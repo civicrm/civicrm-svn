@@ -350,9 +350,15 @@ function _civicrm_api3_store_values(&$fields, &$params, &$values) {
  * @param array $options array of options (so we can modify the filter)
  * @param bool $getCount are we just after the count
  */
-function _civicrm_api3_get_using_query_object($params, $additional_options = array(),$getCount = null){
+function _civicrm_api3_get_using_query_object($object_type, $params, $additional_options = array(), $getCount = null){
 
-  $options          = _civicrm_api3_get_options_from_params($params, TRUE);
+  // Convert id to e.g. contact_id
+  if (empty($params[$object_type . '_id']) && isset($params['id'])) {
+    $params[$object_type . '_id'] = $params['id'];
+  }
+  unset($params['id']);
+
+  $options = _civicrm_api3_get_options_from_params($params, TRUE);
 
   $inputParams = array_merge(
     CRM_Utils_Array::value('input_params', $options, array()),
