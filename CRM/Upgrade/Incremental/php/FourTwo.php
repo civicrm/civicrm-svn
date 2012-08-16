@@ -163,7 +163,7 @@ class CRM_Upgrade_Incremental_php_FourTwo {
     // Some steps take a long time, so we break them up into separate
     // tasks and enqueue them separately.
     $this->addTask(ts('Upgrade DB to 4.2.alpha1: SQL'), 'task_4_2_alpha1_runSql', $rev);
-    $this->addTask(ts('Upgrade DB to 4.2.alpha1: Price Sets'), 'task_4_2_alpha1_createPriceSets');
+    $this->addTask(ts('Upgrade DB to 4.2.alpha1: Price Sets'), 'task_4_2_alpha1_createPriceSets', $rev);
     $minContributionId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(min(id),0) FROM civicrm_contribution');
     $maxContributionId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(max(id),0) FROM civicrm_contribution');
     for ($startId = $minContributionId; $startId <= $maxContributionId; $startId += self::BATCH_SIZE) {
@@ -223,7 +223,7 @@ class CRM_Upgrade_Incremental_php_FourTwo {
    *
    * Upgrade code to create priceset for contribution pages and events
    */
-  static function task_4_2_alpha1_createPriceSets(CRM_Queue_TaskContext $ctx) {
+  static function task_4_2_alpha1_createPriceSets(CRM_Queue_TaskContext $ctx, $rev) {
     $upgrade = new CRM_Upgrade_Form();
     $daoName =
       array(
@@ -239,7 +239,7 @@ class CRM_Upgrade_Incremental_php_FourTwo {
         ),
       );
     // CRM-10613 delete bad data for membership
-     self::deleteBadData('delete');
+    self::deleteBadData('delete', $rev);
     // get all option group used for event and contribution page
     $query = "
 SELECT id, name
@@ -292,37 +292,36 @@ WHERE     cpse.price_set_id IS NULL";
    * 
    * Function to Delete bad data
    */
-  static function deleteBadData($deleteMembership = null) {
+  static function deleteBadData($deleteMembership = NULL, $rev = NULL) {
     //CRM-10613
-    $query = "
- SELECT cc.id,GROUP_CONCAT(cm.id) as membership_id 
+
+    $query = "SELECT cc.id, cmp.membership_id 
  FROM civicrm_membership_payment cmp
  INNER JOIN `civicrm_contribution` cc ON cc.id = cmp.contribution_id
  LEFT JOIN civicrm_line_item cli ON cc.id=cli.entity_id and cli.entity_table = 'civicrm_contribution'
  INNER JOIN civicrm_membership cm ON cm.id=cmp.membership_id
  INNER JOIN civicrm_membership_type cmt ON cmt.id = cm.membership_type_id
+ INNER JOIN civicrm_membership_payment cmp1 on cmp.contribution_id = cmp1.contribution_id 
  WHERE cli.entity_id IS NULL 
- GROUP BY cc.id, cm.membership_type_id
- HAVING count(cc.id) > 1 and count(cm.membership_type_id) > 1 ";
+ GROUP BY cmp.membership_id
+ HAVING COUNT(cmp.contribution_id) > 1 
+ ORDER BY cmp.membership_id ASC";
 
     $dao = CRM_Core_DAO::executeQuery($query);
     while ($dao->fetch()) {
-      $membershiIds = explode(',', $dao->membership_id);
-      sort($membershiIds);
-      self::$_deleteBadDatas[] = array( 
-        'memberships' => $membershiIds,
-        'contribution' => $dao->id
-      );
-      if (!$deleteMembership) {
-        continue;
+      self::$_deleteBadDatas[$dao->id]['memberships'][] = $dao->membership_id;
+      self::$_deleteBadDatas[$dao->id]['contribution'] = $dao->id;
+    }
+    if ($deleteMembership) {
+      foreach (self::$_deleteBadDatas as $contributionId => $membershipIds) {
+        array_pop(self::$_deleteBadDatas[$contributionId]['memberships']);
+        foreach (self::$_deleteBadDatas[$contributionId]['memberships'] as $id) {
+          $membesrshipPayment = new CRM_Member_DAO_MembershipPayment();
+          $membesrshipPayment->membership_id = $id;
+          $membesrshipPayment->delete();
+        }
       }
-      array_pop($membershiIds);
-      foreach ($membershiIds as $id) {
-        $membesrshipPayment = new CRM_Member_DAO_MembershipPayment();
-        $membesrshipPayment->membership_id = $id;
-        $membesrshipPayment->delete();
-      }
-    } 
+    }
   }
 
   /**
