@@ -18,3 +18,17 @@ UPDATE civicrm_activity
 INNER JOIN civicrm_mailing ON civicrm_activity.source_record_id = civicrm_mailing.id
 SET   civicrm_activity.activity_type_id = @newClientSMSValue
 WHERE civicrm_activity.activity_type_id = @clientSMSValue;
+
+-- CRM-10671 remove incomplete price set reports (inserted in 4.2 alpha 1)
+SELECT @option_group_id_report := MAX(id) FROM civicrm_option_group WHERE name = 'report_template';
+DELETE from civicrm_option_value
+WHERE name = 'CRM_Report_Form_Price_Lineitem' AND
+option_group_id = @option_group_id_report;
+
+DELETE from civicrm_option_value
+WHERE name = 'CRM_Report_Form_Price_Contributionbased' AND
+option_group_id = @option_group_id_report;
+
+DELETE from civicrm_option_value
+WHERE name = 'CRM_Report_Form_Price_Lineitemparticipant' AND
+option_group_id = @option_group_id_report;
