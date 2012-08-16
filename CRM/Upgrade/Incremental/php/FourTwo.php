@@ -36,31 +36,9 @@ class CRM_Upgrade_Incremental_php_FourTwo {
   const BATCH_SIZE = 5000;
   const SETTINGS_SNIPPET_PATTERN = '/CRM_Core_ClassLoader::singleton\(\)-\>register/';
   const SETTINGS_SNIPPET = "\nrequire_once 'CRM/Core/ClassLoader.php';\nCRM_Core_ClassLoader::singleton()->register();\n";
+  static $_deleteBadDatas = array();
 
   function verifyPreDBstate(&$errors) {
-    //CRM-10613
-    $query = "
- SELECT cc.id,GROUP_CONCAT(cm.id) as membership_id 
- FROM civicrm_membership_payment cmp
- LEFT JOIN `civicrm_contribution` cc ON cc.id = cmp.contribution_id
- LEFT JOIN civicrm_line_item cli ON cc.id=cli.entity_id and cli.entity_table = 'civicrm_contribution'
- LEFT JOIN civicrm_membership cm ON cm.id=cmp.membership_id
- LEFT JOIN civicrm_membership_type cmt ON cmt.id = cm.membership_type_id
- WHERE cli.entity_id IS NULL 
- GROUP BY cc.id, cm.membership_type_id
- HAVING count(cc.id) > 1 and count(cm.membership_type_id) > 1 ";
-
-    $dao = CRM_Core_DAO::executeQuery($query);
-    while ($dao->fetch()) {
-      $membershiIds = explode(',', $dao->membership_id);
-      sort($membershiIds);
-      array_pop($membershiIds);
-      foreach($membershiIds as $id){
-        $membesrshipPayment = new CRM_Member_DAO_MembershipPayment();
-        $membesrshipPayment->membership_id = $id;
-        $membesrshipPayment->delete();
-      }
-    } 
     return TRUE;
   }
   
@@ -75,6 +53,27 @@ class CRM_Upgrade_Incremental_php_FourTwo {
    * @return void
    */
   function setPreUpgradeMessage(&$preUpgradeMessage, $rev) {
+    if ($rev == '4.2.alpha1') {
+      // CRM-10613 delete bad data for membership
+      self::deleteBadData();
+      if (!empty(self::$_deleteBadDatas)) {
+        $deletedMembership = $deletedPayments = $retainedMembership = "";
+        foreach (self::$_deleteBadDatas as $badData) {
+          $retainedMembership .= "<tr><td>{$badData['contribution']}</td><td>" . array_pop($badData['memberships']) . "</td><tr>";
+          foreach ($badData['memberships'] as $value ) {
+            $deletedPayments .= "<tr><td>{$badData['contribution']}</td><td>" . $value . "</td><tr>"; 
+          }
+        }
+        $preUpgradeMessage .= "<br /><strong>" . ts('The upgrade from CiviCRM version 4.1 to version 4.2 has identified some data integrity issues in the database. If you continue, it will attempt to solve a problem of multiple memberships or multiple payments for a membership associated with a single contribution by deleting the following records:') . "</strong>";
+
+        $preUpgradeMessage .= "<br /><strong>" . ts('For contribution ID ##, membership ID ## will be retained') . "</strong>"; 
+        $preUpgradeMessage .= "<table><tr><th>contribution ID</th><th>membership ID</th></tr>" . $retainedMembership . "</table>";
+
+        $preUpgradeMessage .= "<strong>" . ts('In addition, the following links between this contribution and memberships will be deleted:') . "</strong>";
+        $preUpgradeMessage .= "<table><tr><th>contribution ID</th><th>membership ID</th></tr>" . $deletedPayments . "</table>";
+      }
+    }
+    
     if ($rev == '4.2.beta2') {  
       // note: error conditions are also checked in upgrade_4_2_beta2()
       if (!defined('CIVICRM_SETTINGS_PATH')) {
@@ -101,6 +100,19 @@ class CRM_Upgrade_Incremental_php_FourTwo {
    */
   function setPostUpgradeMessage(&$postUpgradeMessage, $rev) {
     if ($rev == '4.2.alpha1') {
+      // CRM-10613 delete bad data for membership
+      self::deleteBadData();
+      if (!empty(self::$_deleteBadDatas)) {
+        $postUpgradeMessage .= "<br /><strong>" . ts('The following links between this contribution and memberships are successfully deleted:') . "</strong>";
+        $postUpgradeMessage .= "<table><tr><th>contribution ID</th><th>membership ID</th></tr>";
+        foreach (self::$_deleteBadDatas as $badData) {
+          array_pop($badData['memberships']);
+          foreach ($badData['memberships'] as $value ) {
+            $postUpgradeMessage .= "<tr><td>{$badData['contribution']}</td><td>" . $value . "</td><tr>"; 
+          }
+        }
+        $postUpgradeMessage .= "</table>";
+      }
       $postUpgradeMessage .= '<br />' . ts('Default versions of the following System Workflow Message Templates have been modified to handle new functionality: <ul><li>Events - Registration Confirmation and Receipt (on-line)</li><li>Pledges - Acknowledgement</li><li>Pledges - Payment Reminder</li></ul>. If you have modified these templates, please review the new default versions and implement updates as needed to your copies (Administer > Communications > Message Templates > System Workflow Messages).');
     }
     if ($rev == '4.2.beta5') {
@@ -226,7 +238,8 @@ class CRM_Upgrade_Incremental_php_FourTwo {
           CRM_Core_Component::getComponentID('CiviEvent')
         ),
       );
-
+    // CRM-10613 delete bad data for membership
+     self::deleteBadData('delete');
     // get all option group used for event and contribution page
     $query = "
 SELECT id, name
@@ -275,6 +288,42 @@ WHERE     cpse.price_set_id IS NULL";
       return TRUE;
   }
 
+  /**
+   * 
+   * Function to Delete bad data
+   */
+  static function deleteBadData($deleteMembership = null) {
+    //CRM-10613
+    $query = "
+ SELECT cc.id,GROUP_CONCAT(cm.id) as membership_id 
+ FROM civicrm_membership_payment cmp
+ INNER JOIN `civicrm_contribution` cc ON cc.id = cmp.contribution_id
+ LEFT JOIN civicrm_line_item cli ON cc.id=cli.entity_id and cli.entity_table = 'civicrm_contribution'
+ INNER JOIN civicrm_membership cm ON cm.id=cmp.membership_id
+ INNER JOIN civicrm_membership_type cmt ON cmt.id = cm.membership_type_id
+ WHERE cli.entity_id IS NULL 
+ GROUP BY cc.id, cm.membership_type_id
+ HAVING count(cc.id) > 1 and count(cm.membership_type_id) > 1 ";
+
+    $dao = CRM_Core_DAO::executeQuery($query);
+    while ($dao->fetch()) {
+      $membershiIds = explode(',', $dao->membership_id);
+      sort($membershiIds);
+      self::$_deleteBadDatas[] = array( 
+        'memberships' => $membershiIds,
+        'contribution' => $dao->id
+      );
+      if (!$deleteMembership) {
+        continue;
+      }
+      array_pop($membershiIds);
+      foreach ($membershiIds as $id) {
+        $membesrshipPayment = new CRM_Member_DAO_MembershipPayment();
+        $membesrshipPayment->membership_id = $id;
+        $membesrshipPayment->delete();
+      }
+    } 
+  }
 
   /**
    *
