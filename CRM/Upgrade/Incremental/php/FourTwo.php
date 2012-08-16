@@ -61,6 +61,7 @@ class CRM_Upgrade_Incremental_php_FourTwo {
         foreach (self::$_deleteBadDatas as $badData) {
           $retainedMembership .= "<tr><td>{$badData['contribution']}</td><td>" . array_pop($badData['memberships']) . "</td><tr>";
           foreach ($badData['memberships'] as $value ) {
+            $deletedMembership .= "<li>{$value}</li>";
             $deletedPayments .= "<tr><td>{$badData['contribution']}</td><td>" . $value . "</td><tr>"; 
           }
         }
@@ -68,7 +69,7 @@ class CRM_Upgrade_Incremental_php_FourTwo {
 
         $preUpgradeMessage .= "<br /><strong>" . ts('For contribution ID ##, membership ID ## will be retained') . "</strong>"; 
         $preUpgradeMessage .= "<table><tr><th>contribution ID</th><th>membership ID</th></tr>" . $retainedMembership . "</table>";
-
+        $preUpgradeMessage .= "<strong>" . ts('and the following memberships will be deleted:') . "</strong><ul>" . $deletedMembership . "</ul>";
         $preUpgradeMessage .= "<strong>" . ts('In addition, the following links between this contribution and memberships will be deleted:') . "</strong>";
         $preUpgradeMessage .= "<table><tr><th>contribution ID</th><th>membership ID</th></tr>" . $deletedPayments . "</table>";
       }
@@ -313,12 +314,33 @@ WHERE     cpse.price_set_id IS NULL";
       self::$_deleteBadDatas[$dao->id]['contribution'] = $dao->id;
     }
     if ($deleteMembership) {
+      $activityTypes = CRM_Core_PseudoConstant::activityType(TRUE, FALSE, FALSE, 'name');
+      $activityid = array(
+        array_search('Membership Signup', $activityTypes),
+        array_search('Membership Renewal', $activityTypes),
+        array_search('Membership Renewal Reminder', $activityTypes),
+      );
+      if (array_search('Change Membership Type', $activityTypes)) {
+        $activityid[] = array_search('Change Membership Type', $activityTypes);
+      }
+      if (array_search('Change Membership Status', $activityTypes)) {
+        $activityid[] = array_search('Change Membership Type', $activityTypes);
+      }
       foreach (self::$_deleteBadDatas as $contributionId => $membershipIds) {
         array_pop(self::$_deleteBadDatas[$contributionId]['memberships']);
         foreach (self::$_deleteBadDatas[$contributionId]['memberships'] as $id) {
-          $membesrshipPayment = new CRM_Member_DAO_MembershipPayment();
-          $membesrshipPayment->membership_id = $id;
-          $membesrshipPayment->delete();
+          $params = array(
+            'source_record_id' => $id,
+            'activity_type_id' => $activityid,
+          );
+          CRM_Activity_BAO_Activity::deleteActivity($params);
+          $membership     = new CRM_Member_DAO_Membership();
+          $membership->id = $id;
+          $membership->delete();
+          CRM_Core_Error::debug_log_message(ts("contribution ID = %1 , membership ID = %2 has been deleted successfully.", array (
+            1 => $contributionId,
+            2 => $membership->id,                                                                                                          
+          )), FALSE, "Upgrade{$rev}Data");
         }
       }
     }
