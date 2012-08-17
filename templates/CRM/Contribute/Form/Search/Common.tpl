@@ -47,14 +47,29 @@
 </tr>
 <tr>
 	<td>
-	{$form.contribution_receipt_date_isnull.html}&nbsp;{$form.contribution_receipt_date_isnull.label}<br />
-	{$form.contribution_thankyou_date_isnull.html}&nbsp;{$form.contribution_thankyou_date_isnull.label}
+    <div>
+      {$form.contribution_thankyou_date_is_not_null.label}
+      {$form.contribution_thankyou_date_is_not_null.html}<span class="crm-clear-link">(<a href="javascript:unselectRadio('contribution_thankyou_date_is_not_null','{$form.formName}')">{ts}clear{/ts}</a>)</span>
+    </div>
+    <div>
+      {$form.contribution_receipt_date_is_not_null.label}
+      {$form.contribution_receipt_date_is_not_null.html}<span class="crm-clear-link">(<a href="javascript:unselectRadio('contribution_receipt_date_is_not_null','{$form.formName}')">{ts}clear{/ts}</a>)</span>
+    </div>
 	</td>
 	<td>
-	{$form.contribution_pay_later.html}&nbsp;{$form.contribution_pay_later.label}<br />
-	{$form.contribution_recurring.html}&nbsp;{$form.contribution_recurring.label}<br />
-        {$form.contribution_recurring_isnull.html}&nbsp;{$form.contribution_recurring_isnull.label}<br />
-	{$form.contribution_test.html}&nbsp;{$form.contribution_test.label}</td>
+    <div>
+      {$form.contribution_pay_later.label}
+      {$form.contribution_pay_later.html}<span class="crm-clear-link">(<a href="javascript:unselectRadio('contribution_pay_later','{$form.formName}')">{ts}clear{/ts}</a>)</span>
+    </div>
+    <div>
+      {$form.contribution_recurring.label}
+      {$form.contribution_recurring.html}<span class="crm-clear-link">(<a href="javascript:unselectRadio('contribution_recurring','{$form.formName}')">{ts}clear{/ts}</a>)</span>
+    </div>
+    <div>
+      {$form.contribution_test.label}
+      {$form.contribution_test.html}<span class="crm-clear-link">(<a href="javascript:unselectRadio('contribution_test','{$form.formName}')">{ts}clear{/ts}</a>)</span>
+    </div>
+  </td>
 </tr>
 <tr>
 	<td><label>{ts}Contribution Type{/ts}</label> <br />
@@ -71,6 +86,7 @@
 <tr>
 	<td>{$form.contribution_pcp_made_through_id.label} <br />
 	{$form.contribution_pcp_made_through_id.html|crmReplace:class:twenty}</td>
+
 	<td>{$form.contribution_pcp_display_in_roll.label}
 	{$form.contribution_pcp_display_in_roll.html}<span class="crm-clear-link">(<a href="javascript:unselectRadio('contribution_pcp_display_in_roll','{$form.formName}')">{ts}clear{/ts}</a>)</span></td>
 </tr>

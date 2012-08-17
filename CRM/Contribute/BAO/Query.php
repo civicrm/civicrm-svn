@@ -263,15 +263,29 @@ class CRM_Contribute_BAO_Query {
         $query->_tables['civicrm_contribution'] = $query->_whereTables['civicrm_contribution'] = 1;
         return;
 
-      case 'contribution_thankyou_date_isnull':
-        $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause("civicrm_contribution.thankyou_date", "IS NULL");
-        $query->_qill[$grouping][] = ts('Contribution Thank-you date is null');
+      case 'contribution_thankyou_date_is_not_null':
+        if ($value) {
+          $op = "IS NOT NULL";
+          $query->_qill[$grouping][] = ts('Contribution Thank-you Sent');
+        }
+        else {
+          $op = "IS NULL";
+          $query->_qill[$grouping][] = ts('Contribution Thank-you Not Sent');
+        }
+        $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause("civicrm_contribution.thankyou_date", $op);
         $query->_tables['civicrm_contribution'] = $query->_whereTables['civicrm_contribution'] = 1;
         return;
 
-      case 'contribution_receipt_date_isnull':
-        $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause("civicrm_contribution.receipt_date", "IS NULL");
-        $query->_qill[$grouping][] = ts('Contribution Receipt date is null');
+      case 'contribution_receipt_date_is_not_null':
+        if ($value) {
+          $op = "IS NOT NULL";
+          $query->_qill[$grouping][] = ts('Contribution Receipt Sent');
+        }
+        else {
+          $op = "IS NULL";
+          $query->_qill[$grouping][] = ts('Contribution Receipt Not Sent');
+        }
+        $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause("civicrm_contribution.receipt_date", $op);
         $query->_tables['civicrm_contribution'] = $query->_whereTables['civicrm_contribution'] = 1;
         return;
 
@@ -405,32 +419,32 @@ class CRM_Contribute_BAO_Query {
       case 'contribution_test':
         $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause("civicrm_contribution.is_test", $op, $value, "Boolean");
         if ($value) {
-          $query->_qill[$grouping][] = ts("Find Test Contributions");
+          $query->_qill[$grouping][] = ts("Only Display Test Contributions");
         }
         $query->_tables['civicrm_contribution'] = $query->_whereTables['civicrm_contribution'] = 1;
         return;
 
       case 'contribution_is_pay_later':
       case 'contribution_pay_later':
+        $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause("civicrm_contribution.is_pay_later", $op, $value, "Boolean");
         if ($value) {
-          $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause("civicrm_contribution.is_pay_later", $op, $value, "Boolean");
           $query->_qill[$grouping][] = ts("Find Pay Later Contributions");
-          $query->_tables['civicrm_contribution'] = $query->_whereTables['civicrm_contribution'] = 1;
         }
+        else {
+          $query->_qill[$grouping][] = ts("Exclude Pay Later Contributions");
+        }
+        $query->_tables['civicrm_contribution'] = $query->_whereTables['civicrm_contribution'] = 1;
         return;
 
       case 'contribution_recurring':
         if ($value) {
           $query->_where[$grouping][] = "civicrm_contribution.contribution_recur_id IS NOT NULL";
-          $query->_qill[$grouping][] = ts("Displaying Recurring Contributions");
+          $query->_qill[$grouping][] = ts("Find Recurring Contributions");
           $query->_tables['civicrm_contribution_recur'] = $query->_whereTables['civicrm_contribution_recur'] = 1;
         }
-        return;
-
-      case 'contribution_recurring_isnull':
-        if ($value) {
+        else {
           $query->_where[$grouping][] = "civicrm_contribution.contribution_recur_id IS NULL";
-          $query->_qill[$grouping][] = ts("Displaying Non Recurring Contributions");
+          $query->_qill[$grouping][] = ts("Exclude Recurring Contributions");
         }
         return;
 
@@ -475,10 +489,13 @@ class CRM_Contribute_BAO_Query {
         if ($value) {
           $query->_qill[$grouping][] = ts("Personal Campaign Page Honor Roll");
         }
+        else {
+          $query->_qill[$grouping][] = ts("NOT Personal Campaign Page Honor Roll");
+        }
         $query->_tables['civicrm_contribution_soft'] = $query->_whereTables['civicrm_contribution_soft'] = 1;
         return;
 
-      //supporting search for currency type -- CRM-4711
+      // Supporting search for currency type -- CRM-4711
 
       case 'contribution_currency_type':
         $currencySymbol = CRM_Core_PseudoConstant::currencySymbols('name');
@@ -709,7 +726,7 @@ class CRM_Contribute_BAO_Query {
    */
   static function buildSearchForm(&$form) {
 
-    //added contribution source
+    // Added contribution source
     $form->addElement('text', 'contribution_source', ts('Contribution Source'), CRM_Core_DAO::getAttribute('CRM_Contribute_DAO_Contribution', 'source'));
 
     CRM_Core_Form_Date::buildDateRange($form, 'contribution_date', 1, '_low', '_high', ts('From'), FALSE, FALSE);
@@ -720,7 +737,7 @@ class CRM_Contribute_BAO_Query {
     $form->add('text', 'contribution_amount_high', ts('To'), array('size' => 8, 'maxlength' => 8));
     $form->addRule('contribution_amount_high', ts('Please enter a valid money value (e.g. %1).', array(1 => CRM_Utils_Money::format('99.99', ' '))), 'money');
 
-    //adding select option for curreny type -- CRM-4711
+    // Adding select option for curreny type -- CRM-4711
     $form->add('select', 'contribution_currency_type',
       ts('Currency Type'),
       array(
@@ -761,8 +778,7 @@ class CRM_Contribute_BAO_Query {
 
     $statusValues = CRM_Core_OptionGroup::values("contribution_status");
     // Remove status values that are only used for recurring contributions or pledges (In Progress, Overdue).
-    unset($statusValues['5']);
-    unset($statusValues['6']);
+    unset($statusValues['5'], $statusValues['6']);
 
     foreach ($statusValues as $key => $val) {
       $status[] = $form->createElement('advcheckbox', $key, NULL, $val);
@@ -770,27 +786,26 @@ class CRM_Contribute_BAO_Query {
 
     $form->addGroup($status, 'contribution_status_id', ts('Contribution Status'));
 
-    // add null checkboxes for thank you and receipt
-    $form->addElement('checkbox', 'contribution_thankyou_date_isnull', ts('Thank-you date not set?'));
-    $form->addElement('checkbox', 'contribution_receipt_date_isnull', ts('Receipt not sent?'));
+    // Add fields for thank you and receipt
+    $form->addYesNo('contribution_thankyou_date_is_not_null', ts('Thank-you sent?'));
+    $form->addYesNo('contribution_receipt_date_is_not_null', ts('Receipt sent?'));
 
-    //add fields for honor search
+    // Add fields for honor search
     $form->addElement('text', 'contribution_in_honor_of', ts("In Honor Of"));
 
-    $form->addElement('checkbox', 'contribution_test', ts('Find Test Contributions?'));
-    $form->addElement('checkbox', 'contribution_pay_later', ts('Find Pay Later Contributions?'));
+    $form->addYesNo('contribution_pay_later', ts('Contribution is Pay Later?'));
+    $form->addYesNo('contribution_recurring', ts('Contribution is Recurring?'));
+    $form->addYesNo('contribution_test', ts('Contribution is a Test?'));
 
-    //add field for transaction ID search
+    // Add field for transaction ID search
     $form->addElement('text', 'contribution_transaction_id', ts("Transaction ID"));
 
-    $form->addElement('checkbox', 'contribution_recurring', ts('Find Recurring Contributions?'));
-    $form->addElement('checkbox', 'contribution_recurring_isnull', ts('Find Non Recurring Contributions?'));
     $form->addElement('text', 'contribution_check_number', ts('Check Number'));
 
-    //add field for pcp display in roll search
+    // Add field for pcp display in roll search
     $form->addYesNo('contribution_pcp_display_in_roll', ts('Personal Campaign Page Honor Roll?'));
 
-    // add all the custom  searchable fields
+    // Add all the custom searchable fields
     $contribution = array('Contribution');
     $groupDetails = CRM_Core_BAO_CustomGroup::getGroupDetail(NULL, TRUE, $contribution);
     if ($groupDetails) {
@@ -810,7 +825,7 @@ class CRM_Contribute_BAO_Query {
 
     CRM_Campaign_BAO_Campaign::addCampaignInComponentSearch($form, 'contribution_campaign_id');
 
-    // add batch select
+    // Add batch select
     $batches = CRM_Core_BAO_Batch::getBatches();
     
     if ( !empty( $batches ) ) {
@@ -820,6 +835,7 @@ class CRM_Contribute_BAO_Query {
     }
 
     $form->assign('validCiviContribute', TRUE);
+    $form->setDefaults(array('contribution_test' => 0));
   }
 
   static function addShowHide(&$showHide) {
@@ -831,7 +847,7 @@ class CRM_Contribute_BAO_Query {
   }
 
   static function tableNames(&$tables) {
-    //add contribution table
+    // Add contribution table
     if (CRM_Utils_Array::value('civicrm_product', $tables)) {
       $tables = array_merge(array('civicrm_contribution' => 1), $tables);
     }
