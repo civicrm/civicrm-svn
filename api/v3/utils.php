@@ -207,7 +207,7 @@ function civicrm_api3_create_success($values = 1, $params = array(
     }
 
     $allFields = array();
-    if (is_array(CRM_Utils_Array::value('values', $apiFields))) {
+    if ($action != 'getfields' && is_array(CRM_Utils_Array::value('values', $apiFields))) {
       $allFields = array_keys($apiFields['values']);
     }
     $paramFields = array_keys($params);
@@ -878,7 +878,7 @@ function _civicrm_api3_basic_get($bao_name, &$params, $returnAsSuccess = TRUE, $
   $bao = new $bao_name();
   _civicrm_api3_dao_set_filter($bao, $params, TRUE,$entity);
   if ($returnAsSuccess) {
-    return civicrm_api3_create_success(_civicrm_api3_dao_to_array($bao, $params, FALSE, $entity), $params, $bao);
+    return civicrm_api3_create_success(_civicrm_api3_dao_to_array($bao, $params, FALSE, $entity), $params, $entity);
   }
   else {
     return _civicrm_api3_dao_to_array($bao, $params, FALSE, $entity);
