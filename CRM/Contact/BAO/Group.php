@@ -735,6 +735,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
 
     $allTypes = CRM_Core_OptionGroup::values('group_type');
     $values = array();
+    $treePlus = '<img src=' . $config->resourceBase . 'i/TreePlus.gif" class="action-icon"/>';
 
     while ($object->fetch()) {
       $permission = CRM_Contact_BAO_Group::checkPermission($object->id, $object->title);
@@ -804,6 +805,17 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
             'ssid' => $object->saved_search_id,
           )
         );
+        
+        // If group has children, add class for link to view children
+        if (array_key_exists('children', $values[$object->id])) {
+          $values[$object->id]['class'] = "crm-group-parent group_id_{$values[$object->id]['id']}";
+        }
+        
+        // If group is a child, add hidden child class
+        if (array_key_exists('parents', $values[$object->id])) {
+          $values[$object->id]['class'] = "crm-group-child group_id_{$values[$object->id]['id']} hide-row";
+        }
+        
         if ($groupOrg) {
           if ($object->org_id) {
             $contactUrl = CRM_Utils_System::url('civicrm/contact/view', "reset=1&cid={$object->org_id}");
@@ -815,6 +827,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
         }
       }
     }
+//    crm_core_error::debug('$values', $values);
 
     return $values;
   }
@@ -874,6 +887,11 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
           $clauses[] = '(groups.is_active = 0 OR groups.is_active = 1 )';
           break;
       }
+    }
+
+    $parentsOnly = CRM_Utils_Array::value('parentsOnly', $params);
+    if ($parentsOnly) {
+      $clauses[] = 'groups.parents IS NULL';
     }
 
     /*

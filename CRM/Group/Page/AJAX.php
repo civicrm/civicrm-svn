@@ -33,7 +33,7 @@
  */
 
 /**
- * This class contains all the function that are called using AJAX (jQuery)
+ * This class contains the functions that are called using AJAX (jQuery)
  */
 class CRM_Group_Page_AJAX {
   static
@@ -50,6 +50,7 @@ class CRM_Group_Page_AJAX {
     $sortOrder = isset($_REQUEST['sSortDir_0']) ? CRM_Utils_Type::escape($_REQUEST['sSortDir_0'], 'String') : 'asc';
 
     $params = $_POST;
+
     if ($sort && $sortOrder) {
       $params['sortBy'] = $sort . ' ' . $sortOrder;
     }
@@ -60,6 +61,8 @@ class CRM_Group_Page_AJAX {
     // get group list
     $groups = CRM_Contact_BAO_Group::getGroupListSelector($params);
 
+//  crm_core_error::debug('$groups', $groups);
+//  exit();
     $iFilteredTotal = $iTotal = $params['total'];
     $selectorElements = array(
       'group_name', 'group_id', 'group_description',
