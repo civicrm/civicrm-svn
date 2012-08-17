@@ -72,7 +72,11 @@ function civicrm_api3_option_value_create($params) {
   }
 
   if (array_key_exists('component', $params)) {
-    $params['component_id'] = array_search($params['component'], CRM_Core_PseudoConstant::component());
+    if (empty($params['component'])) {
+      $params['component_id'] = '';
+    } else {
+      $params['component_id'] = array_search($params['component'], CRM_Core_PseudoConstant::component());
+    }
     unset($params['component']);
   }
 

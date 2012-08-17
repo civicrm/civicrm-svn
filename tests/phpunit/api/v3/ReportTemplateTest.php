@@ -32,6 +32,21 @@ class api_v3_ReportTemplateTest extends CiviUnitTestCase {
     $this->assertDBQuery(1, 'SELECT is_active FROM civicrm_option_value
       WHERE name = "CRM_Report_Form_Examplez"');
 
+    // change component to null
+    $result = civicrm_api('ReportTemplate', 'create', array(
+      'version' => $this->_apiversion,
+      'id' => $entityId,
+      'component' => '',
+    ));
+    $this->assertEquals(0, $result['is_error'], 'In line ' . __LINE__);
+    $this->assertEquals(1, $result['count'], 'In line ' . __LINE__);
+    $this->assertDBQuery(1, 'SELECT count(*) FROM civicrm_option_value
+      WHERE name = "CRM_Report_Form_Examplez"
+      AND option_group_id = 40');
+    $this->assertDBQuery(1, 'SELECT count(*) FROM civicrm_option_value
+      WHERE name = "CRM_Report_Form_Examplez"
+      AND component_id IS NULL');
+
     // deactivate
     $result = civicrm_api('ReportTemplate', 'create', array(
       'version' => $this->_apiversion,
