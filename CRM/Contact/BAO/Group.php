@@ -808,12 +808,17 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
         
         // If group has children, add class for link to view children
         if (array_key_exists('children', $values[$object->id])) {
-          $values[$object->id]['class'] = "crm-group-parent group_id_{$values[$object->id]['id']}";
+          $values[$object->id]['class'] = "crm-group-parent";
         }
         
         // If group is a child, add hidden child class
         if (array_key_exists('parents', $values[$object->id])) {
-          $values[$object->id]['class'] = "crm-group-child group_id_{$values[$object->id]['id']} hide-row";
+          $parents = explode(',', $values[$object->id]['parents']);
+          $childClass = "crm-group-child hide-row ";
+          foreach ($parents as $parentId){
+            $childClass .= "parent_" . $parentId . " ";            
+          }
+          $values[$object->id]['class'] = trim($childClass);
         }
         
         if ($groupOrg) {
@@ -827,7 +832,6 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
         }
       }
     }
-//    crm_core_error::debug('$values', $values);
 
     return $values;
   }

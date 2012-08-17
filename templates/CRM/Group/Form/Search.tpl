@@ -137,7 +137,7 @@ function buildGroupSelector( filterSearch ) {
                             "sLast":     {/literal}"{ts escape='js'}Last{/ts}"{literal}            
                         }                                                       
                     },
-        "fnDrawCallback": function() { setSelectorClass( ); showChildren(); },
+        "fnDrawCallback": function() { setSelectorClass( ); },
         "fnServerData": function ( sSource, aoData, fnCallback ) {
             var showOrgInfo = {/literal}"{$showOrgInfo}"{literal};
             aoData.push( {name:'showOrgInfo', value: showOrgInfo });
@@ -192,16 +192,41 @@ function setSelectorClass( ) {
     cj(this).addClass( className );
     var rowID = cj(this).find('td:nth-child(2)').text();
     cj(this).prop( 'id', 'row_' + rowID );
+    if ( cj(this).hasClass('crm-group-parent') ) {
+      cj(this).find('td:first').prepend('{/literal}<span class="collapsed show-children" title="{ts}show child groups{/ts}"/></span>{literal}');
+			cj(this).find('span.show-children').click( function(){
+				showChildren( rowID );
+			});
+    } 
   });
 }
 
-function showChildren() {
+function showChildren( parent ) {
+	var childClass = 'parent_' + parent;
   cj('#crm-group-selector tr').each( function( ) {
-    if ( cj(this).hasClass('crm-group-parent') ) {
-      cj(this).find('td:first').append('<br /> [+] Child');
-    } 
-  }); 
+		if ( cj(this).hasClass(childClass) ) {
+			cj(this).show( );
+		}
+		cj("#row_" + parent).find('span.show-children').removeClass("collapsed");
+		cj("#row_" + parent).find('span.show-children').addClass("expanded");
+		cj("#row_" + parent).find('span.show-children').click( function(){
+			hideChildren( parent )
+		});
+	});
 }
 
+function hideChildren( parent ) {
+	var childClass = 'parent_' + parent;
+  cj('#crm-group-selector tr').each( function( ) {
+		if ( cj(this).hasClass(childClass) ) {
+			cj(this).hide( );
+		}
+		cj("#row_" + parent).find('span.show-children').removeClass("expanded");
+		cj("#row_" + parent).find('span.show-children').addClass("collapsed");
+		cj("#row_" + parent).find('span.show-children').click( function(){
+			showChildren( parent )
+		});
+	});
+}
 </script>
 {/literal}

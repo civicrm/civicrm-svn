@@ -3505,3 +3505,8 @@ div#crm-toolTip
 .field-action span.btn-slide{padding-left:0px;padding-right:11px;}
 /*end crm-10345*/
 
+/* alter display of child groups in Manage Groups selector */
+#crm-container .crm-group-child td.crm-group-name:before {
+  content: "^ ";
+  padding-left: 10px;
+}
