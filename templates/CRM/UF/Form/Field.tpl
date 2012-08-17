@@ -26,21 +26,21 @@
 <h3>{if $action eq 8}{ts}Delete Field{/ts} - {$fieldTitle}{elseif $action eq 1}{ts}Add Field{/ts}{elseif $action eq 2}{ts}Edit Field{/ts} - {$fieldTitle}{/if}</h3>
 <div class="crm-block crm-form-block crm-uf-field-form-block">
     {if $action eq 8}
-      	<div class="messages status">
+        <div class="messages status">
           <div class="icon inform-icon"></div>
             {ts}WARNING: Deleting this profile field will remove it from Profile forms and listings. If this field is used in any 'stand-alone' Profile forms, you will need to update those forms to remove this field.{/ts} {ts}Do you want to continue?{/ts}
       </div>
     {else}
-        <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div> 
+        <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
         <table class="form-layout-compressed">
         <tr class="crm-uf-field-form-block-field_name">
             <td class="label">{$form.field_name.label}</td>
             <td>{$form.field_name.html}<br />
             <span class="description">&nbsp;{ts}Select the type of CiviCRM record and the field you want to include in this Profile.{/ts}</span></td>
-        </tr> 
+        </tr>
         <tr class="crm-uf-field-form-block-label">
             <td class="label">{$form.label.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_uf_field' field='label' id=$fieldId}{/if}</td>
-            <td>{$form.label.html}<br />       
+            <td>{$form.label.html}<br />
             <span class="description">{ts}The field label displayed on the form (over-ride the default field label here, if desired).{/ts}</span></td>
         </tr>
         <tr class="crm-uf-field-form-block-is_required">
@@ -65,20 +65,20 @@
         </tr>
         <tr class="crm-uf-field-form-block-in_selector">
             <td class="label"><div id="in_selector_label">{$form.in_selector.label}</div></td>
-            <td><div id="in_selector_html">{$form.in_selector.html}<br />         
+            <td><div id="in_selector_html">{$form.in_selector.html}<br />
             <span id="in_selector_desSpan" class="description">{ts}Is this field included as a column in the search results table? This setting applies only to fields with 'Public Pages' or 'Public Pages and Listings' visibility.{/ts}</span></div></td>
-        </tr>     
+        </tr>
         <tr class="crm-uf-field-form-block-help_pre">
             <td class="label">{$form.help_pre.label}{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_uf_field' field='help_pre' id=$fieldId}{/if}</td>
-            <td>{$form.help_pre.html|crmReplace:class:huge}<br /> 
+            <td>{$form.help_pre.html|crmReplace:class:huge}<br />
             <span class="description">&nbsp;{ts}Explanatory text displayed to users for this field (can include HTML formatting tags).{/ts}</span></td>
         </tr>
-	<tr class="crm-uf-field-form-block-help_post">
+  <tr class="crm-uf-field-form-block-help_post">
             <td class="label">{$form.help_post.label}{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_uf_field' field='help_post' id=$fieldId}{/if}</td>
-            <td>{$form.help_post.html|crmReplace:class:huge}<br /> 
+            <td>{$form.help_post.html|crmReplace:class:huge}<br />
             <span class="description">&nbsp;{ts}Explanatory text displayed to users for this field (can include HTML formatting tags).{/ts}</span></td>
         </tr>
-        <tr class="crm-uf-field-form-block-weight"> 
+        <tr class="crm-uf-field-form-block-weight">
             <td class="label">{$form.weight.label}</td>
             <td>&nbsp;{$form.weight.html}<br />
             <span class="description">&nbsp;{ts}Weight controls the order in which fields are displayed within a profile. Enter a positive or negative integer - lower numbers are displayed ahead of higher numbers.{/ts}</span></td>
@@ -102,65 +102,65 @@ var otherModule = new Array( );
 {/literal}{/foreach}{literal}
 
 cj( function() {
-   if ( cj.inArray( "Profile", otherModule ) > -1 && cj.inArray( "Search Profile", otherModule ) == -1 ){       
+   if ( cj.inArray( "Profile", otherModule ) > -1 && cj.inArray( "Search Profile", otherModule ) == -1 ){
         cj('#profile_visibility').show();
    } else if( cj.inArray( "Search Profile", otherModule ) > -1 ){
         cj('#profile_visibility').show();
         cj("#in_selector").attr('checked',true);
    } else if( cj.inArray( "Profile", otherModule ) == -1 && cj.inArray( "Search Profile", otherModule ) == -1 ){
         cj('#profile_visibility').hide();
-   }                         
+   }
 });
 
 var preHelpLabel = "";
 function showLabel( ) {
 
-	if(preHelpLabel) { cj(".crm-uf-field-form-block-help_pre .label").html(preHelpLabel); }
-	cj(".crm-uf-field-form-block-is_view").show();
-	cj(".crm-uf-field-form-block-is_required").show();
-	cj(".crm-uf-field-form-block-visibility").show();
-	cj(".crm-uf-field-form-block-is_searchable").show();
-	cj(".crm-uf-field-form-block-in_selector").show();
-	cj(".crm-uf-field-form-block-help_post").show();
+  if(preHelpLabel) { cj(".crm-uf-field-form-block-help_pre .label").html(preHelpLabel); }
+  cj(".crm-uf-field-form-block-is_view").show();
+  cj(".crm-uf-field-form-block-is_required").show();
+  cj(".crm-uf-field-form-block-visibility").show();
+  cj(".crm-uf-field-form-block-is_searchable").show();
+  cj(".crm-uf-field-form-block-in_selector").show();
+  cj(".crm-uf-field-form-block-help_post").show();
 
     if("Formatting" == document.forms.Field['field_name[0]'].options[document.forms.Field['field_name[0]'].selectedIndex].value)
-    		     {
-    		     if(!preHelpLabel) { preHelpLabel = cj(".crm-uf-field-form-block-help_post .label").html();  }
-    		     cj(".crm-uf-field-form-block-help_pre .label").html('<label for="help_pre">HTML Code</label>');
-		     	     cj(".crm-uf-field-form-block-is_view").hide();
-			     cj(".crm-uf-field-form-block-is_required").hide();
-			     cj(".crm-uf-field-form-block-visibility").hide();
-			     cj(".crm-uf-field-form-block-is_searchable").hide();
-			     cj(".crm-uf-field-form-block-in_selector").hide();
-			     cj(".crm-uf-field-form-block-help_post").hide();
-    		     }
+             {
+             if(!preHelpLabel) { preHelpLabel = cj(".crm-uf-field-form-block-help_post .label").html();  }
+             cj(".crm-uf-field-form-block-help_pre .label").html('<label for="help_pre">HTML Code</label>');
+                cj(".crm-uf-field-form-block-is_view").hide();
+           cj(".crm-uf-field-form-block-is_required").hide();
+           cj(".crm-uf-field-form-block-visibility").hide();
+           cj(".crm-uf-field-form-block-is_searchable").hide();
+           cj(".crm-uf-field-form-block-in_selector").hide();
+           cj(".crm-uf-field-form-block-help_post").hide();
+             }
 
     var labelValue = '';
-    /* Code to set the Field Label */		
-    if (document.forms.Field['field_name[0]'].options[document.forms.Field['field_name[0]'].selectedIndex].value) { 
+    /* Code to set the Field Label */
+    if (document.forms.Field['field_name[0]'].options[document.forms.Field['field_name[0]'].selectedIndex].value) {
         if ( document.forms.Field['field_name[1]'].value ) {
-            labelValue = document.forms.Field['field_name[1]'].options[document.forms.Field['field_name[1]'].selectedIndex].text; 
+            labelValue = document.forms.Field['field_name[1]'].options[document.forms.Field['field_name[1]'].selectedIndex].text;
         }
 
-        if ( document.forms.Field['field_name[3]'].value ) { 
-            labelValue = labelValue + '-' + document.forms.Field['field_name[3]'].options[document.forms.Field['field_name[3]'].selectedIndex].text + ''; 
-        }   
-        if ( document.forms.Field['field_name[2]'].value ) { 
-            labelValue = labelValue + ' (' + document.forms.Field['field_name[2]'].options[document.forms.Field['field_name[2]'].selectedIndex].text + ')'; 
-        }   
+        if ( document.forms.Field['field_name[3]'].value ) {
+            labelValue = labelValue + '-' + document.forms.Field['field_name[3]'].options[document.forms.Field['field_name[3]'].selectedIndex].text + '';
+        }
+        if ( document.forms.Field['field_name[2]'].value ) {
+            labelValue = labelValue + ' (' + document.forms.Field['field_name[2]'].options[document.forms.Field['field_name[2]'].selectedIndex].text + ')';
+        }
     } else {
-        labelValue = '';  
+        labelValue = '';
     }
 
     var custom = document.forms.Field['field_name[1]'].value;
     if ( custom.substring( 0, 7 ) == 'custom_' ) {
         var customFieldLabel = labelValue.split(' :: ', 2);
         labelValue = customFieldLabel[0];
-        if ( document.forms.Field['field_name[2]'].value ) { 
-            labelValue = labelValue + ' (' + document.forms.Field['field_name[2]'].options[document.forms.Field['field_name[2]'].selectedIndex].text + ')'; 
+        if ( document.forms.Field['field_name[2]'].value ) {
+            labelValue = labelValue + ' (' + document.forms.Field['field_name[2]'].options[document.forms.Field['field_name[2]'].selectedIndex].text + ')';
         }
     }
-    
+
     var input = document.getElementById('label');
     input.value = labelValue;
 
@@ -198,11 +198,11 @@ function showLabel( ) {
         cj('#help_post').val( data.help_post );
         cj('#help_pre').val( data.help_pre );
     }, 'json');
-} 
+}
 
 {/literal}{if $action neq 8}{literal}
    showHideSeletorSearch();
-	
+
    function showHideSeletorSearch()
    {
        var vsbl= cj("#visibility").val( );
@@ -221,7 +221,7 @@ function showLabel( ) {
                show("is_search_desSpan");
            }
            var fldName = cj("#field_name\\[1\\]").val();
-           if ( fldName == 'group' || fldName == 'tag' ) { 
+           if ( fldName == 'group' || fldName == 'tag' ) {
                hide("in_selector_label");
                hide("in_selector_html");
                hide("in_selector_desSpan");
@@ -235,7 +235,7 @@ function showLabel( ) {
 
    cj("#field_name\\[1\\]").bind( 'change blur', function( ) {
        showHideSeletorSearch( );
-   }); 
+   });
 
 cj( function( ) {
     cj("#field_name\\[1\\]").addClass( 'huge' );
@@ -243,7 +243,7 @@ cj( function( ) {
     cj("#is_view").click( function(){
         viewOnlyShowHide();
     });
-    
+
 });
 {/literal}{/if}{literal}
 
@@ -261,7 +261,7 @@ function viewOnlyShowHide( ) {
     }
 }
 
-//CRM-4363	
+//CRM-4363
 function mixProfile( ) {
     var allMixTypes = ["Participant", "Membership", "Contribution"];
     var type = document.forms.Field['field_name[0]'].value;
@@ -271,11 +271,11 @@ function mixProfile( ) {
             document.getElementById("is_searchable").checked = false;
             if ( alreadyMixProfile ) {
                 var message = {/literal}'{ts}Oops. You can not mark fields as Searchable in a profile that contains fields for multiple record types.{/ts}'{literal};
-                alert( message ); 
+                alert( message );
             } else {
-                var message = {/literal}{ts}'Oops. '{/ts} 
+                var message = {/literal}{ts}'Oops. '{/ts}
                 + type + '{ts} fields can not be marked as Searchable in a profile.{/ts}'{literal};
-                alert( message ); 
+                alert( message );
             }
         }
         if ( document.getElementById("in_selector").checked ) {
@@ -284,9 +284,9 @@ function mixProfile( ) {
                 var message = {/literal}'{ts}Oops. You can not mark a field as a Result Column in a profile that contains fields from multiple record types.{/ts}'{literal};
                 alert( message );
             } else {
-                var message = {/literal}{ts}'Oops. '{/ts} 
+                var message = {/literal}{ts}'Oops. '{/ts}
                 + type + '{ts} can not be used as a Result Column for profile searches.{/ts}'{literal};
-                alert( message ); 
+                alert( message );
             }
         }
     }
@@ -296,16 +296,16 @@ function verify( ) {
     var allMixTypes = ["Participant", "Membership", "Contribution"];
     var type = document.forms.Field['field_name[0]'].value;
     if ( allMixTypes.indexOf( type ) != -1 ) {
-        var message = {/literal}{ts}'Oops. One or more fields in this profile are configured to be Searchable and / or shown in a Results Column, AND you are trying to add a '{/ts} 
+        var message = {/literal}{ts}'Oops. One or more fields in this profile are configured to be Searchable and / or shown in a Results Column, AND you are trying to add a '{/ts}
         + type + '{ts} field. Profiles with a mixture of field types can not include Searchable or Results Column fields. If you save this field now, the Seachable and Results Column settings will be removed for all fields in this profile. Do you want to continue?{/ts}'{literal};
-        var ok = confirm( message );    
+        var ok = confirm( message );
         if ( !ok ) {
             return false;
         }
     }
 }
 
-</script> 
+</script>
 {/literal}
 
 {* include jscript to warn if unsaved form field changes *}

@@ -35,22 +35,22 @@
 {if $viewOnly }
 {* wrap in crm-container div so crm styles are used *}
 <div id="crm-container-inner" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
- {include file="CRM/common/CMSUser.tpl"}      
-    {strip} 
+ {include file="CRM/common/CMSUser.tpl"}
+    {strip}
     {if $help_pre && $action neq 4}<div class="messages help">{$help_pre}</div>{/if}
     {assign var=zeroField value="Initial Non Existent Fieldset"}
     {assign var=fieldset  value=$zeroField}
     {foreach from=$fields item=field key=fieldName}
     {if $field.groupTitle != $fieldset}
         {if $fieldset != $zeroField}
-           </table> 
+           </table>
            {if $groupHelpPost}
               <div class="messages help">{$groupHelpPost}</div>
            {/if}
            {if $mode ne 8}
               </fieldset>
            {/if}
-        {/if}   
+        {/if}
        {if $mode ne 8}
             <h3>{$field.groupTitle}</h3>
        {/if}
@@ -67,13 +67,13 @@
         {/if}
     {assign var=n value=$field.name}
     {if $field.options_per_line }
-	<tr>
+  <tr>
         <td class="option-label">{$form.$n.label}</td>
         <td>
-	    {assign var="count" value="1"}
+      {assign var="count" value="1"}
         {strip}
         <table class="form-layout-compressed">
-       
+
          <tr>
           {* sort by fails for option per line. Added a variable to iterate through the element array*}
           {assign var="index" value="1"}
@@ -83,29 +83,29 @@
           {else}
             <td class="labels font-light">{$form.$n.$key.html}</td>
               {if $count == $field.options_per_line}
-         </tr>         
+         </tr>
                    {assign var="count" value="1"}
               {else}
-          	       {assign var="count" value=`$count+1`}
+                   {assign var="count" value=`$count+1`}
               {/if}
           {/if}
           {/foreach}
         </table>
-	{if $field.html_type eq 'Radio' and $form.formName eq 'Preview'}
+  {if $field.html_type eq 'Radio' and $form.formName eq 'Preview'}
            <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$n}', '{$form.formName}'); return false;">{ts}clear{/ts}</a>)</span>
-	{/if}
+  {/if}
         {/strip}
         </td>
     </tr>
-	{else}
+  {else}
         <tr><td class="label">{$form.$n.label}</td>
-	<td>
+  <td>
         {if $n eq 'group' && $form.group || ( $n eq 'tag' && $form.tag )}
            {include file="CRM/Contact/Form/Edit/TagsAndGroups.tpl" type=$n}
         {elseif $n eq 'email_greeting' or  $n eq 'postal_greeting' or $n eq 'addressee'}
-               {include file="CRM/Profile/Form/GreetingType.tpl"}  
+               {include file="CRM/Profile/Form/GreetingType.tpl"}
         {elseif ( $field.data_type eq 'Date' AND $element.skip_calendar NEQ true ) or
-                ( $n|substr:-5:5 eq '_date' ) or ( $field.name eq 'activity_date_time' )  } 
+                ( $n|substr:-5:5 eq '_date' ) or ( $field.name eq 'activity_date_time' )  }
                {include file="CRM/common/jcalendar.tpl" elementName=$form.$n.name}
         {else}
             {if $n|substr:0:4 eq 'url-'}
@@ -127,18 +127,18 @@
                    {/if}
                 {/if}
             {/if}
-	   {/if}
+     {/if}
     </td>
-	{/if}
+  {/if}
         {* Show explanatory text for field if not in 'view' mode *}
         {if $field.help_post && $action neq 4}
             <tr><td>&nbsp;</td><td class="description">{$field.help_post}</td></tr>
         {/if}
-    {/foreach}  
-     
+    {/foreach}
+
     {if $addCAPTCHA }
         {include file='CRM/common/ReCAPTCHA.tpl'}
-    {/if}   
+    {/if}
     </table>
     {if $field.groupHelpPost}
     <div class="messages help">{$field.groupHelpPost}</div>
@@ -146,13 +146,13 @@
     {/strip}
 </div> {* end crm-container div *}
 {else}
-	{capture assign=infoMessage}{ts}This CiviCRM profile field is view only.{/ts}{/capture}
-	{include file="CRM/common/info.tpl"}
+  {capture assign=infoMessage}{ts}This CiviCRM profile field is view only.{/ts}{/capture}
+  {include file="CRM/common/info.tpl"}
 {/if}
 {/if} {* fields array is not empty *}
 
 
-<div class="crm-submit-buttons"> 
-	{include file="CRM/common/formButtons.tpl"}
+<div class="crm-submit-buttons">
+  {include file="CRM/common/formButtons.tpl"}
 </div>
 </div>

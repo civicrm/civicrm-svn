@@ -44,8 +44,8 @@
             <fieldset><legend>{$field.groupTitle}</legend>
         {/if}
 
-	{if $form.formName eq 'Confirm' OR $form.formName eq 'ThankYou'}
-	   <div class="header-dark">{$field.groupTitle} </div>
+  {if $form.formName eq 'Confirm' OR $form.formName eq 'ThankYou'}
+     <div class="header-dark">{$field.groupTitle} </div>
         {/if}
         {assign var=fieldset  value=`$field.groupTitle`}
         {assign var=groupHelpPost  value=`$field.groupHelpPost`}
@@ -66,7 +66,7 @@
              {if $field.help_pre && $action neq 4 && $action neq 1028}
                 &nbsp;&nbsp;<span class="description">{$field.help_pre}</span>
              {/if}
-	    <div class="label option-label">{$form.$n.label}</div>
+      <div class="label option-label">{$form.$n.label}</div>
         <div class="content 3">
              {assign var="count" value="1"}
             {strip}
@@ -104,7 +104,7 @@
              {if $field.help_pre && $action neq 4 && $action neq 1028}
                 &nbsp;&nbsp;<span class="description">{$field.help_pre}</span>
              {/if}
-	       <div class="label">{$form.$n.label}</div>
+         <div class="label">{$form.$n.label}</div>
            <div class="content">
              {if $n|substr:0:3 eq 'im-'}
                {assign var="provider" value=$n|cat:"-provider_id"}
@@ -117,15 +117,15 @@
              {if $n eq 'email_greeting' or  $n eq 'postal_greeting' or $n eq 'addressee'}
                 {include file="CRM/Profile/Form/GreetingType.tpl"}
              {elseif $n eq 'group'}
-				<table id="selector" class="selector crm-profile-tagsandgroups" style="width:auto;">
-					<tr><td>{$form.$n.html}{* quickform add closing </td> </tr>*}
-				</table>
+        <table id="selector" class="selector crm-profile-tagsandgroups" style="width:auto;">
+          <tr><td>{$form.$n.html}{* quickform add closing </td> </tr>*}
+        </table>
              {elseif ( ( $field.data_type eq 'Date' ) or
-	     	     ( $n|substr:-5:5 eq '_date' ) ) AND
-		     ( $form.formName neq 'Confirm' )  AND
-		     ( $form.formName neq 'ThankYou' ) }
+              ( $n|substr:-5:5 eq '_date' ) ) AND
+         ( $form.formName neq 'Confirm' )  AND
+         ( $form.formName neq 'ThankYou' ) }
                       {include file="CRM/common/jcalendar.tpl" elementName=$n}
-   	    	 {else}
+            {else}
                {$form.$n.html}
                {if $n eq 'gender' && $form.$fieldName.frozen neq true}
                   <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$n}', '{$form.formName}');return false;">{ts}clear{/ts}</a>)</span>
@@ -178,8 +178,8 @@
   <script type="text/javascript">
 
 cj(document).ready(function(){
-	cj('#selector tr:even').addClass('odd-row ');
-	cj('#selector tr:odd ').addClass('even-row');
+  cj('#selector tr:even').addClass('odd-row ');
+  cj('#selector tr:odd ').addClass('even-row');
 });
 
   </script>
