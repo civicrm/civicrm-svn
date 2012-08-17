@@ -361,7 +361,7 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
    */
   function url($path = NULL, $query = NULL, $absolute = FALSE,
     $fragment = NULL, $htmlize = TRUE,
-    $frontend = FALSE
+    $frontend = FALSE, $forceBackend = FALSE
   ) {
     $config = CRM_Core_Config::singleton();
     $script = 'index.php';

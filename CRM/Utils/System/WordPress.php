@@ -191,7 +191,8 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
     $absolute = FALSE,
     $fragment = NULL,
     $htmlize = TRUE,
-    $frontend = FALSE
+    $frontend = FALSE,
+    $forceBackend = FALSE 
   ) {
     $config    = CRM_Core_Config::singleton();
     $script    = '';
@@ -231,11 +232,11 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
     }
 
     $base = $absolute ? $config->userFrameworkBaseURL : $config->useFrameworkRelativeBase;
-
-    if (is_admin() && !$frontend) {
+    
+    if ((is_admin() && !$frontend) || $forceBackend) {
       $base .= 'wp-admin/admin.php';
     }
-
+    
     if (isset($path)) {
         if (isset($query)) {
         if ( $permlinkStructure != '' && $pageID ) {
@@ -250,7 +251,7 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
           return $script . '?page=CiviCRM&q=' . $path . $pageID . $fragment;
         }
         else {
-                    return $base .'?page=CiviCRM&q=' . $path . $pageID . $fragment;
+          return $base .'?page=CiviCRM&q=' . $path . $pageID . $fragment;
         }
       }
     }

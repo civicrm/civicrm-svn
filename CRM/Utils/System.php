@@ -194,7 +194,8 @@ class CRM_Utils_System {
     $absolute = FALSE,
     $fragment = NULL,
     $htmlize  = TRUE,
-    $frontend = FALSE
+    $frontend = FALSE,
+    $forceBackend = FALSE
   ) {
     $query = self::makeQueryString($query);
 
@@ -204,13 +205,13 @@ class CRM_Utils_System {
     }
 
     $config = CRM_Core_Config::singleton();
-    return $config->userSystem->url($path, $query, $absolute, $fragment, $htmlize, $frontend);
+    return $config->userSystem->url($path, $query, $absolute, $fragment, $htmlize, $frontend, $forceBackend);
   }
 
   function href($text, $path = NULL, $query = NULL, $absolute = TRUE,
-    $fragment = NULL, $htmlize = TRUE, $frontend = FALSE
+    $fragment = NULL, $htmlize = TRUE, $frontend = FALSE, $forceBackend = FALSE
   ) {
-    $url = self::url($path, $query, $absolute, $fragment, $htmlize, $frontend);
+    $url = self::url($path, $query, $absolute, $fragment, $htmlize, $frontend, $forceBackend);
     return "<a href=\"$url\">$text</a>";
   }
 
@@ -263,7 +264,8 @@ class CRM_Utils_System {
       CRM_Utils_Array::value('a', $params, FALSE),
       CRM_Utils_Array::value('f', $params),
       CRM_Utils_Array::value('h', $params, TRUE),
-      CRM_Utils_Array::value('fe', $params, FALSE)
+      CRM_Utils_Array::value('fe', $params, FALSE),
+      CRM_Utils_Array::value('fb', $params, FALSE)
     );
   }
 
@@ -339,7 +341,7 @@ class CRM_Utils_System {
     if (!$url) {
       $url = self::url('civicrm/dashboard', 'reset=1');
     }
-
+    
     // replace the &amp; characters with &
     // this is kinda hackish but not sure how to do it right
     $url = str_replace('&amp;', '&', $url);

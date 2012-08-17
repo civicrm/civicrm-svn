@@ -2465,8 +2465,8 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
   static function commonSendMail($contactID, &$values) {
     if (!$contactID || !$values) {
       return;
-    }
 
+    }
     $template = CRM_Core_Smarty::singleton();
 
     $displayName = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact',
@@ -2479,10 +2479,9 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
 
     $contactLink = CRM_Utils_System::url('civicrm/contact/view',
       "reset=1&cid=$contactID",
-      TRUE, NULL, FALSE
+       TRUE, NULL, FALSE, FALSE, TRUE
     );
-
-
+ 
     //get the default domain email address.
     list($domainEmailName, $domainEmailAddress) = CRM_Core_BAO_Domain::getNameAndEmail();
 

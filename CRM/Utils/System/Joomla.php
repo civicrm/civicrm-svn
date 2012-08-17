@@ -299,7 +299,7 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
    */
   function url($path = NULL, $query = NULL, $absolute = TRUE,
     $fragment = NULL, $htmlize = TRUE,
-    $frontend = FALSE
+    $frontend = FALSE, $forceBackend = FALSE
   ) {
     $config    = CRM_Core_Config::singleton();
     $separator = $htmlize ? '&amp;' : '&';
@@ -342,7 +342,6 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
       // CRM-8215
       $url = str_replace('/administrator/', '/index.php', $url);
     }
-
     return $url;
   }
 
