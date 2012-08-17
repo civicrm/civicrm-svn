@@ -91,10 +91,8 @@ cj( function() {
 function buildGroupSelector( filterSearch ) {
     if ( filterSearch ) {
         crmGroupSelector.fnDestroy();
-				var showChildren = 1;
         var ZeroRecordText = '<div class="status messages">{/literal}{ts escape="js"}No matching Groups found for your search criteria. Suggestions:{/ts}{literal}<div class="spacer"></div><ul><li>{/literal}{ts escape="js"}Check your spelling.{/ts}{literal}</li><li>{/literal}{ts escape="js"}Try a different spelling or use fewer letters.{/ts}{literal}</li><li>{/literal}{ts escape="js"}Make sure you have enough privileges in the access control system.{/ts}{literal}</li></ul></div>';
     } else {
-				var showChildren = 0;
         var ZeroRecordText = {/literal}'{ts escape="js"}<div class="status messages">No Groups have been created for this site.{/ts}</div>'{literal};
     }
     
@@ -139,7 +137,7 @@ function buildGroupSelector( filterSearch ) {
                             "sLast":     {/literal}"{ts escape='js'}Last{/ts}"{literal}            
                         }                                                       
                     },
-        "fnDrawCallback": function() { setSelectorClass( showChildren ); },
+        "fnDrawCallback": function() { setSelectorClass( ); showChildren(); },
         "fnServerData": function ( sSource, aoData, fnCallback ) {
             var showOrgInfo = {/literal}"{$showOrgInfo}"{literal};
             aoData.push( {name:'showOrgInfo', value: showOrgInfo });
@@ -188,13 +186,21 @@ function buildGroupSelector( filterSearch ) {
     });
 }
 
-function setSelectorClass( showChildren ) {
-    cj('#crm-group-selector tr').each( function( ) {
-       var className = cj(this).find('td:last-child').text();
-       cj(this).addClass( className );
-       var rowID = cj(this).find('td:nth-child(2)').text();
-       cj(this).prop( 'id', 'row_' + rowID );
-    });
+function setSelectorClass( ) {
+  cj('#crm-group-selector tr').each( function( ) {
+    var className = cj(this).find('td:last-child').text();
+    cj(this).addClass( className );
+    var rowID = cj(this).find('td:nth-child(2)').text();
+    cj(this).prop( 'id', 'row_' + rowID );
+  });
+}
+
+function showChildren() {
+  cj('#crm-group-selector tr').each( function( ) {
+    if ( cj(this).hasClass('crm-group-parent') ) {
+      cj(this).find('td:first').append('<br /> [+] Child');
+    } 
+  }); 
 }
 
 </script>
