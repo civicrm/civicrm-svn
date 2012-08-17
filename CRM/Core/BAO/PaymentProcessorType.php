@@ -119,7 +119,7 @@ class CRM_Core_BAO_PaymentProcessorType extends CRM_Core_DAO_PaymentProcessorTyp
    *
    */
   static
-  function add(&$params, &$ids) {
+  function create(&$params) {
     $paymentProcessorType = new CRM_Core_DAO_PaymentProcessorType();
     $paymentProcessorType->copyValues($params);
 
@@ -166,9 +166,6 @@ class CRM_Core_BAO_PaymentProcessorType extends CRM_Core_DAO_PaymentProcessorTyp
     }
 
     // FIXME handle is_default
-
-    // WTF?
-    $paymentProcessorType->id = CRM_Utils_Array::value('paymentProcessorType', $ids);
 
     if (!empty($paymentProcessorType->id)) {
       $ppByName = self::getAllPaymentProcessorTypes('name');

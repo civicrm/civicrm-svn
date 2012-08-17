@@ -60,12 +60,9 @@ function civicrm_api3_payment_processor_type_create($params) {
   if (isset($params['id']) && !CRM_Utils_Rule::integer($params['id'])) {
     return civicrm_api3_create_error('Invalid value for payment_processor type ID');
   }
-  else {
-    $ids['paymentProcessorType'] = CRM_Utils_Array::value('id', $params);
-  }
 
   $payProcType = new CRM_Core_BAO_PaymentProcessorType();
-  $payProcType = CRM_Core_BAO_PaymentProcessorType::add($params, $ids);
+  $payProcType = CRM_Core_BAO_PaymentProcessorType::create($params);
 
   $relType = array();
 
