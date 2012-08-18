@@ -564,5 +564,28 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
     $user = JFactory::getUser();
     return ($user->guest) ? NULL : $user->id;
   }
+
+  /**
+   * Get a list of all instaled modules, including enabled and disabled ones
+   *
+   * @return array CRM_Core_Module
+   */
+  function getModules() {
+    $result = array();
+
+    $db = JFactory::getDbo();
+    $query = $db->getQuery(true);
+    $query->select('type, folder, element, enabled')
+      ->from('#__extensions')
+      ->where('type =' . $db->Quote('plugin'));
+    $plugins = $db->setQuery($query)->loadAssocList();
+    foreach ($plugins as $plugin) {
+      // question: is the folder really a critical part of the plugin's name?
+      $name = implode('.', array('joomla', $plugin['type'], $plugin['folder'], $plugin['element']));
+      $result[] = new CRM_Core_Module($name, $plugin['enabled'] ? TRUE : FALSE);
+    }
+
+    return $result;
+  }
 }
 
