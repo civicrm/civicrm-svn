@@ -91,8 +91,10 @@ cj( function() {
 function buildGroupSelector( filterSearch ) {
     if ( filterSearch ) {
         crmGroupSelector.fnDestroy();
+				var parentsOnly = 0;
         var ZeroRecordText = '<div class="status messages">{/literal}{ts escape="js"}No matching Groups found for your search criteria. Suggestions:{/ts}{literal}<div class="spacer"></div><ul><li>{/literal}{ts escape="js"}Check your spelling.{/ts}{literal}</li><li>{/literal}{ts escape="js"}Try a different spelling or use fewer letters.{/ts}{literal}</li><li>{/literal}{ts escape="js"}Make sure you have enough privileges in the access control system.{/ts}{literal}</li></ul></div>';
     } else {
+				var parentsOnly = 1;
         var ZeroRecordText = {/literal}'{ts escape="js"}<div class="status messages">No Groups have been created for this site.{/ts}</div>'{literal};
     }
     
@@ -137,7 +139,7 @@ function buildGroupSelector( filterSearch ) {
                             "sLast":     {/literal}"{ts escape='js'}Last{/ts}"{literal}            
                         }                                                       
                     },
-        "fnDrawCallback": function() { setSelectorClass( ); },
+        "fnDrawCallback": function() { setSelectorClass( parentsOnly ); },
         "fnServerData": function ( sSource, aoData, fnCallback ) {
             var showOrgInfo = {/literal}"{$showOrgInfo}"{literal};
             aoData.push( {name:'showOrgInfo', value: showOrgInfo });
@@ -186,19 +188,25 @@ function buildGroupSelector( filterSearch ) {
     });
 }
 
-function setSelectorClass( ) {
+function setSelectorClass( parentsOnly ) {
   cj('#crm-group-selector tr').each( function( ) {
     var className = cj(this).find('td:last-child').text();
     cj(this).addClass( className );
     var rowID = cj(this).find('td:nth-child(2)').text();
     cj(this).prop( 'id', 'row_' + rowID );
-    if ( cj(this).hasClass('crm-group-parent') ) {
-      cj(this).find('td:first').prepend('{/literal}<span class="collapsed show-children" title="{ts}show child groups{/ts}"/></span>{literal}');
-			cj(this).find('span.show-children').click( function(){
-				showChildren( rowID );
-			});
-    } 
+		if (parentsOnly) {
+	    if ( cj(this).hasClass('crm-group-parent') ) {
+	      cj(this).find('td:first').prepend('{/literal}<span class="collapsed show-children" title="{ts}show child groups{/ts}"/></span>{literal}');
+				cj(this).find('span.show-children').click( function(){
+					showChildren( rowID );
+				});
+	    }
+		}
   });
+	
+	if (!parentsOnly) {
+		cj('#crm-group-selector tr').removeClass("hide-row");
+	}
 }
 
 function showChildren( parent ) {
