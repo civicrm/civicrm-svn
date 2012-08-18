@@ -221,7 +221,7 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
         $rows[] = array('id' => $dao->id, 'prefix' => '', 'name' => $dao->name, 'parent_id' => $dao->parent_id);
       }
     }
-    $dao->free;
+    $dao->free();
     // While we have nodes left to build, shift the first (alphabetically)
     // node of the list, place it in our tags list and loop through the
     // list of unplaced nodes to find its children. We make a copy to
@@ -400,7 +400,7 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
     while ($dao->fetch()) {
       $tagSets[$dao->id] = $dao->name;
     }
-    $dao->free;
+    $dao->free();
     return $tagSets;
   }
 
