@@ -63,20 +63,27 @@ cj( document ).ready( function( ) {
 });
 function getSearchURLValue( )
 {
-    var contactId =  cj( '#sort_contact_id' ).val();
-    if ( ! contactId || isNaN( contactId ) ) {
-        var sortValue = cj( '#sort_name_navigation' ).val();
-        if ( sortValue ) { 
-            //using xmlhttprequest check if there is only one contact and redirect to view page
-            var dataUrl = {/literal}"{crmURL p='civicrm/ajax/contact' h=0 q='name='}"{literal} + sortValue;
+    // If an integer was typed, assume it to be contactId
+    var input = cj('#sort_name_navigation').val();
+    if((parseFloat(input) == parseInt(input)) && !isNaN(input)) {
+      var contactId = input;
+    }
+    else {
+      var contactId =  cj( '#sort_contact_id' ).val();
+      if ( ! contactId || isNaN( contactId ) ) {
+          var sortValue = cj( '#sort_name_navigation' ).val();
+          if ( sortValue ) { 
+              //using xmlhttprequest check if there is only one contact and redirect to view page
+              var dataUrl = {/literal}"{crmURL p='civicrm/ajax/contact' h=0 q='name='}"{literal} + sortValue;
 
-            var response = cj.ajax({
-                url: dataUrl,
-                async: false
-                }).responseText;
+              var response = cj.ajax({
+                  url: dataUrl,
+                  async: false
+                  }).responseText;
 
-            contactId = response;
-        }
+              contactId = response;
+          }
+      }
     }
     
     if ( contactId && !isNaN(parseInt(contactId)) ) {

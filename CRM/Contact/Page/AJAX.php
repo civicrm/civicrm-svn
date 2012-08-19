@@ -42,63 +42,60 @@ class CRM_Contact_Page_AJAX {
       return self::contactReference();
     }
 
-    $name = CRM_Utils_Array::value('s', $_GET);
-    $name = CRM_Utils_Type::escape($name, 'String');
+    $params = array('version' => 3, 'check_permissions' => TRUE);
 
-    $limit = 10;
-    if (CRM_Utils_Array::value('limit', $_GET)) {
-      $limit = CRM_Utils_Type::escape($_GET['limit'], 'Positive');
+    if ($context = CRM_Utils_Array::value('context', $_GET)) {
+      $params['context'] = CRM_Utils_Type::escape($_GET['context'], 'String');
     }
 
-    $orgId = $employee_id = $cid = $id = $context = $rel = NULL;
-    $org = CRM_Utils_Array::value('org', $_GET);
-    if (CRM_Utils_Array::value('id', $_GET)) {
-      $orgId = CRM_Utils_Type::escape($_GET['id'], 'Positive');
-    }
-
-    if (CRM_Utils_Array::value('employee_id', $_GET)) {
-      $employee_id = CRM_Utils_Type::escape($_GET['employee_id'], 'Positive');
-    }
-
-    if (CRM_Utils_Array::value('cid', $_GET)) {
-      $cid = CRM_Utils_Type::escape($_GET['cid'], 'Positive');
-    }
-
-    if (CRM_Utils_Array::value('id', $_GET)) {
-      $id = CRM_Utils_Type::escape($_GET['id'], 'Positive');
-    }
-
-    if (CRM_Utils_Array::value('context', $_GET)) {
-      $context = CRM_Utils_Type::escape($_GET['context'], 'String');
-    }
-
-    if (isset($_GET['rel'])) {
-      $rel = $_GET['rel'];
-      $relation = explode('_', $_GET['rel']);
-      CRM_Utils_Type::escape($relation[0], 'Integer');
-      CRM_Utils_Type::escape($relation[2], 'String');
-    }
-
-    $params = array(
-      'name' => $name,
-      'limit' => $limit,
-      'org' => $org,
-      'orgId' => $orgId,
-      'employee_id' => $employee_id,
-      'cid' => $cid,
-      'id' => $id,
-      'rel' => $rel,
-      'context' => $context,
-      'version' => 3,
-    );
-
-    $result = civicrm_api('Contact', 'quicksearch', $params);
-    if ($result['is_error'] == 0 && is_array($result['values'])) {
-      foreach ($result['values'] as $key => & $values) {
-        echo $contactList = "{$values['data']}|{$values['id']}\n";
+    if ($name = CRM_Utils_Array::value('s', $_GET)) {
+      // QuickSearch by ID
+      if ($context == 'navigation' && intval($name) == $name) {
+        $cid = $name;
+        $result = civicrm_api('contact', 'get', $params + array('id' => $cid, 'return.sort_name' => 1));
+        if (!empty($result['values'][$cid]['sort_name'])) {
+          echo ts('ID') . " $cid: {$result['values'][$cid]['sort_name']}|$cid\n";
+        }
+        CRM_Utils_System::civiExit();
+      }
+      else {
+        $params['name'] = CRM_Utils_Type::escape($name, 'String');
       }
     }
 
+    $params['limit'] = 10;
+    if (CRM_Utils_Array::value('limit', $_GET)) {
+      $params['limit'] = CRM_Utils_Type::escape($_GET['limit'], 'Positive');
+    }
+
+    $orgId = $employee_id = $cid = $id = $context = $rel = NULL;
+    $params['org'] = CRM_Utils_Array::value('org', $_GET);
+    if (CRM_Utils_Array::value('id', $_GET)) {
+      $params['orgId'] = CRM_Utils_Type::escape($_GET['id'], 'Positive');
+    }
+
+    if (CRM_Utils_Array::value('employee_id', $_GET)) {
+      $params['employee_id'] = CRM_Utils_Type::escape($_GET['employee_id'], 'Positive');
+    }
+
+    if (CRM_Utils_Array::value('cid', $_GET)) {
+      $params['cid'] = CRM_Utils_Type::escape($_GET['cid'], 'Positive');
+    }
+
+    if (CRM_Utils_Array::value('id', $_GET)) {
+      $params['id'] = CRM_Utils_Type::escape($_GET['id'], 'Positive');
+    }
+
+    if (isset($_GET['rel'])) {
+      $params['rel'] = $_GET['rel'];
+    }
+
+    $result = civicrm_api('Contact', 'quicksearch', $params);
+    if (empty($result['is_error']) && !empty($result['values'])) {
+      foreach ($result['values'] as $key => $val) {
+        echo "{$val['data']}|{$val['id']}\n";
+      }
+    }
     CRM_Utils_System::civiExit();
   }
 
