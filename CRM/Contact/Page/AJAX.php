@@ -50,7 +50,7 @@ class CRM_Contact_Page_AJAX {
 
     if ($name = CRM_Utils_Array::value('s', $_GET)) {
       // QuickSearch by ID
-      if ($context == 'navigation' && intval($name) == $name) {
+      if ($context == 'navigation' && is_numeric($name) && intval($name) == floatval($name)) {
         $cid = $name;
         $result = civicrm_api('contact', 'get', $params + array('id' => $cid, 'return.sort_name' => 1));
         if (!empty($result['values'][$cid]['sort_name'])) {
