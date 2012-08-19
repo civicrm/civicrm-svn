@@ -887,6 +887,19 @@ function civicrm_form_alter(&$form, $formValues, $formID) {
   elseif ($formID == 'user_register') {
     $form['#attributes']['enctype'] = 'multipart/form-data';
   }
+  elseif ($formID == 'system_modules') {
+    $form['#submit'][] = '_civicrm_rebuild';
+  }
+}
+
+/**
+ * (Form API - Submission Callback)
+ */
+function _civicrm_rebuild($form, &$form_state) {
+  civicrm_initialize();
+  if (version_compare(CRM_Utils_System::version(), '4.2.beta6') >= 0) {
+    CRM_Core_Invoke::rebuildMenuAndCaches(TRUE);
+  }
 }
 
 /*
