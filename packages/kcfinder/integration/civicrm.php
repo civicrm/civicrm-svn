@@ -36,46 +36,45 @@
  *
  */
 
-function CheckAuthentication() {
+function checkAuthentication() {
+  static $authenticated;
+  if ( !isset( $authenticated ) ) {
+    $current_cwd   = getcwd();
+    $civicrm_root  = dirname(dirname(getcwd()));
+    $authenticated = false;
+    require_once "{$civicrm_root}/civicrm.config.php";
+    require_once 'CRM/Core/Config.php';
 
-    static $authenticated;
-    if ( !isset( $authenticated ) ) {
-       $current_cwd   = getcwd();
-       $civicrm_root  = dirname(dirname(getcwd()));
-       $authenticated = false;
-       require_once "{$civicrm_root}/civicrm.config.php";
-       require_once 'CRM/Core/Config.php';
+    $config = CRM_Core_Config::singleton();
 
-       $config = CRM_Core_Config::singleton();
-
-       if ( !isset($_SESSION['KCFINDER'] ) ) {
-           $_SESSION['KCFINDER'] = array();
-       }
-       
-       $auth_function = null;
-       switch ($config->userFramework) {
-         case 'Drupal':
-         case 'Drupal6':
-           $auth_function = 'authenticate_drupal';
-           break;
-         case 'Joomla':
-           $auth_function = 'authenticate_joomla';
-           break;
-         case 'WordPress':
-           $auth_function = 'authenticate_wordpress';
-           break;
-       }
-       if(!$auth_function($config)) {
-         CRM_Core_Error::fatal(ts("You must be logged in with proper permissions to edit, add, or delete uploaded images."));
-       }
-      
-       $_SESSION['KCFINDER']['disabled'] = false;
-       $_SESSION['KCFINDER']['uploadURL'] = $config->imageUploadURL;
-       $_SESSION['KCFINDER']['uploadDir'] = $config->imageUploadDir;
-
-       $authenticated = true;
-       chdir( $current_cwd );
+    if ( !isset($_SESSION['KCFINDER'] ) ) {
+      $_SESSION['KCFINDER'] = array();
     }
+
+    $auth_function = null;
+    switch ($config->userFramework) {
+    case 'Drupal':
+    case 'Drupal6':
+      $auth_function = 'authenticate_drupal';
+      break;
+    case 'Joomla':
+      $auth_function = 'authenticate_joomla';
+      break;
+    case 'WordPress':
+      $auth_function = 'authenticate_wordpress';
+      break;
+    }
+    if(!$auth_function($config)) {
+      CRM_Core_Error::fatal(ts("You must be logged in with proper permissions to edit, add, or delete uploaded images."));
+    }
+
+    $_SESSION['KCFINDER']['disabled'] = false;
+    $_SESSION['KCFINDER']['uploadURL'] = $config->imageUploadURL;
+    $_SESSION['KCFINDER']['uploadDir'] = $config->imageUploadDir;
+
+    $authenticated = true;
+    chdir( $current_cwd );
+  }
 }
 
 /**
@@ -128,11 +127,15 @@ function authenticate_wordpress($config) {
 
 function authenticate_joomla($config) {
   // FIXME Joomla is still wide open!!
+  //echo $joomlaBase = dirname(dirname(dirname(__FILE__)));
+
+  CRM_Utils_System::loadBootStrap();
+
   return true;
 
 }
 
-CheckAuthentication( );
+checkAuthentication( );
 
 spl_autoload_register('__autoload');
 
