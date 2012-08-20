@@ -70,7 +70,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
 
   /*
    * construct method
-   */ 
+   */
   function __construct() {
     parent::__construct();
   }
@@ -1031,18 +1031,18 @@ WHERE  civicrm_contribution.contact_id = civicrm_contact.id
     $endDate = "$nextYear$monthDay";
 
     $query = "
-SELECT count(*) as count,
-       sum(total_amount) as amount,
-       avg(total_amount) as average,
-       currency
-  FROM civicrm_contribution b
- WHERE b.contact_id IN ( $contactIDs )
-   AND b.contribution_status_id = 1
-   AND b.is_test = 0
-   AND b.receive_date >= $startDate
-   AND b.receive_date <  $endDate
-GROUP BY currency
-";
+      SELECT count(*) as count,
+             sum(total_amount) as amount,
+             avg(total_amount) as average,
+             currency
+        FROM civicrm_contribution b
+       WHERE b.contact_id IN ( $contactIDs )
+         AND b.contribution_status_id = 1
+         AND b.is_test = 0
+         AND b.receive_date >= $startDate
+         AND b.receive_date <  $endDate
+      GROUP BY currency
+      ";
     $dao    = CRM_Core_DAO::executeQuery($query, CRM_Core_DAO::$_nullArray);
     $count  = 0;
     $amount = $average = array();
@@ -1067,7 +1067,7 @@ GROUP BY currency
    * Check if there is a contribution with the params passed in.
    * Used for trxn_id,invoice_id and contribution_id
    *
-   * @param array  $params (reference ) an assoc array of name/value pairs
+   * @param array  $params an assoc array of name/value pairs
    *
    * @return array contribution id if success else NULL
    * @access public
@@ -1243,29 +1243,29 @@ LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.cont
    */
   static function getSoftContributionList($contact_id, $isTest = 0) {
     $query = "SELECT ccs.id, ccs.amount as amount,
-                         ccs.contribution_id,
-                         ccs.pcp_id,
-                         ccs.pcp_display_in_roll,
-                         ccs.pcp_roll_nickname,
-                         ccs.pcp_personal_note,
-                         cc.receive_date,
-                         cc.contact_id as contributor_id,
-                         cc.contribution_status_id as contribution_status_id,
-                         cp.title as pcp_title,
-                         cc.currency,
-                         contact.display_name,
-                         cct.name as contributionType
-                  FROM civicrm_contribution_soft ccs
-                       LEFT JOIN civicrm_contribution cc
-                              ON ccs.contribution_id = cc.id
-                       LEFT JOIN civicrm_pcp cp
-                              ON ccs.pcp_id = cp.id
-                       LEFT JOIN civicrm_contact contact
-                              ON ccs.contribution_id = cc.id AND
-                                 cc.contact_id = contact.id
-                       LEFT JOIN civicrm_contribution_type cct
-                              ON cc.contribution_type_id = cct.id
-                  WHERE cc.is_test = {$isTest} AND ccs.contact_id = " . $contact_id;
+                     ccs.contribution_id,
+                     ccs.pcp_id,
+                     ccs.pcp_display_in_roll,
+                     ccs.pcp_roll_nickname,
+                     ccs.pcp_personal_note,
+                     cc.receive_date,
+                     cc.contact_id as contributor_id,
+                     cc.contribution_status_id as contribution_status_id,
+                     cp.title as pcp_title,
+                     cc.currency,
+                     contact.display_name,
+                     cct.name as contributionType
+              FROM civicrm_contribution_soft ccs
+                   LEFT JOIN civicrm_contribution cc
+                          ON ccs.contribution_id = cc.id
+                   LEFT JOIN civicrm_pcp cp
+                          ON ccs.pcp_id = cp.id
+                   LEFT JOIN civicrm_contact contact
+                          ON ccs.contribution_id = cc.id AND
+                             cc.contact_id = contact.id
+                   LEFT JOIN civicrm_contribution_type cct
+                          ON cc.contribution_type_id = cct.id
+              WHERE cc.is_test = {$isTest} AND ccs.contact_id = " . $contact_id;
 
     $cs                 = CRM_Core_DAO::executeQuery($query, CRM_Core_DAO::$_nullArray);
     $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus();
@@ -1631,11 +1631,11 @@ LEFT JOIN  civicrm_contribution contribution ON ( componentPayment.contribution_
             // CRM-8141 update the membership type with the value recorded in log when membership created/renewed
             // this picks up membership type changes during renewals
             $sql = "
-SELECT    membership_type_id
-FROM      civicrm_membership_log
-WHERE     membership_id=$membership->id
-ORDER BY  id DESC
-LIMIT     1;";
+              SELECT    membership_type_id
+              FROM      civicrm_membership_log
+              WHERE     membership_id=$membership->id
+              ORDER BY  id DESC
+              LIMIT     1;";
             $dao = new CRM_Core_DAO;
             $dao->query($sql);
             if ($dao->fetch()) {
@@ -1643,7 +1643,6 @@ LIMIT     1;";
                 $membership->membership_type_id = $dao->membership_type_id;
                 $membership->save();
               }
-              // else fall back to using current membership type
             }
             // else fall back to using current membership type
             $dao->free();
@@ -1757,8 +1756,7 @@ LIMIT     1;";
   }
 
   /**
-   * This function return all contribution related object ids.
-   *
+   * This function returns all contribution related object ids.
    */
   function getComponentDetails($contributionId) {
     $componentDetails = $pledgePayment = array();
@@ -1767,20 +1765,20 @@ LIMIT     1;";
     }
 
     $query = "
-SELECT    c.id                 as contribution_id,
-          c.contact_id         as contact_id,
-          mp.membership_id     as membership_id,
-          m.membership_type_id as membership_type_id,
-          pp.participant_id    as participant_id,
-          p.event_id           as event_id,
-          pgp.id               as pledge_payment_id
-FROM      civicrm_contribution c
-LEFT JOIN civicrm_membership_payment  mp   ON mp.contribution_id = c.id
-LEFT JOIN civicrm_participant_payment pp   ON pp.contribution_id = c.id
-LEFT JOIN civicrm_participant         p    ON pp.participant_id  = p.id
-LEFT JOIN civicrm_membership          m    ON m.id  = mp.membership_id
-LEFT JOIN civicrm_pledge_payment      pgp  ON pgp.contribution_id  = c.id
-WHERE     c.id = $contributionId";
+      SELECT    c.id                 as contribution_id,
+                c.contact_id         as contact_id,
+                mp.membership_id     as membership_id,
+                m.membership_type_id as membership_type_id,
+                pp.participant_id    as participant_id,
+                p.event_id           as event_id,
+                pgp.id               as pledge_payment_id
+      FROM      civicrm_contribution c
+      LEFT JOIN civicrm_membership_payment  mp   ON mp.contribution_id = c.id
+      LEFT JOIN civicrm_participant_payment pp   ON pp.contribution_id = c.id
+      LEFT JOIN civicrm_participant         p    ON pp.participant_id  = p.id
+      LEFT JOIN civicrm_membership          m    ON m.id  = mp.membership_id
+      LEFT JOIN civicrm_pledge_payment      pgp  ON pgp.contribution_id  = c.id
+      WHERE     c.id = $contributionId";
 
     $dao = CRM_Core_DAO::executeQuery($query);
     $componentDetails = array();
@@ -1841,10 +1839,10 @@ WHERE     c.id = $contributionId";
   /**
    * Function to get individual id for onbehalf contribution
    *
-   * @param  int   $contributionId  contribution id
-   * @param  int   $contributorId   contributer id
+   * @param int $contributionId contribution id
+   * @param int $contributorId  contributer id
    *
-   * @return array $ids             containing organization id and individual id
+   * @return array $ids containing organization id and individual id
    * @access public
    */
   function getOnbehalfIds($contributionId, $contributorId = NULL) {
@@ -1981,9 +1979,9 @@ SELECT source_contact_id
         if (is_numeric($ids['membership'])) {
           // see if there are any other memberships to be considered for same contribution.
           $query = "
-SELECT membership_id
-FROM   civicrm_membership_payment
-WHERE  contribution_id = %1 AND membership_id != %2";
+            SELECT membership_id
+            FROM   civicrm_membership_payment
+            WHERE  contribution_id = %1 AND membership_id != %2";
           $dao = CRM_Core_DAO::executeQuery($query,
             array(1 => array($this->id, 'Integer'),
               2 => array($ids['membership'], 'Integer'),
@@ -2560,10 +2558,10 @@ WHERE  contribution_id = %1 AND membership_id != %2";
    */
   static function isSubscriptionCancelled($contributionId) {
     $sql = "
-   SELECT cr.contribution_status_id
-     FROM civicrm_contribution_recur cr
-LEFT JOIN civicrm_contribution con ON ( cr.id = con.contribution_recur_id )
-    WHERE con.id = %1 LIMIT 1";
+       SELECT cr.contribution_status_id
+         FROM civicrm_contribution_recur cr
+    LEFT JOIN civicrm_contribution con ON ( cr.id = con.contribution_recur_id )
+        WHERE con.id = %1 LIMIT 1";
     $params   = array(1 => array($contributionId, 'Integer'));
     $statusId = CRM_Core_DAO::singleValueQuery($sql, $params);
     $status   = CRM_Contribute_PseudoConstant::contributionStatus($statusId);
@@ -2573,4 +2571,3 @@ LEFT JOIN civicrm_contribution con ON ( cr.id = con.contribution_recur_id )
     return FALSE;
   }
 }
-
