@@ -51,17 +51,6 @@
                 {$form.relation_target_group.label} {help id="id-relationship-target-group" file="CRM/Contact/Form/Search/Advanced.hlp"}<br />
                 {$form.relation_target_group.html|crmReplace:class:huge}
               </div>
-              {literal}
-                <script type="text/javascript">
-                cj("#relation_target_group").crmasmSelect({
-                    addItemTarget: 'bottom',
-                    animate: false,
-                    highlight: true,
-                    sortable: true,
-                    respectParents: true
-                });
-                </script>
-              {/literal}
             </td>
          </tr>
          {if $relationshipGroupTree}
@@ -74,6 +63,13 @@
     </table>
   {literal}
     <script type="text/javascript">
+      cj("#relation_target_group").crmasmSelect({
+          addItemTarget: 'bottom',
+          animate: false,
+          highlight: true,
+          sortable: true,
+          respectParents: true
+      });
       cj("#relation_type_id").change(function() {
         if (cj(this).val() == '') {
           cj('.relationship-type-dependent').hide();
