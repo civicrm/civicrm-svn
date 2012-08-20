@@ -140,7 +140,7 @@
                     <td>
                         {$form.privacy_options.html}
                     </td>
-                    <td>
+                    <td style="vertical-align:middle">
                         {$form.privacy_operator.html}
                     </td>
                 </tr>
@@ -153,6 +153,14 @@
                      highlight: true,
                      sortable: true,
                     });
+                    cj("select#privacy_options").change(function() {
+                      var items = cj(this).siblings('ul.crmasmList').find('li').length;
+                      if (items > 1) {
+                        cj('#privacy_operator').show();
+                      } else {
+                        cj('#privacy_operator').hide();
+                      }
+                    }).change();
                   </script>
                 {/literal}
             </td>
