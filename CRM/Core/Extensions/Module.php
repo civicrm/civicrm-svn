@@ -42,6 +42,7 @@ class CRM_Core_Extensions_Module {
 
   public function install() {
     self::commonInstall('install');
+    self::commonInstall('enable');
   }
 
   private function callHook($moduleName, $modulePath, $hookName) {
