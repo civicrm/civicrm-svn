@@ -741,21 +741,21 @@ class CRM_Contribute_BAO_Query {
     $form->add('select', 'contribution_currency_type',
       ts('Currency Type'),
       array(
-        '' => ts('- select -')) +
+        '' => ts('- any -')) +
       CRM_Core_PseudoConstant::currencySymbols('name')
     );
 
     $form->add('select', 'contribution_type_id',
       ts('Contribution Type'),
       array(
-        '' => ts('- select -')) +
+        '' => ts('- any -')) +
       CRM_Contribute_PseudoConstant::contributionType()
     );
 
     $form->add('select', 'contribution_page_id',
       ts('Contribution Page'),
       array(
-        '' => ts('- select -')) +
+        '' => ts('- any -')) +
       CRM_Contribute_PseudoConstant::contributionPage()
     );
 
@@ -763,14 +763,14 @@ class CRM_Contribute_BAO_Query {
     $form->add('select', 'contribution_payment_instrument_id',
       ts('Payment Instrument'),
       array(
-        '' => ts('- select -')) +
+        '' => ts('- any -')) +
       CRM_Contribute_PseudoConstant::paymentInstrument()
     );
 
     $form->add('select', 'contribution_pcp_made_through_id',
       ts('Personal Campaign Page'),
       array(
-        '' => ts('- select -')) +
+        '' => ts('- any -')) +
       CRM_Contribute_PseudoConstant::pcPage()
     );
 
@@ -831,7 +831,7 @@ class CRM_Contribute_BAO_Query {
     if ( !empty( $batches ) ) {
       $form->add('select', 'contribution_batch_id',
         ts('Batch Name'),
-        array( '' => ts('- select -')) + $batches );
+        array( '' => ts('- any -')) + $batches );
     }
 
     $form->assign('validCiviContribute', TRUE);

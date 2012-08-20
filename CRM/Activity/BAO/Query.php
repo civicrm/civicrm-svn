@@ -542,7 +542,7 @@ class CRM_Activity_BAO_Query {
       $buildEngagementLevel = TRUE;
       $form->add('select', 'activity_engagement_level',
         ts('Engagement Index'),
-        array('' => ts('- select -')) + CRM_Campaign_PseudoConstant::engagementLevel()
+        array('' => ts('- any -')) + CRM_Campaign_PseudoConstant::engagementLevel()
       );
     }
     $form->assign('buildEngagementLevel', $buildEngagementLevel);

@@ -231,7 +231,7 @@ class CRM_Contact_Form_Search_Criteria {
 
     //CRM-6138 Preferred Language
     $langPreff = CRM_Core_PseudoConstant::languages();
-    $form->add('select', 'preferred_language', ts('Preferred Language'), array('' => ts('- select language -')) + $langPreff);
+    $form->add('select', 'preferred_language', ts('Preferred Language'), array('' => ts('- any -')) + $langPreff);
   }
 
   static
@@ -287,14 +287,14 @@ class CRM_Contact_Form_Search_Criteria {
         );
         if ($select == 'stateProvince') {
           if ($countryDefault && !isset($form->_submitValues['country'])) {
-            $selectElements = array('' => ts('- select -')) + CRM_Core_PseudoConstant::stateProvinceForCountry($countryDefault);
+            $selectElements = array('' => ts('- any -')) + CRM_Core_PseudoConstant::stateProvinceForCountry($countryDefault);
           }
           elseif ($form->_submitValues['country']) {
-            $selectElements = array('' => ts('- select -')) + CRM_Core_PseudoConstant::stateProvinceForCountry($form->_submitValues['country']);
+            $selectElements = array('' => ts('- any -')) + CRM_Core_PseudoConstant::stateProvinceForCountry($form->_submitValues['country']);
           }
           else {
             //if not setdefault any country
-            $selectElements = array('' => ts('- select -')) + CRM_Core_PseudoConstant::$select();
+            $selectElements = array('' => ts('- any -')) + CRM_Core_PseudoConstant::$select();
           }
           $element = $form->addElement('select', $name, $title, $selectElements);
         }
@@ -305,7 +305,7 @@ class CRM_Contact_Form_Search_Criteria {
             $defaultValues[$name] = $countryDefault;
             $form->setDefaults($defaultValues);
           }
-          $selectElements = array('' => ts('- select -')) + CRM_Core_PseudoConstant::$select();
+          $selectElements = array('' => ts('- any -')) + CRM_Core_PseudoConstant::$select();
           $element = $form->addElement('select', $name, $title, $selectElements);
         }
         elseif ($select == 'county') {
@@ -313,12 +313,12 @@ class CRM_Contact_Form_Search_Criteria {
             $selectElements = array('' => ts('- select -')) + CRM_Core_PseudoConstant::countyForState($form->_submitValues['state_province']);
           }
           else {
-            $selectElements = array('' => ts('- select a state -'));
+            $selectElements = array('' => ts('- any -'));
           }
           $element = $form->addElement('select', $name, $title, $selectElements);
         }
         else {
-          $selectElements = array('' => ts('- select -')) + CRM_Core_PseudoConstant::$select();
+          $selectElements = array('' => ts('- any -')) + CRM_Core_PseudoConstant::$select();
           $element = $form->addElement('select', $name, $title, $selectElements);
         }
         if ($multiSelect) {

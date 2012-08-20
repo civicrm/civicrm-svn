@@ -48,6 +48,7 @@
             cj('#absolute_'+ fieldName).show();
         } else {
             cj('#absolute_'+ fieldName).hide();
+            cj(':text', '#absolute_'+ fieldName).val('');
         }
     }
 </script>

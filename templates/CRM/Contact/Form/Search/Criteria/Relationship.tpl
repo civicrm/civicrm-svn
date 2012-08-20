@@ -31,16 +31,25 @@
                {$form.relation_type_id.html}
             </td>
             <td>
-               {$form.relation_target_name.label}<br />
-               {$form.relation_target_name.html|crmReplace:class:huge}
-                <div class="description font-italic">
-                    {ts}Complete OR partial contact name.{/ts}
+               <div class="relationship-type-dependent">
+                 {$form.relation_target_name.label}<br />
+                 {$form.relation_target_name.html|crmReplace:class:huge}
+                  <div class="description font-italic">
+                      {ts}Complete OR partial contact name.{/ts}
+                  </div>
                 </div>
-              
-              {$form.relation_target_group.label} {help id="id-relationship-target-group" file="CRM/Contact/Form/Search/Advanced.hlp"}<br />
-              {$form.relation_target_group.html|crmReplace:class:huge}
-              <div class="description font-italic">
-                  {ts}Limit search results to relationships where the related contact(s) are in one of these groups.{/ts}
+            </td>
+          </tr>
+            <td>
+               <div class="relationship-type-dependent">
+                 {$form.relation_status.label}<br />
+                 {$form.relation_status.html}
+                </div>
+            </td>
+            <td>
+              <div class="relationship-type-dependent">
+                {$form.relation_target_group.label} {help id="id-relationship-target-group" file="CRM/Contact/Form/Search/Advanced.hlp"}<br />
+                {$form.relation_target_group.html|crmReplace:class:huge}
               </div>
               {literal}
                 <script type="text/javascript">
@@ -53,19 +62,25 @@
                 });
                 </script>
               {/literal}
-              
-            </td>
-            <td>
-               {$form.relation_status.label}<span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('relation_status', 'Advanced'); return false;" >{ts}clear{/ts}</a>)</span><br />
-               {$form.relation_status.html}
             </td>
          </tr>
          {if $relationshipGroupTree}
          <tr>
-	        <td colspan="4">
-	        {include file="CRM/Custom/Form/Search.tpl" groupTree=$relationshipGroupTree showHideLinks=false}
-            </td>
+          <td colspan="2">
+            {include file="CRM/Custom/Form/Search.tpl" groupTree=$relationshipGroupTree showHideLinks=false}
+          </td>
          </tr>
          {/if}
-    </table>         
+    </table>
+  {literal}
+    <script type="text/javascript">
+      cj("#relation_type_id").change(function() {
+        if (cj(this).val() == '') {
+          cj('.relationship-type-dependent').hide();
+        } else {
+          cj('.relationship-type-dependent').show();
+        }
+      }).change();
+    </script>
+  {/literal}
 </div>
