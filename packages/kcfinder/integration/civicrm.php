@@ -126,13 +126,22 @@ function authenticate_wordpress($config) {
 }
 
 function authenticate_joomla($config) {
-  // FIXME Joomla is still wide open!!
-  //echo $joomlaBase = dirname(dirname(dirname(__FILE__)));
+  // make sure only logged in user can see upload / view images 
+  $joomlaBase = dirname(dirname(dirname(dirname(dirname(dirname(dirname(dirname(__FILE__))))))));
+  
+  define( '_JEXEC', 1 );
+  define('JPATH_BASE', $joomlaBase);
+  define( 'DS', DIRECTORY_SEPARATOR );
+  require_once ( JPATH_BASE .DS.'includes'.DS.'defines.php' );
+  require_once ( JPATH_BASE .DS.'includes'.DS.'framework.php' );
+  
+  $mainframe =& JFactory::getApplication('administrator');
+  $mainframe->initialise();
 
-  CRM_Utils_System::loadBootStrap();
-
+  if (JFactory::getUser()->id == 0) {
+    return false;
+  }
   return true;
-
 }
 
 checkAuthentication( );
