@@ -330,7 +330,7 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
     else {
       $url = "{$base}{$script}?option=com_civicrm{$separator}task={$path}{$Itemid}{$fragment}";
     }
-
+    
     // gross hack for joomla, we are in the backend and want to send a frontend url
     if ($frontend &&
       $config->userFramework == 'Joomla'
@@ -341,6 +341,17 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
 
       // CRM-8215
       $url = str_replace('/administrator/', '/index.php', $url);
+    } elseif ($forceBackend) {
+      if (defined('JVERSION')) {
+        $joomlaVersion = JVERSION;
+      } else {
+        $jversion = new JVersion;
+        $joomlaVersion = $jversion->getShortVersion();
+      }
+      
+      if (version_compare($joomlaVersion, '1.6') >= 0) {
+        $url = str_replace('/index.php', '/administrator/index.php', $url);
+      }
     }
     return $url;
   }
