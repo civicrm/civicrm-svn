@@ -3,7 +3,7 @@
  +--------------------------------------------------------------------+
  | CiviCRM version 4.1                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -31,51 +31,50 @@
  * Ckeditor and tinyMCE
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2011
+ * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
 
-function CheckAuthentication() {
+function checkAuthentication() {
+  static $authenticated;
+  //if ( !isset( $authenticated ) ) {
+    $current_cwd   = getcwd();
+    $civicrm_root  = dirname(dirname(getcwd()));
+    $authenticated = false;
+    require_once "{$civicrm_root}/civicrm.config.php";
+    require_once 'CRM/Core/Config.php';
 
-    static $authenticated;
-    if ( !isset( $authenticated ) ) {
-       $current_cwd   = getcwd();
-       $civicrm_root  = dirname(dirname(getcwd()));
-       $authenticated = false;
-       require_once "{$civicrm_root}/civicrm.config.php";
-       require_once 'CRM/Core/Config.php';
+    $config = CRM_Core_Config::singleton();
 
-       $config = CRM_Core_Config::singleton();
-
-       if ( !isset($_SESSION['KCFINDER'] ) ) {
-           $_SESSION['KCFINDER'] = array();
-       }
-       
-       $auth_function = null;
-       switch ($config->userFramework) {
-         case 'Drupal':
-         case 'Drupal6':
-           $auth_function = 'authenticate_drupal';
-           break;
-         case 'Joomla':
-           $auth_function = 'authenticate_joomla';
-           break;
-         case 'WordPress':
-           $auth_function = 'authenticate_wordpress';
-           break;
-       }
-       if(!$auth_function($config)) {
-         CRM_Core_Error::fatal(ts("You must be logged in with proper permissions to edit, add, or delete uploaded images."));
-       }
-      
-       $_SESSION['KCFINDER']['disabled'] = false;
-       $_SESSION['KCFINDER']['uploadURL'] = $config->imageUploadURL;
-       $_SESSION['KCFINDER']['uploadDir'] = $config->imageUploadDir;
-
-       $authenticated = true;
-       chdir( $current_cwd );
+    if ( !isset($_SESSION['KCFINDER'] ) ) {
+      $_SESSION['KCFINDER'] = array();
     }
+
+    $auth_function = null;
+    switch ($config->userFramework) {
+    case 'Drupal':
+    case 'Drupal6':
+      $auth_function = 'authenticate_drupal';
+      break;
+    case 'Joomla':
+      $auth_function = 'authenticate_joomla';
+      break;
+    case 'WordPress':
+      $auth_function = 'authenticate_wordpress';
+      break;
+    }
+    if(!$auth_function($config)) {
+      CRM_Core_Error::fatal(ts("You must be logged in with proper permissions to edit, add, or delete uploaded images."));
+    }
+
+    $_SESSION['KCFINDER']['disabled'] = false;
+    $_SESSION['KCFINDER']['uploadURL'] = $config->imageUploadURL;
+    $_SESSION['KCFINDER']['uploadDir'] = $config->imageUploadDir;
+
+    $authenticated = true;
+    chdir( $current_cwd );
+  //}
 }
 
 /**
@@ -127,12 +126,25 @@ function authenticate_wordpress($config) {
 }
 
 function authenticate_joomla($config) {
-  // FIXME Joomla is still wide open!!
-  return true;
+  // make sure only logged in user can see upload / view images 
+  $joomlaBase = dirname(dirname(dirname(dirname(dirname(dirname(dirname(dirname(__FILE__))))))));
+  
+  define( '_JEXEC', 1 );
+  define('JPATH_BASE', $joomlaBase);
+  define( 'DS', DIRECTORY_SEPARATOR );
+  require_once ( JPATH_BASE .DS.'includes'.DS.'defines.php' );
+  require_once ( JPATH_BASE .DS.'includes'.DS.'framework.php' );
+  
+  $mainframe =& JFactory::getApplication('administrator');
+  $mainframe->initialise();
 
+  if (JFactory::getUser()->id == 0) {
+    return false;
+  }
+  return true;
 }
 
-CheckAuthentication( );
+checkAuthentication( );
 
 spl_autoload_register('__autoload');
 
