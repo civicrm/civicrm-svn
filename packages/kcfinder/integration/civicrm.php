@@ -121,8 +121,12 @@ function authenticate_drupal($config) {
 }
 
 function authenticate_wordpress($config) {
-  // FIXME WordPress is still wide open!!
-  return true;
+  // make sure user has access to civicrm 
+  CRM_Utils_System::loadBootStrap();
+  if (CRM_Core_Permission::check('access CiviCRM')) {
+    return true;
+  }
+  return false;
 }
 
 function authenticate_joomla($config) {
