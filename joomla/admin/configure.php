@@ -90,8 +90,8 @@ function civicrm_main() {
   // generate backend config file
   $string = "
 <?php
-define('CIVICRM_SETTINGS_PATH', $configFile);
-\$error = @include_once( $configFile );
+define('CIVICRM_SETTINGS_PATH', '$configFile');
+\$error = @include_once( '$configFile' );
 if ( \$error == false ) {
     echo \"Could not load the settings file at: {$configFile}\n\";
     exit( );
