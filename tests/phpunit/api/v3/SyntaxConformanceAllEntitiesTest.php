@@ -204,7 +204,16 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
           'pledge_status_id',
           'pledge_campaign_id',
         )
-      )
+      ),
+      'PaymentProcessorType' => array(
+        'cant_update' => array(
+          'billing_mode',
+        ),
+        'break_return' => array(
+        ),
+        'cant_return' => array(
+        ),
+      ),
     );
     if(empty($knownFailures[$entity])){
       return array();
