@@ -566,7 +566,7 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
   }
 
   /**
-   * Get a list of all instaled modules, including enabled and disabled ones
+   * Get a list of all installed modules, including enabled and disabled ones
    *
    * @return array CRM_Core_Module
    */

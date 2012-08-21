@@ -175,7 +175,7 @@ class CRM_Core_Extensions {
   }
 
   /**
-   * Get a list of all instaled modules, including enabled and disabled ones
+   * Get a list of all installed modules, including enabled and disabled ones
    *
    * @return array CRM_Core_Module
    */
