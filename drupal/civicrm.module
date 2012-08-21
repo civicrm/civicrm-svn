@@ -1217,3 +1217,34 @@ function civicrm_reviews() {
   return array('civicrm_coder' => $review);
 }
 
+/**
+ * Implementation of hook_modules_installed
+ */
+function civicrm_modules_installed($modules) {
+  civicrm_initialize();
+  CRM_Core_Invoke::rebuildMenuAndCaches(TRUE);
+}
+
+/**
+ * Implementation of hook_modules_enabled
+ */
+function civicrm_modules_enabled($modules) {
+  civicrm_initialize();
+  CRM_Core_Invoke::rebuildMenuAndCaches(TRUE);
+}
+
+/**
+ * Implementation of hook_modules_disabled
+ */
+function civicrm_modules_disabled($modules) {
+  civicrm_initialize();
+  CRM_Core_Invoke::rebuildMenuAndCaches(TRUE);
+}
+
+/**
+ * Implementation of hook_modules_uninstalled
+ */
+function civicrm_modules_uninstalled($modules) {
+  civicrm_initialize();
+  CRM_Core_Invoke::rebuildMenuAndCaches(TRUE);
+}

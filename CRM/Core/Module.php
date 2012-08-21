@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.2                                                |
@@ -27,41 +26,50 @@
 */
 
 /**
+ * A module is any software package that participates in the hook
+ * system, such as CiviCRM Module-Extension, a Drupal Module, or
+ * a Joomla Plugin.
  *
- * @package CiviCRM_Hook
+ * @package CRM
  * @copyright CiviCRM LLC (c) 2004-2012
- * $Id: $
+ * $Id$
  *
  */
-class CRM_Utils_Hook_Drupal6 extends CRM_Utils_Hook {
+class CRM_Core_Module {
 
   /**
-   * @var bool
+   * @var string
    */
-  private $first = FALSE;
+  public $name;
 
   /**
-   * @var array(string)
+   * @var bool, TRUE if fully enabled; FALSE if module exists but is disabled
    */
-  private $allModules = array();
+  public $is_active;
 
-  function invoke($numParams,
-    &$arg1, &$arg2, &$arg3, &$arg4, &$arg5,
-    $fnSuffix
-  ) {
-    if (! $this->first || empty($this->allModules)) {
-      $this->first = true;
+  public function __construct($name, $is_active) {
+    $this->name = $name;
+    $this->is_active = $is_active;
+  }
 
-      // copied from user_module_invoke
-      if (function_exists('module_list')) {
-        $this->allModules =  module_list();
+  /**
+   * Get a list of all known modules
+   */
+  public static function getAll($fresh = FALSE) {
+    static $result;
+    if ($fresh || !is_array($result)) {
+      $result = array();
+
+      $ext = new CRM_Core_Extensions();
+      if ($ext->enabled) {
+        $result = array_merge($result, $ext->getModules());
       }
 
-      $this->requireCiviModules($this->allModules);
+      $config = CRM_Core_Config::singleton();
+      if (is_callable(array($config->userSystem, 'getModules'))) {
+        $result = array_merge($result, $config->userSystem->getModules());
+      }
     }
-
-    return $this->runHooks($this->allModules, $fnSuffix,
-                           $numParams, $arg1, $arg2, $arg3, $arg4, $arg5);
+    return $result;
   }
 }
-

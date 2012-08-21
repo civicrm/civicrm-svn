@@ -23,6 +23,8 @@
 
   <civicrm_mail_settings />
 
+  <civicrm_managed />
+
   <civicrm_mapping />
 
   <civicrm_navigation />
