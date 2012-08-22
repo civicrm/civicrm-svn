@@ -316,7 +316,7 @@
     var o = $(this[0]);
     var data = o.data('edit-params');
     if (data) {
-      o.animate({height: '+=100px'}, 300);
+      o.animate({height: '+=50px'}, 200);
       data.snippet = 5;
       data.reset = 1;
       o.addClass('form');
