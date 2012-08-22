@@ -402,14 +402,14 @@
   };
 
   $('document').ready(function() {
-    var clicking, timer;
-    $('#crm-container').on('mousedown', '.crm-inline-edit:not(.form)', function(button) {
+    var clicking;
+    $('.crm-inline-edit-container').on('mousedown', '.crm-inline-edit:not(.form)', function(button) {
       if (button.which == 1) {
         clicking = this;
         setTimeout(function() {clicking = null;}, 500);
       }
     });
-    $('#crm-container').on('mouseup', '.crm-inline-edit:not(.form)', function(button) {
+    $('.crm-inline-edit-container').on('mouseup', '.crm-inline-edit:not(.form)', function(button) {
       if (clicking === this && button.which == 1) {
         $(this).crmFormInline();
       }
