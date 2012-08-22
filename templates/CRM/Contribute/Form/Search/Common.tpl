@@ -37,10 +37,15 @@
 	{$form.contribution_status_id.html} </td>
 </tr>
 <tr>
-	<td><label>{ts}Paid By{/ts}</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	{$form.contribution_check_number.label} <br />
-	{$form.contribution_payment_instrument_id.html}&nbsp;&nbsp;&nbsp;&nbsp;
-	{$form.contribution_check_number.html}
+	<td>
+    <div class="float-left">
+      <label>{ts}Paid By{/ts}</label> <br />
+      {$form.contribution_payment_instrument_id.html}
+    </div>
+    <div class="float-left">
+      {$form.contribution_check_number.label} <br />
+      {$form.contribution_check_number.html}
+    </div>
 	</td>
 	<td>{$form.contribution_transaction_id.label} <br />
 	{$form.contribution_transaction_id.html}</td>
