@@ -33,7 +33,7 @@
   {* include overlay js *}
   {include file="CRM/common/overlay.tpl"}
 
-  <div class="crm-summary-contactname-block">
+  <div class="crm-summary-contactname-block crm-inline-edit-container">
     <div class="crm-summary-block" id="contactname-block">
     {include file="CRM/Contact/Page/Inline/ContactName.tpl"}
     </div>
@@ -124,7 +124,7 @@
       <div class="clear"></div>
   </div><!-- .crm-actions-ribbon -->
 
-  <div class="crm-block crm-content-block crm-contact-page">
+  <div class="crm-block crm-content-block crm-contact-page crm-inline-edit-container">
       <div id="mainTabContainer" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
           <ul class="crm-contact-tabs-list">
               <li id="tab_summary" class="crm-tab-button">
