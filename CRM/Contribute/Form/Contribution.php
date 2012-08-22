@@ -149,9 +149,8 @@ class CRM_Contribute_Form_Contribution extends CRM_Core_Form {
   public $_compId;
 
   /*
-     * Store the line items if price set used.
-     */
-
+   * Store the line items if price set used.
+   */
   public $_lineItems;
 
   protected $_formType;
@@ -1070,8 +1069,7 @@ WHERE  contribution_id = {$this->_id}
    * @access public
    * @static
    */
-  static
-  function formRule($fields, $files, $self) {
+  static function formRule($fields, $files, $self) {
     $errors = array();
 
     //check if contact is selected in standalone mode
@@ -1490,7 +1488,7 @@ WHERE  contribution_id = {$this->_id}
           NULL,
           $contribution->total_amount
         );
-      }
+        }
 
       if ($contribution->id) {
         $statusMsg = ts('The contribution record has been processed.');
@@ -1674,13 +1672,18 @@ WHERE  contribution_id = {$this->_id}
         if (CRM_Utils_Array::value('option_type', $formValues) == 2) {
           $adjustTotalAmount = TRUE;
         }
-        CRM_Pledge_BAO_PledgePayment::updatePledgePaymentStatus($this->_pledgeID,
-          array($this->_ppID),
-          $contribution->contribution_status_id,
-          NULL,
-          $contribution->total_amount,
-          $adjustTotalAmount
-        );
+
+        //do only if either the status or the amount has changed
+        if ($this->_action & CRM_Core_Action::ADD|| (($contribution->contribution_status_id != $formValues['contribution_status_id']) ||
+                                                     ($contribution->total_amount != $formValues['total_amount'])) ) {
+          CRM_Pledge_BAO_PledgePayment::updatePledgePaymentStatus($this->_pledgeID,
+            array($this->_ppID),
+            $contribution->contribution_status_id,
+            NULL,
+            $contribution->total_amount,
+            $adjustTotalAmount
+          );
+        }
       }
 
       $statusMsg = ts('The contribution record has been saved.');
