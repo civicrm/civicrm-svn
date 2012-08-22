@@ -634,6 +634,7 @@ WHERE  contribution_id = {$this->_id}
       $defaults['campaign_id'] = $this->_pledgeValues['campaign_id'];
     }
 
+    $this->_defaults = $defaults;
     return $defaults;
   }
 
@@ -1129,7 +1130,7 @@ WHERE  contribution_id = {$this->_id}
 
     // get the submitted form values.
     $submittedValues = $this->controller->exportValues($this->_name);
-
+    
     // process price set and get total amount and line items.
     $lineItem = array();
     $priceSetId = NULL;
@@ -1678,8 +1679,8 @@ WHERE  contribution_id = {$this->_id}
         if ($this->_action & CRM_Core_Action::ADD) {
           $updatePledgePaymentStatus = TRUE;
         } 
-        elseif ($this->_action & CRM_Core_Action::UPDATE && (($contribution->contribution_status_id != $formValues['contribution_status_id']) ||
-                                                             ($contribution->total_amount != $formValues['total_amount']))) {
+        elseif ($this->_action & CRM_Core_Action::UPDATE && (($this->_defaults['contribution_status_id'] != $formValues['contribution_status_id']) ||
+                                                             ($this->_defaults['total_amount'] != $formValues['total_amount']))) {
           $updatePledgePaymentStatus = TRUE;
         }
 
