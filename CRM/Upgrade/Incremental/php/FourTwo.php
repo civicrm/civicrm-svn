@@ -119,7 +119,7 @@ class CRM_Upgrade_Incremental_php_FourTwo {
     if ($rev == '4.2.beta5') {
       $config = CRM_Core_Config::singleton();
       if (!empty($config->extensionsDir)) {
-        $postUpgradeMessage .= '<br />' . ts('Please <a href="%1" target="_blank">configure the Extesion Resource URL</a>.', array(
+        $postUpgradeMessage .= '<br />' . ts('Please <a href="%1" target="_blank">configure the Extension Resource URL</a>.', array(
           1 => CRM_Utils_system::url('civicrm/admin/setting/url', 'reset=1')
         ));
       }
