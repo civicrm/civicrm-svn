@@ -2350,20 +2350,31 @@ AND       civicrm_openid.is_primary = 1";
   /**
    * Function to process greetings and cache
    *
+   * @param object  $contact contact object after save
+   * @param boolean $useDefaults use default greeting values
+   *
+   * @return void
+   * @access public
+   * @static
    */
-  static
-  function processGreetings(&$contact, $useDefaults = FALSE) {
+  static function processGreetings(&$contact, $useDefaults = FALSE) {
     if ($useDefaults) {
       //retrieve default greetings
       $defaultGreetings = CRM_Core_PseudoConstant::greetingDefaults();
       $contactDefaults = $defaultGreetings[$contact->contact_type];
     }
 
+    // note that contact object not always has required greeting related
+    // fields that are required to calculate greeting and 
+    // also other fields used in tokens etc,
+    // hence we need to retrieve it again.
+    $contact->find(true); 
+
     // store object values to an array
     $contactDetails = array();
     CRM_Core_DAO::storeValues($contact, $contactDetails);
     $contactDetails = array(array($contact->id => $contactDetails));
-
+    
     $emailGreetingString = $postalGreetingString = $addresseeString = NULL;
     $updateQueryString = array();
 
