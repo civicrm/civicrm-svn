@@ -1673,9 +1673,17 @@ WHERE  contribution_id = {$this->_id}
           $adjustTotalAmount = TRUE;
         }
 
+        $updatePledgePaymentStatus = FALSE;
         //do only if either the status or the amount has changed
-        if ($this->_action & CRM_Core_Action::ADD|| (($contribution->contribution_status_id != $formValues['contribution_status_id']) ||
-                                                     ($contribution->total_amount != $formValues['total_amount'])) ) {
+        if ($this->_action & CRM_Core_Action::ADD) {
+          $updatePledgePaymentStatus = TRUE;
+        } 
+        elseif ($this->_action & CRM_Core_Action::UPDATE && (($contribution->contribution_status_id != $formValues['contribution_status_id']) ||
+                                                             ($contribution->total_amount != $formValues['total_amount']))) {
+          $updatePledgePaymentStatus = TRUE;
+        }
+
+        if ($updatePledgePaymentStatus) {
           CRM_Pledge_BAO_PledgePayment::updatePledgePaymentStatus($this->_pledgeID,
             array($this->_ppID),
             $contribution->contribution_status_id,
