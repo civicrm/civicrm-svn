@@ -176,7 +176,7 @@ class CRM_Queue_Runner {
         $isOK = FALSE;
 
         $config = CRM_Core_Config::singleton();
-        if ($config->backtrace) {
+        if ($config->backtrace || CRM_Core_Config::isUpgradeMode()) {
           $errorMessage = $e->getMessage() . "\n" . $e->getTraceAsString();
         }
         else {

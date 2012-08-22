@@ -146,7 +146,7 @@ class CRM_Queue_ErrorPolicy {
     );
 
     $config = CRM_Core_Config::singleton();
-    if ($config->backtrace) {
+    if ($config->backtrace || CRM_Core_Config::isUpgradeMode()) {
       $response['message'] = $e->getMessage() . "\n" . $e->getTraceAsString();
     }
     else {
