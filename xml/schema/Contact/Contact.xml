@@ -604,20 +604,4 @@
     <fieldName>is_deleted</fieldName>
     <add>3.2</add>
   </index>
-  <field>
-    <name>created_date</name>
-    <type>timestamp</type>
-    <comment>When was the contact was created.</comment>
-    <required>false</required>
-    <default>NULL</default>
-    <add>4.3</add>
-  </field>
-  <field>
-    <name>modified_date</name>
-    <type>timestamp</type>
-    <comment>When was the contact (or closely related entity) was created or modified or deleted.</comment>
-    <required>false</required>
-    <default>CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP</default>
-    <add>4.3</add>
-  </field>
 </table>

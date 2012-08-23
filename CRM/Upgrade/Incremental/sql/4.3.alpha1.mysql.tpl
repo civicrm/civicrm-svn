@@ -9,12 +9,3 @@ INSERT INTO `civicrm_state_province`(`country_id`, `abbreviation`, `name`) VALUE
 (1045, 'WZ', 'Wuzhong'),
 (1045, 'GY', 'Guyuan'),
 (1045, 'ZW', 'Zhongwei');
-
--- CRM-10553
-
-ALTER TABLE civicrm_contact
-  ADD COLUMN `created_date` timestamp NULL DEFAULT NULL 
-  COMMENT 'When was the contact was created.';
-ALTER TABLE civicrm_contact
-  ADD COLUMN `modified_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP 
-  COMMENT 'When was the contact (or closely related entity) was created or modified or deleted.';

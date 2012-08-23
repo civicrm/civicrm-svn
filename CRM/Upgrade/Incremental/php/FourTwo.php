@@ -279,7 +279,7 @@ WHERE     cpse.price_set_id IS NULL";
 
       // now rebuild all the triggers
       // CRM-9716
-      // FIXME // CRM_Core_DAO::triggerRebuild();
+      CRM_Core_DAO::triggerRebuild();
 
       return TRUE;
   }
