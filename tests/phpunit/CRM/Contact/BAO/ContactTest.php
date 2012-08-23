@@ -1457,7 +1457,7 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase {
         );
         CRM_Core_BAO_Email::add($params);
         $test->assertDBQuery('ex-1@example.com',
-          'SELECT email FROM civicrm_email WHERE contact_id = %1',
+          'SELECT email FROM civicrm_email WHERE contact_id = %1 ORDER BY id DESC LIMIT 1',
           array(1 => array($contactId, 'Integer'))
         );
       },
@@ -1493,7 +1493,7 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase {
         );
         CRM_Core_BAO_Phone::add($params);
         $test->assertDBQuery('202-555-1000',
-          'SELECT phone FROM civicrm_phone WHERE contact_id = %1',
+          'SELECT phone FROM civicrm_phone WHERE contact_id = %1 ORDER BY id DESC LIMIT 1',
           array(1 => array($contactId, 'Integer'))
         );
       },
