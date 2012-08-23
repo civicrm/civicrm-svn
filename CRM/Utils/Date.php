@@ -1388,18 +1388,11 @@ class CRM_Utils_Date {
                                    *  @return string $mysqlDate date format that is excepted by mysql
                                    */
                                   static
-                                  function processDate($date, $time = NULL, $returnNullString = FALSE, $format = 'YmdHis', $inputCustomFormat = NULL) {
+                                  function processDate($date, $time = NULL, $returnNullString = FALSE, $format = 'YmdHis') {
                                     $mysqlDate = NULL;
 
                                     if ($returnNullString) {
                                       $mysqlDate = 'null';
-                                    }
-
-                                    $config = CRM_Core_Config::singleton();
-                                    $inputFormat = $config->dateInputFormat;
-
-                                    if (!empty($inputCustomFormat)) {
-                                      $inputFormat = $inputCustomFormat;
                                     }
 
                                     if (trim($date)) {

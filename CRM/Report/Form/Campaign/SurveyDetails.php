@@ -40,6 +40,8 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
 
   protected $_phoneField = FALSE;
 
+  protected $_locationBasedPhoneField = FALSE;
+
   protected $_summary = NULL;
   protected $_customGroupGroupBy = FALSE;
   protected $_customGroupExtends = array('Contact', 'Individual', 'Household', 'Organization', 'Activity');
@@ -279,7 +281,7 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
       }
       foreach ($table['fields'] as $fieldName => $field) {
         if (CRM_Utils_Array::value('required', $field) ||
-          CRM_Utils_Array::value($fieldName, $this->_params['fields'])
+          CRM_Utils_Array::value($fieldName, $this->_params['fields']) || CRM_Utils_Array::value('is_required', $field)
         ) {
 
           $fieldsName = CRM_Utils_Array::value(1, explode('_', $tableName));
@@ -320,8 +322,17 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
     if ($this->_phoneField) {
       $this->_from .= "LEFT JOIN civicrm_phone {$this->_aliases['civicrm_phone']} ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_phone']}.contact_id AND {$this->_aliases['civicrm_phone']}.is_primary = 1\n";
     }
-  }
 
+    if($this->_locationBasedPhoneField){
+      foreach($this->_surveyResponseFields as $key => $value){
+        if(substr($key,0,5) == 'phone' && CRM_Utils_Array::value('location_type_id',$value)){
+          $fName = str_replace('-','_',$key);
+          $this->_from .= "LEFT JOIN civicrm_phone ".$this->_aliases["civicrm_phone_{$fName}"]." ON {$this->_aliases['civicrm_contact']}.id = ".$this->_aliases["civicrm_phone_{$fName}"].".contact_id AND ".$this->_aliases["civicrm_phone_{$fName}"].".location_type_id = {$value['location_type_id']} AND ".$this->_aliases["civicrm_phone_{$fName}"].".phone_type_id = {$value['phone_type_id']}\n";
+        }
+      }
+    }
+  }
+  
   function where() {
     $clauses = array();
     foreach ($this->_columns as $tableName => $table) {
@@ -789,8 +800,26 @@ INNER JOIN  civicrm_custom_group cg ON ( cg.id = cf.custom_group_id )
     $responseFields = array();
     foreach ($surveyIds as $surveyId) {
       $responseFields += CRM_Campaign_BAO_survey::getSurveyResponseFields($surveyId);
+      $this->_surveyResponseFields = $responseFields;
     }
-
+    foreach($responseFields as $key => $value){
+      if(substr($key,0,5) == 'phone' && CRM_Utils_Array::value('location_type_id',$value)){
+        $fName = str_replace('-','_',$key);
+        $this->_columns["civicrm_{$fName}"] = 
+          array( 'dao' => 'CRM_Core_DAO_Phone',
+                 'alias' => "phone_civireport_{$fName}",
+                 'fields' => 
+                 array( $fName => array_merge($value, array( 'is_required' => '1',                                                                                                                                       'alias' => "phone_civireport_{$fName}",
+                                                             'dbAlias' => "phone_civireport_{$fName}.phone",
+                                                             'no_display' => TRUE,
+                                                             )
+                                              ),
+                        ),
+                 );
+        $this->_aliases["civicrm_phone_{$fName}"] = $this->_columns["civicrm_{$fName}"]['alias'];
+        $this->_locationBasedPhoneField = TRUE;
+      }
+    }
     $responseFieldIds = array();
     foreach (array_keys($responseFields) as $key) {
       $cfId = CRM_Core_BAO_CustomField::getKeyID($key);
@@ -819,7 +848,7 @@ INNER  JOIN  civicrm_custom_field cf ON ( cg.id = cf.custom_group_id )
     while ($response->fetch()) {
       $resTable = $response->table_name;
       $fieldName = "custom_{$response->cfId}";
-
+      
       //need to check does these custom data already included.
 
       if (!array_key_exists($resTable, $this->_columns)) {
@@ -837,7 +866,6 @@ INNER  JOIN  civicrm_custom_field cf ON ( cg.id = cf.custom_group_id )
         $this->_columns[$resTable]['fields'][$fieldName]['isSurveyResponseField'] = TRUE;
         continue;
       }
-
 
       $title = $responseFields[$fieldName]['title'];
       if (in_array($this->_outputMode, array(

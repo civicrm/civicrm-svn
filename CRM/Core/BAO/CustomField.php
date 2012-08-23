@@ -991,7 +991,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField {
         $qf->assign('customUrls', $customUrls);
         break;
     }
-
+    
     switch ($field->data_type) {
       case 'Int':
         // integers will have numeric rule applied to them.
@@ -1036,6 +1036,9 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField {
         );
         $qf->addRule($elementName, ts('Enter a valid Website.'), 'wikiURL');
         break;
+    }
+    if ($field->is_view && !$search) {
+      $qf->freeze($elementName);
     }
   }
 

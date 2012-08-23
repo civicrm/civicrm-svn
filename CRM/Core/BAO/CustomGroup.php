@@ -1297,11 +1297,6 @@ SELECT $select
 
       $groupId = CRM_Utils_Array::value('id', $group);
       foreach ($group['fields'] as $field) {
-        // skip all view fields
-        if (CRM_Utils_Array::value('is_view', $field)) {
-          continue;
-        }
-
         $required = CRM_Utils_Array::value('is_required', $field);
         //fix for CRM-1620
         if ($field['data_type'] == 'File') {

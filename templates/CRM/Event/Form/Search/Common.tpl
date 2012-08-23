@@ -29,7 +29,9 @@
 </tr>     
  
 <tr> 
-    <tr><td><label>{ts}Event Dates{/ts}</label></td></tr>
+    <td colspan="2"><label>{ts}Event Dates{/ts}</label></td>
+</tr>
+<tr>
     {include file="CRM/Core/DateRange.tpl" fieldName="event" from='_start_date_low' to='_end_date_high'}
 </tr>
 
