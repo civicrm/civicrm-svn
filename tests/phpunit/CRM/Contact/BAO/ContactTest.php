@@ -1,6 +1,7 @@
 <?php
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'CiviTest/Contact.php';
+require_once 'CiviTest/Custom.php';
 class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase {
   function get_info() {
     return array(
@@ -712,6 +713,7 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase {
       'id', 'sort_name', 'Database check, contact deleted successfully.'
     );
     $this->quickCleanup(array('civicrm_contact', 'civicrm_note'));
+    Custom::deleteGroup($customGroup);
   }
 
   /**
@@ -1512,6 +1514,48 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase {
         );
       },
     ));
+  }
+
+  /**
+   * Ensure that civicrm_contact.modified_date is updated when contact-related
+   * custom data
+   */
+  function testTimestamps_custom() {
+    $customGroup = Custom::createGroup(array(), 'Individual');
+    $this->assertNotNull($customGroup);
+    $fields = array(
+      'groupId' => $customGroup->id,
+      'data_type' => 'String',
+      'html_type' => 'Text',
+    );
+    $customField = Custom::createField(array(), $fields);
+    $this->assertNotNull($customField);
+
+    $test = $this;
+    $this->_testTimestamps(array(
+      'INSERT' => function ($contactId) use ($test, $customGroup, $customField) {
+        $result = civicrm_api('contact', 'create', array(
+          'version' => 3,
+          'contact_id' => $contactId,
+          'custom_' . $customField->id => 'test-1',
+        ));
+        $test->assertAPISuccess($result);
+      },
+      'UPDATE' => function ($contactId) use ($test, $customGroup, $customField) {
+        CRM_Core_DAO::executeQuery(
+          "UPDATE {$customGroup->table_name} SET {$customField->column_name} = 'test-2' WHERE entity_id = %1",
+          array(1 => array($contactId, 'Integer'))
+        );
+      },
+      'DELETE' => function ($contactId) use ($test, $customGroup, $customField) {
+        CRM_Core_DAO::executeQuery(
+          "DELETE FROM {$customGroup->table_name} WHERE entity_id = %1",
+          array(1 => array($contactId, 'Integer'))
+        );
+      },
+    ));
+
+    Custom::deleteGroup($customGroup);
   }
 
   /**

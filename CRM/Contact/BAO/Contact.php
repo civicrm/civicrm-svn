@@ -2858,7 +2858,7 @@ LEFT JOIN civicrm_address add2 ON ( add1.master_id = add2.id )
       );
     }
 
-    // TODO custom data
+    // Update timestamp when modifying closely related core tables
     $relatedTables = array(
       'civicrm_address',
       'civicrm_email',
@@ -2878,5 +2878,28 @@ LEFT JOIN civicrm_address add2 ON ( add1.master_id = add2.id )
       'event' => array('DELETE'),
       'sql' => "\nUPDATE civicrm_contact SET modified_date = CURRENT_TIMESTAMP WHERE id = OLD.contact_id;\n",
     );
+    
+    // Update timestamp when modifying related custom-data tables
+    $customGroupTables = array();
+    $customGroupDAO = CRM_Core_BAO_CustomGroup::getAllCustomGroupsByBaseEntity('Contact');
+    $customGroupDAO->is_multiple = 0;
+    $customGroupDAO->find();
+    while ($customGroupDAO->fetch()) {
+      $customGroupTables[] = $customGroupDAO->table_name;
+    }
+    if (!empty($customGroupTables)) {
+      $info[] = array(
+        'table' => $customGroupTables,
+        'when' => 'AFTER',
+        'event' => array('INSERT', 'UPDATE'),
+        'sql' => "\nUPDATE civicrm_contact SET modified_date = CURRENT_TIMESTAMP WHERE id = NEW.entity_id;\n",
+      );
+      $info[] = array(
+        'table' => $customGroupTables,
+        'when' => 'AFTER',
+        'event' => array('DELETE'),
+        'sql' => "\nUPDATE civicrm_contact SET modified_date = CURRENT_TIMESTAMP WHERE id = OLD.entity_id;\n",
+      );
+    }
   }
 }
