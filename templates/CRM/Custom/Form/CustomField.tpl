@@ -27,7 +27,7 @@
 {if $element.help_post}
     {assign var="help_post" value=$element.help_post}
 {/if}
-{if $element.is_view eq 0}{* fix for CRM-3510 *}
+
     {if $element.help_pre}
         <tr class="custom_field-help-pre-row {$element.element_name}-row-help-pre">
             <td>&nbsp;</td>
@@ -57,7 +57,7 @@
                                 {/if}
                             {/if}
                         {/foreach}
-                        {if $element.html_type eq 'Radio'}
+                        {if $element.html_type eq 'Radio' and $element.is_view eq 0}
                             <td><span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$element_name}', '{$form.formName}'); return false;" >{ts}Clear{/ts} {$form.$element_name.label|@strip_tags} </a>)</span></td>
                         {/if}
                     </tr>
@@ -69,13 +69,13 @@
         <tr class="custom_field-row {$element.element_name}-row">
             <td class="label">{$form.$element_name.label}{if $element.help_post}{help id=$element_name text=$help_post}{/if}</td>                                
             <td class="html-adjust">
-                {if $element.data_type neq 'Date'}
+                {if $element.data_type neq 'Date' OR ($element.data_type eq 'Date' AND $element.is_view eq 1)}
                     {$form.$element_name.html}&nbsp;
-                {elseif $element.skip_calendar NEQ true }
+                {elseif $element.skip_calendar NEQ true}
                     {include file="CRM/common/jcalendar.tpl" elementName=$element_name}
                 {/if}
                 
-                {if $element.html_type eq 'Radio'}
+                {if $element.html_type eq 'Radio' and $element.is_view eq 0}
                     <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$element_name}', '{$form.formName}'); return false;" >{ts}Clear{/ts}{$form.$element_name.label|@strip_tags}</a>)</span>
                 {elseif $element.data_type eq 'File'}
                     {if $element.element_value.data}
@@ -103,4 +103,4 @@
         </tr>
         
     {/if}
-{/if}
+
