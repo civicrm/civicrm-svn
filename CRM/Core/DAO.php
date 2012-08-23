@@ -1465,7 +1465,13 @@ SELECT contact_id
     }
   }
 
-  // CRM-9716
+   /**
+    * Build a list of triggers via hook and add them to (err, reconcile them
+    * with) the database.
+    *
+    * @param $tableName string the specific table requiring a rebuild; or NULL to rebuild all tables
+    * @see CRM-9716
+    */
   static function triggerRebuild($tableName = NULL) {
     $info = array();
 
@@ -1476,10 +1482,20 @@ SELECT contact_id
 
     CRM_Utils_Hook::triggerInfo($info, $tableName);
 
-    self::createTriggers($info);
+    // In theory, each triggerInfo listener has enough information to filter
+    // its output to match only $tableName; in practice that's a PITA which
+    // contradicts the design goal of allowing multiple triggers to be
+    // easily declared.  So we'll assume $info may list too many tables. 
+    // createTriggers() needs to do the real enforcement of $tableName
+    // filtering.
+    self::createTriggers($info, $tableName);
   }
 
-  static function createTriggers(&$info) {
+   /**
+    * @param $info array per hook_civicrm_triggerInfo
+    * @param $onlyTableName string the specific table requiring a rebuild; or NULL to rebuild all tables
+    */
+  static function createTriggers(&$info, $onlyTableName = NULL) {
     // Validate info array, should probably raise errors?
     if (is_array($info) == FALSE) {
       return;
@@ -1559,6 +1575,9 @@ SELECT contact_id
 
     // now spit out the sql
     foreach ($triggers as $tableName => $tables) {
+      if ($onlyTableName != NULL && $onlyTableName != $tableName) {
+        continue;
+      }
       foreach ($tables as $eventName => $events) {
         foreach ($events as $whenName => $parts) {
           $varString   = implode("\n", $parts['variables']);
