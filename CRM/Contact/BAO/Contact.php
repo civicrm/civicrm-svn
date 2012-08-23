@@ -2816,4 +2816,28 @@ LEFT JOIN civicrm_address add2 ON ( add1.master_id = add2.id )
     $masterDisplayName = CRM_Core_DAO::singleValueQuery($sql);
     return $masterDisplayName;
   }
+
+  /**
+   * Get the creation/modification times for a contact
+   *
+   * @return array('created_date' => $, 'modified_date' => $)
+   */
+  static function getTimestamps($contactId) {
+    $timestamps = CRM_Core_DAO::executeQuery(
+      'SELECT created_date, modified_date
+      FROM civicrm_contact 
+      WHERE id = %1',
+      array(
+        1 => array($contactId, 'Integer'),
+      )
+    );
+    if ($timestamps->fetch()) {
+      return array(
+        'created_date' => $timestamps->created_date,
+        'modified_date' => $timestamps->modified_date,
+      );
+    } else {
+      return NULL;
+    }
+  }
 }

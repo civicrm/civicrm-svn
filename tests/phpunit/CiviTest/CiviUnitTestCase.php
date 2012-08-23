@@ -485,7 +485,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
    *
    * Example: $this->assertSql(2, 'select count(*) from foo where foo.bar like "%1"', array(1 => array("Whiz", "String")));
    */
-  protected function assertDBQuery($expected, $query, $params = array(
+  function assertDBQuery($expected, $query, $params = array(
     )) {
     $actual = CRM_Core_DAO::singleValueQuery($query, $params);
     $this->assertEquals($expected, $actual,
