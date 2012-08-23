@@ -48,7 +48,7 @@ class CRM_Upgrade_Incremental_php_FourThree {
     
     // now rebuild all the triggers
     // CRM-9716
-    CRM_Core_DAO::triggerRebuild();
+    // FIXME // CRM_Core_DAO::triggerRebuild();
     
     return TRUE;
   }
