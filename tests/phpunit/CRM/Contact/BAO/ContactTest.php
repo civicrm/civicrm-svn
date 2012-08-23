@@ -1423,6 +1423,59 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase {
 
     return $params;
   }
+
+  /**
+   * Ensure that created_date and modified_date are set
+   */
+  function testTimestamps() {
+    CRM_Core_DAO::triggerRebuild();
+
+    $params    = array(
+      'first_name' => 'Test',
+      'last_name' => 'Timestamps',
+      'contact_type' => 'Individual',
+    );
+    $contact = CRM_Contact_BAO_Contact::add($params);
+    $contactId = $contact->id;
+
+    //Now check $contact is object of contact DAO..
+    $this->assertInstanceOf('CRM_Contact_DAO_Contact', $contact, 'Check for created object');
+    $origTimestamps = CRM_Core_DAO::executeQuery(
+      'SELECT created_date, modified_date FROM civicrm_contact WHERE id = %1',
+      array(
+        1 => array($contactId, 'Integer'),
+      )
+    );
+    $origTimestamps->fetch();
+    $this->assertRegexp('/^\d\d\d\d-\d\d-\d\d /', $origTimestamps->created_date);
+    $this->assertRegexp('/^\d\d\d\d-\d\d-\d\d /', $origTimestamps->modified_date);
+    $this->assertEquals($origTimestamps->created_date, $origTimestamps->modified_date);
+
+    //update and change first name and last name, using add( )
+    sleep(1); // advance clock by 1 second to ensure timestamps change
+    $params = array(
+      'first_name' => 'Testing',
+      'contact_type' => 'Individual',
+      'contact_id' => $contactId,
+    );
+    $contact = CRM_Contact_BAO_Contact::add($params);
+
+    //Now check $contact is object of contact DAO..
+    $this->assertInstanceOf('CRM_Contact_DAO_Contact', $contact, 'Check for created object');
+    $newTimestamps = CRM_Core_DAO::executeQuery(
+      'SELECT created_date, modified_date FROM civicrm_contact WHERE id = %1',
+      array(
+        1 => array($contactId, 'Integer'),
+      )
+    );
+    $newTimestamps->fetch();
+    $this->assertRegexp('/^\d\d\d\d-\d\d-\d\d /', $newTimestamps->created_date);
+    $this->assertRegexp('/^\d\d\d\d-\d\d-\d\d /', $newTimestamps->modified_date);
+    $this->assertEquals($origTimestamps->created_date, $newTimestamps->created_date);
+    $this->assertTrue($origTimestamps->modified_date < $newTimestamps->modified_date);
+
+    Contact::delete($contactId);
+  }
 }
 
 
