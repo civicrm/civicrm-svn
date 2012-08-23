@@ -428,6 +428,9 @@ class CRM_Contact_Form_Search_Criteria {
         array('id' => 'relation_target_group', 'multiple' => 'multiple', 'title' => ts('- select -'))
       );
     }
+    
+    // Add reltionship dates
+    CRM_Core_Form_Date::buildDateRange($form, 'relation_date', 1, '_low', '_high', ts('From:'), FALSE, FALSE);
 
     // add all the custom  searchable fields
     $relationship = array('Relationship');

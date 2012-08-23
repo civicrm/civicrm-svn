@@ -24,43 +24,46 @@
  +--------------------------------------------------------------------+
 *}
 <div id="relationship" class="form-item">
-    <table class="form-layout">
-         <tr>
-            <td>
-               {$form.relation_type_id.label}<br />
-               {$form.relation_type_id.html}
-            </td>
-            <td>
-               <div class="relationship-type-dependent">
-                 {$form.relation_target_name.label}<br />
-                 {$form.relation_target_name.html|crmReplace:class:huge}
-                  <div class="description font-italic">
-                      {ts}Complete OR partial contact name.{/ts}
-                  </div>
-                </div>
-            </td>
-          </tr>
-            <td>
-               <div class="relationship-type-dependent">
-                 {$form.relation_status.label}<br />
-                 {$form.relation_status.html}
-                </div>
-            </td>
-            <td>
-              <div class="relationship-type-dependent">
-                {$form.relation_target_group.label} {help id="id-relationship-target-group" file="CRM/Contact/Form/Search/Advanced.hlp"}<br />
-                {$form.relation_target_group.html|crmReplace:class:huge}
-              </div>
-            </td>
-         </tr>
-         {if $relationshipGroupTree}
-         <tr>
-          <td colspan="2">
-            {include file="CRM/Custom/Form/Search.tpl" groupTree=$relationshipGroupTree showHideLinks=false}
-          </td>
-         </tr>
-         {/if}
-    </table>
+  <table class="form-layout">
+    <tr>
+      <td>
+        {$form.relation_type_id.label}<br />
+        {$form.relation_type_id.html}
+      </td>
+      <td>
+         <div class="relation-type-dependent">
+           {$form.relation_target_name.label}<br />
+           {$form.relation_target_name.html|crmReplace:class:huge}
+            <div class="description font-italic">
+                {ts}Complete OR partial contact name.{/ts}
+            </div>
+          </div>
+      </td>
+    </tr>
+    <tr class="relation-type-dependent">
+      <td>
+         {$form.relation_status.label}<br />
+         {$form.relation_status.html}
+      </td>
+      <td>
+        {$form.relation_target_group.label} {help id="id-relationship-target-group" file="CRM/Contact/Form/Search/Advanced.hlp"}<br />
+        {$form.relation_target_group.html|crmReplace:class:huge}
+      </td>
+    </tr>
+    <tr class="relation-type-dependent"> 
+      <td colspan="2"><label>{ts}Start/End Dates{/ts}</label></td>
+    </tr>
+    <tr class="relation-type-dependent">
+      {include file="CRM/Core/DateRange.tpl" fieldName="relation_date" from='_low' to='_high'}
+    </tr>
+    {if $relationshipGroupTree}
+      <tr>
+      <td colspan="2">
+        {include file="CRM/Custom/Form/Search.tpl" groupTree=$relationshipGroupTree showHideLinks=false}
+      </td>
+      </tr>
+    {/if}
+  </table>
   {literal}
     <script type="text/javascript">
       cj("#relation_target_group").crmasmSelect({
@@ -72,9 +75,9 @@
       });
       cj("#relation_type_id").change(function() {
         if (cj(this).val() == '') {
-          cj('.relationship-type-dependent').hide();
+          cj('.relation-type-dependent').hide();
         } else {
-          cj('.relationship-type-dependent').show();
+          cj('.relation-type-dependent').show();
         }
       }).change();
     </script>

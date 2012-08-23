@@ -1456,10 +1456,9 @@ class CRM_Contact_BAO_Query {
         return;
 
       case 'relation_target_name':
-        // since this case is handled with the above
-        return;
-
       case 'relation_status':
+      case 'relation_date_low':
+      case 'relation_date_high':
         // since this case is handled with the above
         return;
 
@@ -3417,6 +3416,8 @@ WHERE  id IN ( $groupIDs )
     $targetName  = $this->getWhereValues('relation_target_name', $grouping);
     $relStatus   = $this->getWhereValues('relation_status', $grouping);
     $targetGroup = $this->getWhereValues('relation_target_group', $grouping);
+    $start = $this->getWhereValues('relation_date_low', $grouping);
+    $end = $this->getWhereValues('relation_date_high', $grouping);
 
     $nameClause = $name = NULL;
     if ($targetName) {
@@ -3495,22 +3496,32 @@ WHERE  id IN ( $groupIDs )
 
 
     //check for active, inactive and all relation status
-    $today = date('Ymd');
     if ($relStatus[2] == 0) {
       $this->_where[$grouping][] = "(
 civicrm_relationship.is_active = 1 AND
-( civicrm_relationship.end_date IS NULL OR civicrm_relationship.end_date >= {$today} ) AND
-( civicrm_relationship.start_date IS NULL OR civicrm_relationship.start_date <= {$today} )
+( civicrm_relationship.end_date IS NULL OR civicrm_relationship.end_date >= CURDATE() ) AND
+( civicrm_relationship.start_date IS NULL OR civicrm_relationship.start_date <= CURDATE() )
 )";
-      $this->_qill[$grouping][] = ts('Relationship - Active');
+      $this->_qill[$grouping][] = ts('Relationship - Active and Current');
     }
     elseif ($relStatus[2] == 1) {
       $this->_where[$grouping][] = "(
 civicrm_relationship.is_active = 0 OR
-civicrm_relationship.end_date < {$today} OR
-civicrm_relationship.start_date > {$today}
+civicrm_relationship.end_date < CURDATE() OR
+civicrm_relationship.start_date > CURDATE()
 )";
-      $this->_qill[$grouping][] = ts('Relationship - Inactive');
+      $this->_qill[$grouping][] = ts('Relationship - Inactive or not Current');
+    }
+
+    // Search by dates
+    if ($start || $end) {
+      foreach (array('start' => '>=', 'end' => '<=') as $d => $op) {
+        if (!empty(${$d}[2])) {
+          $date = date('Ymd', strtotime(${$d}[2]));
+          $this->_where[$grouping][] = "civicrm_relationship.{$d}_date $op $date";
+          $this->_qill[$grouping][] = ($d == 'end' ? ts('Relationship Ended by') : ts('Relationship Started On or After')) . " " . CRM_Utils_Date::customFormat($date);
+        }
+      }
     }
 
     $this->_where[$grouping][] = 'civicrm_relationship.relationship_type_id = ' . $rel[0];

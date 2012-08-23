@@ -38,7 +38,10 @@
     {assign var="tElement" value=`$elementName`_time}
     {$form.$blockSection.$blockId.$elementName.html}
     {assign var="timeElement" value=`$blockSection`_`$blockId`_`$elementName`_time}
-    &nbsp;&nbsp;{$form.$blockSection.$blockId.$tElement.label}&nbsp;&nbsp;{$form.$blockSection.$blockId.$tElement.html|crmReplace:class:six}
+    {if $tElement}
+      &nbsp;&nbsp;{$form.$blockSection.$blockId.$tElement.label}
+      &nbsp;&nbsp;{$form.$blockSection.$blockId.$tElement.html|crmReplace:class:six}
+    {/if}
 {else}
     {assign var='elementId'   value=$form.$elementName.id}
     {assign var="timeElement" value=$elementName|cat:'_time'}
@@ -54,11 +57,14 @@
 {if $batchUpdate AND $timeElement AND $tElement}
     &nbsp;&nbsp;{$form.field.$elementIndex.$tElement.label}&nbsp;&nbsp;{$form.field.$elementIndex.$tElement.html|crmReplace:class:six}
 {elseif $timeElement AND !$tElement}
-    &nbsp;&nbsp;{$form.$timeElement.label}&nbsp;&nbsp;{$form.$timeElement.html|crmReplace:class:six}
+    {if $form.$timeElement.label}
+      &nbsp;&nbsp;{$form.$timeElement.label}&nbsp;&nbsp;
+    {/if}
+    {$form.$timeElement.html|crmReplace:class:six}
 {/if}
 
 {if $action neq 1028}
-    <span class="crm-clear-link">(<a href="javascript:clearDateTime( '{$elementId}' );">{ts}Clear{/ts}{$form.$elementId.label|@strip_tags} </a>)</span>
+    <span class="crm-clear-link">(<a href="javascript:clearDateTime( '{$elementId}' );">{ts}clear{/ts}</a>)</span>
 {/if}
 
 <script type="text/javascript">
