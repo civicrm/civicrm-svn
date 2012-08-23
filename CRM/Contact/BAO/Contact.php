@@ -2840,4 +2840,43 @@ LEFT JOIN civicrm_address add2 ON ( add1.master_id = add2.id )
       return NULL;
     }
   }
+
+  /**
+   * Get a list of triggers for the contact table
+   *
+   * @see hook_civicrm_triggerInfo
+   * @see CRM_Core_DAO::triggerRebuild
+   * @see http://issues.civicrm.org/jira/browse/CRM-10554
+   */
+  static function triggerInfo(&$info, $tableName = NULL) {
+    if ($tableName == NULL || $tableName == self::getTableName()) {
+      $info[] = array(
+        'table' => array(self::getTableName()),
+        'when' => 'BEFORE',
+        'event' => array('INSERT'),
+        'sql' => "\nSET NEW.created_date = CURRENT_TIMESTAMP;\n",
+      );
+    }
+
+    // TODO custom data
+    $relatedTables = array(
+      'civicrm_address',
+      'civicrm_email',
+      'civicrm_im',
+      'civicrm_phone',
+      'civicrm_website',
+    );
+    $info[] = array(
+      'table' => $relatedTables,
+      'when' => 'AFTER',
+      'event' => array('INSERT', 'UPDATE'),
+      'sql' => "\nUPDATE civicrm_contact SET modified_date = CURRENT_TIMESTAMP WHERE id = NEW.contact_id;\n",
+    );
+    $info[] = array(
+      'table' => $relatedTables,
+      'when' => 'AFTER',
+      'event' => array('DELETE'),
+      'sql' => "\nUPDATE civicrm_contact SET modified_date = CURRENT_TIMESTAMP WHERE id = OLD.contact_id;\n",
+    );
+  }
 }

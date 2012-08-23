@@ -1479,6 +1479,7 @@ SELECT contact_id
     $logging->triggerInfo($info, $tableName);
 
     CRM_Core_I18n_Schema::triggerInfo($info, $tableName);
+    CRM_Contact_BAO_Contact::triggerInfo($info, $tableName);
 
     CRM_Utils_Hook::triggerInfo($info, $tableName);
 
