@@ -39,10 +39,10 @@
 <tr>
 	<td>
     <div class="float-left">
-      <label>{ts}Paid By{/ts}</label> <br />
+      <label>{ts}Payment Method{/ts}</label> <br />
       {$form.contribution_payment_instrument_id.html}
     </div>
-    <div class="float-left">
+    <div class="float-left" id="contribution_check_number_wrapper">
       {$form.contribution_check_number.label} <br />
       {$form.contribution_check_number.html}
     </div>
@@ -115,3 +115,15 @@
 	{include file="CRM/Custom/Form/Search.tpl" groupTree=$contributeGroupTree showHideLinks=false}</td>
 </tr>
 {/if}
+{literal}
+  <script type="text/javascript">
+    cj('#contribution_payment_instrument_id').change(function() {
+      if (cj(this).val() == '4' || cj(this).val() == '') {
+        cj('#contribution_check_number_wrapper').show();
+      }
+      else {
+        cj('#contribution_check_number_wrapper').hide();
+      }
+    }).change();
+  </script>
+{/literal}
