@@ -36,8 +36,7 @@
  * This class contains the functions that are called using AJAX (jQuery)
  */
 class CRM_Group_Page_AJAX {
-  static
-  function getGroupList() {
+  static function getGroupList() {
     $params = $_POST;
 
     if ( isset($params['parent_id']) ) {

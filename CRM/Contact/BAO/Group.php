@@ -644,8 +644,11 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
     // get groups
     $groups = CRM_Contact_BAO_Group::getGroupList($params);
 
-    // add total
-    $params['total'] = CRM_Contact_BAO_Group::getGroupCount($params);
+    //skip total if we are making call to show only children
+    if ( !CRM_Utils_Array::value('parent_id', $params) ) {
+      // add total
+      $params['total'] = CRM_Contact_BAO_Group::getGroupCount($params);
+    }
 
     // format params and add links
     $groupList = array();
@@ -655,7 +658,12 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
         $groupList[$id]['group_id'] = $value['id'];
         $groupList[$id]['group_name'] = $value['title'];
         $groupList[$id]['group_description'] = CRM_Utils_Array::value('description', $value);
-        $groupList[$id]['group_type'] = CRM_Utils_Array::value('group_type', $value);
+        if ( CRM_Utils_Array::value('group_type', $value) ) {
+          $groupList[$id]['group_type'] = $value['group_type'];
+        }
+        else {
+          $groupList[$id]['group_type'] = '';
+        }
         $groupList[$id]['visibility'] = $value['visibility'];
         $groupList[$id]['links'] = $value['action'];
         $groupList[$id]['org_info'] = CRM_Utils_Array::value('org_info', $value);
@@ -671,8 +679,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
    * @param  array   $params associated array for params
    * @access public
    */
-  static
-  function getGroupList(&$params) {
+  static function getGroupList(&$params) {
     $config = CRM_Core_Config::singleton();
 
     $whereClause = self::whereClause($params, FALSE);
@@ -830,8 +837,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
     return $values;
   }
 
-  static
-  function getGroupCount(&$params) {
+  static function getGroupCount(&$params) {
     $whereClause = self::whereClause($params, FALSE);
     $query = " SELECT COUNT(*) FROM civicrm_group groups WHERE {$whereClause}";
     return CRM_Core_DAO::singleValueQuery($query, $params);
