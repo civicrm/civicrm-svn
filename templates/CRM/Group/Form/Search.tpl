@@ -142,8 +142,9 @@ function buildGroupSelector( filterSearch ) {
                     },
         "fnDrawCallback": function() { setSelectorClass( parentsOnly, showOrgInfo ); },
         "fnServerData": function ( sSource, aoData, fnCallback ) {
-            aoData.push( {name:'showOrgInfo', value: showOrgInfo });
-            aoData.push( {name:'parentsOnly', value: parentsOnly });
+            aoData.push( {name:'showOrgInfo', value: showOrgInfo },
+                         {name:'parentsOnly', value: parentsOnly }
+                       );
             if ( filterSearch ) {
                 var groupTypes = '';
                 if ( cj('.crm-group-search-form-block #group_type\\[1\\]').prop('checked') ) {
@@ -220,7 +221,7 @@ function showChildren(  parent_id, showOrgInfo ) {
 		  "success": function(response){
 		  	var appendHTML = '';
   			cj.each( response, function( i, val ) {
-			  	appendHTML += '<tr class="parent_is_' + parent_id + ' ' + val.class + '">';
+			  	appendHTML += '<tr class="crm-row-selected parent_is_' + parent_id + ' ' + val.class + '">';
 		    	appendHTML += '<td class="crm-group-name">' + val.group_name + "</td>";
 		    	appendHTML += "<td>" + val.group_id + "</td>";
 					if (val.group_description) {
@@ -238,23 +239,22 @@ function showChildren(  parent_id, showOrgInfo ) {
 		} );
 	}
 		
-	cj("#row_" + parent_id).find('span.show-children').removeClass("collapsed");
-	cj("#row_" + parent_id).find('span.show-children').addClass("expanded");
-	cj("#row_" + parent_id).find('span.show-children').attr("title",{/literal}"{ts}hide child groups{/ts}"{literal});
+  var parentRow = cj("#row_" + parent_id).find('span.show-children');
+  parentRow.removeClass("collapsed").addClass("expanded").attr("title",{/literal}"{ts}hide child groups{/ts}"{literal});
 	
-	cj("#row_" + parent_id).find('span.show-children').click( function(){
+	parentRow.click( function(){
 		hideChildren( parent_id, showOrgInfo )
 	});
 
 }
 
 function hideChildren( parent_id, showOrgInfo ) {
- 	cj("#row_" + parent_id).find('span.show-children').removeClass("expanded");
- 	cj("#row_" + parent_id).find('span.show-children').addClass("collapsed"); 
-	cj("#row_" + parent_id).find('span.show-children').attr("title", {/literal}"{ts}show child groups{/ts}"{literal});
-	cj("#row_" + parent_id).find('span.show-children').click( function(){
+  var parentRow = cj("#row_" + parent_id).find('span.show-children');
+ 	parentRow.removeClass("expanded").addClass("collapsed").attr("title",{/literal}"{ts}show child groups{/ts}"{literal});
+	parentRow.click( function(){
 		showChildren( parent_id, showOrgInfo )
-	});
+  });
+
  	cj('.parent_is_' + parent_id ).hide() ;
 }
 
