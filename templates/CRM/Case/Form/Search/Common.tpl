@@ -27,35 +27,35 @@
     {include file="CRM/Case/Page/ConfigureError.tpl"}
 {else}
 <tr id='case_search_form'>
-  <td class="crm-case-common-form-block-case_type" width="25%"><label>{ts}Case Type{/ts}</label>
-    <br />
-      <div class="listing-box" style="width: auto; height: 120px">
-       {foreach from=$form.case_type_id item="case_type_id_val"}
-        <div class="{cycle values="odd-row,even-row"}">
-                {$case_type_id_val.html}
-        </div>
-      {/foreach}
-      </div><br />
+  <td class="crm-case-common-form-block-case_type" width="25%">
+    <label>{ts}Case Type{/ts}</label><br />
+    <div class="listing-box" style="width: auto; height: 120px">
+     {foreach from=$form.case_type_id item="case_type_id_val"}
+      <div class="{cycle values="odd-row,even-row"}">
+        {$case_type_id_val.html}
+      </div>
+    {/foreach}
+    </div><br />
   </td>
-  
+
   <td class="crm-case-common-form-block-case_status_id" width="25%">
-    {$form.case_status_id.label}<br /> 
-    {$form.case_status_id.html}<br /><br />	
+    {$form.case_status_id.label}<br />
+    {$form.case_status_id.html}<br /><br />
     {if $accessAllCases}
-    {$form.case_owner.html} <span class="crm-clear-link">(<a href="javascript:unselectCaseRadio('case_owner', '{$form.formName}')">{ts}clear{/ts}</a>)</span><br />
+      {$form.case_owner.html} <span class="crm-clear-link">(<a href="javascript:unselectCaseRadio('case_owner', '{$form.formName}')">{ts}clear{/ts}</a>)</span><br />
     {/if}
-    {if $form.case_deleted}	
-        {$form.case_deleted.html}	
-        {$form.case_deleted.label}	
+    {if $form.case_deleted}
+      {$form.case_deleted.html}
+      {$form.case_deleted.label}
     {/if}
   </td>
   {if $form.case_tags }
   <td class="crm-case-common-form-block-case_tags">
-  <label>{ts}Case Tag(s){/ts}</label>
+    <label>{ts}Case Tag(s){/ts}</label>
     <div id="Tag" class="listing-box">
-      {foreach from=$form.case_tags item="tag_val"} 
+      {foreach from=$form.case_tags item="tag_val"}
         <div class="{cycle values="odd-row,even-row"}">
-        	{$tag_val.html} 
+          {$tag_val.html}
         </div>
       {/foreach}
   </td>
@@ -76,7 +76,7 @@
 <script type="text/javascript">
     var verifyCaseInput = new Array();
     cj( function() {
-       
+
         var countCaseInputs = 1;
         cj("#case_search_form input,#case_search_form select").each(function () {
             cj(this).attr('case_pref', countCaseInputs);
@@ -85,23 +85,23 @@
 
         cj("#case_search_form input,#case_search_form select").each(function () {
         if (  cj(this).attr('case_pref') ) {
-            switch( cj(this).attr('type') ) { 
-          
+            switch( cj(this).attr('type') ) {
+
                 case 'checkbox':
                     var caseRef =  cj(this).attr('case_pref');
                     if( cj(this).attr('checked') ) {
-      		            verifyCaseInput[caseRef] = 1;
-    		        } else {
+                      verifyCaseInput[caseRef] = 1;
+                } else {
                         verifyCaseInput[caseRef] = 0;
-                    } 
+                    }
 
                     cj(this).click( function(){
                     if( cj(this).attr('checked') ) {
-      		            verifyCaseInput[caseRef] = 1;
-    		        } else {
- 		                verifyCaseInput[caseRef] = 0;
+                      verifyCaseInput[caseRef] = 1;
+                } else {
+                    verifyCaseInput[caseRef] = 0;
                     }
-                        alterCaseFilters( ); 
+                        alterCaseFilters( );
                     });
                     countCaseInputs++;
                 break;
@@ -117,26 +117,26 @@
                         if( cj(this).val() ) {
                             verifyCaseInput[caseRef] = 1;
                         } else {
-                            verifyCaseInput[caseRef] = 0;  
+                            verifyCaseInput[caseRef] = 0;
                         }
-                        alterCaseFilters( ); 
+                        alterCaseFilters( );
                     });
                     countCaseInputs++;
-                break;    
+                break;
             }
-        }     
+        }
       });
     });
 
-           
+
     function alterCaseFilters( ) {
         var isChecked = 0;
         cj("#case_search_form input[name='case_owner']").each( function( ) {
             if ( (cj(this).attr('type') == 'radio' && cj(this).attr('checked') ) ) {
                 isChecked = 1;
-            }    
+            }
         });
-           
+
         if ( isChecked ) {
             return true;
         }
@@ -145,21 +145,20 @@
             cj("#case_search_form input[name='case_owner']").each( function( ) {
                 if ( (cj(this).attr('type') == 'radio' && cj(this).val( ) == 1) ) {
                     cj(this).click();
-                }    
+                }
             });
         }
     }
- 
+
     function unselectCaseRadio( eleName, thisForm ) {
         if ( cj.inArray( 1, verifyCaseInput ) != -1 ) {
             alert( 'It is mandatory to select either Search All Cases or Only My Cases if any of the case serach criteria is selected' );
             return;
         }
         unselectRadio( eleName, thisForm);
-
     }
 
-</script>      
-{/literal} 
+</script>
+{/literal}
 {/if}
- 
+
