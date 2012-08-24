@@ -516,7 +516,8 @@ SELECT id
                 $setParams['name'] = $pageTitle . '_' . $this->_id;
               }
               else {
-                $setParams['name'] = $pageTitle . '_' . rand(1, 99);
+                $timeSec = explode(".", microtime(true));
+                $setParams['name'] = $pageTitle . '_' . date('is', $timeSec[0]) . $timeSec[1];
               }
               $setParams['is_quick_config'] = 1;
               $setParams['extends'] = CRM_Core_Component::getComponentID('CiviContribute');
