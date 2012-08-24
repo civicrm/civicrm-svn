@@ -674,12 +674,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
         $groupList[$id]['links'] = $value['action'];
         $groupList[$id]['org_info'] = CRM_Utils_Array::value('org_info', $value);
         
-        if ( CRM_Utils_Array::value( 'parents', $value ) ) {
-          $groupList[$id]['is_parent'] = true;
-        }
-        else {
-          $groupList[$id]['is_parent'] = false;
-        }
+        $groupList[$id]['is_parent'] = $value['is_parent'];
       }
       return $groupList;
     }
@@ -824,8 +819,10 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
         );
         
         // If group has children, add class for link to view children
+        $values[$object->id]['is_parent'] = false;
         if (array_key_exists('children', $values[$object->id])) {
           $values[$object->id]['class'] = "crm-group-parent";
+          $values[$object->id]['is_parent'] = true;
         }
         
         // If group is a child, add child class
