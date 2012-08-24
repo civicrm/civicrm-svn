@@ -108,6 +108,13 @@ table.crm-table-group-summary tbody {
     background-color: #FFFFCC !important;
 }
 
+#crm-container .crm-row-child {
+    margin: 0px;
+    padding: 3px 0px 3px 0px;
+    clear: none;
+    background-color: #F1F8EB !important;
+}
+
 #crm-container .row-highlighted {
     margin: 0px;
     padding: 3px 0px 3px 0px;
@@ -3523,4 +3530,9 @@ div#crm-toolTip
 #crm-container .crm-group-child td.crm-group-name {
   padding-left: 15px;
   white-space: nowrap;
+}
+
+#crm-container div.crm-row-parent-name {
+  padding: 3px 0px 0px .5em;
+  opacity: 0.75;
 }

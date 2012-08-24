@@ -659,7 +659,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
           foreach($groupIds as $gId) {
             $title[] = $allGroups[$gId];
           }    
-          $groupList[$id]['group_name'] .= '<br/><em>'.ts('Parent').'</em>: ' . implode(', ', $title);
+          $groupList[$id]['group_name'] .= '<div class="crm-row-parent-name"><em>'.ts('Child of').'</em>: ' . implode(', ', $title) . '</div>';
           $groupList[$id]['class'] = '';
         }
 
