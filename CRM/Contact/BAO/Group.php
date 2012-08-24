@@ -638,15 +638,31 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
     if ( !CRM_Utils_Array::value('parent_id', $params) ) {
       // add total
       $params['total'] = CRM_Contact_BAO_Group::getGroupCount($params);
+ 
+      // get all the groups
+      $allGroups = CRM_Core_PseudoConstant::allGroup();
     }
 
     // format params and add links
     $groupList = array();
-
     if (!empty($groups)) {
       foreach ($groups as $id => $value) {
         $groupList[$id]['group_id'] = $value['id'];
         $groupList[$id]['group_name'] = $value['title'];
+        $groupList[$id]['class'] = $value['class'];
+        
+        // append parent names if in search mode
+        if ( !CRM_Utils_Array::value('parent_id', $params) &&
+        CRM_Utils_Array::value( 'parents', $value ) ) {
+          $groupIds = explode(',', $value['parents']);
+          $title = array();
+          foreach($groupIds as $gId) {
+            $title[] = $allGroups[$gId];
+          }    
+          $groupList[$id]['group_name'] .= '<br/><em>'.ts('Parent').'</em>: ' . implode(', ', $title);
+          $groupList[$id]['class'] = '';
+        }
+
         $groupList[$id]['group_description'] = CRM_Utils_Array::value('description', $value);
         if ( CRM_Utils_Array::value('group_type', $value) ) {
           $groupList[$id]['group_type'] = $value['group_type'];
@@ -657,7 +673,13 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
         $groupList[$id]['visibility'] = $value['visibility'];
         $groupList[$id]['links'] = $value['action'];
         $groupList[$id]['org_info'] = CRM_Utils_Array::value('org_info', $value);
-        $groupList[$id]['class'] = $value['class'];
+        
+        if ( CRM_Utils_Array::value( 'parents', $value ) ) {
+          $groupList[$id]['is_parent'] = true;
+        }
+        else {
+          $groupList[$id]['is_parent'] = false;
+        }
       }
       return $groupList;
     }
@@ -809,6 +831,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
         // If group is a child, add child class
         if (array_key_exists('parents', $values[$object->id])) {
           $values[$object->id]['class'] = "crm-group-child";
+          $values[$object->id]['parents'] = $values[$object->id]['parents'];
         }
         
         if (array_key_exists('children', $values[$object->id])
