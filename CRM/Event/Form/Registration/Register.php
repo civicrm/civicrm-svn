@@ -75,7 +75,8 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
    *
    * @return void
    * @access public
-   */ function preProcess() {
+   */ 
+  function preProcess() {
     parent::preProcess();
 
     $this->_ppType = CRM_Utils_Array::value('type', $_GET);
@@ -758,8 +759,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
    * @access public
    * @static
    */
-  static
-  function formRule($fields, $files, $self) {
+  static function formRule($fields, $files, $self) {
     $errors = array();
     //check that either an email or firstname+lastname is included in the form(CRM-9587)
     self::checkProfileComplete($fields, $errors, $self->_eventId);
@@ -884,11 +884,13 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
         return empty($errors) ? TRUE : $errors;
       }
 
-      foreach ($self->_paymentFields as $name => $fld) {
-        if ($fld['is_required'] &&
-          CRM_Utils_System::isNull(CRM_Utils_Array::value($name, $fields))
-        ) {
-          $errors[$name] = ts('%1 is a required field.', array(1 => $fld['title']));
+      if (property_exists($self, '_paymentFields') && !empty($self->_paymentFields )) {
+        foreach ($self->_paymentFields as $name => $fld) {
+          if ($fld['is_required'] &&
+            CRM_Utils_System::isNull(CRM_Utils_Array::value($name, $fields))
+          ) {
+            $errors[$name] = ts('%1 is a required field.', array(1 => $fld['title']));
+          }
         }
       }
     }
