@@ -100,6 +100,7 @@ function buildGroupSelector( filterSearch ) {
     
     var columns = '';
     var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/grouplist" h=0 q="snippet=4"}'{literal};
+    var showOrgInfo = {/literal}"{$showOrgInfo}"{literal};
 
     crmGroupSelector = cj('#crm-group-selector').dataTable({
         "bFilter"    : false,
@@ -139,10 +140,10 @@ function buildGroupSelector( filterSearch ) {
                             "sLast":     {/literal}"{ts escape='js'}Last{/ts}"{literal}            
                         }                                                       
                     },
-        "fnDrawCallback": function() { setSelectorClass( parentsOnly ); },
+        "fnDrawCallback": function() { setSelectorClass( parentsOnly, showOrgInfo ); },
         "fnServerData": function ( sSource, aoData, fnCallback ) {
-            var showOrgInfo = {/literal}"{$showOrgInfo}"{literal};
             aoData.push( {name:'showOrgInfo', value: showOrgInfo });
+            aoData.push( {name:'parentsOnly', value: parentsOnly });
             if ( filterSearch ) {
                 var groupTypes = '';
                 if ( cj('.crm-group-search-form-block #group_type\\[1\\]').prop('checked') ) {
@@ -188,7 +189,7 @@ function buildGroupSelector( filterSearch ) {
     });
 }
 
-function setSelectorClass( parentsOnly ) {
+function setSelectorClass( parentsOnly, showOrgInfo ) {
   cj('#crm-group-selector tr').each( function( ) {
     var className = cj(this).find('td:last-child').text();
     cj(this).addClass( className );
@@ -198,43 +199,64 @@ function setSelectorClass( parentsOnly ) {
 	    if ( cj(this).hasClass('crm-group-parent') ) {
 	      cj(this).find('td:first').prepend('{/literal}<span class="collapsed show-children" title="{ts}show child groups{/ts}"/></span>{literal}');
 				cj(this).find('span.show-children').click( function(){
-					showChildren( rowID );
+					showChildren( rowID, showOrgInfo );
 				});
 	    }
 		}
   });
-	
-	if (!parentsOnly) {
-		cj('#crm-group-selector tr').removeClass("hide-row");
+}
+
+function showChildren(  parent_id, showOrgInfo ) {
+	if ( cj("#row_" + parent_id).next().hasClass('parent_is_' + parent_id ) ) {
+		// Child rows for this parent have already been retrieved so just show them
+		cj('.parent_is_' + parent_id ).show() ;
+	} else {
+		var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/grouplist" h=0 q="snippet=4"}'{literal};
+		cj.ajax( {
+		  "dataType": 'json',
+		  "type": "POST",
+		  "url": sourceUrl,
+		  "data": {'parent_id': parent_id, 'showOrgInfo': showOrgInfo},
+		  "success": function(response){
+		  	var appendHTML = '';
+  			cj.each( response, function( i, val ) {
+			  	appendHTML += '<tr class="parent_is_' + parent_id + ' ' + val.class + '">';
+		    	appendHTML += '<td class="crm-group-name">' + val.group_name + "</td>";
+		    	appendHTML += "<td>" + val.group_id + "</td>";
+					if (val.group_description) {
+			    	appendHTML += "<td>" + val.group_description + "</td>";						
+					} else {
+			    	appendHTML += "<td>&nbsp;</td>";
+					}
+		    	appendHTML += "<td>" + val.group_type + "</td>";
+		    	appendHTML += "<td>" + val.visibility + "</td>";
+		    	appendHTML += "<td>" + val.links + "</td>";
+			    appendHTML += "</tr>";
+		   	});
+		    cj('#row_' + parent_id ).after( appendHTML );
+		  } 
+		} );
 	}
+		
+	cj("#row_" + parent_id).find('span.show-children').removeClass("collapsed");
+	cj("#row_" + parent_id).find('span.show-children').addClass("expanded");
+	cj("#row_" + parent_id).find('span.show-children').attr("title",{/literal}"{ts}hide child groups{/ts}"{literal});
+	
+	cj("#row_" + parent_id).find('span.show-children').click( function(){
+		hideChildren( parent_id, showOrgInfo )
+	});
+
 }
 
-function showChildren( parent ) {
-	var childClass = 'parent_' + parent;
-  cj('#crm-group-selector tr').each( function( ) {
-		if ( cj(this).hasClass(childClass) ) {
-			cj(this).show( );
-		}
-		cj("#row_" + parent).find('span.show-children').removeClass("collapsed");
-		cj("#row_" + parent).find('span.show-children').addClass("expanded");
-		cj("#row_" + parent).find('span.show-children').click( function(){
-			hideChildren( parent )
-		});
+function hideChildren( parent_id, showOrgInfo ) {
+ 	cj("#row_" + parent_id).find('span.show-children').removeClass("expanded");
+ 	cj("#row_" + parent_id).find('span.show-children').addClass("collapsed"); 
+	cj("#row_" + parent_id).find('span.show-children').attr("title", {/literal}"{ts}show child groups{/ts}"{literal});
+	cj("#row_" + parent_id).find('span.show-children').click( function(){
+		showChildren( parent_id, showOrgInfo )
 	});
+ 	cj('.parent_is_' + parent_id ).hide() ;
 }
 
-function hideChildren( parent ) {
-	var childClass = 'parent_' + parent;
-  cj('#crm-group-selector tr').each( function( ) {
-		if ( cj(this).hasClass(childClass) ) {
-			cj(this).hide( );
-		}
-		cj("#row_" + parent).find('span.show-children').removeClass("expanded");
-		cj("#row_" + parent).find('span.show-children').addClass("collapsed");
-		cj("#row_" + parent).find('span.show-children').click( function(){
-			showChildren( parent )
-		});
-	});
-}
 </script>
 {/literal}

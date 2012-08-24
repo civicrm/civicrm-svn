@@ -3512,6 +3512,15 @@ div#crm-toolTip
 
 /* alter display of child groups in Manage Groups selector */
 #crm-container .crm-group-child td.crm-group-name:before {
-  content: "^ ";
-  padding-left: 10px;
+  content: '';
+  height:16px;
+  width:16px;
+  background:transparent url("../i/icons/jquery-ui-52534D.png") no-repeat top right;
+  background-position: -82px 1px;
+  float:left;
+}
+
+#crm-container .crm-group-child td.crm-group-name {
+  padding-left: 15px;
+  white-space: nowrap;
 }

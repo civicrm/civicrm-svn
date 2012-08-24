@@ -38,43 +38,51 @@
 class CRM_Group_Page_AJAX {
   static
   function getGroupList() {
-    $sortMapper = array(
-      0 => 'groups.title', 1 => 'groups.id', 2 => '',
-      3 => 'groups.group_type', 4 => 'groups.visibility',
-    );
-
-    $sEcho     = CRM_Utils_Type::escape($_REQUEST['sEcho'], 'Integer');
-    $offset    = isset($_REQUEST['iDisplayStart']) ? CRM_Utils_Type::escape($_REQUEST['iDisplayStart'], 'Integer') : 0;
-    $rowCount  = isset($_REQUEST['iDisplayLength']) ? CRM_Utils_Type::escape($_REQUEST['iDisplayLength'], 'Integer') : 25;
-    $sort      = isset($_REQUEST['iSortCol_0']) ? CRM_Utils_Array::value(CRM_Utils_Type::escape($_REQUEST['iSortCol_0'], 'Integer'), $sortMapper) : NULL;
-    $sortOrder = isset($_REQUEST['sSortDir_0']) ? CRM_Utils_Type::escape($_REQUEST['sSortDir_0'], 'String') : 'asc';
-
     $params = $_POST;
 
-    if ($sort && $sortOrder) {
-      $params['sortBy'] = $sort . ' ' . $sortOrder;
+    if ( isset($params['parent_id']) ) {
+      // requesting child groups for a given parent
+      $params['page'] = 1; 
+      $params['rp']   = 25;
+      $groups = CRM_Contact_BAO_Group::getGroupListSelector($params);
+
+      echo json_encode($groups);
+      CRM_Utils_System::civiExit();      
+    } else {      
+      $sortMapper = array(
+        0 => 'groups.title', 1 => 'groups.id', 2 => '',
+        3 => 'groups.group_type', 4 => 'groups.visibility',
+      );
+
+      $sEcho     = CRM_Utils_Type::escape($_REQUEST['sEcho'], 'Integer');
+      $offset    = isset($_REQUEST['iDisplayStart']) ? CRM_Utils_Type::escape($_REQUEST['iDisplayStart'], 'Integer') : 0;
+      $rowCount  = isset($_REQUEST['iDisplayLength']) ? CRM_Utils_Type::escape($_REQUEST['iDisplayLength'], 'Integer') : 25;
+      $sort      = isset($_REQUEST['iSortCol_0']) ? CRM_Utils_Array::value(CRM_Utils_Type::escape($_REQUEST['iSortCol_0'], 'Integer'), $sortMapper) : NULL;
+      $sortOrder = isset($_REQUEST['sSortDir_0']) ? CRM_Utils_Type::escape($_REQUEST['sSortDir_0'], 'String') : 'asc';
+
+      if ($sort && $sortOrder) {
+        $params['sortBy'] = $sort . ' ' . $sortOrder;
+      }
+
+      $params['page'] = ($offset / $rowCount) + 1;
+      $params['rp'] = $rowCount;
+
+      // get group list
+      $groups = CRM_Contact_BAO_Group::getGroupListSelector($params);
+
+      $iFilteredTotal = $iTotal = $params['total'];
+      $selectorElements = array(
+        'group_name', 'group_id', 'group_description',
+        'group_type', 'visibility', 'org_info', 'links', 'class',
+      );
+
+      if (!CRM_Utils_Array::value('showOrgInfo', $params)) {
+        unset($selectorElements[5]);
+      }
+
+      echo CRM_Utils_JSON::encodeDataTableSelector($groups, $sEcho, $iTotal, $iFilteredTotal, $selectorElements);
+      CRM_Utils_System::civiExit();
     }
-
-    $params['page'] = ($offset / $rowCount) + 1;
-    $params['rp'] = $rowCount;
-
-    // get group list
-    $groups = CRM_Contact_BAO_Group::getGroupListSelector($params);
-
-//  crm_core_error::debug('$groups', $groups);
-//  exit();
-    $iFilteredTotal = $iTotal = $params['total'];
-    $selectorElements = array(
-      'group_name', 'group_id', 'group_description',
-      'group_type', 'visibility', 'org_info', 'links', 'class',
-    );
-
-    if (!CRM_Utils_Array::value('showOrgInfo', $params)) {
-      unset($selectorElements[5]);
-    }
-
-    echo CRM_Utils_JSON::encodeDataTableSelector($groups, $sEcho, $iTotal, $iFilteredTotal, $selectorElements);
-    CRM_Utils_System::civiExit();
   }
 }
 

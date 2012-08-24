@@ -658,7 +658,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
         $groupList[$id]['group_type'] = CRM_Utils_Array::value('group_type', $value);
         $groupList[$id]['visibility'] = $value['visibility'];
         $groupList[$id]['links'] = $value['action'];
-        $groupList[$id]['org_info'] = $value['org_info'];
+        $groupList[$id]['org_info'] = CRM_Utils_Array::value('org_info', $value);
         $groupList[$id]['class'] = $value['class'];
       }
       return $groupList;
@@ -735,7 +735,6 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
 
     $allTypes = CRM_Core_OptionGroup::values('group_type');
     $values = array();
-    $treePlus = '<img src=' . $config->resourceBase . 'i/TreePlus.gif" class="action-icon"/>';
 
     while ($object->fetch()) {
       $permission = CRM_Contact_BAO_Group::checkPermission($object->id, $object->title);
@@ -811,14 +810,9 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
           $values[$object->id]['class'] = "crm-group-parent";
         }
         
-        // If group is a child, add hidden child class
+        // If group is a child, add child class
         if (array_key_exists('parents', $values[$object->id])) {
-          $parents = explode(',', $values[$object->id]['parents']);
-          $childClass = "crm-group-child hide-row ";
-          foreach ($parents as $parentId){
-            $childClass .= "parent_" . $parentId . " ";            
-          }
-          $values[$object->id]['class'] = trim($childClass);
+          $values[$object->id]['class'] = "crm-group-child ";
         }
         
         if ($groupOrg) {
@@ -896,6 +890,13 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
     $parentsOnly = CRM_Utils_Array::value('parentsOnly', $params);
     if ($parentsOnly) {
       $clauses[] = 'groups.parents IS NULL';
+    }
+
+    // only show child groups of a specific parent group
+    $parent_id = CRM_Utils_Array::value('parent_id', $params);
+    if ($parent_id) {
+      $clauses[] = 'groups.id IN (SELECT child_group_id FROM civicrm_group_nesting WHERE parent_group_id = %5)';
+      $params[5] = array($parent_id, 'Integer');
     }
 
     /*
