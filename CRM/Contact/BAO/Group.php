@@ -55,8 +55,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
    * @access public
    * @static
    */
-  static
-  function retrieve(&$params, &$defaults) {
+  static function retrieve(&$params, &$defaults) {
     $group = new CRM_Contact_DAO_Group();
     $group->copyValues($params);
     if ($group->find(TRUE)) {
@@ -78,8 +77,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
    * @static
    *
    */
-  static
-  function discard($id) {
+  static function discard($id) {
     CRM_Utils_Hook::pre('delete', 'Group', $id, CRM_Core_DAO::$_nullArray);
 
     $transaction = new CRM_Core_Transaction();
@@ -147,8 +145,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
    * Returns an array of the contacts in the given group.
    *
    */
-  static
-  function getGroupContacts($id) {
+  static function getGroupContacts($id) {
     $params = array(array('group', 'IN', array($id => 1), 0, 0));
     list($contacts, $_) = CRM_Contact_BAO_Query::apiQuery($params, array('contact_id'));
     return $contacts;
@@ -163,8 +160,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
    * @return int count of members in the group with above status
    * @access public
    */
-  static
-  function memberCount($id, $status = 'Added', $countChildGroups = FALSE) {
+  static function memberCount($id, $status = 'Added', $countChildGroups = FALSE) {
     $groupContact = new CRM_Contact_DAO_GroupContact();
     $groupIds = array($id);
     if ($countChildGroups) {
@@ -209,8 +205,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
    * @access public
    * @static
    */
-  static
-  function &getMember($groupID, $useCache = TRUE) {
+  static function &getMember($groupID, $useCache = TRUE) {
     $params = array(array('group', 'IN', array($groupID => 1), 0, 0));
     $returnProperties = array('contact_id');
     list($contacts, $_) = CRM_Contact_BAO_Query::apiQuery($params, $returnProperties, NULL, NULL, 0, 0, $useCache);
@@ -235,8 +230,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
    *
    * @access public
    */
-  static
-  function getGroups($params = NULL, $returnProperties = NULL) {
+  static function getGroups($params = NULL, $returnProperties = NULL) {
     $dao = new CRM_Contact_DAO_Group();
     $dao->is_active = 1;
     if ($params) {
@@ -282,8 +276,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
    * @access public
    * @static
    */
-  static
-  function checkPermission($id, $title) {
+  static function checkPermission($id, $title) {
 
     $allGroups = CRM_Core_PseudoConstant::allGroup();
 
@@ -510,8 +503,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
    * @return Object             DAO object on sucess, null otherwise
    * @static
    */
-  static
-  function setIsActive($id, $isActive) {
+  static function setIsActive($id, $isActive) {
     return CRM_Core_DAO::setFieldValue('CRM_Contact_DAO_Group', $id, 'is_active', $isActive);
   }
 
@@ -524,8 +516,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
    * @return string $condition
    * @static
    */
-  static
-  function groupTypeCondition($groupType = NULL, $excludeHidden = TRUE) {
+  static function groupTypeCondition($groupType = NULL, $excludeHidden = TRUE) {
     $value = NULL;
     if ($groupType == 'Mailing') {
       $value = CRM_Core_DAO::VALUE_SEPARATOR . '2' . CRM_Core_DAO::VALUE_SEPARATOR;
@@ -565,8 +556,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
    * @access public
    * @static
    */
-  static
-  function createHiddenSmartGroup($params) {
+  static function createHiddenSmartGroup($params) {
     $ssId = CRM_Utils_Array::value('saved_search_id', $params);
 
     //add mapping record only for search builder saved search
@@ -766,7 +756,6 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
 
         $action = array_sum(array_keys($newLinks));
 
-
         // CRM-9936
         if (array_key_exists('is_reserved', $object)) {
           //if group is reserved and I don't have reserved permission, suppress delete/edit
@@ -819,9 +808,14 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
         
         // If group is a child, add child class
         if (array_key_exists('parents', $values[$object->id])) {
-          $values[$object->id]['class'] = "crm-group-child ";
+          $values[$object->id]['class'] = "crm-group-child";
         }
         
+        if (array_key_exists('children', $values[$object->id])
+        && array_key_exists('parents', $values[$object->id])) {
+          $values[$object->id]['class'] = "crm-group-child crm-group-parent";
+        }
+
         if ($groupOrg) {
           if ($object->org_id) {
             $contactUrl = CRM_Utils_System::url('civicrm/contact/view', "reset=1&cid={$object->org_id}");
@@ -981,7 +975,6 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
   }
 
   function pagerAtoZ($whereClause, $whereParams) {
-
     $query = "
         SELECT DISTINCT UPPER(LEFT(groups.title, 1)) as sort_name
         FROM  civicrm_group groups
