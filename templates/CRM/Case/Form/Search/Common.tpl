@@ -29,7 +29,7 @@
 <tr id='case_search_form'>
   <td class="crm-case-common-form-block-case_type" width="25%">
     <label>{ts}Case Type{/ts}</label><br />
-    <div class="listing-box" style="width: auto; height: 120px">
+    <div class="listing-box">
      {foreach from=$form.case_type_id item="case_type_id_val"}
       <div class="{cycle values="odd-row,even-row"}">
         {$case_type_id_val.html}
@@ -39,12 +39,20 @@
   </td>
 
   <td class="crm-case-common-form-block-case_status_id" width="25%">
-    {$form.case_status_id.label}<br />
-    {$form.case_status_id.html}<br /><br />
+    <label>{ts}Status{/ts}</label><br />
+    <div class="listing-box">
+     {foreach from=$form.case_status_id item="case_status_id_val"}
+      <div class="{cycle values="odd-row,even-row"}">
+        {$case_status_id_val.html}
+      </div>
+    {/foreach}
+    </div>
     {if $accessAllCases}
-      {$form.case_owner.html} <span class="crm-clear-link">(<a href="javascript:unselectCaseRadio('case_owner', '{$form.formName}')">{ts}clear{/ts}</a>)</span><br />
+      <br />
+      {$form.case_owner.html} <span class="crm-clear-link">(<a href="javascript:unselectCaseRadio('case_owner', '{$form.formName}')">{ts}clear{/ts}</a>)</span>
     {/if}
     {if $form.case_deleted}
+      <br />
       {$form.case_deleted.html}
       {$form.case_deleted.label}
     {/if}

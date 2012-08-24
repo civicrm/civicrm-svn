@@ -242,32 +242,28 @@ class CRM_Case_BAO_Query {
   static
   function whereClauseSingle(&$values, &$query) {
     list($name, $op, $value, $grouping, $wildcard) = $values;
+    $val = $names = array();
     switch ($name) {
       case 'case_status':
       case 'case_status_id':
         $statuses = CRM_Case_PseudoConstant::caseStatus();
-        $names = array();
+        // Standardize input from checkboxes or single value
         if (is_array($value)) {
-          foreach ($value as $k => $v) {
-            if ($v) {
-              $val[$k] = $k;
-              $names[] = $caseStatus[$k];
-            }
+          $value = array_keys($value, 1);
+        }
+        foreach ((array) $value as $k) {
+          if ($k && isset($statuses[$k])) {
+            $val[$k] = $k;
+            $names[] = $statuses[$k];
+          }
+          elseif ($k && ($v = CRM_Utils_Array::key($k, $statuses))) {
+            $val[$v] = $v;
+            $names[] = $k;
           }
         }
-        elseif (is_numeric($value)) {
-          $val = $value;
-          $names[] = $value;
-        }
-        elseif ($caseStatusId = CRM_Utils_Array::key($value, $statuses)) {
-          $val = $caseStatusId;
-          $names[] = $caseStatusId[$caseStatusId];
-        }
-
         if ($val) {
-          $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause("civicrm_case.status_id", $op, $val, 'Int');
-          $value = $statuses[$val];
-          $query->_qill[$grouping][] = ts('Case Status %2 %1', array(1 => $value, 2 => $op));
+          $query->_where[$grouping][] = "civicrm_case.status_id IN (" . implode(',', $val) . ")";
+          $query->_qill[$grouping][] = ts('Case Status is %1', array(1 => implode(ts(' or '), $names)));
           $query->_tables['civicrm_case'] = $query->_whereTables['civicrm_case'] = 1;
         }
         return;
@@ -275,8 +271,6 @@ class CRM_Case_BAO_Query {
       case 'case_type_id':
         $caseTypes = CRM_Case_PseudoConstant::caseType('label', FALSE);
 
-        $names = array();
-        $val = array();
         if (is_array($value)) {
           foreach ($value as $k => $v) {
             if ($v) {
@@ -486,8 +480,6 @@ class CRM_Case_BAO_Query {
       case 'case_tags':
         $tags = CRM_Core_PseudoConstant::tag();
 
-        $names = array();
-        $val = array();
         if (is_array($value)) {
           foreach ($value as $k => $v) {
             if ($v) {
@@ -675,15 +667,14 @@ case_relation_type.id = case_relationship.relationship_type_id )";
     $form->assign('notConfigured', !$configured['configured']);
 
     $caseTypes = CRM_Case_PseudoConstant::caseType('label', FALSE);
-    foreach ($caseTypes as $id => $Name) {
-      $form->addElement('checkbox', "case_type_id[$id]", NULL, $Name);
+    foreach ($caseTypes as $id => $name) {
+      $form->addElement('checkbox', "case_type_id[$id]", NULL, $name);
     }
 
     $statuses = CRM_Case_PseudoConstant::caseStatus('label', FALSE);
-    $form->add('select', 'case_status_id', ts('Case Status'),
-      array(
-        '' => ts('- any status -')) + $statuses
-    );
+    foreach ($statuses as $id => $name) {
+      $form->addElement('checkbox', "case_status_id[$id]", NULL, $name);
+    }
 
     $form->assign('validCiviCase', TRUE);
 
