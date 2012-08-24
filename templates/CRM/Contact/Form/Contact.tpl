@@ -244,6 +244,7 @@ cj("select#contact_sub_type").crmasmSelect({
 
 </script>
 {/literal}
+{include file="CRM/Contact/Form/Edit/Lock.tpl"}
 
 {* include common additional blocks tpl *}
 {include file="CRM/common/additionalBlocks.tpl"}

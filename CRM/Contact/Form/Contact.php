@@ -192,7 +192,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
       if ($this->_contactId) {
         $defaults          = array();
         $params            = array('id' => $this->_contactId);
-        $returnProperities = array('id', 'contact_type', 'contact_sub_type');
+        $returnProperities = array('id', 'contact_type', 'contact_sub_type', 'modified_date');
         CRM_Core_DAO::commonRetrieve('CRM_Contact_DAO_Contact', $params, $defaults, $returnProperities);
 
         if (!CRM_Utils_Array::value('id', $defaults)) {
@@ -526,6 +526,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
     }
 
     $this->addFormRule(array('CRM_Contact_Form_Edit_' . $this->_contactType, 'formRule'), $this->_contactId);
+    $this->addFormRule(array('CRM_Contact_Form_Edit_Lock', 'formRule'), $this->_contactId);
 
     if (array_key_exists('Address', $this->_editOptions)) {
       $this->addFormRule(array('CRM_Contact_Form_Edit_Address', 'formRule'));
@@ -738,6 +739,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
     }
 
     // build location blocks.
+    CRM_Contact_Form_Edit_Lock::buildQuickForm($this);
     CRM_Contact_Form_Location::buildQuickForm($this);
 
     // add attachment
