@@ -129,6 +129,8 @@ class CRM_Contact_Form_Inline_Address extends CRM_Core_Form {
    * @access public
    */
   public function buildQuickForm() {
+    CRM_Contact_Form_Inline_Lock::buildQuickForm($this, $this->_contactId);
+
     CRM_Contact_Form_Edit_Address::buildQuickForm( $this, $this->_locBlockNo, TRUE, TRUE );
 
     $buttons = array(
@@ -230,6 +232,7 @@ class CRM_Contact_Form_Inline_Address extends CRM_Core_Form {
       'status'    => 'save',
       'addressId' => $address[0]->id
     );
+    $response = array_merge($response, CRM_Contact_Form_Inline_Lock::getResponse($this->_contactId));
     echo json_encode($response);
     CRM_Utils_System::civiExit();
   }

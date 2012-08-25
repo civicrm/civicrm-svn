@@ -73,6 +73,8 @@ class CRM_Contact_Form_Inline_Website extends CRM_Core_Form {
    * @access public
    */
   public function buildQuickForm() {
+    CRM_Contact_Form_Inline_Lock::buildQuickForm($this, $this->_contactId);
+
     $totalBlocks = $this->_blockCount;
     $actualBlockCount = 1;
     if (count($this->_websites) > 1) {
@@ -155,6 +157,7 @@ class CRM_Contact_Form_Inline_Website extends CRM_Core_Form {
     );
 
     $response = array('status' => 'save');
+    $response = array_merge($response, CRM_Contact_Form_Inline_Lock::getResponse($this->_contactId));
     echo json_encode($response);
     CRM_Utils_System::civiExit();
   }

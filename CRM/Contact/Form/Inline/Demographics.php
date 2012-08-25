@@ -59,6 +59,7 @@ class CRM_Contact_Form_Inline_Demographics extends CRM_Core_Form {
    * @access public
    */
   public function buildQuickForm() {
+    CRM_Contact_Form_Inline_Lock::buildQuickForm($this, $this->_contactId);
     CRM_Contact_Form_Edit_Demographics::buildQuickForm( $this );
 
     $buttons = array(
@@ -123,6 +124,7 @@ class CRM_Contact_Form_Inline_Demographics extends CRM_Core_Form {
     CRM_Contact_BAO_Contact::create( $params );
 
     $response = array('status' => 'save');
+    $response = array_merge($response, CRM_Contact_Form_Inline_Lock::getResponse($this->_contactId));
     echo json_encode($response);
     CRM_Utils_System::civiExit();
   }
