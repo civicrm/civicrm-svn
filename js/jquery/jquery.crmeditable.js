@@ -405,6 +405,53 @@
     return false; 
   };
 
+  /**
+   * Configure optimistic locking mechanism for inplace editing
+   *
+   * options.oplock_ts: string, initial value of contact's "modified_date"; mutable
+   * options.ignoreLabel: string, text for a button
+   * options.reloadLabel: string, text for a button
+   */
+  $.fn.crmFormContactLock = function(options) {
+    // BEFORE SAVE: Replace input[oplock_ts] with options.oplock_ts
+    this.on('crmFormBeforeSave', function(event, formData) {
+      $.each(formData, function(key, formItem) {
+        if (formItem.name == 'oplock_ts') {
+          formItem.value = options.oplock_ts;
+        }
+      });
+    });
+    // AFTER SUCCESS: Update options.oplock_ts
+    this.on('crmFormSuccess', function(event, response) {
+      options.oplock_ts = response.oplock_ts;
+    });
+    // AFTER ERROR: Render any "Ignore" and "Restart" buttons
+    return this.on('crmFormError', function(event, obj, status) {
+      var o = $(event.target);
+      var data = o.data('edit-params');
+      var errorTag = o.find('.update_oplock_ts');
+      if (errorTag.length > 0) {
+        $('<button>')
+          .text(options.ignoreLabel)
+          .click(function() {
+            options.oplock_ts = errorTag.attr('data:update_oplock_ts');
+            errorTag.parent().hide();
+            return false;
+          })
+          .appendTo(errorTag)
+          ;
+        $('<button>')
+          .text(options.reloadLabel)
+          .click(function() {
+            window.location.reload();
+            return false;
+          })
+          .appendTo(errorTag)
+          ;
+      }
+    });
+  };
+
   $('document').ready(function() {
     var clicking;
     $('.crm-inline-edit-container').on('mousedown', '.crm-inline-edit:not(.form)', function(button) {

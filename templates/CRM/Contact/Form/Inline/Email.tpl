@@ -63,6 +63,7 @@
         </tr>
     {/section}
 </table>
+{$form.oplock_ts.html}
 
 {literal}
 <script type="text/javascript">
