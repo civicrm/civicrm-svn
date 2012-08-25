@@ -88,6 +88,7 @@ cj( function() {
         buildGroupSelector( true );
     });
 });
+
 function buildGroupSelector( filterSearch ) {
     if ( filterSearch ) {
         crmGroupSelector.fnDestroy();
@@ -199,17 +200,44 @@ function setSelectorClass( parentsOnly, showOrgInfo ) {
 		if (parentsOnly) {
 	    if ( cj(this).hasClass('crm-group-parent') ) {
 	      cj(this).find('td:first').prepend('{/literal}<span class="collapsed show-children" title="{ts}show child groups{/ts}"/></span>{literal}');
-				cj(this).find('span.show-children').click( function(){
-					showChildren( rowID, showOrgInfo );
-				});
 	    }
 		}
   });
 }
 
-function showChildren(  parent_id, showOrgInfo ) {
-	if ( cj("#row_" + parent_id).next().hasClass('parent_is_' + parent_id ) ) {
-		// Child rows for this parent have already been retrieved so just show them
+// show hide children
+cj('#crm-group-selector').on( 'click', 'span.show-children', function(){
+  var showOrgInfo = {/literal}"{$showOrgInfo}"{literal};
+  var rowID = cj(this).parents('tr').prop('id');
+  var parentRow = rowID.split('_');
+  var parent_id = parentRow[1];
+  var group_id = '';
+  if ( parentRow[2]) {
+    group_id = parentRow[2];
+  }
+  if ( cj(this).hasClass('collapsed') ) {
+    cj(this).removeClass("collapsed").addClass("expanded").attr("title",{/literal}"{ts}hide child groups{/ts}"{literal});
+    showChildren( parent_id, showOrgInfo, group_id );
+  }
+  else {
+    cj(this).removeClass("expanded").addClass("collapsed").attr("title",{/literal}"{ts}show child groups{/ts}"{literal});
+    //console.log( 'groupd_id: ' + group_id );
+    //console.log( 'parent_id: ' + parent_id );
+		cj('.parent_is_' + parent_id ).hide() ;
+  }
+});
+
+function showChildren( parent_id, showOrgInfo, group_id ) {
+  var rowID = '#row_' + parent_id;
+  if ( group_id ) {
+    rowID = '#row_' + parent_id + '_' + group_id;
+  }
+  
+  //console.log( 'groupd_id: ' + group_id );
+  //console.log( 'parent_id: ' + parent_id );
+
+  if ( cj(rowID).next().hasClass('parent_is_' + parent_id) ) {
+    // child rows for this parent have already been retrieved so just show them
 		cj('.parent_is_' + parent_id ).show() ;
 	} else {
 		var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/grouplist" h=0 q="snippet=4"}'{literal};
@@ -221,9 +249,15 @@ function showChildren(  parent_id, showOrgInfo ) {
 		  "success": function(response){
 		  	var appendHTML = '';
   			cj.each( response, function( i, val ) {
-			  	appendHTML += '<tr class="crm-row-child parent_is_' + parent_id + ' ' + val.class + '">';
-		    	appendHTML += '<td class="crm-group-name">' + val.group_name + "</td>";
-		    	appendHTML += "<td>" + val.group_id + "</td>";
+			  	appendHTML += '<tr id="row_'+ val.group_id +'_'+parent_id+'" class="parent_is_' + parent_id + ' crm-row-child ' + val.class + '">';
+          if ( val.is_parent ) {
+            appendHTML += '<td class="crm-group-name">' + val.group_name + 
+              '{/literal}<span class="collapsed show-children" title="{ts}show child groups{/ts}"/></span>{literal}</td>';
+          }
+          else {
+            appendHTML += '<td class="crm-group-name">' + val.group_name + '</td>';
+          } 
+          appendHTML += "<td>" + val.group_id + "</td>";
 					if (val.group_description) {
 			    	appendHTML += "<td>" + val.group_description + "</td>";						
 					} else {
@@ -234,28 +268,10 @@ function showChildren(  parent_id, showOrgInfo ) {
 		    	appendHTML += "<td>" + val.links + "</td>";
 			    appendHTML += "</tr>";
 		   	});
-		    cj('#row_' + parent_id ).after( appendHTML );
+		    cj( rowID ).after( appendHTML );
 		  } 
 		} );
 	}
-		
-  var parentRow = cj("#row_" + parent_id).find('span.show-children');
-  parentRow.removeClass("collapsed").addClass("expanded").attr("title",{/literal}"{ts}hide child groups{/ts}"{literal});
-	
-	parentRow.click( function(){
-		hideChildren( parent_id, showOrgInfo )
-	});
-
-}
-
-function hideChildren( parent_id, showOrgInfo ) {
-  var parentRow = cj("#row_" + parent_id).find('span.show-children');
- 	parentRow.removeClass("expanded").addClass("collapsed").attr("title",{/literal}"{ts}show child groups{/ts}"{literal});
-	parentRow.click( function(){
-		showChildren( parent_id, showOrgInfo )
-  });
-
- 	cj('.parent_is_' + parent_id ).hide() ;
 }
 
 </script>
