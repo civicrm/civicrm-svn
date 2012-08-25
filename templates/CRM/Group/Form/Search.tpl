@@ -221,9 +221,7 @@ cj('#crm-group-selector').on( 'click', 'span.show-children', function(){
   }
   else {
     cj(this).removeClass("expanded").addClass("collapsed").attr("title",{/literal}"{ts}show child groups{/ts}"{literal});
-    //console.log( 'groupd_id: ' + group_id );
-    //console.log( 'parent_id: ' + parent_id );
-		cj('.parent_is_' + parent_id ).hide() ;
+    cj('.parent_is_' + parent_id ).hide();
   }
 });
 
@@ -232,46 +230,42 @@ function showChildren( parent_id, showOrgInfo, group_id ) {
   if ( group_id ) {
     rowID = '#row_' + parent_id + '_' + group_id;
   }
-  
-  //console.log( 'groupd_id: ' + group_id );
-  //console.log( 'parent_id: ' + parent_id );
-
-  if ( cj(rowID).next().hasClass('parent_is_' + parent_id) ) {
+  if ( cj(rowID).next().hasClass('parent_is_' + parent_id ) ) {
     // child rows for this parent have already been retrieved so just show them
-		cj('.parent_is_' + parent_id ).show() ;
-	} else {
-		var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/grouplist" h=0 q="snippet=4"}'{literal};
-		cj.ajax( {
-		  "dataType": 'json',
-		  "type": "POST",
-		  "url": sourceUrl,
-		  "data": {'parent_id': parent_id, 'showOrgInfo': showOrgInfo},
-		  "success": function(response){
-		  	var appendHTML = '';
-  			cj.each( response, function( i, val ) {
-			  	appendHTML += '<tr id="row_'+ val.group_id +'_'+parent_id+'" class="parent_is_' + parent_id + ' crm-row-child ' + val.class + '">';
-          if ( val.is_parent ) {
-            appendHTML += '<td class="crm-group-name">' + val.group_name + 
-              '{/literal}<span class="collapsed show-children" title="{ts}show child groups{/ts}"/></span>{literal}</td>';
-          }
-          else {
-            appendHTML += '<td class="crm-group-name">' + val.group_name + '</td>';
-          } 
-          appendHTML += "<td>" + val.group_id + "</td>";
-					if (val.group_description) {
-			    	appendHTML += "<td>" + val.group_description + "</td>";						
-					} else {
-			    	appendHTML += "<td>&nbsp;</td>";
-					}
-		    	appendHTML += "<td>" + val.group_type + "</td>";
-		    	appendHTML += "<td>" + val.visibility + "</td>";
-		    	appendHTML += "<td>" + val.links + "</td>";
-			    appendHTML += "</tr>";
-		   	});
-		    cj( rowID ).after( appendHTML );
-		  } 
-		} );
-	}
+    cj('.parent_is_' + parent_id ).show() ;
+  } else {
+    var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/grouplist" h=0 q="snippet=4"}'{literal};
+    cj.ajax( {
+        "dataType": 'json',
+        "type": "POST",
+        "url": sourceUrl,
+        "data": {'parent_id': parent_id, 'showOrgInfo': showOrgInfo},
+        "success": function(response){
+          var appendHTML = '';
+          cj.each( response, function( i, val ) {
+            appendHTML += '<tr id="row_'+ val.group_id +'_'+parent_id+'" class="parent_is_' + parent_id + ' crm-row-child ' + val.class + '">';
+            if ( val.is_parent ) {
+              appendHTML += '<td class="crm-group-name">' + val.group_name + 
+                '{/literal}<span class="collapsed show-children" title="{ts}show child groups{/ts}"/></span>{literal}</td>';
+            }
+            else {
+              appendHTML += '<td class="crm-group-name">' + val.group_name + '</td>';
+            } 
+            appendHTML += "<td>" + val.group_id + "</td>";
+            if (val.group_description) {
+              appendHTML += "<td>" + val.group_description + "</td>";						
+            } else {
+              appendHTML += "<td>&nbsp;</td>";
+            }
+            appendHTML += "<td>" + val.group_type + "</td>";
+            appendHTML += "<td>" + val.visibility + "</td>";
+            appendHTML += "<td>" + val.links + "</td>";
+            appendHTML += "</tr>";
+          });
+          cj( rowID ).after( appendHTML );
+        } 
+    } );
+  }
 }
 
 </script>
