@@ -24,6 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* This file provides the template for inline editing of emails *}
+{$form.oplock_ts.html}
 <table class="crm-inline-edit-form">
     <tr>
       <td colspan="5">
@@ -63,7 +64,6 @@
         </tr>
     {/section}
 </table>
-{$form.oplock_ts.html}
 
 {literal}
 <script type="text/javascript">

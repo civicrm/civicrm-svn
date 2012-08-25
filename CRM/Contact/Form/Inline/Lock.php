@@ -49,9 +49,10 @@ class CRM_Contact_Form_Inline_Lock {
    * @access public
    * @return void
    */
-  public function buildQuickForm(&$form) {
+  public function buildQuickForm(&$form, $contactID) {
     // oplock_ts will start out with blank value -- filled in via JS
     $form->addElement('hidden', 'oplock_ts', '', array('id' => 'oplock_ts'));
+    $form->addFormRule(array('CRM_Contact_Form_Inline_Lock', 'formRule'), $contactID);
   }
 
   /**

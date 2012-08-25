@@ -74,7 +74,8 @@ class CRM_Contact_Form_Inline_Email extends CRM_Core_Form {
    * @access public
    */
   public function buildQuickForm() {
-    CRM_Contact_Form_Inline_Lock::buildQuickForm($this);
+    CRM_Contact_Form_Inline_Lock::buildQuickForm($this, $this->_contactId);
+
     $totalBlocks = $this->_blockCount;
     $actualBlockCount = 1;
     if (count($this->_emails) > 1) {
@@ -112,7 +113,6 @@ class CRM_Contact_Form_Inline_Email extends CRM_Core_Form {
 
     $this->addButtons($buttons);
 
-    $this->addFormRule(array('CRM_Contact_Form_Inline_Lock', 'formRule'), $this->_contactId);
     $this->addFormRule( array( 'CRM_Contact_Form_Inline_Email', 'formRule' ) );
   }
 
