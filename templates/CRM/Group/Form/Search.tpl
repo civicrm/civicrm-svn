@@ -27,54 +27,54 @@
 
 <h3>{ts}Find Groups{/ts}</h3>
 <table class="form-layout">
-    <tr>
-        <td>
-            {$form.title.label}<br />
-            {$form.title.html}<br />
-            <span class="description font-italic">
-                {ts}Complete OR partial group name.{/ts}
-            </span>
-        </td>
-        <td>
-            {$form.group_type.label}<br />
-            {$form.group_type.html}<br />
-            <span class="description font-italic">
-                {ts}Filter search by group type(s).{/ts}
-            </span>
-        </td>
-        <td>
-            {$form.visibility.label}<br />
-            {$form.visibility.html}<br />
-            <span class="description font-italic">
-                {ts}Filter search by visibility.{/ts}
-            </span>
-        </td>
-	    <td>
-            {$form.group_status.label}<br />
-            {$form.group_status.html}
-	    </td>
-    </tr>
-    <tr>
-        <td>{$form.buttons.html}</td><td colspan="2">
-    </tr>
+  <tr>
+    <td>
+      {$form.title.label}<br />
+      {$form.title.html}<br />
+      <span class="description font-italic">
+          {ts}Complete OR partial group name.{/ts}
+      </span>
+    </td>
+    <td>
+      {$form.group_type.label}<br />
+      {$form.group_type.html}<br />
+      <span class="description font-italic">
+          {ts}Filter search by group type(s).{/ts}
+      </span>
+    </td>
+    <td>
+      {$form.visibility.label}<br />
+      {$form.visibility.html}<br />
+      <span class="description font-italic">
+          {ts}Filter search by visibility.{/ts}
+      </span>
+    </td>
+    <td>
+      {$form.group_status.label}<br />
+      {$form.group_status.html}
+    </td>
+  </tr>
+  <tr>
+     <td>{$form.buttons.html}</td><td colspan="2">
+  </tr>
 </table>
 </div>
 <br/>
 <table id="crm-group-selector">
-    <thead>
-        <tr>
-            <th class='crm-group-name'>{ts}Name{/ts}</th>
-            <th class='crm-group-group_id'>{ts}ID{/ts}</th>
-            <th class='crm-group-description'>{ts}Description{/ts}</th>
-            <th class='crm-group-group_type'>{ts}Group Type{/ts}</th>
-            <th class='crm-group-visibility'>{ts}Visibility{/ts}</th>
-            {if $showOrgInfo}
-            <th class='crm-group-org_info'>{ts}Organization{/ts}</th>
-            {/if}
-            <th class='crm-group-group_links nosort'>&nbsp;</th>
-            <th class='hiddenElement'>&nbsp;</th>
-        </tr>
-    </thead>
+  <thead>
+    <tr>
+      <th class='crm-group-name'>{ts}Name{/ts}</th>
+      <th class='crm-group-group_id'>{ts}ID{/ts}</th>
+      <th class='crm-group-description'>{ts}Description{/ts}</th>
+      <th class='crm-group-group_type'>{ts}Group Type{/ts}</th>
+      <th class='crm-group-visibility'>{ts}Visibility{/ts}</th>
+      {if $showOrgInfo}
+      <th class='crm-group-org_info'>{ts}Organization{/ts}</th>
+      {/if}
+      <th class='crm-group-group_links nosort'>&nbsp;</th>
+      <th class='hiddenElement'>&nbsp;</th>
+    </tr>
+  </thead>
 </table>
 
 {* handle enable/disable actions*}
@@ -83,10 +83,10 @@
 {literal}
 <script type="text/javascript">
 cj( function() {
-    buildGroupSelector( false );
-    cj('#_qf_Search_refresh').click( function() {
-        buildGroupSelector( true );
-    });
+  buildGroupSelector( false );
+  cj('#_qf_Search_refresh').click( function() {
+    buildGroupSelector( true );
+  });
 });
 
 function buildGroupSelector( filterSearch ) {
