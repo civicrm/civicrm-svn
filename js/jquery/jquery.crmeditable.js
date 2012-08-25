@@ -341,6 +341,7 @@
           container.removeClass('form');
           return false;
         });
+        o.trigger('crmFormLoad');
       });
     }
   };
@@ -350,6 +351,7 @@
     var data = o.data('edit-params');
     data.snippet = 5;
     data.reset = 1;
+    o.trigger('crmFormBeforeSave', [formData]);
     var queryString = $.param(formData) + '&' + $.param(data); 
     var postUrl = $.crmURL('civicrm/ajax/inline'); 
     $.ajax({
@@ -358,6 +360,7 @@
       data: queryString,
       dataType: "json",
       success: function( response ) {
+        o.trigger('crmFormSuccess', [response]);
         if (status = response.status) {
           var data = o.data('edit-params');
           var dependent = o.data('dependent-fields') || [];
@@ -395,6 +398,7 @@
       error: function (obj, status) {
         $('.crm-container-snippet', o).replaceWith(obj.responseText);
         $('form', o).ajaxForm( {beforeSubmit: requestHandler} );
+        o.trigger('crmFormError', [obj, status]);
       }
     });
     // disable ajaxForm submit
