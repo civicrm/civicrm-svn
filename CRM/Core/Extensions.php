@@ -362,7 +362,14 @@ class CRM_Core_Extensions {
       $ext->setInstalled();
       $ext->setId((integer)$dao->id);
       if ($fullInfo) {
-        $ext->readXMLInfo();
+        if ($ext->hasXMLInfo()) {
+          $ext->readXMLInfo();
+        } else {
+          $ext->setMissing();
+          CRM_Core_Session::setStatus(ts('The extension (%1) is listed as installed, but the info.xml is missing', array(
+            1 => $dao->full_name,
+          )). '<br/>');
+        }
       }
       $result[(integer)$dao->id] = $ext;
     }

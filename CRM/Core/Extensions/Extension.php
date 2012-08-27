@@ -36,6 +36,7 @@
 class CRM_Core_Extensions_Extension {
 
   CONST STATUS_INSTALLED = 'installed';
+  CONST STATUS_MISSING = 'missing';
   CONST STATUS_LOCAL = 'local';
   CONST STATUS_REMOTE = 'remote';
 
@@ -87,6 +88,10 @@ class CRM_Core_Extensions_Extension {
     $this->setStatus(self::STATUS_INSTALLED);
   }
 
+  public function setMissing() {
+    $this->setStatus(self::STATUS_MISSING);
+  }
+
   public function setLocal() {
     $this->setStatus(self::STATUS_LOCAL);
   }
@@ -97,6 +102,7 @@ class CRM_Core_Extensions_Extension {
 
   public function setStatus($status) {
     $labels = array(self::STATUS_INSTALLED => ts('Installed'),
+      self::STATUS_MISSING => ts('Missing'),
       self::STATUS_LOCAL => ts('Local only'),
       self::STATUS_REMOTE => ts('Available'),
     );
@@ -123,6 +129,15 @@ class CRM_Core_Extensions_Extension {
       }
     }
     return $arr;
+  }
+
+  /**
+   * Determine whether the XML info file exists
+   *
+   * @return  bool
+   */  
+  public function hasXMLInfo() {
+    return file_exists($this->path . 'info.xml');
   }
 
   public function readXMLInfo($xml = FALSE) {
@@ -532,4 +547,5 @@ class CRM_Core_Extensions_Extension {
       return $this->id;
     }
   }
+
 }
