@@ -274,8 +274,8 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
 
     $config = CRM_Core_Config::singleton();
 
-    $this->buildCustom($this->_values['custom_pre_id'], 'customPre', TRUE);
-    $this->buildCustom($this->_values['custom_post_id'], 'customPost', TRUE);
+    //$this->buildCustom($this->_values['custom_pre_id'], 'customPre', TRUE);
+    //$this->buildCustom($this->_values['custom_post_id'], 'customPost', TRUE);
 
     if ($this->_priceSetId && !CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_priceSetId, 'is_quick_config')) {
 
@@ -341,6 +341,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
     }
     if (!empty($formattedValues) ) {
       $this->assign('participantProfile', $formattedValues[1]); 
+      $this->set('participantProfile', $formattedValues[1]);
       if ($count > 2) {
         unset($formattedValues[1]);
         $this->assign('addParticipantProfile', $formattedValues);
