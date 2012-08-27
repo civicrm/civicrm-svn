@@ -245,8 +245,7 @@ function showChildren( parent_id, showOrgInfo, group_id ) {
           cj.each( response, function( i, val ) {
             appendHTML += '<tr id="row_'+ val.group_id +'_'+parent_id+'" class="parent_is_' + parent_id + ' crm-row-child ' + val.class + '">';
             if ( val.is_parent ) {
-              appendHTML += '<td class="crm-group-name">' + val.group_name + 
-                '{/literal}<span class="collapsed show-children" title="{ts}show child groups{/ts}"/></span>{literal}</td>';
+              appendHTML += '<td class="crm-group-name">' + '{/literal}<span class="collapsed show-children" title="{ts}show child groups{/ts}"/></span>{literal}' + val.group_name + '</td>';
             }
             else {
               appendHTML += '<td class="crm-group-name">' + val.group_name + '</td>';
