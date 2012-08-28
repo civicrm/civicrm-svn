@@ -890,9 +890,6 @@ class CRM_Profile_Form extends CRM_Core_Form {
         }
       }
     }
-    if ($this->_mode == self::MODE_REGISTER) {
-      CRM_Core_BAO_Address::setOverwrite(FALSE);
-    }
 
     $transaction = new CRM_Core_Transaction();
 

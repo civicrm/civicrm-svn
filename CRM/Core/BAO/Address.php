@@ -41,12 +41,6 @@
 class CRM_Core_BAO_Address extends CRM_Core_DAO_Address {
 
   /**
-   * Should we overwrite existing address, total hack for now
-   * Please do not use this hack in other places, its totally gross
-   */
-  static $_overwrite = TRUE;
-
-  /**
    * takes an associative array and creates a address
    *
    * @param array  $params (reference ) an assoc array of name/value pairs
@@ -588,15 +582,6 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address {
 
     $this->display = CRM_Utils_Address::format($fields, NULL, $microformat);
     $this->display_text = CRM_Utils_Address::format($fields);
-  }
-
-  /**
-   *
-   *
-   *
-   */
-  static  function setOverwrite($overwrite) {
-    self::$_overwrite = $overwrite;
   }
 
   /**
