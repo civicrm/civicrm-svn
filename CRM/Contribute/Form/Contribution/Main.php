@@ -208,7 +208,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
           }
           // ignore component fields
         }
-        elseif (array_key_exists($name, $contribFields) || (substr($name, 0, 11) == 'membership_')) {
+        elseif (array_key_exists($name, $contribFields) || (substr($name, 0, 11) == 'membership_') || (substr($name, 0, 13) == 'contribution_')) {
           continue;
         }
         $fields[$name] = 1;
@@ -269,9 +269,9 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     //         // hack to simplify credit card entry for testing
     //         $this->_defaults['credit_card_type']     = 'Visa';
     //         $this->_defaults['amount']               = 168;
-    //         $this->_defaults['credit_card_number']   = '4807731747657838';
+    //         $this->_defaults['credit_card_number']   = '4111111111111111';
     //         $this->_defaults['cvv2']                 = '000';
-    //         $this->_defaults['credit_card_exp_date'] = array( 'Y' => '2012', 'M' => '05' );
+    //         $this->_defaults['credit_card_exp_date'] = array('Y' => '2014', 'M' => '05');
 
     //         // hack to simplify direct debit entry for testing
     //         $this->_defaults['account_holder'] = 'Max Müller';

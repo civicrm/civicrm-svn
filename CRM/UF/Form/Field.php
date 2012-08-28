@@ -419,6 +419,10 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
         unset($contribFields['is_test']);
         unset($contribFields['is_pay_later']);
         unset($contribFields['contribution_id']);
+        $contribFields['contribution_note'] = array(
+          'name' => 'contribution_note',
+          'title' => ts('Contribution Note'),
+        );
         if ($this->_gid && CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', $this->_gid, 'name') == 'contribution_batch_entry') {
           $fields['Contribution'] = &array_merge($contribFields, $this->_contriBatchEntryFields);
         }

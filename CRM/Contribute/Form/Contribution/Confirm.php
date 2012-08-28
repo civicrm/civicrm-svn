@@ -1353,6 +1353,18 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         CRM_Core_BAO_CustomValueTable::store($params['custom'], 'civicrm_contribution', $contribution->id);
       }
     }
+    // Save note
+    if ($contribution && !empty($params['contribution_note'])) {
+      $noteParams = array(
+        'entity_table' => 'civicrm_contribution',
+        'note' => $params['contribution_note'],
+        'entity_id' => $contribution->id,
+        'contact_id' => $contribution->contact_id,
+        'modified_date' => date('Ymd'),
+      );
+
+      CRM_Core_BAO_Note::add($noteParams, array());
+    }
 
 
     if (isset($params['related_contact'])) {

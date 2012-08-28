@@ -1798,9 +1798,9 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
       else {
         $form->addElement('select', $name . '-website_type_id', NULL, CRM_Core_PseudoConstant::websiteType());
       }
-      // added because note appeared as a standard text input
     }
-    elseif ($fieldName == 'note') {
+    // Note should be rendered as textarea
+    elseif (substr($fieldName, -4) == 'note') {
       $form->add('textarea', $name, $title, $attributes, $required);
     }
     elseif (substr($fieldName, 0, 6) === 'custom') {
