@@ -792,11 +792,6 @@ class CRM_Utils_System {
   }
 
   static function checkURL($url, $addCookie = FALSE) {
-    $config = CRM_Core_Config::singleton();
-    if ($config->userFramework == 'Standalone') {
-      session_write_close();
-    }
-
     // make a GET request to $url
     $ch = curl_init($url);
     if ($addCookie) {
