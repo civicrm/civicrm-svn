@@ -146,75 +146,7 @@
         </div>
     {/if}
 
-    {*display Additional Participant Profile Information*}
-    {if $participantProfile}
-            <div class="crm-group participant_info-group">
-	    	 <div class="header-dark">{ts 1=$participantNo+1}Participant 1{/ts}</div>
-                {if $participantProfile.CustomPre}
-                    <fieldset class="label-left no-border"><div class="bold crm-additional-profile-view-title">{$participantProfile.CustomPreGroupTitle}</div>
-                        {foreach from=$participantProfile.CustomPre item=value key=field}
-                            <div class="crm-section {$field}-section">
-                                <div class="label">{$field}</div>
-                                <div class="content">{$value}</div>
-                                <div class="clear"></div>
-                            </div>
-                        {/foreach}
-                    </fieldset>
-                {/if}
-   		{if $participantProfile.CustomPost}
-                        {foreach from=$participantProfile.CustomPost item=value key=field}
-                        <fieldset class="label-left no-border"><div class="bold crm-profile-view-title">{$participantProfile.CustomPostGroupTitle.$field.groupTitle}</div>
-                        {foreach from=$participantProfile.CustomPost.$field item=value key=field}
-                            <div class="crm-section {$field}-section">
-                                <div class="label">{$field}</div>
-                                <div class="content">{$value}</div>
-                                <div class="clear"></div>
-                            </div>
-                        {/foreach}
-                        </fieldset>
-                        {/foreach}
-                {/if}
-            </div>
-        <div class="spacer"></div>
-    {/if}
-
-
-    {*display Additional Participant Profile Information*}
-    {if $addParticipantProfile}
-        {foreach from=$addParticipantProfile item=participant key=participantNo}
-            <div class="crm-group participant_info-group">
-                <div class="header-dark">
-                    {ts 1=$participantNo}Participant %1{/ts}	
-                </div>
-                {if $participant.additionalCustomPre}
-                    <fieldset class="label-left no-border"><div class="bold crm-additional-profile-view-title">{$participant.additionalCustomPreGroupTitle}</div>
-                        {foreach from=$participant.additionalCustomPre item=value key=field}
-                            <div class="crm-section {$field}-section">
-                                <div class="label">{$field}</div>
-                                <div class="content">{$value}</div>
-                                <div class="clear"></div>
-                            </div>
-                        {/foreach}
-                    </fieldset>
-                {/if}
-
-                {if $participant.additionalCustomPost}
-		            {foreach from=$participant.additionalCustomPost item=value key=field}
-                        <fieldset class="label-left no-border"><div class="bold crm-additional-profile-view-title">{$participant.additionalCustomPostGroupTitle.$field.groupTitle}</div>
-                        {foreach from=$participant.additionalCustomPost.$field item=value key=field}
-                            <div class="crm-section {$field}-section">
-                                <div class="label">{$field}</div>
-                                <div class="content">{$value}</div>
-                                <div class="clear"></div>
-                            </div>
-                        {/foreach}		 
-                        </fieldset>
-		            {/foreach}
-                {/if}
-            </div>
-        <div class="spacer"></div>
-        {/foreach}
-    {/if}
+    {include file="CRM/Event/Form/Registration/DisplayProfile.tpl"}
 
     {if $contributeMode ne 'notify' and !$is_pay_later and $paidEvent and !$isAmountzero and !$isOnWaitlist and !$isRequireApproval}
 	    <div class="crm-group billing_name_address-group">

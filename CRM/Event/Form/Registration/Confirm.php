@@ -341,12 +341,12 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
       }
     }
     if (!empty($formattedValues) ) {
-      $this->assign('participantProfile', $formattedValues[1]); 
-      $this->set('participantProfile', $formattedValues[1]);
+      $this->assign('primaryParticipantProfile', $formattedValues[1]); 
+      $this->set('primaryParticipantProfile',    $formattedValues[1]);
       if ($count > 2) {
         unset($formattedValues[1]);
         $this->assign('addParticipantProfile', $formattedValues);
-        $this->set('addParticipantProfile', $formattedValues);
+        $this->set('addParticipantProfile',    $formattedValues);
       }
     }
 
