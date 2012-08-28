@@ -651,13 +651,13 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
    */
   function clearDBCache() {
     $queries = array(
-      'TRUNCATE TABLE civicrm_acl_cache',
-      'TRUNCATE TABLE civicrm_acl_contact_cache',
-      'TRUNCATE TABLE civicrm_cache',
-      'TRUNCATE TABLE civicrm_prevnext_cache',
+      'DELETE FROM civicrm_acl_cache',
+      'DELETE FROM civicrm_acl_contact_cache',
+      'DELETE FROM civicrm_cache',
+      'DELETE FROM civicrm_prevnext_cache',
       'UPDATE civicrm_group SET cache_date = NULL',
-      'TRUNCATE TABLE civicrm_group_contact_cache',
-      'TRUNCATE TABLE civicrm_menu',
+      'DELETE FROM civicrm_group_contact_cache',
+      'DELETE FROM civicrm_menu',
       'UPDATE civicrm_setting SET value = NULL WHERE name="navigation" AND contact_id IS NOT NULL',
       'DELETE FROM civicrm_setting WHERE name="modulePaths"', // CRM-10543
     );

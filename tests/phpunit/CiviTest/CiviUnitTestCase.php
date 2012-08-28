@@ -213,7 +213,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         $drops[] = 'DROP TABLE ' . $table['table_name'] . ';';
       }
       else {
-        $truncates[] = 'TRUNCATE ' . $table['table_name'] . ';';
+        $truncates[] = 'DELETE FROM ' . $table['table_name'] . ';';
       }
     }
 
@@ -1934,7 +1934,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
     CRM_Core_DAO::executeQuery("SET FOREIGN_KEY_CHECKS = 0;");
     foreach ($tablesToTruncate as $table) {
-      $sql = "TRUNCATE TABLE $table";
+      $sql = "DELETE FROM $table";
       CRM_Core_DAO::executeQuery($sql);
     }
     CRM_Core_DAO::executeQuery("SET FOREIGN_KEY_CHECKS = 1;");
