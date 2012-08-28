@@ -1570,7 +1570,12 @@ class CRM_Contact_BAO_Query {
   }
 
   function restWhere(&$values) {
-    list($name, $op, $value, $grouping, $wildcard) = $values;
+    $name     = CRM_Utils_Array::value(0, $values);
+    $op       = CRM_Utils_Array::value(1, $values);
+    $value    = CRM_Utils_Array::value(2, $values);
+    $grouping = CRM_Utils_Array::value(3, $values);
+    $wildcard = CRM_Utils_Array::value(4, $values);
+    
     if (isset($grouping) && !CRM_Utils_Array::value($grouping, $this->_where)) {
       $this->_where[$grouping] = array();
     }
