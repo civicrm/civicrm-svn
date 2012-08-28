@@ -1684,7 +1684,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
       );
     }
     elseif ($fieldName === 'contact_sub_type') {
-      $gId = $form->get('gid') ? $form->get('gid') : CRM_Utils_Array::value('group_id', $form->_fields[$fieldName]);
+      $gId = $form->get('gid') ? $form->get('gid') : CRM_Utils_Array::value('group_id', $field);
       if ($onBehalf) {
         $profileType = 'Organization';
       }
