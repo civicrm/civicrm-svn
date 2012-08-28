@@ -715,8 +715,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form {
     }
   }
 
-  static
-  function initEventFee(&$form, $eventID) {
+  static function initEventFee(&$form, $eventID) {
     // get price info
 
     // retrive all active price set fields.
@@ -953,13 +952,12 @@ WHERE  v.option_group_id = g.id
   }
 
   /* Calculate the total participant count as per params.
-     *
-     * @param  array $params user params.
-     *
-     * @return $totalCount total participant count.
-     * @access public
-     */
-
+   *
+   * @param  array $params user params.
+   *
+   * @return $totalCount total participant count.
+   * @access public
+   */
   public function getParticipantCount(&$form, $params, $skipCurrent = FALSE) {
     $totalCount = 0;
     if (!is_array($params) || empty($params)) {
@@ -1044,15 +1042,14 @@ WHERE  v.option_group_id = g.id
   }
 
   /* Format user submitted price set params.
-     * Convert price set each param as an array.
-     *
-     * @param $params an array of user submitted params.
-     *
-     *
-     * @return array $formatted, formatted price set params.
-     * @access public
-     */
-
+   * Convert price set each param as an array.
+   *
+   * @param $params an array of user submitted params.
+   *
+   *
+   * @return array $formatted, formatted price set params.
+   * @access public
+   */
   public function formatPriceSetParams(&$form, $params) {
     if (!is_array($params) || empty($params)) {
       return $params;
@@ -1089,14 +1086,14 @@ WHERE  v.option_group_id = g.id
   }
 
   /* Calculate total count for each price set options.
-     * those are currently selected by user.
-     *
-     * @param $form form object.
-     *
-     *
-     * @return array $optionsCount, array of each option w/ count total.
-     * @access public
-     */
+   * those are currently selected by user.
+   *
+   * @param $form form object.
+   *
+   *
+   * @return array $optionsCount, array of each option w/ count total.
+   * @access public
+   */
   function getPriceSetOptionCount(&$form) {
     $params     = $form->get('params');
     $priceSet   = $form->get('priceSet');
@@ -1212,9 +1209,9 @@ WHERE  v.option_group_id = g.id
   }
 
   /* Validate price set submitted params for price option limit,
-     * as well as user should select at least one price field option.
-     *
-     */
+   * as well as user should select at least one price field option.
+   *
+   */
   function validatePriceSet(&$form, $params) {
     $errors = array();
     $hasOptMaxValue = FALSE;

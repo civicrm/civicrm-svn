@@ -61,7 +61,8 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
    *
    * @return void
    * @access public
-   */ function preProcess() {
+   */ 
+  function preProcess() {
     parent::preProcess();
 
     // lineItem isn't set until Register postProcess
@@ -862,8 +863,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
    * @return void
    * @access public
    */
-  static
-  function processContribution(&$form, $params, $result, $contactID,
+  static function processContribution(&$form, $params, $result, $contactID,
     $pending = FALSE, $isAdditionalAmount = FALSE
   ) {
     require_once 'CRM/Core/Transaction.php';

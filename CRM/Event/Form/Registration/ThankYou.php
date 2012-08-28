@@ -97,15 +97,11 @@ class CRM_Event_Form_Registration_ThankYou extends CRM_Event_Form_Registration {
     }
     $this->assignToTemplate();
 
-    $this->buildCustom($this->_values['custom_pre_id'], 'customPre', TRUE);
-    $this->buildCustom($this->_values['custom_post_id'], 'customPost', TRUE);
-
     if ($this->_priceSetId && !CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_priceSetId, 'is_quick_config')) {
-
       $this->assign('lineItem', $this->_lineItem);
-
     }
     $this->assign('totalAmount', $this->_totalAmount);
+
     $hookDiscount = $this->get('hookDiscount');
     if ($hookDiscount) {
       $this->assign('hookDiscount', $hookDiscount);

@@ -165,48 +165,37 @@
         </div>
     {/if}
 
-    {if $customPre}
-            <fieldset class="label-left no-border">
-                {include file="CRM/UF/Form/Block.tpl" fields=$customPre}
-            </fieldset>
-    {/if}
-
-    {if $customPost}
-            <fieldset class="label-left no-border">  
-                {include file="CRM/UF/Form/Block.tpl" fields=$customPost}
-            </fieldset>
-    {/if}
     {*display Primary Participant Profile Information*}
     {if $participantProfile}
-            <div class="crm-group participant_info-group">
-	           <div class="header-dark">{ts 1=$participantNo+1}Participant 1{/ts}</div>
+        <div class="crm-group participant_info-group">
+            <div class="header-dark">{ts}Participant 1{/ts}</div>
                 {if $participantProfile.CustomPre}
-                    <fieldset class="label-left no-border"><div class="bold crm-additional-profile-view-title">{$participantProfile.CustomPreGroupTitle}</div>
-                        {foreach from=$participantProfile.CustomPre item=value key=field}
+                   <fieldset class="label-left no-border"><div class="bold crm-profile-view-title">{$participantProfile.CustomPreGroupTitle}</div>
+                      {foreach from=$participantProfile.CustomPre item=value key=field}
+                         <div class="crm-section {$field}-section">
+                             <div class="label">{$field}</div>
+                             <div class="content">{$value}</div>
+                             <div class="clear"></div>
+                         </div>
+                      {/foreach}
+                   </fieldset>
+                {/if}
+		{if $participantProfile.CustomPost}
+                   {foreach from=$participantProfile.CustomPost item=value key=field}
+                      <fieldset class="label-left no-border"><div class="bold crm-profile-view-title">{$participantProfile.CustomPostGroupTitle.$field.groupTitle}</div>
+                      	 {foreach from=$participantProfile.CustomPost.$field item=value key=field}
                             <div class="crm-section {$field}-section">
                                 <div class="label">{$field}</div>
                                 <div class="content">{$value}</div>
                                 <div class="clear"></div>
                             </div>
-                        {/foreach}
-                    </fieldset>
+                         {/foreach}
+                      </fieldset>
+                   {/foreach}
                 {/if}
-		{if $participantProfile.CustomPost}
-                   {foreach from=$participantProfile.CustomPost item=value key=field
-                      <fieldset class="label-left no-border"><div class="bold crm-profile-view-title">{$participantProfile.CustomPostGroupTitle.$field.groupTitle}</div>
-                      	  {foreach from=$participantProfile.CustomPost.$field item=value key=field}
-                             <div class="crm-section {$field}-section">
-                                 <div class="label">{$field}</div>
-                                 <div class="content">{$value}</div>
-                                 <div class="clear"></div>
-                             </div>
-                         {/foreach}
-                         </fieldset>
-                         {/foreach}
-                 {/if}
             </div>
         <div class="spacer"></div>
-     {/if}
+    {/if}
     {*display Additional Participant Profile Information*}
     {if $addParticipantProfile}
         {foreach from=$addParticipantProfile item=participant key=participantNo}
