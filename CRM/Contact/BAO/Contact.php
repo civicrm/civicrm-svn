@@ -1606,7 +1606,7 @@ ORDER BY civicrm_email.is_primary DESC";
     $addToGroupID = NULL, $ufGroupId = NULL,
     $ctype        = NULL,
     $visibility   = FALSE
-  ) {dsm($params);dsm($fields);
+  ) {
     // add ufGroupID to params array ( CRM-2012 )
     if ($ufGroupId) {
       $params['uf_group_id'] = $ufGroupId;
