@@ -1602,21 +1602,21 @@ VALUES
   function addContribution() {
     $query = "
 INSERT INTO civicrm_contribution
-    (contact_id, contribution_type_id, payment_instrument_id, receive_date, non_deductible_amount, total_amount, trxn_id, currency, cancel_date, cancel_reason, receipt_date, thankyou_date, source )
+    (contact_id, contribution_type_id, payment_instrument_id, receive_date, non_deductible_amount, total_amount, trxn_id, check_number, currency, cancel_date, cancel_reason, receipt_date, thankyou_date, source )
 VALUES
-    (2, 1, 4, '2010-04-11 00:00:00', 0.00, 125.00, 'check #1041', 'USD', NULL, NULL, NULL, NULL, 'Apr 2007 Mailer 1' ),
-    (4, 1, 1, '2010-03-21 00:00:00', 0.00, 50.00, 'P20901X1', 'USD', NULL, NULL, NULL, NULL, 'Online: Save the Penguins' ),
-    (6, 1, 4, '2010-04-29 00:00:00', 0.00, 25.00, 'check #2095', 'USD', NULL, NULL, NULL, NULL, 'Apr 2007 Mailer 1' ),
-    (8, 1, 4, '2010-04-11 00:00:00', 0.00, 50.00, 'check #10552', 'USD', NULL, NULL, NULL, NULL, 'Apr 2007 Mailer 1' ),
-    (16, 1, 4, '2010-04-15 00:00:00', 0.00, 500.00, 'check #509', 'USD', NULL, NULL, NULL, NULL, 'Apr 2007 Mailer 1' ),
-    (19, 1, 4, '2010-04-11 00:00:00', 0.00, 175.00, 'check #102', 'USD', NULL, NULL, NULL, NULL, 'Apr 2007 Mailer 1' ),
-    (82, 1, 1, '2010-03-27 00:00:00', 0.00, 50.00, 'P20193L2', 'USD', NULL, NULL, NULL, NULL, 'Online: Save the Penguins' ),
-    (92, 1, 1, '2010-03-08 00:00:00', 0.00, 10.00, 'P40232Y3', 'USD', NULL, NULL, NULL, NULL, 'Online: Help CiviCRM' ),
-    (34, 1, 1, '2010-04-22 00:00:00', 0.00, 250.00, 'P20193L6', 'USD', NULL, NULL, NULL, NULL, 'Online: Help CiviCRM' ),
-    (71, 1, 1, '2009-07-01 11:53:50', 0.00, 500.00, 'PL71', 'USD', NULL, NULL, NULL, NULL, NULL ),
-    (43, 1, 1, '2009-07-01 12:55:41', 0.00, 200.00, 'PL43II', 'USD', NULL, NULL, NULL, NULL, NULL ),
-    (32, 1, 1, '2009-10-01 11:53:50', 0.00, 200.00, 'PL32I', 'USD', NULL, NULL, NULL, NULL, NULL ),
-    (32, 1, 1, '2009-12-01 12:55:41', 0.00, 200.00, 'PL32II', 'USD', NULL, NULL, NULL, NULL, NULL );
+    (2, 1, 4, '2010-04-11 00:00:00', 0.00, 125.00, NULL, '1041', 'USD', NULL, NULL, NULL, NULL, 'Apr 2007 Mailer 1' ),
+    (4, 1, 1, '2010-03-21 00:00:00', 0.00, 50.00, 'P20901X1', NULL, 'USD', NULL, NULL, NULL, NULL, 'Online: Save the Penguins' ),
+    (6, 1, 4, '2010-04-29 00:00:00', 0.00, 25.00, NULL, '2095', 'USD', NULL, NULL, NULL, NULL, 'Apr 2007 Mailer 1' ),
+    (8, 1, 4, '2010-04-11 00:00:00', 0.00, 50.00, NULL, '10552', 'USD', NULL, NULL, NULL, NULL, 'Apr 2007 Mailer 1' ),
+    (16, 1, 4, '2010-04-15 00:00:00', 0.00, 500.00, NULL, '509', 'USD', NULL, NULL, NULL, NULL, 'Apr 2007 Mailer 1' ),
+    (19, 1, 4, '2010-04-11 00:00:00', 0.00, 175.00, NULL, '102', 'USD', NULL, NULL, NULL, NULL, 'Apr 2007 Mailer 1' ),
+    (82, 1, 1, '2010-03-27 00:00:00', 0.00, 50.00, 'P20193L2', NULL, 'USD', NULL, NULL, NULL, NULL, 'Online: Save the Penguins' ),
+    (92, 1, 1, '2010-03-08 00:00:00', 0.00, 10.00, 'P40232Y3', NULL, 'USD', NULL, NULL, NULL, NULL, 'Online: Help CiviCRM' ),
+    (34, 1, 1, '2010-04-22 00:00:00', 0.00, 250.00, 'P20193L6', NULL, 'USD', NULL, NULL, NULL, NULL, 'Online: Help CiviCRM' ),
+    (71, 1, 1, '2009-07-01 11:53:50', 0.00, 500.00, 'PL71', NULL, 'USD', NULL, NULL, NULL, NULL, NULL ),
+    (43, 1, 1, '2009-07-01 12:55:41', 0.00, 200.00, 'PL43II', NULL, 'USD', NULL, NULL, NULL, NULL, NULL ),
+    (32, 1, 1, '2009-10-01 11:53:50', 0.00, 200.00, 'PL32I', NULL, 'USD', NULL, NULL, NULL, NULL, NULL ),
+    (32, 1, 1, '2009-12-01 12:55:41', 0.00, 200.00, 'PL32II', NULL, 'USD', NULL, NULL, NULL, NULL, NULL );
 ";
     CRM_Core_DAO::executeQuery($query, CRM_Core_DAO::$_nullArray);
 
