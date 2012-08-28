@@ -186,6 +186,10 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic {
           if (!$obj->upgradable) {
             $action -= CRM_Core_Action::UPDATE;
           }
+          if ($obj->status == CRM_Core_Extensions_Extension::STATUS_MISSING) {
+            // do not allow Enable for a MISSING status extension
+            $action -= CRM_Core_Action::ENABLE;
+          }
         }
         $extensionRows[$id]['action'] = CRM_Core_Action::formLink(self::links(),
           $action,

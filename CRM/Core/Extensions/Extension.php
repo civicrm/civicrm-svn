@@ -232,7 +232,7 @@ class CRM_Core_Extensions_Extension {
    * @return boolean Whether all tasks completed successfully.
    */
   public function uninstall() {
-    if ($this->type == 'payment') {
+    if ($this->type == 'payment' && $this->status != 'missing') {
       $this->_runPaymentHook('uninstall');
     }
     if ($this->_removeExtensionByType()) {
@@ -390,14 +390,14 @@ class CRM_Core_Extensions_Extension {
   public function enable() {
     $this->_setActiveByType(1);
     CRM_Core_DAO::setFieldValue('CRM_Core_DAO_Extension', $this->id, 'is_active', 1);
-    if ($this->type == 'payment') {
+    if ($this->type == 'payment' && $this->status != 'missing') {
       $this->_runPaymentHook('enable');
     }
     CRM_Core_Invoke::rebuildMenuAndCaches(TRUE);
   }
 
-  public function disable() {
-    if ($this->type == 'payment') {
+  public function disable() {    
+    if ($this->type == 'payment' && $this->status != 'missing') {
       $this->_runPaymentHook('disable');
     }
     $this->_setActiveByType(0);
