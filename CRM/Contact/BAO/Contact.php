@@ -1606,7 +1606,7 @@ ORDER BY civicrm_email.is_primary DESC";
     $addToGroupID = NULL, $ufGroupId = NULL,
     $ctype        = NULL,
     $visibility   = FALSE
-  ) {
+  ) {dsm($params);dsm($fields);
     // add ufGroupID to params array ( CRM-2012 )
     if ($ufGroupId) {
       $params['uf_group_id'] = $ufGroupId;
@@ -1684,7 +1684,8 @@ ORDER BY civicrm_email.is_primary DESC";
     }
 
 
-    //to update student record
+    // Update student record for Quest
+    // TODO: should this be implemented by a hook instead of in core?
     if (CRM_Core_Permission::access('Quest') && $studentFieldPresent) {
       $ids             = array();
       $dao             = new CRM_Quest_DAO_Student();
