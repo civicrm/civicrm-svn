@@ -263,7 +263,7 @@ class CRM_Case_BAO_Query {
         }
         if ($val) {
           $query->_where[$grouping][] = "civicrm_case.status_id IN (" . implode(',', $val) . ")";
-          $query->_qill[$grouping][] = ts('Case Status is %1', array(1 => implode(ts(' or '), $names)));
+          $query->_qill[$grouping][] = ts('Case Status is %1', array(1 => implode(' ' . ts('or') . ' ', $names)));
           $query->_tables['civicrm_case'] = $query->_whereTables['civicrm_case'] = 1;
         }
         return;
@@ -294,7 +294,7 @@ class CRM_Case_BAO_Query {
 
         $query->_where[$grouping][] = "(civicrm_case.case_type_id LIKE '%{$value}%')";
 
-        $query->_qill[$grouping][] = ts('Case Type %1', array(1 => $op)) . ' ' . implode(' ' . ts('or') . ' ', $names);
+        $query->_qill[$grouping][] = ts('Case Type is %1', array(1 => implode(' ' . ts('or') . ' ', $names)));
         $query->_tables['civicrm_case'] = $query->_whereTables['civicrm_case'] = 1;
         return;
 
