@@ -75,7 +75,6 @@
   cj('#address_{/literal}{$blockId}{literal}_location_type_id').change(function() {
     var ele = cj(this);
     var lt = ele.val();
-    console.log(lt);
     var container = ele.closest('div.crm-inline-edit.address');
     container.data('location-type-id', '');
     if (lt != '') {
