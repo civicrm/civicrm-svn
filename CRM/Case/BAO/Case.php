@@ -316,8 +316,8 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case {
     $sql = "
     SELECT  ov.{$colName}
       FROM  civicrm_case ca
-INNER JOIN  civicrm_option_group og ON og.name='case_type'
-INNER JOIN  civicrm_option_value ov ON ( ca.case_type_id=ov.value AND ov.option_group_id=og.id )
+ INNER JOIN  civicrm_option_group og ON og.name='case_type'
+ INNER JOIN  civicrm_option_value ov ON ( ca.case_type_id=ov.value AND ov.option_group_id=og.id )
      WHERE  ca.id = %1";
 
     $params = array(1 => array($caseId, 'Integer'));
@@ -602,8 +602,8 @@ t_act.act_type AS case_recent_activity_type ";
       $query .= " INNER JOIN
 (
 SELECT act3.case_id, act3.minid AS id, act_details.activity_date_time AS desired_date, act_details.activity_type_id,
-act_details.status_id, aov.name AS act_type_name, aov.label AS act_type
-FROM civicrm_view_case_activity_upcoming act_details INNER JOIN
+ act_details.status_id, aov.name AS act_type_name, aov.label AS act_type
+ FROM civicrm_view_case_activity_upcoming act_details INNER JOIN
 (
   SELECT t.case_id, MIN(act2.id) as minid FROM civicrm_view_case_activity_upcoming act2 INNER JOIN
     (SELECT vu.case_id, MIN(vu.activity_date_time) AS mindate FROM civicrm_view_case_activity_upcoming vu
@@ -612,9 +612,9 @@ FROM civicrm_view_case_activity_upcoming act_details INNER JOIN
   ON act2.activity_date_time = t.mindate
   GROUP BY t.case_id ORDER BY NULL
 ) AS act3
-ON act3.minid = act_details.id
-LEFT JOIN civicrm_option_group aog ON aog.name='activity_type'
-LEFT JOIN civicrm_option_value aov ON (aov.option_group_id = aog.id AND aov.value = act_details.activity_type_id)
+ ON act3.minid = act_details.id
+ LEFT JOIN civicrm_option_group aog ON aog.name='activity_type'
+ LEFT JOIN civicrm_option_value aov ON (aov.option_group_id = aog.id AND aov.value = act_details.activity_type_id)
 ) AS t_act ";
     }
     elseif ($type == 'recent') {
