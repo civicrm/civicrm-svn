@@ -1690,7 +1690,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
       }
       else {
         $profileType = $gId ? CRM_Core_BAO_UFField::getProfileType($gId) : NULL;
-        if ($profileType = 'Contact') {
+        if ($profileType == 'Contact') {
           $profileType = 'Individual';  
         }
       }
