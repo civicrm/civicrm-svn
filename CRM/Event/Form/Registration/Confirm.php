@@ -349,8 +349,8 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
         $this->set('addParticipantProfile',    $formattedValues);
       }
     }
-
-    //cosider total amount.
+    
+    //consider total amount.
     $this->assign('isAmountzero', ($this->_totalAmount <= 0) ? TRUE : FALSE);
 
     if ($this->_paymentProcessor['payment_processor_type'] == 'Google_Checkout' &&

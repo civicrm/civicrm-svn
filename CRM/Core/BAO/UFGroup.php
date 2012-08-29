@@ -1690,6 +1690,9 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
       }
       else {
         $profileType = $gId ? CRM_Core_BAO_UFField::getProfileType($gId) : NULL;
+        if ($profileType = 'Contact') {
+          $profileType = 'Individual';  
+        }
       }
 
       $setSubtype = FALSE;
@@ -1697,7 +1700,9 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         $setSubtype = $profileType;
         $profileType = CRM_Contact_BAO_ContactType::getBasicType($profileType);
       }
+
       $subtypes = $profileType ? CRM_Contact_BAO_ContactType::subTypePairs($profileType) : array();
+
       if ($setSubtype) {
         $subtypeList = array();
         $subtypeList[$setSubtype] = $subtypes[$setSubtype];

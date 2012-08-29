@@ -1412,7 +1412,10 @@ WHERE civicrm_event.is_active = 1
               }
             }
           }
-          $values[$index] = implode(",", $compref);
+          $values[$index] = implode(',', $compref);
+        }
+        elseif ($name == 'contact_sub_type') {
+          $values[$index] = implode(', ', $params[$name]);
         }
         elseif ($name == 'group') {
           $groups = CRM_Contact_BAO_GroupContact::getGroupList();
