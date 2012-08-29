@@ -1408,42 +1408,35 @@ function _civicrm_api3_validate_integer(&$params, &$fieldname, &$fieldInfo) {
  * @param array $fieldinfo array of fields from getfields function
  */
 function _civicrm_api3_validate_string(&$params, &$fieldname, &$fieldInfo) {
-  //if fieldname exists in params
-  if (CRM_Utils_Array::value($fieldname, $params)) {
+  // If fieldname exists in params
+  if ($value = CRM_Utils_Array::value($fieldname, $params)) {
     if ($fieldname == 'currency') {
-      if (!CRM_Utils_Rule::currencyCode($params[$fieldname])) {
-        throw new Exception("currency not a valid code: " . $params[$fieldname]);
+      if (!CRM_Utils_Rule::currencyCode($value)) {
+        throw new Exception("Currency not a valid code: $value");
       }
     }
-    if (CRM_Utils_Array::value('pseudoconstant', $fieldInfo) && !CRM_Utils_Array::value('FKClassName',$fieldInfo)) {
-    // validate / swap out any pseudoconstants
+    if (CRM_Utils_Array::value('pseudoconstant', $fieldInfo) && !CRM_Utils_Array::value('FKClassName', $fieldInfo)) {
+      // Validate & swap out any pseudoconstants
       $constant = $fieldInfo['options'];
-      $enum = CRM_Utils_Array::value('enumValues', $fieldInfo);
-      if (empty($constant) && !empty($enum)) {
+      if (!$constant && ($enum = CRM_Utils_Array::value('enumValues', $fieldInfo))) {
         $constant = explode(',', $enum);
       }
-      if (is_numeric($params[$fieldname]) && !array_key_exists($params[$fieldname], $fieldInfo['options'])) {
-        throw new Exception("$fieldname is not valid");
-      }
-      elseif (!is_numeric($params[$fieldname])) {
-        $numericvalue = array_search($params[$fieldname], $fieldInfo['options']);
-        if (empty($numericvalue)) {
-          throw new Exception("$fieldname `" . $params[$fieldname] . "` is not valid.");
+      // If value passed is not a key, it may be a label
+      // Try to lookup key from label - if it can't be found throw error
+      if (!isset($constant[$value])) {
+        if (!($key = array_search($value, $constant))) {
+          throw new Exception("$fieldname '$value' is not valid.");
         }
         else {
-          $params[$fieldname] = $numericvalue;
+          $value = $key;
         }
       }
     }
-    // once we have done any swaps check our field length
-    if(is_string($params[$fieldname]) &&
-      CRM_Utils_Array::value('maxlength',$fieldInfo)
-      && strlen($params[$fieldname]) > $fieldInfo['maxlength']
-      ){
-      throw new api_Exception( $params[$fieldname] . " is " . strlen($params[$fieldname]) . " characters  - longer than $fieldname length" . $fieldInfo['maxlength'] . ' characters',
+    // Check our field length
+    elseif (is_string($value) && !empty($fieldInfo['maxlength']) && strlen($value) > $fieldInfo['maxlength']) {
+      throw new api_Exception("Value for $fieldname is " . strlen($value) . " characters  - This field has a maxlength of {$fieldInfo['maxlength']} characters.",
         2100, array('field' => $fieldname)
       );
     }
   }
 }
-
