@@ -315,7 +315,7 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case {
 
     $sql = "
     SELECT  ov.{$colName}
-      FROM  civicrm_case ca  
+      FROM  civicrm_case ca
 INNER JOIN  civicrm_option_group og ON og.name='case_type'
 INNER JOIN  civicrm_option_value ov ON ( ca.case_type_id=ov.value AND ov.option_group_id=og.id )
      WHERE  ca.id = %1";
@@ -488,13 +488,13 @@ INNER JOIN  civicrm_option_value ov ON ( ca.case_type_id=ov.value AND ov.option_
     }
 
     $query = "
-    SELECT  contact_a.sort_name name, 
-            contact_a.display_name as display_name, 
-            contact_a.id cid, 
+    SELECT  contact_a.sort_name name,
+            contact_a.display_name as display_name,
+            contact_a.id cid,
             contact_a.birth_date as birth_date,
             ce.email as email,
             cp.phone as phone
-      FROM  civicrm_contact contact_a 
+      FROM  civicrm_contact contact_a
  LEFT JOIN  civicrm_case_contact ON civicrm_case_contact.contact_id = contact_a.id
  LEFT JOIN  civicrm_email ce ON ( ce.contact_id = contact_a.id AND ce.is_primary = 1)
  LEFT JOIN  civicrm_phone cp ON ( cp.contact_id = contact_a.id AND cp.is_primary = 1)
@@ -601,7 +601,7 @@ t_act.act_type AS case_recent_activity_type ";
 
       $query .= " INNER JOIN
 (
-SELECT act3.case_id, act3.minid AS id, act_details.activity_date_time AS desired_date, act_details.activity_type_id, 
+SELECT act3.case_id, act3.minid AS id, act_details.activity_date_time AS desired_date, act_details.activity_type_id,
 act_details.status_id, aov.name AS act_type_name, aov.label AS act_type
 FROM civicrm_view_case_activity_upcoming act_details INNER JOIN
 (
@@ -639,26 +639,26 @@ LEFT JOIN civicrm_option_group aog ON aog.name='activity_type'
 
     $query .= "
         ON t_act.case_id = civicrm_case.id
-LEFT JOIN civicrm_phone ON (civicrm_phone.contact_id = civicrm_contact.id AND civicrm_phone.is_primary=1)
-LEFT JOIN civicrm_relationship case_relationship
- ON ( case_relationship.contact_id_a = civicrm_case_contact.contact_id AND case_relationship.contact_id_b = {$userID} 
-      AND case_relationship.case_id = civicrm_case.id ) 
+ LEFT JOIN civicrm_phone ON (civicrm_phone.contact_id = civicrm_contact.id AND civicrm_phone.is_primary=1)
+ LEFT JOIN civicrm_relationship case_relationship
+ ON ( case_relationship.contact_id_a = civicrm_case_contact.contact_id AND case_relationship.contact_id_b = {$userID}
+      AND case_relationship.case_id = civicrm_case.id )
 
-LEFT JOIN civicrm_relationship_type case_relation_type
+ LEFT JOIN civicrm_relationship_type case_relation_type
  ON ( case_relation_type.id = case_relationship.relationship_type_id
       AND case_relation_type.id = case_relationship.relationship_type_id )
-       
-LEFT JOIN civicrm_option_group cog_type
- ON cog_type.name = 'case_type' 
 
-LEFT JOIN civicrm_option_value cov_type
+ LEFT JOIN civicrm_option_group cog_type
+ ON cog_type.name = 'case_type'
+
+ LEFT JOIN civicrm_option_value cov_type
  ON ( civicrm_case.case_type_id = cov_type.value
-      AND cog_type.id = cov_type.option_group_id ) 
+      AND cog_type.id = cov_type.option_group_id )
 
-LEFT JOIN civicrm_option_group cog_status
- ON cog_status.name = 'case_status' 
+ LEFT JOIN civicrm_option_group cog_status
+ ON cog_status.name = 'case_status'
 
-LEFT JOIN civicrm_option_value cov_status
+ LEFT JOIN civicrm_option_value cov_status
  ON ( civicrm_case.status_id = cov_status.value
       AND cog_status.id = cov_status.option_group_id )
 ";
@@ -885,18 +885,18 @@ AND civicrm_case.status_id != $closedId";
     $seperator = CRM_Core_DAO::VALUE_SEPARATOR;
 
     $query = "
-SELECT case_status.label AS case_status, status_id, case_type.label AS case_type, 
-REPLACE(case_type_id,'{$seperator}','') AS case_type_id, case_relationship.contact_id_b
-FROM civicrm_case
-LEFT JOIN civicrm_option_group option_group_case_type ON ( option_group_case_type.name = 'case_type' )
-LEFT JOIN civicrm_option_value case_type ON ( civicrm_case.case_type_id = case_type.value
-AND option_group_case_type.id = case_type.option_group_id )
-LEFT JOIN civicrm_option_group option_group_case_status ON ( option_group_case_status.name = 'case_status' )
-LEFT JOIN civicrm_option_value case_status ON ( civicrm_case.status_id = case_status.value
-AND option_group_case_status.id = case_status.option_group_id )
-LEFT JOIN civicrm_relationship case_relationship ON ( case_relationship.case_id  = civicrm_case.id 
-AND case_relationship.contact_id_b = {$userID})
-WHERE is_deleted =0 
+SELECT case_status.label AS case_status, status_id, case_type.label AS case_type,
+ REPLACE(case_type_id,'{$seperator}','') AS case_type_id, case_relationship.contact_id_b
+ FROM civicrm_case
+ LEFT JOIN civicrm_option_group option_group_case_type ON ( option_group_case_type.name = 'case_type' )
+ LEFT JOIN civicrm_option_value case_type ON ( civicrm_case.case_type_id = case_type.value
+ AND option_group_case_type.id = case_type.option_group_id )
+ LEFT JOIN civicrm_option_group option_group_case_status ON ( option_group_case_status.name = 'case_status' )
+ LEFT JOIN civicrm_option_value case_status ON ( civicrm_case.status_id = case_status.value
+ AND option_group_case_status.id = case_status.option_group_id )
+ LEFT JOIN civicrm_relationship case_relationship ON ( case_relationship.case_id  = civicrm_case.id
+ AND case_relationship.contact_id_b = {$userID})
+ WHERE is_deleted =0
 {$myCaseWhereClause} {$myGroupByClause}";
 
     $res = CRM_Core_DAO::executeQuery($query, CRM_Core_DAO::$_nullArray);
@@ -931,18 +931,18 @@ WHERE is_deleted =0
   static
   function getCaseRoles($contactID, $caseID, $relationshipID = NULL) {
     $query = '
-    SELECT  civicrm_relationship.id as civicrm_relationship_id, 
-            civicrm_contact.sort_name as sort_name, 
-            civicrm_email.email as email, 
-            civicrm_phone.phone as phone, 
-            civicrm_relationship.contact_id_b as civicrm_contact_id, 
-            civicrm_relationship_type.label_a_b as relation, 
-            civicrm_relationship_type.id as relation_type 
-      FROM  civicrm_relationship 
-INNER JOIN  civicrm_relationship_type ON civicrm_relationship.relationship_type_id = civicrm_relationship_type.id
-INNER JOIN  civicrm_contact ON civicrm_relationship.contact_id_b = civicrm_contact.id
- LEFT JOIN  civicrm_phone ON (civicrm_phone.contact_id = civicrm_contact.id AND civicrm_phone.is_primary = 1) 
- LEFT JOIN  civicrm_email ON (civicrm_email.contact_id = civicrm_contact.id ) 
+    SELECT  civicrm_relationship.id as civicrm_relationship_id,
+            civicrm_contact.sort_name as sort_name,
+            civicrm_email.email as email,
+            civicrm_phone.phone as phone,
+            civicrm_relationship.contact_id_b as civicrm_contact_id,
+            civicrm_relationship_type.label_a_b as relation,
+            civicrm_relationship_type.id as relation_type
+      FROM  civicrm_relationship
+ INNER JOIN  civicrm_relationship_type ON civicrm_relationship.relationship_type_id = civicrm_relationship_type.id
+ INNER JOIN  civicrm_contact ON civicrm_relationship.contact_id_b = civicrm_contact.id
+ LEFT JOIN  civicrm_phone ON (civicrm_phone.contact_id = civicrm_contact.id AND civicrm_phone.is_primary = 1)
+ LEFT JOIN  civicrm_email ON (civicrm_email.contact_id = civicrm_contact.id )
      WHERE  civicrm_relationship.contact_id_a = %1 AND civicrm_relationship.case_id = %2';
 
     $params = array(1 => array($contactID, 'Positive'),
@@ -988,9 +988,9 @@ INNER JOIN  civicrm_contact ON civicrm_relationship.contact_id_b = civicrm_conta
 
     // CRM-5081 - formatting the dates to omit seconds.
     // Note the 00 in the date format string is needed otherwise later on it thinks scheduled ones are overdue.
-    $select = "SELECT count(ca.id) as ismultiple, ca.id as id, 
+    $select = "SELECT count(ca.id) as ismultiple, ca.id as id,
                           ca.activity_type_id as type,
-                          ca.activity_type_id as activity_type_id,  
+                          ca.activity_type_id as activity_type_id,
                           cc.sort_name as reporter,
                           cc.id as reporter_id,
                           acc.sort_name AS assignee,
@@ -1000,27 +1000,27 @@ INNER JOIN  civicrm_contact ON civicrm_relationship.contact_id_b = civicrm_conta
                             DATE_ADD(NOW(), INTERVAL 1 YEAR)
                           ), '%Y%m%d%H%i00') as overdue_date,
                           DATE_FORMAT(ca.activity_date_time, '%Y%m%d%H%i00') as display_date,
-                          ca.status_id as status, 
-                          ca.subject as subject, 
+                          ca.status_id as status,
+                          ca.subject as subject,
                           ca.is_deleted as deleted,
                           ca.priority_id as priority,
                           ca.weight as weight,
                           GROUP_CONCAT(ef.file_id) as attachment_ids ";
 
-    $from = 'FROM civicrm_case_activity cca 
+    $from = 'FROM civicrm_case_activity cca
                   INNER JOIN civicrm_activity ca ON ca.id = cca.activity_id
                   INNER JOIN civicrm_contact cc ON cc.id = ca.source_contact_id
                   INNER JOIN civicrm_option_group cog ON cog.name = "activity_type"
-                  INNER JOIN civicrm_option_value cov ON cov.option_group_id = cog.id 
+                  INNER JOIN civicrm_option_value cov ON cov.option_group_id = cog.id
                          AND cov.value = ca.activity_type_id AND cov.is_active = 1
                   LEFT JOIN civicrm_entity_file ef on ef.entity_table = "civicrm_activity" AND ef.entity_id =
                   LEFT OUTER JOIN civicrm_option_group og ON og.name="activity_status"
                   LEFT OUTER JOIN civicrm_option_value ov ON ov.option_group_id=og.id AND ov.name="Scheduled"
-                  LEFT JOIN civicrm_activity_assignment caa 
-                                ON caa.activity_id = ca.id 
+                  LEFT JOIN civicrm_activity_assignment caa
+                                ON caa.activity_id = ca.id
                                LEFT JOIN civicrm_contact acc ON acc.id = caa.assignee_contact_id  ';
 
-    $where = 'WHERE cca.case_id= %1 
+    $where = 'WHERE cca.case_id= %1
                     AND ca.is_current_revision = 1';
 
     if (CRM_Utils_Array::value('reporter_id', $params)) {
@@ -1320,13 +1320,13 @@ INNER JOIN  civicrm_contact ON civicrm_relationship.contact_id_b = civicrm_conta
   static
   function getRelatedContacts($caseID, $skipDetails = FALSE) {
     $values = array();
-    $query = 'SELECT cc.display_name as name, cc.sort_name as sort_name, cc.id, crt.label_b_a as role, ce.email 
-FROM civicrm_relationship cr 
-LEFT JOIN civicrm_relationship_type crt ON crt.id = cr.relationship_type_id 
-LEFT JOIN civicrm_contact cc ON cc.id = cr.contact_id_b 
-LEFT JOIN civicrm_email   ce ON ce.contact_id = cc.id
-WHERE cr.case_id =  %1 AND ce.is_primary= 1
-GROUP BY cc.id';
+    $query = 'SELECT cc.display_name as name, cc.sort_name as sort_name, cc.id, crt.label_b_a as role, ce.email
+ FROM civicrm_relationship cr
+ LEFT JOIN civicrm_relationship_type crt ON crt.id = cr.relationship_type_id
+ LEFT JOIN civicrm_contact cc ON cc.id = cr.contact_id_b
+ LEFT JOIN civicrm_email   ce ON ce.contact_id = cc.id
+ WHERE cr.case_id =  %1 AND ce.is_primary= 1
+ GROUP BY cc.id';
 
     $params = array(1 => array($caseID, 'Integer'));
     $dao = CRM_Core_DAO::executeQuery($query, $params);
@@ -1456,10 +1456,10 @@ GROUP BY cc.id';
 
       if ($result[$info['contact_id']]) {
         /*
-            	 * Really only need to record one activity with all the targets combined.
-            	 * Originally the template was going to possibly have different content, e.g. depending on permissions,
-            	 * but it's always the same content at the moment.
-            	 */
+               * Really only need to record one activity with all the targets combined.
+               * Originally the template was going to possibly have different content, e.g. depending on permissions,
+               * but it's always the same content at the moment.
+               */
 
         if (empty($recordedActivityParams)) {
           $recordedActivityParams = $activityParams;
@@ -1507,12 +1507,12 @@ GROUP BY cc.id';
     $queryParam = array(1 => array($caseId, 'Integer'),
       2 => array($activityTypeId, 'Integer'),
     );
-    $query = "SELECT count(ca.id) as countact 
-FROM       civicrm_activity ca
-INNER JOIN civicrm_case_activity cca ON ca.id = cca.activity_id 
-WHERE      ca.activity_type_id = %2 
-AND       cca.case_id = %1
-AND        ca.is_deleted = 0";
+    $query = "SELECT count(ca.id) as countact
+ FROM       civicrm_activity ca
+ INNER JOIN civicrm_case_activity cca ON ca.id = cca.activity_id
+ WHERE      ca.activity_type_id = %2
+ AND       cca.case_id = %1
+ AND        ca.is_deleted = 0";
 
     $dao = CRM_Core_DAO::executeQuery($query, $queryParam);
     if ($dao->fetch()) {
@@ -1634,9 +1634,9 @@ AND        ca.is_deleted = 0";
     $contactID = implode(',', $cases['contact_id']);
 
     $condition = "
-AND civicrm_case_contact.contact_id IN( {$contactID} ) 
-AND civicrm_case.id IN( {$caseID})
-AND civicrm_case.is_deleted     = {$cases['case_deleted']}";
+ AND civicrm_case_contact.contact_id IN( {$contactID} )
+ AND civicrm_case.id IN( {$caseID})
+ AND civicrm_case.is_deleted     = {$cases['case_deleted']}";
 
     $query = self::getCaseActivityQuery($type, $userID, $condition, $cases['case_deleted']);
 
@@ -1738,9 +1738,9 @@ AND civicrm_case.is_deleted     = {$cases['case_deleted']}";
     return $globalContacts;
   }
 
-  /* 
-	 * Convenience function to get both case contacts and global in one array
-	 */
+  /*
+   * Convenience function to get both case contacts and global in one array
+   */
 
   static
   function getRelatedAndGlobalContacts($caseId) {
@@ -1800,8 +1800,8 @@ AND civicrm_case.is_deleted     = {$cases['case_deleted']}";
     }
 
     $query = "SELECT ca.id, {$selectDate} as activity_date
-                  FROM civicrm_activity ca 
-                  LEFT JOIN civicrm_case_activity cca ON cca.activity_id = ca.id LEFT JOIN civicrm_case cc ON cc.id = cca.case_id 
+                  FROM civicrm_activity ca
+                  LEFT JOIN civicrm_case_activity cca ON cca.activity_id = ca.id LEFT JOIN civicrm_case cc ON cc.id = cca.case_id
                   WHERE cc.id = %1 {$where} {$groupBy}";
 
     $params = array(1 => array($caseID, 'Integer'));
@@ -1843,16 +1843,16 @@ AND civicrm_case.is_deleted     = {$cases['case_deleted']}";
     }
 
     $query = "
-   SELECT  cc.display_name as clientName, 
-           cca.display_name as  assigneeContactName,  
+   SELECT  cc.display_name as clientName,
+           cca.display_name as  assigneeContactName,
            civicrm_relationship.case_id as caseId,
            civicrm_relationship_type.label_a_b as relation_a_b,
            civicrm_relationship_type.label_b_a as relation_b_a,
-           civicrm_relationship.contact_id_b as rel_contact_id,            
-           civicrm_relationship.contact_id_a as assign_contact_id 
-     FROM  civicrm_relationship_type,  civicrm_relationship 
-LEFT JOIN  civicrm_contact cc  ON cc.id  = civicrm_relationship.contact_id_b  
-LEFT JOIN  civicrm_contact cca ON cca.id = civicrm_relationship.contact_id_a
+           civicrm_relationship.contact_id_b as rel_contact_id,
+           civicrm_relationship.contact_id_a as assign_contact_id
+     FROM  civicrm_relationship_type,  civicrm_relationship
+ LEFT JOIN  civicrm_contact cc  ON cc.id  = civicrm_relationship.contact_id_b
+ LEFT JOIN  civicrm_contact cca ON cca.id = civicrm_relationship.contact_id_a
     WHERE  civicrm_relationship.relationship_type_id = civicrm_relationship_type.id AND {$relationshipClause}";
 
     $dao = CRM_Core_DAO::executeQuery($query, $queryParam);
@@ -1931,12 +1931,12 @@ LEFT JOIN  civicrm_contact cca ON cca.id = civicrm_relationship.contact_id_a
 
     if (!empty($managerRoleId)) {
       $managerRoleQuery = "
-SELECT civicrm_contact.id as casemanager_id, 
+SELECT civicrm_contact.id as casemanager_id,
        civicrm_contact.sort_name as casemanager
-FROM civicrm_contact 
-LEFT JOIN civicrm_relationship ON (civicrm_relationship.contact_id_b = civicrm_contact.id AND civicrm_relationship.relationship_type_id = %1)
-LEFT JOIN civicrm_case ON civicrm_case.id = civicrm_relationship.case_id
-WHERE civicrm_case.id = %2";
+ FROM civicrm_contact
+ LEFT JOIN civicrm_relationship ON (civicrm_relationship.contact_id_b = civicrm_contact.id AND civicrm_relationship.relationship_type_id = %1)
+ LEFT JOIN civicrm_case ON civicrm_case.id = civicrm_relationship.case_id
+ WHERE civicrm_case.id = %2";
 
       $managerRoleParams = array(1 => array($managerRoleId, 'Integer'),
         2 => array($caseId, 'Integer'),
@@ -1995,17 +1995,17 @@ WHERE civicrm_case.id = %2";
     }
 
     $query = "
-    SELECT  c.id as contact_id, 
+    SELECT  c.id as contact_id,
             c.sort_name,
-            ca.id, 
+            ca.id,
             ca.subject as case_subject,
             ov.label as case_type,
             ca.start_date as start_date
       FROM  civicrm_case ca INNER JOIN civicrm_case_contact cc ON ca.id=cc.case_id
-INNER JOIN  civicrm_contact c ON cc.contact_id=c.id
-INNER JOIN  civicrm_option_group og ON og.name='case_type'
-INNER JOIN  civicrm_option_value ov ON (ca.case_type_id=ov.value AND ov.option_group_id=og.id)
-     WHERE  {$whereClause} 
+ INNER JOIN  civicrm_contact c ON cc.contact_id=c.id
+ INNER JOIN  civicrm_option_group og ON og.name='case_type'
+ INNER JOIN  civicrm_option_value ov ON (ca.case_type_id=ov.value AND ov.option_group_id=og.id)
+     WHERE  {$whereClause}
   ORDER BY  c.sort_name
             {$limitClause}
 ";
@@ -2056,7 +2056,7 @@ INNER JOIN  civicrm_option_value ov ON (ca.case_type_id=ov.value AND ov.option_g
       $whereClause = "WHERE " . implode(' AND ', $whereConditions);
     }
 
-    $query = "       
+    $query = "
    SELECT  count( civicrm_case.id )
      FROM  civicrm_case
 LEFT JOIN  civicrm_case_contact ON ( civicrm_case.id = civicrm_case_contact.case_id )
@@ -2143,10 +2143,10 @@ INNER JOIN  civicrm_case_contact ON ( civicrm_case.id = civicrm_case_contact.cas
     $query = "
     SELECT  relCaseAct.case_id
       FROM  civicrm_case mainCase
-INNER JOIN  civicrm_case_activity mainCaseAct ON (mainCaseAct.case_id = mainCase.id)
-INNER JOIN  civicrm_activity mainAct          ON (mainCaseAct.activity_id = mainAct.id AND mainAct.activity_type_id = %1)
-INNER JOIN  civicrm_case_activity relCaseAct  ON (relCaseAct.activity_id = mainAct.id AND mainCaseAct.id !=  relCaseAct.id) 
-INNER JOIN  civicrm_activity relAct           ON (relCaseAct.activity_id = relAct.id  AND relAct.activity_type_id = %1)
+ INNER JOIN  civicrm_case_activity mainCaseAct ON (mainCaseAct.case_id = mainCase.id)
+ INNER JOIN  civicrm_activity mainAct          ON (mainCaseAct.activity_id = mainAct.id AND mainAct.activity_type_id = %1)
+ INNER JOIN  civicrm_case_activity relCaseAct  ON (relCaseAct.activity_id = mainAct.id AND mainCaseAct.id !=  relCaseAct.id)
+ INNER JOIN  civicrm_activity relAct           ON (relCaseAct.activity_id = relAct.id  AND relAct.activity_type_id = %1)
      WHERE  $whereClause";
 
     $dao = CRM_Core_DAO::executeQuery($query, array(1 => array($linkActType, 'Integer'),
@@ -2180,13 +2180,13 @@ INNER JOIN  civicrm_activity relAct           ON (relCaseAct.activity_id = relAc
 
     //2. fetch the details of related cases.
     $query = "
-    SELECT  relCase.id as id, 
-            case_type_ov.label as case_type, 
+    SELECT  relCase.id as id,
+            case_type_ov.label as case_type,
             client.display_name as client_name,
             client.id as client_id
-      FROM  civicrm_case relCase 
-INNER JOIN  civicrm_case_contact relCaseContact ON ( relCase.id = relCaseContact.case_id )
-INNER JOIN  civicrm_contact      client         ON ( client.id = relCaseContact.contact_id ) 
+      FROM  civicrm_case relCase
+ INNER JOIN  civicrm_case_contact relCaseContact ON ( relCase.id = relCaseContact.case_id )
+ INNER JOIN  civicrm_contact      client         ON ( client.id = relCaseContact.contact_id )
  LEFT JOIN  civicrm_option_group case_type_og   ON ( case_type_og.name = 'case_type' )
  LEFT JOIN  civicrm_option_value case_type_ov   ON ( relCase.case_type_id = case_type_ov.value
                                                      AND case_type_og.id = case_type_ov.option_group_id )
@@ -2334,8 +2334,8 @@ INNER JOIN  civicrm_contact      client         ON ( client.id = relCaseContact.
         if ($openCaseType = array_search('Open Case', $activityTypes)) {
           $sql = "
 SELECT  id
-  FROM  civicrm_activity 
- WHERE  activity_type_id = $openCaseType 
+  FROM  civicrm_activity
+ WHERE  activity_type_id = $openCaseType
    AND  id IN ( " . implode(',', array_values($otherActivityIds)) . ');';
           $dao = CRM_Core_DAO::executeQuery($sql);
           while ($dao->fetch()) {
@@ -2491,8 +2491,8 @@ SELECT  id
 
         //update other relationships end dates
         if (!empty($otherRelationshipIds)) {
-          $sql = 'UPDATE  civicrm_relationship 
-                               SET  end_date = CURDATE() 
+          $sql = 'UPDATE  civicrm_relationship
+                               SET  end_date = CURDATE()
                              WHERE  id IN ( ' . implode(',', $otherRelationshipIds) . ')';
           CRM_Core_DAO::executeQuery($sql);
         }
