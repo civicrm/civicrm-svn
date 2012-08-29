@@ -50,6 +50,7 @@ class CRM_Core_ManagedEntitiesTest extends CiviUnitTestCase {
     $me->reconcile();
     $foo = $me->get('com.example.one', 'foo');
     $this->assertEquals('CRM_Example_One_Foo', $foo['name']);
+    $this->assertDBQuery(1, 'SELECT count(*) FROM civicrm_option_value WHERE name = "CRM_Example_One_Foo"');
 
     // later on, hook returns an extra managed entity ('bar')
     $decls[] = array(
@@ -66,8 +67,10 @@ class CRM_Core_ManagedEntitiesTest extends CiviUnitTestCase {
     $me->reconcile();
     $foo = $me->get('com.example.one', 'foo');
     $this->assertEquals('CRM_Example_One_Foo', $foo['name']);
+    $this->assertDBQuery(1, 'SELECT count(*) FROM civicrm_option_value WHERE name = "CRM_Example_One_Foo"');
     $bar = $me->get('com.example.one', 'bar');
     $this->assertEquals('CRM_Example_One_Bar', $bar['name']);
+    $this->assertDBQuery(1, 'SELECT count(*) FROM civicrm_option_value WHERE name = "CRM_Example_One_Bar"');
 
     // and then hook changes its mind, removing 'foo'
     unset($decls[0]);
@@ -75,8 +78,10 @@ class CRM_Core_ManagedEntitiesTest extends CiviUnitTestCase {
     $me->reconcile();
     $foo = $me->get('com.example.one', 'foo');
     $this->assertTrue($foo === NULL);
+    $this->assertDBQuery(0, 'SELECT count(*) FROM civicrm_option_value WHERE name = "CRM_Example_One_Foo"');
     $bar = $me->get('com.example.one', 'bar');
     $this->assertEquals('CRM_Example_One_Bar', $bar['name']);
+    $this->assertDBQuery(1, 'SELECT count(*) FROM civicrm_option_value WHERE name = "CRM_Example_One_Bar"');
   }
 
   /**
@@ -211,6 +216,7 @@ class CRM_Core_ManagedEntitiesTest extends CiviUnitTestCase {
     $foo = $me->get('com.example.one', 'foo');
     $this->assertEquals(1, $foo['is_active']);
     $this->assertEquals('CRM_Example_One_Foo', $foo['name']);
+    $this->assertDBQuery(1, 'SELECT is_active FROM civicrm_option_value WHERE name = "CRM_Example_One_Foo"');
 
     // now deactivate module, which has empty decls and which cascades to managed object
     $this->modules['one']->is_active = FALSE;
@@ -219,6 +225,7 @@ class CRM_Core_ManagedEntitiesTest extends CiviUnitTestCase {
     $foo = $me->get('com.example.one', 'foo');
     $this->assertEquals(0, $foo['is_active']);
     $this->assertEquals('CRM_Example_One_Foo', $foo['name']);
+    $this->assertDBQuery(0, 'SELECT is_active FROM civicrm_option_value WHERE name = "CRM_Example_One_Foo"');
 
     // and reactivate module, which again provides decls and which cascades to managed object
     $this->modules['one']->is_active = TRUE;
@@ -227,6 +234,7 @@ class CRM_Core_ManagedEntitiesTest extends CiviUnitTestCase {
     $foo = $me->get('com.example.one', 'foo');
     $this->assertEquals(1, $foo['is_active']);
     $this->assertEquals('CRM_Example_One_Foo', $foo['name']);
+    $this->assertDBQuery(1, 'SELECT is_active FROM civicrm_option_value WHERE name = "CRM_Example_One_Foo"');
   }
 
   /**

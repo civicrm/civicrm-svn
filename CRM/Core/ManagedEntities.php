@@ -115,7 +115,7 @@ class CRM_Core_ManagedEntities {
           'version' => 3,
           'id' => $dao->entity_id,
         );
-        $result = civicrm_api($dao->entity_type, 'create', $params);
+        $result = civicrm_api($dao->entity_type, 'delete', $params);
         if ($result['is_error']) {
           $this->onApiError($params, $result);
         }
