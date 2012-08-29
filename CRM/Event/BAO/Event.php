@@ -1238,7 +1238,7 @@ WHERE civicrm_event.is_active = 1
               $grpTitles[] = $grp->title;
             }
             if (!empty($grpTitles) &&
-              CRM_Utils_Array::value('title', $fields['group'])
+              CRM_Utils_Array::value('title', CRM_Utils_Array::value('group', $fields))
             ) {
               $values[$fields['group']['title']] = implode(', ', $grpTitles);
             }
@@ -1342,7 +1342,7 @@ WHERE civicrm_event.is_active = 1
           break;
         }
       }
-
+      $customVal     = '';
       $config        = CRM_Core_Config::singleton();
       $locationTypes = $imProviders = array();
       $locationTypes = CRM_Core_PseudoConstant::locationType();
