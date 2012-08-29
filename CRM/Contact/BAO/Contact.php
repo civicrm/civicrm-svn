@@ -1848,10 +1848,7 @@ ORDER BY civicrm_email.is_primary DESC";
 
         $loc = CRM_Utils_Array::key($index, $locationType);
 
-        $blockName = 'address';
-        if (in_array($fieldName, $blocks)) {
-          $blockName = $fieldName;
-        }
+        $blockName = isset($blocks[$fieldName]) ? $fieldName : 'address';
 
         $data[$blockName][$loc]['location_type_id'] = $locTypeId;
 
