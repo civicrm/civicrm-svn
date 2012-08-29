@@ -526,7 +526,11 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
     }
 
     $this->addFormRule(array('CRM_Contact_Form_Edit_' . $this->_contactType, 'formRule'), $this->_contactId);
-    $this->addFormRule(array('CRM_Contact_Form_Edit_Lock', 'formRule'), $this->_contactId);
+
+    // Call Locking check if editing existing contact
+    if ($this->_contactId) {
+      $this->addFormRule(array('CRM_Contact_Form_Edit_Lock', 'formRule'), $this->_contactId);      
+    }
 
     if (array_key_exists('Address', $this->_editOptions)) {
       $this->addFormRule(array('CRM_Contact_Form_Edit_Address', 'formRule'));
