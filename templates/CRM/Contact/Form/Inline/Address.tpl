@@ -86,6 +86,24 @@ cj( function() {
   inlineEditForm( 'Address', 'address-block-'+ blockId,
     {/literal}{$contactId}{literal},
     null, blockId, addressId );
+
+  cj('#address_{/literal}{$blockId}{literal}_location_type_id').change(function() {
+    var ele = cj(this);
+    var lt = ele.val();
+    var container = ele.closest('div.crm-address-block');
+    container.data('location-type-id', '');
+    if (lt != '') {
+      cj('.crm-address-block').each(function() {
+        if (cj(this).data('location-type-id') == lt) {
+          var label = cj('option:selected', ele).text();
+          ele.val('');
+          alert("{/literal}{ts escape='js'}Location type{/ts} {literal}" + label + "{/literal} {ts escape='js'}has already been assigned to another address. Please select another location type for this address.{/ts}{literal}");
+          return false;
+        }
+      });
+      container.data('location-type-id', lt);
+    }
+  });
 });
 
 </script>

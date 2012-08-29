@@ -269,7 +269,7 @@
               {assign var='locationIndex' value=1}
               {if $address}
                 {foreach from=$address item=add key=locationIndex}
-                <div class="{cycle name=location values="contactCardLeft,contactCardRight"} crm-address_{$locationIndex} crm-address-block crm-address_type_{$add.location_type}">
+                <div class="{cycle name=location values="contactCardLeft,contactCardRight"} crm-address_{$locationIndex} crm-address-block crm-address_type_{$add.location_type}" data-location-type-id="{$add.location_type_id}">
                   <div class="crm-summary-block" id="address-block-{$locationIndex}" locno="{$locationIndex}">
                     {include file="CRM/Contact/Page/Inline/Address.tpl"}
                   </div>
