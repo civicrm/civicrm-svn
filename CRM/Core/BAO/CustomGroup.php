@@ -903,6 +903,20 @@ SELECT $select
   }
 
   /**
+   * Get a list of custom groups which extend a given entity type.
+   * If there are custom-groups which only apply to certain subtypes,
+   * those WILL be included.
+   *
+   * @param $entityType string
+   * @return CRM_Core_DAO_CustomGroup
+   */
+  static function getAllCustomGroupsByBaseEntity($entityType) {
+    $customGroupDAO = new CRM_Core_DAO_CustomGroup();
+    self::_addWhereAdd($customGroupDAO, $entityType, NULL, TRUE);
+    return $customGroupDAO;
+  }
+
+  /**
    * Add the whereAdd clause for the DAO depending on the type of entity
    * the custom group is extending.
    *
@@ -915,7 +929,7 @@ SELECT $select
    * @static
    *
    */
-  private static function _addWhereAdd(&$customGroupDAO, $entityType, $entityID = NULL) {
+  private static function _addWhereAdd(&$customGroupDAO, $entityType, $entityID = NULL, $allSubtypes = FALSE) {
     $addSubtypeClause = FALSE;
 
     switch ($entityType) {
@@ -923,7 +937,9 @@ SELECT $select
         // if contact, get all related to contact
         $extendList = "'Contact','Individual','Household','Organization'";
         $customGroupDAO->whereAdd("extends IN ( $extendList )");
-        $addSubtypeClause = TRUE;
+        if (!$allSubtypes) {
+          $addSubtypeClause = TRUE;
+        }
         break;
 
       case 'Individual':
@@ -932,7 +948,9 @@ SELECT $select
         // is I/H/O then get I/H/O and contact
         $extendList = "'Contact','$entityType'";
         $customGroupDAO->whereAdd("extends IN ( $extendList )");
-        $addSubtypeClause = TRUE;
+        if (!$allSubtypes) {
+          $addSubtypeClause = TRUE;
+        }
         break;
 
       case 'Location':

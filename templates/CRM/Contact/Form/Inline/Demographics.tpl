@@ -23,6 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+{$form.oplock_ts.html}
   <div class="crm-inline-edit-form crm-table2div-layout">
     <div class="crm-inline-button">
       {include file="CRM/common/formButtons.tpl"}

@@ -1,6 +1,7 @@
 <?php
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'CiviTest/Contact.php';
+require_once 'CiviTest/Custom.php';
 class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase {
   function get_info() {
     return array(
@@ -712,6 +713,7 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase {
       'id', 'sort_name', 'Database check, contact deleted successfully.'
     );
     $this->quickCleanup(array('civicrm_contact', 'civicrm_note'));
+    Custom::deleteGroup($customGroup);
   }
 
   /**
@@ -1422,6 +1424,172 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase {
     );
 
     return $params;
+  }
+
+  /**
+   * Ensure that created_date and modified_date are set
+   */
+  function testTimestamps_contact() {
+    $test = $this;
+    $this->_testTimestamps(array(
+      'UPDATE' => function ($contactId) use ($test) {
+        $params = array(
+          'first_name' => 'Testing',
+          'contact_type' => 'Individual',
+          'contact_id' => $contactId,
+        );
+        $contact = CRM_Contact_BAO_Contact::add($params);
+        $test->assertInstanceOf('CRM_Contact_DAO_Contact', $contact, 'Check for created object');
+      },
+    ));
+  }
+
+  /**
+   * Ensure that civicrm_contact.modified_date is updated when manipulating a phone record
+   */
+  function testTimestamps_email() {
+    $test = $this;
+    $this->_testTimestamps(array(
+      'INSERT' => function ($contactId) use ($test) {
+        $params = array(
+          'email' => 'ex-1@example.com',
+          'is_primary' => 1,
+          'location_type_id' => 1,
+          'contact_id' => $contactId,
+        );
+        CRM_Core_BAO_Email::add($params);
+        $test->assertDBQuery('ex-1@example.com',
+          'SELECT email FROM civicrm_email WHERE contact_id = %1 ORDER BY id DESC LIMIT 1',
+          array(1 => array($contactId, 'Integer'))
+        );
+      },
+
+      'UPDATE' => function ($contactId) use ($test) {
+        CRM_Core_DAO::executeQuery(
+          'UPDATE civicrm_email SET email = "ex-2@example.com" WHERE contact_id = %1',
+          array(1 => array($contactId, 'Integer'))
+        );
+      },
+
+      'DELETE' => function ($contactId) use ($test) {
+        CRM_Core_DAO::executeQuery(
+          'DELETE FROM civicrm_email WHERE contact_id = %1',
+          array(1 => array($contactId, 'Integer'))
+        );
+      },
+    ));
+  }
+
+  /**
+   * Ensure that civicrm_contact.modified_date is updated when manipulating an email
+   */
+  function testTimestamps_phone() {
+    $test = $this;
+    $this->_testTimestamps(array(
+      'INSERT' => function ($contactId) use ($test) {
+        $params = array(
+          'phone' => '202-555-1000',
+          'is_primary' => 1,
+          'location_type_id' => 1,
+          'contact_id' => $contactId,
+        );
+        CRM_Core_BAO_Phone::add($params);
+        $test->assertDBQuery('202-555-1000',
+          'SELECT phone FROM civicrm_phone WHERE contact_id = %1 ORDER BY id DESC LIMIT 1',
+          array(1 => array($contactId, 'Integer'))
+        );
+      },
+
+      'UPDATE' => function ($contactId) use ($test) {
+        CRM_Core_DAO::executeQuery(
+          'UPDATE civicrm_phone SET phone = "202-555-2000" WHERE contact_id = %1',
+          array(1 => array($contactId, 'Integer'))
+        );
+      },
+
+      'DELETE' => function ($contactId) use ($test) {
+        CRM_Core_DAO::executeQuery(
+          'DELETE FROM civicrm_phone WHERE contact_id = %1',
+          array(1 => array($contactId, 'Integer'))
+        );
+      },
+    ));
+  }
+
+  /**
+   * Ensure that civicrm_contact.modified_date is updated when contact-related
+   * custom data
+   */
+  function testTimestamps_custom() {
+    $customGroup = Custom::createGroup(array(), 'Individual');
+    $this->assertNotNull($customGroup);
+    $fields = array(
+      'groupId' => $customGroup->id,
+      'data_type' => 'String',
+      'html_type' => 'Text',
+    );
+    $customField = Custom::createField(array(), $fields);
+    $this->assertNotNull($customField);
+
+    $test = $this;
+    $this->_testTimestamps(array(
+      'INSERT' => function ($contactId) use ($test, $customGroup, $customField) {
+        $result = civicrm_api('contact', 'create', array(
+          'version' => 3,
+          'contact_id' => $contactId,
+          'custom_' . $customField->id => 'test-1',
+        ));
+        $test->assertAPISuccess($result);
+      },
+      'UPDATE' => function ($contactId) use ($test, $customGroup, $customField) {
+        CRM_Core_DAO::executeQuery(
+          "UPDATE {$customGroup->table_name} SET {$customField->column_name} = 'test-2' WHERE entity_id = %1",
+          array(1 => array($contactId, 'Integer'))
+        );
+      },
+      'DELETE' => function ($contactId) use ($test, $customGroup, $customField) {
+        CRM_Core_DAO::executeQuery(
+          "DELETE FROM {$customGroup->table_name} WHERE entity_id = %1",
+          array(1 => array($contactId, 'Integer'))
+        );
+      },
+    ));
+
+    Custom::deleteGroup($customGroup);
+  }
+
+  /**
+   * Helper for testing timestamp manipulation
+   *
+   * Create a contact and perform a series of steps with it; after each
+   * step, ensure that the contact's modified_date has increased.
+   *
+   * @param $callbacks array ($name => $callable)
+   */
+  function _testTimestamps($callbacks) {
+    CRM_Core_DAO::triggerRebuild();
+    $contactId = Contact::createIndividual();
+
+    $origTimestamps = CRM_Contact_BAO_Contact::getTimestamps($contactId);
+    $this->assertRegexp('/^\d\d\d\d-\d\d-\d\d /', $origTimestamps['created_date']);
+    $this->assertRegexp('/^\d\d\d\d-\d\d-\d\d /', $origTimestamps['modified_date']);
+    $this->assertTrue($origTimestamps['created_date'] <= $origTimestamps['modified_date']);
+
+    $prevTimestamps = $origTimestamps;
+    foreach ($callbacks as $callbackName => $callback) {
+      sleep(1); // advance clock by 1 second to ensure timestamps change
+
+      $callback($contactId);
+      $newTimestamps = CRM_Contact_BAO_Contact::getTimestamps($contactId);
+      $this->assertRegexp('/^\d\d\d\d-\d\d-\d\d /', $newTimestamps['created_date'], "Malformed created_date (after $callbackName)");
+      $this->assertRegexp('/^\d\d\d\d-\d\d-\d\d /', $newTimestamps['modified_date'], "Malformed modified_date (after $callbackName)");
+      $this->assertEquals($origTimestamps['created_date'], $newTimestamps['created_date'], "Changed created_date (after $callbackName)");
+      $this->assertTrue($prevTimestamps['modified_date'] < $newTimestamps['modified_date'], "Misordered modified_date (after $callbackName)");
+
+      $prevTimestamps = $newTimestamps;
+    }
+
+    Contact::delete($contactId);
   }
 }
 

@@ -33,26 +33,66 @@
  *
  */
 class CRM_Upgrade_Incremental_php_FourThree {
+  const BATCH_SIZE = 5000;
 
   function verifyPreDBstate(&$errors) {
     return TRUE;
   }
   
   function upgrade_4_3_alpha1($rev) {
-    $this->addTask(ts('Upgrade DB to 4.3.alpha1: SQL'), 'task_4_3_alpha1_runSql', $rev);
- 
-  }
-  static function task_4_3_alpha1_runSql(CRM_Queue_TaskContext $ctx, $rev) {
     $upgrade = new CRM_Upgrade_Form();
     $upgrade->processSQL($rev);
-    
+
+    $minId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(min(id),0) FROM civicrm_contact');
+    $maxId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(max(id),0) FROM civicrm_contact');
+    for ($startId = $minId; $startId <= $maxId; $startId += self::BATCH_SIZE) {
+      $endId = $startId + self::BATCH_SIZE - 1;
+      $title = ts('Upgrade timestamps (%1 => %2)', array(
+        1 => $startId,
+        2 => $endId,
+      ));
+      $this->addTask($title, 'convertTimestamps', $startId, $endId);
+    }
+
     // now rebuild all the triggers
     // CRM-9716
-    CRM_Core_DAO::triggerRebuild();
+    // FIXME // CRM_Core_DAO::triggerRebuild();
     
     return TRUE;
   }
   
+  /**
+   * Read creation and modification times from civicrm_log; add
+   * them to civicrm_contact.
+   */
+  function convertTimestamps(CRM_Queue_TaskContext $ctx, $startId, $endId) {
+    $sql = "
+      SELECT entity_id, min(modified_date) AS created, max(modified_date) AS modified
+      FROM civicrm_log
+      WHERE entity_table = 'civicrm_contact'
+      AND entity_id BETWEEN %1 AND %2
+      GROUP BY entity_id
+    ";
+    $params = array(
+      1 => array($startId, 'Integer'),
+      2 => array($endId, 'Integer'),
+    );
+    $dao = CRM_Core_DAO::executeQuery($sql, $params);
+    while ($dao->fetch()) {
+      // FIXME civicrm_log.modified_date is DATETIME; civicrm_contact.modified_date is TIMESTAMP
+      CRM_Core_DAO::executeQuery(
+        'UPDATE civicrm_contact SET created_date = %1, modified_date = %2 WHERE id = %3',
+        array(
+          1 => array($dao->created, 'String'),
+          2 => array($dao->modified, 'String'),
+          3 => array($dao->entity_id, 'Integer'),
+        )
+      );
+    }
+
+    return TRUE;
+  }
+
   /**
    * Syntatic sugar for adding a task which (a) is in this class and (b) has
    * a high priority.

@@ -24,6 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* This file builds html for Contact Display Name inline edit *}
+{$form.oplock_ts.html}
 <div class="crm-table2div-layout crm-inline-edit-form">
   <div class="crm-inline-button">
     {include file="CRM/common/formButtons.tpl"}

@@ -1,4 +1,5 @@
-{*
+<?php
+/*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
@@ -22,39 +23,58 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*}
-{$form.oplock_ts.html}
-<div class="crm-inline-edit-form crm-table2div-layout">
-  <div class="crm-inline-button">
-    {include file="CRM/common/formButtons.tpl"}
-  </div>
+*/
 
- <div class="crm-clear">  
-  {if $contactType eq 'Individual'}
-  <div class="crm-label">{$form.current_employer.label}&nbsp;{help id="id-current-employer" file="CRM/Contact/Form/Contact.hlp"}</div>
-  <div class="crm-content">
-    {$form.current_employer.html|crmReplace:class:twenty}
-    <div id="employer_address" style="display:none;"></div>
-  </div>
-  <div class="crm-label">{$form.job_title.label}</div>
-  <div class="crm-content">{$form.job_title.html}</div>
-  {/if}
-  
-  <div class="crm-label">{$form.nick_name.label}</div>
-  <div class="crm-content">{$form.nick_name.html}</div>
-  
-  {if $contactType eq 'Organization'}
-  <div class="crm-label">{$form.legal_name.label}</div>
-  <div class="crm-content">{$form.legal_name.html}</div>
-  <div class="crm-label">{$form.sic_code.label}</div>
-  <div class="crm-content">{$form.sic_code.html}</div>
-  {/if}
-  
-  <div class="crm-label">{$form.contact_source.label}</div>
-  <div class="crm-content">{$form.contact_source.html}</div>
- </div> <!-- end of main -->
-</div>
+/**
+ *
+ * @package CRM
+ * @copyright CiviCRM LLC (c) 2004-2012
+ * $Id$
+ *
+ */
 
-{if $contactType eq 'Individual'}
-  {include file="CRM/Contact/Form/CurrentEmployer.tpl"}
-{/if}
+/**
+ * Auxilary class to provide support for locking (and ignoring locks on)
+ * contact records.
+ */
+class CRM_Contact_Form_Edit_Lock {
+
+  /**
+   * This function provides the HTML form elements
+   *
+   * @param object $form form object
+   * @param int $inlineEditMode ( 1 for contact summary
+   * top bar form and 2 for display name edit )
+   *
+   * @access public
+   * @return void
+   */
+  public function buildQuickForm(&$form) {
+    $form->addElement('hidden', 'modified_date', '', array('id' => 'modified_date'));
+  }
+
+  /**
+   * Ensure that modified_date hasn't changed in the underlying DB
+   *
+   * @param array $fields  the input form values
+   * @param array $files   the uploaded files if any
+   * @param array $options additional user data
+   *
+   * @return true if no errors, else array of errors
+   * @access public
+   * @static
+   */
+  static function formRule($fields, $files, $contactID = NULL) {
+    $errors = array();
+
+    $timestamps = CRM_Contact_BAO_Contact::getTimestamps($contactID);
+    if ($fields['modified_date'] != $timestamps['modified_date']) {
+      // Inline buttons generated via JS
+      $open = sprintf("<span id='update_modified_date' data:latest_modified_date='%s'>", $timestamps['modified_date']);
+      $close = "</span>";
+      $errors['modified_date'] = $open . ts('This record was modified by another user!') . $close;
+    }
+
+    return empty($errors) ? TRUE : $errors;
+  }
+}

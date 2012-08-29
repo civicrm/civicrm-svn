@@ -352,3 +352,15 @@
   {/literal}
 {/if}
 
+{* CRM-10560 *}
+{literal}
+<script type="text/javascript">
+cj(function($) {
+  $('.crm-inline-edit-container').crmFormContactLock({
+    oplock_ts: "{/literal}{$oplock_ts}{literal}",
+    ignoreLabel: "{/literal}{ts}Ignore{/ts}{literal}",
+    reloadLabel: "{/literal}{ts}Start Over{/ts}{literal}"
+  });
+});
+</script>
+{/literal}

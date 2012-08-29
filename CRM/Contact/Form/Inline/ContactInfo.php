@@ -70,6 +70,8 @@ class CRM_Contact_Form_Inline_ContactInfo extends CRM_Core_Form {
    * @access public
    */
   public function buildQuickForm() {
+    CRM_Contact_Form_Inline_Lock::buildQuickForm($this, $this->_contactId);
+
     //build contact type specific fields
     eval('CRM_Contact_Form_Edit_' . $this->_contactType . '::buildQuickForm( $this, 2 );');
 
@@ -139,6 +141,7 @@ class CRM_Contact_Form_Inline_ContactInfo extends CRM_Core_Form {
     CRM_Contact_BAO_Contact::create( $params );
 
     $response = array('status' => 'save');
+    $response = array_merge($response, CRM_Contact_Form_Inline_Lock::getResponse($this->_contactId));
     echo json_encode($response);
     CRM_Utils_System::civiExit();
   }
