@@ -89,5 +89,11 @@
       container.data('location-type-id', lt);
     }
   });
+  cj(':checkbox[id*=is_]', 'form#Address_{/literal}{$blockId}{literal}').change(function() {
+    if (cj(this).is(':checked')) {
+      var ids = cj(this).attr('id').slice(-9);
+      cj('.crm-inline-edit.address.form :checkbox:checked[id$="' + ids + '"]').not(this).removeAttr('checked');
+    }
+  });
 </script>
 {/literal}
