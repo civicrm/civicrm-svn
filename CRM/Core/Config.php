@@ -626,15 +626,17 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
    * do general cleanup of caches, temp directories and temp tables
    * CRM-8739
    */
-  function cleanupCaches() {
+  function cleanupCaches($sessionReset = TRUE) {
     // cleanup templates_c directory
     $this->cleanup(1, FALSE);
 
     // clear db caching
     $this->clearDBCache();
 
-    $session = CRM_Core_Session::singleton();
-    $session->reset(2);
+    if ($sessionReset) {
+      $session = CRM_Core_Session::singleton();
+      $session->reset(2);
+    }
   }
 
   /**
