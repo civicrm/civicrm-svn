@@ -156,7 +156,8 @@ abstract class CRM_Utils_Hook {
         }
       }
 
-      if (!empty($fResult)) {
+      if (!empty($fResult) &&
+          is_array($fResult)) {
         $result = array_merge($result, $fResult);
       }
     }
