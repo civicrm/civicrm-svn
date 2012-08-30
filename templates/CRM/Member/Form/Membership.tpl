@@ -326,7 +326,7 @@ cj( function( ) {
         });
     }
     
-    cj('#membership_type_id\\[1\\]').change( function( ) {
+    cj('#membership_type_id_1').change( function( ) {
         setPaymentBlock( mode );
     });
 
@@ -386,7 +386,7 @@ function showHideMemberStatus() {
   
 {literal}
 function setPaymentBlock( mode ) {
-    var memType = cj('#membership_type_id\\[1\\]').val( );
+    var memType = cj('#membership_type_id_1').val( );
     var isPriceSet = 0;
 
     if ( cj('#price_set_id').length > 0 && cj('#price_set_id').val() ) {
@@ -488,7 +488,7 @@ function buildAutoRenew( membershipType, processorId ) {
 
   //get the required values in case missing.
   if ( !processorId )  processorId = cj( '#payment_processor_id' ).val( );  
-  if ( !membershipType ) membershipType = parseInt( cj('#membership_type_id\\[1\\]').val( ) );
+  if ( !membershipType ) membershipType = parseInt( cj('#membership_type_id_1').val( ) );
   
   //we don't have both required values.
   if ( !processorId || !membershipType ) {
@@ -564,7 +564,7 @@ function buildAmount( priceSetId ) {
   
   var fname = '#priceset';
   if ( !priceSetId ) {
-      cj('#membership_type_id\\[1\\]').val(0);
+      cj('#membership_type_id_1').val(0);
       buildCustomData(customDataType, 'null' );
 
       // hide price set fields.

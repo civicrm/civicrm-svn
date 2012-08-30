@@ -206,7 +206,7 @@
             cj('#repeatFields').hide();
          }
 
-         cj('#entity\\[0\\]').change( function( ) {
+         cj('#entity_0').change( function( ) {
               buildSelect("start_action_date");
 	      buildSelect("end_date");
 	      buildSelect1("recipient");
@@ -226,8 +226,9 @@
 
      function populateRecipient( ) {
      	  var recipient = cj("#recipient option:selected").val();    
-	  var entity = cj("#entity\\[0\\] option:selected").val();
+	  var entity = cj("#entity_0 option:selected").val();
 	  var postUrl = "{/literal}{crmURL p='civicrm/ajax/populateRecipient' h=0}{literal}";
+
 	  if(recipientMapping[recipient] == 'Participant Status' || recipientMapping[recipient] == 'Participant Role') {
    	     var elementID = '#recipient_listing';
              cj( elementID ).html('');
@@ -254,7 +255,7 @@
      function buildSelect( selectID ) {
          var elementID = '#' +  selectID;
          cj( elementID ).html('');
-	 var mappingID = cj('#entity\\[0\\]').val();
+	 var mappingID = cj('#entity_0').val();
          var postUrl = "{/literal}{crmURL p='civicrm/ajax/mapping' h=0}{literal}";
          cj.post( postUrl, { mappingID: mappingID},
              function ( response ) {
@@ -270,7 +271,7 @@
  function buildSelect1( selectID ) {
          var elementID = '#' +  selectID;
          cj( elementID ).html('');
-	 var mappingID = cj('#entity\\[0\\]').val();
+	 var mappingID = cj('#entity_0').val();
          var postUrl1 = "{/literal}{crmURL p='civicrm/ajax/mapping1' h=0}{literal}";
 
 	 cj('#is_recipient_listing').val('');
