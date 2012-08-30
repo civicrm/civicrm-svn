@@ -30,6 +30,7 @@ class calendar_plugin_row_civicrm_event extends calendar_plugin_row_node {
   // Stores the nodes loaded with pre_render.
   var $nodes = array();
   function construct() {
+    parent::construct();
     if (!civicrm_initialize()) {
       return;
     }
