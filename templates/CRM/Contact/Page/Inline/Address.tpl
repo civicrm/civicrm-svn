@@ -83,12 +83,13 @@
   {literal}
   <script type="text/javascript">
     cj( function() {
-      cj().crmaccordions(); 
+      cj().crmaccordions();
+      cj('#address-block-{/literal}{$locationIndex}{literal}').data('location-type-id', {/literal}{$add.location_type_id}{literal});
     });
   </script>
   {/literal}
 {else}
-  <div class="crm-summary-block" id="address-block-{$locationIndex}" locno="{$locationIndex}">
+  <div class="crm-summary-block crm-address-block" id="address-block-{$locationIndex}" locno="{$locationIndex}">
     <div class="crm-table2div-layout">
       <div class="crm-clear">
         <a id="edit-address-block-{$locationIndex}" class="crm-link-action empty-address-block-{$locationIndex}" title="{ts}click to add address{/ts}" locno="{$locationIndex}" aid=0>
@@ -106,7 +107,7 @@
     <div class="contactCardRight crm-address_{$appendBlockIndex} crm-address-block appendAddLink">
   {/if}
 
-      <div class="crm-summary-block" id="address-block-{$appendBlockIndex}" locno="{$appendBlockIndex}">
+      <div class="crm-summary-block crm-address-block" id="address-block-{$appendBlockIndex}" locno="{$appendBlockIndex}">
         <div class="crm-table2div-layout">
           <div class="crm-clear">
             <a id="edit-address-block-{$appendBlockIndex}" class="crm-link-action empty-address-block-{$appendBlockIndex}" title="{ts}click to add address{/ts}" locno="{$appendBlockIndex}" aid=0>

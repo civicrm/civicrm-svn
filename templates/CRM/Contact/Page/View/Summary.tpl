@@ -269,8 +269,8 @@
               {assign var='locationIndex' value=1}
               {if $address}
                 {foreach from=$address item=add key=locationIndex}
-                <div class="{cycle name=location values="contactCardLeft,contactCardRight"} crm-address_{$locationIndex} crm-address-block crm-address_type_{$add.location_type}" data-location-type-id="{$add.location_type_id}">
-                  <div class="crm-summary-block" id="address-block-{$locationIndex}" locno="{$locationIndex}">
+                <div class="{cycle name=location values="contactCardLeft,contactCardRight"} crm-address_{$locationIndex} crm-address_type_{$add.location_type}">
+                  <div class="crm-summary-block crm-address-block" id="address-block-{$locationIndex}" locno="{$locationIndex}">
                     {include file="CRM/Contact/Page/Inline/Address.tpl"}
                   </div>
                 </div>
@@ -286,7 +286,7 @@
                   <div class="contactCardRight crm-address_{$locationIndex} crm-address-block appendAddLink">
                 {/if}
 
-                    <div class="crm-summary-block" id="address-block-{$locationIndex}" locno="{$locationIndex}">
+                    <div class="crm-summary-block crm-address-block" id="address-block-{$locationIndex}" locno="{$locationIndex}">
                       <div class="crm-table2div-layout">
                         <div class="crm-clear">
                           <a id="edit-address-block-{$locationIndex}" class="crm-link-action empty-address-block-{$locationIndex}" title="{ts}click to add address{/ts}" locno="{$locationIndex}" aid=0>

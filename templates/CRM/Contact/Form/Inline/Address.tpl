@@ -93,15 +93,18 @@ cj( function() {
     var container = ele.closest('div.crm-address-block');
     container.data('location-type-id', '');
     if (lt != '') {
+      var ok = true;
       cj('.crm-address-block').each(function() {
         if (cj(this).data('location-type-id') == lt) {
           var label = cj('option:selected', ele).text();
           ele.val('');
           alert("{/literal}{ts escape='js'}Location type{/ts} {literal}" + label + "{/literal} {ts escape='js'}has already been assigned to another address. Please select another location type for this address.{/ts}{literal}");
-          return false;
+          ok = false;
         }
       });
-      container.data('location-type-id', lt);
+      if (ok) {
+        container.data('location-type-id', lt);
+      }
     }
   });
   cj(':checkbox[id*="[is_"]', 'form#Address_{/literal}{$blockId}{literal}').change(function() {
