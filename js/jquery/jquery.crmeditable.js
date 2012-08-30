@@ -436,6 +436,10 @@
           .click(function() {
             options.oplock_ts = errorTag.attr('data:update_oplock_ts');
             errorTag.parent().hide();
+            var containerTag = errorTag.closest('.crm-error');
+            if (containerTag.find('li').length == 1) {
+              containerTag.hide();
+            }
             return false;
           })
           .appendTo(errorTag)
