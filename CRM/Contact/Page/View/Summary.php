@@ -245,9 +245,6 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
 
     $this->assign($defaults);
 
-    // CRM-10560: provide last modification time for locking purposes
-    $timestamps = CRM_Contact_BAO_Contact::getTimestamps($this->_contactId);
-    $this->assign('oplock_ts', $timestamps['modified_date']);
     // FIXME: when we sort out TZ isssues with DATETIME/TIMESTAMP, we can skip next query
     // also assign the last modifed details
     $lastModified = CRM_Core_BAO_Log::lastModified($this->_contactId, 'civicrm_contact');

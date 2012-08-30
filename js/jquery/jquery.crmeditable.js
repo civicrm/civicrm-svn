@@ -408,22 +408,30 @@
   /**
    * Configure optimistic locking mechanism for inplace editing
    *
-   * options.oplock_ts: string, initial value of contact's "modified_date"; mutable
    * options.ignoreLabel: string, text for a button
    * options.reloadLabel: string, text for a button
    */
   $.fn.crmFormContactLock = function(options) {
-    // BEFORE SAVE: Replace input[oplock_ts] with options.oplock_ts
+    var oplock_ts = false;
+
+    // AFTER LOAD: For first edit form, extract oplock_ts
+    this.on('crmFormLoad', function(event) {
+      var o = $(event.target);
+      if (oplock_ts == false) { // first block
+        oplock_ts = o.find('input[name="oplock_ts"]').val();
+      }
+    });
+    // BEFORE SAVE: Replace input[oplock_ts] with oplock_ts
     this.on('crmFormBeforeSave', function(event, formData) {
       $.each(formData, function(key, formItem) {
         if (formItem.name == 'oplock_ts') {
-          formItem.value = options.oplock_ts;
+          formItem.value = oplock_ts;
         }
       });
     });
-    // AFTER SUCCESS: Update options.oplock_ts
+    // AFTER SUCCESS: Update oplock_ts
     this.on('crmFormSuccess', function(event, response) {
-      options.oplock_ts = response.oplock_ts;
+      oplock_ts = response.oplock_ts;
     });
     // AFTER ERROR: Render any "Ignore" and "Restart" buttons
     return this.on('crmFormError', function(event, obj, status) {
@@ -434,7 +442,7 @@
         $('<button>')
           .text(options.ignoreLabel)
           .click(function() {
-            options.oplock_ts = errorTag.attr('data:update_oplock_ts');
+            oplock_ts = errorTag.attr('data:update_oplock_ts');
             errorTag.parent().hide();
             var containerTag = errorTag.closest('.crm-error');
             if (containerTag.find('li').length == 1) {

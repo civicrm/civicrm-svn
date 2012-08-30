@@ -50,8 +50,16 @@ class CRM_Contact_Form_Inline_Lock {
    * @return void
    */
   public function buildQuickForm(&$form, $contactID) {
-    // oplock_ts will start out with blank value -- filled in via JS
-    $form->addElement('hidden', 'oplock_ts', '', array('id' => 'oplock_ts'));
+    // We provide a value for oplock_ts to client, but JS uses it carefully
+    // -- i.e.  when loading the first inline form, JS copies oplock_ts to a
+    // global value, and that global value is used for future form submissions. 
+    // Any time a form is submitted, the value will be updated.  This
+    // handles cases like:
+    // - V1:open V1.phone:open V1.email:open V1.email:submit V1.phone:submit
+    // - V1:open E1:open E1:submit V1.email:open V1.email:submit
+    // - V1:open V1.email:open E1:open E1:submit V1.email:submit V1:lock
+    $timestamps = CRM_Contact_BAO_Contact::getTimestamps($contactID);
+    $form->addElement('hidden', 'oplock_ts', $timestamps['modified_date'], array('id' => 'oplock_ts'));
     $form->addFormRule(array('CRM_Contact_Form_Inline_Lock', 'formRule'), $contactID);
   }
 
