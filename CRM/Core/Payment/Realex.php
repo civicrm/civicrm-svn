@@ -151,18 +151,24 @@ class CRM_Core_Payment_Realex extends CRM_Core_Payment {
 			    <orderid>{$this->_getParam('order_id')}</orderid>
 			    <amount currency='{$this->_getParam('currency')}'>{$this->_getParam('amount')}</amount>
 			    <card> 
-				<number>{$this->_getParam('card_number')}</number>
-				<expdate>{$this->_getParam('exp_date')}</expdate>
-				<type>{$this->_getParam('card_type')}</type> 
-				<chname>{$this->_getParam('card_name')}</chname> 
-				<issueno>{$this->_getParam('issue_number')}</issueno>
-				<cvn>
-				    <number>{$this->_getParam('cvn')}</number>
-				    <presind>1</presind>
-				</cvn>
+				    <number>{$this->_getParam('card_number')}</number>
+				    <expdate>{$this->_getParam('exp_date')}</expdate>
+				    <type>{$this->_getParam('card_type')}</type> 
+				    <chname>{$this->_getParam('card_name')}</chname> 
+				    <issueno>{$this->_getParam('issue_number')}</issueno>
+				    <cvn>
+				      <number>{$this->_getParam('cvn')}</number>
+				      <presind>1</presind>
+				    </cvn>
 			    </card> 
 			    <autosettle flag='1'/>
 			    <sha1hash>$sha1hash</sha1hash>
+          <comments>
+            <comment id='1'>{$this->_getParam('comments')}</comment>
+          </comments>
+          <tssinfo>
+            <varref>{$this->_getParam('varref')}</varref>
+          </tssinfo>
 			</request>";
 
     /**********************************************************
@@ -385,6 +391,9 @@ class CRM_Core_Payment_Realex extends CRM_Core_Payment {
     $this->_setParam('order_id', $params['invoiceID']);
     $params['issue_number'] = (isset($params['issue_number']) ? $params['issue_number'] : '');
     $this->_setParam('issue_number', $params['issue_number']);
+    $this->_setParam('varref', $params['contributionType_name']);
+    $comment = $params['description'] . ' (page id:' . $params['contributionPageID'] . ')';
+    $this->_setParam('comments', $comment);
     //$this->_setParam('currency',      $params['currencyID']);
 
     // set the currency to the default which can be overrided.
