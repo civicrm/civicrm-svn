@@ -27,6 +27,7 @@
 {if $addBlock}
 {include file="CRM/Contact/Form/Edit/$blockName.tpl"}
 {else}
+{include file="CRM/Contact/Form/Edit/Lock.tpl"}
 <div class="crm-form-block crm-search-form-block">
 {if call_user_func(array('CRM_Core_Permission','check'), 'administer CiviCRM') }
     <a href='{crmURL p="civicrm/admin/setting/preferences/display" q="reset=1"}' title="{ts}Click here to configure the panes.{/ts}"><span class="icon settings-icon"></span></a>
@@ -244,7 +245,6 @@ cj("select#contact_sub_type").crmasmSelect({
 
 </script>
 {/literal}
-{include file="CRM/Contact/Form/Edit/Lock.tpl"}
 
 {* include common additional blocks tpl *}
 {include file="CRM/common/additionalBlocks.tpl"}
