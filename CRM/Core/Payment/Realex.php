@@ -329,8 +329,8 @@ class CRM_Core_Payment_Realex extends CRM_Core_Payment {
     }
 
     // format amount to be in smallest possible units
-    list($bills, $pennies) = explode('.', $params['amount']);
-    $this->_setParam('amount', 100 * $bills + $pennies);
+    //list($bills, $pennies) = explode('.', $params['amount']);
+    $this->_setParam('amount', 100 * $params['amount']);
 
     switch (strtolower($params['credit_card_type'])) {
       case 'mastercard':
@@ -383,6 +383,7 @@ class CRM_Core_Payment_Realex extends CRM_Core_Payment {
     $this->_setParam('country', $params['country']);
     $this->_setParam('post_code', $params['postal_code']);
     $this->_setParam('order_id', $params['invoiceID']);
+    $params['issue_number'] = (isset($params['issue_number']) ? $params['issue_number'] : '');
     $this->_setParam('issue_number', $params['issue_number']);
     //$this->_setParam('currency',      $params['currencyID']);
 
@@ -396,7 +397,7 @@ class CRM_Core_Payment_Realex extends CRM_Core_Payment {
     $expyear  = substr((string)$params['credit_card_exp_date']['Y'], 2, 2);
     $this->_setParam('exp_date', $expmonth . $expyear);
 
-    if ((strlen($params['credit_card_start_date']['M']) !== 0) &&
+    if (isset($params['credit_card_start_date']) && (strlen($params['credit_card_start_date']['M']) !== 0) &&
       (strlen($params['credit_card_start_date']['Y']) !== 0)
     ) {
       $startmonth = (string)$params['credit_card_start_date']['M'];
