@@ -73,23 +73,28 @@
 {literal}
 <script type="text/javascript">
   cj().crmaccordions();
+  {/literal}{* // Enforce unique location_type_id fields *}{literal}
   cj('#address_{/literal}{$blockId}{literal}_location_type_id').change(function() {
     var ele = cj(this);
     var lt = ele.val();
     var container = ele.closest('div.crm-inline-edit.address');
     container.data('location-type-id', '');
+    var ok = true;
     if (lt != '') {
       cj('.crm-inline-edit.address').each(function() {
-        if (cj(this).data('location-type-id') == lt) {
+        if (ok && cj(this).data('location-type-id') == lt) {
           var label = cj('option:selected', ele).text();
           ele.val('');
           alert("{/literal}{ts escape='js'}Location type{/ts} {literal}" + label + "{/literal} {ts escape='js'}has already been assigned to another address. Please select another location type for this address.{/ts}{literal}");
-          return false;
+          ok = false;
         }
       });
-      container.data('location-type-id', lt);
+      if (ok) {
+        container.data('location-type-id', lt);
+      }
     }
   });
+  {/literal}{* // Enforce unique is_foo fields *}{literal}
   cj(':checkbox[id*="[is_"]', 'form#Address_{/literal}{$blockId}{literal}').change(function() {
     if (cj(this).is(':checked')) {
       var ids = cj(this).attr('id').slice(-9);
@@ -99,6 +104,17 @@
       alert("{/literal}{ts escape='js'}Please choose another address to be primary before changing this one.{/ts}{literal}");
       cj(this).attr('checked', 'checked');
     }
+  });
+  {/literal}{* // Reset location_type_id when cancel button pressed and enforce on other addr forms *}{literal}
+  cj(':submit[name$=cancel]', 'form#Address_{/literal}{$blockId}{literal}').click(function() {
+    var container = cj(this).closest('div.crm-inline-edit.address');
+    var origValue = container.attr('data-location-type-id') || '';
+    container.data('location-type-id', origValue);
+    cj(':input[id$=_location_type_id]', '.crm-inline-edit.address').each(function() {
+      if (cj(this).val() == origValue) {
+        cj(this).val('').change();
+      }
+    });
   });
 </script>
 {/literal}
