@@ -31,18 +31,17 @@
       </div>
     {/if}
 
-  {foreach from=$cd_edit.fields item=element key=field_id}
-    <div class="crm-summary-row">
-      {if $element.options_per_line != 0}
+    {foreach from=$cd_edit.fields item=element key=field_id}
+      <div class="crm-summary-row">
+        {if $element.options_per_line != 0}
           <div class="crm-label">{$element.field_title}</div>
           <div class="crm-content crm-custom_data">
               {* sort by fails for option per line. Added a variable to iterate through the element array*}
               {foreach from=$element.field_value item=val}
-                  {$val}
+                {$val}
               {/foreach}
           </div>
-      {else}
-        <div class="crm-summary-row">
+        {else}
           <div class="crm-label">{$element.field_title}</div>
           {if $element.field_type == 'File'}
             {if $element.field_value.displayURL}
@@ -62,9 +61,8 @@
           {else}
             <div class="crm-content crm-custom-data">{$element.field_value}</div>
           {/if}
-        </div>
-      {/if}
-    </div>
-  {/foreach}
+        {/if}
+      </div>
+    {/foreach}
   </div>
 </div>

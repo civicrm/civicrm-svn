@@ -307,20 +307,6 @@
                       <div class="clear"></div>
                     </div>
                   </div>
-                  {literal}
-                  <script type="text/javascript">
-                    cj('.columnheader').click( function( ) {
-                      var aTagObj = cj(this).find('a');
-                      if ( aTagObj.hasClass( "expanded" ) ) {
-                        cj(this).parent().find('tr:not(".columnheader")').hide( );
-                      } else {
-                        cj(this).parent().find('tr:not(".columnheader")').show( );
-                      }
-                      aTagObj.toggleClass("expanded");
-                      return false;
-                    });
-                  </script>
-                  {/literal}
                 {/if}         
        
                 {if !empty($hookContent) and isset($hookContentPlacement) and $hookContentPlacement eq 1}

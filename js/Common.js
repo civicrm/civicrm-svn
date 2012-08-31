@@ -621,3 +621,22 @@ function advmultiselectResize() {
   }
 }
 
+(function($) {
+  $(document).ready(function() {
+    $('.collapsible-title').each(function() {
+      if ($(this).hasClass('collapsed')) {
+        $(this).nextAll().hide();
+      }
+      $(this).click(function() {
+        $(this).toggleClass('collapsed');
+        if ($(this).hasClass('collapsed')) {
+          $(this).nextAll().hide(200);
+        }
+        else {
+          $(this).nextAll().show(200);
+        }
+        return false;
+      });
+    });
+  });
+})(jQuery);

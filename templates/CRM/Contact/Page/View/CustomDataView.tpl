@@ -26,29 +26,19 @@
 {* Custom Data view mode*}
 {assign var="customGroupCount" value = 1}
 {foreach from=$viewCustomData item=customValues key=customGroupId}
-    {assign var="count" value=$customGroupCount%2}
+  {assign var="count" value=$customGroupCount%2}
   {if ($count eq $side) or $skipTitle }
-        {foreach from=$customValues item=cd_edit key=cvID}
-      <div class="customFieldGroup ui-corner-all {$cd_edit.name} crm-custom-set-block-{$customGroupId}">
-                <table id="{$cd_edit.name}_{$count}" >
-                  <tr class="columnheader">
-                    <td colspan="2" class="grouplabel">
-                        <a href="#" class="show-block {if $cd_edit.collapse_display eq 0 } expanded collapsed {else} collapsed {/if}" >
-                            {$cd_edit.title}
-                        </a>
-                    </td>
-                  </tr>
-                  <tr class= "{if $cd_edit.collapse_display}hiddenElement{/if}">
-                  <td>
-              <div class="crm-summary-block" id="custom-set-block-{$customGroupId}">
-                {include file="CRM/Contact/Page/View/CustomDataFieldView.tpl" customGroupId=$customGroupId}
-              </div>
-                  </td>
-                  </tr>
-                </table>
-            </div>
-        {/foreach}
-    {/if}
-    {assign var="customGroupCount" value = $customGroupCount+1}
+    {foreach from=$customValues item=cd_edit key=cvID}
+      <div class="customFieldGroup collapsible ui-corner-all {$cd_edit.name} crm-custom-set-block-{$customGroupId}">
+        <div class="collapsible-title{if $cd_edit.collapse_display} collapsed{/if}">
+          {$cd_edit.title}
+        </div>
+        <div class="crm-summary-block" id="custom-set-block-{$customGroupId}">
+          {include file="CRM/Contact/Page/View/CustomDataFieldView.tpl" customGroupId=$customGroupId}
+        </div>
+      </div>
+    {/foreach}
+  {/if}
+  {assign var="customGroupCount" value = $customGroupCount+1}
 {/foreach}
 

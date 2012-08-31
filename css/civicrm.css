@@ -1842,10 +1842,6 @@ div.grippie {
     text-transform: uppercase;
 }
 
-#crm-container div.contact_panel * { 
-    border:0px;
-}
-
 #crm-container div.crm-inline-edit {
   border: 2px dashed transparent;
   background: none;
@@ -2008,7 +2004,7 @@ div.grippie {
   min-height: 17px;
 }
 
-#crm-container div.crm-label {
+#crm-container div.crm-summary-row div.crm-label {
   background-color: #FAFAFA;
   color: #7A7A60;
   text-align: left;
@@ -2017,7 +2013,7 @@ div.grippie {
   padding: 4px;
 }
 
-#crm-container div.crm-content {
+#crm-container div.crm-summary-row div.crm-content {
   padding: 4px;
   margin-left: 130px;
 }
@@ -2169,16 +2165,17 @@ div.grippie {
     border-left: 1px solid #999999;
 }
 
-#crm-container .collapsed {
-    background: url("../i/TreePlus.gif") no-repeat 0 0;
-    padding-left: 19px;
-    cursor:pointer
-}
-
-#crm-container .expanded {
+#crm-container .collapsible-title {
     background: url("../i/TreeMinus.gif") no-repeat 0 0;
     padding-left: 19px;
-    cursor:pointer
+    cursor:pointer;
+    border-bottom: 1px solid #D8D8D8;
+    color: #000000;
+    text-decoration: none;
+}
+
+#crm-container .collapsible-title.collapsed {
+    background: url("../i/TreePlus.gif") no-repeat 0 0;
 }
 
 /* TimeEntry styles */
