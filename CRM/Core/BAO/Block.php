@@ -294,7 +294,7 @@ class CRM_Core_BAO_Block {
             }
           }
           else {
-            if ($blockValue['locationTypeId'] == $value['location_type_id']) {
+            if ($blockValue['locationTypeId'] == CRM_Utils_Array::value('location_type_id', $value)) {
               $valueId = FALSE;
 
               if ($blockName == 'phone') {
