@@ -215,24 +215,35 @@ cj('#crm-group-selector').on( 'click', 'span.show-children', function(){
   if ( parentRow[2]) {
     group_id = parentRow[2];
   }
+	var levelClass = 'level_2';
+	// check enclosing td if already at level 2
+	if ( cj(this).parent().hasClass('level_2') ) {
+		levelClass = 'level_3';
+	}
   if ( cj(this).hasClass('collapsed') ) {
     cj(this).removeClass("collapsed").addClass("expanded").attr("title",{/literal}"{ts}hide child groups{/ts}"{literal});
-    showChildren( parent_id, showOrgInfo, group_id );
+    showChildren( parent_id, showOrgInfo, group_id, levelClass );
   }
   else {
     cj(this).removeClass("expanded").addClass("collapsed").attr("title",{/literal}"{ts}show child groups{/ts}"{literal});
-    cj('.parent_is_' + parent_id ).hide();
+	  cj('.parent_is_' + parent_id).find('.show-children').removeClass("expanded").addClass("collapsed").attr("title",{/literal}"{ts}show child groups{/ts}"{literal});
+		cj('.parent_is_' + parent_id).hide();
+		cj('.parent_is_' + parent_id).each(function(i, obj) {
+			// also hide children of children
+	    var gID = cj(this).find('td:nth-child(2)').text();
+			cj('.parent_is_' + gID).hide();
+		});
   }
 });
 
-function showChildren( parent_id, showOrgInfo, group_id ) {
+function showChildren( parent_id, showOrgInfo, group_id, levelClass) {
   var rowID = '#row_' + parent_id;
   if ( group_id ) {
     rowID = '#row_' + parent_id + '_' + group_id;
   }
   if ( cj(rowID).next().hasClass('parent_is_' + parent_id ) ) {
     // child rows for this parent have already been retrieved so just show them
-    cj('.parent_is_' + parent_id ).show() ;
+    cj('.parent_is_' + parent_id ).show();
   } else {
     var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/grouplist" h=0 q="snippet=4"}'{literal};
     cj.ajax( {
@@ -245,10 +256,10 @@ function showChildren( parent_id, showOrgInfo, group_id ) {
           cj.each( response, function( i, val ) {
             appendHTML += '<tr id="row_'+ val.group_id +'_'+parent_id+'" class="parent_is_' + parent_id + ' crm-row-child ' + val.class + '">';
             if ( val.is_parent ) {
-              appendHTML += '<td class="crm-group-name">' + '{/literal}<span class="collapsed show-children" title="{ts}show child groups{/ts}"/></span>{literal}' + val.group_name + '</td>';
+              appendHTML += '<td class="crm-group-name ' + levelClass + '">' + '{/literal}<span class="collapsed show-children" title="{ts}show child groups{/ts}"/></span>{literal}' + val.group_name + '</td>';
             }
             else {
-              appendHTML += '<td class="crm-group-name">' + val.group_name + '</td>';
+              appendHTML += '<td class="crm-group-name ' + levelClass + '"><span class="crm-no-children"></span>' + val.group_name + '</td>';
             } 
             appendHTML += "<td>" + val.group_id + "</td>";
             if (val.group_description) {

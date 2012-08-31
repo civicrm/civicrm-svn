@@ -3524,10 +3524,18 @@ div#crm-toolTip
 .field-action span.btn-slide{padding-left:0px;padding-right:11px;}
 /*end crm-10345*/
 
-/* alter display of child groups in Manage Groups selector */
-#crm-container .crm-group-child td.crm-group-name {
-  padding-left: 20px;
+/* alter display of parent and child groups in Manage Groups selector */
+#crm-container td.crm-group-name {
   white-space: nowrap;
+}
+#crm-container .crm-group-child td.crm-group-name.level_2 {
+  padding-left: 20px;
+}
+#crm-container .crm-group-child td.crm-group-name.level_3 {
+  padding-left: 40px;
+}
+#crm-container span.crm-no-children {
+  padding-left: 20px!important;
 }
 
 #crm-container div.crm-row-parent-name {
