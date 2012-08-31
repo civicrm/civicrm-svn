@@ -73,22 +73,21 @@
 		{literal}
 		<script type="text/javascript">
 		function mergeBlock(blockname, element, blockId) {
-   		    var allBlock = {/literal}{$mainLocBlock}{literal};
-   		    var block    = eval( "allBlock." + 'main_'+ blockname + element.value);
-		    if(blockname == 'email' || blockname == 'phone'){
-   		          var label = '(overwrite)'+<span id="main_blockname_blockId_overwrite">{/literal}{$form.location.$blockName.$blockId.operation.html}{literal}<br /></span>;
-		    }
-		    else
-		    {
-		        label = '(overwrite)<br />';
-		    }
+      var allBlock = {/literal}{$mainLocBlock}{literal};
+      var block    = eval( "allBlock." + 'main_'+ blockname + element.value);
+      if(blockname == 'email' || blockname == 'phone'){
+        var label = '(overwrite)'+<span id="main_blockname_blockId_overwrite">{/literal}{$form.location.$blockName.$blockId.operation.html}{literal}<br /></span>;
+      }
+      else {
+        label = '(overwrite)<br />';
+      }
  	
-		    if ( !block ) { 
-     		       	block = '';
-     			label   = '(add)';
-   		    }
-   			cj( "#main_"+ blockname +"_" + blockId ).html( block );	
-   			cj( "#main_"+ blockname +"_" + blockId +"_overwrite" ).html( label );
+      if ( !block ) { 
+        block = '';
+        label   = '(add)';
+      }
+      cj( "#main_"+ blockname +"_" + blockId ).html( block );	
+      cj( "#main_"+ blockname +"_" + blockId +"_overwrite" ).html( label );
 		}
 		</script>
 		{/literal}
