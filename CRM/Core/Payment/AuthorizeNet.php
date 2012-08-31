@@ -541,10 +541,10 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
    * @return mixed value of the field, or empty string if the field is
    * not set
    */
-  function _getParam($field, $stripNonWords = FALSE) {
+  function _getParam($field, $xmlSafe = FALSE) {
     $value = CRM_Utils_Array::value($field, $this->_params, '');
-    if ($stripNonWords)
-      $value = preg_replace('/\W/',' ', $value);
+    if ($xmlSafe)
+      $value = str_replace(array( '&', '"', "'", '<', '>' ), '', $value);
     return $value;
   }
 
