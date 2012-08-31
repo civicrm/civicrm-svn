@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div id="custom-set-content-{$customGroupId}" class="crm-table2div-layout{if $permission EQ 'edit'} crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_CustomData", "groupID": "{$customGroupId}"{rdelim}' title="{ts}Edit{/ts}{/if}">
+<div id="custom-set-content-{$customGroupId}" class="{if $permission EQ 'edit'} crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_CustomData", "groupID": "{$customGroupId}"{rdelim}' title="{ts}Edit{/ts}{/if}">
   <div class="crm-clear"><!-- start of main -->
     {if $permission EQ 'edit'}
       <div class="crm-edit-help">
@@ -32,7 +32,7 @@
     {/if}
 
   {foreach from=$cd_edit.fields item=element key=field_id}
-    <div class="crm-row clearfix">
+    <div class="crm-summary-row">
       {if $element.options_per_line != 0}
           <div class="crm-label">{$element.field_title}</div>
           <div class="crm-content crm-custom_data">
@@ -42,7 +42,7 @@
               {/foreach}
           </div>
       {else}
-        <div class="crm-row clearfix">
+        <div class="crm-summary-row">
           <div class="crm-label">{$element.field_title}</div>
           {if $element.field_type == 'File'}
             {if $element.field_value.displayURL}

@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* template for building OpenID block*}
-<div id="crm-openid-content" class="crm-table2div-layout{if $permission EQ 'edit'} crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_OpenID"{rdelim}' title="{ts}Add or edit OpenID{/ts}{/if}">
+<div id="crm-openid-content" class="{if $permission EQ 'edit'} crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_OpenID"{rdelim}' title="{ts}Add or edit OpenID{/ts}{/if}">
   <div class="crm-clear"><!-- start of main -->
     {if $permission EQ 'edit'}
       <div class="crm-edit-help">
@@ -32,14 +32,14 @@
       </div>
     {/if}
     {if empty($openid)}
-      <div class="crm-row clearfix">
+      <div class="crm-summary-row">
         <div class="crm-label">{ts}OpenID{/ts}</div>
         <div class="crm-content"></div>
       </div>
     {/if}
     {foreach from=$openid item=item}
       {if $item.openid}
-      <div class="crm-row clearfix">
+      <div class="crm-summary-row">
         <div class="crm-label">{$item.location_type}&nbsp;{ts}OpenID{/ts}</div>
         <div class="crm-content crm-contact_openid {if $item.is_primary eq 1} primary{/if}">
           <a href="{$item.openid}">{$item.openid|mb_truncate:40}</a>

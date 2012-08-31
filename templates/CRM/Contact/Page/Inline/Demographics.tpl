@@ -23,18 +23,18 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div id="crm-demographic-content" class="crm-table2div-layout{if $permission EQ 'edit'} crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_Demographics"{rdelim}' title="{ts}Add or edit demographics{/ts}{/if}">
+<div id="crm-demographic-content" class="{if $permission EQ 'edit'} crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_Demographics"{rdelim}' title="{ts}Add or edit demographics{/ts}{/if}">
   <div class="crm-clear"><!-- start of main -->
     {if $permission EQ 'edit'}
     <div class="crm-edit-help">
       <span class="batch-edit"></span>{ts}Add or edit demographics{/ts}
     </div>
     {/if}
-    <div class="crm-row clearfix">
+    <div class="crm-summary-row">
       <div class="crm-label">{ts}Gender{/ts}</div>
       <div class="crm-content crm-contact-gender_display">{$gender_display}</div>
     </div>
-    <div class="crm-row clearfix">
+    <div class="crm-summary-row">
       <div class="crm-label">{ts}Date of birth{/ts}</div>
       <div class="crm-content crm-contact-birth_date_display">
           {if $birthDateViewFormat}	 
@@ -47,7 +47,7 @@
     </div>
       {if $is_deceased eq 1}
         {if $deceased_date}
-          <div class="crm-row clearfix">
+          <div class="crm-summary-row">
             <div class="crm-label">{ts}Date Deceased{/ts}</div>
             <div class="crm-content crm-contact-deceased_date_display">
             {if $birthDateViewFormat}          
@@ -58,13 +58,13 @@
             </div>
           </div>
         {else}
-          <div class="crm-row clearfix">
+          <div class="crm-summary-row">
             <div class="crm-label"></div>
             <div class="crm-content crm-contact-deceased_message"><span class="font-red upper">{ts}Contact is Deceased{/ts}</span></div>
           </div>
         {/if}
       {else}
-        <div class="crm-row clearfix">
+        <div class="crm-summary-row">
           <div class="crm-label">{ts}Age{/ts}</div>
           <div class="crm-content crm-contact-age_display">{if $age.y}{ts count=$age.y plural='%count years'}%count year{/ts}{elseif $age.m}{ts count=$age.m plural='%count months'}%count month{/ts}{/if}</div>
         </div>

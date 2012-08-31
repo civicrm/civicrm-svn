@@ -24,40 +24,40 @@
  +--------------------------------------------------------------------+
 *}
 {$form.oplock_ts.html}
-<div class="crm-inline-edit-form crm-table2div-layout">
+<div class="crm-inline-edit-form">
   <div class="crm-inline-button">
     {include file="CRM/common/formButtons.tpl"}
   </div>
 
   <div class="crm-clear">  
     {if $contactType eq 'Individual'}
-    <div class="crm-row clearfix">
+    <div class="crm-summary-row">
       <div class="crm-label">{$form.current_employer.label}&nbsp;{help id="id-current-employer" file="CRM/Contact/Form/Contact.hlp"}</div>
       <div class="crm-content">
         {$form.current_employer.html|crmReplace:class:twenty}
         <div id="employer_address" style="display:none;"></div>
       </div>
     </div>
-    <div class="crm-row clearfix">
+    <div class="crm-summary-row">
       <div class="crm-label">{$form.job_title.label}</div>
       <div class="crm-content">{$form.job_title.html}</div>
     <div>
     {/if}
-    <div class="crm-row clearfix">
+    <div class="crm-summary-row">
       <div class="crm-label">{$form.nick_name.label}</div>
       <div class="crm-content">{$form.nick_name.html}</div>
     </div>
     {if $contactType eq 'Organization'}
-    <div class="crm-row clearfix">
+    <div class="crm-summary-row">
       <div class="crm-label">{$form.legal_name.label}</div>
       <div class="crm-content">{$form.legal_name.html}</div>
     </div>
-    <div class="crm-row clearfix">
+    <div class="crm-summary-row">
       <div class="crm-label">{$form.sic_code.label}</div>
       <div class="crm-content">{$form.sic_code.html}</div>
     </div>
     {/if}
-    <div class="crm-row clearfix">
+    <div class="crm-summary-row">
       <div class="crm-label">{$form.contact_source.label}</div>
       <div class="crm-content">{$form.contact_source.html}</div>
     </div>

@@ -1985,7 +1985,8 @@ div.grippie {
     color: #ff6655 !important
 }
 
-#crm-container .clearfix:after {
+#crm-container .crm-clearfix:after,
+#crm-container .crm-summary-row:after {
   clear: both;
   content: ".";
   display: block;
@@ -1997,9 +1998,10 @@ div.grippie {
   clear:both;
   margin-bottom: 1px;
   background-color: #FAFAFA;
+  font-size: 11px;
 }
 
-#crm-container div.crm-row {
+#crm-container div.crm-summary-row {
   background-color: #F4F4ED;
   border-top: 1px solid #ffffff;
   margin-bottom: 1px;
@@ -2012,17 +2014,12 @@ div.grippie {
   text-align: left;
   width: 122px;
   float:left;
-  padding: 4px 0px 5px 4px;
-  margin-right: 5px;
+  padding: 4px;
 }
 
 #crm-container div.crm-content {
-  padding: 4px 0px 5px 4px;
-  margin-left: 126px;
-}
-
-#crm-container div.crm-table2div-layout {
-  font-size: 11px;
+  padding: 4px;
+  margin-left: 130px;
 }
 
 #crm-container div.crm-config-option {

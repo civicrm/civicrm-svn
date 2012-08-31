@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* template for building phone block*}
-<div id="crm-phone-content" class="crm-table2div-layout{if $permission EQ 'edit'} crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_Phone"{rdelim}' title="{ts}Add or edit phone{/ts}{/if}">
+<div id="crm-phone-content" class="{if $permission EQ 'edit'} crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_Phone"{rdelim}' title="{ts}Add or edit phone{/ts}{/if}">
   <div class="crm-clear"><!-- start of main -->
     {if $permission EQ 'edit'}
       <div class="crm-edit-help">
@@ -32,14 +32,14 @@
       </div>
     {/if}
     {if empty($phone)}
-      <div class="crm-row clearfix">
+      <div class="crm-summary-row">
         <div class="crm-label">{ts}Phone{/ts}</div>
         <div class="crm-content"></div>
       </div>
     {/if}
     {foreach from=$phone item=item}
       {if $item.phone}
-        <div class="crm-row clearfix">
+        <div class="crm-summary-row">
           <div class="crm-label">{$item.location_type}&nbsp;{$item.phone_type}</div>
           <div class="crm-content crm-contact_phone {if $item.is_primary eq 1}primary{/if}">
             <span {if $privacy.do_not_phone} class="do-not-phone" title="{ts}Privacy flag: Do Not Phone{/ts}"{/if}>

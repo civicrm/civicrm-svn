@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* template for building IM block*}
-<div id="crm-im-content" class="crm-table2div-layout{if $permission EQ 'edit'} crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_IM"{rdelim}' title="{ts}Add or edit IM{/ts}{/if}">
+<div id="crm-im-content" class="{if $permission EQ 'edit'} crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_IM"{rdelim}' title="{ts}Add or edit IM{/ts}{/if}">
   <div class="crm-clear"><!-- start of main -->
     {if $permission EQ 'edit'}
       <div class="crm-edit-help">
@@ -32,7 +32,7 @@
       </div>
     {/if}
     {if empty($im)}
-      <div class="crm-row clearfix">
+      <div class="crm-summary-row">
         <div class="crm-label">{ts}IM{/ts}</div>
         <div class="crm-content"></div>
       </div>
@@ -40,7 +40,7 @@
     {foreach from=$im item=item}
       {if $item.name or $item.provider}
         {if $item.name}
-        <div class="crm-row clearfix">
+        <div class="crm-summary-row">
           <div class="crm-label">{$item.provider}&nbsp;({$item.location_type})</div>
           <div class="crm-content crm-contact_im {if $item.is_primary eq 1} primary{/if}">{$item.name}</div>
         </div>

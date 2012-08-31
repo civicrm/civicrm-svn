@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* template for building email block*}
-<div id="crm-email-content" class="crm-table2div-layout{if $permission EQ 'edit'} crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_Email"{rdelim}' title="{ts}Add or edit email{/ts}{/if}">
+<div id="crm-email-content" class="{if $permission EQ 'edit'} crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_Email"{rdelim}' title="{ts}Add or edit email{/ts}{/if}">
   <div class="crm-clear"><!-- start of main -->
   {if $permission EQ 'edit'}
     <div class="crm-edit-help">
@@ -32,14 +32,14 @@
     </div>
   {/if}
   {if empty($email)}
-    <div class="crm-row clearfix">
+    <div class="crm-summary-row">
       <div class="crm-label">{ts}Email{/ts}</div>
       <div class="crm-content"></div>
     </div>
   {/if}
   {foreach from=$email key="blockId" item=item}
     {if $item.email}
-    <div class="crm-row clearfix">
+    <div class="crm-summary-row">
       <div class="crm-label">{$item.location_type}&nbsp;{ts}Email{/ts}</div>
       <div class="crm-content crm-contact_email {if $item.is_primary eq 1}primary{/if}"> <!-- start of content -->
         <span class={if $privacy.do_not_email}"do-not-email" title="{ts}Privacy flag: Do Not Email{/ts}" {elseif $item.on_hold}"email-hold" title="{ts}Email on hold - generally due to bouncing.{/ts}" {elseif $item.is_primary eq 1}"primary"{/if}><a href="mailto:{$item.email}">{$item.email}</a>{if $item.on_hold == 2}&nbsp;({ts}On Hold - Opt Out{/ts}){elseif $item.on_hold}&nbsp;({ts}On Hold{/ts}){/if}{if $item.is_bulkmail}&nbsp;({ts}Bulk{/ts}){/if}</span>

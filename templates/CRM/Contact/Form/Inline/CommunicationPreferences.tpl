@@ -27,13 +27,13 @@
 {* @var $form Contains the array for the form elements and other form associated information assigned to the template by the controller *}
 {$form.oplock_ts.html}
 
- <div class="crm-inline-edit-form crm-table2div-layout">
+ <div class="crm-inline-edit-form">
     <div class="crm-inline-button">
       {include file="CRM/common/formButtons.tpl"}
     </div>
     <div class="crm-clear">
       {foreach key=key item=item from=$commPreference}
-      <div class="crm-row clearfix">
+      <div class="crm-summary-row">
         <div class="crm-label">{$form.$key.label}
           {help id="id-$key" file="CRM/Contact/Form/Contact.hlp"}
         </div>
@@ -44,7 +44,7 @@
         </div>
       </div>
       {if $key eq 'privacy'}
-      <div class="crm-row clearfix">
+      <div class="crm-summary-row">
         <div class="crm-label">&nbsp;</div>
         <div class="crm-content">{
           $form.is_opt_out.html} {$form.is_opt_out.label} {help id="id-optOut" file="CRM/Contact/Form/Contact.hlp"}
@@ -52,7 +52,7 @@
       </div>
       {/if}
       {/foreach}
-      <div class="crm-row clearfix">
+      <div class="crm-summary-row">
         <div class="crm-label">
           {$form.preferred_language.label}
         </div>
@@ -60,7 +60,7 @@
           {$form.preferred_language.html}
         </div>
       </div>
-      <div class="crm-row clearfix">
+      <div class="crm-summary-row">
         <div class="crm-label">
           {$form.preferred_mail_format.label}
         </div>
@@ -70,7 +70,7 @@
       </div>
 
       {if !empty($form.email_greeting_id)}
-      <div class="crm-row clearfix">
+      <div class="crm-summary-row">
         <div class="crm-label">{$form.email_greeting_id.label}</div>
         <div class="crm-content">
           <span id="email_greeting" {if !empty($email_greeting_display)} class="hiddenElement"{/if}>
@@ -90,7 +90,7 @@
       
 
       {if !empty($form.postal_greeting_id)}
-      <div class="crm-row clearfix">
+      <div class="crm-summary-row">
         <div class="crm-label">{$form.postal_greeting_id.label}</div>
         <div class="crm-content">
           <span id="postal_greeting" {if !empty($postal_greeting_display)} class="hiddenElement"{/if}>
@@ -109,7 +109,7 @@
       {/if}
 
       {if !empty($form.addressee_id)}
-      <div class="crm-row clearfix">
+      <div class="crm-summary-row">
         <div class="crm-label">{$form.addressee_id.label}</div>
         <div class="crm-content">
           <span id="addressee" {if !empty($addressee_display)} class="hiddenElement"{/if}>

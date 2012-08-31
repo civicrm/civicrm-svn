@@ -24,32 +24,32 @@
  +--------------------------------------------------------------------+
 *}
 {$form.oplock_ts.html}
-<div class="crm-inline-edit-form crm-table2div-layout">
+<div class="crm-inline-edit-form">
   <div class="crm-inline-button">
     {include file="CRM/common/formButtons.tpl"}
   </div>
 
   <div class="crm-clear">
-    <div class="crm-row clearfix">
+    <div class="crm-summary-row">
       <div class="crm-label">{$form.gender_id.label}</div>
       <div class="crm-content">{$form.gender_id.html}
         <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('gender_id', '{$form.formName}'); return false;">{ts}Clear{/ts} {$form.gender_id.label|@strip_tags}</a>)</span>
       </div>
     </div>
-    <div class="crm-row clearfix">
+    <div class="crm-summary-row">
       <div class="crm-label">{$form.birth_date.label}</div>
       <div class="crm-content">
         {include file="CRM/common/jcalendar.tpl" elementName=birth_date}
       </div>
     </div>
-    <div class="crm-row clearfix">
+    <div class="crm-summary-row">
       <div class="crm-label">&nbsp;</div>
       <div class="crm-content">
         {$form.is_deceased.html}
         {$form.is_deceased.label}
       </div>
     </div>
-    <div class="crm-row clearfix">
+    <div class="crm-summary-row">
       <div class="crm-label crm-deceased-date">{$form.deceased_date.label}</div>
       <div class="crm-content crm-deceased-date">
         {include file="CRM/common/jcalendar.tpl" elementName=deceased_date}

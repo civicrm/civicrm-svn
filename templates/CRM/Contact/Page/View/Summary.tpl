@@ -164,24 +164,24 @@
                         {include file="CRM/Contact/Page/ContactImage.tpl"}
                       </div>
                       {/if}
-                      <div class="crm-table2div-layout{if !empty($imageURL)} float-left{/if}">
+                      <div class="{if !empty($imageURL)} float-left{/if}">
                         <div class="crm-clear">
                         {if !empty($contactTag)}
-                          <div class="crm-row clearfix">
+                          <div class="crm-summary-row">
                             <div class="crm-label" id="tagLink">
                               <a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=$contactId&selectedChild=tag"}" title="{ts}Edit Tags{/ts}">{ts}Tags{/ts}</a>
                             </div>
                             <div class="crm-content" id="tags">{$contactTag}</div>
                           </div>
                         {/if}
-                          <div class="crm-row clearfix">
+                          <div class="crm-summary-row">
                             <div class="crm-label">{ts}Contact Type{/ts}</div>
                             <div class="crm-content crm-contact_type_label">
                               {if isset($contact_type_label)}{$contact_type_label}{/if}
                             </div>
                           </div>
 
-                          <div class="crm-row clearfix">
+                          <div class="crm-summary-row">
                             <div class="crm-label">
                               {ts}CiviCRM ID{/ts}{if !empty($userRecordUrl)} / {ts}User ID{/ts}{/if}
                             </div>
@@ -202,7 +202,7 @@
                   <div class="contact_details">
                       <div class="contact_panel">
                         <div class="contactCardLeft">
-                         <div class="crm-table2div-layout">
+                         <div >
                           {if $showEmail}
                           <div class="crm-clear crm-summary-email-block">
                             <div class="crm-summary-block" id="email-block">
@@ -221,7 +221,7 @@
                         </div><!-- #contactCardLeft -->
 
                         <div class="contactCardRight">
-                          <div class="crm-table2div-layout">
+                          <div >
                             {if $showPhone}
                             <div class="crm-clear crm-summary-phone-block">
                               <div class="crm-summary-block" id="phone-block">

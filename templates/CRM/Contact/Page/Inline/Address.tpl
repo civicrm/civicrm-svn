@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* template for a single address block*}
-<div id="address-block-{$locationIndex}" class="crm-table2div-layout {if $add}crm-address_type_{$add.location_type}{else}add-new{/if}{if $permission EQ 'edit'} crm-inline-edit address" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_Address", "locno": "{$locationIndex}", "aid": "{if $add}{$add.id}{else}0{/if}"{rdelim}' data-location-type-id="{if $add}{$add.location_type_id}{else}0{/if}" title="{if $add}{ts}Edit address{/ts}{else}{ts}Add address{/ts}{/if}{/if}">
+<div id="address-block-{$locationIndex}" class="{if $add}crm-address_type_{$add.location_type}{else}add-new{/if}{if $permission EQ 'edit'} crm-inline-edit address" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_Address", "locno": "{$locationIndex}", "aid": "{if $add}{$add.id}{else}0{/if}"{rdelim}' data-location-type-id="{if $add}{$add.location_type_id}{else}0{/if}" title="{if $add}{ts}Edit address{/ts}{else}{ts}Add address{/ts}{/if}{/if}">
   <div class="crm-clear"><!-- start of main -->
     {if $permission EQ 'edit'}
       <div class="crm-edit-help">
@@ -32,7 +32,7 @@
       </div>
     {/if}
     {if $add }
-      <div class="crm-row clearfix">
+      <div class="crm-summary-row">
         <div class="crm-label">
           {ts 1=$add.location_type}%1&nbsp;Address{/ts}
           {if $config->mapProvider AND
@@ -64,10 +64,10 @@
         {$customValue.title}
       </div>
       <div class="crm-accordion-body">
-        <div class="crm-table2div-layout">
+        <div >
           <div class="crm-clear">
             {foreach from=$customValue.fields item=customField key=cfId}
-            <div class="crm-row clearfix">
+            <div class="crm-summary-row">
               <div class="crm-label">
                 {$customField.field_title}
               </div>

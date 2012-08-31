@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* template for building website block *}
-<div id="crm-website-content" class="crm-table2div-layout{if $permission EQ 'edit'} crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_Website"{rdelim}' title="{ts}Add or edit website{/ts}{/if}">
+<div id="crm-website-content" class="{if $permission EQ 'edit'} crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_Website"{rdelim}' title="{ts}Add or edit website{/ts}{/if}">
   <div class="crm-clear"><!-- start of main -->
     {if $permission EQ 'edit'}
       <div class="crm-edit-help">
@@ -32,14 +32,14 @@
       </div>
     {/if}
     {if empty($website)}
-      <div class="crm-row clearfix">
+      <div class="crm-summary-row">
         <div class="crm-label">{ts}Website{/ts}</div>
         <div class="crm-content"></div>
       </div>
     {/if}
     {foreach from=$website item=item}
       {if !empty($item.url)}
-      <div class="crm-row clearfix">
+      <div class="crm-summary-row">
         <div class="crm-label">{$item.website_type} {ts}Website{/ts}</div>
         <div class="crm-content crm-contact_website"><a href="{$item.url}" target="_blank">{$item.url}</a></div>
       <div>

@@ -25,7 +25,7 @@
 *}
 
 {$form.oplock_ts.html}
-<div class="crm-inline-edit-form crm-table2div-layout">
+<div class="crm-inline-edit-form">
   <div class="crm-inline-button">
     {include file="CRM/common/formButtons.tpl"}
   </div>
