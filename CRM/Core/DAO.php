@@ -604,6 +604,39 @@ LIKE %1
     return preg_match("/\b$constraint\b/i", $show[$tableName]) ? TRUE : FALSE;
   }
 
+ /**
+   * Checks if CONSTRAINT keyword exists for a specified table.
+   *
+   * @param string $tableName
+   *
+   * @return boolean true if CONSTRAINT keyword exists, false otherwise
+   */
+  function schemaRequiresRebuilding($tables = array("civicrm_contact")) {
+    $show = array();
+    foreach($tables as $tableName){
+      if (!array_key_exists($tableName, $show)) {
+        $query = "SHOW CREATE TABLE $tableName";
+        $dao = CRM_Core_DAO::executeQuery($query);
+        
+        if (!$dao->fetch()) {
+          CRM_Core_Error::fatal();
+        }
+        
+        $dao->free();
+        $show[$tableName] = $dao->Create_Table;
+      }
+      
+      $result = preg_match("/\bCONSTRAINT\b\s/i", $show[$tableName]) ? TRUE : FALSE;
+      if($result == TRUE){
+        continue;
+      }
+      else{
+        return FALSE;
+      }
+    }
+    return TRUE;
+  }
+
   /**
    * Checks if the FK constraint name is in the format 'FK_tableName_columnName'
    * for a specified column of a table.
@@ -628,8 +661,9 @@ LIKE %1
       $dao->free();
       $show[$tableName] = $dao->Create_Table;
     }
-
-    return preg_match('/CONSTRAINT [`\']?' . "FK_{$tableName}_{$columnName}" . '/i', $show[$tableName]) ? TRUE : FALSE;
+    $constraint = "`FK_{$tableName}_{$columnName}`";
+    $pattern = "/\bCONSTRAINT\b\s+%s\s+\bFOREIGN\s+KEY\b\s/i";
+    return preg_match(sprintf($pattern, $constraint),$show[$tableName]) ? TRUE : FALSE; 
   }
 
   /**

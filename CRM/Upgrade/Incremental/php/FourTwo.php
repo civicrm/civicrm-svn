@@ -54,6 +54,13 @@ class CRM_Upgrade_Incremental_php_FourTwo {
    */
   function setPreUpgradeMessage(&$preUpgradeMessage, $rev) {
     if ($rev == '4.2.alpha1') {
+      $tables = array('civicrm_contribution_page','civicrm_event','civicrm_group','civicrm_contact');
+      if (!CRM_Core_DAO::schemaRequiresRebuilding($tables)){
+        $errors = ts("The upgrade has identified some schema integrity issues in the database. It seems some of your constraints are missing. You will have to rebuild your schema before re-trying the upgrade. Please refer ".CRM_Utils_System::docURL2("Ensuring Schema Integrity on Upgrades", FALSE, "Ensuring Schema Integrity on Upgrades", NULL, NULL, "wiki"));
+        CRM_Core_Error::fatal($errors);
+        return FALSE;
+      }
+      
       // CRM-10613 delete bad data for membership
       self::deleteBadData();
       if (!empty(self::$_deleteBadDatas)) {
@@ -74,7 +81,7 @@ class CRM_Upgrade_Incremental_php_FourTwo {
         $preUpgradeMessage .= "<table><tr><th>contribution ID</th><th>membership ID</th></tr>" . $deletedPayments . "</table>";
       }
     }
-    
+
     if ($rev == '4.2.beta2') {  
       // note: error conditions are also checked in upgrade_4_2_beta2()
       if (!defined('CIVICRM_SETTINGS_PATH')) {
