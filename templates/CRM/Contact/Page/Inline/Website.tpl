@@ -32,13 +32,17 @@
       </div>
     {/if}
     {if empty($website)}
-      <div class="crm-label">{ts}Website{/ts}</div>
-      <div class="crm-content"></div>
+      <div class="crm-row clearfix">
+        <div class="crm-label">{ts}Website{/ts}</div>
+        <div class="crm-content"></div>
+      </div>
     {/if}
     {foreach from=$website item=item}
       {if !empty($item.url)}
-      <div class="crm-label">{$item.website_type} {ts}Website{/ts}</div>
-      <div class="crm-content crm-contact_website"><a href="{$item.url}" target="_blank">{$item.url}</a></div>
+      <div class="crm-row clearfix">
+        <div class="crm-label">{$item.website_type} {ts}Website{/ts}</div>
+        <div class="crm-content crm-contact_website"><a href="{$item.url}" target="_blank">{$item.url}</a></div>
+      <div>
       {/if}
     {/foreach}
 

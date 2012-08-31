@@ -32,22 +32,24 @@
       </div>
     {/if}
     {if $add }
-      <div class="crm-label">
-        {ts 1=$add.location_type}%1&nbsp;Address{/ts}
-        {if $config->mapProvider AND
-            !empty($add.geo_code_1) AND
-            is_numeric($add.geo_code_1) AND
-            !empty($add.geo_code_2) AND
-            is_numeric($add.geo_code_2)
-        }
-        <br /><a href="{crmURL p='civicrm/contact/map' q="reset=1&cid=`$contactId`&lid=`$add.location_type_id`"}" title="{ts 1=`$add.location_type`}Map %1 Address{/ts}"><span class="geotag">{ts}Map{/ts}</span></a>
-        {/if}
-      </div>
-      <div class="crm-content">
-        {if !empty($sharedAddresses.$locationIndex.shared_address_display.name)}
-          <strong>{ts 1=$sharedAddresses.$locationIndex.shared_address_display.name}Address belongs to %1{/ts}</strong><br />
-        {/if}
-        {$add.display|nl2br}
+      <div class="crm-row clearfix">
+        <div class="crm-label">
+          {ts 1=$add.location_type}%1&nbsp;Address{/ts}
+          {if $config->mapProvider AND
+              !empty($add.geo_code_1) AND
+              is_numeric($add.geo_code_1) AND
+              !empty($add.geo_code_2) AND
+              is_numeric($add.geo_code_2)
+          }
+          <br /><a href="{crmURL p='civicrm/contact/map' q="reset=1&cid=`$contactId`&lid=`$add.location_type_id`"}" title="{ts 1=`$add.location_type`}Map %1 Address{/ts}"><span class="geotag">{ts}Map{/ts}</span></a>
+          {/if}
+        </div>
+        <div class="crm-content">
+          {if !empty($sharedAddresses.$locationIndex.shared_address_display.name)}
+            <strong>{ts 1=$sharedAddresses.$locationIndex.shared_address_display.name}Address belongs to %1{/ts}</strong><br />
+          {/if}
+          {$add.display|nl2br}
+        </div>
       </div>
 
     <!-- add custom data -->
@@ -65,11 +67,13 @@
         <div class="crm-table2div-layout">
           <div class="crm-clear">
             {foreach from=$customValue.fields item=customField key=cfId}
-            <div class="crm-label">
-              {$customField.field_title}
-            </div>
-            <div class="crm-content">
-              {$customField.field_value}
+            <div class="crm-row clearfix">
+              <div class="crm-label">
+                {$customField.field_title}
+              </div>
+              <div class="crm-content">
+                {$customField.field_value}
+              </div>
             </div>
             {/foreach}
             </div>

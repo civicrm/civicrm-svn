@@ -1985,10 +1985,25 @@ div.grippie {
     color: #ff6655 !important
 }
 
+#crm-container .clearfix:after {
+  clear: both;
+  content: ".";
+  display: block;
+  height: 0;
+  visibility: hidden;
+}
+
 #crm-container div.crm-clear {
   clear:both;
   margin-bottom: 1px;
   background-color: #FAFAFA;
+}
+
+#crm-container div.crm-row {
+  background-color: #F4F4ED;
+  border-top: 1px solid #ffffff;
+  margin-bottom: 1px;
+  min-height: 17px;
 }
 
 #crm-container div.crm-label {
@@ -1999,16 +2014,11 @@ div.grippie {
   float:left;
   padding: 4px 0px 5px 4px;
   margin-right: 5px;
-  border-top: 1px solid #ffffff
 }
 
 #crm-container div.crm-content {
-  background-color: #F4F4ED;
   padding: 4px 0px 5px 4px;
-  margin-bottom: 1px;
   margin-left: 126px;
-  min-height: 17px;
-  border-top: 1px solid #ffffff
 }
 
 #crm-container div.crm-table2div-layout {

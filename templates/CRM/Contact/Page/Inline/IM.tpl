@@ -32,17 +32,20 @@
       </div>
     {/if}
     {if empty($im)}
-      <div class="crm-label">{ts}IM{/ts}</div>
-      <div class="crm-content"></div>
+      <div class="crm-row clearfix">
+        <div class="crm-label">{ts}IM{/ts}</div>
+        <div class="crm-content"></div>
+      </div>
     {/if}
     {foreach from=$im item=item}
       {if $item.name or $item.provider}
         {if $item.name}
-        <div class="crm-label">{$item.provider}&nbsp;({$item.location_type})</div>
-        <div class="crm-content crm-contact_im {if $item.is_primary eq 1} primary{/if}">{$item.name}</div>
+        <div class="crm-row clearfix">
+          <div class="crm-label">{$item.provider}&nbsp;({$item.location_type})</div>
+          <div class="crm-content crm-contact_im {if $item.is_primary eq 1} primary{/if}">{$item.name}</div>
+        </div>
         {/if}
       {/if}
     {/foreach}
    </div> <!-- end of main -->
 </div>
-

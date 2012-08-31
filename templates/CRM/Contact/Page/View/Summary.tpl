@@ -167,24 +167,32 @@
                       <div class="crm-table2div-layout{if !empty($imageURL)} float-left{/if}">
                         <div class="crm-clear">
                         {if !empty($contactTag)}
-                          <div class="crm-label" id="tagLink">
-                            <a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=$contactId&selectedChild=tag"}" title="{ts}Edit Tags{/ts}">{ts}Tags{/ts}</a>
+                          <div class="crm-row clearfix">
+                            <div class="crm-label" id="tagLink">
+                              <a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=$contactId&selectedChild=tag"}" title="{ts}Edit Tags{/ts}">{ts}Tags{/ts}</a>
+                            </div>
+                            <div class="crm-content" id="tags">{$contactTag}</div>
                           </div>
-                          <div class="crm-content" id="tags">{$contactTag}</div>
                         {/if}
-                          <div class="crm-label">{ts}Contact Type{/ts}</div>
-                          <div class="crm-content crm-contact_type_label">{if isset($contact_type_label)}{$contact_type_label}{/if}</div>
-
-                          <div class="crm-label">
-                            {ts}CiviCRM ID{/ts}{if !empty($userRecordUrl)} / {ts}User ID{/ts}{/if}
+                          <div class="crm-row clearfix">
+                            <div class="crm-label">{ts}Contact Type{/ts}</div>
+                            <div class="crm-content crm-contact_type_label">
+                              {if isset($contact_type_label)}{$contact_type_label}{/if}
+                            </div>
                           </div>
-                          <div class="crm-content">
-                            <span class="crm-contact-contact_id">{$contactId}</span>
-                            {if !empty($userRecordUrl)}
-                            <span class="crm-contact-user_record_id">
-                              &nbsp;/&nbsp;<a title="View user record" class="user-record-link" href="{$userRecordUrl}">{$userRecordId}</a>
-                            </span>
-                            {/if}
+
+                          <div class="crm-row clearfix">
+                            <div class="crm-label">
+                              {ts}CiviCRM ID{/ts}{if !empty($userRecordUrl)} / {ts}User ID{/ts}{/if}
+                            </div>
+                            <div class="crm-content">
+                              <span class="crm-contact-contact_id">{$contactId}</span>
+                              {if !empty($userRecordUrl)}
+                              <span class="crm-contact-user_record_id">
+                                &nbsp;/&nbsp;<a title="View user record" class="user-record-link" href="{$userRecordUrl}">{$userRecordId}</a>
+                              </span>
+                              {/if}
+                            </div>
                           </div>
                         </div>
                       </div>

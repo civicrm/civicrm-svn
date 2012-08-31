@@ -110,7 +110,7 @@ class WebTest_Contact_InlineFieldsEditTest extends CiviSeleniumTestCase {
     //checking done for location values
     $i = 1;
     foreach ($assertValues as $location => $value) {
-      $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div[@class='crm-label'][$i]", $location ." ". $ucFieldName);
+      $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div/div[@class='crm-label'][$i]", $location ." ". $ucFieldName);
         $primaryClass = "";
         if($i == 1) {
           $key = 1;
@@ -119,9 +119,9 @@ class WebTest_Contact_InlineFieldsEditTest extends CiviSeleniumTestCase {
           $key = $i - 1;  
         }
       if ($isEmail) {
-        $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div[@class='crm-content crm-contact_email {$primaryClass}'][$key]/span/a", $value);
+        $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div/div[@class='crm-content crm-contact_email {$primaryClass}'][$key]/span/a", $value);
       } else {
-        $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div[@class='crm-content crm-contact_phone {$primaryClass}'][$key]/span", $value);
+        $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div/div[@class='crm-content crm-contact_phone {$primaryClass}'][$key]/span", $value);
       }
       $i++;
     }
@@ -140,15 +140,15 @@ class WebTest_Contact_InlineFieldsEditTest extends CiviSeleniumTestCase {
       $this->click('Email_3_IsBulkmail');
       $this->click('_qf_Email_upload');
       sleep(2);
-      $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div[@class='crm-label'][3]", "Main Email");
-      $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div[@class='crm-content crm-contact_email '][2]/span[@class='email-hold']", preg_quote($assertValues[$loc[3]] .' (On Hold) (Bulk)'));
+      $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div/div[@class='crm-label'][3]", "Main Email");
+      $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div/div[@class='crm-content crm-contact_email '][2]/span[@class='email-hold']", preg_quote($assertValues[$loc[3]] .' (On Hold) (Bulk)'));
     } else {
       $this->type("{$field}_2_{$field}_ext", 543);
       $this->select("{$field}_1_{$field}_type_id", "label={$phoneType[2]}");
       $this->click('_qf_Phone_upload');
       sleep(2);
-      $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div[@class='crm-label'][1]", "Home " . $phoneType[2]);
-      $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div[@class='crm-content crm-contact_phone '][1]/span", preg_quote($assertValues['Work'] ."  ext. ". 543));
+      $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div/div[@class='crm-label'][1]", "Home " . $phoneType[2]);
+      $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div/div[@class='crm-content crm-contact_phone '][1]/span", preg_quote($assertValues['Work'] ."  ext. ". 543));
     }
 
   }
@@ -196,15 +196,15 @@ class WebTest_Contact_InlineFieldsEditTest extends CiviSeleniumTestCase {
     );
     
     //privacy options check
-    $this->verifyText("xpath=//div[@id='crm-communication-pref-content']/div[@class='crm-clear']/div[@class='crm-label']", "Privacy");
+    $this->verifyText("xpath=//div[@id='crm-communication-pref-content']/div[@class='crm-clear']/div/div[@class='crm-label']", "Privacy");
     $assertCheck = array_merge($privacyOptions, array("No Bulk Emails (User Opt Out)"));
     $assertCheck = implode("\n ", $assertCheck);
     $this->verifyText("xpath=//div[@id='crm-communication-pref-content']/div[@class='crm-clear']/div[3]", preg_quote("{$assertCheck}"));
     
     $i = 2;
     foreach ($assertValues as $key => $value) {
-      $this->verifyText("xpath=//div[@id='crm-communication-pref-content']/div[@class='crm-clear']/div[@class='crm-label'][{$i}]", preg_quote($value['label']));
-      $this->verifyText("xpath=//div[@id='crm-communication-pref-content']/div[@class='crm-clear']/div[@class='crm-content crm-contact-{$key}']", preg_quote($value['content']));
+      $this->verifyText("xpath=//div[@id='crm-communication-pref-content']/div[@class='crm-clear']/div/div[@class='crm-label'][{$i}]", preg_quote($value['label']));
+      $this->verifyText("xpath=//div[@id='crm-communication-pref-content']/div[@class='crm-clear']/div/div[@class='crm-content crm-contact-{$key}']", preg_quote($value['content']));
       $i++;
     }
 
@@ -242,8 +242,8 @@ class WebTest_Contact_InlineFieldsEditTest extends CiviSeleniumTestCase {
     
     $i = 1;
     foreach ($assertValues as $key => $value) {
-      $this->verifyText("xpath=//div[@id='crm-demographic-content']/div[@class='crm-clear']/div[@class='crm-label'][{$i}]", preg_quote($value['label']));
-      $this->verifyText("xpath=//div[@id='crm-demographic-content']/div[@class='crm-clear']/div[@class='crm-content {$key}']", preg_quote($value['content']));
+      $this->verifyText("xpath=//div[@id='crm-demographic-content']/div[@class='crm-clear']/div/div[@class='crm-label'][{$i}]", preg_quote($value['label']));
+      $this->verifyText("xpath=//div[@id='crm-demographic-content']/div[@class='crm-clear']/div/div[@class='crm-content {$key}']", preg_quote($value['content']));
       $i++;
     }
   
@@ -274,8 +274,8 @@ class WebTest_Contact_InlineFieldsEditTest extends CiviSeleniumTestCase {
     );
     
     foreach($assertValues as $key => $value) {
-      $this->verifyText("xpath=//table[@id='constituent_information_1']/tbody/tr/td/div/div/div[@class='crm-clear']/div[@class='crm-label'][{$key}]", preg_quote($value['label']));
-      $this->verifyText("xpath=//table[@id='constituent_information_1']/tbody/tr/td/div/div/div[@class='crm-clear']/div[@class='crm-content html-adjust crm-custom-data'][$key]", preg_quote($value['content']));
+      $this->verifyText("xpath=//table[@id='constituent_information_1']/tbody/tr/td/div/div/div[@class='crm-clear']/div/div[@class='crm-label'][{$key}]", preg_quote($value['label']));
+      $this->verifyText("xpath=//table[@id='constituent_information_1']/tbody/tr/td/div/div/div[@class='crm-clear']/div/div[@class='crm-content crm-custom-data'][$key]", preg_quote($value['content']));
     }
     
     $this->verifyText("xpath=//table[@id='constituent_information_1']//div[@class='crm-config-option']/a", "add or edit custom set");

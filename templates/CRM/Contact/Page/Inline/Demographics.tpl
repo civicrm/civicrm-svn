@@ -30,35 +30,44 @@
       <span class="batch-edit"></span>{ts}Add or edit demographics{/ts}
     </div>
     {/if}
-
+    <div class="crm-row clearfix">
       <div class="crm-label">{ts}Gender{/ts}</div>
       <div class="crm-content crm-contact-gender_display">{$gender_display}</div>
+    </div>
+    <div class="crm-row clearfix">
       <div class="crm-label">{ts}Date of birth{/ts}</div>
       <div class="crm-content crm-contact-birth_date_display">
           {if $birthDateViewFormat}	 
-              {$birth_date_display|crmDate:$birthDateViewFormat}
+            {$birth_date_display|crmDate:$birthDateViewFormat}
           {else}
-              {$birth_date_display|crmDate}
+            {$birth_date_display|crmDate}
           {/if}
           &nbsp;
       </div>
+    </div>
       {if $is_deceased eq 1}
-         {if $deceased_date}
-          <div class="crm-label">{ts}Date Deceased{/ts}</div>
-          <div class="crm-content crm-contact-deceased_date_display">
-           {if $birthDateViewFormat}          
-            {$deceased_date_display|crmDate:$birthDateViewFormat}
-           {else}
-            {$deceased_date_display|crmDate}
-           {/if}
-         </div>
-         {else}
-          <div class="crm-label"></div>
-          <div class="crm-content crm-contact-deceased_message"><span class="font-red upper">{ts}Contact is Deceased{/ts}</span></div>
-         {/if}
-       {else}
+        {if $deceased_date}
+          <div class="crm-row clearfix">
+            <div class="crm-label">{ts}Date Deceased{/ts}</div>
+            <div class="crm-content crm-contact-deceased_date_display">
+            {if $birthDateViewFormat}          
+              {$deceased_date_display|crmDate:$birthDateViewFormat}
+            {else}
+              {$deceased_date_display|crmDate}
+             {/if}
+            </div>
+          </div>
+        {else}
+          <div class="crm-row clearfix">
+            <div class="crm-label"></div>
+            <div class="crm-content crm-contact-deceased_message"><span class="font-red upper">{ts}Contact is Deceased{/ts}</span></div>
+          </div>
+        {/if}
+      {else}
+        <div class="crm-row clearfix">
           <div class="crm-label">{ts}Age{/ts}</div>
           <div class="crm-content crm-contact-age_display">{if $age.y}{ts count=$age.y plural='%count years'}%count year{/ts}{elseif $age.m}{ts count=$age.m plural='%count months'}%count month{/ts}{/if}</div>
-       {/if}
+        </div>
+      {/if}
     </div> <!-- end of main -->
   </div>

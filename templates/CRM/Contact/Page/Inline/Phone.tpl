@@ -32,16 +32,20 @@
       </div>
     {/if}
     {if empty($phone)}
-      <div class="crm-label">{ts}Phone{/ts}</div>
-      <div class="crm-content"></div>
+      <div class="crm-row clearfix">
+        <div class="crm-label">{ts}Phone{/ts}</div>
+        <div class="crm-content"></div>
+      </div>
     {/if}
     {foreach from=$phone item=item}
       {if $item.phone}
-        <div class="crm-label">{$item.location_type}&nbsp;{$item.phone_type}</div>
-        <div class="crm-content crm-contact_phone {if $item.is_primary eq 1}primary{/if}">
-          <span {if $privacy.do_not_phone} class="do-not-phone" title="{ts}Privacy flag: Do Not Phone{/ts}"{/if}>
-    {$item.phone}{if $item.phone_ext}&nbsp;&nbsp;{ts}ext.{/ts} {$item.phone_ext}{/if}
-          </span>
+        <div class="crm-row clearfix">
+          <div class="crm-label">{$item.location_type}&nbsp;{$item.phone_type}</div>
+          <div class="crm-content crm-contact_phone {if $item.is_primary eq 1}primary{/if}">
+            <span {if $privacy.do_not_phone} class="do-not-phone" title="{ts}Privacy flag: Do Not Phone{/ts}"{/if}>
+              {$item.phone}{if $item.phone_ext}&nbsp;&nbsp;{ts}ext.{/ts} {$item.phone_ext}{/if}
+            </span>
+          </div>
         </div>
       {/if}
     {/foreach}
