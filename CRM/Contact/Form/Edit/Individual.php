@@ -81,14 +81,14 @@ class CRM_Contact_Form_Edit_Individual {
 
     if ( !$inlineEditMode || $inlineEditMode == 2 ) {
       // nick_name
-      $form->addElement('text', 'nick_name', ts('Nick Name'),
+      $form->addElement('text', 'nick_name', ts('Nickname'),
         CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'nick_name')
       );
 
       // job title
       // override the size for UI to look better
       $attributes['job_title']['size'] = 30;
-      $form->addElement('text', 'job_title', ts('Job title'), $attributes['job_title'], 'size="30"');
+      $form->addElement('text', 'job_title', ts('Position'), $attributes['job_title'], 'size="30"');
 
       //Current Employer Element
       $employerDataURL = CRM_Utils_System::url('civicrm/ajax/rest', 'className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=contact&org=1&employee_id=' . $this->_contactId, FALSE, NULL, FALSE);
