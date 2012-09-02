@@ -188,7 +188,7 @@ WHERE  id IN ( $groupIDs )
 
       if ($smartGroupCacheTimeout == 0) {
         $query = "
-DELETE FROM civicrm_group_contact_cache
+TRUNCATE civicrm_group_contact_cache
 ";
         $update = "
 UPDATE civicrm_group g

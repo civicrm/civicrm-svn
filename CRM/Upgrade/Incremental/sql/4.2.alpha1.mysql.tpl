@@ -399,7 +399,7 @@ VALUES
    (@option_group_id_act, {localize}'Reminder Sent'{/localize}, (SELECT @max_val := @max_val+1), 'Reminder Sent', NULL, 1, NULL, (SELECT @max_wt := @max_wt+1), {localize}'Reminder Sent'{/localize}, 0, 1, 1, NULL, NULL);
 
 -- CRM-10335, truncate cache to begin to speed the alter table
-DELETE FROM civicrm_cache;
+TRUNCATE civicrm_cache;
 ALTER TABLE civicrm_cache
   DROP INDEX UI_group_path,
   ADD UNIQUE INDEX `UI_group_path_date` (`group_name`, `path`, `created_date`);
