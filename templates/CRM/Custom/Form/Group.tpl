@@ -158,7 +158,7 @@ if ( subtypes ) {
 
 function warnDataLoss( )
 {
-   var submittedSubtypes = cj('#extends\\[1\\]').val();
+   var submittedSubtypes = cj('#extends_1').val();
    var defaultSubtypes   = {/literal}{$defaultSubtypes}{literal};
 
    var warning = false;

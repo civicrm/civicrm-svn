@@ -220,7 +220,7 @@ function showLabel( ) {
                show("is_search_html");
                show("is_search_desSpan");
            }
-           var fldName = cj("#field_name\\[1\\]").val();
+           var fldName = cj("#field_name_1").val();
            if ( fldName == 'group' || fldName == 'tag' ) { 
                hide("in_selector_label");
                hide("in_selector_html");
@@ -233,12 +233,12 @@ function showLabel( ) {
        }
    }
 
-   cj("#field_name\\[1\\]").bind( 'change blur', function( ) {
+   cj("#field_name_1").bind( 'change blur', function( ) {
        showHideSeletorSearch( );
    }); 
 
 cj( function( ) {
-    cj("#field_name\\[1\\]").addClass( 'huge' );
+    cj("#field_name_1").addClass( 'huge' );
     viewOnlyShowHide( );
     cj("#is_view").click( function(){
         viewOnlyShowHide();
