@@ -322,12 +322,12 @@ cj( function( ) {
         }
     });
     
-    cj('#membership_type_id\\[1\\]').change( function( ) {
+    cj('#membership_type_id_1').change( function( ) {
         setPaymentBlock( );
     });
 });
 function setPaymentBlock( ) {
-    var memType = cj('#membership_type_id\\[1\\]').val( );
+    var memType = cj('#membership_type_id_1').val( );
     
     if ( !memType ) {
         return;
