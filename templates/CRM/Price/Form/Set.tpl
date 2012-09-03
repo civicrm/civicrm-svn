@@ -102,14 +102,14 @@
 	if (showContribution) {
 	    cj("#contribution_type_id").show();
 	}
-    	cj("#extends\\[3\\]").click(function(){
+    	cj("#extends_3").click(function(){
     	showHideContribution();	
 	});
 
     });
 
     function showHideContribution() {
-	if(cj("#extends\\[3\\]").attr('checked') ) {
+	if(cj("#extends_3").attr('checked') ) {
 	      cj("#contribution_type_id").show();
 	} else {
 	      cj("#contribution_type_id").hide();
