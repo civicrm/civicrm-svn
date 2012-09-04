@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @copyright	Copyright (C) 2005 - 2011 CiviCRM LLC All rights reserved.
  * @license		GNU Affero General Public License version 2 or later
@@ -17,7 +16,8 @@ jimport('joomla.plugin.plugin');
  * @subpackage	JFramework
  * @since		1.6
  */
-class plgUserCivicrm extends JPlugin {
+class plgUserCivicrm extends JPlugin
+{
 
   /* resetNavigation after user is saved
 	 * Method is called after user data is stored in the database
@@ -35,6 +35,7 @@ class plgUserCivicrm extends JPlugin {
 
     $app = JFactory::getApplication();
     self::civicrmResetNavigation();
+
   }
 
   /* resetNavigation after group is saved (parent/child may impact acl)
@@ -50,6 +51,7 @@ class plgUserCivicrm extends JPlugin {
 
     $app = JFactory::getApplication();
     self::civicrmResetNavigation();
+
   }
 
   /* delete uf_match record after user is deleted
@@ -68,14 +70,9 @@ class plgUserCivicrm extends JPlugin {
     $app = JFactory::getApplication();
 
     // Instantiate CiviCRM
-    define('CIVICRM_SETTINGS_PATH', JPATH_ROOT . '/' . 'administrator/components/com_civicrm/civicrm.settings.php');
-    require_once CIVICRM_SETTINGS_PATH;
-
-    require_once 'CRM/Core/ClassLoader.php';
-    CRM_Core_ClassLoader::singleton()->register();
-
+    require_once JPATH_ROOT.'/administrator/components/com_civicrm/civicrm.settings.php';
     require_once 'CRM/Core/Config.php';
-    $civiConfig = CRM_Core_Config::singleton();
+    $config = CRM_Core_Config::singleton( );
 
     // Reset Navigation
     require_once 'CRM/Core/BAO/UFMatch.php';
@@ -84,19 +81,17 @@ class plgUserCivicrm extends JPlugin {
 
   // Reset CiviCRM user/contact navigation cache
   public function civicrmResetNavigation() {
+
     // Instantiate CiviCRM
-    define('CIVICRM_SETTINGS_PATH', JPATH_ROOT . '/' . 'administrator/components/com_civicrm/civicrm.settings.php');
-    require_once CIVICRM_SETTINGS_PATH;
-
-    require_once 'CRM/Core/ClassLoader.php';
-    CRM_Core_ClassLoader::singleton()->register();
-
+    if ( !class_exists('CRM_Core_Config') ) {
+      require_once JPATH_ROOT.'/administrator/components/com_civicrm/civicrm.settings.php';
     require_once 'CRM/Core/Config.php';
-    $config = &CRM_Core_Config::singleton();
+    }
+
+    $config = CRM_Core_Config::singleton( );
 
     // Reset Navigation
     require_once 'CRM/Core/BAO/Navigation.php';
     CRM_Core_BAO_Navigation::resetNavigation();
   }
 }
-

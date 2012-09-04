@@ -1100,12 +1100,14 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
       return $errors;
     }
 
+    if(isset($self->_paymentFields)) {
     foreach ($self->_paymentFields as $name => $fld) {
       if ($fld['is_required'] &&
         CRM_Utils_System::isNull(CRM_Utils_Array::value($name, $fields))
       ) {
         $errors[$name] = ts('%1 is a required field.', array(1 => $fld['title']));
       }
+    }
     }
 
     // make sure that credit card number and cvv are valid

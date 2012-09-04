@@ -36,6 +36,7 @@
 class CRM_Core_Extensions_Extension {
 
   CONST STATUS_INSTALLED = 'installed';
+  CONST STATUS_MISSING = 'missing';
   CONST STATUS_LOCAL = 'local';
   CONST STATUS_REMOTE = 'remote';
 
@@ -87,6 +88,10 @@ class CRM_Core_Extensions_Extension {
     $this->setStatus(self::STATUS_INSTALLED);
   }
 
+  public function setMissing() {
+    $this->setStatus(self::STATUS_MISSING);
+  }
+
   public function setLocal() {
     $this->setStatus(self::STATUS_LOCAL);
   }
@@ -97,6 +102,7 @@ class CRM_Core_Extensions_Extension {
 
   public function setStatus($status) {
     $labels = array(self::STATUS_INSTALLED => ts('Installed'),
+      self::STATUS_MISSING => ts('Missing'),
       self::STATUS_LOCAL => ts('Local only'),
       self::STATUS_REMOTE => ts('Available'),
     );
@@ -123,6 +129,15 @@ class CRM_Core_Extensions_Extension {
       }
     }
     return $arr;
+  }
+
+  /**
+   * Determine whether the XML info file exists
+   *
+   * @return  bool
+   */  
+  public function hasXMLInfo() {
+    return file_exists($this->path . 'info.xml');
   }
 
   public function readXMLInfo($xml = FALSE) {
@@ -208,6 +223,7 @@ class CRM_Core_Extensions_Extension {
       $this->_runPaymentHook('install');
     }
   }
+    CRM_Core_Invoke::rebuildMenuAndCaches(TRUE);
   }
 
   /**
@@ -216,7 +232,7 @@ class CRM_Core_Extensions_Extension {
    * @return boolean Whether all tasks completed successfully.
    */
   public function uninstall() {
-    if ($this->type == 'payment') {
+    if ($this->type == 'payment' && $this->status != 'missing') {
       $this->_runPaymentHook('uninstall');
     }
     if ($this->_removeExtensionByType()) {
@@ -227,6 +243,7 @@ class CRM_Core_Extensions_Extension {
         }
       }
     }
+    CRM_Core_Invoke::rebuildMenuAndCaches(TRUE);
   }
 
   public function upgrade() {
@@ -234,6 +251,7 @@ class CRM_Core_Extensions_Extension {
     $this->removeFiles();
     $this->installFiles();
     //TODO// $this->_updateExtensionEntry();
+    CRM_Core_Invoke::rebuildMenuAndCaches(TRUE);
   }
 
   /**
@@ -254,9 +272,21 @@ class CRM_Core_Extensions_Extension {
     $zip = new ZipArchive;
     $res = $zip->open($this->tmpFile);
     if ($res === TRUE) {
+      $zipSubDir = CRM_Utils_Zip::guessBasedir($zip, $this->key);
+      if ($zipSubDir === FALSE) {
+        CRM_Core_Session::setStatus(ts('Unable to extract the extension: bad directory structure') . '<br/>');
+        return FALSE;
+      }
       $path = $config->extensionsDir . DIRECTORY_SEPARATOR . 'tmp';
+      $extractedZipPath = $path . DIRECTORY_SEPARATOR . $zipSubDir;
+      if (is_dir($extractedZipPath)) {
+        if (!CRM_Utils_File::cleanDir($extractedZipPath, TRUE, FALSE)) {
+          CRM_Core_Session::setStatus(ts('Unable to extract the extension: %1 cannot be cleared', array(1 => $extractedZipPath)) . '<br/>');
+          return FALSE;
+        }
+      }
       if (!$zip->extractTo($path)) {
-        CRM_Core_Session::setStatus(ts('Unable to extract the extension to %1.', array(1 => $path)));
+        CRM_Core_Session::setStatus(ts('Unable to extract the extension to %1.', array(1 => $path)) . '<br/>');
         return FALSE;
       }
       $zip->close();
@@ -266,15 +296,15 @@ class CRM_Core_Extensions_Extension {
       return FALSE;
     }
 
-    $filename = $path . DIRECTORY_SEPARATOR . $this->key . DIRECTORY_SEPARATOR . 'info.xml';
+    $filename = $extractedZipPath . DIRECTORY_SEPARATOR . 'info.xml';
     if (!is_readable($filename)) {
-      CRM_Core_Session::setStatus(ts('Failed reading data from %1 during installation', array(1 => $filename)));
+      CRM_Core_Session::setStatus(ts('Failed reading data from %1 during installation', array(1 => $filename)) . '<br/>');
       return FALSE;
     }
     $newxml = file_get_contents($filename);
 
     if (empty($newxml)) {
-      CRM_Core_Session::setStatus(ts('Failed reading data from %1 during installation', array(1 => $filename)));
+      CRM_Core_Session::setStatus(ts('Failed reading data from %1 during installation', array(1 => $filename)) . '<br/>');
       return FALSE;
     }
 
@@ -284,9 +314,14 @@ class CRM_Core_Extensions_Extension {
       CRM_Core_Error::fatal('Cannot install - there are differences between extdir XML file and archive XML file!');
     }
 
-    CRM_Utils_File::copyDir($path . DIRECTORY_SEPARATOR . $this->key,
+    // Why is this a copy instead of a move?
+    CRM_Utils_File::copyDir($extractedZipPath,
       $config->extensionsDir . DIRECTORY_SEPARATOR . $this->key
     );
+    
+    if (!CRM_Utils_File::cleanDir($extractedZipPath, TRUE, FALSE)) {
+      CRM_Core_Session::setStatus(ts('Failed to clean temp dir: %1', array(1 => $extractedZipPath)) . '<br/>');
+    }
     
     return TRUE;
   }
@@ -355,17 +390,19 @@ class CRM_Core_Extensions_Extension {
   public function enable() {
     $this->_setActiveByType(1);
     CRM_Core_DAO::setFieldValue('CRM_Core_DAO_Extension', $this->id, 'is_active', 1);
-    if ($this->type == 'payment') {
+    if ($this->type == 'payment' && $this->status != 'missing') {
       $this->_runPaymentHook('enable');
     }
+    CRM_Core_Invoke::rebuildMenuAndCaches(TRUE);
   }
 
   public function disable() {
-    if ($this->type == 'payment') {
+    if ($this->type == 'payment' && $this->status != 'missing') {
       $this->_runPaymentHook('disable');
     }
     $this->_setActiveByType(0);
     CRM_Core_DAO::setFieldValue('CRM_Core_DAO_Extension', $this->id, 'is_active', 0);
+    CRM_Core_Invoke::rebuildMenuAndCaches(TRUE);
   }
 
   private function _setActiveByType($state) {
@@ -510,4 +547,5 @@ class CRM_Core_Extensions_Extension {
       return $this->id;
   }
 }
+
 }

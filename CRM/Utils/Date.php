@@ -1427,7 +1427,7 @@ class CRM_Utils_Date {
                                         $format = $values['date_format'];
                                       }
 
-                                      if ($values['time_format']) {
+                                      if (isset($values['time_format'])) {
                                         $timeFormat = $values['time_format'];
                                       }
                                     }

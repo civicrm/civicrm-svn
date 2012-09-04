@@ -45,6 +45,7 @@ class civicrm_handler_relationship extends views_handler_relationship {
   }
 
   function construct() {
+    parent::construct();
     if (!civicrm_initialize()) {
       return;
     }

@@ -1531,9 +1531,6 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField {
       !$customFields[$customFieldId]['is_multiple'] &&
       $entityId
     ) {
-      //get the entity table for the custom field
-      $entityTable = CRM_Core_BAO_CustomQuery::$extendsMap[$customFieldExtend];
-
       $query = "
 SELECT id
   FROM $tableName
@@ -1650,8 +1647,7 @@ SELECT id
       $fName = $value['name'];
       $mimeType = $value['type'];
 
-      $path = explode('/', $fName);
-      $filename = $path[count($path) - 1];
+      $filename = pathinfo($fName, PATHINFO_FILENAME);
 
       // rename this file to go into the secure directory
       if (!rename($fName, $config->customFileUploadDir . $filename)) {

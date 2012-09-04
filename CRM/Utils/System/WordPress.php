@@ -239,7 +239,7 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
     
     if (isset($path)) {
         if (isset($query)) {
-        if ( $permlinkStructure != '' && $pageID ) {
+        if ($permlinkStructure != '' && ($pageID || $script != '')) {
           return $script . '?page=CiviCRM&q=' . $path . $pageID . $separator . $query . $fragment;
         }
         else {
@@ -247,7 +247,7 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
         }
       }
       else {
-        if ( $permlinkStructure != '' && $pageID ) {
+        if ($permlinkStructure != '' && ($pageID || $script != '')) {
           return $script . '?page=CiviCRM&q=' . $path . $pageID . $fragment;
         }
         else {
@@ -257,7 +257,7 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
     }
     else {
         if (isset($query)) {
-        if ( $permlinkStructure != '' && $pageID ) {
+        if ($permlinkStructure != '' && ($pageID || $script != '')) {
           return $script . '?' . $query . $pageID . $fragment;
         }
         else {

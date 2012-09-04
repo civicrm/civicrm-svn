@@ -47,6 +47,13 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
 
     // Go directly to the URL of the screen that you will be testing (New Individual).
     $this->WebtestAddGroup();
+    
+     // go to display preferences to enable Open ID field
+    $this->open($this->sboxPath . "civicrm/admin/setting/preferences/display?reset=1");
+    $this->waitForElementPresent("_qf_Display_next-bottom");
+    $this->check("xpath=//ul[@id='contactEditBlocks']//li/span[2]/label[text()='Open ID']/../input");
+    $this->click("_qf_Display_next-bottom");    
+    $this->waitForPageToLoad("30000");    
     $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
 
     //contact details section
@@ -178,6 +185,12 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
 
     $this->webtestLogin();
 
+     // go to display preferences to enable Open ID field
+    $this->open($this->sboxPath . "civicrm/admin/setting/preferences/display?reset=1");
+    $this->waitForElementPresent("_qf_Display_next-bottom");
+    $this->check("xpath=//ul[@id='contactEditBlocks']//li/span[2]/label[text()='Open ID']/../input");
+    $this->click("_qf_Display_next-bottom");    
+    $this->waitForPageToLoad("30000");    
     // Go directly to the URL of the screen that you will be testing (New Household).
     $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Household");
 
@@ -289,9 +302,14 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
     // page contents loaded and you can continue your test execution.
     $this->webtestLogin();
 
+    // go to display preferences to enable Open ID field
+    $this->open($this->sboxPath . "civicrm/admin/setting/preferences/display?reset=1");
+    $this->waitForElementPresent("_qf_Display_next-bottom");
+    $this->check("xpath=//ul[@id='contactEditBlocks']//li/span[2]/label[text()='Open ID']/../input");
+    $this->click("_qf_Display_next-bottom");    
+    $this->waitForPageToLoad("30000");    
     // Go directly to the URL of the screen that you will be testing (New Organization).
     $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Organization");
-
 
     //contact details section
     //fill in Organization name

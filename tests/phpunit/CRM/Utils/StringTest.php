@@ -80,5 +80,17 @@ class CRM_Utils_StringTest extends CiviUnitTestCase {
       $this->assertEquals($actual['middle_name'], $case['middle_name']);
     }
   }
+
+  function testEllipsify() {
+    $maxLen = 5;
+    $cases = array(
+      '1' => '1',
+      '12345' => '12345',
+      '123456' => '12...',
+    );
+    foreach ($cases as $input => $expected) {
+      $this->assertEquals($expected, CRM_Utils_String::ellipsify($input, $maxLen));
+}
+  }
 }
 

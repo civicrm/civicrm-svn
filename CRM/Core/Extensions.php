@@ -175,6 +175,22 @@ class CRM_Core_Extensions {
   }
 
   /**
+   * Get a list of all installed modules, including enabled and disabled ones
+   *
+   * @return array CRM_Core_Module
+   */
+  public function getModules() {
+    $result = array();
+    $dao = new CRM_Core_DAO_Extension();
+    $dao->type = 'module';
+    $dao->find();
+    while ($dao->fetch()) {
+      $result[] = new CRM_Core_Module($dao->full_name, $dao->is_active);
+    }
+    return $result;
+  }
+
+  /**
    * Populates variables containing information about extension.
    * This method is not supposed to call on object initialisation.
    *
@@ -309,7 +325,12 @@ class CRM_Core_Extensions {
     // now check for upgrades - rolling over installed, since
     // those that we care to upgrade
     if (is_array($remote)) {
+      
       foreach ($installed as $dc => $i) {
+        if ($i->status == 'missing') {
+          // don't check for upgrades if expected installed file(s) are missing
+          continue;
+        }
         $key = $i->key;
         foreach ($remote as $dc => $r) {
           if ($key == $r->key) {
@@ -346,7 +367,14 @@ class CRM_Core_Extensions {
       $ext->setInstalled();
       $ext->setId((integer)$dao->id);
       if ($fullInfo) {
+        if ($ext->hasXMLInfo()) {
         $ext->readXMLInfo();
+        } else {
+          $ext->setMissing();
+          CRM_Core_Session::setStatus(ts('The extension %1 (%2) is listed as installed, but expected files(s) including info.xml are missing. Has this site been moved to a different server location?', array(
+            1 => $dao->label, 2 => $dao->full_name,
+          )). '<br/>');
+      }
       }
       $result[(integer)$dao->id] = $ext;
     }

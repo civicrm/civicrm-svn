@@ -42,10 +42,15 @@ class CRM_Core_Extensions_Module {
 
   public function install() {
     self::commonInstall('install');
+    self::commonInstall('enable');
   }
 
   private function callHook($moduleName, $modulePath, $hookName) {
-    include_once ($modulePath . DIRECTORY_SEPARATOR . $moduleName . '.php');
+    $file = $modulePath . DIRECTORY_SEPARATOR . $moduleName . '.php';
+    if (!file_exists($file)) {
+      return;
+    }
+    include_once $file;
     $fnName = "{$moduleName}_civicrm_{$hookName}";
     if (function_exists($fnName)) {
       $fnName();
@@ -53,8 +58,6 @@ class CRM_Core_Extensions_Module {
   }
 
   private function commonInstall($type = 'install') {
-    CRM_Core_PseudoConstant::getModuleExtensions(TRUE);
-
     $this->callHook($this->ext->file,
       $this->ext->path,
       $type
@@ -67,8 +70,6 @@ class CRM_Core_Extensions_Module {
   }
 
   private function commonUNInstall($type = 'uninstall') {
-    CRM_Core_PseudoConstant::getModuleExtensions(TRUE);
-
     $this->callHook($this->ext->file,
       $this->ext->path,
       $type

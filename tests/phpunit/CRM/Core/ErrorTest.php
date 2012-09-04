@@ -25,78 +25,39 @@
  +--------------------------------------------------------------------+
 */
 
+require_once 'CiviTest/CiviUnitTestCase.php';
+
 /**
- *
- * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2012
- * $Id$
- *
+ * Tests for linking to resource files
  */
-class CRM_Report_Form_Price_Lineitemparticipant extends CRM_Report_Form_Extended {
-  protected $_addressField = FALSE;
-
-  protected $_emailField = FALSE;
-
-  protected $_summary = NULL;
-
-  protected $_customGroupExtends = array('Participant', 'Individual', 'Contact');
-
-  protected $_baseTable = 'civicrm_line_item';
-
-  protected $_aclTable = 'civicrm_contact'; 
-  function __construct() {
-    $this->_columns = $this->getContactColumns() 
-      + $this->getEventColumns()
-      + $this->getParticipantColumns() 
-      + $this->getContributionColumns()
-      + $this->getPriceFieldColumns() 
-      + $this->getPriceFieldValueColumns() 
-      + $this->getLineItemColumns() ;
-    
-    parent::__construct();
-  }
-
-  function preProcess() {
-    parent::preProcess();
-  }
-
-  function select() {
-    parent::select();
-  }
-
-  /*
-    * select from clauses to use (from those advertised using
-    * $this->getAvailableJoins())
-    */
-  function fromClauses() {
+class CRM_Core_ErrorTest extends CiviUnitTestCase {
+  function get_info() {
     return array(
-      'priceFieldValue_from_lineItem',
-      'priceField_from_lineItem',
-      'participant_from_lineItem',
-      'contribution_from_participant',
-      'contact_from_participant',
-      'event_from_participant',
+      'name'    => 'Errors',
+      'description' => 'Tests for error handling',
+      'group'     => 'Core',
     );
   }
 
-  function groupBy() {
-    parent::groupBy();
+  function setUp() {
+    parent::setUp();
   }
 
-  function orderBy() {
-    parent::orderBy();
+  /**
+   * Make sure that formatBacktrace() accepts values from debug_backtrace()
+   */
+  function testFormatBacktrace_debug() {
+    $bt = debug_backtrace();
+    $msg = CRM_Core_Error::formatBacktrace($bt);
+    $this->assertRegexp('/CRM_Core_ErrorTest->testFormatBacktrace_debug/', $msg);
   }
 
-  function statistics(&$rows) {
-    return parent::statistics($rows);
-  }
-
-  function postProcess() {
-    parent::postProcess();
-  }
-
-  function alterDisplay(&$rows) {
-    parent::alterDisplay($rows);
+  /**
+   * Make sure that formatBacktrace() accepts values from Exception::getTrace()
+   */
+  function testFormatBacktrace_exception() {
+    $e = new Exception('foo');
+    $msg = CRM_Core_Error::formatBacktrace($e->getTrace());
+    $this->assertRegexp('/CRM_Core_ErrorTest->testFormatBacktrace_exception/', $msg);
   }
 }
-

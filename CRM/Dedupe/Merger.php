@@ -1066,8 +1066,8 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
       $relTableElements[] = array('checkbox', "move_$name");
       $migrationInfo["move_$name"] = 1;
 
-      $relTables[$name]['main_url'] = str_replace('$mainId', $mainId, $relTables[$name]['url']);
-      $relTables[$name]['other_url'] = str_replace('$mainId', $otherId, $relTables[$name]['url']);
+      $relTables[$name]['main_url'] = str_replace('$cid', $mainId, $relTables[$name]['url']);
+      $relTables[$name]['other_url'] = str_replace('$cid', $otherId, $relTables[$name]['url']);
       if ($name == 'rel_table_users') {
         $relTables[$name]['main_url'] = str_replace('%ufid', $mainUfId, $relTables[$name]['url']);
         $relTables[$name]['other_url'] = str_replace('%ufid', $otherUfId, $relTables[$name]['url']);

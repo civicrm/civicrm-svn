@@ -605,6 +605,39 @@ LIKE %1
   }
 
   /**
+   * Checks if CONSTRAINT keyword exists for a specified table.
+   *
+   * @param string $tableName
+   *
+   * @return boolean true if CONSTRAINT keyword exists, false otherwise
+   */
+  function schemaRequiresRebuilding($tables = array("civicrm_contact")) {
+    $show = array();
+    foreach($tables as $tableName){
+      if (!array_key_exists($tableName, $show)) {
+        $query = "SHOW CREATE TABLE $tableName";
+        $dao = CRM_Core_DAO::executeQuery($query);
+        
+        if (!$dao->fetch()) {
+          CRM_Core_Error::fatal();
+        }
+        
+        $dao->free();
+        $show[$tableName] = $dao->Create_Table;
+      }
+      
+      $result = preg_match("/\bCONSTRAINT\b\s/i", $show[$tableName]) ? TRUE : FALSE;
+      if($result == TRUE){
+        continue;
+      }
+      else{
+        return FALSE;
+      }
+    }
+    return TRUE;
+  }
+
+  /**
    * Checks if the FK constraint name is in the format 'FK_tableName_columnName'
    * for a specified column of a table.
    *
@@ -628,8 +661,9 @@ LIKE %1
       $dao->free();
       $show[$tableName] = $dao->Create_Table;
     }
-
-    return preg_match('/CONSTRAINT [`\']?' . "FK_{$tableName}_{$columnName}" . '/i', $show[$tableName]) ? TRUE : FALSE;
+    $constraint = "`FK_{$tableName}_{$columnName}`";
+    $pattern = "/\bCONSTRAINT\b\s+%s\s+\bFOREIGN\s+KEY\b\s/i";
+    return preg_match(sprintf($pattern, $constraint),$show[$tableName]) ? TRUE : FALSE; 
   }
 
   /**
@@ -1192,6 +1226,27 @@ SELECT contact_id
     }
 
     return $_dao->escape($string);
+  }
+
+  /**
+   * Escape a list of strings for use with "WHERE X IN (...)" queries.
+   *
+   * @param $strings array
+   * @param $default string the value to use if $strings has no elements
+   * @return string eg "abc","def","ghi"
+   */
+  static function escapeStrings($strings, $default = NULL) {
+    static $_dao = NULL;
+    if (!$_dao) {
+      $_dao = new CRM_Core_DAO();
+    }
+
+    if (empty($strings)) {
+      return $default;
+    }
+    
+    $escapes = array_map(array($_dao, 'escape'), $strings);
+    return '"' . implode('","', $escapes) . '"';
   }
 
   static function escapeWildCardString($string) {

@@ -21,8 +21,8 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
     */ function setUp() {
     parent::setUp();
 
-    $this->toBeImplemented['get'] = array('ParticipantPayment', 'Profile', 'CustomValue', 'Website', 'Constant', 'Job', 'System');
-    $this->toBeImplemented['create'] = array('SurveyRespondant', 'OptionGroup', 'UFMatch', 'LocationType', 'System');
+    $this->toBeImplemented['get'] = array('ParticipantPayment', 'Profile', 'CustomValue', 'Website', 'Constant', 'Job', 'CustomSearch', 'ReportTemplate', 'System');
+    $this->toBeImplemented['create'] = array('SurveyRespondant', 'OptionGroup', 'UFMatch', 'LocationType', 'CustomSearch', 'ReportTemplate', 'System');
     $this->toBeImplemented['delete'] = array('MembershipPayment', 'OptionGroup', 'SurveyRespondant', 'UFJoin', 'UFMatch', 'LocationType', 'System');
     $this->onlyIDNonZeroCount['get'] = array('ActivityType', 'Entity', 'Domain');
     $this->deprecatedAPI = array('Location', 'ActivityType', 'SurveyRespondant');
@@ -204,7 +204,16 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
           'pledge_status_id',
           'pledge_campaign_id',
         )
-      )
+      ),
+      'PaymentProcessorType' => array(
+        'cant_update' => array(
+          'billing_mode',
+        ),
+        'break_return' => array(
+        ),
+        'cant_return' => array(
+        ),
+      ),
     );
     if(empty($knownFailures[$entity])){
       return array();

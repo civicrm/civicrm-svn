@@ -1242,7 +1242,8 @@ LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.cont
    *  @static
    */
   static function getSoftContributionList($contact_id, $isTest = 0) {
-    $query = "SELECT ccs.id, ccs.amount as amount,
+    $query = "
+    SELECT ccs.id, ccs.amount as amount,
                      ccs.contribution_id,
                      ccs.pcp_id,
                      ccs.pcp_display_in_roll,
@@ -1265,9 +1266,12 @@ LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.cont
                              cc.contact_id = contact.id
                    LEFT JOIN civicrm_contribution_type cct
                           ON cc.contribution_type_id = cct.id
-              WHERE cc.is_test = {$isTest} AND ccs.contact_id = " . $contact_id;
+         WHERE cc.is_test = %2 AND ccs.contact_id = %1
+         ORDER BY cc.receive_date DESC";
 
-    $cs                 = CRM_Core_DAO::executeQuery($query, CRM_Core_DAO::$_nullArray);
+    $params             = array(1 => array($contact_id, 'Integer'),
+                                2 => array($isTest, 'Integer'));
+    $cs                 = CRM_Core_DAO::executeQuery($query, $params);
     $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus();
     $result             = array();
     while ($cs->fetch()) {
@@ -1293,17 +1297,21 @@ LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.cont
   }
 
   static function getSoftContributionTotals($contact_id, $isTest = 0) {
-    $query = "SELECT SUM(amount) as amount,
+    $query = "
+    SELECT SUM(amount) as amount,
                          AVG(total_amount) as average,
                          cc.currency
                   FROM civicrm_contribution_soft  ccs
                        LEFT JOIN civicrm_contribution cc
                               ON ccs.contribution_id = cc.id
-                  WHERE cc.is_test = {$isTest} AND
-                        ccs.contact_id = {$contact_id}
+    WHERE cc.is_test = %2 AND
+          ccs.contact_id = %1
                   GROUP BY currency ";
 
-    $cs = CRM_Core_DAO::executeQuery($query, CRM_Core_DAO::$_nullArray);
+    $params = array(1 => array($contact_id, 'Integer'),
+                    2 => array($isTest, 'Integer'));
+
+    $cs = CRM_Core_DAO::executeQuery($query, $params);
 
     $count = 0;
     $amount = $average = array();

@@ -374,8 +374,9 @@ class CRM_Core_Invoke {
   }
 
   static
-  function rebuildMenuAndCaches($triggerRebuild = FALSE) {
+  function rebuildMenuAndCaches($triggerRebuild = FALSE, $sessionReset = FALSE) {
     $config = CRM_Core_Config::singleton();
+    $config->clearModuleList();
 
     CRM_Core_Menu::store();
 
@@ -383,7 +384,7 @@ class CRM_Core_Invoke {
     CRM_Core_BAO_Navigation::resetNavigation();
 
     // also cleanup all caches
-    $config->cleanupCaches();
+    $config->cleanupCaches($sessionReset || CRM_Utils_Request::retrieve('sessionReset', 'Boolean', CRM_Core_DAO::$_nullObject, FALSE, 0, 'GET'));
 
     // also rebuild triggers if requested explicitly
     if (
@@ -392,6 +393,8 @@ class CRM_Core_Invoke {
     ) {
       CRM_Core_DAO::triggerRebuild();
     }
+    
+    CRM_Core_ManagedEntities::singleton(TRUE)->reconcile();
   }
 }
 

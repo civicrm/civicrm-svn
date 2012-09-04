@@ -32,13 +32,15 @@
  * Grateful acknowledgements go to Donald Lobo for invaluable assistance
  * in creating this payment processor module
  */
+class CRM_Core_Payment_PaymentExpressUtils {
+
 function _valueXml($element, $value = NULL) {
   $nl = "\n";
 
   if (is_array($element)) {
     $xml = '';
     foreach ($element as $elem => $value) {
-      $xml .= _valueXml($elem, $value);
+        $xml .= self::_valueXml($elem, $value);
     }
     return $xml;
   }
@@ -76,3 +78,4 @@ function &_initCURL($query, $url) {
   return $curl;
 }
 
+}

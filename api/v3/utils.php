@@ -205,9 +205,12 @@ function civicrm_api3_create_success($values = 1, $params = array(
     elseif ($action != 'getfields') {
       $apiFields = civicrm_api($entity, 'getfields', array('version' => 3) + $params);
     }
+    else {
+      $apiFields = FALSE;
+    }
 
     $allFields = array();
-    if (is_array(CRM_Utils_Array::value('values', $apiFields))) {
+    if ($action != 'getfields' && is_array($apiFields) && is_array(CRM_Utils_Array::value('values', $apiFields))) {
       $allFields = array_keys($apiFields['values']);
     }
     $paramFields = array_keys($params);
@@ -350,7 +353,13 @@ function _civicrm_api3_store_values(&$fields, &$params, &$values) {
  * @param array $options array of options (so we can modify the filter)
  * @param bool $getCount are we just after the count
  */
-function _civicrm_api3_get_using_query_object($params, $additional_options = array(),$getCount = null){
+function _civicrm_api3_get_using_query_object($object_type, $params, $additional_options = array(), $getCount = null){
+
+  // Convert id to e.g. contact_id
+  if (empty($params[$object_type . '_id']) && isset($params['id'])) {
+    $params[$object_type . '_id'] = $params['id'];
+  }
+  unset($params['id']);
 
   $options          = _civicrm_api3_get_options_from_params($params, TRUE);
 
@@ -872,7 +881,7 @@ function _civicrm_api3_basic_get($bao_name, &$params, $returnAsSuccess = TRUE, $
   $bao = new $bao_name();
   _civicrm_api3_dao_set_filter($bao, $params, TRUE,$entity);
   if ($returnAsSuccess) {
-    return civicrm_api3_create_success(_civicrm_api3_dao_to_array($bao, $params, FALSE, $entity), $params, $bao);
+    return civicrm_api3_create_success(_civicrm_api3_dao_to_array($bao, $params, FALSE, $entity), $params, $entity);
   }
   else {
     return _civicrm_api3_dao_to_array($bao, $params, FALSE, $entity);
@@ -1399,42 +1408,35 @@ function _civicrm_api3_validate_integer(&$params, &$fieldname, &$fieldInfo) {
  * @param array $fieldinfo array of fields from getfields function
  */
 function _civicrm_api3_validate_string(&$params, &$fieldname, &$fieldInfo) {
-  //if fieldname exists in params
-  if (CRM_Utils_Array::value($fieldname, $params)) {
+  // If fieldname exists in params
+  if ($value = CRM_Utils_Array::value($fieldname, $params)) {
     if ($fieldname == 'currency') {
-      if (!CRM_Utils_Rule::currencyCode($params[$fieldname])) {
-        throw new Exception("currency not a valid code: " . $params[$fieldname]);
+      if (!CRM_Utils_Rule::currencyCode($value)) {
+        throw new Exception("Currency not a valid code: $value");
       }
     }
     if (CRM_Utils_Array::value('pseudoconstant', $fieldInfo) && !CRM_Utils_Array::value('FKClassName',$fieldInfo)) {
-    // validate / swap out any pseudoconstants
+      // Validate & swap out any pseudoconstants
       $constant = $fieldInfo['options'];
-      $enum = CRM_Utils_Array::value('enumValues', $fieldInfo);
-      if (empty($constant) && !empty($enum)) {
+      if (!$constant && ($enum = CRM_Utils_Array::value('enumValues', $fieldInfo))) {
         $constant = explode(',', $enum);
       }
-      if (is_numeric($params[$fieldname]) && !array_key_exists($params[$fieldname], $fieldInfo['options'])) {
-        throw new Exception("$fieldname is not valid");
+      // If value passed is not a key, it may be a label
+      // Try to lookup key from label - if it can't be found throw error
+      if (!isset($constant[$value])) {
+        if (!($key = array_search($value, $constant))) {
+          throw new Exception("$fieldname '$value' is not valid.");
       }
-      elseif (!is_numeric($params[$fieldname])) {
-        $numericvalue = array_search($params[$fieldname], $fieldInfo['options']);
-        if (empty($numericvalue)) {
-          throw new Exception("$fieldname `" . $params[$fieldname] . "` is not valid.");
-        }
         else {
-          $params[$fieldname] = $numericvalue;
+          $value = $key;
         }
       }
     }
-    // once we have done any swaps check our field length
-    if(is_string($params[$fieldname]) &&
-      CRM_Utils_Array::value('maxlength',$fieldInfo)
-      && strlen($params[$fieldname]) > $fieldInfo['maxlength']
-      ){
-      throw new api_Exception( $params[$fieldname] . " is " . strlen($params[$fieldname]) . " characters  - longer than $fieldname length" . $fieldInfo['maxlength'] . ' characters',
+    // Check our field length
+    elseif (is_string($value) && !empty($fieldInfo['maxlength']) && strlen($value) > $fieldInfo['maxlength']) {
+      throw new api_Exception("Value for $fieldname is " . strlen($value) . " characters  - This field has a maxlength of {$fieldInfo['maxlength']} characters.",
         2100, array('field' => $fieldname)
       );
     }
   }
 }
-

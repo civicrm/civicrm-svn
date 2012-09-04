@@ -241,6 +241,17 @@ define( 'CIVICRM_MEMCACHE_TIMEOUT', 3600 );
  */
 define( 'CIVICRM_MEMCACHE_PREFIX', '' );
 
+/**
+ * If you have multilingual site and you are using the "inherit CMS language" 
+ * configuration option, but wish to, for example, use fr_CA instead of the
+ * default fr_FR (for French), set one or more of the constants below to an 
+ * appropriate regional value.
+ */
+// define('CIVICRM_LANGUAGE_MAPPING_FR', 'fr_CA');
+// define('CIVICRM_LANGUAGE_MAPPING_EN', 'en_CA');
+// define('CIVICRM_LANGUAGE_MAPPING_ES', 'es_MX');
+// define('CIVICRM_LANGUAGE_MAPPING_PT', 'pt_BR');
+// define('CIVICRM_LANGUAGE_MAPPING_ZH', 'zh_TW');
 
 /**
  *

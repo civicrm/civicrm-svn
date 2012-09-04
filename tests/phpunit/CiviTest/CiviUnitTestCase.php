@@ -797,6 +797,32 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     return;
   }
 
+  function paymentProcessorTypeCreate($params = NULL) {
+    if (is_null($params)) {
+      $params = array(
+        'name' => 'API_Test_PP',
+        'title' => 'API Test Payment Processor',
+        'class_name' => 'CRM_Core_Payment_APITest',
+        'billing_mode' => 'form',
+        'is_recur' => 0,
+        'is_reserved' => 1,
+        'is_active' => 1,
+      );
+    }
+    $params['version'] = API_LATEST_VERSION;
+
+    $result = civicrm_api('payment_processor_type', 'create', $params);
+
+    if (civicrm_error($params) || CRM_Utils_Array::value('is_error', $result)) {
+      throw new Exception('Could not create payment processor type');
+    }
+
+    require_once 'CRM/Core/PseudoConstant.php';
+    CRM_Core_PseudoConstant::flush('paymentProcessorType');
+
+    return $result['id'];
+  }
+
   /**
    * Function to create Participant
    *

@@ -36,8 +36,7 @@
  *
  */
 
-function CheckAuthentication() {
-
+function checkAuthentication() {
     static $authenticated;
     if ( !isset( $authenticated ) ) {
        $current_cwd   = getcwd();
@@ -122,17 +121,35 @@ function authenticate_drupal($config) {
 }
 
 function authenticate_wordpress($config) {
-  // FIXME WordPress is still wide open!!
-  return true;
+  // make sure user has access to civicrm 
+  CRM_Utils_System::loadBootStrap();
+  require_once "CRM/Core/Permission.php";
+  if (CRM_Core_Permission::check('access CiviCRM')) {
+    return true;
+  }
+  return false;
 }
 
 function authenticate_joomla($config) {
-  // FIXME Joomla is still wide open!!
-  return true;
+  // make sure only logged in user can see upload / view images 
+  $joomlaBase = dirname(dirname(dirname(dirname(dirname(dirname(dirname(dirname(__FILE__))))))));
+  
+  define( '_JEXEC', 1 );
+  define('JPATH_BASE', $joomlaBase);
+  define( 'DS', DIRECTORY_SEPARATOR );
+  require_once ( JPATH_BASE .DS.'includes'.DS.'defines.php' );
+  require_once ( JPATH_BASE .DS.'includes'.DS.'framework.php' );
+  
+  $mainframe =& JFactory::getApplication('administrator');
+  $mainframe->initialise();
 
+  if (JFactory::getUser()->id == 0) {
+    return false;
+  }
+  return true;
 }
 
-CheckAuthentication( );
+checkAuthentication( );
 
 spl_autoload_register('__autoload');
 

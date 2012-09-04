@@ -37,7 +37,7 @@ class CRM_Upgrade_Headless {
    *   - message: string, HTML-ish blob
    * @throws Exception
    */
-  function run() {
+  function run($enablePrint = TRUE) {
     // lets get around the time limit issue if possible for upgrades
     if (!ini_get('safe_mode')) {
       set_time_limit(0);
@@ -57,7 +57,10 @@ class CRM_Upgrade_Headless {
       ));
     $queueResult = $queueRunner->runAll();
     if ($queueResult !== TRUE) {
-      throw new Exception('Error running queued tasks: ' . print_r($queueResult, TRUE));
+      if ($enablePrint) {
+        print(CRM_Core_Error::formatTextException($queueResult['exception']));
+    }
+      throw $queueResult['exception']; // FIXME test
     }
 
     CRM_Upgrade_Form::doFinish();

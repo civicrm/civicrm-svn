@@ -78,8 +78,7 @@
 		    if(blockname == 'email' || blockname == 'phone'){
    		          var label = '(overwrite)'+<span id="main_blockname_blockId_overwrite">{/literal}{$form.location.$blockName.$blockId.operation.html}{literal}<br /></span>;
 		    }
-		    else
-		    {
+      else {
 		        label = '(overwrite)<br />';
 		    }
  	

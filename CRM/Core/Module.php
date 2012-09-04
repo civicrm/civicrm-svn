@@ -26,28 +26,50 @@
 */
 
 /**
+ * A module is any software package that participates in the hook
+ * system, such as CiviCRM Module-Extension, a Drupal Module, or
+ * a Joomla Plugin.
  *
  * @package CRM
  * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
-class CRM_Report_Form_Price_Contributionbased extends CRM_Report_Form_Extended {
+class CRM_Core_Module {
 
-  protected $_baseTable = 'civicrm_contribution'; function __construct() {
+  /**
+   * @var string
+   */
+  public $name;
 
-    $this->_columns = $this->getContactColumns() 
-      + $this->getContributionColumns()
-      + $this->getLineItemColumns();
-      
-    parent::__construct();
+  /**
+   * @var bool, TRUE if fully enabled; FALSE if module exists but is disabled
+   */
+  public $is_active;
+
+  public function __construct($name, $is_active) {
+    $this->name = $name;
+    $this->is_active = $is_active;
   }
 
-  function fromClauses() {
-    return array(
-      'lineItem_from_contribution',
-      'contact_from_contribution',
-    );
+  /**
+   * Get a list of all known modules
+   */
+  public static function getAll($fresh = FALSE) {
+    static $result;
+    if ($fresh || !is_array($result)) {
+      $result = array();
+
+      $ext = new CRM_Core_Extensions();
+      if ($ext->enabled) {
+        $result = array_merge($result, $ext->getModules());
+      }
+
+      $config = CRM_Core_Config::singleton();
+      if (is_callable(array($config->userSystem, 'getModules'))) {
+        $result = array_merge($result, $config->userSystem->getModules());
+      }
+    }
+    return $result;
   }
 }
-

@@ -76,17 +76,12 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
           url: settings.ajaxURL,
           dataType: 'json',
           data: params,
+          type:'POST',
           context:this,
           success: function(result) {
             settings.callBack.call(this,result,settings);
           }
         });
-        /*
-    	  $.getJSON.call(this,settings.ajaxURL,params,function(result){
-            console.log(this);
-            console.log("bbb");
-            return settings.callBack.call(self,result,settings);});
-            */
       };
 
     $.fn.crmAutocomplete = function (params,options) {
