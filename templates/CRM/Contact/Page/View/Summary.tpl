@@ -424,15 +424,17 @@ cj(function(){
   /* end of js for inline custom data */
 
   /* start of js for inline address */
-  var addressBlock = cj('div[id^="address-block-"]');
-  addressBlock.mouseenter( function() {
+  var addressBlock = cj('.contact_panel');
+  addressBlock.on( 'mouseenter', 'div[id^="address-block-"]', function() {
     var locno   = cj(this).attr('locno');
     cj(this).addClass('crm-inline-edit-hover');
     cj('a[id^="edit-address-block-' + locno +'"]').show();
-  }).mouseleave( function() {
+  });
+
+  addressBlock.on( 'mouseleave', 'div[id^="address-block-"]', function() {
     var locno   = cj(this).attr('locno');
     cj(this).removeClass('crm-inline-edit-hover');
-    if ( !cj('a[id^="edit-address-block-' + locno +'"]').hasClass('empty-address-block-' + locno ) ) { 
+    if ( !cj('a[id^="edit-address-block-' + locno +'"]').hasClass('empty-address-block-' + locno) ) { 
       cj('a[id^="edit-address-block-'+ locno +'"]').hide();
     }
   });

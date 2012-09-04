@@ -89,7 +89,6 @@
   </script>
   {/literal}
 {else}
-  <div class="crm-summary-block crm-address-block" id="address-block-{$locationIndex}" locno="{$locationIndex}">
     <div class="crm-table2div-layout">
       <div class="crm-clear">
         <a id="edit-address-block-{$locationIndex}" class="crm-link-action empty-address-block-{$locationIndex}" title="{ts}click to add address{/ts}" locno="{$locationIndex}" aid=0>
@@ -97,7 +96,6 @@
         </a>
       </div>
     </div>
-  </div>
 {/if}
 
 {if $appendBlockIndex and $permission EQ 'edit'}
