@@ -123,7 +123,7 @@ class CRM_Queue_ErrorPolicy {
     $response = array(
       'is_error' => 1,
       'is_continue' => 0,
-      'message' => sprintf('Error %s: %s in %s, line %s', $error['type'], $error['message'], $error['file'], $error['line']),
+      'exception' => htmlentities(sprintf('Error %s: %s in %s, line %s', $error['type'], $error['message'], $error['file'], $error['line'])),
     );
     global $activeQueueRunner;
     if (is_object($activeQueueRunner)) {
@@ -137,9 +137,11 @@ class CRM_Queue_ErrorPolicy {
   /**
    * Print an unhandled exception
    *
-   * @param $error
+   * @param $e
    */
-  function reportException($e) {
+  function reportException(Exception $e) {
+    CRM_Core_Error::debug_var('CRM_Queue_ErrorPolicy_reportException', CRM_Core_Error::formatTextException($e));
+
     $response = array(
       'is_error' => 1,
       'is_continue' => 0,
@@ -147,10 +149,10 @@ class CRM_Queue_ErrorPolicy {
 
     $config = CRM_Core_Config::singleton();
     if ($config->backtrace || CRM_Core_Config::isUpgradeMode()) {
-      $response['message'] = $e->getMessage() . "\n" . CRM_Core_Error::formatBacktrace($e->getTrace());
+      $response['exception'] = CRM_Core_Error::formatHtmlException($e);
     }
     else {
-      $response['message'] = $e->getMessage();
+      $response['exception'] = htmlentities($e->getMessage());
     }
 
     global $activeQueueRunner;
@@ -158,10 +160,6 @@ class CRM_Queue_ErrorPolicy {
       $response['last_task_title'] = $activeQueueRunner->lastTaskTitle;
     }
     echo json_encode($response);
-
-    // unconditionally log backtrace
-    $response['message'] = $e->getMessage() . "\n" . $e->getTraceAsString();
-    CRM_Core_Error::debug_var('CRM_Queue_ErrorPolicy_reportException', $response);
     CRM_Utils_System::civiExit();
   }
 }

@@ -139,6 +139,13 @@ class CRM_Queue_Runner {
   public function runAll() {
     $taskResult = $this->formatTaskResult(TRUE);
     while ($taskResult['is_continue']) {
+      // setRaiseException should't be necessary here, but there's a bug
+      // somewhere which causes this setting to be lost.  Observed while
+      // upgrading 4.0=>4.2.  This preference really shouldn't be a global
+      // setting -- it should be more of a contextual/stack-based setting. 
+      // This should be appropriate because queue-runners are not used with
+      // basic web pages -- they're used with CLI/REST/AJAX.
+      CRM_Core_Error::setRaiseException();
       $taskResult = $this->runNext();
     }
 
@@ -161,7 +168,7 @@ class CRM_Queue_Runner {
    *
    * @param $useSteal bool, whether to steal active locks
    *
-   * @return array(is_error => bool, is_continue => bool, numberOfItems => int, 'last_task_title' => $)
+   * @return array(is_error => bool, is_continue => bool, numberOfItems => int, 'last_task_title' => $, 'exception' => $)
    */
   public function runNext($useSteal = FALSE) {
     if ($useSteal) {
@@ -174,20 +181,16 @@ class CRM_Queue_Runner {
     if ($item) {
       $this->lastTaskTitle = $item->data->title;
 
-      $errorMessage = NULL;
+      $exception = NULL;
       try {
         $isOK = $item->data->run($this->getTaskContext());
+        if (!$isOK) {
+          $exception = new Exception('Task returned false');
+        }
       }
       catch(Exception$e) {
         $isOK = FALSE;
-
-        $config = CRM_Core_Config::singleton();
-        if ($config->backtrace || CRM_Core_Config::isUpgradeMode()) {
-          $errorMessage = $e->getMessage() . "\n" . CRM_Core_Error::formatBacktrace($e->getTrace());
-        }
-        else {
-          $errorMessage = $e->getMessage();
-        }
+        $exception = $e;
       }
 
       if ($isOK) {
@@ -197,10 +200,10 @@ class CRM_Queue_Runner {
         $this->releaseErrorItem($item);
       }
 
-      return $this->formatTaskResult($isOK, $errorMessage);
+      return $this->formatTaskResult($isOK, $exception);
     }
     else {
-      return $this->formatTaskResult(FALSE, 'Failed to claim next task');
+      return $this->formatTaskResult(FALSE, new Exception('Failed to claim next task'));
     }
   }
 
@@ -227,7 +230,7 @@ class CRM_Queue_Runner {
       return $this->formatTaskResult(TRUE);
     }
     else {
-      return $this->formatTaskResult(FALSE, 'Failed to claim next task');
+      return $this->formatTaskResult(FALSE, new Exception('Failed to claim next task'));
     }
   }
 
@@ -269,12 +272,12 @@ class CRM_Queue_Runner {
    *
    * @return array(is_error => bool, is_continue => bool, numberOfItems => int)
    */
-  function formatTaskResult($isOK, $message = NULL) {
+  function formatTaskResult($isOK, $exception = NULL) {
     $numberOfItems = $this->queue->numberOfItems();
 
     $result = array();
     $result['is_error'] = $isOK ? 0 : 1;
-    $result['message'] = $message;
+    $result['exception'] = $exception;
     $result['last_task_title'] = isset($this->lastTaskTitle) ? $this->lastTaskTitle : '';
     $result['numberOfItems'] = $this->queue->numberOfItems();
     if ($result['numberOfItems'] <= 0) {

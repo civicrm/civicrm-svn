@@ -42,9 +42,9 @@ cj(function() {
       cj('#crm-queue-runner-title').text('Executed: ' + data.last_task_title);
     }
     
-    if (data.message) {
+    if (data.exception) {
       cj('#crm-queue-runner-message').html('');
-      cj('<pre></pre>').text(data.message).prependTo('#crm-queue-runner-message');
+      cj('<div></div>').html(data.exception).prependTo('#crm-queue-runner-message');
     }
     
   };
