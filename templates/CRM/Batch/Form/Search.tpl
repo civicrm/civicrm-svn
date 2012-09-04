@@ -120,11 +120,11 @@ function buildBatchSelector( filterSearch ) {
             aoData.push( {name:'status', value: status });
             if ( filterSearch ) {
                 var batchStatus = '';
-                if ( cj('.crm-batch-search-form-block #batch_status\\[1\\]').prop('checked') ) {
+                if ( cj('.crm-batch-search-form-block #batch_status_1').prop('checked') ) {
                     batchStatus = '1'; 
                 }
                 
-                if ( cj('.crm-batch-search-form-block #batch_status\\[2\\]').prop('checked') ) {
+                if ( cj('.crm-batch-search-form-block #batch_status_2').prop('checked') ) {
                     if ( batchStatus ) {
                         batchStatus = '3';
                     } else {
