@@ -287,7 +287,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
         }
         // Return the error message to the api
         $error = array();
-        $error['is_error'] = ts('The membership cannot be saved. No valid membership status for given dates');
+        $error['is_error'] = ts('The membership cannot be saved. No valid membership status for given dates. Please provide at least start_date. Optionally end_date and join_date.');
         return $error;
       }
       $params['status_id'] = $calcStatus['id'];
@@ -368,7 +368,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
 
       if (empty($membership->contact_id) && (!empty($membership->owner_membership_id))) {
         $membership->contact_id = $realMembershipContactId;
-      } 
+      }
 
       if (CRM_Utils_Array::value('membership', $ids) && $activityType != 'Membership Signup') {
         CRM_Activity_BAO_Activity::addActivity($membership, $activityType, $targetContactID);
@@ -2167,7 +2167,7 @@ FROM   civicrm_membership_type
       $select .= " INNER JOIN civicrm_membership_status ON civicrm_membership.status_id = civicrm_membership_status.id ";
       $where  .= " and civicrm_membership_status.is_active = 1";
     }
- 
+
     $query = $select . $where;
     return CRM_Core_DAO::singleValueQuery($query);
   }
