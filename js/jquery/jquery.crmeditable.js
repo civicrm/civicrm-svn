@@ -364,14 +364,13 @@
         if (status = response.status) {
           var data = o.data('edit-params');
           var dependent = o.data('dependent-fields') || [];
-          // Clone the add-new link if replacing it
+          // Clone the add-new link if replacing it, and queue the clone to be refreshed as a dependant block
           if (o.hasClass('add-new')) {
             if (response.addressId) {
               data.aid = response.addressId;
             }
-            o.data('edit-params', data);
             var clone = o.parent().clone();
-            o.attr('id', 'old-' + o.attr('id'));
+            o.data('edit-params', data);
             $('.crm-container-snippet', clone).remove();
             if (clone.hasClass('contactCardLeft')) {
               clone.removeClass('contactCardLeft').addClass('contactCardRight');
@@ -379,6 +378,10 @@
             else if (clone.hasClass('contactCardRight')) {
               clone.removeClass('contactCardRight').addClass('contactCardLeft');
             }
+            var cl = $('.crm-inline-edit', clone);
+            var clData = cl.data('edit-params');
+            var locNo = clData.locno++;
+            cl.attr('id', cl.attr('id').replace(locNo, clData.locno)).removeClass('form');
             o.parent().after(clone);
             $.merge(dependent, $('.crm-inline-edit', clone));
           }
@@ -465,6 +468,7 @@
   };
 
   $('document').ready(function() {
+    // Respond to a click (not drag, not right-click) of crm-inline-edit blocks
     var clicking;
     $('.crm-inline-edit-container').on('mousedown', '.crm-inline-edit:not(.form)', function(button) {
       if (button.which == 1) {
@@ -477,7 +481,8 @@
         $(this).crmFormInline();
       }
     });
-    $(document).keyup(function(key) {
+    // Trigger cancel button on esc keypress
+    $(document).keydown(function(key) {
       if (key.which == 27) {
         $('.crm-inline-edit.form :submit[name$=cancel]').click();
       }
