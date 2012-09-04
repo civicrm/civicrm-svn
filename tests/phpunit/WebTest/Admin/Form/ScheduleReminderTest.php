@@ -56,10 +56,10 @@ class WebTest_Admin_Form_ScheduleReminderTest extends CiviSeleniumTestCase {
     $this->type('title', $title);
 
     // Fill Entity Details
-    $this->click('entity[0]');
-    $this->select('entity[0]', 'label=Activity');
-    $this->addSelection('entity[1]', 'label=Meeting');
-    $this->addSelection('entity[2]', 'label=Completed');
+    $this->click('entity_0');
+    $this->select('entity_0', 'label=Activity');
+    $this->addSelection('entity_1', 'label=Meeting');
+    $this->addSelection('entity_2', 'label=Completed');
     $this->select('start_action_offset', 'label=1');
     $this->select('start_action_condition', 'label=after');
     $this->click('is_repeat');
@@ -79,12 +79,12 @@ class WebTest_Admin_Form_ScheduleReminderTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('_qf_ScheduleReminders_cancel-bottom');
 
     $this->assertEquals($title, $this->getValue('id=title'));
-    $this->removeSelection('entity[1]', 'label=Meeting');
-    $this->addSelection('entity[1]', 'label=Phone Call');
-    $this->addSelection('entity[1]', 'label=Interview');
-    $this->removeSelection('entity[2]', 'label=Completed');
-    $this->addSelection('entity[2]', 'label=Scheduled');
-    $this->addSelection('entity[2]', 'label=Completed');
+    $this->removeSelection('entity_1', 'label=Meeting');
+    $this->addSelection('entity_1', 'label=Phone Call');
+    $this->addSelection('entity_1', 'label=Interview');
+    $this->removeSelection('entity_2', 'label=Completed');
+    $this->addSelection('entity_2', 'label=Scheduled');
+    $this->addSelection('entity_2', 'label=Completed');
 
     $this->assertEquals('1', $this->getSelectedValue('id=start_action_offset'));
     $this->assertEquals('hour', $this->getSelectedValue('id=start_action_unit'));
