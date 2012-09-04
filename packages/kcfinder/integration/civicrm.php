@@ -37,44 +37,44 @@
  */
 
 function checkAuthentication() {
-    static $authenticated;
-    if ( !isset( $authenticated ) ) {
-       $current_cwd   = getcwd();
-       $civicrm_root  = dirname(dirname(getcwd()));
-       $authenticated = false;
-       require_once "{$civicrm_root}/civicrm.config.php";
-       require_once 'CRM/Core/Config.php';
+  static $authenticated;
+  if ( !isset( $authenticated ) ) {
+    $current_cwd   = getcwd();
+    $civicrm_root  = dirname(dirname(getcwd()));
+    $authenticated = false;
+    require_once "{$civicrm_root}/civicrm.config.php";
+    require_once 'CRM/Core/Config.php';
 
-       $config = CRM_Core_Config::singleton();
+    $config = CRM_Core_Config::singleton();
 
-       if ( !isset($_SESSION['KCFINDER'] ) ) {
-           $_SESSION['KCFINDER'] = array();
-       }
-       
-       $auth_function = null;
-       switch ($config->userFramework) {
-         case 'Drupal':
-         case 'Drupal6':
-           $auth_function = 'authenticate_drupal';
-           break;
-         case 'Joomla':
-           $auth_function = 'authenticate_joomla';
-           break;
-         case 'WordPress':
-           $auth_function = 'authenticate_wordpress';
-           break;
-       }
-       if(!$auth_function($config)) {
-         CRM_Core_Error::fatal(ts("You must be logged in with proper permissions to edit, add, or delete uploaded images."));
-       }
-      
-       $_SESSION['KCFINDER']['disabled'] = false;
-       $_SESSION['KCFINDER']['uploadURL'] = $config->imageUploadURL;
-       $_SESSION['KCFINDER']['uploadDir'] = $config->imageUploadDir;
-
-       $authenticated = true;
-       chdir( $current_cwd );
+    if ( !isset($_SESSION['KCFINDER'] ) ) {
+      $_SESSION['KCFINDER'] = array();
     }
+
+    $auth_function = null;
+    switch ($config->userFramework) {
+    case 'Drupal':
+    case 'Drupal6':
+      $auth_function = 'authenticate_drupal';
+      break;
+    case 'Joomla':
+      $auth_function = 'authenticate_joomla';
+      break;
+    case 'WordPress':
+      $auth_function = 'authenticate_wordpress';
+      break;
+    }
+    if(!$auth_function($config)) {
+      CRM_Core_Error::fatal(ts("You must be logged in with proper permissions to edit, add, or delete uploaded images."));
+    }
+
+    $_SESSION['KCFINDER']['disabled'] = false;
+    $_SESSION['KCFINDER']['uploadURL'] = $config->imageUploadURL;
+    $_SESSION['KCFINDER']['uploadDir'] = $config->imageUploadDir;
+
+    $authenticated = true;
+    chdir( $current_cwd );
+  }
 }
 
 /**
@@ -83,14 +83,6 @@ function checkAuthentication() {
  * script for hints on how to do this.
  **/
 function authenticate_drupal($config) {
-  $current_cwd = getcwd();
-  if (!defined('DRUPAL_ROOT')){
-    define('DRUPAL_ROOT', $config->userSystem->cmsRootPath());
-  }
-
-  // Simulate being in the drupal root folder so we can share the session
-  chdir(DRUPAL_ROOT);
-
   global $base_url;
   $base_root = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https' : 'http';
   $base_url = $base_root .= '://'. preg_replace('/[^a-z0-9-:._]/i', '', $_SERVER['HTTP_HOST']);
@@ -103,20 +95,13 @@ function authenticate_drupal($config) {
   // correct base_url so it points to Drupal root
   $pos = strpos($base_url, '/sites/');
   $base_url = substr($base_url, 0, $pos); // drupal root absolute url
+  
+  CRM_Utils_System::loadBootStrap(CRM_Core_DAO::$_nullArray,true,false);
 
-  // If we aren't in a Drupal installation, or if Drupal path hasn't been properly found, die
-  if(!file_exists(DRUPAL_ROOT . '/includes/bootstrap.inc')) {
-    CRM_Core_Error::fatal(ts("The CMS integration service for -drupal- requires KCFinder to be properly placed inside your Drupal installation."));
-  }
-
-  // bootstrap
-  require_once(DRUPAL_ROOT . '/includes/bootstrap.inc');
-  drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
-
-  // if user has access permission...
-  if (user_access('access CiviCRM')) {
+  // check if user has access permission...
+  if (CRM_Core_Permission::check('access CiviCRM')) {
     return true;
-  } 
+  }
   return false;
 }
 
