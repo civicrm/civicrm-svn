@@ -1142,24 +1142,4 @@ SELECT is_primary,
       );
     }
   }
-
-  /**
-   * Get total addresses
-   *
-   * @param int $contactId contact Id
-   *
-   * @return int $addressCount address count
-   * @access public
-   * @static
-   */
-  static function getAddressCount( $contactId ) {
-    $query = '
-      SELECT count(id)
-      FROM civicrm_address 
-      WHERE contact_id = %1';
-    
-    $params = array( 1 => array( $contactId, 'Positive' ) );
-    return CRM_Core_DAO::singleValueQuery($query, $params);
 }
-}
-
