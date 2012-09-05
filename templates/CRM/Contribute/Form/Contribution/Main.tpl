@@ -463,12 +463,12 @@ cj('input[name="payment_processor"]').change( function() {
   toggleConfirmButton();
 });
 
-cj(document).ready(function() {
+cj(function() {
   toggleConfirmButton();
 });
 
 function showHidePayPalExpressOption() {
-  if (document.getElementsByName("is_pay_later")[0].checked) {
+  if (cj('input[name="is_pay_later"]').is(':checked')) {
     show("crm-submit-buttons");
     hide("paypalExpress");
   }
