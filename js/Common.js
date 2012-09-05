@@ -159,19 +159,8 @@ function showHideByValue(trigger_field_id, trigger_value, target_element_id, tar
  * FIXME: This function is deprecated and will be removed soon
  *
  */
-function show(block_id,elementType)
-{
-    if ( elementType == null ) {
-        var elementType = 'block';
-    } else if ( elementType == "table-row" && navigator.appName == 'Microsoft Internet Explorer' ) {
-        var elementType = "block";
-    }
-    var myElement = document.getElementById(block_id);
-    if (myElement != null) {
-        myElement.style.display = elementType;
-    } else {
-        alert('Request to show() function failed. Element id undefined = '+ block_id);
-    }
+function show(block_id) {
+  cj('#' + block_id).show();
 }
 
 /**
@@ -180,14 +169,8 @@ function show(block_id,elementType)
  * FIXME: This function is deprecated and will be removed soon
  * 
  */
-function hide(block_id)
-{
-    var myElement = document.getElementById(block_id);
-    if (myElement != null) {
-        myElement.style.display = 'none';
-    } else {
-        alert('Request to hide() function failed. Element id undefined = ' + block_id);
-    }
+function hide(block_id) {
+  cj('#' + block_id).hide();
 }
 
 /**
