@@ -315,21 +315,6 @@ class CRM_Core_Component {
   function &contactSubTypes() {
     if (self::$_contactSubTypes == NULL) {
       self::$_contactSubTypes = array();
-
-      if (CRM_Core_Permission::access('Quest')) {
-
-        // Generalize this at some point
-        self::$_contactSubTypes = array(
-          'Student' =>
-          array(
-            'View' =>
-            array(
-              'file' => 'CRM/Quest/Page/View/Student.php',
-              'class' => 'CRM_Quest_Page_View_Student',
-            ),
-          ),
-        );
-      }
     }
     return self::$_contactSubTypes;
   }

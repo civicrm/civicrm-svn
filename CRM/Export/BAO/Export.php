@@ -570,14 +570,7 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
       }
     }
 
-    //hack for student data
     $multipleSelectFields = array('preferred_communication_method' => 1);
-
-    if (CRM_Core_Permission::access('Quest')) {
-      $studentFields = array();
-      $studentFields = CRM_Quest_BAO_Student::$multipleSelectFields;
-      $multipleSelectFields = array_merge($multipleSelectFields, $studentFields);
-    }
 
     $header = $addPaymentHeader = FALSE;
 

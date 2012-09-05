@@ -507,9 +507,6 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
 
 
     $multipleSelectFields = array('preferred_communication_method' => 1);
-    if (CRM_Core_Permission::access('Quest')) {
-      $multipleSelectFields = CRM_Quest_BAO_Student::$multipleSelectFields;
-    }
 
     // we need to determine of overlay profile should be shown
     $showProfileOverlay = CRM_Core_BAO_UFGroup::showOverlayProfile();
@@ -566,7 +563,7 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
         elseif ($multipleSelectFields &&
           array_key_exists($name, $multipleSelectFields)
         ) {
-          //fix to display student checkboxes
+          // FIXME: Code related to the old CRM_Quest - should be removed
           $key = $name;
           $paramsNew = array($key => $result->$name);
           if ($key == 'test_tutoring') {

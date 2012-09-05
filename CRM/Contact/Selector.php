@@ -575,11 +575,7 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
       $names = self::$_properties;
     }
 
-    //hack for student data (checkboxs)
     $multipleSelectFields = array('preferred_communication_method' => 1);
-    if (CRM_Core_Permission::access('Quest')) {
-      $multipleSelectFields = CRM_Quest_BAO_Student::$multipleSelectFields;
-    }
 
     $links = self::links($this->_context, $this->_contextMenu, $this->_key);
 

@@ -1624,9 +1624,7 @@ ORDER BY civicrm_email.is_primary DESC";
     list($data, $contactDetails) = self::formatProfileContactParams($params, $fields, $contactID, $ufGroupId, $ctype);
 
     // manage is_opt_out
-    if (array_key_exists('is_opt_out', $fields) &&
-      array_key_exists('is_opt_out', $params)
-    ) {
+    if (array_key_exists('is_opt_out', $fields) && array_key_exists('is_opt_out', $params)) {
       $wasOptOut          = CRM_Utils_Array::value('is_opt_out', $contactDetails, FALSE);
       $isOptOut           = CRM_Utils_Array::value('is_opt_out', $params, FALSE);
       $data['is_opt_out'] = $isOptOut;
@@ -1643,16 +1641,12 @@ ORDER BY civicrm_email.is_primary DESC";
       }
     }
 
-    if ($data['contact_type'] != 'Student') {
-      $contact = self::create($data);
-    }
-
     // contact is null if the profile does not have any contact fields
     if ($contact) {
       $contactID = $contact->id;
     }
 
-    if (!$contactID) {
+    if (empty($contactID)) {
       CRM_Core_Error::fatal('Cannot proceed without a valid contact id');
     }
 
@@ -1681,40 +1675,6 @@ ORDER BY civicrm_email.is_primary DESC";
     elseif ($addToGroupID) {
       $contactIds = array($contactID);
       CRM_Contact_BAO_GroupContact::addContactsToGroup($contactIds, $addToGroupID);
-    }
-
-
-    // Update student record for Quest
-    // TODO: should this be implemented by a hook instead of in core?
-    if (CRM_Core_Permission::access('Quest') && $studentFieldPresent) {
-      $ids             = array();
-      $dao             = new CRM_Quest_DAO_Student();
-      $dao->contact_id = $contactID;
-      if ($dao->find(TRUE)) {
-        $ids['id'] = $dao->id;
-      }
-
-      $ssids = array();
-      $studentSummary = new CRM_Quest_DAO_StudentSummary();
-      $studentSummary->contact_id = $contactID;
-      if ($studentSummary->find(TRUE)) {
-        $ssids['id'] = $studentSummary->id;
-      }
-
-      $params['contact_id'] = $contactID;
-      //fixed for check boxes
-
-      $specialFields = array('educational_interest', 'college_type', 'college_interest', 'test_tutoring');
-      foreach ($specialFields as $field) {
-        if ($params[$field]) {
-          $params[$field] = implode(CRM_Core_DAO::VALUE_SEPARATOR,
-            array_keys($params[$field])
-          );
-        }
-      }
-
-      CRM_Quest_BAO_Student::create($params, $ids);
-      CRM_Quest_BAO_Student::createStudentSummary($params, $ssids);
     }
 
     // reset the group contact cache for this group
@@ -2006,16 +1966,6 @@ ORDER BY civicrm_email.is_primary DESC";
 
     if (!isset($data['contact_type'])) {
       $data['contact_type'] = 'Individual';
-    }
-
-    if (CRM_Core_Permission::access('Quest')) {
-      $studentFieldPresent = 0;
-      foreach ($fields as $name => $field) {
-        // check if student fields present
-        if ((!$studentFieldPresent) && array_key_exists($name, CRM_Quest_BAO_Student::exportableFields())) {
-          $studentFieldPresent = 1;
-        }
-      }
     }
 
     //set the values for checkboxes (do_not_email, do_not_mail, do_not_trade, do_not_phone)

@@ -343,14 +343,6 @@ class CRM_Core_Block {
         if (CRM_Core_Permission::giveMeAllACLs()) {
           $shortCuts = CRM_Contact_BAO_ContactType::getCreateNewList();
         }
-        if (CRM_Core_Permission::access('Quest')) {
-          $shortCuts = array_merge($shortCuts, array(
-            array('path' => 'civicrm/quest/search',
-                'query' => 'reset=1',
-                'ref' => 'quest-search',
-                'title' => ts('Quest Search'),
-              )));
-        }
       }
 
       // new activity (select target contact)

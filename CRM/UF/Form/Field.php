@@ -213,10 +213,6 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
       $this->_fields = array_merge(CRM_Event_BAO_Query::getParticipantFields(TRUE), $this->_fields);
     }
 
-    if (CRM_Core_Permission::access('Quest')) {
-      $this->_fields = array_merge(CRM_Quest_BAO_Student::exportableFields(), $this->_fields);
-    }
-
     $this->_selectFields = array();
     foreach ($this->_fields as $name => $field) {
       // lets skip note for now since we dont support it
@@ -403,10 +399,6 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
     }
     unset($subTypes);
 
-    if (CRM_Core_Permission::access('Quest')) {
-      $fields['Student'] = CRM_Quest_BAO_Student::exportableFields();
-    }
-
     // add current employer for individuals
     $fields['Contact']['id'] = array(
       'name' => 'id',
@@ -547,10 +539,6 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
     $contactTypes = !empty($contactTypes) ? array('Contact' => 'Contacts') + $contactTypes : array();
     $sel1 = array(
       '' => '- select -') + $contactTypes;
-
-    if (CRM_Core_Permission::access('Quest')) {
-      $sel1['Student'] = 'Students';
-    }
 
     if (!empty($activityFields)) {
       $sel1['Activity'] = 'Activity';

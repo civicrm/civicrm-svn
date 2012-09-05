@@ -718,11 +718,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
       return NULL;
     }
 
-    $options = $studentFields = array();
-    if (CRM_Core_Permission::access('Quest', FALSE)) {
-      //student fields ( check box )
-      $studentFields = CRM_Quest_BAO_Student::$multipleSelectFields;
-    }
+    $options = array();
 
     // get the contact details (hier)
     $returnProperties = CRM_Contact_BAO_Contact::makeHierReturnProperties($fields);
@@ -843,22 +839,6 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
           $values[$index] = implode(', ', $title);
           $params[$index] = implode(',', $entityTags);
         }
-        elseif (array_key_exists($name, $studentFields)) {
-          $paramsNew = array($name => $details->$name);
-          if ($name == 'test_tutoring') {
-            $names = array($name => array('newName' => $index, 'groupName' => 'test'));
-            // for  readers group
-          }
-          elseif (substr($name, 0, 4) == 'cmr_') {
-            $names = array($name => array('newName' => $index, 'groupName' => substr($name, 0, -3)));
-          }
-          else {
-            $names = array($name => array('newName' => $index, 'groupName' => $name));
-          }
-          CRM_Core_OptionGroup::lookupValues($paramsNew, $names, FALSE);
-          $values[$index] = $paramsNew[$index];
-          $params[$index] = $paramsNew[$name];
-        }
         elseif ($name == 'activity_status_id') {
           $activityStatus = CRM_Core_PseudoConstant::activityStatus();
           $values[$index] = $activityStatus[$details->$name];
@@ -875,112 +855,104 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
           $params[$index] = $details->$name;
         }
         else {
-          $processed = FALSE;
-          if (CRM_Core_Permission::access('Quest', FALSE)) {
-            $processed = CRM_Quest_BAO_Student::buildStudentForm($this, $field);
-          }
-          if (!$processed) {
-            if (substr($name, 0, 7) === 'do_not_' ||
-              substr($name, 0, 3) === 'is_'
-            ) {
-              if ($details->$name) {
-                $values[$index] = '[ x ]';
-              }
+          if (substr($name, 0, 7) === 'do_not_' || substr($name, 0, 3) === 'is_') {
+            if ($details->$name) {
+              $values[$index] = '[ x ]';
             }
-            else {
-              if ($cfID = CRM_Core_BAO_CustomField::getKeyID($name)) {
-                $htmlType = $field['html_type'];
-                $dataType = $field['data_type'];
+          }
+          else {
+            if ($cfID = CRM_Core_BAO_CustomField::getKeyID($name)) {
+              $htmlType = $field['html_type'];
+              $dataType = $field['data_type'];
 
-                // field_type is only set when we are retrieving profile values
-                // when sending email, we call the same function to get custom field
-                // values etc, i.e. emulating a profile
-                $fieldType = CRM_Utils_Array::value('field_type', $field);
+              // field_type is only set when we are retrieving profile values
+              // when sending email, we call the same function to get custom field
+              // values etc, i.e. emulating a profile
+              $fieldType = CRM_Utils_Array::value('field_type', $field);
 
-                if ($htmlType == 'File') {
-                  $entityId = $cid;
-                  if (!$cid &&
-                    $fieldType == 'Activity' &&
-                    CRM_Utils_Array::value(2, $componentWhere[0])
-                  ) {
-                    $entityId = $componentWhere[0][2];
-                  }
-
-                  $fileURL = CRM_Core_BAO_CustomField::getFileURL($entityId,
-                    $cfID,
-                    NULL,
-                    $absolute
-                  );
-                  $params[$index] = $values[$index] = $fileURL['file_url'];
+              if ($htmlType == 'File') {
+                $entityId = $cid;
+                if (!$cid &&
+                  $fieldType == 'Activity' &&
+                  CRM_Utils_Array::value(2, $componentWhere[0])
+                ) {
+                  $entityId = $componentWhere[0][2];
                 }
-                else {
-                  $customVal = NULL;
-                  if (isset($dao) && property_exists($dao, 'data_type') &&
-                    ($dao->data_type == 'Int' ||
-                      $dao->data_type == 'Boolean'
-                    )
-                  ) {
-                    $customVal = (int )($details->{$name});
-                  }
-                  elseif (isset($dao) && property_exists($dao, 'data_type')
-                    && $dao->data_type == 'Float'
-                  ) {
-                    $customVal = (float )($details->{$name});
-                  }
-                  elseif (!CRM_Utils_System::isNull(explode(CRM_Core_DAO::VALUE_SEPARATOR,
-                        $details->{$name}
-                      ))) {
-                    $customVal = $details->{$name};
-                  }
 
-                  //CRM-4582
-                  if (CRM_Utils_System::isNull($customVal)) {
-                    continue;
-                  }
-
-                  $params[$index] = $customVal;
-                  $values[$index] = CRM_Core_BAO_CustomField::getDisplayValue($customVal,
-                    $cfID,
-                    $options
-                  );
-                  if ($htmlType == 'Autocomplete-Select') {
-                    $params[$index] = $values[$index];
-                  }
-                  if (CRM_Core_DAO::getFieldValue('CRM_Core_DAO_CustomField',
-                      $cfID, 'is_search_range'
-                    )) {
-                    $customFieldName = "{$name}_from";
-                  }
-                }
-              }
-              elseif ($name == 'image_URL') {
-                list($width, $height) = getimagesize($details->$name);
-                list($thumbWidth, $thumbHeight) = CRM_Contact_BAO_Contact::getThumbSize($width, $height);
-
-                $image_URL = '<img src="' . $details->$name . '" height= ' . $thumbHeight . ' width= ' . $thumbWidth . '  />';
-                $values[$index] = "<a href='#' onclick='contactImagePopUp(\"{$details->$name}\", {$width}, {$height});'>{$image_URL}</a>";
-              }
-              elseif (in_array($name, array(
-                'birth_date', 'deceased_date', 'membership_start_date', 'membership_end_date', 'join_date'))) {
-                $values[$index] = CRM_Utils_Date::customFormat($details->$name);
-                $params[$index] = CRM_Utils_Date::isoToMysql($details->$name);
+                $fileURL = CRM_Core_BAO_CustomField::getFileURL($entityId,
+                  $cfID,
+                  NULL,
+                  $absolute
+                );
+                $params[$index] = $values[$index] = $fileURL['file_url'];
               }
               else {
-                $dao = '';
-                if ($index == 'Campaign') {
-                  $dao = 'CRM_Campaign_DAO_Campaign';
+                $customVal = NULL;
+                if (isset($dao) && property_exists($dao, 'data_type') &&
+                  ($dao->data_type == 'Int' ||
+                    $dao->data_type == 'Boolean'
+                  )
+                ) {
+                  $customVal = (int )($details->{$name});
                 }
-                elseif ($index == 'Contribution Page') {
-                  $dao = 'CRM_Contribute_DAO_ContributionPage';
+                elseif (isset($dao) && property_exists($dao, 'data_type')
+                  && $dao->data_type == 'Float'
+                ) {
+                  $customVal = (float )($details->{$name});
                 }
-                if ($dao) {
-                  $value = CRM_Core_DAO::getFieldValue($dao, $details->$name, 'title');
+                elseif (!CRM_Utils_System::isNull(explode(CRM_Core_DAO::VALUE_SEPARATOR,
+                      $details->{$name}
+                    ))) {
+                  $customVal = $details->{$name};
                 }
-                else {
-                  $value = $details->$name;
+
+                //CRM-4582
+                if (CRM_Utils_System::isNull($customVal)) {
+                  continue;
                 }
-                $values[$index] = $value;
+
+                $params[$index] = $customVal;
+                $values[$index] = CRM_Core_BAO_CustomField::getDisplayValue($customVal,
+                  $cfID,
+                  $options
+                );
+                if ($htmlType == 'Autocomplete-Select') {
+                  $params[$index] = $values[$index];
+                }
+                if (CRM_Core_DAO::getFieldValue('CRM_Core_DAO_CustomField',
+                    $cfID, 'is_search_range'
+                  )) {
+                  $customFieldName = "{$name}_from";
+                }
               }
+            }
+            elseif ($name == 'image_URL') {
+              list($width, $height) = getimagesize($details->$name);
+              list($thumbWidth, $thumbHeight) = CRM_Contact_BAO_Contact::getThumbSize($width, $height);
+
+              $image_URL = '<img src="' . $details->$name . '" height= ' . $thumbHeight . ' width= ' . $thumbWidth . '  />';
+              $values[$index] = "<a href='#' onclick='contactImagePopUp(\"{$details->$name}\", {$width}, {$height});'>{$image_URL}</a>";
+            }
+            elseif (in_array($name, array(
+              'birth_date', 'deceased_date', 'membership_start_date', 'membership_end_date', 'join_date'))) {
+              $values[$index] = CRM_Utils_Date::customFormat($details->$name);
+              $params[$index] = CRM_Utils_Date::isoToMysql($details->$name);
+            }
+            else {
+              $dao = '';
+              if ($index == 'Campaign') {
+                $dao = 'CRM_Campaign_DAO_Campaign';
+              }
+              elseif ($index == 'Contribution Page') {
+                $dao = 'CRM_Contribute_DAO_ContributionPage';
+              }
+              if ($dao) {
+                $value = CRM_Core_DAO::getFieldValue($dao, $details->$name, 'title');
+              }
+              else {
+                $value = $details->$name;
+              }
+              $values[$index] = $value;
             }
           }
         }
@@ -1944,17 +1916,11 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
       $form->addRule($name, ts('Please enter the duration as number of minutes (integers only).'), 'positiveInteger');
     }
     else {
-      $processed = FALSE;
-      if (CRM_Core_Permission::access('Quest', FALSE)) {
-        $processed = CRM_Quest_BAO_Student::buildStudentForm($form, $fieldName, $title, $contactId);
+      if (substr($fieldName, 0, 3) === 'is_' or substr($fieldName, 0, 7) === 'do_not_') {
+        $form->add('advcheckbox', $name, $title, $attributes, $required);
       }
-      if (!$processed) {
-        if (substr($fieldName, 0, 3) === 'is_' or substr($fieldName, 0, 7) === 'do_not_') {
-          $form->add('advcheckbox', $name, $title, $attributes, $required);
-        }
-        else {
-          $form->add('text', $name, $title, $attributes, $required);
-        }
+      else {
+        $form->add('text', $name, $title, $attributes, $required);
       }
     }
 
@@ -2219,39 +2185,6 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                     $defaults[$fldName . '-website_type_id'] = $val['website_type_id'];
                   }
                 }
-              }
-            }
-          }
-        }
-
-        if (CRM_Core_Permission::access('Quest', FALSE)) {
-          // Checking whether the database contains quest_student table.
-          // Now there are two different schemas for core and quest.
-          // So if only core schema in use then withought following check gets the DB error.
-          $student = new CRM_Quest_BAO_Student();
-          $tableStudent = $student->getTableName();
-
-          if ($tableStudent) {
-            //set student defaults
-            CRM_Quest_BAO_Student::retrieve($details, $studentDefaults, $ids);
-            $studentFields = array('educational_interest', 'college_type', 'college_interest', 'test_tutoring');
-            foreach ($studentFields as $fld) {
-              if ($studentDefaults[$fld]) {
-                $values = explode(CRM_Core_DAO::VALUE_SEPARATOR, $studentDefaults[$fld]);
-              }
-
-              $studentDefaults[$fld] = array();
-              if (is_array($values)) {
-                foreach ($values as $v) {
-                  $studentDefaults[$fld][$v] = 1;
-                }
-              }
-            }
-
-            foreach ($fields as $name => $field) {
-              $fldName = "field[$contactId][$name]";
-              if (array_key_exists($name, $studentDefaults)) {
-                $defaults[$fldName] = $studentDefaults[$name];
               }
             }
           }

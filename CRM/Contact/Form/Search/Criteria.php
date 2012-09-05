@@ -406,16 +406,6 @@ class CRM_Contact_Form_Search_Criteria {
   static
   function task(&$form) {
     $form->add('hidden', 'hidden_task', 1);
-
-    if (CRM_Core_Permission::access('Quest')) {
-      $form->assign('showTask', 1);
-
-      // add the task search stuff
-      // we add 2 select boxes, one for the task from the task table
-      $taskSelect = array('' => '- select -') + CRM_Core_PseudoConstant::tasks();
-      $form->addElement('select', 'task_id', ts('Task'), $taskSelect);
-      $form->addSelect('task_status', ts('Task Status'));
-    }
   }
 
   static

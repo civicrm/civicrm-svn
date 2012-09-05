@@ -368,11 +368,6 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping {
     // add component fields
     $compArray = array();
 
-    if (CRM_Core_Permission::access('Quest')) {
-      $fields['Student'] = CRM_Quest_BAO_Student::exportableFields();
-      $compArray['Student'] = 'Student';
-    }
-
     //we need to unset groups, tags, notes for component export
     if ($exportMode != CRM_Export_Form_Select::CONTACT_EXPORT) {
       foreach (array(
