@@ -381,7 +381,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     if ($this->_ppType) {
       return CRM_Core_Payment_ProcessorForm::buildQuickForm($this);
     }
-
+    
     $config = CRM_Core_Config::singleton();
     if (CRM_Utils_Array::value('is_for_organization', $this->_values) == 2) {
       $this->assign('onBehalfRequired', TRUE);
@@ -1351,7 +1351,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         if (in_array($buttonName,
             array($this->_expressButtonName, $this->_expressButtonName . '_x', $this->_expressButtonName . '_y')
           ) &&
-          !isset($params['is_pay_later'])
+            !CRM_Utils_Array::value('is_pay_later', $params)
         ) {
           $this->set('contributeMode', 'express');
 
