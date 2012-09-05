@@ -998,7 +998,7 @@ abstract class CRM_Utils_Hook {
       'civicrm_disable'
     );
   }
-  
+
   /**
    * This hook is called to drive database upgrades for extension-modules.
    *
@@ -1017,18 +1017,16 @@ abstract class CRM_Utils_Hook {
     );
   }
 
-}
-
   /**
    * This hook is called when an email has been successfully sent by CiviCRM, but not on an error.
-   * 
+   *
    * @param array $params - the mailing parameters array fields include: groupName, from, toName, toEmail, subject, cc, bcc, text, html, returnPath, replyTo, headers, attachments (array)
    */
- 
+
   static function postEmailSend(&$params) {
-    return self::singleton()->invoke(1, $params, 
-      self::$_nullObject, self::$_nullObject, 
-      self::$_nullObject, self::$_nullObject, 
+    return self::singleton()->invoke(1, $params,
+      self::$_nullObject, self::$_nullObject,
+      self::$_nullObject, self::$_nullObject,
       'civicrm_postEmailSend'
     );
   }
