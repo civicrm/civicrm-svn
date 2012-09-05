@@ -2165,7 +2165,7 @@ FROM   civicrm_membership_type
     // CRM-6627, all status below 3 (active, pending, grace) are considered active
     if ($activeOnly) {
       $select .= " INNER JOIN civicrm_membership_status ON civicrm_membership.status_id = civicrm_membership_status.id ";
-      $where  .= " and civicrm_membership_status.is_active = 1";
+      $where  .= " and civicrm_membership_status.is_current_member = 1";
     }
 
     $query = $select . $where;
