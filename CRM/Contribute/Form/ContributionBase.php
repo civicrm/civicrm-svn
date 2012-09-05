@@ -307,15 +307,11 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form {
           foreach ($this->_paymentProcessors as $ppId => $values) {
             if ($values['is_default'] == 1 || (count($this->_paymentProcessors) == 1)) {
               $defaultProcessorId = $ppId;
-            }
-
-            if (!isset($payPalExpressId)) {
-              $payPalExpressId = ($values['payment_processor_type'] == 'PayPal_Express') ? $values['id'] : 0;
-              $this->assign('payPalExpressId', $payPalExpressId);
+              break;
             }
           }
         }
-       
+        
         if (isset($defaultProcessorId)) {
           $this->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment($defaultProcessorId, $this->_mode);
           $this->assign_by_ref('paymentProcessor', $this->_paymentProcessor);    

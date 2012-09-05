@@ -73,6 +73,18 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
       $this->assign('ppType', TRUE);
       return CRM_Core_Payment_ProcessorForm::preProcess($this);
     }
+    
+    //get payPal express id and make it available to template
+    $paymentProcessors = $this->get('paymentProcessors');
+    if (!empty($paymentProcessors)) {
+      foreach ($paymentProcessors as $ppId => $values) {
+        $payPalExpressId = ($values['payment_processor_type'] == 'PayPal_Express') ? $values['id'] : 0;
+        $this->assign('payPalExpressId', $payPalExpressId);
+        if ($payPalExpressId) {
+          break;
+        }
+      }
+    }
 
     // Make the contributionPageID avilable to the template
     $this->assign('contributionPageID', $this->_id);
@@ -381,7 +393,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     if ($this->_ppType) {
       return CRM_Core_Payment_ProcessorForm::buildQuickForm($this);
     }
-    
+
     $config = CRM_Core_Config::singleton();
     if (CRM_Utils_Array::value('is_for_organization', $this->_values) == 2) {
       $this->assign('onBehalfRequired', TRUE);
