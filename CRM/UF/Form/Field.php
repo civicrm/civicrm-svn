@@ -614,12 +614,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
     }
     $this->assign('alreadyMixProfile', $alreadyMixProfile);
 
-    $extra = array(
-      'onclick' => 'showLabel();mixProfile();',
-      'onblur' => 'showLabel();mixProfile();',
-    );
-
-    $sel = &$this->addElement('hierselect', 'field_name', ts('Field Name'), $extra);
+    $sel = &$this->addElement('hierselect', 'field_name', ts('Field Name'));
 
     $formValues = array();
     $formValues = $this->exportValues();
@@ -681,7 +676,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
     );
 
     //CRM-4363
-    $js = array('onclick' => "mixProfile();");
+    $js = array('onChange' => "mixProfile();");
     // should the field appear in selectors (as a column)?
     $this->add('checkbox', 'in_selector', ts('Results Column?'), NULL, NULL, $js);
     $this->add('checkbox', 'is_searchable', ts('Searchable?'), NULL, NULL, $js);

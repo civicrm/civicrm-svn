@@ -32,17 +32,17 @@
  *
  */
 
-/** 
+/**
  *  This function can be used to clear default 'suggestive text' from an input field
  *  When the cursor is moved into the field.
- *  
+ *
  *  It is generally invoked by the input field's onFocus event. Use the reserved
  *  word 'this' to pass this object. EX: onFocus="clearFldVal(this);"
- * 
+ *
  * @access public
  * @param  fld The form field object whose value is to be cleared
  * @param  hideBlocks Array of element Id's to be hidden
- * @return none 
+ * @return none
  */
 function clearFldVal(fld) {
     if (fld.value == fld.defaultValue) {
@@ -50,25 +50,25 @@ function clearFldVal(fld) {
     }
 }
 
-/** 
+/**
  *  This function is called by default at the bottom of template files which have forms that have
  *  conditionally displayed/hidden sections and elements. The PHP is responsible for generating
  *  a list of 'blocks to show' and 'blocks to hide' and the template passes these parameters to
  *  this function.
- * 
+ *
  * @access public
  * @param  showBlocks Array of element Id's to be displayed
  * @param  hideBlocks Array of element Id's to be hidden
  * @param elementType Value to set display style to for showBlocks (e.g. 'block' or 'table-row' or ...)
- * @return none 
+ * @return none
  */
 function on_load_init_blocks(showBlocks, hideBlocks, elementType)
-{   
+{
     if ( elementType == null ) {
         var elementType = 'block';
     }
-    
-    /* This loop is used to display the blocks whose IDs are present within the showBlocks array */ 
+
+    /* This loop is used to display the blocks whose IDs are present within the showBlocks array */
     for ( var i = 0; i < showBlocks.length; i++ ) {
         var myElement = document.getElementById(showBlocks[i]);
         /* getElementById returns null if element id doesn't exist in the document */
@@ -78,9 +78,9 @@ function on_load_init_blocks(showBlocks, hideBlocks, elementType)
             alert('showBlocks array item not in .tpl = ' + showBlocks[i]);
         }
     }
-    
-    /* This loop is used to hide the blocks whose IDs are present within the hideBlocks array */ 
-    for ( var i = 0; i < hideBlocks.length; i++ ) { 
+
+    /* This loop is used to hide the blocks whose IDs are present within the hideBlocks array */
+    for ( var i = 0; i < hideBlocks.length; i++ ) {
         var myElement = document.getElementById(hideBlocks[i]);
         /* getElementById returns null if element id doesn't exist in the document */
         if (myElement != null) {
@@ -91,10 +91,10 @@ function on_load_init_blocks(showBlocks, hideBlocks, elementType)
     }
 }
 
-/** 
+/**
  *  This function is called when we need to show or hide a related form element (target_element)
  *  based on the value (trigger_value) of another form field (trigger_field).
- * 
+ *
  * @access public
  * @param  trigger_field_id     HTML id of field whose onchange is the trigger
  * @param  trigger_value        List of integers - option value(s) which trigger show-element action for target_field
@@ -102,7 +102,7 @@ function on_load_init_blocks(showBlocks, hideBlocks, elementType)
  * @param  target_element_type  Type of element to be shown or hidden ('block' or 'table-row')
  * @param  field_type           Type of element radio/select
  * @param  invert               Boolean - if true, we HIDE target on value match; if false, we SHOW target on value match
- * @return none 
+ * @return none
 */
 function showHideByValue(trigger_field_id, trigger_value, target_element_id, target_element_type, field_type, invert ) {
     if ( target_element_type == null ) {
@@ -110,61 +110,54 @@ function showHideByValue(trigger_field_id, trigger_value, target_element_id, tar
     } else if ( target_element_type == 'table-row' ) {
         var target_element_type = '';
     }
-    
+
     if (field_type == 'select') {
         var trigger = trigger_value.split("|");
-        var selectedOptionValue = document.getElementById(trigger_field_id).options[document.getElementById(trigger_field_id).selectedIndex].value;	
-        
+        var selectedOptionValue = document.getElementById(trigger_field_id).options[document.getElementById(trigger_field_id).selectedIndex].value;
+
         var target = target_element_id.split("|");
         for(var j = 0; j < target.length; j++) {
-            if ( invert ) {  
-                show(target[j], target_element_type);
+            if ( invert ) {
+                cj('#' + target[j]).show();
             } else {
-                hide(target[j],target_element_type);
+                cj('#' + target[j]).hide();
             }
             for(var i = 0; i < trigger.length; i++) {
                 if (selectedOptionValue == trigger[i]) {
-                    if ( invert ) {  
-                        hide(target[j],target_element_type);
+                    if ( invert ) {
+                        cj('#' + target[j]).hide();
                     } else {
-                        show(target[j],target_element_type);
-                    }	
+                        cj('#' + target[j]).show();
+                    }
                 }
             }
         }
- 
+
     } else if (field_type == 'radio') {
         var target = target_element_id.split("|");
         for(var j = 0; j < target.length; j++) {
             if (document.getElementsByName(trigger_field_id)[0].checked) {
-                if ( invert ) {  
-                    hide(target[j], target_element_type);
+                if ( invert ) {
+                    cj('#' + target[j]).hide();
                 } else {
-                    show(target[j], target_element_type);
+                    cj('#' + target[j]).show();
                 }
             } else {
-                if ( invert ) {  
-                    show(target[j], target_element_type);
+                if ( invert ) {
+                    cj('#' + target[j]).show();
                 } else {
-                    hide(target[j], target_element_type);
+                    cj('#' + target[j]).hide();
                 }
             }
         }
     }
 }
 
-/** 
- * This function is used to display a page element  (e.g. block or table row or...). 
- * 
- * This function is called by various links which handle requests to display the hidden blocks.
- * An example is the <code>[+] another phone</code> link which expands an additional phone block.
- * The parameter block_id must have the id of the block which has to be displayed.
+/**
+ * This function was used to display a page element before we had jQuery.
  *
- * 
- * @access public
- * @param block_id Id value of the block (or row) to be displayed.
- * @param elementType Value to set display style to when showing the element (e.g. 'block' or 'table-row' or ...)
- * @return none
+ * FIXME: This function is deprecated and will be removed soon
+ *
  */
 function show(block_id,elementType)
 {
@@ -181,18 +174,13 @@ function show(block_id,elementType)
     }
 }
 
-/** 
- * This function is used to hide a block. 
- * 
- * This function is called by various links which handle requests to hide the visible blocks.
- * An example is the <code>[-] hide phone</code> link which hides the phone block.
- * The parameter block_id must have the id of the block which has to be hidden.
+/**
+ * This function was used to hide a block before we had jQuery.
  *
- * @access public
- * @param block_id Id value of the block to be hidden.
- * @return none
+ * FIXME: This function is deprecated and will be removed soon
+ * 
  */
-function hide(block_id) 
+function hide(block_id)
 {
     var myElement = document.getElementById(block_id);
     if (myElement != null) {
@@ -209,20 +197,19 @@ function hide(block_id)
  * @access public
  * @param fldPrefix - common string which precedes unique checkbox ID and identifies field as
  *                    belonging to the resultset's checkbox collection
- * @param action - 'select' = set all to checked; 'deselect' = set all to unchecked
- * @param form - name of form that checkboxes are part of
- * Sample usage: onClick="javascript:changeCheckboxValues('chk_', 'select', myForm );"
+ * @param object - checkbox
+ * Sample usage: onClick="javascript:changeCheckboxValues('chk_', cj(this) );"
  *
  * @return
  */
-function toggleCheckboxVals(fldPrefix,object) {
+function toggleCheckboxVals(fldPrefix, object) {
     if ( object.id == 'toggleSelect' && cj(object).is(':checked') ) {
        cj( 'Input[id*="' + fldPrefix + '"],Input[id*="toggleSelect"]').attr('checked', true);
     } else {
        cj( 'Input[id*="' + fldPrefix + '"],Input[id*="toggleSelect"]').attr('checked', false);
     }
    /* function called to change the color of selected rows */
-   on_load_init_checkboxes(object.form.name); 
+   on_load_init_checkboxes(object.form.name);
 }
 
 function countSelectedCheckboxes(fldPrefix, form) {
@@ -274,7 +261,7 @@ function toggleTaskAction( status ) {
 function checkPerformAction (fldPrefix, form, taskButton, selection) {
     var cnt;
     var gotTask = 0;
-    
+
     // taskButton TRUE means we don't need to check the 'task' field - it's a button-driven task
     if (taskButton == 1) {
         gotTask = 1;
@@ -289,15 +276,15 @@ function checkPerformAction (fldPrefix, form, taskButton, selection) {
                 return false;
             }
         }
-        gotTask = 1; 
+        gotTask = 1;
     }
-    
+
     if (gotTask == 1) {
         // If user wants to perform action on ALL records and we have a task, return (no need to check further)
         if (document.forms[form].radio_ts[0].checked) {
             return true;
         }
-	
+
         cnt = (selection == 1) ? countSelections() : countSelectedCheckboxes(fldPrefix, document.forms[form]);
         if (!cnt) {
             alert ("Please select one or more contacts for this action.\n\nTo use the entire set of search results, click the 'all records' radio button.");
@@ -333,21 +320,21 @@ function checkSelectedBox( chkName ) {
  * @access public
  * @return null
  */
-function on_load_init_checkboxes(form) 
+function on_load_init_checkboxes(form)
 {
     var formName = form;
     var fldPrefix = 'mark_x';
     for( i=0; i < document.forms[formName].elements.length; i++) {
         fpLen = fldPrefix.length;
         if (document.forms[formName].elements[i].type == 'checkbox' && document.forms[formName].elements[i].name.slice(0,fpLen) == fldPrefix ) {
-            checkSelectedBox (document.forms[formName].elements[i].name, formName); 
+            checkSelectedBox (document.forms[formName].elements[i].name, formName);
         }
     }
 }
 
 /**
  * Function to change the color of the class
- * 
+ *
  * @param form - name of the form
  * @param rowid - id of the <tr>, <div> you want to change
  *
@@ -355,18 +342,18 @@ function on_load_init_checkboxes(form)
  * @return null
  */
 function changeRowColor (rowid, form) {
-    switch (document.getElementById(rowid).className) 	{
-        case 'even-row'          : 	document.getElementById(rowid).className = 'selected even-row';
+    switch (document.getElementById(rowid).className)   {
+        case 'even-row'          :  document.getElementById(rowid).className = 'selected even-row';
                                     break;
-        case 'odd-row'           : 	document.getElementById(rowid).className = 'selected odd-row';
+        case 'odd-row'           :  document.getElementById(rowid).className = 'selected odd-row';
                                     break;
-        case 'selected even-row' : 	document.getElementById(rowid).className = 'even-row';
+        case 'selected even-row' :  document.getElementById(rowid).className = 'even-row';
                                     break;
-        case 'selected odd-row'  : 	document.getElementById(rowid).className = 'odd-row';
+        case 'selected odd-row'  :  document.getElementById(rowid).className = 'odd-row';
                                     break;
-        case 'form-item'         : 	document.getElementById(rowid).className = 'selected';
+        case 'form-item'         :  document.getElementById(rowid).className = 'selected';
                                     break;
-        case 'selected'          : 	document.getElementById(rowid).className = 'form-item';
+        case 'selected'          :  document.getElementById(rowid).className = 'form-item';
     }
 }
 
@@ -377,12 +364,12 @@ function changeRowColor (rowid, form) {
  * @access public
  * @return null
  */
-function on_load_init_check(form) 
+function on_load_init_check(form)
 {
     for( i=0; i < document.forms[form].elements.length; i++) {
-      if ( ( document.forms[form].elements[i].type == 'checkbox' 
+      if ( ( document.forms[form].elements[i].type == 'checkbox'
                   && document.forms[form].elements[i].checked == true )
-           || ( document.forms[form].elements[i].type == 'hidden' 
+           || ( document.forms[form].elements[i].type == 'hidden'
                && document.forms[form].elements[i].value == 1 ) ) {
         var ss = document.forms[form].elements[i].id;
         var row = 'rowid' + ss;
@@ -464,30 +451,30 @@ function countit(essay_id,wc){
     var count_element   = document.getElementById("word_count_" + essay_id);
     var count           = 0;
     var text_area_value = text_area.value;
-    var regex           = /\n/g; 
+    var regex           = /\n/g;
     var essay           = text_area_value.replace(regex," ");
     var words           = essay.split(' ');
-    
+
     for (z=0; z<words.length; z++){
         if (words[z].length>0){
             count++;
         }
     }
-    
+
     count_element.value     = count;
     if (count>=wc) {
         /*text_area.value     = essay;*/
 
         var dataString = '';
         for (z=0; z<wc; z++){
-	  if (words[z].length>0) {
-	    dataString = dataString + words[z] + ' '; 
-	  }
-	}
+    if (words[z].length>0) {
+      dataString = dataString + words[z] + ' ';
+    }
+  }
 
-	text_area.value = dataString; 
+  text_area.value = dataString;
         text_area.blur();
-	count = wc;
+  count = wc;
         count_element.value = count;
         alert("You have reached the "+ wc +" word limit.");
     }
@@ -516,7 +503,7 @@ function showHideRow( index ) {
         cj( 'table#optionField tr:hidden:first' ).show( );
         if( ! cj( 'table#optionField tr:hidden:last' ).length ) cj( 'div#optionFieldLink' ).hide( );
     }
-    return false; 
+    return false;
 }
 
 /**
@@ -528,13 +515,13 @@ function activityStatus( message ) {
     var d = new Date(), time = [], i;
     var currentDateTime = d.getTime()
     var activityTime    = cj("input#activity_date_time_time").val().replace(":", "");
-    
+
     //chunk the time in bunch of 2 (hours,minutes,ampm)
-	for(i=0; i<activityTime.length; i+=2 ) { 
+  for(i=0; i<activityTime.length; i+=2 ) {
         time.push( activityTime.slice( i, i+2 ) );
     }
     var activityDate = new Date( cj("input#activity_date_time_hidden").val() );
-      
+
     d.setFullYear(activityDate.getFullYear());
     d.setMonth(activityDate.getMonth());
     d.setDate(activityDate.getDate());
@@ -562,7 +549,7 @@ function activityStatus( message ) {
         if (! confirm( message.scheduled )) {
             return false;
         }
-    } 
+    }
 }
 
 /**
@@ -602,11 +589,11 @@ function advmultiselectResize() {
       if ( parent.children().size() == 0 ) {
         parent.remove();
       }
-    }); 
+    });
     cj('#crm-container #mainTabContainer.narrowpage #contactTopBar tr.added').detach();
   }
   var cformwidth = cj('#crm-container #Contact .contact_basic_information-section').width();
- 
+
   if (cformwidth < 720) {
     cj('#crm-container .contact_basic_information-section').addClass('narrowform');
     cj('#crm-container .contact_basic_information-section table.form-layout-compressed td .helpicon').parent().addClass('hashelpicon');
