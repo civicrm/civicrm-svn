@@ -617,15 +617,15 @@ LIKE %1
       if (!array_key_exists($tableName, $show)) {
         $query = "SHOW CREATE TABLE $tableName";
         $dao = CRM_Core_DAO::executeQuery($query);
-        
+
         if (!$dao->fetch()) {
           CRM_Core_Error::fatal();
         }
-        
+
         $dao->free();
         $show[$tableName] = $dao->Create_Table;
       }
-      
+
       $result = preg_match("/\bCONSTRAINT\b\s/i", $show[$tableName]) ? TRUE : FALSE;
       if($result == TRUE){
         continue;
@@ -663,7 +663,7 @@ LIKE %1
     }
     $constraint = "`FK_{$tableName}_{$columnName}`";
     $pattern = "/\bCONSTRAINT\b\s+%s\s+\bFOREIGN\s+KEY\b\s/i";
-    return preg_match(sprintf($pattern, $constraint),$show[$tableName]) ? TRUE : FALSE; 
+    return preg_match(sprintf($pattern, $constraint),$show[$tableName]) ? TRUE : FALSE;
   }
 
   /**
@@ -1244,7 +1244,7 @@ SELECT contact_id
     if (empty($strings)) {
       return $default;
     }
-    
+
     $escapes = array_map(array($_dao, 'escape'), $strings);
     return '"' . implode('","', $escapes) . '"';
   }
@@ -1531,6 +1531,10 @@ SELECT contact_id
 
     CRM_Utils_Hook::triggerInfo($info, $tableName);
 
+    // drop all existing triggers on all tables
+    $logging->dropTriggers( );
+
+    // now create the set of new triggers
     self::createTriggers($info);
   }
 
