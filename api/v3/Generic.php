@@ -31,14 +31,16 @@ function civicrm_api3_generic_getfields($apiRequest) {
   if ($action == 'getvalue' || $action == 'getvalue' || $action == 'getcount') {
     $action = 'get';
   }
+
   if (empty($action)) {
     if (CRM_Utils_Array::value($entity . $subentity, $results) &&
       CRM_Utils_Array::value('values', $results[$entity . $subentity])
+      && empty($apiRequest['params']['options'])
     ) {
       return $results[$entity . $subentity];
     }
     else {
-      $values = _civicrm_api_get_fields($entity);
+      $values = _civicrm_api_get_fields($entity, false, $apiRequest['params']);
       $results[$entity] = civicrm_api3_create_success(
         $values, $apiRequest['params'], $entity, 'getfields'
       );
@@ -47,13 +49,14 @@ function civicrm_api3_generic_getfields($apiRequest) {
   }
   // determines whether to use unique field names - seem comment block above
   $unique = TRUE;
-  if (isset($results[$entity . $subentity]) && CRM_Utils_Array::value($action, $results[$entity])) {
+  if (isset($results[$entity . $subentity]) && CRM_Utils_Array::value($action, $results[$entity])
+    && empty($apiRequest['params']['options'])) {
     return $results[$entity . $subentity][$action];
   }
   // defaults based on data model and API policy
   switch ($action) {
     case 'getfields':
-      $values = _civicrm_api_get_fields($entity, $apiRequest['params']);
+      $values = _civicrm_api_get_fields($entity, false, $apiRequest['params']);
       $results[$entity][$action] = civicrm_api3_create_success($values,
         $apiRequest['params'], $entity, 'getfields'
       );

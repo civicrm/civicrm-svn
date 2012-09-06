@@ -1255,9 +1255,17 @@ function _civicrm_api_get_custom_fields($entity, &$params) {
     FALSE,
     FALSE
   );
+  // find out if we have any requests to resolve options
+  $getoptions = CRM_Utils_Array::value('get_options', CRM_Utils_Array::value('options',$params));
+  if(!is_array($getoptions)){
+      $getoptions = array($getoptions);
+  }
 
   foreach ($customfields as $key => $value) {
     $customfields['custom_' . $key] = $value;
+   if(in_array('custom_' . $key, $getoptions)){
+     $customfields['custom_' . $key]['options'] = CRM_Core_BAO_CustomOption::valuesByID($key);
+   }
     unset($customfields[$key]);
   }
   return $customfields;

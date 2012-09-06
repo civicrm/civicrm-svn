@@ -229,6 +229,17 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase {
 
     $this->assertEquals($customField['is_error'], 0);
     $this->assertNotNull($customField['id']);
+    $getFieldsParams = array(
+      'options' => array('get_options' => 'custom_' . $customField['id']),
+      'version' => 3,
+      'action' => 'create',
+    );
+    $description  = "Demonstrate retrieving custom field options";
+    $subfile = "GetFieldsOptions";
+    $fields = civicrm_api('contact', 'getfields', $getFieldsParams);
+    $this->documentMe($getFieldsParams, $fields, __FUNCTION__, 'ContactTest.php', $description,$subfile,'GetFields');
+    $this->assertArrayHasKey('options', $fields['values']['custom_' . $customField['id']]);
+    $this->assertEquals('Label1', $fields['values']['custom_' . $customField['id']]['options'][1]);
   }
 
   ///////////////// civicrm_custom_field_delete methods
