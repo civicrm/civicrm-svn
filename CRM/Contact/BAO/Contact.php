@@ -1640,6 +1640,8 @@ ORDER BY civicrm_email.is_primary DESC";
         CRM_Contact_BAO_SubscriptionHistory::create($shParams);
       }
     }
+    
+    $contact = self::create($data);
 
     // contact is null if the profile does not have any contact fields
     if ($contact) {
