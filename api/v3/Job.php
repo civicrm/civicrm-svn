@@ -312,12 +312,10 @@ function civicrm_api3_job_process_participant($params) {
 
 /*
  * This api checks and updates the status of all membership records for a given domain using the calc_membership_status and
- * update_contact_membership APIs. It also sends renewal reminders if those have been configured for your membership types.
+ * update_contact_membership APIs.
  *
  * IMPORTANT:
- * It uses the default Domain FROM Name and FROM Email Address as the From email address for emails sent by this api.
- * Verify that this value has been properly set from Administer > Configure > Domain Information
- * If you want to use some other FROM email address, modify line 2341 in CRM/Member/BAO/Membership.php and set your valid email address.
+ * Sending renewal reminders has been migrated from this job to the Scheduled Reminders function as of 4.3.
  *
  * @param  array   	  $params (reference ) input parameters NOT USED
  *
@@ -349,29 +347,6 @@ function civicrm_api3_job_process_membership($params) {
 function civicrm_api3_job_process_respondent($params) {
   require_once 'CRM/Campaign/BAO/Survey.php';
   $result = CRM_Campaign_BAO_Survey::releaseRespondent($params);
-
-  if ($result['is_error'] == 0) {
-    return civicrm_api3_create_success();
-  }
-  else {
-    return civicrm_api3_create_error($result['messages']);
-  }
-}
-
-
-/*
- * This api sets the renewal reminder date for memberships which do not have one set yet. Useful for memberships which were
- * added prior to the reminder date property being set for a given membership type (and hence do not have a reminder date set).
- *
- * @param  array   	  $params (reference ) - NOT USED for this api
- *
- * @return boolean        true if success, else false
- * @static void
- * @access public
- */
-function civicrm_api3_job_process_membership_reminder_date($params) {
-  require_once 'CRM/Member/BAO/Membership.php';
-  $result = CRM_Member_BAO_Membership::updateMembershipReminderDate($params);
 
   if ($result['is_error'] == 0) {
     return civicrm_api3_create_success();

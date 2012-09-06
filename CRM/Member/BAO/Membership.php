@@ -2357,9 +2357,7 @@ INNER JOIN  civicrm_contact contact ON ( contact.id = membership.contact_id AND 
      * calc_membership_status and update_contact_membership APIs.
      *
      * IMPORTANT:
-     * It uses the default Domain FROM Name and FROM Email Address as the From email address for emails sent by this api.
-     * Verify that this value has been properly set from Administer > Configure > Domain Information
-     * If you want to use some other FROM email address, modify line 125 and set your valid email address.
+     * Sending renewal reminders has been migrated from this job to the Scheduled Reminders function as of 4.3.
      *
      * @return void
      * @access public
@@ -2377,7 +2375,6 @@ INNER JOIN  civicrm_contact contact ON ( contact.id = membership.contact_id AND 
     $query = "
 SELECT     civicrm_membership.id                    as membership_id,
            civicrm_membership.is_override           as is_override,
-           civicrm_membership.reminder_date         as reminder_date,
            civicrm_membership.membership_type_id    as membership_type_id,
            civicrm_membership.status_id             as status_id,
            civicrm_membership.join_date             as join_date,
@@ -2398,15 +2395,8 @@ WHERE      civicrm_membership.is_test = 0";
     $today         = date("Y-m-d");
     $processCount  = 0;
     $updateCount   = 0;
-    $reminderCount = 0;
 
     $smarty = CRM_Core_Smarty::singleton();
-
-    $domainValues = CRM_Core_BAO_Domain::getNameAndEmail();
-    $domainFromEmail = "$domainValues[0] <$domainValues[1]>";
-
-    //use domain email address as a default From email.
-    $fromEmailAddress = $domainFromEmail;
 
     while ($dao->fetch()) {
       // echo ".";
@@ -2436,7 +2426,6 @@ WHERE      civicrm_membership.is_test = 0";
         'join_date' => $dao->join_date,
         'start_date' => $dao->start_date,
         'end_date' => $dao->end_date,
-        'reminder_date' => $dao->reminder_date,
         'source' => $dao->source,
         'skipStatusCal' => TRUE,
         'skipRecentView' => TRUE,
@@ -2513,102 +2502,10 @@ WHERE      civicrm_membership.is_test = 0";
           $updateCount++;
         }
       }
-
-      //convert date from string format to timestamp format
-      $reminder_date = CRM_Utils_DATE::unixTime($dao->reminder_date);
-      $today_date = CRM_Utils_DATE::unixTime($today);
-
-      //send reminder for membership renewal
-      if ($dao->reminder_date &&
-        $dao->reminder_date != '0000-00-00' &&
-        ($reminder_date <= $today_date)
-      ) {
-        $memType = new CRM_Member_BAO_MembershipType();
-
-        $memType->id = $dao->membership_type_id;
-        $memType->find(TRUE);
-        $renewalMsgId = $memType->renewal_msg_id;
-
-        if ($memType->autorenewal_msg_id && $dao->recur_id) {
-          $contribStatusId = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_ContributionRecur',
-            $dao->recur_id, 'contribution_status_id'
-          );
-          if ($contribStatusId != array_search('Cancelled', $contribStatus)) {
-            $renewalMsgId = $memType->autorenewal_msg_id;
-          }
-        }
-        if ($renewalMsgId) {
-          $toEmail = CRM_Contact_BAO_Contact::getPrimaryEmail($dao->contact_id);
-
-          if ($toEmail) {
-            $sendResult = CRM_Core_BAO_MessageTemplates::sendReminder($dao->contact_id,
-              $toEmail,
-              $renewalMsgId,
-              $fromEmailAddress
-            );
-            if (!$sendResult ||
-              is_a($sendResult, 'PEAR_Error')
-            ) {
-              // we could not send an email, for now we ignore
-              // CRM-3406
-              // at some point we might decide to do something
-            }
-            else {
-              $reminderCount++;
-            }
-
-            //set membership reminder date to NULL since we've sent the reminder.
-            CRM_Core_DAO::setFieldValue('CRM_Member_DAO_Membership', $dao->membership_id, 'reminder_date', 'null');
-
-            // insert the activity log record.
-            $config = CRM_Core_Config::singleton();
-            $activityParams = array();
-            $activityParams['subject'] = $allTypes[$dao->membership_type_id] . ": Status - " . $statusLabels[$newStatus['id']] . ", End Date - " . CRM_Utils_Date::customFormat(CRM_Utils_Date::isoToMysql($dao->end_date), $config->dateformatFull);
-            $activityParams['source_record_id'] = $dao->membership_id;
-
-            $session = CRM_Core_Session::singleton();
-            $activityParams['source_contact_id'] = $session->get('userID') ? $session->get('userID') : $dao->contact_id;
-            $activityParams['assignee_contact_id'] = $dao->contact_id;
-
-            $activityParams['activity_date_time'] = date('YmdHis');
-
-            static $actRelIds = array();
-            if (!isset($actRelIds['activity_type_id'])) {
-              $actRelIds['activity_type_id'] = CRM_Core_OptionGroup::getValue('activity_type',
-                'Membership Renewal Reminder', 'name'
-              );
-            }
-            $activityParams['activity_type_id'] = $actRelIds['activity_type_id'];
-
-            if (!isset($actRelIds['activity_status_id'])) {
-              $actRelIds['activity_status_id'] = CRM_Core_OptionGroup::getValue('activity_status', 'Completed', 'name');
-            }
-            $activityParams['status_id'] = $actRelIds['activity_status_id'];
-
-            static $msgTpl = array();
-            if (!isset($msgTpl[$memType->renewal_msg_id])) {
-              $msgTpl[$memType->renewal_msg_id] = array();
-
-              $messageTemplate = new CRM_Core_DAO_MessageTemplates();
-              $messageTemplate->id = $memType->renewal_msg_id;
-              if ($messageTemplate->find(TRUE)) {
-                $msgTpl[$memType->renewal_msg_id]['subject'] = $messageTemplate->msg_subject;
-                $msgTpl[$memType->renewal_msg_id]['details'] = $messageTemplate->msg_text;
-              }
-              $messageTemplate->free();
-            }
-            $activityParams['details'] = "Subject: {$msgTpl[$memType->renewal_msg_id]['subject']}
-Message: {$msgTpl[$memType->renewal_msg_id]['details']}
-";
-            $activity = CRM_Activity_BAO_Activity::create($activityParams);
-          }
-        }
-        $memType->free();
-      }
       // CRM_Core_Error::debug( 'fEnd', count( $GLOBALS['_DB_DATAOBJECT']['RESULTS'] ) );
     }
     $result['is_error'] = 0;
-    $result['messages'] = ts('Processed %1 membership records. Updated %2 records. Sent %3 renewal reminders.', array(1 => $processCount, 2 => $updateCount, 3 => $reminderCount));
+    $result['messages'] = ts('Processed %1 membership records. Updated %2 records.', array(1 => $processCount, 2 => $updateCount));
     return $result;
   }
 
@@ -2650,54 +2547,8 @@ Message: {$msgTpl[$memType->renewal_msg_id]['details']}
     return $contactMembershipType;
   }
 
-  public function updateMembershipReminderDate($params) {
-
-    //get all active statuses of membership.
-    $allStatuses = CRM_Member_PseudoConstant::membershipStatus();
-
-    //set membership reminder date if membership
-    //record has one of the following status.
-    $validStatus = array('New', 'Current', 'Grace');
-
-    $statusIds = array();
-    foreach ($validStatus as $status) {
-      $statusId = array_search($status, $allStatuses);
-      if ($statusId) {
-        $statusIds[$statusId] = $statusId;
-      }
-    }
-
-    //we don't have valid status to check,
-    //therefore no need to proceed further.
-    if (empty($statusIds)) {
-      return;
-    }
-
-    //set reminder date for all memberships,
-    //in case reminder date is missing and
-    //membership type has reminder day set.
-
-    $query = '
-    UPDATE  civicrm_membership membership
-INNER JOIN  civicrm_contact contact ON ( contact.id = membership.contact_id )
-INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_type_id )
-       SET  membership.reminder_date = DATE_SUB( membership.end_date, INTERVAL type.renewal_reminder_day + 1 DAY )
-     WHERE  membership.reminder_date IS NULL
-       AND  contact.is_deleted = 0
-       AND  ( contact.is_deceased IS NULL OR contact.is_deceased = 0 )
-       AND  type.renewal_reminder_day IS NOT NULL
-       AND  membership.status_id IN ( ' . implode(' , ', $statusIds) . ' )';
-
-    CRM_Core_DAO::executeQuery($query);
-
-    return array(
-      'is_error' => 0,
-      'messages' => 'Membership(s) reminder date updated. (Done)',
-    );
-  }
-
   /**
-   * Functon to records contribution record associated with membership
+   * Function to record contribution record associated with membership
    *
    * @param array  $params array of submitted params
    * @param array  $ids    array of ids

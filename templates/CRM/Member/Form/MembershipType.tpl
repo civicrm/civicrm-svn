@@ -194,45 +194,23 @@
              </tr>
          </table>
         <div class="spacer"></div>
+
         <fieldset><legend>{ts}Renewal Reminders{/ts}</legend>
-				<div class="messages status status-warning">
-					{capture assign=reminderLink}{crmURL p='civicrm/admin/scheduleReminders' q='reset=1'}{/capture}
-					<div class="icon alert-icon"></div>&nbsp;
-					{ts 1=$reminderLink}WARNING: Membership renewal reminders should now be configured using the <a href="%1">Schedule Reminders</a> feature, which supports multiple renewal reminders. The reminders configured on this form will no longer function as of the 4.3 release.{/ts} {docURL page="user/email/scheduled-reminders"}
-					{if $form.renewal_reminder_day.value}
-						<p>{ts}You can use your existing renewal reminder message template(s) with the Schedule Reminders feature. Then disable this reminder by un-selecting the Renewal Reminder Message templates on this form. This will prevent duplicate reminders being sent.{/ts}
+					{if $form.renewal_reminder_day.value} {* Warning for sites that were using the deprecated membership renewal mechanism. *}	
+					<div class="messages status status-warning">
+						{capture assign=reminderLink}{crmURL p='civicrm/admin/scheduleReminders' q='reset=1'}{/capture}
+						<div class="icon alert-icon"></div>&nbsp;
+						{ts 1=$reminderLink}WARNING: Membership renewal reminders must now be configured using the <a href="%1">Schedule Reminders</a> feature, which supports multiple renewal reminders. Reminders previously configured using this form will no longer function. You can use your existing renewal reminder message template(s) with the Schedule Reminders feature.{/ts} {docURL page="user/email/scheduled-reminders"}
+					</div>
+					{else}
+					<div class="help">
+						{capture assign=reminderLink}{crmURL p='civicrm/admin/scheduleReminders' q='reset=1'}{/capture}
+						<div class="icon inform-icon"></div>&nbsp;
+						{ts 1=$reminderLink}Configure membership renewal reminders using <a href="%1">Schedule Reminders</a>.{/ts} {docURL page="user/email/scheduled-reminders"}
+					</div>
 					{/if}
-				</div>
-        {if !$hasMsgTemplates}
-            {capture assign=msgTemplate}{crmURL p='civicrm/admin/messageTemplates' q="action=add&reset=1"}{/capture}
-            <div class="status message">
-                {ts 1=$msgTemplate}No message templates have been created yet. If you want renewal reminders to be sent, <a href='%1'>click here</a> to create a reminder email template. Then return to this screen to assign the renewal reminder message, and set reminder date.{/ts}
-            </div>
-        {else}
-            <table class="form-layout-compressed">
-                <tr class="crm-membership-type-form-block-renewal_msg_id" >
-                    <td class="label">{$form.renewal_msg_id.label}</td>
-                    <td>{$form.renewal_msg_id.html}<br />        
-                        <span class="description">{ts}Select the renewal reminder message to be sent to the members of this membership type.{/ts}</span>
-                    </td>
-                </tr>
-		{if $allowAutoRenewMsg}
-                <tr id="autoRenewalMsgId" class="crm-membership-type-form-block-autorenewal_msg_id">
-                   <td class="label">{$form.autorenewal_msg_id.label}</td>
-                   <td>{$form.autorenewal_msg_id.html}<br />
-                       <span class="description">{ts}Select the autorenewal reminder message to be sent to the members of this membership type.{/ts}</span>
-                   </td>
-                </tr>
-		{/if}
-                <tr class="crm-membership-type-form-block-renewal_reminder_day">              
-                    <td class="label">{$form.renewal_reminder_day.label}</td>
-                    <td>{$form.renewal_reminder_day.html}<br />
-                        <span class="description">{ts}Send Reminder these many days prior to membership expiration.{/ts}</span>
-                    </td>
-                </tr>
-            </table>
-        {/if}
-    </fieldset>
+
+    		</fieldset>
 
     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
     {/if}

@@ -38,6 +38,24 @@ class CRM_Upgrade_Incremental_php_FourThree {
   function verifyPreDBstate(&$errors) {
     return TRUE;
   }
+
+  /**
+   * Compute any messages which should be displayed after upgrade
+   *
+   * @param $postUpgradeMessage string, alterable
+   * @param $rev string, an intermediate version; note that setPostUpgradeMessage is called repeatedly with different $revs
+   * @return void
+   */
+  function setPostUpgradeMessage(&$postUpgradeMessage, $rev) {
+    if ($rev == '4.3.alpha1') {
+      // check if CiviMember component is enabled 
+      $config = CRM_Core_Config::singleton();
+      if (in_array('CiviMember', $config->enableComponents)) {
+        $postUpgradeMessage .= '<br />' . ts('Membership renewal reminders must now be configured using the Schedule Reminders feature, which supports multiple renewal reminders  (Administer > Communications > Schedule Reminders). The Update Membership Statuses scheduled job will no longer send membershp renewal reminders. You can use your existing renewal reminder message template(s) with the Schedule Reminders feature.');
+        $postUpgradeMessage .= '<br />' . ts('The Set Membership Reminder Dates scheduled job has been deleted since membership reminder dates stored in the membership table are no longer in use.');
+      }
+    }
+  }
   
   function upgrade_4_3_alpha1($rev) {
     $upgrade = new CRM_Upgrade_Form();
