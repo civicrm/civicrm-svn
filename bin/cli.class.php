@@ -326,19 +326,20 @@ class civicrm_cli_csv_file extends civicrm_cli {
     }
 
     //header
-    $header = fgetcsv($handle, 1000, $this->separator);
-    //  $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
-    if (!$header) {
+    $header = fgetcsv($handle, 0, $this->separator);
+    // In case fgetcsv couldn't parse the header and dumped the whole line in 1 array element
+    // Try a different separator char
+    if (count($header) == 1) {
       $this->separator = ";";
       rewind($handle);
-      $header = fgetcsv($handle, 1000, $this->separator);
+      $header = fgetcsv($handle, 0, $this->separator);
+      if (count($header) == 1) {
+        die("Invalid file format for " . $this->_file . ". It must be a valid csv with separator ',' or ';'\n");
+      }
     }
-    if (!$header) {
-      die("Invalid file format for " . $this->_file . ". It must be a valid csv with separator ',' or ';'\n");
-    }
-    
+
     $this->header = $header;
-    while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+    while (($data = fgetcsv($handle, 0, $this->separator)) !== FALSE) {
       // skip blank lines
       if(count($data) == 1 && is_null($data[0])) continue;
       $this->row++;
