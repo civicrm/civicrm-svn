@@ -201,21 +201,33 @@ class CRM_Contact_Form_Task extends CRM_Core_Form {
 
       // refire sql in case of custom seach
       if ($form->_action == CRM_Core_Action::COPY) {
-        $selectedCids[$cacheKey] = $form->getContactIds( );
+        // selected contacts only
+        // need to perform action on only selected contacts
+        foreach (self::$_searchFormValues as $name => $value) {
+          if (substr($name, 0, CRM_Core_Form::CB_PREFIX_LEN) == CRM_Core_Form::CB_PREFIX) {
+            $contactID = substr($name, CRM_Core_Form::CB_PREFIX_LEN);
+            if ($useTable) {
+              $insertString[] = " ( {$contactID} ) ";
+            }
+            else {
+              $form->_contactIds[] = substr($name, CRM_Core_Form::CB_PREFIX_LEN);
+            }
+          }
+        }
       }
       else {
         // fetching selected contact ids of passed cache key
         $selectedCids = CRM_Core_BAO_PrevNextCache::getSelection($cacheKey);
-      }
-
-      foreach ($selectedCids[$cacheKey] as $selectedCid => $ignore) {
-        if ($useTable) {
-          $insertString[] = " ( {$selectedCid} ) ";
+        foreach ($selectedCids[$cacheKey] as $selectedCid => $ignore) {
+          if ($useTable) {
+            $insertString[] = " ( {$selectedCid} ) ";
+          }
+          else {
+            $form->_contactIds[] = $selectedCid;
+          }
         }
-        else {
-          $form->_contactIds[] = $selectedCid;
-        }
       }
+      
       if (!empty($insertString)) {
         $string = implode(',', $insertString);
         $sql = "REPLACE INTO {$form->_componentTable} ( contact_id ) VALUES $string";
