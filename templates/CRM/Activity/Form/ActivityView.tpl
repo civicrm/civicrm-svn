@@ -62,6 +62,31 @@
         </tr> 
         {if $values.mailingId}
             <tr>
+                <td class="label nowrap">
+                   # of opens
+                   
+                </td>
+                <td  class="view-value">{$openreport|@count}
+                {if $openreport|@count > 0 and $openreport|@count < 50}<br />Open times:
+                  {foreach from=$openreport item=opens}
+                    {$opens.date} <br />
+                  {/foreach}              
+                {/if}
+             </tr>
+             <tr>
+               <td class="label">
+               # of click-throughs
+               </td>
+               <td class="view-value"> {$clickreport|@count} 
+                {if $clickreport|@count > 0 and $clickreport|@count < 50}<br />Click times:
+                  {foreach from=$clickreport item=clicks}
+                    {$clicks.date}: <a href ='{$clicks.url}'>{$clicks.url|truncate:40:' .... ':true:true}</a> <br />
+                  {/foreach}
+                {/if}
+
+                </td>
+            </tr>
+            <tr>
                 <td class="label">{ts}Details{/ts}</td>
                 <td class="view-value report">
                     

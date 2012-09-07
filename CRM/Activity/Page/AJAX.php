@@ -217,7 +217,7 @@ class CRM_Activity_Page_AJAX {
     $selectorElements = array(
       'activity_type', 'subject', 'source_contact',
       'target_contact', 'assignee_contact',
-      'activity_date', 'status', 'links', 'class',
+      'activity_date', 'status', 'openstats','links', 'class',
     );
 
     echo CRM_Utils_JSON::encodeDataTableSelector($activities, $sEcho, $iTotal, $iFilteredTotal, $selectorElements);

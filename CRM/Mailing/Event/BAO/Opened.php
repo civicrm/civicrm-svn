@@ -135,7 +135,7 @@ class CRM_Mailing_Event_BAO_Opened extends CRM_Mailing_Event_DAO_Opened {
    * @static
    */
   public static function &getRows($mailing_id, $job_id = NULL,
-    $is_distinct = FALSE, $offset = NULL, $rowCount = NULL, $sort = NULL
+    $is_distinct = FALSE, $offset = NULL, $rowCount = NULL, $sort = NULL, $contact_id= NULL
   ) {
 
     $dao = new CRM_Core_Dao();
@@ -169,7 +169,11 @@ class CRM_Mailing_Event_BAO_Opened extends CRM_Mailing_Event_DAO_Opened {
     if (!empty($job_id)) {
       $query .= " AND $job.id = " . CRM_Utils_Type::escape($job_id, 'Integer');
     }
-
+    
+    if (!empty($contact_id)) {
+      $query .= " AND $contact.id = " . CRM_Utils_Type::escape($contact_id, 'Integer');
+    }
+    
     if ($is_distinct) {
       $query .= " GROUP BY $queue.id ";
     }
