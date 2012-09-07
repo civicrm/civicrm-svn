@@ -93,12 +93,12 @@ class CRM_Contact_Form_Task extends CRM_Core_Form {
    *
    * @return void
    * @access public
-   */ function preProcess() {
+   */ 
+  function preProcess() {
     self::preProcessCommon($this);
   }
 
-  static
-  function preProcessCommon(&$form, $useTable = FALSE) {
+  static function preProcessCommon(&$form, $useTable = FALSE) {
 
     $form->_contactIds = array();
     $form->_contactTypes = array();
@@ -228,7 +228,7 @@ class CRM_Contact_Form_Task extends CRM_Core_Form {
     }
 
    
-    if(CRM_Utils_Array::value('radio_ts', self::$_searchFormValues) == 'ts_sel'){
+    if (CRM_Utils_Array::value('radio_ts', self::$_searchFormValues) == 'ts_sel') {
       $params = array();
       $sel = CRM_Utils_Array::value('radio_ts', self::$_searchFormValues);
       $form->assign('searchtype',$sel);
@@ -244,6 +244,7 @@ class CRM_Contact_Form_Task extends CRM_Core_Form {
       $form->_componentIds = $form->_contactIds;
     }
   }
+
   /**
    * This function sets the default values for the form. Relationship that in edit/view action
    * the default values are retrieved from the database
