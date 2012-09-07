@@ -1213,6 +1213,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
           if ($priceField->name == "membership_amount") {
             if ($priceFiledID = CRM_Utils_Array::value("price_{$priceField->id}", $params)) {
               $this->_params['selectMembership'] = $params['selectMembership'] = CRM_Utils_Array::value('membership_type_id', $values[$priceFiledID]);
+              $this->set('selectMembership',CRM_Utils_Array::value('selectMembership', $params));
               if (CRM_Utils_Array::value('is_separate_payment', $this->_membershipBlock) == 0) {
                 $this->_values['amount'] = CRM_Utils_Array::value('amount', $values[$priceFiledID]);
               }
