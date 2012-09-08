@@ -281,6 +281,7 @@ class CRM_Core_Block {
    * @return void
    * @access private
    */
+  static
   private function setTemplateValues($id) {
     switch ($id) {
       case self::CREATE_NEW:
@@ -425,6 +426,7 @@ class CRM_Core_Block {
    * @return void
    * @access private
    */
+  static
   private function setTemplateDashboardValues() {
     static $dashboardLinks = array();
     if (CRM_Core_Permission::check('access Contact Dashboard')) {
