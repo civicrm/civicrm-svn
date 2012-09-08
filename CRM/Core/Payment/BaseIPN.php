@@ -343,7 +343,6 @@ LIMIT 1;";
               'join_date' => CRM_Utils_Date::customFormat(CRM_Utils_Array::value('join_date', $dates), $format),
               'start_date' => CRM_Utils_Date::customFormat(CRM_Utils_Array::value('start_date', $dates), $format),
               'end_date' => CRM_Utils_Date::customFormat(CRM_Utils_Array::value('end_date', $dates), $format),
-              'reminder_date' => CRM_Utils_Date::customFormat(CRM_Utils_Array::value('reminder_date', $dates), $format),
             );
             //we might be renewing membership,
             //so make status override false.

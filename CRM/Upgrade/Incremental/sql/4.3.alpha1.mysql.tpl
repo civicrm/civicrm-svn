@@ -20,3 +20,12 @@ ALTER TABLE civicrm_contact
 
 -- CRM-10296
 DELETE FROM civicrm_job WHERE `api_action` = 'process_membership_reminder_date';
+ALTER TABLE civicrm_membership 			DROP COLUMN reminder_date;
+ALTER TABLE civicrm_membership_log 	DROP COLUMN renewal_reminder_date;
+ALTER TABLE civicrm_membership_type
+	DROP COLUMN renewal_reminder_day,
+	DROP FOREIGN KEY FK_civicrm_membership_type_renewal_msg_id,
+	DROP INDEX FK_civicrm_membership_type_renewal_msg_id,
+	DROP COLUMN renewal_msg_id,
+	DROP COLUMN autorenewal_msg_id;
+

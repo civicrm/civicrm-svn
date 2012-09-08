@@ -196,20 +196,11 @@
         <div class="spacer"></div>
 
         <fieldset><legend>{ts}Renewal Reminders{/ts}</legend>
-					{if $form.renewal_reminder_day.value} {* Warning for sites that were using the deprecated membership renewal mechanism. *}	
-					<div class="messages status status-warning">
-						{capture assign=reminderLink}{crmURL p='civicrm/admin/scheduleReminders' q='reset=1'}{/capture}
-						<div class="icon alert-icon"></div>&nbsp;
-						{ts 1=$reminderLink}WARNING: Membership renewal reminders must now be configured using the <a href="%1">Schedule Reminders</a> feature, which supports multiple renewal reminders. Reminders previously configured using this form will no longer function. You can use your existing renewal reminder message template(s) with the Schedule Reminders feature.{/ts} {docURL page="user/email/scheduled-reminders"}
-					</div>
-					{else}
 					<div class="help">
 						{capture assign=reminderLink}{crmURL p='civicrm/admin/scheduleReminders' q='reset=1'}{/capture}
 						<div class="icon inform-icon"></div>&nbsp;
-						{ts 1=$reminderLink}Configure membership renewal reminders using <a href="%1">Schedule Reminders</a>.{/ts} {docURL page="user/email/scheduled-reminders"}
+						{ts 1=$reminderLink}Configure membership renewal reminders using <a href="%1">Schedule Reminders</a>. If you have previously configured renewal reminder templates, you can re-use them with your new scheduled reminders.{/ts} {docURL page="user/email/scheduled-reminders"}
 					</div>
-					{/if}
-
     		</fieldset>
 
     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
@@ -244,27 +235,6 @@
 		    document.getElementsByName("fixed_period_rollover_day[M]")[0].value = "";
 		    document.getElementsByName("fixed_period_rollover_day[d]")[0].value = "";
 	    }
-    }
-    
-    //load the auto renew msg if recur allow.
-    {/literal}{if $authorize and $allowAutoRenewMsg}{literal}
-    cj( function(){ 
-       setReminder( null ); 
-    });
-    {/literal}{/if}{literal}
-    
-    function setReminder( autoRenewOpt ) {
-       //don't process.
-       var allowToProcess = {/literal}'{$allowAutoRenewMsg}'{literal};
-       if ( !allowToProcess ) {
-          return;
-       }
-       if ( !autoRenewOpt ) {
-       	  autoRenewOpt = cj( 'input:radio[name="auto_renew"]:checked').val();
-       }	     
-       funName = 'hide();';
-       if ( autoRenewOpt == 1 || autoRenewOpt == 2 ) funName = 'show();';
-       eval( "cj('#autoRenewalMsgId')." + funName );
-    }
+    }    
     </script>
 {/literal}

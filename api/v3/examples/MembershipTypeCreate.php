@@ -55,7 +55,6 @@ function membership_type_create_expectedresult(){
           'visibility' => 'public',
           'weight' => '',
           'renewal_msg_id' => '',
-          'renewal_reminder_day' => '',
           'receipt_text_signup' => '',
           'receipt_text_renewal' => '',
           'autorenewal_msg_id' => '',

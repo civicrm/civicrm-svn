@@ -1063,7 +1063,6 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       'join_date',
       'start_date',
       'end_date',
-      'reminder_date',
     );
 
     $calcDates = array();

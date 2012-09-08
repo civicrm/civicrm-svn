@@ -133,32 +133,16 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
       CRM_Core_SelectValues::date(NULL, 'M d'), FALSE
     );
 
-    $msgTemplates = CRM_Core_BAO_MessageTemplates::getMessageTemplates(FALSE);
-    $hasMsgTemplates = FALSE;
-    if (!empty($msgTemplates)) {
-      $hasMsgTemplates = TRUE;
-    }
-
     //Auto-renew Option
     $paymentProcessor  = CRM_Core_PseudoConstant::paymentProcessor(FALSE, FALSE, 'is_recur = 1');
     $isAuthorize       = FALSE;
     $options           = array();
-    $allowAutoRenewMsg = FALSE;
     if (is_array($paymentProcessor) && !empty($paymentProcessor)) {
       $isAuthorize = TRUE;
       $options = array(ts('No auto-renew option'), ts('Give option, but not required'), ts('Auto-renew required '));
-      if ($hasMsgTemplates) {
-        $allowAutoRenewMsg = TRUE;
-        $autoRenewReminderMsg = $this->add('select', 'autorenewal_msg_id',
-          ts('Auto-renew Reminder Message'),
-          array(
-            '' => ts('- select -')) + $msgTemplates
-        );
-      }
     }
-    $this->addRadio('auto_renew', ts('Auto-renew Option'), $options, array('onclick' => "setReminder(this.value);"));
+    $this->addRadio('auto_renew', ts('Auto-renew Option'), $options);
     $this->assign('authorize', $isAuthorize);
-    $this->assign('allowAutoRenewMsg', $allowAutoRenewMsg);
 
     //rollover day
     $this->add('date', 'fixed_period_rollover_day', ts('Fixed Period Rollover Day'),
@@ -184,19 +168,6 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
       CRM_Core_DAO::getAttribute('CRM_Member_DAO_MembershipType', 'weight')
     );
     $this->add('checkbox', 'is_active', ts('Enabled?'));
-
-    if ($hasMsgTemplates) {
-      $reminderMsg = $this->add('select', 'renewal_msg_id', ts('Renewal Reminder Message'), array('' => ts('- select -')) + $msgTemplates);
-    }
-    $this->assign('hasMsgTemplates', $hasMsgTemplates);
-
-    $reminderDay = &$this->add('text',
-      'renewal_reminder_day',
-      ts('Renewal Reminder Day'),
-      CRM_Core_DAO::getAttribute('CRM_Member_DAO_MembershipType',
-        'renewal_reminder_day'
-      )
-    );
 
     $searchRows  = $this->get('searchRows');
     $searchCount = $this->get('searchCount');
@@ -246,22 +217,6 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
     }
 
     $this->assign('membershipRecordsExists', $membershipRecords);
-
-    if (($this->_action & CRM_Core_Action::UPDATE) && $reminderDay) {
-      $renewMessage = array();
-      $returnProperties = array('renewal_msg_id', 'renewal_reminder_day');
-      CRM_Core_DAO::commonRetrieveAll('CRM_Member_DAO_MembershipType', 'id', $this->_id, $renewMessage, $returnProperties);
-      if (CRM_Utils_Array::value('renewal_msg_id', $renewMessage[$this->_id]) &&
-        CRM_Utils_Array::value('renewal_reminder_day', $renewMessage[$this->_id]) &&
-        $membershipRecords
-      ) {
-        $reminderMsg = $this->add('select', 'renewal_msg_id', ts('Renewal Reminder Message'),
-          array(
-            '' => ts('- select -')) + $msgTemplates
-        );
-        $reminderDay->freeze();
-      }
-    }
 
     $this->addElement('submit', $this->getButtonName('refresh'), $searchBtn, array('class' => 'form-submit'));
 
@@ -362,21 +317,6 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
       }
     }
 
-    $renewalReminderDay = CRM_Utils_Array::value('renewal_reminder_day', $params);
-    $renewalMsgId       = CRM_Utils_Array::value('renewal_msg_id', $params);
-    $autoRenewalMsgId   = CRM_Utils_Array::value('autorenewal_msg_id', $params);
-    // FIXME: Commented out this form rule for 4.2 so that admins can disable existing membership type based renewal reminders when they
-    // implement the new reminder method via Schedule Reminders. CRM-8359 dgg
-    /*
-    if (!((($renewalReminderDay && $renewalMsgId)) || (!$renewalReminderDay && !$renewalMsgId))) {
-      if (!$renewalReminderDay) {
-        $errors['renewal_reminder_day'] = ts('Please enter renewal reminder days.');
-      }
-      elseif (!$renewalMsgId && (isset($params['autorenewal_msg_id']) && !$autoRenewalMsgId)) {
-        $errors['renewal_msg_id'] = ts('Please select renewal message.');
-      }
-    }
-    */
     return empty($errors) ? TRUE : $errors;
   }
 
@@ -414,11 +354,8 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
         'minimum_fee',
         'description',
         'auto_renew',
-        'autorenewal_msg_id',
         'duration_unit',
-        'renewal_msg_id',
         'duration_interval',
-        'renewal_reminder_day',
         'contribution_type_id',
         'fixed_period_start_day',
         'fixed_period_rollover_day',

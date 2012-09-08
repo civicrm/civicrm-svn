@@ -158,24 +158,6 @@
       <add>1.5</add>  
   </field>
   <field>
-      <name>renewal_msg_id</name>
-      <type>int unsigned</type>
-      <comment>FK to civicrm_msg_template.id</comment>
-      <add>1.6</add>
-  </field>
-  <foreignKey> 
-      <name>renewal_msg_id</name> 
-      <table>civicrm_msg_template</table> 
-      <key>id</key> 
-      <add>1.6</add>
-  </foreignKey>
-  <field>
-      <name>renewal_reminder_day</name>
-      <type>int</type>
-      <comment>Number of days prior to expiration to send renewal reminder</comment>
-      <add>1.6</add>
-  </field>
-  <field>
       <name>receipt_text_signup</name>
       <type>varchar</type>
       <htmlType>textarea</htmlType>
@@ -195,18 +177,6 @@
       <comment>Receipt Text for membership renewal</comment>
       <add>2.0</add>
   </field>
-  <field>
-      <name>autorenewal_msg_id</name>
-      <type>int unsigned</type>
-      <comment>FK to civicrm_msg_template.id</comment>
-      <add>3.3</add>
-  </field>
-  <foreignKey> 
-      <name>renewal_msg_id</name> 
-      <table>civicrm_msg_template</table> 
-      <key>id</key> 
-      <add>3.3</add>
-  </foreignKey>
   <field> 
       <name>auto_renew</name>     
       <type>boolean</type>

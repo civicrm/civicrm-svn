@@ -1683,7 +1683,6 @@ LEFT JOIN  civicrm_contribution contribution ON ( componentPayment.contribution_
               'join_date' => CRM_Utils_Date::customFormat($dates['join_date'], $format),
               'start_date' => CRM_Utils_Date::customFormat($dates['start_date'], $format),
               'end_date' => CRM_Utils_Date::customFormat($dates['end_date'], $format),
-              'reminder_date' => CRM_Utils_Date::customFormat($dates['reminder_date'], $format),
             );
 
             CRM_Utils_Hook::pre('edit', 'Membership', $membership->id, $formatedParams);

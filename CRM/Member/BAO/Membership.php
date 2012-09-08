@@ -80,10 +80,6 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
       CRM_Utils_Hook::pre('create', 'Membership', NULL, $params);
     }
 
-    if (!CRM_Utils_Array::value('reminder_date', $params)) {
-      $params['reminder_date'] = 'null';
-    }
-
     if (!CRM_Utils_Array::value('is_override', $params)) {
       $params['is_override'] = 'null';
     }
@@ -117,7 +113,6 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
       'status_id' => $membership->status_id,
       'start_date' => $logStartDate,
       'end_date' => CRM_Utils_Date::isoToMysql($membership->end_date),
-      'renewal_reminder_date' => CRM_Utils_Date::isoToMysql($membership->reminder_date),
       'modified_date' => date('Ymd'),
       'membership_type_id' => $values[$membership->id]['membership_type_id'],
     );
@@ -1507,10 +1502,6 @@ AND civicrm_membership.is_test = %2";
             date('Ymd'),
             $format
           ),
-          'renewal_reminder_date' => CRM_Utils_Date::customFormat(
-            $membership->reminder_date,
-            $format
-          ),
           'membership_type_id' => $membershipTypeID,
         );
         $session = CRM_Core_Session::singleton();
@@ -1559,7 +1550,6 @@ AND civicrm_membership.is_test = %2";
         $currentMembership['join_date'] = CRM_Utils_Date::customFormat($currentMembership['join_date'], $format);
         $currentMembership['start_date'] = CRM_Utils_Array::value('start_date', $dates);
         $currentMembership['end_date'] = CRM_Utils_Array::value('end_date', $dates);
-        $currentMembership['reminder_date'] = CRM_Utils_Array::value('reminder_date', $dates);
         $currentMembership['is_test'] = $is_test;
 
         if (CRM_Utils_Array::value('membership_source', $form->_params)) {
@@ -1602,7 +1592,6 @@ AND civicrm_membership.is_test = %2";
         $memParams['join_date'] = CRM_Utils_Date::isoToMysql($membership->join_date);
         $memParams['start_date'] = CRM_Utils_Date::isoToMysql($membership->start_date);
         $memParams['end_date'] = CRM_Utils_Array::value('end_date', $dates);
-        $memParams['reminder_date'] = CRM_Utils_Array::value('reminder_date', $dates);
         $memParams['membership_type_id'] = $membershipTypeID;
 
         //set the log start date.
@@ -1646,7 +1635,6 @@ AND civicrm_membership.is_test = %2";
         $memParams['join_date'] = CRM_Utils_Array::value('join_date', $dates);
         $memParams['start_date'] = CRM_Utils_Array::value('start_date', $dates);
         $memParams['end_date'] = CRM_Utils_Array::value('end_date', $dates);
-        $memParams['reminder_date'] = CRM_Utils_Array::value('reminder_date', $dates);
 
         $status = CRM_Member_BAO_MembershipStatus::getMembershipStatusByDate(CRM_Utils_Date::customFormat($dates['start_date'],
             $statusFormat
@@ -1796,10 +1784,6 @@ AND civicrm_membership.is_test = %2";
         ),
         'modified_date' => CRM_Utils_Date::customFormat(
           $currentMembership['today_date'],
-          $format
-        ),
-        'renewal_reminder_date' => CRM_Utils_Date::customFormat(
-          $currentMembership['reminder_date'],
           $format
         ),
         'membership_type_id' => $currentMembership['membership_type_id'],
@@ -2010,8 +1994,6 @@ WHERE  civicrm_membership.contact_id = civicrm_contact.id
     else {
       // Edit the params array
       unset($params['id']);
-      // Reminder should be sent only to the direct membership
-      unset($params['reminder_date']);
       // unset the custom value ids
       if (is_array(CRM_Utils_Array::value('custom', $params))) {
         foreach ($params['custom'] as $k => $v) {

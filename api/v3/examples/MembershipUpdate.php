@@ -46,7 +46,6 @@ function membership_update_expectedresult(){
           'source' => 'Payment',
           'status_id' => 32,
           'is_override' => 1,
-          'reminder_date' => 'null',
           'owner_membership_id' => '',
           'is_test' => '',
           'is_pay_later' => '',

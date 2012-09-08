@@ -107,13 +107,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates {
       CRM_Core_Error::fatal(ts('Invalid Message template'));
     }
 
-    // set membership_type to null
-    $query = "UPDATE civicrm_membership_type
-                  SET renewal_msg_id = NULL
-                  WHERE renewal_msg_id = %1";
-    $params = array(1 => array($messageTemplatesID, 'Integer'));
-    CRM_Core_DAO::executeQuery($query, $params);
-
+    // Set mailing msg template col to NULL
     $query = "UPDATE civicrm_mailing
                   SET msg_template_id = NULL
                   WHERE msg_template_id = %1";
@@ -122,7 +116,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates {
     $messageTemplates = new CRM_Core_DAO_MessageTemplates();
     $messageTemplates->id = $messageTemplatesID;
     $messageTemplates->delete();
-    CRM_Core_Session::setStatus(ts('Selected message templates has been deleted.'));
+    CRM_Core_Session::setStatus(ts('Selected message template has been deleted.'));
   }
 
   /**
