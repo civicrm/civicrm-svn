@@ -2128,6 +2128,10 @@ AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
   }
 
   function cleanTempDirs() {
+    if(!is_array($this->tempDirs)){
+      // fix test errors where this is not set
+      return;
+    }
     foreach ($this->tempDirs as $tempDir) {
       if (is_dir($tempDir)) {
         CRM_Utils_File::cleanDir($tempDir, TRUE, FALSE);
