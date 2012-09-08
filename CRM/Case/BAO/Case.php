@@ -1013,7 +1013,7 @@ SELECT case_status.label AS case_status, status_id, case_type.label AS case_type
                   INNER JOIN civicrm_option_group cog ON cog.name = "activity_type"
                   INNER JOIN civicrm_option_value cov ON cov.option_group_id = cog.id
                          AND cov.value = ca.activity_type_id AND cov.is_active = 1
-                  LEFT JOIN civicrm_entity_file ef on ef.entity_table = "civicrm_activity" AND ef.entity_id =
+                  LEFT JOIN civicrm_entity_file ef on ef.entity_table = "civicrm_activity" AND ef.entity_id = ca.id
                   LEFT OUTER JOIN civicrm_option_group og ON og.name="activity_status"
                   LEFT OUTER JOIN civicrm_option_value ov ON ov.option_group_id=og.id AND ov.name="Scheduled"
                   LEFT JOIN civicrm_activity_assignment caa
