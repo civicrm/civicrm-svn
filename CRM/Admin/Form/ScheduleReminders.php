@@ -310,7 +310,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form {
     if ($this->_action & CRM_Core_Action::DELETE) {
       // delete reminder
       CRM_Core_BAO_ActionSchedule::del($this->_id);
-      CRM_Core_Session::setStatus(ts('Selected Reminder has been deleted.'));
+      CRM_Core_Session::setStatus(ts('Selected Reminder has been deleted.'), ts('Record Deleted'), 'info');
       if ($this->_context == 'event' && $this->_eventId) {
         $url = CRM_Utils_System::url('civicrm/event/manage/reminder',
           "reset=1&action=update&id={$this->_eventId}"
@@ -477,7 +477,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form {
         $session->pushUserContext($url);
       }
     }
-    CRM_Core_Session::setStatus($status);
+    CRM_Core_Session::setStatus($status, ts('Saved'), 'success');
   }
 }
 

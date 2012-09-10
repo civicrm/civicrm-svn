@@ -488,19 +488,17 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task {
         }
 
         $draftURL = CRM_Utils_System::url('civicrm/mailing/browse/unscheduled', 'scheduled=false&reset=1');
-        $status = ts("Your mailing has been saved. You can continue later by clicking the 'Continue' action to resume working on it.<br /> From <a href='%1'>Draft and Unscheduled Mailings</a>.", array(1 => $draftURL));
-        CRM_Core_Session::setStatus($status);
+        $status = ts("You can continue later by clicking the 'Continue' action to resume working on it.<br />From <a href='%1'>Draft and Unscheduled Mailings</a>.", array(1 => $draftURL));
 
-        //replace user context to search.
+        // Redirect user to search.
         $url = CRM_Utils_System::url('civicrm/contact/' . $fragment, $urlParams);
-        return $this->controller->setDestination($url);
       }
       else {
-        $status = ts("Your mailing has been saved. Click the 'Continue' action to resume working on it.");
-        CRM_Core_Session::setStatus($status);
+        $status = ts("Click the 'Continue' action to resume working on it.");
         $url = CRM_Utils_System::url('civicrm/mailing/browse/unscheduled', 'scheduled=false&reset=1');
-        return $this->controller->setDestination($url);
       }
+      CRM_Core_Session::setStatus($status, ts('Mailing Saved'), 'success');
+      return $this->controller->setDestination($url);
     }
   }
 

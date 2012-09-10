@@ -111,7 +111,7 @@ class CRM_Admin_Form_OptionGroup extends CRM_Admin_Form {
     $params = $this->exportValues();
     if ($this->_action & CRM_Core_Action::DELETE) {
       CRM_Core_BAO_OptionGroup::del($this->_id);
-      CRM_Core_Session::setStatus(ts('Selected option group has been deleted.'));
+      CRM_Core_Session::setStatus(ts('Selected option group has been deleted.'), ts('Record Deleted'), 'info');
     }
     else {
 
@@ -124,8 +124,7 @@ class CRM_Admin_Form_OptionGroup extends CRM_Admin_Form {
       }
 
       $optionGroup = CRM_Core_BAO_OptionGroup::add($params, $ids);
-      CRM_Core_Session::setStatus(ts('The Option Group \'%1\' has been saved.', array(1 => $optionGroup->name)));
+      CRM_Core_Session::setStatus(ts('The Option Group \'%1\' has been saved.', array(1 => $optionGroup->name)), ts('Saved'), 'success');
     }
   }
 }
-

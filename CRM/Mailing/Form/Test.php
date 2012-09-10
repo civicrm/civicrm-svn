@@ -226,7 +226,7 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form {
     $emails = NULL;
     if (CRM_Utils_Array::value('sendtest', $testParams)) {
       if (!($testParams['test_group'] || $testParams['test_email'])) {
-        CRM_Core_Session::setStatus(ts('Your did not provided any email address or selected any group. No test mail is sent.'));
+        CRM_Core_Session::setStatus(ts('You did not provide an email address or select a group.'), ts('Test not sent.'), 'error');
         $error = TRUE;
       }
 
@@ -237,7 +237,7 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form {
           $testParams['emails'][] = $email;
           $emails .= $emails ? ",'$email'" : "'$email'";
           if (!CRM_Utils_Rule::email($email)) {
-            CRM_Core_Session::setStatus(ts('Please enter valid email addresses only.'));
+            CRM_Core_Session::setStatus(ts('Please enter a valid email addresses.'), ts('Test not sent.'), 'error');
             $error = TRUE;
           }
         }
@@ -255,8 +255,7 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form {
       //redirect it to search result CRM-3711.
       if ($ssID && $self->_searchBasedMailing) {
         $draftURL = CRM_Utils_System::url('civicrm/mailing/browse/unscheduled', 'scheduled=false&reset=1');
-        $status = ts("Your mailing has been saved. You can continue later by clicking the 'Continue' action to resume working on it.<br /> From <a href='%1'>Draft and Unscheduled Mailings</a>.", array(1 => $draftURL));
-        CRM_Core_Session::setStatus($status);
+        $status = ts("You can continue later by clicking the 'Continue' action to resume working on it.<br />From <a href='%1'>Draft and Unscheduled Mailings</a>.", array(1 => $draftURL));
 
         //replace user context to search.
         $context = $self->get('context');
@@ -264,16 +263,14 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form {
           $context = 'search';
         }
         $urlParams = "force=1&reset=1&ssID={$ssID}&context={$context}&qfKey={$testParams['qfKey']}";
-
         $url = CRM_Utils_System::url($urlString, $urlParams);
-        CRM_Utils_System::redirect($url);
       }
       else {
-        $status = ts("Your mailing has been saved. Click the 'Continue' action to resume working on it.");
-        CRM_Core_Session::setStatus($status);
+        $status = ts("Click the 'Continue' action to resume working on it.");
         $url = CRM_Utils_System::url('civicrm/mailing/browse/unscheduled', 'scheduled=false&reset=1');
-        CRM_Utils_System::redirect($url);
       }
+      CRM_Core_Session::setStatus($status, ts('Mailing Saved'), 'success');
+      CRM_Utils_System::redirect($url);
     }
 
     if (CRM_Mailing_Info::workflowEnabled()) {
@@ -355,21 +352,23 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form {
     }
 
     if (CRM_Utils_Array::value('sendtest', $testParams)) {
-      $status = ts('Your test message has been sent.');
+      $status = NULL;
       if (CRM_Mailing_Info::workflowEnabled()) {
         if ((CRM_Core_Permission::check('schedule mailings') &&
             CRM_Core_Permission::check('create mailings')
           ) ||
           CRM_Core_Permission::check('access CiviMail')
         ) {
-          $status .= ts(" Click 'Next' when you are ready to Schedule or Send your live mailing (you will still have a chance to confirm or cancel sending this mailing on the next page).");
+          $status = ts("Click 'Next' when you are ready to Schedule or Send your live mailing (you will still have a chance to confirm or cancel sending this mailing on the next page).");
         }
       }
       else {
-        $status .= ts(" Click 'Next' when you are ready to Schedule or Send your live mailing (you will still have a chance to confirm or cancel sending this mailing on the next page).");
+        $status = ts("Click 'Next' when you are ready to Schedule or Send your live mailing (you will still have a chance to confirm or cancel sending this mailing on the next page).");
       }
 
-      CRM_Core_Session::setStatus($status);
+      if ($status) {
+        CRM_Core_Session::setStatus($status, ts('Test message sent'), 'success');
+      }
       $url = CRM_Utils_System::url($urlString, $urlParams);
       CRM_Utils_System::redirect($url);
     }

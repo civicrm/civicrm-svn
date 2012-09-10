@@ -280,7 +280,7 @@ class CRM_Price_Form_Option extends CRM_Core_Form {
       );
 
       if (CRM_Price_BAO_FieldValue::del($this->_oid)) {
-        CRM_Core_Session::setStatus(ts('%1 option has been deleted.', array(1 => $label)));
+        CRM_Core_Session::setStatus(ts('%1 option has been deleted.', array(1 => $label)), ts('Deleted Record'), 'info');
       }
       return;
     }
@@ -300,7 +300,7 @@ class CRM_Price_Form_Option extends CRM_Core_Form {
 
       $optionValue = CRM_Price_BAO_FieldValue::create($params, $ids);
 
-      CRM_Core_Session::setStatus(ts('The option \'%1\' has been saved.', array(1 => $params['label'])));
+      CRM_Core_Session::setStatus(ts("The option '%1' has been saved.", array(1 => $params['label'])), ts('Saved'), 'success');
     }
   }
 }

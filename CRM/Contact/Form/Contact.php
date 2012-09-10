@@ -941,16 +941,16 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
       }
     }
 
-    $statusMsg = ts('Your %1 contact record has been saved.', array(1 => $contact->contact_type_display));
+    $statusMsg = ts('%1 has been saved.', array(1 => $contact->display_name));
     if (!empty($parseStatusMsg)) {
-      $statusMsg = "$statusMsg <br > $parseStatusMsg";
+      $statusMsg .= "<br > $parseStatusMsg";
     }
     if (!empty($updateMembershipMsg)) {
-      $statusMsg = "$statusMsg <br > $updateMembershipMsg";
+      $statusMsg .= "<br > $updateMembershipMsg";
     }
 
     $session = CRM_Core_Session::singleton();
-    CRM_Core_Session::setStatus($statusMsg);
+    CRM_Core_Session::setStatus($statusMsg, ts('Contact Saved'), 'success');
 
     // add the recently viewed contact
     $displayName = CRM_Contact_BAO_Contact::displayName($contact->id);
@@ -1114,7 +1114,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
       }
       elseif (CRM_Utils_Array::value('_qf_Contact_refresh_dedupe', $fields)) {
         // add a session message for no matching contacts
-        CRM_Core_Session::setStatus(ts('No matching contact found.'));
+        CRM_Core_Session::setStatus(ts('No matching contact found.'), ts('None Found'), 'info');
       }
     }
   }

@@ -343,7 +343,7 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent {
         $urlParams = 'reset=1';
         CRM_Core_Session::setStatus(ts("'%1' information has been saved.",
             array(1 => $this->getTitle())
-          ));
+          ), ts('Saved'), 'success');
       }
 
       CRM_Utils_System::redirect(CRM_Utils_System::url($url, $urlParams));

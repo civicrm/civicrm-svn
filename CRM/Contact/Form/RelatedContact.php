@@ -182,9 +182,7 @@ class CRM_Contact_Form_RelatedContact extends CRM_Core_Form {
     $contact = CRM_Contact_BAO_Contact::create($params, TRUE);
 
     // set status message.
-    CRM_Core_Session::setStatus(ts('Your %1 contact record has been saved.',
-        array(1 => $contact->contact_type_display)
-      ));
+    CRM_Core_Session::setStatus(ts('%1 has been saved.', array(1 => $contact->display_name)), ts('Contact Saved'), 'success');
   }
 }
 

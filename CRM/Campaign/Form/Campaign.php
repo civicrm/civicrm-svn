@@ -342,7 +342,7 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form {
     if (isset($this->_campaignId)) {
       if ($this->_action & CRM_Core_Action::DELETE) {
         CRM_Campaign_BAO_Campaign::del($this->_campaignId);
-        CRM_Core_Session::setStatus(ts(' Campaign has been deleted.'));
+        CRM_Core_Session::setStatus(ts(' Campaign has been deleted.'), ts('Deleted Record'), 'info');
         $session->replaceUserContext(CRM_Utils_System::url('civicrm/campaign', 'reset=1&subPage=campaign'));
         return;
       }
@@ -391,13 +391,13 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form {
     $result = CRM_Campaign_BAO_Campaign::create($params);
 
     if ($result) {
-      CRM_Core_Session::setStatus(ts('Campaign %1 has been saved.', array(1 => $result->title)));
+      CRM_Core_Session::setStatus(ts('Campaign %1 has been saved.', array(1 => $result->title)), ts('Saved'), 'success');
       $session->pushUserContext(CRM_Utils_System::url('civicrm/campaign', 'reset=1&subPage=campaign'));
     }
 
     $buttonName = $this->controller->getButtonName();
     if ($buttonName == $this->getButtonName('upload', 'new')) {
-      CRM_Core_Session::setStatus(ts(' You can add another Campaign.'));
+      CRM_Core_Session::setStatus(ts(' You can add another Campaign.'), '', 'info');
       $session->replaceUserContext(CRM_Utils_System::url('civicrm/campaign/add', 'reset=1&action=add'));
     }
     else {

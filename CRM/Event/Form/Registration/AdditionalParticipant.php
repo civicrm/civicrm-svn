@@ -272,7 +272,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
           $statusMessage = ts("It looks like you are now registering a group of %1 participants. The event has %2 available spaces (you will not be wait listed). Please go back to the main registration page and reduce the number of additional people. You will also need to complete payment information.", array(1 => ++$processedCnt, 2 => $spaces));
           $allowToProceed = FALSE;
         }
-        CRM_Core_Session::setstatus($status);
+        CRM_Core_Session::setStatus($status);
       }
       elseif ($processedCnt == $spaces) {
         if (CRM_Utils_Array::value('amount', $this->_params[0], 0) == 0

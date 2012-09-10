@@ -168,11 +168,11 @@ class CRM_Report_Form_Register extends CRM_Core_Form {
     if ($this->_action & CRM_Core_Action::DELETE) {
 
       if (CRM_Core_BAO_OptionValue::del($this->_id)) {
-        CRM_Core_Session::setStatus(ts('Selected %1 Report has been deleted.', array(1 => $this->_GName)));
+        CRM_Core_Session::setStatus(ts('Selected %1 Report has been deleted.', array(1 => $this->_GName)), ts('Deleted Record'), 'info');
         CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/admin/report/options/report_template', "reset=1"));
       }
       else {
-        CRM_Core_Session::setStatus(ts('Selected %1 type has not been deleted.', array(1 => $this->_GName)));
+        CRM_Core_Session::setStatus(ts('Selected %1 type has not been deleted.', array(1 => $this->_GName)), '', 'info');
         CRM_Utils_Weight::correctDuplicateWeights('CRM_Core_DAO_OptionValue', $fieldValues);
       }
     }
@@ -183,7 +183,7 @@ class CRM_Report_Form_Register extends CRM_Core_Form {
 
       $groupParams = array('name' => ('report_template'));
       $optionValue = CRM_Core_OptionValue::addOptionValue($params, $groupParams, $this->_action, $this->_id);
-      CRM_Core_Session::setStatus(ts('The %1 \'%2\' has been saved.', array(1 => 'Report Template', 2 => $optionValue->label)));
+      CRM_Core_Session::setStatus(ts('The %1 \'%2\' has been saved.', array(1 => 'Report Template', 2 => $optionValue->label)), ts('Saved'), 'success');
       CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/admin/report/options/report_template', "reset=1"));
     }
   }

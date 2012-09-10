@@ -375,7 +375,7 @@ class CRM_Core_Session {
   }
 
   /**
-   * stores a status message, resets status if asked to
+   * Fetches status messages
    *
    * @param $reset boolean should we reset the status variable?
    *
@@ -396,43 +396,58 @@ class CRM_Core_Session {
   }
 
   /**
-   * stores the status message in the session
+   * Stores an alert to be displayed to the user via crm-messages
    *
-   * @param $status string the status message
-   * @param $append boolean if you want to append or set new status
+   * @param $text string
+   *   The status message
+   * 
+   * @param $title string
+   *   The optional title of this message
+   * 
+   * @param $type string
+   *   The type of this message (printed as a css class). Possible options:
+   *     - 'alert' (default)
+   *     - 'info'
+   *     - 'success'
+   *     - 'error' (this message type by default will remain on the screen until the user dismisses it)
+   * 
+   * @param $options array
+   *   Additional options. Possible values:
+   *     - 'unique' (default: true) Check if this message was already set before adding
+   *     - 'expires' how long to display this message before fadeout (in ms) set to 0 for no expiration
+   *       defaults to 10 seconds for most messages, or 0 for errors or messages containing links
    *
    * @static
    *
    * @return void
    */
   static
-  function setStatus($status, $append = TRUE) {
+  function setStatus($text, $title = '', $type = 'alert', $options = array()) {
     // make sure session is initialized, CRM-8120
     $session = self::singleton();
+    // default options
+    $options += array(
+      'unique' => TRUE
+    );
 
-    if (isset(self::$_singleton->_session[self::$_singleton->_key]['status'])) {
-      if ($append) {
-        if (is_array($status)) {
-          if (is_array(self::$_singleton->_session[self::$_singleton->_key]['status'])) {
-            self::$_singleton->_session[self::$_singleton->_key]['status'] += $status;
-          }
-          else {
-            $currentStatus = self::$_singleton->_session[self::$_singleton->_key]['status'];
-            // add an empty element to the beginning which will go in the <h3>
-            self::$_singleton->_session[self::$_singleton->_key]['status'] = array(
-              '', $currentStatus) + $status;
-          }
-        }
-        else {
-          self::$_singleton->_session[self::$_singleton->_key]['status'] .= " $status";
-        }
-      }
-      else {
-        self::$_singleton->_session[self::$_singleton->_key]['status'] = " $status";
-      }
+    if (!isset(self::$_singleton->_session[self::$_singleton->_key]['status'])) {
+      self::$_singleton->_session[self::$_singleton->_key]['status'] = array();
     }
-    else {
-      self::$_singleton->_session[self::$_singleton->_key]['status'] = $status;
+    if ($text) {
+      if ($options['unique']) {
+        foreach (self::$_singleton->_session[self::$_singleton->_key]['status'] as $msg) {
+          if ($msg['text'] == $text && $msg['title'] == $title) {
+            return;
+          }
+        }
+      }
+      unset($options['unique']);
+      self::$_singleton->_session[self::$_singleton->_key]['status'][] = array(
+        'text' => $text,
+        'title' => $title,
+        'type' => $type,
+        'options' => $options ? json_encode($options) : NULL,
+      );
     }
   }
 

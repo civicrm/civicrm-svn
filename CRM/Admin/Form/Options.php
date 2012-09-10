@@ -93,7 +93,7 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form {
       $isInUse    = CRM_Core_DAO::singleValueQuery($sql, $queryParam);
       if ($isInUse) {
         $scriptURL = "<a href='" . CRM_Utils_System::docURL2('Update Greetings and Address Data for Contacts', TRUE, NULL, NULL, NULL, "wiki") . "'>" . ts('Learn more about a script that can automatically update contact addressee and greeting options.') . "</a>";
-        CRM_Core_Session::setStatus(ts('The selected %1 option has <strong>not been deleted</strong> because it is currently in use. Please update these contacts to use a different format before deleting this option. %2', array(1 => $this->_GName, 2 => $scriptURL)) . "<br /><br />");
+        CRM_Core_Session::setStatus(ts('The selected %1 option has <strong>not been deleted</strong> because it is currently in use. Please update these contacts to use a different format before deleting this option. %2', array(1 => $this->_GName, 2 => $scriptURL)), ts('Sorry'), 'error');
         $redirect = CRM_Utils_System::url($url, $params);
         CRM_Utils_System::redirect($redirect);
       }
@@ -355,7 +355,7 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form {
           CRM_Core_BAO_Phone::setOptionToNull(CRM_Utils_Array::value('value', $this->_defaultValues));
         }
 
-        CRM_Core_Session::setStatus(ts('Selected %1 type has been deleted.', array(1 => $this->_GName)));
+        CRM_Core_Session::setStatus(ts('Selected %1 type has been deleted.', array(1 => $this->_GName)), ts('Deleted Record'), 'info');
       }
       else {
         CRM_Core_Session::setStatus(ts('Selected %1 type has not been deleted.', array(1 => $this->_GName)));
@@ -391,8 +391,7 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form {
       $groupParams = array('name' => ($this->_gName));
       $optionValue = CRM_Core_OptionValue::addOptionValue($params, $groupParams, $this->_action, $this->_id);
 
-      CRM_Core_Session::setStatus(ts('The %1 \'%2\' has been saved.', array(1 => $this->_GName, 2 => $optionValue->label)));
+      CRM_Core_Session::setStatus(ts('The %1 \'%2\' has been saved.', array(1 => $this->_GName, 2 => $optionValue->label)), ts('Saved'), 'success');
     }
   }
 }
-

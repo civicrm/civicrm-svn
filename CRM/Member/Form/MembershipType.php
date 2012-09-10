@@ -331,7 +331,7 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
     if ($this->_action & CRM_Core_Action::DELETE) {
       CRM_Utils_Weight::delWeight('CRM_Member_DAO_MembershipType', $this->_id);
       CRM_Member_BAO_MembershipType::del($this->_id);
-      CRM_Core_Session::setStatus(ts('Selected membership type has been deleted.'));
+      CRM_Core_Session::setStatus(ts('Selected membership type has been deleted.'), ts('Record Deleted'), 'info');
     }
     else {
       $buttonName = $this->controller->getButtonName();
@@ -509,13 +509,14 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
 
       CRM_Core_Session::setStatus(ts('The membership type \'%1\' has been saved.',
           array(1 => $membershipType->name)
-        ));
+        ), ts('Saved'), 'success');
       $session = CRM_Core_Session::singleton();
       if ($buttonName == $this->getButtonName('upload', 'new')) {
-        CRM_Core_Session::setStatus(ts(' You can add another membership type.'));
+        CRM_Core_Session::setStatus(ts(' You can add another membership type.'), '', 'info');
         $session->replaceUserContext(CRM_Utils_System::url('civicrm/admin/member/membershipType',
             'action=add&reset=1'
-          ));
+          )
+        );
       }
     }
   }

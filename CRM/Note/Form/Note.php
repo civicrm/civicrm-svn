@@ -191,8 +191,6 @@ class CRM_Note_Form_Note extends CRM_Core_Form {
 
     $ids = array();
     CRM_Core_BAO_Note::add($params, $ids);
-    CRM_Core_Session::setStatus(ts('Your Note has been saved.'));
+    CRM_Core_Session::setStatus(ts('Your Note has been saved.'), ts('Saved'), 'success');
   }
-  //end of function
 }
-

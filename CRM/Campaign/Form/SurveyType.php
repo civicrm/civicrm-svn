@@ -162,7 +162,7 @@ class CRM_Campaign_Form_SurveyType extends CRM_Admin_Form {
       $wt = CRM_Utils_Weight::delWeight('CRM_Core_DAO_OptionValue', $this->_id, $fieldValues);
 
       if (CRM_Core_BAO_OptionValue::del($this->_id)) {
-        CRM_Core_Session::setStatus(ts('Selected Survey type has been deleted.'));
+        CRM_Core_Session::setStatus(ts('Selected Survey type has been deleted.'), ts('Deleted Record'), 'info');
       }
     }
     else {
@@ -178,7 +178,7 @@ class CRM_Campaign_Form_SurveyType extends CRM_Admin_Form {
       $params['component_id'] = CRM_Core_Component::getComponentID('CiviCampaign');
       $optionValue = CRM_Core_OptionValue::addOptionValue($params, $groupParams, $this->_action, $this->_id);
 
-      CRM_Core_Session::setStatus(ts('The Survey type \'%1\' has been saved.', array(1 => $optionValue->label)));
+      CRM_Core_Session::setStatus(ts('The Survey type \'%1\' has been saved.', array(1 => $optionValue->label)), ts('Saved'), 'success');
     }
   }
 }

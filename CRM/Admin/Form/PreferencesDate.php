@@ -118,7 +118,7 @@ class CRM_Admin_Form_PreferencesDate extends CRM_Admin_Form {
    */
   public function postProcess() {
     if (!($this->_action & CRM_Core_Action::UPDATE)) {
-      CRM_Core_Session::setStatus(ts('Preferences Date Options can only be updated'));
+      CRM_Core_Session::setStatus(ts('Preferences Date Options can only be updated'), ts('Sorry'), 'error');
       return;
     }
 
@@ -136,10 +136,8 @@ class CRM_Admin_Form_PreferencesDate extends CRM_Admin_Form {
 
     $dao->save();
 
-    CRM_Core_Session::setStatus(ts('The date type \'%1\' has been saved.',
+    CRM_Core_Session::setStatus(ts("The date type '%1' has been saved.",
         array(1 => $params['name'])
-      ));
+      ), ts('Saved'), 'success');
   }
-  //end of function
 }
-

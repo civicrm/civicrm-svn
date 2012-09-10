@@ -135,7 +135,7 @@ class CRM_Contact_Form_Task_Useradd extends CRM_Core_Form {
     $params = $this->exportValues();
 
     CRM_Core_BAO_CMSUser::create($params, 'email');
-    CRM_Core_Session::setStatus(ts('User has been added.'));
+    CRM_Core_Session::setStatus('', ts('User added'), 'success');
   }
   //end of function
 

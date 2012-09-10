@@ -120,10 +120,10 @@ class CRM_Admin_Form_ContactType extends CRM_Admin_Form {
     if ($this->_action & CRM_Core_Action::DELETE) {
       $isDelete = CRM_Contact_BAO_ContactType::del($this->_id);
       if ($isDelete) {
-        CRM_Core_Session::setStatus(ts('Selected contact type has been deleted.'));
+        CRM_Core_Session::setStatus(ts('Selected contact type has been deleted.'), ts('Deleted Record'), 'info');
       }
       else {
-        CRM_Core_Session::setStatus(ts('Selected contact type can not be deleted. Make sure contact type doesn\'t have any associated custom data or group.'));
+        CRM_Core_Session::setStatus(ts("Selected contact type can not be deleted. Make sure contact type doesn't have any associated custom data or group."), ts('Sorry'), 'error');
       }
       return;
     }
@@ -143,7 +143,7 @@ class CRM_Admin_Form_ContactType extends CRM_Admin_Form {
     $contactType = CRM_Contact_BAO_ContactType::add($params);
     CRM_Core_Session::setStatus(ts("The Contact Type '%1' has been saved.",
         array(1 => $contactType->label)
-      ));
+      ), ts('Saved'), 'success');
   }
 }
 

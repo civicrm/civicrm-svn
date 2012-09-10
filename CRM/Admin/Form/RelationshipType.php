@@ -138,7 +138,7 @@ class CRM_Admin_Form_RelationshipType extends CRM_Admin_Form {
   public function postProcess() {
     if ($this->_action & CRM_Core_Action::DELETE) {
       CRM_Contact_BAO_RelationshipType::del($this->_id);
-      CRM_Core_Session::setStatus(ts('Selected Relationship type has been deleted.'));
+      CRM_Core_Session::setStatus(ts('Selected Relationship type has been deleted.'), ts('Record Deleted'), 'info');
     }
     else {
       $params = array();
@@ -169,7 +169,7 @@ class CRM_Admin_Form_RelationshipType extends CRM_Admin_Form {
 
       CRM_Contact_BAO_RelationshipType::add($params, $ids);
 
-      CRM_Core_Session::setStatus(ts('The Relationship Type has been saved.'));
+      CRM_Core_Session::setStatus(ts('The Relationship Type has been saved.'), ts('Saved'), 'success');
     }
   }
   //end of function

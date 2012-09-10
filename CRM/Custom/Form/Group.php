@@ -496,13 +496,13 @@ class CRM_Custom_Form_Group extends CRM_Core_Form {
     CRM_Core_BAO_Cache::deleteGroup('contact fields');
 
     if ($this->_action & CRM_Core_Action::UPDATE) {
-      CRM_Core_Session::setStatus(ts('Your custom field set \'%1 \' has been saved.', array(1 => $group->title)));
+      CRM_Core_Session::setStatus(ts('Your custom field set \'%1 \' has been saved.', array(1 => $group->title)), ts('Saved'), 'success');
     }
     else {
       $url = CRM_Utils_System::url('civicrm/admin/custom/group/field/add', 'reset=1&action=add&gid=' . $group->id);
-      CRM_Core_Session::setStatus(ts('Your custom field set \'%1\' has been added. You can add custom fields now.',
+      CRM_Core_Session::setStatus(ts("Your custom field set '%1' has been added. You can add custom fields now.",
           array(1 => $group->title)
-        ));
+        ), ts('Saved'), 'success');
       $session = CRM_Core_Session::singleton();
       $session->replaceUserContext($url);
     }
@@ -523,9 +523,9 @@ class CRM_Custom_Form_Group extends CRM_Core_Form {
       $missingTableNames = array_diff_key($tables, $db_prefix);
 
       if (!empty($missingTableNames)) {
-        CRM_Core_Session::setStatus('<br />' . ts('Note:To ensure that all of your custom data groups are available to Views, you may need to add the following key(s) to the $db_prefix array in your settings.php file: \'%1\'.',
+        CRM_Core_Session::setStatus(ts("To ensure that all of your custom data groups are available to Views, you may need to add the following key(s) to the db_prefix array in your settings.php file: '%1'.",
             array(1 => implode(', ', $missingTableNames))
-          ));
+          ), ts('Note'), 'info');
       }
     }
   }

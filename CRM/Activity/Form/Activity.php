@@ -982,7 +982,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task {
       );
       CRM_Core_BAO_EntityTag::del($tagParams);
 
-      CRM_Core_Session::setStatus(ts("Selected Activity has been deleted successfully."));
+      CRM_Core_Session::setStatus(ts("Selected Activity has been deleted successfully."), ts('Record Deleted'), 'info');
       return;
     }
 
@@ -1143,7 +1143,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task {
           2 => $followupStatus,
           3 => $mailStatus
         )
-      ));
+      ), ts('Saved'), 'success');
 
     return array('activity' => $activity);
   }

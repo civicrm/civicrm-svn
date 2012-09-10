@@ -632,12 +632,12 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
     $priceField = CRM_Price_BAO_Field::create($params);
 
     if (!is_a($priceField, 'CRM_Core_Error')) {
-      CRM_Core_Session::setStatus(ts('Price Field \'%1\' has been saved.', array(1 => $priceField->label)));
+      CRM_Core_Session::setStatus(ts('Price Field \'%1\' has been saved.', array(1 => $priceField->label)), ts('Saved'), 'success');
     }
     $buttonName = $this->controller->getButtonName();
     $session = CRM_Core_Session::singleton();
     if ($buttonName == $this->getButtonName('next', 'new')) {
-      CRM_Core_Session::setStatus(ts(' You can add another price set field.'));
+      CRM_Core_Session::setStatus(ts(' You can add another price set field.'), '', 'info');
       $session->replaceUserContext(CRM_Utils_System::url('civicrm/admin/price/field', 'reset=1&action=add&sid=' . $this->_sid));
     }
     else {

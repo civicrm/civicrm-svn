@@ -94,7 +94,7 @@ class CRM_Admin_Form_LocationType extends CRM_Admin_Form {
 
     if ($this->_action & CRM_Core_Action::DELETE) {
       CRM_Core_BAO_LocationType::del($this->_id);
-      CRM_Core_Session::setStatus(ts('Selected Location type has been deleted.'));
+      CRM_Core_Session::setStatus(ts('Selected Location type has been deleted.'), ts('Deleted Record'), 'info');
       return;
     }
 
@@ -123,10 +123,8 @@ class CRM_Admin_Form_LocationType extends CRM_Admin_Form {
 
     $locationType->save();
 
-    CRM_Core_Session::setStatus(ts('The location type \'%1\' has been saved.',
+    CRM_Core_Session::setStatus(ts("The location type '%1' has been saved.",
         array(1 => $locationType->name)
-      ));
+      ), ts('Saved'), 'success');
   }
-  //end of function
 }
-

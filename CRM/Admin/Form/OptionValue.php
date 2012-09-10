@@ -237,7 +237,7 @@ class CRM_Admin_Form_OptionValue extends CRM_Admin_Form {
     $params = $this->exportValues();
     if ($this->_action & CRM_Core_Action::DELETE) {
       CRM_Core_BAO_OptionValue::del($this->_id);
-      CRM_Core_Session::setStatus(ts('Selected option value has been deleted.'));
+      CRM_Core_Session::setStatus(ts('Selected option value has been deleted.'), ts('Record Deleted'), 'info');
     }
     else {
 
@@ -257,8 +257,7 @@ class CRM_Admin_Form_OptionValue extends CRM_Admin_Form {
       }
 
       $optionValue = CRM_Core_BAO_OptionValue::add($params, $ids);
-      CRM_Core_Session::setStatus(ts('The Option Value \'%1\' has been saved.', array(1 => $optionValue->label)));
+      CRM_Core_Session::setStatus(ts('The Option Value \'%1\' has been saved.', array(1 => $optionValue->label)), ts('Saved'), 'success');
     }
   }
 }
-

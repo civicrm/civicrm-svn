@@ -714,7 +714,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form {
     }
 
     if ($status) {
-      CRM_Core_Session::setStatus($status, false);
+      CRM_Core_Session::setStatus($status, ts('Saved'), 'success');
     }
 
     // also update the ProfileModule tables

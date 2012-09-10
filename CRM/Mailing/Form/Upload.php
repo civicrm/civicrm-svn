@@ -218,7 +218,7 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form {
       //redirect user to enter from email address.
       $url = CRM_Utils_System::url('civicrm/admin/options/from_email_address', 'group=from_email_address&action=add&reset=1');
       $status = ts("There is no valid from email address present. You can add here <a href='%1'>Add From Email Address.</a>", array(1 => $url));
-      $session->setStatus($status);
+      $session->setStatus($status, ts('Notice'));
     }
     else {
       foreach ($fromEmailAddress as $key => $email) {
@@ -497,19 +497,18 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form {
 
         $session  = CRM_Core_Session::singleton();
         $draftURL = CRM_Utils_System::url('civicrm/mailing/browse/unscheduled', 'scheduled=false&reset=1');
-        $status   = ts("Your mailing has been saved. You can continue later by clicking the 'Continue' action to resume working on it.<br /> From <a href='%1'>Draft and Unscheduled Mailings</a>.", array(1 => $draftURL));
-        CRM_Core_Session::setStatus($status);
+        $status   = ts("You can continue later by clicking the 'Continue' action to resume working on it.<br />From <a href='%1'>Draft and Unscheduled Mailings</a>.", array(1 => $draftURL));
+        CRM_Core_Session::setStatus($status, ts('Mailing Saved'), 'success');
 
-        //replace user context to search.
+        // Redirect user to search.
         $url = CRM_Utils_System::url('civicrm/contact/' . $fragment, $urlParams);
-        return $this->controller->setDestination($url);
       }
       else {
-        $status = ts("Your mailing has been saved. Click the 'Continue' action to resume working on it.");
-        CRM_Core_Session::setStatus($status);
+        $status = ts("Click the 'Continue' action to resume working on it.");
         $url = CRM_Utils_System::url('civicrm/mailing/browse/unscheduled', 'scheduled=false&reset=1');
-        return $this->controller->setDestination($url);
       }
+      CRM_Core_Session::setStatus($status, ts('Mailing Saved'), 'success');
+      return $this->controller->setDestination($url);
     }
   }
 

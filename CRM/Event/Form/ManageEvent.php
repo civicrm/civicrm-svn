@@ -334,7 +334,7 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form {
 
       CRM_Core_Session::setStatus(ts("'%1' information has been saved.",
           array(1 => ($subPage == 'friend') ? 'Friend' : $className)
-        ));
+        ), ts('Saved'), 'success');
 
       $this->postProcessHook();
 

@@ -285,13 +285,13 @@ class CRM_Price_Form_Set extends CRM_Core_Form {
 
     $set = CRM_Price_BAO_Set::create($params);
     if ($this->_action & CRM_Core_Action::UPDATE) {
-      CRM_Core_Session::setStatus(ts('The Set \'%1\' has been saved.', array(1 => $set->title)));
+      CRM_Core_Session::setStatus(ts('The Set \'%1\' has been saved.', array(1 => $set->title)), ts('Saved'), 'success');
     }
     else {
       $url = CRM_Utils_System::url('civicrm/admin/price/field', 'reset=1&action=add&sid=' . $set->id);
-      CRM_Core_Session::setStatus(ts('Your Set \'%1\' has been added. You can add fields to this set now.',
+      CRM_Core_Session::setStatus(ts("Your Set '%1' has been added. You can add fields to this set now.",
           array(1 => $set->title)
-        ));
+        ), ts('Saved'), 'success');
       $session = CRM_Core_Session::singleton();
       $session->replaceUserContext($url);
     }

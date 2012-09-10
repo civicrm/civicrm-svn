@@ -502,7 +502,7 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form {
 
       CRM_Core_Session::setStatus(ts('Activities from the %1 activity set have been added to this case.',
           array(1 => $reports[$params['timeline_id']])
-        ));
+      ), ts('Done'), 'success');
     }
     elseif ($this->_mergeCases &&
       $buttonName == '_qf_CaseView_next_merge_case'

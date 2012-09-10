@@ -113,7 +113,7 @@ class CRM_Admin_Form_PdfFormats extends CRM_Admin_Form {
     if ($this->_action & CRM_Core_Action::DELETE) {
       // delete PDF Page Format
       CRM_Core_BAO_PdfFormat::del($this->_id);
-      CRM_Core_Session::setStatus(ts('Selected PDF Page Format has been deleted.'));
+      CRM_Core_Session::setStatus(ts('Selected PDF Page Format has been deleted.'), ts('Record Deleted'), 'info');
       return;
     }
 
@@ -122,11 +122,10 @@ class CRM_Admin_Form_PdfFormats extends CRM_Admin_Form {
     $bao = new CRM_Core_BAO_PdfFormat();
     $bao->savePdfFormat($values, $this->_id);
 
-    $status = ts('Your new PDF Page Format titled <strong>%1</strong> has been saved.', array(1 => $values['name']));
+    $status = ts('Your new PDF Page Format titled <strong>%1</strong> has been saved.', array(1 => $values['name']), ts('Saved'), 'success');
     if ($this->_action & CRM_Core_Action::UPDATE) {
-      $status = ts('Your PDF Page Format titled <strong>%1</strong> has been updated.', array(1 => $values['name']));
+      $status = ts('Your PDF Page Format titled <strong>%1</strong> has been updated.', array(1 => $values['name']), ts('Saved'), 'success');
     }
     CRM_Core_Session::setStatus($status);
   }
 }
-
