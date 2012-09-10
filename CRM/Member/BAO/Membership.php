@@ -1902,8 +1902,7 @@ SELECT c.contribution_page_id as pageID
    * @static
    * @access public
    */
-  static
-  function getMembershipFields($mode = NULL) {
+  static function getMembershipFields($mode = NULL) {
     $fields = CRM_Member_DAO_Membership::export();
 
     //campaign fields.
@@ -2490,7 +2489,7 @@ WHERE      civicrm_membership.is_test = 0";
         //get the membership status as per id.
         $newStatus = civicrm_api('membership_status', 'calc',
           array(
-            'membership_id' => $dao->membership_id, 'version' => 3), TRUE
+            'membership_id' => $dao->membership_id, 'version' => 3, 'ignore_admin_only'=> FALSE), TRUE
         );
         $statusId = CRM_Utils_Array::value('id', $newStatus);
 
