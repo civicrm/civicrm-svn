@@ -44,3 +44,4 @@
 <a href='http://issues.civicrm.org/jira/browse/CRM?report=com.atlassian.jira.plugin.system.project:roadmap-panel'>{ts}View issues and report bugs.{/ts}</a> &nbsp; &nbsp;
 {docURL page="" text="Online documentation."}
 </div>
+{include file="CRM/common/notifications.tpl"}

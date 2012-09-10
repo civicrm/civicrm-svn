@@ -23,10 +23,12 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+{capture assign=infoTitle}{ts}Preview Mode{/ts}{/capture}
+{assign var="infoType" value="info"}
 {if $preview_type eq 'group'}
-    {capture assign=infoMessage}{ts}Preview of the price set as it will be displayed within an edit form.{/ts}{/capture}
+  {capture assign=infoMessage}{ts}Showing price set as it will be displayed within an edit form.{/ts}{/capture}
 {else}
-    {capture assign=infoMessage}{ts}Preview of this field as it will be displayed in an edit form.{/ts}{/capture}
+  {capture assign=infoMessage}{ts}Showing field as it will be displayed in an edit form.{/ts}{/capture}
 {/if}
 {include file="CRM/common/info.tpl"}
 <div class="crm-block crm-form-block crm-price-set-preview-block">

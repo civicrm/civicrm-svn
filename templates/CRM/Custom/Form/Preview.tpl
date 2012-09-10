@@ -23,15 +23,17 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+{capture assign=infoTitle}{ts}Preview Mode{/ts}{/capture}
+{assign var="infoType" value="info"}
 {if $preview_type eq 'group'}
-    {capture assign=infoMessage}{ts}Preview of the custom data group (fieldset) as it will be displayed within an edit form.{/ts}{/capture}
+    {capture assign=infoMessage}{ts}Showing the custom data group (fieldset) as it will be displayed within an edit form.{/ts}{/capture}
     {capture name=legend}
         {foreach from=$groupTree item=fieldName}
           {$fieldName.title}
         {/foreach}
     {/capture}
 {else}
-    {capture assign=infoMessage}{ts}Preview of this field as it will be displayed in an edit form.{/ts}{/capture}
+    {capture assign=infoMessage}{ts}Showing this field as it will be displayed in an edit form.{/ts}{/capture}
 {/if}
 {include file="CRM/common/info.tpl"}
 <div class="crm-block crm-form-block crm-custom-preview-form-block">

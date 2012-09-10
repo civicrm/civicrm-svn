@@ -76,11 +76,13 @@ packages/jquery/plugins/jquery.mustache.js
 
 packages/jquery/plugins/jquery.blockUI.js
 
+packages/jquery/plugins/jquery.notify.js
+
 js/rest.js
 js/Common.js
 
 js/jquery/jquery.crmeditable.js
+js/jquery/jquery.crmmessages.js
 js/jquery/jquery.crmaccordions.js
 js/jquery/jquery.crmasmselect.js
-js/jquery/jquery.crmtooltip.js
 

@@ -85,7 +85,7 @@
         if (ok && cj(this).data('location-type-id') == lt) {
           var label = cj('option:selected', ele).text();
           ele.val('');
-          alert("{/literal}{ts escape='js'}Location type{/ts} {literal}" + label + "{/literal} {ts escape='js'}has already been assigned to another address. Please select another location type for this address.{/ts}{literal}");
+          ele.crmError(label + "{/literal} {ts escape='js'}has already been assigned to another address. Please select another location for this address.{/ts}"{literal});
           ok = false;
         }
       });
@@ -101,7 +101,7 @@
       cj('.crm-inline-edit.address.form :checkbox:checked[id$="' + ids + '"]').not(this).removeAttr('checked');
     }
     else if (cj(this).is("[id*=is_primary]")) {
-      alert("{/literal}{ts escape='js'}Please choose another address to be primary before changing this one.{/ts}{literal}");
+      cj(this).crmError("{/literal} {ts escape='js'}Please choose another address to be primary before changing this one.{/ts}");
       cj(this).attr('checked', 'checked');
     }
   });

@@ -175,7 +175,7 @@
                              });
                         } else { 
                             relContact.unautocomplete( );
-                            relContact.click( function() { alert( '{/literal}{ts}Please select a relationship type first.{/ts}{literal} ...' );});
+                            relContact.click( function() { cj('#relationship_type_id').crmError('{/literal}{ts}Please select a relationship type first.{/ts}{literal}');});
                         }
                     }
                     
@@ -261,14 +261,17 @@
                         <div class="spacer"></div>
                     {else} {* too many results - we display only 50 *}
                         {if $duplicateRelationship}  
-                            {capture assign=infoMessage}{ts}Duplicate relationship.{/ts}{/capture}
+                            {capture assign=infoTitle}{ts}Duplicate relationship.{/ts}{/capture}
+                            {capture assign=infoMessage}{ts}This relationship already exists.{/ts}{/capture}
                         {else}   
-                            {capture assign=infoMessage}{ts}Too many matching results. Please narrow your search by entering a more complete target contact name.{/ts}{/capture}
-                        {/if}  
+                            {capture assign=infoTitle}{ts}Too many matching results.{/ts}{/capture}
+                            {capture assign=infoMessage}{ts}Please narrow your search by entering a more complete target contact name.{/ts}{/capture}
+                        {/if}
                         {include file="CRM/common/info.tpl"}
                     {/if}
                 {else} {* no valid matches for name + contact_type *}
-                        {capture assign=infoMessage}{ts}No matching results for{/ts} <ul><li>{ts 1=$form.contact_1.value}Name like: %1{/ts}</li><li>{ts}Contact Type{/ts}: {$contact_type_display}</li></ul>{ts}Check your spelling, or try fewer letters for the target contact name.{/ts}{/capture}
+                        {capture assign=infoTitle}{ts}No matching results for{/ts}{/capture}
+                        {capture assign=infoMessage}<ul><li>{ts 1=$form.contact_1.value}Name like: %1{/ts}</li><li>{ts}Contact Type{/ts}: {$contact_type_display}</li></ul>{ts}Check your spelling, or try fewer letters for the target contact name.{/ts}{/capture}
                         {include file="CRM/common/info.tpl"}                
                 {/if} {* end if searchCount *}
               {else}

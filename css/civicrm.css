@@ -601,6 +601,9 @@ div.spacer,
     border: none;
     font-weight: normal;
 }
+#crm-container .messages .msg-title{
+    font-weight: bold;
+}
 #crm-container .messages table,
 .crm-container-snippet .messages table {
   width: auto;
@@ -611,7 +614,7 @@ div.spacer,
     border-bottom: 1px solid #DDDDDD;
 }
 
-#crm-container div.status {
+#crm-container .status {
     background-color:#FFFFCC;
     background-image:none;
     border:1px solid #FFFF66;
@@ -3555,3 +3558,34 @@ div#crm-toolTip
     cursor:pointer
 }
 
+/* Notifications */
+#crm-container .ui-notify { width:350px; position:fixed; top:40px; right:10px; z-index: 999999}
+#crm-container div.ui-notify-message { padding:10px; margin-bottom:15px; color:#fff; -moz-border-radius:8px; -webkit-border-radius:8px; border-radius:8px }
+#crm-container div.ui-notify-message h1 { font-size:14px; margin:0; padding:4px; font-weight:bold }
+#crm-container div.ui-notify-message p { margin:3px 0; padding:0; line-height:18px }
+#crm-container div.ui-notify-message:last-child { margin-bottom:0 }
+#crm-container div.ui-notify-message-style { background:#000; background:rgba(0,0,0,0.8); -moz-box-shadow: 0 0 6px #000; -webkit-box-shadow: 0 0 6px #000; box-shadow: 0 0 6px #000; }
+#crm-container div.ui-notify-message-style a,
+#crm-container div.ui-notify-message-style a:link { color:#CCD0FF; text-decoration: underline; }
+#crm-container div.ui-notify-message-style a:hover,
+#crm-container div.ui-notify-message-style a:focus { color:#B2B8FF }
+#crm-container div.ui-notify-message .ui-notify-click { cursor:pointer }
+#crm-container div.ui-notify-message a.ui-notify-cross { margin-top:-4px; float:right; cursor:pointer; text-decoration:none; font-size:12px; font-weight:bold; text-shadow:0 1px 1px #fff; padding:2px; color: #FFFEB2 }
+#crm-container div.ui-notify-message .ui-notify-cross:hover { color:#ffffab }
+#crm-container div.ui-notify-message .ui-notify-cross:active { position:relative; top:1px }
+#crm-container div.ui-notify-message div.icon {
+  background:transparent url("../i/message-icons.png") no-repeat 0 0;
+  width:24px;
+  height:24px;
+  margin-right: 6px;
+  cursor: pointer;
+}
+#crm-container div.ui-notify-message div.icon.success {
+  background-position: -24px 0px;
+}
+#crm-container div.ui-notify-message div.icon.info {
+  background-position: -48px 0px;
+}
+#crm-container div.ui-notify-message div.icon.error {
+  background-position: -72px 0px;
+}

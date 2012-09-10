@@ -73,12 +73,14 @@
                         </fieldset>
                     {else} {* too many results - we're only displaying 50 *}
                         </div></fieldset>
-                        {capture assign=infoMessage}{ts}Too many matching results. Please narrow your search by entering a more complete target contact name.{/ts}{/capture}
+                        {capture assign=infoTitle}{ts}Too many matching results{/ts}{/capture}
+                        {capture assign=infoMessage}{ts}Please narrow your search by entering a more complete target contact name.{/ts}{/capture}
                         {include file="CRM/common/info.tpl"}
                     {/if}
                 {else} {* no valid matches for name + contact_type *}
                         </div></fieldset>
-                        {capture assign=infoMessage}{ts}No matching results for{/ts}<ul><li>{ts 1=$form.name.value}Name like: %1{/ts}</li><li>{ts}Contact type{/ts}: {$contact_type_display}</li></ul><br />{ts}Check your spelling, or try fewer letters for the target contact name.{/ts}{/capture}
+                        {capture assign=infoTitle}{ts}No matching results for{/ts}{/capture}
+                        {capture assign=infoMessage}{ts}<ul><li>{ts 1=$form.name.value}Name like: %1{/ts}</li><li>{ts}Contact type{/ts}: {$contact_type_display}</li></ul><br />{ts}Check your spelling, or try fewer letters for the target contact name.{/ts}{/capture}
                         {include file="CRM/common/info.tpl"}                
                 {/if} {* end if searchCount *}
               {else}

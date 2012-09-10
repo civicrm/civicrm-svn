@@ -104,21 +104,14 @@
                          {/strip}
                     </fieldset>{*End of Membership Organization Block*}
                 {else} {* too many results - we're only displaying 50 *}
-                     <table  class="form-layout-compressed">
-                        <tr>
-                          <td>
-                          {capture assign=infoMessage}{ts}Too many matching results. Please narrow your search by entering a more complete target contact name.{/ts}{/capture}
-                        {include file="CRM/common/info.tpl"}
-                          </td>
-                        </tr>
-                     </table>
+                  {capture assign=infoTitle}{ts}Too many matching results.{/ts}{/capture}
+                  {capture assign=infoMessage}{ts}Please narrow your search by entering a more complete target contact name.{/ts}{/capture}
+                  {include file="CRM/common/info.tpl"}
                 {/if}
          {else} {* no valid matches for name + contact_type *}
-              <table  class="form-layout-compressed">
-                 <tr> {capture assign=infoMessage}{ts 1=$form.member_org.value 2=Organization}No matching results for <ul><li>Name like: %1</li><li>Contact type: %2</li></ul>Check your spelling, or try fewer letters for the target contact name.{/ts}{/capture}
-            {include file="CRM/common/info.tpl"}           
-	         </tr>
-	      </table>
+            {capture assign=infoTitle}{ts}No matching results for{/ts}{/capture}
+            {capture assign=infoMessage}{ts 1=$form.member_org.value 2=Organization}<ul><li>Name like: %1</li><li>Contact type: %2</li></ul>Check your spelling, or try fewer letters for the target contact name.{/ts}{/capture}
+            {include file="CRM/common/info.tpl"}
          {/if} {* end if searchCount *}
      {/if} {* end if searchDone *}
       <table class="form-layout-compressed">

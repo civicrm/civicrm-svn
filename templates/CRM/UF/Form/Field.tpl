@@ -235,24 +235,20 @@ function mixProfile( ) {
     if ( document.getElementById("is_searchable").checked ) {
       document.getElementById("is_searchable").checked = false;
       if ( alreadyMixProfile ) {
-        var message = {/literal}'{ts}Oops. You can not mark fields as Searchable in a profile that contains fields for multiple record types.{/ts}'{literal};
-        alert( message );
+        var message = {/literal}'{ts}You can not mark fields as Searchable in a profile that contains fields for multiple record types.{/ts}'{literal};
       } else {
-        var message = {/literal}{ts}'Oops. '{/ts}
-        + type + '{ts} fields can not be marked as Searchable in a profile.{/ts}'{literal};
-        alert( message );
+        var message = type + {/literal}'{ts} fields can not be marked as Searchable in a profile.{/ts}'{literal};
       }
+      cj().crmError(message, {/literal}'{ts}Oops{/ts}'{literal});
     }
     if ( document.getElementById("in_selector").checked ) {
       document.getElementById("in_selector").checked = false;
       if ( alreadyMixProfile ) {
-        var message = {/literal}'{ts}Oops. You can not mark a field as a Result Column in a profile that contains fields from multiple record types.{/ts}'{literal};
-        alert( message );
+        var message = {/literal}'{ts}You can not mark a field as a Result Column in a profile that contains fields from multiple record types.{/ts}'{literal};
       } else {
-        var message = {/literal}{ts}'Oops. '{/ts}
-        + type + '{ts} can not be used as a Result Column for profile searches.{/ts}'{literal};
-        alert( message );
+        var message = type + {/literal}'{ts} can not be used as a Result Column for profile searches.{/ts}'{literal};
       }
+      cj().crmError(message, {/literal}'{ts}Oops{/ts}'{literal});
     }
   }
 }

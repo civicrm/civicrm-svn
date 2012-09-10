@@ -26,26 +26,20 @@
 {* Check for Status message for the page (stored in session->getStatus). Status is cleared on retrieval. *}
 
 {if $session->getStatus(false)}
-    {assign var="status" value=$session->getStatus(true)}
-    <div class="messages status">
-    	<div class="icon inform-icon"></div>&nbsp;
-        {if is_array($status)}
-            {foreach name=statLoop item=statItem from=$status}
-                {if $smarty.foreach.statLoop.first}
-                    {if $statItem}<h3>{$statItem}</h3><div class='spacer'></div>{/if}
-                {else}               
-                   <ul><li>{$statItem}</li></ul>
-                {/if}                
-            {/foreach}
-        {else}
-            {$status}
-        {/if}
-    </div>
+  {assign var="status" value=$session->getStatus(true)}
+  {foreach name=statLoop item=statItem from=$status}
+    {assign var="infoType" value=$statItem.type}
+    {assign var="infoTitle" value=$statItem.title}
+    {assign var="infoMessage" value=$statItem.text}
+    {assign var="infoOptions" value=$statItem.options}
+    {include file="CRM/common/info.tpl"}
+  {/foreach}
 {/if}
 
-{if ! $urlIsPublic AND $config->debug}
-    <div class="messages status">
-      <div class="icon inform-icon"></div>
-        &nbsp;{ts}WARNING: Debug is currently enabled in Global Settings.{/ts} {docURL page="developer/development-environment/debugging"}
-    </div>
+{if !$urlIsPublic AND $config->debug}
+  {assign var="infoType" value="alert"}
+  {capture assign=infoTitle}{ts}Warning{/ts}{/capture}
+  {capture assign=infoMessage}{ts}Debug is currently enabled in Global Settings.{/ts} {docURL page="developer/development-environment/debugging"}{/capture}
+  {capture assign=infoOptions}{ldelim}"expires": 10000{rdelim}{/capture}
+  {include file="CRM/common/info.tpl"}
 {/if}

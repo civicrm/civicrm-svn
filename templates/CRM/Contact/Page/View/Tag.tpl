@@ -23,6 +23,6 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{* call the filw that is use to build the form  for tags*}
+{* call the file that is use to build the form  for tags*}
 {include file="CRM/Tag/Form/Tag.tpl"}
 

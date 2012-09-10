@@ -49,7 +49,7 @@
       var getEntityID = function (field,result) {
         var domid= $(field).closest('.crm-entity');
         if (!domid) {
-          $().crmNotification ("Couldn't get the entity id. You need to set class='crm-entity' on a parent element of the field",'notification',domid);
+          console && console.log && console.log("Couldn't get the entity id. You need to set class='crm-entity' on a parent element of the field");
           return false;
         }
         // trying to extract using the html5 data
@@ -59,12 +59,12 @@
         }
         domid=domid.attr('id');
         if (!domid) {
-          $().crmNotification ("FATAL crm-editable: Couldn't get the entity id. You need to set class='crm-entity' id='{entityName}-{id}'",'notification',domid);
+          console && console.log && console.log("FATAL crm-editable: Couldn't get the entity id. You need to set class='crm-entity' id='{entityName}-{id}'");
           return false;
         }
         var e=domid.match(/(\S*)-(\S*)/);
         if (!e) {
-           $().crmNotification ("Couldn't get the entity id. You need to set class='crm-entity' id='{entityName}-{id}'",'notification',this);
+           console && console.log && console.log("Couldn't get the entity id. You need to set class='crm-entity' id='{entityName}-{id}'");
            return false;
         }
         result(e[1],e[2]);
@@ -77,7 +77,7 @@
         }  
         var fieldName=field.className.match(/crmf-(\S*)/)[1];
         if (!fieldName) {
-          $().crmNotification ("Couldn't get the crm-editable field name to modify. You need to set crmf-{field_name} or data-{field_name}",'notification',field);
+          console && console.log && console.log("Couldn't get the crm-editable field name to modify. You need to set crmf-{field_name} or data-{field_name}");
           return false;
         }
         return fieldName;
@@ -122,15 +122,15 @@
           }
         },
         error: function(entity,field,value,data) {
-          $().crmNotification (data.error_message,'error',data);
-          $(this).removeClass ('crm-editable-saving').addClass('crm-editable-error');
+          $(this).crmError(data.error_message);
+          $(this).removeClass('crm-editable-saving');
         },
         success: function(entity,field,value,data) {
-          var $i=$(this);
-          $().crmNotification (false);
-          $i.removeClass ('crm-editable-saving').removeClass ('crm-editable-error');
+          var $i = $(this);
+          $().crmAlert('', 'Saved', 'success');
+          $i.removeClass ('crm-editable-saving crm-error');
           $i.html(value);
-      }
+        }
       }
 
       var editableSettings = $.extend({}, defaults, options);
@@ -159,7 +159,7 @@
             if (id) {
               var e=id.match(/(\S*)-(\S*)/);
                if (!e) 
-                 $().crmNotification ("Couldn't get the entity id. You need to set class='crm-entity' id='{entityName}-{id}'",'notification',this);
+                 console && console.log && console.log("Couldn't get the entity id. You need to set class='crm-entity' id='{entityName}-{id}'");
               formSettings.entity=e[1];
               formSettings.id=e[2];
             } 
@@ -211,7 +211,7 @@
         //$i.editable(function(value,editableSettings) {
           parent=$i.closest('.crm-entity');
           if (!parent) {
-            $().crmNotification ("crm-editable: you need to define one parent element that has a class .crm-entity",'notification',this);
+            console && console.log && console.log("crm-editable: you need to define one parent element that has a class .crm-entity");
             return;
           }
 

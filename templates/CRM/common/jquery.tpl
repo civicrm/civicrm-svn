@@ -80,9 +80,11 @@
 <script type="text/javascript" src="{$config->resourceBase}js/Common.js"></script>
 
 <script type="text/javascript" src="{$config->resourceBase}js/jquery/jquery.crmeditable.js"></script>
+<script type="text/javascript" src="{$config->resourceBase}js/jquery/jquery.crmmessages.js"></script>
 <script type="text/javascript" src="{$config->resourceBase}js/jquery/jquery.crmaccordions.js"></script>
 <script type="text/javascript" src="{$config->resourceBase}js/jquery/jquery.crmasmselect.js"></script>
-<script type="text/javascript" src="{$config->resourceBase}js/jquery/jquery.crmtooltip.js"></script>
+
+<script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.notify.js"></script>
 
 {* CRM-6819: localize datepicker *}
 {if $l10nURL}
