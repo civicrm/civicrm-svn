@@ -111,7 +111,8 @@ class CRM_Core_Page {
    * @param int    $mode  mode of the page
    *
    * @return CRM_Core_Page
-   */ function __construct($title = NULL, $mode = NULL) {
+   */ 
+  function __construct($title = NULL, $mode = NULL) {
     $this->_name  = CRM_Utils_System::getClassName($this);
     $this->_title = $title;
     $this->_mode  = $mode;
@@ -125,6 +126,9 @@ class CRM_Core_Page {
     if (isset($_GET['snippet']) && $_GET['snippet']) {
       if ($_GET['snippet'] == 3) {
         $this->_print = CRM_Core_Smarty::PRINT_PDF;
+      }
+      else if ($_GET['snippet'] == 5) {
+        $this->_print = CRM_Core_Smarty::PRINT_NOFORM;
       }
       else {
         $this->_print = CRM_Core_Smarty::PRINT_SNIPPET;
@@ -158,14 +162,14 @@ class CRM_Core_Page {
     CRM_Utils_Hook::pageRun($this);
 
     if ($this->_print) {
-      if ($this->_print == CRM_Core_Smarty::PRINT_SNIPPET ||
-        $this->_print == CRM_Core_Smarty::PRINT_PDF
-      ) {
+      if (in_array( $this->_print, array( CRM_Core_Smarty::PRINT_SNIPPET,
+        CRM_Core_Smarty::PRINT_PDF, CRM_Core_Smarty::PRINT_NOFORM ))) {
         $content = self::$_template->fetch('CRM/common/snippet.tpl');
       }
       else {
         $content = self::$_template->fetch('CRM/common/print.tpl');
       }
+
       CRM_Utils_System::appendTPLFile($pageTemplateFile,
         $content,
         $this->overrideExtraTemplateFileName()

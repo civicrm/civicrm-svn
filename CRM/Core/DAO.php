@@ -1538,13 +1538,11 @@ SELECT contact_id
 
     CRM_Utils_Hook::triggerInfo($info, $tableName);
 
-    // In theory, each triggerInfo listener has enough information to filter
-    // its output to match only $tableName; in practice that's a PITA which
-    // contradicts the design goal of allowing multiple triggers to be
-    // easily declared.  So we'll assume $info may list too many tables. 
-    // createTriggers() needs to do the real enforcement of $tableName
-    // filtering.
-    self::createTriggers($info, $tableName);
+    // drop all existing triggers on all tables
+    $logging->dropTriggers($tableName);
+
+    // now create the set of new triggers
+    self::createTriggers($info);
   }
 
    /**

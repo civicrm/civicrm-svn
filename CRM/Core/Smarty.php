@@ -62,9 +62,11 @@ class CRM_Core_Smarty extends Smarty {
    * @return CRM_Core_Smarty
    * @access private
    */ 
-  function __construct() {
+  private function __construct() {
     parent::__construct();
+  }
 
+  private function initialize( ) {
     $config = CRM_Core_Config::singleton();
 
     if (isset($config->customTemplateDir) && $config->customTemplateDir) {
@@ -164,8 +166,8 @@ class CRM_Core_Smarty extends Smarty {
    */
   static function &singleton() {
     if (!isset(self::$_singleton)) {
-      $config = CRM_Core_Config::singleton();
-      self::$_singleton = new CRM_Core_Smarty($config->templateDir, $config->templateCompileDir);
+      self::$_singleton = new CRM_Core_Smarty( );
+      self::$_singleton->initialize( );
 
       self::registerStringResource();
     }

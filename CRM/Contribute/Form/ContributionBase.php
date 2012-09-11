@@ -302,6 +302,21 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form {
 
         $this->set('paymentProcessors', $this->_paymentProcessors);
 
+        //set default payment processor
+        if (!empty($this->_paymentProcessors) && empty($this->_paymentProcessor)) {
+          foreach ($this->_paymentProcessors as $ppId => $values) {
+            if ($values['is_default'] == 1 || (count($this->_paymentProcessors) == 1)) {
+              $defaultProcessorId = $ppId;
+              break;
+            }
+          }
+        }
+        
+        if (isset($defaultProcessorId)) {
+          $this->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment($defaultProcessorId, $this->_mode);
+          $this->assign_by_ref('paymentProcessor', $this->_paymentProcessor);    
+        }
+
         if (!CRM_Utils_System::isNull($this->_paymentProcessors)) {
           foreach ($this->_paymentProcessors as $eachPaymentProcessor) {
             // check selected payment processor is active

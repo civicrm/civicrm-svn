@@ -282,7 +282,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
         }
         // Return the error message to the api
         $error = array();
-        $error['is_error'] = ts('The membership cannot be saved. No valid membership status for given dates');
+        $error['is_error'] = ts('The membership cannot be saved. No valid membership status for given dates. Please provide at least start_date. Optionally end_date and join_date.');
         return $error;
       }
       $params['status_id'] = $calcStatus['id'];
@@ -1886,8 +1886,7 @@ SELECT c.contribution_page_id as pageID
    * @static
    * @access public
    */
-  static
-  function getMembershipFields($mode = NULL) {
+  static function getMembershipFields($mode = NULL) {
     $fields = CRM_Member_DAO_Membership::export();
 
     //campaign fields.
@@ -2147,7 +2146,7 @@ FROM   civicrm_membership_type
     // CRM-6627, all status below 3 (active, pending, grace) are considered active
     if ($activeOnly) {
       $select .= " INNER JOIN civicrm_membership_status ON civicrm_membership.status_id = civicrm_membership_status.id ";
-      $where  .= " and civicrm_membership_status.is_active = 1";
+      $where  .= " and civicrm_membership_status.is_current_member = 1";
     }
  
     $query = $select . $where;
@@ -2461,7 +2460,7 @@ WHERE      civicrm_membership.is_test = 0";
         //get the membership status as per id.
         $newStatus = civicrm_api('membership_status', 'calc',
           array(
-            'membership_id' => $dao->membership_id, 'version' => 3), TRUE
+            'membership_id' => $dao->membership_id, 'version' => 3, 'ignore_admin_only'=> FALSE), TRUE
         );
         $statusId = CRM_Utils_Array::value('id', $newStatus);
 

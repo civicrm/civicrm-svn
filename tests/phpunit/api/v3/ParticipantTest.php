@@ -82,9 +82,11 @@ class api_v3_ParticipantTest extends CiviUnitTestCase {
 
   function tearDown() {
     $this->eventDelete($this->_eventID);
-    $this->contactDelete($this->_contactID);
-    $this->contactDelete($this->_individualId);
-    $this->contactDelete($this->_contactID2);
+    $tablesToTruncate = array(
+      'civicrm_custom_group', 'civicrm_custom_field', 'civicrm_contact'
+    );
+    // true tells quickCleanup to drop any tables that might have been created in the test
+    $this->quickCleanup($tablesToTruncate, TRUE);
   }
 
   /**
@@ -163,7 +165,6 @@ class api_v3_ParticipantTest extends CiviUnitTestCase {
     $this->assertEquals($result['values'][$this->_participantID]['event_id'], $this->_eventID);
     $this->assertEquals($result['values'][$this->_participantID]['participant_register_date'], '2007-02-19 00:00:00');
  
-  
   }
 
   /**

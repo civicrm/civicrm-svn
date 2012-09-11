@@ -1433,7 +1433,7 @@ function _civicrm_api3_validate_string(&$params, &$fieldname, &$fieldInfo) {
       // Try to lookup key from label - if it can't be found throw error
       if (!isset($constant[$value])) {
         if (!($key = array_search($value, $constant))) {
-          throw new Exception("$fieldname '$value' is not valid.");
+          throw new Exception("$fieldname `$value` is not valid.");
       }
         else {
           $value = $key;

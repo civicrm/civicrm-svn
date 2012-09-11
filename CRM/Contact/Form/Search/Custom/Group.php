@@ -158,10 +158,10 @@ class CRM_Contact_Form_Search_Custom_Group extends CRM_Contact_Form_Search_Custo
     $includeContactIDs = FALSE, $justIDs = FALSE
   ) {
     if ($justIDs) {
-      $selectClause = "DISTINCT(contact_a.id)  as contact_id";
+      $selectClause = "contact_a.id as contact_id";
     }
     else {
-      $selectClause = "DISTINCT(contact_a.id)  as contact_id,
+      $selectClause = "contact_a.id as contact_id,
                          contact_a.contact_type as contact_type,
                          contact_a.sort_name    as sort_name";
 
@@ -187,10 +187,7 @@ class CRM_Contact_Form_Search_Custom_Group extends CRM_Contact_Form_Search_Custo
 
     $where = $this->where($includeContactIDs);
 
-    $sql = " SELECT $selectClause $from WHERE  $where ";
-    if (!$justIDs && !$this->_allSearch) {
-      $sql .= " GROUP BY contact_id ";
-    }
+    $sql = "SELECT $selectClause $from WHERE  $where GROUP BY contact_id";
 
     // Define ORDER BY for query in $sort, with default value
     if (!$justIDs) {

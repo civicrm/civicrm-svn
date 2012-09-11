@@ -57,8 +57,10 @@ class CRM_Upgrade_Headless {
       ));
     $queueResult = $queueRunner->runAll();
     if ($queueResult !== TRUE) {
+      $errorMessage = CRM_Core_Error::formatTextException($queueResult['exception']);
+      CRM_Core_Error::debug_log_message($errorMessage);
       if ($enablePrint) {
-        print(CRM_Core_Error::formatTextException($queueResult['exception']));
+        print($errorMessage);
     }
       throw $queueResult['exception']; // FIXME test
     }

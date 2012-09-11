@@ -71,6 +71,7 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase {
     $paymentProcessorParams['domain_id'] = 1;
     $paymentProcessorParams['is_active'] = 1;
     $paymentProcessorParams['is_test'] = 1;
+    $paymentProcessorParams['billing_mode'] = 1;
     $processorEntity = $this->paymentProcessor->create($paymentProcessorParams);
 
     $this->_processorId = $processorEntity->id;

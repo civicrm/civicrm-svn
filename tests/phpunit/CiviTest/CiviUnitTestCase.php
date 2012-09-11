@@ -74,6 +74,11 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
   static protected $_dbName;
 
   /**
+   * @var array of temporary directory names
+   */
+  protected $tempDirs;
+
+  /**
    *  @var Utils instance
    */
   public static $utils;
@@ -348,6 +353,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
     $this->_dbconn = $this->getConnection();
     $this->_populateDB();
+    $this->tempDirs = array();
   }
 
   /**
@@ -355,6 +361,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
    */
   protected function tearDown() {
     error_reporting(E_ALL & ~E_NOTICE);
+    $this->cleanTempDirs();
   }
 
   /**
@@ -2107,6 +2114,29 @@ AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
   function assertMailLogEmpty($prefix = ''){
     $mail = file_get_contents(CIVICRM_MAIL_LOG);
     $this->assertEmpty($mail, 'mail sent when it should not have been ' . $prefix);
+  }
+
+  /**
+   * Generate a temporary folder
+   *
+   * @return $string
+   */
+  function createTempDir($prefix = 'test-') {
+    $tempDir = CRM_Utils_File::tempdir($prefix);
+    $this->tempDirs[] = $tempDir;
+    return $tempDir;
+}
+
+  function cleanTempDirs() {
+    if(!is_array($this->tempDirs)){
+      // fix test errors where this is not set
+      return;
+    }
+    foreach ($this->tempDirs as $tempDir) {
+      if (is_dir($tempDir)) {
+        CRM_Utils_File::cleanDir($tempDir, TRUE, FALSE);
+      }
+    }
   }
 }
 

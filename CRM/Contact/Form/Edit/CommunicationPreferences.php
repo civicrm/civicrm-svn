@@ -112,10 +112,7 @@ class CRM_Contact_Form_Edit_CommunicationPreferences {
       //add addressee in Contact form
       $greetingTokens = CRM_Core_PseudoConstant::greeting($filter);
       if (!empty($greetingTokens)) {
-        $form->addElement('select', $fields['field'], $fields['label'],
-          array(
-            '' => ts('- select -')) + $greetingTokens
-        );
+        $form->addElement('select', $fields['field'], $fields['label'], $greetingTokens);
         //custom addressee
         $form->addElement('text', $fields['customField'], $fields['customLabel'],
           CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', $fields['customField']), $fields['js']

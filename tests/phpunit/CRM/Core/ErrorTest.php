@@ -41,6 +41,15 @@ class CRM_Core_ErrorTest extends CiviUnitTestCase {
 
   function setUp() {
     parent::setUp();
+    $config = CRM_Core_Config::singleton();
+    $this->oldConfigAndLogDir = $config->configAndLogDir;
+    $config->configAndLogDir = $this->createTempDir('test-log-');
+  }
+
+  function tearDown() {
+    $config = CRM_Core_Config::singleton();
+    $config->configAndLogDir= $this->oldConfigAndLogDir;
+    parent::tearDown();
   }
 
   /**
@@ -59,5 +68,33 @@ class CRM_Core_ErrorTest extends CiviUnitTestCase {
     $e = new Exception('foo');
     $msg = CRM_Core_Error::formatBacktrace($e->getTrace());
     $this->assertRegexp('/CRM_Core_ErrorTest->testFormatBacktrace_exception/', $msg);
+  }
+
+  /**
+   * We have two coding conventions for writing to log. Make sure that they work together.
+   *
+   * This tests a theory about what caused CRM-10766.
+   */
+  function testMixLog() {
+    CRM_Core_Error::debug_log_message("static-1");
+    $logger = CRM_Core_Error::createDebugLogger();
+    CRM_Core_Error::debug_log_message("static-2");
+    $logger->info('obj-1');
+    CRM_Core_Error::debug_log_message("static-3");
+    $logger->info('obj-2');
+    CRM_Core_Error::debug_log_message("static-4");
+    $logger2 = CRM_Core_Error::createDebugLogger();
+    $logger2->info('obj-3');
+    CRM_Core_Error::debug_log_message("static-5");
+    $this->assertLogRegexp('/static-1.*static-2.*obj-1.*static-3.*obj-2.*static-4.*obj-3.*static-5/s');
+}
+
+  function assertLogRegexp($pattern) {
+    $config = CRM_Core_Config::singleton();
+    $logFiles = glob($config->configAndLogDir.'/CiviCRM*log*/');
+    $this->assertEquals(1, count($logFiles));
+    foreach ($logFiles as $logFile) {
+      $this->assertRegexp($pattern, file_get_contents($logFile));
+    }
   }
 }

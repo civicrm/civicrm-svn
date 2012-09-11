@@ -72,7 +72,7 @@ class civicrm_handler_relationship extends views_handler_relationship {
    */
   function label() {
     if (!isset($this->options['label'])) {
-      return $this->ui_name();
+      return '';
     }
     return $this->options['label'];
   }

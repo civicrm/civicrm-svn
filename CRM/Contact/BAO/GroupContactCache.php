@@ -322,8 +322,7 @@ WHERE  id = %1
     }
 
     if ($sql) {
-      // $sql .= " UNION ";
-      $sql = preg_replace("/^SELECT/", "SELECT $groupID as group_id, ", $sql);
+      $sql = preg_replace("/^\s*SELECT/", "SELECT $groupID as group_id, ", $sql);
     }
 
     // lets also store the records that are explicitly added to the group

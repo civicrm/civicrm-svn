@@ -74,6 +74,18 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
       return CRM_Core_Payment_ProcessorForm::preProcess($this);
     }
 
+    //get payPal express id and make it available to template
+    $paymentProcessors = $this->get('paymentProcessors');
+    if (!empty($paymentProcessors)) {
+      foreach ($paymentProcessors as $ppId => $values) {
+        $payPalExpressId = ($values['payment_processor_type'] == 'PayPal_Express') ? $values['id'] : 0;
+        $this->assign('payPalExpressId', $payPalExpressId);
+        if ($payPalExpressId) {
+          break;
+        }
+      }
+    }
+
     // Make the contributionPageID avilable to the template
     $this->assign('contributionPageID', $this->_id);
     $this->assign('isShare', CRM_Utils_Array::value('is_share', $this->_values));
@@ -1201,6 +1213,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
           if ($priceField->name == "membership_amount") {
             if ($priceFiledID = CRM_Utils_Array::value("price_{$priceField->id}", $params)) {
              $this->_params['selectMembership'] = $params['selectMembership'] = CRM_Utils_Array::value('membership_type_id', $values[$priceFiledID]);
+              $this->set('selectMembership',CRM_Utils_Array::value('selectMembership', $params));
               if (CRM_Utils_Array::value('is_separate_payment', $this->_membershipBlock) == 0) {
                 $this->_values['amount'] = CRM_Utils_Array::value('amount', $values[$priceFiledID]);
               }
@@ -1351,7 +1364,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         if (in_array($buttonName,
             array($this->_expressButtonName, $this->_expressButtonName . '_x', $this->_expressButtonName . '_y')
           ) &&
-          !isset($params['is_pay_later'])
+            !CRM_Utils_Array::value('is_pay_later', $params)
         ) {
           $this->set('contributeMode', 'express');
 

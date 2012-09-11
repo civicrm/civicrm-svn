@@ -453,11 +453,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
       }
     }
 
-    /*
-         * add the go button for the action form, note it is of type 'next' rather than of type 'submit'
-         *
-         */
-
+    // add the go button for the action form, note it is of type 'next' rather than of type 'submit'
     if ($this->_context === 'amtg') {
       // Set dynamic page title for 'Add Members Group'
       CRM_Utils_System::setTitle(ts('Add to Group: %1', array(1 => $this->_group[$this->_amtgID])));
@@ -554,10 +550,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
    * @access public
    */
   function preProcess() {
-
-    /**
-     * set the varios class variables
-     */
+    // set the varios class variables
 
     $this->_group = CRM_Core_PseudoConstant::group();
 
@@ -628,10 +621,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
       $this->_ufGroupID = $config->defaultSearchProfileID;
     }
 
-    /*
-         * assign context to drive the template display, make sure context is valid
-         */
-
+    // assign context to drive the template display, make sure context is valid
     $this->_context = CRM_Utils_Request::retrieve('context', 'String', $this, FALSE, 'search');
     if (!CRM_Utils_Array::value($this->_context, self::validContext())) {
       $this->_context = 'search';
@@ -891,7 +881,6 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
 
     if ($buttonName == $this->_actionButtonName || $buttonName == $this->_printButtonName) {
       // check actionName and if next, then do not repeat a search, since we are going to the next page
-
       // hack, make sure we reset the task values
       $stateMachine = &$this->controller->getStateMachine();
       $formName = $stateMachine->getTaskFormName();
@@ -899,7 +888,6 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
       return;
     }
     else {
-
       $output = CRM_Core_Selector_Controller::SESSION;
 
       // create the selector, controller and run - store results in session

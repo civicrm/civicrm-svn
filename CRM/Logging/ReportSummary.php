@@ -132,7 +132,7 @@ class CRM_Logging_ReportSummary extends CRM_Report_Form {
 
   function postProcess() {
     $this->beginPostProcess();
-
+    $rows = array();
     // temp table to hold all altered contact-ids
     $sql = "
 CREATE TEMPORARY TABLE

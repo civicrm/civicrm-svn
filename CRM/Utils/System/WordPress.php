@@ -236,6 +236,9 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
     if ((is_admin() && !$frontend) || $forceBackend) {
       $base .= 'wp-admin/admin.php';
     }
+    elseif (defined('CIVICRM_UF_WP_BASEPAGE')) {
+      $base .= CIVICRM_UF_WP_BASEPAGE;
+    }
     
     if (isset($path)) {
         if (isset($query)) {

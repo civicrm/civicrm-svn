@@ -455,7 +455,7 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
         'name' => $fieldName,
       );
       $results = array();
-      CRM_Price_BAO_Field::retrieve(&$fieldParams, &$results);
+      CRM_Price_BAO_Field::retrieve($fieldParams, $results);
       if (empty($results)) {
         $fieldParams = array();
         $fieldParams['label'] = $fieldLabel;
@@ -481,7 +481,7 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
           'membership_type_id' => $membershipType->id,
         );
         $results = array();
-        CRM_Price_BAO_FieldValue::retrieve(&$fieldValueParams, &$results);
+        CRM_Price_BAO_FieldValue::retrieve($fieldValueParams, $results);
         if (!empty($results)) {
           $results['label']  = $results['name'] = $submitted['name'];
           $results['amount'] = empty($submitted['minimum_fee']) ? 0 : $submitted['minimum_fee'];
@@ -528,14 +528,14 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
         'name' => $previousID,
       );
       $editedResults = array();
-      CRM_Price_BAO_Field::retrieve(&$editedFieldParams, &$editedResults);
+      CRM_Price_BAO_Field::retrieve($editedFieldParams, $editedResults);
       if (!empty($editedResults)) {
         $editedFieldParams = array(
           'price_field_id' => $editedResults['id'],
           'membership_type_id' => $membershipTypeId,
         );
         $editedResults = array();
-        CRM_Price_BAO_FieldValue::retrieve(&$editedFieldParams, &$editedResults);
+        CRM_Price_BAO_FieldValue::retrieve($editedFieldParams, $editedResults);
         $optionsIds['option_id'][1] = CRM_Utils_Array::value('id', $editedResults);
       }
     }
