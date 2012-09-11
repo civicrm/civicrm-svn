@@ -37,7 +37,7 @@
  * Dummy page for details for IM
  *
  */
-class CRM_Contact_Page_Inline_IM {
+class CRM_Contact_Page_Inline_IM extends CRM_Core_Page {
 
   /**
    * Run the page.
@@ -64,17 +64,14 @@ class CRM_Contact_Page_Inline_IM {
       }
     }
    
-    $template = CRM_Core_Smarty::singleton();
-    $template->assign('contactId', $contactId);
-    $template->assign('im', $ims);
+    $this->assign('contactId', $contactId);
+    $this->assign('im', $ims);
 
     // check logged in user permission
-    $page = new CRM_Core_Page();
-    CRM_Contact_Page_View::checkUserPermission($page, $contactId);
-    $template->assign($page);
-
-    echo $content = $template->fetch('CRM/Contact/Page/Inline/IM.tpl');
-    CRM_Utils_System::civiExit();
+    CRM_Contact_Page_View::checkUserPermission($this, $contactId);
+ 
+    // finally call parent 
+    parent::run();
   }
 }
 

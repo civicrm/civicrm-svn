@@ -37,7 +37,7 @@
  * Page to disply contact information on topi of summary 
  *
  */
-class CRM_Contact_Page_Inline_ContactInfo {
+class CRM_Contact_Page_Inline_ContactInfo extends CRM_Core_Page {
 
   /**
    * Run the page.
@@ -52,9 +52,7 @@ class CRM_Contact_Page_Inline_ContactInfo {
     // get the emails for this contact
     $contactId = CRM_Utils_Request::retrieve('cid', 'Positive', CRM_Core_DAO::$_nullObject, TRUE, NULL, $_REQUEST);
 
-    $params = array(
-      'id' => $contactId
-    );
+    $params = array('id' => $contactId);
 
     $defaults = array();
     CRM_Contact_BAO_Contact::getValues( $params, $defaults );
@@ -68,17 +66,14 @@ class CRM_Contact_Page_Inline_ContactInfo {
       }
     }
 
-    $template = CRM_Core_Smarty::singleton();
-    $template->assign('contactId', $contactId);
-    $template->assign($defaults);
-    
+    $this->assign('contactId', $contactId);
+    $this->assign($defaults);
+
     // check logged in user permission
-    $page = new CRM_Core_Page();
-    CRM_Contact_Page_View::checkUserPermission($page, $contactId);
-    $template->assign($page);
+    CRM_Contact_Page_View::checkUserPermission($this, $contactId);
  
-        echo $content = $template->fetch('CRM/Contact/Page/Inline/ContactInfo.tpl');
-    CRM_Utils_System::civiExit();
+    // finally call parent 
+    parent::run();
   }
 }
 

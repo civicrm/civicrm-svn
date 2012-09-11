@@ -37,7 +37,7 @@
  * Page to disply contact name on top of the summary 
  *
  */
-class CRM_Contact_Page_Inline_ContactName {
+class CRM_Contact_Page_Inline_ContactName extends CRM_Core_Page {
 
   /**
    * Run the page.
@@ -51,22 +51,19 @@ class CRM_Contact_Page_Inline_ContactName {
   function run() {
     // get the emails for this contact
     $contactId = CRM_Utils_Request::retrieve('cid', 'Positive', CRM_Core_DAO::$_nullObject, TRUE, NULL, $_REQUEST);
-
-    $template = CRM_Core_Smarty::singleton();
-    $template->assign('contactId', $contactId);
     
     $isDeleted = (bool) CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $contactId, 'is_deleted');
 
-    $title = CRM_Contact_Page_View::setTitle($contactId, $isDeleted); 
-    $template->assign('title', $title);
+    $this->assign('contactId', $contactId);
     
+    $title = CRM_Contact_Page_View::setTitle($contactId, $isDeleted); 
+    $this->assign('title', $title);
+
     // check logged in user permission
-    $page = new CRM_Core_Page();
-    CRM_Contact_Page_View::checkUserPermission($page, $contactId);
-    $template->assign($page);
+    CRM_Contact_Page_View::checkUserPermission($this, $contactId);
  
-    echo $content = $template->fetch('CRM/Contact/Page/Inline/ContactName.tpl');
-    CRM_Utils_System::civiExit();
+    // finally call parent 
+    parent::run();
   }
 }
 

@@ -37,7 +37,7 @@
  * Dummy page for details of website 
  *
  */
-class CRM_Contact_Page_Inline_Website {
+class CRM_Contact_Page_Inline_Website extends CRM_Core_Page {
 
   /**
    * Run the page.
@@ -62,17 +62,14 @@ class CRM_Contact_Page_Inline_Website {
       }
     }
 
-    $template = CRM_Core_Smarty::singleton();
-    $template->assign('contactId', $contactId);
-    $template->assign('website', $websites);
+    $this->assign('contactId', $contactId);
+    $this->assign('website', $websites);
 
     // check logged in user permission
-    $page = new CRM_Core_Page();
-    CRM_Contact_Page_View::checkUserPermission($page, $contactId);
-    $template->assign($page);
-    
-    echo $content = $template->fetch('CRM/Contact/Page/Inline/Website.tpl');
-    CRM_Utils_System::civiExit();
+    CRM_Contact_Page_View::checkUserPermission($this, $contactId);
+ 
+    // finally call parent 
+    parent::run();
   }
 }
 

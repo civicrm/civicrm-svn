@@ -123,11 +123,11 @@ class CRM_Core_Page {
       self::$_session = CRM_Core_Session::singleton();
     }
 
-    if (isset($_GET['snippet']) && $_GET['snippet']) {
-      if ($_GET['snippet'] == 3) {
+    if (isset($_REQUEST['snippet']) && $_REQUEST['snippet']) {
+      if ($_REQUEST['snippet'] == 3) {
         $this->_print = CRM_Core_Smarty::PRINT_PDF;
       }
-      else if ($_GET['snippet'] == 5) {
+      else if ($_REQUEST['snippet'] == 5) {
         $this->_print = CRM_Core_Smarty::PRINT_NOFORM;
       }
       else {
@@ -136,7 +136,7 @@ class CRM_Core_Page {
     }
 
     // if the request has a reset value, initialize the controller session
-    if (CRM_Utils_Array::value('reset', $_GET)) {
+    if (CRM_Utils_Array::value('reset', $_REQUEST)) {
       $this->reset();
     }
   }
@@ -338,8 +338,7 @@ class CRM_Core_Page {
     return $this->_print;
   }
 
-  static
-  function &getTemplate() {
+  static function &getTemplate() {
     return self::$_template;
   }
 
