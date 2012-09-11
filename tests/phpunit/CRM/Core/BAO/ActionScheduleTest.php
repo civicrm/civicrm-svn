@@ -333,13 +333,17 @@ class CRM_Core_BAO_ActionScheduleTest extends CiviUnitTestCase {
   function testMembershipEndDate_Match() {
     $actionScheduleDao = CRM_Core_BAO_ActionSchedule::add($this->fixtures['sched_membership_end_2week'], $ids);
     $this->assertTrue(is_numeric($actionScheduleDao->id));
+
+    // creates membership with end_date = 20120615
     $membership = $this->createTestObject('CRM_Member_DAO_Membership', $this->fixtures['rolling_membership']);
+
     $this->assertTrue(is_numeric($membership->id));
     $result = civicrm_api('Email', 'create', array(
       'contact_id' => $membership->contact_id,
       'email' => 'test-member@example.com',
       'version' => 3,
     ));
+    
     $this->assertAPISuccess($result);
 
     // end_date=2012-06-15 ; schedule is 2 weeks before end_date
