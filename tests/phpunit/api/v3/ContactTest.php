@@ -759,7 +759,6 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     $this->assertEquals($employer, $relationships['values'][0]['contact_id_b']);
   }
 
-  }
   /**
    *  Verify that attempt to create household contact with details
    *  succeeds
