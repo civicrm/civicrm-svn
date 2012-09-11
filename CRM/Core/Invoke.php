@@ -52,7 +52,7 @@ class CRM_Core_Invoke {
       return;
     }
 
-    if (TRUE) {
+    if (!defined('CIVICRM_SYMFONY_PATH')) {
       // Traditional Civi invocation path
       self::hackMenuRebuild($args); // may exit
       self::init($args);
@@ -138,8 +138,12 @@ class CRM_Core_Invoke {
    * @return array; see CRM_Core_Menu
    */
   static public function getItem($args) {
-    // get the menu items
-    $path = implode('/', $args);
+    if (is_array($args)) {
+      // get the menu items
+      $path = implode('/', $args);
+    } else {
+      $path = $args;
+    }
     $item = CRM_Core_Menu::get($path);
 
     // we should try to compute menus, if item is empty and stay on the same page,
