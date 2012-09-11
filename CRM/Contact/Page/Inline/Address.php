@@ -102,19 +102,6 @@ class CRM_Contact_Page_Inline_Address extends CRM_Core_Page {
     $this->assign('locationIndex', $locBlockNo);
     $this->assign('addressId', $addressId);
     
-    $appendBlockIndex = CRM_Core_BAO_Address::getAddressCount($contactId);
-
-    // check if we are adding new address, then only append add link 
-    if ( $appendBlockIndex == $locBlockNo ) {
-      if ( $appendBlockIndex ) {
-        $appendBlockIndex++;
-      }
-    }
-    else {
-      $appendBlockIndex = 0; 
-    }
-    $this->assign('appendBlockIndex', $appendBlockIndex);
-    
     // check logged in user permission
     CRM_Contact_Page_View::checkUserPermission($this, $contactId);
 
