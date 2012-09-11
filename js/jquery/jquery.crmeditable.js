@@ -443,6 +443,7 @@
       var errorTag = o.find('.update_oplock_ts');
       if (errorTag.length > 0) {
         $('<button>')
+          .addClass('crm-button')
           .text(options.ignoreLabel)
           .click(function() {
             oplock_ts = errorTag.attr('data:update_oplock_ts');
@@ -456,6 +457,7 @@
           .appendTo(errorTag)
           ;
         $('<button>')
+          .addClass('crm-button')
           .text(options.reloadLabel)
           .click(function() {
             window.location.reload();
