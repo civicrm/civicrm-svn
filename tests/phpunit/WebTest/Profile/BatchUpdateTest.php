@@ -114,10 +114,8 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
 
     $this->type('sort_name',  $firstName2);
     $this->click('_qf_Basic_refresh');
-    
-    $this->waitForElementPresent('link=View');
-    $this->click('link=View');
-
+    $this->waitForElementPresent("xpath=//div[@class='crm-search-results']/a/table/tbody//td/span/a[text()='View']");
+    $this->click("xpath=//div[@class='crm-search-results']/a/table/tbody//td/span/a[text()='View']");
     $this->waitForPageToLoad("30000"); 
 
     $xpath = "xpath=//div/table/tbody/tr/td[@class='crm-contact_type_label']";
@@ -128,10 +126,8 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
     
     $this->type('sort_name',  $firstName3);
     $this->click('_qf_Basic_refresh');
-    
-    $this->waitForElementPresent('link=View');
-    $this->click('link=View');
-    
+    $this->waitForElementPresent("xpath=//div[@class='crm-search-results']/a/table/tbody//td/span/a[text()='View']");
+    $this->click("xpath=//div[@class='crm-search-results']/a/table/tbody//td/span/a[text()='View']");
     $this->waitForPageToLoad("30000"); 
     
     $xpath = "xpath=//div/table/tbody/tr/td[@class='crm-contact_type_label']";
