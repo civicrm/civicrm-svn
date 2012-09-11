@@ -42,9 +42,9 @@
       <div class="crm-summary-row">
         <div class="crm-label">{$item.website_type} {ts}Website{/ts}</div>
         <div class="crm-content crm-contact_website"><a href="{$item.url}" target="_blank">{$item.url}</a></div>
-      <div>
+      </div>
       {/if}
     {/foreach}
 
-    </div> <!-- end of main -->
+  </div> <!-- end of main -->
 </div>
