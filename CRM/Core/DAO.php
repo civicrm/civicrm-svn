@@ -1532,7 +1532,7 @@ SELECT contact_id
     CRM_Utils_Hook::triggerInfo($info, $tableName);
 
     // drop all existing triggers on all tables
-    $logging->dropTriggers( );
+    $logging->dropTriggers($tableName);
 
     // now create the set of new triggers
     self::createTriggers($info);
