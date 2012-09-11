@@ -718,22 +718,22 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     // delete the contact
     civicrm_api('contact', 'delete', $params);
   }
+
   /**
-   *  Verify that attempt to create individual contact with first
-   *  and last names, email and location type succeeds
+   * Verify that when changing employers
+   * the old employer relationship becomes inactive
    */
   function testCreateIndividualWithEmployer() {
     $employer = $this->organizationCreate();
     $employer2 = $this->organizationCreate();
-    $params = array(
-        'first_name' => 'abc4',
-        'last_name' => 'xyz4',
-        'email' => 'man4@yahoo.com',
-        'contact_type' => 'Individual',
-        'version' => $this->_apiversion,
-        'employer_id' => $employer,
 
+    $params = array(
+      'email' => 'man4@yahoo.com',
+      'contact_type' => 'Individual',
+      'version' => $this->_apiversion,
+      'employer_id' => $employer,
     );
+
     $result = civicrm_api('contact', 'create', $params);
     $this->assertAPISuccess($result, ' in line ' . __LINE__);
     $relationships = civicrm_api('relationship', 'get', array(
@@ -753,10 +753,11 @@ class api_v3_ContactTest extends CiviUnitTestCase {
       'version' => 3,
       'contact_id_a' => $result['id'],
       'sequential' => 1,
-      'is_active' => 1,
+      'is_active' => 0,
     ));
 
-    $this->assertEquals($employer2, $relationships['values'][0]['contact_id_b']);
+    $this->assertEquals($employer, $relationships['values'][0]['contact_id_b']);
+  }
 
   }
   /**
