@@ -131,7 +131,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $this->click("link=Add Relationship");
     $this->waitForElementPresent("_qf_Relationship_cancel");
     $this->select("relationship_type_id", "Employee of");
-    $this->fillAutoComplete("Compasspoint", "contact_1");
+    $this->webtestFillAutocomplete("Compasspoint");
     $this->waitForElementPresent("details-save");
     $this->click("details-save");
     $this->waitForPageToLoad("30000");
