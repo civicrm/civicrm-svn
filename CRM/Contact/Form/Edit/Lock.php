@@ -49,11 +49,11 @@ class CRM_Contact_Form_Edit_Lock {
    * @access public
    * @return void
    */
-  public function buildQuickForm(&$form) {
+  public static function buildQuickForm(&$form) {
     $form->addElement('hidden', 'modified_date', '', array('id' => 'modified_date'));
-      
-    $this->addElement('button', 'qf_Ignore', ts('Ignore'));
-    $this->addElement('button', 'qf_StartOver', ts('Start Over'));
+
+    $form->addElement('button', 'qf_Ignore', ts('Ignore'));
+    $form->addElement('button', 'qf_StartOver', ts('Start Over'));
   }
 
   /**

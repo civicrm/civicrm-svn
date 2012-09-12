@@ -176,7 +176,8 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
                 if ($caller->getAttribute('method') == 'get') {
                     return PEAR::raiseError('Cannot add a file upload field to a GET method form');
                 }
-                $this->_value = $this->_findValue();
+                $placeholder = array();
+                $this->_value = $this->_findValue($placeholder);
                 $caller->updateAttributes(array('enctype' => 'multipart/form-data'));
                 $caller->setMaxFileSize();
                 break;
@@ -322,7 +323,7 @@ class HTML_QuickForm_file extends HTML_QuickForm_input
     * @access    private
     * @return    mixed
     */
-    function _findValue()
+    function _findValue(&$values)
     {
         if (empty($_FILES)) {
             return null;
