@@ -127,7 +127,7 @@ class CRM_UF_Form_Preview extends CRM_Core_Form {
    *
    * @return array the default array reference
    */
-  function &setDefaultValues() {
+  function setDefaultValues() {
     $defaults = array();
     $stateCountryMap = array();
     foreach ($this->_fields as $name => $field) {

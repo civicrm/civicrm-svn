@@ -123,7 +123,7 @@ class CRM_PCP_BAO_PCPTest extends CiviUnitTestCase {
 
     $pcp   = CRM_Core_DAO::createTestObject('CRM_PCP_DAO_PCP');
     $pcpId = $pcp->id;
-    $del   = CRM_PCP_BAO_PCP::delete($pcpId);
+    $del   = CRM_PCP_BAO_PCP::deleteById($pcpId);
     $this->assertDBRowNotExist('CRM_PCP_DAO_PCP', $pcpId,
       'Database check PCP deleted successfully.'
     );

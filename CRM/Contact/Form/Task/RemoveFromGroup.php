@@ -63,7 +63,7 @@ class CRM_Contact_Form_Task_RemoveFromGroup extends CRM_Contact_Form_Task {
    *
    * @return array the default array reference
    */
-  function &setDefaultValues() {
+  function setDefaultValues() {
     $defaults = array();
 
     if ($this->get('context') === 'smog') {

@@ -100,7 +100,7 @@ class CRM_Custom_Form_Preview extends CRM_Core_Form {
    * @return array   the default array reference
    * @access protected
    */
-  function &setDefaultValues() {
+  function setDefaultValues() {
     $defaults = array();
 
     CRM_Core_BAO_CustomGroup::setDefaults($this->_groupTree, $defaults, FALSE, FALSE);

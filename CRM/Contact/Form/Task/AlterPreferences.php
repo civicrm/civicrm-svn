@@ -74,7 +74,7 @@ class CRM_Contact_Form_Task_AlterPreferences extends CRM_Contact_Form_Task {
    *
    * @return array the default array reference
    */
-  function &setDefaultValues() {
+  function setDefaultValues() {
     $defaults = array();
 
     $defaults['actionTypeOption'] = 0;

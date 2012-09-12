@@ -461,7 +461,7 @@ class CRM_Case_Form_Search extends CRM_Core_Form {
    *
    * @return array the default array reference
    */
-  function &setDefaultValues() {
+  function setDefaultValues() {
     $defaults = array();
     $defaults = $this->_formValues;
     return $defaults;
