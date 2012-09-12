@@ -319,7 +319,7 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
             CRM_Utils_Array::value($fieldName, $this->_params['fields'])
           ) {
 
-            if (!CRM_Utils_Array::value('activity_type_id', $this->_params['group_bys']) &&
+            if (!CRM_Utils_Array::value('activity_type_id', CRM_Utils_Array::value('group_bys',$this->_params)) &&
               (in_array($fieldName, array(
                 'contact_assignee', 'assignee_contact_id')) ||
                 in_array($fieldName, array('contact_target', 'target_contact_id'))
@@ -617,7 +617,7 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
         }
       }
 
-      if (array_key_exists('civicrm_activity_activity_date_time', $row)) {
+      if (array_key_exists('civicrm_activity_activity_date_time', $row) && array_key_exists('civicrm_activity_status_id', $row)) {
         if (CRM_Utils_Date::overdue($rows[$rowNum]['civicrm_activity_activity_date_time']) &&
           $activityStatus[$row['civicrm_activity_status_id']] != 'Completed'
         ) {
