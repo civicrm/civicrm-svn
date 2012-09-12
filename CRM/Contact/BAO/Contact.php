@@ -91,21 +91,22 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact {
     if ( isset( $params['contact_sub_type'] ) ) {
       if ( empty($params['contact_sub_type']) ) {
         $params['contact_sub_type'] = 'null';
-      } else {
-      if (!CRM_Contact_BAO_ContactType::isExtendsContactType($params['contact_sub_type'],
-          $params['contact_type'], TRUE
-        )) {
-        // we'll need to fix tests to handle this
-        // CRM-7925
-        CRM_Core_Error::fatal(ts('The Contact Sub Type does not match the Contact type for this record'));
-      }
-      if (is_array($params['contact_sub_type'])) {
-        $params['contact_sub_type'] = CRM_Core_DAO::VALUE_SEPARATOR . implode(CRM_Core_DAO::VALUE_SEPARATOR, $params['contact_sub_type']) . CRM_Core_DAO::VALUE_SEPARATOR;
       }
       else {
-        $params['contact_sub_type'] = CRM_Core_DAO::VALUE_SEPARATOR . trim($params['contact_sub_type'], CRM_Core_DAO::VALUE_SEPARATOR) . CRM_Core_DAO::VALUE_SEPARATOR;
+        if (!CRM_Contact_BAO_ContactType::isExtendsContactType($params['contact_sub_type'],
+            $params['contact_type'], TRUE
+          )) {
+          // we'll need to fix tests to handle this
+          // CRM-7925
+          CRM_Core_Error::fatal(ts('The Contact Sub Type does not match the Contact type for this record'));
+        }
+        if (is_array($params['contact_sub_type'])) {
+          $params['contact_sub_type'] = CRM_Core_DAO::VALUE_SEPARATOR . implode(CRM_Core_DAO::VALUE_SEPARATOR, $params['contact_sub_type']) . CRM_Core_DAO::VALUE_SEPARATOR;
+        }
+        else {
+          $params['contact_sub_type'] = CRM_Core_DAO::VALUE_SEPARATOR . trim($params['contact_sub_type'], CRM_Core_DAO::VALUE_SEPARATOR) . CRM_Core_DAO::VALUE_SEPARATOR;
+        }
       }
-    }
     }
     else {
       // reset the value
@@ -183,6 +184,8 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact {
       $contact->hash = md5(uniqid(rand(), TRUE));
     }
 
+    $employerId = empty($contact->id) ? NULL : CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $contact->id, 'employer_id');
+
     if (!$allNull) {
       $contact->save();
 
@@ -210,7 +213,7 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact {
       }
       else {
         //unset if employer id exits
-        if ($employerId = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $contact->id, 'employer_id')) {
+        if ($employerId) {
           CRM_Contact_BAO_Contact_Utils::clearCurrentEmployer($contact->id, $employerId);
         }
       }

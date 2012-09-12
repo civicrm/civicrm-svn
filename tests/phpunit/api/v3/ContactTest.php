@@ -726,7 +726,6 @@ class api_v3_ContactTest extends CiviUnitTestCase {
   function testCreateIndividualWithEmployer() {
     $employer = $this->organizationCreate();
     $employer2 = $this->organizationCreate();
-    $random_org = $this->organizationCreate();
 
     $params = array(
       'email' => 'man4@yahoo.com',
@@ -751,7 +750,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
       $random_rel = civicrm_api('relationship', 'create', array(
         'version' => $this->_apiversion,
         'contact_id_a' => $result['id'],
-        'contact_id_b' => $random_org,
+        'contact_id_b' => $this->organizationCreate(),
         'is_active' => 1,
         'relationship_type_id' => $relTypeId,
       ));
