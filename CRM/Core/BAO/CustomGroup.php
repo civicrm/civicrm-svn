@@ -1570,6 +1570,7 @@ SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 
         if (isset($properties['customValue']) && !CRM_Utils_system::isNull($properties['customValue'])) {
           if (isset($properties['customValue'][$groupCount])) {
             $properties['element_name'] = "custom_{$k}_{$properties['customValue'][$groupCount]['id']}";
+            $formattedGroupTree[$key]['table_id'] = $properties['customValue'][$groupCount]['id'];
             if ($properties['data_type'] == 'File') {
               $properties['element_value'] = $properties['customValue'][$groupCount];
               $uploadNames[] = $properties['element_name'];
@@ -1654,7 +1655,14 @@ SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 
     }
 
     if ($returnCount) {
-      return count($details[$groupID]);
+      if ( count($details) <= 1 )
+        return count($details[$groupID]);
+      else {
+        foreach( $details as $key => $value ) {
+          $countValue[$key] = count($details[$key]);
+        }
+        return $countValue;
+      }
     }
     else {
       $form->assign_by_ref("{$prefix}viewCustomData", $details);

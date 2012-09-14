@@ -44,6 +44,9 @@ function buildCustomData( type, subType, subName, cgCount, groupID, isMultiple )
 	} else {
 		cj('#customData').show();		
 	}
+	if ( groupID ) {
+	     	dataUrl = dataUrl + '&groupID=' + groupID;
+	}
 	
 	{/literal}
 		{if $urlPathVar}
@@ -72,8 +75,12 @@ function buildCustomData( type, subType, subName, cgCount, groupID, isMultiple )
 
 
 	if ( isMultiple ) {
-		var fname = '#custom_group_' + groupID + '_' + prevCount;
-		cj("#add-more-link-"+prevCount).hide();
+	     	var fname = '#custom_group_' + groupID + '_' + prevCount;
+		if ( cj(".add-more-link-" + groupID + "-" + prevCount ) ) {
+			cj(".add-more-link-" + groupID + "-" + prevCount).hide();
+		} else {
+			cj("#add-more-link-"+prevCount).hide();
+		}
 	} else {
 		if ( subName && subName != 'null' ) {		
 			var fname = '#customData' + subName ;

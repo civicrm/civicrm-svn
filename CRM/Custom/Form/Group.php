@@ -149,15 +149,7 @@ class CRM_Custom_Form_Group extends CRM_Core_Form {
     }
 
     if (CRM_Utils_Array::value('is_multiple', $fields)) {
-      // if ( isset( $fields['min_multiple'] ) && isset( $fields['max_multiple'] )
-      //      && ( $fields['min_multiple'] > $fields['max_multiple'] ) ) {
-      //     $errors['max_multiple'] = ts("Maximum limit should be higher than minimum limit");
-      // }
-
-      if ($fields['style'] == 'Inline') {
-        $errors['style'] = ts("'Multiple records' feature is not supported for the 'Inline' display style. Please select 'Tab' as the display style if you want to use this feature.");
         $self->assign('showMultiple', TRUE);
-      }
     }
 
     //checks the given custom set doesnot start with digit

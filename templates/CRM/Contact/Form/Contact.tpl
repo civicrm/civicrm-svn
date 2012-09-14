@@ -217,6 +217,16 @@ function removeDefaultCustomFields( ) {
 }
      }
  
+cj(document).ready(function() {
+{/literal}
+{foreach from=$customValueCount item="groupcount" key="groupvalue"} {literal}
+    	 for ( var i = 1; i < {/literal}{$groupcount}{literal}; i++ ) {
+	     buildCustomData( {/literal}"{$contactType}"{literal}, null, null, i, {/literal}{$groupvalue}{literal}, true );
+	 }{/literal}
+{/foreach}
+{literal}
+});
+
 function warnSubtypeDataLoss( )
 {
    var submittedSubtypes = cj('#contact_sub_type').val();

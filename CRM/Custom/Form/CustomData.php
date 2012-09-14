@@ -101,6 +101,7 @@ class CRM_Custom_Form_CustomData {
       $form->_subName
     );
 
+    $form->_customValueCount = CRM_Core_BAO_CustomGroup::buildCustomDataView($form, $groupTree, TRUE, null, null);
     // we should use simplified formatted groupTree
     $groupTree = CRM_Core_BAO_CustomGroup::formatGroupTree($groupTree, $form->_groupCount, $form);
 
