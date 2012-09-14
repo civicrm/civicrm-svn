@@ -501,7 +501,23 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
       }
     }
 
-    if ($this->_paymentProcessor['billing_mode'] != CRM_Core_Payment::BILLING_MODE_BUTTON ||
+    //we have to load confirm contribution button in template
+    //when multiple payment processor as the user 
+    //can toggle with payment processor selection
+    $billingModePaymentProcessors = 0;
+    foreach ($this->_paymentProcessors as $key => $values) {
+      if ($values['billing_mode'] == CRM_Core_Payment::BILLING_MODE_BUTTON) {
+        $billingModePaymentProcessors++;
+      }
+    }
+    
+    if ($billingModePaymentProcessors && count($this->_paymentProcessors) == $billingModePaymentProcessors) {
+      $allAreBillingModeProcessors = TRUE;
+    } else {
+      $allAreBillingModeProcessors = FALSE;
+    }
+
+    if (!$allAreBillingModeProcessors ||
       CRM_Utils_Array::value('is_pay_later', $this->_values['event']) || $bypassPayment 
     ) {
 
