@@ -133,7 +133,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
    *
    * @return void
    * @access public
-   */ function preProcess() {
+   */
+  function preProcess() {
     $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, FALSE, 'add');
 
     $this->_dedupeButtonName = $this->getButtonName('refresh', 'dedupe');
@@ -319,8 +320,48 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
     // location blocks.
     CRM_Contact_Form_Location::preProcess($this);
 
+    // retain the multiple count custom fields value
+    if(CRM_Utils_Array::value('hidden_custom', $_POST)) {
+      $customGroupCount = CRM_Utils_Array::value('hidden_custom_group_count', $_POST);
+      
+      if ($contactSubType = CRM_Utils_Array::value( 'contact_sub_type', $_POST)) {
+        $paramSubType = implode(',', $contactSubType);
+      }
+      
+      $this->set('getCachedTree', FALSE);
+      unset($customGroupCount[0]);
+      foreach ($customGroupCount as $groupID => $groupCount) {
+        if ($groupCount > 1) {          
+          $this->set('groupID', $groupID);
+          //loop the group 
+          for ($i = 0; $i <= $groupCount; $i++) {
+            CRM_Custom_Form_CustomData::preProcess($this, NULL, $contactSubType, 
+              $i, $this->_contactType
+            );
+            CRM_Contact_Form_Edit_CustomData::buildQuickForm($this);
+          }
+        }
+      }
+
+      //reset all the ajax stuff, for normal processing
+      if (isset($this->_groupTree)) {
+        $this->_groupTree = NULL;
+      }
+      $this->set('groupID', NULL);
+      $this->set('getCachedTree', TRUE);
+    }
+
     // execute preProcess dynamically by js else execute normal preProcess
     if (array_key_exists('CustomData', $this->_editOptions)) {
+      //assign a parameter to pass for sub type multivalue
+      //custom field to load
+      if ($this->_contactSubType || isset($paramSubType)) {
+        $paramSubType = (isset($paramSubType)) ? $paramSubType :
+          str_replace( CRM_Core_DAO::VALUE_SEPARATOR, ',', trim($this->_contactSubType, CRM_Core_DAO::VALUE_SEPARATOR));
+        
+        $this->assign('paramSubType', $paramSubType);
+      }
+      
       if (CRM_Utils_Request::retrieve('type', 'String', CRM_Core_DAO::$_nullObject)) {
         CRM_Contact_Form_Edit_CustomData::preProcess($this);
       }

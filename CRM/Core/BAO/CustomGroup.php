@@ -260,7 +260,8 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup {
     $entityID = NULL,
     $groupID  = NULL,
     $subType  = NULL,
-    $subName  = NULL
+    $subName  = NULL,
+    $fromCache = TRUE
   ) {
     if ($entityID) {
       $entityID = CRM_Utils_Type::escape($entityID, 'Integer');
@@ -415,7 +416,11 @@ ORDER BY civicrm_custom_group.weight,
     $cacheKey = "CRM_Core_DAO_CustomGroup_Query " . md5($cacheString);
 
     $cache = CRM_Utils_Cache::singleton();
-    $groupTree = $cache->get($cacheKey);
+
+    if ($fromCache) {
+      $groupTree = $cache->get($cacheKey);
+    }
+
     if (empty($groupTree)) {
       $groupTree = array();
       $crmDAO = CRM_Core_DAO::executeQuery($queryString, $params);

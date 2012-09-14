@@ -74,6 +74,12 @@ class CRM_Contact_Form_Edit_CustomData {
    * @static
    */
   static function buildQuickForm(&$form) {
+    if(!empty($form->_submitValues)) {
+      $customValueCount =  $form->_submitValues['hidden_custom_group_count'];
+      unset($customValueCount[0]);
+      $form->_customValueCount =  $customValueCount;
+      $form->assign( 'customValueCount', $customValueCount);
+    }
     CRM_Custom_Form_CustomData::buildQuickForm($form);
 
     //build custom data.

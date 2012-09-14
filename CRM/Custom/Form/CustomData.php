@@ -91,17 +91,35 @@ class CRM_Custom_Form_CustomData {
       $form->_entityId = CRM_Utils_Request::retrieve('entityID', 'Positive', $form);
     }
 
-    $form->_groupID = CRM_Utils_Request::retrieve('groupID', 'Positive', $form);
+    $typeCheck = CRM_Utils_Request::retrieve( 'type', 'String', CRM_Core_DAO::$_nullObject );
+    $urlGroupId = CRM_Utils_Request::retrieve('groupID', 'Positive', CRM_Core_DAO::$_nullObject);
+    if ( isset($typeCheck) && $urlGroupId) { 
+      $form->_groupID = $urlGroupId;
+    } else {
+      $form->_groupID = CRM_Utils_Request::retrieve('groupID', 'Positive', $form);
+    }
 
+    $gid = (isset($form->_groupID)) ? $form->_groupID : NULL;
+    $getCachedTree = $form->get('getCachedTree');
+    $getCachedTree = isset($getCachedTree) ? $getCachedTree : TRUE;
+    
+    $subType = NULL;
+    if (isset($form->_subType) && !is_array($form->_subType) && !strpos($form->_subType, ',')) {
+      $subType = str_replace( CRM_Core_DAO::VALUE_SEPARATOR, ',', trim( $form->_subType, CRM_Core_DAO::VALUE_SEPARATOR));
+    } elseif (isset($form->_subType)) {
+      $subType = $form->_subType;
+    }
+        
     $groupTree = &CRM_Core_BAO_CustomGroup::getTree($form->_type,
       $form,
       $form->_entityId,
-      $form->_groupID,
-      $form->_subType,
-      $form->_subName
+      $gid,
+      $subType,
+      $form->_subName,
+      $getCachedTree
     );
 
-    $form->_customValueCount = CRM_Core_BAO_CustomGroup::buildCustomDataView($form, $groupTree, TRUE, null, null);
+    $form->_customValueCount = CRM_Core_BAO_CustomGroup::buildCustomDataView($form, $groupTree, TRUE, NULL, NULL);
     // we should use simplified formatted groupTree
     $groupTree = CRM_Core_BAO_CustomGroup::formatGroupTree($groupTree, $form->_groupCount, $form);
 

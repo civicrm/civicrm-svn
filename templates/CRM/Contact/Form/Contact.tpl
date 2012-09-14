@@ -213,19 +213,32 @@ function removeDefaultCustomFields( ) {
         buildCustomData(contactType, values);
      }
      else{
-        buildCustomData(contactType);
+        values = false;      
+	buildCustomData(contactType);
+     }	
+     loadMultiRecordFields(values);
 }
-     }
- 
-cj(document).ready(function() {
+
+function loadMultiRecordFields(subTypeValues) {
+    	if (subTypeValues == false) {
+	   var subTypeValues = null;
+	} else if (!subTypeValues) {
+ 	  var subTypeValues = {/literal}"{$paramSubType}"{literal};
+	}
 {/literal}
 {foreach from=$customValueCount item="groupcount" key="groupvalue"} {literal}
-    	 for ( var i = 1; i < {/literal}{$groupcount}{literal}; i++ ) {
-	     buildCustomData( {/literal}"{$contactType}"{literal}, null, null, i, {/literal}{$groupvalue}{literal}, true );
+ 	 for ( var i = 1; i < {/literal}{$groupcount}{literal}; i++ ) {	
+	     buildCustomData( {/literal}"{$contactType}"{literal}, subTypeValues, null, i, {/literal}{$groupvalue}{literal}, true );
 	 }{/literal}
 {/foreach}
 {literal}
-});
+}
+
+ 
+cj(function() {		
+     loadMultiRecordFields();
+ }); 
+
 
 function warnSubtypeDataLoss( )
 {
