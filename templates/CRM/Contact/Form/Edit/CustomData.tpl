@@ -62,7 +62,7 @@
 		{include file="CRM/Custom/Form/CustomData.tpl" formEdit=true}
       	</div><!-- crm-accordion-body-->
 </div><!-- crm-accordion-wrapper -->
-<div id="custom_group_{$group_id}_{$cgCount}">
+<div id="custom_group_{$group_id}_{$cgCount}"></div>
 		<script type="text/javascript">
 			{if $cd_edit.collapse_display eq 0 }
 				var eleSpan          = "span#custom{$group_id}";
@@ -99,7 +99,7 @@
            success: function(html){
                cj( '#'+ elementID ).hide( );
                var resourceBase   = {/literal}"{$config->resourceBase}"{literal};
-               var successMsg = '{/literal}{ts}The selected record has been deleted.{/ts}{literal} &nbsp;&nbsp;<a href="javascript:hideStatus( ' + valueID  ',' + groupID + ');"><img title="{/literal}{ts}close{/ts}{literal}" src="' +resourceBase+'i/close.png"/></a>';
+               var successMsg = '{/literal}{ts}The selected record has been deleted.{/ts}{literal} &nbsp;&nbsp;<a href="javascript:hideStatus( ' + valueID + ',' + groupID + ');"><img title="{/literal}{ts}close{/ts}{literal}" src="' +resourceBase+'i/close.png"/></a>';
                cj( 'tr#statusmessg_'  + groupID + '_' + valueID ).show( ).children().find('span').html( successMsg );
  			  var element = cj( '.ui-tabs-nav #tab_custom_' + groupID + ' a' );
  			  cj(element).html(cj(element).attr('title') + ' ('+ html+') ');
