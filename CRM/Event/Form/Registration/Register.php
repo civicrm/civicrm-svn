@@ -75,7 +75,8 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
    *
    * @return void
    * @access public
-   */ function preProcess() {
+   */ 
+  function preProcess() {
     parent::preProcess();
 
     $this->_ppType = CRM_Utils_Array::value('type', $_GET);
@@ -318,7 +319,6 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
    * @return None
    * @access public
    */
-
   public function buildQuickForm() {
     if ($this->_ppType) {
       return CRM_Core_Payment_ProcessorForm::buildQuickForm($this);
@@ -505,9 +505,11 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
     //when multiple payment processor as the user 
     //can toggle with payment processor selection
     $billingModePaymentProcessors = 0;
-    foreach ($this->_paymentProcessors as $key => $values) {
-      if ($values['billing_mode'] == CRM_Core_Payment::BILLING_MODE_BUTTON) {
-        $billingModePaymentProcessors++;
+    if (!CRM_Utils_System::isNull($this->_paymentProcessors)) {
+      foreach ($this->_paymentProcessors as $key => $values) {
+        if ($values['billing_mode'] == CRM_Core_Payment::BILLING_MODE_BUTTON) {
+          $billingModePaymentProcessors++;
+        }
       }
     }
     
@@ -783,8 +785,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
    * @access public
    * @static
    */
-  static
-  function formRule($fields, $files, $self) {
+  static function formRule($fields, $files, $self) {
     $errors = array();
     //check that either an email or firstname+lastname is included in the form(CRM-9587)
     self::checkProfileComplete($fields, $errors, $self->_eventId);
@@ -950,15 +951,13 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
    * Check if profiles are complete when event registration occurs(CRM-9587)
    *
    */
-  static
-  function checkProfileComplete($fields, &$errors, $eventId) {
+  static function checkProfileComplete($fields, &$errors, $eventId) {
     $email = '';
     foreach ($fields as $fieldname => $fieldvalue) {
       if (substr($fieldname, 0, 6) == 'email-' && $fieldvalue) {
         $email = $fieldvalue;
       }
     }
-
 
     if (!$email && !(CRM_Utils_Array::value('first_name', $fields) &&
         CRM_Utils_Array::value('last_name', $fields)
@@ -1201,16 +1200,15 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
   //end of function
 
   /*
-     *Function to process Registration of free event
-     *
-     *@param  array $param Form valuess
-     *@param  int contactID
-     *
-     *@return None
-     *access public
-     *
-     */
-
+   *Function to process Registration of free event
+   *
+   *@param  array $param Form valuess
+   *@param  int contactID
+   *
+   *@return None
+   *access public
+   *
+   */
   public function processRegistration($params, $contactID = NULL) {
     $session = CRM_Core_Session::singleton();
     $this->_participantInfo = array();
