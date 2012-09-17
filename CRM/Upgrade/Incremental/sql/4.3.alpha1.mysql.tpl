@@ -29,3 +29,7 @@ ALTER TABLE civicrm_membership_type
 	DROP COLUMN renewal_msg_id,
 	DROP COLUMN autorenewal_msg_id;
 
+-- CRM-10738
+ALTER TABLE civicrm_msg_template
+      CHANGE msg_text msg_text LONGTEXT NULL COMMENT 'Text formatted message',
+      CHANGE msg_html msg_html LONGTEXT NULL COMMENT 'HTML formatted message';

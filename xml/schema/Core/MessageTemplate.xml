@@ -33,19 +33,21 @@
   </field>
   <field>
       <name>msg_text</name>
-      <type>text</type>
+      <type>longtext</type>
       <rows>10</rows>
       <cols>75</cols>
       <comment>Text formatted message</comment>
       <add>1.6</add>
+      <!-- type changed from TEXT to LONGTEXT in 4.3 -->
   </field>
   <field>
       <name>msg_html</name>
-      <type>text</type>
+      <type>longtext</type>
       <rows>10</rows>
       <cols>75</cols>
       <comment>HTML formatted message</comment>
       <add>1.6</add>
+      <!-- type changed from TEXT to LONGTEXT in 4.3 -->
   </field>
   <field> 
       <name>is_active</name>     
