@@ -258,8 +258,7 @@ class CRM_Contact_Form_Task extends CRM_Core_Form {
       $params = array();
       $sel = CRM_Utils_Array::value('radio_ts', self::$_searchFormValues);
       $form->assign('searchtype',$sel);
-      $value = CRM_Core_BAO_PrevNextCache::buildSelectedContactPager($form,$params);
-      $result = CRM_Core_BAO_PrevNextCache::getSelectedContacts($value['offset'],$value['rowCount1']);
+      $result = CRM_Core_BAO_PrevNextCache::getSelectedContacts();
       $form->assign("value", $result);
     }
     

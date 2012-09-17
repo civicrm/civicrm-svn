@@ -377,14 +377,13 @@ WHERE cacheKey LIKE %1 " . $actionGet . $entity_whereClause;
     }
   }
 
-  static function getSelectedContacts( $offset = 0, $rowCount = 50){
+  static function getSelectedContacts(){
     $qfKey = CRM_Utils_Request::retrieve('qfKey', 'String');
     $cacheKey = "civicrm search {$qfKey}";
       $query = "
 SELECT *
 FROM civicrm_prevnext_cache
-WHERE cacheKey LIKE %1 AND is_selected=1 AND cacheKey NOT LIKE %2
-LIMIT $offset, $rowCount";
+WHERE cacheKey LIKE %1 AND is_selected=1 AND cacheKey NOT LIKE %2";
     $params1[1] = array("%{$cacheKey}%", 'String');
     $params1[2] = array("%{$cacheKey}_alphabet%", 'String');
     $dao = CRM_Core_DAO::executeQuery($query, $params1);
