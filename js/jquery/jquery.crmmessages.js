@@ -66,12 +66,21 @@
     };
     // By default, don't expire errors and messages containing links
     var extra = {
-      expires: (type == 'error' || text.indexOf('<a ') > -1) ? 0 : 10000
+      expires: (type == 'error' || text.indexOf('<a ') > -1) ? 0 : (text ? 10000 : 5000),
+      unique: true
     };
     options = $.extend(extra, options);
     options.expires = options.expires === false ? 0 : parseInt(options.expires);
+    if (options.unique && options.unique !== '0') {
+      $('#crm-notification-container .ui-notify-message').each(function() {
+        if (title === $('h1', this).html() && text === $('.notify-content', this).html()) {
+          $('.icon.ui-notify-close', this).click();
+        }
+      });
+    }
     return $('#crm-notification-container').notify('create', params, options);
   }
+
   /**
    * Sets an error message
    * If called for a form item, title and removal condition will be handled automatically
@@ -135,6 +144,8 @@
       }
       var options = $(this).data('options');
       $(this).remove();
+      // Duplicates were already removed server-side
+      options.unique = false;
       $().crmAlert(text, title, type, options);
     });
     // Handle qf form errors

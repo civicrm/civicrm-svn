@@ -3559,7 +3559,7 @@ div#crm-toolTip
 }
 
 /* Notifications */
-#crm-container .ui-notify { width:350px; position:fixed; top:40px; right:10px; z-index: 999999}
+#crm-container .ui-notify { width:350px; position:fixed; top:45px; right:15px; z-index: 999999}
 #crm-container div.ui-notify-message { padding:10px; margin-bottom:15px; color:#fff; -moz-border-radius:8px; -webkit-border-radius:8px; border-radius:8px }
 #crm-container div.ui-notify-message h1 { font-size:14px; margin:0; padding:4px; font-weight:bold; color:#fff; }
 #crm-container div.ui-notify-message p { margin:3px 0; padding:0; line-height:18px }

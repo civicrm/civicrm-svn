@@ -396,6 +396,7 @@
             data.type = 'page';
             block.parent().load(postUrl, data);
           }
+          cj().crmAlert('', ts('Saved'), 'success');
         }
       },
       error: function (obj, status) {
