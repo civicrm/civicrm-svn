@@ -328,7 +328,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
         $paramSubType = implode(',', $contactSubType);
       }
       
-      $this->set('getCachedTree', FALSE);
+      $this->_getCachedTree = FALSE;
       unset($customGroupCount[0]);
       foreach ($customGroupCount as $groupID => $groupCount) {
         if ($groupCount > 1) {          
@@ -348,7 +348,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
         $this->_groupTree = NULL;
       }
       $this->set('groupID', NULL);
-      $this->set('getCachedTree', TRUE);
+      $this->_getCachedTree = TRUE;
     }
 
     // execute preProcess dynamically by js else execute normal preProcess

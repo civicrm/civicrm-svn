@@ -100,8 +100,7 @@ class CRM_Custom_Form_CustomData {
     }
 
     $gid = (isset($form->_groupID)) ? $form->_groupID : NULL;
-    $getCachedTree = $form->get('getCachedTree');
-    $getCachedTree = isset($getCachedTree) ? $getCachedTree : TRUE;
+    $getCachedTree = isset($form->_getCachedTree) ? $form->_getCachedTree : TRUE;
     
     $subType = NULL;
     if (isset($form->_subType) && !is_array($form->_subType) && !strpos($form->_subType, ',')) {
