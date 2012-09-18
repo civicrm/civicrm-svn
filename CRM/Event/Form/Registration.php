@@ -192,7 +192,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form {
    *
    * @return void
    * @access public
-   */ 
+   */
   function preProcess() {
     $this->_eventId = CRM_Utils_Request::retrieve('id', 'Positive', $this, TRUE);
     $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, FALSE);
@@ -240,14 +240,14 @@ class CRM_Event_Form_Registration extends CRM_Core_Form {
 
     if (!$this->_values) {
       // create redirect URL to send folks back to event info page is registration not available
-      $infoUrl = CRM_Utils_System::url('civicrm/event/info', "reset=1&id={$this->_eventId}",
+      $infoUrl = CRM_Utils_System::url(
+        'civicrm/event/info',
+        "reset=1&id={$this->_eventId}",
         FALSE, NULL, FALSE, TRUE
       );
 
       // this is the first time we are hitting this, so check for permissions here
-      if (!CRM_Core_Permission::event(CRM_Core_Permission::EDIT,
-          $this->_eventId
-        )) {
+      if (!CRM_Core_Permission::event(CRM_Core_Permission::EDIT, $this->_eventId)) {
         CRM_Core_Error::statusBounce(ts('You do not have permission to register for this event'), $infoUrl);
       }
 
@@ -260,7 +260,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form {
       $params = array('id' => $this->_eventId);
       CRM_Event_BAO_Event::retrieve($params, $this->_values['event']);
 
-      $this->checkValidEvent();
+      $this->checkValidEvent($infoUrl);
 
       // get the participant values, CRM-4320
       $this->_allowConfirmation = FALSE;
@@ -352,10 +352,10 @@ class CRM_Event_Form_Registration extends CRM_Core_Form {
             }
           }
         }
-        
+
         if (isset($defaultProcessorId)) {
           $this->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment($defaultProcessorId, $this->_mode);
-          $this->assign_by_ref('paymentProcessor', $this->_paymentProcessor);    
+          $this->assign_by_ref('paymentProcessor', $this->_paymentProcessor);
         }
 
         // make sure we have a valid payment class, else abort
@@ -837,7 +837,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form {
     // create CMS user
     if (CRM_Utils_Array::value('cms_create_account', $this->_params)) {
       $this->_params['contactID'] = $contactID;
-      
+
       if (array_key_exists('email-5', $this->_params)) {
       $mail = 'email-5';
       } else {
@@ -1358,7 +1358,7 @@ WHERE  v.option_group_id = g.id
     }
   }
 
-  function checkValidEvent() {
+  function checkValidEvent($redirect = NULL) {
     // is the event active (enabled)?
     if (!$this->_values['event']['is_active']) {
       // form is inactive, die a fatal death
@@ -1367,12 +1367,12 @@ WHERE  v.option_group_id = g.id
 
     // is online registration is enabled?
     if (!$this->_values['event']['is_online_registration']) {
-      CRM_Core_Error::statusBounce(ts('Online registration is not currently available for this event (contact the site administrator for assistance).'), $infoUrl);
+      CRM_Core_Error::statusBounce(ts('Online registration is not currently available for this event (contact the site administrator for assistance).'), $redirect);
     }
 
     // is this an event template ?
     if (CRM_Utils_Array::value('is_template', $this->_values['event'])) {
-      CRM_Core_Error::statusBounce(ts('Event templates are not meant to be registered.'), $infoUrl);
+      CRM_Core_Error::statusBounce(ts('Event templates are not meant to be registered.'), $redirect);
     }
 
     $now = date('YmdHis');
@@ -1384,7 +1384,7 @@ WHERE  v.option_group_id = g.id
       $startDate &&
       $startDate >= $now
     ) {
-      CRM_Core_Error::statusBounce(ts('Registration for this event begins on %1', array(1 => CRM_Utils_Date::customFormat(CRM_Utils_Array::value('registration_start_date', $this->_values['event'])))), $infoUrl);
+      CRM_Core_Error::statusBounce(ts('Registration for this event begins on %1', array(1 => CRM_Utils_Date::customFormat(CRM_Utils_Array::value('registration_start_date', $this->_values['event'])))), $redirect);
     }
 
     $endDate = CRM_Utils_Date::processDate(CRM_Utils_Array::value('registration_end_date',
@@ -1394,7 +1394,7 @@ WHERE  v.option_group_id = g.id
       $endDate &&
       $endDate < $now
     ) {
-      CRM_Core_Error::statusBounce(ts('Registration for this event ended on %1', array(1 => CRM_Utils_Date::customFormat(CRM_Utils_Array::value('registration_end_date', $this->_values['event'])))), $infoUrl);
+      CRM_Core_Error::statusBounce(ts('Registration for this event ended on %1', array(1 => CRM_Utils_Date::customFormat(CRM_Utils_Array::value('registration_end_date', $this->_values['event'])))), $redirect);
     }
   }
 }
