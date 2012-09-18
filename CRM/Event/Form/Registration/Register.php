@@ -909,16 +909,16 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
       ) {
         return empty($errors) ? TRUE : $errors;
       }
-
-      foreach ($self->_paymentFields as $name => $fld) {
-        if ($fld['is_required'] &&
-          CRM_Utils_System::isNull(CRM_Utils_Array::value($name, $fields))
-        ) {
-          $errors[$name] = ts('%1 is a required field.', array(1 => $fld['title']));
+      if (property_exists($self, '_paymentFields')) {
+        foreach ($self->_paymentFields as $name => $fld) {
+          if ($fld['is_required'] &&
+            CRM_Utils_System::isNull(CRM_Utils_Array::value($name, $fields))
+          ) {
+            $errors[$name] = ts('%1 is a required field.', array(1 => $fld['title']));
+          }
         }
       }
     }
-
     // make sure that credit card number and cvv are valid
     if (CRM_Utils_Array::value('credit_card_type', $fields)) {
       if (CRM_Utils_Array::value('credit_card_number', $fields) &&
