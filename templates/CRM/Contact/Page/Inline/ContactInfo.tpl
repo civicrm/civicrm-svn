@@ -23,11 +23,11 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div id="crm-contactinfo-content" class="{if $permission EQ 'edit'} crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_ContactInfo"{rdelim}' title="{ts}Add or edit info{/ts}{/if}">
-  <div class="crm-clear"><!-- start of main -->
+<div id="crm-contactinfo-content" {if $permission EQ 'edit'} class="crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_ContactInfo"{rdelim}'{/if}>
+  <div class="crm-clear" {if $permission EQ 'edit'}title="{ts}Edit info{/ts}"{/if}>
     {if $permission EQ 'edit'}
     <div class="crm-edit-help">
-      <span class="batch-edit"></span>{ts}Add or edit info{/ts}
+      <span class="batch-edit"></span>{ts}Edit info{/ts}
     </div>
     {/if}
 
@@ -65,5 +65,5 @@
         <div class="crm-content crm-contact_source">{$source}</div>
       </div>
 
-    </div> <!-- end of main -->
+    </div>
 </div>

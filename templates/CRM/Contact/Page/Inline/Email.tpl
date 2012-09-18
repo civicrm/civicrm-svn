@@ -24,8 +24,8 @@
  +--------------------------------------------------------------------+
 *}
 {* template for building email block*}
-<div id="crm-email-content" class="{if $permission EQ 'edit'} crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_Email"{rdelim}' title="{ts}Add or edit email{/ts}{/if}">
-  <div class="crm-clear"><!-- start of main -->
+<div id="crm-email-content" {if $permission EQ 'edit'} class="crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_Email"{rdelim}'{/if}>
+  <div class="crm-clear" {if $permission EQ 'edit'}title="{ts}Add or edit email{/ts}"{/if}>
   {if $permission EQ 'edit'}
     <div class="crm-edit-help">
       <span class="batch-edit"></span>{if empty($email)}{ts}Add email{/ts}{else}{ts}Add or edit email{/ts}{/if}
@@ -55,7 +55,7 @@
     </div>
     {/if}
   {/foreach}
-  </div> <!-- end of main -->
+  </div>
 </div>
 
 {literal}

@@ -24,11 +24,11 @@
  +--------------------------------------------------------------------+
 *}
 {* template for building communication preference block*}
-<div id="crm-communication-pref-content" class="{if $permission EQ 'edit'} crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_CommunicationPreferences"{rdelim}' data-dependent-fields='["#crm-phone-content", "#crm-email-content"]' title="{ts}Add or edit communication preferences{/ts}{/if}">
-  <div class="crm-clear"><!-- start of main -->
+<div id="crm-communication-pref-content" {if $permission EQ 'edit'} class="crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_CommunicationPreferences"{rdelim}' data-dependent-fields='["#crm-phone-content", "#crm-email-content"]'{/if}>
+  <div {if $permission EQ 'edit'}class="crm-clear"title="{ts}Edit communication preferences{/ts}"{/if}>
     {if $permission EQ 'edit'}
     <div class="crm-edit-help">
-      <span class="batch-edit"></span>{ts}Add or edit communication preferences{/ts}
+      <span class="batch-edit"></span>{ts}Edit communication preferences{/ts}
     </div>
     {/if}
     <div class="crm-summary-row">
@@ -81,5 +81,5 @@
         {if !empty($addressee_custom)}<span class="crm-custom-greeting">({ts}Customized{/ts})</span>{/if}
       </div>
     </div>
-  </div> <!-- end of main -->
-</div> <!-- end of table layout -->
+  </div>
+</div>

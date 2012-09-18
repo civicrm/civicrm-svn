@@ -24,8 +24,8 @@
  +--------------------------------------------------------------------+
 *}
 {* template for building phone block*}
-<div id="crm-phone-content" class="{if $permission EQ 'edit'} crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_Phone"{rdelim}' title="{ts}Add or edit phone{/ts}{/if}">
-  <div class="crm-clear"><!-- start of main -->
+<div id="crm-phone-content" {if $permission EQ 'edit'} class="crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_Phone"{rdelim}'{/if}>
+  <div class="crm-clear" {if $permission EQ 'edit'}title="{ts}Add or edit phone{/ts}"{/if}>
     {if $permission EQ 'edit'}
       <div class="crm-edit-help">
         <span class="batch-edit"></span>{if empty($phone)}{ts}Add phone{/ts}{else}{ts}Add or edit phone{/ts}{/if}
@@ -49,5 +49,5 @@
         </div>
       {/if}
     {/foreach}
-   </div> <!-- end of main -->
+   </div>
 </div>

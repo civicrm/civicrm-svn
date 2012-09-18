@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div id="crm-contactname-content" {if $permission EQ 'edit'}class="crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_ContactName"{rdelim}' data-dependent-fields='["#crm-communication-pref-content"]' title="{ts}Edit name{/ts}{/if}">
+<div id="crm-contactname-content" {if $permission EQ 'edit'}class="crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_ContactName"{rdelim}' data-dependent-fields='["#crm-communication-pref-content"]'{/if}>
   {if $permission EQ 'edit'}
     <div class="crm-edit-help">
       <span class="batch-edit"></span>{ts}Edit name{/ts}

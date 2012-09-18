@@ -24,8 +24,8 @@
  +--------------------------------------------------------------------+
 *}
 {* template for building OpenID block*}
-<div id="crm-openid-content" class="{if $permission EQ 'edit'} crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_OpenID"{rdelim}' title="{ts}Add or edit OpenID{/ts}{/if}">
-  <div class="crm-clear"><!-- start of main -->
+<div id="crm-openid-content" {if $permission EQ 'edit'} class="crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_OpenID"{rdelim}'{/if}>
+  <div class="crm-clear" {if $permission EQ 'edit'}title="{ts}Add or edit OpenID{/ts}"{/if}>
     {if $permission EQ 'edit'}
       <div class="crm-edit-help">
         <span class="batch-edit"></span>{if empty($openid)}{ts}Add OpenID{/ts}{else}{ts}Add or edit OpenID{/ts}{/if}
@@ -47,5 +47,5 @@
       </div>
       {/if}
     {/foreach}
-   </div> <!-- end of main -->
+   </div>
 </div>
