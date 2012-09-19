@@ -66,7 +66,7 @@ class CRM_Core_BAO_Phone extends CRM_Core_DAO_Phone {
       CRM_Utils_Hook::post('edit', 'Phone', $phone->id, $phone);
     }
     else {
-      CRM_Utils_Hook::post('create', 'phone', $phone->id, $phone);
+      CRM_Utils_Hook::post('create', 'Phone', $phone->id, $phone);
     }
     return $phone;
   }
