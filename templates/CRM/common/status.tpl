@@ -28,18 +28,13 @@
 {if $session->getStatus(false)}
   {assign var="status" value=$session->getStatus(true)}
   {foreach name=statLoop item=statItem from=$status}
-    {assign var="infoType" value=$statItem.type}
-    {assign var="infoTitle" value=$statItem.title}
-    {assign var="infoMessage" value=$statItem.text}
-    {assign var="infoOptions" value=$statItem.options}
-    {include file="CRM/common/info.tpl"}
+    {include file="CRM/common/info.tpl" infoType=$statItem.type infoTitle=$statItem.title infoMessage=$statItem.text infoOptions=$statItem.options}
   {/foreach}
 {/if}
 
 {if !$urlIsPublic AND $config->debug}
-  {assign var="infoType" value="alert"}
   {capture assign=infoTitle}{ts}Warning{/ts}{/capture}
   {capture assign=infoMessage}{ts}Debug is currently enabled in Global Settings.{/ts} {docURL page="developer/development-environment/debugging"}{/capture}
   {capture assign=infoOptions}{ldelim}"expires": 10000{rdelim}{/capture}
-  {include file="CRM/common/info.tpl"}
+  {include file="CRM/common/info.tpl" infoType="alert"}
 {/if}
