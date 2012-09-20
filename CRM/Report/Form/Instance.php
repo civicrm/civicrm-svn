@@ -287,7 +287,6 @@ class CRM_Report_Form_Instance {
       if ($permission) {
         $dashletParams['permission'][] = $permission;
       }
-      unset($params['addToDashboard']);
     }
     $params['is_reserved'] = CRM_Utils_Array::value('is_reserved', $params, FALSE);
 
