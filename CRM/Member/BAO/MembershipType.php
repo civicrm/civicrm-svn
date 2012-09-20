@@ -709,8 +709,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType {
       $fieldParams['option_amount'][1] = empty($params['minimum_fee']) ? 0 : $params['minimum_fee'];
       
       if ($previousID) {
-        $memberTyp = new CRM_Member_Form_MembershipType();
-        $memberTyp->checkPreviousPriceField($previousID, $priceSetId, $membershipTypeId, $optionsIds);
+        CRM_Member_Form_MembershipType::checkPreviousPriceField($previousID, $priceSetId, $membershipTypeId, $optionsIds);
         $fieldParams['option_id'] = CRM_Utils_Array::value('option_id', $optionsIds);
       }
       $priceField = CRM_Price_BAO_Field::create($fieldParams);
@@ -738,8 +737,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType {
       }
       
       if ($previousID) {
-        $memberTyp = new CRM_Member_Form_MembershipType();
-        $memberTyp->checkPreviousPriceField($previousID, $priceSetId, $membershipTypeId, $optionsIds);
+        CRM_Member_Form_MembershipType::checkPreviousPriceField($previousID, $priceSetId, $membershipTypeId, $optionsIds);
         if (CRM_Utils_Array::value('option_id', $optionsIds)) {
           $optionsIds['id'] = current(CRM_Utils_Array::value('option_id', $optionsIds));
         }
