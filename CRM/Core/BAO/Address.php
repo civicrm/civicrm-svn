@@ -136,7 +136,7 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address {
   }
 
   /**
-   * takes an associative array and adds phone
+   * takes an associative array and adds address
    *
    * @param array  $params         (reference ) an assoc array of name/value pairs
    * @param boolean  $fixAddress   true if you need to fix (format) address values
