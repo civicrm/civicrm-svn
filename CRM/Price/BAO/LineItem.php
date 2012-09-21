@@ -243,5 +243,38 @@ WHERE     %2.id = %1";
     $dao = CRM_Core_DAO::executeQuery($query);
     return $result;
   }
+  
+  public static function countLineItems($entityId, $entityTable = 'civicrm_contribution') {
+    $query = "
+SELECT     COUNT(*) 
+FROM       civicrm_line_item 
+WHERE      entity_id = %1 AND 
+           entity_table = %2";
+
+    $params = array(1 => array($entityId, 'Integer'),
+                    2 => array($entityTable, 'String'),
+                    );
+
+    return CRM_Core_DAO::singleValueQuery($query, $params);
+
+  }
+    
+  public static function syncLineItems($entityId, $entityTable = 'civicrm_contribution', $amount) {
+    $query = "                                                                                                                                                                                             
+UPDATE   civicrm_line_item
+SET      unit_price = %3,
+         line_total = %3 
+WHERE    entity_id = %1 AND                                                                                                                                                                               
+         entity_table = %2";
+
+    $params = array(1 => array($entityId, 'Integer'),
+                    2 => array($entityTable, 'String'),
+                    3 => array($amount, 'Float')
+                    );
+
+    return CRM_Core_DAO::singleValueQuery($query, $params);
+
+  }
+
 }
 

@@ -369,6 +369,11 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
         );
 
         $ids['contribution'] = CRM_Contribute_BAO_Contribution::checkDuplicateIds($dupeIds);
+        $lineItemCount = CRM_Price_BAO_LineItem::countLineItems($ids['contribution'],'civicrm_contribution');
+        if ($lineItemCount > 1) {
+          array_unshift($values, "Multiple matching price records detected for this row. The contribution was not imported");
+          return CRM_Contribute_Import_Parser::ERROR;
+        }
         if ($ids['contribution']) {
           $formatted['id'] = $ids['contribution'];
           $formatted['custom'] = CRM_Core_BAO_CustomField::postProcess($formatted,
@@ -408,8 +413,10 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
               $formatted['softID'] = $existingSoftCredit['soft_credit_id'];
             }
           }
-
+          
           $newContribution = CRM_Contribute_BAO_Contribution::create($formatted, $ids);
+          CRM_Price_BAO_LineItem::syncLineItems($ids['contribution'], 'civicrm_contribution', $formatted['total_amount'], $lineItemCount);
+
           $this->_newContributions[] = $newContribution->id;
 
           //return soft valid since we need to show how soft credits were added
