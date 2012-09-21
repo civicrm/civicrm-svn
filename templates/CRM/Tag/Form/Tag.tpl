@@ -39,9 +39,6 @@ options = {ldelim} ajaxURL:"{crmURL p='civicrm/ajax/rest' h=0}"
 entityID={$entityID};
 entityTable='{$entityTable}';
 {literal}
-function hideStatus( ) {
-    cj( '#restmsg' ).hide( );
-}
 cj(document).ready(function(){initTagTree()});
 
 function initTagTree() {
@@ -104,7 +101,6 @@ function initTagTree() {
 };
 {/literal}
 </script>
-<span id="restmsg" style="display:none"></span>
 <div id="Tag" class="view-content">
 <h3>{if !$hideContext}{ts}Tags{/ts}{/if}</h3>
     <p>

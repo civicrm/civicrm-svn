@@ -163,7 +163,6 @@
 	{ts}Case Roles{/ts}
  </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">
-    <span id="restmsg" class="msgok" style="display:none"></span>
  
     {if $hasAccessToAllCases}
     <div class="crm-submit-buttons">
@@ -290,17 +289,12 @@ function addClient( ) {
 	buttons: { 
 		"Done": function() {
 
-				if ( ! cj("#rel_contact").val( ) ) {
-					alert('{/literal}{ts escape="js"}Select valid contact from the list{/ts}{literal}.');
-					return false;
-				}
-
 				var postUrl = {/literal}"{crmURL p='civicrm/case/ajax/addclient' h=0 }"{literal};
 				var caseID        = {/literal}"{$caseID}"{literal};
 				var contactID = cj("#rel_contact_id").val( );
 
-				if ( ! contactID ) {
-					alert('{/literal}{ts escape="js"}Select valid contact from the list{/ts}{literal}.');
+				if ( !cj("#rel_contact").val( ) || !contactID ) {
+					cj("#rel_contact").crmError('{/literal}{ts escape="js"}Select valid contact from the list{/ts}{literal}.');
 					return false;
 				}
 
@@ -367,19 +361,15 @@ function createRelationship( relType, contactID, relID, rowNumber, relTypeName )
 		},
 
 		buttons: { 
-			"Ok": function() { 	    
-				if ( ! cj("#rel_contact").val( ) ) {
-					alert('{/literal}{ts escape="js"}Select valid contact from the list{/ts}{literal}.');
-					return false;
-				}
+			"Ok": function() {
 
 				var sourceContact = {/literal}"{$contactID}"{literal};
 				var caseID        = {/literal}"{$caseID}"{literal};
 
 				var v1 = cj("#rel_contact_id").val( );
 
-				if ( ! v1 ) {
-					alert('{/literal}{ts escape="js"}Select valid contact from the list{/ts}{literal}.');
+				if ( !cj("#rel_contact").val( ) || !v1 ) {
+					cj("#rel_contact").crmError('{/literal}{ts escape="js"}Select valid contact from the list{/ts}{literal}.');
 					return false;
 				}
 
@@ -404,8 +394,7 @@ function createRelationship( relType, contactID, relID, rowNumber, relTypeName )
 			   var errorMsg = '{/literal}{ts 1="' + relTypeName + '" 2="' + relTypeAdminLink + '" }The relationship type definition for the %1 case role is not valid for the client and / or staff contact types. You can review and edit relationship types at <a href="%2">Administer >> Option Lists >> Relationship Types</a>{/ts}{literal}.'; 
 
 			   //display error message.
-			   var imageIcon = "<a href='#'  onclick='cj( \"#restmsg\" ).hide( ); return false;'>" + '<div class="ui-icon ui-icon-close" style="float:left"></div>' + '</a>';
-			   cj( '#restmsg' ).html( imageIcon + errorMsg  ).show( );
+			   cj().crmError(errorMsg);
 			}
 
                         html = '';
@@ -606,26 +595,21 @@ function addRole() {
 		},
 
 		buttons: { 
-			"Ok": function() { 	    
-				if ( ! cj("#role_contact").val( ) ) {
-					alert('{/literal}{ts escape="js"}Select valid contact from the list{/ts}{literal}.');
-					return false;
-				}
+			"Ok": function() {
 
 				var sourceContact = {/literal}"{$contactID}"{literal};
 				var caseID        = {/literal}"{$caseID}"{literal};
 				var relID         = null;
 
-				var v1 = cj("#role_contact_id").val( );
-
-				if ( ! v1 ) {
-					alert('{/literal}{ts escape="js"}Select valid contact from the list{/ts}{literal}.');
+				var v2 = cj("#role_type").val();
+				if ( !v2 ) {
+					cj("#role_type").crmError('{/literal}{ts escape="js"}Select valid type from the list{/ts}{literal}.');
 					return false;
 				}
 
-				var v2 = cj("#role_type").val();
-				if ( ! v2 ) {
-					alert('{/literal}{ts escape="js"}Select valid type from the list{/ts}{literal}.');
+				var v1 = cj("#role_contact_id").val( );
+				if ( ! cj("#role_contact").val( ) || ! v1 ) {
+					cj("#role_contact").crmError('{/literal}{ts escape="js"}Select valid contact from the list{/ts}{literal}.');
 					return false;
 				}
 				
@@ -646,8 +630,7 @@ function addRole() {
 			  				     var errorMsg = '{/literal}{ts 1="' + relTypeName + '" 2="' + relTypeAdminLink + '"  }The relationship type definition for the %1 case role is not valid for the client and / or staff contact types. You can review and edit relationship types at <a href="%2">Administer >> Option Lists >> Relationship Types</a>{/ts}{literal}.'; 
 
 			   				     //display error message.
-			   				     var imageIcon = "<a href='#'  onclick='cj( \"#restmsg\" ).hide( ); return false;'>" + '<div class="ui-icon ui-icon-close" style="float:left"></div>' + '</a>';
-			   				     cj( '#restmsg' ).html( imageIcon + errorMsg  ).show( );  
+			   				     cj().crmError(errorMsg);  
 							}
 					  	    }
 				       });
@@ -799,79 +782,72 @@ function addTags() {
 {include file="CRM/common/activityView.tpl"}
 
 <div class="crm-accordion-wrapper crm-case_activities-accordion crm-accordion-open crm-case-activities-block">
- <div class="crm-accordion-header">
-  <div class="icon crm-accordion-pointer"></div> 
-{ts}Case Activities{/ts}
- </div><!-- /.crm-accordion-header -->
- <div id="activities" class="crm-accordion-body">
-    <span id='fileOnCaseStatusMsg' style="display:none;"></span><!-- Displays status from copy to case -->
-<div id="view-activity">
-     <div id="activity-content"></div>
-</div>
+  <div class="crm-accordion-header">
+    <div class="icon crm-accordion-pointer"></div> 
+    {ts}Case Activities{/ts}
+  </div>
+  <div id="activities" class="crm-accordion-body">
+    <div id="view-activity">
+      <div id="activity-content"></div>
+    </div>
+    <div class="crm-accordion-wrapper crm-accordion-inner crm-search_filters-accordion crm-accordion-closed">
+      <div class="crm-accordion-header">
+        <div class="icon crm-accordion-pointer"></div> 
+        {ts}Search Filters{/ts}</a>
+      </div><!-- /.crm-accordion-header -->
+      <div class="crm-accordion-body">
+        <table class="no-border form-layout-compressed" id="searchOptions">
+          <tr>
+            <td class="crm-case-caseview-form-block-repoter_id"colspan="2"><label for="reporter_id">{ts}Reporter/Role{/ts}</label><br />
+                {$form.reporter_id.html|crmReplace:class:twenty}
+            </td>
+            <td class="crm-case-caseview-form-block-status_id"><label for="status_id">{$form.status_id.label}</label><br />
+                {$form.status_id.html}
+            </td>
+            <td style="vertical-align: bottom;">
+              <span class="crm-button"><input class="form-submit default" name="_qf_Basic_refresh" value="Search" type="button" onclick="buildCaseActivities( true )"; /></span>
+            </td>
+              </tr>
+              <tr>
+                  <td class="crm-case-caseview-form-block-activity_date_low">
+                {$form.activity_date_low.label}<br />
+                      {include file="CRM/common/jcalendar.tpl" elementName=activity_date_low}
+                  </td>
+                  <td class="crm-case-caseview-form-block-activity_date_high"> 
+                      {$form.activity_date_high.label}<br /> 
+                      {include file="CRM/common/jcalendar.tpl" elementName=activity_date_high}
+                  </td>
+                  <td class="crm-case-caseview-form-block-activity_type_filter_id">
+                      {$form.activity_type_filter_id.label}<br />
+                      {$form.activity_type_filter_id.html}
+                  </td>
+          </tr>
+          {if $form.activity_deleted}    
+            <tr class="crm-case-caseview-form-block-activity_deleted">
+             <td>
+              {$form.activity_deleted.html}{$form.activity_deleted.label}
+             </td>
+            </tr>
+          {/if}
+        </table>
+      </div><!-- /.crm-accordion-body -->
+    </div><!-- /.crm-accordion-wrapper -->
 
+    <table id="activities-selector"  class="nestedActivitySelector">
+      <thead><tr>
+      <th class='crm-case-activities-date'>{ts}Date{/ts}</th>
+      <th class='crm-case-activities-subject'>{ts}Subject{/ts}</th>
+      <th class='crm-case-activities-type'>{ts}Type{/ts}</th>
+      <th class='crm-case-activities-with'>{ts}With{/ts}</th>
+      <th class='crm-case-activities-assignee'>{ts}Reporter / Assignee{/ts}</th>
+      <th class='crm-case-activities-status'>{ts}Status{/ts}</th>
+      <th class='crm-case-activities-status' id="nosort">&nbsp;</th>
+      <th class='hiddenElement'>&nbsp;</th>
+      </tr></thead>
+    </table>
 
-  <div>
-<div class="crm-accordion-wrapper crm-accordion-inner crm-search_filters-accordion crm-accordion-closed">
- <div class="crm-accordion-header">
-  <div class="icon crm-accordion-pointer"></div> 
-	{ts}Search Filters{/ts}</a>
- </div><!-- /.crm-accordion-header -->
- <div class="crm-accordion-body">
-
-  <table class="no-border form-layout-compressed" id="searchOptions">
-    <tr>
-        <td class="crm-case-caseview-form-block-repoter_id"colspan="2"><label for="reporter_id">{ts}Reporter/Role{/ts}</label><br />
-            {$form.reporter_id.html|crmReplace:class:twenty}
-        </td>
-        <td class="crm-case-caseview-form-block-status_id"><label for="status_id">{$form.status_id.label}</label><br />
-            {$form.status_id.html}
-        </td>
-	<td style="vertical-align: bottom;">
-		<span class="crm-button"><input class="form-submit default" name="_qf_Basic_refresh" value="Search" type="button" onclick="buildCaseActivities( true )"; /></span>
-	</td>
-    </tr>
-    <tr>
-        <td class="crm-case-caseview-form-block-activity_date_low">
-	    {$form.activity_date_low.label}<br />
-            {include file="CRM/common/jcalendar.tpl" elementName=activity_date_low}
-        </td>
-        <td class="crm-case-caseview-form-block-activity_date_high"> 
-            {$form.activity_date_high.label}<br /> 
-            {include file="CRM/common/jcalendar.tpl" elementName=activity_date_high}
-        </td>
-        <td class="crm-case-caseview-form-block-activity_type_filter_id">
-            {$form.activity_type_filter_id.label}<br />
-            {$form.activity_type_filter_id.html}
-        </td>
-    </tr>
-    {if $form.activity_deleted}    
-    	<tr class="crm-case-caseview-form-block-activity_deleted">
-	     <td>
-		 {$form.activity_deleted.html}{$form.activity_deleted.label}
-	     </td>
-	</tr>
-	{/if}
-  </table>
- </div><!-- /.crm-accordion-body -->
+  </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
- 
-  <table id="activities-selector"  class="nestedActivitySelector">
-  <thead><tr>
-  <th class='crm-case-activities-date'>{ts}Date{/ts}</th>
-  <th class='crm-case-activities-subject'>{ts}Subject{/ts}</th>
-  <th class='crm-case-activities-type'>{ts}Type{/ts}</th>
-  <th class='crm-case-activities-with'>{ts}With{/ts}</th>
-  <th class='crm-case-activities-assignee'>{ts}Reporter / Assignee{/ts}</th>
-  <th class='crm-case-activities-status'>{ts}Status{/ts}</th>
-  <th class='crm-case-activities-status' id="nosort">&nbsp;</th>
-  <th class='hiddenElement'>&nbsp;</th>
-  </tr></thead>
-  </table>
-
- </div><!-- /.crm-accordion-body -->
-</div><!-- /.crm-accordion-wrapper -->
-
-
 
 {literal}
 <script type="text/javascript">
@@ -926,7 +902,7 @@ function checkSelection( field ) {
     }	
 
     if ( forceValidation || ( document.getElementById( validationField ).value == '' ) ) {
-        alert( validationMessage );
+        cj('#'+validationField).crmError(validationMessage);
         return false;
     } else if ( successAction ) {
         return eval( successAction );
@@ -1030,8 +1006,6 @@ cj(function() {
 </script>
 {/literal}
 
-
-</div>
 
 {/if} {* view related cases if end *}
 </div>

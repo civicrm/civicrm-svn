@@ -85,8 +85,6 @@
 </table>
 {capture assign=findCasesURL}<a href="{crmURL p="civicrm/case/search" q="reset=1"}">{ts}Find Cases{/ts}</a>{/capture}
 
-<span id='fileOnCaseStatusMsg' style="display:none;"></span><!-- Displays status from copy to case -->
-
 <div class="spacer"></div>
     <h3>{if $myCases}{ts}My Cases With Upcoming Activities{/ts}{else}{ts}All Cases With Upcoming Activities{/ts}{/if}</h3>
     {if $upcomingCases}

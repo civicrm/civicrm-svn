@@ -52,7 +52,6 @@
 {ts}If you want to provide an Online Registration page for this event, check the first box below and then complete the fields on this form.{/ts} 
 {help id="id-event-reg"}
 </div>
-<span id="restmsg" class="msgok" style="display:none"></span>
 <div class="crm-block crm-form-block crm-event-manage-registration-form-block">
 <div class="crm-submit-buttons">
 {include file="CRM/common/formButtons.tpl" location="top"}
@@ -371,24 +370,19 @@ invert              = 0
     showRuleFields( {/literal}{$ruleFields}{literal} );
 
     function showRuleFields( ruleFields ) 
-    {	   
-        var errorMsg1 = '{/literal}{ts 1="' + ruleFields + '"}Primary participants will be able to register additional participants using the same e-email address.  The default "Fuzzy" Dedupe Rule will use the following fields to prevent duplicate registrations: %1.  First and Last Name will be used to check for matches among multiple participants.{/ts}{literal}';
-        var errorMsg2 = '{/literal}{ts}Primary participants will be allowed to register for this event multiple times.  No duplicate registration checking will be performed.{/ts}{literal}';
-        var errorMsg3 = '{/literal}{ts}Primary participants will be able to register additional participants during registration.{/ts}{literal}';
+    {
+        var msg1 = '{/literal}{ts 1="' + ruleFields + '"}Primary participants will be able to register additional participants using the same e-email address.  The default "Fuzzy" Dedupe Rule will use the following fields to prevent duplicate registrations: %1.  First and Last Name will be used to check for matches among multiple participants.{/ts}{literal}';
+        var msg2 = '{/literal}{ts}Primary participants will be allowed to register for this event multiple times.  No duplicate registration checking will be performed.{/ts}{literal}';
+        var msg3 = '{/literal}{ts}Primary participants will be able to register additional participants during registration.{/ts}{literal}';
  
-        //display error message.
-        var imageIcon = "<a href='#' onclick='cj( \"#restmsg\" ).hide( ); return false;'>" + '<div class="ui-icon ui-icon-close" style="float:left"></div>' + '</a>';
-
+        // Display info
+        cj('.ui-notify-message .icon.info').click();
         if ( cj("#allow_same_participant_emails").attr( 'checked' ) && cj("#is_multiple_registrations").attr( 'checked' ) ) {
-            cj( '#restmsg' ).html( imageIcon + errorMsg1  ).show( );
+            cj().crmAlert( msg1, '', 'info' );
         } else if ( cj("#allow_same_participant_emails").attr( 'checked' ) && !cj("#is_multiple_registrations").attr( 'checked' ) ) {
-            cj( '#restmsg' ).html( imageIcon + errorMsg2  ).show( );
+            cj().crmAlert( msg2, '', 'info' );
         } else if ( !cj("#allow_same_participant_emails").attr( 'checked' ) && cj("#is_multiple_registrations").attr( 'checked' ) ) {
-            cj( '#restmsg' ).html( imageIcon + errorMsg3  ).show( );
-        } else {  
-            cj( '#restmsg' ).html( imageIcon + errorMsg1  ).hide( );
-            cj( '#restmsg' ).html( imageIcon + errorMsg2  ).hide( );
-            cj( '#restmsg' ).html( imageIcon + errorMsg3  ).hide( );
+            cj().crmAlert( msg3, '', 'info' );
         }
     }
 

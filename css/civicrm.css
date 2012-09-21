@@ -654,22 +654,6 @@ div.spacer,
     color:#8A1F11;
 }
 
-#restmsg {
-    z-index:10000;
-    padding:4px;
-    margin-bottom: 4px;
-}
-#restmsg.msgok, span.msgok {
-    display:block;
-    background:#B0D730;
-    background-color:#F1F8EB;
-    border:1px solid #B0D730;
-    color:#3E3E3E;
-    font-size:12px;
-    margin:0 0 8px;
-    padding:4px;
-}
-
 #crm-container div.view-data {
     padding: .25em .5em .25em .5em;
     border: 1px solid DimGray;
@@ -3204,7 +3188,6 @@ del,
 
 #crm-container div.status,
 div.m ul#civicrm-menu,
-#crm-container #restmsg,
 #crm-container #help, 
 #crm-container .help,
 #crm-container .ui-tabs-panel,

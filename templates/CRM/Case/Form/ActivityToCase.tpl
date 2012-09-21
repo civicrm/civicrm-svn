@@ -135,7 +135,7 @@ function fileOnCase( action, activityID, currentCaseId ) {
 				var targetContactId = cj("#target_contact_id").val( );
 				
 			    if ( !cj("#unclosed_cases").val( )  ) {
-			       alert('{/literal}{ts escape="js"}Please select a case from the list{/ts}{literal}.');
+			       cj("#unclosed_cases").crmError('{/literal}{ts escape="js"}Please select a case from the list{/ts}{literal}.');
 				   return false;
 				}
 						
@@ -145,7 +145,7 @@ function fileOnCase( action, activityID, currentCaseId ) {
 			        cj.post( postUrl, { activityID: activityID, caseID: selectedCaseId, contactID: contactId, newSubject: subject, targetContactIds: targetContactId, mode: action, key: {/literal}"{crmKey name='civicrm/ajax/activity/convert'}"{literal} },
 					 function( values ) {
 					      if ( values.error_msg ) {
-                             alert( "{/literal}{ts escape='js'}Unable to file on case{/ts}{literal}.\n\n" + values.error_msg );
+                    cj().crmError(values.error_msg, "{/literal}{ts escape='js'}Unable to file on case{/ts}{literal}.");
 						     return false;
                           } else {
 					          var destUrl = {/literal}"{crmURL p='civicrm/contact/view/case' q='reset=1&action=view&id=' h=0 }"{literal}; 
@@ -182,13 +182,9 @@ function fileOnCase( action, activityID, currentCaseId ) {
 						      	  window.location.reload( ); 
 						      } else {
 						          var activitySubject = cj("#case_activity_subject").val( );
-						          var statusMsg = '<a id="closeFileOnCaseStatusMsg" href="#"><div class="ui-icon ui-icon-close" style="float:left"></div></a> "' + activitySubject + '" has been filed to selected case: ' + cj("#unclosed_cases").val( ) + '. Click <a href="' + caseUrl + '">here</a> to view that case.';
-						          var context = {/literal}"{$context}"{literal};
-                                  if ( context ) {
-                                    context = '-' + context;
-                                  }
-                                  cj('#fileOnCaseStatusMsg' + context ).addClass('msgok').html( statusMsg ).show( );
-                                  cj("#closeFileOnCaseStatusMsg").click(function(){ cj('#fileOnCaseStatusMsg' + context ).fadeOut("slow");return false;}).focus( );
+						          var statusMsg = activitySubject + '" has been filed to selected case: <a href="' + caseUrl + '">' + cj("#unclosed_cases").val( ) + '</a>.';
+                      cj().crmAlert(statusMsg, '{/literal}{ts escape="js"}Activity Filed{/ts}{literal}', 'success');
+
                              }
    					      }
                     }
