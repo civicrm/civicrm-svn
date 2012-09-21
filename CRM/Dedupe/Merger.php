@@ -42,7 +42,7 @@ class CRM_Dedupe_Merger {
     'individual_prefix', 'individual_suffix', 'is_deceased', 'is_opt_out',
     'job_title', 'last_name', 'legal_identifier', 'legal_name',
     'middle_name', 'nick_name', 'organization_name', 'postal_greeting', 'postal_greeting_custom',
-    'preferred_communication_method', 'preferred_mail_format', 'sic_code',
+    'preferred_communication_method', 'preferred_mail_format', 'sic_code', 'current_employer_id'
   );
 
   // FIXME: consider creating a common structure with cidRefs() and eidRefs()
@@ -1488,6 +1488,17 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
     // **** Update contact related info for the main contact
     if (!empty($submitted)) {
       $submitted['contact_id'] = $mainId;
+
+      //update current employer field
+      if ($currentEmloyerId = CRM_Utils_Array::value('current_employer_id', $submitted)) {
+        if (!CRM_Utils_System::isNull($currentEmloyerId)) {
+          $submitted['current_employer'] = $submitted['current_employer_id'];
+        } else {
+          $submitted['current_employer'] = '';
+        }
+        unset($submitted['current_employer_id']);
+      }
+      
       CRM_Contact_BAO_Contact::createProfileContact($submitted, CRM_Core_DAO::$_nullArray, $mainId);
       unset($submitted);
     }

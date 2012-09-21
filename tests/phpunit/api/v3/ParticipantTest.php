@@ -83,7 +83,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase {
   function tearDown() {
     $this->eventDelete($this->_eventID);
     $tablesToTruncate = array(
-      'civicrm_custom_group', 'civicrm_custom_field', 'civicrm_contact'
+      'civicrm_custom_group', 'civicrm_custom_field', 'civicrm_contact', 'civicrm_participant'
     );
     // true tells quickCleanup to drop any tables that might have been created in the test
     $this->quickCleanup($tablesToTruncate, TRUE);
@@ -217,6 +217,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase {
       'version' => $this->_apiversion,
       'return.status_id' => 1,
       'return.participant_status_id' => 1,
+      'options' => array('limit' => 1)
     );
     $result = civicrm_api('participant', 'get', $params);
     $this->assertArrayHasKey('participant_status_id', $result['values'][$result['id']]);
@@ -787,7 +788,6 @@ class api_v3_ParticipantTest extends CiviUnitTestCase {
 
    $params['participant_role_id'] =2;
    $result =  civicrm_api('participant','get', $params);
-   print_r($result);
 
    $this->assertEquals($result['is_error'], 0,  "in line " . __LINE__);
    $this->assertEquals(2,$result['count'], "in line " . __LINE__);

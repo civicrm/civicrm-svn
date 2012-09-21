@@ -91,7 +91,8 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact {
     if ( isset( $params['contact_sub_type'] ) ) {
       if ( empty($params['contact_sub_type']) ) {
         $params['contact_sub_type'] = 'null';
-      } else {
+      }
+      else {
       if (!CRM_Contact_BAO_ContactType::isExtendsContactType($params['contact_sub_type'],
           $params['contact_type'], TRUE
         )) {
@@ -183,6 +184,11 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact {
       $contact->hash = md5(uniqid(rand(), TRUE));
     }
 
+    // Even if we don't need $employerId, it's important to call getFieldValue() before
+    // the contact is saved because we want the existing value to be cached.
+    // createCurrentEmployerRelationship() needs the old value not the updated one. CRM-10788
+    $employerId = empty($contact->id) ? NULL : CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $contact->id, 'employer_id');
+
     if (!$allNull) {
       $contact->save();
 
@@ -210,7 +216,7 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact {
       }
       else {
         //unset if employer id exits
-        if ($employerId = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $contact->id, 'employer_id')) {
+        if ($employerId) {
           CRM_Contact_BAO_Contact_Utils::clearCurrentEmployer($contact->id, $employerId);
         }
       }

@@ -66,9 +66,11 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
     $this->webtestFillDate('join_date', '-2 year');
 
     // Let Start Date and End Date be auto computed
+    // added sleep to make sure jscript onchange for total_amount has a chance to fire
+    sleep(2);
 
     // Clicking save.
-    $this->click('_qf_Membership_upload');
+    $this->click('_qf_Membership_upload-bottom');
     $this->waitForPageToLoad('30000');
 
     // page was loaded
@@ -176,7 +178,7 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
     $this->select("contribution_status_id", "value=2");
 
     // Clicking save.
-    $this->click('_qf_Membership_upload');
+    $this->click('_qf_Membership_upload-bottom');
     $this->waitForPageToLoad('30000');
 
     // page was loaded
@@ -260,9 +262,11 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
     $this->webtestFillDate('join_date', '-2 year');
 
     // Let Start Date and End Date be auto computed
+    // added sleep to make sure jscript onchange for total_amount has a chance to fire
+    sleep(2);
 
     // Clicking save.
-    $this->click('_qf_Membership_upload');
+    $this->click('_qf_Membership_upload-bottom');
     $this->waitForPageToLoad('30000');
 
     // page was loaded
@@ -365,9 +369,11 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
     $this->type('check_number', '1023');
     $this->select('contribution_status_id', "label=Completed");
     $this->click('send_receipt');
+    // added sleep to make sure jscript onchange for total_amount has a chance to fire
+    sleep(2);
 
     // Clicking save.
-    $this->click('_qf_Membership_upload');
+    $this->click('_qf_Membership_upload-bottom');
     $this->waitForPageToLoad('30000');
 
     // page was loaded

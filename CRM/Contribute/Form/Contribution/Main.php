@@ -575,9 +575,23 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
       $this->add('textarea', 'pcp_personal_note', ts('Personal Note'), array('style' => 'height: 3em; width: 40em;'));
     }
 
-    if (!($this->_paymentProcessor['billing_mode'] == CRM_Core_Payment::BILLING_MODE_BUTTON
-        && !$this->_values['is_pay_later']
-      )) {
+    //we have to load confirm contribution button in template
+    //when multiple payment processor as the user 
+    //can toggle with payment processor selection
+    $billingModePaymentProcessors = 0;
+    foreach ($this->_paymentProcessors as $key => $values) {
+      if ($values['billing_mode'] == CRM_Core_Payment::BILLING_MODE_BUTTON) {
+        $billingModePaymentProcessors++;
+      }
+    }
+    
+    if ($billingModePaymentProcessors && count($this->_paymentProcessors) == $billingModePaymentProcessors) {
+      $allAreBillingModeProcessors = TRUE;
+    } else {
+      $allAreBillingModeProcessors = FALSE;
+    }
+    
+    if (!($allAreBillingModeProcessors && !$this->_values['is_pay_later'])) {
       $this->addButtons(array(
           array(
             'type' => 'upload',

@@ -286,6 +286,18 @@ function _civicrm_api3_get_DAO($name) {
   if (strtolower($name) == 'individual' || strtolower($name) == 'household' || strtolower($name) == 'organization') {
     $name = 'Contact';
   }
+
+  //hack to deal with incorrectly named BAO/DAO - see CRM-10859 - remove after rename
+  if($name == 'price_set'){
+    return 'CRM_Price_DAO_Set';
+  }
+  if($name == 'price_field'){
+    return 'CRM_Price_DAO_Field';
+  }
+  if($name == 'price_field_value'){
+    return 'CRM_Price_DAO_FieldValue';
+  }
+
   return CRM_Utils_Array::value(_civicrm_api_get_camel_name($name, 3), $dao);
 }
 

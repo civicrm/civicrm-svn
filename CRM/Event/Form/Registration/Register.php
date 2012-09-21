@@ -319,7 +319,6 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
    * @return None
    * @access public
    */
-
   public function buildQuickForm() {
     if ($this->_ppType) {
       return CRM_Core_Payment_ProcessorForm::buildQuickForm($this);
@@ -502,7 +501,25 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
       }
     }
 
-    if ($this->_paymentProcessor['billing_mode'] != CRM_Core_Payment::BILLING_MODE_BUTTON ||
+    //we have to load confirm contribution button in template
+    //when multiple payment processor as the user 
+    //can toggle with payment processor selection
+    $billingModePaymentProcessors = 0;
+    if (!CRM_Utils_System::isNull($this->_paymentProcessors)) {
+      foreach ($this->_paymentProcessors as $key => $values) {
+        if ($values['billing_mode'] == CRM_Core_Payment::BILLING_MODE_BUTTON) {
+          $billingModePaymentProcessors++;
+        }
+      }
+    }
+    
+    if ($billingModePaymentProcessors && count($this->_paymentProcessors) == $billingModePaymentProcessors) {
+      $allAreBillingModeProcessors = TRUE;
+    } else {
+      $allAreBillingModeProcessors = FALSE;
+    }
+
+    if (!$allAreBillingModeProcessors ||
       CRM_Utils_Array::value('is_pay_later', $this->_values['event']) || $bypassPayment 
     ) {
 
@@ -892,7 +909,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
       ) {
         return empty($errors) ? TRUE : $errors;
       }
-
+      if (property_exists($self, '_paymentFields')) {
       if (property_exists($self, '_paymentFields') && !empty($self->_paymentFields )) {
         foreach ($self->_paymentFields as $name => $fld) {
           if ($fld['is_required'] &&
@@ -903,7 +920,6 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
         }
       }
     }
-
     // make sure that credit card number and cvv are valid
     if (CRM_Utils_Array::value('credit_card_type', $fields)) {
       if (CRM_Utils_Array::value('credit_card_number', $fields) &&
@@ -936,15 +952,13 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
    * Check if profiles are complete when event registration occurs(CRM-9587)
    *
    */
-  static
-  function checkProfileComplete($fields, &$errors, $eventId) {
+  static function checkProfileComplete($fields, &$errors, $eventId) {
     $email = '';
     foreach ($fields as $fieldname => $fieldvalue) {
       if (substr($fieldname, 0, 6) == 'email-' && $fieldvalue) {
         $email = $fieldvalue;
       }
     }
-
 
     if (!$email && !(CRM_Utils_Array::value('first_name', $fields) &&
         CRM_Utils_Array::value('last_name', $fields)
@@ -1196,7 +1210,6 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
      *access public
      *
      */
-
   public function processRegistration($params, $contactID = NULL) {
     $session = CRM_Core_Session::singleton();
     $this->_participantInfo = array();

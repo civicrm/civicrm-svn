@@ -354,7 +354,7 @@ class CRM_Core_BAO_ActionScheduleTest extends CiviUnitTestCase {
         'recipients' => array(),
       ),
       array( // After the 2-week mark, send an email
-        'time' => '2012-06-02 01:00:00',
+        'time' => '2012-06-01 01:00:00',
         'recipients' => array(array('test-member@example.com')),
       ),
     ));

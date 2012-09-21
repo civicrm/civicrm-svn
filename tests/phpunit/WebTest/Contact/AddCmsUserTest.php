@@ -74,6 +74,20 @@ class WebTest_Contact_AddCmsUserTest extends CiviSeleniumTestCase {
     // class attributes.
     $this->open($this->sboxPath);
 
+    // Make sure Drupal account settings allow visitors to register for account w/o admin approval
+    // login as admin
+    $this->webtestLogin(TRUE);
+    $this->open($this->sboxPath . "admin/config/people/accounts");
+    $this->waitForElementPresent("edit-submit");
+
+    $this->click('edit-user-register-1');
+    $this->click('edit-user-email-verification');
+    $this->click('edit-submit');
+    $this->waitForPageToLoad("30000");
+    // logout
+    $this->open($this->sboxPath . 'civicrm/logout?reset=1');
+    $this->waitForPageToLoad("30000");
+
     // Go directly to the URL of the screen that will Create User Anonymously.
     $this->open($this->sboxPath . "user/register");
 
@@ -99,7 +113,8 @@ class WebTest_Contact_AddCmsUserTest extends CiviSeleniumTestCase {
 
     $this->click("edit-submit");
     $this->waitForPageToLoad("30000");
-    $this->assertTrue($this->isTextPresent("Thank you for applying for an account. Your account is currently pending approval by the site administrator."));
+    $this->assertTrue($this->isTextPresent("A welcome message with further instructions has been sent to your e-mail address."));
+
     $this->webtestLogin();
 
     $this->open($this->sboxPath . "civicrm/contact/search?reset=1");

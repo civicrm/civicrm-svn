@@ -104,8 +104,9 @@ class WebTest_Report_LoggingReportTest extends CiviSeleniumTestCase {
     $this->type('subject', $noteSubject . "_edited");
     $this->type('note', $noteText . "_edited");
     $this->click("_qf_Note_next-top");
-    $this->waitForElementPresent('link=Delete');
-    $this->click('link=Delete');
+        
+    $this->waitForElementPresent("xpath=//div[@class='crm-results-block']/div[@id='notes']/div/table/tbody/tr//td/span[2]/ul/li[2]/a[text()='Delete']");
+    $this->click("xpath=//div[@class='crm-results-block']/div[@id='notes']/div/table/tbody/tr//td/span[2]/ul/li[2]/a[text()='Delete']");
     // Check confirmation alert. 
     $this->assertTrue((bool)preg_match("/^Are you sure you want to delete this note/",
         $this->getConfirmation()

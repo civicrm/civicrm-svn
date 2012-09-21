@@ -66,8 +66,13 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
     $this->click('css=#tab_membership a');
     $this->waitForElementPresent("member_is_active");
     $this->check("member_is_active");
+    
+    $this->waitForElementPresent("new_title"); 
+    if ($this->isElementPresent("member_price_set_id")) {
     $this->waitForElementPresent("member_price_set_id"); 
     $this->select("member_price_set_id", "label=- none -");
+    }
+    
     $this->waitForElementPresent("membership_type-block");
     $this->check("xpath=//tr[@id='membership_type-block']/td[2]/table/tbody/tr/td/label[text()='General']/../input[2]");
     $this->check("xpath=//tr[@id='membership_type-block']/td[2]/table/tbody/tr/td/label[text()='Student']/../input[2]");
@@ -257,8 +262,13 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
     $this->click('css=#tab_membership a');
     $this->waitForElementPresent("member_is_active");
     $this->check("member_is_active");
+ 
+    $this->waitForElementPresent("new_title");
+    if ($this->isElementPresent("member_price_set_id")) {
     $this->waitForElementPresent("member_price_set_id"); 
     $this->select("member_price_set_id", "label=- none -");
+    }
+  
     $this->waitForElementPresent("membership_type-block");
     $this->check("xpath=//tr[@id='membership_type-block']/td[2]/table/tbody/tr/td/label[text()='General']/../input[2]");
     $this->check("xpath=//tr[@id='membership_type-block']/td[2]/table/tbody/tr/td/label[text()='Student']/../input[2]");
