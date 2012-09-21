@@ -96,6 +96,33 @@ class CRM_Price_BAO_Set extends CRM_Price_DAO_Set {
     return CRM_Core_DAO::setFieldValue('CRM_Price_DAO_Set', $id, 'is_active', $isActive);
   }
 
+  /**   
+   * Calculate the default price set id
+   * assigned to the contribution/membership etc
+   *
+   * @param string $entity
+   *
+   * @return id $priceSetID
+   *
+   * @access public
+   * @static
+   *
+   */
+  public static function calculateDefaultPriceSet($entity = 'contribution') {
+    if ($entity == 'contribution') {
+      $entityName = 'default_contribution_amount';
+    }
+    else if ($entity == 'membership') {
+      $entityName = 'default_membership_type_amount';
+    }
+
+    if ($entityName) { 
+      $priceSetID = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $entityName, 'id', 'name');
+    }
+    
+    return $priceSetID;
+  }
+
   /**
    * Get the price set title.
    *
