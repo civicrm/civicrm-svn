@@ -67,7 +67,7 @@ function civicrm_api3_contribution_create($params) {
     return $error;
   }
   _civicrm_api3_custom_format_params($params, $values, 'Contribution');
-  $values["contact_id"] = $params["contact_id"];
+  $values["contact_id"] = CRM_Utils_Array::value('contact_id', $params);
   $values["source"] = CRM_Utils_Array::value('source', $params);
 
   $ids = array();
