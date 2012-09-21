@@ -118,7 +118,7 @@ class CRM_Member_Form_MembershipStatus extends CRM_Member_Form {
     if ($this->_action & CRM_Core_Action::DELETE) {
       $wt = CRM_Utils_Weight::delWeight('CRM_Member_DAO_MembershipStatus', $this->_id);
       CRM_Member_BAO_MembershipStatus::del($this->_id);
-      CRM_Core_Session::setStatus(ts('Selected membership status has been deleted.'), ts('Record Deleted'), 'info');
+      CRM_Core_Session::setStatus(ts('Selected membership status has been deleted.'), ts('Record Deleted'), 'success');
     }
     else {
       $params = $ids = array();

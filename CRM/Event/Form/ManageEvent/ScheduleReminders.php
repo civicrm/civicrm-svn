@@ -238,7 +238,7 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
     if ($this->_action & CRM_Core_Action::DELETE) {
       // delete reminder
       CRM_Core_BAO_ActionSchedule::del($this->_id);
-      CRM_Core_Session::setStatus(ts('Selected Reminder has been deleted.'), ts('Record Deleted'), 'info');
+      CRM_Core_Session::setStatus(ts('Selected Reminder has been deleted.'), ts('Record Deleted'), 'success');
       return;
     }
 

@@ -149,7 +149,7 @@ class CRM_Admin_Form_LabelFormats extends CRM_Admin_Form {
     if ($this->_action & CRM_Core_Action::DELETE) {
       // delete Label Format
       CRM_Core_BAO_LabelFormat::del($this->_id);
-      CRM_Core_Session::setStatus(ts('Selected Label Format has been deleted.'), ts('Record Deleted'), 'info');
+      CRM_Core_Session::setStatus(ts('Selected Label Format has been deleted.'), ts('Record Deleted'), 'success');
       return;
     }
     if ($this->_action & CRM_Core_Action::COPY) {
