@@ -75,8 +75,8 @@ function civicrm_api3_contribution_create($params) {
     $ids['contribution'] = $params['id'];
   }
   $contribution = CRM_Contribute_BAO_Contribution::create($values, $ids);
-  if (is_a($contribution, 'CRM_Core_Error')) {
-    return civicrm_api3_create_error($contribution->_errors[0]['message']);
+  if(empty($params['price_set_id']) && empty($params['id'])){
+    _civicrm_api3_contribution_createdefaultlineitem($params, $contribution);
   }
   _civicrm_api3_object_to_array($contribution, $contributeArray[$contribution->id]);
 
@@ -111,6 +111,36 @@ function _civicrm_api3_contribution_create_spec(&$params) {
     'description' => 'Do not add to recent view (setting this improves performance)',
   );
 }
+/*
+ * Create a default contribution line item
+ */
+ function _civicrm_api3_contribution_createdefaultlineitem(&$params, $contribution){
+   $priceSetDetails = CRM_Price_BAO_Set::getDefaultPriceSet();
+   foreach ($priceSetDetails as $field => $values){
+     $priceFieldValueBAO = new CRM_Price_BAO_FieldValue();
+     $priceFieldValueBAO->price_field_id = $values['priceFieldID'];
+     $priceFieldValueBAO->selectAdd();
+     $priceFieldValueBAO->selectAdd('id');
+     $priceFieldValueBAO->selectAdd('label');
+     $priceFieldValueBAO->find(true);
+     continue;
+   }
+   $lineItemparams = array(
+     'version' => 3,
+     'price_field_id' => $priceFieldValueBAO->price_field_id,
+     'price_field_value_id' => $priceFieldValueBAO->id,
+     'entity_table' => 'civicrm_contribution',
+     'entity_id' => $contribution->id,
+     'label' => $priceFieldValueBAO->label,
+     'qty' => 1,
+     'unit_price' => $contribution->total_amount,
+     'line_total' => $contribution->total_amount,
+     'version' => 3,
+   );
+   civicrm_api('line_item','create',$lineItemparams);
+ }
+
+
 
 /**
  * Delete a contribution

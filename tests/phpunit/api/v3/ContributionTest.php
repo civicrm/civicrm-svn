@@ -69,13 +69,14 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'civicrm_participant',
       'civicrm_contact',
       'civicrm_participant_payment',
+      'civicrm_line_item',
     ));
   }
 
   ///////////////// civicrm_contribution_get methods
   function testGetEmptyParamsContribution() {
 
-    $params = array();
+    $params = array('debug' => 1);
     $contribution = civicrm_api('contribution', 'get', $params);
     $this->assertEquals($contribution['is_error'], 1);
     $this->assertEquals($contribution['error_message'], 'Mandatory key(s) missing from params array: version');
@@ -293,7 +294,23 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $this->assertEquals($contribution['values'][$contribution['id']]['invoice_id'], 67890, 'In line ' . __LINE__);
     $this->assertEquals($contribution['values'][$contribution['id']]['source'], 'SSF', 'In line ' . __LINE__);
     $this->assertEquals($contribution['values'][$contribution['id']]['contribution_status_id'], 1, 'In line ' . __LINE__);
+    $lineItems = civicrm_api('line_item','get',array(
+      'version' => $this->_apiversion,
+      'entity_id' => $contribution['id'],
+      'entity_table' => 'civicrm_contribution',
+      'sequential' => 1,
+      ));
+    $this->assertEquals(1, $lineItems['count']);
+    $this->assertEquals($contribution['id'], $lineItems['values'][0]['entity_id']);
+    $this->assertEquals($contribution['id'], $lineItems['values'][0]['entity_id']);
     $this->contributionGetnCheck($params, $contribution['id']);
+    $lineItems = civicrm_api('line_item','get',array(
+        'version' => $this->_apiversion,
+        'entity_id' => $contribution['id'],
+        'entity_table' => 'civicrm_contribution',
+        'sequential' => 1,
+    ));
+    $this->assertEquals(0, $lineItems['count']);
   }
   /*
      * Create test with unique field name on source
