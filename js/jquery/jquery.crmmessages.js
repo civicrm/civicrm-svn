@@ -116,7 +116,7 @@
     var msg = $('#crm-notification-container').notify('create', params, $.extend(extra, options));
     if ($(this).length) {
       $(this).one('change', function() {
-        msg.close();
+        msg && msg.close && msg.close();
         $(this).removeClass('error');
         label.removeClass('crm-error');
       });
