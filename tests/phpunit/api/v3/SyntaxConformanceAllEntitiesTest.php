@@ -21,9 +21,9 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
     */ function setUp() {
     parent::setUp();
 
-    $this->toBeImplemented['get'] = array('ParticipantPayment', 'Profile', 'CustomValue', 'Website', 'Constant', 'Job', 'CustomSearch', 'ReportTemplate', 'System');
-    $this->toBeImplemented['create'] = array('SurveyRespondant', 'OptionGroup', 'UFMatch', 'LocationType', 'CustomSearch', 'ReportTemplate', 'System');
-    $this->toBeImplemented['delete'] = array('MembershipPayment', 'OptionGroup', 'SurveyRespondant', 'UFJoin', 'UFMatch', 'LocationType', 'System');
+    $this->toBeImplemented['get'] = array('ParticipantPayment', 'Profile', 'CustomValue', 'Website', 'Constant', 'Job', 'CustomSearch', 'Extension', 'ReportTemplate', 'System');
+    $this->toBeImplemented['create'] = array('SurveyRespondant', 'OptionGroup', 'UFMatch', 'LocationType', 'CustomSearch', 'Extension', 'ReportTemplate', 'System');
+    $this->toBeImplemented['delete'] = array('MembershipPayment', 'OptionGroup', 'SurveyRespondant', 'UFJoin', 'UFMatch', 'Extension', 'LocationType', 'System');
     $this->onlyIDNonZeroCount['get'] = array('ActivityType', 'Entity', 'Domain');
     $this->deprecatedAPI = array('Location', 'ActivityType', 'SurveyRespondant');
   }
