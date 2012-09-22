@@ -422,6 +422,7 @@ function _civicrm_api3_dao_set_filter(&$dao, $params, $unique = TRUE, $entity) {
   $entity = substr($dao->__table, 8);
 
   $allfields = _civicrm_api3_build_fields_array($dao, $unique);
+  
   $fields = array_intersect(array_keys($allfields), array_keys($params));
   if (isset($params[$entity . "_id"])) {
     //if entity_id is set then treat it as ID (will be overridden by id if set)
@@ -452,8 +453,11 @@ function _civicrm_api3_dao_set_filter(&$dao, $params, $unique = TRUE, $entity) {
   if (!$fields) {
     return;
   }
+  
   foreach ($fields as $field) {
     if (is_array($params[$field])) {
+      //get the actual fieldname from db
+      $fieldName = $allfields[$field]['name'];
       //array is the syntax for SQL clause
       foreach ($params[$field] as $operator => $criteria) {
         if (in_array($operator, $acceptedSQLOperators)) {
@@ -462,7 +466,7 @@ function _civicrm_api3_dao_set_filter(&$dao, $params, $unique = TRUE, $entity) {
 
             case 'IS NULL':
             case 'IS NOT NULL':
-              $dao->whereAdd(sprintf('%s %s', $field, $operator));
+              $dao->whereAdd(sprintf('%s %s', $fieldName, $operator));
               break;
 
             // ternary operators
@@ -472,7 +476,7 @@ function _civicrm_api3_dao_set_filter(&$dao, $params, $unique = TRUE, $entity) {
               if (empty($criteria[0]) || empty($criteria[1])) {
                 throw new exception("invalid criteria for $operator");
               }
-              $dao->whereAdd(sprintf('%s ' . $operator . ' "%s" AND "%s"', $field, CRM_Core_DAO::escapeString($criteria[0]), CRM_Core_DAO::escapeString($criteria[1])));
+              $dao->whereAdd(sprintf('%s ' . $operator . ' "%s" AND "%s"', $fieldName, CRM_Core_DAO::escapeString($criteria[0]), CRM_Core_DAO::escapeString($criteria[1])));
               break;
 
             // n-ary operators
@@ -483,14 +487,14 @@ function _civicrm_api3_dao_set_filter(&$dao, $params, $unique = TRUE, $entity) {
                 throw new exception("invalid criteria for $operator");
               }
               $escapedCriteria = array_map(array('CRM_Core_DAO', 'escapeString'), $criteria);
-              $dao->whereAdd(sprintf('%s %s ("%s")', $field, $operator, implode('", "', $escapedCriteria)));
+              $dao->whereAdd(sprintf('%s %s ("%s")', $fieldName, $operator, implode('", "', $escapedCriteria)));
               break;
 
             // binary operators
 
             default:
 
-              $dao->whereAdd(sprintf('%s %s "%s"', $field, $operator, CRM_Core_DAO::escapeString($criteria)));
+              $dao->whereAdd(sprintf('%s %s "%s"', $fieldName, $operator, CRM_Core_DAO::escapeString($criteria)));
           }
         }
       }
