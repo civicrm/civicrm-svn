@@ -187,7 +187,7 @@ class CRM_Contact_Form_Search_Custom_Group extends CRM_Contact_Form_Search_Custo
 
     $where = $this->where($includeContactIDs);
 
-    $sql = "SELECT $selectClause $from WHERE  $where GROUP BY contact_id";
+    $sql = "SELECT $selectClause $from WHERE  $where GROUP BY contact_a.id";
 
     // Define ORDER BY for query in $sort, with default value
     if (!$justIDs) {
