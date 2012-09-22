@@ -263,6 +263,84 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $this->customGroupDelete($idsContact['custom_group_id']);
   }
 
+  function testCreateContributionNoLineItems() {
+
+    $params = array(
+        'contact_id' => $this->_individualId,
+        'receive_date' => '20120511',
+        'total_amount' => 100.00,
+        'contribution_type_id' => $this->_contributionTypeId,
+        'payment_instrument_id' => 1,
+        'non_deductible_amount' => 10.00,
+        'fee_amount' => 50.00,
+        'net_amount' => 90.00,
+        'trxn_id' => 12345,
+        'invoice_id' => 67890,
+        'source' => 'SSF',
+        'contribution_status_id' => 1,
+        'version' => $this->_apiversion,
+        'use_default_price_set' => 0,
+    );
+
+    $contribution = civicrm_api('contribution', 'create', $params);
+    $lineItems = civicrm_api('line_item','get',array(
+        'version' => $this->_apiversion,
+        'entity_id' => $contribution['id'],
+        'entity_table' => 'civicrm_contribution',
+        'sequential' => 1,
+    ));
+    $this->assertEquals(0, $lineItems['count']);
+  }
+  /*
+   * Test checks that passing in line items suppresses the create mechanism
+   */
+  function testCreateContributionChainedLineItems() {
+
+    $params = array(
+        'contact_id' => $this->_individualId,
+        'receive_date' => '20120511',
+        'total_amount' => 100.00,
+        'contribution_type_id' => $this->_contributionTypeId,
+        'payment_instrument_id' => 1,
+        'non_deductible_amount' => 10.00,
+        'fee_amount' => 50.00,
+        'net_amount' => 90.00,
+        'trxn_id' => 12345,
+        'invoice_id' => 67890,
+        'source' => 'SSF',
+        'contribution_status_id' => 1,
+        'version' => $this->_apiversion,
+        'use_default_price_set' => 0,
+        'api.line_item.create' => array(
+            array(
+              'price_field_id' => 1,
+              'qty' => 2,
+              'line_total' => '20',
+              'unit_price' => '10',
+            ),
+            array(
+                'price_field_id' => 1,
+                'qty' => 1,
+                'line_total' => '80',
+                'unit_price' => '80',
+            ),
+          ),
+
+    );
+
+    $contribution = civicrm_api('contribution', 'create', $params);
+    $description = "Create Contribution with Nested Line Items";
+    $subfile = "CreateWithNestedLineItems";
+    $this->assertAPISuccess($contribution, 'In line ' . __LINE__);
+    $lineItems = civicrm_api('line_item','get',array(
+        'version' => $this->_apiversion,
+        'entity_id' => $contribution['id'],
+        'entity_table' => 'civicrm_contribution',
+        'sequential' => 1,
+    ));
+    $this->assertEquals(2, $lineItems['count']);
+  }
+
   function testCreateContribution() {
 
     $params = array(

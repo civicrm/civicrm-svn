@@ -75,7 +75,7 @@ function civicrm_api3_contribution_create($params) {
     $ids['contribution'] = $params['id'];
   }
   $contribution = CRM_Contribute_BAO_Contribution::create($values, $ids);
-  if(empty($params['price_set_id']) && empty($params['id'])){
+  if(!empty($params['use_default_price_set']) && empty($params['id'] )){
     _civicrm_api3_contribution_createdefaultlineitem($params, $contribution);
   }
   _civicrm_api3_object_to_array($contribution, $contributeArray[$contribution->id]);
@@ -91,6 +91,11 @@ function civicrm_api3_contribution_create($params) {
 function _civicrm_api3_contribution_create_spec(&$params) {
   $params['contact_id']['api.required'] = 1;
   $params['total_amount']['api.required'] = 1;
+  $params['use_default_price_set'] = array(
+    'api.default' => 1,
+    'title' => 'Use Default Price Set',
+     'description' => 'Set this to 0 if you are setting up the lineitems',
+   );
   $params['note'] = array(
     'name' => 'note',
     'title' => 'note',
