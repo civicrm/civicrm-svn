@@ -452,6 +452,32 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $this->contributionDelete($contributionId);
   }
 
+  /*
+   * Function tests that line items are updated
+   */
+  function testCreateUpdateContributionChangeTotal(){
+    $contribution = civicrm_api('contribution', 'create', $this->_params);
+    $lineItems = civicrm_api('line_item','getvalue',array(
+        'version' => $this->_apiversion,
+        'entity_id' => $contribution['id'],
+        'entity_table' => 'civicrm_contribution',
+        'sequential' => 1,
+        'return' => 'line_total',
+    ));
+    $this->assertEquals('100.00', $lineItems);
+
+    $newParams = array_merge($this->_params, array('total_amount' => '777'));
+    $contribution = civicrm_api('contribution', 'create', $newParams);
+    $lineItems = civicrm_api('line_item','getvalue',array(
+        'version' => $this->_apiversion,
+        'entity_id' => $contribution['id'],
+        'entity_table' => 'civicrm_contribution',
+        'sequential' => 1,
+        'return' => 'line_total',
+    ));
+    $this->assertEquals('777.00', $lineItems);
+  }
+
   //To Update Contribution
   //CHANGE: we require the API to do an incremental update
   function testCreateUpdateContribution() {
