@@ -331,6 +331,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $contribution = civicrm_api('contribution', 'create', $params);
     $description = "Create Contribution with Nested Line Items";
     $subfile = "CreateWithNestedLineItems";
+    $this->documentMe($params, $contribution, __FUNCTION__,__FILE__, $description, $subfile);
     $this->assertAPISuccess($contribution, 'In line ' . __LINE__);
     $lineItems = civicrm_api('line_item','get',array(
         'version' => $this->_apiversion,
