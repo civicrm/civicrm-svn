@@ -3438,14 +3438,6 @@ div#crm-toolTip
   margin-bottom: .5ex;
 }
 
-#crm-container .contact_basic_information-section.narrowform table.matching-contacts-actions tr {
-  width:100%;
-}
-
-#crm-container .contact_basic_information-section.narrowform table.matching-contacts-actions td {
-  display:table-cell;
-}
-
 #crm-container .contact_basic_information-section.narrowform table.form-layout-compressed td.hashelpicon {
   position: relative;
 }
