@@ -1961,13 +1961,6 @@ div.grippie {
     height:25px;
 }
 
-#crm-container span.email-hold a:link, 
-#crm-container span.email-hold a:visited, 		
-#crm-container span.do-not-email a:link, 
-#crm-container span.email-hold a:visited {
-    color: #ff6655 !important
-}
-
 #crm-container .crm-clearfix:after,
 #crm-container .crm-summary-row:after {
   clear: both;
@@ -2850,19 +2843,11 @@ div#crm-toolTip #hide-tooltip {
   list-style-image:none;
 }
 
-/* "don't do this" icons */
-#crm-container div.contact_panel span.email-hold, 
-#crm-container div.contact_panel span.do-not-email, 
-#crm-container div.contact_panel span.do-not-mail, 
-#crm-container div.contact_panel span.do-not-phone,
-#crm-container div.crm-search-results span.do-not-phone,
-#crm-container div.crm-search-results span.do-not-email,
-#crm-container div.crm-search-results span.do-not-mail {
-    background-position:3px; 
+/* privacy icons */
+#crm-container div span.privacy-flag {
     background-repeat:no-repeat; 
     background-image:url("../i/stop-icon.png");
-    padding-left: 24px;
-    color: #ff6655 !important;
+    float: right;
 }
 
 /* specific, targeted fixes */
@@ -3158,10 +3143,6 @@ table.crm-info-panel td.label {
 del,
 #crm-container .crm-is_deleted,
 #crm-container table.caseSelector td.status-urgent,
-#crm-container span.email-hold a:link, 
-#crm-container span.email-hold a:visited, 
-#crm-container span.do-not-email a:link, 
-#crm-container span.email-hold a:visited,
 #crm-container .font-red, 
 #crm-container .status-removed, 
 #crm-container .disabled, 

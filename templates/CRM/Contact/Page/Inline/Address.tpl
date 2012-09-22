@@ -34,8 +34,8 @@
     {if $add }
       <div class="crm-summary-row">
         <div class="crm-label">
-          {ts 1=$add.location_type}%1&nbsp;Address{/ts}
-					{if $privacy.do_not_mail}<span class="do-not-mail" title="{ts}Privacy flag: Do Not Mail{/ts}"></span>{/if}
+          {ts 1=$add.location_type}%1 Address{/ts}
+          {if $privacy.do_not_mail}<span class="icon privacy-flag do-not-mail" title="{ts}Privacy flag: Do Not Mail{/ts}"></span>{/if}
           {if $config->mapProvider AND
               !empty($add.geo_code_1) AND
               is_numeric($add.geo_code_1) AND
