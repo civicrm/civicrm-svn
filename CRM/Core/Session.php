@@ -409,13 +409,17 @@ class CRM_Core_Session {
    *     - 'alert' (default)
    *     - 'info'
    *     - 'success'
-   *     - 'error' (this message type by default will remain on the screen until the user dismisses it)
+   *     - 'error' (this message type by default will remain on the screen
+   *               until the user dismisses it)
+   *     - 'no-popup' (will display in the document like old-school)
    * 
    * @param $options array
    *   Additional options. Possible values:
    *     - 'unique' (default: true) Check if this message was already set before adding
-   *     - 'expires' how long to display this message before fadeout (in ms) set to 0 for no expiration
-   *       defaults to 10 seconds for most messages, or 0 for errors or messages containing links
+   *     - 'expires' how long to display this message before fadeout (in ms)
+   *                 set to 0 for no expiration
+   *                 defaults to 10 seconds for most messages, 5 if it has a title but no body,
+   *                 or 0 for errors or messages containing links
    *
    * @static
    *

@@ -115,11 +115,12 @@
     };
     var msg = $('#crm-notification-container').notify('create', params, $.extend(extra, options));
     if ($(this).length) {
-      $(this).one('change', function() {
+      var ele = $(this);
+      setTimeout(function() {ele.one('change', function() {
         msg && msg.close && msg.close();
-        $(this).removeClass('error');
+        ele.removeClass('error');
         label.removeClass('crm-error');
-      });
+      });}, 1000);
     }
     return msg;
   }
@@ -128,10 +129,9 @@
     // Initialize notifications
     $('#crm-notification-container').notify();
     // Display system alerts through js notifications
-    $('#crm-container div.messages:visible').not('.help').each(function() {
+    $('#crm-container div.messages:visible').not('.help').not('.no-popup').each(function() {
       $(this).removeClass('status messages');
       var type = $(this).attr('class').split(' ')[0] || 'alert';
-      type = type.replace('status', 'alert');
       type = type.replace('crm-', '');
       $('.icon', this).remove();
       var title = '';
