@@ -361,7 +361,8 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
     else {
       //fix for CRM-2219 - Update Contribution
       // onDuplicate == CRM_Contribute_Import_Parser::DUPLICATE_UPDATE
-      if ($paramValues['invoice_id'] || $paramValues['trxn_id'] || $paramValues['contribution_id']) {
+      if (CRM_Utils_Array::value('invoice_id',$paramValues) || 
+          CRM_Utils_Array::value('trxn_id', $paramValues) || $paramValues['contribution_id']) {
         $dupeIds = array(
           'id' => CRM_Utils_Array::value('contribution_id', $paramValues),
           'trxn_id' => CRM_Utils_Array::value('trxn_id', $paramValues),
@@ -369,11 +370,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
         );
 
         $ids['contribution'] = CRM_Contribute_BAO_Contribution::checkDuplicateIds($dupeIds);
-        //$lineItemCount = CRM_Price_BAO_LineItem::countLineItems($ids['contribution'],'civicrm_contribution');
-        /*if ($lineItemCount > 1) {
-          array_unshift($values, "Multiple matching price records detected for this row. The contribution was not imported");
-          return CRM_Contribute_Import_Parser::ERROR;
-          }*/
+
         if ($ids['contribution']) {
           $formatted['id'] = $ids['contribution'];
           $formatted['custom'] = CRM_Core_BAO_CustomField::postProcess($formatted,
@@ -382,7 +379,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
             'Contribution'
           );
           //process note
-          if ($paramValues['note']) {
+          if (CRM_Utils_Array::value('note', $paramValues)) {
             $noteID = array();
             $contactID = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_Contribution', $ids['contribution'], 'contact_id');
             $daoNote = new CRM_Core_BAO_Note();
@@ -415,7 +412,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
           }
           
           $newContribution = CRM_Contribute_BAO_Contribution::create($formatted, $ids);
-          CRM_Price_BAO_LineItem::syncLineItems($ids['contribution'], 'civicrm_contribution', $formatted['total_amount']);
+          CRM_Price_BAO_LineItem::syncLineItems($ids['contribution'], 'civicrm_contribution', CRM_Utils_Array::value('total_amount',$formatted));
 
           $this->_newContributions[] = $newContribution->id;
 
