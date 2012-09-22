@@ -123,8 +123,8 @@ class CRM_Utils_PDF_Label extends TCPDF {
       $value = $this->format[$name];
       $metric = $this->format['metric'];
     }
-    else {
-      $value = $this->defaults[$name];
+    else {      
+      $value = CRM_Utils_Array::value($name, $this->defaults);
       $metric = $this->defaults['metric'];
     }
     if ($convert) {
