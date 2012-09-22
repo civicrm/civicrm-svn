@@ -243,38 +243,34 @@ WHERE     %2.id = %1";
     $dao = CRM_Core_DAO::executeQuery($query);
     return $result;
   }
-  
-  public static function countLineItems($entityId, $entityTable = 'civicrm_contribution') {
-    $query = "
-SELECT     COUNT(*) 
-FROM       civicrm_line_item 
-WHERE      entity_id = %1 AND 
-           entity_table = %2";
-
-    $params = array(1 => array($entityId, 'Integer'),
-                    2 => array($entityTable, 'String'),
-                    );
-
-    return CRM_Core_DAO::singleValueQuery($query, $params);
-
-  }
-    
+      
   public static function syncLineItems($entityId, $entityTable = 'civicrm_contribution', $amount) {
+    if (!$entityId || CRM_Utils_System::isNull($amount))
+      return;
+    
+    if ($entityTable == 'civicrm_contribution') {
+      $entityName = 'default_contribution_amount';
+    }
+      
     $query = "                                                                                                                                                                                             
-UPDATE   civicrm_line_item
-SET      unit_price = %3,
-         line_total = %3 
-WHERE    entity_id = %1 AND                                                                                                                                                                               
-         entity_table = %2";
+UPDATE      civicrm_line_item li
+LEFT JOIN   civicrm_price_field pf ON pf.id = li.price_field_id
+LEFT JOIN   civicrm_price_set ps ON ps.id = pf.price_set_id
+SET         li.unit_price = %3, 
+            li.line_total = %3
+WHERE       li.entity_id = %1 AND 
+            li.entity_table = %2 AND 
+            ps.name = %4
+";
 
     $params = array(1 => array($entityId, 'Integer'),
                     2 => array($entityTable, 'String'),
-                    3 => array($amount, 'Float')
+                    3 => array($amount, 'Float'),
+                    4 => array($entityName, 'String'),
                     );
 
-    return CRM_Core_DAO::singleValueQuery($query, $params);
-
+    CRM_Core_DAO::executeQuery($query, $params);
   }
-
+  
 }
 
