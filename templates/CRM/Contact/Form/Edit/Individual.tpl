@@ -43,6 +43,7 @@ cj(function($) {
      return;//no dupe check if this is a modif or if checkSimilar is disabled (contact_ajax_check_similar in civicrm_setting table)
     }
     cj('#last_name').blur(function () {
+      // Close msg if it exists
       lastnameMsg && lastnameMsg.close && lastnameMsg.close();
       if (this.value == '') return;
       cj.getJSON(contactIndividual,{sort_name:cj('#last_name').val()},
@@ -65,11 +66,15 @@ cj(function($) {
         });
         msg += '</ul>';
         lastnameMsg = $().crmAlert(msg, title);
-        cj('.matching-contacts-actions a').click(function(){global_formNavigate =true; return true;});// No confirmation dialog on click
+        cj('.matching-contacts-actions a').click(function(){
+          // No confirmation dialog on click
+          global_formNavigate = true;
+          return true;
         });
       });
     });
   });
+});
 </script>
 {/literal}
 
