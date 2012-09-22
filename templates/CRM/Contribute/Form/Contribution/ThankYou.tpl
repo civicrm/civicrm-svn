@@ -131,12 +131,15 @@
             {* Recurring contribution / pledge information *}
             {if $is_recur}
                 {if $membershipBlock} {* Auto-renew membership confirmation *}
+{crmRegion name="contribution-thankyou-recur-membership"}
                     <br />
                     <strong>{ts 1=$frequency_interval 2=$frequency_unit}This membership will be renewed automatically every %1 %2(s).{/ts}</strong>
                     <div class="description crm-auto-renew-cancel-info">({ts}You will receive an email receipt which includes information about how to cancel the auto-renwal option.{/ts})</div>
+{/crmRegion}
                 {else}
+{crmRegion name="contribution-thankyou-recur"}
                     {if $installments}
-        		        <p><strong>{ts 1=$frequency_interval 2=$frequency_unit 3=$installments}This recurring contribution will be automatically processed every %1 %2(s) for a total %3 installments (including this initial contribution).{/ts}</strong></p>
+     		        <p><strong>{ts 1=$frequency_interval 2=$frequency_unit 3=$installments}This recurring contribution will be automatically processed every %1 %2(s) for a total %3 installments (including this initial contribution).{/ts}</strong></p>
                     {else}
                         <p><strong>{ts 1=$frequency_interval 2=$frequency_unit}This recurring contribution will be automatically processed every %1 %2(s).{/ts}</strong></p>
                     {/if}
@@ -145,8 +148,10 @@
                         {ts}You will receive an email receipt which includes information about how to update or cancel this recurring contribution.{/ts}
                     {/if}
                     </p>
+{/crmRegion}
                 {/if}
             {/if}
+
             {if $is_pledge}
                 {if $pledge_frequency_interval GT 1}
                     <p><strong>{ts 1=$pledge_frequency_interval 2=$pledge_frequency_unit 3=$pledge_installments}I pledge to contribute this amount every %1 %2s for %3 installments.{/ts}</strong></p>
@@ -213,27 +218,39 @@
       </div>
     {/if}
 
-    {if $contributeMode ne 'notify' and ! $is_pay_later and $is_monetary and ( $amount GT 0 OR $minimum_fee GT 0 )}
-    <div class="crm-group billing_name_address-group">
-        <div class="header-dark">
-            {ts}Billing Name and Address{/ts}
-        </div>
-    	<div class="crm-section no-label billing_name-section">
-    		<div class="content">{$billingName}</div>
-    		<div class="clear"></div>
-    	</div>
-    	<div class="crm-section no-label billing_address-section">
-    		<div class="content">{$address|nl2br}</div>
-    		<div class="clear"></div>
-    	</div>
-        <div class="crm-section no-label contributor_email-section">
-        	<div class="content">{$email}</div>
-        	<div class="clear"></div>
-        </div>
-    </div>
+    {if ( $contributeMode ne 'notify' and ! $is_pay_later and $is_monetary and ( $amount GT 0 OR $minimum_fee GT 0 ) ) or $email }
+        {if $contributeMode ne 'notify' and ! $is_pay_later and $is_monetary and ( $amount GT 0 OR $minimum_fee GT 0 ) }
+          {if $billingName or $address}
+            <div class="crm-group billing_name_address-group">
+                <div class="header-dark">
+                    {ts}Billing Name and Address{/ts}
+                </div>
+            	<div class="crm-section no-label billing_name-section">
+            		<div class="content">{$billingName}</div>
+            		<div class="clear"></div>
+            	</div>
+            	<div class="crm-section no-label billing_address-section">
+            		<div class="content">{$address|nl2br}</div>
+            		<div class="clear"></div>
+            	</div>
+       	    </div>
+          {/if}
+        {/if}
+        {if $email}
+            <div class="crm-group contributor_email-group">
+                <div class="header-dark">
+                    {ts}Your Email{/ts}
+                </div>
+                <div class="crm-section no-label contributor_email-section">
+                	<div class="content">{$email}</div>
+                	<div class="clear"></div>
+                </div>
+            </div>
+        {/if}
     {/if}
 
     {if $contributeMode eq 'direct' and ! $is_pay_later and $is_monetary and ( $amount GT 0 OR $minimum_fee GT 0 )}
+{crmRegion name="contribution-thankyou-billing-block"}
     <div class="crm-group credit_card-group">
         <div class="header-dark">
          {if $paymentProcessor.payment_type & 2}
@@ -258,6 +275,7 @@
              </div>
          {/if}
     </div>
+{/crmRegion}
     {/if}
 
     {include file="CRM/Contribute/Form/Contribution/PremiumBlock.tpl" context="thankContribution"}

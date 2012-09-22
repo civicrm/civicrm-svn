@@ -89,18 +89,23 @@
 
             {if $is_recur}
                 {if $membershipBlock} {* Auto-renew membership confirmation *}
+{crmRegion name="contribution-confirm-recur-membership"}
                     <br />
                     <strong>{ts 1=$frequency_interval 2=$frequency_unit}I want this membership to be renewed automatically every %1 %2(s).{/ts}</strong></p>
                     <div class="description crm-auto-renew-cancel-info">({ts}Your initial membership fee will be processed once you complete the confirmation step. You will be able to cancel the auto-renwal option by visiting the web page link that will be included in your receipt.{/ts})</div>
+{/crmRegion}
                 {else}
+{crmRegion name="contribution-confirm-recur"}
                     {if $installments}
                         <p><strong>{ts 1=$frequency_interval 2=$frequency_unit 3=$installments}I want to contribute this amount every %1 %2(s) for %3 installments.{/ts}</strong></p>
                     {else}
                         <p><strong>{ts 1=$frequency_interval 2=$frequency_unit}I want to contribute this amount every %1 %2(s).{/ts}</strong></p>
                     {/if}
                     <p>{ts}Your initial contribution will be processed once you complete the confirmation step. You will be able to cancel the recurring contribution by visiting the web page link that will be included in your receipt.{/ts}</p>
+{/crmRegion}
                 {/if}
             {/if}
+
             {if $is_pledge }
                 {if $pledge_frequency_interval GT 1}
                     <p><strong>{ts 1=$pledge_frequency_interval 2=$pledge_frequency_unit 3=$pledge_installments}I pledge to contribute this amount every %1 %2s for %3 installments.{/ts}</strong></p>
@@ -164,6 +169,7 @@
 
     {if ( $contributeMode ne 'notify' and ! $is_pay_later and $is_monetary and ( $amount GT 0 OR $minimum_fee GT 0 ) ) or $email }
         {if $contributeMode ne 'notify' and ! $is_pay_later and $is_monetary and ( $amount GT 0 OR $minimum_fee GT 0 ) }
+          {if $billingName or $address}
             <div class="crm-group billing_name_address-group">
                 <div class="header-dark">
                     {ts}Billing Name and Address{/ts}
@@ -176,7 +182,8 @@
             		<div class="content">{$address|nl2br}</div>
             		<div class="clear"></div>
             	</div>
-        	</div>
+       	    </div>
+          {/if}
         {/if}
         {if $email}
             <div class="crm-group contributor_email-group">
@@ -191,9 +198,10 @@
         {/if}
     {/if}
 
-		{* Show credit or debit card section for 'direct' mode, except for PayPal Express (detected because credit card number is empty) *}
-    {if $contributeMode eq 'direct' and ! $is_pay_later and $is_monetary and ( $amount GT 0 OR $minimum_fee GT 0 )
-				and ($credit_card_number or $bank_account_number)}
+    {* Show credit or debit card section for 'direct' mode, except for PayPal Express (detected because credit card number is empty) *}
+    {if $contributeMode eq 'direct' and ! $is_pay_later and $is_monetary and ( $amount GT 0 OR $minimum_fee GT 0 )}
+{crmRegion name="contribution-confirm-billing-block"}
+       {if ($credit_card_number or $bank_account_number)}
         <div class="crm-group credit_card-group">
             <div class="header-dark">
             {if $paymentProcessor.payment_type & 2}
@@ -209,6 +217,16 @@
                     {ts}Bank Identification Number{/ts}: {$bank_identification_number}<br />
                     {ts}Bank Name{/ts}: {$bank_name}<br />
                 </div>
+                {if $contributeMode eq 'direct'}
+                  <div class="crm-group debit_agreement-group">
+                      <div class="header-dark">
+                          {ts}Agreement{/ts}
+                      </div>
+                      <div class="display-block">
+                          {ts}Your account data will be used to charge your bank account via direct debit. While submitting this form you agree to the charging of your bank account via direct debit.{/ts}
+                      </div>
+                  </div>
+                {/if}
             {else}
                 <div class="crm-section no-label credit_card_details-section">
                     <div class="content">{$credit_card_type}</div>
@@ -218,6 +236,8 @@
                 </div>
             {/if}
         </div>
+      {/if}
+{/crmRegion}
     {/if}
 
     {include file="CRM/Contribute/Form/Contribution/PremiumBlock.tpl" context="confirmContribution"}
@@ -226,17 +246,6 @@
             <fieldset class="label-left">
                 {include file="CRM/UF/Form/Block.tpl" fields=$customPost}
             </fieldset>
-    {/if}
-
-    {if $contributeMode eq 'direct' and $paymentProcessor.payment_type & 2}
-    <div class="crm-group debit_agreement-group">
-        <div class="header-dark">
-            {ts}Agreement{/ts}
-        </div>
-        <div class="display-block">
-            {ts}Your account data will be used to charge your bank account via direct debit. While submitting this form you agree to the charging of your bank account via direct debit.{/ts}
-        </div>
-    </div>
     {/if}
 
     {if $contributeMode NEQ 'notify' and $is_monetary and ( $amount GT 0 OR $minimum_fee GT 0 ) } {* In 'notify mode, contributor is taken to processor payment forms next *}
