@@ -52,7 +52,7 @@
 	<td>{$form.template.html}</td>
     </tr>
     <tr class="crm-mailing-upload-form-block-subject"><td class="label">{$form.subject.label}</td>
-        <td colspan="2">{$form.subject.html|crmReplace:class:huge}
+        <td colspan="2">{$form.subject.html|crmAddClass:huge}
                         <a href="#" onClick="return showToken('Subject', 3);">{$form.token3.label}</a>
                         {help id="id-token-subject" file="CRM/Contact/Form/Task/Email.hlp"}
                         <div id='tokenSubject' style="display:none">

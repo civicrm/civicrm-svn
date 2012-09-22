@@ -5,11 +5,11 @@
 <table  class="form-layout-compressed">
    <tr> 
      <td class="label ">{$form.context.label}</td> 
-     <td>{$form.context.html|crmReplace:class:huge}</dd>
+     <td>{$form.context.html|crmAddClass:huge}</dd>
    </tr>
    <tr> 
      <td class="label ">{$form.name.label}</td> 
-     <td>{$form.name.html|crmReplace:class:huge}</dd>
+     <td>{$form.name.html|crmAddClass:huge}</dd>
    </tr>
    <tr> 
      <td class="label ">{$form.data.label}</td> 

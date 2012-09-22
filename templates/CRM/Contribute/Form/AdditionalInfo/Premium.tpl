@@ -36,7 +36,7 @@
         <table class="form-layout-compressed"> 
 	  <tr class="crm-contribution-form-block-min_amount">
              <td class="label">{$form.min_amount.label}</td>
-	     <td class="html-adjust">{$form.min_amount.html|crmReplace:class:texttolabel|crmMoney:$currency}</td>
+	     <td class="html-adjust">{$form.min_amount.html|crmAddClass:texttolabel|crmMoney:$currency}</td>
           </tr>
         </table>
         <div class="spacer"></div>

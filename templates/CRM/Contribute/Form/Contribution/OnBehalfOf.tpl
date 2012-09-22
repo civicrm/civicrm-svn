@@ -46,7 +46,7 @@
        {if ( $fieldName eq 'organization_name' ) and $organizationName}
          <div id='org_name' class="label">{$field.label}</div>
          <div class="content">
-            {$field.html|crmReplace:class:big}
+            {$field.html|crmAddClass:big}
             <span>
                 ( <a id='createNewOrg' href="javascript:createNew( );">{ts}Enter a new organization{/ts}</a> )
             </span>

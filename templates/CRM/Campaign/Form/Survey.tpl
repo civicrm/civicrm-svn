@@ -94,7 +94,7 @@
   	     </tr>
              <tr>
                <td class="description label">{$form.report_title.label}</td>
-               <td>{$form.report_title.html|crmReplace:class:big}</td>
+               <td>{$form.report_title.html|crmAddClass:big}</td>
              </tr>
             </table>
            </div><!-- /.crm-accordion-body -->

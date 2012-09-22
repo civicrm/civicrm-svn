@@ -128,7 +128,7 @@
         <table class="form-layout">
             <tr id="optionsPerLine" class="crm-price-field-form-block-options_per_line">
 	            <td class="label">{$form.options_per_line.label}</td>	
-	            <td>{$form.options_per_line.html|crmReplace:class:two}</td>
+	            <td>{$form.options_per_line.html|crmAddClass:two}</td>
             </tr>
             <tr class="crm-price-field-form-block-is_display_amounts">
                <td class="label">{$form.is_display_amounts.label}</td>
@@ -141,7 +141,7 @@
 
             <tr class="crm-price-field-form-block-weight">
                <td class="label">{$form.weight.label}</td>
-               <td>{$form.weight.html|crmReplace:class:two}
+               <td>{$form.weight.html|crmAddClass:two}
                     {if $action neq 4}
                         <div class="description">{ts}Weight controls the order in which fields are displayed in a group. Enter a positive or negative integer - lower numbers are displayed ahead of higher numbers.{/ts}</div>
                     {/if}
@@ -150,7 +150,7 @@
 
            <tr class="crm-price-field-form-block-help_post">
               <td class="label">{$form.help_post.label}</td>
-              <td>{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_price_field' field='help_post' id=$fid}{/if}{$form.help_post.html|crmReplace:class:huge}&nbsp;
+              <td>{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_price_field' field='help_post' id=$fid}{/if}{$form.help_post.html|crmAddClass:huge}&nbsp;
                   {if $action neq 4}
                     <div class="description">{ts}Explanatory text displayed to users for this field.{/ts}</div>
                   {/if}

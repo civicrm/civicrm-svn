@@ -80,7 +80,7 @@
 <tr>
    <td>
 	  {$form.activity_subject.label}<br />
-      	  {$form.activity_subject.html|crmReplace:class:big} 
+      	  {$form.activity_subject.html|crmAddClass:big} 
    </td>
    <td colspan="2">
           {$form.activity_status.label}<br />

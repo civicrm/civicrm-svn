@@ -107,7 +107,7 @@
         </tr>
         <tr class="crm-event-manage-registration-form-block-expiration_time">
             <td scope="row" class="label" width="20%">{$form.expiration_time.label}</td>
-            <td>{$form.expiration_time.html|crmReplace:class:four} {help id="id-expiration_time"}</td>
+            <td>{$form.expiration_time.html|crmAddClass:four} {help id="id-expiration_time"}</td>
         </tr>
     </table>
     <div class="spacer"></div>

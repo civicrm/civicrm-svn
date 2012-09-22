@@ -103,7 +103,7 @@
 		{/if}
 		<tr class="crm-event-manage-eventinfo-form-block-max_participants">
 			<td class="label">{$form.max_participants.label}</td>
-			<td>{$form.max_participants.html|crmReplace:class:four} {help id="id-max_participants"}</td>
+			<td>{$form.max_participants.html|crmAddClass:four} {help id="id-max_participants"}</td>
 		</tr>
     <tr id="id-waitlist" class="crm-event-manage-eventinfo-form-block-has_waitlist">
       {if $form.has_waitlist}

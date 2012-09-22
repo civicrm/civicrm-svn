@@ -74,14 +74,14 @@
         <div class="crm-label">{$form.email_greeting_id.label}</div>
         <div class="crm-content">
           <span id="email_greeting" {if !empty($email_greeting_display)} class="hiddenElement"{/if}>
-            {$form.email_greeting_id.html|crmReplace:class:big}
+            {$form.email_greeting_id.html|crmAddClass:big}
           </span>
           <span id="email_greeting_display" class="view-data">
             {$email_greeting_display}&nbsp;&nbsp;<a href="#" onclick="showGreeting('email_greeting');return false;"><img src="{$config->resourceBase}i/edit.png" border="0" title="{ts}Edit{/ts}"></a>
           </span>
           {if !empty($form.email_greeting_custom)}
             <span id="email_greeting_id_html" class="hiddenElement">
-              <br/>{$form.email_greeting_custom.html|crmReplace:class:big}
+              <br/>{$form.email_greeting_custom.html|crmAddClass:big}
             </span>
           {/if}
          </div>
@@ -94,14 +94,14 @@
         <div class="crm-label">{$form.postal_greeting_id.label}</div>
         <div class="crm-content">
           <span id="postal_greeting" {if !empty($postal_greeting_display)} class="hiddenElement"{/if}>
-            {$form.postal_greeting_id.html|crmReplace:class:big}
+            {$form.postal_greeting_id.html|crmAddClass:big}
           </span>
           <span id="postal_greeting_display" class="view-data">
             {$postal_greeting_display}&nbsp;&nbsp;<a href="#" onclick="showGreeting('postal_greeting');return false;"><img src="{$config->resourceBase}i/edit.png" border="0" title="{ts}Edit{/ts}"></a>
           </span>
           {if !empty($form.postal_greeting_custom)}
             <span id="postal_greeting_id_html" class="hiddenElement">
-              <br/>{$form.postal_greeting_custom.html|crmReplace:class:big}
+              <br/>{$form.postal_greeting_custom.html|crmAddClass:big}
             </span>
           {/if}
         </div>
@@ -113,14 +113,14 @@
         <div class="crm-label">{$form.addressee_id.label}</div>
         <div class="crm-content">
           <span id="addressee" {if !empty($addressee_display)} class="hiddenElement"{/if}>
-            {$form.addressee_id.html|crmReplace:class:big}
+            {$form.addressee_id.html|crmAddClass:big}
           </span>
           <span id="addressee_display" class="view-data">
             {$addressee_display}&nbsp;&nbsp;<a href="#" onclick="showGreeting('addressee');return false;"><img src="{$config->resourceBase}i/edit.png" border="0" title="{ts}Edit{/ts}"></a>
           </span>
           {if !empty($form.addressee_custom)}
             <span id="addressee_id_html" class="hiddenElement">
-              <br/>{$form.addressee_custom.html|crmReplace:class:big}
+              <br/>{$form.addressee_custom.html|crmAddClass:big}
             </span>
           {/if}
          </div>

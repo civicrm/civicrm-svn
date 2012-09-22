@@ -33,7 +33,7 @@
   <table class="form-layout">
     <tr>
       <td class="label">{$form.amount.label}</td>
-      <td>{$form.currency.html|crmReplace:class:eight}&nbsp;{$form.amount.html|crmReplace:class:eight} ({ts}every{/ts} {$frequency_interval} {$frequency_unit})</td>
+      <td>{$form.currency.html|crmAddClass:eight}&nbsp;{$form.amount.html|crmAddClass:eight} ({ts}every{/ts} {$frequency_interval} {$frequency_unit})</td>
     </tr>
     <tr><td class="label">{$form.installments.label}</td><td>{$form.installments.html}<br />
           <span class="description">{ts}Total number of payments to be made. Set this to 0 if this is an open-ended commitment i.e. no set end date.{/ts}</span></td></tr>

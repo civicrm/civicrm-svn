@@ -34,7 +34,7 @@
     <div class="crm-summary-row">
       <div class="crm-label">{$form.current_employer.label}&nbsp;{help id="id-current-employer" file="CRM/Contact/Form/Contact.hlp"}</div>
       <div class="crm-content">
-        {$form.current_employer.html|crmReplace:class:twenty}
+        {$form.current_employer.html|crmAddClass:twenty}
         <div id="employer_address" style="display:none;"></div>
       </div>
     </div>

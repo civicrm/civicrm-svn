@@ -70,11 +70,11 @@
      </tr>
      <tr id="tflimit" class="crm-contribution-contributionpage-pcp-form-block-tellfriend_limit">
   	    <td class="label">{$form.tellfriend_limit.label}</td>
-  	    <td>{$form.tellfriend_limit.html|crmReplace:class:four} {help id="id-tellfriend_limit"}</td>
+  	    <td>{$form.tellfriend_limit.html|crmAddClass:four} {help id="id-tellfriend_limit"}</td>
      </tr>
      <tr class="crm-contribution-contributionpage-pcp-form-block-link_text">
   	    <td class="label">{$form.link_text.label}</td>
-  	    <td>{$form.link_text.html|crmReplace:class:huge} {help id="id-link_text"}</td>
+  	    <td>{$form.link_text.html|crmAddClass:huge} {help id="id-link_text"}</td>
      </tr>
   </table>
 </div>

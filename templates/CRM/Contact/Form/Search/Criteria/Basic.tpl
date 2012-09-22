@@ -26,11 +26,11 @@
 	<table class="form-layout">
 		<tr>
             <td><label>{ts}Complete OR Partial Name{/ts}</label>&nbsp;{help id='id-advanced-intro'}<br />
-                {$form.sort_name.html|crmReplace:class:big}
+                {$form.sort_name.html|crmAddClass:big}
             </td>
             <td>
                 <label>{ts}Complete OR Partial Email{/ts}</label><br />
-                {$form.email.html|crmReplace:class:medium}
+                {$form.email.html|crmAddClass:medium}
             </td>
             <td>
                 {$form.uf_group_id.label} {help id="id-search-views"}<br />{$form.uf_group_id.html}
@@ -123,7 +123,7 @@
 {else}
             <td>&nbsp;</td>
 {/if}
-            <td colspan="4">{$form.tag_search.label}  {help id="id-all-tags"}<br />{$form.tag_search.html|crmReplace:class:huge}</td>
+            <td colspan="4">{$form.tag_search.label}  {help id="id-all-tags"}<br />{$form.tag_search.html|crmAddClass:huge}</td>
         </tr>
         <tr>
             <td colspan="5">{include file="CRM/common/Tag.tpl"}</td>
@@ -174,7 +174,7 @@
         <tr>
             <td>
                 {$form.contact_source.label}<br />
-                {$form.contact_source.html|crmReplace:class:medium}
+                {$form.contact_source.html|crmAddClass:medium}
             </td>
             <td>
                 {if $form.uf_user}
@@ -188,21 +188,21 @@
             </td>
             <td>
                 {$form.job_title.label}<br />
-                {$form.job_title.html|crmReplace:class:medium}
+                {$form.job_title.html|crmAddClass:medium}
             </td>
         </tr>
         <tr>
              <td>
                  {$form.id.label}<br />
-                 {$form.id.html|crmReplace:class:medium}
+                 {$form.id.html|crmAddClass:medium}
              </td>
              <td>
                  {$form.external_identifier.label}<br />
-                 {$form.external_identifier.html|crmReplace:class:medium}
+                 {$form.external_identifier.html|crmAddClass:medium}
              </td>
             <td colspan="3">
                 {$form.preferred_language.label}<br />
-                {$form.preferred_language.html|crmReplace:class:medium}
+                {$form.preferred_language.html|crmAddClass:medium}
             </td>
         </tr>
     </table>

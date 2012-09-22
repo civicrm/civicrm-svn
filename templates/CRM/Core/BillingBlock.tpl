@@ -147,13 +147,13 @@
                         {assign var=n value=billing_country_id-$bltID}
                         <div class="crm-section {$form.$n.name}-section">
 							<div class="label">{$form.$n.label}</div>
-                            <div class="content">{$form.$n.html|crmReplace:class:big}</div>
+                            <div class="content">{$form.$n.html|crmAddClass:big}</div>
                             <div class="clear"></div>
                         </div>
                         {assign var=n value=billing_state_province_id-$bltID}
                         <div class="crm-section {$form.$n.name}-section">
 							<div class="label">{$form.$n.label}</div>
-                            <div class="content">{$form.$n.html|crmReplace:class:big}</div>
+                            <div class="content">{$form.$n.html|crmAddClass:big}</div>
                             <div class="clear"></div>
                         </div>
                         {assign var=n value=billing_postal_code-$bltID}

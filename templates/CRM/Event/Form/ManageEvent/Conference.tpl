@@ -40,7 +40,7 @@
           <tr class="crm-event-conference-form-block-parent_event_name">
              <td class="label">{$form.parent_event_name.label}</td>
              <td>
-                 {$form.parent_event_name.html|crmReplace:class:huge}
+                 {$form.parent_event_name.html|crmAddClass:huge}
              </td>
           </tr>
       </table>
@@ -50,7 +50,7 @@
       <table id="conference_slot_id" class="form-layout">
           <tr class="crm-event-conference-form-block-slot_label_id">
              <td class="label">{$form.slot_label_id.label}</td>
-             <td>{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='slot_label_id' id=$id}{/if}{$form.slot_label_id.html|crmReplace:class:big}
+             <td>{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='slot_label_id' id=$id}{/if}{$form.slot_label_id.html|crmAddClass:big}
              </td>
           </tr>
       </table>

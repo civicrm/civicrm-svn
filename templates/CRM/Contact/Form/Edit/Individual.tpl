@@ -109,7 +109,7 @@ cj(function($) {
   <tr>
     <td colspan="2">
       {$form.current_employer.label}&nbsp;{help id="id-current-employer" file="CRM/Contact/Form/Contact.hlp"}<br />
-      {$form.current_employer.html|crmReplace:class:twenty}
+      {$form.current_employer.html|crmAddClass:twenty}
       <div id="employer_address" style="display:none;"></div>
     </td>
     <td>
@@ -118,7 +118,7 @@ cj(function($) {
     </td>
     <td>
       {$form.nick_name.label}<br />
-      {$form.nick_name.html|crmReplace:class:big}
+      {$form.nick_name.html|crmAddClass:big}
     </td>
     <td>
       {if $buildContactSubType}

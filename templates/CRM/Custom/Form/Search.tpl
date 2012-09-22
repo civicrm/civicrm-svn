@@ -84,8 +84,8 @@
                 <tr>
                 {if $element.data_type neq 'Date'}
                     <td class="label">{$form.$element_name_from.label}</td><td>
-                    {$form.$element_name_from.html|crmReplace:class:six}
-                    &nbsp;&nbsp;{$form.$element_name_to.label}&nbsp;&nbsp;{$form.$element_name_to.html|crmReplace:class:six}
+                    {$form.$element_name_from.html|crmAddClass:six}
+                    &nbsp;&nbsp;{$form.$element_name_to.label}&nbsp;&nbsp;{$form.$element_name_to.html|crmAddClass:six}
                 {elseif $element.skip_calendar NEQ true }
                     <td class="label">{$form.$element_name_from.label}</td><td>
                     {include file="CRM/common/jcalendar.tpl" elementName=$element_name_from}

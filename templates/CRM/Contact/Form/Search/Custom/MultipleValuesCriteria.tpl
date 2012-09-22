@@ -64,7 +64,7 @@
         	    {$form.group.label}
                 </div>
         	<div class="content">
-                    {$form.group.html|crmReplace:class:big}
+                    {$form.group.html|crmAddClass:big}
                 </div>
         	<div class="clear"></div> 
         </div>
@@ -76,7 +76,7 @@
             		{$form.tag.label}
             	</div>
             	<div class="content">
-            		{$form.tag.html|crmReplace:class:medium}
+            		{$form.tag.html|crmAddClass:medium}
             	</div>
             	<div class="clear"></div> 
             </div>

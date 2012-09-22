@@ -94,7 +94,7 @@
         <tr  class="crm-contribution-form-block-total_amount">
             <td class="label">{$form.total_amount.label}</td>
     	    <td {$valueStyle}>
-        	    <span id='totalAmount'>{$form.currency.html|crmReplace:class:eight}&nbsp;{$form.total_amount.html|crmReplace:class:eight}</span> 
+        	    <span id='totalAmount'>{$form.currency.html|crmAddClass:eight}&nbsp;{$form.total_amount.html|crmAddClass:eight}</span> 
         	    {if $hasPriceSets}
         	        <span id='totalAmountORPriceSet'> {ts}OR{/ts}</span>
         	        <span id='selectPriceSet'>{$form.price_set_id.html}</span>
@@ -137,7 +137,7 @@
             </tr>    
      {/if}
 
-        <tr class="crm-contribution-form-block-source"><td class="label">{$form.source.label}</td><td{$valueStyle}>{$form.source.html|crmReplace:class:huge} {help id="id-contrib_source"}</td></tr>
+        <tr class="crm-contribution-form-block-source"><td class="label">{$form.source.label}</td><td{$valueStyle}>{$form.source.html|crmAddClass:huge} {help id="id-contrib_source"}</td></tr>
 
 	{* CRM-7362 --add campaign to contributions *}
 	{include file="CRM/Campaign/Form/addCampaignToComponent.tpl" 
@@ -176,9 +176,9 @@
                 </td>
             </tr>
             {if $showCheckNumber || !$isOnline}  
-                <tr id="checkNumber" class="crm-contribution-form-block-check_number"><td class="label">{$form.check_number.label}</td><td>{$form.check_number.html|crmReplace:class:six}</td></tr>
+                <tr id="checkNumber" class="crm-contribution-form-block-check_number"><td class="label">{$form.check_number.label}</td><td>{$form.check_number.html|crmAddClass:six}</td></tr>
             {/if}
-            <tr class="crm-contribution-form-block-trxn_id"><td class="label">{$form.trxn_id.label}</td><td{$valueStyle}>{$form.trxn_id.html|crmReplace:class:twelve} {help id="id-trans_id"}</td></tr>
+            <tr class="crm-contribution-form-block-trxn_id"><td class="label">{$form.trxn_id.label}</td><td{$valueStyle}>{$form.trxn_id.html|crmAddClass:twelve} {help id="id-trans_id"}</td></tr>
             {if $email and $outBound_option != 2}
                 <tr class="crm-contribution-form-block-is_email_receipt"><td class="label">{$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html} <span class="description">{ts 1=$email}Automatically email a receipt for this contribution to %1?{/ts}</span></td></tr>
             {elseif $context eq 'standalone' and $outBound_option != 2 }
@@ -213,7 +213,7 @@
                    </td>
                   </tr>
                   <tr id="cancelDescription" class="crm-contribution-form-block-cancel_reason"><td class="label">&nbsp;</td><td class="description">{ts}Enter the cancellation date, or you can skip this field and the cancellation date will be automatically set to TODAY.{/ts}</td></tr>
-                  <tr id="cancelReason"><td class="label" style="vertical-align: top;">{$form.cancel_reason.label}</td><td>{$form.cancel_reason.html|crmReplace:class:huge}</td></tr>
+                  <tr id="cancelReason"><td class="label" style="vertical-align: top;">{$form.cancel_reason.label}</td><td>{$form.cancel_reason.html|crmAddClass:huge}</td></tr>
                </table>
                </fieldset>
                </td>
@@ -243,7 +243,7 @@
             	    </tr>
             	    <tr id="nickID" class="crm-contribution-form-block-pcp_roll_nickname">
             	        <td class="label">{$form.pcp_roll_nickname.label}</td>
-            	        <td>{$form.pcp_roll_nickname.html|crmReplace:class:big}<br />
+            	        <td>{$form.pcp_roll_nickname.html|crmAddClass:big}<br />
             		    <span class="description">{ts}Name or nickname contributor wants to be displayed in the Honor Roll. Enter "Anonymous" for anonymous contributions.{/ts}</span></td>
             	    </tr>
             	    <tr id="personalNoteID" class="crm-contribution-form-block-pcp_personal_note">

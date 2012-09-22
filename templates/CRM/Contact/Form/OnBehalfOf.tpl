@@ -40,7 +40,7 @@
 	<tr>
 		<td>{$form.prefix_id.html}</td>
 		<td>{$form.first_name.html}</td>
-		<td>{$form.middle_name.html|crmReplace:class:eight}</td>
+		<td>{$form.middle_name.html|crmAddClass:eight}</td>
 		<td>{$form.last_name.html}</td>
 		<td>{$form.suffix_id.html}</td>
 	</tr>
@@ -57,7 +57,7 @@
 		<td>{$form.household_name.label}</td>
       </tr>
       <tr>
-        <td>{$form.household_name.html|crmReplace:class:big}</td>
+        <td>{$form.household_name.html|crmAddClass:big}</td>
       </tr>
     </table>   
  {if $contactEditMode}</fieldset>{/if}
@@ -75,12 +75,12 @@
       </div>
       <div id="select_org" class="crm-section select_org-section">
         <div class="label">{$form.organization_name.label}</div>	   
-        <div class="content">{$form.organization_id.html|crmReplace:class:big}</div>
+        <div class="content">{$form.organization_id.html|crmAddClass:big}</div>
       </div>
       {/if}  
       <div id="create_org" class="crm-section create_org-section">
 		<div class="label">{$form.organization_name.label}</div>
-        <div class="content">{$form.organization_name.html|crmReplace:class:big}</div>
+        <div class="content">{$form.organization_name.html|crmAddClass:big}</div>
         <div class="clear"></div>
       </div>
     </div>

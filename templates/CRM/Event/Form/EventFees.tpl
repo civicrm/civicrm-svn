@@ -77,7 +77,7 @@
                     <td>{include file="CRM/common/jcalendar.tpl" elementName=receive_date}</td>
                 </tr>
                 <tr class="crm-event-eventfees-form-block-payment_instrument_id"><td class="label">{$form.payment_instrument_id.label}</td><td>{$form.payment_instrument_id.html}</td></tr>
-                <tr id="checkNumber" class="crm-event-eventfees-form-block-check_number"><td class="label">{$form.check_number.label}</td><td>{$form.check_number.html|crmReplace:class:six}</td></tr>
+                <tr id="checkNumber" class="crm-event-eventfees-form-block-check_number"><td class="label">{$form.check_number.label}</td><td>{$form.check_number.html|crmAddClass:six}</td></tr>
                 {if $showTransactionId }
                     <tr class="crm-event-eventfees-form-block-trxn_id"><td class="label">{$form.trxn_id.label}</td><td>{$form.trxn_id.html}</td></tr>
                 {/if}
@@ -127,7 +127,7 @@
             <td><span class="description">
                 {ts}Enter a message you want included at the beginning of the confirmation email. EXAMPLE: 'Thanks for registering for this event.'{/ts}
                 </span><br />
-                {$form.receipt_text.html|crmReplace:class:huge}
+                {$form.receipt_text.html|crmAddClass:huge}
             </td>
         </tr>
       </table>
@@ -154,7 +154,7 @@
             <td><span class="description">
                 {ts}Enter a message you want included at the beginning of the confirmation email. EXAMPLE: 'Thanks for registering for this event.'{/ts}
                 </span><br />
-                {$form.receipt_text.html|crmReplace:class:huge}</td>
+                {$form.receipt_text.html|crmAddClass:huge}</td>
         </tr>
       </table>
     </fieldset>

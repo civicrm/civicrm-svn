@@ -52,7 +52,7 @@
         <tr>
             <td class="label-left">{$form.msg_subject.label}</td>
             <td>
-                  {$form.msg_subject.html|crmReplace:class:huge}
+                  {$form.msg_subject.html|crmAddClass:huge}
 	              <a href="#" onClick="return showToken('Subject', 3);">{$form.token3.label}</a>
 	              {help id="id-token-text" file="CRM/Contact/Form/Task/Email.hlp"}
                   <div id='tokenSubject' style="display:none">
@@ -83,7 +83,7 @@
                 </span>
   		        <div class="clear"></div>
                 <div class='text'>
-                    {$form.msg_text.html|crmReplace:class:huge}
+                    {$form.msg_text.html|crmAddClass:huge}
                     <div class="description">{ts}Text formatted message.{/ts} {ts 1=$tokenDocsRepeated}Tokens may be included (%1).{/ts}</div>
                 </div>
             </div><!-- /.crm-accordion-body -->

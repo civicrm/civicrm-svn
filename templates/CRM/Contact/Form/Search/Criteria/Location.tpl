@@ -37,7 +37,7 @@
         <td colspan="2">
           <div id="streetAddress">
             {$form.street_address.label}<br />
-            {$form.street_address.html|crmReplace:class:big}
+            {$form.street_address.html|crmAddClass:big}
 {if $parseStreetAddress}
             <br /><a href="#" title="{ts}Use Address Elements{/ts}" onClick="processAddressFields( 'addressElements' , 1 );return false;">{ts}Use Address Elements{/ts}</a>
           </div>
@@ -45,7 +45,7 @@
             <table class="crm-block crm-form-block advanced-search-address-elements">
 	        <tr><td>{$form.street_number.label}<br />{$form.street_number.html}<br /><span class="description nowrap">{ts}or ODD / EVEN{/ts}</td>
 	            <td>{$form.street_name.label}<br />{$form.street_name.html}</td>
-	            <td>{$form.street_unit.label}<br />{$form.street_unit.html|crmReplace:class:four}</td>
+	            <td>{$form.street_unit.label}<br />{$form.street_unit.html|crmAddClass:four}</td>
 	        </tr>
 	        <tr>
                 <td colspan="3"><a href="#" title="{ts}Use Complete Address{/ts}" onClick="processAddressFields( 'streetAddress', 1 );return false;">{ts}Use Street Address{/ts}</a></td>
@@ -75,9 +75,9 @@
 			</td>
 			<td><label>{ts}Postal Code{/ts}</label>
 				{$form.postal_code_low.label|replace:'-':'<br />'}
-		                &nbsp;&nbsp;{$form.postal_code_low.html|crmReplace:class:six}
+		                &nbsp;&nbsp;{$form.postal_code_low.html|crmAddClass:six}
                                 {$form.postal_code_high.label}
-                		&nbsp;&nbsp;{$form.postal_code_high.html|crmReplace:class:six}
+                		&nbsp;&nbsp;{$form.postal_code_high.html|crmAddClass:six}
 			</td>
 		    </tr>
 		    <tr>
@@ -86,7 +86,7 @@
                     </tr>
 	            <tr>
 			<td colspan="2">{$form.address_name.label}<br />
-				{$form.address_name.html|crmReplace:class:medium}
+				{$form.address_name.html|crmAddClass:medium}
 			</td>        
 			<td>{$form.world_region.label}<br />
 				{$form.world_region.html}&nbsp;
@@ -94,17 +94,17 @@
 		    </tr>
 		    <tr>
 			<td colspan="2">{$form.county.label}<br />
-				{$form.county.html|crmReplace:class:bigSelect}&nbsp;
+				{$form.county.html|crmAddClass:bigSelect}&nbsp;
 			</td>        
 			<td>{$form.country.label}<br />
-				{$form.country.html|crmReplace:class:big}&nbsp;
+				{$form.country.html|crmAddClass:big}&nbsp;
 			</td>
 		    </tr>
 		</table>
         {/if}&nbsp;
         </td>
         <td>{$form.state_province.label}<br />
-            {$form.state_province.html|crmReplace:class:bigSelect}
+            {$form.state_province.html|crmAddClass:bigSelect}
         </td>
     </tr>
     {if $addressGroupTree}

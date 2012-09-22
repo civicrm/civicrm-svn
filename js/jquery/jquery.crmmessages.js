@@ -149,7 +149,7 @@
       $().crmAlert(text, title, type, options);
     });
     // Handle qf form errors
-    $('#crm-container form :input.error').one('click', function() {
+    $('#crm-container form :input.error').one('blur', function() {
       $('.ui-notify-message .icon.error').click();
       $(this).removeClass('error');
       $(this).next('span.crm-error').remove();

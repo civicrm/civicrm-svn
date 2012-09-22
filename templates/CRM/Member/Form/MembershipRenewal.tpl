@@ -110,7 +110,7 @@
                      </tr>
                      <tr id="changeNumTerms" class="crm-member-membershiprenew-form-block-change-num_terms">	
                         <td class="label">{$form.num_terms.label}</td>
-                        <td>{$form.num_terms.html|crmReplace:class:two} {ts}membership periods{/ts}<br />
+                        <td>{$form.num_terms.html|crmAddClass:two} {ts}membership periods{/ts}<br />
                         <span class="description">{ts}Extend the membership end date by this many membership periods. Make sure the appropriate corresponding fee is entered below.{/ts}</span></td>
                      </tr>
                        {if $context neq 'standalone'}
@@ -153,7 +153,7 @@
                     </tr>
                     <tr id="checkNumber" class="crm-member-membershiprenew-form-block-check_number">
                        <td class="label">{$form.check_number.label}</td>
-                       <td>{$form.check_number.html|crmReplace:class:six}</td>
+                       <td>{$form.check_number.html|crmAddClass:six}</td>
                     </tr>
                     <tr class="crm-member-membershiprenew-form-block-trxn_id">
 	               <td class="label">{$form.trxn_id.label}</td>
@@ -218,7 +218,7 @@
 	     <tr id="notice" class="crm-member-membershiprenew-form-block-receipt_text_renewal">	
     	        <td class="label">{$form.receipt_text_renewal.label}</td>
                 <td><span class="description">{ts}Enter a message you want included at the beginning of the emailed receipt. EXAMPLE: 'Thanks for supporting our organization with your membership.'{/ts}</span><br />
-                    {$form.receipt_text_renewal.html|crmReplace:class:huge}</td> 
+                    {$form.receipt_text_renewal.html|crmAddClass:huge}</td> 
 	     </tr>
      </table>
      {/if}

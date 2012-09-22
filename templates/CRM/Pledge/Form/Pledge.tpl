@@ -71,7 +71,7 @@
         {/if}
 	<tr class="crm-pledge-form-block-amount">
  	    <td class="label">{$form.amount.label}</td>
-    	    <td><span>{$form.currency.html|crmReplace:class:eight}&nbsp;{$form.amount.html|crmReplace:class:eight}</span>
+    	    <td><span>{$form.currency.html|crmAddClass:eight}&nbsp;{$form.amount.html|crmAddClass:eight}</span>
 	        {if $originalPledgeAmount}<div class="messages status"><div class="icon inform-icon"></div>&nbsp;{ts 1=$originalPledgeAmount|crmMoney:$currency} Pledge total has changed due to payment adjustments. Original pledge amount was %1.{/ts}</div>{/if}
 	    </td>
 	</tr>

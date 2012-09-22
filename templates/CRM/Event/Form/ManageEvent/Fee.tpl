@@ -89,7 +89,7 @@
         <table id="payLaterOptions" class="form-layout">
             <tr class="crm-event-manage-fee-form-block-pay_later_text">
                <td class="label">{$form.pay_later_text.label}<span class="marker"> *</span> </td>
-               <td>{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='pay_later_text' id=$id}{/if}{$form.pay_later_text.html|crmReplace:class:big}
+               <td>{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='pay_later_text' id=$id}{/if}{$form.pay_later_text.html|crmAddClass:big}
                </td>
             </tr>
             <tr>
@@ -98,7 +98,7 @@
             </tr>
             <tr class="crm-event-manage-fee-form-block-pay_later_receipt">
                <td class="label">{$form.pay_later_receipt.label}<span class="marker"> *</span> </td>
-               <td>{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='pay_later_receipt' id=$id}{/if}{$form.pay_later_receipt.html|crmReplace:class:big}
+               <td>{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='pay_later_receipt' id=$id}{/if}{$form.pay_later_receipt.html|crmAddClass:big}
                </td>
             </tr>
                 <td>&nbsp;</td>

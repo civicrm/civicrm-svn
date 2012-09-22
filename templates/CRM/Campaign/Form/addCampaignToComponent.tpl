@@ -45,7 +45,7 @@
         <td class="view-value">
 	    {* lets take a call, either show campaign select drop-down or show add campaign link *}		 
             {if $campaignInfo.hasCampaigns}
-		        {$form.campaign_id.html|crmReplace:class:huge} {help id="id-campaign_id" file="CRM/Campaign/Form/addCampaignToComponent.hlp"}
+		        {$form.campaign_id.html|crmAddClass:huge} {help id="id-campaign_id" file="CRM/Campaign/Form/addCampaignToComponent.hlp"}
         		{* show for add and edit actions *}
 			    {if ( $action eq 1 or $action eq 2 ) 
 			        and !$campaignInfo.alreadyIncludedPastCampaigns and $campaignInfo.includePastCampaignURL}

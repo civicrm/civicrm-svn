@@ -36,7 +36,7 @@
 {/if}
 
 <tr id="OpenID_Block_{$blockId}">
-    <td>{$form.openid.$blockId.openid.html|crmReplace:class:twenty}&nbsp;</td>
+    <td>{$form.openid.$blockId.openid.html|crmAddClass:twenty}&nbsp;</td>
     <td>{$form.openid.$blockId.location_type_id.html}</td>
     <td align="center" id="OpenID-Primary-html" {if $blockId eq 1}class="hiddenElement"{/if}>{$form.openid.$blockId.is_primary.1.html}</td>
     {if $blockId gt 1}

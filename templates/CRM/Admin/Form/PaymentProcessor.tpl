@@ -73,21 +73,21 @@
         </tr>
 {/if}
         <tr class="crm-paymentProcessor-form-block-url_site">
-            <td class="label">{$form.url_site.label}</td><td>{$form.url_site.html|crmReplace:class:huge} {help id=$ppType|cat:'-live-url-site'}</td>
+            <td class="label">{$form.url_site.label}</td><td>{$form.url_site.html|crmAddClass:huge} {help id=$ppType|cat:'-live-url-site'}</td>
         </tr>
 {if $form.url_api}
         <tr class="crm-paymentProcessor-form-block-url_api">
-            <td class="label">{$form.url_api.label}</td><td>{$form.url_api.html|crmReplace:class:huge} {help id=$ppType|cat:'-live-url-api'}</td>
+            <td class="label">{$form.url_api.label}</td><td>{$form.url_api.html|crmAddClass:huge} {help id=$ppType|cat:'-live-url-api'}</td>
         </tr>
 {/if}
 {if $is_recur}
         <tr class="crm-paymentProcessor-form-block-url_recur">
-            <td class="label">{$form.url_recur.label}</td><td>{$form.url_recur.html|crmReplace:class:huge} {help id=$ppType|cat:'-live-url-recur'}</td>
+            <td class="label">{$form.url_recur.label}</td><td>{$form.url_recur.html|crmAddClass:huge} {help id=$ppType|cat:'-live-url-recur'}</td>
         </tr>
 {/if}
 {if $form.url_button}
         <tr class="crm-paymentProcessor-form-block-url_button">
-            <td class="label">{$form.url_button.label}</td><td>{$form.url_button.html|crmReplace:class:huge} {help id=$ppType|cat:'-live-url-button'}</td>
+            <td class="label">{$form.url_button.label}</td><td>{$form.url_button.html|crmAddClass:huge} {help id=$ppType|cat:'-live-url-button'}</td>
         </tr>
 {/if}
     </table>        
@@ -114,21 +114,21 @@
         </tr>
 {/if}
         <tr class="crm-paymentProcessor-form-block-test_url_site">
-            <td class="label">{$form.test_url_site.label}</td><td>{$form.test_url_site.html|crmReplace:class:huge} {help id=$ppType|cat:'-test-url-site'}</td>
+            <td class="label">{$form.test_url_site.label}</td><td>{$form.test_url_site.html|crmAddClass:huge} {help id=$ppType|cat:'-test-url-site'}</td>
         </tr>
 {if $form.test_url_api}
         <tr class="crm-paymentProcessor-form-block-test_url_api">
-            <td class="label">{$form.test_url_api.label}</td><td>{$form.test_url_api.html|crmReplace:class:huge} {help id=$ppType|cat:'-test-url-api'}</td>
+            <td class="label">{$form.test_url_api.label}</td><td>{$form.test_url_api.html|crmAddClass:huge} {help id=$ppType|cat:'-test-url-api'}</td>
         </tr>
 {/if}
 {if $is_recur}
         <tr class="crm-paymentProcessor-form-block-test_url_recur">
-            <td class="label">{$form.test_url_recur.label}</td><td>{$form.test_url_recur.html|crmReplace:class:huge} {help id=$ppType|cat:'-test-url-recur'}</td>
+            <td class="label">{$form.test_url_recur.label}</td><td>{$form.test_url_recur.html|crmAddClass:huge} {help id=$ppType|cat:'-test-url-recur'}</td>
         </tr>
 {/if}
 {if $form.test_url_button}
         <tr class="crm-paymentProcessor-form-block-test_url_button">
-            <td class="label">{$form.test_url_button.label}</td><td>{$form.test_url_button.html|crmReplace:class:huge} {help id=$ppType|cat:'-test-url-button'}</td>
+            <td class="label">{$form.test_url_button.label}</td><td>{$form.test_url_button.html|crmAddClass:huge} {help id=$ppType|cat:'-test-url-button'}</td>
         </tr>
 {/if}  
 {/if} 

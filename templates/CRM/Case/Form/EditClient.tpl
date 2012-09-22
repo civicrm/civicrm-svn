@@ -35,7 +35,7 @@
             {$form.change_client_id.label}
         </td>
 	<td id='client'>
-	    {$form.change_client_id.html|crmReplace:class:big}
+	    {$form.change_client_id.html|crmAddClass:big}
 	</td>
     </tr>
     <tr>

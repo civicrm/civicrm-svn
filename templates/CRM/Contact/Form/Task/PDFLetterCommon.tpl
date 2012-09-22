@@ -108,7 +108,7 @@
 
 <div id="saveDetails" class="section">
     <div class="label">{$form.saveTemplateName.label}</div>
-    <div class="content">{$form.saveTemplateName.html|crmReplace:class:huge}</div>
+    <div class="content">{$form.saveTemplateName.html|crmAddClass:huge}</div>
 </div>
 
   </div><!-- /.crm-accordion-body -->

@@ -40,7 +40,7 @@
     {assign var="timeElement" value=`$blockSection`_`$blockId`_`$elementName`_time}
     {if $tElement}
       &nbsp;&nbsp;{$form.$blockSection.$blockId.$tElement.label}
-      &nbsp;&nbsp;{$form.$blockSection.$blockId.$tElement.html|crmReplace:class:six}
+      &nbsp;&nbsp;{$form.$blockSection.$blockId.$tElement.html|crmAddClass:six}
     {/if}
 {else}
     {assign var='elementId'   value=$form.$elementName.id}
@@ -55,12 +55,12 @@
 {/if}
 
 {if $batchUpdate AND $timeElement AND $tElement}
-    &nbsp;&nbsp;{$form.field.$elementIndex.$tElement.label}&nbsp;&nbsp;{$form.field.$elementIndex.$tElement.html|crmReplace:class:six}
+    &nbsp;&nbsp;{$form.field.$elementIndex.$tElement.label}&nbsp;&nbsp;{$form.field.$elementIndex.$tElement.html|crmAddClass:six}
 {elseif $timeElement AND !$tElement}
     {if $form.$timeElement.label}
       &nbsp;&nbsp;{$form.$timeElement.label}&nbsp;&nbsp;
     {/if}
-    {$form.$timeElement.html|crmReplace:class:six}
+    {$form.$timeElement.html|crmAddClass:six}
 {/if}
 
 {if $action neq 1028}

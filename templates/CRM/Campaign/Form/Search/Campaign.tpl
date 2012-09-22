@@ -97,7 +97,7 @@
             </td>
 	        <td>
                 {$form.description.label}<br />
-		        {$form.description.html|crmReplace:class:huge}
+		        {$form.description.html|crmAddClass:huge}
             </td>
 	    </tr>
 

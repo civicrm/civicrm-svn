@@ -170,7 +170,7 @@
             {/if}
 
              <tr class="crm-activity-form-block-subject">
-                <td class="label">{$form.subject.label}</td><td class="view-value">{$form.subject.html|crmReplace:class:huge}</td>
+                <td class="label">{$form.subject.label}</td><td class="view-value">{$form.subject.html|crmAddClass:huge}</td>
              </tr>
 
     	     {* CRM-7362 --add campaign to activities *}
@@ -186,7 +186,7 @@
     	     {/if}
 
              <tr class="crm-activity-form-block-location">
-                <td class="label">{$form.location.label}</td><td class="view-value">{$form.location.html|crmReplace:class:huge}</td>
+                <td class="label">{$form.location.label}</td><td class="view-value">{$form.location.html|crmAddClass:huge}</td>
              </tr>
              <tr class="crm-activity-form-block-activity_date_time">
                 <td class="label">{$form.activity_date_time.label}</td>
@@ -211,12 +211,12 @@
         	        {if $activityTypeName eq "Print PDF Letter"}
             		  <td class="view-value">
                           {* If using plain textarea, assign class=huge to make input large enough. *}
-                          {if $defaultWysiwygEditor eq 0}{$form.details.html|crmReplace:class:huge}{else}{$form.details.html}{/if}
+                          {if $defaultWysiwygEditor eq 0}{$form.details.html|crmAddClass:huge}{else}{$form.details.html}{/if}
             		  </td>
             		{else}
             	      <td class="view-value">
                           {* If using plain textarea, assign class=huge to make input large enough. *}
-                          {if $defaultWysiwygEditor eq 0}{$form.details.html|crmStripAlternatives|crmReplace:class:huge}{else}{$form.details.html|crmStripAlternatives}{/if}
+                          {if $defaultWysiwygEditor eq 0}{$form.details.html|crmStripAlternatives|crmAddClass:huge}{else}{$form.details.html|crmStripAlternatives}{/if}
             		  </td>
             		{/if}
              </tr>
@@ -290,7 +290,7 @@
                            </tr>
                            <tr>
                               <td class="label">{$form.followup_activity_subject.label}</td>
-                              <td>{$form.followup_activity_subject.html|crmReplace:class:huge}</td>
+                              <td>{$form.followup_activity_subject.html|crmAddClass:huge}</td>
                            </tr>
                         </table>
                        </div><!-- /.crm-accordion-body -->

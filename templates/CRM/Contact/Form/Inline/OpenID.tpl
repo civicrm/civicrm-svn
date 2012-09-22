@@ -48,7 +48,7 @@
   {section name='i' start=1 loop=$totalBlocks}
   {assign var='blockId' value=$smarty.section.i.index} 
   <tr id="OpenID_Block_{$blockId}" {if $blockId gt $actualBlockCount}class="hiddenElement"{/if}>
-    <td>{$form.openid.$blockId.openid.html|crmReplace:class:twenty}&nbsp;</td>
+    <td>{$form.openid.$blockId.openid.html|crmAddClass:twenty}&nbsp;</td>
     <td>{$form.openid.$blockId.location_type_id.html}</td>
     <td align="center" id="OpenID-Primary-html" class="crm-openid-is_primary">{$form.openid.$blockId.is_primary.1.html}</td>
 	  <td>

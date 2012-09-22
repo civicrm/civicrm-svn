@@ -51,13 +51,13 @@
                     <table class="form-layout-compressed" align="right">                        
                         {if $chartSupported}
                             <tr>
-                                <td>{$form.charts.html|crmReplace:class:big}</td>
+                                <td>{$form.charts.html|crmAddClass:big}</td>
                                 <td align="right">{$form.$chart.html}</td>
                             </tr>
                         {/if}
                         {if $form.groups}
                             <tr>
-                                <td>{$form.groups.html|crmReplace:class:big}</td>
+                                <td>{$form.groups.html|crmAddClass:big}</td>
                                 <td align="right">{$form.$group.html}</td>
                             </tr>
                         {/if}

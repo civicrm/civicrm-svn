@@ -34,7 +34,7 @@
             {$form.userFrameworkResourceURL.label}
         </td>
         <td>
-            {$form.userFrameworkResourceURL.html|crmReplace:class:'huge40'} {help id='id-resource_url'}
+            {$form.userFrameworkResourceURL.html|crmAddClass:'huge40'} {help id='id-resource_url'}
         </td>
     </tr>
     <tr class="crm-url-form-block-imageUploadURL">
@@ -42,7 +42,7 @@
             {$form.imageUploadURL.label}
         </td>
         <td>
-            {$form.imageUploadURL.html|crmReplace:class:'huge40'} {help id='id-image_url'}
+            {$form.imageUploadURL.html|crmAddClass:'huge40'} {help id='id-image_url'}
         </td>
     </tr>
     <tr class="crm-url-form-block-customCSSURL">
@@ -50,7 +50,7 @@
             {$form.customCSSURL.label}
         </td>
         <td>
-            {$form.customCSSURL.html|crmReplace:class:'huge40'} {help id='id-css_url'}
+            {$form.customCSSURL.html|crmAddClass:'huge40'} {help id='id-css_url'}
         </td>
     </tr>
     <tr class="crm-url-form-block-extensionsURL">
@@ -58,7 +58,7 @@
             {$form.extensionsURL.label}
         </td>
         <td>
-            {$form.extensionsURL.html|crmReplace:class:'huge40'} {help id='id-extensions_url'}
+            {$form.extensionsURL.html|crmAddClass:'huge40'} {help id='id-extensions_url'}
         </td>
     </tr>
     <tr class="crm-url-form-block-enableSSL">

@@ -78,19 +78,19 @@
 </tr>
 <tr>
 	<td><label>{ts}Contribution Type{/ts}</label> <br />
-	{$form.contribution_type_id.html|crmReplace:class:twenty}</td>
+	{$form.contribution_type_id.html|crmAddClass:twenty}</td>
 	<td><label>{ts}Contribution Page{/ts}</label> <br />
-	{$form.contribution_page_id.html|crmReplace:class:twenty}</td>
+	{$form.contribution_page_id.html|crmAddClass:twenty}</td>
 </tr>
 <tr>
 	<td>{$form.contribution_in_honor_of.label} <br />
-	{$form.contribution_in_honor_of.html|crmReplace:class:twenty}</td>
+	{$form.contribution_in_honor_of.html|crmAddClass:twenty}</td>
 	<td>{$form.contribution_source.label} <br />
-	{$form.contribution_source.html|crmReplace:class:twenty}</td>
+	{$form.contribution_source.html|crmAddClass:twenty}</td>
 </tr>
 <tr>
 	<td>{$form.contribution_pcp_made_through_id.label} <br />
-	{$form.contribution_pcp_made_through_id.html|crmReplace:class:twenty}</td>
+	{$form.contribution_pcp_made_through_id.html|crmAddClass:twenty}</td>
 
 	<td>{$form.contribution_pcp_display_in_roll.label}
 	{$form.contribution_pcp_display_in_roll.html}<span class="crm-clear-link">(<a href="javascript:unselectRadio('contribution_pcp_display_in_roll','{$form.formName}')">{ts}clear{/ts}</a>)</span></td>

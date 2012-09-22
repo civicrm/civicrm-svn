@@ -57,7 +57,7 @@
 {/if}
     <tr class="crm-contactEmail-form-block-subject">
        <td class="label">{$form.subject.label}</td>
-       <td>{$form.subject.html|crmReplace:class:huge}&nbsp;
+       <td>{$form.subject.html|crmAddClass:huge}&nbsp;
         <a href="#" onClick="return showToken('Subject', 3);">{$form.token3.label}</a>
 	    {help id="id-token-subject" file="CRM/Contact/Form/Task/Email.hlp"}
         <div id='tokenSubject' style="display:none">

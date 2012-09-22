@@ -53,7 +53,7 @@
 					{$form.loc_event_id.label}
 				</td>
 				<td class="value" colspan="2">
-					{$form.loc_event_id.html|crmReplace:class:huge}
+					{$form.loc_event_id.html|crmAddClass:huge}
 				</td>
 			</tr>
 			<tr>

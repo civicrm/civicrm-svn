@@ -27,11 +27,11 @@
 <table class="form-layout-compressed">
     <tr>
        <td>{$form.household_name.label}<br/>
-         {$form.household_name.html|crmReplace:class:big}
+         {$form.household_name.html|crmAddClass:big}
        </td>
 
        <td>{$form.nick_name.label}<br/>
-       {$form.nick_name.html|crmReplace:class:big}</td>
+       {$form.nick_name.html|crmAddClass:big}</td>
 
        <td>{if $action == 1 and $contactSubType}&nbsp;{else}
               {$form.contact_sub_type.label}<br />

@@ -63,7 +63,7 @@
                   {$form.sort_name.label}
               </td>
               <td>			
-		  {$form.sort_name.html|crmReplace:class:'twenty'}
+		  {$form.sort_name.html|crmAddClass:'twenty'}
               </td>
 	      <td><label>{ts}Contact Type(s){/ts}</label><br />
                   {$form.contact_type.html}

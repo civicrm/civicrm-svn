@@ -70,12 +70,12 @@
         </tr>
         <tr class="crm-uf-field-form-block-help_pre">
             <td class="label">{$form.help_pre.label}{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_uf_field' field='help_pre' id=$fieldId}{/if}</td>
-            <td>{$form.help_pre.html|crmReplace:class:huge}<br />
+            <td>{$form.help_pre.html|crmAddClass:huge}<br />
             <span class="description">&nbsp;{ts}Explanatory text displayed to users for this field (can include HTML formatting tags).{/ts}</span></td>
         </tr>
         <tr class="crm-uf-field-form-block-help_post">
             <td class="label">{$form.help_post.label}{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_uf_field' field='help_post' id=$fieldId}{/if}</td>
-            <td>{$form.help_post.html|crmReplace:class:huge}<br />
+            <td>{$form.help_post.html|crmAddClass:huge}<br />
             <span class="description">&nbsp;{ts}Explanatory text displayed to users for this field (can include HTML formatting tags).{/ts}</span></td>
         </tr>
         <tr class="crm-uf-field-form-block-weight">

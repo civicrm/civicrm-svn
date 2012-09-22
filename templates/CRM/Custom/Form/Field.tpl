@@ -187,7 +187,7 @@ function custom_option_html_type( ) {
         </tr>
         <tr  class="crm-custom-field-form-block-options_per_line" id="optionsPerLine" {if $action neq 2 && ($form.data_type.value.0.0 >= 4 && $form.data_type.value.1.0 neq 'CheckBox' || $form.data_type.value.1.0 neq 'Radio' )}class="hide-block"{/if}>
             <td class="label">{$form.options_per_line.label}</td>	
-            <td class="html-adjust">{$form.options_per_line.html|crmReplace:class:two}</td>
+            <td class="html-adjust">{$form.options_per_line.html|crmAddClass:two}</td>
         </tr>
 	    <tr  class="crm-custom-field-form-block-start_date_years" id="startDateRange" {if $action neq 2 && ($form.data_type.value.0.0 != 5)}class="hide-block"{/if}>
             <td class="label">{$form.start_date_years.label}</td>
@@ -211,7 +211,7 @@ function custom_option_html_type( ) {
         </tr>
         <tr class="crm-custom-field-form-block-weight" >
             <td class="label">{$form.weight.label}</td>
-            <td>{$form.weight.html|crmReplace:class:two}
+            <td>{$form.weight.html|crmAddClass:two}
                 {if $action neq 4}
                 <span class="description">{ts}Weight controls the order in which fields are displayed in a group. Enter a positive or negative integer - lower numbers are displayed ahead of higher numbers.{/ts}</span>
                 {/if}
@@ -227,11 +227,11 @@ function custom_option_html_type( ) {
         </tr>
         <tr class="crm-custom-field-form-block-help_pre">
             <td class="label">{$form.help_pre.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_custom_field' field='help_pre' id=$id}{/if}</td>
-            <td class="html-adjust">{$form.help_pre.html|crmReplace:class:huge}</td>
+            <td class="html-adjust">{$form.help_pre.html|crmAddClass:huge}</td>
         </tr>
         <tr class="crm-custom-field-form-block-help_post">
             <td class="label">{$form.help_post.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_custom_field' field='help_post' id=$id}{/if}</td>
-            <td class="html-adjust">{$form.help_post.html|crmReplace:class:huge}
+            <td class="html-adjust">{$form.help_post.html|crmAddClass:huge}
                 {if $action neq 4}
                     <span class="description">{ts}Explanatory text displayed on back-end forms. Pre help is displayed inline on the form (above the field). Post help is displayed in a pop-up - users click the help balloon to view help text.{/ts}</span>
                 {/if}

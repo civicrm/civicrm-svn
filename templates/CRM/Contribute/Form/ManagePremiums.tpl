@@ -66,10 +66,10 @@
     <tr class="crm-contribution-form-block-imageOption"><td>{$form.imageOption.image.html}</td><td>{$form.uploadFile.html}</td></tr>
 	<tr class="crm-contribution-form-block-imageOption-thumbnail"><td colspan="2">{$form.imageOption.thumbnail.html}</td></tr>
     <tr id="imageURL"{if $action eq 2}class="show-row" {else} class="hide-row" {/if}>
-        <td class="label">{$form.imageUrl.label}</td><td>{$form.imageUrl.html|crmReplace:class:huge}</td>
+        <td class="label">{$form.imageUrl.label}</td><td>{$form.imageUrl.html|crmAddClass:huge}</td>
     </tr>
     <tr id="thumbnailURL"{if $action eq 2}class="show-row" {else} class="hide-row" {/if}>
-        <td class="label">{$form.thumbnailUrl.label}</td><td>{$form.thumbnailUrl.html|crmReplace:class:huge}</td>
+        <td class="label">{$form.thumbnailUrl.label}</td><td>{$form.thumbnailUrl.html|crmAddClass:huge}</td>
     </tr>
 	<tr><td colspan="2">{$form.imageOption.default_image.html}</td></tr>
 	<tr><td colspan="2">{$form.imageOption.noImage.html}</td></tr>

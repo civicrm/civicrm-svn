@@ -33,7 +33,7 @@
       <td>
          <div class="relation-type-dependent">
            {$form.relation_target_name.label}<br />
-           {$form.relation_target_name.html|crmReplace:class:huge}
+           {$form.relation_target_name.html|crmAddClass:huge}
             <div class="description font-italic">
                 {ts}Complete OR partial contact name.{/ts}
             </div>
@@ -47,7 +47,7 @@
       </td>
       <td>
         {$form.relation_target_group.label} {help id="id-relationship-target-group" file="CRM/Contact/Form/Search/Advanced.hlp"}<br />
-        {$form.relation_target_group.html|crmReplace:class:huge}
+        {$form.relation_target_group.html|crmAddClass:huge}
       </td>
     </tr>
     <tr class="relation-type-dependent"> 

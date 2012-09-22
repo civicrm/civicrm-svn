@@ -50,7 +50,7 @@
         <tr>
             {if !empty($form.email_greeting_id)}
                 <td>
-                    <span id="email_greeting" {if !empty($email_greeting_display) and $action eq 2} class="hiddenElement"{/if}>{$form.email_greeting_id.html|crmReplace:class:big}</span>
+                    <span id="email_greeting" {if !empty($email_greeting_display) and $action eq 2} class="hiddenElement"{/if}>{$form.email_greeting_id.html|crmAddClass:big}</span>
                     {if !empty($email_greeting_display) and $action eq 2}
                         <div id="email_greeting_display" class="view-data">{$email_greeting_display}&nbsp;&nbsp;<a href="#" onclick="showGreeting('email_greeting');return false;"><img src="{$config->resourceBase}i/edit.png" border="0" title="{ts}Edit{/ts}"></a></div>
                     {/if}
@@ -58,7 +58,7 @@
             {/if}
             {if !empty($form.postal_greeting_id)}
                 <td>
-                    <span id="postal_greeting" {if !empty($postal_greeting_display) and $action eq 2} class="hiddenElement"{/if}>{$form.postal_greeting_id.html|crmReplace:class:big}</span>
+                    <span id="postal_greeting" {if !empty($postal_greeting_display) and $action eq 2} class="hiddenElement"{/if}>{$form.postal_greeting_id.html|crmAddClass:big}</span>
                     {if !empty($postal_greeting_display) and $action eq 2}
                         <div id="postal_greeting_display" class="view-data">{$postal_greeting_display}&nbsp;&nbsp;<a href="#" onclick="showGreeting('postal_greeting');return false;"><img src="{$config->resourceBase}i/edit.png" border="0" title="{ts}Edit{/ts}"></a></div>
                     {/if}
@@ -66,7 +66,7 @@
             {/if}
             {if !empty($form.addressee_id)}
                 <td>
-                    <span id="addressee" {if !empty($addressee_display) and $action eq 2} class="hiddenElement"{/if}>{$form.addressee_id.html|crmReplace:class:big}</span>
+                    <span id="addressee" {if !empty($addressee_display) and $action eq 2} class="hiddenElement"{/if}>{$form.addressee_id.html|crmAddClass:big}</span>
                     {if !empty($addressee_display) and $action eq 2}
                         <div id="addressee_display" class="view-data">{$addressee_display}&nbsp;&nbsp;<a href="#" onclick="showGreeting('addressee');return false;"><img src="{$config->resourceBase}i/edit.png" border="0" title="{ts}Edit{/ts}"></a></div>
                     {/if}
@@ -86,13 +86,13 @@
         </tr>
         <tr id="greetings2" class="hiddenElement">
             {if !empty($form.email_greeting_custom)}
-                <td><span id="email_greeting_id_html" class="hiddenElement">{$form.email_greeting_custom.html|crmReplace:class:big}</span></td>
+                <td><span id="email_greeting_id_html" class="hiddenElement">{$form.email_greeting_custom.html|crmAddClass:big}</span></td>
             {/if}
              {if !empty($form.postal_greeting_custom)}
-                <td><span id="postal_greeting_id_html" class="hiddenElement">{$form.postal_greeting_custom.html|crmReplace:class:big}</span></td>
+                <td><span id="postal_greeting_id_html" class="hiddenElement">{$form.postal_greeting_custom.html|crmAddClass:big}</span></td>
             {/if}
             {if !empty($form.addressee_custom)}
-                <td><span id="addressee_id_html" class="hiddenElement">{$form.addressee_custom.html|crmReplace:class:big}</span></td>
+                <td><span id="addressee_id_html" class="hiddenElement">{$form.addressee_custom.html|crmAddClass:big}</span></td>
             {/if}
         </tr>
         <tr>

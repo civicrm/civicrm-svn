@@ -75,7 +75,7 @@
 {if $form.activity_details.html}
     <tr class="crm-case-form-block-activity_details">
         <td class="label">{$form.activity_details.label}{help id="id-details" file="CRM/Case/Form/Case.hlp"}</td>
-        <td class="view-value">{if $defaultWysiwygEditor eq 0}{$form.activity_details.html|crmStripAlternatives|crmReplace:class:huge40}{else}{$form.activity_details.html|crmStripAlternatives}{/if}</td>
+        <td class="view-value">{if $defaultWysiwygEditor eq 0}{$form.activity_details.html|crmStripAlternatives|crmAddClass:huge40}{else}{$form.activity_details.html|crmStripAlternatives}{/if}</td>
     </tr>
 {/if}
 
@@ -89,7 +89,7 @@
 {if $form.activity_subject.html}
     <tr class="crm-case-form-block-activity_subject">
        <td class="label">{$form.activity_subject.label}{help id="id-activity_subject" file="CRM/Case/Form/Case.hlp"}</td>
-       <td>{$form.activity_subject.html|crmReplace:class:huge}</td>
+       <td>{$form.activity_subject.html|crmAddClass:huge}</td>
     </tr>
 {/if}
 

@@ -1,4 +1,5 @@
-{*
+<?php
+/*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
@@ -22,32 +23,34 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*}
-{* This file provides the plugin for the Website block *}
-{* @var $form Contains the array for the form elements and other form associated information assigned to the template by the controller*}
-{* @var $blockId Contains the current block id, assigned in the CRM/Contact/Form/Location.php file *}
+*/
 
-{if !$addBlock}
-<tr>
-    <td>{ts}Website{/ts}
-        &nbsp;&nbsp;{help id="id-website" file="CRM/Contact/Form/Contact.hlp"}
-    </td>
-    <td>{ts}Website Type{/ts}</td>
-    <td colspan="2"></td>
-    <td id="Website-Primary" class="hiddenElement"></td>
-</tr>
-{/if}
+/**
+ *
+ * @package CRM
+ * @copyright CiviCRM LLC (c) 2004-2012
+ * $Id$
+ *
+ */
 
-<tr id="Website_Block_{$blockId}">
-    <td>{$form.website.$blockId.url.html|crmAddClass:twenty}&nbsp;</td>
-    <td>{$form.website.$blockId.website_type_id.html}</td>
-    <td colspan="3">{if $blockId > 1} <a href="#" title="{ts}Delete Website Block{/ts}" onClick="removeBlock('Website','{$blockId}'); return false;">{ts}delete{/ts}</a>{/if}</td>
-</tr>
-{if !$addBlock}
-<tr>
-<td colspan="4">
-&nbsp;&nbsp;<a href="#" title={ts}Add{/ts} onClick="buildAdditionalBlocks( 'Website', '{$className}');return false;">{ts}Add another website{/ts}</a>
-</td>
-</tr>
-{/if}
+/**
+ * Add a class to an html element
+ *
+ * @param string $string    the html to be tweaked
+ * @param string $class     the new class or classes to add (separate with a space)
+ *
+ * @return string        the new modified html string
+ * @access public
+ */
+function smarty_modifier_crmAddClass($string, $class) {
+  // Standardize white space
+  $string = str_replace(array('class ="', 'class= "', 'class = "'), 'class="', $string);
+  if (strpos($string, 'class="') !== FALSE) {
+    $string = str_replace('class="', 'class="' . "$class ", $string);
+  }
+  else {
+    $string = str_replace('>', ' class="' . $class . '">', $string);
+  }
+  return $string;
+}
 

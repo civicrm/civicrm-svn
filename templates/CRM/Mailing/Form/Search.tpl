@@ -27,7 +27,7 @@
 <table class="form-layout">
     <tr>
         <td>{$form.mailing_name.label}<br />
-            {$form.mailing_name.html|crmReplace:class:big} {help id="id-mailing_name"}
+            {$form.mailing_name.html|crmAddClass:big} {help id="id-mailing_name"}
         </td>
     </tr>
     <tr>
@@ -40,7 +40,7 @@
     </tr>
     <tr> 
         <td colspan="1">{$form.sort_name.label}<br />
-            {$form.sort_name.html|crmReplace:class:big} {help id="id-create_sort_name"}
+            {$form.sort_name.html|crmAddClass:big} {help id="id-create_sort_name"}
         </td>
         <td width="100%"><label>{ts}Mailing Status{/ts}</label><br />
         <div class="listing-box" style="width: auto; height: 60px">

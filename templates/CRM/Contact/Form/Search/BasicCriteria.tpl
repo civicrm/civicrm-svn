@@ -181,7 +181,7 @@ dojo.addOnLoad( function( ) {
                         </div><br />
                         <span id="id-group-names"></span>
                     {else}
-                        {$form.group.html|crmReplace:class:big}
+                        {$form.group.html|crmAddClass:big}
                     {/if}
                  {/if}
         	</div>
@@ -195,7 +195,7 @@ dojo.addOnLoad( function( ) {
             		{$form.tag.label}
             	</div>
             	<div class="content">
-            		{$form.tag.html|crmReplace:class:medium}
+            		{$form.tag.html|crmAddClass:medium}
             	</div>
             	<div class="clear"></div> 
             </div>

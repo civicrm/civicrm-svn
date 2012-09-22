@@ -143,7 +143,7 @@
     	<tr class="crm-case-caseview-form-block-change_client_id">
     	   <td colspan='2'><a href="#" onClick='cj("#change_client").toggle( ); return false;'>{ts}Assign to Another Client{/ts}</a>	
     	    <span id='change_client' class='hide-block'>
-    	        {$form.change_client_id.html|crmReplace:class:twenty}&nbsp;{$form._qf_CaseView_next_edit_client.html}
+    	        {$form.change_client_id.html|crmAddClass:twenty}&nbsp;{$form._qf_CaseView_next_edit_client.html}
     	    </span>
     	   </td>
     	</tr>
@@ -799,7 +799,7 @@ function addTags() {
         <table class="no-border form-layout-compressed" id="searchOptions">
           <tr>
             <td class="crm-case-caseview-form-block-repoter_id"colspan="2"><label for="reporter_id">{ts}Reporter/Role{/ts}</label><br />
-                {$form.reporter_id.html|crmReplace:class:twenty}
+                {$form.reporter_id.html|crmAddClass:twenty}
             </td>
             <td class="crm-case-caseview-form-block-status_id"><label for="status_id">{$form.status_id.label}</label><br />
                 {$form.status_id.html}

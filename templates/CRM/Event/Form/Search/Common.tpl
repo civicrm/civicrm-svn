@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 <tr>
-    <td class="crm-event-form-block-event_type"> {$form.event_name.label}  <br />{$form.event_name.html|crmReplace:class:huge} </td>
+    <td class="crm-event-form-block-event_type"> {$form.event_name.label}  <br />{$form.event_name.html|crmAddClass:huge} </td>
     <td class="crm-event-form-block-event_type"> {$form.event_type.label}<br />{$form.event_type.html} </td>
 </tr>     
  

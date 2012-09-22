@@ -35,7 +35,7 @@
     <div class="crm-accordion-body">
         <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
         <table class="form-layout-compressed">
-           <tr><td class="label">{$form.distance.label}</td><td>{$form.distance.html|crmReplace:class:four} {$form.prox_distance_unit.html}</td></tr>
+           <tr><td class="label">{$form.distance.label}</td><td>{$form.distance.html|crmAddClass:four} {$form.prox_distance_unit.html}</td></tr>
            <tr><td class="label">FROM...</td><td></td></tr>
            <tr><td class="label">{$form.street_address.label}</td><td>{$form.street_address.html}</td></tr>
            <tr><td class="label">{$form.city.label}</td><td>{$form.city.html}</td></tr>

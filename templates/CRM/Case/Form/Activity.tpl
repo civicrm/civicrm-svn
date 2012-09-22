@@ -180,12 +180,12 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
             {/if}
 	    {if $activityTypeFile neq 'ChangeCaseStartDate'}
             <tr class="crm-case-activity-form-block-subject">
-              <td class="label">{$form.subject.label}</td><td class="view-value">{$form.subject.html|crmReplace:class:huge}</td>
+              <td class="label">{$form.subject.label}</td><td class="view-value">{$form.subject.html|crmAddClass:huge}</td>
             </tr>
 	    {/if}
            <tr class="crm-case-activity-form-block-medium_id">
               <td class="label">{$form.medium_id.label}</td>
-              <td class="view-value">{$form.medium_id.html}&nbsp;&nbsp;&nbsp;{$form.location.label} &nbsp;{$form.location.html|crmReplace:class:huge}</td>
+              <td class="view-value">{$form.medium_id.html}&nbsp;&nbsp;&nbsp;{$form.location.label} &nbsp;{$form.location.html|crmAddClass:huge}</td>
            </tr> 
            <tr class="crm-case-activity-form-block-activity_date_time">
               <td class="label">{$form.activity_date_time.label}</td>
@@ -206,7 +206,7 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
               <td class="label">{$form.details.label}</td>
               <td class="view-value">
                 {* If using plain textarea, assign class=huge to make input large enough. *}
-                {if $defaultWysiwygEditor eq 0}{$form.details.html|crmReplace:class:huge}{else}{$form.details.html}{/if}
+                {if $defaultWysiwygEditor eq 0}{$form.details.html|crmAddClass:huge}{else}{$form.details.html}{/if}
               </td>
            </tr>
            <tr>
@@ -266,7 +266,7 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
                         </tr>
                         <tr class="crm-case-activity-form-block-followup_activity_subject">
                            <td class="label">{$form.followup_activity_subject.label}</td>
-                           <td>{$form.followup_activity_subject.html|crmReplace:class:huge}</td>
+                           <td>{$form.followup_activity_subject.html|crmAddClass:huge}</td>
                         </tr>
                     </table>
  </div><!-- /.crm-accordion-body -->

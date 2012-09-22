@@ -54,7 +54,7 @@
    </tr>
    <tr class="crm-contact-type-form-block-image_URL">
       <td class="label">{$form.image_URL.label}</td>
-      <td>{$form.image_URL.html|crmReplace:class:'huge40'}{help id="id-image_URL"}</td>
+      <td>{$form.image_URL.html|crmAddClass:'huge40'}{help id="id-image_URL"}</td>
    </tr> 
    <tr class="crm-contact-type-form-block-description">
      <td class="label">{$form.description.label}

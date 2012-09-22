@@ -223,7 +223,7 @@
                  </tr>
               <tr id="checkNumber" class="crm-membership-form-block-check_number">
                       <td class="label">{$form.check_number.label}</td>
-                      <td>{$form.check_number.html|crmReplace:class:six}</td>
+                      <td>{$form.check_number.html|crmAddClass:six}</td>
                   </tr>
               {if $action neq 2 }  
                   <tr class="crm-membership-form-block-trxn_id">
@@ -260,7 +260,7 @@
         <tr id='notice' style="display:none;">
             <td class="label">{$form.receipt_text_signup.label}</td>
             <td class="html-adjust"><span class="description">{ts}If you need to include a special message for this member, enter it here. Otherwise, the confirmation email will include the standard receipt message configured under System Message Templates.{/ts}</span>
-                 {$form.receipt_text_signup.html|crmReplace:class:huge}</td>
+                 {$form.receipt_text_signup.html|crmAddClass:huge}</td>
         </tr>
     </table>
     <div id="customData"></div>

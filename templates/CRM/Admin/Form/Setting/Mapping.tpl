@@ -36,7 +36,7 @@
          </tr>
          <tr class="crm-map-form-block-mapAPIKey">
              <td>{$form.mapAPIKey.label}</td>
-             <td>{$form.mapAPIKey.html|crmReplace:class:huge}<br />
+             <td>{$form.mapAPIKey.html|crmAddClass:huge}<br />
              <span class="description">{ts}Enter your API Key or Application ID.{/ts}</span></td>
          </tr>
          <tr class="crm-map-form-block-geoProvider">
@@ -46,7 +46,7 @@
          </tr>
          <tr class="crm-map-form-block-geoAPIKey">
              <td>{$form.geoAPIKey.label}</td>
-             <td>{$form.geoAPIKey.html|crmReplace:class:huge}<br />
+             <td>{$form.geoAPIKey.html|crmAddClass:huge}<br />
              <span class="description">{ts}Enter the API key or Application ID associated with your geocoding provider.{/ts}</span></td>
          </tr>
     </table>

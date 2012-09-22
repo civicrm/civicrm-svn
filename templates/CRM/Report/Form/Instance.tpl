@@ -48,15 +48,15 @@
 <table class="form-layout">
     <tr class="crm-report-instanceForm-form-block-email_subject">
         <td class="report-label" width="20%">{$form.email_subject.label}</td>
-        <td>{$form.email_subject.html|crmReplace:class:huge}</td>
+        <td>{$form.email_subject.html|crmAddClass:huge}</td>
     </tr>
     <tr class="crm-report-instanceForm-form-block-email_to">
         <td class="report-label">{$form.email_to.label}</td>
-        <td>{$form.email_to.html|crmReplace:class:huge}</td>
+        <td>{$form.email_to.html|crmAddClass:huge}</td>
     </tr>
     <tr class="crm-report-instanceForm-form-block-email_cc">
         <td class="report-label">{$form.email_cc.label}</td>
-        <td>{$form.email_cc.html|crmReplace:class:huge}</td>
+        <td>{$form.email_cc.html|crmAddClass:huge}</td>
     </tr> 
 </table>
 <br/>
@@ -71,16 +71,16 @@
     </tr>
     <tr class="crm-report-instanceForm-form-block-parent_id" id="navigation_menu">
 	<td class="report-label">{$form.parent_id.label} {help id="id-parent" file="CRM/Admin/Form/Navigation.hlp"}</td>
-	<td>{$form.parent_id.html|crmReplace:class:huge}</td>
+	<td>{$form.parent_id.html|crmAddClass:huge}</td>
     </tr>
     {if $config->userFramework neq 'Joomla'}
         <tr class="crm-report-instanceForm-form-block-permission">
             <td class="report-label" width="20%">{$form.permission.label} {help id="id-report_perms" file="CRM/Report/Form/Settings.hlp"}</td>
-            <td>{$form.permission.html|crmReplace:class:huge}</td>
+            <td>{$form.permission.html|crmAddClass:huge}</td>
         </tr>
         <tr class="crm-report-instanceForm-form-block-role">
             <td class="report-label" width="20%">{$form.grouprole.label}</td>
-            <td>{$form.grouprole.html|crmReplace:class:huge}</td>
+            <td>{$form.grouprole.html|crmAddClass:huge}</td>
         </tr>
     {/if}
     <tr class="crm-report-instanceForm-form-block-isReserved">

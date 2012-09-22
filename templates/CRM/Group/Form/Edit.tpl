@@ -37,7 +37,7 @@
     <table class="form-layout">
         <tr class="crm-group-form-block-title">
 	    <td class="label">{$form.title.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_group' field='title' id=$group.id}{/if}</td>
-            <td>{$form.title.html|crmReplace:class:huge}
+            <td>{$form.title.html|crmAddClass:huge}
                 {if $group.saved_search_id}&nbsp;({ts}Smart Group{/ts}){/if}
             </td>
         </tr>
@@ -58,7 +58,7 @@
     
         <tr class="crm-group-form-block-visibility">
 	    <td class="label">{$form.visibility.label}</td>
-	    <td>{$form.visibility.html|crmReplace:class:huge} {help id="id-group-visibility" file="CRM/Group/Page/Group.hlp"}</td>
+	    <td>{$form.visibility.html|crmAddClass:huge} {help id="id-group-visibility" file="CRM/Group/Page/Group.hlp"}</td>
 	</tr>
 	
   <tr class="crm-group-form-block-isReserved">
@@ -92,7 +92,7 @@
         <table class="form-layout-compressed">
 	    <tr class="crm-group-form-block-parents">
 	        <td class="label">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{$form.parents.label}</td>
-	        <td>{$form.parents.html|crmReplace:class:huge}</td>
+	        <td>{$form.parents.html|crmAddClass:huge}</td>
 	    </tr>
 	</table>
     {/if}
@@ -102,7 +102,7 @@
 	        <table class="form-layout-compressed">
 		    <tr class="crm-group-form-block-organization">
 		        <td class="label">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{$form.organization.label}</td>
-			<td>{$form.organization.html|crmReplace:class:huge}
+			<td>{$form.organization.html|crmAddClass:huge}
 			    <div id="organization_address" style="font-size:10px"></div>
 			</td>
 		    </tr>

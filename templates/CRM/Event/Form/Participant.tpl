@@ -238,7 +238,7 @@
 			</td>
     		</tr>
     		<tr class="crm-participant-form-block-source">
-    		    <td class="label">{$form.source.label}</td><td>{$form.source.html|crmReplace:class:huge}<br />
+    		    <td class="label">{$form.source.label}</td><td>{$form.source.html|crmAddClass:huge}<br />
                 <span class="description">{ts}Source for this registration (if applicable).{/ts}</span></td>
             </tr>
             </table>
