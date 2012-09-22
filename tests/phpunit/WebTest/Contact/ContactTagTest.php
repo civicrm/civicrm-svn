@@ -85,7 +85,7 @@ class WebTest_Contact_ContactTagTest extends CiviSeleniumTestCase {
 
     // check tag we have created
     $this->click("xpath=//ul/li/label[text()=\"$tagName\"]");
-    $this->waitForElementPresent("css=.msgok");
+    $this->waitForElementPresent("css=.success");
 
     // Is status message correct?
     $this->assertTrue($this->isTextPresent("Saved"));

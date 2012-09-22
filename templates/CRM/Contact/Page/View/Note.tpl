@@ -44,7 +44,7 @@
                     <tr><th>{ts}Comment{/ts}</th><th>{ts}Created By{/ts}</th><th>{ts}Date{/ts}</th></tr>
                 </thead>
                 {foreach from=$comments item=comment}
-                    <tr class="{cycle values="odd-row,even-row"}"><td>{$comment.note}</td><td>{$comment.createdBy}</td><td>{$comment.modified_date}</td></tr>
+                    <tr class="{cycle values='odd-row,even-row'}"><td>{$comment.note}</td><td>{$comment.createdBy}</td><td>{$comment.modified_date}</td></tr>
                 {/foreach}
             </table>
         </fieldset>
@@ -180,7 +180,7 @@
             cj('tr#cnote_'+ noteId +' span.icon_comments_show').hide();
             cj('tr#cnote_'+ noteId +' span.icon_comments_hide').show();
         } else {
-            alert('{/literal}{ts}No comments found for this Note{/ts}{literal}');
+            cj().crmAlert('{/literal}{ts}There are no comments for this note{/ts}{literal}', '{/literal}{ts}None Found{/ts}{literal}', 'alert');
         }
 
     }

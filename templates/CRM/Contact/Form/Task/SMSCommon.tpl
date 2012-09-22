@@ -84,9 +84,8 @@ function maxLengthMessage()
 {
    var len = cj('#text_message').val().length;
    var maxLength = {/literal}{$max_sms_length}{literal};
-   if (len > maxLength) {				     
-      alert('SMS body exceeding limit of 160 characters');
-      cj('#text_message').focus();		 
+   if (len > maxLength) {
+      cj('#text_message').crmError({/literal}'{ts escape="js"}SMS body exceeding limit of 160 characters{/ts}'{literal});
       return false;
    }
 return true;

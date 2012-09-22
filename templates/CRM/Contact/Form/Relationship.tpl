@@ -413,7 +413,7 @@ cj( function( ) {
         cj('#store_employers').val('');
     } 
 
-    cj('.pagerDisplay tbody tr .contact_select input').live('click', function () {
+    cj('.pagerDisplay tbody tr .contact_select input').click(function () {
         var valueSelected = cj(this).val();	  
         if ( cj(this).attr('checked') ) {
             contact_checked[valueSelected] =  valueSelected;
@@ -431,7 +431,7 @@ cj( function( ) {
     } );
 
     if ( useEmployer ) {
-        cj('.pagerDisplay tbody tr .'+ employerClass +' input').live('click', function () {
+        cj('.pagerDisplay tbody tr .'+ employerClass +' input').click( function () {
             var valueSelected = cj(this).val();	
             if ( isRadio ) {
                 employer_checked = new Array();
@@ -439,7 +439,7 @@ cj( function( ) {
             if ( cj(this).attr('checked') ) {
                 // add validation to match with selected contacts
                 if( !contact_checked[valueSelected] ) {
-                    alert('Current employer / Current employee should be among the selected contacts.');
+                    cj(this).crmError({/literal}'{ts escape="js"}Current employer / Current employee should be among the selected contacts.{/ts}'{literal});
                     cj(this).attr('checked',false); 
                 } else {
                     employer_checked[valueSelected] = valueSelected;

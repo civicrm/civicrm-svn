@@ -95,17 +95,18 @@
 <script type="text/javascript">
 //to check if same location type is already selected.
 function checkLocation( object, noAlert ) {
-    var selectedText = cj( '#' + object + ' :selected').text();
-	cj( 'td#Address-Primary-html select' ).each( function() {
-		element = cj(this).attr('id');
-		if ( cj(this).val() && element != object && selectedText == cj( '#' + element + ' :selected').text() ) {
-			if ( ! noAlert ) {
-			    var alertText = "{/literal}{ts escape='js'}Location type{/ts} {literal}" + selectedText + "{/literal} {ts escape='js'}has already been assigned to another address. Please select another location type for this address.{/ts}{literal}";
-			    alert( alertText );
-			}
-			cj( '#' + object ).val('');
-		}
-	});
+  var ele = cj('#' + object);
+  var selectedText = cj(':selected', ele).text();
+  cj('td#Address-Primary-html select').each( function() {
+    element = cj(this).attr('id');
+    if ( cj(this).val() && element != object && selectedText == cj(':selected', this).text() ) {
+      if ( !noAlert ) {
+          var alertText = selectedText + {/literal}" {ts escape='js'}has already been assigned to another address. Please select another location for this address.{/ts}"{literal};
+          ele.crmError(alertText);
+      }
+      cj( '#' + object ).val('');
+    }
+  });
 }
 </script>
 {/literal}

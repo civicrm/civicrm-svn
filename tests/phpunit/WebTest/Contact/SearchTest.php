@@ -152,7 +152,7 @@ class WebTest_Contact_SearchTest extends CiviSeleniumTestCase {
 
     // select tag
     $this->click("xpath=//ul/li/label[text()=\"$tagName\"]");
-    $this->waitForElementPresent("css=.msgok");
+    $this->waitForElementPresent("css=.success");
 
     // visit contact search page
     $this->open($this->sboxPath . "civicrm/contact/search?reset=1");
@@ -175,7 +175,7 @@ class WebTest_Contact_SearchTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad("30000");
 
     // Is contact present in search result?
-    $this->assertTrue($this->isTextPresent("$sortName"), "Contact did not found in search result!");
+    $this->assertTrue($this->isTextPresent("$sortName"), "Contact not found in search result!");
   }
 
   function addTag($tagName = 'New Tag') {

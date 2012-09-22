@@ -76,7 +76,7 @@ function changeActivityStatus( activityID, contactId, current_status_id ) {
                                 if ( values.is_error ) {
                                     // seems to be some discrepancy as to which spelling it should be
                                     err_msg = values.error_msg ? values.error_msg : values.error_message;
-                                    alert( "{/literal}{ts escape='js'}Unable to change status{/ts}{literal}.\n\n" + err_msg );
+                                    cj().crmAlert( err_msg, "{/literal}{ts escape='js'}Unable to change status{/ts}{literal}", 'error' );
                                     return false;
                                 } else {
                                     // Hmm, actually several links inside the row have to change to use the new activity id

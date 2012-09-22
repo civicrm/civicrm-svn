@@ -109,7 +109,7 @@
             var homeMenuId = {/literal}"{$homeMenuId}"{literal};
             if ( nodeID == homeMenuId ) {
               var cannotDeleteMsg = {/literal}"{ts}You cannot delete this menu item:{/ts}" + " "{literal} + menuName;
-              alert( cannotDeleteMsg );
+              cj().crmAlert( cannotDeleteMsg, {/literal}"{ts}Cannot Delete{/ts}"{literal} );
               cj("#navigation-tree").jstree('refresh');
               return false;
             }

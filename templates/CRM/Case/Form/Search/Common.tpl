@@ -160,7 +160,7 @@
 
     function unselectCaseRadio( eleName, thisForm ) {
         if ( cj.inArray( 1, verifyCaseInput ) != -1 ) {
-            alert( 'It is mandatory to select either Search All Cases or Only My Cases if any of the case serach criteria is selected' );
+            cj().crmAlert( {/literal}'{ts  escape="js"}Either "Search All" or "Only My Cases" must be selected when case criteria are specified.{/ts}'{literal}, {/literal}'{ts  escape="js"}Selection Required{/ts}'{literal} );
             return;
         }
         unselectRadio( eleName, thisForm);

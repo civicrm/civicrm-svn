@@ -74,7 +74,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $this->click("css=li#tab_tag a");
     $this->waitForElementPresent("css=div#tagtree");
     $this->click("xpath=//ul/li/label[text()=\"$tagName\"]");
-    $this->waitForElementPresent("css=.msgok");
+    $this->waitForElementPresent("css=.success");
     // is status message correct?
     $this->assertTrue($this->isTextPresent("Saved"));
 
