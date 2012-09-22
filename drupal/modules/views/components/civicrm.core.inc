@@ -128,8 +128,9 @@ function _civicrm_core_data(&$data, $enabled) {
     ),
     'relationship' => array(
       'base' => 'civicrm_contribution',
-      'title' => 'Contribution records',
-      'field' => 'contact_id',
+      'title' => 'Contribution Records',
+      'left_field' => 'contact_id',
+      'field' => 'id',
       'handler' => 'views_handler_relationship',
       'label' => t('CiviCRM Contributions'),
     ),
