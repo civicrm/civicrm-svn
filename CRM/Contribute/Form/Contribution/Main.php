@@ -180,7 +180,6 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     }
 
     if (CRM_Utils_Array::value('hidden_processor', $_POST)) {
-
       $this->set('type', CRM_Utils_Array::value('payment_processor', $_POST));
       $this->set('mode', $this->_mode);
       $this->set('paymentProcessor', $this->_paymentProcessor);
@@ -576,7 +575,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     }
 
     //we have to load confirm contribution button in template
-    //when multiple payment processor as the user 
+    //when multiple payment processor as the user
     //can toggle with payment processor selection
     $billingModePaymentProcessors = 0;
     foreach ($this->_paymentProcessors as $key => $values) {
@@ -584,13 +583,13 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         $billingModePaymentProcessors++;
       }
     }
-    
+
     if ($billingModePaymentProcessors && count($this->_paymentProcessors) == $billingModePaymentProcessors) {
       $allAreBillingModeProcessors = TRUE;
     } else {
       $allAreBillingModeProcessors = FALSE;
     }
-    
+
     if (!($allAreBillingModeProcessors && !$this->_values['is_pay_later'])) {
       $this->addButtons(array(
           array(
@@ -604,6 +603,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     }
 
     $this->addFormRule(array('CRM_Contribute_Form_Contribution_Main', 'formRule'), $this);
+
   }
 
   /**

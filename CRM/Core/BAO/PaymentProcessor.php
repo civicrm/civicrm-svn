@@ -44,7 +44,7 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Core_DAO_PaymentProcessor {
   static $_defaultPaymentProcessor = NULL;
   /*
      * Create Payment Processor
-     * 
+     *
      * @params array parameters for Processor entity
      */
   function create(&$params) {
@@ -125,8 +125,7 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Core_DAO_PaymentProcessor {
    * @access public
    * @static
    */
-  static
-  function del($paymentProcessorID) {
+  static function del($paymentProcessorID) {
     if (!$paymentProcessorID) {
       CRM_Core_Error::fatal(ts('Invalid value passed to delete function'));
     }
@@ -155,8 +154,7 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Core_DAO_PaymentProcessor {
    * @static
    * @access public
    */
-  static
-  function getPayment($paymentProcessorID, $mode) {
+  static function getPayment($paymentProcessorID, $mode) {
     if (!$paymentProcessorID) {
       CRM_Core_Error::fatal(ts('Invalid value passed to getPayment function'));
     }
@@ -176,56 +174,39 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Core_DAO_PaymentProcessor {
       if (!$testDAO->find(TRUE)) {
         CRM_Core_Error::fatal(ts('Could not retrieve payment processor details'));
       }
-      return self::buildPayment($testDAO);
+      return self::buildPayment($testDAO, $mode);
     }
     else {
-      return self::buildPayment($dao);
+      return self::buildPayment($dao, $mode);
     }
   }
 
-
-  static
-  function getPayments($paymentProcessorIDs, $mode) {
+  static function getPayments($paymentProcessorIDs, $mode) {
     if (!$paymentProcessorIDs) {
       CRM_Core_Error::fatal(ts('Invalid value passed to getPayment function'));
     }
-    foreach ($paymentProcessorIDs as $paymentProcessorID) {
-      $dao            = new CRM_Core_DAO_PaymentProcessor();
-      $dao->id        = $paymentProcessorID;
-      $dao->is_active = 1;
-      if (!$dao->find(TRUE)) {
-        return NULL;
-      }
 
-      if ($mode == 'test') {
-        $testDAO            = new CRM_Core_DAO_PaymentProcessor();
-        $testDAO->name      = $dao->name;
-        $testDAO->is_active = 1;
-        $testDAO->is_test   = 1;
-        if (!$testDAO->find(TRUE)) {
-          CRM_Core_Error::fatal(ts('Could not retrieve payment processor details'));
-        }
-        $paymentDAO[$testDAO->id] = self::buildPayment($testDAO);
-      }
-      else {
-        $paymentDAO[$dao->id] = self::buildPayment($dao);
-      }
+    $payments = array( );
+    foreach ($paymentProcessorIDs as $paymentProcessorID) {
+      $payment = self::getPayment($paymentProcessorID, $mode);
+      $payments[$payment['id']] = $payment;
     }
-    asort($paymentDAO);
-    return $paymentDAO;
+
+    asort($payments);
+    return $payments;
   }
 
   /**
    * Function to build payment processor details
    *
-   * @param object $dao payment processor object
+   * @param object $dao   payment processor object
+   * @param  string $mode payment mode ie test or live
    *
    * @return array  associated array with payment processor related fields
    * @static
    * @access public
    */
-  static
-  function buildPayment($dao) {
+  static function buildPayment($dao, $mode) {
     $fields = array(
       'id', 'name', 'payment_processor_type', 'user_name', 'password',
       'signature', 'url_site', 'url_api', 'url_recur', 'url_button',
@@ -236,6 +217,9 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Core_DAO_PaymentProcessor {
     foreach ($fields as $name) {
       $result[$name] = $dao->$name;
     }
+
+    $result['instance'] =& CRM_Core_Payment::singleton($mode, $result);
+
     return $result;
   }
 
@@ -250,8 +234,7 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Core_DAO_PaymentProcessor {
    * @static
    * @access public
    */
-  static
-  function getProcessorForEntity($entityID, $component = 'contribute', $type = 'id') {
+  static function getProcessorForEntity($entityID, $component = 'contribute', $type = 'id') {
     $result = NULL;
     if (!in_array($component, array(
       'membership', 'contribute', 'recur'))) {
@@ -259,26 +242,26 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Core_DAO_PaymentProcessor {
     }
     //FIXME:
     if ($component == 'membership') {
-      $sql = " 
-    SELECT cr.payment_processor_id as ppID1, cp.payment_processor as ppID2, con.is_test 
+      $sql = "
+    SELECT cr.payment_processor_id as ppID1, cp.payment_processor as ppID2, con.is_test
       FROM civicrm_membership mem
-INNER JOIN civicrm_membership_payment mp  ON ( mem.id = mp.membership_id ) 
+INNER JOIN civicrm_membership_payment mp  ON ( mem.id = mp.membership_id )
 INNER JOIN civicrm_contribution       con ON ( mp.contribution_id = con.id )
  LEFT JOIN civicrm_contribution_recur cr  ON ( mem.contribution_recur_id = cr.id )
  LEFT JOIN civicrm_contribution_page  cp  ON ( con.contribution_page_id  = cp.id )
      WHERE mp.membership_id = %1";
     }
     elseif ($component == 'contribute') {
-      $sql = " 
-    SELECT cr.payment_processor_id as ppID1, cp.payment_processor as ppID2, con.is_test 
+      $sql = "
+    SELECT cr.payment_processor_id as ppID1, cp.payment_processor as ppID2, con.is_test
       FROM civicrm_contribution       con
  LEFT JOIN civicrm_contribution_recur cr  ON ( con.contribution_recur_id = cr.id )
  LEFT JOIN civicrm_contribution_page  cp  ON ( con.contribution_page_id  = cp.id )
      WHERE con.id = %1";
     }
     elseif ($component == 'recur') {
-      $sql = " 
-    SELECT cr.payment_processor_id as ppID1, NULL as ppID2, cr.is_test 
+      $sql = "
+    SELECT cr.payment_processor_id as ppID1, NULL as ppID2, cr.is_test
       FROM civicrm_contribution_recur cr
      WHERE cr.id = %1";
     }

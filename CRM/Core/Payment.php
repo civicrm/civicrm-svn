@@ -104,11 +104,11 @@ abstract class CRM_Core_Payment {
 
       //load the object.
       self::$_singleton[$cacheKey] = eval('return ' . $paymentClass . '::singleton( $mode, $paymentProcessor );');
+    }
 
-      //load the payment form for required processor.
-      if ($paymentForm !== NULL) {
-        self::$_singleton[$cacheKey]->setForm($paymentForm);
-      }
+    //load the payment form for required processor.
+    if ($paymentForm !== NULL) {
+      self::$_singleton[$cacheKey]->setForm($paymentForm);
     }
 
     return self::$_singleton[$cacheKey];
@@ -162,8 +162,7 @@ abstract class CRM_Core_Payment {
    */
   abstract function checkConfig();
 
-  static
-  function paypalRedirect(&$paymentProcessor) {
+  static function paypalRedirect(&$paymentProcessor) {
     if (!$paymentProcessor) {
       return FALSE;
     }
@@ -183,8 +182,7 @@ abstract class CRM_Core_Payment {
    * Page callback for civicrm/payment/ipn
    * @public
    */
-  static
-  function handleIPN() {
+  static function handleIPN() {
     self::handlePaymentMethod(
       'PaymentNotification',
       array(
@@ -200,14 +198,10 @@ abstract class CRM_Core_Payment {
    *
    * @public
    */
-  static
-  function handlePaymentMethod($method, $params = array(
-    )) {
+  static function handlePaymentMethod($method, $params = array( )) {
 
     if (!isset($params['processor_name'])) {
-
       CRM_Core_Error::fatal("Missing 'processor_name' param for payment callback");
-
     }
 
     // Query db for processor ..
@@ -220,7 +214,7 @@ abstract class CRM_Core_Payment {
                  ON pp.payment_processor_type = ppt.name
                 AND pp.is_active
                 AND pp.is_test = %1
-              WHERE ppt.name = %2 
+              WHERE ppt.name = %2
         ",
       array(
         1 => array($mode == 'test' ? 1 : 0, 'Integer'),
@@ -239,7 +233,6 @@ abstract class CRM_Core_Payment {
     $extension_instance_found = FALSE;
 
     while ($dao->fetch()) {
-
       // Check pp is extension
       $ext = new CRM_Core_Extensions();
       if ($ext->isExtensionKey($dao->class_name)) {
@@ -335,7 +328,7 @@ abstract class CRM_Core_Payment {
 
     if ($entityID && $entity == 'recur') {
       if (!$userId) {
-        $sql = " 
+        $sql = "
     SELECT con.contact_id
       FROM civicrm_contribution_recur rec
 INNER JOIN civicrm_contribution con ON ( con.contribution_recur_id = rec.id )

@@ -296,9 +296,7 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form {
         }
 
         $ppIds = explode(CRM_Core_DAO::VALUE_SEPARATOR, $ppID);
-        $this->_paymentProcessors = CRM_Core_BAO_PaymentProcessor::getPayments($ppIds,
-          $this->_mode
-        );
+        $this->_paymentProcessors = CRM_Core_BAO_PaymentProcessor::getPayments($ppIds, $this->_mode);
 
         $this->set('paymentProcessors', $this->_paymentProcessors);
 
@@ -311,10 +309,10 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form {
             }
           }
         }
-        
+
         if (isset($defaultProcessorId)) {
           $this->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment($defaultProcessorId, $this->_mode);
-          $this->assign_by_ref('paymentProcessor', $this->_paymentProcessor);    
+          $this->assign_by_ref('paymentProcessor', $this->_paymentProcessor);
         }
 
         if (!CRM_Utils_System::isNull($this->_paymentProcessors)) {
