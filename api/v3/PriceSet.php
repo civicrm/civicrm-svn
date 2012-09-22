@@ -31,22 +31,22 @@
  * File for the CiviCRM APIv3 group functions
  *
  * @package CiviCRM_APIv3
- * @subpackage API_LineItem
+ * @subpackage API_PriceSet
  * @copyright CiviCRM LLC (c) 20042012
  */
 
 /**
- * Create or update a line_item
+ * Create or update a price_set
  *
  * @param array $params  Associative array of property
- *                       name/value pairs to insert in new 'line_item'
- * @example LineItemCreate.php Std Create example
+ *                       name/value pairs to insert in new 'price_set'
+ * @example PriceSetCreate.php Std Create example
  *
  * @return array api result array
- * {@getfields line_item_create}
+ * {@getfields price_set_create}
  * @access public
  */
-function civicrm_api3_line_item_create($params) {
+function civicrm_api3_price_set_create($params) {
   return _civicrm_api3_basic_create(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 }
 /*
@@ -55,36 +55,36 @@ function civicrm_api3_line_item_create($params) {
  * The metadata is used for setting defaults, documentation & validation
  * @param array $params array or parameters determined by getfields
  */
-function _civicrm_api3_line_item_create_spec(&$params) {
+function _civicrm_api3_price_set_create_spec(&$params) {
 }
 
 /**
- * Returns array of line_items  matching a set of one or more group properties
+ * Returns array of price_sets  matching a set of one or more group properties
  *
  * @param array $params Array of one or more valid property_name=>value pairs. If $params is set
- *  as null, all line_items will be returned (default limit is 25)
+ *  as null, all price_sets will be returned (default limit is 25)
  *
- * @return array  Array of matching line_items
- * {@getfields line_item_get}
+ * @return array  Array of matching price_sets
+ * {@getfields price_set_get}
  * @access public
  */
-function civicrm_api3_line_item_get($params) {
+function civicrm_api3_price_set_get($params) {
   return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 }
 
 /**
- * delete an existing line_item
+ * delete an existing price_set
  *
- * This method is used to delete any existing line_item. id of the group
+ * This method is used to delete any existing price_set. id of the group
  * to be deleted is required field in $params array
  *
  * @param array $params array containing id of the group
  *  to be deleted
  *
  * @return array  returns flag true if successfull, error message otherwise
- * {@getfields line_item_delete}
+ * {@getfields price_set_delete}
  * @access public
  */
-function civicrm_api3_line_item_delete($params) {
+function civicrm_api3_price_set_delete($params) {
   return _civicrm_api3_basic_delete(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 }
