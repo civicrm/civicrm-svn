@@ -388,13 +388,14 @@
           // Reload this block plus all dependent blocks
           var update = $.merge([o], dependent);
           for (var i in update) {
-            var block = $(update[i]);
-            var data = block.data('edit-params');
-            data.snippet = 1;
-            data.reset = 1;
-            data.class_name = data.class_name.replace('Form', 'Page');
-            data.type = 'page';
-            block.parent().load(postUrl, data);
+            $(update[i]).each(function() {
+              var data = $(this).data('edit-params');
+              data.snippet = 1;
+              data.reset = 1;
+              data.class_name = data.class_name.replace('Form', 'Page');
+              data.type = 'page';
+              $(this).parent().load(postUrl, data);
+            });
           }
           cj().crmAlert('', ts('Saved'), 'success');
         }
