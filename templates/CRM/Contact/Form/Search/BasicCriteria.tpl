@@ -32,16 +32,16 @@ dojo.require("dojo.parser");
 dojo.require("dijit.Dialog");
 dojo.require("dojo.data.ItemFileWriteStore");
 dojo.require("civicrm.CheckboxTree");
-dojo.require("dijit.form.CheckBox"); 
+dojo.require("dijit.form.CheckBox");
 
 function displayGroupTree( ) {
     // do not recreate if tree is already created
     if ( dijit.byId('checkboxtree') ) {
-	return;
+  return;
     }
 
     var dataUrl = {/literal}"{crmURL p='civicrm/ajax/groupTree' h=0 }"{literal};
-    
+
     {/literal}
     {if $groupIds}
         dataUrl = dataUrl + '?gids=' + '{$groupIds}'
@@ -49,50 +49,50 @@ function displayGroupTree( ) {
     {literal}
 
     var treeStore = new dojo.data.ItemFileWriteStore({url:dataUrl});
-    
+
     var treeModel = new civicrm.tree.CheckboxTreeStoreModel({
-	    store: treeStore,
-	    query: {type:'rootGroup'},
-	    rootId: 'allGroups',
-	    rootLabel: 'All Groups',
-	    childrenAttrs: ["children"]
-	});
+      store: treeStore,
+      query: {type:'rootGroup'},
+      rootId: 'allGroups',
+      rootLabel: 'All Groups',
+      childrenAttrs: ["children"]
+  });
     var tree = new civicrm.CheckboxTree({
-	    id : "checkboxtree",
-	    model: treeModel,
+      id : "checkboxtree",
+      model: treeModel,
         showRoot: false
-	});
-    
+  });
+
     var dd = dijit.byId('id-groupPicker');
 
-    var button1 = new dijit.form.Button({label: "Done", type: "submit"});                                                                   
-    dd.containerNode.appendChild(button1.domNode);      
-    
+    var button1 = new dijit.form.Button({label: "Done", type: "submit"});
+    dd.containerNode.appendChild(button1.domNode);
+
     dd.containerNode.appendChild(tree.domNode);
 
-    var button2 = new dijit.form.Button({label: "Done", type: "submit"});                                                                   
-    dd.containerNode.appendChild(button2.domNode);      
+    var button2 = new dijit.form.Button({label: "Done", type: "submit"});
+    dd.containerNode.appendChild(button2.domNode);
 
     tree.startup();
 
 };
 
-function getCheckedNodes( ) 
+function getCheckedNodes( )
 {
     var treeStore = dijit.byId("checkboxtree").model.store ;
     treeStore.fetch({query: {checked:true},queryOptions: {deep:true}, onComplete: setCheckBoxValues});
-};         
+};
 
-function setCheckBox( ) 
+function setCheckBox( )
 {
     var groupNames = {/literal}"{$groupNames}"{literal};
     if ( groupNames ) {
-	var grp  = document.getElementById('id-group-names');
-	grp.innerHTML = groupNames;
+  var grp  = document.getElementById('id-group-names');
+  grp.innerHTML = groupNames;
     }
 };
 
-function setCheckBoxValues(items,request) 
+function setCheckBoxValues(items,request)
 {
     var groupLabel = "" ;
     var groupIds   = "";
@@ -100,20 +100,20 @@ function setCheckBoxValues(items,request)
     var myTreeStore = dijit.byId("checkboxtree").model.store;
 
     for (var i = 0; i < items.length; i++){
-	var item = items[i];
-	groupLabel = groupLabel + myTreeStore.getLabel(item) + "<BR/>" ;
-	if ( groupIds != '' ) {
-	    groupIds = groupIds + ',';
-	}
-	groupIds = groupIds + item['id'];
+  var item = items[i];
+  groupLabel = groupLabel + myTreeStore.getLabel(item) + "<BR/>" ;
+  if ( groupIds != '' ) {
+      groupIds = groupIds + ',';
+  }
+  groupIds = groupIds + item['id'];
     }
 
-    var grp  = document.getElementById('id-group-names');    
+    var grp  = document.getElementById('id-group-names');
     grp.innerHTML = groupLabel;
-    
+
     var groupId   = document.getElementById('group');
     groupId.value = groupIds;
-};                     
+};
 
 
 dojo.addOnLoad( function( ) {
@@ -136,43 +136,43 @@ dojo.addOnLoad( function( ) {
 <div class="crm-block crm-form-block crm-basic-criteria-form-block">
     <div class="crm-accordion-wrapper crm-case_search-accordion {if $rows}crm-accordion-closed{else}crm-accordion-open{/if}">
      <div class="crm-accordion-header crm-master-accordion-header">
-      <div class="icon crm-accordion-pointer"></div> 
+      <div class="icon crm-accordion-pointer"></div>
         {$editTitle}
     </div><!-- /.crm-accordion-header -->
     <div class="crm-accordion-body">
-        <div class="crm-section sort_name-section">	
-        	<div class="label">
-        		{$form.sort_name.label}
-        	</div>
-        	<div class="content">
-        		{$form.sort_name.html}
-        	</div>
-        	<div class="clear"></div> 
+        <div class="crm-section sort_name-section">
+          <div class="label">
+            {$form.sort_name.label}
+          </div>
+          <div class="content">
+            {$form.sort_name.html}
+          </div>
+          <div class="clear"></div>
         </div>
 
-        {if $form.contact_type}    
-        	<div class="crm-section contact_type-section">	
-        		<div class="label">
-        			{$form.contact_type.label}
-        		</div>
-            	<div class="content">
-            		{$form.contact_type.html}
-            	</div>
-            	<div class="clear"></div> 
-        	</div>
+        {if $form.contact_type}
+          <div class="crm-section contact_type-section">
+            <div class="label">
+              {$form.contact_type.label}
+            </div>
+              <div class="content">
+                {$form.contact_type.html}
+              </div>
+              <div class="clear"></div>
+          </div>
         {/if}
 
         {if $form.group}
-        <div class="crm-section group_selection-section">	
-        	<div class="label">
-        		{if $context EQ 'smog'}
+        <div class="crm-section group_selection-section">
+          <div class="label">
+            {if $context EQ 'smog'}
                     {$form.group_contact_status.label}
                 {else}
                     {ts}in{/ts} &nbsp;
                 {/if}
-        	</div>
-        	<div class="content">
-        		{if $context EQ 'smog'}
+          </div>
+          <div class="content">
+            {if $context EQ 'smog'}
                     {$form.group_contact_status.html}
                 {else}
                     { if $config->groupTree }
@@ -184,20 +184,20 @@ dojo.addOnLoad( function( ) {
                         {$form.group.html|crmAddClass:big}
                     {/if}
                  {/if}
-        	</div>
-        	<div class="clear"></div> 
+          </div>
+          <div class="clear"></div>
         </div>
         {/if}
 
         {if $form.tag}
-            <div class="crm-section tag-section">	
-            	<div class="label">
-            		{$form.tag.label}
-            	</div>
-            	<div class="content">
-            		{$form.tag.html|crmAddClass:medium}
-            	</div>
-            	<div class="clear"></div> 
+            <div class="crm-section tag-section">
+              <div class="label">
+                {$form.tag.label}
+              </div>
+              <div class="content">
+                {$form.tag.html|crmAddClass:medium}
+              </div>
+              <div class="clear"></div>
             </div>
         {/if}
         <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
@@ -208,7 +208,7 @@ dojo.addOnLoad( function( ) {
 {literal}
 <script type="text/javascript">
 cj(function() {
-   cj().crmaccordions(); 
+   cj().crmaccordions();
 });
 </script>
 {/literal}
