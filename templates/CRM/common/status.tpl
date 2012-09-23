@@ -29,9 +29,9 @@
   {assign var="status" value=$session->getStatus(true)}
   {foreach name=statLoop item=statItem from=$status}
     {if $urlIsPublic}
-      {assign var="infoType" value "no-popup"}
+      {assign var="infoType" value="no-popup"}
     {else}
-      {assign var="infoType" value $statItem.type}
+      {assign var="infoType" value=$statItem.type}
     {/if}
     {include file="CRM/common/info.tpl" infoTitle=$statItem.title infoMessage=$statItem.text infoOptions=$statItem.options}
   {/foreach}
