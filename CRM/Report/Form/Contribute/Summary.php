@@ -43,7 +43,9 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
     'pieChart' => 'Pie Chart',
   );
   protected $_customGroupExtends = array('Contribution');
-  protected $_customGroupGroupBy = TRUE; function __construct() {
+  protected $_customGroupGroupBy = TRUE; 
+
+  function __construct() {
     $config = CRM_Core_Config::singleton();
     $campaignEnabled = in_array("CiviCampaign", $config->enableComponents);
     if ($campaignEnabled) {
@@ -332,8 +334,7 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
     $this->_select = "SELECT " . implode(', ', $select) . " ";
   }
 
-  static
-  function formRule($fields, $files, $self) {
+  static function formRule($fields, $files, $self) {
     $errors = $grouping = array();
     //check for searching combination of dispaly columns and
     //grouping criteria

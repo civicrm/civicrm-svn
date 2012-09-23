@@ -45,7 +45,9 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
   protected $_summary = NULL;
 
   protected $_customGroupExtends = array(
-    'Contribution'); function __construct() {
+    'Contribution'); 
+
+  function __construct() {
     $config = CRM_Core_Config::singleton();
     $campaignEnabled = in_array("CiviCampaign", $config->enableComponents);
     if ($campaignEnabled) {

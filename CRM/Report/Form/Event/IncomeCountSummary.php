@@ -46,7 +46,8 @@ class CRM_Report_Form_Event_IncomeCountSummary extends CRM_Report_Form {
   protected $_add2groupSupported = FALSE;
 
   protected $_customGroupExtends = array(
-    'Event'); function __construct() {
+    'Event'); 
+  function __construct() {
 
     $this->_columns = array(
       'civicrm_event' =>

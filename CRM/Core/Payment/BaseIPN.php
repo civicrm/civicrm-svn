@@ -737,7 +737,7 @@ LIMIT 1;";
         }
       }
 
-      CRM_Contribute_Form_AdditionalInfo::processPriceSet($contributionId, $lineSets);
+      CRM_Price_BAO_LineItem::processPriceSet($contributionId, $lineSets);
     }
   }
 }

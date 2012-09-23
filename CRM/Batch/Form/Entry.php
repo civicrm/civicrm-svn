@@ -435,7 +435,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
           $value, $lineItem[$priceSetId]
         );
 
-        CRM_Contribute_Form_AdditionalInfo::processPriceSet($contribution->id, $lineItem);
+        CRM_Price_BAO_LineItem::processPriceSet($contribution->id, $lineItem);
 
         //process premiums
         if (CRM_Utils_Array::value('product_name', $value)) {

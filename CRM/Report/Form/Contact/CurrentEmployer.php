@@ -39,7 +39,9 @@ class CRM_Report_Form_Contact_CurrentEmployer extends CRM_Report_Form {
   protected $_summary = NULL;
 
   protected $_customGroupExtends = array(
-    'Contact', 'Individual'); function __construct() {
+    'Contact', 'Individual');
+  
+  function __construct() {
 
     $this->_columns = array(
       'civicrm_employer' =>

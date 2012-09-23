@@ -1443,7 +1443,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
           $lineItems[$itemId]['line_total'] = $params['total_amount'];
           $lineItems[$itemId]['id'] = $itemId;
           $lineItem[$priceSetId] = $lineItems;
-          CRM_Contribute_Form_AdditionalInfo::processPriceSet($params['contribution_id'], $lineItem);
+          CRM_Price_BAO_LineItem::processPriceSet($params['contribution_id'], $lineItem);
         }
 
         //carry updated membership object.

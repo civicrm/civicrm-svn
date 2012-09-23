@@ -250,8 +250,7 @@ class CRM_Price_Form_Option extends CRM_Core_Form {
    * @static
    * @access public
    */
-  static
-  function formRule($fields, $files, $form) {
+  static function formRule($fields, $files, $form) {
     $errors = array();
     if (CRM_Utils_Array::value('count', $fields) && CRM_Utils_Array::value('max_value', $fields) &&
       $fields['count'] > $fields['max_value']

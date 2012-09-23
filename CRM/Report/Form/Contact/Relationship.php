@@ -40,7 +40,8 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
   protected $_emailField_a = FALSE;
   protected $_emailField_b = FALSE;
   protected $_customGroupExtends = array(
-    'Relationship'); function __construct() {
+    'Relationship'); 
+  function __construct() {
 
     $contact_type = CRM_Contact_BAO_ContactType::getSelectElements(FALSE, TRUE, '_');
 

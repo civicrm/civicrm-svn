@@ -1243,12 +1243,12 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
           foreach ($val as $k => $v) {
             if (CRM_Utils_Money::format($v['line_total']) == CRM_Utils_Money::format($contribution->total_amount )) {
               $temp[$key][$k] = $form->_lineItem[$key][$k];
-              CRM_Contribute_Form_AdditionalInfo::processPriceSet($contribution->id, $temp);
+              CRM_Price_BAO_LineItem::processPriceSet($contribution->id, $temp);
             }
           }
         }
       } elseif (!CRM_Utils_Array::value('is_quick_config', $form->_params)) {
-        CRM_Contribute_Form_AdditionalInfo::processPriceSet($contribution->id, $form->_lineItem);
+          CRM_Price_BAO_LineItem::processPriceSet($contribution->id, $form->_lineItem);
       }
       if (!$form->_separateMembershipPayment && CRM_Utils_Array::value('is_quick_config', $form->_params)) {
         $form->_lineItem = null;

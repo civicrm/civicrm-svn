@@ -39,7 +39,8 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
   protected $_summary = NULL;
 
   protected $_customGroupExtends = array(
-    'Participant'); function __construct() {
+    'Participant'); 
+  function __construct() {
 
     static $_events;
     if (!isset($_events['all'])) {
@@ -254,8 +255,7 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
     $this->_select = "SELECT " . implode(', ', $select) . " ";
   }
 
-  static
-  function formRule($fields, $files, $self) {
+  static function formRule($fields, $files, $self) {
     $errors = $grouping = array();
     return $errors;
   }

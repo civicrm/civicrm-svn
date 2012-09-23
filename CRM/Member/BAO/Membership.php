@@ -2574,7 +2574,7 @@ WHERE      civicrm_membership.is_test = 0";
     if (CRM_Utils_Array::value('processPriceSet', $params) &&
       !empty($params['lineItems'])
     ) {
-      CRM_Contribute_Form_AdditionalInfo::processPriceSet($contribution->id, $params['lineItems']);
+      CRM_Price_BAO_LineItem::processPriceSet($contribution->id, $params['lineItems']);
     }
 
     //insert payment record for this membership

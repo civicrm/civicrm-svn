@@ -104,6 +104,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
 
   public $_action;
 
+  public $_customValueCount;
   /**
    * The array of greetings with option group and filed names
    *

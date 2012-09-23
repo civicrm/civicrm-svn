@@ -40,7 +40,8 @@ class CRM_Report_Form_Event_Income extends CRM_Report_Form {
   protected $_summary = NULL;
   protected $_noFields = TRUE;
   
-  protected $_add2groupSupported = FALSE; function __construct() {
+  protected $_add2groupSupported = FALSE; 
+  function __construct() {
 
     $this->_columns = array(
       'civicrm_event' =>

@@ -89,8 +89,7 @@ class CRM_Price_Form_Set extends CRM_Core_Form {
    * @access public
    * @static
    */
-  static
-  function formRule($fields, $files, $options) {
+  static function formRule($fields, $files, $options) {
     $errors = array();
     $count = count($fields['extends']);
     //price sets configured for membership
