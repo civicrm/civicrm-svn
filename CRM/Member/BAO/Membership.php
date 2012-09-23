@@ -2297,6 +2297,7 @@ INNER JOIN  civicrm_contact contact ON ( contact.id = membership.contact_id AND 
    * @return None
    */
   function processPriceSet($membershipId, $lineItem) {
+    //FIXME : need to move this too
     if (!$membershipId || !is_array($lineItem)
       || CRM_Utils_system::isNull($lineItem)
     ) {
