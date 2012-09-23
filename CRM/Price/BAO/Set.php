@@ -970,7 +970,7 @@ if ($onlyActive) {
   $where = 'AND  value.is_active = 1 AND field.is_active = 1';
 }
 
-static $pricesetFieldCount;
+static $pricesetFieldCount = array();
 if (!isset($pricesetFieldCount[$sid])) {
 $sql = "
     SELECT  sum(value.count) as totalCount
