@@ -114,7 +114,7 @@
                     {ts 1=$browseURL}Or you can <a href='%1'>browse all available Contribution Pages</a>.{/ts}
     	</div>
     	{else}
-    	<div class="messages status">
+    	<div class="messages status no-popup">
              <div class="icon inform-icon"></div> &nbsp;
              {ts 1=$newPageURL}No contribution pages have been created yet. Click <a accesskey="N" href='%1'>here</a> to create a new contribution page.{/ts}
     	</div>

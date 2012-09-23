@@ -30,7 +30,7 @@
     {capture assign='adminURL'}{crmURL p='civicrm/admin/setting/path' q="reset=1&civicrmDestination=$destination"}{/capture}
     {if !$extEnabled }
       <div class="crm-content-block crm-block">
-        <div class="messages status">
+        <div class="messages status no-popup">
              <div class="icon inform-icon"></div>
              {ts 1=$adminURL}Your extensions directory is not set or is not writable. Click <a href='%1'>here</a> to set the extensions directory.{/ts}
         </div>
@@ -94,7 +94,7 @@
         </div>
 
       {else}
-        <div class="messages status">
+        <div class="messages status no-popup">
              <div class="icon inform-icon"></div>
             {ts}There are no local or publicly available extensions to display. Please click "Refresh" to update information about available extensions.{/ts}
         </div>    

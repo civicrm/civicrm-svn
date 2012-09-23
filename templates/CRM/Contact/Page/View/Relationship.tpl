@@ -113,7 +113,7 @@
 {if NOT ($currentRelationships or $inactiveRelationships) }
 
   {if $action NEQ 1} {* show 'no relationships' message - unless already in 'add' mode. *}
-       <div class="messages status">
+       <div class="messages status no-popup">
             <div class="icon inform-icon"></div>
            {capture assign=crmURL}{crmURL p='civicrm/contact/view/rel' q="cid=`$contactId`&action=add&reset=1"}{/capture}
            {if $permission EQ 'edit'}

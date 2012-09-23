@@ -62,7 +62,7 @@
     {/if}
 </div>
 {elseif $action NEQ 1 && $action NEQ 2}
-    <div class="messages status">
+    <div class="messages status no-popup">
         <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/>
         {capture assign=crmURL}{crmURL p='civicrm/admin/optionGroup' q="action=add&reset=1"}{/capture}
         {ts 1=$crmURL}There are no Option Groups entered. You can <a href='%1'>add one</a>.{/ts}

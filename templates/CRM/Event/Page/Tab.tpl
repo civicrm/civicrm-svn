@@ -55,7 +55,7 @@
         {include file="CRM/Event/Form/Selector.tpl"}
 	{include file="CRM/common/pager.tpl" location="bottom"}
     {else}
-       <div class="messages status">
+       <div class="messages status no-popup">
            <table class="form-layout">
              <tr><div class="icon inform-icon"></div>
                    {ts}No event registrations have been recorded for this contact.{/ts}

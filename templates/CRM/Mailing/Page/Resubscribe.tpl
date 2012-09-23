@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {if $confirm}
-<div class="messages status">
+<div class="messages status no-popup">
       <div class="icon inform-icon"></div>&nbsp;
       <label>{$display_name} ({$email})</label> {ts}has been successfully resubscribed.{/ts}
 </div>

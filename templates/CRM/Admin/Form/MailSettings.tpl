@@ -28,7 +28,7 @@
 <div class="crm-block crm-form-block crm-mail-settings-form-block">
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 {if $action eq 8}
-  <div class="messages status">
+  <div class="messages status no-popup">
       <div class="icon inform-icon"></div>     
 	{ts}WARNING: Deleting this option will result in the loss of mail settings data.{/ts} {ts}Do you want to continue?{/ts}
   </div>

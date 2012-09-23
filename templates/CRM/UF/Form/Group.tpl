@@ -37,7 +37,7 @@
 {/if}      
  
 {if $action eq 8 or $action eq 64}
-    <div class="messages status">
+    <div class="messages status no-popup">
            <div class="icon inform-icon"></div>
            {$message}
     </div>   	       

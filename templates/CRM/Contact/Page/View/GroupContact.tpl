@@ -26,7 +26,7 @@
 <div id="groupContact">
 <div class="view-content">
 {if $groupCount eq 0 }
-  <div class="messages status">
+  <div class="messages status no-popup">
     <div class="icon inform-icon"></div>&nbsp;{ts}This contact does not currently belong to any groups.{/ts}  
   </div>
  {/if}

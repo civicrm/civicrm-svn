@@ -59,7 +59,7 @@
             <p> </p>
             {include file="CRM/Contribute/Form/Selector.tpl"}            
         {else}
-            <div class="messages status">
+            <div class="messages status no-popup">
                     <div class="icon inform-icon"></div>
                     {ts}No contributions have been recorded from this contact.{/ts}
             </div>

@@ -85,7 +85,7 @@
     </div>
 {/if}
 {else}
-    <div class="messages status">{ts}This activity might not be attached to any case. Please investigate.{/ts}</div>
+    <div class="messages status no-popup">{ts}This activity might not be attached to any case. Please investigate.{/ts}</div>
 {/if}
 {/if}
 

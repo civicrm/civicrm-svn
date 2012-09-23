@@ -54,7 +54,7 @@
 </table>
 {/strip}
 {else}
-   <div class="messages status">
+   <div class="messages status no-popup">
         <div class="icon inform-icon"></div>&nbsp;
         {ts 1=$title}There are currently no %1.{/ts}
     </div>    

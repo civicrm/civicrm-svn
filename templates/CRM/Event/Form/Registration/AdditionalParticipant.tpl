@@ -36,15 +36,15 @@
 
 {*CRM-4320*}
 {if $statusMessage}
-    <div class="messages status">
+    <div class="messages status no-popup">
         <p>{$statusMessage}</p>
     </div>
 {/if}
 
 {if $priceSet && $allowGroupOnWaitlist}   
     {include file="CRM/Price/Form/ParticipantCount.tpl"}
-    <div id="waiting-status" style="display:none;" class="messages status"></div>
-    <div class="messages status" style="width:25%"><span id="event_participant_status"></span></div> 
+    <div id="waiting-status" style="display:none;" class="messages status no-popup"></div>
+    <div class="messages status no-popup" style="width:25%"><span id="event_participant_status"></span></div> 
 {/if}
 
 <div class="crm-block crm-event-additionalparticipant-form-block">

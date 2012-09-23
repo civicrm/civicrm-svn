@@ -46,7 +46,7 @@
 <div id="crm-container" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
 {* Check for Status message for the page (stored in session->getStatus). Status is cleared on retrieval. *}
 {if $session->getStatus(false)}
-<div class="messages status">
+<div class="messages status no-popup">
   <div class="icon inform-icon"></div>
   {$session->getStatus(true)}
 </div>

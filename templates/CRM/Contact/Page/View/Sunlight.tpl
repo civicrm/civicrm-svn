@@ -49,7 +49,7 @@
        {/foreach}
        </table>
      {else}
-     <div class="messages status">	
+     <div class="messages status no-popup">	
      <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"> &nbsp;
       {ts}No data available for this contact. Please check city/state/zipcode{/ts}
      </div>	

@@ -62,7 +62,7 @@
         {/strip}
     </div>
 {else}
-    <div class="messages status">
+    <div class="messages status no-popup">
       <div class="icon inform-icon"></div>
         {capture assign=crmURL}{crmURL p='civicrm/admin/pdfFormats' q="action=add&reset=1"}{/capture}
         {ts 1=$crmURL}There are no PDF Page Formats configured. You can <a href='%1'>add one</a>.{/ts}

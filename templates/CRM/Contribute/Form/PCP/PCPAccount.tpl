@@ -31,7 +31,7 @@
 {/if}
 
 {if $profileDisplay}
-<div class="messages status">
+<div class="messages status no-popup">
   	<img src="{$config->resourceBase}i/Eyeball.gif" alt="{ts}Profile{/ts}"/>
     	<p><strong>{ts}Profile is not configured with Email address.{/ts}</strong></p>
 </div>

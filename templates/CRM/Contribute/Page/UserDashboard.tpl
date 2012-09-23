@@ -55,7 +55,7 @@
             {ts}Contact us for information about contributions prior to those listed above.{/ts}
         {/if}
     {else}
-        <div class="messages status">
+        <div class="messages status no-popup">
            <div class="icon inform-icon"></div>
                     {ts}There are no contributions on record for you.{/ts}
         </div>

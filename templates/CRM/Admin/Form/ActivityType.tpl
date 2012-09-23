@@ -28,7 +28,7 @@
 <fieldset><legend>{if $action eq 1}{ts}New Activity Type{/ts}{elseif $action eq 2}{ts}Edit Activity Type{/ts}{else}{ts}Delete Activity Type{/ts}{/if}</legend>
   
    {if $action eq 8}
-      <div class="messages status">
+      <div class="messages status no-popup">
         <dl>
           <dt><div class="icon inform-icon"></div></dt>
           <dd>    

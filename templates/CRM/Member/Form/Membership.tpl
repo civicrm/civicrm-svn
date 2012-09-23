@@ -25,7 +25,7 @@
 *}
 {* this template is used for adding/editing/deleting memberships for a contact  *}
 {if $cancelAutoRenew}
-<div class="messages status">
+<div class="messages status no-popup">
     <div class="icon inform-icon"></div>
        <p>{ts 1=$cancelAutoRenew}This membership is set to renew automatically {if $endDate}on {$endDate|crmDate}{/if}. You will need to cancel the auto-renew option if you want to modify the Membership Type, End Date or Membership Status. <a href="%1">Click here</a> if you want to cancel the automatic renewal option.{/ts}</p>
     </div>
@@ -56,7 +56,7 @@
     {assign var=registerMode value="LIVE"}
 {/if}
 {if !$emailExists and $action neq 8 and $context neq 'standalone'}
-<div class="messages status">
+<div class="messages status no-popup">
     <div class="icon inform-icon"></div>
         <p>{ts}You will not be able to send an automatic email receipt for this Membership because there is no email address recorded for this contact. If you want a receipt to be sent when this Membership is recorded, click Cancel and then click Edit from the Summary tab to add an email address before recording the Membership.{/ts}</p>
 </div>
@@ -72,7 +72,7 @@
 <div class="crm-block crm-form-block crm-membership-form-block">
    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
     {if $action eq 8}
-      <div class="messages status">
+      <div class="messages status no-popup">
           <div class="icon inform-icon"></div>&nbsp;       
           <span class="font-red bold">{ts}WARNING: Deleting this membership will also delete any related payment (contribution) records.{/ts} {ts}This action cannot be undone.{/ts}</span>
           <p>{ts}Consider modifying the membership status instead if you want to maintain an audit trail and avoid losing payment data. You can set the status to Cancelled by editing the membership and clicking the Status Override checkbox.{/ts}</p>

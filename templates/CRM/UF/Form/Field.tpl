@@ -26,7 +26,7 @@
 <h3>{if $action eq 8}{ts}Delete Field{/ts} - {$fieldTitle}{elseif $action eq 1}{ts}Add Field{/ts}{elseif $action eq 2}{ts}Edit Field{/ts} - {$fieldTitle}{/if}</h3>
 <div class="crm-block crm-form-block crm-uf-field-form-block">
     {if $action eq 8}
-      	<div class="messages status">
+      	<div class="messages status no-popup">
           <div class="icon inform-icon"></div>
             {ts}WARNING: Deleting this profile field will remove it from Profile forms and listings. If this field is used in any 'stand-alone' Profile forms, you will need to update those forms to remove this field.{/ts} {ts}Do you want to continue?{/ts}
       </div>

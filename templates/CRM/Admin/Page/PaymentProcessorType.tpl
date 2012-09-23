@@ -67,7 +67,7 @@
     </div>
 </div>
 {elseif $action ne 1}
-    <div class="messages status">
+    <div class="messages status no-popup">
         <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/>
         {capture assign=crmURL}{crmURL p='civicrm/admin/paymentProcessorType' q="action=add&reset=1"}{/capture}
         {ts 1=$crmURL}There are no Payment Processors entered. You can <a href='%1'>add one</a>.{/ts}

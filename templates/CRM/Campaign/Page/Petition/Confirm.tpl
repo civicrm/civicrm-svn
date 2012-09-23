@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="messages status">
+<div class="messages status no-popup">
     <div class="icon inform-icon"></div>&nbsp;
     {if $success}
         {ts 1=$display_name 2=$email}<strong>%1 - your email address '%2' has been successfully verified.</strong>{/ts}

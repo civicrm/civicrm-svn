@@ -49,7 +49,7 @@
 
 {* moved to tpl since need to show only for primary participant page *}
 {if $requireApprovalMsg || $waitlistMsg}
-  <div id = "id-waitlist-approval-msg" class="messages status">
+  <div id = "id-waitlist-approval-msg" class="messages status no-popup">
     	{if $requireApprovalMsg}
 	    <div id="id-req-approval-msg">{$requireApprovalMsg}</div>
 	{/if}
@@ -60,7 +60,7 @@
 {/if}
 
 {if $contact_id}
-<div class="messages status">
+<div class="messages status no-popup">
     {ts 1=$display_name}Welcome %1{/ts}. (<a href="{crmURL p='civicrm/event/register' q="cid=0&reset=1&id=`$event.id`"}" title="{ts}Click here to register a different person for this event.{/ts}">{ts 1=$display_name}Not %1, or want to register a different person{/ts}</a>?)</div>
 {/if}
 {if $event.intro_text}

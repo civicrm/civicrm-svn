@@ -129,7 +129,7 @@
     {/if}
 {else}
     <br />
-    <div class="messages status">
+    <div class="messages status no-popup">
         <table>
             <tr><div class="icon inform-icon"></div></tr>      
             <tr>

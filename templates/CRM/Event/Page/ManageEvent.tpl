@@ -158,7 +158,7 @@
               {ts 1=$browseURL}Or you can <a href='%1'>browse all available Current Events</a>.{/ts}
     </div>
    {else}
-    <div class="messages status">
+    <div class="messages status no-popup">
          <div class="icon inform-icon"></div>
          {ts 1=$newEventURL}There are no events scheduled for the date range. You can <a href='%1'>add one</a>.{/ts}
     </div>    

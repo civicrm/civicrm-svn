@@ -142,7 +142,7 @@
             {/if}
             
             {if empty( $template_row) }
-                <div class="messages status">
+                <div class="messages status no-popup">
                     <div class="icon inform-icon"></div>&nbsp;
                     {ts 1=$crmURL}There are no User-driven Message Templates entered. You can <a href='%1'>add one</a>.{/ts}
                 </div>
@@ -164,7 +164,7 @@
   </script>
 
 {elseif $action ne 1 and $action ne 2 and $action ne 4 and $action ne 8}
-  <div class="messages status">
+  <div class="messages status no-popup">
       <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/>
       {ts 1=$crmURL}There are no Message Templates entered. You can <a href='%1'>add one</a>.{/ts}
   </div>

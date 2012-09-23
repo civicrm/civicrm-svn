@@ -61,7 +61,7 @@
 </div>
 {else}
     {if $showForm eq false}
-    <div class="messages status">
+    <div class="messages status no-popup">
 	{if $products ne null }
           <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/>
           {capture assign=crmURL}{crmURL p='civicrm/admin/contribute/addProductToPage' q="reset=1&action=update&id=$id"}{/capture}

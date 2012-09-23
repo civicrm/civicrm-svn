@@ -27,7 +27,7 @@
 <h3>{if $action eq 1}{ts}New ACL{/ts}{elseif $action eq 2}{ts}Edit ACL{/ts}{else}{ts}Delete ACL{/ts}{/if}</h3>
 <div class="crm-block crm-form-block crm-acl-form-block">
 {if $action eq 8}
-  <div class="messages status">
+  <div class="messages status no-popup">
     <div class="icon inform-icon"></div>&nbsp;
         {ts}WARNING: Delete will remove this permission from the specified ACL Role.{/ts} {ts}Do you want to continue?{/ts}
   </div>

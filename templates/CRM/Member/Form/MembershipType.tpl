@@ -30,7 +30,7 @@
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 <div class="form-item" id="membership_type_form">
     {if $action eq 8}   
-         <div class="messages status">
+         <div class="messages status no-popup">
            {ts}WARNING: Deleting this option will result in the loss of all membership records of this type.{/ts} {ts}This may mean the loss of a substantial amount of data, and the action cannot be undone.{/ts} {ts}Do you want to continue?{/ts}
          </div>
          <div> {include file="CRM/common/formButtons.tpl"}</div>

@@ -82,7 +82,7 @@
 <div class="crm-submit-buttons element-right">
   {include file="CRM/common/formButtons.tpl" location="bottom"}
 {else}
-   <div class="messages status">
+   <div class="messages status no-popup">
        <div class="icon inform-icon"></div>
          {ts}There are no records selected for Print.{/ts}
     </div>

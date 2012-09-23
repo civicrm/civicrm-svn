@@ -49,7 +49,7 @@
     {/foreach}
     </table>
 {else}
-    <div class="messages status">
+    <div class="messages status no-popup">
       <dl>
         <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/></dt>
         <dd>

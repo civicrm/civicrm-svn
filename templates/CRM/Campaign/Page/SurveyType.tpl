@@ -49,7 +49,7 @@
         
 </div>
 {else}
-    <div class="messages status">
+    <div class="messages status no-popup">
          <div class="icon inform-icon"> &nbsp;
          {ts 1=$addSurveyType}There are no survey type entered. You can <a href='%1'>add one</a>.{/ts}</div>
     </div>    

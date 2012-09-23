@@ -92,7 +92,7 @@
         {include file="CRM/Case/Page/DashboardSelector.tpl" context="dashboard" list="upcoming" rows=$upcomingCases}
     </div>
     {else}
-        <div class="messages status">
+        <div class="messages status no-popup">
 	    {ts 1=$findCasesURL}There are no open cases with activities scheduled in the next two weeks. Use %1 to expand your search.{/ts}
         </div>
     {/if}
@@ -104,7 +104,7 @@
         {include file="CRM/Case/Page/DashboardSelector.tpl" context="dashboard" list="recent" rows=$recentCases}
     </div>
     {else}
-        <div class="messages status">
+        <div class="messages status no-popup">
 	    {ts 1=$findCasesURL}There are no cases with activities scheduled in the past two weeks. Use %1 to expand your search.{/ts}
         </div>
     {/if}

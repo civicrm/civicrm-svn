@@ -25,7 +25,7 @@
 *}
 
 {if !$hasCampaigns}
-    <div class="messages status">
+    <div class="messages status no-popup">
         <div class="icon inform-icon"></div> &nbsp;
         {ts}No campaigns found.{/ts}
     </div>  

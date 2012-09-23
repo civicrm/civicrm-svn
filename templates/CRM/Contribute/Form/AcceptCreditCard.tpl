@@ -28,7 +28,7 @@
 <fieldset><legend>{if $action eq 1}{ts}New Credit Card{/ts}{elseif $action eq 2}{ts}Edit Credit Card{/ts}{else}{ts}Delete Credit Card{/ts}{/if}</legend>
   
    {if $action eq 8}
-      <div class="messages status">
+      <div class="messages status no-popup">
         <div class="icon inform-icon"></div>    
           {ts}WARNING: If you delete this option, contributors will not be able to use this credit card type on your Online Contribution pages.{/ts} {ts}Do you want to continue?{/ts}
       </div>

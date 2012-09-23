@@ -36,7 +36,7 @@
 <div class="crm-block crm-form-block"> 
 <div class="form-item" id="message_templates">
 {if $action eq 8}
-   <div class="messages status">
+   <div class="messages status no-popup">
        <div class="icon inform-icon"></div>
        {ts}Do you want to delete this message template?{/ts}
    </div>

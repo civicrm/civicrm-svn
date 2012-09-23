@@ -27,7 +27,7 @@
     {include file="CRM/Case/Page/ConfigureError.tpl"}
 
 {elseif $redirectToCaseAdmin}
-    <div class="messages status">
+    <div class="messages status no-popup">
       <div class="icon inform-icon"></div>&nbsp; 
          <strong>{ts}Oops, It looks like there are no active case types.{/ts}</strong>
            {if call_user_func(array('CRM_Core_Permission','check'), ' administer CiviCase')}
@@ -69,7 +69,7 @@
     {if $rows}
         {include file="CRM/Case/Form/Selector.tpl"}
     {else}
-       <div class="messages status">
+       <div class="messages status no-popup">
           <div class="icon inform-icon"></div>
             {ts}There are no case records for this contact.{/ts}
           </div>

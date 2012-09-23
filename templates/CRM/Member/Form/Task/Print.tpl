@@ -59,7 +59,7 @@
 </div>
 
 {else}
-   <div class="messages status">
+   <div class="messages status no-popup">
     <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}">
         {ts}There are no records selected for Print.{/ts}
    </div>

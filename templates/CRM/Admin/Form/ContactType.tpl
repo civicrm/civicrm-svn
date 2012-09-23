@@ -28,7 +28,7 @@
 <h3>{if $action eq 1}{ts}New Contact Type{/ts}{elseif $action eq 2}{ts}Edit Contact Type{/ts}{else}{ts}Delete Contact Type{/ts}{/if}</h3>
 <div class="crm-block crm-form-block crm-contact-type-form-block">
 {if $action eq 8}
-  <div class="messages status">
+  <div class="messages status no-popup">
     <div class="icon inform-icon"></div>
         {ts}WARNING: {ts}This action cannot be undone.{/ts} {ts}Do you want to continue?{/ts}{/ts}
     </div>

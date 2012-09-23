@@ -231,7 +231,7 @@ field_type          ="radio"
 invert              = 0
 }
 {elseif $statusMessage}
-    <div class="messages status">
+    <div class="messages status no-popup">
         <div class="icon inform-icon"></div>
         {$statusMessage}
     </div>

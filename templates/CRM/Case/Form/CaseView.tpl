@@ -505,7 +505,7 @@ cj(document).ready(function(){
         {/foreach}
     </table>
   {else}
-    <div class="messages status">
+    <div class="messages status no-popup">
       <div class="icon inform-icon"></div>
           {capture assign=crmURL}{crmURL p='civicrm/contact/view/rel' q="action=add&reset=1&cid=`$contactId`&caseID=`$caseID`"}{/capture}
           {ts 1=$crmURL}There are no Relationships entered for this client. You can <a accesskey="N" href='%1'>add one</a>.{/ts}
@@ -536,7 +536,7 @@ cj(document).ready(function(){
         {/foreach}
     </table>
   {elseif $globalGroupInfo.id}
-    <div class="messages status">
+    <div class="messages status no-popup">
       <div class="icon inform-icon"></div>&nbsp;        
           {capture assign=crmURL}{crmURL p='civicrm/group/search' q="reset=1&context=amtg&amtgID=`$globalGroupInfo.id`"}{/capture}
           {ts 1=$crmURL 2=$globalGroupInfo.title}The group %2 has no members. You can <a href='%1'>add one</a>.{/ts}

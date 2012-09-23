@@ -56,7 +56,7 @@
         </div>
     {/if}
     {if NOT ($activeMembers or $inActiveMembers) and $action ne 2 and $action ne 1 and $action ne 8 and $action ne 4 and $action ne 32768}
-       	<div class="messages status">
+       	<div class="messages status no-popup">
           <div class="icon inform-icon"></div>
               {ts}No memberships have been recorded for this contact.{/ts}
          </div>

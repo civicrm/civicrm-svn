@@ -28,7 +28,7 @@
 <fieldset><legend>{if $action eq 1}{ts}Assign ACL Role{/ts}{elseif $action eq 2}{ts}Assign ACL Role{/ts}{else}{ts}Delete ACL Role Assignment{/ts}{/if}</legend>
  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 {if $action eq 8}
-  <div class="messages status">
+  <div class="messages status no-popup">
   <div class="icon inform-icon"></div>
        {ts}WARNING: Deleting this option will remove this ACL Role Assignment.{/ts} {ts}Do you want to continue?{/ts}
   </div>

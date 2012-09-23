@@ -59,7 +59,7 @@
   </div>
 
 {else} 
-    <div class="messages status">
+    <div class="messages status no-popup">
         <div class="icon inform-icon"></div> &nbsp;
         {ts}No Campaigns found.{/ts}
     </div>

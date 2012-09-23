@@ -50,7 +50,7 @@
     {include file="CRM/Pledge/Form/Selector.tpl"}
     
 {else}
-   <div class="messages status">
+   <div class="messages status no-popup">
        <div class="icon inform-icon"></div>
             {ts}No pledges have been recorded from this contact.{/ts}
        </div>

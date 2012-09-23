@@ -40,7 +40,7 @@
     </tr>
     <tr>
         <td colspan=2>
-        <div class="messages status"> 
+        <div class="messages status no-popup"> 
 		  <div class="icon inform-icon"></div> &nbsp; 
         {ts}WARNING: Deleting this option will result in the loss of all Report related records which use the option. This may mean the loss of a substantial amount of data, and the action cannot be undone. Do you want to continue?{/ts}
         </div>        

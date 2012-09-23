@@ -69,7 +69,7 @@
     </div>
 </div>
 {elseif $action ne 1 and $action ne 2 and $action ne 8}
-    <div class="messages status">
+    <div class="messages status no-popup">
     <dl>
         <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/></dt>
         {capture assign=crmURL}{crmURL q="action=add&reset=1"}{/capture}

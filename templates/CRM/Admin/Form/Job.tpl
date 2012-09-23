@@ -29,12 +29,12 @@
  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 
 {if $action eq 8}
-  <div class="messages status">
+  <div class="messages status no-popup">
       <div class="icon inform-icon"></div>
         {ts}WARNING: Deleting this Scheduled Job will cause some important site functionality to stop working.{/ts} {ts}Do you want to continue?{/ts}
   </div>
 {elseif $action eq 128}
-  <div class="messages status">
+  <div class="messages status no-popup">
       <div class="icon inform-icon"></div>
         {ts}Are you sure you would like to execute this job?{/ts}
   </div>

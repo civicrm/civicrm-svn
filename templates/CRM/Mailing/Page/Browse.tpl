@@ -127,7 +127,7 @@
     </div>
 {elseif $unscheduled}
 
-    <div class="messages status">
+    <div class="messages status no-popup">
             <div class="icon inform-icon"></div>&nbsp;
             {capture assign=crmURL}{crmURL p=$newMassUrl q='reset=1'}{/capture}
             {ts}There are no Unscheduled Mailings.{/ts}
@@ -135,13 +135,13 @@
    </div>
 
 {elseif $archived}
-    <div class="messages status">
+    <div class="messages status no-popup">
             <div class="icon inform-icon"></div>&nbsp
             {capture assign=crmURL}{crmURL p='civicrm/mailing/browse/scheduled' q='scheduled=true&reset=1'}{$qVal}{/capture}
             {ts 1=$crmURL}There are no Archived Mailings. You can archive mailings from <a href='%1'>Scheduled or Sent Mailings</a>.{/ts}
    </div>
 {else}
-    <div class="messages status">
+    <div class="messages status no-popup">
             <div class="icon inform-icon"></div>&nbsp;
             {capture assign=crmURL}{crmURL p=$newMassUrl q='reset=1'}{/capture}
             {capture assign=archiveURL}{crmURL p='civicrm/mailing/browse/archived' q='reset=1'}{$qVal}{/capture}

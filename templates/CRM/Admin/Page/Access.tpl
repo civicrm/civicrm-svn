@@ -34,7 +34,7 @@
         <p>{ts 1=$ufAccessURL 2=$jAccessParams}Use <a href='%1' %2>Joomla Access Control</a> to manage basic access to CiviCRM components and menu items. Use CiviCRM ACLs to control access to specific CiviCRM contact groups. You can also configure ACLs to grant or deny access to specific Profiles, and/or Custom Data Fields.{/ts}</p>    {/if}
 </div>
 {if $config->userFramework EQ 'WordPress'}
-    <div class="messages status" id="id-wordpress-acl-not-supported">
+    <div class="messages status no-popup" id="id-wordpress-acl-not-supported">
         <p>
         <div class="icon alert-icon"></div> &nbsp; <span class="font-red bold">{ts}CiviCRM Access Control features have not yet been implemented for WordPress installations. This means that any user with either 'Administrator' or 'Editor' role will have access to all back-office CiviCRM functionality and data.{/ts}</span> 
         </p>

@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 <div class="crm-block crm-event-participant_confirm-form-block">
-  <div class="messages status">
+  <div class="messages status no-popup">
         {$statusMsg}
   </div>
 

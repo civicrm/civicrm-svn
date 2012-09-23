@@ -49,7 +49,7 @@
 </table> 
 </div>
 {else}
- <div class="messages status"> 
+ <div class="messages status no-popup"> 
     {ts}There are no live contribution records to display.{/ts}  
  </div>
 {/if}

@@ -43,7 +43,7 @@
        </tr>
       </table>
     {else}
-        <div class="messages status">
+        <div class="messages status no-popup">
             <div class="icon inform-icon"></div> &nbsp;
             {ts 1=$mappingName}WARNING: Are you sure you want to delete mapping '<b>%1</b>'?{/ts} {ts}This action cannot be undone.{/ts}
         </div>

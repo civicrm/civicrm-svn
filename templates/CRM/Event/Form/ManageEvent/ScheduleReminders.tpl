@@ -42,7 +42,7 @@
     {include file="CRM/common/formButtons.tpl" location="top"}
  </div>
 {if $action eq 8}
-  <div class="messages status">  
+  <div class="messages status no-popup">  
       <div class="icon inform-icon"></div> 
         {ts 1=$reminderName}WARNING: You are about to delete the Reminder titled <strong>%1</strong>.{/ts} {ts}Do you want to continue?{/ts}
   </div>

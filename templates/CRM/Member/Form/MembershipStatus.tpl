@@ -28,7 +28,7 @@
 <fieldset><legend>{if $action eq 1}{ts}New Membership Status{/ts}{elseif $action eq 2}{ts}Edit Membership Status{/ts}{else}{ts}Delete Membership Status{/ts}{/if}</legend>
  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
    {if $action eq 8}
-      <div class="messages status">
+      <div class="messages status no-popup">
          <div class="icon inform-icon"></div>  
           {ts}WARNING: Deleting this option will result in the loss of all membership records of this status.{/ts} {ts}This may mean the loss of a substantial amount of data, and the action cannot be undone.{/ts} {ts}Do you want to continue?{/ts}
       </div>

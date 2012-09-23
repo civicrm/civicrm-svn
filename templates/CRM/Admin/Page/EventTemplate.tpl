@@ -72,7 +72,7 @@
 
 
 {else}
-    <div class="messages status">
+    <div class="messages status no-popup">
     <div class="icon inform-icon"></div>
     {capture assign=crmURL}{crmURL p='civicrm/event/add' q="action=add&is_template=1&reset=1"}{/capture}
         {ts 1=$crmURL}There are no Event Templates present. You can <a href='%1'>add one</a>.{/ts}    

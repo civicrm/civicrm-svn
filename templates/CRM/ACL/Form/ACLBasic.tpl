@@ -28,7 +28,7 @@
 <fieldset><legend>{if $action eq 1}{ts}New ACL{/ts}{elseif $action eq 2}{ts}Edit ACL{/ts}{else}{ts}Delete ACL{/ts}{/if}</legend>
 
 {if $action eq 8}
-  <div class="messages status">
+  <div class="messages status no-popup">
     <dl>
       <dt><div class="icon inform-icon"></div></dt>
       <dd>    

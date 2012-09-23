@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* Custom searches. Default template for NO MATCHES on submitted search request. *}
-<div class="messages status">
+<div class="messages status no-popup">
   <div class="icon inform-icon"></div>&nbsp;
   {if $qill}
     {ts}No matches found for:{/ts}

@@ -60,7 +60,7 @@
 
 {else}
 <div class="crm-content-block">    
-<div class="messages status">
+<div class="messages status no-popup">
 	<div class="icon inform-icon"></div>&nbsp;
         {ts}No report instances have been created for your site.{/ts} &nbsp;
         {if $templateUrl}

@@ -76,7 +76,7 @@
 
     {else}
         {if $action eq 16}
-        <div class="messages status">
+        <div class="messages status no-popup">
         <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/>
         {capture assign=crmURL}{crmURL p='civicrm/admin/custom/group/field/add' q="action=add&reset=1&gid=$gid"}{/capture}
         {ts 1=$groupTitle 2=$crmURL}There are no custom fields for custom group '%1', <a href='%2'>add one</a>.{/ts}

@@ -145,7 +145,7 @@
         	{ts 1=$displayName 2=$registerMode}Use this form to submit an event registration on behalf of %1. <strong>A %2 transaction will be submitted</strong> using the selected payment processor.{/ts}
         </div>
     {/if}
-    <div id="eventFullMsg" class="messages status" style="display:none;"></div>
+    <div id="eventFullMsg" class="messages status no-popup" style="display:none;"></div>
   
 
     {if $action eq 1 AND $paid}

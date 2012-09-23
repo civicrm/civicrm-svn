@@ -27,7 +27,7 @@
 <h3>{if $action eq 1}{ts}New Option Value{/ts}{elseif $action eq 2}{ts}Edit Option Value{/ts}{else}{ts}Delete Option Value{/ts}{/if}</h3>
 <div class="crm-block crm-form-block crm-admin-optionvalue-form-block">
    {if $action eq 8}
-      <div class="messages status">
+      <div class="messages status no-popup">
           <div class="icon inform-icon"></div>
           {ts}WARNING: Deleting this option value will result in the loss of all records which use the option value.{/ts} {ts}This may mean the loss of a substantial amount of data, and the action cannot be undone.{/ts} {ts}Do you want to continue?{/ts}
       </div>
