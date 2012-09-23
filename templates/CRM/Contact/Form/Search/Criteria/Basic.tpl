@@ -23,8 +23,8 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-	<table class="form-layout">
-		<tr>
+  <table class="form-layout">
+    <tr>
             <td><label>{ts}Complete OR Partial Name{/ts}</label>&nbsp;{help id='id-advanced-intro'}<br />
                 {$form.sort_name.html|crmAddClass:big}
             </td>
@@ -56,23 +56,23 @@
                 </div>
             </td>
         </tr>
-		<tr>
+    <tr>
 {if $form.contact_type}
             <td><label>{ts}Contact Type(s){/ts}</label><br />
                 {$form.contact_type.html}
                  {literal}
-					<script type="text/javascript">
+          <script type="text/javascript">
 
-								cj("select#contact_type").crmasmSelect({
-									addItemTarget: 'bottom',
-									animate: false,
-									highlight: true,
-									sortable: true,
-									respectParents: true
-								});
+                cj("select#contact_type").crmasmSelect({
+                  addItemTarget: 'bottom',
+                  animate: false,
+                  highlight: true,
+                  sortable: true,
+                  respectParents: true
+                });
 
-						</script>
-					{/literal}
+            </script>
+          {/literal}
             </td>
 {else}
             <td>&nbsp;</td>
