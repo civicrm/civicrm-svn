@@ -43,7 +43,19 @@ class CRM_Contact_BAO_Query {
    *
    * @var int
    */
-  CONST MODE_CONTACTS = 1, MODE_CONTRIBUTE = 2, MODE_QUEST = 4, MODE_MEMBER = 8, MODE_EVENT = 16, MODE_KABISSA = 64, MODE_GRANT = 128, MODE_PLEDGEBANK = 256, MODE_PLEDGE = 512, MODE_CASE = 2048, MODE_ALL = 17407, MODE_ACTIVITY = 4096, MODE_CAMPAIGN = 8192, MODE_MAILING = 16384;
+  CONST
+    MODE_CONTACTS = 1,
+    MODE_CONTRIBUTE = 2,
+    MODE_MEMBER = 8,
+    MODE_EVENT = 16,
+    MODE_GRANT = 128,
+    MODE_PLEDGEBANK = 256,
+    MODE_PLEDGE = 512,
+    MODE_CASE = 2048,
+    MODE_ALL = 17407,
+    MODE_ACTIVITY = 4096,
+    MODE_CAMPAIGN = 8192,
+    MODE_MAILING = 16384;
 
   /**
    * the default set of return properties
@@ -366,7 +378,7 @@ class CRM_Contact_BAO_Query {
    *
    * @return Object
    * @access public
-   */ 
+   */
   function __construct($params = NULL, $returnProperties = NULL, $fields = NULL,
     $includeContactIds = FALSE, $strict = FALSE, $mode = 1,
     $skipPermission    = FALSE, $searchDescendentGroups = TRUE,
@@ -559,13 +571,6 @@ class CRM_Contact_BAO_Query {
         elseif (isset($field['where'])) {
           list($tableName, $fieldName) = explode('.', $field['where'], 2);
           if (isset($tableName)) {
-
-            if (substr($tableName, 0, 6) == 'quest_') {
-              $this->_select['ethnicity_id_1'] = 'ethnicity_id_1';
-              $this->_select['gpa_weighted_calc'] = 'gpa_weighted_calc';
-              $this->_select['SAT_composite'] = 'SAT_composite';
-              $this->_select['household_income_total'] = 'household_income_total';
-            }
 
             if (CRM_Utils_Array::value($tableName, self::$_dependencies)) {
               $this->_tables['civicrm_address'] = 1;
@@ -1306,8 +1311,6 @@ class CRM_Contact_BAO_Query {
       (substr($values[0], 0, 6) == 'event_') ||
       (substr($values[0], 0, 12) == 'participant_') ||
       (substr($values[0], 0, 12) == 'member_') ||
-      (substr($values[0], 0, 6) == 'quest_') ||
-      (substr($values[0], 0, 8) == 'kabissa_') ||
       (substr($values[0], 0, 4) == 'tmf_') ||
       (substr($values[0], 0, 6) == 'grant_') ||
       (substr($values[0], 0, 7) == 'pledge_') ||
@@ -1579,7 +1582,7 @@ class CRM_Contact_BAO_Query {
     $value    = CRM_Utils_Array::value(2, $values);
     $grouping = CRM_Utils_Array::value(3, $values);
     $wildcard = CRM_Utils_Array::value(4, $values);
-    
+
     if (isset($grouping) && !CRM_Utils_Array::value($grouping, $this->_where)) {
       $this->_where[$grouping] = array();
     }
@@ -3171,7 +3174,7 @@ WHERE  id IN ( $groupIDs )
       // force the county to be an array
       $value = array($value);
     }
-    
+
     // check if the values are ids OR names of the counties
     $inputFormat = 'id';
     foreach ($value as $v) {
@@ -3183,7 +3186,7 @@ WHERE  id IN ( $groupIDs )
     $names = array();
     if ($inputFormat == 'id') {
       $clause = 'civicrm_county.id IN (' . implode(',', $value) . ')';
-      
+
       $county = CRM_Core_PseudoConstant::county();
       foreach ($value as $id) {
         $names[] = CRM_Utils_Array::value($id, $county);
@@ -3208,7 +3211,7 @@ WHERE  id IN ( $groupIDs )
       return implode(' ' . ts('or') . ' ', $names);
     }
   }
-  
+
   /**
    * where / qill clause for state/province AND country (if present)
    *
