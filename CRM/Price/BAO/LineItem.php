@@ -243,5 +243,31 @@ WHERE     %2.id = %1";
     $dao = CRM_Core_DAO::executeQuery($query);
     return $result;
   }
+
+  /**
+   * Function to process price set and line items.
+   *
+   * @access public
+   *
+   * @return None
+   */
+  function processPriceSet($contributionId, $lineItem, $entityTable = 'civicrm_contribution') {
+    if (!$contributionId || !is_array($lineItem)
+        || CRM_Utils_system::isNull($lineItem)
+        ) {
+      return;
+    }
+    
+    foreach ($lineItem as $priceSetId => $values) {
+      if (!$priceSetId) {
+        continue;
+      }
+      foreach ($values as $line) {
+        $line['entity_table'] = $entityTable;
+        $line['entity_id'] = $contributionId;
+        CRM_Price_BAO_LineItem::create($line);
+      }
+    }
+  }
 }
 
