@@ -893,7 +893,6 @@ class CRM_Contact_BAO_Query {
         if ($field && isset($field['where'])) {
           list($tableName, $fieldName) = explode('.', $field['where'], 2);
           $tName = $name . '-' . substr($tableName, 8) . $elementType;
-          $fieldName = $fieldName;
           if (isset($tableName)) {
             $this->_select["{$tName}_id"] = "`$tName`.id as `{$tName}_id`";
             $this->_element["{$tName}_id"] = 1;
