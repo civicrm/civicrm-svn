@@ -71,7 +71,7 @@ class CRM_Report_Form extends CRM_Core_Form {
    */
   protected $_title;
   protected $_noFields = FALSE;
-  
+
   /**
    * The set of all columns in the report. An associative array
    * with column name as the key and attribues as the value
@@ -256,7 +256,7 @@ class CRM_Report_Form extends CRM_Core_Form {
 
     // merge custom data columns to _columns list, if any
     $this->addCustomDataToColumns();
-    
+
     // add / modify display columns, filters ..etc
     CRM_Utils_Hook::alterReportVar('columns', $this->_columns, $this);
   }
@@ -1717,7 +1717,8 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
             continue;
           }
 
-          if (is_array($this->_params['group_bys']) && CRM_Utils_Array::value($fieldName, $this->_params['group_bys'])) {
+          if (!empty($this->_params['group_bys']) && CRM_Utils_Array::value($fieldName, $this->_params['group_bys'])
+               && !empty($this->_params['group_bys_freq'])) {
             switch (CRM_Utils_Array::value($fieldName, $this->_params['group_bys_freq'])) {
               case 'YEARWEEK':
                 $select[]       = "DATE_SUB({$field['dbAlias']}, INTERVAL WEEKDAY({$field['dbAlias']}) DAY) AS {$tableName}_{$fieldName}_start";
@@ -1906,14 +1907,14 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
     ) {
       $this->_params = $this->_formValues;
     }
-    
+
     // hack to fix params when submitted from dashboard, CRM-8532
     // fields array is missing because form building etc is skipped
     // in dashboard mode for report
     if (!CRM_Utils_Array::value('fields', $this->_params) && !$this->_noFields) {
       $this->_params = $this->_formValues;
     }
-    
+
     $this->_formValues = $this->_params;
     if (CRM_Core_Permission::check('administer Reports') &&
       isset($this->_id) &&
@@ -2405,6 +2406,7 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
 
     // build array of result based on column headers. This method also allows
     // modifying column headers before using it to build result set i.e $rows.
+    $rows = array();
     $this->buildRows($sql, $rows);
 
     // format result set.
