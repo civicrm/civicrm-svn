@@ -73,7 +73,6 @@
                 <div class ='content'>
                     {if isset($form.auto_renew) }
                         {$form.auto_renew.html}&nbsp;{$form.auto_renew.label}
-                        <span class="description crm-auto-renew-cancel-info">({ts}Your initial membership fee will be processed once you complete the confirmation step. You will be able to cancel automatic renewals at any time by logging in to your account or contacting us.{/ts})</span>
                     {/if}
                 </div>
             </div>
@@ -223,7 +222,6 @@ cj(function(){
 	        <td style="width: auto;">{$form.auto_renew.html}</td>
 	        <td style="width: auto;">
 	            {$form.auto_renew.label}
-                <div class="description crm-auto-renew-cancel-info">({ts}Your initial membership fee will be processed once you complete the confirmation step. You will be able to cancel automatic renewals at any time by logging in to your account or contacting us.{/ts})</div>
 	        </td>
     	    </tr>
         {/if}

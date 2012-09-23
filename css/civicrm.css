@@ -3655,3 +3655,28 @@ div#crm-toolTip
   font-weight: bold;
   margin-bottom: .5em;
 }
+
+#crm-container.crm-public .price-set-row {
+  font-size: 15px;
+  margin-bottom: 5px;
+}
+#crm-container.crm-public .price-set-row input,
+#crm-container.crm-public .price-set-row label {
+  vertical-align: middle;
+  cursor: pointer;
+}
+#crm-container.crm-public .price-set-row .crm-price-amount-amount {
+  font-weight: bold;
+  min-width: 2em;
+  color: #333333;
+}
+#crm-container.crm-public .price-set-row .crm-price-amount-label {
+  color: #444444;
+}
+#crm-container.crm-public .price-set-row.highlight label {
+  color: #000000;
+  font-weight: bold;
+}
+#crm-container.crm-public .price-set-row.highlight .crm-price-amount-label {
+  color: #222222;
+}

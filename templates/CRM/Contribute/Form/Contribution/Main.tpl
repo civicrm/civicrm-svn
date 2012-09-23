@@ -468,6 +468,16 @@ function showHidePayPalExpressOption() {
     hide("crm-submit-buttons");
   }
 }
+
+cj(function(){
+  // highlight price sets
+  function updatePriceSetHighlight() {
+    cj('#priceset .price-set-row').removeClass('highlight');
+    cj('#priceset .price-set-row input:checked').parent().parent().addClass('highlight');
+  }
+  cj('#priceset input[type="radio"]').change(updatePriceSetHighlight);
+  updatePriceSetHighlight();
+});
 {/literal}
 </script>
 {/if}

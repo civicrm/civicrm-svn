@@ -79,17 +79,14 @@
                 		</div>
                 		<div class="crm-section {$form.credit_card_number.name}-section">
 							<div class="label">{$form.credit_card_number.label}</div>
-                			<div class="content">{$form.credit_card_number.html}
-                				<div class="description">{ts}Enter numbers only, no spaces or dashes.{/ts}</div>
-                			</div>
+                			<div class="content">{$form.credit_card_number.html}</div>
                 			<div class="clear"></div>
                 		</div>
                 		<div class="crm-section {$form.cvv2.name}-section">
 							<div class="label">{$form.cvv2.label}</div>
                 			<div class="content">
                 				{$form.cvv2.html}
-                				<img src="{$config->resourceBase}i/mini_cvv2.gif" alt="{ts}Security Code Location on Credit Card{/ts}" style="vertical-align: text-bottom;" />
-                				<div class="description">{ts}Usually the last 3-4 digits in the signature area on the back of the card.{/ts}</div>
+                				<img src="{$config->resourceBase}i/mini_cvv2.gif" alt="{ts}Usually the last 3-4 digits in the signature area on the back of the card.{/ts}" title="{ts}Usually the last 3-4 digits in the signature area on the back of the card.{/ts}" style="vertical-align: text-bottom;" />
                 			</div>
                 			<div class="clear"></div>
                 		</div>
@@ -267,6 +264,14 @@ cj( function( ) {
     } else {
       cj('.billing_name_address-group').show(200);
     }
+  });
+
+  // remove spaces, dashes from credit card number
+  cj('#credit_card_number').change(function(){
+    var cc = cj('#credit_card_number').val()
+      .replace(/ /g, '')
+      .replace(/-/g, '');
+    cj('#credit_card_number').val(cc);
   });
 });
 {/literal}
