@@ -131,7 +131,7 @@ class CRM_Admin_Form_MailSettings extends CRM_Admin_Form {
   function postProcess() {
     if ($this->_action & CRM_Core_Action::DELETE) {
       CRM_Core_BAO_MailSettings::deleteMailSettings($this->_id);
-      CRM_Core_Session::setStatus(ts('Selected Mail Setting has been deleted.'));
+      CRM_Core_Session::setStatus("", ts('Mail Setting Deleted.'), "success");
       return;
     }
 
@@ -177,10 +177,10 @@ class CRM_Admin_Form_MailSettings extends CRM_Admin_Form {
     $mailSettings = CRM_Core_BAO_MailSettings::create($params);
 
     if ($mailSettings->id) {
-      CRM_Core_Session::setStatus($status);
+      CRM_Core_Session::setStatus($status, ts("Saved"), "success");
     }
     else {
-      CRM_Core_Session::setStatus(ts('Your changes are not saved.'));
+      CRM_Core_Session::setStatus("", ts('Changes Not Saved.'), "info");
     }
   }
 }

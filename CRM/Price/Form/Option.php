@@ -279,7 +279,7 @@ class CRM_Price_Form_Option extends CRM_Core_Form {
       );
 
       if (CRM_Price_BAO_FieldValue::del($this->_oid)) {
-        CRM_Core_Session::setStatus(ts('%1 option has been deleted.', array(1 => $label)), ts('Deleted Record'), 'info');
+        CRM_Core_Session::setStatus(ts('%1 option has been deleted.', array(1 => $label)), ts('Record Deleted'), 'success');
       }
       return;
     }

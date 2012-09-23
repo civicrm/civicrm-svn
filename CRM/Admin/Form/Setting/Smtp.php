@@ -82,7 +82,7 @@ class CRM_Admin_Form_Setting_Smtp extends CRM_Admin_Form_Setting {
     // check if test button
     if ($buttonName == $this->_testButtonName) {
       if ($formValues['outBound_option'] == 2) {
-        CRM_Core_Session::setStatus(ts('You have selected "Disable Outbound Email". A test email can not be sent.'));
+        CRM_Core_Session::setStatus(ts('You have selected "Disable Outbound Email". A test email can not be sent.'), ts("Email Disabled"), "error");
       }
       else {
         $session = CRM_Core_Session::singleton();
@@ -159,11 +159,11 @@ class CRM_Admin_Form_Setting_Smtp extends CRM_Admin_Form_Setting {
         CRM_Core_Error::ignoreException();
         $result = $mailer->send($toEmail, $headers, $message);
         if (!is_a($result, 'PEAR_Error')) {
-          CRM_Core_Session::setStatus($testMailStatusMsg . ts('Your %1 settings are correct. A test email has been sent to your email address.', array(1 => strtoupper($mailerName))));
+          CRM_Core_Session::setStatus($testMailStatusMsg . ts('Your %1 settings are correct. A test email has been sent to your email address.', array(1 => strtoupper($mailerName))), ts("Mail Sent"), "success");
         }
         else {
           $message = CRM_Utils_Mail::errorMessage($mailer, $result);
-          CRM_Core_Session::setStatus($testMailStatusMsg . ts('Oops. Your %1 settings are incorrect. No test mail has been sent.', array(1 => strtoupper($mailerName))) . $message);
+          CRM_Core_Session::setStatus($testMailStatusMsg . ts('Oops. Your %1 settings are incorrect. No test mail has been sent.', array(1 => strtoupper($mailerName))) . $message, ts("Mail Not Sent"), "error");
         }
       }
     }

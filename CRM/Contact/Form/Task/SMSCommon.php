@@ -403,7 +403,7 @@ class CRM_Contact_Form_Task_SMSCommon {
     );
 
     if ($sent) {
-      $status = array('', ts('Your message has been sent.'));
+      CRM_Core_Session::setStatus('', ts('Your message has been sent.'), 'success');
     }
 
     //Display the name and number of contacts for those sms is not sent.
@@ -412,21 +412,18 @@ class CRM_Contact_Form_Task_SMSCommon {
     if (!empty($smsNotSent)) {
       $extraMess = CRM_Utils_System::getClassName($form) == 'CRM_Activity_Form_Task_SMS' ? " or the contact is not a target contact to activity of '" . self::RECIEVED_SMS_ACTIVITY_SUBJECT . "' as subject " : "";
 
-      $statusDisplay = ts("SMS not sent to contact(s) (No phone no. on file or communication preferences specify DO NOT SMS or Contact is deceased {$extraMess}): %1", array(
-        1 => count($smsNotSent))) . '<br />' . ts('Details') . ': ';
+      $statusDisplay = ts("SMS not sent to contact(s) (No phone no. on file or communication preferences specify DO NOT SMS or Contact is deceased  %1.", array(
+        1 => $extraMess));
 
       foreach ($smsNotSent as $contactId => $values) {
         $displayName    = $values['display_name'];
         $phone          = $values['phone'];
         $contactViewUrl = CRM_Utils_System::url('civicrm/contact/view', "reset=1&cid={$contactId}");
-        $statusDisplay .= "<a href='{$contactViewUrl}'>{$displayName}</a>, ";
+        $statusDisplay .= "<br/><a href='{$contactViewUrl}'>{$displayName}</a>";
       }
-      $status[] = $statusDisplay;
+      CRM_Core_Session::setStatus($statusDisplay, ts('SMS not sent to %1 contact(s)', array(1 => count($smsNotSent)))); 
     }
 
-    if (!empty($status)) {
-      CRM_Core_Session::setStatus($status);
-    }
   }
 }
 

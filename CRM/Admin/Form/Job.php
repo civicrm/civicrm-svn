@@ -183,7 +183,7 @@ class CRM_Admin_Form_Job extends CRM_Admin_Form {
 
     if ($this->_action & CRM_Core_Action::DELETE) {
       CRM_Core_BAO_Job::del($this->_id);
-      CRM_Core_Session::setStatus(ts('Selected Scheduled Job has been deleted.'));
+      CRM_Core_Session::setStatus("", ts('Scheduled Job Deleted.'), "success");
       return;
     }
 

@@ -553,7 +553,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form {
 
       if ($this->_action & CRM_Core_Action::DELETE) {
         CRM_Campaign_BAO_Survey::del($this->_surveyId);
-        CRM_Core_Session::setStatus(ts(' Survey has been deleted.'));
+        CRM_Core_Session::setStatus('', ts('Survey Deleted.'), 'success');
         $session->replaceUserContext(CRM_Utils_System::url('civicrm/campaign', 'reset=1&subPage=survey'));
         return;
       }
@@ -738,7 +738,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form {
 
     $buttonName = $this->controller->getButtonName();
     if ($buttonName == $this->getButtonName('next', 'new')) {
-      CRM_Core_Session::setStatus(ts(' You can add another Survey.'));
+      CRM_Core_Session::setStatus(ts('You can add another Survey.'), '', 'info');
       $session->replaceUserContext(CRM_Utils_System::url('civicrm/survey/add', 'reset=1&action=add'));
     }
     else {

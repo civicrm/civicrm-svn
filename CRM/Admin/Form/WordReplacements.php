@@ -258,7 +258,7 @@ class CRM_Admin_Form_WordReplacements extends CRM_Core_Form {
       //reset navigation
       CRM_Core_BAO_Navigation::resetNavigation();
 
-      CRM_Core_Session::setStatus("Your Settings have been saved");
+      CRM_Core_Session::setStatus("", ts("Settings Saved"), "success");
       CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/admin/options/wordreplacements',
           "reset=1"
         ));

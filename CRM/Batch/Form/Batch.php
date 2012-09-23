@@ -107,7 +107,7 @@ class CRM_Batch_Form_Batch extends CRM_Admin_Form {
   public function postProcess() {
     $params = $this->controller->exportValues($this->_name);
     if ($this->_action & CRM_Core_Action::DELETE) {
-      CRM_Core_Session::setStatus("Batch has been deleted successfully.");
+      CRM_Core_Session::setStatus("", ts("Batch Deleted"), "success");
       CRM_Core_BAO_Batch::deleteBatch($this->_id);
       return;
     }

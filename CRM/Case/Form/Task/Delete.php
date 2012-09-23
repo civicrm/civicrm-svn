@@ -94,11 +94,8 @@ class CRM_Case_Form_Task_Delete extends CRM_Case_Form_Task {
       }
     }
 
-    $status = array(
-      ts('Deleted Case(s): %1', array(1 => $deletedCases)),
-      ts('Total Selected Case(s): %1', array(1 => count($this->_caseIds))),
-    );
-    CRM_Core_Session::setStatus($status);
+    CRM_Core_Session::setStatus(ts($deletedCases), ts('Deleted Cases'), 'success');
+    CRM_Core_Session::setStatus('', ts('Total Selected Case(s): %1', array(1 => count($this->_caseIds))), 'info');
   }
 }
 

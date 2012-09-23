@@ -158,32 +158,32 @@ class CRM_Admin_Form_Extensions extends CRM_Admin_Form {
     if ($this->_action & CRM_Core_Action::DELETE) {
       $ext = new CRM_Core_Extensions();
       if ($ext->uninstall($this->_id, $this->_key)) {
-      CRM_Core_Session::setStatus(ts('Extension has been uninstalled.'));
+      CRM_Core_Session::setStatus("", ts('Extension Uninstalled'), "success");
     }
     }
 
     if ($this->_action & CRM_Core_Action::ADD) {
       $ext = new CRM_Core_Extensions();
       $ext->install($this->_id, $this->_key);
-      CRM_Core_Session::setStatus(ts('Extension has been installed.'));
+      CRM_Core_Session::setStatus("", ts('Extension Installed'), "success");
     }
 
     if ($this->_action & CRM_Core_Action::ENABLE) {
       $ext = new CRM_Core_Extensions();
       $ext->enable($this->_id, $this->_key);
-      CRM_Core_Session::setStatus(ts('Extension has been enabled.'));
+      CRM_Core_Session::setStatus("", ts('Extension Enabled'), "success");
     }
 
     if ($this->_action & CRM_Core_Action::DISABLE) {
       $ext = new CRM_Core_Extensions();
       $ext->disable($this->_id, $this->_key);
-      CRM_Core_Session::setStatus(ts('Extension has been disabled.'));
+      CRM_Core_Session::setStatus("", ts('Extension Disabled'), "success");
     }
 
     if ($this->_action & CRM_Core_Action::UPDATE) {
       $ext = new CRM_Core_Extensions();
       $ext->upgrade($this->_id, $this->_key);
-      CRM_Core_Session::setStatus(ts('Extension has been upgraded.'));
+      CRM_Core_Session::setStatus("", ts('Extension Upgraded'), "success");
     }
 
     CRM_Utils_System::redirect(

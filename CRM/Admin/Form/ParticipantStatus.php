@@ -80,7 +80,7 @@ class CRM_Admin_Form_ParticipantStatus extends CRM_Admin_Form {
   function postProcess() {
     if ($this->_action & CRM_Core_Action::DELETE) {
       if (CRM_Event_BAO_ParticipantStatusType::deleteParticipantStatusType($this->_id)) {
-        CRM_Core_Session::setStatus(ts('Selected participant status has been deleted.'), ts('Deleted Record'), 'info');
+        CRM_Core_Session::setStatus(ts('Selected participant status has been deleted.'), ts('Record Deleted'), 'success');
       }
       else {
         CRM_Core_Session::setStatus(ts('Selected participant status has <strong>NOT</strong> been deleted; there are still participants with this status.'), ts('Sorry'), 'error');

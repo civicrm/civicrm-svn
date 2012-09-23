@@ -111,7 +111,7 @@ class CRM_Admin_Form_Setting_UpdateConfigBackend extends CRM_Admin_Form_Setting 
       $config->clearDBCache();
       parent::rebuildMenu();
 
-      CRM_Core_Session::setStatus(ts('Cache has been cleared and menu has been rebuilt successfully.'));
+      CRM_Core_Session::setStatus(ts('Cache has been cleared and menu has been rebuilt successfully.'), ts("Success"), "success");
       return CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/admin/setting/updateConfigBackend', 'reset=1'));
     }
 

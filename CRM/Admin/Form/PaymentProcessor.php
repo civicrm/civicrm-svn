@@ -314,7 +314,7 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
 
     if ($this->_action & CRM_Core_Action::DELETE) {
       CRM_Core_BAO_PaymentProcessor::del($this->_id);
-      CRM_Core_Session::setStatus(ts('Selected Payment Processor has been deleted.'));
+      CRM_Core_Session::setStatus("", ts('Payment Processor Deleted.'), "success");
       return;
     }
 

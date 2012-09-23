@@ -45,12 +45,12 @@ class CRM_Admin_Page_Admin extends CRM_Core_Page {
     if (rand(1, 10) == 3 &&
       CRM_Core_DAO::isDBMyISAM(150)
     ) {
-      $errorMessage = 'Your database is configured to use the MyISAM database engine. CiviCRM  requires InnoDB. You will need to convert any MyISAM tables in your database to InnoDB. Using MyISAM tables will result in data integrity issues.';
-      CRM_Core_Session::setStatus($errorMessage);
+      $errorMessage = ts('Your database is configured to use the MyISAM database engine. CiviCRM requires InnoDB. You will need to convert any MyISAM tables in your database to InnoDB. Using MyISAM tables will result in data integrity issues.');
+      CRM_Core_Session::setStatus($errorMessage, ts('Sorry'), "alert");
     }
 
     if (!CRM_Utils_System::isDBVersionValid($errorMessage)) {
-      CRM_Core_Session::setStatus($errorMessage);
+      CRM_Core_Session::setStatus($errorMessage, ts('Sorry'), "alert");
     }
 
     $groups = array('Customize Data and Screens' => ts('Customize Data and Screens'),

@@ -222,7 +222,7 @@ AND    time_format <> ''
     $cache = CRM_Utils_Cache::singleton();
     $cache->delete('CRM_Core_Config');
 
-    CRM_Core_Session::setStatus(ts('Your changes have been saved.'));
+    CRM_Core_Session::setStatus("", ts('Changes Saved.'), "success");
   }
 
   public function rebuildMenu() {

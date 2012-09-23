@@ -155,7 +155,7 @@ class CRM_Admin_Page_Job extends CRM_Core_Page_Basic {
       $jm = new CRM_Core_JobManager();
       $jm->executeJobById($this->_id);
 
-      CRM_Core_Session::setStatus(ts('Selected Scheduled Job has been executed. See the log for details.'));
+      CRM_Core_Session::setStatus(ts('Selected Scheduled Job has been executed. See the log for details.'), ts("Executed"), "success");
     }
 
     $sj = new CRM_Core_JobManager();

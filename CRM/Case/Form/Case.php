@@ -337,7 +337,7 @@ class CRM_Case_Form_Case extends CRM_Core_Form {
       if ($caseDelete) {
         $statusMsg = ts('The selected case has been moved to the Trash. You can view and / or restore deleted cases by checking the "Deleted Cases" option under Find Cases.<br />');
       }
-      CRM_Core_Session::setStatus($statusMsg);
+      CRM_Core_Session::setStatus($statusMsg, ts('Case Deleted'), 'success');
       return;
     }
 
@@ -347,7 +347,7 @@ class CRM_Case_Form_Case extends CRM_Core_Form {
       if ($caseRestore) {
         $statusMsg = ts('The selected case has been restored.<br />');
       }
-      CRM_Core_Session::setStatus($statusMsg);
+      CRM_Core_Session::setStatus($statusMsg, ts('Restored'), 'success');
       return;
     }
     // store the submitted values in an array
@@ -428,7 +428,7 @@ class CRM_Case_Form_Case extends CRM_Core_Form {
     // 5. auto populate activites
 
     // 6. set status
-    CRM_Core_Session::setStatus("{$params['statusMsg']}");
+    CRM_Core_Session::setStatus($params['statusMsg'], '', 'info');
   }
 }
 

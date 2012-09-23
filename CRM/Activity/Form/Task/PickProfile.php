@@ -76,7 +76,7 @@ class CRM_Activity_Form_Task_PickProfile extends CRM_Activity_Form_Task {
     $validate = FALSE;
     //validations
     if (count($this->_activityHolderIds) > $this->_maxActivities) {
-      CRM_Core_Session::setStatus("The maximum number of Activities you can select for Batch Update is {$this->_maxActivities}. You have selected " . count($this->_activityHolderIds) . ". Please select fewer Activities from your search results and try again.");
+      CRM_Core_Session::setStatus(ts("The maximum number of Activities you can select for Batch Update is %1. You have selected %2. Please select fewer Activities from your search results and try again.", array(1 => $this->_maxActivities, 2 => count($this->_activityHolderIds))), ts('Maximum Exceeded'), 'error');
       $validate = TRUE;
     }
 
@@ -119,11 +119,11 @@ class CRM_Activity_Form_Task_PickProfile extends CRM_Activity_Form_Task {
     }
 
     if (empty($profiles)) {
-      CRM_Core_Session::setStatus("You will need to create a Profile containing the {$types[0]} fields you want to edit before you can use Batch Update via Profile. Navigate to Administer Civicrm >> CiviCRM Profile to configure a Profile. Consult the online Administrator documentation for more information.");
+      CRM_Core_Session::setStatus(ts("You will need to create a Profile containing the %1 fields you want to edit before you can use Batch Update via Profile. Navigate to Administer Civicrm >> CiviCRM Profile to configure a Profile. Consult the online Administrator documentation for more information.", array(1 => $types[0])), ts("No Profile Configured"), "alert");
       CRM_Utils_System::redirect($this->_userContext);
     }
     elseif ($notEditable) {
-      CRM_Core_Session::setStatus("Some of the selected activities are not editable.");
+      CRM_Core_Session::setStatus("", ts("Some of the selected activities are not editable."), "alert");
       CRM_Utils_System::redirect($this->_userContext);
     }
 

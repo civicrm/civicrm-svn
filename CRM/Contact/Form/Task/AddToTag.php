@@ -153,7 +153,7 @@ class CRM_Contact_Form_Task_AddToTag extends CRM_Contact_Form_Task {
       $status[] = 'Total Contact(s) already tagged: ' . $notAdded;
     }
 
-    CRM_Core_Session::setStatus($status);
+    CRM_Core_Session::setStatus(implode('<br/>', $status), '', 'success');
   }
   //end of function
 }

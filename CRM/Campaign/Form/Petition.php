@@ -183,7 +183,7 @@ class CRM_Campaign_Form_Petition extends CRM_Campaign_Form_Survey {
 
       if ($this->_action & CRM_Core_Action::DELETE) {
         CRM_Campaign_BAO_Survey::del($this->_surveyId);
-        CRM_Core_Session::setStatus(ts(' Petition has been deleted.'), ts('Deleted Record'), 'info');
+        CRM_Core_Session::setStatus(ts(' Petition has been deleted.'), ts('Record Deleted'), 'success');
         $session->replaceUserContext(CRM_Utils_System::url('civicrm/campaign', 'reset=1&subPage=petition'));
         return;
       }

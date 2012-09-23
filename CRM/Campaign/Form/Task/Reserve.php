@@ -287,7 +287,7 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
     }
 
     if (!empty($status)) {
-      CRM_Core_Session::setStatus(implode('&nbsp;&nbsp;', $status));
+      CRM_Core_Session::setStatus(implode('&nbsp;&nbsp;', $status), '', 'info');
     }
 
     //get ready to jump to voter interview form.

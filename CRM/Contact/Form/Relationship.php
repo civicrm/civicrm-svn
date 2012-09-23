@@ -681,7 +681,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form {
       }
     }
 
-    CRM_Core_Session::setStatus($status);
+    CRM_Core_Session::setStatus($status, '', 'info');
     if ($quickSave) {
       $session = CRM_Core_Session::singleton();
       CRM_Utils_System::redirect($session->popUserContext());

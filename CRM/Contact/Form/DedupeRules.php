@@ -230,7 +230,7 @@ UPDATE civicrm_dedupe_rule_group
 
     // lets skip updating of fields for reserved dedupe group
     if ($rgDao->is_reserved) {
-      CRM_Core_Session::setStatus(ts('The rule \'%1\' has been saved.', array(1 => $rgDao->title)));
+      CRM_Core_Session::setStatus(ts('The rule \'%1\' has been saved.', array(1 => $rgDao->title)), 'Saved', 'success');
       return;
     }
 
@@ -284,7 +284,7 @@ UPDATE civicrm_dedupe_rule_group
 
     CRM_Core_BAO_PrevNextCache::deleteItem(NULL, $cacheKey);
 
-    CRM_Core_Session::setStatus(ts('The rule \'%1\' has been saved.', array(1 => $rgDao->title)));
+    CRM_Core_Session::setStatus(ts('The rule \'%1\' has been saved.', array(1 => $rgDao->title)), 'Saved', 'success');
   }
 }
 

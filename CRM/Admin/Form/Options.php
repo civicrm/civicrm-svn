@@ -355,10 +355,10 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form {
           CRM_Core_BAO_Phone::setOptionToNull(CRM_Utils_Array::value('value', $this->_defaultValues));
         }
 
-        CRM_Core_Session::setStatus(ts('Selected %1 type has been deleted.', array(1 => $this->_GName)), ts('Deleted Record'), 'info');
+        CRM_Core_Session::setStatus(ts('Selected %1 type has been deleted.', array(1 => $this->_GName)), ts('Record Deleted'), 'success');
       }
       else {
-        CRM_Core_Session::setStatus(ts('Selected %1 type has not been deleted.', array(1 => $this->_GName)));
+        CRM_Core_Session::setStatus(ts('Selected %1 type has not been deleted.', array(1 => $this->_GName)), ts('Sorry'), 'error');
         CRM_Utils_Weight::correctDuplicateWeights('CRM_Core_DAO_OptionValue', $fieldValues);
       }
     }

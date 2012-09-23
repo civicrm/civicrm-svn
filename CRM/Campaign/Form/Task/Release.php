@@ -162,7 +162,7 @@ class CRM_Campaign_Form_Task_Release extends CRM_Campaign_Form_Task {
           array(1 => (count($this->_contactIds) - count($deleteActivityIds)))
         );
       }
-      CRM_Core_Session::setStatus(implode('&nbsp;', $status));
+      CRM_Core_Session::setStatus(implode('&nbsp;', $status), '', 'info');
     }
   }
 }

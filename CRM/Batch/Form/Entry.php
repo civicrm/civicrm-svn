@@ -209,7 +209,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
     $buttonName = $this->controller->getButtonName('submit');
 
     if ($suppressFields && $buttonName != '_qf_Entry_next') {
-      CRM_Core_Session::setStatus("FILE or Autocomplete Select type field(s) in the selected profile are not supported for Batch Update and have been excluded.");
+      CRM_Core_Session::setStatus(ts("FILE or Autocomplete Select type field(s) in the selected profile are not supported for Batch Update."), ts("Some fields have been excluded."), "info");
     }
   }
 
@@ -340,7 +340,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
     CRM_Core_BAO_Cache::deleteGroup('batch entry', $cacheKeyString, FALSE);
 
     // set success status
-    CRM_Core_Session::setStatus("Your batch has been processed.");
+    CRM_Core_Session::setStatus("", ts("Batch Processed."), "success");
 
     CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/batch', 'reset=1&status=2'));
   }

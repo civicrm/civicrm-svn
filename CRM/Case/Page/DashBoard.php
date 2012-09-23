@@ -70,7 +70,7 @@ class CRM_Case_Page_DashBoard extends CRM_Core_Page {
     //validate access for all cases.
     if ($allCases && !CRM_Core_Permission::check('access all cases and activities')) {
       $allCases = FALSE;
-      CRM_Core_Session::setStatus(ts('You are not authorized to access all cases and activities.'));
+      CRM_Core_Session::setStatus(ts('You are not authorized to access all cases and activities.'), ts('Sorry'), 'error');
     }
     if (!$allCases) {
       $this->assign('myCases', TRUE);

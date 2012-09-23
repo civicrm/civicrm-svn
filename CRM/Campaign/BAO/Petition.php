@@ -186,7 +186,7 @@ SELECT  petition.id                         as id,
 
     if (!isset($params['sid'])) {
       $statusMsg = ts('No survey sid parameter. Cannot process signature.');
-      CRM_Core_Session::setStatus($statusMsg);
+      CRM_Core_Session::setStatus($statusMsg, ts('Sorry'), 'error');
       return;
     }
 
