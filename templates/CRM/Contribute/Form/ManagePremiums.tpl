@@ -58,7 +58,7 @@
         <td class="label">{$form.imageOption.label}</td>
     	<td>
     	<fieldset><div class="description">
-        <p>{ts}A thumbnail picture for this premium will be displayed on the contribution page if you provide one. When a contributor clicks on the thumbnail, a full-size image is displayed in a pop-up window. Images must be in GIF, JPEG, or PNG format, and the full-size image may be no larger than 500 pixels wide x 500 pixels high. Thumbnails should be approximately 100 x 100 pixels.{/ts}</p>
+        <p>{ts}You can give this premium a picture that will be displayed on the contribution page. Both a 50 x 50 pixel thumbnail image and a 200 x 200 pixel larger image will be displayed. Images must be in GIF, JPEG, or PNG format.{/ts}</p>
         <p>{ts}You can upload an image from your computer OR enter a URL for an image already on the Web. If you chose to upload an image file, a 'thumbnail' version will be automatically created for you. If you don't have an image available at this time, you may also choose to display a 'No Image Available' icon - by selecting the 'default image'.{/ts}</p>
                   </div>
   <table class="form-layout-compressed">

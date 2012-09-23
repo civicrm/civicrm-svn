@@ -3547,3 +3547,111 @@ div#crm-toolTip
 #crm-container div.ui-notify-message div.icon.error {
   background-position: -72px 0px;
 }
+
+#crm-container.crm-public input[type="text"],
+#crm-container.crm-public select {
+  font-size: 15px;
+  padding: 5px;
+  border-radius: 2px;
+  vertical-align: middle;
+}
+#crm-container.crm-public .label {
+  padding-top: 6px;
+}
+#crm-container.crm-public .crm-section, .crm-section {
+  margin-bottom: 0;
+}
+#crm-container.crm-public #crm-submit-buttons {
+  margin-top: 30px;
+}
+#crm-container.crm-public #crm-submit-buttons input#_qf_Main_upload-bottom {
+  font-size: 1.5em;
+  padding: 3px 10px;
+}
+
+#crm-container.crm-public #premiums-listings {
+  margin-top: 10px;
+  min-width: 450px;
+  width: 60%;
+}
+#crm-container.crm-public #premiums-listings .premium {
+  margin: 5px 0;
+}
+#crm-container.crm-public #premiums-listings .premium .premium-short {
+  padding: 10px;
+  border: 2px solid #ffffff;
+  background-color: #f0f0f0;
+  cursor: pointer;
+}
+#crm-container.crm-public #premiums-listings .premium .premium-short.hover {
+  border: 2px solid #b0b0b0;
+}
+#crm-container.crm-public #premiums-listings .premium .premium-short-thumbnail {
+  float: left;
+  width: 50px;
+}
+#crm-container.crm-public #premiums-listings .premium .premium-short-thumbnail img {
+  width: 50px;
+}
+#crm-container.crm-public #premiums-listings .premium .premium-short-content {
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  padding: 20px;
+}
+#crm-container.crm-public #premiums-listings .premium .premium-full {
+  display: none;
+  padding: 5px;
+  border: 2px solid #cfcfcf;
+  background-color: #ffffff;
+}
+
+#crm-container.crm-public #premiums-listings .premium .premium-full .premium-full-image {
+  float: left;
+  width: 200px;
+  padding: 10px;
+}
+#crm-container.crm-public #premiums-listings .premium .premium-full .premium-full-image img {
+  width: 200px;
+}
+#crm-container.crm-public #premiums-listings .premium .premium-full .premium-full-title {
+  text-align: center;
+  font-size: 1.5em;
+  font-weight: bold;
+  padding: 20px;
+}
+#crm-container.crm-public #premiums-listings .premium .premium-full .premium-full-description {
+}
+#crm-container.crm-public #premiums-listings .premium .premium-full .premium-full-min {
+  font-size: .9em;
+  font-style: italic;
+}
+#crm-container.crm-public #premiums-listings .premium.premium-no_thanks .premium-short {
+  text-align: center;
+  font-size: 1.3em;
+  padding: 10px;
+}
+#crm-container.crm-public #premiums-listings .premium.premium-no_thanks .premium-full {
+  text-align: center;
+  font-size: 1.3em;
+  font-weight: bold;
+  padding: 10px;
+}
+#crm-container.crm-public #premiums-listings .premium.premium-disabled .premium-short,
+#crm-container.crm-public #premiums-listings .premium.premium-disabled .premium-full .premium-full-image,
+#crm-container.crm-public #premiums-listings .premium.premium-disabled .premium-full .premium-full-title,
+#crm-container.crm-public #premiums-listings .premium.premium-disabled .premium-full .premium-full-description,
+#crm-container.crm-public #premiums-listings .premium.premium-disabled .premium-full .premium-full-options,
+#crm-container.crm-public #premiums-listings .premium.premium-disabled .premium-full .premium-full-min {
+  opacity: 0.5;
+}
+#crm-container.crm-public #premiums-listings .premium .premium-full-disabled {
+  display: none;
+}
+#crm-container.crm-public #premiums-listings .premium.premium-disabled .premium-full-disabled {
+  display: block;
+  color: #ff0000;
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: .5em;
+}

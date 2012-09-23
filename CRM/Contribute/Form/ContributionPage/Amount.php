@@ -120,7 +120,7 @@ SELECT id
     //check if selected payment processor supports recurring payment
     if (!empty($recurringPaymentProcessor)) {
       $this->addElement('checkbox', 'is_recur', ts('Recurring contributions'), NULL,
-        array('onclick' => "showHideByValue('is_recur',true,'recurFields','table-row','radio',false); showRecurInterval( );")
+        array('onclick' => "showHideByValue('is_recur',true,'recurFields','table-row','radio',false);")
       );
       $this->addCheckBox('recur_frequency_unit', ts('Supported recurring units'),
         CRM_Core_OptionGroup::values('recur_frequency_units', FALSE, FALSE, FALSE, NULL, 'name'),
@@ -128,6 +128,7 @@ SELECT id
         array('&nbsp;&nbsp;', '&nbsp;&nbsp;', '&nbsp;&nbsp;', '<br/>')
       );
       $this->addElement('checkbox', 'is_recur_interval', ts('Support recurring intervals'));
+      $this->addElement('checkbox', 'is_recur_installments', ts('Offer installments'));
     }
 
     // add pay later options
@@ -407,6 +408,7 @@ SELECT id
       'is_monetary' => FALSE,
       'is_pay_later' => FALSE,
       'is_recur_interval' => FALSE,
+      'is_recur_installments' => FALSE,
       'recur_frequency_unit' => "null",
       'default_amount_id' => "null",
       'is_allow_other_amount' => FALSE,
@@ -440,6 +442,7 @@ SELECT id
         array_keys($params['recur_frequency_unit'])
       );
       $params['is_recur_interval'] = CRM_Utils_Array::value('is_recur_interval', $params, FALSE);
+      $params['is_recur_installments'] = CRM_Utils_Array::value('is_recur_installments', $params, FALSE);
     }
 
     if (array_key_exists('payment_processor', $params) &&

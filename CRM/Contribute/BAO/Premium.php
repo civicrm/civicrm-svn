@@ -107,6 +107,8 @@ class CRM_Contribute_BAO_Premium extends CRM_Contribute_DAO_Premium {
    * @static
    */
   function buildPremiumBlock(&$form, $pageID, $formItems = FALSE, $selectedProductID = NULL, $selectedOption = NULL) {
+    $this->add('hidden', "selectProduct", $selectedProductID, array('id' => 'selectProduct'));
+
     $dao = new CRM_Contribute_DAO_Premium();
     $dao->entity_table = 'civicrm_contribution_page';
     $dao->entity_id = $pageID;
@@ -144,22 +146,17 @@ class CRM_Contribute_BAO_Premium extends CRM_Contribute_DAO_Premium {
             CRM_Core_DAO::storeValues($productDAO, $products[$productDAO->id]);
           }
         }
-        $radio[$productDAO->id] = $form->createElement('radio', NULL, NULL, NULL, $productDAO->id, NULL);
         $options = $temp = array();
         $temp = explode(',', $productDAO->options);
         foreach ($temp as $value) {
           $options[trim($value)] = trim($value);
         }
         if ($temp[0] != '') {
-          $form->addElement('select', 'options_' . $productDAO->id, NULL, $options, array('onchange' => "return selectPremium(this);"));
+          $form->addElement('select', 'options_' . $productDAO->id, NULL, $options);
         }
       }
       if (count($products)) {
-        $form->assign('showRadioPremium', $formItems);
-        if ($formItems) {
-          $radio[''] = $form->createElement('radio', NULL, NULL, '&nbsp ' . ts('No thank you'), 'no_thanks', NULL);
-          $form->addGroup($radio, 'selectProduct', NULL);
-        }
+        $form->assign('showPremium', $formItems);
         $form->assign('showSelectOptions', $formItems);
         $form->assign('products', $products);
         $form->assign('premiumBlock', $premiumBlock);

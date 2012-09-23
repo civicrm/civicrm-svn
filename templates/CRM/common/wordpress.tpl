@@ -27,7 +27,7 @@
 {include file="CRM/common/debug.tpl"}
 {/if}
 
-<div id="crm-container" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
+<div id="crm-container" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}" {if $urlIsPublic}class="crm-public"{/if}>
 
 {* we should uncomment below code only when we are experimenting with new css for specific pages and comment css inclusion in civicrm.module*}
 {*if $config->customCSSURL}

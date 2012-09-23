@@ -296,7 +296,8 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form {
         ), '1');
     }
     else {
-      $defaults['recur_frequency_unit'] = array_fill_keys(CRM_Core_OptionGroup::values('recur_frequency_units'), '1');
+      # CRM 10860
+      $defaults['recur_frequency_unit'] = array('month' => 1);
     }
 
     if (CRM_Utils_Array::value('is_for_organization', $defaults)) {

@@ -102,21 +102,12 @@
                 </div>
                 </fieldset>
 
+                {if $profileAddressFields}
+                  <input type="checkbox" id="billingcheckbox" value="0"> <label for="billingcheckbox">{ts}My billing address is the same as above{/ts}</label>
+                {/if}
                 <fieldset class="billing_name_address-group">
                 	<legend>{ts}Billing Name and Address{/ts}</legend>
-                	  {if $profileAddressFields}
-                        <input type="checkbox" id="billingcheckbox" value=0> {ts}Billing Address is same as above{/ts}
-                      {/if}
                     <div class="crm-section billing_name_address-section">
-                        <div class="crm-section billingNameInfo-section">
-                        	<div class="content description">
-                        	  {if $paymentProcessor.payment_type & 2}
-                        	     {ts}Enter the name of the account holder, and the corresponding billing address.{/ts}
-                        	  {else}
-                        	     {ts}Enter the name as shown on your credit or debit card, and the billing address for this card.{/ts}
-                        	  {/if}
-                        	</div>
-                        </div>
                         <div class="crm-section {$form.billing_first_name.name}-section">
 							<div class="label">{$form.billing_first_name.label}</div>
                             <div class="content">{$form.billing_first_name.html}</div>
@@ -171,65 +162,113 @@
 
      {if $profileAddressFields}
      <script type="text/javascript">
-    {literal}
-cj( function( ) {
-    cj('#billingcheckbox').click( function( ) {
-          sameAddress( this.checked ); // need to only action when check not when toggled, can't assume desired behaviour
-        });
+     {literal}
+
+cj( function( ) { 
+  // build list of ids to track changes on
+  var address_fields = {/literal}{$profileAddressFields|@json_encode}{literal};
+  var input_ids = [];
+  var select_ids = [];
+  var orig_id = field = field_name = null;
+  
+  // build input ids
+  cj('.billing_name_address-section input').each(function(i){
+    orig_id = cj(this).attr('id');
+    field = orig_id.split('-');
+    field_name = field[0].replace('billing_', '');
+    if(field[1]) {
+      if(address_fields[field_name]) {
+        input_ids['#'+field_name+'-'+address_fields[field_name]] = '#'+orig_id;
+      }
+    }
+  });
+  if(cj('#first_name').length)
+    input_ids['#first_name'] = '#billing_first_name';
+  if(cj('#middle_name').length)
+    input_ids['#middle_name'] = '#billing_middle_name';
+  if(cj('#last_name').length)
+    input_ids['#last_name'] = '#billing_last_name';
+
+  // build select ids
+  cj('.billing_name_address-section select').each(function(i){
+    orig_id = cj(this).attr('id');
+    field = orig_id.split('-');
+    field_name = field[0].replace('billing_', '').replace('_id', '');
+    if(field[1]) {
+      if(address_fields[field_name]) {
+        select_ids['#'+field_name+'-'+address_fields[field_name]] = '#'+orig_id;
+      }
+    }
+  });
+
+  // detect if billing checkbox should default to checked
+  var checked = true;
+  for(var id in input_ids) {
+    var orig_id = input_ids[id];
+    if(cj(id).val() != cj(orig_id).val()) {
+      checked = false;
+      break;
+    }
+  }
+  for(var id in select_ids) {
+    var orig_id = select_ids[id];
+    if(cj(id).val() != cj(orig_id).val()) {
+      checked = false;
+      break;
+    }
+  }
+  if(checked) {
+    cj('#billingcheckbox').attr('checked', 'checked');
+    cj('.billing_name_address-group').hide();
+  }
+
+  // onchange handlers for non-billing fields
+  for(var id in input_ids) {
+    var orig_id = input_ids[id];
+    cj(id).change(function(){
+      var id = '#'+cj(this).attr('id');
+      var orig_id = input_ids[id];
+
+      // if billing checkbox is active, copy other field into billing field
+      if(cj('#billingcheckbox').attr('checked')) {
+        cj(orig_id).val( cj(id).val() );
+      };
     });
+  };
+  for(var id in select_ids) {
+    var orig_id = select_ids[id];
+    cj(id).change(function(){
+      var id = '#'+cj(this).attr('id');
+      var orig_id = select_ids[id];
 
-function sameAddress( setValue ) {
-  {/literal}
-    var  addressFields = {$profileAddressFields|@json_encode};
-    {literal}
-    var locationTypeInProfile = 'Primary';
-    var orgID = field = fieldName = null;
-    if ( setValue ) {
-    cj('.billing_name_address-section input').each( function( i ){
-            orgID = cj(this).attr('id');
-            field = orgID.split('-');
-            fieldName = field[0].replace('billing_', '');
-            if ( field[1] ) { // ie. there is something after the '-' like billing_street_address-5
-                              // this means it is an address field
-              if(addressFields[fieldName]){
-                fieldName =  fieldName + '-' + addressFields[fieldName];
-              }
-            }
-              cj(this).val( cj('#' + fieldName ).val() );
-            });
-    
-    var stateId;
-    cj('.billing_name_address-section select').each( function( i ){
-        orgID = cj(this).attr('id');
-        field = orgID.split('-');
-        fieldName = field[0].replace('billing_', '');
-        fieldNameBase = fieldName.replace('_id', '');
-      if ( field[1] ) { 
-                          // this means it is an address field
-          if(addressFields[fieldNameBase]){
-            fieldName =  fieldNameBase + '-' + addressFields[fieldNameBase];
-          }
-      }
+      // if billing checkbox is active, copy other field into billing field
+      if(cj('#billingcheckbox').attr('checked')) {
+        cj(orig_id+' option').removeAttr('selected');
+        cj(orig_id+' option[value="'+cj(id).val()+'"]').attr('selected', 'selected');
+      };
 
-      // don't set value for state-province, since
-      // if need reload state depending on country
-      if ( fieldNameBase == 'state_province' ) {
-        stateId = cj('#' + fieldName ).val();
-        }
-      else {
-        cj(this).val( cj('#' + fieldName ).val() ).change( );   
+      if(orig_id == '#billing_country_id-5') {
+        cj(orig_id).change();
       }
     });
+  };
 
-    // now set the state province, we are delaying setdefaults
-    // before onchange takes some time / to load states
-    if ( stateId ) {
-      setTimeout(function(){
-        cj( 'select[id^="billing_state_province_id"]').val( stateId );
-      }, 500);
-      }
-}
-}
+
+  // toggle show/hide
+  cj('#billingcheckbox').click(function(){
+    if(this.checked) {
+      cj('.billing_name_address-group').hide(200);
+
+      // copy all values
+      for(var id in input_ids) {
+        var orig_id = input_ids[id];
+        cj(orig_id).val( cj(id).val() );
+      };
+    } else {
+      cj('.billing_name_address-group').show(200);
+    }
+  });
+});
 {/literal}
 </script>
 {/if}

@@ -33,3 +33,8 @@ ALTER TABLE civicrm_membership_type
 ALTER TABLE civicrm_msg_template
       CHANGE msg_text msg_text LONGTEXT NULL COMMENT 'Text formatted message',
       CHANGE msg_html msg_html LONGTEXT NULL COMMENT 'HTML formatted message';
+
+-- CRM-10860
+ALTER TABLE civicrm_contribution_page ADD COLUMN is_recur_installments tinyint(4) DEFAULT '0';
+UPDATE civicrm_contribution_page SET is_recur_installments='1';
+

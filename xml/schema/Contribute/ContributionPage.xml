@@ -90,12 +90,19 @@
        <comment>Supported recurring frequency units.</comment>
        <add>2.1</add>
   </field>
-  <field>   
+  <field>
       <name>is_recur_interval</name>   
       <type>boolean</type>                   
       <default>0</default> 
       <comment>if true - supports recurring intervals</comment>   
       <add>2.1</add>   
+  </field>
+  <field>
+      <name>is_recur_installments</name>   
+      <type>boolean</type>                   
+      <default>0</default> 
+      <comment>if true - asks user for recurring installments</comment>   
+      <add>4.3</add>   
   </field>
   <field>   
       <name>is_pay_later</name>   

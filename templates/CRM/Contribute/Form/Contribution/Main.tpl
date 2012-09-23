@@ -100,7 +100,7 @@ var priceset = {/literal}{if $priceset}'#{$priceset}'{else}0{/if}{literal}
       {$intro_text}
   </div>
   {if $islifetime or $ispricelifetime }
-    <div id="help">You have a current Lifetime Membership which does not need top be renewed.</div>
+    <div id="help">{ts}You have a current Lifetime Membership which does not need top be renewed.{/ts}</div>
   {/if}
 
   {if !empty($useForMember)}
@@ -133,17 +133,22 @@ var priceset = {/literal}{if $priceset}'#{$priceset}'{else}0{/if}{literal}
       {/if}
   {/if}
 
-
   {if $form.is_recur}
     <div class="crm-section {$form.is_recur.name}-section">
       <div class="label">&nbsp;</div>
       <div class="content">
-        <p><strong>{$form.is_recur.html} {ts}every{/ts} &nbsp;{$form.frequency_interval.html} &nbsp; {$form.frequency_unit.html}<span id="recur_installments_num">&nbsp; {ts}for{/ts} &nbsp; {$form.installments.html} &nbsp;{$form.installments.label}</span></strong></p>
-        <p><span class="description">{ts}Your recurring contribution will be processed automatically for the number of installments you specify. You can leave the number of installments blank if you want to make an open-ended commitment. In either case, you can choose to cancel at any time.{/ts}
-            {if $is_email_receipt}
-                {ts}You will receive an email receipt for each recurring contribution. The receipts will include a link you can use if you decide to modify or cancel your future contributions.{/ts}
-            {/if}
-            </span></p>
+        {$form.is_recur.html} {$form.is_recur.label} {ts}every{/ts} 
+        {if $is_recur_interval}
+          {$form.frequency_interval.html} 
+        {/if}
+        {if $one_frequency_unit} 
+          {$frequency_unit}
+        {else}
+          {$form.frequency_unit.html}
+        {/if}
+        {if $is_recur_installments}
+          {ts}for{/ts} {$form.installments.html} {$form.installments.label}
+        {/if}
       </div>
       <div class="clear"></div>
     </div>
@@ -350,35 +355,21 @@ if ( {/literal}"{$form.is_recur}"{literal} ) {
 }
 
 function enablePeriod ( ) {
-    var frqInt  = {/literal}"{$form.frequency_interval}"{literal};
-    if ( document.getElementsByName("is_recur")[0].checked == true ) {
-  document.getElementById('installments').value = '';
-  if ( frqInt ) {
-      document.getElementById('frequency_interval').value    = '';
-      document.getElementById('frequency_interval').disabled = true;
-  }
-  document.getElementById('installments').disabled   = true;
-  document.getElementById('frequency_unit').disabled = true;
-
-  //get back to auto renew settings.
-  var allowAutoRenew = {/literal}'{$allowAutoRenewMembership}'{literal};
-  if ( allowAutoRenew && cj("#auto_renew") ) {
-     showHideAutoRenew( null );
-  }
-    } else {
-  if ( frqInt ) {
-      document.getElementById('frequency_interval').disabled = false;
-  }
-  document.getElementById('installments').disabled   = false;
-  document.getElementById('frequency_unit').disabled = false;
-
-  //disabled auto renew settings.
-  var allowAutoRenew = {/literal}'{$allowAutoRenewMembership}'{literal};
-  if ( allowAutoRenew && cj("#auto_renew") ) {
+  var frqInt  = {/literal}"{$form.frequency_interval}"{literal};
+  if ( document.getElementsByName("is_recur")[0].checked == true ) {
+    //get back to auto renew settings.
+    var allowAutoRenew = {/literal}'{$allowAutoRenewMembership}'{literal};
+    if ( allowAutoRenew && cj("#auto_renew") ) {
+      showHideAutoRenew( null );
+    }
+  } else {
+    //disabled auto renew settings.
+    var allowAutoRenew = {/literal}'{$allowAutoRenewMembership}'{literal};
+    if ( allowAutoRenew && cj("#auto_renew") ) {
       cj("#auto_renew").attr( 'checked', false );
       cj('#allow_auto_renew').hide( );
-  }
     }
+  }
 }
 
 {/literal}{if $relatedOrganizationFound and $reset}{literal}

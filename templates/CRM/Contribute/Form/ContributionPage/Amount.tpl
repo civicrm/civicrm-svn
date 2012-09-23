@@ -108,6 +108,10 @@
                         <td>{$form.is_recur_interval.html}<br />
                         <span class="description">{ts}Can users also set an interval (e.g. every '3' months)?{/ts}</span></td>
                     </tr>
+                    <tr class="crm-contribution-form-block-is_recur_installments"><th scope="row" class="label">{$form.is_recur_installments.label}</th>
+                        <td>{$form.is_recur_installments.html}<br />
+                        <span class="description">{ts}Give the user a choice of installments (e.g. donate every month for 6 months)? If not, recurring donations will continue indefinitely.{/ts}</span></td>
+                    </tr>
                   </table>
                 </td>
         </tr>
@@ -292,14 +296,6 @@
 		  break;
 	   }
  	}
-
-	function showRecurInterval( ) {
-		 if ( cj("#is_recur").attr( 'checked' ) ) {
-		     cj("#is_recur_interval").attr( 'checked', true );    
-		 } else {
-		     cj("#is_recur_interval").attr( 'checked', false ); 
-		 }
-	}
 
     function showRecurring( paymentProcessorIds ) {
         var display = true;

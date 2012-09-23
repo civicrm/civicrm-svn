@@ -30,7 +30,7 @@
 {* include wysiwyg related files*}
 {include file="CRM/common/wysiwyg.tpl"}
 
-<div id="crm-container" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
+<div id="crm-container" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}" {if $urlIsPublic}class="crm-public"{/if}>
 
 
 {include file="CRM/common/action.tpl"}
