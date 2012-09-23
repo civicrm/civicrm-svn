@@ -319,8 +319,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
 
         foreach ($customOption as $opId => $opt) {
           if ($field->is_display_amounts) {
-            $opt['label'] .= '&nbsp;-&nbsp;';
-            $opt['label'] .= CRM_Utils_Money::format($opt[$valueFieldName]);
+            $opt['label'] = '<span class="crm-price-amount-amount">' . CRM_Utils_Money::format($opt[$valueFieldName]) . '</span> <span class="crm-price-amount-label">' . $opt['label'] . '</span>';
           }
           $count     = CRM_Utils_Array::value('count', $opt, '');
           $max_value = CRM_Utils_Array::value('max_value', $opt, '');
