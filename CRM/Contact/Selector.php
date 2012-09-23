@@ -631,20 +631,6 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
           CRM_Core_OptionGroup::lookupValues($paramsNew, $name, FALSE);
           $row[$key] = $paramsNew[$key];
         }
-        elseif (isset($tmfFields) && $tmfFields && array_key_exists($property, $tmfFields)
-          || substr($property, 0, 12) == 'participant_'
-        ) {
-          if (substr($property, -3) == '_id') {
-            $key       = substr($property, 0, -3);
-            $paramsNew = array($key => $result->$property);
-            $name      = array($key => array('newName' => $key, 'groupName' => $key));
-            CRM_Core_OptionGroup::lookupValues($paramsNew, $name, FALSE);
-            $row[$key] = $paramsNew[$key];
-          }
-          else {
-            $row[$property] = $result->$property;
-          }
-        }
         elseif (strpos($property, '-im')) {
           $row[$property] = $result->$property;
           if (!empty($result->$property)) {
@@ -889,7 +875,7 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
         $contactType = $row['contact_type_orig'];
   }
 
-      if ( $contactType ) { 
+      if ( $contactType ) {
         $row['contact_type'] = CRM_Contact_BAO_Contact_Utils::getImage($contactType,
           FALSE, $row['contact_id']);
       }
