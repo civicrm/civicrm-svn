@@ -157,7 +157,7 @@ class api_v3_EventTest extends CiviUnitTestCase {
       'event_title' => 'Annual CiviCRM meet',
       'version' => $this->_apiversion,
     );
-    
+
     $result = civicrm_api('event', 'get', $params);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__);
     $this->assertEquals(1, $result['count']);
@@ -201,7 +201,7 @@ class api_v3_EventTest extends CiviUnitTestCase {
     $result = civicrm_api('Event', 'Get', $params);
     $this->assertEquals(1, $result['id'], ' in line ' . __LINE__);
 
-   
+
   }
   /*
    * Getting the id back of an event.
@@ -545,18 +545,17 @@ class api_v3_EventTest extends CiviUnitTestCase {
   }
 
   function testEventCreationPermissions() {
-    require_once 'CRM/Core/Permission/UnitTests.php';
     $params = array(
       'event_type_id' => 1, 'start_date' => '2010-10-03', 'title' => 'le cake is a tie', 'check_permissions' => TRUE,
       'version' => $this->_apiversion,
     );
-
-    CRM_Core_Permission_UnitTests::$permissions = array('access CiviCRM');
+    $config = &CRM_Core_Config::singleton();
+    $config->userPermissionClass->permissions = array('access CiviCRM');
     $result = civicrm_api('event', 'create', $params);
     $this->assertEquals(1, $result['is_error'], 'lacking permissions should not be enough to create an event');
     $this->assertEquals('API permission check failed for event/create call; missing permission: access CiviEvent.', $result['error_message'], 'lacking permissions should not be enough to create an event');
 
-    CRM_Core_Permission_UnitTests::$permissions = array('access CiviEvent', 'edit all events', 'access CiviCRM');
+    $config->userPermissionClass->permissions = array('access CiviEvent', 'edit all events', 'access CiviCRM');
     $result = civicrm_api('event', 'create', $params);
     $this->assertEquals(0, $result['is_error'], 'overfluous permissions should be enough to create an event');
   }
@@ -567,7 +566,7 @@ class api_v3_EventTest extends CiviUnitTestCase {
     $result      = civicrm_api('event', 'getfields', $params);
     $this->assertEquals(1, $result['values']['title']['api.required'], 'in line ' . __LINE__);
   }
-  /* 
+  /*
      * test api_action param also works
      */
   function testgetfieldsRest() {
