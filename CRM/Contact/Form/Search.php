@@ -899,8 +899,8 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
       $setDynamic = FALSE;
 
       if (strpos($this->_selectorName, 'CRM_Contact_Selector') !== FALSE) {
-        eval('$selector = new ' . $this->_selectorName .
-          '( $this->_customSearchClass,
+        $selector = new $this->_selectorName
+          ( $this->_customSearchClass,
                          $this->_formValues,
                          $this->_params,
                          $this->_returnProperties,
@@ -908,17 +908,17 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                          false,
                          $searchChildGroups,
                          $this->_context,
-                         $this->_contextMenu );'
-        );
+                         $this->_contextMenu
+          );
         $setDynamic = TRUE;
       }
       else {
-        eval('$selector = new ' . $this->_selectorName .
-          '( $this->_params,
+        $selector = new  $this->_selectorName
+          ( $this->_params,
                          $this->_action,
                          null, false, null,
-                         "search", "advanced" );'
-        );
+                         "search", "advanced"
+         );
       }
 
       $selector->setKey($this->controller->_key);
