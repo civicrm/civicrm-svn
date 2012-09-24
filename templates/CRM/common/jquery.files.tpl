@@ -65,7 +65,7 @@ packages/jquery/css/dashboard.css
 
 packages/jquery/plugins/jquery.FormNavigate.js
 
-packages/jquery/plugins/jquery.validate.js
+packages/jquery/plugins/jquery.validate.min.js
 packages/jquery/plugins/jquery.civicrm-validate.js
 packages/jquery/plugins/jquery.ui.datepicker.validation.pack.js
 
