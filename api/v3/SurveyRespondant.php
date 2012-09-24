@@ -62,14 +62,17 @@ function &civicrm_api3_survey_respondant_get($params) {
     $surveyID = $params['id'];
   }
 
+  $interviewerID = NULL;
   if (array_key_exists('interviewer_id', $params)) {
     $interviewerID = $params['interviewer_id'];
   }
-  else {
-    $interviewerID = NULL;
+
+  $statusIds = array();
+  if (array_key_exists('status_id', $params)) {
+    $statusIds = explode(',', $params['status_id']);
   }
 
-  $respondants = CRM_Campaign_BAO_Survey::getSurveyActivities($surveyID, $interviewerID );
+  $respondants = CRM_Campaign_BAO_Survey::getSurveyActivities($surveyID, $interviewerID, $statusIds);
 
   return (civicrm_api3_create_success($respondants, $params));
 }
