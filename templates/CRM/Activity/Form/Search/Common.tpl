@@ -28,7 +28,7 @@
      <td><label>{ts}Activity Type(s){/ts}</label>
         <div id="Activity" class="listing-box">
           {foreach from=$form.activity_type_id item="activity_type_val"} 
-             <div class="{cycle values="odd-row,even-row"}">
+             <div class="{cycle values='odd-row,even-row'}">
                {$activity_type_val.html}
              </div>
           {/foreach}
@@ -53,7 +53,7 @@
     <td><label>{ts}Activity Tag(s){/ts}</label>
       <div id ="Tags" class="listing-box">
          {foreach from=$form.activity_tags item="tag_val"} 
-              <div class="{cycle values="odd-row,even-row"}">
+              <div class="{cycle values='odd-row,even-row'}">
                    {$tag_val.html}
               </div>
          {/foreach}
@@ -74,7 +74,7 @@
    <td colspan="2"><br />
 	  {$form.activity_contact_name.html}<br />
       <span class="description font-italic">{ts}Complete OR partial Name of the Source Contact or the Assignee Contact.{/ts}</span><br /><br />
-	  {$form.activity_test.label} &nbsp; {$form.activity_test.html} 
+	  {$form.activity_test.label} &nbsp; {$form.activity_test.html} <span class="crm-clear-link">(<a href="javascript:unselectRadio('activity_test','{$form.formName}')">{ts}clear{/ts}</a>)</span>
    </td>
 </tr>
 <tr>

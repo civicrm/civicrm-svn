@@ -69,7 +69,7 @@
 {/htxt}
 
 {htxt id="id-relationship-target-group-title"}
-{ts}Related Contact Group{/ts}
+{ts}Target Contact Group{/ts}
 {/htxt}
 {htxt id="id-relationship-target-group"}
     <p>{ts}Use this filter to limit search results to relationships where the related contacts are part of a specific group or groups.
