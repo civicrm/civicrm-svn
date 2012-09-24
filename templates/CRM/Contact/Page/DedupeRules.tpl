@@ -29,46 +29,49 @@
 {include file="CRM/Contact/Form/DedupeFind.tpl"}
 {else}
     <div id="help">
+    	{ts}Manage the rules used to identify potential duplicate contact records. Scan for duplicates using a selected rule and merge duplicate contact data as needed.<br /><p>Default Front End Rules are automatically used when new contacts are created through online registrations including Events, Membership, Contributions and Profile pages. They are also selected by default when you Import contacts. They should be configured with a tight definition of what constitutes a duplicate (for example: email address/first/last name for Individuals).<br /><p>Back End Rules should be configured with a looser definition of what constitutes a duplicate. The default Back End rule is automatically used to check for possible duplicates when contacts are added or edited via the user interface.{/ts}
         {ts}Manage the rules used to identify potentially duplicate contact records. Scan for duplicates using a selected rule and merge duplicate contact data as needed.{/ts} {help id="id-dedupe-intro"}
     </div>
-    {if $rows}
-        {include file="CRM/common/jsortable.tpl"}
-        <div id="browseValues">
-            {strip}
-              <table id="options" class="display">
-                <thead>
-                <tr>
-                  <th>{ts}Name{/ts}</th>
-                  <th id="sortable">{ts}Contact Type{/ts}</th>
-                  <th>{ts}Level{/ts}</th>
-                  <th>{ts}Default?{/ts}</th>
-                  <th></th>
-                </tr>
-                </thead>
-                {foreach from=$rows item=row}
-                  <tr class="{cycle values="odd-row,even-row"}">
-                    <td>{$row.title}</td>
-                    <td>{$row.contact_type_display}</td>	
-                    <td>{$row.level}</td>	
-                    {if $row.is_default}
-                        <td><img src="{$config->resourceBase}i/check.gif" alt="{ts}Default{/ts}" /></td>    
-                    {else}
-                        <td></td>
-                    {/if}
-                    <td>{$row.action|replace:'xx':$row.id}</td>
-                  </tr>
-                {/foreach}
-              </table>
-            {/strip}
-        </div>
-    {/if}
     {if $hasperm_administer_dedupe_rules}
-	    <div class="action-link">
-    	<a href="{crmURL q="action=add&contact_type=Individual&reset=1"}" class="button"><span><div class="icon add-icon"></div>{ts}Add Rule for Individuals{/ts}</span></a>
-    	<a href="{crmURL q="action=add&contact_type=Household&reset=1"}" class="button"><span><div class="icon add-icon"></div>{ts}Add Rule for Households{/ts}</span></a>
-    	<a href="{crmURL q="action=add&contact_type=Organization&reset=1"}" class="button"><span><div class="icon add-icon"></div>{ts}Add Rule for Organizations{/ts}</span></a>
-    	<div class="clear"><br /></div>
-	    <a href="{crmURL p='civicrm/dedupe/exception' q='reset=1'}" class="button"><span>{ts}View Dedupe Exceptions{/ts}</span></a>
+        <div class="action-link">
+        <a href="{crmURL p='civicrm/dedupe/exception' q='reset=1'}" class="button"><span>{ts}View the Dedupe Exceptions{/ts}</span></a>
         </div>
     {/if}
+    {if $brows}
+    {include file="CRM/common/jsortable.tpl"} 
+    {foreach from=$brows key=contactType item=rows}	 
+      <div id="browseValues_{$contactType}">
+        <div>
+        {strip}
+          <table id="options_{$contactType}" class="display">
+            <thead>
+            <tr>
+              <th>{ts 1=$contactType}%1 Rules{/ts}</th>
+              <th>{ts}Level{/ts}</th>
+              <th>{ts}Default?{/ts}</th>
+              <th></th>
+            </tr>
+            </thead>
+            {foreach from=$rows item=row}
+              <tr class="{cycle values="odd-row,even-row"}">
+                <td>{$row.title}</td>
+                <td>{$row.level}</td>	
+                {if $row.is_default}
+                    <td><img src="{$config->resourceBase}i/check.gif" alt="{ts}Default{/ts}" /></td>    
+                {else}
+                    <td></td>
+                {/if}
+                <td>{$row.action|replace:'xx':$row.id}</td>
+              </tr>
+            {/foreach}
+          </table>
+        {/strip}
+       </div>
+       <div style="float:right">
+            <a href="{crmURL q="action=add&contact_type=$contactType&reset=1"}" class="button"><span><div class="icon add-icon"></div>{ts 1=$contactType}Add Rule for %1s{/ts}</span></a>    
+        </div> 
+      </div> 
+    {/foreach}
+    {/if}
+
 {/if}

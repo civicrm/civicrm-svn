@@ -166,8 +166,8 @@ class CRM_Contact_Page_DedupeRules extends CRM_Core_Page_Basic {
     $dao->find();
 
     while ($dao->fetch()) {
-      $ruleGroups[$dao->id] = array();
-      CRM_Core_DAO::storeValues($dao, $ruleGroups[$dao->id]);
+      $ruleGroups[$dao->contact_type][$dao->id] = array();
+      CRM_Core_DAO::storeValues($dao, $ruleGroups[$dao->contact_type][$dao->id]);
 
       // form all action links
       $action = array_sum(array_keys($this->links()));
@@ -181,10 +181,11 @@ class CRM_Contact_Page_DedupeRules extends CRM_Core_Page_Basic {
         unset($links[CRM_Core_Action::DELETE]);
       }
 
-      $ruleGroups[$dao->id]['action'] = CRM_Core_Action::formLink($links, $action, array('id' => $dao->id));
-      CRM_Dedupe_DAO_RuleGroup::addDisplayEnums($ruleGroups[$dao->id]);
+      $ruleGroups[$dao->contact_type][$dao->id]['action'] = CRM_Core_Action::formLink($links, $action, array('id' => $dao->id));
+      CRM_Dedupe_DAO_RuleGroup::addDisplayEnums($ruleGroups[$dao->contact_type][$dao->id]);
     }
-    $this->assign('rows', $ruleGroups);
+
+    $this->assign('brows', $ruleGroups);
   }
 
   /**
