@@ -1335,7 +1335,17 @@ class CRM_Contact_BAO_Query {
         list($name, $op, $value, $grouping, $wildcard) = $values;
         $this->group($values);
         return;
-
+      case 'group_type':
+        // so we resolve this into a list of groups & proceed as if they had been 
+        // handed in
+        list($name, $op, $value, $grouping, $wildcard) = $values;
+        $values[0] = 'group';
+        $values[1] = 'IN';
+        $this->_paramLookup['group'][0][0] ='group';
+        $this->_paramLookup['group'][0][1] = 'IN';
+        $this->_paramLookup['group'][0][2] = $values[2] = $this->getGroupsFromTypeCriteria($value);
+        $this->group($values);
+        return;
       // case tag comes from find contacts
 
       case 'tag_search':
@@ -2438,7 +2448,7 @@ class CRM_Contact_BAO_Query {
     }
 
     $groupNames = CRM_Core_PseudoConstant::group();
-    $groupIds = implode(',', array_keys($value, 1));
+    $groupIds = implode(',', array_keys($value));
 
     $names = array();
     foreach ($value as $id => $dontCare) {
@@ -2518,6 +2528,17 @@ class CRM_Contact_BAO_Query {
 
     $this->_where[$grouping][] = $groupClause;
     $this->_qill[$grouping][] = $qill;
+  }
+  /*
+   * Function translates selection of group type into a list of groups
+   */
+  function getGroupsFromTypeCriteria($value){
+    $groupIds = array();
+    foreach ($value as $groupTypeValue) {
+      $groupList = CRM_Core_PseudoConstant::group($groupTypeValue);
+      $groupIds = ($groupIds + $groupList);
+    }
+    return $groupIds;
   }
 
   /**
