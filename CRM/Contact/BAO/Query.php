@@ -1310,7 +1310,6 @@ class CRM_Contact_BAO_Query {
       (substr($values[0], 0, 6) == 'event_') ||
       (substr($values[0], 0, 12) == 'participant_') ||
       (substr($values[0], 0, 12) == 'member_') ||
-      (substr($values[0], 0, 4) == 'tmf_') ||
       (substr($values[0], 0, 6) == 'grant_') ||
       (substr($values[0], 0, 7) == 'pledge_') ||
       (substr($values[0], 0, 5) == 'case_')
@@ -1336,7 +1335,7 @@ class CRM_Contact_BAO_Query {
         $this->group($values);
         return;
       case 'group_type':
-        // so we resolve this into a list of groups & proceed as if they had been 
+        // so we resolve this into a list of groups & proceed as if they had been
         // handed in
         list($name, $op, $value, $grouping, $wildcard) = $values;
         $values[0] = 'group';
