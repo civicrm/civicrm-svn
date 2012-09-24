@@ -149,7 +149,6 @@ class CRM_Activity_BAO_Query {
    */
   static
   function where(&$query) {
-    $isTest = FALSE;
     $grouping = NULL;
     foreach (array_keys($query->_params) as $id) {
       if (substr($query->_params[$id][0], 0, 9) == 'activity_') {
@@ -158,17 +157,8 @@ class CRM_Activity_BAO_Query {
         }
         $grouping = $query->_params[$id][3];
         self::whereClauseSingle($query->_params[$id], $query);
-        if ($query->_params[$id][0] == 'activity_test') {
-          $isTest = TRUE;
-        }
-      }
-    }
 
-    if ($grouping !== NULL &&
-      !$isTest
-    ) {
-      $values = array('activity_test', '=', 0, $grouping, 0);
-      self::whereClauseSingle($values, $query);
+      }
     }
   }
 
@@ -303,9 +293,9 @@ class CRM_Activity_BAO_Query {
         break;
 
       case 'activity_test':
-        $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause("civicrm_activity.is_test", $op, $value, "Integer");
+        $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause("civicrm_activity.is_test", $op, $value, "Boolean");
         if ($value) {
-          $query->_qill[$grouping][] = ts('Find Test Activities');
+          $query->_qill[$grouping][] = ts('Activity is a Test');
         }
         break;
 
@@ -500,7 +490,7 @@ class CRM_Activity_BAO_Query {
     $form->addGroup($activity_status, 'activity_status', ts('Activity Status'));
     $form->setDefaults(array('activity_status[1]' => 1, 'activity_status[2]' => 1));
     $form->addElement('text', 'activity_subject', ts('Subject'), CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'sort_name'));
-    $form->addElement('checkbox', 'activity_test', ts('Find Test Activities?'));
+    $form->addYesNo('activity_test', ts('Activity is a Test?'));
     $activity_tags = CRM_Core_BAO_Tag::getTags('civicrm_activity');
     if ($activity_tags) {
       foreach ($activity_tags as $tagID => $tagName) {
@@ -545,7 +535,9 @@ class CRM_Activity_BAO_Query {
         array('' => ts('- any -')) + CRM_Campaign_PseudoConstant::engagementLevel()
       );
     }
+    
     $form->assign('buildEngagementLevel', $buildEngagementLevel);
+    $form->setDefaults(array('activity_test' => 0));
   }
 
   static
