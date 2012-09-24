@@ -314,8 +314,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     CRM_Utils_System::flushCache();
 
     // clear permissions stub to not check permissions
-    require_once 'CRM/Core/Permission/UnitTests.php';
-    CRM_Core_Permission_UnitTests::$permissions = NULL;
+    $config = CRM_Core_Config::singleton();
+    $config->userPermissionClass->permissions = NULL;
 
     //flush component settings
     CRM_Core_Component::getEnabledComponents(TRUE);
