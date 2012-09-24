@@ -354,7 +354,7 @@ class CRM_PCP_Form_Campaign extends CRM_Core_Form {
 
     CRM_Core_Session::setStatus(ts("Your Personal Campaign Page has been %1 %2 %3",
         array(1 => $pageStatus, 2 => $approvalMessage, 3 => $notifyStatus)
-      ));
+      ), '', 'info');
     if (!$this->_pageId) {
       $session->pushUserContext(CRM_Utils_System::url('civicrm/pcp/info', "reset=1&id={$pcp->id}&ap={$anonymousPCP}"));
     }

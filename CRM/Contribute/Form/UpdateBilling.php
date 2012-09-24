@@ -294,6 +294,8 @@ class CRM_Contribute_Form_UpdateBilling extends CRM_Core_Form {
         $status = ts('Billing details for your automatically renewed %1 membership have been updated.',
           array(1 => $tplParams['membershipType'])
         );
+        $msgTitle = ts('Details Updated');
+        $msgType = 'success';
       }
       else {
         $status = ts('Billing details for the recurring contribution of %1, every %2 %3 have been updated.',
@@ -303,6 +305,9 @@ class CRM_Contribute_Form_UpdateBilling extends CRM_Core_Form {
             3 => $this->_subscriptionDetails->frequency_unit,
           )
         );
+        $msgTitle = ts('Details Updated');
+        $msgType = 'success';
+        
         $tplParams = array(
           'recur_frequency_interval' => $this->_subscriptionDetails->frequency_interval,
           'recur_frequency_unit' => $this->_subscriptionDetails->frequency_unit,
@@ -416,12 +421,14 @@ class CRM_Contribute_Form_UpdateBilling extends CRM_Core_Form {
     }
     else {
       $status = ts('There was some problem updating the billing details.');
+      $msgTitle = ts('Update Error');
+      $msgType = 'error';
     }
 
     $session = CRM_Core_Session::singleton();
     $userID  = $session->get('userID');
     if ( $userID && $status) {
-      CRM_Core_Session::setStatus($status);
+      $session->setStatus($status, $msgTitle, $msgType);
     } else if (!$userID) {
       if ($status) 
         CRM_Utils_System::setUFMessage($status);

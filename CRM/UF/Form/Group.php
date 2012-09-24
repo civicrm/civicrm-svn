@@ -319,7 +319,7 @@ class CRM_UF_Form_Group extends CRM_Core_Form {
     if ($this->_action & CRM_Core_Action::DELETE) {
       $title = CRM_Core_BAO_UFGroup::getTitle($this->_id);
       CRM_Core_BAO_UFGroup::del($this->_id);
-      CRM_Core_Session::setStatus(ts("Your CiviCRM Profile '%1' has been deleted.", array(1 => $title)));
+      CRM_Core_Session::setStatus(ts("Your CiviCRM Profile '%1' has been deleted.", array(1 => $title)), ts('Profile Deleted'), 'success');
     }
     elseif ($this->_action & CRM_Core_Action::DISABLE) {
       $ufJoinParams = array('uf_group_id' => $this->_id);
@@ -362,13 +362,13 @@ class CRM_UF_Form_Group extends CRM_Core_Form {
 
       if ($this->_action & CRM_Core_Action::UPDATE) {
         $url = CRM_Utils_System::url('civicrm/admin/uf/group', 'reset=1&action=browse');
-        CRM_Core_Session::setStatus(ts("Your CiviCRM Profile '%1' has been saved.", array(1 => $ufGroup->title)));
+        CRM_Core_Session::setStatus(ts("Your CiviCRM Profile '%1' has been saved.", array(1 => $ufGroup->title)), ts('Profile Saved'), 'success');
       }
       else {
         $url = CRM_Utils_System::url('civicrm/admin/uf/group/field/add', 'reset=1&action=add&gid=' . $ufGroup->id);
         CRM_Core_Session::setStatus(ts('Your CiviCRM Profile \'%1\' has been added. You can add fields to this profile now.',
             array(1 => $ufGroup->title)
-          ));
+          ), ts('Profile Added'), 'success');
       }
       $session = CRM_Core_Session::singleton();
       $session->replaceUserContext($url);

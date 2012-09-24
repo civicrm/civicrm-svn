@@ -317,7 +317,7 @@ class CRM_Core_BAO_Note extends CRM_Core_DAO_Note {
 
     $return = $note->delete();
     if ($showStatus) {
-      CRM_Core_Session::setStatus($status);
+      CRM_Core_Session::setStatus($status, ts('Deleted'), 'success');
     }
 
     // delete the recently created Note

@@ -423,7 +423,7 @@ WHERE  title = %1
     $updateNestingCache = FALSE;
     if ($this->_action & CRM_Core_Action::DELETE) {
       CRM_Contact_BAO_Group::discard($this->_id);
-      CRM_Core_Session::setStatus(ts("The Group '%1' has been deleted.", array(1 => $this->_title)));
+      CRM_Core_Session::setStatus(ts("The Group '%1' has been deleted.", array(1 => $this->_title)), ts('Group Deleted'), 'success');
       $updateNestingCache = TRUE;
     }
     else {
@@ -465,7 +465,7 @@ WHERE  title = %1
         }
       }
 
-      CRM_Core_Session::setStatus(ts('The Group \'%1\' has been saved.', array(1 => $group->title)));
+      CRM_Core_Session::setStatus(ts('The Group \'%1\' has been saved.', array(1 => $group->title)), ts('Group Saved'), 'success');
 
       /*
              * Add context to the session, in case we are adding members to the group

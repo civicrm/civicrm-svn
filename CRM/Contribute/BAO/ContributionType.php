@@ -138,7 +138,7 @@ class CRM_Contribute_BAO_ContributionType extends CRM_Contribute_DAO_Contributio
         $session = CRM_Core_Session::singleton();
         CRM_Core_Session::setStatus(ts(
             'This contribution type cannot be deleted because it is being referenced by one or more of the following types of records: Contributions, Contribution Pages, or Membership Types. Consider disabling this type instead if you no longer want it used.'
-          ));
+          ), ts('Deletion Error'), 'error');
         return CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/admin/contribute/contributionType', "reset=1&action=browse"));
       }
       else {

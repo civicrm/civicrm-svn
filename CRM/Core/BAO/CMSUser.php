@@ -209,7 +209,7 @@ class CRM_Core_BAO_CMSUser {
         'plural' => 'Created %count new contact records.'
       )
     );
-    CRM_Core_Session::setStatus($status, TRUE);
+    CRM_Core_Session::setStatus($status, ts('Saved'), 'success');
     CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/admin', 'reset=1'));
   }
 

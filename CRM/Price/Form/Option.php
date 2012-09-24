@@ -299,7 +299,7 @@ class CRM_Price_Form_Option extends CRM_Core_Form {
 
       $optionValue = CRM_Price_BAO_FieldValue::create($params, $ids);
 
-      CRM_Core_Session::setStatus(ts("The option '%1' has been saved.", array(1 => $params['label'])), ts('Saved'), 'success');
+      CRM_Core_Session::setStatus(ts("The option '%1' has been saved.", array(1 => $params['label'])), ts('Value Saved'), 'success');
     }
   }
 }

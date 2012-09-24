@@ -197,14 +197,14 @@ class CRM_Core_BAO_PaymentProcessorType extends CRM_Core_DAO_PaymentProcessorTyp
     $dao = CRM_Core_DAO::executeQuery($query, $params);
 
     if ($dao->fetch()) {
-      CRM_Core_Session::setStatus(ts('There is a Payment Processor associated with selected Payment Processor type, hence it can not be deleted.'));
+      CRM_Core_Session::setStatus(ts('There is a Payment Processor associated with selected Payment Processor type, hence it can not be deleted.'), ts('Deletion Error'), 'error');
       return;
     }
 
     $paymentProcessorType = new CRM_Core_DAO_PaymentProcessorType();
     $paymentProcessorType->id = $paymentProcessorTypeId;
     if ($paymentProcessorType->delete()) {
-      CRM_Core_Session::setStatus(ts('Selected Payment Processor type has been deleted.<br>'));
+      CRM_Core_Session::setStatus(ts('Selected Payment Processor type has been deleted.<br>'), '', 'success');
       return TRUE;
   }
 }

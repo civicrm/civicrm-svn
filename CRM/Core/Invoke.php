@@ -62,7 +62,7 @@ class CRM_Core_Invoke {
       // ensure that the user has a good privilege level
       if (CRM_Core_Permission::check('administer CiviCRM')) {
         self::rebuildMenuAndCaches();
-        CRM_Core_Session::setStatus(ts('Menu has been rebuilt'));
+        CRM_Core_Session::setStatus(ts('Menu has been rebuilt'), ts('Complete'), 'success');
         return CRM_Utils_System::redirect();
       }
       else {
@@ -233,7 +233,7 @@ class CRM_Core_Invoke {
     }
 
     CRM_Core_Menu::store();
-    CRM_Core_Session::setStatus(ts('Menu has been rebuilt'));
+    CRM_Core_Session::setStatus(ts('Menu has been rebuilt'), ts('Complete'), 'success');
     return CRM_Utils_System::redirect();
   }
 

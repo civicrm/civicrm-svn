@@ -307,7 +307,7 @@ class CRM_SMS_Form_Group extends CRM_Contact_Form_Task {
 
     if ($qf_Group_submit) {
       $status = ts("Your Mass SMS has been saved.");
-      CRM_Core_Session::setStatus($status);
+      CRM_Core_Session::setStatus($status, ts('Saved'), 'success');
       $url = CRM_Utils_System::url('civicrm/mailing', 'reset=1&sms=1');
       return $this->controller->setDestination($url);
     }

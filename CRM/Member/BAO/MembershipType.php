@@ -163,7 +163,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType {
       }
       if (!$skipRedirect) {
         $session = CRM_Core_Session::singleton();
-        CRM_Core_Session::setStatus($message);
+        CRM_Core_Session::setStatus($message, ts('Membership Not Deleted'), 'error');
         return CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/admin/member/membershipType', 'reset=1&action=browse'));
       }
       else {

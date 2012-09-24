@@ -262,7 +262,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
 
     if (!is_array($this->_fields)) {
       $session = CRM_Core_Session::singleton();
-      CRM_Core_Session::setStatus(ts('This feature is not currently available.'));
+      CRM_Core_Session::setStatus(ts('This feature is not currently available.'), ts('Sorry'), 'error');
       return CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm', 'reset=1'));
     }
 
@@ -731,7 +731,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
       );
       if ($ids) {
         if ($form->_isUpdateDupe == 2) {
-          CRM_Core_Session::setStatus(ts('Note: this contact may be a duplicate of an existing record.'));
+          CRM_Core_Session::setStatus(ts('Note: this contact may be a duplicate of an existing record.'), ts('Possible Duplicate Detected'), 'alert');
         }
         elseif ($form->_isUpdateDupe == 1) {
           if (!$form->_id) {
@@ -1065,7 +1065,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
     ) {
       $params['contactID'] = $this->_id;
       if (!CRM_Core_BAO_CMSUser::create($params, $this->_mail)) {
-        CRM_Core_Session::setStatus(ts('Your profile is not saved and Account is not created.'));
+        CRM_Core_Session::setStatus(ts('Your profile is not saved and Account is not created.'), ts('Profile Error'), 'error');
         $transaction->rollback();
         return CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/profile/create',
             'reset=1&gid=' . $this->_gid

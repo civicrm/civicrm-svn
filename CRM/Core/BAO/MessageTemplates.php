@@ -116,7 +116,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates {
     $messageTemplates = new CRM_Core_DAO_MessageTemplates();
     $messageTemplates->id = $messageTemplatesID;
     $messageTemplates->delete();
-    CRM_Core_Session::setStatus(ts('Selected message template has been deleted.'));
+    CRM_Core_Session::setStatus(ts('Selected message template has been deleted.'), ts('Deleted'), 'success');
   }
 
   /**

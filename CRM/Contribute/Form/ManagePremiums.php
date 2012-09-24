@@ -327,10 +327,10 @@ class CRM_Contribute_Form_ManagePremiums extends CRM_Contribute_Form {
 
       $premium = CRM_Contribute_BAO_ManagePremiums::add($params, $ids);
       if ($error) {
-        CRM_Core_Session::setStatus(ts('No thumbnail of your image was created because the GD image library is not currently compiled in your PHP installation. Product is currently configured to use default thumbnail image. If you have a local thumbnail image you can upload it separately and input the thumbnail URL by editing this premium.'), ts('Notice'));
+        CRM_Core_Session::setStatus(ts('No thumbnail of your image was created because the GD image library is not currently compiled in your PHP installation. Product is currently configured to use default thumbnail image. If you have a local thumbnail image you can upload it separately and input the thumbnail URL by editing this premium.'), ts('Notice'), 'alert');
       }
       else {
-        CRM_Core_Session::setStatus(ts('The Premium \'%1\' has been saved.', array(1 => $premium->name)), ts('Saved'), 'success');
+        CRM_Core_Session::setStatus(ts("The Premium '%1' has been saved.", array(1 => $premium->name)), ts('Saved'), 'success');
       }
     }
   }

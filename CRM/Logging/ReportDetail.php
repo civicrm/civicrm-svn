@@ -75,7 +75,7 @@ class CRM_Logging_ReportDetail extends CRM_Report_Form {
     if (CRM_Utils_Request::retrieve('revert', 'Boolean', CRM_Core_DAO::$_nullObject)) {
       $reverter = new CRM_Logging_Reverter($this->log_conn_id, $this->log_date);
       $reverter->revert($this->tables);
-      CRM_Core_Session::setStatus(ts('The changes have been reverted.'));
+      CRM_Core_Session::setStatus(ts('The changes have been reverted.'), ts('Reverted'), 'success');
       if ($this->cid) {
         CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/contact/view', "reset=1&selectedChild=log&cid={$this->cid}", FALSE, NULL, FALSE));
       }

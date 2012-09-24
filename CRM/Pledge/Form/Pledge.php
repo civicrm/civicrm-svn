@@ -735,7 +735,7 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form {
         }
       }
     }
-    CRM_Core_Session::setStatus($statusMsg);
+    CRM_Core_Session::setStatus($statusMsg, ts('Payment Due'), 'info');
 
     $buttonName = $this->controller->getButtonName();
     if ($this->_context == 'standalone') {

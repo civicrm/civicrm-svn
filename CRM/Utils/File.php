@@ -154,7 +154,7 @@ class CRM_Utils_File {
           }
           elseif (is_file($object)) {
             if (!unlink($object)) {
-              CRM_Core_Session::setStatus(ts('Unable to remove file %1', array(1 => $object)) . '<br/>');
+              CRM_Core_Session::setStatus(ts('Unable to remove file %1', array(1 => $object)), ts('Warning'), 'error');
           }
         }
       }
@@ -164,12 +164,12 @@ class CRM_Utils_File {
       if ($rmdir) {
         if (rmdir($target)) {
           if ($verbose) {
-          CRM_Core_Session::setStatus(ts('Removed directory %1', array(1 => $target)) . '<br/>');
+          	CRM_Core_Session::setStatus(ts('Removed directory %1', array(1 => $target)), '', 'success');
           }
           return TRUE;
       }
         else {
-          CRM_Core_Session::setStatus(ts('Unable to remove directory %1', array(1 => $target)) . '<br/>');
+          CRM_Core_Session::setStatus(ts('Unable to remove directory %1', array(1 => $target)), ts('Warning'), 'error');
     }
   }
     }

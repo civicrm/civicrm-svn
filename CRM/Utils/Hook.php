@@ -169,9 +169,9 @@ abstract class CRM_Utils_Hook {
     $civiModules = CRM_Core_PseudoConstant::getModuleExtensions();
     foreach ($civiModules as $civiModule) {
       if (!file_exists($civiModule['filePath'])) {
-        CRM_Core_Session::setStatus(ts('Error loading module file (%1). Please restore the file or disable the module.', array(
-          1 => $civiModule['filePath'],
-        )) . '<br/>');
+        CRM_Core_Session::setStatus(
+        	ts( 'Error loading module file (%1). Please restore the file or disable the module.', array(1 => $civiModule['filePath']) ),
+        	ts( 'Warning'), 'error');
         continue;
       }
       include_once $civiModule['filePath'];

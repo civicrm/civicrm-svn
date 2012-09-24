@@ -83,7 +83,7 @@ class CRM_Custom_Form_DeleteFile extends CRM_Core_Form {
    */
   public function postProcess() {
     CRM_Core_BAO_File::delete($this->_id, $this->_eid);
-    CRM_Core_Session::setStatus(ts('The attached file has been deleted.'));
+    CRM_Core_Session::setStatus(ts('The attached file has been deleted.'), ts('Deleted'), 'success');
 
     $session = CRM_Core_Session::singleton();
     $toUrl = $session->popUserContext();

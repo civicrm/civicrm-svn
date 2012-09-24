@@ -23,13 +23,13 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{htxt id='accesskeys'}
-<p>
-  <strong>{ts}Use the following key combinations for:{/ts}</strong>
-</p>
+{htxt id="accesskeys-title"}
+  {ts}Access Keys{/ts}
+{/htxt}
+{htxt id="accesskeys"}
 <p></p>
 <ul>
-  <li> ALT+SHIFT+E -<em> Edit Contact(View Contact Summary Page)</em></li>
+  <li> ALT+SHIFT+E -<em> Edit Contact (View Contact Summary Page)</em></li>
   <li> ALT+SHIFT+S -<em> Save Button</em></li>
   <li> ALT+SHIFT+N -<em> Adding a new record in each tab (Activities, Tags,..etc)</em></li>
 </ul>

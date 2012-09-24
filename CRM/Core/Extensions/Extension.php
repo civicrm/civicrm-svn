@@ -274,37 +274,37 @@ class CRM_Core_Extensions_Extension {
     if ($res === TRUE) {
       $zipSubDir = CRM_Utils_Zip::guessBasedir($zip, $this->key);
       if ($zipSubDir === FALSE) {
-        CRM_Core_Session::setStatus(ts('Unable to extract the extension: bad directory structure') . '<br/>');
+        CRM_Core_Session::setStatus(ts('Unable to extract the extension: bad directory structure'), '', 'error');
         return FALSE;
       }
       $path = $config->extensionsDir . DIRECTORY_SEPARATOR . 'tmp';
       $extractedZipPath = $path . DIRECTORY_SEPARATOR . $zipSubDir;
       if (is_dir($extractedZipPath)) {
         if (!CRM_Utils_File::cleanDir($extractedZipPath, TRUE, FALSE)) {
-          CRM_Core_Session::setStatus(ts('Unable to extract the extension: %1 cannot be cleared', array(1 => $extractedZipPath)) . '<br/>');
+          CRM_Core_Session::setStatus(ts('Unable to extract the extension: %1 cannot be cleared', array(1 => $extractedZipPath)), ts('Installation Error'), 'error');
           return FALSE;
         }
       }
       if (!$zip->extractTo($path)) {
-        CRM_Core_Session::setStatus(ts('Unable to extract the extension to %1.', array(1 => $path)) . '<br/>');
+        CRM_Core_Session::setStatus(ts('Unable to extract the extension to %1.', array(1 => $path)), ts('Installation Error'), 'error');
         return FALSE;
       }
       $zip->close();
     }
     else {
-      CRM_Core_Session::setStatus('Unable to extract the extension.');
+      CRM_Core_Session::setStatus(ts('Unable to extract the extension.'), '', 'error');
       return FALSE;
     }
 
     $filename = $extractedZipPath . DIRECTORY_SEPARATOR . 'info.xml';
     if (!is_readable($filename)) {
-      CRM_Core_Session::setStatus(ts('Failed reading data from %1 during installation', array(1 => $filename)) . '<br/>');
+      CRM_Core_Session::setStatus(ts('Failed reading data from %1 during installation', array(1 => $filename)), ts('Installation Error'), 'error');
       return FALSE;
     }
     $newxml = file_get_contents($filename);
 
     if (empty($newxml)) {
-      CRM_Core_Session::setStatus(ts('Failed reading data from %1 during installation', array(1 => $filename)) . '<br/>');
+      CRM_Core_Session::setStatus(ts('Failed reading data from %1 during installation', array(1 => $filename)), ts('Installation Error'), 'error');
       return FALSE;
     }
 
@@ -320,7 +320,7 @@ class CRM_Core_Extensions_Extension {
     );
     
     if (!CRM_Utils_File::cleanDir($extractedZipPath, TRUE, FALSE)) {
-      CRM_Core_Session::setStatus(ts('Failed to clean temp dir: %1', array(1 => $extractedZipPath)) . '<br/>');
+      CRM_Core_Session::setStatus(ts('Failed to clean temp dir: %1', array(1 => $extractedZipPath)), '', 'alert');
     }
     
     return TRUE;
@@ -364,7 +364,7 @@ class CRM_Core_Extensions_Extension {
 
     $fp = fopen($filename, "w");
     if (! $fp) {
-        CRM_Core_Session::setStatus(ts('Unable to write to %1.<br />Is the location writable?', array(1 => $filename)));
+        CRM_Core_Session::setStatus(ts('Unable to write to %1.<br />Is the location writable?', array(1 => $filename)), ts('Write Error'), 'error');
         return;
       }
     curl_setopt($ch, CURLOPT_FILE, $fp);
@@ -374,7 +374,7 @@ class CRM_Core_Extensions_Extension {
       CRM_Core_Error::debug(curl_error($ch));
       CRM_Core_Error::debug(curl_errno($ch)); exit( );
       CRM_Core_Session::setStatus(ts('Unable to download extension from %1. Error Message: %2',
-          array(1 => $this->downloadUrl, 2 => curl_error($ch))));
+          array(1 => $this->downloadUrl, 2 => curl_error($ch))), ts('Download Error'), 'error');
         return;
       }
       else {
@@ -430,7 +430,7 @@ class CRM_Core_Extensions_Extension {
 
   private function _removeExtensionEntry() {
     if (CRM_Core_BAO_Extension::del($this->id)) {
-    CRM_Core_Session::setStatus(ts('Selected option value has been deleted.'));
+    CRM_Core_Session::setStatus(ts('Selected option value has been deleted.'), ts('Deleted'), 'success');
       return TRUE;
   }
   }
@@ -530,7 +530,9 @@ class CRM_Core_Extensions_Extension {
         break;
 
       default:
-        CRM_Core_Session::setStatus("Unrecognized payment hook ($method) in " . __CLASS__ . '::' . __METHOD__);
+        CRM_Core_Session::setStatus(ts( "Unrecognized payment hook (%1) in %2::%3", 
+        								array(1 => $method, 2 =>  __CLASS__ , 3 => __METHOD__) ),
+        								'', 'error');
     }
   }
 

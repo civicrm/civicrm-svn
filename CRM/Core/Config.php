@@ -439,7 +439,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
           // CRM-4949
           $value = $this->templateCompileDir;
           $url = CRM_Utils_System::url('civicrm/admin/setting/path', 'reset=1');
-          CRM_Core_Session::setStatus(ts('%1 has an incorrect directory path. Please go to the <a href="%2">path setting page</a> and correct it.', array(1 => $key, 2 => $url)) . '<br/>');
+          CRM_Core_Session::setStatus(ts('%1 has an incorrect directory path. Please go to the <a href="%2">path setting page</a> and correct it.', array(1 => $key, 2 => $url)), ts('Check Settings'), 'alert');
         }
       }
       elseif ($key == 'lcMessages') {
@@ -556,7 +556,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
         self::$_mail = Mail::factory('mock', $params);
       }
       else {
-        CRM_Core_Session::setStatus(ts('There is no valid SMTP server Setting Or SendMail path setting. Click <a href=\'%1\'>Administer CiviCRM >> Global Settings</a> to set the OutBound Email.', array(1 => CRM_Utils_System::url('civicrm/admin/setting', 'reset=1'))));
+        CRM_Core_Session::setStatus(ts('There is no valid SMTP server Setting Or SendMail path setting. Click <a href=\'%1\'>Administer CiviCRM >> Global Settings</a> to set the OutBound Email.', array(1 => CRM_Utils_System::url('civicrm/admin/setting', 'reset=1'))), ts('Check Settings'), 'alert');
       }
     }
     return self::$_mail;

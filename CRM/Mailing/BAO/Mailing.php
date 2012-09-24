@@ -2217,7 +2217,7 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
     $dao->id = $id;
     $dao->delete();
 
-    CRM_Core_Session::setStatus(ts('Selected mailing has been deleted.'));
+    CRM_Core_Session::setStatus(ts('Selected mailing has been deleted.'), ts('Deleted'), 'success');
   }
 
   /**

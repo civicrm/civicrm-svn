@@ -185,7 +185,7 @@ class CRM_Contribute_Form_Task_Batch extends CRM_Contribute_Form_Task {
     $buttonName = $this->controller->getButtonName('submit');
 
     if ($suppressFields && $buttonName != '_qf_Batch_next') {
-      CRM_Core_Session::setStatus("FILE or Autocomplete Select type field(s) in the selected profile are not supported for Batch Update and have been excluded.");
+      CRM_Core_Session::setStatus(ts("FILE or Autocomplete Select type field(s) in the selected profile are not supported for Batch Update and have been excluded."), ts('Unsupported Field Type'), 'error');
     }
 
     $this->addDefaultButtons(ts('Update Contributions'));
@@ -265,10 +265,10 @@ class CRM_Contribute_Form_Task_Batch extends CRM_Contribute_Form_Task {
           CRM_Core_BAO_CustomValueTable::store($value['custom'], 'civicrm_contribution', $contribution->id);
         }
       }
-      CRM_Core_Session::setStatus("Your updates have been saved.");
+      CRM_Core_Session::setStatus(ts("Your updates have been saved."), ts('Saved'), 'success');
     }
     else {
-      CRM_Core_Session::setStatus("No updates have been saved.");
+      CRM_Core_Session::setStatus(ts("No updates have been saved."), ts('Not Saved'), 'alert');
     }
   }
   //end of function

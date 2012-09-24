@@ -123,7 +123,7 @@ class CRM_Contribute_Form_ContributionPage_AddProduct extends CRM_Contribute_For
         $dao = new CRM_Contribute_DAO_PremiumsProduct();
         $dao->id = $this->_pid;
         $dao->delete();
-        CRM_Core_Session::setStatus(ts('Selected Premium Product has been removed from this Contribution Page.'));
+        CRM_Core_Session::setStatus(ts('Selected Premium Product has been removed from this Contribution Page.'), ts('Saved'), 'success');
         CRM_Utils_System::redirect($url);
       }
 
@@ -213,7 +213,7 @@ class CRM_Contribute_Form_ContributionPage_AddProduct extends CRM_Contribute_For
       $dao     = new CRM_Contribute_DAO_PremiumsProduct();
       $dao->id = $this->_pid;
       $dao->delete();
-      CRM_Core_Session::setStatus(ts('Selected Premium Product has been removed from this Contribution Page.'));
+      CRM_Core_Session::setStatus(ts('Selected Premium Product has been removed from this Contribution Page.'), ts('Saved'), 'success');
       CRM_Utils_System::redirect($url);
     }
     else {

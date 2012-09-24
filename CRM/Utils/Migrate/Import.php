@@ -80,7 +80,7 @@ class CRM_Utils_Migrate_Import {
                 2 => $dao->$keyName,
                 3 => $dao->__table,
               )
-            ) . "<br />");
+            ), '', 'info');
           return FALSE;
         }
       }

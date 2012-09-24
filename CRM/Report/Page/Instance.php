@@ -68,12 +68,12 @@ class CRM_Report_Page_Instance extends CRM_Core_Page {
         CRM_Core_BAO_Navigation::resetNavigation();
       }
 
-      CRM_Core_Session::setStatus(ts('Selected Instance has been deleted.'));
+      CRM_Core_Session::setStatus(ts('Selected Instance has been deleted.'), ts('Deleted'), 'success');
     }
     else {
       $templateInfo = CRM_Core_OptionGroup::getRowValues('report_template', "{$optionVal}", 'value');
       if (empty($templateInfo)) {
-        CRM_Core_Session::setStatus(ts('Could not find template for the instance.'));
+        CRM_Core_Session::setStatus(ts('Could not find template for the instance.'), ts('Template Not Found'), 'error');
         return;
       }
 
@@ -104,7 +104,7 @@ class CRM_Report_Page_Instance extends CRM_Core_Page {
         return $wrapper->run($templateInfo['name'], NULL, NULL);
       }
 
-      CRM_Core_Session::setStatus(ts('Could not find template for the instance.'));
+      CRM_Core_Session::setStatus(ts('Could not find template for the instance.'), ts('Template Not Found'), 'error');
     }
     return CRM_Utils_System::redirect($reportUrl);
   }

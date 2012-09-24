@@ -126,7 +126,7 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form {
       $membershipFee = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType', $this->_memType, 'minimum_fee');
       if (!$membershipFee) {
         $statusMsg = ts('Membership Renewal using a credit card requires a Membership fee. Since there is no fee associated with the selected memebership type, you can use the normal renewal mode.');
-        CRM_Core_Session::setStatus($statusMsg);
+        CRM_Core_Session::setStatus($statusMsg, '', 'info');
         CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/contact/view/membership',
             "reset=1&action=renew&cid={$this->_contactID}&id={$this->_id}&context=membership"
           ));
@@ -888,7 +888,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       $statusMsg .= ' ' . ts('A renewal confirmation and receipt has been sent to %1.', array(1 => $this->_contributorEmail));
     }
 
-    CRM_Core_Session::setStatus($statusMsg);
+    CRM_Core_Session::setStatus($statusMsg, ts('Complete'), 'success');
   }
 }
 

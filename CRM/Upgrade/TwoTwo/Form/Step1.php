@@ -157,7 +157,7 @@ class CRM_Upgrade_TwoTwo_Form_Step1 extends CRM_Upgrade_Form {
       // table(s) found in the db which are no longer required
       // for v2.x, though would not do any harm it's recommended
       // to remove them.
-      CRM_Core_Session::setStatus(ts("Table(s) found in your db which are no longer required for v2.x, though would not do any harm it's recommended to remove them"));
+      CRM_Core_Session::setStatus(ts("Table(s) found in your db which are no longer required for v2.x, though would not do any harm it's recommended to remove them"), ts('Redundant Tables'), 'info');
     }
 
     // show error if any of the tables, use 'MyISAM' storage engine.

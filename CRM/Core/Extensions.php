@@ -130,13 +130,16 @@ class CRM_Core_Extensions {
               1 => $this->_extDir,
               2 => $url,
             )
-          ));
+          ), ts('Directory Unwritable'), 'alert');
         $this->_extDir = NULL;
       }
 
       if (!class_exists('ZipArchive')) {
         // everyone else is dumping messages wily-nily, why can't I?
-        CRM_Core_Session::setStatus(ts('You will not be able to install extensions at this time because your installation of PHP does not support ZIP archives. Please ask your system administrator to install the standard PHP-ZIP extension.'));
+        CRM_Core_Session::setStatus(
+        	ts('You will not be able to install extensions at this time because your installation of PHP does not support ZIP archives. Please ask your system administrator to install the standard PHP-ZIP extension.'),
+        	ts('ZIP Support Required'), 'alert'
+        );
     }
 
       if (empty($config->extensionsURL)) {
@@ -147,7 +150,7 @@ class CRM_Core_Extensions {
               1 => $this->_extDir,
               2 => $url,
             )
-          ));
+          ), ts('Check Settings'), 'alert');
   }
     }
   }
@@ -373,7 +376,7 @@ class CRM_Core_Extensions {
           $ext->setMissing();
           CRM_Core_Session::setStatus(ts('The extension %1 (%2) is listed as installed, but expected files(s) including info.xml are missing. Has this site been moved to a different server location?', array(
             1 => $dao->label, 2 => $dao->full_name,
-          )). '<br/>');
+          )), ts('Corrupted Extension'), 'alert');
       }
       }
       $result[(integer)$dao->id] = $ext;
@@ -730,14 +733,14 @@ class CRM_Core_Extensions {
     if(FALSE === $this->getRepositoryUrl()) {
       // don't check if the user has configured civi not to check an external
       // url for extensions. See CRM-10575.
-      CRM_Core_Session::setStatus(ts('Not checking remote URL for extensions since ext_repo_url is set to false.'));
+      CRM_Core_Session::setStatus(ts('Not checking remote URL for extensions since ext_repo_url is set to false.'), ts('Check Settings'), 'alert');
       return array();
     }
 
     $extdir = file_get_contents($this->getRepositoryUrl());
 
     if ($extdir === FALSE) {
-      CRM_Core_Session::setStatus(ts('The CiviCRM public extensions directory at %1 could not be contacted - please check your webserver can make external HTTP requests or contact CiviCRM team on <a href="http://forum.civicrm.org/">CiviCRM forum</a>.<br />', array(1 => $this->getRepositoryUrl())));
+      CRM_Core_Session::setStatus(ts('The CiviCRM public extensions directory at %1 could not be contacted - please check your webserver can make external HTTP requests or contact CiviCRM team on <a href="http://forum.civicrm.org/">CiviCRM forum</a>.<br />', array(1 => $this->getRepositoryUrl())), ts('Connection Error'), 'error');
     }
 
     $lines = explode("\n", $extdir);
@@ -755,7 +758,7 @@ class CRM_Core_Extensions {
 
     if (empty($exts)) {
       if ($extdir !== FALSE) {
-        CRM_Core_Session::setStatus(ts('Could not retrieve a list of extensions from the CiviCRM public directory at %1 - please contact CiviCRM team on <a href="http://forum.civicrm.org/">CiviCRM forum</a>.<br />', array(1 => $this->getRepositoryUrl())));
+        CRM_Core_Session::setStatus(ts('Could not retrieve a list of extensions from the CiviCRM public directory at %1 - please contact CiviCRM team on <a href="http://forum.civicrm.org/">CiviCRM forum</a>.<br />', array(1 => $this->getRepositoryUrl())), ts('Failed Fetching List'), 'error');
       }
       $exts = array();
     }

@@ -71,4 +71,3 @@ function smarty_function_help($params, &$smarty) {
   $title = ts('%1 Help', array(1 => $name));
   return '<a class="helpicon" title="'.$title.'" href="javascript:cj().crmTooltip(\''.$params['id'].'\', \''.$file.'\', \''.$name.'\')">&nbsp;</a>';
 }
-

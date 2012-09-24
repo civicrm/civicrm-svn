@@ -773,7 +773,7 @@ AND    status IN ( 'Scheduled', 'Running', 'Paused' )
       );
       CRM_Core_DAO::executeQuery($sql, $params);
 
-      CRM_Core_Session::setStatus(ts('The mailing has been canceled.'));
+      CRM_Core_Session::setStatus(ts('The mailing has been canceled.'), ts('Canceled'), 'success');
     }
   }
 

@@ -143,7 +143,7 @@ class CRM_Tag_Form_Tag extends CRM_Core_Form {
 
     CRM_Core_BAO_EntityTag::create($entityTag, $this->_entityTable, $this->_entityID);
 
-    CRM_Core_Session::setStatus(ts('Your update(s) have been saved.'));
+    CRM_Core_Session::setStatus(ts('Your update(s) have been saved.'), ts('Saved'), 'success');
   }
   //end of function
 }

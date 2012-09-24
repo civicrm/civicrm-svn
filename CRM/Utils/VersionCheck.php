@@ -165,10 +165,9 @@ class CRM_Utils_VersionCheck {
 
         $fp = @fopen($cachefile, 'w');
         if (!$fp) {
-          $message = ts('Do not have permission to write to file: %1',
-            array(1 => $cachefile)
-          );
-          CRM_Core_Session::setStatus($message);
+          CRM_Core_Session::setStatus(
+          	ts( 'Do not have permission to write to file: %1', array(1 => $cachefile) ),
+          	ts( 'Insufficient Permissions'), 'error');
           return;
         }
 

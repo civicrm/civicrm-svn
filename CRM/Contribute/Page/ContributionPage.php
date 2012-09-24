@@ -323,7 +323,7 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page {
     }
     elseif ($action & CRM_Core_Action::COPY) {
       $session = CRM_Core_Session::singleton();
-      CRM_Core_Session::setStatus(ts('A copy of the contribution page has been created'));
+      CRM_Core_Session::setStatus(ts('A copy of the contribution page has been created'), ts('Successfully Copied'), 'success');
       $this->copy();
     }
     elseif ($action & CRM_Core_Action::DELETE) {
@@ -346,7 +346,7 @@ AND         cp.page_type = 'contribute'
 ";
 
       if ($pageTitle = CRM_Core_DAO::singleValueQuery($query)) {
-        CRM_Core_Session::setStatus(ts('The \'%1\' cannot be deleted! You must Delete all Personal Campaign Page(s) related with this contribution page prior to deleting the page.', array(1 => $pageTitle)));
+        CRM_Core_Session::setStatus(ts('The \'%1\' cannot be deleted! You must Delete all Personal Campaign Page(s) related with this contribution page prior to deleting the page.', array(1 => $pageTitle)), ts('Deletion Error'), 'error');
 
         CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/admin/contribute', 'reset=1'));
       }

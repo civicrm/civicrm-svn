@@ -200,10 +200,10 @@ class CRM_Member_Form_Membership extends CRM_Member_Form {
             );
           }
           if (CRM_Utils_Array::value('membership_end_date', $hasMembership)) {
-            CRM_Core_Session::setStatus(ts('This contact has an existing %1 membership record with %2 status and end date of %3. <a href="%4">Click here if you want to renew this membership</a> (rather than creating a new membership record). <a href="%5">Click here to view all existing and / or expired memberships for this contact.</a>', array(1 => $hasMembership['membership_type'], 2 => $hasMembership['membership_status'], 3 => CRM_Utils_Date::customformat($hasMembership['membership_end_date']), 4 => $renewUrl, 5 => $membershipTab)));
+            CRM_Core_Session::setStatus(ts('This contact has an existing %1 membership record with %2 status and end date of %3. <a href="%4">Click here if you want to renew this membership</a> (rather than creating a new membership record). <a href="%5">Click here to view all existing and / or expired memberships for this contact.</a>', array(1 => $hasMembership['membership_type'], 2 => $hasMembership['membership_status'], 3 => CRM_Utils_Date::customformat($hasMembership['membership_end_date']), 4 => $renewUrl, 5 => $membershipTab)), '', 'alert');
           }
           else {
-            CRM_Core_Session::setStatus(ts('This contact has an existing %1 membership record with %2 status. <a href="%3">Click here if you want to renew this membership</a> (rather than creating a new membership record). <a href="%4">Click here to view all existing and / or expired memberships for this contact.</a>', array(1 => $hasMembership['membership_type'], 2 => $hasMembership['membership_status'], 3 => $renewUrl, 4 => $membershipTab)));
+            CRM_Core_Session::setStatus(ts('This contact has an existing %1 membership record with %2 status. <a href="%3">Click here if you want to renew this membership</a> (rather than creating a new membership record). <a href="%4">Click here to view all existing and / or expired memberships for this contact.</a>', array(1 => $hasMembership['membership_type'], 2 => $hasMembership['membership_status'], 3 => $renewUrl, 4 => $membershipTab)), '', 'alert');
           }
         }
       }
@@ -917,7 +917,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
             if (!$self->_mode) {
               $status .= ' ' . ts('OR You can sign up by setting Status Override? to true.');
             }
-            CRM_Core_Session::setStatus($status);
+            CRM_Core_Session::setStatus($status, ts('Membership Status Error'), 'error');
           }
         }
       }
@@ -1556,10 +1556,10 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       }
       $statusMsg = implode('<br/>', $statusMsg);
       if ($receiptSend && $mailSend) {
-        $statusMsg .= '<br/>' . ts('A membership confirmation and receipt has been sent to %1.', array(1 => $this->_contributorEmail));
+        $statusMsg .= ts('A membership confirmation and receipt has been sent to %1.', array(1 => $this->_contributorEmail));
       }
     }
-    CRM_Core_Session::setStatus($statusMsg);
+    CRM_Core_Session::setStatus($statusMsg, ts('Complete'), 'success');
 
     $buttonName = $this->controller->getButtonName();
     if ($this->_context == 'standalone') {

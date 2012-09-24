@@ -2344,10 +2344,10 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
         if (CRM_Report_Utils_Report::mailReport($content, $this->_id,
             $this->_outputMode, $attachments
           )) {
-          CRM_Core_Session::setStatus(ts("Report mail has been sent."));
+          CRM_Core_Session::setStatus(ts("Report mail has been sent."), ts('Sent'), 'success');
         }
         else {
-          CRM_Core_Session::setStatus(ts("Report mail could not be sent."));
+          CRM_Core_Session::setStatus(ts("Report mail could not be sent."), ts('Mail Error'), 'error');
         }
 
         CRM_Utils_System::redirect(CRM_Utils_System::url(CRM_Utils_System::currentPath(),
@@ -3140,7 +3140,7 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
       }
 
       CRM_Contact_BAO_GroupContact::addContactsToGroup($contact_ids, $groupID);
-      CRM_Core_Session::setStatus(ts("Listed contact(s) have been added to the selected group."));
+      CRM_Core_Session::setStatus(ts("Listed contact(s) have been added to the selected group."), ts('Contacts Added'), 'success');
     }
   }
 }

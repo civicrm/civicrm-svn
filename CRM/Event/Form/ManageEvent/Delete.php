@@ -104,16 +104,16 @@ class CRM_Event_Form_ManageEvent_Delete extends CRM_Event_Form_ManageEvent {
       $searchURL = CRM_Utils_System::url('civicrm/event/search', 'reset=1');
       CRM_Core_Session::setStatus(ts('This event cannot be deleted because there are participant records linked to it. If you want to delete this event, you must first find the participants linked to this event and delete them. You can use use <a href=\'%1\'> CiviEvent >> Find Participants page </a>.',
           array(1 => $searchURL)
-        ));
+        ), ts('Deletion Error'), 'error');
       return;
     }
     CRM_Event_BAO_Event::del($this->_id);
     if ($this->_isTemplate) {
-      CRM_Core_Session::setStatus(ts("Event template '%1' has been deleted.", array(1 => $this->_title)));
+      CRM_Core_Session::setStatus(ts("Event template '%1' has been deleted.", array(1 => $this->_title)), t('Event Deleted'), 'success');
       CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/admin/eventTemplate', 'reset=1'));
     }
     else {
-      CRM_Core_Session::setStatus(ts("Event '%1' has been deleted.", array(1 => $this->_title)));
+      CRM_Core_Session::setStatus(ts("'%1' has been deleted.", array(1 => $this->_title)), t('Event Deleted'), 'success');
     }
   }
 }

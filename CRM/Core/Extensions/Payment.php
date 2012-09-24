@@ -112,7 +112,7 @@ class CRM_Core_Extensions_Payment {
       $dao->find();
       while ($dao->fetch()) {
         if ($dao->payment_processor_type == $this->ext->name) {
-          CRM_Core_Session::setStatus('Cannot uninstall this extension - there is at least one payment processor using payment processor type provided by it.');
+          CRM_Core_Session::setStatus(ts('Cannot uninstall this extension - there is at least one payment processor using the payment processor type provided by it.'), ts('Uninstall Error'), 'error');
           return;
         }
       }

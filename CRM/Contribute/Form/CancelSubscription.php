@@ -231,6 +231,8 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form {
           $tplParams['membership_status'] = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipStatus', $tplParams['status_id']);
           $tplParams['membershipType'] = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType', $tplParams['membership_type_id']);
           $status = ts('The automatic renewal of your %1 membership has been cancelled as requested. This does not affect the status of your membership - you will receive a separate notification when your membership is up for renewal.', array(1 => $tplParams['membershipType']));
+          $msgTitle = 'Membership Renewal Cancelled';
+          $msgType = 'info';
         }
         else {
           $tplParams['recur_frequency_interval'] = $this->_subscriptionDetails->frequency_interval;
@@ -244,6 +246,8 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form {
               3 => $this->_subscriptionDetails->frequency_unit,
             )
           );
+          $msgTitle = 'Contribution Cancelled';
+          $msgType = 'success';
         }
 
         if (CRM_Utils_Array::value('is_notify', $params) == 1) {
@@ -279,21 +283,28 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form {
         }
       }
       else {
+        $msgType = 'error';
+        $msgTitle = ts('Error');
         if ($params['send_cancel_request'] == 1) {
           $status = ts('Recurring contribution was cancelled successfully by the processor, but could not be marked as cancelled in the database.');
         }
-        else $status = ts('Recurring contribution could not be cancelled in the database.');
+        else {
+          $status = ts('Recurring contribution could not be cancelled in the database.');
+        }
       }
     }
     else {
       $status = ts('The recurring contribution could not be cancelled.');
+      $msgTitle = 'Error Cancelling Contribution';
+      $msgType = 'error';
     }
 
     $session = CRM_Core_Session::singleton();
     $userID  = $session->get('userID');
     if ( $userID && $status) {
-      CRM_Core_Session::setStatus($status);
-    } else if (!$userID) {
+      $session->setStatus($status, $msgTitle, $msgType);
+    }
+    elseif (!$userID) {
       if ($status) 
         CRM_Utils_System::setUFMessage($status);
       // keep result as 1, since we not displaying anything on the redirected page anyway

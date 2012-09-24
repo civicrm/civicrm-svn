@@ -274,8 +274,8 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
           // Redirect the form in case of error
           CRM_Core_Session::setStatus(ts('The membership cannot be saved.') .
             '<br/>' .
-            ts('No valid membership status for given dates.')
-          );
+            ts('No valid membership status for given dates.'),
+          ts('Save Error'), 'error');
           return CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/contact/view',
               "reset=1&force=1&cid={$params['contact_id']}&selectedChild=member"
             ));
@@ -707,7 +707,7 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
             'membership_type_id'
           );
           if (!in_array($membershipTypeID, $membershipTypeIds)) {
-            CRM_Core_Session::setStatus(ts("Oops. The membership you're trying to renew appears to be invalid. Contact your site administrator if you need assistance. If you continue, you will be issued a new membership."));
+            CRM_Core_Session::setStatus(ts("Oops. The membership you're trying to renew appears to be invalid. Contact your site administrator if you need assistance. If you continue, you will be issued a new membership."), ts('Invalid Membership'), 'error');
           }
         }
 
@@ -1142,7 +1142,7 @@ AND civicrm_membership.is_test = %2";
 
     if (!$count) {
       $session = CRM_Core_Session::singleton();
-      CRM_Core_Session::setStatus(ts('There are no status present, You cannot add membership.'));
+      CRM_Core_Session::setStatus(ts('There are no status present, You cannot add membership.'), ts('Deleted'), 'error');
       return CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/contact/view', "reset=1&force=1&cid={$contactId}&selectedChild=member"));
     }
   }

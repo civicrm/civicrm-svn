@@ -98,19 +98,19 @@ class CRM_PCP_Form_PCP extends CRM_Core_Form {
         case CRM_Core_Action::DELETE:
         case 'delete':
           CRM_PCP_BAO_PCP::delete($this->_id);
-          CRM_Core_Session::setStatus(ts("The Campaign Page '%1' has been deleted.", array(1 => $this->_title)));
+          CRM_Core_Session::setStatus(ts("The Campaign Page '%1' has been deleted.", array(1 => $this->_title)), ts('Page Deleted'), 'success');
           break;
 
         case CRM_Core_Action::DISABLE:
         case 'disable':
           CRM_PCP_BAO_PCP::setDisable($this->_id, '0');
-          CRM_Core_Session::setStatus(ts("The Campaign Page '%1' has been disabled.", array(1 => $this->_title)));
+          CRM_Core_Session::setStatus(ts("The Campaign Page '%1' has been disabled.", array(1 => $this->_title)), ts('Page Disabled'), 'success');
           break;
 
         case CRM_Core_Action::ENABLE:
         case 'enable':
           CRM_PCP_BAO_PCP::setDisable($this->_id, '1');
-          CRM_Core_Session::setStatus(ts("The Campaign Page '%1' has been enabled.", array(1 => $this->_title)));
+          CRM_Core_Session::setStatus(ts("The Campaign Page '%1' has been enabled.", array(1 => $this->_title)), ts('Page Enabled'), 'success');
           break;
       }
 
@@ -208,7 +208,7 @@ class CRM_PCP_Form_PCP extends CRM_Core_Form {
   public function postProcess() {
     if ($this->_action & CRM_Core_Action::DELETE) {
       CRM_PCP_BAO_PCP::delete($this->_id);
-      CRM_Core_Session::setStatus(ts("The Campaign Page '%1' has been deleted.", array(1 => $this->_title)));
+      CRM_Core_Session::setStatus(ts("The Campaign Page '%1' has been deleted.", array(1 => $this->_title)), ts('Page Deleted'), 'success');
     }
     else {
       $params = $this->controller->exportValues($this->_name);

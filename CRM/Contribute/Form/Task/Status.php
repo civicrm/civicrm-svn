@@ -298,7 +298,7 @@ AND    co.id IN ( $contribIDs )";
       $template->clearTemplateVars();
     }
 
-    CRM_Core_Session::setStatus(ts('Contribution status has been updated for selected record(s).'));
+    CRM_Core_Session::setStatus(ts('Contribution status has been updated for selected record(s).'), ts('Status Updated'), 'success');
   }
 
   static

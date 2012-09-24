@@ -173,7 +173,7 @@ class CRM_Utils_Mail {
         $message = self::errorMessage($mailer, $result);
         // append error message in case multiple calls are being made to
         // this method in the course of sending a batch of messages.
-        CRM_Core_Session::setStatus($message, TRUE);
+		CRM_Core_Session::setStatus(ts($message), ts('Mailing Error'), 'error');
         return FALSE;
       }
       // CRM-10699

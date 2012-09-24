@@ -107,12 +107,9 @@ class CRM_Grant_Form_Task_Update extends CRM_Grant_Form_Task {
         $updatedGrants++;
       }
     }
-
-    $status = array(
-      ts('Updated Grant(s): %1', array(1 => $updatedGrants)),
-      ts('Total Selected Grant(s): %1', array(1 => count($this->_grantIds))),
-    );
-    CRM_Core_Session::setStatus($status);
+      
+    CRM_Core_Session::setStatus(ts('Updated Grant(s): %1', array(1 => $updatedGrants)), '', 'info');
+    CRM_Core_Session::setStatus(ts('Total Selected Grant(s): %1', array(1 => count($this->_grantIds))), '', 'info');
     CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/grant/search', 'force=1&qfKey=' . $qfKey));
   }
 }

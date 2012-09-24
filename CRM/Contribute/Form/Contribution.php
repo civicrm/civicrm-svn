@@ -346,7 +346,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Core_Form {
               $pledgeTab = CRM_Utils_System::url('civicrm/contact/view',
                 "reset=1&force=1&cid={$this->_contactID}&selectedChild=pledge"
               );
-              CRM_Core_Session::setStatus(ts('This contact has pending or overdue pledge payments. <a href="%1">Click here to view their Pledges tab</a> and verify whether this contribution should be applied as a pledge payment.', array(1 => $pledgeTab)), ts('Notice'));
+              CRM_Core_Session::setStatus(ts('This contact has pending or overdue pledge payments. <a href="%1">Click here to view their Pledges tab</a> and verify whether this contribution should be applied as a pledge payment.', array(1 => $pledgeTab)), ts('Notice'), 'alert');
             }
             elseif ($paymentsDue) {
               // Show user link to oldest Pending or Overdue pledge payment
@@ -362,7 +362,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Core_Form {
                   "reset=1&action=add&cid={$this->_contactID}&ppid={$payments['id']}&context=pledge"
                 );
               }
-              CRM_Core_Session::setStatus(ts('This contact has a pending or overdue pledge payment of %2 which is scheduled for %3. <a href="%1">Click here to enter a pledge payment</a>.', array(1 => $ppUrl, 2 => $ppAmountDue, 3 => $ppSchedDate)), ts('Notice'));
+              CRM_Core_Session::setStatus(ts('This contact has a pending or overdue pledge payment of %2 which is scheduled for %3. <a href="%1">Click here to enter a pledge payment</a>.', array(1 => $ppUrl, 2 => $ppAmountDue, 3 => $ppSchedDate)), ts('Notice'), 'alert');
             }
           }
         }

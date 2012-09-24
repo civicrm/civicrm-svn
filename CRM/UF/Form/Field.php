@@ -749,7 +749,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
         CRM_Core_BAO_UFGroup::updateGroupTypes($this->_gid, $fieldsType);
       }
 
-      CRM_Core_Session::setStatus(ts('Selected Profile Field has been deleted.'));
+      CRM_Core_Session::setStatus(ts('Selected Profile Field has been deleted.'), ts('Profile Field Deleted'), 'success');
       return;
     }
 
@@ -782,7 +782,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
 
     //check for duplicate fields
     if ($params["field_name"][0] != "Formatting" && CRM_Core_BAO_UFField::duplicateField($params, $ids)) {
-      CRM_Core_Session::setStatus(ts('The selected field was not added. It already exists in this profile.'));
+      CRM_Core_Session::setStatus(ts('The selected field already exists in this profile.'), ts('Field Not Added'), 'error');
       return;
     }
     else {
@@ -827,13 +827,13 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
       }
       CRM_Core_Session::setStatus(ts('Your CiviCRM Profile Field \'%1\' has been saved to \'%2\'.',
           array(1 => $name, 2 => $this->_title)
-        ));
+        ), ts('Profile Field Saved'), 'success');
     }
     $buttonName = $this->controller->getButtonName();
 
     $session = CRM_Core_Session::singleton();
     if ($buttonName == $this->getButtonName('next', 'new')) {
-      CRM_Core_Session::setStatus(ts(' You can add another profile field.'));
+      CRM_Core_Session::setStatus(ts(' You can add another profile field.'), '', 'info');
       $session->replaceUserContext(CRM_Utils_System::url('civicrm/admin/uf/group/field/add',
           "reset=1&action=add&gid={$this->_gid}&sbr={$showBestResult}"
         ));

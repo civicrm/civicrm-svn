@@ -325,7 +325,7 @@ ORDER BY civicrm_contribution_total_amount_sum DESC
       }
 
       CRM_Contact_BAO_GroupContact::addContactsToGroup($contact_ids, $groupID);
-      CRM_Core_Session::setStatus(ts("Listed contact(s) have been added to the selected group."));
+      CRM_Core_Session::setStatus(ts("Listed contact(s) have been added to the selected group."), ts('Contacts Added'), 'success');
     }
   }
 

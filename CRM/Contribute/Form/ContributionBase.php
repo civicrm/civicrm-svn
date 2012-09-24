@@ -225,12 +225,12 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form {
               $this->assign('membershipContactName', $employers[$this->_membershipContactID]['name']);
             }
             else {
-              CRM_Core_Session::setStatus(ts("Oops. The membership you're trying to renew appears to be invalid. Contact your site administrator if you need assistance. If you continue, you will be issued a new membership."));
+              CRM_Core_Session::setStatus(ts("Oops. The membership you're trying to renew appears to be invalid. Contact your site administrator if you need assistance. If you continue, you will be issued a new membership."), ts('Membership Invalid'), 'alert');
             }
           }
         }
         else {
-          CRM_Core_Session::setStatus(ts("Oops. The membership you're trying to renew appears to be invalid. Contact your site administrator if you need assistance. If you continue, you will be issued a new membership."));
+          CRM_Core_Session::setStatus(ts("Oops. The membership you're trying to renew appears to be invalid. Contact your site administrator if you need assistance. If you continue, you will be issued a new membership."), ts('Membership Invalid'), 'alert');
         }
         unset($membership);
       }
@@ -675,7 +675,7 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form {
 
         if (array_intersect_key($fields, $fieldsToIgnore)) {
           $fields = array_diff_key($fields, $fieldsToIgnore);
-          CRM_Core_Session::setStatus(ts('Some of the profile fields cannot be configured for this page.'));
+          CRM_Core_Session::setStatus(ts('Some of the profile fields cannot be configured for this page.'), ts('Warning'), 'alert');
         }
 
         $fields = array_diff_assoc($fields, $this->_fields);

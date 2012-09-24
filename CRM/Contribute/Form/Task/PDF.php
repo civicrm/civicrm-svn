@@ -250,12 +250,16 @@ AND    {$this->_componentClause}";
     }
     else {
       if ($suppressedEmails) {
-        $status = array('', ts('Email was NOT sent to %1 contacts (no email address on file, or communication preferences specify DO NOT EMAIL, or contact is deceased).', array(1 => $suppressedEmails)));
+        $status = ts('Email was NOT sent to %1 contacts (no email address on file, or communication preferences specify DO NOT EMAIL, or contact is deceased).', array(1 => $suppressedEmails));
+        $msgTitle = ts('Email Error');
+        $msgType = 'error';
       }
       else {
-        $status = array('', ts('Your mail has been sent.'));
+        $status = ts('Your mail has been sent.');
+        $msgTitle = ts('Sent');
+        $msgType = 'success';
       }
-      CRM_Core_Session::setStatus($status);
+      CRM_Core_Session::setStatus($status, $msgTitle, $msgType);
     }
   }
 }
