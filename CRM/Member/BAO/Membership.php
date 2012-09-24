@@ -745,12 +745,16 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
             $allowAutoRenewOpt = 1;
             if (is_array($form->_paymentProcessors)){
               foreach ($form->_paymentProcessors as $id => $val) {
-                $allowAutoRenewOpt = $allowAutoRenewOpt * $val['is_recur'];
+                if (!$val['is_recur']) {
+                  $allowAutoRenewOpt = 0;
+                  continue;
+                }
               }
             }
 
             $javascriptMethod = array('onclick' => "return showHideAutoRenew( this.value );");
-            $autoRenewMembershipTypeOptions["autoRenewMembershipType_{$value}"] = (int)$allowAutoRenewOpt;
+            $autoRenewMembershipTypeOptions["autoRenewMembershipType_{$value}"] = (int)$allowAutoRenewOpt * CRM_Utils_Array::value($value, $form->_membershipBlock['auto_renew']);;
+
             if ($allowAutoRenewOpt) {
               $allowAutoRenewMembership = TRUE;
             }
