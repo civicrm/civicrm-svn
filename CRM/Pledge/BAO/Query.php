@@ -202,7 +202,6 @@ class CRM_Pledge_BAO_Query {
 
   static
   function where(&$query) {
-    $isTest = FALSE;
     $grouping = NULL;
     foreach (array_keys($query->_params) as $id) {
       if (!CRM_Utils_Array::value(0, $query->_params[$id])) {
@@ -212,19 +211,9 @@ class CRM_Pledge_BAO_Query {
         if ($query->_mode == CRM_Contact_BAO_QUERY::MODE_CONTACTS) {
           $query->_useDistinct = TRUE;
         }
-        if ($query->_params[$id][0] == 'pledge_test') {
-          $isTest = TRUE;
-        }
         $grouping = $query->_params[$id][3];
         self::whereClauseSingle($query->_params[$id], $query);
       }
-    }
-
-    if ($grouping !== NULL &&
-      !$isTest
-    ) {
-      $values = array('pledge_test', '=', 0, $grouping, 0);
-      self::whereClauseSingle($values, $query);
     }
   }
 
@@ -358,10 +347,10 @@ class CRM_Pledge_BAO_Query {
         $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause('civicrm_pledge.is_test',
           $op,
           $value,
-          'Integer'
+          'Boolean'
         );
         if ($value) {
-          $query->_qill[$grouping][] = ts('Find Test Pledges');
+          $query->_qill[$grouping][] = ts('Pledge is a Test');
         }
         $query->_tables['civicrm_pledge'] = $query->_whereTables['civicrm_pledge'] = 1;
         return;
@@ -558,8 +547,7 @@ class CRM_Pledge_BAO_Query {
     // pledge payment related dates
     CRM_Core_Form_Date::buildDateRange($form, 'pledge_payment_date', 1, '_low', '_high', ts('From'), FALSE, FALSE);
 
-    $form->addElement('checkbox', 'pledge_test', ts('Find Test Pledges?'));
-
+    $form->addYesNo('pledge_test', ts('Pledge is a Test?'));
     $form->add('text', 'pledge_amount_low', ts('From'), array('size' => 8, 'maxlength' => 8));
     $form->addRule('pledge_amount_low', ts('Please enter a valid money value (e.g. %1).', array(1 => CRM_Utils_Money::format('9.99', ' '))), 'money');
 
@@ -638,6 +626,7 @@ class CRM_Pledge_BAO_Query {
     CRM_Campaign_BAO_Campaign::addCampaignInComponentSearch($form, 'pledge_campaign_id');
 
     $form->assign('validCiviPledge', TRUE);
+    $form->setDefaults(array('pledge_test' => 0));
   }
 
   static
