@@ -843,16 +843,21 @@ ORDER BY   i.contact_id, i.{$tempColumn}
    */
   public function getTestRecipients($testParams) {
     if (array_key_exists($testParams['test_group'], CRM_Core_PseudoConstant::group())) {
-      $group     = new CRM_Contact_DAO_Group();
-      $group->id = $testParams['test_group'];
-      $contacts  = CRM_Contact_BAO_GroupContact::getGroupContacts($group);
-      foreach ($contacts as $contact) {
+      $contacts = civicrm_api('contact','get', array(
+        'version' =>3,
+        'group' => $testParams['test_group'],
+         'return' => 'id',
+           'options' => array('limit' => 100000000000,
+          ))
+       );
+
+      foreach (array_keys($contacts['values']) as $groupContact) {
         $query = "SELECT DISTINCT civicrm_email.id AS email_id, civicrm_email.is_primary as is_primary,
                                  civicrm_email.is_bulkmail as is_bulkmail
 FROM civicrm_email
 INNER JOIN civicrm_contact ON civicrm_email.contact_id = civicrm_contact.id
 WHERE civicrm_email.is_bulkmail = 1
-AND civicrm_contact.id = {$contact->contact_id}
+AND civicrm_contact.id = {$groupContact}
 AND civicrm_contact.do_not_email = 0
 AND civicrm_contact.is_deceased = 0
 AND civicrm_email.on_hold = 0
@@ -862,7 +867,7 @@ AND civicrm_contact.is_opt_out =0";
           $params = array(
             'job_id' => $testParams['job_id'],
             'email_id' => $dao->email_id,
-            'contact_id' => $contact->contact_id,
+            'contact_id' => $groupContact,
           );
           $queue = CRM_Mailing_Event_BAO_Queue::create($params);
         }
@@ -872,7 +877,7 @@ AND civicrm_contact.is_opt_out =0";
 FROM civicrm_email
 INNER JOIN civicrm_contact ON civicrm_email.contact_id = civicrm_contact.id
 WHERE civicrm_email.is_primary = 1
-AND civicrm_contact.id = {$contact->contact_id}
+AND civicrm_contact.id = {$groupContact}
 AND civicrm_contact.do_not_email =0
 AND civicrm_contact.is_deceased = 0
 AND civicrm_email.on_hold = 0
@@ -882,7 +887,7 @@ AND civicrm_contact.is_opt_out =0";
             $params = array(
               'job_id' => $testParams['job_id'],
               'email_id' => $dao->email_id,
-              'contact_id' => $contact->contact_id,
+              'contact_id' => $groupContact,
             );
             $queue = CRM_Mailing_Event_BAO_Queue::create($params);
           }
