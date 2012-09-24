@@ -47,14 +47,13 @@ class CRM_Core_Page_AJAX {
   static function run() {
     $className = CRM_Utils_Type::escape($_REQUEST['class_name'], 'String');
     $type = '';
-    if (CRM_Utils_Array::value('type', $_POST)) {
-      $type = CRM_Utils_Type::escape($_POST['type'], 'String');
+    if (!empty($_REQUEST['type'])) {
+      $type = CRM_Utils_Type::escape($_REQUEST['type'], 'String');
     }
 
     if (!$className) {
       CRM_Core_Error::fatal(ts('Invalid className: %1', array(1 => $className)));
     }
-
     if (!$type) {
       $wrapper = new CRM_Utils_Wrapper();
       $wrapper->run($className);
@@ -62,10 +61,10 @@ class CRM_Core_Page_AJAX {
     else {
       if ( $type == 'method' ) {
         $execute = "{$className}();";
-      eval($execute);
-    }
+        eval($execute);
+      }
       else {
-        eval("\$page = new {$className}();");
+        $page = new $className();
         $page->run();
       }
     }

@@ -23,6 +23,9 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+{htxt id="id-dash_welcome-title"}
+{ts}Dashboard{/ts}
+{/htxt}
 {htxt id="id-dash_welcome"}
 <p>
   {ts}To include a dashlet report click "Configure Dashboard" and drag the desired dashlet from the "Available Dashlets" block to one of the columns (use the right column for a better fit).{/ts}
@@ -40,6 +43,9 @@
 </p>
 {/htxt}
 
+{htxt id="id-dash_configure-title"}
+{ts}Configuration{/ts}
+{/htxt}
 {htxt id="id-dash_configure"}
 <p>
   {ts}To include a dashlet report drag it from the "Available Dashlets" block to one of the two columns (use the right column for a better fit).{/ts}

@@ -27,6 +27,10 @@
     - However, it may be invoked by other special case activities at some point so use $activityTypeFile condition
       when adding help specific to "New Cases". *}
 
+
+{htxt id="id-details-title"}
+  {ts}Details{/ts}
+{/htxt}
 {htxt id="id-details"}
 {if $activityTypeFile EQ 'OpenCase'}
     <ul>
@@ -42,12 +46,18 @@
 {/if}
 {/htxt}
 
+{htxt id="id-activity_subject-title"}
+  {ts}Title{/ts}
+{/htxt}
 {htxt id="id-activity_subject"}
 {if $activityTypeFile EQ 'OpenCase'}
   {ts}Provide a one-line summary of what this case is about.{/ts}
 {/if}
 {/htxt}
 
+{htxt id="id-case_type-title"}
+  {ts}Case Type{/ts}
+{/htxt}
 {htxt id="id-case_type"}
 {if $activityTypeFile EQ 'OpenCase'}
   {ts}Offer the appropriate service from the list. If the service requires coordination, contact the Director.{/ts}

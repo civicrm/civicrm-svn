@@ -23,6 +23,9 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+{htxt id="id-contribute-intro-title"}
+  {ts}Contribution Dashboard{/ts}
+{/htxt}
 {htxt id="id-contribute-intro"}
     {capture assign=findContactURL}{crmURL p="civicrm/contact/search/basic" q="reset=1"}{/capture}
     {capture assign=importURL}{crmURL p="civicrm/contribute/import" q="reset=1"}{/capture}

@@ -29,12 +29,12 @@
 <div class="crm-accordion-header">
     <div class="icon crm-accordion-pointer"></div> 
     {ts}HTML Format{/ts}
-    {help id="id-message-text" file="CRM/Contact/Form/Task/Email.hlp"}
+    {help id="id-message-text"}
 </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">
   <span class="helpIcon" id="helphtml">
 	<a href="#" onClick="return showToken('Html', 2);">{$form.token2.label}</a>
-	{help id="id-token-html" file="CRM/Contact/Form/Task/Email.hlp"}
+	{help id="id-token-html"}
 	<div id="tokenHtml" style="display:none;">
 	    <input style="border:1px solid #999999;" type="text" id="filter2" size="20" name="filter2" onkeyup="filter(this, 2)"/><br />
 	    <span class="description">{ts}Begin typing to filter list of tokens{/ts}</span><br/>
@@ -63,7 +63,7 @@
  
  <span class="helpIcon" id="helptext">
 	<a href="#" onClick="return showToken('Text', 1);">{$form.token1.label}</a>
-	{help id="id-token-text" file="CRM/Contact/Form/Task/Email.hlp"}
+	{help id="id-token-text"}
 	<div id='tokenText' style="display:none">
 	    <input  style="border:1px solid #999999;" type="text" id="filter1" size="20" name="filter1" onkeyup="filter(this, 1)"/><br />
 	    <span class="description">{ts}Begin typing to filter list of tokens{/ts}</span><br/>
@@ -73,7 +73,7 @@
     <div class="clear"></div>
  
     <div class='text'>
-	{$form.text_message.html}<br />
+      {$form.text_message.html}<br />
     </div>
   </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->    

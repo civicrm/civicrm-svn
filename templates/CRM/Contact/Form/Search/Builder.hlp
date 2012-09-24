@@ -23,6 +23,9 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+{htxt id="builder-intro-title"}
+{ts}Search Builder{/ts}
+{/htxt}
 {htxt id="builder-intro"}
 <p><strong>{ts 1="http://book.civicrm.org/user/working-with-your-data/searching"}IMPORTANT: Search Builder requires you to use specific formats for your search values. Review the <a href="%1">Search documentation in the User Guide</a> before building your first search...{/ts}</strong></p>
 <p>{ts}Create your search by selecting the criteria (record type and field), the comparison operator, and entering the value you want to search for. You can define one or many criteria as a set: <em>Include contacts where... State IS Washington AND City IS Seattle AND Birth Date is later than (>) Jan 1, 1985</em>{/ts}</p>

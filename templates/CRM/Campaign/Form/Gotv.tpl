@@ -28,9 +28,9 @@
   <div class='messages status'>
      <div class="icon inform-icon"></div>
         <ul>
-	   {foreach from=$errorMessages item=errorMsg}	
-             <li>{ts}{$errorMsg}{/ts}</li>
-           {/foreach}
+          {foreach from=$errorMessages item=errorMsg}
+            <li>{ts}{$errorMsg}{/ts}</li>
+          {/foreach}
        </ul>
      </div>
   </div>

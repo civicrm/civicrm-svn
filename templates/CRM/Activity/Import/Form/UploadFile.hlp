@@ -23,6 +23,9 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+{htxt id="id-upload-title"}
+  {ts}Activity Import{/ts}
+{/htxt}
 {htxt id="id-upload"}
     <p>
     {ts}The Activity Import Wizard allows you to easily upload activity from other applications into CiviCRM. Contacts must already exist in your CiviCRM database prior to importing activities for them. Use Import Contacts to create contact records first, if necessary. Then you can match activities to contacts by Email Address, CiviCRM Contact ID, or an External Identifier (see the TIP below).{/ts}

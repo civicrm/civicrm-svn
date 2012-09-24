@@ -44,7 +44,7 @@ function ts(text, params) {
   //TODO: This function is a placeholder for the moment and doesn't do actual translation
   if (params && typeof(params) === 'object') {
     for (var i in params) {
-      text = text.replace(i, params[i]);
+      text = text.replace('%'+i, params[i]);
     }
   }
   return text;

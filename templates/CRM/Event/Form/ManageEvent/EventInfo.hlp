@@ -23,10 +23,16 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+{htxt id="id-template-title-title"}
+  {ts}Title{/ts}
+{/htxt}
 {htxt id="id-template-title"}
 {ts}This is the title that users will see when they are selecting an event template to clone for a new event. It is NOT the title of the event itself.{/ts}
 {/htxt}
 
+{htxt id="id-select-template-title"}
+  {ts}Template{/ts}
+{/htxt}
 {htxt id="id-select-template"}
 {if $isTemplate}
     {ts}You can select an existing Event Template as the basis for the new template you are creating, or you can create the template from scratch.{/ts}
@@ -35,11 +41,17 @@
 {/if}
 {/htxt}
 
+{htxt id="id-participant-role-title"}
+  {ts}Participant Role{/ts}
+{/htxt}
 {htxt id="id-participant-role"}
     <p>{ts}The Role you select here is automatically assigned to people when they register online for this event (usually the default 'Attendee' role).{/ts}</p>
     <p>{ts}You can also allow people to choose a Role by creating a Profile with the Participant Role field. Then include that Profile when you configure the Online Registration page for this event.{/ts}</p>
 {/htxt}
 
+{htxt id="id-listing-title"}
+  {ts}Participant Listing{/ts}
+{/htxt}
 {htxt id="id-listing"}
     {ts}To allow users to see a listing of participants, set this field to 'Name' (list names only), 'Name and Email', or 'Name, Status and Register Date'.{/ts}
     {if ! $isTemplate}
@@ -57,37 +69,52 @@
     {/if}
 {/htxt}
 
+{htxt id="id-max_participants-title"}
+  {ts}Maximum Participants{/ts}
+{/htxt}
 {htxt id="id-max_participants"}
 {ts}Optionally set a maximum number of participants for this event.{/ts}
-
 {if $form.has_waitlist}
   {ts}You may allow users to join a waitlist when the event is full (by checking the box below).{/ts}
 {else}
   {ts}You may allow users to join a waitlist when the event is full. To enable this feature you must first enable the Participant Statuses used by the waitlist work-flow (Administer » CiviEvent » Participant Statuses). Then reload this form and check 'Offer a Waitlist?'.{/ts}
-{/if}   
-
+{/if}
 {ts}Otherwise, the registration link is hidden and the &quot;Event Full Message&quot' is displayed when the maximum number of registrations is reached. Only participants with status types marked as 'counted' are included when checking if the event is full.{/ts}
 {/htxt}
 
+{htxt id="id-event_full_text-title"}
+  {ts}Event-Full Message{/ts}
+{/htxt}
 {htxt id="id-event_full_text"}
 {ts}Text displayed on the Event Information page when the maximum number of registrations is reached (unless you are offering a waitlist). If online registration is enabled, this message will also be displayed if users attempt to register.{/ts}
 {/htxt}
 
+{htxt id="id-has_waitlist-title"}
+  {ts}Waitlist{/ts}
+{/htxt}
 {htxt id="id-has_waitlist"}
 {ts}Check this box to allow users to join a waitlist if the event is full. If a space becomes available, the first participant from the waitlist will move to 'Pending from waitlist' status, and will be sent an email with a link to complete their registration (including paying event fees - if any).{/ts}
 {/htxt}
 
+{htxt id="id-help-waitlist_text-title"}
+  {ts}Waitlist Text{/ts}
+{/htxt}
 {htxt id="id-help-waitlist_text"}
 {ts}This message is displayed on the event information and event registration pages when the event is full AND the waitlist feature is enabled.{/ts} 
 {/htxt}
 
+{htxt id="id-is_map-title"}
+  {ts}Map{/ts}
+{/htxt}
 {htxt id="id-is_map"}
 {capture assign=mapURL}{crmURL p='civicrm/admin/setting/mapping' q="reset=1"}{/capture} 
 {ts 1=$mapURL}Include map presenting event location on event information page? (A map provider must be configured under <a href='%1'>Global Settings &raquo; Mapping</a>){/ts}
 {/htxt}
 
+{htxt id="id-is_share-title"}
+  {ts}Social Sharing{/ts}
+{/htxt}
 {htxt id="id-is_share"}
 <p>{ts}When enabled, links allowing people to share this event with their social network will be displayed (e.g. Facebook "Like", Google+, and Twitter).{/ts}</p>
 <p>{ts}Social media links will be included on the Event Info page, Thank-you page, Tell-a-Friend page (if enabled), and in event confirmation emails.{/ts}</p>
-
 {/htxt}

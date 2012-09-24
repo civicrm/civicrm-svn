@@ -34,10 +34,7 @@
  */
 
 /**
- * Replace the value of an attribute in the input string. Assume
- * the the attribute is well formed, of the type name="value". If
- * no replacement is mentioned the value is inserted at the end of
- * the form element
+ * Adds inline help
  *
  * @param array  $params the function params
  * @param object $smarty reference to the smarty object
@@ -62,22 +59,16 @@ function smarty_function_help($params, &$smarty) {
     $file = $smarty->_tpl_vars['tplFile'];
   }
   else {
-    return;
+    return $help;
   }
 
-  $file = str_replace('.tpl', '.hlp', $file);
-  $id = urlencode($params['id']);
-  if ($id == 'accesskeys') {
-    $file = 'CRM/common/accesskeys.hlp';
+  $file = str_replace(array('.tpl', '.hlp'), '', $file);
+  if ($params['id'] == 'accesskeys') {
+    $file = 'CRM/common/accesskeys';
   }
-  $config = CRM_Core_Config::singleton();
-  $smarty->assign('id', $params['id']);
-  if (!$help) {
-    $help = $smarty->fetch($file);
-  }
-  return <<< EOT
-<script type="text/javascript"> cj( function() { cj(".helpicon").toolTip(); });</script>
-<div class="helpicon">&nbsp;<span id="{$id}_help" style="display:none">$help</span></div>&nbsp;&nbsp;&nbsp;
-EOT;
+  $smarty->assign('id', $params['id'] . '-title');
+  $name = trim($smarty->fetch($file . '.hlp'));
+  $title = ts('%1 Help', array(1 => $name));
+  return '<a class="helpicon" title="'.$title.'" href="javascript:cj().crmTooltip(\''.$params['id'].'\', \''.$file.'\', \''.$name.'\')">&nbsp;</a>';
 }
 

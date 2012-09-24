@@ -25,11 +25,13 @@
 */ 
 (function($){ $.fn.crmaccordions = function(){
   var crmAccordionWrapper = $('.crm-accordion-wrapper').not('.crm-accordion-processed, .crm-accordion-wrapper div');  
+    crmAccordionWrapper.on('click', 'div.crm-accordion-header a', function (e) {
+      // Allow normal clicking of links
+      e.stopPropagation();
+    });
     crmAccordionWrapper.on('click', 'div.crm-accordion-header', function () {
       $(this).parent().toggleClass('crm-accordion-open').toggleClass('crm-accordion-closed');
-		//return false to prevent wiring of click event
-		return false;
-		});
+    });
   crmAccordionWrapper.addClass('crm-accordion-processed');
-	};
+  };
 })(jQuery);

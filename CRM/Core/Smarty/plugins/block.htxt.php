@@ -46,7 +46,7 @@
 function smarty_block_htxt($params, $text, &$smarty) {
   $id = $params['id'];
   if ($id == $smarty->_tpl_vars['id']) {
-    return "<div class='crm-help'>$text</div>";
+    return $text;
   }
   else {
     return NULL;

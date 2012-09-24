@@ -24,35 +24,27 @@
 * +--------------------------------------------------------------------+
 */
 (function($, undefined){ 
-  $.fn.crmtooltip = function(){
-    $('a.crm-summary-link').not('.crm-processed')
-      .addClass('crm-processed')
-      .live('mouseover',
-        function(e)  {
-            $(this).addClass('crm-tooltip-active');
-            topDistance = e.pageY - $(window).scrollTop();
-            if (topDistance < 300 | topDistance < $(this).children('.crm-tooltip-wrapper').height()) {
-                  $(this).addClass('crm-tooltip-down');
-              }
-          if ($(this).children('.crm-tooltip-wrapper').length == '') {
-            $(this).append('<div class="crm-tooltip-wrapper"><div class="crm-tooltip"></div></div>');
-            $(this).children().children('.crm-tooltip')
-              .html('<div class="crm-loading-element"></div>')
-              .load(this.href);
-          }
+  var tip;
+  $.fn.crmTooltip = function(id, tpl, title) {
+    tip && tip.close && tip.close();
+    var options = {
+      expires: 0
+    };
+    tip = $().crmAlert('...', title, 'crm-tooltip crm-msg-loading', options);
+    $.ajax($.crmURL('civicrm/ajax/inline'),
+      {
+        data: {class_name:'CRM_Core_Page_Help', type: 'page', id: id, tpl: tpl},
+        dataType: 'html',
+        success: function(data) {
+          $('#crm-notification-container .crm-tooltip .notify-content:last').html(data);
+          $('#crm-notification-container .crm-tooltip').removeClass('crm-msg-loading').addClass('info');
+        },
+        error: function(data) {
+          $('#crm-notification-container .crm-tooltip .notify-content:last').html('Unable to load help file.');
+          $('#crm-notification-container .crm-tooltip').removeClass('crm-msg-loading').addClass('error');
         }
-      )
-      .live('mouseout',
-        function(){
-          $(this).removeClass('crm-tooltip-active');
-          $(this).removeClass('crm-tooltip-down');
-        }
-      )
-      .live('click',
-        function(){
-          return false;
-        }
-      );
+      }
+    );
   };
 
   $.fn.crmAlert = function(text, title, type, options) {
@@ -150,7 +142,7 @@
     });
     // Handle qf form errors
     $('#crm-container form :input.error').one('blur', function() {
-      $('.ui-notify-message .icon.error').click();
+      $('.ui-notify-message.error a.ui-notify-close').click();
       $(this).removeClass('error');
       $(this).next('span.crm-error').remove();
       $('label[for="' + $(this).attr('name') + '"], label[for="' + $(this).attr('id') + '"]').removeClass('crm-error').find('.crm-error').removeClass('crm-error');

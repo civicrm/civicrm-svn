@@ -23,6 +23,9 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+{htxt id="id-event-intro-title"}
+  {ts}Event Dashboard{/ts}
+{/htxt}
 {htxt id="id-event-intro"}
     {capture assign=findContactURL}{crmURL p="civicrm/contact/search/basic" q="reset=1"}{/capture}
     {capture assign=importURL}{crmURL p="civicrm/event/import" q="reset=1"}{/capture}

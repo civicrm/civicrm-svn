@@ -23,6 +23,9 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+{htxt id="id-member_is_primary-title"}
+  {ts}Member Search{/ts}
+{/htxt}
 {htxt id="id-member_is_primary"}
 {ts}Indicate whether you want the search results to include:{/ts}
 <ul><li>{ts}all members, regardless of whether they are the direct member or inherit it through a relationship,{/ts}</li>
