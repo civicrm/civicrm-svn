@@ -306,14 +306,15 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
   }
 
   /**
-   * function to get the list of groups for contact based on status of membership
+   * Function to get the list of groups for contact based on status of group membership
    *
    * @param int     $contactId         contact id
    * @param string  $status            state of membership
    * @param int     $numGroupContact   number of groups for a contact that should be shown
    * @param boolean $count             true if we are interested only in the count
    * @param boolean $ignorePermission  true if we should ignore permissions for the current user
-   *                                   useful in profile where permissions are limited for the user
+   *                                   useful in profile where permissions are limited for the user. If left
+   *                                   at false only groups viewable by the current user are returned
    * @param boolean $onlyPublicGroups  true if we want to hide system groups
    *
    * @return array (reference )|int $values the relevant data object values for the contact or
@@ -366,7 +367,7 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
       $permission = ' ( 1 ) ';
     }
     else {
-      $permission = CRM_Core_Permission::whereClause(CRM_Core_Permission::VIEW, $tables, $whereTables);
+      $permission = CRM_Core_Permission::getPermissionedStaticGroupClause(CRM_Core_Permission::VIEW, $tables, $whereTables);
     }
 
     $from = CRM_Contact_BAO_Query::fromClause($tables);
