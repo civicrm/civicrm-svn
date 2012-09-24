@@ -90,14 +90,10 @@
 		{/if}
 		<tr class="crm-event-manage-eventinfo-form-block-max_participants">
 			<td class="label">{$form.max_participants.label}</td>
-      {assign var="waitlist" value=0}
-      {if $form.has_waitlist}
-        {assign var="waitlist" value=1}
-      {/if}
 			<td>{$form.max_participants.html|crmAddClass:four} {help id="id-max_participants" waitlist=$waitlist}</td>
 		</tr>
     <tr id="id-waitlist" class="crm-event-manage-eventinfo-form-block-has_waitlist">
-      {if $form.has_waitlist}
+      {if $waitlist}
         <td class="label">{$form.has_waitlist.label}</td>
         <td>{$form.has_waitlist.html} {help id="id-has_waitlist"}</td>
       {/if}

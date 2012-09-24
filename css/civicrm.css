@@ -3453,6 +3453,9 @@ div.m ul#civicrm-menu,
 #crm-container div.ui-notify-message a.ui-notify-cross { margin-top:-4px; float:right; cursor:pointer; text-decoration:none; font-size:12px; font-weight:bold; text-shadow:0 1px 1px #fff; padding:2px; color: #FFFEB2 }
 #crm-container div.ui-notify-message .ui-notify-cross:hover { color:#ffffab }
 #crm-container div.ui-notify-message .ui-notify-cross:active { position:relative; top:1px }
+#crm-container div.ui-notify-message table, #crm-container div.ui-notify-message tbody {
+  border: 0 none;
+}
 #crm-container div.ui-notify-message div.icon {
   background:transparent url("../i/message-icons.png") no-repeat 0 0;
   width:24px;
@@ -3469,6 +3472,8 @@ div.m ul#civicrm-menu,
 #crm-container div.ui-notify-message.error div.icon {
   background-position: -72px 0px;
 }
+
+/* Public Pages */
 
 #crm-container.crm-public input[type="text"],
 #crm-container.crm-public select {

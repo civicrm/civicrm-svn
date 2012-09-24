@@ -34,9 +34,10 @@
   });
   cj.crmURL('init', '{/literal}{crmURL p="civicrm/example" q="placeholder"}{literal}');
 
-  var CRM = {
-    urlIsPublic: {/literal}{if $urlIsPublic}true{else}false{/if}{literal}
-  };
+  var CRM = {{/literal}
+    urlIsPublic: {if $urlIsPublic}true{else}false{/if},
+    userFramework: '{$config->userFramework}'
+  {literal}};
 
 </script>
 {/literal}
