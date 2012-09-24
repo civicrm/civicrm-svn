@@ -183,23 +183,6 @@ class CRM_Core_Permission_Drupal {
         $clauses[] = ' ( civicrm_group_contact.group_id IN (' . implode(', ', array_keys(self::$_viewPermissionedGroups[$groupKey])) . " ) AND civicrm_group_contact.status = 'Added' ) ";
         $tables['civicrm_group_contact'] = 1;
         $whereTables['civicrm_group_contact'] = 1;
-
-
-        // foreach group that is potentially a saved search, add the saved search clause
-        foreach (array_keys(self::$_viewPermissionedGroups[$groupKey]) as $id) {
-          $group = new CRM_Contact_DAO_Group();
-          $group->id = $id;
-          if ($group->find(TRUE) && $group->saved_search_id) {
-            $clause = CRM_Contact_BAO_SavedSearch::whereClause($group->saved_search_id,
-              $tables,
-              $whereTables
-            );
-            if (trim($clause)) {
-              $clauses[] = $clause;
-            }
-          }
-        }
-
         $clause = ' ( ' . implode(' OR ', $clauses) . ' ) ';
       }
     }
