@@ -25,15 +25,17 @@
 */
 (function($, undefined){ 
   var tip;
-  $.fn.crmTooltip = function(id, tpl, title) {
+  $.fn.crmTooltip = function(title, params) {
     tip && tip.close && tip.close();
     var options = {
       expires: 0
     };
     tip = $().crmAlert('...', title, 'crm-tooltip crm-msg-loading', options);
+    params.class_name = 'CRM_Core_Page_Help';
+    params.type = 'page';
     $.ajax($.crmURL('civicrm/ajax/inline'),
       {
-        data: {class_name:'CRM_Core_Page_Help', type: 'page', id: id, tpl: tpl},
+        data: params,
         dataType: 'html',
         success: function(data) {
           $('#crm-notification-container .crm-tooltip .notify-content:last').html(data);

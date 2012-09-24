@@ -175,10 +175,11 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent {
 
     if ($this->_action & CRM_Core_Action::ADD) {
       $eventTemplates = CRM_Event_PseudoConstant::eventTemplates();
-      if (CRM_Utils_System::isNull($eventTemplates)) {
-        $this->assign('noEventTemplates', TRUE);
+      if (CRM_Utils_System::isNull($eventTemplates) && !$this->_isTemplate) {
+        $url = CRM_Utils_System::url('civicrm/admin/eventTemplate', array('reset' => 1));
+        CRM_Core_Session::setStatus(ts('If you find that you are creating multiple events with similar settings, you may want to use the <a href="%1">Event Templates</a> feature to streamline your workflow.', array(1 => $url)), ts('Tip'), 'info');
       }
-      else {
+      if (!CRM_Utils_System::isNull($eventTemplates)) {
         $this->add('select', 'template_id', ts('From Template'), array(
           '' => ts('- select -')) + $eventTemplates,
           FALSE, array('onchange' => "reloadWindow( this.value );")

@@ -52,22 +52,24 @@ function smarty_function_help($params, &$smarty) {
     $help = '<div class="crm-help">' . $params['text'] . '</div>';
   }
 
-  if (isset($params['file'])) {
-    $file = $params['file'];
+  if (empty($params['file']) && isset($smarty->_tpl_vars['tplFile'])) {
+    $params['file'] = $smarty->_tpl_vars['tplFile'];
   }
-  elseif (isset($smarty->_tpl_vars['tplFile'])) {
-    $file = $smarty->_tpl_vars['tplFile'];
-  }
-  else {
+  elseif (empty($params['file'])) {
     return $help;
   }
 
-  $file = str_replace(array('.tpl', '.hlp'), '', $file);
+  $params['file'] = str_replace(array('.tpl', '.hlp'), '', $params['file']);
   if ($params['id'] == 'accesskeys') {
-    $file = 'CRM/common/accesskeys';
+    $params['file'] = 'CRM/common/accesskeys';
   }
   $smarty->assign('id', $params['id'] . '-title');
-  $name = trim($smarty->fetch($file . '.hlp'));
+  $name = trim($smarty->fetch($params['file'] . '.hlp'));
   $title = ts('%1 Help', array(1 => $name));
-  return '<a class="helpicon" title="'.$title.'" href="javascript:cj().crmTooltip(\''.$params['id'].'\', \''.$file.'\', \''.$name.'\')">&nbsp;</a>';
+  unset($params['text']);
+  // Format for json
+  foreach ($params as &$param) {
+    $param = $param === NULL ? '' : $param;
+  }
+  return '<a class="helpicon" title="' . $title . '" href=\'javascript:cj().crmTooltip("' . $name . '", ' . json_encode($params) . ')\'>&nbsp;</a>';
 }

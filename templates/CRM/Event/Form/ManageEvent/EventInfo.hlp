@@ -27,7 +27,7 @@
   {ts}Title{/ts}
 {/htxt}
 {htxt id="id-template-title"}
-{ts}This is the title that users will see when they are selecting an event template to clone for a new event. It is NOT the title of the event itself.{/ts}
+{ts}This is the title that users will see when they are selecting an event template to clone for a new event. It is <em>not</em> the title of the event itself.{/ts}
 {/htxt}
 
 {htxt id="id-select-template-title"}
@@ -54,12 +54,12 @@
 {/htxt}
 {htxt id="id-listing"}
     {ts}To allow users to see a listing of participants, set this field to 'Name' (list names only), 'Name and Email', or 'Name, Status and Register Date'.{/ts}
-    {if ! $isTemplate}
+    {if !$isTemplate}
         {if $config->userSystem->is_drupal}
             {ts}You will need to set Drupal Access Control permissions to include 'view event participants' for any Roles you want to access this listing.{/ts}
             {if $action eq 2 AND $entityId}
                 {ts}Create links to the listing page by copying the following URL, and adding it to the Event Description below and / or as a menu item or links elsewhere on your site:{/ts}<br />
-                <strong>{crmURL a=true p='civicrm/event/participant' q="reset=1&id=`$entityId`"}</strong>
+                <em>{crmURL a=true p='civicrm/event/participant' q="reset=1&id=`$entityId`"}</em>
             {else} {* Creating new event *}
                 {ts}After adding your event, create links to the listing page by copying the URL provided in the 'Participant Listing' section of the Configure Event page.{/ts}
             {/if}
@@ -74,7 +74,7 @@
 {/htxt}
 {htxt id="id-max_participants"}
 {ts}Optionally set a maximum number of participants for this event.{/ts}
-{if $form.has_waitlist}
+{if $waitlist}
   {ts}You may allow users to join a waitlist when the event is full (by checking the box below).{/ts}
 {else}
   {ts}You may allow users to join a waitlist when the event is full. To enable this feature you must first enable the Participant Statuses used by the waitlist work-flow (Administer » CiviEvent » Participant Statuses). Then reload this form and check 'Offer a Waitlist?'.{/ts}
@@ -109,6 +109,13 @@
 {htxt id="id-is_map"}
 {capture assign=mapURL}{crmURL p='civicrm/admin/setting/mapping' q="reset=1"}{/capture} 
 {ts 1=$mapURL}Include map presenting event location on event information page? (A map provider must be configured under <a href='%1'>Global Settings &raquo; Mapping</a>){/ts}
+{/htxt}
+
+{htxt id="id-is_public-title"}
+  {ts}Public Events{/ts}
+{/htxt}
+{htxt id="id-is_public"}
+<p>{ts}When enabled, this event will be included in iCalendar feeds and displayed on your site's "Upcoming Events" block.{/ts}</p>
 {/htxt}
 
 {htxt id="id-is_share-title"}

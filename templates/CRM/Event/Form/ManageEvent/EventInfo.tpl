@@ -24,16 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* Step 1 of New Event Wizard, and Edit Event Info form. *} 
-{if $noEventTemplates}
-	{capture assign=etUrl}{crmURL p='civicrm/admin/eventTemplate' q="reset=1"}{/capture}
-        <div class="status message">
-	<table class="form-layout">
-	        <tr><td><div class="icon inform-icon"></div></td>
-	            <td class="status">{ts 1=$etUrl}If you find that you are creating multiple events with similar settings, you may want to use the <a href='%1'>Event Templates</a> feature to streamline your workflow.{/ts}</td>
-	        </tr>
-	</table>
-        </div>
-{/if}
+
 <div class="crm-block crm-form-block crm-event-manage-eventinfo-form-block">
 {if $cdType} 
 	{include file="CRM/Custom/Form/CustomData.tpl"} 
@@ -46,7 +37,7 @@
     	       {if $form.template_id}
 			<tr class="crm-event-manage-eventinfo-form-block-template_id">
 				<td class="label">{$form.template_id.label}</td>
-    				<td>{$form.template_id.html} {help id="id-select-template"}</td>
+    				<td>{$form.template_id.html} {help id="id-select-template" isTemplate=$isTemplate}</td>
     			</tr>
     		{/if}
 		{if $form.template_title}
@@ -57,8 +48,7 @@
 		{/if}
 		<tr class="crm-event-manage-eventinfo-form-block-event_type_id">
 			<td class="label">{$form.event_type_id.label}</td>
-			<td>{$form.event_type_id.html}<br />
-			<span class="description">{ts}After selecting an Event Type, this page will display any custom event fields for that type.{/ts}</td>
+			<td>{$form.event_type_id.html}</td>
 		</tr>
 
 	        {* CRM-7362 --add campaign *}
@@ -67,15 +57,12 @@
 
 		<tr class="crm-event-manage-eventinfo-form-block-default_role_id">
 			<td class="label">{$form.default_role_id.label}</td>
-			<td>{$form.default_role_id.html}<br />
-			<span class="description">{ts}The Role you select here is automatically assigned to people when they register online for this event (usually the default 'Attendee' role).{/ts}
-			{help id="id-participant-role"}</td>
+			<td>{$form.default_role_id.html} {help id="id-participant-role"}
+			</td>
 		</tr>
 		<tr class="crm-event-manage-eventinfo-form-block-participant_listing_id">
 			<td class="label">{$form.participant_listing_id.label}</td>
-			<td>{$form.participant_listing_id.html}<br />
-			<span class="description"> {ts}To allow users to see a listing of participants, set this field to 'Name' (list names only), 'Name and Email', or 'Name, Status and Register Date'.{/ts} 
-			{help id="id-listing"} </span></td>
+			<td>{$form.participant_listing_id.html} {help id="id-listing" isTemplate=$isTemplate action=$action entityId=$entityId}</td>
 		</tr>
 		<tr class="crm-event-manage-eventinfo-form-block-title">
 			<td class="label">{$form.title.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='title' id=$eventID}{/if}</td>
@@ -103,7 +90,11 @@
 		{/if}
 		<tr class="crm-event-manage-eventinfo-form-block-max_participants">
 			<td class="label">{$form.max_participants.label}</td>
-			<td>{$form.max_participants.html|crmAddClass:four} {help id="id-max_participants"}</td>
+      {assign var="waitlist" value=0}
+      {if $form.has_waitlist}
+        {assign var="waitlist" value=1}
+      {/if}
+			<td>{$form.max_participants.html|crmAddClass:four} {help id="id-max_participants" waitlist=$waitlist}</td>
 		</tr>
     <tr id="id-waitlist" class="crm-event-manage-eventinfo-form-block-has_waitlist">
       {if $form.has_waitlist}
@@ -112,7 +103,8 @@
       {/if}
     </tr>
 		<tr id="id-event_full" class="crm-event-manage-eventinfo-form-block-event_full_text">
-			<td class="label">{$form.event_full_text.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='event_full_text' id=$eventID}{/if}<br />{help id="id-event_full_text"}</td>
+			<td class="label">{$form.event_full_text.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='event_full_text' id=$eventID}{/if}
+      <br />{help id="id-event_full_text"}&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>{$form.event_full_text.html}</td>
 		</tr>
 		<tr id="id-waitlist-text" class="crm-event-manage-eventinfo-form-block-waitlist_text">
@@ -127,13 +119,11 @@
 		</tr>
 		<tr class="crm-event-manage-eventinfo-form-block-is_public">
 			<td>&nbsp;</td>
-			<td>{$form.is_public.html} {$form.is_public.label}<br />
-			<span class="description">{ts}Include this event in iCalendar feeds?{/ts}</span></td>
+			<td>{$form.is_public.html} {$form.is_public.label}{help id="id-is_public"}</td>
 		</tr>
 		<tr class="crm-event-manage-eventinfo-form-block-is_share">
 			<td>&nbsp;</td>
-			<td>{$form.is_share.html} {$form.is_share.label} {help id="id-is_share"}<br />
-			<span class="description">{ts}When enabled, links allowing people to share this event with their social network will be displayed (e.g. Facebook "Like", Google+, and Twitter).{/ts}</span></td>
+			<td>{$form.is_share.html} {$form.is_share.label} {help id="id-is_share"}
 		</tr>
 		<tr class="crm-event-manage-eventinfo-form-block-is_active">
 			<td>&nbsp;</td>
