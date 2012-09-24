@@ -60,8 +60,7 @@ class CRM_Core_Permission {
    */
   public static function getPermission() {
     $config = CRM_Core_Config::singleton();
-    require_once (str_replace('_', DIRECTORY_SEPARATOR, $config->userPermissionClass) . '.php');
-    return eval('return ' . $config->userPermissionClass . '::getPermission( );');
+    return $config->userPermissionClass->getPermission( );
   }
 
   /**
@@ -75,8 +74,7 @@ class CRM_Core_Permission {
    */
   static function check($str) {
     $config = CRM_Core_Config::singleton();
-    require_once (str_replace('_', DIRECTORY_SEPARATOR, $config->userPermissionClass) . '.php');
-    return eval('return ' . $config->userPermissionClass . '::check( $str ); ');
+    return $config->userPermissionClass->check( $str );
   }
 
   /**
@@ -90,8 +88,7 @@ class CRM_Core_Permission {
    */
   static function checkGroupRole($array) {
     $config = CRM_Core_Config::singleton();
-    require_once (str_replace('_', DIRECTORY_SEPARATOR, $config->userPermissionClass) . '.php');
-    return eval('return ' . $config->userPermissionClass . '::checkGroupRole( $array ); ');
+    return $config->userPermissionClass->checkGroupRole( $array );
   }
 
   /**
@@ -106,8 +103,7 @@ class CRM_Core_Permission {
    */
   public static function getPermissionedStaticGroupClause($type, &$tables, &$whereTables) {
     $config = CRM_Core_Config::singleton();
-    require_once (str_replace('_', DIRECTORY_SEPARATOR, $config->userPermissionClass) . '.php');
-    return eval('return ' . $config->userPermissionClass . '::whereClause( $type, $tables, $whereTables );');
+    return $config->userPermissionClass->getPermissionedStaticGroupClause( $type, $tables, $whereTables );
   }
 
   /**
@@ -125,8 +121,7 @@ class CRM_Core_Permission {
    */
   public static function group($groupType, $excludeHidden = TRUE) {
     $config = CRM_Core_Config::singleton();
-    require_once (str_replace('_', DIRECTORY_SEPARATOR, $config->userPermissionClass) . '.php');
-    return eval('return ' . $config->userPermissionClass . '::group( $groupType, $excludeHidden );');
+    return $config->userPermissionClass->group( $groupType, $excludeHidden );
   }
 
   public static function customGroupAdmin() {
@@ -522,8 +517,8 @@ class CRM_Core_Permission {
       return $componentName;
     }
 
-    static $allCompPermissions;
-    if (!is_array($allCompPermissions)) {
+    static $allCompPermissions = array();
+    if (!empty($allCompPermissions)) {
       $components = CRM_Core_Component::getComponents();
       foreach ($components as $name => $comp) {
         $allCompPermissions[$name] = $comp->getPermissions();
@@ -551,8 +546,7 @@ class CRM_Core_Permission {
    */
   public static function permissionEmails($permissionName) {
     $config = CRM_Core_Config::singleton();
-    require_once (str_replace('_', DIRECTORY_SEPARATOR, $config->userPermissionClass) . '.php');
-    return eval('return ' . $config->userPermissionClass . '::permissionEmails( $permissionName );');
+    return $config->userPermissionClass->permissionEmails( $permissionName );
   }
 
   /**
@@ -564,8 +558,7 @@ class CRM_Core_Permission {
    */
   public static function roleEmails($roleName) {
     $config = CRM_Core_Config::singleton();
-    require_once (str_replace('_', DIRECTORY_SEPARATOR, $config->userRoleClass) . '.php');
-    return eval('return ' . $config->userRoleClass . '::roleEmails( $roleName );');
+    return $config->userRoleClass->roleEmails( $roleName );
   }
 
   static function isMultisiteEnabled() {

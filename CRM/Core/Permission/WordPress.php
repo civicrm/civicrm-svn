@@ -36,47 +36,8 @@
 /**
  *
  */
-class CRM_Core_Permission_WordPress {
+class CRM_Core_Permission_WordPress extends CRM_Core_Permission_Base {
 
-  /**
-   * get the current permission of this user
-   *
-   * @return string the permission of the user (edit or view or null)
-   */
-  public static function getPermission() {
-    return CRM_Core_Permission::EDIT;
-  }
-
-  /**
-   * Get the permissioned where clause for the user
-   *
-   * @param int $type the type of permission needed
-   * @param  array $tables (reference ) add the tables that are needed for the select clause
-   * @param  array $whereTables (reference ) add the tables that are needed for the where clause
-   *
-   * @return string the group where clause for this user
-   * @access public
-   */
-  public static function whereClause($type, &$tables, &$whereTables) {
-    return '( 1 )';
-  }
-
-  /**
-   * Get all groups from database, filtered by permissions
-   * for this user
-   *
-   * @param string $groupType     type of group(Access/Mailing)
-   * @param boolen $excludeHidden exclude hidden groups.
-   *
-   * @access public
-   * @static
-   *
-   * @return array - array reference of all groups.
-   *
-   */
-  public static function &group($groupType = NULL, $excludeHidden = TRUE) {
-    return CRM_Core_PseudoConstant::allGroup($groupType, $excludeHidden);
-  }
 
   /**
    * given a permission string, check for access requirements
@@ -84,10 +45,9 @@ class CRM_Core_Permission_WordPress {
    * @param string $str the permission to check
    *
    * @return boolean true if yes, else false
-   * @static
    * @access public
    */
-  static
+
   function check($str) {
     // for administrators give them all permissions
     if (!function_exists('current_user_can')) {
@@ -146,42 +106,6 @@ class CRM_Core_Permission_WordPress {
     }
 
     return FALSE;
-  }
-
-  /**
-   * Given a roles array, check for access requirements
-   *
-   * @param array $array the roles to check
-   *
-   * @return boolean true if yes, else false
-   * @static
-   * @access public
-   */
-  static
-  function checkGroupRole($array) {
-    return FALSE;
-  }
-
-  /**
-   * Get all the contact emails for users that have a specific permission
-   *
-   * @param string $permissionName name of the permission we are interested in
-   *
-   * @return string a comma separated list of email addresses
-   */
-  public static function permissionEmails($permissionName) {
-    return '';
-  }
-
-  /**
-   * Get all the contact emails for users that have a specific role
-   *
-   * @param string $roleName name of the role we are interested in
-   *
-   * @return string a comma separated list of email addresses
-   */
-  public static function roleEmails($roleName) {
-    return '';
   }
 }
 

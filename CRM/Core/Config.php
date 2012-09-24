@@ -246,8 +246,8 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
 
     $this->userFrameworkClass = 'CRM_Utils_System_' . $userFramework;
     $this->userHookClass = 'CRM_Utils_Hook_' . $userFramework;
-    $this->userPermissionClass = 'CRM_Core_Permission_' . $userFramework;
-
+    $userPermissionClass = 'CRM_Core_Permission_' . $userFramework;
+    $this->userPermissionClass = new $userPermissionClass();
     require_once (str_replace('_', DIRECTORY_SEPARATOR, $this->userFrameworkClass) . '.php');
     $class = $this->userFrameworkClass;
     // redundant with _initVariables
