@@ -36,14 +36,14 @@
 /**
  *
  */
-class CRM_Core_Permission_UnitTests {
+class CRM_Core_Permission_UnitTests extends CRM_Core_Permission_Base {
 
   // permission mapping to stub check() calls
   public $permissions = NULL;
 
   function check($str) {
     // return the stubbed permission (defaulting to true if the array is missing)
-    return is_array($this->$permissions) ? in_array($str, $this->$permissions) : TRUE;
+    return is_array($this->permissions) ? in_array($str, $this->permissions) : TRUE;
   }
 }
 
