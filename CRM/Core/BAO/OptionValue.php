@@ -391,5 +391,30 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue {
     }
     return $options;
   }
+  /**
+   * Get the values of all option values given an option group Name as a key => value pair
+   * Use above cached function to make it super efficient
+   *
+   * @param string $optionGroupName the option group name for which we want the values from
+   *
+   * @return array an associative array of label, value pairs
+   * @static
+   * @public
+   */
+  static function getOptionValuesAssocArrayFromName($optionGroupName) {
+    $dao = new CRM_Core_DAO_OptionGroup();
+    $dao->name = $optionGroupName;
+    $dao->selectAdd();
+    $dao->selectAdd('id');
+    $dao->find(TRUE);
+    $optionValues = self::getOptionValuesArray($dao->id);
+
+    $options = array();
+    foreach ($optionValues as $id => $value) {
+      $options[$value['value']] = $value['label'];
+    }
+    return $options;
+  }
+
 }
 
