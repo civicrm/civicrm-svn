@@ -192,7 +192,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form {
    *
    * @return void
    * @access public
-   */ 
+   */
   function preProcess() {
     $this->_eventId = CRM_Utils_Request::retrieve('id', 'Positive', $this, TRUE);
     $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, FALSE);
@@ -352,10 +352,10 @@ class CRM_Event_Form_Registration extends CRM_Core_Form {
             }
           }
         }
-        
+
         if (isset($defaultProcessorId)) {
           $this->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment($defaultProcessorId, $this->_mode);
-          $this->assign_by_ref('paymentProcessor', $this->_paymentProcessor);    
+          $this->assign_by_ref('paymentProcessor', $this->_paymentProcessor);
         }
 
         // make sure we have a valid payment class, else abort
@@ -838,7 +838,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form {
     // create CMS user
     if (CRM_Utils_Array::value('cms_create_account', $this->_params)) {
       $this->_params['contactID'] = $contactID;
-      
+
       if (array_key_exists('email-5', $this->_params)) {
         $mail = 'email-5';
       } else {
@@ -849,7 +849,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form {
           }
         }
       }
-      
+
       // we should use primary email for
       // 1. free event registration.
       // 2. pay later participant.
@@ -877,7 +877,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form {
   public function addParticipant($params, $contactID) {
 
     $transaction = new CRM_Core_Transaction();
-    
+
     $groupName = 'participant_role';
     $query = "
 SELECT  v.label as label ,v.value as value
