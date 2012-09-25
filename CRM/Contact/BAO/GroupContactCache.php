@@ -174,7 +174,7 @@ WHERE  id IN ( $groupIDs )
     if ($groupID == NULL) {
       $invoked = TRUE;
     } else if (is_array($groupID)) {
-      foreach ($groupID as $gid) 
+      foreach ($groupID as $gid)
         unset(self::$_alreadyLoaded[$gid]);
     } else if ($groupID && array_key_exists($groupID, self::$_alreadyLoaded)) {
       unset(self::$_alreadyLoaded[$groupID]);
@@ -289,15 +289,13 @@ WHERE  id = %1
         // we split it up and store custom class
         // so temp tables are not destroyed if they are used
         // hence customClass is defined above at top of function
-        $customClass = CRM_Contact_BAO_SearchCustom::customClass($ssParams['customSearchID'],
-                       $savedSearchID
-        );
+        $customClass =
+          CRM_Contact_BAO_SearchCustom::customClass($ssParams['customSearchID'], $savedSearchID);
         $searchSQL = $customClass->contactIDs();
         $idName = 'contact_id';
       }
       else {
         $formValues = CRM_Contact_BAO_SavedSearch::getFormValues($savedSearchID);
-
 
         $query = new CRM_Contact_BAO_Query($ssParams, $returnProperties, NULL,
                  FALSE, FALSE, 1,
