@@ -41,7 +41,9 @@ class CRM_Contact_Form_Search_Custom_Group extends CRM_Contact_Form_Search_Custo
   protected $_where = ' (1) ';
 
   protected $_aclFrom = NULL;
-  protected $_aclWhere = NULL; function __construct(&$formValues) {
+  protected $_aclWhere = NULL;
+
+  function __construct(&$formValues) {
     $this->_formValues = $formValues;
     $this->_columns = array(
       ts('Contact Id') => 'contact_id',
@@ -154,16 +156,25 @@ class CRM_Contact_Form_Search_Custom_Group extends CRM_Contact_Form_Search_Custo
     $form->assign('elements', array('includeGroups', 'excludeGroups', 'andOr', 'includeTags', 'excludeTags'));
   }
 
-  function all($offset = 0, $rowcount = 0, $sort = NULL,
+  function all(
+    $offset = 0, $rowcount = 0, $sort = NULL,
     $includeContactIDs = FALSE, $justIDs = FALSE
   ) {
+
+    $groupBy = null;
     if ($justIDs) {
       $selectClause = "contact_a.id as contact_id";
+      // CRM-10850
+      // we do this since this if stmt is called by the smart group part of the code
+      // adding a groupBy clause and saving it as a smart group messes up the query and
+      // bad things happen
+      $groupBy = null;
     }
     else {
       $selectClause = "contact_a.id as contact_id,
                          contact_a.contact_type as contact_type,
                          contact_a.sort_name    as sort_name";
+      $groupBy = " GROUP BY contact_a.id";
 
       //distinguish column according to user selection
       if (($this->_includeGroups && !$this->_includeTags)) {
@@ -187,7 +198,7 @@ class CRM_Contact_Form_Search_Custom_Group extends CRM_Contact_Form_Search_Custo
 
     $where = $this->where($includeContactIDs);
 
-    $sql = "SELECT $selectClause $from WHERE  $where GROUP BY contact_a.id";
+    $sql = "SELECT $selectClause $from WHERE  $where $groupBy";
 
     // Define ORDER BY for query in $sort, with default value
     if (!$justIDs) {
