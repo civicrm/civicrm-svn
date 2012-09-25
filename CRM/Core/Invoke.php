@@ -207,9 +207,7 @@ class CRM_Core_Invoke {
         }
         $title = CRM_Utils_Array::value('title', $item);
         if (strstr($item['page_callback'], '_Page')) {
-          eval('$object = ' .
-            "new {$item['page_callback']}( \$title, \$mode );"
-          );
+          $object = new $item['page_callback'] ($title, $mode );
         }
         elseif (strstr($item['page_callback'], '_Controller')) {
           $addSequence = 'false';
@@ -218,9 +216,7 @@ class CRM_Core_Invoke {
             $addSequence = $addSequence ? 'true' : 'false';
             unset($pageArgs['addSequence']);
           }
-          eval('$object = ' .
-            "new {$item['page_callback']} ( \$title, true, \$mode, null, \$addSequence );"
-          );
+            $object = new $item['page_callback'] ($title, $mode, null, $addSequence );
         }
         else {
           CRM_Core_Error::fatal();
