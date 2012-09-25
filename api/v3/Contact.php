@@ -191,6 +191,13 @@ function civicrm_api3_contact_get($params) {
   }
   return civicrm_api3_create_success($returnContacts, $params, 'contact');
 }
+
+function civicrm_api3_contact_getcount($params) {
+  $options = array();
+  _civicrm_api3_contact_get_supportanomalies($params, $options);
+  $count = _civicrm_api3_get_using_query_object('contact', $params, $options,1);
+  return $count;
+}
 /*
  * Adjust Metadata for Get action
  *

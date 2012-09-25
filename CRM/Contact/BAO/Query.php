@@ -1072,7 +1072,7 @@ class CRM_Contact_BAO_Query {
         $select = "SELECT count( DISTINCT {$this->_distinctComponentClause} )";
       }
       else {
-        $select = 'SELECT count(DISTINCT contact_a.id)';
+        $select = 'SELECT count(DISTINCT contact_a.id) as rowCount';
       }
       $from = $this->_simpleFromClause;
       if ($this->_useDistinct) {
@@ -3738,14 +3738,15 @@ civicrm_relationship.start_date > CURDATE()
     $sort             = NULL,
     $offset           = 0,
     $row_count        = 25,
-    $smartGroupCache  = TRUE
+    $smartGroupCache  = TRUE,
+    $count = FALSE
   ) {
     $query = new CRM_Contact_BAO_Query($params, $returnProperties,
       NULL, TRUE, FALSE, 1,
       FALSE, TRUE, $smartGroupCache
     );
 
-    list($select, $from, $where, $having) = $query->query();
+    list($select, $from, $where, $having) = $query->query($count);
     $options = $query->_options;
     $sql = "$select $from $where $having";
     // add group by
@@ -3763,6 +3764,11 @@ civicrm_relationship.start_date > CURDATE()
 
     $values = array();
     while ($dao->fetch()) {
+      if($count){
+        $noRows = $dao->rowCount;
+        $dao->free();
+        return array($noRows,NULL);
+      }
       $values[$dao->contact_id] = $query->store($dao);
     }
     $dao->free();
