@@ -365,13 +365,16 @@ SELECT id
     }
 
     if (CRM_Utils_Array::value('is_recur_interval', $fields)) {
+      foreach(array_keys($fields['payment_processor']) as $paymentProcessorID) {
       $paymentProcessorType = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_PaymentProcessor',
-        $fields['payment_processor'],
+                                                            $paymentProcessorID,
         'payment_processor_type'
       );
       if ($paymentProcessorType == 'Google_Checkout') {
         $errors['is_recur_interval'] = ts('Google Checkout does not support recurring intervals');
+          break;
       }
+    }
     }
 
     return $errors;

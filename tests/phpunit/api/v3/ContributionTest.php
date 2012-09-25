@@ -69,13 +69,14 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'civicrm_participant',
       'civicrm_contact',
       'civicrm_participant_payment',
+      'civicrm_line_item',
     ));
   }
 
   ///////////////// civicrm_contribution_get methods
   function testGetEmptyParamsContribution() {
 
-    $params = array();
+    $params = array('debug' => 1);
     $contribution = civicrm_api('contribution', 'get', $params);
     $this->assertEquals($contribution['is_error'], 1);
     $this->assertEquals($contribution['error_message'], 'Mandatory key(s) missing from params array: version');
@@ -262,6 +263,85 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $this->customGroupDelete($idsContact['custom_group_id']);
   }
 
+  function testCreateContributionNoLineItems() {
+
+    $params = array(
+        'contact_id' => $this->_individualId,
+        'receive_date' => '20120511',
+        'total_amount' => 100.00,
+        'contribution_type_id' => $this->_contributionTypeId,
+        'payment_instrument_id' => 1,
+        'non_deductible_amount' => 10.00,
+        'fee_amount' => 50.00,
+        'net_amount' => 90.00,
+        'trxn_id' => 12345,
+        'invoice_id' => 67890,
+        'source' => 'SSF',
+        'contribution_status_id' => 1,
+        'version' => $this->_apiversion,
+        'use_default_price_set' => 0,
+    );
+
+    $contribution = civicrm_api('contribution', 'create', $params);
+    $lineItems = civicrm_api('line_item','get',array(
+        'version' => $this->_apiversion,
+        'entity_id' => $contribution['id'],
+        'entity_table' => 'civicrm_contribution',
+        'sequential' => 1,
+    ));
+    $this->assertEquals(0, $lineItems['count']);
+  }
+  /*
+   * Test checks that passing in line items suppresses the create mechanism
+   */
+  function testCreateContributionChainedLineItems() {
+
+    $params = array(
+        'contact_id' => $this->_individualId,
+        'receive_date' => '20120511',
+        'total_amount' => 100.00,
+        'contribution_type_id' => $this->_contributionTypeId,
+        'payment_instrument_id' => 1,
+        'non_deductible_amount' => 10.00,
+        'fee_amount' => 50.00,
+        'net_amount' => 90.00,
+        'trxn_id' => 12345,
+        'invoice_id' => 67890,
+        'source' => 'SSF',
+        'contribution_status_id' => 1,
+        'version' => $this->_apiversion,
+        'use_default_price_set' => 0,
+        'api.line_item.create' => array(
+            array(
+              'price_field_id' => 1,
+              'qty' => 2,
+              'line_total' => '20',
+              'unit_price' => '10',
+            ),
+            array(
+                'price_field_id' => 1,
+                'qty' => 1,
+                'line_total' => '80',
+                'unit_price' => '80',
+            ),
+          ),
+
+    );
+
+    $contribution = civicrm_api('contribution', 'create', $params);
+    $description = "Create Contribution with Nested Line Items";
+    $subfile = "CreateWithNestedLineItems";
+    $this->documentMe($params, $contribution, __FUNCTION__,__FILE__, $description, $subfile);
+    $this->assertAPISuccess($contribution, 'In line ' . __LINE__);
+    $lineItems = civicrm_api('line_item','get',array(
+        'version' => $this->_apiversion,
+        'entity_id' => $contribution['id'],
+        'entity_table' => 'civicrm_contribution',
+        'sequential' => 1,
+    ));
+    $this->assertEquals(2, $lineItems['count']);
+  }
+
   function testCreateContribution() {
 
     $params = array(
@@ -293,7 +373,23 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $this->assertEquals($contribution['values'][$contribution['id']]['invoice_id'], 67890, 'In line ' . __LINE__);
     $this->assertEquals($contribution['values'][$contribution['id']]['source'], 'SSF', 'In line ' . __LINE__);
     $this->assertEquals($contribution['values'][$contribution['id']]['contribution_status_id'], 1, 'In line ' . __LINE__);
+    $lineItems = civicrm_api('line_item','get',array(
+      'version' => $this->_apiversion,
+      'entity_id' => $contribution['id'],
+      'entity_table' => 'civicrm_contribution',
+      'sequential' => 1,
+      ));
+    $this->assertEquals(1, $lineItems['count']);
+    $this->assertEquals($contribution['id'], $lineItems['values'][0]['entity_id']);
+    $this->assertEquals($contribution['id'], $lineItems['values'][0]['entity_id']);
     $this->contributionGetnCheck($params, $contribution['id']);
+    $lineItems = civicrm_api('line_item','get',array(
+        'version' => $this->_apiversion,
+        'entity_id' => $contribution['id'],
+        'entity_table' => 'civicrm_contribution',
+        'sequential' => 1,
+    ));
+    $this->assertEquals(0, $lineItems['count']);
   }
   /*
      * Create test with unique field name on source
@@ -433,6 +529,32 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $expectedResult = contribution_create_expectedresult();
     $this->checkArrayEquals($result, $expectedResult);
     $this->contributionDelete($contributionId);
+  }
+
+  /*
+   * Function tests that line items are updated
+   */
+  function testCreateUpdateContributionChangeTotal(){
+    $contribution = civicrm_api('contribution', 'create', $this->_params);
+    $lineItems = civicrm_api('line_item','getvalue',array(
+        'version' => $this->_apiversion,
+        'entity_id' => $contribution['id'],
+        'entity_table' => 'civicrm_contribution',
+        'sequential' => 1,
+        'return' => 'line_total',
+    ));
+    $this->assertEquals('100.00', $lineItems);
+
+    $newParams = array_merge($this->_params, array('total_amount' => '777'));
+    $contribution = civicrm_api('contribution', 'create', $newParams);
+    $lineItems = civicrm_api('line_item','getvalue',array(
+        'version' => $this->_apiversion,
+        'entity_id' => $contribution['id'],
+        'entity_table' => 'civicrm_contribution',
+        'sequential' => 1,
+        'return' => 'line_total',
+    ));
+    $this->assertEquals('777.00', $lineItems);
   }
 
   //To Update Contribution

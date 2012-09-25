@@ -57,7 +57,7 @@ function civicrm_api3_line_item_create($params) {
  */
 function _civicrm_api3_line_item_create_spec(&$params) {
   $params['entity_id']['api.required'] = 1;
-  print_r($params);
+  $params['price_field_id']['api.required'] = 1;
 }
 
 /**

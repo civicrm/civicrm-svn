@@ -618,7 +618,7 @@ class CRM_Core_Extensions {
    *
    * @access public
    *
-   * @param int $id id of the extension record
+   * @param int $id id of the extension record; deprecated
    * @param string $key extension key
    *
    * @return void
@@ -809,5 +809,12 @@ class CRM_Core_Extensions {
       return $contents;
     }
   }
+
+  /**
+   * Determine whether the extensions subsystem is properly configured
+   */
+  public function isEnabled() {
+      return $this->enabled;
+}
 }
 

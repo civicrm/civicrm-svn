@@ -500,7 +500,7 @@ WHERE     cpse.price_set_id IS NULL";
  LEFT JOIN civicrm_membership cm ON cm.id=cmp.membership_id
  LEFT JOIN civicrm_membership_type cmt ON cmt.id = cm.membership_type_id
  LEFT JOIN civicrm_price_field cpf ON cpf.name = cmt.member_of_contact_id
- LEFT JOIN civicrm_price_field_value cpfv ON cpfv.membership_type_id = cm.membership_type_id
+ LEFT JOIN civicrm_price_field_value cpfv ON cpfv.membership_type_id = cm.membership_type_id AND cpf.id = cpfv.price_field_id
  WHERE (cc.id BETWEEN %1 AND %2) AND cli.entity_id IS NULL ;
  ";
     $sqlParams = array(

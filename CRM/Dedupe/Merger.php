@@ -721,7 +721,8 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         // Rule: resolve address conflict if any -
         if ($fieldName == 'address') {
           $mainNewLocTypeId = $migrationInfo['location'][$fieldName][$fieldCount]['locTypeId'];
-          if (array_key_exists("main_{$mainNewLocTypeId}", $migrationInfo['main_loc_address'])) {
+          if (CRM_Utils_Array::value('main_loc_address', $migrationInfo) && 
+              array_key_exists("main_{$mainNewLocTypeId}", $migrationInfo['main_loc_address'])) {
             // main loc already has some address for the loc-type. Its a overwrite situation.
 
             // look for next available loc-type

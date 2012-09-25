@@ -34,6 +34,8 @@
  */
 class CRM_Contact_BAO_GroupContactCache extends CRM_Contact_DAO_GroupContactCache {
 
+  static $_alreadyLoaded = array();
+
   /**
    * Check to see if we have cache entries for this group
    * if not, regenerate, else return
@@ -171,6 +173,11 @@ WHERE  id IN ( $groupIDs )
 
     if ($groupID == NULL) {
       $invoked = TRUE;
+    } else if (is_array($groupID)) {
+      foreach ($groupID as $gid) 
+        unset(self::$_alreadyLoaded[$gid]);
+    } else if ($groupID && array_key_exists($groupID, self::$_alreadyLoaded)) {
+      unset(self::$_alreadyLoaded[$groupID]);
     }
 
     //when there are difference in timezones for mysql and php.
@@ -250,11 +257,10 @@ WHERE  id = %1
   static function load(&$group, $fresh = FALSE) {
     $groupID = $group->id;
     $savedSearchID = $group->saved_search_id;
-        static $alreadyLoaded = array();
-        if (in_array($groupID, $alreadyLoaded) && !$fresh) {
+    if (array_key_exists($groupID, self::$_alreadyLoaded) && !$fresh) {
           return;
         }
-        $alreadyLoaded[] = $groupID;
+    self::$_alreadyLoaded[$groupID] = 1;
     $sql         = NULL;
     $idName      = 'id';
     $customClass = NULL;
