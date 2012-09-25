@@ -60,6 +60,7 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase {
       'civicrm_contact',
       'civicrm_pledge',
       'civicrm_pledge_payment',
+      'civicrm_line_item',
     );
 
     $this->quickCleanup($tablesToTruncate);
