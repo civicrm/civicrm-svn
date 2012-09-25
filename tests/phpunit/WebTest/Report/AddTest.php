@@ -191,7 +191,7 @@ class WebTest_Report_AddTest extends CiviSeleniumTestCase {
     $this->assertSelectedLabel("parent_id", "Reports");
 
     // Is correct access permission?
-    $this->assertSelectedLabel("permission", "access CiviReport");
+    $this->assertSelectedLabel("permission", "access CiviCRM");
   }
 }
 
