@@ -32,72 +32,70 @@
 #Tag #tagtree .highlighted {ldelim}background-color:lightgrey;{rdelim}
 </style>
 <script type="text/javascript">
+(function(){ldelim}
+  var entityID={$entityID};
+  var entityTable='{$entityTable}';
+  {literal}
+  cj(document).ready(function(){initTagTree()});
 
-dummy_options = {ldelim} ajaxURL:"{crmURL p='civicrm/ajax/rest' h=0}"
-       ,closetxt:'<div class="ui-icon ui-icon-close" style="float:left"></div>'
-      {rdelim} 
-entityID={$entityID};
-entityTable='{$entityTable}';
-{literal}
-cj(document).ready(function(){initTagTree()});
+  function initTagTree() {
+      //unobsctructive elements are there to provide the function to those not having javascript, no need for the others
+      cj(".unobstructive").hide();
 
-function initTagTree() {
-    //unobsctructive elements are there to provide the function to those not having javascript, no need for the others
-    cj(".unobstructive").hide();
+      cj("#tagtree ul input:checked").each (function(){
+    cj(this).parents("li").children(".jstree-icon").addClass('highlighted');
+      });
+      
+      cj("#tagtree input").change(function(){
+    tagid = this.id.replace("check_", "");
+    //get current tags from Summary and convert to array
+    var tagLabels = cj.trim( cj("#tags").text( ) );
+    if ( tagLabels ) {
+        var tagsArray = tagLabels.split(',');
+    } else{
+        var tagsArray = new Array();
+    }
 
-    cj("#tagtree ul input:checked").each (function(){
-        cj(this).parents("li").children(".jstree-icon").addClass('highlighted');
-    });
-    
-    cj("#tagtree input").change(function(){
-        tagid = this.id.replace("check_", "");
-        //get current tags from Summary and convert to array
-        var tagLabels = cj.trim( cj("#tags").text( ) );
-        if ( tagLabels ) {
-            var tagsArray = tagLabels.split(',');
-        } else{
-            var tagsArray = new Array();
-        }
+    //get current tag label
+    var currentTagLabel = cj("#tagLabel_" + tagid ).text( );
+    if (this.checked) {
+        cj().crmAPI ('entity_tag','create',{entity_table:entityTable,entity_id:entityID,tag_id:tagid});
+        // add check to tab label array
+        tagsArray.push( currentTagLabel );
+    } else {
+        cj().crmAPI ('entity_tag','delete',{entity_table:entityTable,entity_id:entityID,tag_id:tagid});
+        // build array of tag labels
+        tagsArray = cj.map(tagsArray, function (a) { 
+       if ( cj.trim( a ) != currentTagLabel ) {
+           return cj.trim( a );
+       }
+         });
+    }
+      
+    //showing count of tags in summary tab
+    var existingTagsInTagset = cj('.token-input-delete-token-facebook').length;
+    var tagCount = cj("#tagtree input:checkbox:checked").length + existingTagsInTagset;  
+    cj( '.ui-tabs-nav #tab_tag a' ).html( 'Tags <em>' + tagCount + '</em>');
 
-        //get current tag label
-        var currentTagLabel = cj("#tagLabel_" + tagid ).text( );
-        if (this.checked) {
-            cj().crmAPI ('entity_tag','create',{entity_table:entityTable,entity_id:entityID,tag_id:tagid});
-            // add check to tab label array
-            tagsArray.push( currentTagLabel );
-        } else {
-            cj().crmAPI ('entity_tag','delete',{entity_table:entityTable,entity_id:entityID,tag_id:tagid});
-            // build array of tag labels
-            tagsArray = cj.map(tagsArray, function (a) { 
-                 if ( cj.trim( a ) != currentTagLabel ) {
-                     return cj.trim( a );
-                 }
-             });
-        }
-		
-        //showing count of tags in summary tab
-        var existingTagsInTagset = cj('.token-input-delete-token-facebook').length;
-        var tagCount = cj("#tagtree input:checkbox:checked").length + existingTagsInTagset;  
-        cj( '.ui-tabs-nav #tab_tag a' ).html( 'Tags <em>' + tagCount + '</em>');
-
-        //update summary tab 
-        tagLabels = tagsArray.join(', ');
-        cj("#tags").html( tagLabels );
-        ( tagLabels ) ? cj("#tagLink,#tags").show( ) : cj("#tagLink,#tags").hide( );
-    });
- 
-    //load js tree.
-    cj("#tagtree").jstree({"plugins" : ["themes", "html_data"]});
+    //update summary tab 
+    tagLabels = tagsArray.join(', ');
+    cj("#tags").html( tagLabels );
+    ( tagLabels ) ? cj("#tagLink,#tags").show( ) : cj("#tagLink,#tags").hide( );
+      });
    
-    {/literal}
-    {if $permission neq 'edit'}
-    {literal}
-        cj("#tagtree input").attr('disabled', true);
-    {/literal}
-    {/if}
-    {literal}
-    
-};
+      //load js tree.
+      cj("#tagtree").jstree({"plugins" : ["themes", "html_data"]});
+     
+      {/literal}
+      {if $permission neq 'edit'}
+      {literal}
+    cj("#tagtree input").attr('disabled', true);
+      {/literal}
+      {/if}
+      {literal}
+      
+  };
+})();
 {/literal}
 </script>
 <div id="Tag" class="view-content">
