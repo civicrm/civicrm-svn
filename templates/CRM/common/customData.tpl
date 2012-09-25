@@ -76,10 +76,10 @@ function buildCustomData( type, subType, subName, cgCount, groupID, isMultiple )
 
 	if ( isMultiple ) {
 	     	var fname = '#custom_group_' + groupID + '_' + prevCount;
-		if ( cj(".add-more-link-" + groupID + "-" + prevCount ) ) {
-			cj(".add-more-link-" + groupID + "-" + prevCount).hide();
+		if (cj(".add-more-link-" + groupID + "-" + prevCount ).length) {
+		  cj(".add-more-link-" + groupID + "-" + prevCount).hide();
 		} else {
-			cj("#add-more-link-"+prevCount).hide();
+                  cj("#add-more-link-"+prevCount).hide();
 		}
 	} else {
 		if ( subName && subName != 'null' ) {		
