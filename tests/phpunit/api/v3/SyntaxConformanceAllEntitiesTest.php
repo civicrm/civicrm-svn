@@ -154,7 +154,10 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
       'MembershipPayment',
       'Participant',
       'ParticipantPayment',
-
+      'LineItem',
+      'PriceSet',
+      'PriceField',
+      'PriceFieldValue',
       'PledgePayment',
     );
     if ($sequential === TRUE) {
@@ -182,7 +185,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
           'amount' // can't be changed through API
         ),
         'break_return' => array(// if these are passed in they are retrieved from the wrong table
-          'honor_contact_id', 
+          'honor_contact_id',
           'cancel_date',
           'contribution_page_id',
           'contribution_type_id',
@@ -193,7 +196,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
           'end_date',
           'modified_date',
           'acknowledge_date',
-          'start_date', 
+          'start_date',
           'frequency_day',
           'currency',
           'max_reminders',
@@ -220,7 +223,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
     }
     return $knownFailures[$entity][$key];
   }
-  
+
   /** testing the _get **/
 
   /**
@@ -414,7 +417,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
       // $this->markTestIncomplete("civicrm_api3_{$Entity}_create to be implemented");
       return;
     }
-    
+
     $baoString = 'CRM_Grant_BAO_Grant';
     $baoString = _civicrm_api3_get_DAO($entityName);
     $this->assertNotEmpty($baoString, $entityName);
@@ -438,7 +441,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
         $this->getKnownUnworkablesUpdateSingle($entityName, 'cant_return'),
         $valuesNotToReturn
       );
-    
+
     $return = array_diff($return,$valuesNotToReturn);
     $baoObj = new CRM_Core_DAO();
     $baoObj->createTestObject($baoString, array('currency' => 'USD'), 2, 0);
@@ -594,7 +597,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
     $this->assertEquals(1, $result['is_error'], 'In line ' . __LINE__);
     $this->assertEquals("Input variable `params` is not an array", $result['error_message']);
   }
-  
+
 
 }
 
