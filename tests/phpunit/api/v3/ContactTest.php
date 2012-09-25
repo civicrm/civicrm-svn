@@ -81,6 +81,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
       'civicrm_contact',
       'civicrm_email',
       'civicrm_contribution',
+      'civicrm_line_item',
       'civicrm_website',
       'civicrm_relationship'
     );
