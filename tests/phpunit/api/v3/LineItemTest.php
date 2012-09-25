@@ -43,13 +43,23 @@ class api_v3_LineItemTest extends CiviUnitTestCase {
     foreach ($this->contactIds as $id) {
       civicrm_api('contact', 'delete', array('version' => $this->_apiversion, 'id' => $id));
     }
-    civicrm_api('line_item', 'delete', array('version' => $this->_apiversion, 'id' => $this->id));
+    $this->quickCleanup(
+        array(
+            'civicrm_contact',
+            'civicrm_contribution',
+            'civicrm_line_item',
+        )
+    );
     $this->contributionTypeDelete();
   }
 
   public function testCreateLineItem() {
+    $this->quickCleanup(
+        array(
+            'civicrm_line_item',
+        )
+    );
     $result = civicrm_api($this->_entity, 'create', $this->params);
-
     $this->id = $result['id'];
     $this->documentMe($this->params, $result, __FUNCTION__, __FILE__);
     $this->assertAPISuccess($result, 'In line ' . __LINE__);
@@ -59,9 +69,6 @@ class api_v3_LineItemTest extends CiviUnitTestCase {
   }
 
   public function testGetBasicLineItem() {
-    $createResult = civicrm_api($this->_entity, 'create', $this->params);
-    $this->id = $createResult['id'];
-    $this->assertAPISuccess($createResult);
     $getParams = array(
       'version' => $this->_apiversion,
       'entity_table' => 'civicrm_contribution',
@@ -73,8 +80,12 @@ class api_v3_LineItemTest extends CiviUnitTestCase {
   }
 
   public function testDeleteLineItem() {
-    $createResult = civicrm_api($this->_entity, 'create', $this->params);
-    $deleteParams = array('version' => $this->_apiversion, 'id' => $createResult['id']);
+    $getParams = array(
+        'version' => $this->_apiversion,
+        'entity_table' => 'civicrm_contribution',
+    );
+    $getResult = civicrm_api($this->_entity, 'get', $getParams);
+    $deleteParams = array('version' => $this->_apiversion, 'id' => $getResult['id']);
     $deleteResult = civicrm_api($this->_entity, 'delete', $deleteParams);
     $this->documentMe($deleteParams, $deleteResult, __FUNCTION__, __FILE__);
     $this->assertAPISuccess($deleteResult, 'In line ' . __LINE__);
