@@ -373,7 +373,7 @@ function _civicrm_api3_get_using_query_object($object_type, $params, $additional
   }
   unset($params['id']);
 
-  $options          = _civicrm_api3_get_options_from_params($params, TRUE);
+  $options = _civicrm_api3_get_options_from_params($params, TRUE);
 
   $inputParams = array_merge(
     CRM_Utils_Array::value('input_params', $options, array()),
@@ -410,7 +410,7 @@ function _civicrm_api3_get_using_query_object($object_type, $params, $additional
     $getCount
   );
   if ($getCount) { // only return the count of contacts
-    return $entities[0];
+    return $entities;
   }
 
   return $entities;
@@ -422,7 +422,7 @@ function _civicrm_api3_dao_set_filter(&$dao, $params, $unique = TRUE, $entity) {
   $entity = substr($dao->__table, 8);
 
   $allfields = _civicrm_api3_build_fields_array($dao, $unique);
-  
+
   $fields = array_intersect(array_keys($allfields), array_keys($params));
   if (isset($params[$entity . "_id"])) {
     //if entity_id is set then treat it as ID (will be overridden by id if set)
@@ -453,7 +453,7 @@ function _civicrm_api3_dao_set_filter(&$dao, $params, $unique = TRUE, $entity) {
   if (!$fields) {
     return;
   }
-  
+
   foreach ($fields as $field) {
     if (is_array($params[$field])) {
       //get the actual fieldname from db
