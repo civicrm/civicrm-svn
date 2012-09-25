@@ -193,8 +193,7 @@ class CRM_Contribute_BAO_Query {
   }
 
   static function where(&$query) {
-    $isTest = FALSE;
-    $grouping = NULL;
+    $testCondition = $grouping = NULL;
     foreach (array_keys($query->_params) as $id) {
       if (!CRM_Utils_Array::value(0, $query->_params[$id])) {
         continue;
@@ -204,20 +203,19 @@ class CRM_Contribute_BAO_Query {
           $query->_useDistinct = TRUE;
         }
         if ($query->_params[$id][0] == 'contribution_test') {
-          $isTest = TRUE;
+          $testCondition = $id;
+          continue;
         }
         $grouping = $query->_params[$id][3];
         self::whereClauseSingle($query->_params[$id], $query);
       }
     }
-
-    if ($grouping !== NULL &&
-      !$isTest &&
+    // Only add test condition if other fields are selected
+    if ($grouping !== NULL && $testCondition &&
       // we dont want to include all tests for sql OR CRM-7827
       $query->getOperator() != 'OR'
     ) {
-      $values = array('contribution_test', '=', 0, $grouping, 0);
-      self::whereClauseSingle($values, $query);
+      self::whereClauseSingle($query->_params[$testCondition], $query);
     }
   }
 

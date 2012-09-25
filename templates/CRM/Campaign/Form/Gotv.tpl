@@ -25,7 +25,7 @@
 *}
 
 {if $errorMessages}
-  <div class='messages status'>
+  <div class="messages status crm-error no-popup">
      <div class="icon inform-icon"></div>
         <ul>
           {foreach from=$errorMessages item=errorMsg}

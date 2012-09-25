@@ -52,28 +52,36 @@
 </tr>
 <tr>
 	<td>
-    <div>
-      {$form.contribution_thankyou_date_is_not_null.label}
-      {$form.contribution_thankyou_date_is_not_null.html}<span class="crm-clear-link">(<a href="javascript:unselectRadio('contribution_thankyou_date_is_not_null','{$form.formName}')">{ts}clear{/ts}</a>)</span>
-    </div>
-    <div>
-      {$form.contribution_receipt_date_is_not_null.label}
-      {$form.contribution_receipt_date_is_not_null.html}<span class="crm-clear-link">(<a href="javascript:unselectRadio('contribution_receipt_date_is_not_null','{$form.formName}')">{ts}clear{/ts}</a>)</span>
-    </div>
+    <table style="width:auto">
+      <tbody>
+        <tr>
+          <td>{$form.contribution_thankyou_date_is_not_null.label}</td>
+          <td>{$form.contribution_thankyou_date_is_not_null.html}<span class="crm-clear-link">(<a href="javascript:unselectRadio('contribution_thankyou_date_is_not_null','{$form.formName}')">{ts}clear{/ts}</a>)</span></td>
+        </tr>
+        <tr>
+          <td>{$form.contribution_receipt_date_is_not_null.label}</td>
+          <td>{$form.contribution_receipt_date_is_not_null.html}<span class="crm-clear-link">(<a href="javascript:unselectRadio('contribution_receipt_date_is_not_null','{$form.formName}')">{ts}clear{/ts}</a>)</span></td>
+        </tr>
+      </tbody>
+    </table>
 	</td>
 	<td>
-    <div>
-      {$form.contribution_pay_later.label}
-      {$form.contribution_pay_later.html}<span class="crm-clear-link">(<a href="javascript:unselectRadio('contribution_pay_later','{$form.formName}')">{ts}clear{/ts}</a>)</span>
-    </div>
-    <div>
-      {$form.contribution_recurring.label}
-      {$form.contribution_recurring.html}<span class="crm-clear-link">(<a href="javascript:unselectRadio('contribution_recurring','{$form.formName}')">{ts}clear{/ts}</a>)</span>
-    </div>
-    <div>
-      {$form.contribution_test.label}
-      {$form.contribution_test.html}<span class="crm-clear-link">(<a href="javascript:unselectRadio('contribution_test','{$form.formName}')">{ts}clear{/ts}</a>)</span>
-    </div>
+    <table style="width:auto">
+      <tbody>
+        <tr>
+          <td>{$form.contribution_pay_later.label}</td>
+          <td>{$form.contribution_pay_later.html}<span class="crm-clear-link">(<a href="javascript:unselectRadio('contribution_pay_later','{$form.formName}')">{ts}clear{/ts}</a>)</span></td>
+        </tr>
+        <tr>
+          <td>{$form.contribution_recurring.label}</td>
+          <td>{$form.contribution_recurring.html}<span class="crm-clear-link">(<a href="javascript:unselectRadio('contribution_recurring','{$form.formName}')">{ts}clear{/ts}</a>)</span></td>
+        </tr>
+        <tr>
+          <td>{$form.contribution_test.label}</td>
+          <td>{$form.contribution_test.html}<span class="crm-clear-link">(<a href="javascript:unselectRadio('contribution_test','{$form.formName}')">{ts}clear{/ts}</a>)</span></td>
+        </tr>
+      </tbody>
+    </table>
   </td>
 </tr>
 <tr>
@@ -123,6 +131,7 @@
       }
       else {
         cj('#contribution_check_number_wrapper').hide();
+        cj('#contribution_check_number').val('');
       }
     }).change();
   </script>

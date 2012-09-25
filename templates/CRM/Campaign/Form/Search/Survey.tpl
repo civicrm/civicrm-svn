@@ -116,7 +116,7 @@
             {if $context eq 'search'}    
 	            {$form.buttons.html}
 	        {else}
-	            <a class="searchSurvey button" style="float:left;" href="#" title={ts}Search{/ts} onClick="searchSurveys( '{$qfKey}' );return false;">{ts}Search{/ts}</a>
+	            <a class="searchSurvey button" style="float:left;" href="#" title="{ts}Search{/ts}" onClick="searchSurveys( '{$qfKey}' );return false;">{ts}Search{/ts}</a>
 	        {/if}
 	        </td>
         </tr>
@@ -202,7 +202,7 @@ function loadSurveyList( )
              "aaSorting": [],
              "aoColumns":[{sClass:'crm-survey-id                          hiddenElement' },
                           {sClass:'crm-survey-title'                                     },
-                          {sClass:'crm-survey-campaign_id                 hiddenElement' },			     
+                          {sClass:'crm-survey-campaign_id                 hiddenElement' },
                           {sClass:'crm-survey-campaign'                                  },
                           {sClass:'crm-survey-activity_type_id            hiddenElement' },
                           {sClass:'crm-survey-activity_type'                             },

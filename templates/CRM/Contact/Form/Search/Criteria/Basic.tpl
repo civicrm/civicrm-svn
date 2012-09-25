@@ -173,7 +173,7 @@
         </tr>
         <tr>
             <td>
-                {$form.contact_source.label}<br />
+                {$form.contact_source.label} {help id="id-source" file="CRM/Contact/Form/Contact"}<br />
                 {$form.contact_source.html|crmAddClass:medium}
             </td>
             <td>
@@ -197,7 +197,7 @@
                  {$form.id.html|crmAddClass:medium}
              </td>
              <td>
-                 {$form.external_identifier.label}<br />
+                 {$form.external_identifier.label} {help id="id-external-id" file="CRM/Contact/Form/Contact"}<br />
                  {$form.external_identifier.html|crmAddClass:medium}
              </td>
             <td colspan="3">

@@ -58,7 +58,7 @@
 		</table>
 		<table class="crm-section contact_source-section form-layout-compressed">
             <tr class="last-row">
-              <td>{$form.contact_source.label}<br />
+              <td>{$form.contact_source.label} {help id="id-source"}<br />
                   {$form.contact_source.html|crmAddClass:twenty}
               </td>
               <td>{$form.external_identifier.label}{help id="id-external-id" file="CRM/Contact/Form/Contact.hlp"}&nbsp;<br />

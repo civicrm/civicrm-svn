@@ -60,9 +60,7 @@ function smarty_function_help($params, &$smarty) {
   }
 
   $params['file'] = str_replace(array('.tpl', '.hlp'), '', $params['file']);
-  if ($params['id'] == 'accesskeys') {
-    $params['file'] = 'CRM/common/accesskeys';
-  }
+
   $smarty->assign('id', $params['id'] . '-title');
   $name = trim($smarty->fetch($params['file'] . '.hlp'));
   $title = ts('%1 Help', array(1 => $name));

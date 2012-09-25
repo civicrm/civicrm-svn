@@ -14,7 +14,7 @@ class CRM_Core_Page_Help {
       foreach ($args as $id => $arg) {
         $smarty->assign($id, $arg);
       }
-      print $smarty->fetch($file);
+      exit($smarty->fetch($file));
     }
   }
 

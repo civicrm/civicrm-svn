@@ -202,7 +202,7 @@ class CRM_Pledge_BAO_Query {
 
   static
   function where(&$query) {
-    $grouping = NULL;
+    $testCondition = $grouping = NULL;
     foreach (array_keys($query->_params) as $id) {
       if (!CRM_Utils_Array::value(0, $query->_params[$id])) {
         continue;
@@ -211,9 +211,20 @@ class CRM_Pledge_BAO_Query {
         if ($query->_mode == CRM_Contact_BAO_QUERY::MODE_CONTACTS) {
           $query->_useDistinct = TRUE;
         }
+        if ($query->_params[$id][0] == 'participant_test') {
+          $testCondition = $id;
+          continue;
+        }
         $grouping = $query->_params[$id][3];
         self::whereClauseSingle($query->_params[$id], $query);
       }
+    }
+    // Only add test condition if other fields are selected
+    if ($grouping !== NULL && $testCondition &&
+      // we dont want to include all tests for sql OR CRM-7827
+      $query->getOperator() != 'OR'
+    ) {
+      self::whereClauseSingle($query->_params[$testCondition], $query);
     }
   }
 

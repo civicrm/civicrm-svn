@@ -159,3 +159,10 @@
 {htxt id="id-supplemental-address"}
 <p>{ts}Supplemental address info, e.g. c/o, department name, building name, etc.{/ts}</p>
 {/htxt}
+
+{htxt id="id-source-title"}
+  {ts}Contact Source{/ts}
+{/htxt}
+{htxt id="id-source"}
+<p>{ts}Use this field to store a description of how/why this contact was added to the database. This field is usually auto-filled when a contact is created from a public form i.e. Event Registration.{/ts}</p>
+{/htxt}
