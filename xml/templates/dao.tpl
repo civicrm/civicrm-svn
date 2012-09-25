@@ -37,13 +37,13 @@
 require_once 'CRM/Core/DAO.php';
 require_once 'CRM/Utils/Type.php';
 
-{if $table.foreignKey} 
-  {foreach from=$table.foreignKey item=foreign} 
+{if $table.foreignKey}
+  {foreach from=$table.foreignKey item=foreign}
      {if $foreign.import}
 require_once '{$foreign.fileName}';
-     {/if} 
-  {/foreach} 
-{/if} 
+     {/if}
+  {/foreach}
+{/if}
 
 class {$table.className} extends CRM_Core_DAO {ldelim}
 
@@ -108,7 +108,7 @@ class {$table.className} extends CRM_Core_DAO {ldelim}
      */
     public ${$field.name};
 
-{/foreach} {* table.fields *}	
+{/foreach} {* table.fields *}
 
     /**
      * class constructor
@@ -130,8 +130,8 @@ class {$table.className} extends CRM_Core_DAO {ldelim}
      * @return array
      */
     function links( ) {ldelim}
-	if ( ! ( self::$_links ) ) {ldelim}
-	     self::$_links = array(
+  if ( ! ( self::$_links ) ) {ldelim}
+       self::$_links = array(
 {foreach from=$table.foreignKey item=foreign}
                                    '{$foreign.name}' => '{$foreign.table}:{$foreign.key}',
 {/foreach}
@@ -157,57 +157,57 @@ class {$table.className} extends CRM_Core_DAO {ldelim}
 {else}
                                             '{$field.name}'
 {/if}
-							 => array( 
+               => array(
                                                                       'name'      => '{$field.name}',
                                                                       'type'      => {$field.crmType},
 {if $field.title}
                                                                       'title'     => ts('{$field.title}'),
 {/if}
 {if $field.required}
-					                              'required'  => {$field.required},
+                                        'required'  => {$field.required},
 {/if} {* field.required *}
 {if $field.length}
-								      'maxlength' => {$field.length},
+                      'maxlength' => {$field.length},
 {/if} {* field.length *}
 {if $field.size}
-								      'size'      => {$field.size},
+                      'size'      => {$field.size},
 {/if} {* field.size *}
 {if $field.rows}
-								      'rows'      => {$field.rows},
+                      'rows'      => {$field.rows},
 {/if} {* field.rows *}
 {if $field.cols}
-								      'cols'      => {$field.cols},
+                      'cols'      => {$field.cols},
 {/if} {* field.cols *}
 
 {if $field.import}
-								      'import'    => {$field.import},
+                      'import'    => {$field.import},
                                                                       'where'     => '{$table.name}.{$field.name}',
                                       'headerPattern' => '{$field.headerPattern}',
                                       'dataPattern' => '{$field.dataPattern}',
 {/if} {* field.import *}
 {if $field.export}
-								      'export'    => {$field.export},
-                                      {if ! $field.import}                                
-								      'where'     => '{$table.name}.{$field.name}',	
+                      'export'    => {$field.export},
+                                      {if ! $field.import}
+                      'where'     => '{$table.name}.{$field.name}',
                                       'headerPattern' => '{$field.headerPattern}',
                                       'dataPattern' => '{$field.dataPattern}',
-				      {/if}	
+              {/if}
 {/if} {* field.export *}
 {if $field.rule}
-								      'rule'      => '{$field.rule}',
+                      'rule'      => '{$field.rule}',
 {/if} {* field.rule *}
 {if $field.default}
-    								      'default'   => '{$field.default|substring:1:-1}',
+                          'default'   => '{$field.default|substring:1:-1}',
 {/if} {* field.default *}
 {if $field.enumValues}
-    								      'enumValues' => '{$field.enumValues}',
+                          'enumValues' => '{$field.enumValues}',
 {/if} {* field.enumValues *}
 
 {if $field.FKClassName}
-								      'FKClassName' => '{$field.FKClassName}',
+                      'FKClassName' => '{$field.FKClassName}',
 {/if} {* field.FKClassName *}
 {if $field.pseudoconstant}
-								      'pseudoconstant' => '{$field.pseudoconstant}',
+                      'pseudoconstant' => '{$field.pseudoconstant}',
 {/if} {* field.pseudoconstant *}                                                                    ),
 {/foreach} {* table.fields *}
                                       );
@@ -264,10 +264,10 @@ class {$table.className} extends CRM_Core_DAO {ldelim}
                   {foreach from=$table.foreignKey item=foreign}
                      {if $foreign.import}
                         self::$_import = array_merge( self::$_import,
-						      {$foreign.className}::import( true ) );
+                  {$foreign.className}::import( true ) );
                      {/if}
                   {/foreach}
-               {/if} 
+               {/if}
           {rdelim}
           return self::$_import;
       {rdelim}
