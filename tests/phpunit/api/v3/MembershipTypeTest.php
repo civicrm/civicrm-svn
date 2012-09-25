@@ -31,6 +31,7 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase {
   protected $_contactID;
   protected $_contributionTypeID;
   protected $_apiversion;
+  protected $_entity = 'MembershipType';
   public $_eNoticeCompliant = TRUE;
 
   function get_info() {
@@ -316,20 +317,12 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase {
       'duration_unit' => 'month',
       'duration_interval' => '10',
       'period_type' => 'fixed',
-      'sequential' => 1,
       'domain_id' => 1,
       'version' => $this->_apiversion,
     );
     $membershiptype = civicrm_api('membership_type', 'update', $params);
 
-    $this->assertEquals($membershiptype['values'][0]['name'], 'Updated General', "in line " . __LINE__);
-    $this->assertEquals($membershiptype['values'][0]['member_of_contact_id'], '2', "in line " . __LINE__);
-    $this->assertEquals($membershiptype['values'][0]['contribution_type_id'], '2', "in line " . __LINE__);
-    $this->assertEquals($membershiptype['values'][0]['duration_unit'], 'month', "in line " . __LINE__);
-    $this->assertEquals($membershiptype['values'][0]['duration_interval'], '10', "in line " . __LINE__);
-    $this->assertEquals($membershiptype['values'][0]['period_type'], 'fixed', "in line " . __LINE__);
-    $this->assertEquals($membershiptype['values'][0]['visibility'], '1', "in line " . __LINE__);
-    $this->membershipTypeDelete(array('id' => $membershiptype['id']));
+    $this->getAndCheck($params, $id, $this->_entity);
   }
 
   ///////////////// civicrm_membership_type_delete methods
