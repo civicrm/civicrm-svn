@@ -1608,7 +1608,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
   function testContactUpdatePermissions() {
     $params = array('contact_type' => 'Individual', 'first_name' => 'Foo', 'last_name' => 'Bear', 'check_permissions' => TRUE, 'version' => $this->_apiversion);
     $result = civicrm_api('contact', 'create', $params);
-
+    $config = CRM_Core_Config::singleton();
     $params = array('id' => $result['id'], 'contact_type' => 'Individual', 'last_name' => 'Bar', 'check_permissions' => TRUE, 'version' => $this->_apiversion);
 
     $config->userPermissionClass->permissions = array('access CiviCRM');
