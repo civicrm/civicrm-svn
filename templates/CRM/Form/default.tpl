@@ -88,6 +88,14 @@ cj( function($) {
 
   var new_params = cj.extend(true, default_params, params, true);
   cj("#{/literal}{$form.formName}{literal}").validate(new_params);
+
+  // validation stuff after the form validate is initialized
+  if(CRM.validate_functions) {
+    for(var i in CRM.validate_functions) {
+      CRM.validate_functions[i]();
+    }
+  }
+
 });
 </script>
 {/literal}

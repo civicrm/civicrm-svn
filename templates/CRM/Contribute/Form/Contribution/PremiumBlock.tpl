@@ -272,6 +272,32 @@
           }
           update_premiums();
         });
+
+        // validation of premiums
+        var error_message = '{/literal}{ts}You must contribute more to get that premium{/ts}{literal}';
+        cj.validator.addMethod('premiums', function(value, element, params){
+          var premium_id = cj('#selectProduct').val();
+          var premium$ = cj('#premium_id-'+premium_id);
+          if(premium$.length) {
+            if(premium$.hasClass('premium-disabled')) {
+              alert(error_message);
+              //cj('#premium_id-no_thanks .premium-short').click();
+              return false;
+            }
+          }
+          return true;
+        }, error_message);
+        
+        // add validation rules
+        if(!CRM.validate_functions) CRM.validate_functions = [];
+        CRM.validate_functions.push(function(){
+          cj('#selectProduct').rules('add', 'premiums');
+        });
+        
+        // need to use jquery validate's ignore option, so that it will not ignore hidden fields
+        CRM.validate_params = {
+          ignore: '.ignore'
+        };
       });
     </script>
     {/literal}
