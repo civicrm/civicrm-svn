@@ -41,6 +41,8 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
       $tx = new CRM_Core_Transaction();
     }
 
+    _civicrm_api3_api_check_permission($apiRequest['entity'], $apiRequest['action'], $apiRequest['params']);
+
     // we do this before we
     _civicrm_api3_swap_out_aliases($apiRequest);
     if (strtolower($action) != 'getfields') {
