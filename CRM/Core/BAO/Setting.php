@@ -383,7 +383,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
   static
   function fixAndStoreDirAndURL(&$params) {
     $sql = "
-SELECT name, group_name 
+SELECT name, group_name
 FROM   civicrm_setting
 WHERE  ( group_name = %1
 OR       group_name = %2 )
@@ -462,7 +462,7 @@ OR       group_name = %2 )
     }
 
     $isJoomla = (defined('CIVICRM_UF') && CIVICRM_UF == 'Joomla') ? TRUE : FALSE;
-    
+
     if (CRM_Core_Config::isUpgradeMode() && !$isJoomla) {
       $currentVer = CRM_Core_BAO_Domain::version();
       if (version_compare($currentVer, '4.1.alpha1') < 0) {
