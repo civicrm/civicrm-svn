@@ -51,9 +51,9 @@ require_once 'CRM/Core/BAO/Address.php';
  */
 function civicrm_api3_address_create(&$params) {
   /**
-	 * if street_parsing, street_address has to be parsed into
-	 * separate parts
-	 */
+   * if street_parsing, street_address has to be parsed into
+   * separate parts
+   */
   if (array_key_exists('street_parsing', $params)) {
     if ($params['street_parsing'] == 1) {
       if (array_key_exists('street_address', $params)) {
@@ -79,9 +79,9 @@ function civicrm_api3_address_create(&$params) {
   }
 
   /**
-	  * create array for BAO (expects address params in as an
-	  * element in array 'address'
-	  */
+    * create array for BAO (expects address params in as an
+    * element in array 'address'
+    */
   $addressBAO = CRM_Core_BAO_Address::add($params, TRUE);
   if (empty($addressBAO)) {
     return civicrm_api3_create_error("Address is not created or updated ");
@@ -95,7 +95,7 @@ function civicrm_api3_address_create(&$params) {
 
 /*
  * Adjust Metadata for Create action
- * 
+ *
  * @param array $params array or parameters determined by getfields
  */
 function _civicrm_api3_address_create_spec(&$params) {
