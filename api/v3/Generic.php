@@ -98,7 +98,7 @@ function civicrm_api3_generic_getfields($apiRequest) {
 
   foreach ($metadata as $fieldname => $field) {
     if (array_key_exists('pseudoconstant', $field)&& !CRM_Utils_Array::value('FKClassName',$field)) {
-      $options = civicrm_api('constant', 'get', array('version' => 3, 'name' => $field['pseudoconstant']));
+      $options = civicrm_api('constant', 'get', array('version' => 3, 'name' => $field['pseudoconstant']['name']));
       if (is_array(CRM_Utils_Array::value('values', $options))) {
 
         $metadata[$fieldname]['options'] = $options['values'];

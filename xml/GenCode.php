@@ -86,7 +86,7 @@ class CRM_GenCode_Main {
     // add one or more filters
     $this->beautifier->addFilter('NewLines', array('after' => 'class, public, require, comment'));
     $this->beautifier->setIndentChar(' ');
-    $this->beautifier->setIndentNumber(4);
+    $this->beautifier->setIndentNumber(2);
     $this->beautifier->setNewLine("\n");
 
     CRM_GenCode_Util_File::createDir($this->sqlCodePath);
@@ -699,6 +699,16 @@ Alternatively you can get a version of CiviCRM that matches your PHP version
     $field['dataPattern'] = $this->value('dataPattern', $fieldXML);
     $field['uniqueName'] = $this->value('uniqueName', $fieldXML);
     $field['pseudoconstant'] = $this->value('pseudoconstant', $fieldXML);
+    if(!empty($fieldXML->pseudoconstant)){
+      //ok this is a bit long-winded but it gets there & is consistent with above approach
+      $field['pseudoconstant'] = array();
+      $validOptions = array('name', 'optionGroupName', 'table', 'keyColumn', 'labelColumn');
+      foreach ($validOptions as $pseudoOption){
+        if(!empty($fieldXML->pseudoconstant->$pseudoOption)){
+          $field['pseudoconstant'][$pseudoOption] = $this->value($pseudoOption, $fieldXML->pseudoconstant);
+        }
+      }
+    }
     $fields[$name] = &$field;
   }
 
