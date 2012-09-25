@@ -59,8 +59,8 @@
   
 </tr> 
 <tr>
-    <td class="crm-event-form-block-participant_test">{$form.participant_test.html}&nbsp;{$form.participant_test.label}</td> 
-    <td class="crm-event-form-block-participant_pay_later">{$form.participant_pay_later.html}&nbsp;{$form.participant_pay_later.label}</td> 
+    <td class="crm-event-form-block-participant_test">{$form.participant_test.label} {$form.participant_test.html}<span class="crm-clear-link">(<a href="javascript:unselectRadio('participant_test','{$form.formName}')">{ts}clear{/ts}</a>)</span></td> 
+    <td class="crm-event-form-block-participant_pay_later">{$form.participant_pay_later.label} {$form.participant_pay_later.html}<span class="crm-clear-link">(<a href="javascript:unselectRadio('participant_pay_later','{$form.formName}')">{ts}clear{/ts}</a>)</span></td> 
 </tr>
 <tr>
     <td class="crm-event-form-block-participant_fee_level">{$form.participant_fee_level.label}<br />{$form.participant_fee_level.html}</td>

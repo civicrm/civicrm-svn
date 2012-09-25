@@ -273,10 +273,10 @@ class CRM_Event_BAO_Query {
         $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause("civicrm_participant.is_test",
           $op,
           $value,
-          "Integer"
+          "Boolean"
         );
         if ($value) {
-          $query->_qill[$grouping][] = ts("Find Test Participants");
+          $query->_qill[$grouping][] = ts("Participant is a Test");
         }
         $query->_tables['civicrm_participant'] = $query->_whereTables['civicrm_participant'] = 1;
         return;
@@ -314,11 +314,9 @@ class CRM_Event_BAO_Query {
         $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause("civicrm_participant.is_pay_later",
           $op,
           $value,
-          "Integer"
+          "Boolean"
         );
-        if ($value) {
-          $query->_qill[$grouping][] = ts("Find Pay Later Participants");
-        }
+        $query->_qill[$grouping][] = $value ? ts("Participant is Pay Later") : ts("Participant is not Pay Later");
         $query->_tables['civicrm_participant'] = $query->_whereTables['civicrm_participant'] = 1;
         return;
 
@@ -590,8 +588,8 @@ class CRM_Event_BAO_Query {
       $form->_participantRole = &$form->addElement('checkbox', "participant_role_id[$rId]", NULL, $rName);
     }
 
-    $form->addElement('checkbox', 'participant_test', ts('Find Test Participants?'));
-    $form->addElement('checkbox', 'participant_pay_later', ts('Find Pay Later Participants?'));
+    $form->addYesNo('participant_test', ts('Participant is a Test?'));
+    $form->addYesNo('participant_pay_later', ts('Participant is Pay Later?'));
     $form->addElement('text', 'participant_fee_amount_low', ts('From'), array('size' => 8, 'maxlength' => 8));
     $form->addElement('text', 'participant_fee_amount_high', ts('To'), array('size' => 8, 'maxlength' => 8));
 
@@ -618,6 +616,7 @@ class CRM_Event_BAO_Query {
     CRM_Campaign_BAO_Campaign::addCampaignInComponentSearch($form, 'participant_campaign_id');
 
     $form->assign('validCiviEvent', TRUE);
+    $form->setDefaults(array('participant_test' => 0));
   }
 
   static function searchAction(&$row, $id) {}
