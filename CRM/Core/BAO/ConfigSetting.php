@@ -202,9 +202,7 @@ class CRM_Core_BAO_ConfigSetting {
     $domain->find(TRUE);
     if ($domain->config_backend) {
       $defaults = unserialize($domain->config_backend);
-      if ($defaults === FALSE ||
-        !is_array($defaults)
-      ) {
+      if ($defaults === FALSE || !is_array($defaults)) {
         $defaults = array();
         return;
       }

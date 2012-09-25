@@ -185,7 +185,6 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
       $cache = CRM_Utils_Cache::singleton();
       self::$_singleton = $cache->get('CRM_Core_Config');
 
-
       // if not in cache, fire off config construction
       if (!self::$_singleton) {
         self::$_singleton = new CRM_Core_Config;
