@@ -14,7 +14,7 @@
  *  - params: array, varies
  */
 function civicrm_api3_generic_update($apiRequest) {
-  $errorFnName = ($apiRequest['version'] == 2) ? 'civicrm_create_error' : 'civicrm_api3_create_error';
+  $errorFnName = 'civicrm_api3_create_error';
 
   //$key_id = strtolower ($apiRequest['entity'])."_id";
   $key_id = "id";
