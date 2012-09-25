@@ -33,7 +33,7 @@
 </style>
 <script type="text/javascript">
 
-options = {ldelim} ajaxURL:"{crmURL p='civicrm/ajax/rest' h=0}"
+dummy_options = {ldelim} ajaxURL:"{crmURL p='civicrm/ajax/rest' h=0}"
        ,closetxt:'<div class="ui-icon ui-icon-close" style="float:left"></div>'
       {rdelim} 
 entityID={$entityID};
@@ -62,12 +62,11 @@ function initTagTree() {
         //get current tag label
         var currentTagLabel = cj("#tagLabel_" + tagid ).text( );
         if (this.checked) {
-            //civiREST ('entity_tag','create',{entity_table:entityTable,entity_id:entityID,tag_id:tagid},image);
-            cj().crmAPI ('entity_tag','create',{entity_table:entityTable,entity_id:entityID,tag_id:tagid},options);
+            cj().crmAPI ('entity_tag','create',{entity_table:entityTable,entity_id:entityID,tag_id:tagid});
             // add check to tab label array
             tagsArray.push( currentTagLabel );
         } else {
-            cj().crmAPI ('entity_tag','delete',{entity_table:entityTable,entity_id:entityID,tag_id:tagid},options);
+            cj().crmAPI ('entity_tag','delete',{entity_table:entityTable,entity_id:entityID,tag_id:tagid});
             // build array of tag labels
             tagsArray = cj.map(tagsArray, function (a) { 
                  if ( cj.trim( a ) != currentTagLabel ) {
