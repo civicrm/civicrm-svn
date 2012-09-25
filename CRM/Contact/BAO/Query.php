@@ -1381,7 +1381,7 @@ class CRM_Contact_BAO_Query {
       case 'location_type':
         $this->locationType($values);
         return;
-         
+
       case 'county':
         $this->county($values);
         return;
@@ -1389,7 +1389,7 @@ class CRM_Contact_BAO_Query {
       case 'state_province':
         $this->stateProvince($values);
         return;
-        
+
       case 'country':
         $this->country($values, FALSE);
         return;
@@ -3141,7 +3141,7 @@ WHERE  id IN ( $groupIDs )
       // force the county to be an array
       $value = array($value);
     }
-    
+
     // check if the values are ids OR names of the counties
     $inputFormat = 'id';
     foreach ($value as $v) {
@@ -3153,7 +3153,7 @@ WHERE  id IN ( $groupIDs )
     $names = array();
     if ($inputFormat == 'id') {
       $clause = 'civicrm_county.id IN (' . implode(',', $value) . ')';
-      
+
       $county = CRM_Core_PseudoConstant::county();
       foreach ($value as $id) {
         $names[] = CRM_Utils_Array::value($id, $county);
@@ -3178,7 +3178,7 @@ WHERE  id IN ( $groupIDs )
       return implode(' ' . ts('or') . ' ', $names);
     }
   }
-  
+
   /**
    * where / qill clause for state/province AND country (if present)
    *
