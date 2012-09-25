@@ -417,8 +417,7 @@ class CRM_Core_PseudoConstant {
       return $var;
     }
 
-    require_once (str_replace('_', DIRECTORY_SEPARATOR, $name) . ".php");
-    eval('$object = new ' . $name . '( );');
+    $object = new $name ( );
 
     $object->selectAdd();
     $object->selectAdd("$key, $retrieve");
@@ -2183,23 +2182,27 @@ ORDER BY name";
    * @return array - array reference of all relevant constant
    */
   public static function getConstant($constant) {
-    if (!self::$$constant) {
+    if(empty(self::$$constant)) {
+      if(is_array($constant)){
+        print_r($constant);
+        debug_print_backtrace();
+        die;
+      }
       if (method_exists(get_class(), $constant)) {
         self::$$constant = self::$constant();
       }
     }
-
     return self::$$constant;
   }
 
 
-  /**                                                                                                                                                                                                       
+  /**
    * Get all the auto renew options
    *
    * @access public
    * @static
    *
-   * @return array self::autoRenew - array reference of all autoRenew 
+   * @return array self::autoRenew - array reference of all autoRenew
    *
    */
   public static function &autoRenew() {
