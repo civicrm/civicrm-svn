@@ -40,10 +40,7 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
       $apiRequest['is_transactional'] = 1;
       $tx = new CRM_Core_Transaction();
     }
-    $errorFnName = ($apiRequest['version'] == 2) ? 'civicrm_create_error' : 'civicrm_api3_create_error';
-    if ($apiRequest['version'] > 2) {
-      _civicrm_api3_api_check_permission($apiRequest['entity'], $apiRequest['action'], $apiRequest['params']);
-    }
+
     // we do this before we
     _civicrm_api3_swap_out_aliases($apiRequest);
     if (strtolower($action) != 'getfields') {
@@ -65,7 +62,7 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
       $result = isset($extra) ? $function($apiRequest['params'], $extra) : $function($apiRequest['params']);
     }
     else {
-      return $errorFnName("API (" . $apiRequest['entity'] . "," . $apiRequest['action'] . ") does not exist (join the API team and implement it!)");
+      return civicrm_api3_create_error("API (" . $apiRequest['entity'] . "," . $apiRequest['action'] . ") does not exist (join the API team and implement it!)");
     }
 
     if (CRM_Utils_Array::value('format.is_success', $apiRequest['params']) == 1) {
