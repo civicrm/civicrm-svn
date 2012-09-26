@@ -248,12 +248,16 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
     $query2    = file_get_contents($sql_file2);
     $query3    = file_get_contents($sql_file3);
-    $query3    = file_get_contents($sql_file4);
+    $query4    = file_get_contents($sql_file4);
     if (self::$utils->do_query($query2) === FALSE) {
       echo "Cannot load civicrm_data.mysql. Aborting.";
       exit;
     }
     if (self::$utils->do_query($query3) === FALSE) {
+      echo "Cannot load test_data.mysql. Aborting.";
+      exit;
+    }
+    if (self::$utils->do_query($query4) === FALSE) {
       echo "Cannot load test_data.mysql. Aborting.";
       exit;
     }

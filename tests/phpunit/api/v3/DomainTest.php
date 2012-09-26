@@ -71,7 +71,7 @@ class api_v3_DomainTest extends CiviUnitTestCase {
     // taken from form code - couldn't find good method to use
     $params['entity_id'] = 1;
     $params['entity_table'] = CRM_Core_BAO_Domain::getTableName();
-    $domain = 1;    
+    $domain = 1;
     $defaultLocationType = CRM_Core_BAO_LocationType::getDefault();
     $location = array();
     $params['address'][1]['location_type_id'] = $defaultLocationType->id;
@@ -112,28 +112,22 @@ class api_v3_DomainTest extends CiviUnitTestCase {
   public function testGet() {
 
 
-    $params = array('version' => 3);
+    $params = array('version' => 3, 'sequential' => 1,);
     $result = civicrm_api('domain', 'get', $params);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__);
 
     $this->assertType('array', $result, 'In line' . __LINE__);
 
-    foreach ($result['values'] as $key => $domain) {
-      if ($key == 'version') {
-        continue;
-      }
-
-      $this->assertEquals("info@FIXME.ORG", $domain['from_email'], 'In line ' . __LINE__);
-      $this->assertEquals("FIXME", $domain['from_name'], 'In line' . __LINE__);
-
-      // checking other important parts of domain information
-      // test will fail if backward incompatible changes happen
-      $this->assertArrayHasKey('id', $domain, 'In line' . __LINE__);
-      $this->assertArrayHasKey('name', $domain, 'In line' . __LINE__);
-      $this->assertArrayHasKey('domain_email', $domain, 'In line' . __LINE__);
-      $this->assertArrayHasKey('domain_phone', $domain, 'In line' . __LINE__);
-      $this->assertArrayHasKey('domain_address', $domain, 'In line' . __LINE__);
-    }
+    $domain = $result['values'][0];
+    $this->assertEquals("info@FIXME.ORG", $domain['from_email'], 'In line ' . __LINE__);
+    $this->assertEquals("FIXME", $domain['from_name'], 'In line' . __LINE__);
+    // checking other important parts of domain information
+    // test will fail if backward incompatible changes happen
+    $this->assertArrayHasKey('id', $domain, 'In line' . __LINE__);
+    $this->assertArrayHasKey('name', $domain, 'In line' . __LINE__);
+    $this->assertArrayHasKey('domain_email', $domain, 'In line' . __LINE__);
+    $this->assertArrayHasKey('domain_phone', $domain, 'In line' . __LINE__);
+    $this->assertArrayHasKey('domain_address', $domain, 'In line' . __LINE__);
   }
 
   public function testGetCurrentDomain() {
