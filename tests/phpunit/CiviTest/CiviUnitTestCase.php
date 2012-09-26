@@ -244,8 +244,11 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     //  initialize test database
     $sql_file2 = dirname(dirname(dirname(dirname(__FILE__)))) . "/sql/civicrm_data.mysql";
     $sql_file3 = dirname(dirname(dirname(dirname(__FILE__)))) . "/sql/test_data.mysql";
+    $sql_file4 = dirname(dirname(dirname(dirname(__FILE__)))) . "/sql/test_data_second_domain.mysql";
+
     $query2    = file_get_contents($sql_file2);
     $query3    = file_get_contents($sql_file3);
+    $query3    = file_get_contents($sql_file4);
     if (self::$utils->do_query($query2) === FALSE) {
       echo "Cannot load civicrm_data.mysql. Aborting.";
       exit;
@@ -862,12 +865,12 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
    *
    * @return int $id of contribution type created
    */
-  function contributionTypeCreate($apiversion = 2) {
+  function contributionTypeCreate() {
 
     $op = new PHPUnit_Extensions_Database_Operation_Insert();
     $op->execute($this->_dbconn,
       new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-        dirname(__FILE__) . '/../api/v' . $apiversion . '/dataset/contribution_types.xml'
+        dirname(__FILE__) . '/../api/v' . API_LATEST_VERSION . '/dataset/contribution_types.xml'
       )
     );
 
