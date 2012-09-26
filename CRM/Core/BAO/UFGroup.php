@@ -2341,13 +2341,17 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
    * @return void
    * @access public
    */
-  static function copy($id) {
+  static function copy($id, $title =null) {
     $fieldsFix = array('prefix' => array('title' => ts('Copy of ')));
     $copy = &CRM_Core_DAO::copyGeneric('CRM_Core_DAO_UFGroup',
       array('id' => $id),
       NULL,
       $fieldsFix
     );
+
+    if ($title) {
+      $copy->title = $title; 
+    }
 
     if ($pos = strrpos($copy->name, "_{$id}")) {
       $copy->name = substr_replace($copy->name, '', $pos);

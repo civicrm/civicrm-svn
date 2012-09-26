@@ -117,7 +117,14 @@ class CRM_UF_Form_Preview extends CRM_Core_Form {
     }
 
     $this->set('fieldId', NULL);
+    $this->assign( 'gid', $this->_gid );
     $this->assign("fields", $this->_fields);
+
+    $editInPlace = CRM_Utils_Request::retrieve('edit_in_place', 'Boolean');
+    if ($editInPlace) {
+      $this->assign("editInPlace", $editInPlace);
+    }
+    
   }
 
   /**

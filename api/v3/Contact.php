@@ -39,6 +39,20 @@
  *
  */
 
+
+function civicrm_api3_contact_getfieldsByType ($params) {
+  require_once 'CRM/Contact/BAO/Contact.php';
+  $fields  = CRM_Contact_BAO_Contact::getFieldsByType(array(),true);
+    if (  isset( $params['sequential'] ) && $params['sequential'] ==1 ) {
+      foreach ($fields as $k => $v) 
+        $fields[$k] =  array_values($v);
+    }
+  $params['sequential'] = 0;
+  return civicrm_api3_create_success($fields,$params,'Contact', 'getfieldsbytype');
+}
+
+
+
 /**
  * Create or update a contact (note you should always call this via civicrm_api() & never directly)
  *

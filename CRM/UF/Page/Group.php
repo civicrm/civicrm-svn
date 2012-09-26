@@ -81,6 +81,12 @@ class CRM_UF_Page_Group extends CRM_Core_Page {
           'qs' => 'action=preview&id=%%id%%&field=0&context=group',
           'title' => ts('Edit CiviCRM Profile Group'),
         ),
+        CRM_Core_Action::PREVIEW => array(
+          'name' => ts('Edit In Place'),
+          'url' => 'civicrm/admin/uf/group',
+          'qs' => 'action=preview&id=%%id%%&field=0&context=group&edit_in_place=1',
+          'title' => ts('Edit CiviCRM Profile Group'),
+        ),
         CRM_Core_Action::ADD => array(
           'name' => ts('Use Profile-Create Mode'),
           'url' => 'civicrm/profile/create',
@@ -142,7 +148,7 @@ class CRM_UF_Page_Group extends CRM_Core_Page {
       // default to 'browse'
       'browse'
     );
-
+    
     // assign vars to templates
     $this->assign('action', $action);
     $id = CRM_Utils_Request::retrieve('id', 'Positive',
@@ -184,16 +190,25 @@ class CRM_UF_Page_Group extends CRM_Core_Page {
   /**
    * This function is to make a copy of a profile, including
    * all the fields in the profile
-   *
+   * 
    * @return void
    * @access public
    */
   function copy() {
     $gid = CRM_Utils_Request::retrieve('gid', 'Positive',
-      $this, TRUE, 0, 'GET'
+      $this, TRUE, 0, 'REQUEST'
     );
+    $title = CRM_Utils_Request::retrieve('title', 'String');
 
-    CRM_Core_BAO_UFGroup::copy($gid);
+    $json = CRM_Utils_Request::retrieve('json', 'String');
+
+
+    $result = CRM_Core_BAO_UFGroup::copy($gid,$title);
+    if ($json) {
+      echo json_encode ($result->toArray());
+      exit ();
+    }
+
     CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/admin/uf/group', 'reset=1'));
   }
 

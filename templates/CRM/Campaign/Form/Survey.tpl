@@ -63,9 +63,13 @@
            <td class="label">{$form.profile_id.label}</td>
            <td class="view-value">{$form.profile_id.html}&nbsp;<span class="profile-links"></span>
 	       <div class="description">{ts}Select the Profile for Survey.{/ts}</div>
-           <div class="profile-create">
-                <a href="{crmURL p='civicrm/admin/uf/group/add' q='reset=1&action=add'}" target="_blank">{ts}Click here for new profile{/ts}
+           <div class="profile-create  crm-entity" id="UFGroup-new">
+           <span class="crm-editable crmf-title" data-placeholder='New profile'></span>
+                <!--a href="{crmURL p='civicrm/admin/uf/group/add' q='reset=1&action=add'}" target="_blank">{ts}Click here for new profile{/ts}-->
            </div>
+{*include profile link function*}
+{include file="CRM/common/buildProfileLink.tpl"  inplace=1 selector="#profile_id"}
+
            </td> 
        </tr>
       
@@ -141,11 +145,8 @@
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>
 
-{*include profile link function*}
-{include file="CRM/common/buildProfileLink.tpl"}
-
 {literal}
-<script type="text/javascript">
+<!--script type="text/javascript">
     //show edit profile field links
     cj(function() {
         // show edit for profile
@@ -157,7 +158,7 @@
         var profileField =  cj('select[id="profile_id"]'); 
         buildLinks( profileField, profileField.val()); 
     });
-</script>
+</script-->
 {/literal}
 
 {include file="CRM/common/customData.tpl"}

@@ -64,11 +64,11 @@
                     </tr>
                 </thead>
                 {foreach from=$rows item=row key=id }
-                <tr class="{cycle values="odd-row,even-row"} {$row.class} crm-tag crm-entity" id="tag-{$row.id}" >
-                    <td class="crm-tag-name crm-editable crmf-name">{$row.name}</td>
+                <tr class="{cycle values="odd-row,even-row"} {$row.class} crm-tag crm-entity" id="tag-{$row.id}">
+                    <td class="crmf-name crm-editable-row crm-tag-name"><span class="crmf-name crm-editable">{$row.name}</span></td>
                     <td class="crm-tag-id">{$row.id}</td>	
-                    <td class="crm-tag-description crm-editable crmf-description">{$row.description} </td>
-                    <td class="crm-tag-parent">{$row.parent} {if $row.parent_id}(<span class='crmf-parent_id crm-editable'>{$row.parent_id}</span>){/if}</td>
+                    <td class="crmf-description crm-editable crm-tag-description">{$row.description} </td>
+                    <td class="crm-tag-parent">{$row.parent} {if $row.parent_id}({$row.parent_id}){/if}</td>
         	    <td class="crm-tag-used_for">{$row.used_for}</td>
                     <td class="crm-tag-is_tagset">{if $row.is_tagset}<img src="{$config->resourceBase}i/check.gif" alt="{ts}Tag Set{/ts}" />{/if}</td>
                     <td class="crm-tag-is_reserved">{if $row.is_reserved}<img src="{$config->resourceBase}i/check.gif" alt="{ts}Reserved{/ts}" />{/if}</td>
@@ -197,4 +197,5 @@ function mergeTag( fromId ) {
 {/literal}
 
 {/if}
-{include file="CRM/common/crmeditable.tpl"}
+
+{include file="CRM/common/crmeditable.tpl"} 
