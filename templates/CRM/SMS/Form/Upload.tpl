@@ -34,7 +34,7 @@
 
 <table class="form-layout-compressed">
     <tr class="crm-mailing-upload-form-block-sms_provider_id"><td class="label">{$form.sms_provider_id.label}</td>
-        <td>{$form.sms_provider_id.html} {help id ="id-sms_provider"}</td>
+        <td>{$form.sms_provider_id.html} {help id ="id-sms_provider" isAdmin=$isAdmin}</td>
     </tr>
     
     <tr class="crm-mailing-upload-form-block-template">

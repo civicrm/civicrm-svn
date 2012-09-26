@@ -128,7 +128,7 @@
         <span class="description">{ts}Latest membership period expiration date. End Date will be automatically set based on Membership Type if you don't select a date.{/ts}</span></td></tr>
         <tr id="autoRenew" class="crm-membership-form-block-auto_renew">
            <td class="label"> {$form.auto_renew.label} </td>
-           <td> {$form.auto_renew.html} {help id="id-auto_renew" file="CRM/Member/Form/Membership.hlp"} </td>
+           <td> {$form.auto_renew.html} {help id="id-auto_renew" file="CRM/Member/Form/Membership.hlp" action=$action} </td>
         </tr>
     {if ! $membershipMode}
         <tr><td class="label">{$form.is_override.label}</td><td>{$form.is_override.html}&nbsp;&nbsp;{help id="id-status-override"}</td></tr>

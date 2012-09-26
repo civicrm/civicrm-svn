@@ -25,7 +25,7 @@
 *}
 {if $context ne 'caseActivity'}
     <tr class="crm-case-opencase-form-block-case_type_id">
-    	<td class="label">{$form.case_type_id.label}{help id="id-case_type" file="CRM/Case/Form/Case.hlp"}</td>
+    	<td class="label">{$form.case_type_id.label}{help id="id-case_type" file="CRM/Case/Form/Case.hlp" activityTypeFile=$activityTypeFile}</td>
     	<td>{$form.case_type_id.html}</td>
     </tr>
     <tr class="crm-case-opencase-form-block-status_id">

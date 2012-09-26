@@ -2714,8 +2714,7 @@ a.helpicon {
     background-color:transparent;
     width:16px;
     height:16px;
-    z-index:1;
-    position:absolute;
+    display: inline-block;
 }
 
 div.crm-accordion-header a.helpicon {
@@ -3455,6 +3454,11 @@ div.m ul#civicrm-menu,
 #crm-container div.ui-notify-message .ui-notify-cross:active { position:relative; top:1px }
 #crm-container div.ui-notify-message table, #crm-container div.ui-notify-message tbody {
   border: 0 none;
+}
+#crm-container div.ui-notify-message ul,
+#crm-container div.ui-notify-message ol {
+  margin: 0.5em 0 1em;
+  padding: 0 0 0 0.5em;
 }
 #crm-container div.ui-notify-message div.icon {
   background:transparent url("../i/message-icons.png") no-repeat 0 0;

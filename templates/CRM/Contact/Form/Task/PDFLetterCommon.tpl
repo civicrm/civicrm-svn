@@ -81,7 +81,7 @@
   {if $action neq 4}
   <span class="helpIcon" id="helphtml">
 	<a href="#" onClick="return showToken('Html', 1);">{$form.token1.label}</a>
-	{help id="id-token-html" file="CRM/Contact/Form/Task/Email.hlp"}
+	{help id="id-token-html" file="CRM/Contact/Form/Task/Email.hlp" tplFile=$tplFile isAdmin=$isAdmin editor=$editor}
 	<div id="tokenHtml" style="display:none;">
 	    <input style="border:1px solid #999999;" type="text" id="filter1" size="20" name="filter1" onkeyup="filter(this, 1)"/><br />
 	    <span class="description">{ts}Begin typing to filter list of tokens{/ts}</span><br/>

@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {htxt id="id-basic-criteria-title"}
-{ts}Search{/ts}
+  {ts}Search{/ts}
 {/htxt}
 {htxt id="id-basic-criteria"}
     {capture assign=amt}{500|crmMoney}{/capture}
@@ -33,13 +33,18 @@
 {/htxt}
 
 {htxt id="id-smog-criteria-title"}
-{ts}Group Search{/ts}
+  {ts}Group Search{/ts}
 {/htxt}
 {htxt id="id-smog-criteria"}
-    <p>{ts 1=$group.title}Contacts in the <strong>%1</strong> group are listed below. Use 'Find Contacts within this Group' to search for specific contacts. Use the 'Group Status...' checkboxes to view contacts with 'Pending' status and/or contacts who have been 'Removed' from this group.{/ts}</p>
+    <p>{ts 1=$group_title}Contacts in the <strong>%1</strong> group are listed below.{/ts}
+      <ul>
+        <li>{ts}Use 'Find Contacts within this Group' to search for specific contacts.{/ts}</li>
+        <li>{ts}Use the 'Group Status...' checkboxes to view contacts with 'Pending' status and/or contacts who have been 'Removed' from this group.{/ts}</li>
+      </ul>
+    </p>
     {if $permissionedForGroup}
-        {capture assign=addMembersURL}{crmURL q="context=amtg&amtgID=`$group.id`&reset=1"}{/capture}
-        <p>{ts 1=$addMembersURL 2=$group.title}Click <a href='%1'>Add Contacts to %2</a> if you want to add contacts to this group.{/ts}
+        {capture assign=addMembersURL}{crmURL q="context=amtg&amtgID=`$group_id`&reset=1"}{/capture}
+        <p>{ts 1=$addMembersURL 2=$group_title}Click <a href='%1'>Add Contacts to %2</a> if you want to add contacts to this group.{/ts}
         {if !empty($ssID)}
             {if $ssMappingID}
                 {capture assign=editSmartGroupURL}{crmURL p="civicrm/contact/search/builder" q="reset=1&force=1&ssID=`$ssID`"}{/capture}
@@ -53,21 +58,21 @@
 {/htxt}
 
 {htxt id="id-amtg-criteria-title"}
-{ts}Add to Group{/ts}
+  {ts}Add to Group{/ts}
 {/htxt}
 {htxt id="id-amtg-criteria"}
     {ts 1=$group.title}Use this Search form to find contacts. Mark the contacts you want to add to this group. Then click 'Add Contacts to %1'.{/ts}
 {/htxt}
 
 {htxt id="id-edit-smartGroup-title"}
-{ts}Edit Smart Group{/ts}
+  {ts}Edit Smart Group{/ts}
 {/htxt}
 {htxt id="id-edit-smartGroup"}
     {ts}Click this button if you want to view and or modify the search criteria used to define the members of this smart group.{/ts}
 {/htxt}
 
 {htxt id="id-add-to-smartGroup-title"}
-{ts}Add to Smart Group{/ts}
+  {ts}Add to Smart Group{/ts}
 {/htxt}
 {htxt id="id-add-to-smartGroup"}
     {ts}You can also add contacts to a smart group directly - regardless of whether they meet the smart group search criteria. For example, you might have a smart group for constituents who live in a certain locality, AND might have a few constituents who want to stay informed about events in that locality even though they no longer live there. Click this button to add contacts directly to this smart group.{/ts}

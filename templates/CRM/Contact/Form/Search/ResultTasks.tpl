@@ -45,11 +45,11 @@
             <a href="{$searchBuilderURL}">&raquo; {ts}Search Builder{/ts}</a><br />
         {/if}
         {if $context eq 'smog'}
-            {help id="id-smog-criteria"}
+            {help id="id-smog-criteria" group_id=$group.id group_title=$group.title ssID=$ssID ssMappingID=$ssMappingID permissionedForGroup=$permissionedForGroup}
         {elseif $context eq 'amtg'}
             {help id="id-amtg-criteria"}
         {else}
-            {help id="id-basic-criteria"}
+            {help id="id-basic-criteria" amt=$amt}
         {/if}
     {elseif $action eq 512}
         <a href="{$searchBuilderURL}">&raquo; {ts}Search Builder{/ts}</a><br />

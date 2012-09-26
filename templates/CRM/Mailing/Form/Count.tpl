@@ -23,31 +23,30 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="messages status float-right" style="margin-left: 1em;">
-    {ts}Total Recipients:{/ts} <strong>{$count|crmNumberFormat}</strong><br /></div>
-<div class="status float-right">
-   {if $action eq 256 & $ssid eq null}
-  <div id="popupContainer">
-<table id="selectedRecords" class="display crm-copy-fields">
-    <thead>
-       <tr class="columnheader">
-	        <th class="contact_details">Name</th>
-       </tr>
-    </thead>
-
-    <tbody>
-	{foreach from=$value item='row'}
-	<tr class="{cycle values="odd-row,even-row"}">
-	       <td class="name">{$row}</td>
-	    {/foreach}
-	</tr>    
-    </tbody>
-</table>
-</div>
-   <a href="#" id="button"title="Contacts selected in the Find Contacts page"> {ts}View Selected Contacts{/ts}</a>
-   {/if}
+<div class="status float-right" style="margin-left: 1em;">
+  {ts}Total Recipients:{/ts} <strong>{$count|crmNumberFormat}</strong>
 </div>
 {if $action eq 256 & $ssid eq null}
+  <div class="status float-right">
+    <div id="popupContainer">
+      <table id="selectedRecords" class="display crm-copy-fields">
+        <thead>
+          <tr class="columnheader">
+            <th class="contact_details">Name</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {foreach from=$value item='row'}
+          <tr class="{cycle values="odd-row,even-row"}">
+                 <td class="name">{$row}</td>
+              {/foreach}
+          </tr>    
+        </tbody>
+      </table>
+    </div>
+     <a href="#" id="button"title="Contacts selected in the Find Contacts page"> {ts}View Selected Contacts{/ts}</a>
+  </div>
 {literal}
 <script type="text/javascript">
 cj("#popupContainer").hide();

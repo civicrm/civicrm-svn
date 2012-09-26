@@ -65,9 +65,9 @@ function smarty_function_help($params, &$smarty) {
   $name = trim($smarty->fetch($params['file'] . '.hlp'));
   $title = ts('%1 Help', array(1 => $name));
   unset($params['text']);
-  // Format for json
+  // Format params to survive being passed through json & the url
   foreach ($params as &$param) {
-    $param = $param === NULL ? '' : $param;
+    $param = is_bool($param) || is_numeric($param) ? (int) $param : (string) $param;
   }
   return '<a class="helpicon" title="' . $title . '" href=\'javascript:cj().crmTooltip("' . $name . '", ' . json_encode($params) . ')\'>&nbsp;</a>';
 }

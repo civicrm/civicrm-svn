@@ -25,7 +25,7 @@
 *}
     <div id="help" style="padding: 1em;">
         {ts}Available dashboard elements - dashlets - are displayed in the dark gray top bar. Drag and drop dashlets onto the left or right columns below to add them to your dashboard. Changes are automatically saved. Click 'Done' to return to the normal dashboard view.{/ts}
-        {help id="id-dash_configure" file="CRM/Contact/Page/Dashboard.hlp"}
+        {help id="id-dash_configure" file="CRM/Contact/Page/Dashboard.hlp" admin=$admin}
     </div><br/>
     <div class="dashlets-header">{ts}Available Dashlets{/ts}</div>
     <div id="available-dashlets" class="dash-column">
