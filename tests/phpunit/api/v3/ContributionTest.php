@@ -392,6 +392,17 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $this->assertEquals(0, $lineItems['count']);
   }
   /*
+   *
+   */
+  function testCreateContributionWithPaymentInstrument() {
+    $params = $this->_params + array('payment_instrument' => 'EFT');
+    $contribution =  civicrm_api('contribution','create',$params);
+    $contribution = civicrm_api('contribution','get',array('version'=> 3, 'sequential' => 1, 'id' => $contribution['id']));
+    $this->assertArrayHasKey('payment_instrument', $contribution['values'][0]);
+    $eftTypeId = CRM_Core_OptionGroup::getValue('payment_instrument', 'EFT');
+    $this->assertEquals('EFT',$contribution['values'][0]['payment_instrument']);
+  }
+  /*
      * Create test with unique field name on source
      */
   function testCreateContributionSource() {
