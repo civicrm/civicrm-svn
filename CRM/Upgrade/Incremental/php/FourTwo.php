@@ -97,6 +97,18 @@ class CRM_Upgrade_Incremental_php_FourTwo {
         ));
       }
     }
+    if ($rev == '4.2.2') {  
+      $query = " SELECT cli.id
+FROM `civicrm_line_item` cli
+INNER JOIN civicrm_membership_payment cmp ON cmp.contribution_id = cli.entity_id AND cli.entity_table = 'civicrm_contribution'
+INNER JOIN civicrm_price_field_value cpfv ON cpfv.id = cli.price_field_value_id
+INNER JOIN civicrm_price_field cpf ON cpf.id = cpfv.price_field_id and cpf.id != cli.price_field_id
+INNER JOIN civicrm_price_set cps ON cps.id = cpf.price_set_id AND cps.name <>'default_membership_type_amount' ";
+      $dao = CRM_Core_DAO::executeQuery($query);
+      if ($dao->N) {
+        $preUpgradeMessage .= "<br /><strong>". ts('We have identified extraneous data in your database that a previous upgrade likely introduced. We STRONGLY recommend making a backup of your site before continuing. We also STRONGLY suggest fixing this issue with unneeded records BEFORE you upgrade. You can find more information about this issue and the way to fix it by visiting <a href="http://forum.civicrm.org/index.php/topic,26181.0.html">http://forum.civicrm.org/index.php/topic,26181.0.html</a>.') ."</strong>";
+      }
+    }
   }
 
   /**
