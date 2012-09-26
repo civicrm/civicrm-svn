@@ -73,17 +73,20 @@ function civicrm_api3_pledge_payment_create($params) {
   }
 
   $dao = CRM_Pledge_BAO_PledgePayment::add($paymentParams);
+  if(empty($dao->pledge_id)){
+    $dao->find(True);
+  }
   _civicrm_api3_object_to_array($dao, $result[$dao->id]);
 
 
   //update pledge status
-  CRM_Pledge_BAO_PledgePayment::updatePledgePaymentStatus($params['pledge_id']);
+  CRM_Pledge_BAO_PledgePayment::updatePledgePaymentStatus($dao->pledge_id);
 
   return civicrm_api3_create_success($result, $params, 'pledge_payment', 'create', $dao);
 }
 /*
  * Adjust Metadata for Create action
- * 
+ *
  * The metadata is used for setting defaults, documentation & validation
  * @param array $params array or parameters determined by getfields
  */
@@ -136,9 +139,9 @@ function updatePledgePayments($pledgeId, $paymentStatusId, $paymentIds) {
   return $result;
 }
 
-/* 
+/*
  * Gets field for civicrm_pledge_payment functions
- * 
+ *
  * @return array fields valid for other functions
  */
 function civicrm_api3_pledge_payment_get_spec(&$params) {

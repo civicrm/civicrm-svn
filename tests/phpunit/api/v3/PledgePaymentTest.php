@@ -39,6 +39,8 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase {
   protected $_apiversion;
   protected $_contributionID;
   protected $_contributionTypeId;
+  protected $_entity = 'PledgePayment';
+
   public $DBResetRequired = TRUE; function setUp() {
     $this->_apiversion = 3;
     parent::setUp();
@@ -60,6 +62,7 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase {
       'civicrm_contact',
       'civicrm_pledge',
       'civicrm_pledge_payment',
+      'civicrm_line_item',
     );
 
     $this->quickCleanup($tablesToTruncate);
@@ -280,7 +283,6 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase {
 
   function testUpdatePledgePayment() {
     $params = array(
-      'contact_id' => $this->_individualId,
       'pledge_id' => $this->_pledgeID,
       'contribution_id' => $this->_contributionID,
       'version' => $this->_apiversion,
@@ -296,9 +298,8 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase {
 
     $result = civicrm_api('pledge_payment', 'update', $updateparams);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__);
-    $this->assertEquals($result['is_error'], 0);
-    $this->assertEquals('20.00', $result['values'][$result['id']]['actual_amount']);
-    $this->assertEquals($result['values'][$result['id']]['status_id'], 1, 'in line ' . __LINE__);
+    $this->assertAPISuccess($result, ' in line ' . __LINE__);
+    $this->getAndCheck(array_merge($params,$updateparams), $result['id'], $this->_entity);
   }
 
   function testDeletePledgePayment() {
