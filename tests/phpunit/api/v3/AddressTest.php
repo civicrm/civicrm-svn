@@ -207,7 +207,11 @@ class api_v3_AddressTest extends CiviUnitTestCase {
     civicrm_api('address', 'create', $this->_params);
     $subfile     = "AddressSort";
     $description = "Demonstrates Use of sort filter";
-    $params      = array('options' => array('sort' => 'street_address DESC'),
+    $params      = array(
+      'options' => array(
+        'sort' => 'street_address DESC',
+        'limit' => 2,
+      ),
       'version' => $this->_apiversion,
       'sequential' => 1,
     );
