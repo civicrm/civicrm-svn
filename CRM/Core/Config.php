@@ -413,13 +413,14 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
       CRM_Core_Config_Defaults::setValues($variables);
 
       // retrieve directory and url preferences also
-      CRM_Core_BAO_Setting::retrieveDirectoryAndURLPreferences($defaults);
+      CRM_Core_BAO_Setting::retrieveDirectoryAndURLPreferences($variables);
 
       // add component specific settings
       $this->componentRegistry->addConfig($this);
 
       // serialise settings
-      CRM_Core_BAO_ConfigSetting::add($variables);
+      $settings = $variables;
+      CRM_Core_BAO_ConfigSetting::add($settings);
     }
 
     $urlArray = array('userFrameworkResourceURL', 'imageUploadURL');
