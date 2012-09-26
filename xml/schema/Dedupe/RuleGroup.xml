@@ -38,6 +38,14 @@
     <add>2.1</add>
   </field>
   <field>
+    <name>usage</name>
+    <type>enum</type>
+    <values>Unsupervised, Supervised, General</values>
+    <required>true</required>
+    <comment>Whether the rule should be used for cases where usage is Unsupervised, Supervised OR General(programatically)</comment>
+    <add>4.3</add>
+  </field>
+  <field>
     <name>is_default</name>
     <type>boolean</type>
     <comment>Is this a default rule (one rule for every contact type + level combination should be default)</comment>

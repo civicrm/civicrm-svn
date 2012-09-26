@@ -49,7 +49,8 @@ class CRM_Contact_Form_DedupeRules extends CRM_Admin_Form {
    *
    * @return None
    * @access public
-   */ function preProcess() {
+   */ 
+  function preProcess() {
     // Ensure user has permission to be here
     if (!CRM_Core_Permission::check('administer dedupe rules')) {
       CRM_Utils_System::permissionDenied();
@@ -104,23 +105,28 @@ class CRM_Contact_Form_DedupeRules extends CRM_Admin_Form {
     $this->addRule('title', ts('A duplicate matching rule with this name already exists. Please select another name.'),
       'objectExists', array('CRM_Dedupe_DAO_RuleGroup', $this->_rgid, 'title')
     );
-    $levelType = array(
+    /*  
+  $levelType = array(
       'Fuzzy' => ts('Fuzzy'),
       'Strict' => ts('Strict'),
     );
     $ruleLevel = $this->add('select', 'level', ts('Level'), $levelType);
+*/
+    $options = array(ts('Unsupervised'), ts('Supervised'), ts('General'));
 
-    $default = $this->add('checkbox', 'is_default', ts('Default?'));
+    $this->addRadio('level', ts('Usage'), $options);
+
+    /*  $default = $this->add('checkbox', 'is_default', ts('Default?'));
     if (CRM_Utils_Array::value('is_default', $this->_defaults)) {
       $default->freeze();
-      $ruleLevel->freeze();
-    }
+      //$ruleLevel->freeze();
+      }*/
 
     $disabled = array();
     $reserved = $this->add('checkbox', 'is_reserved', ts('Reserved?'));
     if (CRM_Utils_Array::value('is_reserved', $this->_defaults)) {
       $reserved->freeze();
-      $ruleLevel->freeze();
+      // $ruleLevel->freeze();
       $disabled = array('disabled' => TRUE);
     }
 
@@ -158,8 +164,7 @@ class CRM_Contact_Form_DedupeRules extends CRM_Admin_Form {
    * @static
    * @access public
    */
-  static
-  function formRule($fields, $files, $self) {
+  static function formRule($fields, $files, $self) {
     $errors = array();
     if (CRM_Utils_Array::value('is_reserved', $fields)) {
       return TRUE;
