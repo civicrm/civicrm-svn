@@ -47,20 +47,14 @@
             <thead>
             <tr>
               <th>{ts 1=$contactType}%1 Rules{/ts}</th>
-              <th>{ts}Level{/ts}</th>
-              <th>{ts}Default?{/ts}</th>
+              <th>{ts}Usage{/ts}</th>
               <th></th>
             </tr>
             </thead>
             {foreach from=$rows item=row}
               <tr class="{cycle values="odd-row,even-row"}">
                 <td>{$row.title}</td>
-                <td>{$row.level}</td>	
-                {if $row.is_default}
-                    <td><img src="{$config->resourceBase}i/check.gif" alt="{ts}Default{/ts}" /></td>    
-                {else}
-                    <td></td>
-                {/if}
+                <td>{$row.usage}</td>	
                 <td>{$row.action|replace:'xx':$row.id}</td>
               </tr>
             {/foreach}
