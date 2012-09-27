@@ -2726,9 +2726,86 @@ div a.helpicon:focus {
   background-image:url(../i/icons/jquery-ui-91CE00.png); !important
 }
 
+div#crm-toolTip {
+    padding   : 10px;
+    background: #eef4b8;
+    font-size : 11px;
+    color     : black;
+    text-align: left;
+    margin    : 1em;
+    position: fixed;
+    bottom:20px;
+    right:20px;
+    width:500px;
+    display:none;
+    max-height:500px;
+    overflow:auto;
+}
+
+div#crm-toolTip td {
+    vertical-align: top;
+    padding: 2px 4px 2px 2px;
+}
+
+div#crm-toolTip a {
+    color: #000;
+    text-decoration: underline;
+}
+div#crm-toolTip #hide-tooltip {
+    float:right;
+    cursor: pointer;
+}
+
 .crm-summary-link {
     position: relative;
     z-index: 16;
+}
+
+.crm-tooltip-wrapper {
+    position:absolute;
+    bottom:0px;
+    left:-36px;
+    overflow:hidden;
+    z-index:1000;
+    padding-bottom: 10px;
+    background: transparent url('../i/overlay-pointer.png') no-repeat bottom left;
+    font-size:12px;
+    display:none;
+}
+
+.crm-tooltip-down .crm-tooltip-wrapper {
+    top:20px;
+    padding-top: 10px;
+    background: transparent url('../i/overlay-pointer.png') no-repeat top left;
+    overflow: visible;
+}
+
+.crm-tooltip-active {z-index: 20;}
+
+.crm-tooltip-active .crm-tooltip-wrapper {display:block;}
+
+.crm-tooltip {
+    padding:4px;
+    background-color: #2f2f2e;
+    color:#FFF;
+    margin-left:11px;
+    min-width: 20px;
+    min-height: 20px;
+}
+#crm-container .crm-tooltip table,
+#crm-container .crm-tooltip table tr td {border:none;}
+.crm-tooltip .crm-summary-group {
+    width:700px;
+    margin-bottom: 0px;
+}
+
+.crm-tooltip .crm-report-overlay {
+    width: 500px;
+    margin-bottom: 0px;
+}
+
+.crm-tooltip .crm-report-overlay thead td {
+  font-weight: bold;
 }
 
 .crm-summary-group h2 {
@@ -2737,7 +2814,6 @@ div a.helpicon:focus {
 	color:#FFF;
 	margin-bottom:0px;
 }
-
 
 /* crm-summary-group appears outside crm-container for contact summary icon overlay */
 #crm-container .crm-summary-group .crm-section .label,

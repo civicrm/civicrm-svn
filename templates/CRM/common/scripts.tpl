@@ -28,6 +28,7 @@
 <script type="text/javascript">
   cj(document).ready(function() {
     advmultiselectResize();
+    cj().crmtooltip();
   });
   cj(window).resize(function() {
     advmultiselectResize();

@@ -24,13 +24,43 @@
 * +--------------------------------------------------------------------+
 */
 (function($, undefined){ 
-  var tip;
-  $.fn.crmTooltip = function(title, params) {
-    tip && tip.close && tip.close();
+  $.fn.crmtooltip = function(){
+    $('a.crm-summary-link')
+    .addClass('crm-processed')
+    .live('mouseover',
+      function(e)  {
+          $(this).addClass('crm-tooltip-active');
+          topDistance = e.pageY - $(window).scrollTop();
+          if (topDistance < 300 | topDistance < $(this).children('.crm-tooltip-wrapper').height()) {
+                $(this).addClass('crm-tooltip-down');
+            }
+        if ($(this).children('.crm-tooltip-wrapper').length == '') {
+          $(this).append('<div class="crm-tooltip-wrapper"><div class="crm-tooltip"></div></div>');
+          $(this).children().children('.crm-tooltip')
+            .html('<div class="crm-loading-element"></div>')
+            .load(this.href);
+        }
+      })
+      .live('mouseout',
+      function(){
+        $(this).removeClass('crm-tooltip-active');
+        $(this).removeClass('crm-tooltip-down');
+        }
+      )
+    .live('click',
+      function(){
+        return false;
+        }
+      );
+  };
+  
+  var h;
+  $.fn.crmHelp = function(title, params) {
+    h && h.close && h.close();
     var options = {
       expires: 0
     };
-    tip = $().crmAlert('...', title, 'crm-tooltip crm-msg-loading', options);
+    h = $().crmAlert('...', title, 'crm-help crm-msg-loading', options);
     params.class_name = 'CRM_Core_Page_Help';
     params.type = 'page';
     $.ajax($.crmURL('civicrm/ajax/inline'),
@@ -38,12 +68,12 @@
         data: params,
         dataType: 'html',
         success: function(data) {
-          $('#crm-notification-container .crm-tooltip .notify-content:last').html(data);
-          $('#crm-notification-container .crm-tooltip').removeClass('crm-msg-loading').addClass('info');
+          $('#crm-notification-container .crm-help .notify-content:last').html(data);
+          $('#crm-notification-container .crm-help').removeClass('crm-msg-loading').addClass('info');
         },
         error: function(data) {
-          $('#crm-notification-container .crm-tooltip .notify-content:last').html('Unable to load help file.');
-          $('#crm-notification-container .crm-tooltip').removeClass('crm-msg-loading').addClass('error');
+          $('#crm-notification-container .crm-help .notify-content:last').html('Unable to load help file.');
+          $('#crm-notification-container .crm-help').removeClass('crm-msg-loading').addClass('error');
         }
       }
     );
