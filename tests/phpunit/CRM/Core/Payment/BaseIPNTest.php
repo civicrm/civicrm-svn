@@ -112,6 +112,7 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase {
       'civicrm_event',
       'civicrm_participant',
       'civicrm_pledge',
+      'civicrm_line_item',
     );
     $this->quickCleanup($tablesToTruncate);
     CRM_Member_PseudoConstant::membershipType($this->_membershipTypeID, TRUE);
