@@ -89,6 +89,11 @@
       <name>role_id</name> 
       <uniqueName>participant_role_id</uniqueName>
       <title>Participant Role Id</title>
+      <pseudoconstant>
+        <name>participantRole</name>
+        <optionGroupName>participant_role</optionGroupName>
+        <class>CRM_Event_PseudoConstant</class>
+      </pseudoconstant>
       <headerPattern>/(participant.)?(role)$/i</headerPattern>
       <import>true</import>
       <type>varchar</type>  

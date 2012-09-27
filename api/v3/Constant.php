@@ -91,8 +91,11 @@
 function civicrm_api3_constant_get($params) {
 
   $name = $params['name'];
-  require_once 'CRM/Core/PseudoConstant.php';
+  //  require_once 'CRM/Core/PseudoConstant.php';
   $className = 'CRM_Core_PseudoConstant';
+  if (isset ($params['class']) && ($params['class'] == 'CRM_Event_PseudoConstant')) { // whitelist approach is safter
+    $className = $params['class'];
+  }
   $callable = "$className::$name";
   if (is_callable($callable)) {
     if (empty($params)) {
