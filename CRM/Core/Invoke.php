@@ -216,7 +216,7 @@ class CRM_Core_Invoke {
             $addSequence = $addSequence ? 'true' : 'false';
             unset($pageArgs['addSequence']);
           }
-            $object = new $item['page_callback'] ($title, $mode, null, $addSequence );
+            $object = new $item['page_callback'] ($title, true, $mode, null, $addSequence );
         }
         else {
           CRM_Core_Error::fatal();
@@ -389,7 +389,7 @@ class CRM_Core_Invoke {
     ) {
       CRM_Core_DAO::triggerRebuild();
     }
-    
+
     CRM_Core_ManagedEntities::singleton(TRUE)->reconcile();
   }
 }
