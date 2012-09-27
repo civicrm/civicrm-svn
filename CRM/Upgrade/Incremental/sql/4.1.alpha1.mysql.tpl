@@ -274,8 +274,8 @@ ALTER TABLE `civicrm_dedupe_rule_group` ADD `is_reserved` TINYINT( 4 ) NULL DEFA
 UPDATE `civicrm_dedupe_rule_group` SET `name` = CONCAT( REPLACE( `name`, '-', '' ), '-', id );
 
 -- the fuzzy default dedupe rules
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, {localize field='title'}title{/localize}, is_reserved)
-VALUES ('Individual', 20, 'Fuzzy', 1, 'IndividualFuzzy', {localize}'Individual Fuzzy In-built'{/localize}, 1);
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, title, is_reserved)
+VALUES ('Individual', 20, 'Fuzzy', 1, 'IndividualFuzzy', 'Individual Fuzzy In-built', 1);
 
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
@@ -284,15 +284,15 @@ VALUES (@drgid, 'civicrm_contact', 'first_name', 5),
        (@drgid, 'civicrm_email'  , 'email',     10);
 
 -- the strict dedupe rules
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, {localize field='title'}title{/localize}, is_reserved)
-VALUES ('Individual', 10, 'Strict', 1, 'IndividualStrict', {localize}'Individual Strict In-built'{/localize}, 1);
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, title, is_reserved)
+VALUES ('Individual', 10, 'Strict', 1, 'IndividualStrict', 'Individual Strict In-built', 1);
 
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
 VALUES (@drgid, 'civicrm_email', 'email', 10);
 
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, {localize field='title'}title{/localize}, is_reserved)
-VALUES ('Individual', 15, 'Strict', 0, 'IndividualComplete', {localize}'Individual Complete Inbuilt'{/localize}, 1);
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, title, is_reserved)
+VALUES ('Individual', 15, 'Strict', 0, 'IndividualComplete', 'Individual Complete Inbuilt', 1);
 
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)

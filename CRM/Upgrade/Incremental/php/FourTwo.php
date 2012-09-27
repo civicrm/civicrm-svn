@@ -228,6 +228,37 @@ INNER JOIN civicrm_price_set cps ON cps.id = cpf.price_set_id AND cps.name <>'de
     $this->addTask(ts('Upgrade DB to 4.2.2: SQL'), 'task_4_2_alpha1_runSql', $rev);
     //create line items for memberships and participants for api/import
     self::convertContribution();
+    
+    // CRM-10937 Fix the title on civicrm_dedupe_rule_group
+    $upgrade = new CRM_Upgrade_Form();
+    if ($upgrade->multilingual) {
+      // Check if the 'title' field exists
+      $query = "SELECT column_name
+                  FROM information_schema.COLUMNS
+                 WHERE table_name = 'civicrm_dedupe_rule_group'
+                   AND table_schema = DATABASE()
+                   AND column_name = 'title'";
+
+      $dao = CRM_Core_DAO::executeQuery($query);
+     
+      if (!$dao->N) {
+        $domain = new CRM_Core_DAO_Domain;
+        $domain->find(TRUE);
+
+        if ($domain->locales) {
+          $locales = explode(CRM_Core_DAO::VALUE_SEPARATOR, $domain->locales);
+          $locale = array_shift($locales);
+          
+          // Use the first language (they should all have the same value)
+          CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_dedupe_rule_group` CHANGE `title_{$locale}` `title` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Label of the rule group'", $params, TRUE, NULL, FALSE, FALSE);
+          
+          // Drop remaining the column for the remaining languages
+          foreach ($locales as $locale) {
+            CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_dedupe_rule_group` DROP `title_{$locale}`", $params, TRUE, NULL, FALSE, FALSE);
+          }
+        }
+      }
+    }
   }
   
   function convertContribution(){
