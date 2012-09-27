@@ -47,64 +47,33 @@ class CRM_Core_Permission_WordPress extends CRM_Core_Permission_Base {
    * @return boolean true if yes, else false
    * @access public
    */
-
   function check($str) {
     // for administrators give them all permissions
     if (!function_exists('current_user_can')) {
       return TRUE;
     }
 
-    if (current_user_can('author')) {
-      return FALSE;
-    }
-
-    if (current_user_can('super admin') ||
-      current_user_can('administrator')
-    ) {
+    if (current_user_can('super admin') || current_user_can('administrator')) {
       return TRUE;
     }
 
-    static $otherPerms = NULL;
-    if (!$otherPerms) {
-      $otherPerms = array(
-        'access CiviMail subscribe/unsubscribe pages' => 1,
-        'access all custom data' => 1,
-        'access uploaded files' => 1,
-        'make online contributions' => 1,
-        'profile create' => 1,
-        'profile edit' => 1,
-        'profile view' => 1,
-        'register for events' => 1,
-        'view event info' => 1,
-        'access Contact Dashboard' => 1,
-        'sign CiviCRM Petition' => 1,
-        'view public CiviMail content' => 1,
-      );
+    // Make string lowercase and convert spaces into underscore
+    $str = strtolower($str);
+    $str = str_replace(" ","_",$str);
+
+    if ( is_user_logged_in() ) {
+      // Check whether the logged in user has the capabilitity
+      if (current_user_can($str)) {
+        return TRUE;
+      }
     }
-
-    static $editPerms = NULL;
-    if (!$editPerms) {
-      $editPerms = array(
-        'access CiviCRM' => 1,
-      );
-      $editPerms = array_merge($editPerms, $otherPerms);
+    else {
+      //check the capabilities of Anonymous user)
+      $roleObj = new WP_Roles();
+      if (array_key_exists($str, $roleObj->get_role('anonymous_user')->capabilities)) {
+        return TRUE;
+      }
     }
-
-    $permissions = NULL;
-
-    if (current_user_can('editor')) {
-      //assign editor permissions
-      $permissions = $editPerms;
-    } else {
-      // for everyone else, give them permission only for
-      // some public pages
-      $permissions = $otherPerms;
-    }
-
-    if (array_key_exists($str, $permissions)) {
-      return TRUE;
-    }
-
     return FALSE;
   }
 }
