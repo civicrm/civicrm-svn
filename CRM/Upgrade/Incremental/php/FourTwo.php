@@ -184,21 +184,7 @@ INNER JOIN civicrm_price_set cps ON cps.id = cpf.price_set_id AND cps.name <>'de
     // tasks and enqueue them separately.
     $this->addTask(ts('Upgrade DB to 4.2.alpha1: SQL'), 'task_4_2_alpha1_runSql', $rev);
     $this->addTask(ts('Upgrade DB to 4.2.alpha1: Price Sets'), 'task_4_2_alpha1_createPriceSets', $rev);
-    $minContributionId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(min(id),0) FROM civicrm_contribution');
-    $maxContributionId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(max(id),0) FROM civicrm_contribution');
-    for ($startId = $minContributionId; $startId <= $maxContributionId; $startId += self::BATCH_SIZE) {
-      $endId = $startId + self::BATCH_SIZE - 1;
-      $title = ts('Upgrade DB to 4.2.alpha1: Contributions (%1 => %2)', array(1 => $startId, 2 => $endId));
-      $this->addTask($title, 'task_4_2_alpha1_convertContributions', $startId, $endId);
-    } 
-    $minParticipantId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(min(id),0) FROM civicrm_participant');
-    $maxParticipantId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(max(id),0) FROM civicrm_participant');
-    
-    for ($startId = $minParticipantId; $startId <= $maxParticipantId; $startId += self::BATCH_SIZE) {
-      $endId = $startId + self::BATCH_SIZE - 1;
-      $title = ts('Upgrade DB to 4.2.alpha1: Participant (%1 => %2)', array(1 => $startId, 2 => $endId));
-      $this->addTask($title, 'task_4_2_alpha1_convertParticipants', $startId, $endId);
-    }
+    self::convertContribution();
     $this->addTask(ts('Upgrade DB to 4.2.alpha1: Event Profile'), 'task_4_2_alpha1_eventProfile');
   }
 
@@ -236,6 +222,30 @@ INNER JOIN civicrm_price_set cps ON cps.id = cpf.price_set_id AND cps.name <>'de
   
   function upgrade_4_2_0($rev) {
     $this->addTask(ts('Upgrade DB to 4.2.0: SQL'), 'task_4_2_alpha1_runSql', $rev);
+  }
+
+  function upgrade_4_2_2($rev) {
+    $this->addTask(ts('Upgrade DB to 4.2.2: SQL'), 'task_4_2_alpha1_runSql', $rev);
+    //create line items for memberships and participants for api/import
+    self::convertContribution();
+  }
+  
+  function convertContribution(){
+    $minContributionId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(min(id),0) FROM civicrm_contribution');
+    $maxContributionId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(max(id),0) FROM civicrm_contribution');
+    for ($startId = $minContributionId; $startId <= $maxContributionId; $startId += self::BATCH_SIZE) {
+      $endId = $startId + self::BATCH_SIZE - 1;
+      $title = ts('Upgrade DB to 4.2.alpha1: Contributions (%1 => %2)', array(1 => $startId, 2 => $endId));
+      $this->addTask($title, 'task_4_2_alpha1_convertContributions', $startId, $endId);
+    } 
+    $minParticipantId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(min(id),0) FROM civicrm_participant');
+    $maxParticipantId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(max(id),0) FROM civicrm_participant');
+    
+    for ($startId = $minParticipantId; $startId <= $maxParticipantId; $startId += self::BATCH_SIZE) {
+      $endId = $startId + self::BATCH_SIZE - 1;
+      $title = ts('Upgrade DB to 4.2.alpha1: Participant (%1 => %2)', array(1 => $startId, 2 => $endId));
+      $this->addTask($title, 'task_4_2_alpha1_convertParticipants', $startId, $endId);
+    }
   }
   
   /**
