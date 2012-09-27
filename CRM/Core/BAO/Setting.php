@@ -507,6 +507,10 @@ AND domain_id = %3
           $value = CRM_Utils_System::absoluteURL($value, TRUE);
         }
       }
+      // CRM-10931, If DB doesn't have any value, carry on with any default value thats already available 
+      if (!isset($value) && CRM_Utils_Array::value($dao->name, $params)) {
+        $value = $params[$dao->name];
+      }
       $params[$dao->name] = $value;
 
       if ($setInConfig) {
