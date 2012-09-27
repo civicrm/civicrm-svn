@@ -28,9 +28,9 @@
 {include file="CRM/Contact/Form/Search/Intro.tpl"}
 <div class="crm-form-block crm-search-form-block">
 {* This section handles form elements for search criteria *}
-<div id="searchForm">
+  <div id="searchForm">
     {include file="CRM/Contact/Form/Search/BasicCriteria.tpl"}
-</div>
+  </div>
 </div>
 <div class="crm-content-block">
 {if $rowsEmpty}
