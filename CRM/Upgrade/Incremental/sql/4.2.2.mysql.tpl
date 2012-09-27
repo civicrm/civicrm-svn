@@ -19,3 +19,14 @@ LEFT JOIN civicrm_membership_payment cmp ON cc.id = cmp.contribution_id
 LEFT JOIN civicrm_participant_payment cpp ON cc.id = cpp.contribution_id
 WHERE cli.entity_id IS NULL AND cc.contribution_page_id IS NULL AND cmp.contribution_id IS NULL AND cpp.contribution_id IS NULL
 GROUP BY cc.id;
+
+-- CRM-10937
+{if $multilingual}
+  {foreach from=$locales item=locale}
+   {if $config->lcMessages eq $locale} 
+     ALTER TABLE civicrm_dedupe_rule_group CHANGE `title_{$locale}` `title` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Label of the rule group';
+   {else}
+     ALTER TABLE civicrm_dedupe_rule_group DROP `title_{$locale}`;
+   {/if}
+  {/foreach}
+{/if}
