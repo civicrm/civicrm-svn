@@ -47,7 +47,6 @@ class CRM_PCP_Form_Contribute extends CRM_Contribute_Form_ContributionPage {
    */
   public $_component = 'contribute';
 
-
   public function preProcess() {
     parent::preProcess();
   }

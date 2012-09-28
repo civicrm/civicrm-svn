@@ -101,13 +101,10 @@ class CRM_Activity_Import_Form_MapField extends CRM_Core_Form {
       /* Skip the first (empty) key/pattern */
 
       if (empty($re)) {
-
         continue;
-
       }
 
       /* if we've already used this field, move on */
-
       //             if ($this->_fieldUsed[$key])
       //                 continue;
       /* Scan through the headerPatterns defined in the schema for a
@@ -398,8 +395,7 @@ class CRM_Activity_Import_Form_MapField extends CRM_Core_Form {
    * @static
    * @access public
    */
-  static
-  function formRule($fields) {
+  static function formRule($fields) {
     $errors = array();
     // define so we avoid notices below
     $errors['_qf_default'] = '';

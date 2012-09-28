@@ -221,8 +221,7 @@ class CRM_PCP_Form_PCPAccount extends CRM_Core_Form {
    * @access public
    * @static
    */
-  static
-  function formRule($fields, $files, $self) {
+  static function formRule($fields, $files, $self) {
     $errors = array();
     foreach ($fields as $key => $value) {
       if (strpos($key, 'email-') !== FALSE && !empty($value)) {

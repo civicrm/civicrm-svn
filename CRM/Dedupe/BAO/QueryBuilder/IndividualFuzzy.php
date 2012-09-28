@@ -3,8 +3,7 @@
 // TODO: How to handle NULL values/records?
 class CRM_Dedupe_BAO_QueryBuilder_IndividualFuzzy extends CRM_Dedupe_BAO_QueryBuilder {
 
-  static
-  function record($rg) {
+  static function record($rg) {
 
     $civicrm_contact = CRM_Utils_Array::value('civicrm_contact', $rg->params, array());
     $civicrm_email = CRM_Utils_Array::value('civicrm_email', $rg->params, array());
@@ -27,8 +26,7 @@ class CRM_Dedupe_BAO_QueryBuilder_IndividualFuzzy extends CRM_Dedupe_BAO_QueryBu
     );
   }
 
-  static
-  function internal($rg) {
+  static function internal($rg) {
     $query = "
             SELECT contact1.id as id1, contact2.id as id2, {$rg->threshold} as weight
             FROM civicrm_contact as contact1

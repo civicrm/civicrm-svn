@@ -164,8 +164,7 @@ class CRM_Dedupe_Merger {
   /**
    * Returns the related tables groups for which a contact has any info entered
    */
-  static
-  function getActiveRelTables($cid) {
+  static function getActiveRelTables($cid) {
     $cid = (int) $cid;
     $groups = array();
 
@@ -200,8 +199,7 @@ class CRM_Dedupe_Merger {
   /**
    * Return tables and their fields referencing civicrm_contact.contact_id explicitely
    */
-  static
-  function &cidRefs() {
+  static function &cidRefs() {
     static $cidRefs;
     if (!$cidRefs) {
       // FIXME: this should be generated dynamically from the schema's
@@ -258,8 +256,7 @@ class CRM_Dedupe_Merger {
   /**
    * Return tables and their fields referencing civicrm_contact.contact_id with entity_id
    */
-  static
-  function &eidRefs() {
+  static function &eidRefs() {
     static $eidRefs;
     if (!$eidRefs) {
       // FIXME: this should be generated dynamically from the schema
@@ -285,8 +282,7 @@ class CRM_Dedupe_Merger {
   /**
    * return custom processing tables.
    */
-  static
-  function &cpTables() {
+  static function &cpTables() {
     static $tables;
     if (!$tables) {
       $tables = array(
@@ -310,8 +306,7 @@ class CRM_Dedupe_Merger {
   /**
    * return payment related table.
    */
-  static
-  function &paymentTables() {
+  static function &paymentTables() {
     static $tables;
     if (!$tables) {
       $tables = array('civicrm_pledge', 'civicrm_membership', 'civicrm_participant');

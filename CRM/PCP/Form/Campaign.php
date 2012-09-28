@@ -156,8 +156,7 @@ class CRM_PCP_Form_Campaign extends CRM_Core_Form {
    * @access public
    * @static
    */
-  static
-  function formRule($fields, $files, $self) {
+  static function formRule($fields, $files, $self) {
     $errors = array();
     if ($fields['goal_amount'] <= 0) {
       $errors['goal_amount'] = ts('Goal Amount should be a numeric value greater than zero.');

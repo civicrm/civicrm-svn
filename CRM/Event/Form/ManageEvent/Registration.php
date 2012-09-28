@@ -55,7 +55,8 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
    *
    * @return void
    * @access public
-   */ function preProcess() {
+   */ 
+  function preProcess() {
     $this->_addProfileBottom = CRM_Utils_Array::value('addProfileBottom', $_GET, FALSE);
     $this->_profileBottomNum = CRM_Utils_Array::value('addProfileNum', $_GET, 0);
     $this->_addProfileBottomAdd = CRM_Utils_Array::value('addProfileBottomAdd', $_GET, FALSE);
@@ -453,8 +454,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
    * @static
    * @access public
    */
-  static
-  function formRule($values, $files, $form) {
+  static function formRule($values, $files, $form) {
     if (CRM_Utils_Array::value('is_online_registration', $values)) {
 
       if (!$values['confirm_title']) {
@@ -625,8 +625,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
    *
    * @return boolean
    */
-  static
-  function getEmailFields($profileIds) {
+  static function getEmailFields($profileIds) {
     $emailFields = array();
     foreach ($profileIds as $profileId) {
       if ($profileId && is_numeric($profileId)) {
@@ -646,8 +645,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
    *
    * @return boolean
    */
-  static
-  function isProfileComplete($profileIds) {
+  static function isProfileComplete($profileIds) {
     $profileReqFields = array();
     foreach ($profileIds as $profileId) {
       if ($profileId && is_numeric($profileId)) {
@@ -679,8 +677,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
    * Add additional profiles from the form to an array of profile ids.
    *
    */
-  static
-  function addMultipleProfiles(&$profileIds, $values, $field) {
+  static function addMultipleProfiles(&$profileIds, $values, $field) {
     if ($multipleProfiles = CRM_Utils_Array::value($field, $values)) {
       foreach ($multipleProfiles as $profileId) {
         $profileIds[] = $profileId;

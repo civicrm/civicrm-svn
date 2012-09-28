@@ -1036,8 +1036,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
    * @return void
    * @access public
    */
-  static
-  function processContribution(&$form,
+  static function processContribution(&$form,
     $params,
     $result,
     $contactID,

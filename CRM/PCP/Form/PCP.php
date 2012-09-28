@@ -194,8 +194,7 @@ class CRM_PCP_Form_PCP extends CRM_Core_Form {
    * @static
    * @access public
    */
-  static
-  function formRule($fields, $files, $form) {}
+  static function formRule($fields, $files, $form) {}
 
   /**
    * Process the form

@@ -1,8 +1,7 @@
 <?php
 class CRM_Dedupe_BAO_QueryBuilder_IndividualStrict extends CRM_Dedupe_BAO_QueryBuilder {
 
-  static
-  function record($rg) {
+  static function record($rg) {
     $civicrm_email = CRM_Utils_Array::value('civicrm_email', $rg->params, array());
 
     $params = array(
@@ -19,8 +18,7 @@ class CRM_Dedupe_BAO_QueryBuilder_IndividualStrict extends CRM_Dedupe_BAO_QueryB
     );
   }
 
-  static
-  function internal($rg) {
+  static function internal($rg) {
     $query = "
             SELECT contact1.id as id1, contact2.id as id2, {$rg->threshold} as weight
             FROM civicrm_contact as contact1
@@ -38,8 +36,7 @@ class CRM_Dedupe_BAO_QueryBuilder_IndividualStrict extends CRM_Dedupe_BAO_QueryB
    * An alternative version which might perform a lot better
    * than the above. Will need to do some testing
    */
-  static
-  function internalOptimized($rg) {
+  static function internalOptimized($rg) {
     $sql = "
 CREATE TEMPORARY TABLE emails (
                                email varchar(255),

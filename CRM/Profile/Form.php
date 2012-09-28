@@ -154,7 +154,8 @@ class CRM_Profile_Form extends CRM_Core_Form {
    * @return void
    *
    * @access public
-   */ function preProcess() {
+   */ 
+  function preProcess() {
 
     $this->_id         = $this->get('id');
     $this->_gid        = $this->get('gid');
@@ -614,16 +615,14 @@ class CRM_Profile_Form extends CRM_Core_Form {
   }
 
   /*
-     * Function to validate profile and provided activity Id
-     *                                          
-     * @params Integer $activityId Activity Id
-     * @params Integer $gid        Profile Id
-     *
-     * @return Array   $errors     Errors ( if any ).
-     */
-
-  static
-  function validateContactActivityProfile($activityId, $contactId, $gid) {
+   * Function to validate profile and provided activity Id
+   *                                          
+   * @params Integer $activityId Activity Id
+   * @params Integer $gid        Profile Id
+   *
+   * @return Array   $errors     Errors ( if any ).
+   */
+  static function validateContactActivityProfile($activityId, $contactId, $gid) {
     $errors = array();
     if (!$activityId) {
       $errors[] = 'Profile is using one or more activity fields, and is missing the activity Id (aid) in the URL.';
@@ -665,8 +664,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
    * @access public
    * @static
    */
-  static
-  function formRule($fields, $files, $form) {
+  static function formRule($fields, $files, $form) {
     $errors = array();
     // if no values, return
     if (empty($fields)) {

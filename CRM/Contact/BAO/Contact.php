@@ -245,8 +245,7 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact {
    * @access public
    * @static
    */
-  static
-    function &create(&$params, $fixAddress = TRUE, $invokeHooks = TRUE, $skipDelete = FALSE) {
+  static function &create(&$params, $fixAddress = TRUE, $invokeHooks = TRUE, $skipDelete = FALSE) {
       $contact = NULL;
       if (!CRM_Utils_Array::value('contact_type', $params) &&
         !CRM_Utils_Array::value('contact_id', $params)
