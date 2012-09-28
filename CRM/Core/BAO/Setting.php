@@ -406,9 +406,10 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
   * it via the API or other mechanisms. In order to keep this consistent it is important the form layer
   * also leverages it.
   *
+  * Function is intended for configuration rather than runtime access to settings
+  *
   * The following params will filter the result. If none are passed all settings will be returns
   *
-  * @param string $group Settings Group - e.g UrlPreferences
   * @params string $name Name of specific setting e.g customCSSURL
   * @params integer $componentID id of relevant component.
   *
@@ -423,29 +424,21 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
   * - help_text
   */
   static
-  function getSettingSpecification($group = NULL, $name = NULL, $componentID = NULL){
-    // not quite sure here - don't want to make group compulsory as this should be able to be used to explore
-    // perhaps it makes sense to hit for name if name set & then hit for group if group set & lastly hit for
-    // component if component set & then cache by whatever was passed in as well- but could make quite a few hits?
-    // the version below
+  function getSettingSpecification( $name = NULL, $componentID = NULL){
     $cacheString = 'settingsMetadata_';
     if($name){
       $cacheString .= 'name_' .$name;
-    }
-    if($group){
-      $cacheString .= 'group_name_' .$group;
     }
 
     $settingsMetadata = CRM_Core_BAO_Cache::getItem('CiviCRM setting Spec', $cacheString, $componentID);
     if ($settingsMetadata === NULL) {
       global $civicrm_root;
-      $xmlFile = $civicrm_root. '/xml/settings/Settings.xml';
-      if($group && file_exists($civicrm_root. '/xml/settings/' . $group . '.xml')){
-        $xmlFile = $civicrm_root. '/xml/settings/' . $group . '.xml';
+      $xmlPaths = array($civicrm_root. '/xml/settings/Settings.xml');
+      CRM_Utils_Hook::alterXmlSettings($xmlPaths);
+      foreach ($xmlPaths as $xmlFile) {
+        $settingsMetadata = self::xmltoSettingsArray(self::parseSettingsXML($xmlFile));
       }
 
-
-      $settingsMetadata = self::xmltoSettingsArray(self::parseSettingsXML($xmlFile));
       CRM_Core_BAO_Cache::setItem($settingsMetadata,'CiviCRM setting Spec', $cacheString, $componentID);
     }
     return $settingsMetadata;

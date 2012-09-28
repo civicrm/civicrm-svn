@@ -95,12 +95,12 @@ class api_v3_SettingTest extends CiviUnitTestCase {
     $this->assertAPISuccess($result, "in line " . __LINE__);
     $this->assertArrayNotHasKey('customCSSURL', $result['values']);
 
-    $description = 'Demonstrate return from getfields - for one group only';
-    $result = civicrm_api('setting', 'getfields', array('version' => $this->_apiversion, 'group' => 'UrlPreferences'));
-    $this->documentMe($params, $result, __FUNCTION__, __FILE__, $description, 'GetFieldsGroup');
+    civicrm_api('system','flush', array('version' => $this->_apiversion));
+    $description = 'Demonstrate return from getfields';
+    $result = civicrm_api('setting', 'getfields', array('version' => $this->_apiversion));
+    //  $this->documentMe($params, $result, __FUNCTION__, __FILE__, $description, 'GetFieldsGroup');
     $this->assertAPISuccess($result, "in line " . __LINE__);
     $this->assertArrayHasKey('customCSSURL', $result['values']);
-    $this->assertArrayNotHasKey('default_renewal_contribution_page', $result['values']);
     civicrm_api('system','flush', array('version' => $this->_apiversion));
   }
 

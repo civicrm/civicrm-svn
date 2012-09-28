@@ -37,7 +37,6 @@
 
 function civicrm_api3_setting_getfields($params) {
   $result = CRM_Core_BAO_Setting::getSettingSpecification(
-      CRM_Utils_Array::value('group',$params),
       CRM_Utils_Array::value('name',$params),
       CRM_Utils_Array::value('component_id',$params));
   // find any supplemental information
@@ -52,7 +51,6 @@ function civicrm_api3_setting_getfields($params) {
 }
 
 function civicrm_api3_setting_getfields_spec(&$params) {
-  $params['group'] = array('title' => 'Group setting belongs to');
   $params['name'] = array('title' => 'Setting Name belongs to');
   $params['component_id'] = array('title' => 'id of relevant component');
 }
