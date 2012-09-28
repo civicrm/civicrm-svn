@@ -32,7 +32,7 @@
 <table class="selector">
    <tr class="sticky">
      {if !$single and $context eq 'Search' }
-        <th scope="col" title="Select Rows">{$form.toggleSelect.html}</th> 
+        <th scope="col" title="Select Rows">{$form.toggleSelect.html}</th>
      {/if}
      {foreach from=$columnHeaders item=header}
         <th scope="col">
@@ -50,17 +50,17 @@
   {counter start=0 skip=1 print=false}
   {foreach from=$rows item=row}
   <tr id='rowid{$row.activity_id}' class="{cycle values="odd-row,even-row"} {$row.class}">
-	{if !$single }
-        {if $context eq 'Search' }       
-    	    {assign var=cbName value=$row.checkbox}
-    	    <td>{$form.$cbName.html}</td> 
- 		{/if}
-  
+  {if !$single }
+        {if $context eq 'Search' }
+          {assign var=cbName value=$row.checkbox}
+          <td>{$form.$cbName.html}</td>
+     {/if}
+
     {/if}
 
     <td>{$row.activity_type}</td>
-   
-	<td>{$row.activity_subject}</td>
+
+  <td>{$row.activity_subject}</td>
 
     <td>
     {if !$row.source_contact_id}
@@ -68,8 +68,8 @@
     {elseif $contactId NEQ $row.source_contact_id}
       <a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.source_contact_id`"}" title="{ts}View contact{/ts}">{$row.source_contact_name}</a>
     {else}
-      {$row.source_contact_name}	
-    {/if}			
+      {$row.source_contact_name}
+    {/if}
     </td>
 
     <td>
@@ -103,7 +103,7 @@
             {/if}
         {/foreach}
         {if count($row.assignee_contact_name) > 5}({ts}more{/ts}){/if}
-    {/if}	
+    {/if}
     </td>
 
     <td>{$row.activity_date_time|crmDate}</td>
@@ -122,7 +122,7 @@
 {if $context EQ 'Search'}
  <script type="text/javascript">
  {* this function is called to change the color of selected row(s) *}
-    var fname = "{$form.formName}";	
+    var fname = "{$form.formName}";
     on_load_init_checkboxes(fname);
  </script>
 {/if}
