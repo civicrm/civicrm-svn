@@ -59,11 +59,11 @@
        <td class="label">{$form.subject.label}</td>
        <td>{$form.subject.html|crmAddClass:huge}&nbsp;
         <a href="#" onClick="return showToken('Subject', 3);">{$form.token3.label}</a>
-	    {help id="id-token-subject" file="CRM/Contact/Form/Task/Email.hlp"}
+      {help id="id-token-subject" file="CRM/Contact/Form/Task/Email.hlp"}
         <div id='tokenSubject' style="display:none">
-	      <input style="border:1px solid #999999;" type="text" id="filter3" size="20" name="filter3" onkeyup="filter(this, 3)"/><br />
-	      <span class="description">{ts}Begin typing to filter list of tokens{/ts}</span><br/>
-	      {$form.token3.html}
+        <input style="border:1px solid #999999;" type="text" id="filter3" size="20" name="filter3" onkeyup="filter(this, 3)"/><br />
+        <span class="description">{ts}Begin typing to filter list of tokens{/ts}</span><br/>
+        {$form.token3.html}
         </div>
        </td>
     </tr>

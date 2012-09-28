@@ -27,19 +27,19 @@
 <div id="help">
     {ts}Choose Relationship Type and Target Organization{/ts}
 </div>
-<table class="form-layout-compressed"> 
+<table class="form-layout-compressed">
     <tr><td></td><td>{include file="CRM/Contact/Form/Task.tpl"}</td></tr>
-     {if $action EQ 2} {* action = update *}    
+     {if $action EQ 2} {* action = update *}
         <tr><td></td><td><label>{$sort_name}</label></td></tr>
-     {else} {* action = add *}  
+     {else} {* action = add *}
         <tr class="crm-contact-task-addtoOrganization-form-block-relationship_type_id">
           <td>{$form.relationship_type_id.label}</td>
           <td>{$form.relationship_type_id.html}</td>
-        </tr>    
+        </tr>
         <tr class="crm-contact-task-addtoOrganization-form-block-name">
           <td>{$form.name.label}</td><td>{$form.name.html}</td>
-        </tr>    
-        <tr><td></td><td>{$form._qf_AddToOrganization_refresh.html}&nbsp;&nbsp;{$form._qf_AddToOrganization_cancel.html}</td></tr>   
+        </tr>
+        <tr><td></td><td>{$form._qf_AddToOrganization_refresh.html}&nbsp;&nbsp;{$form._qf_AddToOrganization_cancel.html}</td></tr>
 </table>
 {if $searchDone } {* Search button clicked *}
     {if $searchCount}
@@ -81,7 +81,7 @@
                         </div></fieldset>
                         {capture assign=infoTitle}{ts}No matching results for{/ts}{/capture}
                         {capture assign=infoMessage}{ts}<ul><li>{ts 1=$form.name.value}Name like: %1{/ts}</li><li>{ts}Contact type{/ts}: {$contact_type_display}</li></ul><br />{ts}Check your spelling, or try fewer letters for the target contact name.{/ts}{/capture}
-                        {include file="CRM/common/info.tpl"}                
+                        {include file="CRM/common/info.tpl"}
                 {/if} {* end if searchCount *}
               {else}
                 </div></fieldset>
@@ -91,19 +91,19 @@
         {* Only show start/end date and buttons if action=update, OR if we have $contacts (results)*}
         {if $searchRows OR $action EQ 2}
             <div class="form-item">
-              
+
                     <div class="description">
 
                     </div>
                    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
             </div>
-	<div class="form-item">
-	{$form.status.label} {$form.status.html}
-	</div>
+  <div class="form-item">
+  {$form.status.label} {$form.status.html}
+  </div>
 
 
             </div></fieldset>
-	{/if}
+  {/if}
 
 
 

@@ -30,7 +30,7 @@
 {if $title and $className eq 'CRM_Contact_Form_Contact'}
 <div id = "addressBlockId" class="crm-accordion-wrapper crm-address-accordion crm-accordion-closed">
  <div class="crm-accordion-header">
-  <div class="icon crm-accordion-pointer"></div> 
+  <div class="icon crm-accordion-pointer"></div>
         <a href="#" class="whiteanchor">{$title}</a>
  </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body" id="addressBlock">
@@ -42,8 +42,8 @@
      {if $masterAddress.$blockId gt 0 }
         <tr><td><div class="message status"><div class="icon inform-icon"></div>&nbsp; {ts 1=$masterAddress.$blockId}This address is shared with %1 contact record(s). Modifying this address will automatically update the shared address for these contacts.{/ts}</div></td></tr>
      {/if}
-     
-	 {if $className eq 'CRM_Contact_Form_Contact'}
+
+   {if $className eq 'CRM_Contact_Form_Contact'}
      <tr>
         <td id='Address-Primary-html' colspan="2">
            <span class="crm-address-element location_type_id-address-element">{$form.address.$blockId.location_type_id.label}
@@ -57,11 +57,11 @@
          </td>
      {/if}
      </tr>
-                 
+
     {* include shared address template *}
     {include file="CRM/Contact/Form/ShareAddress.tpl"}
-     
-    {/if}    
+
+    {/if}
      <tr>
         <td>
      <table id="address_{$blockId}" style="display:block" class="form-layout-compressed">
@@ -73,9 +73,9 @@
      </table>
         </td>
         <td colspan="2">
-           <div class="crm-edit-address-custom_data crm-address-custom-set-block-{$blockId}"> 
+           <div class="crm-edit-address-custom_data crm-address-custom-set-block-{$blockId}">
             {include file="CRM/Contact/Form/Edit/Address/CustomData.tpl"}
-            </div> 
+            </div>
         </td>
      </tr>
   </table>
@@ -113,7 +113,7 @@ function checkLocation( object, noAlert ) {
 {literal}
 <script type="text/javascript">
 cj(function() {
-   cj().crmaccordions(); 
+   cj().crmaccordions();
 });
 </script>
 {/literal}

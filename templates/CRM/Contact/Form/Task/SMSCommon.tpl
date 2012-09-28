@@ -27,32 +27,32 @@
 
 <div class="crm-accordion-wrapper crm-plaint_text_sms-accordion crm-accordion-open">
 <div class="crm-accordion-header">
-  <div class="icon crm-accordion-pointer"></div> 
+  <div class="icon crm-accordion-pointer"></div>
   {ts}Plain-Text Format{/ts}
-	</div><!-- /.crm-accordion-header -->
+  </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">
  <div id='char-count-message'></div>
  <span class="helpIcon" id="helptext">
-	<a href="#" onClick="return showToken('Text', 1);">{$form.token1.label}</a>
-	{help id="id-token-text" file="CRM/Contact/Form/Task/SMS.hlp"}
-	<div id='tokenText' style="display:none">
-	    <input  style="border:1px solid #999999;" type="text" id="filter1" size="20" name="filter1" onkeyup="filter(this, 1)"/><br />
-	    <span class="description">{ts}Begin typing to filter list of tokens{/ts}</span><br/>
-	    {$form.token1.html}
-	</div>
+  <a href="#" onClick="return showToken('Text', 1);">{$form.token1.label}</a>
+  {help id="id-token-text" file="CRM/Contact/Form/Task/SMS.hlp"}
+  <div id='tokenText' style="display:none">
+      <input  style="border:1px solid #999999;" type="text" id="filter1" size="20" name="filter1" onkeyup="filter(this, 1)"/><br />
+      <span class="description">{ts}Begin typing to filter list of tokens{/ts}</span><br/>
+      {$form.token1.html}
+  </div>
     </span>
     <div class="clear"></div>
     <div class='text'>
-	{$form.text_message.html}<br />
+  {$form.text_message.html}<br />
     </div>
   </div><!-- /.crm-accordion-body -->
-</div><!-- /.crm-accordion-wrapper -->    
+</div><!-- /.crm-accordion-wrapper -->
 <div id="editMessageDetails" class="section">
     <div id="updateDetails" class="section" >
-	{$form.updateTemplate.html}&nbsp;{$form.updateTemplate.label}
+  {$form.updateTemplate.html}&nbsp;{$form.updateTemplate.label}
     </div>
     <div class="section">
-	{$form.saveTemplate.html}&nbsp;{$form.saveTemplate.label}
+  {$form.saveTemplate.html}&nbsp;{$form.saveTemplate.label}
     </div>
 </div>
 
@@ -65,10 +65,10 @@
 {literal}
 <script type="text/javascript">
 cj(function() {
-   cj().crmaccordions(); 
+   cj().crmaccordions();
 });
 
-{/literal}{if $max_sms_length}{literal}	
+{/literal}{if $max_sms_length}{literal}
 maxCharInfoDisplay();
 
 cj('#text_message').bind({

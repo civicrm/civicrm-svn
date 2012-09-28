@@ -28,7 +28,7 @@
   {assign var='fldName' value=$prefix|cat:'contact'}
   {assign var='profSelect' value=$prefix|cat:'profiles'}
     {if $noLabel}
-     	<div>
+       <div>
           <div id="contact-success-{$prefix}{$blockNo}" class="hiddenElement">
               <span class="success-status">{ts}New contact has been created.{/ts}</span>
           </div>
@@ -36,7 +36,7 @@
           {if $form.$profSelect}
             {ts}OR{/ts}<br/>{$form.$profSelect.$blockNo.html}<div id="contact-dialog-{$prefix}{$blockNo}" class="hiddenElement"></div>
           {/if}
-    	</div>
+      </div>
     {else}
       <tr id="contact-success-{$prefix}{$blockNo}" class="hiddenElement">
       <td></td>
@@ -61,7 +61,7 @@
   cj( function( ) {
       // add multiple client option if configured
       if ( allowMultiClient ) {
-      	 addMultiClientOption{/literal}{$prefix}{$blockNo}{literal}( newToken, {/literal}{$blockNo},"{$prefix}"{literal} );
+         addMultiClientOption{/literal}{$prefix}{$blockNo}{literal}( newToken, {/literal}{$blockNo},"{$prefix}"{literal} );
       } else {
          addSingleClientOption{/literal}{$prefix}{$blockNo}{literal}( {/literal}{$blockNo},"{$prefix}"{literal} );
       }
@@ -70,16 +70,16 @@
   function newContact{/literal}{$prefix}{$blockNo}{literal}( gid, blockNo, prefix ) {
 
       if ( allowMultiClient ) {
-      	 existingTokens = '';
-      	 var cid = cj('#' + prefix + 'contact_' + blockNo ).val();
-      	 var cids = new Array();
-      	 cids = cid.split(',');
-      	 var i = 0;
-      	 cj('li.token-input-token-facebook').each(function(){
-    		var displayName = cj(this).children('p').text();
-    	 	existingTokens += '{"name":"'+displayName+'","id":"'+cids[i]+'"},';
-    	  	i++;
-      	 });
+         existingTokens = '';
+         var cid = cj('#' + prefix + 'contact_' + blockNo ).val();
+         var cids = new Array();
+         cids = cid.split(',');
+         var i = 0;
+         cj('li.token-input-token-facebook').each(function(){
+        var displayName = cj(this).children('p').text();
+         existingTokens += '{"name":"'+displayName+'","id":"'+cids[i]+'"},';
+          i++;
+         });
       }
 
       var dataURL = {/literal}"{crmURL p='civicrm/profile/create' q="reset=1&snippet=5&context=dialog&blockNo=$blockNo&prefix=$prefix" h=0 }"{literal};
@@ -91,13 +91,13 @@
          url: dataURL,
          success: function( content ) {
              cj( '#contact-dialog-'+ prefix + blockNo ).show( ).html( content ).dialog({
-         	    	title: "Create New Contact",
-             		modal: true,
-             		width: 680,
-             		overlay: {
-             			opacity: 0.5,
-             			background: "black"
-             		},
+                 title: "Create New Contact",
+                 modal: true,
+                 width: 680,
+                 overlay: {
+                   opacity: 0.5,
+                   background: "black"
+                 },
 
                  close: function(event, ui) {
                    cj('#contact-success-' + prefix + blockNo).fadeOut(5000);

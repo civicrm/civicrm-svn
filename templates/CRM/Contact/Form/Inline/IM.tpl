@@ -28,24 +28,24 @@
 <table class="crm-inline-edit-form">
     <tr>
       <td colspan="5">
-        <div class="crm-submit-buttons"> 
+        <div class="crm-submit-buttons">
           {include file="CRM/common/formButtons.tpl"}
         </div>
       </td>
     </tr>
     <tr>
-      <td>{ts}Instant Messenger{/ts}&nbsp; 
+      <td>{ts}Instant Messenger{/ts}&nbsp;
       {if $actualBlockCount lt 5 }
         <span id="add-more-im" title="{ts}click to add more{/ts}"><a class="crm-link-action">{ts}add{/ts}</a></span>
       {/if}
       </td>
-	    <td>{ts}IM Location{/ts}</td>
-	    <td>{ts}IM Type{/ts}</td>
+      <td>{ts}IM Location{/ts}</td>
+      <td>{ts}IM Type{/ts}</td>
       <td>{ts}Primary?{/ts}</td>
       <td>&nbsp;</td>
     </tr>
     {section name='i' start=1 loop=$totalBlocks}
-    {assign var='blockId' value=$smarty.section.i.index} 
+    {assign var='blockId' value=$smarty.section.i.index}
     <tr id="IM_Block_{$blockId}" {if $blockId gt $actualBlockCount}class="hiddenElement"{/if}>
         <td>{$form.im.$blockId.name.html}&nbsp;</td>
         <td>{$form.im.$blockId.location_type_id.html}</td>
@@ -65,7 +65,7 @@
     cj( function() {
       // check first primary radio
       cj('#IM_1_IsPrimary').prop('checked', true );
-     
+
       // make sure only one is primary radio is checked
       cj('.crm-im-is_primary input').click(function(){
         cj('.crm-im-is_primary input').each(function(){
@@ -90,7 +90,7 @@
 
       // add more and set focus to new row
       cj('#add-more-im').click(function() {
-        var rowSelector = cj('tr[id^="IM_Block_"][class="hiddenElement"] :first').parent(); 
+        var rowSelector = cj('tr[id^="IM_Block_"][class="hiddenElement"] :first').parent();
         rowSelector.removeClass('hiddenElement');
         var rowId = rowSelector.attr('id').replace('IM_Block_', '');
         cj('#im_' + rowId + '_name').focus();

@@ -31,7 +31,7 @@
      <div class='hiddenElement' id='instance_data'> </div>
    {else}
     <div class="form-item">
-     {if $logCount > 0 }  	
+     {if $logCount > 0 }
        <table>
        <tr class="columnheader"><th>{ts}Changed By{/ts}</th><th>{ts}Change Date{/ts}</th></tr>
        {foreach from=$log item=row}
@@ -42,10 +42,10 @@
        {/foreach}
        </table>
      {else}
-     <div class="messages status no-popup">	
+     <div class="messages status no-popup">
       <div class="icon inform-icon"></div> &nbsp;
       {ts}No modifications have been logged for this contact.{/ts}
-     </div>	
+     </div>
      {/if}
     </div>
    {/if}

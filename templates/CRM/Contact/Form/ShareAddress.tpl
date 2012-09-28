@@ -31,16 +31,16 @@
       <span class="shared-address-display" id="shared-address-display-name-{$blockId}">
         {$sharedAddresses.$blockId.shared_address_display.name}
       </span>
-          
+
       <span class="shared-address-display" id="shared-address-display-{$blockId}" onclick="cj(this).hide( );cj('#shared-address-display-name-{$blockId}').hide( );cj('#shared-address-display-cancel-{$blockId}').show( );cj('#shared-address-{$blockId}').show( );">
               {$sharedAddresses.$blockId.shared_address_display.address} <a href='#' onclick='return false;'>( {ts}Change current shared address{/ts} )</a>
       </span>
-          
+
       <span id="shared-address-display-cancel-{$blockId}" class="hiddenElement" onclick="cj(this).hide( );cj('#shared-address-display-name-{$blockId}').show( );cj('#shared-address-display-{$blockId}').show( );cj('#shared-address-{$blockId}').hide( );">
               <a href='#' onclick='return false;'>( {ts}Cancel{/ts} )</a>
       </span>
     {/if}
-    
+
     <table id="shared-address-{$blockId}" class="form-layout-compressed hiddenElement">
       {include file="CRM/Contact/Form/NewContact.tpl" blockNo="$blockId"}
     </table>
@@ -95,12 +95,12 @@ cj( function( ) {
         return;
       }
 
-      var addressHTML = '';	    
-      var postUrl = {/literal}"{crmURL p='civicrm/ajax/inline' q='class_name=CRM_Contact_Page_AJAX::getAddressDisplay' h=0}"{literal};	
-      
-      addCiviOverlay('div.crm-address_' + blockNo);   
- 
-      cj.post( postUrl, { 'contact_id': sharedContactId , 'type': 'method' }, 
+      var addressHTML = '';
+      var postUrl = {/literal}"{crmURL p='civicrm/ajax/inline' q='class_name=CRM_Contact_Page_AJAX::getAddressDisplay' h=0}"{literal};
+
+      addCiviOverlay('div.crm-address_' + blockNo);
+
+      cj.post( postUrl, { 'contact_id': sharedContactId , 'type': 'method' },
         function( response ) {
           if ( response ) {
             var selected = 'checked';
@@ -112,17 +112,17 @@ cj( function( ) {
               } else {
                 cj( 'input[name="address[' + blockNo + '][master_id]"]' ).val( val.id );
               }
-              
-              addressHTML = addressHTML + '<input type="radio" name="selected_shared_address-'+ blockNo +'" value=' + val.id + ' ' + selected +'>' + val.display_text + '<br/>'; 
 
-              addressExists = true; 
+              addressHTML = addressHTML + '<input type="radio" name="selected_shared_address-'+ blockNo +'" value=' + val.id + ' ' + selected +'>' + val.display_text + '<br/>';
+
+              addressExists = true;
             });
 
             if ( addressExists  ) {
               cj( '#shared-address-' + blockNo + ' .shared-address-list' ).remove( );
               cj( '#shared-address-' + blockNo ).append( '<tr class="shared-address-list"><td></td><td>' + addressHTML + '</td></tr>');
               cj( 'input[name^=selected_shared_address-]' ).click( function( ) {
-              
+
               // get the block id
               var elemId = cj(this).attr( 'name' ).split('-');
               cj( 'input[name="address[' + elemId[1] + '][master_id]"]' ).val( cj(this).val( ) );
@@ -133,9 +133,9 @@ cj( function( ) {
               cj( '#shared-address-' + blockNo ).append( '<tr class="shared-address-list"><td></td><td>' + helpText + '</td></tr>');
             }
 
-            removeCiviOverlay('div.crm-address_' + blockNo);   
+            removeCiviOverlay('div.crm-address_' + blockNo);
           }
-        },'json');            
+        },'json');
     });
 
 
@@ -147,7 +147,7 @@ cj( function( ) {
 
         // update stored value
         _default = cj( contactHiddenElement ).val( );
-        }  
+        }
 
     }, 500);
     // end of code to add onchange event for hidden element

@@ -25,14 +25,14 @@
 *}
 <div id="location" class="form-item">
     <table class="form-layout">
-	<tr>
+  <tr>
         <td>
            {$form.location_type.label}<br />
-           {$form.location_type.html} 
+           {$form.location_type.html}
            <div class="description" >
-             {ts}Location search uses the PRIMARY location for each contact by default.{/ts}<br /> 
+             {ts}Location search uses the PRIMARY location for each contact by default.{/ts}<br />
              {ts}To search by specific location types (e.g. Home, Work...), check one or more boxes above.{/ts}
-           </div> 
+           </div>
         </td>
         <td colspan="2">
           <div id="streetAddress">
@@ -43,11 +43,11 @@
           </div>
           <div id="addressElements" class=hiddenElement>
             <table class="crm-block crm-form-block advanced-search-address-elements">
-	        <tr><td>{$form.street_number.label}<br />{$form.street_number.html}<br /><span class="description nowrap">{ts}or ODD / EVEN{/ts}</td>
-	            <td>{$form.street_name.label}<br />{$form.street_name.html}</td>
-	            <td>{$form.street_unit.label}<br />{$form.street_unit.html|crmAddClass:four}</td>
-	        </tr>
-	        <tr>
+          <tr><td>{$form.street_number.label}<br />{$form.street_number.html}<br /><span class="description nowrap">{ts}or ODD / EVEN{/ts}</td>
+              <td>{$form.street_name.label}<br />{$form.street_name.html}</td>
+              <td>{$form.street_unit.label}<br />{$form.street_unit.html|crmAddClass:four}</td>
+          </tr>
+          <tr>
                 <td colspan="3"><a href="#" title="{ts}Use Complete Address{/ts}" onClick="processAddressFields( 'streetAddress', 1 );return false;">{ts}Use Street Address{/ts}</a></td>
             </tr>
             </table>
@@ -56,51 +56,51 @@
             <br />
             {$form.city.label}<br />
             {$form.city.html}
-  	</td>	   
+    </td>
     </tr>
-           
+
     <tr>
         <td>
         {if $form.postal_code.html}
-		<table class="inner-table">
-		   <tr>
-			<td>
-			     {$form.postal_code.label}<br />
+    <table class="inner-table">
+       <tr>
+      <td>
+           {$form.postal_code.label}<br />
                              {$form.postal_code.html}
-			</td>
-			<td>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<label>{ts}OR{/ts}</label>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			</td>
-			<td><label>{ts}Postal Code{/ts}</label>
-				{$form.postal_code_low.label|replace:'-':'<br />'}
-		                &nbsp;&nbsp;{$form.postal_code_low.html|crmAddClass:six}
+      </td>
+      <td>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <label>{ts}OR{/ts}</label>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </td>
+      <td><label>{ts}Postal Code{/ts}</label>
+        {$form.postal_code_low.label|replace:'-':'<br />'}
+                    &nbsp;&nbsp;{$form.postal_code_low.html|crmAddClass:six}
                                 {$form.postal_code_high.label}
-                		&nbsp;&nbsp;{$form.postal_code_high.html|crmAddClass:six}
-			</td>
-		    </tr>
-		    <tr>
+                    &nbsp;&nbsp;{$form.postal_code_high.html|crmAddClass:six}
+      </td>
+        </tr>
+        <tr>
                             <td colspan="2">&nbsp;</td>
                             <td>{$form.prox_distance.label}<br />{$form.prox_distance.html}&nbsp;{$form.prox_distance_unit.html}</td>
                     </tr>
-	            <tr>
-			<td colspan="2">{$form.address_name.label}<br />
-				{$form.address_name.html|crmAddClass:medium}
-			</td>        
-			<td>{$form.world_region.label}<br />
-				{$form.world_region.html}&nbsp;
-			</td>
-		    </tr>
-		    <tr>
-			<td colspan="2">{$form.county.label}<br />
-				{$form.county.html|crmAddClass:bigSelect}&nbsp;
-			</td>        
-			<td>{$form.country.label}<br />
-				{$form.country.html|crmAddClass:big}&nbsp;
-			</td>
-		    </tr>
-		</table>
+              <tr>
+      <td colspan="2">{$form.address_name.label}<br />
+        {$form.address_name.html|crmAddClass:medium}
+      </td>
+      <td>{$form.world_region.label}<br />
+        {$form.world_region.html}&nbsp;
+      </td>
+        </tr>
+        <tr>
+      <td colspan="2">{$form.county.label}<br />
+        {$form.county.html|crmAddClass:bigSelect}&nbsp;
+      </td>
+      <td>{$form.country.label}<br />
+        {$form.country.html|crmAddClass:big}&nbsp;
+      </td>
+        </tr>
+    </table>
         {/if}&nbsp;
         </td>
         <td>{$form.state_province.label}<br />
@@ -109,8 +109,8 @@
     </tr>
     {if $addressGroupTree}
         <tr>
-	    <td colspan="2">
-	        {include file="CRM/Custom/Form/Search.tpl" groupTree=$addressGroupTree showHideLinks=false}
+      <td colspan="2">
+          {include file="CRM/Custom/Form/Search.tpl" groupTree=$addressGroupTree showHideLinks=false}
             </td>
         </tr>
     {/if}
@@ -123,14 +123,14 @@
 function processAddressFields( name, loadData ) {
     if ( name == 'addressElements' ) {
         if ( loadData ) {
-		  cj( '#street_address' ).val( '' );
-	    }
-	     
+      cj( '#street_address' ).val( '' );
+      }
+
         showBlockName = 'addressElements';
-	    hideBlockName = 'streetAddress';
-	} else {
+      hideBlockName = 'streetAddress';
+  } else {
         if ( loadData ) {
-             cj( '#street_name'   ).val( '' );   
+             cj( '#street_name'   ).val( '' );
              cj( '#street_unit'   ).val( '' );
              cj( '#street_number' ).val( '' );
         }

@@ -29,15 +29,15 @@
        <tr class="columnheader">
           <th>{ts}Contact 1{/ts}</th>
           <th>{ts}Contact 2 (Duplicate){/ts}</th>
-	  <th></th>
+    <th></th>
        </tr>
     </thead>
     <tbody>
        {foreach from=$dedupeExceptions item=exception key=id}
        <tr id="dupeRow_{$id}" class="{cycle values="odd-row,even-row"}">
-	   <td>{$exception.main.name}</td>
-	   <td>{$exception.other.name}</td>
-	   <td><a id='duplicateContacts' href="#" title={ts}Remove Exception{/ts} onClick="processDupes( {$exception.main.id}, {$exception.other.id}, 'nondupe-dupe', 'dedupe-exception' );return false;">&raquo; {ts}Remove Exception{/ts}</a></td>
+     <td>{$exception.main.name}</td>
+     <td>{$exception.other.name}</td>
+     <td><a id='duplicateContacts' href="#" title={ts}Remove Exception{/ts} onClick="processDupes( {$exception.main.id}, {$exception.other.id}, 'nondupe-dupe', 'dedupe-exception' );return false;">&raquo; {ts}Remove Exception{/ts}</a></td>
        </tr>
        {/foreach}
     </tbody>
@@ -50,12 +50,12 @@
 
 {literal}
 <script type="text/javascript">
-	//load jQuery data table.
+  //load jQuery data table.
         cj('#dedupeExceptions').dataTable( {
-		"sPaginationType": "full_numbers",
-		"aaSorting": [[0,'asc'], [1,'asc']],
-		"aoColumns": [{sClass:""},{sClass:""},{bSortable:false}],
-        });    
+    "sPaginationType": "full_numbers",
+    "aaSorting": [[0,'asc'], [1,'asc']],
+    "aoColumns": [{sClass:""},{sClass:""},{bSortable:false}],
+        });
 </script>
 {/literal}
 

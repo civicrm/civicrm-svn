@@ -49,22 +49,22 @@
  <div class="crm-accordion-body">
   {include file="CRM/Contact/Form/Search/AdvancedCriteria.tpl"}
  </div>
-</div>  
+</div>
 </div>
 
 {if $rowsEmpty}
 <div class="crm-content-block">
-	<div class="crm-results-block crm-results-block-empty">
+  <div class="crm-results-block crm-results-block-empty">
     {include file="CRM/Contact/Form/Search/EmptyResults.tpl"}
-	</div>
+  </div>
 </div>
 {/if}
 
 {if $rows}
 <div class="crm-content-block">
-	<div class="crm-results-block">
+  <div class="crm-results-block">
     {* Search request has returned 1 or more matching rows. Display results and collapse the search criteria fieldset. *}
-    
+
        {* This section handles form elements for action task select and submit *}
        <div class="crm-search-tasks">
        {if $taskFile}
@@ -97,17 +97,17 @@
 {/if}
 {literal}
 <script type="text/javascript">
-cj(function() { 
-    cj().crmaccordions(); 
+cj(function() {
+    cj().crmaccordions();
     if ( cj('#component_mode').val() != '7' ) {
       cj('#crm-display_relationship_type').hide( );
     }
 
     cj('#component_mode').change( function( ) {
         // reset task dropdown if user changes component mode and it exists
-	    if (cj("#task").length > 0) {
-	        cj('#task').val( '' );
-	    }
+      if (cj("#task").length > 0) {
+          cj('#task').val( '' );
+      }
         var selectedValue = cj(this).val( );
         switch ( selectedValue ) {
             case '2':
@@ -145,7 +145,7 @@ cj(function() {
             loadPanes('CiviCase');
             break;
 
-	    case '7':
+      case '7':
             cj('#crm-display_relationship_type').show( );
             break;
 
@@ -153,7 +153,7 @@ cj(function() {
             cj('#crm-display_relationship_type').hide( );
             cj('#display_relationship_type').val('');
             break;
-        } 
+        }
     });
 });
 </script>

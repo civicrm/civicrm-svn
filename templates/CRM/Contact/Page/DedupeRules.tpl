@@ -29,7 +29,7 @@
 {include file="CRM/Contact/Form/DedupeFind.tpl"}
 {else}
     <div id="help">
-    	{ts}Manage the rules used to identify potential duplicate contact records. Scan for duplicates using a selected rule and merge duplicate contact data as needed.<br /><p>Default Front End Rules are automatically used when new contacts are created through online registrations including Events, Membership, Contributions and Profile pages. They are also selected by default when you Import contacts. They should be configured with a tight definition of what constitutes a duplicate (for example: email address/first/last name for Individuals).<br /><p>Back End Rules should be configured with a looser definition of what constitutes a duplicate. The default Back End rule is automatically used to check for possible duplicates when contacts are added or edited via the user interface.{/ts}
+      {ts}Manage the rules used to identify potential duplicate contact records. Scan for duplicates using a selected rule and merge duplicate contact data as needed.<br /><p>Default Front End Rules are automatically used when new contacts are created through online registrations including Events, Membership, Contributions and Profile pages. They are also selected by default when you Import contacts. They should be configured with a tight definition of what constitutes a duplicate (for example: email address/first/last name for Individuals).<br /><p>Back End Rules should be configured with a looser definition of what constitutes a duplicate. The default Back End rule is automatically used to check for possible duplicates when contacts are added or edited via the user interface.{/ts}
         {ts}Manage the rules used to identify potentially duplicate contact records. Scan for duplicates using a selected rule and merge duplicate contact data as needed.{/ts} {help id="id-dedupe-intro"}
     </div>
     {if $hasperm_administer_dedupe_rules}
@@ -38,8 +38,8 @@
         </div>
     {/if}
     {if $brows}
-    {include file="CRM/common/jsortable.tpl"} 
-    {foreach from=$brows key=contactType item=rows}	 
+    {include file="CRM/common/jsortable.tpl"}
+    {foreach from=$brows key=contactType item=rows}
       <div id="browseValues_{$contactType}">
         <div>
         {strip}
@@ -54,7 +54,7 @@
             {foreach from=$rows item=row}
               <tr class="{cycle values="odd-row,even-row"}">
                 <td>{$row.title}</td>
-                <td>{$row.used_display}</td>	
+                <td>{$row.used_display}</td>
                 <td>{$row.action|replace:'xx':$row.id}</td>
               </tr>
             {/foreach}
@@ -62,9 +62,9 @@
         {/strip}
        </div>
        <div style="float:right">
-            <a href="{crmURL q="action=add&contact_type=$contactType&reset=1"}" class="button"><span><div class="icon add-icon"></div>{ts 1=$contactType}Add Rule for %1s{/ts}</span></a>    
-        </div> 
-      </div> 
+            <a href="{crmURL q="action=add&contact_type=$contactType&reset=1"}" class="button"><span><div class="icon add-icon"></div>{ts 1=$contactType}Add Rule for %1s{/ts}</span></a>
+        </div>
+      </div>
     {/foreach}
     {/if}
 

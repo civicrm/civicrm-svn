@@ -27,7 +27,7 @@
     <p></p>
     <div class="bold">{ts}Elected Officals:{/ts} {$displayName}</div>
     <div class="form-item">
-     {if $rowCount > 0 }  	
+     {if $rowCount > 0 }
        <table>
        <tr class="columnheader">
           <th>{ts}Image{/ts}</th>
@@ -49,10 +49,10 @@
        {/foreach}
        </table>
      {else}
-     <div class="messages status no-popup">	
+     <div class="messages status no-popup">
      <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"> &nbsp;
       {ts}No data available for this contact. Please check city/state/zipcode{/ts}
-     </div>	
+     </div>
      {/if}
     </div>
  </p>

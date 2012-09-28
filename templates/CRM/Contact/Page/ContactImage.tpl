@@ -36,8 +36,8 @@
     {/if}
     {literal}
     <script>
-	function contactImagePopUp(url, width, height) {
-     	    newwindow = window.open(url,'name', 'width='+width+', height='+height );
-        }	
+  function contactImagePopUp(url, width, height) {
+           newwindow = window.open(url,'name', 'width='+width+', height='+height );
+        }
     </script>
     {/literal}

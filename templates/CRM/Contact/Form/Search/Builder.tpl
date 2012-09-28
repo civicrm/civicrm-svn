@@ -51,13 +51,13 @@
 {if $rowsEmpty || $rows}
 <div class="crm-content-block">
 {if $rowsEmpty}
-	<div class="crm-results-block crm-results-block-empty">
+  <div class="crm-results-block crm-results-block-empty">
     {include file="CRM/Contact/Form/Search/EmptyResults.tpl"}
-	</div>
+  </div>
 {/if}
 
 {if $rows}
-	<div class="crm-results-block">
+  <div class="crm-results-block">
        {* This section handles form elements for action task select and submit *}
        <div class="crm-search-tasks">
        {include file="CRM/Contact/Form/Search/ResultTasks.tpl"}

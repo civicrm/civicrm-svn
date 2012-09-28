@@ -37,7 +37,7 @@
     <div class="crm-summary-row">
       <div class="crm-label">{ts}Date of birth{/ts}</div>
       <div class="crm-content crm-contact-birth_date_display">
-          {if $birthDateViewFormat}	 
+          {if $birthDateViewFormat}
             {$birth_date_display|crmDate:$birthDateViewFormat}
           {else}
             {$birth_date_display|crmDate}
@@ -50,7 +50,7 @@
           <div class="crm-summary-row">
             <div class="crm-label">{ts}Date Deceased{/ts}</div>
             <div class="crm-content crm-contact-deceased_date_display">
-            {if $birthDateViewFormat}          
+            {if $birthDateViewFormat}
               {$deceased_date_display|crmDate:$birthDateViewFormat}
             {else}
               {$deceased_date_display|crmDate}

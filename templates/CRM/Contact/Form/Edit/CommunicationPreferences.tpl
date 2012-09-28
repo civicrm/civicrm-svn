@@ -28,7 +28,7 @@
 
 <div class="crm-accordion-wrapper crm-commPrefs-accordion crm-accordion-closed">
  <div class="crm-accordion-header">
-  <div class="icon crm-accordion-pointer"></div> 
+  <div class="icon crm-accordion-pointer"></div>
         <a href="#" class="whiteanchor">{$title}</a>
   </div><!-- /.crm-accordion-header -->
 <div id="commPrefs" class="crm-accordion-body">
@@ -43,9 +43,9 @@
             {if !empty($form.addressee_id)}
                 <td>{$form.addressee_id.label}</td>
             {/if}
-	    {if !empty($form.email_greeting_id) OR !empty($form.postal_greeting_id) OR !empty($form.addressee_id)}
+      {if !empty($form.email_greeting_id) OR !empty($form.postal_greeting_id) OR !empty($form.addressee_id)}
                 <td>&nbsp;&nbsp;{help id="id-greeting" file="CRM/Contact/Form/Contact.hlp"}</td>
-	    {/if}
+      {/if}
         </tr>
         <tr>
             {if !empty($form.email_greeting_id)}
@@ -139,13 +139,13 @@ cj( function( ) {
                 cj( "#" + fldName.slice(0, -3) + "_custom" ).val('');
             }
         });
-    }          
+    }
 });
 
 function showGreeting( element ) {
     cj("#" + element ).show( );
     cj("#" + element + '_display' ).hide( );
-    
+
     // TO DO fix for custom greeting
     var fldName = '#' + element + '_id';
     if ( cj( fldName ).val( ) == 4 ) {

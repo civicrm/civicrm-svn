@@ -28,34 +28,34 @@
 <table class="crm-inline-edit-form">
   <tr>
     <td colspan="4">
-      <div class="crm-submit-buttons"> 
+      <div class="crm-submit-buttons">
         {include file="CRM/common/formButtons.tpl"}
       </div>
     </td>
   </tr>
 
   <tr>
-	  <td>{ts}Open ID{/ts}&nbsp;
+    <td>{ts}Open ID{/ts}&nbsp;
     {if $actualBlockCount lt 5 }
       <span id="add-more-openid" title="{ts}click to add more{/ts}"><a class="crm-link-action">{ts}add{/ts}</a></span>
     {/if}
     </td>
-	  <td>{ts}Open ID Location{/ts}</td>
-	 	<td id="OpenID-Primary">{ts}Primary?{/ts}</td>
+    <td>{ts}Open ID Location{/ts}</td>
+     <td id="OpenID-Primary">{ts}Primary?{/ts}</td>
     <td>&nbsp;</td>
   </tr>
-  
+
   {section name='i' start=1 loop=$totalBlocks}
-  {assign var='blockId' value=$smarty.section.i.index} 
+  {assign var='blockId' value=$smarty.section.i.index}
   <tr id="OpenID_Block_{$blockId}" {if $blockId gt $actualBlockCount}class="hiddenElement"{/if}>
     <td>{$form.openid.$blockId.openid.html|crmAddClass:twenty}&nbsp;</td>
     <td>{$form.openid.$blockId.location_type_id.html}</td>
     <td align="center" id="OpenID-Primary-html" class="crm-openid-is_primary">{$form.openid.$blockId.is_primary.1.html}</td>
-	  <td>
+    <td>
       {if $blockId gt 1}
         <a class="crm-delete-openid crm-link-action" title="{ts}Delete OpenID Block{/ts}">{ts}delete{/ts}</a>
       {/if}
-    </td>  
+    </td>
   </tr>
   {/section}
 </table>
@@ -65,7 +65,7 @@
     cj( function() {
       // check first primary radio
       cj('#OpenID_1_IsPrimary').prop('checked', true );
-     
+
       // make sure only one is primary radio is checked
       cj('.crm-openid-is_primary input').click(function(){
         cj('.crm-openid-is_primary input').each(function(){
@@ -90,7 +90,7 @@
 
       // add more and set focus to new row
       cj('#add-more-openid').click(function() {
-        var rowSelector = cj('tr[id^="OpenID_Block_"][class="hiddenElement"] :first').parent(); 
+        var rowSelector = cj('tr[id^="OpenID_Block_"][class="hiddenElement"] :first').parent();
         rowSelector.removeClass('hiddenElement');
         var rowId = rowSelector.attr('id').replace('OpenID_Block_', '');
         cj('#openid_' + rowId + '_name').focus();

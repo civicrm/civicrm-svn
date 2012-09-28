@@ -28,7 +28,7 @@
 <table class="crm-inline-edit-form">
     <tr>
       <td colspan="5">
-        <div class="crm-submit-buttons"> 
+        <div class="crm-submit-buttons">
           {include file="CRM/common/formButtons.tpl"}
         </div>
       </td>
@@ -39,13 +39,13 @@
         <span id="add-more-email" title="{ts}click to add more{/ts}"><a class="crm-link-action">{ts}add{/ts}</a></span>
       {/if}
       </td>
-	    <td>{ts}On Hold?{/ts}</td>
-	    <td>{ts}Bulk Mailings?{/ts}</td>
+      <td>{ts}On Hold?{/ts}</td>
+      <td>{ts}Bulk Mailings?{/ts}</td>
       <td>{ts}Primary?{/ts}</td>
       <td>&nbsp;</td>
     </tr>
     {section name='i' start=1 loop=$totalBlocks}
-    {assign var='blockId' value=$smarty.section.i.index} 
+    {assign var='blockId' value=$smarty.section.i.index}
         <tr id="Email_Block_{$blockId}" {if $blockId gt $actualBlockCount}class="hiddenElement"{/if}>
             <td>{$form.email.$blockId.email.html|crmAddClass:eighteen}&nbsp;{$form.email.$blockId.location_type_id.html}
             </td>
@@ -70,7 +70,7 @@
     cj( function() {
       // check first primary radio
       cj('#Email_1_IsPrimary').prop('checked', true );
-     
+
       // make sure only one is primary radio is checked
       cj('.crm-email-is_primary input').click(function(){
         cj('.crm-email-is_primary input').each(function(){
@@ -103,11 +103,11 @@
 
       // add more and set focus to new row
       cj('#add-more-email').click(function() {
-        var rowSelector = cj('tr[id^="Email_Block_"][class="hiddenElement"] :first').parent(); 
+        var rowSelector = cj('tr[id^="Email_Block_"][class="hiddenElement"] :first').parent();
         rowSelector.removeClass('hiddenElement');
         var rowId = rowSelector.attr('id').replace('Email_Block_', '');
         cj('#email_' + rowId + '_email').focus();
-        
+
         if ( cj('tr[id^="Email_Block_"][class="hiddenElement"]').length == 0  ) {
           cj('#add-more-email').hide();
         }
@@ -117,7 +117,7 @@
       cj('tr[id^="Email_Block_"]' ).each( function() {
           if( cj(this).find('td:first span').length > 0 ) {
             cj(this).removeClass('hiddenElement');
-          } 
+          }
       });
     });
 

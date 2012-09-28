@@ -29,9 +29,9 @@
 
 {if !$addBlock}
 <tr>
-	<td>{ts}Open ID{/ts}</td>
-	<td>{ts}Open ID Location{/ts}</td>
-	<td id="OpenID-Primary" class="hiddenElement">{ts}Primary?{/ts}</td>
+  <td>{ts}Open ID{/ts}</td>
+  <td>{ts}Open ID Location{/ts}</td>
+  <td id="OpenID-Primary" class="hiddenElement">{ts}Primary?{/ts}</td>
 </tr>
 {/if}
 

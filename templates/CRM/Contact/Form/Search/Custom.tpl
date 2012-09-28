@@ -65,14 +65,14 @@
 {/if}
 
 {if $rows}
-	<div class="crm-results-block">
+  <div class="crm-results-block">
     {* Search request has returned 1 or more matching rows. Display results and collapse the search criteria fieldset. *}
         {* This section handles form elements for action task select and submit *}
-       <div class="crm-search-tasks">        
+       <div class="crm-search-tasks">
         {include file="CRM/Contact/Form/Search/ResultTasks.tpl"}
-		</div>
+    </div>
         {* This section displays the rows along and includes the paging controls *}
-	    <div class="crm-search-results">
+      <div class="crm-search-results">
 
         {include file="CRM/common/pager.tpl" location="top"}
 
@@ -80,7 +80,7 @@
         {if $atoZ}
             {include file="CRM/common/pagerAToZ.tpl"}
         {/if}
-        
+
         {strip}
         <table class="selector" summary="{ts}Search results listings.{/ts}">
             <thead class="sticky">
@@ -121,7 +121,7 @@
 
         <script type="text/javascript">
         {* this function is called to change the color of selected row(s) *}
-        var fname = "{$form.formName}";	
+        var fname = "{$form.formName}";
         on_load_init_checkboxes(fname);
         </script>
 
@@ -140,7 +140,7 @@
 {literal}
 <script type="text/javascript">
 cj(function() {
-   cj().crmaccordions(); 
+   cj().crmaccordions();
 });
 </script>
 {/literal}

@@ -40,12 +40,12 @@
             <td class="label">{$form.title.label}</td>
             <td>{$form.title.html}</td>
         </tr>
-	<tr class="crm-contact-task-createsmartgroup-form-block-description">
+  <tr class="crm-contact-task-createsmartgroup-form-block-description">
             <td class="label">{$form.description.label}</td>
             <td>{$form.description.html}</td>
         </tr>
           {if $form.group_type}
-        <tr class="crm-contact-task-createsmartgroup-form-block-group_type"> 
+        <tr class="crm-contact-task-createsmartgroup-form-block-group_type">
             <td class="label">{$form.group_type.label}</td>
             <td>{$form.group_type.html}</td>
         </tr>

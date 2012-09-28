@@ -51,7 +51,7 @@
                    <td>{$form.description.html}</td></tr>
                 {if $form.group_type}
                 <tr class="crm-contact-task-addtogroup-form-block-group_type">
-		    <td class="label">{$form.group_type.label}</td>
+        <td class="label">{$form.group_type.label}</td>
                     <td>{$form.group_type.html}</td>
                 </tr>
                 {/if}
@@ -77,9 +77,9 @@ function showElements() {
       cj('#id_new_group').hide();
     } else {
       cj('#id_new_group').show();
-      cj('#id_existing_group').hide();  
+      cj('#id_existing_group').hide();
     }
 }
 </script>
-{/literal} 
+{/literal}
 {/if}

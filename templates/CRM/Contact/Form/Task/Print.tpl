@@ -41,7 +41,7 @@
     {if !empty($columnHeaders.street_address)}
       <td>{ts}Address{/ts}</td>
     {/if}
-    {if !empty($columnHeaders.city)} 
+    {if !empty($columnHeaders.city)}
       <td>{ts}City{/ts}</td>
     {/if}
     {if !empty($columnHeaders.state_province)}
@@ -78,10 +78,10 @@
         {if !empty($columnHeaders.state_province)}
           <td>{$row.state_province}</td>
         {/if}
-	{if !empty($columnHeaders.postal_code)}
+  {if !empty($columnHeaders.postal_code)}
           <td>{$row.postal_code}</td>
         {/if}
-	{if !empty($columnHeaders.country)}
+  {if !empty($columnHeaders.country)}
           <td>{$row.country}</td>
         {/if}
         <td>{$row.email}</td>

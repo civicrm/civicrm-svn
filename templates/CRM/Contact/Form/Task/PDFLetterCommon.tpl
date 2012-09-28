@@ -28,48 +28,48 @@
 <table class="form-layout-compressed">
     <tr>
         <td class="label-left">{$form.template.label}</td>
-	    <td>{$form.template.html}</td>
+      <td>{$form.template.html}</td>
     </tr>
 </table>
 {/if}
 
 <div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
     <div class="crm-accordion-header">
-        <div class="icon crm-accordion-pointer"></div> 
+        <div class="icon crm-accordion-pointer"></div>
         {$form.pdf_format_header.html}
     </div>
     <div class="crm-accordion-body">
       <div class="crm-block crm-form-block crm-pdf-format-form-block">
-		<table class="form-layout-compressed">
-			<tr>
-				<td class="label-left">{$form.format_id.label}</td><td>{$form.format_id.html}{help id="id-pdf-format" file="CRM/Contact/Form/Task/PDFLetterCommon.hlp"}</td>
-				<td colspan="2">&nbsp;</td>
+    <table class="form-layout-compressed">
+      <tr>
+        <td class="label-left">{$form.format_id.label}</td><td>{$form.format_id.html}{help id="id-pdf-format" file="CRM/Contact/Form/Task/PDFLetterCommon.hlp"}</td>
+        <td colspan="2">&nbsp;</td>
             </tr>
-			<tr>
-				<td class="label-left">{$form.paper_size.label}</td><td>{$form.paper_size.html}</td>
-				<td class="label-left">{$form.orientation.label}</td><td>{$form.orientation.html}</td>
-			</tr>
-			<tr>
-				<td class="label-left">{$form.metric.label}</td><td>{$form.metric.html}</td>
-				<td colspan="2">&nbsp;</td>
-			</tr>
-			<tr>
-				<td>{$form.paper_dimensions.html}</td><td id="paper_dimensions">&nbsp;</td>
-				<td colspan="2">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="label-left">{$form.margin_top.label}</td><td>{$form.margin_top.html}</td>
-				<td class="label-left">{$form.margin_bottom.label}</td><td>{$form.margin_bottom.html}</td>
-			</tr>
-			<tr>
-				<td class="label-left">{$form.margin_left.label}</td><td>{$form.margin_left.html}</td>
-				<td class="label-left">{$form.margin_right.label}</td><td>{$form.margin_right.html}</td>
-			</tr>
-		</table>
+      <tr>
+        <td class="label-left">{$form.paper_size.label}</td><td>{$form.paper_size.html}</td>
+        <td class="label-left">{$form.orientation.label}</td><td>{$form.orientation.html}</td>
+      </tr>
+      <tr>
+        <td class="label-left">{$form.metric.label}</td><td>{$form.metric.html}</td>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+      <tr>
+        <td>{$form.paper_dimensions.html}</td><td id="paper_dimensions">&nbsp;</td>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="label-left">{$form.margin_top.label}</td><td>{$form.margin_top.html}</td>
+        <td class="label-left">{$form.margin_bottom.label}</td><td>{$form.margin_bottom.html}</td>
+      </tr>
+      <tr>
+        <td class="label-left">{$form.margin_left.label}</td><td>{$form.margin_left.html}</td>
+        <td class="label-left">{$form.margin_right.label}</td><td>{$form.margin_right.html}</td>
+      </tr>
+    </table>
         <div id="bindFormat">{$form.bind_format.html}&nbsp;{$form.bind_format.label}</div>
         <div id="updateFormat" style="display: none">{$form.update_format.html}&nbsp;{$form.update_format.label}</div>
       </div>
-	</div>
+  </div>
 </div>
 
 <div class="crm-accordion-wrapper crm-html_email-accordion crm-accordion-open">
@@ -80,21 +80,21 @@
  <div class="crm-accordion-body">
   {if $action neq 4}
   <span class="helpIcon" id="helphtml">
-	<a href="#" onClick="return showToken('Html', 1);">{$form.token1.label}</a>
-	{help id="id-token-html" file="CRM/Contact/Form/Task/Email.hlp" tplFile=$tplFile isAdmin=$isAdmin editor=$editor}
-	<div id="tokenHtml" style="display:none;">
-	    <input style="border:1px solid #999999;" type="text" id="filter1" size="20" name="filter1" onkeyup="filter(this, 1)"/><br />
-	    <span class="description">{ts}Begin typing to filter list of tokens{/ts}</span><br/>
-	    {$form.token1.html}
-	</div>
+  <a href="#" onClick="return showToken('Html', 1);">{$form.token1.label}</a>
+  {help id="id-token-html" file="CRM/Contact/Form/Task/Email.hlp" tplFile=$tplFile isAdmin=$isAdmin editor=$editor}
+  <div id="tokenHtml" style="display:none;">
+      <input style="border:1px solid #999999;" type="text" id="filter1" size="20" name="filter1" onkeyup="filter(this, 1)"/><br />
+      <span class="description">{ts}Begin typing to filter list of tokens{/ts}</span><br/>
+      {$form.token1.html}
+  </div>
   </span>
   {/if}
     <div class="clear"></div>
     <div class='html'>
-	{if $editor EQ 'textarea'}
-	    <div class="help description">{ts}NOTE: If you are composing HTML-formatted messages, you may want to enable a Rich Text (WYSIWYG) editor (Administer &raquo; Configure &raquo; Global Settings &raquo; Site Preferences).{/ts}</div>
-	{/if}
-	{$form.html_message.html}<br />
+  {if $editor EQ 'textarea'}
+      <div class="help description">{ts}NOTE: If you are composing HTML-formatted messages, you may want to enable a Rich Text (WYSIWYG) editor (Administer &raquo; Configure &raquo; Global Settings &raquo; Site Preferences).{/ts}</div>
+  {/if}
+  {$form.html_message.html}<br />
     </div>
 
 <div id="editMessageDetails">
@@ -119,7 +119,7 @@
 {literal}
 <script type="text/javascript">
 cj(function() {
-    cj().crmaccordions(); 
+    cj().crmaccordions();
 });
 
 var currentWidth;
@@ -135,7 +135,7 @@ function tokenReplHtml ( )
     if ( editor == "tinymce" ) {
         var content= tinyMCE.get('html_message').getContent() +token1;
         tinyMCE.get('html_message').setContent(content);
-    } else if ( editor == "joomlaeditor" ) { 
+    } else if ( editor == "joomlaeditor" ) {
         tinyMCE.execCommand('mceInsertContent',false, token1);
         var msg       = document.getElementById(html_message).value;
         var cursorlen = document.getElementById(html_message).selectionStart;
@@ -145,13 +145,13 @@ function tokenReplHtml ( )
         document.getElementById(html_message).selectionStart = cursorPos;
         document.getElementById(html_message).selectionEnd   = cursorPos;
         document.getElementById(html_message).focus();
-	} else if ( editor == "ckeditor" ) {
+  } else if ( editor == "ckeditor" ) {
         oEditor = CKEDITOR.instances[html_message];
-        oEditor.insertHtml(token1.toString() );        
+        oEditor.insertHtml(token1.toString() );
     } else if ( editor == "drupalwysiwyg" ) {
         Drupal.wysiwyg.instances[html_message].insert(token1.toString());
     } else {
-		var msg       = document.getElementById(html_message).value;
+    var msg       = document.getElementById(html_message).value;
         var cursorlen = document.getElementById(html_message).selectionStart;
         var textlen   = msg.length;
         document.getElementById(html_message).value = msg.substring(0, cursorlen) + token1 + msg.substring(cursorlen, textlen);
