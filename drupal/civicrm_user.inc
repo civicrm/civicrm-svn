@@ -180,12 +180,12 @@ function civicrm_user_view($user, $view_mode) {
     $civiPerm = CRM_Contact_BAO_Contact_Permission::allow($userID);
     if (CRM_Core_Permission::check('access CiviCRM') && $civiPerm) {
       $contactURL =
-	'<span class="user-page-link" id="user-page-contact" ><span class="user-page-bullet">&raquo;</span> ' .
-	l(ts("View Contact Record"),
-	  'civicrm/contact/view',
-	  array('query' => array('reset' => 1, 'cid' => $userID ))
-	  ) .
-	'</span>';
+  '<span class="user-page-link" id="user-page-contact" ><span class="user-page-bullet">&raquo;</span> ' .
+  l(ts("View Contact Record"),
+    'civicrm/contact/view',
+    array('query' => array('reset' => 1, 'cid' => $userID ))
+    ) .
+  '</span>';
     }
 
     if (CRM_Core_Permission::check('access Contact Dashboard') && $civiPerm) {
@@ -193,12 +193,12 @@ function civicrm_user_view($user, $view_mode) {
         $contactURL .= '<br/>';
       }
       $contactURL .=
-	'<span class="user-page-link" id="user-page-dashboard" ><span class="user-page-bullet">&raquo;</span> ' .
-	l(ts("View Contact Dashboard"),
-	  'civicrm/user',
-	  array('query' => array('reset' => 1, 'id' => $userID ))
-	  ) .
-	'</span>';
+  '<span class="user-page-link" id="user-page-dashboard" ><span class="user-page-bullet">&raquo;</span> ' .
+  l(ts("View Contact Dashboard"),
+    'civicrm/user',
+    array('query' => array('reset' => 1, 'id' => $userID ))
+    ) .
+  '</span>';
     }
 
     require_once 'CRM/Profile/Page/Dynamic.php';

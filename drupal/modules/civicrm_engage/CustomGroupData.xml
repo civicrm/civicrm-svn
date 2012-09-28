@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
 <!-- This xml file defines the custom data, option values, and profiles to be used with CiviEngage, PB / CiviEngage v2.0 -->
-<CustomData>	
+<CustomData>  
   <CustomGroups>
     <CustomGroup>
       <name>Voter_Info</name>
@@ -64,7 +64,7 @@
       <name>Grant_Info</name>
       <title>Grant Info</title>
       <extends>Organization</extends>
-	    <extends_entity_column_value>:;:;:;Foundation:;:;:;</extends_entity_column_value>
+      <extends_entity_column_value>:;:;:;Foundation:;:;:;</extends_entity_column_value>
       <style>Inline</style>
       <collapse_display>0</collapse_display>
       <help_pre></help_pre>
@@ -166,7 +166,7 @@
         <name>Media_Outlet_Info</name>
         <title>Media Outlet Info</title>
         <extends>Organization</extends>
-	    <extends_entity_column_value>:;:;:;Media_Outlet:;:;:;</extends_entity_column_value>
+      <extends_entity_column_value>:;:;:;Media_Outlet:;:;:;</extends_entity_column_value>
         <style>Inline</style>
         <collapse_display>0</collapse_display>
         <help_pre></help_pre>
@@ -181,7 +181,7 @@
         <name>Media_Info</name>
         <title>Media Info</title>
         <extends>Individual</extends>
-	    <extends_entity_column_value>:;:;:;Media_Contact:;:;:;</extends_entity_column_value>
+      <extends_entity_column_value>:;:;:;Media_Contact:;:;:;</extends_entity_column_value>
         <style>Inline</style>
         <collapse_display>0</collapse_display>
         <help_pre></help_pre>
@@ -196,7 +196,7 @@
         <name>Funder_Info</name>
         <title>Funder Info</title>
         <extends>Individual</extends>
-	    <extends_entity_column_value>:;:;:;Funder_Contact:;:;:;</extends_entity_column_value>
+      <extends_entity_column_value>:;:;:;Funder_Contact:;:;:;</extends_entity_column_value>
         <style>Inline</style>
         <collapse_display>0</collapse_display>
         <help_pre></help_pre>
@@ -207,11 +207,11 @@
         <is_multiple>0</is_multiple>
         <collapse_adv_display>0</collapse_adv_display>
     </CustomGroup>
-	    <CustomGroup>
+      <CustomGroup>
         <name>Elected_Official_Info</name>
         <title>Elected Official Info</title>
         <extends>Individual</extends>
-	    <extends_entity_column_value>:;:;:;Elected_Official:;:;:;</extends_entity_column_value>
+      <extends_entity_column_value>:;:;:;Elected_Official:;:;:;</extends_entity_column_value>
         <style>Inline</style>
         <collapse_display>0</collapse_display>
         <help_pre></help_pre>
@@ -402,7 +402,7 @@ N - New</help_post>
       <option_group_name>constituent_type_ind_values</option_group_name>
       <custom_group_name>Constituent_Info_Individuals</custom_group_name>
     </CustomField>
-	<CustomField>
+  <CustomField>
         <label>Constituent Type - Org</label>
         <data_type>String</data_type>
         <html_type>CheckBox</html_type>
@@ -414,7 +414,7 @@ N - New</help_post>
         <is_view>0</is_view>
         <options_per_line>3</options_per_line>
         <text_length>255</text_length>
-		<date_format>M:;:;:;d:;:;:;Y</date_format>
+    <date_format>M:;:;:;d:;:;:;Y</date_format>
         <note_columns>60</note_columns>
         <note_rows>4</note_rows>
         <column_name>constituent_type_org</column_name>
@@ -1095,8 +1095,8 @@ N - New</help_post>
       <note_columns>60</note_columns>
       <note_rows>4</note_rows>
         <column_name>media_type_org_78</column_name>
-		<option_group_name>media_type_org_options</option_group_name>
-		<custom_group_name>Media_Outlet_Info</custom_group_name>
+    <option_group_name>media_type_org_options</option_group_name>
+    <custom_group_name>Media_Outlet_Info</custom_group_name>
     </CustomField>
     <CustomField>
         <label>Media Type - Ind</label>
@@ -1113,8 +1113,8 @@ N - New</help_post>
       <note_columns>60</note_columns>
       <note_rows>4</note_rows>
         <column_name>media_type_ind_79</column_name>
-		<option_group_name>media_type_org_options</option_group_name>
-		<custom_group_name>Media_Info</custom_group_name>
+    <option_group_name>media_type_org_options</option_group_name>
+    <custom_group_name>Media_Info</custom_group_name>
     </CustomField>
     <CustomField>
         <label>Beat</label>
@@ -1130,8 +1130,8 @@ N - New</help_post>
       <note_columns>60</note_columns>
       <note_rows>4</note_rows>
         <column_name>beat_80</column_name>
-		<option_group_name>beat_options</option_group_name>
-		<custom_group_name>Media_Info</custom_group_name>
+    <option_group_name>beat_options</option_group_name>
+    <custom_group_name>Media_Info</custom_group_name>
     </CustomField>
     <CustomField>
         <label>Media Issue Interest</label>
@@ -1148,7 +1148,7 @@ N - New</help_post>
       <note_columns>60</note_columns>
       <note_rows>4</note_rows>
         <column_name>media_issue_interest_82</column_name>
-		<option_group_name>issue_areas_options</option_group_name>
+    <option_group_name>issue_areas_options</option_group_name>
         <custom_group_name>Media_Info</custom_group_name>
     </CustomField>
     <CustomField>
@@ -1166,7 +1166,7 @@ N - New</help_post>
       <note_columns>60</note_columns>
       <note_rows>4</note_rows>
         <column_name>funder_program_areas_84</column_name>
-		<custom_group_name>Funder_Info</custom_group_name>
+    <custom_group_name>Funder_Info</custom_group_name>
     </CustomField>
     <CustomField>
         <label>Funder Issue Interest</label>
@@ -1183,7 +1183,7 @@ N - New</help_post>
       <note_columns>60</note_columns>
       <note_rows>4</note_rows>
         <column_name>funder_issue_interest_85</column_name>
-		<option_group_name>issue_areas_options</option_group_name>
+    <option_group_name>issue_areas_options</option_group_name>
         <custom_group_name>Funder_Info</custom_group_name>
     </CustomField>
     <CustomField>
@@ -1201,7 +1201,7 @@ N - New</help_post>
       <note_columns>60</note_columns>
       <note_rows>4</note_rows>
         <column_name>elected_level_82</column_name>
-		<option_group_name>elected_level_options</option_group_name>
+    <option_group_name>elected_level_options</option_group_name>
         <custom_group_name>Elected_Official_Info</custom_group_name>
     </CustomField>
     <CustomField>
@@ -1218,7 +1218,7 @@ N - New</help_post>
       <note_columns>60</note_columns>
       <note_rows>4</note_rows>
         <column_name>elected_staffer_role_83</column_name>
-		<option_group_name>elected_staffer_role_options</option_group_name>
+    <option_group_name>elected_staffer_role_options</option_group_name>
         <custom_group_name>Elected_Official_Info</custom_group_name>
     </CustomField>
     <CustomField>
@@ -1343,8 +1343,8 @@ N - New</help_post>
       <name>secondary_language_options</name>
       <title>Secondary Language Options</title>
       <is_active>1</is_active>
-    </OptionGroup>	
-	<OptionGroup>
+    </OptionGroup>  
+  <OptionGroup>
         <name>media_type_org_options</name>
         <title>Media Type - Org Options</title>
         <is_active>1</is_active>
@@ -1359,7 +1359,7 @@ N - New</help_post>
         <title>Constituent Type - Org Values</title>
         <is_active>1</is_active>
     </OptionGroup>
-	<OptionGroup>
+  <OptionGroup>
         <name>elected_level_options</name>
         <title>Elected Level Options</title>
         <is_active>1</is_active>
@@ -1374,11 +1374,11 @@ N - New</help_post>
         <title>Survey Q1 Response Options</title>
         <is_active>1</is_active>
     </OptionGroup>
-	<!-- must use civicrm_survey naming convention in option group name to appear in default options in CiviCRM -->
+  <!-- must use civicrm_survey naming convention in option group name to appear in default options in CiviCRM -->
     <OptionGroup>
         <name>civicrm_survey_default_results_set_options</name>
         <title>Survey Default Results Set Options</title>
-				<description>Default options for Results Set for Surveys</description>
+        <description>Default options for Results Set for Surveys</description>
         <is_active>1</is_active>
     </OptionGroup>  
   </OptionGroups>
@@ -1654,7 +1654,7 @@ N - New</help_post>
       <is_active>1</is_active>
       <option_group_name>constituent_type_ind_values</option_group_name>
     </OptionValue>
-	<!-- Remove Elected Official constitutent type after migration is finished -->
+  <!-- Remove Elected Official constitutent type after migration is finished -->
     <OptionValue>
       <label>Elected Official</label>
       <value>Elected Official</value>
@@ -1707,8 +1707,8 @@ N - New</help_post>
       <is_active>1</is_active>
       <option_group_name>constituent_type_ind_values</option_group_name>
     </OptionValue>
-	<!-- Media Contact constitutent type after migration is finished -->
-	<OptionValue>
+  <!-- Media Contact constitutent type after migration is finished -->
+  <OptionValue>
         <label>Media Contact</label>
         <value>Media_Contact</value>
         <name>Media_Contact</name>
@@ -1717,10 +1717,10 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>constituent_type_ind_values</option_group_name>
-	<!-- Remove Funder constitutent type after migration is finished -->
+    <option_group_name>constituent_type_ind_values</option_group_name>
+  <!-- Remove Funder constitutent type after migration is finished -->
     </OptionValue>
-		<OptionValue>
+    <OptionValue>
         <label>Funder</label>
         <value>Funder</value>
         <name>Funder</name>
@@ -1729,7 +1729,7 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>constituent_type_ind_values</option_group_name>
+    <option_group_name>constituent_type_ind_values</option_group_name>
     </OptionValue>
     <OptionValue>
       <label>Add Staff Name Here</label>
@@ -2232,7 +2232,7 @@ N - New</help_post>
       <is_active>1</is_active>
       <option_group_name>secondary_language_options</option_group_name>
     </OptionValue>
-	<OptionValue>
+  <OptionValue>
         <label>Member Organization</label>
         <value>Member Organization</value>
         <name>Member_Organization</name>
@@ -2241,10 +2241,10 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>constituent_type_org_values</option_group_name>
+    <option_group_name>constituent_type_org_values</option_group_name>
     </OptionValue>
-	<!-- Remember to remove Media Organization option value after migration -->
-	<OptionValue>
+  <!-- Remember to remove Media Organization option value after migration -->
+  <OptionValue>
         <label>Media Organization</label>
         <value>Media Organization</value>
         <name>Media_Organization</name>
@@ -2253,9 +2253,9 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>constituent_type_org_values</option_group_name>
+    <option_group_name>constituent_type_org_values</option_group_name>
     </OptionValue>
-	<OptionValue>
+  <OptionValue>
         <label>Affiliate Organization</label>
         <value>Affiliate Organization</value>
         <name>Affiliate_Organization</name>
@@ -2264,9 +2264,9 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>constituent_type_org_values</option_group_name>
+    <option_group_name>constituent_type_org_values</option_group_name>
     </OptionValue>
-	<!-- Remember to remove Foundation option value after migration -->
+  <!-- Remember to remove Foundation option value after migration -->
     <OptionValue>
         <label>Foundation</label>
         <value>Foundation</value>
@@ -2276,9 +2276,9 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>constituent_type_org_values</option_group_name>
+    <option_group_name>constituent_type_org_values</option_group_name>
     </OptionValue>
-	    <OptionValue>
+      <OptionValue>
         <label>Elected Official Office</label>
         <value>Elected Official Office</value>
         <name>Elected_Official_Office</name>
@@ -2287,7 +2287,7 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>constituent_type_org_values</option_group_name>
+    <option_group_name>constituent_type_org_values</option_group_name>
     </OptionValue>
     <OptionValue>
         <label>Government</label>
@@ -2298,9 +2298,9 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>constituent_type_org_values</option_group_name>
+    <option_group_name>constituent_type_org_values</option_group_name>
     </OptionValue>
-	<OptionValue>
+  <OptionValue>
         <label>Nonprofit</label>
         <value>Nonprofit</value>
         <name>Nonprofit</name>
@@ -2309,7 +2309,7 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>constituent_type_org_values</option_group_name>
+    <option_group_name>constituent_type_org_values</option_group_name>
     </OptionValue>
     <OptionValue>
         <label>Business</label>
@@ -2320,7 +2320,7 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>constituent_type_org_values</option_group_name>
+    <option_group_name>constituent_type_org_values</option_group_name>
     </OptionValue>
 <!-- <New option values -->
 <OptionValue>
@@ -2344,7 +2344,7 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>media_type_org_options</option_group_name>
+    <option_group_name>media_type_org_options</option_group_name>
     </OptionValue>
     <OptionValue>
         <label>Blog</label>
@@ -2355,7 +2355,7 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>media_type_org_options</option_group_name>
+    <option_group_name>media_type_org_options</option_group_name>
     </OptionValue>
     <OptionValue>
         <label>Magazine</label>
@@ -2366,7 +2366,7 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>media_type_org_options</option_group_name>
+    <option_group_name>media_type_org_options</option_group_name>
     </OptionValue>
     <OptionValue>
         <label>Newspaper</label>
@@ -2377,7 +2377,7 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>media_type_org_options</option_group_name>
+    <option_group_name>media_type_org_options</option_group_name>
     </OptionValue>
     <OptionValue>
         <label>Radio</label>
@@ -2388,7 +2388,7 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>media_type_org_options</option_group_name>
+    <option_group_name>media_type_org_options</option_group_name>
     </OptionValue>
     <OptionValue>
         <label>TV</label>
@@ -2399,7 +2399,7 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>media_type_org_options</option_group_name>
+    <option_group_name>media_type_org_options</option_group_name>
     </OptionValue>
     <OptionValue>
         <label>Online</label>
@@ -2410,7 +2410,7 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>media_type_org_options</option_group_name>
+    <option_group_name>media_type_org_options</option_group_name>
     </OptionValue>
     <OptionValue>
         <label>Photography</label>
@@ -2421,7 +2421,7 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>media_type_org_options</option_group_name>
+    <option_group_name>media_type_org_options</option_group_name>
     </OptionValue>
     <OptionValue>
         <label>Weekly</label>
@@ -2432,9 +2432,9 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>media_type_org_options</option_group_name>
+    <option_group_name>media_type_org_options</option_group_name>
     </OptionValue>
-	<OptionValue>
+  <OptionValue>
         <label>Economic Development</label>
         <value>Economic_Development</value>
         <name>Economic_Development</name>
@@ -2443,7 +2443,7 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>beat_options</option_group_name>
+    <option_group_name>beat_options</option_group_name>
     </OptionValue>
     <OptionValue>
         <label>Employment</label>
@@ -2454,7 +2454,7 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>beat_options</option_group_name>
+    <option_group_name>beat_options</option_group_name>
     </OptionValue>
     <OptionValue>
         <label>Environment</label>
@@ -2465,7 +2465,7 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>beat_options</option_group_name>
+    <option_group_name>beat_options</option_group_name>
     </OptionValue>
     <OptionValue>
         <label>Health</label>
@@ -2476,7 +2476,7 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>beat_options</option_group_name>
+    <option_group_name>beat_options</option_group_name>
     </OptionValue>
     <OptionValue>
         <label>Human Interest</label>
@@ -2487,7 +2487,7 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>beat_options</option_group_name>
+    <option_group_name>beat_options</option_group_name>
     </OptionValue>
     <OptionValue>
         <label>Immigration</label>
@@ -2498,9 +2498,9 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>beat_options</option_group_name>
+    <option_group_name>beat_options</option_group_name>
     </OptionValue>
-	<OptionValue>
+  <OptionValue>
         <label>City Council</label>
         <value>City Council</value>
         <name>City_Council</name>
@@ -2509,7 +2509,7 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>elected_level_options</option_group_name>
+    <option_group_name>elected_level_options</option_group_name>
     </OptionValue>
     <OptionValue>
         <label>State Assembly</label>
@@ -2520,7 +2520,7 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>elected_level_options</option_group_name>
+    <option_group_name>elected_level_options</option_group_name>
     </OptionValue>
     <OptionValue>
         <label>State Senate</label>
@@ -2531,7 +2531,7 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>elected_level_options</option_group_name>
+    <option_group_name>elected_level_options</option_group_name>
     </OptionValue>
     <OptionValue>
         <label>Chief of Staff</label>
@@ -2542,7 +2542,7 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>elected_staffer_role_options</option_group_name>
+    <option_group_name>elected_staffer_role_options</option_group_name>
     </OptionValue>
     <OptionValue>
         <label>Legislative Director</label>
@@ -2553,7 +2553,7 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>elected_staffer_role_options</option_group_name>
+    <option_group_name>elected_staffer_role_options</option_group_name>
     </OptionValue>
     <OptionValue>
         <label>Scheduler</label>
@@ -2564,7 +2564,7 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-		<option_group_name>elected_staffer_role_options</option_group_name>
+    <option_group_name>elected_staffer_role_options</option_group_name>
     </OptionValue>
     <OptionValue>
         <label>Upper Level Staff</label>
@@ -2575,7 +2575,7 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-	<option_group_name>elected_staffer_role_options</option_group_name>
+  <option_group_name>elected_staffer_role_options</option_group_name>
     </OptionValue>
     <OptionValue>
         <label>Lower Level Staff</label>
@@ -2586,7 +2586,7 @@ N - New</help_post>
         <is_optgroup>0</is_optgroup>
         <is_reserved>0</is_reserved>
         <is_active>1</is_active>
-	<option_group_name>elected_staffer_role_options</option_group_name>
+  <option_group_name>elected_staffer_role_options</option_group_name>
     </OptionValue>
     <OptionValue>
       <label>Yes</label>
@@ -2678,7 +2678,7 @@ N - New</help_post>
         <is_active>1</is_active>
       <option_group_name>civicrm_survey_default_results_set_options</option_group_name>
     </OptionValue>
-	<OptionValue>
+  <OptionValue>
       <label>Deceased</label>
       <value>DE</value>
       <is_default>0</is_default>
@@ -2752,7 +2752,7 @@ N - New</help_post>
       <is_cms_user>0</is_cms_user>
       <name>update_constituent_info</name>
     </ProfileGroup>
-	<ProfileGroup>
+  <ProfileGroup>
         <is_active>1</is_active>
         <group_type>Participant</group_type>
         <title>Update Event Invite Responses</title>
@@ -3103,8 +3103,8 @@ N - New</help_post>
       <label>Member Status</label>
       <field_type>Individual</field_type>
       <profile_group_name>update_grassroots_info</profile_group_name>
-    </ProfileField>	
-	<ProfileField>
+    </ProfileField>  
+  <ProfileField>
         <field_name>custom.civicrm_value_Participant_Info.invitation_date</field_name>
         <is_active>1</is_active>
         <is_view>0</is_view>
@@ -3116,7 +3116,7 @@ N - New</help_post>
         <is_searchable>0</is_searchable>
         <label>Invitation Date</label>
         <field_type>Participant</field_type>
-		<profile_group_name>update_event_invite_responses</profile_group_name>
+    <profile_group_name>update_event_invite_responses</profile_group_name>
     </ProfileField>
     <ProfileField>
         <field_name>custom.civicrm_value_Participant_Info.invitation_response</field_name>
@@ -3130,7 +3130,7 @@ N - New</help_post>
         <is_searchable>0</is_searchable>
         <label>Invitation Response</label>
         <field_type>Participant</field_type>
-		<profile_group_name>update_event_invite_responses</profile_group_name>
+    <profile_group_name>update_event_invite_responses</profile_group_name>
     </ProfileField>
     <ProfileField>
         <field_name>custom.civicrm_value_Participant_Info.second_call_date</field_name>
@@ -3144,7 +3144,7 @@ N - New</help_post>
         <is_searchable>0</is_searchable>
         <label>Second Call Date</label>
         <field_type>Participant</field_type>
-		<profile_group_name>update_event_invite_responses</profile_group_name>
+    <profile_group_name>update_event_invite_responses</profile_group_name>
     </ProfileField>
     <ProfileField>
         <field_name>custom.civicrm_value_Participant_Info.second_call_response</field_name>
@@ -3158,9 +3158,9 @@ N - New</help_post>
         <is_searchable>0</is_searchable>
         <label>Second Call Response</label>
         <field_type>Participant</field_type>
-		<profile_group_name>update_event_invite_responses</profile_group_name>
-	</ProfileField>
-	<ProfileField>
+    <profile_group_name>update_event_invite_responses</profile_group_name>
+  </ProfileField>
+  <ProfileField>
         <field_name>custom.civicrm_value_Participant_Info.reminder_date</field_name>
         <is_active>1</is_active>
         <is_view>0</is_view>
@@ -3172,7 +3172,7 @@ N - New</help_post>
         <is_searchable>0</is_searchable>
         <label>Reminder Date</label>
         <field_type>Participant</field_type>
-		<profile_group_name>update_event_invite_responses</profile_group_name>
+    <profile_group_name>update_event_invite_responses</profile_group_name>
     </ProfileField>
     <ProfileField>
         <field_name>custom.civicrm_value_Participant_Info.reminder_response</field_name>
@@ -3186,9 +3186,9 @@ N - New</help_post>
         <is_searchable>0</is_searchable>
         <label>Reminder Response</label>
         <field_type>Participant</field_type>
-		<profile_group_name>update_event_invite_responses</profile_group_name>
+    <profile_group_name>update_event_invite_responses</profile_group_name>
     </ProfileField>
-	<ProfileField>
+  <ProfileField>
         <field_name>participant_status</field_name>
         <is_active>1</is_active>
         <is_view>0</is_view>
@@ -3200,7 +3200,7 @@ N - New</help_post>
         <is_searchable>0</is_searchable>
         <label>Participant Status</label>
         <field_type>Participant</field_type>
-		<profile_group_name>update_event_invite_responses</profile_group_name>
+    <profile_group_name>update_event_invite_responses</profile_group_name>
     </ProfileField>
   </ProfileFields>
   <ProfileJoins>
@@ -3216,7 +3216,7 @@ N - New</help_post>
       <weight>1</weight>
       <profile_group_name>update_grassroots_info</profile_group_name>
     </ProfileJoin>
-	<ProfileJoin>
+  <ProfileJoin>
       <is_active>1</is_active>
       <module>Profile</module>
       <weight>1</weight>

@@ -47,13 +47,13 @@ class CRM_Campaign_Page_Petition_ThankYou extends CRM_Core_Page {
     CRM_Utils_System::setTitle(CRM_Utils_Array::value('thankyou_title', $this->petition));
 
     // send thank you or email verification emails
-    /* 
-			 * sendEmailMode
-			 * 1 = connected user via login/pwd - thank you
-			 * 	 	or dedupe contact matched who doesn't have a tag CIVICRM_TAG_UNCONFIRMED - thank you
-			 * 	 	login using fb connect - thank you + click to add msg to fb wall
-			 * 2 = send a confirmation request email     
-			 */
+    /*
+       * sendEmailMode
+       * 1 = connected user via login/pwd - thank you
+       *      or dedupe contact matched who doesn't have a tag CIVICRM_TAG_UNCONFIRMED - thank you
+       *      login using fb connect - thank you + click to add msg to fb wall
+       * 2 = send a confirmation request email
+       */
 
 
     return parent::run();

@@ -128,11 +128,11 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form {
    *
    * @var int
    * EMAIL_THANK = 1,
-   * 		connected user via login/pwd - thank you
-   * 	 	or dedupe contact matched who doesn't have a tag CIVICRM_TAG_UNCONFIRMED - thank you
-   * 		or login using fb connect - thank you + click to add msg to fb wall
+   *     connected user via login/pwd - thank you
+   *      or dedupe contact matched who doesn't have a tag CIVICRM_TAG_UNCONFIRMED - thank you
+   *     or login using fb connect - thank you + click to add msg to fb wall
    * EMAIL_CONFIRM = 2;
-   *		send a confirmation request email
+   *    send a confirmation request email
    */
   protected $_sendEmailMode;
 
@@ -462,7 +462,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form {
 
         // check if user has already signed this petition - redirects to Thank You if true
         $this->redirectIfSigned($params);
-        
+
         if ($this->petition['bypass_confirm']) {
           // send thank you email directly, bypassing confirmation
           $this->_sendEmailMode = self::EMAIL_THANK;
@@ -470,7 +470,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form {
           $params['statusId'] = 2;
           break;
         }
-        
+
         if ($tag_name) {
           $tag            = new CRM_Core_DAO_EntityTag();
           $tag->entity_id = $this->_contactId;

@@ -41,7 +41,7 @@
 /**
  * Flush all system caches
  *
- * @param  array   	  $params input parameters
+ * @param  array       $params input parameters
  *                          - triggers: bool, whether to drop/create SQL triggers; default: FALSE
  *                          - session:  bool, whether to reset the CiviCRM session data; defaul: FALSE
  *

@@ -52,7 +52,7 @@ function civicrm_conf_init() {
     }
 
     if ( defined( 'CIVICRM_CONFDIR' ) && ! isset( $confdir ) ) {
-      	$confdir = CIVICRM_CONFDIR;
+        $confdir = CIVICRM_CONFDIR;
     } else {
         // make it relative to civicrm.config.php, else php makes it relative
         // to the script that invokes it

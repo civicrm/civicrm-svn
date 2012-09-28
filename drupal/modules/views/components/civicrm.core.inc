@@ -1820,10 +1820,10 @@ function _civicrm_core_data(&$data, $enabled) {
       'field' => 'contact_id_a',
     ),
     // Directly links to contact table - link B also.
-    //		   'civicrm_contact' => array(
-    //									  'left_field' => 'id',
-    //									  'field' => 'contact_id_b',
-    //									  ),
+    //       'civicrm_contact' => array(
+    //                    'left_field' => 'id',
+    //                    'field' => 'contact_id_b',
+    //                    ),
   );
 
   //Display A->B relationships in User Views

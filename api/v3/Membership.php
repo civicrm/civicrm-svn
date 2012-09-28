@@ -155,7 +155,7 @@ function civicrm_api3_membership_create($params) {
 }
 /*
  * Adjust Metadata for Create action
- * 
+ *
  * The metadata is used for setting defaults, documentation & validation
  * @param array $params array or parameters determined by getfields
  */
@@ -289,11 +289,11 @@ function _civicrm_api3_membership_format_params($params, &$values, $create = FAL
     switch ($key) {
 
       case 'membership_type':
-      	// @todo we still need to adequately figure out how to handle this @ the API layer.
-      	// it is an FK & a pseudoconstant - we should probably alias it onto membership_type_id & 
-      	// then in the validate_integer function do an if(!is_integer && $fieldInfo['pseudoconstant) look 
-      	// up pseudoconstant & flip it over. By the time it hits api it will be a valid membership_type & handling @
-      	// api layer not required
+        // @todo we still need to adequately figure out how to handle this @ the API layer.
+        // it is an FK & a pseudoconstant - we should probably alias it onto membership_type_id &
+        // then in the validate_integer function do an if(!is_integer && $fieldInfo['pseudoconstant) look
+        // up pseudoconstant & flip it over. By the time it hits api it will be a valid membership_type & handling @
+        // api layer not required
         $membershipTypeId = CRM_Utils_Array::key(ucfirst($value),
           CRM_Member_PseudoConstant::membershipType()
         );

@@ -48,7 +48,7 @@ require_once 'api/v3/utils.php';
  * Dumb wrapper to execute scheduled jobs. Always creates success - errors
  * and results are handled in the job log.
  *
- * @param  array   	  $params (reference ) input parameters
+ * @param  array       $params (reference ) input parameters
  *
  * @return array API Result Array
  *
@@ -68,7 +68,7 @@ function civicrm_api3_job_execute($params) {
 /**
  * Geocode group of contacts based on given params
  *
- * @param  array   	  $params (reference ) input parameters
+ * @param  array       $params (reference ) input parameters
  *
  * @return array API Result Array
  * {@getfields contact_geocode}
@@ -106,7 +106,7 @@ function _civicrm_api3_contact_geocode_spec(&$params) {
 /**
  * Send the scheduled reminders for all contacts (either for activities or events)
  *
- * @param  array   	  $params (reference ) input parameters
+ * @param  array       $params (reference ) input parameters
  *                        now - the time to use, in YmdHis format
  *                            - makes testing a bit simpler since we can simulate past/future time
  *
@@ -130,7 +130,7 @@ function civicrm_api3_job_send_reminder($params) {
 /**
  * Execute a specific report instance and send the output via email
  *
- * @param  array   	  $params (reference ) input parameters
+ * @param  array       $params (reference ) input parameters
  *                        sendmail - Boolean - should email be sent?, required
  *                        instanceId - Integer - the report instance ID
  *                        resetVal - Integer - should we reset form state (always true)?
@@ -158,7 +158,7 @@ function civicrm_api3_job_mail_report($params) {
  * IMPORTANT: You must first create valid option value before using via admin interface.
  * Check option lists for Email Greetings, Postal Greetings and Addressee
  *
- * @param  array   	  $params (reference ) input parameters
+ * @param  array       $params (reference ) input parameters
  *                        ct - String - ct=Individual or ct=Household or ct=Organization
  *                        gt - String - gt=email_greeting or gt=postal_greeting or gt=addressee
  *                        id - Integer - greetings option group
@@ -198,7 +198,7 @@ function civicrm_api3_job_update_greeting($params) {
 /**
  * Mass update pledge statuses
  *
- * @param  array   	  $params (reference ) input parameters
+ * @param  array       $params (reference ) input parameters
  *
  * @return boolean        true if success, else false
  * @static
@@ -317,7 +317,7 @@ function civicrm_api3_job_process_participant($params) {
  * IMPORTANT:
  * Sending renewal reminders has been migrated from this job to the Scheduled Reminders function as of 4.3.
  *
- * @param  array   	  $params (reference ) input parameters NOT USED
+ * @param  array       $params (reference ) input parameters NOT USED
  *
  * @return boolean        true if success, else false
  * @static void
@@ -338,7 +338,7 @@ function civicrm_api3_job_process_membership($params) {
 /*
  * This api checks and updates the status of all survey respondants.
  *
- * @param  array   	  $params (reference ) input parameters
+ * @param  array       $params (reference ) input parameters
  *
  * @return boolean        true if success, else false
  * @static void

@@ -17,7 +17,7 @@ table.form-layout td, table.form-layout th {
 #crm-container {   
     overflow: visible !important;
     font-family      : DejaVu Sans, serif;
-    margin           : 0px 10px 0px 10px;	
+    margin           : 0px 10px 0px 10px;  
 }
 
 /* CSS for Print and PDF of Reports */
@@ -87,7 +87,7 @@ table.form-layout td, table.form-layout th {
 }
 
 #crm-container table.report-layout th.report-contents {
-    background-color : #F5F5F5;	       
+    background-color : #F5F5F5;         
 }
 
 #crm-container table.report-layout th.statistics {

@@ -41,7 +41,7 @@
 /**
  * Install an extension
  *
- * @param  array   	  $params input parameters
+ * @param  array       $params input parameters
  *                          - key: string, eg "com.example.myextension"
  *
  * @return boolean        true if success, else false
@@ -71,7 +71,7 @@ function civicrm_api3_extension_install($params) {
 /**
  * Enable an extension
  *
- * @param  array   	  $params input parameters
+ * @param  array       $params input parameters
  *                          - key: string, eg "com.example.myextension"
  *
  * @return boolean        true if success, else false
@@ -105,7 +105,7 @@ function civicrm_api3_extension_enable($params) {
 /**
  * Disable an extension
  *
- * @param  array   	  $params input parameters
+ * @param  array       $params input parameters
  *                          - key: string, eg "com.example.myextension"
  *
  * @return boolean        true if success, else false
@@ -139,7 +139,7 @@ function civicrm_api3_extension_disable($params) {
 /**
  * Uninstall an extension
  *
- * @param  array   	  $params input parameters
+ * @param  array       $params input parameters
  *                          - key: string, eg "com.example.myextension"
  *
  * @return boolean        true if success, else false

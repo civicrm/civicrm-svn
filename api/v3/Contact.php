@@ -44,7 +44,7 @@ function civicrm_api3_contact_getfieldsByType ($params) {
   require_once 'CRM/Contact/BAO/Contact.php';
   $fields  = CRM_Contact_BAO_Contact::getFieldsByType(array(),true);
     if (  isset( $params['sequential'] ) && $params['sequential'] ==1 ) {
-      foreach ($fields as $k => $v) 
+      foreach ($fields as $k => $v)
         $fields[$k] =  array_values($v);
     }
   $params['sequential'] = 0;
@@ -265,7 +265,7 @@ function _civicrm_api3_contact_get_supportanomalies(&$params, &$options) {
 /**
  * Delete a contact with given contact id
  *
- * @param  array   	  $params (reference ) input parameters, contact_id element required
+ * @param  array       $params (reference ) input parameters, contact_id element required
  *
  * @return array API Result Array
  * @access public

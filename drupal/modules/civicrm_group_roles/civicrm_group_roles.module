@@ -159,7 +159,7 @@ function civicrm_group_roles_form_alter(&$form, &$form_state, $form_id) {
   // append this to change user edit submit function
     if ( ( $form['#id'] == 'user-profile-form' &&
          isset( $form['#user'] ) &&
-         (module_exists('content_profile') || isset( $form['account'] )) ) || 
+         (module_exists('content_profile') || isset( $form['account'] )) ) ||
     $form['#id'] == 'user-edit-form'
   ) {
     $uid = $form['#user']->uid;
@@ -366,13 +366,13 @@ function civicrm_group_roles_menu() {
   );
   $items['admin/config/civicrm/civicrm_group_roles/manual_sync'] =
     array(
-	  'title' => t('Manually Synchronize'),
-	  'page callback' => 'drupal_get_form',
-	  'page arguments' => array('civicrm_group_roles_manual_sync'),
-	  'access callback' => 'user_access',
-	  'access arguments' => array('access civicrm group role setting'),
-	  'type' => MENU_LOCAL_TASK,
-	  );
+    'title' => t('Manually Synchronize'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('civicrm_group_roles_manual_sync'),
+    'access callback' => 'user_access',
+    'access arguments' => array('access civicrm group role setting'),
+    'type' => MENU_LOCAL_TASK,
+    );
   return $items;
 }
 
@@ -599,7 +599,7 @@ function civicrm_group_roles_add_remove_groups($roles, $user, $op) {
         $contact_id = CRM_Utils_Array::value( 'contact_id', $contact['values'][0] );
 
         if ( $contact_id ) {
-            
+
       //loop over user's roles
       foreach ($roles as $rid => $role) {
 
@@ -633,7 +633,7 @@ function civicrm_group_roles_add_remove_groups($roles, $user, $op) {
           }
                 } //end foreach
             } //end foreach
-                
+
         } //end if $contact
     } //endif $roles
       }
@@ -649,13 +649,13 @@ function civicrm_group_roles_manual_sync()
 {
   $form = array();
   $form['manual_sync'] = array(
-			       '#type' => 'fieldset',
-			       '#title' => t('Manual Synchronization:'),
-			       );
+             '#type' => 'fieldset',
+             '#title' => t('Manual Synchronization:'),
+             );
   $form['manual_sync']['manual_sync_submit'] = array(
-						     '#type' => 'submit',
-						     '#value' => t('Synchronize CiviCRM Groups to Drupal Roles now'),
-						     );
+                 '#type' => 'submit',
+                 '#value' => t('Synchronize CiviCRM Groups to Drupal Roles now'),
+                 );
 
   return $form;
 }
@@ -678,14 +678,14 @@ function civicrm_group_roles_manual_sync_submit($form, &$form_state)
 function civicrm_group_roles_batch_init() {
 
   $batch = array(
-		 'title' => t('Updating Users...'),
-		 'operations' => array(),
-		 'init_message' => t('Starting Update'),
-		 'progress_message' => t('Processed @current out of @total.'),
-		 'error_message' => t('An error occurred during processing'),
-		 'finished' => 'civicrm_group_roles_batch_finished',
-		 'progressive' => FALSE
-		 );
+     'title' => t('Updating Users...'),
+     'operations' => array(),
+     'init_message' => t('Starting Update'),
+     'progress_message' => t('Processed @current out of @total.'),
+     'error_message' => t('An error occurred during processing'),
+     'finished' => 'civicrm_group_roles_batch_finished',
+     'progressive' => FALSE
+     );
 
   //query all existing users
 

@@ -663,11 +663,11 @@ function _civicrm_api3_apply_options_to_dao(&$params, &$dao, $entity) {
 function _civicrm_api3_build_fields_array(&$bao, $unique = TRUE) {
   $fields = $bao->fields();
   if ($unique) {
-  	if(!CRM_Utils_Array::value('id', $fields)){
+    if(!CRM_Utils_Array::value('id', $fields)){
      $entity = _civicrm_api_get_entity_name_from_dao($bao);
      $fields['id'] = $fields[$entity . '_id'];
      unset($fields[$entity . '_id']);
-  	}
+    }
     return $fields;
   }
 
