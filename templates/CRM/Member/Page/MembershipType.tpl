@@ -26,19 +26,19 @@
 {if $action eq 1 or $action eq 2 or $action eq 8}
    {include file="CRM/Member/Form/MembershipType.tpl"}
 {else}
-	{capture assign=reminderLink}{crmURL p='civicrm/admin/scheduleReminders' q='reset=1'}{/capture}
+  {capture assign=reminderLink}{crmURL p='civicrm/admin/scheduleReminders' q='reset=1'}{/capture}
   <div id="help">
-  	<p><div class="icon inform-icon"></div>&nbsp;{ts}Membership types are used to categorize memberships. You can define an unlimited number of types. Each type incorporates a 'name' (Gold Member, Honor Society Member...), a description, a minimum fee (can be $0), and a duration (can be 'lifetime'). Each member type is specifically linked to the membership entity (organization) - e.g. Bay Area Chapter.{/ts} {docURL page="user/membership/setup"}</p>
-		<p>{ts 1=$reminderLink}Configure membership renewal reminders using <a href="%1">Schedule Reminders</a>.{/ts} {docURL page="user/email/scheduled-reminders"}</p>
-	</div>
+    <p><div class="icon inform-icon"></div>&nbsp;{ts}Membership types are used to categorize memberships. You can define an unlimited number of types. Each type incorporates a 'name' (Gold Member, Honor Society Member...), a description, a minimum fee (can be $0), and a duration (can be 'lifetime'). Each member type is specifically linked to the membership entity (organization) - e.g. Bay Area Chapter.{/ts} {docURL page="user/membership/setup"}</p>
+    <p>{ts 1=$reminderLink}Configure membership renewal reminders using <a href="%1">Schedule Reminders</a>.{/ts} {docURL page="user/email/scheduled-reminders"}</p>
+  </div>
 
     {if $rows}
     <div id="membership_type">
         {strip}
-    	{* handle enable/disable actions*}
-     	{include file="CRM/common/enableDisable.tpl"}
+      {* handle enable/disable actions*}
+       {include file="CRM/common/enableDisable.tpl"}
         {include file="CRM/common/jsortable.tpl"}
-     	<table id="options" class="display">
+       <table id="options" class="display">
             <thead>
                 <tr>
                     <th>{ts}Membership{/ts}</th>
@@ -46,11 +46,11 @@
                     <th>{ts}Fixed Start{/ts}</th>
                     <th>{ts}Minimum Fee{/ts}</th>
                     <th>{ts}Duration{/ts}</th>
-										<th>{ts}Auto-renew Option{/ts}</th>
-                    <th>{ts}Related{/ts}</th>   
+                    <th>{ts}Auto-renew Option{/ts}</th>
+                    <th>{ts}Related{/ts}</th>
                     <th>{ts}Visibility{/ts}</th>
                     <th id="order" class="sortable">{ts}Order{/ts}</th>
-         	        <th>{ts}Enabled?{/ts}</th>
+                   <th>{ts}Enabled?{/ts}</th>
                     <th></th>
                     <th class="hiddenElement"></th>
                 </tr>
@@ -62,7 +62,7 @@
                     <td class="crm-membership-type-fixed_period_start_day">{$row.fixed_period_start_day}</td>
                     <td class="crm-membership-type-minimum_fee" align="right">{$row.minimum_fee|crmMoney}</td>
                     <td class="crm-membership-type-duration_interval_unit">{$row.duration_interval} {$row.duration_unit}</td>
-										<td class="crm-membership-type-auto-renew">{if $row.auto_renew EQ 2}{ts}Required{/ts}{elseif $row.auto_renew EQ 1}{ts}Optional{/ts}{else}{ts}No{/ts}{/if}</td>
+                    <td class="crm-membership-type-auto-renew">{if $row.auto_renew EQ 2}{ts}Required{/ts}{elseif $row.auto_renew EQ 1}{ts}Optional{/ts}{else}{ts}No{/ts}{/if}</td>
                     <td class="crm-membership-type-relationship_type_name">{$row.relationshipTypeName}</td>
                     <td class="crm-membership-type-visibility">{$row.visibility}</td>
                     <td class="nowrap crm-membership_type-order">{$row.order}</td>
@@ -75,17 +75,17 @@
         {/strip}
 
             {if $action ne 1 and $action ne 2}
-        	    <div class="action-link">
-            	    <a href="{crmURL q="action=add&reset=1"}" id="newMembershipType" class="button"><span><div class="icon add-icon"></div>{ts}Add Membership Type{/ts}</span></a>
+              <div class="action-link">
+                  <a href="{crmURL q="action=add&reset=1"}" id="newMembershipType" class="button"><span><div class="icon add-icon"></div>{ts}Add Membership Type{/ts}</span></a>
                 </div>
             {/if}
     </div>
     {else}
       {if $action ne 1}
         <div class="messages status no-popup">
-       	    <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/>
+             <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/>
             {capture assign=crmURL}{crmURL p='civicrm/admin/member/membershipType' q="action=add&reset=1"}{/capture}{ts 1=$crmURL}There are no membership types entered. You can <a href='%1'>add one</a>.{/ts}
-        </div>    
+        </div>
       {/if}
     {/if}
 {/if}

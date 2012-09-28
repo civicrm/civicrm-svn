@@ -39,12 +39,12 @@
         </tr>
         {foreach from=$activeMembers item=activeMember}
         <tr class="{cycle values="odd-row,even-row"} {$activeMember.class}">
-	        <td>{$activeMember.membership_type}</td>
-		<td>{$activeMember.join_date|crmDate}</td>
-	        <td>{$activeMember.start_date|crmDate}</td>
-	        <td>{$activeMember.end_date|crmDate}</td>
-	        <td>{$activeMember.status}</td>
-	        <td>{if $activeMember.renewPageId}<a href="{crmURL p='civicrm/contribute/transact' q="id=`$activeMember.renewPageId`&mid=`$activeMember.id`&reset=1"}">[ {ts}Renew Now{/ts} ]</a>{/if}</td>
+          <td>{$activeMember.membership_type}</td>
+    <td>{$activeMember.join_date|crmDate}</td>
+          <td>{$activeMember.start_date|crmDate}</td>
+          <td>{$activeMember.end_date|crmDate}</td>
+          <td>{$activeMember.status}</td>
+          <td>{if $activeMember.renewPageId}<a href="{crmURL p='civicrm/contribute/transact' q="id=`$activeMember.renewPageId`&mid=`$activeMember.id`&reset=1"}">[ {ts}Renew Now{/ts} ]</a>{/if}</td>
         </tr>
         {/foreach}
         </table>
@@ -70,11 +70,11 @@
         </tr>
         {foreach from=$inActiveMembers item=inActiveMember}
         <tr class="{cycle values="odd-row,even-row"} {$inActiveMember.class}">
-	        <td>{$inActiveMember.membership_type}</td>
-	        <td>{$inActiveMember.start_date|crmDate}</td>
-	        <td>{$inActiveMember.end_date|crmDate}</td>
-	        <td>{$inActiveMember.status}</td>
-	        <td>{if $inActiveMember.renewPageId}<a href="{crmURL p='civicrm/contribute/transact' q="id=`$inActiveMember.renewPageId`&mid=`$inActiveMember.id`&reset=1"}">[ {ts}Renew Now{/ts} ]</a>{/if}</td>
+          <td>{$inActiveMember.membership_type}</td>
+          <td>{$inActiveMember.start_date|crmDate}</td>
+          <td>{$inActiveMember.end_date|crmDate}</td>
+          <td>{$inActiveMember.status}</td>
+          <td>{if $inActiveMember.renewPageId}<a href="{crmURL p='civicrm/contribute/transact' q="id=`$inActiveMember.renewPageId`&mid=`$inActiveMember.id`&reset=1"}">[ {ts}Renew Now{/ts} ]</a>{/if}</td>
 
         </tr>
         {/foreach}
