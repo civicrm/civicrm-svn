@@ -154,7 +154,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
    * @return void
    *
    * @access public
-   */ 
+   */
   function preProcess() {
 
     $this->_id         = $this->get('id');
@@ -266,7 +266,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
       CRM_Core_Session::setStatus(ts('This feature is not currently available.'), ts('Sorry'), 'error');
       return CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm', 'reset=1'));
     }
-
+    $defaults = array();
     if ($this->_mode != self::MODE_SEARCH) {
       CRM_Core_BAO_UFGroup::setRegisterDefaults($this->_fields, $defaults);
       $this->setDefaults($defaults);
@@ -616,7 +616,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
 
   /*
    * Function to validate profile and provided activity Id
-   *                                          
+   *
    * @params Integer $activityId Activity Id
    * @params Integer $gid        Profile Id
    *
@@ -753,18 +753,18 @@ class CRM_Profile_Form extends CRM_Core_Form {
             $duplicateContactsLinks .= '<table class="matching-contacts-actions">';
             $row = '';
             for ($i = 0; $i < sizeof($contactLinks['rows']); $i++) {
-              $row .= '  <tr>	 ';
-              $row .= '  	<td class="matching-contacts-name"> ';
+              $row .= '  <tr>   ';
+              $row .= '    <td class="matching-contacts-name"> ';
               $row .= $contactLinks['rows'][$i]['display_name'];
-              $row .= '  	</td>';
-              $row .= '  	<td class="matching-contacts-email"> ';
+              $row .= '    </td>';
+              $row .= '    <td class="matching-contacts-email"> ';
               $row .= $contactLinks['rows'][$i]['primary_email'];
-              $row .= '  	</td>';
-              $row .= '  	<td class="action-items"> ';
+              $row .= '    </td>';
+              $row .= '    <td class="action-items"> ';
               $row .= $contactLinks['rows'][$i]['view'] . ' ';
               $row .= $contactLinks['rows'][$i]['edit'];
-              $row .= '  	</td>';
-              $row .= '  </tr>	 ';
+              $row .= '    </td>';
+              $row .= '  </tr>   ';
             }
 
             $duplicateContactsLinks .= $row . '</table>';
