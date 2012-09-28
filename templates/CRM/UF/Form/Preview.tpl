@@ -37,22 +37,22 @@
 {if $viewOnly }
 {* wrap in crm-container div so crm styles are used *}
 <div id="crm-container-inner" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
-{include file="CRM/common/CMSUser.tpl"}      
-  {strip} 
+{include file="CRM/common/CMSUser.tpl"}
+  {strip}
   {if $help_pre && $action neq 4}<div class="messages help">{$help_pre}</div>{/if}
   {assign var=zeroField value="Initial Non Existent Fieldset"}
   {assign var=fieldset  value=$zeroField}
   {foreach from=$fields item=field key=fieldName}
   {if $field.groupTitle != $fieldset}
       {if $fieldset != $zeroField}
-         </table> 
+         </table>
          {if $groupHelpPost}
             <div class="messages help">{$groupHelpPost}</div>
          {/if}
          {if $mode ne 8}
             </fieldset>
          {/if}
-      {/if}   
+      {/if}
      {if $mode ne 8}
           <h3>{$field.groupTitle}</h3>
      {/if}
@@ -69,13 +69,13 @@
         {/if}
     {assign var=n value=$field.name}
     {if $field.options_per_line }
-	<tr>
+  <tr>
         <td class="option-label">{$form.$n.label}</td>
         <td>
-	    {assign var="count" value="1"}
+      {assign var="count" value="1"}
         {strip}
         <table class="form-layout-compressed">
-       
+
          <tr>
           {* sort by fails for option per line. Added a variable to iterate through the element array*}
           {assign var="index" value="1"}
@@ -85,29 +85,29 @@
           {else}
             <td class="labels font-light">{$form.$n.$key.html}</td>
               {if $count == $field.options_per_line}
-         </tr>         
+         </tr>
                    {assign var="count" value="1"}
               {else}
-          	       {assign var="count" value=`$count+1`}
+                   {assign var="count" value=`$count+1`}
               {/if}
           {/if}
           {/foreach}
         </table>
-	{if $field.html_type eq 'Radio' and $form.formName eq 'Preview'}
+  {if $field.html_type eq 'Radio' and $form.formName eq 'Preview'}
            <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$n}', '{$form.formName}'); return false;">{ts}clear{/ts}</a>)</span>
-	{/if}
+  {/if}
         {/strip}
         </td>
     </tr>
-	{else}
+  {else}
         <tr class="crm-entity crm-UFField" id="UFField-{$field.field_id}" data-weight="{$field.weight}" title="{$field.field_type}->{$form.$n.name}"><td class="label"><span class="crm-editable crmf-label">{$form.$n.label}</span></td>
-	<td>
+  <td>
         {if $n eq 'group' && $form.group || ( $n eq 'tag' && $form.tag )}
            {include file="CRM/Contact/Form/Edit/TagsAndGroups.tpl" type=$n}
         {elseif $n eq 'email_greeting' or  $n eq 'postal_greeting' or $n eq 'addressee'}
-               {include file="CRM/Profile/Form/GreetingType.tpl"}  
+               {include file="CRM/Profile/Form/GreetingType.tpl"}
         {elseif ( $field.data_type eq 'Date' AND $element.skip_calendar NEQ true ) or
-                ( $n|substr:-5:5 eq '_date' ) or ( $field.name eq 'activity_date_time' )  } 
+                ( $n|substr:-5:5 eq '_date' ) or ( $field.name eq 'activity_date_time' )  }
                {include file="CRM/common/jcalendar.tpl" elementName=$form.$n.name}
         {else}
             {if $n|substr:0:4 eq 'url-'}
@@ -129,19 +129,19 @@
                    {/if}
                 {/if}
             {/if}
-	   {/if}
+     {/if}
 
     </td>
-	{/if}
+  {/if}
         {* Show explanatory text for field if not in 'view' mode *}
         {if $field.help_post && $action neq 4}
             <tr class="crm-editable" id="UFField-{$field.field_id}"><td>&nbsp;</td><td class="description crm-editable crmf-help_post">{$field.help_post}</td></tr>
         {/if}
-    {/foreach}  
-     
+    {/foreach}
+
     {if $addCAPTCHA }
         {include file='CRM/common/ReCAPTCHA.tpl'}
-    {/if}   
+    {/if}
     </table>
     {if $field.groupHelpPost}
     <div class="messages help">{$field.groupHelpPost}</div>
@@ -149,8 +149,8 @@
     {/strip}
 </div> {* end crm-container div *}
 {else}
-	{capture assign=infoMessage}{ts}This CiviCRM profile field is view only.{/ts}{/capture}
-	{include file="CRM/common/info.tpl"}
+  {capture assign=infoMessage}{ts}This CiviCRM profile field is view only.{/ts}{/capture}
+  {include file="CRM/common/info.tpl"}
 {/if}
 {else}
   {if $editInPlace}
@@ -162,11 +162,11 @@
 
 
 {if !$editInPlace}
-<div class="crm-submit-buttons"> 
-	{include file="CRM/common/formButtons.tpl"}
+<div class="crm-submit-buttons">
+  {include file="CRM/common/formButtons.tpl"}
 </div>
 {else}
-{include file="CRM/Contact/Page/Inline/AddFields.tpl" profileID=$id field_groups="field_groups"} 
+{include file="CRM/Contact/Page/Inline/AddFields.tpl" profileID=$id field_groups="field_groups"}
 {/if}
 
 </div>
@@ -197,7 +197,7 @@
 <script>
 cj.crmURL ('init', '{crmURL p="civicrm/example" q="placeholder"}');
 {literal}
-//example of usage alert ($.crmURL ('civicrm/admin/uf/group/field/update',{reset:1,action:'update',id:42}));    
+//example of usage alert ($.crmURL ('civicrm/admin/uf/group/field/update',{reset:1,action:'update',id:42}));
 cj(function ($){
 
     $('#Preview input').attr("readonly","readonly");
@@ -254,7 +254,7 @@ cj(function ($){
 
     $(document).on ('load','#Field',function (event) { // loading the admin form for a field
       //or create a new custom field
-console.log (this); 
+console.log (this);
       $(this).find ('.crm-button_qf_Field_next_new').hide();
       $(this).find ('.crm-button-type-cancel').click(function (){ // cancelled by the used, don't save, just remove the form
         if ($(this).closest('.ui-dialog').length >0) {
@@ -280,7 +280,7 @@ console.log (this);
     event.stopPropagation();
     $(this).crmTemplate('#tpl-field',data,{'method':'after'});
     //and now that it's created, let's make it editable. the template triggered a render event
-  }); 
+  });
 
   $('.crm-editable').crmEditable ();
 
@@ -303,7 +303,7 @@ console.log (this);
 
 //        $(this).trigger ("create",{values:params});console.log(params);return true; // test drop without creation
 
-        $().crmAPI.call(this,'UFField','Create',params,{success:function (data) { 
+        $().crmAPI.call(this,'UFField','Create',params,{success:function (data) {
           $(this).trigger ("create",data);
           ui.draggable.hide();
         }});
@@ -324,7 +324,7 @@ console.log (this);
     <input class="required" type="checkbox"><label>Required</label>
     <br/>
     <a href="/civicrm/admin/uf/group/field/update?reset=1&action=update&id={{id}}" class="crm-editable crm-dialog admin-field">
-      <span class="ui-icon ui-icon-wrench aicon" style="display:inline-block"></span>Advanced edit 
+      <span class="ui-icon ui-icon-wrench aicon" style="display:inline-block"></span>Advanced edit
     </a>
     <br>
     <span class="ui-icon ui-icon-trash" style="display:inline-block"></span>Delete

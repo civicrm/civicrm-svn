@@ -27,7 +27,7 @@
     {* Add or edit Profile Group form *}
     {include file="CRM/UF/Form/Group.tpl"}
 {elseif $action eq 1024}
-    {* Preview Profile Group form *}	
+    {* Preview Profile Group form *}
     {include file="CRM/UF/Form/Preview.tpl"}
 {elseif $action eq 8192}
     {* Display HTML Form Snippet Code *}
@@ -38,8 +38,8 @@
     <form name="html_code" action="{crmURL p='civicrm/admin/uf/group' q="action=profile&gid=$gid"}">
     <div id="standalone-form">
         <textarea rows="20" cols="80" name="profile" id="profile">{$profile}</textarea>
-        <div class="spacer"></div>    
-        <a href="#" onclick="html_code.profile.select(); return false;" class="button"><span>Select HTML Code</span></a> 
+        <div class="spacer"></div>
+        <a href="#" onclick="html_code.profile.select(); return false;" class="button"><span>Select HTML Code</span></a>
     </div>
     <div class="action-link">
         &nbsp; <a href="{crmURL p='civicrm/admin/uf/group' q="reset=1"}">&raquo;  {ts}Back to Profile Listings{/ts}</a>
@@ -62,7 +62,7 @@
             <li id='tab_user'>    <a href='#user-profiles'     title='{ts}User-defined Profile{/ts}'>{ts}User-defined Profiles{/ts}</a></li>
             <li id='tab_reserved'><a href='#reserved-profiles' title='{ts}Reserved Profiles{/ts}'>{ts}Reserved Profiles{/ts}</a></li>
         </ul>
-    
+
         {* handle enable/disable actions*}
         {include file="CRM/common/enableDisable.tpl"}
         {include file="CRM/common/jsortable.tpl"}
@@ -77,11 +77,11 @@
                 <th id="nosort">{ts}Used For{/ts}</th>
                 <th></th>
               </tr>
-            </thead> 
+            </thead>
             <tbody>
             {foreach from=$rows item=row}
             {if !$row.is_reserved }
-  	          <tr id="UFGroup-{$row.id}"class="crm-entity {$row.class}{if NOT $row.is_active} disabled{/if}">
+              <tr id="UFGroup-{$row.id}"class="crm-entity {$row.class}{if NOT $row.is_active} disabled{/if}">
                 <td><span class="crmf-title crm-editable">{$row.title}</span></td>
                 <td>{$row.group_type}</td>
                 <td>{$row.id}</td>
@@ -92,7 +92,7 @@
             {/foreach}
             </tbody>
             </table>
-        
+
             {if NOT ($action eq 1 or $action eq 2)}
             <div class="crm-submit-buttons">
                 <a href="{crmURL p='civicrm/admin/uf/group/add' q='action=add&reset=1'}" id="newCiviCRMProfile-bottom" class="button"><span><div class="icon add-icon"></div>{ts}Add Profile{/ts}</span></a>
@@ -112,11 +112,11 @@
                 <th id="nosort">{ts}Used For{/ts}</th>
                 <th></th>
               </tr>
-            </thead> 
+            </thead>
             <tbody>
             {foreach from=$rows item=row}
             {if $row.is_reserved}
-  	          <tr id="row_{$row.id}"class="{$row.class}{if NOT $row.is_active} disabled{/if}">
+              <tr id="row_{$row.id}"class="{$row.class}{if NOT $row.is_active} disabled{/if}">
                 <td>{$row.title}</td>
                 <td>{$row.group_type}</td>
                 <td>{$row.id}</td>
@@ -127,7 +127,7 @@
             {/foreach}
             </tbody>
             </table>
-        
+
             {if NOT ($action eq 1 or $action eq 2)}
             <div class="crm-submit-buttons">
                 <a href="{crmURL p='civicrm/admin/uf/group/add' q='action=add&reset=1'}" id="newCiviCRMProfile-bottom" class="button"><span><div class="icon add-icon"></div>{ts}Add Profile{/ts}</span></a>
@@ -157,4 +157,4 @@
     {/if}
     {/if}
 {/if}
-{include file="CRM/common/crmeditable.tpl"} 
+{include file="CRM/common/crmeditable.tpl"}

@@ -26,7 +26,7 @@
 <h3>{if $action eq 8}{ts}Delete Field{/ts} - {$fieldTitle}{elseif $action eq 1}{ts}Add Field{/ts}{elseif $action eq 2}{ts}Edit Field{/ts} - {$fieldTitle}{/if}</h3>
 <div class="crm-block crm-form-block crm-uf-field-form-block">
     {if $action eq 8}
-      	<div class="messages status no-popup">
+        <div class="messages status no-popup">
           <div class="icon inform-icon"></div>
             {ts}WARNING: Deleting this profile field will remove it from Profile forms and listings. If this field is used in any 'stand-alone' Profile forms, you will need to update those forms to remove this field.{/ts} {ts}Do you want to continue?{/ts}
       </div>
@@ -179,7 +179,7 @@ function showLabel( ) {
 
 {/literal}{if $action neq 8}{literal}
   showHideSeletorSearch();
-  
+
   function showHideSeletorSearch() {
     var is_search = cj('#is_search_label, #is_search_html, #is_search_desSpan');
     var in_selector = cj('#in_selector_label, #in_selector_html, #in_selector_desSpan');
@@ -187,7 +187,7 @@ function showLabel( ) {
       is_search.hide();
       in_selector.hide();
       cj("#is_searchable").attr('checked',false);
-    } 
+    }
     else {
       if (!cj("#is_view").attr('checked')) {
         is_search.hide();
@@ -201,7 +201,7 @@ function showLabel( ) {
       }
     }
   }
-  
+
   cj("#field_name_1").bind( 'change blur', function( ) {
      showHideSeletorSearch( );
   });
