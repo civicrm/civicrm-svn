@@ -31,7 +31,7 @@
     {else}
         {ts}No matching memberships found.{/ts}
     {/if}
-	<br />
+  <br />
     {ts}Suggestions:{/ts}
     <ul>
         <li>{ts}if you are searching by participant name, check your spelling{/ts}</li>

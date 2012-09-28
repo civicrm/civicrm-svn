@@ -31,14 +31,14 @@
 
 <div class="crm-block crm-event-thankyou-form-block">
     {* Don't use "normal" thank-you message for Waitlist and Approval Required registrations - since it will probably not make sense for those situations. dgg *}
-    {if $event.thankyou_text AND (not $isOnWaitlist AND not $isRequireApproval)} 
+    {if $event.thankyou_text AND (not $isOnWaitlist AND not $isRequireApproval)}
         <div id="intro_text" class="crm-section event_thankyou_text-section">
             <p>
             {$event.thankyou_text}
             </p>
         </div>
     {/if}
-    
+
     {* Show link to Tell a Friend (CRM-2153) *}
     {if $friendText}
         <div id="tell-a-friend" class="crm-section tell_friend_link-section">
@@ -52,13 +52,13 @@
             <a href="{$pcpLink}" title="{$pcpLinkText}" class="button"><span>&raquo; {$pcpLinkText}</span></a>
         </div><br /><br />
     {/if}
-    
+
     <div id="help">
         {if $isOnWaitlist}
             <p>
                 <span class="bold">{ts}You have been added to the WAIT LIST for this event.{/ts}</span>
                 {ts}If space becomes available you will receive an email with a link to a web page where you can complete your registration.{/ts}
-             </p> 
+             </p>
         {elseif $isRequireApproval}
             <p>
                 <span class="bold">{ts}Your registration has been submitted.{/ts}
@@ -92,7 +92,7 @@
             {include file="CRM/Event/Form/Registration/EventInfoBlock.tpl" context="ThankYou"}
         </div>
     </div>
-    
+
     {if $paidEvent}
         <div class="crm-group event_fees-group">
             <div class="header-dark">
@@ -101,40 +101,40 @@
             {if $lineItem}
                 {include file="CRM/Price/Page/LineItem.tpl" context="Event"}
             {elseif $amount || $amount == 0}
-	            <div class="crm-section no-label amount-item-section">
-                    {foreach from= $finalAmount item=amount key=level}  
-            			<div class="content">
-            			    {$amount.amount|crmMoney}&nbsp;&nbsp;{$amount.label}
-            			</div>
-            			<div class="clear"></div>
+              <div class="crm-section no-label amount-item-section">
+                    {foreach from= $finalAmount item=amount key=level}
+                  <div class="content">
+                      {$amount.amount|crmMoney}&nbsp;&nbsp;{$amount.label}
+                  </div>
+                  <div class="clear"></div>
                     {/foreach}
                 </div>
                 {if $totalAmount}
-        			<div class="crm-section no-label total-amount-section">
-                		<div class="content bold">{ts}Event Total{/ts}:&nbsp;&nbsp;{$totalAmount|crmMoney}</div>
-                		<div class="clear"></div>
-                	</div>
+              <div class="crm-section no-label total-amount-section">
+                    <div class="content bold">{ts}Event Total{/ts}:&nbsp;&nbsp;{$totalAmount|crmMoney}</div>
+                    <div class="clear"></div>
+                  </div>
                     {if $hookDiscount.message}
                         <div class="crm-section hookDiscount-section">
                             <em>({$hookDiscount.message})</em>
                         </div>
                     {/if}
-                {/if}	
+                {/if}
             {/if}
             {if $receive_date}
                 <div class="crm-section no-label receive_date-section">
                     <div class="content bold">{ts}Transaction Date{/ts}: {$receive_date|crmDate}</div>
-                	<div class="clear"></div>
+                  <div class="clear"></div>
                 </div>
             {/if}
             {if $contributeMode ne 'notify' AND $trxn_id}
                 <div class="crm-section no-label trxn_id-section">
                     <div class="content bold">{ts}Transaction #{/ts}: {$trxn_id}</div>
-            		<div class="clear"></div>
-            	</div>
+                <div class="clear"></div>
+              </div>
             {/if}
         </div>
-    
+
     {elseif $participantInfo}
         <div class="crm-group participantInfo-group">
             <div class="header-dark">
@@ -142,12 +142,12 @@
             </div>
             <div class="crm-section no-label participant_info-section">
                 <div class="content">
-                    {foreach from=$participantInfo  item=mail key=no}  
-                        <strong>{$mail}</strong><br />	
+                    {foreach from=$participantInfo  item=mail key=no}
+                        <strong>{$mail}</strong><br />
                     {/foreach}
                 </div>
-        		<div class="clear"></div>
-        	</div>
+            <div class="clear"></div>
+          </div>
         </div>
     {/if}
 
@@ -160,26 +160,26 @@
                 <div class="content">
                     {$event.participant_role}
                 </div>
-        		<div class="clear"></div>
-        	</div>
+            <div class="clear"></div>
+          </div>
         </div>
     {/if}
 
     {include file="CRM/Event/Form/Registration/DisplayProfile.tpl"}
 
-    {if $contributeMode ne 'notify' and $paidEvent and ! $is_pay_later and ! $isAmountzero and !$isOnWaitlist and !$isRequireApproval}   
+    {if $contributeMode ne 'notify' and $paidEvent and ! $is_pay_later and ! $isAmountzero and !$isOnWaitlist and !$isRequireApproval}
         <div class="crm-group billing_name_address-group">
             <div class="header-dark">
                 {ts}Billing Name and Address{/ts}
             </div>
-        	<div class="crm-section no-label billing_name-section">
-        		<div class="content">{$billingName}</div>
-        		<div class="clear"></div>
-        	</div>
-        	<div class="crm-section no-label billing_address-section">
-        		<div class="content">{$address|nl2br}</div>
-        		<div class="clear"></div>
-        	</div>
+          <div class="crm-section no-label billing_name-section">
+            <div class="content">{$billingName}</div>
+            <div class="clear"></div>
+          </div>
+          <div class="crm-section no-label billing_address-section">
+            <div class="content">{$address|nl2br}</div>
+            <div class="clear"></div>
+          </div>
         </div>
     {/if}
 
@@ -190,10 +190,10 @@
             </div>
             <div class="crm-section no-label credit_card_details-section">
                 <div class="content">{$credit_card_type}</div>
-        		<div class="content">{$credit_card_number}</div>
-        		<div class="content">{ts}Expires{/ts}: {$credit_card_exp_date|truncate:7:''|crmDate}</div>
-        		<div class="clear"></div>
-        	</div>
+            <div class="content">{$credit_card_number}</div>
+            <div class="content">{ts}Expires{/ts}: {$credit_card_exp_date|truncate:7:''|crmDate}</div>
+            <div class="clear"></div>
+          </div>
         </div>
     {/if}
 
@@ -202,7 +202,7 @@
             <p>{$event.thankyou_footer_text}</p>
         </div>
     {/if}
-    
+
     <div class="action-link section event_info_link-section">
         <a href="{crmURL p='civicrm/event/info' q="reset=1&id=`$event.id`"}">&raquo; {ts 1=$event.event_title}Back to "%1" event information{/ts}</a>
     </div>

@@ -32,7 +32,7 @@
     {assign var=expressButtonName value='_qf_Register_upload_express'}
     <fieldset class="crm-group payPalExpress-group"><legend>{ts}Checkout with PayPal{/ts}</legend>
     <div class="description">{ts}Click the PayPal button to continue.{/ts}</div>
-	<div>{$form.$expressButtonName.html} <span style="font-size:11px; font-family: Arial, Verdana;">Checkout securely.  Pay without sharing your financial information. </span>
+  <div>{$form.$expressButtonName.html} <span style="font-size:11px; font-family: Arial, Verdana;">Checkout securely.  Pay without sharing your financial information. </span>
     </div>
     </fieldset>
 {/if}
@@ -50,12 +50,12 @@
 {* moved to tpl since need to show only for primary participant page *}
 {if $requireApprovalMsg || $waitlistMsg}
   <div id = "id-waitlist-approval-msg" class="messages status no-popup">
-    	{if $requireApprovalMsg}
-	    <div id="id-req-approval-msg">{$requireApprovalMsg}</div>
-	{/if}
+      {if $requireApprovalMsg}
+      <div id="id-req-approval-msg">{$requireApprovalMsg}</div>
+  {/if}
         {if $waitlistMsg}
-	    <div id="id-waitlist-msg">{$waitlistMsg}</div>
-	{/if} 
+      <div id="id-waitlist-msg">{$waitlistMsg}</div>
+  {/if}
   </div>
 {/if}
 
@@ -89,12 +89,12 @@
 {if $priceSet}
     {if ! $quickConfig}<fieldset id="priceset" class="crm-group priceset-group"><legend>{$event.fee_label}</legend>{/if}
         {include file="CRM/Price/Form/PriceSet.tpl" extends="Event"}
-	{include file="CRM/Price/Form/ParticipantCount.tpl"}
+  {include file="CRM/Price/Form/ParticipantCount.tpl"}
     {if ! $quickConfig}</fieldset>{/if}
 
     {if $form.is_pay_later}
         <div class="crm-section pay_later-section">
-	        <div class="label">&nbsp;</div>
+          <div class="label">&nbsp;</div>
             <div class="content">{$form.is_pay_later.html}&nbsp;{$form.is_pay_later.label}</div>
             <div class="clear"></div>
         </div>
@@ -139,7 +139,7 @@
 {* User account registration option. Displays if enabled for one of the profiles on this page. *}
 {include file="CRM/common/CMSUser.tpl"}
 
-{include file="CRM/UF/Form/Block.tpl" fields=$customPre} 
+{include file="CRM/UF/Form/Block.tpl" fields=$customPre}
  <div class="crm-section payment_processor-section">
       <div class="label">{$form.payment_processor.label}</div>
       <div class="content">{$form.payment_processor.html}</div>
@@ -150,7 +150,7 @@
  {include file="CRM/common/paymentBlock.tpl'}
 
 
-{include file="CRM/UF/Form/Block.tpl" fields=$customPost}   
+{include file="CRM/UF/Form/Block.tpl" fields=$customPost}
 
 {if $isCaptcha}
     {include file='CRM/common/ReCAPTCHA.tpl'}
@@ -166,7 +166,7 @@
     </div>
 {/if}
 </div>
- 
+
 <script type="text/javascript">
 {literal}
 function toggleConfirmButton() {
@@ -180,9 +180,9 @@ function toggleConfirmButton() {
 
    if (payPalExpressId !=0 && payPalExpressId == processorTypeId) {
       hide("crm-submit-buttons");
-   } else {	
+   } else {
       show("crm-submit-buttons");
-   } 
+   }
 }
 
 cj('input[name="payment_processor"]').change( function() {
@@ -192,68 +192,68 @@ cj('input[name="payment_processor"]').change( function() {
 cj(function() {
   toggleConfirmButton();
 });
-{/literal} 
+{/literal}
 </script>
 {/if}
-{literal} 
+{literal}
 <script type="text/javascript">
     {/literal}{if $pcp && $is_honor_roll }pcpAnonymous();{/if}{literal}
 
-    function allowParticipant( ) { 		
-	{/literal}{if $allowGroupOnWaitlist}{literal}
-	    var additionalParticipants = cj('#additional_participants').val();
-	    var pricesetParticipantCount = 0;
-	    {/literal}{if $priceSet}{literal}
-	      pricesetParticipantCount = pPartiCount;
-	    {/literal}{/if}{literal}
-	
-	    allowGroupOnWaitlist( additionalParticipants, pricesetParticipantCount );
-	{/literal}{/if}{literal}
+    function allowParticipant( ) {
+  {/literal}{if $allowGroupOnWaitlist}{literal}
+      var additionalParticipants = cj('#additional_participants').val();
+      var pricesetParticipantCount = 0;
+      {/literal}{if $priceSet}{literal}
+        pricesetParticipantCount = pPartiCount;
+      {/literal}{/if}{literal}
+
+      allowGroupOnWaitlist( additionalParticipants, pricesetParticipantCount );
+  {/literal}{/if}{literal}
     }
 
     {/literal}{if ($form.is_pay_later or $bypassPayment) and $paymentProcessor.payment_processor_type EQ 'PayPal_Express'}
-    {literal} 
+    {literal}
        showHidePayPalExpressOption( );
     {/literal}{/if}{literal}
 
     function showHidePayPalExpressOption( )
     {
-	var payLaterElement = {/literal}{if $form.is_pay_later}true{else}false{/if}{literal};
-	if ( ( cj("#bypass_payment").val( ) == 1 ) ||
-	     ( payLaterElement && document.getElementsByName('is_pay_later')[0].checked ) ) {
-		show("crm-submit-buttons");
-		hide("paypalExpress");
-	} else {
-		show("paypalExpress");
-		hide("crm-submit-buttons");
-	}
+  var payLaterElement = {/literal}{if $form.is_pay_later}true{else}false{/if}{literal};
+  if ( ( cj("#bypass_payment").val( ) == 1 ) ||
+       ( payLaterElement && document.getElementsByName('is_pay_later')[0].checked ) ) {
+    show("crm-submit-buttons");
+    hide("paypalExpress");
+  } else {
+    show("paypalExpress");
+    hide("crm-submit-buttons");
+  }
     }
 
-    {/literal}{if ($form.is_pay_later or $bypassPayment) and $showHidePaymentInformation}{literal} 
+    {/literal}{if ($form.is_pay_later or $bypassPayment) and $showHidePaymentInformation}{literal}
        showHidePaymentInfo( );
     {/literal} {/if}{literal}
 
     function showHidePaymentInfo( )
-    {	
-	var payLater = {/literal}{if $form.is_pay_later}true{else}false{/if}{literal};
+    {
+  var payLater = {/literal}{if $form.is_pay_later}true{else}false{/if}{literal};
 
-	if ( ( cj("#bypass_payment").val( ) == 1 ) ||
-	     ( payLater && document.getElementsByName('is_pay_later')[0].checked ) ) {
-	     hide( 'billing-payment-block' );		
-	} else {
+  if ( ( cj("#bypass_payment").val( ) == 1 ) ||
+       ( payLater && document.getElementsByName('is_pay_later')[0].checked ) ) {
+       hide( 'billing-payment-block' );
+  } else {
              show( 'billing-payment-block' );
-	}
+  }
     }
-    
+
     {/literal}{if $allowGroupOnWaitlist}{literal}
        allowGroupOnWaitlist( 0, 0 );
     {/literal}{/if}{literal}
-    
+
     function allowGroupOnWaitlist( additionalParticipants, pricesetParticipantCount )
-    {	
+    {
       {/literal}{if $isAdditionalParticipants}{literal}
       if ( !additionalParticipants ) {
-      	additionalParticipants = cj('#additional_participants').val();
+        additionalParticipants = cj('#additional_participants').val();
       }
       {/literal}{else}{literal}
         additionalParticipants = 0;
@@ -261,81 +261,81 @@ cj(function() {
 
       additionalParticipants = parseInt( additionalParticipants );
       if ( ! additionalParticipants ) {
-      	 additionalParticipants = 0;
-      }     
+         additionalParticipants = 0;
+      }
 
       var availableRegistrations = {/literal}'{$availableRegistrations}'{literal};
       var totalParticipants = parseInt( additionalParticipants ) + 1;
-      
+
       if ( pricesetParticipantCount ) {
-      	// add priceset count if any 
-      	totalParticipants += parseInt(pricesetParticipantCount) - 1;
+        // add priceset count if any
+        totalParticipants += parseInt(pricesetParticipantCount) - 1;
       }
       var isrequireApproval = {/literal}'{$requireApprovalMsg}'{literal};
- 
+
       if ( totalParticipants > availableRegistrations ) {
          cj( "#id-waitlist-msg" ).show( );
          cj( "#id-waitlist-approval-msg" ).show( );
 
-         //set the value for hidden bypass payment. 
+         //set the value for hidden bypass payment.
          cj( "#bypass_payment").val( 1 );
 
          //hide pay later.
-         {/literal}{if $form.is_pay_later}{literal} 
-	    cj("#is-pay-later").hide( );
+         {/literal}{if $form.is_pay_later}{literal}
+      cj("#is-pay-later").hide( );
          {/literal} {/if}{literal}
- 
-      }	else {
+
+      }  else {
          if ( isrequireApproval ) {
             cj( "#id-waitlist-approval-msg" ).show( );
             cj( "#id-waitlist-msg" ).hide( );
          } else {
             cj( "#id-waitlist-approval-msg" ).hide( );
          }
-         //reset value since user don't want or not eligible for waitlist 
+         //reset value since user don't want or not eligible for waitlist
          cj( "#bypass_payment").val( 0 );
 
          //need to show paylater if exists.
-         {/literal}{if $form.is_pay_later}{literal} 
-	    cj("#is-pay-later").show( );
+         {/literal}{if $form.is_pay_later}{literal}
+      cj("#is-pay-later").show( );
          {/literal} {/if}{literal}
       }
 
       //now call showhide payment info.
       {/literal}
-      {if ($form.is_pay_later or $bypassPayment) and $paymentProcessor.payment_processor_type EQ 'PayPal_Express'}{literal} 
+      {if ($form.is_pay_later or $bypassPayment) and $paymentProcessor.payment_processor_type EQ 'PayPal_Express'}{literal}
          showHidePayPalExpressOption( );
       {/literal}{/if}
       {literal}
-  
-      {/literal}{if ($form.is_pay_later or $bypassPayment) and $showHidePaymentInformation}{literal} 
+
+      {/literal}{if ($form.is_pay_later or $bypassPayment) and $showHidePaymentInformation}{literal}
          showHidePaymentInfo( );
       {/literal}{/if}{literal}
     }
-    
+
     {/literal}{if $pcp && $is_honor_roll }{literal}
     function pcpAnonymous( ) {
         // clear nickname field if anonymous is true
-        if ( document.getElementsByName("pcp_is_anonymous")[1].checked ) { 
+        if ( document.getElementsByName("pcp_is_anonymous")[1].checked ) {
             document.getElementById('pcp_roll_nickname').value = '';
         }
-        if ( ! document.getElementsByName("pcp_display_in_roll")[0].checked ) { 
+        if ( ! document.getElementsByName("pcp_display_in_roll")[0].checked ) {
             hide('nickID', 'block');
             hide('nameID', 'block');
-    	hide('personalNoteID', 'block');
+      hide('personalNoteID', 'block');
         } else {
             if ( document.getElementsByName("pcp_is_anonymous")[0].checked ) {
                 show('nameID', 'block');
                 show('nickID', 'block');
-    	        show('personalNoteID', 'block');
+              show('personalNoteID', 'block');
             } else {
                 show('nameID', 'block');
                 hide('nickID', 'block');
-    	    hide('personalNoteID', 'block');
+          hide('personalNoteID', 'block');
             }
         }
     }
     {/literal}{/if}{literal}
 
 </script>
-{/literal} 
+{/literal}

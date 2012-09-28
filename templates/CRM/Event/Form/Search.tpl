@@ -34,16 +34,16 @@
   </div>
  <div class="crm-accordion-body">
 <div id="searchForm">
-    {strip} 
+    {strip}
         <table class="form-layout">
         <tr class="crm-event-search-form-block-sort_name">
            <td class="font-size12pt" colspan="2">
                {$form.sort_name.label}&nbsp;&nbsp;{$form.sort_name.html|crmAddClass:'twenty'}&nbsp;&nbsp;&nbsp;{$form.buttons.html}
-           </td>       
+           </td>
         </tr>
-     
+
         {include file="CRM/Event/Form/Search/Common.tpl"}
-     
+
         <tr>
            <td colspan="2">{include file="CRM/common/formButtons.tpl"}</td>
         </tr>
@@ -56,9 +56,9 @@
 {if $rowsEmpty|| $rows}
 <div class="crm-block crm-content-block">
 {if $rowsEmpty}
-	<div class="crm-results-block crm-results-block-empty">
+  <div class="crm-results-block crm-results-block-empty">
     {include file="CRM/Event/Form/Search/EmptyResults.tpl"}
-	</div>
+  </div>
 {/if}
 
 {if $rows}
@@ -67,10 +67,10 @@
         {* This section handles form elements for action task select and submit *}
         <div class="crm-search-tasks crm-event-search-tasks">
            {include file="CRM/common/searchResultTasks.tpl" context='Event'}
-	    </div>
+      </div>
         {* This section displays the rows along and includes the paging controls *}
-    	<div id='participantSearch' class="crm-event-search-results">
-	        {include file="CRM/Event/Form/Selector.tpl" context="Search"}
+      <div id='participantSearch' class="crm-event-search-results">
+          {include file="CRM/Event/Form/Selector.tpl" context="Search"}
         </div>
     {* END Actions/Results section *}
 </div>
@@ -81,7 +81,7 @@
 {literal}
 <script type="text/javascript">
 cj(function() {
-   cj().crmaccordions(); 
+   cj().crmaccordions();
 });
 </script>
 {/literal}

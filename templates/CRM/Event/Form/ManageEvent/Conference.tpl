@@ -30,9 +30,9 @@
 
     <table class="form-layout">
        <tr class="crm-event-conference-form-block-title">
-	  <td class="label">{$form.title.label}</td>
-	  <td>{$form.title.html}</td>
-       </tr>	
+    <td class="label">{$form.title.label}</td>
+    <td>{$form.title.html}</td>
+       </tr>
     </table>
 
     <div id="parent_event_name">
@@ -63,7 +63,7 @@
 {include file="CRM/common/formNavigate.tpl"}
 
 {literal}
-<script type="text/javascript"> 
+<script type="text/javascript">
 var eventUrl = "{/literal}{crmURL p='civicrm/ajax/event' h=0}{literal}";
 
 cj('input#parent_event_name').autocomplete(

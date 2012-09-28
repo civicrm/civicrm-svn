@@ -41,32 +41,32 @@
 </div>
     <legend>{$profileTitle}</legend>
         <table class="crm-copy-fields">
-	     <thead class="sticky">
+       <thead class="sticky">
             <tr class="columnheader">
              {foreach from=$readOnlyFields item=fTitle key=fName}
-	            <td>{$fTitle}</td>
-	         {/foreach}
+              <td>{$fTitle}</td>
+           {/foreach}
 
              <td>{ts}Event{/ts}</td>
              {foreach from=$fields item=field key=fieldName}
                 <td><img  src="{$config->resourceBase}i/copy.png" alt="{ts 1=$field.title}Click to copy %1 from row one to all rows.{/ts}" fname="{$field.name}" class="action-icon" title="{ts}Click here to copy the value in row one to ALL rows.{/ts}" />{$field.title}</td>
              {/foreach}
- 
+
          </tr>
          </thead>
             {foreach from=$componentIds item=pid}
              <tr class="{cycle values="odd-row,even-row"}" entity_id="{$pid}">
-	      {foreach from=$readOnlyFields item=fTitle key=fName}
-	         <td>{$contactDetails.$pid.$fName}</td>
-	      {/foreach}
+        {foreach from=$readOnlyFields item=fTitle key=fName}
+           <td>{$contactDetails.$pid.$fName}</td>
+        {/foreach}
 
-              <td class="crm-event-title">{$details.$pid.title}</td>   
+              <td class="crm-event-title">{$details.$pid.title}</td>
               {foreach from=$fields item=field key=fieldName}
                 {assign var=n value=$field.name}
                 {if ( $fields.$n.data_type eq 'Date') or ( $n eq 'participant_register_date' ) }
                    <td class="compressed">{include file="CRM/common/jcalendar.tpl" elementName=$n elementIndex=$pid batchUpdate=1}</td>
                 {else}
-                	<td class="compressed">{$form.field.$pid.$n.html}</td> 
+                  <td class="compressed">{$form.field.$pid.$n.html}</td>
                 {/if}
               {/foreach}
              </tr>
@@ -79,7 +79,7 @@
               </td>
            </tr>
          </table>
-        
+
 </fieldset>
 </div>
 
@@ -87,14 +87,14 @@
 {literal}
 <script type="text/javascript">
 /**
- * Function to update participant status 
+ * Function to update participant status
  */
 cj( function(){
    cj('#status_change').change( function() {
       if ( cj(this).val() ) {
-        cj('.crm-copy-fields [name^="field["][name*="[participant_status]"]').val( cj(this).val() ); 
+        cj('.crm-copy-fields [name^="field["][name*="[participant_status]"]').val( cj(this).val() );
       }
-   }); 
+   });
 
 });
 </script>

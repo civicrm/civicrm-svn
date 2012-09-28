@@ -39,9 +39,9 @@
     <div class="crm-content-block crm-block">
     <div id="custom_group">
      {strip}
-	 {* handle enable/disable actions*}
-	 {include file="CRM/common/enableDisable.tpl"} 
-   {include file="CRM/common/jsortable.tpl"}   
+   {* handle enable/disable actions*}
+   {include file="CRM/common/enableDisable.tpl"}
+   {include file="CRM/common/jsortable.tpl"}
       <table id="options" class="display">
         <thead>
           <tr>
@@ -70,7 +70,7 @@
         {/foreach}
         </tbody>
       </table>
-        
+
         {if NOT ($action eq 1 or $action eq 2) }
         <div class="action-link">
         <a href="{crmURL p='civicrm/admin/custom/group' q="action=add&reset=1"}" id="newCustomDataGroup" class="button"><span><div class="icon add-icon"></div>{ts}Add Set of Custom Fields{/ts}</span></a>
@@ -90,5 +90,5 @@
        {/if}
     {/if}
 {/if}
-{include file="CRM/common/crmeditable.tpl"} 
+{include file="CRM/common/crmeditable.tpl"}
 

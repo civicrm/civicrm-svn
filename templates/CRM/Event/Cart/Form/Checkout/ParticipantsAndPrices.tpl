@@ -16,20 +16,20 @@
   <fieldset class="event_form">
     <div class="participants crm-section" id="event_{$event_in_cart->event_id}_participants">
       {foreach from=$event_in_cart->participants item=participant}
-	{include file="CRM/Event/Cart/Form/Checkout/Participant.tpl"}
+  {include file="CRM/Event/Cart/Form/Checkout/Participant.tpl"}
       {/foreach}
       <a class="link-add" href="#" onclick="add_participant({$event_in_cart->event_cart->id}, {$event_in_cart->event_id}); return false;">{ts}Add Another Participant{/ts}</a>
     </div>
     {if $event_in_cart->event->is_monetary }
       <div class="price_choices crm-section">
-	{foreach from=$price_fields_for_event.$event_id key=price_index item=price_field_name}
-	  <div class="label">
-	    {$form.$price_field_name.label}
-	  </div>
-	  <div class="content">
-	    {$form.$price_field_name.html|replace:'/label>&nbsp;':'/label><br>'}
-	  </div>
-	{/foreach}
+  {foreach from=$price_fields_for_event.$event_id key=price_index item=price_field_name}
+    <div class="label">
+      {$form.$price_field_name.label}
+    </div>
+    <div class="content">
+      {$form.$price_field_name.html|replace:'/label>&nbsp;':'/label><br>'}
+    </div>
+  {/foreach}
       </div>
     {else}
       <p>{ts}There is no charge for this event.{/ts}</p>
@@ -50,7 +50,7 @@
 function add_participant( cart_id, event_id ) {
   var max_index = 0;
   var matcher = new RegExp("event_" + event_id + "_participant_(\\d+)");
-  
+
   cj('#event_' + event_id + '_participants .participant').each(
     function(index) {
       matches = matcher.exec(cj(this).attr('id'));
@@ -62,7 +62,7 @@ function add_participant( cart_id, event_id ) {
     }
   );
 
-  cj.get("/civicrm/ajax/event/add_participant_to_cart?&cart_id=" + cart_id + "&event_id=" + event_id, 
+  cj.get("/civicrm/ajax/event/add_participant_to_cart?&cart_id=" + cart_id + "&event_id=" + event_id,
     function(data) {
       cj('#event_' + event_id + '_participants').append(data);
     }

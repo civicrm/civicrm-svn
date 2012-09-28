@@ -26,9 +26,9 @@
 <tr>
     <td class="crm-event-form-block-event_type"> {$form.event_name.label}  <br />{$form.event_name.html|crmAddClass:huge} </td>
     <td class="crm-event-form-block-event_type"> {$form.event_type.label}<br />{$form.event_type.html} </td>
-</tr>     
- 
-<tr> 
+</tr>
+
+<tr>
     <td colspan="2"><label>{ts}Event Dates{/ts}</label></td>
 </tr>
 <tr>
@@ -36,10 +36,10 @@
 </tr>
 
 <tr>
-    <td class="crm-event-form-block-participant_status"><label>{ts}Participant Status{/ts}</label> 
+    <td class="crm-event-form-block-participant_status"><label>{ts}Participant Status{/ts}</label>
     <br />
       <div class="listing-box" style="width: auto; height: 120px">
-       {foreach from=$form.participant_status_id item="participant_status_val"} 
+       {foreach from=$form.participant_status_id item="participant_status_val"}
         <div class="{cycle values="odd-row,even-row"}">
        {$participant_status_val.html}
         </div>
@@ -56,22 +56,22 @@
       {/foreach}
       </div><br />
     </td>
-  
-</tr> 
+
+</tr>
 <tr>
-    <td class="crm-event-form-block-participant_test">{$form.participant_test.label} {$form.participant_test.html}<span class="crm-clear-link">(<a href="javascript:unselectRadio('participant_test','{$form.formName}')">{ts}clear{/ts}</a>)</span></td> 
-    <td class="crm-event-form-block-participant_pay_later">{$form.participant_pay_later.label} {$form.participant_pay_later.html}<span class="crm-clear-link">(<a href="javascript:unselectRadio('participant_pay_later','{$form.formName}')">{ts}clear{/ts}</a>)</span></td> 
+    <td class="crm-event-form-block-participant_test">{$form.participant_test.label} {$form.participant_test.html}<span class="crm-clear-link">(<a href="javascript:unselectRadio('participant_test','{$form.formName}')">{ts}clear{/ts}</a>)</span></td>
+    <td class="crm-event-form-block-participant_pay_later">{$form.participant_pay_later.label} {$form.participant_pay_later.html}<span class="crm-clear-link">(<a href="javascript:unselectRadio('participant_pay_later','{$form.formName}')">{ts}clear{/ts}</a>)</span></td>
 </tr>
 <tr>
     <td class="crm-event-form-block-participant_fee_level">{$form.participant_fee_level.label}<br />{$form.participant_fee_level.html}</td>
      <td class="crm-event-form-block-participant_fee_amount"><label>{ts}Fee Amount{/ts}</label><br />
-     	{$form.participant_fee_amount_low.label} &nbsp; {$form.participant_fee_amount_low.html} &nbsp;&nbsp; 
-	{$form.participant_fee_amount_high.label} &nbsp; {$form.participant_fee_amount_high.html}
-     </td> 
+       {$form.participant_fee_amount_low.label} &nbsp; {$form.participant_fee_amount_low.html} &nbsp;&nbsp;
+  {$form.participant_fee_amount_high.label} &nbsp; {$form.participant_fee_amount_high.html}
+     </td>
 </tr>
 
 {* campaign in contribution search *}
-{include file="CRM/Campaign/Form/addCampaignToComponent.tpl" campaignContext="componentSearch" 
+{include file="CRM/Campaign/Form/addCampaignToComponent.tpl" campaignContext="componentSearch"
 campaignTrClass='' campaignTdClass='crm-event-form-block-participant_campaign_id'}
 
 {if $participantGroupTree }
@@ -83,7 +83,7 @@ campaignTrClass='' campaignTdClass='crm-event-form-block-participant_campaign_id
 {/if}
 
 {literal}
-<script type="text/javascript"> 
+<script type="text/javascript">
 var eventUrl = "{/literal}{$dataURLEvent}{literal}";
 var typeUrl  = "{/literal}{$dataURLEventType}{literal}";
 var feeUrl   = "{/literal}{$dataURLEventFee}{literal}";
