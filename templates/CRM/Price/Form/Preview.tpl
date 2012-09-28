@@ -36,11 +36,11 @@
 
 {foreach from=$groupTree item=cd_edit key=group_id}
     <fieldset>
-	{if $preview_type eq 'group'}<legend>{$setTitle}</legend>{/if}
-    	   <table class="form-layout">
-       	       {assign var="priceSet" value=`$cd_edit`} 
-       	       {include file="CRM/Price/Form/PriceSet.tpl"}
-    	   </table>
+  {if $preview_type eq 'group'}<legend>{$setTitle}</legend>{/if}
+         <table class="form-layout">
+                {assign var="priceSet" value=`$cd_edit`}
+                {include file="CRM/Price/Form/PriceSet.tpl"}
+         </table>
     </fieldset>
 {/foreach}
 {/strip}

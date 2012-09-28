@@ -25,7 +25,7 @@
 *}
 {if $groupCount == 0 and $mailingCount == 0}
   <div class="status">
-	<div class="icon inform-icon"></div>
+  <div class="icon inform-icon"></div>
         {ts}To send a mailing, you must have a valid group of recipients - either at least one group that's a Mailing List or at least one previous mailing.{/ts}
   </div>
 {else}
@@ -33,7 +33,7 @@
 {include file="CRM/common/WizardHeader.tpl"}
 
   <table class="form-layout">
-   <tr class="crm-mailing-group-form-block-name"><td class="label">{$form.name.label}</td><td>{$form.name.html} {help id="mailing-name"}</td></tr>   
+   <tr class="crm-mailing-group-form-block-name"><td class="label">{$form.name.label}</td><td>{$form.name.html} {help id="mailing-name"}</td></tr>
      {* CRM-7362 --add campaign *}
      {include file="CRM/Campaign/Form/addCampaignToComponent.tpl"
      campaignTrClass="crm-mailing-group-form-block-campaign_id"}
@@ -44,7 +44,7 @@
             <td>{$form.baseGroup.html} {help id="base-group"}</td>
         </tr>
     {/if}
-    
+
     <tr class="crm-mailing-group-form-block-dedupeemail">
         <td class="label">{$form.dedupe_email.label}</td>
         <td>{$form.dedupe_email.html} {help id="dedupe-email"}</td>
@@ -55,7 +55,7 @@
 <div id="id-additional" class="form-item">
 <div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-open">
  <div class="crm-accordion-header">
-  <div class="icon crm-accordion-pointer"></div> 
+  <div class="icon crm-accordion-pointer"></div>
  {if $context EQ 'search'}{ts}Additional Mailing Recipients{/ts}{else}{ts}Mailing Recipients{/ts}{/if}
  </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">
@@ -86,7 +86,7 @@
 {literal}
 <script type="text/javascript">
 cj(function() {
-   cj().crmaccordions(); 
+   cj().crmaccordions();
 });
 </script>
 {/literal}

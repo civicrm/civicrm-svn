@@ -27,7 +27,7 @@
 {include file="CRM/common/WizardHeader.tpl"}
 
 <div id="help">
-    {ts}You can either <strong>upload</strong> the mailing content from your computer OR <strong>compose</strong> the content on this screen.{/ts} {help id="content-intro"} 
+    {ts}You can either <strong>upload</strong> the mailing content from your computer OR <strong>compose</strong> the content on this screen.{/ts} {help id="content-intro"}
 </div>
 
 {include file="CRM/Mailing/Form/Count.tpl"}
@@ -48,8 +48,8 @@
     </tr>
     {/if}
     <tr class="crm-mailing-upload-form-block-template">
-    	<td class="label">{$form.template.label}</td>
-	<td>{$form.template.html}</td>
+      <td class="label">{$form.template.label}</td>
+  <td>{$form.template.html}</td>
     </tr>
     <tr class="crm-mailing-upload-form-block-subject"><td class="label">{$form.subject.label}</td>
         <td colspan="2">{$form.subject.html|crmAddClass:huge}
@@ -103,7 +103,7 @@
                 <span class="description">{ts}You may choose to include a pre-configured Footer block below your message. This is a good place to include the required unsubscribe, opt-out and postal address tokens.{/ts}</span>
             </td>
         </tr>
-    </table> 
+    </table>
   </fieldset>
 
   <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
@@ -115,15 +115,15 @@
 <script type="text/javascript">
     showHideUpload();
     function showHideUpload()
-    { 
-	if (document.getElementsByName("upload_type")[0].checked) {
+    {
+  if (document.getElementsByName("upload_type")[0].checked) {
             hide('compose_id');
-	    cj('.crm-mailing-upload-form-block-template').hide();
-	    show('upload_id');	
+      cj('.crm-mailing-upload-form-block-template').hide();
+      show('upload_id');
         } else {
             show('compose_id');
-	    cj('.crm-mailing-upload-form-block-template').show();
-	    hide('upload_id');
+      cj('.crm-mailing-upload-form-block-template').show();
+      hide('upload_id');
             verify( );
         }
     }

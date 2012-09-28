@@ -29,5 +29,5 @@
         <div class="icon inform-icon"></div>
           {ts 1=$title}WARNING: Deleting this price field will result in the loss of all '%1' data.{/ts} {ts}This action cannot be undone.{/ts} {ts}Do you want to continue?{/ts}
     </div>
-		<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>

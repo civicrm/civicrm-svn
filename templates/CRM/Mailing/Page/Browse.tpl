@@ -25,7 +25,7 @@
 *}
 {if $sms}
   {assign var='newMassUrl' value='civicrm/sms/send'}
-  {assign var='qVal' value='&sms=1'}	
+  {assign var='qVal' value='&sms=1'}
 {else}
   {assign var='newMassUrl' value='civicrm/mailing/send'}
   {assign var='qVal' value=''}
@@ -33,7 +33,7 @@
 
 {if $showLinks}
     <div class="action-link">
-    	<a accesskey="N" href="{crmURL p=$newMassUrl q='reset=1'}" class="button"><span><div class="icon email-icon"></div>{ts}New Mailing{/ts}</span></a><br/><br/>
+      <a accesskey="N" href="{crmURL p=$newMassUrl q='reset=1'}" class="button"><span><div class="icon email-icon"></div>{ts}New Mailing{/ts}</span></a><br/><br/>
     </div>
 {/if}
 {include file="CRM/Mailing/Form/Search.tpl"}
@@ -79,14 +79,14 @@
         {if $unscheduled}
             <td class="crm-mailing-created_date">{$row.created_date}</td>
         {else}
-            <td class="crm-mailing-scheduled_by"><a href ={crmURL p='civicrm/contact/view' q="reset=1&cid="}{$row.scheduled_id}>{$row.scheduled_by}</a></td>	
+            <td class="crm-mailing-scheduled_by"><a href ={crmURL p='civicrm/contact/view' q="reset=1&cid="}{$row.scheduled_id}>{$row.scheduled_by}</a></td>
             <td class="crm-mailing-scheduled">{$row.scheduled}</td>
             <td class="crm-mailing-start">{$row.start}</td>
             <td class="crm-mailing-end">{$row.end}</td>
         {/if}
-	    {if call_user_func(array('CRM_Campaign_BAO_Campaign','isCampaignEnable'))}
-	        <td class="crm-mailing-campaign">{$row.campaign}</td>
-	    {/if}
+      {if call_user_func(array('CRM_Campaign_BAO_Campaign','isCampaignEnable'))}
+          <td class="crm-mailing-campaign">{$row.campaign}</td>
+      {/if}
         <td>{$row.action|replace:'xx':$row.id}</td>
       </tr>
       {/foreach}
@@ -95,9 +95,9 @@
 
     {include file="CRM/common/pager.tpl" location="bottom"}
     {if $showLinks}
-    	<div class="action-link">
+      <div class="action-link">
             <a accesskey="N" href="{crmURL p=$newMassUrl q='reset=1'}" class="button"><span><div class="icon email-icon"></div>{ts}New Mailing{/ts}</span></a><br/>
-    	</div>
+      </div>
     {/if}
 
 {* No mailings to list. Check isSearch flag to see if we're in a search or not. *}
@@ -105,7 +105,7 @@
     {if $archived}
         {capture assign=browseURL}{crmURL p='civicrm/mailing/browse/archived' q="reset=1"}{$qVal}{/capture}
         {assign var="browseType" value="Archived"}
-    {elseif $unscheduled} 
+    {elseif $unscheduled}
         {capture assign=browseURL}{crmURL p='civicrm/mailing/browse/unscheduled' q="scheduled=false&reset=1"}{$qVal}{/capture}
         {assign var="browseType" value="Draft and Unscheduled"}
     {else}
@@ -115,8 +115,8 @@
     <div class="status messages">
         <table class="form-layout">
             <tr><div class="icon inform-icon"></div>
-               {ts}No Mailings match your search criteria. Suggestions:{/ts} 
-	    </tr>
+               {ts}No Mailings match your search criteria. Suggestions:{/ts}
+      </tr>
                 <div class="spacer"></div>
                 <ul>
                 <li>{ts}Check your spelling.{/ts}</li>
@@ -131,7 +131,7 @@
             <div class="icon inform-icon"></div>&nbsp;
             {capture assign=crmURL}{crmURL p=$newMassUrl q='reset=1'}{/capture}
             {ts}There are no Unscheduled Mailings.{/ts}
-	    {if $showLinks}{ts 1=$crmURL}You can <a href='%1'>create and send one</a>.{/ts}{/if}
+      {if $showLinks}{ts 1=$crmURL}You can <a href='%1'>create and send one</a>.{/ts}{/if}
    </div>
 
 {elseif $archived}
@@ -146,6 +146,6 @@
             {capture assign=crmURL}{crmURL p=$newMassUrl q='reset=1'}{/capture}
             {capture assign=archiveURL}{crmURL p='civicrm/mailing/browse/archived' q='reset=1'}{$qVal}{/capture}
             {ts}There are no Scheduled or Sent Mailings.{/ts}
-	    {if $showLinks}{ts 1=$crmURL}You can <a href='%1'>create and send one</a>{/ts}{/if}{if $archiveLinks}{ts 1=$archiveURL} OR you can search the <a href='%1'>Archived Mailings</a>{/ts}{/if}.	    
+      {if $showLinks}{ts 1=$crmURL}You can <a href='%1'>create and send one</a>{/ts}{/if}{if $archiveLinks}{ts 1=$archiveURL} OR you can search the <a href='%1'>Archived Mailings</a>{/ts}{/if}.
    </div>
 {/if}

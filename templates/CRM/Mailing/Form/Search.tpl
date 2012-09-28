@@ -32,13 +32,13 @@
     </tr>
     <tr>
         <td>
-	    <label>{ts}Mailing Date{/ts}</label>
-	</td>
+      <label>{ts}Mailing Date{/ts}</label>
+  </td>
     </tr>
     <tr>
-	{include file="CRM/Core/DateRange.tpl" fieldName="mailing" from='_from' to='_to'}
+  {include file="CRM/Core/DateRange.tpl" fieldName="mailing" from='_from' to='_to'}
     </tr>
-    <tr> 
+    <tr>
         <td colspan="1">{$form.sort_name.label}<br />
             {$form.sort_name.html|crmAddClass:big} {help id="id-create_sort_name"}
         </td>
@@ -56,7 +56,7 @@
     <td>{$form.sms.label}<br/>{$form.sms.html}</td>
 </tr>
     {* campaign in mailing search *}
-    {include file="CRM/Campaign/Form/addCampaignToComponent.tpl" 
+    {include file="CRM/Campaign/Form/addCampaignToComponent.tpl"
     campaignContext="componentSearch" campaignTrClass='' campaignTdClass=''}
 
     <tr>

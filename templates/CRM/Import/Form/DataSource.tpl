@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-  
+
 <div class="crm-block crm-form-block crm-import-datasource-form-block">
 {if $showOnlyDataSourceFormPane}
   {include file=$dataSourceFormTemplateFile}
@@ -58,7 +58,7 @@
       <h3>{ts}Import Options{/ts}</h3>
       <table class="form-layout-compressed">
          <tr class="crm-import-datasource-form-block-contactType">
-	     <td class="label">{$form.contactType.label}</td>
+       <td class="label">{$form.contactType.label}</td>
              <td>{$form.contactType.html} {help id='contact-type'}&nbsp;&nbsp;&nbsp;
                <span id="contact-subtype">{$form.subType.label}&nbsp;&nbsp;&nbsp;{$form.subType.html} {help id='contact-sub-type'}</span></td>
          </tr>
@@ -78,13 +78,13 @@
          <tr>
              <td></td><td class="description">{ts}Select the format that is used for date fields in your import data.{/ts}</td>
          </tr>
-         
+
         {if $geoCode}
          <tr class="crm-import-datasource-form-block-doGeocodeAddress">
              <td class="label"></td>
              <td>{$form.doGeocodeAddress.html} {$form.doGeocodeAddress.label}<br />
                <span class="description">
-                {ts}This option is not recommended for large imports. Use the command-line geocoding script instead.{/ts} 
+                {ts}This option is not recommended for large imports. Use the command-line geocoding script instead.{/ts}
                </span>
                {docURL page="Managing Scheduled Jobs" resource="wiki"}
             </td>
@@ -95,7 +95,7 @@
          <tr  class="crm-import-datasource-form-block-savedMapping">
               <td class="label"><label for="savedMapping">{if $loadedMapping}{ts}Select a Different Field Mapping{/ts}{else}{ts}Load Saved Field Mapping{/ts}{/if}</label></td>
               <td>{$form.savedMapping.html}<br />
-	    &nbsp;&nbsp;&nbsp;<span class="description">{ts}Select Saved Mapping or Leave blank to create a new One.{/ts}</span></td>
+      &nbsp;&nbsp;&nbsp;<span class="description">{ts}Select Saved Mapping or Leave blank to create a new One.{/ts}</span></td>
          </tr>
         { /if}
  </table>
@@ -105,7 +105,7 @@
 
   {literal}
     <script type="text/javascript">
-      cj(document).ready(function() {    
+      cj(document).ready(function() {
          //build data source form block
          buildDataSourceFormBlock();
          buildSubTypes();
@@ -139,23 +139,23 @@
 
                         success: function(subtype){
                                                    if ( subtype.length == 0 ) {
-                                                      cj("#subType").empty(); 
+                                                      cj("#subType").empty();
                                                       cj("#contact-subtype").hide();
-                                                   } else {       
-                                                       cj("#contact-subtype").show();   
-                                                       cj("#subType").empty();                                   
+                                                   } else {
+                                                       cj("#contact-subtype").show();
+                                                       cj("#subType").empty();
 
-                                                       cj("#subType").append("<option value=''>- {/literal}{ts}select{/ts}{literal} -</option>");  
+                                                       cj("#subType").append("<option value=''>- {/literal}{ts}select{/ts}{literal} -</option>");
                                                        for ( var key in  subtype ) {
-                                                           // stick these new options in the subtype select 
-                                                           cj("#subType").append("<option value="+key+">"+subtype[key]+" </option>");  
+                                                           // stick these new options in the subtype select
+                                                           cj("#subType").append("<option value="+key+">"+subtype[key]+" </option>");
                                                        }
-                                                   } 
-                                       
+                                                   }
+
 
                                                  }
   });
-       
+
       }
 
       function buildDedupeRules( )
@@ -167,23 +167,23 @@
 
                         success: function(dedupe){
                                                    if ( dedupe.length == 0 ) {
-                                                      cj("#dedupe").empty(); 
+                                                      cj("#dedupe").empty();
                                                       cj("#contact-dedupe").hide();
-                                                   } else {       
-                                                       cj("#contact-dedupe").show();   
-                                                       cj("#dedupe").empty();                                   
+                                                   } else {
+                                                       cj("#contact-dedupe").show();
+                                                       cj("#dedupe").empty();
 
-                                                       cj("#dedupe").append("<option value=''>- {/literal}{ts}select{/ts}{literal} -</option>");  
+                                                       cj("#dedupe").append("<option value=''>- {/literal}{ts}select{/ts}{literal} -</option>");
                                                        for ( var key in  dedupe ) {
-                                                           // stick these new options in the dedupe select 
-                                                           cj("#dedupe").append("<option value="+key+">"+dedupe[key]+" </option>");  
+                                                           // stick these new options in the dedupe select
+                                                           cj("#dedupe").append("<option value="+key+">"+dedupe[key]+" </option>");
                                                        }
-                                                   } 
-                                       
+                                                   }
+
 
                                                  }
   });
-       
+
       }
 
     </script>

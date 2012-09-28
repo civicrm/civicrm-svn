@@ -53,27 +53,27 @@
     {foreach from=$rows item=row}
         {cycle values="odd-row,even-row" assign=rowClass}
         <tr id='rowid{$row.pledge_id}' class='{$rowClass} {if $row.pledge_status_name eq 'Overdue' } status-overdue{/if}'>
-            {if $context eq 'Search' }       
+            {if $context eq 'Search' }
                 {assign var=cbName value=$row.checkbox}
-                <td>{$form.$cbName.html}</td> 
+                <td>{$form.$cbName.html}</td>
             {/if}
             <td>
-                {if ! $single }	
+                {if ! $single }
                     &nbsp;{$row.contact_type}<br/>
                 {/if}
                 <span id="{$row.pledge_id}_show">
                     <a href="#" onclick="cj('#paymentDetails{$row.pledge_id},#minus{$row.pledge_id}_hide,#{$row.pledge_id}_hide').show();
-                        buildPaymentDetails('{$row.pledge_id}','{$row.contact_id}'); 
+                        buildPaymentDetails('{$row.pledge_id}','{$row.contact_id}');
                         cj('#{$row.pledge_id}_show').hide();
                         return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a>
                 </span>
                 <span id="minus{$row.pledge_id}_hide">
-                    <a href="#" onclick="cj('#paymentDetails{$row.pledge_id},#{$row.pledge_id}_hide,#minus{$row.pledge_id}_hide').hide(); 
+                    <a href="#" onclick="cj('#paymentDetails{$row.pledge_id},#{$row.pledge_id}_hide,#minus{$row.pledge_id}_hide').hide();
                             cj('#{$row.pledge_id}_show').show();
                             return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a>
                 </span>
             </td>
-            {if ! $single }	
+            {if ! $single }
                 <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`"}">{$row.sort_name}</a></td>
             {/if}
             <td class="right">{$row.pledge_amount|crmMoney:$row.pledge_currency}</td>
@@ -83,7 +83,7 @@
             <td>{$row.pledge_create_date|truncate:10:''|crmDate}</td>
             <td>{$row.pledge_next_pay_date|truncate:10:''|crmDate}</td>
             <td class="right">{$row.pledge_next_pay_amount|crmMoney:$row.pledge_currency}</td>
-            <td>{$row.pledge_status}</td>	
+            <td>{$row.pledge_status}</td>
             <td>{$row.action|replace:'xx':$row.pledge_id}</td>
         </tr>
         <tr id="{$row.pledge_id}_hide" class='{$rowClass}'>
@@ -109,7 +109,7 @@
 {if $context EQ 'Search'}
     <script type="text/javascript">
     {* this function is called to change the color of selected row(s) *}
-    var fname = "{$form.formName}";	
+    var fname = "{$form.formName}";
     on_load_init_checkboxes(fname);
  </script>
 {/if}
@@ -125,7 +125,7 @@
     function buildPaymentDetails( pledgeId, contactId )
     {
         var dataUrl = {/literal}"{crmURL p='civicrm/pledge/payment' h=0 q="action=browse&snippet=4&context=`$context`&pledgeId="}"{literal} + pledgeId + '&cid=' + contactId;
-            
+
         cj.ajax({
                 url     : dataUrl,
                 dataType: "html",
@@ -139,4 +139,4 @@
              });
     }
 </script>
-{/literal}	
+{/literal}

@@ -26,7 +26,7 @@
 {*Javascript function controls showing and hiding of form elements based on html type.*}
 {literal}
 <script type="text/Javascript">
-    function option_html_type(form) { 
+    function option_html_type(form) {
         var html_type = document.getElementById("html_type");
         var html_type_name = html_type.options[html_type.selectedIndex].value;
 
@@ -40,28 +40,28 @@
         }
 
         if (html_type_name == 'Radio' || html_type_name == 'CheckBox') {
-	    cj("#optionsPerLine").show( );
+      cj("#optionsPerLine").show( );
         } else {
-	    cj("#optionsPerLine").hide( );
-	    cj("#optionsPerLineDef").hide( );
+      cj("#optionsPerLine").hide( );
+      cj("#optionsPerLineDef").hide( );
         }
 
         var radioOption, checkBoxOption;
 
         for (var i=1; i<=11; i++) {
             radioOption = 'radio'+i;
-            checkBoxOption = 'checkbox'+i	
+            checkBoxOption = 'checkbox'+i
             if (html_type_name == 'Radio' || html_type_name == 'CheckBox' || html_type_name == 'Select') {
                 if (html_type_name == "CheckBox") {
                     document.getElementById(checkBoxOption).style.display="block";
                     document.getElementById(radioOption).style.display="none";
                 } else {
-                    document.getElementById(radioOption).style.display="block";	
+                    document.getElementById(radioOption).style.display="block";
                     document.getElementById(checkBoxOption).style.display="none";
                 }
             }
         }
-	
+
     }
 </script>
 {/literal}
@@ -86,7 +86,7 @@
            </td>
         </tr>
         {/if}
- 
+
     </table>
     <div class="spacer"></div>
     <div id="price-block" {if $action eq 2 && $form.html_type.value.0 eq 'Text'} class="show-block" {else} class="hide-block" {/if}>
@@ -99,25 +99,25 @@
                {/if}
                </td>
             </tr>
-	    {if $useForEvent}
-	    <tr class="crm-price-field-form-block-count">
+      {if $useForEvent}
+      <tr class="crm-price-field-form-block-count">
               <td class="label">{$form.count.label}</td>
               <td>{$form.count.html}<br />
                 <span class="description">{ts}Enter a value here if you want to increment the number of registered participants per unit against the maximum number of participants allowed for this event.{/ts}</span>
                 {help id="id-participant-count"}
               </td>
             </tr>
-	    <tr class="crm-price-field-form-block-max_value">
+      <tr class="crm-price-field-form-block-max_value">
               <td class="label">{$form.max_value.label}</td>
               <td>{$form.max_value.html}
               </td>
             </tr>
-	    <tr class="crm-price-field-form-block-description">
+      <tr class="crm-price-field-form-block-description">
               <td class="label">{$form.description.label}</td>
               <td>{$form.description.html}
               </td>
             </tr>
-	  {/if}
+    {/if}
         </table>
     </div>
 
@@ -127,8 +127,8 @@
     {/if}
         <table class="form-layout">
             <tr id="optionsPerLine" class="crm-price-field-form-block-options_per_line">
-	            <td class="label">{$form.options_per_line.label}</td>	
-	            <td>{$form.options_per_line.html|crmAddClass:two}</td>
+              <td class="label">{$form.options_per_line.label}</td>
+              <td>{$form.options_per_line.html|crmAddClass:two}</td>
             </tr>
             <tr class="crm-price-field-form-block-is_display_amounts">
                <td class="label">{$form.is_display_amounts.label}</td>
@@ -179,7 +179,7 @@
            <td class="label">{$form.is_required.label}</td>
            <td>&nbsp;{$form.is_required.html}</td>
         </tr>
-	    <tr class="crm-price-field-form-block-visibility_id">
+      <tr class="crm-price-field-form-block-visibility_id">
            <td class="label">{$form.visibility_id.label}</td>
            <td>&nbsp;{$form.visibility_id.html}  {help id="id-visibility"}</td>
         </tr>
@@ -190,22 +190,22 @@
      </table>
      <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
   </div>
- 
+
 
 <script type="text/javascript">
     option_html_type(this.form);
 </script>
 {literal}
      <script type="text/javascript">
-     
+
      function calculateRowValues( row ) {
       var mtype = cj("#membership_type_id_"+row).val();
       var postUrl = "{/literal}{crmURL p='civicrm/ajax/memType' h=0}{literal}";
 
       cj.post( postUrl, {mtype: mtype}, function( data ) {
-       	       cj("#option_amount_"+ row).val( data.total_amount );   
-	       cj("#option_label_"+ row).val( data.name );   
-      }, 'json');  
+                cj("#option_amount_"+ row).val( data.total_amount );
+         cj("#option_label_"+ row).val( data.name );
+      }, 'json');
      }
 
     {/literal}

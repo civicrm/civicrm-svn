@@ -44,11 +44,11 @@
 {literal}
 if ( document.getElementsByName("saveMapping")[0].checked ) {
     document.getElementsByName("updateMapping")[0].checked = true;
-    document.getElementsByName("saveMapping")[0].checked = false;	
-} 
+    document.getElementsByName("saveMapping")[0].checked = false;
+}
 {/literal}
-{if $isCheked}  
-    document.getElementsByName("saveMapping")[0].checked = true;           
+{if $isCheked}
+    document.getElementsByName("saveMapping")[0].checked = true;
 {/if}
 </script>
 

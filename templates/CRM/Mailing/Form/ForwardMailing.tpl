@@ -45,9 +45,9 @@
                 <label>{$form.forward_comment.label}</label></td>
                 <td>{$form.forward_comment.html}<br /><br />
               &nbsp;{$form.html_comment.html}<br /></td>
-       	    </tr>
+             </tr>
             </table>
-</div> 
+</div>
 <br />
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>
@@ -58,24 +58,24 @@ var editor = {/literal}"{$editor}"{literal};
 {/literal}
 {if $editor eq "fckeditor"}
 {literal}
-	function FCKeditor_OnComplete( editorInstance )
-	{
-	 	oEditor = FCKeditorAPI.GetInstance('html_comment');
-		loadEditor();	
-		editorInstance.Events.AttachEvent( 'OnFocus') ;
-    	}
+  function FCKeditor_OnComplete( editorInstance )
+  {
+     oEditor = FCKeditorAPI.GetInstance('html_comment');
+    loadEditor();
+    editorInstance.Events.AttachEvent( 'OnFocus') ;
+      }
 {/literal}
 {/if}
 {if $editor eq "tinymce"}
 {literal}
-	function customEvent() {
-		loadEditor();
-		tinyMCE.get('html_comment').onKeyPress.add(function(ed, e) {
- 		});
-	}
+  function customEvent() {
+    loadEditor();
+    tinyMCE.get('html_comment').onKeyPress.add(function(ed, e) {
+     });
+  }
 
 tinyMCE.init({
-	oninit : "customEvent"
+  oninit : "customEvent"
 });
 
 {/literal}

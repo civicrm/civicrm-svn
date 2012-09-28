@@ -31,72 +31,72 @@
             {ts}Enter up to ten (10) multiple choice options in this table (click 'another choice' for each additional choice). If you need more than ten options, you can create an unlimited number of additional choices using the Edit Price Options link after saving this new field. Enter a description of the option in the 'Label' column, and the associated price in the 'Amount' column. Click the 'Default' radio button to the left of an option if you want that to be selected by default.{/ts}
         {/if}
     </div>
-	{strip}
-	<table id='optionField'>
-	<tr>
+  {strip}
+  <table id='optionField'>
+  <tr>
         <th>&nbsp;</th>
-	    <th>{ts}Default{/ts}</th>
-	{if $useForMember}
-	    <th>{ts}Membership Type{/ts} {help id="id-membership-type"}</th>
-	{/if}
+      <th>{ts}Default{/ts}</th>
+  {if $useForMember}
+      <th>{ts}Membership Type{/ts} {help id="id-membership-type"}</th>
+  {/if}
         <th>{ts}Label{/ts}</th>
         <th>{ts}Amount{/ts} {if $useForEvent}{help id="id-negative-options"}{/if}</th>
     {if $useForEvent}
-	    <th>{ts}Participant Count{/ts} {help id="id-participant-count"}</th>
-	    <th>{ts}Max Participant{/ts} {help id="id-participant-max"}</th>
-	{/if}
+      <th>{ts}Participant Count{/ts} {help id="id-participant-count"}</th>
+      <th>{ts}Max Participant{/ts} {help id="id-participant-max"}</th>
+  {/if}
         <th>{ts}Weight{/ts}</th>
-	    <th>{ts}Active?{/ts}</th>
+      <th>{ts}Active?{/ts}</th>
     </tr>
-	
-	{section name=rowLoop start=1 loop=12}
-	{assign var=index value=$smarty.section.rowLoop.index}
-	<tr id="optionField_{$index}" class="form-item {cycle values="odd-row,even-row"}">
-        <td> 
+
+  {section name=rowLoop start=1 loop=12}
+  {assign var=index value=$smarty.section.rowLoop.index}
+  <tr id="optionField_{$index}" class="form-item {cycle values="odd-row,even-row"}">
+        <td>
         {if $index GT 1}
             <a onclick="showHideRow({$index});" name="optionField_{$index}" href="javascript:void(0)" class="form-link"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}hide field or section{/ts}"/></a>
         {/if}
         </td>
-	    <td> 
-		<div id="radio{$index}" style="display:none">
-		     {$form.default_option[$index].html} 
-		</div>
-		<div id="checkbox{$index}" style="display:none">
-		     {$form.default_checkbox_option.$index.html} 
-		</div>
-	    </td>
-	    {if $useForMember}
-	      	<td>{$form.membership_type_id.$index.html}</td>
-	    {/if} 
-	    <td> {$form.option_label.$index.html}</td>
-	    
-	    <td> {$form.option_amount.$index.html|crmAddClass:eight}</td>
-	    {if $useForEvent}
-	      	<td>{$form.option_count.$index.html}</td>
-	        <td>{$form.option_max_value.$index.html}</td>
-	    {/if} 
-	    <td> {$form.option_weight.$index.html}</td>
- 	    <td> {$form.option_status.$index.html}</td>
-	</tr>
+      <td>
+    <div id="radio{$index}" style="display:none">
+         {$form.default_option[$index].html}
+    </div>
+    <div id="checkbox{$index}" style="display:none">
+         {$form.default_checkbox_option.$index.html}
+    </div>
+      </td>
+      {if $useForMember}
+          <td>{$form.membership_type_id.$index.html}</td>
+      {/if}
+      <td> {$form.option_label.$index.html}</td>
+
+      <td> {$form.option_amount.$index.html|crmAddClass:eight}</td>
+      {if $useForEvent}
+          <td>{$form.option_count.$index.html}</td>
+          <td>{$form.option_max_value.$index.html}</td>
+      {/if}
+      <td> {$form.option_weight.$index.html}</td>
+       <td> {$form.option_status.$index.html}</td>
+  </tr>
     {/section}
     </table>
-	<div id="optionFieldLink" class="add-remove-link">
+  <div id="optionFieldLink" class="add-remove-link">
         <a onclick="showHideRow();" name="optionFieldLink" href="javascript:void(0)" class="form-link"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}show field or section{/ts}"/>{ts}another choice{/ts}</a>
     </div>
-	<div id="additionalOption" class="description">
-		{ts}If you need additional options - you can add them after you Save your current entries.{/ts}
-	</div>
+  <div id="additionalOption" class="description">
+    {ts}If you need additional options - you can add them after you Save your current entries.{/ts}
+  </div>
     {/strip}
-    
+
 </fieldset>
 <script type="text/javascript">
     var showRows   = new Array({$showBlocks});
     var hideBlocks = new Array({$hideBlocks});
     var rowcounter = 0;
     {literal}
-    if (navigator.appName == "Microsoft Internet Explorer") {    
-	for ( var count = 0; count < hideBlocks.length; count++ ) {
-	    var r = document.getElementById(hideBlocks[count]);
+    if (navigator.appName == "Microsoft Internet Explorer") {
+  for ( var count = 0; count < hideBlocks.length; count++ ) {
+      var r = document.getElementById(hideBlocks[count]);
             r.style.display = 'none';
         }
     }

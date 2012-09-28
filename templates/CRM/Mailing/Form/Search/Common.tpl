@@ -16,8 +16,8 @@
   </td>
 </tr>
 <tr>
-	<tr><td><label>{ts}Mailing Date{/ts}</label></td></tr>
-	{include file="CRM/Core/DateRange.tpl" fieldName="mailing_date" from='_low' to='_high'}
+  <tr><td><label>{ts}Mailing Date{/ts}</label></td></tr>
+  {include file="CRM/Core/DateRange.tpl" fieldName="mailing_date" from='_low' to='_high'}
 </tr>
 <tr>
   <td>

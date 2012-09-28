@@ -41,9 +41,9 @@
         {if $action eq 8}
             {ts 1=$usedPriceSetTitle}Unable to delete the '%1' price set - it is currently in use by one or more active events or contribution pages or contributions.{/ts}
         {/if}
-        
-	    {if $usedBy.civicrm_event or $usedBy.civicrm_contribution_page} 
-            {include file="CRM/Price/Page/table.tpl"} 
+
+      {if $usedBy.civicrm_event or $usedBy.civicrm_contribution_page}
+            {include file="CRM/Price/Page/table.tpl"}
         {/if}
     </div>
     {/if}
@@ -52,9 +52,9 @@
     <div id="price_set">
     <p></p>
         {strip}
-	{* handle enable/disable actions*}
- 	{include file="CRM/common/enableDisable.tpl"}
-	{include file="CRM/common/jsortable.tpl"}
+  {* handle enable/disable actions*}
+   {include file="CRM/common/enableDisable.tpl"}
+  {include file="CRM/common/jsortable.tpl"}
         <table id="price_set" class="display crm-price-set-listing">
         <thead>
         <tr>
@@ -65,15 +65,15 @@
         </tr>
         </thead>
         {foreach from=$rows item=row}
-	    <tr id="row_{$row.id}"class=" crm-price-set crm-price-set_{$row.id} {cycle values="even-row,odd-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
+      <tr id="row_{$row.id}"class=" crm-price-set crm-price-set_{$row.id} {cycle values="even-row,odd-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
             <td class="crm-price-set-title">{$row.title}</td>
-	        <td class="crm-price-set-extends">{$row.extends}</td>
-	        <td id="row_{$row.id}_status" class="crm-price-set-is_active">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+          <td class="crm-price-set-extends">{$row.extends}</td>
+          <td id="row_{$row.id}_status" class="crm-price-set-is_active">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
             <td>{$row.action|replace:'xx':$row.id}</td>
         </tr>
         {/foreach}
         </table>
-        
+
         {if NOT ($action eq 1 or $action eq 2) }
         <div class="action-link">
             <a href="{crmURL p='civicrm/admin/price' q="action=add&reset=1"}" id="newPriceSet" class="button"><span><div class="icon add-icon"></div>{ts}Add Set of Price Fields{/ts}</span></a>

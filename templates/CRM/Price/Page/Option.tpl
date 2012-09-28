@@ -33,10 +33,10 @@
     <div class="icon inform-icon"></div>
         {if $action eq 8}
             {ts 1=$usedPriceSetTitle}Unable to delete the '%1' Price Field Option - it is currently in use by one or more active events  or contribution pages or contributions.{/ts}
-       	{/if}
-        
-	{if $usedBy.civicrm_event or $usedBy.civicrm_contribution_page} 
-            {include file="CRM/Price/Page/table.tpl"} 
+         {/if}
+
+  {if $usedBy.civicrm_event or $usedBy.civicrm_contribution_page}
+            {include file="CRM/Price/Page/table.tpl"}
         {/if}
 
     </div>
@@ -45,30 +45,30 @@
 
 
 {if $customOption}
-    
+
     <div id="field_page">
      <p></p>
         {strip}
-	{* handle enable/disable actions*}
- 	{include file="CRM/common/enableDisable.tpl"}
- 	{include file="CRM/common/jsortable.tpl"}
+  {* handle enable/disable actions*}
+   {include file="CRM/common/enableDisable.tpl"}
+   {include file="CRM/common/jsortable.tpl"}
         <table id="options" class="display">
         <thead>
          <tr>
             <th>{ts}Option Label{/ts}</th>
             <th>{ts}Option Amount{/ts}</th>
-    	    <th>{ts}Default{/ts}</th>
+          <th>{ts}Default{/ts}</th>
             <th id="order" class="sortable">{ts}Order{/ts}</th>
-	        <th>{ts}Enabled?{/ts}</th>
+          <th>{ts}Enabled?{/ts}</th>
             <th></th>
             <th class="hiddenElement"></th>
          </tr>
         </thead>
         {foreach from=$customOption item=row}
-    	<tr id="row_{$row.id}"class=" crm-price-option crm-price-option_{$row.id} {cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
+      <tr id="row_{$row.id}"class=" crm-price-option crm-price-option_{$row.id} {cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
             <td class="crm-price-option-label">{$row.label}</td>
             <td class="crm-price-option-value">{$row.amount|crmMoney}</td>
-	    <td class="crm-price-option-is_default">{if $row.is_default}<img src="{$config->resourceBase}i/check.gif" alt="{ts}Default{/ts}" />{/if}</td>
+      <td class="crm-price-option-is_default">{if $row.is_default}<img src="{$config->resourceBase}i/check.gif" alt="{ts}Default{/ts}" />{/if}</td>
             <td class="nowrap crm-price-option-order">{$row.weight}</td>
             <td id="row_{$row.id}_status" class="crm-price-option-is_active">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
             <td>{$row.action|replace:'xx':$row.id}</td>
@@ -82,13 +82,13 @@
         <div class="action-link">
             <a href="{crmURL q="reset=1&action=add&fid=$fid&sid=$sid"}" class="button"><span><div class="icon add-icon"></div> {ts 1=$fieldTitle}New Option for '%1'{/ts}</span></a>
         </div>
-	{/if}
+  {/if}
     </div>
 
 {else}
     {if $action eq 16}
         <div class="messages status no-popup">
-          <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/> 
+          <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/>
            {capture assign=crmURL}{crmURL p='civicrm/admin/price/field/option' q="action=add&fid=$fid&sid=$sid"}{/capture}{ts 1=$fieldTitle 2=$crmURL}There are no options for the price field '%1', <a href='%2'>add one</a>.{/ts}
         </div>
     {/if}

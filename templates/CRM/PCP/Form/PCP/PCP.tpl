@@ -29,12 +29,12 @@
     <div id="pcp" class="crm-block crm-form-block crm-pcp-search-form-block">
         <h3>{ts}Find Campaign Pages{/ts}</h3>
         <table class="form-layout-compressed">
-	    <tr>
-		    <td>{$form.status_id.label}<br />{$form.status_id.html}</td>
-		    <td>{$form.page_type.label}<br />{$form.page_type.html}</td>
-		    <td>{$form.page_id.label}<br />{$form.page_id.html}</td>
+      <tr>
+        <td>{$form.status_id.label}<br />{$form.status_id.html}</td>
+        <td>{$form.page_type.label}<br />{$form.page_type.html}</td>
+        <td>{$form.page_id.label}<br />{$form.page_id.html}</td>
         <td>{$form.event_id.label}<br />{$form.event_id.html}</td>
-	    </tr>
+      </tr>
         </table>
         <div class="crm-submit-buttons">{$form.buttons.html}</div>
     </div>
