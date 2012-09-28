@@ -167,7 +167,7 @@ class WebTest_Contact_AdvanceSearchPrivacyOptionsTest extends CiviSeleniumTestCa
     $this->waitForPageToLoad('30000');
     
     //return its presence
-    return $this->isElementPresent("xpath=//div[@class='crm-search-results']/a/table//tr/td[3]/a[text()='{$lastName}, {$firstName}']");
+    return $this->isElementPresent("xpath=//div[@class='crm-search-results']/table/tbody/tr/td[3]/a[text()='{$lastName}, {$firstName}']");
   }
   
   function getOptionVal($privacyOption) {
