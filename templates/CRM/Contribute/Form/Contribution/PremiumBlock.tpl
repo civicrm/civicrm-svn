@@ -289,15 +289,15 @@
         }, error_message);
         
         // add validation rules
-        if(!CRM.validate_functions) CRM.validate_functions = [];
-        CRM.validate_functions.push(function(){
+        CRM.validate.functions.push(function(){
           cj('#selectProduct').rules('add', 'premiums');
         });
         
         // need to use jquery validate's ignore option, so that it will not ignore hidden fields
-        CRM.validate_params = {
-          ignore: '.ignore'
-        };
+        CRM.validate.params['ignore'] = '.ignore';
+
+        // enable jquery validation for this form
+        CRM.validate.use = true;
       });
     </script>
     {/literal}

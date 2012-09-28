@@ -37,7 +37,12 @@
 
   var CRM = {{/literal}
     urlIsPublic: {if $urlIsPublic}true{else}false{/if},
-    userFramework: '{$config->userFramework}'
+    userFramework: '{$config->userFramework}',
+    validate: {literal}{ 
+      use: false,
+      params: {},
+      functions: []
+    }{/literal}
   {literal}};
 
 </script>
