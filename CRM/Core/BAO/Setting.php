@@ -316,7 +316,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
       $domains[] = CRM_Core_Config::domainID();
     }
     $fields = array();
-    $fieldsToSet = self::getSettingMetadata($params, $fields);
+    $fieldsToSet = self::validateSettingsInput($params, $fields);
     foreach ($domains as $domain){
       foreach ($fieldsToSet as $name => $value){
         CRM_Core_BAO_Setting::setItem(
@@ -343,7 +343,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
  * @param array $fields empty array to be populated with fields metadata
  * @return array $fieldstoset name => value array of the fields to be set (with extraneous removed)
  */
-  static function getSettingMetadata(&$params, &$fields){
+  static function validateSettingsInput(&$params, &$fields){
     $group = CRM_Utils_Array::value('group', $params);
 
     $ignoredParams = array(
@@ -367,6 +367,10 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
       $getFieldsParams['name'] = $name;
     }
     $fields = civicrm_api('setting','getfields', $getFieldsParams);
+    $invalidParams = (array_diff_key($settingParams,$fields['values']));
+    if(!empty($invalidParams)){
+      throw new api_Exception(implode(',', $invalidParams) . " are not valid settings");
+    }
     return array_intersect_key($settingParams,$fields['values']);
   }
   /**

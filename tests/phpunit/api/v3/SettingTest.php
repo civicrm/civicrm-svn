@@ -131,6 +131,19 @@ class api_v3_SettingTest extends CiviUnitTestCase {
   /**
    * check getfields works
    */
+  function testCreateInvalidSettings() {
+
+    $params = array('version' => $this->_apiversion,
+        'domain_id' => $this->_domainID2,
+        'invalid_key' => 1,
+    );
+    $result = civicrm_api('setting', 'create', $params);
+    $this->assertEquals(1, $result['is_error']);
+
+   }
+  /**
+   * check getfields works
+   */
   function testCreateSettingMultipleDomains() {
 
     $params = array('version' => $this->_apiversion,
