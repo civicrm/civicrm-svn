@@ -203,7 +203,7 @@ LEFT JOIN  civicrm_option_value ON
 LEFT JOIN  civicrm_option_group ON
            ( civicrm_option_group.id = civicrm_option_value.option_group_id )
 WHERE
-	       civicrm_option_group.name = 'event_type' AND
+         civicrm_option_group.name = 'event_type' AND
            ( ce.is_template IS NULL OR ce.is_template = 0) AND
            ce.id IN ($ids) AND
            ce.is_active = 1;";
