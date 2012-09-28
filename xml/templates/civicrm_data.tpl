@@ -934,8 +934,8 @@ VALUES
 
 
 -- the fuzzy default dedupe rules
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, title, is_reserved)
-VALUES ('Individual', 20, 'Fuzzy', 1, 'IndividualFuzzy', '{ts escape="sql"}Individual Fuzzy In-built{/ts}', 1);
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, used, name, title, is_reserved)
+VALUES ('Individual', 20, 'Fuzzy', 1, 'Supervised', 'IndividualFuzzy', '{ts escape="sql"}Individual Fuzzy In-built{/ts}', 1);
 
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
@@ -943,16 +943,16 @@ VALUES (@drgid, 'civicrm_contact', 'first_name', 5),
        (@drgid, 'civicrm_contact', 'last_name',  7),
        (@drgid, 'civicrm_email'  , 'email',     10);
 
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, title, is_reserved)
-VALUES ('Organization', 10, 'Fuzzy', 1, 'OrganizationFuzzy', '{ts escape="sql"}Organization Fuzzy{/ts}', 0);
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, used, name, title, is_reserved)
+VALUES ('Organization', 10, 'Fuzzy', 1, 'Supervised', 'OrganizationFuzzy', '{ts escape="sql"}Organization Fuzzy{/ts}', 0);
 
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
 VALUES (@drgid, 'civicrm_contact', 'organization_name', 10),
        (@drgid, 'civicrm_email'  , 'email',             10);
 
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, title, is_reserved)
-VALUES ('Household', 10, 'Fuzzy', 1, 'HouseholdFuzzy', '{ts escape="sql"}Household Fuzzy{/ts}', 0);
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, used, name, title, is_reserved)
+VALUES ('Household', 10, 'Fuzzy', 1, 'Supervised', 'HouseholdFuzzy', '{ts escape="sql"}Household Fuzzy{/ts}', 0);
 
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
@@ -960,31 +960,31 @@ VALUES (@drgid, 'civicrm_contact', 'household_name', 10),
        (@drgid, 'civicrm_email'  , 'email',          10);
 
 -- the strict dedupe rules
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, title, is_reserved)
-VALUES ('Individual', 10, 'Strict', 1, 'IndividualStrict', '{ts escape="sql"}Individual Strict In-built{/ts}', 1);
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, used, name, title, is_reserved)
+VALUES ('Individual', 10, 'Strict', 1, 'Unsupervised', 'IndividualStrict', '{ts escape="sql"}Individual Strict In-built{/ts}', 1);
 
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
 VALUES (@drgid, 'civicrm_email', 'email', 10);
 
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, title, is_reserved)
-VALUES ('Organization', 10, 'Strict', 1, 'OrganizationStrict', '{ts escape="sql"}Organization Strict{/ts}', 0);
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, used, name, title, is_reserved)
+VALUES ('Organization', 10, 'Strict', 1, 'Unsupervised', 'OrganizationStrict', '{ts escape="sql"}Organization Strict{/ts}', 0);
 
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
 VALUES (@drgid, 'civicrm_contact', 'organization_name', 10),
        (@drgid, 'civicrm_email'  , 'email',             10);
 
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, title, is_reserved)
-VALUES ('Household', 10, 'Strict', 1, 'HouseholdStrict', '{ts escape="sql"}Household Strict{/ts}', 0);
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, used, name, title, is_reserved)
+VALUES ('Household', 10, 'Strict', 1, 'Unsupervised', 'HouseholdStrict', '{ts escape="sql"}Household Strict{/ts}', 0);
 
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
 VALUES (@drgid, 'civicrm_contact', 'household_name', 10),
        (@drgid, 'civicrm_email'  , 'email',          10);
 
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, title, is_reserved)
-VALUES ('Individual', 15, 'Strict', 0, 'IndividualComplete', '{ts escape="sql"}Individual Complete Inbuilt{/ts}', 1);
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, used, name, title, is_reserved)
+VALUES ('Individual', 15, 'Strict', 0, 'General', 'IndividualComplete', '{ts escape="sql"}Individual Complete Inbuilt{/ts}', 1);
 
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
