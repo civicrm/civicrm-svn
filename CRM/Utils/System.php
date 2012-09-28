@@ -341,7 +341,7 @@ class CRM_Utils_System {
     if (!$url) {
       $url = self::url('civicrm/dashboard', 'reset=1');
     }
-    
+
     // replace the &amp; characters with &
     // this is kinda hackish but not sure how to do it right
     $url = str_replace('&amp;', '&', $url);
@@ -961,7 +961,7 @@ class CRM_Utils_System {
           CRM_Core_Error::fatal('HTTPS is not set up on this machine');
         }
         else {
-		  CRM_Core_Session::setStatus(ts('HTTPS is not set up on this machine'), ts('Warning'), 'alert');
+      CRM_Core_Session::setStatus(ts('HTTPS is not set up on this machine'), ts('Warning'), 'alert');
           // admin should be the only one following this
           // since we dont want the user stuck in a bad place
           return;
@@ -1488,11 +1488,11 @@ class CRM_Utils_System {
     $facility->execute(FALSE);
 
     $redirectUrl = self::url('civicrm/admin/job', 'reset=1');
-    
+
     CRM_Core_Session::setStatus(
-    	ts('Scheduled jobs have been executed according to individual timing settings. Please check log for messages.'),
-    	ts('Complete'), 'success');
-    	
+      ts('Scheduled jobs have been executed according to individual timing settings. Please check log for messages.'),
+      ts('Complete'), 'success');
+
     CRM_Utils_System::redirect($redirectUrl);
   }
 }
