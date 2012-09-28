@@ -30,34 +30,34 @@
 {strip}
 {if $list}
 {counter start=0 skip=1 print=false}
-    {foreach from=$list item=rows key=report}		
+    {foreach from=$list item=rows key=report}
 <div class="crm-accordion-wrapper crm-accordion_{$report}-accordion crm-accordion_title-accordion crm-accordion-open">
  <div class="crm-accordion-header">
   <div class="icon crm-accordion-pointer"></div>
   {if $report}{if $report EQ 'Contribute'}{ts}Contribution{/ts}{else}{$report}{/if}{else}Contact{/if} Report Templates
  </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">
-	<div id="{$report}" class="boxBlock">
-	    <table class="report-layout">
-		{foreach from=$rows item=row}
-		    <tr id="row_{counter}" class="crm-report-templateList">
-			<td class="crm-report-templateList-title" style="width:35%;">
-			    <a href="{$row.url}" title="{ts}Create report from this template{/ts}">&raquo; <strong>{$row.title}</strong></a>
-			    {if $row.instanceUrl}
-				<div style="font-size:10px;text-align:right;margin-top:3px;">
-				    <a href="{$row.instanceUrl}">{ts}Existing Report(s){/ts}</a>
-				</div>
-			    {/if}
-			</td>
-			<td style="cursor:help;" class="crm-report-templateList-description">
-			    {$row.description}
-			</td>
-		    </tr>
-		{/foreach}
-	    </table>
-	</div>
+  <div id="{$report}" class="boxBlock">
+      <table class="report-layout">
+    {foreach from=$rows item=row}
+        <tr id="row_{counter}" class="crm-report-templateList">
+      <td class="crm-report-templateList-title" style="width:35%;">
+          <a href="{$row.url}" title="{ts}Create report from this template{/ts}">&raquo; <strong>{$row.title}</strong></a>
+          {if $row.instanceUrl}
+        <div style="font-size:10px;text-align:right;margin-top:3px;">
+            <a href="{$row.instanceUrl}">{ts}Existing Report(s){/ts}</a>
+        </div>
+          {/if}
+      </td>
+      <td style="cursor:help;" class="crm-report-templateList-description">
+          {$row.description}
+      </td>
+        </tr>
+    {/foreach}
+      </table>
+  </div>
  </div><!-- /.crm-accordion-body -->
-</div><!-- /.crm-accordion-wrapper -->    
+</div><!-- /.crm-accordion-wrapper -->
 {/foreach}
 {else}
     <div class="messages status no-popup">
@@ -69,7 +69,7 @@
 {literal}
 <script type="text/javascript">
 cj(function() {
-   cj().crmaccordions(); 
+   cj().crmaccordions();
 });
 </script>
 {/literal}

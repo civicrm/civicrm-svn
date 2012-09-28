@@ -45,7 +45,7 @@
       cj("#tagtree ul input:checked").each (function(){
     cj(this).parents("li").children(".jstree-icon").addClass('highlighted');
       });
-      
+
       cj("#tagtree input").change(function(){
     tagid = this.id.replace("check_", "");
     //get current tags from Summary and convert to array
@@ -65,27 +65,27 @@
     } else {
         cj().crmAPI ('entity_tag','delete',{entity_table:entityTable,entity_id:entityID,tag_id:tagid});
         // build array of tag labels
-        tagsArray = cj.map(tagsArray, function (a) { 
+        tagsArray = cj.map(tagsArray, function (a) {
        if ( cj.trim( a ) != currentTagLabel ) {
            return cj.trim( a );
        }
          });
     }
-      
+
     //showing count of tags in summary tab
     var existingTagsInTagset = cj('.token-input-delete-token-facebook').length;
-    var tagCount = cj("#tagtree input:checkbox:checked").length + existingTagsInTagset;  
+    var tagCount = cj("#tagtree input:checkbox:checked").length + existingTagsInTagset;
     cj( '.ui-tabs-nav #tab_tag a' ).html( 'Tags <em>' + tagCount + '</em>');
 
-    //update summary tab 
+    //update summary tab
     tagLabels = tagsArray.join(', ');
     cj("#tags").html( tagLabels );
     ( tagLabels ) ? cj("#tagLink,#tags").show( ) : cj("#tagLink,#tags").hide( );
       });
-   
+
       //load js tree.
       cj("#tagtree").jstree({"plugins" : ["themes", "html_data"]});
-     
+
       {/literal}
       {if $permission neq 'edit'}
       {literal}
@@ -93,7 +93,7 @@
       {/literal}
       {/if}
       {literal}
-      
+
   };
 })();
 {/literal}
@@ -109,9 +109,9 @@
             {ts}Current tags are highlighted.{/ts}
         {/if}
     {else}
-        {if !$hideContext} 
+        {if !$hideContext}
         {ts}Mark or unmark the checkboxes, <span class="unobstructive">and click 'Update Tags' to modify tags.<span>{/ts}
-	{/if}
+  {/if}
     {/if}
     </p>
     <div id="tagtree">
@@ -120,13 +120,13 @@
         <li id="tag_{$id}">
             {if ! $node.children}<input name="tagList[{$id}]" id="check_{$id}" type="checkbox" {if $tagged[$id]}checked="checked"{/if}/>{/if}
             {if $node.children}<input name="tagList[{$id}]" id="check_{$id}" type="checkbox" {if $tagged[$id]}checked="checked"{/if}/>{/if}
-            {if $node.children} <span class="hit"></span> {/if} <label for="check_{$id}" id="tagLabel_{$id}">{$node.name}</label> 
+            {if $node.children} <span class="hit"></span> {/if} <label for="check_{$id}" id="tagLabel_{$id}">{$node.name}</label>
             {if $node.children}
             <ul>
                 {foreach from=$node.children item="subnode" key="subid"}
                     <li id="tag_{$subid}">
                         <input id="check_{$subid}" name="tagList[{$subid}]" type="checkbox" {if $tagged[$subid]}checked="checked"{/if}/>
-                        {if $subnode.children} <span class="hit"></span> {/if} <label for="check_{$subid}" id="tagLabel_{$subid}">{$subnode.name}</label> 
+                        {if $subnode.children} <span class="hit"></span> {/if} <label for="check_{$subid}" id="tagLabel_{$subid}">{$subnode.name}</label>
                         {if $subnode.children}
                         <ul>
                             {foreach from=$subnode.children item="subsubnode" key="subsubid"}
@@ -134,18 +134,18 @@
                                     <input id="check_{$subsubid}" name="tagList[{$subsubid}]" type="checkbox" {if $tagged[$subsubid]}checked="checked"{/if}/>
                                     <label for="check_{$subsubid}" id="tagLabel_{$subsubid}">{$subsubnode.name}</label>
                                 </li>
-                            {/foreach} 
+                            {/foreach}
                         </ul>
                         {/if}
-                    </li>	 
-                {/foreach} 
+                    </li>
+                {/foreach}
             </ul>
             {/if}
-        </li>	 
-        {/foreach} 
+        </li>
+        {/foreach}
     </ul>
     </div>
-   
+
       {*foreach from=$tag item="row" key="id"}
 
         <div class="form-item" id="rowidtag_{$id}">
@@ -171,7 +171,7 @@
 {if $action eq 1 or $action eq 2 }
  <script type="text/javascript">
  {* this function is called to change the color of selected row(s) *}
-    var fname = "{$form.formName}";	
+    var fname = "{$form.formName}";
     on_load_init_check(fname);
  </script>
 {/if}

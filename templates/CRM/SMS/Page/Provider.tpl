@@ -42,12 +42,12 @@
 <div id="ltype">
     {strip}
         {* handle enable/disable actions*}
- 	    {include file="CRM/common/enableDisable.tpl"}
+       {include file="CRM/common/enableDisable.tpl"}
         <br/><table class="selector">
         <tr class="columnheader">
             <th >{ts}Provider Details{/ts}</th>
             <th >{ts}Username{/ts}</th>
-	    <th >{ts}API Parameters{/ts}</th>
+      <th >{ts}API Parameters{/ts}</th>
             <th >{ts}Action{/ts}</th>
         </tr>
         {foreach from=$rows item=row}
@@ -57,10 +57,10 @@
                 {ts}API Url:{/ts} {$row.api_url}<br/>
             </td>
             <td class="crm-provider-username">{$row.username}
-  	    </td>
+        </td>
             <td class="crm-api-params">{if $row.api_params eq null}<em>{ts}no parameters{/ts}</em>{else}<pre>{$row.api_params}</pre>{/if}</td>
-           
-	        <td>{$row.action|replace:'xx':$row.id}</td>
+
+          <td>{$row.action|replace:'xx':$row.id}</td>
         </tr>
         {/foreach}
         </table>
@@ -70,10 +70,10 @@
     <div class="messages status no-popup">
       <div class="icon inform-icon"></div>
         {ts}There are no providers configured.{/ts}
-     </div>    
+     </div>
      <div class="action-link">
        <a href="{crmURL p='civicrm/admin/sms/provider' q="action=add&reset=1"}" class="button"><span><div class="icon add-icon"></div>{ts}Add SMS Provider{/ts}</span></a>
      </div>
- 
+
 {/if}
 {/if}
