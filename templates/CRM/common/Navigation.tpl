@@ -28,11 +28,11 @@
         {if call_user_func(array('CRM_Core_Permission','giveMeAllACLs'))}
         <li id="crm-qsearch" class="menumain">
             <form action="{crmURL p='civicrm/contact/search/basic' h=0 }" name="search_block" id="id_search_block" method="post" onsubmit="getSearchURLValue( );">
-            	<div id="quickSearch">
-            	</div>
+              <div id="quickSearch">
+              </div>
             </form>
         </li>
-	{/if}
+  {/if}
         {$navigation}
     </ul>
 </div>
@@ -41,8 +41,8 @@
 <script type="text/javascript">
 //CRM-6776, enter-to-submit functionality is broken for IE due to hidden field
 cj( document ).ready( function( ) {
-   cj("#civicrm-menu >li").each(function(i){ 
-      cj(this).attr("tabIndex",i+2); 
+   cj("#civicrm-menu >li").each(function(i){
+      cj(this).attr("tabIndex",i+2);
    });
    var htmlContent = '';
       if ( cj.browser.msie ) {
@@ -51,13 +51,13 @@ cj( document ).ready( function( ) {
           } else {
               htmlContent = '<input type="submit" value="Go" name="_qf_Basic_refresh" class="form-submit default" />';
           }
-          htmlContent += '<input type="text" class="form-text" id="sort_name_navigation" name="sort_name" style="width: 12em; margin-left: -45px;" />' + 
+          htmlContent += '<input type="text" class="form-text" id="sort_name_navigation" name="sort_name" style="width: 12em; margin-left: -45px;" />' +
                          '<input type="text" id="sort_contact_id" style="display: none" />';
-          cj( '#quickSearch' ).html( htmlContent );            
+          cj( '#quickSearch' ).html( htmlContent );
       } else {
-          htmlContent += '<input type="text" class="form-text" id="sort_name_navigation" name="sort_name" style="width: 12em;" />' + 
-                         '<input type="hidden" id="sort_contact_id" value="" />' + 
-                         '<input type="submit" value="{ts}Go{/ts}" name="_qf_Basic_refresh" class="form-submit default" style="display: none;" />';    
+          htmlContent += '<input type="text" class="form-text" id="sort_name_navigation" name="sort_name" style="width: 12em;" />' +
+                         '<input type="hidden" id="sort_contact_id" value="" />' +
+                         '<input type="submit" value="{ts}Go{/ts}" name="_qf_Basic_refresh" class="form-submit default" style="display: none;" />';
           cj( '#quickSearch' ).html( htmlContent );
    }
 });
@@ -72,7 +72,7 @@ function getSearchURLValue( )
       var contactId =  cj( '#sort_contact_id' ).val();
       if ( ! contactId || isNaN( contactId ) ) {
           var sortValue = cj( '#sort_name_navigation' ).val();
-          if ( sortValue ) { 
+          if ( sortValue ) {
               //using xmlhttprequest check if there is only one contact and redirect to view page
               var dataUrl = {/literal}"{crmURL p='civicrm/ajax/contact' h=0 q='name='}"{literal} + sortValue;
 
@@ -85,7 +85,7 @@ function getSearchURLValue( )
           }
       }
     }
-    
+
     if ( contactId && !isNaN(parseInt(contactId)) ) {
         var url = {/literal}"{crmURL p='civicrm/contact/view' h=0 q='reset=1&cid='}"{literal} + contactId;
         document.getElementById('id_search_block').action = url;
@@ -113,32 +113,32 @@ cj( function() {
     }).result(function(event, data, formatted) {
        document.location={/literal}"{crmURL p='civicrm/contact/view' h=0 q='reset=1&cid='}"{literal}+data[1];
        return false;
-    });    
+    });
 });
 
 var framework = "{/literal}{$config->userFramework}{literal}";
 if ( framework != 'Joomla') {
-	cj('body').prepend( cj("#menu-container").html() );
+  cj('body').prepend( cj("#menu-container").html() );
 
-	//Track Scrolling
-	cj(window).scroll( function () { 
-	   var scroll = document.documentElement.scrollTop || document.body.scrollTop;
-	   cj('#civicrm-menu').css({top: "scroll", position: "fixed", top: "0px"}); 
-	   cj('div.sticky-header').css({ 'top' : "23px", position: "fixed" });
-	});
+  //Track Scrolling
+  cj(window).scroll( function () {
+     var scroll = document.documentElement.scrollTop || document.body.scrollTop;
+     cj('#civicrm-menu').css({top: "scroll", position: "fixed", top: "0px"});
+     cj('div.sticky-header').css({ 'top' : "23px", position: "fixed" });
+  });
 
-	if ( cj('#edit-shortcuts').length > 0 ) {
-	   cj('#civicrm-menu').css({ 'width': '97%' });
-	}
+  if ( cj('#edit-shortcuts').length > 0 ) {
+     cj('#civicrm-menu').css({ 'width': '97%' });
+  }
 } else {
-	   cj('div#toolbar-box div.m').html(cj("#menu-container").html());
-	   cj('#civicrm-menu').ready( function(){ 
-			cj('.outerbox').css({ 'margin-top': '6px'});
-			cj('#root-menu-div .menu-ul li').css({ 'padding-bottom' : '2px', 'margin-top' : '2px' });
-			cj('img.menu-item-arrow').css({ 'top' : '4px' }); 
-		});
+     cj('div#toolbar-box div.m').html(cj("#menu-container").html());
+     cj('#civicrm-menu').ready( function(){
+      cj('.outerbox').css({ 'margin-top': '6px'});
+      cj('#root-menu-div .menu-ul li').css({ 'padding-bottom' : '2px', 'margin-top' : '2px' });
+      cj('img.menu-item-arrow').css({ 'top' : '4px' });
+    });
 }
-	var resourceBase   = {/literal}"{$config->resourceBase}"{literal};
-	cj('#civicrm-menu').menu( {arrowSrc: resourceBase + 'packages/jquery/css/images/arrow.png'} );
+  var resourceBase   = {/literal}"{$config->resourceBase}"{literal};
+  cj('#civicrm-menu').menu( {arrowSrc: resourceBase + 'packages/jquery/css/images/arrow.png'} );
 </script>
 {/literal}

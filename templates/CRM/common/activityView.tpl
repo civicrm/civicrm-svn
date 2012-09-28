@@ -29,19 +29,19 @@ function {/literal}{$list}{literal}viewActivity( activityID, contactID, list ) {
     if ( list ) {
         list = "-" + list;
     }
-    
+
     cj("#view-activity" + list ).show( );
 
     cj("#view-activity" + list ).dialog({
         title: "View Activity",
-        modal: true, 
+        modal: true,
         width : "680px", // don't remove px
-        height: "560", 
+        height: "560",
         resizable: true,
         bgiframe: true,
-        overlay: { 
-            opacity: 0.5, 
-            background: "black" 
+        overlay: {
+            opacity: 0.5,
+            background: "black"
         },
 
         beforeclose: function(event, ui) {
@@ -52,12 +52,12 @@ function {/literal}{$list}{literal}viewActivity( activityID, contactID, list ) {
             cj("#activity-content" + list , this).html("");
             var viewUrl = {/literal}"{crmURL p='civicrm/case/activity/view' h=0 q="snippet=4" }"{literal};
             cj("#activity-content" + list , this).load( viewUrl + "&cid="+contactID + "&aid=" + activityID + "&type="+list);
-            
+
         },
 
-        buttons: { 
-            "Done": function() { 	    
-                cj(this).dialog("destroy"); 
+        buttons: {
+            "Done": function() {
+                cj(this).dialog("destroy");
             }
         }
     });

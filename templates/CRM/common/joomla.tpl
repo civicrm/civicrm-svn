@@ -28,7 +28,7 @@
 {/if}
 
 <div id="crm-container" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}" {if $urlIsPublic}class="crm-public"{/if}>
-    
+
 {* Only include joomla.css in administrator (backend). Page layout style ids and classes conflict with typical front-end css and break the page layout. *}
 {include file="CRM/common/action.tpl"}
 {if $buildNavigation }
@@ -67,9 +67,9 @@
 {/if}
 
 {if $pageTitle}
-	<div class="crm-title">
-		<h1 class="title">{if $isDeleted}<del>{/if}{$pageTitle}{if $isDeleted}</del>{/if}</h1>
-	</div>    
+  <div class="crm-title">
+    <h1 class="title">{if $isDeleted}<del>{/if}{$pageTitle}{if $isDeleted}</del>{/if}</h1>
+  </div>
 {/if}
 
     {crmRegion name='page-header'}

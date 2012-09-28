@@ -29,13 +29,13 @@ paramsArray = new Array();
 
 //build the an array of highlighted elements
 {/literal}
-{foreach from=$highlightedFields item=paramName}	    
-    paramsArray["{$paramName}"] = "1";	    
+{foreach from=$highlightedFields item=paramName}
+    paramsArray["{$paramName}"] = "1";
 {/foreach}
-{literal}	             
+{literal}
 
 //get select object of first element
-selObj = document.getElementById("mapper\[0\]\[0\]");   
+selObj = document.getElementById("mapper\[0\]\[0\]");
 
 for ( i = 0; i < selObj.options.length; i++ ) {
     //check value is exist in array
@@ -51,7 +51,7 @@ for ( i = 0; i < selObj.options.length; i++ ) {
 
     //Highlight the required field during import (Relationship fields*)
     paramsArrayRel = new Array();
-    
+
     //build the an array of highlighted elements
     {/literal}
     {foreach from=$highlightedRelFields key=relId item=paramsRel}
@@ -63,25 +63,25 @@ for ( i = 0; i < selObj.options.length; i++ ) {
         {/foreach}
     {/foreach}
     {literal}
-    
+
     var object = 'select[id^="mapper"][id$="[0]"]';
     cj(object).bind( 'change', function(){highlight(this);});
     cj('div#map-field').one( 'mouseenter', function(){highlight(object);});
-    
-    function highlight(obj){ 
+
+    function highlight(obj){
         cj(obj).each(function(){
             // get selected element id
             var currentId = this.id;
-            
+
             // create relationship related field ID ( replace last [0] with [1] )
             var newId     = currentId.replace(/\[0\]$/, "\[1\]");
-            
+
             // get the option value
             var selected  = cj(this).val();
-            
+
             // get obeject of select field
             selObjRel = document.getElementById(newId);
-            
+
             if ( paramsArrayRel[selected] != undefined ) {
                 for ( i = 0; i < selObjRel.options.length; i++ ) {
                     //check value is exist in array
