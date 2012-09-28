@@ -434,7 +434,7 @@
   <item>
      <path>civicrm/admin/setting/component</path>
      <title>Enable CiviCRM Components</title>
-	 <desc>Enable or disable components (e.g. CiviEvent, CiviMember, etc.) for your site based on the features you need. We recommend disabling any components not being used in order to simplify the user interface. You can easily re-enable components at any time from this screen.</desc>
+   <desc>Enable or disable components (e.g. CiviEvent, CiviMember, etc.) for your site based on the features you need. We recommend disabling any components not being used in order to simplify the user interface. You can easily re-enable components at any time from this screen.</desc>
      <page_callback>CRM_Admin_Form_Setting_Component</page_callback>
      <adminGroup>System Settings</adminGroup>
      <icon>admin/small/36.png</icon>
@@ -484,7 +484,7 @@
   <item>
      <path>civicrm/admin/setting/misc</path>
      <title>Undelete, Logging and ReCAPTCHA</title>
-	 <desc>Enable undelete/move to trash feature, detailed change logging, ReCAPTCHA to protect forms.</desc>
+   <desc>Enable undelete/move to trash feature, detailed change logging, ReCAPTCHA to protect forms.</desc>
      <page_callback>CRM_Admin_Form_Setting_Miscellaneous</page_callback>
      <adminGroup>System Settings</adminGroup>
      <icon>admin/small/36.png</icon>

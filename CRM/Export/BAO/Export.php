@@ -500,7 +500,7 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
         }
 
         $relationFrom = " {$relationFrom}
-                INNER JOIN civicrm_relationship crel ON crel.{$contactB} = contact_a.id AND crel.relationship_type_id = {$id} 
+                INNER JOIN civicrm_relationship crel ON crel.{$contactB} = contact_a.id AND crel.relationship_type_id = {$id}
                 {$relationshipJoin} ";
 
         //check for active relationship status only
@@ -1323,7 +1323,7 @@ VALUES $sqlValueString
     CRM_Core_DAO::executeQuery($sql);
 
     $sql = "
-CREATE TABLE {$exportTempTable} ( 
+CREATE TABLE {$exportTempTable} (
      id int unsigned NOT NULL AUTO_INCREMENT,
 ";
     $sql .= implode(",\n", array_values($sqlColumns));
@@ -1359,11 +1359,11 @@ SELECT    r1.id                 as copy_id,
           r1.addressee          as copy_addressee,
           r1.addressee_id       as copy_addressee_id,
           r1.postal_greeting    as copy_postal_greeting,
-          r1.postal_greeting_id as copy_postal_greeting_id, 
+          r1.postal_greeting_id as copy_postal_greeting_id,
           r2.id                 as master_id,
           r2.civicrm_primary_id as master_contact_id,
           r2.postal_greeting    as master_postal_greeting,
-          r2.postal_greeting_id as master_postal_greeting_id, 
+          r2.postal_greeting_id as master_postal_greeting_id,
           r2.addressee          as master_addressee,
           r2.addressee_id       as master_addressee_id
 FROM      $tableName r1
@@ -1378,19 +1378,19 @@ ORDER BY  r1.id";
 SELECT    r1.id                 as master_id,
           r1.civicrm_primary_id as master_contact_id,
           r1.postal_greeting    as master_postal_greeting,
-          r1.postal_greeting_id as master_postal_greeting_id, 
+          r1.postal_greeting_id as master_postal_greeting_id,
           r1.addressee          as master_addressee,
           r1.addressee_id       as master_addressee_id,
           r2.id                 as copy_id,
           r2.civicrm_primary_id as copy_contact_id,
           r2.postal_greeting    as copy_postal_greeting,
-          r2.postal_greeting_id as copy_postal_greeting_id, 
+          r2.postal_greeting_id as copy_postal_greeting_id,
           r2.addressee          as copy_addressee,
           r2.addressee_id       as copy_addressee_id
 FROM      $tableName r1
 LEFT JOIN $tableName r2 ON ( r1.street_address = r2.street_address AND
-							 r1.city = r2.city AND
-							 r1.state_province_id = r2.state_province_id )
+               r1.city = r2.city AND
+               r1.state_province_id = r2.state_province_id )
 WHERE     ( r1.household_name IS NULL OR r1.household_name = '' )
 AND       ( r2.household_name IS NULL OR r2.household_name = '' )
 AND       ( r1.street_address != '' )
@@ -1484,8 +1484,8 @@ WHERE  id IN ( $deleteIDString )
 
   /*
      * The function unsets static part of the string, if token is the dynamic part.
-     * Example: 'Hello {contact.first_name}' => converted to => '{contact.first_name}' 
-     * i.e 'Hello Alan' => converted to => 'Alan' 
+     * Example: 'Hello {contact.first_name}' => converted to => '{contact.first_name}'
+     * i.e 'Hello Alan' => converted to => 'Alan'
      *
      */
 
