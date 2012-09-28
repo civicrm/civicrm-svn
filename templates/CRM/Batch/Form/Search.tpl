@@ -97,33 +97,33 @@ function buildBatchSelector( filterSearch ) {
         "bProcessing": true,
         "asStripClasses" : [ "odd-row", "even-row" ],
         "sPaginationType": "full_numbers",
-        "sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',	
+        "sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',
         "bServerSide": true,
         "bJQueryUI": true,
         "sAjaxSource": sourceUrl,
         "iDisplayLength": 25,
-        "oLanguage": { "sZeroRecords":  ZeroRecordText,                         
-                       "sProcessing":    {/literal}"{ts escape='js'}Processing...{/ts}"{literal},   
+        "oLanguage": { "sZeroRecords":  ZeroRecordText,
+                       "sProcessing":    {/literal}"{ts escape='js'}Processing...{/ts}"{literal},
                        "sLengthMenu":    {/literal}"{ts escape='js'}Show _MENU_ entries{/ts}"{literal},
                        "sInfo":          {/literal}"{ts escape='js'}Showing _START_ to _END_ of _TOTAL_ entries{/ts}"{literal},
                        "sInfoEmpty":     {/literal}"{ts escape='js'}Showing 0 to 0 of 0 entries{/ts}"{literal},
                        "sInfoFiltered":  {/literal}"{ts escape='js'}(filtered from _MAX_ total entries){/ts}"{literal},
-                       "sSearch":        {/literal}"{ts escape='js'}Search:{/ts}"{literal},      
-                       "oPaginate": {                                           
-                            "sFirst":    {/literal}"{ts escape='js'}First{/ts}"{literal},          
-                            "sPrevious": {/literal}"{ts escape='js'}Previous{/ts}"{literal},       
-                            "sNext":     {/literal}"{ts escape='js'}Next{/ts}"{literal},           
-                            "sLast":     {/literal}"{ts escape='js'}Last{/ts}"{literal}            
-                        }                                                       
+                       "sSearch":        {/literal}"{ts escape='js'}Search:{/ts}"{literal},
+                       "oPaginate": {
+                            "sFirst":    {/literal}"{ts escape='js'}First{/ts}"{literal},
+                            "sPrevious": {/literal}"{ts escape='js'}Previous{/ts}"{literal},
+                            "sNext":     {/literal}"{ts escape='js'}Next{/ts}"{literal},
+                            "sLast":     {/literal}"{ts escape='js'}Last{/ts}"{literal}
+                        }
                     },
         "fnServerData": function ( sSource, aoData, fnCallback ) {
             aoData.push( {name:'status', value: status });
             if ( filterSearch ) {
                 var batchStatus = '';
                 if ( cj('.crm-batch-search-form-block #batch_status_1').prop('checked') ) {
-                    batchStatus = '1'; 
+                    batchStatus = '1';
                 }
-                
+
                 if ( cj('.crm-batch-search-form-block #batch_status_2').prop('checked') ) {
                     if ( batchStatus ) {
                         batchStatus = '3';
@@ -132,18 +132,18 @@ function buildBatchSelector( filterSearch ) {
                     }
                 }
 
-                aoData.push(	     
+                aoData.push(
                     {name:'title', value: cj('.crm-batch-search-form-block #title').val()},
                     {name:'status', value: cj('.crm-batch-search-form-block #batch_status').val() }
                 );
-            }	
+            }
             cj.ajax( {
-                "dataType": 'json', 
-                "type": "POST", 
-                "url": sSource, 
-                "data": aoData, 
+                "dataType": 'json',
+                "type": "POST",
+                "url": sSource,
+                "data": aoData,
                 "success": fnCallback
-            } ); 
+            } );
         }
     });
 }

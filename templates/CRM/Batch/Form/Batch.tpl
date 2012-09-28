@@ -27,7 +27,7 @@
 {if $action eq 8}
   <h3>{ts}Delete Batch{/ts}</h3>
 {elseif $action eq 2}
-	<h3>{ts}Edit Batch{/ts}</h3>
+  <h3>{ts}Edit Batch{/ts}</h3>
 {else}
   <h3>{ts}New Batch{/ts}</h3>
 {/if}
