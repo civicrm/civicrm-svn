@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<settings>
+    <setting>
+      <group_name>Directory Preferences</group_name>
+      <name>uploadDir</name>
+      <type>Url</type>
+      <html_type>Text</html_type>
+      <default></default>
+      <add>4.1</add>
+      <title></title>
+      <is_domain>1</is_domain>
+      <is_contact>0</is_contact>
+      <description></description>
+      <help_text>If set, new contacts that are created when signing a petition are assigned a tag of this name.</help_text>
+    </setting>
+    <setting>
+      <group_name>Directory Preferences</group_name>
+      <name>imageUploadDir</name>
+      <type>Url</type>
+      <html_type>Text</html_type>
+      <default></default>
+      <add>4.1</add>
+      <title></title>
+      <is_domain>1</is_domain>
+      <is_contact>0</is_contact>
+      <description></description>
+      <help_text></help_text>
+    </setting>
+    <setting>
+      <group_name>Directory Preferences</group_name>
+      <name>customFileUploadDir</name>
+      <type>Url</type>
+      <html_type>Text</html_type>
+      <default></default>
+      <add>4.1</add>
+      <title></title>
+      <is_domain>1</is_domain>
+      <is_contact>0</is_contact>
+      <description></description>
+      <help_text></help_text>
+    </setting>
+    <setting>
+      <group_name>Directory Preferences</group_name>
+      <name>customTemplateDir</name>
+      <type>Url</type>
+      <html_type>Text</html_type>
+      <default></default>
+      <add>4.1</add>
+      <title></title>
+      <is_domain>1</is_domain>
+      <is_contact>0</is_contact>
+      <description></description>
+      <help_text></help_text>
+    </setting>
+    <setting>
+      <group_name>Directory Preferences</group_name>
+      <name>customPHPPathDir</name>
+      <type>Url</type>
+      <html_type>Text</html_type>
+      <default></default>
+      <add>4.1</add>
+      <title></title>
+      <is_domain>1</is_domain>
+      <is_contact>0</is_contact>
+      <description></description>
+      <help_text></help_text>
+    </setting>
+    <setting>
+      <group_name>Directory Preferences</group_name>
+      <name>extensionsDir</name>
+      <type>Url</type>
+      <html_type>Text</html_type>
+      <default></default>
+      <add>4.1</add>
+      <title></title>
+      <is_domain>1</is_domain>
+      <is_contact>0</is_contact>
+      <description></description>
+      <help_text></help_text>
+    </setting>
+</settings>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<settings>
+    <setting>
+      <group_name>Event Preferences</group_name>
+      <name>enable_cart</name>
+      <type>String</type>
+      <html_type>Text</html_type>
+      <default></default>
+      <add>4.1</add>
+      <title>Tag for Unconfirmed Petition Signers</title>
+      <is_domain>1</is_domain>
+      <is_contact>0</is_contact>
+      <description></description>
+      <help_text>If set, new contacts that are created when signing a petition are assigned a tag of this name.</help_text>
+    </setting>
+</settings>

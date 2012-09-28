@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<settings>
+    <setting>
+      <group_name>Member Preferences</group_name>
+      <name>default_renewal_contribution_page</name>
+      <type>Integer</type>
+      <html_type>Select</html_type>
+      <default></default>
+      <pseudoconstant>
+        <name>contributionPage</name>
+      </pseudoconstant>
+      <add>4.1</add>
+      <title>Default online membership renewal page</title>
+      <is_domain>1</is_domain>
+      <is_contact>0</is_contact>
+      <description>If you select a default online contribution page for self-service membership renewals, a "renew" link pointing to that page will be displayed on the Contact Dashboard for memberships which were entered offline. You will need to ensure that the membership block for the selected online contribution page includes any currently available memberships.</description>
+      <help_text></help_text>
+    </setting>
+</settings>
