@@ -46,8 +46,7 @@ class CRM_Contact_BAO_Contact_Utils {
    * @access public
    * @static
    */
-  static
-  function getImage($contactType, $urlOnly = FALSE, $contactId = NULL, $addProfileOverlay = TRUE) {
+  static function getImage($contactType, $urlOnly = FALSE, $contactId = NULL, $addProfileOverlay = TRUE) {
     static $imageInfo = array();
 
     $contactType = explode(CRM_Core_DAO::VALUE_SEPARATOR, trim($contactType, CRM_Core_DAO::VALUE_SEPARATOR));
@@ -151,8 +150,7 @@ WHERE  id IN ( $idString )
    * @static
    * @access public
    */
-  static
-  function generateChecksum($contactID, $ts = NULL, $live = NULL, $hash = NULL) {
+  static function generateChecksum($contactID, $ts = NULL, $live = NULL, $hash = NULL) {
     // return a warning message if we dont get a contactID
     // this typically happens when we do a message preview
     // or an anon mailing view - CRM-8298
@@ -203,8 +201,7 @@ WHERE  id IN ( $idString )
    * @static
    * @access public
    */
-  static
-  function validChecksum($contactID, $inputCheck) {
+  static function validChecksum($contactID, $inputCheck) {
 
     $input = CRM_Utils_System::explode('_', $inputCheck, 3);
 
@@ -237,8 +234,7 @@ WHERE  id IN ( $idString )
    * @static
    * @access public
    */
-  static
-  function maxLocations($contactId) {
+  static function maxLocations($contactId) {
     $contactLocations = array();
 
     // find number of location blocks for this contact and adjust value accordinly
@@ -265,8 +261,7 @@ UNION
    * @access public
    * @static
    */
-  static
-  function createCurrentEmployerRelationship($contactID, $organization) {
+  static function createCurrentEmployerRelationship($contactID, $organization) {
     $organizationId = NULL;
 
     // if organization id is passed.
@@ -351,8 +346,7 @@ UNION
    * @access public
    * @static
    */
-  static
-  function currentEmployerRelatedMembership($contactID, $employerID, $relationshipParams, $duplicate = FALSE) {
+  static function currentEmployerRelatedMembership($contactID, $employerID, $relationshipParams, $duplicate = FALSE) {
     $ids = array();
     $action = CRM_Core_Action::ADD;
 
@@ -382,8 +376,7 @@ UNION
    * @param array $currentEmployerParams associated array of contact id and its employer id
    *
    */
-  static
-  function setCurrentEmployer($currentEmployerParams) {
+  static function setCurrentEmployer($currentEmployerParams) {
     foreach ($currentEmployerParams as $contactId => $orgId) {
       $query = "UPDATE civicrm_contact contact_a,civicrm_contact contact_b
 SET contact_a.employer_id=contact_b.id, contact_a.organization_name=contact_b.organization_name
@@ -401,8 +394,7 @@ WHERE contact_a.id ={$contactId} AND contact_b.id={$orgId}; ";
    * @param int $organizationId current employer id
    *
    */
-  static
-  function updateCurrentEmployer($organizationId) {
+  static function updateCurrentEmployer($organizationId) {
     $query = "UPDATE civicrm_contact contact_a,civicrm_contact contact_b
 SET contact_a.organization_name=contact_b.organization_name
 WHERE contact_a.employer_id=contact_b.id AND contact_b.id={$organizationId}; ";
@@ -417,8 +409,7 @@ WHERE contact_a.employer_id=contact_b.id AND contact_b.id={$organizationId}; ";
    * @param int $employerId contact id ( mostly organization contact id)
    *
    */
-  static
-  function clearCurrentEmployer($contactId, $employerId = NULL) {
+  static function clearCurrentEmployer($contactId, $employerId = NULL) {
     $query = "UPDATE civicrm_contact
 SET organization_name=NULL, employer_id = NULL
 WHERE id={$contactId}; ";
@@ -468,8 +459,7 @@ WHERE id={$contactId}; ";
    * @static
    *
    */
-  static
-  function buildOnBehalfForm(&$form,
+  static function buildOnBehalfForm(&$form,
     $contactType       = 'Individual',
     $countryID         = NULL,
     $stateID           = NULL,
@@ -593,8 +583,7 @@ WHERE id={$contactId}; ";
    * @param int $employerId contact id of employer ( organization id )
    *
    */
-  static
-  function clearAllEmployee($employerId) {
+  static function clearAllEmployee($employerId) {
     $query = "
 UPDATE civicrm_contact
    SET organization_name=NULL, employer_id = NULL
@@ -614,8 +603,7 @@ UPDATE civicrm_contact
    * @static
    * @access public
    */
-  static
-  function formatContactIDSToLinks($contactIDs, $addViewLink = TRUE, $addEditLink = TRUE, $originalId = NULL) {
+  static function formatContactIDSToLinks($contactIDs, $addViewLink = TRUE, $addEditLink = TRUE, $originalId = NULL) {
     $contactLinks = array();
     if (!is_array($contactIDs) || empty($contactIDs)) {
       return $contactLinks;
@@ -719,8 +707,7 @@ LEFT JOIN  civicrm_email ce ON ( ce.contact_id=c.id AND ce.is_primary = 1 )
    * @return $contactDetails array of contact info.
    * @static
    */
-  static
-  function contactDetails($componentIds, $componentName, $returnProperties = array(
+  static function contactDetails($componentIds, $componentName, $returnProperties = array(
     )) {
     $contactDetails = array();
     if (empty($componentIds) ||
@@ -843,8 +830,7 @@ Group By  componentId";
    * @static
    * @access public
    */
-  static
-  function processSharedAddress(&$address) {
+  static function processSharedAddress(&$address) {
     if (!is_array($address)) {
       return;
     }
@@ -896,8 +882,7 @@ Group By  componentId";
    * @return $contactNames associated array of contact names
    * @static
    */
-  static
-  function getAddressShareContactNames(&$addresses) {
+  static function getAddressShareContactNames(&$addresses) {
     $contactNames = array();
     // get the list of master id's for address
     $masterAddressIds = array();
@@ -925,8 +910,7 @@ Group By  componentId";
     return $contactNames;
   }
 
-  static
-  function clearContactCaches() {
+  static function clearContactCaches() {
     // clear acl cache if any.
     CRM_ACL_BAO_Cache::resetCache();
 
@@ -1079,8 +1063,7 @@ WHERE id IN (" . implode(',', $contactIds) . ")";
    *
    * @return int or null
    */
-  static
-  function defaultGreeting($contactType, $greetingType) {
+  static function defaultGreeting($contactType, $greetingType) {
     $contactTypeFilters = array('Individual' => 1, 'Household' => 2, 'Organization' => 3);
     if (!isset($contactTypeFilters[$contactType])) {
       return;
