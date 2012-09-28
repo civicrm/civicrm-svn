@@ -81,9 +81,6 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     if (CRM_Utils_Array::value('is_error', $result, 0) == 0) {
       _civicrm_api_call_nested_api($apiRequest['params'], $result, $apiRequest['action'], $apiRequest['entity'], $apiRequest['version']);
     }
-    if (CRM_Utils_Array::value('format.smarty', $apiRequest['params']) || CRM_Utils_Array::value('format_smarty', $apiRequest['params'])) {
-      // return _civicrm_api_parse_result_through_smarty($result,$apiRequest['params']);
-    }
     if (function_exists('xdebug_time_index')
       && CRM_Utils_Array::value('debug', $apiRequest['params'])
       // result would not be an array for getvalue
@@ -467,17 +464,5 @@ function _civicrm_api_get_entity_name_from_dao($bao){
   $daos = array_flip($dao);
   return _civicrm_api_get_entity_name_from_camel($daos[$daoName]);
 
-}
-
-/*
- * Parses result through smarty
- * @param array $result result of API call
- */
-function _civicrm_api_parse_result_through_smarty(&$result, &$params) {
-  require_once 'CRM/Core/Smarty.php';
-  $smarty = CRM_Core_Smarty::singleton();
-  $smarty->assign('result', $result);
-  $template = CRM_Utils_Array::value('format.smarty', $params, $params['format_smarty']);
-  return $smarty->fetch("../templates/" . $template);
 }
 
