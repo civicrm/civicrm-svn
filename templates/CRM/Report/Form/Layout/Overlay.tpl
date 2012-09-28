@@ -41,8 +41,8 @@
                       {assign var=skipCount value=`$header.colspan`}
                       {assign var=skipMade  value=1}
                    {else}
-                      <td>{$header.title}</td> 
-                   		{assign var=skip value=false}
+                      <td>{$header.title}</td>
+                       {assign var=skip value=false}
                    {/if}
                 {else} {* for skip case *}
                    {assign var=skipMade value=`$skipMade+1`}
@@ -53,13 +53,13 @@
         {/capture}
 
         {if !$sections} {* section headers and sticky headers aren't playing nice yet *}
-        	<thead>
+          <thead>
             <tr>
                 {$tableHeader}
-        		</tr>          
-        	</thead>
+            </tr>
+          </thead>
         {/if}
-       
+
         {* pre-compile section header here, rather than doing it every time under foreach *}
         {capture assign=sectionHeaderTemplate}
             {assign var=columnCount value=$columnHeaders|@count}
@@ -101,33 +101,33 @@
                         {if $row.$fieldLink}
                             <a title="{$row.$fieldHover}" href="{$row.$fieldLink}" {$row.$fieldClass}>
                         {/if}
-                        
+
                         {if $row.$field eq 'Subtotal'}
                             {$row.$field}
-                        {elseif $header.type & 4 OR $header.type & 256}   
+                        {elseif $header.type & 4 OR $header.type & 256}
                             {if $header.group_by eq 'MONTH' or $header.group_by eq 'QUARTER'}
                                 {$row.$field|crmDate:$config->dateformatPartial}
-                            {elseif $header.group_by eq 'YEAR'}	
+                            {elseif $header.group_by eq 'YEAR'}
                                 {$row.$field|crmDate:$config->dateformatYear}
-                            {else}	
-                                {if $header.type & 4}	
+                            {else}
+                                {if $header.type & 4}
                                    {$row.$field|truncate:10:''|crmDate}
                                 {else}
                                    {$row.$field|crmDate}
                                 {/if}
-                            {/if} 
+                            {/if}
                         {elseif $header.type eq 1024}
                             <span class="nowrap">{$row.$field|crmMoney}</span>
                         {else}
                             {$row.$field}
                         {/if}
-                        
+
                         {if $row.$fieldLink}</a>{/if}
                     </td>
                 {/foreach}
             </tr>
         {/foreach}
-        
+
         {if $grandStat}
             {* foreach from=$grandStat item=row*}
             <tr class="total-row">
@@ -150,4 +150,4 @@
             {include file="CRM/common/pager.tpl"  noForm=0}
         </div>
     {/if}
-{/if}        
+{/if}

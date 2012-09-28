@@ -40,7 +40,7 @@
                         <tr>
                             <td>{$form.$print.html}&nbsp;&nbsp;</td>
                             <td>{$form.$pdf.html}&nbsp;&nbsp;</td>
-                            <td>{$form.$csv.html}&nbsp;&nbsp;</td>                        
+                            <td>{$form.$csv.html}&nbsp;&nbsp;</td>
                             {if $instanceUrl}
                                 <td>&nbsp;&nbsp;&raquo;&nbsp;<a href="{$instanceUrl}">{ts}Existing report(s) from this template{/ts}</a></td>
                             {/if}
@@ -48,7 +48,7 @@
                     </table>
                 </td>
                 <td>
-                    <table class="form-layout-compressed" align="right">                        
+                    <table class="form-layout-compressed" align="right">
                         {if $chartSupported}
                             <tr>
                                 <td>{$form.charts.html|crmAddClass:big}</td>
@@ -74,10 +74,10 @@
     function disablePrintPDFButtons( viewtype ) {
       if (viewtype && flashChartType != viewtype) {
         cj('#_qf_Summary_submit_pdf').attr('disabled', true).addClass('button-disabled');
-	cj('#_qf_Summary_submit_print').attr('disabled', true).addClass('button-disabled');
+  cj('#_qf_Summary_submit_print').attr('disabled', true).addClass('button-disabled');
       } else {
         cj('#_qf_Summary_submit_pdf').removeAttr('disabled').removeClass('button-disabled');
-	cj('#_qf_Summary_submit_print').removeAttr('disabled').removeClass('button-disabled');
+  cj('#_qf_Summary_submit_print').removeAttr('disabled').removeClass('button-disabled');
       }
     }
     </script>

@@ -25,7 +25,7 @@
 *}
 {* Report form criteria section *}
     {if $colGroups}
-	    <div id="col-groups" class="civireport-criteria" >
+      <div id="col-groups" class="civireport-criteria" >
         {if $componentName eq 'Grant'}
             <h3>{ts}Include these Statistics{/ts}</h3>
         {else}
@@ -63,7 +63,7 @@
         {/foreach}
         </div>
     {/if}
-    
+
     {if $groupByElements}
         <div id="group-by-elements" class="civireport-criteria" >
         <h3>Group by Columns</h3>
@@ -86,15 +86,15 @@
                     <td colspan="4 - ($count % 4)"></td>
                 {/if}
             </tr>
-        </table>    
-     </div>  
+        </table>
+     </div>
     {/if}
 
     {if $orderByOptions}
       <div id="order-by-elements" class="civireport-criteria" >
         <h3>Order by Columns</h3>
 
-	<table id="optionField">
+  <table id="optionField">
         <tr>
         <th>&nbsp;</th>
         <th> Column</th>
@@ -102,9 +102,9 @@
         <th> Section Header / Group By</th>
         </tr>
 
-	{section name=rowLoop start=1 loop=6}
-	{assign var=index value=$smarty.section.rowLoop.index}
-	<tr id="optionField_{$index}" class="form-item {cycle values="odd-row,even-row"}">
+  {section name=rowLoop start=1 loop=6}
+  {assign var=index value=$smarty.section.rowLoop.index}
+  <tr id="optionField_{$index}" class="form-item {cycle values="odd-row,even-row"}">
         <td>
         {if $index GT 1}
             <a onclick="hideRow({$index});" name="orderBy_{$index}" href="javascript:void(0)" class="form-link"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}hide field or section{/ts}"/></a>
@@ -113,7 +113,7 @@
         <td> {$form.order_bys.$index.column.html}</td>
         <td> {$form.order_bys.$index.order.html}</td>
         <td> {$form.order_bys.$index.section.html}</td>
-	</tr>
+  </tr>
         {/section}
         </table>
             <div id="optionFieldLink" class="add-remove-link">
@@ -152,29 +152,29 @@
         <h3>Other Options</h3>
         <table class="report-layout">
             <tr class="crm-report crm-report-criteria-groupby">
-	        <td>{$form.options.html}</td>
-	        {if $form.blank_column_end}
-	            <td>{$form.blank_column_end.label}&nbsp;&nbsp;{$form.blank_column_end.html}</td>
+          <td>{$form.options.html}</td>
+          {if $form.blank_column_end}
+              <td>{$form.blank_column_end.label}&nbsp;&nbsp;{$form.blank_column_end.html}</td>
                 {/if}
             </tr>
         </table>
         </div>
     {/if}
-  
+
     {if $filters}
-	<div id="set-filters" class="civireport-criteria" >
+  <div id="set-filters" class="civireport-criteria" >
         <h3>Set Filters</h3>
         <table class="report-layout">
-	    {assign var="counter" value=1}	
+      {assign var="counter" value=1}
             {foreach from=$filters     item=table key=tableName}
- 	        {assign  var="filterCount" value=$table|@count}
+           {assign  var="filterCount" value=$table|@count}
             {* Wrap custom field sets in collapsed accordion pane. *}
-	        {if $colGroups.$tableName.group_title and $filterCount gte 1}
-		    {* we should close table that contains other filter elements before we start building custom group accordian  *}
-		    {if $counter eq 1} 
-	            	</table>
-			{assign var="counter" value=0}		
-		    {/if}	
+          {if $colGroups.$tableName.group_title and $filterCount gte 1}
+        {* we should close table that contains other filter elements before we start building custom group accordian  *}
+        {if $counter eq 1}
+                </table>
+      {assign var="counter" value=0}
+        {/if}
                     <div class="crm-accordion-wrapper crm-accordion crm-accordion-closed">
                     <div class="crm-accordion-header">
                         <div class="icon crm-accordion-pointer"></div>
@@ -217,17 +217,17 @@
             {if $closed eq 0 }</table>{/if}
         </div>
     {/if}
- 
+
     {literal}
     <script type="text/javascript">
     {/literal}
         {foreach from=$filters item=table key=tableName}
             {foreach from=$table item=field key=fieldName}
-		{literal}var val = "dnc";{/literal}
+    {literal}var val = "dnc";{/literal}
                 {assign var=fieldOp     value=$fieldName|cat:"_op"}
                 {if !($field.operatorType & 4) && !$field.no_display && $form.$fieldOp.html}
                     {literal}var val = document.getElementById("{/literal}{$fieldOp}{literal}").value;{/literal}
-		{/if}
+    {/if}
                 {literal}showHideMaxMinVal( "{/literal}{$fieldName}{literal}", val );{/literal}
             {/foreach}
         {/foreach}
@@ -248,17 +248,17 @@
                 cj('#' + fldMinMax ).hide();
             }
         }
-	    
-	function selectGroupByFields(id) {
-	    var field = 'fields\['+ id+'\]';
-	    var group = 'group_bys\['+ id+'\]';	
-	    var groups = document.getElementById( group ).checked;
-	    if ( groups == 1 ) {
-	        document.getElementById( field ).checked = true;	
-	    } else {
-	        document.getElementById( field ).checked = false;	    
-	    }	
-	}
+
+  function selectGroupByFields(id) {
+      var field = 'fields\['+ id+'\]';
+      var group = 'group_bys\['+ id+'\]';
+      var groups = document.getElementById( group ).checked;
+      if ( groups == 1 ) {
+          document.getElementById( field ).checked = true;
+      } else {
+          document.getElementById( field ).checked = false;
+      }
+  }
     </script>
     {/literal}
 

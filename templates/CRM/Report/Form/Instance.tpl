@@ -57,21 +57,21 @@
     <tr class="crm-report-instanceForm-form-block-email_cc">
         <td class="report-label">{$form.email_cc.label}</td>
         <td>{$form.email_cc.html|crmAddClass:huge}</td>
-    </tr> 
+    </tr>
 </table>
 <br/>
 
 <h3>{ts}Other Settings{/ts}</h3>
 <table class="form-layout">
     <tr class="crm-report-instanceForm-form-block-is_navigation">
-	<td class="report-label">{$form.is_navigation.label}</td>
+  <td class="report-label">{$form.is_navigation.label}</td>
         <td>{$form.is_navigation.html}<br />
             <span class="description">{ts}All report instances are automatically included in the Report Listing page. Check this box to also add this report to the navigation menu.{/ts}</span>
         </td>
     </tr>
     <tr class="crm-report-instanceForm-form-block-parent_id" id="navigation_menu">
-	<td class="report-label">{$form.parent_id.label} {help id="id-parent" file="CRM/Admin/Form/Navigation.hlp"}</td>
-	<td>{$form.parent_id.html|crmAddClass:huge}</td>
+  <td class="report-label">{$form.parent_id.label} {help id="id-parent" file="CRM/Admin/Form/Navigation.hlp"}</td>
+  <td>{$form.parent_id.html|crmAddClass:huge}</td>
     </tr>
     {if $config->userFramework neq 'Joomla'}
         <tr class="crm-report-instanceForm-form-block-permission">
@@ -84,23 +84,23 @@
         </tr>
     {/if}
     <tr class="crm-report-instanceForm-form-block-isReserved">
-	    <td class="report-label">{$form.is_reserved.label} {help id="id-is_reserved" file="CRM/Report/Form/Settings.hlp"}</td>
+      <td class="report-label">{$form.is_reserved.label} {help id="id-is_reserved" file="CRM/Report/Form/Settings.hlp"}</td>
       <td>{$form.is_reserved.html}
         <span class="description">{ts}If reserved, only users with 'administer reserved reports' permission can modify this report instance.{/ts}</span>
       </td>
     </tr>
     <tr class="crm-report-instanceForm-form-block-addToDashboard">
-	    <td class="report-label">{$form.addToDashboard.label} {help id="id-dash_avail" file="CRM/Report/Form/Settings.hlp"}</td>
+      <td class="report-label">{$form.addToDashboard.label} {help id="id-dash_avail" file="CRM/Report/Form/Settings.hlp"}</td>
       <td>{$form.addToDashboard.html}
-      	<span class="description">{ts}Users with appropriate permissions can add this report to their dashboard.{/ts}</span>
+        <span class="description">{ts}Users with appropriate permissions can add this report to their dashboard.{/ts}</span>
       </td>
     </tr>
 </table>
 
-{include file="CRM/common/showHideByFieldValue.tpl" 
+{include file="CRM/common/showHideByFieldValue.tpl"
     trigger_field_id    ="is_navigation"
     trigger_value       =""
-    target_element_id   ="navigation_menu" 
+    target_element_id   ="navigation_menu"
     target_element_type ="table-row"
     field_type          ="radio"
     invert              = 0
@@ -121,10 +121,10 @@
             function(){
                 if ( cj('#is_navigation').attr('checked') && cj('#parent_id').val() == '') {
                     var confirmMsg = {/literal}'{ts}You have chosen to include this report in the Navigation Menu without selecting a Parent Menu item from the dropdown. This will add the report to the top level menu bar. Are you sure you want to continue?{/ts}'{literal}
-                    return confirm(confirmMsg);                    
+                    return confirm(confirmMsg);
                 }
             }
-        );        
+        );
     });
 </script>
 {/literal}
