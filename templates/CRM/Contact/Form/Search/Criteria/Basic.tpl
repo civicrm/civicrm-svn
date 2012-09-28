@@ -78,7 +78,8 @@
             <td>&nbsp;</td>
 {/if}
 {if $form.group}
-            <td><label>{ts}Group(s){/ts}</label>
+            <td><div id='groupselect'><label>{ts}Group(s){/ts}<span class="crm-clear-link">
+            (<a id='searchbygrouptype'>{ts}search by group type{/ts}</a>)</span></label>
                 {$form.group.html}
                 {literal}
                 <script type="text/javascript">
@@ -90,8 +91,57 @@
                     respectParents: true
                 });
 
+
                 </script>
                 {/literal}
+            </div>
+            <div id='grouptypeselect'>
+            <label>{ts}Group Type(s){/ts}<span class="crm-clear-link"> ( <a id='searchbygroup'>{ts}search by group{/ts}</a>)</span></label>
+                {$form.group_type.html}
+                {literal}
+                <script type="text/javascript">
+                cj("select#group_type").crmasmSelect({
+                    addItemTarget: 'bottom',
+                    animate: false,
+                    highlight: true,
+                    sortable: true,
+                    respectParents: true
+                });
+
+                function showGroupSearch(){
+                    cj('#grouptypeselect').hide();
+                    cj('#groupselect').show();
+                    cj('#group_type').val('') ;
+                    cj('#crmasmList2 li').remove();
+                    cj('#crmasmSelect2').children().removeClass('asmOptionDisabled').removeAttr('disabled');
+                }
+                function showGroupTypeSearch(){
+                    cj('#groupselect').hide();
+                    cj('#grouptypeselect').show();
+                    cj('#group').val('') ;
+                    cj('#crmasmList1 li').remove();
+                    cj('#crmasmSelect1').children().removeClass('asmOptionDisabled').removeAttr('disabled');
+                }
+
+                cj(function(){
+                  cj('#searchbygrouptype').click(function() {
+                      showGroupTypeSearch();
+                  });
+                  cj('#searchbygroup').click(function() {
+                      showGroupSearch();
+                  });
+
+                  if (cj('#group_type').val() ) {
+                    showGroupTypeSearch();
+                  }
+                  else {
+                    showGroupSearch();
+                  }
+
+                });
+                </script>
+                {/literal}
+                </div>
             </td>
 {else}
             <td>&nbsp;</td>

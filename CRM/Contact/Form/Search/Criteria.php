@@ -56,6 +56,11 @@ class CRM_Contact_Form_Search_Criteria {
         $form->add('select', 'group', ts('Groups'), $form->_group, FALSE,
           array('id' => 'group', 'multiple' => 'multiple', 'title' => ts('- select -'))
         );
+        $groupOptions = CRM_Core_BAO_OptionValue::getOptionValuesAssocArrayFromName('group_type');
+        $form->add('select', 'group_type', ts('Group Types'), $groupOptions, FALSE,
+            array('id' => 'group_type', 'multiple' => 'multiple', 'title' => ts('- select -'))
+        );
+        $form->add('hidden','group_search_selected','group');
       }
     }
 
@@ -239,7 +244,7 @@ class CRM_Contact_Form_Search_Criteria {
     // Build location criteria based on _submitValues if
     // available; otherwise, use $form->_formValues.
     $formValues = $form->_submitValues;
-    
+
     if (empty($formValues) && !empty($form->_formValues)) {
       $formValues = $form->_formValues;
     }
@@ -426,7 +431,7 @@ class CRM_Contact_Form_Search_Criteria {
         array('id' => 'relation_target_group', 'multiple' => 'multiple', 'title' => ts('- select -'))
       );
     }
-    
+
     // Add reltionship dates
     CRM_Core_Form_Date::buildDateRange($form, 'relation_date', 1, '_low', '_high', ts('From:'), FALSE, FALSE);
 
