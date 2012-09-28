@@ -510,7 +510,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
   /**
    * build the condition to retrieve groups.
    *
-   * @param string  $groupType     type of group(Access/Mailing)
+   * @param string  $groupType type of group(Access/Mailing) OR the key of the group
    * @param boolen  $excludeHidden exclude hidden groups.
    *
    * @return string $condition
@@ -523,6 +523,10 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
     }
     elseif ($groupType == 'Access') {
       $value = CRM_Core_DAO::VALUE_SEPARATOR . '1' . CRM_Core_DAO::VALUE_SEPARATOR;
+    }
+    elseif (!empty($groupType)){
+      // ie we have been given the group key
+      $value = CRM_Core_DAO::VALUE_SEPARATOR . $groupType . CRM_Core_DAO::VALUE_SEPARATOR;
     }
 
     $condition = NULL;
@@ -638,7 +642,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
     if ( !CRM_Utils_Array::value('parent_id', $params) ) {
       // add total
       $params['total'] = CRM_Contact_BAO_Group::getGroupCount($params);
- 
+
       // get all the groups
       $allGroups = CRM_Core_PseudoConstant::allGroup();
     }
@@ -650,7 +654,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
         $groupList[$id]['group_id'] = $value['id'];
         $groupList[$id]['group_name'] = $value['title'];
         $groupList[$id]['class'] = $value['class'];
-        
+
         // append parent names if in search mode
         if ( !CRM_Utils_Array::value('parent_id', $params) &&
         CRM_Utils_Array::value( 'parents', $value ) ) {
@@ -658,7 +662,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
           $title = array();
           foreach($groupIds as $gId) {
             $title[] = $allGroups[$gId];
-          }    
+          }
           $groupList[$id]['group_name'] .= '<div class="crm-row-parent-name"><em>'.ts('Child of').'</em>: ' . implode(', ', $title) . '</div>';
           $groupList[$id]['class'] = '';
         }
@@ -673,7 +677,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
         $groupList[$id]['visibility'] = $value['visibility'];
         $groupList[$id]['links'] = $value['action'];
         $groupList[$id]['org_info'] = CRM_Utils_Array::value('org_info', $value);
-        
+
         $groupList[$id]['is_parent'] = $value['is_parent'];
       }
       return $groupList;
@@ -817,19 +821,19 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
             'ssid' => $object->saved_search_id,
           )
         );
-        
+
         // If group has children, add class for link to view children
         $values[$object->id]['is_parent'] = false;
         if (array_key_exists('children', $values[$object->id])) {
           $values[$object->id]['class'] = "crm-group-parent";
           $values[$object->id]['is_parent'] = true;
         }
-        
+
         // If group is a child, add child class
         if (array_key_exists('parents', $values[$object->id])) {
           $values[$object->id]['class'] = "crm-group-child";
         }
-        
+
         if (array_key_exists('children', $values[$object->id])
         && array_key_exists('parents', $values[$object->id])) {
           $values[$object->id]['class'] = "crm-group-child crm-group-parent";
