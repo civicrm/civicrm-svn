@@ -419,7 +419,7 @@ class CRM_Activity_Import_Form_MapField extends CRM_Core_Form {
       );
 
       $params = array(
-        'level' => 'Strict',
+        'used'         => 'Unsupervised',
         'contact_type' => 'Individual',
       );
       list($ruleFields, $threshold) = CRM_Dedupe_BAO_RuleGroup::dedupeRuleFieldsWeight($params);

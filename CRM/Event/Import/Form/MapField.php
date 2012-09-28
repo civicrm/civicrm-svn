@@ -101,9 +101,7 @@ class CRM_Event_Import_Form_MapField extends CRM_Core_Form {
       /* Skip the first (empty) key/pattern */
 
       if (empty($re)) {
-
         continue;
-
       }
 
       /* if we've already used this field, move on */
@@ -412,8 +410,7 @@ class CRM_Event_Import_Form_MapField extends CRM_Core_Form {
    * @static
    * @access public
    */
-  static
-  function formRule($fields, $files, $self) {
+  static function formRule($fields, $files, $self) {
     $errors = array();
     $fieldMessage = NULL;
     if (!array_key_exists('savedMapping', $fields)) {
@@ -434,7 +431,7 @@ class CRM_Event_Import_Form_MapField extends CRM_Core_Form {
         CRM_Event_Import_Parser::CONTACT_ORGANIZATION => 'Organization',
       );
       $params = array(
-        'level' => 'Strict',
+        'used'         => 'Unsupervised',
         'contact_type' => $contactTypes[$contactTypeId],
       );
       list($ruleFields, $threshold) = CRM_Dedupe_BAO_RuleGroup::dedupeRuleFieldsWeight($params);

@@ -278,7 +278,7 @@ UNION
       $dedupeParams = CRM_Dedupe_Finder::formatParams($organizationParams, 'Organization');
 
       $dedupeParams['check_permission'] = FALSE;
-      $dupeIDs = CRM_Dedupe_Finder::dupesByParams($dedupeParams, 'Organization', 'Fuzzy');
+      $dupeIDs = CRM_Dedupe_Finder::dupesByParams($dedupeParams, 'Organization', 'Supervised');
 
       if (is_array($dupeIDs) && !empty($dupeIDs)) {
         // we should create relationship only w/ first org CRM-4193
@@ -680,8 +680,8 @@ LEFT JOIN  civicrm_email ce ON ( ce.contact_id=c.id AND ce.is_primary = 1 )
       if (!empty($originalId) && array_key_exists('merge', $hasPermissions)) {
         $rgBao               = new CRM_Dedupe_BAO_RuleGroup();
         $rgBao->contact_type = $dao->contact_type;
-        $rgBao->level        = 'Fuzzy';
-        $rgBao->is_default   = 1;
+        $rgBao->used         = 'Supervised';
+        //$rgBao->is_default   = 1;
         if ($rgBao->find(TRUE)) {
           $rgid = $rgBao->id;
         }

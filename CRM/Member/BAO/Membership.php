@@ -988,7 +988,7 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
       // Using new Dedupe rule.
       $ruleParams = array(
         'contact_type' => $contactType,
-        'level' => 'Strict',
+        'used'         => 'Unsupervised',
       );
       $fieldsArray = CRM_Dedupe_BAO_Rule::dedupeRuleFields($ruleParams);
 

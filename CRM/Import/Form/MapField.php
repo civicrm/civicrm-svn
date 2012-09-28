@@ -225,7 +225,7 @@ class CRM_Import_Form_MapField extends CRM_Core_Form {
         'Individual', 'Household', 'Organization') as $cType) {
         $ruleParams = array(
           'contact_type' => $cType,
-          'level' => 'Strict',
+          'used'         => 'Unsupervised',
         );
         $this->_dedupeFields[$cType] = CRM_Dedupe_BAO_Rule::dedupeRuleFields($ruleParams);
       }

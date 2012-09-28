@@ -505,7 +505,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
       // Using new Dedupe rule.
       $ruleParams = array(
         'contact_type' => $contacType,
-        'level' => 'Strict',
+        'used'         => 'Unsupervised',
       );
       $fieldsArray = CRM_Dedupe_BAO_Rule::dedupeRuleFields($ruleParams);
       $tmpConatctField = array();

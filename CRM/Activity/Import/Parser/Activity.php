@@ -316,7 +316,7 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser {
         // Using new Dedupe rule.
         $ruleParams = array(
           'contact_type' => 'Individual',
-          'level' => 'Strict',
+          'used'         => 'Unsupervised',
         );
         $fieldsArray = CRM_Dedupe_BAO_Rule::dedupeRuleFields($ruleParams);
 

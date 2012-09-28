@@ -89,7 +89,7 @@ class CRM_Dedupe_Finder {
    */
   static function dupesByParams($params,
     $ctype,
-    $level       = 'Strict',
+    $level       = 'Unsupervised',
     $except      = array(),
     $ruleGroupID = NULL
   ) {
@@ -111,8 +111,8 @@ class CRM_Dedupe_Finder {
     if (!$foundByID) {
       $rgBao               = new CRM_Dedupe_BAO_RuleGroup();
       $rgBao->contact_type = $ctype;
-      $rgBao->level        = $level;
-      $rgBao->is_default   = 1;
+      $rgBao->used         = $level;
+      //$rgBao->is_default   = 1;
       if (!$rgBao->find(TRUE)) {
         CRM_Core_Error::fatal("$level rule for $ctype does not exist");
       }
@@ -130,7 +130,6 @@ class CRM_Dedupe_Finder {
       }
     }
     $dao->query($rgBao->tableDropQuery());
-
     return array_diff($dupes, $except);
   }
 
@@ -159,7 +158,7 @@ class CRM_Dedupe_Finder {
    *
    * @return array  array of dupe contact_ids
    */
-  static function dupesOfContact($cid, $level = 'Strict', $ctype = NULL) {
+  static function dupesOfContact($cid, $level = 'Unsupervised', $ctype = NULL) {
     // if not provided, fetch the contact type from the database
     if (!$ctype) {
       $dao = new CRM_Contact_DAO_Contact();
@@ -170,9 +169,9 @@ class CRM_Dedupe_Finder {
       $ctype = $dao->contact_type;
     }
     $rgBao               = new CRM_Dedupe_BAO_RuleGroup();
-    $rgBao->level        = $level;
+    $rgBao->used         = $level;
     $rgBao->contact_type = $ctype;
-    $rgBao->is_default   = 1;
+    //$rgBao->is_default   = 1;
     if (!$rgBao->find(TRUE)) {
       CRM_Core_Error::fatal("$level rule for $ctype does not exist");
     }

@@ -309,7 +309,7 @@ class CRM_Contribute_Import_Form_MapField extends CRM_Core_Form {
     // get the Dedupe rule for this contact type and build soft credit array
     $ruleParams = array(
       'contact_type' => $contactType,
-      'level' => 'Strict',
+      'used'         => 'Unsupervised',
     );
     $fieldsArray = CRM_Dedupe_BAO_Rule::dedupeRuleFields($ruleParams);
     $softCreditFields = array();
@@ -471,7 +471,7 @@ class CRM_Contribute_Import_Form_MapField extends CRM_Core_Form {
         CRM_Contribute_Import_Parser::CONTACT_ORGANIZATION => 'Organization',
       );
       $params = array(
-        'level' => 'Strict',
+        'used'         => 'Unsupervised',
         'contact_type' => $contactTypes[$contactTypeId],
       );
       list($ruleFields, $threshold) = CRM_Dedupe_BAO_RuleGroup::dedupeRuleFieldsWeight($params);

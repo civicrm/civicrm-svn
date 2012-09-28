@@ -718,9 +718,9 @@ class CRM_Profile_Form extends CRM_Core_Form {
       }
 
       // for dialog mode we should always use fuzzy rule.
-      $ruleType = 'Strict';
+      $ruleType = 'Unsupervised';
       if ($form->_context == 'dialog') {
-        $ruleType = 'Fuzzy';
+        $ruleType = 'Supervised';
       }
 
       $dedupeParams['check_permission'] = FALSE;

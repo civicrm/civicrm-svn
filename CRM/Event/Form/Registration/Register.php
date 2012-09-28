@@ -1415,7 +1415,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
       //lets check w/ other contact params.
       if ($self->_values['event']['allow_same_participant_emails']) {
         $params = $fields;
-        $level = ($isAdditional) ? 'Fuzzy' : 'Strict';
+        $level = ($isAdditional) ? 'Supervised' : 'Unsupervised';
 
         $dedupeParams = CRM_Dedupe_Finder::formatParams($params, 'Individual');
 

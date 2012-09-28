@@ -1683,7 +1683,7 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
       // Using new Dedupe rule.
       $ruleParams = array(
         'contact_type' => 'Individual',
-        'level' => 'Strict',
+        'used'         => 'Unsupervised',
       );
       $fieldsArray = CRM_Dedupe_BAO_Rule::dedupeRuleFields($ruleParams);
 

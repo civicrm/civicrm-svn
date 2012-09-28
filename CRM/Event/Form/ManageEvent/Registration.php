@@ -287,7 +287,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
     }
 
     $params = array(
-      'level' => 'Fuzzy',
+      'used'         => 'Supervised',
       'contact_type' => 'Individual',
     );
     $dedupeRuleFields = CRM_Dedupe_BAO_Rule::dedupeRuleFields($params);

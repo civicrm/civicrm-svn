@@ -497,7 +497,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
         // Using new Dedupe rule.
         $ruleParams = array(
           'contact_type' => $this->_contactType,
-          'level' => 'Strict',
+          'used'         => 'Unsupervised',
         );
         $fieldsArray = CRM_Dedupe_BAO_Rule::dedupeRuleFields($ruleParams);
 

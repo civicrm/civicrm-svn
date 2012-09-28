@@ -54,7 +54,7 @@
             {foreach from=$rows item=row}
               <tr class="{cycle values="odd-row,even-row"}">
                 <td>{$row.title}</td>
-                <td>{$row.usage}</td>	
+                <td>{$row.used_display}</td>	
                 <td>{$row.action|replace:'xx':$row.id}</td>
               </tr>
             {/foreach}

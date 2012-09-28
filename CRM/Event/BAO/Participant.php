@@ -651,7 +651,7 @@ GROUP BY  participant.event_id
         // Using new Dedupe rule.
         $ruleParams = array(
           'contact_type' => $contactType,
-          'level' => 'Strict',
+          'used'         => 'Unsupervised',
         );
         $fieldsArray = CRM_Dedupe_BAO_Rule::dedupeRuleFields($ruleParams);
 
