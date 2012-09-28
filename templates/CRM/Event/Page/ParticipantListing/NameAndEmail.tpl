@@ -41,7 +41,7 @@
          </tr>
       {foreach from=$rows item=row}
          <tr class="{cycle values="odd-row,even-row"}">
-            <td class="crm-participant-name">{$row.name}</td>	
+            <td class="crm-participant-name">{$row.name}</td>
             <td class="crm-participant-email">{$row.email}</td>
          </tr>
       {/foreach}

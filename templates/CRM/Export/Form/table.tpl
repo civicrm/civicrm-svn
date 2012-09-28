@@ -42,51 +42,51 @@
                 </td>
             </tr>
         {/section}
-    
+
         <tr>
            <td class="form-item even-row underline-effect">
                {$form.addMore.1.html}
            </td>
-        </tr>            
+        </tr>
     </table>
     {/strip}
 
 
     <div>
-	{if $loadedMapping}
+  {if $loadedMapping}
             <span>{$form.updateMapping.html}{$form.updateMapping.label}&nbsp;&nbsp;&nbsp;</span>
-	{/if}
-	<span>{$form.saveMapping.html}{$form.saveMapping.label}</span>
+  {/if}
+  <span>{$form.saveMapping.html}{$form.saveMapping.label}</span>
     <div id="saveDetails" class="form-item">
       <table class="form-layout-compressed">
          <tr><td class="label">{$form.saveMappingName.label}</td><td>{$form.saveMappingName.html}</td></tr>
          <tr><td class="label">{$form.saveMappingDesc.label}</td><td>{$form.saveMappingDesc.html}</td></tr>
       </table>
     </div>
-	
 
-	<script type="text/javascript">
+
+  <script type="text/javascript">
          {if $mappingDetailsError }
-            show('saveDetails');    
+            show('saveDetails');
          {else}
-    	    hide('saveDetails');
+          hide('saveDetails');
          {/if}
 
-	     {literal}   
- 	     function showSaveDetails(chkbox) {
-    		 if (chkbox.checked) {
-    			document.getElementById("saveDetails").style.display = "block";
-    			document.getElementById("saveMappingName").disabled = false;
-    			document.getElementById("saveMappingDesc").disabled = false;
-    		 } else {
-    			document.getElementById("saveDetails").style.display = "none";
-    			document.getElementById("saveMappingName").disabled = true;
-    			document.getElementById("saveMappingDesc").disabled = true;
-    		 }
+       {literal}
+        function showSaveDetails(chkbox) {
+         if (chkbox.checked) {
+          document.getElementById("saveDetails").style.display = "block";
+          document.getElementById("saveMappingName").disabled = false;
+          document.getElementById("saveMappingDesc").disabled = false;
+         } else {
+          document.getElementById("saveDetails").style.display = "none";
+          document.getElementById("saveMappingName").disabled = true;
+          document.getElementById("saveMappingDesc").disabled = true;
          }
-         {/literal}	     
+         }
+         {/literal}
     cj('Select[id^="mapper[1]"][id$="[1]"]').addClass('huge');
-	</script>
+  </script>
     </div>
 
  </div>
