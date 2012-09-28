@@ -25,13 +25,13 @@
 *}
 
 <div class="crm-block crm-form-block crm-search-form-block">
-	<div class="crm-accordion-wrapper crm-member_search_form-accordion {if $rows}crm-accordion-closed{else}crm-accordion-open{/if}">
-	 <div class="crm-accordion-header crm-master-accordion-header">
-	    <div class="icon crm-accordion-pointer"></div> 
-	    {ts}Edit Search Criteria{/ts}
- 	 </div><!-- /.crm-accordion-header -->
-	<div class="crm-accordion-body">
-	    {strip}
+  <div class="crm-accordion-wrapper crm-member_search_form-accordion {if $rows}crm-accordion-closed{else}crm-accordion-open{/if}">
+   <div class="crm-accordion-header crm-master-accordion-header">
+      <div class="icon crm-accordion-pointer"></div>
+      {ts}Edit Search Criteria{/ts}
+    </div><!-- /.crm-accordion-header -->
+  <div class="crm-accordion-body">
+      {strip}
         <div id="help">
             {ts}Use this form to find Grant(s) by Contact name, Grant Status, Grant Type, Total Amount , etc .{/ts}
         </div>
@@ -39,7 +39,7 @@
             <tr>
                <td class="font-size12pt" colspan="3">
                     {$form.sort_name.label}&nbsp;&nbsp;{$form.sort_name.html|crmAddClass:'twenty'}&nbsp;&nbsp;&nbsp;{$form.buttons.html}<br />
-               </td>       
+               </td>
             </tr>
 
         {include file="CRM/Grant/Form/Search/Common.tpl"}
@@ -58,8 +58,8 @@
 {/if}
 
 {if $rows}
-    {* Search request has returned 1 or more matching rows. Display results and collapse the search criteria fieldset. *}    
-	<div class="crm-results-block">
+    {* Search request has returned 1 or more matching rows. Display results and collapse the search criteria fieldset. *}
+  <div class="crm-results-block">
         {* This section handles form elements for action task select and submit *}
         <div class="crm-search-tasks">
             {include file="CRM/common/searchResultTasks.tpl"}
@@ -74,7 +74,7 @@
 {literal}
 <script type="text/javascript">
 cj(function() {
-   cj().crmaccordions(); 
+   cj().crmaccordions();
 });
 </script>
 {/literal}

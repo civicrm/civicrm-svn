@@ -79,7 +79,7 @@
 
 {* handle enable/disable actions*}
 {include file="CRM/common/enableDisable.tpl"}
- 
+
 {literal}
 <script type="text/javascript">
 cj( function() {
@@ -92,13 +92,13 @@ cj( function() {
 function buildGroupSelector( filterSearch ) {
     if ( filterSearch ) {
         crmGroupSelector.fnDestroy();
-				var parentsOnly = 0;
+        var parentsOnly = 0;
         var ZeroRecordText = '<div class="status messages">{/literal}{ts escape="js"}No matching Groups found for your search criteria. Suggestions:{/ts}{literal}<div class="spacer"></div><ul><li>{/literal}{ts escape="js"}Check your spelling.{/ts}{literal}</li><li>{/literal}{ts escape="js"}Try a different spelling or use fewer letters.{/ts}{literal}</li><li>{/literal}{ts escape="js"}Make sure you have enough privileges in the access control system.{/ts}{literal}</li></ul></div>';
     } else {
-				var parentsOnly = 1;
+        var parentsOnly = 1;
         var ZeroRecordText = {/literal}'{ts escape="js"}<div class="status messages">No Groups have been created for this site.{/ts}</div>'{literal};
     }
-    
+
     var columns = '';
     var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/grouplist" h=0 q="snippet=4"}'{literal};
     var showOrgInfo = {/literal}"{$showOrgInfo}"{literal};
@@ -122,24 +122,24 @@ function buildGroupSelector( filterSearch ) {
         "bProcessing": true,
         "asStripClasses" : [ "odd-row", "even-row" ],
         "sPaginationType": "full_numbers",
-        "sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',	
+        "sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',
         "bServerSide": true,
         "bJQueryUI": true,
         "sAjaxSource": sourceUrl,
         "iDisplayLength": 25,
-        "oLanguage": { "sZeroRecords":  ZeroRecordText,                         
-                       "sProcessing":    {/literal}"{ts escape='js'}Processing...{/ts}"{literal},   
+        "oLanguage": { "sZeroRecords":  ZeroRecordText,
+                       "sProcessing":    {/literal}"{ts escape='js'}Processing...{/ts}"{literal},
                        "sLengthMenu":    {/literal}"{ts escape='js'}Show _MENU_ entries{/ts}"{literal},
                        "sInfo":          {/literal}"{ts escape='js'}Showing _START_ to _END_ of _TOTAL_ entries{/ts}"{literal},
                        "sInfoEmpty":     {/literal}"{ts escape='js'}Showing 0 to 0 of 0 entries{/ts}"{literal},
                        "sInfoFiltered":  {/literal}"{ts escape='js'}(filtered from _MAX_ total entries){/ts}"{literal},
-                       "sSearch":        {/literal}"{ts escape='js'}Search:{/ts}"{literal},      
-                       "oPaginate": {                                           
-                            "sFirst":    {/literal}"{ts escape='js'}First{/ts}"{literal},          
-                            "sPrevious": {/literal}"{ts escape='js'}Previous{/ts}"{literal},       
-                            "sNext":     {/literal}"{ts escape='js'}Next{/ts}"{literal},           
-                            "sLast":     {/literal}"{ts escape='js'}Last{/ts}"{literal}            
-                        }                                                       
+                       "sSearch":        {/literal}"{ts escape='js'}Search:{/ts}"{literal},
+                       "oPaginate": {
+                            "sFirst":    {/literal}"{ts escape='js'}First{/ts}"{literal},
+                            "sPrevious": {/literal}"{ts escape='js'}Previous{/ts}"{literal},
+                            "sNext":     {/literal}"{ts escape='js'}Next{/ts}"{literal},
+                            "sLast":     {/literal}"{ts escape='js'}Last{/ts}"{literal}
+                        }
                     },
         "fnDrawCallback": function() { setSelectorClass( parentsOnly, showOrgInfo ); },
         "fnServerData": function ( sSource, aoData, fnCallback ) {
@@ -149,9 +149,9 @@ function buildGroupSelector( filterSearch ) {
             if ( filterSearch ) {
                 var groupTypes = '';
                 if ( cj('.crm-group-search-form-block #group_type_1').prop('checked') ) {
-                    groupTypes = '1'; 
+                    groupTypes = '1';
                 }
-                
+
                 if ( cj('.crm-group-search-form-block #group_type_2').prop('checked') ) {
                     if ( groupTypes ) {
                         groupTypes = groupTypes + ',2';
@@ -162,9 +162,9 @@ function buildGroupSelector( filterSearch ) {
 
                 var groupStatus = '';
                 if ( cj('.crm-group-search-form-block #group_status_1').prop('checked') ) {
-                    groupStatus = '1'; 
+                    groupStatus = '1';
                 }
-                
+
                 if ( cj('.crm-group-search-form-block #group_status_2').prop('checked') ) {
                     if ( groupStatus ) {
                         groupStatus = '3';
@@ -173,20 +173,20 @@ function buildGroupSelector( filterSearch ) {
                     }
                 }
 
-                aoData.push(	     
+                aoData.push(
                     {name:'title', value: cj('.crm-group-search-form-block #title').val()},
                     {name:'group_type', value: groupTypes },
                     {name:'visibility', value: cj('.crm-group-search-form-block #visibility').val()},
                     {name:'status', value: groupStatus }
                 );
-            }	
+            }
             cj.ajax( {
-                "dataType": 'json', 
-                "type": "POST", 
-                "url": sSource, 
-                "data": aoData, 
+                "dataType": 'json',
+                "type": "POST",
+                "url": sSource,
+                "data": aoData,
                 "success": fnCallback
-            } ); 
+            } );
         }
     });
 }
@@ -197,11 +197,11 @@ function setSelectorClass( parentsOnly, showOrgInfo ) {
     cj(this).addClass( className );
     var rowID = cj(this).find('td:nth-child(2)').text();
     cj(this).prop( 'id', 'row_' + rowID );
-		if (parentsOnly) {
-	    if ( cj(this).hasClass('crm-group-parent') ) {
-	      cj(this).find('td:first').prepend('{/literal}<span class="collapsed show-children" title="{ts}show child groups{/ts}"/></span>{literal}');
-	    }
-		}
+    if (parentsOnly) {
+      if ( cj(this).hasClass('crm-group-parent') ) {
+        cj(this).find('td:first').prepend('{/literal}<span class="collapsed show-children" title="{ts}show child groups{/ts}"/></span>{literal}');
+      }
+    }
   });
 }
 
@@ -215,24 +215,24 @@ cj('#crm-group-selector').on( 'click', 'span.show-children', function(){
   if ( parentRow[2]) {
     group_id = parentRow[2];
   }
-	var levelClass = 'level_2';
-	// check enclosing td if already at level 2
-	if ( cj(this).parent().hasClass('level_2') ) {
-		levelClass = 'level_3';
-	}
+  var levelClass = 'level_2';
+  // check enclosing td if already at level 2
+  if ( cj(this).parent().hasClass('level_2') ) {
+    levelClass = 'level_3';
+  }
   if ( cj(this).hasClass('collapsed') ) {
     cj(this).removeClass("collapsed").addClass("expanded").attr("title",{/literal}"{ts}hide child groups{/ts}"{literal});
     showChildren( parent_id, showOrgInfo, group_id, levelClass );
   }
   else {
     cj(this).removeClass("expanded").addClass("collapsed").attr("title",{/literal}"{ts}show child groups{/ts}"{literal});
-	  cj('.parent_is_' + parent_id).find('.show-children').removeClass("expanded").addClass("collapsed").attr("title",{/literal}"{ts}show child groups{/ts}"{literal});
-		cj('.parent_is_' + parent_id).hide();
-		cj('.parent_is_' + parent_id).each(function(i, obj) {
-			// also hide children of children
-	    var gID = cj(this).find('td:nth-child(2)').text();
-			cj('.parent_is_' + gID).hide();
-		});
+    cj('.parent_is_' + parent_id).find('.show-children').removeClass("expanded").addClass("collapsed").attr("title",{/literal}"{ts}show child groups{/ts}"{literal});
+    cj('.parent_is_' + parent_id).hide();
+    cj('.parent_is_' + parent_id).each(function(i, obj) {
+      // also hide children of children
+      var gID = cj(this).find('td:nth-child(2)').text();
+      cj('.parent_is_' + gID).hide();
+    });
   }
 });
 
@@ -260,10 +260,10 @@ function showChildren( parent_id, showOrgInfo, group_id, levelClass) {
             }
             else {
               appendHTML += '<td class="crm-group-name ' + levelClass + '"><span class="crm-no-children"></span>' + val.group_name + '</td>';
-            } 
+            }
             appendHTML += "<td>" + val.group_id + "</td>";
             if (val.group_description) {
-              appendHTML += "<td>" + val.group_description + "</td>";						
+              appendHTML += "<td>" + val.group_description + "</td>";
             } else {
               appendHTML += "<td>&nbsp;</td>";
             }
@@ -273,7 +273,7 @@ function showChildren( parent_id, showOrgInfo, group_id, levelClass) {
             appendHTML += "</tr>";
           });
           cj( rowID ).after( appendHTML );
-        } 
+        }
     } );
   }
 }
