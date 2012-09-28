@@ -26,16 +26,16 @@
 {* this template is used for adding/editing Wordpress Access Control  *}
 <div id="help">
     <p>{ts}Use this form to Grant access to CiviCRM components and other CiviCRM permissions to WordPress roles.{/ts}<br /><br />
-	{ts}<strong>NOTE: Super Admin</strong> and <strong>Administrator</strong> roles will have all permissions in CiviCRM.{/ts}
-	</p>
+  {ts}<strong>NOTE: Super Admin</strong> and <strong>Administrator</strong> roles will have all permissions in CiviCRM.{/ts}
+  </p>
 </div>
 <div class="crm-block crm-form-block crm-export-form-block">
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 <table>
      <tr>
         {assign var="i" value=1}
-	    {foreach from=$roles key=role_name item=role_value }
-		  <td style="padding:0;">
+      {foreach from=$roles key=role_name item=role_value }
+      <td style="padding:0;">
           <table border="0" cellpadding="0" cellspacing="0">
           <tr>
                 <td class="label">&nbsp;</td>
@@ -60,7 +60,7 @@
           </table>
           </td>
           {assign var="i" value=$i+1}
-		  {/foreach}
+      {/foreach}
      </tr>
 </table>
 

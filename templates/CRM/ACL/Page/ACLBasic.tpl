@@ -53,17 +53,17 @@
         </tr>
         {foreach from=$rows item=row}
         <tr class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
-	        <td>{$row.entity}</td>	
-	        <td>{$row.object_table}</td>	
-	        <td>{$row.action}</td>
+          <td>{$row.entity}</td>
+          <td>{$row.object_table}</td>
+          <td>{$row.action}</td>
         </tr>
         {/foreach}
         </table>
         {/strip}
 
         {if $action ne 1 and $action ne 2}
-	    <div class="action-link">
-    	<a href="{crmURL q="action=add&reset=1"}" id="newACL"><div class="icon add-icon"></div>{ts}Add ACL{/ts}</a>
+      <div class="action-link">
+      <a href="{crmURL q="action=add&reset=1"}" id="newACL"><div class="icon add-icon"></div>{ts}Add ACL{/ts}</a>
         </div>
         {/if}
     </div>
@@ -75,6 +75,6 @@
         {capture assign=crmURL}{crmURL q="action=add&reset=1"}{/capture}
         <dd>{ts 1=$crmURL}There are no ACLs entered. You can <a href='%1'>add one</a>.{/ts}</dd>
         </dl>
-    </div>    
+    </div>
 {/if}
 </div>
