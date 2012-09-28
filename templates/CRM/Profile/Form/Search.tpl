@@ -28,8 +28,8 @@
     {if $groupId }
 <div class="crm-accordion-wrapper crm-group-{$groupId}-accordion {if $rows}crm-accordion-closed{else}crm-accordion-open{/if}">
  <div class="crm-accordion-header crm-master-accordion-header">
-  <div class="icon crm-accordion-pointer"></div> 
-	{ts}Edit Search Criteria{/ts}
+  <div class="icon crm-accordion-pointer"></div>
+  {ts}Edit Search Criteria{/ts}
  </div>
  <div class="crm-accordion-body">
     {else}
@@ -39,26 +39,26 @@
     <table class="form-layout-compressed" id="profile">
     {foreach from=$fields item=field key=fieldName}
         {assign var=n value=$field.name}
-	{if $field.is_search_range}
-	   {assign var=from value=$field.name|cat:'_from'}
-	   {assign var=to value=$field.name|cat:'_to'}
-	   {if $field.data_type neq 'Date'}
-	        <tr>
-        	    <td class="label">{$form.$from.label}</td>
+  {if $field.is_search_range}
+     {assign var=from value=$field.name|cat:'_from'}
+     {assign var=to value=$field.name|cat:'_to'}
+     {if $field.data_type neq 'Date'}
+          <tr>
+              <td class="label">{$form.$from.label}</td>
                 <td class="description">{$form.$from.html}&nbsp;&nbsp;{$form.$to.label}&nbsp;&nbsp;{$form.$to.html}</td>
-	        </tr>
-	   {else}
+          </tr>
+     {else}
        <tr>
-   	       <td class="label">{$form.$from.label}</td>
+            <td class="label">{$form.$from.label}</td>
            <td class="description">{include file="CRM/common/jcalendar.tpl" elementName=$from}
             &nbsp;&nbsp;{$form.$to.label}&nbsp;&nbsp;{include file="CRM/common/jcalendar.tpl" elementName=$to}</td>
        </tr>
-	   {/if}    
-	{elseif $field.options_per_line}
-	<tr>
+     {/if}
+  {elseif $field.options_per_line}
+  <tr>
         <td class="option-label">{$form.$n.label}</td>
         <td>
-	    {assign var="count" value="1"}
+      {assign var="count" value="1"}
         {strip}
         <table class="form-layout-compressed">
         <tr>
@@ -92,30 +92,30 @@
         {/strip}
         </td>
     </tr>
-	{else}
-	    <tr>
+  {else}
+      <tr>
             <td class="label">{$form.$n.label}</td>
-            {if $n eq 'addressee' or $n eq 'email_greeting' or $n eq 'postal_greeting'}  
-              <td class="description"> 
+            {if $n eq 'addressee' or $n eq 'email_greeting' or $n eq 'postal_greeting'}
+              <td class="description">
                  {include file="CRM/Profile/Form/GreetingType.tpl"}
-              </td> 
-            {elseif $n eq 'group'} 
-	 	      <td>
-	 	        <table id="selector" class="selector" style="width:auto;">
-			        <tr><td>{$form.$n.html}{* quickform add closing </td> </tr>*}
-		        </table>
-		      </td>
+              </td>
+            {elseif $n eq 'group'}
+           <td>
+             <table id="selector" class="selector" style="width:auto;">
+              <tr><td>{$form.$n.html}{* quickform add closing </td> </tr>*}
+            </table>
+          </td>
             {else}
                 <td class="description">
                     {if ( $field.data_type eq 'Date' or
                                ( ( ( $n eq 'birth_date' ) or ( $n eq 'deceased_date' ) ) ) ) }
-                       {include file="CRM/common/jcalendar.tpl" elementName=$n}  
-        		    {else}       
+                       {include file="CRM/common/jcalendar.tpl" elementName=$n}
+                {else}
                        {$form.$n.html}
                     {/if}
-		    	{if ($n eq 'gender') or ($field.html_type eq 'Radio' and $form.formName eq 'Search')}
-			        <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$n}', '{$form.formName}'); return false;">{ts}clear{/ts}</a>)</span>
-	    	    {elseif $field.html_type eq 'Autocomplete-Select'}
+          {if ($n eq 'gender') or ($field.html_type eq 'Radio' and $form.formName eq 'Search')}
+              <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$n}', '{$form.formName}'); return false;">{ts}clear{/ts}</a>)</span>
+            {elseif $field.html_type eq 'Autocomplete-Select'}
                         {if $field.data_type eq 'ContactReference'}
                             {include file="CRM/Custom/Form/ContactReference.tpl" element_name = $n}
                         {else}
@@ -125,13 +125,13 @@
                 </td>
             {/if}
         </tr>
-	{/if}
+  {/if}
     {/foreach}
-    
+
     {if $proximity_search}
         <tr><td colspan="2">{include file="CRM/Contact/Form/Task/ProximityCommon.tpl"}</td></tr>
     {/if}
-    
+
     <tr><td></td><td>{include file="CRM/common/formButtons.tpl"}</td></tr>
     </table>
 
@@ -145,7 +145,7 @@
 {literal}
 <script type="text/javascript">
 cj(function() {
-   cj().crmaccordions(); 
+   cj().crmaccordions();
 });
 </script>
 {/literal}
@@ -166,9 +166,9 @@ cj(function() {
 {literal}
 <script type="text/javascript">
 
-cj(document).ready(function(){ 
-	cj('#selector tr:even').addClass('odd-row ');
-	cj('#selector tr:odd ').addClass('even-row');
+cj(document).ready(function(){
+  cj('#selector tr:even').addClass('odd-row ');
+  cj('#selector tr:odd ').addClass('even-row');
 });
 </script>
 {/literal}

@@ -24,10 +24,10 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for editing Site Preferences  *}
-<div class="crm-block crm-form-block crm-preferences-display-form-block"> 
+<div class="crm-block crm-form-block crm-preferences-display-form-block">
  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
      <table class="form-layout">
-	    <tr class="crm-preferences-display-form-block-contact_view_options">
+      <tr class="crm-preferences-display-form-block-contact_view_options">
                <td class="label">{$form.contact_view_options.label}</td>
                <td>{$form.contact_view_options.html}</td>
             </tr>
@@ -35,7 +35,7 @@
            <td>&nbsp;</td>
            <td class="description">{capture assign=crmURL}{crmURL p='civicrm/admin/setting/component' q='action=add&reset=1'}{/capture}{ts 1=$crmURL}Select the <strong>tabs</strong> that should be displayed when viewing a contact record. EXAMPLE: If your organization does not keep track of 'Relationships', then un-check this option to simplify the screen display. Tabs for Contributions, Pledges, Memberships, Events, Grants and Cases are also hidden if the corresponding component is not enabled. Go to <a href="%1">Administer > System Settings > Enable Components</a> to modify the components which are available for your site.{/ts}</td>
         </tr>
-	    <tr class="crm-preferences-display-form-block-contact_edit_options">
+      <tr class="crm-preferences-display-form-block-contact_edit_options">
             <td class="label">{$form.contact_edit_options.label}</td>
             <td>
                <table style="width:80%">
@@ -57,8 +57,8 @@
                        </ul>
                    </td>
                  </tr>
-	           </table>
-	        </td>
+             </table>
+          </td>
         </tr>
         <tr class="crm-preferences-display-form-block-description">
            <td>&nbsp;</td>
@@ -112,7 +112,7 @@
                     {$form.wysiwyg_input_format.html}{literal}<script type="text/javascript">cj(document).ready(function() { if (cj('#editor_id').val() == 4) cj('#crm-preferences-display-form-block-wysiwyg_input_format').show(); });</script>{/literal}
                     <br /><span class="description">{ts}You will need to enable and configure several modules if you want to allow users to upload images while using a Drupal Default Editor.{/ts} {docURL page="Configuring CiviCRM to Use the Default Drupal Editor" resource="wiki"}</span>
                 </td>
-            </tr>    
+            </tr>
         {/if}
         <tr class="crm-preferences-display-form-block-description">
            <td>&nbsp;</td>
@@ -142,34 +142,34 @@
 {literal}
 <script type="text/javascript" >
     cj(function( ) {
-	cj("#contactEditBlocks").sortable({
-			placeholder: 'ui-state-highlight',
-			update: getSorting
-		});
-	cj("#contactEditOptions").sortable({
-			placeholder: 'ui-state-highlight',
-			update: getSorting
-		});
+  cj("#contactEditBlocks").sortable({
+      placeholder: 'ui-state-highlight',
+      update: getSorting
     });
- 
+  cj("#contactEditOptions").sortable({
+      placeholder: 'ui-state-highlight',
+      update: getSorting
+    });
+    });
+
     function getSorting(e, ui) {
         var params = new Array();
-    	var y = 0;
-	var items = cj("#contactEditBlocks li");
-	if ( items.length > 0 ) {
-	    for( var y=0; y < items.length; y++ ) {
-	        var idState = items[y].id.split('-');
-	        params[y+1] = idState[1];    
-	    }
-	}     
-    
+      var y = 0;
+  var items = cj("#contactEditBlocks li");
+  if ( items.length > 0 ) {
+      for( var y=0; y < items.length; y++ ) {
+          var idState = items[y].id.split('-');
+          params[y+1] = idState[1];
+      }
+  }
+
         items = cj("#contactEditOptions li");
-	if ( items.length > 0 ) { 
+  if ( items.length > 0 ) {
             for( var x=0; x < items.length; x++ ) {
                 var idState = items[x].id.split('-');
-                params[x+y+1] = idState[1];    
+                params[x+y+1] = idState[1];
             }
-	}
+  }
         cj('#contact_edit_preferences').val( params.toString( ) );
     }
 </script>

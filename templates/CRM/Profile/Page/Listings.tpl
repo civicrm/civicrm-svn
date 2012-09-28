@@ -28,13 +28,13 @@
 
 {if $search}
 <div class="crm-block crm-form-block">
-	{include file="$searchTPL"}
+  {include file="$searchTPL"}
 </div>
 {/if}
 <div class="crm-block crm-content-block">
 {* show profile listings criteria ($qill) *}
 {if $rows}
-    
+
     {if $qill}
     <div class="crm-search-tasks">
      <div id="search-status">
@@ -44,28 +44,28 @@
     </div>
     </div>
     {/if}
-    
-    
+
+
     <div class="crm-search-results">
     {include file="CRM/common/pager.tpl" location="top"}
     {* Search criteria are passed to tpl in the $qill array *}
-    
+
 
     {strip}
     <table>
       <tr class="columnheader">
       {foreach from=$columnHeaders item=header}
         <th scope="col">
-        {if $header.sort} 
-          {assign var='key' value=$header.sort} 
-          {$sort->_response.$key.link} 
-        {else} 
-          {$header.name} 
-        {/if} 
+        {if $header.sort}
+          {assign var='key' value=$header.sort}
+          {$sort->_response.$key.link}
+        {else}
+          {$header.name}
+        {/if}
          </th>
       {/foreach}
       </tr>
-    
+
       {counter start=0 skip=1 print=false}
       {foreach from=$rows item=row name=listings}
       <tr id="row-{$smarty.foreach.listings.iteration}" class="{cycle values="odd-row,even-row"}">
