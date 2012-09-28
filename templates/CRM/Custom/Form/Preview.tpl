@@ -49,10 +49,10 @@
         {if $element.help_pre}
             <tr><td class="label"></td><td class="description">{$element.help_pre}</td></tr>
         {/if}
-	{if $element.options_per_line }
+  {if $element.options_per_line }
         {*assign var="element_name" value=$element.custom_group_id|cat:_|cat:$field_id|cat:_|cat:$element.name*}
-        {assign var="element_name" value=$element.element_name}     
-        <tr> 
+        {assign var="element_name" value=$element.element_name}
+        <tr>
          <td class="label">{$form.$element_name.label}{if $element.help_post}{help id=$element_name text=$element.help_post}{/if}</td>
          <td>
             {assign var="count" value="1"}
@@ -72,38 +72,38 @@
                                 {assign var="count" value=`$count+1`}
                             {/if}
                          {/if}
-                    {/foreach}  
-		    {if $element.html_type eq 'Radio'}
+                    {/foreach}
+        {if $element.html_type eq 'Radio'}
                  <tr>
-	               <td><span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$element_name}', '{$form.formName}'); return false;" >{ts}clear{/ts}</a>)</span></td> 
-	             {/if}
-                 </tr>                  
+                 <td><span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$element_name}', '{$form.formName}'); return false;" >{ts}clear{/ts}</a>)</span></td>
+               {/if}
+                 </tr>
                 </table>
          </td>
         </tr>
-	{else}
-        {assign var="name" value=`$element.name`} 
+  {else}
+        {assign var="name" value=`$element.name`}
         {*assign var="element_name" value=$group_id|cat:_|cat:$field_id|cat:_|cat:$element.name*}
-        {assign var="element_name" value=$element.element_name}  
+        {assign var="element_name" value=$element.element_name}
         <tr>
           <td class="label">{$form.$element_name.label}{if $element.help_post}{help id=$element_name text=$element.help_post}{/if}</td>
-	      <td>
-	    {if $element.data_type neq 'Date'}
+        <td>
+      {if $element.data_type neq 'Date'}
             {$form.$element_name.html}&nbsp;
         {elseif $element.skip_calendar NEQ true }
             {include file="CRM/common/jcalendar.tpl" elementName=$element_name}
         {/if}
-	    {if $element.html_type eq 'Radio'}
-	    	<span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$element_name}', '{$form.formName}'); return false;" >{ts}clear{/ts}</a>)</span>
-	    {elseif $element.html_type eq 'Autocomplete-Select'}
-	        {if $element.data_type eq 'ContactReference'}
+      {if $element.html_type eq 'Radio'}
+        <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$element_name}', '{$form.formName}'); return false;" >{ts}clear{/ts}</a>)</span>
+      {elseif $element.html_type eq 'Autocomplete-Select'}
+          {if $element.data_type eq 'ContactReference'}
                   {include file="CRM/Custom/Form/ContactReference.tpl"}
                 {else}
-	          {include file="CRM/Custom/Form/AutoComplete.tpl"}
+            {include file="CRM/Custom/Form/AutoComplete.tpl"}
                 {/if}
         {/if}
           </td>
-	{/if}
+  {/if}
      {/if}
     {/foreach}
     </table>

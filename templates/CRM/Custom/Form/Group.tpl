@@ -96,8 +96,8 @@ if ( isGroupEmpty ) {
 
 function showHideStyle()
 {
-	var isShow          = false;
-	var extend          = document.getElementById("extends_0").value;
+  var isShow          = false;
+  var extend          = document.getElementById("extends_0").value;
     var contactTypes    = {/literal}'{$contactTypes}'{literal};
     var showStyle       = "{/literal}{$showStyle}{literal}";
     var showMultiple    = "{/literal}{$showMultiple}{literal}";
@@ -108,13 +108,13 @@ function showHideStyle()
     if ( cj.inArray(extend, contactTypes) >= 0 ) {
         isShow  = true;
     }
-	if( isShow  ) {
+  if( isShow  ) {
         cj("tr#style").show();
         cj("tr#is_multiple").show();
-	} else {
+  } else {
         cj("tr#style").hide();
         cj("tr#is_multiple").hide();
-   	}
+     }
 
     if ( showStyle ) {
         cj("tr#style").show();

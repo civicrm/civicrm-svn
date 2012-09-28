@@ -32,18 +32,18 @@ cj( function( ) {
 
     var customObj   = cj(custom);
     var customIdObj = cj(custom_id);
-    
+
     if ( !customObj.hasClass('ac_input') ) {
-        customObj.autocomplete( url, 
+        customObj.autocomplete( url,
             { width : 250, selectFirst : false, elementId: custom,  matchContains: true, formatResult: {/literal}validate{$element_name|replace:']':''|replace:'[':'_'|replace:'-':'_'}{literal}
-            }).result( 
+            }).result(
                 function(event, data ) {
                     customIdObj.val( data[1] );
                 }
         );
         customObj.click( function( ) {
             customIdObj.val('');
-	    }); 
+      });
      }
 });
 

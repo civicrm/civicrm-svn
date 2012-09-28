@@ -27,8 +27,8 @@
 {foreach from=$groupTree item=cd_edit key=group_id}
   <div class="crm-accordion-wrapper crm-contactDetails-accordion crm-accordion-open" id="{$cd_edit.name}" >
     <div class="crm-accordion-header">
-    <div class="icon crm-accordion-pointer"></div> 
-        {$cd_edit.title}	
+    <div class="icon crm-accordion-pointer"></div>
+        {$cd_edit.title}
     </div><!-- /.crm-accordion-header -->
 
     <div class="crm-accordion-body">
@@ -91,13 +91,13 @@
                     {include file="CRM/common/jcalendar.tpl" elementName=$element_name_from}
                     &nbsp;&nbsp;{$form.$element_name_to.label}&nbsp;&nbsp;
                     {include file="CRM/common/jcalendar.tpl" elementName=$element_name_to}
-                {/if}  
+                {/if}
             {else}
                 <td class="label">{$form.$element_name.label}</td><td>
                 {if $element.data_type neq 'Date'}
                     {$form.$element_name.html}
                 {elseif $element.skip_calendar NEQ true }
-                    {include file="CRM/common/jcalendar.tpl" elementName=$element_name}    
+                    {include file="CRM/common/jcalendar.tpl" elementName=$element_name}
                 {/if}
             {/if}
             {if $element.html_type eq 'Radio'}
@@ -111,16 +111,16 @@
             {/if}
             </td>
           </tr>
-	    {/if}
-	    {/foreach}
-	   </table>
+      {/if}
+      {/foreach}
+     </table>
     </div><!-- /.crm-accordion-body -->
   </div><!-- /.crm-accordion-wrapper -->
 
 {if  $form.formName eq 'Advanced'}
 <script type="text/javascript">
 {if $cd_edit.collapse_adv_display eq 1}
-	cj("#{$cd_edit.name}").removeClass('crm-accordion-open').addClass('crm-accordion-closed');
+  cj("#{$cd_edit.name}").removeClass('crm-accordion-open').addClass('crm-accordion-closed');
 {/if}
 </script>
 {/if}

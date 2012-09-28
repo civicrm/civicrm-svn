@@ -64,17 +64,17 @@
                 </table>
             </td>
         </tr>
-            
+
     {else}
         <tr class="custom_field-row {$element.element_name}-row">
-            <td class="label">{$form.$element_name.label}{if $element.help_post}{help id=$element_name text=$help_post}{/if}</td>                                
+            <td class="label">{$form.$element_name.label}{if $element.help_post}{help id=$element_name text=$help_post}{/if}</td>
             <td class="html-adjust">
                 {if $element.data_type neq 'Date' OR ($element.data_type eq 'Date' AND $element.is_view eq 1)}
                     {$form.$element_name.html}&nbsp;
                 {elseif $element.skip_calendar NEQ true}
                     {include file="CRM/common/jcalendar.tpl" elementName=$element_name}
                 {/if}
-                
+
                 {if $element.html_type eq 'Radio' and $element.is_view eq 0}
                     <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$element_name}', '{$form.formName}'); return false;" >{ts}clear{/ts}</a>)</span>
                 {elseif $element.data_type eq 'File'}
@@ -89,9 +89,9 @@
                             {if $element.element_value.deleteURL }
                                 <br />
                             {$element.element_value.deleteURL}
-                            {/if}	
-                        </span>  
-                    {/if} 
+                            {/if}
+                        </span>
+                    {/if}
                 {elseif $element.html_type eq 'Autocomplete-Select'}
                   {if $element.data_type eq 'ContactReference'}
                     {include file="CRM/Custom/Form/ContactReference.tpl"}
@@ -101,6 +101,6 @@
                 {/if}
             </td>
         </tr>
-        
+
     {/if}
 
