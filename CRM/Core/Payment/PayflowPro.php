@@ -56,7 +56,7 @@ class CRM_Core_Payment_PayflowPro extends CRM_Core_Payment {
   /*
      * This function  sends request and receives response from
      * the processor. It is the main function for processing on-server
-	 * credit card transactions
+   * credit card transactions
      */
   function doDirectPayment(&$params) {
     if (!defined('CURLOPT_SSLCERT')) {
@@ -65,7 +65,7 @@ class CRM_Core_Payment_PayflowPro extends CRM_Core_Payment {
 
     /*
          * define variables for connecting with the gateway
-		 */
+     */
 
 
     // Are you using the Payflow Fraud Protection Service?
@@ -90,7 +90,7 @@ class CRM_Core_Payment_PayflowPro extends CRM_Core_Payment {
     /*
          *Create the array of variables to be sent to the processor from the $params array
          * passed into this function
-		 *
+     *
          */
 
     $payflow_query_array = array(

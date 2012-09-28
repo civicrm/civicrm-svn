@@ -83,7 +83,7 @@ class CRM_Core_Payment_Elavon extends CRM_Core_Payment {
     // credit card name
     $requestFields['ssl_first_name'] = $params['billing_first_name'];
     // credit card name
-    //$requestFields['ssl_middle_name']	     = $params['billing_middle_name'];
+    //$requestFields['ssl_middle_name']       = $params['billing_middle_name'];
     // credit card name
     $requestFields['ssl_last_name'] = $params['billing_last_name'];
     // contact name
@@ -114,7 +114,7 @@ class CRM_Core_Payment_Elavon extends CRM_Core_Payment {
      *  $params['qfKey'];
      *  $params['amount_other'];
      *  $params['ip_address'];
-     *  $params['contributionType_name'	];
+     *  $params['contributionType_name'  ];
      *  $params['contributionPageID'];
      *  $params['contributionType_accounting_code'];
      *  $params['amount_level'];

@@ -111,7 +111,7 @@ class CRM_Core_Payment_FirstData extends CRM_Core_Payment {
     //compile array
 
     /**********************************************************
-     *		Payment Processor field name 				**fields from $params array	 ***
+     *    Payment Processor field name         **fields from $params array   ***
      *******************************************************************/
 
     $requestFields['cardnumber'] = $params['credit_card_number'];
@@ -134,20 +134,20 @@ class CRM_Core_Payment_FirstData extends CRM_Core_Payment {
     $requestFields['ordertype'] = $params['payment_action'];
     $requestFields['comments'] = $params['description'];
     //**********************set 'result' for live testing **************************
-    //  $requestFields[       'result'	]			=		"";  #set to "Good", "Decline" or "Duplicate"
-    //  $requestFields[       ''	]					=	$params[ 'qfKey'				];
-    //  $requestFields[       ''	]					=	$params[ 'amount_other'			];
-    //  $requestFields[       ''	]					=	$params[ 'billing_first_name'		];
-    //  $requestFields[       ''	]					=	$params[ 'billing_middle_name'		];
-    //  $requestFields[       ''	]					=	$params[ 'billing_last_name'	];
+    //  $requestFields[       'result'  ]      =    "";  #set to "Good", "Decline" or "Duplicate"
+    //  $requestFields[       ''  ]          =  $params[ 'qfKey'        ];
+    //  $requestFields[       ''  ]          =  $params[ 'amount_other'      ];
+    //  $requestFields[       ''  ]          =  $params[ 'billing_first_name'    ];
+    //  $requestFields[       ''  ]          =  $params[ 'billing_middle_name'    ];
+    //  $requestFields[       ''  ]          =  $params[ 'billing_last_name'  ];
 
-    //  $requestFields[       ''	]					=	$params[ 'contributionType_name'	];
-    //  $requestFields[       ''	]					=	$params[ 'contributionPageID'	];
-    //  $requestFields[       ''	]					=	$params[ 'contributionType_accounting_code'	];
-    //  $requestFields[       ''	]					=	$params['amount_level'	];
-    //  $requestFields[       ''	]					=	$params['credit_card_type'	];
-    //  $requestFields[       'addrnum'	]		=	numeric portion of street address - not yet implemented
-    //  $requestFields[       'taxexempt'	]	 taxexempt status (Y or N) - not implemented
+    //  $requestFields[       ''  ]          =  $params[ 'contributionType_name'  ];
+    //  $requestFields[       ''  ]          =  $params[ 'contributionPageID'  ];
+    //  $requestFields[       ''  ]          =  $params[ 'contributionType_accounting_code'  ];
+    //  $requestFields[       ''  ]          =  $params['amount_level'  ];
+    //  $requestFields[       ''  ]          =  $params['credit_card_type'  ];
+    //  $requestFields[       'addrnum'  ]    =  numeric portion of street address - not yet implemented
+    //  $requestFields[       'taxexempt'  ]   taxexempt status (Y or N) - not implemented
 
     return $requestFields;
   }
@@ -175,7 +175,7 @@ class CRM_Core_Payment_FirstData extends CRM_Core_Payment {
      * create FirstData request object
      **********************************************************/
     require_once 'FirstData/lphp.php';
-    //	$mylphp=new lphp;
+    //  $mylphp=new lphp;
 
     /**********************************************************
      * define variables for connecting with the gateway

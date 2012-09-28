@@ -324,19 +324,19 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
     // retain the multiple count custom fields value
     if(CRM_Utils_Array::value('hidden_custom', $_POST)) {
       $customGroupCount = CRM_Utils_Array::value('hidden_custom_group_count', $_POST);
-      
+
       if ($contactSubType = CRM_Utils_Array::value( 'contact_sub_type', $_POST)) {
         $paramSubType = implode(',', $contactSubType);
       }
-      
+
       $this->_getCachedTree = FALSE;
       unset($customGroupCount[0]);
       foreach ($customGroupCount as $groupID => $groupCount) {
-        if ($groupCount > 1) {          
+        if ($groupCount > 1) {
           $this->set('groupID', $groupID);
-          //loop the group 
+          //loop the group
           for ($i = 0; $i <= $groupCount; $i++) {
-            CRM_Custom_Form_CustomData::preProcess($this, NULL, $contactSubType, 
+            CRM_Custom_Form_CustomData::preProcess($this, NULL, $contactSubType,
               $i, $this->_contactType
             );
             CRM_Contact_Form_Edit_CustomData::buildQuickForm($this);
@@ -359,10 +359,10 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
       if ($this->_contactSubType || isset($paramSubType)) {
         $paramSubType = (isset($paramSubType)) ? $paramSubType :
           str_replace( CRM_Core_DAO::VALUE_SEPARATOR, ',', trim($this->_contactSubType, CRM_Core_DAO::VALUE_SEPARATOR));
-        
+
         $this->assign('paramSubType', $paramSubType);
       }
-      
+
       if (CRM_Utils_Request::retrieve('type', 'String', CRM_Core_DAO::$_nullObject)) {
         CRM_Contact_Form_Edit_CustomData::preProcess($this);
       }
@@ -572,7 +572,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
 
     // Call Locking check if editing existing contact
     if ($this->_contactId) {
-      $this->addFormRule(array('CRM_Contact_Form_Edit_Lock', 'formRule'), $this->_contactId);      
+      $this->addFormRule(array('CRM_Contact_Form_Edit_Lock', 'formRule'), $this->_contactId);
     }
 
     if (array_key_exists('Address', $this->_editOptions)) {
@@ -1128,19 +1128,19 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
         $duplicateContactsLinks .= '<table class="matching-contacts-actions">';
         $row = '';
         for ($i = 0; $i < count($contactLinks['rows']); $i++) {
-          $row .= '  <tr>	 ';
-          $row .= '  	<td class="matching-contacts-name"> ';
+          $row .= '  <tr>   ';
+          $row .= '    <td class="matching-contacts-name"> ';
           $row .= $contactLinks['rows'][$i]['display_name'];
-          $row .= '  	</td>';
-          $row .= '  	<td class="matching-contacts-email"> ';
+          $row .= '    </td>';
+          $row .= '    <td class="matching-contacts-email"> ';
           $row .= $contactLinks['rows'][$i]['primary_email'];
-          $row .= '  	</td>';
-          $row .= '  	<td class="action-items"> ';
+          $row .= '    </td>';
+          $row .= '    <td class="action-items"> ';
           $row .= $contactLinks['rows'][$i]['view'];
           $row .= $contactLinks['rows'][$i]['edit'];
           $row .= CRM_Utils_Array::value('merge', $contactLinks['rows'][$i]);
-          $row .= '  	</td>';
-          $row .= '  </tr>	 ';
+          $row .= '    </td>';
+          $row .= '  </tr>   ';
         }
 
         $duplicateContactsLinks .= $row . '</table>';
