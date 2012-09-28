@@ -135,7 +135,7 @@ class CRM_Core_Extensions_Extension {
    * Determine whether the XML info file exists
    *
    * @return  bool
-   */  
+   */
   public function hasXMLInfo() {
     return file_exists($this->path . 'info.xml');
   }
@@ -318,11 +318,11 @@ class CRM_Core_Extensions_Extension {
     CRM_Utils_File::copyDir($extractedZipPath,
       $config->extensionsDir . DIRECTORY_SEPARATOR . $this->key
     );
-    
+
     if (!CRM_Utils_File::cleanDir($extractedZipPath, TRUE, FALSE)) {
       CRM_Core_Session::setStatus(ts('Failed to clean temp dir: %1', array(1 => $extractedZipPath)), '', 'alert');
     }
-    
+
     return TRUE;
   }
 
@@ -530,9 +530,9 @@ class CRM_Core_Extensions_Extension {
         break;
 
       default:
-        CRM_Core_Session::setStatus(ts( "Unrecognized payment hook (%1) in %2::%3", 
-        								array(1 => $method, 2 =>  __CLASS__ , 3 => __METHOD__) ),
-        								'', 'error');
+        CRM_Core_Session::setStatus(ts( "Unrecognized payment hook (%1) in %2::%3",
+                        array(1 => $method, 2 =>  __CLASS__ , 3 => __METHOD__) ),
+                        '', 'error');
     }
   }
 

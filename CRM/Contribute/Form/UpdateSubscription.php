@@ -106,7 +106,7 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form {
         array( 1 => $this->_paymentProcessorObj->_processorName ) ) . '</span>';
       CRM_Core_Session::setStatus($userAlert, ts('Warning'), 'alert');
     }
-    
+
     $this->assign('isChangeSupported', $this->_paymentProcessorObj->isSupported('changeSubscriptionAmount'));
     $this->assign('paymentProcessor', $this->_paymentProcessor);
     $this->assign('frequency_unit', $this->_subscriptionDetails->frequency_unit);
@@ -115,9 +115,9 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form {
     if ($this->_subscriptionDetails->contact_id) {
       list($this->_donorDisplayName, $this->_donorEmail) = CRM_Contact_BAO_Contact::getContactDetails($this->_subscriptionDetails->contact_id);
     }
-    
+
     CRM_Utils_System::setTitle(ts('Update Recurring Contribution'));
-    
+
     // handle context redirection
     CRM_Contribute_BAO_ContributionRecur::setSubscriptionContext();
   }
@@ -199,7 +199,7 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form {
     // if this is an update of an existing recurring contribution, pass the ID
     $params['id'] = $this->_subscriptionDetails->recur_id;
     $message = '';
-    
+
     $params['subscriptionId'] = $this->_subscriptionDetails->subscription_id;
     $updateSubscription = true;
     if ($this->_paymentProcessorObj->isSupported('changeSubscriptionAmount')) {
@@ -221,20 +221,20 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form {
                            4 => $params['installments'],
                            )
                      );
-                     
-		$msgTitle = ts('Update Success');
-		$msgType = 'success';
-        
+
+    $msgTitle = ts('Update Success');
+    $msgType = 'success';
+
         $contactID = $this->_subscriptionDetails->contact_id;
-        
+
         if ($this->_subscriptionDetails->amount != $params['amount']) {
             $message .= "<br /> Recurring contribution amount has been updated from " . CRM_Utils_Money::format($this->_subscriptionDetails->amount, $this->_subscriptionDetails->currency) . ' to ' . CRM_Utils_Money::format($params['amount'], $this->_subscriptionDetails->currency) . 'for this subscription. ';
         }
-        
+
         if ($this->_subscriptionDetails->installments != $params['installments']) {
             $message .= "<br /> Recurring contribution installments have been updated from {$this->_subscriptionDetails->installments} to {$params['installments']} for this subscription. ";
         }
-        
+
         $activityParams = array(
             'source_contact_id' => $contactID,
             'activity_type_id' => CRM_Core_OptionGroup::getValue('activity_type',
@@ -251,7 +251,7 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form {
         );
         $session = CRM_Core_Session::singleton();
         $cid = $session->get('userID');
-        
+
         if ($cid) {
           $activityParams['target_contact_id'][] = $activityParams['source_contact_id'];
           $activityParams['source_contact_id'] = $cid;
@@ -307,10 +307,10 @@ class CRM_Contribute_Form_UpdateSubscription extends CRM_Core_Form {
     if ( $userID && $status) {
       CRM_Core_Session::setStatus($status, $msgTitle, $msgType);
     } else if (!$userID) {
-      if ($status) 
+      if ($status)
         CRM_Utils_System::setUFMessage($status);
       // keep result as 1, since we not displaying anything on the redirected page anyway
-      return CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/contribute/subscriptionstatus', 
+      return CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/contribute/subscriptionstatus',
                                                               "reset=1&task=update&result=1"));
     }
   }
