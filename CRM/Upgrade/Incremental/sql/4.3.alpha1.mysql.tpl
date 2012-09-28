@@ -38,3 +38,7 @@ ALTER TABLE civicrm_msg_template
 ALTER TABLE civicrm_contribution_page ADD COLUMN is_recur_installments tinyint(4) DEFAULT '0';
 UPDATE civicrm_contribution_page SET is_recur_installments='1';
 
+-- CRM-10863		
+SELECT @country_id := id from civicrm_country where name = 'Luxembourg' AND iso_code = 'LU';
+INSERT IGNORE INTO `civicrm_state_province`(`country_id`, `abbreviation`, `name`) VALUES
+(@country_id, 'L', 'Luxembourg');

@@ -3803,5 +3803,7 @@ INSERT INTO civicrm_state_province (id, country_id, abbreviation, name) VALUES
 (NULL, 1045, "SZ", "Shizuishan"),
 (NULL, 1045, "WZ", "Wuzhong"),
 (NULL, 1045, "GY", "Guyuan"),
-(NULL, 1045, "ZW", "Zhongwei");
+(NULL, 1045, "ZW", "Zhongwei"),
 
+-- CRM-10863 Added Missing Province for Luxembourg
+(NULL, 1126, "L", "Luxembourg");
