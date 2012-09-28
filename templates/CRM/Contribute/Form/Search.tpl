@@ -27,18 +27,18 @@
 {assign var="showBlock" value="'searchForm'"}
 {assign var="hideBlock" value="'searchForm_show'"}
 <div class="crm-block crm-form-block crm-contribution-search-form-block">
-	<div class="crm-accordion-wrapper crm-contribution_search_form-accordion {if $rows}crm-accordion-closed{else}crm-accordion-open{/if}">
-    	<div class="crm-accordion-header crm-master-accordion-header">
-    	    <div class="icon crm-accordion-pointer"></div> 
-    	    {ts}Edit Search Criteria{/ts}
-     	</div><!-- /.crm-accordion-header -->
-    	<div class="crm-accordion-body">
-        {strip} 
+  <div class="crm-accordion-wrapper crm-contribution_search_form-accordion {if $rows}crm-accordion-closed{else}crm-accordion-open{/if}">
+      <div class="crm-accordion-header crm-master-accordion-header">
+          <div class="icon crm-accordion-pointer"></div>
+          {ts}Edit Search Criteria{/ts}
+       </div><!-- /.crm-accordion-header -->
+      <div class="crm-accordion-body">
+        {strip}
             <table class="form-layout">
             <tr>
                 <td class="font-size12pt" colspan="2">
                     {$form.sort_name.label}&nbsp;&nbsp;{$form.sort_name.html|crmAddClass:'twenty'}&nbsp;&nbsp;&nbsp;{$form.buttons.html}
-                </td>       
+                </td>
             </tr>
             {include file="CRM/Contribute/Form/Search/Common.tpl"}
             <tr>
@@ -46,7 +46,7 @@
             </tr>
             </table>
         {/strip}
-    	</div><!-- /.crm-accordion-body -->
+      </div><!-- /.crm-accordion-body -->
     </div><!-- /.crm-accordion-wrapper -->
 </div><!-- /.crm-form-block -->
 {if $rowsEmpty || $rows}
@@ -59,16 +59,16 @@
 
 {if $rows}
     <div class="crm-results-block">
-    {* Search request has returned 1 or more matching rows. *}    
+    {* Search request has returned 1 or more matching rows. *}
         {* This section handles form elements for action task select and submit *}
         <div class="crm-search-tasks crm-event-search-tasks">
             {include file="CRM/common/searchResultTasks.tpl" context="Contribution"}
         </div>
 
         {* This section displays the rows along and includes the paging controls *}
-	<div id="contributionSearch" class="crm-search-results">
+  <div id="contributionSearch" class="crm-search-results">
         {include file="CRM/Contribute/Form/Selector.tpl" context="Search"}
-	</div>
+  </div>
     {* END Actions/Results section *}
     </div>
 {/if}
@@ -78,7 +78,7 @@
 {literal}
 <script type="text/javascript">
 cj(function() {
-   cj().crmaccordions(); 
+   cj().crmaccordions();
 });
 </script>
 {/literal}

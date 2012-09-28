@@ -33,47 +33,47 @@
       </div>
   {elseif $action eq 1024}
      {include file="CRM/Contribute/Form/Contribution/PremiumBlock.tpl" context="previewPremium"}
-  {else}  
+  {else}
   <table class="form-layout-compressed">
      <tr class="crm-contribution-form-block-name">
-	<td class="label">{$form.name.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_product' field='name' id=$productId}{/if}
-	</td>
-	<td class="html-adjust">{$form.name.html}<br />
-	   <span class="description">{ts}Name of the premium (product, service, subscription, etc.) as it will be displayed to contributors.{/ts}</span>
-	</td>
+  <td class="label">{$form.name.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_product' field='name' id=$productId}{/if}
+  </td>
+  <td class="html-adjust">{$form.name.html}<br />
+     <span class="description">{ts}Name of the premium (product, service, subscription, etc.) as it will be displayed to contributors.{/ts}</span>
+  </td>
      </tr>
      <tr>
         <td class="label">{$form.description.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_product' field='description' id=$productId}{/if}
-	</td>
-	<td class="html-adjust">{$form.description.html}
-	</td>
+  </td>
+  <td class="html-adjust">{$form.description.html}
+  </td>
      <tr class="crm-contribution-form-block-sku">
         <td class="label">{$form.sku.label}
-	</td>
-	<td class="html-adjust">{$form.sku.html}<br />
-	   <span class="description">{ts}Optional product SKU or code. If used, this value will be included in contributor receipts.{/ts}</span>
-	</td>
+  </td>
+  <td class="html-adjust">{$form.sku.html}<br />
+     <span class="description">{ts}Optional product SKU or code. If used, this value will be included in contributor receipts.{/ts}</span>
+  </td>
      </tr>
      <tr class="crm-contribution-form-block-imageOption" >
         <td class="label">{$form.imageOption.label}</td>
-    	<td>
-    	<fieldset><div class="description">
+      <td>
+      <fieldset><div class="description">
         <p>{ts}You can give this premium a picture that will be displayed on the contribution page. Both a 50 x 50 pixel thumbnail image and a 200 x 200 pixel larger image will be displayed. Images must be in GIF, JPEG, or PNG format.{/ts}</p>
         <p>{ts}You can upload an image from your computer OR enter a URL for an image already on the Web. If you chose to upload an image file, a 'thumbnail' version will be automatically created for you. If you don't have an image available at this time, you may also choose to display a 'No Image Available' icon - by selecting the 'default image'.{/ts}</p>
                   </div>
   <table class="form-layout-compressed">
-    {if $thumbnailUrl}<tr class="odd-row"><td class="describe-image" colspan="2"><strong>Current Image Thumbnail</strong><br /><img src="{$thumbnailUrl}" /></td></tr>{/if} 
+    {if $thumbnailUrl}<tr class="odd-row"><td class="describe-image" colspan="2"><strong>Current Image Thumbnail</strong><br /><img src="{$thumbnailUrl}" /></td></tr>{/if}
     <tr class="crm-contribution-form-block-imageOption"><td>{$form.imageOption.image.html}</td><td>{$form.uploadFile.html}</td></tr>
-	<tr class="crm-contribution-form-block-imageOption-thumbnail"><td colspan="2">{$form.imageOption.thumbnail.html}</td></tr>
+  <tr class="crm-contribution-form-block-imageOption-thumbnail"><td colspan="2">{$form.imageOption.thumbnail.html}</td></tr>
     <tr id="imageURL"{if $action eq 2}class="show-row" {else} class="hide-row" {/if}>
         <td class="label">{$form.imageUrl.label}</td><td>{$form.imageUrl.html|crmAddClass:huge}</td>
     </tr>
     <tr id="thumbnailURL"{if $action eq 2}class="show-row" {else} class="hide-row" {/if}>
         <td class="label">{$form.thumbnailUrl.label}</td><td>{$form.thumbnailUrl.html|crmAddClass:huge}</td>
     </tr>
-	<tr><td colspan="2">{$form.imageOption.default_image.html}</td></tr>
-	<tr><td colspan="2">{$form.imageOption.noImage.html}</td></tr>
-	</table>
+  <tr><td colspan="2">{$form.imageOption.default_image.html}</td></tr>
+  <tr><td colspan="2">{$form.imageOption.noImage.html}</td></tr>
+  </table>
         </fieldset>
         </td>
     </tr>
@@ -86,8 +86,8 @@
     <tr class="crm-contribution-form-block-price">
        <td class="label">{$form.price.label}</td>
        <td class="html-adjust">{$form.price.html|crmMoney}<br />
-	   <span class="description">{ts}The market value of this premium (e.g. retail price). For tax-deductible contributions, this amount will be used to set the non-deductible amount in the contribution record and receipt.{/ts}</span>
-       </td> 
+     <span class="description">{ts}The market value of this premium (e.g. retail price). For tax-deductible contributions, this amount will be used to set the non-deductible amount in the contribution record and receipt.{/ts}</span>
+       </td>
     </tr>
     <tr class="crm-contribution-form-block-cost">
        <td class="label">{$form.cost.label}</td>
@@ -98,7 +98,7 @@
     <tr class="crm-contribution-form-block-options">
        <td class="label">{$form.options.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_product' field='options' id=$productId}{/if}</td>
       <td class="html-adjust">{$form.options.html}<br />
-      	  <span class="description">{ts}Enter a comma-delimited list of color, size, etc. options for the product if applicable. Contributors will be presented a drop-down menu of these options when they select this product.{/ts}</span>
+          <span class="description">{ts}Enter a comma-delimited list of color, size, etc. options for the product if applicable. Contributors will be presented a drop-down menu of these options when they select this product.{/ts}</span>
        </td>
     </tr>
     <tr class="crm-contribution-form-block-is_active">
@@ -106,12 +106,12 @@
        <td class="html-adjust">{$form.is_active.html}</td>
     </tr>
   </table>
-	<div id="time-delimited[show]" class="data-group-first">
-	<div class="spacer"></div>  
+  <div id="time-delimited[show]" class="data-group-first">
+  <div class="spacer"></div>
         <a href="#" onclick="hide('time-delimited[show]'); show('time-delimited'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a><label>{ts}Subscription or Service Settings{/ts}</label><br />
-	</div>	
-	<div id="time-delimited"> 
-	<div class="spacer"></div>  
+  </div>
+  <div id="time-delimited">
+  <div class="spacer"></div>
     <fieldset><legend><a href="#" onclick="hide('time-delimited'); show('time-delimited[show]'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{ts}Subscription or Service Settings{/ts}</legend>
   <table class="form-layout-compressed">
     <tr class="crm-contribution-form-block-period_type">
@@ -135,7 +135,7 @@
     <tr class="crm-contribution-form-block-frequency_interval">
        <td class="label">{$form.frequency_interval.label}</td>
        <td class="html-adjust">{$form.frequency_interval.html} &nbsp; {$form.frequency_unit.html}<br />
-          <span class="description">{ts}Frequency of subscription or service (e.g. journal delivered every two months).{/ts}</span> 
+          <span class="description">{ts}Frequency of subscription or service (e.g. journal delivered every two months).{/ts}</span>
     </td>
     </tr>
     </table>
@@ -144,7 +144,7 @@
  {/if}
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </fieldset>
-{if $action eq 1 or $action eq 2 }		 
+{if $action eq 1 or $action eq 2 }
 
 <script type="text/javascript">
 var myElement1 = document.getElementById('time-delimited');
@@ -152,29 +152,29 @@ var myElement2 = document.getElementById('time-delimited[show]');
 
 {if $showSubscriptions }
   myElement1.style.display = 'block';
-  myElement2.style.display = 'none';    
+  myElement2.style.display = 'none';
 {else}
   myElement1.style.display = 'none';
-  myElement2.style.display = 'block';  
+  myElement2.style.display = 'block';
 {/if}
 {literal}
 
 function add_upload_file_block(parms) {
-	if (parms =='thumbnail') {
-	      
-          document.getElementById("imageURL").style.display="table-row";                    
-	      document.getElementById("thumbnailURL").style.display="table-row";
-	   
-	} else {
+  if (parms =='thumbnail') {
 
-	      document.getElementById("imageURL").style.display="none";    
-	      document.getElementById("thumbnailURL").style.display="none";
-	   	
-	}	
+          document.getElementById("imageURL").style.display="table-row";
+        document.getElementById("thumbnailURL").style.display="table-row";
+
+  } else {
+
+        document.getElementById("imageURL").style.display="none";
+        document.getElementById("thumbnailURL").style.display="none";
+
+  }
 }
 
 function select_option() {
-    
+
 }
 
 {/literal}

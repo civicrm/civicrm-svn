@@ -28,37 +28,37 @@
 <div class="crm-block crm-form-block crm-contribution_type-form-block">
    {if $action eq 8}
       <div class="messages status no-popup">
-          <div class="icon inform-icon"></div>    
+          <div class="icon inform-icon"></div>
           {ts}WARNING: You cannot delete a contribution type if it is currently used by any Contributions, Contribution Pages or Membership Types. Consider disabling this option instead.{/ts} {ts}Deleting a contribution type cannot be undone.{/ts} {ts}Do you want to continue?{/ts}
       </div>
    {else}
      <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
      <table class="form-layout-compressed">
       <tr class="crm-contribution-form-block-name">
- 	  <td class="label">{$form.name.label}</td>
-	  <td class="html-adjust">{$form.name.html}</td>	
+     <td class="label">{$form.name.label}</td>
+    <td class="html-adjust">{$form.name.html}</td>
        </tr>
-       <tr class="crm-contribution-form-block-description">	 
-    	  <td class="label">{$form.description.label}</td>
-	  <td class="html-adjust">{$form.description.html}</td>
+       <tr class="crm-contribution-form-block-description">
+        <td class="label">{$form.description.label}</td>
+    <td class="html-adjust">{$form.description.html}</td>
        </tr>
        <tr class="crm-contribution-form-block-accounting_code">
-    	  <td class="label">{$form.accounting_code.label}</td>
-	  <td class="html-adjust">{$form.accounting_code.html}<br />
-       	      <span class="description">{ts}Use this field to flag contributions of this type with the corresponding code used in your accounting system. This code will be included when you export contribution data to your accounting package.{/ts}</span>
-	  </td>
+        <td class="label">{$form.accounting_code.label}</td>
+    <td class="html-adjust">{$form.accounting_code.html}<br />
+               <span class="description">{ts}Use this field to flag contributions of this type with the corresponding code used in your accounting system. This code will be included when you export contribution data to your accounting package.{/ts}</span>
+    </td>
        </tr>
        <tr class="crm-contribution-form-block-is_deductible">
-    	  <td class="label">{$form.is_deductible.label}</td>
-	  <td class="html-adjust">{$form.is_deductible.html}<br />
-	      <span class="description">{ts}Are contributions of this type tax-deductible?{/ts}</span>
-	  </td>
+        <td class="label">{$form.is_deductible.label}</td>
+    <td class="html-adjust">{$form.is_deductible.html}<br />
+        <span class="description">{ts}Are contributions of this type tax-deductible?{/ts}</span>
+    </td>
        </tr>
-       <tr class="crm-contribution-form-block-is_active">	 
-    	  <td class="label">{$form.is_active.label}</td>
-	  <td class="html-adjust">{$form.is_active.html}</td>
+       <tr class="crm-contribution-form-block-is_active">
+        <td class="label">{$form.is_active.label}</td>
+    <td class="html-adjust">{$form.is_active.html}</td>
        </tr>
-      </table> 
+      </table>
    {/if}
    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="botttom"}</div>
 </div>

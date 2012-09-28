@@ -60,7 +60,7 @@
         <div class="header-dark">
             {if !$membershipBlock AND $amount OR ( $priceSetID and $lineItem ) }{ts}Contribution Amount{/ts}{else}{ts}Membership Fee{/ts} {/if}
         </div>
-	{/if}
+  {/if}
         <div class="display-block">
             {if !$useForMember}
               {if $lineItem and $priceSetID}
@@ -141,7 +141,7 @@
                 {if $pcp_is_anonymous}
                     <strong>{ts}anonymously{/ts}.</strong>
                 {else}
-		    {ts}under the name{/ts}: <strong>{$pcp_roll_nickname}</strong><br/>
+        {ts}under the name{/ts}: <strong>{$pcp_roll_nickname}</strong><br/>
                     {if $pcp_personal_note}
                         {ts}With the personal note{/ts}: <strong>{$pcp_personal_note}</strong>
                     {else}
@@ -174,15 +174,15 @@
                 <div class="header-dark">
                     {ts}Billing Name and Address{/ts}
                 </div>
-            	<div class="crm-section no-label billing_name-section">
-            		<div class="content">{$billingName}</div>
-            		<div class="clear"></div>
-            	</div>
-            	<div class="crm-section no-label billing_address-section">
-            		<div class="content">{$address|nl2br}</div>
-            		<div class="clear"></div>
-            	</div>
-       	    </div>
+              <div class="crm-section no-label billing_name-section">
+                <div class="content">{$billingName}</div>
+                <div class="clear"></div>
+              </div>
+              <div class="crm-section no-label billing_address-section">
+                <div class="content">{$address|nl2br}</div>
+                <div class="clear"></div>
+              </div>
+             </div>
           {/if}
         {/if}
         {if $email}
@@ -191,8 +191,8 @@
                     {ts}Your Email{/ts}
                 </div>
                 <div class="crm-section no-label contributor_email-section">
-                	<div class="content">{$email}</div>
-                	<div class="clear"></div>
+                  <div class="content">{$email}</div>
+                  <div class="clear"></div>
                 </div>
             </div>
         {/if}
@@ -230,9 +230,9 @@
             {else}
                 <div class="crm-section no-label credit_card_details-section">
                     <div class="content">{$credit_card_type}</div>
-                	<div class="content">{$credit_card_number}</div>
-                	<div class="content">{ts}Expires{/ts}: {$credit_card_exp_date|truncate:7:''|crmDate}</div>
-                	<div class="clear"></div>
+                  <div class="content">{$credit_card_number}</div>
+                  <div class="content">{ts}Expires{/ts}: {$credit_card_exp_date|truncate:7:''|crmDate}</div>
+                  <div class="clear"></div>
                 </div>
             {/if}
         </div>

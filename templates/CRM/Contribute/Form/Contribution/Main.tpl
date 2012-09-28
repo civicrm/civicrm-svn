@@ -28,7 +28,7 @@
  {if $is_monetary}
   {* Put PayPal Express button after customPost block since it's the submit button in this case. *}
   {if $paymentProcessor.payment_processor_type EQ 'PayPal_Express'}
-  <div id="paypalExpress">   
+  <div id="paypalExpress">
      {assign var=expressButtonName value='_qf_Main_upload_express'}
       <fieldset class="crm-group paypal_checkout-group">
         <legend>{ts}Checkout with PayPal{/ts}</legend>
@@ -47,10 +47,10 @@
         </div>
         </div>
       </fieldset>
-   </div> 
+   </div>
   {/if}
  {/if}
-    
+
 {elseif $onbehalf}
    {include file=CRM/Contribute/Form/Contribution/OnBehalfOf.tpl}
 {else}
@@ -137,11 +137,11 @@ var priceset = {/literal}{if $priceset}'#{$priceset}'{else}0{/if}{literal}
     <div class="crm-section {$form.is_recur.name}-section">
       <div class="label">&nbsp;</div>
       <div class="content">
-        {$form.is_recur.html} {$form.is_recur.label} {ts}every{/ts} 
+        {$form.is_recur.html} {$form.is_recur.label} {ts}every{/ts}
         {if $is_recur_interval}
-          {$form.frequency_interval.html} 
+          {$form.frequency_interval.html}
         {/if}
-        {if $one_frequency_unit} 
+        {if $one_frequency_unit}
           {$frequency_unit}
         {else}
           {$form.frequency_unit.html}
@@ -445,9 +445,9 @@ function toggleConfirmButton() {
 
    if (payPalExpressId !=0 && payPalExpressId == processorTypeId) {
       hide("crm-submit-buttons");
-   } else {	
+   } else {
       show("crm-submit-buttons");
-   } 
+   }
 }
 
 cj('input[name="payment_processor"]').change( function() {

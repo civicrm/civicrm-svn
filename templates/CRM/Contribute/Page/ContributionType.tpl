@@ -35,8 +35,8 @@
 <p></p>
     <div class="form-item">
         {strip}
-	{* handle enable/disable actions*}
- 	{include file="CRM/common/enableDisable.tpl"}
+  {* handle enable/disable actions*}
+   {include file="CRM/common/enableDisable.tpl"}
         <table cellpadding="0" cellspacing="0" border="0">
            <thead class="sticky">
             <th>{ts}Name{/ts}</th>
@@ -49,21 +49,21 @@
           </thead>
          {foreach from=$rows item=row}
         <tr id="row_{$row.id}"class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
-	        <td>{$row.name}</td>	
-	        <td>{$row.description}</td>
-            	<td>{$row.accounting_code}</td>
-	        <td>{if $row.is_deductible eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-	        <td>{if $row.is_reserved eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-	        <td id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-	        <td>{$row.action|replace:'xx':$row.id}</td>
+          <td>{$row.name}</td>
+          <td>{$row.description}</td>
+              <td>{$row.accounting_code}</td>
+          <td>{if $row.is_deductible eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+          <td>{if $row.is_reserved eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+          <td id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+          <td>{$row.action|replace:'xx':$row.id}</td>
         </tr>
         {/foreach}
          </table>
         {/strip}
 
         {if $action ne 1 and $action ne 2}
-	    <div class="action-link">
-    	<a href="{crmURL q="action=add&reset=1"}" id="newContributionType" class="button"><span><div class="icon add-icon"></div>{ts}Add Contribution Type{/ts}</span></a>
+      <div class="action-link">
+      <a href="{crmURL q="action=add&reset=1"}" id="newContributionType" class="button"><span><div class="icon add-icon"></div>{ts}Add Contribution Type{/ts}</span></a>
         </div>
         {/if}
     </div>
@@ -73,6 +73,6 @@
         <div class="icon inform-icon"></div>
         {capture assign=crmURL}{crmURL q="action=add&reset=1"}{/capture}
         {ts 1=$crmURL}There are no Contribution Types entered. You can <a href='%1'>add one</a>.{/ts}
-    </div>    
+    </div>
 {/if}
 {/if}

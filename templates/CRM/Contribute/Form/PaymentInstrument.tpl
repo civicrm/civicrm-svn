@@ -34,10 +34,10 @@
       </div>
      {else}
      <table>
- 	<tr class="crm-contribution-form-block-name"><td class="label">{$form.name.label}</td><td class="html-adjust">{$form.name.html}</td></tr>
-    	<tr class="crm-contribution-form-block-description"><td class="label">{$form.description.label}</td><td class="html-adjust">{$form.description.html}</td></tr>
+   <tr class="crm-contribution-form-block-name"><td class="label">{$form.name.label}</td><td class="html-adjust">{$form.name.html}</td></tr>
+      <tr class="crm-contribution-form-block-description"><td class="label">{$form.description.label}</td><td class="html-adjust">{$form.description.html}</td></tr>
         <tr class="crm-contribution-form-block-is_active"><td class="label">{$form.is_active.label}</td><td class="html-adjust">{$form.is_active.html}</td></tr>
-     </table> 
+     </table>
      {/if}
     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </fieldset>

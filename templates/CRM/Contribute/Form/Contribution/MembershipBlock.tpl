@@ -67,7 +67,7 @@
         {/if}
 
         {include file="CRM/Price/Form/PriceSet.tpl" extends="Membership"}
-      	<div id="allow_auto_renew">
+        <div id="allow_auto_renew">
             <div class='crm-section auto-renew'>
                 <div class='label'></div>
                 <div class ='content'>
@@ -217,13 +217,13 @@ cj(function(){
         </tr>
 
         {/foreach}
-	    {if isset($form.auto_renew) }
-	        <tr id="allow_auto_renew">
-	        <td style="width: auto;">{$form.auto_renew.html}</td>
-	        <td style="width: auto;">
-	            {$form.auto_renew.label}
-	        </td>
-    	    </tr>
+      {if isset($form.auto_renew) }
+          <tr id="allow_auto_renew">
+          <td style="width: auto;">{$form.auto_renew.html}</td>
+          <td style="width: auto;">
+              {$form.auto_renew.label}
+          </td>
+          </tr>
         {/if}
         {if $showRadio}
             {if $showRadioNoThanks } {* Provide no-thanks option when Membership signup is not required - per membership block configuration. *}

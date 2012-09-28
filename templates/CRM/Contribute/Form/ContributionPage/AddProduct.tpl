@@ -31,7 +31,7 @@
         {ts}Use this form to select a premium to be offered on this Online Contribution Page.{/ts}
     {/if}
 </div>
- 
+
 <div class="crm-block crm-form-block crm-contribution-add_product-form-block">
     <fieldset><legend>{if $action eq 2 }{ts}Add Products to This Page{/ts} {elseif $action eq 1024}{ts}Preview{/ts}{else} {ts}Remove Products from this Page{/ts}{/if}</legend>
    {if $action eq 8}
@@ -42,13 +42,13 @@
   {elseif $action eq 1024}
      {include file="CRM/Contribute/Form/Contribution/PremiumBlock.tpl"}
   {else}
-  <table class="form-layout-compressed"> 
+  <table class="form-layout-compressed">
     <tr class="crm-contribution-form-block-product_id"><td class="label">{$form.product_id.label}</td><td class="html-adjust">{$form.product_id.html}<br />
     <span class="description">{ts 1=$managePremiumsURL}Pick a premium to include on this Contribution Page. Use <a href='%1'>Manage Premiums</a> to create or enable additional premium choices for your site.{/ts}</span></td></tr>
     <tr class="crm-contribution-form-block-weight"><td class="label">{$form.weight.label}</td><td class="html-adjust">{$form.weight.html}<br />
      <span class="description">{ts}Weight controls the order that premiums are displayed on the Contribution Page.{/ts}</span></td></tr>
     </table>
-  {/if}	
+  {/if}
     </fieldset>
 </div>
 

@@ -26,7 +26,7 @@
 <div class="view-content">
     {if $contribute_rows}
         {strip}
-    
+
         <table class="selector">
             <tr class="columnheader">
                 <th>{ts}Total Amount{/ts}</th>
@@ -35,7 +35,7 @@
                 <th>{ts}Receipt Sent{/ts}</th>
                 <th>{ts}Status{/ts}</th>
             </tr>
-        
+
             {foreach from=$contribute_rows item=row}
                 <tr id='rowid{$row.contribution_id}' class="{cycle values="odd-row,even-row"}{if $row.cancel_date} disabled{/if}">
                     <td>{$row.total_amount|crmMoney:$row.currency} {if $row.amount_level } - {$row.amount_level} {/if}
@@ -51,7 +51,7 @@
             {/foreach}
         </table>
         {/strip}
-        {if $contributionSummary.total.count gt 12} 
+        {if $contributionSummary.total.count gt 12}
             {ts}Contact us for information about contributions prior to those listed above.{/ts}
         {/if}
     {else}
@@ -60,9 +60,9 @@
                     {ts}There are no contributions on record for you.{/ts}
         </div>
     {/if}
-     
-    
-    {if $honor}	
+
+
+    {if $honor}
         {if $honorRows}
             {strip}
             <div id="help">
@@ -70,7 +70,7 @@
             </div>
             <table class="selector">
                 <tr class="columnheader">
-                    <th >{ts}Contributor{/ts}</th> 
+                    <th >{ts}Contributor{/ts}</th>
                     <th>{ts}Amount{/ts}</th>
                     <th>{ts}Contribution Type{/ts}</th>
                     <th>{ts}Received date{/ts}</th>
@@ -89,9 +89,9 @@
                 {/foreach}
             </table>
             {/strip}
-        {/if}   	  	
-    {/if} 
-    
+        {/if}
+    {/if}
+
     {if $recur}
         {if $recurRows}
             {strip}
@@ -99,10 +99,10 @@
             <table class="selector">
                 <tr class="columnheader">
                     <th>{ts}Terms:{/ts}</th>
-                    <th>{ts}Status{/ts}</th> 
-                    <th>{ts}Installments{/ts}</th> 
-                    <th>{ts}Created{/ts}</th> 
-                    <th></th>   
+                    <th>{ts}Status{/ts}</th>
+                    <th>{ts}Installments{/ts}</th>
+                    <th>{ts}Created{/ts}</th>
+                    <th></th>
                 </tr>
                 {foreach from=$recurRows item=row key=id}
                     <tr class="{cycle values="odd-row,even-row"}">
@@ -114,9 +114,9 @@
                        <td>{$recurRows.$id.action|replace:'xx':$recurRows.id}</td>
                     </tr>
                 {/foreach}
-            </table>    
+            </table>
             {/strip}
-        {/if}   	  	
+        {/if}
     {/if}
 </div>
 

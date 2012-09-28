@@ -35,8 +35,8 @@ cj('#crm-container')
             cj(event.target).addClass('btn-slide-active');
         } else {
             cj('.btn-slide .panel').hide();
-            cj('.btn-slide-active').removeClass('btn-slide-active');	
-        } 
+            cj('.btn-slide-active').removeClass('btn-slide-active');
+        }
 });
 </script>
 {/literal}
