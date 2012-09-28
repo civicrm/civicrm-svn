@@ -25,7 +25,7 @@
 *}
 <p>
 
-{if $rows } 
+{if $rows }
 <div class="crm-submit-buttons">
      <span class="element-right">{include file="CRM/common/formButtons.tpl" location="top"}</span>
 </div>
@@ -49,9 +49,9 @@
         <td class="crm-case-print-case_type_id">{$row.case_type_id}</td>
         <td class="crm-case-print-case_role">{if $row.case_role}{$row.case_role}{else}---{/if}</td>
         <td class="crm-case-print-case_recent_activity_type">{if $row.case_recent_activity_type}
-    	{$row.case_recent_activity_type}<br />{$row.case_recent_activity_date|crmDate}{else}---{/if}</td>
+      {$row.case_recent_activity_type}<br />{$row.case_recent_activity_date|crmDate}{else}---{/if}</td>
         <td class="crm-case-print-case_scheduled_activity_type">{if $row.case_scheduled_activity_type}
-    	{$row.case_scheduled_activity_type}<br />{$row.case_scheduled_activity_date|crmDate}{else}---{/if}</td>
+      {$row.case_scheduled_activity_type}<br />{$row.case_scheduled_activity_date|crmDate}{else}---{/if}</td>
     </tr>
 {/foreach}
 </table>

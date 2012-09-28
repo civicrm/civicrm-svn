@@ -34,21 +34,21 @@
         <td class="label">
             {$form.change_client_id.label}
         </td>
-	<td id='client'>
-	    {$form.change_client_id.html|crmAddClass:big}
-	</td>
+  <td id='client'>
+      {$form.change_client_id.html|crmAddClass:big}
+  </td>
     </tr>
     <tr>
         <td></td>
         <td><span class="crm-button crm-button-type-submit">&nbsp;{$form._qf_EditClient_next_edit_client.html}</span>
             <span class="crm-button crm-button-type-submit">&nbsp;{$form._qf_EditClient_cancel_edit_client.html}</span>
-	</td>
+  </td>
     </tr>
 </table>
 </div>
 </div>
 {literal}
-<script type="text/javascript"> 
+<script type="text/javascript">
 var contactUrl = {/literal}"{crmURL p='civicrm/ajax/rest' q='className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=newcontact' h=0 }"{literal};
 var selectedContact = '';
 
@@ -61,24 +61,24 @@ function checkSelection( field ) {
     var selectedContactName = cj('#change_client_id').val( );
     var clientName = new Array( );
     clientName = selectedContact.split('::');
-    
+
     if ( selectedContactName == '' ) {
         validationMessage = '{/literal}{ts escape="js"}Please select another client for this case.{/ts}{literal}';
-	alert( validationMessage );
+  alert( validationMessage );
         return false;
     } else if ( cj('#contact_id').val( ) == {/literal}{$contactId}{literal} ) {
-      	validationMessage = '{/literal}{ts 1="'+clientName[0]+'"}%1 is already assigned to this case. Please select some other client for this case.{/ts}{literal}';
-	alert( validationMessage );
-        return false;    
+        validationMessage = '{/literal}{ts 1="'+clientName[0]+'"}%1 is already assigned to this case. Please select some other client for this case.{/ts}{literal}';
+  alert( validationMessage );
+        return false;
     } else {
         validationMessage = '{/literal}{ts 1="'+clientName[0]+'"}Are you sure you want to reassign this case and all related activities and relationships to %1?{/ts}{literal}';
         if ( confirm( validationMessage ) ) {
-	    this.href+='&amp;confirmed=1'; 
+      this.href+='&amp;confirmed=1';
         } else {
-	    return false;
-	}	
-    }       
-    
+      return false;
+  }
+    }
+
 }
 </script>
 {/literal}

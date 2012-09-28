@@ -28,18 +28,18 @@
 <div class="crm-block crm-form-block crm-case-activitychangestatus-form-block">
 <table class="form-layout">
      <tr class="crm-case-activitychangestatus-form-block-status">
-	    <td class="label">{$form.activity_change_status.label}</td>
-     	<td>{$form.activity_change_status.html}</td>
+      <td class="label">{$form.activity_change_status.label}</td>
+       <td>{$form.activity_change_status.html}</td>
      </tr>
-</table>     	
+</table>
 </div>
 </div>
 
 {literal}
 <script type="text/javascript">
 cj( "#changeStatusDialog" ).hide( );
-function changeActivityStatus( activityID, contactId, current_status_id ) { 
-    
+function changeActivityStatus( activityID, contactId, current_status_id ) {
+
     cj("#changeStatusDialog").show();
     cj("#changeStatusDialog").dialog({
         title       : "Change Activity Status",
@@ -56,12 +56,12 @@ function changeActivityStatus( activityID, contactId, current_status_id ) {
             cj("#activity_change_status").val( current_status_id );
         },
 
-        buttons : { 
-			"Ok": function() { 
+        buttons : {
+      "Ok": function() {
                 var status_id = cj("#activity_change_status").val( );
 
                 cj(this).dialog("destroy");
-		
+
                 if ( status_id == current_status_id  ) {
                     return false;
                 }
@@ -69,7 +69,7 @@ function changeActivityStatus( activityID, contactId, current_status_id ) {
                 var dataUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 }"{literal};
                 var data = 'json=1&version=3&entity=Activity&action=update&id=' + activityID + '&status_id=' + status_id + '&case_id=' + {/literal}{$caseId}{literal};
                 cj.ajax({   type     : "POST",
-                            dataType : "json", 
+                            dataType : "json",
                             url      : dataUrl,
                             data     : data,
                             success  : function( values ) {
@@ -94,11 +94,11 @@ function changeActivityStatus( activityID, contactId, current_status_id ) {
                             }
                 });
             },
-	
-            "Cancel": function() { 
-                cj(this).dialog("close"); 
-                cj(this).dialog("destroy"); 
-            } 
+
+            "Cancel": function() {
+                cj(this).dialog("close");
+                cj(this).dialog("destroy");
+            }
         }
     });
 }

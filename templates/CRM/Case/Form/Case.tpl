@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* Base template for Open Case. May be used for other special activity types at some point ..
-   Note: 1. We will include all the activity fields here however each activity type file may build (via php) only those required by them. 
+   Note: 1. We will include all the activity fields here however each activity type file may build (via php) only those required by them.
          2. Each activity type file can include its case fields in its own template, so that they will be included during activity edit.
 *}
 <div class="crm-block crm-form-block crm-case-form-block">
@@ -38,15 +38,15 @@
 {/if}
 
 <h3>{if $action eq 8}{ts}Delete Case{/ts}{elseif $action eq 32768}{ts}Restore Case{/ts}{/if}</h3>
-{if $action eq 8 or $action eq 32768 } 
-      <div class="messages status no-popup"> 
-        <div class="icon inform-icon"></div> 
+{if $action eq 8 or $action eq 32768 }
+      <div class="messages status no-popup">
+        <div class="icon inform-icon"></div>
           {if $action eq 8}
-            {ts}Click Delete to move this case and all associated activities to the Trash.{/ts} 
+            {ts}Click Delete to move this case and all associated activities to the Trash.{/ts}
           {else}
-            {ts}Click Restore to retrieve this case and all associated activities from the Trash.{/ts} 
+            {ts}Click Restore to retrieve this case and all associated activities from the Trash.{/ts}
           {/if}
-      </div> 
+      </div>
 {else}
 <table class="form-layout">
     {if $activityTypeDescription }
@@ -56,10 +56,10 @@
     {/if}
 {if $clientName}
     <tr class="crm-case-form-block-clientName">
-    	<td class="label font-size12pt">{ts}Client{/ts}</td>
-    	<td class="font-size12pt bold view-value">{$clientName}</td>
+      <td class="label font-size12pt">{ts}Client{/ts}</td>
+      <td class="font-size12pt bold view-value">{$clientName}</td>
     </tr>
-{elseif !$clientName and $action eq 1} 
+{elseif !$clientName and $action eq 1}
     {if $context eq 'standalone'}
         {include file="CRM/Contact/Form/NewContact.tpl"}
     {/if}
@@ -69,7 +69,7 @@
     <tr class="crm-case-form-block-medium_id">
         <td class="label">{$form.medium_id.label}</td>
         <td class="view-value">{$form.medium_id.html}&nbsp;&nbsp;&nbsp;{$form.activity_location.label} &nbsp;{$form.activity_location.html}</td>
-    </tr> 
+    </tr>
 {/if}
 
 {if $form.activity_details.html}
@@ -83,7 +83,7 @@
 {if $groupTree}
     <tr>
        <td colspan="2">{include file="CRM/Custom/Form/CustomData.tpl"}</td>
-    </tr>    
+    </tr>
 {/if}
 
 {if $form.activity_subject.html}
@@ -105,7 +105,7 @@
         {$form.duration.html}
          <span class="description">{ts}Total time spent on this activity (in minutes).{/ts}
       </td>
-    </tr> 
+    </tr>
 {/if}
 
 {if $form.tag.html}
@@ -133,10 +133,10 @@ cj("select[multiple]").crmasmSelect({
     </td>
 </tr>
 
-<tr class="crm-case-form-block-tag_set"><td colspan="2">{include file="CRM/common/Tag.tpl" tagsetType='case'}</td></tr>	     
+<tr class="crm-case-form-block-tag_set"><td colspan="2">{include file="CRM/common/Tag.tpl" tagsetType='case'}</td></tr>
 
 </table>
-{/if}	
+{/if}
 
 {if $action eq 1}
     {*include custom data js file*}
@@ -149,7 +149,7 @@ cj("select[multiple]").crmasmSelect({
               buildCustomData( {/literal}'{$customDataType}'{literal}, customDataSubType );
            } else {
               buildCustomData( {/literal}'{$customDataType}'{literal} );
-           } 
+           }
        });
        </script>
      {/literal}

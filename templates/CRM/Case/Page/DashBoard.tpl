@@ -33,8 +33,8 @@
 {capture assign=newCaseURL}{crmURL p="civicrm/contact/view/case" q="action=add&context=standalone&reset=1"}{/capture}
 
 <div class="crm-submit-buttons crm-case-dashboard-buttons">
-    {if $newClient and $allowToAddNewCase}	
-	    <a href="{$newCaseURL}" class="button"><span><div class="icon add-icon"></div> {ts}Add Case{/ts}</span></a>
+    {if $newClient and $allowToAddNewCase}
+      <a href="{$newCaseURL}" class="button"><span><div class="icon add-icon"></div> {ts}Add Case{/ts}</span></a>
     {/if}
     <a class="button" name="find_my_cases" href="{crmURL p="civicrm/case/search" q="reset=1&case_owner=2&force=1"}"><span>{ts}Find My Cases{/ts}</span></a>
 
@@ -93,7 +93,7 @@
     </div>
     {else}
         <div class="messages status no-popup">
-	    {ts 1=$findCasesURL}There are no open cases with activities scheduled in the next two weeks. Use %1 to expand your search.{/ts}
+      {ts 1=$findCasesURL}There are no open cases with activities scheduled in the next two weeks. Use %1 to expand your search.{/ts}
         </div>
     {/if}
 
@@ -105,7 +105,7 @@
     </div>
     {else}
         <div class="messages status no-popup">
-	    {ts 1=$findCasesURL}There are no cases with activities scheduled in the past two weeks. Use %1 to expand your search.{/ts}
+      {ts 1=$findCasesURL}There are no cases with activities scheduled in the past two weeks. Use %1 to expand your search.{/ts}
         </div>
     {/if}
 {/if}
