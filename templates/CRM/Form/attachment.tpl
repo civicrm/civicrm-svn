@@ -50,14 +50,14 @@
     {/if}
     {if !$noexpand}
     <div class="crm-accordion-wrapper crm-accordion_title-accordion {$openCloseStyle}">
-	 		<div class="crm-accordion-header">
-	  			<div class="icon crm-accordion-pointer"></div>
-	  			{$attachTitle}
-			</div><!-- /.crm-accordion-header -->
- 		<div class="crm-accordion-body">
- 		{/if}
+       <div class="crm-accordion-header">
+          <div class="icon crm-accordion-pointer"></div>
+          {$attachTitle}
+      </div><!-- /.crm-accordion-header -->
+     <div class="crm-accordion-body">
+     {/if}
     <div id="attachments">
-			<table class="form-layout-compressed">
+      <table class="form-layout-compressed">
       {if $form.attachFile_1}
         {if $context EQ 'pcpCampaign'}
             <div class="description">{ts}You can upload a picture or image to include on your page. Your file should be in .jpg, .gif, or .png format. Recommended image size is 250 x 250 pixels. Maximum size is 360 x 360 pixels.{/ts}</div>
@@ -100,16 +100,16 @@
             </td>
         </tr>
     {/if}
-			</table>
+      </table>
     </div>
-	</div><!-- /.crm-accordion-body -->
-	</div><!-- /.crm-accordion-wrapper -->
+  </div><!-- /.crm-accordion-body -->
+  </div><!-- /.crm-accordion-wrapper -->
   {if !$noexpand}
     {literal}
     <script type="text/javascript">
-	cj(function() {
-	   cj().crmaccordions();
-	});
+  cj(function() {
+     cj().crmaccordions();
+  });
     </script>
     {/literal}
   {/if}

@@ -54,16 +54,16 @@
             <td class="crm-labelFormat-description">{$row.grouping}</td>
             <td class="crm-labelFormat-is_default">{if $row.is_default eq 1}<img src="{$config->resourceBase}i/check.gif" alt="{ts}Default{/ts}" />{/if}&nbsp;</td>
             <td class="crm-labelFormat-is_reserved">{if $row.is_reserved eq 1}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}&nbsp;</td>
-	        <td class="crm-labelFormat-order nowrap">{$row.order}</td>
-	        <td class="order hiddenElement">{$row.weight}</td>
-	        <td>{$row.action|replace:'xx':$row.id}</td>
+          <td class="crm-labelFormat-order nowrap">{$row.order}</td>
+          <td class="order hiddenElement">{$row.weight}</td>
+          <td>{$row.action|replace:'xx':$row.id}</td>
         </tr>
         {/foreach}
         </table>
         {/strip}
 
-	    <div class="action-link">
-    	<a href="{crmURL q="action=add&reset=1"}" id="newLabelFormat" class="button"><span><div class="icon add-icon"></div>{ts}Add Label Format{/ts}</span></a>
+      <div class="action-link">
+      <a href="{crmURL q="action=add&reset=1"}" id="newLabelFormat" class="button"><span><div class="icon add-icon"></div>{ts}Add Label Format{/ts}</span></a>
         </div>
 </div>
 {else}
@@ -71,6 +71,6 @@
       <div class="icon inform-icon"></div>
         {capture assign=crmURL}{crmURL p='civicrm/admin/labelFormats' q="action=add&reset=1"}{/capture}
         {ts 1=$crmURL}There are no Label Formats configured. You can <a href='%1'>add one</a>.{/ts}
-    </div>    
+    </div>
 {/if}
 {/if}

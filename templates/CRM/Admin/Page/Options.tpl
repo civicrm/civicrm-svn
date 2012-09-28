@@ -26,7 +26,7 @@
 
 {if $action eq 1 or $action eq 2 or $action eq 8}
    {include file="CRM/Admin/Form/Options.tpl"}
-{else}	
+{else}
 
 <div id="help">
   {if $gName eq "gender"}
@@ -74,12 +74,12 @@
 {/if}
 <div id={$gName}>
         {strip}
-	{* handle enable/disable actions*} 
-	{include file="CRM/common/enableDisable.tpl"}
+  {* handle enable/disable actions*}
+  {include file="CRM/common/enableDisable.tpl"}
     {include file="CRM/common/jsortable.tpl"}
         <table id="options" class="display">
-	       <thead>
-	       <tr>
+         <thead>
+         <tr>
             {if $showComponent}
                 <th>{ts}Component{/ts}</th>
             {/if}
@@ -90,10 +90,10 @@
                     {ts}Label{/ts}
                 {/if}
             </th>
-	    {if $gName eq "case_status"}
-	    	<th>
-		    {ts}Status Class{/ts}
-		</th>	    
+      {if $gName eq "case_status"}
+        <th>
+        {ts}Status Class{/ts}
+    </th>
             {/if}
             <th>
                 {if $gName eq "redaction_rule"}
@@ -108,7 +108,7 @@
             {if $showVisibility}<th>{ts}Visibility{/ts}</th>{/if}
             <th id="nosort">{ts}Description{/ts}</th>
             <th id="order">{ts}Order{/ts}</th>
-	        {if $showIsDefault}<th>{ts}Default{/ts}</th>{/if}
+          {if $showIsDefault}<th>{ts}Default{/ts}</th>{/if}
             <th>{ts}Reserved{/ts}</th>
             <th>{ts}Enabled?{/ts}</th>
             <th class="hiddenElement"></th>
@@ -121,24 +121,24 @@
             {if $showComponent}
                 <td class="crm-admin-options-component_name">{$row.component_name}</td>
             {/if}
-	        <td class="crm-admin-options-label">{$row.label}</td>
-    	    {if $gName eq "case_status"}				
-    		    <td class="crm-admin-options-grouping">{$row.grouping}</td>
-            {/if}	
-    	    <td class="crm-admin-options-value">{$row.value}</td>
-    		{if $showCounted}
-    		    <td class="yes-no crm-admin-options-filter">{if $row.filter eq 1}<img src="{$config->resourceBase}i/check.gif" alt="{ts}Counted{/ts}" />{/if}</td>
-    		{/if}
+          <td class="crm-admin-options-label">{$row.label}</td>
+          {if $gName eq "case_status"}
+            <td class="crm-admin-options-grouping">{$row.grouping}</td>
+            {/if}
+          <td class="crm-admin-options-value">{$row.value}</td>
+        {if $showCounted}
+            <td class="yes-no crm-admin-options-filter">{if $row.filter eq 1}<img src="{$config->resourceBase}i/check.gif" alt="{ts}Counted{/ts}" />{/if}</td>
+        {/if}
             {if $showVisibility}<td class="crm-admin-visibility_label">{$row.visibility_label}</td>{/if}
-    	    <td class="crm-admin-options-description">{$row.description}</td>	
-    	    <td class="nowrap crm-admin-options-order">{$row.order}</td>
+          <td class="crm-admin-options-description">{$row.description}</td>
+          <td class="nowrap crm-admin-options-order">{$row.order}</td>
             {if $showIsDefault}
-    	    	<td class="crm-admin-options-is_default" align="center">{if $row.is_default eq 1}<img src="{$config->resourceBase}i/check.gif" alt="{ts}Default{/ts}" />{/if}&nbsp;</td>
-    	    {/if}
-	        <td class="crm-admin-options-is_reserved">{if $row.is_reserved eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-	        <td class="crm-admin-options-is_active" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-	        <td>{$row.action|replace:'xx':$row.id}</td>
-	        <td class="order hiddenElement">{$row.weight}</td>
+            <td class="crm-admin-options-is_default" align="center">{if $row.is_default eq 1}<img src="{$config->resourceBase}i/check.gif" alt="{ts}Default{/ts}" />{/if}&nbsp;</td>
+          {/if}
+          <td class="crm-admin-options-is_reserved">{if $row.is_reserved eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+          <td class="crm-admin-options-is_active" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+          <td>{$row.action|replace:'xx':$row.id}</td>
+          <td class="order hiddenElement">{$row.weight}</td>
         </tr>
         {/foreach}
         </tbody>
@@ -156,7 +156,7 @@
          <div class="icon inform-icon"></div>
         {capture assign=crmURL}{crmURL  q="group="|cat:$gName|cat:"&action=add&reset=1"}{/capture}
         {ts 1=$crmURL}There are no option values entered. You can <a href='%1'>add one</a>.{/ts}
-    </div>    
+    </div>
 {/if}
 </div>
 {/if}

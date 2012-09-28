@@ -36,10 +36,10 @@
          {if $item.isDeleted}<del>{/if}{$item.title|mb_truncate:25:"..":true}{if $item.isDeleted}</del>{/if}</a>
          <div class="crm-recentview-wrapper">
            <a href='{$item.url}' class="crm-actions-view">{ts}View{/ts}</a>
-	       {if $item.edit_url}<a href='{$item.edit_url}' class="crm-actions-edit">{ts}Edit{/ts}</a>{/if}    
-		   {if $item.delete_url}<a href='{$item.delete_url}' class="crm-actions-delete">{ts}Delete{/ts}</a>{/if}
+         {if $item.edit_url}<a href='{$item.edit_url}' class="crm-actions-edit">{ts}Edit{/ts}</a>{/if}
+       {if $item.delete_url}<a href='{$item.delete_url}' class="crm-actions-delete">{ts}Delete{/ts}</a>{/if}
          </div>
-	     </li>
+       </li>
     {/foreach}
    </ul>
 </div>
@@ -48,7 +48,7 @@
     cj( function( ) {
       if (cj('#recently-viewed').offset().left > 150) {
         cj('#recently-viewed').removeClass('left').addClass('right');
-		      }
+          }
     });
 </script>
 {/literal}

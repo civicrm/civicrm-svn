@@ -33,7 +33,7 @@
     <div id="reminder">
       {include file="CRM/Admin/Page/Reminders.tpl"}
       <div class="action-link">
-    	  <a href="{crmURL q="action=add&reset=1"}" id="newScheduleReminder" class="button"><span><div class="icon add-icon"></div>{ts}Add Reminder{/ts}</span></a>
+        <a href="{crmURL q="action=add&reset=1"}" id="newScheduleReminder" class="button"><span><div class="icon add-icon"></div>{ts}Add Reminder{/ts}</span></a>
       </div>
 
     </div>
@@ -43,6 +43,6 @@
       <div class="icon inform-icon"></div>
         {capture assign=crmURL}{crmURL p='civicrm/admin/scheduleReminders' q="action=add&reset=1"}{/capture}
         {ts 1=$crmURL}There are no Scheduled Reminders configured. You can <a href='%1'>add one</a>.{/ts}
-    </div>    
+    </div>
 {/if}
 {/if}

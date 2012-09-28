@@ -29,7 +29,7 @@
         {foreach from=$fields item=field key=fieldName}
             {assign var=n value=$fieldName}
             {if $form.$n}
-            	<tr class="crm-preferences-form-block-{$fieldName}">
+              <tr class="crm-preferences-form-block-{$fieldName}">
                     {if $field.html_type EQ 'checkbox'|| $field.html_type EQ 'checkboxes'}
                         <td class="label"></td>
                         <td>
@@ -47,10 +47,10 @@
                             {/if}
                         </td>
                     {/if}
-            	</tr>
-        	{/if}
+              </tr>
+          {/if}
         {/foreach}
-	</table>
+  </table>
 
     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>

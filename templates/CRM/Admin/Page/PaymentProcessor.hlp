@@ -240,34 +240,34 @@
 <table>
 <tr><th>{ts}Parameters{/ts}</th><th>{ts}Values{/ts}</th><th>{ts}Description{/ts}</th></tr>
 <tr>
-	<td>w</td>
-	<td>180/168/160 ({ts}large/medium/small{/ts})</td>
-	<td>{ts}width of the button in pixels{/ts}</td>
+  <td>w</td>
+  <td>180/168/160 ({ts}large/medium/small{/ts})</td>
+  <td>{ts}width of the button in pixels{/ts}</td>
 </tr>
 <tr>
-	<td>h</td>
-	<td>46/44/43 ({ts}large/medium/small{/ts})</td>
-	<td>{ts}height of the button in pixels{/ts}</td>
+  <td>h</td>
+  <td>46/44/43 ({ts}large/medium/small{/ts})</td>
+  <td>{ts}height of the button in pixels{/ts}</td>
 </tr>
 <tr>
-	<td>style</td>
-	<td>white/trans..</td>
-	<td>{ts}background color for the button{/ts}</td>
+  <td>style</td>
+  <td>white/trans..</td>
+  <td>{ts}background color for the button{/ts}</td>
 </tr>
 <tr>
-	<td>variant</td>
-	<td>text/disabled</td>
-	<td>{ts}whether the button is clickable or disabled{/ts}</td>
+  <td>variant</td>
+  <td>text/disabled</td>
+  <td>{ts}whether the button is clickable or disabled{/ts}</td>
 </tr>
 <tr>
-	<td>loc</td>
-	<td>en_US</td>
-	<td>{ts}a locale associated with the transaction (optional){/ts}</td>
+  <td>loc</td>
+  <td>en_US</td>
+  <td>{ts}a locale associated with the transaction (optional){/ts}</td>
 </tr>
 <tr>
-	<td>merchant_id</td>
-	<td>{ts 1=1234567890}(e.g %1){/ts}</td>
-	<td>{ts}Merchant ID{/ts}</td>
+  <td>merchant_id</td>
+  <td>{ts 1=1234567890}(e.g %1){/ts}</td>
+  <td>{ts}Merchant ID{/ts}</td>
 </tr>
 </table>
 
@@ -282,34 +282,34 @@
 <table>
 <tr><th>{ts}Parameters{/ts}</th><th>{ts}Values{/ts}</th><th>{ts}Description{/ts}</th></tr>
 <tr>
-	<td>w</td>
-	<td>180/168/160 ({ts}large/medium/small{/ts})</td>
-	<td>{ts}width of the button in pixels{/ts}</td>
+  <td>w</td>
+  <td>180/168/160 ({ts}large/medium/small{/ts})</td>
+  <td>{ts}width of the button in pixels{/ts}</td>
 </tr>
 <tr>
-	<td>h</td>
-	<td>46/44/43 ({ts}large/medium/small{/ts})</td>
-	<td>{ts}height of the button in pixels{/ts}</td>
+  <td>h</td>
+  <td>46/44/43 ({ts}large/medium/small{/ts})</td>
+  <td>{ts}height of the button in pixels{/ts}</td>
 </tr>
 <tr>
-	<td>style</td>
-	<td>white/trans..</td>
-	<td>{ts}background color for the button{/ts}</td>
+  <td>style</td>
+  <td>white/trans..</td>
+  <td>{ts}background color for the button{/ts}</td>
 </tr>
 <tr>
-	<td>variant</td>
-	<td>text/disabled</td>
-	<td>{ts}whether the button is clickable or disabled{/ts}</td>
+  <td>variant</td>
+  <td>text/disabled</td>
+  <td>{ts}whether the button is clickable or disabled{/ts}</td>
 </tr>
 <tr>
-	<td>loc</td>
-	<td>en_US</td>
-	<td>{ts}a locale associated with the transaction (optional){/ts}</td>
+  <td>loc</td>
+  <td>en_US</td>
+  <td>{ts}a locale associated with the transaction (optional){/ts}</td>
 </tr>
 <tr>
-	<td>merchant_id</td>
-	<td>{ts 1=1234567890}(e.g %1){/ts}</td>
-	<td>{ts}Merchant ID{/ts}</td>
+  <td>merchant_id</td>
+  <td>{ts 1=1234567890}(e.g %1){/ts}</td>
+  <td>{ts}Merchant ID{/ts}</td>
 </tr>
 </table>
 <p><strong>{ts}Example of a large Google Checkout button on a white background (For LIVE Account):{/ts}</strong></p>

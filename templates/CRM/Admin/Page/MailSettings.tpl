@@ -40,7 +40,7 @@
             <th>{ts}Localpart{/ts}</th>
             <th>{ts}Domain{/ts}</th>
             <th>{ts}Return-Path{/ts}</th>
-            <th>{ts}Protocol{/ts}</th>	
+            <th>{ts}Protocol{/ts}</th>
             <th>{ts}Source{/ts}</th>
             <!--<th>{ts}Port{/ts}</th>-->
             <th>{ts}Use SSL?{/ts}</th>
@@ -49,10 +49,10 @@
         </thead>
         {foreach from=$rows item=row}
           <tr id='rowid{$row.id}' class="crm-mailSettings {cycle values="odd-row,even-row"}">
-              <td class="crm-mailSettings-name">{$row.name}</td>	
-              <td class="crm-mailSettings-server">{$row.server}</td>	
-              <td class="crm-mailSettings-username">{$row.username}</td>	
-              <td class="crm-mailSettings-localpart">{$row.localpart}</td>	
+              <td class="crm-mailSettings-name">{$row.name}</td>
+              <td class="crm-mailSettings-server">{$row.server}</td>
+              <td class="crm-mailSettings-username">{$row.username}</td>
+              <td class="crm-mailSettings-localpart">{$row.localpart}</td>
               <td class="crm-mailSettings-domain">{$row.domain}</td>
               <td class="crm-mailSettings-return_path">{$row.return_path}</td>
               <td class="crm-mailSettings-protocol">{$row.protocol}</td>
@@ -77,7 +77,7 @@
     <div class="messages status no-popup">
         <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/>
         {capture assign=crmURL}{crmURL p='civicrm/admin/mailSettings' q="action=add&reset=1"}{/capture}
-        {ts 1=$crmURL}There are no Mail Settings present. You can <a href='%1'>add one</a>.{/ts} 
-    </div>    
+        {ts 1=$crmURL}There are no Mail Settings present. You can <a href='%1'>add one</a>.{/ts}
+    </div>
 {/if}
 {/if}

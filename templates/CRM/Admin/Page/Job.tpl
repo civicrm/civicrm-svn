@@ -44,7 +44,7 @@
 <div id="ltype">
     {strip}
         {* handle enable/disable actions*}
- 	    {include file="CRM/common/enableDisable.tpl"}
+       {include file="CRM/common/enableDisable.tpl"}
         <br/><table class="selector">
         <tr class="columnheader">
             <th >{ts}Name (Frequency)/Description{/ts}</th>
@@ -64,7 +64,7 @@
             <td class="crm-job-name">{if $row.parameters eq null}<em>{ts}no parameters{/ts}</em>{else}<pre>{$row.parameters}</pre>{/if}</td>
             <td class="crm-job-name">{if $row.last_run eq null}never{else}{$row.last_run|crmDate:$config->dateformatDatetime}{/if}</td>
             <td id="row_{$row.id}_status" class="crm-job-is_active">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-	        <td>{$row.action|replace:'xx':$row.id}</td>
+          <td>{$row.action|replace:'xx':$row.id}</td>
         </tr>
         {/foreach}
         </table>
@@ -81,10 +81,10 @@
     <div class="messages status no-popup">
       <div class="icon inform-icon"></div>
         {ts}There are no jobs configured.{/ts}
-     </div>    
+     </div>
      <div class="action-link">
        <a href="{crmURL p='civicrm/admin/job' q="action=add&reset=1"}" id="newJob-nojobs" class="button"><span><div class="icon add-icon"></div>{ts}Add New Scheduled Job{/ts}</span></a>
      </div>
- 
+
 {/if}
 {/if}

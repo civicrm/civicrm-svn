@@ -30,7 +30,7 @@
 
 <div class="float-right">
   <table class="form-layout-compressed">
-   {if $newClient}	
+   {if $newClient}
     <tr>
       <td>
         <a href="{$newCaseURL}" class="button"><span>&raquo; {ts}New Case{/ts}</span></a>
@@ -43,7 +43,7 @@
         <a href="{crmURL p="civicrm/case" q="reset=1&all=1"}"><span>&raquo; {ts}Show ALL Cases with Upcoming Activities{/ts}</span></a>
       </td>
     </tr>
-   {else}	
+   {else}
     <tr>
       <td class="right">
         <a href="{crmURL p="civicrm/case" q="reset=1&all=0"}"><span>&raquo; {ts}Show My Cases with Upcoming Activities{/ts}</span></a>

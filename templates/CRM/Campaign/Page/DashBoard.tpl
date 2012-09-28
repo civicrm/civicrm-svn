@@ -27,7 +27,7 @@
 
 {* build the campaign selector *}
 {if $subPageType eq 'campaign'}
- 
+
 {* load the campaign search and selector here *}
 {include file="CRM/Campaign/Form/Search/Campaign.tpl"}
 
@@ -46,14 +46,14 @@
 {* build normal page *}
 {else}
 
- {* enclosed all tabs and its content in a block *}	
+ {* enclosed all tabs and its content in a block *}
  <div class="crm-block crm-content-block crm-campaign-page">
 
  <div id="mainTabContainer" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
      <ul class="crm-campaign-tabs-list">
            {foreach from=$allTabs key=tabName item=tabValue}
            <li id="tab_{$tabValue.id}" class="crm-tab-button ui-corner-bottom">
-            	<a href="{$tabValue.url}" title="{$tabValue.title}"><span></span>{$tabValue.title}</a>
+              <a href="{$tabValue.url}" title="{$tabValue.title}"><span></span>{$tabValue.title}</a>
            </li>
            {/foreach}
      </ul>
@@ -65,23 +65,23 @@
 
 //explicitly stop spinner
 function stopSpinner( ) {
-  cj('li.crm-tab-button').each(function(){ cj(this).find('span').text(' ');})	 
+  cj('li.crm-tab-button').each(function(){ cj(this).find('span').text(' ');})
 }
 
 cj(document).ready( function( ) {
      {/literal}
      var spinnerImage = '<img src="{$config->resourceBase}i/loading.gif" style="width:10px;height:10px"/>';
-     {literal} 
-     
+     {literal}
+
      var selectedTabIndex = {/literal}{$selectedTabIndex}{literal};
-     cj("#mainTabContainer").tabs( { 
-                                    selected: selectedTabIndex, 
+     cj("#mainTabContainer").tabs( {
+                                    selected: selectedTabIndex,
                                     spinner: spinnerImage,
-				    cache: true, 
-				    load: stopSpinner 
-				    });
+            cache: true,
+            load: stopSpinner
+            });
 });
-           
+
 </script>
 {/literal}
 <div class="clear"></div>

@@ -31,10 +31,10 @@
         {ts 1='http://civicrm.org/' 2='http://civicrm.org/download/'}Read about the new version on <a href='%1'>our website</a> and <a href='%2'>download it here</a>.{/ts}
         <div class="messages status no-popup">
           <table>
-	    <tr><td class="tasklist">
+      <tr><td class="tasklist">
               {ts 1='http://civicrm.org/civicrm/profile/create?reset=1&gid=15'}Have you registered this site at CiviCRM.org? If not, please help strengthen the CiviCRM ecosystem by taking a few minutes to <a href="%1" target="_blank">fill out the site registration form</a>. The information collected will help us prioritize improvements, target our communications and build the community. If you have a technical role for this site, be sure to check "Keep in Touch" to receive technical updates (a low volume mailing list).{/ts}</td>
-	    </tr>
-	  </table>
+      </tr>
+    </table>
         </div>
     </div>
 {/if}
@@ -55,7 +55,7 @@
 
             <table class="form-layout" width="100%">
             <tr>
-	       <td width="50%" style="padding: 0px;">
+         <td width="50%" style="padding: 0px;">
                 {foreach from=$group.fields item=panelItem  key=panelName name=groupLoop}
                     &raquo;&nbsp;<a href="{$panelItem.url}"{if $panelItem.extra} {$panelItem.extra}{/if} id="idc_{$panelItem.id}">{$panelItem.title}</a><br />
                     {if $smarty.foreach.groupLoop.iteration EQ $group.perColumn}
@@ -69,11 +69,11 @@
     </tr>
     </table>
  </div>
- 
+
  <div id="id_{$groupName}">
     <fieldset><legend><strong>{$group.hide}{$group.title}</strong></legend>
         <table class="form-layout">
-                
+
         {foreach from=$group.fields item=panelItem  key=panelName name=groupLoop}
             <tr class="{cycle values="odd-row,even-row" name=$groupName}">
                 <td style="vertical-align: top; width:24px;">
@@ -87,7 +87,7 @@
                 </td>
             </tr>
         {/foreach}
-        
+
         </table>
     </fieldset>
   </div>

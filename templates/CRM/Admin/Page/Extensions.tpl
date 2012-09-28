@@ -57,7 +57,7 @@
       {if $extensionRows}
         <div id="extensions">
           {strip}
-          {* handle enable/disable actions*} 
+          {* handle enable/disable actions*}
           <table id="extensions" class="display">
             <thead>
               <tr>
@@ -75,7 +75,7 @@
                 <td class="crm-extensions-label">
                     <a class="collapsed" href="#"></a>&nbsp;<strong>{$row.label}</strong><br/>({$row.key})
                 </td>
-		<td class="crm-extensions-label">{$row.statusLabel} {if $row.upgradable}<br/>({ts}Outdated{/ts}){/if}</td>
+    <td class="crm-extensions-label">{$row.statusLabel} {if $row.upgradable}<br/>({ts}Outdated{/ts}){/if}</td>
                 <td class="crm-extensions-label">{$row.version} {if $row.upgradable}<br/>({$row.upgradeVersion}){/if}</td>
                 <td class="crm-extensions-is_active" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
                 <td class="crm-extensions-description">{$row.type|capitalize}</td>
@@ -97,7 +97,7 @@
         <div class="messages status no-popup">
              <div class="icon inform-icon"></div>
             {ts}There are no local or publicly available extensions to display. Please click "Refresh" to update information about available extensions.{/ts}
-        </div>    
+        </div>
       {/if}
 
 
@@ -106,7 +106,7 @@
                 <a href="{crmURL q="reset=1"}" id="new" class="button"><span><div class="icon refresh-icon"></div>{ts}Refresh{/ts}</span></a>
               </div>
           {/if}
-          
+
           {literal}
           <script type="text/javascript">
             cj( function( ) {
@@ -117,9 +117,9 @@
                         currentObj.parent( ).parent( ).next( ).hide( );
                     } else {
                         currentObj.addClass( 'expanded' );
-                        currentObj.parent( ).parent( ).next( ).show( ); 
+                        currentObj.parent( ).parent( ).next( ).show( );
                     }
-                    
+
                     return false;
                 });
             });
