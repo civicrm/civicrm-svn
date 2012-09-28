@@ -60,9 +60,9 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 
     if (!empty($testParams)) {
       $query = "
-			SELECT *
-			  FROM $jobTable
-			 WHERE id = {$testParams['job_id']}";
+      SELECT *
+        FROM $jobTable
+       WHERE id = {$testParams['job_id']}";
       $job->query($query);
     }
     else {
@@ -78,22 +78,22 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
       // Select the first child job that is scheduled
       // CRM-6835
       $query = "
-			SELECT   j.*
-			  FROM   $jobTable     j,
-					 $mailingTable m
-			 WHERE   m.id = j.mailing_id AND m.domain_id = {$domainID}
+      SELECT   j.*
+        FROM   $jobTable     j,
+           $mailingTable m
+       WHERE   m.id = j.mailing_id AND m.domain_id = {$domainID}
                      {$modeClause}
-			   AND   j.is_test = 0
-			   AND   ( ( j.start_date IS null
-			   AND       j.scheduled_date <= $currentTime
-			   AND       j.status = 'Scheduled' )
+         AND   j.is_test = 0
+         AND   ( ( j.start_date IS null
+         AND       j.scheduled_date <= $currentTime
+         AND       j.status = 'Scheduled' )
                 OR     ( j.status = 'Running'
-			   AND       j.end_date IS null ) )
-			   AND (j.job_type = 'child')
-			   AND   {$mailingACL}
-			ORDER BY j.mailing_id,
-					 j.id
-			";
+         AND       j.end_date IS null ) )
+         AND (j.job_type = 'child')
+         AND   {$mailingACL}
+      ORDER BY j.mailing_id,
+           j.id
+      ";
 
       $job->query($query);
     }
@@ -279,20 +279,20 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
     // Select all the mailing jobs that are created from
     // when the mailing is submitted or scheduled.
     $query = "
-		SELECT   j.*
-		  FROM   $jobTable     j,
-				 $mailingTable m
-		 WHERE   m.id = j.mailing_id AND m.domain_id = {$domainID}
+    SELECT   j.*
+      FROM   $jobTable     j,
+         $mailingTable m
+     WHERE   m.id = j.mailing_id AND m.domain_id = {$domainID}
                  $workflowClause
                  $modeClause
-		   AND   j.is_test = 0
-		   AND   ( ( j.start_date IS null
-		   AND       j.scheduled_date <= $currentTime
-		   AND       j.status = 'Scheduled'
-		   AND       j.end_date IS null ) )
-		   AND ((j.job_type is NULL) OR (j.job_type <> 'child'))
-		ORDER BY j.scheduled_date,
-				 j.start_date";
+       AND   j.is_test = 0
+       AND   ( ( j.start_date IS null
+       AND       j.scheduled_date <= $currentTime
+       AND       j.status = 'Scheduled'
+       AND       j.end_date IS null ) )
+       AND ((j.job_type is NULL) OR (j.job_type <> 'child'))
+    ORDER BY j.scheduled_date,
+         j.start_date";
 
 
     $job->query($query);
@@ -464,7 +464,7 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
                     WHERE       $eqTable.job_id = " . $this->id . "
                         AND     $edTable.id IS null
                         AND     $ebTable.id IS null
-                        AND		$contactTable.is_opt_out = 0";
+                        AND    $contactTable.is_opt_out = 0";
 
     if ($mailing->sms_provider_id) {
       $query = "
@@ -485,7 +485,7 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
                     WHERE       $eqTable.job_id = " . $this->id . "
                         AND     $edTable.id IS null
                         AND     $ebTable.id IS null
-                        AND		$contactTable.is_opt_out = 0";
+                        AND    $contactTable.is_opt_out = 0";
     }
     $eq->query($query);
 

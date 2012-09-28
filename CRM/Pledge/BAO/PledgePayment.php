@@ -52,14 +52,14 @@ class CRM_Pledge_BAO_PledgePayment extends CRM_Pledge_DAO_PledgePayment {
   static
   function getPledgePayments($pledgeId) {
     $query = "
-SELECT    civicrm_pledge_payment.id id, 
+SELECT    civicrm_pledge_payment.id id,
           scheduled_amount,
-          scheduled_date, 
-          reminder_date, 
+          scheduled_date,
+          reminder_date,
           reminder_count,
-          actual_amount, 
+          actual_amount,
           receive_date,
-	      civicrm_pledge_payment.currency,
+        civicrm_pledge_payment.currency,
           civicrm_option_value.name as status,
           civicrm_option_value.label as label,
           civicrm_contribution.id as contribution_id
@@ -645,7 +645,7 @@ WHERE  civicrm_pledge.id = %2
 UPDATE civicrm_pledge_payment
 SET    civicrm_pledge_payment.status_id = {$paymentStatusId}
        {$actualAmountClause} {$contributionIdClause}
-WHERE  civicrm_pledge_payment.pledge_id = %1    
+WHERE  civicrm_pledge_payment.pledge_id = %1
        {$paymentClause}
 ";
 
@@ -696,10 +696,10 @@ WHERE  civicrm_pledge_payment.id = {$paymentId}
 SELECT civicrm_pledge_payment.id id, civicrm_pledge_payment.scheduled_amount amount, civicrm_pledge_payment.currency
 FROM civicrm_pledge, civicrm_pledge_payment
 WHERE civicrm_pledge.id = civicrm_pledge_payment.pledge_id
-  AND civicrm_pledge_payment.status_id {$statusClause}        
+  AND civicrm_pledge_payment.status_id {$statusClause}
   AND civicrm_pledge.id = %1
 ORDER BY civicrm_pledge_payment.scheduled_date ASC
-LIMIT 0, %2  
+LIMIT 0, %2
 ";
 
     $params[1]      = array($pledgeID, 'Integer');
