@@ -40,7 +40,7 @@ class WebTest_Contribute_ConfirmOptionalTest extends CiviSeleniumTestCase {
     // confirm contribution
     $this->assertFalse($this->isTextPresent("Your transaction has been processed successfully"), "Loaded thank you page");
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
-    $this->assertTrue($this->isTextPresent("Your contribution will not be completed until"), "Should load confirmation page");
+    $this->assertTrue($this->isTextPresent("Please verify the information below carefully"), "Should load confirmation page");
     $this->click("_qf_Confirm_next-bottom");
     $this->waitForPageToLoad("30000");
 
