@@ -38,5 +38,6 @@
       <is_contact>0</is_contact>
       <description></description>
       <help_text>Web service URL.</help_text>
+      <validate_callback>CRM_Utils_Rule::url</validate_callback>
     </setting>
 </settings>

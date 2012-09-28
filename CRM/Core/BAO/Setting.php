@@ -371,7 +371,23 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
     if(!empty($invalidParams)){
       throw new api_Exception(implode(',', $invalidParams) . " are not valid settings");
     }
-    return array_intersect_key($settingParams,$fields['values']);
+    $fieldsToSet = array_intersect_key($settingParams,$fields['values']);
+    foreach ($fieldsToSet as $settingField => $settingValue){
+      self::validateSetting($settingValue, $fields['values'][$settingField]);
+    }
+    return $fieldsToSet;
+  }
+
+  static function validateSetting($value, $fieldSpec){
+    if(empty($fieldSpec['validate_callback'])){
+      return true;
+    }
+    else{
+      list($class,$fn) = explode('::',$fieldSpec['validate_callback']);
+      if(!$class::$fn($value)){
+        throw new api_Exception("validation failed for $value  based on callback {$fieldSpec[$value]}");
+      }
+    }
   }
   /**
    * Delete some or all of the items in the settings table
