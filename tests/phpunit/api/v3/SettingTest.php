@@ -40,6 +40,7 @@ class api_v3_SettingTest extends CiviUnitTestCase {
   protected $_apiversion = 3;
   protected $_contactID;
   protected $_params;
+  protected $_currentDomain;
   protected $_domainID2;
   protected $_domainID3;
 
@@ -57,20 +58,27 @@ class api_v3_SettingTest extends CiviUnitTestCase {
   }
 
   function setUp() {
+    parent::setUp();
     $params = array(
         'name' => 'A-team domain',
         'description' => 'domain of chaos',
         'version' => 3,
-        'domain_version' => '4.2',
+        'domain_version' => '4.3',
         'loc_block_id' => '2',
     );
+    $result = civicrm_api( 'domain','get',$params);
+    if(empty($result['id'])){
+      $result = civicrm_api( 'domain','create',$params );
+    }
 
-    $result = civicrm_api( 'domain','create',$params );
     $this->_domainID2 = $result['id'];
     $params['name'] = 'B-team domain';
-    $result = civicrm_api( 'domain','create',$params );
+    $result = civicrm_api( 'domain','get',$params);
+    if(empty($result['id'])){
+      $result = civicrm_api( 'domain','create',$params );
+    }
     $this->_domainID3 = $result['id'];
-    parent::setUp();
+    $this->_currentDomain = CRM_Core_Config::domainID();
   }
 
   function tearDown() {
@@ -139,6 +147,69 @@ class api_v3_SettingTest extends CiviUnitTestCase {
     );
     $result = civicrm_api('setting', 'create', $params);
     $this->assertEquals(1, $result['is_error']);
+   }
+
+   /**
+    * check getfields works
+    */
+   function testCreateInvalidURLSettings() {
+
+     $params = array('version' => $this->_apiversion,
+         'domain_id' => $this->_domainID2,
+         'userFrameworkResourceURL' => 'dfhkdhfd',
+     );
+     $result = civicrm_api('setting', 'create', $params);
+     $this->assertEquals(1, $result['is_error']);
+     $params = array('version' => $this->_apiversion,
+         'domain_id' => $this->_domainID2,
+         'userFrameworkResourceURL' => 'http://blah.com',
+     );
+     $result = civicrm_api('setting', 'create', $params);
+     $this->assertAPISuccess($result);
+
+   }
+   /**
+    * check getfields works
+    */
+   function testCreateInvalidBooleanSettings() {
+
+     $params = array('version' => $this->_apiversion,
+         'domain_id' => $this->_domainID2,
+         'track_civimail_replies' => 'dfhkdhfd',
+     );
+     $result = civicrm_api('setting', 'create', $params);
+     $this->assertEquals(1, $result['is_error']);
+
+     $params = array('version' => $this->_apiversion,
+         'track_civimail_replies' => '0',
+     );
+     $result = civicrm_api('setting', 'create', $params);
+     $getResult = civicrm_api('setting','get',$params);
+     $this->assertEquals(0, $getResult['values'][$this->_currentDomain]['track_civimail_replies']);
+
+     $this->assertAPISuccess($result);
+     $getResult = civicrm_api('setting','get',$params);
+     $this->assertEquals(0, $getResult['values'][$this->_currentDomain]['track_civimail_replies']);
+     $params = array(
+       'version' => $this->_apiversion,
+       'domain_id' => $this->_domainID2,
+       'track_civimail_replies' => '1',
+     );
+     $result = civicrm_api('setting', 'create', $params);
+     $this->assertAPISuccess($result);
+     $getResult = civicrm_api('setting','get',$params);
+     $this->assertEquals(1, $getResult['values'][$this->_domainID2]['track_civimail_replies']);
+
+     $params = array('version' => $this->_apiversion,
+         'domain_id' => $this->_domainID2,
+         'track_civimail_replies' => 'TRUE',
+     );
+     $result = civicrm_api('setting', 'create', $params);
+     $this->assertAPISuccess($result);
+     $getResult = civicrm_api('setting','get',$params);
+
+     $this->assertEquals(1, $getResult['values'][$this->_domainID2]['track_civimail_replies'], "check TRUE is converted to 1");
+
 
    }
   /**

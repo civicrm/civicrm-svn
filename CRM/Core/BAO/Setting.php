@@ -372,22 +372,46 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
       throw new api_Exception(implode(',', $invalidParams) . " are not valid settings");
     }
     $fieldsToSet = array_intersect_key($settingParams,$fields['values']);
-    foreach ($fieldsToSet as $settingField => $settingValue){
+    foreach ($fieldsToSet as $settingField => &$settingValue){
       self::validateSetting($settingValue, $fields['values'][$settingField]);
     }
     return $fieldsToSet;
   }
-
-  static function validateSetting($value, $fieldSpec){
+/*
+ * Validate & convert settings input
+ *
+ * @value mixed value of the setting to be set
+ * @fieldSpec array Metadata for given field (drawn from the xml)
+ */
+  static function validateSetting(&$value, $fieldSpec){
     if(empty($fieldSpec['validate_callback'])){
       return true;
     }
     else{
       list($class,$fn) = explode('::',$fieldSpec['validate_callback']);
-      if(!$class::$fn($value)){
-        throw new api_Exception("validation failed for $value  based on callback {$fieldSpec[$value]}");
+      if(!$class::$fn($value,$fieldSpec)){
+        throw new api_Exception("validation failed for {$fieldSpec['name']} = $value  based on callback {$fieldSpec['validate_callback']}");
       }
     }
+  }
+
+  /*
+   * Validate & convert settings input - translate True False to 0 or 1
+  *
+  * @value mixed value of the setting to be set
+  * @fieldSpec array Metadata for given field (drawn from the xml)
+  */
+  static function validateBoolSetting(&$value, $fieldSpec){
+    if(!CRM_Utils_Rule::boolean($value)){
+      throw new api_Exception("Boolean value required for {$fieldSpec['name']}");
+    }
+    if(!$value){
+      $value = 0;
+    }
+    else{
+      $value = 1;
+    }
+    return TRUE;
   }
   /**
    * Delete some or all of the items in the settings table
