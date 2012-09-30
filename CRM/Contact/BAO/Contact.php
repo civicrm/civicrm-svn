@@ -903,7 +903,7 @@ WHERE id={$id}; ";
         $statusMsg = ts('Image could not be uploaded due to invalid type extension.');
       }
       if ($opType == 'status') {
-        CRM_Core_Session::setStatus($statusMsg, 'Invalid Type', 'error');
+        CRM_Core_Session::setStatus($statusMsg, 'Sorry', 'error');
       }
       // FIXME: additional support for fatal, bounce etc could be added.
       return FALSE;
@@ -923,7 +923,7 @@ WHERE id={$id}; ";
     if ($action & CRM_Core_Action::DELETE) {
       if (CRM_Utils_Request::retrieve('confirmed', 'Boolean', $this)) {
         CRM_Contact_BAO_Contact::deleteContactImage($cid);
-        CRM_Core_Session::setStatus(ts('Contact Image is deleted successfully'), ts('Record Deleted'), 'success');
+        CRM_Core_Session::setStatus(ts('Contact image deleted successfully'), ts('Image Deleted'), 'success');
         $session = CRM_Core_Session::singleton();
         $toUrl = $session->popUserContext();
         CRM_Utils_System::redirect($toUrl);

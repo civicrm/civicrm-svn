@@ -277,7 +277,7 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
 
     CRM_Core_OptionValue::addOptionValue($emailParams, $groupParams, $action, $this->_fromEmailId);
 
-    CRM_Core_Session::setStatus(ts('Domain information for \'%1\' has been saved.', array(1 => $domain->name)));
+    CRM_Core_Session::setStatus(ts("Domain information for '%1' has been saved.", array(1 => $domain->name)), ts('Saved'), 'success');
     $session = CRM_Core_Session::singleton();
     $session->replaceUserContext(CRM_Utils_System::url('civicrm/admin', 'reset=1'));
   }

@@ -46,16 +46,16 @@ class CRM_Contact_Form_Task_AlterPreferences extends CRM_Contact_Form_Task {
    * @access public
    *
    * @return void
-   */ 
+   */
    function buildQuickForm() {
     // add select for preferences
 
     $options = array(ts('Add Selected Options'), ts('Remove selected options'));
-    
+
     $this->addRadio('actionTypeOption', ts('actionTypeOption'), $options);
-    
+
     $privacyOptions = CRM_Core_SelectValues::privacy();
-    
+
     foreach ($privacyOptions as $prefID => $prefName) {
       $this->_prefElement = &$this->addElement('checkbox', "pref[$prefID]", NULL, $prefName);
     }
@@ -66,7 +66,7 @@ class CRM_Contact_Form_Task_AlterPreferences extends CRM_Contact_Form_Task {
   function addRules() {
     $this->addFormRule(array('CRM_Contact_Form_Task_AlterPreferences', 'formRule'));
   }
-  
+
   /**
    * Set the default form values
    *
@@ -99,49 +99,43 @@ class CRM_Contact_Form_Task_AlterPreferences extends CRM_Contact_Form_Task {
   public function postProcess() {
     //get the submitted values in an array
     $params = $this->controller->exportValues($this->_name);
-    $privacyValues = $privacy_labels = array();
 
-    //set default action to "add"
-    $privacyValueNew = true;
-    $actionTypeMsg = 'Added';
-    
     $actionTypeOption = CRM_Utils_Array::value('actionTypeOption', $params, NULL);
-    if ($actionTypeOption) {
-        //if remove option has been selected change new privacy value to "false"
-        $privacyValueNew = false;
-        $actionTypeMsg = 'Removed';
-    }
-    
+    // If remove option has been selected set new privacy value to "false"
+    $privacyValueNew = empty($actionTypeOption);
+
     // check if any privay option has been checked
-    if (CRM_Utils_Array::value('pref', $params)) {
-        $privacyValues = $params['pref'];
-    
-        foreach($this->_contactIds as $contact_id) {
-            $contact = new CRM_Contact_BAO_Contact();
-            $contact->id = $contact_id;
-            
-            foreach($privacyValues as $privacy_key => $privacy_value) {
-                $contact->$privacy_key = $privacyValueNew;
-            }
-            $contact->save();
+    if (!empty($params['pref'])) {
+      $privacyValues = $params['pref'];
+      $count = 0;
+      foreach($this->_contactIds as $contact_id) {
+        $contact = new CRM_Contact_BAO_Contact();
+        $contact->id = $contact_id;
+
+        foreach($privacyValues as $privacy_key => $privacy_value) {
+          $contact->$privacy_key = $privacyValueNew;
         }
-    
+        $contact->save();
+        $count++;
+      }
+      // Status message
+      $privacyOptions = CRM_Core_SelectValues::privacy();
+      $status = array();
+      foreach($privacyValues as $privacy_key => $privacy_value) {
+        $label = $privacyOptions[$privacy_key];
+        $status[] = $privacyValueNew ? ts("Added '%1'", array(1 => $label)) : ts("Removed '%1'", array(1 => $label));
+      }
+  
+      $status = '<ul><li>' . implode('</li><li>', $status) . '</li></ul>';
+      if ($count > 1) {
+        $title = ts('%1 Contacts Updated', array(1 => $count));
+      }
+      else {
+        $name = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $contact_id, 'display_name');
+        $title = ts('%1 Updated', array(1 => $name));
+      }
+  
+      CRM_Core_Session::setStatus($status, $title, 'success');
     }
-    
-    // prepare status messages
-    $privacyOptions = CRM_Core_SelectValues::privacy();
-    foreach($privacyValues as $privacy_key => $privacy_value) {
-        $privacy_labels[] = $privacyOptions[$privacy_key];
-    }
-    
-    
-    $status = array($actionTypeMsg. ' privacy options: ' . implode(', ', $privacy_labels));
-    $status[] = 'Total Contact(s) modified: ' . count($this->_contactIds);
-
- 
-    CRM_Core_Session::setStatus($status);
   }
-  //end of function
 }
-
- 

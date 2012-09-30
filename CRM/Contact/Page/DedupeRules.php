@@ -113,7 +113,7 @@ class CRM_Contact_Page_DedupeRules extends CRM_Core_Page_Basic {
 
     $context = CRM_Utils_Request::retrieve('context', 'String', $this, FALSE);
     if ($context == 'nonDupe') {
-      CRM_Core_Session::setStatus(ts('Selected contacts have been marked as not duplicates'));
+      CRM_Core_Session::setStatus(ts('Selected contacts have been marked as not duplicates'), ts('Changes Saved'), 'success');
     }
 
     // assign permissions vars to template

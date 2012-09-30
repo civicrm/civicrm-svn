@@ -197,7 +197,7 @@ class CRM_Contact_Page_View_Relationship extends CRM_Core_Page {
       if ($this->_caseId) {
         //create an activity for case role removal.CRM-4480
         CRM_Case_BAO_Case::createCaseRoleActivity($this->_caseId, $this->_id);
-        CRM_Core_Session::setStatus(ts('Case Role has been deleted successfully.'), FALSE);
+        CRM_Core_Session::setStatus(ts('Case Role has been deleted successfully.'), ts('Record Deleted'), 'success');
       }
 
       // delete relationship

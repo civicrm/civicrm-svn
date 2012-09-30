@@ -168,7 +168,7 @@ class CRM_Contact_Page_View_GroupContact extends CRM_Core_Page {
         'is_enabled'
       )
     ) {
-      CRM_Core_Session::setStatus('make sure at least one contact group association is maintained.');
+      CRM_Core_Session::setStatus(ts('Please ensure at least one contact group association is maintained.'), ts('Could Not Remove'));
       return FALSE;
     }
 

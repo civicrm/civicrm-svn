@@ -151,11 +151,11 @@ class CRM_Contact_Form_GroupContact extends CRM_Core_Form {
     if ($userID == $this->_contactId) {
       $method = 'Web';
     }
-
     $groupContact = CRM_Contact_BAO_GroupContact::addContactsToGroup($contactID, $groupId, $method);
 
     if ($groupContact && $this->_context != 'user') {
-      CRM_Core_Session::setStatus(ts('Contact has been added to the selected group.'));
+      $groups = CRM_Core_PseudoConstant::group();
+      CRM_Core_Session::setStatus(ts("Contact has been added to '%1'.", array(1 => $groups[$groupId])), ts('Added to Group'), 'success');
     }
   }
   //end of function

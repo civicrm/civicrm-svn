@@ -397,30 +397,23 @@ class CRM_Contact_Form_Task_EmailCommon {
     );
 
     if ($sent) {
-      $status = array('', ts('Your message has been sent.'));
+      $count_success = count($form->_contactDetails);
+      CRM_Core_Session::setStatus(ts('One message was sent successfully.', array('plural' => '%count messages were sent successfully.', 'count' => $count_success)), ts('Message Sent', array('plural' => 'Messages Sent', 'count' => $count_success)), 'success');
     }
 
     //Display the name and number of contacts for those email is not sent.
     $emailsNotSent = array_diff_assoc($form->_allContactDetails, $form->_contactDetails);
 
-    $statusOnHold = '';
-    if (!empty($emailsNotSent)) {
-      $statusDisplay = ts('Email not sent to contact(s) (no email address on file or communication preferences specify DO NOT EMAIL or Contact is deceased or Primary email address is On Hold): %1', array(
-        1 => count($emailsNotSent))) . '<br />' . ts('Details') . ': ';
+    if ($emailsNotSent) {
+      $not_sent = array();
       foreach ($emailsNotSent as $contactId => $values) {
         $displayName    = $values['display_name'];
         $email          = $values['email'];
-        $contactViewUrl = CRM_Utils_System::url('civicrm/contact/view', "reset=1&cid={$contactId}");
-        $statusDisplay .= "<a href='{$contactViewUrl}'>{$displayName}</a>, ";
-
-        // build separate status for on hold messages
-        if ($values['on_hold']) {
-          $statusOnHold .= ts('Email was not sent to %1 because primary email address (%2) is On Hold.',
-            array(1 => "<a href='{$contactViewUrl}'>{$displayName}</a>", 2 => "<strong>{$email}</strong>")
-          ) . '<br />';
-        }
+        $contactViewUrl = CRM_Utils_System::url('civicrm/contact/view', "reset=1&cid=$contactId");
+        $not_sent[] = "<a href='$contactViewUrl' title='$email'>$displayName</a>" . ($values['on_hold'] ? '(' . ts('on hold') . ')' : '');
       }
-      $status[] = $statusDisplay;
+      $status = '(' . ts('because no email address on file or communication preferences specify DO NOT EMAIL or Contact is deceased or Primary email address is On Hold') . ')<ul><li>' . implode('</li><li>', $not_sent) . '</li></ul>';
+      CRM_Core_Session::setStatus($status, ts('One Message Not Sent', array('count' => count($emailsNotSent), 'plural' => '%count Messages Not Sent')), 'info');
     }
 
     if (isset($form->_caseId) && is_numeric($form->_caseId)) {
@@ -431,13 +424,6 @@ class CRM_Contact_Form_Task_EmailCommon {
       );
       CRM_Case_BAO_Case::processCaseActivity($caseParams);
     }
-
-    if (strlen($statusOnHold)) {
-      $status[] = $statusOnHold;
-    }
-
-    CRM_Core_Session::setStatus($status);
   }
   //end of function
 }
-

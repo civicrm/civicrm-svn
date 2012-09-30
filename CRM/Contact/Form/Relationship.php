@@ -568,16 +568,16 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form {
 
     $status = '';
     if ($valid) {
-      $status .= ' ' . ts('%count new relationship record created.', array('count' => $valid, 'plural' => '%count new relationship records created.'));
+      CRM_Core_Session::setStatus(ts('New relationship created.', array('count' => $valid, 'plural' => '%count new relationships created.')), ts('Saved'), 'success');
     }
     if ($invalid) {
-      $status .= ' ' . ts('%count relationship record not created due to invalid target contact type.', array('count' => $invalid, 'plural' => '%count relationship records not created due to invalid target contact type.'));
+      CRM_Core_Session::setStatus(ts('%count relationship record was not created due to an invalid target contact type.', array('count' => $invalid, 'plural' => '%count relationship records were not created due to invalid target contact types.')), ts('%count invalid', array('count' => $invalid)));
     }
     if ($duplicate) {
-      $status .= ' ' . ts('%count relationship record not created - duplicate of existing relationship.', array('count' => $duplicate, 'plural' => '%count relationship records not created - duplicate of existing relationship.'));
+      CRM_Core_Session::setStatus(ts('One relationship was not created because it already exists.', array('count' => $duplicate, 'plural' => '%count relationships were not created because they already exist.')), ts('%count duplicate', array('count' => $duplicate)));
     }
     if ($saved) {
-      $status .= ts('Relationship record has been updated.');
+      CRM_Core_Session::setStatus(ts('Relationship record has been updated.'), ts('Saved'), 'success');
     }
 
     if (!empty($relationshipIds)) {
@@ -681,7 +681,6 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form {
       }
     }
 
-    CRM_Core_Session::setStatus($status, '', 'info');
     if ($quickSave) {
       $session = CRM_Core_Session::singleton();
       CRM_Utils_System::redirect($session->popUserContext());

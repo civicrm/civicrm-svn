@@ -140,20 +140,14 @@ class CRM_Contact_Form_Task_AddToTag extends CRM_Contact_Form_Task {
 
       list($total, $added, $notAdded) = CRM_Core_BAO_EntityTag::addEntitiesToTag($this->_contactIds, $key);
 
-      $status = array(
-        'Contact(s) tagged as: ' . implode(',', $this->_name),
-        'Total Selected Contact(s): ' . $total,
-      );
+      $status = array(ts('%count contact tagged', array('count' => $added, 'plural' => '%count contacts tagged')));
+      if ($notAdded) {
+        $status[] = ts('%count contact already had this tag', array('count' => $notAdded, 'plural' => '%count contacts already had this tag'));
+      }
+      $status = '<ul><li>' . implode('</li><li>', $status) . '</li></ul>';
+      CRM_Core_Session::setStatus($status, ts('Tagged Contact as %2', array(2 => $this->_tags[$key], 'count' => $added, 'plural' => 'Tagged Contacts as %2')), 'success', array('expires' => 0));
     }
 
-    if ($added) {
-      $status[] = 'Total Contact(s) tagged: ' . $added;
-    }
-    if ($notAdded) {
-      $status[] = 'Total Contact(s) already tagged: ' . $notAdded;
-    }
-
-    CRM_Core_Session::setStatus(implode('<br/>', $status), '', 'success');
   }
   //end of function
 }

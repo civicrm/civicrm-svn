@@ -111,7 +111,7 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic {
           );
         }
         $message .= ts(" during the batch merge process with safe mode.");
-        CRM_Core_Session::setStatus($message);
+        CRM_Core_Session::setStatus($message, ts('Merge Complete'), 'success');
 
         $urlQry = "reset=1&action=update&rgid={$rgid}";
         if ($gid) {
@@ -195,9 +195,7 @@ class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic {
           $ruleGroup->find(TRUE);
 
           $session = CRM_Core_Session::singleton();
-          $session->setStatus(ts('No possible duplicates were found using %1 rule.',
-              array(1 => $ruleGroup->name)
-            ));
+          $session->setStatus(ts('No possible duplicates were found using %1 rule.', array(1 => $ruleGroup->name)), ts('None Found'), 'info');
           $url = CRM_Utils_System::url('civicrm/contact/deduperules', 'reset=1');
           if ($context == 'search') {
             $url = $session->readUserContext();

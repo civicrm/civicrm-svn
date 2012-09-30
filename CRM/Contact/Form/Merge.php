@@ -311,7 +311,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form {
 
     CRM_Dedupe_Merger::moveAllBelongings($this->_cid, $this->_oid, $formValues);
 
-    CRM_Core_Session::setStatus(ts('The contacts have been merged.'));
+    CRM_Core_Session::setStatus(ts('Contact id %1 has been updated and contact id %2 has been deleted.', array(1 => $this->_cid, 2 => $this->_oid)), ts('Contacts Merged'), 'success');
     $url = CRM_Utils_System::url('civicrm/contact/view', "reset=1&cid={$this->_cid}");
     if (CRM_Utils_Array::value('_qf_Merge_submit', $formValues)) {
       $listParamsURL = "reset=1&action=update&rgid={$this->_rgid}";

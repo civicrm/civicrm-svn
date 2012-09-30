@@ -158,7 +158,7 @@ class CRM_Contact_Form_Task_Batch extends CRM_Contact_Form_Task {
     $buttonName = $this->controller->getButtonName('submit');
 
     if ($suppressFields && $buttonName != '_qf_BatchUpdateProfile_next') {
-      CRM_Core_Session::setStatus("FILE or Autocomplete Select type field(s) in the selected profile are not supported for Batch Update and have been excluded.");
+      CRM_Core_Session::setStatus(ts("File or Autocomplete Select type field(s) in the selected profile are not supported for Batch Update and have been excluded."), ts('Some Fields Excluded'), 'info');
     }
 
     $this->addDefaultButtons(ts('Update Contacts'));
@@ -260,12 +260,10 @@ class CRM_Contact_Form_Task_Batch extends CRM_Contact_Form_Task {
       }
     }
 
-    $statusMsg = ts("Your updates have been saved.");
-
+    CRM_Core_Session::setStatus('', ts("Updates Saved"), 'success');
     if ($inValidSubtypeCnt) {
-      $statusMsg .= ' ' . ts('Contact SubType field of %1 number of contact(s) has not been updated.', array(1 => $inValidSubtypeCnt));
+      CRM_Core_Session::setStatus(ts('Contact SubType field of 1 contact has not been updated.', array('plural' => 'Contact SubType field of %count contacts has not been updated.', 'count' => $inValidSubtypeCnt)), ts('Invalid Subtype'));
     }
-    CRM_Core_Session::setStatus("{$statusMsg}");
   }
   //end of function
   function parseStreetAddress(&$contactValues, &$form) {
