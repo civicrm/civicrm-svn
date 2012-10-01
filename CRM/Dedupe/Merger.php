@@ -889,6 +889,10 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
           if ($value === 0 or $value === '0') {
             $value = $qfZeroBug;
           }
+          if (is_array($value) && 
+              !CRM_Utils_Array::value(1, $value)) {
+            $value[1] = NULL;
+          }
           $elements[] = array('advcheckbox', "move_$field", NULL, NULL, NULL, $value);
           $migrationInfo["move_$field"] = $value;
         }
