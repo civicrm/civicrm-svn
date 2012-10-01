@@ -1,12 +1,12 @@
 <?php
-require_once ('AuditConfig.php');
-class Audit {
+
+class CRM_Case_Audit_Audit {
   private $auditConfig;
   private $xmlString;
 
   public function __construct($xmlString, $confFilename) {
     $this->xmlString = $xmlString;
-    $this->auditConfig = new AuditConfig($confFilename);
+    $this->auditConfig = new CRM_Case_Audit_AuditConfig($confFilename);
   }
 
   public function getActivities($printReport = FALSE) {
@@ -167,10 +167,10 @@ class Audit {
   }
 
   /* compareActivities
-	 * 
+	 *
 	 * This is intended to be called as a sort callback function, returning whether an activity's date is earlier or later than another's.
 	 * The type of date to use is specified in the config.
-	 * 
+	 *
 	 */
 
   public function compareActivities($a, $b) {
@@ -199,9 +199,7 @@ fwrite($fh, $xmlString);
 fclose($fh);
 */
 
-    $audit = new Audit($xmlString,
-      'audit.conf.xml'
-    );
+    $audit = new CRM_Case_Audit_Audit($xmlString, 'audit.conf.xml');
     $activities = $audit->getActivities($printReport);
 
     $template = CRM_Core_Smarty::singleton();
@@ -218,6 +216,3 @@ fclose($fh);
     return $contents;
   }
 }
-
-// Audit::run( file_get_contents( 'CaseReport.xml' ) );
-

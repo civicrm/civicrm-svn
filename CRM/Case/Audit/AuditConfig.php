@@ -1,5 +1,6 @@
 <?php
-class AuditConfig {
+
+class CRM_Case_Audit_AuditConfig {
   private $filename;
   private $completionLabel;
   private $completionValue;
@@ -113,7 +114,7 @@ class AuditConfig {
   }
 
   /* inRegion
-	 * 
+	 *
 	 * Check if label $n is explicitly listed in region $r in the config.
 	 */
 
@@ -127,7 +128,7 @@ class AuditConfig {
   }
 
   /* includeInRegion
-	 * 
+	 *
 	 * Should field $n be included in region $r, taking into account exclusion rules.
 	 */
 
@@ -146,7 +147,7 @@ class AuditConfig {
   }
 
   /* includeTime
-	 * 
+	 *
 	 * Should the time component of field $n in region $r be displayed?
 	 */
 
@@ -174,7 +175,7 @@ class AuditConfig {
   }
 
   /* getRegions
-	 * 
+	 *
 	 * Return a list of all the regions in the config file.
 	 */
 
@@ -183,7 +184,7 @@ class AuditConfig {
   }
 
   /* sort
-	 * 
+	 *
 	 * Sort a group of fields for a given region according to the order in the config.
 	 * The array to be sorted should have elements that have a member with a key of 'label', and the value should be the field label.
 	 */
@@ -199,7 +200,7 @@ class AuditConfig {
   }
 
   /* compareFields
-	 * 
+	 *
 	 * This is intended to be called as a sort callback function, returning whether a field in a region comes before or after another one.
 	 * See also PHP's usort().
 	 */
