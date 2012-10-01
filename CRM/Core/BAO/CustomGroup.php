@@ -1609,7 +1609,7 @@ SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 
    *  @param array   $groupTree associated array
    *  @param boolean $returnCount true if customValue count needs to be returned
    */
-  static function buildCustomDataView(&$form, &$groupTree, $returnCount = FALSE, $groupID = NULL, $prefix = NULL) {
+  static function buildCustomDataView(&$form, &$groupTree, $returnCount = FALSE, $gId = NULL, $prefix = NULL) {
     foreach ($groupTree as $key => $group) {
       if ($key === 'info') {
         continue;
@@ -1660,9 +1660,12 @@ SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 
     }
 
     if ($returnCount) {
-      if ( count($details) <= 1 )
-        return count($details[$groupID]);
-      else {
+      //return a single value count if group id is passed to function
+      //else return a groupId and count mapped array
+      if (!empty($gID)){
+        return count($details[$gID]);
+      }
+      else { 
         foreach( $details as $key => $value ) {
           $countValue[$key] = count($details[$key]);
         }

@@ -117,7 +117,8 @@ class CRM_Custom_Form_CustomData {
       $form->_subName,
       $getCachedTree
     );
-    if (!empty($groupTree)) {
+
+    if (property_exists($form, '_customValueCount') && !empty($groupTree)) {
       $form->_customValueCount = CRM_Core_BAO_CustomGroup::buildCustomDataView($form, $groupTree, TRUE, NULL, NULL);
     }
     // we should use simplified formatted groupTree
