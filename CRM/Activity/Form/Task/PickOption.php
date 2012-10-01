@@ -164,6 +164,17 @@ class CRM_Activity_Form_Task_PickOption extends CRM_Activity_Form_Task {
       }
     }
     $this->_contacts = array_unique($this->_contacts);
+
+    //bounce to pick option if no contacts to send to
+    if ( empty($this->_contacts) ) {
+      $urlParams = "_qf_PickOption_display=true&qfKey={$params['qfKey']}";
+      $urlRedirect = CRM_Utils_System::url('civicrm/activity/search', $urlParams);
+      CRM_Core_Error::statusBounce(
+        ts('It appears you have no contacts with emails from the selected recipients.'),
+        $urlRedirect
+      );
+    }
+
     $this->set('contacts', $this->_contacts);
   }
 }
