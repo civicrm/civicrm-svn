@@ -622,15 +622,21 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
   }
 
   static
-  function fixAndStoreDirAndURL(&$params) {
+  function fixAndStoreDirAndURL(&$params, $domainID = null) {
+    if(empty($domainID)){
+      $domainID = CRM_Core_Config::domainID();
+    }
     $sql = "
  SELECT name, group_name
  FROM   civicrm_setting
- WHERE  ( group_name = %1
- OR       group_name = %2 )
+ WHERE domain_id = %1
+ AND ( group_name = %2
+ OR  group_name = %3 )
 ";
-    $sqlParams = array(1 => array(self::DIRECTORY_PREFERENCES_NAME, 'String'),
-      2 => array(self::URL_PREFERENCES_NAME, 'String'),
+    $sqlParams = array(
+      1 => array($domainID, 'Integer'),
+      2 => array(self::DIRECTORY_PREFERENCES_NAME, 'String'),
+      3 => array(self::URL_PREFERENCES_NAME, 'String'),
     );
 
     $dirParams = array();
