@@ -209,7 +209,7 @@ function toggleCheckboxVals(fldPrefix, object) {
     } else {
        cj( 'Input[id*="' + fldPrefix + '"],Input[id*="toggleSelect"]').attr('checked', false);
     }
-   /* function called to change the color of selected rows */
+   // change the class of selected rows
    on_load_init_checkboxes(object.form.name);
 }
 
