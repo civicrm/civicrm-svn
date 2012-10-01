@@ -220,7 +220,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
       $domains[] = CRM_Core_Config::domainID();
     }
     $fields = array();
-    $fieldsToGet = _civicrm_api3_setting_filterfields($params, $fields);
+    $fieldsToGet = self::validateSettingsInput($params, $fields, FALSE);
     foreach ($domains as $domain){
     foreach ($fieldsToGet as $name => $value){
       $setting =
@@ -343,7 +343,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
  * @param array $fields empty array to be populated with fields metadata
  * @return array $fieldstoset name => value array of the fields to be set (with extraneous removed)
  */
-  static function validateSettingsInput(&$params, &$fields){
+  static function validateSettingsInput(&$params, &$fields, $createMode = TRUE){
     $group = CRM_Utils_Array::value('group', $params);
 
     $ignoredParams = array(
@@ -372,6 +372,9 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
       throw new api_Exception(implode(',', $invalidParams) . " are not valid settings");
     }
     $fieldsToSet = array_intersect_key($settingParams,$fields['values']);
+    if(!$createMode){
+      return $fieldsToSet;
+    }
     foreach ($fieldsToSet as $settingField => &$settingValue){
       self::validateSetting($settingValue, $fields['values'][$settingField]);
     }

@@ -138,39 +138,4 @@ function _civicrm_api3_setting_getDomainArray(&$params){
   }
   return $domains;
 }
-/*
- * This function filters on the fields like 'version' & 'debug' that are not settings and ensures group
- * is set.
- *
- * The fields array is filled with metadata about the settings api fields (from getfields)
- *
- * @param array $params Parameters as passed into API
- * @param array $fields empty array to be populated with fields metadata
- * @return array $fieldstoset name => value array of the fields to be set (with extraneous removed)
- */
-function _civicrm_api3_setting_filterfields(&$params, &$fields){
-  $group = CRM_Utils_Array::value('group', $params);
 
-  $ignoredParams = array(
-      'version' => 1,
-      'id' => 1,
-      'domain_id' => 1,
-      'group' => 1,
-      'debug' => 1,
-      'created_id',
-      'component_id',
-      'contact_id'
-  );
-  $settingParams = array_diff_key($params, $ignoredParams);
-  $getFieldsParams = array(
-      'version' => 3,
-      'group' => $group,
-  );
-  if(count($settingParams) ==1){
-    // ie we are only setting one field - we'll pass it into getfields for efficiency
-    list($name) = array_keys($settingParams);
-    $getFieldsParams['name'] = $name;
-  }
-  $fields = civicrm_api('setting','getfields', $getFieldsParams);
-  return array_intersect_key($settingParams,$fields['values']);
-}
