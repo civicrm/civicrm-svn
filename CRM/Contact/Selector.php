@@ -142,7 +142,9 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
    *
    * @return CRM_Contact_Selector
    * @access public
-   */ function __construct($customSearchClass,
+   */
+  function __construct(
+    $customSearchClass,
     $formValues = NULL,
     $params = NULL,
     $returnProperties = NULL,
@@ -153,9 +155,7 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
     $contextMenu = NULL
   ) {
     //don't build query constructor, if form is not submitted
-    $force = CRM_Utils_Request::retrieve('force', 'Boolean',
-      CRM_Core_DAO::$_nullObject
-    );
+    $force = CRM_Utils_Request::retrieve('force', 'Boolean', CRM_Core_DAO::$_nullObject);
     if (empty($formValues) && !$force) {
       return;
     }
@@ -182,8 +182,6 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
       );
       self::$_columnHeaders = NULL;
 
-      //CRM_Core_Error::debug( 'f', $this->_fields );
-
       $this->_customFields = CRM_Core_BAO_CustomField::getFieldsForImport('Individual');
 
       $this->_returnProperties = CRM_Contact_BAO_Contact::makeHierReturnProperties($this->_fields);
@@ -201,7 +199,8 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
       CRM_Contact_BAO_ProximityQuery::fixInputParams($this->_params);
     }
 
-    $this->_query = new CRM_Contact_BAO_Query($this->_params,
+    $this->_query = new CRM_Contact_BAO_Query(
+      $this->_params,
       $this->_returnProperties,
       NULL,
       $includeContactIds,
@@ -888,8 +887,8 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
       elseif ( CRM_Utils_Array::value('contact_type_orig', $row) ) {
         $contactType = $row['contact_type_orig'];
       }
-      
-      if ( $contactType ) { 
+
+      if ( $contactType ) {
         $row['contact_type'] = CRM_Contact_BAO_Contact_Utils::getImage($contactType,
           FALSE, $row['contact_id']);
       }

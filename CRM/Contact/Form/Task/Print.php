@@ -61,7 +61,6 @@ class CRM_Contact_Form_Task_Print extends CRM_Contact_Form_Task {
 
     // create the selector, controller and run - store results in session
     $fv = $this->get('formValues');
-
     $params = CRM_Contact_BAO_Query::convertFormValues($rowElements);
 
     $returnProperties = $this->get('returnProperties');
@@ -86,11 +85,11 @@ class CRM_Contact_Form_Task_Print extends CRM_Contact_Form_Task {
     eval('$selector   = new ' .
       $selectorName .
       '( $customSearchClass,
-                 $fv,
-                 $params,
-                 $returnP,
-                 $this->_action,
-                 $includeContactIds );'
+         $fv,
+         $params,
+         $returnP,
+         $this->_action,
+         $includeContactIds );'
     );
     $controller = new CRM_Core_Selector_Controller($selector,
       NULL,
