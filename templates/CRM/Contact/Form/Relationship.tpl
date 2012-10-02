@@ -185,7 +185,7 @@
                         var postUrl = "{/literal}{crmURL p='civicrm/ajax/relationshipContactTypeList' h=0}{literal}";
                         cj.post( postUrl, { relType: relType },
                             function ( response ) {
-                                cj( elementID ).get(0).add(new Option('{/literal}{ts}- create new contact -{/ts}{literal}', ''), document.all ? i : null);
+                                cj( elementID ).get(0).add(new Option('{/literal}{ts}- create new contact -{/ts}{literal}', ''));
                                 response = eval( response );
                                 for (i = 0; i < response.length; i++) {
                                     cj( elementID ).get(0).add(new Option(response[i].name, response[i].value), document.all ? i : null);
