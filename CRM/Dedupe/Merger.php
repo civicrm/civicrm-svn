@@ -856,8 +856,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
     $rows = $elements = $relTableElements = $migrationInfo = array();
 
     foreach ($diffs['contact'] as $field) {
-      foreach (array(
-        'main', 'other') as $moniker) {
+      foreach (array('main', 'other') as $moniker) {
         $contact = &$$moniker;
         $value   = CRM_Utils_Array::value($field, $contact);
         $label   = isset($specialValues[$moniker][$field]) ? $specialValues[$moniker]["{$field}_display"] : $value;
