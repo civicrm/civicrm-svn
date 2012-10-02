@@ -151,10 +151,10 @@ class CRM_Case_Audit_Audit {
       }
 
       if ($printReport) {
-        uasort($caseActivities, array(&$this, "compareActivities"));
+        uasort($caseActivities, array($this, "compareActivities"));
       }
       else {
-        uasort($retval, array(&$this, "compareActivities"));
+        uasort($retval, array($this, "compareActivities"));
       }
     }
 
@@ -167,11 +167,11 @@ class CRM_Case_Audit_Audit {
   }
 
   /* compareActivities
-	 *
-	 * This is intended to be called as a sort callback function, returning whether an activity's date is earlier or later than another's.
-	 * The type of date to use is specified in the config.
-	 *
-	 */
+   *
+   * This is intended to be called as a sort callback function, returning whether an activity's date is earlier or later than another's.
+   * The type of date to use is specified in the config.
+   *
+   */
 
   public function compareActivities($a, $b) {
     // This should work

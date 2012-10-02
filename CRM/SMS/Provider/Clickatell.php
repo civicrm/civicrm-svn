@@ -110,8 +110,8 @@ class CRM_SMS_Provider_Clickatell extends CRM_SMS_Provider {
    * Create and auth a Clickatell session.
    *
    * @return void
-   */ function __construct($provider = array(
-     ), $skipAuth = FALSE) {
+   */
+  function __construct($provider = array( ), $skipAuth = FALSE) {
     // initialize vars
     $this->_apiType = CRM_Utils_Array::value('api_type', $provider, 'http');
     $this->_providerInfo = $provider;
@@ -148,8 +148,7 @@ class CRM_SMS_Provider_Clickatell extends CRM_SMS_Provider {
    * @static
    *
    */
-  static
-  function &singleton($providerParams = array(
+  static function &singleton($providerParams = array(
     ), $force = FALSE) {
     $providerID = CRM_Utils_Array::value('provider_id', $providerParams);
     $skipAuth   = $providerID ? FALSE : TRUE;
