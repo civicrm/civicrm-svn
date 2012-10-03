@@ -1,0 +1,6 @@
+-- CRM-10953 Remove duplicate activity type for 'Reminder Sent' which is mistakenly inserted by 4.2.alpha1 upgrade script
+-- Check if cnt > 1 of option_value rows in activity_type option group w/ name = 'Reminder Sent'
+-- If true
+--  get civicrm_option_value.value of both rows (first and second rows)
+--  update civicrm_activity.activity_type_id where = to second row value, set to first row value
+--  delete second civicrm_option_value row
