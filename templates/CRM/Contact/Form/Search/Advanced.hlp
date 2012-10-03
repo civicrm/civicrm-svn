@@ -82,3 +82,11 @@
 {htxt id="id-all-tags"}
     <p>{ts}Find records with tags (regular or tagset tag) which contain a complete or partial word or phrase. EXAMPLE: If you have several tags that contain the word 'Donor', you can find contacts tagged with any of them by entering 'Donor' in this field.{/ts}</p>
 {/htxt}
+
+{htxt id="is-test-title"}
+{ts}Test Records{/ts}
+{/htxt}
+{htxt id="is-test"}
+    <p>{ts}In the process of setting up CiviCRM components or configuring pages and profiles, you might have created test contributions, activities, participants, pledges, etc.{/ts}</p>
+    <p>{ts}Once you have finished your testing, it is a good idea to clean up by searching for test records and deleting them.{/ts}</p>
+{/htxt}

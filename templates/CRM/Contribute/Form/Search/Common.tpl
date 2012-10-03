@@ -77,7 +77,7 @@
           <td>{$form.contribution_recurring.html}<span class="crm-clear-link">(<a href="javascript:unselectRadio('contribution_recurring','{$form.formName}')">{ts}clear{/ts}</a>)</span></td>
         </tr>
         <tr>
-          <td>{$form.contribution_test.label}</td>
+          <td>{$form.contribution_test.label} {help id="is-test" file="CRM/Contact/Form/Search/Advanced"}</td>
           <td>{$form.contribution_test.html}<span class="crm-clear-link">(<a href="javascript:unselectRadio('contribution_test','{$form.formName}')">{ts}clear{/ts}</a>)</span></td>
         </tr>
       </tbody>

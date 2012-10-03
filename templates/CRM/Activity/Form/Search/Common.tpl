@@ -74,7 +74,7 @@
    <td colspan="2"><br />
     {$form.activity_contact_name.html}<br />
       <span class="description font-italic">{ts}Complete OR partial Name of the Source Contact or the Assignee Contact.{/ts}</span><br /><br />
-    {$form.activity_test.label} &nbsp; {$form.activity_test.html} <span class="crm-clear-link">(<a href="javascript:unselectRadio('activity_test','{$form.formName}')">{ts}clear{/ts}</a>)</span>
+    {$form.activity_test.label} {help id="is-test" file="CRM/Contact/Form/Search/Advanced"} &nbsp; {$form.activity_test.html} <span class="crm-clear-link">(<a href="javascript:unselectRadio('activity_test','{$form.formName}')">{ts}clear{/ts}</a>)</span>
    </td>
 </tr>
 <tr>
