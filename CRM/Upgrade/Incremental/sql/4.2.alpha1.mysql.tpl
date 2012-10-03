@@ -389,15 +389,6 @@ VALUES
    (@option_group_id_aro, {localize}'Auto-renew Memberships Only'{/localize}, 2, 'Auto-renew Memberships Only', NULL, 0, 0, 2),
    (@option_group_id_aro, {localize}'Reminder for Both'{/localize}, 3, 'Reminder for Both', NULL, 0, 0, 3);
 
-SELECT @option_group_id_act := max(id) from civicrm_option_group where name = 'activity_type';
-SELECT @max_wt              := MAX(weight) FROM civicrm_option_value WHERE option_group_id = @option_group_id_act;
-SELECT @max_val             := MAX(ROUND(op.value)) FROM civicrm_option_value op WHERE op.option_group_id = @option_group_id_act;
-
-INSERT INTO
-   `civicrm_option_value` (`option_group_id`, {localize field='label'}`label`{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, {localize field='description'}`description`{/localize}, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`)
-VALUES
-   (@option_group_id_act, {localize}'Reminder Sent'{/localize}, (SELECT @max_val := @max_val+1), 'Reminder Sent', NULL, 1, NULL, (SELECT @max_wt := @max_wt+1), {localize}'Reminder Sent'{/localize}, 0, 1, 1, NULL, NULL);
-
 -- CRM-10335, truncate cache to begin to speed the alter table
 TRUNCATE civicrm_cache;
 ALTER TABLE civicrm_cache
