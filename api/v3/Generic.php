@@ -33,19 +33,7 @@ function civicrm_api3_generic_getfields($apiRequest) {
   }
 
   if (empty($action)) {
-    if (CRM_Utils_Array::value($entity . $subentity, $results) &&
-      CRM_Utils_Array::value('values', $results[$entity . $subentity])
-      && empty($apiRequest['params']['options'])
-    ) {
-      return $results[$entity . $subentity];
-    }
-    else {
-      $values = _civicrm_api_get_fields($entity, false, $apiRequest['params']);
-      $results[$entity] = civicrm_api3_create_success(
-        $values, $apiRequest['params'], $entity, 'getfields'
-      );
-      return $results[$entity];
-    }
+    $action='get';
   }
   // determines whether to use unique field names - seem comment block above
   $unique = TRUE;
