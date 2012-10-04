@@ -150,34 +150,36 @@
   }
   
   $(document).ready(function() {
-    // Initialize notifications
-    $('#crm-notification-container').notify();
-    // Display system alerts through js notifications
-    $('#crm-container div.messages:visible').not('.help').not('.no-popup').each(function() {
-      $(this).removeClass('status messages');
-      var type = $(this).attr('class').split(' ')[0] || 'alert';
-      type = type.replace('crm-', '');
-      $('.icon', this).remove();
-      var title = '';
-      if ($('.msg-text', this).length > 0) {
-        var text = $('.msg-text', this).html();
-        title = $('.msg-title', this).html();
-      }
-      else {
-        var text = $(this).html();
-      }
-      var options = $(this).data('options') || {};
-      $(this).remove();
-      // Duplicates were already removed server-side
-      options.unique = false;
-      $().crmAlert(text, title, type, options);
-    });
-    // Handle qf form errors
-    $('#crm-container form :input.error').one('blur', function() {
-      $('.ui-notify-message.error a.ui-notify-close').click();
-      $(this).removeClass('error');
-      $(this).next('span.crm-error').remove();
-      $('label[for="' + $(this).attr('name') + '"], label[for="' + $(this).attr('id') + '"]').removeClass('crm-error').find('.crm-error').removeClass('crm-error');
-    });
+    if (CRM && CRM.urlIsPublic === false) {
+      // Initialize notifications
+      $('#crm-notification-container').notify();
+      // Display system alerts through js notifications
+      $('#crm-container div.messages:visible').not('.help').not('.no-popup').each(function() {
+        $(this).removeClass('status messages');
+        var type = $(this).attr('class').split(' ')[0] || 'alert';
+        type = type.replace('crm-', '');
+        $('.icon', this).remove();
+        var title = '';
+        if ($('.msg-text', this).length > 0) {
+          var text = $('.msg-text', this).html();
+          title = $('.msg-title', this).html();
+        }
+        else {
+          var text = $(this).html();
+        }
+        var options = $(this).data('options') || {};
+        $(this).remove();
+        // Duplicates were already removed server-side
+        options.unique = false;
+        $().crmAlert(text, title, type, options);
+      });
+      // Handle qf form errors
+      $('#crm-container form :input.error').one('blur', function() {
+        $('.ui-notify-message.error a.ui-notify-close').click();
+        $(this).removeClass('error');
+        $(this).next('span.crm-error').remove();
+        $('label[for="' + $(this).attr('name') + '"], label[for="' + $(this).attr('id') + '"]').removeClass('crm-error').find('.crm-error').removeClass('crm-error');
+      });
+    }
   });
 })(jQuery);
