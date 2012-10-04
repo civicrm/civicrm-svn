@@ -197,8 +197,6 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
       $this->add('text', 'max_value', ts('Max Participants'), $attributes['max_value']);
       $this->addRule('max_value', ts('Please enter a valid Max Participants.'), 'positiveInteger');
 
-      $this->add('textArea', 'description', ts('Description'), $attributes['description']);
-
       $this->assign('useForEvent', TRUE);
     }
     else {

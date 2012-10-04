@@ -112,11 +112,6 @@
               <td>{$form.max_value.html}
               </td>
             </tr>
-      <tr class="crm-price-field-form-block-description">
-              <td class="label">{$form.description.label}</td>
-              <td>{$form.description.html}
-              </td>
-            </tr>
     {/if}
         </table>
     </div>
