@@ -611,6 +611,8 @@ function advmultiselectResize() {
 
 (function($) {
   $(document).ready(function() {
+    advmultiselectResize();
+    $().crmtooltip();
     $('.collapsible-title').each(function() {
       if ($(this).hasClass('collapsed')) {
         $(this).nextAll().hide();
@@ -626,5 +628,8 @@ function advmultiselectResize() {
         return false;
       });
     });
+  });
+  $(window).resize(function() {
+    advmultiselectResize();
   });
 })(jQuery);

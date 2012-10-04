@@ -24,26 +24,18 @@
  +--------------------------------------------------------------------+
 *}
 
-{literal}
-<script type="text/javascript">
-  cj(document).ready(function() {
-    advmultiselectResize();
-    cj().crmtooltip();
-  });
-  cj(window).resize(function() {
-    advmultiselectResize();
-  });
-  cj.crmURL('init', '{/literal}{crmURL p="civicrm/example" q="placeholder"}{literal}');
 
-  var CRM = {{/literal}
+<script type="text/javascript">
+  cj.crmURL('init', '{crmURL p="civicrm/example" q="placeholder"}');
+
+  var CRM = {ldelim}
     urlIsPublic: {if $urlIsPublic}true{else}false{/if},
     userFramework: '{$config->userFramework}',
-    validate: {literal}{ 
+    validate: {ldelim} 
       use: false,
-      params: {},
+      params: {ldelim}{rdelim},
       functions: []
-    }{/literal}
-  {literal}};
+    {rdelim}
+  {rdelim};
 
 </script>
-{/literal}
