@@ -52,7 +52,7 @@ class CRM_Contact_Form_Inline_Lock {
   public function buildQuickForm(&$form, $contactID) {
     // We provide a value for oplock_ts to client, but JS uses it carefully
     // -- i.e.  when loading the first inline form, JS copies oplock_ts to a
-    // global value, and that global value is used for future form submissions. 
+    // global value, and that global value is used for future form submissions.
     // Any time a form is submitted, the value will be updated.  This
     // handles cases like:
     // - V1:open V1.phone:open V1.email:open V1.email:submit V1.phone:submit
@@ -83,11 +83,11 @@ class CRM_Contact_Form_Inline_Lock {
       $open = sprintf("<span class='update_oplock_ts' data:update_oplock_ts='%s'>", $timestamps['modified_date']);
       $close = "</span>";
       $errors['oplock_ts'] = $open . ts('This record was modified by another user!') . $close;
-    } 
+    }
 
     return empty($errors) ? TRUE : $errors;
   }
-  
+
   /**
    * Return any post-save data
    *
