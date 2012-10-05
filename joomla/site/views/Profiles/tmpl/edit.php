@@ -28,29 +28,29 @@
  */
 defined('_JEXEC') or die('Restricted access'); ?>
 <?php if ( $this->params->def( 'show_page_title', 1 ) ) : ?>
-	<div class="componentheading <?php echo $this->params->get( 'pageclass_sfx' ); ?>">
-		<?php echo $this->escape($this->params->get('page_title')); ?>
-	</div>
+  <div class="componentheading <?php echo $this->params->get( 'pageclass_sfx' ); ?>">
+    <?php echo $this->escape($this->params->get('page_title')); ?>
+  </div>
 <?php endif; ?>
 
 <?php if ( ($this->params->def('image', -1) != -1) || $this->params->def('show_comp_description', 1) ) : ?>
 <table width="100%" cellpadding="4" cellspacing="0" border="0" align="center" class="contentpane<?php echo $this->params->get( 'pageclass_sfx' ); ?>">
 <tr>
-	<td valign="top" class="contentdescription <?php echo $this->params->get( 'pageclass_sfx' ); ?>">
-	<?php
-		if ( isset($this->image) ) :  echo $this->image; endif;
-		echo $this->params->get('comp_description');
-	?>
-	</td>
+  <td valign="top" class="contentdescription <?php echo $this->params->get( 'pageclass_sfx' ); ?>">
+  <?php
+    if ( isset($this->image) ) :  echo $this->image; endif;
+    echo $this->params->get('comp_description');
+  ?>
+  </td>
 </tr>
 </table>
 <?php endif; ?>
-	// Make sure you are logged in and have the necessary access rights
-		if ($user->get('gid') < 19) {
-			  JResponse::setHeader('HTTP/1.0 403',true);
+  // Make sure you are logged in and have the necessary access rights
+    if ($user->get('gid') < 19) {
+        JResponse::setHeader('HTTP/1.0 403',true);
               JError::raiseWarning( 403, JText::_('ALERTNOTAUTH') );
-			return;
-		}
+      return;
+    }
 /*  edit (mode=8) pages */
 <script type="text/javascript" src="{$config->resourceBase}js/Common.js"></script>
 {if ! empty( $fields )}
@@ -59,7 +59,7 @@ defined('_JEXEC') or die('Restricted access'); ?>
 
         {include file="CRM/Form/body.tpl"}
 
-    
+
     {strip}
     {if $help_pre && $action neq 4}
     <div class="messages help">{$help_pre}</div>
@@ -78,15 +78,15 @@ defined('_JEXEC') or die('Restricted access'); ?>
               <div class="messages help">{$groupHelpPost}</div>
            {/if}
 
-           
+
               </fieldset>
-          
+
         {/if}
 
 
             <fieldset>
-      
-	   {if $context neq 'dialog'}
+
+     {if $context neq 'dialog'}
               <div id="{$groupId}_show" class="section-hidden section-hidden-border">
               <a href="#" onclick="hide('{$groupId}_show'); show('{$groupId}'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a><label>{ts}{$field.groupTitle}{/ts}</label><br />
                </div>
@@ -95,8 +95,8 @@ defined('_JEXEC') or die('Restricted access'); ?>
               <fieldset><legend><a href="#" onclick="hide('{$groupId}'); show('{$groupId}_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{ts}{$field.groupTitle}{/ts}</legend>
            {else}
               <div>
-	      <fieldset><legend>{ts}{$field.groupTitle}{/ts}</legend>
-	   {/if}	
+        <fieldset><legend>{ts}{$field.groupTitle}{/ts}</legend>
+     {/if}
         {/if}
         {assign var=fieldset  value=`$field.groupTitle`}
         {assign var=groupHelpPost  value=`$field.groupHelpPost`}
@@ -108,10 +108,10 @@ defined('_JEXEC') or die('Restricted access'); ?>
 
     {assign var=n value=$field.name}
     {if $field.options_per_line}
-	<tr>
+  <tr>
         <td class="option-label">{$form.$n.label}</td>
         <td>
-	    {assign var="count" value="1"}
+      {assign var="count" value="1"}
         {strip}
         <table class="form-layout-compressed">
         <tr>
@@ -127,7 +127,7 @@ defined('_JEXEC') or die('Restricted access'); ?>
                    <tr>
                    {assign var="count" value="1"}
               {else}
-          	       {assign var="count" value=`$count+1`}
+                   {assign var="count" value=`$count+1`}
               {/if}
           {/if}
           {/foreach}
@@ -136,7 +136,7 @@ defined('_JEXEC') or die('Restricted access'); ?>
         {/strip}
         </td>
     </tr>
-	{else}
+  {else}
         <tr>
            <td class="label">{$form.$n.label}</td>
            <td>
@@ -147,11 +147,11 @@ defined('_JEXEC') or die('Restricted access'); ?>
            {$form.$n.html}
            </td>
         </tr>
-	  {if $form.$n.type eq 'file'}
-	      <tr><td class="label"></td><td>{$customFiles.$n.displayURL}</td></tr>
-	      <tr><td class="label"></td><td>{$customFiles.$n.deleteURL}</td></tr>
-	  {/if} 
-	{/if}
+    {if $form.$n.type eq 'file'}
+        <tr><td class="label"></td><td>{$customFiles.$n.displayURL}</td></tr>
+        <tr><td class="label"></td><td>{$customFiles.$n.deleteURL}</td></tr>
+    {/if}
+  {/if}
         {* Show explanatory text for field if not in 'view' mode *}
         {if $field.help_post && $action neq 4 && $form.$n.html}<tr><td>&nbsp;</td><td class="description">{$field.help_post}</td></tr>
         {/if}
@@ -159,7 +159,7 @@ defined('_JEXEC') or die('Restricted access'); ?>
     {/foreach}
 
         {if $addToGroupId}
-	        <tr><td class="label">{$form.group[$addToGroupId].label}</td><td>{$form.group[$addToGroupId].html}</td></tr>
+          <tr><td class="label">{$form.group[$addToGroupId].label}</td><td>{$form.group[$addToGroupId].html}</td></tr>
         {/if}
 
     {if $isCaptcha  }
@@ -173,7 +173,7 @@ defined('_JEXEC') or die('Restricted access'); ?>
     {/if}
 
         </fieldset>
- 
+
 
 
 
@@ -189,12 +189,12 @@ defined('_JEXEC') or die('Restricted access'); ?>
     var showBlocks = new Array({$showBlocks});
     var hideBlocks = new Array({$hideBlocks});
 
-    /* hide and display the appropriate blocks as directed by the php code */    
-	on_load_init_blocks( showBlocks, hideBlocks );
-    
+    /* hide and display the appropriate blocks as directed by the php code */
+  on_load_init_blocks( showBlocks, hideBlocks );
+
   {/if}
 
- 
+
 
 
 
