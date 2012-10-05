@@ -683,6 +683,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form {
         CRM_Core_BAO_Address::checkContactSharedAddressFields($fields, $contactID);
       }
       $this->assign($name, $fields);
+      $profileAddressFields = array();
       if (is_array($fields)) {
         foreach ($fields as $key => $field) {
           if ($viewOnly &&
