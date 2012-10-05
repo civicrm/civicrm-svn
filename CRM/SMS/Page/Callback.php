@@ -33,15 +33,10 @@
  *
  */
 
-  //session_start();
-  //require_once 'civicrm.config.php';
-
 class CRM_SMS_Page_Callback 
 {
   
   function run(){
-    $config = CRM_Core_Config::singleton();
-
     $provider = CRM_SMS_Provider::singleton($_REQUEST);
     
     if (array_key_exists('status',$_REQUEST)){
