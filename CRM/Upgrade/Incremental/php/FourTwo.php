@@ -267,7 +267,7 @@ INNER JOIN civicrm_price_set cps ON cps.id = cpf.price_set_id AND cps.name <>'de
 SELECT coalesce(min(value),0) from civicrm_option_value ov
 WHERE ov.option_group_id =
   (SELECT id from civicrm_option_group og WHERE og.name = 'activity_type') AND
-ov.name = 'Reminder Sent';"
+ov.name = 'Reminder Sent'";
 
     $minReminderSent = CRM_Core_DAO::singlevalueQuery($queryMin);
     
@@ -275,7 +275,7 @@ ov.name = 'Reminder Sent';"
 SELECT coalesce(max(value),0) from civicrm_option_value ov
 WHERE ov.option_group_id =
   (SELECT id from civicrm_option_group og WHERE og.name = 'activity_type') AND
-ov.name = 'Reminder Sent';"
+ov.name = 'Reminder Sent'";
 
     $maxReminderSent = CRM_Core_DAO::singlevalueQuery($queryMax);
 
@@ -284,7 +284,7 @@ ov.name = 'Reminder Sent';"
       $query = "
 UPDATE civicrm_activity
 SET activity_type_id = {$minReminderSent}
-WHERE activity_type_id = {$maxReminderSent};"
+WHERE activity_type_id = {$maxReminderSent}";
 
       CRM_Core_DAO::execute($query);
       
@@ -293,7 +293,7 @@ WHERE activity_type_id = {$maxReminderSent};"
 DELETE from civicrm_option_value
   WHERE option_group_id =
     (SELECT id from civicrm_option_group og WHERE og.name = 'activity_type') AND
-  value = '{$maxReminderSent}';"
+  value = '{$maxReminderSent}'";
 
       CRM_Core_DAO::execute($query);
     }
