@@ -23,10 +23,17 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+{htxt id='proc-type-title'}
+  {ts}Payment Processors{/ts}
+{/htxt}
 {htxt id='proc-type'}
-{capture assign=bookLink}{docURL page="user/contributions/payment-processors" text="payment processor overview"}{/capture}
-{capture assign=wikiLink}{docURL page="CiviContribute Payment Processor Configuration" text="configuration procedures for each Payment Processor" resource="wiki"}{/capture}
-{ts 1=$bookLink 2=$wikiLink}Review the %1 and %2 first. If you're not sure which processor to use - we recommend reviewing terms, limitations and coverage areas on each processor's website before proceeding. If your preferred processor is not in the list, consider partnering with a developer and contributing a plugin.{/ts}
+<p>{ts}Refer to the following documentation:{/ts}</p>
+<ul>
+  <li>{docURL page="user/contributions/payment-processors" text="Payment processor overview"}</li>
+  <li>{docURL page="Payment Processors" text="Processor comparison and setup guide" resource="wiki"}</li>
+</ul>
+<p>{ts}If you're not sure which processor to use - we recommend reviewing terms, limitations and coverage areas on each processor's website before proceeding.{/ts}</p>
+<p>{ts 1="http://civicrm.org/extensions"}If your desired processor is not in the list, check the <a href="%1">Extensions Directory</a> for more payment processors you can download. If you still can't find it, consider partnering with a developer and contributing a new extension.{/ts}</p>
 {/htxt}
 
 {htxt id='AuthNet_AIM-live-user-name'}

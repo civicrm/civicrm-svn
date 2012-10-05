@@ -34,7 +34,7 @@
  */
 
 /**
- * This class generates form components for Location Type
+ * This class generates form components for Payment Processor
  *
  */
 class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
@@ -307,7 +307,7 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
    *
    * @access public
    *
-   * @return None
+   * @return Void
    */
   public function postProcess() {
     CRM_Utils_System::flushCache('CRM_Core_DAO_PaymentProcessor');
@@ -328,8 +328,14 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
 
     $this->updatePaymentProcessor($values, $domainID, FALSE);
     $this->updatePaymentProcessor($values, $domainID, TRUE);
+    CRM_Core_Session::setStatus(ts('Payment processor %1 has been saved.', array(1 => "<em>{$values['name']}</em>")), ts('Saved'), 'success');
   }
-  //end of function
+
+  /**
+   * Save a payment processor
+   *
+   * @return Void
+   */
   function updatePaymentProcessor(&$values, $domainID, $test) {
     $dao = new CRM_Core_DAO_PaymentProcessor();
 
@@ -361,4 +367,3 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
     $dao->save();
   }
 }
-
