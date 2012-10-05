@@ -284,6 +284,11 @@ class CRM_SMS_Provider_Clickatell extends CRM_SMS_Provider {
         return $send[1];
       }
       else {
+        // delete any parent activity & throw error
+        if (CRM_Utils_Array::value('parent_activity_id', $header)) {
+          $params = array('id' => $header['parent_activity_id']);
+          CRM_Activity_BAO_Activity::deleteActivity($params);
+        }
         return PEAR::raiseError($response['data']);
       }
     }
