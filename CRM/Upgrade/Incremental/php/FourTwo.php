@@ -261,6 +261,44 @@ INNER JOIN civicrm_price_set cps ON cps.id = cpf.price_set_id AND cps.name <>'de
     }
   }
 
+  function upgrade_4_2_3($rev) {
+    // CRM-10953 Remove duplicate activity type for 'Reminder Sent' which is mistakenly inserted by 4.2.alpha1 upgrade script
+    $queryMin = "
+SELECT coalesce(min(value),0) from civicrm_option_value ov
+WHERE ov.option_group_id =
+  (SELECT id from civicrm_option_group og WHERE og.name = 'activity_type') AND
+ov.name = 'Reminder Sent';"
+
+    $minReminderSent = CRM_Core_DAO::singlevalueQuery($queryMin);
+    
+    $queryMax = "
+SELECT coalesce(max(value),0) from civicrm_option_value ov
+WHERE ov.option_group_id =
+  (SELECT id from civicrm_option_group og WHERE og.name = 'activity_type') AND
+ov.name = 'Reminder Sent';"
+
+    $maxReminderSent = CRM_Core_DAO::singlevalueQuery($queryMax);
+
+    // If we have two different values, replace new value with original in any activities
+    if ($maxReminderSent > $minReminderSent) {
+      $query = "
+UPDATE civicrm_activity
+SET activity_type_id = {$minReminderSent}
+WHERE activity_type_id = {$maxReminderSent};"
+
+      CRM_Core_DAO::execute($query);
+      
+      // Then delete the newer (duplicate) option_value row
+      $query = "
+DELETE from civicrm_option_value
+  WHERE option_group_id =
+    (SELECT id from civicrm_option_group og WHERE og.name = 'activity_type') AND
+  value = '{$maxReminderSent}';"
+
+      CRM_Core_DAO::execute($query);
+    }
+  }
+
   function convertContribution(){
     $minContributionId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(min(id),0) FROM civicrm_contribution');
     $maxContributionId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(max(id),0) FROM civicrm_contribution');
