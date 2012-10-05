@@ -33,11 +33,21 @@
  *
  */
 
-session_start();
+  //session_start();
+  //require_once 'civicrm.config.php';
 
-require_once '../civicrm.config.php';
-$config = CRM_Core_Config::singleton();
+class CRM_SMS_Page_Callback 
+{
+  
+  function run(){
+    $config = CRM_Core_Config::singleton();
 
-$provider = CRM_SMS_Provider::singleton($_REQUEST);
-$provider->inbound();
-
+    $provider = CRM_SMS_Provider::singleton($_REQUEST);
+    
+    if (array_key_exists('status',$_REQUEST)){
+      $provider->callback();
+    } elseif (array_key_exists('api_id',$_REQUEST) && array_key_exists('moMsgId',$_REQUEST)){
+      $provider->inbound();
+    }
+  }
+}
