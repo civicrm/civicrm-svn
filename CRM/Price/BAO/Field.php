@@ -129,7 +129,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
           'price_field_id' => $priceField->id,
           'label' => trim($params['option_label'][$index]),
           'name' => CRM_Utils_String::munge($params['option_label'][$index], '_', 64),
-          'amount' => CRM_Utils_Rule::cleanMoney(trim($params['option_amount'][$index])), 
+          'amount' => CRM_Utils_Rule::cleanMoney(trim($params['option_amount'][$index])),
           'count' => CRM_Utils_Array::value($index, CRM_Utils_Array::value('option_count', $params), NULL),
           'max_value' => CRM_Utils_Array::value($index, CRM_Utils_Array::value('option_max_value', $params), NULL),
           'description' => CRM_Utils_Array::value($index, CRM_Utils_Array::value('option_description', $params), NULL),
@@ -245,7 +245,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
     if ($field->name == 'contribution_amount') {
         $qf->_contributionAmount = 1;
     }
-    
+
     if (isset($qf->_online) && $qf->_online) {
       $useRequired = FALSE;
     }
@@ -270,7 +270,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
           $qf->assign('priceset', $elementName);
           $extra = array('onclick' => 'useAmountOther();');
         }
-       
+
         // if seperate membership payment is used with quick config priceset then change the other amount label
         if (property_exists($qf,'_membershipBlock') && CRM_Utils_Array::value('is_separate_payment', $qf->_membershipBlock) && $qf->_quickConfig && $field->name == 'other_amount' && !property_exists($qf,'_contributionAmount')) {
             $label = 'Additional Contribution';
@@ -297,14 +297,14 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
         if (in_array($optionKey, $feezeOptions)) {
           $element->freeze();
         }
-        
+
         //CRM-10117
         if (property_exists($qf, '_quickConfig') && $qf->_quickConfig) {
           $message = ts("Please enter a valid amount.");
           $type = "money";
         } else {
           $message = ts('%1 must be an integer (whole number).', array(1 => $label));
-          $type = "positiveInteger";          
+          $type = "positiveInteger";
         }
         // integers will have numeric rule applied to them.
         $qf->addRule($elementName, $message, $type);
@@ -324,7 +324,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
           }
           $count     = CRM_Utils_Array::value('count', $opt, '');
           $max_value = CRM_Utils_Array::value('max_value', $opt, '');
-          $priceVal  = implode($seperator, array($opt[$valueFieldName], $count, $max_value));   
+          $priceVal  = implode($seperator, array($opt[$valueFieldName], $count, $max_value));
           $extra = array('price' => json_encode(array($elementName, $priceVal)),
                          'data-amount' => $opt[$valueFieldName],
                          'data-currency' => $currencyName,
@@ -333,7 +333,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
             $extra += array('onclick' => 'clearAmountOther();');
           } elseif (property_exists($qf, '_quickConfig') && $qf->_quickConfig && $field->name == 'membership_amount') {
             $extra += array('onclick' => "return showHideAutoRenew({$opt['membership_type_id']});",
-                            'membership-type' => $opt['membership_type_id'],                            
+                            'membership-type' => $opt['membership_type_id'],
                             );
             $qf->assign('membershipFieldID',$field->id);
           }
@@ -476,12 +476,12 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
     $optionGroupName = "civicrm_price_field.amount.{$fid}";
 
     $query = "
-SELECT 
+SELECT
         option_value.id as id
-FROM 
+FROM
         civicrm_option_value option_value,
         civicrm_option_group option_group
-WHERE 
+WHERE
         option_group.name  = %1
     AND option_group.id    = option_value.option_group_id
     AND option_value.label = %2";
@@ -568,8 +568,8 @@ WHERE
     if (!empty($priceFields)) {
       // we should has to have positive amount.
       $sql = "
-SELECT  id, html_type 
-FROM  civicrm_price_field 
+SELECT  id, html_type
+FROM  civicrm_price_field
 WHERE  id IN (" . implode(',', array_keys($priceFields)) . ')';
       $fieldDAO = CRM_Core_DAO::executeQuery($sql);
       $htmlTypes = array();
