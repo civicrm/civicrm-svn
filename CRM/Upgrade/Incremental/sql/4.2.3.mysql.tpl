@@ -9,3 +9,11 @@ INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES
     ( {$domainID}, 'civicrm/mailing/browse?reset=1&sms=1', '{ts escape="sql" skip="true"}Find Mass SMS{/ts}', 'Find Mass SMS', 'administer CiviCRM', NULL, @mailingsID, '1', 1, @navWeight+1 );
+
+-- CRM-10980
+{if $multilingual}
+    {foreach from=$locales item=locale}
+         UPDATE `civicrm_option_value` SET label_{$locale} = '{ts escape="sql"}Bulk SMS{/ts}',name = 'Bulk SMS',description_{$locale} = '{ts escape="sql"}Bulk SMS{/ts}' WHERE name = 'BULK SMS'; 
+    {/foreach}
+{else}
+    UPDATE `civicrm_option_value` SET label = '{ts escape="sql"}Bulk SMS{/ts}',name = 'Bulk SMS',description = '{ts escape="sql"}Bulk SMS{/ts}' WHERE name = 'BULK SMS'; 
