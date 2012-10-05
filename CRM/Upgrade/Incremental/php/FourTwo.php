@@ -262,6 +262,7 @@ INNER JOIN civicrm_price_set cps ON cps.id = cpf.price_set_id AND cps.name <>'de
   }
 
   function upgrade_4_2_3($rev) {
+    $this->addTask(ts('Upgrade DB to 4.2.3: SQL'), 'task_4_2_alpha1_runSql', $rev);
     // CRM-10953 Remove duplicate activity type for 'Reminder Sent' which is mistakenly inserted by 4.2.alpha1 upgrade script
     $queryMin = "
 SELECT coalesce(min(value),0) from civicrm_option_value ov
