@@ -13,8 +13,8 @@ VALUES
 -- CRM-10980
 {if $multilingual}
     {foreach from=$locales item=locale}
-         UPDATE `civicrm_option_value` SET label_{$locale} = '{ts escape="sql"}Bulk SMS{/ts}',name = 'Bulk SMS',description_{$locale} = '{ts escape="sql"}Bulk SMS{/ts}' WHERE name = 'BULK SMS'; 
+         UPDATE `civicrm_option_value` SET label_{$locale} = '{ts escape="sql"}Mass SMS{/ts}',name = 'Mass SMS',description_{$locale} = '{ts escape="sql"}Mass SMS{/ts}' WHERE name = 'BULK SMS'; 
     {/foreach}
 {else}
-    UPDATE `civicrm_option_value` SET label = '{ts escape="sql"}Bulk SMS{/ts}',name = 'Bulk SMS',description = '{ts escape="sql"}Bulk SMS{/ts}' WHERE name = 'BULK SMS'; 
+    UPDATE `civicrm_option_value` SET label = '{ts escape="sql"}Mass SMS{/ts}',name = 'Mass SMS',description = '{ts escape="sql"}Mass SMS{/ts}' WHERE name = 'BULK SMS'; 
 {/if}
