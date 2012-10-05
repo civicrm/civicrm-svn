@@ -61,7 +61,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
    *
    * @return void
    * @access public
-   */ 
+   */
   function preProcess() {
     parent::preProcess();
 
@@ -295,7 +295,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
       } else {
           $prefix1 = '';
           $prefix2 = '';
-      } 
+      }
       if ($participantValue != 'skip') {
         //get the customPre profile info
         if (CRM_Utils_Array::value( $prefix2 . 'custom_pre_id', $this->_values)) {
@@ -341,7 +341,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
       }
     }
     if (!empty($formattedValues) ) {
-      $this->assign('primaryParticipantProfile', $formattedValues[1]); 
+      $this->assign('primaryParticipantProfile', $formattedValues[1]);
       $this->set('primaryParticipantProfile',    $formattedValues[1]);
       if ($count > 2) {
         unset($formattedValues[1]);
@@ -349,7 +349,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
         $this->set('addParticipantProfile',    $formattedValues);
       }
     }
-    
+
     //consider total amount.
     $this->assign('isAmountzero', ($this->_totalAmount <= 0) ? TRUE : FALSE);
 
@@ -500,7 +500,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
 
     $payment = $registerByID = $primaryCurrencyID = $contribution = NULL;
     $this->participantIDS = array();
-
+    $fields = array();
     foreach ($params as $key => $value) {
       $this->fixLocationFields($value, $fields);
       //unset the billing parameters if it is pay later mode
