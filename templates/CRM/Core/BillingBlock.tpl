@@ -221,12 +221,12 @@ function sameAddress( setValue ) {
       }
     });
 
-    // now set the state province, we are delaying setdefaults
-    // before onchange takes some time / to load states
+    // now set the state province
+    // after ajax call loads all the states
     if ( stateId ) {
-      setTimeout(function(){
+      cj('select[id^="billing_state_province_id"]').ajaxStop(function() {
         cj( 'select[id^="billing_state_province_id"]').val( stateId );
-      }, 500);
+      });
     }  
   }
 }
