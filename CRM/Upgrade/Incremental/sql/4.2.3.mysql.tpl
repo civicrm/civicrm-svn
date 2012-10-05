@@ -17,3 +17,4 @@ VALUES
     {/foreach}
 {else}
     UPDATE `civicrm_option_value` SET label = '{ts escape="sql"}Bulk SMS{/ts}',name = 'Bulk SMS',description = '{ts escape="sql"}Bulk SMS{/ts}' WHERE name = 'BULK SMS'; 
+{/if}
