@@ -165,7 +165,6 @@
                         var relType    = cj('#relationship_type_id').val( );
                         var relContact = cj('#contact_1');
                         if ( relType ) {
-                             relContact.unbind( 'click' );
                              var dataUrl = {/literal}'{crmURL p="civicrm/ajax/rest" h=0 q="className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=relationship&rel="}'{literal} + relType;
                              relContact.autocomplete( dataUrl, { width : 180, selectFirst : false, matchContains: true });
                              relContact.result(function( event, data ) {
@@ -175,20 +174,19 @@
                              });
                         } else {
                             relContact.unautocomplete( );
-                            relContact.click( function() { cj('#relationship_type_id').crmError('{/literal}{ts}Please select a relationship type first.{/ts}{literal}');});
                         }
                     }
 
                     function buildCreateNewSelect( selectID, relType ) {
-                        var elementID = '#' + selectID;
-                        cj( elementID ).html('');
+                        selectID = '#' + selectID;
+                        cj( selectID ).html('');
                         var postUrl = "{/literal}{crmURL p='civicrm/ajax/relationshipContactTypeList' h=0}{literal}";
                         cj.post( postUrl, { relType: relType },
                             function ( response ) {
-                                cj( elementID ).get(0).add(new Option('{/literal}{ts}- create new contact -{/ts}{literal}', ''), document.all ? i : null);
+                                cj( selectID ).get(0).add(new Option('- {/literal}{ts escape="js"}create new contact{/ts}{literal} -', ''), document.all ? i : null);
                                 response = eval( response );
                                 for (i = 0; i < response.length; i++) {
-                                    cj( elementID ).get(0).add(new Option(response[i].name, response[i].value), document.all ? i : null);
+                                    cj( selectID ).get(0).add(new Option(response[i].name, response[i].value), document.all ? i : null);
                                 }
                             }
                         );
