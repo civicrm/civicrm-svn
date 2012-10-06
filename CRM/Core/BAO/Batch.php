@@ -319,7 +319,7 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
         'name' => ts('Enter records'),
         'url' => 'civicrm/batch/entry',
         'qs' => 'id=%%id%%&reset=1',
-        'title' => ts('Batch Entry'),
+        'title' => ts('Bulk Data Entry'),
       ),
       CRM_Core_Action::UPDATE => array(
         'name' => ts('Edit'),

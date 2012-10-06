@@ -12,9 +12,26 @@ VALUES
 
 -- CRM-10980
 {if $multilingual}
-    {foreach from=$locales item=locale}
-         UPDATE `civicrm_option_value` SET label_{$locale} = '{ts escape="sql"}Mass SMS{/ts}',name = 'Mass SMS',description_{$locale} = '{ts escape="sql"}Mass SMS{/ts}' WHERE name = 'BULK SMS'; 
-    {/foreach}
+	{foreach from=$locales item=locale}
+  	UPDATE `civicrm_option_value` SET label_{$locale} = '{ts escape="sql"}Mass SMS{/ts}',name = 'Mass SMS',description_{$locale} = '{ts escape="sql"}Mass SMS{/ts}' WHERE name = 'BULK SMS'; 
+	{/foreach}
 {else}
-    UPDATE `civicrm_option_value` SET label = '{ts escape="sql"}Mass SMS{/ts}',name = 'Mass SMS',description = '{ts escape="sql"}Mass SMS{/ts}' WHERE name = 'BULK SMS'; 
+	UPDATE `civicrm_option_value` SET label = '{ts escape="sql"}Mass SMS{/ts}',name = 'Mass SMS',description = '{ts escape="sql"}Mass SMS{/ts}' WHERE name = 'BULK SMS'; 
 {/if}
+
+-- CRM-10986: Rename Batches UI elements to Bulk Data Entry
+-- update reserved profile titles
+{if $multilingual}
+  {foreach from=$locales item=locale}
+  	UPDATE `civicrm_uf_group` SET title_{$locale} = '{ts escape="sql"}Contribution Bulk Entry{/ts}' WHERE name = 'contribution_batch_entry';
+    UPDATE `civicrm_uf_group` SET title_{$locale} = '{ts escape="sql"}Membership Bulk Entry{/ts}' WHERE name = 'membership_batch_entry';
+	{/foreach}
+{else}
+  UPDATE `civicrm_uf_group` SET title = '{ts escape="sql"}Contribution Bulk Entry{/ts}' WHERE name = 'contribution_batch_entry';
+  UPDATE `civicrm_uf_group` SET title = '{ts escape="sql"}Membership Bulk Entry{/ts}' WHERE name = 'membership_batch_entry';
+{/if}
+
+-- update navigation menu items and fix typo in permission column
+UPDATE `civicrm_navigation` SET label = '{ts escape="sql"}Bulk Data Entry{/ts}', name = 'Bulk Data Entry',
+permission = 'access CiviMember, access CiviContribute'
+WHERE url = 'civicrm/batch&reset=1';
