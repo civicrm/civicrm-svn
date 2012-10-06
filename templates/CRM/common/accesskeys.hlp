@@ -31,6 +31,6 @@
 <ul>
   <li>ALT+SHIFT+E - <em>{ts}Edit Contact (View Contact Summary Page){/ts}</em></li>
   <li>ALT+SHIFT+S - <em>{ts}Save Button{/ts}</em></li>
-  <li>ALT+SHIFT+N - <em>{ts}Adding a new record in each tab (Activities, Tags,..etc){/ts}</em></li>
+  <li>ALT+SHIFT+N - <em>{ts}Add a new record in each tab (Activities, Tags,..etc){/ts}</em></li>
 </ul>
 {/htxt}
