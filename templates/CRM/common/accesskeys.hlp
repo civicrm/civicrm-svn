@@ -29,8 +29,8 @@
 {htxt id="accesskeys"}
 <p></p>
 <ul>
-  <li> ALT+SHIFT+E -<em> Edit Contact (View Contact Summary Page)</em></li>
-  <li> ALT+SHIFT+S -<em> Save Button</em></li>
-  <li> ALT+SHIFT+N -<em> Adding a new record in each tab (Activities, Tags,..etc)</em></li>
+  <li>ALT+SHIFT+E - <em>{ts}Edit Contact (View Contact Summary Page){/ts}</em></li>
+  <li>ALT+SHIFT+S - <em>{ts}Save Button{/ts}</em></li>
+  <li>ALT+SHIFT+N - <em>{ts}Adding a new record in each tab (Activities, Tags,..etc){/ts}</em></li>
 </ul>
 {/htxt}

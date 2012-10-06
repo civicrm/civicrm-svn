@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {htxt id="id-dash_welcome-title"}
-{ts}Dashboard{/ts}
+  {ts}Dashboard{/ts}
 {/htxt}
 {htxt id="id-dash_welcome"}
 <p>
@@ -44,7 +44,7 @@
 {/htxt}
 
 {htxt id="id-dash_configure-title"}
-{ts}Configuration{/ts}
+  {ts}Configuration{/ts}
 {/htxt}
 {htxt id="id-dash_configure"}
 <p>

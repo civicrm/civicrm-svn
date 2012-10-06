@@ -24,8 +24,8 @@
  +--------------------------------------------------------------------+
 *}
 {htxt id="id-next-prev-buttons-title"}
-{ts}Navigation{/ts}
+  {ts}Navigation{/ts}
 {/htxt}
 {htxt id="id-next-prev-buttons"}
-{ts}Next/Previous buttons are not available for searches which are sorted by email, phone or address or fields.{/ts}
+  {ts}Next/Previous buttons are not available for searches which are sorted by email, phone or address or fields.{/ts}
 {/htxt}

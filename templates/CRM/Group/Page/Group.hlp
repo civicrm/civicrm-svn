@@ -43,7 +43,7 @@
 {/htxt} 
 
 {htxt id="id-group-visibility-title"}
-  {ts}Title{/ts}
+  {ts}Group Visibility{/ts}
 {/htxt}
 {htxt id="id-group-visibility"}
 <p>{ts}Select 'User and User Admin Only' if joining this group is controlled by authorized CiviCRM users only. If you want to allow contacts to join and remove themselves from this group via the Registration and Account Profile forms, select 'Public Pages'.{/ts}</p>
