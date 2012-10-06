@@ -63,6 +63,8 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
   
   public $_mode;
 
+  public $_params;
+
   public $_membershipId = null;
   /**
    * when not to reset sort_name
@@ -646,7 +648,8 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         
         $value['is_renew'] = false; 
         if ( CRM_Utils_Array::value('member_option', $params) && CRM_Utils_Array::value( $key, $params['member_option'] ) == 2 ) {
-          $value['is_renew'] = true; 
+          $this->_params = $params;
+          $value['is_renew'] = true;
           $membership = CRM_Member_BAO_Membership::renewMembership( 
             $value['contact_id'],
             $value['membership_type_id'],
