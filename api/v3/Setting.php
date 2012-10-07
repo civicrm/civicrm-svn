@@ -104,15 +104,19 @@ function civicrm_api3_setting_getdefaults_spec(&$params) {
 function civicrm_api3_setting_revert(&$params){
   $defaults = civicrm_api('setting','getdefaults', $params);
   $domains = _civicrm_api3_setting_getDomainArray($params);
+  $result = array();
   foreach ($domains as $domainID){
       $valuesToRevert = array_intersect_key($params, $defaults['values'][$domainID]);
       $valuesToRevert = $defaults['values'][$domainID];
     if(!empty($valuesToRevert)){
       $valuesToRevert['version'] = $params['version'];
       $valuesToRevert['domain_id'] = $domainID;
-      civicrm_api('setting', 'create', $valuesToRevert);
+      // note that I haven't looked at how the result would appear with multiple domains in play
+      $result = array_merge($result, civicrm_api('setting', 'create', $valuesToRevert));
     }
   }
+
+  return civicrm_api3_create_success($result, $params, 'setting', 'revert');
 }
 /*
  * Alter metadata for getfields functions
@@ -133,6 +137,7 @@ function civicrm_api3_setting_revert_spec(&$params) {
 function civicrm_api3_setting_fill(&$params){
   $defaults = civicrm_api('setting','getdefaults', $params);
   $domains = _civicrm_api3_setting_getDomainArray($params);
+  $result = array();
   foreach ($domains as $domainID){
     $apiArray = array(
       'version' => $params['version'],
@@ -141,9 +146,10 @@ function civicrm_api3_setting_fill(&$params){
     $existing = civicrm_api('setting','get', $apiArray);
     $valuesToFill = array_diff_key($defaults['values'][$domainID], $existing['values'][$domainID]);
     if(!empty($valuesToFill)){
-      civicrm_api('setting', 'create', $valuesToFill + $apiArray);
+      $result = array_merge($result, civicrm_api('setting', 'create', $valuesToFill + $apiArray));
     }
   }
+  return civicrm_api3_create_success($result, $params, 'setting', 'fill');
 }
 /*
  * Alter metadata for getfields functions
@@ -220,6 +226,55 @@ function civicrm_api3_setting_get_spec(&$params) {
       'description' => 'if you know the group defining it will make the api more efficient'
   )
   ;
+}
+/**
+ * Returns value for specific parameter. Function requires more fields than 'get' but is intended for
+ * runtime usage & should be quicker
+ *
+ * @param array $params  (reference) Array of one or more valid
+ *                       property_name=>value pairs.
+ *
+ * @return array Array of matching settings
+ * {@getfields setting_get}
+ * @access public
+ */
+function civicrm_api3_setting_getvalue($params) {
+  return CRM_Core_BAO_Setting::getItem(
+    $params['group'],
+    CRM_Utils_Array::value('name', $params),
+    CRM_Utils_Array::value('component_id', $params),
+    CRM_Utils_Array::value('default_value', $params),
+    CRM_Utils_Array::value('contact_id', $params),
+    CRM_Utils_Array::value('domain_id', $params)
+  );
+}
+
+/*
+ * Metadata for setting create function
+*
+* @param array $params parameters as passed to the API
+*/
+function civicrm_api3_setting_getvalue_spec(&$params) {
+
+  $params['group'] = array(
+      'title' => 'Settings Group',
+      'api.required' => TRUE,
+  );
+  $params['name'] = array(
+      'title' => 'Setting Name',
+  );
+  $params['default_value'] = array(
+      'title' => 'Default Value',
+  );
+  $params['component_id'] = array(
+      'title' => 'Component Id',
+  );
+  $params['contact_id'] = array(
+      'title' => 'Contact Id',
+  );
+  $params['domain_id'] = array(
+      'description' => 'if you do not pass in a domain id this will default to the current domain'
+  );
 }
 /*
  * Converts domain input into an array. If an array is passed in this is used, if 'all' is passed

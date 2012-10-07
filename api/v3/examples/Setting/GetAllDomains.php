@@ -9,7 +9,7 @@ function setting_get_example(){
 $params = array( 
   'version' => 3,
   'domain_id' => 'all',
-  'uniq_email_per_site' => 1,
+  'return' => 'uniq_email_per_site',
 );
 
   require_once 'api/api.php';

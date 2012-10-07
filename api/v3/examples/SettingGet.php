@@ -8,8 +8,8 @@
 function setting_get_example(){
 $params = array( 
   'version' => 3,
-  'domain_id' => '',
-  'uniq_email_per_site' => 1,
+  'domain_id' => 3,
+  'return' => 'uniq_email_per_site',
 );
 
   require_once 'api/api.php';
@@ -27,9 +27,9 @@ function setting_get_expectedresult(){
   'is_error' => 0,
   'version' => 3,
   'count' => 1,
-  'id' => '',
+  'id' => 3,
   'values' => array( 
-      '' => array( 
+      '3' => array( 
           'uniq_email_per_site' => 0,
         ),
     ),

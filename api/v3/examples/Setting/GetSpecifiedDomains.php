@@ -12,7 +12,9 @@ $params = array(
       '0' => 1,
       '1' => 2,
     ),
-  'uniq_email_per_site' => 0,
+  'return' => array( 
+      '0' => 'uniq_email_per_site',
+    ),
 );
 
   require_once 'api/api.php';

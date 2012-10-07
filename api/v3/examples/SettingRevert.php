@@ -3,16 +3,16 @@
 
 
 /*
- shows setting a variable for a current domain
+ Demonstrates reverting a parameter to default value
  */
-function setting_create_example(){
+function setting_revert_example(){
 $params = array( 
   'version' => 3,
-  'uniq_email_per_site' => 1,
+  'name' => 'address_format',
 );
 
   require_once 'api/api.php';
-  $result = civicrm_api( 'setting','create',$params );
+  $result = civicrm_api( 'setting','revert',$params );
 
   return $result;
 }
@@ -20,16 +20,22 @@ $params = array(
 /*
  * Function returns array of result expected from previous function
  */
-function setting_create_expectedresult(){
+function setting_revert_expectedresult(){
 
   $expectedResult = array( 
   'is_error' => 0,
   'version' => 3,
-  'count' => 1,
+  'count' => 5,
   'id' => 1,
   'values' => array( 
-      '1' => array( 
-          'uniq_email_per_site' => 1,
+      'is_error' => 0,
+      'version' => 3,
+      'count' => 1,
+      'id' => 1,
+      'values' => array( 
+          '1' => array( 
+              'address_format' => '{contact.address_name}\n{contact.street_address}\n{contact.supplemental_address_1}\n{contact.supplemental_address_2}\n{contact.city}{, }{contact.state_province}{ }{contact.postal_code}\n{contact.country}',
+            ),
         ),
     ),
 );
@@ -43,7 +49,7 @@ function setting_create_expectedresult(){
 /*
 * This example has been generated from the API test suite. The test that created it is called
 * 
-* testCreateSetting and can be found in 
+* testRevert and can be found in 
 * http://svn.civicrm.org/civicrm/branches/v3.4/tests/phpunit/CiviTest/api/v3/SettingTest.php
 * 
 * You can see the outcome of the API tests at 

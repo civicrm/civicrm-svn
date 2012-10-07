@@ -290,7 +290,7 @@ class api_v3_SettingTest extends CiviUnitTestCase {
     );
     $result = civicrm_api('setting', 'get', $params);
     $description = "shows getting a variable for a current domain";
-    $this->documentMe($params, $result, __FUNCTION__, __FILE__, $description, 'CreateSettingCurrentDomain');
+    $this->documentMe($params, $result, __FUNCTION__, __FILE__, $description, 'GetSettingCurrentDomain');
     $this->assertAPISuccess($result, "in line " . __LINE__);
     $this->assertArrayHasKey(CRM_Core_Config::domainID(), $result['values']);
   }
