@@ -1757,49 +1757,54 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     }
     $entity = substr(basename($filename), 0, strlen(basename($filename)) - 8);
     //todo - this is a bit cludgey
-    if (strstr($function, 'Create')) {
-      $action = empty($action) ? 'create' : $action;
-      $entityAction = 'Create';
+    if(empty($action)){
+      if (strstr($function, 'Create')) {
+        $action = empty($action) ? 'create' : $action;
+        $entityAction = 'Create';
+      }
+      elseif (strstr($function, 'GetSingle')) {
+        $action = empty($action) ? 'getsingle' : $action;
+        $entityAction = 'GetSingle';
+      }
+      elseif (strstr($function, 'GetValue')) {
+        $action = empty($action) ? 'getvalue' : $action;
+        $entityAction = 'GetValue';
+      }
+      elseif (strstr($function, 'GetCount')) {
+        $action = empty($action) ? 'getcount' : $action;
+        $entityAction = 'GetCount';
+      }
+      elseif (strstr($function, 'Get')) {
+        $action = empty($action) ? 'get' : $action;
+        $entityAction = 'Get';
+      }
+      elseif (strstr($function, 'Delete')) {
+        $action = empty($action) ? 'delete' : $action;
+        $entityAction = 'Delete';
+      }
+      elseif (strstr($function, 'Update')) {
+        $action = empty($action) ? 'update' : $action;
+        $entityAction = 'Update';
+      }
+      elseif (strstr($function, 'Subscribe')) {
+        $action = empty($action) ? 'subscribe' : $action;
+        $entityAction = 'Subscribe';
+      }
+      elseif (strstr($function, 'Set')) {
+        $action = empty($action) ? 'set' : $action;
+        $entityAction = 'Set';
+      }
+      elseif (strstr($function, 'Apply')) {
+        $action = empty($action) ? 'apply' : $action;
+        $entityAction = 'Apply';
+      }
+      elseif (strstr($function, 'Replace')) {
+        $action = empty($action) ? 'replace' : $action;
+        $entityAction = 'Replace';
+      }
     }
-    elseif (strstr($function, 'GetSingle')) {
-      $action = empty($action) ? 'getsingle' : $action;
-      $entityAction = 'GetSingle';
-    }
-    elseif (strstr($function, 'GetValue')) {
-      $action = empty($action) ? 'getvalue' : $action;
-      $entityAction = 'GetValue';
-    }
-    elseif (strstr($function, 'GetCount')) {
-      $action = empty($action) ? 'getcount' : $action;
-      $entityAction = 'GetCount';
-    }
-    elseif (strstr($function, 'Get')) {
-      $action = empty($action) ? 'get' : $action;
-      $entityAction = 'Get';
-    }
-    elseif (strstr($function, 'Delete')) {
-      $action = empty($action) ? 'delete' : $action;
-      $entityAction = 'Delete';
-    }
-    elseif (strstr($function, 'Update')) {
-      $action = empty($action) ? 'update' : $action;
-      $entityAction = 'Update';
-    }
-    elseif (strstr($function, 'Subscribe')) {
-      $action = empty($action) ? 'subscribe' : $action;
-      $entityAction = 'Subscribe';
-    }
-    elseif (strstr($function, 'Set')) {
-      $action = empty($action) ? 'set' : $action;
-      $entityAction = 'Set';
-    }
-    elseif (strstr($function, 'Apply')) {
-      $action = empty($action) ? 'apply' : $action;
-      $entityAction = 'Apply';
-    }
-    elseif (strstr($function, 'Replace')) {
-      $action = empty($action) ? 'replace' : $action;
-      $entityAction = 'Replace';
+    else {
+      $entityAction = ucwords($action);
     }
 
     //unset hash field if it's in the values array because it changes every time so it makes the examples

@@ -92,7 +92,7 @@ class api_v3_SettingTest extends CiviUnitTestCase {
     $params = array('version' => $this->_apiversion);
     $result = civicrm_api('setting', 'getfields', $params);
     $description = 'Demonstrate return from getfields - see subfolder for variants';
-    $this->documentMe($params, $result, __FUNCTION__, __FILE__, $description);
+    $this->documentMe($params, $result, __FUNCTION__, __FILE__, $description,'', 'getfields');
     $this->assertAPISuccess($result, "in line " . __LINE__);
     $this->assertArrayHasKey('customCSSURL', $result['values']);
 
@@ -236,7 +236,10 @@ class api_v3_SettingTest extends CiviUnitTestCase {
     $this->assertEquals(1, $result['values'][2]['uniq_email_per_site']);
     $this->assertEquals(1, $result['values'][1]['uniq_email_per_site']);
 
-
+    $params = array('version' => $this->_apiversion,
+        'domain_id' => 'all',
+        'return' => 'uniq_email_per_site'
+    );
     // we'll check it with a 'get'
     $result = civicrm_api('setting', 'get', $params);
     $description = "shows getting a variable for all domains";
@@ -257,8 +260,10 @@ class api_v3_SettingTest extends CiviUnitTestCase {
     $this->assertAPISuccess($result, "in line " . __LINE__);
     $this->assertEquals(0, $result['values'][3]['uniq_email_per_site']);
     $this->assertEquals(0, $result['values'][1]['uniq_email_per_site']);
-
-    $params['domain_id'] = array(1,2);
+    $params = array('version' => $this->_apiversion,
+        'domain_id' => array(1,2),
+        'return' => array('uniq_email_per_site'),
+    );
     $result = civicrm_api('setting', 'get', $params);
     $description = "shows getting a variable for specified domains";
     $this->documentMe($params, $result, __FUNCTION__, __FILE__,$description, 'GetSpecifiedDomains', 'Get');
@@ -290,14 +295,26 @@ class api_v3_SettingTest extends CiviUnitTestCase {
     $this->assertArrayHasKey(CRM_Core_Config::domainID(), $result['values']);
   }
 
-  function testGetDefault() {
+  function testGetValue() {
+    $params = array(
+      'version' => $this->_apiversion,
+      'name' => 'imageUploadURL',
+      'group' => 'URL Preferences'
+    );
+    $result = civicrm_api('setting', 'getvalue', $params);
+    $this->assertEquals('sites/default/files/civicrm/persist/contribute/', $result);
+    $description = "Demonstrates getvalue action - intended for runtime use as better caching than get";
+    $this->documentMe($params, $result, __FUNCTION__, __FILE__, $description);
+  }
+
+  function testGetDefaults() {
 
     $params = array('version' => $this->_apiversion,
       'name' => 'address_format',
     );
     $result = civicrm_api('setting', 'getdefaults', $params);
     $description = "gets defaults setting a variable for a given domain - if no domain is set current is assumed";
-    $this->documentMe($params, $result, __FUNCTION__, __FILE__,$description,'GetDefault','getdefaults');
+    $this->documentMe($params, $result, __FUNCTION__, __FILE__,$description,'GetDefaults','getdefaults');
     $this->assertAPISuccess($result, "in line " . __LINE__);
     $this->assertEquals('{contact.address_name}\n{contact.street_address}\n{contact.supplemental_address_1}\n{contact.supplemental_address_2}\n{contact.city}{, }{contact.state_province}{ }{contact.postal_code}\n{contact.country}', $result['values'][CRM_Core_Config::domainID()]['address_format']);
     $params = array('version' => $this->_apiversion,
@@ -326,8 +343,9 @@ class api_v3_SettingTest extends CiviUnitTestCase {
     $result = civicrm_api('setting', 'get', $params);
     //make sure it's set
     $this->assertEquals('xyz', $result['values'][CRM_Core_Config::domainID()]['address_format']);
-
-    civicrm_api('setting', 'revert', $revertParams);
+    $description = "Demonstrates reverting a parameter to default value";
+    $result = civicrm_api('setting', 'revert', $revertParams);
+    $this->documentMe($revertParams, $result, __FUNCTION__, __FILE__,$description,'','revert');
     //make sure it's reverted
     $result = civicrm_api('setting', 'get', $params);
     $this->assertEquals('{contact.address_name}\n{contact.street_address}\n{contact.supplemental_address_1}\n{contact.supplemental_address_2}\n{contact.city}{, }{contact.state_province}{ }{contact.postal_code}\n{contact.country}', $result['values'][CRM_Core_Config::domainID()]['address_format']);
