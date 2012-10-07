@@ -274,14 +274,13 @@
         });
 
         // validation of premiums
-        var error_message = '{/literal}{ts}You must contribute more to get that premium{/ts}{literal}';
+        var error_message = '{/literal}{ts escape="js"}You must contribute more to get that premium{/ts}{literal}';
         cj.validator.addMethod('premiums', function(value, element, params){
           var premium_id = cj('#selectProduct').val();
           var premium$ = cj('#premium_id-'+premium_id);
           if(premium$.length) {
             if(premium$.hasClass('premium-disabled')) {
               alert(error_message);
-              //cj('#premium_id-no_thanks .premium-short').click();
               return false;
             }
           }
