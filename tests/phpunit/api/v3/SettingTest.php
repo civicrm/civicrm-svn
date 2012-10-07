@@ -111,7 +111,14 @@ class api_v3_SettingTest extends CiviUnitTestCase {
     $this->assertArrayHasKey('customCSSURL', $result['values']);
     civicrm_api('system','flush', array('version' => $this->_apiversion));
   }
-
+  function testGetFieldsFilters() {
+    $params = array('version' => $this->_apiversion);
+    $filters = array('name' => 'advanced_search_options');
+    $result = civicrm_api('setting', 'getfields', $params + $filters);
+    $this->assertAPISuccess($result, ' in LINE ' . __LINE__);
+    $this->assertArrayNotHasKey('customCSSURL', $result['values']);
+    $this->assertArrayHasKey('advanced_search_options',$result['values']);
+  }
   /**
    * check getfields works
    */
@@ -265,21 +272,123 @@ class api_v3_SettingTest extends CiviUnitTestCase {
 
     $params = array('version' => $this->_apiversion,
         'domain_id' => $this->_domainID2,
-        'uniq_email_per_site' => 1,
+        'return' => 'uniq_email_per_site',
     );
     $result = civicrm_api('setting', 'get', $params);
     $description = "shows get setting a variable for a given domain - if no domain is set current is assumed";
     $this->documentMe($params, $result, __FUNCTION__, __FILE__);
     $this->assertAPISuccess($result, "in line " . __LINE__);
 
-    $params = array('version' => $this->_apiversion,
-        'uniq_email_per_site' => 1,
+    $params = array(
+      'version' => $this->_apiversion,
+      'return' => 'uniq_email_per_site',
     );
     $result = civicrm_api('setting', 'get', $params);
     $description = "shows getting a variable for a current domain";
     $this->documentMe($params, $result, __FUNCTION__, __FILE__, $description, 'CreateSettingCurrentDomain');
     $this->assertAPISuccess($result, "in line " . __LINE__);
     $this->assertArrayHasKey(CRM_Core_Config::domainID(), $result['values']);
+  }
+
+  function testGetDefault() {
+
+    $params = array('version' => $this->_apiversion,
+      'name' => 'address_format',
+    );
+    $result = civicrm_api('setting', 'getdefaults', $params);
+    $description = "gets defaults setting a variable for a given domain - if no domain is set current is assumed";
+    $this->documentMe($params, $result, __FUNCTION__, __FILE__,$description,'GetDefault','getdefaults');
+    $this->assertAPISuccess($result, "in line " . __LINE__);
+    $this->assertEquals('{contact.address_name}\n{contact.street_address}\n{contact.supplemental_address_1}\n{contact.supplemental_address_2}\n{contact.city}{, }{contact.state_province}{ }{contact.postal_code}\n{contact.country}', $result['values'][CRM_Core_Config::domainID()]['address_format']);
+    $params = array('version' => $this->_apiversion,
+      'name' => 'mailing_format',
+    );
+    $result = civicrm_api('setting', 'getdefaults', $params);
+    $this->assertEquals('{contact.addressee}\n{contact.street_address}\n{contact.supplemental_address_1}\n{contact.supplemental_address_2}\n{contact.city}{, }{contact.state_province}{ }{contact.postal_code}\n{contact.country}', $result['values'][CRM_Core_Config::domainID()]['mailing_format']);
+    $this->assertArrayHasKey(CRM_Core_Config::domainID(), $result['values']);
+  }
+  /*
+   * Function tests reverting a specific parameter
+   */
+  function testRevert() {
+
+    $params = array(
+      'version' => $this->_apiversion,
+      'address_format' => 'xyz',
+      'mailing_format' => 'bcs',
+    );
+    $result = civicrm_api('setting', 'create', $params);
+    $this->assertAPISuccess($result, "in line " . __LINE__);
+    $revertParams = array(
+      'version' => $this->_apiversion,
+      'name' => 'address_format'
+    );
+    $result = civicrm_api('setting', 'get', $params);
+    //make sure it's set
+    $this->assertEquals('xyz', $result['values'][CRM_Core_Config::domainID()]['address_format']);
+
+    civicrm_api('setting', 'revert', $revertParams);
+    //make sure it's reverted
+    $result = civicrm_api('setting', 'get', $params);
+    $this->assertEquals('{contact.address_name}\n{contact.street_address}\n{contact.supplemental_address_1}\n{contact.supplemental_address_2}\n{contact.city}{, }{contact.state_province}{ }{contact.postal_code}\n{contact.country}', $result['values'][CRM_Core_Config::domainID()]['address_format']);
+    $params = array(
+      'version' => $this->_apiversion,
+      'return' => array('mailing_format'),
+    );
+    $result = civicrm_api('setting', 'get', $params);
+    //make sure it's unchanged
+    $this->assertEquals('bcs', $result['values'][CRM_Core_Config::domainID()]['mailing_format']);
+  }
+  /*
+   * Tests reverting ALL parameters (specific domain)
+   */
+  function testRevertAll() {
+
+    $params = array(
+        'version' => $this->_apiversion,
+        'address_format' => 'xyz',
+        'mailing_format' => 'bcs',
+    );
+    $result = civicrm_api('setting', 'create', $params);
+    $this->assertAPISuccess($result, "in line " . __LINE__);
+    $revertParams = array(
+        'version' => $this->_apiversion,
+    );
+    $result = civicrm_api('setting', 'get', $params);
+    //make sure it's set
+    $this->assertEquals('xyz', $result['values'][CRM_Core_Config::domainID()]['address_format']);
+
+    civicrm_api('setting', 'revert', $params);
+    //make sure it's reverted
+    $result = civicrm_api('setting', 'get', $params);
+    $this->assertEquals('{contact.address_name}\n{contact.street_address}\n{contact.supplemental_address_1}\n{contact.supplemental_address_2}\n{contact.city}{, }{contact.state_province}{ }{contact.postal_code}\n{contact.country}', $result['values'][CRM_Core_Config::domainID()]['address_format']);
+    $this->assertEquals('{contact.addressee}\n{contact.street_address}\n{contact.supplemental_address_1}\n{contact.supplemental_address_2}\n{contact.city}{, }{contact.state_province}{ }{contact.postal_code}\n{contact.country}', $result['values'][CRM_Core_Config::domainID()]['mailing_format']);
+  }
+
+  /*
+   * Tests filling missing params
+  */
+  function testFill() {
+    $params = array(
+        'version' => $this->_apiversion,
+        'address_format' => 'xyz',
+        'mailing_format' => 'bcs',
+        'domain_id' => $this->_domainID2,
+    );
+    $result = civicrm_api('setting', 'create', $params);
+    $params = array(
+      'version' => $this->_apiversion,
+      'domain_id' => $this->_domainID2,
+    );
+    $result = civicrm_api('setting', 'get', $params);
+    $this->assertAPISuccess($result, "in line " . __LINE__);
+    $this->assertArrayNotHasKey('tag_unconfirmed', $result['values'][$this->_domainID2]);
+    $result = civicrm_api('setting', 'fill', $params);
+    $this->assertAPISuccess($result, "in line " . __LINE__);
+    $result = civicrm_api('setting', 'get', $params);
+    $this->assertAPISuccess($result, "in line " . __LINE__);
+    $this->assertArrayHasKey('tag_unconfirmed', $result['values'][$this->_domainID2]);
+    $this->assertEquals('Unconfirmed', $result['values'][$this->_domainID2]['tag_unconfirmed']);
   }
 }
 

@@ -215,24 +215,31 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
    * @access public
    */
   static
-  function getItems(&$params, $domains = null){
+  function getItems(&$params, $domains = null, $settingsToReturn){
     if(empty($domains)){
       $domains[] = CRM_Core_Config::domainID();
     }
+    if(!empty($settingsToReturn) && !is_array($settingsToReturn)){
+      $settingsToReturn = array($settingsToReturn);
+    }
     $fields = array();
-    $fieldsToGet = self::validateSettingsInput($params, $fields, FALSE);
+    $fieldsToGet = self::validateSettingsInput(array_flip($settingsToReturn), $fields, FALSE);
     foreach ($domains as $domain){
-    foreach ($fieldsToGet as $name => $value){
-      $setting =
-      CRM_Core_BAO_Setting::getItem(
-      $fields['values'][$name]['group_name'],
-      $name,
-      CRM_Utils_Array::value('component_id', $params),
-      CRM_Utils_Array::value('default_value', $params),
-      CRM_Utils_Array::value('contact_id', $params),
-      $domain
+      foreach ($fieldsToGet as $name => $value){
+        $setting =
+        CRM_Core_BAO_Setting::getItem(
+        $fields['values'][$name]['group_name'],
+        $name,
+        CRM_Utils_Array::value('component_id', $params),
+        CRM_Utils_Array::value('default_value', $params),
+        CRM_Utils_Array::value('contact_id', $params),
+        $domain
       );
-    $result[$domain][$name] = $setting;
+    if(!is_null($setting)){
+      // we won't return if not set - helps in return all scenario - otherwise we can't indentify the missing ones
+      // e.g for revert of fill actions
+      $result[$domain][$name] = $setting;
+    }
     }
   }
     return $result;
@@ -337,8 +344,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
   /*
  * gets metadata about the settings fields (from getfields) based on the fields being passed in
  *
- * This function filters on the fields like 'version' & 'debug' that are not settings and ensures group
- * is set.
+ * This function filters on the fields like 'version' & 'debug' that are not settings
  * @param array $params Parameters as passed into API
  * @param array $fields empty array to be populated with fields metadata
  * @return array $fieldstoset name => value array of the fields to be set (with extraneous removed)
@@ -350,16 +356,15 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
         'version' => 1,
         'id' => 1,
         'domain_id' => 1,
-        'group' => 1,
         'debug' => 1,
         'created_id',
         'component_id',
-        'contact_id'
+        'contact_id',
+        'filters',
     );
     $settingParams = array_diff_key($params, $ignoredParams);
     $getFieldsParams = array(
         'version' => 3,
-        'group' => $group,
     );
     if(count($settingParams) ==1){
       // ie we are only setting one field - we'll pass it into getfields for efficiency
@@ -369,16 +374,23 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
     $fields = civicrm_api('setting','getfields', $getFieldsParams);
     $invalidParams = (array_diff_key($settingParams,$fields['values']));
     if(!empty($invalidParams)){
-      throw new api_Exception(implode(',', $invalidParams) . " are not valid settings");
+      throw new api_Exception(implode(',', $invalidParams) . " not valid settings");
     }
-    $fieldsToSet = array_intersect_key($settingParams,$fields['values']);
+    if(!empty($settingParams)){
+      $filteredFields = array_intersect_key($settingParams,$fields['values']);
+    }
+    else{
+      // no filters so we are interested in all - ie. get mode when no filters specified
+      $filteredFields = $fields['values'];
+    }
     if(!$createMode){
-      return $fieldsToSet;
+      // no validation required
+      return $filteredFields;
     }
-    foreach ($fieldsToSet as $settingField => &$settingValue){
+    foreach ($filteredFields as $settingField => &$settingValue){
       self::validateSetting($settingValue, $fields['values'][$settingField]);
     }
-    return $fieldsToSet;
+    return$filteredFields;
   }
 /*
  * Validate & convert settings input
@@ -471,10 +483,11 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
   * - help_text
   */
   static
-  function getSettingSpecification( $name = NULL, $componentID = NULL){
+  function getSettingSpecification($componentID = null, $filters = array()){
+
     $cacheString = 'settingsMetadata_';
-    if($name){
-      $cacheString .= 'name_' .$name;
+    foreach ($filters as $filterField => $filterString){
+      $cacheString .= "_{$filterField}_{$filterString}";
     }
 
     $settingsMetadata = CRM_Core_BAO_Cache::getItem('CiviCRM setting Spec', $cacheString, $componentID);
@@ -483,7 +496,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
       $xmlPaths = array($civicrm_root. '/xml/settings/Settings.xml');
       CRM_Utils_Hook::alterXmlSettings($xmlPaths);
       foreach ($xmlPaths as $xmlFile) {
-        $settingsMetadata = self::xmltoSettingsArray(self::parseSettingsXML($xmlFile));
+        $settingsMetadata = self::xmltoSettingsArray(self::parseSettingsXML($xmlFile), $filters);
       }
 
       CRM_Core_BAO_Cache::setItem($settingsMetadata,'CiviCRM setting Spec', $cacheString, $componentID);
@@ -508,7 +521,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
  * that xml should have been loaded
  * @param xml $xml object loaded from file
  */
-  function xmltoSettingsArray($xml) {
+  function xmltoSettingsArray($xml, $filters) {
     $settingSpecs = array();
     $array = json_decode(json_encode($xml), TRUE);
     if(empty($array['settings'])){
@@ -520,18 +533,29 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
          $group['setting'] = array($group['setting']['name'] = $group['setting']);
        }
         foreach ($group['setting'] as $setting => $values){
-          $settingSpecs[$values['name']] = $values;
-          foreach ($settingSpecs[$values['name']] as $key => $value){
-            if(is_array($value) && empty( $value)){
-              unset($settingSpecs[$values['name']][$key]);
+          if(self::_filterSettingsSpecification($filters, $values)){
+            $settingSpecs[$values['name']] = $values;
+            foreach ($settingSpecs[$values['name']] as $key => $value){
+              if(is_array($value) && empty( $value)){
+                unset($settingSpecs[$values['name']][$key]);
+              }
             }
           }
+
         }
     }
     return $settingSpecs;
   }
 
-
+  static function _filterSettingsSpecification($filters, $settingSpec){
+    foreach ($filters as $filterField => $filterValue){
+      if(!array_key_exists($filterField, $settingSpec)
+        || $settingSpec[$filterField] != $filterValue){
+        return false;
+      }
+    }
+    return true;
+  }
   static
   function valueOptions($group,
     $name,
@@ -788,7 +812,7 @@ AND domain_id = %3
       return $civicrm_setting[$group][$name];
     } else {
       return $default;
-}
+    }
   }
 }
 
