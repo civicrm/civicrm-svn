@@ -195,9 +195,7 @@
 {/if}
 
 <script>
-cj.crmURL ('init', '{crmURL p="civicrm/example" q="placeholder"}');
 {literal}
-//example of usage alert ($.crmURL ('civicrm/admin/uf/group/field/update',{reset:1,action:'update',id:42}));
 cj(function ($){
 
     $('#Preview input').attr("readonly","readonly");
@@ -254,7 +252,6 @@ cj(function ($){
 
     $(document).on ('load','#Field',function (event) { // loading the admin form for a field
       //or create a new custom field
-console.log (this);
       $(this).find ('.crm-button_qf_Field_next_new').hide();
       $(this).find ('.crm-button-type-cancel').click(function (){ // cancelled by the used, don't save, just remove the form
         if ($(this).closest('.ui-dialog').length >0) {
@@ -344,13 +341,13 @@ console.log (this);
 
 {crmAPI var="groups" entity="CustomGroup" action="get" sequential="1"}
 <div id="add_custom_fields">
-<h3>Add a new custom field into</h3>
+<h3>{ts}Add a new custom field into{/ts}</h3>
 <ul>
 {foreach from=$groups.values item=group name=group}
 {assign var="group_id" value=$group.id}
 <li id="crm-entity" id="CustomGroup-{$group_id}"><a href="{crmURL p='civicrm/admin/custom/group/field/add' q="reset=1&action=add&gid=$group_id"}" class="crm-dialog crm-editable button" title="add a custom field into {$group.name}">{$group.extend} {$group.name}</a></li>
 {/foreach}
-<li><a href="{crmURL p='civicrm/admin/custom/group' q='action=add&reset=1'}" id="newCustomDataGroup" class="button crm-dialog crm-editable"><span><div class="icon add-icon"></div>Create New Set of Custom Fields</span></a>
+<li><a href="{crmURL p='civicrm/admin/custom/group' q='action=add&reset=1'}" id="newCustomDataGroup" class="button crm-dialog crm-editable"><span><div class="icon add-icon"></div>{ts}Create New Set of Custom Fields{/ts}</span></a>
 </ul>
 </div>
 {/if}
