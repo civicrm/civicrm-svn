@@ -58,7 +58,7 @@
     <setting>
       <group_name>Mailing Preferences</group_name>
       <name>mailing_backend</name>
-      <type>Integer</type>
+      <type>Array</type>
       <html_type>checkbox</html_type>
       <default>0</default>
       <add>4.1</add>

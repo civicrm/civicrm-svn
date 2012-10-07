@@ -5,7 +5,7 @@
       <name>tag_unconfirmed</name>
       <type>String</type>
       <html_type>Text</html_type>
-      <default></default>
+      <default>Unconfirmed</default>
       <add>4.1</add>
       <title>Tag for Unconfirmed Petition Signers</title>
       <is_domain>1</is_domain>
@@ -18,7 +18,7 @@
       <name>petition_contacts</name>
       <type>String</type>
       <html_type>Text</html_type>
-      <default></default>
+      <default>Petition Contacts</default>
       <add>4.1</add>
       <title>Petition Signers Group</title>
       <is_domain>1</is_domain>
