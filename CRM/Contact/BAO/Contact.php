@@ -1027,7 +1027,7 @@ WHERE id={$id}; ";
 
     if ($contact) {
       $contactTypes = array();
-      if ($contact->contact_sub_type) 
+      if ($contact->contact_sub_type)
         $contactTypes = explode(CRM_Core_DAO::VALUE_SEPARATOR, trim($contact->contact_sub_type, CRM_Core_DAO::VALUE_SEPARATOR));
       array_unshift($contactTypes, $contact->contact_type);
 
@@ -1635,7 +1635,7 @@ ORDER BY civicrm_email.is_primary DESC";
         CRM_Contact_BAO_SubscriptionHistory::create($shParams);
       }
     }
-    
+
     $contact = self::create($data);
 
     // contact is null if the profile does not have any contact fields
@@ -2306,16 +2306,16 @@ AND       civicrm_openid.is_primary = 1";
     }
 
     // note that contact object not always has required greeting related
-    // fields that are required to calculate greeting and 
+    // fields that are required to calculate greeting and
     // also other fields used in tokens etc,
     // hence we need to retrieve it again.
-    $contact->find(true); 
+    $contact->find(true);
 
     // store object values to an array
     $contactDetails = array();
     CRM_Core_DAO::storeValues($contact, $contactDetails);
     $contactDetails = array(array($contact->id => $contactDetails));
-    
+
     $emailGreetingString = $postalGreetingString = $addresseeString = NULL;
     $updateQueryString = array();
 
@@ -2782,15 +2782,15 @@ LEFT JOIN civicrm_address add2 ON ( add1.master_id = add2.id )
           $related = array_merge ($related,array_keys($fields[$r]));
       }
 
-      
+
       // add current employer for individuals
       $fields['Individual']['current_employer'] = array( 'name'  => 'organization_name',
                                                          'title' => ts('Current Employer') );
-      
+
       require_once 'CRM/Core/BAO/Setting.php';
       $addressOptions = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
                                                             'address_options', true, null, true );
-      
+
       if ( !$addressOptions['county'] ) {
           unset( $fields['Individual'  ]['county']);
           unset( $fields['Household'   ]['county']);
@@ -2800,7 +2800,7 @@ LEFT JOIN civicrm_address add2 ON ( add1.master_id = add2.id )
 
       //build the common contact fields array CRM-3037.
       foreach ( $fields['Individual'] as $key => $value ) {
-          if ( CRM_Utils_Array::value( $key, $fields['Household'] ) && 
+          if ( CRM_Utils_Array::value( $key, $fields['Household'] ) &&
                CRM_Utils_Array::value( $key, $fields['Organization'] ) ) {
               $fields['Contact'][$key] = $value;
               //as we move common fields to contacts. There fore these fields
@@ -2822,10 +2822,10 @@ LEFT JOIN civicrm_address add2 ON ( add1.master_id = add2.id )
       }
       $fields['Contact']['id'] = array( 'name'  => 'id',
                                         'title' => ts('Internal Contact ID') );
-                                        
+
       unset( $fields['Contact']['contact_type'] );
 
-      // since we need a hierarchical list to display contact types & subtypes, 
+      // since we need a hierarchical list to display contact types & subtypes,
       // this is what we going to display in first selector
       $contactTypes = CRM_Contact_BAO_ContactType::getSelectElements( false, false );
       unset($contactTypes['']);
@@ -2842,18 +2842,18 @@ LEFT JOIN civicrm_address add2 ON ( add1.master_id = add2.id )
               $fields[$name] = $subTypeFields;
           }
       }
-      
+
       //unset selected fields
       foreach( $groupFieldList as $key => $value ) {
           if ( is_integer( $key) ) {
               unset( $fields['Individual'][$value], $fields['Household'][$value], $fields['Organization'][$value] );
               continue;
           }
-          if ( CRM_Utils_Array::value( 'field_name',$defaults ) 
-              && $defaults['field_name']['0'] == $value['field_type'] 
+          if ( CRM_Utils_Array::value( 'field_name',$defaults )
+              && $defaults['field_name']['0'] == $value['field_type']
               && $defaults['field_name']['1'] == $key ) {
               continue;
-          } 
+          }
           unset( $fields[$value['field_type']][$key] );
       }
       unset( $subTypes );
