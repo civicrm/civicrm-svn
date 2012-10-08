@@ -73,7 +73,7 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase {
         'civicrm_membership_payment',
         'civicrm_membership_status',
         'civicrm_membership_type',
-
+        'civicrm_line_item',
       )
     );
     $this->contributionTypeDelete();

@@ -55,14 +55,7 @@ class CRM_Case_XMLProcessor_Report extends CRM_Case_XMLProcessor {
       $this
     );
 
-    return Audit::run($contents, $clientID, $caseID);
-
-    /******
-     CRM_Utils_System::download( "{$case['clientName']} {$case['caseType']}",
-     'text/xml',
-     $contents,
-     'xml', true );
-     ******/
+    return CRM_Case_Audit_Audit::run($contents, $clientID, $caseID);
   }
 
   function &getRedactionRules() {
@@ -902,7 +895,7 @@ LIMIT  1
       $params,
       $report
     );
-    $printReport = Audit::run($contents, $clientID, $caseID, TRUE);
+    $printReport = CRM_Case_Audit_Audit::run($contents, $clientID, $caseID, TRUE);
     echo $printReport;
     CRM_Utils_System::civiExit();
   }

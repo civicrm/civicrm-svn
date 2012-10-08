@@ -412,13 +412,14 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
       CRM_Core_Config_Defaults::setValues($variables);
 
       // retrieve directory and url preferences also
-      CRM_Core_BAO_Setting::retrieveDirectoryAndURLPreferences($defaults);
+      CRM_Core_BAO_Setting::retrieveDirectoryAndURLPreferences($variables);
 
       // add component specific settings
       $this->componentRegistry->addConfig($this);
 
       // serialise settings
-      CRM_Core_BAO_ConfigSetting::add($variables);
+      $settings = $variables;
+      CRM_Core_BAO_ConfigSetting::add($settings);
     }
 
     $urlArray = array('userFrameworkResourceURL', 'imageUploadURL');
@@ -429,8 +430,9 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
         $value = CRM_Utils_File::addTrailingSlash($value, '/');
       }
       elseif (in_array($key, $dirArray)) {
+        if ($value)
         $value = CRM_Utils_File::addTrailingSlash($value);
-        if (CRM_Utils_File::createDir($value, FALSE) === FALSE) {
+        if (empty($value) || (CRM_Utils_File::createDir($value, FALSE) === FALSE)) {
           // seems like we could not create the directories
           // settings might have changed, lets suppress a message for now
           // so we can make some more progress and let the user fix their settings

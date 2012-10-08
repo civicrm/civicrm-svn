@@ -335,7 +335,7 @@ VALUES
    (@option_group_id_act, '{ts escape="sql"}PhoneBank{/ts}',                          30, 'PhoneBank', NULL,0, 0, 29, '', 0, 1, 1, @campaignCompId, NULL),
    (@option_group_id_act, '{ts escape="sql"}WalkList{/ts}',                           31, 'WalkList', NULL,0, 0, 30, '', 0, 1, 1, @campaignCompId, NULL),
    (@option_group_id_act, '{ts escape="sql"}Petition Signature{/ts}',                           32, 'Petition', NULL,0, 0, 31, '', 0, 1, 1, @campaignCompId, NULL),
-   (@option_group_id_act, '{ts escape="sql"}BULK SMS{/ts}',                           34, 'BULK SMS',         NULL, 1, NULL, 34, '{ts escape="sql"}BULK SMS{/ts}',                                                    0, 1, 1, NULL, NULL),
+   (@option_group_id_act, '{ts escape="sql"}Mass SMS{/ts}',                           34, 'Mass SMS',         NULL, 1, NULL, 34, '{ts escape="sql"}Mass SMS{/ts}',                                                    0, 1, 1, NULL, NULL),
 
 -- Activity Types for CiviCampaign CiviCase
    (@option_group_id_act, '{ts escape="sql"}Change Custom Data{/ts}',                 33, 'Change Custom Data', NULL,0, 0, 33, '', 0, 1, 1, @caseCompId, NULL),
@@ -1240,8 +1240,8 @@ INSERT INTO civicrm_uf_group
     (8,  'shared_address',     'Contact',   		  '{ts escape="sql"}Shared Address{/ts}'    , 0,           1,           NULL),
     (9,  'on_behalf_organization', 'Contact,Organization,Contribution,Membership',
     '{ts escape="sql"}On Behalf Of Organization{/ts}'    , 0,           1,           NULL),
-    (10,  'contribution_batch_entry', 'Contribution', '{ts escape="sql"}Contribution Batch Entry{/ts}' , 0,      1,           NULL),
-    (11,  'membership_batch_entry', 'Membership', '{ts escape="sql"}Membership Batch Entry{/ts}' , 0,      1,           NULL),
+    (10,  'contribution_batch_entry', 'Contribution', '{ts escape="sql"}Contribution Bulk Entry{/ts}' , 0,      1,           NULL),
+    (11,  'membership_batch_entry', 'Membership', '{ts escape="sql"}Membership Bulk Entry{/ts}' , 0,      1,           NULL),
     (12, 'event_registration', 'Individual, Contact', '{ts escape="sql"}Your Registration Info{/ts}',        0,      0,           NULL);
 
 INSERT INTO civicrm_uf_join

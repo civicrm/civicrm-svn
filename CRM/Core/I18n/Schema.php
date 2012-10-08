@@ -39,8 +39,7 @@ class CRM_Core_I18n_Schema {
    *
    * @return void
    */
-  static
-  function dropAllViews() {
+  static function dropAllViews() {
     $domain = new CRM_Core_DAO_Domain();
     $domain->find(TRUE);
     if (!$domain->locales) {
@@ -65,8 +64,7 @@ class CRM_Core_I18n_Schema {
    *
    * @return void
    */
-  static
-  function makeMultilingual($locale) {
+  static function makeMultilingual($locale) {
     $domain = new CRM_Core_DAO_Domain();
     $domain->find(TRUE);
 
@@ -120,8 +118,7 @@ class CRM_Core_I18n_Schema {
    *
    * @return void
    */
-  static
-  function makeSinglelingual($retain) {
+  static function makeSinglelingual($retain) {
     $domain = new CRM_Core_DAO_Domain;
     $domain->find(TRUE);
     $locales = explode(CRM_Core_DAO::VALUE_SEPARATOR, $domain->locales);
@@ -130,6 +127,10 @@ class CRM_Core_I18n_Schema {
     if (!$locales) {
       return;
     }
+
+    // lets drop all triggers first
+    $logging = new CRM_Logging_Schema;
+    $logging->dropTriggers( );
 
     // turn subsequent tables singlelingual
     $tables = CRM_Core_I18n_SchemaStructure::tables();
@@ -144,6 +145,9 @@ class CRM_Core_I18n_Schema {
     //CRM-6963 -fair assumption.
     global $dbLocale;
     $dbLocale = '';
+
+    // now lets rebuild all triggers
+    CRM_Core_DAO::triggerRebuild( );
   }
 
   /**
@@ -155,8 +159,12 @@ class CRM_Core_I18n_Schema {
    *
    * @return void
    */
-  static
-    function makeSinglelingualTable($retain, $table, $class = 'CRM_Core_I18n_SchemaStructure', $triggers = array()) {
+  static function makeSinglelingualTable(
+    $retain,
+    $table,
+    $class = 'CRM_Core_I18n_SchemaStructure',
+    $triggers = array()
+  ) {
     $domain = new CRM_Core_DAO_Domain;
     $domain->find(TRUE);
     $locales = explode(CRM_Core_DAO::VALUE_SEPARATOR, $domain->locales);
@@ -206,7 +214,8 @@ class CRM_Core_I18n_Schema {
       $dao->query($query, FALSE);
     }
 
-    if (CRM_Core_Config::isUpgradeMode() && !empty($triggers)) {
+    if ( !empty($triggers)) {
+      if (CRM_Core_Config::isUpgradeMode()) {
       foreach ($triggers as $triggerInfo) {
         $when = $triggerInfo['when'];
         $event = $triggerInfo['event'];
@@ -218,6 +227,7 @@ class CRM_Core_I18n_Schema {
     // invoke the meta trigger creation call
     CRM_Core_DAO::triggerRebuild($table);
   }
+  }
 
   /**
    * Add a new locale to a multi-lang db, setting
@@ -228,8 +238,7 @@ class CRM_Core_I18n_Schema {
    *
    * @return void
    */
-  static
-  function addLocale($locale, $source) {
+  static function addLocale($locale, $source) {
     // get the current supported locales
     $domain = new CRM_Core_DAO_Domain();
     $domain->find(TRUE);
@@ -286,8 +295,7 @@ class CRM_Core_I18n_Schema {
    *
    * @return void
    */
-  static
-  function rebuildMultilingualSchema($locales, $version = NULL) {
+  static function rebuildMultilingualSchema($locales, $version = NULL) {
     if ($version) {
       $latest = self::getLatestSchema($version);
       require_once "CRM/Core/I18n/SchemaStructure_{$latest}.php";
@@ -350,8 +358,7 @@ class CRM_Core_I18n_Schema {
    *
    * @return string        the rewritten query
    */
-  static
-  function rewriteQuery($query) {
+  static function rewriteQuery($query) {
     global $dbLocale;
     $tables = self::schemaStructureTables();
     foreach ($tables as $table) {
@@ -362,8 +369,7 @@ class CRM_Core_I18n_Schema {
     return $query;
   }
 
-  static
-  function schemaStructureTables($version = NULL, $force = FALSE) {
+  static function schemaStructureTables($version = NULL, $force = FALSE) {
     static $_tables = NULL;
     if ($_tables === NULL || $force) {
       if ($version) {
@@ -382,8 +388,7 @@ class CRM_Core_I18n_Schema {
     return $_tables;
   }
 
-  static
-  function getLatestSchema($version) {
+  static function getLatestSchema($version) {
     // remove any .upgrade sub-str from version. Makes it easy to do version_compare & give right result
     $version = str_ireplace(".upgrade", "", $version);
 

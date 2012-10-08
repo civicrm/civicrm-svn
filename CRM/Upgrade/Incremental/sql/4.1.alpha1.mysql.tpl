@@ -267,21 +267,15 @@ UPDATE civicrm_option_group SET `is_reserved` = 1;
 {/if}
 
 -- CRM-9112
-{if $multilingual}
-  {foreach from=$locales item=locale}
-    ALTER TABLE `civicrm_dedupe_rule_group` ADD title_{$locale} VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT 'Label of the rule group';
-    UPDATE `civicrm_dedupe_rule_group` SET title_{$locale} = `name`;
-  {/foreach}
-{else}
   ALTER TABLE `civicrm_dedupe_rule_group` ADD `title` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT 'Label of the rule group';
-{/if}
+
 ALTER TABLE `civicrm_dedupe_rule_group` ADD `is_reserved` TINYINT( 4 ) NULL DEFAULT NULL COMMENT 'Is this a reserved rule - a rule group that has been optimized and cannot be changed by the admin';
 
 UPDATE `civicrm_dedupe_rule_group` SET `name` = CONCAT( REPLACE( `name`, '-', '' ), '-', id );
 
 -- the fuzzy default dedupe rules
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, {localize field='title'}title{/localize}, is_reserved) 
-VALUES ('Individual', 20, 'Fuzzy', 1, 'IndividualFuzzy', {localize}'Individual Fuzzy In-built'{/localize}, 1);
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, title, is_reserved)
+VALUES ('Individual', 20, 'Fuzzy', 1, 'IndividualFuzzy', 'Individual Fuzzy In-built', 1);
 
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
@@ -290,15 +284,15 @@ VALUES (@drgid, 'civicrm_contact', 'first_name', 5),
        (@drgid, 'civicrm_email'  , 'email',     10);
 
 -- the strict dedupe rules
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, {localize field='title'}title{/localize}, is_reserved) 
-VALUES ('Individual', 10, 'Strict', 1, 'IndividualStrict', {localize}'Individual Strict In-built'{/localize}, 1);
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, title, is_reserved)
+VALUES ('Individual', 10, 'Strict', 1, 'IndividualStrict', 'Individual Strict In-built', 1);
 
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
 VALUES (@drgid, 'civicrm_email', 'email', 10);
 
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, {localize field='title'}title{/localize}, is_reserved)
-VALUES ('Individual', 15, 'Strict', 0, 'IndividualComplete', {localize}'Individual Complete Inbuilt'{/localize}, 1);
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name, title, is_reserved)
+VALUES ('Individual', 15, 'Strict', 0, 'IndividualComplete', 'Individual Complete Inbuilt', 1);
 
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)

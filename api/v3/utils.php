@@ -1402,7 +1402,7 @@ function _civicrm_api3_validate_integer(&$params, &$fieldname, &$fieldInfo) {
     if (CRM_Utils_Array::value('pseudoconstant', $fieldInfo) && !CRM_Utils_Array::value('FKClassName',$fieldInfo)) {
       $constant = $fieldInfo['options'];
       if (is_numeric($params[$fieldname]) && !array_key_exists($params[$fieldname], $fieldInfo['options'])) {
-        throw new api_Exception("$fieldname is not valid", 2001, array('error_field' => $fieldname));
+        throw new API_Exception("$fieldname is not valid", 2001, array('error_field' => $fieldname));
       }
       elseif (!is_numeric($params[$fieldname])) {
         $numericvalue = array_search($params[$fieldname], $fieldInfo['options']);
@@ -1419,7 +1419,7 @@ function _civicrm_api3_validate_integer(&$params, &$fieldname, &$fieldInfo) {
       CRM_Utils_Array::value('maxlength',$fieldInfo)
       && strlen($params[$fieldname]) > $fieldInfo['maxlength']
       ){
-      throw new api_Exception( $params[$fieldname] . " is " . strlen($params[$fieldname]) . " characters  - longer than $fieldname length" . $fieldInfo['maxlength'] . ' characters',
+      throw new API_Exception( $params[$fieldname] . " is " . strlen($params[$fieldname]) . " characters  - longer than $fieldname length" . $fieldInfo['maxlength'] . ' characters',
         2100, array('field' => $fieldname)
       );
     }
@@ -1458,7 +1458,7 @@ function _civicrm_api3_validate_string(&$params, &$fieldname, &$fieldInfo) {
     }
     // Check our field length
     elseif (is_string($value) && !empty($fieldInfo['maxlength']) && strlen($value) > $fieldInfo['maxlength']) {
-      throw new api_Exception("Value for $fieldname is " . strlen($value) . " characters  - This field has a maxlength of {$fieldInfo['maxlength']} characters.",
+      throw new API_Exception("Value for $fieldname is " . strlen($value) . " characters  - This field has a maxlength of {$fieldInfo['maxlength']} characters.",
         2100, array('field' => $fieldname)
       );
     }

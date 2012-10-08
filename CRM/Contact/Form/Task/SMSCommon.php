@@ -320,6 +320,7 @@ class CRM_Contact_Form_Task_SMSCommon {
     else {
       if (CRM_Utils_Array::value('text_message', $fields)) {
         $messageCheck = CRM_Utils_Array::value('text_message', $fields);
+        $messageCheck = str_replace("\r\n", "\n", $messageCheck);
         if ($messageCheck && (strlen($messageCheck) > CRM_SMS_Provider::MAX_SMS_CHAR)) {
           $errors['text_message'] = ts("You can configure the SMS message body up to %1 characters", array(1 => CRM_SMS_Provider::MAX_SMS_CHAR));
         }

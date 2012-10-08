@@ -122,10 +122,11 @@ class CRM_Mailing_Selector_Browse extends CRM_Core_Selector_Base implements CRM_
         // sort by completed date for archived and undefined get
         $completedOrder = CRM_Utils_Sort::DESCENDING;
       }
+      $nameHeaderLabel = ($this->_parent->get('sms')) ? 'SMS Name' : 'Mailing Name';
 
       self::$_columnHeaders = array(
         array(
-          'name' => ts('Mailing Name'),
+          'name' => ts($nameHeaderLabel),
           'sort' => 'name',
           'direction' => CRM_Utils_Sort::DONTCARE,
         ),

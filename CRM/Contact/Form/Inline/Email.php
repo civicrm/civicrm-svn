@@ -136,13 +136,10 @@ class CRM_Contact_Form_Inline_Email extends CRM_Core_Form {
           $hasData[] = $instance;
           if ( CRM_Utils_Array::value( 'is_primary', $blockValues ) ) {
             $hasPrimary[] = $instance;
-            if ( !$primaryID &&
-              CRM_Utils_Array::value( 'email', $blockValues ) ) {
-                $primaryID = $blockValues['email'];
             }
           }
         }
-      }
+
 
       if ( empty( $hasPrimary ) && !empty( $hasData ) ) {
         $errors["email[1][is_primary]"] = ts('One email should be marked as primary.' );

@@ -53,17 +53,20 @@ class CRM_Contact_Form_Task_Print extends CRM_Contact_Form_Task {
     $this->assign('id', $this->get('id'));
     $this->assign('pageTitle', ts('CiviCRM Contact Listing'));
 
-    //using _contactIds field for creating params for query so that multiple selections on multiple pages can be print
-    //can be print.
+    $params = $this->get('queryParams');
+    if (!empty($this->_contactIds)) {
+      //using _contactIds field for creating params for query so that multiple selections on multiple pages
+      //can be printed.
     foreach ($this->_contactIds as $contactId) {
-      $rowElements[CRM_Core_Form::CB_PREFIX . $contactId] = 1;
+        $params[] = array(
+          CRM_Core_Form::CB_PREFIX . $contactId,
+          '=',
+          1, 0, 0);
+    }
     }
 
     // create the selector, controller and run - store results in session
     $fv = $this->get('formValues');
-
-    $params = CRM_Contact_BAO_Query::convertFormValues($rowElements);
-
     $returnProperties = $this->get('returnProperties');
 
     $sortID = NULL;

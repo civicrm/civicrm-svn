@@ -66,9 +66,7 @@ class CRM_Contribute_Form_Task_PDFLetterCommon extends CRM_Contact_Form_Task_PDF
       $tokenHtml = CRM_Utils_Token::replaceContributionTokens($tokenHtml, $contribution[$contributionId], TRUE, $messageToken);
       $tokenHtml = CRM_Utils_Token::replaceHookTokens($tokenHtml, $contact[$contactId], $categories, TRUE);
 
-      if (defined('CIVICRM_MAIL_SMARTY') &&
-        CIVICRM_MAIL_SMARTY
-      ) {
+      if (defined('CIVICRM_MAIL_SMARTY') && CIVICRM_MAIL_SMARTY) {
         $smarty = CRM_Core_Smarty::singleton();
         // also add the tokens to the template
         $smarty->assign_by_ref('contact', $contact);

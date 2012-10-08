@@ -792,18 +792,12 @@ SELECT g.*
                 }
                 $tmpTables[$tmpName] = $tmpInfo;
               }
-              $whereTables = array_merge($whereTables,
-                $tmpTables
-              );
+              $whereTables = array_merge($whereTables, $tmpTables);
             }
           }
 
-          if (($dao->saved_search_id ||
-              $dao->children ||
-              $dao->parents
-            ) &&
-            $dao->cache_date == NULL
-          ) {
+          if (($dao->saved_search_id || $dao->children || $dao->parents) &&
+            $dao->cache_date == NULL) {
             CRM_Contact_BAO_GroupContactCache::load($dao);
           }
         }

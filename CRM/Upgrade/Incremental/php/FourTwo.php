@@ -97,6 +97,18 @@ class CRM_Upgrade_Incremental_php_FourTwo {
         ));
       }
     }
+    if ($rev == '4.2.2') {  
+      $query = " SELECT cli.id
+FROM `civicrm_line_item` cli
+INNER JOIN civicrm_membership_payment cmp ON cmp.contribution_id = cli.entity_id AND cli.entity_table = 'civicrm_contribution'
+INNER JOIN civicrm_price_field_value cpfv ON cpfv.id = cli.price_field_value_id
+INNER JOIN civicrm_price_field cpf ON cpf.id = cpfv.price_field_id and cpf.id != cli.price_field_id
+INNER JOIN civicrm_price_set cps ON cps.id = cpf.price_set_id AND cps.name <>'default_membership_type_amount' ";
+      $dao = CRM_Core_DAO::executeQuery($query);
+      if ($dao->N) {
+        $preUpgradeMessage .= "<br /><strong>". ts('We have identified extraneous data in your database that a previous upgrade likely introduced. We STRONGLY recommend making a backup of your site before continuing. We also STRONGLY suggest fixing this issue with unneeded records BEFORE you upgrade. You can find more information about this issue and the way to fix it by visiting <a href="http://forum.civicrm.org/index.php/topic,26181.0.html">http://forum.civicrm.org/index.php/topic,26181.0.html</a>.') ."</strong>";
+  }
+    }
   }
 
   /**
@@ -172,21 +184,7 @@ class CRM_Upgrade_Incremental_php_FourTwo {
     // tasks and enqueue them separately.
     $this->addTask(ts('Upgrade DB to 4.2.alpha1: SQL'), 'task_4_2_alpha1_runSql', $rev);
     $this->addTask(ts('Upgrade DB to 4.2.alpha1: Price Sets'), 'task_4_2_alpha1_createPriceSets', $rev);
-    $minContributionId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(min(id),0) FROM civicrm_contribution');
-    $maxContributionId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(max(id),0) FROM civicrm_contribution');
-    for ($startId = $minContributionId; $startId <= $maxContributionId; $startId += self::BATCH_SIZE) {
-      $endId = $startId + self::BATCH_SIZE - 1;
-      $title = ts('Upgrade DB to 4.2.alpha1: Contributions (%1 => %2)', array(1 => $startId, 2 => $endId));
-      $this->addTask($title, 'task_4_2_alpha1_convertContributions', $startId, $endId);
-    }
-    $minParticipantId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(min(id),0) FROM civicrm_participant');
-    $maxParticipantId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(max(id),0) FROM civicrm_participant');
-    
-    for ($startId = $minParticipantId; $startId <= $maxParticipantId; $startId += self::BATCH_SIZE) {
-      $endId = $startId + self::BATCH_SIZE - 1;
-      $title = ts('Upgrade DB to 4.2.alpha1: Participant (%1 => %2)', array(1 => $startId, 2 => $endId));
-      $this->addTask($title, 'task_4_2_alpha1_convertParticipants', $startId, $endId);
-    }
+    self::convertContribution();
     $this->addTask(ts('Upgrade DB to 4.2.alpha1: Event Profile'), 'task_4_2_alpha1_eventProfile');
   }
 
@@ -226,6 +224,100 @@ class CRM_Upgrade_Incremental_php_FourTwo {
     $this->addTask(ts('Upgrade DB to 4.2.0: SQL'), 'task_4_2_alpha1_runSql', $rev);
   }
   
+  function upgrade_4_2_2($rev) {
+    $this->addTask(ts('Upgrade DB to 4.2.2: SQL'), 'task_4_2_alpha1_runSql', $rev);
+    //create line items for memberships and participants for api/import
+    self::convertContribution();
+    
+    // CRM-10937 Fix the title on civicrm_dedupe_rule_group
+    $upgrade = new CRM_Upgrade_Form();
+    if ($upgrade->multilingual) {
+      // Check if the 'title' field exists
+      $query = "SELECT column_name
+                  FROM information_schema.COLUMNS
+                 WHERE table_name = 'civicrm_dedupe_rule_group'
+                   AND table_schema = DATABASE()
+                   AND column_name = 'title'";
+
+      $dao = CRM_Core_DAO::executeQuery($query);
+     
+      if (!$dao->N) {
+        $domain = new CRM_Core_DAO_Domain;
+        $domain->find(TRUE);
+
+        if ($domain->locales) {
+          $locales = explode(CRM_Core_DAO::VALUE_SEPARATOR, $domain->locales);
+          $locale = array_shift($locales);
+          
+          // Use the first language (they should all have the same value)
+          CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_dedupe_rule_group` CHANGE `title_{$locale}` `title` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Label of the rule group'", $params, TRUE, NULL, FALSE, FALSE);
+          
+          // Drop remaining the column for the remaining languages
+          foreach ($locales as $locale) {
+            CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_dedupe_rule_group` DROP `title_{$locale}`", $params, TRUE, NULL, FALSE, FALSE);
+          }
+        }
+      }
+    }
+  }
+
+  function upgrade_4_2_3($rev) {
+    $this->addTask(ts('Upgrade DB to 4.2.3: SQL'), 'task_4_2_alpha1_runSql', $rev);
+    // CRM-10953 Remove duplicate activity type for 'Reminder Sent' which is mistakenly inserted by 4.2.alpha1 upgrade script
+    $queryMin = "
+SELECT coalesce(min(value),0) from civicrm_option_value ov
+WHERE ov.option_group_id =
+  (SELECT id from civicrm_option_group og WHERE og.name = 'activity_type') AND
+ov.name = 'Reminder Sent'";
+
+    $minReminderSent = CRM_Core_DAO::singlevalueQuery($queryMin);
+    
+    $queryMax = "
+SELECT coalesce(max(value),0) from civicrm_option_value ov
+WHERE ov.option_group_id =
+  (SELECT id from civicrm_option_group og WHERE og.name = 'activity_type') AND
+ov.name = 'Reminder Sent'";
+
+    $maxReminderSent = CRM_Core_DAO::singlevalueQuery($queryMax);
+
+    // If we have two different values, replace new value with original in any activities
+    if ($maxReminderSent > $minReminderSent) {
+      $query = "
+UPDATE civicrm_activity
+SET activity_type_id = {$minReminderSent}
+WHERE activity_type_id = {$maxReminderSent}";
+
+      CRM_Core_DAO::execute($query);
+      
+      // Then delete the newer (duplicate) option_value row
+      $query = "
+DELETE from civicrm_option_value
+  WHERE option_group_id =
+    (SELECT id from civicrm_option_group og WHERE og.name = 'activity_type') AND
+  value = '{$maxReminderSent}'";
+
+      CRM_Core_DAO::execute($query);
+    }
+  }
+
+  function convertContribution(){
+    $minContributionId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(min(id),0) FROM civicrm_contribution');
+    $maxContributionId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(max(id),0) FROM civicrm_contribution');
+    for ($startId = $minContributionId; $startId <= $maxContributionId; $startId += self::BATCH_SIZE) {
+      $endId = $startId + self::BATCH_SIZE - 1;
+      $title = ts('Upgrade DB to 4.2.alpha1: Contributions (%1 => %2)', array(1 => $startId, 2 => $endId));
+      $this->addTask($title, 'task_4_2_alpha1_convertContributions', $startId, $endId);
+    }
+    $minParticipantId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(min(id),0) FROM civicrm_participant');
+    $maxParticipantId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(max(id),0) FROM civicrm_participant');
+
+    for ($startId = $minParticipantId; $startId <= $maxParticipantId; $startId += self::BATCH_SIZE) {
+      $endId = $startId + self::BATCH_SIZE - 1;
+      $title = ts('Upgrade DB to 4.2.alpha1: Participant (%1 => %2)', array(1 => $startId, 2 => $endId));
+      $this->addTask($title, 'task_4_2_alpha1_convertParticipants', $startId, $endId);
+    }
+  }
+
   /**
    * (Queue Task Callback)
    *

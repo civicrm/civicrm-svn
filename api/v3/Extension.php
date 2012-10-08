@@ -59,6 +59,8 @@ function civicrm_api3_extension_install($params) {
     return civicrm_api3_create_error('Missing required parameter: key');
   } elseif (!$ext->isExtensionKey($params['key']) || !array_key_exists($params['key'], $exts)) {
     return civicrm_api3_create_error('Unknown extension key');
+  } elseif ($exts[$params['key']]->status == 'installed' && $exts[$params['key']]->is_active == TRUE) {
+    return civicrm_api3_create_success(); // already installed
   } elseif (!in_array($exts[$params['key']]->status, array('remote', 'local'))) {
     return civicrm_api3_create_error('Can only install extensions with status "Available (Local)" or "Available (Remote)"');
   } else {

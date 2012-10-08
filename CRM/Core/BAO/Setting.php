@@ -73,8 +73,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
    * @static
    * @access public
    */
-  static
-  function inCache($group,
+  static function inCache($group,
     $name,
     $componentID = NULL,
     $contactID   = NULL,
@@ -100,8 +99,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
     return isset(self::$_cache[$cacheKey]) ? $cacheKey : NULL;
   }
 
-  static
-  function setCache($values,
+  static function setCache($values,
     $group,
     $componentID = NULL,
     $contactID = NULL,
@@ -121,8 +119,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
     return $cacheKey;
   }
 
-  static
-  function dao($group,
+  static function dao($group,
     $name        = NULL,
     $componentID = NULL,
     $contactID   = NULL,
@@ -165,8 +162,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
    * @static
    * @access public
    */
-  static
-  function getItem($group,
+  static function getItem($group,
     $name         = NULL,
     $componentID  = NULL,
     $defaultValue = NULL,
@@ -257,8 +253,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
    * @static
    * @access public
    */
-  static
-  function setItem($value,
+  static function setItem($value,
     $group,
     $name,
     $componentID = NULL,
@@ -439,8 +434,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
    * @static
    * @access public
    */
-  static
-  function deleteItem($group, $name = NULL, $componentID = NULL, $contactID = NULL) {
+  static function deleteItem($group, $name = NULL, $componentID = NULL, $contactID = NULL) {
     $dao = self::dao($group, $name, $componentID, $contactID);
     $dao->delete();
 
@@ -556,8 +550,8 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
     }
     return true;
   }
-  static
-  function valueOptions($group,
+
+  static function valueOptions($group,
     $name,
     $system              = TRUE,
     $userID              = NULL,
@@ -608,8 +602,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
     return ($returnNameANDLabels) ? $nameAndLabels : $returnValues;
   }
 
-  static
-  function setValueOption($group,
+  static function setValueOption($group,
     $name,
     $value,
     $system   = TRUE,
@@ -648,8 +641,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
     );
   }
 
-  static
-  function fixAndStoreDirAndURL(&$params, $domainID = null) {
+  static function fixAndStoreDirAndURL(&$params, $domainID = null) {
     if(empty($domainID)){
       $domainID = CRM_Core_Config::domainID();
     }
@@ -716,8 +708,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
     }
   }
 
-  static
-  function storeDirectoryOrURLPreferences(&$params, $group) {
+  static function storeDirectoryOrURLPreferences(&$params, $group) {
     foreach ($params as $name => $value) {
       // always try to store relative directory or url from CMS root
       $value = ($group == self::DIRECTORY_PREFERENCES_NAME) ? CRM_Utils_File::relativeDirectory($value) : CRM_Utils_System::relativeURL($value);
@@ -729,8 +720,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
     }
   }
 
-  static
-  function retrieveDirectoryAndURLPreferences(&$params, $setInConfig = FALSE) {
+  static function retrieveDirectoryAndURLPreferences(&$params, $setInConfig = FALSE) {
     if ($setInConfig) {
       $config = CRM_Core_Config::singleton();
     }
@@ -791,6 +781,10 @@ AND domain_id = %3
           // CRM-7622: we need to remove the language part
           $value = CRM_Utils_System::absoluteURL($value, TRUE);
         }
+      }
+      // CRM-10931, If DB doesn't have any value, carry on with any default value thats already available 
+      if (!isset($value) && CRM_Utils_Array::value($dao->name, $params)) {
+        $value = $params[$dao->name];
       }
       $params[$dao->name] = $value;
 

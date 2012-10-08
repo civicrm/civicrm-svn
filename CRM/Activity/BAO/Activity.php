@@ -1559,6 +1559,7 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
     $message = $tokenHtml ? $tokenHtml : $tokenText;
     $recipient = $smsParams['To'];
     $smsParams['contact_id'] = $toID;
+    $smsParams['parent_activity_id'] = $activityID;
 
     $providerObj = CRM_SMS_Provider::singleton(array('provider_id' => $smsParams['provider_id']));
     if (!$providerObj->send($recipient, $smsParams, $message, NULL)) {

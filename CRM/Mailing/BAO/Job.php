@@ -849,7 +849,7 @@ AND    status IN ( 'Scheduled', 'Running', 'Paused' )
         if ($mailing->sms_provider_id) {
           $mailing->subject = $mailing->name;
           $activityTypeID = CRM_Core_OptionGroup::getValue('activity_type',
-            'Bulk SMS',
+            'Mass SMS',
             'name'
           );
         }

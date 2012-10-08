@@ -224,7 +224,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
         //pagination and row count assertion
         $pagerCount = "Contact {$j} - {$subTotal} of {$count}";
         $this->verifyText("xpath=//div[@class='crm-search-results']/div[@class='crm-pager']/span[@class='crm-pager-nav']", preg_quote($pagerCount));
-        $this->assertEquals($perPageRow, $this->getXpathCount("//div[@class='crm-search-results']/a/table/tbody/tr"));
+        $this->assertEquals($perPageRow, $this->getXpathCount("//div[@class='crm-search-results']/table/tbody/tr"));
         
         //go to next page
         $this->click("xpath=//div[@class='crm-search-results']/div[@class='crm-pager']/span[@class='crm-pager-nav']/a[@title='next page']");
@@ -236,7 +236,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
       if ($mod) {
         $pagerCount = "Contact {$lastPageSub} - {$count} of {$count}";
         $this->verifyText("xpath=//div[@class='crm-search-results']/div[@class='crm-pager']/span[@class='crm-pager-nav']", preg_quote($pagerCount));
-        $this->assertEquals($mod, $this->getXpathCount("//div[@class='crm-search-results']/a/table/tbody/tr"));
+        $this->assertEquals($mod, $this->getXpathCount("//div[@class='crm-search-results']/table/tbody/tr"));
       }
     }
   }  
@@ -247,7 +247,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $this->click("_qf_Advanced_refresh");
     $this->waitForPageToLoad("30000");
     // verify unique name
-    $this->verifyText("xpath=//div[@class='crm-search-results']/a/table//tr/td[3]/a", preg_quote("adv$firstName, $firstName"));
+    $this->verifyText("xpath=//div[@class='crm-search-results']/table/tbody/tr/td[3]/a", preg_quote("adv$firstName, $firstName"));
     // should give 1 result only as we are searching with unique name
     $this->waitForText("xpath=//div[@id='search-status']/table/tbody/tr/td", preg_quote("1 Contact"));
     // click to edit search

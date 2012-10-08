@@ -83,7 +83,7 @@ class WebTest_Import_CustomDataTest extends ImportCiviSeleniumTestCase {
     $this->type('sort_name', $firstName1);
     $this->click('_qf_Basic_refresh');
     $this->waitForPageToLoad("30000");
-    $this->click("xpath=//div[@class='crm-search-results']/a/table/tbody/tr/td[11]/span/a[text()='View']");
+    $this->click("xpath=//div[@class='crm-search-results']/table/tbody/tr/td[11]/span/a[text()='View']");
     $this->waitForPageToLoad("30000");
 
     for ($cnt = 0; $cnt < 2; $cnt++) {

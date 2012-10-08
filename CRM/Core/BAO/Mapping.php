@@ -90,7 +90,7 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping {
     $mapping = new CRM_Core_DAO_Mapping();
     $mapping->id = $id;
     $mapping->delete();
-    CRM_Core_Session::setStatus(ts('Selected Mapping has been Deleted Successfuly.'), ts('Deleted'), 'success');
+    CRM_Core_Session::setStatus(ts('Selected mapping has been deleted successfully.'), ts('Deleted'), 'success');
 
     return TRUE;
   }

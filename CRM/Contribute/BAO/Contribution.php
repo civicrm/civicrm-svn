@@ -2287,7 +2287,7 @@ SELECT source_contact_id
       if ($this->id) {
         $lineItem = CRM_Price_BAO_LineItem::getLineItems($this->id, 'contribution', 1);
         if (!empty($lineItem)) {
-          $itemId                = key($lineItems);
+          $itemId                = key($lineItem);
           $values['lineItem'][0] = $lineItem;
           $values['priceSetID']  = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $lineItem[$itemId]['price_field_id'], 'price_set_id');
       }

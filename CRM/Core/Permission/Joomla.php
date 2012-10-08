@@ -47,8 +47,7 @@ class CRM_Core_Permission_Joomla extends CRM_Core_Permission_Base {
    * @return boolean true if yes, else false
    * @access public
    */
-
-  function check($str) {
+  static function check($str) {
     $config = CRM_Core_Config::singleton();
 
     // ensure that we are running in a joomla context
@@ -56,14 +55,25 @@ class CRM_Core_Permission_Joomla extends CRM_Core_Permission_Base {
     // not execute hooks if joomla is not loaded
     if (defined('_JEXEC')) {
       $permissionStr = 'civicrm.' . CRM_Utils_String::munge(strtolower($str));
-      $permission = JFactory::getUser()->authorise($permissionStr,
-        'com_civicrm'
-      );
+      $permission = JFactory::getUser()->authorise($permissionStr, 'com_civicrm');
       return $permission;
     }
     else {
       return '(1)';
     }
+  }
+
+  /**
+   * Given a roles array, check for access requirements
+   *
+   * @param array $array the roles to check
+   *
+   * @return boolean true if yes, else false
+   * @static
+   * @access public
+   */
+  static function checkGroupRole($array) {
+    return FALSE;
   }
 }
 

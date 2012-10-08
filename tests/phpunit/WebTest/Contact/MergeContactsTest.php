@@ -192,9 +192,9 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('_qf_Advanced_refresh');
     $this->type('sort_name', $firstName);
     $this->click('_qf_Advanced_refresh');
-    $this->waitForElementPresent("xpath=//form[@id='Advanced']/div[3]/div/div[2]/a/table/tbody/tr");
+    $this->waitForElementPresent("xpath=//form[@id='Advanced']/div[3]/div/div[2]/table/tbody/tr");
 
-    $this->click("//form[@id='Advanced']/div[3]/div/div[2]/a/table/tbody/tr/td[11]/span[1]/a[text()='View']");
+    $this->click("//form[@id='Advanced']/div[3]/div/div[2]/table/tbody/tr/td[11]/span[1]/a[text()='View']");
     $this->waitForPageToLoad("30000");
 
     // Verify prefix merged
@@ -633,9 +633,10 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
     $this->click("_qf_DedupeFind_next-top");
     $this->waitForPageToLoad("30000");
     sleep(2);
-    $this->click("xpath=//form[@id='DedupeFind']/a");
+    $this->click("xpath=//form[@id='DedupeFind']//a/span[text()='Batch Merge Duplicates']");
+
     // Check confirmation alert.
-    $this->assertTrue((bool)preg_match("/^This will run batch merge process on the listed duplicates. The operation will run in safe mode; only records with no direct data conflicts will be merged. Click OK to proceed if you are sure you wish to run this operation./",
+    $this->assertTrue((bool)preg_match("/^This will run the batch merge process on the listed duplicates. The operation will run in safe mode - only records with no direct data conflicts will be merged. Click OK to proceed if you are sure you wish to run this operation./",
                                        $this->getConfirmation()
                                        ));
     $this->chooseOkOnNextConfirmation();

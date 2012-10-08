@@ -32,7 +32,7 @@
     </tr>
     <tr>
         <td>
-      <label>{ts}Mailing Date{/ts}</label>
+	    <label>{ts}{if $sms eq 1}SMS Date{else}Mailing Date{/if}{/ts}</label>
   </td>
     </tr>
     <tr>
@@ -42,7 +42,7 @@
         <td colspan="1">{$form.sort_name.label}<br />
             {$form.sort_name.html|crmAddClass:big} {help id="id-create_sort_name"}
         </td>
-        <td width="100%"><label>{ts}Mailing Status{/ts}</label><br />
+        <td width="100%"><label>{ts}{if $sms eq 1}SMS Status{else}Mailing Status{/if}{/ts}</label><br />
         <div class="listing-box" style="width: auto; height: 60px">
             {foreach from=$form.mailing_status item="mailing_status_val"}
             <div class="{cycle values="odd-row,even-row"}">
@@ -52,9 +52,7 @@
         </div><br />
         </td>
     </tr>
-<tr>
-    <td>{$form.sms.label}<br/>{$form.sms.html}</td>
-</tr>
+
     {* campaign in mailing search *}
     {include file="CRM/Campaign/Form/addCampaignToComponent.tpl"
     campaignContext="componentSearch" campaignTrClass='' campaignTdClass=''}

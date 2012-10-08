@@ -85,6 +85,8 @@ class CRM_Contribute_BAO_Contribution_Utils {
     $paymentParams['contributionPageID'] = $form->_params['contributionPageID'] = $form->_values['id'];
 
 
+    $payment = NULL;
+    $paymentObjError = ts('The system did not record payment details for this payment and so could not process the transaction. Please report this error to the site administrator.');
     if ($form->_values['is_monetary'] && $form->_amount > 0.0 && is_array($form->_paymentProcessor)) {
       $payment = CRM_Core_Payment::singleton($form->_mode, $form->_paymentProcessor, $form);
     }
@@ -135,7 +137,10 @@ class CRM_Contribute_BAO_Contribution_Utils {
         }
         else {
           if (!$form->_params['is_pay_later']) {
+            if (is_object($payment)) 
             $result = &$payment->doTransferCheckout($form->_params, 'contribute');
+            else 
+              CRM_Core_Error::fatal($paymentObjError);
           }
           else {
             // follow similar flow as IPN
@@ -172,10 +177,16 @@ class CRM_Contribute_BAO_Contribution_Utils {
 
         // determine if express + recurring and direct accordingly
         if ($paymentParams['is_recur'] == 1) {
+          if (is_object($payment)) 
           $result = &$payment->createRecurringPayments($paymentParams);
+          else 
+            CRM_Core_Error::fatal($paymentObjError);
         }
         else {
+          if (is_object($payment)) 
           $result = &$payment->doExpressCheckout($paymentParams);
+          else 
+            CRM_Core_Error::fatal($paymentObjError);
         }
       }
     }
@@ -207,7 +218,10 @@ class CRM_Contribute_BAO_Contribution_Utils {
         }
       }
 
+      if (is_object($payment)) 
       $result = &$payment->doDirectPayment($paymentParams);
+      else 
+        CRM_Core_Error::fatal($paymentObjError);
     }
 
     if ($component == 'membership') {

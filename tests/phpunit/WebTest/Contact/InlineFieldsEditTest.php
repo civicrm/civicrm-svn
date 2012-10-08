@@ -274,8 +274,8 @@ class WebTest_Contact_InlineFieldsEditTest extends CiviSeleniumTestCase {
     );
     
     foreach($assertValues as $key => $value) {
-      $this->verifyText("xpath=//table[@id='constituent_information_1']/tbody/tr/td/div/div/div[@class='crm-clear']/div/div[@class='crm-label'][{$key}]", preg_quote($value['label']));
-      $this->verifyText("xpath=//table[@id='constituent_information_1']/tbody/tr/td/div/div/div[@class='crm-clear']/div/div[@class='crm-content crm-custom-data'][$key]", preg_quote($value['content']));
+      $this->verifyText("xpath=//table[@id='constituent_information_1']/tbody/tr[2]/td/div/div/div/div[@class='crm-clear']/div[@class='crm-label'][{$key}]", preg_quote($value['label']));
+      $this->verifyText("xpath=//table[@id='constituent_information_1']/tbody/tr[2]/td/div/div/div/div[@class='crm-clear']/div[@class='crm-content html-adjust crm-custom-data'][$key]", preg_quote($value['content']));
     }
     
     $this->verifyText("xpath=//table[@id='constituent_information_1']//div[@class='crm-config-option']/a", "add or edit custom set");
@@ -291,8 +291,8 @@ class WebTest_Contact_InlineFieldsEditTest extends CiviSeleniumTestCase {
   
   function _checkClickLink($linkText, $field) {
     //check element presence
-    $text = $this->getText("xpath=//div[@id='{$field}-block']/div[@id='crm-{$field}-content']//a[@id='edit-{$field}']");
-    $this->assertTrue((($text == $linkText) && $this->isElementPresent("xpath=//div[@id='{$field}-block']/div[@id='crm-{$field}-content']//a[@id='edit-{$field}']")), "'{$linkText}' link text: {$text} missing on contact summary page");
-    $this->click("xpath=//div[@id='{$field}-block']/div[@id='crm-{$field}-content']//a[@id='edit-{$field}']");
+    $text = $this->getText("xpath=//div[@id='{$field}-block']//div[@id='crm-{$field}-content']//a[@id='edit-{$field}']");
+    $this->assertTrue((($text == $linkText) && $this->isElementPresent("xpath=//div[@id='{$field}-block']//div[@id='crm-{$field}-content']//a[@id='edit-{$field}']")), "'{$linkText}' link text: {$text} missing on contact summary page");
+    $this->click("xpath=//div[@id='{$field}-block']//div[@id='crm-{$field}-content']//a[@id='edit-{$field}']");
   }
 }
