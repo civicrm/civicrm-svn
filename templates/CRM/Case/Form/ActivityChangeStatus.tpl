@@ -75,7 +75,7 @@ function changeActivityStatus( activityID, contactId, current_status_id ) {
                             success  : function( values ) {
                                 if ( values.is_error ) {
                                     // seems to be some discrepancy as to which spelling it should be
-                                    err_msg = values.error_msg ? values.error_msg : values.error_message;
+                                    var err_msg = values.error_msg ? values.error_msg : values.error_message;
                                     cj().crmAlert(err_msg, '{/literal}{ts escape="js"}Unable to change status{/ts}{literal}', 'error');
                                     return false;
                                 } else {

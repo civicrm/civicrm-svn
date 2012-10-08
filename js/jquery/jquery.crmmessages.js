@@ -83,26 +83,35 @@
     type = type || 'alert';
     title = title || '';
     options = options || {};
-    var params = {
-      text: text,
-      title: title,
-      type: type
-    };
-    // By default, don't expire errors and messages containing links
-    var extra = {
-      expires: (type == 'error' || text.indexOf('<a ') > -1) ? 0 : (text ? 10000 : 5000),
-      unique: true
-    };
-    options = $.extend(extra, options);
-    options.expires = options.expires === false ? 0 : parseInt(options.expires);
-    if (options.unique && options.unique !== '0') {
-      $('#crm-notification-container .ui-notify-message').each(function() {
-        if (title === $('h1', this).html() && text === $('.notify-content', this).html()) {
-          $('.icon.ui-notify-close', this).click();
-        }
-      });
+    if ($('#crm-notification-container').length) {
+      var params = {
+        text: text,
+        title: title,
+        type: type
+      };
+      // By default, don't expire errors and messages containing links
+      var extra = {
+        expires: (type == 'error' || text.indexOf('<a ') > -1) ? 0 : (text ? 10000 : 5000),
+        unique: true
+      };
+      options = $.extend(extra, options);
+      options.expires = options.expires === false ? 0 : parseInt(options.expires);
+      if (options.unique && options.unique !== '0') {
+        $('#crm-notification-container .ui-notify-message').each(function() {
+          if (title === $('h1', this).html() && text === $('.notify-content', this).html()) {
+            $('.icon.ui-notify-close', this).click();
+          }
+        });
+      }
+      return $('#crm-notification-container').notify('create', params, options);
     }
-    return $('#crm-notification-container').notify('create', params, options);
+    else {
+      if (title.length) {
+        text = title + "\n" + text;
+      }
+      alert(text);
+      return null;
+    }
   }
 
   /**
@@ -132,12 +141,7 @@
       }
       $(this).addClass('error');
     }
-    var params = {
-      text: text,
-      title: title,
-      type: 'error'
-    };
-    var msg = $('#crm-notification-container').notify('create', params, $.extend(extra, options));
+    var msg = $().crmAlert(text, title, 'error', $.extend(extra, options));
     if ($(this).length) {
       var ele = $(this);
       setTimeout(function() {ele.one('change', function() {
