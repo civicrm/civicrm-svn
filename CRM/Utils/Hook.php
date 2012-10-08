@@ -1140,4 +1140,20 @@ abstract class CRM_Utils_Hook {
         'civicrm_alterXmlSettings'
     );
   }
+
+  /**
+   * This hook is called when Settings have been loaded from the xml
+   * It is an opportunity for hooks to alter the data
+   *
+   * @param array $settingsMetaData - Settings Metadata
+   * @domainID integer $domainID
+   */
+
+  static function alterSettingsMetaData(&$settingsMetaData, $domainID) {
+    return self::singleton()->invoke(2, $settingsMetaData,
+        $domainID, self::$_nullObject,
+        self::$_nullObject, self::$_nullObject,
+        'civicrm_alterXmlSettings'
+    );
+  }
 }
