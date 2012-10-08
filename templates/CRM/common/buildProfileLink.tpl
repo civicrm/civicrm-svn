@@ -24,7 +24,7 @@ var selector = '{$selector}';
               var pop=$(this);
               var title = pop.find('.crmf-title').val();
               if (title == '') {
-                $().crmNotification("Please give a title");
+                $('.crmf-title', pop).crmError('{/literal}{ts escape="js"}Please enter a title{/ts}{literal}');
                 return;
               }
               $().crmAPI('UFGroup','Create',{group_type:'Contact',title:title},{
@@ -33,7 +33,7 @@ var selector = '{$selector}';
                   pop.dialog( "close" );
                 },
                 error:function(data) {
-                  alert (data.error_message);
+                  $().crmError(data.error_message);
                 },
 
               });
@@ -53,7 +53,7 @@ var selector = '{$selector}';
         var profile_id = $(selector + " option:selected").val();
 
         if (profile_id < 1) {
-          $().crmNotification ("you must select a profile above");
+          $().crmError('{/literal}{ts escape="js"}You must select a profile above{/ts}{literal}');
         }
         var cloneUrl = $(this).data('url');
         cloneUrl = cloneUrl + profile_id;
@@ -63,12 +63,11 @@ var selector = '{$selector}';
             "Create": function() {
               var title = $('#name-clone-dialog').val();
               if (title == '') {
-                $().crmNotification ("Please enter a name");
+                $('#name-clone-dialog').crmError('{/literal}{ts escape="js"}Please enter a name{/ts}{literal}');
                 return;
               }
               $.getJSON(cloneUrl+'&title='+title, function (data) {
                   $('<option value="'+data.id+'" selected="selected">'+title+'</option>').attr('selected','selected').appendTo (selector);
-                console.log (data);
               });
               $( this ).dialog( "close" );
             },
@@ -89,7 +88,7 @@ var selector = '{$selector}';
         var url=btn.data('url');
         var profile_id = $(selector + " option:selected").val();
         if (profile_id < 1)
-          $().crmNotification ("you must select a profile above");
+          $().crmError('{/literal}{ts escape="js"}You must select a profile above{/ts}{literal}');
         //$("#helper-editdialog-dialog").load ('/civicrm/inline/uf/edit_fields?id='+1,function () {
         $("#helper-editdialog-dialog").load ('/civicrm/admin/uf/group?snippet=1&edit_in_place=1&action=preview&field=0&id='+profile_id,function () {
           btn.val ('Edit');

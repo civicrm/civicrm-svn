@@ -64,19 +64,19 @@ function checkSelection( field ) {
 
     if ( selectedContactName == '' ) {
         validationMessage = '{/literal}{ts escape="js"}Please select another client for this case.{/ts}{literal}';
-  alert( validationMessage );
+        cj().crmError(validationMessage, '{/literal}{ts escape="js"}Client Selection{/ts}{literal}');
         return false;
     } else if ( cj('#contact_id').val( ) == {/literal}{$contactId}{literal} ) {
-        validationMessage = '{/literal}{ts 1="'+clientName[0]+'"}%1 is already assigned to this case. Please select some other client for this case.{/ts}{literal}';
-  alert( validationMessage );
+        validationMessage = '{/literal}{ts escape="js" 1="'+clientName[0]+'"}%1 is already assigned to this case. Please select some other client for this case.{/ts}{literal}';
+        cj().crmError(validationMessage, '{/literal}{ts escape="js"}Client Selection{/ts}{literal}');
         return false;
     } else {
-        validationMessage = '{/literal}{ts 1="'+clientName[0]+'"}Are you sure you want to reassign this case and all related activities and relationships to %1?{/ts}{literal}';
+        validationMessage = '{/literal}{ts escape="js" 1="'+clientName[0]+'"}Are you sure you want to reassign this case and all related activities and relationships to %1?{/ts}{literal}';
         if ( confirm( validationMessage ) ) {
-      this.href+='&amp;confirmed=1';
+          this.href+='&amp;confirmed=1';
         } else {
-      return false;
-  }
+          return false;
+        }
     }
 
 }

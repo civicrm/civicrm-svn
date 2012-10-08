@@ -180,7 +180,7 @@
             cj('tr#cnote_'+ noteId +' span.icon_comments_show').hide();
             cj('tr#cnote_'+ noteId +' span.icon_comments_hide').show();
         } else {
-            cj().crmAlert('{/literal}{ts}There are no comments for this note{/ts}{literal}', '{/literal}{ts}None Found{/ts}{literal}', 'alert');
+            cj().crmAlert('{/literal}{ts escape="js"}There are no comments for this note{/ts}{literal}', '{/literal}{ts escape="js"}None Found{/ts}{literal}', 'alert');
         }
 
     }
