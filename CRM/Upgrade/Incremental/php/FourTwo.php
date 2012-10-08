@@ -228,7 +228,7 @@ INNER JOIN civicrm_price_set cps ON cps.id = cpf.price_set_id AND cps.name <>'de
     $this->addTask(ts('Upgrade DB to 4.2.2: SQL'), 'task_4_2_alpha1_runSql', $rev);
     //create line items for memberships and participants for api/import
     self::convertContribution();
-    
+
     // CRM-10937 Fix the title on civicrm_dedupe_rule_group
     $upgrade = new CRM_Upgrade_Form();
     if ($upgrade->multilingual) {
@@ -240,7 +240,7 @@ INNER JOIN civicrm_price_set cps ON cps.id = cpf.price_set_id AND cps.name <>'de
                    AND column_name = 'title'";
 
       $dao = CRM_Core_DAO::executeQuery($query);
-     
+
       if (!$dao->N) {
         $domain = new CRM_Core_DAO_Domain;
         $domain->find(TRUE);
@@ -248,10 +248,10 @@ INNER JOIN civicrm_price_set cps ON cps.id = cpf.price_set_id AND cps.name <>'de
         if ($domain->locales) {
           $locales = explode(CRM_Core_DAO::VALUE_SEPARATOR, $domain->locales);
           $locale = array_shift($locales);
-          
+
           // Use the first language (they should all have the same value)
           CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_dedupe_rule_group` CHANGE `title_{$locale}` `title` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Label of the rule group'", $params, TRUE, NULL, FALSE, FALSE);
-          
+
           // Drop remaining the column for the remaining languages
           foreach ($locales as $locale) {
             CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_dedupe_rule_group` DROP `title_{$locale}`", $params, TRUE, NULL, FALSE, FALSE);
@@ -271,7 +271,7 @@ WHERE ov.option_group_id =
 ov.name = 'Reminder Sent'";
 
     $minReminderSent = CRM_Core_DAO::singlevalueQuery($queryMin);
-    
+
     $queryMax = "
 SELECT coalesce(max(value),0) from civicrm_option_value ov
 WHERE ov.option_group_id =
@@ -288,7 +288,7 @@ SET activity_type_id = {$minReminderSent}
 WHERE activity_type_id = {$maxReminderSent}";
 
       CRM_Core_DAO::execute($query);
-      
+
       // Then delete the newer (duplicate) option_value row
       $query = "
 DELETE from civicrm_option_value
