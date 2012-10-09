@@ -28,6 +28,9 @@ function civicrm_api3_generic_getfields($apiRequest) {
   $lcase_entity = _civicrm_api_get_entity_name_from_camel($entity);
   $subentity    = CRM_Utils_Array::value('contact_type', $apiRequest['params']);
   $action       = strtolower(CRM_Utils_Array::value('action', $apiRequest['params']));
+  if(!empty($apiRequest['params']['options']) && is_array($apiRequest['params']['options'])){
+    $options = $apiRequest['params']['options'];
+  }
   if ($action == 'getvalue' || $action == 'getvalue' || $action == 'getcount') {
     $action = 'get';
   }
@@ -71,6 +74,12 @@ function civicrm_api3_generic_getfields($apiRequest) {
         ));
       break;
 
+    case 'getoptions':
+      $metadata = array(
+        'field' => array('title' => 'Field to retrieve options for',
+        'api.required' => 1,
+      ));
+        break;
     default:
       // oddballs are on their own
       $metadata = array();
@@ -85,7 +94,8 @@ function civicrm_api3_generic_getfields($apiRequest) {
   }
 
   foreach ($metadata as $fieldname => $field) {
-    if (array_key_exists('pseudoconstant', $field)&& !CRM_Utils_Array::value('FKClassName',$field)) {
+    if (array_key_exists('pseudoconstant', $field)&& (!CRM_Utils_Array::value('FKClassName',$field) ||
+        (!empty($options) && !empty($options['get_options'])))) {
       $param = array('version' => 3, 'name' => $field['pseudoconstant']['name']);
       if (isset ( $field['pseudoconstant']['class'])) {
         $param['class'] = $field['pseudoconstant']['class'];
@@ -183,3 +193,19 @@ function civicrm_api3_generic_replace($apiRequest) {
   return _civicrm_api3_generic_replace($apiRequest['entity'], $apiRequest['params']);
 }
 
+/**
+ * API wrapper for replace function
+ *
+ * @param array $apiRequest api request as an array. Keys are
+ *
+ * @return integer count of results
+ */
+function civicrm_api3_generic_getoptions($apiRequest) {
+  $getFieldsArray = array(
+    'version' => 3,
+    'action' => 'create',
+    'options' => array('get_options' => $apiRequest['params']['field'], )
+  );
+  $result = civicrm_api($apiRequest['entity'], 'getfields', $getFieldsArray);
+  return $result['values'][$apiRequest['params']['field']]['options'];
+}

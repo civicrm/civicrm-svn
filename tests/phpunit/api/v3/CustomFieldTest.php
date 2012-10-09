@@ -184,7 +184,7 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase {
   /*function testCustomFieldCreateExample( )
     {
 
-        
+
         $customGroup = $this->customGroupCreate('Individual','date_test_group',3);
         require_once 'api/v3/examples/CustomFieldCreate.php';
         $result = custom_field_create_example();
@@ -240,6 +240,15 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase {
     $this->documentMe($getFieldsParams, $fields, __FUNCTION__, 'ContactTest.php', $description,$subfile,'GetFields');
     $this->assertArrayHasKey('options', $fields['values']['custom_' . $customField['id']]);
     $this->assertEquals('Label1', $fields['values']['custom_' . $customField['id']]['options'][1]);
+    $getOptionsArray = array(
+      'field' => 'custom_' . $customField['id'],
+      'version' => 3,
+    );
+    $description = "Demonstrates retrieving options for a custom field";
+    $subfile = "GetOptions";
+    $result = civicrm_api('contact', 'getoptions', $getOptionsArray);
+    $this->assertEquals('Label1', $result[1]);
+    $this->documentMe($getOptionsArray, $result, __FUNCTION__, 'ContactTest.php', $description, '', 'getoptions');
   }
 
   ///////////////// civicrm_custom_field_delete methods
