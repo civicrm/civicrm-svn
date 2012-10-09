@@ -2281,14 +2281,13 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
     $ufGroups = CRM_Core_PseudoConstant::ufgroup();
 
     CRM_Utils_Hook::aclGroup(CRM_Core_Permission::ADMIN, NULL, 'civicrm_uf_group', $ufGroups, $ufGroups);
+
     // Exclude Bulk Data Entry profiles - CRM-10901
-    $skipBulk = array();
-    $skipBulk[] = CRM_Core_DAO::getFieldValue('CRM_Core_BAO_UFGroup', 'contribution_batch_entry', 'id', 'name');
-    $skipBulk[] = CRM_Core_DAO::getFieldValue('CRM_Core_BAO_UFGroup', 'membership_batch_entry', 'id', 'name');
+    $batchProfiles = CRM_Core_BAO_UFGroup::getBatchProfiles();
 
     foreach ($ufGroups as $id => $title) {
       $ptype = CRM_Core_BAO_UFField::getProfileType($id, FALSE, $onlyPure);
-      if (in_array($ptype, $types) && !in_array($id, $skipBulk)) {
+      if (in_array($ptype, $types) && !array_key_exists($id, $batchProfiles)) {
         $profiles[$id] = $title;          
       }
     }
