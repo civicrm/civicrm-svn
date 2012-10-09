@@ -88,6 +88,13 @@ cj(function() {
           cj('#now').attr( 'checked', false );
        }
    });
+   cj('#now').change( function( ) { 
+       if ( cj('#now').attr('checked', true ) ) {
+          cj('#start_date_display').val( '' );
+          cj('#start_date').val( '' );
+          cj('#start_date_time').val( '' );
+       }
+   });
 });
 {/literal}
 </script>
