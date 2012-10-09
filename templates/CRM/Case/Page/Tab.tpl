@@ -67,11 +67,7 @@
     {/if}
 
     {if $rows}
-        {if $selectorTpl}
-          {include file=$selectorTpl}
-        {else}
           {include file="CRM/Case/Form/Selector.tpl"}
-        {/if}
     {else}
        <div class="messages status no-popup">
           <div class="icon inform-icon"></div>

@@ -119,7 +119,7 @@
                     </span>
                 {/if}
               </td>
-              <td id="phone-{$row.phone_id}">
+              <td>
                 {if $row.phone}
                   {$row.phone}
                   {if $row.do_not_phone}

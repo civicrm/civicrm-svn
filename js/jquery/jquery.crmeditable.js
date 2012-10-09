@@ -37,7 +37,6 @@
 * - crmForm()
 *   this embed a civicrm form and make it in place (load+ajaxForm) 
 *   to make it easier to customize the form (eg. hide a button...) it triggers a 'load' event on the form. you can then catch the load on your code (using the $('#id_of_the_form').on(function(){//do something
-*   upon sucessful submit of the form, an event 'success' is triggered
 */
 
 
@@ -317,8 +316,7 @@
        $this.html ("Loading...");
        if (settings.dialog)
          $this.dialog({width:'auto',minWidth:600});
-       $this.load (settings.source ,function (){
-         formLoaded(this)});
+       $this.load (settings.source ,function (){formLoaded(this)});
 
     });
   };

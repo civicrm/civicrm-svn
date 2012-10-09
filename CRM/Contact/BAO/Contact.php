@@ -2755,108 +2755,89 @@ LEFT JOIN civicrm_address add2 ON ( add1.master_id = add2.id )
     return $masterDisplayName;
   }
 
-  /* this function is used to add a field in a profile. It is called to build the list of fields for drag n' drop & for the admin field
+  /**
+   * Get the creation/modification times for a contact
+   *
+   * @return array('created_date' => $, 'modified_date' => $)
   */
-  static
-  function getFieldsByType ($groupFieldList = array(), $split=false) {
-     if (empty ($groupFieldList))
-       $groupFieldList =  array( 'note', 'email_greeting_custom', 'postal_greeting_custom', 'addressee_custom', 'id' );
-      $fields = array();
-      $fields['Contact'] = array( );
-      $fields['Individual'  ] = CRM_Contact_BAO_Contact::importableFields('Individual', false, false, true);
-      $fields['Household'   ] = CRM_Contact_BAO_Contact::importableFields('Household', false, false, true);
-      $fields['Organization'] = CRM_Contact_BAO_Contact::importableFields('Organization', false, false, true);
-      if ($split) {
-        $relatedfields= array ('Address','Communication');
-        $fields['Address'] = CRM_Core_DAO_Address::import( );
-        $fields['Communication'] = array_merge (CRM_Core_DAO_Phone::import( ),CRM_Core_DAO_Email::import( ),CRM_Core_DAO_IM::import( true ),CRM_Core_DAO_OpenID::import( ));
-/*          $fields['Phone'] = CRM_Core_DAO_Phone::import( );
-        $relatedfields= array ('Address','Phone','Email', 'IM','OpenID');
-        $fields['Email'] = CRM_Core_DAO_Email::import( );
-        $fields['IM'] = CRM_Core_DAO_IM::import( true );
-        $fields['OpenID'] = CRM_Core_DAO_OpenID::import( );
-*/
-        $communicationFields = array_merge (CRM_Contact_BAO_Contact::$_commPrefs, array ('addressee','addressee_custom','email_greeting','email_greeting_custom','is_opt_out','postal_greeting','postal_greeting_custom','preferred_mail_format','preferred_communication_method'));
-        $related = array();
-        foreach ($relatedfields as $r)
-          $related = array_merge ($related,array_keys($fields[$r]));
+  static function getTimestamps($contactId) {
+    $timestamps = CRM_Core_DAO::executeQuery(
+      'SELECT created_date, modified_date
+      FROM civicrm_contact 
+      WHERE id = %1',
+      array(
+        1 => array($contactId, 'Integer'),
+      )
+    );
+    if ($timestamps->fetch()) {
+      return array(
+        'created_date' => $timestamps->created_date,
+        'modified_date' => $timestamps->modified_date,
+      );
+    } else {
+      return NULL;
+      }
       }
 
-
-      // add current employer for individuals
-      $fields['Individual']['current_employer'] = array( 'name'  => 'organization_name',
-                                                         'title' => ts('Current Employer') );
-
-      require_once 'CRM/Core/BAO/Setting.php';
-      $addressOptions = CRM_Core_BAO_Setting::valueOptions( CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
-                                                            'address_options', true, null, true );
-
-      if ( !$addressOptions['county'] ) {
-          unset( $fields['Individual'  ]['county']);
-          unset( $fields['Household'   ]['county']);
-          unset( $fields['Organization']['county']);
-      }
-
-
-      //build the common contact fields array CRM-3037.
-      foreach ( $fields['Individual'] as $key => $value ) {
-          if ( CRM_Utils_Array::value( $key, $fields['Household'] ) &&
-               CRM_Utils_Array::value( $key, $fields['Organization'] ) ) {
-              $fields['Contact'][$key] = $value;
-              //as we move common fields to contacts. There fore these fields
-              //are unset from resoective array's.
-              unset( $fields['Individual'][$key] );
-              unset( $fields['Household'][$key] );
-              unset( $fields['Organization'][$key] );
+  /**
+   * Get a list of triggers for the contact table
+   *
+   * @see hook_civicrm_triggerInfo
+   * @see CRM_Core_DAO::triggerRebuild
+   * @see http://issues.civicrm.org/jira/browse/CRM-10554
+   */
+  static function triggerInfo(&$info, $tableName = NULL) {
+    if ($tableName == NULL || $tableName == self::getTableName()) {
+      $info[] = array(
+        'table' => array(self::getTableName()),
+        'when' => 'BEFORE',
+        'event' => array('INSERT'),
+        'sql' => "\nSET NEW.created_date = CURRENT_TIMESTAMP;\n",
+      );
           }
-      }
-      if ($split) {
-        foreach ($fields['Contact'] as $key => $v) {
-          if (in_array ( $key,$communicationFields)) {
-            $fields['Communication'][] = $fields['Contact'][$key];
-            unset ($fields['Contact'][$key] );
-          } elseif (in_array ( $key, $related)){
-            unset ($fields['Contact'][$key] );
+
+    // Update timestamp when modifying closely related core tables
+    $relatedTables = array(
+      'civicrm_address',
+      'civicrm_email',
+      'civicrm_im',
+      'civicrm_phone',
+      'civicrm_website',
+    );
+    $info[] = array(
+      'table' => $relatedTables,
+      'when' => 'AFTER',
+      'event' => array('INSERT', 'UPDATE'),
+      'sql' => "\nUPDATE civicrm_contact SET modified_date = CURRENT_TIMESTAMP WHERE id = NEW.contact_id;\n",
+    );
+    $info[] = array(
+      'table' => $relatedTables,
+      'when' => 'AFTER',
+      'event' => array('DELETE'),
+      'sql' => "\nUPDATE civicrm_contact SET modified_date = CURRENT_TIMESTAMP WHERE id = OLD.contact_id;\n",
+    );
+
+    // Update timestamp when modifying related custom-data tables
+    $customGroupTables = array();
+    $customGroupDAO = CRM_Core_BAO_CustomGroup::getAllCustomGroupsByBaseEntity('Contact');
+    $customGroupDAO->is_multiple = 0;
+    $customGroupDAO->find();
+    while ($customGroupDAO->fetch()) {
+      $customGroupTables[] = $customGroupDAO->table_name;
           }
-        }
+    if (!empty($customGroupTables)) {
+      $info[] = array(
+        'table' => $customGroupTables,
+        'when' => 'AFTER',
+        'event' => array('INSERT', 'UPDATE'),
+        'sql' => "\nUPDATE civicrm_contact SET modified_date = CURRENT_TIMESTAMP WHERE id = NEW.entity_id;\n",
+      );
+      $info[] = array(
+        'table' => $customGroupTables,
+        'when' => 'AFTER',
+        'event' => array('DELETE'),
+        'sql' => "\nUPDATE civicrm_contact SET modified_date = CURRENT_TIMESTAMP WHERE id = OLD.entity_id;\n",
+      );
       }
-      $fields['Contact']['id'] = array( 'name'  => 'id',
-                                        'title' => ts('Internal Contact ID') );
-
-      unset( $fields['Contact']['contact_type'] );
-
-      // since we need a hierarchical list to display contact types & subtypes,
-      // this is what we going to display in first selector
-      $contactTypes = CRM_Contact_BAO_ContactType::getSelectElements( false, false );
-      unset($contactTypes['']);
-
-      // include Subtypes For Profile
-      $subTypes = CRM_Contact_BAO_ContactType::subTypeInfo( );
-      foreach ( $subTypes as $name => $val ) {
-          //custom fields for sub type
-          $subTypeFields = CRM_Core_BAO_CustomField::getFieldsForImport( $name );
-
-          if ( array_key_exists($val['parent'], $fields) ) {
-              $fields[$name] = $fields[$val['parent']] + $subTypeFields;
-          } else {
-              $fields[$name] = $subTypeFields;
           }
-      }
-
-      //unset selected fields
-      foreach( $groupFieldList as $key => $value ) {
-          if ( is_integer( $key) ) {
-              unset( $fields['Individual'][$value], $fields['Household'][$value], $fields['Organization'][$value] );
-              continue;
           }
-          if ( CRM_Utils_Array::value( 'field_name',$defaults )
-              && $defaults['field_name']['0'] == $value['field_type']
-              && $defaults['field_name']['1'] == $key ) {
-              continue;
-          }
-          unset( $fields[$value['field_type']][$key] );
-      }
-      unset( $subTypes );
-      return $fields;
-   }
-}

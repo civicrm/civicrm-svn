@@ -70,7 +70,6 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
     'city', 'state_province', 'postal_code', 'country',
     'geo_code_1', 'geo_code_2', 'is_deceased',
     'email', 'on_hold', 'phone', 'status',
-    'email_id','phone_id','address_id',
     'do_not_email', 'do_not_phone', 'do_not_mail',
   );
 

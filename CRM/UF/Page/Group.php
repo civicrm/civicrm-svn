@@ -81,12 +81,6 @@ class CRM_UF_Page_Group extends CRM_Core_Page {
           'qs' => 'action=preview&id=%%id%%&field=0&context=group',
           'title' => ts('Edit CiviCRM Profile Group'),
         ),
-        CRM_Core_Action::PREVIEW => array(
-          'name' => ts('Edit In Place'),
-          'url' => 'civicrm/admin/uf/group',
-          'qs' => 'action=preview&id=%%id%%&field=0&context=group&edit_in_place=1',
-          'title' => ts('Edit CiviCRM Profile Group'),
-        ),
         CRM_Core_Action::ADD => array(
           'name' => ts('Use Profile-Create Mode'),
           'url' => 'civicrm/profile/create',
@@ -196,19 +190,10 @@ class CRM_UF_Page_Group extends CRM_Core_Page {
    */
   function copy() {
     $gid = CRM_Utils_Request::retrieve('gid', 'Positive',
-      $this, TRUE, 0, 'REQUEST'
+      $this, TRUE, 0, 'GET'
     );
-    $title = CRM_Utils_Request::retrieve('title', 'String');
 
-    $json = CRM_Utils_Request::retrieve('json', 'String');
-
-
-    $result = CRM_Core_BAO_UFGroup::copy($gid,$title);
-    if ($json) {
-      echo json_encode ($result->toArray());
-      exit ();
-    }
-
+    CRM_Core_BAO_UFGroup::copy($gid);
     CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/admin/uf/group', 'reset=1'));
   }
 
