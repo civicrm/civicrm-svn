@@ -184,15 +184,20 @@ class CRM_Core_Transaction {
    *
    * @param $phase A constant; one of: self::PHASE_{PRE,POST}_{COMMIT,ROLLBACK}
    * @param $callback A PHP callback
+   * @param mixed $params Optional values to pass to callback.
+   *          See php manual call_user_func_array for details.
    */
-  static public function addCallback($phase, $callback) {
-    self::$_callbacks[$phase][] = $callback;
+  static public function addCallback($phase, $callback, $params = null) {
+    self::$_callbacks[$phase][] = array(
+      'callback' => $callback,
+      'parameters' => (is_array($params) ? $params : array($params))
+    );
   }
 
   static protected function invokeCallbacks($phase, $callbacks) {
     if (is_array($callbacks[$phase])) {
       foreach ($callbacks[$phase] as $cb) {
-        call_user_func($cb);
+        call_user_func_array($cb['callback'], $cb['parameters']);
       }
     }
   }
