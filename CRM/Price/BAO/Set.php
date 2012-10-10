@@ -655,7 +655,7 @@ WHERE  id = %1";
           }
         $params["price_{$id}"] = array($params["price_{$id}"] => 1);
         $optionValueId = CRM_Utils_Array::key(1, $params["price_{$id}"]);
-        $optionLabel = $field['options'][$optionValueId]['label'];
+        $optionLabel = CRM_Utils_Array::value('label', $field['options'][$optionValueId]);
         $params['amount_priceset_level_radio'] = array();
         $params['amount_priceset_level_radio'][$optionValueId] = $optionLabel;
         if (isset($radioLevel)) {
