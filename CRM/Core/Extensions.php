@@ -651,14 +651,15 @@ class CRM_Core_Extensions {
    *
    * @param int $id id of the extension record
    * @param string $key extension key
+   * @param bool $removeFiles whether to remove PHP source tree for the extension
    *
    * @return void
    */
-  public function uninstall($id, $key) {
+  public function uninstall($id, $key, $removeFiles = TRUE) {
     $this->populate();
     $e = $this->getExtensions();
     $ext = $e[$key];
-    if ($ext->uninstall()) {
+    if ($ext->uninstall($removeFiles)) {
       return TRUE;
   }
   }

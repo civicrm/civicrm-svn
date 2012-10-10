@@ -31,7 +31,7 @@
 {else}
   {assign var='newMassUrl' value='civicrm/mailing/send'}
   {assign var='qVal' value=''}
-  {assign var='linkTitle' value='New Mailings'}
+  {assign var='linkTitle' value='New Mailing'}
   {assign var='componentName' value='Mailings'}
 {/if}
 

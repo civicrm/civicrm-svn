@@ -1133,7 +1133,7 @@ WHERE  contribution_id = {$this->_id}
     
     // process price set and get total amount and line items.
     $lineItem = array();
-    $priceSetId = NULL;
+    $priceSetId = $pId = NULL;
     $priceSetId = CRM_Utils_Array::value('price_set_id', $submittedValues);
     if (empty($priceSetId) && !$this->_id) {
       $this->_priceSetId = $priceSetId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', 'default_contribution_amount', 'id', 'name');
@@ -1151,9 +1151,10 @@ WHERE  contribution_id = {$this->_id}
     }
     if (!$priceSetId && CRM_Utils_Array::value('total_amount', $submittedValues) && $this->_id) {
       // 10117 update th line items for participants
-      if ($this->_context == 'participant' && $this->_compId) {
+      $pId = ($this->_compId && $this->_context == 'participant') ? $this->_compId : CRM_Core_DAO::getFieldValue('CRM_Event_DAO_ParticipantPayment', $this->_id, 'participant_id', 'contribution_id'); //CRM-10964
+      if ($pId) {
         $entityTable = 'participant';
-        $entityID = $this->_compId;
+        $entityID = $pId;
         $participantParams = array(
                                    'fee_amount' => $submittedValues['total_amount'],
                                    'id'         => $entityID);
@@ -1452,7 +1453,7 @@ WHERE  contribution_id = {$this->_id}
         );
       }
 
-      if (($this->_context != 'participant')) {
+      if (($this->_context != 'participant') && !$pId) {
         $entityID = $contribution->id;
         $entityTable = 'contribution';
       }
@@ -1602,7 +1603,7 @@ WHERE  contribution_id = {$this->_id}
       //create contribution.
       $contribution = CRM_Contribute_BAO_Contribution::create($params, $ids);
       // 10117 update th line items for participants
-      if ($this->_context != 'participant') {
+      if ($this->_context != 'participant' && !$pId) {
         $entityID = $contribution->id;
         $entityTable = 'contribution';
       }

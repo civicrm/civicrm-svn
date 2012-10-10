@@ -56,11 +56,6 @@ define('CIVICRM_UF', 'UnitTests');
 global $civicrm_root;
 $civicrm_root = dirname (dirname (dirname (dirname( __FILE__ ) )));
 
-global $civicrm_setting;
-$civicrm_setting['Extension Preferences']['ext_repo_url'] = FALSE; // disable downloading
-$civicrm_setting['Directory Preferences']['extensionsDir'] = 'FIXME /path/to/extensions';
-$civicrm_setting['URL Preferences']['extensionsURL'] = 'FIXME http://url/to/extensions';
-
 // set this to a temporary directory. it defaults to /tmp/civi on linux
 //define( 'CIVICRM_TEMPLATE_COMPILEDIR', 'the/absolute/path/' );
 

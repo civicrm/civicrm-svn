@@ -146,6 +146,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     // also load the class loader
     require_once 'CRM/Core/ClassLoader.php';
     CRM_Core_ClassLoader::singleton()->register();
+    if (function_exists('_civix_phpunit_setUp')) { // FIXME: loosen coupling
+      _civix_phpunit_setUp();
+  }
   }
 
   function requireDBReset() {
@@ -211,6 +214,11 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     foreach ($tables as $table) {
       // skip log tables
       if (substr($table['table_name'], 0, 4) == 'log_') {
+        continue;
+      }
+
+      // don't change list of installed extensions
+      if ($table['table_name'] == 'civicrm_extension') {
         continue;
       }
 

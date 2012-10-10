@@ -1315,7 +1315,7 @@ class CRM_Report_Form extends CRM_Core_Form {
     if ($relative) {
       list($term, $unit) = CRM_Utils_System::explode('.', $relative, 2);
       $dateRange = CRM_Utils_Date::relativeToAbsolute($term, $unit);
-      $from = $dateRange['from'];
+      $from = substr($dateRange['from'], 0, 8);
       //Take only Date Part, Sometime Time part is also present in 'to'
       $to = substr($dateRange['to'], 0, 8);
     }

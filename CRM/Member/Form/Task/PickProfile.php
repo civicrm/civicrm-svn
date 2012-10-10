@@ -98,7 +98,7 @@ class CRM_Member_Form_Task_PickProfile extends CRM_Member_Form_Task {
     $profiles = CRM_Core_BAO_UFGroup::getProfiles($types, TRUE);
 
     if (empty($profiles)) {
-      CRM_Core_Session::setStatus(ts("You will need to create a Profile containing the {$types[0]} fields you want to edit before you can use Batch Update via Profile. Navigate to Administer Civicrm >> CiviCRM Profile to configure a Profile. Consult the online Administrator documentation for more information."), ts('Batch Update Error'), 'error');
+      CRM_Core_Session::setStatus(ts("You will need to create a Profile containing the {$types[0]} fields you want to edit before you can use Batch Update via Profile. Navigate to Administer CiviCRM >> CiviCRM Profile to configure a Profile. Consult the online Administrator documentation for more information."), ts('Batch Update Error'), 'error');
       CRM_Utils_System::redirect($this->_userContext);
     }
 

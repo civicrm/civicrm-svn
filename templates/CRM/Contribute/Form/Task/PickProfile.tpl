@@ -24,8 +24,6 @@
  +--------------------------------------------------------------------+
 *}
 <div class="form-item crm-block crm-form-block crm-contribution-form-block">
-<fieldset>
-    <legend>{ts}Batch Update Contribution via Profile{/ts}</legend>
      <table class="form-layout-compressed">
        <tr class="crm-contribution-form-block-uf_group_id">
           <td class="label">{$form.uf_group_id.label}</td>
@@ -37,6 +35,5 @@
        </tr>
     </table>
     <div class="crm-submit-buttons">{$form.buttons.html}</td></div>
-</fieldset>
 </div>
 

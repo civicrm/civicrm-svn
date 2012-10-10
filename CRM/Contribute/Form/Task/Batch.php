@@ -242,7 +242,7 @@ class CRM_Contribute_Form_Task_Batch extends CRM_Contribute_Form_Task {
             $value[$val] = CRM_Utils_Date::processDate($value[$val]);
           }
         }
-        if ($value['contribution_type']) {
+        if (CRM_Utils_Array::value('contribution_type', $value)) {
           $value['contribution_type_id'] = $value['contribution_type'];
         }
 
