@@ -38,7 +38,7 @@ Plugin Name: CiviCRM
 Plugin URI: http://civicrm.org/
 Description: CiviCRM WP Plugin
 Author: CiviCRM LLC
-  Version: 4.2.3
+Version: 4.3
 Author URI: http://civicrm.org/
 License: AGPL3
 */
@@ -69,19 +69,30 @@ function civicrm_activate() {
     $wp_roles = new WP_Roles();
   }
 
-  //Add the 'anonymous_user' role with limited capabilities.
+  //Minimum capabilities (Civicrm permissions) arrays
+  $min_capabilities =  array(
+    'make_online_contributions' => 1,
+    'profile_create' => 1,
+    'profile_edit' => 1,
+    'profile_view' => 1,
+    'register_for_events' => 1,
+    'view_event_info' => 1,
+  );
+
+  // Assign the Minimum capabilities (Civicrm permissions) to all WP roles
+  foreach ( $wp_roles->role_names as $role => $name ) {
+    $roleObj = $wp_roles->get_role($role);
+    foreach ($min_capabilities as $capability_name => $capability_value) {
+      $roleObj->add_cap($capability_name);
+    }
+  }
+
+  //Add the 'anonymous_user' role with minimum capabilities.
   if (!in_array('anonymous_user' , $wp_roles->roles)) {
     add_role(
       'anonymous_user',
       'Anonymous User',
-      array(
-        'make_online_contributions' => 1,
-        'profile_create' => 1,
-        'profile_edit' => 1,
-        'profile_view' => 1,
-        'register_for_events' => 1,
-        'view_event_info' => 1,
-      )
+      $min_capabilities
     );
   }
 }
@@ -927,4 +938,3 @@ function civicrm_buffer_callback($buffer) {
 }
 
 civicrm_wp_main();
-
