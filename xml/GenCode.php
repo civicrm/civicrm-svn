@@ -1,6 +1,7 @@
 <?php
 ini_set('include_path', '.' . PATH_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'packages' . PATH_SEPARATOR . '..');
 ini_set('memory_limit', '512M');
+date_default_timezone_set('UTC'); // avoid php warnings if timezone is not set - CRM-10844
 
 define('CIVICRM_UF', 'Drupal');
 
