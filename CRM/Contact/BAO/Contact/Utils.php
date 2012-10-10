@@ -681,7 +681,6 @@ LEFT JOIN  civicrm_email ce ON ( ce.contact_id=c.id AND ce.is_primary = 1 )
         $rgBao               = new CRM_Dedupe_BAO_RuleGroup();
         $rgBao->contact_type = $dao->contact_type;
         $rgBao->used         = 'Supervised';
-        //$rgBao->is_default   = 1;
         if ($rgBao->find(TRUE)) {
           $rgid = $rgBao->id;
         }

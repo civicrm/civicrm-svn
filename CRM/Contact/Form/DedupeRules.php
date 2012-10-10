@@ -65,9 +65,8 @@ class CRM_Contact_Form_DedupeRules extends CRM_Admin_Form {
       $rgDao->find(TRUE);
       $this->_defaults['threshold'] = $rgDao->threshold;
       $this->_contactType = $rgDao->contact_type;
-      $this->_defaults['level'] = $rgDao->level;
+      $this->_defaults['used'] = $rgDao->used;
       $this->_defaults['title'] = $rgDao->title;
-      $this->_defaults['is_default'] = $rgDao->is_default;
       $this->_defaults['is_reserved'] = $rgDao->is_reserved;
       $this->assign('isReserved', $rgDao->is_reserved);
       $ruleDao = new CRM_Dedupe_DAO_Rule();
@@ -110,17 +109,10 @@ class CRM_Contact_Form_DedupeRules extends CRM_Admin_Form {
 
     $this->addRadio('level', ts('Usage'), $options);
 
-    /*  $default = $this->add('checkbox', 'is_default', ts('Default?'));
-    if (CRM_Utils_Array::value('is_default', $this->_defaults)) {
-      $default->freeze();
-      //$ruleLevel->freeze();
-      }*/
-
     $disabled = array();
     $reserved = $this->add('checkbox', 'is_reserved', ts('Reserved?'));
     if (CRM_Utils_Array::value('is_reserved', $this->_defaults)) {
       $reserved->freeze();
-      // $ruleLevel->freeze();
       $disabled = array('disabled' => TRUE);
     }
 
@@ -192,7 +184,9 @@ class CRM_Contact_Form_DedupeRules extends CRM_Admin_Form {
    */
   public function postProcess() {
     $values = $this->exportValues();
-
+    
+    //FIXME: Handle logic to replace is_default column by usage
+    /*
     $isDefault = CRM_Utils_Array::value('is_default', $values, FALSE);
     // reset defaults
     if ($isDefault) {
@@ -206,7 +200,7 @@ UPDATE civicrm_dedupe_rule_group
       );
       CRM_Core_DAO::executeQuery($query, $queryParams);
     }
-
+    */
     $rgDao = new CRM_Dedupe_DAO_RuleGroup();
     if ($this->_action & CRM_Core_Action::UPDATE) {
       $rgDao->id = $this->_rgid;
@@ -214,7 +208,7 @@ UPDATE civicrm_dedupe_rule_group
 
     $rgDao->title        = $values['title'];
     $rgDao->is_reserved  = CRM_Utils_Array::value('is_reserved', $values, FALSE);
-    $rgDao->is_default   = $isDefault;
+    //    $rgDao->is_default   = $isDefault;
     $rgDao->level        = $values['level'];
     $rgDao->contact_type = $this->_contactType;
     $rgDao->threshold    = $values['threshold'];

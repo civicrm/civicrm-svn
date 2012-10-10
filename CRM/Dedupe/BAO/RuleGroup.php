@@ -374,9 +374,8 @@ class CRM_Dedupe_BAO_RuleGroup extends CRM_Dedupe_DAO_RuleGroup {
    */
   function dedupeRuleFieldsWeight($params) {
     $rgBao               = new CRM_Dedupe_BAO_RuleGroup();
-    $rgBao->level        = $params['level'];
+    $rgBao->used         = $params['used'];
     $rgBao->contact_type = $params['contact_type'];
-    $rgBao->is_default   = 1;
     $rgBao->find(TRUE);
 
     $ruleBao = new CRM_Dedupe_BAO_Rule();
@@ -412,10 +411,10 @@ class CRM_Dedupe_BAO_RuleGroup extends CRM_Dedupe_DAO_RuleGroup {
     $result = array();
     while ($dao->fetch()) {
       if (!empty($dao->name)) {
-        $name = "{$dao->name} - {$dao->level}";
+        $name = "{$dao->name} - {$dao->used}";
       }
       else {
-        $name = "{$dao->contact_type} - {$dao->level}";
+        $name = "{$dao->contact_type} - {$dao->used}";
       }
       $result[$dao->id] = $name;
     }
