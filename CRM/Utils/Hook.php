@@ -567,7 +567,6 @@ abstract class CRM_Utils_Hook {
    *   Optional result (boolean) may also be provided. Class can be an array of classes (not sure what that does :( ).
    *   The key for new Task(s) should not conflict with the keys for core tasks of that $objectType, which can be found in CRM/$objectType/Task.php.
    */
-
   static function searchTasks($objectType, &$tasks) {
     return self::singleton()->invoke(2, $objectType, $tasks,
       self::$_nullObject, self::$_nullObject, self::$_nullObject,
@@ -589,7 +588,6 @@ abstract class CRM_Utils_Hook {
    * @param array $groups - the list of groups being included / excluded
    * @param array $mailings - the list of mailings being included / excluded
    */
-
   static function mailingGroups(&$form, &$groups, &$mailings) {
     return self::singleton()->invoke(3, $form, $groups, $mailings,
       self::$_nullObject, self::$_nullObject,
@@ -647,7 +645,6 @@ abstract class CRM_Utils_Hook {
    * @param int $id - the id of the object for which the call is being made.
    *   For custom fields, it will be the custom field id
    */
-
   static function contactListQuery(&$query, $name, $context, $id) {
     return self::singleton()->invoke(4, $query, $name, $context, $id,
       self::$_nullObject,
@@ -688,7 +685,6 @@ abstract class CRM_Utils_Hook {
    * @param array $params - array fields include: groupName, from, toName, toEmail, subject, cc, bcc, text, html, returnPath, replyTo, headers, attachments (array)
    * @param string $context - the context in which the hook is being invoked, eg 'civimail'
    */
-
   static function alterMailParams(&$params, $context = NULL) {
     return self::singleton()->invoke(2, $params, $context,
       self::$_nullObject, self::$_nullObject, self::$_nullObject,
@@ -1088,8 +1084,7 @@ abstract class CRM_Utils_Hook {
     );
   }
 
-  static
-  function alterReportVar($varType, &$var, &$object) {
+  static function alterReportVar($varType, &$var, &$object) {
     return self::singleton()->invoke(3, $varType, $var, $object,
       self::$_nullObject,
       self::$_nullObject,

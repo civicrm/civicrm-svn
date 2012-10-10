@@ -75,8 +75,7 @@ class CRM_Utils_Type {
    * @access public
    * @static
    */
-  static
-  function typeToString($type) {
+  static function typeToString($type) {
     switch ($type) {
       case 1:
         $string = 'Int';
