@@ -92,7 +92,8 @@ class CRM_Utils_PDF_Label extends TCPDF {
    * @param $unit     Unit of measure for the PDF document
    *
    * @access public
-   */ function __construct($format, $unit = 'mm') {
+   */
+  function __construct($format, $unit = 'mm') {
     if (is_array($format)) {
       // Custom format
       $tFormat = $format;
@@ -134,8 +135,8 @@ class CRM_Utils_PDF_Label extends TCPDF {
   }
 
   /*
-     * Function to initialize label format settings
-     */
+   * Function to initialize label format settings
+   */
   function LabelSetFormat(&$format, $unit) {
     $this->defaults = CRM_Core_BAO_LabelFormat::getDefaultValues();
     $this->format = &$format;
@@ -163,8 +164,8 @@ class CRM_Utils_PDF_Label extends TCPDF {
   }
 
   /*
-     * function to Generate the pdf of one label (can be modified using SetGenerator)
-     */
+   * function to Generate the pdf of one label (can be modified using SetGenerator)
+   */
   function generateLabel($text) {
     $args = array(
       'w' => $this->width,
@@ -207,8 +208,8 @@ class CRM_Utils_PDF_Label extends TCPDF {
   }
 
   /*
-     * function to Print a label
-     */
+   * function to Print a label
+   */
   function AddPdfLabel($texte) {
     $posX = $this->marginLeft + ($this->countX * ($this->width + $this->xSpace));
     $posY = $this->marginTop + ($this->countY * ($this->height + $this->ySpace));

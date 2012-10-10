@@ -9,9 +9,8 @@ class CRM_Utils_System_Base {
   var $is_wordpress = FALSE;
 
   /*
-     * Does the CMS allow CMS forms to be extended by hooks
-     */
-
+   * Does the CMS allow CMS forms to be extended by hooks
+   */
   var $supports_form_extensions = FALSE;
 
   /**
@@ -91,8 +90,8 @@ class CRM_Utils_System_Base {
   }
 
   /*
-     * Currently this is just helping out the test class as defaults is calling it - maybe move fix to defaults
-     */
+   * Currently this is just helping out the test class as defaults is calling it - maybe move fix to defaults
+   */
   function cmsRootPath() {}
 }
 

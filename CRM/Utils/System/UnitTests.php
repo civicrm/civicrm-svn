@@ -46,8 +46,7 @@ class CRM_Utils_System_UnitTests extends CRM_Utils_System_Drupal {
     return;
   }
 
-  static
-  function authenticate($name, $password, $loadCMSBootstrap = FALSE, $realPath = NULL) {
+  static function authenticate($name, $password, $loadCMSBootstrap = FALSE, $realPath = NULL) {
     $retVal = array(1, 1, 12345);
     return $retVal;
   }
@@ -158,6 +157,6 @@ class CRM_Utils_System_UnitTests extends CRM_Utils_System_Drupal {
 
   function getModules() {
     return array();
-}
+  }
 }
 

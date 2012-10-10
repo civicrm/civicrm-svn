@@ -34,8 +34,7 @@
  */
 class CRM_Utils_Crypt {
 
-  static
-  function encrypt($string) {
+  static function encrypt($string) {
     if (empty($string)) {
       return $string;
     }
@@ -57,8 +56,7 @@ class CRM_Utils_Crypt {
     return base64_encode($string);
   }
 
-  static
-  function decrypt($string) {
+  static function decrypt($string) {
     if (empty($string)) {
       return $string;
     }

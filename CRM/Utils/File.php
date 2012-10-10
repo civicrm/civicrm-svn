@@ -46,8 +46,7 @@ class CRM_Utils_File {
    * @return boolean     true if file is ascii
    * @access public
    */
-  static
-  function isAscii($name) {
+  static function isAscii($name) {
     $fd = fopen($name, "r");
     if (!$fd) {
       return FALSE;
@@ -74,8 +73,7 @@ class CRM_Utils_File {
    * @return boolean     true if file is html
    * @access public
    */
-  static
-  function isHtml($name) {
+  static function isHtml($name) {
     $fd = fopen($name, "r");
     if (!$fd) {
       return FALSE;
@@ -107,8 +105,7 @@ class CRM_Utils_File {
    * @access public
    * @static
    */
-  static
-  function createDir($path, $abort = TRUE) {
+  static function createDir($path, $abort = TRUE) {
     if (is_dir($path) || empty($path)) {
       return;
     }
@@ -200,8 +197,7 @@ class CRM_Utils_File {
    * @return boolean  whether the file was recoded properly
    * @access public
    */
-  static
-  function toUtf8($name) {
+  static function toUtf8($name) {
     static $config = NULL;
     static $legacyEncoding = NULL;
     if ($config == NULL) {
@@ -246,8 +242,7 @@ class CRM_Utils_File {
    * @access public
    * @static
    */
-  static
-  function addTrailingSlash($name, $separator = NULL) {
+  static function addTrailingSlash($name, $separator = NULL) {
     if (!$separator) {
       $separator = DIRECTORY_SEPARATOR;
     }
@@ -297,8 +292,7 @@ class CRM_Utils_File {
     }
   }
 
-  static
-  function isExtensionSafe($ext) {
+  static function isExtensionSafe($ext) {
     static $extensions = NULL;
     if (!$extensions) {
       $extensions = CRM_Core_OptionGroup::values('safe_file_extension', TRUE);
@@ -328,8 +322,7 @@ class CRM_Utils_File {
    *
    * @return boolean  whether the file can be include()d or require()d
    */
-  static
-  function isIncludable($name) {
+  static function isIncludable($name) {
     $x = @fopen($name, 'r', TRUE);
     if ($x) {
       fclose($x);
@@ -344,15 +337,13 @@ class CRM_Utils_File {
    * remove the 32 bit md5 we add to the fileName
    * also remove the unknown tag if we added it
    */
-  static
-  function cleanFileName($name) {
+  static function cleanFileName($name) {
     // replace the last 33 character before the '.' with null
     $name = preg_replace('/(_[\w]{32})\./', '.', $name);
     return $name;
   }
 
-  static
-  function makeFileName($name) {
+  static function makeFileName($name) {
     $uniqID   = md5(uniqid(rand(), TRUE));
     $info     = pathinfo($name);
     $basename = substr($info['basename'],
@@ -369,8 +360,7 @@ class CRM_Utils_File {
     }
   }
 
-  static
-  function getFilesByExtension($path, $ext) {
+  static function getFilesByExtension($path, $ext) {
     $path  = self::addTrailingSlash($path);
     $dh    = opendir($path);
     $files = array();
@@ -388,8 +378,7 @@ class CRM_Utils_File {
    *
    * @param string $dir  the directory to be secured
    */
-  static
-  function restrictAccess($dir) {
+  static function restrictAccess($dir) {
     // note: empty value for $dir can play havoc, since that might result in putting '.htaccess' to root dir
     // of site, causing site to stop functioning.
     // FIXME: we should do more checks here -
@@ -412,8 +401,7 @@ HTACCESS;
    * Create the base file path from which all our internal directories are
    * offset. This is derived from the template compile directory set
    */
-  static
-  function baseFilePath($templateCompileDir = NULL) {
+  static function baseFilePath($templateCompileDir = NULL) {
     static $_path = NULL;
     if (!$_path) {
       if ($templateCompileDir == NULL) {
@@ -437,8 +425,7 @@ HTACCESS;
     return $_path;
   }
 
-  static
-  function relativeDirectory($directory) {
+  static function relativeDirectory($directory) {
     // Do nothing on windows
     if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
       return $directory;
@@ -461,8 +448,7 @@ HTACCESS;
     return $directory;
   }
 
-  static
-  function absoluteDirectory($directory) {
+  static function absoluteDirectory($directory) {
     // Do nothing on windows - config will need to specify absolute path
     if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
       return $directory;
@@ -489,8 +475,7 @@ HTACCESS;
    * @return string, path to an openable/writable file
    * @see tempnam
    */
-  static
-  function tempnam($prefix = 'tmp-') {
+  static function tempnam($prefix = 'tmp-') {
     //$config = CRM_Core_Config::singleton();
     //$nonce = md5(uniqid() . $config->dsn . $config->userFrameworkResourceURL);
     //$fileName = "{$config->configAndLogDir}" . $prefix . $nonce . $suffix;

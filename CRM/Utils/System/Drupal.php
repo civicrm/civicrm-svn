@@ -93,11 +93,11 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
   }
 
   /*
-     *  Change user name in host CMS
-     *  
-     *  @param integer $ufID User ID in CMS
-     *  @param string $ufName User name
-     */
+   *  Change user name in host CMS
+   *  
+   *  @param integer $ufID User ID in CMS
+   *  @param string $ufName User name
+   */
   function updateCMSName($ufID, $ufName) {
     // CRM-5555
     if (function_exists('user_load')) {
@@ -164,13 +164,13 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
   }
 
   /*
-     * Function to get the drupal destination string. When this is passed in the
-     * URL the user will be directed to it after filling in the drupal form
-     *
-     * @param object $form Form object representing the 'current' form - to which the user will be returned
-     * @return string $destination destination value for URL
-     *
-     */
+   * Function to get the drupal destination string. When this is passed in the
+   * URL the user will be directed to it after filling in the drupal form
+   *
+   * @param object $form Form object representing the 'current' form - to which the user will be returned
+   * @return string $destination destination value for URL
+   *
+   */
   function getLoginDestination(&$form) {
     $args = NULL;
 
@@ -500,18 +500,17 @@ AND    u.status = 1
     }
     return FALSE;
   }
+
   /*
-    * Load user into session
-    */
+   * Load user into session
+   */
   function loadUser($username) {
     global $user;
 
     $user = user_load_by_name($username);
 
     if (empty($user->uid)) {
-
       return FALSE;
-
     }
 
     $contact_id = CRM_Core_BAO_UFMatch::getContactId($uid);

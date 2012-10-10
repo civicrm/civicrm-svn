@@ -91,11 +91,11 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
   }
 
   /*
-     *  Change user name in host CMS
-     *  
-     *  @param integer $ufID User ID in CMS
-     *  @param string $ufName User name
-     */
+   *  Change user name in host CMS
+   *  
+   *  @param integer $ufID User ID in CMS
+   *  @param string $ufName User name
+   */
   function updateCMSName($ufID, $ufName) {
     $ufID = CRM_Utils_Type::escape($ufID, 'Integer');
     $ufName = CRM_Utils_Type::escape($ufName, 'String');
@@ -525,24 +525,24 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
   }
 
   /* 
-     * load joomla bootstrap
-     *
-     * @param $params array with uid or name and password 
-     * @param $loadUser boolean load cms user?
-     * @param $throwError throw error on failure?
-     */
+   * load joomla bootstrap
+   *
+   * @param $params array with uid or name and password 
+   * @param $loadUser boolean load cms user?
+   * @param $throwError throw error on failure?
+   */
   function loadBootStrap($params = array(), $loadUser = TRUE, $throwError = TRUE) {
-        // Setup the base path related constant.
-        $joomlaBase = dirname(dirname(dirname(dirname(dirname(dirname(dirname(dirname(__FILE__))))))));
+    // Setup the base path related constant.
+    $joomlaBase = dirname(dirname(dirname(dirname(dirname(dirname(dirname(dirname(__FILE__))))))));
 
     // load BootStrap here if needed
     // We are a valid Joomla entry point.
-        if ( ! defined( '_JEXEC' ) ) {
-    define('_JEXEC', 1);
-            define('DS', DIRECTORY_SEPARATOR);
+    if ( ! defined( '_JEXEC' ) ) {
+      define('_JEXEC', 1);
+      define('DS', DIRECTORY_SEPARATOR);
       define('JPATH_BASE', $joomlaBase . '/administrator');
-            require $joomlaBase . '/administrator/includes/defines.php';
-        }
+      require $joomlaBase . '/administrator/includes/defines.php';
+    }
 
     // Get the framework.
     require $joomlaBase . '/libraries/import.php';

@@ -52,16 +52,16 @@ class CRM_Utils_Hook_Drupal6 extends CRM_Utils_Hook {
     if (! $this->first || empty($this->allModules)) {
       $this->first = true;
 
-            // copied from user_module_invoke
-            if (function_exists('module_list')) {
+      // copied from user_module_invoke
+      if (function_exists('module_list')) {
         $this->allModules =  module_list();
-            }
+      }
 
       $this->requireCiviModules($this->allModules);
-          }
+    }
 
     return $this->runHooks($this->allModules, $fnSuffix,
-                                $numParams, $arg1, $arg2, $arg3, $arg4, $arg5 );
-        }
+                           $numParams, $arg1, $arg2, $arg3, $arg4, $arg5 );
+  }
 }
 

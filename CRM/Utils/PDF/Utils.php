@@ -139,9 +139,8 @@ class CRM_Utils_PDF_Utils {
   }
 
   /*
-     * function to convert value from one metric to another
-     */
-
+   * function to convert value from one metric to another
+   */
   static function convertMetric($value, $from, $to, $precision = NULL) {
     switch ($from . $to) {
       case 'incm':

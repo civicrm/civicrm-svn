@@ -50,8 +50,7 @@ class CRM_Utils_ICalendar {
    * @return  Escaped text
    *
    */
-  static
-  function formatText($text) {
+  static function formatText($text) {
     $text = strip_tags($text);
     $text = str_replace("\"", "DQUOTE", $text);
     $text = str_replace("\\", "\\\\", $text);
@@ -70,8 +69,7 @@ class CRM_Utils_ICalendar {
    * @return  Escaped date
    *
    */
-  static
-  function formatDate($date, $gdata = FALSE) {
+  static function formatDate($date, $gdata = FALSE) {
 
     if ($gdata) {
       return date("Y-m-d\TH:i:s.000",
