@@ -457,20 +457,23 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping {
     foreach ($subTypes as $subType => $val) {
       //adding subtype specific relationships CRM-5256
       $csRelationships = array();
-      $subTypeRelationshipTypes = CRM_Contact_BAO_Relationship::getContactRelationshipType(NULL, NULL, NULL, $val['parent'],
-        FALSE, 'label', TRUE, $subType
-      );
 
-      foreach ($subTypeRelationshipTypes as $key => $var) {
-        if (!array_key_exists($key, $fields[$val['parent']])) {
-          list($type) = explode('_', $key);
-
-          $csRelationships[$key]['title'] = $var;
-          $csRelationships[$key]['headerPattern'] = '/' . preg_quote($var, '/') . '/';
-          $csRelationships[$key]['export'] = TRUE;
-          $csRelationships[$key]['relationship_type_id'] = $type;
-          $csRelationships[$key]['related'] = TRUE;
-          $csRelationships[$key]['hasRelationType'] = 1;
+      if ($mappingType == 'Export') {
+        $subTypeRelationshipTypes = 
+          CRM_Contact_BAO_Relationship::getContactRelationshipType(NULL, NULL, NULL, $val['parent'],
+                                                                   FALSE, 'label', TRUE, $subType);
+        
+        foreach ($subTypeRelationshipTypes as $key => $var) {
+          if (!array_key_exists($key, $fields[$val['parent']])) {
+            list($type) = explode('_', $key);
+            
+            $csRelationships[$key]['title'] = $var;
+            $csRelationships[$key]['headerPattern'] = '/' . preg_quote($var, '/') . '/';
+            $csRelationships[$key]['export'] = TRUE;
+            $csRelationships[$key]['relationship_type_id'] = $type;
+            $csRelationships[$key]['related'] = TRUE;
+            $csRelationships[$key]['hasRelationType'] = 1;
+          }
         }
       }
 
@@ -547,6 +550,7 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping {
 
     foreach ($sel1 as $key => $sel) {
       if ($key) {
+        asort($mapperFields[$key]);
         $sel2[$key] = array('' => ts('- select field -')) + $mapperFields[$key];
       }
     }
