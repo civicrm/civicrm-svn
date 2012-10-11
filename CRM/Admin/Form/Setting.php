@@ -40,6 +40,7 @@
 class CRM_Admin_Form_Setting extends CRM_Core_Form {
 
   protected $_defaults;
+  protected $_settings = array();
 
   /**
    * This function sets the default values for the form.
@@ -91,6 +92,10 @@ class CRM_Admin_Form_Setting extends CRM_Core_Form {
         '1' => 1) + $autoSearchFields;
       $this->_defaults['autocompleteContactReference'] = array(
         '1' => 1) + $cRSearchFields;
+      foreach ($this->_settings as $setting => $group){
+        $settingMetaData = civicrm_api('setting', 'getfields', array('version' => 3, 'name' => $setting));
+        $this->_defaults[$setting] = CRM_Core_BAO_Setting::getItem($group, $setting, null, CRM_Utils_Array::value('default',$settingMetaData['values'][$setting]));
+      }
       $this->_defaults['enableSSL'] = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'enableSSL', NULL, 0);
       $this->_defaults['verifySSL'] = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'verifySSL', NULL, 1);
 
@@ -130,6 +135,25 @@ LIMIT  1
         ),
       )
     );
+
+    foreach ($this->_settings as $setting => $group){
+      $settingMetaData = civicrm_api('setting', 'getfields', array('version' => 3, 'name' => $setting));
+      if(isset($settingMetaData['values'][$setting]['quick_form_type'])){
+        $add = 'add' . $settingMetaData['values'][$setting]['quick_form_type'];
+        if($add == 'addElement'){
+          $this->$add(
+            $settingMetaData['values'][$setting]['html_type'],
+            $setting,
+            ts($settingMetaData['values'][$setting]['title']),
+            CRM_Utils_Array::value('html_attributes', $settingMetaData['values'][$setting], array())
+          );
+        }
+        else{
+          $this->$add($setting, ts($settingMetaData['values'][$setting]['title']));
+        }
+        $this->assign("{$setting}_description", $settingMetaData['values'][$setting]['description']);
+      }
+    }
   }
 
   /**
@@ -215,7 +239,11 @@ AND    time_format <> ''
       );
       unset($params['enableSSL']);
     }
-
+    $settings = array_intersect_key($params, $this->_settings);
+    foreach ($settings as $setting => $settingGroup){
+      CRM_Core_BAO_Setting::setItem($params[$setting], $this->_settings[$setting], $setting);
+      unset($params[$setting]);
+    }
     CRM_Core_BAO_ConfigSetting::add($params);
 
     // also delete the CRM_Core_Config key from the database

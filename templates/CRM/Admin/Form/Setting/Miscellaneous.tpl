@@ -42,11 +42,11 @@
     </table>
 
     <table class="form-layout">
-        <tr class="crm-miscellaneous-form-block-contactUndelete">
-          <td class="label">{$form.contactUndelete.label}</td>
+        <tr class="crm-miscellaneous-form-block-contact_undelete">
+          <td class="label">{$form.contact_undelete.label}</td>
           <td>
-            {$form.contactUndelete.html}<br />
-            <p class="description">{ts}If enabled, deleted contacts will be moved to trash (instead of being destroyed). Users with the proper permission are able to search for the deleted contacts and restore them (or delete permanently).{/ts}</p>
+            {$form.contact_undelete.html}<br />
+            <p class="description">{ts}{$contact_undelete_description}{/ts}</p>
           </td>
         </tr>
         <tr class="crm-miscellaneous-form-block-logging">

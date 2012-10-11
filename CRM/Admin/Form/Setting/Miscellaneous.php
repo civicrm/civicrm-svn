@@ -39,7 +39,9 @@
  */
 class CRM_Admin_Form_Setting_Miscellaneous extends CRM_Admin_Form_Setting {
 
-  protected $_settings = array('max_attachments' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME);
+  protected $_settings = array(
+    'max_attachments' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+    'contact_undelete' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME);
 
   /**
    * Function to build the form
@@ -50,7 +52,6 @@ class CRM_Admin_Form_Setting_Miscellaneous extends CRM_Admin_Form_Setting {
   public function buildQuickForm() {
     CRM_Utils_System::setTitle(ts('Settings - Undelete, Logging and ReCAPTCHA'));
 
-    $this->addYesNo('contactUndelete', ts('Contact Trash & Undelete'));
 
     // also check if we can enable triggers
     $validTriggerPermission = CRM_Core_DAO::checkTriggerViewPermission(FALSE);
@@ -72,9 +73,6 @@ class CRM_Admin_Form_Setting_Miscellaneous extends CRM_Admin_Form_Setting {
       array('size' => 64, 'maxlength' => 256)
     );
 
-    $this->addElement('text', 'max_attachments', ts('Maximum Attachments'),
-      array('size' => 2, 'maxlength' => 8)
-    );
     $this->addElement('text', 'maxFileSize', ts('Maximum File Size'),
       array('size' => 2, 'maxlength' => 8)
     );
