@@ -39,6 +39,8 @@
  */
 class CRM_Admin_Form_Setting_Miscellaneous extends CRM_Admin_Form_Setting {
 
+  protected $_settings = array('max_attachments' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME);
+
   /**
    * Function to build the form
    *
@@ -70,7 +72,7 @@ class CRM_Admin_Form_Setting_Miscellaneous extends CRM_Admin_Form_Setting {
       array('size' => 64, 'maxlength' => 256)
     );
 
-    $this->addElement('text', 'maxAttachments', ts('Maximum Attachments'),
+    $this->addElement('text', 'max_attachments', ts('Maximum Attachments'),
       array('size' => 2, 'maxlength' => 8)
     );
     $this->addElement('text', 'maxFileSize', ts('Maximum File Size'),
@@ -93,7 +95,7 @@ class CRM_Admin_Form_Setting_Miscellaneous extends CRM_Admin_Form_Setting {
       array('size' => 64, 'maxlength' => 64)
     );
 
-    $this->addRule('maxAttachments', ts('Value should be a positive number'), 'positiveInteger');
+    $this->addRule('max_attachments', ts('Value should be a positive number'), 'positiveInteger');
     $this->addRule('maxFileSize', ts('Value should be a positive number'), 'positiveInteger');
     $this->addRule('checksumTimeout', ts('Value should be a positive number'), 'positiveInteger');
 
