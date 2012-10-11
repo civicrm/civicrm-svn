@@ -322,8 +322,7 @@ class CRM_Case_Form_Activity_OpenCase {
     }
 
     // Add parameters for attachments
-    $config = CRM_Core_Config::singleton( );
-    $numAttachments = $config->maxAttachments;
+    $numAttachments = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'max_attachments');
     for ( $i = 1; $i <= $numAttachments; $i++ ) {
       $attachName = "attachFile_$i";
       if ( isset( $params[$attachName] ) && !empty( $params[$attachName] ) ) {
