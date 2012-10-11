@@ -379,8 +379,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
    * @access public
    * @static
    */
-  static
-  function formRule($fields, $files, $self) {
+  static function formRule($fields, $files, $self) {
     $errors = array();
     //get the button name.
     $button = substr($self->controller->getButtonName(), -4);
@@ -441,8 +440,8 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
             }
             else {
               // check with first_name and last_name for additional participants
-              if (($value['first_name'] == $fields['first_name']) &&
-                ($value['last_name'] == $fields['last_name'])
+              if ((CRM_Utils_Array::value('first_name',$value) == $fields['first_name']) &&
+                (CRM_Utils_Array::value('last_name',$value) == $fields['last_name'])
               ) {
                 $errors['first_name'] = ts('The first name and last name must be unique for each participant.');
                 break;
