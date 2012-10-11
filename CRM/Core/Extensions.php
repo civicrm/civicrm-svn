@@ -137,8 +137,8 @@ class CRM_Core_Extensions {
       if (!class_exists('ZipArchive')) {
         // everyone else is dumping messages wily-nily, why can't I?
         CRM_Core_Session::setStatus(
-        	ts('You will not be able to install extensions at this time because your installation of PHP does not support ZIP archives. Please ask your system administrator to install the standard PHP-ZIP extension.'),
-        	ts('ZIP Support Required'), 'alert'
+          ts('You will not be able to install extensions at this time because your installation of PHP does not support ZIP archives. Please ask your system administrator to install the standard PHP-ZIP extension.'),
+          ts('ZIP Support Required'), 'alert'
         );
     }
 
@@ -164,8 +164,8 @@ class CRM_Core_Extensions {
       // http://issues.civicrm.org/jira/browse/CRM-10575
       if($url === false) {
         $this->_repoUrl = false;
-      } 
-      else { 
+      }
+      else {
       $vars = array(
         '{ver}' => CRM_Utils_System::version(),
         '{uf}' => $config->userFramework,
@@ -328,7 +328,7 @@ class CRM_Core_Extensions {
     // now check for upgrades - rolling over installed, since
     // those that we care to upgrade
     if (is_array($remote)) {
-      
+
       foreach ($installed as $dc => $i) {
         if ($i->status == 'missing') {
           // don't check for upgrades if expected installed file(s) are missing
@@ -679,7 +679,7 @@ class CRM_Core_Extensions {
    */
   public function upgrade($id, $key) {
     $this->populate();
-    
+
     $e = $this->getExtensionsByKey(TRUE);
     $ext = $e[$key];
     if (! $ext->isUpgradeable()) {
