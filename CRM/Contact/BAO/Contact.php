@@ -1757,7 +1757,7 @@ ORDER BY civicrm_email.is_primary DESC";
     $locationTypes = CRM_Core_PseudoConstant::locationType();
     $billingLocationTypeId = array_search('Billing', $locationTypes);
 
-    $blocks = array('email', 'phone', 'im', 'openid');
+    $blocks = array('email', 'phone', 'phone_ext', 'im', 'openid');
 
     $multiplFields = array('url');
     // prevent overwritten of formatted array, reset all block from
@@ -1803,7 +1803,7 @@ ORDER BY civicrm_email.is_primary DESC";
 
         $loc = CRM_Utils_Array::key($index, $locationType);
 
-        $blockName = isset($blocks[$fieldName]) ? $fieldName : 'address';
+        $blockName = in_array( $fieldName, $blocks) ? $fieldName : 'address';
 
         $data[$blockName][$loc]['location_type_id'] = $locTypeId;
 
@@ -1832,7 +1832,11 @@ ORDER BY civicrm_email.is_primary DESC";
             $data['phone'][$loc]['phone_type_id'] = '';
           }
           $data['phone'][$loc]['phone'] = $value;
-
+          
+          if (isset($params[$fieldName . '_ext-'. $locTypeId])) {
+            $data['phone'][$loc]['phone_ext'] = $params[$fieldName . '_ext-'. $locTypeId];
+          }
+          
           //special case to handle primary phone with different phone types
           // in this case we make first phone type as primary
           if (isset($data['phone'][$loc]['is_primary']) && !$primaryPhoneLoc) {
@@ -1842,6 +1846,9 @@ ORDER BY civicrm_email.is_primary DESC";
           if ($loc != $primaryPhoneLoc) {
             unset($data['phone'][$loc]['is_primary']);
           }
+        }
+        elseif ($fieldName == 'phone_ext') {
+          $data['phone_ext'][$loc]['phone_ext'] = $value;
         }
         elseif ($fieldName == 'email') {
           $data['email'][$loc]['email'] = $value;
@@ -1962,7 +1969,15 @@ ORDER BY civicrm_email.is_primary DESC";
               }
             }
           }
-          $data[$key] = $value;
+          if($key == 'phone' && isset($params['phone_ext'])){
+            $data[$key] = $value;
+            foreach($value as $cnt => $phoneBlock){
+              $data[$key][$cnt]['phone_ext'] = CRM_Utils_Array::retrieveValueRecursive($params['phone_ext'][$cnt], 'phone_ext');
+            }
+          }
+          else {
+            $data[$key] = $value;
+          }
         }
       }
     }

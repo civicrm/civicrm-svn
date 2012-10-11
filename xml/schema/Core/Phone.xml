@@ -100,8 +100,10 @@
        <title>Phone Extension</title>
        <type>varchar</type>
        <length>16</length>
+       <import>true</import>
        <export>true</export>
        <headerPattern>/extension/i</headerPattern>
+       <dataPattern>/^\d+$/</dataPattern>
        <comment>Optional extension for a phone number.</comment>
        <add>3.3</add>
   </field>

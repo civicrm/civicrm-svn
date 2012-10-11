@@ -993,12 +993,16 @@ function _civicrm_api3_deprecated_add_formatted_location_blocks(&$values, &$para
   }
 
   foreach (array(
-    'Phone', 'Email', 'IM', 'OpenID') as $block) {
+    'Phone', 'Email', 'IM', 'OpenID','Phone_Ext') as $block) {
     $name = strtolower($block);
     if (!array_key_exists($name, $values)) {
       continue;
     }
 
+    if($name == 'phone_ext'){
+      $block = 'Phone';
+    }
+    
     // block present in value array.
     if (!array_key_exists($name, $params) || !is_array($params[$name])) {
       $params[$name] = array();
