@@ -182,4 +182,21 @@
       <description></description>
       <help_text></help_text>
     </setting>
+    <setting>
+      <group_name>CiviCRM Preferences</group_name>
+      <name>max_attachments</name>
+      <type>Integer</type>
+      <html_type>Text</html_type>
+      <html_attributes>
+        <size>Text</size>
+        <maxlength>Text</maxlength>
+      </html_attributes>
+      <default>3</default>
+      <add>4.3</add>
+      <title>Maximum Attachments</title>
+      <is_domain>1</is_domain>
+      <is_contact>0</is_contact>
+      <description>Maximum number of files (documents, images, etc.) which can attached to emails or activities.</description>
+      <help_text></help_text>
+    </setting>
 </settings>
