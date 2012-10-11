@@ -300,12 +300,12 @@ AND       CEF.entity_id    = %2";
   }
 
   static function buildAttachment(&$form, $entityTable, $entityID = NULL, $numAttachments = NULL, $ajaxDelete = FALSE) {
-    $config = CRM_Core_Config::singleton();
 
     if (!$numAttachments) {
-      $numAttachments = $config->maxAttachments;
+      $numAttachments = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'max_attachments');
     }
 
+    $config = CRM_Core_Config::singleton();
     // set default max file size as 2MB
     $maxFileSize = $config->maxFileSize ? $config->maxFileSize : 2;
 
@@ -384,8 +384,7 @@ AND       CEF.entity_id    = %2";
       CRM_Core_BAO_File::deleteEntityFile($entityTable, $entityID);
     }
 
-    $config = CRM_Core_Config::singleton();
-    $numAttachments = $config->maxAttachments;
+    $numAttachments = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'max_attachments');
 
     $now = date('Ymdhis');
 
@@ -411,8 +410,7 @@ AND       CEF.entity_id    = %2";
     $entityTable,
     $entityID
   ) {
-    $config = CRM_Core_Config::singleton();
-    $numAttachments = $config->maxAttachments;
+    $numAttachments = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'max_attachments');
 
     for ($i = 1; $i <= $numAttachments; $i++) {
       if (isset($params["attachFile_$i"]) &&
@@ -433,8 +431,7 @@ AND       CEF.entity_id    = %2";
   }
 
   static function uploadNames() {
-    $config = CRM_Core_Config::singleton();
-    $numAttachments = $config->maxAttachments;
+    $numAttachments = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'max_attachments');
 
     $names = array();
     for ($i = 1; $i <= $numAttachments; $i++) {
