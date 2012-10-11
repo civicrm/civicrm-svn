@@ -67,7 +67,6 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
     $this->_searchKey = CRM_Utils_Request::retrieve('key', 'String', $this);
 
     // sort out whether it’s a delete-to-trash, delete-into-oblivion or restore (and let the template know)
-    $config              = CRM_Core_Config::singleton();
     $values              = $this->controller->exportValues();
     $this->_skipUndelete = (CRM_Core_Permission::check('access deleted contacts') and (CRM_Utils_Request::retrieve('skip_undelete', 'Boolean', $this) or CRM_Utils_Array::value('task', $values) == CRM_Contact_Task::DELETE_PERMANENTLY));
     $this->_restore      = (CRM_Utils_Request::retrieve('restore', 'Boolean', $this) or CRM_Utils_Array::value('task', $values) == CRM_Contact_Task::RESTORE);
@@ -79,7 +78,7 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
       CRM_Core_Error::fatal(ts('You do not have permission to delete this contact.'));
     }
 
-    $this->assign('trash', $config->contactUndelete and !$this->_skipUndelete);
+    $this->assign('trash', CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'contact_undelete', NULL) and !$this->_skipUndelete);
     $this->assign('restore', $this->_restore);
 
     if ($this->_restore) {

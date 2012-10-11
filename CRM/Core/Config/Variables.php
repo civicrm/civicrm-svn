@@ -305,11 +305,6 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults {
    */
   public $mapGeoCoding = 1;
 
-  /**
-   * Whether deleted contacts should be moved to trash instead
-   * @var boolean
-   */
-  public $contactUndelete = TRUE;
 
   /**
    * Whether database-level logging should be performed
