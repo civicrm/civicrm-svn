@@ -79,9 +79,9 @@
                 <p class="description">{ts}If enabled, CiviCRM automatically checks availablity of a newer version of the software. New version alerts will be displayed on the main CiviCRM Administration page.{/ts}</p>
                 <p class="description">{ts}When enabled, statistics about your CiviCRM installation are reported anonymously to the CiviCRM team to assist in prioritizing ongoing development efforts. The following information is gathered: CiviCRM version, versions of PHP, MySQL and framework (Drupal/Joomla/standalone), and default language. Counts (but no actual data) of the following record types are reported: contacts, activities, cases, relationships, contributions, contribution pages, contribution products, contribution widgets, discounts, price sets, profiles, events, participants, tell-a-friend pages, grants, mailings, memberships, membership blocks, pledges, pledge blocks and active payment processor types.{/ts}</p></td>
         </tr>
-        <tr class="crm-miscellaneous-form-block-maxAttachments">
-            <td class="label">{$form.maxAttachments.label}</td>
-            <td>{$form.maxAttachments.html}<br />
+        <tr class="crm-miscellaneous-form-block-max_attachments">
+            <td class="label">{$form.max_attachments.label}</td>
+            <td>{$form.max_attachments.html}<br />
                 <span class="description">{ts}Maximum number of files (documents, images, etc.) which can attached to emails or activities.{/ts}</span></td>
         </tr>
   <tr class="crm-miscellaneous-form-block-maxFileSize">
