@@ -936,8 +936,7 @@ class CRM_Report_Form extends CRM_Core_Form {
   // a formrule function to ensure that fields selected in group_by
   // (if any) should only be the ones present in display/select fields criteria;
   // note: works if and only if any custom field selected in group_by.
-  function customDataFormRule($fields, $ignoreFields = array(
-    )) {
+  function customDataFormRule($fields, $ignoreFields = array( )) {
     $errors = array();
     if (!empty($this->_customGroupExtends) && $this->_customGroupGroupBy && !empty($fields['group_bys'])) {
       foreach ($this->_columns as $tableName => $table) {
