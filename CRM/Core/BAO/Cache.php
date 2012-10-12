@@ -57,8 +57,7 @@ class CRM_Core_BAO_Cache extends CRM_Core_DAO_Cache {
    * @static
    * @access public
    */
-  static
-  function &getItem($group, $path, $componentID = NULL) {
+  static function &getItem($group, $path, $componentID = NULL) {
     $dao = new CRM_Core_DAO_Cache();
 
     $dao->group_name   = $group;
@@ -85,10 +84,7 @@ class CRM_Core_BAO_Cache extends CRM_Core_DAO_Cache {
    * @static
    * @access public
    */
-  static
-  function setItem(&$data,
-    $group, $path, $componentID = NULL
-  ) {
+  static function setItem(&$data, $group, $path, $componentID = NULL) {
     $dao = new CRM_Core_DAO_Cache();
 
     $dao->group_name   = $group;
@@ -116,8 +112,7 @@ class CRM_Core_BAO_Cache extends CRM_Core_DAO_Cache {
    * @static
    * @access public
    */
-  static
-  function deleteGroup($group = NULL, $path = NULL, $clearAll = TRUE) {
+  static function deleteGroup($group = NULL, $path = NULL, $clearAll = TRUE) {
     $dao = new CRM_Core_DAO_Cache();
 
     if (!empty($group)) {
@@ -159,8 +154,7 @@ class CRM_Core_BAO_Cache extends CRM_Core_DAO_Cache {
    * @static
    * @access private
    */
-  static
-  function storeSessionToCache($names,
+  static function storeSessionToCache($names,
     $resetSession = TRUE
   ) {
     foreach ($names as $key => $sessionName) {
@@ -206,8 +200,7 @@ class CRM_Core_BAO_Cache extends CRM_Core_DAO_Cache {
      * @access private
      */
 
-  static
-  function restoreSessionFromCache($names) {
+  static function restoreSessionFromCache($names) {
     foreach ($names as $key => $sessionName) {
       if (is_array($sessionName)) {
         $value = self::getItem('CiviCRM Session',
