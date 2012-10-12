@@ -46,8 +46,7 @@ class CRM_Core_Invoke {
    * @static
    * @access public
    */
-  static
-  function invoke($args) {
+  static function invoke($args) {
     if ($args[0] !== 'civicrm') {
       return;
     }
@@ -245,8 +244,7 @@ class CRM_Core_Invoke {
    * @static
    * @access public
    */
-  static
-  function form($action, $contact_type, $contact_sub_type) {
+  static function form($action, $contact_type, $contact_sub_type) {
     CRM_Utils_System::setUserContext(array('civicrm/contact/search/basic', 'civicrm/contact/view'));
     $wrapper = new CRM_Utils_Wrapper();
 
@@ -267,8 +265,7 @@ class CRM_Core_Invoke {
    * @static
    * @access public
    */
-  static
-  function profile($args) {
+  static function profile($args) {
     if ($args[1] !== 'profile') {
       return;
     }
@@ -373,8 +370,7 @@ class CRM_Core_Invoke {
     return $page->run();
   }
 
-  static
-  function rebuildMenuAndCaches($triggerRebuild = FALSE, $sessionReset = FALSE) {
+  static function rebuildMenuAndCaches($triggerRebuild = FALSE, $sessionReset = FALSE) {
     $config = CRM_Core_Config::singleton();
     $config->clearModuleList();
 
@@ -393,7 +389,7 @@ class CRM_Core_Invoke {
     ) {
       CRM_Core_DAO::triggerRebuild();
     }
-    
+
     CRM_Core_ManagedEntities::singleton(TRUE)->reconcile();
   }
 }
