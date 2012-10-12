@@ -230,7 +230,7 @@ class CRM_Member_Form_Task_Batch extends CRM_Member_Form_Task {
         }
 
         if (CRM_Utils_Array::value('membership_type', $value)) {
-          $membershipTypeId = $value['membership_type_id'] = $value['membership_type'];
+          $membershipTypeId = $value['membership_type_id'] = $value['membership_type'][1];
         }
 
         unset($value['membership_source']);
