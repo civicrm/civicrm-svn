@@ -75,7 +75,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
    *
    * @return void
    * @access public
-   */ 
+   */
   function preProcess() {
     parent::preProcess();
 
@@ -85,9 +85,10 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
       $this->assign('ppType', TRUE);
       return CRM_Core_Payment_ProcessorForm::preProcess($this);
     }
-    
+
     //get payPal express id and make it available to template
     $paymentProcessors = $this->get('paymentProcessors');
+    $this->assign('payPalExpressId', 0);
     if (!empty($paymentProcessors)) {
       foreach ($paymentProcessors as $ppId => $values) {
         $payPalExpressId = ($values['payment_processor_type'] == 'PayPal_Express') ? $values['id'] : 0;
@@ -97,7 +98,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
         }
       }
     }
-        
+
     //CRM-4320.
     //here we can't use parent $this->_allowWaitlist as user might
     //walk back and we maight set this value in this postProcess.
@@ -502,7 +503,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
     }
 
     //we have to load confirm contribution button in template
-    //when multiple payment processor as the user 
+    //when multiple payment processor as the user
     //can toggle with payment processor selection
     $billingModePaymentProcessors = 0;
     if (!CRM_Utils_System::isNull($this->_paymentProcessors)) {
@@ -512,7 +513,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
         }
       }
     }
-    
+
     if ($billingModePaymentProcessors && count($this->_paymentProcessors) == $billingModePaymentProcessors) {
       $allAreBillingModeProcessors = TRUE;
     } else {
@@ -520,12 +521,12 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
     }
 
     if (!$allAreBillingModeProcessors ||
-      CRM_Utils_Array::value('is_pay_later', $this->_values['event']) || $bypassPayment 
+      CRM_Utils_Array::value('is_pay_later', $this->_values['event']) || $bypassPayment
     ) {
 
       //freeze button to avoid multiple calls.
       $js = NULL;
-      
+
       if (!CRM_Utils_Array::value('is_monetary', $this->_values['event'])) {
         $js = array('onclick' => "return submitOnce(this,'" . $this->_name . "','" . ts('Processing') . "');");
       }
