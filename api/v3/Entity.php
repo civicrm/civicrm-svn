@@ -20,10 +20,20 @@ function civicrm_api3_entity_get($params) {
     $iterator = new DirectoryIterator($api_dir);
     foreach ($iterator as $fileinfo) {
       $file = $fileinfo->getFilename();
+
+      // Check for entities with a master file ("api/v3/MyEntity.php")
       $parts = explode(".", $file);
       if (end($parts) == "php" && $file != "utils.php" && !preg_match('/Tests?.php$/', $file) ) {
         // without the ".php"
         $entities[] = substr($file, 0, -4);
+      }
+
+      // Check for entities with standalone action files ("api/v3/MyEntity/MyAction.php")
+      $action_dir = $api_dir . DIRECTORY_SEPARATOR . $file;
+      if (preg_match('/^[A-Z][A-Za-z0-9]*$/', $file) && is_dir($action_dir)) {
+        if (count(glob("$action_dir/[A-Z]*.php")) > 0) {
+          $entities[] = $file;
+        }
       }
     }
   }
