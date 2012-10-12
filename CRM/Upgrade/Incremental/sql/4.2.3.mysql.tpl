@@ -39,3 +39,9 @@ VALUES
 UPDATE `civicrm_navigation` SET label = '{ts escape="sql"}Bulk Data Entry{/ts}', name = 'Bulk Data Entry',
 permission = 'access CiviMember, access CiviContribute'
 WHERE url = 'civicrm/batch&reset=1';
+
+-- CRM-11018
+ALTER TABLE civicrm_discount DROP FOREIGN KEY FK_civicrm_discount_option_group_id;
+ALTER TABLE `civicrm_discount`
+  ADD CONSTRAINT `FK_civicrm_discount_option_group_id` FOREIGN KEY (`option_group_id`) REFERENCES `civicrm_price_set` (`id`) ON DELETE CASCADE;
+ALTER TABLE `civicrm_discount` CHANGE `option_group_id` `option_group_id` int(10) unsigned NOT NULL COMMENT 'FK to civicrm_price_set';
