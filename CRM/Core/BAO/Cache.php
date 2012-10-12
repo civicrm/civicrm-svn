@@ -154,34 +154,28 @@ class CRM_Core_BAO_Cache extends CRM_Core_DAO_Cache {
    * @static
    * @access private
    */
-  static function storeSessionToCache($names,
-    $resetSession = TRUE
-  ) {
+  static function storeSessionToCache($names, $resetSession = TRUE) {
     foreach ($names as $key => $sessionName) {
       if (is_array($sessionName)) {
+        $value = null;
         if (!empty($_SESSION[$sessionName[0]][$sessionName[1]])) {
-          self::setItem($_SESSION[$sessionName[0]][$sessionName[1]],
-            'CiviCRM Session',
-            "{$sessionName[0]}_{$sessionName[1]}"
-          );
-          // $_SESSION[$sessionName[0]][$sessionName[1]] );
-          if ($resetSession) {
-            $_SESSION[$sessionName[0]][$sessionName[1]] = NULL;
-            unset($_SESSION[$sessionName[0]][$sessionName[1]]);
-          }
+          $value = $_SESSION[$sessionName[0]][$sessionName[1]];
+        }
+        self::setItem($value, 'CiviCRM Session', "{$sessionName[0]}_{$sessionName[1]}");
+        if ($resetSession) {
+          $_SESSION[$sessionName[0]][$sessionName[1]] = NULL;
+          unset($_SESSION[$sessionName[0]][$sessionName[1]]);
         }
       }
       else {
+        $value = null;
         if (!empty($_SESSION[$sessionName])) {
-          self::setItem($_SESSION[$sessionName],
-            'CiviCRM Session',
-            $sessionName
-          );
-          // $_SESSION[$sessionName] );
-          if ($resetSession) {
-            $_SESSION[$sessionName] = NULL;
-            unset($_SESSION[$sessionName]);
-          }
+          $value = $_SESSION[$sessionName];
+        }
+        self::setItem($value, 'CiviCRM Session', $sessionName);
+        if ($resetSession) {
+          $_SESSION[$sessionName] = NULL;
+          unset($_SESSION[$sessionName]);
         }
       }
     }
