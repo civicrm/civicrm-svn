@@ -154,7 +154,7 @@
   }
   
   $(document).ready(function() {
-    if (CRM && CRM.urlIsPublic === false) {
+    if (typeof CRM !== "undefined" && CRM.urlIsPublic === false) {
       // Initialize notifications
       $('#crm-notification-container').notify();
       // Display system alerts through js notifications
