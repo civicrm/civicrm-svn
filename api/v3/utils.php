@@ -1444,8 +1444,8 @@ function _civicrm_api3_validate_string(&$params, &$fieldname, &$fieldInfo) {
         throw new Exception("Currency not a valid code: $value");
       }
     }
-    if (CRM_Utils_Array::value('pseudoconstant', $fieldInfo) && !CRM_Utils_Array::value('FKClassName',$fieldInfo)) {
-      // Validate & swap out any pseudoconstants
+    if (!empty ($fieldInfo['options']) || !empty($fieldInfo['enumValues'])) {
+      // Validate & swap out any pseudoconstants / options
       $constant = $fieldInfo['options'];
       if (!$constant && ($enum = CRM_Utils_Array::value('enumValues', $fieldInfo))) {
         $constant = explode(',', $enum);

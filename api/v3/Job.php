@@ -80,9 +80,6 @@ function civicrm_api3_job_execute($params) {
  */
 function civicrm_api3_job_geocode($params) {
 
-  // available params:
-  // 'start=', 'end=', 'geocoding=', 'parse=', 'throttle='
-
   require_once 'CRM/Utils/Address/BatchUpdate.php';
   $gc = new CRM_Utils_Address_BatchUpdate($params);
 
@@ -99,8 +96,12 @@ function civicrm_api3_job_geocode($params) {
 /*
  * First check on Code documentation
  */
-function _civicrm_api3_contact_geocode_spec(&$params) {
+function _civicrm_api3_job_geocode_spec(&$params) {
   $params['start'] = array('title' => 'Start Date');
+  $params['end'] = array('title' => 'End Date');
+  $params['geocoding'] = array('title' => 'Is this for GeoCoding? (I think this is a 1,0 field?)');
+  $params['parse'] = array('title' => 'Is this for parsing? (I think this is a 1,0 field?)');
+  $params['throttle'] = array('title' => 'Throttle? (no idea what you enter in this field)');
 }
 
 /**
@@ -141,10 +142,11 @@ function civicrm_api3_job_send_reminder($params) {
  *
  */
 function civicrm_api3_job_mail_report($params) {
-  require_once 'CRM/Report/Utils/Report.php';
+
   $result = CRM_Report_Utils_Report::processReport($params);
 
   if ($result['is_error'] == 0) {
+    // this should be handling by throwing exceptions but can't remove until we can test that.
     return civicrm_api3_create_success();
   }
   else {
@@ -158,9 +160,6 @@ function civicrm_api3_job_mail_report($params) {
  * IMPORTANT: You must first create valid option value before using via admin interface.
  * Check option lists for Email Greetings, Postal Greetings and Addressee
  *
- * @param  array       $params (reference ) input parameters
- *                        ct - String - ct=Individual or ct=Household or ct=Organization
- *                        gt - String - gt=email_greeting or gt=postal_greeting or gt=addressee
  *                        id - Integer - greetings option group
  *
  * @return boolean        true if success, else false
@@ -169,30 +168,45 @@ function civicrm_api3_job_mail_report($params) {
  *
  */
 function civicrm_api3_job_update_greeting($params) {
-  require_once 'CRM/Contact/BAO/Contact/Utils.php';
-
-  civicrm_api3_verify_mandatory($params, NULL, array('ct', 'gt'));
-  // fixme - use the wrapper & getfields to do this checking - advertise as an enum
-  if (!in_array($params['ct'],
-      array('Individual', 'Household', 'Organization')
-    )) {
-    return civicrm_api3_create_error(ts('Invalid contact type (ct) parameter value'));
-  }
-
-  if (!in_array($params['gt'],
-      array('email_greeting', 'postal_greeting', 'addressee')
-    )) {
-    return civicrm_api3_create_error(ts('Invalid greeting type (gt) parameter value'));
-  }
 
   $result = CRM_Contact_BAO_Contact_Utils::updateGreeting($params);
 
   if ($result['is_error'] == 0) {
+    //really we should rely on the exception mechanism here - but we need to test that before removing this line
     return civicrm_api3_create_success();
   }
   else {
     return civicrm_api3_create_error($result['messages']);
   }
+}
+
+/*
+ * Adjust Metadata for Get action
+*
+* The metadata is used for setting defaults, documentation & validation
+* @param array $params array or parameters determined by getfields
+*/
+function _civicrm_api3_job_update_greeting_spec(&$params) {
+  $params['ct'] = array(
+    'api.required' => 1,
+    'title' => 'Contact Type',
+    'type' => CRM_Utils_Type::T_STRING,
+    'options' => array(
+      'Individual' => 'Individual',
+      'Household' => 'Household',
+      'Organization' => 'Organization'
+    )
+  );
+  $params['gt'] = array(
+      'api.required' => 1,
+      'title' => 'Greeting Type',
+      'type' => CRM_Utils_Type::T_STRING,
+      'options' => array(
+          'email_greeting' => 'email_greeting',
+          'postal_greeting' => 'postal_greeting',
+          'addressee' => 'addressee'
+      )
+  );
 }
 
 /**
@@ -207,7 +221,6 @@ function civicrm_api3_job_update_greeting($params) {
  */
 function civicrm_api3_job_process_pledge($params) {
 
-  require_once 'CRM/Pledge/BAO/Pledge.php';
   $result = CRM_Pledge_BAO_Pledge::updatePledgeStatus($params);
 
   if ($result['is_error'] == 0) {
@@ -227,7 +240,7 @@ function civicrm_api3_job_process_pledge($params) {
  * @return array
  */
 function civicrm_api3_job_process_mailing($params) {
-  require_once 'CRM/Mailing/BAO/Mailing.php';
+
   if (!CRM_Mailing_BAO_Mailing::processQueue()) {
     return civicrm_api3_create_error("Process Queue failed");
   }
@@ -245,7 +258,7 @@ function civicrm_api3_job_process_mailing($params) {
  * @return array
  */
 function civicrm_api3_job_process_sms($params) {
-  require_once 'CRM/Mailing/BAO/Mailing.php';
+
   if (!CRM_Mailing_BAO_Mailing::processQueue('sms')) {
     return civicrm_api3_create_error("Process Queue failed");
   }
