@@ -264,7 +264,7 @@ function _civicrm_api_loadEntity($entity, $version = 3) {
       }
 
       $parts = explode(".", $file);
-      if (end($parts) == "php" && !preg_match('/Tests?.php$/', $file) ) {
+      if (end($parts) == "php" && !preg_match('/Tests?\.php$/', $file) ) {
         require_once $action_dir . DIRECTORY_SEPARATOR . $file;
         $loaded_files[$file] = TRUE;
       }
