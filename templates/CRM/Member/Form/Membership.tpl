@@ -385,7 +385,7 @@ function showHideMemberStatus() {
   
 {literal}
 function setPaymentBlock( mode ) {
-  var memType = cj('#membership_type_id\\[1\\]').val( );
+  var memType = parseInt(cj('#membership_type_id\\[1\\]').val( ));
   var isPriceSet = 0;
 
   if ( cj('#price_set_id').length > 0 && cj('#price_set_id').val() ) {
@@ -396,15 +396,13 @@ function setPaymentBlock( mode ) {
     return;
   }
 
-	var dataUrl = {/literal}"{crmURL p='civicrm/ajax/memType' h=0}"{literal};
+	var allMemberships = {/literal}{$allMembershipInfo}{literal};
+	if ( !mode ) {
+    // skip this for test and live modes because contribution type is set automatically
+    cj("#contribution_type_id").val( allMemberships[memType]['contribution_type_id'] );
+  }
 
-  cj.post( dataUrl, {mtype: memType}, function( data ) {
-    if ( !mode ) {
-      // skip this for test and live modes because contribution type is set automatically
-      cj("#contribution_type_id").val( data.contribution_type_id );
-    }
-    cj("#total_amount").val( data.total_amount );
-  }, 'json');
+  cj("#total_amount").val( allMemberships[memType]['total_amount'] );
 }
 
 {/literal}

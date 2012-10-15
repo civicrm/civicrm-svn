@@ -494,9 +494,10 @@ class CRM_Member_Form_Membership extends CRM_Member_Form {
     $dao->domain_id = CRM_Core_Config::domainID();
     $dao->find();
 
+    // retrieve all memberships
     $allMemberships = CRM_Member_BAO_Membership::buildMembershipTypeValues($this);
 
-    $membershipType = array();
+    $allMembershipInfo = $membershipType = array();
     foreach( $allMemberships as $key => $values ) {
       if (CRM_Utils_Array::value('is_active', $values) ) {
         $membershipType[$key] = CRM_Utils_Array::value('name', $values);
@@ -518,8 +519,17 @@ class CRM_Member_Form_Membership extends CRM_Member_Form {
             $selOrgMemType[$memberOfContactId][$key] = CRM_Utils_Array::value('name', $values);
           }
         }
+
+        // build membership info array, which is used to set the payment information block when
+        // membership type is selected.
+        $allMembershipInfo[$key] = array(
+          'contribution_type_id' => CRM_Utils_Array::value('contribution_type_id', $values),
+          'total_amount'         => CRM_Utils_Array::value('minimum_fee', $values)
+        );
       }
     }
+
+    $this->assign('allMembershipInfo', json_encode($allMembershipInfo));
 
     // show organization by default, if only one organization in
     // the list
