@@ -3135,11 +3135,18 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
       $contact_ids = array();
       // Add resulting contacts to group
       while ($dao->fetch()) {
-        $contact_ids[$dao->addtogroup_contact_id] = $dao->addtogroup_contact_id;
+        if ($dao->addtogroup_contact_id) {
+          $contact_ids[$dao->addtogroup_contact_id] = $dao->addtogroup_contact_id;
+        }
       }
 
-      CRM_Contact_BAO_GroupContact::addContactsToGroup($contact_ids, $groupID);
-      CRM_Core_Session::setStatus(ts("Listed contact(s) have been added to the selected group."), ts('Contacts Added'), 'success');
+      if ( !empty($contact_ids) ) {
+        CRM_Contact_BAO_GroupContact::addContactsToGroup($contact_ids, $groupID);
+        CRM_Core_Session::setStatus(ts("Listed contact(s) have been added to the selected group."), ts('Contacts Added'), 'success');
+      }
+      else {
+        CRM_Core_Session::setStatus(ts("The listed records(s) cannot be added to the group."));
+      }
     }
   }
 }

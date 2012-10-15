@@ -58,14 +58,14 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
           'source_contact_id' =>
           array(
             'name' => 'id',
-            'alias' => 'contact_civireport',
+            'alias' => 'civicrm_contact_source',
             'no_display' => TRUE,
           ),
           'contact_source' =>
           array(
             'name' => 'sort_name',
             'title' => ts('Source Contact Name'),
-            'alias' => 'contact_civireport',
+            'alias' => 'civicrm_contact_source',
             'no_repeat' => TRUE,
           ),
           'contact_assignee' =>
@@ -79,7 +79,7 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
           array(
             'name' => 'sort_name',
             'title' => ts('Target Contact Name'),
-            'alias' => 'civicrm_contact_target',
+            'alias' => 'contact_civireport',
             'default' => TRUE,
           ),
         ),
@@ -88,7 +88,7 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
           'contact_source' =>
           array(
             'name' => 'sort_name',
-            'alias' => 'contact_civireport',
+            'alias' => 'civicrm_contact_source',
             'title' => ts('Source Contact Name'),
             'operator' => 'like',
             'type' => CRM_Report_Form::OP_STRING,
@@ -104,7 +104,7 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
           'contact_target' =>
           array(
             'name' => 'sort_name',
-            'alias' => 'civicrm_contact_target',
+            'alias' => 'contact_civireport',
             'title' => ts('Target Contact Name'),
             'operator' => 'like',
             'type' => CRM_Report_Form::OP_STRING,
@@ -356,10 +356,10 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                     ON {$this->_aliases['civicrm_activity']}.id = {$this->_aliases['civicrm_activity_target']}.activity_id 
              LEFT JOIN civicrm_activity_assignment {$this->_aliases['civicrm_activity_assignment']}
                     ON {$this->_aliases['civicrm_activity']}.id = {$this->_aliases['civicrm_activity_assignment']}.activity_id 
-             LEFT JOIN civicrm_contact contact_civireport
-                    ON {$this->_aliases['civicrm_activity']}.source_contact_id = contact_civireport.id 
-             LEFT JOIN civicrm_contact civicrm_contact_target 
-                    ON {$this->_aliases['civicrm_activity_target']}.target_contact_id = civicrm_contact_target.id
+             LEFT JOIN civicrm_contact civicrm_contact_source
+                    ON {$this->_aliases['civicrm_activity']}.source_contact_id = civicrm_contact_source.id 
+             LEFT JOIN civicrm_contact contact_civireport 
+                    ON {$this->_aliases['civicrm_activity_target']}.target_contact_id = contact_civireport.id
              LEFT JOIN civicrm_contact civicrm_contact_assignee 
                     ON {$this->_aliases['civicrm_activity_assignment']}.assignee_contact_id = civicrm_contact_assignee.id
             
@@ -428,7 +428,7 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
               // get current user
               $session = CRM_Core_Session::singleton();
               if ($contactID = $session->get('userID')) {
-                $clause = "( contact_civireport.id = " . $contactID . " OR civicrm_contact_assignee.id = " . $contactID . " OR civicrm_contact_target.id = " . $contactID . " )";
+                $clause = "( civicrm_contact_source.id = " . $contactID . " OR civicrm_contact_assignee.id = " . $contactID . " OR contact_civireport.id = " . $contactID . " )";
               }
               else {
                 $clause = NULL;
@@ -489,7 +489,7 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
 
   function postProcess() {
 
-    $this->buildACLClause(array('contact_civireport', 'civicrm_contact_target', 'civicrm_contact_assignee'));
+    $this->buildACLClause(array('civicrm_contact_source', 'contact_civireport', 'civicrm_contact_assignee'));
     parent::postProcess();
   }
 
