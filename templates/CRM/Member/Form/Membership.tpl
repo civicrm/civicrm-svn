@@ -335,16 +335,16 @@ cj( function( ) {
   cj('#is_different_contribution_contact').change( function() {
     setDifferentContactBlock();
   });
-
-  function setDifferentContactBlock( ) {
-    //get the
-    if ( cj('#is_different_contribution_contact').attr('checked') ) {
-      cj('#record-different-contact').show();
-    } else {
-      cj('#record-different-contact').hide();
-    }
-  }
 });
+
+function setDifferentContactBlock( ) {
+  // show/hide different contact section
+  if ( cj('#is_different_contribution_contact').attr('checked') ) {
+    cj('#record-different-contact').show();
+  } else {
+    cj('#record-different-contact').hide();
+  }
+}
 </script>
 {/literal}
 
