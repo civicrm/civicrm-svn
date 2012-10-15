@@ -63,8 +63,7 @@ class CRM_Core_Block {
    *
    * @return void
    */
-  static
-  function initProperties() {
+  static function initProperties() {
     if (!defined('BLOCK_CACHE_GLOBAL')) {
       define('BLOCK_CACHE_GLOBAL', 0x0008);
     }
@@ -181,8 +180,7 @@ class CRM_Core_Block {
    *
    * @return string  the value of the desired property
    */
-  static
-  function getProperty($id, $property) {
+  static function getProperty($id, $property) {
     if (!(self::$_properties)) {
       self::initProperties();
     }
@@ -198,8 +196,7 @@ class CRM_Core_Block {
    *
    * @return void
    */
-  static
-  function setProperty($id, $property, $value) {
+  static function setProperty($id, $property, $value) {
     if (!(self::$_properties)) {
       self::initProperties();
     }
@@ -211,8 +208,7 @@ class CRM_Core_Block {
    *
    * @return array  the $_properties array
    */
-  static
-  function properties() {
+  static function properties() {
     if (!(self::$_properties)) {
       self::initProperties();
     }
@@ -225,8 +221,7 @@ class CRM_Core_Block {
    * @return array
    * @access public
    */
-  static
-  function getInfo() {
+  static function getInfo() {
 
     $block = array();
     foreach (self::properties() as $id => $value) {
@@ -536,8 +531,7 @@ class CRM_Core_Block {
    * @return array
    * @access public
    */
-  static
-  function getContent($id) {
+  static function getContent($id) {
     // return if upgrade mode
     $config = CRM_Core_Config::singleton();
     if ($config->isUpgradeMode()) {
@@ -616,8 +610,7 @@ class CRM_Core_Block {
    * @return array
    * @access public
    */
-  static
-  function fetch($id, $fileName, $properties) {
+  static function fetch($id, $fileName, $properties) {
     $template = CRM_Core_Smarty::singleton();
 
     if ($properties) {

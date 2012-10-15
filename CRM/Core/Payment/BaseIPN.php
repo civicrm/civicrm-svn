@@ -314,12 +314,10 @@ LIMIT 1;";
 
             if ($currentMembership) {
               /*
-                             * Fixed FOR CRM-4433
-                             * In BAO/Membership.php(renewMembership function), we skip the extend membership date and status
-                             * when Contribution mode is notify and membership is for renewal )
-                             */
-
-
+               * Fixed FOR CRM-4433
+               * In BAO/Membership.php(renewMembership function), we skip the extend membership date and status
+               * when Contribution mode is notify and membership is for renewal )
+               */
               CRM_Member_BAO_Membership::fixMembershipStatusBeforeRenew($currentMembership, $changeToday);
 
               $dates = CRM_Member_BAO_MembershipType::getRenewalDatesForMembershipType($membership->id,
@@ -522,16 +520,16 @@ LIMIT 1;";
   }
 
   /*
-     * Send receipt from contribution. Note that the compose message part has been moved to contribution
-     * In general LoadObjects is called first to get the objects but the composeMessageArray function now calls it
-     *
-     * @params array $input Incoming data from Payment processor
-     * @params array $ids Related object IDs
-     * @params array $values values related to objects that have already been loaded
-     * @params bool $recur is it part of a recurring contribution
-     * @params bool $returnMessageText Should text be returned instead of sent. This
-     * is because the function is also used to generate pdfs
-     */
+   * Send receipt from contribution. Note that the compose message part has been moved to contribution
+   * In general LoadObjects is called first to get the objects but the composeMessageArray function now calls it
+   *
+   * @params array $input Incoming data from Payment processor
+   * @params array $ids Related object IDs
+   * @params array $values values related to objects that have already been loaded
+   * @params bool $recur is it part of a recurring contribution
+   * @params bool $returnMessageText Should text be returned instead of sent. This
+   * is because the function is also used to generate pdfs
+   */
   function sendMail(&$input, &$ids, &$objects, &$values, $recur = FALSE, $returnMessageText = FALSE) {
     $contribution = &$objects['contribution'];
     $input['is_recur'] = $recur;
@@ -653,18 +651,18 @@ LIMIT 1;";
   }
 
   /*
-     * Update pledge associated with a recurring contribution
-     *
-     * If the contribution has a pledge_payment record pledge, then update the pledge_payment record & pledge based on that linkage.
-     *
-     * If a previous contribution in the recurring contribution sequence is linked with a pledge then we assume this contribution
-     * should be  linked with the same pledge also. Currently only back-office users can apply a recurring payment to a pledge &
-     * it should be assumed they
-     * do so with the intention that all payments will be linked
-     *
-     * The pledge payment record should already exist & will need to be updated with the new contribution ID.
-     * If not the contribution will also need to be linked to the pledge
-     */
+   * Update pledge associated with a recurring contribution
+   *
+   * If the contribution has a pledge_payment record pledge, then update the pledge_payment record & pledge based on that linkage.
+   *
+   * If a previous contribution in the recurring contribution sequence is linked with a pledge then we assume this contribution
+   * should be  linked with the same pledge also. Currently only back-office users can apply a recurring payment to a pledge &
+   * it should be assumed they
+   * do so with the intention that all payments will be linked
+   *
+   * The pledge payment record should already exist & will need to be updated with the new contribution ID.
+   * If not the contribution will also need to be linked to the pledge
+   */
   function updateRecurLinkedPledge(&$contribution) {
     $returnProperties = array('id', 'pledge_id');
     $paymentDetails   = array();

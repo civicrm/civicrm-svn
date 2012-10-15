@@ -86,30 +86,27 @@ abstract class CRM_Core_Component_Info {
   CONST COMPONENT_MENU_XML = 'Menu';
 
   /*
-     * Stores component information.
-     * @var array component settings as key/value pairs
-     */
-
+   * Stores component information.
+   * @var array component settings as key/value pairs
+   */
   public $info;
 
   /*
-     * Stores component keyword
-     * @var string name of component keyword
-     */
-
+   * Stores component keyword
+   * @var string name of component keyword
+   */
   protected $keyword;
 
   /*
-     * Class constructor, sets name and namespace (those are stored
-     * in the component registry (database) and no need to duplicate
-     * them here, as well as populates the info variable.
-     * 
-     * @param string $name name of the component
-     * @param string $namespace namespace prefix for component's files
-     * @access public
-     * 
-     */
-
+   * Class constructor, sets name and namespace (those are stored
+   * in the component registry (database) and no need to duplicate
+   * them here, as well as populates the info variable.
+   * 
+   * @param string $name name of the component
+   * @param string $namespace namespace prefix for component's files
+   * @access public
+   * 
+   */
   public function __construct($name, $namespace, $componentID) {
     $this->name        = $name;
     $this->namespace   = $namespace;

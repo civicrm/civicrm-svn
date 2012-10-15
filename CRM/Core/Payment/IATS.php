@@ -54,7 +54,8 @@ class CRM_Core_Payment_IATS extends CRM_Core_Payment {
    * @param string $mode the mode of operation: live or test
    *
    * @return void
-   */ function __construct($mode, &$paymentProcessor) {
+   */
+  function __construct($mode, &$paymentProcessor) {
     $this->_paymentProcessor = $paymentProcessor;
     $this->_processorName = ts('IATS');
 
@@ -71,8 +72,7 @@ class CRM_Core_Payment_IATS extends CRM_Core_Payment {
     }
   }
 
-  static
-  function &singleton($mode, &$paymentProcessor) {
+  static function &singleton($mode, &$paymentProcessor) {
     $processorName = $paymentProcessor['name'];
     if (self::$_singleton[$processorName] === NULL) {
       self::$_singleton[$processorName] = new CRM_Core_Payment_IATS($mode, $paymentProcessor);

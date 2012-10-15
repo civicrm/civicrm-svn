@@ -36,18 +36,16 @@ class CRM_Core_OptionGroup {
   static $_values = array();
 
   /*
-     * $_domainIDGroups array maintains the list of option groups for whom
-     * domainID is to be considered.
-     *
-     */
-
+   * $_domainIDGroups array maintains the list of option groups for whom
+   * domainID is to be considered.
+   *
+   */
   static $_domainIDGroups = array(
     'from_email_address',
     'grant_type',
   );
 
-  static
-  function &valuesCommon($dao, $flip = FALSE, $grouping = FALSE,
+  static function &valuesCommon($dao, $flip = FALSE, $grouping = FALSE,
     $localize = FALSE, $valueColumnName = 'label'
   ) {
     self::$_values = array();
@@ -77,8 +75,7 @@ class CRM_Core_OptionGroup {
     return self::$_values;
   }
 
-  static
-  function &values($name, $flip = FALSE, $grouping = FALSE,
+  static function &values($name, $flip = FALSE, $grouping = FALSE,
     $localize = FALSE, $condition = NULL,
     $valueColumnName = 'label', $onlyActive = TRUE
   ) {
@@ -131,8 +128,7 @@ WHERE  v.option_group_id = g.id
     return $var;
   }
 
-  static
-  function &valuesByID($id, $flip = FALSE, $grouping = FALSE, $localize = FALSE, $valueColumnName = 'label') {
+  static function &valuesByID($id, $flip = FALSE, $grouping = FALSE, $localize = FALSE, $valueColumnName = 'label') {
     $cacheKey = "CRM_OG_ID_{$id}_{$flip}_{$grouping}_{$localize}_{$valueColumnName}";
 
     $cache = CRM_Utils_Cache::singleton();
@@ -185,8 +181,7 @@ WHERE  v.option_group_id = g.id
    * @access public
    * @static
    */
-  static
-  function lookupValues(&$params, &$names, $flip = FALSE) {
+  static function lookupValues(&$params, &$names, $flip = FALSE) {
     foreach ($names as $postName => $value) {
       // See if $params field is in $names array (i.e. is a value that we need to lookup)
       if ($postalName = CRM_Utils_Array::value($postName, $params)) {
@@ -238,8 +233,7 @@ WHERE  v.option_group_id = g.id
     }
   }
 
-  static
-  function getLabel($groupName, $value, $onlyActiveValue = TRUE) {
+  static function getLabel($groupName, $value, $onlyActiveValue = TRUE) {
     if (empty($groupName) ||
       empty($value)
     ) {
@@ -268,8 +262,7 @@ WHERE  v.option_group_id = g.id
     return NULL;
   }
 
-  static
-  function getValue($groupName,
+  static function getValue($groupName,
     $label,
     $labelField = 'label',
     $labelType  = 'String',
@@ -326,8 +319,7 @@ WHERE  v.option_group_id = g.id
    * @return int   the option group ID
    *
    */
-  static
-  function createAssoc($groupName, &$values, &$defaultID, $groupTitle = NULL) {
+  static function createAssoc($groupName, &$values, &$defaultID, $groupTitle = NULL) {
     self::deleteAssoc($groupName);
     if (!empty($values)) {
       $group              = new CRM_Core_DAO_OptionGroup();
@@ -361,8 +353,7 @@ WHERE  v.option_group_id = g.id
     return $group->id;
   }
 
-  static
-  function getAssoc($groupName, &$values, $flip = FALSE, $field = 'name') {
+  static function getAssoc($groupName, &$values, $flip = FALSE, $field = 'name') {
     $query = "
 SELECT v.id as amount_id, v.value, v.label, v.name, v.description, v.weight
   FROM civicrm_option_group g,

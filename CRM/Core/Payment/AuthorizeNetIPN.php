@@ -280,8 +280,7 @@ INNER JOIN civicrm_membership_payment mp ON m.id = mp.membership_id AND mp.contr
     }
   }
 
-  static
-  function retrieve($name, $type, $abort = TRUE, $default = NULL, $location = 'POST') {
+  static function retrieve($name, $type, $abort = TRUE, $default = NULL, $location = 'POST') {
     static $store = NULL;
     $value = CRM_Utils_Request::retrieve($name, $type, $store,
       FALSE, $default, $location

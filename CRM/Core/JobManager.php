@@ -47,13 +47,12 @@ class CRM_Core_JobManager {
 
 
   /*
-     * Class constructor
-     * 
-     * @param void
-     * @access public
-     * 
-     */
-
+   * Class constructor
+   * 
+   * @param void
+   * @access public
+   * 
+   */
   public function __construct() {
     $config = CRM_Core_Config::singleton();
     $config->fatalErrorHandler = 'CRM_Core_JobManager_scheduledJobFatalErrorHandler';
@@ -62,12 +61,11 @@ class CRM_Core_JobManager {
   }
 
   /*
-     * 
-     * @param void
-     * @access private
-     * 
-     */
-
+   * 
+   * @param void
+   * @access private
+   * 
+   */
   public function execute($auth = TRUE) {
 
     $this->logEntry('Starting scheduled jobs execution');
@@ -89,13 +87,12 @@ class CRM_Core_JobManager {
   }
 
   /*
-     * Class destructor
-     * 
-     * @param void
-     * @access public
-     * 
-     */
-
+   * Class destructor
+   * 
+   * @param void
+   * @access public
+   * 
+   */
   public function __destruct() {}
 
   public function executeJobByAction($entity, $action) {
@@ -134,14 +131,13 @@ class CRM_Core_JobManager {
   }
 
   /*
-     * Retrieves the list of jobs from the database,
-     * populates class param.
-     * 
-     * @param void
-     * @access private
-     * 
-     */
-
+   * Retrieves the list of jobs from the database,
+   * populates class param.
+   * 
+   * @param void
+   * @access private
+   * 
+   */
   private function _getJobs() {
     $jobs = array();
     $dao = new CRM_Core_DAO_Job();
@@ -156,14 +152,13 @@ class CRM_Core_JobManager {
   }
 
   /*
-     * Retrieves specific job from the database by id
-     * and creates ScheduledJob object.
-     * 
-     * @param void
-     * @access private
-     * 
-     */
-
+   * Retrieves specific job from the database by id
+   * and creates ScheduledJob object.
+   * 
+   * @param void
+   * @access private
+   * 
+   */
   private function _getJob($id = NULL, $entity = NULL, $action = NULL) {
     if (is_null($id) && is_null($action)) {
       CRM_Core_Error::fatal('You need to provide either id or name to use this method');
@@ -186,15 +181,13 @@ class CRM_Core_JobManager {
     $this->singleRunParams[$key] = $params;
     $this->singleRunParams[$key]['version'] = 3;
   }
-
-
+  
   /*
-     *
-     * @return array|null collection of permissions, null if none
-     * @access public
-     *
-     */
-
+   *
+   * @return array|null collection of permissions, null if none
+   * @access public
+   *
+   */
   public function logEntry($message) {
     $domainID = CRM_Core_Config::domainID();
     $dao = new CRM_Core_DAO_JobLog();

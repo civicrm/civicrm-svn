@@ -80,7 +80,8 @@ class CRM_Core_Session {
    * the session and one is not available.
    *
    * @return void
-   */ function __construct() {
+   */
+  function __construct() {
     $this->_session = &$_SESSION;
   }
 
@@ -90,8 +91,7 @@ class CRM_Core_Session {
    * @return object
    * @static
    */
-  static
-  function &singleton() {
+  static function &singleton() {
     if (self::$_singleton === NULL) {
       self::$_singleton = new CRM_Core_Session;
     }
@@ -425,8 +425,7 @@ class CRM_Core_Session {
    *
    * @return void
    */
-  static
-  function setStatus($text, $title = '', $type = 'alert', $options = array()) {
+  static function setStatus($text, $title = '', $type = 'alert', $options = array()) {
     // make sure session is initialized, CRM-8120
     $session = self::singleton();
     // default options
@@ -455,8 +454,7 @@ class CRM_Core_Session {
     }
   }
 
-  static
-  function registerAndRetrieveSessionObjects($names) {
+  static function registerAndRetrieveSessionObjects($names) {
     if (!is_array($names)) {
       $names = array($names);
     }
@@ -471,8 +469,7 @@ class CRM_Core_Session {
     CRM_Core_BAO_Cache::restoreSessionFromCache($names);
   }
 
-  static
-  function storeSessionObjects($reset = TRUE) {
+  static function storeSessionObjects($reset = TRUE) {
     if (empty(self::$_managedNames)) {
       return;
     }

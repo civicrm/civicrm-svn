@@ -147,7 +147,6 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
    * @return void
    *
    */
-
   function __construct($title = NULL, $modal = TRUE,
     $mode = NULL, $scope = NULL,
     $addSequence = FALSE, $ignoreKey = FALSE

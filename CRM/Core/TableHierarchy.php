@@ -77,8 +77,7 @@ class CRM_Core_TableHierarchy {
     'civicrm_mailing_event_trackable_url_open' => '41',
   );
 
-  static
-  function &info() {
+  static function &info() {
     //get the campaign related tables.
     CRM_Campaign_BAO_Query::info(self::$info);
 
