@@ -2088,16 +2088,16 @@ WHERE  civicrm_membership.contact_id = civicrm_contact.id
   }
 
   static function &buildMembershipTypeValues(&$form, $membershipTypeID = NULL) {
-    $whereClause = NULL;
+    $whereClause = " WHERE domain_id = ". CRM_Core_Config::domainID();
 
     if (is_array($membershipTypeID)) {
       $allIDs = implode(',', $membershipTypeID);
-      $whereClause = "WHERE id IN ( $allIDs )";
+      $whereClause .= " AND id IN ( $allIDs )";
     }
     elseif (is_numeric($membershipTypeID) &&
       $membershipTypeID > 0
     ) {
-      $whereClause = "WHERE id = $membershipTypeID";
+      $whereClause .= " AND id = $membershipTypeID";
     }
 
     $query = "
@@ -2110,7 +2110,7 @@ FROM   civicrm_membership_type
     $membershipTypeValues = array();
     $membershipTypeFields = array(
       'id', 'minimum_fee', 'name', 'is_active',
-      'description', 'contribution_type_id', 'auto_renew',
+      'description', 'contribution_type_id', 'auto_renew','member_of_contact_id'
     );
 
     while ($dao->fetch()) {

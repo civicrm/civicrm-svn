@@ -578,10 +578,12 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     //when multiple payment processor as the user
     //can toggle with payment processor selection
     $billingModePaymentProcessors = 0;
+    if ( !empty( $this->_paymentProcessors ) ) {
     foreach ($this->_paymentProcessors as $key => $values) {
       if ($values['billing_mode'] == CRM_Core_Payment::BILLING_MODE_BUTTON) {
         $billingModePaymentProcessors++;
       }
+    }
     }
 
     if ($billingModePaymentProcessors && count($this->_paymentProcessors) == $billingModePaymentProcessors) {

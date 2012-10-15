@@ -122,7 +122,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
 
     for ($index = 1; $index <= $maxIndex; $index++) {
 
-      if (CRM_Utils_Array::value($index, CRM_Utils_Array::value('option_label', $params)) &&
+      if (CRM_Utils_Array::value($index , $params['option_amount']) && (CRM_Utils_Array::value($index, CRM_Utils_Array::value('option_label', $params)) || CRM_Utils_Array::value('is_quick_config', $params)) &&
         !CRM_Utils_System::isNull($params['option_amount'][$index])
       ) {
         $options = array(
@@ -319,6 +319,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
 
         foreach ($customOption as $opId => $opt) {
           if ($field->is_display_amounts) {
+            $opt['label'] =  CRM_Utils_Array::value('label', $opt) ? $opt['label'] . '&nbsp;-&nbsp;' : '';
             $opt['label'] = '<span class="crm-price-amount-amount">' . CRM_Utils_Money::format($opt[$valueFieldName]) . '</span> <span class="crm-price-amount-label">' . $opt['label'] . '</span>';
           }
           $count     = CRM_Utils_Array::value('count', $opt, '');

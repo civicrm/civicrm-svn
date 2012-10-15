@@ -258,9 +258,15 @@ class CRM_Core_Error extends PEAR_ErrorStack {
    */
   static
   function fatal($message = NULL, $code = NULL, $email = NULL) {
+    
     if (self::$modeException) {
-      throw new Exception("A fatal error was triggered", $code);
+      $details = 'A fatal error was triggered';
+      if ($message) {
+        $details .= ': ' . $message;
     }
+      throw new Exception($details, $code);
+    }
+    
     if (!$message) {
       $message = ts('We experienced an unexpected error. Please post a detailed description and the backtrace on the CiviCRM forums: %1', array(1 => 'http://forum.civicrm.org/'));
     }

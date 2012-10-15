@@ -319,33 +319,32 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form {
     $this->assign('entityID', $this->_id);
     $selOrgMemType[0][0] = $selMemTypeOrg[0] = ts('- select -');
 
-    $dao = new CRM_Member_DAO_MembershipType();
-    $dao->domain_id = CRM_Core_Config::domainID();
-    $dao->find();
+    $allMemberships = CRM_Member_BAO_Membership::buildMembershipTypeValues($this);
+
     $membershipType = array();
-    while ($dao->fetch()) {
-      if ($dao->is_active) {
-        $membershipType[$dao->id] = $dao->name;
-        if ($this->_mode && !$dao->minimum_fee) {
+    foreach( $allMemberships as $key => $values ) {
+      if (CRM_Utils_Array::value('is_active', $values) ) {
+        $membershipType[$key] = CRM_Utils_Array::value('name', $values);
+        if ($this->_mode && !CRM_Utils_Array::value('minimum_fee', $values)) {
           continue;
         }
         else {
-          if (!CRM_Utils_Array::value($dao->member_of_contact_id, $selMemTypeOrg)) {
-            $selMemTypeOrg[$dao->member_of_contact_id] = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact',
-              $dao->member_of_contact_id,
+          $memberOfContactId = CRM_Utils_Array::value('member_of_contact_id', $values);
+          if (!CRM_Utils_Array::value($memberOfContactId, $selMemTypeOrg)) {
+            $selMemTypeOrg[$memberOfContactId] = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact',
+              $memberOfContactId,
               'display_name',
               'id'
             );
 
-            $selOrgMemType[$dao->member_of_contact_id][0] = ts('- select -');
+            $selOrgMemType[$memberOfContactId][0] = ts('- select -');
           }
-          if (!CRM_Utils_Array::value($dao->id, $selOrgMemType[$dao->member_of_contact_id])) {
-            $selOrgMemType[$dao->member_of_contact_id][$dao->id] = $dao->name;
+          if (!CRM_Utils_Array::value($key, $selOrgMemType[$memberOfContactId])) {
+            $selOrgMemType[$memberOfContactId][$key] = CRM_Utils_Array::value('name', $values);
           }
         }
       }
     }
-
     // force select of organization by default, if only one organization in
     // the list
     if (count($selMemTypeOrg) == 2) {

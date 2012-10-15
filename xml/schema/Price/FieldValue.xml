@@ -34,7 +34,6 @@
       <type>varchar</type>
       <title>Name</title>
       <length>255</length>
-      <required>true</required>
       <comment>Price field option name</comment>
       <add>3.3</add>
   </field>
@@ -43,7 +42,6 @@
       <type>varchar</type>
       <title>Label</title>
       <length>255</length>
-      <required>true</required>
       <localizable>true</localizable>
       <comment>Price field option label</comment>
       <add>3.3</add>

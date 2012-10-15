@@ -2827,8 +2827,14 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         $defaults[$fldName] = array_pop($noteDetails);
       }
       elseif (in_array($name, array(
-        'contribution_type', 'payment_instrument', 'participant_status', 'participant_role', 'membership_type'))) {
+        'contribution_type', 'payment_instrument', 'participant_status', 'participant_role'))) {
         $defaults[$fldName] = $values["{$name}_id"];
+      }
+      elseif ($name == 'membership_type') {
+        // since membership_type field is a hierselect - 
+        $defaults[$fldName][0] = 
+          CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType',$values['membership_type_id'],'member_of_contact_id','id');
+        $defaults[$fldName][1] = $values['membership_type_id'];
       }
       elseif ($name == 'membership_status') {
         $defaults[$fldName] = $values['status_id'];

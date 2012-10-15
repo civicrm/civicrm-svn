@@ -319,7 +319,8 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
             CRM_Utils_Array::value($fieldName, $this->_params['fields'])
           ) {
 
-            if (!CRM_Utils_Array::value('activity_type_id', CRM_Utils_Array::value('group_bys',$this->_params)) &&
+            if (isset($this->_params['group_bys']) && 
+                !CRM_Utils_Array::value('activity_type_id', $this->_params['group_bys']) &&
               (in_array($fieldName, array(
                 'contact_assignee', 'assignee_contact_id')) ||
                 in_array($fieldName, array('contact_target', 'target_contact_id'))

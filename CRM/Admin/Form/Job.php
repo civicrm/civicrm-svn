@@ -111,8 +111,7 @@ class CRM_Admin_Form_Job extends CRM_Admin_Form {
     $this->addFormRule(array('CRM_Admin_Form_Job', 'formRule'));
   }
 
-  static
-  function formRule($fields) {
+  static function formRule($fields) {
 
     $errors = array();
 

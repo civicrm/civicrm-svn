@@ -57,8 +57,9 @@
       <name>label</name>
       <type>varchar</type>
       <length>255</length>
-      <required>true</required>
-      <comment>descriptive label for item - from custom_option.label</comment>
+      <default>NULL</default>
+      <!-- changed to not required in 4.2.3 -->
+      <comment>descriptive label for item - from price_field_value.label</comment>
       <add>1.7</add>
   </field>
   <field>

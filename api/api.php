@@ -216,6 +216,59 @@ function _civicrm_api_resolve($apiRequest) {
 }
 
 /**
+ * Load/require all files related to an entity.
+ *
+ * This should not normally be called because it's does a file-system scan; it's
+ * only appropriate when introspection is really required (eg for "getActions").
+ *
+ * @param string $entity
+ * @return void
+ */
+function _civicrm_api_loadEntity($entity, $version = 3) {
+  /*
+  $apiRequest = array();
+  $apiRequest['entity'] = $entity;
+  $apiRequest['action'] = 'pretty sure it will never exist. Trick to [try to] force resolve to scan everywhere';
+  $apiRequest['version'] = $version;
+  // look up function, file, is_generic
+  $apiRequest = _civicrm_api_resolve($apiRequest);
+  */
+
+  $camelName = _civicrm_api_get_camel_name($entity, $version);
+
+  // Check for master entity file; to match _civicrm_api_resolve(), only load the first one
+  require_once 'CRM/Utils/File.php';
+  $stdFile = 'api/v' . $version . '/' . $camelName . '.php';
+  if (CRM_Utils_File::isIncludable($stdFile)) {
+    require_once $stdFile;
+  }
+
+  // Check for standalone action files; to match _civicrm_api_resolve(), only load the first one
+  $loaded_files = array(); // array($relativeFilePath => TRUE)
+  $include_dirs = array_unique(explode(PATH_SEPARATOR, get_include_path()));
+  foreach ($include_dirs as $include_dir) {
+    $action_dir = implode(DIRECTORY_SEPARATOR, array($include_dir, 'api', "v${version}", $camelName));
+    if (! is_dir($action_dir)) {
+      continue;
+    }
+
+    $iterator = new DirectoryIterator($action_dir);
+    foreach ($iterator as $fileinfo) {
+      $file = $fileinfo->getFilename();
+      if (array_key_exists($file, $loaded_files)) {
+        continue; // action provided by an earlier item on include_path
+      }
+
+      $parts = explode(".", $file);
+      if (end($parts) == "php" && !preg_match('/Tests?\.php$/', $file) ) {
+        require_once $action_dir . DIRECTORY_SEPARATOR . $file;
+        $loaded_files[$file] = TRUE;
+      }
+    }
+  }
+}
+
+/**
  *
  * @deprecated
  */

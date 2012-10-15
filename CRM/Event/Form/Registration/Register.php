@@ -88,6 +88,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
 
     //get payPal express id and make it available to template
     $paymentProcessors = $this->get('paymentProcessors');
+    $this->assign('payPalExpressId', 0);
     if (!empty($paymentProcessors)) {
       foreach ($paymentProcessors as $ppId => $values) {
         $payPalExpressId = ($values['payment_processor_type'] == 'PayPal_Express') ? $values['id'] : 0;
