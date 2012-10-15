@@ -101,7 +101,7 @@ class CRM_Core_Permission_Base {
    * @access public
    */
   public function groupClause($type, &$tables, &$whereTables) {
-    return ' ';
+    return ' (1) ';
   }
 
   /**
