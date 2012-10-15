@@ -313,41 +313,40 @@
 {literal}
 <script type="text/javascript">
 cj( function( ) {
-    var mode   = {/literal}'{$membershipMode}'{literal};
-    if ( !mode ) {
-        // Offline form (mode = false) has the record_contribution checkbox
-        cj('#record_contribution').click( function( ) {
-            if ( cj(this).attr('checked') ) {
-                cj('#recordContribution').show( );
-                setPaymentBlock( );
-            } else {
-                cj('#recordContribution').hide( );
-            }
-        });
-    }
-    
-    cj('#membership_type_id\\[1\\]').change( function( ) {
-        setPaymentBlock( mode );
-    });
-
-    // show/hide different contact section
-    setDifferentContactBlock();
-    cj('#is_different_contribution_contact').change( function() {
-      setDifferentContactBlock();
-    });
-
-    function setDifferentContactBlock( ) {
-      //get the
-      if ( cj('#is_different_contribution_contact').attr('checked') ) {
-        cj('#record-different-contact').show();
+	var mode   = {/literal}'{$membershipMode}'{literal};
+  if ( !mode ) {
+    // Offline form (mode = false) has the record_contribution checkbox
+    cj('#record_contribution').click( function( ) {
+      if ( cj(this).attr('checked') ) {
+        cj('#recordContribution').show( );
+        setPaymentBlock( );
       } else {
-        cj('#record-different-contact').hide();
+        cj('#recordContribution').hide( );
       }
+    });
+  }
+
+  cj('#membership_type_id\\[1\\]').change( function( ) {
+    setPaymentBlock( mode );
+  });
+
+  // show/hide different contact section
+  setDifferentContactBlock();
+  cj('#is_different_contribution_contact').change( function() {
+    setDifferentContactBlock();
+  });
+
+  function setDifferentContactBlock( ) {
+    //get the
+    if ( cj('#is_different_contribution_contact').attr('checked') ) {
+      cj('#record-different-contact').show();
+    } else {
+      cj('#record-different-contact').hide();
     }
+  }
 });
 </script>
 {/literal}
-
 
 {if ($emailExists and $outBound_option != 2) OR $context eq 'standalone' }
 {include file="CRM/common/showHideByFieldValue.tpl" 
