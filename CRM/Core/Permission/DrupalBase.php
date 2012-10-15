@@ -206,21 +206,6 @@ class CRM_Core_Permission_DrupalBase extends CRM_Core_Permission_Base {
   }
 
   /**
-   * Get the permissioned where clause for the user
-   *
-   * @param int $type the type of permission needed
-   * @param  array $tables (reference ) add the tables that are needed for the select clause
-   * @param  array $whereTables (reference ) add the tables that are needed for the where clause
-   *
-   * @return string the group where clause for this user
-   * @access public
-   */
-  public function getPermissionedStaticGroupClause($type, &$tables, &$whereTables) {
-    $this->group();
-    return $this->groupClause($type, $tables, $whereTables);
-  }
-
-  /**
    * given a permission string, check for access requirements
    *
    * @param string $str the permission to check

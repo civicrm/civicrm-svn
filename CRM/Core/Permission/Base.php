@@ -60,7 +60,20 @@ class CRM_Core_Permission_Base {
   public function whereClause($type, &$tables, &$whereTables) {
     return '( 1 )';
   }
-
+  /**
+   * Get the permissioned where clause for the user when trying to see groups
+   *
+   * @param int $type the type of permission needed
+   * @param  array $tables (reference ) add the tables that are needed for the select clause
+   * @param  array $whereTables (reference ) add the tables that are needed for the where clause
+   *
+   * @return string the group where clause for this user
+   * @access public
+   */
+  public function getPermissionedStaticGroupClause($type, &$tables, &$whereTables) {
+    $this->group();
+    return $this->groupClause($type, $tables, $whereTables);
+  }
   /**
    * Get all groups from database, filtered by permissions
    * for this user
@@ -73,8 +86,22 @@ class CRM_Core_Permission_Base {
    * @return array - array reference of all groups.
    *
    */
-  public function &group($groupType = NULL, $excludeHidden = TRUE) {
+  public function group($groupType = NULL, $excludeHidden = TRUE) {
     return CRM_Core_PseudoConstant::allGroup($groupType, $excludeHidden);
+  }
+
+  /**
+   * Get group clause for this user
+   *
+   * @param int $type the type of permission needed
+   * @param  array $tables (reference ) add the tables that are needed for the select clause
+   * @param  array $whereTables (reference ) add the tables that are needed for the where clause
+   *
+   * @return string the group where clause for this user
+   * @access public
+   */
+  public function groupClause($type, &$tables, &$whereTables) {
+    return ' ';
   }
 
   /**
