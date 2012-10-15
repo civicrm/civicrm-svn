@@ -78,33 +78,10 @@ class CRM_Contact_Form_Search_Basic extends CRM_Contact_Form_Search {
     }
 
     if (CRM_Utils_Array::value('groups', $searchOptions)) {
-      if ($config->groupTree) {
-        $this->add('hidden', 'group', NULL, array('id' => 'group'));
-
-        $group = CRM_Utils_Array::value('group', $this->_formValues);
-        $selectedGroups = explode(',', $group);
-
-        if (is_array($selectedGroups)) {
-          $groupNames = NULL;
-          $groupIds = array();
-          foreach ($selectedGroups as $groupId) {
-            if ($groupNames) {
-              $groupNames .= '<br/>';
-            }
-            $groupNames .= $this->_group[$groupId];
-          }
-          $groupIds[] = $groupId;
-        }
-
-        $this->assign('groupIds', implode(',', $groupIds));
-        $this->assign('groupNames', $groupNames);
-      }
-      else {
-        // add select for groups
-        $group = array(
-          '' => ts('- any group -')) + $this->_group;
-        $this->_groupElement = &$this->addElement('select', 'group', ts('in'), $group);
-      }
+      // add select for groups
+      $group = array(
+        '' => ts('- any group -')) + $this->_group;
+      $this->_groupElement = &$this->addElement('select', 'group', ts('in'), $group);
     }
 
     if (CRM_Utils_Array::value('tags', $searchOptions)) {
@@ -248,12 +225,10 @@ class CRM_Contact_Form_Search_Basic extends CRM_Contact_Form_Search {
 
     $config = CRM_Core_Config::singleton();
 
-    if (!$config->groupTree) {
-      $group = CRM_Utils_Array::value('group', $this->_formValues);
-      if ($group && !is_array($group)) {
-        unset($this->_formValues['group']);
-        $this->_formValues['group'][$group] = 1;
-      }
+    $group = CRM_Utils_Array::value('group', $this->_formValues);
+    if ($group && !is_array($group)) {
+      unset($this->_formValues['group']);
+      $this->_formValues['group'][$group] = 1;
     }
 
     $tag = CRM_Utils_Array::value('tag', $this->_formValues);

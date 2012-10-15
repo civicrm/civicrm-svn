@@ -332,13 +332,11 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search {
     }
 
     $config = CRM_Core_Config::singleton();
-    if (!$config->groupTree) {
-      $group = CRM_Utils_Array::value('group', $this->_formValues);
-      if ($group && is_array($group)) {
-        unset($this->_formValues['group']);
-        foreach ($group as $key => $value) {
-          $this->_formValues['group'][$value] = 1;
-        }
+    $group = CRM_Utils_Array::value('group', $this->_formValues);
+    if ($group && is_array($group)) {
+      unset($this->_formValues['group']);
+      foreach ($group as $key => $value) {
+        $this->_formValues['group'][$value] = 1;
       }
     }
 
