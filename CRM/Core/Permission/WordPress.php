@@ -70,7 +70,7 @@ class CRM_Core_Permission_WordPress extends CRM_Core_Permission_Base {
     else {
       //check the capabilities of Anonymous user)
       $roleObj = new WP_Roles();
-      if (array_key_exists($str, $roleObj->get_role('anonymous_user')->capabilities)) {
+      if ($roleObj->get_role('anonymous_user') != NULL && array_key_exists($str, $roleObj->get_role('anonymous_user')->capabilities)) {
         return TRUE;
       }
     }
