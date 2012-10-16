@@ -40,8 +40,7 @@
 
 require_once 'api/v3/utils.php';
 
-// @codeCoverageIgnoreStart 
-// this doesn't belong to the API
+
 
 /**
  * take the input parameter list as specified in the data model and
@@ -1002,7 +1001,7 @@ function _civicrm_api3_deprecated_add_formatted_location_blocks(&$values, &$para
     if($name == 'phone_ext'){
       $block = 'Phone';
     }
-    
+
     // block present in value array.
     if (!array_key_exists($name, $params) || !is_array($params[$name])) {
       $params[$name] = array();
@@ -1053,8 +1052,8 @@ function _civicrm_api3_deprecated_add_formatted_location_blocks(&$values, &$para
     $fields['Address'] = CRM_Core_DAO_Address::fields();
   }
 
-  // Note: we doing multiple value formatting here for address custom fields, plus putting into right format. 
-  // The actual formatting (like date, country ..etc) for address custom fields is taken care of while saving 
+  // Note: we doing multiple value formatting here for address custom fields, plus putting into right format.
+  // The actual formatting (like date, country ..etc) for address custom fields is taken care of while saving
   // the address in CRM_Core_BAO_Address::create method
   if (CRM_Utils_Array::value('location_type_id', $values)) {
     static $customFields = array();
@@ -1080,8 +1079,8 @@ function _civicrm_api3_deprecated_add_formatted_location_blocks(&$values, &$para
             $newValues[$key] = array( );
             foreach ( $mulValues as $v1 ) {
               foreach ( $customOption as $v2 ) {
-                if ( ( strtolower( $v2['label'] ) == strtolower( trim( $v1 ) ) ) || 
-                     ( strtolower( $v2['value'] ) == strtolower( trim( $v1 ) ) ) ) { 
+                if ( ( strtolower( $v2['label'] ) == strtolower( trim( $v1 ) ) ) ||
+                     ( strtolower( $v2['value'] ) == strtolower( trim( $v1 ) ) ) ) {
                   if ( $htmlType == 'CheckBox' ) {
                     $newValues[$key][$v2['value']] = 1;
                   } else {
@@ -1246,7 +1245,7 @@ function _civicrm_api3_deprecated_membership_format_params($params, &$values, $c
 
   require_once 'CRM/Core/OptionGroup.php';
   $customFields = CRM_Core_BAO_CustomField::getFields( 'Membership');
-  
+
   foreach ($params as $key => $value) {
     // ignore empty values or empty arrays etc
     if (CRM_Utils_System::isNull($value)) {
@@ -1276,7 +1275,7 @@ function _civicrm_api3_deprecated_membership_format_params($params, &$values, $c
                 }
           }
       }
-     
+
     switch ($key) {
       case 'membership_contact_id':
         if (!CRM_Utils_Rule::integer($value)) {
