@@ -463,8 +463,9 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
         $errors[$emailName] = "Your email is invaid";
       }
       elseif (email_exists($params['mail'])) {
-        $errors[$emailName] = ts('This email %1 is already registered. Please select another email.',
-          array(1 => $params['mail'])
+        $resetUrl = $config->userFrameworkBaseURL . 'wp-login.php?action=lostpassword';
+        $errors[$emailName] = ts('The email address %1 is already registered. <a href="%2">Have you forgotten your password?</a>',
+          array(1 => $params['mail'], 2 => $resetUrl)
         );
       }
     }

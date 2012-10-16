@@ -205,8 +205,9 @@ SELECT name, mail
         );
       }
       if (strtolower($dbEmail) == strtolower($email)) {
-        $errors[$emailName] = ts('This email %1 is already registered. Please select another email.',
-          array(1 => $email)
+        $resetUrl = $config->userFrameworkBaseURL . 'user/password';
+        $errors[$emailName] = ts('The email address %1 is already registered. <a href="%2">Have you forgotten your password?</a>',
+          array(1 => $email, 2 => $resetUrl)
         );
       }
     }

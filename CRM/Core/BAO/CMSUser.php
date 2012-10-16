@@ -339,6 +339,9 @@ class CRM_Core_BAO_CMSUser {
         $loginUrl .= '?destination=' . urlencode($destination);
       }
     }
+    elseif ($isWordPress) {
+      $loginUrl .= 'wp-login.php';
+    }
 
     $form->assign('loginUrl', $loginUrl);
     $form->assign('showCMS', $showCMS);

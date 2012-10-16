@@ -156,8 +156,9 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
         );
       }
       if (strtolower($dbEmail) == strtolower($email)) {
-        $errors[$emailName] = ts('This email %1 is already registered. Please select another email.',
-          array(1 => $email)
+        $resetUrl = str_replace('administrator/', '', $config->userFrameworkBaseURL) . 'index.php?option=com_users&view=reset';
+        $errors[$emailName] = ts('The email address %1 is already registered. <a href="%2">Have you forgotten your password?</a>',
+          array(1 => $email, 2 => $resetUrl)
         );
       }
     }

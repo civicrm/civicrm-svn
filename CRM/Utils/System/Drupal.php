@@ -155,8 +155,9 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
           array(':mail' => $params['mail'])
         )->fetchField();
         if ((bool) $uid) {
-          $errors[$emailName] = ts('This email %1 is already registered. Please select another email.',
-            array(1 => $params['mail'])
+          $resetUrl = $config->userFrameworkBaseURL . 'user/password';
+          $errors[$emailName] = ts('The email address %1 is already registered. <a href="%2">Have you forgotten your password?</a>',
+            array(1 => $params['mail'], 2 => $resetUrl)
           );
         }
       }
