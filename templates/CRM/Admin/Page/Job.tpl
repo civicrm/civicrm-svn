@@ -57,7 +57,6 @@
         <tr id="row_{$row.id}" class="crm-job {cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
             <td class="crm-job-name"><strong>{$row.name}</strong> ({$row.run_frequency})<br/>
                 {$row.description}<br />
-                {ts}API Prefix:{/ts} {$row.api_prefix}<br/>
                 {ts}API Entity:{/ts} {$row.api_entity}<br/>
                 {ts}API Action:{/ts} <strong>{$row.api_action}</strong><br/>
             </td>

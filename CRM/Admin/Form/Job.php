@@ -84,10 +84,6 @@ class CRM_Admin_Form_Job extends CRM_Admin_Form {
       $attributes['description']
     );
 
-    $this->add('text', 'api_prefix', ts('API Call Prefix'),
-      $attributes['api_prefix'], TRUE
-    );
-
     $this->add('text', 'api_entity', ts('API Call Entity'),
       $attributes['api_entity'], TRUE
     );
@@ -118,9 +114,9 @@ class CRM_Admin_Form_Job extends CRM_Admin_Form {
     require_once 'api/api.php';
 
     $apiRequest = array();
-    $apiRequest['entity'] = CRM_Utils_String::munge($fields['api_entity']);
-    $apiRequest['action'] = CRM_Utils_String::munge($fields['api_action']);
-    $apiRequest['version'] = substr($fields['api_prefix'], -1); // ie. civicrm_api3
+    $apiRequest['entity']  = CRM_Utils_String::munge($fields['api_entity']);
+    $apiRequest['action']  = CRM_Utils_String::munge($fields['api_action']);
+    $apiRequest['version'] = 3;
     $apiRequest += _civicrm_api_resolve($apiRequest);    // look up function, file, is_generic
 
     if( !$apiRequest['function'] ) {
@@ -160,8 +156,8 @@ class CRM_Admin_Form_Job extends CRM_Admin_Form {
     CRM_Core_DAO::storeValues($dao, $defaults);
 
     // CRM-10708
-    // job entity thats shipped with core is all lower case. 
-    // this makes sure camel casing is followed for proper working of default population. 
+    // job entity thats shipped with core is all lower case.
+    // this makes sure camel casing is followed for proper working of default population.
     if (CRM_Utils_Array::value('api_entity', $defaults)) {
       $defaults['api_entity'] = ucfirst($defaults['api_entity']);
     }
@@ -196,7 +192,6 @@ class CRM_Admin_Form_Job extends CRM_Admin_Form {
     $dao->run_frequency = $values['run_frequency'];
     $dao->parameters    = $values['parameters'];
     $dao->name          = $values['name'];
-    $dao->api_prefix    = $values['api_prefix'];
     $dao->api_entity    = $values['api_entity'];
     $dao->api_action    = $values['api_action'];
     $dao->description   = $values['description'];

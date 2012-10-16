@@ -12,10 +12,10 @@ INSERT INTO `civicrm_state_province`(`country_id`, `abbreviation`, `name`) VALUE
 
 -- CRM-10553
 ALTER TABLE civicrm_contact
-  ADD COLUMN `created_date` timestamp NULL DEFAULT NULL 
+  ADD COLUMN `created_date` timestamp NULL DEFAULT NULL
   COMMENT 'When was the contact was created.';
 ALTER TABLE civicrm_contact
-  ADD COLUMN `modified_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP 
+  ADD COLUMN `modified_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
   COMMENT 'When was the contact (or closely related entity) was created or modified or deleted.';
 
 -- CRM-10296
@@ -38,7 +38,10 @@ ALTER TABLE civicrm_msg_template
 ALTER TABLE civicrm_contribution_page ADD COLUMN is_recur_installments tinyint(4) DEFAULT '0';
 UPDATE civicrm_contribution_page SET is_recur_installments='1';
 
--- CRM-10863		
+-- CRM-10863
 SELECT @country_id := id from civicrm_country where name = 'Luxembourg' AND iso_code = 'LU';
 INSERT IGNORE INTO `civicrm_state_province`(`country_id`, `abbreviation`, `name`) VALUES
 (@country_id, 'L', 'Luxembourg');
+
+-- CRM-11047
+ALTER TABLE civicrm_job DROP COLUMN api_prefix;

@@ -55,7 +55,6 @@
 
         <div id="fname"><br/>
         </div>
-        {$form.api_prefix.html}
         <select name="api_entity" type="text" id="api_entity" class="form-select required">
           {crmAPI entity="Entity" action="get" var="entities" version=3}
           {foreach from=$entities.values item=entity}
@@ -73,18 +72,12 @@
     var apiName = "";
 
     // building prefix
-    var apiPrefixRaw = cj('#api_prefix').val();
-
-    if( apiPrefixRaw == '' ) {
+    if( cj('#api_action').val() == '' ) {
       cj('#fname').html( "<em>API name will start appearing here as you type in fields below.</em>" );
       return;
     }
 
-    if( apiPrefixRaw == 'civicrm_api3' ) {
-      apiPrefix = 'api'
-    } else {
-      apiPrefix = apiPrefixRaw;
-    }
+    apiPrefix = 'api'
 
     // building entity
     var apiEntity = cj('#api_entity').val().replace( /([A-Z])/g, function($1) {
@@ -98,7 +91,6 @@
 
   // bind to different events to build API name live
   cj(document).ready( function() { assembleName() } );
-  cj('#api_prefix').keyup( function() { assembleName() } );
   cj('#api_entity').change( function() { assembleName() } );
   cj('#api_action').keyup( function() { assembleName() } );
 

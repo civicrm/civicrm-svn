@@ -30,7 +30,7 @@
        <table>civicrm_domain</table>
        <key>id</key>
        <add>4.1</add>
-  </foreignKey>  
+  </foreignKey>
   <field>
        <name>run_frequency</name>
        <type>enum</type>
@@ -67,6 +67,7 @@
        <default>"civicrm_api3"</default>
        <comment>Prefix of the job api call</comment>
        <add>4.1</add>
+       <drop>4.3</drop>
   </field>
   <field>
        <name>api_entity</name>
@@ -74,14 +75,14 @@
        <length>255</length>
        <comment>Entity of the job api call</comment>
        <add>4.1</add>
-  </field>  
+  </field>
   <field>
        <name>api_action</name>
        <type>varchar</type>
        <length>255</length>
        <comment>Action of the job api call</comment>
        <add>4.1</add>
-  </field>  
+  </field>
   <field>
        <name>parameters</name>
        <type>text</type>
