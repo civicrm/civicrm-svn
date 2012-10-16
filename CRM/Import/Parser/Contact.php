@@ -646,7 +646,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser {
         }
       }
 
-      if (is_a($newContact, 'CRM_Contact_BAO_Contact')) {
+      if (isset($newContact) && is_a($newContact, 'CRM_Contact_BAO_Contact')) {
         $relationship = TRUE;
       }
       elseif (is_a($error, 'CRM_Core_Error')) {
@@ -682,7 +682,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser {
     }
 
     $contactID = NULL;
-    if (is_object($newContact) || ($newContact instanceof CRM_Contact_BAO_Contact)) {
+    if (isset($newContact) && is_object($newContact) && ($newContact instanceof CRM_Contact_BAO_Contact)) {
       $relationship = TRUE;
       $newContact = clone($newContact);
       $contactID = $newContact->id;
@@ -693,7 +693,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser {
         $this->_retCode = CRM_Import_Parser::VALID;
       }
     }
-    elseif (CRM_Core_Error::isAPIError($newContact, CRM_Core_ERROR::DUPLICATE_CONTACT)) {
+    elseif (isset($newContact) && CRM_Core_Error::isAPIError($newContact, CRM_Core_ERROR::DUPLICATE_CONTACT)) {
       // if duplicate, no need of further processing
       if ($onDuplicate == CRM_Import_Parser::DUPLICATE_SKIP) {
         $errorMessage = "Skipping duplicate record";

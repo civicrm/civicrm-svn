@@ -947,7 +947,7 @@ class CRM_Import_Form_MapField extends CRM_Core_Form {
               $updateMappingFields->im_provider_id = isset($mapperKeys[$i][2]) ? $mapperKeys[$i][2] : NULL;
             }
             $location = array_keys($locationTypes, $locations[$i]);
-            $updateMappingFields->location_type_id = isset($location) ? $location[0] : NULL;
+            $updateMappingFields->location_type_id = (isset($location) && isset($location[0])) ? $location[0] : NULL;
           }
         }
         $updateMappingFields->save();

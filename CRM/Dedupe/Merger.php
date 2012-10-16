@@ -715,7 +715,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         // Rule: resolve address conflict if any -
         if ($fieldName == 'address') {
           $mainNewLocTypeId = $migrationInfo['location'][$fieldName][$fieldCount]['locTypeId'];
-          if (CRM_Utils_Array::value('main_loc_address', $migrationInfo) && 
+          if (CRM_Utils_Array::value('main_loc_address', $migrationInfo) &&
               array_key_exists("main_{$mainNewLocTypeId}", $migrationInfo['main_loc_address'])) {
             // main loc already has some address for the loc-type. Its a overwrite situation.
 
@@ -948,13 +948,11 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
 
     $mainLocBlock = $locBlockIds = array();
     $locBlockIds['main'] = $locBlockIds['other'] = array();
-    foreach (array(
-      'Email', 'Phone', 'IM', 'OpenID', 'Address') as $block) {
+    foreach (array('Email', 'Phone', 'IM', 'OpenID', 'Address') as $block) {
       $name = strtolower($block);
-      foreach (array(
-        'main', 'other') as $moniker) {
-        $blockValue = CRM_Utils_Array::value($name, $locations[$moniker], array());
-
+      foreach (array('main', 'other') as $moniker) {
+	$locIndex = CRM_Utils_Array::value($moniker, $locations);
+        $blockValue = CRM_Utils_Array::value($name, $locIndex, array());
         if (empty($blockValue)) {
           $locValue[$moniker][$name] = 0;
           $locLabel[$moniker][$name] = $locTypes[$moniker][$name] = array();
@@ -1503,7 +1501,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         }
         unset($submitted['current_employer_id']);
       }
-      
+
       CRM_Contact_BAO_Contact::createProfileContact($submitted, CRM_Core_DAO::$_nullArray, $mainId);
       unset($submitted);
     }

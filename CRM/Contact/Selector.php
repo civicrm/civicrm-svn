@@ -1,6 +1,4 @@
 <?php
-// $Id$
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.2                                                |
@@ -444,12 +442,10 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
           }
           $title .= " ($loc)";
         }
-        else {
-          if (isset($this->_query->_fields[$prop])) {
-            $title = $this->_query->_fields[$prop]['title'];
-          } else {
-            $title = '';
-          }
+        elseif (isset($this->_query->_fields[$prop]) && isset($this->_query->_fields[$prop]['title'])) {
+          $title = $this->_query->_fields[$prop]['title'];
+        } else {
+          $title = '';
         }
 
         self::$_columnHeaders[] = array('name' => $title, 'sort' => $prop);
@@ -758,7 +754,7 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
         );
 
         $row['contact_type_orig'] = $result->contact_type;
-        $row['contact_sub_type']  = $result->contact_sub_type ? 
+        $row['contact_sub_type']  = $result->contact_sub_type ?
           CRM_Contact_BAO_ContactType::contactTypePairs(FALSE, $result->contact_sub_type, ', ') : $result->contact_sub_type;
         $row['contact_id'] = $result->contact_id;
         $row['sort_name'] = $result->sort_name;
