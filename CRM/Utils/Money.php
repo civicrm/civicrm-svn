@@ -98,7 +98,7 @@ class CRM_Utils_Money {
       $lc = setlocale(LC_MONETARY, 0);
       setlocale(LC_MONETARY, 'en_US.utf8', 'en_US', 'en_US.utf8', 'en_US', 'C');
       $amount = money_format($config->moneyvalueformat, $amount);
-      setlocale($lc);
+      setlocale(LC_MONETARY, $lc);
     }
 
     $rep = array(
