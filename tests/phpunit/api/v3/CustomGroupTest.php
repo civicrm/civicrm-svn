@@ -5,7 +5,6 @@
  *  Include class definitions
  */
 require_once 'tests/phpunit/CiviTest/CiviUnitTestCase.php';
-require_once 'api/v3/CustomGroup.php';
 
 /**
  *  Test APIv3 civicrm_create_custom_group
@@ -185,6 +184,20 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase {
     $this->assertNotNull($result['id'], 'In line ' . __LINE__);
     $this->assertEquals($result['values'][$result['id']]['extends'], 'Individual', 'In line ' . __LINE__);
   }
+  /**
+   * check with valid array
+   */
+  function testCustomGroupGetFields() {
+    $params = array(
+        'version' => $this->_apiversion,
+    );
+
+    $result = civicrm_api('custom_group', 'getfields', $params);
+    $this->assertEquals('Tab', $result['values']['style']['options'][0]);
+    $this->assertEquals('Inline', $result['values']['style']['options'][1]);
+
+  }
+
 
   /**
    * check with extends array length greater than 1
