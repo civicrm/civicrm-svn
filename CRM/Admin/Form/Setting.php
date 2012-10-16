@@ -152,6 +152,11 @@ LIMIT  1
           $this->$add($setting, ts($settingMetaData['values'][$setting]['title']));
         }
         $this->assign("{$setting}_description", $settingMetaData['values'][$setting]['description']);
+        if($setting == 'max_attachments'){
+          //temp hack
+          $this->addRule('max_attachments', ts('Value should be a positive number'), 'positiveInteger');
+        }
+
       }
     }
   }

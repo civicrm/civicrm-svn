@@ -93,7 +93,6 @@ class CRM_Admin_Form_Setting_Miscellaneous extends CRM_Admin_Form_Setting {
       array('size' => 64, 'maxlength' => 64)
     );
 
-    $this->addRule('max_attachments', ts('Value should be a positive number'), 'positiveInteger');
     $this->addRule('maxFileSize', ts('Value should be a positive number'), 'positiveInteger');
     $this->addRule('checksumTimeout', ts('Value should be a positive number'), 'positiveInteger');
 
