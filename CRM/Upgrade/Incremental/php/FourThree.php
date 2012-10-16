@@ -48,7 +48,7 @@ class CRM_Upgrade_Incremental_php_FourThree {
    */
   function setPostUpgradeMessage(&$postUpgradeMessage, $rev) {
     if ($rev == '4.3.alpha1') {
-      // check if CiviMember component is enabled 
+      // check if CiviMember component is enabled
       $config = CRM_Core_Config::singleton();
       if (in_array('CiviMember', $config->enableComponents)) {
         $postUpgradeMessage .= '<br />' . ts('Membership renewal reminders must now be configured using the Schedule Reminders feature, which supports multiple renewal reminders  (Administer > Communications > Schedule Reminders). The Update Membership Statuses scheduled job will no longer send membershp renewal reminders. You can use your existing renewal reminder message template(s) with the Schedule Reminders feature.');
@@ -56,7 +56,7 @@ class CRM_Upgrade_Incremental_php_FourThree {
       }
     }
   }
-  
+
   function upgrade_4_3_alpha1($rev) {
     $upgrade = new CRM_Upgrade_Form();
     $upgrade->processSQL($rev);
@@ -66,19 +66,26 @@ class CRM_Upgrade_Incremental_php_FourThree {
     for ($startId = $minId; $startId <= $maxId; $startId += self::BATCH_SIZE) {
       $endId = $startId + self::BATCH_SIZE - 1;
       $title = ts('Upgrade timestamps (%1 => %2)', array(
-        1 => $startId,
-        2 => $endId,
-      ));
+                 1 => $startId,
+                 2 => $endId,
+               ));
       $this->addTask($title, 'convertTimestamps', $startId, $endId);
+    }
+
+    // CRM-10893
+    // fix WP access control
+    $config = CRM_Core_Config::singleton( );
+    if§ ($config->userFramework == 'WordPress') {
+      civicrm_wp_set_capabilities( );
     }
 
     // now rebuild all the triggers
     // CRM-9716
     // FIXME // CRM_Core_DAO::triggerRebuild();
-    
+
     return TRUE;
   }
-  
+
   /**
    * Read creation and modification times from civicrm_log; add
    * them to civicrm_contact.
@@ -134,6 +141,4 @@ class CRM_Upgrade_Incremental_php_FourThree {
     );
     $queue->createItem($task, array('weight' => -1));
   }
-  
-  
-  }
+}

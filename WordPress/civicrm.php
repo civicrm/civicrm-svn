@@ -59,11 +59,19 @@ else {
 
 /**
  * Method that runs only when civicrm plugin is activated.
- * To create 'anonymous_user' role, if 'anonymous_user' role is not in the wordpress installation
  */
 register_activation_hook( __FILE__, 'civicrm_activate');
 
 function civicrm_activate() {
+  // Assign minimum capabilities for all wordpress roles and create anonymous_user' role
+  civicrm_wp_set_capabilities();
+}
+
+/*
+ * Function to create anonymous_user' role, if 'anonymous_user' role is not in the wordpress installation
+ * and assign minimum capabilities for all wordpress roles
+ */
+function civicrm_wp_set_capabilities() {
   global $wp_roles;
   if (!isset($wp_roles)) {
     $wp_roles = new WP_Roles();
