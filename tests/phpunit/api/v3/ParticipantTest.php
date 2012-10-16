@@ -32,7 +32,7 @@
 
 
 
-require_once 'api/v3/DeprecatedUtils.php';
+require_once 'CRM/Utils/DeprecatedUtils.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 class api_v3_ParticipantTest extends CiviUnitTestCase {
 
@@ -159,12 +159,12 @@ class api_v3_ParticipantTest extends CiviUnitTestCase {
       'id' => $this->_participantID,
       'version' => $this->_apiversion,
       'return' => 'id,participant_register_date,event_id',
-      
+
     );
     $result = civicrm_api('participant', 'get', $params);
     $this->assertEquals($result['values'][$this->_participantID]['event_id'], $this->_eventID);
     $this->assertEquals($result['values'][$this->_participantID]['participant_register_date'], '2007-02-19 00:00:00');
- 
+
   }
 
   /**

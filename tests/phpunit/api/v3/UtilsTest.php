@@ -28,7 +28,7 @@
 */
 
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'api/v3/DeprecatedUtils.php';
+require_once 'CRM/Utils/DeprecatedUtils.php';
 
 /**
  * Test class for API utils
