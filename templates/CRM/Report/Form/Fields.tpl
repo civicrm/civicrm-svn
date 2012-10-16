@@ -65,8 +65,8 @@
 {if $updateReportButton}
 <div id='update-button' class="crm-submit-buttons">
    {$form.$save.html}
-   {if $mode neq 'template' && $form.$next}
-       {$form.$next.html}
+   {if $mode neq 'template' && $form.$next} {* Removed Save a Copy button here since user doesn't have chance to set a new title. *}
+       <span class="description">{ts}To save a copy with updated criteria click Report Settings above and update the Report Title. Then click Save a Copy.{/ts}</span>
    {/if}
 </div>
 {/if}

@@ -314,8 +314,16 @@ class CRM_Report_Form_Instance {
 
     $instanceID = $form->getVar('_id');
     $isNew = $form->getVar('_createNew');
-    if ($instanceID && !$isNew) {
-      $dao->id = $instanceID;
+    $isCopy = 0;
+    
+    if ($instanceID) {
+      if (!$isNew) {
+        // updating an existing report instance
+        $dao->id = $instanceID;        
+      } else {
+        // making a copy of an existing instance
+        $isCopy = 1;
+      }
     }
 
     $dao->report_id = CRM_Report_Utils_Report::getValueFromUrl($instanceID);
@@ -324,77 +332,73 @@ class CRM_Report_Form_Instance {
 
     $form->set('id', $dao->id);
 
-    $reloadTemplate = FALSE;
-    if ($dao->id) {
-      if (!empty($form->_navigation)) {
-        if ($isNew && CRM_Utils_Array::value('id', $form->_navigation)) {
-          unset($form->_navigation['id']);
-        }
-        $form->_navigation['url'] = "civicrm/report/instance/{$dao->id}&reset=1";
-        $navigation = CRM_Core_BAO_Navigation::add($form->_navigation);
+    if (!empty($form->_navigation)) {
+      if ($isNew && CRM_Utils_Array::value('id', $form->_navigation)) {
+        unset($form->_navigation['id']);
+      }
+      $form->_navigation['url'] = "civicrm/report/instance/{$dao->id}&reset=1";
+      $navigation = CRM_Core_BAO_Navigation::add($form->_navigation);
 
-        if (CRM_Utils_Array::value('is_active', $form->_navigation)) {
-          //set the navigation id in report instance table
-          CRM_Core_DAO::setFieldValue('CRM_Report_DAO_Instance', $dao->id, 'navigation_id', $navigation->id);
-        }
-        else {
-          // has been removed from the navigation bar
-          CRM_Core_DAO::setFieldValue('CRM_Report_DAO_Instance', $dao->id, 'navigation_id', 'NULL');
-        }
-
-        //reset navigation
-        CRM_Core_BAO_Navigation::resetNavigation();
-
-        // in order to reflect change in navigation, template needs to be reloaded
-        $reloadTemplate = TRUE;
+      if (CRM_Utils_Array::value('is_active', $form->_navigation)) {
+        //set the navigation id in report instance table
+        CRM_Core_DAO::setFieldValue('CRM_Report_DAO_Instance', $dao->id, 'navigation_id', $navigation->id);
+      }
+      else {
+        // has been removed from the navigation bar
+        CRM_Core_DAO::setFieldValue('CRM_Report_DAO_Instance', $dao->id, 'navigation_id', 'NULL');
       }
 
-      // add to dashlet
-      if (!empty($dashletParams)) {
-        $section = 2;
-        $chart = '';
-        if (CRM_Utils_Array::value('charts', $params)) {
-          $section = 1;
-          $chart = "&charts=" . $params['charts'];
-        }
-
-        $dashletParams['url'] = "civicrm/report/instance/{$dao->id}&reset=1&section={$section}&snippet=5{$chart}&context=dashlet";
-        $dashletParams['fullscreen_url'] = "civicrm/report/instance/{$dao->id}&reset=1&section={$section}&snippet=5{$chart}&context=dashletFullscreen";
-        $dashletParams['instanceURL'] = "civicrm/report/instance/{$dao->id}";
-        CRM_Core_BAO_Dashboard::addDashlet($dashletParams);
-      }
-
-      $instanceParams   = array('value' => $dao->report_id);
-      $instanceDefaults = array();
-      $cmpName          = "Contact";
-      $statusMsg        = "null";
-      CRM_Core_DAO::commonRetrieve('CRM_Core_DAO_OptionValue',
-        $instanceParams,
-        $instanceDefaults
-      );
-
-      if ($cmpID = CRM_Utils_Array::value('component_id', $instanceDefaults)) {
-        $cmpName = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Component', $cmpID,
-          'name', 'id'
-        );
-        $cmpName = substr($cmpName, 4);
-      }
-
-      // Url to view this report and others created FROM this template
-      $instanceUrl = CRM_Utils_System::url('civicrm/report/list',
-        "reset=1&ovid={$instanceDefaults['id']}"
-      );
-      $statusMsg = ts('Report "%1" has been created and is now available in the <a href="%3">report listings under "%2" Reports</a>.', array(1 => $dao->title, 2 => $cmpName, 3 => $instanceUrl));
-      if ($instanceID && !$isNew) {
-        $statusMsg = ts('Report "%1" has been updated.', array(1 => $dao->title));
-      }
-      CRM_Core_Session::setStatus($statusMsg);
+      //reset navigation
+      CRM_Core_BAO_Navigation::resetNavigation();
     }
 
-    if ($reloadTemplate) {
-      // as there's been change in navigation, reload the template
-      return CRM_Utils_System::redirect(CRM_Utils_System::url(CRM_Utils_System::currentPath(), 'force=1'));
+    // add to dashlet
+    if (!empty($dashletParams)) {
+      $section = 2;
+      $chart = '';
+      if (CRM_Utils_Array::value('charts', $params)) {
+        $section = 1;
+        $chart = "&charts=" . $params['charts'];
+      }
+
+      $dashletParams['url'] = "civicrm/report/instance/{$dao->id}&reset=1&section={$section}&snippet=5{$chart}&context=dashlet";
+      $dashletParams['fullscreen_url'] = "civicrm/report/instance/{$dao->id}&reset=1&section={$section}&snippet=5{$chart}&context=dashletFullscreen";
+      $dashletParams['instanceURL'] = "civicrm/report/instance/{$dao->id}";
+      CRM_Core_BAO_Dashboard::addDashlet($dashletParams);
     }
+
+    $instanceParams   = array('value' => $dao->report_id);
+    $instanceDefaults = array();
+    $cmpName          = "Contact";
+    $statusMsg        = "null";
+    CRM_Core_DAO::commonRetrieve('CRM_Core_DAO_OptionValue',
+      $instanceParams,
+      $instanceDefaults
+    );
+
+    if ($cmpID = CRM_Utils_Array::value('component_id', $instanceDefaults)) {
+      $cmpName = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Component', $cmpID,
+        'name', 'id'
+      );
+      $cmpName = substr($cmpName, 4);
+    }
+
+    if ($instanceID && !$isNew) {
+      // updating existing instance
+      $statusMsg = ts('"%1" report has been updated.', array(1 => $dao->title));
+    } elseif ($isCopy) {
+      $statusMsg = ts('Your report has been successfully copied as "%1". You are currently viewing the new copy.', array(1 => $dao->title));
+    } else {
+      $statusMsg = ts('"%1" report has been successfully created. You are currently viewing the new report instance.', array(1 => $dao->title));
+    }
+
+    $instanceUrl = CRM_Utils_System::url("civicrm/report/instance/{$dao->id}",
+      "reset=1"
+    );
+          
+    CRM_Core_Session::setStatus($statusMsg);
+
+    CRM_Utils_System::redirect($instanceUrl);
   }
 }
 
