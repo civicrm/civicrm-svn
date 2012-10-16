@@ -1438,26 +1438,22 @@ function _civicrm_api3_validate_integer(&$params, &$fieldname, &$fieldInfo) {
  */
 function _civicrm_api3_validate_string(&$params, &$fieldname, &$fieldInfo) {
   // If fieldname exists in params
-  if ($value = CRM_Utils_Array::value($fieldname, $params)) {
+  $value = (string) CRM_Utils_Array::value($fieldname, $params,'');
+  if ($value ) {
     if ($fieldname == 'currency') {
       if (!CRM_Utils_Rule::currencyCode($value)) {
         throw new Exception("Currency not a valid code: $value");
       }
     }
-    if (!empty ($fieldInfo['options']) || !empty($fieldInfo['enumValues'])) {
+    if (!empty ($fieldInfo['options'])) {
       // Validate & swap out any pseudoconstants / options
-      $constant = $fieldInfo['options'];
-      if (!$constant && ($enum = CRM_Utils_Array::value('enumValues', $fieldInfo))) {
-        $constant = explode(',', $enum);
-      }
+      $options = $fieldInfo['options'];
+
       // If value passed is not a key, it may be a label
       // Try to lookup key from label - if it can't be found throw error
-      if (!isset($constant[$value])) {
-        if (!($key = array_search($value, $constant))) {
+      if (!isset($options[$value]) ) {
+        if (!(in_array($value, $options))) {
           throw new Exception("$fieldname `$value` is not valid.");
-      }
-        else {
-          $value = $key;
         }
       }
     }
