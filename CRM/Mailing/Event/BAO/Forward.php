@@ -118,7 +118,7 @@ class CRM_Mailing_Event_BAO_Forward extends CRM_Mailing_Event_DAO_Forward {
         'email' => $forward_email,
         'location_type_id' => $locationType->id,
       );
-      require_once 'api/v3/DeprecatedUtils.php';
+      require_once 'CRM/Utils/DeprecatedUtils.php';
       _civicrm_api3_deprecated_add_formatted_param($value, $formatted);
       $formatted['onDuplicate'] = CRM_Import_Parser::DUPLICATE_SKIP;
       $formatted['fixAddress'] = TRUE;
@@ -153,7 +153,7 @@ class CRM_Mailing_Event_BAO_Forward extends CRM_Mailing_Event_DAO_Forward {
     $forward->save();
 
     $dao->reset();
-    $dao->query("   SELECT  $job.mailing_id as mailing_id 
+    $dao->query("   SELECT  $job.mailing_id as mailing_id
                         FROM    $job
                         WHERE   $job.id = " .
       CRM_Utils_Type::escape($job_id, 'Integer')

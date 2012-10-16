@@ -81,8 +81,8 @@ class CRM_Mailing_Event_BAO_Subscribe extends CRM_Mailing_Event_DAO_Subscribe {
       /* First, find out if the contact already exists */
 
       $query = "
-   SELECT DISTINCT contact_a.id as contact_id 
-     FROM civicrm_contact contact_a 
+   SELECT DISTINCT contact_a.id as contact_id
+     FROM civicrm_contact contact_a
 LEFT JOIN civicrm_email      ON contact_a.id = civicrm_email.contact_id
     WHERE civicrm_email.email = %1 AND contact_a.is_deleted = 0";
 
@@ -99,7 +99,7 @@ LEFT JOIN civicrm_email      ON contact_a.id = civicrm_email.contact_id
     $transaction = new CRM_Core_Transaction();
 
     if (!$contact_id) {
-      require_once 'api/v3/DeprecatedUtils.php';
+      require_once 'CRM/Utils/DeprecatedUtils.php';
 
       /* If the contact does not exist, create one. */
 
@@ -318,7 +318,7 @@ SELECT     civicrm_email.id as email_id
   function getContactGroups($email, $contactID = NULL) {
     if ($contactID) {
       $query = "
-                 SELECT DISTINCT group_a.group_id, group_a.status, civicrm_group.title 
+                 SELECT DISTINCT group_a.group_id, group_a.status, civicrm_group.title
                  FROM civicrm_group_contact group_a
                  LEFT JOIN civicrm_group ON civicrm_group.id = group_a.group_id
                  LEFT JOIN civicrm_contact ON ( group_a.contact_id = civicrm_contact.id )
@@ -331,7 +331,7 @@ SELECT     civicrm_email.id as email_id
       $email = $strtolower($email);
 
       $query = "
-                 SELECT DISTINCT group_a.group_id, group_a.status, civicrm_group.title 
+                 SELECT DISTINCT group_a.group_id, group_a.status, civicrm_group.title
                  FROM civicrm_group_contact group_a
                  LEFT JOIN civicrm_group ON civicrm_group.id = group_a.group_id
                  LEFT JOIN civicrm_contact ON ( group_a.contact_id = civicrm_contact.id ) AND civicrm_contact.is_deleted = 0
