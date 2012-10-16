@@ -157,7 +157,7 @@ class CRM_Core_Extensions {
     }
   }
 
-  public function getRepositoryUrl() {
+  private function getRepositoryUrl() {
     if (empty($this->_repoUrl) && $this->_repoUrl !== FALSE) {
       $config = CRM_Core_Config::singleton();
       $url = CRM_Core_BAO_Setting::getItem('Extension Preferences', 'ext_repo_url', NULL, self::DEFAULT_EXTENSIONS_REPOSITORY);
@@ -205,12 +205,12 @@ class CRM_Core_Extensions {
    *
    * @return void
    */
-  public function populate($fullInfo = FALSE) {
+  private function populate($fullInfo = FALSE) {
     if (is_null($this->_extDir) || empty($this->_extDir)) {
       return;
     }
 
-    $installed       = $this->getInstalled($fullInfo);
+    $installed       = $this->_discoverInstalled($fullInfo);
     $uploaded        = $this->getNotInstalled();
     $this->_extById  = array_merge($installed, $uploaded);
     $this->_extByKey = array();
@@ -228,7 +228,7 @@ class CRM_Core_Extensions {
    *
    * @return array the list of installed extensions
    */
-  public function getExtensionsByKey($fullInfo = FALSE) {
+  private function getExtensionsByKey($fullInfo = FALSE) {
     $this->populate($fullInfo);
     return $this->_extByKey;
   }
@@ -242,33 +242,9 @@ class CRM_Core_Extensions {
    *
    * @return array the list of installed extensions
    */
-  public function getExtensionsById($fullInfo = FALSE) {
+  private function getExtensionsById($fullInfo = FALSE) {
     $this->populate($fullInfo);
     return $this->_extById;
-  }
-
-  /**
-   * @todo DEPRECATE
-   *
-   * @access public
-   *
-   * @param boolean $fullInfo provide full info (read XML files) if true, otherwise only DB stored data
-   *
-   * @return array list of extensions
-   */
-  public function getInstalled($fullInfo = FALSE) {
-    return $this->_discoverInstalled($fullInfo);
-  }
-
-  /**
-   * @todo DEPRECATE
-   *
-   * @access public
-   *
-   * @return array list of extensions
-   */
-  public function getAvailable() {
-    return $this->_discoverAvailable();
   }
 
   /**
@@ -278,7 +254,7 @@ class CRM_Core_Extensions {
    *
    * @return array list of extensions
    */
-  public function getNotInstalled() {
+  private function getNotInstalled() {
     $installed = $this->_discoverInstalled();
     $result    = $this->_discoverAvailable();
     $instKeys  = array();
@@ -386,7 +362,7 @@ class CRM_Core_Extensions {
     return $result;
   }
 
-  public function getRemoteByKey() {
+  private function getRemoteByKey() {
     $re = $this->_discoverRemote();
     $result = array();
     foreach ($re as $id => $ext) {
@@ -395,7 +371,7 @@ class CRM_Core_Extensions {
     return $result;
   }
 
-  public function _discoverRemote() {
+  private function _discoverRemote() {
 
     $config    = CRM_Core_Config::singleton();
     $tsPath    = $config->extensionsDir . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'timestamp.txt';
@@ -582,34 +558,9 @@ class CRM_Core_Extensions {
   public function isExtensionClass($clazz) {
 
     if (substr($clazz, 0, 4) != 'CRM_') {
-      $extensions = CRM_Core_PseudoConstant::getExtensions($clazz);
-      if (array_key_exists($this->classToKey($clazz), $extensions)) {
-        return TRUE;
-      }
+      return preg_match('/^[a-z0-9]+(_[a-z0-9]+)+$/', $clazz);
     }
     return FALSE;
-  }
-
-  /**
-   * Sets extension's record active or disabled.
-   *
-   * @access public
-   *
-   * @param int $id id of the extension record
-   * @param boolean $is_active active state
-   *
-   * @return mixed result of CRM_Core_DAO::setFieldValue
-   */
-  static public function setIsActive($id, $is_active) {
-    $extensions = new CRM_Core_Extensions();
-    $e = $extensions->getExtensionsByKey();
-    foreach ($e as $key => $eo) {
-      if ($eo->id == $id) {
-        $ext = $eo;
-      }
-    }
-    $is_active ? $ext->enable() : $ext->disable();
-    return TRUE;
   }
 
   /**
@@ -685,12 +636,12 @@ class CRM_Core_Extensions {
     $e = $this->getExtensionsByKey(TRUE);
     $ext = $e[$key];
     if (! $ext->isUpgradeable()) {
-    $ext->uninstall();
+      $ext->uninstall();
 
-    // get fresh scope and install
-    $e = $this->getExtensions();
-    $ext = $e[$key];
-    $ext->install();
+      // get fresh scope and install
+      $e = $this->getExtensions();
+      $ext = $e[$key];
+      $ext->install();
     } else {
       // get the info.xml with newest downloadUrl
       $remotes = $this->getRemoteByKey();
@@ -699,11 +650,11 @@ class CRM_Core_Extensions {
 
       // refresh
       $e = $this->getExtensions();
-  }
+    }
   }
 
 
-  public function grabCachedKeyList() {
+  private function grabCachedKeyList() {
     $result     = array();
     $config     = CRM_Core_Config::singleton();
     $cachedPath = $config->extensionsDir . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR;
@@ -724,7 +675,7 @@ class CRM_Core_Extensions {
    *
    * @return Array list of extension names
    */
-  public function grabRemoteKeyList() {
+  private function grabRemoteKeyList() {
 
     ini_set('default_socket_timeout', CRM_Utils_VersionCheck::CHECK_TIMEOUT);
     set_error_handler(array('CRM_Utils_VersionCheck', 'downloadError'));
@@ -785,7 +736,7 @@ class CRM_Core_Extensions {
    *
    * @return contents of info.xml, or null if info.xml cannot be retrieved or parsed
    */
-  public function grabRemoteInfoFile($key, $cached = FALSE) {
+  private function grabRemoteInfoFile($key, $cached = FALSE) {
     $config = CRM_Core_Config::singleton();
 
     $path     = $config->extensionsDir . DIRECTORY_SEPARATOR . 'cache';
@@ -825,8 +776,8 @@ class CRM_Core_Extensions {
    *
    * @return bool
    */
-  public function isDownloadEnabled() {
+  private function isDownloadEnabled() {
     return (FALSE !== $this->getRepositoryUrl());
-}
+  }
 }
 

@@ -334,13 +334,6 @@ class CRM_Core_PseudoConstant {
   private static $greetingDefaults = array();
 
   /**
-   * Extensions
-   * @var array
-   * @static
-   */
-  private static $extensions = array();
-
-  /**
    * Extensions of type module
    * @var array
    * @static
@@ -1987,33 +1980,6 @@ ORDER BY name";
    */
   public static function &languages() {
     return CRM_Core_I18n_PseudoConstant::languages();
-  }
-
-  /**
-   * Get all extensions
-   *
-   * The static array extensions
-   *
-   * @access public
-   * @static
-   *
-   * @return array - array($fullyQualifiedName => $label) list of extensions
-   */
-  public static function &getExtensions() {
-    if (!self::$extensions) {
-      self::$extensions = array();
-      $sql = '
-        SELECT full_name, label
-        FROM civicrm_extension
-        WHERE is_active = 1
-      ';
-      $dao = CRM_Core_DAO::executeQuery($sql);
-      while ($dao->fetch()) {
-        self::$extensions[$dao->full_name] = $dao->label;
-    }
-    }
-
-    return self::$extensions;
   }
 
   /**
