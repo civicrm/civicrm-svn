@@ -28,9 +28,7 @@ function civicrm_api3_generic_getfields($apiRequest) {
   $lcase_entity = _civicrm_api_get_entity_name_from_camel($entity);
   $subentity    = CRM_Utils_Array::value('contact_type', $apiRequest['params']);
   $action       = strtolower(CRM_Utils_Array::value('action', $apiRequest['params']));
-  if(!empty($apiRequest['params']['options']) && is_array($apiRequest['params']['options'])){
-    $options = $apiRequest['params']['options'];
-  }
+  $apiOptions = CRM_Utils_Array::value('options', $apiRequest['params'], array());
   if ($action == 'getvalue' || $action == 'getvalue' || $action == 'getcount') {
     $action = 'get';
   }
@@ -41,7 +39,7 @@ function civicrm_api3_generic_getfields($apiRequest) {
   // determines whether to use unique field names - seem comment block above
   $unique = TRUE;
   if (isset($results[$entity . $subentity]) && CRM_Utils_Array::value($action, $results[$entity])
-    && empty($apiRequest['params']['options'])) {
+    && empty($apiOptions)) {
     return $results[$entity . $subentity][$action];
   }
   // defaults based on data model and API policy
@@ -84,6 +82,7 @@ function civicrm_api3_generic_getfields($apiRequest) {
       // oddballs are on their own
       $metadata = array();
   }
+
   // find any supplemental information
   $hypApiRequest = array('entity' => $apiRequest['entity'], 'action' => $action, 'version' => $apiRequest['version']);
   $hypApiRequest += _civicrm_api_resolve($hypApiRequest);
@@ -93,26 +92,12 @@ function civicrm_api3_generic_getfields($apiRequest) {
     $helper($metadata);
   }
 
-  foreach ($metadata as $fieldname => $field) {
-    if (array_key_exists('pseudoconstant', $field)&& (!CRM_Utils_Array::value('FKClassName',$field) ||
-        (!empty($options) && !empty($options['get_options'])))) {
-      $param = array('version' => 3, 'name' => $field['pseudoconstant']['name']);
-      if (isset ( $field['pseudoconstant']['class'])) {
-        $param['class'] = $field['pseudoconstant']['class'];
-      };
-      if (isset ( $field['pseudoconstant']['optionGroupName'])) {
-        $param['optionGroupName'] = $field['pseudoconstant']['optionGroupName'];
-      };
-      $options = civicrm_api('constant', 'get', $param);
-      if (is_array(CRM_Utils_Array::value('values', $options))) {
+  $fieldsToResolve = CRM_Utils_Array::value('get_options', $apiOptions, array());
 
-        $metadata[$fieldname]['options'] = $options['values'];
-      }
-    }
-    if (array_key_exists('enumValues', $field)) {
-      $metadata[$fieldname]['options'] = explode(',', $field['enumValues']);
-    }
+  foreach ($metadata as $fieldname => $fieldSpec) {
+    _civicrm_api3_generic_get_metatdata_options($metadata, $fieldname, $fieldSpec, $fieldsToResolve);
   }
+
   $results[$entity][$action] = civicrm_api3_create_success($metadata, $apiRequest['params'], NULL, 'getfields');
   return $results[$entity][$action];
 }
@@ -208,4 +193,41 @@ function civicrm_api3_generic_getoptions($apiRequest) {
   );
   $result = civicrm_api($apiRequest['entity'], 'getfields', $getFieldsArray);
   return $result['values'][$apiRequest['params']['field']]['options'];
+}
+/*
+ * Function fills the 'options' array on the metadata returned by getfields if
+ * 1) the param option 'get_options' is defined - e.g. $params['options']['get_options'] => array('custom_1)
+ * (this is passed in as the $fieldsToResolve array)
+ * 2) the field is a pseudoconstant and is NOT an FK
+ * - the reason for this is that checking / transformation is done on pseudoconstants but
+ * - if the field is an FK then mysql will enforce the data quality (& we have handling on failure)
+ * @todo - if may be we should define a 'resolve' key on the psuedoconstant for when these rules are not fine enough
+ * 3) if there is an 'enum' then it is split up into the relevant options
+ *
+ * This function is only split out for the purpose of code clarity / comment block documentation
+ * @param array $metadata the array of metadata that will form the result of the getfields function
+ * @param string $fieldname field currently being processed
+ * @param array $fieldSpec metadata for that field
+ * @param array $fieldsToResolve anny field resolutions specifically requested
+ */
+function _civicrm_api3_generic_get_metatdata_options(&$metadata, $fieldname, $fieldSpec, $fieldsToResolve){
+  if (array_key_exists('enumValues', $fieldSpec)) {
+    // use of a space after the comma is inconsistent in xml
+    $enumStr = str_replace(', ', ',', $fieldSpec['enumValues']);
+    $metadata[$fieldname]['options'] = explode(',', $enumStr);
+    return;
+  }
+
+  if(empty($fieldSpec['pseudoconstant'])){
+    return ;
+  }
+  elseif(!empty($fieldSpec['FKClassName']) && !in_array($fieldname, $fieldsToResolve)){
+    return;
+  }
+
+  $pseudoParams = $fieldSpec['pseudoconstant'] + array('version' => 3 );
+  $options = civicrm_api('constant', 'get', $pseudoParams);
+  if (is_array(CRM_Utils_Array::value('values', $options))) {
+    $metadata[$fieldname]['options'] = $options['values'];
+  }
 }
