@@ -534,7 +534,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser {
           //special case to check dedupe if external id present.
           //if we send external id dedupe will stop.
           unset($dedupeParams['external_identifier']);
-          require_once 'api/v3/DeprecatedUtils.php';
+          require_once 'CRM/Utils/DeprecatedUtils.php';
           $checkDedupe = _civicrm_api3_deprecated_duplicate_formatted_contact($dedupeParams);
           if (CRM_Core_Error::isAPIError($checkDedupe, CRM_Core_ERROR::DUPLICATE_CONTACT)) {
             $matchingContactIds = explode(',', $checkDedupe['error_message']['params'][0]);
@@ -1159,7 +1159,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser {
           if ($customFields[$customFieldID]['data_type'] == 'Date') {
             if (array_key_exists($customFieldID, $addressCustomFields) && CRM_Utils_Date::convertToDefaultDate($params[$key][0], $dateType, $key)) {
               $value = $params[$key][0][$key];
-            } 
+            }
             else if (CRM_Utils_Date::convertToDefaultDate($params, $dateType, $key)) {
               $value = $params[$key];
             }
@@ -1647,7 +1647,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser {
     //get the prefix id etc if exists
     CRM_Contact_BAO_Contact::resolveDefaults($formatted, TRUE);
 
-    require_once 'api/v3/DeprecatedUtils.php';
+    require_once 'CRM/Utils/DeprecatedUtils.php';
     //@todo direct call to API function not supported.
     // setting required check to false, CRM-2839
     // plus we do our own required check in import
@@ -1862,7 +1862,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser {
     $dateType = $session->get("dateTypes");
     foreach ($params as $key => $val) {
       $customFieldID = CRM_Core_BAO_CustomField::getKeyID($key);
-      if ($customFieldID && 
+      if ($customFieldID &&
           !array_key_exists($customFieldID, $addressCustomFields)) {
         //we should not update Date to null, CRM-4062
         if ($val && ($customFields[$customFieldID]['data_type'] == 'Date')) {
@@ -1916,7 +1916,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser {
           }
 
           if (!$break) {
-            require_once 'api/v3/DeprecatedUtils.php';
+            require_once 'CRM/Utils/DeprecatedUtils.php';
             _civicrm_api3_deprecated_add_formatted_param($value, $formatted);
           }
         }
@@ -1939,13 +1939,13 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser {
       if ($key == 'id' && isset($field)) {
         $formatted[$key] = $field;
       }
-      require_once 'api/v3/DeprecatedUtils.php';
+      require_once 'CRM/Utils/DeprecatedUtils.php';
       _civicrm_api3_deprecated_add_formatted_param($formatValues, $formatted);
 
       //Handling Custom Data
       // note: Address custom fields will be handled separately inside _civicrm_api3_deprecated_add_formatted_param
-      if (($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) && 
-          array_key_exists($customFieldID, $customFields) && 
+      if (($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) &&
+          array_key_exists($customFieldID, $customFields) &&
           !array_key_exists($customFieldID, $addressCustomFields)) {
 
         $extends = CRM_Utils_Array::value('extends', $customFields[$customFieldID]);
@@ -1962,8 +1962,8 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser {
                         $params[$key]    = array( );
                         foreach ( $mulValues as $v1 ) {
                             foreach ( $customOption as $v2 ) {
-                                if ( ( strtolower( $v2['label'] ) == strtolower( trim( $v1 ) ) ) || 
-                                     ( strtolower( $v2['value'] ) == strtolower( trim( $v1 ) ) ) ) { 
+                                if ( ( strtolower( $v2['label'] ) == strtolower( trim( $v1 ) ) ) ||
+                                     ( strtolower( $v2['value'] ) == strtolower( trim( $v1 ) ) ) ) {
                                     if ( $htmlType == 'CheckBox' ) {
                                         $params[$key][$v2['value']] = $formatted[$key][$v2['value']] = 1;
                                     } else {
@@ -1975,7 +1975,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser {
                     }
                 break;
                 }
-                
+
         //@todo calling api functions directly is not supported
         _civicrm_api3_custom_format_params($params, $formatted, $extends);
       }

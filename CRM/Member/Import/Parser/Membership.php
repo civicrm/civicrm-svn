@@ -57,7 +57,7 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser {
 
   /**
    * class constructor
-   */ 
+   */
   function __construct(&$mapperKeys, $mapperLocType = NULL, $mapperPhoneType = NULL) {
     parent::__construct();
     $this->_mapperKeys = &$mapperKeys;
@@ -362,7 +362,7 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser {
 
       $formatValues[$key] = $field;
     }
-    require_once 'api/v3/DeprecatedUtils.php';
+    require_once 'CRM/Utils/DeprecatedUtils.php';
     //TODO calling API function directly is unsupported.
     $formatError = _civicrm_api3_deprecated_membership_format_params($formatValues, $formatted, TRUE);
 
@@ -436,7 +436,7 @@ class CRM_Member_Import_Parser_Membership extends CRM_Member_Import_Parser {
       //retrieve contact id using contact dedupe rule
       $formatValues['contact_type'] = $this->_contactType;
       $formatValues['version'] = 3;
-      require_once 'api/v3/DeprecatedUtils.php';
+      require_once 'CRM/Utils/DeprecatedUtils.php';
       $error = _civicrm_api3_deprecated_check_contact_dedupe($formatValues);
 
       if (CRM_Core_Error::isAPIError($error, CRM_Core_ERROR::DUPLICATE_CONTACT)) {
