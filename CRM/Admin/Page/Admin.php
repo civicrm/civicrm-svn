@@ -93,19 +93,21 @@ class CRM_Admin_Page_Admin extends CRM_Core_Page {
 
     $this->_showHide = new CRM_Core_ShowHideBlocks();
     foreach ($groups as $group => $title) {
-      $this->_showHide->addShow("id_{$group}_show");
-      $this->_showHide->addHide("id_{$group}");
-      $v = CRM_Core_ShowHideBlocks::links($this, $group, '', '', FALSE);
+      $groupId = str_replace(' ', '_', $group);
+      
+      $this->_showHide->addShow("id_{$groupId}_show");
+      $this->_showHide->addHide("id_{$groupId}");
+      $v = CRM_Core_ShowHideBlocks::links($this, $groupId, '', '', FALSE);
       if (isset($values[$group])) {
-        $adminPanel[$group] = $values[$group];
-        $adminPanel[$group]['show'] = $v['show'];
-        $adminPanel[$group]['hide'] = $v['hide'];
-        $adminPanel[$group]['title'] = $title;
+        $adminPanel[$groupId] = $values[$group];
+        $adminPanel[$groupId]['show'] = $v['show'];
+        $adminPanel[$groupId]['hide'] = $v['hide'];
+        $adminPanel[$groupId]['title'] = $title;
       } else {
-        $adminPanel[$group] = array();
-        $adminPanel[$group]['show'] = '';
-        $adminPanel[$group]['hide'] = '';
-        $adminPanel[$group]['title'] = $title;
+        $adminPanel[$groupId] = array();
+        $adminPanel[$groupId]['show'] = '';
+        $adminPanel[$groupId]['hide'] = '';
+        $adminPanel[$groupId]['title'] = $title;
       }
     }
     $versionCheck = CRM_Utils_VersionCheck::singleton();
