@@ -33,7 +33,7 @@
  *
  */
 
-require_once 'api/v3/DeprecatedUtils.php';
+  require_once 'CRM/Utils/DeprecatedUtils.php';
 
 /**
  * class to parse membership csv files
@@ -388,7 +388,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser {
           $newParticipant = CRM_Event_BAO_Participant::create($formatted, $ids);
           if( CRM_Utils_Array::value('fee_level', $formatted)) {
             $otherParams = array(
-              'fee_label' => $formatted['fee_level'], 
+              'fee_label' => $formatted['fee_level'],
               'event_id' => $newParticipant->event_id
             );
             CRM_Price_BAO_LineItem::syncLineItems($newParticipant->id, 'civicrm_participant', $newParticipant->fee_amount, $otherParams);
