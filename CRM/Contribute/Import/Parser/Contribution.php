@@ -56,7 +56,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
 
   /**
    * class constructor
-   */ 
+   */
   function __construct(&$mapperKeys, $mapperSoftCredit = NULL, $mapperPhoneType = NULL) {
     parent::__construct();
     $this->_mapperKeys = &$mapperKeys;
@@ -338,7 +338,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
     if (CRM_Utils_Array::value('pledge_payment', $paramValues)) {
       $paramValues['onDuplicate'] = $onDuplicate;
     }
-    require_once 'api/v3/DeprecatedUtils.php';
+    require_once 'CRM/Utils/DeprecatedUtils.php';
     $formatError = _civicrm_api3_deprecated_formatted_param($paramValues, $formatted, TRUE);
 
     if ($formatError) {
@@ -362,7 +362,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
     else {
       //fix for CRM-2219 - Update Contribution
       // onDuplicate == CRM_Contribute_Import_Parser::DUPLICATE_UPDATE
-      if (CRM_Utils_Array::value('invoice_id',$paramValues) || 
+      if (CRM_Utils_Array::value('invoice_id',$paramValues) ||
           CRM_Utils_Array::value('trxn_id', $paramValues) || $paramValues['contribution_id']) {
         $dupeIds = array(
           'id' => CRM_Utils_Array::value('contribution_id', $paramValues),
@@ -453,7 +453,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
 
       $paramValues['version'] = 3;
       //retrieve contact id using contact dedupe rule
-      require_once 'api/v3/DeprecatedUtils.php';
+      require_once 'CRM/Utils/DeprecatedUtils.php';
       $error = _civicrm_api3_deprecated_check_contact_dedupe($paramValues);
 
       if (CRM_Core_Error::isAPIError($error, CRM_Core_ERROR::DUPLICATE_CONTACT)) {
