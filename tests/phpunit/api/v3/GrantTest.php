@@ -70,6 +70,7 @@ class api_v3_GrantTest extends CiviUnitTestCase {
     $baoString  = 'CRM_Grant_BAO_Grant';
     $fields     = civicrm_api($entityName, 'getfields', array(
         'version' => 3,
+        'action' => 'create',
       )
     );
 
