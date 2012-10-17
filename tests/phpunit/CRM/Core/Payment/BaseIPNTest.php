@@ -128,8 +128,8 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase {
     $this->_setUpRecurringContribution();
     $this->IPN->loadObjects($this->input, $this->ids, $this->objects, FALSE, $this->_processorId);
     $this->assertFalse(empty($this->objects['membership']), 'in line ' . __LINE__);
-    $this->assertArrayHasKey(0, $this->objects['membership'], 'in line ' . __LINE__);
-    $this->assertTrue(is_a($this->objects['membership'][0], 'CRM_Member_BAO_Membership'));
+    $this->assertArrayHasKey($this->_membershipTypeID, $this->objects['membership'], 'in line ' . __LINE__);
+    $this->assertTrue(is_a($this->objects['membership'][$this->_membershipTypeID], 'CRM_Member_BAO_Membership'));
     $this->assertTrue(is_a($this->objects['contributionType'], 'CRM_Contribute_BAO_ContributionType'));
     $this->assertFalse(empty($this->objects['contributionRecur']), __LINE__);
     $this->assertFalse(empty($this->objects['paymentProcessor']), __LINE__);
@@ -147,8 +147,8 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase {
     $contribution->find(true);
     $contribution->loadRelatedObjects($this->input, $this->ids,  FALSE, true);
     $this->assertFalse(empty($contribution->_relatedObjects['membership']), 'in line ' . __LINE__);
-    $this->assertArrayHasKey(0, $contribution->_relatedObjects['membership'], 'in line ' . __LINE__);
-    $this->assertTrue(is_a($contribution->_relatedObjects['membership'][0], 'CRM_Member_BAO_Membership'));
+    $this->assertArrayHasKey($this->_membershipTypeID, $contribution->_relatedObjects['membership'], 'in line ' . __LINE__);
+    $this->assertTrue(is_a($contribution->_relatedObjects['membership'][$this->_membershipTypeID], 'CRM_Member_BAO_Membership'));
     $this->assertTrue(is_a($contribution->_relatedObjects['contributionType'], 'CRM_Contribute_BAO_ContributionType'));
     $this->assertFalse(empty($contribution->_relatedObjects['contributionRecur']), __LINE__);
     $this->assertFalse(empty($contribution->_relatedObjects['paymentProcessor']), __LINE__);
