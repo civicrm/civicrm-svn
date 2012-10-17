@@ -422,7 +422,7 @@ function _civicrm_api3_dao_set_filter(&$dao, $params, $unique = TRUE, $entity) {
   $entity = substr($dao->__table, 8);
 
   $allfields = _civicrm_api3_build_fields_array($dao, $unique);
-
+  
   $fields = array_intersect(array_keys($allfields), array_keys($params));
   if (isset($params[$entity . "_id"])) {
     //if entity_id is set then treat it as ID (will be overridden by id if set)
@@ -453,7 +453,7 @@ function _civicrm_api3_dao_set_filter(&$dao, $params, $unique = TRUE, $entity) {
   if (!$fields) {
     return;
   }
-
+  
   foreach ($fields as $field) {
     if (is_array($params[$field])) {
       //get the actual fieldname from db
@@ -1425,29 +1425,33 @@ function _civicrm_api3_validate_integer(&$params, &$fieldname, &$fieldInfo) {
  */
 function _civicrm_api3_validate_string(&$params, &$fieldname, &$fieldInfo) {
   // If fieldname exists in params
-  $value = (string) CRM_Utils_Array::value($fieldname, $params,'');
-  if ($value ) {
+  if ($value = CRM_Utils_Array::value($fieldname, $params)) {
     if ($fieldname == 'currency') {
       if (!CRM_Utils_Rule::currencyCode($value)) {
         throw new Exception("Currency not a valid code: $value");
       }
     }
-    if (!empty ($fieldInfo['options'])) {
-      // Validate & swap out any pseudoconstants / options
-      $options = $fieldInfo['options'];
-
+    if (CRM_Utils_Array::value('pseudoconstant', $fieldInfo) && !CRM_Utils_Array::value('FKClassName', $fieldInfo)) {
+      // Validate & swap out any pseudoconstants
+      $constant = $fieldInfo['options'];
+      if (!$constant && ($enum = CRM_Utils_Array::value('enumValues', $fieldInfo))) {
+        $constant = explode(',', $enum);
+      }
       // If value passed is not a key, it may be a label
       // Try to lookup key from label - if it can't be found throw error
-      if (!isset($options[$value]) ) {
-        if (!(in_array($value, $options))) {
+      if (!isset($constant[$value])) {
+        if (!($key = array_search($value, $constant))) {
           throw new Exception("$fieldname `$value` is not valid.");
+        }
+        else {
+          $value = $key;
         }
       }
     }
     // Check our field length
     elseif (is_string($value) && !empty($fieldInfo['maxlength']) && strlen($value) > $fieldInfo['maxlength']) {
       throw new API_Exception("Value for $fieldname is " . strlen($value) . " characters  - This field has a maxlength of {$fieldInfo['maxlength']} characters.",
-        2101, array('field' => $fieldname)
+        2100, array('field' => $fieldname)
       );
     }
   }
