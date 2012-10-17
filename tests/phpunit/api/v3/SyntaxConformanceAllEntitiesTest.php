@@ -64,7 +64,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
   }
 
   public static function toBeSkipped_get($sequential = FALSE) {
-    $entitiesWithoutGet = array('Mailing', 'MailingEventSubscribe', 'MailingEventConfirm', 'MailingEventResubscribe', 'MailingEventUnsubscribe', 'MailingGroup', 'Location');
+    $entitiesWithoutGet = array('Setting', 'Mailing', 'MailingEventSubscribe', 'MailingEventConfirm', 'MailingEventResubscribe', 'MailingEventUnsubscribe', 'MailingGroup', 'Location');
     if ($sequential === TRUE) {
       return $entitiesWithoutGet;
     }
@@ -159,6 +159,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
       'PriceFieldValue',
       'PledgePayment',
       'ContributionPage',
+      'Setting',
     );
     if ($sequential === TRUE) {
       return $entitiesWithout;
