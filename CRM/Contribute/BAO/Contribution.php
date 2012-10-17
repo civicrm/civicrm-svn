@@ -1997,6 +1997,9 @@ WHERE  contribution_id = %1 ";
       $dao = CRM_Core_DAO::executeQuery($query, $params );
       while ($dao->fetch()) {
         if ($dao->membership_id) {
+          if (!is_array($ids['membership'])) {
+            $ids['membership'] = array();
+          }
           $ids['membership'][] = $dao->membership_id;
         }
       }
