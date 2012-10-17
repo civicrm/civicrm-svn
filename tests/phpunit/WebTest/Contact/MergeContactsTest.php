@@ -165,7 +165,7 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('_qf_Merge_cancel-bottom');
 
     // Move the activities, groups, etc to the main contact and merge using Merge and Goto Next Pair
-    $this->check('move_individual_prefix');
+    $this->check('move_prefix_id');
     $this->check('move_location_email_2');
     $this->check('move_rel_table_activities');
     $this->check('move_rel_table_groups');
