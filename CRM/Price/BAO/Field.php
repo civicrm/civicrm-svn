@@ -122,8 +122,11 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
 
     for ($index = 1; $index <= $maxIndex; $index++) {
 
-      if (CRM_Utils_Array::value($index , CRM_Utils_Array::value('option_amount', $params)) && (CRM_Utils_Array::value($index, CRM_Utils_Array::value('option_label', $params)) || CRM_Utils_Array::value('is_quick_config', $params)) &&
-        !CRM_Utils_System::isNull($params['option_amount'][$index])
+      if (array_key_exists('option_amount', $params) && 
+          array_key_exists($index, $params['option_amount']) && 
+          (CRM_Utils_Array::value($index, CRM_Utils_Array::value('option_label', $params)) || 
+           CRM_Utils_Array::value('is_quick_config', $params)) &&
+          !CRM_Utils_System::isNull($params['option_amount'][$index])
           ) {
         $options = array(
           'price_field_id' => $priceField->id,
