@@ -1992,9 +1992,12 @@ SELECT source_contact_id
 SELECT membership_id
 FROM   civicrm_membership_payment
 WHERE  contribution_id = %1 ";
-      $dao = CRM_Core_DAO::executeQuery($query,
-        array(1 => array($this->id, 'Integer'),
-        ));
+      $params = array(1 => array($this->id, 'Integer'));
+      if (is_numeric($ids['membership'])) {
+          $query = $query .  " AND membership_id != %2";
+          $params[2] = array($ids['membership'], 'Integer');
+      }
+      $dao = CRM_Core_DAO::executeQuery($query, $params );
       
       $ids['membership'] = array($ids['membership']);
       while ($dao->fetch()) {
