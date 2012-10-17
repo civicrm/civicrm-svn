@@ -249,6 +249,25 @@ class CRM_Contribute_Form_Search extends CRM_Core_Form {
       )
     );
 
+    $this->_group = CRM_Core_PseudoConstant::group();
+
+    // multiselect for groups
+    if ($this->_group) {
+      $this->add('select', 'group', ts('Groups'), $this->_group, FALSE,
+        array('id' => 'group', 'multiple' => 'multiple', 'title' => ts('- select -'))
+      );
+    }
+
+    // multiselect for tags
+    require_once 'CRM/Core/BAO/Tag.php';
+    $contactTags = CRM_Core_BAO_Tag::getTags();
+
+    if ($contactTags) {
+      $this->add('select', 'contact_tags', ts('Tags'), $contactTags, FALSE,
+        array('id' => 'contact_tags', 'multiple' => 'multiple', 'title' => ts('- select -'))
+      );
+    }
+
     CRM_Contribute_BAO_Query::buildSearchForm($this);
 
     /*
@@ -354,6 +373,37 @@ class CRM_Contribute_Form_Search extends CRM_Core_Form {
       if (isset($this->_formValues[$f])) {
         $this->_formValues[$f] = CRM_Utils_Rule::cleanMoney($this->_formValues[$f]);
       }
+    }
+    
+    $config = CRM_Core_Config::singleton();
+    $tags = CRM_Utils_Array::value('contact_tags', $this->_formValues);
+    if ($tags && !is_array($tags)) {
+      unset($this->_formValues['contact_tags']);
+      $this->_formValues['contact_tags'][$tags] = 1;
+    }
+    
+    if ($tags && is_array($tags)) {
+      unset($this->_formValues['contact_tags']);
+      foreach($tags as $notImportant => $tagID) {
+          $this->_formValues['contact_tags'][$tagID] = 1;
+      }
+    }
+    
+    
+    if (!$config->groupTree) {
+      $group = CRM_Utils_Array::value('group', $this->_formValues);
+      if ($group && !is_array($group)) {
+        unset($this->_formValues['group']);
+        $this->_formValues['group'][$group] = 1;
+      }
+      
+      if ($group && is_array($group)) {
+        unset($this->_formValues['group']);
+        foreach($group as $notImportant => $groupID) {
+            $this->_formValues['group'][$groupID] = 1;
+        }
+      }
+      
     }
 
     CRM_Core_BAO_CustomValue::fixFieldValueOfTypeMemo($this->_formValues);

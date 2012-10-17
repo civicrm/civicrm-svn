@@ -2654,7 +2654,7 @@ WHERE  id IN ( $groupIDs )
         $this->_useDistinct = TRUE;
       }
       foreach ($value as $id => $dontCare) {
-        $names[] = $tagNames[$id];
+        $names[] = CRM_Utils_Array::value($id, $tagNames);
       }
       $names = implode(' ' . ts('or') . ' ', $names);
       $value = implode(',', array_keys($value));

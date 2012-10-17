@@ -34,13 +34,53 @@
        </div><!-- /.crm-accordion-header -->
       <div class="crm-accordion-body">
         {strip}
-            <table class="form-layout">
+          <table class="form-layout">
             <tr>
-                <td class="font-size12pt" colspan="2">
-                    {$form.sort_name.label}&nbsp;&nbsp;{$form.sort_name.html|crmAddClass:'twenty'}&nbsp;&nbsp;&nbsp;{$form.buttons.html}
-                </td>
+              <td class="font-size12pt" colspan="2">                    {$form.sort_name.label}&nbsp;&nbsp;{$form.sort_name.html|crmAddClass:'twenty'}&nbsp;&nbsp;&nbsp;{$form.buttons.html}
+              </td>
             </tr>
-            {include file="CRM/Contribute/Form/Search/Common.tpl"}
+            <tr>
+              {if $form.contact_tags}
+                <td><label>{ts}Select Tag(s){/ts}</label>
+                    {$form.contact_tags.html}
+                    {literal}
+                    <script type="text/javascript">
+
+                    cj("select#contact_tags").crmasmSelect({
+                        addItemTarget: 'bottom',
+                        animate: false,
+                        highlight: true,
+                        sortable: true,
+                        respectParents: true
+                    });
+                    </script>
+                    {/literal}   
+                </td>
+              {else}
+                <td>&nbsp;</td>
+              {/if}
+
+              {if $form.group}
+                <td><label>{ts}Group(s){/ts}</label>
+                    {$form.group.html}
+                    {literal}
+                    <script type="text/javascript">
+                    cj("select#group").crmasmSelect({
+                        addItemTarget: 'bottom',
+                        animate: false,
+                        highlight: true,
+                        sortable: true,
+                        respectParents: true
+                    });
+
+                    </script>
+                    {/literal}
+                </td>
+              {else}
+                <td>&nbsp;</td>
+              {/if}
+            </tr>
+{include file="CRM/Contribute/Form/Search/Common.tpl"}
             <tr>
                <td colspan="2">{$form.buttons.html}</td>
             </tr>
