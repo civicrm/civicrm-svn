@@ -32,9 +32,6 @@
                 <div id="attachStatusMesg" class="status hiddenElement"></div>
                 <div id="attachFileRecord_{$attVal.fileID}">
                   <strong><a href="{$attVal.url}">{$attVal.cleanName}</a></strong>
-                  {if $attVal.deleteURLArgs}
-                   &nbsp;&nbsp;<a href="javascript:showDelete('{$attVal.cleanName}', '{$attVal.deleteURLArgs}', {$attVal.fileID})"><img src="{$config->resourceBase}/i/delete.png" title="{ts}Delete this attachment{/ts}"></a>
-                  {/if}
                   <br/>
                 </div>
           {/foreach}
@@ -86,7 +83,7 @@
                 <div id="attachFileRecord_{$attVal.fileID}">
                   <strong><a href="{$attVal.url}">{$attVal.cleanName}</a></strong>
                   {if $attVal.deleteURLArgs}
-                   &nbsp;&nbsp;<a href="javascript:showDelete('{$attVal.cleanName}', '{$attVal.deleteURLArgs}', {$attVal.fileID})"><img src="{$config->resourceBase}/i/delete.png" title="{ts}Delete this attachment{/ts}"></a>
+                   <a href="javascript:showDelete('{$attVal.cleanName}', '{$attVal.deleteURLArgs}', {$attVal.fileID})" title="{ts}Delete this attachment{/ts}"><span class="icon red-icon delete-icon" style="margin:0px 0px -5px 20px" title="{ts}Delete this attachment{/ts}"></span></a>
                   {/if}
                   <br/>
                 </div>
@@ -96,7 +93,7 @@
         <tr>
             <td class="label">&nbsp;</td>
             <td>{$form.is_delete_attachment.html}&nbsp;{$form.is_delete_attachment.label}<br />
-                <span class="description">{ts}Click the red X next to a file name to delete a specific attachment. If you want to delete ALL attachments, check the box above and click Save.{/ts}</span>
+                <span class="description">{ts}Click the red trash-can next to a file name to delete a specific attachment. If you want to delete ALL attachments, check the box above and click Save.{/ts}</span>
             </td>
         </tr>
     {/if}
