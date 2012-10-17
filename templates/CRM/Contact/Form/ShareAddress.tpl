@@ -56,14 +56,14 @@
       if ( showSelect && cj( '#shared-address-display-' + blockNo ).length == 0 ) {
         cj( '#shared-address-' + blockNo ).show( );
       }
-      cj( 'table#address_' + blockNo ).hide( );
+      cj( 'table#address_table_' + blockNo ).hide( );
       cj( '#shared-address-display-' + blockNo ).show( );
       cj( '#shared-address-display-name-' + blockNo ).show( );
       cj( '#shared-address-display-cancel-' + blockNo ).hide( );
       cj( '.crm-address-custom-set-block-' + blockNo).hide( );
     } else {
       cj( '#shared-address-' + blockNo ).hide( );
-      cj( 'table#address_' + blockNo ).show( );
+      cj( 'table#address_table_' + blockNo ).show( );
       cj( '#shared-address-display-' + blockNo ).hide( );
       cj( '#shared-address-display-name-' + blockNo ).hide( );
       cj( '#shared-address-display-cancel-' + blockNo ).hide( );
