@@ -1058,6 +1058,21 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
         $commonClauses[] = "civicrm_activity.activity_type_id = $activityTypeID";
       }
     }
+    
+    // exclude by activity type clause
+    if (!empty($input['activity_type_exclude_id'])) {
+      if (is_array($input['activity_type_exclude_id'])) {
+        foreach ($input['activity_type_exclude_id'] as $idx => $value) {
+          $input['activity_type_exclude_id'][$idx] = CRM_Utils_Type::escape($value, 'Positive');
+        }
+        $commonClauses[] = "civicrm_activity.activity_type_id NOT IN ( " . implode(",", $input['activity_type_exclude_id']) . " ) ";
+      }
+      else {
+        $activityTypeID = CRM_Utils_Type::escape($input['activity_type_exclude_id'], 'Positive');
+        $commonClauses[] = "civicrm_activity.activity_type_id != $activityTypeID";
+      }
+    }
+    
     $commonClause = implode(' AND ', $commonClauses);
 
     $includeCaseActivities = FALSE;

@@ -1,3 +1,29 @@
+{*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 4.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*}
+
 <div class="crm-activity-selector-{$context}">
 <div class="crm-accordion-wrapper crm-search_filters-accordion crm-accordion-closed">
  <div class="crm-accordion-header">
@@ -9,11 +35,11 @@
   <table class="no-border form-layout-compressed" id="searchOptions">
     <tr>
         <td class="crm-contact-form-block-activity_type_filter_id">
-            {$form.activity_type_filter_id.html}
+          {$form.activity_type_filter_id.html}
         </td>
-        <!--td style="vertical-align: bottom;">
-    <span class="crm-button"><input class="form-submit default" name="_qf_Basic_refresh" value="Search" type="button" onclick="buildContactActivities( true )"; /></span>
-  </td-->
+        <td class="crm-contact-form-block-activity_type_exclude_filter_id">
+          {$form.activity_type_exclude_filter_id.html}
+        </td>
     </tr>
   </table>
  </div><!-- /.crm-accordion-body -->
@@ -45,7 +71,10 @@ cj( function ( ) {
    var context = {/literal}"{$context}"{literal};
    buildContactActivities{/literal}{$context}{literal}( false );
    cj('.crm-activity-selector-'+ context +' #activity_type_filter_id').change( function( ) {
-       buildContactActivities{/literal}{$context}{literal}( true );
+      buildContactActivities{/literal}{$context}{literal}( true );
+   });
+   cj('.crm-activity-selector-'+ context +' #activity_type_exclude_filter_id').change( function( ) {
+      buildContactActivities{/literal}{$context}{literal}( true );
    });
 });
 
@@ -108,7 +137,8 @@ function buildContactActivities{/literal}{$context}{literal}( filterSearch ) {
             );
             if ( filterSearch ) {
                 aoData.push(
-                    {name:'activity_type_id', value: cj('.crm-activity-selector-'+ context +' select#activity_type_filter_id').val()}
+                    {name:'activity_type_id', value: cj('.crm-activity-selector-'+ context +' select#activity_type_filter_id').val()},
+                    {name:'activity_type_exclude_id', value: cj('.crm-activity-selector-'+ context +' select#activity_type_exclude_filter_id').val()}
                 );
             }
             cj.ajax( {

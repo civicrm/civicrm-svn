@@ -44,6 +44,7 @@ class CRM_Activity_Form_ActivityFilter extends CRM_Core_Form {
     asort($activityOptions);
 
     $this->add('select', 'activity_type_filter_id', ts('Activity Type'), array('' => ts('- all activity type(s) -')) + $activityOptions);
+    $this->add('select', 'activity_type_exclude_filter_id', ts('Activity Type Exclude'), array('' => ts('- activity type exclusion -')) + $activityOptions);
     $this->assign('suppressForm', TRUE);
   }
 }
