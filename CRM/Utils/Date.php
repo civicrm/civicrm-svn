@@ -1376,8 +1376,7 @@ class CRM_Utils_Date {
    *
    *  @return string $mysqlDate date format that is excepted by mysql
    */
-  static
-    function processDate($date, $time = NULL, $returnNullString = FALSE, $format = 'YmdHis', $inputCustomFormat = NULL) {
+  static function processDate($date, $time = NULL, $returnNullString = FALSE, $format = 'YmdHis', $inputCustomFormat = NULL) {
     $mysqlDate = NULL;
 
     if ($returnNullString) {
@@ -1405,8 +1404,7 @@ class CRM_Utils_Date {
    *
    *  @return array $date and time
    */
-  static
-    function setDateDefaults($mysqlDate = NULL, $formatType = NULL, $format = NULL, $timeFormat = NULL) {
+  static function setDateDefaults($mysqlDate = NULL, $formatType = NULL, $format = NULL, $timeFormat = NULL) {
     // if date is not passed assume it as today
     if (!$mysqlDate) {
       $mysqlDate = date('Y-m-d G:i:s');
@@ -1473,8 +1471,7 @@ class CRM_Utils_Date {
    *
    * @return string $format
    */
-  static
-    function getDateFormat($formatType = NULL) {
+  static function getDateFormat($formatType = NULL) {
     $format = NULL;
     if ($formatType) {
       $format = CRM_Core_Dao::getFieldValue('CRM_Core_DAO_PreferencesDate',
