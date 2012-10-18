@@ -31,7 +31,7 @@ class plgUserCivicrm extends JPlugin
    * @since   1.6
    * @throws  Exception on error.
    */
-  function onUserAfterSave( $user, $isnew, $success, $msg ) {
+  function onUserAfterSave($user, $isnew, $success, $msg) {
 
     $app = JFactory::getApplication();
     self::civicrmResetNavigation();
@@ -47,11 +47,9 @@ class plgUserCivicrm extends JPlugin
    * @since   1.6
    * @throws  Exception on error.
    */
-  function onUserAfterSaveGroup( $var ) {
-
+  function onUserAfterSaveGroup($var) {
     $app = JFactory::getApplication();
     self::civicrmResetNavigation();
-
   }
 
   /* delete uf_match record after user is deleted
@@ -65,33 +63,46 @@ class plgUserCivicrm extends JPlugin
    * @since   1.6
    * @throws  Exception on error.
    */
-  function onUserAfterDelete( $user, $succes, $msg ) {
-
+  function onUserAfterDelete($user, $succes, $msg) {
     $app = JFactory::getApplication();
 
     // Instantiate CiviCRM
     require_once JPATH_ROOT.'/administrator/components/com_civicrm/civicrm.settings.php';
     require_once 'CRM/Core/Config.php';
-    $config = CRM_Core_Config::singleton( );
+    $config = CRM_Core_Config::singleton();
 
     // Reset Navigation
     require_once 'CRM/Core/BAO/UFMatch.php';
-    CRM_Core_BAO_UFMatch::deleteUser( $user['id'] );
+    CRM_Core_BAO_UFMatch::deleteUser($user['id']);
   }
 
   // Reset CiviCRM user/contact navigation cache
   public function civicrmResetNavigation() {
-
     // Instantiate CiviCRM
-    if ( !class_exists('CRM_Core_Config') ) {
+    if (!class_exists('CRM_Core_Config')) {
       require_once JPATH_ROOT.'/administrator/components/com_civicrm/civicrm.settings.php';
       require_once 'CRM/Core/Config.php';
     }
 
-    $config = CRM_Core_Config::singleton( );
+    $config = CRM_Core_Config::singleton();
 
-    // Reset Navigation
-    require_once 'CRM/Core/BAO/Navigation.php';
-    CRM_Core_BAO_Navigation::resetNavigation( );
+    $cId = null;
+
+    //retrieve civicrm contact ID if joomla user ID is provided
+    if ( $jId ) {
+      $params = array(
+        'version' => 3,
+        'uf_id'   => $jId,
+        'return'  => 'contact_id',
+      );
+      $cId = civicrm_api('uf_match', 'getvalue', $params);
+
+      if ($cId) {
+        // Reset Navigation
+        require_once 'CRM/Core/BAO/Navigation.php';
+        CRM_Core_BAO_Navigation::resetNavigation($cId);
+      }
+    }
   }
+
 }
