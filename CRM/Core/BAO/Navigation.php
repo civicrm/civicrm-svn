@@ -708,27 +708,27 @@ ORDER BY parent_id, weight";
    */
   static function processMove($nodeID, $referenceID, $position) {
     if ($referenceID) {
-      $referenInfo = self::getNavigationInfo($referenceID);
-      if (empty($referenInfo['parent_id'])) {
-        $newParentID = $referenceID;
-        $newWeight = $position;
-      }
+      $newParentID = $referenceID;
+      $parentClause = "parent_id = {$referenceID} ";
     }
     else {
       $newParentID = 'NULL';
-      // since we use weights like 10, 20, ... for parents
-      // we cannot use
-      // $newWeight =  $position + 1;
-      // so based on position let's get the weight of menu
-      // with position - 1 and calculate new weight
-      $position = $position - 1;
-
-      $sql    = "SELECT weight from civicrm_navigation WHERE parent_id IS NULL ORDER BY weight LIMIT %1, 1";
-      $params = array(1 => array($position, 'Positive'));
-      $dao    = CRM_Core_DAO::executeQuery($sql, $params);
-      $dao->fetch();
-      $newWeight = $dao->weight + 1;
+      $parentClause = 'parent_id IS NULL';
     }
+
+    // since we use weights like 10, 20, ... for parents
+    // we cannot use
+    // $newWeight =  $position + 1;
+    // so based on position let's get the weight of menu
+    // with position - 1 and calculate new weight
+    $position    = $position - 1;
+
+    $sql    = "SELECT weight from civicrm_navigation WHERE {$parentClause} ORDER BY weight LIMIT %1, 1";
+    $params = array(1 => array($position, 'Positive'));
+    $dao    = CRM_Core_DAO::executeQuery($sql, $params);
+    $dao->fetch();
+
+    $newWeight = $dao->weight + 1;
 
     // get the details of current node
     $nodeInfo        = self::getNavigationInfo($nodeID);
@@ -743,14 +743,14 @@ ORDER BY parent_id, weight";
     if ($oldParentID == $newParentID) {
       if ($newWeight > $oldWeight) {
         if (!$referenceID) {
-          $newWeight = $newWeight - 1;
+          $newWeight--;
         }
         $sql[] = "UPDATE civicrm_navigation SET weight = weight - 1
                     WHERE {$oldParentClause}  AND weight BETWEEN {$oldWeight} + 1 AND {$newWeight}";
       }
       if ($newWeight < $oldWeight) {
         $sql[] = "UPDATE civicrm_navigation SET weight = weight + 1
-                            WHERE {$oldParentClause} AND weight BETWEEN {$newWeight} AND {$oldWeight} - 1";
+                    WHERE {$oldParentClause} AND weight BETWEEN {$newWeight} AND {$oldWeight} - 1";
       }
     }
 
