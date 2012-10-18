@@ -32,42 +32,37 @@
  * $Id$
  *
  */
-
-class CRM_Utils_Cache_NoCache implements CRM_Utils_Cache_Interface {
+interface CRM_Utils_Cache_Interface {
 
   /**
-   * We only need one instance of this object. So we use the singleton
-   * pattern and cache the instance in this variable
+   * Set the value in the cache
    *
-   * @var object
-   * @static
+   * @param string $key
+   * @param mixed $value
+   * @return void
    */
-  static private $_singleton = NULL;
+  function set($key, &$value);
 
   /**
-   * Constructor
+   * Get a value from the cache
    *
-   * @param array   $config  an array of configuration params
+   * @param string $key
+   * @return mixed NULL if $key has not been previously set
+   */
+  function get($key);
+
+  /**
+   * Delete a value from the cache
+   *
+   * @param string $key
+   * @return void
+   */
+  function delete($key);
+
+  /**
+   * Delete all values from the cache
    *
    * @return void
    */
-  function __construct($config) {
-  }
-
-  function set($key, &$value) {
-    return FALSE;
-  }
-
-  function get($key) {
-    return NULL;
-  }
-
-  function delete($key) {
-    return FALSE;
-  }
-
-  function flush() {
-    return FALSE;
-  }
+  function flush();
 }
-

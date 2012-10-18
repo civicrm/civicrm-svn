@@ -1,6 +1,6 @@
 <?php
 
-class CRM_Utils_Cache_SerializeCache {
+class CRM_Utils_Cache_SerializeCache implements CRM_Utils_Cache_Interface {
 
   /**
    * The cache storage container, an array by default, stored in a file under templates
@@ -14,7 +14,7 @@ class CRM_Utils_Cache_SerializeCache {
    *
    * @return void
    */
-  function __construct(&$config) {
+  function __construct($config) {
     $this->_cache = array();
   }
 
