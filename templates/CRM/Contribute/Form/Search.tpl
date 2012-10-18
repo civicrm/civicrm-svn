@@ -41,7 +41,7 @@
             </tr>
             <tr>
               {if $form.contact_tags}
-                <td><label>{ts}Select Tag(s){/ts}</label>
+                <td><label>{ts}Contributor Tag(s){/ts}</label>
                     {$form.contact_tags.html}
                     {literal}
                     <script type="text/javascript">
@@ -61,7 +61,7 @@
               {/if}
 
               {if $form.group}
-                <td><label>{ts}Group(s){/ts}</label>
+                <td><label>{ts}Contributor Group(s){/ts}</label>
                     {$form.group.html}
                     {literal}
                     <script type="text/javascript">
