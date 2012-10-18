@@ -25,62 +25,64 @@
 *}
 {* this template is used for adding/editing tags  *}
 <style>
-.hit {ldelim}padding-left:10px;{rdelim}
-.tree li {ldelim}padding-left:10px;{rdelim}
-#Tag .tree .collapsable .hit {ldelim}background:url('{$config->resourceBase}i/menu-expanded.png') no-repeat left 8px;padding-left: 9px;cursor:pointer{rdelim}
-#Tag .tree .expandable .hit {ldelim}background:url('{$config->resourceBase}i/menu-collapsed.png') no-repeat left 6px;padding-left: 9px;cursor:pointer{rdelim}
-#Tag #tagtree .highlighted {ldelim}background-color:lightgrey;{rdelim}
+  .hit {ldelim}padding-left:10px;{rdelim}
+  .tree li {ldelim}padding-left:10px;{rdelim}
+  #Tag .tree .collapsable .hit {ldelim}background:url('{$config->resourceBase}i/menu-expanded.png') no-repeat left 8px;padding-left: 9px;cursor:pointer{rdelim}
+  #Tag .tree .expandable .hit {ldelim}background:url('{$config->resourceBase}i/menu-collapsed.png') no-repeat left 6px;padding-left: 9px;cursor:pointer{rdelim}
+  #Tag #tagtree .highlighted {ldelim}background-color:lightgrey;{rdelim}
 </style>
 <script type="text/javascript">
-(function(){ldelim}
-  var entityID={$entityID};
-  var entityTable='{$entityTable}';
-  {literal}
-  cj(document).ready(function(){initTagTree()});
+  (function(){ldelim}
+    var entityID={$entityID};
+    var entityTable='{$entityTable}';
+    {literal}
+    cj(function(){initTagTree()});
 
-  function initTagTree() {
+    function initTagTree() {
       //unobsctructive elements are there to provide the function to those not having javascript, no need for the others
       cj(".unobstructive").hide();
 
       cj("#tagtree ul input:checked").each (function(){
-    cj(this).parents("li").children(".jstree-icon").addClass('highlighted');
+        cj(this).parents("li").children(".jstree-icon").addClass('highlighted');
       });
 
       cj("#tagtree input").change(function(){
-    tagid = this.id.replace("check_", "");
-    //get current tags from Summary and convert to array
-    var tagLabels = cj.trim( cj("#tags").text( ) );
-    if ( tagLabels ) {
-        var tagsArray = tagLabels.split(',');
-    } else{
-        var tagsArray = new Array();
-    }
+        tagid = this.id.replace("check_", "");
+        //get current tags from Summary and convert to array
+        var tagLabels = cj.trim( cj("#tags").text( ) );
+        if ( tagLabels ) {
+          var tagsArray = tagLabels.split(',');
+        }
+        else{
+          var tagsArray = new Array();
+        }
 
-    //get current tag label
-    var currentTagLabel = cj("#tagLabel_" + tagid ).text( );
-    if (this.checked) {
-        cj().crmAPI ('entity_tag','create',{entity_table:entityTable,entity_id:entityID,tag_id:tagid});
-        // add check to tab label array
-        tagsArray.push( currentTagLabel );
-    } else {
-        cj().crmAPI ('entity_tag','delete',{entity_table:entityTable,entity_id:entityID,tag_id:tagid});
-        // build array of tag labels
-        tagsArray = cj.map(tagsArray, function (a) {
-       if ( cj.trim( a ) != currentTagLabel ) {
-           return cj.trim( a );
-       }
-         });
-    }
+        //get current tag label
+        var currentTagLabel = cj("#tagLabel_" + tagid ).text( );
+        if (this.checked) {
+          cj().crmAPI ('entity_tag','create',{entity_table:entityTable,entity_id:entityID,tag_id:tagid});
+          // add check to tab label array
+          tagsArray.push( currentTagLabel );
+        }
+        else {
+          cj().crmAPI ('entity_tag','delete',{entity_table:entityTable,entity_id:entityID,tag_id:tagid});
+          // build array of tag labels
+          tagsArray = cj.map(tagsArray, function (a) {
+            if ( cj.trim( a ) != currentTagLabel ) {
+              return cj.trim( a );
+            }
+          });
+        }
 
-    //showing count of tags in summary tab
-    var existingTagsInTagset = cj('.token-input-delete-token-facebook').length;
-    var tagCount = cj("#tagtree input:checkbox:checked").length + existingTagsInTagset;
-    cj( '.ui-tabs-nav #tab_tag a' ).html( 'Tags <em>' + tagCount + '</em>');
+        //showing count of tags in summary tab
+        var existingTagsInTagset = cj('.token-input-delete-token-facebook').length;
+        var tagCount = cj("#tagtree input:checkbox:checked").length + existingTagsInTagset;
+        cj( '.ui-tabs-nav #tab_tag a' ).html( 'Tags <em>' + tagCount + '</em>');
 
-    //update summary tab
-    tagLabels = tagsArray.join(', ');
-    cj("#tags").html( tagLabels );
-    ( tagLabels ) ? cj("#tagLink,#tags").show( ) : cj("#tagLink,#tags").hide( );
+        //update summary tab
+        tagLabels = tagsArray.join(', ');
+        cj("#tags").html( tagLabels );
+        ( tagLabels ) ? cj("#tagLink,#tags").show( ) : cj("#tagLink,#tags").hide( );
       });
 
       //load js tree.
@@ -88,90 +90,81 @@
 
       {/literal}
       {if $permission neq 'edit'}
-      {literal}
-    cj("#tagtree input").attr('disabled', true);
-      {/literal}
+        {literal}
+          cj("#tagtree input").attr('disabled', true);
+        {/literal}
       {/if}
       {literal}
-
-  };
-})();
-{/literal}
+    };
+  })();
+  {/literal}
 </script>
 <div id="Tag" class="view-content">
-<h3>{if !$hideContext}{ts}Tags{/ts}{/if}</h3>
-    <p>
-    {if $action eq 16}
-        {if $permission EQ 'edit'}
-            {capture assign=crmURL}{crmURL p='civicrm/contact/view/tag' q='action=update'}{/capture}
-            <span class="unobstructive">{ts 1=$displayName 2=$crmURL}Current tags for <strong>%1</strong> are highlighted. You can add or remove tags from <a href='%2'>Edit Tags</a>.{/ts}</span>
-        {else}
-            {ts}Current tags are highlighted.{/ts}
-        {/if}
+  <h3>{if !$hideContext}{ts}Tags{/ts}{/if}</h3>
+  <p>
+  {if $action eq 16}
+    {if $permission EQ 'edit'}
+      {capture assign=crmURL}{crmURL p='civicrm/contact/view/tag' q='action=update'}{/capture}
+      <span class="unobstructive">{ts 1=$displayName 2=$crmURL}Current tags for <strong>%1</strong> are highlighted. You can add or remove tags from <a href='%2'>Edit Tags</a>.{/ts}</span>
+      {else}
+      {ts}Current tags are highlighted.{/ts}
+    {/if}
     {else}
-        {if !$hideContext}
-        {ts}Mark or unmark the checkboxes, <span class="unobstructive">and click 'Update Tags' to modify tags.<span>{/ts}
+    {if !$hideContext}
+      {ts}Mark or unmark the checkboxes, <span class="unobstructive">and click 'Update Tags' to modify tags.<span>{/ts}
+    {/if}
   {/if}
-    {/if}
-    </p>
-    <div id="tagtree">
+  </p>
+  <div id="tagtree">
     <ul class="tree">
-        {foreach from=$tree item="node" key="id"}
-        <li id="tag_{$id}">
-            {if ! $node.children}<input name="tagList[{$id}]" id="check_{$id}" type="checkbox" {if $tagged[$id]}checked="checked"{/if}/>{/if}
-            {if $node.children}<input name="tagList[{$id}]" id="check_{$id}" type="checkbox" {if $tagged[$id]}checked="checked"{/if}/>{/if}
-            {if $node.children} <span class="hit"></span> {/if} <label for="check_{$id}" id="tagLabel_{$id}">{$node.name}</label>
-            {if $node.children}
-            <ul>
-                {foreach from=$node.children item="subnode" key="subid"}
-                    <li id="tag_{$subid}">
-                        <input id="check_{$subid}" name="tagList[{$subid}]" type="checkbox" {if $tagged[$subid]}checked="checked"{/if}/>
-                        {if $subnode.children} <span class="hit"></span> {/if} <label for="check_{$subid}" id="tagLabel_{$subid}">{$subnode.name}</label>
-                        {if $subnode.children}
-                        <ul>
-                            {foreach from=$subnode.children item="subsubnode" key="subsubid"}
-                                <li id="tag_{$subsubid}">
-                                    <input id="check_{$subsubid}" name="tagList[{$subsubid}]" type="checkbox" {if $tagged[$subsubid]}checked="checked"{/if}/>
-                                    <label for="check_{$subsubid}" id="tagLabel_{$subsubid}">{$subsubnode.name}</label>
-                                </li>
-                            {/foreach}
-                        </ul>
-                        {/if}
-                    </li>
-                {/foreach}
-            </ul>
-            {/if}
-        </li>
-        {/foreach}
+    {foreach from=$tree item="node" key="id"}
+      <li id="tag_{$id}">
+        {if ! $node.children}<input name="tagList[{$id}]" id="check_{$id}" type="checkbox" {if $tagged[$id]}checked="checked"{/if}/>{/if}
+        {if $node.children}<input name="tagList[{$id}]" id="check_{$id}" type="checkbox" {if $tagged[$id]}checked="checked"{/if}/>{/if}
+        {if $node.children} <span class="hit"></span> {/if} <label for="check_{$id}" id="tagLabel_{$id}">{$node.name}</label>
+        {if $node.children}
+          <ul>
+            {foreach from=$node.children item="subnode" key="subid"}
+              <li id="tag_{$subid}">
+                <input id="check_{$subid}" name="tagList[{$subid}]" type="checkbox" {if $tagged[$subid]}checked="checked"{/if}/>
+                {if $subnode.children} <span class="hit"></span> {/if} <label for="check_{$subid}" id="tagLabel_{$subid}">{$subnode.name}</label>
+                {if $subnode.children}
+                  <ul>
+                    {foreach from=$subnode.children item="subsubnode" key="subsubid"}
+                      <li id="tag_{$subsubid}">
+                        <input id="check_{$subsubid}" name="tagList[{$subsubid}]" type="checkbox" {if $tagged[$subsubid]}checked="checked"{/if}/>
+                        <label for="check_{$subsubid}" id="tagLabel_{$subsubid}">{$subsubnode.name}</label>
+                      </li>
+                    {/foreach}
+                  </ul>
+                {/if}
+              </li>
+            {/foreach}
+          </ul>
+        {/if}
+      </li>
+    {/foreach}
     </ul>
-    </div>
+  </div>
 
-      {*foreach from=$tag item="row" key="id"}
-
-        <div class="form-item" id="rowidtag_{$id}">
-         {$form.tagList[$id].html} &nbsp;<label for="tag_{$id}">{$row}</label>
-        </div>
-
-      {/foreach*}
-
-    {* Show Edit Tags link if in View mode *}
-    {if $permission EQ 'edit' AND $action eq 16}
-        </fieldset>
-        <div class="action-link unobstructive">
-          <a accesskey="N" href="{crmURL p='civicrm/contact/view/tag' q='action=update'}" class="button"><span><div class="icon edit-icon"></div>{ts}Edit Tags{/ts}</span></a>
-        </div>
-    {else}
-       <div class="form-item unobstructive">{$form.buttons.html}</div>
-       </fieldset>
-    {/if}
-    <br />
-    {include file="CRM/common/Tag.tpl" context="contactTab"}
+{* Show Edit Tags link if in View mode *}
+{if $permission EQ 'edit' AND $action eq 16}
+  </fieldset>
+  <div class="action-link unobstructive">
+    <a accesskey="N" href="{crmURL p='civicrm/contact/view/tag' q='action=update'}" class="button"><span><div class="icon edit-icon"></div>{ts}Edit Tags{/ts}</span></a>
+  </div>
+  {else}
+  <div class="form-item unobstructive">{$form.buttons.html}</div>
+  </fieldset>
+{/if}
+  <br />
+{include file="CRM/common/Tag.tpl" context="contactTab"}
 </div>
 
 {if $action eq 1 or $action eq 2 }
- <script type="text/javascript">
- {* this function is called to change the color of selected row(s) *}
-    var fname = "{$form.formName}";
-    on_load_init_check(fname);
- </script>
+<script type="text/javascript">
+  {* this function is called to change the color of selected row(s) *}
+  var fname = "{$form.formName}";
+  on_load_init_check(fname);
+</script>
 {/if}
