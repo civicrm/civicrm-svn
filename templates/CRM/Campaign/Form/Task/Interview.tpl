@@ -66,15 +66,18 @@
   {section name=rowLoop start=1 loop=5}
   {assign var=index value=$smarty.section.rowLoop.index}
   <tr id="optionField_{$index}" class="form-item {cycle values="odd-row,even-row"}">
-        <td>
-        {if $index GT 1}
+      	<td>
+	{if $index GT 1}
             <a onclick="hideRow({$index});" name="orderBy_{$index}" href="javascript:void(0)" class="form-link"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}hide field or section{/ts}"/></a>
-        {else}
-            {$form.buttons._qf_Interview_submit_orderBy.html}
         {/if}
-        </td>
+	</td>
         <td> {$form.order_bys.$index.column.html}</td>
         <td> {$form.order_bys.$index.order.html}</td>
+	<td>
+	{if $index eq 1}
+            {$form.buttons._qf_Interview_submit_orderBy.html}
+	{/if}
+        </td>
   </tr>
         {/section}
   </table>
