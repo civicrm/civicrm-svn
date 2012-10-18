@@ -82,4 +82,31 @@ class CRM_Utils_XML {
 
     return implode("\n", $messages);
   }
+
+  /**
+   * Convert an XML element to an array
+   *
+   * @pararm $obj SimpleXMLElement
+   * @return array
+   */
+  public static function xmlObjToArray($obj) {
+    $arr = array();
+    if (is_object($obj)) {
+      $obj = get_object_vars($obj);
+    }
+    if (is_array($obj)) {
+      foreach ($obj as $i => $v) {
+        if (is_object($v) || is_array($v)) {
+          $v = self::xmlObjToArray($v);
+        }
+        if (empty($v)) {
+          $arr[$i] = NULL;
+        }
+        else {
+          $arr[$i] = $v;
+        }
+      }
+    }
+    return $arr;
+  }
 }

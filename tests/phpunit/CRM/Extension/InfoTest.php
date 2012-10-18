@@ -14,11 +14,12 @@ class CRM_Extension_InfoTest extends CiviUnitTestCase {
   }
 
   function testGood() {
-    file_put_contents($this->file, "<extension key='test.foo' type='module'><file>foo</file></extension>");
+    file_put_contents($this->file, "<extension key='test.foo' type='module'><file>foo</file><typeInfo><extra>zamboni</extra></typeInfo></extension>");
 
     $info = CRM_Extension_Info::loadFromFile($this->file);
     $this->assertEquals('test.foo', $info->key);
     $this->assertEquals('foo', $info->file);
+    $this->assertEquals('zamboni', $info->typeInfo['extra']);
   }
 
   function testBad() {

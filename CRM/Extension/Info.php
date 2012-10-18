@@ -26,6 +26,12 @@
 */
 
 class CRM_Extension_Info {
+
+  /**
+   * Extension info file name
+   */
+  const FILENAME = 'info.xml';
+
   /**
    * @var string local file system path containing extension
    */
@@ -109,8 +115,9 @@ class CRM_Extension_Info {
         ksort($this->urls);
       }
       else {
-        $this->$attr = $this->xmlObjToArray($val);
+        $this->$attr = CRM_Utils_XML::xmlObjToArray($val);
       }
     }
   }
+
 }
