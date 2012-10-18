@@ -573,7 +573,7 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
    * @access public
    */
   function getTemplateFileName() {
-    $ext = new CRM_Core_Extensions();
+    $ext = CRM_Extension_System::singleton()->getMapper();
     if ($ext->isExtensionClass(CRM_Utils_System::getClassName($this))) {
       $filename = $ext->getTemplateName(CRM_Utils_System::getClassName($this));
       $tplname = $ext->getTemplatePath(CRM_Utils_System::getClassName($this)) . DIRECTORY_SEPARATOR . $filename;

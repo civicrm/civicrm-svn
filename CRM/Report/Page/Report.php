@@ -63,7 +63,7 @@ class CRM_Report_Page_Report extends CRM_Core_Page {
     $reportClass = NULL;
 
     if ($extKey !== FALSE) {
-      $ext = new CRM_Core_Extensions();
+      $ext = CRM_Extension_System::singleton()->getMapper();
       $reportClass = $ext->keyToClass($templateInfo['name'], 'report');
       $templateInfo['name'] = $reportClass;
     }

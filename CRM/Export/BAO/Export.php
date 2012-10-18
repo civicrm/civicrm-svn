@@ -1140,7 +1140,7 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
   }
 
   function exportCustom($customSearchClass, $formValues, $order) {
-    $ext = new CRM_Core_Extensions();
+    $ext = CRM_Extension_System::singleton()->getMapper();
     if (!$ext->isExtensionClass($customSearchClass)) {
       require_once (str_replace('_', DIRECTORY_SEPARATOR, $customSearchClass) . '.php');
     }

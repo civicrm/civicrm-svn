@@ -452,7 +452,7 @@ class CRM_Core_Extensions_Extension {
       $this->id = 0;
     }
 
-    $ext = new CRM_Core_Extensions();
+    $ext = CRM_Extension_System::singleton()->getMapper();
 
     $paymentClass = $ext->keyToClass($this->key, 'payment');
     require_once $ext->classToPath($paymentClass);

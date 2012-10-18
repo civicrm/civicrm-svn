@@ -70,7 +70,7 @@ class CRM_Contact_BAO_SearchCustom {
       return $error;
     }
 
-    $ext = new CRM_Core_Extensions();
+    $ext = CRM_Extension_System::singleton()->getMapper();
 
     if (!$ext->isExtensionKey($customSearchClass)) {
       $customSearchFile = str_replace('_',

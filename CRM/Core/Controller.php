@@ -389,7 +389,7 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
         $formName = CRM_Utils_String::getClassName($name);
       }
 
-      $ext = new CRM_Core_Extensions();
+      $ext = CRM_Extension_System::singleton()->getMapper();
       if ($ext->isExtensionClass($className)) {
         require_once ($ext->classToPath($className));
       }
