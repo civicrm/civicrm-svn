@@ -39,23 +39,31 @@ class CRM_Extension_Container_Collection implements CRM_Extension_Container_Inte
 
   /**
    * @var array ($name => CRM_Extension_Container_Interface)
+   *
+   * Note: Treat as private. This is only public to facilitate debugging.
    */
-  private $containers;
+  public $containers;
 
   /**
    * @var CRM_Utils_Cache_Interface|NULL
+   *
+   * Note: Treat as private. This is only public to facilitate debugging.
    */
-  private $cache;
+  public $cache;
 
   /**
    * @var string the cache key used for any data stored by this container
+   *
+   * Note: Treat as private. This is only public to facilitate debugging.
    */
-  private $cacheKey;
+  public $cacheKey;
 
   /**
    * @var array ($key => $containerName)
+   *
+   * Note: Treat as private. This is only public to facilitate debugging.
    */
-  private $k2c;
+  public $k2c;
 
   /**
    * @param array $containers array($name => CRM_Extension_Container_Interface)

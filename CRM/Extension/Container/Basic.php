@@ -36,23 +36,41 @@
  * scanned for extensions.
  */
 class CRM_Extension_Container_Basic implements CRM_Extension_Container_Interface {
-  private $baseDir;
-  private $baseUrl;
+
+  /**
+   * @var string
+   *
+   * Note: Treat as private. This is only public to facilitate debugging.
+   */
+  public $baseDir;
+
+  /**
+   * @var string
+   *
+   * Note: Treat as private. This is only public to facilitate debugging.
+   */
+  public $baseUrl;
 
   /**
    * @var CRM_Utils_Cache_Interface|NULL
+   *
+   * Note: Treat as private. This is only public to facilitate debugging.
    */
-  private $cache;
+  public $cache;
 
   /**
    * @var string the cache key used for any data stored by this container
+   *
+   * Note: Treat as private. This is only public to facilitate debugging.
    */
-  private $cacheKey;
+  public $cacheKey;
 
   /**
    * @var array($key => $relPath)
+   *
+   * Note: Treat as private. This is only public to facilitate debugging.
    */
-  private $relPaths = FALSE;
+  public $relPaths = FALSE;
 
   /**
    * @param string $baseDir local path to the container
