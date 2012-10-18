@@ -34,7 +34,7 @@
  * $Id$
  *
  */
-class CRM_Extension_Config {
+class CRM_Extension_System {
   private static $singleton;
 
   private $cache = NULL;
@@ -46,11 +46,11 @@ class CRM_Extension_Config {
   private $downloader = NULL;
 
   /**
-   * @return CRM_Extension_Config
+   * @return CRM_Extension_System
    */
   public static function singleton($fresh = FALSE) {
     if (! self::$singleton) {
-      self::$singleton = new CRM_Extension_Config();
+      self::$singleton = new CRM_Extension_System();
     }
     return self::$singleton;
   }
@@ -132,7 +132,7 @@ class CRM_Extension_Config {
   /**
    * @return CRM_Utils_Cache_Interface
    */
-  protected function getCache() {
+  public function getCache() {
     if ($this->cache === NULL) {
       $this->cache = new CRM_Utils_Cache_SqlGroup(array(
         'group' => 'ext',

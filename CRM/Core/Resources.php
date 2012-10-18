@@ -66,7 +66,7 @@ class CRM_Core_Resources {
       self::$_singleton = $instance;
     }
     if (self::$_singleton === NULL) {
-      self::$_singleton = new CRM_Core_Resources(array(CRM_Extension_Config::singleton()->getMapper(), 'keyToUrl'));
+      self::$_singleton = new CRM_Core_Resources(array(CRM_Extension_System::singleton()->getMapper(), 'keyToUrl'));
     }
     return self::$_singleton;
   }
