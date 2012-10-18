@@ -97,14 +97,17 @@ function civicrm_user_update(&$edit, &$user, $category) {
     !empty($edit['mail'])
   ) {
     require_once 'CRM/Core/BAO/UFMatch.php';
+    require_once 'CRM/Contact/BAO/Contact.php';
     $contactID = CRM_Core_BAO_UFMatch::getContactId($user->uid);
     // cant find the contactID, so lets skip
     if (!$contactID) {
       return;
     }
-    CRM_Core_BAO_UFMatch::updateContactEmail($contactID,
-      trim($edit['mail'])
-    );
+    $contactEmail = CRM_Contact_BAO_Contact::getPrimaryEmail($contactID);
+    $userEmail = trim($edit['mail']);
+    if ($contactEmail != $userEmail) {
+      CRM_Core_BAO_UFMatch::updateContactEmail($contactID, $userEmail);
+    }
 
     // reset navigation on user role change
     $editRoles     = array_keys(CRM_Utils_Array::value('roles', $edit, array()));

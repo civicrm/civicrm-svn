@@ -871,7 +871,9 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
     // don't carry current_employer_id field,
     // since we don't want to directly update DAO object without
     // handling related business logic ( eg related membership )
-    if (isset($params['current_employer_id']))unset($params['current_employer_id']);
+    if (isset($params['current_employer_id'])) {
+      unset($params['current_employer_id']);
+    }
 
     $params['contact_type'] = $this->_contactType;
     if (empty($params['contact_sub_type']) && $this->_isContactSubType) {
@@ -973,9 +975,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
 
     if (array_key_exists('TagsAndGroups', $this->_editOptions)) {
       //add contact to tags
-      CRM_Core_BAO_EntityTag::create($params['tag'], 'civicrm_contact',
-        $params['contact_id']
-      );
+      CRM_Core_BAO_EntityTag::create($params['tag'], 'civicrm_contact', $params['contact_id']);
 
       //save free tags
       if (isset($params['contact_taglist']) && !empty($params['contact_taglist'])) {
