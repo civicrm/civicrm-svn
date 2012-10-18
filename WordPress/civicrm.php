@@ -38,7 +38,7 @@
   Plugin URI: http://civicrm.org/
   Description: CiviCRM WP Plugin
   Author: CiviCRM LLC
-  Version: 4.2.3
+  Version: 4.2.4
   Author URI: http://civicrm.org/
   License: AGPL3
 */
