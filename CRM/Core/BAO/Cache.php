@@ -73,6 +73,31 @@ class CRM_Core_BAO_Cache extends CRM_Core_DAO_Cache {
   }
 
   /**
+   * Retrieve all items in a group
+   *
+   * @param string $group (required) The group name of the item
+   * @param int    $componentID The optional component ID (so componenets can share the same name space)
+   *
+   * @return object The data if present in cache, else null
+   * @static
+   * @access public
+   */
+  static function &getItems($group, $componentID = NULL) {
+    $dao = new CRM_Core_DAO_Cache();
+
+    $dao->group_name   = $group;
+    $dao->component_id = $componentID;
+    $dao->find();
+
+    $result = array(); // array($path => $data)
+    while ($dao->fetch()) {
+      $result[$dao->path] = unserialize($dao->data);
+    }
+    $dao->free();
+    return $result;
+  }
+
+  /**
    * Store an item in the DB cache
    *
    * @param object $data  (required) A reference to the data that will be serialized and stored
