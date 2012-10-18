@@ -67,7 +67,6 @@ class CRM_Extension_Container_BasicTest extends CiviUnitTestCase {
     // not needed for now // file_put_contents("$basedir/foo/foo.php", "<?php\n");
     file_put_contents("$basedir/foo/bar/info.xml", "<extension key='test.foo.bar' type='report'><file>oddball</file></extension>");
     // not needed for now // file_put_contents("$basedir/foo/bar/oddball.php", "<?php\n");
-    file_put_contents("$basedir/foo/bar/.autoremove", "");
     $c = new CRM_Extension_Container_Basic($basedir, 'http://example/basedir', $cache, $cacheKey);
     return array($basedir, $c);
   }
