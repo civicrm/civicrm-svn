@@ -1492,8 +1492,18 @@ WHERE id={$id}; ";
    * @access public
    * @static
    */
-  static function getPrimaryLocationType($contactId, $skipDefaultPriamry = FALSE) {
-    $query = "
+  static function getPrimaryLocationType($contactId, $skipDefaultPriamry = FALSE, $block = NULL) {
+    if($block){
+      $entityBlock = array('contact_id' => $contactId);
+      $blocks      = CRM_Core_BAO_Location::getValues($entityBlock);
+      foreach($blocks[$block] as $key => $value){
+        if (CRM_Utils_Array::value('is_primary', $value)){
+          $locationType = CRM_Utils_Array::value('location_type_id',$value);
+        }
+      }
+    }
+    else {
+      $query = "
 SELECT
  IF ( civicrm_email.location_type_id IS NULL,
     IF ( civicrm_address.location_type_id IS NULL,
@@ -1511,17 +1521,17 @@ FROM civicrm_contact
      LEFT JOIN civicrm_im      ON ( civicrm_im.is_primary      = 1 AND civicrm_im.contact_id = civicrm_contact.id)
      LEFT JOIN civicrm_openid  ON ( civicrm_openid.is_primary  = 1 AND civicrm_openid.contact_id = civicrm_contact.id)
 WHERE  civicrm_contact.id = %1 ";
-
-    $params = array(1 => array($contactId, 'Integer'));
-
-    $dao = CRM_Core_DAO::executeQuery($query, $params);
-
-    $locationType = NULL;
-    if ($dao->fetch()) {
-      $locationType = $dao->locationType;
+      
+      $params = array(1 => array($contactId, 'Integer'));
+      
+      $dao = CRM_Core_DAO::executeQuery($query, $params);
+      
+      $locationType = NULL;
+      if ($dao->fetch()) {
+        $locationType = $dao->locationType;
+      }
     }
-
-    if ($locationType) {
+    if (isset($locationType)) {
       return $locationType;
     }
     elseif ($skipDefaultPriamry) {
@@ -1535,7 +1545,7 @@ WHERE  civicrm_contact.id = %1 ";
       return $defaultLocationType->id;
     }
   }
-
+  
   /**
    * function to get the display name, primary email and location type of a contact
    *
@@ -1780,7 +1790,13 @@ ORDER BY civicrm_email.is_primary DESC";
 
       if ($locTypeId == 'Primary') {
         if ($contactID) {
-          $locTypeId = $primaryLocationType;
+          if(in_array( $fieldName, $blocks)){
+            $locTypeId = self::getPrimaryLocationType($contactID, FALSE, $fieldName);
+          }
+          else{
+            $locTypeId = self::getPrimaryLocationType($contactID, FALSE, 'address');
+          }
+          $primaryLocationType = $locTypeId;
         }
         else {
           $locTypeId = $defaultLocationId;
