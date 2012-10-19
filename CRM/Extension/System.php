@@ -115,6 +115,16 @@ class CRM_Extension_System {
    * @return CRM_Extension_Manager
    */
   public function getManager() {
+    if ($this->manager === NULL) {
+      $typeManagers = array(
+        'payment' => new CRM_Extension_Manager_Payment($this->getMapper()),
+        //'report' => new CRM_Extension_Manager_Report(),
+        //'search' => new CRM_Extension_Manager_Search(),
+        //'module' => new CRM_Extension_Manager_Module(),
+      );
+      $this->manager = new CRM_Extension_Manager(/*$this->getFullContainer(),*/ $this->getMapper(), $typeManagers);
+    }
+    return $this->manager;
   }
 
   /**
