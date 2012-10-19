@@ -150,10 +150,6 @@ class CRM_Logging_ReportDetail extends CRM_Report_Form {
         if ($from == $to) {
           continue;
         }
-        // only in PHP: '0' == false and null == false but '0' != null
-        if ($from == FALSE and $to == FALSE) {
-          continue;
-        }
 
         // CRM-7251: special-case preferred_communication_method
         if ($field == 'preferred_communication_method') {
