@@ -55,13 +55,13 @@ class CRM_Core_Invoke {
 
     $config = CRM_Core_Config::singleton();
 
-    if (isset($args[1]) and $args[1] == 'menu' and
-      isset($args[2]) and $args[2] == 'rebuild'
+    if ((isset($args[1]) and $args[1] == 'menu' and
+      isset($args[2]) and $args[2] == 'rebuild') || isset($args[1]) and $args[1] == 'clearcache'
     ) {
       // ensure that the user has a good privilege level
       if (CRM_Core_Permission::check('administer CiviCRM')) {
         self::rebuildMenuAndCaches();
-        CRM_Core_Session::setStatus(ts('Menu has been rebuilt'), ts('Complete'), 'success');
+        CRM_Core_Session::setStatus(ts('Cleared all CiviCRM caches (database, menu, templates)'), ts('Complete'), 'success');
         return CRM_Utils_System::redirect();
       }
       else {
