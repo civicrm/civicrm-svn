@@ -25,7 +25,7 @@ class CRM_Extension_Container_StaticTest extends CiviUnitTestCase {
     $c = $this->_createContainer();
     try {
       $c->getPath('un.kno.wn');
-    } catch (Exception $e) {
+    } catch (CRM_Extension_Exception $e) {
       $exc = $e;
     }
     $this->assertTrue(is_object($exc), 'Expected exception');
@@ -38,7 +38,7 @@ class CRM_Extension_Container_StaticTest extends CiviUnitTestCase {
     $c = $this->_createContainer();
     try {
       $c->getResUrl('un.kno.wn');
-    } catch (Exception $e) {
+    } catch (CRM_Extension_Exception $e) {
       $exc = $e;
     }
     $this->assertTrue(is_object($exc), 'Expected exception');

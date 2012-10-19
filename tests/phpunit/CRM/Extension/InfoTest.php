@@ -29,7 +29,7 @@ class CRM_Extension_InfoTest extends CiviUnitTestCase {
     $exc = NULL;
     try {
       $info = CRM_Extension_Info::loadFromFile($this->file);
-    } catch (Exception $e) {
+    } catch (CRM_Extension_Exception $e) {
       $exc = $e;
     }
     $this->assertTrue(is_object($exc));

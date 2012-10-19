@@ -74,7 +74,7 @@ class CRM_Extension_Container_Static implements CRM_Extension_Container_Interfac
     if (isset($this->exts[$key])) {
       return $this->exts[$key];
     } else {
-      throw new Exception("Missing extension: $key");
+      throw new CRM_Extension_Exception("Missing extension: $key");
     }
   }
 }

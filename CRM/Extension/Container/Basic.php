@@ -110,12 +110,12 @@ class CRM_Extension_Container_Basic implements CRM_Extension_Container_Interface
    * Determine the relative path of an extension directory
    *
    * @return string
-   * @throws Exception
+   * @throws CRM_Extension_Exception
    */
   protected function getRelPath($key) {
     $keypaths = $this->getRelPaths();
     if (! isset($keypaths[$key])) {
-      throw new Exception("Failed to find extension: $key");
+      throw new CRM_Extension_Exception("Failed to find extension: $key");
     }
     return $keypaths[$key];
   }

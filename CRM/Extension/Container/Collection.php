@@ -102,14 +102,14 @@ class CRM_Extension_Container_Collection implements CRM_Extension_Container_Inte
    * Get the container which defines a particular key
    *
    * @return CRM_Extension_Container_Interface
-   * @throws Exception
+   * @throws CRM_Extension_Exception
    */
   public function getContainer($key) {
     $k2c = $this->getKeysToContainer();
     if (isset($k2c[$key])) {
       return $this->containers[$k2c[$key]];
     } else {
-      throw new Exception("Unknown extension: $key");
+      throw new CRM_Extension_Exception("Unknown extension: $key");
     }
   }
 

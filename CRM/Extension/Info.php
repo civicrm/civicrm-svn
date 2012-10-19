@@ -32,11 +32,6 @@ class CRM_Extension_Info {
    */
   const FILENAME = 'info.xml';
 
-  /**
-   * @var string local file system path containing extension
-   */
-  public $path = NULL;
-
   public $key = NULL;
   public $type = NULL;
   public $name = NULL;
@@ -48,15 +43,15 @@ class CRM_Extension_Info {
    *
    * @param string $string XML content
    * @return CRM_Extension_Info
-   * @throws Exception
+   * @throws CRM_Extension_Exception
    */
   public static function loadFromFile($file) {
     list ($xml, $error) = CRM_Utils_XML::parseFile($file);
     if ($xml === FALSE) {
-      throw new Exception("Failed to parse info XML: $error");
+      throw new CRM_Extension_Exception("Failed to parse info XML: $error");
     }
 
-    $instance = new CRM_Extension_Info(NULL, NULL, NULL, NULL, NULL);
+    $instance = new CRM_Extension_Info();
     $instance->parse($xml);
     return $instance;
   }
@@ -70,16 +65,15 @@ class CRM_Extension_Info {
   public static function loadFromString($string) {
     $xml = simplexml_load_string($string, 'SimpleXMLElement');
     if ($xml == FALSE) {
-      throw new \Exception("Failed to parse info XML: $string");
+      throw new CRM_Extension_Exception("Failed to parse info XML: $string");
     }
 
-    $instance = new CRM_Extension_Info(NULL, NULL, NULL, NULL, NULL);
+    $instance = new CRM_Extension_Info();
     $instance->parse($xml);
     return $instance;
   } // */
 
-  function __construct($path, $key, $type = NULL, $name = NULL, $label = NULL, $file = NULL) {
-    $this->path      = $path;
+  function __construct($key = NULL, $type = NULL, $name = NULL, $label = NULL, $file = NULL) {
     $this->key       = $key;
     $this->type      = $type;
     $this->name      = $name;
