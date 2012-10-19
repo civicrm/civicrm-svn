@@ -1983,6 +1983,36 @@ ORDER BY name";
   }
 
   /**
+   * Get all extensions
+   *
+   * The static array extensions
+   *
+   * FIXME: This is called by civix but not by any core code. We
+   * should provide an API call which civix can use instead.
+   *
+   * @access public
+   * @static
+   *
+   * @return array - array($fullyQualifiedName => $label) list of extensions
+   */
+  public static function &getExtensions() {
+    if (!self::$extensions) {
+      self::$extensions = array();
+      $sql = '
+        SELECT full_name, label
+        FROM civicrm_extension
+        WHERE is_active = 1
+      ';
+      $dao = CRM_Core_DAO::executeQuery($sql);
+      while ($dao->fetch()) {
+        self::$extensions[$dao->full_name] = $dao->label;
+    }
+    }
+
+    return self::$extensions;
+  }
+
+  /**
    * Fetch the list of active extensions of type 'module'
    *
    * @param $fresh bool whether to forcibly reload extensions list from canonical store
