@@ -281,6 +281,7 @@ COLS;
     $query = preg_replace("/^  [^`].*$/m", '', $query);
     $query = preg_replace("/^\) ENGINE=[^ ]+ /im", ') ENGINE=ARCHIVE ', $query);
     $query = preg_replace("/^\) /m", "$cols\n) ", $query);
+    $query = preg_replace("/DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP/i", 'DEFAULT NULL', $query);
 
     CRM_Core_DAO::executeQuery($query);
 
