@@ -1376,23 +1376,12 @@ class CRM_Utils_Date {
    *
    *  @return string $mysqlDate date format that is excepted by mysql
    */
-  static
-    function processDate($date, $time = NULL, $returnNullString = FALSE, $format = 'YmdHis') {
+  static function processDate($date, $time = NULL, $returnNullString = FALSE, $format = 'YmdHis') {
     $mysqlDate = NULL;
 
-                                  /**
-                                   *  Function to process date, convert to mysql format
-                                   *
-                                   *  @param string $date date string
-                                   *  @param string $time time string
-                                   *  @param string $returnNullString  'null' needs to be returned
-                                   *                so that db oject will set null in db
-                                   *  @param string $format expected return date format.( default is  mysql )
-                                   *
-                                   *  @return string $mysqlDate date format that is excepted by mysql
-                                   */
-  static function processDate($date, $time = NULL, $returnNullString = FALSE, $format = 'YmdHis', $inputCustomFormat = NULL) {
-                                    $mysqlDate = NULL;
+    if ($returnNullString) {
+      $mysqlDate = 'null';
+    }
 
     if (trim($date)) {
       $mysqlDate = date($format, strtotime($date . ' ' . $time));
@@ -1408,25 +1397,18 @@ class CRM_Utils_Date {
    *
    *  @return array $date and time
    */
-  static
-    function setDateDefaults($mysqlDate = NULL, $formatType = NULL, $format = NULL, $timeFormat = NULL) {
+  static function setDateDefaults($mysqlDate = NULL, $formatType = NULL, $format = NULL, $timeFormat = NULL) {
     // if date is not passed assume it as today
     if (!$mysqlDate) {
       $mysqlDate = date('Y-m-d G:i:s');
     }
 
-                                  /**
-                                   *  Function to convert mysql to date plugin format
-                                   *
-                                   *  @param string $mysqlDate date string
-                                   *
-                                   *  @return array $date and time
-                                   */
-  static function setDateDefaults($mysqlDate = NULL, $formatType = NULL, $format = NULL, $timeFormat = NULL) {
-                                    // if date is not passed assume it as today
-                                    if (!$mysqlDate) {
-                                      $mysqlDate = date('Y-m-d G:i:s');
-                                    }
+    $config = CRM_Core_Config::singleton();
+    if ($formatType) {
+      // get actual format
+      $params = array('name' => $formatType);
+      $values = array();
+      CRM_Core_DAO::commonRetrieve('CRM_Core_DAO_PreferencesDate', $params, $values);
 
       if ($values['date_format']) {
         $format = $values['date_format'];
@@ -1482,8 +1464,7 @@ class CRM_Utils_Date {
    *
    * @return string $format
    */
-  static
-    function getDateFormat($formatType = NULL) {
+  static function getDateFormat($formatType = NULL) {
     $format = NULL;
     if ($formatType) {
       $format = CRM_Core_Dao::getFieldValue('CRM_Core_DAO_PreferencesDate',
@@ -1491,20 +1472,12 @@ class CRM_Utils_Date {
       );
     }
 
-                                  /**
-                                   * Function get date format
-                                   *
-                                   * @param  string $formatType Date name e.g. birth
-                                   *
-                                   * @return string $format
-                                   */
-  static function getDateFormat($formatType = NULL) {
-                                    $format = NULL;
-                                    if ($formatType) {
-                                      $format = CRM_Core_Dao::getFieldValue('CRM_Core_DAO_PreferencesDate',
-                                        $formatType, 'date_format', 'name'
-                                      );
-                                    }
+    if (!$format) {
+      $config = CRM_Core_Config::singleton();
+      $format = $config->dateInputFormat;
+    }
+    return $format;
+  }
 
   static function getUTCTime($format = 'YmdHis') {
     $originalTimezone = date_default_timezone_get();
