@@ -116,10 +116,8 @@
 
              {if $n eq 'email_greeting' or  $n eq 'postal_greeting' or $n eq 'addressee'}
                 {include file="CRM/Profile/Form/GreetingType.tpl"}
-             {elseif $n eq 'group'}
-        <table id="selector" class="selector crm-profile-tagsandgroups" style="width:auto;">
-          <tr><td>{$form.$n.html}{* quickform add closing </td> </tr>*}
-        </table>
+             {elseif ($n eq 'group' && $form.group) || ($n eq 'tag' && $form.tag)}
+                {include file="CRM/Contact/Form/Edit/TagsAndGroups.tpl" type=$n title=null context="profile"}
              {elseif ( ( $field.data_type eq 'Date' ) or
               ( $n|substr:-5:5 eq '_date' ) ) AND
          ( $form.formName neq 'Confirm' )  AND

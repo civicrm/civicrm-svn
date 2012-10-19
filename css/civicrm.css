@@ -475,8 +475,8 @@ div.spacer,
     border: 1px none;
 }
 
-#crm-container table.crm-profile-tagsandgroups {
-    margin-top: -1.25em;
+#crm-container table.crm-profile-tagsandgroups table#crm-tagGroupTable {
+    margin: -.2em 0;
 }
 
 #crm-container table.advmultiselect {

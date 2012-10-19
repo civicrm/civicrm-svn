@@ -31,7 +31,7 @@
   </div><!-- /.crm-accordion-header -->
   <div class="crm-accordion-body" id="tagGroup">
 {/if}
-    <table class="form-layout-compressed{if $context EQ 'profile'} crm-profile-tagsandgroups{/if}" style="width:98%">
+    <table class="form-layout-compressed{if $context EQ 'profile'} crm-profile-tagsandgroups{/if}">
   <tr>
       {foreach key=key item=item from=$tagGroup}
     {* $type assigned from dynamic.tpl *}
