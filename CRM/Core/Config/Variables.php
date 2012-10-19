@@ -392,7 +392,8 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults {
   public $includeWildCardInName = 1;
   public $includeEmailInName = 1;
   public $includeNickNameInName = 0;
-  public $smartGroupCacheTimeout = 0;
+
+  public $smartGroupCacheTimeout = 5;
 
   public $defaultSearchProfileID = NULL;
 

@@ -61,16 +61,13 @@ class CRM_Contact_BAO_GroupContactCache extends CRM_Contact_DAO_GroupContactCach
     $smartGroupCacheTimeout = isset($config->smartGroupCacheTimeout) && is_numeric($config->smartGroupCacheTimeout) ? $config->smartGroupCacheTimeout : 0;
 
     //make sure to give original timezone settings again.
-    $originalTimezone = date_default_timezone_get();
-    date_default_timezone_set('UTC');
-    $now = date('YmdHis');
-    date_default_timezone_set($originalTimezone);
+    $now = CRM_Utils_Date::getUTCTime();
 
     $query = "
 SELECT  g.id
 FROM    civicrm_group g
-WHERE   g.id IN ( {$groupID} ) 
-AND     ( g.saved_search_id IS NOT NULL OR 
+WHERE   g.id IN ( {$groupID} )
+AND     ( g.saved_search_id IS NOT NULL OR
           g.children IS NOT NULL )
 AND     ( g.cache_date IS NULL OR
           ( TIMESTAMPDIFF(MINUTE, g.cache_date, $now) >= $smartGroupCacheTimeout )
@@ -128,7 +125,7 @@ AND     ( g.cache_date IS NULL OR
   /**
    * Change the cache_date
    *
-   * @param $groupID array(int) 
+   * @param $groupID array(int)
    * @param $processed bool, whether the cache data was recently modified
    */
   static function updateCacheTime($groupID, $processed) {
@@ -136,10 +133,7 @@ AND     ( g.cache_date IS NULL OR
     if ($processed) {
       // also update the group with cache date information
       //make sure to give original timezone settings again.
-      $originalTimezone = date_default_timezone_get();
-      date_default_timezone_set('UTC');
-      $now = date('YmdHis');
-      date_default_timezone_set($originalTimezone);
+      $now = CRM_Utils_Date::getUTCTime();
     }
     else {
       $now = 'null';
@@ -174,7 +168,7 @@ WHERE  id IN ( $groupIDs )
     if ($groupID == NULL) {
       $invoked = TRUE;
     } else if (is_array($groupID)) {
-      foreach ($groupID as $gid) 
+      foreach ($groupID as $gid)
         unset(self::$_alreadyLoaded[$gid]);
     } else if ($groupID && array_key_exists($groupID, self::$_alreadyLoaded)) {
       unset(self::$_alreadyLoaded[$groupID]);
@@ -183,11 +177,8 @@ WHERE  id IN ( $groupIDs )
     //when there are difference in timezones for mysql and php.
     //cache_date set null not behaving properly, CRM-6855
 
-    //make sure to give original timezone settings again.
-    $originalTimezone = date_default_timezone_get();
-    date_default_timezone_set('UTC');
-    $now = date('YmdHis');
-    date_default_timezone_set($originalTimezone);
+    //make sure to give original timezone settings again
+    $now = CRM_Utils_Date::getUTCTime();
 
     if (!isset($groupID)) {
       $config = CRM_Core_Config::singleton();
@@ -207,7 +198,7 @@ SET    cache_date = null
 DELETE     gc
 FROM       civicrm_group_contact_cache gc
 INNER JOIN civicrm_group g ON g.id = gc.group_id
-WHERE      TIMESTAMPDIFF(MINUTE, g.cache_date, $now) >= $smartGroupCacheTimeout   
+WHERE      TIMESTAMPDIFF(MINUTE, g.cache_date, $now) >= $smartGroupCacheTimeout
 ";
         $update = "
 UPDATE civicrm_group g
@@ -316,9 +307,9 @@ WHERE  id = %1
         );
       }
       $groupID = CRM_Utils_Type::escape($groupID, 'Integer');
-      $sql = $searchSQL . " AND contact_a.id NOT IN ( 
-                              SELECT contact_id FROM civicrm_group_contact 
-                              WHERE civicrm_group_contact.status = 'Removed' 
+      $sql = $searchSQL . " AND contact_a.id NOT IN (
+                              SELECT contact_id FROM civicrm_group_contact
+                              WHERE civicrm_group_contact.status = 'Removed'
                               AND   civicrm_group_contact.group_id = $groupID ) ";
     }
 
