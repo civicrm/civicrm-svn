@@ -112,6 +112,7 @@ SELECT    li.id,
           li.line_total,
           pf.label as field_title,
           pf.html_type,
+          pfv.membership_type_id,
           li.price_field_id,
           li.participant_count,
           li.price_field_value_id,
@@ -157,6 +158,7 @@ WHERE     %2.id = %1";
         'html_type' => $dao->html_type,
         'description' => $dao->description,
         'entity_id' => $entityId,
+        'membership_type_id' => $dao->membership_type_id,
       );
     }
     return $lineItems;

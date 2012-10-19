@@ -50,8 +50,7 @@ class CRM_Core_BAO_CMSUser {
    * @static
    * @access public
    */
-  static
-  function synchronize() {
+  static function synchronize() {
     //start of schronization code
     $config = CRM_Core_Config::singleton();
 
@@ -223,8 +222,7 @@ class CRM_Core_BAO_CMSUser {
    * @access public
    * @static
    */
-  static
-  function create(&$params, $mail) {
+  static function create(&$params, $mail) {
     $config = CRM_Core_Config::singleton();
 
     $ufID = $config->userSystem->createUser($params, $mail);
@@ -258,8 +256,7 @@ class CRM_Core_BAO_CMSUser {
    * @access public
    * @static
    */
-  static
-  function buildForm(&$form, $gid, $emailPresent, $action = CRM_Core_Action::NONE) {
+  static function buildForm(&$form, $gid, $emailPresent, $action = CRM_Core_Action::NONE) {
     $config = CRM_Core_Config::singleton();
     $showCMS = FALSE;
 
@@ -357,8 +354,7 @@ class CRM_Core_BAO_CMSUser {
      * 
      */
 
-  static
-  function formRule($fields, $files, $self) {
+  static function formRule($fields, $files, $self) {
     if (!CRM_Utils_Array::value('cms_create_account', $fields)) {
       return TRUE;
     }
@@ -436,8 +432,7 @@ class CRM_Core_BAO_CMSUser {
    * @access public
    * @static
    */
-  static
-  function userExists(&$contact) {
+  static function userExists(&$contact) {
     $config = CRM_Core_Config::singleton();
 
     $isDrupal    = $config->userSystem->is_drupal;
@@ -495,8 +490,7 @@ class CRM_Core_BAO_CMSUser {
     return $result;
   }
 
-  static
-  function &dbHandle(&$config) {
+  static function &dbHandle(&$config) {
     CRM_Core_Error::ignoreException();
     $db_uf = DB::connect($config->userFrameworkDSN);
     CRM_Core_Error::setCallback();

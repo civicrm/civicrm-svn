@@ -286,7 +286,7 @@ class CRM_Core_Payment_BaseIPN {
       }
 
       if (!empty($memberships)) {
-        foreach ($memberships as $membership) {
+        foreach ($memberships as $membershipTypeIdKey => $membership) {
           if ($membership) {
             $format = '%Y%m%d';
 
@@ -371,9 +371,18 @@ LIMIT 1;";
 
             //update related Memberships.
             CRM_Member_BAO_Membership::updateRelatedMemberships($membership->id, $formatedParams);
+            
+            //update the membership type key of membership relatedObjects array
+            //if it has changed after membership update
+            if ($membershipTypeIdKey != $membership->membership_type_id) {
+              $memberships[$membership->membership_type_id] = $membership;
+              $contribution->_relatedObjects['membership'][$membership->membership_type_id] = $membership;
+              unset($contribution->_relatedObjects['membership'][$membershipTypeIdKey]);
+              unset($memberships[$membershipTypeIdKey]);
           }
         }
       }
+    }
     }
     else {
       // event

@@ -1541,6 +1541,7 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
    * @access public
    * @static
    */
+
   static function sendSMSMessage($toID,
     &$tokenText,
     &$tokenHtml,
@@ -2481,7 +2482,7 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id AND grp.n
           $contactActivities[$activityId]['source_contact'] = '<em>n/a</em>';
         }
 
-        if (isset($values['mailingId'])) {
+        if (isset($values['mailingId']) && !empty($values['mailingId'])) {
           $contactActivities[$activityId]['target_contact'] = CRM_Utils_System::href($values['recipients'], 'civicrm/mailing/report', "mid={$values['source_record_id']}&reset=1&cid={$values['source_contact_id']}&context=activitySelector");
         }
         elseif (CRM_Utils_Array::value('recipients', $values)) {

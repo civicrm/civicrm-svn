@@ -270,7 +270,7 @@ WHERE ov.option_group_id =
   (SELECT id from civicrm_option_group og WHERE og.name = 'activity_type') AND
 ov.name = 'Reminder Sent'";
 
-    $minReminderSent = CRM_Core_DAO::singlevalueQuery($queryMin);
+    $minReminderSent = CRM_Core_DAO::singleValueQuery($queryMin);
     
     $queryMax = "
 SELECT coalesce(max(value),0) from civicrm_option_value ov
@@ -278,7 +278,7 @@ WHERE ov.option_group_id =
   (SELECT id from civicrm_option_group og WHERE og.name = 'activity_type') AND
 ov.name = 'Reminder Sent'";
 
-    $maxReminderSent = CRM_Core_DAO::singlevalueQuery($queryMax);
+    $maxReminderSent = CRM_Core_DAO::singleValueQuery($queryMax);
 
     // If we have two different values, replace new value with original in any activities
     if ($maxReminderSent > $minReminderSent) {
@@ -287,7 +287,7 @@ UPDATE civicrm_activity
 SET activity_type_id = {$minReminderSent}
 WHERE activity_type_id = {$maxReminderSent}";
 
-      CRM_Core_DAO::execute($query);
+      CRM_Core_DAO::executeQuery($query);
       
       // Then delete the newer (duplicate) option_value row
       $query = "
@@ -296,7 +296,7 @@ DELETE from civicrm_option_value
     (SELECT id from civicrm_option_group og WHERE og.name = 'activity_type') AND
   value = '{$maxReminderSent}'";
 
-      CRM_Core_DAO::execute($query);
+      CRM_Core_DAO::executeQuery($query);
     }
   }
 

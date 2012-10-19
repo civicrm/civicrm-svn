@@ -11,9 +11,10 @@ VALUES
     ( {$domainID}, 'civicrm/mailing/browse?reset=1&sms=1', '{ts escape="sql" skip="true"}Find Mass SMS{/ts}', 'Find Mass SMS', 'administer CiviCRM', NULL, @mailingsID, '1', 1, @navWeight+1 );
 
 -- CRM-10980 and CRM-11014
+SELECT @optionID := max(id) FROM civicrm_option_value WHERE name = 'BULK SMS';
 {if $multilingual}
     {foreach from=$locales item=locale}
-  	UPDATE `civicrm_option_value` SET label_{$locale} = '{ts escape="sql"}Mass SMS{/ts}',name = 'Mass SMS',description_{$locale} = '{ts escape="sql"}Mass SMS{/ts}' WHERE name = 'BULK SMS'; 
+  	UPDATE `civicrm_option_value` SET label_{$locale} = '{ts escape="sql"}Mass SMS{/ts}',name = 'Mass SMS',description_{$locale} = '{ts escape="sql"}Mass SMS{/ts}' WHERE id = @optionID; 
     	ALTER TABLE `civicrm_price_field_value` CHANGE name name VARCHAR(255) NULL DEFAULT NULL, CHANGE label_{$locale} label_{$locale} VARCHAR(255)  NULL DEFAULT NULL;
     {/foreach}
 {else}

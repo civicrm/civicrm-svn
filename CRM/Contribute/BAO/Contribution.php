@@ -1977,26 +1977,26 @@ SELECT source_contact_id
       $this->_relatedObjects['contact']->find(TRUE);
     }
     $this->_relatedObjects['contributionType'] = $contributionType;
-    if ($this->_component == 'contribute') {
 
+    if ($this->_component == 'contribute') {
       // retrieve the other optional objects first so
       // stuff down the line can use this info and do things
       // CRM-6056
-      if (!empty($ids['membership'])) {
-        if (is_numeric($ids['membership'])) {
+      //in any case get the memberships associated with the contribution
+      //because we now support multiple memberships w/ price set
           // see if there are any other memberships to be considered for same contribution.
           $query = "
             SELECT membership_id
             FROM   civicrm_membership_payment
-            WHERE  contribution_id = %1 AND membership_id != %2";
-          $dao = CRM_Core_DAO::executeQuery($query,
-            array(1 => array($this->id, 'Integer'),
-              2 => array($ids['membership'], 'Integer'),
-            )
-          );
+WHERE  contribution_id = %1 ";
+      $params = array(1 => array($this->id, 'Integer'));
 
-          $ids['membership'] = array($ids['membership']);
+      $dao = CRM_Core_DAO::executeQuery($query, $params );
           while ($dao->fetch()) {
+        if ($dao->membership_id) {
+          if (!is_array($ids['membership'])) {
+            $ids['membership'] = array();
+          }
             $ids['membership'][] = $dao->membership_id;
           }
         }
@@ -2013,13 +2013,11 @@ SELECT source_contact_id
               $membership->start_date = CRM_Utils_Date::isoToMysql($membership->start_date);
               $membership->end_date = CRM_Utils_Date::isoToMysql($membership->end_date);
               $membership->reminder_date = CRM_Utils_Date::isoToMysql($membership->reminder_date);
-
-              $this->_relatedObjects['membership'][] = $membership;
+            $this->_relatedObjects['membership'][$membership->membership_type_id] = $membership;
               $membership->free();
             }
           }
         }
-      }
 
       if (!empty($ids['pledge_payment'])) {
 
@@ -2288,10 +2286,18 @@ SELECT source_contact_id
         $lineItem = CRM_Price_BAO_LineItem::getLineItems($this->id, 'contribution', 1);
         if (!empty($lineItem)) {
           $itemId                = key($lineItem);
+          foreach ($lineItem as &$eachItem) {
+            if (array_key_exists($eachItem['membership_type_id'], $this->_relatedObjects['membership']) ) {
+              $eachItem['join_date'] = CRM_Utils_Date::customFormat($this->_relatedObjects['membership'][$eachItem['membership_type_id']]->join_date);
+              $eachItem['start_date'] = CRM_Utils_Date::customFormat($this->_relatedObjects['membership'][$eachItem['membership_type_id']]->start_date);
+              $eachItem['end_date'] = CRM_Utils_Date::customFormat($this->_relatedObjects['membership'][$eachItem['membership_type_id']]->end_date);  
+            }
+          }
           $values['lineItem'][0] = $lineItem;
           $values['priceSetID']  = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $lineItem[$itemId]['price_field_id'], 'price_set_id');
       }
       }
+
       $relatedContact = CRM_Contribute_BAO_Contribution::getOnbehalfIds(
         $this->id,
         $this->contact_id
@@ -2357,6 +2363,9 @@ SELECT source_contact_id
     $template->assign('first_name', $this->_relatedObjects['contact']->first_name);
     $template->assign('last_name', $this->_relatedObjects['contact']->last_name);
     $template->assign('displayName', $this->_relatedObjects['contact']->display_name);
+    if (!empty($values['lineItem']) && !empty($this->_relatedObjects['membership'])) {
+      $template->assign('useForMember', true);
+    }
     //assign honor infomation to receiptmessage
     $honorID = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_Contribution',
       $this->id,

@@ -78,6 +78,14 @@ class CRM_Core_BAO_Email extends CRM_Core_DAO_Email {
       CRM_Utils_Hook::pre('create', 'Email', NULL, $e);
     }
 
+    // CRM-11006 move calls to pre hook from create function to add function
+    if (!empty($params['id'])) {
+      CRM_Utils_Hook::pre('edit', 'Email', $params['id'], $email);
+    }
+    else {
+      CRM_Utils_Hook::pre('create', 'Email', NULL, $e);
+    }
+
     // lower case email field to optimize queries
     $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
     $email->email = $strtolower($email->email);
@@ -95,6 +103,7 @@ WHERE  contact_id = {$params['contact_id']}
 
     // handle if email is on hold
     self::holdEmail($email);
+
 	$email->save();
     /*
      * CRM-11006 move calls to pre hook from create function to add function
@@ -105,6 +114,7 @@ WHERE  contact_id = {$params['contact_id']}
     else {
       CRM_Utils_Hook::post('create', 'Email', $email->id, $email);
     }
+
     return $email;
   }
 

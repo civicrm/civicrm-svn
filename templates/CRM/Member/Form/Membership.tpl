@@ -341,9 +341,10 @@
       cj('#is_different_contribution_contact').change( function() {
         setDifferentContactBlock();
       });
+});
 
       function setDifferentContactBlock( ) {
-        //get the
+  // show/hide different contact section
         if ( cj('#is_different_contribution_contact').attr('checked') ) {
           cj('#record-different-contact').show();
         }
@@ -351,7 +352,6 @@
           cj('#record-different-contact').hide();
         }
       }
-    });
     </script>
     {/literal}
 
@@ -393,7 +393,7 @@
 
     {literal}
     function setPaymentBlock( mode ) {
-      var memType = cj('#membership_type_id_1').val( );
+      var memType = parseInt(cj('#membership_type_id_1').val( ));
       var isPriceSet = 0;
 
       if ( cj('#price_set_id').length > 0 && cj('#price_set_id').val() ) {
@@ -404,15 +404,13 @@
         return;
       }
 
-      var dataUrl = {/literal}"{crmURL p='civicrm/ajax/memType' h=0}"{literal};
-
-      cj.post( dataUrl, {mtype: memType}, function( data ) {
+	var allMemberships = {/literal}{$allMembershipInfo}{literal};
         if ( !mode ) {
           // skip this for test and live modes because contribution type is set automatically
-          cj("#contribution_type_id").val( data.contribution_type_id );
+    cj("#contribution_type_id").val( allMemberships[memType]['contribution_type_id'] );
         }
-        cj("#total_amount").val( data.total_amount );
-      }, 'json');
+
+  cj("#total_amount").val( allMemberships[memType]['total_amount'] );
     }
 
     {/literal}
@@ -444,7 +442,8 @@
             }
           }
         );
-      } else {
+	}
+	else {
         cj("#email-receipt").hide( );
         cj("#notice").hide( );
       }
@@ -572,7 +571,9 @@
     {/literal}{/if}{literal}
 
     function buildAmount( priceSetId ) {
-      if ( !priceSetId ) priceSetId = cj("#price_set_id").val( );
+  if ( !priceSetId ) {
+	  priceSetId = cj("#price_set_id").val( );
+  }
         var fname = '#priceset';
         if ( !priceSetId ) {
         cj('#membership_type_id_1').val(0);

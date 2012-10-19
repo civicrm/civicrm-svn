@@ -165,7 +165,7 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('_qf_Merge_cancel-bottom');
 
     // Move the activities, groups, etc to the main contact and merge using Merge and Goto Next Pair
-    $this->check('move_individual_prefix');
+    $this->check('move_prefix_id');
     $this->check('move_location_email_2');
     $this->check('move_rel_table_activities');
     $this->check('move_rel_table_groups');
@@ -632,7 +632,10 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad("30000");
     $this->click("_qf_DedupeFind_next-top");
     $this->waitForPageToLoad("30000");
-    sleep(2);
+   
+    $this->select("xpath=//div[@id='option51_length']//select", "value=50");
+    sleep(3);
+    $totalContacts = $this->getXpathCount("//table[@class='pagerDisplay']/tbody/tr");
     $this->click("xpath=//form[@id='DedupeFind']//a/span[text()='Batch Merge Duplicates']");
 
     // Check confirmation alert.
@@ -642,7 +645,10 @@ class WebTest_Contact_MergeContactsTest extends CiviSeleniumTestCase {
     $this->chooseOkOnNextConfirmation();
     $this->waitForPageToLoad("30000");
     sleep(5);
-    $this->assertTrue($this->isTextPresent("3 pairs of duplicates were merged and 1 pairs of duplicates were skipped due to conflict during the batch merge process with safe mode."));
+    
+    $unMergedContacts = $this->getXpathCount("//table[@class='pagerDisplay']/tbody/tr");
+    $mergedContacts = $totalContacts - $unMergedContacts;
+    $this->assertTrue($this->isTextPresent("{$mergedContacts} pairs of duplicates were merged and {$unMergedContacts} pairs of duplicates were skipped due to conflict during the batch merge process with safe mode."));
     
     $this->waitForElementPresent("xpath=//form[@id='DedupeFind']/div[2]/div/table/tbody//tr/td[1]/a[text()='$firstName1 $lastName1']/../../td[2]/a[text()='$firstName1 $lastName1']");
     $this->click("xpath=//form[@id='DedupeFind']/div[2]/div/table/tbody//tr/td[1]/a[text()='$firstName1 $lastName1']/../../td[2]/a[text()='$firstName1 $lastName1']/../../td[4]/a[text()='merge']");

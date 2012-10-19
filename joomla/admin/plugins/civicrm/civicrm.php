@@ -48,10 +48,8 @@ class plgUserCivicrm extends JPlugin
 	 * @throws	Exception on error.
 	 */
   function onUserAfterSaveGroup($var) {
-
     $app = JFactory::getApplication();
     self::civicrmResetNavigation();
-
   }
 
   /* delete uf_match record after user is deleted
@@ -66,7 +64,6 @@ class plgUserCivicrm extends JPlugin
 	 * @throws	Exception on error.
 	 */
   function onUserAfterDelete($user, $succes, $msg) {
-
     $app = JFactory::getApplication();
 
     // Instantiate CiviCRM
@@ -81,7 +78,6 @@ class plgUserCivicrm extends JPlugin
 
   // Reset CiviCRM user/contact navigation cache
   public function civicrmResetNavigation() {
-
     // Instantiate CiviCRM
     if ( !class_exists('CRM_Core_Config') ) {
       require_once JPATH_ROOT.'/administrator/components/com_civicrm/civicrm.settings.php';
@@ -90,8 +86,23 @@ class plgUserCivicrm extends JPlugin
 
     $config = CRM_Core_Config::singleton( );
 
+    $cId = null;
+
+    //retrieve civicrm contact ID if joomla user ID is provided
+    if ( $jId ) {
+      $params = array(
+        'version' => 3,
+        'uf_id'   => $jId,
+        'return'  => 'contact_id',
+      );
+      $cId = civicrm_api('uf_match', 'getvalue', $params);
+
+      if ($cId) {
     // Reset Navigation
     require_once 'CRM/Core/BAO/Navigation.php';
-    CRM_Core_BAO_Navigation::resetNavigation();
+        CRM_Core_BAO_Navigation::resetNavigation($cId);
   }
+}
+  }
+
 }
