@@ -58,7 +58,7 @@ class CRM_Contact_BAO_GroupContactCache extends CRM_Contact_DAO_GroupContactCach
     $groupID = CRM_Core_DAO::escapeString(implode(', ', $groupID));
 
     $config = CRM_Core_Config::singleton();
-    $smartGroupCacheTimeout = isset($config->smartGroupCacheTimeout) && is_numeric($config->smartGroupCacheTimeout) ? $config->smartGroupCacheTimeout : 0;
+    $smartGroupCacheTimeout = self::smartGroupCacheTimeout();
 
     //make sure to give original timezone settings again.
     $now = CRM_Utils_Date::getUTCTime();
@@ -182,7 +182,7 @@ WHERE  id IN ( $groupIDs )
 
     if (!isset($groupID)) {
       $config = CRM_Core_Config::singleton();
-      $smartGroupCacheTimeout = isset($config->smartGroupCacheTimeout) && is_numeric($config->smartGroupCacheTimeout) ? $config->smartGroupCacheTimeout : 0;
+      $smartGroupCacheTimeout = self::smartGroupCacheTimeout();
 
       if ($smartGroupCacheTimeout == 0) {
         $query = "
@@ -366,6 +366,16 @@ AND  civicrm_group_contact.group_id = $groupID ";
 
         self::store($groupIDs, $values);
       }
+    }
+  }
+
+  static function smartGroupCacheTimeout() {
+    if (isset($config->smartGroupCacheTimeout) && is_numeric($config->smartGroupCacheTimeout)) {
+      return $config->smartGroupCacheTimeout;
+    }
+    else {
+      // lets have a min cache time of 5 mins if not set
+      return 5;
     }
   }
 }
