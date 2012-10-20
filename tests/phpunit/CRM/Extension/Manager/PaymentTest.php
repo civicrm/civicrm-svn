@@ -5,7 +5,6 @@ require_once 'CiviTest/CiviUnitTestCase.php';
 class CRM_Extension_Manager_PaymentTest extends CiviUnitTestCase {
   function setUp() {
     parent::setUp();
-    CRM_Core_DAO::executeQuery('DELETE FROM civicrm_extension WHERE full_name LIKE "test.%"');
     if (class_exists('test_extension_manager_paymenttest')) {
       test_extension_manager_paymenttest::$counts = array();
     }

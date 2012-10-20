@@ -7,7 +7,6 @@ class CRM_Extension_ManagerTest extends CiviUnitTestCase {
     parent::setUp();
     list ($this->basedir, $this->container) = $this->_createContainer();
     $this->mapper = new CRM_Extension_Mapper($this->container);
-    CRM_Core_DAO::executeQuery('DELETE FROM civicrm_extension WHERE full_name LIKE "test.%"');
   }
 
   function tearDown() {

@@ -5,7 +5,6 @@ require_once 'CiviTest/CiviUnitTestCase.php';
 class CRM_Extension_Manager_ReportTest extends CiviUnitTestCase {
   function setUp() {
     parent::setUp();
-    CRM_Core_DAO::executeQuery('DELETE FROM civicrm_extension WHERE full_name LIKE "test.%"');
     //if (class_exists('test_extension_manager_reporttest')) {
     //  test_extension_manager_reporttest::$counts = array();
     //}
@@ -13,7 +12,6 @@ class CRM_Extension_Manager_ReportTest extends CiviUnitTestCase {
 
   function tearDown() {
     parent::tearDown();
-    CRM_Core_DAO::executeQuery('DELETE FROM civicrm_extension WHERE full_name LIKE "test.%"');
   }
 
   /**
