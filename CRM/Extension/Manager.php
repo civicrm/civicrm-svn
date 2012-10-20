@@ -97,12 +97,34 @@ class CRM_Extension_Manager {
    * @throws CRM_Extension_Exception
    */
   public function install($keys) {
+    $origStatuses = $this->getStatuses();
+
+    // TODO: to mitigate the risk of crashing during installation, scan
+    // keys/statuses/types before doing anything
+    
     foreach ($keys as $key) {
       list ($info, $typeManager) = $this->_getInfoTypeHandler($key); // throws Exception
 
-      $typeManager->onPreInstall($info);
-      $this->_createExtensionEntry($info);
-      $typeManager->onPostInstall($info);
+      switch ($origStatuses[$key]) {
+        case self::STATUS_INSTALLED:
+          // ok, nothing to do
+          break;
+        case self::STATUS_DISABLED:
+          // re-enable it
+          $typeManager->onPreEnable($info);
+          $this->_setExtensionActive($info, 1);
+          $typeManager->onPostEnable($info);
+          break;
+        case self::STATUS_UNINSTALLED:
+          // install anew
+          $typeManager->onPreInstall($info);
+          $this->_createExtensionEntry($info);
+          $typeManager->onPostInstall($info);
+          break;
+        case self::STATUS_UNKNOWN:
+        default:
+          throw new CRM_Extension_Exception("Cannot install or enable extension: $key");
+      }
     }
 
     $this->statuses = NULL;
@@ -117,16 +139,7 @@ class CRM_Extension_Manager {
    * @throws CRM_Extension_Exception
    */
   public function enable($keys) {
-    foreach ($keys as $key) {
-      list ($info, $typeManager) = $this->_getInfoTypeHandler($key); // throws Exception
-
-      $typeManager->onPreEnable($info);
-      CRM_Core_DAO::setFieldValue('CRM_Core_DAO_Extension', $this->id, 'is_active', 1);
-      $typeManager->onPostEnable($info);
-    }
-
-    $this->statuses = NULL;
-    CRM_Core_Invoke::rebuildMenuAndCaches(TRUE);
+    $this->install($keys);
   }
 
   /**
@@ -137,12 +150,28 @@ class CRM_Extension_Manager {
    * @throws CRM_Extension_Exception
    */
   public function disable($keys) {
+    $origStatuses = $this->getStatuses();
+
+    // TODO: to mitigate the risk of crashing during installation, scan
+    // keys/statuses/types before doing anything
+
     foreach ($keys as $key) {
       list ($info, $typeManager) = $this->_getInfoTypeHandler($key); // throws Exception
 
-      $typeManager->onPreDisable($info);
-      CRM_Core_DAO::setFieldValue('CRM_Core_DAO_Extension', $this->id, 'is_active', 0);
-      $typeManager->onPostDisable($info);
+      switch ($origStatuses[$key]) {
+        case self::STATUS_INSTALLED:
+          $typeManager->onPreDisable($info);
+          $this->_setExtensionActive($info, 0);
+          $typeManager->onPostDisable($info);
+          break;
+        case self::STATUS_DISABLED:
+        case self::STATUS_UNINSTALLED:
+          // ok, nothing to do
+          break;
+        case self::STATUS_UNKNOWN:
+        default:
+          throw new CRM_Extension_Exception("Cannot disable unknown extension: $key");
+      }
     }
 
     $this->statuses = NULL;
@@ -159,12 +188,30 @@ class CRM_Extension_Manager {
    * @throws CRM_Extension_Exception
    */
   public function uninstall($keys) {
-    foreach ($keys as $key) {
+    $origStatuses = $this->getStatuses();
+
+    // TODO: to mitigate the risk of crashing during installation, scan
+    // keys/statuses/types before doing anything
+
+   foreach ($keys as $key) {
       list ($info, $typeManager) = $this->_getInfoTypeHandler($key); // throws Exception
 
-      $typeManager->onPreUninstall($info);
-      $this->_removeExtensionEntry($info);
-      $typeManager->onPostUninstall($info);
+      switch ($origStatuses[$key]) {
+        case self::STATUS_INSTALLED:
+          throw new CRM_Extension_Exception("Cannot uninstall extension; disable it first: $key");
+          break;
+        case self::STATUS_DISABLED:
+          $typeManager->onPreUninstall($info);
+          $this->_removeExtensionEntry($info);
+          $typeManager->onPostUninstall($info);
+          break;
+        case self::STATUS_UNINSTALLED:
+          // ok, nothing to do
+          break;
+        case self::STATUS_UNKNOWN:
+        default:
+          throw new CRM_Extension_Exception("Cannot disable unknown extension: $key");
+      }
     }
 
     $this->statuses = NULL;
@@ -244,7 +291,7 @@ class CRM_Extension_Manager {
 
   private function _removeExtensionEntry(CRM_Extension_Info $info) {
     $dao = new CRM_Core_DAO_Extension();
-    $dao->key = $info->key;
+    $dao->full_name = $info->key;
     if ($dao->find(TRUE)) {
       if (CRM_Core_BAO_Extension::del($dao->id)) {
         CRM_Core_Session::setStatus(ts('Selected option value has been deleted.'), ts('Deleted'), 'success');
@@ -252,5 +299,12 @@ class CRM_Extension_Manager {
         throw new CRM_Extension_Exception("Failed to remove extension entry");
       }
     } // else: post-condition already satisified
+  }
+
+  private function _setExtensionActive(CRM_Extension_Info $info, $isActive) {
+    CRM_Core_DAO::executeQuery('UPDATE civicrm_extension SET is_active = %1 where full_name = %2', array(
+      1 => array($isActive, 'Integer'),
+      2 => array($info->key, 'String'),
+    ));
   }
 }

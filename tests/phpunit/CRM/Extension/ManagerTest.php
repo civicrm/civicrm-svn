@@ -30,22 +30,28 @@ class CRM_Extension_ManagerTest extends CiviUnitTestCase {
 
   /**
    * Install an extension with a valid type name
+   *
+   * Note: We initially install two extensions but then toggle only
+   * the second. This controls for bad SQL queries which hit either
+   * "the first row" or "all rows".
    */
-  function testInstallDisableUninstall() {
+  function testInstall_Disable_Uninstall() {
     $testingTypeManager = $this->getMock('CRM_Extension_Manager_Interface');
     $manager = $this->_createManager(array(
       'testing-type' => $testingTypeManager,
     ));
     $this->assertEquals('uninstalled', $manager->getStatus('test.foo.bar'));
+    $this->assertEquals('uninstalled', $manager->getStatus('test.whiz.bang'));
 
     $testingTypeManager
-      ->expects($this->once())
+      ->expects($this->exactly(2))
       ->method('onPreInstall');
     $testingTypeManager
-      ->expects($this->once())
+      ->expects($this->exactly(2))
       ->method('onPostInstall');
-    $manager->install(array('test.foo.bar'));
+    $manager->install(array('test.whiz.bang', 'test.foo.bar'));
     $this->assertEquals('installed', $manager->getStatus('test.foo.bar'));
+    $this->assertEquals('installed', $manager->getStatus('test.whiz.bang'));
 
     $testingTypeManager
       ->expects($this->once())
@@ -55,6 +61,7 @@ class CRM_Extension_ManagerTest extends CiviUnitTestCase {
       ->method('onPostDisable');
     $manager->disable(array('test.foo.bar'));
     $this->assertEquals('disabled', $manager->getStatus('test.foo.bar'));
+    $this->assertEquals('installed', $manager->getStatus('test.whiz.bang')); // no side-effect
 
     $testingTypeManager
       ->expects($this->once())
@@ -64,12 +71,55 @@ class CRM_Extension_ManagerTest extends CiviUnitTestCase {
       ->method('onPostUninstall');
     $manager->uninstall(array('test.foo.bar'));
     $this->assertEquals('uninstalled', $manager->getStatus('test.foo.bar'));
+    $this->assertEquals('installed', $manager->getStatus('test.whiz.bang')); // no side-effect
   }
 
   /**
    * Install an extension with a valid type name
    */
-  function testInstallDisableEnable() {
+  function testInstall_Disable_Enable() {
+    $testingTypeManager = $this->getMock('CRM_Extension_Manager_Interface');
+    $manager = $this->_createManager(array(
+      'testing-type' => $testingTypeManager,
+    ));
+    $this->assertEquals('uninstalled', $manager->getStatus('test.foo.bar'));
+    $this->assertEquals('uninstalled', $manager->getStatus('test.whiz.bang'));
+
+    $testingTypeManager
+      ->expects($this->exactly(2))
+      ->method('onPreInstall');
+    $testingTypeManager
+      ->expects($this->exactly(2))
+      ->method('onPostInstall');
+    $manager->install(array('test.whiz.bang', 'test.foo.bar'));
+    $this->assertEquals('installed', $manager->getStatus('test.foo.bar'));
+    $this->assertEquals('installed', $manager->getStatus('test.whiz.bang'));
+
+    $testingTypeManager
+      ->expects($this->once())
+      ->method('onPreDisable');
+    $testingTypeManager
+      ->expects($this->once())
+      ->method('onPostDisable');
+    $manager->disable(array('test.foo.bar'));
+    $this->assertEquals('disabled', $manager->getStatus('test.foo.bar'));
+    $this->assertEquals('installed', $manager->getStatus('test.whiz.bang'));
+
+    $testingTypeManager
+      ->expects($this->once())
+      ->method('onPreEnable');
+    $testingTypeManager
+      ->expects($this->once())
+      ->method('onPostEnable');
+    $manager->enable(array('test.foo.bar'));
+    $this->assertEquals('installed', $manager->getStatus('test.foo.bar'));
+    $this->assertEquals('installed', $manager->getStatus('test.whiz.bang'));
+  }
+
+  /**
+   * Performing 'install' on a 'disabled' extension performs an 'enable'
+   */
+  function testInstall_Disable_Install() {
     $testingTypeManager = $this->getMock('CRM_Extension_Manager_Interface');
     $manager = $this->_createManager(array(
       'testing-type' => $testingTypeManager,
@@ -100,7 +150,33 @@ class CRM_Extension_ManagerTest extends CiviUnitTestCase {
     $testingTypeManager
       ->expects($this->once())
       ->method('onPostEnable');
-    $manager->enable(array('test.foo.bar'));
+    $manager->install(array('test.foo.bar')); // install() instead of enable()
+    $this->assertEquals('installed', $manager->getStatus('test.foo.bar'));
+  }
+
+  /**
+   * Install an extension with a valid type name
+   */
+  function testEnableBare() {
+    $testingTypeManager = $this->getMock('CRM_Extension_Manager_Interface');
+    $manager = $this->_createManager(array(
+      'testing-type' => $testingTypeManager,
+    ));
+    $this->assertEquals('uninstalled', $manager->getStatus('test.foo.bar'));
+
+    $testingTypeManager
+      ->expects($this->once())
+      ->method('onPreInstall');
+    $testingTypeManager
+      ->expects($this->once())
+      ->method('onPostInstall');
+    $testingTypeManager
+      ->expects($this->never())
+      ->method('onPreEnable');
+    $testingTypeManager
+      ->expects($this->never())
+      ->method('onPostEnable');
+    $manager->enable(array('test.foo.bar')); // enable not install
     $this->assertEquals('installed', $manager->getStatus('test.foo.bar'));
   }
 
@@ -116,29 +192,6 @@ class CRM_Extension_ManagerTest extends CiviUnitTestCase {
     ));
     $this->assertEquals('unknown', $manager->getStatus('test.foo.bar.whiz.bang'));
   }
-
-  /**
-   * Install an extension with an invalid type name
-   */
-  function testInstallMultiple() {
-    $testingTypeManager = $this->getMock('CRM_Extension_Manager_Interface');
-    $manager = $this->_createManager(array(
-      'testing-type' => $testingTypeManager,
-    ));
-    $this->assertEquals('uninstalled', $manager->getStatus('test.foo.bar'));
-    $this->assertEquals('uninstalled', $manager->getStatus('test.whiz.bang'));
-
-    $testingTypeManager
-      ->expects($this->exactly(2))
-      ->method('onPreInstall');
-    $testingTypeManager
-      ->expects($this->exactly(2))
-      ->method('onPostInstall');
-    $manager->install(array('test.foo.bar', 'test.whiz.bang'));
-    $this->assertEquals('installed', $manager->getStatus('test.foo.bar'));
-    $this->assertEquals('installed', $manager->getStatus('test.whiz.bang'));
-  }
-
 
   function _createManager($typeManagers) {
     list ($basedir, $c) = $this->_createContainer();
