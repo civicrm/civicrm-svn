@@ -60,24 +60,14 @@ function civicrm_api3_extension_install($params) {
     return civicrm_api3_create_success();
   }
 
-  $ext = new CRM_Core_Extensions();
-  $exts = $ext->getExtensions();
-  foreach ($keys as $key) {
-  if (!$ext->isEnabled()) {
-    return civicrm_api3_create_error('Extension support is not enabled');
-    } elseif (!$ext->isExtensionKey($key) || !array_key_exists($key, $exts)) {
-      return civicrm_api3_create_error('Invalid extension key: ' . $key);
-    } elseif ($exts[$key]->status == 'installed' && $exts[$key]->is_active == TRUE) {
-      // already installed
-    } elseif (!in_array($exts[$key]->status, array('remote', 'local'))) {
-    return civicrm_api3_create_error('Can only install extensions with status "Available (Local)" or "Available (Remote)"');
-  } else {
-      // pre-condition: not installed
-      $ext->install(NULL, $key); // FIXME: only rebuild cache one time
-    }
+  try {
+    CRM_Extension_System::singleton()->getManager()->install($keys);
+  } catch (CRM_Extension_Exception $e) {
+    return civicrm_api3_create_error($e->getMessage());
   }
-    return civicrm_api3_create_success();
-  }
+
+  return civicrm_api3_create_success();
+}
 
 /**
  * Enable an extension
@@ -99,26 +89,9 @@ function civicrm_api3_extension_enable($params) {
     return civicrm_api3_create_success();
   }
 
-  $ext = new CRM_Core_Extensions();
-  $exts = $ext->getExtensions();
-  foreach ($keys as $key) {
-  if (!$ext->isEnabled()) {
-    return civicrm_api3_create_error('Extension support is not enabled');
-    } elseif (!$ext->isExtensionKey($key) || !array_key_exists($key, $exts)) {
-      return civicrm_api3_create_error('Invalid extension key: ' . $key);
-    } elseif ($exts[$key]->status == 'installed' && $exts[$key]->is_active == TRUE) {
-      // already enabled
-    } elseif ($exts[$key]->status != 'installed') {
-    return civicrm_api3_create_error('Can only enable extensions which have been previously installed');
-    } elseif ($exts[$key]->is_active == TRUE) {
-    return civicrm_api3_create_error('Can only enable extensions which are currently inactive');
-  } else {
-    // pre-condition: installed and inactive
-      $ext->enable(NULL, $key); // FIXME: only rebuild cache one time
-    }
-  }
-    return civicrm_api3_create_success();
-  }
+  CRM_Extension_System::singleton()->getManager()->enable($keys);
+  return civicrm_api3_create_success();
+}
 
 /**
  * Disable an extension
@@ -140,26 +113,9 @@ function civicrm_api3_extension_disable($params) {
     return civicrm_api3_create_success();
   }
 
-  $ext = new CRM_Core_Extensions();
-  $exts = $ext->getExtensions();
-  foreach ($keys as $key) {
-  if (!$ext->isEnabled()) {
-    return civicrm_api3_create_error('Extension support is not enabled');
-    } elseif (!$ext->isExtensionKey($key) || !array_key_exists($key, $exts)) {
-      return civicrm_api3_create_error('Invalid extension key: ' . $key);
-    } elseif ($exts[$key]->status == 'installed' && $exts[$key]->is_active != TRUE) {
-      // already disabled
-    } elseif ($exts[$key]->status != 'installed') {
-    return civicrm_api3_create_error('Can only disable extensions which have been previously installed');
-    } elseif ($exts[$key]->is_active != TRUE) {
-    return civicrm_api3_create_error('Can only disable extensions which are active');
-  } else {
-    // pre-condition: installed and active
-      $ext->disable(NULL, $key); // FIXME: only rebuild cache one time
-    }
-  }
-    return civicrm_api3_create_success();
-  }
+  CRM_Extension_System::singleton()->getManager()->disable($keys);
+  return civicrm_api3_create_success();
+}
 
 /**
  * Uninstall an extension
@@ -182,26 +138,10 @@ function civicrm_api3_extension_uninstall($params) {
     return civicrm_api3_create_success();
   }
 
-  $ext = new CRM_Core_Extensions();
-  $exts = $ext->getExtensions();
-  foreach ($keys as $key) {
-  if (!$ext->isEnabled()) {
-    return civicrm_api3_create_error('Extension support is not enabled');
-    } elseif (!$ext->isExtensionKey($key) || !array_key_exists($key, $exts)) {
-      // FIXME: is this necesary? if $key is not in $exts, can't we assume it's uninstalled
-      return civicrm_api3_create_error('Invalid extension key: ' . $key);
-    } elseif ($exts[$key]->status != 'installed') {
-    return civicrm_api3_create_error('Can only uninstall extensions which have been previously installed');
-    } elseif ($exts[$key]->is_active == TRUE) {
-    return civicrm_api3_create_error('Extension must be disabled before uninstalling');
-  } else {
-    // pre-condition: installed and inactive
-      $removeFiles = CRM_Utils_Array::value('removeFiles', $params, FALSE);
-      $ext->uninstall(NULL, $key, $removeFiles); // FIXME: only rebuild cache one time
-    }
-  }
-    return civicrm_api3_create_success();
-  }
+  // TODO // $removeFiles = CRM_Utils_Array::value('removeFiles', $params, FALSE);
+  CRM_Extension_System::singleton()->getManager()->uninstall($keys);
+  return civicrm_api3_create_success();
+}
 
 /**
  * Determine the list of extension keys
