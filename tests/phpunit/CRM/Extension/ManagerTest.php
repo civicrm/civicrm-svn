@@ -37,6 +37,7 @@ class CRM_Extension_ManagerTest extends CiviUnitTestCase {
     $manager = $this->_createManager(array(
       'testing-type' => $testingTypeManager,
     ));
+    $this->assertEquals('uninstalled', $manager->getStatus('test.foo.bar'));
 
     $testingTypeManager
       ->expects($this->once())
@@ -45,8 +46,7 @@ class CRM_Extension_ManagerTest extends CiviUnitTestCase {
       ->expects($this->once())
       ->method('onPostInstall');
     $manager->install('test.foo.bar');
-    $this->assertDBQuery(1, 'SELECT count(*) FROM civicrm_extension WHERE full_name = "test.foo.bar"');
-    $this->assertDBQuery(1, 'SELECT count(*) FROM civicrm_extension WHERE full_name = "test.foo.bar" AND is_active = 1');
+    $this->assertEquals('installed', $manager->getStatus('test.foo.bar'));
 
     $testingTypeManager
       ->expects($this->once())
@@ -55,8 +55,7 @@ class CRM_Extension_ManagerTest extends CiviUnitTestCase {
       ->expects($this->once())
       ->method('onPostDisable');
     $manager->disable('test.foo.bar');
-    $this->assertDBQuery(1, 'SELECT count(*) FROM civicrm_extension WHERE full_name = "test.foo.bar"');
-    $this->assertDBQuery(1, 'SELECT count(*) FROM civicrm_extension WHERE full_name = "test.foo.bar" AND is_active = 0');
+    $this->assertEquals('disabled', $manager->getStatus('test.foo.bar'));
 
     $testingTypeManager
       ->expects($this->once())
@@ -65,7 +64,7 @@ class CRM_Extension_ManagerTest extends CiviUnitTestCase {
       ->expects($this->once())
       ->method('onPostUninstall');
     $manager->uninstall('test.foo.bar');
-    $this->assertDBQuery(0, 'SELECT count(*) FROM civicrm_extension WHERE full_name = "test.foo.bar"');
+    $this->assertEquals('uninstalled', $manager->getStatus('test.foo.bar'));
   }
 
   /**
@@ -76,6 +75,7 @@ class CRM_Extension_ManagerTest extends CiviUnitTestCase {
     $manager = $this->_createManager(array(
       'testing-type' => $testingTypeManager,
     ));
+    $this->assertEquals('uninstalled', $manager->getStatus('test.foo.bar'));
 
     $testingTypeManager
       ->expects($this->once())
@@ -84,8 +84,7 @@ class CRM_Extension_ManagerTest extends CiviUnitTestCase {
       ->expects($this->once())
       ->method('onPostInstall');
     $manager->install('test.foo.bar');
-    $this->assertDBQuery(1, 'SELECT count(*) FROM civicrm_extension WHERE full_name = "test.foo.bar"');
-    $this->assertDBQuery(1, 'SELECT count(*) FROM civicrm_extension WHERE full_name = "test.foo.bar" AND is_active = 1');
+    $this->assertEquals('installed', $manager->getStatus('test.foo.bar'));
 
     $testingTypeManager
       ->expects($this->once())
@@ -94,8 +93,7 @@ class CRM_Extension_ManagerTest extends CiviUnitTestCase {
       ->expects($this->once())
       ->method('onPostDisable');
     $manager->disable('test.foo.bar');
-    $this->assertDBQuery(1, 'SELECT count(*) FROM civicrm_extension WHERE full_name = "test.foo.bar"');
-    $this->assertDBQuery(1, 'SELECT count(*) FROM civicrm_extension WHERE full_name = "test.foo.bar" AND is_active = 0');
+    $this->assertEquals('disabled', $manager->getStatus('test.foo.bar'));
 
     $testingTypeManager
       ->expects($this->once())
@@ -104,14 +102,26 @@ class CRM_Extension_ManagerTest extends CiviUnitTestCase {
       ->expects($this->once())
       ->method('onPostEnable');
     $manager->enable('test.foo.bar');
-    $this->assertDBQuery(1, 'SELECT count(*) FROM civicrm_extension WHERE full_name = "test.foo.bar"');
-    $this->assertDBQuery(1, 'SELECT count(*) FROM civicrm_extension WHERE full_name = "test.foo.bar" AND is_active = 1');
+    $this->assertEquals('installed', $manager->getStatus('test.foo.bar'));
+  }
+
+  /**
+   * Get the status of an unknown extension
+   */
+  function testStatusUnknownKey() {
+    $testingTypeManager = $this->getMock('CRM_Extension_Manager_Interface');
+    $testingTypeManager->expects($this->never())
+      ->method('onPreInstall');
+    $manager = $this->_createManager(array(
+      'testing-type' => $testingTypeManager,
+    ));
+    $this->assertEquals('unknown', $manager->getStatus('test.foo.bar.whiz.bang'));
   }
 
   function _createManager($typeManagers) {
     list ($basedir, $c) = $this->_createContainer();
     $mapper = new CRM_Extension_Mapper($c);
-    return new CRM_Extension_Manager($mapper, $typeManagers);
+    return new CRM_Extension_Manager($c, $mapper, $typeManagers);
   }
 
   function _createContainer(CRM_Utils_Cache_Interface $cache = NULL, $cacheKey = NULL) {

@@ -35,6 +35,25 @@
  *
  */
 class CRM_Extension_Manager {
+  /**
+   * The extension is fully installed and enabled
+   */
+  const STATUS_INSTALLED = 'installed';
+
+  /**
+   * The extension config has been applied to database but deactivated
+   */
+  const STATUS_DISABLED = 'disabled';
+
+  /**
+   * The extension code is visible, but nothing has been applied to DB
+   */
+  const STATUS_UNINSTALLED = 'uninstalled';
+
+  /**
+   * The extension code is not locally accessible
+   */
+  const STATUS_UNKNOWN = 'unknown';
 
   /**
    * @var CRM_Extension_Container_Interface, the interface
@@ -51,9 +70,10 @@ class CRM_Extension_Manager {
    */
   public $typeManagers;
 
-  function __construct(CRM_Extension_Mapper $mapper, $typeManagers) {
-   $this->mapper = $mapper;
-   $this->typeManagers = $typeManagers;
+  function __construct(CRM_Extension_Container_Interface $fullContainer, CRM_Extension_Mapper $mapper, $typeManagers) {
+    $this->fullContainer = $fullContainer;
+    $this->mapper = $mapper;
+    $this->typeManagers = $typeManagers;
   }
 
   /**
@@ -61,25 +81,34 @@ class CRM_Extension_Manager {
    */
   public function install($key) {
     list ($info, $typeManager) = $this->_getInfoTypeHandler($key); // throws Exception
+
     $typeManager->onPreInstall($info);
     $this->_createExtensionEntry($info);
     $typeManager->onPostInstall($info);
+
+    $this->statuses = NULL;
     CRM_Core_Invoke::rebuildMenuAndCaches(TRUE);
   }
 
   public function enable($key) {
     list ($info, $typeManager) = $this->_getInfoTypeHandler($key); // throws Exception
+
     $typeManager->onPreEnable($info);
     CRM_Core_DAO::setFieldValue('CRM_Core_DAO_Extension', $this->id, 'is_active', 1);
     $typeManager->onPostEnable($info);
+
+    $this->statuses = NULL;
     CRM_Core_Invoke::rebuildMenuAndCaches(TRUE);
   }
 
   public function disable($key) {
     list ($info, $typeManager) = $this->_getInfoTypeHandler($key); // throws Exception
+
     $typeManager->onPreDisable($info);
     CRM_Core_DAO::setFieldValue('CRM_Core_DAO_Extension', $this->id, 'is_active', 0);
     $typeManager->onPostDisable($info);
+
+    $this->statuses = NULL;
     CRM_Core_Invoke::rebuildMenuAndCaches(TRUE);
   }
 
@@ -92,10 +121,56 @@ class CRM_Extension_Manager {
    */
   public function uninstall($key) {
     list ($info, $typeManager) = $this->_getInfoTypeHandler($key); // throws Exception
+
     $typeManager->onPreUninstall($info);
     $this->_removeExtensionEntry($info);
     $typeManager->onPostUninstall($info);
+
+    $this->statuses = NULL;
     CRM_Core_Invoke::rebuildMenuAndCaches(TRUE);
+  }
+
+  /**
+   * Determine the status of an extension
+   *
+   * @return string constant (STATUS_INSTALLED, STATUS_DISABLED, STATUS_UNINSTALLED, STATUS_UNKNOWN)
+   */
+  public function getStatus($key) {
+    $statuses = $this->getStatuses();
+    if (array_key_exists($key, $statuses)) {
+      return $statuses[$key];
+    } else {
+      return self::STATUS_UNKNOWN;
+    }
+  }
+
+  /**
+   * Determine the status of all extensions
+   *
+   * @return array ($key => status_constant)
+   */
+  public function getStatuses() {
+    if (!is_array($this->statuses)) {
+      $this->statuses = array();
+
+      foreach ($this->fullContainer->getKeys() as $key) {
+        $this->statuses[$key] = self::STATUS_UNINSTALLED;
+      }
+
+      $sql = '
+        SELECT full_name, is_active
+        FROM civicrm_extension
+      ';
+      $dao = CRM_Core_DAO::executeQuery($sql);
+      while ($dao->fetch()) {
+        if ($dao->is_active) {
+          $this->statuses[$dao->full_name] = self::STATUS_INSTALLED;
+        } else {
+          $this->statuses[$dao->full_name] = self::STATUS_DISABLED;
+        }
+      }
+    }
+    return $this->statuses;
   }
 
   // ----------------------

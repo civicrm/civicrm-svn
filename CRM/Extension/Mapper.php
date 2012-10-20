@@ -62,9 +62,28 @@ class CRM_Extension_Mapper {
    * @var CRM_Extension_Container_Interface
    */
   protected $container;
+  
+  /**
+   * @var array (key => CRM_Extension_Info)
+   */
+  protected $infos = array();
 
-  public function __construct(CRM_Extension_Container_Interface $container) {
+  /**
+   * @var array
+   */
+  protected $moduleExtensions = NULL;
+
+  /**
+   * @var CRM_Utils_Cache_Interface
+   */
+  protected $cache;
+
+  protected $cacheKey;
+
+  public function __construct(CRM_Extension_Container_Interface $container, CRM_Utils_Cache_Interface $cache = NULL, $cacheKey = NULL) {
     $this->container = $container;
+    $this->cache = $cache;
+    $this->cacheKey = $cacheKey;
   }
 
   /**
@@ -130,8 +149,11 @@ class CRM_Extension_Mapper {
    * @param string $key extension key
    * @return CRM_Extension_Info
    */
-  public function keyToInfo($key) {
-    return CRM_Extension_Info::loadFromFile($this->container->getPath($key) . DIRECTORY_SEPARATOR . CRM_Extension_Info::FILENAME);
+  public function keyToInfo($key, $fresh = FALSE) {
+    if ($fresh || !array_key_exists($key, $this->infos)) {
+      $this->infos[$key] = CRM_Extension_Info::loadFromFile($this->container->getPath($key) . DIRECTORY_SEPARATOR . CRM_Extension_Info::FILENAME);
+    }
+    return $this->infos[$key];
   }
 
   /**
@@ -181,7 +203,46 @@ class CRM_Extension_Mapper {
     return $this->container->getResUrl($key);
   }
 
-  // TODO public function keyToUrl($key)
+  /**
+   * Fetch the list of active extensions of type 'module'
+   *
+   * @param $fresh bool whether to forcibly reload extensions list from canonical store
+   * @return array - array(array('prefix' => $, 'file' => $))
+   */
+  public function getActiveModuleFiles($fresh = FALSE) {
+    $config = CRM_Core_Config::singleton();
+    if ($config->isUpgradeMode()) {
+      return array(); // hmm, ok
+    }
+
+    $moduleExtensions = NULL;
+    if ($this->cache && !$fresh) {
+      $moduleExtensions = $this->cache->get($this->cacheKey . '/moduleFiles');
+    }
+
+    if (!is_array($moduleExtensions)) {
+      // Check canonical module list
+      $moduleExtensions = array();
+      $sql = '
+        SELECT full_name, file
+        FROM civicrm_extension
+        WHERE is_active = 1
+        AND type = "module"
+      ';
+      $dao = CRM_Core_DAO::executeQuery($sql);
+      while ($dao->fetch()) {
+        $moduleExtensions[] = array(
+          'prefix' => $dao->file,
+          'filePath' => $this->keyToPath($dao->full_name),
+        );
+      }
+
+      if ($this->cache) {
+        $this->cache->set($this->cacheKey . '/moduleFiles', $moduleExtensions);
+      }
+    }
+    return $moduleExtensions;
+  }
 
   /**
    * Given the class, provides the template path.
@@ -217,4 +278,5 @@ class CRM_Extension_Mapper {
     $info = $this->keyToInfo($this->classToKey($clazz));
     return (string) $info->file . '.tpl';
   }
+
 }

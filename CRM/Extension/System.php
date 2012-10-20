@@ -102,16 +102,20 @@ class CRM_Extension_System {
   }
 
   /**
+   * Get the service which provides runtime information about extensions
+   *
    * @return CRM_Extension_Mapper
    */
   public function getMapper() {
     if ($this->mapper === NULL) {
-      $this->mapper = new CRM_Extension_Mapper($this->getFullContainer());
+      $this->mapper = new CRM_Extension_Mapper($this->getFullContainer(), $this->getCache(), 'mapper');
     }
     return $this->mapper;
   }
 
   /**
+   * Get the service for enabling and disabling extensions
+   *
    * @return CRM_Extension_Manager
    */
   public function getManager() {
@@ -122,18 +126,22 @@ class CRM_Extension_System {
         //'search' => new CRM_Extension_Manager_Search(),
         'module' => new CRM_Extension_Manager_Module($this->getMapper()),
       );
-      $this->manager = new CRM_Extension_Manager(/*$this->getFullContainer(),*/ $this->getMapper(), $typeManagers);
+      $this->manager = new CRM_Extension_Manager($this->getFullContainer(), $this->getMapper(), $typeManagers);
     }
     return $this->manager;
   }
 
   /**
+   * Get the service for finding remotely-available extensions
+   *
    * @return CRM_Extension_Browser
    */
   public function getBrowser() {
   }
 
   /**
+   * Get the service for loading code from remotely-available extensions
+   *
    * @return CRM_Extension_Downloader
    */
   public function getDownloader() {
