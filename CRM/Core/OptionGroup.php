@@ -77,19 +77,19 @@ class CRM_Core_OptionGroup {
 
   static function &values($name, $flip = FALSE, $grouping = FALSE,
     $localize = FALSE, $condition = NULL,
-    $valueColumnName = 'label', $onlyActive = TRUE
+    $valueColumnName = 'label', $onlyActive = TRUE, $fresh = FALSE
   ) {
     static $_cache = array();
 
     $cacheKey = "CRM_OG_{$name}_{$flip}_{$grouping}_{$localize}_{$condition}_{$valueColumnName}_{$onlyActive}";
 
-    if (array_key_exists($cacheKey, $_cache)) {
+    if (array_key_exists($cacheKey, $_cache) && !$fresh) {
       return $_cache[$cacheKey];
     }
 
     $cache = CRM_Utils_Cache::singleton();
     $var = $cache->get($cacheKey);
-    if ($var) {
+    if ($var && !$fresh) {
       return $var;
     }
 
