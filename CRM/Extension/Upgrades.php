@@ -33,7 +33,7 @@
  * $Id$
  *
  */
-class CRM_Core_Extensions_Upgrades {
+class CRM_Extension_Upgrades {
 
   const QUEUE_NAME = 'ext-upgrade';
 
