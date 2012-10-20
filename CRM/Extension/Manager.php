@@ -57,18 +57,31 @@ class CRM_Extension_Manager {
 
   /**
    * @var CRM_Extension_Container_Interface, the interface
+   *
+   * Note: Treat as private. This is only public to facilitate debugging.
    */
   public $fullContainer;
 
   /**
    * @var CRM_Extension_Mapper
+   *
+   * Note: Treat as private. This is only public to facilitate debugging.
    */
   public $mapper;
 
   /**
    * @var array (typeName => CRM_Extension_Manager_Interface)
+   *
+   * Note: Treat as private. This is only public to facilitate debugging.
    */
   public $typeManagers;
+
+  /**
+   * @var array (extensionKey => statusConstant)
+   *
+   * Note: Treat as private. This is only public to facilitate debugging.
+   */  
+  public $statuses;
 
   function __construct(CRM_Extension_Container_Interface $fullContainer, CRM_Extension_Mapper $mapper, $typeManagers) {
     $this->fullContainer = $fullContainer;
@@ -78,35 +91,59 @@ class CRM_Extension_Manager {
 
   /**
    * Add records of the extension to the database -- and enable it
+   *
+   * @param array $keys list of extension keys
+   * @return void
+   * @throws CRM_Extension_Exception
    */
-  public function install($key) {
-    list ($info, $typeManager) = $this->_getInfoTypeHandler($key); // throws Exception
+  public function install($keys) {
+    foreach ($keys as $key) {
+      list ($info, $typeManager) = $this->_getInfoTypeHandler($key); // throws Exception
 
-    $typeManager->onPreInstall($info);
-    $this->_createExtensionEntry($info);
-    $typeManager->onPostInstall($info);
-
-    $this->statuses = NULL;
-    CRM_Core_Invoke::rebuildMenuAndCaches(TRUE);
-  }
-
-  public function enable($key) {
-    list ($info, $typeManager) = $this->_getInfoTypeHandler($key); // throws Exception
-
-    $typeManager->onPreEnable($info);
-    CRM_Core_DAO::setFieldValue('CRM_Core_DAO_Extension', $this->id, 'is_active', 1);
-    $typeManager->onPostEnable($info);
+      $typeManager->onPreInstall($info);
+      $this->_createExtensionEntry($info);
+      $typeManager->onPostInstall($info);
+    }
 
     $this->statuses = NULL;
     CRM_Core_Invoke::rebuildMenuAndCaches(TRUE);
   }
 
-  public function disable($key) {
-    list ($info, $typeManager) = $this->_getInfoTypeHandler($key); // throws Exception
+  /**
+   * Add records of the extension to the database -- and enable it
+   *
+   * @param array $keys list of extension keys
+   * @return void
+   * @throws CRM_Extension_Exception
+   */
+  public function enable($keys) {
+    foreach ($keys as $key) {
+      list ($info, $typeManager) = $this->_getInfoTypeHandler($key); // throws Exception
 
-    $typeManager->onPreDisable($info);
-    CRM_Core_DAO::setFieldValue('CRM_Core_DAO_Extension', $this->id, 'is_active', 0);
-    $typeManager->onPostDisable($info);
+      $typeManager->onPreEnable($info);
+      CRM_Core_DAO::setFieldValue('CRM_Core_DAO_Extension', $this->id, 'is_active', 1);
+      $typeManager->onPostEnable($info);
+    }
+
+    $this->statuses = NULL;
+    CRM_Core_Invoke::rebuildMenuAndCaches(TRUE);
+  }
+
+  /**
+   * Add records of the extension to the database -- and enable it
+   *
+   * @param array $keys list of extension keys
+   * @return void
+   * @throws CRM_Extension_Exception
+   */
+  public function disable($keys) {
+    foreach ($keys as $key) {
+      list ($info, $typeManager) = $this->_getInfoTypeHandler($key); // throws Exception
+
+      $typeManager->onPreDisable($info);
+      CRM_Core_DAO::setFieldValue('CRM_Core_DAO_Extension', $this->id, 'is_active', 0);
+      $typeManager->onPostDisable($info);
+    }
 
     $this->statuses = NULL;
     CRM_Core_Invoke::rebuildMenuAndCaches(TRUE);
@@ -115,16 +152,20 @@ class CRM_Extension_Manager {
   /**
    * Remove all database references to an extension
    *
-   * @param string $key extension key
-   * @param bool $removeFiles whether to remove PHP source tree for the extension
+   * Add records of the extension to the database -- and enable it
+   *
+   * @param array $keys list of extension keys
    * @return void
+   * @throws CRM_Extension_Exception
    */
-  public function uninstall($key) {
-    list ($info, $typeManager) = $this->_getInfoTypeHandler($key); // throws Exception
+  public function uninstall($keys) {
+    foreach ($keys as $key) {
+      list ($info, $typeManager) = $this->_getInfoTypeHandler($key); // throws Exception
 
-    $typeManager->onPreUninstall($info);
-    $this->_removeExtensionEntry($info);
-    $typeManager->onPostUninstall($info);
+      $typeManager->onPreUninstall($info);
+      $this->_removeExtensionEntry($info);
+      $typeManager->onPostUninstall($info);
+    }
 
     $this->statuses = NULL;
     CRM_Core_Invoke::rebuildMenuAndCaches(TRUE);

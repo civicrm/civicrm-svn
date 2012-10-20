@@ -21,7 +21,7 @@ class CRM_Extension_Manager_ModuleTest extends CiviUnitTestCase {
     $manager = CRM_Extension_System::singleton(TRUE)->getManager();
     $this->assertModuleActive(FALSE, 'moduletest');
 
-    $manager->install('test.extension.manager.moduletest');
+    $manager->install(array('test.extension.manager.moduletest'));
     $this->assertHookCounts(array(
       'install' => 1,
       'enable' => 1,
@@ -30,7 +30,7 @@ class CRM_Extension_Manager_ModuleTest extends CiviUnitTestCase {
     ));
     $this->assertModuleActive(TRUE, 'moduletest');
 
-    $manager->disable('test.extension.manager.moduletest');
+    $manager->disable(array('test.extension.manager.moduletest'));
     $this->assertHookCounts(array(
       'install' => 1,
       'enable' => 1,
@@ -39,7 +39,7 @@ class CRM_Extension_Manager_ModuleTest extends CiviUnitTestCase {
     ));
     $this->assertModuleActive(FALSE, 'moduletest');
 
-    $manager->uninstall('test.extension.manager.moduletest');
+    $manager->uninstall(array('test.extension.manager.moduletest'));
     $this->assertHookCounts(array(
       'install' => 1,
       'enable' => 1,
@@ -57,7 +57,7 @@ class CRM_Extension_Manager_ModuleTest extends CiviUnitTestCase {
     $manager = CRM_Extension_System::singleton(TRUE)->getManager();
     $this->assertModuleActive(FALSE, 'moduletest');
 
-    $manager->install('test.extension.manager.moduletest');
+    $manager->install(array('test.extension.manager.moduletest'));
     $this->assertHookCounts(array(
       'install' => 1,
       'enable' => 1,
@@ -66,7 +66,7 @@ class CRM_Extension_Manager_ModuleTest extends CiviUnitTestCase {
     ));
     $this->assertModuleActive(TRUE, 'moduletest');
 
-    $manager->disable('test.extension.manager.moduletest');
+    $manager->disable(array('test.extension.manager.moduletest'));
     $this->assertHookCounts(array(
       'install' => 1,
       'enable' => 1,
@@ -75,7 +75,7 @@ class CRM_Extension_Manager_ModuleTest extends CiviUnitTestCase {
     ));
     $this->assertModuleActive(FALSE, 'moduletest');
 
-    $manager->enable('test.extension.manager.moduletest');
+    $manager->enable(array('test.extension.manager.moduletest'));
     $this->assertHookCounts(array(
       'install' => 1,
       'enable' => 2,

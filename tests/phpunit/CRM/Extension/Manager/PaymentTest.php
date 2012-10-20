@@ -21,16 +21,16 @@ class CRM_Extension_Manager_PaymentTest extends CiviUnitTestCase {
     $manager = CRM_Extension_System::singleton(TRUE)->getManager();
     $this->assertDBQuery(0, 'SELECT count(*) FROM civicrm_payment_processor_type WHERE class_name = "test.extension.manager.paymenttest"');
 
-    $manager->install('test.extension.manager.paymenttest');
+    $manager->install(array('test.extension.manager.paymenttest'));
     $this->assertEquals(1, test_extension_manager_paymenttest::$counts['install']);
     $this->assertDBQuery(1, 'SELECT count(*) FROM civicrm_payment_processor_type WHERE class_name = "test.extension.manager.paymenttest" AND is_active = 1');
 
-    $manager->disable('test.extension.manager.paymenttest');
+    $manager->disable(array('test.extension.manager.paymenttest'));
     $this->assertEquals(1, test_extension_manager_paymenttest::$counts['disable']);
     $this->assertDBQuery(1, 'SELECT count(*) FROM civicrm_payment_processor_type WHERE class_name = "test.extension.manager.paymenttest"');
     $this->assertDBQuery(1, 'SELECT count(*) FROM civicrm_payment_processor_type WHERE class_name = "test.extension.manager.paymenttest" AND is_active = 0');
 
-    $manager->uninstall('test.extension.manager.paymenttest');
+    $manager->uninstall(array('test.extension.manager.paymenttest'));
     $this->assertEquals(1, test_extension_manager_paymenttest::$counts['uninstall']);
     $this->assertDBQuery(0, 'SELECT count(*) FROM civicrm_payment_processor_type WHERE class_name = "test.extension.manager.paymenttest"');
   }
@@ -42,16 +42,16 @@ class CRM_Extension_Manager_PaymentTest extends CiviUnitTestCase {
     $manager = CRM_Extension_System::singleton(TRUE)->getManager();
     $this->assertDBQuery(0, 'SELECT count(*) FROM civicrm_payment_processor_type WHERE class_name = "test.extension.manager.paymenttest"');
 
-    $manager->install('test.extension.manager.paymenttest');
+    $manager->install(array('test.extension.manager.paymenttest'));
     $this->assertEquals(1, test_extension_manager_paymenttest::$counts['install']);
     $this->assertDBQuery(1, 'SELECT count(*) FROM civicrm_payment_processor_type WHERE class_name = "test.extension.manager.paymenttest" AND is_active = 1');
 
-    $manager->disable('test.extension.manager.paymenttest');
+    $manager->disable(array('test.extension.manager.paymenttest'));
     $this->assertEquals(1, test_extension_manager_paymenttest::$counts['disable']);
     $this->assertDBQuery(1, 'SELECT count(*) FROM civicrm_payment_processor_type WHERE class_name = "test.extension.manager.paymenttest"');
     $this->assertDBQuery(1, 'SELECT count(*) FROM civicrm_payment_processor_type WHERE class_name = "test.extension.manager.paymenttest" AND is_active = 0');
 
-    $manager->enable('test.extension.manager.paymenttest');
+    $manager->enable(array('test.extension.manager.paymenttest'));
     $this->assertEquals(1, test_extension_manager_paymenttest::$counts['enable']);
     $this->assertDBQuery(1, 'SELECT count(*) FROM civicrm_payment_processor_type WHERE class_name = "test.extension.manager.paymenttest"');
     $this->assertDBQuery(1, 'SELECT count(*) FROM civicrm_payment_processor_type WHERE class_name = "test.extension.manager.paymenttest" AND is_active = 1');

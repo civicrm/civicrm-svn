@@ -25,7 +25,7 @@ class CRM_Extension_ManagerTest extends CiviUnitTestCase {
     $manager = $this->_createManager(array(
       'other-testing-type' => $testingTypeManager,
     ));
-    $manager->install('test.foo.bar');
+    $manager->install(array('test.foo.bar'));
   }
 
   /**
@@ -44,7 +44,7 @@ class CRM_Extension_ManagerTest extends CiviUnitTestCase {
     $testingTypeManager
       ->expects($this->once())
       ->method('onPostInstall');
-    $manager->install('test.foo.bar');
+    $manager->install(array('test.foo.bar'));
     $this->assertEquals('installed', $manager->getStatus('test.foo.bar'));
 
     $testingTypeManager
@@ -53,7 +53,7 @@ class CRM_Extension_ManagerTest extends CiviUnitTestCase {
     $testingTypeManager
       ->expects($this->once())
       ->method('onPostDisable');
-    $manager->disable('test.foo.bar');
+    $manager->disable(array('test.foo.bar'));
     $this->assertEquals('disabled', $manager->getStatus('test.foo.bar'));
 
     $testingTypeManager
@@ -62,7 +62,7 @@ class CRM_Extension_ManagerTest extends CiviUnitTestCase {
     $testingTypeManager
       ->expects($this->once())
       ->method('onPostUninstall');
-    $manager->uninstall('test.foo.bar');
+    $manager->uninstall(array('test.foo.bar'));
     $this->assertEquals('uninstalled', $manager->getStatus('test.foo.bar'));
   }
 
@@ -82,7 +82,7 @@ class CRM_Extension_ManagerTest extends CiviUnitTestCase {
     $testingTypeManager
       ->expects($this->once())
       ->method('onPostInstall');
-    $manager->install('test.foo.bar');
+    $manager->install(array('test.foo.bar'));
     $this->assertEquals('installed', $manager->getStatus('test.foo.bar'));
 
     $testingTypeManager
@@ -91,7 +91,7 @@ class CRM_Extension_ManagerTest extends CiviUnitTestCase {
     $testingTypeManager
       ->expects($this->once())
       ->method('onPostDisable');
-    $manager->disable('test.foo.bar');
+    $manager->disable(array('test.foo.bar'));
     $this->assertEquals('disabled', $manager->getStatus('test.foo.bar'));
 
     $testingTypeManager
@@ -100,7 +100,7 @@ class CRM_Extension_ManagerTest extends CiviUnitTestCase {
     $testingTypeManager
       ->expects($this->once())
       ->method('onPostEnable');
-    $manager->enable('test.foo.bar');
+    $manager->enable(array('test.foo.bar'));
     $this->assertEquals('installed', $manager->getStatus('test.foo.bar'));
   }
 
@@ -117,6 +117,29 @@ class CRM_Extension_ManagerTest extends CiviUnitTestCase {
     $this->assertEquals('unknown', $manager->getStatus('test.foo.bar.whiz.bang'));
   }
 
+  /**
+   * Install an extension with an invalid type name
+   */
+  function testInstallMultiple() {
+    $testingTypeManager = $this->getMock('CRM_Extension_Manager_Interface');
+    $manager = $this->_createManager(array(
+      'testing-type' => $testingTypeManager,
+    ));
+    $this->assertEquals('uninstalled', $manager->getStatus('test.foo.bar'));
+    $this->assertEquals('uninstalled', $manager->getStatus('test.whiz.bang'));
+
+    $testingTypeManager
+      ->expects($this->exactly(2))
+      ->method('onPreInstall');
+    $testingTypeManager
+      ->expects($this->exactly(2))
+      ->method('onPostInstall');
+    $manager->install(array('test.foo.bar', 'test.whiz.bang'));
+    $this->assertEquals('installed', $manager->getStatus('test.foo.bar'));
+    $this->assertEquals('installed', $manager->getStatus('test.whiz.bang'));
+  }
+
+
   function _createManager($typeManagers) {
     list ($basedir, $c) = $this->_createContainer();
     $mapper = new CRM_Extension_Mapper($c);
@@ -129,6 +152,9 @@ class CRM_Extension_ManagerTest extends CiviUnitTestCase {
     mkdir("$basedir/weird/foobar");
     file_put_contents("$basedir/weird/foobar/info.xml", "<extension key='test.foo.bar' type='testing-type'><file>oddball</file></extension>");
     // not needed for now // file_put_contents("$basedir/weird/bar/oddball.php", "<?php\n");
+    mkdir("$basedir/weird/whizbang");
+    file_put_contents("$basedir/weird/whizbang/info.xml", "<extension key='test.whiz.bang' type='testing-type'><file>oddball</file></extension>");
+    // not needed for now // file_put_contents("$basedir/weird/whizbang/oddball.php", "<?php\n");
     $c = new CRM_Extension_Container_Basic($basedir, 'http://example/basedir', $cache, $cacheKey);
     return array($basedir, $c);
   }
