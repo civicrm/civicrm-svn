@@ -123,7 +123,7 @@ class CRM_Extension_System {
       $typeManagers = array(
         'payment' => new CRM_Extension_Manager_Payment($this->getMapper()),
         'report' => new CRM_Extension_Manager_Report(),
-        //'search' => new CRM_Extension_Manager_Search(),
+        'search' => new CRM_Extension_Manager_Search(),
         'module' => new CRM_Extension_Manager_Module($this->getMapper()),
       );
       $this->manager = new CRM_Extension_Manager($this->getFullContainer(), $this->getMapper(), $typeManagers);
