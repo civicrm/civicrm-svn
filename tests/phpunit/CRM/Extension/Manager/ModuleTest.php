@@ -19,7 +19,7 @@ class CRM_Extension_Manager_ModuleTest extends CiviUnitTestCase {
   function testInstallDisableUninstall() {
     global $_test_extension_manager_moduletest_counts;
     $manager = CRM_Extension_System::singleton(TRUE)->getManager();
-    $this->assertModuleActive(FALSE, 'moduletest');
+    $this->assertModuleActiveByName(FALSE, 'moduletest');
 
     $manager->install(array('test.extension.manager.moduletest'));
     $this->assertHookCounts(array(
@@ -28,7 +28,8 @@ class CRM_Extension_Manager_ModuleTest extends CiviUnitTestCase {
       'disable' => 0,
       'uninstall' => 0,
     ));
-    $this->assertModuleActive(TRUE, 'moduletest');
+    $this->assertModuleActiveByName(TRUE, 'moduletest');
+    $this->assertModuleActiveByKey(TRUE, 'test.extension.manager.moduletest');
 
     $manager->disable(array('test.extension.manager.moduletest'));
     $this->assertHookCounts(array(
@@ -37,7 +38,8 @@ class CRM_Extension_Manager_ModuleTest extends CiviUnitTestCase {
       'disable' => 1,
       'uninstall' => 0,
     ));
-    $this->assertModuleActive(FALSE, 'moduletest');
+    $this->assertModuleActiveByName(FALSE, 'moduletest');
+    $this->assertModuleActiveByKey(FALSE, 'test.extension.manager.moduletest');
 
     $manager->uninstall(array('test.extension.manager.moduletest'));
     $this->assertHookCounts(array(
@@ -46,7 +48,8 @@ class CRM_Extension_Manager_ModuleTest extends CiviUnitTestCase {
       'disable' => 1,
       'uninstall' => 1,
     ));
-    $this->assertModuleActive(FALSE, 'moduletest');
+    $this->assertModuleActiveByName(FALSE, 'moduletest');
+    $this->assertModuleActiveByKey(FALSE, 'test.extension.manager.moduletest');
   }
 
   /**
@@ -55,7 +58,8 @@ class CRM_Extension_Manager_ModuleTest extends CiviUnitTestCase {
   function testInstallDisableEnable() {
     global $_test_extension_manager_moduletest_counts;
     $manager = CRM_Extension_System::singleton(TRUE)->getManager();
-    $this->assertModuleActive(FALSE, 'moduletest');
+    $this->assertModuleActiveByName(FALSE, 'moduletest');
+    $this->assertModuleActiveByKey(FALSE, 'test.extension.manager.moduletest');
 
     $manager->install(array('test.extension.manager.moduletest'));
     $this->assertHookCounts(array(
@@ -64,7 +68,8 @@ class CRM_Extension_Manager_ModuleTest extends CiviUnitTestCase {
       'disable' => 0,
       'uninstall' => 0,
     ));
-    $this->assertModuleActive(TRUE, 'moduletest');
+    $this->assertModuleActiveByName(TRUE, 'moduletest');
+    $this->assertModuleActiveByKey(TRUE, 'test.extension.manager.moduletest');
 
     $manager->disable(array('test.extension.manager.moduletest'));
     $this->assertHookCounts(array(
@@ -73,7 +78,8 @@ class CRM_Extension_Manager_ModuleTest extends CiviUnitTestCase {
       'disable' => 1,
       'uninstall' => 0,
     ));
-    $this->assertModuleActive(FALSE, 'moduletest');
+    $this->assertModuleActiveByName(FALSE, 'moduletest');
+    $this->assertModuleActiveByKey(FALSE, 'test.extension.manager.moduletest');
 
     $manager->enable(array('test.extension.manager.moduletest'));
     $this->assertHookCounts(array(
@@ -82,7 +88,8 @@ class CRM_Extension_Manager_ModuleTest extends CiviUnitTestCase {
       'disable' => 1,
       'uninstall' => 0,
     ));
-    $this->assertModuleActive(TRUE, 'moduletest');
+    $this->assertModuleActiveByName(TRUE, 'moduletest');
+    $this->assertModuleActiveByKey(TRUE, 'test.extension.manager.moduletest');
   }
   
   /**
@@ -98,11 +105,21 @@ class CRM_Extension_Manager_ModuleTest extends CiviUnitTestCase {
     }
   }
   
-  function assertModuleActive($expectedIsActive, $prefix) {
+  function assertModuleActiveByName($expectedIsActive, $prefix) {
     $activeModules = CRM_Core_PseudoConstant::getModuleExtensions(TRUE); // FIXME
     foreach ($activeModules as $activeModule) {
       if ($activeModule['prefix'] == $prefix) {
         $this->assertEquals($expectedIsActive, TRUE);
+        return;
+      }
+    }
+    $this->assertEquals($expectedIsActive, FALSE);
+  }
+
+  function assertModuleActiveByKey($expectedIsActive, $key) {
+    foreach (CRM_Core_Module::getAll() as $module) {
+      if ($module->name == $key) {
+        $this->assertEquals((bool)$expectedIsActive, (bool)$module->is_active);
         return;
       }
     }

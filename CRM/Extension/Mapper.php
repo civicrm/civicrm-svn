@@ -245,6 +245,22 @@ class CRM_Extension_Mapper {
   }
 
   /**
+   * Get a list of all installed modules, including enabled and disabled ones
+   *
+   * @return array CRM_Core_Module
+   */
+  public function getModules() {
+    $result = array();
+    $dao = new CRM_Core_DAO_Extension();
+    $dao->type = 'module';
+    $dao->find();
+    while ($dao->fetch()) {
+      $result[] = new CRM_Core_Module($dao->full_name, $dao->is_active);
+    }
+    return $result;
+  }
+
+  /**
    * Given the class, provides the template path.
    *
    * @access public

@@ -58,12 +58,7 @@ class CRM_Core_Module {
   public static function getAll($fresh = FALSE) {
     static $result;
     if ($fresh || !is_array($result)) {
-      $result = array();
-
-      $ext = new CRM_Core_Extensions();
-      if ($ext->enabled) {
-        $result = array_merge($result, $ext->getModules());
-      }
+      $result = CRM_Extension_System::singleton()->getMapper()->getModules();
 
       $config = CRM_Core_Config::singleton();
       if (is_callable(array($config->userSystem, 'getModules'))) {
