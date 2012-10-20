@@ -52,7 +52,7 @@ class CRM_Admin_Form_Setting_Mapping extends CRM_Admin_Form_Setting {
     $geo = CRM_Core_SelectValues::geoProvider();
     $this->addElement('select', 'mapProvider', ts('Mapping Provider'), array('' => '- select -') + $map, array('onChange' => 'showHideMapAPIkey( this.value );'));
     $this->add('text', 'mapAPIKey', ts('Map Provider Key'), NULL);
-    $this->addElement('select', 'geoProvider', ts('Geocoding Provider'), array('' => '- select -') + $geo, array('onChange' => 'showHideGeoAPIkey( this.value );'));
+    $this->addElement('select', 'geoProvider', ts('Geocoding Provider'), array('' => '- select -') + $geo);
     $this->add('text', 'geoAPIKey', ts('Geo Provider Key'), NULL);
 
     parent::buildQuickForm();

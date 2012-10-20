@@ -149,7 +149,7 @@ class CRM_Contact_Form_Task_Map extends CRM_Contact_Form_Task {
     CRM_Utils_System::setTitle(ts('Map Location(s)'));
     $page->assign('query', 'CiviCRM Search Query');
     $page->assign('mapProvider', $config->mapProvider);
-    $page->assign('mapKey', $config->mapAPIKey);
+    $page->assign('mapKey', urlencode($config->mapAPIKey));
     if ($type == 'Contact') {
       $imageUrlOnly = FALSE;
 
