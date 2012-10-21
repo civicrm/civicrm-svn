@@ -47,8 +47,6 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic {
    */
   static $_links = NULL;
 
-  static $_extensions = NULL;
-
   /**
    * Obtains the group name from url and sets the title.
    *
@@ -57,10 +55,6 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic {
    *
    */
   function preProcess() {
-    $ext = new CRM_Core_Extensions();
-    if ($ext->enabled === TRUE) {
-      self::$_extensions = $ext->getExtensions();
-    }
     CRM_Utils_System::setTitle(ts('CiviCRM Extensions'));
         $destination = CRM_Utils_System::url( 'civicrm/admin/extensions',
                                               'reset=1' );
@@ -142,23 +136,18 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic {
    * @static
    */
   function browse() {
-
-    $this->assign('extEnabled', FALSE);
-    if (self::$_extensions !== NULL) {
-      $this->assign('extEnabled', TRUE);
-    }
-    else {
-      return;
-    }
+    // TODO // $this->assign('extEnabled', CRM_Extension_System::singleton()->getBrowser()->isEnabled());
+    $this->assign('extEnabled', TRUE);
 
     $this->assign('extDbUpgrades', CRM_Extension_Upgrades::hasPending());
     $this->assign('extDbUpgradeUrl', CRM_Utils_System::url('civicrm/admin/extensions/upgrade', 'reset=1'));
 
-    $extensionRows = array();
-    $em = self::$_extensions;
+    $extensionRows = array(); // array($pseudo_id => extended_CRM_Extension_Info)
 
     $fid = 1;
-    foreach ($em as $key => $obj) {
+    $mapper = CRM_Extension_System::singleton()->getMapper();
+    foreach(CRM_Extension_System::singleton()->getFullContainer()->getKeys() as $key) {
+      $obj = $mapper->keyToInfo($key);
 
       // for extensions which aren't installed, create a
       // dummy/placeholder id
@@ -169,50 +158,33 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic {
         $id = 'x'. $fid++;
       }
 
-      $extensionRows[$id] = (array) $obj;
+      $extensionRows[$id] = self::createExtendedInfo($obj);
+      $extensionRows[$id]['id'] = $id;
 
       // assign actions
-      if ($obj->status == CRM_Core_Extensions_Extension::STATUS_INSTALLED || $obj->status == CRM_Core_Extensions_Extension::STATUS_MISSING) {
-        if ($obj->is_active) {
-          $action = CRM_Core_Action::DISABLE;
-          if ($obj->upgradable) {
-            $action += CRM_Core_Action::UPDATE;
-          }
-        }
-        else {
-          $action = array_sum(array_keys($this->links()));
-          $action -= CRM_Core_Action::DISABLE;
-          $action -= CRM_Core_Action::ADD;
-          if (!$obj->upgradable) {
-            $action -= CRM_Core_Action::UPDATE;
-          }
-          if ($obj->status == CRM_Core_Extensions_Extension::STATUS_MISSING) {
-            // do not allow Enable for a MISSING status extension
-            $action -= CRM_Core_Action::ENABLE;
-        }
-        }
-        $extensionRows[$id]['action'] = CRM_Core_Action::formLink(self::links(),
-          $action,
-          array(
-            'id' => $id,
-            'key' => $obj->key,
-          )
-        );
+      $action = 0;
+      switch ($extensionRows[$id]['status']) {
+        case CRM_Extension_Manager::STATUS_UNINSTALLED:
+          $action += CRM_Core_Action::ADD;
+          break;
+        case CRM_Extension_Manager::STATUS_DISABLED:
+          $action += CRM_Core_Action::ENABLE;
+          $action += CRM_Core_Action::DELETE;
+          break;
+        case CRM_Extension_Manager::STATUS_INSTALLED:
+          $action += CRM_Core_Action::DISABLE;
+          break;
+        default:
       }
-      else {
-        $action = array_sum(array_keys($this->links()));
-        $action -= CRM_Core_Action::DISABLE;
-        $action -= CRM_Core_Action::ENABLE;
-        $action -= CRM_Core_Action::DELETE;
-        $action -= CRM_Core_Action::UPDATE;
-        $extensionRows[$id]['action'] = CRM_Core_Action::formLink(self::links(),
-          $action,
-          array(
-            'id' => $id,
-            'key' => $obj->key,
-          )
-        );
-      }
+      // TODO if extbrowser is enabled and extbrowser has newer version than extcontainer,
+      // then $action += CRM_Core_Action::UPDATE
+      $extensionRows[$id]['action'] = CRM_Core_Action::formLink(self::links(),
+        $action,
+        array(
+          'id' => $id,
+          'key' => $obj->key,
+        )
+      );
     }
 
     $this->assign('extensionRows', $extensionRows);
@@ -255,6 +227,38 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic {
    */
   function userContextParams($mode = NULL) {
     return 'reset=1&action=browse';
+  }
+
+  /**
+   * Take an extension's raw XML info and add information about the
+   * extension's status on the local system.
+   *
+   * The result format resembles the old CRM_Core_Extensions_Extension.
+   *
+   * @return array
+   */
+  public static function createExtendedInfo(CRM_Extension_Info $obj) {
+    $mapper = CRM_Extension_System::singleton()->getMapper();
+    $manager = CRM_Extension_System::singleton()->getManager();
+
+    $extensionRow = (array) $obj;
+    $extensionRow['path'] = $mapper->keyToBasePath($obj->key);
+    $extensionRow['status'] = $manager->getStatus($obj->key);
+
+    switch ($extensionRow['status']) {
+      case CRM_Extension_Manager::STATUS_UNINSTALLED:
+        $extensionRow['statusLabel'] = ''; // ts('Uninstalled');
+        break;
+      case CRM_Extension_Manager::STATUS_DISABLED:
+        $extensionRow['statusLabel'] = ts('Disabled');
+        break;
+      case CRM_Extension_Manager::STATUS_INSTALLED:
+        $extensionRow['statusLabel'] = ts('Enabled'); // ts('Installed');
+        break;
+      default:
+        $extensionRow['statusLabel'] = '(' . $extensionRow['status'] . ')';
+    }
+    return $extensionRow;
   }
 }
 

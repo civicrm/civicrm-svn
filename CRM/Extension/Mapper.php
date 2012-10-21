@@ -189,6 +189,18 @@ class CRM_Extension_Mapper {
    * extension's main class.
    *
    * @access public
+   * @param string $key extension key
+   * @return string local path of the extension source tree
+   */
+  public function keyToBasePath($key) {
+    return $this->container->getPath($key);
+  }
+
+  /**
+   * Given the key, provides the path to file containing
+   * extension's main class.
+   *
+   * @access public
    *
    * @param string $key extension key
    *

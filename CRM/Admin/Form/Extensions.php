@@ -58,10 +58,9 @@ class CRM_Admin_Form_Extensions extends CRM_Admin_Form {
     $this->assign('id', $this->_id);
     $this->assign('key', $this->_key);
 
-    $ext = new CRM_Core_Extensions();
-    $extension = $ext->getExtensions();
-
-    $this->assign('extension', get_object_vars($extension[$this->_key]));
+    $info = CRM_Extension_System::singleton()->getMapper()->keyToInfo($this->_key);
+    $extInfo = CRM_Admin_Page_Extensions::createExtendedInfo($info);
+    $this->assign('extension', $extInfo);
   }
 
   /**

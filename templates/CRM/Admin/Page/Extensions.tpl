@@ -64,20 +64,18 @@
                 <th>{ts}Extension name (key){/ts}</th>
                 <th>{ts}Status{/ts}</th>
                 <th>{ts}Version{/ts}</th>
-                <th>{ts}Enabled?{/ts}</th>
                 <th>{ts}Type{/ts}</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
               {foreach from=$extensionRows item=row}
-              <tr id="row_{$row.id}" class="crm-extensions crm-extensions_{$row.id}{if NOT $row.is_active} disabled{/if}{if $row.status eq 'missing'} extension-missing{/if}{if $row.upgradable} extension-upgradable{elseif $row.status eq 'installed'} extension-installed{/if}">
+              <tr id="row_{$row.id}" class="crm-extensions crm-extensions_{$row.id}{if $row.status eq 'disabled'} disabled{/if}{if $row.upgradable} extension-upgradable{elseif $row.status eq 'installed'} extension-installed{/if}">
                 <td class="crm-extensions-label">
-                    <a class="collapsed" href="#"></a>&nbsp;<strong>{$row.label}</strong><br/>({$row.key})
+                    <a class="collapsed" href="#">(expand)</a>&nbsp;<strong>{$row.label}</strong><br/>({$row.key})
                 </td>
     <td class="crm-extensions-label">{$row.statusLabel} {if $row.upgradable}<br/>({ts}Outdated{/ts}){/if}</td>
                 <td class="crm-extensions-label">{$row.version} {if $row.upgradable}<br/>({$row.upgradeVersion}){/if}</td>
-                <td class="crm-extensions-is_active" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
                 <td class="crm-extensions-description">{$row.type|capitalize}</td>
                 <td>{$row.action|replace:'xx':$row.id}</td>
               </tr>
@@ -85,7 +83,7 @@
                   <td>
                       {include file="CRM/Admin/Page/ExtensionDetails.tpl" extension=$row}
                   </td>
-                  <td></td><td></td><td></td><td></td><td></td>
+                  <td></td><td></td><td></td><td></td>
               </tr>
               {/foreach}
             </tbody>
