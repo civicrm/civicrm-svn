@@ -148,7 +148,9 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
     $this->add('date', 'fixed_period_rollover_day', ts('Fixed Period Rollover Day'),
       CRM_Core_SelectValues::date(NULL, 'M d'), FALSE
     );
-
+    $this->add('date', 'month_fixed_period_rollover_day', ts('Fixed Period Rollover Day'),
+        CRM_Core_SelectValues::date(NULL, 'd'), FALSE
+    );
     // required in form rule
     $this->add('hidden', 'action', $this->_action);
 
@@ -359,6 +361,7 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
         'contribution_type_id',
         'fixed_period_start_day',
         'fixed_period_rollover_day',
+        'month_fixed_period_rollover_day',
       );
 
       $params = $ids = array();
@@ -412,6 +415,10 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
           $mon          = ($mon < 9) ? '0' . $mon : $mon;
           $dat          = ($dat < 9) ? '0' . $dat : $dat;
           $params[$per] = $mon . $dat;
+        }
+        else if($per == 'fixed_period_rollover_day' && !empty($params['month_fixed_period_rollover_day'])){
+          $params['fixed_period_rollover_day'] = $params['month_fixed_period_rollover_day']['d'];
+          unset($params['month_fixed_period_rollover_day']);
         }
         else {
           $params[$per] = 'NULL';
