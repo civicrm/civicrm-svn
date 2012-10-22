@@ -26,33 +26,65 @@
 {* Advanced Search Criteria Fieldset *}
 {literal}
 <script type="text/javascript">
-// bind first click of accordion header to load crm-accordion-body with snippet
-// everything else taken care of by cj().crm-accordions()
-  cj(document).ready( function() {
-    cj('.crm-search_criteria_basic-accordion .crm-accordion-header').addClass('active');
-    cj('.crm-ajax-accordion').on('click', '.crm-accordion-header:not(.active)', function() {
-      loadPanes(cj(this).attr('id'));
+cj(function($) {
+  $(document).ready( function() {
+    $().crmaccordions();
+    // Bind first click of accordion header to load crm-accordion-body with snippet
+    // everything else is taken care of by crmaccordions()
+    $('.crm-search_criteria_basic-accordion .crm-accordion-header').addClass('active');
+    $('.crm-ajax-accordion').on('click', '.crm-accordion-header:not(.active)', function() {
+      loadPanes($(this).attr('id'));
     });
-    cj('.crm-ajax-accordion.crm-accordion-open .crm-accordion-header').each(function(index) {
-      loadPanes(cj(this).attr('id'));
+    $('.crm-ajax-accordion.crm-accordion-open .crm-accordion-header').each(function() {
+      loadPanes($(this).attr('id'));
     });
-    cj('.crm-ajax-accordion').on('click', '.close-accordion', function() {
-      var header = cj(this).parent();
+    $('.crm-ajax-accordion').on('click', '.close-accordion', function() {
+      var header = $(this).parent();
       header.next().html('');
       header.removeClass('active');
       header.parent().removeClass('crm-accordion-open').addClass('crm-accordion-closed');
-      cj(this).remove();
+      // Reset results-display mode if it depends on this pane
+      var mode = modes[$('#component_mode').val()] || null;
+      if (mode && header.attr('id') == mode) {
+        $('#component_mode').val('1');
+      }
+      $(this).remove();
       return false;
     });
+    // TODO: Why are the modes numeric? If they used the string there would be no need for this map
+    var modes = {
+      '2': 'CiviContribute',
+      '3': 'CiviEvent',
+      '4': 'activity',
+      '5': 'CiviMember',
+      '6': 'CiviCase',
+    };
+    // Handle change of results mode
+    $('#component_mode').change(function() {
+      // Reset task dropdown
+      $('#task').val('');
+      var mode = modes[$('#component_mode').val()] || null;
+      if (mode) {
+        $('.crm-' + mode + '-accordion').removeClass('crm-accordion-closed').addClass('crm-accordion-open');
+        loadPanes(mode);
+      }
+      if ($('#component_mode').val() == '7') {
+        $('#crm-display_relationship_type').show();
+      }
+      else {
+        $('#display_relationship_type').val('');
+        $('#crm-display_relationship_type').hide();
+      }
+    }).change();
   });
-// load panes function calls for snippet based on id of crm-accordion-header
-  function loadPanes( id ) {
+  // Loads snippet based on id of crm-accordion-header
+  function loadPanes(id) {
     var url = "{/literal}{crmURL p='civicrm/contact/search/advanced' q="snippet=1&qfKey=`$qfKey`&searchPane=" h=0}{literal}" + id;
-    var header = cj('#' + id);
-    var body = cj('div.crm-accordion-body.' + id);
-    if ( header.length > 0 && body.length > 0 && !body.html() ) {
+    var header = $('#' + id);
+    var body = $('.crm-accordion-body.' + id);
+    if (header.length > 0 && body.length > 0 && !body.html()) {
       body.html('<div class="crm-loading-element"><span class="loading-text">{/literal}{ts}Loading{/ts}{literal}...</span></div>');
-      cj.ajax({
+      $.ajax({
         url : url,
         success: function(data) {
           body.html(data);
@@ -62,6 +94,7 @@
       });
     }
   }
+});
 </script>
 {/literal}
 

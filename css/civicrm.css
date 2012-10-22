@@ -3127,6 +3127,11 @@ table.crm-info-panel td.label {
 
 .crm-accordion-header.active {
     font-weight:bold;
+    background: #41477E;
+}
+
+.crm-accordion-header.active:hover {
+    background: #2E3471;
 }
 
 .crm-accordion-header a.close-accordion {
