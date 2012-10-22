@@ -88,5 +88,5 @@
 {/htxt}
 {htxt id="is-test"}
     <p>{ts}In the process of setting up CiviCRM components or configuring pages and profiles, you might have created test contributions, activities, participants, pledges, etc.{/ts}</p>
-    <p>{ts}Once you have finished your testing, it is a good idea to clean up by searching for test records and deleting them.{/ts}</p>
+    <p>{ts}Once you have finished your testing, it is a good idea to clean up by finding your test records and deleting them.{/ts}</p>
 {/htxt}
