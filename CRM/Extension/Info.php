@@ -61,17 +61,17 @@ class CRM_Extension_Info {
    *
    * @param string $string XML content
    * @return CRM_Extension_Info
-   *
+   */
   public static function loadFromString($string) {
-    $xml = simplexml_load_string($string, 'SimpleXMLElement');
-    if ($xml == FALSE) {
+    list ($xml, $error) = CRM_Utils_XML::parseString($string);
+    if ($xml === FALSE) {
       throw new CRM_Extension_Exception("Failed to parse info XML: $string");
     }
 
     $instance = new CRM_Extension_Info();
     $instance->parse($xml);
     return $instance;
-  } // */
+  }
 
   function __construct($key = NULL, $type = NULL, $name = NULL, $label = NULL, $file = NULL) {
     $this->key       = $key;

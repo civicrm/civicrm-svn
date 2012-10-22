@@ -61,6 +61,30 @@ class CRM_Utils_XML {
     return array($xml, $error);
   }
 
+  /**
+   * Read a well-formed XML file
+   *
+   * @return array (0 => SimpleXMLElement|FALSE, 1 => errorMessage|FALSE)
+   */
+  public static function parseString($string) {
+    $xml = FALSE; // SimpleXMLElement
+    $error = FALSE; // string
+
+    $oldLibXMLErrors = libxml_use_internal_errors();
+    libxml_use_internal_errors(TRUE);
+
+    $xml = simplexml_load_string($string,
+      'SimpleXMLElement', LIBXML_NOCDATA
+    );
+    if ($xml === FALSE) {
+      $error = self::formatErrors(libxml_get_errors());
+    }
+
+    libxml_use_internal_errors($oldLibXMLErrors);
+
+    return array($xml, $error);
+  }
+
   protected static function formatErrors($errors) {
     $messages = array();
 
