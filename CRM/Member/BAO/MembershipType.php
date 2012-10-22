@@ -40,7 +40,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType {
   static $_defaultMembershipType = NULL;
 
   static $_membershipTypeInfo = array();
-  
+
   /**
    * class constructor
    */
@@ -467,7 +467,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType {
 
     $oldPeriodType = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType',
         CRM_Core_DAO::getFieldValue('CRM_Member_DAO_Membership', $membershipId, 'membership_type_id'), 'period_type');
-    
+
     // CRM-7297 Membership Upsell
     if (is_null($membershipTypeID)) {
       $membershipTypeDetails = self::getMembershipTypeDetails($membershipDetails[$membershipId]->membership_type_id);
@@ -501,7 +501,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType {
 
       switch ($membershipTypeDetails['duration_unit']) {
         case 'year':
-          //need to check if the upsell is from rolling to fixed and adjust accordingly 
+          //need to check if the upsell is from rolling to fixed and adjust accordingly
           if ($membershipTypeDetails['period_type'] == 'fixed' && $oldPeriodType == 'rolling' ) {
             $month = substr($membershipTypeDetails['fixed_period_start_day'], 0, strlen($membershipTypeDetails['fixed_period_start_day']) - 2);
             $day = substr($membershipTypeDetails['fixed_period_start_day'], -2);
@@ -621,10 +621,10 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType {
 
   /**
    * Funtion to retrieve organization and associated membership
-   * types 
+   * types
    *
    * @return array arrays of organization and membership types
-   * 
+   *
    * @static
    * @access public
    */
@@ -638,7 +638,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType {
       $dao = CRM_Core_DAO::executeQuery( $query );
       while ($dao->fetch()) {
         $orgs[$dao->member_of_contact_id] = $dao->sort_name;
-        $types[$dao->member_of_contact_id][$dao->id] = $dao->name;  
+        $types[$dao->member_of_contact_id][$dao->id] = $dao->name;
       }
 
       self::$_membershipTypeInfo = array($orgs, $types);
@@ -648,9 +648,9 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType {
 
 
   function createMembershipPriceField($params, $ids, $previousID, $membershipTypeId) {
-    
+
     $priceSetId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', 'default_membership_type_amount', 'id', 'name');
-    
+
     if (CRM_Utils_Array::value('memberOfContact', $ids)) {
       $fieldName = $ids['memberOfContact'];
 }
@@ -704,7 +704,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType {
           'is_active' => 1,
         );
       }
-      
+
       if ($previousID) {
         CRM_Member_Form_MembershipType::checkPreviousPriceField($previousID, $priceSetId, $membershipTypeId, $optionsIds);
         if (CRM_Utils_Array::value('option_id', $optionsIds)) {
@@ -712,7 +712,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType {
         }
       }
       CRM_Price_BAO_FieldValue::add($results, $optionsIds);
-    } 
+    }
   }
 }
 
