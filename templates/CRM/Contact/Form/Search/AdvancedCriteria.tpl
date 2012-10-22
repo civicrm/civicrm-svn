@@ -28,25 +28,39 @@
 <script type="text/javascript">
 // bind first click of accordion header to load crm-accordion-body with snippet
 // everything else taken care of by cj().crm-accordions()
-cj(document).ready( function() {
-    cj('.crm-ajax-accordion .crm-accordion-header').one('click', function() {
+  cj(document).ready( function() {
+    cj('.crm-search_criteria_basic-accordion .crm-accordion-header').addClass('active');
+    cj('.crm-ajax-accordion').on('click', '.crm-accordion-header:not(.active)', function() {
       loadPanes(cj(this).attr('id'));
-      });
+    });
     cj('.crm-ajax-accordion.crm-accordion-open .crm-accordion-header').each(function(index) {
       loadPanes(cj(this).attr('id'));
-      });
-});
+    });
+    cj('.crm-ajax-accordion').on('click', '.close-accordion', function() {
+      var header = cj(this).parent();
+      header.next().html('');
+      header.removeClass('active');
+      header.parent().removeClass('crm-accordion-open').addClass('crm-accordion-closed');
+      cj(this).remove();
+      return false;
+    });
+  });
 // load panes function calls for snippet based on id of crm-accordion-header
-function loadPanes( id ) {
+  function loadPanes( id ) {
     var url = "{/literal}{crmURL p='civicrm/contact/search/advanced' q="snippet=1&qfKey=`$qfKey`&searchPane=" h=0}{literal}" + id;
-   if ( ! cj('div.'+id).html() ) {
-      var loading = '<div class="crm-loading-element"><span class="loading-text">{/literal}{ts}Loading{/ts}{literal}...</span></div>';
-      cj('div.'+id).html(loading);
+    var header = cj('#' + id);
+    var body = cj('div.crm-accordion-body.' + id);
+    if ( header.length > 0 && body.length > 0 && !body.html() ) {
+      body.html('<div class="crm-loading-element"><span class="loading-text">{/literal}{ts}Loading{/ts}{literal}...</span></div>');
       cj.ajax({
-          url    : url,
-          success: function(data) { cj('div.'+id).html(data); }
-          });
-      }
+        url : url,
+        success: function(data) {
+          body.html(data);
+          header.addClass('active');
+          header.append('<a href="#" class="close-accordion" title="{/literal}{ts}Remove from search criteria{/ts}{literal}">{/literal}{ts}Reset{/ts}{literal} [x]</a>');
+        }
+      });
+    }
   }
 </script>
 {/literal}
