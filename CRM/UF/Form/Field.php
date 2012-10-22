@@ -276,7 +276,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
         'city', 'postal_code', 'postal_code_suffix',
         'geo_code_1', 'geo_code_2',
         'state_province', 'country', 'county',
-        'phone', 'email', 'im', 'address_name',
+        'phone', 'email', 'im', 'address_name','phone_ext',
       );
 
       if (!$defaults['location_type_id'] &&

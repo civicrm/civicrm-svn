@@ -379,6 +379,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
         'email',
         'im',
         'address_name',
+        'phone_ext',
       );
 
       //get location type

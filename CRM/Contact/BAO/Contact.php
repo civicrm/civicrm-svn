@@ -1852,8 +1852,8 @@ ORDER BY civicrm_email.is_primary DESC";
           }
           $data['phone'][$loc]['phone'] = $value;
           
-          if (isset($params[$fieldName . '_ext-'. $locTypeId]) || isset($params[$fieldName . '_ext'])) {
-            $data['phone'][$loc]['phone_ext'] = isset($params[$fieldName . '_ext-'. $locTypeId]) ? $params[$fieldName . '_ext-'. $locTypeId] : $params[$fieldName . '_ext'];
+          if (isset($params[$fieldName . '_ext-'. $locTypeId]) || ($actualLocTypeId == 'Primary' && isset($params[$fieldName . '_ext-'.$actualLocTypeId]))) {
+            $data['phone'][$loc]['phone_ext'] = isset($params[$fieldName . '_ext-'. $locTypeId]) ? $params[$fieldName . '_ext-'. $locTypeId] : $params[$fieldName . '_ext-'.$actualLocTypeId];
           }
           
           //special case to handle primary phone with different phone types
@@ -1991,7 +1991,9 @@ ORDER BY civicrm_email.is_primary DESC";
           if($key == 'phone' && isset($params['phone_ext'])){
             $data[$key] = $value;
             foreach($value as $cnt => $phoneBlock){
-              $data[$key][$cnt]['phone_ext'] = CRM_Utils_Array::retrieveValueRecursive($params['phone_ext'][$cnt], 'phone_ext');
+              if($params[$key][$cnt]['location_type_id'] == $params['phone_ext'][$cnt]['location_type_id']){
+                $data[$key][$cnt]['phone_ext'] = CRM_Utils_Array::retrieveValueRecursive($params['phone_ext'][$cnt], 'phone_ext');
+              }
             }
           }
           else {
