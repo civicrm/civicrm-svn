@@ -68,6 +68,11 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences {
           'title' => ts('Notify Activity Assignees'),
           'weight' => 5,
         ),
+        'activity_assignee_notification_ics' => array(
+          'html_type' => 'checkbox',
+          'title' => ts('Include ICal Invite to Activity Assignees'),
+          'weight' => 5,
+        ),
         'contact_ajax_check_similar' => array(
           'html_type' => 'checkbox',
           'title' => ts('Check for Similar Contacts'),

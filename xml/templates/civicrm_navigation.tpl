@@ -53,6 +53,7 @@ VALUES
   ( @domainID, NULL, 1, 'CiviCRM Preferences', 'editor_id', '{serialize}2{/serialize}' ),
   ( @domainID, NULL, 1, 'CiviCRM Preferences', 'contact_ajax_check_similar', '{serialize}1{/serialize}' ),
   ( @domainID, NULL, 1, 'CiviCRM Preferences', 'activity_assignee_notification', '{serialize}1{/serialize}' ),
+  ( @domainID, NULL, 1, 'CiviCRM Preferences', 'activity_assignee_notification_ics', '{serialize}0{/serialize}' ),
   ( @domainID, NULL, 1, 'CiviCRM Preferences', 'contact_autocomplete_options', '{serialize}12{/serialize}' ),
   ( @domainID, NULL, 1, 'CiviCRM Preferences', 'contact_reference_options', '{serialize}12{/serialize}' ),
   ( @domainID, NULL, 1, 'Address Standardization Preferences', 'address_standardization_provider', NULL ),

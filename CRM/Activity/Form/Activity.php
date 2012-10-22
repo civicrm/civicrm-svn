@@ -1126,8 +1126,14 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task {
         //include attachments while sendig a copy of activity.
         $attachments = CRM_Core_BAO_File::getEntityFile('civicrm_activity', $activity->id);
 
+        $ics = new CRM_Activity_BAO_ICalendar( $activity );
+        $ics->addAttachment( $attachments, $mailToContacts );
+
         // CRM-8400 add param with _currentlyViewedContactId for URL link in mail
         $result = CRM_Case_BAO_Case::sendActivityCopy(NULL, $activity->id, $mailToContacts, $attachments, NULL);
+        
+        $ics->cleanup();
+
         $mailStatus .= ts("A copy of the activity has also been sent to assignee contacts(s).");
       }
     }

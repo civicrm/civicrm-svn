@@ -45,3 +45,6 @@ INSERT IGNORE INTO `civicrm_state_province`(`country_id`, `abbreviation`, `name`
 
 -- CRM-11047
 ALTER TABLE civicrm_job DROP COLUMN api_prefix;
+
+-- CRM-11117
+INSERT IGNORE INTO `civicrm_setting` (`group_name`, `name`, `value`, `domain_id`, `is_domain`) VALUES ('CiviCRM Preferences', 'activity_assignee_notification_ics', 's:1:"0";', {$domainID}, '1'); 

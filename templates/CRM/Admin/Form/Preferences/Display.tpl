@@ -92,6 +92,16 @@
            </td>
         </tr>
 
+        <tr class="crm-preferences-display-form-block-activity_assignee_notification_ics">
+           <td class="label"></td>
+           <td>{$form.activity_assignee_notification_ics.html} {$form.activity_assignee_notification_ics.label}</td>
+        </tr>
+        <tr class="crm-preferences-display-form-block-description">
+           <td>&nbsp;</td>
+           <td class="description">{ts}When enabled, the assignee notification sent out above will also include an ical meeting invite.{/ts}
+           </td>
+        </tr>
+
         <tr class="crm-preferences-display-form-block-user_dashboard_options">
            <td class="label">{$form.user_dashboard_options.label}</td>
            <td>{$form.user_dashboard_options.html}</td>

@@ -684,9 +684,14 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity {
         $activity->id
       );
 
+      $ics = new CRM_Activity_BAO_ICalendar( $activity );
+      $ics->addAttachment( $attachments, $mailToContacts );
+
       $result = CRM_Case_BAO_Case::sendActivityCopy($this->_currentlyViewedContactId,
         $activity->id, $mailToContacts, $attachments, $this->_caseId
       );
+
+      $ics->cleanup();
 
       if (empty($result)) {
         $mailStatus = '';
