@@ -49,7 +49,7 @@ class CRM_Extension_System {
    * @return CRM_Extension_System
    */
   public static function singleton($fresh = FALSE) {
-    if (! self::$singleton) {
+    if (! self::$singleton || $fresh) {
       self::$singleton = new CRM_Extension_System();
     }
     return self::$singleton;
@@ -145,6 +145,14 @@ class CRM_Extension_System {
    * @return CRM_Extension_Downloader
    */
   public function getDownloader() {
+    if ($this->downloader === NULL) {
+      $basedir = ($this->getDefaultContainer() ? $this->getDefaultContainer()->getBaseDir() : NULL);
+      $this->downloader = new CRM_Extension_Downloader(
+        $basedir,
+        CRM_Utils_File::tempdir() // WAS: $config->extensionsDir . DIRECTORY_SEPARATOR . 'tmp';
+      );
+    }
+    return $this->downloader;
   }
 
   /**

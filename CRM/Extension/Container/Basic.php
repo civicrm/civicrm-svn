@@ -107,6 +107,13 @@ class CRM_Extension_Container_Basic implements CRM_Extension_Container_Interface
   }
 
   /**
+   * @return string
+   */
+  public function getBaseDir() {
+    return $this->baseDir;
+  }
+
+  /**
    * Determine the relative path of an extension directory
    *
    * @return string

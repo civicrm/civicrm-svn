@@ -144,6 +144,43 @@ function civicrm_api3_extension_uninstall($params) {
 }
 
 /**
+ * Download and install an extension
+ *
+ * @param  array       $params input parameters
+ *                          - key: string, eg "com.example.myextension"
+ *                          - url: string eg "http://repo.com/myextension-1.0.zip"
+ *
+ * @return array API result
+ * @static void
+ * @access public
+ * @example ExtensionDownload.php
+ *
+ */
+function civicrm_api3_extension_download($params) {
+  if (! array_key_exists('key', $params)) {
+    throw new API_Exception('Missing required parameter: key');
+  }
+
+  if (! array_key_exists('url', $params)) {
+    // FIXME: check CRM_Extension_Browser for download URL
+    throw new API_Exception('Missing required parameter: url');
+  }
+
+  foreach (CRM_Extension_System::singleton()->getDownloader()->checkRequirements() as $requirement) {
+    return civicrm_api3_create_error($requirement['message']);
+  }
+
+  if (! CRM_Extension_System::singleton()->getDownloader()->download($params['key'], $params['url'])) {
+    return civicrm_api3_create_error('Download failed - ZIP file is unavailable or malformed');
+  }
+  CRM_Extension_System::singleton()->getCache()->flush();
+  CRM_Extension_System::singleton(TRUE);
+  CRM_Extension_System::singleton()->getManager()->install(array($params['key']));
+
+  return civicrm_api3_create_success();
+}
+
+/**
  * Determine the list of extension keys
  *
  * @param array $params API request params with 'key' or 'keys'
@@ -158,7 +195,7 @@ function _civicrm_api3_getKeys($params) {
       return array();
     } else {
       return explode(API_V3_EXTENSION_DELIMITER, $params['keys']);
-}
+    }
   } elseif (array_key_exists('key', $params)) {
     return array($params['key']);
   } else {
