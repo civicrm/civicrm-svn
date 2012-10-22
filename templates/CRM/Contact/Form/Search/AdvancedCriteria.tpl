@@ -48,8 +48,11 @@ cj(function($) {
       if (mode && header.attr('id') == mode) {
         var oldMode = $('#component_mode :selected').text();
         $('#component_mode').val('1');
-        var msg = '{/literal}{ts escape="js"}Your "Display Results" selection is not available without search criteria from the pane you just closed.{/ts}{literal}';
-        $().crmAlert(msg, '{/literal}{ts escape="js"}Display Results Reset{/ts}{literal}');
+        {/literal}
+        var msg = '{ts escape="js"}Displaying results as "%1" is not available without search criteria from the pane you just closed.{/ts}';
+        msg = msg.replace('%1', oldMode);
+        $().crmAlert(msg, '{ts escape="js"}Display Results Reset{/ts}');
+        {literal}
       }
       $(this).remove();
       return false;
@@ -87,12 +90,16 @@ cj(function($) {
     var body = $('.crm-accordion-body.' + id);
     if (header.length > 0 && body.length > 0 && !body.html()) {
       body.html('<div class="crm-loading-element"><span class="loading-text">{/literal}{ts}Loading{/ts}{literal}...</span></div>');
+      header.append('<a href="#" class="close-accordion" title="{/literal}{ts}Remove from search criteria{/ts}{literal}">{/literal}{ts}Reset{/ts}{literal} [x]</a>');
+      header.addClass('active');
       $.ajax({
         url : url,
         success: function(data) {
           body.html(data);
-          header.addClass('active');
-          header.append('<a href="#" class="close-accordion" title="{/literal}{ts}Remove from search criteria{/ts}{literal}">{/literal}{ts}Reset{/ts}{literal} [x]</a>');
+        },
+        error: function() {
+          $().crmAlert({/literal}'{ts escape="js"}Sorry, could not load the requested information from the server.{/ts}', '{ts escape="js"}Network Error{/ts}'{literal});
+          $('.close-accordion', header).click();
         }
       });
     }
