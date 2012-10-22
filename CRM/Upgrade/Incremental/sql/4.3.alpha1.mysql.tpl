@@ -46,5 +46,15 @@ INSERT IGNORE INTO `civicrm_state_province`(`country_id`, `abbreviation`, `name`
 -- CRM-11047
 ALTER TABLE civicrm_job DROP COLUMN api_prefix;
 
+-- CRM-11068
+ALTER TABLE civicrm_group
+  ADD refresh_date datetime default NULL COMMENT 'Date and time when we need to refresh the cache next.' AFTER `cache_date`;
+
+SELECT @domainID := min(id) FROM civicrm_domain;
+INSERT INTO `civicrm_job`
+    ( domain_id, run_frequency, last_run, name, description, api_entity, api_action, parameters, is_active )
+VALUES
+    ( @domainID, 'Always' , NULL, '{ts escape="sql" skip="true"}Rebuild Smart Group Cache{/ts}', '{ts escape="sql" skip="true"}Rebuilds the smart group cache.{/ts}', 'job', 'group_rebuild', '{ts escape="sql" skip="true"}limit=Number optional-Limit the number of smart groups rebuild{/ts}', 0);
+
 -- CRM-11117
-INSERT IGNORE INTO `civicrm_setting` (`group_name`, `name`, `value`, `domain_id`, `is_domain`) VALUES ('CiviCRM Preferences', 'activity_assignee_notification_ics', 's:1:"0";', {$domainID}, '1'); 
+INSERT IGNORE INTO `civicrm_setting` (`group_name`, `name`, `value`, `domain_id`, `is_domain`) VALUES ('CiviCRM Preferences', 'activity_assignee_notification_ics', 's:1:"0";', {$domainID}, '1');

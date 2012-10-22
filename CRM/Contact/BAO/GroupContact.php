@@ -54,8 +54,7 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
    * @access public
    * @static
    */
-  static
-  function add(&$params) {
+  static function add(&$params) {
 
     $dataExists = self::dataExists($params);
     if (!$dataExists) {
@@ -78,8 +77,7 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
    * @access public
    * @static
    */
-  static
-  function dataExists(&$params) {
+  static function dataExists(&$params) {
     // return if no data present
     if ($params['group_id'] == 0) {
       return FALSE;
@@ -100,8 +98,7 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
    * @access public
    * @static
    */
-  static
-  function getValues(&$params, &$values) {
+  static function getValues(&$params, &$values) {
     if (empty($params)) {
       return NULL;
     }
@@ -130,8 +127,7 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
    * @access public
    * @static
    */
-  static
-  function addContactsToGroup(&$contactIds,
+  static function addContactsToGroup(&$contactIds,
     $groupId,
     $method   = 'Admin',
     $status   = 'Added',
@@ -175,8 +171,7 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
    * @access public
    * @static
    */
-  static
-  function removeContactsFromGroup(&$contactIds,
+  static function removeContactsFromGroup(&$contactIds,
     $groupId,
     $method   = 'Admin',
     $status   = 'Removed',
@@ -273,8 +268,7 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
    * @return array $values this array has key-> group id and value group title
    * @static
    */
-  static
-  function getGroupList($contactId = 0, $visibility = FALSE) {
+  static function getGroupList($contactId = 0, $visibility = FALSE) {
     $group = new CRM_Contact_DAO_Group();
 
     $select = $from = $where = '';
@@ -322,8 +316,7 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
    *
    * $access public
    */
-  static
-  function &getContactGroup($contactId,
+  static function &getContactGroup($contactId,
     $status           = NULL,
     $numGroupContact  = NULL,
     $count            = FALSE,
@@ -525,8 +518,7 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
    * @access public
    * @static
    */
-  static
-  function create(&$params, $contactId, $visibility = FALSE, $method = 'Admin') {
+  static function create(&$params, $contactId, $visibility = FALSE, $method = 'Admin') {
     $contactIds = array();
     $contactIds[] = $contactId;
 
@@ -574,8 +566,7 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
     }
   }
 
-  static
-  function isContactInGroup($contactID, $groupID) {
+  static function isContactInGroup($contactID, $groupID) {
     if (!CRM_Utils_Rule::positiveInteger($contactID) ||
       !CRM_Utils_Rule::positiveInteger($groupID)
     ) {
@@ -605,8 +596,7 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
    * @return void.
    * @static
    */
-  static
-  function mergeGroupContact($mainContactId, $dontCare, $otherContactId) {
+  static function mergeGroupContact($mainContactId, $dontCare, $otherContactId) {
     $params = array(1 => array($mainContactId, 'Integer'),
       2 => array($otherContactId, 'Integer'),
     );
@@ -711,8 +701,7 @@ AND       group_id IN ( $groupIDString )
    * @return void.
    * @static
    */
-  static
-  function ignoreMergeSubscriptionHistory($mainContactId, $dontCare, $otherContactId) {
+  static function ignoreMergeSubscriptionHistory($mainContactId, $dontCare, $otherContactId) {
     // this is handled by merge group contacts
     return;
   }
@@ -727,8 +716,7 @@ AND       group_id IN ( $groupIDString )
    * @access public
    * @static
    */
-  static
-  function bulkAddContactsToGroup($contactIDs,
+  static function bulkAddContactsToGroup($contactIDs,
     $groupID,
     $method   = 'Admin',
     $status   = 'Added',

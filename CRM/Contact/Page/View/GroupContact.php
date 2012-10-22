@@ -44,14 +44,26 @@ class CRM_Contact_Page_View_GroupContact extends CRM_Core_Page {
 
     $count = CRM_Contact_BAO_GroupContact::getContactGroup($this->_contactId, NULL, NULL, TRUE);
 
+
     $in      = CRM_Contact_BAO_GroupContact::getContactGroup($this->_contactId, 'Added');
     $pending = CRM_Contact_BAO_GroupContact::getContactGroup($this->_contactId, 'Pending');
     $out     = CRM_Contact_BAO_GroupContact::getContactGroup($this->_contactId, 'Removed');
+
+
 
     $this->assign('groupCount', $count);
     $this->assign_by_ref('groupIn', $in);
     $this->assign_by_ref('groupPending', $pending);
     $this->assign_by_ref('groupOut', $out);
+
+    $smart = CRM_Contact_BAO_GroupContactCache::contactGroup($this->_contactId);
+    if (!empty($smart)) {
+      $this->assign_by_ref('groupSmart', $smart['groups']);
+    }
+    else {
+      $this->assign_by_ref('groupSmart', null);
+    }
+
   }
 
   /**
@@ -63,7 +75,8 @@ class CRM_Contact_Page_View_GroupContact extends CRM_Core_Page {
    * @access public
    */
   function edit($groupId = NULL) {
-    $controller = new CRM_Core_Controller_Simple('CRM_Contact_Form_GroupContact',
+    $controller = new CRM_Core_Controller_Simple(
+      'CRM_Contact_Form_GroupContact',
       ts('Contact\'s Groups'),
       $this->_action
     );
@@ -72,7 +85,9 @@ class CRM_Contact_Page_View_GroupContact extends CRM_Core_Page {
     // set the userContext stack
     $session = CRM_Core_Session::singleton();
 
-    $session->pushUserContext(CRM_Utils_System::url('civicrm/contact/view',
+    $session->pushUserContext(
+      CRM_Utils_System::url(
+        'civicrm/contact/view',
         "action=browse&selectedChild=group&cid={$this->_contactId}"
       ),
       FALSE

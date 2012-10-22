@@ -1479,10 +1479,11 @@ class CRM_Utils_Date {
     return $format;
   }
 
-  static function getUTCTime($format = 'YmdHis') {
+  static function getUTCTime($format = 'YmdHis', $offset = 0) {
     $originalTimezone = date_default_timezone_get();
     date_default_timezone_set('UTC');
-    $now = date('YmdHis');
+    $time = time() + $offset;
+    $now = date('YmdHis', $time);
     date_default_timezone_set($originalTimezone);
     return $now;
   }

@@ -477,3 +477,15 @@ function civicrm_api3_job_cleanup( $params ) {
     CRM_Utils_System::flushCache( );
   }
 }
+
+/**
+ * This api reloads all the smart groups. If the org has a large number of smart groups
+ * it is recommended that they use the limit clause to limit the number of smart groups
+ * evaluated on a per job basis. Might also help to increase the smartGroupCacheTimeout
+ * and use the cache
+ */
+function civicrm_api3_job_group_rebuild( $params ) {
+  $limit = CRM_Utils_Array::value( 'limit', $params, 0 );
+
+  CRM_Contact_BAO_GroupContactCache::loadAll(null, $limit);
+}
