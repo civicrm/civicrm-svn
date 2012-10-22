@@ -155,10 +155,10 @@ class CRM_Contact_Page_DedupeRules extends CRM_Core_Page_Basic {
       // form all action links
       $action = array_sum(array_keys($this->links()));
       $links = self::links();
-      if ($dao->is_default) {
+      /* if ($dao->is_default) {
         unset($links[CRM_Core_Action::MAP]);
         unset($links[CRM_Core_Action::DELETE]);
-      }
+        }*/
 
       if ($dao->is_reserved) {
         unset($links[CRM_Core_Action::DELETE]);
