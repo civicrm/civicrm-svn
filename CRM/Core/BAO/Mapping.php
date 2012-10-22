@@ -770,11 +770,11 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping {
 
               $jsSet = TRUE;
 
-              if (CRM_Utils_Array::value($i, $mappingOperator[$x])) {
+              if (CRM_Utils_Array::value($i, CRM_Utils_Array::value($x, $mappingOperator))) {
                 $defaults["operator[$x][$i]"] = CRM_Utils_Array::value($i, $mappingOperator[$x]);
               }
 
-              if (CRM_Utils_Array::value($i, $mappingValue[$x])) {
+              if (CRM_Utils_Array::value($i, CRM_Utils_Array::value($x, $mappingValue))) {
                 $defaults["value[$x][$i]"] = CRM_Utils_Array::value($i, $mappingValue[$x]);
               }
             }
@@ -1170,9 +1170,12 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping {
             $saveMappingFields->im_provider_id = CRM_Utils_Array::value('3', $v);
           }
 
-          $saveMappingFields->operator = CRM_Utils_Array::value($k, $params['operator'][$key]);
-          $saveMappingFields->value = CRM_Utils_Array::value($k, $params['value'][$key]);
-
+          if (CRM_Utils_Array::value('operator', $params)) {
+            $saveMappingFields->operator = CRM_Utils_Array::value($k, $params['operator'][$key]);            
+          }
+          if (CRM_Utils_Array::value('value', $params)) {
+            $saveMappingFields->value = CRM_Utils_Array::value($k, $params['value'][$key]);
+          }
           // Handle mapping for 'related contact' fields
           if (count(explode('_', CRM_Utils_Array::value('1', $v))) > 2) {
             list($id, $first, $second) = explode('_', CRM_Utils_Array::value('1', $v));
