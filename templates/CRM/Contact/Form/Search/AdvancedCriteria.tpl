@@ -46,7 +46,10 @@ cj(function($) {
       // Reset results-display mode if it depends on this pane
       var mode = modes[$('#component_mode').val()] || null;
       if (mode && header.attr('id') == mode) {
+        var oldMode = $('#component_mode :selected').text();
         $('#component_mode').val('1');
+        var msg = '{/literal}{ts escape="js"}Your "Display Results" selection is not available without search criteria from the pane you just closed.{/ts}{literal}';
+        $().crmAlert(msg, '{/literal}{ts escape="js"}Display Results Reset{/ts}{literal}');
       }
       $(this).remove();
       return false;
