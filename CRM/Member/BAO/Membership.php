@@ -1210,7 +1210,8 @@ AND civicrm_membership.is_test = %2";
       $form->_values['contribution_other_id'] = $result[1]->id;
     }
     else {
-      // create the CMS contact here since we normally do this under processConfirm
+      // we need to explicitly create a CMS user in case of free memberships
+      // since the below has already been done under processConfirm for paid memberships
       CRM_Contribute_BAO_Contribution_Utils::createCMSUser($membershipParams,
         $membershipParams['cms_contactID'],
         'email-' . $form->_bltID
