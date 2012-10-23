@@ -702,11 +702,21 @@ ORDER BY parent_id, weight";
   /**
    * Function to process move action
    *
-   * @param $nodeID
-   * @param $referenceID
-   * @param $position
+   * @param $nodeID node that is being moved
+   * @param $referenceID parent id where node is moved. 0 mean no parent
+   * @param $position new position of the nod, it starts with 0 - n
+   *
+   * @return void
+   * @static
    */
   static function processMove($nodeID, $referenceID, $position) {
+    // based on the new position we need to get the weight of the node after moved node
+    // 1. update the weight of $position + 1 nodes to weight + 1
+    // 2. weight of the ( $position -1 ) node - 1 is the new weight of the node being moved
+
+    // check if there is parent id, which means node is moved inside existing parent container, so use parent id
+    // to find the correct position else use NULL to get the weights of parent ( $position - 1 )
+    // accordingly set the new parent_id
     if ($referenceID) {
       $newParentID = $referenceID;
       $parentClause = "parent_id = {$referenceID} ";
@@ -716,53 +726,38 @@ ORDER BY parent_id, weight";
       $parentClause = 'parent_id IS NULL';
     }
 
-    // since we use weights like 10, 20, ... for parents
-    // we cannot use
-    // $newWeight =  $position + 1;
-    // so based on position let's get the weight of menu
-    // with position - 1 and calculate new weight
-    $position    = $position - 1;
-
+    $incrementOtherNodes = true;
     $sql    = "SELECT weight from civicrm_navigation WHERE {$parentClause} ORDER BY weight LIMIT %1, 1";
-    $params = array(1 => array($position, 'Positive'));
-    $dao    = CRM_Core_DAO::executeQuery($sql, $params);
-    $dao->fetch();
+    $params = array(1 => array( $position, 'Positive'));
+    $newWeight = CRM_Core_DAO::singleValueQuery($sql, $params);
 
-    $newWeight = $dao->weight + 1;
+    // this means node is moved to last position, so you need to get the weight of last element + 1
+    if (!$newWeight) {
+      $lastPosition = $position - 1;
+      $sql    = "SELECT weight from civicrm_navigation WHERE {$parentClause} ORDER BY weight LIMIT %1, 1";
+      $params = array(1 => array($lastPosition, 'Positive'));
+      $newWeight = CRM_Core_DAO::singleValueQuery($sql, $params);
 
-    // get the details of current node
-    $nodeInfo        = self::getNavigationInfo($nodeID);
-    $oldParentID     = $nodeInfo['parent_id'];
-    $oldWeight       = $nodeInfo['weight'];
-    $oldParentClause = " parent_id = {$oldParentID}";
+      // since last node increment + 1
+      $newWeight = $newWeight + 1;
 
-    // since we need to do multiple updates lets build sql array and then fire all with transaction
-    $sql = array();
+      // since this is a last node we don't need to increment other nodes
+      $incrementOtherNodes = false;
+    }
 
-    // reorder was made, since parent are same
-    if ($oldParentID == $newParentID) {
-      if ($newWeight > $oldWeight) {
-        if (!$referenceID) {
-          $newWeight--;
-        }
-        $sql[] = "UPDATE civicrm_navigation SET weight = weight - 1
-                    WHERE {$oldParentClause}  AND weight BETWEEN {$oldWeight} + 1 AND {$newWeight}";
-      }
-      if ($newWeight < $oldWeight) {
-        $sql[] = "UPDATE civicrm_navigation SET weight = weight + 1
-                    WHERE {$oldParentClause} AND weight BETWEEN {$newWeight} AND {$oldWeight} - 1";
-      }
+    $transaction = new CRM_Core_Transaction();
+
+    // now update the existing nodes to weight + 1, if required.
+    if ( $incrementOtherNodes ) {
+      $query = "UPDATE civicrm_navigation SET weight = weight + 1
+                  WHERE {$parentClause} AND weight >= {$newWeight}";
+
+      CRM_Core_DAO::executeQuery($query);
     }
 
     // finally set the weight of current node
-    $sql[] = "UPDATE civicrm_navigation SET weight = {$newWeight}, parent_id = {$newParentID} WHERE id = {$nodeID}";
-
-    // now execute all the sql's
-    $transaction = new CRM_Core_Transaction();
-
-    foreach ($sql as $query) {
-      CRM_Core_DAO::executeQuery($query);
-    }
+    $query = "UPDATE civicrm_navigation SET weight = {$newWeight}, parent_id = {$newParentID} WHERE id = {$nodeID}";
+    CRM_Core_DAO::executeQuery($query);
 
     $transaction->commit();
   }
