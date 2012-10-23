@@ -569,7 +569,15 @@ SELECT label, value
             continue;
 
           case 'File':
-            if ( $op == 'IS NULL' || $op == 'IS NOT NULL' ) {
+            if ( $op == 'IS NULL' || $op == 'IS NOT NULL' || $op == 'IS EMPTY' || $op == 'IS NOT EMPTY' ) {
+              switch ($op) {
+                case 'IS EMPTY':
+                  $op = 'IS NULL';
+                  break;
+                case 'IS NOT EMPTY':
+                  $op = 'IS NOT NULL';
+                  break;
+              }
               $this->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause($fieldName, $op);
               $this->_qill[$grouping][] = $field['label'] . " {$op} ";
             }
