@@ -86,10 +86,16 @@
   </foreignKey>
   <field>   
       <name>payment_instrument_id</name>
+      <uniqueName>contribution_payment_instrument_id</uniqueName>
       <title>Payment Instrument</title>
       <type>int unsigned</type>
-      <comment>FK to Payment Instrument</comment>   
-      <add>1.3</add>   
+      <comment>FK to Payment Instrument</comment>
+      <pseudoconstant>
+        <name>paymentInstrument</name>
+        <optionGroupName>paymentInstrument</optionGroupName>
+        <class>CRM_Contribute_PseudoConstant</class>
+      </pseudoconstant>
+      <add>1.3</add>
   </field>  
   <index>
       <name>UI_contrib_payment_instrument_id</name>
