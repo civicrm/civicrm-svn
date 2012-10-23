@@ -635,8 +635,8 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship {
     $relationshipTypeId = CRM_Utils_Array::value('relationship_type_id', $params);
     list($type, $first, $second) = explode('_', $relationshipTypeId);
 
-    $queryString = " SELECT id 
-                         FROM   civicrm_relationship 
+    $queryString = " SELECT id
+                         FROM   civicrm_relationship
                          WHERE  relationship_type_id = " . CRM_Utils_Type::escape($type, 'Integer');
     if ($start_date) {
       $queryString .= " AND start_date = " . CRM_Utils_Type::escape($start_date, 'Date');
@@ -779,8 +779,8 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship {
     }
 
     $from = "
-      FROM  civicrm_relationship 
-INNER JOIN  civicrm_relationship_type ON ( civicrm_relationship.relationship_type_id = civicrm_relationship_type.id ) 
+      FROM  civicrm_relationship
+INNER JOIN  civicrm_relationship_type ON ( civicrm_relationship.relationship_type_id = civicrm_relationship_type.id )
 INNER JOIN  civicrm_contact ";
     if ($direction == 'a_b') {
       $from .= 'ON ( civicrm_contact.id = civicrm_relationship.contact_id_a ) ';
@@ -789,11 +789,11 @@ INNER JOIN  civicrm_contact ";
       $from .= 'ON ( civicrm_contact.id = civicrm_relationship.contact_id_b ) ';
     }
     $from .= "
-LEFT JOIN  civicrm_address ON (civicrm_address.contact_id = civicrm_contact.id )
-LEFT JOIN  civicrm_phone ON (civicrm_phone.contact_id = civicrm_contact.id AND civicrm_phone.is_primary = 1)
-LEFT JOIN  civicrm_email ON (civicrm_email.contact_id = civicrm_contact.id )
+LEFT JOIN  civicrm_address ON (civicrm_address.contact_id = civicrm_contact.id AND civicrm_address.is_primary = 1)
+LEFT JOIN  civicrm_phone   ON (civicrm_phone.contact_id = civicrm_contact.id AND civicrm_phone.is_primary = 1)
+LEFT JOIN  civicrm_email   ON (civicrm_email.contact_id = civicrm_contact.id AND civicrm_email.is_primary = 1)
 LEFT JOIN  civicrm_state_province ON (civicrm_address.state_province_id = civicrm_state_province.id)
-LEFT JOIN  civicrm_country ON (civicrm_address.country_id = civicrm_country.id) 
+LEFT JOIN  civicrm_country ON (civicrm_address.country_id = civicrm_country.id)
 ";
     $where = 'WHERE ( 1 )';
     if ($contactId) {
@@ -1168,7 +1168,7 @@ LEFT JOIN  civicrm_country ON (civicrm_address.country_id = civicrm_country.id)
           // Delete memberships of the related contacts only if relationship type exists for membership type
           $query = "
 SELECT relationship_type_id, relationship_direction
-  FROM civicrm_membership_type 
+  FROM civicrm_membership_type
  WHERE id = {$membershipValues['membership_type_id']}";
           $dao = CRM_Core_DAO::executeQuery($query);
           $relTypeDirs = array();
@@ -1309,7 +1309,7 @@ SELECT relationship_type_id, relationship_direction
     $contacts = implode(',', $contactIds);
 
     $query = "
-SELECT organization_name, id, employer_id 
+SELECT organization_name, id, employer_id
 FROM civicrm_contact
 WHERE id IN ( {$contacts} )
 ";
@@ -1348,8 +1348,8 @@ WHERE id IN ( {$contacts} )
       $query = "
 SELECT cc.id as id, cc.sort_name as name
 FROM civicrm_relationship cr, civicrm_contact cc
-WHERE cr.contact_id_a = $contactID AND 
-cr.relationship_type_id = $relTypeId AND 
+WHERE cr.contact_id_a = $contactID AND
+cr.relationship_type_id = $relTypeId AND
 cr.is_permission_a_b = 1 AND
 IF(cr.end_date IS NULL, 1, (DATEDIFF( CURDATE( ), cr.end_date ) <= 0)) AND
 cr.is_active = 1 AND
