@@ -24,7 +24,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
     $this->toBeImplemented['get'] = array('ParticipantPayment', 'Profile', 'CustomValue', 'Website', 'Constant', 'Job', 'CustomSearch', 'Extension', 'ReportTemplate', 'System');
     $this->toBeImplemented['create'] = array('SurveyRespondant', 'OptionGroup', 'UFMatch', 'LocationType', 'CustomSearch', 'Extension', 'ReportTemplate', 'System');
     $this->toBeImplemented['delete'] = array('MembershipPayment', 'OptionGroup', 'SurveyRespondant', 'UFJoin', 'UFMatch', 'Extension', 'LocationType', 'System');
-    $this->onlyIDNonZeroCount['get'] = array('ActivityType', 'Entity', 'Domain');
+    $this->onlyIDNonZeroCount['get'] = array('ActivityType', 'Entity', 'Domain','Setting');
     $this->deprecatedAPI = array('Location', 'ActivityType', 'SurveyRespondant');
   }
 
@@ -64,7 +64,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
   }
 
   public static function toBeSkipped_get($sequential = FALSE) {
-    $entitiesWithoutGet = array('Setting', 'Mailing', 'MailingEventSubscribe', 'MailingEventConfirm', 'MailingEventResubscribe', 'MailingEventUnsubscribe', 'MailingGroup', 'Location');
+    $entitiesWithoutGet = array('Mailing', 'MailingEventSubscribe', 'MailingEventConfirm', 'MailingEventResubscribe', 'MailingEventUnsubscribe', 'MailingGroup', 'Location');
     if ($sequential === TRUE) {
       return $entitiesWithoutGet;
     }
