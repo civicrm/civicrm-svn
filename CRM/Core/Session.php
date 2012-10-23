@@ -53,7 +53,7 @@ class CRM_Core_Session {
    *
    * @var object
    */
-  protected $_session;
+  protected $_session = NULL;
 
   /**
    * We only need one instance of this object. So we use the singleton
@@ -82,7 +82,6 @@ class CRM_Core_Session {
    * @return void
    */
   function __construct() {
-    $this->_session = &$_SESSION;
   }
 
   /**
@@ -107,6 +106,16 @@ class CRM_Core_Session {
    * @return void
    */
   function create() {
+    // lets initialize the _session variable just before we need it
+    // hopefully any bootstrapping code will actually load the session from the CMS
+    if (!isset($this->_session)) {
+      // CRM-9483
+      if (!$_SESSION) {
+        session_start();
+      }
+      $this->_session =& $_SESSION;
+    }
+
     if (!isset($this->_session[$this->_key]) ||
       !is_array($this->_session[$this->_key])
     ) {
@@ -400,10 +409,10 @@ class CRM_Core_Session {
    *
    * @param $text string
    *   The status message
-   * 
+   *
    * @param $title string
    *   The optional title of this message
-   * 
+   *
    * @param $type string
    *   The type of this message (printed as a css class). Possible options:
    *     - 'alert' (default)
@@ -412,7 +421,7 @@ class CRM_Core_Session {
    *     - 'error' (this message type by default will remain on the screen
    *               until the user dismisses it)
    *     - 'no-popup' (will display in the document like old-school)
-   * 
+   *
    * @param $options array
    *   Additional options. Possible values:
    *     - 'unique' (default: true) Check if this message was already set before adding
