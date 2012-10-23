@@ -59,13 +59,10 @@ require_once 'CRM/Contribute/PseudoConstant.php';
 function civicrm_api3_contribution_create($params) {
   civicrm_api3_verify_one_mandatory($params, NULL, array('contribution_type_id', 'contribution_type'));
 
-
   $values = array();
 
-  $error = _civicrm_api3_contribute_format_params($params, $values);
-  if (civicrm_error($error)) {
-    return $error;
-  }
+  _civicrm_api3_contribute_format_params($params, $values);
+
   _civicrm_api3_custom_format_params($params, $values, 'Contribution');
   $values["contact_id"] = CRM_Utils_Array::value('contact_id', $params);
   $values["source"] = CRM_Utils_Array::value('source', $params);
@@ -256,13 +253,8 @@ function _civicrm_api3_contribution_get_spec(&$params) {
  * @access public
  */
 function _civicrm_api3_contribute_format_params($params, &$values, $create = FALSE) {
-  // copy all the contribution fields as is
 
-
-  require_once 'CRM/Contribute/DAO/Contribution.php';
-  $fields = &CRM_Contribute_DAO_Contribution::fields();
-
-  _civicrm_api3_store_values($fields, $params, $values);
+  _civicrm_api3_filter_fields_for_bao('Contribution', $params, $values);
 
   foreach ($params as $key => $value) {
     // ignore empty values or empty arrays etc
@@ -273,7 +265,7 @@ function _civicrm_api3_contribute_format_params($params, &$values, $create = FAL
     switch ($key) {
       case 'contribution_type_id':
         if (!CRM_Utils_Array::value($value, CRM_Contribute_PseudoConstant::contributionType())) {
-          return civicrm_api3_create_error("Invalid Contribution Type Id");
+          throw new Exception("Invalid Contribution Type Id");
         }
         break;
 
@@ -281,18 +273,13 @@ function _civicrm_api3_contribute_format_params($params, &$values, $create = FAL
         $contributionTypeId = CRM_Utils_Array::key($value, CRM_Contribute_PseudoConstant::contributionType());
         if ($contributionTypeId) {
           if (CRM_Utils_Array::value('contribution_type_id', $values) && $contributionTypeId != $values['contribution_type_id']) {
-            return civicrm_api3_create_error("Mismatched Contribution Type and Contribution Type Id");
+            throw new Exception("Mismatched Contribution Type and Contribution Type Id");
           }
           $values['contribution_type_id'] = $contributionTypeId;
         }
         else {
-          return civicrm_api3_create_error("Invalid Contribution Type");
+          throw new Exception("Invalid Contribution Type");
         }
-        break;
-
-      case 'payment_instrument':
-        require_once 'CRM/Core/OptionGroup.php';
-        $values['payment_instrument_id'] = CRM_Core_OptionGroup::getValue('payment_instrument', $value);
         break;
 
       case 'soft_credit_to':

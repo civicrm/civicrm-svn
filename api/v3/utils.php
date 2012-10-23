@@ -333,7 +333,22 @@ function _civicrm_api3_separate_values(&$values) {
     }
   }
 }
-
+/*
+ * This is a wrapper for api_store_values which will check the suitable fields using getfields
+ * rather than DAO->fields
+ *
+ * Getfields has handling for how to deal with uniquenames which dao->fields doesn't
+ *
+ * Note this is used by BAO type create functions - eg. contribution
+ * @param string $entity
+ * @param array $params
+ * @param array $values
+ */
+function _civicrm_api3_filter_fields_for_bao($entity, &$params, &$values){
+  $fields = civicrm_api($entity,'getfields', array('version' => 3,'action' => 'create'));
+  $fields = $fields['values'];
+  _civicrm_api3_store_values($fields, $params, $values);
+}
 /**
  *
  * @param array $fields
@@ -1357,6 +1372,7 @@ function _civicrm_api3_swap_out_aliases(&$apiRequest) {
   );
 
   foreach ($result['values'] as $field => $values) {
+    $uniqueName = CRM_Utils_Array::value('uniqueName', $values);
     if (CRM_Utils_Array::value('api.aliases', $values)) {
       // if aliased field is not set we try to use field alias
       if (!isset($apiRequest['params'][$field])) {
@@ -1370,7 +1386,7 @@ function _civicrm_api3_swap_out_aliases(&$apiRequest) {
         }
       }
     }
-    elseif (!isset($apiRequest['params'][$field])
+    if (!isset($apiRequest['params'][$field])
       && CRM_Utils_Array::value('name', $values)
       && $field != $values['name']
       && isset($apiRequest['params'][$values['name']])
@@ -1378,15 +1394,17 @@ function _civicrm_api3_swap_out_aliases(&$apiRequest) {
       $apiRequest['params'][$field] = $apiRequest['params'][$values['name']];
       // note that it would make sense to unset the original field here but tests need to be in place first
     }
-    elseif (!isset($apiRequest['params'][$field])
-      && CRM_Utils_Array::value('uniqueName', $values)
-      && $field != $values['uniqueName']
-      && array_key_exists($values['uniqueName'], $apiRequest['params'])
-    ) {
+    if (!isset($apiRequest['params'][$field])
+      && $uniqueName
+      && $field != $uniqueName
+      && array_key_exists($uniqueName, $apiRequest['params'])
+      )
+    {
       $apiRequest['params'][$field] = CRM_Utils_Array::value($values['uniqueName'], $apiRequest['params']);
       // note that it would make sense to unset the original field here but tests need to be in place first
     }
   }
+
 }
 /*
  * Validate integer fields being passed into API.
