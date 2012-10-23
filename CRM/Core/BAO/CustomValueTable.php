@@ -254,9 +254,7 @@ class CRM_Core_BAO_CustomValueTable {
    * @access public
    * @static
    */
-  public static function fieldToSQLType($type,
-    $maxLength = 255
-  ) {
+  public static function fieldToSQLType($type, $maxLength = 255) {
     if (!isset($maxLength) ||
       !is_numeric($maxLength) ||
       $maxLength <= 0
