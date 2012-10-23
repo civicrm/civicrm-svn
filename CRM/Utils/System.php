@@ -941,10 +941,16 @@ class CRM_Utils_System {
     }
   }
 
+  /**
+   * Check and determine is this is an SSL request
+   * Note that we inline this function in install/civicrm.php, so if
+   * you change this function, please go and change the code in the install script
+   */
   static function isSSL( ) {
-    return (isset($_SERVER['HTTPS']) &&
-      !empty($_SERVER['HTTPS']) &&
-      strtolower($_SERVER['HTTPS']) != 'off') ? true : false;
+    return
+      (isset($_SERVER['HTTPS']) &&
+        !empty($_SERVER['HTTPS']) &&
+        strtolower($_SERVER['HTTPS']) != 'off') ? true : false;
   }
 
   static function redirectToSSL($abort = FALSE) {

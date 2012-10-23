@@ -230,13 +230,14 @@ function civicrm_cms_base() {
   // for drupal
   $numPrevious = 6;
 
-  if (!isset($_SERVER['HTTPS']) ||
-    strtolower($_SERVER['HTTPS']) == 'off'
+  if (isset($_SERVER['HTTPS']) &&
+    !empty($_SERVER['HTTPS']) &&
+    strtolower($_SERVER['HTTPS']) != 'off'
   ) {
-    $url = 'http://' . $_SERVER['HTTP_HOST'];
+    $url = 'https://' . $_SERVER['HTTP_HOST'];
   }
   else {
-    $url = 'https://' . $_SERVER['HTTP_HOST'];
+    $url = 'http://' . $_SERVER['HTTP_HOST'];
   }
 
   $baseURL = $_SERVER['SCRIPT_NAME'];
