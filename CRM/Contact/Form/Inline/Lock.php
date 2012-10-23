@@ -80,8 +80,8 @@ class CRM_Contact_Form_Inline_Lock {
     $timestamps = CRM_Contact_BAO_Contact::getTimestamps($contactID);
     if ($fields['oplock_ts'] != $timestamps['modified_date']) {
       // Inline buttons generated via JS
-      $open = sprintf("<span class='update_oplock_ts' data:update_oplock_ts='%s'>", $timestamps['modified_date']);
-      $close = "</span>";
+      $open = sprintf("<div class='update_oplock_ts' data:update_oplock_ts='%s'>", $timestamps['modified_date']);
+      $close = "</div>";
       $errors['oplock_ts'] = $open . ts('This record was modified by another user!') . $close;
     }
 
