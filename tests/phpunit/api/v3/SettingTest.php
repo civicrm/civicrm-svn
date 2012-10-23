@@ -298,11 +298,11 @@ class api_v3_SettingTest extends CiviUnitTestCase {
   function testGetValue() {
     $params = array(
       'version' => $this->_apiversion,
-      'name' => 'imageUploadURL',
-      'group' => 'URL Preferences'
+      'name' => 'petition_contacts',
+      'group' => 'Campaign Preferences'
     );
     $result = civicrm_api('setting', 'getvalue', $params);
-    $this->assertEquals('sites/default/files/civicrm/persist/contribute/', $result);
+    $this->assertEquals('Petition Contacts', $result);
     $description = "Demonstrates getvalue action - intended for runtime use as better caching than get";
     $this->documentMe($params, $result, __FUNCTION__, __FILE__, $description);
   }

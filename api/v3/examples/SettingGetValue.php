@@ -8,8 +8,8 @@
 function setting_getvalue_example(){
 $params = array( 
   'version' => 3,
-  'name' => 'imageUploadURL',
-  'group' => 'URL Preferences',
+  'name' => 'petition_contacts',
+  'group' => 'Campaign Preferences',
 );
 
   require_once 'api/api.php';
@@ -23,7 +23,7 @@ $params = array(
  */
 function setting_getvalue_expectedresult(){
 
-  $expectedResult = 'sites/default/files/civicrm/persist/contribute/';
+  $expectedResult = 'Petition Contacts';
 
   return $expectedResult  ;
 }
