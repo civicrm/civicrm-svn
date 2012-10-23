@@ -95,6 +95,7 @@ function _civicrm_api3_contribution_create_spec(&$params) {
    );
   $params['note'] = array(
     'name' => 'note',
+    'uniqueName' => 'contribution_note',
     'title' => 'note',
     'type' => 2,
     'description' => 'Associated Note in the notes table',
@@ -293,13 +294,6 @@ function _civicrm_api3_contribute_format_params($params, &$values, $create = FAL
         break;
     }
   }
-
-  if (array_key_exists('note', $params)) {
-    $values['note'] = $params['note'];
-  }
-
-
-
 
   return array();
 }

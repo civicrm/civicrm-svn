@@ -535,6 +535,31 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $this->assertEquals('my contribution note', $result['values'][0]['note']);
     civicrm_api('contribution', 'delete', array('version' => 3, 'id' => $contribution['id']));
   }
+
+  function testCreateContributionWithNoteUniqueNameAliases() {
+    $params      = array(
+        'contact_id' => $this->_individualId,
+        'receive_date' => '2012-01-01',
+        'total_amount' => 100.00,
+        'contribution_type_id' => $this->_contributionTypeId,
+        'payment_instrument_id' => 1,
+        'non_deductible_amount' => 10.00,
+        'fee_amount' => 50.00,
+        'net_amount' => 90.00,
+        'trxn_id' => 12345,
+        'invoice_id' => 67890,
+        'source' => 'SSF',
+        'contribution_status_id' => 1,
+        'version' => $this->_apiversion,
+        'contribution_note' => 'my contribution note',
+    );
+
+    $contribution = civicrm_api('contribution', 'create', $params);
+    $result = civicrm_api('note', 'get', array('version' => 3, 'entity_table' => 'civicrm_contribution', 'entity_id' => $contribution['id'], 'sequential' => 1));
+    $this->assertAPISuccess($result);
+    $this->assertEquals('my contribution note', $result['values'][0]['note']);
+    civicrm_api('contribution', 'delete', array('version' => 3, 'id' => $contribution['id']));
+  }
   /*
      * This is the test for creating soft credits - however a 'get' is not yet possible via API
      * as the current BAO functions are contact-centric (from what I can find)
