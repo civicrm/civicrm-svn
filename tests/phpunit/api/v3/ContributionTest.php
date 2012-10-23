@@ -421,6 +421,10 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $this->assertArrayHasKey('payment_instrument', $contribution['values'][0]);
     $this->assertEquals('EFT',$contribution['values'][0]['payment_instrument']);
     $this->assertEquals(1,$contribution['count']);
+    $contribution = civicrm_api('contribution','get',array('version'=> 3, 'sequential' => 1, 'payment_instrument' => 'EFT'));
+    $this->assertArrayHasKey('payment_instrument', $contribution['values'][0]);
+    $this->assertEquals('EFT',$contribution['values'][0]['payment_instrument']);
+    $this->assertEquals(1,$contribution['count']);
   }
 
   /*
