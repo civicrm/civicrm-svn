@@ -224,6 +224,9 @@ function _civicrm_api3_generic_get_metatdata_options(&$metadata, $fieldname, $fi
   elseif(!empty($fieldSpec['FKClassName']) && !in_array($fieldname, $fieldsToResolve)){
     return;
   }
+  if(substr($fieldname, -3) == '_id'){
+    $metadata[$fieldname]['api.aliases'][] = substr($fieldname, 0, -3);
+  }
 
   $pseudoParams = $fieldSpec['pseudoconstant'] + array('version' => 3 );
   $options = civicrm_api('constant', 'get', $pseudoParams);
