@@ -46,6 +46,13 @@ class CRM_Extension_System {
   private $downloader = NULL;
 
   /**
+   * The URL of the remote extensions repository
+   *
+   * @var string|FALSE
+   */
+  private $_repoUrl = NULL;
+
+  /**
    * @return CRM_Extension_System
    */
   public static function singleton($fresh = FALSE) {
@@ -137,6 +144,14 @@ class CRM_Extension_System {
    * @return CRM_Extension_Browser
    */
   public function getBrowser() {
+    if ($this->browser === NULL) {
+      $cacheDir = NULL;
+      if ($this->getDefaultContainer()) {
+        $cacheDir = $this->getDefaultContainer()->getBaseDir() . DIRECTORY_SEPARATOR . 'cache';
+      }
+      $this->browser = new CRM_Extension_Browser($this->getRepositoryUrl(), '', $cacheDir);
+    }
+    return $this->browser;
   }
 
   /**
@@ -166,5 +181,32 @@ class CRM_Extension_System {
       ));
     }
     return $this->cache;
+  }
+
+  /**
+   * Determine the URL which provides a feed of available extensions
+   *
+   * @return string|FALSE
+   */
+  public function getRepositoryUrl() {
+    if (empty($this->_repoUrl) && $this->_repoUrl !== FALSE) {
+      $config = CRM_Core_Config::singleton();
+      $url = CRM_Core_BAO_Setting::getItem('Extension Preferences', 'ext_repo_url', NULL, CRM_Extension_Browser::DEFAULT_EXTENSIONS_REPOSITORY);
+
+      // boolean false means don't try to check extensions
+      // http://issues.civicrm.org/jira/browse/CRM-10575
+      if($url === false) {
+        $this->_repoUrl = false;
+      }
+      else {
+        $vars = array(
+          '{ver}' => CRM_Utils_System::version(),
+          '{uf}' => $config->userFramework,
+          '{php}' => phpversion(),
+        );
+        $this->_repoUrl = strtr($url, $vars);
+      }
+    }
+    return $this->_repoUrl;
   }
 }
