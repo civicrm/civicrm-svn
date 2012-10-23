@@ -2730,36 +2730,6 @@ div a.helpicon:focus {
   background-image:url(../i/icons/jquery-ui-91CE00.png); !important
 }
 
-div#crm-toolTip {
-    padding   : 10px;
-    background: #eef4b8;
-    font-size : 11px;
-    color     : black;
-    text-align: left;
-    margin    : 1em;
-    position: fixed;
-    bottom:20px;
-    right:20px;
-    width:500px;
-    display:none;
-    max-height:500px;
-    overflow:auto;
-}
-
-div#crm-toolTip td {
-    vertical-align: top;
-    padding: 2px 4px 2px 2px;
-}
-
-div#crm-toolTip a {
-    color: #000;
-    text-decoration: underline;
-}
-div#crm-toolTip #hide-tooltip {
-    float:right;
-    cursor: pointer;
-}
-
 .crm-summary-link {
     position: relative;
     z-index: 16;
