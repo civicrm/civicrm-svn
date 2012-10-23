@@ -70,7 +70,11 @@ function civicrm_html_head() {
 
     // add localized calendar js
     $localisation = explode('_', $config->lcMessages);
-    $localizationFile = drupal_get_path('module', 'civicrm') . '/../packages/jquery/jquery-ui-1.8.16/development-bundle/ui/i18n/jquery.ui.datepicker-' . $localisation[0] . '.js';
+    $localizationFile =
+      drupal_get_path('module', 'civicrm') .
+      '/../packages/jquery/jquery-ui-1.8.16/development-bundle/ui/i18n/jquery.ui.datepicker-' .
+      $localisation[0] .
+      '.js';
 
     if (file_exists($localizationFile)) {
       drupal_add_js($localizationFile, array(
@@ -308,20 +312,13 @@ function civicrm_initialize() {
     }
     require_once 'CRM/Core/BAO/Preferences.php';
 
-    // fixme - after 3.4 is discontinued remove 3.4 support
-    // As this file may be shared between 3.4 & 4.1 releases use the BAO_Preferences::value legacy function if it exists
-    // in future only CRM_Core_BAO_Setting::getItem will be required
     $args = explode('/', $_GET['q']);
     if (
-  (!isset($args[1]) || $args[1] != 'upgrade') &&
-  ((method_exists('CRM_Core_BAO_Preferences', 'value') &&
-    CRM_Core_BAO_Preferences::value('editor_id') == 4)
-   || (method_exists('CRM_Core_BAO_Setting', 'getItem') &&
-       CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
-            // drupal wysiwyg
-            'editor_id'
-          ) == 4)
-      )
+      (!isset($args[1]) || $args[1] != 'upgrade') &&
+      CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+        // drupal wysiwyg
+        'editor_id'
+      ) == 4
     ) {
       //we have to ensure that wysiwyg is loaded since
       //pages load only with ajax callbacks
