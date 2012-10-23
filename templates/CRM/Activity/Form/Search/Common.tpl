@@ -69,11 +69,13 @@
 <tr>
    <td>
     {$form.activity_role.html}
-      <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('activity_role', '{$form.formName}'); document.getElementById('activity_contact_name').value = ''; return false;" >{ts}clear{/ts}</a>)</span><br />
+      <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('activity_role', '{$form.formName}'); cj('#activity_contact_name').val('').parent().hide(); return false;" >{ts}clear{/ts}</a>)</span>
+      <div>
+        {$form.activity_contact_name.html}
+        <div class="description font-italic">{ts}Complete OR partial name of the{/ts} <span class="contact-name-option option-1">{ts}Source Contact{/ts}</span><span class="contact-name-option option-2">{ts}Assignee Contact{/ts}</span>.</div>
+      </div>
    </td>
-   <td colspan="2"><br />
-    {$form.activity_contact_name.html}<br />
-      <span class="description font-italic">{ts}Complete OR partial Name of the Source Contact or the Assignee Contact.{/ts}</span><br /><br />
+   <td colspan="2">
     {$form.activity_test.label} {help id="is-test" file="CRM/Contact/Form/Search/Advanced"} &nbsp; {$form.activity_test.html} <span class="crm-clear-link">(<a href="javascript:unselectRadio('activity_test','{$form.formName}')">{ts}clear{/ts}</a>)</span>
    </td>
 </tr>
@@ -142,6 +144,16 @@ campaignContext="componentSearch" campaignTrClass='' campaignTdClass=''}
 
 
 <script type="text/javascript">
+cj('[name=activity_role]:input').change(function() {
+  cj('.description .contact-name-option').hide();
+  if (cj(this).is(':checked')) {
+    cj('#activity_contact_name').parent().show();
+    cj('.description .option-' + cj(this).val()).show();
+  }
+}).change();
+if (cj('[name=activity_role]:checked').length < 1) {
+  cj('#activity_contact_name').parent().hide();
+}
 function showCustomData( chkbox )
 {
     if ( document.getElementById( chkbox ).checked ) {

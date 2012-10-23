@@ -24,11 +24,12 @@
  +--------------------------------------------------------------------+
 *}
 {htxt id="id-member_is_primary-title"}
-  {ts}Member Search{/ts}
+  {ts}Primary Members{/ts}
 {/htxt}
 {htxt id="id-member_is_primary"}
-{ts}Indicate whether you want the search results to include:{/ts}
-<ul><li>{ts}All members, regardless of whether they are the direct member or inherit it through a relationship,{/ts}</li>
-<li>{ts}Only primary members (those contacts who have a membership directly attached to their record), or{/ts}</li>
-<li>{ts}Only related records (those who inherit membership through a relationship as defined in the membership type configuration).{/ts}</li></ul>
+  <ul>
+    <li>{ts}Select "Yes" to display only primary members (those contacts who have a membership directly attached to their record){/ts}</li>
+    <li>{ts}Select "No" to display only related records (those who inherit membership through a relationship as defined in the membership type configuration).{/ts}</li>
+    <li>{ts}Select neither to show all members, regardless of whether they are the direct member or inherit it through a relationship,{/ts}</li>
+  </ul>
 {/htxt}

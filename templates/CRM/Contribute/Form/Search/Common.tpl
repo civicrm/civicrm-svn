@@ -62,6 +62,10 @@
           <td>{$form.contribution_receipt_date_is_not_null.label}</td>
           <td>{$form.contribution_receipt_date_is_not_null.html}<span class="crm-clear-link">(<a href="javascript:unselectRadio('contribution_receipt_date_is_not_null','{$form.formName}')">{ts}clear{/ts}</a>)</span></td>
         </tr>
+        <tr>
+          <td>{$form.contribution_test.label} {help id="is-test" file="CRM/Contact/Form/Search/Advanced"}</td>
+          <td>{$form.contribution_test.html}<span class="crm-clear-link">(<a href="javascript:unselectRadio('contribution_test','{$form.formName}')">{ts}clear{/ts}</a>)</span></td>
+        </tr>
       </tbody>
     </table>
   </td>
@@ -75,10 +79,6 @@
         <tr>
           <td>{$form.contribution_recurring.label}</td>
           <td>{$form.contribution_recurring.html}<span class="crm-clear-link">(<a href="javascript:unselectRadio('contribution_recurring','{$form.formName}')">{ts}clear{/ts}</a>)</span></td>
-        </tr>
-        <tr>
-          <td>{$form.contribution_test.label} {help id="is-test" file="CRM/Contact/Form/Search/Advanced"}</td>
-          <td>{$form.contribution_test.html}<span class="crm-clear-link">(<a href="javascript:unselectRadio('contribution_test','{$form.formName}')">{ts}clear{/ts}</a>)</span></td>
         </tr>
       </tbody>
     </table>
@@ -126,7 +126,7 @@
 {literal}
   <script type="text/javascript">
     cj('#contribution_payment_instrument_id').change(function() {
-      if (cj(this).val() == '4' || cj(this).val() == '') {
+      if (cj(this).val() == '4') {
         cj('#contribution_check_number_wrapper').show();
       }
       else {

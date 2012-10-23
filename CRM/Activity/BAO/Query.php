@@ -489,7 +489,7 @@ class CRM_Activity_BAO_Query {
     CRM_Core_Form_Date::buildDateRange($form, 'activity_date', 1, '_low', '_high', ts('From'), FALSE, FALSE);
 
     $activityRoles = array(1 => ts('Created by'), 2 => ts('Assigned to'));
-    $form->addRadio('activity_role', NULL, $activityRoles, NULL, '<br />');
+    $form->addRadio('activity_role', NULL, $activityRoles);
 
     $form->addElement('text', 'activity_contact_name', ts('Contact Name'), CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'sort_name'));
 

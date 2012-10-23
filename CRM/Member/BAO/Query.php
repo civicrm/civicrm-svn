@@ -122,8 +122,7 @@ class CRM_Member_BAO_Query {
   }
 
   static function where(&$query) {
-    $isTest = FALSE;
-    $grouping = NULL;
+    $grouping = $testCondition = NULL;
     foreach (array_keys($query->_params) as $id) {
       if (!CRM_Utils_Array::value(0, $query->_params[$id])) {
         continue;
@@ -133,18 +132,19 @@ class CRM_Member_BAO_Query {
           $query->_useDistinct = TRUE;
         }
         if ($query->_params[$id][0] == 'member_test') {
-          $isTest = TRUE;
+          $testCondition = $id;
+          continue;
         }
         $grouping = $query->_params[$id][3];
         self::whereClauseSingle($query->_params[$id], $query);
       }
     }
-
-    if ($grouping !== NULL &&
-      !$isTest
+    // Only add test condition if other fields are selected
+    if ($grouping !== NULL && $testCondition &&
+      // we dont want to include all tests for sql OR CRM-7827
+      $query->getOperator() != 'OR'
     ) {
-      $values = array('member_test', '=', 0, $grouping, 0);
-      self::whereClauseSingle($values, $query);
+      self::whereClauseSingle($query->_params[$testCondition], $query);
     }
   }
 
@@ -219,15 +219,10 @@ class CRM_Member_BAO_Query {
         return;
 
       case 'member_test':
-        $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause("civicrm_membership.is_test",
-          $op,
-          $value,
-          "Integer"
-        );
+        $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause("civicrm_membership.is_test", $op, $value, "Boolean");
         if ($value) {
-          $query->_qill[$grouping][] = ts("Find Test Memberships");
+          $query->_qill[$grouping][] = ts('Membership is a Test');
         }
-        $query->_tables['civicrm_membership'] = $query->_whereTables['civicrm_membership'] = 1;
         return;
 
       case 'member_auto_renew':
@@ -245,7 +240,11 @@ class CRM_Member_BAO_Query {
             ),
             "Integer"
           );
-          $query->_qill[$grouping][] = ts("Find Auto-renew Memberships");
+          $query->_qill[$grouping][] = ts("Membership is Auto-Renew");
+        }
+        else {
+          $query->_where[$grouping][] = " civicrm_membership.contribution_recur_id IS NULL";
+          $query->_qill[$grouping][] = ts("Membership is NOT Auto-Renew");
         }
         $query->_tables['civicrm_membership'] = $query->_whereTables['civicrm_membership'] = 1;
         return;
@@ -257,7 +256,10 @@ class CRM_Member_BAO_Query {
           "Integer"
         );
         if ($value) {
-          $query->_qill[$grouping][] = ts("Find Pay Later Memberships");
+          $query->_qill[$grouping][] = ts("Membership is Pay Later");
+        }
+        else {
+          $query->_qill[$grouping][] = ts("Membership is NOT Pay Later");
         }
         $query->_tables['civicrm_membership'] = $query->_whereTables['civicrm_membership'] = 1;
         return;
@@ -289,20 +291,13 @@ class CRM_Member_BAO_Query {
         return;
 
       case 'member_is_primary':
-        switch ($value) {
-          case 1:
-            $query->_qill[$grouping][] = ts("Primary AND Related Members");
-            break;
-
-          case 2:
-            $query->_where[$grouping][] = " civicrm_membership.owner_membership_id IS NULL";
-            $query->_qill[$grouping][] = ts("Primary Members Only");
-            break;
-
-          case 3:
-            $query->_where[$grouping][] = " civicrm_membership.owner_membership_id IS NOT NULL";
-            $query->_qill[$grouping][] = ts("Related Members Only");
-            break;
+        if ($value) {
+          $query->_where[$grouping][] = " civicrm_membership.owner_membership_id IS NULL";
+          $query->_qill[$grouping][] = ts("Primary Members Only");
+        }
+        else {
+          $query->_where[$grouping][] = " civicrm_membership.owner_membership_id IS NOT NULL";
+          $query->_qill[$grouping][] = ts("Related Members Only");
         }
         $query->_tables['civicrm_membership'] = $query->_whereTables['civicrm_membership'] = 1;
         return;
@@ -395,10 +390,6 @@ class CRM_Member_BAO_Query {
       $form->_membershipType = &$form->addElement('checkbox', "member_membership_type_id[$id]", NULL, $Name);
     }
 
-    // Option to include / exclude inherited memberships from search results (e.g. rows where owner_membership_id is NOT NULL)
-    $primaryValues = array(1 => ts('All Members'), 2 => ts('Primary Members Only'), 3 => ts('Related Members Only'));
-    $form->addRadio('member_is_primary', '', $primaryValues);
-    $form->setDefaults(array('member_is_primary' => 1));
 
     foreach (CRM_Member_PseudoConstant::membershipStatus(NULL, NULL, 'label') as $sId => $sName) {
       $form->_membershipStatus = &$form->addElement('checkbox', "member_status_id[$sId]", NULL, $sName);
@@ -412,9 +403,10 @@ class CRM_Member_BAO_Query {
 
     CRM_Core_Form_Date::buildDateRange($form, 'member_end_date', 1, '_low', '_high', ts('From'), FALSE, FALSE);
 
-    $form->addElement('checkbox', 'member_test', ts('Find Test Memberships?'));
-    $form->addElement('checkbox', 'member_pay_later', ts('Find Pay Later Memberships?'));
-    $form->addElement('checkbox', 'member_auto_renew', ts('Find Auto-renew Memberships?'));
+    $form->addYesNo('member_is_primary', ts('Primary Member?'));
+    $form->addYesNo('member_pay_later', ts('Pay Later?'));
+    $form->addYesNo('member_auto_renew', ts('Auto-Renew?'));
+    $form->addYesNo('member_test', ts('Membership is a Test?'));
 
     // add all the custom  searchable fields
     $extends = array('Membership');
@@ -437,6 +429,7 @@ class CRM_Member_BAO_Query {
     CRM_Campaign_BAO_Campaign::addCampaignInComponentSearch($form, 'member_campaign_id');
 
     $form->assign('validCiviMember', TRUE);
+    $form->setDefaults(array('member_test' => 0));
   }
 
   static function searchAction(&$row, $id) {}
