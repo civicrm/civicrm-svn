@@ -75,7 +75,7 @@ class CRM_Upgrade_Incremental_php_FourThree {
     // CRM-10893
     // fix WP access control
     $config = CRM_Core_Config::singleton( );
-    if§ ($config->userFramework == 'WordPress') {
+    if ($config->userFramework == 'WordPress') {
       civicrm_wp_set_capabilities( );
     }
 
