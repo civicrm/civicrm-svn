@@ -262,6 +262,7 @@ function civicrm_api3_setting_getvalue_spec(&$params) {
   );
   $params['name'] = array(
       'title' => 'Setting Name',
+      'api.aliases' => array('return'),
   );
   $params['default_value'] = array(
       'title' => 'Default Value',
