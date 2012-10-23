@@ -453,9 +453,7 @@ AND    $cond
   static function setValues(&$params) {
 
     if (!isset($params['entityID']) ||
-      CRM_Utils_Type::escape($params['entityID'],
-        'Integer', FALSE
-      ) === NULL
+      CRM_Utils_Type::escape($params['entityID'], 'Integer', FALSE) === NULL
     ) {
       return CRM_Core_Error::createAPIError(ts('entityID needs to be set and of type Integer'));
     }
@@ -467,9 +465,7 @@ AND    $cond
     foreach ($params as $n => $v) {
       if ($customFieldInfo = CRM_Core_BAO_CustomField::getKeyID($n, TRUE)) {
         $fieldID = (int ) $customFieldInfo[0];
-        if (CRM_Utils_Type::escape($fieldID,
-            'Integer', FALSE
-          ) === NULL) {
+        if (CRM_Utils_Type::escape($fieldID, 'Integer', FALSE) === NULL) {
           return CRM_Core_Error::createAPIError(ts('field ID needs to be of type Integer for index %1',
               array(1 => $fieldID)
             ));
@@ -533,9 +529,7 @@ AND    cf.id IN ( $fieldIDList )
           }
         }
         // Ensure that value is of the right data type
-        elseif (CRM_Utils_Type::escape($fieldValue['value'],
-            $dataType, FALSE
-          ) === NULL) {
+        elseif (CRM_Utils_Type::escape($fieldValue['value'], $dataType, FALSE) === NULL) {
           return CRM_Core_Error::createAPIError(ts('value: %1 is not of the right field data type: %2',
               array(
                 1 => $fieldValue['value'],
@@ -613,9 +607,7 @@ AND    cf.id IN ( $fieldIDList )
       $key = $idx = NULL;
       if (substr($n, 0, 7) == 'custom_') {
         $idx = substr($n, 7);
-        if (CRM_Utils_Type::escape($idx,
-            'Integer', FALSE
-          ) === NULL) {
+        if (CRM_Utils_Type::escape($idx, 'Integer', FALSE) === NULL) {
           return CRM_Core_Error::createAPIError(ts('field ID needs to be of type Integer for index %1',
               array(1 => $idx)
             ));
