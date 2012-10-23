@@ -404,11 +404,13 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
   }
 
   function testGetContributionByPaymentInstrument() {
-    $params = $this->_params + array('payment_instrument' => 'EFT');
-    $params2 = $this->_params + array('payment_instrument' => 'Cash');
-    civicrm_api('contribution','create',$params);
-    civicrm_api('contribution','create',$params2);
     $eftTypeId = CRM_Core_OptionGroup::getValue('payment_instrument', 'EFT');
+    $cashTypeId = CRM_Core_OptionGroup::getValue('payment_instrument', 'Cash');
+    $params = $this->_params + array('payment_instrument' => 'EFT');
+    $params2 = $this->_params + array('payment_instrument' => 'Cash',);
+    civicrm_api('contribution','create',$params);
+    $contribution = civicrm_api('contribution','create',$params2);
+    $this->assertAPISuccess($contribution);
     $contribution = civicrm_api('contribution','get',array('version'=> 3, 'sequential' => 1, 'contribution_payment_instrument_id' => 'Cash'));
     $this->assertArrayHasKey('payment_instrument', $contribution['values'][0]);
     $this->assertEquals('Cash',$contribution['values'][0]['payment_instrument']);
@@ -416,7 +418,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $contribution = civicrm_api('contribution','get',array('version'=> 3, 'sequential' => 1, 'payment_instrument_id' => 'EFT'));
     $this->assertArrayHasKey('payment_instrument', $contribution['values'][0]);
     $this->assertEquals('EFT',$contribution['values'][0]['payment_instrument']);
-    $this->assertEquals(1,$contribution['count']);
+    $this->assertEquals(1, $contribution['count']);
     $contribution = civicrm_api('contribution','get',array('version'=> 3, 'sequential' => 1, 'payment_instrument_id' => 5));
     $this->assertArrayHasKey('payment_instrument', $contribution['values'][0]);
     $this->assertEquals('EFT',$contribution['values'][0]['payment_instrument']);
@@ -424,6 +426,11 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $contribution = civicrm_api('contribution','get',array('version'=> 3, 'sequential' => 1, 'payment_instrument' => 'EFT'));
     $this->assertArrayHasKey('payment_instrument', $contribution['values'][0]);
     $this->assertEquals('EFT',$contribution['values'][0]['payment_instrument']);
+    $this->assertEquals(1,$contribution['count']);
+    $contribution = civicrm_api('contribution', 'update', array('id' => $contribution['id'], 'version' => $this->_apiversion, 'payment_instrument' => 'Credit Card'));
+    $contribution = civicrm_api('contribution','get',array('version'=> 3, 'sequential' => 1, 'id' => $contribution['id'], ));
+    $this->assertArrayHasKey('payment_instrument', $contribution['values'][0]);
+    $this->assertEquals('Credit Card',$contribution['values'][0]['payment_instrument']);
     $this->assertEquals(1,$contribution['count']);
   }
 
