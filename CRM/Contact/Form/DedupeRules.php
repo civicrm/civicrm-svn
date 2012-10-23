@@ -56,16 +56,17 @@ class CRM_Contact_Form_DedupeRules extends CRM_Admin_Form {
       CRM_Utils_System::permissionDenied();
       CRM_Utils_System::civiExit();
     }
-
+    $this->_options = array(ts('Unsupervised'), ts('Supervised'), ts('General'));
     $this->_rgid = CRM_Utils_Request::retrieve('id', 'Positive', $this, FALSE, 0);
     $this->_contactType = CRM_Utils_Request::retrieve('contact_type', 'String', $this, FALSE, 0);
     if ($this->_rgid) {
       $rgDao = new CRM_Dedupe_DAO_RuleGroup();
       $rgDao->id = $this->_rgid;
       $rgDao->find(TRUE);
+
       $this->_defaults['threshold'] = $rgDao->threshold;
       $this->_contactType = $rgDao->contact_type;
-      $this->_defaults['used'] = $rgDao->used;
+      $this->_defaults['used'] = CRM_Utils_Array::key($rgDao->used, $this->_options);
       $this->_defaults['title'] = $rgDao->title;
       $this->_defaults['is_reserved'] = $rgDao->is_reserved;
       $this->assign('isReserved', $rgDao->is_reserved);
@@ -105,9 +106,7 @@ class CRM_Contact_Form_DedupeRules extends CRM_Admin_Form {
       'objectExists', array('CRM_Dedupe_DAO_RuleGroup', $this->_rgid, 'title')
     );
 
-    $options = array(ts('Unsupervised'), ts('Supervised'), ts('General'));
-
-    $this->addRadio('level', ts('Usage'), $options);
+    $this->addRadio('used', ts('Usage'), $this->_options);
 
     $disabled = array();
     $reserved = $this->add('checkbox', 'is_reserved', ts('Reserved?'));
@@ -208,8 +207,7 @@ UPDATE civicrm_dedupe_rule_group
 
     $rgDao->title        = $values['title'];
     $rgDao->is_reserved  = CRM_Utils_Array::value('is_reserved', $values, FALSE);
-    //    $rgDao->is_default   = $isDefault;
-    $rgDao->level        = $values['level'];
+    $rgDao->used         = $this->_options[$values['used']];
     $rgDao->contact_type = $this->_contactType;
     $rgDao->threshold    = $values['threshold'];
     $rgDao->save();

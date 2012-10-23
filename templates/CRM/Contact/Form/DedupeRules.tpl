@@ -40,13 +40,9 @@
             </div>
         </td>
     </tr>
-    <tr class="crm-dedupe-rules-form-block-level">
-        <td class="label">{$form.level.label}</td>
-        <td>{$form.level.html}</td>
-     </tr>
-     <tr class="crm-dedupe-rules-form-block-is_default">
-        <td class="label">{$form.is_default.label}</td>
-        <td>{$form.is_default.html}</td>
+    <tr class="crm-dedupe-rules-form-block-used">
+        <td class="label">{$form.used.label}</td>
+        <td>{$form.used.html}</td>
      </tr>
      <tr class="crm-dedupe-rules-form-block-is_reserved">
         <td class="label">{$form.is_reserved.label}</td>
