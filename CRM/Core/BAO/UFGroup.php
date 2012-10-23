@@ -2111,26 +2111,28 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         }
         else {
           $blocks = array('email', 'phone', 'im', 'openid');
-          $primaryLocationType = FALSE;
           list($fieldName, $locTypeId, $phoneTypeId) = CRM_Utils_System::explode('-', $name, 3);
           if (!in_array($fieldName, $multipleFields)) {
             if (is_array($details)) {
               foreach ($details as $key => $value) {
                 // when we fixed CRM-5319 - get primary loc
                 // type as per loc field and removed below code.
+                $primaryLocationType = FALSE;
                 if ($locTypeId == 'Primary') {
-                  $primaryLocationType = TRUE;
-                  if (in_array($fieldName, $blocks)){
-                    $locTypeId = CRM_Contact_BAO_Contact::getPrimaryLocationType($contactId, FALSE, $fieldName);
-                  }
-                  else{
-                    $locTypeId = CRM_Contact_BAO_Contact::getPrimaryLocationType($contactId, FALSE, 'address');
+                  if (is_array($value) && array_key_exists($fieldName, $value)){
+                    $primaryLocationType = TRUE;
+                    if (in_array($fieldName, $blocks)){
+                      $locTypeId = CRM_Contact_BAO_Contact::getPrimaryLocationType($contactId, FALSE, $fieldName);
+                    }
+                    else{
+                      $locTypeId = CRM_Contact_BAO_Contact::getPrimaryLocationType($contactId, FALSE, 'address');
+                    }
                   }
                 }
 
                 // fixed for CRM-665
                 if (is_numeric($locTypeId)) {
-                  if (($primaryLocationType && $key == 1) || $locTypeId == CRM_Utils_Array::value('location_type_id', $value)) {
+                  if ($primaryLocationType || $locTypeId == CRM_Utils_Array::value('location_type_id', $value)) {
                     if (CRM_Utils_Array::value($fieldName, $value)) {
                       //to handle stateprovince and country
                       if ($fieldName == 'state_province') {
