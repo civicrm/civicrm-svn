@@ -453,6 +453,12 @@
       var data = o.data('edit-params');
       var errorTag = o.find('.update_oplock_ts');
       if (errorTag.length > 0) {
+        $('<span>')
+          .addClass('crm-lock-button')
+          .appendTo(errorTag);
+
+        var buttonContainer = o.find('.crm-lock-button');
+
         $('<button>')
           .addClass('crm-button')
           .text(options.ignoreLabel)
@@ -465,7 +471,7 @@
             }
             return false;
           })
-          .appendTo(errorTag)
+          .appendTo(buttonContainer)
           ;
         $('<button>')
           .addClass('crm-button')
@@ -474,7 +480,7 @@
             window.location.reload();
             return false;
           })
-          .appendTo(errorTag)
+          .appendTo(buttonContainer)
           ;
       }
     });

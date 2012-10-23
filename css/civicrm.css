@@ -313,13 +313,17 @@ div.spacer,
   margin-bottom: 28px;
 }
 
+#crm-container span.crm-lock-button {
+  float: right;
+}
+
 #crm-container fieldset{
     background:none;
     padding:4px 0px;
     margin:10px 0px;
     border:none;
     border-top: 1px solid #CFCEC3;
-    
+
 }
 
 #crm-container fieldset.no-border {
