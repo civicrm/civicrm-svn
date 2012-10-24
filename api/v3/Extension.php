@@ -162,8 +162,15 @@ function civicrm_api3_extension_download($params) {
   }
 
   if (! array_key_exists('url', $params)) {
-    // FIXME: check CRM_Extension_Browser for download URL
-    throw new API_Exception('Missing required parameter: url');
+    if ($info = CRM_Extension_System::singleton()->getBrowser()->getExtension($params['key'])) {
+      if ($info->downloadUrl) {
+        $params['url'] = $info->downloadUrl;
+      }
+    }
+  }
+
+  if (! array_key_exists('url', $params)) {
+    throw new API_Exception('Cannot resolve download url for extension. Try adding parameter "url"');
   }
 
   foreach (CRM_Extension_System::singleton()->getDownloader()->checkRequirements() as $requirement) {

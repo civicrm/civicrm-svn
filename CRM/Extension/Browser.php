@@ -119,6 +119,22 @@ class CRM_Extension_Browser {
     return $exts;
   }
 
+  /**
+   * Get a description of a particular extension
+   *
+   * @return CRM_Extension_Info|NULL
+   */
+  public function getExtension($key) {
+    // TODO optimize performance -- we don't need to fetch/cache the entire repo
+    $exts = $this->getExtensions();
+    if (array_key_exists($key, $exts)) {
+      return $exts[$key];
+    } else {
+      // throw new CRM_Extension_Exception("Unknown remote extension: $key");
+      return NULL;
+    }
+  }
+
   private function _discoverRemote() {
     $tsPath    = $this->cacheDir . DIRECTORY_SEPARATOR . 'timestamp.txt';
     $timestamp = FALSE;
