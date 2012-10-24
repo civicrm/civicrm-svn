@@ -498,6 +498,37 @@ HTACCESS;
     unlink($fileName);
     mkdir($fileName, 0700);
     return $fileName . '/';
-}
+  }
+  /**
+   * Search directory tree for files which match a glob pattern
+   *
+   * @param $dir string, base dir
+   * @param $pattern string, glob pattern, eg "*.txt"
+   * @return array(string)
+   */
+  function findFiles($dir, $pattern) {
+    $todos = array($dir);
+    $result = array();
+    while (!empty($todos)) {
+      $subdir = array_shift($todos);
+      foreach (glob("$subdir/$pattern") as $match) {
+        if (!is_dir($match)) {
+          $result[] = $match;
+        }
+      }
+      $dh = opendir($subdir);
+      if ($dh) {
+        while (FALSE !== ($entry = readdir($dh))) {
+          $path = $subdir . DIRECTORY_SEPARATOR . $entry;
+          if ($entry == '.' || $entry == '..') {
+          } elseif (is_dir($path)) {
+            $todos[] = $path;
+          }
+        }
+        closedir($dh);
+      }
+    }
+    return $result;
+  }
 }
 
