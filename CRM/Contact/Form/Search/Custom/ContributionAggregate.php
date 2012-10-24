@@ -73,18 +73,23 @@ class CRM_Contact_Form_Search_Custom_ContributionAggregate implements CRM_Contac
     $form->addDate('start_date', ts('Contribution Date From'), FALSE, array('formatType' => 'custom'));
     $form->addDate('end_date', ts('...through'), FALSE, array('formatType' => 'custom'));
 
+    $contribution_types = CRM_Contribute_PseudoConstant::contributionType();
+    foreach($contribution_types as $contribution_type_id => $contribution_type) {
+      $form->addElement('checkbox', "contribution_type_id[{$contribution_type_id}]", 'Contribution Type', $contribution_type);
+    }
+
     /**
      * If you are using the sample template, this array tells the template fields to render
      * for the search form.
      */
-    $form->assign('elements', array('min_amount', 'max_amount', 'start_date', 'end_date'));
+    $form->assign('elements', array('min_amount', 'max_amount', 'start_date', 'end_date', 'contribution_type_id'));
   }
 
   /**
    * Define the smarty template used to layout the search form and results listings.
    */
   function templateFile() {
-    return 'CRM/Contact/Form/Search/Custom.tpl';
+    return 'CRM/Contact/Form/Search/Custom/ContributionAggregate.tpl';
   }
 
   /**
@@ -185,6 +190,11 @@ civicrm_contact AS contact_a
         $contactIDs = implode(', ', $contactIDs);
         $clauses[] = "contact_a.id IN ( $contactIDs )";
       }
+    }
+
+    if (!empty($this->_formValues['contribution_type_id'])) {
+      $contribution_type_ids = implode(',', array_keys($this->_formValues['contribution_type_id']));
+      $clauses[] = "contrib.contribution_type_id IN ($contribution_type_ids)";
     }
 
     return implode(' AND ', $clauses);
