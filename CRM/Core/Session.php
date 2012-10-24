@@ -110,7 +110,7 @@ class CRM_Core_Session {
     // hopefully any bootstrapping code will actually load the session from the CMS
     if (!isset($this->_session)) {
       // CRM-9483
-      if (!$_SESSION) {
+      if (!isset($_SESSION)) {
         session_start();
       }
       $this->_session =& $_SESSION;
