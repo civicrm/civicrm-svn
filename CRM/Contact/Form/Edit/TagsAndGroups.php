@@ -96,8 +96,6 @@ class CRM_Contact_Form_Edit_TagsandGroups {
 
       if ($groupID || !empty($group)) {
         $groups = CRM_Contact_BAO_Group::getGroupsHierarchy($ids);
-        
-        crm_core_error::debug('$groups', $groups);
 
         $attributes['skiplabel'] = TRUE;
         foreach ($groups as $id => $group) {
