@@ -267,19 +267,18 @@ AND    refresh_date IS NULL
       }
     }
     elseif (is_array($groupID)) {
-        $query = "
+      $groupIDs = implode(', ', $groupID);
+      $query = "
 DELETE     g
 FROM       civicrm_group_contact_cache g
-WHERE      g.group_id IN ( %1 )
+WHERE      g.group_id IN ( $groupIDs )
 ";
-        $update = "
+      $update = "
 UPDATE civicrm_group g
 SET    cache_date = null,
        refresh_date = null
-WHERE  id IN ( %1 )
+WHERE  id IN ( $groupIDs )
 ";
-      $groupIDs = implode(', ', $groupID);
-      $params = array(1 => array($groupIDs, 'String'));
     }
     else {
       $query = "
