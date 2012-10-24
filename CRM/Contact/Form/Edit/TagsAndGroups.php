@@ -95,23 +95,20 @@ class CRM_Contact_Form_Edit_TagsandGroups {
       }
 
       if ($groupID || !empty($group)) {
-        $sql = "
-    SELECT   id, title, description, visibility
-    FROM     civicrm_group
-    WHERE    id $ids
-    ORDER BY title
-    ";
-        $dao = CRM_Core_DAO::executeQuery($sql);
+        $groups = CRM_Contact_BAO_Group::getGroupsHierarchy($ids);
+        
+        crm_core_error::debug('$groups', $groups);
+
         $attributes['skiplabel'] = TRUE;
-        while ($dao->fetch()) {
+        foreach ($groups as $id => $group) {
           // make sure that this group has public visibility
           if ($visibility &&
-            $dao->visibility == 'User and User Admin Only'
+            $group['visibility'] == 'User and User Admin Only'
           ) {
             continue;
           }
-          $form->_tagGroup[$fName][$dao->id]['description'] = $dao->description;
-          $elements[] = &$form->addElement('advcheckbox', $dao->id, NULL, $dao->title, $attributes);
+          $form->_tagGroup[$fName][$id]['description'] = $group['description'];
+          $elements[] = &$form->addElement('advcheckbox', $id, NULL, $group['title'], $attributes);
         }
 
         if (!empty($elements)) {

@@ -736,7 +736,8 @@ div.spacer,
     margin: 0px;
 } 
 
-#crm-container ul.indented {
+#crm-container ul.indented,
+{
     padding-left: 3em;
 }
 #crm-container tr.subevent td.event-title,
@@ -744,6 +745,7 @@ div.spacer,
     padding-left: 3em;
 }
 
+#crm-container span.child-indent { padding-left: 1em };
 
 /*
 ** CSS for links from Drupal Blocks.
@@ -2516,6 +2518,17 @@ span.icon {
 .email-icon { background-position:-81px -98px; }
 .preview-icon { background-position:-227px -129px; }
 .play-icon { background-position: -3px -161px; }
+
+#crm-container .child-icon {
+  background-color: transparent;
+  background-image: url("../packages/jquery/plugins/jstree/themes/default/d.png");
+  background-position: -36px 0;
+  background-repeat: no-repeat;
+  display: inline-block;
+  height: 13px;
+  margin: 0;
+  padding: 0;
+  width: 18px; }
 
 #crm-container .geotag {
     padding: 2px 0 2px 20px !important;
