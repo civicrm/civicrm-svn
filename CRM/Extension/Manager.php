@@ -56,11 +56,18 @@ class CRM_Extension_Manager {
   const STATUS_UNKNOWN = 'unknown';
 
   /**
-   * @var CRM_Extension_Container_Interface, the interface
+   * @var CRM_Extension_Container_Interface
    *
    * Note: Treat as private. This is only public to facilitate debugging.
    */
   public $fullContainer;
+
+  /**
+   * @var CRM_Extension_Container_Basic|FALSE
+   *
+   * Note: Treat as private. This is only public to facilitate debugging.
+   */
+  public $defaultContainer;
 
   /**
    * @var CRM_Extension_Mapper
@@ -80,13 +87,72 @@ class CRM_Extension_Manager {
    * @var array (extensionKey => statusConstant)
    *
    * Note: Treat as private. This is only public to facilitate debugging.
-   */  
+   */
   public $statuses;
 
-  function __construct(CRM_Extension_Container_Interface $fullContainer, CRM_Extension_Mapper $mapper, $typeManagers) {
+  /**
+   * @param CRM_Extension_Container_Basic|FALSE $defaultContainer
+   */
+  function __construct(CRM_Extension_Container_Interface $fullContainer, $defaultContainer, CRM_Extension_Mapper $mapper, $typeManagers) {
     $this->fullContainer = $fullContainer;
+    $this->defaultContainer = $defaultContainer;
     $this->mapper = $mapper;
     $this->typeManagers = $typeManagers;
+  }
+
+  /**
+   * Install or upgrade the code for an extension -- and perform any
+   * necessary database changes (eg replacing extension metadata).
+   *
+   * This only works if the extension is stored in the default container.
+   *
+   * @param string $tmpCodeDir path to a local directory containing a copy of the new (inert) code
+   * @return void
+   * @throws CRM_Extension_Exception
+   */
+  public function replace($tmpCodeDir) {
+    if (! $this->defaultContainer) {
+      throw new CRM_Extension_Exception("Default extension container is not configured");
+    }
+
+    $newInfo = CRM_Extension_Info::loadFromFile($tmpCodeDir . DIRECTORY_SEPARATOR . CRM_Extension_Info::FILENAME);
+    try {
+      list ($oldInfo, $typeManager) = $this->_getInfoTypeHandler($newInfo->key); // throws Exception
+    } catch (CRM_Extension_Exception $e) {
+      // the extension does not exist in any container; we're free to put it in
+      $tgtPath = $this->defaultContainer->getBaseDir() . DIRECTORY_SEPARATOR . $newInfo->key;
+      if (!rename($tmpCodeDir, $tgtPath)) {
+        throw new CRM_Extension_Exception("Failed to move $tmpCodeDir to $tgtPath");
+      }
+      $this->refresh();
+      return;
+    }
+
+    switch ($this->getStatus($newInfo->key)) {
+      case self::STATUS_UNINSTALLED:
+        // The old code exists, but there are no DB records to worry about
+        $tgtPath = $this->defaultContainer->getPath($newInfo->key); // throws exception
+        if (!CRM_Utils_File::replaceDir($tmpCodeDir, $tgtPath)) {
+          throw new CRM_Extension_Exception("Failed to move $tmpCodeDir to $tgtPath");
+        }
+        break;
+      case self::STATUS_INSTALLED:
+      case self::STATUS_DISABLED:
+        // The old code and old DB records exist
+        $tgtPath = $this->defaultContainer->getPath($newInfo->key); // throws exception
+        $typeManager->onPreReplace($oldInfo, $newInfo);
+        if (!CRM_Utils_File::replaceDir($tmpCodeDir, $tgtPath)) {
+          throw new CRM_Extension_Exception("Failed to move $tmpCodeDir to $tgtPath");
+        }
+        $this->_updateExtensionEntry($newInfo);
+        $typeManager->onPostReplace($oldInfo, $newInfo);
+        break;
+      case self::STATUS_UNKNOWN:
+      default:
+        throw new CRM_Extension_Exception("Cannot install or enable extension: $key");
+    }
+
+    $this->refresh();
   }
 
   /**
@@ -101,7 +167,7 @@ class CRM_Extension_Manager {
 
     // TODO: to mitigate the risk of crashing during installation, scan
     // keys/statuses/types before doing anything
-    
+
     foreach ($keys as $key) {
       list ($info, $typeManager) = $this->_getInfoTypeHandler($key); // throws Exception
 
@@ -261,6 +327,12 @@ class CRM_Extension_Manager {
     return $this->statuses;
   }
 
+  public function refresh() {
+    $this->statuses = NULL;
+    $this->fullContainer->refresh(); // and, indirectly, defaultContainer
+    $this->mapper->refresh();
+  }
+
   // ----------------------
 
   /**
@@ -287,6 +359,22 @@ class CRM_Extension_Manager {
     $dao->file = $info->file;
     $dao->is_active = 1;
     return (bool) ($dao->insert());
+  }
+
+  private function _updateExtensionEntry(CRM_Extension_Info $info) {
+    $dao = new CRM_Core_DAO_Extension();
+    $dao->full_name = $info->key;
+    if ($dao->find(TRUE)) {
+      $dao->label = $info->label;
+      $dao->name = $info->name;
+      $dao->full_name = $info->key;
+      $dao->type = $info->type;
+      $dao->file = $info->file;
+      $dao->is_active = 1;
+      return (bool) ($dao->update());
+    } else {
+      return $this->_createExtensionEntry($info);
+    }
   }
 
   private function _removeExtensionEntry(CRM_Extension_Info $info) {

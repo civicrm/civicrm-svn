@@ -571,5 +571,28 @@ HTACCESS;
       return TRUE;
     }
   }
+
+  /**
+   * Move $fromDir to $toDir, replacing/deleting any
+   * pre-existing content.
+   *
+   * @param string $fromDir the directory which should be moved
+   * @param string $toDir the new location of the directory
+   * @return bool TRUE on success
+   */
+  static function replaceDir($fromDir, $toDir, $verbose = FALSE) {
+    if (is_dir($toDir)) {
+      if (!self::cleanDir($toDir, TRUE, $verbose)) {
+        return FALSE;
+      }
+    }
+    // When CRM_Core_Extensions_Extension does this, it uses copyDir, and
+    // that seems odd. We'll just a rename().
+    // CRM_Utils_File::copyDir($fromDir, $toDir);
+    // if (!CRM_Utils_File::cleanDir($fromDir, TRUE, FALSE)) {
+    //   CRM_Core_Session::setStatus(ts('Failed to clean temp dir: %1', array(1 => $fromDir)), '', 'alert');
+    // }
+    return rename($fromDir, $toDir);
+  }
 }
 

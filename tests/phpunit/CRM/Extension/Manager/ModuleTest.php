@@ -7,10 +7,15 @@ class CRM_Extension_Manager_ModuleTest extends CiviUnitTestCase {
     parent::setUp();
     global $_test_extension_manager_moduletest_counts;
     $_test_extension_manager_moduletest_counts = array();
+    $this->system = new CRM_Extension_System(array(
+      'extensionsDir' => '',
+      'extensionsURL' => '',
+    ));
   }
 
   function tearDown() {
     parent::tearDown();
+    $this->system = NULL;
   }
 
   /**
@@ -18,7 +23,7 @@ class CRM_Extension_Manager_ModuleTest extends CiviUnitTestCase {
    */
   function testInstallDisableUninstall() {
     global $_test_extension_manager_moduletest_counts;
-    $manager = CRM_Extension_System::singleton(TRUE)->getManager();
+    $manager = $this->system->getManager();
     $this->assertModuleActiveByName(FALSE, 'moduletest');
 
     $manager->install(array('test.extension.manager.moduletest'));
@@ -57,7 +62,7 @@ class CRM_Extension_Manager_ModuleTest extends CiviUnitTestCase {
    */
   function testInstallDisableEnable() {
     global $_test_extension_manager_moduletest_counts;
-    $manager = CRM_Extension_System::singleton(TRUE)->getManager();
+    $manager = $this->system->getManager();
     $this->assertModuleActiveByName(FALSE, 'moduletest');
     $this->assertModuleActiveByKey(FALSE, 'test.extension.manager.moduletest');
 
@@ -91,7 +96,7 @@ class CRM_Extension_Manager_ModuleTest extends CiviUnitTestCase {
     $this->assertModuleActiveByName(TRUE, 'moduletest');
     $this->assertModuleActiveByKey(TRUE, 'test.extension.manager.moduletest');
   }
-  
+
   /**
    * @param array $counts expected hook invocation counts ($hookName => $count)
    */
@@ -104,7 +109,7 @@ class CRM_Extension_Manager_ModuleTest extends CiviUnitTestCase {
       );
     }
   }
-  
+
   function assertModuleActiveByName($expectedIsActive, $prefix) {
     $activeModules = CRM_Core_PseudoConstant::getModuleExtensions(TRUE); // FIXME
     foreach ($activeModules as $activeModule) {

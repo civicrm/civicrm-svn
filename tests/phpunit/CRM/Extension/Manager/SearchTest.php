@@ -8,17 +8,22 @@ class CRM_Extension_Manager_SearchTest extends CiviUnitTestCase {
     //if (class_exists('test_extension_manager_searchtest')) {
     //  test_extension_manager_searchtest::$counts = array();
     //}
+    $this->system = new CRM_Extension_System(array(
+      'extensionsDir' => '',
+      'extensionsURL' => '',
+    ));
   }
 
   function tearDown() {
     parent::tearDown();
+    $this->system = NULL;
   }
 
   /**
    * Install an extension with a valid type name
    */
   function testInstallDisableUninstall() {
-    $manager = CRM_Extension_System::singleton(TRUE)->getManager();
+    $manager = $this->system->getManager();
     $this->assertDBQuery(0, 'SELECT count(*) FROM civicrm_option_value WHERE name = "test.extension.manager.searchtest"');
 
     $manager->install(array('test.extension.manager.searchtest'));
@@ -36,7 +41,7 @@ class CRM_Extension_Manager_SearchTest extends CiviUnitTestCase {
    * Install an extension with a valid type name
    */
   function testInstallDisableEnable() {
-    $manager = CRM_Extension_System::singleton(TRUE)->getManager();
+    $manager = $this->system->getManager();
     $this->assertDBQuery(0, 'SELECT count(*) FROM civicrm_option_value WHERE name = "test.extension.manager.searchtest"');
 
     $manager->install(array('test.extension.manager.searchtest'));

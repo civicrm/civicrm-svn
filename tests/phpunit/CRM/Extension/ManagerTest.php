@@ -193,10 +193,100 @@ class CRM_Extension_ManagerTest extends CiviUnitTestCase {
     $this->assertEquals('unknown', $manager->getStatus('test.foo.bar.whiz.bang'));
   }
 
+  /**
+   * Replace code for an extension that doesn't exist in the container
+   */
+  function testReplace_Unknown() {
+    $testingTypeManager = $this->getMock('CRM_Extension_Manager_Interface');
+    $manager = $this->_createManager(array(
+      'testing-type' => $testingTypeManager,
+    ));
+    $this->assertEquals('unknown', $manager->getStatus('test.newextension'));
+
+    $this->download = $this->_createDownload('test.newextension', 'newextension');
+
+    $testingTypeManager
+      ->expects($this->never()) // no data to replace
+      ->method('onPreReplace');
+    $testingTypeManager
+      ->expects($this->never()) // no data to replace
+      ->method('onPostReplace');
+    $manager->replace($this->download);
+    $this->assertEquals('uninstalled', $manager->getStatus('test.newextension'));
+    $this->assertTrue(file_exists("{$this->basedir}/test.newextension/info.xml"));
+    $this->assertTrue(file_exists("{$this->basedir}/test.newextension/newextension.php"));
+    $this->assertEquals('testing-type', $this->mapper->keyToInfo('test.newextension')->type);
+    $this->assertEquals('newextension', $this->mapper->keyToInfo('test.newextension')->file);
+  }
+
+  /**
+   * Replace code for an extension that doesn't exist in the container
+   */
+  function testReplace_Uninstalled() {
+    $testingTypeManager = $this->getMock('CRM_Extension_Manager_Interface');
+    $manager = $this->_createManager(array(
+      'testing-type' => $testingTypeManager,
+    ));
+    $this->assertEquals('uninstalled', $manager->getStatus('test.whiz.bang'));
+    $this->assertEquals('oddball', $this->mapper->keyToInfo('test.whiz.bang')->file);
+
+    $this->download = $this->_createDownload('test.whiz.bang', 'newextension');
+
+    $testingTypeManager
+      ->expects($this->never()) // no data to replace
+      ->method('onPreReplace');
+    $testingTypeManager
+      ->expects($this->never()) // no data to replace
+      ->method('onPostReplace');
+    $manager->replace($this->download);
+    $this->assertEquals('uninstalled', $manager->getStatus('test.whiz.bang'));
+    $this->assertTrue(file_exists("{$this->basedir}/weird/whizbang/info.xml"));
+    $this->assertTrue(file_exists("{$this->basedir}/weird/whizbang/newextension.php"));
+    $this->assertFalse(file_exists("{$this->basedir}/weird/whizbang/oddball.php"));
+    $this->assertEquals('testing-type', $this->mapper->keyToInfo('test.whiz.bang')->type);
+    $this->assertEquals('newextension', $this->mapper->keyToInfo('test.whiz.bang')->file);
+  }
+
+  /**
+   * Install a module and then replace it with new code
+   *
+   * Note that some metadata changes between versions -- the original has
+   * file="oddball", and the upgrade has file="newextension".
+   */
+  function testReplace_Installed() {
+    $testingTypeManager = $this->getMock('CRM_Extension_Manager_Interface');
+    $manager = $this->_createManager(array(
+      'testing-type' => $testingTypeManager,
+    ));
+    $this->assertEquals('uninstalled', $manager->getStatus('test.whiz.bang'));
+    $this->assertEquals('oddball', $this->mapper->keyToInfo('test.whiz.bang')->file);
+
+    $manager->install(array('test.whiz.bang'));
+    $this->assertEquals('installed', $manager->getStatus('test.whiz.bang'));
+    $this->assertEquals('oddball', $this->mapper->keyToInfo('test.whiz.bang')->file);
+    $this->assertDBQuery('oddball', 'SELECT file FROM civicrm_extension WHERE full_name ="test.whiz.bang"');
+
+    $this->download = $this->_createDownload('test.whiz.bang', 'newextension');
+
+    $testingTypeManager
+      ->expects($this->once())
+      ->method('onPreReplace');
+    $testingTypeManager
+      ->expects($this->once())
+      ->method('onPostReplace');
+    $manager->replace($this->download);
+    $this->assertEquals('installed', $manager->getStatus('test.whiz.bang'));
+    $this->assertTrue(file_exists("{$this->basedir}/weird/whizbang/info.xml"));
+    $this->assertTrue(file_exists("{$this->basedir}/weird/whizbang/newextension.php"));
+    $this->assertFalse(file_exists("{$this->basedir}/weird/whizbang/oddball.php"));
+    $this->assertEquals('newextension', $this->mapper->keyToInfo('test.whiz.bang')->file);
+    $this->assertDBQuery('newextension', 'SELECT file FROM civicrm_extension WHERE full_name ="test.whiz.bang"');
+  }
+
   function _createManager($typeManagers) {
-    list ($basedir, $c) = $this->_createContainer();
-    $mapper = new CRM_Extension_Mapper($c);
-    return new CRM_Extension_Manager($c, $mapper, $typeManagers);
+    //list ($basedir, $c) = $this->_createContainer();
+    $mapper = new CRM_Extension_Mapper($this->container);
+    return new CRM_Extension_Manager($this->container, $this->container, $this->mapper, $typeManagers);
   }
 
   function _createContainer(CRM_Utils_Cache_Interface $cache = NULL, $cacheKey = NULL) {
@@ -210,5 +300,12 @@ class CRM_Extension_ManagerTest extends CiviUnitTestCase {
     // not needed for now // file_put_contents("$basedir/weird/whizbang/oddball.php", "<?php\n");
     $c = new CRM_Extension_Container_Basic($basedir, 'http://example/basedir', $cache, $cacheKey);
     return array($basedir, $c);
+  }
+
+  function _createDownload($key, $file) {
+    $basedir = $this->createTempDir('ext-dl-');
+    file_put_contents("$basedir/info.xml", "<extension key='$key' type='testing-type'><file>$file</file></extension>");
+    file_put_contents("$basedir/$file.php", "<?php\n");
+    return $basedir;
   }
 }

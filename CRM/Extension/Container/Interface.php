@@ -61,4 +61,6 @@ interface CRM_Extension_Container_Interface {
    * @throws Exception
    */
   public function getResUrl($key);
+
+  public function refresh();
 }

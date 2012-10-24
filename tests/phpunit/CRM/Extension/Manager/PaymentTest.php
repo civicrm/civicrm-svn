@@ -8,17 +8,22 @@ class CRM_Extension_Manager_PaymentTest extends CiviUnitTestCase {
     if (class_exists('test_extension_manager_paymenttest')) {
       test_extension_manager_paymenttest::$counts = array();
     }
+    $this->system = new CRM_Extension_System(array(
+      'extensionsDir' => '',
+      'extensionsURL' => '',
+    ));
   }
 
   function tearDown() {
     parent::tearDown();
+    $this->system = NULL;
   }
 
   /**
    * Install an extension with a valid type name
    */
   function testInstallDisableUninstall() {
-    $manager = CRM_Extension_System::singleton(TRUE)->getManager();
+    $manager = $this->system->getManager();
     $this->assertDBQuery(0, 'SELECT count(*) FROM civicrm_payment_processor_type WHERE class_name = "test.extension.manager.paymenttest"');
 
     $manager->install(array('test.extension.manager.paymenttest'));
@@ -39,7 +44,7 @@ class CRM_Extension_Manager_PaymentTest extends CiviUnitTestCase {
    * Install an extension with a valid type name
    */
   function testInstallDisableEnable() {
-    $manager = CRM_Extension_System::singleton(TRUE)->getManager();
+    $manager = $this->system->getManager();
     $this->assertDBQuery(0, 'SELECT count(*) FROM civicrm_payment_processor_type WHERE class_name = "test.extension.manager.paymenttest"');
 
     $manager->install(array('test.extension.manager.paymenttest'));

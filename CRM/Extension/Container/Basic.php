@@ -107,6 +107,16 @@ class CRM_Extension_Container_Basic implements CRM_Extension_Container_Interface
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function refresh() {
+    $this->relPaths = NULL;
+    if ($this->cache) {
+      $this->cache->delete($this->cacheKey);
+    }
+  }
+
+  /**
    * @return string
    */
   public function getBaseDir() {

@@ -99,6 +99,18 @@ class CRM_Extension_Container_Collection implements CRM_Extension_Container_Inte
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function refresh() {
+    if ($this->cache) {
+      $this->cache->delete($this->cacheKey);
+    }
+    foreach ($this->containers as $container) {
+      $container->refresh();
+    }
+  }
+
+  /**
    * Get the container which defines a particular key
    *
    * @return CRM_Extension_Container_Interface

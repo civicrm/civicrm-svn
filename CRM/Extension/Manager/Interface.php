@@ -37,13 +37,16 @@
 interface CRM_Extension_Manager_Interface {
   public function onPreInstall(CRM_Extension_Info $info);
   public function onPostInstall(CRM_Extension_Info $info);
-  
+
   public function onPreEnable(CRM_Extension_Info $info);
   public function onPostEnable(CRM_Extension_Info $info);
-  
+
   public function onPreDisable(CRM_Extension_Info $info);
   public function onPostDisable(CRM_Extension_Info $info);
 
   public function onPreUninstall(CRM_Extension_Info $info);
   public function onPostUninstall(CRM_Extension_Info $info);
+
+  public function onPreReplace(CRM_Extension_Info $oldInfo, CRM_Extension_Info $newInfo);
+  public function onPostReplace(CRM_Extension_Info $oldInfo, CRM_Extension_Info $newInfo);
 }

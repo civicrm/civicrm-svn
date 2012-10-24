@@ -70,6 +70,12 @@ class CRM_Extension_Container_Static implements CRM_Extension_Container_Interfac
     return $e['resUrl'];
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function refresh() {
+  }
+
   protected function getExt($key) {
     if (isset($this->exts[$key])) {
       return $this->exts[$key];

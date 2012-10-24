@@ -41,12 +41,11 @@ class CRM_Extension_Manager_Search extends CRM_Extension_Manager_Base {
   CONST CUSTOM_SEARCH_GROUP_NAME = 'custom_search';
 
   public function __construct() {
-    parent::__construct();
+    parent::__construct(TRUE);
     $this->groupId = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionGroup',
       self::CUSTOM_SEARCH_GROUP_NAME, 'id', 'name'
     );
   }
-
 
   public function onPreInstall(CRM_Extension_Info $info) {
     $customSearchesByName = $this->getCustomSearchesByName();

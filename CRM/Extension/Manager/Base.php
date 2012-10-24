@@ -36,7 +36,16 @@
  */
 class CRM_Extension_Manager_Base implements CRM_Extension_Manager_Interface {
 
-  public function __construct() {
+  /**
+   * @var bool hether to automatically uninstall and install during 'replace'
+   */
+  public $autoReplace;
+
+  /**
+   * @param bool $autoReplace whether to automatically uninstall and install during 'replace'
+   */
+  public function __construct($autoReplace = FALSE) {
+    $this->autoReplace = $autoReplace;
   }
 
   /**
@@ -85,5 +94,25 @@ class CRM_Extension_Manager_Base implements CRM_Extension_Manager_Interface {
    * {@inheritdoc}
    */
   public function onPostUninstall(CRM_Extension_Info $info) {
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function onPreReplace(CRM_Extension_Info $oldInfo, CRM_Extension_Info $newInfo) {
+    if ($this->autoReplace) {
+      $this->onPreUninstall($oldInfo);
+      $this->onPostUninstall($oldInfo);
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function onPostReplace(CRM_Extension_Info $oldInfo, CRM_Extension_Info $newInfo) {
+    if ($this->autoReplace) {
+      $this->onPreInstall($oldInfo);
+      $this->onPostInstall($oldInfo);
+    }
   }
 }

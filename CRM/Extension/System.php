@@ -55,11 +55,22 @@ class CRM_Extension_System {
   /**
    * @return CRM_Extension_System
    */
-  public static function singleton($fresh = FALSE) {
+  public static function singleton($fresh = FALSE, $parameters = array()) {
     if (! self::$singleton || $fresh) {
-      self::$singleton = new CRM_Extension_System();
+      self::$singleton = new CRM_Extension_System($parameters);
     }
     return self::$singleton;
+  }
+
+  public function __construct($parameters = array()) {
+    $config = CRM_Core_Config::singleton();
+    if (!array_key_exists('extensionsDir', $parameters)) {
+      $parameters['extensionsDir'] = $config->extensionsDir;
+    }
+    if (!array_key_exists('extensionsURL', $parameters)) {
+      $parameters['extensionsURL'] = $config->extensionsURL;
+    }
+    $this->parameters = $parameters;
   }
 
   /**
@@ -133,7 +144,7 @@ class CRM_Extension_System {
         'search' => new CRM_Extension_Manager_Search(),
         'module' => new CRM_Extension_Manager_Module($this->getMapper()),
       );
-      $this->manager = new CRM_Extension_Manager($this->getFullContainer(), $this->getMapper(), $typeManagers);
+      $this->manager = new CRM_Extension_Manager($this->getFullContainer(), $this->getDefaultContainer(), $this->getMapper(), $typeManagers);
     }
     return $this->manager;
   }

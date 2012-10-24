@@ -36,6 +36,7 @@
 class CRM_Extension_Manager_Module extends CRM_Extension_Manager_Base {
 
   public function __construct(CRM_Extension_Mapper $mapper) {
+    parent::__construct(FALSE);
     $this->mapper = $mapper;
   }
 

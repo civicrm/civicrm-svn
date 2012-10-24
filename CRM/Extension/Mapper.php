@@ -62,7 +62,7 @@ class CRM_Extension_Mapper {
    * @var CRM_Extension_Container_Interface
    */
   protected $container;
-  
+
   /**
    * @var array (key => CRM_Extension_Info)
    */
@@ -307,4 +307,11 @@ class CRM_Extension_Mapper {
     return (string) $info->file . '.tpl';
   }
 
+  public function refresh() {
+    $this->infos = array();
+    $this->moduleExtensions = NULL;
+    if ($this->cache) {
+      $this->cache->delete($this->cacheKey . '/moduleFiles');
+    }
+  }
 }
