@@ -544,5 +544,32 @@ HTACCESS;
     }
     return $result;
   }
+
+  /**
+   * Determine if $child is a sub-directory of $parent
+   *
+   * @param string $parent
+   * @param string $child
+   * @return bool
+   */
+  static function isChildPath($parent, $child, $checkRealPath = TRUE) {
+    if ($checkRealPath) {
+      $parent = realpath($parent);
+      $child = realpath($child);
+    }
+    $parentParts = explode('/', rtrim($parent, '/'));
+    $childParts = explode('/', rtrim($child, '/'));
+    while (($parentPart = array_shift($parentParts)) !== NULL) {
+      $childPart = array_shift($childParts);
+      if ($parentPart != $childPart) {
+        return FALSE;
+      }
+    }
+    if (empty($childParts)) {
+      return FALSE; // same directory
+    } else {
+      return TRUE;
+    }
+  }
 }
 
