@@ -338,6 +338,15 @@ function civicrm_wp_scripts() {
     }
   }
 
+  // add localized calendar js
+  $config = CRM_Core_Config::singleton();
+  $localisation = explode('_', $config->lcMessages);
+  $localizationFile = '/civicrm/civicrm/packages/jquery/jquery-ui-1.9.0/development-bundle/ui/i18n/jquery.ui.datepicker-' . $localisation[0] . '.js';
+
+  if (file_exists( WP_PLUGIN_DIR . $localizationFile)) {
+    wp_enqueue_script('civicrm-datepicker', WP_PLUGIN_URL . $localizationFile);
+  }
+
   //add namespacing js
   wp_enqueue_script('js/jquery.conflict.js', WP_PLUGIN_URL . '/civicrm/civicrm/js/jquery.conflict.js');
 
