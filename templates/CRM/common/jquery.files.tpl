@@ -27,9 +27,9 @@
  * If you MODIFY this file, please make sure you also modify jquery.tpl.
  * We will unify the two files in a future release
  *}
-packages/jquery/jquery.min.js
-packages/jquery/jquery-ui-1.8.16/js/jquery-ui-1.8.16.custom.min.js
-packages/jquery/jquery-ui-1.8.16/css/smoothness/jquery-ui-1.8.16.custom.css
+packages/jquery/jquery-1.8.2.min.js
+packages/jquery/jquery-ui-1.9.0/js/jquery-ui-1.9.0.custom.min.js
+packages/jquery/jquery-ui-1.9.0/css/smoothness/jquery-ui-1.9.0.custom.min.css
 
 packages/jquery/plugins/jquery.autocomplete.js
 packages/jquery/css/jquery.autocomplete.css

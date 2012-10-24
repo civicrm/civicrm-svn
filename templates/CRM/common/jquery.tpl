@@ -27,9 +27,9 @@
  * If you MODIFY this file, please make sure you also modify jquery.files.tpl.
  * Cannot get rid of this since we use it for print html, standalone profile etc
  *}
-<script type="text/javascript" src="{$config->resourceBase}packages/jquery/jquery.min.js"></script>
-<script type="text/javascript" src="{$config->resourceBase}packages/jquery/jquery-ui-1.8.16/js/jquery-ui-1.8.16.custom.min.js"></script>
-<style type="text/css">@import url("{$config->resourceBase}packages/jquery/jquery-ui-1.8.16/css/smoothness/jquery-ui-1.8.16.custom.css");</style>
+<script type="text/javascript" src="{$config->resourceBase}packages/jquery/jquery-1.8.2.min.js"></script>
+<script type="text/javascript" src="{$config->resourceBase}packages/jquery/jquery-ui-1.9.0/js/jquery-ui-1.9.0.custom.min.js"></script>
+<style type="text/css">@import url("{$config->resourceBase}packages/jquery/jquery-ui-1.9.0/css/smoothness/jquery-ui-1.9.0.custom.min.css");</style>
 
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.autocomplete.js"></script>
 <style type="text/css">@import url("{$config->resourceBase}packages/jquery/css/jquery.autocomplete.css");</style>
