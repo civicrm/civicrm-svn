@@ -61,7 +61,7 @@ class CRM_Contact_Page_View_GroupContact extends CRM_Core_Page {
       $this->assign_by_ref('groupSmart', $smart['groups']);
     }
     else {
-      $this->assign_by_ref('groupSmart', null);
+      $this->assign('groupSmart', null);
     }
 
   }
