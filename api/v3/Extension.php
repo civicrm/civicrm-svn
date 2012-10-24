@@ -162,6 +162,13 @@ function civicrm_api3_extension_download($params) {
   }
 
   if (! array_key_exists('url', $params)) {
+    if (! CRM_Extension_System::singleton()->getBrowser()->isEnabled()) {
+      throw new API_Exception('Automatic downloading is diabled. Try adding parameter "url"');
+    }
+    if ($reqs = CRM_Extension_System::singleton()->getBrowser()->checkRequirements()) {
+      $first = array_shift($reqs);
+      throw new API_Exception($first['message']);
+    }
     if ($info = CRM_Extension_System::singleton()->getBrowser()->getExtension($params['key'])) {
       if ($info->downloadUrl) {
         $params['url'] = $info->downloadUrl;
