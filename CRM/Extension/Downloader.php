@@ -48,7 +48,8 @@ class CRM_Extension_Downloader {
    * @param string $containerDir the place to store downloaded & extracted extensions
    * @param string $tmpDir
    */
-  public function __construct($containerDir, $tmpDir) {
+  public function __construct(CRM_Extension_Manager $manager, $containerDir, $tmpDir) {
+    $this->manager = $manager;
     $this->containerDir = $containerDir;
     $this->tmpDir = $tmpDir;
   }
@@ -86,11 +87,12 @@ class CRM_Extension_Downloader {
   }
 
   /**
-   * Install an extension from a remote URL
+   * Install or upgrade an extension from a remote URL
    *
    * @param string $key the name of the extension being installed
    * @param string $downloadUrl URL of a .zip file
    * @return bool TRUE for success
+   * @throws CRM_Extension_Exception
    */
   public function download($key, $downloadUrl) {
     $filename = $this->tmpDir . DIRECTORY_SEPARATOR . $key . '.zip';
@@ -104,9 +106,16 @@ class CRM_Extension_Downloader {
       return FALSE;
     }
 
-    if (! $this->installFiles($key, $filename)) {
+    $extractedZipPath = $this->extractFiles($key, $filename);
+    if (! $extractedZipPath) {
       return FALSE;
     }
+
+    if (! $this->validateFiles($key, $extractedZipPath)) {
+      return FALSE;
+    }
+
+    $this->manager->replace($extractedZipPath);
 
     return TRUE;
   }
@@ -170,9 +179,9 @@ class CRM_Extension_Downloader {
    *
    * @param string $key the name of the extension being installed; this usually matches the basedir in the .zip
    * @param string $zipFile the local path to a .zip file
-   * @return bool TRUE for success
+   * @return string|FALSE zip file path
    */
-  public function installFiles($key, $zipFile) {
+  public function extractFiles($key, $zipFile) {
     $config = CRM_Core_Config::singleton();
 
     $zip = new ZipArchive();
@@ -201,6 +210,15 @@ class CRM_Extension_Downloader {
       return FALSE;
     }
 
+    return $extractedZipPath;
+  }
+
+  /**
+   * Validate that $extractedZipPath contains valid for extension $key
+   *
+   * @return bool
+   */
+  function validateFiles($key, $extractedZipPath) {
     $filename = $extractedZipPath . DIRECTORY_SEPARATOR . CRM_Extension_Info::FILENAME;
     if (!is_readable($filename)) {
       CRM_Core_Session::setStatus(ts('Failed reading data from %1 during installation', array(1 => $filename)), ts('Installation Error'), 'error');
@@ -218,15 +236,7 @@ class CRM_Extension_Downloader {
       CRM_Core_Error::fatal('Cannot install - there are differences between extdir XML file and archive XML file!');
     }
 
-    // Why is this a copy instead of a move?
-    CRM_Utils_File::copyDir($extractedZipPath,
-      $this->containerDir . DIRECTORY_SEPARATOR . $key
-    );
-
-    if (!CRM_Utils_File::cleanDir($extractedZipPath, TRUE, FALSE)) {
-      CRM_Core_Session::setStatus(ts('Failed to clean temp dir: %1', array(1 => $extractedZipPath)), '', 'alert');
-    }
-
     return TRUE;
   }
+
 }

@@ -174,6 +174,7 @@ class CRM_Extension_System {
     if ($this->downloader === NULL) {
       $basedir = ($this->getDefaultContainer() ? $this->getDefaultContainer()->getBaseDir() : NULL);
       $this->downloader = new CRM_Extension_Downloader(
+        $this->getManager(),
         $basedir,
         CRM_Utils_File::tempdir() // WAS: $config->extensionsDir . DIRECTORY_SEPARATOR . 'tmp';
       );

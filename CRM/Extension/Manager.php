@@ -128,10 +128,20 @@ class CRM_Extension_Manager {
       return;
     }
 
+    // There is an old copy of the extension. Try to install in the same place -- but it must go in the default-container
+    $tgtPath = $this->fullContainer->getPath($newInfo->key);
+    if (! CRM_Utils_File::isChildPath($this->defaultContainer->getBaseDir(), $tgtPath)) {
+      // force installation in the default-container
+      $tgtPath = $this->defaultContainer->getBaseDir() . DIRECTORY_SEPARATOR . $newInfo->key;
+      CRM_Core_Session::setStatus(ts('A copy of the extension (%1) is in a system folder (%2). The system copy will be preserved, but the new copy will be used.', array(
+        1 => $newInfo->key,
+        2 => $oldPath,
+      )));
+    }
+
     switch ($this->getStatus($newInfo->key)) {
       case self::STATUS_UNINSTALLED:
         // The old code exists, but there are no DB records to worry about
-        $tgtPath = $this->defaultContainer->getPath($newInfo->key); // throws exception
         if (!CRM_Utils_File::replaceDir($tmpCodeDir, $tgtPath)) {
           throw new CRM_Extension_Exception("Failed to move $tmpCodeDir to $tgtPath");
         }
@@ -139,7 +149,6 @@ class CRM_Extension_Manager {
       case self::STATUS_INSTALLED:
       case self::STATUS_DISABLED:
         // The old code and old DB records exist
-        $tgtPath = $this->defaultContainer->getPath($newInfo->key); // throws exception
         $typeManager->onPreReplace($oldInfo, $newInfo);
         if (!CRM_Utils_File::replaceDir($tmpCodeDir, $tgtPath)) {
           throw new CRM_Extension_Exception("Failed to move $tmpCodeDir to $tgtPath");
