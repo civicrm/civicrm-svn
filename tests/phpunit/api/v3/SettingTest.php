@@ -43,7 +43,7 @@ class api_v3_SettingTest extends CiviUnitTestCase {
   protected $_currentDomain;
   protected $_domainID2;
   protected $_domainID3;
-
+  public $_eNoticeCompliant = TRUE;
   function __construct() {
     parent::__construct();
 
@@ -316,12 +316,12 @@ class api_v3_SettingTest extends CiviUnitTestCase {
     $description = "gets defaults setting a variable for a given domain - if no domain is set current is assumed";
     $this->documentMe($params, $result, __FUNCTION__, __FILE__,$description,'GetDefaults','getdefaults');
     $this->assertAPISuccess($result, "in line " . __LINE__);
-    $this->assertEquals('{contact.address_name}\n{contact.street_address}\n{contact.supplemental_address_1}\n{contact.supplemental_address_2}\n{contact.city}{, }{contact.state_province}{ }{contact.postal_code}\n{contact.country}', $result['values'][CRM_Core_Config::domainID()]['address_format']);
+    $this->assertEquals("{contact.address_name}\n{contact.street_address}\n{contact.supplemental_address_1}\n{contact.supplemental_address_2}\n{contact.city}{, }{contact.state_province}{ }{contact.postal_code}\n{contact.country}", $result['values'][CRM_Core_Config::domainID()]['address_format']);
     $params = array('version' => $this->_apiversion,
       'name' => 'mailing_format',
     );
     $result = civicrm_api('setting', 'getdefaults', $params);
-    $this->assertEquals('{contact.addressee}\n{contact.street_address}\n{contact.supplemental_address_1}\n{contact.supplemental_address_2}\n{contact.city}{, }{contact.state_province}{ }{contact.postal_code}\n{contact.country}', $result['values'][CRM_Core_Config::domainID()]['mailing_format']);
+    $this->assertEquals("{contact.addressee}\n{contact.street_address}\n{contact.supplemental_address_1}\n{contact.supplemental_address_2}\n{contact.city}{, }{contact.state_province}{ }{contact.postal_code}\n{contact.country}", $result['values'][CRM_Core_Config::domainID()]['mailing_format']);
     $this->assertArrayHasKey(CRM_Core_Config::domainID(), $result['values']);
   }
   /*
@@ -348,7 +348,7 @@ class api_v3_SettingTest extends CiviUnitTestCase {
     $this->documentMe($revertParams, $result, __FUNCTION__, __FILE__,$description,'','revert');
     //make sure it's reverted
     $result = civicrm_api('setting', 'get', $params);
-    $this->assertEquals('{contact.address_name}\n{contact.street_address}\n{contact.supplemental_address_1}\n{contact.supplemental_address_2}\n{contact.city}{, }{contact.state_province}{ }{contact.postal_code}\n{contact.country}', $result['values'][CRM_Core_Config::domainID()]['address_format']);
+    $this->assertEquals("{contact.address_name}\n{contact.street_address}\n{contact.supplemental_address_1}\n{contact.supplemental_address_2}\n{contact.city}{, }{contact.state_province}{ }{contact.postal_code}\n{contact.country}", $result['values'][CRM_Core_Config::domainID()]['address_format']);
     $params = array(
       'version' => $this->_apiversion,
       'return' => array('mailing_format'),
@@ -376,11 +376,11 @@ class api_v3_SettingTest extends CiviUnitTestCase {
     //make sure it's set
     $this->assertEquals('xyz', $result['values'][CRM_Core_Config::domainID()]['address_format']);
 
-    civicrm_api('setting', 'revert', $params);
+    civicrm_api('setting', 'revert', $revertParams);
     //make sure it's reverted
-    $result = civicrm_api('setting', 'get', $params);
-    $this->assertEquals('{contact.address_name}\n{contact.street_address}\n{contact.supplemental_address_1}\n{contact.supplemental_address_2}\n{contact.city}{, }{contact.state_province}{ }{contact.postal_code}\n{contact.country}', $result['values'][CRM_Core_Config::domainID()]['address_format']);
-    $this->assertEquals('{contact.addressee}\n{contact.street_address}\n{contact.supplemental_address_1}\n{contact.supplemental_address_2}\n{contact.city}{, }{contact.state_province}{ }{contact.postal_code}\n{contact.country}', $result['values'][CRM_Core_Config::domainID()]['mailing_format']);
+    $result = civicrm_api('setting', 'get', array('version' => 3, 'group' => 'core'));
+    $this->assertEquals("{contact.address_name}\n{contact.street_address}\n{contact.supplemental_address_1}\n{contact.supplemental_address_2}\n{contact.city}{, }{contact.state_province}{ }{contact.postal_code}\n{contact.country}", $result['values'][CRM_Core_Config::domainID()]['address_format']);
+    $this->assertEquals("{contact.addressee}\n{contact.street_address}\n{contact.supplemental_address_1}\n{contact.supplemental_address_2}\n{contact.city}{, }{contact.state_province}{ }{contact.postal_code}\n{contact.country}", $result['values'][CRM_Core_Config::domainID()]['mailing_format']);
   }
 
   /*
