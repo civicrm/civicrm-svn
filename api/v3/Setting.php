@@ -71,15 +71,16 @@ function civicrm_api3_setting_getdefaults(&$params){
   $settings = civicrm_api('setting','getfields', $params);
   $domains = _civicrm_api3_setting_getDomainArray($params);
   foreach ($domains as $domainID){
+    $noDefaults = array();
     foreach ($settings['values'] as $setting => $spec){
-      if(array_key_exists('default', $spec) || isset($spec['default'])){
+      if(array_key_exists('default', $spec) && !is_null($spec['default'])){
         $defaults[$domainID][$setting] = $spec['default'];
       }
       else{
         $noDefaults[$setting] = 1;
       }
     }
-    if($params['debug'] ==1){
+    if(!empty($params['debug'])){
       // we are only tracking 'noDefaults' to help us check the xml
       print_r($noDefaults);
     }
@@ -103,11 +104,12 @@ function civicrm_api3_setting_getdefaults_spec(&$params) {
  */
 function civicrm_api3_setting_revert(&$params){
   $defaults = civicrm_api('setting','getdefaults', $params);
+  $fields = civicrm_api('setting','getfields', $params);
+  $fields = $fields['values'];
   $domains = _civicrm_api3_setting_getDomainArray($params);
   $result = array();
   foreach ($domains as $domainID){
-      $valuesToRevert = array_intersect_key($params, $defaults['values'][$domainID]);
-      $valuesToRevert = $defaults['values'][$domainID];
+    $valuesToRevert = array_intersect_key($defaults['values'][$domainID], $fields);
     if(!empty($valuesToRevert)){
       $valuesToRevert['version'] = $params['version'];
       $valuesToRevert['domain_id'] = $domainID;
