@@ -591,7 +591,7 @@ class CRM_Utils_String {
       $config->set('Cache.DefinitionImpl', null);
 
       $_filter = new HTMLPurifier($config);
-}
+    }
 
     return $_filter->purify($string);
   }

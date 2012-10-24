@@ -137,9 +137,9 @@ class CRM_Contribute_BAO_Contribution_Utils {
         }
         else {
           if (!$form->_params['is_pay_later']) {
-            if (is_object($payment)) 
+            if (is_object($payment))
               $result = &$payment->doTransferCheckout($form->_params, 'contribute');
-            else 
+            else
               CRM_Core_Error::fatal($paymentObjError);
           }
           else {
@@ -177,15 +177,15 @@ class CRM_Contribute_BAO_Contribution_Utils {
 
         // determine if express + recurring and direct accordingly
         if ($paymentParams['is_recur'] == 1) {
-          if (is_object($payment)) 
+          if (is_object($payment))
             $result = &$payment->createRecurringPayments($paymentParams);
-          else 
+          else
             CRM_Core_Error::fatal($paymentObjError);
         }
         else {
-          if (is_object($payment)) 
+          if (is_object($payment))
             $result = &$payment->doExpressCheckout($paymentParams);
-          else 
+          else
             CRM_Core_Error::fatal($paymentObjError);
         }
       }
@@ -218,9 +218,9 @@ class CRM_Contribute_BAO_Contribution_Utils {
         }
       }
 
-      if (is_object($payment)) 
+      if (is_object($payment))
         $result = &$payment->doDirectPayment($paymentParams);
-      else 
+      else
         CRM_Core_Error::fatal($paymentObjError);
     }
 
@@ -229,8 +229,7 @@ class CRM_Contribute_BAO_Contribution_Utils {
     }
 
     if (is_a($result, 'CRM_Core_Error')) {
-
-      //make sure to cleanup db for recurring case.
+      // make sure to cleanup db for recurring case.
       if (CRM_Utils_Array::value('contributionID', $paymentParams)) {
         CRM_Contribute_BAO_Contribution::deleteContribution($paymentParams['contributionID']);
       }
@@ -290,8 +289,9 @@ class CRM_Contribute_BAO_Contribution_Utils {
     if ($component == 'membership') {
       return $membershipResult;
     }
-    //Do not send an email if Recurring contribution is done via Direct Mode
-    //We will send email once the IPN is received.
+
+    // Do not send an email if Recurring contribution is done via Direct Mode
+    // We will send email once the IPN is received.
     if (!empty($paymentParams['is_recur']) && $form->_contributeMode == 'direct') {
       return TRUE;
     }
