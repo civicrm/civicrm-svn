@@ -1255,9 +1255,13 @@ class CRM_Contact_BAO_Query {
       $likeNames = array('sort_name', 'email', 'note', 'display_name');
     }
 
-    if (!$useEquals &&
-      in_array($id, $likeNames)
-    ) {
+    // email comes in via advanced search
+    // so use wildcard always
+    if ($id == 'email') {
+      $wildcard = 1;
+    }
+
+    if (!$useEquals &&  in_array($id, $likeNames)) {
       $result = array($id, 'LIKE', $values, 0, 1);
     }
     elseif (is_string($values) && strpos($values, '%') !== FALSE) {
@@ -2905,7 +2909,6 @@ WHERE  id IN ( $groupIDs )
     list($name, $op, $value, $grouping, $wildcard) = $values;
 
     $n = trim($value);
-
     if ($n) {
       $config = CRM_Core_Config::singleton();
 
@@ -2925,7 +2928,7 @@ WHERE  id IN ( $groupIDs )
             // only add wild card if not there
           }
           else {
-            $value = "'$value%'";
+            $value = "'%{$value}%'";
           }
           $op = 'LIKE';
         }
