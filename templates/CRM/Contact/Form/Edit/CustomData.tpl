@@ -38,8 +38,7 @@
 {/if}
     <div class="crm-accordion-header">
       <div id="custom{$group_id}" class="icon crm-accordion-pointer"></div>
-
-                        <a href="#" class="whiteanchor">{$cd_edit.title}</a>
+        {$cd_edit.title}
       </div><!-- /.crm-accordion-header -->
 
           <div id="customData{$group_id}" class="crm-accordion-body">

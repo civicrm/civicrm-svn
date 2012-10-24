@@ -3319,12 +3319,6 @@ div.m ul#civicrm-menu,
 #crm-container div.finalconf-itemdesc     { font-style:italic; padding:6px 12px 6px 12px; color:#666; float:right; width:60%; }
 #crm-container h4.finalconf-btm           { border-bottom:1px solid #ccc; margin-bottom:20px; }
 
-
-/*Screen Reader Accessibility additions*/
-#crm-container a.whiteanchor{
-  color:white;
-}
-
 /* classes related to batch entry operation */
 #crm-container span.batch-edit {
   padding: 2px 9px 2px 3px;
