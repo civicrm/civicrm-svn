@@ -57,7 +57,8 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
     MULTISITE_PREFERENCES_NAME = 'Multi Site Preferences',
     NAVIGATION_NAME = 'Navigation Menu',
     SYSTEM_PREFERENCES_NAME = 'CiviCRM Preferences',
-    URL_PREFERENCES_NAME = 'URL Preferences';
+    URL_PREFERENCES_NAME = 'URL Preferences',
+    LOCALIZATION_PREFERENCES_NAME = 'Localization Preferences';
   static $_cache = NULL;
 
   /**
@@ -487,10 +488,11 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
     $settingsMetadata = CRM_Core_BAO_Cache::getItem('CiviCRM setting Spec', $cacheString, $componentID);
     if ($settingsMetadata === NULL) {
       global $civicrm_root;
-      $xmlPaths = array($civicrm_root. '/xml/settings/Settings.xml');
-      CRM_Utils_Hook::alterXmlSettings($xmlPaths);
-      foreach ($xmlPaths as $xmlFile) {
-        $settingsMetadata = self::xmltoSettingsArray(self::parseSettingsXML($xmlFile), $filters);
+      $metaDataFolders = array($civicrm_root. '/settings');
+      CRM_Utils_Hook::alterSettingsFolders($metaDataFolders);
+      foreach ($metaDataFolders as $metaDataFolder) {
+        $settingsMetadata = self::loadSettingsMetaData($metaDataFolder);
+        self::_filterSettingsSpecification($filters, $settingsMetadata);
       }
       CRM_Utils_Hook::alterSettingsMetaData($settingsMetadata, $domainID);
       CRM_Core_BAO_Cache::setItem($settingsMetadata,'CiviCRM setting Spec', $cacheString, $componentID);
@@ -498,57 +500,55 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
     return $settingsMetadata;
 
   }
-/*
- * This is copied from GenCode  but since it's only 5 lines & that one isn't static it seemed ok to copy
- * perhaps
- */
-  function parseSettingsXML($file) {
-    $dom = new DomDocument();
-    $dom->load($file);
-    $dom->xinclude();
-    $dbXML = simplexml_import_dom($dom);
-    return $dbXML;
-  }
-/*
- * Convert Settings xml to settings array. We are going to return it as a list of settings rather than expect
- * people to always know the group which can seem a bit arbitrary. But if a group was passed in than only
- * that xml should have been loaded
- * @param xml $xml object loaded from file
- */
-  function xmltoSettingsArray($xml, $filters) {
-    $settingSpecs = array();
-    $array = json_decode(json_encode($xml), TRUE);
-    if(empty($array['settings'])){
-      $array = array('settings' => array($array));
+  /*
+   * Load up settings metadata from files
+   */
+  static function loadSettingsMetadata($metaDataFolder){
+    $settingMetaData = array();
+    $settingsFiles = CRM_Utils_File::findFiles($metaDataFolder, '*.setting.php');
+    foreach ($settingsFiles as $file) {
+      $settings = include $file;
+      $settingMetaData = array_merge($settingMetaData, $settings);
     }
-    foreach ($array['settings'] as $settingsGroup => $group){
-       if(!CRM_Utils_Array::value(1,$group['setting'])){
-         // ie the has been flattened as only one child
-         $group['setting'] = array($group['setting']['name'] = $group['setting']);
-       }
-        foreach ($group['setting'] as $setting => $values){
-          if(self::_filterSettingsSpecification($filters, $values)){
-            $settingSpecs[$values['name']] = $values;
-            foreach ($settingSpecs[$values['name']] as $key => $value){
-              if(is_array($value) && empty( $value)){
-                unset($settingSpecs[$values['name']][$key]);
-              }
-            }
-          }
+    return $settingMetaData;
+  }
 
+/*
+ * Filter the settings metadata according to filters passed in. This is a convenience filter
+ * and allows selective reverting / filling of settings
+ *
+ * @param array $filters Filters to match against data
+ * @param array $settingSpec metadata to filter
+ */
+  static function _filterSettingsSpecification($filters, &$settingSpec){
+    if(empty($filters)){
+      return;
+    }
+    else if(array_keys($filters) == array('name')){
+      $settingSpec = array($filters['name'] => $settingSpec[$filters['name']]);
+      return;
+    }
+    else{
+      foreach ($settingSpec as $field => $fieldValues){
+        if(array_intersect_assoc($fieldValues, $filters) != $filters){
+          unset($settingSpec[$field]);
         }
-    }
-    return $settingSpecs;
-  }
-
-  static function _filterSettingsSpecification($filters, $settingSpec){
-    foreach ($filters as $filterField => $filterValue){
-      if(!array_key_exists($filterField, $settingSpec)
-        || $settingSpec[$filterField] != $filterValue){
-        return false;
       }
+      return;
     }
-    return true;
+  }
+/*
+ * move an item from being in the config array to being stored as a setting
+ * @todo remove from config - as appropriate
+ */
+  static function convertConfigToSetting($name, $domain = 'current_domain'){
+    $config = CRM_Core_Config::singleton();
+    if($config->$name){
+      civicrm_api('setting', 'create', array('version' => 3, $name => $config->$name, 'domain_id' => $domainID));
+    }
+    else{
+      civicrm_api('setting', 'fill', array('version' => 3, 'name' => $name, 'domain_id' => $domainID));
+    }
   }
 
   static function valueOptions($group,
@@ -782,7 +782,7 @@ AND domain_id = %3
           $value = CRM_Utils_System::absoluteURL($value, TRUE);
         }
       }
-      // CRM-10931, If DB doesn't have any value, carry on with any default value thats already available 
+      // CRM-10931, If DB doesn't have any value, carry on with any default value thats already available
       if (!isset($value) && CRM_Utils_Array::value($dao->name, $params)) {
         $value = $params[$dao->name];
       }

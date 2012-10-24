@@ -1125,14 +1125,14 @@ abstract class CRM_Utils_Hook {
   /**
    * This hook is called when Settings specifications are loaded
    *
-   * @param array $xmlPaths - list of paths from which to derive metadata
+   * @param array $settingsFolders - list of paths from which to derive metadata
    */
 
-  static function alterXmlSettings(&$xmlPaths) {
-    return self::singleton()->invoke(1, $xmlPaths,
+  static function alterSettingsFolders(&$settingsFolders) {
+    return self::singleton()->invoke(1, $settingsFolders,
         self::$_nullObject, self::$_nullObject,
         self::$_nullObject, self::$_nullObject,
-        'civicrm_alterXmlSettings'
+        'civicrm_alterSettingsFolders'
     );
   }
 
@@ -1148,7 +1148,7 @@ abstract class CRM_Utils_Hook {
     return self::singleton()->invoke(2, $settingsMetaData,
         $domainID, self::$_nullObject,
         self::$_nullObject, self::$_nullObject,
-        'civicrm_alterXmlSettings'
+        'civicrm_alterSettingsMetaData'
     );
   }
 }
