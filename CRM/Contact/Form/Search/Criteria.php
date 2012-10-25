@@ -53,7 +53,12 @@ class CRM_Contact_Form_Search_Criteria {
     if ($form->_searchOptions['groups']) {
       // multiselect for groups
       if ($form->_group) {
-        $form->add('select', 'group', ts('Groups'), $form->_group, FALSE,
+        // Arrange groups into hierarchical listing (child groups follow their parents and have indentation spacing in title)
+        $ids = implode(',', array_keys($form->_group));
+        $ids = 'IN (' . $ids . ')';
+        $groupHierarchy = CRM_Contact_BAO_Group::getGroupsHierarchy($ids, NULL, '&nbsp;&nbsp;', TRUE);
+        
+        $form->add('select', 'group', ts('Groups'), $groupHierarchy, FALSE,
           array('id' => 'group', 'multiple' => 'multiple', 'title' => ts('- select -'))
         );
         $groupOptions = CRM_Core_BAO_OptionValue::getOptionValuesAssocArrayFromName('group_type');
