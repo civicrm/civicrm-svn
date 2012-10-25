@@ -36,7 +36,6 @@ class CRM_Upgrade_Incremental_php_FourTwo {
   const BATCH_SIZE = 5000;
   const SETTINGS_SNIPPET_PATTERN = '/CRM_Core_ClassLoader::singleton\(\)-\>register/';
   const SETTINGS_SNIPPET = "\nrequire_once 'CRM/Core/ClassLoader.php';\nCRM_Core_ClassLoader::singleton()->register();\n";
-  static $_deleteBadDatas = array();
 
   function verifyPreDBstate(&$errors) {
     return TRUE;
@@ -61,24 +60,38 @@ class CRM_Upgrade_Incremental_php_FourTwo {
         return FALSE;
       }
 
-      // CRM-10613 delete bad data for membership
-      self::deleteBadData();
-      if (!empty(self::$_deleteBadDatas)) {
-        $deletedMembership = $deletedPayments = $retainedMembership = "";
-        foreach (self::$_deleteBadDatas as $badData) {
-          $retainedMembership .= "<tr><td>{$badData['contribution']}</td><td>" . array_pop($badData['memberships']) . "</td><tr>";
-          foreach ($badData['memberships'] as $value ) {
-            $deletedMembership .= "<li>{$value}</li>";
-            $deletedPayments .= "<tr><td>{$badData['contribution']}</td><td>" . $value . "</td><tr>";
-          }
+      // CRM-10613, CRM-11120
+      $query = "
+SELECT mp.contribution_id, mp.membership_id, mem.membership_type_id, mem.start_date, mem.end_date, mem.status_id
+FROM civicrm_membership_payment mp
+INNER JOIN ( SELECT cmp.contribution_id
+              FROM civicrm_membership_payment cmp
+              LEFT JOIN civicrm_line_item cli ON cmp.contribution_id=cli.entity_id and cli.entity_table = 'civicrm_contribution'
+              WHERE cli.entity_id IS NULL
+              GROUP BY cmp.contribution_id
+              HAVING COUNT(cmp.membership_id) > 1) submp ON submp.contribution_id = mp.contribution_id
+INNER JOIN civicrm_membership mem ON mem.id = mp.membership_id
+ORDER BY mp.contribution_id, mp.membership_id";
+      $invalidData = CRM_Core_DAO::executeQuery($query);
+      if ($invalidData->N) {
+        $invalidDataMessage .= "<br /><strong>" . ts('The upgrade has identified some data integrity issues in the database. There are some extraneous membership records linked to same contributions:') . "</strong>";
+        $membershipType = CRM_Member_PseudoConstant::membershipType();
+        $membershipStatus = CRM_Member_PseudoConstant::membershipStatus();
+        $invalidDataMessage .= "<table border=1><tr><th>Contribution-ID</th><th>Membership-ID</th><th>Membership Type</th><th>Start Date</th><th>End Date</th><th>Status</th></tr>";
+        while ($invalidData->fetch()) {
+          //$invalidDataDetails[]
+          $invalidDataMessage .= "<tr>";
+          $invalidDataMessage .= "<td>{$invalidData->contribution_id}</td>";
+          $invalidDataMessage .= "<td>{$invalidData->membership_id}</td>";
+          $invalidDataMessage .= "<td>" . CRM_Utils_Array::value($invalidData->membership_type_id, $membershipType) . "</td>";
+          $invalidDataMessage .= "<td>{$invalidData->start_date}</td>";
+          $invalidDataMessage .= "<td>{$invalidData->end_date}</td>";
+          $invalidDataMessage .= "<td>" . CRM_Utils_Array::value($invalidData->status_id, $membershipStatus) . "</td>";
+          $invalidDataMessage .= "</tr>";
         }
-        $preUpgradeMessage .= "<br /><strong>" . ts('The upgrade from CiviCRM version 4.1 to version 4.2 has identified some data integrity issues in the database. If you continue, it will attempt to solve a problem of multiple memberships or multiple payments for a membership associated with a single contribution by deleting the following records:') . "</strong>";
-
-        $preUpgradeMessage .= "<br /><strong>" . ts('For contribution ID ##, membership ID ## will be retained') . "</strong>";
-        $preUpgradeMessage .= "<table><tr><th>contribution ID</th><th>membership ID</th></tr>" . $retainedMembership . "</table>";
-        $preUpgradeMessage .= "<strong>" . ts('and the following memberships will be deleted:') . "</strong><ul>" . $deletedMembership . "</ul>";
-        $preUpgradeMessage .= "<strong>" . ts('In addition, the following links between this contribution and memberships will be deleted:') . "</strong>";
-        $preUpgradeMessage .= "<table><tr><th>contribution ID</th><th>membership ID</th></tr>" . $deletedPayments . "</table>";
+        $invalidDataMessage .= "</table>"; 
+        CRM_Core_Error::fatal($invalidDataMessage);
+        return FALSE;
       }
     }
 
@@ -120,19 +133,6 @@ INNER JOIN civicrm_price_set cps ON cps.id = cpf.price_set_id AND cps.name <>'de
    */
   function setPostUpgradeMessage(&$postUpgradeMessage, $rev) {
     if ($rev == '4.2.alpha1') {
-      // CRM-10613 delete bad data for membership
-      self::deleteBadData();
-      if (!empty(self::$_deleteBadDatas)) {
-        $postUpgradeMessage .= "<br /><strong>" . ts('The following links between this contribution and memberships are successfully deleted:') . "</strong>";
-        $postUpgradeMessage .= "<table><tr><th>contribution ID</th><th>membership ID</th></tr>";
-        foreach (self::$_deleteBadDatas as $badData) {
-          array_pop($badData['memberships']);
-          foreach ($badData['memberships'] as $value ) {
-            $postUpgradeMessage .= "<tr><td>{$badData['contribution']}</td><td>" . $value . "</td><tr>";
-          }
-        }
-        $postUpgradeMessage .= "</table>";
-      }
       $postUpgradeMessage .= '<br />' . ts('Default versions of the following System Workflow Message Templates have been modified to handle new functionality: <ul><li>Events - Registration Confirmation and Receipt (on-line)</li><li>Pledges - Acknowledgement</li><li>Pledges - Payment Reminder</li></ul>. If you have modified these templates, please review the new default versions and implement updates as needed to your copies (Administer > Communications > Message Templates > System Workflow Messages).');
     }
     if ($rev == '4.2.beta5') {
@@ -182,7 +182,7 @@ INNER JOIN civicrm_price_set cps ON cps.id = cpf.price_set_id AND cps.name <>'de
 
     // Some steps take a long time, so we break them up into separate
     // tasks and enqueue them separately.
-    $this->addTask(ts('Upgrade DB to 4.2.alpha1: SQL'), 'task_4_2_alpha1_runSql', $rev);
+    $this->addTask(ts('Upgrade DB to 4.2.alpha1: SQL'), 'task_4_2_x_runSql', $rev);
     $this->addTask(ts('Upgrade DB to 4.2.alpha1: Price Sets'), 'task_4_2_alpha1_createPriceSets', $rev);
     self::convertContribution();
     $this->addTask(ts('Upgrade DB to 4.2.alpha1: Event Profile'), 'task_4_2_alpha1_eventProfile');
@@ -200,7 +200,7 @@ INNER JOIN civicrm_price_set cps ON cps.id = cpf.price_set_id AND cps.name <>'de
   }
 
   function upgrade_4_2_beta3($rev) {
-    $this->addTask(ts('Upgrade DB to 4.2.beta3: SQL'), 'task_4_2_alpha1_runSql', $rev);
+    $this->addTask(ts('Upgrade DB to 4.2.beta3: SQL'), 'task_4_2_x_runSql', $rev);
     $minParticipantId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(min(id),0) FROM civicrm_participant');
     $maxParticipantId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(max(id),0) FROM civicrm_participant');
 
@@ -221,11 +221,11 @@ INNER JOIN civicrm_price_set cps ON cps.id = cpf.price_set_id AND cps.name <>'de
   }
 
   function upgrade_4_2_0($rev) {
-    $this->addTask(ts('Upgrade DB to 4.2.0: SQL'), 'task_4_2_alpha1_runSql', $rev);
+    $this->addTask(ts('Upgrade DB to 4.2.0: SQL'), 'task_4_2_x_runSql', $rev);
   }
 
   function upgrade_4_2_2($rev) {
-    $this->addTask(ts('Upgrade DB to 4.2.2: SQL'), 'task_4_2_alpha1_runSql', $rev);
+    $this->addTask(ts('Upgrade DB to 4.2.2: SQL'), 'task_4_2_x_runSql', $rev);
     //create line items for memberships and participants for api/import
     self::convertContribution();
 
@@ -262,7 +262,7 @@ INNER JOIN civicrm_price_set cps ON cps.id = cpf.price_set_id AND cps.name <>'de
   }
 
   function upgrade_4_2_3($rev) {
-    $this->addTask(ts('Upgrade DB to 4.2.3: SQL'), 'task_4_2_alpha1_runSql', $rev);
+    $this->addTask(ts('Upgrade DB to 4.2.3: SQL'), 'task_4_2_x_runSql', $rev);
     // CRM-10953 Remove duplicate activity type for 'Reminder Sent' which is mistakenly inserted by 4.2.alpha1 upgrade script
     $queryMin = "
 SELECT coalesce(min(value),0) from civicrm_option_value ov
@@ -357,8 +357,7 @@ HAVING COUNT(cpse.price_set_id) > 1 AND MIN(cpse1.id) <> cpse.id ";
           CRM_Core_Component::getComponentID('CiviEvent')
         ),
       );
-    // CRM-10613 delete bad data for membership
-    self::deleteBadData('delete', $rev);
+
     // get all option group used for event and contribution page
     $query = "
 SELECT id, name
@@ -396,7 +395,7 @@ WHERE     cpse.price_set_id IS NULL";
   /**
    * (Queue Task Callback)
    */
-  static function task_4_2_alpha1_runSql(CRM_Queue_TaskContext $ctx, $rev) {
+  static function task_4_2_x_runSql(CRM_Queue_TaskContext $ctx, $rev) {
       $upgrade = new CRM_Upgrade_Form();
       $upgrade->processSQL($rev);
 
@@ -405,63 +404,6 @@ WHERE     cpse.price_set_id IS NULL";
       CRM_Core_DAO::triggerRebuild();
 
       return TRUE;
-  }
-
-  /**
-   *
-   * Function to Delete bad data
-   */
-  static function deleteBadData($deleteMembership = NULL, $rev = NULL) {
-    //CRM-10613
-
-    $query = "SELECT cc.id, cmp.membership_id
- FROM civicrm_membership_payment cmp
- INNER JOIN `civicrm_contribution` cc ON cc.id = cmp.contribution_id
- LEFT JOIN civicrm_line_item cli ON cc.id=cli.entity_id and cli.entity_table = 'civicrm_contribution'
- INNER JOIN civicrm_membership cm ON cm.id=cmp.membership_id
- INNER JOIN civicrm_membership_type cmt ON cmt.id = cm.membership_type_id
- INNER JOIN civicrm_membership_payment cmp1 on cmp.contribution_id = cmp1.contribution_id
- WHERE cli.entity_id IS NULL
- GROUP BY cmp.membership_id
- HAVING COUNT(cmp.contribution_id) > 1
- ORDER BY cmp.membership_id ASC";
-
-    $dao = CRM_Core_DAO::executeQuery($query);
-    while ($dao->fetch()) {
-      self::$_deleteBadDatas[$dao->id]['memberships'][] = $dao->membership_id;
-      self::$_deleteBadDatas[$dao->id]['contribution'] = $dao->id;
-    }
-    if ($deleteMembership) {
-      $activityTypes = CRM_Core_PseudoConstant::activityType(TRUE, FALSE, FALSE, 'name');
-      $activityid = array(
-        array_search('Membership Signup', $activityTypes),
-        array_search('Membership Renewal', $activityTypes),
-        array_search('Membership Renewal Reminder', $activityTypes),
-      );
-      if (array_search('Change Membership Type', $activityTypes)) {
-        $activityid[] = array_search('Change Membership Type', $activityTypes);
-      }
-      if (array_search('Change Membership Status', $activityTypes)) {
-        $activityid[] = array_search('Change Membership Type', $activityTypes);
-      }
-      foreach (self::$_deleteBadDatas as $contributionId => $membershipIds) {
-        array_pop(self::$_deleteBadDatas[$contributionId]['memberships']);
-        foreach (self::$_deleteBadDatas[$contributionId]['memberships'] as $id) {
-          $params = array(
-            'source_record_id' => $id,
-            'activity_type_id' => $activityid,
-          );
-          CRM_Activity_BAO_Activity::deleteActivity($params);
-          $membership     = new CRM_Member_DAO_Membership();
-          $membership->id = $id;
-          $membership->delete();
-          CRM_Core_Error::debug_log_message(ts("contribution ID = %1 , membership ID = %2 has been deleted successfully.", array (
-            1 => $contributionId,
-            2 => $membership->id,
-          )), FALSE, "Upgrade{$rev}Data");
-        }
-      }
-    }
   }
 
   /**
