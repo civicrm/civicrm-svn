@@ -2517,23 +2517,11 @@ span.icon {
 .preview-icon { background-position:-227px -129px; }
 .play-icon { background-position: -3px -161px; }
 
-#crm-container .child-icon {
-  background-color: transparent;
-  background-image: url("../packages/jquery/plugins/jstree/themes/default/d.png");
-  background-position: -36px 0;
-  background-repeat: no-repeat;
-  display: inline-block;
-  height: 13px;
-  margin: 0;
-  padding: 0;
-  width: 18px; }
-
 #crm-container .geotag {
   padding: 2px 0 2px 20px !important;
   background: url('../i/geotag_16.png') left center no-repeat;
   font-size: .9em;
 }
-
 
 /* These .crm-icon classes use item_sprites.png */
 
