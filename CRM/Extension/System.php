@@ -189,7 +189,7 @@ class CRM_Extension_System {
     if ($this->cache === NULL) {
       $this->cache = new CRM_Utils_Cache_SqlGroup(array(
         'group' => 'ext',
-        'prefetch' => FALSE,
+        'prefetch' => TRUE,
       ));
     }
     return $this->cache;
