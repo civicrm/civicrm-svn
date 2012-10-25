@@ -300,6 +300,25 @@ DELETE from civicrm_option_value
     }
   }
 
+  function upgrade_4_2_5($rev) {
+    //CRM-11077
+    $sql = " SELECT cpse.entity_id, cpse.price_set_id 
+FROM `civicrm_price_set_entity` cpse
+LEFT JOIN civicrm_price_set cps ON cps.id = cpse.price_set_id
+LEFT JOIN civicrm_price_set_entity cpse1 ON cpse1.price_set_id = cpse.price_set_id 
+WHERE cpse.entity_table = 'civicrm_event'  AND cps.is_quick_config = 1 
+GROUP BY cpse.id
+HAVING COUNT(cpse.price_set_id) > 1 AND MIN(cpse1.id) <> cpse.id ";
+    
+    $dao = CRM_Core_DAO::executeQuery($sql);
+    while ($dao->fetch()) {
+      if ($dao->price_set_id) {
+        $copyPriceSet = &CRM_Price_BAO_Set::copy($dao->price_set_id);
+        CRM_Price_BAO_Set::addTo('civicrm_event', $dao->entity_id, $copyPriceSet->id);
+      }
+    }
+  }
+
   function convertContribution(){
     $minContributionId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(min(id),0) FROM civicrm_contribution');
     $maxContributionId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(max(id),0) FROM civicrm_contribution');

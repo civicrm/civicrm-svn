@@ -1203,11 +1203,6 @@ AND civicrm_membership.is_test = %2";
         $contributionTypeId,
         'membership'
       );
-
-      // Save the contribution ID so that I can be used in email receipts
-      // For example, if you need to generate a tax receipt for the donation only.
-      if ($result[1])
-      $form->_values['contribution_other_id'] = $result[1]->id;
     }
     else {
       // we need to explicitly create a CMS user in case of free memberships
@@ -1223,6 +1218,10 @@ AND civicrm_membership.is_test = %2";
       $errors[1] = CRM_Core_Error::getMessages($result[1]);
     }
     else {
+      // Save the contribution ID so that I can be used in email receipts
+      // For example, if you need to generate a tax receipt for the donation only.
+      $form->_values['contribution_other_id'] = $result[1]->id;
+
       $contribution[1] = $result[1];
     }
 
@@ -1703,6 +1702,7 @@ AND civicrm_membership.is_test = %2";
 
     $memParams['custom'] = $customFieldsFormatted;
     $membership = self::create($memParams, $ids, FALSE, $activityType);
+
     // not sure why this statement is here, seems quite odd :( - Lobo: 12/26/2010
     // related to: http://forum.civicrm.org/index.php/topic,11416.msg49072.html#msg49072
     $membership->find(TRUE);

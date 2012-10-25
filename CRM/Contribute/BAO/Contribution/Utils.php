@@ -229,7 +229,6 @@ class CRM_Contribute_BAO_Contribution_Utils {
     }
 
     if (is_a($result, 'CRM_Core_Error')) {
-
       //make sure to cleanup db for recurring case.
       if (CRM_Utils_Array::value('contributionID', $paymentParams)) {
         CRM_Contribute_BAO_Contribution::deleteContribution($paymentParams['contributionID']);
@@ -290,6 +289,7 @@ class CRM_Contribute_BAO_Contribution_Utils {
     if ($component == 'membership') {
       return $membershipResult;
     }
+
     //Do not send an email if Recurring contribution is done via Direct Mode
     //We will send email once the IPN is received.
     if (!empty($paymentParams['is_recur']) && $form->_contributeMode == 'direct') {
