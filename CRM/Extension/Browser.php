@@ -68,6 +68,10 @@ class CRM_Extension_Browser {
     return $this->repoUrl;
   }
 
+  public function refresh() {
+    unlink($this->getTsPath());
+  }
+
   /**
    * Determine whether downloading is supported
    *
@@ -136,7 +140,7 @@ class CRM_Extension_Browser {
   }
 
   private function _discoverRemote() {
-    $tsPath    = $this->cacheDir . DIRECTORY_SEPARATOR . 'timestamp.txt';
+    $tsPath    = $this->getTsPath();
     $timestamp = FALSE;
 
     if (file_exists($tsPath)) {
@@ -274,5 +278,9 @@ class CRM_Extension_Browser {
 
       return $contents;
     }
+  }
+
+  private function getTsPath() {
+      return $this->cacheDir . DIRECTORY_SEPARATOR . 'timestamp.txt';
   }
 }

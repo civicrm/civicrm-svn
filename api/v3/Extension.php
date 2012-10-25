@@ -195,6 +195,40 @@ function civicrm_api3_extension_download($params) {
 }
 
 /**
+ * Download and install an extension
+ *
+ * @param  array       $params input parameters
+ *                          - local: bool, whether to rescan local filesystem (default: TRUE)
+ *                          - remote: bool, whether to rescan remote repository (default: TRUE)
+ *
+ * @return array API result
+ * @static void
+ * @access public
+ * @example ExtensionRefresh.php
+ *
+ */
+function civicrm_api3_extension_refresh($params) {
+  $defaults = array('local' => TRUE, 'remote' => TRUE);
+  $params = array_merge($defaults, $params);
+
+  $system = CRM_Extension_System::singleton(TRUE);
+
+  if ($params['local']) {
+    $system->getManager()->refresh();
+    $system->getManager()->getStatuses(); // force immediate scan
+  }
+
+  if ($params['remote']) {
+    if ($system->getBrowser()->isEnabled() && empty($system->getBrowser()->checkRequirements)) {
+      $system->getBrowser()->refresh();
+      $system->getBrowser()->getExtensions(); // force immediate download
+    }
+  }
+
+  return civicrm_api3_create_success();
+}
+
+/**
  * Determine the list of extension keys
  *
  * @param array $params API request params with 'key' or 'keys'
