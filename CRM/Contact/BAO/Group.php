@@ -866,7 +866,8 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
   static function getGroupsHierarchy (
     $groupIds,
     $parents  = NULL,
-    $spacer = '<span class="child-indent"></span>'
+    $spacer = '<span class="child-indent"></span>',
+    $titleOnly = FALSE
    ) {
      // <span class="child-icon"></span>
      // need to return id, title (w/ spacer), description, visibility
@@ -948,9 +949,13 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
      // appearance of ordering when transformed into HTML in the form layer. Add description and visibility.
      $groupsReturn = array();
      foreach ($groups as $key=>$value) {
-       $groupsReturn[$key] = array('title' => $value[0] . $value[1],
-                              'description' => $allGroups[$key]['description'],
-                              'visibility' => $allGroups[$key]['visibility'],);
+       if ($titleOnly) {
+         $groupsReturn[$key] = $value[0] . $value[1];
+       } else {
+         $groupsReturn[$key] = array('title' => $value[0] . $value[1],
+                                'description' => $allGroups[$key]['description'],
+                                'visibility' => $allGroups[$key]['visibility'],);         
+       }
      }
 
      return $groupsReturn;
