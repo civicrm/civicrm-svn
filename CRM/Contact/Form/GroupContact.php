@@ -97,20 +97,32 @@ class CRM_Contact_Form_GroupContact extends CRM_Core_Form {
       $allGroups = CRM_Core_PseudoConstant::group();
     }
 
-    // get the list of groups for the contact
+    // Arrange groups into hierarchical listing (child groups follow their parents and have indentation spacing in title)
+    $ids = implode(',', array_keys($allGroups));
+    $ids = 'IN (' . $ids . ')';
+    $groupHierarchy = CRM_Contact_BAO_Group::getGroupsHierarchy($ids, NULL, '&nbsp;&nbsp;');
+
+    // Flatten array returned by getGroupsHierarchy to just have group_id => group_title
+    $groupList = array();
+    foreach ($groupHierarchy as $key => $value){
+      $groupList[$key] = $value['title'];
+    }
+
+    // get the list of groups contact is currently in ("Added") or unsubscribed ("Removed").
     $currentGroups = CRM_Contact_BAO_GroupContact::getGroupList($this->_contactId);
 
+    // Remove current groups from drowdown options ($groupSelect)
     if (is_array($currentGroups)) {
-      $groupList = array_diff($allGroups, $currentGroups);
+      // Compare array keys, since the array values (group title) in $groupList may have extra spaces for indenting child groups
+      $groupSelect = array_diff_key($groupList, $currentGroups);
     }
     else {
-      $groupList = $allGroups;
+      $groupSelect = $groupList;
     }
-    //sort groups then prepend 'select'
-    asort($groupList, SORT_STRING);
-    $groupList = array( '' => ts('- select group -')) + $groupList;
 
-    if (count($groupList) > 1) {
+    $groupSelect = array( '' => ts('- select group -')) + $groupSelect;
+
+    if (count($groupSelect) > 1) {
       $session = CRM_Core_Session::singleton();
       // user dashboard
       if (strstr($session->readUserContext(), 'user')) {
@@ -120,7 +132,7 @@ class CRM_Contact_Form_GroupContact extends CRM_Core_Form {
         $msg = ts('Add to a group');
       }
 
-      $this->add('select', 'group_id', $msg, $groupList, TRUE);
+      $this->add('select', 'group_id', $msg, $groupSelect, TRUE);
 
       $this->addButtons(array(
           array(
