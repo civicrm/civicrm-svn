@@ -37,51 +37,53 @@ class CRM_Logging_ReportSummary extends CRM_Report_Form {
 
   protected $_logTables =
     array(
-          'log_civicrm_contact' =>
-          array( 'fk'  => 'id',
-                 ),
-          'log_civicrm_email' =>
-          array( 'fk'  => 'contact_id',
-                 'log_type' => 'Contact',
-                 ),
-          'log_civicrm_phone' =>
-          array( 'fk'  => 'contact_id',
-                 'log_type' => 'Contact',
-                 ),
-          'log_civicrm_address' =>
-          array( 'fk'  => 'contact_id',
-                 'log_type' => 'Contact',
-                 ),
-          'log_civicrm_note' =>
-          array( 'fk'  => 'entity_id',
-                 'entity_table' => true,
-                 'dao' => 'CRM_Core_DAO_Note',
-                 'dao_column'  => 'subject',
-                 ),
-          'log_civicrm_group_contact' =>
-          array( 'fk'  => 'contact_id',
-                 'dao' => 'CRM_Contact_DAO_Group',
-                 'dao_column'    => 'title',
-                 'entity_column' => 'group_id',
-                 'action_column' => 'status',
-                 'log_type'      => 'Group',
-                 ),
-          'log_civicrm_entity_tag' =>
-          array( 'fk'  => 'entity_id',
-                 'dao' => 'CRM_Core_DAO_Tag',
-                 'dao_column'    => 'name',
-                 'entity_column' => 'tag_id',
-                 'entity_table'  => true
-                 ),
-          'log_civicrm_relationship' =>
-          array( 'fk'  => 'contact_id_a',
-                 'entity_column' => 'relationship_type_id',
-                 'dao' => 'CRM_Contact_DAO_RelationshipType',
-                 'dao_column' => 'label_a_b',
-                 ),
-           );
+      'log_civicrm_contact' =>
+      array( 'fk'  => 'id',
+      ),
+      'log_civicrm_email' =>
+      array( 'fk'  => 'contact_id',
+        'log_type' => 'Contact',
+      ),
+      'log_civicrm_phone' =>
+      array( 'fk'  => 'contact_id',
+        'log_type' => 'Contact',
+      ),
+      'log_civicrm_address' =>
+      array( 'fk'  => 'contact_id',
+        'log_type' => 'Contact',
+      ),
+      'log_civicrm_note' =>
+      array( 'fk'  => 'entity_id',
+        'entity_table' => true,
+        'dao' => 'CRM_Core_DAO_Note',
+        'dao_column'  => 'subject',
+      ),
+      'log_civicrm_group_contact' =>
+      array( 'fk'  => 'contact_id',
+        'dao' => 'CRM_Contact_DAO_Group',
+        'dao_column'    => 'title',
+        'entity_column' => 'group_id',
+        'action_column' => 'status',
+        'log_type'      => 'Group',
+      ),
+      'log_civicrm_entity_tag' =>
+      array( 'fk'  => 'entity_id',
+        'dao' => 'CRM_Core_DAO_Tag',
+        'dao_column'    => 'name',
+        'entity_column' => 'tag_id',
+        'entity_table'  => true
+      ),
+      'log_civicrm_relationship' =>
+      array( 'fk'  => 'contact_id_a',
+        'entity_column' => 'relationship_type_id',
+        'dao' => 'CRM_Contact_DAO_RelationshipType',
+        'dao_column' => 'label_a_b',
+      ),
+    );
 
-  protected $loggingDB; function __construct() {
+  protected $loggingDB;
+
+  function __construct() {
     // don’t display the ‘Add these Contacts to Group’ button
     $this->_add2groupSupported = FALSE;
 
@@ -141,12 +143,12 @@ CREATE TEMPORARY TABLE
     CRM_Core_DAO::executeQuery($sql);
 
     $logDateClause = $this->dateClause('log_date',
-                                       CRM_Utils_Array::value("log_date_relative",  $this->_params),
-                                       CRM_Utils_Array::value("log_date_from",      $this->_params),
-                                       CRM_Utils_Array::value("log_date_to",        $this->_params),
-                                       CRM_Utils_Type::T_DATE,
-                                       CRM_Utils_Array::value("log_date_from_time", $this->_params),
-                                       CRM_Utils_Array::value("log_date_to_time",   $this->_params));
+      CRM_Utils_Array::value("log_date_relative",  $this->_params),
+      CRM_Utils_Array::value("log_date_from",      $this->_params),
+      CRM_Utils_Array::value("log_date_to",        $this->_params),
+      CRM_Utils_Type::T_DATE,
+      CRM_Utils_Array::value("log_date_from_time", $this->_params),
+      CRM_Utils_Array::value("log_date_to_time",   $this->_params));
     $logDateClause = $logDateClause ? "AND {$logDateClause}" : null;
 
     list($offset, $rowCount) = $this->limit();
@@ -173,9 +175,9 @@ CREATE TEMPORARY TABLE
 
     foreach ( $this->_logTables as $entity => $detail ) {
       if ((in_array($this->getLogType($entity), $logTypes) &&
-           CRM_Utils_Array::value('log_type_op', $this->_params) == 'in') ||
-          (!in_array($this->getLogType($entity), $logTypes) &&
-           CRM_Utils_Array::value('log_type_op', $this->_params) == 'notin')) {
+        CRM_Utils_Array::value('log_type_op', $this->_params) == 'in') ||
+        (!in_array($this->getLogType($entity), $logTypes) &&
+          CRM_Utils_Array::value('log_type_op', $this->_params) == 'notin')) {
         $this->from( $entity );
         $sql = $this->buildQuery(false);
         $sql = str_replace("entity_log_civireport.log_type as", "'{$entity}' as", $sql);
