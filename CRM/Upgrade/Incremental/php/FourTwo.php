@@ -79,7 +79,6 @@ ORDER BY mp.contribution_id, mp.membership_id";
         $membershipStatus = CRM_Member_PseudoConstant::membershipStatus();
         $invalidDataMessage .= "<table border=1><tr><th>Contribution-ID</th><th>Membership-ID</th><th>Membership Type</th><th>Start Date</th><th>End Date</th><th>Membership Status</th></tr>";
         while ($invalidData->fetch()) {
-          //$invalidDataDetails[]
           $invalidDataMessage .= "<tr>";
           $invalidDataMessage .= "<td>{$invalidData->contribution_id}</td>";
           $invalidDataMessage .= "<td>{$invalidData->membership_id}</td>";
