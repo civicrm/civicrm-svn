@@ -579,7 +579,8 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField {
     $showAll         = FALSE,
     $onlyParent      = FALSE,
     $search          = FALSE,
-    $checkPermission = TRUE
+    $checkPermission = TRUE,
+    $withMultiple    = FALSE                                         
   ) {
     // Note: there are situations when we want getFieldsForImport() return fields related
     // ONLY to basic contact types, but NOT subtypes. And thats where $onlyParent is helpful
@@ -597,7 +598,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField {
     foreach ($fields as $id => $values) {
       // for now we should not allow multiple fields in profile / export etc, hence unsetting
       if (!$search &&
-        CRM_Utils_Array::value('is_multiple', $values)
+        (CRM_Utils_Array::value('is_multiple', $values) && !$withMultiple)
       ) {
         continue;
       }
@@ -2351,6 +2352,29 @@ WHERE      f.id IN ($ids)";
     }
 
     return $errors;
+  }
+
+  static function isMultiRecordField($customId) {
+    $isMultipleWithGid = FALSE;
+    if (!is_numeric($customId)) {
+      $customId = self::getKeyID($customId);
+    }
+    if (is_numeric($customId)) {
+      $sql = "SELECT cg.id cgId
+ FROM civicrm_custom_group cg
+ INNER JOIN civicrm_custom_field cf 
+ ON cg.id = cf.custom_group_id
+WHERE cf.id = %1 AND cg.is_multiple = 1";
+      $params[1] = array($customId, 'Integer');
+      $dao = CRM_Core_DAO::executeQuery($sql, $params);
+      if ($dao->fetch()) {
+        if ($dao->cgId) {
+          $isMultipleWithGid = $dao->cgId;
+        } 
+      }
+    }
+ 
+    return $isMultipleWithGid;
   }
 }
 
