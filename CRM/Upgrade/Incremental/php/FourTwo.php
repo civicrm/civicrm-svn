@@ -55,7 +55,7 @@ class CRM_Upgrade_Incremental_php_FourTwo {
     if ($rev == '4.2.alpha1') {
       $tables = array('civicrm_contribution_page','civicrm_event','civicrm_group','civicrm_contact');
       if (!CRM_Core_DAO::schemaRequiresRebuilding($tables)){
-        $errors = ts("The upgrade has identified some schema integrity issues in the database. It seems some of your constraints are missing. You will have to rebuild your schema before re-trying the upgrade. Please refer ".CRM_Utils_System::docURL2("Ensuring Schema Integrity on Upgrades", FALSE, "Ensuring Schema Integrity on Upgrades", NULL, NULL, "wiki"));
+        $errors = ts("The upgrade has identified some schema integrity issues in the database. It seems some of your constraints are missing. You will have to rebuild your schema before re-trying the upgrade. Please refer to ".CRM_Utils_System::docURL2("Ensuring Schema Integrity on Upgrades", FALSE, "Ensuring Schema Integrity on Upgrades", NULL, NULL, "wiki"));
         CRM_Core_Error::fatal($errors);
         return FALSE;
       }
@@ -74,10 +74,10 @@ INNER JOIN civicrm_membership mem ON mem.id = mp.membership_id
 ORDER BY mp.contribution_id, mp.membership_id";
       $invalidData = CRM_Core_DAO::executeQuery($query);
       if ($invalidData->N) {
-        $invalidDataMessage .= "<br /><strong>" . ts('The upgrade has identified some data integrity issues in the database. There are some extraneous membership records linked to same contributions:') . "</strong>";
+        $invalidDataMessage .= "<br /><strong>" . ts('The upgrade is being aborted due to data integrity issues in your database. There are multiple membership records linked to the same contribution record. This is unexpected, and some of the membership records may be duplicates. The problem record pairs are listed below. Please copy the list to your clipboad and email it to us at info@civicrm.org so we can review the details and recommend steps to resolve the problem.') . "</strong>";
         $membershipType = CRM_Member_PseudoConstant::membershipType();
         $membershipStatus = CRM_Member_PseudoConstant::membershipStatus();
-        $invalidDataMessage .= "<table border=1><tr><th>Contribution-ID</th><th>Membership-ID</th><th>Membership Type</th><th>Start Date</th><th>End Date</th><th>Status</th></tr>";
+        $invalidDataMessage .= "<table border=1><tr><th>Contribution-ID</th><th>Membership-ID</th><th>Membership Type</th><th>Start Date</th><th>End Date</th><th>Membership Status</th></tr>";
         while ($invalidData->fetch()) {
           //$invalidDataDetails[]
           $invalidDataMessage .= "<tr>";
