@@ -43,7 +43,11 @@
             <td>{$form.label.html}<br />
             <span class="description">{ts}The field label displayed on the form (over-ride the default field label here, if desired).{/ts}</span></td>
         </tr>
-        <tr class="crm-uf-field-form-block-is_required">
+        <tr class="crm-uf-field-form-block-is_multi">
+            <td class="label">{$form.is_multi_summary.label}</td>
+            <td>{$form.is_multi_summary.html}<br />
+        </tr>
+	<tr class="crm-uf-field-form-block-is_required">
             <td class="label">{$form.is_required.label}</td>
             <td>{$form.is_required.html}<br />
             <span class="description">{ts}Are users required to complete this field?{/ts}</span></td>
@@ -214,6 +218,44 @@ function showLabel( ) {
     });
   });
 {/literal}{/if}{literal}
+
+cj("#field_name_1").change(
+function() {
+  multiSummaryToggle(cj(this).val());
+});
+
+ cj( function( ) {
+     var fieldId = cj("#field_name_1").val();
+     multiSummaryToggle(fieldId);
+ });
+
+function multiSummaryToggle(customId) {
+if (customId && customId.match(/custom_[\d]/)) {
+
+ var dataUrl = "{/literal}{crmURL p='civicrm/ajax/rest' q='className=CRM_UF_Page_AJAX&fnName=checkIsMultiRecord&json=1' h=0 }"{literal};
+  dataUrl = dataUrl + '&customId=' + customId;
+   cj.ajax({  url: dataUrl, 
+    async: false,
+    global: false,
+    dataType : 'json', 
+    success : function(response) {
+      if (response.is_multi != 0 ) {
+       	 cj('.crm-uf-field-form-block-is_multi').show();
+      } else {
+         if (cj('#is_multi_summary').is(':checked')) {	
+	  cj('#is_multi_summary').removeAttr('checked');
+	 }
+	 cj('.crm-uf-field-form-block-is_multi').hide();	
+      }
+    }
+   });
+} else {
+   if (cj('#is_multi_summary').is(':checked')) {	
+    cj('#is_multi_summary').removeAttr('checked');
+   }
+   cj('.crm-uf-field-form-block-is_multi').hide();
+ }
+}
 
 function viewOnlyShowHide() {
   var is_search = cj('#is_search_label, #is_search_html, #is_search_desSpan');

@@ -178,4 +178,11 @@
     <comment>Is this field reserved for use by some other CiviCRM functionality?</comment>
     <add>3.0</add>
   </field>
+  <field>
+    <name>is_multi_summary</name>
+    <type>boolean</type>
+    <default>0</default>
+    <comment>Include in multi-record listing?</comment>
+    <add>4.3</add>
+  </field>
 </table>

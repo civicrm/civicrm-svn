@@ -90,3 +90,7 @@ UPDATE civicrm_dedupe_rule_group
 WHERE contact_type = 'Individual' AND is_reserved = 1;
 
 ALTER TABLE civicrm_dedupe_rule_group DROP COLUMN level;
+
+-- CRM-10771
+ALTER TABLE civicrm_uf_field
+  ADD `is_multi_summary` tinyint(4) DEFAULT '0' COMMENT 'Include in multi-record listing?';

@@ -339,11 +339,12 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
       }
 
       $field = CRM_Core_DAO::executeQuery($query);
+
       if (!$showAll) {
-        $importableFields = CRM_Contact_BAO_Contact::importableFields('All');
+        $importableFields = CRM_Contact_BAO_Contact::importableFields('All', FALSE, FALSE, FALSE, TRUE, TRUE);
       }
       else {
-        $importableFields = CRM_Contact_BAO_Contact::importableFields('All', FALSE, TRUE);
+        $importableFields = CRM_Contact_BAO_Contact::importableFields('All', FALSE, TRUE, FALSE, TRUE, TRUE);
       }
 
       $profileType = CRM_Core_BAO_UFField::getProfileType($group->id);
@@ -386,7 +387,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
       $locationType = array();
       $locationType = CRM_Core_PseudoConstant::locationType();
 
-      $customFields = CRM_Core_BAO_CustomField::getFieldsForImport($ctype);
+      $customFields = CRM_Core_BAO_CustomField::getFieldsForImport($ctype, FALSE, FALSE, FALSE, TRUE, TRUE);
 
       // hack to add custom data for components
       $components = array('Contribution', 'Participant', 'Membership', 'Activity');

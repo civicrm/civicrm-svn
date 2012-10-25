@@ -1058,12 +1058,13 @@ WHERE id={$id}; ";
     $status          = FALSE,
     $showAll         = FALSE,
     $isProfile       = FALSE,
-    $checkPermission = TRUE
+    $checkPermission = TRUE,
+    $withMultiCustomFields = FALSE
   ) {
     if (empty($contactType)) {
       $contactType = 'All';
     }
-
+    
     $cacheKeyString = "importableFields $contactType";
     $cacheKeyString .= $status ? '_1' : '_0';
     $cacheKeyString .= $showAll ? '_1' : '_0';
@@ -1125,7 +1126,8 @@ WHERE id={$id}; ";
               $showAll,
               TRUE,
               FALSE,
-              FALSE
+              FALSE,
+              $withMultiCustomFields
             )
           );
           //unset the fields, which are not related to their
@@ -1155,7 +1157,8 @@ WHERE id={$id}; ";
                 $showAll,
                 FALSE,
                 FALSE,
-                FALSE
+                FALSE,
+                $withMultiCustomFields
               )
             );
           }

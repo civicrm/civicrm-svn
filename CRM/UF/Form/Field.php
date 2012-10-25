@@ -104,7 +104,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
    * Batch entry fields
    */
   protected $_memberBatchEntryFields;
-
+ 
   /**
    * Function to set variables up before form is built
    *
@@ -135,7 +135,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
       $this->assign('showBestResult', $showBestResult);
     }
 
-    $this->_fields = CRM_Contact_BAO_Contact::importableFields('All', TRUE, TRUE, TRUE);
+    $this->_fields = CRM_Contact_BAO_Contact::importableFields('All', TRUE, TRUE, TRUE, TRUE, TRUE);
     $this->_fields = array_merge(CRM_Activity_BAO_Activity::exportableFields('Activity'), $this->_fields);
 
     $this->_contriBatchEntryFields = array(
@@ -316,9 +316,10 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
     $this->add('hidden', 'field_id', $this->_id);
 
     $fields = array();
-    $fields['Individual'] = CRM_Contact_BAO_Contact::importableFields('Individual', FALSE, FALSE, TRUE);
-    $fields['Household'] = CRM_Contact_BAO_Contact::importableFields('Household', FALSE, FALSE, TRUE);
-    $fields['Organization'] = CRM_Contact_BAO_Contact::importableFields('Organization', FALSE, FALSE, TRUE);
+    $fields['Individual'] = CRM_Contact_BAO_Contact::importableFields('Individual', FALSE, FALSE, TRUE, TRUE, TRUE);
+
+    $fields['Household'] = CRM_Contact_BAO_Contact::importableFields('Household', FALSE, FALSE, TRUE, TRUE, TRUE);
+    $fields['Organization'] = CRM_Contact_BAO_Contact::importableFields('Organization', FALSE, FALSE, TRUE, TRUE, TRUE);
 
     // add current employer for individuals
     $fields['Individual']['current_employer'] = array(
@@ -643,7 +644,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
     }
 
     $sel->setOptions(array($sel1, $sel2, $sel3, $sel4));
-
+ 
     $visibleValues = array();
     if (in_array('Search Profile', $otherModules)) {
       $visibleValues['Public Pages and Listings'] = 'Public Pages and Listings';
@@ -669,6 +670,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
     $this->add('checkbox', 'in_selector', ts('Results Column?'), NULL, NULL, $js);
     $this->add('checkbox', 'is_searchable', ts('Searchable?'), NULL, NULL, $js);
 
+   
     $attributes = CRM_Core_DAO::getAttribute('CRM_Core_DAO_UFField');
 
     // weight
@@ -679,8 +681,11 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
     $this->add('textarea', 'help_post', ts('Field Post Help'), $attributes['help_post']);
 
     $this->add('checkbox', 'is_required', ts('Required?'));
+
+    $this->add('checkbox', 'is_multi_summary', ts('Include in multi-record listing?'));              
     $this->add('checkbox', 'is_active', ts('Active?'));
     $this->add('checkbox', 'is_view', ts('View Only?'));
+       
     // $this->add( 'checkbox', 'is_registration', ts( 'Display in Registration Form?' ) );
     //$this->add( 'checkbox', 'is_match'       , ts( 'Key to Match Contacts?'        ) );
 
@@ -769,7 +774,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
       // we dont get a name for a html formatting element
       $name = $this->_selectFields[$params['field_name'][1]];
     }
-
+    
     //Hack for Formatting Field Name
     if ($params['field_name'][0] == 'Formatting') {
       $params['field_name'][1] = 'formatting_' . rand(1000, 9999);
@@ -779,7 +784,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
     if ($params['field_name'][1] == 'url') {
       $params['field_name'][1] = 'url-1';
     }
-
+    
     //check for duplicate fields
     if ($params["field_name"][0] != "Formatting" && CRM_Core_BAO_UFField::duplicateField($params, $ids)) {
       CRM_Core_Session::setStatus(ts('The selected field already exists in this profile.'), ts('Field Not Added'), 'error');
@@ -989,6 +994,16 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
         $isCustomField = TRUE;
         if (!empty($fields['field_id']) && !$customField->is_active && $is_active) {
           $errors['field_name'] = ts('Cannot set this field "Active" since the selected custom field is disabled.');
+        }
+
+        //check if profile already has a different multi-record custom set field configured
+        $customGroupId = CRM_Core_BAO_CustomField::isMultiRecordField($profileFieldName);
+        if ($customGroupId) {
+          if ($profileMultiRecordCustomGid = CRM_Core_BAO_UFField::checkMultiRecordFieldExists($self->_gid)) {
+            if ($customGroupId != $profileMultiRecordCustomGid) {
+              $errors['field_name'] = ts("You cannot configure multi-record custom fields belonging to different custom sets in one profile");
+            }
+          }
         }
       }
     }
