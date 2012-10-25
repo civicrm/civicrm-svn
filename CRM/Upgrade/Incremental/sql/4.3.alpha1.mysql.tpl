@@ -58,3 +58,35 @@ VALUES
 
 -- CRM-11117
 INSERT IGNORE INTO `civicrm_setting` (`group_name`, `name`, `value`, `domain_id`, `is_domain`) VALUES ('CiviCRM Preferences', 'activity_assignee_notification_ics', 's:1:"0";', {$domainID}, '1');
+
+-- CRM-10885
+ALTER TABLE civicrm_dedupe_rule_group 
+  ADD used enum('Unsupervised','Supervised','General') COLLATE utf8_unicode_ci NOT NULL COMMENT 'Whether the rule should be used for cases where usage is Unsupervised, Supervised OR General(programatically)' AFTER threshold;
+  
+UPDATE civicrm_dedupe_rule_group 
+  SET used = 'General' WHERE is_default = 0;
+
+UPDATE civicrm_dedupe_rule_group
+    SET used = CASE level
+        WHEN 'Fuzzy' THEN 'Supervised'
+        WHEN 'Strict'   THEN 'Unsupervised'
+    END
+WHERE is_default = 1;
+
+UPDATE civicrm_dedupe_rule_group
+  SET name = CONCAT_WS('', `contact_type`, `used`)
+WHERE is_default = 1 OR is_reserved = 1;
+
+UPDATE civicrm_dedupe_rule_group
+  SET  title = 'Name and Email'
+WHERE contact_type IN ('Organization', 'Household') AND used IN ('Unsupervised', 'Supervised');
+
+UPDATE civicrm_dedupe_rule_group
+    SET title = CASE used
+        WHEN 'Supervised' THEN 'Name and Email (reserved)'
+        WHEN 'Unsupervised'   THEN 'Email (reserved)'
+         WHEN 'General' THEN 'Name and Address (reserved)'
+    END
+WHERE contact_type = 'Individual' AND is_reserved = 1;
+
+ALTER TABLE civicrm_dedupe_rule_group DROP COLUMN level;
