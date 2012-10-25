@@ -66,7 +66,7 @@ class CRM_Extension_Container_Collection implements CRM_Extension_Container_Inte
   public $k2c;
 
   /**
-   * @param array $containers array($name => CRM_Extension_Container_Interface)
+   * @param array $containers array($name => CRM_Extension_Container_Interface) in order from highest priority (winners) to lowest priority (losers)
    * @param CRM_Utils_Cache_Interface $cache
    * @param string $cacheKey unique name for this container
    */
@@ -137,8 +137,9 @@ class CRM_Extension_Container_Collection implements CRM_Extension_Container_Inte
     }
     if (!is_array($k2c)) {
       $k2c = array();
-      foreach ($this->containers as $name => $container) {
-        $keys = $container->getKeys();
+      $containerNames = array_reverse(array_keys($this->containers));
+      foreach ($containerNames as $name) {
+        $keys = $this->containers[$name]->getKeys();
         foreach ($keys as $key) {
           $k2c[$key] = $name;
         }

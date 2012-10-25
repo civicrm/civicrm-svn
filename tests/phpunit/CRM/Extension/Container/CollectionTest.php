@@ -18,7 +18,7 @@ class CRM_Extension_Container_CollectionTest extends CiviUnitTestCase {
 
   function testGetKeys() {
     $c = $this->_createContainer();
-    $this->assertEquals($c->getKeys(), array('test.foo', 'test.foo.bar', 'test.whiz', 'test.whizbang'));
+    $this->assertEquals(array('test.conflict', 'test.whiz', 'test.whizbang', 'test.foo', 'test.foo.bar'), $c->getKeys()); 
   }
 
   function testGetPath() {
@@ -34,6 +34,7 @@ class CRM_Extension_Container_CollectionTest extends CiviUnitTestCase {
     $this->assertEquals("/path/to/bar", $c->getPath('test.foo.bar'));
     $this->assertEquals("/path/to/whiz", $c->getPath('test.whiz'));
     $this->assertEquals("/path/to/whizbang", $c->getPath('test.whizbang'));
+    $this->assertEquals("/path/to/conflict-b", $c->getPath('test.conflict'));
   }
 
   function testGetResUrl() {
@@ -49,6 +50,7 @@ class CRM_Extension_Container_CollectionTest extends CiviUnitTestCase {
     $this->assertEquals('http://foobar', $c->getResUrl('test.foo.bar'));
     $this->assertEquals('http://whiz', $c->getResUrl('test.whiz'));
     $this->assertEquals('http://whizbang', $c->getResUrl('test.whizbang'));
+    $this->assertEquals('http://conflict-b', $c->getResUrl('test.conflict'));
   }
 
   function testCaching() {
@@ -83,6 +85,16 @@ class CRM_Extension_Container_CollectionTest extends CiviUnitTestCase {
       'test.whizbang' => array(
         'path' => '/path/to/whizbang',
         'resUrl' => 'http://whizbang',
+      ),
+      'test.conflict' => array(
+        'path' => '/path/to/conflict-b',
+        'resUrl' => 'http://conflict-b',
+      ),
+    ));
+    $containers['c'] = new CRM_Extension_Container_Static(array(
+      'test.conflict' => array(
+        'path' => '/path/to/conflict-c',
+        'resUrl' => 'http://conflict-c',
       ),
     ));
     $c  = new CRM_Extension_Container_Collection($containers, $cache, $cacheKey);
