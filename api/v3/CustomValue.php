@@ -87,11 +87,11 @@ function civicrm_api3_custom_value_create($params) {
     if (is_array($param)) {
       $param = $sp . implode($sp, $param) . $sp;
     }
-    list($c, $id) = explode('_', $id, 2);
+    list($c, $id) = CRM_Utils_System::explode('_', $id, 2);
     if ($c != 'custom') {
       continue;
     }
-    list($i, $n, $x) = explode(':', $id);
+    list($i, $n, $x) = CRM_Utils_System::explode(':', $id, 3);
     if (is_numeric($i)) {
       $key = $i;
       $x = $n;
@@ -145,14 +145,14 @@ function civicrm_api3_custom_value_get($params) {
   foreach ($params as $id => $param) {
     if ($param && substr($id, 0, 6) == 'return') {
       $id = substr($id, 7);
-      list($c, $i) = explode('_', $id, 2);
+      list($c, $i) = CRM_Utils_System::explode('_', $id, 2);
       if ($c == 'custom' && is_numeric($i)) {
         $names['custom_' . $i] = 'custom_' . $i;
         $id = $i;
       }
       else {
         // Lookup names if ID was not supplied
-        list($group, $field) = explode(':', $id, 2);
+        list($group, $field) = CRM_Utils_System::explode(':', $id, 2);
         $id = CRM_Core_BAO_CustomField::getCustomFieldID($field, $group);
         if (!$id) {
           continue;
