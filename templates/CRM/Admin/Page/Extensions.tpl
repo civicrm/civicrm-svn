@@ -37,6 +37,8 @@
       </div>
     {/if}
 
+    {include file="CRM/Admin/Page/Extensions/About.tpl"}
+
     {include file="CRM/common/enableDisable.tpl"}
     {include file="CRM/common/jsortable.tpl"}
 
@@ -57,7 +59,6 @@
         </ul>
 
         <div id="extensions-main" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
-            {include file="CRM/Admin/Page/Extensions/About.tpl"}
             {include file="CRM/Admin/Page/Extensions/Main.tpl"}
         </div>
         <div id="extensions-addnew" class="ui-tabs-panel ui-widget-content ui-corner-bottom">

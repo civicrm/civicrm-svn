@@ -158,14 +158,13 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic {
     sort($keys);
     foreach($keys as $key) {
       $obj = $mapper->keyToInfo($key);
-      $id = 'x'. $fid++;
 
-      $localExtensionRows[$id] = self::createExtendedInfo($obj);
-      $localExtensionRows[$id]['id'] = $id;
+      $row = self::createExtendedInfo($obj);
+      $row['id'] = $obj->key;
 
       // assign actions
       $action = 0;
-      switch ($localExtensionRows[$id]['status']) {
+      switch ($row['status']) {
         case CRM_Extension_Manager::STATUS_UNINSTALLED:
           $action += CRM_Core_Action::ADD;
           break;
@@ -184,13 +183,15 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic {
       }
       // TODO if extbrowser is enabled and extbrowser has newer version than extcontainer,
       // then $action += CRM_Core_Action::UPDATE
-      $localExtensionRows[$id]['action'] = CRM_Core_Action::formLink(self::links(),
+      $row['action'] = CRM_Core_Action::formLink(self::links(),
         $action,
         array(
-          'id' => $id,
+          'id' => $row['id'],
           'key' => $obj->key,
         )
       );
+
+      $localExtensionRows[$row['id']] = $row;
     }
 
     $this->assign('localExtensionRows', $localExtensionRows);
@@ -199,7 +200,7 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic {
     $remoteExtensionRows = array();
     foreach (CRM_Extension_System::singleton()->getBrowser()->getExtensions() as $info) {
       $row = (array) $info;
-      $row['id'] = 'x'. $fid++;
+      $row['id'] = $info->key;
       $action = CRM_Core_Action::ADD;
       $row['action'] = CRM_Core_Action::formLink(self::links(),
         $action,
