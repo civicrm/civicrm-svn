@@ -500,12 +500,13 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
     foreach (self::$validFields as $field) {
       $mainParams["return.$field"] = $otherParams["return.$field"] = 1;
     }
+    require_once 'api/v2/Contact.php';
     $main = civicrm_contact_get($mainParams);
     $other = civicrm_contact_get($otherParams);
 
     //CRM-4524
-    $main = reset($main['values']);
-    $other = reset($other['values']);
+    $main  = reset(CRM_Utils_Array::value('values', $main));
+    $other = reset(CRM_Utils_Array::value('values', $other));
 
     if ($main['contact_type'] != $other['contact_type']) {
       return FALSE;
