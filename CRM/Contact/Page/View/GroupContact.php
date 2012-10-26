@@ -44,26 +44,50 @@ class CRM_Contact_Page_View_GroupContact extends CRM_Core_Page {
 
     $count = CRM_Contact_BAO_GroupContact::getContactGroup($this->_contactId, NULL, NULL, TRUE);
 
-
     $in      = CRM_Contact_BAO_GroupContact::getContactGroup($this->_contactId, 'Added');
     $pending = CRM_Contact_BAO_GroupContact::getContactGroup($this->_contactId, 'Pending');
     $out     = CRM_Contact_BAO_GroupContact::getContactGroup($this->_contactId, 'Removed');
 
-
+    // keep track of all 'added' contact groups so we can remove them from the smart group
+    // section
+    $staticGroups = array();
+    if (!empty($in)) {
+      foreach ($in as $group) {
+        $staticGroups[$group['group_id']] = 1;
+      }
+    }
 
     $this->assign('groupCount', $count);
     $this->assign_by_ref('groupIn', $in);
     $this->assign_by_ref('groupPending', $pending);
     $this->assign_by_ref('groupOut', $out);
 
-    $smart = CRM_Contact_BAO_GroupContactCache::contactGroup($this->_contactId);
-    if (!empty($smart)) {
-      $this->assign_by_ref('groupSmart', $smart['groups']);
-    }
-    else {
-      $this->assign('groupSmart', null);
-    }
+    $allGroup = CRM_Contact_BAO_GroupContactCache::contactGroup($this->_contactId);
+    $this->assign('groupSmart'  , null);
+    $this->assign('groupParent', null);
 
+    if (!empty($allGroup)) {
+      $smart = $parent = array( );
+      foreach ($allGroup['group'] as $group) {
+        // delete all smart groups which are also in static groups
+        if (isset($staticGroups[$group['id']])) {
+          continue;
+        }
+        if (empty($group['children'])) {
+          $smart[] = $group;
+        }
+        else {
+          $parent[] = $group;
+        }
+      }
+
+      if (!empty($smart)) {
+        $this->assign_by_ref('groupSmart', $smart);
+      }
+      if (!empty($parent)) {
+        $this->assign_by_ref('groupParent', $parent);
+      }
+    }
   }
 
   /**
@@ -127,12 +151,8 @@ class CRM_Contact_Page_View_GroupContact extends CRM_Core_Page {
     $this->assign('displayName', $displayName);
 
     if ($this->_action == CRM_Core_Action::DELETE) {
-      $groupContactId = CRM_Utils_Request::retrieve('gcid', 'Positive',
-        CRM_Core_DAO::$_nullObject, TRUE
-      );
-      $status = CRM_Utils_Request::retrieve('st', 'String',
-        CRM_Core_DAO::$_nullObject, TRUE
-      );
+      $groupContactId = CRM_Utils_Request::retrieve('gcid', 'Positive', CRM_Core_DAO::$_nullObject, TRUE);
+      $status = CRM_Utils_Request::retrieve('st', 'String', CRM_Core_DAO::$_nullObject, TRUE);
       if (is_numeric($groupContactId) && $status) {
         $this->del($groupContactId, $status, $this->_contactId);
       }

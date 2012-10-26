@@ -68,13 +68,30 @@
     </thead>
    {foreach from=$groupSmart item=row}
         <tr id="grp_{$row.id}" class="{cycle values="odd-row,even-row"}">
-          <td class="bold"><a href="{crmURL p='civicrm/group/search' q="reset=1&force=1&context=smog&gid=`$row.group_id`"}">{$row.title}</a></td>
+          <td class="bold"><a href="{crmURL p='civicrm/group/search' q="reset=1&force=1&context=smog&gid=`$row.id`"}">{$row.title}</a></td>
         </tr>
        {/foreach}
     </table>
   {/strip}
 {/if}
 
+{if $groupParent}
+  <h3>{ts}Parent Groups{/ts}</h3>
+  {strip}
+    <table id="parent_group" class="display">
+    <thead>
+    <tr>
+    <th>{ts}Group{/ts}</th>
+    </tr>
+    </thead>
+   {foreach from=$groupParent item=row}
+        <tr id="grp_{$row.id}" class="{cycle values="odd-row,even-row"}">
+          <td class="bold"><a href="{crmURL p='civicrm/group/search' q="reset=1&force=1&context=smog&gid=`$row.id`"}">{$row.title}</a></td>
+        </tr>
+       {/foreach}
+    </table>
+  {/strip}
+{/if}
 
   {* Include 'add to new group' form if session has edit contact permissions *}
     {if $permission EQ 'edit'}

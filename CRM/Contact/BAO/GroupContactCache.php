@@ -462,43 +462,47 @@ AND  civicrm_group_contact.group_id = $groupID ";
 
     $contactIDString = CRM_Core_DAO::escapeString(implode(', ', $contactIDs));
     $sql = "
-SELECT     gc.group_id, gc.contact_id, g.title
+SELECT     gc.group_id, gc.contact_id, g.title, g.children
 FROM       civicrm_group_contact_cache gc
 INNER JOIN civicrm_group g ON g.id = gc.group_id
 WHERE      gc.contact_id IN ($contactIDString)
-ORDER BY   gc.contact_id
+ORDER BY   gc.contact_id, g.children
 ";
 
     $dao = CRM_Core_DAO::executeQuery($sql);
-    $contactGroups = array();
+    $contactGroup = array();
     $prevContactID = null;
     while ($dao->fetch()) {
       if (
         $prevContactID &&
         $prevContactID != $dao->contact_id
       ) {
-        $contactGroups[$prevContactID]['groupTitle'] = implode(', ', $contactGroups[$prevContactID]['groupTitle']);
+        $contactGroup[$prevContactID]['groupTitle'] = implode(', ', $contactGroup[$prevContactID]['groupTitle']);
       }
       $prevContactID = $dao->contact_id;
-      if (!array_key_exists($dao->contact_id, $contactGroups)) {
-        $contactGroups[$dao->contact_id] =
-          array( 'groups' => array(), 'groupTitle' => array());
+      if (!array_key_exists($dao->contact_id, $contactGroup)) {
+        $contactGroup[$dao->contact_id] =
+          array( 'group' => array(), 'groupTitle' => array());
       }
 
-      $contactGroups[$dao->contact_id]['groups'][] =
-        array( 'id' => $dao->group_id, 'title' => $dao->title );
-      $contactGroups[$dao->contact_id]['groupTitle'][] = $dao->title;
+      $contactGroup[$dao->contact_id]['group'][] =
+        array(
+          'id' => $dao->group_id,
+          'title' => $dao->title,
+          'children' => $dao->children
+        );
+      $contactGroup[$dao->contact_id]['groupTitle'][] = $dao->title;
     }
 
     if ($prevContactID) {
-      $contactGroups[$prevContactID]['groupTitle'] = implode(', ', $contactGroups[$prevContactID]['groupTitle']);
+      $contactGroup[$prevContactID]['groupTitle'] = implode(', ', $contactGroup[$prevContactID]['groupTitle']);
     }
 
     if (is_numeric($contactID)) {
-      return $contactGroups[$contactID];
+      return $contactGroup[$contactID];
     }
     else {
-      return $contactGroups;
+      return $contactGroup;
     }
   }
 
