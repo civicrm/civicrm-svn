@@ -74,7 +74,7 @@
              </tr>
             {if $element.html_type eq 'Radio'}
                 <tr style="line-height: .75em; margin-top: 1px;">
-                    <td> <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$element_name}', '{$form.formName}'); return false;">{ts}clear{/ts}</a>)</span></td>
+                    <td> <span class="crm-clear-link">(<a href="#" title="{ts}unselect{/ts}" onclick="unselectRadio('{$element_name}', '{$form.formName}'); return false;">{ts}clear{/ts}</a>)</span></td>
                 </tr>
             {/if}
             </table>
@@ -107,7 +107,7 @@
                 {/if}
             {/if}
             {if $element.html_type eq 'Radio'}
-                &nbsp; <a href="#" title="unselect" onclick="unselectRadio('{$element_name}', '{$form.formName}'); return false;">{ts}unselect{/ts}</a>
+                &nbsp; <span class="crm-clear-link">(<a href="#" title="{ts}unselect{/ts}" onclick="unselectRadio('{$element_name}', '{$form.formName}'); return false;">{ts}clear{/ts}</a>)</span>
             {elseif $element.html_type eq 'Autocomplete-Select'}
                 {if $element.data_type eq 'ContactReference'}
                     {include file="CRM/Custom/Form/ContactReference.tpl"}
