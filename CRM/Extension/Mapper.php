@@ -151,7 +151,15 @@ class CRM_Extension_Mapper {
    */
   public function keyToInfo($key, $fresh = FALSE) {
     if ($fresh || !array_key_exists($key, $this->infos)) {
-      $this->infos[$key] = CRM_Extension_Info::loadFromFile($this->container->getPath($key) . DIRECTORY_SEPARATOR . CRM_Extension_Info::FILENAME);
+      try {
+        $this->infos[$key] = CRM_Extension_Info::loadFromFile($this->container->getPath($key) . DIRECTORY_SEPARATOR . CRM_Extension_Info::FILENAME);
+      } catch (CRM_Extension_Exception $e) {
+        // file has more detailed info, but we'll fallback to DB if it's missing -- DB has enough info to uninstall
+        $this->infos[$key] = CRM_Extension_System::singleton()->getManager()->createInfoFromDB($key);
+        if (!$this->infos[$key]) {
+          throw $e;
+        }
+      }
     }
     return $this->infos[$key];
   }
@@ -243,10 +251,21 @@ class CRM_Extension_Mapper {
       ';
       $dao = CRM_Core_DAO::executeQuery($sql);
       while ($dao->fetch()) {
-        $moduleExtensions[] = array(
-          'prefix' => $dao->file,
-          'filePath' => $this->keyToPath($dao->full_name),
-        );
+        try {
+          $moduleExtensions[] = array(
+            'prefix' => $dao->file,
+            'filePath' => $this->keyToPath($dao->full_name),
+          );
+        } catch (CRM_Extension_Exception $e) {
+          // Putting a stub here provides more consistency
+          // in how getActiveModuleFiles when racing between
+          // dirty file-removals and cache-clears.
+          CRM_Core_Session::setStatus($e->getMessage(), '', 'error');
+          $moduleExtensions[] = array(
+            'prefix' => $dao->file,
+            'filePath' => NULL,
+          );
+        }
       }
 
       if ($this->cache) {

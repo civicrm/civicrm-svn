@@ -188,8 +188,12 @@ class CRM_Extension_Manager_Payment extends CRM_Extension_Manager_Base {
     // (payment processor enable/disable/install/uninstall). May wish to implement some
     // kind of registry/caching system if more hooks are added.
 
-    $paymentClass = $this->mapper->keyToClass($info->key, 'payment');
-    require_once $this->mapper->classToPath($paymentClass);
+    try {
+      $paymentClass = $this->mapper->keyToClass($info->key, 'payment');
+      require_once $this->mapper->classToPath($paymentClass);
+    } catch (CRM_Extension_Exception $e) {
+      return;
+    }
 
     // See if we have any instances of this PP defined ..
     if ($processor_id = CRM_Core_DAO::singleValueQuery("

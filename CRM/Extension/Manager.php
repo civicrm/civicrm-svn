@@ -56,6 +56,16 @@ class CRM_Extension_Manager {
   const STATUS_UNKNOWN = 'unknown';
 
   /**
+   * The extension is fully installed and enabled
+   */
+  const STATUS_INSTALLED_MISSING = 'installed-missing';
+
+  /**
+   * The extension is fully installed and enabled
+   */
+  const STATUS_DISABLED_MISSING = 'disabled-missing';
+
+  /**
    * @var CRM_Extension_Container_Interface
    *
    * Note: Treat as private. This is only public to facilitate debugging.
@@ -116,39 +126,54 @@ class CRM_Extension_Manager {
     }
 
     $newInfo = CRM_Extension_Info::loadFromFile($tmpCodeDir . DIRECTORY_SEPARATOR . CRM_Extension_Info::FILENAME);
-    try {
-      list ($oldInfo, $typeManager) = $this->_getInfoTypeHandler($newInfo->key); // throws Exception
-    } catch (CRM_Extension_Exception $e) {
-      // the extension does not exist in any container; we're free to put it in
-      $tgtPath = $this->defaultContainer->getBaseDir() . DIRECTORY_SEPARATOR . $newInfo->key;
-      if (!rename($tmpCodeDir, $tgtPath)) {
-        throw new CRM_Extension_Exception("Failed to move $tmpCodeDir to $tgtPath");
-      }
-      $this->refresh();
-      return;
-    }
+    $oldStatus = $this->getStatus($newInfo->key);
 
-    // There is an old copy of the extension. Try to install in the same place -- but it must go in the default-container
-    $tgtPath = $this->fullContainer->getPath($newInfo->key);
-    if (! CRM_Utils_File::isChildPath($this->defaultContainer->getBaseDir(), $tgtPath)) {
-      // force installation in the default-container
-      $tgtPath = $this->defaultContainer->getBaseDir() . DIRECTORY_SEPARATOR . $newInfo->key;
-      CRM_Core_Session::setStatus(ts('A copy of the extension (%1) is in a system folder (%2). The system copy will be preserved, but the new copy will be used.', array(
-        1 => $newInfo->key,
-        2 => $oldPath,
-      )));
-    }
-
-    switch ($this->getStatus($newInfo->key)) {
+    // find $tgtPath, $oldInfo, $typeManager
+    switch ($oldStatus) {
       case self::STATUS_UNINSTALLED:
-        // The old code exists, but there are no DB records to worry about
+      case self::STATUS_INSTALLED:
+      case self::STATUS_DISABLED:
+        // There is an old copy of the extension. Try to install in the same place -- but it must go somewhere in the default-container
+        list ($oldInfo, $typeManager) = $this->_getInfoTypeHandler($newInfo->key); // throws Exception
+        $tgtPath = $this->fullContainer->getPath($newInfo->key);
+        if (! CRM_Utils_File::isChildPath($this->defaultContainer->getBaseDir(), $tgtPath)) {
+          // force installation in the default-container
+          $tgtPath = $this->defaultContainer->getBaseDir() . DIRECTORY_SEPARATOR . $newInfo->key;
+          CRM_Core_Session::setStatus(ts('A copy of the extension (%1) is in a system folder (%2). The system copy will be preserved, but the new copy will be used.', array(
+            1 => $newInfo->key,
+            2 => $oldPath,
+          )));
+        }
+        break;
+      case self::STATUS_INSTALLED_MISSING:
+      case self::STATUS_DISABLED_MISSING:
+      // the extension does not exist in any container; we're free to put it anywhere
+        $tgtPath = $this->defaultContainer->getBaseDir() . DIRECTORY_SEPARATOR . $newInfo->key;
+        list ($oldInfo, $typeManager) = $this->_getMissingInfoTypeHandler($newInfo->key); // throws Exception
+        break;
+      case self::STATUS_UNKNOWN:
+      // the extension does not exist in any container; we're free to put it anywhere
+        $tgtPath = $this->defaultContainer->getBaseDir() . DIRECTORY_SEPARATOR . $newInfo->key;
+        $oldInfo = $typeManager = NULL;
+        break;
+      default:
+        throw new CRM_Extension_Exception("Cannot install or enable extension: $key");
+    }
+
+    // move the code!
+    switch ($oldStatus) {
+      case self::STATUS_UNINSTALLED:
+      case self::STATUS_UNKNOWN:
+        // There are no DB records to worry about, so we'll just put the files in place
         if (!CRM_Utils_File::replaceDir($tmpCodeDir, $tgtPath)) {
           throw new CRM_Extension_Exception("Failed to move $tmpCodeDir to $tgtPath");
         }
         break;
       case self::STATUS_INSTALLED:
+      case self::STATUS_INSTALLED_MISSING:
       case self::STATUS_DISABLED:
-        // The old code and old DB records exist
+      case self::STATUS_DISABLED_MISSING:
+        // There are DB records; coordinate the file placement with the DB updates
         $typeManager->onPreReplace($oldInfo, $newInfo);
         if (!CRM_Utils_File::replaceDir($tmpCodeDir, $tgtPath)) {
           throw new CRM_Extension_Exception("Failed to move $tmpCodeDir to $tgtPath");
@@ -156,7 +181,6 @@ class CRM_Extension_Manager {
         $this->_updateExtensionEntry($newInfo);
         $typeManager->onPostReplace($oldInfo, $newInfo);
         break;
-      case self::STATUS_UNKNOWN:
       default:
         throw new CRM_Extension_Exception("Cannot install or enable extension: $key");
     }
@@ -231,15 +255,21 @@ class CRM_Extension_Manager {
     // keys/statuses/types before doing anything
 
     foreach ($keys as $key) {
-      list ($info, $typeManager) = $this->_getInfoTypeHandler($key); // throws Exception
-
       switch ($origStatuses[$key]) {
         case self::STATUS_INSTALLED:
+          list ($info, $typeManager) = $this->_getInfoTypeHandler($key); // throws Exception
+          $typeManager->onPreDisable($info);
+          $this->_setExtensionActive($info, 0);
+          $typeManager->onPostDisable($info);
+          break;
+        case self::STATUS_INSTALLED_MISSING:
+          list ($info, $typeManager) = $this->_getMissingInfoTypeHandler($key); // throws Exception
           $typeManager->onPreDisable($info);
           $this->_setExtensionActive($info, 0);
           $typeManager->onPostDisable($info);
           break;
         case self::STATUS_DISABLED:
+        case self::STATUS_DISABLED_MISSING:
         case self::STATUS_UNINSTALLED:
           // ok, nothing to do
           break;
@@ -269,13 +299,19 @@ class CRM_Extension_Manager {
     // keys/statuses/types before doing anything
 
    foreach ($keys as $key) {
-      list ($info, $typeManager) = $this->_getInfoTypeHandler($key); // throws Exception
-
       switch ($origStatuses[$key]) {
         case self::STATUS_INSTALLED:
+        case self::STATUS_INSTALLED_MISSING:
           throw new CRM_Extension_Exception("Cannot uninstall extension; disable it first: $key");
           break;
         case self::STATUS_DISABLED:
+          list ($info, $typeManager) = $this->_getInfoTypeHandler($key); // throws Exception
+          $typeManager->onPreUninstall($info);
+          $this->_removeExtensionEntry($info);
+          $typeManager->onPostUninstall($info);
+          break;
+        case self::STATUS_DISABLED_MISSING:
+          list ($info, $typeManager) = $this->_getMissingInfoTypeHandler($key); // throws Exception
           $typeManager->onPreUninstall($info);
           $this->_removeExtensionEntry($info);
           $typeManager->onPostUninstall($info);
@@ -326,10 +362,16 @@ class CRM_Extension_Manager {
       ';
       $dao = CRM_Core_DAO::executeQuery($sql);
       while ($dao->fetch()) {
+        try {
+          $path = $this->fullContainer->getPath($dao->full_name);
+          $codeExists = !empty($path) && is_dir($path);
+        } catch (CRM_Extension_Exception $e) {
+          $codeExists = FALSE;
+        }
         if ($dao->is_active) {
-          $this->statuses[$dao->full_name] = self::STATUS_INSTALLED;
+          $this->statuses[$dao->full_name] = $codeExists ? self::STATUS_INSTALLED : self::STATUS_INSTALLED_MISSING;
         } else {
-          $this->statuses[$dao->full_name] = self::STATUS_DISABLED;
+          $this->statuses[$dao->full_name] = $codeExists ? self::STATUS_DISABLED : self::STATUS_DISABLED_MISSING;
         }
       }
     }
@@ -356,6 +398,25 @@ class CRM_Extension_Manager {
       return array($info, $this->typeManagers[$info->type]);
     } else {
       throw new CRM_Extension_Exception("Unrecognized extension type: " . $info->type);
+    }
+  }
+
+  /**
+   * Find the $info and $typeManager for a $key
+   *
+   * @return array (0 => CRM_Extension_Info, 1 => CRM_Extension_Manager_Interface)
+   * @throws CRM_Extension_Exception
+   */
+  private function _getMissingInfoTypeHandler($key) {
+    $info = $this->createInfoFromDB($key);
+    if ($info) {
+      if (array_key_exists($info->type, $this->typeManagers)) {
+        return array($info, $this->typeManagers[$info->type]);
+      } else {
+        throw new CRM_Extension_Exception("Unrecognized extension type: " . $info->type);
+      }
+    } else {
+      throw new CRM_Extension_Exception("Failed to reconstruct missing extension: " . $key);
     }
   }
 
@@ -403,5 +464,22 @@ class CRM_Extension_Manager {
       1 => array($isActive, 'Integer'),
       2 => array($info->key, 'String'),
     ));
+  }
+
+  /**
+   * Auto-generate a place-holder for a missing extension using info from
+   * database.
+   *
+   * @return CRM_Extension_Info|NULL
+   */
+  public function createInfoFromDB($key) {
+    $dao = new CRM_Core_DAO_Extension();
+    $dao->full_name = $key;
+    if ($dao->find(TRUE)) {
+      $info = new CRM_Extension_Info($dao->full_name, $dao->type, $dao->name, $dao->label, $dao->file);
+      return $info;
+    } else {
+      return NULL;
+    }
   }
 }

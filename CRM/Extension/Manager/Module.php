@@ -46,7 +46,11 @@ class CRM_Extension_Manager_Module extends CRM_Extension_Manager_Base {
   }
 
   private function callHook(CRM_Extension_Info $info, $hookName) {
-    $file = $this->mapper->keyToPath($info->key);
+    try {
+      $file = $this->mapper->keyToPath($info->key);
+    } catch (CRM_Extension_Exception $e) {
+      return;
+    }
     if (!file_exists($file)) {
       return;
     }

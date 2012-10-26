@@ -41,10 +41,40 @@ interface CRM_Extension_Manager_Interface {
   public function onPreEnable(CRM_Extension_Info $info);
   public function onPostEnable(CRM_Extension_Info $info);
 
+  /**
+   * Perform type-specific removal logic (before updating the extension
+   * row in the "civicrm_extension" table).
+   * 
+   * @param CRM_Extension_Info $info may be generated from xml or DB (which is lossy)
+   * @see CRM_Extension_Info::reconstruct
+   */
   public function onPreDisable(CRM_Extension_Info $info);
+
+  /**
+   * Perform type-specific removal logic (after updating the extension
+   * row in the "civicrm_extension" table).
+   *
+   * @param CRM_Extension_Info $info may be generated from xml or DB (which is lossy)
+   * @see CRM_Extension_Info::reconstruct
+   */
   public function onPostDisable(CRM_Extension_Info $info);
 
+  /**
+   * Perform type-specific removal logic (removing the extension
+   * row in the "civicrm_extension" table).
+   *
+   * @param CRM_Extension_Info $info may be generated from xml or DB (which is lossy)
+   * @see CRM_Extension_Info::reconstruct
+   */
   public function onPreUninstall(CRM_Extension_Info $info);
+
+  /**
+   * Perform type-specific removal logic (after removing the extension
+   * row in the "civicrm_extension" table).
+   *
+   * @param CRM_Extension_Info $info may be generated from xml or DB (which is lossy)
+   * @see CRM_Extension_Info::reconstruct
+   */
   public function onPostUninstall(CRM_Extension_Info $info);
 
   public function onPreReplace(CRM_Extension_Info $oldInfo, CRM_Extension_Info $newInfo);

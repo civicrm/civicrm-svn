@@ -142,11 +142,16 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic {
     $this->assign('extDbUpgrades', CRM_Extension_Upgrades::hasPending());
     $this->assign('extDbUpgradeUrl', CRM_Utils_System::url('civicrm/admin/extensions/upgrade', 'reset=1'));
 
+    // TODO: Debate whether to immediately detect changes in underlying source tree
+    // CRM_Extension_System::singleton()->getManager()->refresh();
+
     $extensionRows = array(); // array($pseudo_id => extended_CRM_Extension_Info)
 
     $fid = 1;
     $mapper = CRM_Extension_System::singleton()->getMapper();
-    foreach(CRM_Extension_System::singleton()->getFullContainer()->getKeys() as $key) {
+    $keys = array_keys(CRM_Extension_System::singleton()->getManager()->getStatuses());
+    sort($keys);
+    foreach($keys as $key) {
       $obj = $mapper->keyToInfo($key);
 
       // for extensions which aren't installed, create a
@@ -171,7 +176,11 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic {
           $action += CRM_Core_Action::ENABLE;
           $action += CRM_Core_Action::DELETE;
           break;
+        case CRM_Extension_Manager::STATUS_DISABLED_MISSING:
+          $action += CRM_Core_Action::DELETE;
+          break;
         case CRM_Extension_Manager::STATUS_INSTALLED:
+        case CRM_Extension_Manager::STATUS_INSTALLED_MISSING:
           $action += CRM_Core_Action::DISABLE;
           break;
         default:
@@ -242,7 +251,11 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic {
     $manager = CRM_Extension_System::singleton()->getManager();
 
     $extensionRow = (array) $obj;
-    $extensionRow['path'] = $mapper->keyToBasePath($obj->key);
+    try {
+      $extensionRow['path'] = $mapper->keyToBasePath($obj->key);
+    } catch (CRM_Extension_Exception $e) {
+      $extensionRow['path'] = '';
+    }
     $extensionRow['status'] = $manager->getStatus($obj->key);
 
     switch ($extensionRow['status']) {
@@ -254,6 +267,12 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic {
         break;
       case CRM_Extension_Manager::STATUS_INSTALLED:
         $extensionRow['statusLabel'] = ts('Enabled'); // ts('Installed');
+        break;
+      case CRM_Extension_Manager::STATUS_DISABLED_MISSING:
+        $extensionRow['statusLabel'] = ts('Disabled (Missing)');
+        break;
+      case CRM_Extension_Manager::STATUS_INSTALLED_MISSING:
+        $extensionRow['statusLabel'] = ts('Enabled (Missing)'); // ts('Installed');
         break;
       default:
         $extensionRow['statusLabel'] = '(' . $extensionRow['status'] . ')';
