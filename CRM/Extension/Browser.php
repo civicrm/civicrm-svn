@@ -56,7 +56,10 @@ class CRM_Extension_Browser {
   }
 
   /**
-   * Determine whether the system allows downloading new extensions
+   * Determine whether the system policy allows downloading new extensions.
+   *
+   * This is reflection of *policy* and *intent*; it does not indicate whether
+   * the browser will actually *work*. For that, see checkRequirements().
    *
    * @return bool
    */

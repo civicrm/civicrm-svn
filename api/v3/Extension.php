@@ -1,7 +1,7 @@
 <?php
 // $Id$
 
-define(API_V3_EXTENSION_DELIMITER, ',');
+define('API_V3_EXTENSION_DELIMITER', ',');
 
 /*
  +--------------------------------------------------------------------+

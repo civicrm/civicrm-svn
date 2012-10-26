@@ -147,7 +147,7 @@ class CRM_Utils_File {
           $object = $target . DIRECTORY_SEPARATOR . $sibling;
 
           if (is_dir($object)) {
-            CRM_Utils_File::cleanDir($object, $rmdir);
+            CRM_Utils_File::cleanDir($object, $rmdir, $verbose);
           }
           elseif (is_file($object)) {
             if (!unlink($object)) {
