@@ -86,24 +86,26 @@ function civicrm_group_roles_user_login(&$edit, $account) {
     return;
   }
 
-  $params = array(
-    'contact_id' => $contact,
-    'version' => 3,
-  );
-  //find the groups for contact
-  $groups = civicrm_api('group_contact', 'get', $params);
-  $groups = CRM_Utils_Array::value('values', $groups);
+  // To account for the case of smart groups, we grab *all* the rules,
+  // and look for this contact in a list of group members
+  // CRM-11161
+  $query = db_select('civicrm_group_roles_rules', 'cgr');
+  $query->join('role', 'r', 'r.rid=cgr.role_id');
+  $query->fields('r', array('name'))->fields('cgr', array('role_id', 'group_id'));
 
-  foreach ($groups as $key) {
-
-    $query = db_select('civicrm_group_roles_rules', 'cgr');
-    $query->join('role', 'r', 'r.rid = cgr.role_id');
-    $query->fields('r', array('name'))->fields('cgr', array('role_id'))->condition('cgr.group_id', $key['group_id']);
-    $result = $query->range(0, 1)->execute()->fetchAssoc();
-
-    if ($result && CRM_Utils_Array::value('name', $result)) {
-      //assign the role for user
-      civicrm_group_roles_add_role($account->uid, $result['role_id'], $result['name']);
+  $result = $query->execute();
+  foreach ($result as $group) {
+    $params = array(
+      'filter.group_id' => $group->group_id,
+      'id' => $contact,
+      'version'  => 3,
+    );
+    $contacts = civicrm_api('contact', 'get', $params);
+    if ($contacts['count'] > 0) { // The user is in there
+      $msg = sprintf('assigning role %s (%d) to user %s because they are part of group %d (contactID: %d)',
+             $group->name, $group->role_id, $account->uid, $group->group_id, $contact);
+      watchdog('civicrm_group_roles', $msg);
+      civicrm_group_roles_add_role($account->uid, $group->role_id, $group->name);
     }
   }
 }
