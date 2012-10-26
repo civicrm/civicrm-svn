@@ -107,10 +107,10 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic {
           'title' => ts('Uninstall Extension'),
         ),
         CRM_Core_Action::UPDATE => array(
-          'name' => ts('Upgrade'),
+          'name' => ts('Install'),
           'url' => 'civicrm/admin/extensions',
           'qs' => 'action=update&id=%%id%%&key=%%key%%',
-          'title' => ts('Upgrade Extension'),
+          'title' => ts('Download Extension'),
         ),
       );
     }
@@ -201,12 +201,12 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic {
     foreach (CRM_Extension_System::singleton()->getBrowser()->getExtensions() as $info) {
       $row = (array) $info;
       $row['id'] = $info->key;
-      $action = CRM_Core_Action::ADD;
+      $action = CRM_Core_Action::UPDATE;
       $row['action'] = CRM_Core_Action::formLink(self::links(),
         $action,
         array(
           'id' => $row['id'],
-          'key' => $obj->key,
+          'key' => $row['key'],
         )
       );
       $remoteExtensionRows[$row['id']] = $row;

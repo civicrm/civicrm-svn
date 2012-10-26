@@ -58,9 +58,30 @@ class CRM_Admin_Form_Extensions extends CRM_Admin_Form {
     $this->assign('id', $this->_id);
     $this->assign('key', $this->_key);
 
-    $info = CRM_Extension_System::singleton()->getMapper()->keyToInfo($this->_key);
-    $extInfo = CRM_Admin_Page_Extensions::createExtendedInfo($info);
-    $this->assign('extension', $extInfo);
+
+    switch ($this->_action) {
+      case CRM_Core_Action::ADD:
+      case CRM_Core_Action::DELETE:
+      case CRM_Core_Action::ENABLE:
+      case CRM_Core_Action::DISABLE:
+        $info = CRM_Extension_System::singleton()->getMapper()->keyToInfo($this->_key);
+        $extInfo = CRM_Admin_Page_Extensions::createExtendedInfo($info);
+        $this->assign('extension', $extInfo);
+        break;
+
+      case CRM_Core_Action::UPDATE:
+        if (! CRM_Extension_System::singleton()->getBrowser()->isEnabled()) {
+          CRM_Core_Error::fatal(ts('The system administrator has disabled this feature.'));
+        }
+        $info = CRM_Extension_System::singleton()->getBrowser()->getExtension($this->_key);
+        $extInfo = CRM_Admin_Page_Extensions::createExtendedInfo($info);
+        $this->assign('extension', $extInfo);
+        break;
+
+      default:
+        CRM_Core_Error::fatal(ts('Unsupported action'));
+    }
+
   }
 
   /**
@@ -85,27 +106,27 @@ class CRM_Admin_Form_Extensions extends CRM_Admin_Form {
   public function buildQuickForm() {
 
     switch ($this->_action) {
-      case 1:
+      case CRM_Core_Action::ADD:
         $buttonName = ts('Install');
         $title = ts('Install Extension');
         break;
 
-      case 2:
-        $buttonName = ts('Upgrade');
-        $title = ts('Upgrade Extension');
+      case CRM_Core_Action::UPDATE:
+        $buttonName = ts('Download');
+        $title = ts('Download Extension');
         break;
 
-      case 8:
+      case CRM_Core_Action::DELETE:
         $buttonName = ts('Uninstall');
         $title = ts('Uninstall Extension');
         break;
 
-      case 32:
+      case CRM_Core_Action::ENABLE:
         $buttonName = ts('Enable');
         $title = ts('Enable Extension');
         break;
 
-      case 64:
+      case CRM_Core_Action::DISABLE:
         $buttonName = 'Disable';
         $title = ts('Disable Extension');
         break;
@@ -175,9 +196,15 @@ class CRM_Admin_Form_Extensions extends CRM_Admin_Form {
     }
 
     if ($this->_action & CRM_Core_Action::UPDATE) {
-      $ext = new CRM_Core_Extensions();
-      $ext->upgrade($this->_id, $this->_key);
-      CRM_Core_Session::setStatus("", ts('Extension Upgraded'), "success");
+      $result = civicrm_api('Extension', 'download', array(
+        'version' => 3,
+        'key' => $this->_key,
+      ));
+      if (! CRM_Utils_Array::value('is_error', $result, FALSE)) {
+        CRM_Core_Session::setStatus("", ts('Extension Upgraded'), "success");
+      } else {
+        CRM_Core_Session::setStatus($result['error_message'], ts('Extension Upgrade Failed'), "error");
+      }
     }
 
     CRM_Utils_System::redirect(
