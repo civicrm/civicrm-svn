@@ -2640,9 +2640,9 @@ ORDER BY civicrm_mailing.name";
     return $list;
   }
 
-  static function isSearchBasedMailing($mid) {
+  static function hiddenMailingGroup($mid) {
     $sql = "
-SELECT     count(g.id)
+SELECT     g.id
 FROM       civicrm_mailing m
 INNER JOIN civicrm_mailing_group mg ON mg.mailing_id = m.id
 INNER JOIN civicrm_group g ON mg.entity_id = g.id AND mg.entity_table = 'civicrm_group'

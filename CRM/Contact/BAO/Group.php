@@ -270,14 +270,12 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
    * make sure that the user has permission to access this group
    *
    * @param int $id   the id of the object
-   * @param int $name the name or title of the object
    *
    * @return string   the permission that the user has (or null)
    * @access public
    * @static
    */
-  static function checkPermission($id, $title) {
-
+  static function checkPermission($id) {
     $allGroups = CRM_Core_PseudoConstant::allGroup();
 
     $permissions = NULL;
@@ -871,13 +869,13 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
    ) {
      // <span class="child-icon"></span>
      // need to return id, title (w/ spacer), description, visibility
-     
+
      // We need to build a list of tags ordered by hierarchy and sorted by
      // name. The heirarchy will be communicated by an accumulation of
      // separators in front of the name to give it a visual offset.
      // Instead of recursively making mysql queries, we'll make one big
      // query and build the heirarchy with the algorithm below.
-     
+
      $args = array(1 => array($groupIds, 'String'));
      $query = "SELECT id, title, description, visibility, parents
      FROM     civicrm_group
@@ -909,7 +907,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
        else {
          // group can have > 1 parent so $dao->parents may be comma separated list (eg. '1,2,5'). Grab and match on 1st parent.
          $parentArray = explode(',', $dao->parents);
-         $parent = $parentArray[0];         
+         $parent = $parentArray[0];
          $rows[] = array('id' => $dao->id,
                           'prefix' => '',
                           'title' => $dao->title,
@@ -954,13 +952,13 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
        } else {
          $groupsReturn[$key] = array('title' => $value[0] . $value[1],
                                 'description' => $allGroups[$key]['description'],
-                                'visibility' => $allGroups[$key]['visibility'],);         
+                                'visibility' => $allGroups[$key]['visibility'],);
        }
      }
 
      return $groupsReturn;
   }
-  
+
   static function getGroupCount(&$params) {
     $whereClause = self::whereClause($params, FALSE);
     $query = " SELECT COUNT(*) FROM civicrm_group groups WHERE {$whereClause}";

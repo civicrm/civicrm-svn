@@ -70,9 +70,20 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task {
       }
     }
 
-    // use previous context unless mailing is not schedule, CRM-4290
     $session = CRM_Core_Session::singleton();
-    if (strpos($session->readUserContext(), 'civicrm/mailing') === FALSE) {
+    if ($this->_searchBasedMailing) {
+      $config = CRM_Core_Config::singleton();
+      $path = CRM_Utils_Array::value($config->userFrameworkURLVar, $_GET);
+      $qfKey = CRM_Utils_Array::value('qfKey', $_GET);
+      if ($qfKey) {
+        $session->pushUserContext(CRM_Utils_System::url($path, "qfKey=$qfKey"));
+      }
+      else {
+        $session->pushUserContext(CRM_Utils_System::url('civicrm/mailing', 'reset=1'));
+      }
+    }
+    elseif (strpos($session->readUserContext(), 'civicrm/mailing') === FALSE) {
+      // use previous context unless mailing is not schedule, CRM-4290
       $session->pushUserContext(CRM_Utils_System::url('civicrm/mailing', 'reset=1'));
     }
   }
@@ -176,13 +187,13 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task {
       TRUE
     );
 
-    $searchBasedMailing = false;
+    $hiddenMailingGroup = NULL;
     $campaignId = NULL;
 
     //CRM-7362 --add campaigns.
     if ($this->_mailingID) {
       $campaignId = CRM_Core_DAO::getFieldValue('CRM_Mailing_DAO_Mailing', $this->_mailingID, 'campaign_id');
-      $searchBasedMailing = CRM_Mailing_BAO_Mailing::isSearchBasedMailing($this->_mailingID);
+      $hiddenMailingGroup = CRM_Mailing_BAO_Mailing::hiddenMailingGroup($this->_mailingID);
     }
     CRM_Campaign_BAO_Campaign::addCampaign($this, $campaignId);
 
@@ -190,7 +201,11 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task {
     $this->addElement('checkbox', 'dedupe_email', ts('Remove duplicate emails?'));
 
     //get the mailing groups.
-    $groups = CRM_Core_PseudoConstant::group('Mailing', ! $searchBasedMailing);
+    $groups = CRM_Core_PseudoConstant::group('Mailing');
+    if ($hiddenMailingGroup) {
+      $groups[$hiddenMailingGroup] =
+        CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Group', $hiddenMailingGroup, 'title');
+    }
 
     $mailings = CRM_Mailing_PseudoConstant::completed();
     if (!$mailings) {
@@ -329,6 +344,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task {
             'id'    => $grpID,
             'name'  => CRM_Utils_String::titleToVar($newGroupTitle),
             'title' => $newGroupTitle,
+            'group_type' => array('2' => 1),
           );
           $group = CRM_Contact_BAO_Group::create($groupParams);
         }
