@@ -2077,7 +2077,7 @@ AND civicrm_contact.is_opt_out =0";
 SELECT    $selectClause
   FROM    civicrm_mailing m
 LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
- WHERE ( ( g.entity_table = 'civicrm_group' AND g.entity_id IN ( $groupIDs ) )
+ WHERE ( ( g.entity_table like 'civicrm_group%' AND g.entity_id IN ( $groupIDs ) )
     OR   ( g.entity_table IS NULL AND g.entity_id IS NULL ) )
    $condition";
       $dao = CRM_Core_DAO::executeQuery($query, CRM_Core_DAO::$_nullArray);
