@@ -67,10 +67,11 @@ class CRM_Extension_Downloader {
       $url = CRM_Utils_System::url('civicrm/admin/setting/path', "reset=1&civicrmDestination=${civicrmDestination}");
       $errors[] = array(
         'title' => ts('Directory Unwritable'),
-        'message' => ts('Your extensions directory: %1 is not web server writable. Please go to the <a href="%2">path setting page</a> and correct it.<br/>',
+        //'message' => ts('Your extensions directory: %1 is not web server writable. Please go to the <a href="%2">path setting page</a> and correct it.<br/>',
+        'message' => ts("Your extensions directory is not set or is not writable. Click <a href='%1'>here</a> to set the extensions directory.",
           array(
-            1 => $this->containerDir,
-            2 => $url,
+            //1 => $this->containerDir,
+            1 => $url,
           )
         )
       );

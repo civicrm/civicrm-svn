@@ -136,8 +136,12 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic {
    * @static
    */
   function browse() {
-    // TODO // $this->assign('extEnabled', CRM_Extension_System::singleton()->getBrowser()->isEnabled());
-    $this->assign('extEnabled', TRUE);
+    $this->assign('extAddNewEnabled', CRM_Extension_System::singleton()->getBrowser()->isEnabled());
+    $reqs = CRM_Extension_System::singleton()->getDownloader()->checkRequirements();
+    if (empty($reqs)) {
+      $reqs = CRM_Extension_System::singleton()->getBrowser()->checkRequirements();
+    }
+    $this->assign('extAddNewReqs', $reqs);
 
     $this->assign('extDbUpgrades', CRM_Extension_Upgrades::hasPending());
     $this->assign('extDbUpgradeUrl', CRM_Utils_System::url('civicrm/admin/extensions/upgrade', 'reset=1'));
