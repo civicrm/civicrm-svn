@@ -60,11 +60,11 @@
               <td>{$form.contact_source.label} {help id="id-source"}<br />
                 {$form.contact_source.html|crmAddClass:twenty}
               </td>
-              <td>{$form.external_identifier.label}{help id="id-external-id" file="CRM/Contact/Form/Contact.hlp"}&nbsp;<br />
+              <td>{$form.external_identifier.label}&nbsp;{help id="id-external-id"}<br />
                 {$form.external_identifier.html|crmAddClass:six}
               </td>
               {if $contactId}
-                <td><label for="internal_identifier">{ts}Internal Id{/ts}</label><br />{$contactId}</td>
+                <td><label for="internal_identifier">{ts}Internal Id{/ts}{help id="id-internal-id"}</label><br /><input type="text" class="six form-text medium" size="20" disabled="disabled" value="{$contactId}"></td>
               {/if}
             </tr>
           </table>
@@ -112,14 +112,14 @@
   var action = "{/literal}{$action}{literal}";
   var removeCustomData = true;
   showTab[0] = {"spanShow":"span#contact","divShow":"div#contactDetails"};
-  cj(function( ) {
-    cj().crmaccordions( );
+  cj(function($) {
     cj(showTab).each( function(){
       if( this.spanShow ) {
         cj(this.spanShow).removeClass( ).addClass('crm-accordion-open');
         cj(this.divShow).show( );
       }
     });
+    cj().crmaccordions( );
 
     cj('.crm-accordion-body').each( function() {
       //remove tab which doesn't have any element
@@ -131,22 +131,61 @@
       }
       //open tab if form rule throws error
       if ( cj(this).children( ).find('span.crm-error').text( ).length > 0 ) {
-        cj(this).parent( ).removeClass( 'crm-accordion-closed' ).addClass('crm-accordion-open');
+        cj(this).parents('.crm-accordion-closed').crmAccordionToggle();
       }
     });
+    if (action == '2') {
+      cj('.crm-accordion-wrapper').not('.crm-accordion-wrapper .crm-accordion-wrapper').each(function() {
+        highlightTabs(this);
+      });
+      cj('#crm-container').on('change click', '.crm-accordion-body :input, .crm-accordion-body a', function() {
+        highlightTabs($(this).parents('.crm-accordion-wrapper'));
+      });
+    }
+    function highlightTabs(tab) {
+      //highlight the tab having data inside.
+      cj('.crm-accordion-body :input', tab).each( function() {
+        var active = false;
+          switch( cj(this).prop('type') ) {
+            case 'checkbox':
+            case 'radio':
+              if( cj(this).is(':checked') ) {
+                $('.crm-accordion-header:first', tab).addClass('active');
+                return false;
+              }
+              break;
 
-    highlightTabs();
+            case 'text':
+            case 'textarea':
+            case 'select-one':
+            case 'select-multiple':
+              if( cj(this).val() ) {
+                $('.crm-accordion-header:first', tab).addClass('active');
+                return false;
+              }
+              break;
+
+            case 'file':
+              if( cj(this).next().html() ) {
+                $('.crm-accordion-header:first', tab).addClass('active');
+                return false;
+              }
+              break;
+          }
+          $('.crm-accordion-header:first', tab).removeClass('active');
+      });
+    }
   });
 
   cj('a#expand').click( function( ){
     if( cj(this).attr('href') == '#expand') {
       var message = {/literal}"{ts}Collapse all tabs{/ts}"{literal};
       cj(this).attr('href', '#collapse');
-      cj('.crm-accordion-closed').removeClass('crm-accordion-closed').addClass('crm-accordion-open');
+      cj('.crm-accordion-closed').crmAccordionToggle();
     }
     else {
       var message     = {/literal}"{ts}Expand all tabs{/ts}"{literal};
-      cj('.crm-accordion-open').removeClass('crm-accordion-open').addClass('crm-accordion-closed');
+      cj('.crm-accordion-open').crmAccordionToggle();
       cj(this).attr('href', '#expand');
     }
     cj(this).html(message);
@@ -155,47 +194,6 @@
 
   function showHideSignature( blockId ) {
     cj('#Email_Signature_' + blockId ).toggle( );
-  }
-
-  function highlightTabs( ) {
-    if ( action == 2 ) {
-      //highlight the tab having data inside.
-      cj('.crm-accordion-body :input').each( function() {
-        var element = cj(this).closest(".crm-accordion-body").attr("id");
-        if (element) {
-          eval('var ' + element + ' = "";');
-          switch( cj(this).attr('type') ) {
-            case 'checkbox':
-            case 'radio':
-              if( cj(this).is(':checked') ) {
-                eval( element + ' = true;');
-              }
-              break;
-
-            case 'text':
-            case 'textarea':
-              if( cj(this).val() ) {
-                eval( element + ' = true;');
-              }
-              break;
-
-            case 'select-one':
-            case 'select-multiple':
-              if( cj('select option:selected' ) && cj(this).val() ) {
-                eval( element + ' = true;');
-              }
-              break;
-
-            case 'file':
-              if( cj(this).next().html() ) eval( element + ' = true;');
-              break;
-          }
-          if( eval( element + ';') ) {
-            cj(this).closest(".crm-accordion-wrapper").addClass('crm-accordion-hasContent');
-          }
-        }
-      });
-    }
   }
 
   function removeDefaultCustomFields( ) {
@@ -255,7 +253,7 @@
     });
 
     if ( warning ) {
-      return confirm( 'One or more contact subtypes have been de-selected from the list for this contact. Any custom data associated with de-selected subtype will be removed. Click OK to proceed, or Cancel to review your changes before saving.' );
+      return confirm({/literal}'{ts escape="js"}One or more contact subtypes have been de-selected from the list for this contact. Any custom data associated with de-selected subtype will be removed. Click OK to proceed, or Cancel to review your changes before saving.{/ts}'{literal});
     }
     return true;
   }

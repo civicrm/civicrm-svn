@@ -174,7 +174,7 @@ function clearFirstBlock( blockName , blockId ) {
     cj("#" + element +" input, " + "#" + element + " select").each(function () {
         cj(this).val('');
     });
-    cj("#addressBlockId").removeClass('crm-accordion-open').addClass('crm-accordion-closed');
+    cj("#addressBlockId.crm-accordion-open").crmAccordionToggle();
 }
 
 function getAddressBlock( position ) {

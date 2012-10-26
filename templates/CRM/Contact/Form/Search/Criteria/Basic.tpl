@@ -243,7 +243,7 @@
         </tr>
         <tr>
              <td>
-                 {$form.id.label}<br />
+                 {$form.id.label} {help id="id-internal-id" file="CRM/Contact/Form/Contact"}<br />
                  {$form.id.html|crmAddClass:medium}
              </td>
              <td>

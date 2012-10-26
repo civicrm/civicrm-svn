@@ -2149,7 +2149,7 @@ div.grippie {
   border-left: 1px solid #999999;
 }
 
-#crm-container .collapsible-title {
+.crm-collapsible .collapsible-title {
   background: url("../i/TreeMinus.gif") no-repeat 0 0;
   padding-left: 19px;
   cursor:pointer;
@@ -2158,8 +2158,12 @@ div.grippie {
   text-decoration: none;
 }
 
-#crm-container .collapsible-title.collapsed {
+.crm-collapsible .collapsible-title.collapsed {
   background: url("../i/TreePlus.gif") no-repeat 0 0;
+}
+
+.crm-collapsible .collapsible-title.collapsed + * {
+  display: none;
 }
 
 /* TimeEntry styles */
@@ -2565,8 +2569,7 @@ span.icon {
   padding:4px 0px;
 }
 
-.crm-accordion-open .crm-accordion-body { display: block; }
-.crm-accordion-closed .crm-accordion-body { display: none!important; }
+.crm-accordion-closed .crm-accordion-body { display: none; }
 
 .crm-accordion-open .crm-accordion-header .crm-accordion-pointer {
   background-position: -64px -16px;
@@ -2605,10 +2608,6 @@ span.icon {
 
 .crm-accordion-email-signature .crm-accordion-header .crm-accordion-pointer {
   background-image:url("../i/icons/jquery-ui-2786C2.png")
-}
-
-.crm-accordion-hasContent .crm-accordion-header {
-  font-weight:bold;
 }
 
 .crm-accordion-email-signature .crm-accordion-header {

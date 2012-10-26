@@ -239,11 +239,11 @@ cj(function() {
 });
 
 {/literal}{if $invalidGroupName}{literal}
-cj("#new-group").removeClass( 'crm-accordion-closed' ).addClass( 'crm-accordion-open' );
+cj("#new-group.crm-accordion-closed").crmAccordionToggle();
 {/literal}{/if}{literal}
 
 {/literal}{if $invalidTagName}{literal}
-cj("#new-tag").removeClass( 'crm-accordion-closed' ).addClass( 'crm-accordion-open' );
+cj("#new-tag.crm-accordion-closed").crmAccordionToggle();
 {/literal}{/if}{literal}
 
 </script>

@@ -44,16 +44,15 @@
     <td style="width: 50%;">{$form.email.$blockId.email.html|crmAddClass:twenty}&nbsp;{$form.email.$blockId.location_type_id.html}
     <div class="clear"></div>
 {if $className eq 'CRM_Contact_Form_Contact'}
-<div class="crm-accordion-wrapper crm-accordion-email-signature crm-accordion_title-accordion crm-accordion-closed">
- <div class="crm-accordion-header">
-  <div class="icon crm-accordion-pointer"></div>
-{ts}Signature{/ts}
-  </div><!-- /.crm-accordion-header -->
-  <div id="signatureBlock{$blockId}" class="crm-accordion-body">
-            {$form.email.$blockId.signature_html.label}<br />{$form.email.$blockId.signature_html.html}<br />
-            {$form.email.$blockId.signature_text.label}<br />{$form.email.$blockId.signature_text.html}
-  </div><!-- /.crm-accordion-body -->
-</div><!-- /.crm-accordion-wrapper -->
+<div class="email-signature crm-collapsible">
+  <div class="collapsible-title collapsed">
+    {ts}Signature{/ts}
+  </div>
+  <div id="signatureBlock{$blockId}">
+    {$form.email.$blockId.signature_html.label}<br />{$form.email.$blockId.signature_html.html}<br />
+    {$form.email.$blockId.signature_text.label}<br />{$form.email.$blockId.signature_text.html}
+  </div>
+</div>
 
 {/if}
     </td>

@@ -302,7 +302,7 @@
                          cj('.crm-accordion-body').each( function() {
                            //open tab if form rule throws error
                            if ( cj(this).children( ).find('span.crm-error').text( ).length > 0 ) {
-                             cj(this).parent( ).removeClass( 'crm-accordion-closed' ).addClass('crm-accordion-open');
+                             cj(this).parent('.crm-accordion-closed').crmAccordionToggle();
                            }
                          });
           });

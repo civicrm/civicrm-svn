@@ -219,7 +219,7 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
  <div class="crm-accordion-header">
   <div class="icon crm-accordion-pointer"></div> {ts}Send a Copy{/ts}
    </div><!-- /.crm-accordion-header -->
- <div id="sendcopy" class="crm-accordion-body">
+ <div id="sendcopy-body" class="crm-accordion-body">
 
                     <div class="description">{ts}Email a complete copy of this activity record to other people involved with the case. Click the top left box to select all.{/ts}</div>
                    {strip}
@@ -337,12 +337,10 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
     {if $action neq 8 and $action neq 32768}
         <script type="text/javascript">
             {if $searchRows}
-                cj('sendcopy').toggleClass('crm-accordion-open');
-                cj('sendcopy').toggleClass('crm-accordion-closed');
+                cj('#sendcopy').crmAccordionToggle();
             {/if}
 
-            cj('follow-up').toggleClass('crm-accordion-open');
-            cj('follow-up').toggleClass('crm-accordion-closed');
+            cj('#follow-up').crmAccordionToggle();
 
         </script>
     {/if}

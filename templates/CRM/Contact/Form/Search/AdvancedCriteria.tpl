@@ -42,7 +42,7 @@ cj(function($) {
       var header = $(this).parent();
       header.next().html('');
       header.removeClass('active');
-      header.parent().removeClass('crm-accordion-open').addClass('crm-accordion-closed');
+      header.parent('.crm-accordion-open').crmAccordionToggle();
       // Reset results-display mode if it depends on this pane
       var mode = modes[$('#component_mode').val()] || null;
       if (mode && header.attr('id') == mode) {
@@ -71,7 +71,7 @@ cj(function($) {
       $('#task').val('');
       var mode = modes[$('#component_mode').val()] || null;
       if (mode) {
-        $('.crm-' + mode + '-accordion').removeClass('crm-accordion-closed').addClass('crm-accordion-open');
+        $('.crm-' + mode + '-accordion.crm-accordion-closed').crmAccordionToggle();
         loadPanes(mode);
       }
       if ($('#component_mode').val() == '7') {

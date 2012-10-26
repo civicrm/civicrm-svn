@@ -25,7 +25,13 @@
 *}
 {if $groupTree}
 {foreach from=$groupTree item=cd_edit key=group_id}
-  <div class="crm-accordion-wrapper crm-contactDetails-accordion crm-accordion-open" id="{$cd_edit.name}" >
+
+  {if $form.formName eq 'Advanced' AND $cd_edit.collapse_adv_display eq 1}
+    {assign var='accordion_class' value='crm-accordion-closed'}
+  {else}
+    {assign var='accordion_class' value='crm-accordion-open'}
+  {/if}
+  <div class="crm-accordion-wrapper crm-contactDetails-accordion {$accordion_class}" id="{$cd_edit.name}" >
     <div class="crm-accordion-header">
     <div class="icon crm-accordion-pointer"></div>
         {$cd_edit.title}
@@ -117,13 +123,6 @@
     </div><!-- /.crm-accordion-body -->
   </div><!-- /.crm-accordion-wrapper -->
 
-{if  $form.formName eq 'Advanced'}
-<script type="text/javascript">
-{if $cd_edit.collapse_adv_display eq 1}
-  cj("#{$cd_edit.name}").removeClass('crm-accordion-open').addClass('crm-accordion-closed');
-{/if}
-</script>
-{/if}
 {/foreach}
 {/if}
 

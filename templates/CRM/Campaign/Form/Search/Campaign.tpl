@@ -154,7 +154,7 @@
  cj( function( ) {
     //collapse the search form.
     var searchFormName = '#search_form_' + {/literal}'{$searchFor}'{literal};
-    cj( searchFormName ).removeClass( 'crm-accordion-open' ).addClass( 'crm-accordion-closed' );
+    cj( searchFormName + '.crm-accordion-open').crmAccordionToggle();
     searchCampaigns( {/literal}'{$qfKey}'{literal} );
  });
 
@@ -174,7 +174,7 @@ function searchCampaigns( qfKey )
 
         //collapse the search form.
         var searchFormName = '#search_form_' + {/literal}'{$searchFor}'{literal};
-        cj( searchFormName ).removeClass( 'crm-accordion-open' ).addClass( 'crm-accordion-closed' );
+        cj( searchFormName + '.crm-accordion-open').crmAccordionToggle();
       }, 'html' );
 }
 

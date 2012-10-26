@@ -92,7 +92,7 @@
  {
     var invalidGroupName = {/literal}'{$invalidGroupName}'{literal};
     if ( invalidGroupName ) {
-       cj("#new-group").removeClass( 'crm-accordion-closed' ).addClass( 'crm-accordion-open' );
+       cj("#new-group.crm-accordion-closed").crmAccordionToggle();
     } else {
        cj("#newGroupName").val( '' );
        cj("#newGroupDesc").val( '' );
