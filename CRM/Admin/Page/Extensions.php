@@ -136,6 +136,10 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic {
    * @static
    */
   function browse() {
+    $mapper = CRM_Extension_System::singleton()->getMapper();
+    $manager = CRM_Extension_System::singleton()->getManager();
+
+    // build announcements at the top of the page
     $this->assign('extAddNewEnabled', CRM_Extension_System::singleton()->getBrowser()->isEnabled());
     $reqs = CRM_Extension_System::singleton()->getDownloader()->checkRequirements();
     if (empty($reqs)) {
@@ -147,14 +151,11 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic {
     $this->assign('extDbUpgradeUrl', CRM_Utils_System::url('civicrm/admin/extensions/upgrade', 'reset=1'));
 
     // TODO: Debate whether to immediately detect changes in underlying source tree
-    // CRM_Extension_System::singleton()->getManager()->refresh();
-
-    $fid = 1;
+    // $manager->refresh();
 
     // build list of local extensions
     $localExtensionRows = array(); // array($pseudo_id => extended_CRM_Extension_Info)
-    $mapper = CRM_Extension_System::singleton()->getMapper();
-    $keys = array_keys(CRM_Extension_System::singleton()->getManager()->getStatuses());
+    $keys = array_keys($manager->getStatuses());
     sort($keys);
     foreach($keys as $key) {
       $obj = $mapper->keyToInfo($key);
@@ -193,7 +194,6 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic {
 
       $localExtensionRows[$row['id']] = $row;
     }
-
     $this->assign('localExtensionRows', $localExtensionRows);
 
     // build list of availabe downloads

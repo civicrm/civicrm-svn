@@ -1,3 +1,8 @@
+{* 
+Display a table of locally-available extensions.
+
+Depends: CRM/common/enableDisable.tpl and CRM/common/jsortable.tpl 
+*}
 {if $localExtensionRows}
   <div id="extensions">
     {strip}
@@ -13,10 +18,13 @@
         </tr>
       </thead>
       <tbody>
-        {foreach from=$localExtensionRows item=row}
+        {foreach from=$localExtensionRows key=extKey item=row}
         <tr id="row_{$row.id}" class="crm-extensions crm-extensions_{$row.id}{if $row.status eq 'disabled'} disabled{/if}{if $row.upgradable} extension-upgradable{elseif $row.status eq 'installed'} extension-installed{/if}">
           <td class="crm-extensions-label">
               <a class="collapsed" href="#">(expand)</a>&nbsp;<strong>{$row.label}</strong><br/>({$row.key})
+              {if $remoteExtensionRows[$extKey] && $row.version != $remoteExtensionRows[$extKey].version}
+                <div class="crm-extensions-upgrade">{ts 1=http://FIXME}Version {$remoteExtensionRows[$extKey].version} is available. <a href="%1">Upgrade</a>{/ts}</div>
+              {/if}
           </td>
           <td class="crm-extensions-label">{$row.statusLabel} {if $row.upgradable}<br/>({ts}Outdated{/ts}){/if}</td>
           <td class="crm-extensions-label">{$row.version} {if $row.upgradable}<br/>({$row.upgradeVersion}){/if}</td>

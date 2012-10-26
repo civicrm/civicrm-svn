@@ -1,3 +1,8 @@
+{* 
+Display a table of remotely-available extensions
+
+Depends: CRM/common/enableDisable.tpl and CRM/common/jsortable.tpl 
+*}
 {if $remoteExtensionRows}
   <div id="extensions-addnew">
     {strip}
@@ -11,7 +16,10 @@
         </tr>
       </thead>
       <tbody>
-        {foreach from=$remoteExtensionRows item=row}
+        {foreach from=$remoteExtensionRows key=extKey item=row}
+        {if $localExtensionRows[$extKey]}
+          {continue}
+        {/if}
         <tr id="addnew-row_{$row.id}" class="crm-extensions crm-extensions_{$row.id}">
           <td class="crm-extensions-label">
               <a class="collapsed" href="#">(expand)</a>&nbsp;<strong>{$row.label}</strong><br/>({$row.key})

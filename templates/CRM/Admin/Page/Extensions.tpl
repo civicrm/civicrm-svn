@@ -43,7 +43,7 @@
     {include file="CRM/common/jsortable.tpl"}
 
     <div id="mainTabContainer" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
-        <ul class="crm-contact-tabs-list">
+        <ul class="crm-extensions-tabs-list">
             <li id="tab_summary" class="crm-tab-button">
               <a href="#extensions-main" title="{ts}Extensions{/ts}">
               <span> </span> {ts}Extensions{/ts}
