@@ -71,6 +71,8 @@ class CRM_Logging_Differ {
         $contactIdClause = "AND id = {$contactID}";
         break;
       case 'civicrm_note':
+        $contactIdClause = "AND ( entity_id = {$contactID} AND entity_table = 'civicrm_contact' ) OR (entity_id IN (SELECT note.id FROM civicrm_note note WHERE note.entity_id = {$contactID} AND note.entity_table = 'civicrm_contact') AND entity_table = 'civicrm_note')";
+        break;
       case 'civicrm_entity_tag':
         $contactIdClause = "AND entity_id = {$contactID} AND entity_table = 'civicrm_contact'";
         break;

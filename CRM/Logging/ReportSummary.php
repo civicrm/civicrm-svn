@@ -58,6 +58,13 @@ class CRM_Logging_ReportSummary extends CRM_Report_Form {
         'dao' => 'CRM_Core_DAO_Note',
         'dao_column'  => 'subject',
       ),
+      'log_civicrm_note_comment' =>
+      array( 'fk'  => 'entity_id',
+        'table_name'  => 'log_civicrm_note',
+        'entity_table' => true,
+        'dao' => 'CRM_Core_DAO_Note',
+        'dao_column'  => 'subject',
+      ),
       'log_civicrm_group_contact' =>
       array( 'fk'  => 'contact_id',
         'dao' => 'CRM_Contact_DAO_Group',
@@ -97,11 +104,11 @@ class CRM_Logging_ReportSummary extends CRM_Report_Form {
   }
 
   function groupBy() {
-    $this->_groupBy = 'GROUP BY log_conn_id, log_user_id, EXTRACT(DAY_MICROSECOND FROM log_date)';
+    $this->_groupBy = 'GROUP BY entity_log_civireport.log_conn_id, entity_log_civireport.log_user_id, EXTRACT(DAY_MICROSECOND FROM entity_log_civireport.log_date)';
   }
 
   function orderBy() {
-    $this->_orderBy = 'ORDER BY log_date DESC';
+    $this->_orderBy = 'ORDER BY entity_log_civireport.log_date DESC';
   }
 
   function select() {
@@ -129,7 +136,7 @@ class CRM_Logging_ReportSummary extends CRM_Report_Form {
     $this->_limit = NULL;
 
     $tempClause    = ($offset && $rowCount) ? "AND temp.id BETWEEN $offset AND $rowCount" : null;
-    $this->_where .= " AND (log_action != 'Initialization') {$tempClause}";
+    $this->_where .= " AND (entity_log_civireport.log_action != 'Initialization') {$tempClause}";
   }
 
   function postProcess() {
@@ -155,11 +162,12 @@ CREATE TEMPORARY TABLE
     $this->_limit = NULL;
 
     foreach ( $this->_logTables as $entity => $detail ) {
+      $tableName = CRM_Utils_Array::value('table_name', $detail, $entity);
       $clause = CRM_Utils_Array::value('entity_table', $detail);
       $clause = $clause ? "entity_table = 'civicrm_contact' AND" : null;
       $sql    = "
  INSERT IGNORE INTO civicrm_temp_civireport_logsummary ( contact_id )
- SELECT DISTINCT {$detail['fk']} FROM `{$this->loggingDB}`.{$entity}
+ SELECT DISTINCT {$detail['fk']} FROM `{$this->loggingDB}`.{$tableName}
  WHERE {$clause} log_action != 'Initialization' {$logDateClause} LIMIT {$rowCount}";
       CRM_Core_DAO::executeQuery($sql);
     }
