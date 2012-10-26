@@ -159,6 +159,7 @@ class CRM_Extension_Browser {
       $cached = TRUE;
     }
 
+    $this->_remotesDiscovered = array();
     foreach ($remotes as $id => $rext) {
       $xml = $this->grabRemoteInfoFile($rext['key'], $cached);
       if ($xml != FALSE) {

@@ -149,30 +149,23 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic {
     // TODO: Debate whether to immediately detect changes in underlying source tree
     // CRM_Extension_System::singleton()->getManager()->refresh();
 
-    $extensionRows = array(); // array($pseudo_id => extended_CRM_Extension_Info)
-
     $fid = 1;
+
+    // build list of local extensions
+    $localExtensionRows = array(); // array($pseudo_id => extended_CRM_Extension_Info)
     $mapper = CRM_Extension_System::singleton()->getMapper();
     $keys = array_keys(CRM_Extension_System::singleton()->getManager()->getStatuses());
     sort($keys);
     foreach($keys as $key) {
       $obj = $mapper->keyToInfo($key);
+      $id = 'x'. $fid++;
 
-      // for extensions which aren't installed, create a
-      // dummy/placeholder id
-      if (isset($obj->id)) {
-        $id = $obj->id;
-      }
-      else {
-        $id = 'x'. $fid++;
-      }
-
-      $extensionRows[$id] = self::createExtendedInfo($obj);
-      $extensionRows[$id]['id'] = $id;
+      $localExtensionRows[$id] = self::createExtendedInfo($obj);
+      $localExtensionRows[$id]['id'] = $id;
 
       // assign actions
       $action = 0;
-      switch ($extensionRows[$id]['status']) {
+      switch ($localExtensionRows[$id]['status']) {
         case CRM_Extension_Manager::STATUS_UNINSTALLED:
           $action += CRM_Core_Action::ADD;
           break;
@@ -191,7 +184,7 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic {
       }
       // TODO if extbrowser is enabled and extbrowser has newer version than extcontainer,
       // then $action += CRM_Core_Action::UPDATE
-      $extensionRows[$id]['action'] = CRM_Core_Action::formLink(self::links(),
+      $localExtensionRows[$id]['action'] = CRM_Core_Action::formLink(self::links(),
         $action,
         array(
           'id' => $id,
@@ -200,7 +193,24 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic {
       );
     }
 
-    $this->assign('extensionRows', $extensionRows);
+    $this->assign('localExtensionRows', $localExtensionRows);
+
+    // build list of availabe downloads
+    $remoteExtensionRows = array();
+    foreach (CRM_Extension_System::singleton()->getBrowser()->getExtensions() as $info) {
+      $row = (array) $info;
+      $row['id'] = 'x'. $fid++;
+      $action = CRM_Core_Action::ADD;
+      $row['action'] = CRM_Core_Action::formLink(self::links(),
+        $action,
+        array(
+          'id' => $row['id'],
+          'key' => $obj->key,
+        )
+      );
+      $remoteExtensionRows[$row['id']] = $row;
+    }
+    $this->assign('remoteExtensionRows', $remoteExtensionRows);
   }
 
   /**

@@ -1,4 +1,4 @@
-{if $extensionRows}
+{if $localExtensionRows}
   <div id="extensions">
     {strip}
     {* handle enable/disable actions*}
@@ -13,7 +13,7 @@
         </tr>
       </thead>
       <tbody>
-        {foreach from=$extensionRows item=row}
+        {foreach from=$localExtensionRows item=row}
         <tr id="row_{$row.id}" class="crm-extensions crm-extensions_{$row.id}{if $row.status eq 'disabled'} disabled{/if}{if $row.upgradable} extension-upgradable{elseif $row.status eq 'installed'} extension-installed{/if}">
           <td class="crm-extensions-label">
               <a class="collapsed" href="#">(expand)</a>&nbsp;<strong>{$row.label}</strong><br/>({$row.key})
@@ -34,10 +34,9 @@
     </table>
     {/strip}
   </div>
-
 {else}
   <div class="messages status no-popup">
        <div class="icon inform-icon"></div>
-      {ts}There are no local or publicly available extensions to display. Please click "Refresh" to update information about available extensions.{/ts}
+      {ts}There are no extensions to display. Please click "Refresh" to update information about available extensions.{/ts}
   </div>
 {/if}
