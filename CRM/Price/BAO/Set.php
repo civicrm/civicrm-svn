@@ -523,7 +523,7 @@ AND ( expire_on IS NULL OR expire_on >= {$currentTime} )
 
     // also get the pre and post help from this price set
     $sql = "
-SELECT extends, contribution_type_id, help_pre, help_post
+SELECT extends, contribution_type_id, help_pre, help_post, is_quick_config
 FROM   civicrm_price_set
 WHERE  id = %1";
     $dao = CRM_Core_DAO::executeQuery($sql, $params);
@@ -532,6 +532,7 @@ WHERE  id = %1";
       $setTree[$setID]['contribution_type_id'] = $dao->contribution_type_id;
       $setTree[$setID]['help_pre'] = $dao->help_pre;
       $setTree[$setID]['help_post'] = $dao->help_post;
+      $setTree[$setID]['is_quick_config'] = $dao->is_quick_config;
     }
     return $setTree;
   }
