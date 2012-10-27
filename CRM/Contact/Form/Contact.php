@@ -755,9 +755,9 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
     eval('CRM_Contact_Form_Edit_' . $this->_contactType . '::buildQuickForm( $this );');
 
     // build Custom data if Custom data present in edit option
-    $buildCustomData = NULL;
+    $buildCustomData = 'noCustomDataPresent';
     if (array_key_exists('CustomData', $this->_editOptions)) {
-      $buildCustomData = "removeDefaultCustomFields( ), highlightTabs( );";
+      $buildCustomData = "customDataPresent";
     }
 
     // subtype is a common field. lets keep it here
@@ -768,8 +768,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
         array(
           'id' => 'contact_sub_type',
           'multiple' => 'multiple',
-          'title' => ts('- subtype -'),
-          'onchange' => $buildCustomData,
+          'title' => '- ' . ts('select') . ' -',
+          'class' => $buildCustomData,
         )
       );
     }

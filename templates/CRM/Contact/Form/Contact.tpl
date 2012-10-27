@@ -120,6 +120,12 @@
       }
     });
     cj().crmaccordions( );
+    cj('.customDataPresent').change(function() {
+      removeDefaultCustomFields( );
+      cj('.crm-accordion-wrapper').not('.crm-accordion-wrapper .crm-accordion-wrapper').each(function() {
+        highlightTabs(this);
+      });
+    });
 
     cj('.crm-accordion-body').each( function() {
       //remove tab which doesn't have any element
