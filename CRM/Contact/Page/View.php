@@ -438,10 +438,11 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
       $title = "<del>{$title}</del>";
     }
 
-    // set title null for now
-    CRM_Utils_System::setTitle('');
-
+    // Inline-edit places its own title on the page
+    // Here's a quick-fix to avoid redundant titles CRM-11080
+    CRM_Utils_System::setTitle(ts('Contact Summary'));
     //CRM_Utils_System::setTitle($displayName, $title);
+
     return $title;
   }
 }
