@@ -227,6 +227,7 @@ class CRM_Extension_Manager {
     }
 
     $this->statuses = NULL;
+    $this->mapper->refresh();
     CRM_Core_Invoke::rebuildMenuAndCaches(TRUE);
   }
 
@@ -280,6 +281,7 @@ class CRM_Extension_Manager {
     }
 
     $this->statuses = NULL;
+    $this->mapper->refresh();
     CRM_Core_Invoke::rebuildMenuAndCaches(TRUE);
   }
 
@@ -326,6 +328,7 @@ class CRM_Extension_Manager {
     }
 
     $this->statuses = NULL;
+    $this->mapper->refresh();
     CRM_Core_Invoke::rebuildMenuAndCaches(TRUE);
   }
 
