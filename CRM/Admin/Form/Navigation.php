@@ -92,7 +92,10 @@ class CRM_Admin_Form_Navigation extends CRM_Admin_Form {
     $operators = array('AND' => 'AND', 'OR' => 'OR');
     $this->add('select', 'permission_operator', ts('Operator'), $operators);
 
-    $this->add('checkbox', 'has_separator', ts('Separator?'));
+    //make separator location configurable
+    $separator = array(0 => 'None', 1 => 'After Menu Element', 2 => 'Before Menu Element');
+    $this->add('select', 'has_separator', ts('Separator?'), $separator);
+    
     $active = $this->add('checkbox', 'is_active', ts('Enabled?'));
 
     if (CRM_Utils_Array::value('name', $this->_defaults) == 'Home') {

@@ -346,6 +346,10 @@ ORDER BY parent_id, weight";
         if ($value['attributes']['name'] != 'Home') {
           $name = self::getMenuName($value, $skipMenuItems);
           if ($name) {
+            //separator before
+            if (isset($value['attributes']['separator']) && $value['attributes']['separator'] == 2) {
+              $navigationString .= '<li class="menu-separator"></li>';
+            }
             $removeCharacters = array('/', '!', '&', '*', ' ', '(', ')', '.');
             $navigationString .= '<li class="menumain crm-' . str_replace($removeCharacters, '_', $value['attributes']['label']) . '">' . $name;
           }
@@ -414,7 +418,8 @@ ORDER BY parent_id, weight";
       }
       else {
         $navigationString .= '</li>';
-        if (isset($value['attributes']['separator']) && $value['attributes']['separator']) {
+        //locate separator after
+        if (isset($value['attributes']['separator']) && $value['attributes']['separator'] == 1) {
           $navigationString .= '<li class="menu-separator"></li>';
         }
       }
@@ -423,6 +428,10 @@ ORDER BY parent_id, weight";
         foreach ($value['child'] as $val) {
           $name = self::getMenuName($val, $skipMenuItems);
           if ($name) {
+            //locate separator before
+            if (isset($val['attributes']['separator']) && $val['attributes']['separator'] == 2) {
+              $navigationString .= '<li class="menu-separator"></li>';
+            }
             $removeCharacters = array('/', '!', '&', '*', ' ', '(', ')', '.');
             $navigationString .= '<li class="crm-' . str_replace($removeCharacters, '_', $val['attributes']['label']) . '">' . $name;
             self::recurseNavigation($val, $navigationString, $json, $skipMenuItems);
@@ -431,7 +440,7 @@ ORDER BY parent_id, weight";
       }
       if (!empty($value['child'])) {
         $navigationString .= '</ul></li>';
-        if (isset($value['attributes']['separator']) && $value['attributes']['separator']) {
+        if (isset($value['attributes']['separator']) && $value['attributes']['separator'] == 1) {
           $navigationString .= '<li class="menu-separator"></li>';
         }
       }
