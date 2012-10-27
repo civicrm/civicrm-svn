@@ -80,6 +80,7 @@
         {include file="CRM/Admin/Page/Extensions/Refresh.tpl"}
     {/if}
 
+    {* Expand/Collapse *}
     {literal}
     <script type="text/javascript">
       cj( function( ) {
@@ -99,6 +100,7 @@
     </script>
     {/literal}
 
+    {* Tab management *}
     <script type="text/javascript">
     var selectedTab  = 'summary';
     var spinnerImage = '<img src="{$config->resourceBase}i/loading.gif" style="width:10px;height:10px"/>';
@@ -118,4 +120,26 @@
     });
     {/literal}
     </script>
+
+    {* Refresh buttons *}
+    {literal}
+    <script type="text/javascript">
+    cj(function() {
+      cj('.crm-extensions-refresh').click(function(event){
+        event.stopPropagation();
+        cj().crmAlert('', ts('Refreshing...'), 'info');
+        cj().crmAPI('Extension', 'refresh', {}, { 
+          'callBack' : function(result){
+            if (result.is_error) {
+              cj().crmAlert(result.error_message, ts('Refresh Error'), 'error');
+            } else {
+              window.location.reload();
+            }
+          } 
+        });
+        return false;
+      }); // .click
+    }); // onload
+    </script>
+    {/literal}
 {/if}
