@@ -440,8 +440,18 @@ class CRM_Utils_REST {
       'q' => 1,
       'json' => 1,
       'key' => 1,
+      'api_key' => 1,
+      'entity' => 1,
+      'action' => 1,
     );
 
+    if (array_key_exists('json', $_REQUEST) &&  $_REQUEST['json'][0] == "{") {
+      $params = json_decode($_REQUEST['json'], TRUE);
+      if(empty($params)) {
+        echo json_encode(array('is_error' => 1, 'error_message', 'invalid json format: ?{"param_with_double_quote":"value"}'));
+        CRM_Utils_System::civiExit();
+      }
+    }
     foreach ($_REQUEST as $n => $v) {
       if (!array_key_exists($n, $skipVars)) {
         $params[$n] = $v;
