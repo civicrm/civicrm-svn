@@ -1583,6 +1583,12 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
         $statusMsg .= '<br/>' . ts('A membership confirmation and receipt has been sent to %1.', array(1 => $this->_contributorEmail));
       }
     }
+
+    // finally set membership id if already not set
+    if (!$this->_id) {
+      $this->_id = $membership->id;
+    }
+
     CRM_Core_Session::setStatus($statusMsg);
 
     $buttonName = $this->controller->getButtonName();
