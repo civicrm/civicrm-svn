@@ -92,7 +92,7 @@ class CRM_Contact_Page_AJAX {
       'version' => 3,
     );
 
-    $result = civicrm_api('Contact', 'quicksearch', $params);
+    $result = civicrm_api('Contact', 'getquick', $params);
     if ($result['is_error'] == 0 && is_array($result['values'])) {
       foreach ($result['values'] as $key => & $values) {
         echo $contactList = "{$values['data']}|{$values['id']}\n";
