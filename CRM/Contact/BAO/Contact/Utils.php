@@ -909,12 +909,24 @@ Group By  componentId";
     return $contactNames;
   }
 
-  static function clearContactCaches() {
+  /**
+   * Clear the contact cache so things are kosher. We started off being super aggressive with clearing
+   * caches, but are backing off from this with every release. Compromise between ease of coding versus
+   * performance versus being accurate at that very instant
+   *
+   * @param $contactID - the contactID that was edited / deleted
+   *
+   * @return void
+   * @static
+   */
+  static function clearContactCaches($contactID = NULL) {
     // clear acl cache if any.
     CRM_ACL_BAO_Cache::resetCache();
 
-    // also clear prev/next dedupe cache
-    CRM_Core_BAO_PrevNextCache::deleteItem();
+    if (empty($contactID)) {
+      // also clear prev/next dedupe cache - if no contactID passed in
+      CRM_Core_BAO_PrevNextCache::deleteItem();
+    }
 
     // reset the group contact cache for this group
     CRM_Contact_BAO_GroupContactCache::remove();

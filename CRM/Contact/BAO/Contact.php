@@ -403,7 +403,8 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact {
       $transaction->commit();
 
       // CRM-6367: fetch the right label for contact type’s display
-      $contact->contact_type_display = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_ContactType',
+      $contact->contact_type_display = CRM_Core_DAO::getFieldValue(
+        'CRM_Contact_DAO_ContactType',
         $contact->contact_type,
         'label',
         'name'
@@ -414,7 +415,7 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact {
         // since resetting and
         // rebuilding cache could be expensive (for many contacts). We might come out with better
         // approach in future.
-        CRM_Contact_BAO_Contact_Utils::clearContactCaches();
+        CRM_Contact_BAO_Contact_Utils::clearContactCaches($contact->id);
       }
 
       if ($invokeHooks) {
@@ -1064,7 +1065,7 @@ WHERE id={$id}; ";
     if (empty($contactType)) {
       $contactType = 'All';
     }
-    
+
     $cacheKeyString = "importableFields $contactType";
     $cacheKeyString .= $status ? '_1' : '_0';
     $cacheKeyString .= $showAll ? '_1' : '_0';
@@ -1524,11 +1525,11 @@ FROM civicrm_contact
      LEFT JOIN civicrm_im      ON ( civicrm_im.is_primary      = 1 AND civicrm_im.contact_id = civicrm_contact.id)
      LEFT JOIN civicrm_openid  ON ( civicrm_openid.is_primary  = 1 AND civicrm_openid.contact_id = civicrm_contact.id)
 WHERE  civicrm_contact.id = %1 ";
-      
+
       $params = array(1 => array($contactId, 'Integer'));
-      
+
       $dao = CRM_Core_DAO::executeQuery($query, $params);
-      
+
       $locationType = NULL;
       if ($dao->fetch()) {
         $locationType = $dao->locationType;
@@ -1548,7 +1549,7 @@ WHERE  civicrm_contact.id = %1 ";
       return $defaultLocationType->id;
     }
   }
-  
+
   /**
    * function to get the display name, primary email and location type of a contact
    *
@@ -1854,11 +1855,11 @@ ORDER BY civicrm_email.is_primary DESC";
             $data['phone'][$loc]['phone_type_id'] = '';
           }
           $data['phone'][$loc]['phone'] = $value;
-          
+
           if (isset($params[$fieldName . '_ext-'. $locTypeId]) || ($actualLocTypeId == 'Primary' && isset($params[$fieldName . '_ext-'.$actualLocTypeId]))) {
             $data['phone'][$loc]['phone_ext'] = isset($params[$fieldName . '_ext-'. $locTypeId]) ? $params[$fieldName . '_ext-'. $locTypeId] : $params[$fieldName . '_ext-'.$actualLocTypeId];
           }
-          
+
           //special case to handle primary phone with different phone types
           // in this case we make first phone type as primary
           if (isset($data['phone'][$loc]['is_primary']) && !$primaryPhoneLoc) {
@@ -1961,7 +1962,7 @@ ORDER BY civicrm_email.is_primary DESC";
           }
 
           $type = $data['contact_type'];
-          if ( CRM_Utils_Array::value('contact_sub_type', $data) ) { 
+          if ( CRM_Utils_Array::value('contact_sub_type', $data) ) {
             $type = $data['contact_sub_type'];
             $type = explode(CRM_Core_DAO::VALUE_SEPARATOR, trim($type, CRM_Core_DAO::VALUE_SEPARATOR));
             // generally a contact even if, has multiple subtypes the parent-type is going to be one only
@@ -2809,7 +2810,7 @@ LEFT JOIN civicrm_address add2 ON ( add1.master_id = add2.id )
   static function getTimestamps($contactId) {
     $timestamps = CRM_Core_DAO::executeQuery(
       'SELECT created_date, modified_date
-      FROM civicrm_contact 
+      FROM civicrm_contact
       WHERE id = %1',
       array(
         1 => array($contactId, 'Integer'),

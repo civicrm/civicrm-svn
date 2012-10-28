@@ -456,9 +456,9 @@ function civicrm_api3_job_cleanup( $params ) {
   $session   = CRM_Utils_Array::value( 'session'   , $params, true  );
   $tempTable = CRM_Utils_Array::value( 'tempTables', $params, true  );
   $jobLog    = CRM_Utils_Array::value( 'jobLog'    , $params, true  );
+  $prevNext  = CRM_Utils_Array::value( 'prevNext'  , $params, true  );
   $dbCache   = CRM_Utils_Array::value( 'dbCache'   , $params, false );
   $memCache  = CRM_Utils_Array::value( 'memCache'  , $params, false );
-  $prevNext  = CRM_Utils_Array::value( 'prevNext'  , $params, false );
 
   if ( $session || $tempTable || $prevNext ) {
     require_once 'CRM/Core/BAO/Cache.php';
