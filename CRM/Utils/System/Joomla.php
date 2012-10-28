@@ -92,7 +92,7 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
 
   /*
    *  Change user name in host CMS
-   *  
+   *
    *  @param integer $ufID User ID in CMS
    *  @param string $ufName User name
    */
@@ -331,25 +331,24 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
     else {
       $url = "{$base}{$script}?option=com_civicrm{$separator}task={$path}{$Itemid}{$fragment}";
     }
-    
+
     // gross hack for joomla, we are in the backend and want to send a frontend url
-    if ($frontend &&
-      $config->userFramework == 'Joomla'
-    ) {
+    if ($frontend && $config->userFramework == 'Joomla') {
       // handle both joomla v1.5 and v1.6, CRM-7939
       $url = str_replace('/administrator/index2.php', '/index.php', $url);
       $url = str_replace('/administrator/index.php', '/index.php', $url);
 
       // CRM-8215
       $url = str_replace('/administrator/', '/index.php', $url);
-    } elseif ($forceBackend) {
+    }
+    elseif ($forceBackend) {
       if (defined('JVERSION')) {
         $joomlaVersion = JVERSION;
       } else {
         $jversion = new JVersion;
         $joomlaVersion = $jversion->getShortVersion();
       }
-      
+
       if (version_compare($joomlaVersion, '1.6') >= 0) {
         $url = str_replace('/index.php', '/administrator/index.php', $url);
       }
@@ -525,10 +524,10 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
     }
   }
 
-  /* 
+  /*
    * load joomla bootstrap
    *
-   * @param $params array with uid or name and password 
+   * @param $params array with uid or name and password
    * @param $loadUser boolean load cms user?
    * @param $throwError throw error on failure?
    */
