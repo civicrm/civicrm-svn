@@ -67,7 +67,7 @@ class CRM_Core_BAO_Email extends CRM_Core_DAO_Email {
    */
   static function add(&$params) {
     $email = new CRM_Core_DAO_Email();
-    $email->copyValues($params);
+
     /*
      * CRM-11006 move calls to pre hook from create function to add function
      */
@@ -85,6 +85,8 @@ class CRM_Core_BAO_Email extends CRM_Core_DAO_Email {
     else {
       CRM_Utils_Hook::pre('create', 'Email', NULL, $e);
     }
+
+    $email->copyValues($params);
 
     // lower case email field to optimize queries
     $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';

@@ -41,7 +41,7 @@ class CRM_Core_BAO_Phone extends CRM_Core_DAO_Phone {
   /*
    * Create phone object - note that the create function calls 'add' but
    * has more business logic
-   * 
+   *
    * @param array $params input parameters
    */
 
@@ -71,7 +71,6 @@ class CRM_Core_BAO_Phone extends CRM_Core_DAO_Phone {
   function add(&$params) {
     $phone = new CRM_Core_DAO_Phone();
 
-    $phone->copyValues($params);
     /*
      * CRM-11006 move calls to pre hook from create function to add function
      */
@@ -81,6 +80,9 @@ class CRM_Core_BAO_Phone extends CRM_Core_DAO_Phone {
     else {
       CRM_Utils_Hook::pre('create', 'Phone', NULL, $params);
     }
+
+    $phone->copyValues($params);
+
     $phone->save();
     /*
      * CRM-11006 move calls to pre hook from create function to add function
