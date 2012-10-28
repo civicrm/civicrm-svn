@@ -2606,17 +2606,6 @@ span.icon {
   background-image:url("../i/icons/jquery-ui-3E3E3E.png")
 }
 
-.crm-accordion-email-signature .crm-accordion-header .crm-accordion-pointer {
-  background-image:url("../i/icons/jquery-ui-2786C2.png")
-}
-
-.crm-accordion-email-signature .crm-accordion-header {
-  background-color: transparent;
-  color: #2786C2;
-  font-weight: normal;
-  padding-left: 0px;
-}
-
 .crm-accordion-wrapper {
   margin-bottom:4px;
 }
