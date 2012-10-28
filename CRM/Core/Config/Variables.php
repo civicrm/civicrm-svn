@@ -85,6 +85,11 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults {
   public $imageUploadURL = NULL;
 
   /**
+   * The local path to the default extension container
+   */
+  public $extensionsDir;
+
+  /**
    * The url for resources defined by extensions
    */
   public $extensionsURL = NULL;

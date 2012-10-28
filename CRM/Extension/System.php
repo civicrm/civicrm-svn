@@ -187,10 +187,14 @@ class CRM_Extension_System {
    */
   public function getCache() {
     if ($this->cache === NULL) {
-      $this->cache = new CRM_Utils_Cache_SqlGroup(array(
-        'group' => 'ext',
-        'prefetch' => TRUE,
-      ));
+      if (defined('CIVICRM_DSN')) {
+        $this->cache = new CRM_Utils_Cache_SqlGroup(array(
+          'group' => 'ext',
+          'prefetch' => TRUE,
+        ));
+      } else {
+        $this->cache = new CRM_Utils_Cache_ArrayCache(array());
+      }
     }
     return $this->cache;
   }
