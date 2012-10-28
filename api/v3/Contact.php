@@ -523,7 +523,7 @@ function _civicrm_api3_greeting_format_params($params) {
  */
 function civicrm_api3_contact_quicksearch($params) {
   // kept as an alias for compatibility reasons.  CRM-11136
-  return civicrm_api3_contact_getsearch($params);
+  return civicrm_api3_contact_getquick($params);
 }
 
 function civicrm_api3_contact_getquick($params) {
