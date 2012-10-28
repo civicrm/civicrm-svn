@@ -91,7 +91,7 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
         rowCount:35,
         json:1,
         entity:'Contact',
-        action:'quicksearch',
+        action:'getquick',
         sequential:1
       },params);
         //'return':'sort_name,email'
