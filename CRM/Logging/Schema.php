@@ -185,6 +185,8 @@ AND    TABLE_NAME LIKE 'log_civicrm_%'
     $create = explode("\n", $dao->Create_Table);
     foreach ($cols as $col) {
       $line = substr(array_pop(preg_grep("/^  `$col` /", $create)), 0, -1);
+      // CRM-11179
+      $line = preg_replace("/DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP/i", 'DEFAULT NULL', $line);
       CRM_Core_DAO::executeQuery("ALTER TABLE `{$this->db}`.log_$table ADD $line");
     }
 
@@ -226,7 +228,7 @@ AND    TABLE_NAME LIKE 'log_civicrm_%'
       $dao->report_id  = $report;
       $dao->title      = $titles[$report];
       $dao->permission = 'administer CiviCRM';
-      if ($report == 'logging/contact/summary') 
+      if ($report == 'logging/contact/summary')
         $dao->is_reserved = 1;
       $dao->insert();
     }
