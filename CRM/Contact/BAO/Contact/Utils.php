@@ -193,9 +193,7 @@ WHERE  id IN ( $idString )
    * Make sure the checksum is valid for the passed in contactID
    *
    * @param int    $contactID
-   * @param string $cs         checksum to match against
-   * @param int    $ts         timestamp that checksum was generated
-   * @param int    $live       life of this checksum in hours/ 'inf' for infinite
+   * @param string $inputCheck checksum to match against
    *
    * @return boolean           true if valid, else false
    * @static
