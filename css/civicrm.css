@@ -3686,3 +3686,9 @@ h2.crm-editable-enabled input {min-height:1.4em;}
 #crm-container.crm-public .price-set-row.highlight .crm-price-amount-label {
   color: #222222;
 }
+
+#crm-container .crm-extensions-upgrade {
+  background: #ffb;
+  border: 1px solid #000;
+  text-align: center;
+}

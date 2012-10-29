@@ -33,7 +33,7 @@
  *
  */
 
-class CRM_Utils_Cache_NoCache {
+class CRM_Utils_Cache_NoCache implements CRM_Utils_Cache_Interface {
 
   /**
    * We only need one instance of this object. So we use the singleton
@@ -51,7 +51,7 @@ class CRM_Utils_Cache_NoCache {
    *
    * @return void
    */
-  function __construct(&$config) {
+  function __construct($config) {
   }
 
   function set($key, &$value) {

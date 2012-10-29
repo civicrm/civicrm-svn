@@ -26,62 +26,61 @@
 */
 
 /**
- * This class stores logic for managing CiviCRM extensions.
- *
  * @package CRM
  * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
- *
  */
-class CRM_Core_Extensions_Module {
-  public function __construct($ext) {
-    $this->ext = $ext;
 
-    $this->config = CRM_Core_Config::singleton();
+/**
+ * An extension container is a locally-accessible source tree which can be
+ * scanned for extensions.
+ */
+class CRM_Extension_Container_Static implements CRM_Extension_Container_Interface {
+  public function __construct($exts) {
+    $this->exts = $exts;
   }
 
-  public function install() {
-    self::commonInstall('install');
-    self::commonInstall('enable');
+  /**
+   * {@inheritdoc}
+   */
+  public function getName() {
+    return $this->name;
   }
 
-  private function callHook($moduleName, $modulePath, $hookName) {
-    $file = $modulePath . DIRECTORY_SEPARATOR . $moduleName . '.php';
-    if (!file_exists($file)) {
-      return;
+  /**
+   * {@inheritdoc}
+   */
+  public function getKeys() {
+    return array_keys($this->exts);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPath($key) {
+    $e = $this->getExt($key);
+    return $e['path'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getResUrl($key) {
+    $e = $this->getExt($key);
+    return $e['resUrl'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function refresh() {
+  }
+
+  protected function getExt($key) {
+    if (isset($this->exts[$key])) {
+      return $this->exts[$key];
+    } else {
+      throw new CRM_Extension_Exception("Missing extension: $key");
     }
-    include_once $file;
-    $fnName = "{$moduleName}_civicrm_{$hookName}";
-    if (function_exists($fnName)) {
-      $fnName();
-    }
-  }
-
-  private function commonInstall($type = 'install') {
-    $this->callHook($this->ext->file,
-      $this->ext->path,
-      $type
-    );
-  }
-
-  public function uninstall() {
-    $this->commonUNInstall('uninstall');
-    return TRUE;
-  }
-
-  private function commonUNInstall($type = 'uninstall') {
-    $this->callHook($this->ext->file,
-      $this->ext->path,
-      $type
-    );
-  }
-
-  public function disable() {
-    $this->commonUNInstall('disable');
-  }
-
-  public function enable() {
-    $this->commonInstall('enable');
   }
 }
-

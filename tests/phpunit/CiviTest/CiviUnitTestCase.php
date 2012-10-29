@@ -325,6 +325,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     // enable backtrace to get meaningful errors
     $config->backtrace = 1;
 
+    // disable any left-over test extensions
+    CRM_Core_DAO::executeQuery('DELETE FROM civicrm_extension WHERE full_name LIKE "test.%"');
+
     // reset all the caches
     CRM_Utils_System::flushCache();
 

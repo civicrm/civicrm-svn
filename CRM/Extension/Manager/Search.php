@@ -33,77 +33,78 @@
  * $Id$
  *
  */
-class CRM_Core_Extensions_Report {
+class CRM_Extension_Manager_Search extends CRM_Extension_Manager_Base {
 
   /**
    *
    */
-  CONST REPORT_GROUP_NAME = 'report_template';
+  CONST CUSTOM_SEARCH_GROUP_NAME = 'custom_search';
 
-  public function __construct($ext) {
-    $this->ext = $ext;
+  public function __construct() {
+    parent::__construct(TRUE);
     $this->groupId = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionGroup',
-      self::REPORT_GROUP_NAME, 'id', 'name'
+      self::CUSTOM_SEARCH_GROUP_NAME, 'id', 'name'
     );
-    $this->customReports = CRM_Core_OptionGroup::values(self::REPORT_GROUP_NAME, TRUE, FALSE, FALSE, NULL, 'name', FALSE);
   }
 
-  public function install() {
-    if (array_key_exists($this->ext->key, $this->customReports)) {
-      CRM_Core_Error::fatal('This report is already registered.');
+  public function onPreInstall(CRM_Extension_Info $info) {
+    $customSearchesByName = $this->getCustomSearchesByName();
+    if (array_key_exists($info->key, $customSearchesByName)) {
+      CRM_Core_Error::fatal('This custom search is already registered.');
     }
 
-    if ($this->ext->typeInfo['component'] === 'Contact') {
-      $compId = 'null';
-    }
-    else {
-      $comp = CRM_Core_Component::get($this->ext->typeInfo['component']);
-      $compId = $comp->componentID;
-    }
-    if (empty($compId)) {
-      CRM_Core_Error::fatal("Component for which you're trying to install the extension (" . $this->ext->typeInfo['component'] . ") is currently disabled.");
-    }
     $weight = CRM_Utils_Weight::getDefaultWeight('CRM_Core_DAO_OptionValue',
       array('option_group_id' => $this->groupId)
     );
-    $ids = array();
+
     $params = array(
-      'label' => $this->ext->label . ' (' . $this->ext->key . ')',
-      'value' => $this->ext->typeInfo['reportUrl'],
-      'name' => $this->ext->key,
-      'weight' => $weight,
-      'description' => $this->ext->label . ' (' . $this->ext->key . ')',
-      'component_id' => $compId,
       'option_group_id' => $this->groupId,
+      'weight' => $weight,
+      'description' => $info->label . ' (' . $info->key . ')',
+      'name' => $info->key,
+      'value' => max($customSearchesByName) + 1,
+      'label' => $info->key,
       'is_active' => 1,
     );
 
+    $ids = array();
     $optionValue = CRM_Core_BAO_OptionValue::add($params, $ids);
-  }
-
-  public function uninstall() {
-
-    //        if( !array_key_exists( $this->ext->key, $this->customReports ) ) {
-    //            CRM_Core_Error::fatal( 'This report is not registered.' );
-    //        }
-
-    $cr          = CRM_Core_OptionGroup::values(self::REPORT_GROUP_NAME, FALSE, FALSE, FALSE, NULL, 'id', FALSE);
-    $id          = $cr[$this->customReports[$this->ext->key]];
-    $optionValue = CRM_Core_BAO_OptionValue::del($id);
 
     return $optionValue ? TRUE : FALSE;
   }
 
-  public function disable() {
-    $cr          = CRM_Core_OptionGroup::values(self::REPORT_GROUP_NAME, FALSE, FALSE, FALSE, NULL, 'id', FALSE);
-    $id          = $cr[$this->customReports[$this->ext->key]];
+  public function onPreUninstall(CRM_Extension_Info $info) {
+    $customSearchesByName = $this->getCustomSearchesByName();
+    if (!array_key_exists($info->key, $customSearchesByName)) {
+      CRM_Core_Error::fatal('This custom search is not registered.');
+    }
+
+    $cs          = $this->getCustomSearchesById();
+    $id          = $cs[$customSearchesByName[$info->key]];
+    $optionValue = CRM_Core_BAO_OptionValue::del($id);
+
+    return TRUE;
+  }
+
+  public function onPreDisable(CRM_Extension_Info $info) {
+    $customSearchesByName = $this->getCustomSearchesByName();
+    $cs          = $this->getCustomSearchesById();
+    $id          = $cs[$customSearchesByName[$info->key]];
     $optionValue = CRM_Core_BAO_OptionValue::setIsActive($id, 0);
   }
 
-  public function enable() {
-    $cr          = CRM_Core_OptionGroup::values(self::REPORT_GROUP_NAME, FALSE, FALSE, FALSE, NULL, 'id', FALSE);
-    $id          = $cr[$this->customReports[$this->ext->key]];
+  public function onPreEnable(CRM_Extension_Info $info) {
+    $customSearchesByName = $this->getCustomSearchesByName();
+    $cs          = $this->getCustomSearchesById();
+    $id          = $cs[$customSearchesByName[$info->key]];
     $optionValue = CRM_Core_BAO_OptionValue::setIsActive($id, 1);
   }
-}
 
+  protected function getCustomSearchesByName() {
+    return CRM_Core_OptionGroup::values(self::CUSTOM_SEARCH_GROUP_NAME, TRUE, FALSE, FALSE, NULL, 'name', FALSE, TRUE);
+  }
+
+  protected function getCustomSearchesById() {
+    return CRM_Core_OptionGroup::values(self::CUSTOM_SEARCH_GROUP_NAME, FALSE, FALSE, FALSE, NULL, 'id', FALSE, TRUE);
+  }
+}

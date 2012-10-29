@@ -128,7 +128,7 @@ class CRM_Contact_Selector_Custom extends CRM_Core_Selector_Base implements CRM_
     $this->_formValues = $formValues;
     $this->_includeContactIds = $includeContactIds;
 
-    $ext = new CRM_Core_Extensions();
+    $ext = CRM_Extension_System::singleton()->getMapper();
 
     if (!$ext->isExtensionKey($customSearchClass)) {
       if ($ext->isExtensionClass($customSearchClass)) {

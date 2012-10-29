@@ -26,50 +26,43 @@
 */
 
 /**
- * This class stores logic for managing schema upgrades in CiviCRM extensions.
  *
  * @package CRM
  * @copyright CiviCRM LLC (c) 2004-2012
  * $Id$
  *
  */
-class CRM_Core_Extensions_Upgrades {
-
-  const QUEUE_NAME = 'ext-upgrade';
+interface CRM_Utils_Cache_Interface {
 
   /**
-   * Determine whether any extensions have pending upgrades
+   * Set the value in the cache
    *
-   * @return bool
+   * @param string $key
+   * @param mixed $value
+   * @return void
    */
-  static function hasPending() {
-    $checks = CRM_Utils_Hook::upgrade('check');
-    if (is_array($checks)) {
-      foreach ($checks as $check) {
-        if ($check) {
-          return TRUE;
-        }
-      }
-    }
-
-    return FALSE;
-  }
+  function set($key, &$value);
 
   /**
-   * Fill a queue with upgrade tasks
+   * Get a value from the cache
    *
-   * @return CRM_Queue_Queue
+   * @param string $key
+   * @return mixed NULL if $key has not been previously set
    */
-  static function createQueue() {
-    $queue = CRM_Queue_Service::singleton()->create(array(
-      'type' => 'Sql',
-      'name' => self::QUEUE_NAME,
-      'reset' => TRUE,
-    ));
+  function get($key);
 
-    CRM_Utils_Hook::upgrade('enqueue', $queue);
+  /**
+   * Delete a value from the cache
+   *
+   * @param string $key
+   * @return void
+   */
+  function delete($key);
 
-    return $queue;
-  }
-
+  /**
+   * Delete all values from the cache
+   *
+   * @return void
+   */
+  function flush();
 }

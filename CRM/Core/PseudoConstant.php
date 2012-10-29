@@ -334,13 +334,6 @@ class CRM_Core_PseudoConstant {
   private static $greetingDefaults = array();
 
   /**
-   * Extensions
-   * @var array
-   * @static
-   */
-  private static $extensions = array();
-
-  /**
    * Extensions of type module
    * @var array
    * @static
@@ -1994,6 +1987,9 @@ ORDER BY name";
    *
    * The static array extensions
    *
+   * FIXME: This is called by civix but not by any core code. We
+   * should provide an API call which civix can use instead.
+   *
    * @access public
    * @static
    *
@@ -2026,53 +2022,7 @@ ORDER BY name";
    * @return array - array(array('prefix' => $, 'file' => $))
    */
   public static function getModuleExtensions($fresh = FALSE) {
-    $config = CRM_Core_Config::singleton();
-    if ($config->isUpgradeMode() || !isset($config->extensionsDir)) {
-      return array(); // hmm, ok
-    }
-
-    /*
-    if (!is_array(self::$moduleExtensions)) {
-      // Check prefetched module list
-
-      // ISSUE: 'Directory Preferences' can only store strings
-      self::$moduleExtensions = CRM_Core_BAO_Setting::getItem(
-        CRM_Core_BAO_Setting::DIRECTORY_PREFERENCES_NAME,
-        'modulePaths');
-    }
-    */
-
-    if ($fresh || !is_array(self::$moduleExtensions)) {
-      // Check canonical module list
-
-      self::$moduleExtensions = array();
-      $sql = '
-        SELECT full_name, file
-        FROM civicrm_extension
-        WHERE is_active = 1
-        AND type = "module"
-      ';
-      $dao = CRM_Core_DAO::executeQuery($sql);
-      while ($dao->fetch()) {
-        self::$moduleExtensions[] = array(
-          'prefix' => $dao->file,
-          'filePath' => $config->extensionsDir
-            . DIRECTORY_SEPARATOR . $dao->full_name
-            . DIRECTORY_SEPARATOR . $dao->file . '.php',
-        );
-      }
-
-      /*
-      // Store for future pre-fetching
-      // ISSUE: 'Directory Preferences' can only store strings
-      CRM_Core_BAO_Setting::setItem(
-        self::$moduleExtensions,
-        CRM_Core_BAO_Setting::DIRECTORY_PREFERENCES_NAME,
-        'modulePaths'
-        );
-      */
-    }
-    return self::$moduleExtensions;
+    return CRM_Extension_System::singleton()->getMapper()->getActiveModuleFiles($fresh);
   }
 
   /**

@@ -92,7 +92,7 @@ abstract class CRM_Core_Payment {
     $cacheKey = "{$mode}_{$paymentProcessor['id']}_" . (int)isset($paymentForm);
     if (!isset(self::$_singleton[$cacheKey]) || $force) {
       $config = CRM_Core_Config::singleton();
-      $ext = new CRM_Core_Extensions();
+      $ext = CRM_Extension_System::singleton()->getMapper();
       if ($ext->isExtensionKey($paymentProcessor['class_name'])) {
         $paymentClass = $ext->keyToClass($paymentProcessor['class_name'], 'payment');
         require_once ($ext->classToPath($paymentClass));
@@ -235,7 +235,7 @@ abstract class CRM_Core_Payment {
 
     while ($dao->fetch()) {
       // Check pp is extension
-      $ext = new CRM_Core_Extensions();
+      $ext = CRM_Extension_System::singleton()->getMapper();
       if ($ext->isExtensionKey($dao->class_name)) {
         $extension_instance_found = TRUE;
         $paymentClass = $ext->keyToClass($dao->class_name, 'payment');

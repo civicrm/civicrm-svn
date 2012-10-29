@@ -50,11 +50,10 @@ class CRM_Core_Resources {
   private static $_singleton = NULL;
 
   /**
-   * @var array(string => string) Map extension names to their base URLs. Note:
-   *  - The $extMap['*'] is a grandparent-URL for unknown extension dirs
+   * @var callable(string => string) Map extension names to their base URLs. Note:
    *  - URLs should end with a trailing '/'
    */
-  private $extMap = NULL;
+  private $extMapper = NULL;
 
   /**
    * Get or set the single instance of CRM_Core_Resources
@@ -67,13 +66,7 @@ class CRM_Core_Resources {
       self::$_singleton = $instance;
     }
     if (self::$_singleton === NULL) {
-      $config = CRM_Core_Config::singleton();
-      $extMap = array();
-      $extMap['civicrm'] = $config->userFrameworkResourceURL;
-      if (!empty($config->extensionsURL)) {
-        $extMap['*'] = rtrim($config->extensionsURL, '/') .'/';
-      }
-      self::$_singleton = new CRM_Core_Resources($extMap);
+      self::$_singleton = new CRM_Core_Resources(array(CRM_Extension_System::singleton()->getMapper(), 'keyToUrl'));
     }
     return self::$_singleton;
   }
@@ -81,12 +74,12 @@ class CRM_Core_Resources {
   /**
    * Construct a resource manager
    *
-   * @var $extMap array(extensionName => url) Map extension names to their base URLs. Note:
-   *  - The $extMap['*'] is a grandparent-URL for unknown extension dirs
+   * @var $extMapper array(extensionName => url) Map extension names to their base URLs. Note:
+   *  - The $extMapper['*'] is a grandparent-URL for unknown extension dirs
    *  - URLs should end with a trailing '/'
    */
-  public function __construct($extMap) {
-    $this->extMap = $extMap;
+  public function __construct($extMapper) {
+    $this->extMapper = $extMapper;
   }
 
   /**
@@ -212,14 +205,7 @@ class CRM_Core_Resources {
     if ($file === NULL) {
       $file = '';
     }
-
-    if (isset($this->extMap[$ext])) {
-      return $this->extMap[$ext] . $file;
-    } elseif (isset($this->extMap['*'])) {
-      return $this->extMap['*'] . $ext . '/' . $file;
-    } else {
-      CRM_Core_Error::debug_log_message("CRM_Core_Resources::getUrl('$ext','$file') failed: please ensure extensionsURL is configured");
-      return '/';
-    }
+    // TODO consider caching call_user_func results
+    return call_user_func($this->extMapper, $ext) . $file;
   }
 }

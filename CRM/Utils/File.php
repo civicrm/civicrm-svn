@@ -147,7 +147,7 @@ class CRM_Utils_File {
           $object = $target . DIRECTORY_SEPARATOR . $sibling;
 
           if (is_dir($object)) {
-            CRM_Utils_File::cleanDir($object, $rmdir);
+            CRM_Utils_File::cleanDir($object, $rmdir, $verbose);
           }
           elseif (is_file($object)) {
             if (!unlink($object)) {
@@ -466,6 +466,19 @@ HTACCESS;
   }
 
   /**
+   * Make a file path relative to some base dir
+   *
+   * @return string
+   */
+  function relativize($directory, $basePath) {
+    if (substr($directory, 0, strlen($basePath)) == $basePath) {
+      return substr($directory, strlen($basePath));
+    } else {
+      return $directory;
+    }
+  }
+
+  /**
    * Create a path to a temporary file which can endure for multiple requests
    *
    * TODO: Automatic file cleanup using, eg, TTL policy
@@ -499,6 +512,7 @@ HTACCESS;
     mkdir($fileName, 0700);
     return $fileName . '/';
   }
+
   /**
    * Search directory tree for files which match a glob pattern
    *
@@ -506,7 +520,7 @@ HTACCESS;
    * @param $pattern string, glob pattern, eg "*.txt"
    * @return array(string)
    */
-  function findFiles($dir, $pattern) {
+  static function findFiles($dir, $pattern) {
     $todos = array($dir);
     $result = array();
     while (!empty($todos)) {
@@ -529,6 +543,56 @@ HTACCESS;
       }
     }
     return $result;
+  }
+
+  /**
+   * Determine if $child is a sub-directory of $parent
+   *
+   * @param string $parent
+   * @param string $child
+   * @return bool
+   */
+  static function isChildPath($parent, $child, $checkRealPath = TRUE) {
+    if ($checkRealPath) {
+      $parent = realpath($parent);
+      $child = realpath($child);
+    }
+    $parentParts = explode('/', rtrim($parent, '/'));
+    $childParts = explode('/', rtrim($child, '/'));
+    while (($parentPart = array_shift($parentParts)) !== NULL) {
+      $childPart = array_shift($childParts);
+      if ($parentPart != $childPart) {
+        return FALSE;
+      }
+    }
+    if (empty($childParts)) {
+      return FALSE; // same directory
+    } else {
+      return TRUE;
+    }
+  }
+
+  /**
+   * Move $fromDir to $toDir, replacing/deleting any
+   * pre-existing content.
+   *
+   * @param string $fromDir the directory which should be moved
+   * @param string $toDir the new location of the directory
+   * @return bool TRUE on success
+   */
+  static function replaceDir($fromDir, $toDir, $verbose = FALSE) {
+    if (is_dir($toDir)) {
+      if (!self::cleanDir($toDir, TRUE, $verbose)) {
+        return FALSE;
+      }
+    }
+    // When CRM_Core_Extensions_Extension does this, it uses copyDir, and
+    // that seems odd. We'll just a rename().
+    // CRM_Utils_File::copyDir($fromDir, $toDir);
+    // if (!CRM_Utils_File::cleanDir($fromDir, TRUE, FALSE)) {
+    //   CRM_Core_Session::setStatus(ts('Failed to clean temp dir: %1', array(1 => $fromDir)), '', 'alert');
+    // }
+    return rename($fromDir, $toDir);
   }
 }
 

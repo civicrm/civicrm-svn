@@ -42,10 +42,13 @@ class CRM_Core_ResourcesTest extends CiviUnitTestCase {
   function setUp() {
     parent::setUp();
 
-    $this->res = new CRM_Core_Resources(array(
-      'civicrm' => 'http://core-app/',
-      '*' => 'http://ext-dir/',
-    ));
+    $this->res = new CRM_Core_Resources(function($name) {
+      if ($name == 'civicrm') {
+        return 'http://core-app/';
+      } else {
+        return 'http://ext-dir/' . $name . '/';
+      }
+    });
     CRM_Core_Resources::singleton($this->res);
 
     // Templates injected into regions should normally be file names, but for unit-testing it's handy to use "string:" notation

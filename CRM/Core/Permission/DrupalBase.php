@@ -73,7 +73,7 @@ class CRM_Core_Permission_DrupalBase extends CRM_Core_Permission_Base {
    * @return array - array reference of all groups.
    *
    */
-  public function &group($groupType = NULL, $excludeHidden = TRUE) {
+  public function group($groupType = NULL, $excludeHidden = TRUE) {
     if (!isset($this->_viewPermissionedGroups)) {
       $this->_viewPermissionedGroups = $this->_editPermissionedGroups = array();
     }
