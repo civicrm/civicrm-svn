@@ -644,10 +644,10 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
    * Flush information about loaded modules
    */
   function clearModuleList() {
+    CRM_Extension_System::singleton()->getCache()->flush();
     CRM_Utils_Hook::singleton(TRUE);
     CRM_Core_PseudoConstant::getModuleExtensions(TRUE);
     CRM_Core_Module::getAll(TRUE);
-    CRM_Extension_System::singleton()->getCache()->flush();
   }
 
   /**

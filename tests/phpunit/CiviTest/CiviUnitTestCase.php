@@ -380,6 +380,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
   protected function tearDown() {
     error_reporting(E_ALL & ~E_NOTICE);
     $this->cleanTempDirs();
+    $this->unsetExtensionSystem();
   }
 
   /**
@@ -2160,6 +2161,23 @@ AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
       if (is_dir($tempDir)) {
         CRM_Utils_File::cleanDir($tempDir, TRUE, FALSE);
       }
+    }
+  }
+
+  /**
+   * Temporarily replace the singleton extension with a different one
+   */
+  function setExtensionSystem(CRM_Extension_System $system) {
+    if ($this->origExtensionSystem == NULL) {
+      $this->origExtensionSystem = CRM_Extension_System::singleton();
+    }
+    CRM_Extension_System::setSingleton($this->origExtensionSystem);
+  }
+  
+  function unsetExtensionSystem() {
+    if ($this->origExtensionSystem !== NULL) {
+      CRM_Extension_System::setSingleton($this->origExtensionSystem);
+      $this->origExtensionSystem = NULL;
     }
   }
 }

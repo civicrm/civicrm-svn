@@ -7,10 +7,12 @@ class CRM_Extension_Manager_ModuleTest extends CiviUnitTestCase {
     parent::setUp();
     global $_test_extension_manager_moduletest_counts;
     $_test_extension_manager_moduletest_counts = array();
+    $this->basedir = $this->createTempDir('ext-');
     $this->system = new CRM_Extension_System(array(
-      'extensionsDir' => '',
-      'extensionsURL' => '',
+      'extensionsDir' => $this->basedir,
+      'extensionsURL' => 'http://testbase/',
     ));
+    $this->setExtensionSystem($this->system);
   }
 
   function tearDown() {
@@ -22,12 +24,11 @@ class CRM_Extension_Manager_ModuleTest extends CiviUnitTestCase {
    * Install an extension with a valid type name
    */
   function testInstallDisableUninstall() {
-    global $_test_extension_manager_moduletest_counts;
     $manager = $this->system->getManager();
     $this->assertModuleActiveByName(FALSE, 'moduletest');
 
     $manager->install(array('test.extension.manager.moduletest'));
-    $this->assertHookCounts(array(
+    $this->assertHookCounts('moduletest', array(
       'install' => 1,
       'enable' => 1,
       'disable' => 0,
@@ -37,7 +38,7 @@ class CRM_Extension_Manager_ModuleTest extends CiviUnitTestCase {
     $this->assertModuleActiveByKey(TRUE, 'test.extension.manager.moduletest');
 
     $manager->disable(array('test.extension.manager.moduletest'));
-    $this->assertHookCounts(array(
+    $this->assertHookCounts('moduletest', array(
       'install' => 1,
       'enable' => 1,
       'disable' => 1,
@@ -47,7 +48,7 @@ class CRM_Extension_Manager_ModuleTest extends CiviUnitTestCase {
     $this->assertModuleActiveByKey(FALSE, 'test.extension.manager.moduletest');
 
     $manager->uninstall(array('test.extension.manager.moduletest'));
-    $this->assertHookCounts(array(
+    $this->assertHookCounts('moduletest', array(
       'install' => 1,
       'enable' => 1,
       'disable' => 1,
@@ -61,13 +62,12 @@ class CRM_Extension_Manager_ModuleTest extends CiviUnitTestCase {
    * Install an extension with a valid type name
    */
   function testInstallDisableEnable() {
-    global $_test_extension_manager_moduletest_counts;
     $manager = $this->system->getManager();
     $this->assertModuleActiveByName(FALSE, 'moduletest');
     $this->assertModuleActiveByKey(FALSE, 'test.extension.manager.moduletest');
 
     $manager->install(array('test.extension.manager.moduletest'));
-    $this->assertHookCounts(array(
+    $this->assertHookCounts('moduletest', array(
       'install' => 1,
       'enable' => 1,
       'disable' => 0,
@@ -77,7 +77,7 @@ class CRM_Extension_Manager_ModuleTest extends CiviUnitTestCase {
     $this->assertModuleActiveByKey(TRUE, 'test.extension.manager.moduletest');
 
     $manager->disable(array('test.extension.manager.moduletest'));
-    $this->assertHookCounts(array(
+    $this->assertHookCounts('moduletest', array(
       'install' => 1,
       'enable' => 1,
       'disable' => 1,
@@ -87,7 +87,7 @@ class CRM_Extension_Manager_ModuleTest extends CiviUnitTestCase {
     $this->assertModuleActiveByKey(FALSE, 'test.extension.manager.moduletest');
 
     $manager->enable(array('test.extension.manager.moduletest'));
-    $this->assertHookCounts(array(
+    $this->assertHookCounts('moduletest', array(
       'install' => 1,
       'enable' => 2,
       'disable' => 1,
@@ -98,14 +98,122 @@ class CRM_Extension_Manager_ModuleTest extends CiviUnitTestCase {
   }
 
   /**
+   * Install an extension then forcibly remove the code and cleanup DB afterwards.
+   */
+  function testInstall_DirtyRemove_Disable_Uninstall() {
+    // create temporary extension (which can dirtily remove later)
+    $this->_createExtension('test.extension.manager.module.auto1', 'module', 'test_extension_manager_module_auto1');
+    $mainfile = $this->basedir . '/test.extension.manager.module.auto1/test_extension_manager_module_auto1.php';
+    $this->assertTrue(file_exists($mainfile));
+    $manager = $this->system->getManager();
+    $this->assertModuleActiveByName(FALSE, 'test_extension_manager_module_auto1');
+    $this->assertModuleActiveByKey(FALSE, 'test.extension.manager.module.auto1');
+
+    // install it
+    $manager->install(array('test.extension.manager.module.auto1'));
+    $this->assertEquals('installed', $manager->getStatus('test.extension.manager.module.auto1'));
+    $this->assertHookCounts('test_extension_manager_module_auto1', array(
+      'install' => 1,
+      'enable' => 1,
+      'disable' => 0,
+      'uninstall' => 0,
+    ));
+    $this->assertModuleActiveByName(TRUE, 'test_extension_manager_module_auto1');
+    $this->assertModuleActiveByKey(TRUE, 'test.extension.manager.module.auto1');
+
+    // dirty removal
+    CRM_Utils_File::cleanDir($this->basedir . '/test.extension.manager.module.auto1', TRUE, FALSE);
+    $manager->refresh();
+    $this->assertEquals('installed-missing', $manager->getStatus('test.extension.manager.module.auto1'));
+
+    // disable while missing
+    $manager->disable(array('test.extension.manager.module.auto1'));
+    $this->assertEquals('disabled-missing', $manager->getStatus('test.extension.manager.module.auto1'));
+    $this->assertHookCounts('test_extension_manager_module_auto1', array(
+      'install' => 1,
+      'enable' => 1,
+      'disable' => 0, // normally called -- but not for missing modules!
+      'uninstall' => 0,
+    ));
+    $this->assertModuleActiveByName(FALSE, 'test_extension_manager_module_auto1');
+    $this->assertModuleActiveByKey(FALSE, 'test.extension.manager.moduletest');
+
+    $manager->uninstall(array('test.extension.manager.module.auto1'));
+    $this->assertHookCounts('test_extension_manager_module_auto1', array(
+      'install' => 1,
+      'enable' => 1,
+      'disable' => 0, // normally called -- but not for missing modules!
+      'uninstall' => 0, // normally called -- but not for missing modules!
+    ));
+    $this->assertEquals('unknown', $manager->getStatus('test.extension.manager.module.auto1'));
+    $this->assertModuleActiveByName(FALSE, 'test_extension_manager_module_auto1');
+    $this->assertModuleActiveByKey(FALSE, 'test.extension.manager.module.auto1');
+  }
+
+  /**
+   * Install an extension then forcibly remove the code and cleanup DB afterwards.
+   */
+  function testInstall_DirtyRemove_Disable_Restore() {
+    // create temporary extension (which can dirtily remove later)
+    $this->_createExtension('test.extension.manager.module.auto1', 'module', 'test_extension_manager_module_auto1');
+    $mainfile = $this->basedir . '/test.extension.manager.module.auto1/test_extension_manager_module_auto1.php';
+    $this->assertTrue(file_exists($mainfile));
+    $manager = $this->system->getManager();
+    $this->assertModuleActiveByName(FALSE, 'test_extension_manager_module_auto1');
+    $this->assertModuleActiveByKey(FALSE, 'test.extension.manager.module.auto1');
+
+    // install it
+    $manager->install(array('test.extension.manager.module.auto1'));
+    $this->assertEquals('installed', $manager->getStatus('test.extension.manager.module.auto1'));
+    $this->assertHookCounts('test_extension_manager_module_auto1', array(
+      'install' => 1,
+      'enable' => 1,
+      'disable' => 0,
+      'uninstall' => 0,
+    ));
+    $this->assertModuleActiveByName(TRUE, 'test_extension_manager_module_auto1');
+    $this->assertModuleActiveByKey(TRUE, 'test.extension.manager.module.auto1');
+
+    // dirty removal
+    CRM_Utils_File::cleanDir($this->basedir . '/test.extension.manager.module.auto1', TRUE, FALSE);
+    $manager->refresh();
+    $this->assertEquals('installed-missing', $manager->getStatus('test.extension.manager.module.auto1'));
+
+    // disable while missing
+    $manager->disable(array('test.extension.manager.module.auto1'));
+    $this->assertEquals('disabled-missing', $manager->getStatus('test.extension.manager.module.auto1'));
+    $this->assertHookCounts('test_extension_manager_module_auto1', array(
+      'install' => 1,
+      'enable' => 1,
+      'disable' => 0, // normally called -- but not for missing modules!
+      'uninstall' => 0,
+    ));
+    $this->assertModuleActiveByName(FALSE, 'test_extension_manager_module_auto1');
+    $this->assertModuleActiveByKey(FALSE, 'test.extension.manager.moduletest');
+
+    // restore the code
+    $this->_createExtension('test.extension.manager.module.auto1', 'module', 'test_extension_manager_module_auto1');
+    $manager->refresh();
+    $this->assertHookCounts('test_extension_manager_module_auto1', array(
+      'install' => 1,
+      'enable' => 1,
+      'disable' => 0,
+      'uninstall' => 0,
+    ));
+    $this->assertEquals('disabled', $manager->getStatus('test.extension.manager.module.auto1'));
+    $this->assertModuleActiveByName(FALSE, 'test_extension_manager_module_auto1');
+    $this->assertModuleActiveByKey(FALSE, 'test.extension.manager.module.auto1');
+  }
+
+  /**
    * @param array $counts expected hook invocation counts ($hookName => $count)
    */
-  function assertHookCounts($counts) {
+  function assertHookCounts($module, $counts) {
     global $_test_extension_manager_moduletest_counts;
     foreach ($counts as $key => $expected) {
-      $actual = $_test_extension_manager_moduletest_counts[$key];
+      $actual = @$_test_extension_manager_moduletest_counts[$module][$key];
       $this->assertEquals($expected, $actual,
-         sprintf('Expected %d calls to hook_civicrm_%s -- found %d', $expected, $key, $actual)
+         sprintf('Expected %d call(s) to hook_civicrm_%s -- found %d', $expected, $key, $actual)
       );
     }
   }
@@ -130,4 +238,38 @@ class CRM_Extension_Manager_ModuleTest extends CiviUnitTestCase {
     }
     $this->assertEquals($expectedIsActive, FALSE);
   }
+
+  function _createExtension($key, $type, $file, $template = self::MODULE_TEMPLATE) {
+    $basedir = $this->basedir;
+    mkdir("$basedir/$key");
+    file_put_contents("$basedir/$key/info.xml", "<extension key='$key' type='$type'><file>$file</file></extension>");
+    file_put_contents("$basedir/$key/$file.php", strtr($template, array('_FILE_' => $file)));
+    $this->system->getCache()->flush();
+    $this->system->getManager()->refresh();
+  }
+  
+  public static function incHookCount($module, $name) {
+    global $_test_extension_manager_moduletest_counts;
+    $_test_extension_manager_moduletest_counts[$module][$name] = 1 + (int) $_test_extension_manager_moduletest_counts[$module][$name];
+  }
+  
+  const MODULE_TEMPLATE = "
+<?php
+function _FILE__civicrm_install() {
+  CRM_Extension_Manager_ModuleTest::incHookCount('_FILE_', 'install');
+}
+
+function _FILE__civicrm_uninstall() {
+  CRM_Extension_Manager_ModuleTest::incHookCount('_FILE_', 'uninstall');
+}
+
+function _FILE__civicrm_enable() {
+  CRM_Extension_Manager_ModuleTest::incHookCount('_FILE_', 'enable');
+}
+
+function _FILE__civicrm_disable() {
+  CRM_Extension_Manager_ModuleTest::incHookCount('_FILE_', 'disable');
+}
+";
+
 }

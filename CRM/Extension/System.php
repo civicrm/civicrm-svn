@@ -55,11 +55,19 @@ class CRM_Extension_System {
   /**
    * @return CRM_Extension_System
    */
-  public static function singleton($fresh = FALSE, $parameters = array()) {
+  public static function singleton($fresh = FALSE) {
     if (! self::$singleton || $fresh) {
-      self::$singleton = new CRM_Extension_System($parameters);
+      if (self::$singleton) {
+        self::$singleton = new CRM_Extension_System(self::$singleton->parameters);
+      } else {
+        self::$singleton = new CRM_Extension_System();
+      }
     }
     return self::$singleton;
+  }
+
+  public static function setSingleton(CRM_Extension_System $singleton) {
+    self::$singleton = $singleton;
   }
 
   public function __construct($parameters = array()) {
@@ -109,9 +117,8 @@ class CRM_Extension_System {
    */
   public function getDefaultContainer() {
     if ($this->defaultContainer === NULL) {
-      $config = CRM_Core_Config::singleton();
-      if ($config->extensionsDir) {
-        $this->defaultContainer = new CRM_Extension_Container_Basic($config->extensionsDir, $config->extensionsURL, $this->getCache(), 'default');
+      if ($this->parameters['extensionsDir']) {
+        $this->defaultContainer = new CRM_Extension_Container_Basic($this->parameters['extensionsDir'], $this->parameters['extensionsURL'], $this->getCache(), 'default');
       } else {
         $this->defaultContainer = FALSE;
       }
