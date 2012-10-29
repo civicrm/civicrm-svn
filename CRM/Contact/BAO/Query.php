@@ -4518,10 +4518,7 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
     return $this->_operator;
   }
 
-  function filterRelatedContacts(&$from,
-    &$where,
-    &$having
-  ) {
+  function filterRelatedContacts(&$from, &$where, &$having) {
     static $_rTypeProcessed = NULL;
     static $_rTypeFrom = NULL;
     static $_rTypeWhere = NULL;

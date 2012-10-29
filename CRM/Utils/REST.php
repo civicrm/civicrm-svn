@@ -503,7 +503,7 @@ class CRM_Utils_REST {
     $smarty= CRM_Core_Smarty::singleton( );
     CRM_Utils_System::setTitle( "$entity::$tplfile inline $tpl" );
     if( !$smarty->template_exists($tpl) ){
-      header("Status: 404 Not Found"); 
+      header("Status: 404 Not Found");
       die ("Can't find the requested template file templates/$tpl");
     }
     if (array_key_exists('id',$_GET)) {// special treatmenent, because it's often used
@@ -638,9 +638,7 @@ class CRM_Utils_REST {
     $className = CRM_Utils_Array::value('className', $_REQUEST);
 
     // If the function isn't in the civicrm namespace, reject the request.
-    if (($args[0] != 'civicrm' &&
-        count($args) != 3
-      ) && !$className) {
+    if (($args[0] != 'civicrm' && count($args) != 3) && !$className) {
       return self::error('Unknown function invocation.');
     }
 
@@ -657,8 +655,7 @@ class CRM_Utils_REST {
 
     // If the function isn't in the civicrm namespace or request
     // is for login or ping
-    if (empty($args) ||
-      $args[0] != 'civicrm' ||
+    if (empty($args) || $args[0] != 'civicrm' ||
       ((count($args) != 3) && ($args[1] != 'login') && ($args[1] != 'ping')) ||
       $args[1] == 'ping'
     ) {
@@ -677,9 +674,7 @@ class CRM_Utils_REST {
     $uid = NULL;
     $session = CRM_Core_Session::singleton();
 
-    if ($session->get('PHPSESSID') &&
-      $session->get('cms_user_id')
-    ) {
+    if ($session->get('PHPSESSID') && $session->get('cms_user_id')) {
       $uid = $session->get('cms_user_id');
     }
 
