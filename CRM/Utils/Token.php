@@ -936,7 +936,7 @@ class CRM_Utils_Token {
     $extraParams      = NULL,
     $tokens           = array(),
     $className        = NULL,
-    $jobID            = NULL,
+    $jobID            = NULL
   ) {
     if (empty($contactIDs)) {
       // putting a fatal here so we can track if/when this happens
