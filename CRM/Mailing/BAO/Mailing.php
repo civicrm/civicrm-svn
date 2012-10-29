@@ -249,8 +249,7 @@ WHERE  c.group_id = {$groupDAO->id}
                     ORDER BY $email.is_bulkmail";
 
     if ($mode == 'sms') {
-      $phoneTypes = CRM_Core_PseudoConstant::phoneType();
-      $phoneTypes = array_flip($phoneTypes);
+      $phoneTypes = CRM_Core_OptionGroup::values('phone_type', TRUE, FALSE, FALSE, NULL, 'name');
       $query      = "REPLACE INTO       I_$job_id (phone_id, contact_id)
 
                     SELECT DISTINCT     $phone.id as phone_id,

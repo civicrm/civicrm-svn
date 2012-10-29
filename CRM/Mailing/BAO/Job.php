@@ -589,6 +589,9 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
     $config = CRM_Core_Config::singleton();
     foreach ($fields as $key => $field) {
       $contactID = $field['contact_id'];
+      if (!array_key_exists($contactID, $details[0])) {
+        $details[0][$contactID] = array();
+      }
       /* Compose the mailing */
 
       $recipient = $replyToEmail = NULL;

@@ -760,8 +760,8 @@ LIMIT {$offset}, {$rowCount}
 
     $queryString = NULL;
     //check for mobile type
-    $phoneTypes = CRM_Core_PseudoConstant::phoneType();
-    $mobileType = CRM_Utils_Array::key('Mobile', $phoneTypes);
+    $phoneTypes = CRM_Core_OptionGroup::values('phone_type', TRUE, FALSE, FALSE, NULL, 'name');
+    $mobileType = CRM_Utils_Array::value('Mobile', $phoneTypes);
 
     if ($name = CRM_Utils_Array::value('name', $_GET)) {
       $name = CRM_Utils_Type::escape($name, 'String');
