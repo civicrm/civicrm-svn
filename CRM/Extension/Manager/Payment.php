@@ -190,8 +190,15 @@ class CRM_Extension_Manager_Payment extends CRM_Extension_Manager_Base {
 
     try {
       $paymentClass = $this->mapper->keyToClass($info->key, 'payment');
-      require_once $this->mapper->classToPath($paymentClass);
+      $file = $this->mapper->classToPath($paymentClass);
+      if (! file_exists($file)) {
+        CRM_Core_Session::setStatus(ts('Failed to load file (%3) for payment processor (%1) while running "%2"', array(1 => $info->key, 2 => $method, 3 => $file)), '', 'error');
+        return;
+      } else {
+        require_once $file;
+      }
     } catch (CRM_Extension_Exception $e) {
+      CRM_Core_Session::setStatus(ts('Failed to determine file path for payment processor (%1) while running "%2"', array(1 => $info->key, 2 => $method)), '', 'error');
       return;
     }
 
