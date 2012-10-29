@@ -34,6 +34,8 @@
  */
 class CRM_Contact_Form_Search_Custom_FullText implements CRM_Contact_Form_Search_Interface {
 
+  const LIMIT = 10;
+
   protected $_formValues;
 
   protected $_columns;
@@ -54,24 +56,20 @@ class CRM_Contact_Form_Search_Custom_FullText implements CRM_Contact_Form_Search
 
   protected $_limitRowClause = NULL;
 
-  protected $_limitNumber = 10;
+  protected $_limitDetailClause = NULL;
+
+  protected $_limitNumber = 11; // this should be one more than self::LIMIT
 
   protected $_foundRows = array();
 
   function __construct(&$formValues) {
     $this->_formValues = &$formValues;
 
-    $this->_text = CRM_Utils_Array::value('text',
-      $formValues
-    );
-    $this->_table = CRM_Utils_Array::value('table',
-      $formValues
-    );
+    $this->_text = CRM_Utils_Array::value('text', $formValues);
+    $this->_table = CRM_Utils_Array::value('table', $formValues);
 
     if (!$this->_text) {
-      $this->_text = CRM_Utils_Request::retrieve('text', 'String',
-        CRM_Core_DAO::$_nullObject
-      );
+      $this->_text = CRM_Utils_Request::retrieve('text', 'String', CRM_Core_DAO::$_nullObject);
       if ($this->_text) {
         $this->_text = trim($this->_text);
         $formValues['text'] = $this->_text;
@@ -79,9 +77,7 @@ class CRM_Contact_Form_Search_Custom_FullText implements CRM_Contact_Form_Search
     }
 
     if (!$this->_table) {
-      $this->_table = CRM_Utils_Request::retrieve('table', 'String',
-        CRM_Core_DAO::$_nullObject
-      );
+      $this->_table = CRM_Utils_Request::retrieve('table', 'String', CRM_Core_DAO::$_nullObject);
       if ($this->_table) {
         $formValues['table'] = $this->_table;
       }
@@ -108,7 +104,7 @@ class CRM_Contact_Form_Search_Custom_FullText implements CRM_Contact_Form_Search
 
     if (!$this->_table) {
       $this->_limitClause = " LIMIT {$this->_limitNumber}";
-      $this->_limitRowClause = $this->_limitClause;
+      $this->_limitRowClause = $this->_limitDetailClause = $this->_limitClause;
     }
     else {
       // when there is table specified, we would like to use the pager. But since
@@ -119,8 +115,9 @@ class CRM_Contact_Form_Search_Custom_FullText implements CRM_Contact_Form_Search
       $pageId = CRM_Utils_Array::value('crmPID', $_REQUEST);
       $pageId = $pageId ? $pageId : 1;
       $offset = ($pageId - 1) * $rowCount;
-      $this->_limitClause = " LIMIT $offset, $rowCount";
+      $this->_limitClause = NULL;
       $this->_limitRowClause = " LIMIT $rowCount";
+      $this->_limitDetailClause = " LIMIT $offset, $rowCount";
     }
   }
 
@@ -205,7 +202,7 @@ CREATE TEMPORARY TABLE {$this->_tableName} (
 CREATE TEMPORARY TABLE {$this->_entityIDTableName} (
   id int unsigned NOT NULL AUTO_INCREMENT,
   entity_id int unsigned NOT NULL,
-  
+
   UNIQUE INDEX unique_entity_id ( entity_id ),
   PRIMARY KEY ( id )
 ) ENGINE=HEAP DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci
@@ -216,40 +213,30 @@ CREATE TEMPORARY TABLE {$this->_entityIDTableName} (
   function fillTable() {
     $config = CRM_Core_Config::singleton();
 
-    if ((!$this->_table ||
-        $this->_table == 'Contact'
-      )) {
+    if ((!$this->_table || $this->_table == 'Contact')) {
       $this->fillContact();
     }
 
-    if ((!$this->_table ||
-        $this->_table == 'Activity'
-      ) &&
+    if ((!$this->_table || $this->_table == 'Activity') &&
       CRM_Core_Permission::check('view all activities')
     ) {
       $this->fillActivity();
     }
 
-    if ((!$this->_table ||
-        $this->_table == 'Case'
-      ) &&
+    if ((!$this->_table || $this->_table == 'Case') &&
       in_array('CiviCase', $config->enableComponents)
     ) {
       $this->fillCase();
     }
 
-    if ((!$this->_table ||
-        $this->_table == 'Contribution'
-      ) &&
+    if ((!$this->_table || $this->_table == 'Contribution') &&
       in_array('CiviContribute', $config->enableComponents) &&
       CRM_Core_Permission::check('access CiviContribute')
     ) {
       $this->fillContribution();
     }
 
-    if ((!$this->_table ||
-        $this->_table == 'Participant'
-      ) &&
+    if ((!$this->_table || $this->_table == 'Participant') &&
       (in_array('CiviEvent', $config->enableComponents) &&
         CRM_Core_Permission::check('view event participants')
       )
@@ -257,9 +244,7 @@ CREATE TEMPORARY TABLE {$this->_entityIDTableName} (
       $this->fillParticipant();
     }
 
-    if ((!$this->_table ||
-        $this->_table == 'Membership'
-      ) &&
+    if ((!$this->_table || $this->_table == 'Membership') &&
       in_array('CiviMember', $config->enableComponents) &&
       CRM_Core_Permission::check('access CiviMember')
     ) {
@@ -288,7 +273,7 @@ CREATE TEMPORARY TABLE {$this->_entityIDTableName} (
     $sql = "
 DELETE     t.*
 FROM       {$this->_tableName} t
-WHERE      NOT EXISTS ( SELECT c.id 
+WHERE      NOT EXISTS ( SELECT c.id
                         FROM civicrm_acl_contact_cache c
                         WHERE c.user_id = %1 AND t.contact_id = c.contact_id )
 ";
@@ -298,7 +283,7 @@ WHERE      NOT EXISTS ( SELECT c.id
 DELETE     t.*
 FROM       {$this->_tableName} t
 WHERE      t.table_name = 'Activity' AND
-           NOT EXISTS ( SELECT c.id 
+           NOT EXISTS ( SELECT c.id
                         FROM civicrm_acl_contact_cache c
                         WHERE c.user_id = %1 AND ( t.target_contact_id = c.contact_id OR t.target_contact_id IS NULL ) )
 ";
@@ -308,7 +293,7 @@ WHERE      t.table_name = 'Activity' AND
 DELETE     t.*
 FROM       {$this->_tableName} t
 WHERE      t.table_name = 'Activity' AND
-           NOT EXISTS ( SELECT c.id 
+           NOT EXISTS ( SELECT c.id
                         FROM civicrm_acl_contact_cache c
                         WHERE c.user_id = %1 AND ( t.assignee_contact_id = c.contact_id OR t.assignee_contact_id IS NULL ) )
 ";
@@ -352,15 +337,12 @@ AND        cf.html_type IN ( 'Text', 'TextArea', 'RichTextEditor' )
     foreach ($tables as $tableName => $tableValues) {
       if ($tableName == 'sql') {
         foreach ($tableValues as $sqlStatement) {
-          $sqlStatement = str_ireplace('SELECT', 'SELECT SQL_CALC_FOUND_ROWS', $sqlStatement);
           $sql = "
 REPLACE INTO {$this->_entityIDTableName} ( entity_id )
 $sqlStatement
 {$this->_limitClause}
 ";
           CRM_Core_DAO::executeQuery($sql);
-          $totalRows = CRM_Core_DAO::singleValueQuery("SELECT FOUND_ROWS();");
-          $maxRowCount = ($totalRows > $maxRowCount) ? $totalRows : $maxRowCount;
         }
       }
       else {
@@ -392,23 +374,34 @@ $sqlStatement
 
         $sql = "
 REPLACE INTO {$this->_entityIDTableName} ( entity_id )
-SELECT  SQL_CALC_FOUND_ROWS distinct {$tableValues['id']}
+SELECT  distinct {$tableValues['id']}
 FROM    $tableName
 WHERE   ( $whereClause )
 AND     {$tableValues['id']} IS NOT NULL
 {$this->_limitClause}
 ";
         CRM_Core_DAO::executeQuery($sql);
-        $totalRows = CRM_Core_DAO::singleValueQuery("SELECT FOUND_ROWS();");
-        $maxRowCount = ($totalRows > $maxRowCount) ? $totalRows : $maxRowCount;
       }
     }
 
+    $rowCount = "SELECT count(*) FROM {$this->_entityIDTableName}";
     $tableKey = array_keys($tables);
-    $this->_foundRows[ucfirst(str_replace('civicrm_', '', $tableKey[0]))] = $maxRowCount;
+    $this->_foundRows[ucfirst(str_replace('civicrm_', '', $tableKey[0]))] =
+      CRM_Core_DAO::singleValueQuery($rowCount);
   }
 
   function fillContactIDs() {
+    $contactSQLL = array();
+    $contactSQL[] = "
+SELECT     et.entity_id
+FROM       civicrm_entity_tag et
+INNER JOIN civicrm_tag t ON et.tag_id = t.id
+WHERE      et.entity_table = 'civicrm_contact'
+AND        et.tag_id       = t.id
+AND        t.name LIKE \"{$this->_text}\"
+GROUP BY   et.entity_id
+";
+
     $tables = array(
       'civicrm_contact' => array('id' => 'id',
         'fields' => array(
@@ -441,6 +434,7 @@ AND     {$tableValues['id']} IS NOT NULL
           'note' => NULL,
         ),
       ),
+      'sql' => $contactSQL,
     );
 
     // get the custom data info
@@ -463,14 +457,14 @@ AND     {$tableValues['id']} IS NOT NULL
     $contactSQL = array();
 
     $contactSQL[] = "
-SELECT     distinct ca.id 
+SELECT     distinct ca.id
 FROM       civicrm_activity ca
 INNER JOIN civicrm_contact c ON ca.source_contact_id = c.id
 LEFT JOIN  civicrm_email e ON e.contact_id = c.id
 LEFT JOIN  civicrm_option_group og ON og.name = 'activity_type'
-LEFT JOIN  civicrm_option_value ov ON ( ov.option_group_id = og.id ) 
+LEFT JOIN  civicrm_option_value ov ON ( ov.option_group_id = og.id )
 WHERE      (c.sort_name LIKE {$this->_text} OR c.display_name LIKE {$this->_text}) OR
-           ( e.email LIKE {$this->_text}    AND 
+           ( e.email LIKE {$this->_text}    AND
              ca.activity_type_id = ov.value AND
              ov.name IN ('Inbound Email', 'Email') )
 AND (ca.is_deleted = 0 OR ca.is_deleted IS NULL OR
@@ -478,15 +472,15 @@ AND (ca.is_deleted = 0 OR ca.is_deleted IS NULL OR
 ";
 
     $contactSQL[] = "
-SELECT     distinct ca.id 
+SELECT     distinct ca.id
 FROM       civicrm_activity ca
 INNER JOIN civicrm_activity_target cat ON cat.activity_id = ca.id
 INNER JOIN civicrm_contact c ON cat.target_contact_id = c.id
 LEFT  JOIN civicrm_email e ON cat.target_contact_id = e.contact_id
 LEFT  JOIN civicrm_option_group og ON og.name = 'activity_type'
-LEFT  JOIN civicrm_option_value ov ON ( ov.option_group_id = og.id ) 
+LEFT  JOIN civicrm_option_value ov ON ( ov.option_group_id = og.id )
 WHERE      (c.sort_name LIKE {$this->_text} OR c.display_name LIKE {$this->_text}) OR
-           ( e.email LIKE {$this->_text}    AND 
+           ( e.email LIKE {$this->_text}    AND
              ca.activity_type_id = ov.value AND
              ov.name IN ('Inbound Email', 'Email') )
 AND (ca.is_deleted = 0 OR ca.is_deleted IS NULL OR
@@ -494,7 +488,7 @@ AND (ca.is_deleted = 0 OR ca.is_deleted IS NULL OR
 ";
 
     $contactSQL[] = "
-SELECT     distinct ca.id 
+SELECT     distinct ca.id
 FROM       civicrm_activity ca
 INNER JOIN civicrm_activity_assignment caa ON caa.activity_id = ca.id
 INNER JOIN civicrm_contact c ON caa.assignee_contact_id = c.id
@@ -509,6 +503,16 @@ AND        (c.sort_name LIKE {$this->_text} OR c.display_name LIKE {$this->_text
              ov.name IN ('Inbound Email', 'Email') )
 AND (ca.is_deleted = 0 OR ca.is_deleted IS NULL OR
      c.is_deleted = 0 OR c.is_deleted IS NULL)
+";
+
+    $contactSQL[] = "
+SELECT     et.entity_id
+FROM       civicrm_entity_tag et
+INNER JOIN civicrm_tag t ON et.tag_id = t.id
+WHERE      et.entity_table = 'civicrm_activity'
+AND        et.tag_id       = t.id
+AND        t.name LIKE \"{$this->_text}\"
+GROUP BY   et.entity_id
 ";
 
     $tables = array(
@@ -534,46 +538,54 @@ AND (ca.is_deleted = 0 OR ca.is_deleted IS NULL OR
   }
 
   function fillCase() {
-    $maxRowCount = 0;
-    $sql = "
-INSERT INTO {$this->_tableName}
-( table_name, contact_id, sort_name, case_id, case_start_date, case_end_date, case_is_deleted )
-SELECT SQL_CALC_FOUND_ROWS 'Case', c.id, c.sort_name, cc.id, DATE(cc.start_date), DATE(cc.end_date), cc.is_deleted
-FROM      civicrm_case cc 
+    $this->fillCaseIDs( );
+
+    //move data from entity table to detail table
+    $this->moveEntityToDetail('Case');
+  }
+
+  function fillCaseIDs( ) {
+    $contactSQL = array();
+
+    $contactSQL[] = "
+SELECT    distinct cc.id
+FROM      civicrm_case cc
 LEFT JOIN civicrm_case_contact ccc ON cc.id = ccc.case_id
 LEFT JOIN civicrm_contact c ON ccc.contact_id = c.id
 WHERE     (c.sort_name LIKE {$this->_text} OR c.display_name LIKE {$this->_text})
           AND (cc.is_deleted = 0 OR cc.is_deleted IS NULL)
-{$this->_limitClause}
 ";
 
-    CRM_Core_DAO::executeQuery($sql);
-    $totalRows = CRM_Core_DAO::singleValueQuery("SELECT FOUND_ROWS();");
-    $maxRowCount = ($totalRows > $maxRowCount) ? $totalRows : $maxRowCount;
-
     if ($this->_textID) {
-      $sql = "
-INSERT INTO {$this->_tableName}
-  ( table_name, contact_id, sort_name, case_id, case_start_date, case_end_date, case_is_deleted )
-SELECT SQL_CALC_FOUND_ROWS 'Case', c.id, c.sort_name, cc.id, DATE(cc.start_date), DATE(cc.end_date), cc.is_deleted
-FROM      civicrm_case cc 
+      $contactSQL[] = "
+SELECT    distinct cc.id
+FROM      civicrm_case cc
 LEFT JOIN civicrm_case_contact ccc ON cc.id = ccc.case_id
 LEFT JOIN civicrm_contact c ON ccc.contact_id = c.id
 WHERE     cc.id = {$this->_textID}
           AND (cc.is_deleted = 0 OR cc.is_deleted IS NULL)
-{$this->_limitClause}
-    ";
-
-      CRM_Core_DAO::executeQuery($sql);
-      $totalRows = CRM_Core_DAO::singleValueQuery("SELECT FOUND_ROWS();");
-      $maxRowCount = ($totalRows > $maxRowCount) ? $totalRows : $maxRowCount;
+";
     }
 
-    $this->_foundRows['Case'] = $maxRowCount;
+    $contactSQL[] = "
+SELECT     et.entity_id
+FROM       civicrm_entity_tag et
+INNER JOIN civicrm_tag t ON et.tag_id = t.id
+WHERE      et.entity_table = 'civicrm_case'
+AND        et.tag_id       = t.id
+AND        t.name LIKE {$this->_text}
+GROUP BY   et.entity_id
+";
+
+    $tables = array(
+      'civicrm_case' => array( 'fields' => array( ) ),
+      'sql' => $contactSQL,
+    );
+
+    $this->runQueries($tables);
   }
 
   function fillContribution() {
-
     //get contribution ids in entity table.
     $this->fillContributionIDs();
 
@@ -587,7 +599,7 @@ WHERE     cc.id = {$this->_textID}
   function fillContributionIDs() {
     $contactSQL = array();
     $contactSQL[] = "
-SELECT     distinct cc.id 
+SELECT     distinct cc.id
 FROM       civicrm_contribution cc
 INNER JOIN civicrm_contact c ON cc.contact_id = c.id
 WHERE      (c.sort_name LIKE {$this->_text} OR
@@ -634,7 +646,7 @@ WHERE      (c.sort_name LIKE {$this->_text} OR
   function fillParticipantIDs() {
     $contactSQL = array();
     $contactSQL[] = "
-SELECT     distinct cp.id 
+SELECT     distinct cp.id
 FROM       civicrm_participant cp
 INNER JOIN civicrm_contact c ON cp.contact_id = c.id
 WHERE      (c.sort_name LIKE {$this->_text} OR c.display_name LIKE {$this->_text})
@@ -678,7 +690,7 @@ WHERE      (c.sort_name LIKE {$this->_text} OR c.display_name LIKE {$this->_text
   function fillMembershipIDs() {
     $contactSQL = array();
     $contactSQL[] = "
-SELECT     distinct cm.id 
+SELECT     distinct cm.id
 FROM       civicrm_membership cm
 INNER JOIN civicrm_contact c ON cm.contact_id = c.id
 WHERE      (c.sort_name LIKE {$this->_text} OR c.display_name LIKE {$this->_text})
@@ -732,7 +744,10 @@ WHERE      (c.sort_name LIKE {$this->_text} OR c.display_name LIKE {$this->_text
       $tables
     );
 
-    $form->assign('csID', CRM_Utils_Array::value('customSearchID', $this->_formValues));
+    $form->assign('csID', $form->get('csid'));
+
+    // also add the limit constant
+    $form->assign('limit', self::LIMIT);
 
     /**
      * You can define a custom title for the search form
@@ -777,9 +792,7 @@ WHERE      (c.sort_name LIKE {$this->_text} OR c.display_name LIKE {$this->_text
           $row[$name] = $dao->$name;
         }
         else {
-          $row['activity_type'] = CRM_Utils_Array::value($dao->$name,
-            $activityTypes
-          );
+          $row['activity_type'] = CRM_Utils_Array::value($dao->$name, $activityTypes);
         }
       }
       if (isset($row['participant_role'])) {
@@ -796,10 +809,12 @@ WHERE      (c.sort_name LIKE {$this->_text} OR c.display_name LIKE {$this->_text
     $summary['Count'] = array();
     foreach (array_keys($summary) as $table) {
       $summary['Count'][$table] = CRM_Utils_Array::value($table, $this->_foundRows);
-    }
-
-    if (!$this->_table) {
-      $summary['addShowAllLink'] = TRUE;
+      if ($summary['Count'][$table] >= self::LIMIT) {
+        $summary['addShowAllLink'][$table] = TRUE;
+      }
+      else {
+        $summary['addShowAllLink'][$table] = FALSE;
+      }
     }
 
     return $summary;
@@ -828,7 +843,7 @@ WHERE      (c.sort_name LIKE {$this->_text} OR c.display_name LIKE {$this->_text
     $this->initialize();
 
     $sql = "
-SELECT 
+SELECT
   contact_a.contact_id   as contact_id  ,
   contact_a.sort_name as sort_name
 FROM
@@ -876,14 +891,14 @@ INSERT INTO {$this->_tableName}
 SELECT     c.id, c.sort_name, 'Contact'
   FROM     {$this->_entityIDTableName} ct
 INNER JOIN civicrm_contact c ON ct.entity_id = c.id
-{$this->_limitRowClause}
+{$this->_limitDetailClause}
 ";
         break;
 
       case 'Activity':
         $sql = "
 INSERT INTO {$this->_tableName}
-( table_name, activity_id, subject, details, contact_id, sort_name, assignee_contact_id, assignee_sort_name, target_contact_id, 
+( table_name, activity_id, subject, details, contact_id, sort_name, assignee_contact_id, assignee_sort_name, target_contact_id,
   target_sort_name, activity_type_id, case_id, client_id )
 SELECT    'Activity', ca.id, substr(ca.subject, 1, 50), substr(ca.details, 1, 250),
            c1.id, c1.sort_name,
@@ -902,51 +917,51 @@ LEFT JOIN  civicrm_contact c3 ON cat.target_contact_id = c3.id
 LEFT JOIN  civicrm_case_activity cca ON cca.activity_id = ca.id
 LEFT JOIN  civicrm_case_contact ccc ON ccc.case_id = cca.case_id
 WHERE (ca.is_deleted = 0 OR ca.is_deleted IS NULL)
-{$this->_limitRowClause}
+{$this->_limitDetailClause}
 ";
         break;
 
       case 'Contribution':
         $sql = "
 INSERT INTO {$this->_tableName}
-( table_name, contact_id, sort_name, contribution_id, contribution_type, contribution_page, contribution_receive_date, 
+( table_name, contact_id, sort_name, contribution_id, contribution_type, contribution_page, contribution_receive_date,
   contribution_total_amount, contribution_trxn_Id, contribution_source, contribution_status, contribution_check_number )
-   SELECT  'Contribution', c.id, c.sort_name, cc.id, cct.name, ccp.title, cc.receive_date, 
-           cc.total_amount, cc.trxn_id, cc.source, contribution_status.label, cc.check_number 
+   SELECT  'Contribution', c.id, c.sort_name, cc.id, cct.name, ccp.title, cc.receive_date,
+           cc.total_amount, cc.trxn_id, cc.source, contribution_status.label, cc.check_number
      FROM  {$this->_entityIDTableName} ct
 INNER JOIN civicrm_contribution cc ON cc.id = ct.entity_id
 LEFT JOIN  civicrm_contact c ON cc.contact_id = c.id
 LEFT JOIN  civicrm_contribution_type cct ON cct.id = cc.contribution_type_id
-LEFT JOIN  civicrm_contribution_page ccp ON ccp.id = cc.contribution_page_id 
+LEFT JOIN  civicrm_contribution_page ccp ON ccp.id = cc.contribution_page_id
 LEFT JOIN  civicrm_option_group option_group_contributionStatus ON option_group_contributionStatus.name = 'contribution_status'
-LEFT JOIN  civicrm_option_value contribution_status ON 
+LEFT JOIN  civicrm_option_value contribution_status ON
 ( contribution_status.option_group_id = option_group_contributionStatus.id AND contribution_status.value = cc.contribution_status_id )
-{$this->_limitRowClause}
+{$this->_limitDetailClause}
 ";
         break;
 
       case 'Participant':
         $sql = "
 INSERT INTO {$this->_tableName}
-( table_name, contact_id, sort_name, participant_id, event_title, participant_fee_level, participant_fee_amount, 
+( table_name, contact_id, sort_name, participant_id, event_title, participant_fee_level, participant_fee_amount,
 participant_register_date, participant_source, participant_status, participant_role )
-   SELECT  'Participant', c.id, c.sort_name, cp.id, ce.title, cp.fee_level, cp.fee_amount, cp.register_date, cp.source, 
+   SELECT  'Participant', c.id, c.sort_name, cp.id, ce.title, cp.fee_level, cp.fee_amount, cp.register_date, cp.source,
            participantStatus.label, cp.role_id
      FROM  {$this->_entityIDTableName} ct
 INNER JOIN civicrm_participant cp ON cp.id = ct.entity_id
 LEFT JOIN  civicrm_contact c ON cp.contact_id = c.id
 LEFT JOIN  civicrm_event ce ON ce.id = cp.event_id
 LEFT JOIN  civicrm_participant_status_type participantStatus ON participantStatus.id = cp.status_id
-{$this->_limitRowClause}
+{$this->_limitDetailClause}
 ";
         break;
 
       case 'Membership':
-        $sql = " 
+        $sql = "
 INSERT INTO {$this->_tableName}
-( table_name, contact_id, sort_name, membership_id, membership_type, membership_fee, membership_start_date, 
+( table_name, contact_id, sort_name, membership_id, membership_type, membership_fee, membership_start_date,
 membership_end_date, membership_source, membership_status )
-   SELECT  'Membership', c.id, c.sort_name, cm.id, cmt.name, cc.total_amount, cm.start_date, cm.end_date, cm.source, cms.name 
+   SELECT  'Membership', c.id, c.sort_name, cm.id, cmt.name, cc.total_amount, cm.start_date, cm.end_date, cm.source, cms.name
      FROM  {$this->_entityIDTableName} ct
 INNER JOIN civicrm_membership cm ON cm.id = ct.entity_id
 LEFT JOIN  civicrm_contact c ON cm.contact_id = c.id
@@ -954,9 +969,23 @@ LEFT JOIN  civicrm_membership_type cmt ON cmt.id = cm.membership_type_id
 LEFT JOIN  civicrm_membership_payment cmp ON cmp.membership_id = cm.id
 LEFT JOIN  civicrm_contribution cc ON cc.id = cmp.contribution_id
 LEFT JOIN  civicrm_membership_status cms ON cms.id = cm.status_id
-{$this->_limitRowClause}
+{$this->_limitDetailClause}
 ";
         break;
+
+      case 'Case':
+        $sql = "
+INSERT INTO {$this->_tableName}
+( table_name, contact_id, sort_name, case_id, case_start_date, case_end_date, case_is_deleted )
+SELECT 'Case', c.id, c.sort_name, cc.id, DATE(cc.start_date), DATE(cc.end_date), cc.is_deleted
+FROM       {$this->_entityIDTableName} ct
+INNER JOIN civicrm_case cc ON cc.id = ct.entity_id
+LEFT JOIN  civicrm_case_contact ccc ON cc.id = ccc.case_id
+LEFT JOIN  civicrm_contact c ON ccc.contact_id = c.id
+{$this->_limitClause}
+";
+        break;
+
     }
 
     if ($sql) {
