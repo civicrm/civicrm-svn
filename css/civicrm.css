@@ -1694,43 +1694,6 @@ table.campaign td,
   cursor: pointer;
 }
 
-/*Styles for Context menu */
-#crm-container .contextMenu,
-.crm-contextmenu {
-  position   : absolute;
-  z-index    : 9999;
-  border     : none;
-  padding    : 5px 0 0 0px;
-  margin     : 0px 0px 0px -20px;
-  display    : none;
-  width      : 180px;
-  background:transparent url(../i/dropdown-pointer.gif) no-repeat scroll 10px 1px;
-}
-
-#squeeze .contextMenu {
-  margin     : -95px 0px 0px -275px;
-}
-
-#crm-container .contextMenu li,
-.crm-contextmenu li {
-  background-image: none;
-  list-style : none;
-  padding    : 3px;
-  margin     : 0px;
-}
-
-#crm-container .contextMenu a,
-.crm-contextmenu a {
-  text-decoration     : none;
-  display             : block;
-  line-height         : 20px;
-  height              : 20px;
-  background-position : 6px center;
-  background-repeat   : no-repeat;
-  outline             : none;
-  padding             : 0px 0px 1px 5px;
-}
-
 /*class for CMS user name check used in profile*/
 .cmsmessagebox {
   position    : absolute;
@@ -3222,26 +3185,18 @@ div.m ul#civicrm-menu,
 #crm-container .ac_results li.ac_over strong { color:#000; }
 
 /* theming for panel and context menus */
-#crm-container td ul.panel li,
-#crm-container .contextMenu li,
-.crm-contextmenu li {
+#crm-container td ul.panel li {
   background-color:#2F2F2E;
 }
 
-#crm-container .panel li a,
-#crm-container .contextMenu a,
-.crm-contextmenu a,
-#crm-container .contextMenu a:link,
-.crm-contextmenu a:link {
+#crm-container .panel li a {
   color:#DFDFDF;
 }
 
 #crm-container .panel li a:hover,
 #crm-container .crm-participant-list-inner li a:hover,
 #crm-container .crm-event-links-list-inner li a:hover,
-#crm-container .crm-contribpage-links-list-inner li a:hover,
-#crm-container .contextMenu li a:hover,
-.crm-contextmenu li a:hover {
+#crm-container .crm-contribpage-links-list-inner li a:hover{
   color: #3e3e3e;
   background-color: #F5F6F1;
   text-decoration: none;

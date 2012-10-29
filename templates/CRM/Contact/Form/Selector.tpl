@@ -140,78 +140,11 @@
   {/if}
 </table>
 
-<!-- Context Menu populated as per component and permission-->
-<ul id="contactMenu" class="contextMenu">
-{foreach from=$contextMenu item=value key=key}
-  <li class="{$value.ref}"><a href="#{$value.key}">{$value.title}</a></li>
-{/foreach}
-</ul>
 <script type="text/javascript">
  {* this function is called to change the color of selected row(s) *}
     var fname = "{$form.formName}";
     on_load_init_checkboxes(fname);
  {literal}
-cj(document).ready( function() {
-var url         = "{/literal}{crmURL p='civicrm/contact/view/changeaction' q='reset=1&action=add&cid=changeid&context=changeaction' h=0}{literal}";
-var activityUrl = "{/literal}{crmURL p='civicrm/contact/view' q="action=browse&selectedChild=activity&reset=1&cid=changeid&context=`$context`" h=0}{literal}";
-var emailUrl    = "{/literal}{crmURL p='civicrm/contact/view/activity' q="atype=3&action=add&reset=1&cid=changeid&context=`$context`" h=0}{literal}";
-var contactUrl  = "{/literal}{crmURL p='civicrm/contact/changeaction' q="reset=1&cid=changeid&key=`$qfKey`&context=`$context`" h=0}{literal}";
-var tagUrl  = "{/literal}{crmURL p='civicrm/contact/view' q="selectedChild=tag&reset=1&cid=changeid&key=`$qfKey`" h=0}{literal}";
-
-// Show menu when contact row is right clicked
-cj(".selector tr").contextMenu({
-      menu: 'contactMenu'
-    }, function( action, el ) {
-        var contactId = el.attr('id').substr(5);
-        switch (action) {
-          case 'activity':
-          case 'email':
-            var qfKey = "{/literal}{$qfKey}{literal}";
-            emailUrl = emailUrl+'&key='+qfKey;
-            eval( 'locationUrl = '+action+'Url;');
-            break;
-          case 'add':
-            contactId += '&action=update';
-          case 'view':
-            locationUrl = contactUrl.replace( /changeaction/g, action );
-            break;
-          case 'tag':
-            locationUrl = tagUrl;
-            break;
-          default:
-            locationUrl = url.replace( /changeaction/g, action );
-            break;
-        }
-        eval( 'locationUrl = locationUrl.replace( /changeid/, contactId );');
-        // we do not need civicrmDestination for edit and view links (edit goes to view and then search results breadcrumb is available)
-        if ( action == 'add' || action == 'view') {
-            window.location = locationUrl;
-        } else {
-            var destination = "{/literal}{crmURL q="qfKey=`$qfKey`" h=0}{literal}";
-            window.location = locationUrl + '&civicrmDestination=' + encodeURIComponent(destination);
-        }
-   });
-  {/literal}
-  {foreach from=$selectedContactIds item=selectedContactId}{literal}
-     cj("#mark_x_{/literal}{$selectedContactId}{literal}").attr('checked', 'checked');
-  {/literal}
-  {/foreach}
-
-  {foreach from=$unselectedContactIds item=unselectedContactId}{literal}
-        cj("#mark_x_{/literal}{$unselectedContactId}{literal}").removeAttr('checked');{/literal}
-  {/foreach}
-
-  {literal}
-    var formName = "{/literal}{$form.formName}{literal}";
-    on_load_init_checkboxes(formName);
-    toggleTaskAction( false );
-});
-
-cj('ul#contactMenu').mouseup( function(e){
-   if( e.button !=0 ) {
-    //when right or middle button clicked fire default right click popup
-   }
-});
 
 function countSelections( ){
   var Url =  "{/literal}{crmURL p='civicrm/ajax/markSelection' h=0}{literal}";

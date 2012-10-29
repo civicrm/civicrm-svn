@@ -42,7 +42,6 @@ packages/jquery/css/menu.css
 
 packages/jquery/plugins/jquery.chainedSelects.js
 
-packages/jquery/plugins/jquery.contextMenu.js
 packages/jquery/plugins/jquery.tableHeader.js
 
 packages/jquery/plugins/jquery.textarearesizer.js
