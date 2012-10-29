@@ -25,9 +25,6 @@
  +--------------------------------------------------------------------+
 */
 
-
-//session_start( );
-
 require_once '../civicrm.config.php';
 require_once 'CRM/Core/Config.php';
 $config = CRM_Core_Config::singleton();
@@ -37,9 +34,7 @@ $rest = new CRM_Utils_REST();
 
 $rest->loadCMSBootstrap();
 
-if (isset($_GET['json']) &&
-  $_GET['json']
-) {
+if (isset($_GET['json']) && $_GET['json']) {
   header('Content-Type: text/javascript');
 }
 else {
