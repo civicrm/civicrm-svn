@@ -370,6 +370,9 @@ function _civicrm_api_get_camel_name($entity, $version = NULL) {
  */
 function _civicrm_api_call_nested_api(&$params, &$result, $action, $entity, $version) {
   $entity = _civicrm_api_get_entity_name_from_camel($entity);
+  if(strtolower($action) == 'getsingle'){
+    $result['values'][0] = $result;
+  }
   foreach ($params as $field => $newparams) {
     if ((is_array($newparams) || $newparams === 1) && $field <> 'api.has_parent' && substr($field, 0, 3) == 'api') {
 
@@ -436,12 +439,15 @@ function _civicrm_api_call_nested_api(&$params, &$result, $action, $entity, $ver
           $subParams = array_merge($subParams, $newparams);
           _civicrm_api_replace_variables($subAPI[1], $subaction, $subParams, $result['values'][$idIndex], $separator);
           $result['values'][$idIndex][$field] = civicrm_api($subEntity, $subaction, $subParams);
-          if ($result['is_error'] === 1) {
+          if (!empty($result['is_error'])) {
             throw new Exception($subEntity . ' ' . $subaction . 'call failed with' . $result['error_message']);
           }
         }
       }
     }
+  }
+  if(strtolower($action) == 'getsingle'){
+    $result = $result['values'][0];
   }
 }
 
