@@ -33,7 +33,7 @@
 
   <span class="value">
         {$form.gender_id.html}
-        <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('gender_id', '{$form.formName}'); return false;">{ts}Clear{/ts} {$form.gender_id.label|@strip_tags}</a>)</span>
+        <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('gender_id', '{$form.formName}'); return false;">{ts}clear{/ts}</a>)</span>
         </span>
   </div>
   <div class="form-item">
