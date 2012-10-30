@@ -265,8 +265,6 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
 
       $document->addStyleSheet("{$config->resourceBase}css/extras.css");
 
-      $document->addScript("{$config->resourceBase}js/Common.js");
-
       $template = CRM_Core_Smarty::singleton();
 
       // CRM-6819 + CRM-7086
