@@ -300,6 +300,7 @@ DELETE from civicrm_option_value
   }
 
   function upgrade_4_2_5($rev) {
+    $this->addTask(ts('Upgrade DB to 4.2.5: SQL'), 'task_4_2_x_runSql', $rev);
     //CRM-11077
     $sql = " SELECT cpse.entity_id, cpse.price_set_id 
 FROM `civicrm_price_set_entity` cpse
