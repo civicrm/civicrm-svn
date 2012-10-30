@@ -445,8 +445,8 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
       }
     }
 
-    $paymentProcessorID = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_PaymentProcessorType',
-      'Google_Checkout', 'id', 'name'
+    $paymentProcessorID = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_PaymentProcessor',
+      'Google_Checkout', 'id', 'payment_processor_type'
     );
 
     $this->loadObjects($input, $ids, $objects, FALSE, $paymentProcessorID);

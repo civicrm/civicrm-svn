@@ -1019,9 +1019,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser {
         $contactId = array_shift($cids);
         $cid = NULL;
 
-        $vals = array(
-          'contact_id' => $contactId,
-        );
+        $vals = array('contact_id' => $contactId);
 
         if ($onDuplicate == CRM_Import_Parser::DUPLICATE_REPLACE) {
           civicrm_api('contact', 'delete', $vals);
