@@ -2532,7 +2532,7 @@ span.icon {
 .crm-collapsible .collapsible-title {
   background-image: url("../i/TreeMinus.gif");
   background-color: transparent;
-  color: #3e3e3e;
+  color: #3E3E3E;
 }
 
 .crm-accordion-inner.collapsed .crm-accordion-header,
@@ -2582,23 +2582,16 @@ span.icon {
 
 .crm-collapsible .collapsible-title {
   padding-left: 19px;
-  color: #000000;
   text-decoration: none;
   background-repeat: no-repeat;
   background-position: 0px center;
   cursor: pointer;
 }
 
-/* ==================================================================================== */
-/* ! hack to force pages with master accordions 
-     to work, needs updating of tpl files   */
-/* ==================================================================================== */
 #crm-container .crm-master-accordion-header+.crm-accordion-body  {
   border:none;
   padding: 0px;
 }
-
-/* accordion-colors */
 
 .crm-form-block {
   background-color:#E6E6DC;
@@ -2625,7 +2618,8 @@ span.icon {
   text-decoration: underline !important;
 }
 
-.crm-master-accordion-header.crm-accordion-header:hover {
+.crm-master-accordion-header.crm-accordion-header:hover,
+.crm-collapsible .collapsible-title:hover {
   background-color: transparent;
   color: #0200A0;
 }

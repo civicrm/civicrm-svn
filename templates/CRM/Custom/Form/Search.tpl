@@ -26,16 +26,10 @@
 {if $groupTree}
 {foreach from=$groupTree item=cd_edit key=group_id}
 
-  {if $form.formName eq 'Advanced' AND $cd_edit.collapse_adv_display eq 1}
-    {assign var='accordion_class' value='collapsed'}
-  {else}
-    {assign var='accordion_class' value=''}
-  {/if}
-  <div class="crm-accordion-wrapper crm-contactDetails-accordion {$accordion_class}" id="{$cd_edit.name}" >
+  <div class="crm-accordion-wrapper crm-contactDetails-accordion {if $form.formName eq 'Advanced' AND $cd_edit.collapse_adv_display eq 1}collapsed{/if}" id="{$cd_edit.name}" >
     <div class="crm-accordion-header">
         {$cd_edit.title}
-    </div><!-- /.crm-accordion-header -->
-
+    </div>
     <div class="crm-accordion-body">
     <table class="form-layout-compressed">
     {foreach from=$cd_edit.fields item=element key=field_id}

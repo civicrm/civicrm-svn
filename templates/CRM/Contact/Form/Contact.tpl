@@ -192,11 +192,11 @@
     if( cj(this).attr('href') == '#expand') {
       var message = {/literal}"{ts}Collapse all tabs{/ts}"{literal};
       cj(this).attr('href', '#collapse');
-      cj('.collapsed').crmAccordionToggle();
+      cj('.crm-accordion-wrapper.collapsed').crmAccordionToggle();
     }
     else {
-      var message     = {/literal}"{ts}Expand all tabs{/ts}"{literal};
-      cj('.').crmAccordionToggle();
+      var message = {/literal}"{ts}Expand all tabs{/ts}"{literal};
+      cj('.crm-accordion-wrapper:not(.collapsed)').crmAccordionToggle();
       cj(this).attr('href', '#expand');
     }
     cj(this).html(message);
