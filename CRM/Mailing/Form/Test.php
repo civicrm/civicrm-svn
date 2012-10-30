@@ -90,46 +90,25 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form {
       }
     }
 
-    //FIXME : currently we are hiding save an continue later when
-    //search base mailing, we should handle it when we fix CRM-3876
-    if ($this->_searchBasedMailing) {
-      $buttons = array(
-        array('type' => 'back',
-          'name' => ts('<< Previous'),
-        ),
-        array(
-          'type' => 'next',
-          'name' => $name,
-          'spacing' => '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;',
-          'isDefault' => TRUE,
-        ),
-        array(
-          'type' => 'cancel',
-          'name' => ts('Cancel'),
-        ),
-      );
-    }
-    else {
-      $buttons = array(
-        array('type' => 'back',
-          'name' => ts('<< Previous'),
-        ),
-        array(
-          'type' => 'next',
-          'name' => $name,
-          'spacing' => '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;',
-          'isDefault' => TRUE,
-        ),
-        array(
-          'type' => 'submit',
-          'name' => ts('Save & Continue Later'),
-        ),
-        array(
-          'type' => 'cancel',
-          'name' => ts('Cancel'),
-        ),
-      );
-    }
+    $buttons = array(
+      array('type' => 'back',
+        'name' => ts('<< Previous'),
+      ),
+      array(
+        'type' => 'next',
+        'name' => $name,
+        'spacing' => '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;',
+        'isDefault' => TRUE,
+      ),
+      array(
+        'type' => 'submit',
+        'name' => ts('Save & Continue Later'),
+      ),
+      array(
+        'type' => 'cancel',
+        'name' => ts('Cancel'),
+      ),
+    );
 
     $this->addButtons($buttons);
 
