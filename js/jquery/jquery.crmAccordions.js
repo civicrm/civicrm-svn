@@ -54,14 +54,13 @@
   };
   $.fn.crmAccordionToggle = function(speed) {
     $(this).each(function() {
-      var wrapper = $(this);
-      if (wrapper.hasClass('collapsed')) {
-        $('.crm-accordion-body', wrapper).first().css('display', 'none').slideDown(speed);
+      if ($(this).hasClass('collapsed')) {
+        $('.crm-accordion-body', this).first().css('display', 'none').slideDown(speed);
       }
       else {
-        $('.crm-accordion-body', wrapper).first().css('display', 'block').slideUp(speed);
+        $('.crm-accordion-body', this).first().css('display', 'block').slideUp(speed);
       }
-      wrapper.toggleClass('collapsed');
+      $(this).toggleClass('collapsed');
     });
   };
 })(jQuery);
