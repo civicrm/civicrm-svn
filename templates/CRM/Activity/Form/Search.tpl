@@ -25,7 +25,7 @@
 *}
 {* Search form and results for Activities *}
 <div class="crm-form-block crm-search-form-block">
-<div class="crm-accordion-wrapper crm-advanced_search_form-accordion {if $rows}collapsed{else}{/if}">
+<div class="crm-accordion-wrapper crm-advanced_search_form-accordion {if $rows}collapsed{/if}">
  <div class="crm-accordion-header crm-master-accordion-header">
         {ts}Edit Search Criteria{/ts}
 </div><!-- /.crm-accordion-header -->

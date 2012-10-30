@@ -30,7 +30,7 @@
 </div>
 
 <div class="crm-form-block crm-search-form-block">
-<div class="crm-accordion-wrapper crm-search_builder-accordion {if $rows and !$showSearchForm}collapsed{else}{/if}">
+<div class="crm-accordion-wrapper crm-search_builder-accordion {if $rows and !$showSearchForm}collapsed{/if}">
  <div class="crm-accordion-header crm-master-accordion-header">
         {ts}Edit Search Criteria{/ts}
 </div><!-- /.crm-accordion-header -->

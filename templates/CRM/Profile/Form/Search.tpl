@@ -26,7 +26,7 @@
 {if ! empty( $fields )}
 
     {if $groupId }
-<div class="crm-accordion-wrapper crm-group-{$groupId}-accordion {if $rows}collapsed{else}{/if}">
+<div class="crm-accordion-wrapper crm-group-{$groupId}-accordion {if $rows}collapsed{/if}">
  <div class="crm-accordion-header crm-master-accordion-header">
   {ts}Edit Search Criteria{/ts}
  </div>

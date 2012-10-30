@@ -32,9 +32,9 @@
   {assign var=tableID value=$cd_edit.table_id}
   {assign var=divName value=$group_id|cat:"_$tableID"}
   <div></div>
-  <div id="{$cd_edit.name|cat:"_$divName"}" class="crm-accordion-wrapper crm-accordion_title-accordion {if $cd_edit.collapse_display and !$skipTitle}collapsed{else}{/if}">
+  <div id="{$cd_edit.name|cat:"_$divName"}" class="crm-accordion-wrapper crm-accordion_title-accordion {if $cd_edit.collapse_display and !$skipTitle}collapsed{/if}">
 {else}
-  <div id="{$cd_edit.name}" class="crm-accordion-wrapper crm-address-accordion {if $cd_edit.collapse_display}collapsed{else}{/if}">
+  <div id="{$cd_edit.name}" class="crm-accordion-wrapper crm-address-accordion {if $cd_edit.collapse_display}collapsed{/if}">
 {/if}
     <div class="crm-accordion-header">
       <div id="custom{$group_id}" class="icon crm-accordion-pointer"></div>

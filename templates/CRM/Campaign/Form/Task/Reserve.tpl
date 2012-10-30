@@ -61,7 +61,7 @@
 
 
  {* Existing Group *}
- <div class="crm-accordion-wrapper crm-existing_group-accordion {if $hasExistingGroups}{else}collapsed{/if}">
+ <div class="crm-accordion-wrapper crm-existing_group-accordion {if $hasExistingGroups} {else}collapsed{/if}">
  <div class="crm-accordion-header">
   {ts}Add respondent(s) to existing group(s){/ts}
  </div><!-- /.crm-accordion-header -->

@@ -38,7 +38,7 @@
 
     {if !$printOnly} {* NO print section starts *}
     <div {if !$criteriaForm}style="display: none;"{/if}> {* criteria section starts *}
-    <div class="crm-accordion-wrapper crm-report_criteria-accordion crm-accordion_title-accordion {if $rows}collapsed{else}{/if}">
+    <div class="crm-accordion-wrapper crm-report_criteria-accordion crm-accordion_title-accordion {if $rows}collapsed{/if}">
     <div class="crm-accordion-header">
     {ts}Report Criteria{/ts}
     </div><!-- /.crm-accordion-header -->
@@ -230,7 +230,7 @@
     </div> {* criteria section ends *}
 
     {if $instanceForm OR $instanceFormError} {* settings section starts *}
-    <div class="crm-accordion-wrapper crm-report_setting-accordion crm-accordion_title-accordion {if $rows}collapsed{else}{/if}">
+    <div class="crm-accordion-wrapper crm-report_setting-accordion crm-accordion_title-accordion {if $rows}collapsed{/if}">
     <div class="crm-accordion-header" {if $updateReportButton} onclick="hide('update-button'); return false;" {/if} >
     {if $mode eq 'template'}{ts}Create Report{/ts}{else}{ts}Report Settings{/ts}{/if}
     </div><!-- /.crm-accordion-header -->

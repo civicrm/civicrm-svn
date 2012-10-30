@@ -36,7 +36,7 @@
 
 {strip}
 <div class="crm-block crm-form-block crm-basic-criteria-form-block">
-    <div class="crm-accordion-wrapper crm-case_search-accordion {if $rows}collapsed{else}{/if}">
+    <div class="crm-accordion-wrapper crm-case_search-accordion {if $rows}collapsed{/if}">
      <div class="crm-accordion-header crm-master-accordion-header">
         {$editTitle}
     </div><!-- /.crm-accordion-header -->

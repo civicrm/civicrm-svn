@@ -29,7 +29,7 @@
 
 {include file="CRM/Contact/Form/Search/Intro.tpl"}
 
-<div class="crm-accordion-wrapper crm-advanced_search_form-accordion {if !empty($ssID) or $rows}collapsed{else}{/if}">
+<div class="crm-accordion-wrapper crm-advanced_search_form-accordion {if !empty($ssID) or $rows}collapsed{/if}">
  <div class="crm-accordion-header crm-master-accordion-header">
   {if !empty($ssID) or $rows}
   {if $savedSearch}

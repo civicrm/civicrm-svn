@@ -59,7 +59,7 @@
       {foreach from=$customGroup item=customValue key=cvId}
       <div id="address_custom_{$cgId}_{$locationIndex}" 
       class="crm-accordion-wrapper crm-address-custom-{$cgId}-{$locationIndex}-accordion 
-      {if $customValue.collapse_display}collapsed{else}{/if}">
+      {if $customValue.collapse_display}collapsed{/if}">
       <div class="crm-accordion-header">
         {$customValue.title}
       </div>

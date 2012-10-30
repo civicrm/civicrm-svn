@@ -354,7 +354,7 @@ function loadPanes( id ) {
     {* Additional Detail / Honoree Information / Premium Information *}
     {foreach from=$allPanes key=paneName item=paneValue}
 
-<div class="crm-accordion-wrapper crm-ajax-accordion crm-{$paneValue.id}-accordion {if $paneValue.open eq 'true'}{else}collapsed{/if}">
+<div class="crm-accordion-wrapper crm-ajax-accordion crm-{$paneValue.id}-accordion {if $paneValue.open neq 'true'}collapsed{/if}">
  <div class="crm-accordion-header" id="{$paneValue.id}">
 
         {$paneName}
