@@ -2666,9 +2666,8 @@ WHERE  id IN ( $groupIDs )
 
     // CRM-10338
     if ( in_array( $op, array( 'IS NULL', 'IS NOT NULL', 'IS EMPTY', 'IS NOT EMPTY' ) ) ) {
-      if ($op == 'IS EMPTY' || $op == 'IS NOT EMPTY') {
-        $op = str_replace('EMPTY', 'NULL', $op);
-      }
+      // this converts IS (NOT)? EMPTY to IS (NOT)? NULL
+      $op = str_replace('EMPTY', 'NULL', $op);
       $this->_where[$grouping][] = "{$etTable}.tag_id $op";
     }
     else {
