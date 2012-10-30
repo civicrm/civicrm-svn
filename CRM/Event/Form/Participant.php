@@ -788,7 +788,7 @@ WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
       array(
         '' => ts('- select -')) + $events,
       TRUE,
-      array('onchange' => "buildFeeBlock( this.value ); buildCustomData( 'Participant', this.value, {$this->_eventNameCustomDataTypeID} ); buildParticipantRole( this.value ); buildEventTypeCustomData( this.value, {$this->_eventTypeCustomDataTypeID}, '{$eventAndTypeMapping}' ); loadCampaign( this.value, {$eventCampaigns} );", 'class' => 'huge')
+      array('onchange' => "buildFeeBlock( this.value ); CRM.buildCustomData( 'Participant', this.value, {$this->_eventNameCustomDataTypeID} ); buildParticipantRole( this.value ); buildEventTypeCustomData( this.value, {$this->_eventTypeCustomDataTypeID}, '{$eventAndTypeMapping}' ); loadCampaign( this.value, {$eventCampaigns} );", 'class' => 'huge')
     );
 
     // CRM-6111
@@ -801,7 +801,7 @@ WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
 cj(function() {
 cj('#event_id').val( '{$this->_eID}' );
 buildFeeBlock( {$this->_eID} );
-buildCustomData( 'Participant', {$this->_eID}, {$this->_eventNameCustomDataTypeID} );
+CRM.buildCustomData( 'Participant', {$this->_eID}, {$this->_eventNameCustomDataTypeID} );
 buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{$eventAndTypeMapping}' );
 loadCampaign( {$this->_eID}, {$eventCampaigns} );
 });

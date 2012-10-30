@@ -535,10 +535,10 @@ cj( function( ) {
     if ( relType ) {
         var relTypeId = relType.split("_");
         if (relTypeId) {
-            buildCustomData( 'Relationship', relTypeId[0]);
+            CRM.buildCustomData( 'Relationship', relTypeId[0]);
         }
     } else {
-        buildCustomData('Relationship');
+        CRM.buildCustomData('Relationship');
     }
 });
 
@@ -588,10 +588,10 @@ function changeCustomData( cType ) {
     if ( relType ) {
         var relTypeId = relType.split("_");
         if (relTypeId) {
-            buildCustomData( cType, relTypeId[0]);
+            CRM.buildCustomData( cType, relTypeId[0]);
         }
     } else {
-        buildCustomData( cType );
+        CRM.buildCustomData( cType );
     }
 }
 

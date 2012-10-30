@@ -282,9 +282,9 @@ cj(document).ready(function() {
   cj('#membershipOrgType').hide();
   cj('#changeNumTerms').hide();
   {/literal}
-    buildCustomData( '{$customDataType}' );
+    CRM.buildCustomData( '{$customDataType}' );
     {if $customDataSubType}
-      buildCustomData( '{$customDataType}', {$customDataSubType} );
+      CRM.buildCustomData( '{$customDataType}', {$customDataSubType} );
     {/if}
   {literal}
 });

@@ -129,7 +129,7 @@ class CRM_Case_Form_Activity_OpenCase {
     $form->add('select', 'case_type_id', ts('Case Type'),
       $caseType, TRUE, array(
         'onchange' =>
-        "buildCustomData( 'Case', this.value );",
+        "CRM.buildCustomData( 'Case', this.value );",
       )
     );
 

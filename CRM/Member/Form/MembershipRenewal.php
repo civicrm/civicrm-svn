@@ -357,7 +357,7 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form {
       $selOrgMemType[$index] = $orgMembershipType;
     }
 
-    $js = array('onChange' => "setPaymentBlock( ); buildCustomData( 'Membership', this.value );");
+    $js = array('onChange' => "setPaymentBlock( ); CRM.buildCustomData( 'Membership', this.value );");
 
     //build the form for auto renew.
     $recurProcessor = array();
@@ -384,7 +384,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
             }
           }
         }
-        $js = array('onChange' => "setPaymentBlock(); buildCustomData( 'Membership', this.value );");
+        $js = array('onChange' => "setPaymentBlock(); CRM.buildCustomData( 'Membership', this.value );");
         $this->assign('autoRenew', json_encode($autoRenew));
       }
       $autoRenewElement = $this->addElement('checkbox', 'auto_renew', ts('Membership renewed automatically'),

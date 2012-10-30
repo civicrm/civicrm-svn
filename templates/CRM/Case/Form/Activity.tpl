@@ -323,9 +323,9 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
         <script type="text/javascript">
             cj(document).ready(function() {
                 {/literal}
-                buildCustomData( '{$customDataType}' );
+                CRM.buildCustomData( '{$customDataType}' );
                 {if $customDataSubType}
-                    buildCustomData( '{$customDataType}', {$customDataSubType} );
+                    CRM.buildCustomData( '{$customDataType}', {$customDataSubType} );
                 {/if}
                 {literal}
             });

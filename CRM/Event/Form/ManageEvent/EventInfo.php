@@ -198,7 +198,7 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent {
       array(
         '' => ts('- select -')) + $event,
       TRUE,
-      array('onChange' => "buildCustomData( 'Event', this.value );")
+      array('onChange' => "CRM.buildCustomData( 'Event', this.value );")
     );
 
     //CRM-7362 --add campaigns.

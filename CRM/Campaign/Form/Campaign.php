@@ -241,7 +241,7 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form {
     $this->add('select', 'campaign_type_id', ts('Campaign Type'),
       array(
         '' => ts('- select -')) + $campaignTypes, TRUE,
-      array('onChange' => "buildCustomData( 'Campaign', this.value );")
+      array('onChange' => "CRM.buildCustomData( 'Campaign', this.value );")
     );
 
     // add campaign status

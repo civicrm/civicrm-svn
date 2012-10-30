@@ -29,8 +29,8 @@
 {/if}
 {literal}
 <script type="text/javascript">
-
-function buildCustomData( type, subType, subName, cgCount, groupID, isMultiple )
+var CRM = CRM || {};
+CRM.buildCustomData = function( type, subType, subName, cgCount, groupID, isMultiple )
 {
   var dataUrl = {/literal}"{crmURL p=$urlPath h=0 q='snippet=4&type='}"{literal} + type;
 
@@ -95,7 +95,7 @@ function buildCustomData( type, subType, subName, cgCount, groupID, isMultiple )
           }).responseText;
 
   cj( fname ).html( response );
-}
+};
 
 </script>
 {/literal}

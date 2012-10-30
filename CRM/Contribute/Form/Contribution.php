@@ -833,7 +833,7 @@ WHERE  contribution_id = {$this->_id}
     $element = $this->add('select', 'contribution_type_id',
       ts('Contribution Type'),
       array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::contributionType(),
-      TRUE, array('onChange' => "buildCustomData( 'Contribution', this.value );")
+      TRUE, array('onChange' => "CRM.buildCustomData( 'Contribution', this.value );")
     );
     if ($this->_online) {
       $element->freeze();

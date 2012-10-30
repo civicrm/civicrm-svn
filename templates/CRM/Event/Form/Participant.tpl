@@ -543,7 +543,7 @@
 
     cj(function() {
       {/literal}
-      buildCustomData( '{$customDataType}', 'null', 'null' );
+      CRM.buildCustomData( '{$customDataType}', 'null', 'null' );
       {literal}
       for ( var i in roleGroupMapper ) {
         if ( ( i > 0 ) && ( document.getElementById( "role_id_"+i ).checked ) ) {
@@ -554,10 +554,10 @@
       }
       {/literal}
       {if $eventID}
-        buildCustomData( '{$customDataType}', {$eventID}, {$eventNameCustomDataTypeID} );
+        CRM.buildCustomData( '{$customDataType}', {$eventID}, {$eventNameCustomDataTypeID} );
       {/if}
       {if $eventTypeID}
-        buildCustomData( '{$customDataType}', {$eventTypeID}, {$eventTypeCustomDataTypeID} );
+        CRM.buildCustomData( '{$customDataType}', {$eventTypeID}, {$eventTypeCustomDataTypeID} );
       {/if}
       {literal}
 
@@ -593,7 +593,7 @@
 
   function buildEventTypeCustomData( eventID, eventTypeCustomDataTypeID, eventAndTypeMapping ) {
     var mapping = eval('(' + eventAndTypeMapping + ')');
-    buildCustomData( 'Participant', mapping[eventID], eventTypeCustomDataTypeID );
+    CRM.buildCustomData( 'Participant', mapping[eventID], eventTypeCustomDataTypeID );
   }
 
   function loadCampaign( eventId, campaigns ) {

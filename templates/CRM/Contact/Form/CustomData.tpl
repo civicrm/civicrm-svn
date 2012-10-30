@@ -40,9 +40,9 @@
       var groupID = {/literal}"{$groupID}"{literal};
       var contact_type = {/literal}"{$contact_type}"{literal};
       var contact_subtype = {/literal}"{$contact_subtype}"{literal};
-      buildCustomData( contact_type, contact_subtype );
+      CRM.buildCustomData( contact_type, contact_subtype );
       for ( var i = 1; i < customValueCount; i++ ) {
-        buildCustomData( contact_type, contact_subtype, null, i, groupID, true );
+        CRM.buildCustomData( contact_type, contact_subtype, null, i, groupID, true );
       }
     </script>
     {/literal}

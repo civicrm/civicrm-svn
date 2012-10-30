@@ -164,7 +164,7 @@
   <script type="text/javascript">
     cj(document).ready(function() {
       {/literal}
-        buildCustomData( 'Survey' );
+        CRM.buildCustomData( 'Survey' );
       {literal}
     });
   </script>

@@ -146,9 +146,9 @@ cj("select[multiple]").crmasmSelect({
       cj(document).ready(function() {
            var customDataSubType = cj('#case_type_id').val();
            if ( customDataSubType ) {
-              buildCustomData( {/literal}'{$customDataType}'{literal}, customDataSubType );
+              CRM.buildCustomData( {/literal}'{$customDataType}'{literal}, customDataSubType );
            } else {
-              buildCustomData( {/literal}'{$customDataType}'{literal} );
+              CRM.buildCustomData( {/literal}'{$customDataType}'{literal} );
            }
        });
        </script>

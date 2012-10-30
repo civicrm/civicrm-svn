@@ -551,7 +551,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form {
       $selOrgMemType[$index] = $orgMembershipType;
     }
 
-    $memTypeJs = array('onChange' => "buildCustomData( 'Membership', this.value );");
+    $memTypeJs = array('onChange' => "CRM.buildCustomData( 'Membership', this.value );");
 
     //build the form for auto renew.
     $recurProcessor = $autoRenew = array();
@@ -588,7 +588,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
           }
           $memTypeJs = array(
             'onChange' =>
-            "buildCustomData( 'Membership', this.value ); buildAutoRenew(this.value, null );",
+            "CRM.buildCustomData( 'Membership', this.value ); buildAutoRenew(this.value, null );",
           );
         }
       }

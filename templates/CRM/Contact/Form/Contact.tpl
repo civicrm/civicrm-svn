@@ -191,7 +191,7 @@
       $('.crm-custom-accordion').remove();
       var values = $("#contact_sub_type").val();
       var contactType = {/literal}"{$contactType}"{literal};
-      buildCustomData(contactType, values);
+      CRM.buildCustomData(contactType, values);
       loadMultiRecordFields(values);
       $('.crm-custom-accordion').each(function() {
         highlightTabs(this);
@@ -209,7 +209,7 @@
       {foreach from=$customValueCount item="groupCount" key="groupValue"}
       {if $groupValue}{literal}
         for ( var i = 1; i < {/literal}{$groupCount}{literal}; i++ ) {
-          buildCustomData( {/literal}"{$contactType}"{literal}, subTypeValues, null, i, {/literal}{$groupValue}{literal}, true );
+          CRM.buildCustomData( {/literal}"{$contactType}"{literal}, subTypeValues, null, i, {/literal}{$groupValue}{literal}, true );
         }
       {/literal}
       {/if}

@@ -199,7 +199,7 @@ class CRM_Grant_Form_Grant extends CRM_Core_Form {
     $this->add('select', 'grant_type_id', ts('Grant Type'),
       array(
         '' => ts('- select -')) + $grantType, TRUE,
-      array('onChange' => "buildCustomData( 'Grant', this.value );")
+      array('onChange' => "CRM.buildCustomData( 'Grant', this.value );")
     );
 
     //need to assign custom data type and subtype to the template

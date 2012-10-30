@@ -24,18 +24,25 @@
  +--------------------------------------------------------------------+
 *}
 
-
 <script type="text/javascript">
+  {* Initialize crmURL *}
   cj.crmURL('init', '{crmURL p="civicrm/example" q="placeholder"}');
 
-  var CRM = {ldelim}
+{*
+ * Here we define the CRM object:
+ * a single global variable where everything that _absolutely_must_ be global should be stored
+ *}
+  {literal}
+  var CRM = CRM || {};
+  CRM = cj.extend({{/literal}
     urlIsPublic: {if $urlIsPublic}true{else}false{/if},
     userFramework: '{$config->userFramework}',
-    validate: {ldelim} 
+    {literal}
+    validate: {
       use: false,
-      params: {ldelim}{rdelim},
+      params: {},
       functions: []
-    {rdelim}
-  {rdelim};
-
+    }
+  }, CRM);
+  {/literal}
 </script>

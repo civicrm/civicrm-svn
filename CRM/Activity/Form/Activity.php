@@ -665,7 +665,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task {
       $this->_fields['followup_activity_type_id']['attributes'],
       FALSE, array(
         'onchange' =>
-        "buildCustomData( 'Activity', this.value );",
+        "CRM.buildCustomData( 'Activity', this.value );",
       )
     );
 

@@ -114,9 +114,9 @@
 <script type="text/javascript">
 cj( document ).ready( function( ) {
     {/literal}{if $customDataSubType}
-     buildCustomData( '{$customDataType}', {$customDataSubType} );
+     CRM.buildCustomData( '{$customDataType}', {$customDataSubType} );
         {else}
-     buildCustomData( '{$customDataType}' );
+     CRM.buildCustomData( '{$customDataType}' );
         {/if}
     {literal}
 });
