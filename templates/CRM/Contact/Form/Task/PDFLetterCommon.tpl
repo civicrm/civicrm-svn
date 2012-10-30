@@ -33,7 +33,7 @@
 </table>
 {/if}
 
-<div class="crm-accordion-wrapper crm-accordion_title-accordion collapsed">
+<div class="crm-accordion-wrapper collapsed">
     <div class="crm-accordion-header">
         {$form.pdf_format_header.html}
     </div>

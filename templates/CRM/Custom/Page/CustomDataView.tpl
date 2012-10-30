@@ -42,7 +42,7 @@
       </tr>
       <tr>
     <td id="{$cd_edit.name}_{$index}" class="section-shown form-item">
-        <div class="crm-accordion-wrapper crm-accordion_title-accordion {if $cd_edit.collapse_display eq 0 or $skipTitle} {else}collapsed{/if}">
+        <div class="crm-accordion-wrapper {if $cd_edit.collapse_display eq 0 or $skipTitle} {else}collapsed{/if}">
         {if !$skipTitle}
              <div class="crm-accordion-header">
             {$cd_edit.title}

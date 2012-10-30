@@ -157,7 +157,7 @@
 <div class="clear"></div>
 {include file="CRM/Case/Page/CustomDataView.tpl"}
 
-<div class="crm-accordion-wrapper crm-accordion_title-accordion collapsed crm-case-roles-block">
+<div class="crm-accordion-wrapper collapsed crm-case-roles-block">
  <div class="crm-accordion-header">
   {ts}Case Roles{/ts}
  </div><!-- /.crm-accordion-header -->
@@ -473,7 +473,7 @@ cj(document).ready(function(){
 {/literal}
 
 {if $hasAccessToAllCases}
-<div class="crm-accordion-wrapper crm-accordion_title-accordion collapsed crm-case-other-relationships-block">
+<div class="crm-accordion-wrapper collapsed crm-case-other-relationships-block">
  <div class="crm-accordion-header">
   {ts}Other Relationships{/ts}
  </div><!-- /.crm-accordion-header -->
@@ -653,7 +653,7 @@ function addRole() {
 {* pane to display / edit regular tags or tagsets for cases *}
 {if $showTags OR $showTagsets }
 
-<div id="casetags" class="crm-accordion-wrapper crm-accordion_title-accordion  crm-case-tags-block">
+<div id="casetags" class="crm-accordion-wrapper  crm-case-tags-block">
  <div class="crm-accordion-header">
   {ts}Case Tags{/ts}
  </div><!-- /.crm-accordion-header -->

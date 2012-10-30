@@ -194,7 +194,7 @@
 </table>
 
 {if $premium}
-    <div class="crm-accordion-wrapper crm-accordion_title-accordion ">
+    <div class="crm-accordion-wrapper ">
         <div class="crm-accordion-header">
             {ts}Premium Information{/ts}
         </div>
@@ -209,7 +209,7 @@
 {/if}
 
 {if $pcp_id}
-    <div id='PCPView' class="crm-accordion-wrapper crm-accordion_title-accordion ">
+    <div id='PCPView' class="crm-accordion-wrapper ">
          <div class="crm-accordion-header">
                 {ts}Personal Campaign Page Contribution Information{/ts}
          </div>

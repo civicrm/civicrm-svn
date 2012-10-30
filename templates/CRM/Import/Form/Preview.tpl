@@ -147,7 +147,7 @@ function verify( ) {
 
  {* Group options *}
  {* New Group *}
-<div id="new-group" class="crm-accordion-wrapper crm-accordion_title-accordion collapsed">
+<div id="new-group" class="crm-accordion-wrapper collapsed">
  <div class="crm-accordion-header">
     {ts}Add imported records to a new group{/ts}
  </div><!-- /.crm-accordion-header -->
@@ -182,7 +182,7 @@ function verify( ) {
 
     {* Tag options *}
     {* New Tag *}
-<div id="new-tag" class="crm-accordion-wrapper crm-accordion_title-accordion collapsed">
+<div id="new-tag" class="crm-accordion-wrapper collapsed">
  <div class="crm-accordion-header">
   {ts}Create a new tag and assign it to imported records{/ts}
  </div><!-- /.crm-accordion-header -->
@@ -204,7 +204,7 @@ function verify( ) {
 </div><!-- /.crm-accordion-wrapper -->
     {* Existing Tag Imported Contact *}
 
-<div id="existing-tags" class="crm-accordion-wrapper crm-accordion_title-accordion collapsed">
+<div id="existing-tags" class="crm-accordion-wrapper collapsed">
  <div class="crm-accordion-header">
   {ts}Tag imported records{/ts}
 </div><!-- /.crm-accordion-header -->

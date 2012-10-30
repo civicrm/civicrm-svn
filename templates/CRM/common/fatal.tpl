@@ -50,7 +50,7 @@
         <div class="crm-section crm-error-message">{$error.message}</div>
     {/if}
     {if ($code OR $mysql_code OR $errorDetails) AND $config->debug}
-        <div class="crm-accordion-wrapper crm-accordion_title-accordion collapsed crm-fatal-error-details-block" onclick="toggle(this);";>
+        <div class="crm-accordion-wrapper collapsed crm-fatal-error-details-block" onclick="toggle(this);";>
          <div class="crm-accordion-header">
           {ts}Error Details{/ts}
          </div><!-- /.crm-accordion-header -->
@@ -74,10 +74,10 @@
 <script language="JavaScript">
 function toggle( element ) {
     var className = element.className;
-    if ( className  == 'crm-accordion-wrapper crm-accordion_title-accordion collapsed crm-fatal-error-details-block') {
-        element.className = 'crm-accordion-wrapper crm-accordion_title-accordion  crm-fatal-error-details-block';
+    if ( className  == 'crm-accordion-wrapper collapsed crm-fatal-error-details-block') {
+        element.className = 'crm-accordion-wrapper  crm-fatal-error-details-block';
     } else {
-        element.className = 'crm-accordion-wrapper crm-accordion_title-accordion collapsed crm-fatal-error-details-block';
+        element.className = 'crm-accordion-wrapper collapsed crm-fatal-error-details-block';
     }
 }
 </script>

@@ -276,7 +276,7 @@
              {if $action neq 4} {* Don't include "Schedule Follow-up" section in View mode. *}
                  <tr class="crm-activity-form-block-schedule_followup">
                     <td colspan="2">
-                       <div class="crm-accordion-wrapper crm-accordion_title-accordion collapsed">
+                       <div class="crm-accordion-wrapper collapsed">
              <div class="crm-accordion-header">
                 {ts}Schedule Follow-up{/ts}
               </div><!-- /.crm-accordion-header -->

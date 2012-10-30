@@ -31,7 +31,7 @@
 </script>
 {/literal}
 
-<div class="crm-accordion-wrapper crm-accordion_title-accordion collapsed">
+<div class="crm-accordion-wrapper collapsed">
  <div class="crm-accordion-header">
     Advanced Settings
   </div><!-- /.crm-accordion-header -->

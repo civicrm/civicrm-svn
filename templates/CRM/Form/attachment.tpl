@@ -39,14 +39,12 @@
     </tr>
 {elseif $action NEQ 4}
     {if $context EQ 'pcpCampaign'}
-        {capture assign=attachTitle}{ts}Include a Picture or an Image{/ts}{/capture}
-        {assign var=openCloseStyle value=''}
+      {capture assign=attachTitle}{ts}Include a Picture or an Image{/ts}{/capture}
     {else}
-        {capture assign=attachTitle}{ts}Attachment(s){/ts}{/capture}
-        {assign var=openCloseStyle value='collapsed'}
+      {capture assign=attachTitle}{ts}Attachment(s){/ts}{/capture}
     {/if}
     {if !$noexpand}
-    <div class="crm-accordion-wrapper crm-accordion_title-accordion {$openCloseStyle}">
+    <div class="crm-accordion-wrapper {if $context NEQ 'pcpCampaign'}collapsed{/if}">
        <div class="crm-accordion-header">
           {$attachTitle}
       </div><!-- /.crm-accordion-header -->

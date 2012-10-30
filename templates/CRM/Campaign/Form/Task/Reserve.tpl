@@ -41,7 +41,7 @@
 
 {* Group options *}
  {* New Group *}
- <div id="new-group" class="crm-accordion-wrapper crm-accordion_title-accordion collapsed">
+ <div id="new-group" class="crm-accordion-wrapper collapsed">
  <div class="crm-accordion-header">
  {ts}Add respondent(s) to a new group{/ts}
  </div><!-- /.crm-accordion-header -->

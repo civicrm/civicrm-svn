@@ -86,7 +86,7 @@
         </div>
 
 
-        <div class="crm-accordion-wrapper crm-accordion_title-accordion collapsed crm-case-roles-block">
+        <div class="crm-accordion-wrapper collapsed crm-case-roles-block">
          <div class="crm-accordion-header">
           {ts}Edit Widget Colors{/ts}
          </div><!-- /.crm-accordion-header -->
