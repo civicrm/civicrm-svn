@@ -829,9 +829,6 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
       $this->_oldSubtypes = explode(CRM_Core_DAO::VALUE_SEPARATOR,
         trim($this->_values['contact_sub_type'], CRM_Core_DAO::VALUE_SEPARATOR)
       );
-      if (!empty($this->_oldSubtypes)) {
-        $buttons[0]['js'] = array('onclick' => "return warnSubtypeDataLoss()");
-      }
     }
     $this->assign('oldSubtypes', json_encode($this->_oldSubtypes));
 

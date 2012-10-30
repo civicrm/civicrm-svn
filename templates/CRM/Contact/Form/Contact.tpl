@@ -93,8 +93,7 @@
         </div>
       </div><!-- /.crm-accordion-body -->
     </div><!-- /.crm-accordion-wrapper -->
-    
-    <script type="text/javascript">var showTab = Array( );</script>
+
     {foreach from = $editOptions item = "title" key="name"}
       {if $name eq 'CustomData' }
         <div id='customData'></div>
@@ -108,34 +107,20 @@
   {literal}
 
   <script type="text/javascript" >
-  var action = "{/literal}{$action}{literal}";
-  var removeCustomData = true;
-  showTab[0] = {"spanShow":"span#contact","divShow":"div#contactDetails"};
   cj(function($) {
-    $(showTab).each( function(){
-      if( this.spanShow ) {
-        $(this.spanShow).removeClass( ).addClass('');
-        $(this.divShow).show( );
-      }
-    });
-    $().crmAccordions( );
-    $('.customDataPresent').change(function() {
-      removeDefaultCustomFields( );
-      $('.crm-accordion-wrapper').not('.crm-accordion-wrapper .crm-accordion-wrapper').each(function() {
-        highlightTabs(this);
-      });
-    });
+    var action = "{/literal}{$action}{literal}";
+    $().crmAccordions();
 
     $('.crm-accordion-body').each( function() {
       //remove tab which doesn't have any element
-      if ( ! cj.trim( $(this).text() ) ) {
+      if ( ! $.trim( $(this).text() ) ) {
         ele     = $(this);
         prevEle = $(this).prev();
         $(ele).remove();
         $(prevEle).remove();
       }
       //open tab if form rule throws error
-      if ( $(this).children( ).find('span.crm-error').text( ).length > 0 ) {
+      if ( $(this).children().find('span.crm-error').text().length > 0 ) {
         $(this).parents('.collapsed').crmAccordionToggle();
       }
     });
@@ -186,94 +171,78 @@
           $('.crm-accordion-header:first', tab).removeClass('active');
       });
     }
-  });
 
-  cj('a#expand').click( function( ){
-    if( cj(this).attr('href') == '#expand') {
-      var message = {/literal}"{ts}Collapse all tabs{/ts}"{literal};
-      cj(this).attr('href', '#collapse');
-      cj('.crm-accordion-wrapper.collapsed').crmAccordionToggle();
-    }
-    else {
-      var message = {/literal}"{ts}Expand all tabs{/ts}"{literal};
-      cj('.crm-accordion-wrapper:not(.collapsed)').crmAccordionToggle();
-      cj(this).attr('href', '#expand');
-    }
-    cj(this).html(message);
-    return false;
-  });
-
-  function showHideSignature( blockId ) {
-    cj('#Email_Signature_' + blockId ).toggle( );
-  }
-
-  function removeDefaultCustomFields( ) {
-    //execute only once
-    if (removeCustomData) {
-      cj(".crm-accordion-wrapper").children().each( function() {
-        var eleId = cj(this).attr("id");
-        if ( eleId && eleId.substr(0,10) == "customData" ) { cj(this).parent("div").remove(); }
-      });
-      removeCustomData = false;
-    }
-
-    var values = cj("#contact_sub_type").val();
-    var contactType = {/literal}"{$contactType}"{literal};
-    if ( values ) {
-      buildCustomData(contactType, values);
-    }
-    else{
-      values = false;
-      buildCustomData(contactType);
-    }
-    loadMultiRecordFields(values);
-  }
-
-  function loadMultiRecordFields(subTypeValues) {
-    if (subTypeValues == false) {
-      var subTypeValues = null;
-    }
-      else if (!subTypeValues) {
-      var subTypeValues = {/literal}"{$paramSubType}"{literal};
-    }
-    {/literal}
-    {foreach from=$customValueCount item="groupCount" key="groupValue"}
-    {if $groupValue}{literal}
-      for ( var i = 1; i < {/literal}{$groupCount}{literal}; i++ ) {
-        buildCustomData( {/literal}"{$contactType}"{literal}, subTypeValues, null, i, {/literal}{$groupValue}{literal}, true );
+    $('a#expand').click( function() {
+      if( $(this).attr('href') == '#expand') {
+        var message = {/literal}"{ts}Collapse all tabs{/ts}"{literal};
+        $(this).attr('href', '#collapse');
+        $('.crm-accordion-wrapper.collapsed').crmAccordionToggle();
       }
-    {/literal}
-    {/if}
-    {/foreach}
-    {literal}
-  }
-
-  cj(function() {
-    loadMultiRecordFields();
-  });
-
-  function warnSubtypeDataLoss( ) {
-    var submittedSubtypes = cj('#contact_sub_type').val();
-    var defaultSubtypes   = {/literal}{$oldSubtypes}{literal};
-
-    var warning = false;
-    cj.each(defaultSubtypes, function(index, subtype) {
-      if ( cj.inArray(subtype, submittedSubtypes) < 0 ) {
-        warning = true;
+      else {
+        var message = {/literal}"{ts}Expand all tabs{/ts}"{literal};
+        $('.crm-accordion-wrapper:not(.collapsed)').crmAccordionToggle();
+        $(this).attr('href', '#expand');
       }
+      $(this).html(message);
+      return false;
     });
 
-    if ( warning ) {
-      return confirm({/literal}'{ts escape="js"}One or more contact subtypes have been de-selected from the list for this contact. Any custom data associated with de-selected subtype will be removed. Click OK to proceed, or Cancel to review your changes before saving.{/ts}'{literal});
-    }
-    return true;
-  }
+    $('.customDataPresent').change(function() {
+      $('.crm-custom-accordion').remove();
+      var values = $("#contact_sub_type").val();
+      var contactType = {/literal}"{$contactType}"{literal};
+      buildCustomData(contactType, values);
+      loadMultiRecordFields(values);
+      $('.crm-custom-accordion').each(function() {
+        highlightTabs(this);
+      });
+    });
 
-  cj("select#contact_sub_type").crmasmSelect({
-    addItemTarget: 'bottom',
-    animate: false,
-    highlight: true,
-    respectParents: true
+    function loadMultiRecordFields(subTypeValues) {
+      if (subTypeValues == false) {
+        var subTypeValues = null;
+      }
+        else if (!subTypeValues) {
+        var subTypeValues = {/literal}"{$paramSubType}"{literal};
+      }
+      {/literal}
+      {foreach from=$customValueCount item="groupCount" key="groupValue"}
+      {if $groupValue}{literal}
+        for ( var i = 1; i < {/literal}{$groupCount}{literal}; i++ ) {
+          buildCustomData( {/literal}"{$contactType}"{literal}, subTypeValues, null, i, {/literal}{$groupValue}{literal}, true );
+        }
+      {/literal}
+      {/if}
+      {/foreach}
+      {literal}
+    }
+
+    loadMultiRecordFields();
+
+    {/literal}{if $oldSubtypes}{literal}
+    $('input[name=_qf_Contact_upload_view], input[name=_qf_Contact_upload_new]').click(function() {
+      var submittedSubtypes = $('#contact_sub_type').val();
+      var oldSubtypes = {/literal}{$oldSubtypes}{literal};
+
+      var warning = false;
+      $.each(oldSubtypes, function(index, subtype) {
+        if ( $.inArray(subtype, submittedSubtypes) < 0 ) {
+          warning = true;
+        }
+      });
+      if ( warning ) {
+        return confirm({/literal}'{ts escape="js"}One or more contact subtypes have been de-selected from the list for this contact. Any custom data associated with de-selected subtype will be removed. Click OK to proceed, or Cancel to review your changes before saving.{/ts}'{literal});
+      }
+      return true;
+    });
+    {/literal}{/if}{literal}
+
+    $("select#contact_sub_type").crmasmSelect({
+      addItemTarget: 'bottom',
+      animate: false,
+      highlight: true,
+      respectParents: true
+    });
   });
 
 </script>
