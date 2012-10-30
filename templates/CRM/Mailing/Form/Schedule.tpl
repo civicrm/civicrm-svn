@@ -78,7 +78,7 @@
 {if $preview}
 {literal}
 cj(function() {
-   cj().crmaccordions();
+   cj().crmAccordions();
 });
 {/literal}
 {/if}

@@ -297,7 +297,7 @@
           {literal}
           <script type="text/javascript">
           cj(function() {
-                cj().crmaccordions();
+                cj().crmAccordions();
                          cj('.crm-accordion-body').each( function() {
                            //open tab if form rule throws error
                            if ( cj(this).children( ).find('span.crm-error').text( ).length > 0 ) {

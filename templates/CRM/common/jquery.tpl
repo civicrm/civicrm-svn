@@ -78,7 +78,7 @@
 
 <script type="text/javascript" src="{$config->resourceBase}js/jquery/jquery.crmeditable.js"></script>
 <script type="text/javascript" src="{$config->resourceBase}js/jquery/jquery.crmmessages.js"></script>
-<script type="text/javascript" src="{$config->resourceBase}js/jquery/jquery.crmaccordions.js"></script>
+<script type="text/javascript" src="{$config->resourceBase}js/jquery/jquery.crmAccordions.js"></script>
 <script type="text/javascript" src="{$config->resourceBase}js/jquery/jquery.crmasmselect.js"></script>
 
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.notify.js"></script>

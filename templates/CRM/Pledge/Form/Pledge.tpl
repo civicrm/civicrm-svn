@@ -183,7 +183,6 @@ function loadPanes( id ) {
 {foreach from=$allPanes key=paneName item=paneValue}
 <div class="crm-accordion-wrapper crm-ajax-accordion crm-{$paneValue.id}-accordion {if $paneValue.open eq 'true'}{else}collapsed{/if}">
 <div class="crm-accordion-header" id="{$paneValue.id}">
-
         {$paneName}
   </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">
@@ -201,7 +200,7 @@ function loadPanes( id ) {
 {literal}
 <script type="text/javascript">
 cj(function() {
-   cj().crmaccordions();
+   cj().crmAccordions();
 });
 </script>
 {/literal}

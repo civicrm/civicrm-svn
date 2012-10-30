@@ -110,7 +110,7 @@
 {literal}
 <script type="text/javascript">
 cj(function() {
-   cj().crmaccordions();
+   cj().crmAccordions();
 });
 </script>
 {/literal}

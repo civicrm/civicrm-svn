@@ -77,7 +77,7 @@
  <script type="text/javascript">
   {literal}
        cj(function() {
-           cj().crmaccordions();
+           cj().crmAccordions();
         });
 
      function hideStatus( valueID, groupID ) {

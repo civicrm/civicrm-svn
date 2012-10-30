@@ -28,9 +28,9 @@
 <script type="text/javascript">
 cj(function($) {
   $(document).ready( function() {
-    $().crmaccordions();
+    $().crmAccordions();
     // Bind first click of accordion header to load crm-accordion-body with snippet
-    // everything else is taken care of by crmaccordions()
+    // everything else is taken care of by crmAccordions()
     $('.crm-search_criteria_basic-accordion .crm-accordion-header').addClass('active');
     $('.crm-ajax-accordion').on('click', '.crm-accordion-header:not(.active)', function() {
       loadPanes($(this).attr('id'));

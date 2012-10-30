@@ -134,7 +134,7 @@
     });
 
     cj(function() {
-       cj().crmaccordions();
+       cj().crmAccordions();
     });
 </script>
 {/literal}

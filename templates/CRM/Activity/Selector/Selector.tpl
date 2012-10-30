@@ -66,7 +66,7 @@
 var {/literal}{$context}{literal}oTable;
 
 cj( function ( ) {
-   cj().crmaccordions();
+   cj().crmAccordions();
    var context = {/literal}"{$context}"{literal};
    buildContactActivities{/literal}{$context}{literal}( false );
    cj('.crm-activity-selector-'+ context +' #activity_type_filter_id').change( function( ) {

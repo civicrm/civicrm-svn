@@ -118,7 +118,7 @@
         $(this.divShow).show( );
       }
     });
-    $().crmaccordions( );
+    $().crmAccordions( );
     $('.customDataPresent').change(function() {
       removeDefaultCustomFields( );
       $('.crm-accordion-wrapper').not('.crm-accordion-wrapper .crm-accordion-wrapper').each(function() {

@@ -24,7 +24,7 @@
 * +--------------------------------------------------------------------+
 */ 
 (function($, undefined) {
-  $.fn.crmaccordions = function(speed) {
+  $.fn.crmAccordions = function(speed) {
     if (speed === undefined) {
       speed = 200;
     }
