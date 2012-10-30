@@ -40,9 +40,8 @@
     {* include overlay js *}
     {include file="CRM/common/overlay.tpl"}
 
-    <div class="crm-accordion-wrapper crm-contactDetails-accordion crm-accordion-open">
+    <div class="crm-accordion-wrapper crm-contactDetails-accordion">
       <div class="crm-accordion-header">
-        <div class="icon crm-accordion-pointer"></div>
         {ts}Contact Details{/ts}
       </div><!-- /.crm-accordion-header -->
       <div class="crm-accordion-body" id="contactDetails">
@@ -113,49 +112,49 @@
   var removeCustomData = true;
   showTab[0] = {"spanShow":"span#contact","divShow":"div#contactDetails"};
   cj(function($) {
-    cj(showTab).each( function(){
+    $(showTab).each( function(){
       if( this.spanShow ) {
-        cj(this.spanShow).removeClass( ).addClass('crm-accordion-open');
-        cj(this.divShow).show( );
+        $(this.spanShow).removeClass( ).addClass('');
+        $(this.divShow).show( );
       }
     });
-    cj().crmaccordions( );
-    cj('.customDataPresent').change(function() {
+    $().crmaccordions( );
+    $('.customDataPresent').change(function() {
       removeDefaultCustomFields( );
-      cj('.crm-accordion-wrapper').not('.crm-accordion-wrapper .crm-accordion-wrapper').each(function() {
+      $('.crm-accordion-wrapper').not('.crm-accordion-wrapper .crm-accordion-wrapper').each(function() {
         highlightTabs(this);
       });
     });
 
-    cj('.crm-accordion-body').each( function() {
+    $('.crm-accordion-body').each( function() {
       //remove tab which doesn't have any element
-      if ( ! cj.trim( cj(this).text() ) ) {
-        ele     = cj(this);
-        prevEle = cj(this).prev();
-        cj(ele).remove();
-        cj(prevEle).remove();
+      if ( ! cj.trim( $(this).text() ) ) {
+        ele     = $(this);
+        prevEle = $(this).prev();
+        $(ele).remove();
+        $(prevEle).remove();
       }
       //open tab if form rule throws error
-      if ( cj(this).children( ).find('span.crm-error').text( ).length > 0 ) {
-        cj(this).parents('.crm-accordion-closed').crmAccordionToggle();
+      if ( $(this).children( ).find('span.crm-error').text( ).length > 0 ) {
+        $(this).parents('.collapsed').crmAccordionToggle();
       }
     });
     if (action == '2') {
-      cj('.crm-accordion-wrapper').not('.crm-accordion-wrapper .crm-accordion-wrapper').each(function() {
+      $('.crm-accordion-wrapper').not('.crm-accordion-wrapper .crm-accordion-wrapper').each(function() {
         highlightTabs(this);
       });
-      cj('#crm-container').on('change click', '.crm-accordion-body :input, .crm-accordion-body a', function() {
+      $('#crm-container').on('change click', '.crm-accordion-body :input, .crm-accordion-body a', function() {
         highlightTabs($(this).parents('.crm-accordion-wrapper'));
       });
     }
     function highlightTabs(tab) {
       //highlight the tab having data inside.
-      cj('.crm-accordion-body :input', tab).each( function() {
+      $('.crm-accordion-body :input', tab).each( function() {
         var active = false;
-          switch( cj(this).prop('type') ) {
+          switch($(this).prop('type')) {
             case 'checkbox':
             case 'radio':
-              if( cj(this).is(':checked') ) {
+              if($(this).is(':checked') && !$(this).is('[id$=IsPrimary],[id$=IsBilling]')) {
                 $('.crm-accordion-header:first', tab).addClass('active');
                 return false;
               }
@@ -163,16 +162,22 @@
 
             case 'text':
             case 'textarea':
+              if($(this).val()) {
+                $('.crm-accordion-header:first', tab).addClass('active');
+                return false;
+              }
+              break;
+
             case 'select-one':
             case 'select-multiple':
-              if( cj(this).val() ) {
+              if($(this).val() && $('option[value=""]', this).length > 0) {
                 $('.crm-accordion-header:first', tab).addClass('active');
                 return false;
               }
               break;
 
             case 'file':
-              if( cj(this).next().html() ) {
+              if($(this).next().html()) {
                 $('.crm-accordion-header:first', tab).addClass('active');
                 return false;
               }
@@ -187,11 +192,11 @@
     if( cj(this).attr('href') == '#expand') {
       var message = {/literal}"{ts}Collapse all tabs{/ts}"{literal};
       cj(this).attr('href', '#collapse');
-      cj('.crm-accordion-closed').crmAccordionToggle();
+      cj('.collapsed').crmAccordionToggle();
     }
     else {
       var message     = {/literal}"{ts}Expand all tabs{/ts}"{literal};
-      cj('.crm-accordion-open').crmAccordionToggle();
+      cj('.').crmAccordionToggle();
       cj(this).attr('href', '#expand');
     }
     cj(this).html(message);

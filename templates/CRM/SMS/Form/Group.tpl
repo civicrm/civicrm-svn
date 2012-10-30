@@ -38,9 +38,8 @@
 
 
 <div id="id-additional" class="form-item">
-<div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-open">
+<div class="crm-accordion-wrapper crm-accordion_title-accordion ">
  <div class="crm-accordion-header">
-  <div class="icon crm-accordion-pointer"></div>
 {ts}Mailing Recipients{/ts}
  </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">

@@ -29,9 +29,8 @@
     <div class="messages status no-popup">{include file="CRM/Contribute/Form/Task.tpl"}</div>
 {/if}
 
-<div class="crm-accordion-wrapper crm-html_email-accordion crm-accordion-open">
+<div class="crm-accordion-wrapper crm-html_email-accordion ">
   <div class="crm-accordion-header">
-    <div class="icon crm-accordion-pointer"></div>
     {$form.more_options_header.html}
   </div><!-- /.crm-accordion-header -->
   <div class="crm-accordion-body">

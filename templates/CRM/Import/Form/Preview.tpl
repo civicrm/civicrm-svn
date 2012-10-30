@@ -147,9 +147,8 @@ function verify( ) {
 
  {* Group options *}
  {* New Group *}
-<div id="new-group" class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
+<div id="new-group" class="crm-accordion-wrapper crm-accordion_title-accordion collapsed">
  <div class="crm-accordion-header">
-  <div class="icon crm-accordion-pointer"></div>
     {ts}Add imported records to a new group{/ts}
  </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">
@@ -169,9 +168,8 @@ function verify( ) {
 
       {* Existing Group *}
 
-<div id="existing-groups" class="crm-accordion-wrapper crm-existing_group-accordion {if $form.groups}crm-accordion-open{else}crm-accordion-closed{/if}">
+<div id="existing-groups" class="crm-accordion-wrapper crm-existing_group-accordion {if $form.groups}{else}collapsed{/if}">
  <div class="crm-accordion-header">
-  <div class="icon crm-accordion-pointer"></div>
   {$form.groups.label}
  </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">
@@ -184,9 +182,8 @@ function verify( ) {
 
     {* Tag options *}
     {* New Tag *}
-<div id="new-tag" class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
+<div id="new-tag" class="crm-accordion-wrapper crm-accordion_title-accordion collapsed">
  <div class="crm-accordion-header">
-  <div class="icon crm-accordion-pointer"></div>
   {ts}Create a new tag and assign it to imported records{/ts}
  </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">
@@ -207,9 +204,8 @@ function verify( ) {
 </div><!-- /.crm-accordion-wrapper -->
     {* Existing Tag Imported Contact *}
 
-<div id="existing-tags" class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
+<div id="existing-tags" class="crm-accordion-wrapper crm-accordion_title-accordion collapsed">
  <div class="crm-accordion-header">
-  <div class="icon crm-accordion-pointer"></div>
   {ts}Tag imported records{/ts}
 </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">
@@ -239,11 +235,11 @@ cj(function() {
 });
 
 {/literal}{if $invalidGroupName}{literal}
-cj("#new-group.crm-accordion-closed").crmAccordionToggle();
+cj("#new-group.collapsed").crmAccordionToggle();
 {/literal}{/if}{literal}
 
 {/literal}{if $invalidTagName}{literal}
-cj("#new-tag.crm-accordion-closed").crmAccordionToggle();
+cj("#new-tag.collapsed").crmAccordionToggle();
 {/literal}{/if}{literal}
 
 </script>

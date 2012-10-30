@@ -27,13 +27,12 @@
 {foreach from=$groupTree item=cd_edit key=group_id}
 
   {if $form.formName eq 'Advanced' AND $cd_edit.collapse_adv_display eq 1}
-    {assign var='accordion_class' value='crm-accordion-closed'}
+    {assign var='accordion_class' value='collapsed'}
   {else}
-    {assign var='accordion_class' value='crm-accordion-open'}
+    {assign var='accordion_class' value=''}
   {/if}
   <div class="crm-accordion-wrapper crm-contactDetails-accordion {$accordion_class}" id="{$cd_edit.name}" >
     <div class="crm-accordion-header">
-    <div class="icon crm-accordion-pointer"></div>
         {$cd_edit.title}
     </div><!-- /.crm-accordion-header -->
 

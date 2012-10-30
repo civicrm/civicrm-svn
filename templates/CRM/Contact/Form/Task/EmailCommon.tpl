@@ -25,9 +25,8 @@
 *}
 {*common template for compose mail*}
 
-<div class="crm-accordion-wrapper crm-html_email-accordion crm-accordion-open">
+<div class="crm-accordion-wrapper crm-html_email-accordion ">
 <div class="crm-accordion-header">
-    <div class="icon crm-accordion-pointer"></div>
     {ts}HTML Format{/ts}
     {help id="id-message-text"}
 </div><!-- /.crm-accordion-header -->
@@ -54,9 +53,8 @@
 
 
 
-<div class="crm-accordion-wrapper crm-plaint_text_email-accordion crm-accordion-closed">
+<div class="crm-accordion-wrapper crm-plaint_text_email-accordion collapsed">
 <div class="crm-accordion-header">
-  <div class="icon crm-accordion-pointer"></div>
   {ts}Plain-Text Format{/ts}
   </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">

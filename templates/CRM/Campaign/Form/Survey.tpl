@@ -81,9 +81,8 @@
        {* Create Report *}
        <tr id='showoption'>
            <td colspan="2">
-           <div id="new-group" class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-open">
+           <div id="new-group" class="crm-accordion-wrapper crm-accordion_title-accordion ">
            <div class="crm-accordion-header">
-           <div class="icon crm-accordion-pointer"></div>
            {ts}Create Report{/ts}
            </div><!-- /.crm-accordion-header -->
            <div class="crm-accordion-body">

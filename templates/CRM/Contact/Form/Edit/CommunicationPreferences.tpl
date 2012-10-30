@@ -26,9 +26,8 @@
 {* This file provides the plugin for the communication preferences in all the three types of contact *}
 {* @var $form Contains the array for the form elements and other form associated information assigned to the template by the controller *}
 
-<div class="crm-accordion-wrapper crm-commPrefs-accordion crm-accordion-closed">
+<div class="crm-accordion-wrapper crm-commPrefs-accordion collapsed">
  <div class="crm-accordion-header">
-  <div class="icon crm-accordion-pointer"></div>
     {$title}
   </div><!-- /.crm-accordion-header -->
 <div id="commPrefs" class="crm-accordion-body">

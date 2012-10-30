@@ -35,10 +35,9 @@
             {assign  var="count" value="0"}
             {* Wrap custom field sets in collapsed accordion pane. *}
             {if $grpFields.group_title}
-                <div class="crm-accordion-wrapper crm-accordion crm-accordion-closed">
+                <div class="crm-accordion-wrapper crm-accordion collapsed">
                     <div class="crm-accordion-header">
-                        <div class="icon crm-accordion-pointer"></div>
-                        {$grpFields.group_title}
+                                    {$grpFields.group_title}
                     </div><!-- /.crm-accordion-header -->
                     <div class="crm-accordion-body">
             {/if}
@@ -175,10 +174,9 @@
                 </table>
       {assign var="counter" value=0}
         {/if}
-                    <div class="crm-accordion-wrapper crm-accordion crm-accordion-closed">
+                    <div class="crm-accordion-wrapper crm-accordion collapsed">
                     <div class="crm-accordion-header">
-                        <div class="icon crm-accordion-pointer"></div>
-                        {$colGroups.$tableName.group_title}
+                                    {$colGroups.$tableName.group_title}
                     </div><!-- /.crm-accordion-header -->
                     <div class="crm-accordion-body">
                     <table class="report-layout">

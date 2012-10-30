@@ -215,9 +215,9 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
            {if $searchRows} {* We have got case role rows to display for "Send Copy To" feature *}
             <tr>
                 <td colspan="2">
-                    <div id="sendcopy" class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
+                    <div id="sendcopy" class="crm-accordion-wrapper crm-accordion_title-accordion collapsed">
  <div class="crm-accordion-header">
-  <div class="icon crm-accordion-pointer"></div> {ts}Send a Copy{/ts}
+   {ts}Send a Copy{/ts}
    </div><!-- /.crm-accordion-header -->
  <div id="sendcopy-body" class="crm-accordion-body">
 
@@ -250,9 +250,8 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
            <tr>
               <td colspan="2">
 
-<div id="follow-up" class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
+<div id="follow-up" class="crm-accordion-wrapper crm-accordion_title-accordion collapsed">
  <div class="crm-accordion-header">
-  <div class="icon crm-accordion-pointer"></div>
  {ts}Schedule Follow-up{/ts}
   </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">

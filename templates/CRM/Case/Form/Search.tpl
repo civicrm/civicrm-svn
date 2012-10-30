@@ -29,9 +29,8 @@
 {else}
 
 <div class="crm-block crm-form-block crm-case-search-form-block">
-<div class="crm-accordion-wrapper crm-case_search-accordion {if $rows}crm-accordion-closed{else}crm-accordion-open{/if}">
+<div class="crm-accordion-wrapper crm-case_search-accordion {if $rows}collapsed{else}{/if}">
  <div class="crm-accordion-header crm-master-accordion-header">
-  <div class="icon crm-accordion-pointer"></div>
             {ts}Edit Search Criteria{/ts}
 </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">

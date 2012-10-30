@@ -82,7 +82,7 @@
 
     {assign var='searchForm' value="search_form_$searchFor"}
 
-    <div id="{$searchForm}" class="crm-accordion-wrapper crm-petition_search_form-accordion crm-accordion-open">
+    <div id="{$searchForm}" class="crm-accordion-wrapper crm-petition_search_form-accordion ">
     <div class="crm-accordion-header">
     <div id="petitionSearch" class="icon crm-accordion-pointer"></div>
         {ts}Search Petitions{/ts}
@@ -134,7 +134,7 @@
  cj( function( ) {
     //collapse the search form.
     var searchFormName = '#search_form_' + {/literal}'{$searchFor}'{literal};
-    cj( searchFormName + '.crm-accordion-open').crmAccordionToggle();
+    cj( searchFormName + '.').crmAccordionToggle();
     searchPetitions( {/literal}'{$qfKey}'{literal} );
  });
 
@@ -154,7 +154,7 @@ function searchPetitions( qfKey )
 
         //collapse the search form.
         var searchFormName = '#search_form_' + {/literal}'{$searchFor}'{literal};
-        cj( searchFormName + '.crm-accordion-open').crmAccordionToggle();
+        cj( searchFormName + '.').crmAccordionToggle();
       }, 'html' );
 }
 

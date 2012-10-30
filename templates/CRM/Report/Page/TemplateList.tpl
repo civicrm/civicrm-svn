@@ -31,9 +31,8 @@
 {if $list}
 {counter start=0 skip=1 print=false}
     {foreach from=$list item=rows key=report}
-<div class="crm-accordion-wrapper crm-accordion_{$report}-accordion crm-accordion_title-accordion crm-accordion-open">
+<div class="crm-accordion-wrapper crm-accordion_{$report}-accordion crm-accordion_title-accordion ">
  <div class="crm-accordion-header">
-  <div class="icon crm-accordion-pointer"></div>
   {if $report}{if $report EQ 'Contribute'}{ts}Contribution{/ts}{else}{$report}{/if}{else}Contact{/if} Report Templates
  </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">

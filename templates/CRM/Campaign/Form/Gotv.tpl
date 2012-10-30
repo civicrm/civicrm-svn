@@ -87,7 +87,7 @@
  cj( function( ) {
     //collapse the search form.
     var searchFormName = '#search_form_' + {/literal}'{$searchVoterFor}'{literal};
-    cj( searchFormName + '.crm-accordion-open').crmAccordionToggle();
+    cj( searchFormName + '.').crmAccordionToggle();
     searchVoters( {/literal}'{$qfKey}'{literal} );
  });
 
@@ -114,7 +114,7 @@ function searchVoters( qfKey )
 
         //collapse the search form.
         var searchFormName = '#search_form_' + {/literal}'{$searchVoterFor}'{literal};
-        cj( searchFormName + '.crm-accordion-open').crmAccordionToggle();
+        cj( searchFormName + '.').crmAccordionToggle();
       }, 'html' );
 }
 

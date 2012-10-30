@@ -276,10 +276,9 @@
              {if $action neq 4} {* Don't include "Schedule Follow-up" section in View mode. *}
                  <tr class="crm-activity-form-block-schedule_followup">
                     <td colspan="2">
-                       <div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
+                       <div class="crm-accordion-wrapper crm-accordion_title-accordion collapsed">
              <div class="crm-accordion-header">
-              <div class="icon crm-accordion-pointer"></div>
-              {ts}Schedule Follow-up{/ts}
+                {ts}Schedule Follow-up{/ts}
               </div><!-- /.crm-accordion-header -->
              <div class="crm-accordion-body">
                         <table class="form-layout-compressed">
@@ -302,7 +301,7 @@
                          cj('.crm-accordion-body').each( function() {
                            //open tab if form rule throws error
                            if ( cj(this).children( ).find('span.crm-error').text( ).length > 0 ) {
-                             cj(this).parent('.crm-accordion-closed').crmAccordionToggle();
+                             cj(this).parent('.collapsed').crmAccordionToggle();
                            }
                          });
           });

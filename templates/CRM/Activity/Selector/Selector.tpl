@@ -25,9 +25,8 @@
 *}
 
 <div class="crm-activity-selector-{$context}">
-<div class="crm-accordion-wrapper crm-search_filters-accordion crm-accordion-closed">
+<div class="crm-accordion-wrapper crm-search_filters-accordion collapsed">
  <div class="crm-accordion-header">
-  <div class="icon crm-accordion-pointer"></div>
   {ts}Filter by Activity Type{/ts}</a>
  </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">

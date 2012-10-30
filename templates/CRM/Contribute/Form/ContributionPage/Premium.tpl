@@ -38,9 +38,8 @@
     </tr>
    </table>
 
-   <div class="crm-accordion-wrapper crm-plain_text_email-accordion crm-accordion-closed">
+   <div class="crm-accordion-wrapper crm-plain_text_email-accordion collapsed">
    <div class="crm-accordion-header">
-        <div class="icon crm-accordion-pointer"></div>
         {ts}Premiums Settings{/ts}
    </div><!-- /.crm-accordion-header -->
    <div class="crm-accordion-body">

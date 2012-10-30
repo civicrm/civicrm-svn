@@ -33,9 +33,8 @@
 </table>
 {/if}
 
-<div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
+<div class="crm-accordion-wrapper crm-accordion_title-accordion collapsed">
     <div class="crm-accordion-header">
-        <div class="icon crm-accordion-pointer"></div>
         {$form.pdf_format_header.html}
     </div>
     <div class="crm-accordion-body">
@@ -72,9 +71,8 @@
   </div>
 </div>
 
-<div class="crm-accordion-wrapper crm-html_email-accordion crm-accordion-open">
+<div class="crm-accordion-wrapper crm-html_email-accordion ">
 <div class="crm-accordion-header">
-    <div class="icon crm-accordion-pointer"></div>
     {$form.html_message.label}
 </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">

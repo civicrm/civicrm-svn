@@ -157,9 +157,8 @@
 <div class="clear"></div>
 {include file="CRM/Case/Page/CustomDataView.tpl"}
 
-<div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed crm-case-roles-block">
+<div class="crm-accordion-wrapper crm-accordion_title-accordion collapsed crm-case-roles-block">
  <div class="crm-accordion-header">
-  <div class="icon crm-accordion-pointer"></div>
   {ts}Case Roles{/ts}
  </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">
@@ -474,9 +473,8 @@ cj(document).ready(function(){
 {/literal}
 
 {if $hasAccessToAllCases}
-<div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed crm-case-other-relationships-block">
+<div class="crm-accordion-wrapper crm-accordion_title-accordion collapsed crm-case-other-relationships-block">
  <div class="crm-accordion-header">
-  <div class="icon crm-accordion-pointer"></div>
   {ts}Other Relationships{/ts}
  </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">
@@ -655,9 +653,8 @@ function addRole() {
 {* pane to display / edit regular tags or tagsets for cases *}
 {if $showTags OR $showTagsets }
 
-<div id="casetags" class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-open crm-case-tags-block">
+<div id="casetags" class="crm-accordion-wrapper crm-accordion_title-accordion  crm-case-tags-block">
  <div class="crm-accordion-header">
-  <div class="icon crm-accordion-pointer"></div>
   {ts}Case Tags{/ts}
  </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">
@@ -781,18 +778,16 @@ function addTags() {
 {*include activity view js file*}
 {include file="CRM/common/activityView.tpl"}
 
-<div class="crm-accordion-wrapper crm-case_activities-accordion crm-accordion-open crm-case-activities-block">
+<div class="crm-accordion-wrapper crm-case_activities-accordion  crm-case-activities-block">
   <div class="crm-accordion-header">
-    <div class="icon crm-accordion-pointer"></div>
     {ts}Case Activities{/ts}
   </div>
   <div id="activities" class="crm-accordion-body">
     <div id="view-activity">
       <div id="activity-content"></div>
     </div>
-    <div class="crm-accordion-wrapper crm-accordion-inner crm-search_filters-accordion crm-accordion-closed">
+    <div class="crm-accordion-wrapper crm-accordion-inner crm-search_filters-accordion collapsed">
       <div class="crm-accordion-header">
-        <div class="icon crm-accordion-pointer"></div>
         {ts}Search Filters{/ts}</a>
       </div><!-- /.crm-accordion-header -->
       <div class="crm-accordion-body">

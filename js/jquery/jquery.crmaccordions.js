@@ -39,25 +39,14 @@
       container.on('click', 'div.crm-accordion-header a', function (e) {
         e.stopPropagation && e.stopPropagation();
       });
-      container.on('click', '.crm-accordion-header', function () {
-        var wrapper = $(this).parent();
-        if (wrapper.hasClass('crm-accordion-open')) {
-          $('.crm-accordion-body', wrapper).css('display', 'block').slideUp(speed);
-        }
-        else {
-          $('.crm-accordion-body', wrapper).css('display', 'none').slideDown(speed);
-        }
-        wrapper.toggleClass('crm-accordion-open').toggleClass('crm-accordion-closed');
-        return;
-      });
-      container.on('click', '.crm-collapsible .collapsible-title', function () {
-        $(this).toggleClass('collapsed');
-        if ($(this).hasClass('collapsed')) {
-          $(this).next().css('display', 'block').slideUp(speed);
-        }
-        else {
+      container.on('click', '.crm-accordion-header, .crm-collapsible .collapsible-title', function () {
+        if ($(this).parent().hasClass('collapsed')) {
           $(this).next().css('display', 'none').slideDown(speed);
         }
+        else {
+          $(this).next().css('display', 'block').slideUp(speed);
+        }
+        $(this).parent().toggleClass('collapsed');
         return false;
       });
       container.addClass('crm-accordion-processed');
@@ -66,13 +55,13 @@
   $.fn.crmAccordionToggle = function(speed) {
     $(this).each(function() {
       var wrapper = $(this);
-      if (wrapper.hasClass('crm-accordion-open')) {
-        $('.crm-accordion-body', wrapper).hide(speed);
+      if (wrapper.hasClass('collapsed')) {
+        $('.crm-accordion-body', wrapper).first().css('display', 'none').slideDown(speed);
       }
       else {
-        $('.crm-accordion-body', wrapper).show(speed);
+        $('.crm-accordion-body', wrapper).first().css('display', 'block').slideUp(speed);
       }
-      wrapper.toggleClass('crm-accordion-open').toggleClass('crm-accordion-closed');
+      wrapper.toggleClass('collapsed');
     });
   };
 })(jQuery);

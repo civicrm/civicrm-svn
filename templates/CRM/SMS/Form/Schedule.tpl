@@ -51,9 +51,8 @@
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
 
 {if $preview}
-<div class="crm-accordion-wrapper crm-plain_text_sms-accordion crm-accordion-closed">
+<div class="crm-accordion-wrapper crm-plain_text_sms-accordion collapsed">
     <div class="crm-accordion-header">
-        <div class="icon crm-accordion-pointer"></div>
         {ts}Preview SMS{/ts}
     </div><!-- /.crm-accordion-header -->
     <div class="crm-accordion-body">

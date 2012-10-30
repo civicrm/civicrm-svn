@@ -41,9 +41,8 @@
 
 {* Group options *}
  {* New Group *}
- <div id="new-group" class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
+ <div id="new-group" class="crm-accordion-wrapper crm-accordion_title-accordion collapsed">
  <div class="crm-accordion-header">
- <div class="icon crm-accordion-pointer"></div>
  {ts}Add respondent(s) to a new group{/ts}
  </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">
@@ -62,9 +61,8 @@
 
 
  {* Existing Group *}
- <div class="crm-accordion-wrapper crm-existing_group-accordion {if $hasExistingGroups}crm-accordion-open{else}crm-accordion-closed{/if}">
+ <div class="crm-accordion-wrapper crm-existing_group-accordion {if $hasExistingGroups}{else}collapsed{/if}">
  <div class="crm-accordion-header">
-  <div class="icon crm-accordion-pointer"></div>
   {ts}Add respondent(s) to existing group(s){/ts}
  </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">
@@ -92,7 +90,7 @@
  {
     var invalidGroupName = {/literal}'{$invalidGroupName}'{literal};
     if ( invalidGroupName ) {
-       cj("#new-group.crm-accordion-closed").crmAccordionToggle();
+       cj("#new-group.collapsed").crmAccordionToggle();
     } else {
        cj("#newGroupName").val( '' );
        cj("#newGroupDesc").val( '' );

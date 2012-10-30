@@ -40,9 +40,8 @@
 </table>
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
 
-<div class="crm-accordion-wrapper crm-plain_text_email-accordion crm-accordion-closed">
+<div class="crm-accordion-wrapper crm-plain_text_email-accordion collapsed">
     <div class="crm-accordion-header">
-        <div class="icon crm-accordion-pointer"></div>
         {ts}Preview Mailing{/ts}
     </div><!-- /.crm-accordion-header -->
     <div class="crm-accordion-body">

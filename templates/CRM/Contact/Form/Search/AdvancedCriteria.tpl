@@ -35,14 +35,14 @@ cj(function($) {
     $('.crm-ajax-accordion').on('click', '.crm-accordion-header:not(.active)', function() {
       loadPanes($(this).attr('id'));
     });
-    $('.crm-ajax-accordion.crm-accordion-open .crm-accordion-header').each(function() {
+    $('.crm-ajax-accordion:not(.collapsed) .crm-accordion-header').each(function() {
       loadPanes($(this).attr('id'));
     });
     $('.crm-ajax-accordion').on('click', '.close-accordion', function() {
       var header = $(this).parent();
       header.next().html('');
       header.removeClass('active');
-      header.parent('.crm-accordion-open').crmAccordionToggle();
+      header.parent('.crm-ajax-accordion:not(.collapsed)').crmAccordionToggle();
       // Reset results-display mode if it depends on this pane
       var mode = modes[$('#component_mode').val()] || null;
       if (mode && header.attr('id') == mode) {
@@ -71,7 +71,7 @@ cj(function($) {
       $('#task').val('');
       var mode = modes[$('#component_mode').val()] || null;
       if (mode) {
-        $('.crm-' + mode + '-accordion.crm-accordion-closed').crmAccordionToggle();
+        $('.crm-' + mode + '-accordion.collapsed').crmAccordionToggle();
         loadPanes(mode);
       }
       if ($('#component_mode').val() == '7') {
@@ -118,9 +118,8 @@ cj(function($) {
         {/if}
 
 {strip}
-<div class="crm-accordion-wrapper crm-search_criteria_basic-accordion crm-accordion-open">
+<div class="crm-accordion-wrapper crm-search_criteria_basic-accordion ">
  <div class="crm-accordion-header">
-  <div class="icon crm-accordion-pointer"></div>
   {ts}Basic Criteria{/ts}
  </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">
@@ -129,9 +128,8 @@ cj(function($) {
 </div><!-- /.crm-accordion-wrapper -->
 
     {foreach from=$allPanes key=paneName item=paneValue}
-      <div class="crm-accordion-wrapper crm-ajax-accordion crm-{$paneValue.id}-accordion {if $paneValue.open eq 'true' and $openedPanes.$paneName}crm-accordion-open{else}crm-accordion-closed{/if}">
+      <div class="crm-accordion-wrapper crm-ajax-accordion crm-{$paneValue.id}-accordion {if $paneValue.open eq 'true' and $openedPanes.$paneName}{else}collapsed{/if}">
        <div class="crm-accordion-header" id="{$paneValue.id}">
-         <div class="icon crm-accordion-pointer"></div>
          {$paneName}
        </div>
        <div class="crm-accordion-body {$paneValue.id}"></div>

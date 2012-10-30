@@ -23,9 +23,8 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-accordion-wrapper crm-demographics-accordion crm-accordion-closed">
+<div class="crm-accordion-wrapper crm-demographics-accordion collapsed">
  <div class="crm-accordion-header">
-  <div class="icon crm-accordion-pointer"></div>
   {$title}
   </div><!-- /.crm-accordion-header -->
   <div id="demographics" class="crm-accordion-body">

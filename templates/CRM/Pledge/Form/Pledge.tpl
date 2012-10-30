@@ -154,7 +154,7 @@ cj(document).ready( function() {
     cj('.crm-ajax-accordion .crm-accordion-header').one('click', function() {
       loadPanes(cj(this).attr('id'));
     });
-    cj('.crm-ajax-accordion.crm-accordion-open .crm-accordion-header').each(function(index) {
+    cj('.crm-ajax-accordion:not(.collapsed) .crm-accordion-header').each(function(index) {
       loadPanes(cj(this).attr('id'));
       });
 });
@@ -181,9 +181,8 @@ function loadPanes( id ) {
 
 <div class="accordion ui-accordion ui-widget ui-helper-reset">
 {foreach from=$allPanes key=paneName item=paneValue}
-<div class="crm-accordion-wrapper crm-ajax-accordion crm-{$paneValue.id}-accordion {if $paneValue.open eq 'true'}crm-accordion-open{else}crm-accordion-closed{/if}">
+<div class="crm-accordion-wrapper crm-ajax-accordion crm-{$paneValue.id}-accordion {if $paneValue.open eq 'true'}{else}collapsed{/if}">
 <div class="crm-accordion-header" id="{$paneValue.id}">
-  <div class="icon crm-accordion-pointer"></div>
 
         {$paneName}
   </div><!-- /.crm-accordion-header -->
