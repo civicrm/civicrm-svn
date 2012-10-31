@@ -35,6 +35,7 @@
        <title>Website</title>
        <type>varchar</type>
        <length>128</length>
+       <size>BIG</size>
        <import>true</import>
        <headerPattern>/Website/i</headerPattern>
        <dataPattern>/^[A-Za-z][0-9A-Za-z]{20,}$/</dataPattern>

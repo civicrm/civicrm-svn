@@ -127,6 +127,7 @@
        <name>external_identifier</name>
        <type>varchar</type>
        <length>32</length>
+       <size>EIGHT</size>
        <import>true</import>
        <headerPattern>/external\s?id/i</headerPattern>
        <dataPattern>/^\d{11,}$/</dataPattern>
@@ -144,6 +145,7 @@
        <title>Sort Name</title>
        <type>varchar</type>
        <length>128</length>
+       <size>BIG</size>
        <export>true</export>
        <comment>Name used for sorting different contact types</comment>
       <add>1.1</add>
@@ -158,6 +160,7 @@
        <title>Display Name</title>
        <type>varchar</type>
        <length>128</length>
+       <size>BIG</size>
        <export>true</export>
        <comment>Formatted name representing preferred format for display/print/other output.</comment>
        <add>1.1</add>
@@ -166,6 +169,7 @@
        <name>nick_name</name>
        <type>varchar</type>
        <length>128</length>
+       <size>BIG</size>
        <import>true</import>
        <headerPattern>/n(ick\s)name|nick$/i</headerPattern>
        <dataPattern>/^\w+$/</dataPattern>
@@ -177,6 +181,7 @@
        <name>legal_name</name>
        <type>varchar</type>
        <length>128</length>
+       <size>BIG</size>
        <import>true</import>
        <headerPattern>/^legal|(l(egal\s)?name)$/i</headerPattern>
        <comment>Legal Name.</comment>
@@ -189,6 +194,7 @@
        <title>Website</title>
        <type>varchar</type>
        <length>128</length>
+       <size>BIG</size>
        <import>true</import>
        <headerPattern>/^(home\sURL)|URL|web|site/i</headerPattern>
        <dataPattern>/^[\w\/\:\.]+$/</dataPattern>
@@ -273,6 +279,7 @@
        <uniqueName>contact_source</uniqueName>
        <type>varchar</type>
        <length>255</length>
+       <size>MEDIUM</size>
        <import>true</import>
        <headerPattern>/(S(ource\s)?o(f\s)?C(ontact\s)?Data)$/i</headerPattern>
        <comment>where contact come from, e.g. import, donate module insert...</comment>
@@ -282,6 +289,7 @@
        <name>first_name</name>
        <type>varchar</type>
        <length>64</length>
+       <size>BIG</size>
        <import>true</import>
        <headerPattern>/^first|(f(irst\s)?name)$/i</headerPattern>
        <dataPattern>/^\w+$/</dataPattern>
@@ -298,6 +306,7 @@
        <name>middle_name</name>
        <type>varchar</type>
        <length>64</length>
+       <size>MEDIUM</size>
        <import>true</import>
        <headerPattern>/^middle|(m(iddle\s)?name)$/i</headerPattern>
        <dataPattern>/^\w+$/</dataPattern>
@@ -309,6 +318,7 @@
        <name>last_name</name>
        <type>varchar</type>
        <length>64</length>
+       <size>BIG</size>
        <import>true</import>
        <headerPattern>/^last|(l(ast\s)?name)$/i</headerPattern>
        <dataPattern>/^\w+(\s\w+)?+$/</dataPattern>
@@ -448,6 +458,7 @@
        <name>job_title</name>
        <type>varchar</type>
        <length>255</length>
+       <size>MEDIUM</size>
        <import>true</import>
        <headerPattern>/^job|(j(ob\s)?title)$/i</headerPattern>
        <dataPattern>//</dataPattern>
@@ -516,6 +527,7 @@
        <name>household_name</name>
        <type>varchar</type>
        <length>128</length>
+       <size>BIG</size>
        <import>true</import>
        <headerPattern>/^household|(h(ousehold\s)?name)$/i</headerPattern>
        <dataPattern>/^\w+$/</dataPattern>
@@ -545,6 +557,7 @@
        <name>organization_name</name>
        <type>varchar</type>
        <length>128</length>
+       <size>BIG</size>
        <import>true</import>
        <headerPattern>/^organization|(o(rganization\s)?name)$/i</headerPattern>
        <dataPattern>/^\w+$/</dataPattern>

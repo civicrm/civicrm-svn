@@ -118,7 +118,7 @@ cj(function($) {
     </td>
     <td>
       {$form.nick_name.label}<br />
-      {$form.nick_name.html|crmAddClass:big}
+      {$form.nick_name.html}
     </td>
     <td>
       {if $buildContactSubType}

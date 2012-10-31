@@ -26,11 +26,11 @@
   <table class="form-layout">
     <tr>
             <td><label>{ts}Complete OR Partial Name{/ts}</label>&nbsp;{help id='id-advanced-intro'}<br />
-                {$form.sort_name.html|crmAddClass:big}
+                {$form.sort_name.html}
             </td>
             <td>
                 <label>{ts}Complete OR Partial Email{/ts}</label><br />
-                {$form.email.html|crmAddClass:medium}
+                {$form.email.html}
             </td>
             <td>
                 {$form.uf_group_id.label} {help id="id-search-views"}<br />{$form.uf_group_id.html}
@@ -224,7 +224,7 @@
         <tr>
             <td>
                 {$form.contact_source.label} {help id="id-source" file="CRM/Contact/Form/Contact"}<br />
-                {$form.contact_source.html|crmAddClass:medium}
+                {$form.contact_source.html}
             </td>
             <td>
                 {if $form.uf_user}
@@ -238,21 +238,21 @@
             </td>
             <td>
                 {$form.job_title.label}<br />
-                {$form.job_title.html|crmAddClass:medium}
+                {$form.job_title.html}
             </td>
         </tr>
         <tr>
              <td>
                  {$form.id.label} {help id="id-internal-id" file="CRM/Contact/Form/Contact"}<br />
-                 {$form.id.html|crmAddClass:medium}
+                 {$form.id.html}
              </td>
              <td>
                  {$form.external_identifier.label} {help id="id-external-id" file="CRM/Contact/Form/Contact"}<br />
-                 {$form.external_identifier.html|crmAddClass:medium}
+                 {$form.external_identifier.html}
              </td>
             <td colspan="3">
                 {$form.preferred_language.label}<br />
-                {$form.preferred_language.html|crmAddClass:medium}
+                {$form.preferred_language.html}
             </td>
         </tr>
     </table>

@@ -58,6 +58,7 @@ class CRM_Core_Form_Renderer extends HTML_QuickForm_Renderer_ArraySmarty {
   static $_sizeMapper = array(
     2 => 'two',
     4 => 'four',
+    6 => 'six',
     8 => 'eight',
     12 => 'twelve',
     20 => 'medium',

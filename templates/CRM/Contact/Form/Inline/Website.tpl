@@ -48,7 +48,7 @@
     {section name='i' start=1 loop=$totalBlocks}
     {assign var='blockId' value=$smarty.section.i.index} 
     <tr id="Website_Block_{$blockId}" {if $blockId gt $actualBlockCount}class="hiddenElement"{/if}>
-      <td>{$form.website.$blockId.url.html|crmAddClass:twenty}&nbsp;</td>
+      <td>{$form.website.$blockId.url.html}&nbsp;</td>
       <td>{$form.website.$blockId.website_type_id.html}</td>
       <td>
         {if $blockId > 1} 
@@ -67,15 +67,15 @@
         cj(this).closest('tr').each(function(){
           cj(this).find('input').val('');
           cj(this).addClass('hiddenElement');
+          cj('#add-more-website').show();
         });
       });
 
       // add more and set focus to new row
       cj('#add-more-website').click(function() {
-        var rowSelector = cj('tr[id^="Website_Block_"][class="hiddenElement"] :first').parent(); 
+        var rowSelector = cj('tr[id^="Website_Block_"][class="hiddenElement"]:first'); 
         rowSelector.removeClass('hiddenElement');
-        var rowId = rowSelector.attr('id').replace('Website_Block_', '');
-        cj('#website_' + rowId + '_url').focus();
+        cj(':text:first', rowSelector).focus();
         if ( cj('tr[id^="Website_Block_"][class="hiddenElement"]').length == 0  ) {
           cj('#add-more-website').hide();
         }

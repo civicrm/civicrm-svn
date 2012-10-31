@@ -601,19 +601,12 @@ Alternatively you can get a version of CiviCRM that matches your PHP version
     $type  = (string ) $fieldXML->type;
     switch ($type) {
       case 'varchar':
-        $field['sqlType'] = 'varchar(' . (int ) $fieldXML->length . ')';
-        $field['phpType'] = 'string';
-        $field['crmType'] = 'CRM_Utils_Type::T_STRING';
-        $field['length']  = (int ) $fieldXML->length;
-        $field['size']    = $this->getSize($field['length']);
-        break;
-
       case 'char':
-        $field['sqlType'] = 'char(' . (int ) $fieldXML->length . ')';
+        $field['length'] = (int) $fieldXML->length;
+        $field['sqlType'] = "$type({$field['length']})";
         $field['phpType'] = 'string';
         $field['crmType'] = 'CRM_Utils_Type::T_STRING';
-        $field['length']  = (int ) $fieldXML->length;
-        $field['size']    = $this->getSize($field['length']);
+        $field['size'] = $this->getSize($fieldXML);
         break;
 
       case 'enum':
@@ -885,34 +878,35 @@ Alternatively you can get a version of CiviCRM that matches your PHP version
   }
 
   /**
-   * four
-   * eight
-   * twelve
-   * sixteen
-   * medium (20)
-   * big (30)
-   * huge (45)
+   * Sets the size property of a textfield
+   * See constants defined in CRM_Utils_Type for possible values
    */
-  protected function getSize($maxLength) {
-    if ($maxLength <= 2) {
-      return 'CRM_Utils_Type::TWO';
+  protected function getSize($fieldXML) {
+    // Extract from <size> tag if supplied
+    if ($this->value('size', $fieldXML)) {
+      $const = 'CRM_Utils_Type::' . strtoupper($fieldXML->size);
+      if (defined($const)) {
+        return $const;
+      }
     }
-    if ($maxLength <= 4) {
-      return 'CRM_Utils_Type::FOUR';
-    }
-    if ($maxLength <= 8) {
-      return 'CRM_Utils_Type::EIGHT';
-    }
-    if ($maxLength <= 16) {
-      return 'CRM_Utils_Type::TWELVE';
-    }
-    if ($maxLength <= 32) {
-      return 'CRM_Utils_Type::MEDIUM';
-    }
-    if ($maxLength <= 64) {
-      return 'CRM_Utils_Type::BIG';
+    // Infer from <length> tag if <size> was not explicitly set or was invalid
+
+    // This map is slightly different from CRM_Core_Form_Renderer::$_sizeMapper
+    // Because we usually want fields to render as smaller than their maxlength
+    $sizes = array(
+      2 => 'TWO',
+      4 => 'FOUR',
+      6 => 'SIX',
+      8 => 'EIGHT',
+      16 => 'TWELVE',
+      32 => 'MEDIUM',
+      64 => 'BIG',
+    );
+    foreach ($sizes as $length => $name) {
+      if ($fieldXML->length <= $length) {
+        return "CRM_Utils_Type::$name";
+      }
     }
     return 'CRM_Utils_Type::HUGE';
   }
 }
-

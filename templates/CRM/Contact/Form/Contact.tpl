@@ -60,10 +60,10 @@
                 {$form.contact_source.html|crmAddClass:twenty}
               </td>
               <td>{$form.external_identifier.label}&nbsp;{help id="id-external-id"}<br />
-                {$form.external_identifier.html|crmAddClass:six}
+                {$form.external_identifier.html}
               </td>
               {if $contactId}
-                <td><label for="internal_identifier">{ts}Internal Id{/ts}{help id="id-internal-id"}</label><br /><input type="text" class="six form-text medium" size="20" disabled="disabled" value="{$contactId}"></td>
+                <td><label for="internal_identifier_display">{ts}Internal Id{/ts}{help id="id-internal-id"}</label><br /><input id="internal_identifier_display" type="text" class="form-text eight" size="8" disabled="disabled" value="{$contactId}"></td>
               {/if}
             </tr>
           </table>
