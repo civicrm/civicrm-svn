@@ -27,6 +27,7 @@
 
 <div style="margin-top: 3em; padding: 1em; background-color: #0C0; border: 1px #070 solid; color: white; font-weight: bold">
   <p>{$message}</p>
+  {if $rows}
   <div class="upgrade-success">
     <table>
       <tr>
@@ -36,11 +37,12 @@
       </tr>
       {foreach from=$rows item=row}
         <tr>
-            {foreach $row item=cell}
+            {foreach from=$row item=cell}
               <td>{$cell}</td>
             {/foreach}
         </tr>
       {/foreach}
     </table>
   </div>
+  {/if}
 </div>

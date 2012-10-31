@@ -35,22 +35,27 @@ function initialize() {
   if (!function_exists('drush_get_context')) {
     require_once '../civicrm.config.php';
   }
+
+  // hack to make code think its an upgrade mode, and not do lot of initialization which breaks the code due to new 4.2 schema
+  $_GET['q'] = 'civicrm/upgrade/cleanup42';
   
   require_once 'CRM/Core/Config.php';
   $config = CRM_Core_Config::singleton();
   
   // this does not return on failure
   CRM_Utils_System::authenticateScript(TRUE);
-  
 }
 
 function run() {
   initialize();
   echo "The following records have been processed. If action = Un-linked, that membership has been disconnected from the contribution record.\n";
-  echo "Contact ID, ContributionID, Contribution Status, MembershipID, Membership Type, Start Date, End Date, Membership Status \n";
-  $fh = fopen('php://stdout', 'w');
-  fputcsv($fh, array("Contact ID", "ContributionID, Contribution Status, MembershipID, Membership Type, Start Date, End Date, Membership Status");
-  CRM_Upgrade_Page_Cleanup42deleteInvalidPairs(function($row) use ($fh) {
+  echo "Contact ID, ContributionID, Contribution Status, MembershipID, Membership Type, Start Date, End Date, Membership Status, Action \n";
+
+  $fh   = fopen('php://stdout', 'w');
+  $rows = CRM_Upgrade_Incremental_php_FourTwo::deleteInvalidPairs();
+  foreach ( $rows as $row ) {
     fputcsv($fh, $row);
-  });
+  }
 }
+
+run();

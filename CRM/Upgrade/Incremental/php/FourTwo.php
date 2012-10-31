@@ -813,9 +813,10 @@ VALUES
     $queue->createItem($task, array('weight' => -1));
   }
 
-  public static function deleteInvalidPairs($onProcess) {
+  public static function deleteInvalidPairs() {
     require_once 'CRM/Member/PseudoConstant.php';
     require_once 'CRM/Contribute/PseudoConstant.php';
+    $processedRecords = array();
 
     $tempTableName1 = CRM_Core_DAO::createTempTableName();
     // 1. collect all duplicates
@@ -864,9 +865,21 @@ VALUES
         $memType        = CRM_Utils_Array::value($dao->membership_type_id, $membershipType);
         $memStatus      = CRM_Utils_Array::value($dao->status_id, $membershipStatus);
         $contribStatus  = CRM_Utils_Array::value($dao->contribution_status_id, $contributionStatus);
-        $onProcess(array($dao->contact_id, $dao->contribution_id, $contribStatus, $dao->membership_id, $memType, $dao->start_date, $dao->end_date, $memStatus, $status));
+        $processedRecords[] = array($dao->contact_id, $dao->contribution_id, $contribStatus, $dao->membership_id, 
+                                    $memType, $dao->start_date, $dao->end_date, $memStatus, $status);
       }
     }
+
+    if ( !empty($processedRecords) ) {
+      CRM_Core_Error::debug_log_message("deleteInvalidPairs() - The following records have been processed. Membership records with action:");
+      CRM_Core_Error::debug_log_message( "Contact ID, ContributionID, Contribution Status, MembershipID, Membership Type, Start Date, End Date, Membership Status, Action" );
+      foreach ( $processedRecords as $record ) {
+        CRM_Core_Error::debug_log_message(implode(', ', $record));
+      }
+    } else {
+      CRM_Core_Error::debug_log_message("deleteInvalidPairs() - Could not find any records to process.");
+    }
+    return $processedRecords;
   }
 
 }

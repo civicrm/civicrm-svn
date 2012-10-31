@@ -26,16 +26,17 @@
 */
 class CRM_Upgrade_Page_Cleanup42  extends CRM_Core_Page {
   public function run() {
-    $rows = array();
-    CRM_Upgrade_Incremental_php_FourTwo::deleteInvalidPairs(function($row) use ($rows) {
-      $rows[] = $row;
-    });
+    $rows     = CRM_Upgrade_Incremental_php_FourTwo::deleteInvalidPairs();
     $template = CRM_Core_Smarty::singleton();
-    $columnHeaders = array("Contact ID", "ContributionID", "Contribution Status", "MembershipID", "Membership Type", "Start Date", "End Date", "Membership Status", "Action";
+
+    $columnHeaders = array("Contact ID", "ContributionID", "Contribution Status", "MembershipID", 
+                           "Membership Type", "Start Date", "End Date", "Membership Status", "Action");
     $template->assign('columnHeaders', $columnHeaders);
     $template->assign('rows', $rows);
-    $message = ts('The following records have been processed. Membership records with action')
-    $template->assign('message' $message);
+
+    $message = !empty($rows) ? ts('The following records have been processed. Membership records with action:') : ts('Could not find any records to process.');
+    $template->assign('message', $message);
+
     $content = $template->fetch('CRM/common/upgradeCleanup.tpl');
     echo CRM_Utils_System::theme('page', $content, TRUE, $this->_print, FALSE, TRUE);
   }
