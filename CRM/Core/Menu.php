@@ -620,6 +620,11 @@ UNION (
     if (preg_match('/^civicrm\/(upgrade\/)?queue\//', $path)) {
       CRM_Queue_Menu::alter($path, $menuPath);
     }
+    if ($path == 'civicrm/upgrade/cleanup42') {
+      $menuPath['page_callback'] = 'CRM_Upgrade_Page_Cleanup42';
+      $menuPath['access_arguments'][0][] = 'administer CiviCRM';
+      $menuPath['access_callback'] = array('CRM_Core_Permission', 'checkMenu');
+    }
 
     if (!empty($menuPath)) {
       $i18n = CRM_Core_I18n::singleton();

@@ -74,7 +74,8 @@ INNER JOIN civicrm_membership mem ON mem.id = mp.membership_id
 ORDER BY mp.contribution_id, mp.membership_id";
       $invalidData = CRM_Core_DAO::executeQuery($query);
       if ($invalidData->N) {
-        $invalidDataMessage = "<br /><strong>" . ts('The upgrade is being aborted due to data integrity issues in your database. There are multiple membership records linked to the same contribution record. This is unexpected, and some of the membership records may be duplicates. The problem record pairs are listed below. Please copy the list to your clipboard and email it to us at info@civicrm.org so we can review the details and recommend steps to resolve the problem.') . "</strong>";
+        $invalidDataMessage = "<br /><strong>" . ts('The upgrade is being aborted due to data integrity issues in your database. There are multiple membership records linked to the same contribution record. This is unexpected, and some of the membership records may be duplicates. The problem record pairs are listed below. Refer to <a href="%1">this wiki page for instructions on repairing your database</a> so that you can run the upgrade successfully."
+        ', array( 1 => 'http://wiki.civicrm.org/confluence/display/CRMDOC42/Repair+database+script+for+4.2+upgrades')) . "</strong>";
         $membershipType = CRM_Member_PseudoConstant::membershipType();
         $membershipStatus = CRM_Member_PseudoConstant::membershipStatus();
         $invalidDataMessage .= "<table border=1><tr><th>Contribution-ID</th><th>Membership-ID</th><th>Membership Type</th><th>Start Date</th><th>End Date</th><th>Membership Status</th></tr>";
@@ -811,4 +812,61 @@ VALUES
     );
     $queue->createItem($task, array('weight' => -1));
   }
+
+  public static function deleteInvalidPairs($onProcess) {
+    require_once 'CRM/Member/PseudoConstant.php';
+    require_once 'CRM/Contribute/PseudoConstant.php';
+
+    $tempTableName1 = CRM_Core_DAO::createTempTableName();
+    // 1. collect all duplicates
+    $sql = "
+  CREATE TEMPORARY TABLE {$tempTableName1} SELECT mp.id as payment_id, mp.contribution_id, mp.membership_id, mem.membership_type_id, mem.start_date, mem.end_date, mem.status_id, mem.contact_id, con.contribution_status_id
+  FROM civicrm_membership_payment mp
+  INNER JOIN ( SELECT cmp.contribution_id
+                FROM civicrm_membership_payment cmp
+                LEFT JOIN civicrm_line_item cli ON cmp.contribution_id=cli.entity_id and cli.entity_table = 'civicrm_contribution'
+                WHERE cli.entity_id IS NULL
+                GROUP BY cmp.contribution_id
+                HAVING COUNT(cmp.membership_id) > 1) submp ON submp.contribution_id = mp.contribution_id
+  INNER JOIN civicrm_membership mem ON mem.id = mp.membership_id
+  INNER JOIN civicrm_contribution con ON con.id = mp.contribution_id
+  ORDER BY mp.contribution_id, mp.membership_id";
+    $dao = CRM_Core_DAO::executeQuery($sql);
+
+    $tempTableName2 = CRM_Core_DAO::createTempTableName();
+    // 2. collect all records that are going to be retained
+    $sql = "
+  CREATE TEMPORARY TABLE {$tempTableName2} 
+  SELECT MAX(payment_id) as payment_id FROM {$tempTableName1} GROUP BY contribution_id HAVING COUNT(*) > 1";
+    CRM_Core_DAO::executeQuery($sql);
+
+    // 3. do the un-linking
+    $sql = "
+  DELETE cmp.*
+  FROM   civicrm_membership_payment cmp
+  INNER JOIN $tempTableName1 temp1 ON temp1.payment_id = cmp.id
+  LEFT JOIN  $tempTableName2 temp2 ON temp1.payment_id = temp2.payment_id
+  WHERE temp2.payment_id IS NULL";
+    CRM_Core_DAO::executeQuery($sql);
+
+    // 4. show all records that were Processed, i.e Retained vs Un-linked
+    $sql = "
+  SELECT temp1.contact_id, temp1.contribution_id, temp1.contribution_status_id, temp1.membership_id, temp1.membership_type_id, temp1.start_date, temp1.end_date, temp1.status_id, temp2.payment_id as retain_id
+  FROM $tempTableName1 temp1
+  LEFT JOIN  $tempTableName2 temp2 ON temp1.payment_id = temp2.payment_id";
+    $dao = CRM_Core_DAO::executeQuery($sql);
+    if ($dao->N) { 
+      $membershipType   = CRM_Member_PseudoConstant::membershipType();
+      $membershipStatus = CRM_Member_PseudoConstant::membershipStatus();
+      $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus();
+      while ($dao->fetch()) {
+        $status         = $dao->retain_id ? 'Retained' : 'Un-linked';
+        $memType        = CRM_Utils_Array::value($dao->membership_type_id, $membershipType);
+        $memStatus      = CRM_Utils_Array::value($dao->status_id, $membershipStatus);
+        $contribStatus  = CRM_Utils_Array::value($dao->contribution_status_id, $contributionStatus);
+        $onProcess(array($dao->contact_id, $dao->contribution_id, $contribStatus, $dao->membership_id, $memType, $dao->start_date, $dao->end_date, $memStatus, $status));
+      }
+    }
+  }
+
 }
