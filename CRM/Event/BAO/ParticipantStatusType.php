@@ -43,7 +43,7 @@ class CRM_Event_BAO_ParticipantStatusType extends CRM_Event_DAO_ParticipantStatu
   }
 
   static function &create(&$params) {
-    $transaction = new CRM_Core_Transaction;
+    $transaction = new CRM_Core_Transaction();
     $statusType = self::add($params);
     if (is_a($statusType, 'CRM_Core_Error')) {
       $transaction->rollback();

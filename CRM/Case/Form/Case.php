@@ -323,7 +323,7 @@ class CRM_Case_Form_Case extends CRM_Core_Form {
    * @return None
    */
   public function postProcess() {
-    $tx = new CRM_Core_Transaction();
+    $transaction = new CRM_Core_Transaction();
 
     // check if dedupe button, if so return.
     $buttonName = $this->controller->getButtonName();

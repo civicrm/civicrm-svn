@@ -1162,7 +1162,7 @@ function _civicrm_api3_validate_uniquekey(&$params, &$fieldname, &$fieldInfo) {
 function _civicrm_api3_generic_replace($entity, $params) {
 
   require_once 'CRM/Core/Transaction.php';
-  $tx = new CRM_Core_Transaction();
+  $transaction = new CRM_Core_Transaction();
   try {
     if (!is_array($params['values'])) {
       throw new Exception("Mandatory key(s) missing from params array: values");
@@ -1176,7 +1176,7 @@ function _civicrm_api3_generic_replace($entity, $params) {
     // Lookup pre-existing records
     $preexisting = civicrm_api($entity, 'get', $baseParams, $params);
     if (civicrm_error($preexisting)) {
-      $tx->rollback();
+      $transaction->rollback();
       return $preexisting;
     }
 
@@ -1188,7 +1188,7 @@ function _civicrm_api3_generic_replace($entity, $params) {
       $action      = (isset($replacement['id']) || isset($replacement[$entity . '_id'])) ? 'update' : 'create';
       $create      = civicrm_api($entity, $action, $replacement);
       if (civicrm_error($create)) {
-        $tx->rollback();
+        $transaction->rollback();
         return $create;
       }
       foreach ($create['values'] as $entity_id => $entity_value) {
@@ -1207,7 +1207,7 @@ function _civicrm_api3_generic_replace($entity, $params) {
           'id' => $staleID,
         ));
       if (civicrm_error($delete)) {
-        $tx->rollback();
+        $transaction->rollback();
         return $delete;
       }
     }
@@ -1215,11 +1215,11 @@ function _civicrm_api3_generic_replace($entity, $params) {
     return civicrm_api3_create_success($creates, $params);
   }
   catch(PEAR_Exception$e) {
-    $tx->rollback();
+    $transaction->rollback();
     return civicrm_api3_create_error($e->getMessage());
   }
   catch(Exception$e) {
-    $tx->rollback();
+    $transaction->rollback();
     return civicrm_api3_create_error($e->getMessage());
   }
 }
