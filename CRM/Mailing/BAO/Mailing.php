@@ -1180,9 +1180,8 @@ AND civicrm_contact.is_opt_out =0";
 
     $message = new Mail_mime("\n");
 
-    if (defined('CIVICRM_MAIL_SMARTY') &&
-      CIVICRM_MAIL_SMARTY
-    ) {
+    $useSmarty = defined('CIVICRM_MAIL_SMARTY') && CIVICRM_MAIL_SMARTY ? TRUE : FALSE;
+    if ($useSmarty) {
       $smarty = CRM_Core_Smarty::singleton();
       // also add the contact tokens to the template
       $smarty->assign_by_ref('contact', $contact);
@@ -1194,9 +1193,7 @@ AND civicrm_contact.is_opt_out =0";
         ($contact['preferred_mail_format'] == 'HTML' && !array_key_exists('html', $pEmails))
       )) {
       $textBody = join('', $text);
-      if (defined('CIVICRM_MAIL_SMARTY') &&
-        CIVICRM_MAIL_SMARTY
-      ) {
+      if ($useSmarty) {
         $smarty->security = TRUE;
         $textBody         = $smarty->fetch("string:$textBody");
         $smarty->security = FALSE;
@@ -1208,9 +1205,7 @@ AND civicrm_contact.is_opt_out =0";
           $contact['preferred_mail_format'] == 'Both'
         ))) {
       $htmlBody = join('', $html);
-      if (defined('CIVICRM_MAIL_SMARTY') &&
-        CIVICRM_MAIL_SMARTY
-      ) {
+      if ($useSmarty) {
         $smarty->security = TRUE;
         $htmlBody         = $smarty->fetch("string:$htmlBody");
         $smarty->security = FALSE;
@@ -1348,7 +1343,7 @@ AND civicrm_contact.is_opt_out =0";
     $token = $token_a['token'];
     $data  = $token;
 
-    $escapeSmarty = defined('CIVICRM_MAIL_SMARTY') && CIVICRM_MAIL_SMARTY ? TRUE : FALSE;
+    $useSmarty = defined('CIVICRM_MAIL_SMARTY') && CIVICRM_MAIL_SMARTY ? TRUE : FALSE;
 
     if ($type == 'embedded_url') {
       $embed_data = array();
@@ -1382,7 +1377,7 @@ AND civicrm_contact.is_opt_out =0";
       }
     }
     elseif ($type == 'contact') {
-      $data = CRM_Utils_Token::getContactTokenReplacement($token, $contact, FALSE, FALSE, $escapeSmarty);
+      $data = CRM_Utils_Token::getContactTokenReplacement($token, $contact, FALSE, FALSE, $useSmarty);
     }
     elseif ($type == 'action') {
       $data = CRM_Utils_Token::getActionTokenReplacement($token, $verp, $urls, $html);
