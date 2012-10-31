@@ -62,7 +62,7 @@ class CRM_Upgrade_Incremental_php_FourTwo {
 
       // CRM-10613, CRM-11120
       $query = "
-SELECT mp.contribution_id, mp.membership_id, mem.membership_type_id, mem.start_date, mem.end_date, mem.status_id
+SELECT mp.contribution_id, mp.membership_id, mem.membership_type_id, mem.start_date, mem.end_date, mem.status_id, mem.contact_id
 FROM civicrm_membership_payment mp
 INNER JOIN ( SELECT cmp.contribution_id
               FROM civicrm_membership_payment cmp
@@ -74,13 +74,14 @@ INNER JOIN civicrm_membership mem ON mem.id = mp.membership_id
 ORDER BY mp.contribution_id, mp.membership_id";
       $invalidData = CRM_Core_DAO::executeQuery($query);
       if ($invalidData->N) {
-        $invalidDataMessage = "<br /><strong>" . ts('The upgrade is being aborted due to data integrity issues in your database. There are multiple membership records linked to the same contribution record. This is unexpected, and some of the membership records may be duplicates. The problem record pairs are listed below. Refer to <a href="%1">this wiki page for instructions on repairing your database</a> so that you can run the upgrade successfully."
+        $invalidDataMessage = "<br /><strong>" . ts('The upgrade is being aborted due to data integrity issues in your database. There are multiple membership records linked to the same contribution record. This is unexpected, and some of the membership records may be duplicates. The problem record pairs are listed below. Refer to <a href="%1">this wiki page for instructions on repairing your database</a> so that you can run the upgrade successfully.
         ', array( 1 => 'http://wiki.civicrm.org/confluence/display/CRMDOC42/Repair+database+script+for+4.2+upgrades')) . "</strong>";
         $membershipType = CRM_Member_PseudoConstant::membershipType();
         $membershipStatus = CRM_Member_PseudoConstant::membershipStatus();
-        $invalidDataMessage .= "<table border=1><tr><th>Contribution-ID</th><th>Membership-ID</th><th>Membership Type</th><th>Start Date</th><th>End Date</th><th>Membership Status</th></tr>";
+        $invalidDataMessage .= "<table border=1><tr><th>Contact-ID</th><th>Contribution-ID</th><th>Membership-ID</th><th>Membership Type</th><th>Start Date</th><th>End Date</th><th>Membership Status</th></tr>";
         while ($invalidData->fetch()) {
           $invalidDataMessage .= "<tr>";
+          $invalidDataMessage .= "<td>{$invalidData->contact_id}</td>";
           $invalidDataMessage .= "<td>{$invalidData->contribution_id}</td>";
           $invalidDataMessage .= "<td>{$invalidData->membership_id}</td>";
           $invalidDataMessage .= "<td>" . CRM_Utils_Array::value($invalidData->membership_type_id, $membershipType) . "</td>";
