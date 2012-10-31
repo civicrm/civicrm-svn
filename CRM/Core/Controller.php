@@ -154,6 +154,12 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
     // this has to true for multiple tab session fix
     $addSequence = TRUE;
 
+    // let the constructor initialize this, should happen only once
+    if (!isset(self::$_template)) {
+      self::$_template = CRM_Core_Smarty::singleton();
+      self::$_session = CRM_Core_Session::singleton();
+    }
+
     // add a unique validable key to the name
     $name         = CRM_Utils_System::getClassName($this);
     $name         = $name . '_' . $this->key($name, $addSequence, $ignoreKey);
@@ -176,12 +182,6 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
     }
 
     $this->HTML_QuickForm_Controller($name, $modal);
-
-    // let the constructor initialize this, should happen only once
-    if (!isset(self::$_template)) {
-      self::$_template = CRM_Core_Smarty::singleton();
-      self::$_session = CRM_Core_Session::singleton();
-    }
 
     $snippet = CRM_Utils_Array::value('snippet', $_REQUEST);
     //$snippet = CRM_Utils_Request::retrieve( 'snippet', 'Integer', $this, false, null, $_REQUEST );
