@@ -41,9 +41,10 @@ function initialize() {
   
   require_once 'CRM/Core/Config.php';
   $config = CRM_Core_Config::singleton();
-  
-  // this does not return on failure
-  CRM_Utils_System::authenticateScript(TRUE);
+  if (php_sapi_name() != "cli") {
+    // this does not return on failure
+    CRM_Utils_System::authenticateScript(TRUE);
+  }
 }
 
 function run() {
@@ -51,7 +52,7 @@ function run() {
   echo "The following records have been processed. If action = Un-linked, that membership has been disconnected from the contribution record.\n";
   echo "Contact ID, ContributionID, Contribution Status, MembershipID, Membership Type, Start Date, End Date, Membership Status, Action \n";
 
-  $fh   = fopen('php://stdout', 'w');
+  $fh   = fopen('php://output', 'w');
   $rows = CRM_Upgrade_Incremental_php_FourTwo::deleteInvalidPairs();
   foreach ( $rows as $row ) {
     fputcsv($fh, $row);
