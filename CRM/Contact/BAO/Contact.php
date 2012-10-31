@@ -1220,7 +1220,7 @@ WHERE id={$id}; ";
    * @access public
    * @static
    */
-  static function &exportableFields($contactType = 'Individual', $status = FALSE, $export = FALSE, $search = FALSE) {
+  static function &exportableFields($contactType = 'Individual', $status = FALSE, $export = FALSE, $search = FALSE, $withMultiRecord = FALSE) {
     if (empty($contactType)) {
       $contactType = 'All';
     }
@@ -1302,14 +1302,14 @@ WHERE id={$id}; ";
 
         if ($contactType != 'All') {
           $fields = array_merge($fields,
-            CRM_Core_BAO_CustomField::getFieldsForImport($contactType, $status, TRUE, $search)
+            CRM_Core_BAO_CustomField::getFieldsForImport($contactType, $status, TRUE, $search, TRUE, $withMultiRecord)
           );
         }
         else {
           foreach (array(
             'Individual', 'Household', 'Organization') as $type) {
             $fields = array_merge($fields,
-              CRM_Core_BAO_CustomField::getFieldsForImport($type, FALSE, FALSE, $search)
+              CRM_Core_BAO_CustomField::getFieldsForImport($type, FALSE, FALSE, $search, TRUE, $withMultiRecord)
             );
           }
         }
@@ -1961,6 +1961,22 @@ ORDER BY civicrm_email.is_primary DESC";
             $value .= ' ' . $params[$key . '_time'];
           }
 
+          $valueId = NULL;
+          if (CRM_Utils_Array::value('customRecordValues', $params)) {
+            if (is_array($params['customRecordValues']) && !empty($params['customRecordValues'])) {
+              foreach ($params['customRecordValues'] as $recId => $customFields) {
+                if (is_array($customFields) && !empty($customFields)) {
+                  foreach ($customFields as $customFieldName) {
+                    if ($customFieldName == $key) {
+                      $valueId = $recId;
+                      break;
+                    }
+                  }
+                }
+              }
+            }
+          }
+
           $type = $data['contact_type'];
           if ( CRM_Utils_Array::value('contact_sub_type', $data) ) {
             $type = $data['contact_sub_type'];
@@ -1975,7 +1991,7 @@ ORDER BY civicrm_email.is_primary DESC";
             $data['custom'],
             $value,
             $type,
-            NULL,
+            $valueId,
             $contactID
           );
         }

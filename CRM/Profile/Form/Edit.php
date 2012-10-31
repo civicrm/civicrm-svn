@@ -146,8 +146,15 @@ SELECT module
       CRM_Core_Error::fatal();
     }
 
-    // set the title
-    CRM_Utils_System::setTitle($ufGroup->title);
+    // set the title    
+    if ($this->_multiRecord && $this->_customGroupTitle) {
+      $groupTitle = ($this->_multiRecord & CRM_Core_Action::UPDATE) ?
+        'Edit ' . $this->_customGroupTitle . ' Record' : $this->_customGroupTitle;
+      
+    } else {
+      $groupTitle = $ufGroup->title;
+    }
+    CRM_Utils_System::setTitle($groupTitle);
     $this->assign('recentlyViewed', FALSE);
 
     if ($this->_context != 'dialog') {
@@ -191,6 +198,17 @@ SELECT module
         }
       }
 
+      if ($this->_multiRecordProfile) {
+        $urlParams = "reset=1&id={$this->_id}&gid={$gidString}";
+        
+        // get checksum if present
+        if ($this->get('cs')) {
+          $urlParams .= "&cs=" . $this->get('cs');
+        }
+        $this->_postURL = CRM_Utils_System::url('civicrm/profile/edit', $urlParams);
+        $this->_cancelURL = CRM_Utils_System::url('civicrm/profile/edit', $urlParams);
+      }
+      
       // we do this gross hack since qf also does entity replacement
       $this->_postURL = str_replace('&amp;', '&', $this->_postURL);
       $this->_cancelURL = str_replace('&amp;', '&', $this->_cancelURL);
@@ -214,7 +232,24 @@ SELECT module
     }
 
     parent::buildQuickForm();
-
+    
+    if (($this->_multiRecord & CRM_Core_Action::DELETE) && $this->_recordExists) {
+      $this->_deleteButtonName = $this->getButtonName('upload', 'delete');
+      
+      $this->addElement('submit',
+        $this->_deleteButtonName,
+        ts('Delete')
+      ); 
+       
+      $buttons[] = array(
+        'type' => 'cancel',
+        'name' => ts('Cancel'),
+        'isDefault' => TRUE,
+      );
+      $this->addButtons($buttons);
+      return;
+    } 
+    
     //get the value from session, this is set if there is any file
     //upload field
     $uploadNames = $this->get('uploadNames');
@@ -267,8 +302,11 @@ SELECT module
       echo json_encode($returnArray);
       CRM_Utils_System::civiExit();
     }
-
-    CRM_Core_Session::setStatus(ts('Thank you. Your information has been saved.'), ts('Saved'), 'success');
+    
+    //for delete record handling
+    if (!CRM_Utils_Array::value($this->_deleteButtonName, $_POST)) {
+      CRM_Core_Session::setStatus(ts('Thank you. Your information has been saved.'), ts('Saved'), 'success');
+    }
 
     $session = CRM_Core_Session::singleton();
     // only replace user context if we do not have a postURL

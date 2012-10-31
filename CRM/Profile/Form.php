@@ -71,7 +71,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
 
   /**
    * The title of the category we are editing
-   *
+   * 
    * @var string
    */
   protected $_title;
@@ -144,6 +144,27 @@ class CRM_Profile_Form extends CRM_Core_Form {
    */
   protected $_activityId = NULL;
 
+  
+  protected $_multiRecordFields = NULL;
+  
+  protected $_recordId = NULL;
+  
+  /**
+   * action for multi record profile (create/edit/view)
+   *
+   * @var string
+   */
+  protected $_multiRecord = NULL;
+    
+  protected $_multiRecordProfile = FALSE;
+
+  protected $_recordExists = TRUE;
+
+  protected $_customGroupTitle = NULL;
+  
+  protected $_deleteButtonName = NULL;
+
+  protected $_customGroupId = NULL;
   /**
    * pre processing work done here.
    *
@@ -163,10 +184,35 @@ class CRM_Profile_Form extends CRM_Core_Form {
     $this->_grid       = CRM_Utils_Request::retrieve('grid', 'Integer', $this);
     $this->_context    = CRM_Utils_Request::retrieve('context', 'String', $this);
 
+    //unset from session when $_GET doesn't have it
+    //except when the form is submitted
+    if (empty($_POST)) {
+      if (!array_key_exists('multiRecord', $_GET)) {
+        $this->set('multiRecord', NULL);
+      }
+      if (!array_key_exists('recordId', $_GET)) {
+        $this->set('recordId', NULL);
+      }
+    }
+        
+    if ($this->_mode == self::MODE_EDIT) {
+      //specifies the action being done on a multi record field
+      $multiRecordAction = CRM_Utils_Request::retrieve('multiRecord', 'String', $this);
+      $this->_multiRecord = (!is_numeric($multiRecordAction)) ? 
+        CRM_Core_Action::resolve($multiRecordAction) : $multiRecordAction;
+      if ($this->_multiRecord) {
+        $this->set('multiRecord', $this->_multiRecord);
+      }
+
+      if ($this->_multiRecord && 
+          !in_array($this->_multiRecord, array(CRM_Core_Action::UPDATE, CRM_Core_Action::ADD, CRM_Core_Action::DELETE))) {
+        CRM_Core_Error::fatal(ts('Proper action not specified for this custom value record profile'));
+      }
+    }
     $this->_duplicateButtonName = $this->getButtonName('upload', 'duplicate');
 
     $gids = explode(',', CRM_Utils_Request::retrieve('gid', 'String', CRM_Core_DAO::$_nullObject, FALSE, 0, 'GET'));
-
+    
     if ((count($gids) > 1) && !$this->_profileIds && empty($this->_profileIds)) {
       if (!empty($gids)) {
         foreach ($gids as $pfId) {
@@ -241,7 +287,71 @@ class CRM_Profile_Form extends CRM_Core_Form {
         NULL,
         ($this->_action == CRM_Core_Action::ADD) ? CRM_Core_Permission::CREATE : CRM_Core_Permission::EDIT
       );
-
+      $multiRecordFieldListing = FALSE;
+      //using selector for listing of multirecord fields
+      if ($this->_mode == self::MODE_EDIT && $this->_gid) {
+        CRM_Core_BAO_UFGroup::shiftMultiRecordFields($this->_fields, $this->_multiRecordFields);
+            
+        if ($this->_multiRecord) {
+          if ($this->_multiRecord != CRM_Core_Action::ADD) {
+            $this->_recordId = CRM_Utils_Request::retrieve('recordId', 'Positive', $this);
+          } else {
+            $this->_recordId = NULL;
+            $this->set('recordId', NULL);
+          }
+          //record id is neccessary for _multiRecord view and update/edit action
+          if (!$this->_recordId
+              && ($this->_multiRecord == CRM_Core_Action::UPDATE || $this->_multiRecord == CRM_Core_Action::DELETE)) {
+            CRM_Core_Error::fatal(ts('The requested Profile (gid=%1) requires record id while performing this action',
+              array(1 => $this->_gid)
+            ));
+          }
+          
+          $fieldId = CRM_Core_BAO_CustomField::getKeyID(key($this->_multiRecordFields));
+          $customGroupDetails = CRM_Core_BAO_CustomGroup::getGroupTitles(array($fieldId));
+          $this->_customGroupTitle = $customGroupDetails[$fieldId]['groupTitle'];
+          $this->_customGroupId = $customGroupDetails[$fieldId]['groupID'];
+                    
+          if ($this->_multiRecord == CRM_Core_Action::UPDATE || $this->_multiRecord == CRM_Core_Action::DELETE) {
+            //record exists check
+            foreach ($this->_multiRecordFields as $key => $field) {
+              $fieldIds[] = CRM_Core_BAO_CustomField::getKeyID($key);
+            }
+            $getValues = CRM_Core_BAO_CustomValueTable::getEntityValues($this->_id, NULL, $fieldIds, TRUE);
+                  
+            if (array_key_exists($this->_recordId, $getValues)) {
+              $this->_recordExists = TRUE;
+            } else {
+              $this->_recordExists = FALSE;
+              if ($this->_multiRecord & CRM_Core_Action::UPDATE) {
+                CRM_Core_Session::setStatus(ts('Note: The record %1 doesnot exists. Upon save a new record will be create', array(1 => $this->_recordId)), ts('Record doesnot exist'), 'alert');
+              }
+            }
+          }
+          if ($this->_multiRecord & CRM_Core_Action::ADD) {
+            $this->_maxRecordLimit = CRM_Core_BAO_CustomGroup::hasReachedMaxLimit($customGroupDetails[$fieldId]['groupID'], $this->_id);
+            if ($this->_maxRecordLimit) {
+              $session = CRM_Core_Session::singleton();
+              CRM_Core_Session::setStatus(ts('You cannot add a new record as  maximum allowed limit is reached'), ts('Sorry'), 'error');
+            }
+          }
+          
+        } elseif (!empty($this->_multiRecordFields)
+           && (!$this->_multiRecord || !in_array($this->_multiRecord, array(CRM_Core_Action::DELETE, CRM_Core_Action::UPDATE)) )) {
+          //multirecord listing page
+          $multiRecordFieldListing = TRUE;
+          $page = new CRM_Profile_Page_MultipleRecordFieldsListing();
+          $cs = $this->get('cs');
+          $page->set('pageCheckSum', $cs);
+          $page->set('contactId', $this->_id);
+          $page->set('profileId', $this->_gid);
+          $page->set('action', CRM_Core_Action::BROWSE);
+          $page->set('multiRecordFieldListing', $multiRecordFieldListing);
+          $page->run();
+        }
+      }
+      $this->assign('multiRecordFieldListing', $multiRecordFieldListing);
+      
       // is profile double-opt in?
       if (CRM_Utils_Array::value('group', $this->_fields) &&
         CRM_Core_BAO_UFGroup::isProfileDoubleOptin()
@@ -259,8 +369,18 @@ class CRM_Profile_Form extends CRM_Core_Form {
           $session->setStatus($status);
         }
       }
+      
+      //transfering all the multirecord custom fields in _fields
+      if ($this->_multiRecord && !empty($this->_multiRecordFields)) {
+        $this->_fields = $this->_multiRecordFields;
+        $this->_multiRecordProfile = TRUE;
+      } elseif ($this->_multiRecord && empty($this->_multiRecordFields)) {
+        $session = CRM_Core_Session::singleton();
+        CRM_Core_Session::setStatus(ts('This feature is not currently available.'), ts('Sorry'), 'error');
+        return CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm', 'reset=1'));
+      }
     }
-
+    
     if (!is_array($this->_fields)) {
       $session = CRM_Core_Session::singleton();
       CRM_Core_Session::setStatus(ts('This feature is not currently available.'), ts('Sorry'), 'error');
@@ -283,7 +403,11 @@ class CRM_Profile_Form extends CRM_Core_Form {
    */
   function setDefaultsValues() {
     $this->_defaults = array();
-    if ($this->_id) {
+    if ($this->_multiRecordProfile && ($this->_multiRecord == CRM_Core_Action::DELETE)) {
+      return;
+    }
+    
+    if ($this->_id && !$this->_multiRecordProfile) {
       if ($this->_isContactActivityProfile) {
         $contactFields = $activityFields = array();
         foreach ($this->_fields as $fieldName => $field) {
@@ -306,43 +430,103 @@ class CRM_Profile_Form extends CRM_Core_Form {
     }
 
     //set custom field defaults
-    foreach ($this->_fields as $name => $field) {
-      if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($name)) {
-        $htmlType = $field['html_type'];
+    if ($this->_multiRecordProfile) {
+      foreach ($this->_multiRecordFields as $key => $field) {
+        $fieldIds[] = CRM_Core_BAO_CustomField::getKeyID($key);
+      }
 
-        if ((!isset($this->_defaults[$name]) || $htmlType == 'File') &&
-          (CRM_Utils_Array::value('field_type', $field) != 'Activity')
-        ) {
-          CRM_Core_BAO_CustomField::setProfileDefaults($customFieldID,
-            $name,
-            $this->_defaults,
-            $this->_id,
-            $this->_mode
-          );
+      $defaultValues = array( );
+      if ($this->_multiRecord && $this->_multiRecord == CRM_Core_Action::UPDATE) {
+        $defaultValues = CRM_Core_BAO_CustomValueTable::getEntityValues($this->_id, NULL, $fieldIds, TRUE);
+        if ($this->_recordExists == TRUE) {
+          $defaultValues = $defaultValues[$this->_recordId];
+        } else {
+          $defaultValues = NULL;
         }
+      }
 
-        if ($htmlType == 'File') {
-          $entityId = $this->_id;
-          if (CRM_Utils_Array::value('field_type', $field) == 'Activity' &&
-            $this->_activityId
-          ) {
-            $entityId = $this->_activityId;
+      if (!empty($defaultValues)) {
+        foreach ($defaultValues as $key => $value) {
+          $name = "custom_{$key}";
+          $htmlType = $this->_multiRecordFields[$name]['html_type'];
+          if ($htmlType != 'File') {
+            if ($value) {
+              CRM_Core_BAO_CustomField::setProfileDefaults($key,
+                $name,
+                $this->_defaults,
+                $this->_id,
+                $this->_mode,
+                $value                                           
+              );
+            } else {
+              $this->_defaults[$name] = "";
+            }
           }
-          $url = CRM_Core_BAO_CustomField::getFileURL($entityId, $customFieldID);
-
-          if ($url) {
-            $customFiles[$field['name']]['displayURL'] = ts("Attached File") . ": {$url['file_url']}";
-
-            $deleteExtra = ts("Are you sure you want to delete attached file?");
-            $fileId      = $url['file_id'];
-            $deleteURL   = CRM_Utils_System::url('civicrm/file',
-              "reset=1&id={$fileId}&eid=$entityId&fid={$customFieldID}&action=delete"
+          
+          if ($htmlType == 'File') {
+            $entityId = $this->_id;
+            if (CRM_Utils_Array::value('field_type', $field) == 'Activity' &&
+                $this->_activityId
+                ) {
+              $entityId = $this->_activityId;
+            }
+            $url = CRM_Core_BAO_CustomField::getFileURL($entityId, $key);
+            
+            if ($url) {
+              $customFiles[$name]['displayURL'] = ts("Attached File") . ": {$url['file_url']}";
+              
+              $deleteExtra = ts("Are you sure you want to delete attached file?");
+              $fileId      = $url['file_id'];
+              $deleteURL   = CRM_Utils_System::url('civicrm/file',
+                             "reset=1&id={$fileId}&eid=$entityId&fid={$key}&action=delete"
+                           );
+              $text = ts("Delete Attached File");
+              $customFiles[$field['name']]['deleteURL'] = "<a href=\"{$deleteURL}\" onclick = \"if (confirm( ' $deleteExtra ' )) this.href+='&amp;confirmed=1'; else return false;\">$text</a>";
+              
+              // also delete the required rule that we've set on the form element
+              $this->removeFileRequiredRules($name);
+            }
+          }
+        }
+      }
+    } else {
+      foreach ($this->_fields as $name => $field) {
+        if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($name)) {
+          $htmlType = $field['html_type'];
+          if ((!isset($this->_defaults[$name]) || $htmlType == 'File') &&
+              (CRM_Utils_Array::value('field_type', $field) != 'Activity')
+              ) {
+            CRM_Core_BAO_CustomField::setProfileDefaults($customFieldID,
+              $name,
+              $this->_defaults,
+              $this->_id,
+              $this->_mode
             );
-            $text = ts("Delete Attached File");
-            $customFiles[$field['name']]['deleteURL'] = "<a href=\"{$deleteURL}\" onclick = \"if (confirm( ' $deleteExtra ' )) this.href+='&amp;confirmed=1'; else return false;\">$text</a>";
+          }
 
-            // also delete the required rule that we've set on the form element
-            $this->removeFileRequiredRules($field['name']);
+          if ($htmlType == 'File') {
+            $entityId = $this->_id;
+            if (CRM_Utils_Array::value('field_type', $field) == 'Activity' &&
+              $this->_activityId
+            ) {
+              $entityId = $this->_activityId;
+            }
+            $url = CRM_Core_BAO_CustomField::getFileURL($entityId, $customFieldID);
+            
+            if ($url) {
+              $customFiles[$field['name']]['displayURL'] = ts("Attached File") . ": {$url['file_url']}";
+              
+              $deleteExtra = ts("Are you sure you want to delete attached file?");
+              $fileId      = $url['file_id'];
+              $deleteURL   = CRM_Utils_System::url('civicrm/file',
+                 "reset=1&id={$fileId}&eid=$entityId&fid={$customFieldID}&action=delete"
+              );
+              $text = ts("Delete Attached File");
+              $customFiles[$field['name']]['deleteURL'] = "<a href=\"{$deleteURL}\" onclick = \"if (confirm( ' $deleteExtra ' )) this.href+='&amp;confirmed=1'; else return false;\">$text</a>";
+              
+              // also delete the required rule that we've set on the form element
+              $this->removeFileRequiredRules($field['name']);
+            }
           }
         }
       }
@@ -351,6 +535,11 @@ class CRM_Profile_Form extends CRM_Core_Form {
       $this->assign('customFiles', $customFiles);
     }
 
+    if ($this->_multiRecordProfile) {
+      $this->setDefaults($this->_defaults);
+      return;
+    }
+    
     if (CRM_Utils_Array::value('image_URL', $this->_defaults)) {
       list($imageWidth, $imageHeight) = getimagesize($this->_defaults['image_URL']);
       list($imageThumbWidth, $imageThumbHeight) = CRM_Contact_BAO_Contact::getThumbSize($imageWidth, $imageHeight);
@@ -382,8 +571,22 @@ class CRM_Profile_Form extends CRM_Core_Form {
     //lets have single status message, CRM-4363
     $return = FALSE;
     $statusMessage = NULL;
+    if (($this->_multiRecord & CRM_Core_Action::ADD) && $this->_maxRecordLimit) {
+      return;
+    }
+  
+    if (($this->_multiRecord & CRM_Core_Action::DELETE)) {
+      if (!$this->_recordExists) {
+        $session = CRM_Core_Session::singleton();
+        CRM_Core_Session::setStatus(ts('The record %1 doesnot exists', array(1 => $this->_recordId)), ts('Record doesnot exists'), 'alert');
+      } else {
+        $this->assign('deleteRecord', TRUE);
+      }
+      return;
+    } 
 
     CRM_Core_BAO_Address::checkContactSharedAddressFields($this->_fields, $this->_id);
+ 
     //we should not allow component and mix profiles in search mode
     if ($this->_mode != self::MODE_REGISTER) {
       //check for mix profile fields (eg:  individual + other contact type)
@@ -501,7 +704,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
 
     // cache the state country fields. based on the results, we could use our javascript solution
     // in create or register mode
-    $stateCountryMap = array();
+    $stateCountryMap = array();    
 
     // add the form elements
     foreach ($this->_fields as $name => $field) {
@@ -847,7 +1050,27 @@ class CRM_Profile_Form extends CRM_Core_Form {
    */
   public function postProcess() {
     $params = $this->controller->exportValues($this->_name);
-
+    
+    //if the delete record button is clicked
+    if ($this->_deleteButtonName) {
+      if (CRM_Utils_Array::value($this->_deleteButtonName, $_POST) && $this->_recordId) {
+        $filterParams['id'] = $this->_customGroupId;
+        $returnProperities = array('is_multiple', 'table_name');
+        CRM_Core_DAO::commonRetrieve("CRM_Core_DAO_CustomGroup", $filterParams, $returnValues, $returnProperities);
+        if (CRM_Utils_Array::value('is_multiple', $returnValues)) {
+          if ($tableName = CRM_Utils_Array::value('table_name', $returnValues)) {
+            $sql = "DELETE FROM {$tableName} WHERE id = %1 AND entity_id = %2";
+            $sqlParams = array(
+                          1 => array($this->_recordId, 'Integer'), 
+                          2 => array($this->_id, 'Integer')
+                         );
+           $dao = CRM_Core_DAO::executeQuery($sql, $sqlParams);
+           CRM_Core_Session::setStatus(ts('Your record has been deleted.'), ts('Deleted'), 'success');
+          }
+        }
+        return;
+      }
+    }
     if (CRM_Utils_Array::value('image_URL', $params)) {
       CRM_Contact_BAO_Contact::processImageParams($params);
     }
@@ -1029,12 +1252,17 @@ class CRM_Profile_Form extends CRM_Core_Form {
         $activity = civicrm_api('Activity', 'create', $activityParams);
       }
     }
+    
+    if ($this->_multiRecord && $this->_recordId && $this->_multiRecordFields && $this->_recordExists) {
+      $params['customRecordValues'][$this->_recordId] = array_keys($this->_multiRecordFields);
+    }
 
     $this->_id = CRM_Contact_BAO_Contact::createProfileContact($params, $profileFields,
       $this->_id, $addToGroupId,
       $this->_gid, $this->_ctype,
       TRUE
     );
+    
     //mailing type group
     if (!empty($mailingType)) {
       // we send in the contactID so we match the same groups and are exact, rather than relying on email

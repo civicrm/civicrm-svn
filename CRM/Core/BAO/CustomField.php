@@ -1090,7 +1090,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField {
     $html_type  = $attributes['html_type'];
     $data_type  = $attributes['data_type'];
     $format     = CRM_Utils_Array::value('format', $attributes);
-
+    
     return self::getDisplayValueCommon($value,
       $option,
       $html_type,
@@ -1110,7 +1110,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField {
     $fieldID   = NULL
   ) {
     $display = $value;
-
+ 
     if ($fieldID &&
       (($html_type == 'Radio' && $data_type != 'Boolean') ||
         ($html_type == 'Autocomplete-Select' && $data_type != 'ContactReference') ||
@@ -1301,35 +1301,38 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField {
    * @params array  $defaults      associated array of fields
    * @params int    $contactId     contact id
    * @param  int    $mode          profile mode
-   *
-   * @static
+   * @param  mixed  $value         if passed - dont fetch value from db,
+   *                               just format the given value
+   * @static  
    * @access public
    */
   static function setProfileDefaults($customFieldId,
     $elementName,
     &$defaults,
     $contactId = NULL,
-    $mode = NULL
+    $mode = NULL,
+    $value = NULL                                 
   ) {
     //get the type of custom field
     $customField = new CRM_Core_BAO_CustomField();
     $customField->id = $customFieldId;
     $customField->find(TRUE);
 
-    $value = NULL;
     if (!$contactId) {
       if ($mode == CRM_Profile_Form::MODE_CREATE) {
         $value = $customField->default_value;
       }
     }
     else {
-      $info   = self::getTableColumnGroup($customFieldId);
-      $query  = "SELECT {$info[0]}.{$info[1]} as value FROM {$info[0]} WHERE {$info[0]}.entity_id = {$contactId}";
-      $result = CRM_Core_DAO::executeQuery($query);
-      if ($result->fetch()) {
-        $value = $result->value;
+      if (!$value) {
+        $info   = self::getTableColumnGroup($customFieldId);
+        $query  = "SELECT {$info[0]}.{$info[1]} as value FROM {$info[0]} WHERE {$info[0]}.entity_id = {$contactId}";
+        $result = CRM_Core_DAO::executeQuery($query);
+        if ($result->fetch()) {
+          $value = $result->value;
+        }
       }
-
+      
       if ($customField->data_type == 'Country') {
         if (!$value) {
           $config = CRM_Core_Config::singleton();
@@ -1526,7 +1529,6 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField {
     if (is_array($customFieldExtend)) {
       $customFieldExtend = $customFieldExtend[0];
     }
-
     if (!$customValueId &&
       // we always create new entites for is_multiple unless specified
       !$customFields[$customFieldId]['is_multiple'] &&

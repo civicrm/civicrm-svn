@@ -40,7 +40,7 @@ class CRM_Core_BAO_CustomValueTable {
     ) {
       return;
     }
-
+     
     foreach ($customParams as $tableName => $tables) {
       foreach ($tables as $index => $fields) {
         $sqlOP      = NULL;
@@ -370,7 +370,7 @@ class CRM_Core_BAO_CustomValueTable {
    * @access public
    * @static
    */
-  public static function &getEntityValues($entityID, $entityType = NULL, $fieldIDs = NULL) {
+  public static function &getEntityValues($entityID, $entityType = NULL, $fieldIDs = NULL, $formatMultiRecordField = FALSE) {
     if (!$entityID) {
       // adding this here since an empty contact id could have serious repurcussions
       // like looping forever
@@ -429,7 +429,11 @@ AND    $cond
         foreach ($fields[$tableName] as $fieldID) {
           $fieldName = "custom_{$fieldID}";
           if ($isMultiple[$tableName]) {
-            $result["{$fieldID}_{$dao->id}"] = $dao->$fieldName;
+            if ($formatMultiRecordField) {
+              $result["{$dao->id}"]["{$fieldID}"] = $dao->$fieldName;
+            } else {
+              $result["{$fieldID}_{$dao->id}"] = $dao->$fieldName;
+            }
           }
           else {
             $result[$fieldID] = $dao->$fieldName;

@@ -2019,5 +2019,30 @@ SELECT  civicrm_custom_group.id as groupID, civicrm_custom_group.title as groupT
             $types = array_merge($types, $objTypes);
             return $objTypes;
           }
+  
+  function hasReachedMaxLimit($customGroupId, $entityId) {
+    //check whether the group is multiple
+    $isMultiple = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_CustomGroup', $customGroupId, 'is_multiple');
+    $isMultiple = ($isMultiple) ? TRUE : FALSE;
+    $hasReachedMax = FALSE;  
+    if ($isMultiple &&
+        ($maxMultiple = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_CustomGroup', $customGroupId, 'max_multiple'))) {
+      if (!$maxMultiple) {
+        $hasReachedMax = FALSE;
+      } else {
+        $tableName = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_CustomGroup', $customGroupId, 'table_name');
+        //count the number of entries for a entity
+        $sql = "SELECT COUNT(id) FROM {$tableName} WHERE entity_id = %1";
+        $params = array(1 => array($entityId, 'Integer'));
+        $count = CRM_Core_DAO::singleValueQuery($sql, $params);
+        
+        if ($count >= $maxMultiple) {
+          $hasReachedMax = TRUE;
         }
+      }
+    }
+    return $hasReachedMax;
+  }
+  
+ }
 

@@ -24,6 +24,14 @@
  +--------------------------------------------------------------------+
 *}
 {* Profile forms when embedded in CMS account create (mode=1) or cms account edit (mode=8) or civicrm/profile (mode=4) pages *}
+{if $deleteRecord}
+<div class="messages status no-popup">
+  <div class="icon inform-icon"></div>&nbsp;
+        {ts}Are you sure you want to delete this record?{/ts}
+  </div>
+  <span class="crm-button">{$form._qf_Edit_upload_delete.html}</span>
+  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+{else}
 {if $context neq 'dialog'}
 <script type="text/javascript" src="{$config->resourceBase}js/Common.js"></script>
 {/if}
@@ -51,6 +59,14 @@
     {/if}
 
     {include file="CRM/common/CMSUser.tpl"}
+
+    {if $action eq 2 and $multiRecordFieldListing}
+
+    <h1>{ts}Edit Details{/ts}</h1>
+    <div class="crm-submit-buttons" style='float:right'>
+         {include file="CRM/common/formButtons.tpl"}{if $isDuplicate}<span class="crm-button">{$form._qf_Edit_upload_duplicate.html}</span>{/if}
+    </div>
+    {/if}
 
     {assign var=zeroField value="Initial Non Existent Fieldset"}
     {assign var=fieldset  value=$zeroField}
@@ -198,8 +214,12 @@
         </div>
     {/if}
 
-    {if ($action eq 1 and $mode eq 4 ) or ($action eq 2) or ($action eq 8192)}
-    <div class="crm-submit-buttons">
+    {if ($action eq 1 and $mode eq 4 ) or ($action eq 2) or ($action eq 8192)}	
+    {if $action eq 2 and $multiRecordFieldListing}
+      {include file="CRM/Profile/Page/MultipleRecordFieldsListing.tpl"	showListing=true}	
+      {assign var=floatStyle value='float:right'}
+    {/if}  
+    <div class="crm-submit-buttons" style='{$floatStyle}'>
          {include file="CRM/common/formButtons.tpl"}{if $isDuplicate}<span class="crm-button">{$form._qf_Edit_upload_duplicate.html}</span>{/if}
     </div>
     {/if}
@@ -220,7 +240,9 @@
   {/if}
 </script>
 {/if} {* fields array is not empty *}
-
+{if $multiRecordFieldListing and empty($fields)}
+  {include file="CRM/Profile/Page/MultipleRecordFieldsListing.tpl" showListing=true}
+{/if}
 {if $drupalCms}
 {include file="CRM/common/showHideByFieldValue.tpl"
 trigger_field_id    ="create_account"
@@ -236,6 +258,7 @@ invert              = 0
         {$statusMessage}
     </div>
 {/if}
+{/if} {*end of if for $deleteRecord*}
 {literal}
 <script type="text/javascript">
 

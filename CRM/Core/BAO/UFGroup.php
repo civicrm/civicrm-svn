@@ -475,6 +475,8 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
               $fields[$name]['date_format'] = $customFields[$field->field_name]['date_format'];
               $fields[$name]['time_format'] = $customFields[$field->field_name]['time_format'];
             }
+            
+            $fields[$name]['is_multi_summary'] = $field->is_multi_summary;
           }
           else {
             unset($fields[$name]);
@@ -714,7 +716,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
    */
   public static function getValues($cid, &$fields, &$values,
     $searchable = TRUE, $componentWhere = NULL,
-    $absolute = FALSE
+    $absolute = FALSE, $additionalWhereClause = NULL
   ) {
     if (empty($cid) && empty($componentWhere)) {
       return NULL;
@@ -735,7 +737,8 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
     $query = new CRM_Contact_BAO_Query($params, $returnProperties, $fields);
     $options = &$query->_options;
 
-    $details = $query->searchQuery();
+    $details = $query->searchQuery( 0, 0, NULL, FALSE, FALSE,
+      FALSE, FALSE, FALSE, $additionalWhereClause);
     if (!$details->fetch()) {
       return;
     }
@@ -3206,6 +3209,24 @@ SELECT  group_id
     }
     return $profileIds;
   }
+  
+  static function shiftMultiRecordFields(&$source, &$destination, $returnMultiSummaryFields = FALSE) {
+    $multiSummaryFields = $returnMultiSummaryFields ? array( ) : NULL;
+    foreach ($source as $field => $properties) {
+      if (!CRM_Core_BAO_CustomField::getKeyID($field)) {
+        continue;
+      }
+      if (CRM_Core_BAO_CustomField::isMultiRecordField($field)) {
+        $destination[$field] = $properties;
+        if ($returnMultiSummaryFields) {
+          if ($properties['is_multi_summary']) {
+            $multiSummaryFields[$field] = $properties;
+          }
+        }
+        unset($source[$field]);
+      }
+    }
+    return $multiSummaryFields;
+  }
 
 }
-

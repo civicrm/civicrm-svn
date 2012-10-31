@@ -85,7 +85,7 @@
         <tr class="crm-uf-field-form-block-weight">
             <td class="label">{$form.weight.label}</td>
             <td>&nbsp;{$form.weight.html}<br />
-            <span class="description">&nbsp;{ts}Weight controls the order in which fields are displayed within a profile. Enter a positive or negative integer - lower numbers are displayed ahead of higher numbers.{/ts}</span></td>
+            <span class="description">&nbsp;{ts}Weight controls the order in which fields are displayed within a profile. Enter a positive or negative integer - lower numbers are displayed ahead of higher numbers. Note: The field order will not respect non-multi fields interspersed with multi record fields in edit mode{/ts}</span></td>
         </tr>
         <tr class="crm-uf-field-form-block-is_active">
             <td class="label">{$form.is_active.label}</td>
