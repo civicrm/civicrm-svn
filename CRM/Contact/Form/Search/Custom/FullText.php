@@ -391,14 +391,14 @@ AND     {$tableValues['id']} IS NOT NULL
   }
 
   function fillContactIDs() {
-    $contactSQLL = array();
+    $contactSQL = array();
     $contactSQL[] = "
 SELECT     et.entity_id
 FROM       civicrm_entity_tag et
 INNER JOIN civicrm_tag t ON et.tag_id = t.id
 WHERE      et.entity_table = 'civicrm_contact'
 AND        et.tag_id       = t.id
-AND        t.name LIKE \"{$this->_text}\"
+AND        t.name LIKE {$this->_text}
 GROUP BY   et.entity_id
 ";
 
@@ -511,7 +511,7 @@ FROM       civicrm_entity_tag et
 INNER JOIN civicrm_tag t ON et.tag_id = t.id
 WHERE      et.entity_table = 'civicrm_activity'
 AND        et.tag_id       = t.id
-AND        t.name LIKE \"{$this->_text}\"
+AND        t.name LIKE {$this->_text}
 GROUP BY   et.entity_id
 ";
 
