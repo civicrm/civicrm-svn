@@ -82,6 +82,7 @@ class CRM_Core_Session {
    * @return void
    */
   function __construct() {
+    $this->_session = null;
   }
 
   /**
@@ -105,7 +106,7 @@ class CRM_Core_Session {
    *
    * @return void
    */
-  function create() {
+  function initialize() {
     // lets initialize the _session variable just before we need it
     // hopefully any bootstrapping code will actually load the session from the CMS
     if (!isset($this->_session)) {
@@ -133,6 +134,8 @@ class CRM_Core_Session {
    */
   function reset($all = 1) {
     if ($all != 1) {
+      $this->initialize();
+
       // to make certain we clear it, first initialize it to empty
       $this->_session[$this->_key] = array();
       unset($this->_session[$this->_key]);
@@ -153,6 +156,8 @@ class CRM_Core_Session {
    * @return void
    */
   function createScope($prefix) {
+    $this->initialize();
+
     if (empty($prefix)) {
       return;
     }
@@ -171,6 +176,8 @@ class CRM_Core_Session {
    * @return void
    */
   function resetScope($prefix) {
+    $this->initialize();
+
     if (empty($prefix)) {
       return;
     }
@@ -199,7 +206,6 @@ class CRM_Core_Session {
    */
   function set($name, $value = NULL, $prefix = NULL) {
     // create session scope
-    $this->create();
     $this->createScope($prefix);
 
     if (empty($prefix)) {
@@ -235,7 +241,6 @@ class CRM_Core_Session {
    */
   function get($name, $prefix = NULL) {
     // create session scope
-    $this->create();
     $this->createScope($prefix);
 
     if (empty($prefix)) {
@@ -262,7 +267,6 @@ class CRM_Core_Session {
    */
   function getVars(&$vars, $prefix = '') {
     // create session scope
-    $this->create();
     $this->createScope($prefix);
 
     if (empty($prefix)) {
@@ -375,6 +379,7 @@ class CRM_Core_Session {
    * dumps the session to the log
    */
   function debug($all = 1) {
+    $this->initialize();
     if ($all != 1) {
       CRM_Core_Error::debug('CRM Session', $this->_session);
     }
@@ -391,7 +396,7 @@ class CRM_Core_Session {
    * @return string        the status message if any
    */
   function getStatus($reset = FALSE) {
-    $this->create();
+    $this->initialize();
 
     $status = NULL;
     if (array_key_exists('status', $this->_session[$this->_key])) {
@@ -437,6 +442,8 @@ class CRM_Core_Session {
   static function setStatus($text, $title = '', $type = 'alert', $options = array()) {
     // make sure session is initialized, CRM-8120
     $session = self::singleton();
+    $session->initialize();
+
     // default options
     $options += array(
       'unique' => TRUE
