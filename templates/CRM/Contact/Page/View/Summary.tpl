@@ -335,18 +335,18 @@
 
     cj( function() {
       var tabIndex = cj('#tab_' + selectedTab).prevAll().length;
-  cj("#mainTabContainer").tabs({ selected: tabIndex, spinner: spinnerImage, cache: true, load: stopSpinner});
+      cj("#mainTabContainer").tabs({ selected: tabIndex, spinner: spinnerImage, cache: true, load: stopSpinner});
       cj(".crm-tab-button").addClass("ui-corner-bottom");
     });
     {/literal}
    </script>
 {/if}
 
-{if !empty($isAddressCustomPresent)}
+{if !empty($isAddressCustomPresent) || $showCustomData}
   {literal}
   <script type="text/javascript">
-  cj(function() {
-    cj().crmAccordions();
+  cj(function($) {
+    $('.crm-inline-edit-container').crmAccordions();
   });
   </script>
   {/literal}
