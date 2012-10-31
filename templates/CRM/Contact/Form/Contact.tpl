@@ -96,9 +96,10 @@
 
     {foreach from = $editOptions item = "title" key="name"}
       {if $name eq 'CustomData' }
-        <div id='customData'></div>
+        <div id='customData'>{include file="CRM/Contact/Form/Edit/CustomData.tpl"}</div>
+      {else}
+        {include file="CRM/Contact/Form/Edit/$name.tpl"}
       {/if}
-    {include file="CRM/Contact/Form/Edit/$name.tpl"}
     {/foreach}
     <div class="crm-submit-buttons">
     {include file="CRM/common/formButtons.tpl" location="bottom"}
@@ -188,7 +189,7 @@
     });
 
     $('.customDataPresent').change(function() {
-      $('.crm-custom-accordion').remove();
+      //$('.crm-custom-accordion').remove();
       var values = $("#contact_sub_type").val();
       var contactType = {/literal}"{$contactType}"{literal};
       CRM.buildCustomData(contactType, values);

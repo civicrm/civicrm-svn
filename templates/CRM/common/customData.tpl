@@ -89,12 +89,35 @@ CRM.buildCustomData = function( type, subType, subName, cgCount, groupID, isMult
     }
   }
 
-  var response = cj.ajax({
-            url: dataUrl,
-            async: false
-          }).responseText;
+  cj.ajax({
+    url: dataUrl,
+    dataType: 'html',
+    success: function(response) {
+      var target = cj(fname);
+      var storage = {};
+      target.children().each(function() {
+        var id = cj(this).attr('id');
+        if (id) {
+          // Help values survive storage
+          cj('textarea', this).each(function() {
+            cj(this).text(cj(this).val());
+          });
+          cj('option:selected', this).attr('selected', 'selected');
+          cj('option:not(:selected)', this).removeAttr('selected');
+          storage[id] = cj(this).detach();
+        }
+      });
+      target.html(response);
+      target.children().each(function() {
+        var id = cj(this).attr('id');
+        if (id && storage[id]) {
+          cj(this).replaceWith(storage[id]);
+        }
+      });
+      storage = null;
+    }
+  });
 
-  cj( fname ).html( response );
 };
 
 </script>
