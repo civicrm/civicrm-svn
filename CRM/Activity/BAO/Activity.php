@@ -393,10 +393,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity {
     $activityId = $activity->id;
 
     // check and attach and files as needed
-    CRM_Core_BAO_File::processAttachment($params,
-      'civicrm_activity',
-      $activityId
-    );
+    CRM_Core_BAO_File::processAttachment($params, 'civicrm_activity', $activityId);
 
     // attempt to save activity assignment
     $resultAssignment = NULL;
@@ -1058,7 +1055,7 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
         $commonClauses[] = "civicrm_activity.activity_type_id = $activityTypeID";
       }
     }
-    
+
     // exclude by activity type clause
     if (!empty($input['activity_type_exclude_id'])) {
       if (is_array($input['activity_type_exclude_id'])) {
@@ -1072,7 +1069,7 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
         $commonClauses[] = "civicrm_activity.activity_type_id != $activityTypeID";
       }
     }
-    
+
     $commonClause = implode(' AND ', $commonClauses);
 
     $includeCaseActivities = FALSE;
@@ -2533,11 +2530,11 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id AND grp.n
         if ( $values['activity_type'] == 'Bulk Email'){
           require_once 'CRM/Mailing/Event/BAO/Opened.php';
           require_once 'CRM/Mailing/Event/BAO/TrackableURLOpen.php';
-          
+
           $contactActivities[$activityId]['openstats'] = "Opens: ".
             count(CRM_Mailing_Event_BAO_Opened::getRows(
                CRM_Utils_Array::value('source_record_id', $values), NULL, FALSE, NULL, NULL, NULL, $params['contact_id']
-            ) 
+            )
           )."<br />Clicks:" .
             count(CRM_Mailing_Event_BAO_TrackableURLOpen::getRows(
                CRM_Utils_Array::value('source_record_id', $values), NULL, FALSE, NULL, NULL, NULL, NULL, $params['contact_id']

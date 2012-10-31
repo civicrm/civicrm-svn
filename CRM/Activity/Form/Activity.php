@@ -1131,7 +1131,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task {
 
         // CRM-8400 add param with _currentlyViewedContactId for URL link in mail
         $result = CRM_Case_BAO_Case::sendActivityCopy(NULL, $activity->id, $mailToContacts, $attachments, NULL);
-        
+
         $ics->cleanup();
 
         $mailStatus .= ts("A copy of the activity has also been sent to assignee contacts(s).");
