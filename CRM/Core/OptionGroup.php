@@ -45,7 +45,8 @@ class CRM_Core_OptionGroup {
     'grant_type',
   );
 
-  static function &valuesCommon($dao, $flip = FALSE, $grouping = FALSE,
+  static function &valuesCommon(
+    $dao, $flip = FALSE, $grouping = FALSE,
     $localize = FALSE, $valueColumnName = 'label'
   ) {
     self::$_values = array();
@@ -75,13 +76,34 @@ class CRM_Core_OptionGroup {
     return self::$_values;
   }
 
-  static function &values($name, $flip = FALSE, $grouping = FALSE,
+  /**
+   * This function retrieves all the values for the specific option group by name
+   * this is primarily used to create various html based form elements
+   * (radio, select, checkbox etc). OptionGroups for most cases have the
+   * 'label' in the label colum and the 'id' or 'name' in the value column
+   *
+   * @param $name       string  name of the option group
+   * @param $flip       boolean results are return in id => label format if false
+   *                            if true, the results are reversed
+   * @param $grouping   boolean if true, return the value in 'grouping' column
+   * @param $localize   boolean if true, localize the results before returning
+   * @param $condition  string  add another condition to the sql query
+   * @param $labelColumnName string the column to use for 'label'
+   * @param $onlyActive boolean return only the action option values
+   * @param $fresh      boolean ignore cache entries and go back to DB
+   *
+   * @return array      the values as specified by the above params
+   * @static
+   * @void
+   */
+  static function &values(
+    $name, $flip = FALSE, $grouping = FALSE,
     $localize = FALSE, $condition = NULL,
-    $valueColumnName = 'label', $onlyActive = TRUE, $fresh = FALSE
+    $labelColumnName = 'label', $onlyActive = TRUE, $fresh = FALSE
   ) {
     static $_cache = array();
 
-    $cacheKey = "CRM_OG_{$name}_{$flip}_{$grouping}_{$localize}_{$condition}_{$valueColumnName}_{$onlyActive}";
+    $cacheKey = "CRM_OG_{$name}_{$flip}_{$grouping}_{$localize}_{$condition}_{$labelColumnName}_{$onlyActive}";
 
     if (array_key_exists($cacheKey, $_cache) && !$fresh) {
       return $_cache[$cacheKey];
@@ -94,7 +116,7 @@ class CRM_Core_OptionGroup {
     }
 
     $query = "
-SELECT  v.{$valueColumnName} as {$valueColumnName} ,v.value as value, v.grouping as grouping
+SELECT  v.{$labelColumnName} as {$labelColumnName} ,v.value as value, v.grouping as grouping
 FROM   civicrm_option_value v,
        civicrm_option_group g
 WHERE  v.option_group_id = g.id
@@ -117,7 +139,7 @@ WHERE  v.option_group_id = g.id
     $p = array(1 => array($name, 'String'));
     $dao = CRM_Core_DAO::executeQuery($query, $p);
 
-    $var = self::valuesCommon($dao, $flip, $grouping, $localize, $valueColumnName);
+    $var = self::valuesCommon($dao, $flip, $grouping, $localize, $labelColumnName);
 
     // call option value hook
     CRM_Utils_Hook::optionValues($var, $name);
@@ -128,8 +150,25 @@ WHERE  v.option_group_id = g.id
     return $var;
   }
 
-  static function &valuesByID($id, $flip = FALSE, $grouping = FALSE, $localize = FALSE, $valueColumnName = 'label') {
-    $cacheKey = "CRM_OG_ID_{$id}_{$flip}_{$grouping}_{$localize}_{$valueColumnName}";
+  /**
+   * This function retrieves all the values for the specific option group by id
+   * this is primarily used to create various html based form elements
+   * (radio, select, checkbox etc). OptionGroups for most cases have the
+   * 'label' in the label colum and the 'id' or 'name' in the value column
+   *
+   * @param $id         integer id of the option group
+   * @param $flip       boolean results are return in id => label format if false
+   *                            if true, the results are reversed
+   * @param $grouping   boolean if true, return the value in 'grouping' column
+   * @param $localize   boolean if true, localize the results before returning
+   * @param $labelColumnName string the column to use for 'label'
+   *
+   * @return array      the values as specified by the above params
+   * @static
+   * @void
+   */
+  static function &valuesByID($id, $flip = FALSE, $grouping = FALSE, $localize = FALSE, $labelColumnName = 'label') {
+    $cacheKey = "CRM_OG_ID_{$id}_{$flip}_{$grouping}_{$localize}_{$labelColumnName}";
 
     $cache = CRM_Utils_Cache::singleton();
     $var = $cache->get($cacheKey);
@@ -139,7 +178,7 @@ WHERE  v.option_group_id = g.id
 
 
     $query = "
-SELECT  v.{$valueColumnName} as {$valueColumnName} ,v.value as value, v.grouping as grouping
+SELECT  v.{$labelColumnName} as {$labelColumnName} ,v.value as value, v.grouping as grouping
 FROM   civicrm_option_value v,
        civicrm_option_group g
 WHERE  v.option_group_id = g.id
@@ -151,7 +190,7 @@ WHERE  v.option_group_id = g.id
     $p = array(1 => array($id, 'Integer'));
     $dao = CRM_Core_DAO::executeQuery($query, $p);
 
-    $var = self::valuesCommon($dao, $flip, $grouping, $localize, $valueColumnName);
+    $var = self::valuesCommon($dao, $flip, $grouping, $localize, $labelColumnName);
     $cache->set($cacheKey, $var);
 
     return $var;
