@@ -34,7 +34,7 @@ class CRM_Upgrade_Page_Cleanup42  extends CRM_Core_Page {
     $template->assign('columnHeaders', $columnHeaders);
     $template->assign('rows', $rows);
 
-    $message = !empty($rows) ? ts('The following records have been processed. Membership records with action:') : ts('Could not find any records to process.');
+    $message = !empty($rows) ? ts('The following records have been processed. Membership records with action = Un-linked have been disconnected from the listed contribution record.:') : ts('Could not find any records to process.');
     $template->assign('message', $message);
 
     $content = $template->fetch('CRM/common/upgradeCleanup.tpl');
