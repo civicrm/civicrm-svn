@@ -305,6 +305,11 @@ class CRM_Profile_Form extends CRM_Core_Form {
             CRM_Core_Error::fatal(ts('The requested Profile (gid=%1) requires record id while performing this action',
               array(1 => $this->_gid)
             ));
+          } elseif (empty($this->_multiRecordFields)) {
+              CRM_Core_Error::fatal(ts('No Multi-Record Fields configured for this profile (gid=%1)',
+              array(1 => $this->_gid)
+            ));
+            }
           }
           
           $fieldId = CRM_Core_BAO_CustomField::getKeyID(key($this->_multiRecordFields));
