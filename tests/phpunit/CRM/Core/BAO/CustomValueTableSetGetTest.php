@@ -71,12 +71,14 @@ class CRM_Core_BAO_CustomValueTableSetGetTest extends CiviUnitTestCase {
       'custom_' . $fieldID => $badDate,
     );
 
+    $errorScope = CRM_Core_TemporaryErrorScope::useException();
     $message = null;
     try {
       $result = CRM_Core_BAO_CustomValueTable::setValues($params);
     } catch ( Exception $e ) {
       $message = $e->getMessage();
     }
+    $errorScope = NULL;
 
     // Check that an exception has been thrown
     $this->assertNotNull( $message, 'Verify than an exception is thrown when bad date is passed' );
@@ -171,12 +173,14 @@ class CRM_Core_BAO_CustomValueTableSetGetTest extends CiviUnitTestCase {
       'custom_' . $fieldID => $badYesNo,
     );
 
+    $errorScope = CRM_Core_TemporaryErrorScope::useException();
     $message = null;
     try {
       $result = CRM_Core_BAO_CustomValueTable::setValues($params);
     } catch (Exception $e) {
       $message = $e->getMessage();
     }
+    $errorScope = NULL;
 
     // Check that an exception has been thrown
     $this->assertNotNull( $message, 'Verify than an exception is thrown when bad boolean is passed' );

@@ -25,7 +25,8 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     if (!is_array($params)) {
       throw new API_Exception('Input variable `params` is not an array', 2000);
     }
-    _civicrm_api3_initialize(TRUE);
+    _civicrm_api3_initialize();
+    $errorScope = CRM_Core_TemporaryErrorScope::useException();
     require_once 'CRM/Utils/String.php';
     require_once 'CRM/Utils/Array.php';
     $apiRequest = array();

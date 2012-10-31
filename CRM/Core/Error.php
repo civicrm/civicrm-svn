@@ -666,15 +666,6 @@ class CRM_Core_Error extends PEAR_ErrorStack {
     $error->_errorsByLevel = array();
   }
 
-  /* used for the API, rise the exception instead of catching/fatal it */
-
-
-  public static function setRaiseException() {
-    self::$modeException = 1;
-    $GLOBALS['_PEAR_default_error_mode'] = PEAR_ERROR_CALLBACK;
-    $GLOBALS['_PEAR_default_error_options'] = array('CRM_Core_Error', 'exceptionHandler');
-  }
-
   public static function ignoreException($callback = NULL) {
     if (!$callback) {
       $callback = array('CRM_Core_Error', 'nullHandler');

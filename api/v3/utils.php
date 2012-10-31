@@ -40,15 +40,10 @@
 
 /**
  * Initialize CiviCRM - should be run at the start of each API function
- *
- * $useException boolean raise exception if set
  */
-function _civicrm_api3_initialize($useException = TRUE) {
+function _civicrm_api3_initialize() {
   require_once 'CRM/Core/Config.php';
   $config = CRM_Core_Config::singleton();
-  if ($useException) {
-    CRM_Core_Error::setRaiseException();
-  }
 }
 
 /*

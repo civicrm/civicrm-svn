@@ -151,7 +151,8 @@ function civicrm_relationship_delete(&$params) {
  */
 function civicrm_relationship_update($params) {
   try {
-    _civicrm_initialize(TRUE);
+    _civicrm_initialize();
+    $errorScope = CRM_Core_TemporaryErrorScope::useException();
 
     /*
         * Erik Hommel, 5 Oct 2010 : fix for CRM-6895
