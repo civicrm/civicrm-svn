@@ -123,13 +123,6 @@ class CRM_Admin_Form_Job extends CRM_Admin_Form {
       $errors['api_action'] = ts('Given API command is not defined.');
     }
 
-    // CRM-9868- don't allow Enabled (is_active) for jobs that should never be run automatically via execute action or runjobs url
-    if ($fields['api_action'] == 'update_greeting' && CRM_Utils_Array::value('is_active', $fields) == 1) {
-      // pass "wiki" as 6th param to docURL2 if you are linking to a page in wiki.civicrm.org
-      $docLink = CRM_Utils_System::docURL2("Managing Scheduled Jobs", NULL, NULL, NULL, NULL, "wiki");
-      $errors['is_active'] = ts('You can not save this Scheduled Job as Active with the specified api action (%2). That action should not be run regularly - it should only be run manually for special conditions. %1', array(1 => $docLink, 2 => $fields['api_action']));
-    }
-
     if (!empty($errors)) {
       return $errors;
     }
@@ -198,6 +191,16 @@ class CRM_Admin_Form_Job extends CRM_Admin_Form {
     $dao->is_active     = CRM_Utils_Array::value('is_active', $values, 0);
 
     $dao->save();
+    
+    // CRM-11143 - Give warning message if update_greetings is Enabled (is_active) since it generally should not be run automatically via execute action or runjobs url.
+    if ($values['api_action'] == 'update_greeting' && CRM_Utils_Array::value('is_active', $values) == 1) {
+      // pass "wiki" as 6th param to docURL2 if you are linking to a page in wiki.civicrm.org
+      $docLink = CRM_Utils_System::docURL2("Managing Scheduled Jobs", NULL, NULL, NULL, NULL, "wiki");
+      $msg = ts('You may not want this Scheduled Job to be enabled since most sites will not need the Update Greeting job to be run automatically. If you are uncertain about having the job run automatically, you should edit the job again and uncheck the Active box. %1', array(1 => $docLink));
+      CRM_Core_Session::setStatus($msg, ts('Warning: Update Greeting job enabled'), 'alert');
+    }
+
+    
   }
   //end of function
 }
