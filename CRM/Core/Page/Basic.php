@@ -150,15 +150,11 @@ abstract class CRM_Core_Page_Basic extends CRM_Core_Page {
     $sort     = ($n > 2) ? func_get_arg(2) : NULL;
     // what action do we want to perform ? (store it for smarty too.. :)
 
-    $this->_action = CRM_Utils_Request::retrieve('action', 'String',
-      $this, FALSE, 'browse'
-    );
+    $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, FALSE, 'browse');
     $this->assign('action', $this->_action);
 
     // get 'id' if present
-    $id = CRM_Utils_Request::retrieve('id', 'Positive',
-      $this, FALSE, 0
-    );
+    $id = CRM_Utils_Request::retrieve('id', 'Positive', $this, FALSE, 0);
 
     require_once (str_replace('_', DIRECTORY_SEPARATOR, $this->getBAOName()) . ".php");
 
