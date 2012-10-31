@@ -204,8 +204,8 @@
             var ids = [];
             cj('.crm-contribution-contributionpage-amount-form-block-payment_processor input[type="checkbox"]').each(function(){
                 if(cj(this).attr('checked')) {
-                    var id = cj(this).attr('id').split('[')[1].split(']')[0];
-                    ids.push(id);
+                    var id = cj(this).attr('id').split('_')[2];
+		    ids.push(id);
                 }
             });
             return ids;
