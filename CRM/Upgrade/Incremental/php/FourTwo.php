@@ -74,7 +74,7 @@ INNER JOIN civicrm_membership mem ON mem.id = mp.membership_id
 ORDER BY mp.contribution_id, mp.membership_id";
       $invalidData = CRM_Core_DAO::executeQuery($query);
       if ($invalidData->N) {
-        $invalidDataMessage = "<br /><strong>" . ts('The upgrade is being aborted due to data integrity issues in your database. There are multiple membership records linked to the same contribution record. This is unexpected, and some of the membership records may be duplicates. The problem record pairs are listed below. Refer to <a href="%1">this wiki page for instructions on repairing your database</a> so that you can run the upgrade successfully.
+        $invalidDataMessage = "<br /><strong>" . ts('The upgrade is being aborted due to data integrity issues in your database. There are multiple membership records linked to the same contribution record. This is unexpected, and some of the membership records may be duplicates. The problem record sets are listed below. Refer to <a href="%1">this wiki page for instructions on repairing your database</a> so that you can run the upgrade successfully.
         ', array( 1 => 'http://wiki.civicrm.org/confluence/display/CRMDOC42/Repair+database+script+for+4.2+upgrades')) . "</strong>";
         $membershipType = CRM_Member_PseudoConstant::membershipType();
         $membershipStatus = CRM_Member_PseudoConstant::membershipStatus();
