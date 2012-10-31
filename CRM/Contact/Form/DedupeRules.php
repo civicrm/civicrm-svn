@@ -185,21 +185,22 @@ class CRM_Contact_Form_DedupeRules extends CRM_Admin_Form {
     $values = $this->exportValues();
     
     //FIXME: Handle logic to replace is_default column by usage
-    /*
-    $isDefault = CRM_Utils_Array::value('is_default', $values, FALSE);
-    // reset defaults
-    if ($isDefault) {
+    $used = CRM_Utils_Array::value('used', $values, FALSE);
+    // reset used column to General (since there can only
+    // be one 'Supervised' or 'Unsupervised' rule)
+    if ($this->_options[$used] != 'General') {
       $query = "
 UPDATE civicrm_dedupe_rule_group 
-   SET is_default = 0
+   SET used = 'General'
  WHERE contact_type = %1 
-   AND level = %2";
+   AND used = %2";
       $queryParams = array(1 => array($this->_contactType, 'String'),
-        2 => array($values['level'], 'String'),
+        2 => array($this->_options[$used], 'String'),
       );
+
       CRM_Core_DAO::executeQuery($query, $queryParams);
     }
-    */
+
     $rgDao = new CRM_Dedupe_DAO_RuleGroup();
     if ($this->_action & CRM_Core_Action::UPDATE) {
       $rgDao->id = $this->_rgid;
