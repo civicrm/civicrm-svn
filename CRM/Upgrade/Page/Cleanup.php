@@ -24,8 +24,8 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 */
-class CRM_Upgrade_Page_Cleanup42  extends CRM_Core_Page {
-  public function run() {
+class CRM_Upgrade_Page_Cleanup  extends CRM_Core_Page {
+  public function cleanup425() {
     $rows     = CRM_Upgrade_Incremental_php_FourTwo::deleteInvalidPairs();
     $template = CRM_Core_Smarty::singleton();
 
@@ -34,10 +34,15 @@ class CRM_Upgrade_Page_Cleanup42  extends CRM_Core_Page {
     $template->assign('columnHeaders', $columnHeaders);
     $template->assign('rows', $rows);
 
-    $message = !empty($rows) ? ts('The following records have been processed. Membership records with action = Un-linked have been disconnected from the listed contribution record:') : ts('Could not find any records to process.');
-    $template->assign('message', $message);
+    $preMessage = !empty($rows) ? ts('The following records have been processed. Membership records with action = Un-linked have been disconnected from the listed contribution record:') : ts('Could not find any records to process.');
+    $template->assign('preMessage', $preMessage);
+
+    $postMessage =  ts('You can <a href="%1">click here</a> to try running the 4.2 upgrade script again. <a href="%2" target="_blank">(Review upgrade documentation)</a>',
+                    array(1 => CRM_Utils_System::url('civicrm/upgrade', 'reset=1'),
+                          2 => 'http://wiki.civicrm.org/confluence/display/CRMDOC/Installation+and+Upgrades'));
+    $template->assign('postMessage', $postMessage);
 
     $content = $template->fetch('CRM/common/upgradeCleanup.tpl');
-    echo CRM_Utils_System::theme('page', $content, TRUE, $this->_print, FALSE, TRUE);
+    echo CRM_Utils_System::theme('page', $content, TRUE, FALSE, FALSE, TRUE);
   }
 }

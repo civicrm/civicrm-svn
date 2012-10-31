@@ -620,8 +620,12 @@ UNION (
     if (preg_match('/^civicrm\/(upgrade\/)?queue\//', $path)) {
       CRM_Queue_Menu::alter($path, $menuPath);
     }
-    if ($path == 'civicrm/upgrade/cleanup42') {
-      $menuPath['page_callback'] = 'CRM_Upgrade_Page_Cleanup42';
+    
+    // Part of upgrade framework but not run inside main upgrade because it deletes data
+    // Once we have another example of a 'cleanup' we should generalize the clause below so it grabs string
+    // which follows upgrade/ and checks for existence of a function in Cleanup class.
+    if ($path == 'civicrm/upgrade/cleanup425') {
+      $menuPath['page_callback'] = array('CRM_Upgrade_Page_Cleanup','cleanup425');
       $menuPath['access_arguments'][0][] = 'administer CiviCRM';
       $menuPath['access_callback'] = array('CRM_Core_Permission', 'checkMenu');
     }

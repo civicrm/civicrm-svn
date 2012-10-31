@@ -26,7 +26,9 @@
 {* upgradeCleanup.tpl: Display page for special cleanup scripts related to Upgrade.*}
 
 <div style="margin-top: 3em; padding: 1em; background-color: #0C0; border: 1px #070 solid; color: white; font-weight: bold">
-  <p>{$message}</p>
+  {if $preMessage}
+    <p>{$preMessage}</p>
+  {/if}
   {if $rows}
   <div class="upgrade-success">
     <table>
@@ -44,5 +46,8 @@
       {/foreach}
     </table>
   </div>
+  {/if}
+  {if $postMessage}
+    <p>{$postMessage}</p>
   {/if}
 </div>

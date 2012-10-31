@@ -90,7 +90,7 @@ ORDER BY mp.contribution_id, mp.membership_id";
           $invalidDataMessage .= "<td>" . CRM_Utils_Array::value($invalidData->status_id, $membershipStatus) . "</td>";
           $invalidDataMessage .= "</tr>";
         }
-        $invalidDataMessage .= "</table>"; 
+        $invalidDataMessage .= "</table><p>" . ts('If you have reviewed the cleanup script documentation on the wiki and you are ready to run the cleanup now - <a href="%1">click here</a>.', array(1 => CRM_Utils_System::url('civicrm/upgrade/cleanup425', 'reset=1'))) . "</p>"; 
         CRM_Core_Error::fatal($invalidDataMessage);
         return FALSE;
       }
