@@ -41,7 +41,7 @@
         </div>
       </div>
       <div class="crm-summary-row">
-        <div class="crm-label">{ts}Position{/ts}</div>
+        <div class="crm-label">{ts}Job Title{/ts}</div>
         <div class="crm-content crm-contact-job_title">{$job_title}</div>
       </div>
       {/if}

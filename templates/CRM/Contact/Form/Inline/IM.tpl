@@ -36,7 +36,7 @@
     <tr>
       <td>{ts}Instant Messenger{/ts}&nbsp;
       {if $actualBlockCount lt 5 }
-        <span id="add-more-im" title="{ts}click to add more{/ts}"><a class="crm-link-action">{ts}add{/ts}</a></span>
+        <span id="add-more-im" title="{ts}click to add more{/ts}"><a class="crm-link-action add-more-inline">{ts}add{/ts}</a></span>
       {/if}
       </td>
       <td>{ts}IM Location{/ts}</td>
@@ -53,7 +53,7 @@
         <td align="center" class="crm-im-is_primary">{$form.im.$blockId.is_primary.1.html}</td>
         <td>
           {if $blockId gt 1}
-            <a class="crm-delete-im crm-link-action" title="{ts}delete im block{/ts}">{ts}delete{/ts}</a>
+            <a class="crm-delete-inline crm-link-action" title="{ts}delete im block{/ts}">{ts}delete{/ts}</a>
           {/if}
         </td>
     </tr>
@@ -62,43 +62,9 @@
 
 {literal}
 <script type="text/javascript">
-    cj( function() {
+    cj(function($) {
       // check first primary radio
-      cj('#IM_1_IsPrimary').prop('checked', true );
-
-      // make sure only one is primary radio is checked
-      cj('.crm-im-is_primary input').click(function(){
-        cj('.crm-im-is_primary input').each(function(){
-          cj(this).prop('checked', false);
-        });
-        cj(this).prop('checked', true);
-      });
-
-      // handle delete of block
-      cj('.crm-delete-im').click( function(){
-        cj(this).closest('tr').each(function(){
-          cj(this).find('input').val('');
-          //if the primary is checked for deleted block
-          //unset and set first as primary
-          if (cj(this).find('.crm-im-is_primary input').prop('checked') ) {
-            cj(this).find('.crm-im-is_primary input').prop('checked', false);
-            cj('#IM_1_IsPrimary').prop('checked', true );
-          }
-          cj(this).addClass('hiddenElement');
-        });
-      });
-
-      // add more and set focus to new row
-      cj('#add-more-im').click(function() {
-        var rowSelector = cj('tr[id^="IM_Block_"][class="hiddenElement"] :first').parent();
-        rowSelector.removeClass('hiddenElement');
-        var rowId = rowSelector.attr('id').replace('IM_Block_', '');
-        cj('#im_' + rowId + '_name').focus();
-        if ( cj('tr[id^="IM_Block_"][class="hiddenElement"]').length == 0  ) {
-          cj('#add-more-im').hide();
-        }
-      });
+      $('#IM_1_IsPrimary').prop('checked', true );
     });
-
 </script>
 {/literal}

@@ -38,7 +38,7 @@
       <td>{ts}Website{/ts}
         {help id="id-website" file="CRM/Contact/Form/Contact.hlp"}
         {if $actualBlockCount lt 5 }
-          &nbsp;&nbsp;<span id="add-more-website" title="{ts}click to add more{/ts}"><a class="crm-link-action">{ts}add{/ts}</a></span>
+          &nbsp;&nbsp;<span id="add-more-website" title="{ts}click to add more{/ts}"><a class="crm-link-action add-more-inline">{ts}add{/ts}</a></span>
         {/if}
       </td>
       <td>{ts}Website Type{/ts}</td>
@@ -52,7 +52,7 @@
       <td>{$form.website.$blockId.website_type_id.html}</td>
       <td>
         {if $blockId > 1} 
-          <a class="crm-delete-website crm-link-action" title="{ts}delete website block{/ts}">{ts}delete{/ts}</a>
+          <a class="crm-delete-inline crm-link-action" title="{ts}delete website block{/ts}">{ts}delete{/ts}</a>
         {/if}
        </td>
     </tr>
@@ -61,33 +61,13 @@
 
 {literal}
 <script type="text/javascript">
-    cj( function() {
-      // handle delete of block
-      cj('.crm-delete-website').click( function(){
-        cj(this).closest('tr').each(function(){
-          cj(this).find('input').val('');
-          cj(this).addClass('hiddenElement');
-          cj('#add-more-website').show();
-        });
-      });
-
-      // add more and set focus to new row
-      cj('#add-more-website').click(function() {
-        var rowSelector = cj('tr[id^="Website_Block_"][class="hiddenElement"]:first'); 
-        rowSelector.removeClass('hiddenElement');
-        cj(':text:first', rowSelector).focus();
-        if ( cj('tr[id^="Website_Block_"][class="hiddenElement"]').length == 0  ) {
-          cj('#add-more-website').hide();
-        }
-      });
-
+    cj(function($) {
       // error handling / show hideen elements duing form validation
-      cj('tr[id^="Website_Block_"]' ).each( function() {
-          if( cj(this).find('td:first span').length > 0 ) {
-            cj(this).removeClass('hiddenElement');
+      $('tr[id^="Website_Block_"]' ).each( function() {
+          if( $(this).find('td:first span').length > 0 ) {
+            $(this).removeClass('hiddenElement');
           } 
       });
     });
-
 </script>
 {/literal}

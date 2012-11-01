@@ -323,33 +323,64 @@
 
    <script type="text/javascript">
     var selectedTab  = 'summary';
-    var spinnerImage = '<img src="{$config->resourceBase}i/loading.gif" style="width:10px;height:10px"/>';
     {if $selectedChild}selectedTab = "{$selectedChild}";{/if}
     
     {literal}
  
-    //explicitly stop spinner
-    function stopSpinner( ) {
-      cj('li.crm-tab-button').each(function(){ cj(this).find('span').text(' ');})
-    }
+    cj(function($) {
+      //explicitly stop spinner
+      function stopSpinner( ) {
+        $('li.crm-tab-button span').text(' ');
+      }
+      var tabIndex = $('#tab_' + selectedTab).prevAll().length;
+      var spinnerImage = '<img src="{/literal}{$config->resourceBase}{literal}i/loading.gif" style="width:10px;height:10px"/>';
+      $("#mainTabContainer").tabs({ selected: tabIndex, spinner: spinnerImage, cache: true, load: stopSpinner});
+      $(".crm-tab-button").addClass("ui-corner-bottom");
+      $().crmAccordions();
 
-    cj( function() {
-      var tabIndex = cj('#tab_' + selectedTab).prevAll().length;
-      cj("#mainTabContainer").tabs({ selected: tabIndex, spinner: spinnerImage, cache: true, load: stopSpinner});
-      cj(".crm-tab-button").addClass("ui-corner-bottom");
+      // make sure only one is primary radio is checked
+      $('.crm-inline-edit-container').on('change', '[class$=is_primary] input', function() {
+        if ($(this).is(':checked')) {
+          $('[class$=is_primary] input', $(this).closest('form')).not(this).prop('checked', false);
+        }
+      });
+
+      // make sure only one builk mail radio is checked
+      $('.crm-inline-edit-container').on('change', '.crm-email-bulkmail input', function(){
+        if ($(this).is(':checked')) {
+          $('.crm-email-bulkmail input').not(this).prop('checked', false);
+        }
+      });
+
+      // handle delete link within blocks
+      $('.crm-inline-edit-container').on('click', '.crm-delete-inline', function() {
+        var row = $(this).closest('tr');
+        var form = $(this).closest('form');
+        row.addClass('hiddenElement');
+        $('input', row).val('');
+        //if the primary is checked for deleted block
+        //unset and set first as primary
+        if ($('[class$=is_primary] input:checked', row).length > 0) {
+          $('[class$=is_primary] input', row).prop('checked', false);
+          $('[class$=is_primary] input:first', form).prop('checked', true );
+        }
+        $('.add-more-inline', form).show();
+      });
+
+      // add more and set focus to new row
+      $('.crm-inline-edit-container').on('click', '.add-more-inline', function() {
+        var form = $(this).closest('form');
+        var row = $('tr[class="hiddenElement"]:first', form);
+        row.removeClass('hiddenElement');
+        $('input:focus', form).blur();
+        $('input:first', row).focus();
+        if ($('tr[class="hiddenElement"]').length < 1) {
+          $(this).hide();
+        }
+      });
     });
     {/literal}
    </script>
-{/if}
-
-{if !empty($isAddressCustomPresent) || $showCustomData}
-  {literal}
-  <script type="text/javascript">
-  cj(function($) {
-    $('.crm-inline-edit-container').crmAccordions();
-  });
-  </script>
-  {/literal}
 {/if}
 
 {* CRM-10560 *}
