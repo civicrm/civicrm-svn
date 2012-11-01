@@ -228,7 +228,8 @@ function _civicrm_api3_generic_get_metatdata_options(&$metadata, $fieldname, $fi
     $metadata[$fieldname]['api.aliases'][] = substr($fieldname, 0, -3);
   }
 
-  $pseudoParams = $fieldSpec['pseudoconstant'] + array('version' => 3 );
+  $pseudoParams = $fieldSpec['pseudoconstant'];
+  $pseudoParams['version'] = 3;
   $options = civicrm_api('constant', 'get', $pseudoParams);
   if (is_array(CRM_Utils_Array::value('values', $options))) {
     $metadata[$fieldname]['options'] = $options['values'];
