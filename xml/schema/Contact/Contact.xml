@@ -279,7 +279,7 @@
        <uniqueName>contact_source</uniqueName>
        <type>varchar</type>
        <length>255</length>
-       <size>MEDIUM</size>
+       <size>BIG</size>
        <import>true</import>
        <headerPattern>/(S(ource\s)?o(f\s)?C(ontact\s)?Data)$/i</headerPattern>
        <comment>where contact come from, e.g. import, donate module insert...</comment>
