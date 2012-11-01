@@ -64,10 +64,6 @@
           <script type="text/javascript">
 
                 cj("select#contact_type").crmasmSelect({
-                  addItemTarget: 'bottom',
-                  animate: false,
-                  highlight: true,
-                  sortable: true,
                   respectParents: true
                 });
 
@@ -84,10 +80,6 @@
                 {literal}
                 <script type="text/javascript">
                 cj("select#group").crmasmSelect({
-                    addItemTarget: 'bottom',
-                    animate: false,
-                    highlight: true,
-                    sortable: true,
                     respectParents: true
                 });
 
@@ -101,10 +93,6 @@
                 {literal}
                 <script type="text/javascript">
                 cj("select#group_type").crmasmSelect({
-                    addItemTarget: 'bottom',
-                    animate: false,
-                    highlight: true,
-                    sortable: true,
                     respectParents: true
                 });
 
@@ -159,10 +147,6 @@
                 <script type="text/javascript">
 
                 cj("select#contact_tags").crmasmSelect({
-                    addItemTarget: 'bottom',
-                    animate: false,
-                    highlight: true,
-                    sortable: true,
                     respectParents: true
                 });
 
@@ -191,24 +175,19 @@
                         {$form.privacy_options.html}
                     </td>
                     <td style="vertical-align:middle">
-                        {$form.privacy_operator.html}
+                        <div id="privacy-operator-wrapper">{$form.privacy_operator.html} {help id="privacy-operator"}</div>
                     </td>
                 </tr>
                 </table>
                 {literal}
                   <script type="text/javascript">
-                    cj("select#privacy_options").crmasmSelect({
-                     addItemTarget: 'bottom',
-                     animate: false,
-                     highlight: true,
-                     sortable: true,
-                    });
+                    cj("select#privacy_options").crmasmSelect();
                     cj("select#privacy_options").change(function() {
                       var items = cj(this).siblings('ul.crmasmList').find('li').length;
                       if (items > 1) {
-                        cj('#privacy_operator').show();
+                        cj('#privacy-operator-wrapper').show();
                       } else {
-                        cj('#privacy_operator').hide();
+                        cj('#privacy-operator-wrapper').hide();
                       }
                     }).change();
                   </script>
