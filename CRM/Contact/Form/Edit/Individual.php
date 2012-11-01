@@ -88,7 +88,7 @@ class CRM_Contact_Form_Edit_Individual {
       // job title
       // override the size for UI to look better
       $attributes['job_title']['size'] = 30;
-      $form->addElement('text', 'job_title', ts('Position'), $attributes['job_title'], 'size="30"');
+      $form->addElement('text', 'job_title', ts('Job Title'), $attributes['job_title'], 'size="30"');
 
       //Current Employer Element
       $employerDataURL = CRM_Utils_System::url('civicrm/ajax/rest', 'className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=contact&org=1&employee_id=' . $this->_contactId, FALSE, NULL, FALSE);
