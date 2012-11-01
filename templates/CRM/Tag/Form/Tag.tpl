@@ -163,7 +163,6 @@
 {if $action eq 1 or $action eq 2 }
 <script type="text/javascript">
   {* this function is called to change the color of selected row(s) *}
-  var fname = "{$form.formName}";
-  on_load_init_check(fname);
+  on_load_init_check("{$form.formName}");
 </script>
 {/if}
