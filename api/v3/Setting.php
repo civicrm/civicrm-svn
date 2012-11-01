@@ -241,6 +241,10 @@ function civicrm_api3_setting_get_spec(&$params) {
  * @access public
  */
 function civicrm_api3_setting_getvalue($params) {
+  $config = CRM_Core_Config::singleton();
+  if(isset($config->$params['name'])){
+    return $config->$params['name'];
+  }
   return CRM_Core_BAO_Setting::getItem(
     $params['group'],
     CRM_Utils_Array::value('name', $params),

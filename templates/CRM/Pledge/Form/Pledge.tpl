@@ -222,7 +222,7 @@ cj(function() {
      }
 
      function calculatedPaymentAmount( ) {
-       var thousandMarker = '{/literal}{$config->monetaryThousandSeparator}{literal}';
+       var thousandMarker = {/literal}{crmSetting name="monetaryThousandSeparator" group="CiviCRM Localization"}{literal};
        var seperator      = '{/literal}{$config->monetaryDecimalPoint}{literal}';
        var amount = document.getElementById("amount").value;
        // replace all thousandMarker and change the seperator to a dot
