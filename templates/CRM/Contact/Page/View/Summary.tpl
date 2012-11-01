@@ -166,14 +166,12 @@
                       {/if}
                       <div class="{if !empty($imageURL)} float-left{/if}">
                         <div class="crm-clear">
-                        {if !empty($contactTag)}
                           <div class="crm-summary-row">
                             <div class="crm-label" id="tagLink">
                               <a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=$contactId&selectedChild=tag"}" title="{ts}Edit Tags{/ts}">{ts}Tags{/ts}</a>
                             </div>
                             <div class="crm-content" id="tags">{$contactTag}</div>
                           </div>
-                        {/if}
                           <div class="crm-summary-row">
                             <div class="crm-label">{ts}Contact Type{/ts}</div>
                             <div class="crm-content crm-contact_type_label">
@@ -328,15 +326,20 @@
       function stopSpinner( ) {
         $('li.crm-tab-button span').text(' ');
       }
-      var tabIndex = $('#tab_' + selectedTab).prevAll().length;
       {/literal}
-      var selectedTab  = 'summary';
+      var selectedTab = '{if !empty($selectedChild)}{$selectedChild}{else}summary{/if}';
       {if $selectedChild}selectedTab = "{$selectedChild}";{/if}
+      var tabIndex = $('#tab_' + selectedTab).prevAll().length;
       var spinnerImage = '<img src="{$config->resourceBase}i/loading.gif" style="width:10px;height:10px"/>';
       {literal}
       $("#mainTabContainer").tabs({ selected: tabIndex, spinner: spinnerImage, cache: true, load: stopSpinner});
       $(".crm-tab-button").addClass("ui-corner-bottom");
       $().crmAccordions();
+
+      $('.crm-inline-edit-container').on('click', '#tagLink a', function() {
+        $('.ui-tabs-anchor[href*="/contact/view/tag"]').click();
+        return false;
+      });
 
       // make sure only one is primary radio is checked
       $('.crm-inline-edit-container').on('change', '[class$=is_primary] input', function() {

@@ -82,7 +82,6 @@
         //update summary tab
         tagLabels = tagsArray.join(', ');
         cj("#tags").html( tagLabels );
-        ( tagLabels ) ? cj("#tagLink,#tags").show( ) : cj("#tagLink,#tags").hide( );
       });
 
       //load js tree.
