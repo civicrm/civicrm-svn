@@ -52,8 +52,8 @@
           <div class="crm-grid-cell"><img src="{$config->resourceBase}i/copy.png" alt="{ts 1=$field.title}Click to copy %1 from row one to all rows.{/ts}" fname="{$field.name}" class="action-icon" title="{ts}Click here to copy the value in row one to ALL rows.{/ts}" />{$field.title}</div>
         {/foreach}
       </div>
-    {section name='i' start=1 loop=$rowCount} 
-    {assign var='rowNumber' value=$smarty.section.i.index} 
+    {section name='i' start=1 loop=$rowCount}
+    {assign var='rowNumber' value=$smarty.section.i.index}
     <div class="{cycle values="odd-row,even-row"} selector-rows crm-grid-row" entity_id="{$rowNumber}">
         <div class="compressed crm-grid-cell"><span class="batch-edit"></span></div>
         {* contact select/create option*}
@@ -63,8 +63,8 @@
 
         {if $batchType eq 2 }
           {$form.member_option.$rowNumber.html}
-        {/if} 
-        
+        {/if}
+
         {foreach from=$fields item=field key=fieldName}
         {assign var=n value=$field.name}
         {if ( $fields.$n.data_type eq 'Date') or ( in_array( $n, array( 'thankyou_date', 'cancel_date', 'receipt_date', 'receive_date', 'join_date', 'membership_start_date', 'membership_end_date' ) ) ) }
@@ -72,9 +72,9 @@
         {elseif $n eq 'soft_credit'}
             <div class="compressed crm-grid-cell">{include file="CRM/Contact/Form/NewContact.tpl" blockNo = $rowNumber noLabel=true prefix="soft_credit_"}</div>
         {elseif in_array( $fields.$n.html_type, array('Radio', 'CheckBox'))}
-            <div class="compressed crm-grid-cell">&nbsp;{$form.field.$rowNumber.$n.html}</div> 
+            <div class="compressed crm-grid-cell">&nbsp;{$form.field.$rowNumber.$n.html}</div>
         {else}
-            <div class="compressed crm-grid-cell">{$form.field.$rowNumber.$n.html}</div> 
+            <div class="compressed crm-grid-cell">{$form.field.$rowNumber.$n.html}</div>
         {/if}
         {/foreach}
     </div>
@@ -87,15 +87,15 @@
    cj(function(){
       cj('.selector-rows').change(function(){
           var options = {
-              'url' : {/literal}"{crmURL p='civicrm/ajax/batch' h=0}"{literal}       
+              'url' : {/literal}"{crmURL p='civicrm/ajax/batch' h=0}"{literal}
           };
 
           cj("#Entry").ajaxSubmit(options);
-          
+
           // validate rows
           checkColumns( cj(this) );
       });
-      
+
       // validate rows
       validateRow( );
 
@@ -103,7 +103,7 @@
       calculateActualTotal();
 
       cj('input[id*="_total_amount"]').bind('keyup change', function(){
-          calculateActualTotal();    
+          calculateActualTotal();
       });
 
       {/literal}{if $batchType eq 1 }{literal}
@@ -121,14 +121,14 @@
             cj(this).attr('disabled', true);
           }
         });
-       
+
         // set payment info accord to membership type
         cj( 'select[id*="][membership_type][0]"]').change( function() {
-          setPaymentBlock( cj(this), null ); 
+          setPaymentBlock( cj(this), null );
         });
 
         cj( 'select[id*="][membership_type][1]"]').change( function() {
-          setPaymentBlock( cj(this), cj(this).val() ); 
+          setPaymentBlock( cj(this), cj(this).val() );
         });
 
       {/literal}{/if}{literal}
@@ -141,27 +141,27 @@
       cj('#primary_contact_1').focus();
 
    });
-   
+
    function setPaymentBlock( form, memType ) {
      var rowID = form.closest('div.crm-grid-row').attr('entity_id');
      var dataUrl = {/literal}"{crmURL p='civicrm/ajax/memType' h=0}"{literal};
-      
+
      if ( !memType ) {
       memType = cj( 'select[id="field['+ rowID+'][membership_type][1]"]').val();
      }
 
      cj.post( dataUrl, {mtype: memType}, function( data ) {
-         cj('#field_' + rowID + '_contribution_type').val( data.contribution_type_id );            
+         cj('#field_' + rowID + '_contribution_type').val( data.contribution_type_id );
          cj('#field_' + rowID + '_total_amount').val( data.total_amount ).change();
-     }, 'json');     
+     }, 'json');
    }
-   
+
    function hideSendReceipt() {
      cj( 'input[id*="][send_receipt]"]').each( function() {
        showHideReceipt( cj(this) );
      });
    }
-   
+
    function showHideReceipt( elem ) {
      var rowID = elem.closest('div.crm-grid-row').attr('entity_id');
      var element = 'field_' + rowID + '_receipt_date';
@@ -177,7 +177,7 @@
            checkColumns( cj(this) );
       });
    }
-    
+
    function checkColumns( parentRow ) {
        // show valid row icon if all required data is field
        var validRow   = 0;
@@ -192,7 +192,7 @@
             validRow++;
          }
        });
-       
+
        // this means use has entered some data
        if ( errorExists ) {
          parentRow.find("div:first span").prop('class', 'batch-invalid');
@@ -202,7 +202,7 @@
          parentRow.find("div:first span").prop('class', 'batch-edit');
        }
    }
-    
+
    function calculateActualTotal() {
      var total = 0;
      cj('input[id*="_total_amount"]').each(function(){
@@ -211,7 +211,7 @@
       }
      });
 
-     cj('.batch-actual-total').html(formatMoney(total)); 
+     cj('.batch-actual-total').html(formatMoney(total));
    }
 
   //money formatting/localization
@@ -220,20 +220,20 @@
     var t = '{/literal}{$config->monetaryThousandSeparator}{literal}';
     var d = '{/literal}{$config->monetaryDecimalPoint}{literal}';
 
-    var n = amount, 
-        c = isNaN(c = Math.abs(c)) ? 2 : c, 
-        d = d == undefined ? "," : d, 
-        t = t == undefined ? "." : t, s = n < 0 ? "-" : "", 
-        i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", 
+    var n = amount,
+        c = isNaN(c = Math.abs(c)) ? 2 : c,
+        d = d == undefined ? "," : d,
+        t = t == undefined ? "." : t, s = n < 0 ? "-" : "",
+        i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "",
         j = (j = i.length) > 3 ? j % 3 : 0;
-    
+
     return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
   }
 
   function updateContactInfo( blockNo, prefix ) {
     var contactHiddenElement = 'input[name="' + prefix + 'contact_select_id[' + blockNo +']"]';
-    var contactId = cj( contactHiddenElement ).val();; 
-    
+    var contactId = cj( contactHiddenElement ).val();;
+
     var returnProperties = '';
     var profileFields = new Array();
     {/literal}
@@ -247,13 +247,13 @@
           var fld = fldName.split('-');
           returnProperties = returnProperties + fld[0];
           profileFields[fld[0]] = fldName;
-        {/literal}  
+        {/literal}
       {/foreach}
     {/if}
     {literal}
-    
+
     cj().crmAPI ('Contact','get',{
-      'sequential' :'1', 
+      'sequential' :'1',
       'contact_id': contactId,
       'return': returnProperties },
       { success:function (data) {
@@ -269,10 +269,10 @@
       }
     });
 
-    // for membership batch entry based on contact we need to enable / disable 
+    // for membership batch entry based on contact we need to enable / disable
     // add membership select
     {/literal}{if $batchType eq 2}{literal}
-    cj().crmAPI ('Membership','get',{ 
+    cj().crmAPI ('Membership','get',{
       'sequential' :'1',
       'contact_id': contactId,
       },
@@ -281,11 +281,11 @@
           //get the information on membership type
           var membershipTypeId   = data.values[0].membership_type_id;
           var membershipJoinDate = data.values[0].join_date;
-          cj().crmAPI ('MembershipType','get',{ 
+          cj().crmAPI ('MembershipType','get',{
             'sequential' :'1',
-            'id' : membershipTypeId 
+            'id' : membershipTypeId
             },
-            { success:function (data){    
+            { success:function (data){
                 var memTypeContactId = data.values[0].member_of_contact_id;
                 cj('select[id="member_option_' + blockNo + '"]').removeAttr('disabled').val(2);
                 cj('select[id="field[' + blockNo + '][membership_type][0]"]').val( memTypeContactId ).change();
@@ -301,18 +301,18 @@
   }
 
 /**
- * This function is use to setdefault elements via ajax 
+ * This function is use to setdefault elements via ajax
  *
  * @param fname string field name
  * @return void
  */
 function setFieldValue( fname, fieldValue, blockNo ) {
     var elementId = cj('[name="field['+ blockNo +']['+ fname +']"]');
-    
+
     if ( elementId.length == 0 ) {
       elementId =  cj('input[type=checkbox][name^="field['+ blockNo +']['+ fname +']"][type!=hidden]');
     }
- 
+
     // if element not found than return
     if ( elementId.length == 0 ) {
       return;
@@ -320,13 +320,13 @@ function setFieldValue( fname, fieldValue, blockNo ) {
 
     //check if it is date element
     var isDateElement = elementId.attr('format');
-    
+
     // check if it is wysiwyg element
     var editor = elementId.attr('editor');
 
     //get the element type
-    var elementType = elementId.attr('type'); 
-    
+    var elementType = elementId.attr('type');
+
     // set the value for all the elements, elements needs to be handled are
     // select, checkbox, radio, date fields, text, textarea, multi-select
     // wysiwyg editor, advanced multi-select ( to do )
@@ -341,7 +341,7 @@ function setFieldValue( fname, fieldValue, blockNo ) {
       elementId.removeProp('checked');
       if ( fieldValue ) {
         cj.each( fieldValue, function( key, value ) {
-          cj('input[name="field['+ blockNo +']['+ fname +']['+ value +']"]').prop('checked', true); 
+          cj('input[name="field['+ blockNo +']['+ fname +']['+ value +']"]').prop('checked', true);
         });
       }
     } else if ( editor ) {
@@ -353,7 +353,7 @@ function setFieldValue( fname, fieldValue, blockNo ) {
           break;
         case 'tinymce':
           var elemtId = element.attr('id');
-          tinyMCE.get( elemtId ).setContent( htmlContent ); 
+          tinyMCE.get( elemtId ).setContent( htmlContent );
           break;
         case 'joomlaeditor':
           // TO DO
@@ -375,7 +375,7 @@ function setFieldValue( fname, fieldValue, blockNo ) {
 
 function setDateFieldValue( fname, fieldValue, blockNo ) {
    var dateValues = fieldValue.split(' ');
-   
+
    var actualDateElement =  cj('#field_'+ blockNo +'_' + fname );
    var date_format = actualDateElement.attr('format');
    var altDateFormat = 'yy-mm-dd';
@@ -384,16 +384,16 @@ function setDateFieldValue( fname, fieldValue, blockNo ) {
 
    // format date according to display field
    var hiddenDateValue  = cj.datepicker.formatDate( 'mm/dd/yy', actualDateValue );
-   
+
    actualDateElement.val( hiddenDateValue );
-   
+
    var displayDateValue = actualDateElement.val();
    if ( date_format != 'mm/dd/yy' ) {
      displayDateValue  = cj.datepicker.formatDate( date_format, actualDateValue );
    }
-   
+
    cj('#field_'+ blockNo +'_' + fname + '_display').val( displayDateValue );
-   
+
    // need to fix time formatting
    if ( dateValues[1] ) {
     cj('#field_'+ blockNo +'_' + fname + '_time').val(dateValues[1].substr(0,5));
