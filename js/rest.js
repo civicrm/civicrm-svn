@@ -83,11 +83,11 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
   };
     var defaults = {
       success: function(result,settings){
-        $().crmAlert('', ts('Saved'), 'success');
+        $().crmAlert('', 'Saved', 'success');
         return true;
       },
       error: function(result,settings){
-        $().crmError(result.error_message, ts('Error'));
+        $().crmError(result.error_message, 'Error');
         return false;
       },
       callBack: function(result,settings){

@@ -127,11 +127,11 @@
     cj(function() {
       cj('.crm-extensions-refresh').click(function(event){
         event.stopPropagation();
-        cj().crmAlert('', ts('Refreshing...'), 'info');
+        cj().crmAlert('', '{/literal}{ts escape="js"}Refreshing...{/ts}{literal}'), 'info');
         cj().crmAPI('Extension', 'refresh', {}, { 
           'callBack' : function(result){
             if (result.is_error) {
-              cj().crmAlert(result.error_message, ts('Refresh Error'), 'error');
+              cj().crmAlert(result.error_message, '{/literal}{ts escape="js"}Refresh Error{/ts}{literal}', 'error');
             } else {
               window.location.reload();
             }

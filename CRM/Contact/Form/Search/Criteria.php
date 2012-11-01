@@ -93,17 +93,14 @@ class CRM_Contact_Form_Search_Criteria {
     $form->add('text', 'contact_source', ts('Contact Source'), CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'contact_source'));
 
     //added job title
-    $attributes['job_title']['size'] = 30;
-    $form->addElement('text', 'job_title', ts('Job Title'), $attributes['job_title'], 'size="30"');
+    $form->addElement('text', 'job_title', ts('Job Title'), CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'job_title'));
 
 
     //added internal ID
-    $attributes['id']['size'] = 30;
-    $form->addElement('text', 'id', ts('Contact ID'), $attributes['id'], 'size="30"');
+    $form->addElement('text', 'id', ts('Contact ID'), CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'id'));
 
     //added external ID
-    $attributes['external_identifier']['size'] = 30;
-    $form->addElement('text', 'external_identifier', ts('External ID'), $attributes['external_identifier'], 'size="30"');
+    $form->addElement('text', 'external_identifier', ts('External ID'), CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'external_identifier'));
 
     if (CRM_Core_Permission::check('access deleted contacts') and CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'contact_undelete', NULL)) {
       $form->add('checkbox', 'deleted_contacts', ts('Search in Trash') . '<br />' . ts('(deleted contacts)'));

@@ -406,7 +406,7 @@
               $(this).parent().load(postUrl, data);
             });
           }
-          cj().crmAlert('', ts('Saved'), 'success');
+          cj().crmAlert('', 'Saved', 'success');
         }
       },
       error: function (obj, status) {
