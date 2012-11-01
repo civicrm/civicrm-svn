@@ -167,6 +167,9 @@ class CRM_Core_BAO_Note extends CRM_Core_DAO_Note {
 
     $note->save();
 
+    // check and attach and files as needed
+    CRM_Core_BAO_File::processAttachment($params, 'civicrm_note', $note->id);
+
     if ($note->entity_table == 'civicrm_contact') {
       CRM_Core_BAO_Log::register($note->entity_id,
         'civicrm_note',
@@ -362,8 +365,8 @@ class CRM_Core_BAO_Note extends CRM_Core_DAO_Note {
     $viewNote = array();
 
     $query = "
-  SELECT  id, 
-          note 
+  SELECT  id,
+          note
     FROM  civicrm_note
    WHERE  entity_table=\"{$entityTable}\"
      AND  entity_id = %1
@@ -542,8 +545,8 @@ ORDER BY  modified_date desc";
     $params = array(1 => array($contactID, 'Integer'));
 
     // delete all notes related to contribution
-    $contributeQuery = "DELETE note.* 
-FROM civicrm_note note LEFT JOIN civicrm_contribution contribute ON note.entity_id = contribute.id 
+    $contributeQuery = "DELETE note.*
+FROM civicrm_note note LEFT JOIN civicrm_contribution contribute ON note.entity_id = contribute.id
 WHERE contribute.contact_id = %1 AND note.entity_table = 'civicrm_contribution'";
 
     CRM_Core_DAO::executeQuery($contributeQuery, $params);

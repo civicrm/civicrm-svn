@@ -257,6 +257,7 @@ class CRM_Core_BAO_File extends CRM_Core_DAO_File {
       $result['entityID']  = $dao->cefID;
       $result['mime_type'] = $dao->mime_type;
       $result['fileName']  = $dao->uri;
+      $result['description'] = $dao->description;
       $result['cleanName'] = CRM_Utils_File::cleanFileName($dao->uri);
       $result['fullPath']  = $config->customFileUploadDir . DIRECTORY_SEPARATOR . $dao->uri;
       $result['url']       = CRM_Utils_System::url('civicrm/file', "reset=1&id={$dao->cfID}&eid={$entityID}");
@@ -275,6 +276,7 @@ class CRM_Core_BAO_File extends CRM_Core_DAO_File {
 SELECT    CF.id as cfID,
           CF.uri as uri,
           CF.mime_type as mime_type,
+          CF.description as description,
           CEF.id as cefID
 FROM      civicrm_file AS CF
 LEFT JOIN civicrm_entity_file AS CEF ON ( CEF.file_id = CF.id )
@@ -330,6 +332,7 @@ AND       CEF.entity_id    = %2";
     }
 
     $form->assign('numAttachments', $numAttachments);
+
     // add attachments
     for ($i = 1; $i <= $numAttachments; $i++) {
       $form->addElement('file', "attachFile_$i", ts('Attach File'), 'size=30 maxlength=60');
@@ -341,6 +344,7 @@ AND       CEF.entity_id    = %2";
         'maxfilesize',
         $maxFileSize * 1024 * 1024
       );
+      $form->addElement('text', "attachDesc_$i", ts('Description'), 'size=40 maxlength=255');
     }
 
   }
@@ -391,6 +395,7 @@ AND       CEF.entity_id    = %2";
     // setup all attachments
     for ($i = 1; $i <= $numAttachments; $i++) {
       $attachName = "attachFile_$i";
+      $attachDesc = "attachDesc_$i";
       if (isset($formValues[$attachName]) && !empty($formValues[$attachName])) {
         // we dont care if the file is empty or not
         // CRM-7448
@@ -398,6 +403,7 @@ AND       CEF.entity_id    = %2";
           'uri' => $formValues[$attachName]['name'],
           'type' => $formValues[$attachName]['type'],
           'location' => $formValues[$attachName]['name'],
+          'description' => $formValues[$attachDesc],
           'upload_date' => $now,
         );
         $params[$attachName] = $fileParams;

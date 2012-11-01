@@ -33,6 +33,10 @@
             <tr><td class="label">{ts}Date:{/ts}</td><td>{$note.modified_date|crmDate}</td></tr>
             <tr><td class="label">{ts}Privacy:{/ts}</td><td>{$note.privacy}</td></tr>
             <tr><td class="label"></td><td>{$note.note|nl2br}</td></tr>
+
+            {if $currentAttachmentInfo}
+               {include file="CRM/Form/attachment.tpl"}
+            {/if}
           </table>
           <div class="crm-submit-buttons"><input type="button" name='cancel' value="{ts}Done{/ts}" onclick="location.href='{crmURL p='civicrm/contact/view' q='action=browse&selectedChild=note'}';"/></div>
 
@@ -79,6 +83,11 @@
                 <td class="label">{$form.note.label}</td>
                 <td>
                     {$form.note.html}
+                </td>
+            </tr>
+            <tr class="crm-activity-form-block-attachment">
+                <td colspan="2">
+                    {include file="CRM/Form/attachment.tpl"}
                 </td>
             </tr>
         </table>

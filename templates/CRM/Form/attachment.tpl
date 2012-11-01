@@ -31,7 +31,7 @@
           {foreach from=$currentAttachmentInfo key=attKey item=attVal}
                 <div id="attachStatusMesg" class="status hiddenElement"></div>
                 <div id="attachFileRecord_{$attVal.fileID}">
-                  <strong><a href="{$attVal.url}">{$attVal.cleanName}</a></strong>
+                  <strong><a href="{$attVal.url}">{$attVal.cleanName}</a></strong>&nbsp;-&nbsp;{$attVal.description}
                   <br/>
                 </div>
           {/foreach}
@@ -58,16 +58,17 @@
         {/if}
             <tr>
                 <td class="label">{$form.attachFile_1.label}</td>
-                <td>{$form.attachFile_1.html}<span class="crm-clear-link">(<a href="javascript:clearAttachment( '#attachFile_1' );">{ts}clear{/ts}</a>)</span><br />
-                    <span class="description">{ts}Browse to the <strong>file</strong> you want to upload.{/ts}{if $numAttachments GT 1} {ts 1=$numAttachments}You can have a maximum of %1 attachment(s).{/ts}{/if} Each file must be less than {$config->maxFileSize}M in size.</span>
+                <td>{$form.attachFile_1.html}&nbsp;{$form.attachDesc_1.html}<span class="crm-clear-link">(<a href="javascript:clearAttachment( '#attachFile_1', '#attachDesc_1' );">{ts}clear{/ts}</a>)</span><br />
+                    <span class="description">{ts}Browse to the <strong>file</strong> you want to upload.{/ts}{if $numAttachments GT 1} {ts 1=$numAttachments}You can have a maximum of %1 attachment(s).{/ts}{/if} Each file must be less than {$config->maxFileSize}M in size. You can also add a short description.</span>
                 </td>
             </tr>
         {section name=attachLoop start=2 loop=$numAttachments+1}
           {assign var=index value=$smarty.section.attachLoop.index}
           {assign var=attachName value="attachFile_"|cat:$index}
+          {assign var=attachDesc value="attachDesc_"|cat:$index}
             <tr>
                 <td class="label"></td>
-                <td>{$form.$attachName.html}<span class="crm-clear-link">(<a href="javascript:clearAttachment( '#{$attachName}' );">{ts}clear{/ts}</a>)</span></td>
+                <td>{$form.$attachName.html}&nbsp;{$form.$attachDesc.html}<span class="crm-clear-link">(<a href="javascript:clearAttachment( '#{$attachName}' );">{ts}clear{/ts}</a>)</span></td>
             </tr>
         {/section}
       {/if}
@@ -78,7 +79,7 @@
           {foreach from=$currentAttachmentInfo key=attKey item=attVal}
                 <div id="attachStatusMesg" class="status hiddenElement"></div>
                 <div id="attachFileRecord_{$attVal.fileID}">
-                  <strong><a href="{$attVal.url}">{$attVal.cleanName}</a></strong>
+                  <strong><a href="{$attVal.url}">{$attVal.cleanName}</a></strong>&nbsp;-&nbsp;{$attVal.description}
                   {if $attVal.deleteURLArgs}
                    <a href="javascript:showDelete('{$attVal.cleanName}', '{$attVal.deleteURLArgs}', {$attVal.fileID})" title="{ts}Delete this attachment{/ts}"><span class="icon red-icon delete-icon" style="margin:0px 0px -5px 20px" title="{ts}Delete this attachment{/ts}"></span></a>
                   {/if}
@@ -109,8 +110,9 @@
   {/if}
     {literal}
     <script type="text/javascript">
-        function clearAttachment( element ) {
+        function clearAttachment( element, desc ) {
             cj(element).val('');
+            cj(desc).val('');
         }
     </script>
     {/literal}

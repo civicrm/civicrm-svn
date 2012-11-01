@@ -69,7 +69,9 @@ class CRM_Note_Form_Note extends CRM_Core_Form {
    *
    * @var int
    */
-  protected $_parentId; function preProcess() {
+  protected $_parentId;
+
+  function preProcess() {
     $this->_entityTable = $this->get('entityTable');
     $this->_entityId    = $this->get('entityId');
     $this->_id          = $this->get('id');
@@ -82,7 +84,10 @@ class CRM_Note_Form_Note extends CRM_Core_Form {
       CRM_Core_Error::statusBounce(ts('You do not have access to this note.'));
     }
 
-    // set title to "Note - "+Contact Name
+    // add attachments part
+    CRM_Core_BAO_File::buildAttachment($this, 'civicrm_note', $this->_id, NULL, TRUE);
+
+    // set title to "Note - " + Contact Name
     $displayName = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $this->_entityId, 'display_name');
     $pageTitle = 'Note - ' . $displayName;
     $this->assign('pageTitle', $pageTitle);
@@ -147,7 +152,7 @@ class CRM_Note_Form_Note extends CRM_Core_Form {
 
     $this->addButtons(array(
         array(
-          'type' => 'next',
+          'type' => 'upload',
           'name' => ts('Save'),
           'isDefault' => TRUE,
         ),
@@ -167,7 +172,7 @@ class CRM_Note_Form_Note extends CRM_Core_Form {
    */
   public function postProcess() {
     // store the submitted values in an array
-    $params = $this->exportValues();
+    $params = $this->controller->exportValues($this->_name);
 
     $session = CRM_Core_Session::singleton();
     $params['contact_id'] = $session->get('userID');
@@ -185,12 +190,18 @@ class CRM_Note_Form_Note extends CRM_Core_Form {
       CRM_Core_BAO_Note::del($this->_id);
       return;
     }
+
+    $params['id'] = null;
     if ($this->_action & CRM_Core_Action::UPDATE) {
       $params['id'] = $this->_id;
     }
 
+    // add attachments as needed
+    CRM_Core_BAO_File::formatAttachment($params, $params, 'civicrm_note', $params['id']);
+
     $ids = array();
-    CRM_Core_BAO_Note::add($params, $ids);
+    $note = CRM_Core_BAO_Note::add($params, $ids);
+
     CRM_Core_Session::setStatus(ts('Your Note has been saved.'), ts('Saved'), 'success');
   }
 }

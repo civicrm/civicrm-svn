@@ -75,6 +75,11 @@ class CRM_Contact_Page_View_Note extends CRM_Core_Page {
     if (!empty($comments)) {
       $this->assign('comments', $comments);
     }
+
+    // add attachments part
+    $currentAttachmentInfo = CRM_Core_BAO_File::getEntityFile('civicrm_note', $this->_id);
+    $this->assign('currentAttachmentInfo', $currentAttachmentInfo);
+
   }
 
   /**
