@@ -321,7 +321,11 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form {
 
     $allMemberships = CRM_Member_BAO_Membership::buildMembershipTypeValues($this);
 
-    $membershipType = array();
+    $allMembershipInfo = $membershipType = array();
+
+    // auto renew options if enabled for the membership
+    $options = array(ts('No auto-renew option'), ts('Give option, but not required'), ts('Auto-renew required '));
+
     foreach( $allMemberships as $key => $values ) {
       if (CRM_Utils_Array::value('is_active', $values) ) {
         $membershipType[$key] = CRM_Utils_Array::value('name', $values);
@@ -343,8 +347,23 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form {
             $selOrgMemType[$memberOfContactId][$key] = CRM_Utils_Array::value('name', $values);
           }
         }
+
+        // build membership info array, which is used to set the payment information block when
+        // membership type is selected.
+        $allMembershipInfo[$key] = array(
+          'contribution_type_id' => CRM_Utils_Array::value('contribution_type_id', $values),
+          'total_amount'         => CRM_Utils_Money::format($values['minimum_fee'], NULL, '%a'),
+          'total_amount_numeric' => CRM_Utils_Array::value('minimum_fee', $values)
+        );
+
+        if (CRM_Utils_Array::value('auto_renew', $values)) {
+          $allMembershipInfo[$key]['auto_renew'] = $options[$values['auto_renew']];
+        }
       }
     }
+
+    $this->assign('allMembershipInfo', json_encode($allMembershipInfo));
+
     // force select of organization by default, if only one organization in
     // the list
     if (count($selMemTypeOrg) == 2) {

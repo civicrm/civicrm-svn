@@ -532,7 +532,8 @@ class CRM_Member_Form_Membership extends CRM_Member_Form {
         // membership type is selected.
         $allMembershipInfo[$key] = array(
           'contribution_type_id' => CRM_Utils_Array::value('contribution_type_id', $values),
-          'total_amount'         => CRM_Utils_Array::value('minimum_fee', $values)
+          'total_amount'         => CRM_Utils_Money::format($values['minimum_fee'], NULL, '%a'),
+          'auto_renew'           => CRM_Utils_Array::value('auto_renew', $values)
         );
       }
     }

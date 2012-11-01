@@ -340,15 +340,21 @@ function setPaymentBlock( ) {
     return;
   }
 
-  var dataUrl = {/literal}"{crmURL p='civicrm/ajax/memType' h=0}"{literal};
+  var allMemberships = {/literal}{$allMembershipInfo}{literal};
+  var mode   = {/literal}'{$membershipMode}'{literal};
+  if ( !mode ) {
+    // skip this for test and live modes because contribution type is set automatically
+    cj("#contribution_type_id").val( allMemberships[memType]['contribution_type_id'] );
+  }
 
-  cj.post( dataUrl, {mtype: memType}, function( data ) {
-    cj("#contribution_type_id").val( data.contribution_type_id );
-    var terms = cj("#num_terms").val();
-    var renewTotal = data.total_amount_numeric * cj("#num_terms").val();
-
+  var term = cj("#num_terms").val();
+  if ( term ) {
+    var renewTotal = allMemberships[memType]['total_amount_numeric'] * term;
     cj("#total_amount").val( renewTotal.toFixed(2) );
-  }, 'json');
+  }
+  else {
+    cj("#total_amount").val( allMemberships[memType]['total_amount'] );
+  }
 }
 
 // show/hide different contact section
