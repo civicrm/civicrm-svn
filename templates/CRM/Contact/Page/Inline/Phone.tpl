@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* template for building phone block*}
-<div id="crm-phone-content" {if $permission EQ 'edit'} class="crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_Phone"{rdelim}'{/if}>
+<div id="crm-phone-content" {if $permission EQ 'edit'} class="crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_Phone"{rdelim}' data-dependent-fields='["#crm-contact-actions-wrapper"]'{/if}>
   <div class="crm-clear" {if $permission EQ 'edit'}title="{ts}Add or edit phone{/ts}"{/if}>
     {if $permission EQ 'edit'}
       <div class="crm-edit-help">

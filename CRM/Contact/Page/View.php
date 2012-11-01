@@ -200,17 +200,6 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
     $this->set('contactType', $contactType);
     $this->set('contactSubtype', $contactSubtype);
 
-    // see if other modules want to add a link activtity bar
-    $hookLinks = CRM_Utils_Hook::links('view.contact.activity',
-      'Contact',
-      $this->_contactId,
-      CRM_Core_DAO::$_nullObject,
-      CRM_Core_DAO::$_nullObject
-    );
-    if (is_array($hookLinks)) {
-      $this->assign('hookLinks', $hookLinks);
-    }
-
     // add to recently viewed block
     $isDeleted = (bool) CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $this->_contactId, 'is_deleted');
 
@@ -219,7 +208,6 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
       'subtype' => $contactSubtype,
       'isDeleted' => $isDeleted,
     );
-
 
     if (($session->get('userID') == $this->_contactId) ||
       CRM_Contact_BAO_Contact_Permission::allow($this->_contactId, CRM_Core_Permission::EDIT)
@@ -247,49 +235,8 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
     $title = self::setTitle($this->_contactId, $isDeleted);
     $this->assign('title', $title);
 
-    $config = CRM_Core_Config::singleton();
-    $uid = CRM_Core_BAO_UFMatch::getUFId($this->_contactId);
-    if ($uid) {
-      // To do: we should also allow drupal users with CRM_Core_Permission::check( 'view user profiles' ) true to access $userRecordUrl
-      // but this is currently returning false regardless of permission set for the role. dgg
-      if ($config->userSystem->is_drupal == '1' &&
-        ($session->get('userID') == $this->_contactId || CRM_Core_Permission::check('administer users'))
-      ) {
-        $userRecordUrl = CRM_Utils_System::url('user/' . $uid);
-      }
-      elseif ($config->userFramework == 'Joomla') {
-        $userRecordUrl = NULL;
-        // if logged in user is super user, then he can view other users joomla profile
-        if (JFactory::getUser()->authorise('core.admin')) {
-          $userRecordUrl = $config->userFrameworkBaseURL . "index.php?option=com_users&view=user&task=user.edit&id=" . $uid;
-        }
-        elseif ($session->get('userID') == $this->_contactId) {
-          $userRecordUrl = $config->userFrameworkBaseURL . "index.php?option=com_admin&view=profile&layout=edit&id=" . $uid;
-        }
-      }
-      else {
-        $userRecordUrl = NULL;
-      }
-      $this->assign('userRecordUrl', $userRecordUrl);
-      $this->assign('userRecordId', $uid);
-    }
-    elseif (($config->userSystem->is_drupal == '1' && CRM_Core_Permission::check('administer users')) ||
-      ($config->userFramework == 'Joomla' &&
-        JFactory::getUser()->authorise('core.create', 'com_users')
-      )
-    ) {
-      $userAddUrl = CRM_Utils_System::url('civicrm/contact/view/useradd',
-        'reset=1&action=add&cid=' . $this->_contactId
-      );
-      $this->assign('userAddUrl', $userAddUrl);
-    }
-
-    if (CRM_Core_Permission::check('access Contact Dashboard')) {
-      $dashboardURL = CRM_Utils_System::url('civicrm/user',
-        "reset=1&id={$this->_contactId}"
-      );
-      $this->assign('dashboardURL', $dashboardURL);
-    }
+    // Add links for actions menu
+    self::addUrls($this, $this->_contactId);
 
     if ($contactType == 'Organization' &&
       CRM_Core_Permission::check('administer Multiple Organizations') &&
@@ -444,6 +391,66 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
     //CRM_Utils_System::setTitle($displayName, $title);
 
     return $title;
+  }
+
+  /**
+   * Add urls for display in the actions menu
+   */
+  static function addUrls(&$obj, $cid) {
+    $config = CRM_Core_Config::singleton();
+    $uid = CRM_Core_BAO_UFMatch::getUFId($cid);
+    if ($uid) {
+      // To do: we should also allow drupal users with CRM_Core_Permission::check( 'view user profiles' ) true to access $userRecordUrl
+      // but this is currently returning false regardless of permission set for the role. dgg
+      if ($config->userSystem->is_drupal == '1' &&
+        ($session->get('userID') == $cid || CRM_Core_Permission::check('administer users'))
+      ) {
+        $userRecordUrl = CRM_Utils_System::url('user/' . $uid);
+      }
+      elseif ($config->userFramework == 'Joomla') {
+        $userRecordUrl = NULL;
+        // if logged in user is super user, then he can view other users joomla profile
+        if (JFactory::getUser()->authorise('core.admin')) {
+          $userRecordUrl = $config->userFrameworkBaseURL . "index.php?option=com_users&view=user&task=user.edit&id=" . $uid;
+        }
+        elseif ($session->get('userID') == $cid) {
+          $userRecordUrl = $config->userFrameworkBaseURL . "index.php?option=com_admin&view=profile&layout=edit&id=" . $uid;
+        }
+      }
+      else {
+        $userRecordUrl = NULL;
+      }
+      $obj->assign('userRecordUrl', $userRecordUrl);
+      $obj->assign('userRecordId', $uid);
+    }
+    elseif (($config->userSystem->is_drupal == '1' && CRM_Core_Permission::check('administer users')) ||
+      ($config->userFramework == 'Joomla' &&
+        JFactory::getUser()->authorise('core.create', 'com_users')
+      )
+    ) {
+      $userAddUrl = CRM_Utils_System::url('civicrm/contact/view/useradd',
+        'reset=1&action=add&cid=' . $cid
+      );
+      $obj->assign('userAddUrl', $userAddUrl);
+    }
+
+    if (CRM_Core_Permission::check('access Contact Dashboard')) {
+      $dashboardURL = CRM_Utils_System::url('civicrm/user',
+        "reset=1&id={$cid}"
+      );
+      $obj->assign('dashboardURL', $dashboardURL);
+    }
+
+    // See if other modules want to add links to the activtity bar
+    $hookLinks = CRM_Utils_Hook::links('view.contact.activity',
+      'Contact',
+      $cid,
+      CRM_Core_DAO::$_nullObject,
+      CRM_Core_DAO::$_nullObject
+    );
+    if (is_array($hookLinks)) {
+      $obj->assign('hookLinks', $hookLinks);
+    }
   }
 }
 

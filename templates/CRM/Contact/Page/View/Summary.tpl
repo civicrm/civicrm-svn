@@ -52,7 +52,7 @@
         {* Include the Actions and Edit buttons if user has 'edit' permission and contact is NOT in trash. *}
           {if $permission EQ 'edit' and !$isDeleted}
               <li class="crm-contact-activity">
-                  {include file="CRM/Contact/Form/ActionsButton.tpl"}
+                  {include file="CRM/Contact/Page/Inline/Actions.tpl"}
               </li>
               <li>
                   {assign var='editParams' value=$urlParams|cat:"&action=update&cid=$contactId"}
@@ -322,18 +322,18 @@
   </div><!-- /.crm-content-block -->
 
    <script type="text/javascript">
-    var selectedTab  = 'summary';
-    {if $selectedChild}selectedTab = "{$selectedChild}";{/if}
-    
     {literal}
- 
     cj(function($) {
       //explicitly stop spinner
       function stopSpinner( ) {
         $('li.crm-tab-button span').text(' ');
       }
       var tabIndex = $('#tab_' + selectedTab).prevAll().length;
-      var spinnerImage = '<img src="{/literal}{$config->resourceBase}{literal}i/loading.gif" style="width:10px;height:10px"/>';
+      {/literal}
+      var selectedTab  = 'summary';
+      {if $selectedChild}selectedTab = "{$selectedChild}";{/if}
+      var spinnerImage = '<img src="{$config->resourceBase}i/loading.gif" style="width:10px;height:10px"/>';
+      {literal}
       $("#mainTabContainer").tabs({ selected: tabIndex, spinner: spinnerImage, cache: true, load: stopSpinner});
       $(".crm-tab-button").addClass("ui-corner-bottom");
       $().crmAccordions();
@@ -377,6 +377,10 @@
         if ($('tr[class="hiddenElement"]').length < 1) {
           $(this).hide();
         }
+      });
+
+      $('body').click(function() {
+        cj('#crm-contact-actions-list').hide();
       });
     });
     {/literal}

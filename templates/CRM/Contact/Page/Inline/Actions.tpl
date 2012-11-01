@@ -25,7 +25,7 @@
 *}
 {* this template is used for the dropdown menu of the "Actions" button on contacts. *}
 
-<div id="crm-contact-actions-wrapper">
+<div id="crm-contact-actions-wrapper" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_Actions"{rdelim}'>
   <div id="crm-contact-actions-link"><span><div class="icon dropdown-icon"></div>{ts}Actions{/ts}</span></div>
     <div class="ac_results" id="crm-contact-actions-list">
       <div class="crm-contact-actions-list-inner">
@@ -44,7 +44,7 @@
                         <a class="vcard " title="{ts}vCard record for this contact.{/ts}" href="{crmURL p='civicrm/contact/view/vcard' q="reset=1&cid=$contactId"}"><span><div class="icon vcard-icon"></div>{ts}vCard{/ts}</span>
                         </a>
                   </li>
-                 {if $dashboardURL }
+                 {if !empty($dashboardURL)}
                    <li class="crm-contact-dashboard">
                       <a href="{$dashboardURL}" class="dashboard " title="{ts}dashboard{/ts}">
                          <span><div class="icon dashboard-icon"></div>{ts}Contact Dashboard{/ts}</span>
@@ -86,10 +86,6 @@
   </div>
 {literal}
 <script type="text/javascript">
-
-cj('body').click(function() {
-    cj('#crm-contact-actions-list').hide();
-});
 
 cj('#crm-contact-actions-list').click(function(event){
     event.stopPropagation();
