@@ -207,6 +207,12 @@ SELECT module
         }
         $this->_postURL = CRM_Utils_System::url('civicrm/profile/edit', $urlParams);
         $this->_cancelURL = CRM_Utils_System::url('civicrm/profile/edit', $urlParams);
+
+        //passing the post url to template so the popup form does
+        //proper redirection and proccess form errors if any 
+        $popupRedirect = CRM_Utils_System::url('civicrm/profile/edit', $urlParams, FALSE, NULL, FALSE);
+        $this->assign('urlParams', $urlParams);
+        $this->assign('postUrl', $popupRedirect);
       }
       
       // we do this gross hack since qf also does entity replacement

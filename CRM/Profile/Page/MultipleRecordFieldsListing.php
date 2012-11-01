@@ -47,7 +47,8 @@ class CRM_Profile_Page_MultipleRecordFieldsListing extends CRM_Core_Page_Basic {
   protected $_profileId = NULL;
   
   protected $_contactId = NULL;
-  
+
+  protected $_customGroupTitle = NULL;  
   /**
    * Get BAO Name
    *
@@ -64,8 +65,6 @@ class CRM_Profile_Page_MultipleRecordFieldsListing extends CRM_Core_Page_Basic {
    */
   function &links() {
     if (!(self::$_links)) {
-      //$deleteExtra = ts('Are you sure you want to delete this record?');
-
       // helper variable for nicer formatting
       $links = array();
 
@@ -76,23 +75,22 @@ class CRM_Profile_Page_MultipleRecordFieldsListing extends CRM_Core_Page_Basic {
       $links[CRM_Core_Action::VIEW] = array(
         'name' => ts('View'),
         'url' => 'civicrm/profile/view',
-        'qs' => "id=%%id%%&recordId=%%recordId%%&gid=%%gid%%&multiRecord={$view}",
-        'title' => ts('View'),
+        'qs' => "id=%%id%%&recordId=%%recordId%%&gid=%%gid%%&multiRecord={$view}&snippet=1&context=multiProfileDialog",
+        'title' => ts('View %1', array( 1 => $this->_customGroupTitle . ' record')),
       );
 
       $links[CRM_Core_Action::UPDATE] = array(
         'name' => ts('Edit'),
         'url' => 'civicrm/profile/edit',
-        'qs' => "id=%%id%%&recordId=%%recordId%%&gid=%%gid%%&multiRecord={$update}",
-        'title' => ts('Edit'),
+        'qs' => "id=%%id%%&recordId=%%recordId%%&gid=%%gid%%&multiRecord={$update}&snippet=1&context=multiProfileDialog",
+        'title' => ts('Edit %1', array( 1 => $this->_customGroupTitle . ' record')),
       );
 
       $links[CRM_Core_Action::DELETE] = array(
         'name' => ts('Delete'),
         'url' => 'civicrm/profile/edit',
-        'qs' => "id=%%id%%&recordId=%%recordId%%&gid=%%gid%%&multiRecord={$delete}",
-        //        'extra' => 'onclick = "return confirm(\'' . $deleteExtra . '\');"',
-        'title' => ts('Delete'),
+        'qs' => "id=%%id%%&recordId=%%recordId%%&gid=%%gid%%&multiRecord={$delete}&snippet=1&context=multiProfileDialog",
+        'title' => ts('Delete %1', array( 1 => $this->_customGroupTitle . ' record')),
       );
       
       self::$_links = $links;
@@ -154,6 +152,7 @@ class CRM_Profile_Page_MultipleRecordFieldsListing extends CRM_Core_Page_Basic {
       );
       $multiRecordFields = array( );
       $fieldIDs = NULL;
+      $result = NULL;
       $multiRecordFieldsWithSummaryListing = CRM_Core_BAO_UFGroup::shiftMultiRecordFields($fields, $multiRecordFields, TRUE);
       
       $multiFieldId = CRM_Core_BAO_CustomField::getKeyID(key($multiRecordFields));
@@ -209,7 +208,7 @@ class CRM_Profile_Page_MultipleRecordFieldsListing extends CRM_Core_Page_Basic {
        $fieldInput  = $singleField;
      }
      $customGroupInfo = CRM_Core_BAO_CustomGroup::getGroupTitles($fieldInput);
-     $customGroupTitle = $customGroupInfo[$fieldIdInput]['groupTitle'];
+     $this->_customGroupTitle = $customGroupInfo[$fieldIdInput]['groupTitle'];
      
      if ($result && !empty($result)) {
        $links = self::links();
@@ -241,13 +240,14 @@ class CRM_Profile_Page_MultipleRecordFieldsListing extends CRM_Core_Page_Basic {
        }
      }
     }
-    
+        
     $headers = array(  );
-    foreach ($fieldIDs as $fieldID) {
-      $headers[$fieldID] = $customGroupInfo[$fieldID]['fieldLabel'];
+    if (!empty($fieldIDs)) {
+      foreach ($fieldIDs as $fieldID) {
+        $headers[$fieldID] = $customGroupInfo[$fieldID]['fieldLabel'];
+      }
     }
-  
-    $this->assign('customGroupTitle', $customGroupTitle);
+    $this->assign('customGroupTitle', $this->_customGroupTitle);
     $this->assign('headers', $headers);
     $this->assign('records', $result);
   }

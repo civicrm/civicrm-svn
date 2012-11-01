@@ -150,7 +150,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
   protected $_recordId = NULL;
   
   /**
-   * action for multi record profile (create/edit/view)
+   * action for multi record profile (create/edit/delete)
    *
    * @var string
    */

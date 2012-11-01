@@ -24,17 +24,62 @@
  +--------------------------------------------------------------------+
 *}
 {* Profile forms when embedded in CMS account create (mode=1) or cms account edit (mode=8) or civicrm/profile (mode=4) pages *}
+{if !($context eq 'dialog' or $context eq 'multiProfileDialog')}
+<script type="text/javascript" src="{$config->resourceBase}js/Common.js"></script>
+{/if}
+{if ($context eq 'multiProfileDialog')}
+
+{literal}
+<script type="text/javascript">
+cj(function() {
+    var formOptions = {
+        beforeSubmit:  proccessMultiRecordForm //pre-submit callback
+    };
+
+    //binding the callback to snippet profile form
+    cj('.crm-container-snippet #Edit').ajaxForm(formOptions);
+});
+    // pre-submit callback	  
+    function proccessMultiRecordForm(formData, jqForm, options) {
+      var queryString = cj.param(formData);
+      queryString = queryString + '{/literal}{$urlParams}{literal}' + '&snippet=5';
+
+      if (cj('#profile-dialog')) {
+        var postUrl = {/literal}"{crmURL p='civicrm/profile/edit' h=0 }"{literal};
+        var response = cj.ajax({
+           type: "POST",
+           url: postUrl,
+           async: false,
+           data: queryString,
+           dataType: "json",
+
+         }).responseText;
+
+	 //if there is any form error show the dialog 
+	 //else redirect to post url
+	 if (cj(response).find('.crm-error').html()) {
+           cj('#profile-dialog').show().html(response);
+	 }
+	 else {
+	  window.location = '{/literal}{$postUrl}{literal}';
+         }
+
+        // here we could return false to prevent the form from being submitted;
+        // returning anything other than false will allow the form submit to continue
+        return false;
+      }
+    }   
+</script>
+{/literal}
+{/if}
 {if $deleteRecord}
 <div class="messages status no-popup">
   <div class="icon inform-icon"></div>&nbsp;
         {ts}Are you sure you want to delete this record?{/ts}
   </div>
   <span class="crm-button">{$form._qf_Edit_upload_delete.html}</span>
-  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+  <div class="crm-submit-buttons" style='float:right'>{include file="CRM/common/formButtons.tpl"}</div>
 {else}
-{if $context neq 'dialog'}
-<script type="text/javascript" src="{$config->resourceBase}js/Common.js"></script>
-{/if}
 {if ! empty( $fields )}
 {* Wrap in crm-container div so crm styles are used.*}
 {* Replace div id "crm-container" only when profile is not loaded in civicrm container, i.e for profile shown in my account and in profile standalone mode otherwise id should be "crm-profile-block" *}

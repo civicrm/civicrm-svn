@@ -54,6 +54,44 @@
         {/strip}
        </div>
       </div>
+<div id='profile-dialog' class="hiddenElement"></div>
+{literal}
+<script type='text/javascript'>
+cj(function() {
+
+function formDialog(dataURL, dialogTitle){
+      cj.ajax({
+         url: dataURL,
+         success: function( content ) {
+	       cj('#profile-dialog').show( ).html( content ).dialog({
+                 title: dialogTitle,
+                 modal: true,
+                 width: 680,
+                 overlay: {
+                   opacity: 0.5,
+                   background: "black"
+                 },
+		 
+                 close: function(event, ui) {
+	           cj('#profile-dialog').html('');
+                 }
+             });
+	 }});
+}
+
+cj('.action-item').each(function(){
+ cj(this).attr('jshref', cj(this).attr('href'));
+ cj(this).removeAttr('href');
+});
+
+ cj(".action-item").click(function(){
+    dataURL = cj(this).attr('jshref');
+    dialogTitle = cj(this).attr('title');       
+    formDialog(dataURL, dialogTitle);
+ });
+});
+</script>
+{/literal}
 {elseif !$records}
 <div class="messages status no-popup">
   <div class="icon inform-icon"></div>&nbsp;
