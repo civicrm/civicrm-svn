@@ -66,6 +66,15 @@ function civicrm_api3_job_execute($params) {
 }
 
 /**
+ * Adjust Metadata for Execute action
+ *
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_job_execute_spec(&$params) {
+  $params['auth'] = array('title' => 'Require authentication');
+}
+
+/**
  * Geocode group of contacts based on given params
  *
  * @param  array       $params (reference ) input parameters
