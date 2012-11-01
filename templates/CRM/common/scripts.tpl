@@ -25,16 +25,39 @@
 *}
 
 <script type="text/javascript">
-  {* Initialize crmURL *}
-  cj.crmURL('init', '{crmURL p="civicrm/example" q="placeholder"}');
+  cj(function($) {ldelim}
+    {* Initialize cj.crmURL *}
+    $.crmURL('init', '{crmURL p="civicrm/example" q="placeholder"}');
+  {rdelim});
 
 {*
- * Here we define the CRM object:
- * a single global variable where everything that _absolutely_must_ be global should be stored
+ * Here we define the CRM object,
+ * A single global variable to hold those things which absolutely MUST be global
+ * (so in most cases scope your vars and don't put them here!).
+ * Translated strings can be stored in the CRM.ts object
+ * Very common strings are included here for convenience. Others should be added dynamically per-template.
+ *
+ * To extend this object for use in your own template, follow this example:
+ * <script type="text/javascript">
+ *   var CRM = CRM || {};
+ *   CRM.myVar = '{$serverVariable}';
+ *   CRM.ts.cow = '{ts escape="js"}Cow{/ts}';
+ *   CRM.myFunction = function() {
+ *     cj().crmAlert('{ts escape="js"}Avoid global functions!{/ts}', CRM.ts.ok);
+ *   };
+ * </script>
  *}
   {literal}
   var CRM = CRM || {};
-  CRM = cj.extend({{/literal}
+  CRM = cj.extend(true, {
+    ts: {{/literal}
+      ok: '{ts escape="js"}OK{/ts}',
+      cancel: '{ts escape="js"}Cancel{/ts}',
+      yes: '{ts escape="js"}Yes{/ts}',
+      no: '{ts escape="js"}No{/ts}',
+      saved: '{ts escape="js"}Saved{/ts}',
+      error: '{ts escape="js"}Error{/ts}'
+    {rdelim},
     urlIsPublic: {if $urlIsPublic}true{else}false{/if},
     userFramework: '{$config->userFramework}',
     {literal}

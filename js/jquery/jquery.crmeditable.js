@@ -40,10 +40,9 @@
 */
 
 
-(function($){
+(function($) {
 
     $.fn.crmEditable = function (options) {
-
       // for a jquery object (the crm-editable), find the entity name and id to apply the changes to
       // call result function(entity,id). The caller is responsible to use these params and do the needed
       var getEntityID = function (field,result) {
@@ -122,19 +121,19 @@
           }
         },
         error: function(entity,field,value,data) {
-          $(this).crmError(data.error_message);
+          $(this).crmError(data.error_message, CRM.ts.error);
           $(this).removeClass('crm-editable-saving');
         },
         success: function(entity,field,value,data) {
           var $i = $(this);
-          $().crmAlert('', 'Saved', 'success');
+          $().crmAlert('', CRM.ts.saved, 'success');
           $i.removeClass ('crm-editable-saving crm-error');
           $i.html(value);
         }
       }
 
       var editableSettings = $.extend({}, defaults, options);
-  	  return this.each(function() {
+      return this.each(function() {
         var $i = $(this);
         var fieldName = "";
       
@@ -268,7 +267,7 @@
       'dialog': false,
       'load' : function (target){},
       'success' : function (result) {
-        $(this).html ("Saved");
+        $(this).html (CRM.ts.saved);
        }
     }, options);
 
@@ -406,7 +405,7 @@
               $(this).parent().load(postUrl, data);
             });
           }
-          cj().crmAlert('', 'Saved', 'success');
+          cj().crmAlert('', CRM.ts.saved, 'success');
         }
       },
       error: function (obj, status) {

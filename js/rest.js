@@ -27,39 +27,32 @@
 *
 */
 
-/*
-TO BE VERIFIED
-If you do not use clean urls on drupal, you have to define a variable to set the url of the server to be used for the rest
-<script type="text/javascript">
-var options {ajaxURL:"{$config->userFrameworkResourceURL}";
-</script>
-
-
-*/
-
-(function($){
+(function($) {
 
   /**
    * Almost like {crmURL} but on the client side
    * eg: var url = cj.crmURL ('civicrm/contact/view', {reset:1,cid:42});
    * or: $('a.crmURL').crmURL();
    */
+  var tplURL = '/civicrm/example?placeholder';
   $.extend ({ 'crmURL':
     function (p, params) {
       if (p == "init") {
-        // storage and avoid polluting the global namespace
-        $(document).data('civicrm_templateURL', params);
+        tplURL = params;
         return;
       }
       params = params || '';
-      var tplURL = $(document).data('civicrm_templateURL') || '/civicrm/example?placeholder';
+      var frag = p.split ('?');
+      var url = tplURL.replace("civicrm/example", frag[0]);
 
-      var url = tplURL.replace("civicrm/example", p);
       if (typeof(params) == 'string') {
         url = url.replace("placeholder", params);
       }
       else {
         url = url.replace("placeholder", $.param(params));
+      }
+      if (frag[1]) {
+        url += (url.indexOf('?') === (url.length - 1) ? '' : '&') + frag[1];
       }
       // remove trailing "?"
       if (url.indexOf('?') === (url.length - 1)) {
@@ -68,56 +61,54 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
       return url;
     }
   });
-  
+
   $.fn.crmURL = function () {
     return this.each(function() {
-      var $this = $(this);
       if (this.href) {
-        var frag = $this.attr('href').split ('?');
-        if (frag[1])
-          this.href = $.crmURL (frag[0], frag[1]);
-        else 
-          this.href = $.crmURL (frag[0]);
+        this.href = $.crmURL(this.href);
       }
-    });      
+    });
   };
-    var defaults = {
-      success: function(result,settings){
-        $().crmAlert('', 'Saved', 'success');
-        return true;
-      },
-      error: function(result,settings){
-        $().crmError(result.error_message, 'Error');
+
+  var ts = {};
+
+  var defaults = {
+    success: function(result,settings){
+      $().crmAlert('', CRM.ts.saved, 'success');
+      return true;
+    },
+    error: function(result,settings){
+      $().crmError(result.error_message, CRM.ts.error);
+      return false;
+    },
+    callBack: function(result,settings){
+      if (result.is_error == 1) {
+        return settings.error.call(this,result,settings);
         return false;
-      },
-      callBack: function(result,settings){
-        if (result.is_error == 1) {
-          return settings.error.call(this,result,settings);
-          return false;
-        }
-        return settings.success.call(this,result,settings);
-      },
-      ajaxURL: $.crmURL('civicrm/ajax/rest'),
-    };
+      }
+      return settings.success.call(this,result,settings);
+    },
+    ajaxURL: 'civicrm/ajax/rest',
+  };
 
-    $.fn.crmAPI = function(entity,action,params,options) {
-      params ['entity'] = entity;
-      params ['action'] = action;
-      params ['json'] = 1;
-      var settings = $.extend({}, defaults, options);
-      $.ajax({
-        url: settings.ajaxURL,
-        dataType: 'json',
-        data: params,
-        type:'POST',
-        context:this,
-        success: function(result) {
-          settings.callBack.call(this,result,settings);
-        }
-      });
-    };
+  $.fn.crmAPI = function(entity, action, params, options) {
+    params ['entity'] = entity;
+    params ['action'] = action;
+    params ['json'] = 1;
+    var settings = $.extend({}, defaults, options);
+    $.ajax({
+      url: $.crmURL(settings.ajaxURL),
+      dataType: 'json',
+      data: params,
+      type:'POST',
+      context:this,
+      success: function(result) {
+        settings.callBack.call(this, result, settings);
+      }
+    });
+  };
 
-  $.fn.crmAutocomplete = function (params,options) {
+  $.fn.crmAutocomplete = function (params, options) {
     if (typeof params == 'undefined') params = {};
     if (typeof options == 'undefined') options = {};
     params = $().extend( {
@@ -126,8 +117,7 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
       entity:'Contact',
       action:'quicksearch',
       sequential:1
-    },params);
-      //'return':'sort_name,email'
+    }, params);
 
     options = $().extend({}, {
         field :'name',
@@ -143,8 +133,8 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
             tmp.push(data[attr]);
           }
         }
-        return  tmp.join(' :: '); 
-      },    			
+        return  tmp.join(' :: ');
+      },
       parse: function (data){
              var acd = new Array();
              for(cid in data.values){
@@ -155,16 +145,13 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
       },
       delay:100,
       minChars:1
-      },options
+      }, options
     );
-    var contactUrl = defaults.ajaxURL + "?"+ $.param(params);
-  
-  //    contactUrl = contactUrl + "fnName=civicrm/contact/search&json=1&";
-  //var contactUrl = "/civicrm/ajax/rest?fnName=civicrm/contact/search&json=1&return[sort_name]=1&return[email]&rowCount=25";
-  
+    var contactUrl = $.crmURL(defaults.ajaxURL, params);
+
   return this.each(function() {
     var selector = this;
-    if (typeof $.fn.autocomplete != 'function') 
+    if (typeof $.fn.autocomplete != 'function')
         $.fn.autocomplete = cj.fn.autocomplete;//to work around the fubar cj
         var extraP = {};
         extraP [options.field] = function () {return $(selector).val();};
@@ -172,7 +159,7 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
           extraParams:extraP,
           formatItem: function(data,i,max,value,term){
             return options.formatItem(data,i,max,value,term);
-          },    			
+          },
           parse: function(data){ return options.parse(data);},
           width: 250,
           delay:options.delay,
@@ -181,8 +168,8 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
           minChars:options.minChars,
           selectFirst: true
        }).result(function(event, data, formatted) {
-            options.result(data);       
-        });    
+            options.result(data);
+        });
      });
    }
 
