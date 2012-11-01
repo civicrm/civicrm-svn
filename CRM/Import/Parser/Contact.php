@@ -1889,6 +1889,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser {
     //now format custom data.
     foreach ($params as $key => $field) {
       if ($field == NULL || $field === '') {
+        unset($params[$key]);
         continue;
       }
 
@@ -1974,10 +1975,11 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser {
                 break;
                 }
 
-        //@todo calling api functions directly is not supported
-        _civicrm_api3_custom_format_params($params, $formatted, $extends);
       }
     }
+
+    // @todo calling api functions directly is not supported
+    _civicrm_api3_custom_format_params($params, $formatted, $extends);
 
     // to check if not update mode and unset the fields with empty value.
     if (!$this->_updateWithId && array_key_exists('custom', $formatted)) {
