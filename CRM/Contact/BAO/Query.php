@@ -1881,7 +1881,7 @@ class CRM_Contact_BAO_Query {
           $value = $strtolower(CRM_Core_DAO::escapeString($value));
         }
         if ($wildcard) {
-          $value = "'%$value%'";
+          $value = "%$value%";
           $op = 'LIKE';
         }
 
