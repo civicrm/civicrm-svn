@@ -106,7 +106,7 @@ WHERE  contact_id = {$params['contact_id']}
     // handle if email is on hold
     self::holdEmail($email);
 
-	$email->save();
+  $email->save();
     /*
      * CRM-11006 move calls to pre hook from create function to add function
      */
