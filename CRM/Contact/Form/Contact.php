@@ -213,7 +213,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
         }
 
         list($displayName, $contactImage) = CRM_Contact_BAO_Contact::getDisplayAndImage($this->_contactId);
-
+        $displayName = ts('Edit %1', array(1 => $displayName));
         CRM_Utils_System::setTitle($displayName, $contactImage . ' ' . $displayName);
         $context = CRM_Utils_Request::retrieve('context', 'String', $this);
         $qfKey = CRM_Utils_Request::retrieve('key', 'String', $this);
@@ -853,7 +853,6 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
     $params = $this->controller->exportValues($this->_name);
 
     CRM_Contact_BAO_Contact_Optimizer::edit( $params, $this->_preEditValues );
-    // CRM_Core_Error::debug( 'PEV', $this->_preEditValues ) ; CRM_Core_Error::debug( 'POST', $params ); exit( );
 
     if (CRM_Utils_Array::value('image_URL', $params)) {
       CRM_Contact_BAO_Contact::processImageParams($params);
@@ -967,6 +966,14 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
 
     $contact = CRM_Contact_BAO_Contact::create($params, TRUE, FALSE, TRUE);
 
+    // status message
+    if ($this->_contactId) {
+      $message = ts('%1 has been updated.', array(1 => $contact->display_name));
+    }
+    else {
+      $message = ts('%1 has been created.', array(1 => $contact->display_name));
+    }
+
     // set the contact ID
     $this->_contactId = $contact->id;
 
@@ -980,22 +987,18 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
       }
     }
 
-    $statusMsg = ts('%1 has been saved.', array(1 => $contact->display_name));
     if (!empty($parseStatusMsg)) {
-      $statusMsg .= "<br > $parseStatusMsg";
+      $message .= "<br />$parseStatusMsg";
     }
     if (!empty($updateMembershipMsg)) {
-      $statusMsg .= "<br > $updateMembershipMsg";
+      $message .= "<br />$updateMembershipMsg";
     }
 
     $session = CRM_Core_Session::singleton();
-    CRM_Core_Session::setStatus($statusMsg, ts('Contact Saved'), 'success');
+    $session->setStatus($message, ts('Contact Saved'), 'success');
 
     // add the recently viewed contact
-    $displayName = CRM_Contact_BAO_Contact::displayName($contact->id);
-
     $recentOther = array();
-
     if (($session->get('userID') == $contact->id) ||
       CRM_Contact_BAO_Contact_Permission::allow($contact->id, CRM_Core_Permission::EDIT)
     ) {
@@ -1006,12 +1009,12 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
       $recentOther['deleteUrl'] = CRM_Utils_System::url('civicrm/contact/view/delete', 'reset=1&delete=1&cid=' . $contact->id);
     }
 
-    CRM_Utils_Recent::add($displayName,
+    CRM_Utils_Recent::add($contact->display_name,
       CRM_Utils_System::url('civicrm/contact/view', 'reset=1&cid=' . $contact->id),
       $contact->id,
       $this->_contactType,
       $contact->id,
-      $displayName,
+      $contact->display_name,
       $recentOther
     );
 
