@@ -109,5 +109,74 @@ class CRM_Core_BAO_SettingTest extends CiviUnitTestCase {
     CRM_Core_BAO_Setting::retrieveDirectoryAndURLPreferences($params);
     $this->assertEquals('/test/override', $params['imageUploadDir']);
   }
+  /**
+   * Ensure that overrides in $civicrm_setting apply when
+   * when using retrieveDirectoryAndURLPreferences().
+   */
+  function testConvertAndFillSettings() {
+    $sql = " DELETE FROM civicrm_setting WHERE name = 'max_attachments'";
+    CRM_Core_DAO::executeQuery($sql);
+    $settings = array('maxAttachments' => 6);
+    CRM_Core_BAO_ConfigSetting::add($settings);
+    $config = CRM_Core_Config::singleton(true, true);
+    $this->assertEquals(6, $config->maxAttachments);
+    CRM_Core_BAO_Setting::updateSettingsFromMetaData();
+    //check current domain
+    $value = civicrm_api('setting', 'getvalue', array(
+        'version' => 3,
+        'name' => 'max_attachments',
+        'group' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+    ));
+
+    $this->assertEquals(6, $value);
+    // check alternate domain
+    $value = civicrm_api('setting', 'getvalue', array(
+        'version' => 3,
+        'name' => 'max_attachments',
+        'group' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+        'domain_id' => 2
+    ));
+
+    $this->assertEquals(3, $value);
+    $config = CRM_Core_Config::singleton(true, true);
+
+    //some caching inconsistency here
+    $this->assertEmpty($config->maxAttachments, "Config item still Set to {$config->maxAttachments}
+    . This works fine when test run alone");
+  }
+  /**
+   * Ensure that overrides in $civicrm_setting apply when
+   * when using retrieveDirectoryAndURLPreferences().
+   */
+  function testConvertConfigToSettingNoPrefetch() {
+    $settings = array('maxAttachments' => 6);
+    CRM_Core_BAO_ConfigSetting::add($settings);
+    $config = CRM_Core_Config::singleton(true, true);
+    $this->assertEquals(6, $config->maxAttachments);
+    CRM_Core_BAO_Setting::convertConfigToSetting('max_attachments');
+    $value = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'max_attachments');
+    $this->assertEquals(6, $value);
+    civicrm_api('system', 'flush', array('version' => 3));
+    $config = CRM_Core_Config::singleton(true, true);
+    $this->assertEmpty($config->maxAttachments);
+  }
+
+/*
+ * Check that setting is converted without config value being removed
+
+  function testConvertConfigToSettingPrefetch() {
+    $settings = array('debug' => 1);
+    CRM_Core_BAO_ConfigSetting::add($settings);
+    $config = CRM_Core_Config::singleton(true, true);
+    $this->assertEquals(1, $config->debug);
+    CRM_Core_BAO_Setting::convertConfigToSetting('debug_is_enabled');
+    $value = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::DEBUG_PREFERENCES_NAME, 'debug_is_enabled');
+    $this->assertEquals(1, $value);
+    civicrm_api('system', 'flush', array('version' => 3));
+    $config = CRM_Core_Config::singleton(true, true);
+    $this->assertEmpty($config->debug);
+  }
+   */
+
 }
 

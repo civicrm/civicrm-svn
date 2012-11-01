@@ -250,6 +250,8 @@ return array (
     'group_name' => 'CiviCRM Preferences',
     'group' => 'core',
     'name' => 'max_attachments',
+    'legacy_key' => 'maxAttachments',
+    'prefetch' => 0,
     'type' => 'Integer',
     'quick_form_type' => 'Element',
     'html_type' => 'text',

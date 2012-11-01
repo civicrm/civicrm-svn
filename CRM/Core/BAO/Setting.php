@@ -537,17 +537,56 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
       return;
     }
   }
+  /*
+   * Look for any missing settings and convert them from config or load default as appropriate
+   * This should be run from GenCode & also from upgrades to add any new defaults.
+   *
+   * Multisites have often been overlooked in upgrade scripts so can be expected to be missing
+   * a number of settings
+   */
+  static function updateSettingsFromMetaData(){
+    $apiArray = array(
+        'version' => 3,
+        'domain_id' => 'all',
+    );
+    $existing = civicrm_api('setting','get', $apiArray);
+    $allSettings = civicrm_api('setting', 'getfields', array('version' => 3));
+    foreach ($existing['values'] as $domainID => $domainSettings){
+      $missing = array_diff_key($allSettings['values'], $domainSettings);
+      foreach ($missing as $name => $settings){
+        self::convertConfigToSetting($name, $domainID);
+      }
+    }
+
+  }
 /*
  * move an item from being in the config array to being stored as a setting
- * @todo remove from config - as appropriate
+ * remove from config - as appropriate based on metadata
  */
-  static function convertConfigToSetting($name, $domain = 'current_domain'){
-    $config = CRM_Core_Config::singleton();
-    if($config->$name){
-      civicrm_api('setting', 'create', array('version' => 3, $name => $config->$name, 'domain_id' => $domainID));
+  static function convertConfigToSetting($name, $domainID = null){
+    //we can't rely on config here since it isn't domain aware so lets just get the dao object
+    // changes to config are unimportant so as long as we can grab OK we are fine
+    if(empty($domainID)){
+      $domainID= CRM_Core_Config::domainID();
+    }
+    $domain = new CRM_Core_DAO_Domain();
+    $domain->id = $domainID;
+    $domain->find(TRUE);
+    if ($domain->config_backend) {
+      $values = unserialize($domain->config_backend);
+    }
+    $spec = self::getSettingSpecification(null, array('name' => $name), $domainID);
+    $configKey = CRM_Utils_Array::value('config_key', $spec[$name], CRM_Utils_Array::value('legacy_key', $spec[$name], $name));
+    if($values[$configKey]){
+      civicrm_api('setting', 'create', array('version' => 3, $name => $values[$configKey], 'domain_id' => $domainID));
     }
     else{
       civicrm_api('setting', 'fill', array('version' => 3, 'name' => $name, 'domain_id' => $domainID));
+    }
+    if(empty($spec[$name]['prefetch']) && !empty($values[$configKey])){
+      unset($values[$configKey]);
+      $domain->config_backend = serialize($values);
+      $domain->save();
     }
   }
 
