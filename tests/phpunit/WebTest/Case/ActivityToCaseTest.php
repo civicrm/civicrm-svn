@@ -195,8 +195,8 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
     );
 
     // click through to the Activity view screen
-    $this->waitForElementPresent("xpath=//div[@id='Activities']//table/tbody/tr[2]/td[8]");
-    $this->click("xpath=//div[@id='Activities']//table/tbody/tr[2]/td[8]/span[2]/ul/li/a[text()='File On Case']");
+    $this->waitForElementPresent("xpath=//div[@id='Activities']//table/tbody/tr[2]/td[9]");
+    $this->click("xpath=//div[@id='Activities']//table/tbody/tr[2]/td[9]/span[2]/ul/li/a[text()='File On Case']");
     $this->waitForElementPresent("css=div#fileOnCaseDialog");
     $this->waitForElementPresent('case_activity_subject');
 
@@ -211,8 +211,7 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
     );
 
     $this->click("xpath=//div[@class='ui-dialog-buttonset']/button/span[text()='Ok']");
-    $this->waitForPageToLoad("30000");
-    $this->waitForElementPresent("xpath=//div[@id='Activities']//table/tbody/tr[1]/td[8]/span/a[text()='View']");
+    $this->waitForElementPresent("xpath=//div[@id='Activities']//table/tbody/tr[1]/td[9]/span/a[text()='View']");
 
     // verify if custom data is present
     $this->open($this->sboxPath . "civicrm/case?reset=1");
