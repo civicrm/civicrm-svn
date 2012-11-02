@@ -81,7 +81,7 @@ function formDialog(dataURL, dialogTitle){
 
 cj('.action-item').each(function(){
  cj(this).attr('jshref', cj(this).attr('href'));
- cj(this).removeAttr('href');
+ cj(this).attr('href', '#');
 });
 
  cj(".action-item").click(function(){

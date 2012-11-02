@@ -99,6 +99,10 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
 
   protected $_recordId = NULL;
   
+  /*
+   * fetch multirecord as well as non-multirecord fields
+   */
+  protected $_allFields = NULL;
   /**
    * class constructor
    *
@@ -121,6 +125,9 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
     if (!array_key_exists('recordId', $_GET)) {
       $this->set('recordId', NULL);
     }
+    if (!array_key_exists('allFields', $_GET)) {
+      $this->set('allFields', NULL);
+    }
     
     //specifies the action being done on a multi record field
     $multiRecordAction = CRM_Utils_Request::retrieve('multiRecord', 'String', $this);
@@ -132,9 +139,10 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
     }
   
     if ($this->_multiRecord & CRM_Core_Action::VIEW) {
-      $this->_recordId = CRM_Utils_Request::retrieve('recordId', 'Positive', $this);
+      $this->_recordId  = CRM_Utils_Request::retrieve('recordId', 'Positive', $this);
+      $this->_allFields = CRM_Utils_Request::retrieve('allFields', 'Integer', $this);
     }
-        
+    
     if ($profileIds) {
       $this->_profileIds = $profileIds;
     }
@@ -199,7 +207,7 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
         CRM_Core_Permission::VIEW
       );
 
-      if ($this->_multiRecord & CRM_Core_Action::VIEW && $this->_recordId) {
+      if ($this->_multiRecord & CRM_Core_Action::VIEW && $this->_recordId && !$this->_allFields) {
         CRM_Core_BAO_UFGroup::shiftMultiRecordFields($fields, $multiRecordFields);
         $fields = $multiRecordFields;
       }
@@ -280,7 +288,14 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
       else {
         $customWhereClause = NULL;
         if ($this->_multiRecord & CRM_Core_Action::VIEW && $this->_recordId) {
-          if ($fieldID = CRM_Core_BAO_CustomField::getKeyID(key($fields))) {
+          if ($this->_allFields) {
+            $copyFields = $fields;
+            CRM_Core_BAO_UFGroup::shiftMultiRecordFields($copyFields, $multiRecordFields);
+            $fieldKey = key($multiRecordFields);
+          } else {
+            $fieldKey = key($fields);
+          }
+          if ($fieldID = CRM_Core_BAO_CustomField::getKeyID($fieldKey)) {
             $tableColumnGroup = CRM_Core_BAO_CustomField::getTableColumnGroup($fieldID);
             $columnName = "{$tableColumnGroup[0]}.id";
             $customWhereClause = $columnName . ' = ' . $this->_recordId;
@@ -314,7 +329,7 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
       $template->assign('overlayProfile', TRUE);
     }
 
-    if (($this->_multiRecord & CRM_Core_Action::VIEW) && $this->_recordId) {
+    if (($this->_multiRecord & CRM_Core_Action::VIEW) && $this->_recordId && !$this->_allFields) {
       $fieldDetail = reset($fields);
       $fieldId = CRM_Core_BAO_CustomField::getKeyID($fieldDetail['name']);
       $customGroupDetails = CRM_Core_BAO_CustomGroup::getGroupTitles(array($fieldId));
@@ -322,6 +337,7 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
     } else {
       $title = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', $this->_gid, 'title');
     }
+
     //CRM-4131.
     $displayName = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $this->_id, 'display_name');
     if ($displayName) {
