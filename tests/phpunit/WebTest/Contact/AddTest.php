@@ -176,8 +176,9 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
     $this->waitForPageToLoad("30000");
-
-    $this->assertTrue($this->isTextPresent("Your Individual contact record has been saved."));
+    
+    $individualName = $this->getText("xpath=//div[@class='crm-summary-display_name']");
+    $this->assertTrue($this->isTextPresent("$individualName has been created."));
   }
 
   function testHouseholdAdd() {
@@ -286,7 +287,8 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
     $this->click("_qf_Contact_upload_view");
     $this->waitForPageToLoad("30000");
 
-    $this->assertTrue($this->isTextPresent("Your Household contact record has been saved"));
+    $householdName = $this->getText("xpath=//div[@class='crm-summary-display_name']");
+    $this->assertTrue($this->isTextPresent("$householdName has been created."));
   }
 
   function testOrganizationAdd() {
@@ -397,8 +399,9 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
     $this->waitForPageToLoad("30000");
-
-    $this->assertTrue($this->isTextPresent("Your Organization contact record has been saved"));
+    
+    $organizationName = $this->getText("xpath=//div[@class='crm-summary-display_name']");
+    $this->assertTrue($this->isTextPresent("$organizationName has been created."));
   }
 
   function testIndividualAdWithSharedAddress() {
@@ -507,11 +510,12 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
     $this->waitForPageToLoad("30000");
-    $this->assertTrue($this->isTextPresent("Your Individual contact record has been saved"));
+    $name = $this->getText("xpath=//div[@class='crm-summary-display_name']");
+    $this->assertTrue($this->isTextPresent("$name has been created."));
 
     //make sure current employer is set
-    $this->verifyText("xpath=id('contactTopBar')/table/tbody/tr/td[3]", 'Employer');
-    $this->verifyText("xpath=id('contactTopBar')/table/tbody/tr/td[4]/a[text()]", $currentEmployer);
+    $this->verifyText("xpath=id('contactinfo-block')/div/div/div[2]/div", 'Employer');
+    $this->verifyText("xpath=id('contactinfo-block')/div/div/div[2]/div[2]/a[text()]", $currentEmployer);
 
     //make sure both shared address are set.
     $this->assertTrue($this->isTextPresent("Address belongs to $currentEmployer"));
