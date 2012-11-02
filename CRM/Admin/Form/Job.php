@@ -196,7 +196,7 @@ class CRM_Admin_Form_Job extends CRM_Admin_Form {
     if ($values['api_action'] == 'update_greeting' && CRM_Utils_Array::value('is_active', $values) == 1) {
       // pass "wiki" as 6th param to docURL2 if you are linking to a page in wiki.civicrm.org
       $docLink = CRM_Utils_System::docURL2("Managing Scheduled Jobs", NULL, NULL, NULL, NULL, "wiki");
-      $msg = ts('You may not want this Scheduled Job to be enabled since most sites will not need the Update Greeting job to be run automatically. If you are uncertain about having the job run automatically, you should edit the job again and uncheck the Active box. %1', array(1 => $docLink));
+      $msg = ts('The update greeting job can be very resource intensive and is typically not necessary to run on a regular basis. If you do choose to enable the job, we recommend you do not run it with the force=1 option, which would rebuild greetings on all records. Leaving that option absent, or setting it to force=0, will only rebuild greetings for contacts that do not currently have a value stored. %1', array(1 => $docLink));
       CRM_Core_Session::setStatus($msg, ts('Warning: Update Greeting job enabled'), 'alert');
     }
 
