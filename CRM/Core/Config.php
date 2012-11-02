@@ -619,8 +619,16 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
   /**
    * one function to get domain ID
    */
-  static function domainID() {
-    return defined('CIVICRM_DOMAIN_ID') ? CIVICRM_DOMAIN_ID : 1;
+  static function domainID($domainID = null, $reset = false) {
+    static $domain;
+    if($domainID){
+      $domain = $domainID;
+    }
+    if ($reset || empty($domain)){
+      $domain = defined('CIVICRM_DOMAIN_ID') ? CIVICRM_DOMAIN_ID : 1;
+    }
+
+    return $domain;
   }
 
   /**

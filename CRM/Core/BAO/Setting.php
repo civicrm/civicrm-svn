@@ -552,10 +552,12 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
     $existing = civicrm_api('setting','get', $apiArray);
     $allSettings = civicrm_api('setting', 'getfields', array('version' => 3));
     foreach ($existing['values'] as $domainID => $domainSettings){
+      CRM_Core_BAO_Domain::setDomain($domainID);
       $missing = array_diff_key($allSettings['values'], $domainSettings);
       foreach ($missing as $name => $settings){
         self::convertConfigToSetting($name, $domainID);
       }
+      CRM_Core_BAO_Domain::resetDomain();
     }
 
   }
@@ -564,8 +566,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
  * remove from config - as appropriate based on metadata
  */
   static function convertConfigToSetting($name, $domainID = null){
-    //we can't rely on config here since it isn't domain aware so lets just get the dao object
-    // changes to config are unimportant so as long as we can grab OK we are fine
+    $config = CRM_Core_Config::singleton();
     if(empty($domainID)){
       $domainID= CRM_Core_Config::domainID();
     }
@@ -587,6 +588,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
       unset($values[$configKey]);
       $domain->config_backend = serialize($values);
       $domain->save();
+      unset($config->$configKey);
     }
   }
 

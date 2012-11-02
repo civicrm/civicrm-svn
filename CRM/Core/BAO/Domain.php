@@ -74,9 +74,9 @@ class CRM_Core_BAO_Domain extends CRM_Core_DAO_Domain {
    * @static
    */
   static
-  function &getDomain() {
+  function &getDomain($reset = null) {
     static $domain = NULL;
-    if (!$domain) {
+    if (!$domain || $reset) {
       $domain = new CRM_Core_BAO_Domain();
       $domain->id = CRM_Core_Config::domainID();
       if (!$domain->find(TRUE)) {
@@ -85,6 +85,26 @@ class CRM_Core_BAO_Domain extends CRM_Core_DAO_Domain {
     }
     return $domain;
   }
+/*
+ * Change Domain (ie. to perform a temporary action) such as changing config for all domains
+ *
+ * @param integer $domainID id for domain you want to set as current
+ */
+  static function setDomain($domainID){
+    CRM_Core_Config::domainID($domainID);
+    self::getDomain($domainID);
+  }
+
+  /*
+   * Reset domain to default (ie. as loaded from settings)
+  *
+  * @param integer $domainID id for domain you want to set as current
+  */
+  static function resetDomain(){
+    CRM_Core_Config::domainID(null, true);
+    self::getDomain(null, true);
+  }
+
 
   static
   function version( $skipUsingCache = false ) {
@@ -263,9 +283,9 @@ class CRM_Core_BAO_Domain extends CRM_Core_DAO_Domain {
 
     if (!empty($siteGroups)) {
       $query = "
-SELECT      cc.id
-FROM        civicrm_contact cc
-INNER JOIN  civicrm_group_contact gc ON 
+ SELECT      cc.id
+ FROM        civicrm_contact cc
+ INNER JOIN  civicrm_group_contact gc ON
            (gc.contact_id = cc.id AND gc.status = 'Added' AND gc.group_id IN (" . implode(',', $siteGroups) . "))";
 
       $dao = CRM_Core_DAO::executeQuery($query);
