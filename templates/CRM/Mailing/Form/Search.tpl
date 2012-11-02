@@ -32,7 +32,7 @@
     </tr>
     <tr>
         <td>
-	    <label>{ts}{if $sms eq 1}SMS Date{else}Mailing Date{/if}{/ts}</label>
+	    <label>{if $sms eq 1}{ts}SMS Date{/ts}{else}{ts}Mailing Date{/ts}{/if}{/ts}</label>
 	</td>
     </tr>
     <tr>
@@ -42,7 +42,7 @@
         <td colspan="1">{$form.sort_name.label}<br />
             {$form.sort_name.html|crmReplace:class:big} {help id="id-create_sort_name"}
         </td>
-        <td width="100%"><label>{ts}{if $sms eq 1}SMS Status{else}Mailing Status{/if}{/ts}</label><br />
+        <td width="100%"><label>{if $sms eq 1}{ts}SMS Status{/ts}{else}{ts}Mailing Status{/ts}{/if}</label><br />
         <div class="listing-box" style="width: auto; height: 60px">
             {foreach from=$form.mailing_status item="mailing_status_val"}
             <div class="{cycle values="odd-row,even-row"}">

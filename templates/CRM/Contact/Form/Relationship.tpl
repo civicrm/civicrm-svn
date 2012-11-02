@@ -434,7 +434,7 @@ cj( function( ) {
             if ( cj(this).attr('checked') ) {
                 // add validation to match with selected contacts
                 if( !contact_checked[valueSelected] ) {
-                    alert('Current employer / Current employee should be among the selected contacts.');
+                    alert('{/literal}{ts escape="js"}Current employer / Current employee should be among the selected contacts.{/ts}{literal}');
                     cj(this).attr('checked',false); 
                 } else {
                     employer_checked[valueSelected] = valueSelected;
