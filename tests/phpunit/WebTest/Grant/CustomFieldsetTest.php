@@ -81,8 +81,8 @@ class WebTest_Grant_CustomFieldsetTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('_qf_Group_next-bottom');
     $grantFieldSet = 'Fieldset' . $rand;
     $this->type("id=title", $grantFieldSet);
-    $this->select("id=extends[0]", "label=Grants");
-    $this->addSelection("id=extends[1]", "label=$grantType");
+    $this->select("id=extends_0", "label=Grants");
+    $this->addSelection("id=extends_1", "label=$grantType");
     $this->click("id=collapse_display");
     $this->click("id=_qf_Group_next-bottom");
     $this->waitForElementPresent('_qf_Field_next-bottom');
@@ -91,7 +91,7 @@ class WebTest_Grant_CustomFieldsetTest extends CiviSeleniumTestCase {
     // Add field to fieldset
     $grantField = 'GrantField' . $rand;
     $this->type("id=label", $grantField);
-    $this->select("id=data_type[0]", "label=Money");
+    $this->select("id=data_type_0", "label=Money");
     $this->click("id=_qf_Field_next-bottom");
     $this->waitForPageToLoad("30000");
     $this->assertTrue($this->isTextPresent("Your custom field '$grantField' has been saved."));
@@ -108,6 +108,7 @@ class WebTest_Grant_CustomFieldsetTest extends CiviSeleniumTestCase {
     $this->click("id=_qf_Edit_next");
     $this->select("id=status_id", "label=Granted");
     $this->select("id=grant_type_id", "label=$grantType");
+    $this->waitForTextPresent($grantField);
     $this->assertTrue($this->isTextPresent($grantField));
     $this->type("id=amount_total", "100.00");
     $this->type("css=div#$grantFieldSet input.form-text", "99.99");

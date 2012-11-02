@@ -59,7 +59,7 @@ class WebTest_Case_CaseCustomFieldsTest extends CiviSeleniumTestCase {
     $this->type("title", $customGrp1);
     $this->select("extends[0]", "value=Case");
     sleep(1);
-    $this->select("extends[1]", "value=2");
+    $this->select("extends_1", "value=2");
     $this->click("_qf_Group_next-bottom");
     $this->waitForPageToLoad('30000');
 
