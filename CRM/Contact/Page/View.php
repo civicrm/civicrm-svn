@@ -398,6 +398,7 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
    */
   static function addUrls(&$obj, $cid) {
     $config = CRM_Core_Config::singleton();
+    $session = CRM_Core_Session::singleton();
     $uid = CRM_Core_BAO_UFMatch::getUFId($cid);
     if ($uid) {
       // To do: we should also allow drupal users with CRM_Core_Permission::check( 'view user profiles' ) true to access $userRecordUrl
