@@ -375,6 +375,15 @@ function civicrm_views_custom_data_cache(&$data, $entity_type, $groupID, $subTyp
         'left_field' => 'id',
         'field' => 'entity_id',
       );
+      
+      // expose custom data to contact view, too
+      if ($jointable != 'civicrm_contact') {
+        $data[$currentgroup['table_name']]['table']['join']['civicrm_contact'] = array(
+          'left_table' => $jointable,
+          'left_field' => 'id',
+          'field' => 'entity_id',
+        );
+      }
     }
     $currentgroupfields = $currentgroup['fields'];
     $customHTMLTypes = array(
