@@ -57,8 +57,8 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
     $texts = array(
       "Title - New Membership $hash",
       "This is introductory message for $pageTitle",
-      'Student - $ 50.00',
-      "Label $hash - $ $rand.00",
+      '$ 50.00 Student',
+      "$ $rand.00 Label $hash",
       "Pay later label $hash",
       'Organization Details',
       'Other Amount',
@@ -109,7 +109,7 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
     $texts = array(
       "Title - New Membership $hash",
       "This is introductory message for $pageTitle",
-      "Label $hash - $ $rand.00",
+      "$ $rand.00 Label $hash",
       "Pay later label $hash",
       'Organization Details',
       'Other Amount',
