@@ -67,7 +67,7 @@ class WebTest_Contribute_OfflineRecurContributionTest extends CiviSeleniumTestCa
     $this->type('total_amount', '10');
 
     // recurring contribution fields
-    $this->click('CIVICRM_QFID_1_8');
+    $this->click('is_recur');
     $this->type('frequency_interval', '1');
     $this->select('frequency_unit', 'label=month(s)');
     $this->type('installments', '12');
