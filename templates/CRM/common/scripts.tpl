@@ -27,7 +27,7 @@
 <script type="text/javascript">
   cj(function($) {ldelim}
     {* Initialize cj.crmURL *}
-    $.crmURL('init', '{crmURL p="civicrm/example" q="placeholder"}');
+    $.crmURL('init', '{crmURL p="civicrm/example" q="placeholder" h=0 }');
   {rdelim});
 
 {*
