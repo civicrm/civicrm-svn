@@ -101,7 +101,7 @@ class WebTest_Contribute_OnlineRecurContributionTest extends CiviSeleniumTestCas
     $this->type("xpath=//div[@class='crm-section other_amount-section']//div[2]/input", $contributionAmount);
 
     // recurring contribution - each month for 12 months
-    $this->click("CIVICRM_QFID_1_8");
+    $this->click("is_recur");
     $this->type("frequency_interval", "1");
     $this->type("installments", "12");
 
