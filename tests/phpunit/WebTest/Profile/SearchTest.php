@@ -84,8 +84,9 @@ class WebTest_Profile_SearchTest extends CiviSeleniumTestCase {
     $this->click('_qf_Field_next_new-bottom');
     $this->waitForPageToLoad('30000');
     //check for field add
-    $this->assertTrue($this->isTextPresent("Your CiviCRM Profile Field 'Last Name' has been saved to '$profileTitle'. You can add another profile field."));
-
+    $this->assertTrue($this->isTextPresent("Your CiviCRM Profile Field 'Last Name' has been saved to '$profileTitle'."));
+    $this->assertTrue($this->isTextPresent("You can add another profile field."));
+                                           
     // Add Email field.
     $this->click('field_name[0]');
     $this->select('field_name[0]', 'value=Contact');
@@ -100,7 +101,8 @@ class WebTest_Profile_SearchTest extends CiviSeleniumTestCase {
     $this->click('_qf_Field_next_new-bottom');
     $this->waitForPageToLoad('30000');
     //check for field add
-    $this->assertTrue($this->isTextPresent("Your CiviCRM Profile Field 'Email' has been saved to '$profileTitle'. You can add another profile field."));
+    $this->assertTrue($this->isTextPresent("Your CiviCRM Profile Field 'Email' has been saved to '$profileTitle'."));
+    $this->assertTrue($this->isTextPresent("You can add another profile field."));
 
     // Add Sample Custom Field.
     $this->click('field_name[0]');
@@ -135,8 +137,8 @@ class WebTest_Profile_SearchTest extends CiviSeleniumTestCase {
     // Search Contact via profile.
     $this->waitForElementPresent("xpath=//div[@id='crm-container']//div/a[text()='» Back to Listings']");
     $this->click("xpath=//div[@id='crm-container']//div/a[text()='» Back to Listings']");
-    $this->waitForElementPresent('css=div.crm-block div div div');
-    $this->click('css=div.crm-block div div div');
+    $this->waitForElementPresent("xpath=//div[@class='crm-block crm-form-block']");
+    $this->click("xpath=//div[@class='crm-block crm-form-block']");
     // Fill Last Name
     $this->type('last_name', $lastName);
     // Fill Email
