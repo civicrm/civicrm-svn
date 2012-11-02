@@ -76,7 +76,7 @@ class WebTest_Contact_ContactReferenceFieldTest extends CiviSeleniumTestCase {
     $this->select('group_id', "label={$groupName}");
     $this->click('_qf_GroupContact_next');
     $this->waitForPageToLoad("30000");
-    $this->assertTrue($this->isTextPresent("Contact has been added to the selected group "));
+    $this->assertTrue($this->isTextPresent("Contact has been added to '{$groupName}'"));
 
     // Individual 1
     $contact2 = substr(sha1(rand()), 0, 7);
