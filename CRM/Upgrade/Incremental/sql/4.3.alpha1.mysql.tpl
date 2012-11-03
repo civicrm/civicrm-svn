@@ -60,10 +60,10 @@ VALUES
 INSERT IGNORE INTO `civicrm_setting` (`group_name`, `name`, `value`, `domain_id`, `is_domain`) VALUES ('CiviCRM Preferences', 'activity_assignee_notification_ics', 's:1:"0";', {$domainID}, '1');
 
 -- CRM-10885
-ALTER TABLE civicrm_dedupe_rule_group 
+ALTER TABLE civicrm_dedupe_rule_group
   ADD used enum('Unsupervised','Supervised','General') COLLATE utf8_unicode_ci NOT NULL COMMENT 'Whether the rule should be used for cases where usage is Unsupervised, Supervised OR General(programatically)' AFTER threshold;
-  
-UPDATE civicrm_dedupe_rule_group 
+
+UPDATE civicrm_dedupe_rule_group
   SET used = 'General' WHERE is_default = 0;
 
 UPDATE civicrm_dedupe_rule_group
@@ -94,3 +94,11 @@ ALTER TABLE civicrm_dedupe_rule_group DROP COLUMN level;
 -- CRM-10771
 ALTER TABLE civicrm_uf_field
   ADD `is_multi_summary` tinyint(4) DEFAULT '0' COMMENT 'Include in multi-record listing?';
+
+-- CRM-1115
+-- note that country names are not translated in the DB
+SELECT @region_id   := max(id) from civicrm_worldregion where name = "Europe and Central Asia";
+INSERT INTO civicrm_country (name,iso_code,region_id,is_province_abbreviated) VALUES("Kosovo", "XK", @region_id, 0);
+
+UPDATE civicrm_country SET name = 'Libya' WHERE name LIKE 'Libyan%';
+UPDATE civicrm_country SET name = 'Congo, Republic of the' WHERE name = 'Congo';
