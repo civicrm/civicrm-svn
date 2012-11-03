@@ -518,7 +518,7 @@ class CRM_Core_Permission {
     }
 
     static $allCompPermissions = array();
-    if (!empty($allCompPermissions)) {
+    if (empty($allCompPermissions)) {
       $components = CRM_Core_Component::getComponents();
       foreach ($components as $name => $comp) {
         $allCompPermissions[$name] = $comp->getPermissions();
