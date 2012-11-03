@@ -25,17 +25,11 @@
 *}
 {* Form elements for displaying and running action tasks on search results *}
 {capture assign=advSearchURL}
-{if $context EQ 'smog'}
-     {crmURL p='civicrm/group/search/advanced' q="gid=`$group.id`&reset=1&force=1"}
-{elseif $context EQ 'amtg'}
-     {crmURL p='civicrm/contact/search/advanced' q="context=amtg&amtgID=`$group.id`&reset=1&force=1"}
-{else}
-    {crmURL p='civicrm/contact/search/advanced' q="reset=1"}
-{/if}
-{/capture}
-{capture assign=searchBuilderURL}
-    {crmURL p='civicrm/contact/search/builder' q="reset=1"}
-{/capture}
+{if $context EQ 'smog'}{crmURL p='civicrm/group/search/advanced' q="gid=`$group.id`&reset=1&force=1"}
+{elseif $context EQ 'amtg'}{crmURL p='civicrm/contact/search/advanced' q="context=amtg&amtgID=`$group.id`&reset=1&force=1"}
+{else}{crmURL p='civicrm/contact/search/advanced' q="reset=1"}
+{/if}{/capture}
+{capture assign=searchBuilderURL}{crmURL p='civicrm/contact/search/builder' q="reset=1"}{/capture}
 
  <div id="search-status">
   <div class="float-right right">
