@@ -454,7 +454,12 @@ SELECT label, value
             continue;
 
           case 'Boolean':
-            $value = (int ) $value;
+            if (strtolower($value) == 'yes' || strtolower($value) == strtolower(ts('Yes')) {
+              $value = 1;
+            }
+            else {
+              $value = (int) $value;
+            }
             $value = ($value == 1) ? 1 : 0;
             $this->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause($fieldName, $op, $value, 'Integer');
             $value = $value ? ts('Yes') : ts('No');
