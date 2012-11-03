@@ -505,10 +505,14 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
     $other = civicrm_contact_get($otherParams);
 
     //CRM-4524
-    $main  = reset(CRM_Utils_Array::value('values', $main));
-    $other = reset(CRM_Utils_Array::value('values', $other));
+    if (CRM_Utils_Array::value('values', $main)) {
+      $main  = reset($main['values']);
+    }
+    if (CRM_Utils_Array::value('values', $other)) {
+      $other  = reset($other['values']);
+    }
 
-    if ($main['contact_type'] != $other['contact_type']) {
+    if (CRM_Utils_Array::value('contact_type', $main) != CRM_Utils_Array::value('contact_type', $other)) {
       return FALSE;
     }
 
