@@ -50,6 +50,14 @@ class CRM_Report_Form_Contribute_Repeat extends CRM_Report_Form {
             'no_repeat' => TRUE,
             'default' => TRUE,
           ),
+          'display_name' =>
+          array('title' => ts('Display Name'),
+		  'no_repeat' => TRUE,
+          ),
+          'addressee_display' =>
+          array('title' => ts('Addressee Name'),
+		  'no_repeat' => TRUE,
+          ),
           'id' =>
           array(
             'no_display' => TRUE,
@@ -104,10 +112,18 @@ class CRM_Report_Form_Contribute_Repeat extends CRM_Report_Form {
         'grouping' => 'contact-fields',
         'fields' =>
         array(
+          'street_address' =>
+          array('title' => ts('Street Address')),
+          'supplemental_address_1' =>
+          array('title' => ts('Additional Address')),
+          'city' =>
+          array('title' => ts('City')),
           'country_id' =>
           array('title' => ts('Country')),
           'state_province_id' =>
           array('title' => ts('State/Province')),
+          'postal_code' =>
+          array('title' => ts('Postal Code')),
         ),
         'group_bys' =>
         array(
@@ -470,8 +486,7 @@ LEFT JOIN civicrm_temp_civireport_repeat2 {$this->_aliases['civicrm_contribution
     $errors = $checkDate = $errorCount = array();
 
     $rules = array(
-      'id' => array('sort_name', 'email', 'phone',
-        'state_province_id', 'country_id',
+      'id' => array('sort_name', 'display_name', 'addressee_display', 'email', 'phone', 'state_province_id', 'country_id', 'city', 'street_address', 'supplemental_address_1', 'postal_code'
       ),
       'country_id' => array('country_id'),
       'state_province_id' => array('country_id', 'state_province_id'),
