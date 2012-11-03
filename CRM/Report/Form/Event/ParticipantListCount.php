@@ -34,7 +34,7 @@
  * $Id$
  *
  */
-class CRM_Report_Form_Event_ParticipantListCount extends CRM_Report_Form {
+class CRM_Report_Form_Event_ParticipantListCount extends CRM_Report_Form_Event {
 
   protected $_summary = NULL;
 
@@ -138,7 +138,7 @@ class CRM_Report_Form_Event_ParticipantListCount extends CRM_Report_Form {
             'name' => 'event_id',
             'title' => ts('Event'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-            'options' => CRM_Event_PseudoConstant::event(NULL, NULL, "is_template IS NULL OR is_template = 0"),
+            'options' => $this->getEventFilterOptions(),
           ),
           'sid' =>
           array(

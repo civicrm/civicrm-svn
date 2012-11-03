@@ -34,19 +34,13 @@
  * $Id$
  *
  */
-class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
+class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form_Event {
 
   protected $_summary = NULL;
 
   protected $_customGroupExtends = array(
     'Participant'); 
   function __construct() {
-
-    static $_events;
-    if (!isset($_events['all'])) {
-      CRM_Core_PseudoConstant::populate($_events['all'], 'CRM_Event_DAO_Event', FALSE, 'title', 'is_active', "is_template IS NULL OR is_template = 0", 'end_date DESC');
-    }
-
     $this->_columns = array(
       'civicrm_contact' =>
       array(
@@ -148,7 +142,7 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
           'event_id' => array('name' => 'event_id',
             'title' => ts('Event'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-            'options' => $_events['all'],
+            'options' => $this->getEventFilterOptions(),
           ),
           'sid' => array(
             'name' => 'status_id',

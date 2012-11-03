@@ -34,7 +34,7 @@
  * $Id$
  *
  */
-class CRM_Report_Form_Event_Income extends CRM_Report_Form {
+class CRM_Report_Form_Event_Income extends CRM_Report_Form_Event {
   CONST ROW_COUNT_LIMIT = 2;
 
   protected $_summary = NULL;
@@ -53,9 +53,7 @@ class CRM_Report_Form_Event_Income extends CRM_Report_Form {
           array('title' => ts('Event Title'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'type' => CRM_Utils_Type::T_INT,
-            'options' => CRM_Event_PseudoConstant::event(NULL, NULL,
-              "is_template IS NULL OR is_template = 0"
-            ),
+            'options' => $this->getEventFilterOptions(),
           ),
         ),
       ),
