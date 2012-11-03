@@ -174,7 +174,10 @@ function civicrm_drush_command() {
       'drush civicrm-sql-dump --result-file=../CiviCRM.sql' => 'Save SQL dump to the directory above Drupal root.',
     ),
     'options' => array(
+      'data-only' => 'Dump data without statements to create any of the schema.',
+      'gzip' => 'Compress the dump using the gzip program which must be in your $PATH.',
       'result-file' => 'Save to a file.',
+      'tables-list' => 'comma-separated list of tables to transfer.',
     ),
   );
   $items['civicrm-sql-query'] = array(
