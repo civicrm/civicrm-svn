@@ -84,6 +84,31 @@ class CRM_Member_BAO_MembershipStatus extends CRM_Member_DAO_MembershipStatus {
   }
 
   /**
+   * Takes an associative array and creates a membership Status object
+   * See http://wiki.civicrm.org/confluence/display/CRM/Database+layer
+   * @param array    $params      (reference ) an assoc array of name/value pairs
+   *
+   * @return object CRM_Member_BAO_MembershipStatus object
+   * @access public
+   * @static
+   */
+  static function create($params){
+    $ids = array();
+    if(!empty($params['id'])){
+      $ids['membershipStatus']  = $params['id'];
+    }
+    else{
+      //don't allow duplicate names - if id not set
+      $status = new CRM_Member_DAO_MembershipStatus();
+      $status->name = $params['name'];
+      if ($status->find(TRUE)) {
+        throw new Exception('A membership status with this name already exists.');
+      }
+    }
+    $membershipStatusBAO = CRM_Member_BAO_MembershipStatus::add($params, $ids);
+    return $membershipStatusBAO;
+  }
+  /**
    * function to add the membership types
    *
    * @param array $params reference array contains the values submitted by the form
@@ -251,9 +276,9 @@ class CRM_Member_BAO_MembershipStatus extends CRM_Member_DAO_MembershipStatus {
     }
 
     $query = "
- SELECT   * 
- FROM     civicrm_membership_status 
- WHERE    {$where} 
+ SELECT   *
+ FROM     civicrm_membership_status
+ WHERE    {$where}
  ORDER BY weight ASC";
 
     $membershipStatus = CRM_Core_DAO::executeQuery($query, CRM_Core_DAO::$_nullArray);

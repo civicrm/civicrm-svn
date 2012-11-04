@@ -56,33 +56,17 @@ require_once 'CRM/Member/BAO/MembershipStatus.php';
  * @access public
  */
 function civicrm_api3_membership_status_create($params) {
+  return _civicrm_api3_basic_create(_civicrm_api3_get_BAO(__FUNCTION__), $params);
+}
 
-  civicrm_api3_verify_one_mandatory($params, 'CRM_Member_DAO_MembershipStatus', array('name', 'label'));
-  //move before verifiy? DAO check requires?
-  if (empty($params['name'])) {
-    $params['name'] = CRM_Utils_Array::value('label', $params);
-  }
-
-  //don't allow duplicate names.
-  require_once 'CRM/Member/DAO/MembershipStatus.php';
-  $status = new CRM_Member_DAO_MembershipStatus();
-  $status->name = $params['name'];
-  if ($status->find(TRUE)) {
-    return civicrm_api3_create_error(ts('A membership status with this name already exists.'));
-  }
-
-  require_once 'CRM/Member/BAO/MembershipStatus.php';
-  $ids = array();
-  $membershipStatusBAO = CRM_Member_BAO_MembershipStatus::add($params, $ids);
-  if (is_a($membershipStatusBAO, 'CRM_Core_Error')) {
-    return civicrm_api3_create_error("Membership is not created");
-  }
-  else {
-    $values             = array();
-    $values['id']       = $membershipStatusBAO->id;
-    $values['is_error'] = 0;
-    return civicrm_api3_create_success($values, $params);
-  }
+/*
+ * Adjust Metadata for Create action
+*
+* The metadata is used for setting defaults, documentation & validation
+* @param array $params array or parameters determined by getfields
+*/
+function _civicrm_api3_membership_status_create_spec(&$params) {
+  $params['name']['api.aliases'] = array('label');
 }
 
 /**
@@ -97,7 +81,6 @@ function civicrm_api3_membership_status_create($params) {
  * @access public
  */
 function civicrm_api3_membership_status_get($params) {
-
   return _civicrm_api3_basic_get('CRM_Member_BAO_MembershipStatus', $params);
 }
 
@@ -194,7 +177,7 @@ SELECT start_date, end_date, join_date
     // Take the is_admin column in MembershipStatus into consideration when requested
     if (! CRM_Utils_Array::value('ignore_admin_only', $membershipParams) ) {
       $result = &CRM_Member_BAO_MembershipStatus::getMembershipStatusByDate($dao->start_date, $dao->end_date, $dao->join_date, 'today', TRUE);
-    } 
+    }
     else {
     $result = &CRM_Member_BAO_MembershipStatus::getMembershipStatusByDate($dao->start_date, $dao->end_date, $dao->join_date);
     }
