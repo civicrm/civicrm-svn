@@ -478,7 +478,7 @@ class CRM_Core_I18n_Schema {
     return "CREATE OR REPLACE VIEW {$table}_{$locale} AS SELECT " . implode(', ', $cols) . " FROM {$table}";
   }
 
-  function triggerInfo(&$info, $tableName = NULL) {
+  static function triggerInfo(&$info, $tableName = NULL) {
     // get the current supported locales
     $domain = new CRM_Core_DAO_Domain();
     $domain->find(TRUE);
@@ -505,9 +505,9 @@ class CRM_Core_I18n_Schema {
     else {
       $class = 'CRM_Core_I18n_SchemaStructure';
     }
-    
+
     eval("\$columns =& $class::columns();");
-    
+
     foreach ($columns as $table => $hash) {
       if ($tableName &&
         $tableName != $table

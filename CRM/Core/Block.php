@@ -276,7 +276,7 @@ class CRM_Core_Block {
    * @return void
    * @access private
    */
-  private function setTemplateValues($id) {
+  private static function setTemplateValues($id) {
     switch ($id) {
       case self::CREATE_NEW:
         self::setTemplateShortcutValues();
@@ -328,7 +328,7 @@ class CRM_Core_Block {
    * @return void
    * @access private
    */
-  private function setTemplateShortcutValues() {
+  private static function setTemplateShortcutValues() {
     $config = CRM_Core_Config::singleton();
 
     static $shortCuts = array();
@@ -420,7 +420,7 @@ class CRM_Core_Block {
    * @return void
    * @access private
    */
-  private function setTemplateDashboardValues() {
+  private static function setTemplateDashboardValues() {
     static $dashboardLinks = array();
     if (CRM_Core_Permission::check('access Contact Dashboard')) {
       $dashboardLinks = array(
@@ -456,7 +456,7 @@ class CRM_Core_Block {
    * @return void
    * @access private
    */
-  private function setTemplateMailValues() {
+  private static function setTemplateMailValues() {
     static $shortCuts = NULL;
 
     if (!($shortCuts)) {
@@ -489,7 +489,7 @@ class CRM_Core_Block {
    * @return void
    * @access private
    */
-  private function setTemplateMenuValues() {
+  private static function setTemplateMenuValues() {
     $config = CRM_Core_Config::singleton();
 
     $path = 'navigation';
@@ -505,7 +505,7 @@ class CRM_Core_Block {
    * @return void
    * @access private
    */
-  private function setTemplateEventValues() {
+  private static function setTemplateEventValues() {
     $config = CRM_Core_Config::singleton();
 
     $info = CRM_Event_BAO_Event::getCompleteInfo(date("Ymd"));
