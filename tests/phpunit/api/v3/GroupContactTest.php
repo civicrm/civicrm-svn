@@ -28,16 +28,16 @@
 */
 
 
-
-
-require_once 'api/v3/GroupContact.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 class api_v3_GroupContactTest extends CiviUnitTestCase {
 
   protected $_contactId;
   protected $_contactId1;
   protected $_apiversion;
-  protected $_groupId1; function get_info() {
+  protected $_groupId1;
+  public $_eNoticeCompliant = True;
+
+  function get_info() {
     return array(
       'name' => 'Group Contact Create',
       'description' => 'Test all Group Contact Create API methods.',
@@ -47,8 +47,8 @@ class api_v3_GroupContactTest extends CiviUnitTestCase {
 
   /*
      * Set up for group contact tests
-     * 
-     * @todo set up calls function that doesn't work @ the moment 
+     *
+     * @todo set up calls function that doesn't work @ the moment
      */
   function setUp() {
     $this->_apiversion = 3;
@@ -113,7 +113,7 @@ class api_v3_GroupContactTest extends CiviUnitTestCase {
     );
     $result = civicrm_api('group_contact', 'get', $params);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__);
-    foreach ($result as $v) {
+    foreach ($result['values'] as $v) {
       $this->assertEquals($v['title'], $this->_group[$v['group_id']]['title']);
       $this->assertEquals($v['visibility'], $this->_group[$v['group_id']]['visibility']);
       $this->assertEquals($v['in_method'], $this->_group[$v['group_id']]['in_method']);
@@ -126,14 +126,15 @@ class api_v3_GroupContactTest extends CiviUnitTestCase {
     $params      = array(
       'group_id' => $this->_groupId1,
       'version' => $this->_apiversion,
-      'api.contact.get' => 1,
+      'api.group.get' => 1,
+      'sequential' => 1,
     );
     $result = civicrm_api('group_contact', 'get', $params);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__, $description, $subfile);
-    foreach ($result as $v) {
-      $this->assertEquals($v['title'], $this->_group[$v['group_id']]['title']);
-      $this->assertEquals($v['visibility'], $this->_group[$v['group_id']]['visibility']);
-      $this->assertEquals($v['in_method'], $this->_group[$v['group_id']]['in_method']);
+    foreach ($result['values'][0]['api.group.get']['values'] as $values) {
+      $key = $values['id'];
+      $this->assertEquals($values['title'], $this->_group[$key]['title']);
+      $this->assertEquals($values['visibility'], $this->_group[$key]['visibility']);
     }
   }
 
