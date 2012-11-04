@@ -27,11 +27,8 @@
  +--------------------------------------------------------------------+
 */
 
-
-
-
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'api/v3/GroupOrganization.php';
+
 
 /**
  * Test class for GroupOrganization API - civicrm_group_organization_*
@@ -39,7 +36,10 @@ require_once 'api/v3/GroupOrganization.php';
  *  @package   CiviCRM
  */
 class api_v3_GroupOrganizationTest extends CiviUnitTestCase {
-  protected $_apiversion; function get_info() {
+  protected $_apiversion;
+  public $_eNoticeCompliant = True;
+
+  function get_info() {
     return array(
       'name' => 'Group Organization',
       'description' => 'Test all Group Organization API methods.',
@@ -112,10 +112,11 @@ class api_v3_GroupOrganizationTest extends CiviUnitTestCase {
       'organization_id' => $this->_orgID,
       'group_id' => $this->_groupID,
       'version' => $this->_apiversion,
+      'sequential' => 1,
     );
     $result = civicrm_api('group_organization', 'create', $params);
 
-    $paramsGet = array('organization_id' => $result['result']['organization_id']);
+    $paramsGet = array('organization_id' => $result['values'][0]['organization_id']);
 
     $result = civicrm_api('group_organization', 'get', $params);
     $this->assertEquals($result['is_error'], 0);

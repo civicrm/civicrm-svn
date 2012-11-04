@@ -1,11 +1,13 @@
 <?php
 // $Id$
 
-require_once 'api/v3/Group.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 class api_v3_GroupTest extends CiviUnitTestCase {
   protected $_apiversion;
-  protected $_groupID; function get_info() {
+  protected $_groupID;
+  public $_eNoticeCompliant = True;
+
+  function get_info() {
     return array(
       'name' => 'Group Get',
       'description' => 'Test all Group Get API methods.',

@@ -28,10 +28,7 @@
 */
 
 
-
-
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'api/v3/GroupNesting.php';
 
 /**
  * Test class for GroupNesting API - civicrm_group_nesting_*
@@ -40,6 +37,7 @@ require_once 'api/v3/GroupNesting.php';
  */
 class api_v3_GroupNestingTest extends CiviUnitTestCase {
   protected $_apiversion;
+  public $_eNoticeCompliant = True;
 
   /**
    * Sets up the fixture, for example, opens a network connection.
@@ -158,7 +156,7 @@ class api_v3_GroupNestingTest extends CiviUnitTestCase {
   public function testGetWithParentGroupId() {
     $params = array(
       'parent_group_id' => 1,
-      'version' => _apiversion,
+      'version' => $this->_apiversion,
     );
 
     $result = civicrm_api('group_nesting', 'get', $params);
