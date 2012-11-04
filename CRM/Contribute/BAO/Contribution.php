@@ -2001,7 +2001,7 @@ WHERE  contribution_id = %1 ";
           }
         }
 
-        if (is_array($ids['membership'])) {
+        if (is_array(CRM_Utils_Array::value('membership', $ids))) {
           foreach ($ids['membership'] as $id) {
             if (!empty($id)) {
               $membership = new CRM_Member_BAO_Membership();
@@ -2290,7 +2290,7 @@ WHERE  contribution_id = %1 ";
             if (array_key_exists($eachItem['membership_type_id'], $this->_relatedObjects['membership']) ) {
               $eachItem['join_date'] = CRM_Utils_Date::customFormat($this->_relatedObjects['membership'][$eachItem['membership_type_id']]->join_date);
               $eachItem['start_date'] = CRM_Utils_Date::customFormat($this->_relatedObjects['membership'][$eachItem['membership_type_id']]->start_date);
-              $eachItem['end_date'] = CRM_Utils_Date::customFormat($this->_relatedObjects['membership'][$eachItem['membership_type_id']]->end_date);  
+              $eachItem['end_date'] = CRM_Utils_Date::customFormat($this->_relatedObjects['membership'][$eachItem['membership_type_id']]->end_date);
             }
           }
           $values['lineItem'][0] = $lineItem;
