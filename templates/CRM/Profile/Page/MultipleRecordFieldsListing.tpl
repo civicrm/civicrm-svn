@@ -76,12 +76,13 @@ function formDialog(dataURL, dialogTitle){
 	           cj('#profile-dialog').html('');
                  }
              });
+             cj('#profile-dialog #crm-profile-block .edit-value label').css('display', 'inline');
 	 }});
 }
 
 cj('.action-item').each(function(){
  cj(this).attr('jshref', cj(this).attr('href'));
- cj(this).attr('href', '#');
+ cj(this).attr('href', '#browseValues');
 });
 
  cj(".action-item").click(function(){

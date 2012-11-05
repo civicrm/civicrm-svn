@@ -131,6 +131,7 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
    */
   protected $_profileIds = array();
 
+  protected $_multiRecordTableName = NULL;
   /**
    * Class constructor
    *
@@ -138,11 +139,12 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
    *
    * @return CRM_Contact_Selector_Profile
    * @access public
-   */ function __construct(&$params, &$customFields, $ufGroupIds = NULL, $map = FALSE,
+   */
+  function __construct(&$params, &$customFields, $ufGroupIds = NULL, $map = FALSE,
     $editLink = FALSE, $linkToUF = FALSE
   ) {
     $this->_params = $params;
-
+  
     if (is_array($ufGroupIds)) {
       $this->_profileIds = $ufGroupIds;
       $this->_gid = $ufGroupIds[0];
@@ -178,6 +180,7 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
       CRM_Core_BAO_UFGroup::LISTINGS_VISIBILITY,
       FALSE, $this->_profileIds
     );
+    
     $this->_customFields = &$customFields;
 
     $returnProperties = CRM_Contact_BAO_Contact::makeHierReturnProperties($this->_fields);
@@ -187,6 +190,11 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
 
     $queryParams    = CRM_Contact_BAO_Query::convertFormValues($this->_params, 1);
     $this->_query   = new CRM_Contact_BAO_Query($queryParams, $returnProperties, $this->_fields);
+ 
+    //the below is done for query building for multirecord custom field listing
+    //to show all the custom field multi valued records of a particular contact
+    $this->fixQueryForMultiRecord($this->_fields);
+
     $this->_options = &$this->_query->_options;
   }
   //end of constructor
@@ -262,7 +270,9 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
    * @access public
    */
   function getPagerParams($action, &$params) {
-    $params['status']    = ts('Contact %%StatusMessage%%');
+    $status = 
+      CRM_Utils_System::isNull($this->_multiRecordTableName) ? ts('Contact %%StatusMessage%%') : ts('Contact Multi Records %%StatusMessage%%');
+    $params['status']    = $status;
     $params['csvString'] = NULL;
     $params['rowCount']  = CRM_Utils_Pager::ROWCOUNT;
 
@@ -448,7 +458,7 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
       }
     }
     $links = self::links($this->_map, $this->_editLink, $this->_linkToUF, $this->_profileIds);
-
+ 
     $locationTypes = CRM_Core_PseudoConstant::locationType();
 
     $names = array();
@@ -507,7 +517,11 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
 
 
     $multipleSelectFields = array('preferred_communication_method' => 1);
-
+    $multiRecordTableId = NULL;
+    if ($this->_multiRecordTableName) {
+      $multiRecordTableId = "{$this->_multiRecordTableName}_id";
+    }
+    
     // we need to determine of overlay profile should be shown
     $showProfileOverlay = CRM_Core_BAO_UFGroup::showOverlayProfile();
 
@@ -618,6 +632,16 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
         'id' => $result->contact_id,
         'gid' => implode(',', $this->_profileIds),
       );
+     
+      // pass record id param to view url for multi record view
+      if ($multiRecordTableId && $newLinks) {
+        if ($result->$multiRecordTableId){
+          if ($newLinks[CRM_Core_Action::VIEW]['url'] == 'civicrm/profile/view') {
+            $newLinks[CRM_Core_Action::VIEW]['qs'] .= "&multiRecord=view&recordId=%%recordId%%&allFields=1";
+            $params['recordId'] = $result->$multiRecordTableId;
+          }
+        }
+      }
 
       if ($this->_linkToUF) {
         $ufID = CRM_Core_BAO_UFMatch::getUFId($result->contact_id);
@@ -651,6 +675,70 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
   function getExportFileName($output = 'csv') {
     return ts('CiviCRM Profile Listings');
   }
+
+  /**
+   *  fix the query for multi record listing 
+   */
+  function fixQueryForMultiRecord($fields) {
+    $multiRecordTableName = $groupByClause = NULL;
+    $selectorSet = FALSE;
+    $customGroupId = NULL;
+    foreach ($fields as $field => $properties) {
+      if (!CRM_Core_BAO_CustomField::getKeyID($field)) {
+        continue;
+      }
+      if ($cgId = CRM_Core_BAO_CustomField::isMultiRecordField($field)) {
+        $customGroupId = CRM_Utils_System::isNull($customGroupId) ? $cgId : $customGroupId;
+
+        //if the field is searchable proper grouping needs to be done
+        if ($customGroupId) {
+          if (CRM_Utils_Array::value($field, $this->_params)) {
+            $this->_multiRecordTableName = $multiRecordTableName =
+              CRM_Core_DAO::getFieldValue('CRM_Core_DAO_CustomGroup', $customGroupId, 'table_name');
+
+            if ($multiRecordTableName) {
+              // the group by clause
+              $groupByClause = "{$multiRecordTableName}.id";
+              $this->_query->_distinctComponentClause = "{$groupByClause}";
+              $this->_query->_groupByComponentClause  = "GROUP BY {$groupByClause}";
+              return;
+            }
+          }
+          
+          if (CRM_Utils_Array::value('in_selector', $properties)) {
+            $selectorSet = TRUE;
+          }
+        }
+      }
+    }
+ 
+    if (!isset($customGroupId) || !$customGroupId) {
+      return;
+    }
+    
+    //if the field is in selector and not a searchable field
+    //append the proper customvalue clause to get proper row count and grouped result
+    if ($selectorSet) {
+      $this->_multiRecordTableName = $multiRecordTableName =
+        CRM_Core_DAO::getFieldValue('CRM_Core_DAO_CustomGroup', $customGroupId, 'table_name');
+
+      if ($this->_multiRecordTableName) {
+        if ($clauseElements = CRM_Utils_Array::value($multiRecordTableName, $this->_query->_tables)) {
+          // the group by clause
+          $groupByClause = "{$multiRecordTableName}.id";
+          $this->_query->_distinctComponentClause = "{$groupByClause}";
+          $this->_query->_groupByComponentClause  = "GROUP BY {$groupByClause}";
+          
+          if (!preg_match('/' . $clauseElements .'/', $this->_query->_simpleFromClause)) {
+            $this->_query->_simpleFromClause .= $clauseElements;
+          }
+          if (!array_key_exists($multiRecordTableName, $this->_query->_whereTables)) {
+            $this->_query->_whereTables[$multiRecordTableName] = $clauseElements;
+          }
+        }
+      }
+    }
+  } //func close
 }
 //end of class
 

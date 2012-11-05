@@ -42,7 +42,7 @@ cj(function() {
     // pre-submit callback	  
     function proccessMultiRecordForm(formData, jqForm, options) {
       var queryString = cj.param(formData);
-      queryString = queryString + '{/literal}{$urlParams}{literal}' + '&snippet=5';
+      queryString = queryString + '{/literal}{$urlParams}{literal}' + '&snippet=1';
 
       if (cj('#profile-dialog')) {
         var postUrl = {/literal}"{crmURL p='civicrm/profile/edit' h=0 }"{literal};
@@ -78,7 +78,7 @@ cj(function() {
         {ts}Are you sure you want to delete this record?{/ts}
   </div>
   <span class="crm-button">{$form._qf_Edit_upload_delete.html}</span>
-  <div class="crm-submit-buttons" style='float:right'>{include file="CRM/common/formButtons.tpl"}</div>
+  <div class="crm-submit-buttons" style='display:inline'>{include file="CRM/common/formButtons.tpl"}</div>
 {else}
 {if ! empty( $fields )}
 {* Wrap in crm-container div so crm styles are used.*}

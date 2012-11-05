@@ -3991,7 +3991,9 @@ civicrm_relationship.start_date > CURDATE()
           $limitDAO   = CRM_Core_DAO::executeQuery($limitQuery);
           $limitIDs   = array();
           while ($limitDAO->fetch()) {
-            $limitIDs[] = $limitDAO->id;
+            if ($limitDAO->id) {
+              $limitIDs[] = $limitDAO->id;
+            }
           }
           if (empty($limitIDs)) {
             $limitClause = ' AND ( 0 ) ';
