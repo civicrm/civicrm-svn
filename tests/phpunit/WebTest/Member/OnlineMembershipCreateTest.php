@@ -115,8 +115,8 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
     // edit contribution page memberships tab to add two new membership types
     $this->open($this->sboxPath . "civicrm/admin/contribute/membership?reset=1&action=update&id={$pageId}");
     $this->waitForElementPresent('_qf_MembershipBlock_next-bottom');
-    $this->click("membership_type[$memTypeId1]");
-    $this->click("membership_type[$memTypeId2]");
+    $this->click("membership_type_$memTypeId1");
+    $this->click("membership_type_$memTypeId2");
     $this->click('_qf_MembershipBlock_next');
     $this->waitForPageToLoad('30000');
     $this->waitForElementPresent('_qf_MembershipBlock_next-bottom');
@@ -217,7 +217,7 @@ class WebTest_Member_OnlineMembershipCreateTest extends CiviSeleniumTestCase {
 
     // Select membership type 1
     $this->waitForElementPresent("xpath=//div[@class='crm-section membership_amount-section']/div[2]//span/label");
-    $this->click("xpath=//div[@class='crm-section membership_amount-section']/div[2]//span/label[contains(text(),'$memTypeId')]");
+    $this->click("xpath=//div[@class='crm-section membership_amount-section']/div[2]//span/label/span[2][contains(text(),'$memTypeId')]");
     $this->click("xpath=//div[@class='crm-section contribution_amount-section']/div[2]//span/label[text()='No thank you']");
     if ($payLater) {
       $this->click("xpath=//div[@class='crm-section payment_processor-section']/div[2]//label[text()='Pay later label {$hash}']");
