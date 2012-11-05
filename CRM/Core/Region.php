@@ -102,7 +102,7 @@ class CRM_Core_Region {
       'weight' => 1,
       'disabled' => FALSE,
     );
-    $snippet = array_merge($defaults, $snippet);
+    $snippet += $defaults;
     if (!isset($snippet['type'])) {
       foreach ($types as $type) {
         // auto-detect

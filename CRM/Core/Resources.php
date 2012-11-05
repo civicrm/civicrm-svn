@@ -56,6 +56,12 @@ class CRM_Core_Resources {
   private $extMapper = NULL;
 
   /**
+   * 
+   */
+  protected $settings = array();
+  protected $addedSettings = FALSE;
+
+  /**
    * Get or set the single instance of CRM_Core_Resources
    *
    * @param $instance CRM_Core_Resources, new copy of the manager
@@ -141,6 +147,35 @@ class CRM_Core_Resources {
       ));
     }
     return $this;
+  }
+
+  /**
+   * Add JavaScript variables to the global CRM object.
+   *
+   * @param $settings array
+   * @return CRM_Core_Resources
+   */
+  public function addSetting($settings) {
+    foreach ($settings as $k => $v) {
+      if (isset($this->settings[$k]) && is_array($this->settings[$k]) && is_array($v)) {
+        $v += $this->settings[$k];
+      }
+      $this->settings[$k] = $v;
+    }
+    if (!$this->addedSettings) {
+      $resources = $this;
+      CRM_Core_Region::instance('settings')->add(array(
+        'callback' => function(&$snippet, &$html) use ($resources) {
+          $html .= "\n" . $resources->renderSettings();
+        }
+      ));
+      $this->addedSettings = TRUE;
+    }
+    return $this;
+  }
+  
+  public function renderSettings() {
+    return 'CRM = cj.extend(true, ' . json_encode($this->settings) . ', CRM);';
   }
 
   /**

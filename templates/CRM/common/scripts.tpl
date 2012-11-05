@@ -38,14 +38,7 @@
  * Very common strings are included here for convenience. Others should be added dynamically per-template.
  *
  * To extend this object for use in your own template, follow this example:
- * <script type="text/javascript">
- *   var CRM = CRM || {};
- *   CRM.myVar = '{$serverVariable}';
- *   CRM.ts.cow = '{ts escape="js"}Cow{/ts}';
- *   CRM.myFunction = function() {
- *     cj().crmAlert('{ts escape="js"}Avoid global functions!{/ts}', CRM.ts.ok);
- *   };
- * </script>
+ *
  *}
   {literal}
   var CRM = CRM || {};
@@ -68,4 +61,6 @@
     }
   }, CRM);
   {/literal}
+  {crmRegion name='settings'}
+  {/crmRegion}
 </script>
