@@ -714,10 +714,8 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       }
       elseif ($recurring) {
         $this->click('is_recur');
-        // only monthly frequency unit enabled
-        $this->click("recur_frequency_unit[day]");
-        $this->click("recur_frequency_unit[week]");
-        $this->click("recur_frequency_unit[year]");
+        $this->click("is_recur_interval");
+        $this->click("is_recur_installments");
       }
       if ($allowOtherAmmount) {
 
@@ -763,7 +761,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
         // FIXME: handle Introductory Message - New Memberships/Renewals
         foreach ($membershipTypes as $mType) {
-          $this->click("membership_type[{$mType['id']}]");
+          $this->click("membership_type_{$mType['id']}");
           if (array_key_exists('default', $mType)) {
             // FIXME:
           }
