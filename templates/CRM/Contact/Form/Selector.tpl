@@ -113,9 +113,13 @@
               {/if}
               <td>
                 {if $row.email}
-                    <span title="{$row.email}"
+                    <span title="{$row.email}">
                         {$row.email|mb_truncate:17:"...":true}
-                        {if $row.on_hold} (On Hold)<span class="status-hold" title="{ts}This email is on hold (probably due to bouncing).{/ts}"></span>{elseif $row.do_not_email}<span class="icon privacy-flag do-not-email" title="{ts}Do Not Email{/ts}"></span>{/if}
+                        {if $row.on_hold}
+                          (On Hold)<span class="status-hold" title="{ts}This email is on hold (probably due to bouncing).{/ts}"></span>
+                        {elseif $row.do_not_email}
+                          <span class="icon privacy-flag do-not-email" title="{ts}Do Not Email{/ts}"></span>
+                        {/if}
                     </span>
                 {/if}
               </td>
@@ -141,63 +145,57 @@
 </table>
 
 <script type="text/javascript">
- {* this function is called to change the color of selected row(s) *}
-    var fname = "{$form.formName}";
-    on_load_init_checkboxes(fname);
- {literal}
-
-function countSelections( ){
-  var Url =  "{/literal}{crmURL p='civicrm/ajax/markSelection' h=0}{literal}";
-  var key =  'civicrm search {/literal}{$qfKey}{literal}';
-  var arg =  "qfKey="+key+"&action=countSelection";
-  var count = 0;
-  cj.ajax({
-      "url":   Url,
-      "type": "POST",
-      "data":  arg,
-      "async"    : false,
-      "dataType": 'json',
-      "success": function(data){
-           count  =  data.getCount;
-      }
-    });
-
-   return count;
+  {literal}
+  cj(function($) {
+    cj("#toggleSelect, input[id^=mark_x_]").removeAttr('checked');
+    var cids = [];
+    var i = 0;
+    {/literal}
+    {foreach from=$selectedContactIds item=selectedContactId}
+      cids[i++] = "#mark_x_{$selectedContactId}";
+    {/foreach}
+    {literal}
+    $(cids.join(',')).attr('checked', 'checked');
+    var params = {getCount: cids.length};
+    countSelections(params);
+    on_load_init_checkboxes("{/literal}{$form.formName}{literal}");
+  });
+function countSelections(obj) {
+  var label = cj('label[for*=ts_sel]');
+  if (obj && typeof(obj.getCount) != 'undefined' && label.length > 0) {
+    if (cj('span', label).length < 1) {
+      label.prepend('<span>' + obj.getCount + '</span> ');
+    }
+    else {
+      cj('span', label).html(obj.getCount);
+    }
+    toggleTaskAction(obj.getCount);
+  }
+  on_load_init_checkboxes("{/literal}{$form.formName}{literal}");
 }
-
-function toggleContactSelection( name, qfKey, selection ){
-  var Url  = "{/literal}{crmURL p='civicrm/ajax/markSelection' h=0}{literal}";
-
-  if ( selection == 'multiple' ) {
+function toggleContactSelection(name, qfKey, selection) {
+  var url = cj.crmURL('civicrm/ajax/markSelection');
+  var params = {qfKey: qfKey};
+  if (!(cj('#' + name).is(':checked'))) {
+    params.action = 'unselect';
+    params.state = 'unchecked';
+  }
+  if (selection == 'multiple') {
      var rowArr = new Array( );
      {/literal}{foreach from=$rows item=row  key=keyVal}
      {literal}rowArr[{/literal}{$keyVal}{literal}] = '{/literal}{$row.checkbox}{literal}';
      {/literal}{/foreach}{literal}
-     var elements = rowArr.join('-');
-
-     if ( cj('#' + name).is(':checked') ){
-            cj.post( Url, { name: elements , qfKey: qfKey , variableType: 'multiple' } );
-     } else {
-         cj.post( Url, { name: elements , qfKey: qfKey , variableType: 'multiple' , action: 'unselect' } );
-     }
-  } else if ( selection == 'single' ) {
-     if ( cj('#' + name).is(':checked') ){
-          cj.post( Url, { name: name , qfKey: qfKey } );
-     } else {
-           cj.post( Url, { name: name , qfKey: qfKey , state: 'unchecked' } );
-     }
-  } else if ( name == 'resetSel' && selection == 'reset' ) {
-
-     cj.post( Url, {  qfKey: qfKey , variableType: 'multiple' , action: 'unselect' } );
-     {/literal}
-     {foreach from=$rows item=row}{literal}
-             cj("#{/literal}{$row.checkbox}{literal}").removeAttr('checked');{/literal}
-     {/foreach}
-     {literal}
-     cj("#toggleSelect").removeAttr('checked');
-     var formName = "{/literal}{$form.formName}{literal}";
-     on_load_init_checkboxes(formName);
+     params.name = rowArr.join('-');
+     params.variableType = 'multiple';
   }
+  else if (name == 'resetSel' && selection == 'reset') {
+    params.variableType = 'multiple';
+    cj("#toggleSelect, input[id^=mark_x_]").removeAttr('checked');
+  }
+  else {
+    params.name = name;
+  }
+  cj.getJSON(url, params, countSelections);
 }
 {/literal}
 </script>

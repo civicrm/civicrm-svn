@@ -274,11 +274,11 @@ class CRM_Contact_Page_AJAX {
   }
 
   static function relationship() {
-    $relType         = CRM_Utils_Array::value('rel_type', $_POST);
-    $relContactID    = CRM_Utils_Array::value('rel_contact', $_POST);
-    $sourceContactID = CRM_Utils_Array::value('contact_id', $_POST);
-    $relationshipID  = CRM_Utils_Array::value('rel_id', $_POST);
-    $caseID          = CRM_Utils_Array::value('case_id', $_POST);
+    $relType         = CRM_Utils_Array::value('rel_type', $_REQUEST);
+    $relContactID    = CRM_Utils_Array::value('rel_contact', $_REQUEST);
+    $sourceContactID = CRM_Utils_Array::value('contact_id', $_REQUEST);
+    $relationshipID  = CRM_Utils_Array::value('rel_id', $_REQUEST);
+    $caseID          = CRM_Utils_Array::value('case_id', $_REQUEST);
 
 
     $relationParams = array(
@@ -324,7 +324,7 @@ class CRM_Contact_Page_AJAX {
    * Function to fetch the custom field help
    */
   static function customField() {
-    $fieldId          = CRM_Utils_Type::escape($_POST['id'], 'Integer');
+    $fieldId          = CRM_Utils_Type::escape($_REQUEST['id'], 'Integer');
     $params           = array('id' => $fieldId);
     $returnProperties = array('help_pre', 'help_post');
     $values           = array();
@@ -565,12 +565,12 @@ WHERE sort_name LIKE '%$name%'";
    *
    */
   static function deleteCustomValue() {
-    $customValueID = CRM_Utils_Type::escape($_POST['valueID'], 'Positive');
-    $customGroupID = CRM_Utils_Type::escape($_POST['groupID'], 'Positive');
+    $customValueID = CRM_Utils_Type::escape($_REQUEST['valueID'], 'Positive');
+    $customGroupID = CRM_Utils_Type::escape($_REQUEST['groupID'], 'Positive');
 
     CRM_Core_BAO_CustomValue::deleteCustomValue($customValueID, $customGroupID);
-    if ($contactId = CRM_Utils_Array::value('contactId', $_POST)) {
-      echo CRM_Contact_BAO_Contact::getCountComponent('custom_' . $_POST['groupID'], $contactId);
+    if ($contactId = CRM_Utils_Array::value('contactId', $_REQUEST)) {
+      echo CRM_Contact_BAO_Contact::getCountComponent('custom_' . $_REQUEST['groupID'], $contactId);
     }
 
     // reset the group contact cache for this group
@@ -583,9 +583,9 @@ WHERE sort_name LIKE '%$name%'";
    *
    */
   static function enableDisable() {
-    $op        = CRM_Utils_Type::escape($_POST['op'], 'String');
-    $recordID  = CRM_Utils_Type::escape($_POST['recordID'], 'Positive');
-    $recordBAO = CRM_Utils_Type::escape($_POST['recordBAO'], 'String');
+    $op        = CRM_Utils_Type::escape($_REQUEST['op'], 'String');
+    $recordID  = CRM_Utils_Type::escape($_REQUEST['recordID'], 'Positive');
+    $recordBAO = CRM_Utils_Type::escape($_REQUEST['recordBAO'], 'String');
 
     $isActive = NULL;
     if ($op == 'disable-enable') {
@@ -629,7 +629,7 @@ WHERE sort_name LIKE '%$name%'";
     */
   static public function checkUserName() {
     $config = CRM_Core_Config::singleton();
-    $username = trim(htmlentities($_POST['cms_name']));
+    $username = trim(htmlentities($_REQUEST['cms_name']));
 
     $params = array('name' => $username);
 
@@ -653,8 +653,8 @@ WHERE sort_name LIKE '%$name%'";
    *  Function to get email address of a contact
    */
   static function getContactEmail() {
-    if (CRM_Utils_Array::value('contact_id', $_POST)) {
-      $contactID = CRM_Utils_Type::escape($_POST['contact_id'], 'Positive');
+    if (CRM_Utils_Array::value('contact_id', $_REQUEST)) {
+      $contactID = CRM_Utils_Type::escape($_REQUEST['contact_id'], 'Positive');
       list($displayName,
         $userEmail
       ) = CRM_Contact_BAO_Contact_Location::getEmailDetails($contactID);
@@ -817,7 +817,7 @@ LIMIT {$offset}, {$rowCount}
 
 
   static function buildSubTypes() {
-    $parent = CRM_Utils_Array::value('parentId', $_POST);
+    $parent = CRM_Utils_Array::value('parentId', $_REQUEST);
 
     switch ($parent) {
       case 1:
@@ -840,7 +840,7 @@ LIMIT {$offset}, {$rowCount}
   }
 
   static function buildDedupeRules() {
-    $parent = CRM_Utils_Array::value('parentId', $_POST);
+    $parent = CRM_Utils_Array::value('parentId', $_REQUEST);
 
     switch ($parent) {
       case 1:
@@ -883,10 +883,10 @@ LIMIT {$offset}, {$rowCount}
         break;
 
       case 'save_columns':
-        CRM_Core_BAO_Dashboard::saveDashletChanges($_POST['columns']);
+        CRM_Core_BAO_Dashboard::saveDashletChanges($_REQUEST['columns']);
         CRM_Utils_System::civiExit();
       case 'delete_dashlet':
-        $dashletID = CRM_Utils_Type::escape($_POST['dashlet_id'], 'Positive');
+        $dashletID = CRM_Utils_Type::escape($_REQUEST['dashlet_id'], 'Positive');
         CRM_Core_BAO_Dashboard::deleteDashlet($dashletID);
         CRM_Utils_System::civiExit();
     }
@@ -899,7 +899,7 @@ LIMIT {$offset}, {$rowCount}
    * Function to retrieve signature based on email id
    */
   static function getSignature() {
-    $emailID = CRM_Utils_Type::escape($_POST['emailID'], 'Positive');
+    $emailID = CRM_Utils_Type::escape($_REQUEST['emailID'], 'Positive');
     $query   = "SELECT signature_text, signature_html FROM civicrm_email WHERE id = {$emailID}";
     $dao     = CRM_Core_DAO::executeQuery($query);
 
@@ -1036,9 +1036,9 @@ LIMIT {$offset}, {$rowCount}
    *
    */
   static function processDupes() {
-    $oper = CRM_Utils_Type::escape($_POST['op'], 'String');
-    $cid  = CRM_Utils_Type::escape($_POST['cid'], 'Positive');
-    $oid  = CRM_Utils_Type::escape($_POST['oid'], 'Positive');
+    $oper = CRM_Utils_Type::escape($_REQUEST['op'], 'String');
+    $cid  = CRM_Utils_Type::escape($_REQUEST['cid'], 'Positive');
+    $oid  = CRM_Utils_Type::escape($_REQUEST['oid'], 'Positive');
 
     if (!$oper || !$cid || !$oid) {
 
@@ -1069,9 +1069,9 @@ LIMIT {$offset}, {$rowCount}
 
   static function getDedupes() {
 
-    $sEcho     = CRM_Utils_Type::escape($_POST['sEcho'], 'Integer');
-    $offset    = isset($_POST['iDisplayStart']) ? CRM_Utils_Type::escape($_POST['iDisplayStart'], 'Integer') : 0;
-    $rowCount  = isset($_POST['iDisplayLength']) ? CRM_Utils_Type::escape($_POST['iDisplayLength'], 'Integer') : 25;
+    $sEcho     = CRM_Utils_Type::escape($_REQUEST['sEcho'], 'Integer');
+    $offset    = isset($_REQUEST['iDisplayStart']) ? CRM_Utils_Type::escape($_REQUEST['iDisplayStart'], 'Integer') : 0;
+    $rowCount  = isset($_REQUEST['iDisplayLength']) ? CRM_Utils_Type::escape($_REQUEST['iDisplayLength'], 'Integer') : 25;
     $sort      = isset($_REQUEST['iSortCol_0']) ? $sortMapper[CRM_Utils_Type::escape($_REQUEST['iSortCol_0'], 'Integer')] : 'sort_name';
     $sortOrder = isset($_REQUEST['sSortDir_0']) ? CRM_Utils_Type::escape($_REQUEST['sSortDir_0'], 'String') : 'asc';
 
@@ -1122,7 +1122,7 @@ LIMIT {$offset}, {$rowCount}
    * Function to retrieve a PDF Page Format for the PDF Letter form
    */
   function pdfFormat() {
-    $formatId = CRM_Utils_Type::escape($_POST['formatId'], 'Integer');
+    $formatId = CRM_Utils_Type::escape($_REQUEST['formatId'], 'Integer');
 
     $pdfFormat = CRM_Core_BAO_PdfFormat::getById($formatId);
 
@@ -1134,7 +1134,7 @@ LIMIT {$offset}, {$rowCount}
    * Function to retrieve Paper Size dimensions
    */
   function paperSize() {
-    $paperSizeName = CRM_Utils_Type::escape($_POST['paperSizeName'], 'String');
+    $paperSizeName = CRM_Utils_Type::escape($_REQUEST['paperSizeName'], 'String');
 
     $paperSize = CRM_Core_BAO_PaperSize::getByName($paperSizeName);
 
@@ -1143,7 +1143,7 @@ LIMIT {$offset}, {$rowCount}
   }
 
   static function relationshipContactTypeList() {
-    $relType = CRM_Utils_Array::value('relType', $_POST);
+    $relType = CRM_Utils_Array::value('relType', $_REQUEST);
 
     $types = CRM_Contact_BAO_Relationship::getValidContactTypeList($relType);
 
@@ -1160,21 +1160,14 @@ LIMIT {$offset}, {$rowCount}
   }
 
   static function selectUnselectContacts() {
-    $name         = CRM_Utils_Array::value('name', $_POST);
-    $cacheKey     = CRM_Utils_Array::value('qfKey', $_POST);
-    $state        = CRM_Utils_Array::value('state', $_POST, 'checked');
-    $variableType = CRM_Utils_Array::value('variableType', $_POST, 'single');
+    $name         = CRM_Utils_Array::value('name', $_REQUEST);
+    $cacheKey     = CRM_Utils_Array::value('qfKey', $_REQUEST);
+    $state        = CRM_Utils_Array::value('state', $_REQUEST, 'checked');
+    $variableType = CRM_Utils_Array::value('variableType', $_REQUEST, 'single');
 
-    $actionToPerform = CRM_Utils_Array::value('action', $_POST, 'select');
-    if ($actionToPerform == 'countSelection') {
-      $contactIds = CRM_Core_BAO_PrevNextCache::getSelection($cacheKey);
-      $countSelectionCids = count($contactIds[$cacheKey]);
+    $actionToPerform = CRM_Utils_Array::value('action', $_REQUEST, 'select');
 
-      $arrRet = array('getCount' => $countSelectionCids);
-      echo json_encode($arrRet);
-      CRM_Utils_System::civiExit();
-    }
-    elseif ($variableType == 'multiple') {
+    if ($variableType == 'multiple') {
       // action post value only works with multiple type variable
       if ($name) {
         //multiple names like mark_x_1-mark_x_2 where 1,2 are cids
@@ -1193,6 +1186,12 @@ LIMIT {$offset}, {$rowCount}
       $action = ($state == 'checked') ? 'select' : 'unselect';
       CRM_Core_BAO_PrevNextCache::markSelection($cacheKey, $action, $cId);
     }
+    $contactIds = CRM_Core_BAO_PrevNextCache::getSelection($cacheKey);
+    $countSelectionCids = count($contactIds[$cacheKey]);
+
+    $arrRet = array('getCount' => $countSelectionCids);
+    echo json_encode($arrRet);
+    CRM_Utils_System::civiExit();
   }
 
   protected function _convertToId($name) {
@@ -1203,7 +1202,7 @@ LIMIT {$offset}, {$rowCount}
   }
 
   static function getAddressDisplay() {
-    $contactId = CRM_Utils_Array::value('contact_id', $_POST);
+    $contactId = CRM_Utils_Array::value('contact_id', $_REQUEST);
     if (!$contactId) {
       $addressVal["error_message"] = "no contact id found";
     } else {
