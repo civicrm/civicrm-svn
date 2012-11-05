@@ -61,7 +61,7 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
     $this->click("_qf_Contact_upload_view");
     $this->waitForPageToLoad("30000");
 
-    $this->assertTrue($this->isTextPresent("Your Individual contact record has been saved."));
+    $this->assertTrue($this->isTextPresent("$firstName $lastName has been created."));
 
     // click through to the membership view screen
     $this->click("css=li#tab_member a");
@@ -150,11 +150,10 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
     $this->select("membership_type_id[0]", "label={$lifeTimeMemTypeParams['member_org']}");
     // Wait for membership type select to reload
     $this->waitForTextPresent($lifeTimeMemTypeParams['membership_type']);
-    sleep(3);
     $this->select("membership_type_id[1]", "label={$lifeTimeMemTypeParams['membership_type']}");
 
     $this->waitForElementPresent("xpath=//form[@id='Membership']/div[2]/div[2]//table/tbody//tr[@class='crm-membership-form-block-end_date']/td[2]");
-    $this->click("xpath=//form[@id='Membership']/div[2]/div[2]//table/tbody//tr[@class='crm-membership-form-block-end_date']/td[2]/span/a[text()='Clear End Date  ']");
+    $this->click("xpath=//form[@id='Membership']/div[2]/div[2]//table/tbody//tr[@class='crm-membership-form-block-end_date']/td[2]/span/a[text()='clear']");
 
     $this->click("_qf_Membership_upload-bottom");
     $this->waitForPageToLoad("30000");
@@ -203,7 +202,7 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
     $this->click("_qf_Contact_upload_view");
     $this->waitForPageToLoad("30000");
 
-    $this->assertTrue($this->isTextPresent("Your Individual contact record has been saved."));
+    $this->assertTrue($this->isTextPresent("$firstName $lastName has been created."));
 
     // click through to the membership view screen
     $this->click("css=li#tab_member a");
