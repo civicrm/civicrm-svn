@@ -780,11 +780,11 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     if(sizeof($unitVals) == 1) {
       $this->assign('one_frequency_unit', true);
       $unit = $unitVals[0];
+      $form->add('hidden', 'frequency_unit', $unit);
       if (CRM_Utils_Array::value('is_recur_interval', $form->_values) || $className == 'CRM_Contribute_Form_Contribution') {
         $unit .= "(s)";
       }
       $this->assign('frequency_unit', $unit);
-      $form->add('hidden', 'frequency_unit', $unit);
     } else {
       $this->assign('one_frequency_unit', false);
       $units = array();

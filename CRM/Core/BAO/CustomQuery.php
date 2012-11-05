@@ -454,7 +454,7 @@ SELECT label, value
             continue;
 
           case 'Boolean':
-            if (strtolower($value) == 'yes' || strtolower($value) == strtolower(ts('Yes')) {
+            if (strtolower($value) == 'yes' || strtolower($value) == strtolower(ts('Yes'))) {
               $value = 1;
             }
             else {
