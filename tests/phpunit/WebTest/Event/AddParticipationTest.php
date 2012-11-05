@@ -173,8 +173,8 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
     $this->click('extends[0]');
     $this->select('extends[0]', 'value=ParticipantRole');
 
-    $this->click('extends[1]');
-    $this->select('extends[1]', 'value=2');
+    $this->click('extends[1][]');
+    $this->select('extends[1][]', 'value=2');
 
     $this->click("//option[@value='Contact']");
     $this->click('_qf_Group_next');
