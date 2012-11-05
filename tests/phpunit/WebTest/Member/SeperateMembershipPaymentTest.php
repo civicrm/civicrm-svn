@@ -50,7 +50,7 @@ class WebTest_Member_SeperateMembershipPaymentTest extends CiviSeleniumTestCase 
     $lastName1 = 'An_' . substr(sha1(rand()), 0, 7);
     $this->webtestAddContact($firstName1, $lastName1, TRUE);
     $this->waitForPageToLoad("30000");
-    $this->assertTrue($this->isTextPresent("Your Individual contact record has been saved."));
+    $this->assertTrue($this->isTextPresent("$firstName1 $lastName1 has been created."));
     $url = explode('&cid=', $this->getLocation());
     $cid = $url[1];
 
@@ -110,8 +110,8 @@ class WebTest_Member_SeperateMembershipPaymentTest extends CiviSeleniumTestCase 
     // edit contribution page memberships tab to add two new membership types
     $this->open($this->sboxPath . "civicrm/admin/contribute/membership?reset=1&action=update&id={$pageId}");
     $this->waitForElementPresent('_qf_MembershipBlock_next-bottom');
-    $this->click("membership_type[$memTypeId1]");
-    $this->click("membership_type[$memTypeId2]");
+    $this->click("membership_type_$memTypeId1");
+    $this->click("membership_type_$memTypeId2");
     $this->click('_qf_MembershipBlock_next');
     $this->waitForPageToLoad('30000');
     $this->waitForElementPresent('_qf_MembershipBlock_next-bottom');
@@ -173,7 +173,7 @@ class WebTest_Member_SeperateMembershipPaymentTest extends CiviSeleniumTestCase 
     $this->waitForElementPresent("_qf_Main_upload-bottom");
 
     // Select membership type 1
-    $this->click("xpath=//div[@class='crm-section membership_amount-section']/div[2]//span/label[contains(text(),'$memTypeId')]");
+    $this->click("xpath=//div[@class='crm-section membership_amount-section']/div[2]//span/label/span[2][contains(text(),'$memTypeId')]");
     $this->type("xpath=//div[@class='crm-section other_amount-section']//div[2]/input", 60);
     $this->click("_qf_Main_upload-bottom");
     $this->waitForPageToLoad('30000');
