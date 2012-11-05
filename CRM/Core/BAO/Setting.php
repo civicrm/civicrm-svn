@@ -561,10 +561,11 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
     }
 
   }
-/*
- * move an item from being in the config array to being stored as a setting
- * remove from config - as appropriate based on metadata
- */
+
+  /*
+   * move an item from being in the config array to being stored as a setting
+   * remove from config - as appropriate based on metadata
+   */
   static function convertConfigToSetting($name, $domainID = null){
     $config = CRM_Core_Config::singleton();
     if(empty($domainID)){
