@@ -184,8 +184,10 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Logging_ReportSummary {
 
       $row['log_civicrm_entity_log_type'] = $this->getLogType($row['log_civicrm_entity_log_type']);
 
+      $date = CRM_Utils_Date::isoToMysql($row['log_civicrm_entity_log_date']);
+
       if ($row['log_civicrm_entity_log_action'] == 'Update') {
-        $q = "reset=1&log_conn_id={$row['log_civicrm_entity_log_conn_id']}&log_date={$row['log_civicrm_entity_log_date']}";
+        $q = "reset=1&log_conn_id={$row['log_civicrm_entity_log_conn_id']}&log_date=". $date;
         if ($this->cid) {
           $q .= '&cid=' . $this->cid;
         }
@@ -195,7 +197,6 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Logging_ReportSummary {
         $row['log_civicrm_entity_log_action'] = "<a href='{$url1}' class='crm-summary-link'><div class='icon details-icon'></div></a>&nbsp;<a title='View details for this update' href='{$url2}'>" . ts('Update') . '</a>';
       }
 
-      $date = CRM_Utils_Date::isoToMysql($row['log_civicrm_entity_log_date']);
       $key  = $date . '_' . $row['log_civicrm_entity_log_type'] . '_' . $row['log_civicrm_entity_log_conn_id'] . '_' . $row['log_civicrm_entity_log_user_id'];
       $newRows[$key] = $row;
 
