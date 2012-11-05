@@ -692,7 +692,16 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
 
         //if the field is searchable proper grouping needs to be done
         if ($customGroupId) {
-          if (CRM_Utils_Array::value($field, $this->_params)) {
+          $isSubmitted = FALSE;
+          foreach ($this->_query->_params as $key => $value) {
+            //check the query params 'where' element
+            if ($value[0] == $field) {
+              $isSubmitted = TRUE;
+              break;
+            }
+          }
+
+          if ($isSubmitted) {
             $this->_multiRecordTableName = $multiRecordTableName =
               CRM_Core_DAO::getFieldValue('CRM_Core_DAO_CustomGroup', $customGroupId, 'table_name');
 
@@ -711,7 +720,7 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
         }
       }
     }
- 
+
     if (!isset($customGroupId) || !$customGroupId) {
       return;
     }
@@ -721,7 +730,7 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
     if ($selectorSet) {
       $this->_multiRecordTableName = $multiRecordTableName =
         CRM_Core_DAO::getFieldValue('CRM_Core_DAO_CustomGroup', $customGroupId, 'table_name');
-
+      
       if ($this->_multiRecordTableName) {
         if ($clauseElements = CRM_Utils_Array::value($multiRecordTableName, $this->_query->_tables)) {
           // the group by clause
