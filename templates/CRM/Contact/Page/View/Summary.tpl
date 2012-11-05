@@ -51,7 +51,7 @@
 
         {* Include the Actions and Edit buttons if user has 'edit' permission and contact is NOT in trash. *}
           {if $permission EQ 'edit' and !$isDeleted}
-              <li class="crm-contact-activity">
+              <li class="crm-contact-activity crm-summary-block">
                   {include file="CRM/Contact/Page/Inline/Actions.tpl"}
               </li>
               <li>
@@ -322,6 +322,16 @@
    <script type="text/javascript">
     {literal}
     cj(function($) {
+      // Set page title
+      var oldName = $('#crm-remove-title').text() || 'CiviCRM';
+      $('#crm-remove-title').remove();
+      function refreshTitle() {
+        var contactName = $('.crm-summary-display_name').text().trim();
+        $('title').html($('title').html().replace(oldName, contactName));
+        oldName = contactName;
+      }
+      $('#contactname-block').load(refreshTitle);
+      refreshTitle();
       //explicitly stop spinner
       function stopSpinner( ) {
         $('li.crm-tab-button span').text(' ');
