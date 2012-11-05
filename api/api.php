@@ -372,7 +372,11 @@ function _civicrm_api_get_camel_name($entity, $version = NULL) {
 function _civicrm_api_call_nested_api(&$params, &$result, $action, $entity, $version) {
   $entity = _civicrm_api_get_entity_name_from_camel($entity);
   if(strtolower($action) == 'getsingle'){
-    $result['values'][0] = $result;
+    // I don't understand the protocol here, but we don't want
+    // $result to be a recursive array
+    // $result['values'][0] = $result;
+    $oldResult = $result;
+    $result = array('values' => array(0 => $oldResult));
   }
   foreach ($params as $field => $newparams) {
     if ((is_array($newparams) || $newparams === 1) && $field <> 'api.has_parent' && substr($field, 0, 3) == 'api') {
