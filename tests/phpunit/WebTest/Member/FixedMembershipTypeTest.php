@@ -55,7 +55,7 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
     $this->click('_qf_Contact_upload_view');
     $this->waitForPageToLoad("30000");
 
-    $this->assertTrue($this->isTextPresent("Your Organization contact record has been saved."));
+    $this->assertTrue($this->isTextPresent("Organization $title has been created."));
 
     // Go directly to the URL
     $this->open($this->sboxPath . "civicrm/admin/member/membershipType?reset=1&action=browse");
@@ -109,8 +109,7 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
     // Clicking save.
     $this->click('_qf_Contact_upload_view');
     $this->waitForPageToLoad("30000");
-
-    $this->assertTrue($this->isTextPresent('Your Individual contact record has been saved.'));
+    $this->assertTrue($this->isTextPresent("$firstName $lastName has been created."));
 
     // click through to the membership view screen
     $this->click('css=li#tab_member a');
@@ -223,7 +222,7 @@ SELECT end_event_adjust_interval
     $this->click('_qf_Contact_upload_view');
     $this->waitForPageToLoad("30000");
 
-    $this->assertTrue($this->isTextPresent("Your Organization contact record has been saved."));
+    $this->assertTrue($this->isTextPresent("Organization $title has been created."));
 
     // Go directly to the URL
     $this->open($this->sboxPath . "civicrm/admin/member/membershipType?reset=1&action=browse");
@@ -277,7 +276,7 @@ SELECT end_event_adjust_interval
     $this->click('_qf_Contact_upload_view');
     $this->waitForPageToLoad("30000");
 
-    $this->assertTrue($this->isTextPresent('Your Individual contact record has been saved.'));
+    $this->assertTrue($this->isTextPresent("$firstName $lastName has been created."));
 
     // click through to the membership add screen
     $this->click('css=li#tab_member a');
@@ -391,7 +390,7 @@ SELECT end_event_adjust_interval
     $this->click('_qf_Contact_upload_view');
     $this->waitForPageToLoad("30000");
 
-    $this->assertTrue($this->isTextPresent("Your Organization contact record has been saved."));
+    $this->assertTrue($this->isTextPresent("Organization $title has been created."));
 
     // Go directly to the URL
     $this->open($this->sboxPath . "civicrm/admin/member/membershipType?reset=1&action=browse");
@@ -444,7 +443,7 @@ SELECT end_event_adjust_interval
     $this->click('_qf_Contact_upload_view');
     $this->waitForPageToLoad("30000");
 
-    $this->assertTrue($this->isTextPresent('Your Individual contact record has been saved.'));
+    $this->assertTrue($this->isTextPresent("$firstName $lastName has been created."));
 
     // click through to the membership view screen
     $this->click('css=li#tab_member a');
@@ -553,7 +552,7 @@ SELECT end_event_adjust_interval
     $this->click('_qf_Contact_upload_view');
     $this->waitForPageToLoad("30000");
 
-    $this->assertTrue($this->isTextPresent("Your Organization contact record has been saved."));
+    $this->assertTrue($this->isTextPresent("Organization $title has been created."));
 
     // Go directly to the URL
     $this->open($this->sboxPath . "civicrm/admin/member/membershipType?reset=1&action=browse");
@@ -607,7 +606,7 @@ SELECT end_event_adjust_interval
     $this->click('_qf_Contact_upload_view');
     $this->waitForPageToLoad("30000");
 
-    $this->assertTrue($this->isTextPresent('Your Individual contact record has been saved.'));
+    $this->assertTrue($this->isTextPresent("$firstName $lastName has been created."));
 
     // click through to the membership view screen
     $this->click('css=li#tab_member a');
