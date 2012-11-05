@@ -202,6 +202,7 @@ class CRM_Contact_BAO_DupeContactTest extends CiviUnitTestCase {
       'last_name' => 'hood',
       'email' => 'hood@example.com',
     );
+    $errorScope = CRM_Core_TemporaryErrorScope::useException();
     $dedupeParams = CRM_Dedupe_Finder::formatParams($fields, 'Individual');
     $ids = CRM_Dedupe_Finder::dupesByParams($dedupeParams, 'Individual', 'Fuzzy');
 
