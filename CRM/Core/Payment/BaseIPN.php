@@ -221,16 +221,16 @@ class CRM_Core_Payment_BaseIPN {
     }
 
     if (!empty($memberships)) {
-    foreach ($memberships as $membership) {
-      if ($membership) {
-        $membership->status_id = 6;
-        $membership->save();
-
-        //update related Memberships.
-        $params = array('status_id' => 6);
-        CRM_Member_BAO_Membership::updateRelatedMemberships($membership->id, $params);
+      foreach ($memberships as $membership) {
+        if ($membership) {
+          $membership->status_id = 6;
+          $membership->save();
+          
+          //update related Memberships.
+          $params = array('status_id' => 6);
+          CRM_Member_BAO_Membership::updateRelatedMemberships($membership->id, $params);
+        }
       }
-    }
     }
 
     if ($participant) {
