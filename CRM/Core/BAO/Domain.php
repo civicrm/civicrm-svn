@@ -85,21 +85,33 @@ class CRM_Core_BAO_Domain extends CRM_Core_DAO_Domain {
     }
     return $domain;
   }
-/*
- * Change Domain (ie. to perform a temporary action) such as changing config for all domains
- *
- * @param integer $domainID id for domain you want to set as current
- */
+
+ /**
+  * Change active domain (ie. to perform a temporary action) such as changing
+  * config for all domains
+  *
+  * Switching around the global domain variable is very risky business. This
+  * is ONLY used as a hack to allow CRM_Core_BAO_Setting::setItems to manipulate
+  * the civicrm_domain.config_backend in multiple domains. When/if config_backend
+  * goes away, this hack should be removed.
+  *
+  * @param integer $domainID id for domain you want to set as current
+  * @deprecated
+  * @see http://issues.civicrm.org/jira/browse/CRM-11204
+  */
   static function setDomain($domainID){
     CRM_Core_Config::domainID($domainID);
     self::getDomain($domainID);
   }
 
-  /*
-   * Reset domain to default (ie. as loaded from settings)
-  *
-  * @param integer $domainID id for domain you want to set as current
-  */
+  /**
+   * Reset domain to default (ie. as loaded from settings). This is the
+   * counterpart to CRM_Core_BAO_Domain::setDomain.
+   *
+   * @param integer $domainID id for domain you want to set as current
+   * @deprecated
+   * @see CRM_Core_BAO_Domain::setDomain
+   */
   static function resetDomain(){
     CRM_Core_Config::domainID(null, true);
     self::getDomain(null, true);
