@@ -58,7 +58,8 @@ require_once 'api/v2/utils.php';
  * @access public
  */
 function civicrm_event_create(&$params) {
-  _civicrm_initialize(TRUE);
+  _civicrm_initialize();
+  $errorScope = CRM_Core_TemporaryErrorScope::useException();
   try {
     civicrm_api_check_permission(__FUNCTION__, $params, TRUE);
     civicrm_verify_mandatory($params, 'CRM_Event_DAO_Event', array('start_date', 'event_type_id', 'title'));

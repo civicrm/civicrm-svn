@@ -137,10 +137,9 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
     if (CRM_Utils_Array::value('membership', $ids)) {
       if ($membership->status_id != $oldStatus) {
         $allStatus     = CRM_Member_PseudoConstant::membershipStatus();
-        $session       = CRM_Core_Session::singleton();
         $activityParam = array(
           'subject' => "Status changed from {$allStatus[$oldStatus]} to {$allStatus[$membership->status_id]}",
-          'source_contact_id' => $session->get('userID'),
+          'source_contact_id' => $membershipLog['modified_id'],
           'target_contact_id' => $membership->contact_id,
           'source_record_id' => $membership->id,
           'activity_type_id' => array_search('Change Membership Status', $activityTypes),
@@ -155,11 +154,10 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
         $activityResult = civicrm_api('activity', 'create', $activityParam);
       }
       if (isset($membership->membership_type_id) && $membership->membership_type_id != $oldType) {
-        $session = CRM_Core_Session::singleton();
         $membershipTypes = CRM_Member_PseudoConstant::membershipType();
         $activityParam = array(
           'subject' => "Type changed from {$membershipTypes[$oldType]} to {$membershipTypes[$membership->membership_type_id]}",
-          'source_contact_id' => $session->get('userID'),
+          'source_contact_id' => $membershipLog['modified_id'],
           'target_contact_id' => $membership->contact_id,
           'source_record_id' => $membership->id,
           'activity_type_id' => array_search('Change Membership Type', $activityTypes),

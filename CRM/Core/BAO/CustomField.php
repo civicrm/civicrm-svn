@@ -1650,7 +1650,7 @@ SELECT id
       $fName = $value['name'];
       $mimeType = $value['type'];
 
-      $filename = pathinfo($fName, PATHINFO_FILENAME);
+      $filename = pathinfo($fName, PATHINFO_BASENAME);
 
       // rename this file to go into the secure directory
       if (!rename($fName, $config->customFileUploadDir . $filename)) {

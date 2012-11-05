@@ -1,4 +1,5 @@
-{*
+<?php
+/*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
@@ -22,43 +23,26 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*}
-<div class="crm-block crm-form-block crm-search-form-block">
-<table class="form-layout">
-    <tr>
-        <td>{$form.mailing_name.label}<br />
-            {$form.mailing_name.html|crmAddClass:big} {help id="id-mailing_name"}
-        </td>
-    </tr>
-    <tr>
-        <td>
-	    <label>{if $sms eq 1}{ts}SMS Date{/ts}{else}{ts}Mailing Date{/ts}{/if}{/ts}</label>
-  </td>
-    </tr>
-    <tr>
-  {include file="CRM/Core/DateRange.tpl" fieldName="mailing" from='_from' to='_to'}
-    </tr>
-    <tr>
-        <td colspan="1">{$form.sort_name.label}<br />
-            {$form.sort_name.html|crmAddClass:big} {help id="id-create_sort_name"}
-        </td>
-        <td width="100%"><label>{if $sms eq 1}{ts}SMS Status{/ts}{else}{ts}Mailing Status{/ts}{/if}</label><br />
-        <div class="listing-box" style="width: auto; height: 60px">
-            {foreach from=$form.mailing_status item="mailing_status_val"}
-            <div class="{cycle values="odd-row,even-row"}">
-                {$mailing_status_val.html}
-            </div>
-            {/foreach}
-        </div><br />
-        </td>
-    </tr>
+*/
+class CRM_Upgrade_Page_Cleanup  extends CRM_Core_Page {
+  public function cleanup425() {
+    $rows     = CRM_Upgrade_Incremental_php_FourTwo::deleteInvalidPairs();
+    $template = CRM_Core_Smarty::singleton();
 
-    {* campaign in mailing search *}
-    {include file="CRM/Campaign/Form/addCampaignToComponent.tpl"
-    campaignContext="componentSearch" campaignTrClass='' campaignTdClass=''}
+    $columnHeaders = array("Contact ID", "ContributionID", "Contribution Status", "MembershipID", 
+                           "Membership Type", "Start Date", "End Date", "Membership Status", "Action");
+    $template->assign('columnHeaders', $columnHeaders);
+    $template->assign('rows', $rows);
 
-    <tr>
-        <td>{$form.buttons.html}</td><td colspan="2"></td>
-    </tr>
-</table>
-</div>
+    $preMessage = !empty($rows) ? ts('The following records have been processed. Membership records with action = Un-linked have been disconnected from the listed contribution record:') : ts('Could not find any records to process.');
+    $template->assign('preMessage', $preMessage);
+
+    $postMessage =  ts('You can <a href="%1">click here</a> to try running the 4.2 upgrade script again. <a href="%2" target="_blank">(Review upgrade documentation)</a>',
+                    array(1 => CRM_Utils_System::url('civicrm/upgrade', 'reset=1'),
+                          2 => 'http://wiki.civicrm.org/confluence/display/CRMDOC/Installation+and+Upgrades'));
+    $template->assign('postMessage', $postMessage);
+
+    $content = $template->fetch('CRM/common/upgradeCleanup.tpl');
+    echo CRM_Utils_System::theme('page', $content, TRUE, FALSE, FALSE, TRUE);
+  }
+}

@@ -1077,11 +1077,11 @@ class api_v3_ContactTest extends CiviUnitTestCase {
   /**
    *  Test civicrm_contact_quicksearch() with empty name param
    */
-  public function testContactQuickSearchEmpty() {
+  public function testContactGetQuickEmpty() {
     $params = array(
       'version' => $this->_apiversion,
     );
-    $result = civicrm_api('contact', 'quicksearch', $params);
+    $result = civicrm_api('contact', 'getquick', $params);
     $this->assertTrue(is_array($result), 'in line ' . __LINE__);
     $this->assertEquals(1, $result['is_error'], 'in line ' . __LINE__);
   }
@@ -1089,7 +1089,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
   /**
    *  Test civicrm_contact_quicksearch() with empty name param
    */
-  public function testContactQuickSearch() {
+  public function testContactGetQuick() {
     //  Insert a row in civicrm_contact creating individual contact
     $op = new PHPUnit_Extensions_Database_Operation_Insert();
     $op->execute($this->_dbconn,

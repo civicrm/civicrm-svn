@@ -1,4 +1,5 @@
-{*
+<?php
+/*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
@@ -22,43 +23,51 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*}
-<div class="crm-block crm-form-block crm-search-form-block">
-<table class="form-layout">
-    <tr>
-        <td>{$form.mailing_name.label}<br />
-            {$form.mailing_name.html|crmAddClass:big} {help id="id-mailing_name"}
-        </td>
-    </tr>
-    <tr>
-        <td>
-	    <label>{if $sms eq 1}{ts}SMS Date{/ts}{else}{ts}Mailing Date{/ts}{/if}{/ts}</label>
-  </td>
-    </tr>
-    <tr>
-  {include file="CRM/Core/DateRange.tpl" fieldName="mailing" from='_from' to='_to'}
-    </tr>
-    <tr>
-        <td colspan="1">{$form.sort_name.label}<br />
-            {$form.sort_name.html|crmAddClass:big} {help id="id-create_sort_name"}
-        </td>
-        <td width="100%"><label>{if $sms eq 1}{ts}SMS Status{/ts}{else}{ts}Mailing Status{/ts}{/if}</label><br />
-        <div class="listing-box" style="width: auto; height: 60px">
-            {foreach from=$form.mailing_status item="mailing_status_val"}
-            <div class="{cycle values="odd-row,even-row"}">
-                {$mailing_status_val.html}
-            </div>
-            {/foreach}
-        </div><br />
-        </td>
-    </tr>
+*/
 
-    {* campaign in mailing search *}
-    {include file="CRM/Campaign/Form/addCampaignToComponent.tpl"
-    campaignContext="componentSearch" campaignTrClass='' campaignTdClass=''}
+/**
+ * Define the reload action. Reload the page but do not do any validation.
+ * This help with actions where we might want hooks to process some data
+ * but not validate all the fields. Was incorporated to improve the discount
+ * module integration.
+ *
+ * @package CRM
+ * @copyright CiviCRM LLC (c) 2004-2012
+ * $Id$
+ *
+ */
+class CRM_Core_QuickForm_Action_Reload extends CRM_Core_QuickForm_Action {
 
-    <tr>
-        <td>{$form.buttons.html}</td><td colspan="2"></td>
-    </tr>
-</table>
-</div>
+  /**
+   * class constructor
+   *
+   * @param object $stateMachine reference to state machine object
+   *
+   * @return object
+   * @access public
+   */
+  function __construct(&$stateMachine) {
+    parent::__construct($stateMachine);
+  }
+
+  /**
+   * Processes the request.
+   *
+   * @param  object    $page       CRM_Core_Form the current form-page
+   * @param  string    $actionName Current action name, as one Action object can serve multiple actions
+   *
+   * @return void
+   * @access public
+   */
+  function perform(&$page, $actionName) {
+    // save the form values and validation status to the session
+    $page->isFormBuilt() or $page->buildForm();
+
+    $pageName = $page->getAttribute('name');
+    $data = &$page->controller->container();
+    $data['values'][$pageName] = $page->exportValues();
+
+    return $page->handle('display');
+  }
+}
+

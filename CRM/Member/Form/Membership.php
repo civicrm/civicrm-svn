@@ -532,7 +532,8 @@ class CRM_Member_Form_Membership extends CRM_Member_Form {
         // membership type is selected.
         $allMembershipInfo[$key] = array(
           'contribution_type_id' => CRM_Utils_Array::value('contribution_type_id', $values),
-          'total_amount'         => CRM_Utils_Array::value('minimum_fee', $values)
+          'total_amount'         => CRM_Utils_Money::format($values['minimum_fee'], NULL, '%a'),
+          'auto_renew'           => CRM_Utils_Array::value('auto_renew', $values)
         );
       }
     }
@@ -1582,6 +1583,12 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
         $statusMsg .= ts('A membership confirmation and receipt has been sent to %1.', array(1 => $this->_contributorEmail));
       }
     }
+
+    // finally set membership id if already not set
+    if (!$this->_id) {
+      $this->_id = $membership->id;
+    }
+
     CRM_Core_Session::setStatus($statusMsg, ts('Complete'), 'success');
 
     $buttonName = $this->controller->getButtonName();

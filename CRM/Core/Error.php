@@ -257,8 +257,16 @@ class CRM_Core_Error extends PEAR_ErrorStack {
    * @acess public
    */
   static function fatal($message = NULL, $code = NULL, $email = NULL) {
+    $vars = array(
+      'message' => $message,
+      'code' => $code,
+    );
     
     if (self::$modeException) {
+      // CRM-11043
+      CRM_Core_Error::debug_var('Fatal Error Details', $vars);
+      CRM_Core_Error::backtrace('backTrace', TRUE);
+
       $details = 'A fatal error was triggered';
       if ($message) {
         $details .= ': ' . $message;
@@ -274,11 +282,9 @@ class CRM_Core_Error extends PEAR_ErrorStack {
       print ("Sorry. A non-recoverable error has occurred.\n$message \n$code\n$email\n\n");
       debug_print_backtrace();
       die("\n");
+      // FIXME: Why doesn't this call abend()? Difference: abend() will cleanup transaction and (via civiExit) store session state
+      // self::abend(CRM_Core_Error::FATAL_ERROR);
     }
-    $vars = array(
-      'message' => $message,
-      'code' => $code,
-    );
 
     $config = CRM_Core_Config::singleton();
 
@@ -648,15 +654,6 @@ class CRM_Core_Error extends PEAR_ErrorStack {
     $error = self::singleton();
     $error->_errors = array();
     $error->_errorsByLevel = array();
-  }
-
-  /* used for the API, rise the exception instead of catching/fatal it */
-
-
-  public static function setRaiseException() {
-    self::$modeException = 1;
-    $GLOBALS['_PEAR_default_error_mode'] = PEAR_ERROR_CALLBACK;
-    $GLOBALS['_PEAR_default_error_options'] = array('CRM_Core_Error', 'exceptionHandler');
   }
 
   public static function ignoreException($callback = NULL) {

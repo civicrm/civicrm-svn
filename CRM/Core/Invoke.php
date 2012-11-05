@@ -52,7 +52,6 @@ class CRM_Core_Invoke {
     }
 
     require_once 'CRM/Core/I18n.php';
-
     $config = CRM_Core_Config::singleton();
 
     if ((isset($args[1]) and $args[1] == 'menu' and
@@ -173,13 +172,8 @@ class CRM_Core_Invoke {
       // CRM_Core_Error::debug( $item ); exit( );
       $result = NULL;
       if (is_array($item['page_callback'])) {
-        $newArgs = explode('/',
-          $_GET[$config->userFrameworkURLVar]
-        );
-        require_once (str_replace('_',
-            DIRECTORY_SEPARATOR,
-            $item['page_callback'][0]
-          ) . '.php');
+        $newArgs = explode('/', $_GET[$config->userFrameworkURLVar]);
+        require_once (str_replace('_', DIRECTORY_SEPARATOR, $item['page_callback'][0]) . '.php');
         $result = call_user_func($item['page_callback'],
           $newArgs
         );
@@ -192,13 +186,8 @@ class CRM_Core_Invoke {
         );
       }
       else {
-        $newArgs = explode('/',
-          $_GET[$config->userFrameworkURLVar]
-        );
-        require_once (str_replace('_',
-            DIRECTORY_SEPARATOR,
-            $item['page_callback']
-          ) . '.php');
+        $newArgs = explode('/', $_GET[$config->userFrameworkURLVar]);
+        require_once (str_replace('_', DIRECTORY_SEPARATOR, $item['page_callback']) . '.php');
         $mode = 'null';
         if (isset($pageArgs['mode'])) {
           $mode = $pageArgs['mode'];

@@ -56,7 +56,8 @@ require_once 'api/v2/utils.php';
  * @todo Erik Hommel 15/12/2010 : check if function is ok for update
  */
 function civicrm_tag_create(&$params) {
-  _civicrm_initialize(TRUE);
+  _civicrm_initialize();
+  $errorScope = CRM_Core_TemporaryErrorScope::useException();
   try {
 
     civicrm_verify_mandatory($params, 'CRM_Core_DAO_Tag', array('name'));
@@ -103,7 +104,8 @@ function civicrm_tag_create(&$params) {
  * @access public
  */
 function civicrm_tag_delete(&$params) {
-  _civicrm_initialize(TRUE);
+  _civicrm_initialize();
+  $errorScope = CRM_Core_TemporaryErrorScope::useException();
   try {
     civicrm_verify_mandatory($params, NULL, array('tag_id'));
     $tagID = CRM_Utils_Array::value('tag_id', $params);

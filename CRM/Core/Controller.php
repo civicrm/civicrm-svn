@@ -327,6 +327,7 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
       'process' => 'CRM_Core_QuickForm_Action_Process',
       'cancel' => 'CRM_Core_QuickForm_Action_Cancel',
       'refresh' => 'CRM_Core_QuickForm_Action_Refresh',
+      'reload' => 'CRM_Core_QuickForm_Action_Reload',
       'done' => 'CRM_Core_QuickForm_Action_Done',
       'jump' => 'CRM_Core_QuickForm_Action_Jump',
       'submit' => 'CRM_Core_QuickForm_Action_Submit',

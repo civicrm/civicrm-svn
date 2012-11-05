@@ -525,12 +525,16 @@ function _civicrm_api3_greeting_format_params($params) {
  *
  * @access public
  *
- * {@example ContactQuicksearch.php 0}
+ * {@example ContactGetquick.php 0}
  *
  */
 function civicrm_api3_contact_quicksearch($params) {
-  civicrm_api3_verify_mandatory($params, NULL, array('name'));
+  // kept as an alias for compatibility reasons.  CRM-11136
+  return civicrm_api3_contact_getquick($params);
+}
 
+function civicrm_api3_contact_getquick($params) {
+  civicrm_api3_verify_mandatory($params, NULL, array('name'));
   $name = CRM_Utils_Array::value('name', $params);
 
   // get the autocomplete options from settings

@@ -1,4 +1,5 @@
-{*
+<?php
+/*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
@@ -22,43 +23,47 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*}
-<div class="crm-block crm-form-block crm-search-form-block">
-<table class="form-layout">
-    <tr>
-        <td>{$form.mailing_name.label}<br />
-            {$form.mailing_name.html|crmAddClass:big} {help id="id-mailing_name"}
-        </td>
-    </tr>
-    <tr>
-        <td>
-	    <label>{if $sms eq 1}{ts}SMS Date{/ts}{else}{ts}Mailing Date{/ts}{/if}{/ts}</label>
-  </td>
-    </tr>
-    <tr>
-  {include file="CRM/Core/DateRange.tpl" fieldName="mailing" from='_from' to='_to'}
-    </tr>
-    <tr>
-        <td colspan="1">{$form.sort_name.label}<br />
-            {$form.sort_name.html|crmAddClass:big} {help id="id-create_sort_name"}
-        </td>
-        <td width="100%"><label>{if $sms eq 1}{ts}SMS Status{/ts}{else}{ts}Mailing Status{/ts}{/if}</label><br />
-        <div class="listing-box" style="width: auto; height: 60px">
-            {foreach from=$form.mailing_status item="mailing_status_val"}
-            <div class="{cycle values="odd-row,even-row"}">
-                {$mailing_status_val.html}
-            </div>
-            {/foreach}
-        </div><br />
-        </td>
-    </tr>
+*/
 
-    {* campaign in mailing search *}
-    {include file="CRM/Campaign/Form/addCampaignToComponent.tpl"
-    campaignContext="componentSearch" campaignTrClass='' campaignTdClass=''}
+/**
+ * A PHP script which deletes extraneous civicrm_membership_payment rows
+ * in order to correct the condition where a contribution row is linked to > 1 membership.
+  */
 
-    <tr>
-        <td>{$form.buttons.html}</td><td colspan="2"></td>
-    </tr>
-</table>
-</div>
+function initialize() {
+  session_start();
+  if (!function_exists('drush_get_context')) {
+    require_once '../civicrm.config.php';
+  }
+
+  // hack to make code think its an upgrade mode, and not do lot of initialization which breaks the code due to new 4.2 schema
+  $_GET['q'] = 'civicrm/upgrade/cleanup42';
+
+  require_once 'CRM/Core/Config.php';
+  $config = CRM_Core_Config::singleton();
+  if (php_sapi_name() != "cli") {
+    // this does not return on failure
+    CRM_Utils_System::authenticateScript(TRUE);
+  }
+}
+
+function run() {
+  initialize();
+
+  $fh   = fopen('php://output', 'w');
+  $rows = CRM_Upgrade_Incremental_php_FourTwo::deleteInvalidPairs();
+
+  if ( !empty($rows)) {
+    echo "The following records have been processed. If action = Un-linked, that membership has been disconnected from the contribution record.\n";
+    echo "Contact ID, ContributionID, Contribution Status, MembershipID, Membership Type, Start Date, End Date, Membership Status, Action \n";
+  }
+  else {
+    echo "Could not find any records to process.\n";
+  }
+
+  foreach ( $rows as $row ) {
+    fputcsv($fh, $row);
+  }
+}
+
+run();

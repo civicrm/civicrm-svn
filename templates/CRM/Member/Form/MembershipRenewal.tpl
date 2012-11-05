@@ -222,6 +222,7 @@
        </tr>
      </table>
      {/if}
+
      <div id="customData"></div>
      {*include custom data js file*}
      {include file="CRM/common/customData.tpl"}
@@ -240,6 +241,7 @@
         invert              = 0
     }
 {/if}
+
 {if $email and $outBound_option != 2}
     {include file="CRM/common/showHideByFieldValue.tpl"
         trigger_field_id    ="send_receipt"
@@ -258,6 +260,7 @@
         invert              = 0
     }
 {/if}
+
 {if !$membershipMode}
     {include file="CRM/common/showHideByFieldValue.tpl"
         trigger_field_id    ="payment_instrument_id"
@@ -278,7 +281,7 @@
 {/if}
 {literal}
 <script type="text/javascript">
-cj(document).ready(function() {
+cj(function() {
   cj('#membershipOrgType').hide();
   cj('#changeNumTerms').hide();
   {/literal}
@@ -288,36 +291,39 @@ cj(document).ready(function() {
     {/if}
   {literal}
 });
-function checkPayment()
-{
+
+function checkPayment() {
     showHideByValue('record_contribution','','recordContribution','table-row','radio',false);
     {/literal}{if $email and $outBound_option != 2}{literal}
     var record_contribution = document.getElementsByName('record_contribution');
     if ( record_contribution[0].checked ) {
         document.getElementsByName('send_receipt')[0].checked = true;
         show('fromEmail', 'table-row');
-    } else {
+  }
+  else {
         document.getElementsByName('send_receipt')[0].checked = false;
     }
     showHideByValue('send_receipt','','notice','table-row','radio',false);
     {/literal}{/if}{literal}
 }
-function adjustMembershipOrgType( )
-{
+
+function adjustMembershipOrgType( ) {
   cj('#membershipOrgType').show();
   cj('#changeMembershipOrgType').hide();
 }
-function changeNumTerms( )
-{
+
+function changeNumTerms( ) {
   cj('#changeNumTerms').show();
   cj('#defaultNumTerms').hide();
 }
+
 cj( function( ) {
     cj('#record_contribution').click( function( ) {
         if ( cj(this).attr('checked') ) {
             cj('#recordContribution').show( );
             setPaymentBlock( );
-        } else {
+    }
+    else {
             cj('#recordContribution').hide( );
         }
     });
@@ -325,7 +331,9 @@ cj( function( ) {
     cj('#membership_type_id_1').change( function( ) {
         setPaymentBlock( );
     });
+  setPaymentBlock( );
 });
+
 function setPaymentBlock( ) {
     var memType = cj('#membership_type_id_1').val( );
 
@@ -333,16 +341,23 @@ function setPaymentBlock( ) {
         return;
     }
 
-    var dataUrl = {/literal}"{crmURL p='civicrm/ajax/memType' h=0}"{literal};
+  var allMemberships = {/literal}{$allMembershipInfo}{literal};
+  var mode   = {/literal}'{$membershipMode}'{literal};
+  if ( !mode ) {
+    // skip this for test and live modes because contribution type is set automatically
+    cj("#contribution_type_id").val( allMemberships[memType]['contribution_type_id'] );
+  }
 
-    cj.post( dataUrl, {mtype: memType}, function( data ) {
-        cj("#contribution_type_id").val( data.contribution_type_id );
-  var terms = cj("#num_terms").val();
-          var renewTotal = data.total_amount_numeric * cj("#num_terms").val();
-
+  var term = cj("#num_terms").val();
+  if ( term ) {
+    var renewTotal = allMemberships[memType]['total_amount_numeric'] * term;
         cj("#total_amount").val( renewTotal.toFixed(2) );
-    }, 'json');
 }
+  else {
+    cj("#total_amount").val( allMemberships[memType]['total_amount'] );
+  }
+}
+
     // show/hide different contact section
     setDifferentContactBlock();
     cj('#contribution_contact').change( function() {

@@ -509,14 +509,9 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
     CRM_Mailing_BAO_Mailing::tokenReplace($mailing);
 
     // get and format attachments
-    $attachments = &CRM_Core_BAO_File::getEntityFile('civicrm_mailing',
-      $mailing->id
-    );
+    $attachments = &CRM_Core_BAO_File::getEntityFile('civicrm_mailing', $mailing->id);
 
-
-    if (defined('CIVICRM_MAIL_SMARTY') &&
-      CIVICRM_MAIL_SMARTY
-    ) {
+    if (defined('CIVICRM_MAIL_SMARTY') && CIVICRM_MAIL_SMARTY) {
       CRM_Core_Smarty::registerStringResource();
     }
 
@@ -582,16 +577,21 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
       $params[] = $field['contact_id'];
     }
 
-    $details = CRM_Utils_Token::getTokenDetails($params,
+    $details = CRM_Utils_Token::getTokenDetails(
+      $params,
       $returnProperties,
       TRUE, TRUE, NULL,
       $mailing->getFlattenedTokens(),
-      get_class($this)
+      get_class($this),
+      $this->id
     );
 
     $config = CRM_Core_Config::singleton();
     foreach ($fields as $key => $field) {
       $contactID = $field['contact_id'];
+      if (!array_key_exists($contactID, $details[0])) {
+        $details[0][$contactID] = array();
+      }
       /* Compose the mailing */
 
       $recipient = $replyToEmail = NULL;

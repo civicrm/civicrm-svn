@@ -23,42 +23,31 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-block crm-form-block crm-search-form-block">
-<table class="form-layout">
-    <tr>
-        <td>{$form.mailing_name.label}<br />
-            {$form.mailing_name.html|crmAddClass:big} {help id="id-mailing_name"}
-        </td>
-    </tr>
-    <tr>
-        <td>
-	    <label>{if $sms eq 1}{ts}SMS Date{/ts}{else}{ts}Mailing Date{/ts}{/if}{/ts}</label>
-  </td>
-    </tr>
-    <tr>
-  {include file="CRM/Core/DateRange.tpl" fieldName="mailing" from='_from' to='_to'}
-    </tr>
-    <tr>
-        <td colspan="1">{$form.sort_name.label}<br />
-            {$form.sort_name.html|crmAddClass:big} {help id="id-create_sort_name"}
-        </td>
-        <td width="100%"><label>{if $sms eq 1}{ts}SMS Status{/ts}{else}{ts}Mailing Status{/ts}{/if}</label><br />
-        <div class="listing-box" style="width: auto; height: 60px">
-            {foreach from=$form.mailing_status item="mailing_status_val"}
-            <div class="{cycle values="odd-row,even-row"}">
-                {$mailing_status_val.html}
-            </div>
+{* upgradeCleanup.tpl: Display page for special cleanup scripts related to Upgrade.*}
+
+<div style="margin-top: 3em; padding: 1em; background-color: #0C0; border: 1px #070 solid; color: white; font-weight: bold">
+  {if $preMessage}
+    <p>{$preMessage}</p>
+  {/if}
+  {if $rows}
+  <div class="upgrade-success">
+    <table>
+      <tr>
+        {foreach from=$columnHeaders item=header}
+          <th>{$header}</th>
+        {/foreach}
+      </tr>
+      {foreach from=$rows item=row}
+        <tr>
+            {foreach from=$row item=cell}
+              <td>{$cell}</td>
             {/foreach}
-        </div><br />
-        </td>
-    </tr>
-
-    {* campaign in mailing search *}
-    {include file="CRM/Campaign/Form/addCampaignToComponent.tpl"
-    campaignContext="componentSearch" campaignTrClass='' campaignTdClass=''}
-
-    <tr>
-        <td>{$form.buttons.html}</td><td colspan="2"></td>
-    </tr>
-</table>
+        </tr>
+      {/foreach}
+    </table>
+  </div>
+  {/if}
+  {if $postMessage}
+    <p>{$postMessage}</p>
+  {/if}
 </div>

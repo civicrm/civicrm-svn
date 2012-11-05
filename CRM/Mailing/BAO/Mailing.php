@@ -249,8 +249,7 @@ WHERE  c.group_id = {$groupDAO->id}
                     ORDER BY $email.is_bulkmail";
 
     if ($mode == 'sms') {
-      $phoneTypes = CRM_Core_PseudoConstant::phoneType();
-      $phoneTypes = array_flip($phoneTypes);
+      $phoneTypes = CRM_Core_OptionGroup::values('phone_type', TRUE, FALSE, FALSE, NULL, 'name');
       $query      = "REPLACE INTO       I_$job_id (phone_id, contact_id)
 
                     SELECT DISTINCT     $phone.id as phone_id,
@@ -2071,7 +2070,7 @@ AND civicrm_contact.is_opt_out =0";
 SELECT    $selectClause
   FROM    civicrm_mailing m
 LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
- WHERE ( ( g.entity_table = 'civicrm_group' AND g.entity_id IN ( $groupIDs ) )
+ WHERE ( ( g.entity_table like 'civicrm_group%' AND g.entity_id IN ( $groupIDs ) )
     OR   ( g.entity_table IS NULL AND g.entity_id IS NULL ) )
    $condition";
       $dao = CRM_Core_DAO::executeQuery($query, CRM_Core_DAO::$_nullArray);
