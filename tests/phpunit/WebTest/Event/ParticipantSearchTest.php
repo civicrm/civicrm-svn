@@ -62,8 +62,8 @@ class WebTest_Event_ParticipantSearchTest extends CiviSeleniumTestCase {
       'Event Dates',
       'Participant Status',
       'Participant Role',
-      'Find Test Participants',
-      'Find Pay Later Participants',
+      'Participant is a Test?',
+      'Participant is Pay Later?',
       'Fee Level',
       'Fee Amount',
       // check that the custom data is also there
@@ -145,6 +145,7 @@ class WebTest_Event_ParticipantSearchTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . "civicrm/event/search?reset=1");
     $this->waitForPageToLoad("30000");
 
+    $this->select('event_relative', "label=Choose Date Range");
     $this->webtestFillDate('event_start_date_low', '-2 year');
     $this->webtestFillDate('event_end_date_high', '+1 year');
 
@@ -171,6 +172,7 @@ class WebTest_Event_ParticipantSearchTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . "civicrm/event/search?reset=1");
     $this->waitForPageToLoad("30000");
 
+    $this->select('event_relative', "label=Choose Date Range");
     $this->webtestFillDate('event_start_date_low', '-2 year');
     $this->webtestFillDate('event_end_date_high', '+1 year');
 
@@ -203,7 +205,7 @@ class WebTest_Event_ParticipantSearchTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . "civicrm/event/search?reset=1");
     $this->waitForPageToLoad("30000");
 
-    $this->click("CIVICRM_QFID_chicken_4");
+    $this->click("xpath=//div[@id='Food_Preference']/div[2]/table/tbody/tr/td[2]//label[contains(text(),'Chicken Combo')]");
 
     $this->click("_qf_Search_refresh");
     $this->waitForPageToLoad("30000");
@@ -215,10 +217,10 @@ class WebTest_Event_ParticipantSearchTest extends CiviSeleniumTestCase {
 
     $this->_checkStrings($stringsToCheck);
 
-    $this->click("CIVICRM_QFID_salmon_6");
-
+    $this->click("xpath=//div[@id='Food_Preference']/div[2]/table/tbody/tr/td[2]//label[contains(text(),'Salmon Stew')]");
     $this->click("_qf_Search_refresh");
     $this->waitForPageToLoad("30000");
+
     $stringsToCheck = array("Soup Selection = Salmon Stew");
 
     $this->_checkStrings($stringsToCheck);
