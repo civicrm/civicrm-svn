@@ -774,8 +774,8 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
       );
     }
 
-    $unitVals       = explode(CRM_Core_DAO::VALUE_SEPARATOR, $frUnits); 
-    
+    $unitVals       = explode(CRM_Core_DAO::VALUE_SEPARATOR, $frUnits);
+
     // CRM 10860, display text instead of a dropdown if there's only 1 frequency unit
     if(sizeof($unitVals) == 1) {
       $this->assign('one_frequency_unit', true);
@@ -1229,7 +1229,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         $check = array();
         $otherAmount = FALSE;
         while ($priceField->fetch()) {
-          CRM_Price_BAO_FieldValue::getValues($priceField->id,&$values);
+          CRM_Price_BAO_FieldValue::getValues($priceField->id, $values);
           if ($priceField->name == "membership_amount") {
             if ($priceFiledID = CRM_Utils_Array::value("price_{$priceField->id}", $params)) {
              $this->_params['selectMembership'] = $params['selectMembership'] = CRM_Utils_Array::value('membership_type_id', $values[$priceFiledID]);
