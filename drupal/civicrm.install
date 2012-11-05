@@ -69,9 +69,7 @@ function civicrm_requirements($phase) {
     );
   }
 
-  if (!empty($problems)) {
-    return $problems;
-  }
+  return $problems;
 }
 
 /**
