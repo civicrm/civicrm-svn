@@ -71,7 +71,7 @@ function civicrm_requirements($phase) {
   ) {
     $problems[] = array(
       'title' => t('CiviCRM settings does not exist'),
-      'description' =>
+      'value' =>
       t('CiviCRM settings file does not exist. It should be created by CiviCRM <a href="!link">install</a>',
         array('!link' => $url)
       ),
