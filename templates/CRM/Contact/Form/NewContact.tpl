@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* template for adding form elements for selecting existing or creating new contact*}
-{if $context ne 'search'}
+{if !in_array($context, array('search','advanced', 'builder')) }
   {assign var='fldName' value=$prefix|cat:'contact'}
   {assign var='profSelect' value=$prefix|cat:'profiles'}
   {if $noLabel}
@@ -51,7 +51,6 @@
     </td>
   </tr>
   {/if}
-{/if}
 
 {literal}
 <script type="text/javascript">
@@ -155,3 +154,4 @@
   }
 </script>
 {/literal}
+{/if}{* end of search if *}
