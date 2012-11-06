@@ -666,7 +666,7 @@ class CRM_GCD {
       $contact->id = $this->individual[($id - 1)];
 
       // also update the sort name for the contact id.
-      $contact->display_name = trim($this->prefix[$contact->prefix_id] . " $contact->first_name $contact->middle_name $contact->last_name " . $this->suffix[$contact->suffix_id]);
+      $contact->display_name = trim($this->prefix[$contact->prefix_id] . " $contact->first_name $contact->last_name " . $this->suffix[$contact->suffix_id]);
       $contact->sort_name = $contact->last_name . ', ' . $contact->first_name;
       $contact->addressee_id = $contact->postal_greeting_id = $contact->email_greeting_id = 1;
       $contact->postal_greeting_display = $contact->email_greeting_display = 'Dear ' . $contact->first_name;
