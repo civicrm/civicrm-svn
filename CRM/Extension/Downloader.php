@@ -144,6 +144,7 @@ class CRM_Extension_Downloader {
     curl_setopt($ch, CURLOPT_URL, $remoteFile);
     curl_setopt($ch, CURLOPT_HEADER, false);
     curl_setopt($ch, CURLOPT_VERBOSE, 1);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, CRM_Core_BAO_Setting::getItem('Civicrm Preferences', 'verifySSL', null, True));
     if (preg_match('/^https:/', $remoteFile)) {
       curl_setopt_array($ch, CA_Config_Curl::singleton()->toCurlOptions());
     }
