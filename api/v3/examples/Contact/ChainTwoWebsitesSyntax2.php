@@ -54,15 +54,15 @@ function contact_create_expectedresult(){
   'id' => 1,
   'values' => array( 
       '1' => array( 
-          'id' => 1,
+          'id' => '1',
           'contact_type' => 'Individual',
-          'contact_sub_type' => 'null',
-          'do_not_email' => '',
-          'do_not_phone' => '',
-          'do_not_mail' => '',
-          'do_not_sms' => '',
-          'do_not_trade' => '',
-          'is_opt_out' => '',
+          'contact_sub_type' => '',
+          'do_not_email' => 0,
+          'do_not_phone' => 0,
+          'do_not_mail' => 0,
+          'do_not_sms' => 0,
+          'do_not_trade' => 0,
+          'is_opt_out' => 0,
           'legal_identifier' => '',
           'external_identifier' => '',
           'sort_name' => 'xyz3, abc3',
@@ -72,7 +72,7 @@ function contact_create_expectedresult(){
           'image_URL' => '',
           'preferred_communication_method' => '',
           'preferred_language' => 'en_US',
-          'preferred_mail_format' => '',
+          'preferred_mail_format' => 'Both',
           'api_key' => '',
           'first_name' => 'abc3',
           'middle_name' => '',
@@ -91,13 +91,15 @@ function contact_create_expectedresult(){
           'job_title' => '',
           'gender_id' => '',
           'birth_date' => '',
-          'is_deceased' => '',
+          'is_deceased' => 0,
           'deceased_date' => '',
           'household_name' => '',
           'primary_contact_id' => '',
           'organization_name' => '',
           'sic_code' => '',
           'user_unique_id' => '',
+          'created_date' => '',
+          'modified_date' => '2012-11-05 16:01:45',
           'api.contribution.create' => array( 
               'is_error' => 0,
               'version' => 3,
@@ -106,7 +108,7 @@ function contact_create_expectedresult(){
               'values' => array( 
                   '0' => array( 
                       'id' => 1,
-                      'contact_id' => 1,
+                      'contact_id' => '1',
                       'contribution_type_id' => 1,
                       'contribution_page_id' => '',
                       'payment_instrument_id' => 1,
@@ -145,7 +147,7 @@ function contact_create_expectedresult(){
                   'values' => array( 
                       '0' => array( 
                           'id' => 1,
-                          'contact_id' => 1,
+                          'contact_id' => '1',
                           'url' => 'http://civicrm.org',
                           'website_type_id' => '',
                         ),
@@ -159,7 +161,7 @@ function contact_create_expectedresult(){
                   'values' => array( 
                       '0' => array( 
                           'id' => 2,
-                          'contact_id' => 1,
+                          'contact_id' => '1',
                           'url' => 'http://chained.org',
                           'website_type_id' => 2,
                         ),

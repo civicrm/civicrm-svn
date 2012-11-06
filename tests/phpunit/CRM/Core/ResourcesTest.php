@@ -103,6 +103,16 @@ class CRM_Core_ResourcesTest extends CiviUnitTestCase {
     $this->assertEquals($expected, $actual);
   }
 
+  function testAddSetting() {
+    $this->res
+      ->addSetting(array('fruit' => array('mine' => 'apple')))
+      ->addSetting(array('fruit' => array('yours' => 'orange')))
+    ;
+    $actual = $this->res->renderSetting();
+    $expected = 'CRM = cj.extend(true, ' . json_encode(array('fruit' => array('yours' => 'orange', 'mine' => 'apple'))) . ', CRM);';
+    $this->assertEquals($expected, $actual);
+  }
+
   function testCrmJS() {
     $smarty = CRM_Core_Smarty::singleton();
 

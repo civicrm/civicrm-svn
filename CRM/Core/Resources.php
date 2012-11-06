@@ -166,7 +166,7 @@ class CRM_Core_Resources {
       $resources = $this;
       CRM_Core_Region::instance('settings')->add(array(
         'callback' => function(&$snippet, &$html) use ($resources) {
-          $html .= "\n" . $resources->renderSettings();
+          $html .= "\n" . $resources->renderSetting();
         }
       ));
       $this->addedSettings = TRUE;
@@ -174,7 +174,7 @@ class CRM_Core_Resources {
     return $this;
   }
   
-  public function renderSettings() {
+  public function renderSetting() {
     return 'CRM = cj.extend(true, ' . json_encode($this->settings) . ', CRM);';
   }
 
