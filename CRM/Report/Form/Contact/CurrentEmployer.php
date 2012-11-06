@@ -77,6 +77,10 @@ class CRM_Report_Form_Contact_CurrentEmployer extends CRM_Report_Form {
           array('title' => ts('Employee Name'),
             'required' => TRUE,
           ),
+		  'first_name' => array('title' => ts('First Name'),
+          ),
+		  'last_name' => array('title' => ts('Last Name'),
+          ),
           'job_title' =>
           array('title' => ts('Job Title'),
             'default' => TRUE,

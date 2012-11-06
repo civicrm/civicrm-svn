@@ -59,6 +59,10 @@ class CRM_Report_Form_Contribute_TopDonor extends CRM_Report_Form {
             'required' => TRUE,
             'no_repeat' => TRUE,
           ),
+		  'first_name' => array('title' => ts('First Name'),
+          ),
+		  'last_name' => array('title' => ts('Last Name'),
+          ),
         ),
       ),
       'civicrm_contribution' =>
@@ -102,6 +106,33 @@ class CRM_Report_Form_Contribute_TopDonor extends CRM_Report_Form {
             'default' => array(1),
           ),
         ),
+      ),
+	'civicrm_email' =>
+      array(
+        'dao' => 'CRM_Core_DAO_Email',
+        'fields' =>
+        array(
+          'email' =>
+          array('title' => ts('Email'),
+            'default' => TRUE,
+            'no_repeat' => TRUE,
+          ),
+        ),
+        'grouping' => 'email-fields',
+      ),
+	  
+      'civicrm_phone' =>
+      array(
+        'dao' => 'CRM_Core_DAO_Phone',
+        'fields' =>
+        array(
+          'phone' =>
+          array('title' => ts('Phone'),
+            'default' => TRUE,
+            'no_repeat' => TRUE,
+          ),
+        ),
+        'grouping' => 'phone-fields',
       ),
       'civicrm_group' =>
       array(
@@ -203,9 +234,15 @@ class CRM_Report_Form_Contribute_TopDonor extends CRM_Report_Form {
   function from() {
     $this->_from = "
         FROM civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom}
-        	 INNER JOIN civicrm_contribution {$this->_aliases['civicrm_contribution']} 
+	       	 INNER JOIN civicrm_contribution {$this->_aliases['civicrm_contribution']} 
 		             ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_contribution']}.contact_id AND {$this->_aliases['civicrm_contribution']}.is_test = 0
-        ";
+             LEFT  JOIN civicrm_email  {$this->_aliases['civicrm_email']} 
+                         ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_email']}.contact_id  
+                         AND {$this->_aliases['civicrm_email']}.is_primary = 1
+             LEFT  JOIN civicrm_phone  {$this->_aliases['civicrm_phone']} 
+                         ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_phone']}.contact_id AND
+                            {$this->_aliases['civicrm_phone']}.is_primary = 1 
+	";
   }
 
   function where() {

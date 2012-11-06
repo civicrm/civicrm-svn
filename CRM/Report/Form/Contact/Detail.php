@@ -55,6 +55,10 @@ class CRM_Report_Form_Contact_Detail extends CRM_Report_Form {
             'required' => TRUE,
             'no_repeat' => TRUE,
           ),
+		  'first_name' => array('title' => ts('First Name'),
+          ),
+		  'last_name' => array('title' => ts('Last Name'),
+          ),
           'id' =>
           array(
             'no_display' => TRUE,

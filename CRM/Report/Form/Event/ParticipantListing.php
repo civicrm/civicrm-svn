@@ -53,6 +53,10 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form_Event {
             'no_repeat' => TRUE,
             'dbAlias' => 'contact_civireport.sort_name',
           ),
+		  'first_name' => array('title' => ts('First Name'),
+          ),
+		  'last_name' => array('title' => ts('Last Name'),
+          ),
           'id' =>
           array(
             'no_display' => TRUE,
@@ -167,6 +171,19 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form_Event {
           array('title' => ts('Event'), 'default_weight' => '1', 'default_order' => 'ASC'),
         ),
       ),
+      'civicrm_phone' =>
+      array(
+        'dao' => 'CRM_Core_DAO_Phone',
+        'fields' =>
+        array(
+          'phone' =>
+          array('title' => ts('Phone'),
+            'default' => TRUE,
+            'no_repeat' => TRUE,
+          ),
+        ),
+        'grouping' => 'contact-fields',
+      ),
       'civicrm_event' =>
       array(
         'dao' => 'CRM_Event_DAO_Event',
@@ -269,7 +286,11 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form_Event {
                        {$this->_aliases['civicrm_address']}.is_primary = 1 
              LEFT JOIN  civicrm_email {$this->_aliases['civicrm_email']} 
                     ON ({$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_email']}.contact_id AND
-                       {$this->_aliases['civicrm_email']}.is_primary = 1) ";
+                       {$this->_aliases['civicrm_email']}.is_primary = 1) 
+             LEFT  JOIN civicrm_phone  {$this->_aliases['civicrm_phone']} 
+                     ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_phone']}.contact_id AND
+                         {$this->_aliases['civicrm_phone']}.is_primary = 1 		   
+			";
   }
 
   function where() {
