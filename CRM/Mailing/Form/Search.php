@@ -40,9 +40,9 @@ class CRM_Mailing_Form_Search extends CRM_Core_Form {
 
   public function buildQuickForm() {
     $parent = $this->controller->getParent();
-    $nameTextLabel = ($parent->_sms) ? 'SMS Name' : 'Mailing Name';
+    $nameTextLabel = ($parent->_sms) ? ts('SMS Name') : ts('Mailing Name');
 
-    $this->add('text', 'mailing_name', ts($nameTextLabel),
+    $this->add('text', 'mailing_name', $nameTextLabel,
       CRM_Core_DAO::getAttribute('CRM_Mailing_DAO_Mailing', 'title')
     );
 
