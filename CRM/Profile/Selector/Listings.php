@@ -193,7 +193,7 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
  
     //the below is done for query building for multirecord custom field listing
     //to show all the custom field multi valued records of a particular contact
-    $this->fixQueryForMultiRecord($this->_fields);
+    $this->setMultiRecordTableName($this->_fields);
 
     $this->_options = &$this->_query->_options;
   }
@@ -377,9 +377,27 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
    */
   function getTotalCount($action) {
     $additionalWhereClause = 'contact_a.is_deleted = 0';
-    return $this->_query->searchQuery(0, 0, NULL, TRUE, NULL, NULL, NULL,
-      NULL, $additionalWhereClause
+    $additionalFromClause = NULL;
+    $returnQuery = NULL;
+
+    if ($this->_multiRecordTableName &&
+        !array_key_exists($this->_multiRecordTableName, $this->_query->_whereTables)) {
+      $additionalFromClause = CRM_Utils_Array::value($this->_multiRecordTableName, $this->_query->_tables);
+      $returnQuery = TRUE;  
+    }
+    
+    $countVal = $this->_query->searchQuery(0, 0, NULL, TRUE, NULL, NULL, NULL,
+      $returnQuery, $additionalWhereClause, NULL, $additionalFromClause
     );
+    
+    if (!$returnQuery) {
+      return $countVal;
+    }
+    
+    if ($returnQuery) {
+      $sql = preg_replace('/DISTINCT/', '', $countVal);
+      return CRM_Core_DAO::singleValueQuery($sql);
+    }
   }
 
   /**
@@ -437,9 +455,20 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
     $sort->_vars = $varArray;
 
     $additionalWhereClause = 'contact_a.is_deleted = 0';
+    $returnQuery = NULL;    
+    if ($this->_multiRecordTableName) {
+      $returnQuery = TRUE;
+    }
+    
     $result = $this->_query->searchQuery($offset, $rowCount, $sort, NULL, NULL,
-      NULL, NULL, NULL, $additionalWhereClause
+      NULL, NULL, $returnQuery, $additionalWhereClause
     );
+    
+    if ($returnQuery) {
+      $resQuery = preg_replace('/GROUP BY contact_a.id[\s]+ORDER BY/', ' ORDER BY', $result);
+      $result   = CRM_Core_DAO::executeQuery($resQuery);
+    }
+    
     // process the result of the query
     $rows = array();
 
@@ -677,12 +706,13 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
   }
 
   /**
-   *  fix the query for multi record listing 
+   *  set the _multiRecordTableName to display the result set 
+   *  according to multi record custom field values
    */
-  function fixQueryForMultiRecord($fields) {
-    $multiRecordTableName = $groupByClause = NULL;
-    $selectorSet = FALSE;
-    $customGroupId = NULL;
+  function setMultiRecordTableName($fields) {
+   $customGroupId = $multiRecordTableName = NULL;
+   $selectorSet = FALSE;
+
     foreach ($fields as $field => $properties) {
       if (!CRM_Core_BAO_CustomField::getKeyID($field)) {
         continue;
@@ -690,7 +720,7 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
       if ($cgId = CRM_Core_BAO_CustomField::isMultiRecordField($field)) {
         $customGroupId = CRM_Utils_System::isNull($customGroupId) ? $cgId : $customGroupId;
 
-        //if the field is searchable proper grouping needs to be done
+        //if the field is submitted set multiRecordTableName
         if ($customGroupId) {
           $isSubmitted = FALSE;
           foreach ($this->_query->_params as $key => $value) {
@@ -704,12 +734,7 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
           if ($isSubmitted) {
             $this->_multiRecordTableName = $multiRecordTableName =
               CRM_Core_DAO::getFieldValue('CRM_Core_DAO_CustomGroup', $customGroupId, 'table_name');
-
             if ($multiRecordTableName) {
-              // the group by clause
-              $groupByClause = "{$multiRecordTableName}.id";
-              $this->_query->_distinctComponentClause = "{$groupByClause}";
-              $this->_query->_groupByComponentClause  = "GROUP BY {$groupByClause}";
               return;
             }
           }
@@ -726,26 +751,10 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
     }
     
     //if the field is in selector and not a searchable field
-    //append the proper customvalue clause to get proper row count and grouped result
+    //get the proper customvalue table name
     if ($selectorSet) {
       $this->_multiRecordTableName = $multiRecordTableName =
         CRM_Core_DAO::getFieldValue('CRM_Core_DAO_CustomGroup', $customGroupId, 'table_name');
-      
-      if ($this->_multiRecordTableName) {
-        if ($clauseElements = CRM_Utils_Array::value($multiRecordTableName, $this->_query->_tables)) {
-          // the group by clause
-          $groupByClause = "{$multiRecordTableName}.id";
-          $this->_query->_distinctComponentClause = "{$groupByClause}";
-          $this->_query->_groupByComponentClause  = "GROUP BY {$groupByClause}";
-          
-          if (!preg_match('/' . $clauseElements .'/', $this->_query->_simpleFromClause)) {
-            $this->_query->_simpleFromClause .= $clauseElements;
-          }
-          if (!array_key_exists($multiRecordTableName, $this->_query->_whereTables)) {
-            $this->_query->_whereTables[$multiRecordTableName] = $clauseElements;
-          }
-        }
-      }
     }
   } //func close
 }
