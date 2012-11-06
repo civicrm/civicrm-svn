@@ -175,9 +175,7 @@ class CRM_Core_Menu {
     }
 
     $args = explode('/', $path);
-    while (!self::isArrayTrue($fieldsPresent) &&
-      !empty($args)
-    ) {
+    while (!self::isArrayTrue($fieldsPresent) && !empty($args)) {
 
       array_pop($args);
       $parentPath = implode('/', $args);
@@ -564,21 +562,21 @@ class CRM_Core_Menu {
     }
 
     $query = "
-( 
-  SELECT * 
-  FROM     civicrm_menu 
+(
+  SELECT *
+  FROM     civicrm_menu
   WHERE    path in ( $queryString )
            $domainWhereClause
   ORDER BY length(path) DESC
-  LIMIT    1 
+  LIMIT    1
 )
 ";
 
     if ($path != 'navigation') {
       $query .= "
-UNION ( 
+UNION (
   SELECT *
-  FROM   civicrm_menu 
+  FROM   civicrm_menu
   WHERE  path IN ( 'navigation' )
          $domainWhereClause
 )

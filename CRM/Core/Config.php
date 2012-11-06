@@ -178,7 +178,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
       // lets ensure we set E_DEPRECATED to minimize errors
       // CRM-6327
       if (defined('E_DEPRECATED')) {
-        error_reporting(error_reporting() & ~E_DEPRECATED & ~E_STRICT);
+        error_reporting(error_reporting() & ~E_DEPRECATED);
       }
 
       // first, attempt to get configuration object from cache
