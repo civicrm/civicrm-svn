@@ -116,6 +116,35 @@ class api_v3_ContactTest extends CiviUnitTestCase {
   }
 
   /**
+   *  Test civicrm_contact_create with sub-types
+   *
+   *  Verify that sub-types are created successfully and not deleted by subsequent updates
+   */
+  function testIndividualSubType() {
+    $params = array(
+      'first_name' => 'test abc',
+      'contact_type' => 'Individual',
+      'last_name' => 'test xyz',
+      'contact_sub_type' => array('Student', 'Staff'),
+      'version' => $this->_apiversion,
+    );
+    $contact = civicrm_api('contact', 'create', $params);
+    $cid = $contact['id'];
+    
+    $params = array(
+      'id' => $cid,
+      'middle_name' => 'foo',
+      'version' => $this->_apiversion,
+    );
+    civicrm_api('contact', 'create', $params);
+    unset($params['middle_name']);
+    
+    $contact = civicrm_api('contact', 'get', $params);
+    
+    $this->assertEquals(array('Student', 'Staff'), $contact['values'][$cid]['contact_sub_type'], "In line " . __LINE__);
+  }
+
+  /**
    *  Verify that attempt to create contact with empty params fails
    */
   function testCreateEmptyContact() {

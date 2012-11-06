@@ -119,11 +119,9 @@ function civicrm_api3_contact_create($params) {
     $params['contact_type'] = CRM_Contact_BAO_Contact::getContactType($entityId);
   }
 
-  if (!($csType = CRM_Utils_Array::value('contact_sub_type', $params)) &&
-    $entityId
-  ) {
+  if (!isset($params['contact_sub_type']) && $entityId) {
     require_once 'CRM/Contact/BAO/Contact.php';
-    $csType = CRM_Contact_BAO_Contact::getContactSubType($entityId);
+    $params['contact_sub_type'] = CRM_Contact_BAO_Contact::getContactSubType($entityId);
   }
 
   _civicrm_api3_custom_format_params($params, $values, $params['contact_type'], $entityId);
