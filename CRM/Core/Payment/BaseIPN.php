@@ -195,7 +195,7 @@ class CRM_Core_Payment_BaseIPN {
     return TRUE;
   }
 
-  function cancelled(&$objects, &$transaction) {
+  function cancelled(&$objects, &$transaction, $input = array()) {
     $contribution = &$objects['contribution'];
     $memberships = &$objects['membership'];
     if (is_numeric($memberships)) {
@@ -618,7 +618,7 @@ LIMIT 1;";
     $contributionStatuses = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
 
     if ($statusId == array_search('Cancelled', $contributionStatuses)) {
-      $baseIPN->cancelled($objects, $transaction);
+      $baseIPN->cancelled($objects, $transaction, $input);
       $transaction->commit();
       return $statusId;
     }
