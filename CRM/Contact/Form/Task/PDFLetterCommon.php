@@ -338,7 +338,7 @@ class CRM_Contact_Form_Task_PDFLetterCommon {
       'activity_date_time' => date('YmdHis'),
       'details' => $html_message,
     );
-    if ($form->_activityId) {
+    if (!empty($form->_activityId)) {
       $activityParams += array('id' => $form->_activityId);
     }
     if ($form->_cid) {
