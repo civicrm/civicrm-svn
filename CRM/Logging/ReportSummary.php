@@ -158,18 +158,34 @@ CREATE TEMPORARY TABLE
       CRM_Utils_Array::value("log_date_to_time",   $this->_params));
     $logDateClause = $logDateClause ? "AND {$logDateClause}" : null;
 
-    list($offset, $rowCount) = $this->limit();
     $this->_limit = NULL;
+    if (!CRM_Utils_Array::value('altered_contact_id_value', $this->_params)) { 
+      // do not apply limit when its running from change-log TAB
+      list($offset, $rowCount) = $this->limit();
+      $this->_limit = "LIMIT {$rowCount}";
+    }
 
+    $sqlParams = array();
     foreach ( $this->_logTables as $entity => $detail ) {
       $tableName = CRM_Utils_Array::value('table_name', $detail, $entity);
-      $clause = CRM_Utils_Array::value('entity_table', $detail);
-      $clause = $clause ? "entity_table = 'civicrm_contact' AND" : null;
+      $clause = array("log_action != 'Initialization'");
+      if (CRM_Utils_Array::value('entity_table', $detail)) {
+        $clause[] = "entity_table = 'civicrm_contact'";
+      }
+      if (CRM_Utils_Array::value('altered_contact_id_value', $this->_params)) { 
+        $clause[]  = "`{$this->loggingDB}`.{$tableName}.{$detail['fk']}= %1";
+        $sqlParams = array(1 => array($this->_params['altered_contact_id_value'], 'Integer'));
+      }
+      if ($logDateClause) {
+        $clause[]  = $logDateClause;
+      }
+      $clause = implode(' AND ', $clause);
+
       $sql    = "
  INSERT IGNORE INTO civicrm_temp_civireport_logsummary ( contact_id )
  SELECT DISTINCT {$detail['fk']} FROM `{$this->loggingDB}`.{$tableName}
- WHERE {$clause} log_action != 'Initialization' {$logDateClause} LIMIT {$rowCount}";
-      CRM_Core_DAO::executeQuery($sql);
+ WHERE {$clause} {$this->_limit}";
+      CRM_Core_DAO::executeQuery($sql, $sqlParams);
     }
 
     $logTypes = CRM_Utils_Array::value('log_type_value', $this->_params);
