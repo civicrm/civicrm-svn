@@ -361,10 +361,9 @@
     data.reset = 1;
     o.trigger('crmFormBeforeSave', [formData]);
     var queryString = $.param(formData) + '&' + $.param(data); 
-    var postUrl = $.crmURL('civicrm/ajax/inline'); 
     $.ajax({
       type: "POST",
-      url: postUrl,
+      url: $.crmURL('civicrm/ajax/inline'),
       data: queryString,
       dataType: "json",
       success: function( response ) {
@@ -402,7 +401,7 @@
               data.reset = 1;
               data.class_name = data.class_name.replace('Form', 'Page');
               data.type = 'page';
-              $(this).closest('.crm-summary-block').load(postUrl, data, function() {$(this).trigger('load');});
+              $(this).closest('.crm-summary-block').load($.crmURL('civicrm/ajax/inline', data), function() {$(this).trigger('load');});
             });
           }
           cj().crmAlert('', CRM.ts.saved, 'success');
