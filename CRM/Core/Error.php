@@ -323,6 +323,78 @@ class CRM_Core_Error extends PEAR_ErrorStack {
   }
 
   /**
+   * display an error page with an error message describing what happened
+   *
+   * This function is evil -- it largely replicates fatal(). Hopefully the
+   * entire CRM_Core_Error system can be hollowed out and replaced with
+   * something that follows a cleaner separation of concerns.
+   *
+   * @param Exception $exception
+   *
+   * @return void
+   * @static
+   * @acess public
+   */
+  static function handleUnhandledException($exception) {
+    $config = CRM_Core_Config::singleton();
+    $vars = array(
+      'message' => $exception->getMessage(),
+      'code' => NULL,
+      'exception' => $exception,
+    );
+    if (!$vars['message']) {
+      $vars['message'] = ts('We experienced an unexpected error. Please post a detailed description and the backtrace on the CiviCRM forums: %1', array(1 => 'http://forum.civicrm.org/'));
+    }
+
+    // Case A: CLI
+    if (php_sapi_name() == "cli") {
+      printf("Sorry. A non-recoverable error has occurred.\n%s\n", $vars['message']);
+      print self::formatTextException($exception);
+      die("\n");
+      // FIXME: Why doesn't this call abend()? Difference: abend() will cleanup transaction and (via civiExit) store session state
+      // self::abend(CRM_Core_Error::FATAL_ERROR);
+    }
+
+    // Case B: Custom error handler
+    if ($config->fatalErrorHandler &&
+      function_exists($config->fatalErrorHandler)
+    ) {
+      $name = $config->fatalErrorHandler;
+      $ret = $name($vars);
+      if ($ret) {
+        // the call has been successfully handled
+        // so we just exit
+        self::abend(CRM_Core_Error::FATAL_ERROR);
+      }
+    }
+    
+    // Case C: Default error handler
+
+    // log to file
+    CRM_Core_Error::debug_var('Fatal Error Details', $vars);
+    CRM_Core_Error::backtrace('backTrace', TRUE);
+
+    // print to screen
+    $template = CRM_Core_Smarty::singleton();
+    $template->assign($vars);
+    $content = $template->fetch($config->fatalErrorTemplate);
+    if ($config->backtrace) {
+      $content = self::formatHtmlException($exception) . $content;
+    }
+    if ($config->userFramework == 'Joomla' &&
+      class_exists('JError')
+    ) {
+      JError::raiseError('CiviCRM-001', $content);
+    }
+    else {
+      echo CRM_Utils_System::theme('page', $content);
+    }
+
+    // fin
+    self::abend(CRM_Core_Error::FATAL_ERROR);
+  }
+
+  /**
    * outputs pre-formatted debug information. Flushes the buffers
    * so we can interrupt a potential POST/redirect
    *

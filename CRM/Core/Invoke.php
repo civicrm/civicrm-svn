@@ -42,6 +42,7 @@ class CRM_Core_Invoke {
    * respective functions are called
    *
    * @param $args array this array contains the arguments of the url
+   * @return string, HTML
    *
    * @static
    * @access public
@@ -52,12 +53,24 @@ class CRM_Core_Invoke {
     }
 
     if (!defined('CIVICRM_SYMFONY_PATH')) {
-      // Traditional Civi invocation path
-      self::hackMenuRebuild($args); // may exit
-      self::init($args);
-      self::hackStandalone($args);
-      $item = self::getItem($args);
-      return self::runItem($item);
+      try {
+        // Traditional Civi invocation path
+        self::hackMenuRebuild($args); // may exit
+        self::init($args);
+        self::hackStandalone($args);
+        $item = self::getItem($args);
+        return self::runItem($item);
+      } catch (Exception $e) {
+        // Recall: CRM_Core_Config is initialized before calling CRM_Core_Invoke
+        $config = CRM_Core_Config::singleton();
+        return CRM_Core_Error::handleUnhandledException($e);
+        /*
+        if ($config->backtrace) {
+          return CRM_Core_Error::formatHtmlException($e);
+        } else {
+         // TODO
+        }*/
+      }
     } else { 
       // Symfony-based invocation path
       require_once CIVICRM_SYMFONY_PATH . '/app/bootstrap.php.cache';
