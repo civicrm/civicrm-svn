@@ -220,24 +220,25 @@ class CRM_Core_Payment_BaseIPN {
       $this->addrecurLineItems($objects['contributionRecur']->id, $contribution->id);
     }
 
-    if (!empty($memberships)) {
-      foreach ($memberships as $membership) {
-        if ($membership) {
-          $membership->status_id = 6;
-          $membership->save();
-          
-          //update related Memberships.
-          $params = array('status_id' => 6);
-          CRM_Member_BAO_Membership::updateRelatedMemberships($membership->id, $params);
+    if (!CRM_Utils_Array::value('skipComponentSync', $input)) {
+      if (!empty($memberships)) {
+        foreach ($memberships as $membership) {
+          if ($membership) {
+            $membership->status_id = 6;
+            $membership->save();
+            
+            //update related Memberships.
+            $params = array('status_id' => 6);
+            CRM_Member_BAO_Membership::updateRelatedMemberships($membership->id, $params);
+          }
         }
       }
+      
+      if ($participant) {
+        $participant->status_id = 4;
+        $participant->save();
+      }
     }
-
-    if ($participant) {
-      $participant->status_id = 4;
-      $participant->save();
-    }
-
     $transaction->commit();
     CRM_Core_Error::debug_log_message("Setting contribution status to cancelled");
     //echo "Success: Setting contribution status to cancelled<p>";
@@ -616,7 +617,7 @@ LIMIT 1;";
     $contribution = &$objects['contribution'];
 
     $contributionStatuses = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
-
+    $input['skipComponentSync'] = CRM_Utils_Array::value('skipComponentSync', $params);
     if ($statusId == array_search('Cancelled', $contributionStatuses)) {
       $baseIPN->cancelled($objects, $transaction, $input);
       $transaction->commit();
