@@ -200,7 +200,7 @@ class CRM_Contact_Form_Edit_TagsandGroups {
    *
    * @return None
    */
-  function setDefaultValues(&$form, &$defaults) {
+  public static function setDefaultValues(&$form, &$defaults) {
     $contactEditOptions = $form->get('contactEditOptions');
     if ($form->_action & CRM_Core_Action::ADD) {
       if (array_key_exists('TagsAndGroups', $contactEditOptions)) {

@@ -180,7 +180,7 @@ class CRM_Contact_Form_CustomData extends CRM_Core_Form {
    *
    * @return array the default array reference
    */
-  function &setDefaultValues() {
+  function setDefaultValues() {
     if ($this->_cdType) {
       $customDefaultValue = CRM_Custom_Form_CustomData::setDefaultValues($this);
       return $customDefaultValue;

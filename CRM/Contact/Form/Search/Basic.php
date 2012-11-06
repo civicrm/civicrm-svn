@@ -108,7 +108,7 @@ class CRM_Contact_Form_Search_Basic extends CRM_Contact_Form_Search {
    *
    * @return array the default array reference
    */
-  function &setDefaultValues() {
+  function setDefaultValues() {
     $defaults = array();
 
     $defaults['sort_name'] = CRM_Utils_Array::value('sort_name', $this->_formValues);

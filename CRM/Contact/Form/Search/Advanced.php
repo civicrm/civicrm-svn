@@ -194,7 +194,7 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search {
    *
    * @return array the default array reference
    */
-  function &setDefaultValues() {
+  function setDefaultValues() {
     $defaults = $this->_formValues;
     $this->normalizeDefaultValues($defaults);
 

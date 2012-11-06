@@ -157,7 +157,7 @@ class CRM_Contact_Form_Task_AddToGroup extends CRM_Contact_Form_Task {
    *
    * @return array the default array reference
    */
-  function &setDefaultValues() {
+  function setDefaultValues() {
     $defaults = array();
 
     if ($this->_context === 'amtg') {

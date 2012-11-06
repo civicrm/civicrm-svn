@@ -440,7 +440,7 @@ class CRM_Activity_Form_Search extends CRM_Core_Form {
    *
    * @return array the default array reference
    */
-  function &setDefaultValues() {
+  function setDefaultValues() { // TODO test?
     $defaults = array();
     $defaults = $this->_formValues;
     return $defaults;

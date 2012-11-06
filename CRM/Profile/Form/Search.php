@@ -65,7 +65,7 @@ class CRM_Profile_Form_Search extends CRM_Profile_Form {
    *
    * @return array the default array reference
    */
-  function &setDefaultValues() {
+  function setDefaultValues() {
     $defaults = array();
     // note we intentionally overwrite value since we use it as defaults
     // and its all pass by value

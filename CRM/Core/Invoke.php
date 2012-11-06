@@ -51,9 +51,31 @@ class CRM_Core_Invoke {
       return;
     }
 
-    require_once 'CRM/Core/I18n.php';
-    $config = CRM_Core_Config::singleton();
-
+    if (!defined('CIVICRM_SYMFONY_PATH')) {
+      // Traditional Civi invocation path
+      self::hackMenuRebuild($args); // may exit
+      self::init($args);
+      self::hackStandalone($args);
+      $item = self::getItem($args);
+      return self::runItem($item);
+    } else { 
+      // Symfony-based invocation path
+      require_once CIVICRM_SYMFONY_PATH . '/app/bootstrap.php.cache';
+      require_once CIVICRM_SYMFONY_PATH . '/app/AppKernel.php';
+      $kernel = new AppKernel('dev', true);
+      $kernel->loadClassCache();
+      $response = $kernel->handle(Symfony\Component\HttpFoundation\Request::createFromGlobals());
+      // $response->send();
+      return $response->getContent();
+    }
+  }
+  /**
+   * Hackish support /civicrm/menu/rebuild
+   *
+   * @param array $args list of path parts
+   * @void
+   */
+  static public function hackMenuRebuild($args) {
     if ((isset($args[1]) and $args[1] == 'menu' and
       isset($args[2]) and $args[2] == 'rebuild') || isset($args[1]) and $args[1] == 'clearcache'
     ) {
@@ -61,22 +83,41 @@ class CRM_Core_Invoke {
       if (CRM_Core_Permission::check('administer CiviCRM')) {
         self::rebuildMenuAndCaches();
         CRM_Core_Session::setStatus(ts('Cleared all CiviCRM caches (database, menu, templates)'), ts('Complete'), 'success');
-        return CRM_Utils_System::redirect();
+        return CRM_Utils_System::redirect(); // exits
       }
       else {
         CRM_Core_Error::fatal('You do not have permission to execute this url');
       }
     }
-
+  }
+  
+  /**
+   * Perform general setup
+   *
+   * @param array $args list of path parts
+   * @void
+   */
+  static public function init($args) {
     // first fire up IDS and check for bad stuff
+    $config = CRM_Core_Config::singleton();
     if ($config->useIDS) {
       $ids = new CRM_Core_IDS();
       $ids->check($args);
     }
 
     // also initialize the i18n framework
+    require_once 'CRM/Core/I18n.php';
     $i18n = CRM_Core_I18n::singleton();
+  }
 
+  /**
+   * Hackish support for /standalone/*
+   *
+   * @param array $args list of path parts
+   * @void
+   */
+  static public function hackStandalone($args) {
+    $config = CRM_Core_Config::singleton();
     if ($config->userFramework == 'Standalone') {
       $session = CRM_Core_Session::singleton();
       if ($session->get('new_install') !== TRUE) {
@@ -86,9 +127,21 @@ class CRM_Core_Invoke {
         CRM_Core_Menu::store();
       }
     }
+  }
 
-    // get the menu items
-    $path = implode('/', $args);
+  /**
+   * Determine which menu $item corresponds to $args
+   *
+   * @param array $args list of path parts
+   * @return array; see CRM_Core_Menu
+   */
+  static public function getItem($args) {
+    if (is_array($args)) {
+      // get the menu items
+      $path = implode('/', $args);
+    } else {
+      $path = $args;
+    }
     $item = CRM_Core_Menu::get($path);
 
     // we should try to compute menus, if item is empty and stay on the same page,
@@ -98,6 +151,17 @@ class CRM_Core_Invoke {
       $item = CRM_Core_Menu::get($path);
     }
 
+    return $item;
+  }
+
+  /**
+   * Given a menu item, call the appropriate controller and return the response
+   *
+   * @param array $item see CRM_Core_Menu
+   * @return string, HTML
+   */
+  static public function runItem($item) {
+    $config = CRM_Core_Config::singleton();
     if ($config->userFramework == 'Joomla' && $item) {
       $config->userFrameworkURLVar = 'task';
 

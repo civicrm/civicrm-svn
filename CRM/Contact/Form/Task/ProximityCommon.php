@@ -157,7 +157,7 @@ class CRM_Contact_Form_Task_ProximityCommon extends CRM_Contact_Form_Task {
    *
    * @return array the default array reference
    */
-  function &setDefaultValues($form) {
+  function setDefaultValues($form) {
     $defaults       = array();
     $config         = CRM_Core_Config::singleton();
     $countryDefault = $config->defaultContactCountry;

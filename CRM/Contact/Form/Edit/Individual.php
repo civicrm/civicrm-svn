@@ -51,7 +51,7 @@ class CRM_Contact_Form_Edit_Individual {
    * @access public
    * @return void 
    */
-  public function buildQuickForm(&$form, $inlineEditMode = NULL) {
+  public static function buildQuickForm(&$form, $inlineEditMode = NULL) {
     $form->applyFilter('__ALL__', 'trim');
 
     if ( !$inlineEditMode || $inlineEditMode == 1 ) {
@@ -91,7 +91,7 @@ class CRM_Contact_Form_Edit_Individual {
       $form->addElement('text', 'job_title', ts('Job Title'), $attributes['job_title'], 'size="30"');
 
       //Current Employer Element
-      $employerDataURL = CRM_Utils_System::url('civicrm/ajax/rest', 'className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=contact&org=1&employee_id=' . $this->_contactId, FALSE, NULL, FALSE);
+      $employerDataURL = CRM_Utils_System::url('civicrm/ajax/rest', 'className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=contact&org=1&employee_id=' . $form->_contactId, FALSE, NULL, FALSE);
       $form->assign('employerDataURL', $employerDataURL);
 
       $form->addElement('text', 'current_employer', ts('Current Employer'), '');

@@ -727,7 +727,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
   public function buildQuickForm() {
     //load form for child blocks
     if ($this->_addBlockName) {
-      return eval('CRM_Contact_Form_Edit_' . $this->_addBlockName . '::buildQuickForm( $this );');
+      $callback = array('CRM_Contact_Form_Edit_' . $this->_addBlockName, 'buildQuickForm');
+      return call_user_func($callback, $this);
     }
 
     if ($this->_action == CRM_Core_Action::UPDATE) {
