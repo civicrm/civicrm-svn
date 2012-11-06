@@ -3018,14 +3018,6 @@ table.crm-info-panel td.label {
   color: #3e3e3e;
 }
 
-#crm-container div.contact_panel td.grouplabel,
-#contact-summary .crm-accordion-header {
-  background-color: #FFF;
-  color:#3e3e3e;
-  font-size:13px;
-  font-weight:bold;
-  font-family: Helvetica;
-}
 #crm-container div.contact_panel td.grouplabel {border-bottom:2px solid #D7D7D0 !important;}
 
 #tagGroup table .label {color:#FFF;}

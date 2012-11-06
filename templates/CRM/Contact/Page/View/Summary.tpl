@@ -165,7 +165,7 @@
                       </div>
                       {/if}
                       <div class="{if !empty($imageURL)} float-left{/if}">
-                        <div class="crm-clear">
+                        <div class="crm-summary-block">
                           <div class="crm-summary-row">
                             <div class="crm-label" id="tagLink">
                               <a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=$contactId&selectedChild=tag"}" title="{ts}Edit Tags{/ts}">{ts}Tags{/ts}</a>
@@ -202,17 +202,13 @@
                         <div class="contactCardLeft">
                          <div >
                           {if $showEmail}
-                          <div class="crm-clear crm-summary-email-block">
-                            <div class="crm-summary-block" id="email-block">
+                          <div class="crm-summary-email-block crm-summary-block" id="email-block">
                               {include file="CRM/Contact/Page/Inline/Email.tpl"}
-                            </div>
                           </div>
                           {/if}
                           {if $showWebsite}
-                          <div class="crm-clear crm-summary-website-block">
-                            <div class="crm-summary-block" id="website-block">
+                          <div class="crm-summary-website-block crm-summary-block" id="website-block">
                               {include file="CRM/Contact/Page/Inline/Website.tpl"}
-                            </div>
                           </div>
                           {/if}
                          </div>
@@ -221,24 +217,18 @@
                         <div class="contactCardRight">
                           <div >
                             {if $showPhone}
-                            <div class="crm-clear crm-summary-phone-block">
-                              <div class="crm-summary-block" id="phone-block">
+                            <div class="crm-summary-phone-block crm-summary-block" id="phone-block">
                                 {include file="CRM/Contact/Page/Inline/Phone.tpl"}
-                              </div>
                             </div>
                             {/if}
                             {if $showIM}
-                            <div class="crm-clear crm-summary-im-block">
-                              <div class="crm-summary-block" id="im-block">
+                            <div class="crm-summary-im-block crm-summary-block" id="im-block">
                                 {include file="CRM/Contact/Page/Inline/IM.tpl"}
-                              </div>
                             </div>
                             {/if}
                             {if $showOpenID}
-                            <div class="crm-clear crm-summary-openid-block">
-                              <div class="crm-summary-block" id="openid-block">
+                            <div class="crm-summary-openid-block crm-summary-block" id="openid-block">
                                 {include file="CRM/Contact/Page/Inline/OpenID.tpl"}
-                              </div>
                             </div>
                             {/if}
                           </div>
@@ -251,7 +241,7 @@
                         {assign var='locationIndex' value=1}
                         {if $address}
                           {foreach from=$address item=add key=locationIndex}
-                            <div class="{if $locationIndex is odd}contactCardLeft{else}contactCardRight{/if} crm-address_{$locationIndex} crm-address-block">
+                            <div class="{if $locationIndex is odd}contactCardLeft{else}contactCardRight{/if} crm-address_{$locationIndex} crm-address-block crm-summary-block">
                               {include file="CRM/Contact/Page/Inline/Address.tpl"}
                             </div>
                           {/foreach}
@@ -260,7 +250,7 @@
                         {* add new link *}
                         {if $permission EQ 'edit'}
                           {assign var='add' value=0}
-                            <div class="{if $locationIndex is odd}contactCardLeft{else}contactCardRight{/if} crm-address-block">
+                            <div class="{if $locationIndex is odd}contactCardLeft{else}contactCardRight{/if} crm-address-block crm-summary-block">
                               {include file="CRM/Contact/Page/Inline/Address.tpl"}
                             </div>
                       {/if}

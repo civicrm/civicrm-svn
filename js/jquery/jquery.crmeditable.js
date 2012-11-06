@@ -332,7 +332,7 @@
       $.ajax({
         url: $.crmURL('civicrm/ajax/inline', data),
       }).done( function(response) {
-        o.css('overflow', 'hidden').wrapInner('<div class="inline-edit-hidden-content" style="display:none" />').append( response);
+        o.css('overflow', 'hidden').wrapInner('<div class="inline-edit-hidden-content" style="display:none" />').append(response);
         // Smooth resizing
         var newHeight = $('.crm-container-snippet', o).height();
         var diff = newHeight - parseInt(o.css('height'));
@@ -487,6 +487,11 @@
   $('document').ready(function() {
     // Respond to a click (not drag, not right-click) of crm-inline-edit blocks
     var clicking;
+    $('.crm-inline-edit-container').on('mousedown', '.crm-inline-edit:not(.form) a, .crm-inline-edit:not(.form) .crm-accordion-header, .crm-inline-edit:not(.form) .collapsible-title', function(event) {
+      if (event.which == 1) {
+        event.stopPropigation();
+      }
+    });
     $('.crm-inline-edit-container').on('mousedown', '.crm-inline-edit:not(.form)', function(button) {
       if (button.which == 1) {
         clicking = this;

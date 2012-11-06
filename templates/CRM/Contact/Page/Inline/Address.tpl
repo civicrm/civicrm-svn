@@ -57,39 +57,28 @@
     {foreach from=$add.custom item=customGroup key=cgId} {* start of outer foreach *}
       {assign var="isAddressCustomPresent" value=1}
       {foreach from=$customGroup item=customValue key=cvId}
-      <div id="address_custom_{$cgId}_{$locationIndex}" 
-      class="crm-accordion-wrapper crm-address-custom-{$cgId}-{$locationIndex}-accordion 
-      {if $customValue.collapse_display}collapsed{/if}">
-      <div class="crm-accordion-header">
-        {$customValue.title}
-      </div>
-      <div class="crm-accordion-body">
-        <div >
-          <div class="crm-clear">
-            {foreach from=$customValue.fields item=customField key=cfId}
-            <div class="crm-summary-row">
-              <div class="crm-label">
-                {$customField.field_title}
-              </div>
-              <div class="crm-content">
-                {$customField.field_value}
-              </div>
+        <div id="address_custom_{$cgId}_{$locationIndex}" 
+        class="crm-collapsible crm-address-custom-{$cgId}-{$locationIndex}-accordion 
+        {if $customValue.collapse_display}collapsed{/if}">
+        <div class="collapsible-title">
+          {$customValue.title}
+        </div>
+        <div class="crm-summary-block">
+          {foreach from=$customValue.fields item=customField key=cfId}
+          <div class="crm-summary-row">
+            <div class="crm-label">
+              {$customField.field_title}
             </div>
-            {/foreach}
+            <div class="crm-content">
+              {$customField.field_value}
             </div>
           </div>
+          {/foreach}
+          </div>
         </div>
-      </div>
       {/foreach}
     {/foreach} {* end of outer custom group foreach *}
     <!-- end custom data -->
-    {literal}
-    <script type="text/javascript">
-    cj( function() {
-      cj().crmAccordions(); 
-    });
-    </script>
-    {/literal}
     {/if}
   </div>
 </div>

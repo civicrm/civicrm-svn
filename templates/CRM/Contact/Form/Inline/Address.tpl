@@ -72,7 +72,6 @@
   </div> 
 {literal}
 <script type="text/javascript">
-  cj().crmAccordions();
   {/literal}{* // Enforce unique location_type_id fields *}{literal}
   cj('#address_{/literal}{$blockId}{literal}_location_type_id').change(function() {
     var ele = cj(this);
