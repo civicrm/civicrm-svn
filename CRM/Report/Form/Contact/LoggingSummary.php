@@ -197,7 +197,11 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Logging_ReportSummary {
         $row['log_civicrm_entity_log_action'] = "<a href='{$url1}' class='crm-summary-link'><div class='icon details-icon'></div></a>&nbsp;<a title='View details for this update' href='{$url2}'>" . ts('Update') . '</a>';
       }
 
-      $key  = $date . '_' . $row['log_civicrm_entity_log_type'] . '_' . $row['log_civicrm_entity_log_conn_id'] . '_' . $row['log_civicrm_entity_log_user_id'];
+      $key  = $date . '_' . 
+        $row['log_civicrm_entity_log_type'] . '_' . 
+        $row['log_civicrm_entity_log_conn_id'] . '_' . 
+        $row['log_civicrm_entity_log_user_id'] . '_' .
+        $row['log_civicrm_entity_id'];
       $newRows[$key] = $row;
 
       unset($row['log_civicrm_entity_log_user_id']);

@@ -104,7 +104,7 @@ class CRM_Logging_ReportSummary extends CRM_Report_Form {
   }
 
   function groupBy() {
-    $this->_groupBy = 'GROUP BY entity_log_civireport.log_conn_id, entity_log_civireport.log_user_id, EXTRACT(DAY_MICROSECOND FROM entity_log_civireport.log_date)';
+    $this->_groupBy = 'GROUP BY entity_log_civireport.log_conn_id, entity_log_civireport.log_user_id, EXTRACT(DAY_MICROSECOND FROM entity_log_civireport.log_date), entity_log_civireport.id';
   }
 
   function orderBy() {
