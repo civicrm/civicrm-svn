@@ -323,8 +323,19 @@
     {literal}
     cj(function($) {
       // Set page title
-      var oldName = $('#crm-remove-title').text() || 'CiviCRM';
-      $('#crm-remove-title').remove();
+      var oldName = 'CiviCRM';
+      var nameTitle = $('#crm-remove-title');
+      if (nameTitle.length > 0) {
+        oldName = nameTitle.text();
+        nameTitle.parent('h1').remove();
+      }
+      else {
+        $('h1').each(function() {
+          if ($(this).text() == oldName) {
+            $(this).remove();
+          }
+        });
+      }
       function refreshTitle() {
         var contactName = $('.crm-summary-display_name').text().trim();
         $('title').html($('title').html().replace(oldName, contactName));

@@ -25,7 +25,7 @@
 *}
 {* this template is used for the dropdown menu of the "Actions" button on contacts. *}
 
-<div id="crm-contact-actions-wrapper" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_Actions"{rdelim}'>
+<div id="crm-contact-actions-wrapper" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Page_Inline_Actions"{rdelim}'>
   <div id="crm-contact-actions-link"><span><div class="icon dropdown-icon"></div>{ts}Actions{/ts}</span></div>
     <div class="ac_results" id="crm-contact-actions-list">
       <div class="crm-contact-actions-list-inner">

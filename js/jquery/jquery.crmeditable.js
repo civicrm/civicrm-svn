@@ -402,7 +402,7 @@
               data.reset = 1;
               data.class_name = data.class_name.replace('Form', 'Page');
               data.type = 'page';
-              $(this).closest('.crm-summary-block').load(postUrl, data, function() {$(this).trigger('load');console.log(this);});
+              $(this).closest('.crm-summary-block').load(postUrl, data, function() {$(this).trigger('load');});
             });
           }
           cj().crmAlert('', CRM.ts.saved, 'success');
