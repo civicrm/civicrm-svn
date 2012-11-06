@@ -100,6 +100,7 @@
        <title>Phone Extension</title>
        <type>varchar</type>
        <length>16</length>
+       <size>FOUR</size>
        <import>true</import>
        <export>true</export>
        <headerPattern>/extension/i</headerPattern>
