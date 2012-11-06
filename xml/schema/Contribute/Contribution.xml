@@ -347,7 +347,8 @@
     <title>Check Number</title>
     <headerPattern>/check(.?number)?/i</headerPattern>
     <type>varchar</type>     
-    <length>255</length>  
+    <length>255</length>
+    <size>SIX</size> 
     <import>true</import>
     <add>2.2</add>     
   </field>  
