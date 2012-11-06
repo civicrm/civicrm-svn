@@ -155,54 +155,54 @@ class CRM_Extension_Manager_ModuleTest extends CiviUnitTestCase {
    */
   function testInstall_DirtyRemove_Disable_Restore() {
     // create temporary extension (which can dirtily remove later)
-    $this->_createExtension('test.extension.manager.module.auto1', 'module', 'test_extension_manager_module_auto1');
-    $mainfile = $this->basedir . '/test.extension.manager.module.auto1/test_extension_manager_module_auto1.php';
+    $this->_createExtension('test.extension.manager.module.auto2', 'module', 'test_extension_manager_module_auto2');
+    $mainfile = $this->basedir . '/test.extension.manager.module.auto2/test_extension_manager_module_auto2.php';
     $this->assertTrue(file_exists($mainfile));
     $manager = $this->system->getManager();
-    $this->assertModuleActiveByName(FALSE, 'test_extension_manager_module_auto1');
-    $this->assertModuleActiveByKey(FALSE, 'test.extension.manager.module.auto1');
+    $this->assertModuleActiveByName(FALSE, 'test_extension_manager_module_auto2');
+    $this->assertModuleActiveByKey(FALSE, 'test.extension.manager.module.auto2');
 
     // install it
-    $manager->install(array('test.extension.manager.module.auto1'));
-    $this->assertEquals('installed', $manager->getStatus('test.extension.manager.module.auto1'));
-    $this->assertHookCounts('test_extension_manager_module_auto1', array(
+    $manager->install(array('test.extension.manager.module.auto2'));
+    $this->assertEquals('installed', $manager->getStatus('test.extension.manager.module.auto2'));
+    $this->assertHookCounts('test_extension_manager_module_auto2', array(
       'install' => 1,
       'enable' => 1,
       'disable' => 0,
       'uninstall' => 0,
     ));
-    $this->assertModuleActiveByName(TRUE, 'test_extension_manager_module_auto1');
-    $this->assertModuleActiveByKey(TRUE, 'test.extension.manager.module.auto1');
+    $this->assertModuleActiveByName(TRUE, 'test_extension_manager_module_auto2');
+    $this->assertModuleActiveByKey(TRUE, 'test.extension.manager.module.auto2');
 
     // dirty removal
-    CRM_Utils_File::cleanDir($this->basedir . '/test.extension.manager.module.auto1', TRUE, FALSE);
+    CRM_Utils_File::cleanDir($this->basedir . '/test.extension.manager.module.auto2', TRUE, FALSE);
     $manager->refresh();
-    $this->assertEquals('installed-missing', $manager->getStatus('test.extension.manager.module.auto1'));
+    $this->assertEquals('installed-missing', $manager->getStatus('test.extension.manager.module.auto2'));
 
     // disable while missing
-    $manager->disable(array('test.extension.manager.module.auto1'));
-    $this->assertEquals('disabled-missing', $manager->getStatus('test.extension.manager.module.auto1'));
-    $this->assertHookCounts('test_extension_manager_module_auto1', array(
+    $manager->disable(array('test.extension.manager.module.auto2'));
+    $this->assertEquals('disabled-missing', $manager->getStatus('test.extension.manager.module.auto2'));
+    $this->assertHookCounts('test_extension_manager_module_auto2', array(
       'install' => 1,
       'enable' => 1,
       'disable' => 0, // normally called -- but not for missing modules!
       'uninstall' => 0,
     ));
-    $this->assertModuleActiveByName(FALSE, 'test_extension_manager_module_auto1');
+    $this->assertModuleActiveByName(FALSE, 'test_extension_manager_module_auto2');
     $this->assertModuleActiveByKey(FALSE, 'test.extension.manager.moduletest');
 
     // restore the code
-    $this->_createExtension('test.extension.manager.module.auto1', 'module', 'test_extension_manager_module_auto1');
+    $this->_createExtension('test.extension.manager.module.auto2', 'module', 'test_extension_manager_module_auto2');
     $manager->refresh();
-    $this->assertHookCounts('test_extension_manager_module_auto1', array(
+    $this->assertHookCounts('test_extension_manager_module_auto2', array(
       'install' => 1,
       'enable' => 1,
       'disable' => 0,
       'uninstall' => 0,
     ));
-    $this->assertEquals('disabled', $manager->getStatus('test.extension.manager.module.auto1'));
-    $this->assertModuleActiveByName(FALSE, 'test_extension_manager_module_auto1');
-    $this->assertModuleActiveByKey(FALSE, 'test.extension.manager.module.auto1');
+    $this->assertEquals('disabled', $manager->getStatus('test.extension.manager.module.auto2'));
+    $this->assertModuleActiveByName(FALSE, 'test_extension_manager_module_auto2');
+    $this->assertModuleActiveByKey(FALSE, 'test.extension.manager.module.auto2');
   }
 
   /**
