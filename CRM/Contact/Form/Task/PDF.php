@@ -50,6 +50,8 @@ class CRM_Contact_Form_Task_PDF extends CRM_Contact_Form_Task {
 
   public $_cid = NULL;
 
+  public $_activityId = NULL;
+
   /**
    * build all the data structures needed to build the form
    *
@@ -66,7 +68,12 @@ class CRM_Contact_Form_Task_PDF extends CRM_Contact_Form_Task {
     // retrieve contact ID if this is 'single' mode
     $cid = CRM_Utils_Request::retrieve('cid', 'Positive', $this, FALSE);
 
-    $this->_activityId = CRM_Utils_Request::retrieve('id', 'Positive', $this, FALSE);
+    if ($cid) {
+      // this is true in non-search context / single mode
+      // in search context 'id' is the default profile id for search display
+      // CRM-11227
+      $this->_activityId = CRM_Utils_Request::retrieve('id', 'Positive', $this, FALSE);
+    }
 
     if ($cid) {
       CRM_Contact_Form_Task_PDFLetterCommon::preProcessSingle($this, $cid);
