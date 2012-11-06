@@ -162,6 +162,9 @@
   });
 function countSelections(obj) {
   var label = cj('label[for*=ts_sel]');
+  if (typeof(obj) == 'undefined') {
+    return parseInt(cj('span', label).text());
+  }
   if (obj && typeof(obj.getCount) != 'undefined' && label.length > 0) {
     if (cj('span', label).length < 1) {
       label.prepend('<span>' + obj.getCount + '</span> ');
