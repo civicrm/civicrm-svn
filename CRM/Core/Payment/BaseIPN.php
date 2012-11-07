@@ -91,11 +91,12 @@ class CRM_Core_Payment_BaseIPN {
 
     return TRUE;
   }
+
   /*
- * Load objects related to contribution
- *
- * @input array information from Payment processor
- */
+   * Load objects related to contribution
+   *
+   * @input array information from Payment processor
+   */
   function loadObjects(&$input, &$ids, &$objects, $required, $paymentProcessorID, $error_handling = NULL) {
     if (empty($error_handling)) {
       // default options are that we log an error & echo it out
@@ -165,16 +166,16 @@ class CRM_Core_Payment_BaseIPN {
     }
 
     if (!empty($memberships)) {
-    foreach ($memberships as $membership) {
-      if ($membership) {
-        $membership->status_id = 4;
-        $membership->save();
-
-        //update related Memberships.
-        $params = array('status_id' => 4);
-        CRM_Member_BAO_Membership::updateRelatedMemberships($membership->id, $params);
+      foreach ($memberships as $membership) {
+        if ($membership) {
+          $membership->status_id = 4;
+          $membership->save();
+          
+          //update related Memberships.
+          $params = array('status_id' => 4);
+          CRM_Member_BAO_Membership::updateRelatedMemberships($membership->id, $params);
+        }
       }
-    }
     }
 
     if ($participant) {
@@ -387,11 +388,6 @@ LIMIT 1;";
     }
     else {
       // event
-      $eventParams = array('id' => $objects['event']->id);
-      $values['event'] = array();
-
-      CRM_Event_BAO_Event::retrieve($eventParams, $values['event']);
-
       $eventParams = array('id' => $objects['event']->id);
       $values['event'] = array();
 
@@ -678,8 +674,7 @@ LIMIT 1;";
    */
   function updateRecurLinkedPledge(&$contribution) {
     $returnProperties = array('id', 'pledge_id');
-    $paymentDetails   = array();
-    $paymentIDs       = array();
+    $paymentDetails   = $paymentIDs = array();
 
     if (CRM_Core_DAO::commonRetrieveAll('CRM_Pledge_DAO_PledgePayment', 'contribution_id', $contribution->id,
         $paymentDetails, $returnProperties
