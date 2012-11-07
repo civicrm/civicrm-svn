@@ -51,10 +51,8 @@ function inlineEditForm( formName, blockName, contactId, cgId, locNo, addId ) {
     actualFormName = formName + '_' + locNo;
   }
 
-  cj('#' + actualFormName ).ajaxForm( options );
-
   // bind form using 'ajaxForm'
-  cj('#' + formName ).ajaxForm( options );
+  cj('#' + actualFormName ).ajaxForm( options );
 
 	// error callback
 	function onError( response ) {
