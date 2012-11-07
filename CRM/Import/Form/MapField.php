@@ -106,9 +106,9 @@ class CRM_Import_Form_MapField extends CRM_Core_Form {
   protected $_dedupeFields;
 
   /**
-   * Attempt to resolve a column name with our mapper fields
+   * Attempt to match header labels with our mapper fields
    *
-   * @param columnName
+   * @param header
    * @param mapperFields
    *
    * @return string
@@ -124,9 +124,8 @@ class CRM_Import_Form_MapField extends CRM_Core_Form {
     }
 
     foreach ($patterns as $key => $re) {
-      /* skip empty patterns */
-
-      if (empty($re) or $re == '//') {
+      // Skip empty key/patterns
+      if (!$key || !$re || strlen("$re") < 5) {
         continue;
       }
 
@@ -153,7 +152,8 @@ class CRM_Import_Form_MapField extends CRM_Core_Form {
     $n        = count($this->_dataValues);
 
     foreach ($patterns as $key => $re) {
-      if (empty($re)) {
+      // Skip empty key/patterns
+      if (!$key || !$re || strlen("$re") < 5) {
         continue;
       }
 

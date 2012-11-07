@@ -88,7 +88,7 @@ class CRM_Activity_Import_Form_MapField extends CRM_Core_Form {
   protected $_fieldUsed;
 
   /**
-   * Attempt to resolve the header with our mapper fields
+   * Attempt to match header labels with our mapper fields
    *
    * @param header
    * @param mapperFields
@@ -98,18 +98,12 @@ class CRM_Activity_Import_Form_MapField extends CRM_Core_Form {
    */
   public function defaultFromHeader($header, &$patterns) {
     foreach ($patterns as $key => $re) {
-      /* Skip the first (empty) key/pattern */
-
-      if (empty($re)) {
+      // Skip empty key/patterns
+      if (!$key || !$re || strlen("$re") < 5) {
         continue;
       }
 
-      /* if we've already used this field, move on */
-      //             if ($this->_fieldUsed[$key])
-      //                 continue;
-      /* Scan through the headerPatterns defined in the schema for a
-             * match */
-
+      // Scan through the headerPatterns defined in the schema for a match
       if (preg_match($re, $header)) {
         $this->_fieldUsed[$key] = TRUE;
         return $key;
@@ -133,7 +127,8 @@ class CRM_Activity_Import_Form_MapField extends CRM_Core_Form {
     $n        = count($this->_dataValues);
 
     foreach ($patterns as $key => $re) {
-      if (empty($re)) {
+      // Skip empty key/patterns
+      if (!$key || !$re || strlen("$re") < 5) {
         continue;
       }
 
