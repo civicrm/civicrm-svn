@@ -110,6 +110,7 @@ class CRM_Event_Import_Form_Preview extends CRM_Core_Form {
    * @access public
    */
   public function buildQuickForm() {
+
     $this->addButtons(array(
         array(
           'type' => 'back',
@@ -174,7 +175,6 @@ class CRM_Event_Import_Form_Preview extends CRM_Core_Form {
       }
       $mapperFields[] = implode(' - ', $header);
     }
-
     $parser->run($fileName, $seperator,
       $mapperFields,
       $skipColumnHeader,
@@ -188,8 +188,8 @@ class CRM_Event_Import_Form_Preview extends CRM_Core_Form {
 
     // check if there is any error occured
 
-    $errorStack   = CRM_Core_Error::singleton();
-    $errors       = $errorStack->getErrors();
+    $errorStack = CRM_Core_Error::singleton();
+    $errors = $errorStack->getErrors();
     $errorMessage = array();
 
     if (is_array($errors)) {

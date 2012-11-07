@@ -139,11 +139,9 @@ class CRM_Activity_Import_Form_UploadFile extends CRM_Core_Form {
 
     $fileName         = $this->controller->exportValue($this->_name, 'uploadFile');
     $skipColumnHeader = $this->controller->exportValue($this->_name, 'skipColumnHeader');
-    $onDuplicate      = $this->controller->exportValue($this->_name,
-      'onDuplicate'
-    );
-    $dateFormats = $this->controller->exportValue($this->_name, 'dateFormats');
-    $savedMapping = $this->controller->exportValue($this->_name, 'savedMapping');
+    $onDuplicate      = $this->controller->exportValue($this->_name, 'onDuplicate');
+    $dateFormats      = $this->controller->exportValue($this->_name, 'dateFormats');
+    $savedMapping     = $this->controller->exportValue($this->_name, 'savedMapping');
 
     $this->set('onDuplicate', $onDuplicate);
     $this->set('dateFormats', $dateFormats);

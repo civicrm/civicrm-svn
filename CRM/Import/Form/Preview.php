@@ -302,7 +302,6 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
     // check if there is any error occured
     $errorStack = CRM_Core_Error::singleton();
     $errors = $errorStack->getErrors();
-
     $errorMessage = array();
 
     if (is_array($errors)) {
@@ -569,9 +568,7 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
 
     $errorStack = CRM_Core_Error::singleton();
     $errors = $errorStack->getErrors();
-
     $errorMessage = array();
-
 
     if (is_array($errors)) {
       foreach ($errors as $key => $value) {

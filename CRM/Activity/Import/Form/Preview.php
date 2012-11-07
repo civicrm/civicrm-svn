@@ -65,7 +65,6 @@ class CRM_Activity_Import_Form_Preview extends CRM_Core_Form {
       $this->assign('savedName', $mapDAO->name);
     }
 
-
     if ($skipColumnHeader) {
       $this->assign('skipColumnHeader', $skipColumnHeader);
       $this->assign('rowDisplayCount', 3);
@@ -88,7 +87,6 @@ class CRM_Activity_Import_Form_Preview extends CRM_Core_Form {
       $urlParams = 'type=' . CRM_Activity_Import_Parser::NO_MATCH . '&parser=CRM_Activity_Import_Parser';
       $this->set('downloadMismatchRecordsUrl', CRM_Utils_System::url('civicrm/export', $urlParams));
     }
-
 
     $properties = array(
       'mapper',
@@ -159,9 +157,9 @@ class CRM_Activity_Import_Form_Preview extends CRM_Core_Form {
     $config = CRM_Core_Config::singleton();
     $seperator = $config->fieldSeparator;
 
-    $mapper          = $this->controller->exportValue('MapField', 'mapper');
-    $mapperKeys      = array();
-    $mapperLocType   = array();
+    $mapper = $this->controller->exportValue('MapField', 'mapper');
+    $mapperKeys = array();
+    $mapperLocType = array();
     $mapperPhoneType = array();
 
     foreach ($mapper as $key => $value) {
@@ -193,7 +191,6 @@ class CRM_Activity_Import_Form_Preview extends CRM_Core_Form {
       }
       $mapperFields[] = implode(' - ', $header);
     }
-
     $parser->run($fileName, $seperator,
       $mapperFields,
       $skipColumnHeader,
@@ -208,7 +205,6 @@ class CRM_Activity_Import_Form_Preview extends CRM_Core_Form {
 
     $errorStack = CRM_Core_Error::singleton();
     $errors = $errorStack->getErrors();
-
     $errorMessage = array();
 
     if (is_array($errors)) {

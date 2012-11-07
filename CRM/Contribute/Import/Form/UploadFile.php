@@ -56,7 +56,6 @@ class CRM_Contribute_Import_Form_UploadFile extends CRM_Core_Form {
    * @access public
    */
   public function buildQuickForm() {
-
     //Setting Upload File Size
     $config = CRM_Core_Config::singleton();
     if ($config->maxImportFileSize >= 8388608) {
@@ -79,7 +78,6 @@ class CRM_Contribute_Import_Form_UploadFile extends CRM_Core_Form {
     $this->addElement('checkbox', 'skipColumnHeader', ts('First row contains column headers'));
 
     $duplicateOptions = array();
-
     $duplicateOptions[] = $this->createElement('radio',
       NULL, NULL, ts('Insert new contributions'), CRM_Contribute_Import_Parser::DUPLICATE_SKIP
     );

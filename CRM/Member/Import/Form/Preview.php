@@ -65,7 +65,6 @@ class CRM_Member_Import_Form_Preview extends CRM_Core_Form {
       $this->assign('savedName', $mapDAO->name);
     }
 
-
     if ($skipColumnHeader) {
       $this->assign('skipColumnHeader', $skipColumnHeader);
       $this->assign('rowDisplayCount', 3);
@@ -88,7 +87,6 @@ class CRM_Member_Import_Form_Preview extends CRM_Core_Form {
       $urlParams = 'type=' . CRM_Member_Import_Parser::NO_MATCH . '&parser=CRM_Member_Import_Parser';
       $this->set('downloadMismatchRecordsUrl', CRM_Utils_System::url('civicrm/export', $urlParams));
     }
-
 
     $properties = array(
       'mapper',
@@ -159,9 +157,9 @@ class CRM_Member_Import_Form_Preview extends CRM_Core_Form {
     $config = CRM_Core_Config::singleton();
     $seperator = $config->fieldSeparator;
 
-    $mapper          = $this->controller->exportValue('MapField', 'mapper');
-    $mapperKeys      = array();
-    $mapperLocType   = array();
+    $mapper = $this->controller->exportValue('MapField', 'mapper');
+    $mapperKeys = array();
+    $mapperLocType = array();
     $mapperPhoneType = array();
     // Note: we keep the multi-dimension array (even thought it's not
     // needed in the case of memberships import) so that we can merge
@@ -209,8 +207,8 @@ class CRM_Member_Import_Form_Preview extends CRM_Core_Form {
 
     // check if there is any error occured
 
-    $errorStack   = CRM_Core_Error::singleton();
-    $errors       = $errorStack->getErrors();
+    $errorStack = CRM_Core_Error::singleton();
+    $errors = $errorStack->getErrors();
     $errorMessage = array();
 
     if (is_array($errors)) {
