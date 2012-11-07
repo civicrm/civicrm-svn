@@ -69,7 +69,10 @@ class CRM_Activity_Form_ActivityLinks extends CRM_Core_Form {
     }
 
     if ($contactId && CRM_SMS_BAO_Provider::activeProviderCount()) {
-      list($name, $phone, $doNotSMS) = CRM_Contact_BAO_Contact_Location::getPhoneDetails($contactId);
+      // Check for existence of a mobile phone and ! do not SMS privacy setting
+      $mobileTypeID = CRM_Core_OptionGroup::getValue('phone_type', 'Mobile', 'name');
+      list($name, $phone, $doNotSMS) = CRM_Contact_BAO_Contact_Location::getPhoneDetails($contactId, $mobileTypeID);
+      
       if (!$doNotSMS && $phone) {
         $sendSMS = array($SMSId  => ts('Send SMS'));
         $activityTypes += $sendSMS;
