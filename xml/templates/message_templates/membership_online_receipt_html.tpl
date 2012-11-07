@@ -37,7 +37,7 @@
   </table>
   <table width="500" style="border: 1px solid #999; margin: 1em 0em 1em; border-collapse: collapse;">
 
-     {if $membership_assign}
+     {if $membership_assign && !$useForMember}
       <tr>
        <th {$headerStyle}>
         {ts}Membership Information{/ts}
@@ -75,15 +75,13 @@
 
 
      {if $amount}
-
-
       <tr>
        <th {$headerStyle}>
         {ts}Membership Fee{/ts}
        </th>
       </tr>
 
-      {if $membership_amount and $is_quick_config}
+      {if !$useForMember and $membership_amount and $is_quick_config}
 
        <tr>
         <td {$labelStyle}>
