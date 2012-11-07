@@ -489,7 +489,8 @@
     var clicking;
     $('.crm-inline-edit-container').on('mousedown', '.crm-inline-edit:not(.form) a, .crm-inline-edit:not(.form) .crm-accordion-header, .crm-inline-edit:not(.form) .collapsible-title', function(event) {
       if (event.which == 1) {
-        event.stopPropigation();
+        event.stopPropagation();
+        return false;
       }
     });
     $('.crm-inline-edit-container').on('mousedown', '.crm-inline-edit:not(.form)', function(button) {
