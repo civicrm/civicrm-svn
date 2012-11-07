@@ -23,6 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+{include file="CRM/common/scripts.tpl"}
 {if $config->debug}
 {include file="CRM/common/debug.tpl"}
 {/if}
@@ -79,7 +80,5 @@
 {include file="CRM/common/footer.tpl"}
 {/if}
 {/crmRegion}
-
-{include file="CRM/common/scripts.tpl"}
 
 </div> {* end crm-container div *}

@@ -116,8 +116,7 @@ cj( function() {
     });
 });
 
-var framework = "{/literal}{$config->userFramework}{literal}";
-if ( framework != 'Joomla') {
+if (CRM.userFramework != 'Joomla') {
   cj('body').prepend( cj("#menu-container").html() );
 
   //Track Scrolling
@@ -138,7 +137,6 @@ if ( framework != 'Joomla') {
       cj('img.menu-item-arrow').css({ 'top' : '4px' });
     });
 }
-  var resourceBase   = {/literal}"{$config->resourceBase}"{literal};
-  cj('#civicrm-menu').menu( {arrowSrc: resourceBase + 'packages/jquery/css/images/arrow.png'} );
+  cj('#civicrm-menu').menu( {arrowSrc: CRM.resourceBase + 'packages/jquery/css/images/arrow.png'} );
 </script>
 {/literal}

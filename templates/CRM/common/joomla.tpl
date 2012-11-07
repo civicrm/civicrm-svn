@@ -23,6 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+{include file="CRM/common/scripts.tpl"}
 {if $config->debug}
 {include file="CRM/common/debug.tpl"}
 {/if}
@@ -104,8 +105,6 @@
 
   </tr>
 </table>
-
-{include file="CRM/common/scripts.tpl"}
 
 {* We need to set jquery $ object back to $*}
 <script type="text/javascript">jQuery.noConflict(true);</script>

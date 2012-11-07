@@ -53,6 +53,7 @@
     {rdelim},
     urlIsPublic: {if $urlIsPublic}true{else}false{/if},
     userFramework: '{$config->userFramework}',
+    resourceBase: '{$config->resourceBase}',
     {literal}
     validate: {
       use: false,
