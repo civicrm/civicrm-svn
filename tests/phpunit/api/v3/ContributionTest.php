@@ -49,7 +49,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'contact_id' => $this->_individualId,
       'receive_date' => '20120511',
       'total_amount' => 100.00,
-      'contribution_type_id' => $this->_contributionTypeId,
+      'financial_account_id' => $this->_contributionTypeId,
       'non_deductible_amount' => 10.00,
       'fee_amount' => 51.00,
       'net_amount' => 91.00,
@@ -94,7 +94,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'contact_id' => $this->_individualId,
       'receive_date' => '2010-01-20',
       'total_amount' => 100.00,
-      'contribution_type_id' => $this->_contributionTypeId,
+      'financial_account_id' => $this->_contributionTypeId,
       'non_deductible_amount' => 10.00,
       'fee_amount' => 51.00,
       'net_amount' => 91.00,
@@ -116,7 +116,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $this->assertEquals(1,$contribution['count']);
     $this->documentMe($params, $contribution, __FUNCTION__, __FILE__);
     $this->assertEquals($contribution['values'][$contribution['id']]['contact_id'], $this->_individualId, 'In line ' . __LINE__);
-    $this->assertEquals($contribution['values'][$contribution['id']]['contribution_type_id'], $this->_contributionTypeId);
+    $this->assertEquals($contribution['values'][$contribution['id']]['financial_account_id'], $this->_contributionTypeId);
     $this->assertEquals($contribution['values'][$contribution['id']]['total_amount'], 100.00, 'In line ' . __LINE__);
     $this->assertEquals($contribution['values'][$contribution['id']]['non_deductible_amount'], 10.00, 'In line ' . __LINE__);
     $this->assertEquals($contribution['values'][$contribution['id']]['fee_amount'], 51.00, 'In line ' . __LINE__);
@@ -188,7 +188,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'total_amount' => 1,
       'version' => 3,
       'check_permissions' => FALSE,
-      'contribution_type_id' => 1,
+      'financial_account_id' => 1,
     );
     $contribution = civicrm_api('contribution', 'create', $params);
     $this->assertEquals($contribution['is_error'], 0, 'In line ' . __LINE__);
@@ -269,7 +269,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
         'contact_id' => $this->_individualId,
         'receive_date' => '20120511',
         'total_amount' => 100.00,
-        'contribution_type_id' => $this->_contributionTypeId,
+        'financial_account_id' => $this->_contributionTypeId,
         'payment_instrument_id' => 1,
         'non_deductible_amount' => 10.00,
         'fee_amount' => 50.00,
@@ -300,7 +300,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
         'contact_id' => $this->_individualId,
         'receive_date' => '20120511',
         'total_amount' => 100.00,
-        'contribution_type_id' => $this->_contributionTypeId,
+        'financial_account_id' => $this->_contributionTypeId,
         'payment_instrument_id' => 1,
         'non_deductible_amount' => 10.00,
         'fee_amount' => 50.00,
@@ -348,7 +348,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'contact_id' => $this->_individualId,
       'receive_date' => '20120511',
       'total_amount' => 100.00,
-      'contribution_type_id' => $this->_contributionTypeId,
+      'financial_account_id' => $this->_contributionTypeId,
       'payment_instrument_id' => 1,
       'non_deductible_amount' => 10.00,
       'fee_amount' => 50.00,
@@ -364,7 +364,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $this->documentMe($params, $contribution, __FUNCTION__, __FILE__);
     $this->assertEquals($contribution['values'][$contribution['id']]['contact_id'], $this->_individualId, 'In line ' . __LINE__);
     $this->assertEquals($contribution['values'][$contribution['id']]['total_amount'], 100.00, 'In line ' . __LINE__);
-    $this->assertEquals($contribution['values'][$contribution['id']]['contribution_type_id'], $this->_contributionTypeId, 'In line ' . __LINE__);
+    $this->assertEquals($contribution['values'][$contribution['id']]['financial_account_id'], $this->_contributionTypeId, 'In line ' . __LINE__);
     $this->assertEquals($contribution['values'][$contribution['id']]['payment_instrument_id'], 1, 'In line ' . __LINE__);
     $this->assertEquals($contribution['values'][$contribution['id']]['non_deductible_amount'], 10.00, 'In line ' . __LINE__);
     $this->assertEquals($contribution['values'][$contribution['id']]['fee_amount'], 50.00, 'In line ' . __LINE__);
@@ -443,7 +443,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'contact_id' => $this->_individualId,
       'receive_date' => date('Ymd'),
       'total_amount' => 100.00,
-      'contribution_type_id' => $this->_contributionTypeId,
+      'financial_account_id' => $this->_contributionTypeId,
       'payment_instrument_id' => 1,
       'non_deductible_amount' => 10.00,
       'fee_amount' => 50.00,
@@ -470,7 +470,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'contact_id' => 999,
       'receive_date' => date('Ymd'),
       'total_amount' => 100.00,
-      'contribution_type_id' => $this->_contributionTypeId,
+      'financial_account_id' => $this->_contributionTypeId,
       'payment_instrument_id' => 1,
       'non_deductible_amount' => 10.00,
       'fee_amount' => 50.00,
@@ -492,7 +492,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'contribution_contact_id' => 999,
       'receive_date' => date('Ymd'),
       'total_amount' => 100.00,
-      'contribution_type_id' => $this->_contributionTypeId,
+      'financial_account_id' => $this->_contributionTypeId,
       'payment_instrument_id' => 1,
       'non_deductible_amount' => 10.00,
       'fee_amount' => 50.00,
@@ -515,7 +515,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'contact_id' => $this->_individualId,
       'receive_date' => '2012-01-01',
       'total_amount' => 100.00,
-      'contribution_type_id' => $this->_contributionTypeId,
+      'financial_account_id' => $this->_contributionTypeId,
       'payment_instrument_id' => 1,
       'non_deductible_amount' => 10.00,
       'fee_amount' => 50.00,
@@ -541,7 +541,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
         'contact_id' => $this->_individualId,
         'receive_date' => '2012-01-01',
         'total_amount' => 100.00,
-        'contribution_type_id' => $this->_contributionTypeId,
+        'financial_account_id' => $this->_contributionTypeId,
         'payment_instrument_id' => 1,
         'non_deductible_amount' => 10.00,
         'fee_amount' => 50.00,
@@ -663,7 +663,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'id' => $contributionID,
       'contact_id' => $this->_individualId,
       'total_amount' => 110.00,
-      'contribution_type_id' => $this->_contributionTypeId,
+      'financial_account_id' => $this->_contributionTypeId,
       'non_deductible_amount' => 10.00,
       'net_amount' => 100.00,
       'contribution_status_id' => 1,
@@ -681,7 +681,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
 
     $this->assertEquals($contribution['values'][$contributionID]['contact_id'], $this->_individualId, 'In line ' . __LINE__);
     $this->assertEquals($contribution['values'][$contributionID]['total_amount'], 110.00, 'In line ' . __LINE__);
-    $this->assertEquals($contribution['values'][$contributionID]['contribution_type_id'], $this->_contributionTypeId, 'In line ' . __LINE__);
+    $this->assertEquals($contribution['values'][$contributionID]['financial_account_id'], $this->_contributionTypeId, 'In line ' . __LINE__);
     $this->assertEquals($contribution['values'][$contributionID]['instrument_id'], $old_payment_instrument, 'In line ' . __LINE__);
     $this->assertEquals($contribution['values'][$contributionID]['non_deductible_amount'], 10.00, 'In line ' . __LINE__);
     $this->assertEquals($contribution['values'][$contributionID]['fee_amount'], $old_fee_amount, 'In line ' . __LINE__);
@@ -757,7 +757,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'contact_id' => $this->_individualId,
       'receive_date' => date('Ymd'),
       'total_amount' => 100.00,
-      'contribution_type_id' => $this->_contributionTypeId,
+      'financial_account_id' => $this->_contributionTypeId,
       'non_deductible_amount' => 10.00,
       'fee_amount' => 51.00,
       'net_amount' => 91.00,
@@ -775,7 +775,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
 
     $this->assertEquals($p['contact_id'], $res['contact_id'], 'In line ' . __LINE__);
     $this->assertEquals($p['total_amount'], $res['total_amount'], 'In line ' . __LINE__);
-    $this->assertEquals($p['contribution_type_id'], $res['contribution_type_id'], 'In line ' . __LINE__);
+    $this->assertEquals($p['financial_account_id'], $res['financial_account_id'], 'In line ' . __LINE__);
     $this->assertEquals($p['net_amount'], $res['net_amount'], 'In line ' . __LINE__);
     $this->assertEquals($p['non_deductible_amount'], $res['non_deductible_amount'], 'In line ' . __LINE__);
     $this->assertEquals($p['fee_amount'], $res['fee_amount'], 'In line ' . __LINE__);
@@ -796,7 +796,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'contact_id' => $this->_individualId,
       'receive_date' => date('Ymd'),
       'total_amount' => 100.00,
-      'contribution_type_id' => $this->_contributionTypeId,
+      'financial_account_id' => $this->_contributionTypeId,
       'non_deductible_amount' => 10.00,
       'contribution_status_id' => 1,
       'version' => $this->_apiversion,
@@ -807,7 +807,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'contact_id' => $this->_individualId,
       'receive_date' => date('Ymd'),
       'total_amount' => 200.00,
-      'contribution_type_id' => $this->_contributionTypeId,
+      'financial_account_id' => $this->_contributionTypeId,
       'non_deductible_amount' => 20.00,
       'trxn_id' => 5454565,
       'invoice_id' => 1212124,
@@ -827,7 +827,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
 
     $this->assertEquals($p2['contact_id'], $res['contact_id'], 'In line ' . __LINE__);
     $this->assertEquals($p2['total_amount'], $res['total_amount'], 'In line ' . __LINE__);
-    $this->assertEquals($p2['contribution_type_id'], $res['contribution_type_id'], 'In line ' . __LINE__);
+    $this->assertEquals($p2['financial_account_id'], $res['financial_account_id'], 'In line ' . __LINE__);
     $this->assertEquals($p2['net_amount'], $res['net_amount'], 'In line ' . __LINE__);
     $this->assertEquals($p2['non_deductible_amount'], $res['non_deductible_amount'], 'In line ' . __LINE__);
     $this->assertEquals($p2['fee_amount'], $res['fee_amount'], 'In line ' . __LINE__);
@@ -907,9 +907,9 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'contact_id' => $this->_individualId,
       'receive_date' => date('Ymd'),
       'total_amount' => 100.00,
-      'contribution_type_id' => $this->_contributionTypeId,
+      'financial_account_id' => $this->_contributionTypeId,
       'contribution_status_id' => 1,
-      'contribution_type' => NULL,
+      'financial_account' => NULL,
       'note' => 'note',
       'contribution_source' => 'test',
     );

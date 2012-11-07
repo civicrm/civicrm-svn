@@ -64,8 +64,8 @@ class WebTest_Contribute_ContactContextAddTest extends CiviSeleniumTestCase {
     $this->click("link=Record Contribution (Check, Cash, EFT ...)");
 
     $this->waitForElementPresent("_qf_Contribution_cancel-bottom");
-    // fill contribution type.
-    $this->select("contribution_type_id", "Donation");
+      // fill financial account.
+      $this->select("financial_account_id", "Donation");
 
     // fill in Received Date
     $this->webtestFillDate('receive_date');

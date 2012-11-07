@@ -162,8 +162,8 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
     $this->click('record_contribution', 'value=1');
     $this->waitForElementPresent('contribution_status_id');
 
-    // select the contribution type for the selected membership type
-    $this->select('contribution_type_id', 'value=2');
+      // select the financial account for the selected membership type
+      $this->select('financial_account_id', 'value=2');
 
     // the amount for the selected membership type
     $this->type('total_amount', '100.00');

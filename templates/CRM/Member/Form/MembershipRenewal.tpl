@@ -133,9 +133,9 @@
                       </td>
                     </tr>
                   {/if}
-                    <tr class="crm-member-membershiprenew-form-block-contribution_type">
-                       <td class="label">{$form.contribution_type_id.label}</td>
-                       <td>{$form.contribution_type_id.html}<br />
+                    <tr class="crm-member-membershiprenew-form-block-financial_account_id">
+                       <td class="label">{$form.financial_account_id.label}</td>
+                       <td>{$form.financial_account_id.html}<br />
                        <span class="description">{ts}Select the appropriate contribution type for this payment.{/ts}</span></td>
                     </tr>
                     <tr class="crm-member-membershiprenew-form-block-total_amount">

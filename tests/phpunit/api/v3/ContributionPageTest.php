@@ -17,7 +17,7 @@ class api_v3_ContributionPageTest extends CiviUnitTestCase {
     $this->contactIds[] = $this->individualCreate();
     $this->params = array(
       'version' => $this->_apiversion,
-      'contribution_type_id' => 1,
+      'financial_account_id' => 1,
       'currency' => 'NZD',
       'goal_amount' => $this->testAmount,
     );
@@ -47,7 +47,7 @@ class api_v3_ContributionPageTest extends CiviUnitTestCase {
     $getParams = array(
       'version' => $this->_apiversion,
       'currency' => 'NZD',
-      'contribution_type_id' => 1,
+      'financial_account_id' => 1,
     );
     $getResult = civicrm_api($this->_entity, 'get', $getParams);
     $this->documentMe($getParams, $getResult, __FUNCTION__, __FILE__);
@@ -63,7 +63,7 @@ class api_v3_ContributionPageTest extends CiviUnitTestCase {
       'version' => $this->_apiversion,
       'amount' => ''. $this->testAmount, // 3456
       'currency' => 'NZD',
-      'contribution_type_id' => 1,
+      'financial_account_id' => 1,
     );
     $getResult = civicrm_api($this->_entity, 'get', $getParams);
     $this->documentMe($getParams, $getResult, __FUNCTION__, __FILE__);
@@ -96,7 +96,7 @@ class api_v3_ContributionPageTest extends CiviUnitTestCase {
   public static function tearDownAfterClass(){
     $tablesToTruncate = array(
       'civicrm_contact',
-      'civicrm_contribution_type',
+      'civicrm_financial_account',
       'civicrm_contribution',
       'civicrm_contribution_page',
     );

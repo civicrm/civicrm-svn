@@ -257,7 +257,7 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
       NULL, NULL, NULL, NULL,
       array('&nbsp;&nbsp;', '&nbsp;&nbsp;', '&nbsp;&nbsp;', '<br/>')
     );
-    $this->add('select', 'contribution_type_id', ts('Contribution Type'),
+        $this->add('select', 'financial_account_id',ts( 'Contribution Type' ),
       array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::contributionType()
     );
 
@@ -480,9 +480,9 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
     }
 
     if ($values['is_monetary']) {
-      //check if contribution type is selected
-      if (!$values['contribution_type_id']) {
-        $errors['contribution_type_id'] = ts("Please select contribution type.");
+            //check if financial account is selected
+            if ( !$values['financial_account_id'] ) {
+                $errors['financial_account_id'] = ts( "Please select contribution type." );
       }
 
       //check for the event fee label (mandatory)
@@ -758,7 +758,7 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
         $priceSetID = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $params['price_field_id'], 'price_set_id');
         CRM_Price_BAO_Set::setIsQuickConfig($priceSetID,0);
       }
-      $params['contribution_type_id'] = '';
+            $params['financial_account_id'] = '';
     }
 
     //update events table

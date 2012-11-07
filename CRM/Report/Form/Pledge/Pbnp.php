@@ -71,7 +71,7 @@ class CRM_Report_Form_Pledge_Pbnp extends CRM_Report_Form {
           array('title' => ts('Pledge Made'),
             'required' => TRUE,
           ),
-          'contribution_type_id' =>
+                                 'financial_account_id' =>
           array('title' => ts('Contribution Type'),
             'requried' => TRUE,
           ),
@@ -91,7 +91,7 @@ class CRM_Report_Form_Pledge_Pbnp extends CRM_Report_Form {
             'title' => 'Pledge Made',
             'operatorType' => CRM_Report_Form::OP_DATE,
           ),
-          'contribution_type_id' =>
+                                 'financial_account_id' =>
           array('title' => ts('Contribution Type'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => CRM_Contribute_PseudoConstant::contributionType(),

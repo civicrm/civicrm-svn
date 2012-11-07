@@ -189,7 +189,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
           'honor_contact_id',
           'cancel_date',
           'contribution_page_id',
-          'contribution_type_id',
+          'financial_account_id',
           'currency'
         ),
         'cant_return' => array(// can't be retrieved from api

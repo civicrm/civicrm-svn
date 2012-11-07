@@ -88,7 +88,7 @@ class CRM_Contribute_Form_ContributionView extends CRM_Core_Form {
       }
     }
 
-    $groupTree = CRM_Core_BAO_CustomGroup::getTree('Contribution', $this, $id, 0, CRM_Utils_Array::value('contribution_type_id', $values));
+    $groupTree = CRM_Core_BAO_CustomGroup::getTree('Contribution', $this, $id, 0, CRM_Utils_Array::value('financial_account_id', $values));
     CRM_Core_BAO_CustomGroup::buildCustomDataView($this, $groupTree);
 
     $premiumId = NULL;
@@ -162,7 +162,9 @@ class CRM_Contribute_Form_ContributionView extends CRM_Core_Form {
     $displayName = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $values['contact_id'], 'display_name');
     $this->assign('displayName', $displayName);
 
-    $title = $displayName . ' - (' . CRM_Utils_Money::format($values['total_amount']) . ' ' . ' - ' . $values['contribution_type'] . ')';
+        $title = $displayName . 
+            ' - (' . CRM_Utils_Money::format( $values['total_amount'] ) . ' ' . 
+            ' - ' . $values['financial_account'] . ')';
 
     $recentOther = array();
     if (CRM_Core_Permission::checkActionPermission('CiviContribute', CRM_Core_Action::UPDATE)) {

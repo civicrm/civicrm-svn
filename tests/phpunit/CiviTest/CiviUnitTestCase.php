@@ -676,7 +676,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
       // FIXME: I know it's 1, cause it was loaded directly to the db.
       // FIXME: when we load all the data, we'll need to address this to
       // FIXME: avoid hunting numbers around.
-      'contribution_type_id' => $contributionTypeID,
+                         'financial_account_id' =>$contributionTypeID,
       'is_active' => 1,
       'version' => $version,
       'sequential' => 1,
@@ -880,7 +880,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
   /**
    * Function to create Contribution Type
    *
-   * @return int $id of contribution type created
+     * @return int $id of financial account created
    */
   function contributionTypeCreate() {
 
@@ -902,7 +902,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
    *      * @param int $contributionTypeId
    */
   function contributionTypeDelete($contributionTypeID = NULL) {
-    require_once 'CRM/Contribute/BAO/ContributionType.php';
+        require_once 'CRM/Financial/DAO/FinancialAccount.php';
     if ($contributionTypeID === NULL) {
       civicrm_api('Contribution', 'get', array('version' => 3, 'contribution_type_id' => 10, 'api.contribution.delete' => 1));
       civicrm_api('Contribution', 'get', array('version' => 3, 'contribution_type_id' => 11, 'api.contribution.delete' => 1));
@@ -992,7 +992,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
       'scheduled_date' => date('Ymd'),
       'amount' => 100.00,
       'pledge_status_id' => '2',
-      'contribution_type_id' => '1',
+                        'financial_account_id'  => '1',
       'pledge_original_installment_amount' => 20,
       'frequency_interval' => 5,
       'frequency_unit' => 'year',
@@ -1035,7 +1035,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
       'contact_id' => $cID,
       'receive_date' => date('Ymd'),
       'total_amount' => 100.00,
-      'contribution_type_id' => $cTypeID,
+                        'financial_account_id'   => $cTypeID,
       'payment_instrument_id' => 1,
       'non_deductible_amount' => 10.00,
       'fee_amount' => 50.00,

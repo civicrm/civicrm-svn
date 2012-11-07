@@ -43,7 +43,7 @@ class CRM_Contribute_BAO_Contribution_Utils {
    * @param array   $premiumParams   array with premium related key
    * value pairs
    * @param int     $contactID       contact id
-   * @param int     $contributionTypeId   contribution type id
+     * @param int     $contributionTypeId   financial account id  
    * @param int     $component   component id
    *
    * @return array associated array
@@ -62,23 +62,21 @@ class CRM_Contribute_BAO_Contribution_Utils {
     CRM_Core_Payment_Form::mapParams($form->_bltID, $form->_params, $paymentParams, TRUE);
 
     $contributionType = new CRM_Contribute_DAO_ContributionType();
-    if (isset($paymentParams['contribution_type'])) {
-      $contributionType->id = $paymentParams['contribution_type'];
+        if ( isset( $paymentParams['financial_account'] ) ) {
+            $contributionType->id = $paymentParams['financial_account'];
     }
     elseif (CRM_Utils_Array::value('pledge_id', $form->_values)) {
       $contributionType->id = CRM_Core_DAO::getFieldValue('CRM_Pledge_DAO_Pledge',
         $form->_values['pledge_id'],
-        'contribution_type_id'
-      );
-    }
-    else {
+                                                                 'financial_account_id' );
+        } else {
       $contributionType->id = $contributionTypeId;
     }
     if (!$contributionType->find(TRUE)) {
       CRM_Core_Error::fatal('Could not find a system table');
     }
 
-    // add some contribution type details to the params list
+        // add some financial account details to the params list
     // if folks need to use it
     $paymentParams['contributionType_name'] = $form->_params['contributionType_name'] = $contributionType->name;
     $paymentParams['contributionType_accounting_code'] = $form->_params['contributionType_accounting_code'] = $contributionType->accounting_code;
@@ -210,7 +208,7 @@ class CRM_Contribute_BAO_Contribution_Utils {
         );
 
         $paymentParams['contributionID'] = $contribution->id;
-        $paymentParams['contributionTypeID'] = $contribution->contribution_type_id;
+                $paymentParams['contributionTypeID'] = $contribution->financial_account_id;
         $paymentParams['contributionPageID'] = $contribution->contribution_page_id;
 
         if ($form->_values['is_recur'] && $contribution->contribution_recur_id) {
@@ -441,9 +439,9 @@ INNER JOIN   civicrm_contact contact ON ( contact.id = contrib.contact_id )
       $transaction['trxn_id'] = md5(uniqid(rand(), TRUE));
     }
 
-    if (!isset($transaction['contribution_type_id'])) {
+        if ( ! isset( $transaction['financial_account_id'] ) ) {
       $contributionTypes = array_keys(CRM_Contribute_PseudoConstant::contributionType());
-      $transaction['contribution_type_id'] = $contributionTypes[0];
+            $transaction['financial_account_id'] = $contributionTypes[0];
     }
 
     if (($type == 'paypal') && (!isset($transaction['net_amount']))) {
@@ -688,7 +686,7 @@ INNER JOIN   civicrm_contact contact ON ( contact.id = contrib.contact_id )
     $customFields = CRM_Core_BAO_CustomField::getFields('Contribution',
       FALSE,
       FALSE,
-      CRM_Utils_Array::value('contribution_type_id',
+                                                   CRM_Utils_Array::value('financial_account_id',
         $params
       )
     );

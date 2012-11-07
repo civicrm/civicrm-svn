@@ -244,7 +244,7 @@ class CRM_Pledge_BAO_Pledge extends CRM_Pledge_DAO_Pledge {
 
     $config            = CRM_Core_Config::singleton();
     $contributionTypes = CRM_Contribute_PseudoConstant::contributionType();
-    $title             = CRM_Contact_BAO_Contact::displayName($pledge->contact_id) . ' - (' . ts('Pledged') . ' ' . CRM_Utils_Money::format($pledge->amount, $pledge->currency) . ' - ' . $contributionTypes[$pledge->contribution_type_id] . ')';
+    $title             = CRM_Contact_BAO_Contact::displayName($pledge->contact_id) . ' - (' . ts('Pledged') . ' ' . CRM_Utils_Money::format($pledge->amount, $pledge->currency) . ' - ' . $contributionTypes[$pledge->financial_account_id] . ')';
 
     // add the recently created Pledge
     CRM_Utils_Recent::add($title,
@@ -469,8 +469,7 @@ GROUP BY  cp.currency
         'create_date' => $honorDAO->create_date,
         'acknowledge_date' => $honorDAO->acknowledge_date,
         'type' => CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_ContributionType',
-          $honorDAO->contribution_type_id, 'name'
-        ),
+                                                                                               $honorDAO->financial_account_id, 'name' ),
         'display_name' => CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact',
           $honorDAO->contact_id, 'display_name'
         ),

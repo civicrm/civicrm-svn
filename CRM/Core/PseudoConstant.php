@@ -383,6 +383,13 @@ class CRM_Core_PseudoConstant {
   private static $contactType = array();
 
   /**
+     * Financial Account Type
+     * @var array
+     * @static
+     */
+    private static $financialAccountType;
+
+    /**
    * populate the object from the database. generic populate
    * method
    *
@@ -2064,6 +2071,28 @@ ORDER BY name";
     }
     return self::$eventContacts;
   }
+
+    /**
+     * Get all Financial Account Types
+     *
+     * The static array financial_account_type is returned
+     *
+     * @access public
+     * @static
+     *
+     * @param boolean $all - get All Financial Account Type - default is to get only active ones.
+     *
+     * @return array - array reference of all Financial Account Type
+     *
+     */
+    public static function financialAccountType( )
+    {
+        if ( ! self::$financialAccountType ) {
+            require_once 'CRM/Core/OptionGroup.php';
+            self::$financialAccountType = CRM_Core_OptionGroup::values('financial_account_type');
+        }
+        return self::$financialAccountType;
+    }
 
   /**
    * Get all batch types

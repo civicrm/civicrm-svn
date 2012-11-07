@@ -134,17 +134,14 @@ class CRM_Report_Form_Contribute_Repeat extends CRM_Report_Form {
           ),
         ),
       ),
-      'civicrm_contribution_type' =>
-      array(
-        'dao' => 'CRM_Contribute_DAO_ContributionType',
+                   'civicrm_financial_account' =>
+                   array( 'dao'           => 'CRM_Financial_DAO_FinancialAccount',
         'fields' =>
-        array(
-          'contribution_type' => NULL,
-        ),
+                          array( 'financial_account'   => null, ), 
         'grouping' => 'contri-fields',
         'group_bys' =>
         array(
-          'contribution_type' =>
+          'financial_account' =>
           array('name' => 'id',
                 'title' => 'Contribution Type' ),
         ),
@@ -260,7 +257,7 @@ contribution_civireport2.total_amount_sum as contribution2_total_amount_sum',
     $append = NULL;
 
     // since contact fields not related to contribution type
-    if (array_key_exists('contribution_type', $this->_params['group_bys']) ||
+        if ( array_key_exists('financial_account', $this->_params['group_bys']) ||
       array_key_exists('contribution_source', $this->_params['group_bys'])
     ) {
       unset($this->_columns['civicrm_contact']['fields']['id']);
@@ -372,9 +369,9 @@ LEFT JOIN civicrm_email   {$this->_aliases['civicrm_email']}
        ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_email']}.contact_id AND {$this->_aliases['civicrm_email']}.is_primary = 1
 LEFT JOIN civicrm_phone   {$this->_aliases['civicrm_phone']}
        ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_phone']}.contact_id AND {$this->_aliases['civicrm_phone']}.is_primary = 1";
-    }
-    elseif ($fromTable == 'civicrm_contribution_type') {
-      $contriCol = "contribution_type_id";
+            
+        } else if ( $fromTable == 'civicrm_financial_account' ) {
+            $contriCol  = "financial_account_id";
     }
     elseif ($fromTable == 'civicrm_contribution') {
       $contriCol = $fromCol;
@@ -491,14 +488,14 @@ LEFT JOIN civicrm_temp_civireport_repeat2 {$this->_aliases['civicrm_contribution
       'country_id' => array('country_id'),
       'state_province_id' => array('country_id', 'state_province_id'),
       'contribution_source' => array('contribution_source'),
-      'contribution_type' => array('contribution_type'),
+                        'financial_account'   => array( 'financial_account' ),
     );
     $idMapping = array(
       'id' => 'Contact',
       'country_id' => 'Country',
       'state_province_id' => 'State/Province',
       'contribution_source' => 'Contribution Source',
-      'contribution_type' => 'Contribution Type',
+                            'financial_account'   => 'Contribution Type',
       'sort_name' => 'Contact Name',
       'email' => 'Email',
       'phone' => 'Phone',

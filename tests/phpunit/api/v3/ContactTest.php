@@ -583,7 +583,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
       'api.contribution.create' => array(
         'receive_date' => '2010-01-01',
         'total_amount' => 100.00,
-        'contribution_type_id' => 1,
+        'financial_account_id' => 1,
         'payment_instrument_id' => 1,
         'non_deductible_amount' => 10.00,
         'fee_amount' => 50.00,
@@ -628,7 +628,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
       'api.contribution.create' => array(
         'receive_date' => '2010-01-01',
         'total_amount' => 100.00,
-        'contribution_type_id' => 1,
+        'financial_account_id' => 1,
         'payment_instrument_id' => 1,
         'non_deductible_amount' => 10.00,
         'fee_amount' => 50.00,
@@ -1192,7 +1192,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
 
                              'receive_date'           => '2010-01-01',
                              'total_amount'           => 100.00,
-                             'contribution_type_id'   => 1,
+                             'financial_account_id'   => 1,
                              'payment_instrument_id'  => 1,
                              'non_deductible_amount'  => 10.00,
                              'fee_amount'             => 50.00,
@@ -1263,7 +1263,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
       'api.contribution.create' => array(
         'receive_date' => '2010-01-01',
         'total_amount' => 100.00,
-        'contribution_type_id' => $this->_contributionTypeId,
+        'financial_account_id' => $this->_contributionTypeId,
         'payment_instrument_id' => 1,
         'non_deductible_amount' => 10.00,
         'fee_amount' => 50.00,
@@ -1276,7 +1276,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
       'api.contribution.create.1' => array(
         'receive_date' => '2011-01-01',
         'total_amount' => 120.00,
-        'contribution_type_id' => $this->_contributionTypeId,
+        'financial_account_id' => $this->_contributionTypeId,
         'payment_instrument_id' => 1,
         'non_deductible_amount' => 10.00,
         'fee_amount' => 50.00,
@@ -1333,7 +1333,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
       'api.contribution.create' => array(
         'receive_date' => '2010-01-01',
         'total_amount' => 100.00,
-        'contribution_type_id' => $this->_contributionTypeId,
+        'financial_account_id' => $this->_contributionTypeId,
         'payment_instrument_id' => 1,
         'non_deductible_amount' => 10.00,
         'fee_amount' => 50.00,
@@ -1344,7 +1344,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
       'api.contribution.create.1' => array(
         'receive_date' => '2011-01-01',
         'total_amount' => 120.00,
-        'contribution_type_id' => $this->_contributionTypeId,
+        'financial_account_id' => $this->_contributionTypeId,
         'payment_instrument_id' => 1,
         'non_deductible_amount' => 10.00,
         'fee_amount' => 50.00,
@@ -1415,7 +1415,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
       'api.contribution.create' => array(
         'receive_date' => '2010-01-01',
         'total_amount' => 100.00,
-        'contribution_type_id' => 1,
+        'financial_account_id' => 1,
         'payment_instrument_id' => 1,
         'non_deductible_amount' => 10.00,
         'fee_amount' => 50.00,
@@ -1428,7 +1428,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
       'api.contribution.create.1' => array(
         'receive_date' => '2011-01-01',
         'total_amount' => 120.00,
-        'contribution_type_id' => 1,
+        'financial_account_id' => 1,
         'payment_instrument_id' => 1,
         'non_deductible_amount' => 10.00,
         'fee_amount' => 50.00,

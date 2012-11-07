@@ -220,8 +220,8 @@ WHERE
         case 'civicrm_contribution_page':
           $ids = implode(',', $entities);
           $queryString = "SELECT cp.id as id, cp.title as title, cp.start_date as startDate, cp.end_date as endDate,ct.name as type
-FROM      civicrm_contribution_page cp, civicrm_contribution_type ct
-WHERE     ct.id = cp.contribution_type_id AND
+FROM      civicrm_contribution_page cp, civicrm_financial_account ct
+WHERE     ct.id = cp.financial_account_id AND 
           cp.id IN ($ids) AND
           cp.is_active = 1;";
           $crmDAO = CRM_Core_DAO::executeQuery($queryString);

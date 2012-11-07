@@ -237,10 +237,9 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form {
       $defaults['membership_type_id'] = $this->_memType;
     }
 
-    $defaults['contribution_type_id'] = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType',
+        $defaults['financial_account_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
       $this->_memType,
-      'contribution_type_id'
-    );
+                                                                         'financial_account_id' );
 
     $defaults['total_amount'] = CRM_Utils_Money::format(CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType',
         $this->_memType,
@@ -431,7 +430,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     $this->addDate('renewal_date', ts('Date Renewal Entered'), FALSE, array('formatType' => 'activityDate'));
     if (CRM_Core_Permission::access('CiviContribute') && !$this->_mode) {
       $this->addElement('checkbox', 'record_contribution', ts('Record Renewal Payment?'), NULL, array('onclick' => "checkPayment();"));
-      $this->add('select', 'contribution_type_id', ts('Contribution Type'),
+            $this->add('select', 'financial_account_id', ts( 'Contribution Type' ), 
         array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::contributionType()
       );
 
@@ -529,8 +528,8 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     //total amount condition arise when membership type having no
     //minimum fee
     if (isset($params['record_contribution'])) {
-      if (!$params['contribution_type_id']) {
-        $errors['contribution_type_id'] = ts('Please select a Contribution Type.');
+            if ( ! $params['financial_account_id'] ) {
+                $errors['financial_account_id'] = ts('Please select a Contribution Type.');
       }
       if (!$params['total_amount']) {
         $errors['total_amount'] = ts('Please enter a Contribution Amount.');

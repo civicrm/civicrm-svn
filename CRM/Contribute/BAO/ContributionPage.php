@@ -89,8 +89,8 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
       $values['custom_post_id'] = '';
     }
     // add an accounting code also
-    if (CRM_Utils_Array::value('contribution_type_id', $values)) {
-      $values['accountingCode'] = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_ContributionType', $values['contribution_type_id'], 'accounting_code');
+    if (CRM_Utils_Array::value('financial_account_id', $values)) {
+      $values['accountingCode'] = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_ContributionType', $values['financial_account_id'], 'accounting_code');
     }
   }
 
@@ -301,7 +301,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
         'isShare' => CRM_Utils_Array::value('is_share', $values),
       );
 
-      if ($contributionTypeId = CRM_Utils_Array::value('contribution_type_id', $values)) {
+            if ( $contributionTypeId = CRM_Utils_Array::value('financial_account_id', $values ) ) {
         $tplParams['contributionTypeId'] = $contributionTypeId;
         $tplParams['contributionTypeName'] = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_ContributionType', $contributionTypeId);
       }
@@ -707,7 +707,7 @@ WHERE entity_table = 'civicrm_contribution_page'
     );
     $query = "
    SELECT  civicrm_contribution_page.id as id,
-           civicrm_contribution_page.contribution_type_id as settings,
+           civicrm_contribution_page.financial_account_id as settings, 
            amount_block_is_active as amount,
            civicrm_membership_block.id as membership,
            civicrm_uf_join.id as custom,
