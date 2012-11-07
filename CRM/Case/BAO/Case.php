@@ -921,9 +921,8 @@ SELECT case_status.label AS case_status, status_id, case_type.label AS case_type
   /**
    * Function to get Case roles
    *
-   * @param int $contactID contact id
-   * @param int $caseID case id
-   *
+   * @param int   $contactID contact id
+   * @param int   $caseID case id
    * @return returns case role / relationships
    *
    * @static
@@ -945,6 +944,7 @@ SELECT case_status.label AS case_status, status_id, case_type.label AS case_type
  LEFT JOIN  civicrm_email ON (civicrm_email.contact_id = civicrm_contact.id )
      WHERE  civicrm_relationship.contact_id_a = %1 AND civicrm_relationship.case_id = %2';
 
+
     $params = array(1 => array($contactID, 'Positive'),
       2 => array($caseID, 'Positive'),
     );
@@ -953,7 +953,6 @@ SELECT case_status.label AS case_status, status_id, case_type.label AS case_type
       $query .= ' AND civicrm_relationship.id = %3 ';
       $params[3] = array($relationshipID, 'Integer');
     }
-
     $dao = CRM_Core_DAO::executeQuery($query, $params);
 
     $values = array();
@@ -1715,9 +1714,9 @@ SELECT case_status.label AS case_status, status_id, case_type.label AS case_type
   }
 
   static
-  function getGlobalContacts(&$groupInfo, $sort = NULL, $showLinks = NULL) {
+  function getGlobalContacts(&$groupInfo, $sort = NULL, $showLinks = NULL, $returnOnlyCount = FALSE, $offset = 0, $rowCount = 25) {
     $globalContacts = array();
-
+    
     $settingsProcessor = new CRM_Case_XMLProcessor_Settings();
     $settings = $settingsProcessor->run();
     if (!empty($settings)) {
@@ -1732,7 +1731,11 @@ SELECT case_status.label AS case_status, status_id, case_type.label AS case_type
           $params             = array(array('group', 'IN', array($groupInfo['id'] => 1), 0, 0));
           $return             = array('sort_name' => 1, 'display_name' => 1, 'email' => 1, 'phone' => 1);
           $return             = array('contact_id' => 1, 'sort_name' => 1, 'display_name' => 1, 'email' => 1, 'phone' => 1);
-          list($globalContacts, $_) = CRM_Contact_BAO_Query::apiQuery($params, $return, NULL, $sort);
+          list($globalContacts, $_) = CRM_Contact_BAO_Query::apiQuery($params, $return, NULL, $sort, $offset, $rowCount, TRUE, $returnOnlyCount);
+          
+          if ($returnOnlyCount) {
+            return $globalContacts;
+          }
           
           if ($showLinks) {
             foreach($globalContacts as $idx => $contact) {
