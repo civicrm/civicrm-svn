@@ -49,18 +49,16 @@ class CRM_Contact_Page_AJAX {
     }
 
     if ($name = CRM_Utils_Array::value('s', $_GET)) {
-      // QuickSearch by ID
-      if ($context == 'navigation' && is_numeric($name) && intval($name) == floatval($name)) {
-        $cid = $name;
-        $result = civicrm_api('contact', 'get', $params + array('id' => $cid, 'return.sort_name' => 1));
-        if (!empty($result['values'][$cid]['sort_name'])) {
-          echo ts('ID') . " $cid: {$result['values'][$cid]['sort_name']}|$cid\n";
-        }
-        CRM_Utils_System::civiExit();
-      }
-      else {
-        $params['name'] = CRM_Utils_Type::escape($name, 'String');
-      }
+      $params['name'] = CRM_Utils_Type::escape($name, 'String');
+    }
+
+    //CRM-10687: Allow quicksearch by multiple fields
+    if (!empty($_GET['fieldName'])) {
+      $params['field_name'] = CRM_Utils_Type::escape($_GET['fieldName'], 'String');
+    }
+
+    if (!empty($_GET['tableName'])) {
+      $params['table_name'] = CRM_Utils_Type::escape($_GET['tableName'], 'String');
     }
 
     $params['limit'] = 10;

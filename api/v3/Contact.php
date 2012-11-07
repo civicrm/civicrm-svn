@@ -554,7 +554,7 @@ function civicrm_api3_contact_getquick($params) {
       $list[$value] = $acOptions[$value];
     }
   }
-
+  
   $select = $actualSelectElements = array('sort_name');
   $where  = '';
   $from   = array();
@@ -666,18 +666,33 @@ function civicrm_api3_contact_getquick($params) {
     $includeNickName = " OR nick_name LIKE '$strSearch'";
     $exactIncludeNickName = " OR nick_name LIKE '$name'";
   }
-
-  if ($config->includeEmailInName) {
-    if (!in_array('email', $list)) {
-      $includeEmailFrom = "LEFT JOIN civicrm_email eml ON ( cc.id = eml.contact_id AND eml.is_primary = 1 )";
+    
+  //CRM-10687  
+  if (!empty($params['field_name']) && !empty($params['table_name'])) {
+    $field_name = $params['field_name'];
+    $table_name = $params['table_name'];
+    if ($config->includeEmailInName) {
+        if (!in_array('email', $list)) {
+          $includeEmailFrom = "LEFT JOIN civicrm_email eml ON ( cc.id = eml.contact_id AND eml.is_primary = 1 )";
+        }
     }
-    $whereClause = " WHERE ( email LIKE '$strSearch' OR sort_name LIKE '$strSearch' $includeNickName ) {$where} ";
-    $exactWhereClause = " WHERE ( email LIKE '$name' OR sort_name LIKE '$name' $exactIncludeNickName ) {$where} ";
-  }
+    $whereClause = " WHERE ( $table_name.$field_name LIKE '$strSearch')";
+    $exactWhereClause = " WHERE ( $table_name.$field_name = '$name')";    
+  } 
   else {
-    $whereClause = " WHERE ( sort_name LIKE '$strSearch' $includeNickName ) {$where} ";
-    $exactWhereClause = " WHERE ( sort_name LIKE '$name' $exactIncludeNickName ) {$where} ";
+      if ($config->includeEmailInName) {
+        if (!in_array('email', $list)) {
+          $includeEmailFrom = "LEFT JOIN civicrm_email eml ON ( cc.id = eml.contact_id AND eml.is_primary = 1 )";
+        }
+        $whereClause = " WHERE ( email LIKE '$strSearch' OR sort_name LIKE '$strSearch' $includeNickName ) {$where} ";
+        $exactWhereClause = " WHERE ( email LIKE '$name' OR sort_name LIKE '$name' $exactIncludeNickName ) {$where} ";
+      }
+      else {
+        $whereClause = " WHERE ( sort_name LIKE '$strSearch' $includeNickName ) {$where} ";
+        $exactWhereClause = " WHERE ( sort_name LIKE '$name' $exactIncludeNickName ) {$where} ";
+      }
   }
+  
   $additionalFrom = '';
   if ($relType) {
     $additionalFrom = "
