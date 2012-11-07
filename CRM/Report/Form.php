@@ -2298,13 +2298,11 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
       $this->_outputMode == 'pdf' ||
       $this->_sendmail
     ) {
-      $templateFile = parent::getTemplateFileName();
 
+      $content = $this->compileContent();
       $url = CRM_Utils_System::url("civicrm/report/instance/{$this->_id}",
              "reset=1", TRUE
       );
-
-      $content = $this->_formValues['report_header'] . CRM_Core_Form::$_template->fetch($templateFile) . $this->_formValues['report_footer'];
 
       if ($this->_sendmail) {
         $config = CRM_Core_Config::singleton();
@@ -2395,6 +2393,28 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
       CRM_Report_Form_Instance::postProcess($this);
     }
   }
+  /*
+   * Get Template file name - use default form template if a specific one has not been set up for this report
+   *
+   */
+  function getTemplateFileName(){
+    $defaultTpl = parent::getTemplateFileName();
+    if(!CRM_Utils_File::isIncludable($defaultTpl)){
+      $defaultTpl = 'CRM/Report/Form.tpl';
+    }
+    return $defaultTpl;
+  }
+
+  /*
+   * Compile the report content
+   *
+   *  Although this function is super-short it is useful to keep separate so it can be over-ridden by report classes.
+   */
+  function compileContent(){
+    $templateFile = $this->getTemplateFileName();
+    return $this->_formValues['report_header'] . CRM_Core_Form::$_template->fetch($templateFile) . $this->_formValues['report_footer'];
+  }
+
 
   function postProcess() {
     // get ready with post process params
