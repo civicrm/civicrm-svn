@@ -1,3 +1,4 @@
+{include file='../CRM/Upgrade/4.3.alpha1.msg_template/civicrm_msg_template.tpl'}
 -- CRM-8507
 ALTER TABLE civicrm_custom_field
   ADD UNIQUE INDEX `UI_name_custom_group_id` (`name`, `custom_group_id`);
