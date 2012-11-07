@@ -142,7 +142,7 @@ class CRM_Core_Payment_BaseIPN {
   function failed(&$objects, &$transaction) {
     $contribution = &$objects['contribution'];
     $memberships = array();
-    if(CRM_Utils_Array::value('membership', $objects)){
+    if (CRM_Utils_Array::value('membership', $objects)) {
       $memberships = &$objects['membership'];
       if (is_numeric($memberships)) {
         $memberships = array($objects['membership']);
@@ -156,7 +156,6 @@ class CRM_Core_Payment_BaseIPN {
     $participant = &$objects['participant'];
 
     $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
-
     $contribution->contribution_status_id = array_search('Failed', $contributionStatus);
     $contribution->save();
 
@@ -597,7 +596,6 @@ LIMIT 1;";
     $ids['contributionPage'] = NULL;
     $ids['contributionRecur'] = NULL;
     $input['component'] = $name;
-
 
     $baseIPN = new CRM_Core_Payment_BaseIPN();
     $transaction = new CRM_Core_Transaction();
