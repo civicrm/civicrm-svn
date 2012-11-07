@@ -37,17 +37,40 @@
        <add>1.3</add>
   </field>
   <field> 
-      <name>contribution_type_id</name> 
+      <name>financial_account_id</name> 
       <type>int unsigned</type>                 
       <required>true</required>                  
-      <comment>default Contribution type assigned to contributions submitted via this page, e.g. Contribution, Campaign Contribution</comment> 
+      <comment>default financial account assigned to contributions submitted via this page, e.g. Contribution, Campaign Contribution</comment> 
       <add>1.3</add> 
+      <change>4.1</change>
+      <changedName>contribution_type_id</changedName>
   </field> 
   <foreignKey> 
-       <name>contribution_type_id</name> 
-       <table>civicrm_contribution_type</table> 
+      <name>financial_account_id</name> 
+      <table>civicrm_financial_account</table> 
        <key>id</key> 
+      <add>1.3</add> 
+      <change>4.1</change>
+      <changedName>contribution_type_id</changedName>
   </foreignKey>
+  <field> 
+      <name>non_deductible_financial_account_id</name>  
+      <title>Financial Account</title>
+      <type>int unsigned</type>
+      <comment>FK to Financial Account</comment>
+      <changedName>contribution_type_id</changedName>
+      <add>4.1</add>  
+      <change>4.1</change>
+      <changedName>contribution_type_id</changedName>
+  </field>    
+  <foreignKey>  
+       <name>non_deductible_financial_account_id</name>  
+       <table>civicrm_financial_account</table>  
+       <key>id</key>         
+       <add>4.1</add>  
+      <change>4.1</change>
+      <changedName>contribution_type_id</changedName>
+  </foreignKey>  
   <field> 
       <name>payment_processor</name> 
       <type>varchar</type>
