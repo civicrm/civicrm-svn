@@ -1226,7 +1226,7 @@ AND civicrm_membership.is_test = %2";
 
     $memBlockDetails = CRM_Member_BAO_Membership::getMembershipBlock($form->_id);
     if (CRM_Utils_Array::value('is_separate_payment', $memBlockDetails) && !$paymentDone) {
-      $contributionType = new CRM_Contribute_DAO_ContributionType();
+            $contributionType = new CRM_Financial_DAO_FinancialAccount( );
       $contributionType->id = CRM_Utils_Array::value('financial_account_id', $membershipDetails);
       if (!$contributionType->find(TRUE)) {
         CRM_Core_Error::fatal(ts("Could not find a system table"));

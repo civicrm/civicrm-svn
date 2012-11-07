@@ -92,13 +92,6 @@
       <add>1.5</add>  
   </field> 
   <field>  
-      <name>non_deductible_amount</name>  
-      <type>decimal</type>                  
-      <comment>Non-deductible value of this membership type (0 for free/complimentary membership types).</comment>  
-      <default>0</default>
-      <add>1.5</add>  
-  </field> 
-  <field>  
       <name>duration_unit</name>  
       <type>enum</type>
       <values>day, month, year, lifetime</values>

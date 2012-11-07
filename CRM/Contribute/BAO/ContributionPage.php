@@ -90,7 +90,9 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
     }
     // add an accounting code also
     if (CRM_Utils_Array::value('financial_account_id', $values)) {
-      $values['accountingCode'] = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_ContributionType', $values['financial_account_id'], 'accounting_code');
+            $values['accountingCode'] = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialAccount',
+                                                                     $values['financial_account_id'],
+                                                                     'accounting_code' );
     }
   }
 
@@ -303,7 +305,8 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
 
             if ( $contributionTypeId = CRM_Utils_Array::value('financial_account_id', $values ) ) {
         $tplParams['contributionTypeId'] = $contributionTypeId;
-        $tplParams['contributionTypeName'] = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_ContributionType', $contributionTypeId);
+                $tplParams['contributionTypeName'] = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialAccount',
+                                                                                  $contributionTypeId );
       }
 
       if ($contributionPageId = CRM_Utils_Array::value('id', $values)) {

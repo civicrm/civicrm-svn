@@ -110,6 +110,7 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
     if (!self::$contributionType) {
       CRM_Core_PseudoConstant::populate(self::$contributionType,
                                                'CRM_Financial_DAO_FinancialAccount' );
+            
     }
     if ($id) {
       $result = CRM_Utils_Array::value($id, self::$contributionType);

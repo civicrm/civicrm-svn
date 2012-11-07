@@ -149,7 +149,7 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page {
         $this->assign('isPriceSet', 1);
         $this->assign('isQuickConfig', $setDetails[$priceSetId]['is_quick_config']);
       }
-        }
+    }
 
     $params = array('entity_id' => $this->_id, 'entity_table' => 'civicrm_event');
     $values['location'] = CRM_Core_BAO_Location::getValues($params, TRUE);

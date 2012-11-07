@@ -54,24 +54,6 @@
       <changedName>contribution_type_id</changedName>
   </foreignKey>
   <field> 
-      <name>non_deductible_financial_account_id</name>  
-      <title>Financial Account</title>
-      <type>int unsigned</type>
-      <comment>FK to Financial Account</comment>
-      <changedName>contribution_type_id</changedName>
-      <add>4.1</add>  
-      <change>4.1</change>
-      <changedName>contribution_type_id</changedName>
-  </field>    
-  <foreignKey>  
-       <name>non_deductible_financial_account_id</name>  
-       <table>civicrm_financial_account</table>  
-       <key>id</key>         
-       <add>4.1</add>  
-      <change>4.1</change>
-      <changedName>contribution_type_id</changedName>
-  </foreignKey>  
-  <field> 
       <name>payment_processor</name> 
       <type>varchar</type>
       <length>128</length>

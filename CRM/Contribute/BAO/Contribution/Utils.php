@@ -61,7 +61,7 @@ class CRM_Contribute_BAO_Contribution_Utils {
   ) {
     CRM_Core_Payment_Form::mapParams($form->_bltID, $form->_params, $paymentParams, TRUE);
 
-    $contributionType = new CRM_Contribute_DAO_ContributionType();
+        $contributionType = new CRM_Financial_DAO_FinancialAccount( );
         if ( isset( $paymentParams['financial_account'] ) ) {
             $contributionType->id = $paymentParams['financial_account'];
     }

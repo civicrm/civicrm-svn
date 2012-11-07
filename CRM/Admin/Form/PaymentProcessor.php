@@ -54,7 +54,7 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
     if ($this->_id) {
       $this->_ppType = CRM_Utils_Request::retrieve('pp', 'String', $this, FALSE, NULL);
       if (!$this->_ppType) {
-        $this->_ppType = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_PaymentProcessor',
+                $this->_ppType = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_PaymentProcessor',
           $this->_id,
           'payment_processor_type'
         );
@@ -66,7 +66,7 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
     }
 
     $this->assign('ppType', $this->_ppType);
-    $this->_ppDAO = new CRM_Core_DAO_PaymentProcessorType();
+        $this->_ppDAO = new CRM_Financial_DAO_PaymentProcessorType( );
     $this->_ppDAO->name = $this->_ppType;
 
     if (!$this->_ppDAO->find(TRUE)) {
@@ -163,13 +163,13 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
       return;
     }
 
-    $attributes = CRM_Core_DAO::getAttribute('CRM_Core_DAO_PaymentProcessor');
+        $attributes = CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_PaymentProcessor' );
 
     $this->add('text', 'name', ts('Name'),
       $attributes['name'], TRUE
     );
 
-    $this->addRule('name', ts('Name already exists in Database.'), 'objectExists', array('CRM_Core_DAO_PaymentProcessor', $this->_id));
+        $this->addRule( 'name', ts('Name already exists in Database.'), 'objectExists', array( 'CRM_Financial_DAO_PaymentProcessor', $this->_id ) );
 
     $this->add('text', 'description', ts('Description'),
       $attributes['description']
@@ -272,7 +272,7 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
     }
     $domainID = CRM_Core_Config::domainID();
 
-    $dao            = new CRM_Core_DAO_PaymentProcessor();
+        $dao = new CRM_Financial_DAO_PaymentProcessor( );
     $dao->id        = $this->_id;
     $dao->domain_id = $domainID;
     if (!$dao->find(TRUE)) {
@@ -282,7 +282,7 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
     CRM_Core_DAO::storeValues($dao, $defaults);
 
     // now get testID
-    $testDAO            = new CRM_Core_DAO_PaymentProcessor();
+        $testDAO = new CRM_Financial_DAO_PaymentProcessor( );
     $testDAO->name      = $dao->name;
     $testDAO->is_test   = 1;
     $testDAO->domain_id = $domainID;
@@ -310,7 +310,7 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
    * @return Void
    */
   public function postProcess() {
-    CRM_Utils_System::flushCache('CRM_Core_DAO_PaymentProcessor');
+        CRM_Utils_System::flushCache( 'CRM_Financial_DAO_PaymentProcessor' );
 
     if ($this->_action & CRM_Core_Action::DELETE) {
       CRM_Core_BAO_PaymentProcessor::del($this->_id);
@@ -337,7 +337,7 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
    * @return Void
    */
   function updatePaymentProcessor(&$values, $domainID, $test) {
-    $dao = new CRM_Core_DAO_PaymentProcessor();
+        $dao = new CRM_Financial_DAO_PaymentProcessor( );
 
     $dao->id         = $test ? $this->_testID : $this->_id;
     $dao->domain_id  = $domainID;

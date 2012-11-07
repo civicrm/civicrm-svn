@@ -227,4 +227,9 @@
      <page_callback>CRM_Contribute_Page_SubscriptionStatus</page_callback>
      <access_arguments>make online contributions</access_arguments>
   </item>
+  <item>
+     <path>civicrm/ajax/FinancialAccount</path>
+     <page_callback>CRM_Financial_Page_AJAX::financialAccount</page_callback>
+     <access_arguments>make online contributions</access_arguments>
+  </item>
 </menu>

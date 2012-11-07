@@ -9,6 +9,7 @@
     <column>is_deductible</column>
     <column>is_reserved</column>
     <column>is_active</column>
+    <column>financial_account_type_id</column>    
     <row>
       <value>10</value>  <!--  id  -->
       <value>Gift</value>  <!--  name  -->
@@ -17,6 +18,7 @@
       <value>0</value>  <!--  is_deductible  -->
       <null />  <!--  is_reserved  -->      
       <value>1</value>  <!--  is_active  -->      
+      <value>3</value>   <!--  financial_account_type_id  -->
     </row>
     <row>
       <value>11</value>  <!--  id  -->
@@ -26,6 +28,7 @@
       <value>0</value>  <!--  is_deductible  -->
       <null />  <!--  is_reserved  -->      
       <value>1</value>  <!--  is_active  -->      
+      <value>3</value>   <!--  financial_account_type_id  -->    
     </row>    
   </table>
 </dataset>

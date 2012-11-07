@@ -214,13 +214,6 @@
        <comment>For elements with options, the option group id that is used</comment>
        <add>1.4</add>
   </field>
-  <field>
-       <name>filter</name>
-       <type>varchar</type>
-       <length>255</length>
-       <comment>Stores Contact Get API params contact reference custom fields. May be used for other filters in the future.</comment>
-       <add>4.1</add>
-  </field>
   <index>
     <name>UI_label_custom_group_id</name>
     <fieldName>label</fieldName>

@@ -32,7 +32,7 @@
  * $Id$
  *
  */
-class CRM_Core_BAO_PaymentProcessorType extends CRM_Core_DAO_PaymentProcessorType {
+class CRM_Core_BAO_PaymentProcessorType extends CRM_Financial_DAO_PaymentProcessorType {
 
   /**
    * static holder for the default payment processor
@@ -62,7 +62,7 @@ class CRM_Core_BAO_PaymentProcessorType extends CRM_Core_DAO_PaymentProcessorTyp
    */
   static
   function retrieve(&$params, &$defaults) {
-    $paymentProcessorType = new CRM_Core_DAO_PaymentProcessorType();
+        $paymentProcessorType = new CRM_Financial_DAO_PaymentProcessorType( );
     $paymentProcessorType->copyValues($params);
     if ($paymentProcessorType->find(TRUE)) {
       CRM_Core_DAO::storeValues($paymentProcessorType, $defaults);
@@ -84,7 +84,7 @@ class CRM_Core_BAO_PaymentProcessorType extends CRM_Core_DAO_PaymentProcessorTyp
    */
   static
   function setIsActive($id, $is_active) {
-    return CRM_Core_DAO::setFieldValue('CRM_Core_DAO_PaymentProcessorType', $id, 'is_active', $is_active);
+        return CRM_Core_DAO::setFieldValue( 'CRM_Financial_DAO_PaymentProcessorType', $id, 'is_active', $is_active );
   }
 
   /**
@@ -201,7 +201,7 @@ class CRM_Core_BAO_PaymentProcessorType extends CRM_Core_DAO_PaymentProcessorTyp
       return;
     }
 
-    $paymentProcessorType = new CRM_Core_DAO_PaymentProcessorType();
+        $paymentProcessorType = new CRM_Financial_DAO_PaymentProcessorType( );
     $paymentProcessorType->id = $paymentProcessorTypeId;
     if ($paymentProcessorType->delete()) {
       CRM_Core_Session::setStatus(ts('Selected Payment Processor type has been deleted.<br>'), '', 'success');

@@ -1409,7 +1409,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
         }
 
                 //insert financial account name in receipt.
-        $this->assign('contributionTypeName', CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_ContributionType',
+                $this->assign( 'contributionTypeName', CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialAccount',
                                                                                     $contributionParams['financial_account_id'] ) );
         $contributions = array();
         if ($this->_single) {

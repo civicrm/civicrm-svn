@@ -541,7 +541,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
       $fields = array_merge($fields, $tmpFields);
       $fields = array_merge($fields, $note);
       $fields = array_merge($fields, $optionFields);
-      $fields = array_merge($fields, CRM_Contribute_DAO_ContributionType::export());
+            $fields = array_merge($fields, CRM_Financial_DAO_FinancialAccount::export( ) );
       $fields = array_merge($fields, CRM_Core_BAO_CustomField::getFieldsForImport('Contribution'));
       self::$_importableFields = $fields;
     }
@@ -803,7 +803,7 @@ INNER JOIN  civicrm_contact contact ON ( contact.id = civicrm_contribution.conta
       $contributionFields = array_merge($contributionFields, self::getSpecialContributionFields());
     }
 
-    $contributionFields = array_merge($contributionFields, CRM_Contribute_DAO_ContributionType::export());
+        $contributionFields = array_merge( $contributionFields, CRM_Financial_DAO_FinancialAccount::export( ) );
 
     foreach ($contributionFields as $key => $var) {
       if ($key == 'contribution_contact_id') {
