@@ -34,9 +34,6 @@
         <tr class="crm-contribution-form-block-fee_amount"><td class="label">{$form.fee_amount.label}</td><td{$valueStyle}>{$form.fee_amount.html|crmMoney:$currency:'XXX':'YYY'}<br />
             <span class="description">{ts}Processing fee for this transaction (if applicable).{/ts}</span></td></tr>
 
-
-
-
         <tr class="crm-contribution-form-block-ftype">
 	{if $feeAmount neq 1}
 	<td class="label">{$form.fee_to_financial_account_id.label}</td>
@@ -51,9 +48,6 @@
         </td>
 	{/if}    
 	</tr>
-
-
-
 
         <tr class="crm-contribution-form-block-net_amount"><td class="label">{$form.net_amount.label}</td><td{$valueStyle}>{$form.net_amount.html|crmMoney:$currency:'':1}<br />
             <span class="description">{ts}Net value of the contribution (Total Amount minus Fee).{/ts}</span></td></tr>

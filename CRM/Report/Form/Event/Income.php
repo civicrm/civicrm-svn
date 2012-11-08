@@ -337,6 +337,7 @@ class CRM_Report_Form_Event_Income extends CRM_Report_Form_Event {
         
         $showEvents = array_diff(array_keys($events), $this->_params['id_value']);
       }
+
       $this->buildEventReport($showEvents);
       
     }

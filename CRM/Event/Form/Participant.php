@@ -1444,7 +1444,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
                             'trxn_type'         => 'Debit',
                             'total_amount'      => $params['initial_amount'],
                             'fee_amount'        => CRM_Utils_Array::value( 'fee_amount', $result ),
-                            'net_amount'        => CRM_Utils_Array::value( 'net_amount', $result, $params['initial_amount'] ),
+                            'net_amount'        => CRM_Utils_Array::value( 'net_amount', $result ),
                             'currency'          => $params['fee_currency'],
                             'payment_processor' => $this->_paymentProcessor['id'],
                             'trxn_id'           => $params['trxn_id'],
@@ -1483,8 +1483,28 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
     }
 
         require_once 'CRM/Core/BAO/FinancialTrxn.php';
-
         $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
+        $checkDiscount = CRM_Core_BAO_Discount::findSet($this->_eventId,'civicrm_event');
+        if (!empty($checkDiscount)) {
+          CRM_Core_PseudoConstant::populate( $fromaccount,
+                                             'CRM_Financial_DAO_EntityFinancialAccount',
+                                             $all = True, 
+                                             $retrieve = 'financial_account_id', 
+                                             $filter = null, 
+                                             " account_relationship = 9 AND entity_id = ".$params['financial_type_id'] );
+          $trxnParams['from_financial_account_id'] = current($fromaccount);
+          CRM_Core_PseudoConstant::populate( $toaccount,
+                                             'CRM_Financial_DAO_EntityFinancialAccount',
+                                             $all = True, 
+                                             $retrieve = 'financial_account_id', 
+                                             $filter = null, 
+                                             " account_relationship = 1 AND entity_id = ".$params['financial_type_id'] );
+          $trxnParams['to_financial_account_id'] = current($toaccount);
+          $trxnParams['total_amount'] = $params['total_amount'];
+          unset($trxnParams['contribution_id']);
+          $discountTrxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams,'civicrm_financial_trxn' );
+
+        }
         $transaction->commit();
       }
     }

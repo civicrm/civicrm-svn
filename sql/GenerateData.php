@@ -1700,9 +1700,11 @@ order by cc.id; ";
 
   function addContributionFinancialItem() {
 
-    $sql = "SELECT cc.id contribution_id, cli.id as line_item_id, cc.contact_id, cc.receive_date, cc.total_amount, cc.currency, cli.label, cli.financial_type_id
+    $sql = " SELECT cc.id contribution_id, cli.id as line_item_id, cc.contact_id, cc.receive_date, cc.total_amount, cc.currency, cli.label, cli.financial_type_id,  cefa.financial_account_id
 FROM `civicrm_contribution` cc
-LEFT JOIN civicrm_line_item cli ON cli.entity_id = cc.id and cli.entity_table = 'civicrm_contribution';";
+LEFT JOIN civicrm_line_item cli ON cli.entity_id = cc.id and cli.entity_table = 'civicrm_contribution'
+LEFT JOIN civicrm_entity_financial_account cefa ON cefa.entity_id =  cli.financial_type_id
+WHERE cefa.account_relationship = 6; ";
     $result = CRM_Core_DAO::executeQuery($sql);
     $financialAccountId = null;
     $this->addFinancialItem($result, $financialAccountId);
@@ -1710,10 +1712,12 @@ LEFT JOIN civicrm_line_item cli ON cli.entity_id = cc.id and cli.entity_table = 
 
   function addParticipantFinancialItem() {
    
-    $sql = " SELECT cpp.contribution_id, cli.id as line_item_id, cp.contact_id, now() as receive_date, cp.fee_amount as total_amount, cp.fee_currency as currency, cli.label, cli.financial_type_id
+    $sql = " SELECT cpp.contribution_id, cli.id as line_item_id, cp.contact_id, now() as receive_date, cp.fee_amount as total_amount, cp.fee_currency as currency, cli.label, cli.financial_type_id, cefa.financial_account_id
 FROM `civicrm_participant` cp
 LEFT JOIN civicrm_participant_payment cpp ON cpp.participant_id = cp.id
-LEFT JOIN civicrm_line_item cli ON cli.entity_id = cp.id and cli.entity_table = 'civicrm_participant'";
+LEFT JOIN civicrm_line_item cli ON cli.entity_id = cp.id and cli.entity_table = 'civicrm_participant'
+LEFT JOIN civicrm_entity_financial_account cefa ON cefa.entity_id =  cli.financial_type_id
+WHERE cefa.account_relationship = 6";
     $result = CRM_Core_DAO::executeQuery($sql);
     $financialAccountId = null;
     $this->addFinancialItem($result, $financialAccountId);
@@ -1726,7 +1730,8 @@ LEFT JOIN civicrm_line_item cli ON cli.entity_id = cp.id and cli.entity_table = 
         'total_amount' => $result->total_amount, 
         'currency' => $result->currency,
         'status_id' => 1,
-        'contribution_id' => $result->contribution_id
+        'contribution_id' => $result->contribution_id,
+        'to_financial_account_id' => $result->financial_account_id
       );
       $trxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
       $financialItem = array(
@@ -1737,7 +1742,8 @@ LEFT JOIN civicrm_line_item cli ON cli.entity_id = cp.id and cli.entity_table = 
         'entity_id' => $result->line_item_id,
         'contact_id' => $result->contact_id,
         'entity_table' => 'civicrm_line_item',
-        'description' => $result->label
+        'description' => $result->label,
+        'financial_account_id' => $result->financial_account_id
       );
       $trxnId['id'] = $trxn->id;
       CRM_Financial_BAO_FinancialItem::create($financialItem, null, $trxnId);

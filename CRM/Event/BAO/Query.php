@@ -486,7 +486,7 @@ class CRM_Event_BAO_Query {
 
       case 'participant_discount_name':
         $from = " $side JOIN civicrm_discount discount ON ( civicrm_participant.discount_id = discount.id )";
-        $from .= " $side JOIN civicrm_option_group discount_name ON ( discount_name.id = discount.option_group_id ) ";
+        $from .= " $side JOIN civicrm_option_group discount_name ON ( discount_name.id = discount.price_set_id ) ";
         break;
     }
     return $from;

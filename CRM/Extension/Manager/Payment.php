@@ -60,7 +60,7 @@ class CRM_Extension_Manager_Payment extends CRM_Extension_Manager_Base {
       CRM_Core_Error::fatal('This payment processor type already exists.');
     }
 
-    $dao = new CRM_Core_DAO_PaymentProcessorType();
+    $dao = new CRM_Financial_DAO_PaymentProcessorType();
 
     $dao->is_active   = 1;
     $dao->class_name  = trim($info->key);
@@ -136,7 +136,7 @@ class CRM_Extension_Manager_Payment extends CRM_Extension_Manager_Base {
         }
       }
     }
-    return CRM_Core_BAO_PaymentProcessorType::del($paymentProcessorTypes[$info->key]);
+    return CRM_Financial_BAO_PaymentProcessorType::del($paymentProcessorTypes[$info->key]);
   }
 
   /**
@@ -147,7 +147,7 @@ class CRM_Extension_Manager_Payment extends CRM_Extension_Manager_Base {
     $this->_runPaymentHook($info, 'disable');
 
     $paymentProcessorTypes = $this->_getAllPaymentProcessorTypes('class_name');
-    CRM_Core_BAO_PaymentProcessorType::setIsActive($paymentProcessorTypes[$info->key], 0);
+    CRM_Financial_BAO_PaymentProcessorType::setIsActive($paymentProcessorTypes[$info->key], 0);
   }
 
   /**
@@ -155,7 +155,7 @@ class CRM_Extension_Manager_Payment extends CRM_Extension_Manager_Base {
    */
   public function onPreEnable(CRM_Extension_Info $info) {
     $paymentProcessorTypes = $this->_getAllPaymentProcessorTypes('class_name');
-    CRM_Core_BAO_PaymentProcessorType::setIsActive($paymentProcessorTypes[$info->key], 1);
+    CRM_Financial_BAO_PaymentProcessorType::setIsActive($paymentProcessorTypes[$info->key], 1);
   }
 
   /**
@@ -168,7 +168,7 @@ class CRM_Extension_Manager_Payment extends CRM_Extension_Manager_Base {
 
   private function _getAllPaymentProcessorTypes($attr) {
     $ppt = array();
-    $dao = new CRM_Core_DAO_PaymentProcessorType();
+    $dao = new CRM_Financial_DAO_PaymentProcessorType();
     $dao->find();
     while ($dao->fetch()) {
       $ppt[$dao->$attr] = $dao->id;
