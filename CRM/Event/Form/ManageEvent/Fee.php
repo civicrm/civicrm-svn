@@ -257,9 +257,6 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
       NULL, NULL, NULL, NULL,
       array('&nbsp;&nbsp;', '&nbsp;&nbsp;', '&nbsp;&nbsp;', '<br/>')
     );
-        $this->add('select', 'financial_type_id',ts( 'Financial Type' ),
-                   array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::financialType( ) );
-
     // add pay later options
     $this->addElement('checkbox', 'is_pay_later', ts('Enable Pay Later option?'), NULL,
       array('onclick' => "return showHideByValue('is_pay_later','','payLaterOptions','block','radio',false);")
@@ -293,6 +290,10 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
       // label
       $this->add('text', "label[$i]", ts('Label'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_OptionValue', 'label'));
       $this->add('hidden', "price_field_value[$i]", '', array('id' => "price_field_value[$i]"));
+            
+            // Financial Type
+            $this->add('select', "financial_type_id[$i]",ts( 'Financial Type' ),
+                   array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::financialType( ) );
       // value
       $this->add('text', "value[$i]", ts('Value'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_OptionValue', 'value'));
       $this->addRule("value[$i]", ts('Please enter a valid money value for this field (e.g. %1).', array(1 => CRM_Utils_Money::format('99.99', ' '))), 'money');
@@ -597,7 +598,9 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
         $labels  = CRM_Utils_Array::value('label', $params);
         $values  = CRM_Utils_Array::value('value', $params);
         $default = CRM_Utils_Array::value('default', $params);
+                $financialType = CRM_Utils_Array::value( 'financial_type_id', $params );
 
+                
         $options = array();
         if (!CRM_Utils_System::isNull($labels) && !CRM_Utils_System::isNull($values)) {
           for ($i = 1; $i < self::NUM_OPTION; $i++) {
@@ -606,8 +609,8 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
                                  'value' => CRM_Utils_Rule::cleanMoney(trim($values[$i])),
                                  'weight' => $i,
                                  'is_active' => 1,
-                                 'is_default' => $default == $i,
-                                 );
+                                                'is_default'        => $default == $i,
+                                                'financial_type_id' => trim( $financialType[$i] ) );
             }
           }
           if (!empty($options)) {

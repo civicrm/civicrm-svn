@@ -124,7 +124,7 @@ ORDER by f.name";
         if( !empty( $result ) ){
             foreach ( $result as $id => $name ) {
                 if( in_array( $id, $financialAccountType[$financialAccountTypeId] )  && $_GET['_value'] != 'select' ){
-                    if ( $countResult == 1){
+                    if ( $countResult != 1){
                         $elements[] = array( 'name'  => $name,
                                              'value' => $id );
                     }else{
@@ -145,4 +145,16 @@ ORDER by f.name";
         CRM_Utils_System::civiExit( );
     }
  
+    function jqFinancialType( $config ) {
+        if ( ! isset( $_GET['_value'] ) ||
+             empty( $_GET['_value'] ) ) {
+            CRM_Utils_System::civiExit( );
+}
+        require_once 'CRM/Core/DAO.php';
+        $elements = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_Product', $_GET['_value'], 'financial_type_id' );
+        
+        require_once "CRM/Utils/JSON.php";
+        echo json_encode( $elements );
+        CRM_Utils_System::civiExit( );
+    }
 }

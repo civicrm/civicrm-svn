@@ -133,7 +133,12 @@ class CRM_Financial_BAO_FinancialTypeAccount extends CRM_Financial_DAO_EntityFin
         $dependancy = array( 
                             array('Contribute', 'Contribution'), 
                             array('Contribute', 'ContributionPage'), 
-                            array('Member', 'MembershipType')
+                            array( 'Member', 'MembershipType' ),
+                            array( 'Price', 'Field' ),
+                            array( 'Price', 'FieldValue' ),
+                            array( 'Grant', 'Grant' ),
+                            array( 'Contribute', 'ManagePremiums' ),
+                            array( 'Contribute', 'Premium' ),
                             );
         foreach ($dependancy as $name) {
             require_once (str_replace('_', DIRECTORY_SEPARATOR, "CRM_" . $name[0] . "_BAO_" . $name[1]) . ".php");

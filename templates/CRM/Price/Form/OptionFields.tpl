@@ -43,6 +43,7 @@
         <th>{ts}Amount{/ts} {if $useForEvent}{help id="id-negative-options"}{/if}</th>
     {if $useForEvent}
       <th>{ts}Participant Count{/ts} {help id="id-participant-count"}</th>
+	    <th>{ts}Financial Type{/ts} {help id="id-financial_type"}</th>
       <th>{ts}Max Participant{/ts} {help id="id-participant-max"}</th>
   {/if}
         <th>{ts}Weight{/ts}</th>
@@ -73,6 +74,7 @@
       <td> {$form.option_amount.$index.html|crmAddClass:eight}</td>
       {if $useForEvent}
           <td>{$form.option_count.$index.html}</td>
+		<td>{$form.option_financial_type_id.$index.html}</td>
           <td>{$form.option_max_value.$index.html}</td>
       {/if}
       <td> {$form.option_weight.$index.html}</td>
@@ -100,6 +102,24 @@
             r.style.display = 'none';
         }
     }
+    
+    cj('#optionField input').blur( function(){
+    		var currentId = cj(this).attr('id');
+    		var arrayID = currentId.split('_');
+		if( ( arrayID[1] == 'label' || arrayID[1] == 'amount' ) && arrayID[2] > 1 ){
+		    var value = cj("#"+currentId).val(); 
+		    if( value.length != 0  && cj("#option_financial_type_id_"+arrayID[2]).val() ==''){
+		    	var currentFtid = "#option_financial_type_id_"+arrayID[2];
+		    	var previousFtid = "#option_financial_type_id_"+ (arrayID[2]-1);
+		    	var financial_type = cj(previousFtid).val(); 
+		    	cj(currentFtid).val(financial_type); 
+		   }
+		   if( cj("#option_label_"+arrayID[2]).val().length == 0 && cj("#option_amount_"+arrayID[2]).val().length == 0  )
+		   	cj("#option_financial_type_id_"+arrayID[2]).val('');
+		}
+		
+    });
+
     {/literal}
     {* hide and display the appropriate blocks as directed by the php code *}
     on_load_init_blocks( showRows, hideBlocks, '' );

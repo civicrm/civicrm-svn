@@ -138,14 +138,13 @@ class CRM_Financial_BAO_FinancialAccount extends CRM_Financial_DAO_FinancialAcco
         
         //check dependencies
         $dependancy = array( 
-                            array('Contribute', 'Contribution'), 
-                            array('Contribute', 'ContributionPage'), 
-                            array('Member', 'MembershipType')
+                            array('Core', 'FinancialTrxn', 'to_financial_account_id'), 
+                            array('Financial', 'FinancialTypeAccount', 'financial_account_id' ), 
                             );
         foreach ($dependancy as $name) {
             require_once (str_replace('_', DIRECTORY_SEPARATOR, "CRM_" . $name[0] . "_BAO_" . $name[1]) . ".php");
             eval('$bao = new CRM_' . $name[0] . '_BAO_' . $name[1] . '();');
-            $bao->financial_type_id = $financialAccountId;
+            $bao->$name[2] = $financialAccountId;
             if ($bao->find(true)) {
                 $check = true;
             }

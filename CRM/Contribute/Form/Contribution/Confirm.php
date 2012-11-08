@@ -1010,7 +1010,14 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         'start_date' => CRM_Utils_Date::customFormat($startDate, '%Y%m%d'),
         'end_date' => CRM_Utils_Date::customFormat($endDate, '%Y%m%d'),
       );
-
+            if( CRM_Utils_Array::value( 'selectProduct', $premiumParams ) ){
+                require_once 'CRM/Contribute/DAO/PremiumsProduct.php';
+                $daoPremiumsProduct             = new CRM_Contribute_DAO_PremiumsProduct();
+                $daoPremiumsProduct->product_id = $premiumParams['selectProduct'];
+                $daoPremiumsProduct->premiums_id = $dao->id;
+                $daoPremiumsProduct->find(true);
+                $params['financial_type_id'] = $daoPremiumsProduct->financial_type_id;
+            }
       //Fixed For CRM-3901
       $daoContrProd = new CRM_Contribute_DAO_ContributionProduct();
       $daoContrProd->contribution_id = $contribution->id;

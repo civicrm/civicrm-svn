@@ -34,6 +34,12 @@
 <div id="ltype">
 <p></p>
     <div class="form-item">
+    {if $action ne 1 and $action ne 2}
+	    <div class="action-link">
+    	<a href="{crmURL q="action=add&reset=1&aid=$aid"}" id="newfinancialTypeAccount" class="button"><span><div class="icon add-icon"></div>{ts}Add Financial Type Account{/ts}</span></a>
+	<a href="{crmURL p="civicrm/admin/financial/financialType" q="action=update&id=`$aid`&reset=1"}" class="button"><span><div class="icon edit-icon"></div>{ts}Edit Settings{/ts}</span></a>
+        </div>
+        {/if}
         {strip}
 	{* handle enable/disable actions*}
  	{include file="CRM/common/enableDisable.tpl"}
@@ -64,6 +70,7 @@
         {if $action ne 1 and $action ne 2}
 	    <div class="action-link">
     	<a href="{crmURL q="action=add&reset=1&aid=$aid"}" id="newfinancialTypeAccount" class="button"><span><div class="icon add-icon"></div>{ts}Add Financial Type Account{/ts}</span></a>
+	<a href="{crmURL p="civicrm/admin/financial/financialType" q="action=update&id=`$aid`&reset=1"}" class="button"><span><div class="icon edit-icon"></div>{ts}Edit Settings{/ts}</span></a>
         </div>
         {/if}
     </div>

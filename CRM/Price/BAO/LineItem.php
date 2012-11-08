@@ -222,8 +222,8 @@ WHERE     %2.id = %1";
         'max_value' => CRM_Utils_Array::value('max_value', $options[$oid]),
         'membership_type_id' => CRM_Utils_Array::value('membership_type_id', $options[$oid]),
         'auto_renew' => CRM_Utils_Array::value('auto_renew', $options[$oid]),
-        'html_type' => $fields['html_type'],
-      );
+                                   'html_type'            => $fields['html_type'],
+                                   'financial_type_id'    => CRM_Utils_Array::value( 'financial_type_id', $options[$oid]) );
     }
   }
 

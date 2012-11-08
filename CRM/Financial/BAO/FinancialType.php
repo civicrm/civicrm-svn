@@ -115,8 +115,21 @@ class CRM_Financial_BAO_FinancialType extends CRM_Financial_DAO_FinancialType
         $financialType               = new CRM_Financial_DAO_FinancialType( );
         $financialType->copyValues( $params );;
         
-        $financialType->id = CRM_Utils_Array::value( 'financialType', $ids );
+        if( CRM_Utils_Array::value( 'financialType', $ids ) ){            
+            $oldFinancialType      = new CRM_Financial_DAO_FinancialType( );
+            $oldFinancialType->id  = CRM_Utils_Array::value( 'financialType', $ids );
+            $oldFinancialType->is_current_revision = 0;
+            if( $originalId = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialType', $oldFinancialType->id, 'original_id' ) )
+                $financialType->original_id = $originalId;
+            else
+                $financialType->original_id = $oldFinancialType->id;
+              
+        }
+
         $financialType->save( );
+        if( CRM_Utils_Array::value( 'financialType', $ids ) ){
+            $oldFinancialType->save( ); 
+        }
         return $financialType;
     }
     
@@ -136,7 +149,11 @@ class CRM_Financial_BAO_FinancialType extends CRM_Financial_DAO_FinancialType
         $dependancy = array( 
                             array('Contribute', 'Contribution'), 
                             array('Contribute', 'ContributionPage'), 
-                            array('Member', 'MembershipType')
+                            array( 'Member', 'MembershipType' ),
+                            array( 'Price', 'Field' ),
+                            array( 'Price', 'FieldValue' ),
+                            array( 'Grant', 'Grant' ),
+                            array( 'Contribute', 'ManagePremiums' ),
                             );
         foreach ($dependancy as $name) {
             require_once (str_replace('_', DIRECTORY_SEPARATOR, "CRM_" . $name[0] . "_BAO_" . $name[1]) . ".php");
@@ -144,9 +161,9 @@ class CRM_Financial_BAO_FinancialType extends CRM_Financial_DAO_FinancialType
             $bao->financial_type_id = $financialTypeId;
             if ($bao->find(true)) {
                 $check = true;
+                break;
             }
         }
-       
         if ($check) {
             $session = CRM_Core_Session::singleton();
             CRM_Core_Session::setStatus( ts(

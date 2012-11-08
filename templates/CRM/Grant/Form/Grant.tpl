@@ -100,6 +100,18 @@
                         {$form.money_transfer_date.html|crmDate}
                     {/if}<br />
                     <span class="description">{ts}Date on which the grant money was transferred.{/ts}</span></td></tr>
+		    
+			<tr class="crm-grant-form-block-financial_type">
+			    <td class="label">{$form.financial_type_id.label}</td>
+			    <td>
+			    {if !$financialType }
+			    	{capture assign=ftUrl}{crmURL p='civicrm/admin/financial/financialType' q="reset=1"}{/capture}
+				{ts 1=$ftUrl}There is no Financial Type configured.<a href='%1'> Click here</a> if you want to configure financial type for your site.{/ts}
+			    {else}
+				{$form.financial_type_id.html}
+			    {/if}
+			    </td>
+			</tr>
       <tr class="crm-grant-form-block-grant_due_date"><td class="label">{$form.grant_due_date.label}</td>
         <td>
             {if $hideCalendar neq true}

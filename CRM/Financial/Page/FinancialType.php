@@ -151,7 +151,7 @@ class CRM_Financial_Page_FinancialType extends CRM_Core_Page_Basic
         require_once 'CRM/Financial/DAO/FinancialType.php';
         require_once 'CRM/Contribute/PseudoConstant.php';
         $dao = new CRM_Financial_DAO_FinancialType();
-
+        $dao->is_current_revision =1;
         $dao->orderBy('name');
         $dao->find();
         

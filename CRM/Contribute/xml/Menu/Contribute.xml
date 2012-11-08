@@ -278,4 +278,9 @@
      <page_callback>CRM_Financial_Page_AJAX::jqFinancialRelation</page_callback>
      <access_arguments>make online contributions</access_arguments>
   </item> 
+  <item>
+     <path>civicrm/ajax/jqFinancialType</path>
+     <page_callback>CRM_Financial_Page_AJAX::jqFinancialType</page_callback>
+     <access_arguments>make online contributions</access_arguments>
+  </item> 
 </menu>

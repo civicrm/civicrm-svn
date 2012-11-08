@@ -844,11 +844,18 @@ WHERE  contribution_id = {$this->_id}
       TRUE, array('onChange' => "CRM.buildCustomData( 'Contribution', this.value );")
     );
         $params = 'financial_account_type_id = 1' ;
+        $recievedInto = CRM_Contribute_PseudoConstant::financialAccount(  null, $params );
+        if( count( $recievedInto ) ){
+            $this->assign( 'recievedInto', $recievedInto );
+        }
+        
         $this->add( 'select', 
                                'to_financial_account_id', 
                                ts( 'Received Into' ), 
-                               array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::financialAccount(  null, $params ),
+                        array(''=>ts( '- Select Recieved Into -' )) + $recievedInto,
                                TRUE );
+       
+        
     if ($this->_online) {
       $element->freeze();
     }
@@ -1144,7 +1151,6 @@ WHERE  contribution_id = {$this->_id}
 
     // get the submitted form values.
     $submittedValues = $this->controller->exportValues($this->_name);
-    
     // process price set and get total amount and line items.
     $lineItem = array();
     $priceSetId = $pId = NULL;
@@ -1337,9 +1343,11 @@ WHERE  contribution_id = {$this->_id}
 
             // add some financial type details to the params list
       // if folks need to use it
-      $paymentParams['contributionType_name'] = $this->_params['contributionType_name'] = $contributionType->name;
-      $paymentParams['contributionType_accounting_code'] = $this->_params['contributionType_accounting_code'] = $contributionType->accounting_code;
-      $paymentParams['contributionPageID'] = NULL;
+            $paymentParams['contributionType_name']                = 
+                $this->_params['contributionType_name']            = $contributionType->name;
+            // $paymentParams['contributionType_accounting_code']     = 
+            //     $this->_params['contributionType_accounting_code'] = $contributionType->accounting_code;
+            $paymentParams['contributionPageID']                   = null;
       if (CRM_Utils_Array::value('is_email_receipt', $this->_params)) {
         $paymentParams['email'] = $this->userEmail;
         $paymentParams['is_email_receipt'] = 1;

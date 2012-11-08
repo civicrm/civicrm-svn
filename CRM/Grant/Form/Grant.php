@@ -232,6 +232,20 @@ class CRM_Grant_Form_Grant extends CRM_Core_Form {
     $noteAttrib = CRM_Core_DAO::getAttribute('CRM_Core_DAO_Note');
     $this->add('textarea', 'note', ts('Notes'), $noteAttrib['note']);
 
+        //Financial Type
+        require_once 'CRM/Contribute/PseudoConstant.php';
+        $financialType = CRM_Contribute_PseudoConstant::financialType( );
+        if( count( $financialType ) ){
+            $this->assign( 'financialType', $financialType );
+        }
+        $this->add( 'select', 'financial_type_id', 
+                               ts( 'Financial Type' ), 
+                               array(''=>ts( '- Select Financial Type -' )) + $financialType,
+                               false );
+        
+        //build custom data
+        CRM_Custom_Form_Customdata::buildQuickForm( $this );
+        
     // add attachments part
     CRM_Core_BAO_File::buildAttachment($this,
       'civicrm_grant',
@@ -261,9 +275,10 @@ class CRM_Grant_Form_Grant extends CRM_Core_Form {
 
     if ($this->_context == 'standalone') {
       CRM_Contact_Form_NewContact::buildQuickForm($this);
+            // $this->addFormRule( array( 'CRM_Grant_Form_Grant', 'formRule' ), $this );
+        }
       $this->addFormRule(array('CRM_Grant_Form_Grant', 'formRule'), $this);
     }
-  }
 
   /**
    * global form rule
@@ -281,10 +296,14 @@ class CRM_Grant_Form_Grant extends CRM_Core_Form {
     $errors = array();
 
     //check if contact is selected in standalone mode
-    if (isset($fields['contact_select_id'][1]) && !$fields['contact_select_id'][1]) {
+        if ( CRM_Utils_Array::value( 'contact_select_id', $fields, false ) && isset( $fields['contact_select_id'][1] ) && !$fields['contact_select_id'][1] ) {
       $errors['contact[1]'] = ts('Please select a contact or create new contact');
     }
 
+        if (  CRM_Utils_Array::value( 'amount_granted', $fields, false ) && $fields['amount_granted'] > 0 && !CRM_Utils_Array::value( 'financial_type_id', $fields, false ) && CRM_Utils_Array::value( 'money_transfer_date', $fields, false ) ){
+            $errors['financial_type_id'] = ts('Financial Type is a required field if Amount is Granted');
+        }
+        
     return $errors;
   }
 

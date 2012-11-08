@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>  
+  
+<table>  
+  <base>CRM/Financial</base>  
+  <class>FinancialBatch</class>  
+  <name>civicrm_financial_batch</name>  
+  <add>4.1</add> 
+  <log>true</log> 
+  <field>  
+      <name>id</name>  
+      <type>int unsigned</type>  
+      <required>true</required>  
+      <comment>Unique Address ID</comment>  
+      <add>4.1</add>
+  </field>  
+  <primaryKey>  
+       <name>id</name>  
+       <autoincrement>true</autoincrement>  
+  </primaryKey>  
+  <field>
+      <name>batch_type_id</name>
+      <type>int unsigned</type>
+      <required>true</required>
+      <comment>fk to Batch Type options in civicrm_option_values</comment>
+      <add>4.1</add>
+  </field>
+  <foreignKey> 
+       <name>batch_type_id</name> 
+       <table>civicrm_option_values</table> 
+       <key>id</key> 
+       <add>4.1</add> 
+  </foreignKey> 
+  <field> 
+      <name>contact_id</name> 
+      <title>Contact ID</title>
+      <type>int unsigned</type>   
+      <required>true</required>  
+      <comment>fk to civicrm_contact.id of batch creator</comment> 
+      <add>4.1</add> 
+  </field> 
+  <foreignKey> 
+       <name>contact_id</name> 
+       <table>civicrm_contact</table> 
+       <key>id</key> 
+       <add>4.1</add> 
+  </foreignKey> 
+  <field>  
+      <name>description</name>  
+      <type>VARCHAR</type> 
+      <length>255</length>
+      <required>true</required> 
+       <comment>Financial Batch Description.</comment>
+      <add>4.1</add>
+  </field>
+  <field>
+       <name>payment_instrument_id</name>
+       <type>int unsigned</type>
+       <export>true</export>
+       <comment>fk to Payment Instrument options in civicrm_option_values</comment>
+       <add>4.1</add>
+  </field>
+  <foreignKey> 
+       <name>payment_instrument_id</name> 
+       <table>civicrm_option_values</table> 
+       <key>id</key> 
+       <add>4.1</add> 
+  </foreignKey>
+  <field>
+       <name>manual_number_trans</name>
+       <type>int unsigned</type>
+       <comment></comment>
+       <add>4.1</add>
+  </field>
+  <field>
+       <name>manual_total</name>
+       <type>int unsigned</type>   
+       <add>4.1</add>
+  </field>
+  <field>
+       <name>open_date</name>
+       <type>timestamp</type>   
+       <default>CURRENT_TIMESTAMP</default> 
+       <add>4.1</add>
+  </field>
+  <field>
+       <name>close_date</name>
+       <type>datetime</type>
+       <add>4.1</add>
+  </field>
+  <field>
+       <name>export_date</name>
+       <type>datetime</type>
+       <add>4.1</add>
+  </field>
+  <field>
+       <name>batch_status_id</name>
+       <type>int unsigned</type> 
+       <required>true</required>  
+       <comment>fk to Batch Status options in civicrm_option_values</comment>
+       <add>4.1</add>
+  </field>
+  <foreignKey> 
+       <name>batch_status_id</name> 
+       <table>civicrm_option_values</table> 
+       <key>id</key> 
+       <add>4.1</add> 
+  </foreignKey>
+</table>

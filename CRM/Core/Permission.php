@@ -450,7 +450,14 @@ class CRM_Core_Permission {
       'merge duplicate contacts' => $prefix . ts('merge duplicate contacts'),
       'view all notes' => $prefix . ts('view all notes'),
       'access AJAX API' => $prefix . ts('access AJAX API'),
-      'access contact reference fields' => $prefix . ts('access contact reference fields'),
+                   'access contact reference fields'   => $prefix . ts( 'access contact reference fields' ),
+                   'create manual batch'               => $prefix . ts( 'create manual batch' ),
+                   'edit own manual batches'           => $prefix . ts( 'edit own manual batches' ),
+                   'edit all manual batches'           => $prefix . ts( 'edit all manual batches' ),
+                   'view own manual batches'           => $prefix . ts( 'view own manual batches' ),
+                   'view all manual batches'           => $prefix . ts( 'view all manual batches' ),
+                   'delete own manual batches'         => $prefix . ts( 'delete own manual batches' ),
+                   'delete all manual batches'         => $prefix . ts( 'delete all manual batches' ),
     );
 
     return $permissions;

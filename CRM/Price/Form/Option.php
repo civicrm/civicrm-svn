@@ -206,7 +206,9 @@ class CRM_Price_Form_Option extends CRM_Core_Form {
                 if( !in_array( $key, $revenueFinancialType ) )
                     unset( $financialType[$key] );
             }
-             
+            if( count( $financialType ) ){
+                $this->assign( 'financialType', $financialType );
+            }
             $this->add('select', 'financial_type_id', 
                                ts( 'Financial Type' ), 
                                array(''=>ts( '- select -' )) + $financialType,

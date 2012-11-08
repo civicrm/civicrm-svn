@@ -79,7 +79,7 @@
         {if $contributionMode}
            <tr class="crm-contribution-form-block-payment_processor_id"><td class="label nowrap">{$form.payment_processor_id.label}<span class="marker"> * </span></td><td>{$form.payment_processor_id.html}</td></tr>
         {/if}
-        <tr class="crm-contribution-form-block-contribution_type_id crm-contribution-form-block-financial_type_id"><td class="label">{$form.financial_account_id.label}</td><td{$valueStyle}>{$form.financial_account_id.html}&nbsp;
+        <tr class="crm-contribution-form-block-contribution_type_id crm-contribution-form-block-financial_type_id"><td class="label">{$form.financial_type_id.label}</td><td{$valueStyle}>{$form.financial_type_id.html}&nbsp;
         {if $is_test}
         {ts}(test){/ts}
         {/if} {help id="id-financial_type"}
@@ -171,7 +171,13 @@
                 </td>
             </tr>
 	     <tr class="crm-contribution-form-block-contribution_type_id crm-contribution-form-block-financial_type_id">
-	     	 <td class="label">{$form.to_financial_account_id.label}</td><td{$valueStyle}>{$form.to_financial_account_id.html}&nbsp;
+	     	 <td class="label">{$form.to_financial_account_id.label}</td><td{$valueStyle}>
+		 {if !$recievedInto }
+		     	{capture assign=ftUrl}{crmURL p='civicrm/admin/financial/financialAccount' q="reset=1"}{/capture}
+			{ts 1=$ftUrl}There is no Financial Account configured of Financial Account Type Asset. <a href='%1'>Click here</a> if you want to configure financial Account of Financial Account Type Asset for your site.{/ts}
+	        {else}  
+		 	{$form.to_financial_account_id.html}&nbsp;
+		{/if}				 
       	     	 </td>
 	     </tr>
             <tr class="crm-contribution-form-block-payment_instrument_id">
