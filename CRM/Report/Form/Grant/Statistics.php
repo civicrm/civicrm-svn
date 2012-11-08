@@ -58,6 +58,11 @@ class CRM_Report_Form_Grant_Statistics extends CRM_Report_Form {
             'name' => 'grant_type_id',
             'title' => ts('By Grant Type'),
           ),
+          'grant_program_id' =>
+          array( 
+            'name' => 'grant_program_id' ,
+            'title' => ts('By Grant Program'),
+          ),
           'status_id' =>
           array(
             'no_display' => TRUE,
@@ -285,11 +290,11 @@ class CRM_Report_Form_Grant_Statistics extends CRM_Report_Form {
   }
 
   function where() {
-    $granted = array_search('Granted', CRM_Grant_PseudoConstant::grantStatus());
+    $approved = array_search( 'Approved', CRM_Grant_PseudoConstant::grantStatus( ) );
     $whereClause = " 
 WHERE {$this->_aliases['civicrm_grant']}.amount_total IS NOT NULL 
   AND {$this->_aliases['civicrm_grant']}.amount_total > 0";
-    $this->_where = $whereClause . " AND {$this->_aliases['civicrm_grant']}.status_id = {$granted} ";
+    $this->_where = $whereClause . " AND {$this->_aliases['civicrm_grant']}.status_id = {$approved} ";
 
     foreach ($this->_columns as $tableName => $table) {
       if (array_key_exists('filters', $table)) {
@@ -384,6 +389,7 @@ WHERE {$this->_aliases['civicrm_grant']}.amount_total IS NOT NULL
     $grantTypes = CRM_Grant_PseudoConstant::grantType();
     $countries  = CRM_Core_PseudoConstant::country();
     $gender     = CRM_Core_PseudoConstant::gender();
+    $grantPrograms = CRM_Grant_BAO_Grant::getGrantPrograms();
 
     $grantAmountTotal = "
 SELECT COUNT({$this->_aliases['civicrm_grant']}.id) as count , 
@@ -429,6 +435,14 @@ SELECT COUNT({$this->_aliases['civicrm_grant']}.id) as count ,
         $grantType = CRM_Utils_Array::value($values['civicrm_grant_grant_type_id'], $grantTypes);
         $grantStatistics['civicrm_grant_grant_type_id']['title'] = ts('By Grant Type');
         self::getStatistics($grantStatistics['civicrm_grant_grant_type_id'], $grantType, $values,
+          $awardedGrants, $awardedGrantsAmount
+        );
+      }
+
+      if ( CRM_Utils_Array::value( 'civicrm_grant_grant_program_id', $values ) ) {
+        $grantProgram = CRM_Utils_Array::value( $values['civicrm_grant_grant_program_id'], $grantPrograms );
+        $grantStatistics['civicrm_grant_grant_program_id']['title'] = ts( 'By Grant Program' );
+        self::getStatistics( $grantStatistics['civicrm_grant_grant_program_id'], $grantProgram, $values,
           $awardedGrants, $awardedGrantsAmount
         );
       }

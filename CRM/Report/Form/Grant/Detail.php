@@ -102,6 +102,11 @@ class CRM_Report_Form_Grant_Detail extends CRM_Report_Form {
             'name' => 'grant_type_id',
             'title' => ts('Grant Type'),
           ),
+          'grant_program_id' =>
+          array( 
+            'name' => 'grant_program_id' ,
+            'title' => ts( 'Grant Program' ),
+          ),
           'status_id' =>
           array(
             'name' => 'status_id',
@@ -162,6 +167,13 @@ class CRM_Report_Form_Grant_Detail extends CRM_Report_Form {
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => CRM_Grant_PseudoConstant::grantType(),
           ),
+          'grant_program'     => 
+          array(
+            'name' =>'grant_program_id' ,
+            'title'      => ts( 'Grant Program' ),
+            'operatorType'   => CRM_Report_Form::OP_MULTISELECT,
+            'options'      => CRM_Grant_BAO_GrantProgram::grantPrograms( ),
+          ),
           'status_id' =>
           array(
             'name' => 'status_id',
@@ -207,6 +219,10 @@ class CRM_Report_Form_Grant_Detail extends CRM_Report_Form {
           'grant_type_id' =>
           array(
             'title' => ts('Grant Type'),
+          ),
+          'grant_program_id' => 
+          array( 
+            'title'        => ts( 'Grant Program' )
           ),
           'status_id' =>
           array(
@@ -362,6 +378,12 @@ class CRM_Report_Form_Grant_Detail extends CRM_Report_Form {
           $rows[$rowNum]['civicrm_grant_grant_type_id'] = CRM_Grant_PseudoConstant::grantType($value);
         }
         $entryFound = TRUE;
+      }
+      if ( array_key_exists('civicrm_grant_grant_program_id', $row) ) {
+        if ( $value = $row['civicrm_grant_grant_program_id'] ) {
+          $rows[$rowNum]['civicrm_grant_grant_program_id'] = CRM_Grant_BAO_GrantProgram::grantPrograms( $value );
+        }
+        $entryFound = true;
       }
       if (array_key_exists('civicrm_grant_status_id', $row)) {
         if ($value = $row['civicrm_grant_status_id']) {

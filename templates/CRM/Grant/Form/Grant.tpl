@@ -57,10 +57,18 @@
            <td class="label">{$form.status_id.label}</td>
            <td>{$form.status_id.html}</td>
       </tr>
+			<tr class="crm-grant-form-block-grant_rejected_reason_id grant_rejected_reason_id">
+			     <td class="label">{$form.grant_rejected_reason_id.label}</td>
+			     <td>{$form.grant_rejected_reason_id.html}</td>
+			</tr>
       <tr class="crm-grant-form-block-grant_type_id">
            <td class="label">{$form.grant_type_id.label}</td>
            <td>{$form.grant_type_id.html}</td>
       </tr>
+			<tr class="crm-grant-form-block-grant_program_id">
+			     <td class="label">{$form.grant_program_id.label}</td>
+			     <td>{$form.grant_program_id.html}</td>
+			</tr>    
       <tr class="crm-grant-form-block-amount_total">
            <td class="label">{$form.amount_total.label}</td>
            <td>{$form.amount_total.html}</td>
@@ -160,3 +168,34 @@
 </div>
 
 {/if} {* closing of main custom data if *}
+
+
+ <script type="text/javascript">
+    {literal}
+var total = 0;
+cj(".form-select").change(function(){
+cj(".form-select").each(function(){
+
+var name = cj(this).attr('id');
+    var customName = name.split('_');
+if ( customName[0] == 'custom' ) {
+   total += parseInt(cj('#'+name).val());
+}
+});
+});
+cj(document).ready(function(){
+if ( cj("#status_id option:selected").text() == 'Rejected') {
+  cj('.grant_rejected_reason_id').show();
+} else {
+  cj('.grant_rejected_reason_id').hide();
+}
+cj('#status_id').change(function(){
+if ( this.options[this.selectedIndex].text == 'Rejected' ) {
+  cj('.grant_rejected_reason_id').show();
+} else {
+  cj('.grant_rejected_reason_id').hide();
+}
+});
+});
+{/literal}
+</script>

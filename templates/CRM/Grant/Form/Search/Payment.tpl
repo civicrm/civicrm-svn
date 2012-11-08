@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.2                                                |
+ | CiviCRM version 4.1                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2012                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -61,6 +61,7 @@
     <td colspan = "2"><label>{ts}Amount Granted{/ts}</label> <br />
         {$form.grant_amount_low.label}
         {$form.grant_amount_low.html}
+	 {$form.grant_amount_high.label}
         {$form.grant_amount_high.html}
     </td>
 </tr>

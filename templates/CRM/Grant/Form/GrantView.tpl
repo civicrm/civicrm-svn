@@ -47,6 +47,9 @@
         <tr class="crm-grant-view-form-block-name"><td class="label">{ts}Name{/ts}</td><td class="bold">{$displayName}</td></tr>
         <tr class="crm-grant-view-form-block-status_id"><td class="label">{ts}Grant Status{/ts}</td> <td>{$grantStatus}</td></tr>
         <tr class="crm-grant-view-form-block-grant_type_id"><td class="label">{ts}Grant Type{/ts}</td> <td>{$grantType}</td></tr>
+	{if $grantRejectedReason}
+ 	<tr class="crm-grant-view-form-block-grant_rejected_reason_id"><td class="label">{ts}Grant Rejected Reason{/ts}</td> <td>{$grantRejectedReason}</td></tr>
+	{/if}
         <tr class="crm-grant-view-form-block-application_received_date"><td class="label">{ts}Application Received{/ts}</td> <td>{$application_received_date|crmDate}</td></tr>
         <tr class="crm-grant-view-form-block-decision_date"><td class="label">{ts}Grant Decision{/ts}</td> <td>{$decision_date|crmDate}</td></tr>
         <tr class="crm-grant-view-form-block-money_transfer_date"><td class="label">{ts}Money Transferred{/ts}</td> <td>{$money_transfer_date|crmDate}</td></tr>

@@ -186,6 +186,19 @@ class CRM_Grant_BAO_Query {
 
         return;
 
+    case 'grant_program_id':
+            
+      $value = $strtolower(CRM_Core_DAO::escapeString(trim($value)));
+
+      $query->_where[$grouping][] = "civicrm_grant.grant_program_id $op '{$value}'";
+            
+      $grantPrograms = CRM_Grant_BAO_Grant::getGrantPrograms();
+      $value = $grantPrograms[$value];
+      $query->_qill[$grouping ][] = ts( 'Grant Type %2 %1', array( 1 => $value, 2 => $op) );
+      $query->_tables['civicrm_grant'] = $query->_whereTables['civicrm_grant'] = 1;
+
+      return;
+
       case 'grant_status_id':
 
         $value = $strtolower(CRM_Core_DAO::escapeString(trim($value)));
@@ -221,8 +234,18 @@ class CRM_Grant_BAO_Query {
       case 'grant_amount_low':
       case 'grant_amount_high':
         $query->numberRangeBuilder($values,
-          'civicrm_grant', 'grant_amount', 'amount_total', 'Total Amount'
+                                 'civicrm_grant', 'grant_amount', 'amount_granted', 'Total Granted'
         );
+    case 'grant_amount_total':
+    case 'grant_amount_total_low':
+    case 'grant_amount_total_high':
+      $query->numberRangeBuilder( $values,
+                                  'civicrm_grant', 'grant_amount_total', 'amount_total', 'Amount Allocated' );
+    case 'grant_assessment':
+    case 'grant_assessment_low':
+    case 'grant_assessment_high':
+      $query->numberRangeBuilder( $values,
+                                  'civicrm_grant', 'grant_assessment', 'assessment', 'Assessment' );
     }
   }
 
@@ -302,6 +325,10 @@ class CRM_Grant_BAO_Query {
   static
   function buildSearchForm(&$form) {
 
+    $grantPrograms = CRM_Grant_BAO_Grant::getGrantPrograms();
+    $form->add('select', 'grant_program_id',  ts( 'Grant Programs' ),
+      array( '' => ts( '- select -' ) ) + $grantPrograms);
+    
     $grantType = CRM_Core_OptionGroup::values('grant_type');
     $form->add('select', 'grant_type_id', ts('Grant Type'),
       array(
@@ -336,12 +363,21 @@ class CRM_Grant_BAO_Query {
 
     $form->addYesNo('grant_report_received', ts('Grant report received?'));
 
-    $form->add('text', 'grant_amount_low', ts('Minimum Amount'), array('size' => 8, 'maxlength' => 8));
+    $form->add('text', 'grant_amount_total_low', ts('From'), array( 'size' => 8, 'maxlength' => 8 ) ); 
+    $form->addRule('grant_amount_total_low', ts('Please enter a valid money value (e.g. %1).', array(1 => CRM_Utils_Money::format('9.99', ' '))), 'money');
+        
+    $form->add('text', 'grant_amount_total_high', ts('To'), array( 'size' => 8, 'maxlength' => 8 ) ); 
+    $form->addRule('grant_amount_total_high', ts('Please enter a valid money value (e.g. %1).', array(1 => CRM_Utils_Money::format('99.99', ' '))), 'money');
+        
+    $form->add('text', 'grant_amount_low', ts('From'), array( 'size' => 8, 'maxlength' => 8 ) ); 
     $form->addRule('grant_amount_low', ts('Please enter a valid money value (e.g. %1).', array(1 => CRM_Utils_Money::format('9.99', ' '))), 'money');
 
-    $form->add('text', 'grant_amount_high', ts('Maximum Amount'), array('size' => 8, 'maxlength' => 8));
+    $form->add('text', 'grant_amount_high', ts('To'), array('size' => 8, 'maxlength' => 8));
     $form->addRule('grant_amount_high', ts('Please enter a valid money value (e.g. %1).', array(1 => CRM_Utils_Money::format('99.99', ' '))), 'money');
 
+    $form->add('text', 'grant_assessment_low', ts('From'), array( 'size' => 9, 'maxlength' => 9 ) ); 
+    $form->add('text', 'grant_assessment_high', ts('To'), array( 'size' => 9, 'maxlength' => 9 ) );
+        
     // add all the custom  searchable fields
     $grant = array('Grant');
     $groupDetails = CRM_Core_BAO_CustomGroup::getGroupDetail(NULL, TRUE, $grant);
