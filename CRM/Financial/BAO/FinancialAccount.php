@@ -131,6 +131,28 @@ class CRM_Financial_BAO_FinancialAccount extends CRM_Financial_DAO_FinancialAcco
      * @static
      */
     
+    static function financialAccountValidation($fields,&$errors) {
+    $financialAccount = array( );
+    if (CRM_Utils_Array::value('financial_type_id', $fields)) {
+      CRM_Core_PseudoConstant::populate( $financialAccount,
+                                         'CRM_Financial_DAO_EntityFinancialAccount',
+                                         $all = True, 
+                                         $retrieve = 'financial_account_id', 
+                                         $filter = null, 
+                                         " account_relationship = 6 AND entity_id = {$fields['financial_type_id']} " );
+      if( !current( $financialAccount ) ) {
+        $errors['financial_type_id'] = "Financial Account of account relationship of 'Is Asset Account of' is not configured for this Financial Type";
+      }
+    }
+    }
+    
+    /**
+     * Function to delete financial Types 
+     * 
+     * @param int $financialAccountId
+     * @static
+     */
+    
     static function del($financialAccountId) 
     {
         //checking if financial type is present  

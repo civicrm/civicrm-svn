@@ -1332,9 +1332,9 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             }
           }        
         }
-        CRM_Contribute_Form_AdditionalInfo::processPriceSet($contribution->id, $temp, $contribution);
+        CRM_Price_BAO_LineItem::processPriceSet($contribution->id, $temp, $contribution);
       } elseif (!CRM_Utils_Array::value('is_quick_config', $form->_params)) {
-        CRM_Contribute_Form_AdditionalInfo::processPriceSet($contribution->id, $form->_lineItem,$contribution,$form->_params['initial_amount']);
+        CRM_Price_BAO_LineItem::processPriceSet($contribution->id, $form->_lineItem, $contribution);
       }
       if (!$form->_separateMembershipPayment && CRM_Utils_Array::value('is_quick_config', $form->_params)) {
         $form->_lineItem = null;

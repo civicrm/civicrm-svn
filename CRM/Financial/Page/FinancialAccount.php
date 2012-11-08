@@ -144,13 +144,14 @@ class CRM_Financial_Page_FinancialAccount extends CRM_Core_Page_Basic
         $contributionType = array();
         require_once 'CRM/Financial/DAO/FinancialAccount.php';
         $dao = new CRM_Financial_DAO_FinancialAccount();
-
         $dao->orderBy('name');
         $dao->find();
+        $financialAccountType = CRM_Core_PseudoConstant::accountOptionValues('financial_account_type');
 
         while ($dao->fetch()) {
             $contributionType[$dao->id] = array();
             CRM_Core_DAO::storeValues( $dao, $contributionType[$dao->id]);
+          $contributionType[$dao->id]['financial_account_type_id'] =  $financialAccountType[$dao->financial_account_type_id];
             // form all action links
             $action = array_sum(array_keys($this->links()));
 

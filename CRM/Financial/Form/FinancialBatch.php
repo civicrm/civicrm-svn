@@ -34,9 +34,6 @@
  *
  */
 
-require_once 'CRM/Contribute/Form.php';
-require_once 'CRM/Core/PseudoConstant.php';
-require_once 'CRM/Contribute/PseudoConstant.php';
 /**
  * This class generates form components for Contribution Batch
  * 
@@ -275,7 +272,7 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form
                 }
             
   
-        $batch = CRM_Core_BAO_Batch::create($params, $ids);
+        $batch = CRM_Core_BAO_Batch::create($params, $ids, $context = 'financialBatch');
             $buttonName = $this->controller->getButtonName( );
                    
             $session = CRM_Core_Session::singleton( );

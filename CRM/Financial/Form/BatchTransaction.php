@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Contribute/Form.php';
-require_once 'CRM/Core/PseudoConstant.php';
 /**
  * This class generates form components for Financial Type
  * 
@@ -74,9 +72,7 @@ class CRM_Financial_Form_BatchTransaction extends CRM_Contribute_Form
        
         $this->addElement('hidden', 'batch_id' ,'11');
         
-        $this->add( 'text',
-                    'name',
-                    ts( 'Batch Name' ) );
+    $this->add( 'text', 'name', ts( 'Batch Name' ) );
        
         //$this->addFormRule( array( 'CRM_Financial_Form_FinancialType', 'formRule'), $this );
     }
@@ -90,10 +86,41 @@ class CRM_Financial_Form_BatchTransaction extends CRM_Contribute_Form
      */
     public function postProcess() 
     {
-        require_once 'CRM/Financial/BAO/EntityFinancialItem.php';
-        require_once 'CRM/Contact/BAO/Contact/Utils.php';   
-        require_once 'CRM/Core/Form.php'; 
-        $this->_returnvalues = array( 'contact_id',
+
+    $contactID = CRM_Utils_Type::escape( 1, 'Integer' );
+    $context   = CRM_Utils_Type::escape( 'batch', 'String' );
+    $sortMapper  = array( 0 => 'sort_name', 1 => 'amount', 2 => 'transaction_date', 3 => 'name' );
+    if ( isset($_REQUEST['sEcho'])) {
+      $sEcho       = CRM_Utils_Type::escape($_REQUEST['sEcho'], 'Integer');
+    }
+        
+    $offset      = isset($_REQUEST['iDisplayStart'])? CRM_Utils_Type::escape($_REQUEST['iDisplayStart'], 'Integer'):0;
+        
+    $rowCount    = isset($_REQUEST['iDisplayLength'])? CRM_Utils_Type::escape($_REQUEST['iDisplayLength'], 'Integer'):25; 
+    $sort        = isset($_REQUEST['iSortCol_0'] )? CRM_Utils_Array::value( CRM_Utils_Type::escape($_REQUEST['iSortCol_0'],'Integer'), $sortMapper ): null;
+    $sortOrder   = isset($_REQUEST['sSortDir_0'] )? CRM_Utils_Type::escape($_REQUEST['sSortDir_0'], 'String'):'asc';
+
+    $params['batch_id'] = $_POST['batch_id'];
+    if ( $sort && $sortOrder ) {
+      $params['sortBy']  = $sort . ' '. $sortOrder;
+    }
+    $params['page'] = ($offset/$rowCount) + 1;
+    $params['rp']   = $rowCount;
+
+    $params['contact_id'] = $contactID;
+    $params['context'   ] = $context;
+        
+    //require_once 'CRM/RBC/BAO/Contribution.php';
+    //$row = CRM_RBC_BAO_Contribution::getContributionSelector( $params );
+        
+    /* require_once "CRM/Utils/JSON.php"; */
+    /* $iFilteredTotal = $iTotal = $params['total']; */
+    /* $selectorElements = array( 'contact_type', 'sort_name', 'amount','transaction_date', 'name', 'class' ); */
+    /* echo CRM_Utils_JSON::encodeDataTableSelector( $row, $sEcho, $iTotal, $iFilteredTotal, $selectorElements ); */
+    /* CRM_Utils_System::civiExit( ); */
+
+    $this->_returnvalues = array( 
+      'civicrm_financial_item.contact_id',
                                       'sort_name',
                                       'total_amount',
                                       'contact_type',
@@ -101,7 +128,8 @@ class CRM_Financial_Form_BatchTransaction extends CRM_Contribute_Form
                                       'date',
                                       'name'
                                       );
-        $this->_columnHeader = array( 'contact_type'   => '',
+    $this->_columnHeader = array( 
+      'contact_type'     => '',
                                       'sort_name'      => 'Contact Name',
                                       'total_amount'   => 'Amount',
                                       'date'           => 'Received',
@@ -134,6 +162,7 @@ class CRM_Financial_Form_BatchTransaction extends CRM_Contribute_Form
         $this->assign( 'searchRows',  $this->_searchRows);
         
     }
+
       function &links()
         {
             if (!(self::$_links)) {

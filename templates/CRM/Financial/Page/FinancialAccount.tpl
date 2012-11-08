@@ -42,6 +42,7 @@
             <th>{ts}Name{/ts}</th>
             <th>{ts}Description{/ts}</th>
             <th>{ts}Acctg Code{/ts}</th>
+            <th>{ts}Financial Account Type{/ts}</th>
             <th>{ts}Deductible?{/ts}</th>
             <th>{ts}Reserved?{/ts}</th>
             <th>{ts}Enabled?{/ts}</th>
@@ -52,6 +53,7 @@
 	        <td>{$row.name}</td>	
 	        <td>{$row.description}</td>
             	<td>{$row.accounting_code}</td>
+            	<td>{$row.financial_account_type_id}</td>
 	        <td>{if $row.is_deductible eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
 	        <td>{if $row.is_reserved eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
 	        <td id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>

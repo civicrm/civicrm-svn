@@ -36,15 +36,13 @@
 
 require_once 'CRM/Financial/DAO/FinancialBatch.php';
 
-class CRM_Financial_BAO_FinancialBatch extends CRM_Financial_DAO_FinancialBatch
-{
+class CRM_Financial_BAO_FinancialBatch extends CRM_Financial_DAO_FinancialBatch {
 
     /**
      * static holder for the default LT
      */
     static $_defaultContributionType = null;
     
-
     /**
      * class constructor
      */
@@ -67,9 +65,7 @@ class CRM_Financial_BAO_FinancialBatch extends CRM_Financial_DAO_FinancialBatch
      * @access public
      * @static
      */
-    static function retrieve( &$params, &$defaults ) 
-        
-    {
+  static function retrieve( &$params, &$defaults ) {
         $financialBatch = new CRM_Financial_DAO_FinancialBatch( );
         $financialBatch->copyValues( $params );
         if ( $financialBatch->find( true ) ) {
@@ -89,17 +85,15 @@ class CRM_Financial_BAO_FinancialBatch extends CRM_Financial_DAO_FinancialBatch
      * @static 
      * @return object
      */
-    static function add(&$params, &$ids) 
-    {
-        
+  static function add(&$params) {
         // action is taken depending upon the mode
         $financialBatch              = new CRM_Financial_DAO_FinancialBatch( );
-        $financialBatch->copyValues( $params );;
-        
-        $financialBatch->id = CRM_Utils_Array::value( 'financialBatch', $ids );
+    $financialBatch->copyValues( $params );
+    if (CRM_Utils_Array::value('batch_id', $params)) {
+      $financialBatch->id = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_FinancialBatch', $params['batch_id'], 'id', 'batch_id');
+    }
         $financialBatch->save( );
         return $financialBatch;
     }
-
 }
 

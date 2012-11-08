@@ -979,7 +979,9 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     ) {
       $errors['contribution_status_id'] = ts("Please select a valid payment status before updating.");
     }
-    $errors = CRM_Price_BAO_Field::initialPayValidation( $params, $files, $self );
+
+    CRM_Financial_BAO_FinancialAccount::financialAccountValidation($params,$errors);
+    CRM_Price_BAO_Field::initialPayValidation( $params, $files, $self, $errors);
 
     return empty($errors) ? TRUE : $errors;
   }
@@ -1372,7 +1374,6 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
 
       if ($result) {
         $this->_params = array_merge($this->_params, $result);
-
         //assign amount to template if payment was successful
         $this->assign('amount', $params['total_amount']);
       }
@@ -1436,7 +1437,6 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
             'payment_processor' => $this->_paymentProcessor['payment_processor_type'],
             'trxn_id' => CRM_Utils_Array::value('trxn_id', $result),
           );
-
           $trxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
         }
       }
