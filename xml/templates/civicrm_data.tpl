@@ -529,8 +529,8 @@ VALUES
   (@option_group_id_report , '{ts escape="sql"}Activity Report{/ts}',                         'activity',                       'CRM_Report_Form_Activity',                       NULL, 0, NULL, 3,  '{ts escape="sql"}Provides a list of constituent activity including activity statistics for one/all contacts during a given date range(required){/ts}', 0, 0, 1, NULL, NULL),
   (@option_group_id_report , '{ts escape="sql"}Walk / Phone List Report{/ts}',                'walklist',                       'CRM_Report_Form_Walklist_Walklist',                       NULL, 0, NULL, 4,  '{ts escape="sql"}Provides a detailed report for your walk/phonelist for targetted contacts{/ts}', 0, 0, 0, NULL, NULL),
   (@option_group_id_report , '{ts escape="sql"}Current Employer Report{/ts}',                 'contact/currentEmployer',        'CRM_Report_Form_Contact_CurrentEmployer',        NULL, 0, NULL, 5,  '{ts escape="sql"}Provides detail list of employer employee relationships along with employment details Ex Join Date{/ts}', 0, 0, 1, NULL, NULL),
-  (@option_group_id_report , '{ts escape="sql"}Contribution Summary Report{/ts}',             'contribute/summary',             'CRM_Report_Form_Contribute_Summary',             NULL, 0, NULL, 6,  '{ts escape="sql"}Groups and totals contributions by criteria including contact, time period, contribution type, contributor location, etc.{/ts}', 0, 0, 1, @contributeCompId, NULL),
-  (@option_group_id_report , '{ts escape="sql"}Contribution Detail Report{/ts}',              'contribute/detail',              'CRM_Report_Form_Contribute_Detail',              NULL, 0, NULL, 7,  '{ts escape="sql"}Lists specific contributions by criteria including contact, time period, contribution type, contributor location, etc. Contribution summary report points to this report for contribution details.{/ts}', 0, 0, 1, @contributeCompId, NULL),
+  (@option_group_id_report , '{ts escape="sql"}Contribution Summary Report{/ts}',             'contribute/summary',             'CRM_Report_Form_Contribute_Summary',             NULL, 0, NULL, 6,  '{ts escape="sql"}Groups and totals contributions by criteria including contact, time period, financial type, contributor location, etc.{/ts}', 0, 0, 1, @contributeCompId, NULL),
+  (@option_group_id_report , '{ts escape="sql"}Contribution Detail Report{/ts}',              'contribute/detail',              'CRM_Report_Form_Contribute_Detail',              NULL, 0, NULL, 7,  '{ts escape="sql"}Lists specific contributions by criteria including contact, time period, financial type, contributor location, etc. Contribution summary report points to this report for contribution details.{/ts}', 0, 0, 1, @contributeCompId, NULL),
   (@option_group_id_report , '{ts escape="sql"}Repeat Contributions Report{/ts}',             'contribute/repeat',              'CRM_Report_Form_Contribute_Repeat',              NULL, 0, NULL, 8,  '{ts escape="sql"}Given two date ranges, shows contacts who contributed in both the date ranges with the amount contributed in each and the percentage increase / decrease.{/ts}', 0, 0, 1, @contributeCompId, NULL),
   (@option_group_id_report , '{ts escape="sql"}Contributions by Organization Report{/ts}',    'contribute/organizationSummary', 'CRM_Report_Form_Contribute_OrganizationSummary', NULL, 0, NULL, 9,  '{ts escape="sql"}Displays a detailed list of contributions grouped by organization, which includes contributions made by employees for the organisation.{/ts}', 0, 0, 1, @contributeCompId, NULL),
   (@option_group_id_report , '{ts escape="sql"}Contributions by Household Report{/ts}',       'contribute/householdSummary',    'CRM_Report_Form_Contribute_HouseholdSummary',    NULL, 0, NULL, 10, '{ts escape="sql"}Displays a detailed list of contributions grouped by household which includes contributions made by members of the household.{/ts}', 0, 0, 1, @contributeCompId, NULL),
@@ -854,12 +854,12 @@ VALUES
 -- financial accounts
 SELECT @opval := value FROM civicrm_option_value WHERE name = 'Revenue';
 INSERT INTO
-   `civicrm_financial_account` (`name`, `financial_account_type_id`, `is_reserved`, `is_active`, `is_deductible`)
+   `civicrm_financial_account` (`name`, `financial_account_type_id`, `is_reserved`, `is_active`, `is_deductible`, `is_default`)
 VALUES
-  ( '{ts escape="sql"}Donation{/ts}'             , @opval, 0, 1, 1 ),
-  ( '{ts escape="sql"}Member Dues{/ts}'          , @opval, 0, 1, 1 ), 
-  ( '{ts escape="sql"}Campaign Contribution{/ts}', @opval, 0, 1, 0 ),
-  ( '{ts escape="sql"}Event Fee{/ts}'            , @opval, 0, 1, 0 );
+  ( '{ts escape="sql"}Donation{/ts}'             , @opval, 0, 1, 1, 1 ),
+  ( '{ts escape="sql"}Member Dues{/ts}'          , @opval, 0, 1, 1, 0 ), 
+  ( '{ts escape="sql"}Campaign Contribution{/ts}', @opval, 0, 1, 0, 0 ),
+  ( '{ts escape="sql"}Event Fee{/ts}'            , @opval, 0, 1, 0, 0 );
 
 -- Now insert option values which require domainID
 --

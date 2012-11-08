@@ -1222,7 +1222,7 @@ class CRM_GCD {
     $contact_id = $organizationDAO->contact_id;
 
     $membershipType = "INSERT INTO civicrm_membership_type
-        (name, description, member_of_contact_id, financial_account_id, minimum_fee, duration_unit, duration_interval, period_type, fixed_period_start_day, fixed_period_rollover_day, relationship_type_id, relationship_direction, visibility, weight, is_active)
+        (name, description, member_of_contact_id, financial_type_id, minimum_fee, duration_unit, duration_interval, period_type, fixed_period_start_day, fixed_period_rollover_day, relationship_type_id, relationship_direction, visibility, weight, is_active)
         VALUES
         ('General', 'Regular annual membership.', " . $contact_id . ", 3, 100, 'year', 1, 'rolling',null, null, 7, 'b_a', 'Public', 1, 1),
         ('Student', 'Discount membership for full-time students.', " . $contact_id . ", 1, 50, 'year', 1, 'rolling', null, null, 7, 'b_a', 'Public', 2, 1),
@@ -1413,7 +1413,7 @@ VALUES
     $eventLok3 = CRM_Core_DAO::singleValueQuery($sql, CRM_Core_DAO::$_nullArray);
 
     $event = "INSERT INTO civicrm_event
-        ( title, summary, description, event_type_id, participant_listing_id, is_public, start_date, end_date, is_online_registration, registration_link_text, max_participants, event_full_text, is_monetary, financial_account_id, is_map, is_active, fee_label, is_show_location, loc_block_id,intro_text, footer_text, confirm_title, confirm_text, confirm_footer_text, is_email_confirm, confirm_email_text, confirm_from_name, confirm_from_email, cc_confirm, bcc_confirm, default_fee_id, thankyou_title, thankyou_text, thankyou_footer_text, is_pay_later, pay_later_text, pay_later_receipt, is_multiple_registrations, allow_same_participant_emails, currency )
+        ( title, summary, description, event_type_id, participant_listing_id, is_public, start_date, end_date, is_online_registration, registration_link_text, max_participants, event_full_text, is_monetary, financial_type_id, is_map, is_active, fee_label, is_show_location, loc_block_id,intro_text, footer_text, confirm_title, confirm_text, confirm_footer_text, is_email_confirm, confirm_email_text, confirm_from_name, confirm_from_email, cc_confirm, bcc_confirm, default_fee_id, thankyou_title, thankyou_text, thankyou_footer_text, is_pay_later, pay_later_text, pay_later_receipt, is_multiple_registrations, allow_same_participant_emails, currency )
         VALUES
         ( 'Fall Fundraiser Dinner', 'Kick up your heels at our Fall Fundraiser Dinner/Dance at Glen Echo Park! Come by yourself or bring a partner, friend or the entire family!', 'This event benefits our teen programs. Admission includes a full 3 course meal and wine or soft drinks. Grab your dancing shoes, bring the kids and come join the party!', 3, 1, 1, '" . date('Y-m-d 17:00:00', strtotime("+6 months")) . "', '" . date('Y-m-d 17:00:00', strtotime("+6 months +2 days")) . "', 1, 'Register Now', 100, 'Sorry! The Fall Fundraiser Dinner is full. Please call Jane at 204 222-1000 ext 33 if you want to be added to the waiting list.', 1, 4, 1, 1, 'Dinner Contribution', 1 ,$eventLok1,'Fill in the information below to join as at this wonderful dinner event.', NULL, 'Confirm Your Registration Information', 'Review the information below carefully.', NULL, 1, 'Contact the Development Department if you need to make any changes to your registration.', 'Fundraising Dept.', 'development@example.org', NULL, NULL, NULL, 'Thanks for Registering!', '<p>Thank you for your support. Your contribution will help us build even better tools.</p><p>Please tell your friends and colleagues about this wonderful event.</p>', '<p><a href=http://civicrm.org>Back to CiviCRM Home Page</a></p>', 1, 'I will send payment by check', 'Send a check payable to Our Organization within 3 business days to hold your reservation. Checks should be sent to: 100 Main St., Suite 3, San Francisco CA 94110', 1, 0, 'USD' ),
         ( 'Summer Solstice Festival Day Concert', 'Festival Day is coming! Join us and help support your parks.', 'We will gather at noon, learn a song all together,  and then join in a joyous procession to the pavilion. We will be one of many groups performing at this wonderful concert which benefits our city parks.', 5, 1, 1, '" . date('Y-m-d 12:00:00', strtotime("-1 day")) . "', '" . date('Y-m-d 17:00:00', strtotime("-1 day")) . "', 1, 'Register Now', 50, 'We have all the singers we can handle. Come to the pavilion anyway and join in from the audience.', 1, 2, NULL, 1, 'Festival Fee', 1, $eventLok2, 'Complete the form below and click Continue to register online for the festival. Or you can register by calling us at 204 222-1000 ext 22.', '', 'Confirm Your Registration Information', '', '', 1, 'This email confirms your registration. If you have questions or need to change your registration - please do not hesitate to call us.', 'Event Dept.', 'events@example.org', '', NULL, NULL, 'Thanks for Your Joining In!', '<p>Thank you for your support. Your participation will help build new parks.</p><p>Please tell your friends and colleagues about the concert.</p>', '<p><a href=http://civicrm.org>Back to CiviCRM Home Page</a></p>', 0, NULL, NULL, 1, 0, 'USD' ),
@@ -1423,7 +1423,7 @@ VALUES
 
     //CRM-4464
     $eventTemplates = "INSERT INTO civicrm_event
-        ( is_template, template_title, event_type_id, default_role_id, participant_listing_id, is_public, is_monetary, is_online_registration, is_multiple_registrations, allow_same_participant_emails, is_email_confirm, financial_account_id, fee_label, confirm_title, thankyou_title, confirm_from_name, confirm_from_email, is_active, currency )
+        ( is_template, template_title, event_type_id, default_role_id, participant_listing_id, is_public, is_monetary, is_online_registration, is_multiple_registrations, allow_same_participant_emails, is_email_confirm, financial_type_id, fee_label, confirm_title, thankyou_title, confirm_from_name, confirm_from_email, is_active, currency )
         VALUES
         ( 1, 'Free Meeting without Online Registration', 4, 1, 1, 1, 0, 0, null, null, null, null,             null, null, null, null, null, 1, 'USD'  ),
         ( 1, 'Free Meeting with Online Registration',    4, 1, 1, 1, 0, 1,    1,    1,    0, null,             null, 'Confirm Your Registration Information', 'Thanks for Registering!', null, null, 1, 'USD'  ),
@@ -1602,7 +1602,7 @@ VALUES
   function addContribution() {
     $query = "
 INSERT INTO civicrm_contribution
-    (contact_id, financial_account_id, payment_instrument_id, receive_date, non_deductible_amount, total_amount, trxn_id, check_number, currency, cancel_date, cancel_reason, receipt_date, thankyou_date, source )
+    (contact_id, financial_type_id, payment_instrument_id, receive_date, non_deductible_amount, total_amount, trxn_id, check_number, currency, cancel_date, cancel_reason, receipt_date, thankyou_date, source )
 VALUES
     (2, 1, 4, '2010-04-11 00:00:00', 0.00, 125.00, NULL, '1041', 'USD', NULL, NULL, NULL, NULL, 'Apr 2007 Mailer 1' ),
     (4, 1, 1, '2010-03-21 00:00:00', 0.00, 50.00, 'P20901X1', NULL, 'USD', NULL, NULL, NULL, NULL, 'Online: Save the Penguins' ),
@@ -1661,7 +1661,7 @@ VALUES
 
   function addPledge() {
     $pledge = "INSERT INTO civicrm_pledge
-        (contact_id, financial_account_id, contribution_page_id, amount, original_installment_amount, currency,frequency_unit, frequency_interval, frequency_day, installments, start_date, create_date, acknowledge_date, modified_date, cancel_date, end_date, honor_contact_id, honor_type_id, status_id, is_test) 
+        (contact_id, financial_type_id, contribution_page_id, amount, original_installment_amount, currency,frequency_unit, frequency_interval, frequency_day, installments, start_date, create_date, acknowledge_date, modified_date, cancel_date, end_date, honor_contact_id, honor_type_id, status_id, is_test) 
         VALUES
        (71, 1, 1, 500.00, '500', 'USD', 'month', 1, 1, 1, '2009-07-01 00:00:00', '2009-06-26 00:00:00', NULL, NULL, NULL,'2009-07-01 00:00:00', NULL, NULL, 1, 0),
        (43, 1, 1, 800.00, '200', 'USD', 'month', 3, 1, 4, '2009-07-01 00:00:00', '2009-06-23 00:00:00', '2009-06-23 00:00:00', NULL, NULL, '2009-04-01 10:11:40', NULL, NULL, 5, 0),

@@ -305,10 +305,10 @@ class CRM_Event_Form_Registration extends CRM_Core_Form {
       $this->set('requireApproval', $this->_requireApproval);
 
       // also get the accounting code
-            if ( CRM_Utils_Array::value( 'financial_account_id', $this->_values['event'] ) ) {
+            if ( CRM_Utils_Array::value( 'financial_type_id', $this->_values['event'] ) ) {
                 $this->_values['event']['accountingCode'] =
-                    CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialAccount',
-                                                 $this->_values['event']['financial_account_id'],
+                    CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialType',
+                                                 $this->_values['event']['financial_type_id'],
           'accounting_code'
         );
       }

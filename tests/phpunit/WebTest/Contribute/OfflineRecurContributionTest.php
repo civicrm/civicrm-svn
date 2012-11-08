@@ -62,8 +62,8 @@ class WebTest_Contribute_OfflineRecurContributionTest extends CiviSeleniumTestCa
     $this->waitForElementPresent('payment_processor_id');
     $this->select('payment_processor_id', "label={$processorName}");
 
-      $this->click('financial_account_id');
-      $this->select('financial_account_id', 'label=Donation');
+      $this->click('financial_type_id');
+      $this->select('financial_type_id', 'label=Donation');
     $this->type('total_amount', '10');
 
     // recurring contribution fields
@@ -99,7 +99,7 @@ class WebTest_Contribute_OfflineRecurContributionTest extends CiviSeleniumTestCa
     // View Recurring Contribution Record
     $verifyData = array(
       'From' => "$contactName",
-      'Contribution Type' => 'Donation (test)',
+                          'Financial Type'    => 'Donation (test)',
       'Total Amount' => 'Installments: 12, Interval: 1 month(s)',
       'Contribution Status' => 'Pending : Incomplete Transaction',
       'Paid By' => 'Credit Card',

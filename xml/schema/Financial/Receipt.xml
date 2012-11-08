@@ -112,7 +112,7 @@
   <field>    
       <name>non_deductible_amount</name>    
       <type>decimal</type>    
-      <comment>Portion of total amount which is NOT tax deductible. Equal to total_amount for non-deductible contribution types.</comment>
+      <comment>Portion of total amount which is NOT tax deductible. Equal to total_amount for non-deductible financial types.</comment>
       <add>4.1</add>    
   </field>
   <field>

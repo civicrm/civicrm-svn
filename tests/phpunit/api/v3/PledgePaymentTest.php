@@ -169,8 +169,7 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase {
       'version' => 3,
       'total_amount' => 20,
       'contact_id' => $this->_individualId,
-      'financial_account_id' => $this->_contributionTypeId,
-    );
+                                  'financial_type_id' => $this->_contributionTypeId);
     $contribution = civicrm_api('contribution', 'create', $contributionParams);
 
     $this->assertEquals(0, $contribution['is_error'], " in line " . __LINE__);
@@ -203,8 +202,7 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase {
         'version' => 3,
         'total_amount' => 20,
         'contact_id' => $this->_individualId,
-        'financial_account_id' => $this->_contributionTypeId,
-      );
+                                  'financial_type_id' => $this->_contributionTypeId);
       $contribution = civicrm_api('contribution', 'create', $contributionParams);
 
       $this->assertEquals(0, $contribution['is_error'], " in line " . __LINE__);

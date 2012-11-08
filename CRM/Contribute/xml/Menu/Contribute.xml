@@ -259,6 +259,23 @@
      <title>Financial Type</title>
      <page_callback>CRM_Financial_Form_FinancialTypeAccount</page_callback>
      <adminGroup>CiviContribute</adminGroup>
-     <weight>582</weight>
+     <weight>583</weight>
   </item>
+ <item>
+     <path>civicrm/admin/financial/financialType/accounts/delete</path>
+     <title>Financial Type</title>
+     <page_callback>CRM_Financial_Form_FinancialTypeAccount</page_callback>
+     <adminGroup>CiviContribute</adminGroup>
+     <weight>584</weight>
+  </item>
+  <item>
+     <path>civicrm/ajax/jqFinancial</path>
+     <page_callback>CRM_Financial_Page_AJAX::jqFinancial</page_callback>
+     <access_arguments>make online contributions</access_arguments>
+  </item>
+  <item>
+     <path>civicrm/ajax/jqFinancialRelation</path>
+     <page_callback>CRM_Financial_Page_AJAX::jqFinancialRelation</page_callback>
+     <access_arguments>make online contributions</access_arguments>
+  </item> 
 </menu>

@@ -37,17 +37,17 @@
        <onDelete>CASCADE</onDelete>
   </foreignKey>
   <field>  
-      <name>financial_account_id</name>  
-      <title>Account</title>
+      <name>financial_type_id</name>  
+      <title>Type</title>
       <type>int unsigned</type>  
-      <comment>FK to Financial Account</comment>
+      <comment>FK to Financial Type</comment>
       <add>2.1</add>  
       <change>4.1</change>
       <changedName>contribution_type_id</changedName>
   </field>    
   <foreignKey>  
-       <name>financial_account_id</name>  
-       <table>civicrm_financial_account</table>  
+       <name>financial_type_id</name>  
+       <table>civicrm_financial_type</table>  
        <key>id</key>  
        <add>2.1</add>  
        <change>4.1</change>

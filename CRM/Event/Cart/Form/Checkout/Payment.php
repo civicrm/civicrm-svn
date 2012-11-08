@@ -123,7 +123,7 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart {
     foreach ($this->cart->get_main_events_in_carts() as $event_in_cart) {
       if ($payment_processor_id == NULL && $event_in_cart->event->payment_processor != NULL) {
         $payment_processor_id = $event_in_cart->event->payment_processor;
-        $this->contribution_type_id = $event_in_cart->event->contribution_type_id;
+		$this->financial_type_id = $event_in_cart->event->financial_type_id;
       }
       else {
         if ($event_in_cart->event->payment_processor != NULL && $event_in_cart->event->payment_processor != $payment_processor_id) {
@@ -604,7 +604,7 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart {
 
     $contribParams = array(
       'contact_id' => $payer,
-      'contribution_type_id' => $params['contribution_type_id'],
+      'financial_type_id' => $params['financial_type_id'],
       'receive_date' => $params['now'],
       'total_amount' => $params['amount'],
       'amount_level' => $mer_participant->fee_level,

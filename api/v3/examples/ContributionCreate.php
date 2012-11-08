@@ -42,7 +42,7 @@ function contribution_create_expectedresult(){
       '1' => array( 
           'id' => 1,
           'contact_id' => 1,
-          'financial_account_id' => 11,
+          'financial_type_id' => 11,
           'contribution_page_id' => '',
           'payment_instrument_id' => 1,
           'receive_date' => '20120511000000',

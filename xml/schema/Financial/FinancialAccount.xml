@@ -53,6 +53,7 @@
       <name>financial_account_type_id</name>  
       <type>int unsigned</type>  
       <required>true</required>  
+      <default>3</default> 
       <add>3.2</add>
       <change>4.1</change>
       <changedName>account_type_id</changedName>
@@ -109,7 +110,6 @@
   <field>
        <name>tax_rate</name>
        <type>decimal</type>
-       <default>0</default>
        <comment>The percentage of the total_amount that is due for this tax.</comment>
        <add>4.1</add>
   </field>

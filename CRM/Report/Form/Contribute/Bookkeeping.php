@@ -96,7 +96,7 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
             'statistics' =>
             array('sum' => ts('Amount')),
           ),
-                          		 'financial_account_id' 	=> array( 'title'   => ts('Contribution Type'),
+                          		 'financial_type_id' 	=> array( 'title'   => ts('Financial Type'),
             'default' => TRUE,
           ),
           'trxn_id' => array('title' => ts('Trans #'),
@@ -122,10 +122,10 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
         array(
           'receive_date' =>
           array('operatorType' => CRM_Report_Form::OP_DATE),
-                                 'financial_account_id'   =>
-          array('title' => ts('Contribution Type'),
+                                 'financial_type_id'   =>
+                                    array( 'title'        => ts( 'Financial Type' ), 
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-            'options' => CRM_Contribute_PseudoConstant::contributionType(),
+                                           'options'      => CRM_Contribute_PseudoConstant::financialType( )
           ),
           'payment_instrument_id' =>
           array('title' => ts('Paid By'),
@@ -234,7 +234,7 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
     $checkList          = array();
     $entryFound         = FALSE;
     $display_flag       = $prev_cid = $cid = 0;
-    $contributionTypes  = CRM_Contribute_PseudoConstant::contributionType();
+        $contributionTypes = CRM_Contribute_PseudoConstant::financialType( );
     $paymentInstruments = CRM_Contribute_PseudoConstant::paymentInstrument();
 
 

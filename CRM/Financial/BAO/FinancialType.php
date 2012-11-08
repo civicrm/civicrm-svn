@@ -121,7 +121,7 @@ class CRM_Financial_BAO_FinancialType extends CRM_Financial_DAO_FinancialType
     }
     
     /**
-     * Function to delete contribution Types 
+     * Function to delete financial Types 
      * 
      * @param int $contributionTypeId
      * @static
@@ -141,7 +141,7 @@ class CRM_Financial_BAO_FinancialType extends CRM_Financial_DAO_FinancialType
         foreach ($dependancy as $name) {
             require_once (str_replace('_', DIRECTORY_SEPARATOR, "CRM_" . $name[0] . "_BAO_" . $name[1]) . ".php");
             eval('$bao = new CRM_' . $name[0] . '_BAO_' . $name[1] . '();');
-            $bao->financial_account_id = $financialTypeId;
+            $bao->financial_type_id = $financialTypeId;
             if ($bao->find(true)) {
                 $check = true;
             }
@@ -154,7 +154,7 @@ class CRM_Financial_BAO_FinancialType extends CRM_Financial_DAO_FinancialType
             return CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/admin/financial/financialType', "reset=1&action=browse" ));
         }
         
-        //delete from contribution Type table
+        //delete from financial Type table
         require_once 'CRM/Contribute/DAO/Contribution.php';
         $financialType = new CRM_Financial_DAO_FinancialType( );
         $financialType->id = $financialTypeId;

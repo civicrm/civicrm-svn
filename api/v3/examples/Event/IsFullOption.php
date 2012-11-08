@@ -35,7 +35,7 @@ function event_getsingle_expectedresult(){
   'is_online_registration' => 0,
   'max_participants' => '1',
   'is_monetary' => 0,
-  'contribution_type_id' => 0,
+  'financial_type_id' => 0,
   'is_map' => 0,
   'is_active' => 0,
   'is_show_location' => '1',

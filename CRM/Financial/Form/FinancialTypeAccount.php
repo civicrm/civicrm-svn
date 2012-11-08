@@ -79,6 +79,8 @@ class CRM_Financial_Form_FinancialTypeAccount extends CRM_Contribute_Form
         require_once 'CRM/Core/DAO.php';
         $this->_aid = CRM_Utils_Request::retrieve( 'aid', 'Positive', $this );
         $this->_id  = CRM_Utils_Request::retrieve( 'id' , 'Positive', $this ); 
+        if(!$this->_id && ( $this->_action & CRM_Core_Action::UPDATE  ))
+            $this->_id = CRM_Utils_Type::escape( $this->_id , 'Positive' );
         $this->_BAOName = $this->get( 'BAOName' );
         if ( $this->_aid && ( $this->_action & CRM_Core_Action::ADD  ) ) {
             $this->_title = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialType', $this->_aid, 'name' );
@@ -108,6 +110,18 @@ class CRM_Financial_Form_FinancialTypeAccount extends CRM_Contribute_Form
      */
     public function buildQuickForm( ) 
     {
+        if ( $this->_action & CRM_Core_Action::DELETE ) {
+            $this->addButtons( array(
+                                     array ( 'type'      => 'next',
+                                             'name'      => ts('Delete Financial Account Type'),
+                                             'spacing'   => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+                                             'isDefault' => true   ),
+                                     array ( 'type'      => 'cancel',
+                                             'name'      => ts('Cancel') ),
+                                     )
+                               );
+             return;
+        }
        
         parent::buildQuickForm( );
 
@@ -118,9 +132,7 @@ class CRM_Financial_Form_FinancialTypeAccount extends CRM_Contribute_Form
             $this->setDefaults( $defaults );
             $financialAccountTitle = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialAccount', $defaults['financial_account_id'], 'name' );
         }
-        if ($this->_action & CRM_Core_Action::DELETE ) { 
-            return;
-        }
+        
         $this->applyFilter('__ALL__', 'trim');
         
         if ( $this->_action == CRM_Core_Action::UPDATE ){
@@ -149,14 +161,14 @@ class CRM_Financial_Form_FinancialTypeAccount extends CRM_Contribute_Form
             
                 $financialAccountType = "financial_account_type_id = {$financialAccountType[$this->_submitValues['account_relationship']]}";
                 require_once 'CRM/Contribute/PseudoConstant.php';
-                $result = CRM_Contribute_PseudoConstant::contributionType( null, $financialAccountType );
+                $result = CRM_Contribute_PseudoConstant::financialAccount( null, $financialAccountType );
 
                 $financialAccountSelect = array(''=>ts( '- Select Financial Account -' )) + $result;
                 //$defaults['']
             }
         
             else  {
-                $financialAccountSelect = array( 'select'=>ts( '-Select Financial Account-' )) + CRM_Contribute_PseudoConstant::contributionType( );; 
+                $financialAccountSelect = array( 'select'=>ts( '-Select Financial Account-' )) + CRM_Contribute_PseudoConstant::financialType( );; 
             }
         }
         if( $this->_action == CRM_Core_Action::UPDATE ){
@@ -168,7 +180,7 @@ class CRM_Financial_Form_FinancialTypeAccount extends CRM_Contribute_Form
             
             $financialAccountType = "financial_account_type_id = {$financialAccountType[$this->_defaultValues['account_relationship']]}";
             require_once 'CRM/Contribute/PseudoConstant.php';
-            $result = CRM_Contribute_PseudoConstant::contributionType( null, $financialAccountType );
+            $result = CRM_Contribute_PseudoConstant::financialAccount( null, $financialAccountType );
 
             $financialAccountSelect = array(''=>ts( '- Select Financial Account -' )) + $result;
             
@@ -252,7 +264,7 @@ class CRM_Financial_Form_FinancialTypeAccount extends CRM_Contribute_Form
     {
         require_once 'CRM/Financial/BAO/FinancialTypeAccount.php';
         if($this->_action & CRM_Core_Action::DELETE) {
-            CRM_Financial_BAO_FinancialTypeAccount::del($this->_id);
+            CRM_Financial_BAO_FinancialTypeAccount::del($this->_id, $this->_aid);
             CRM_Core_Session::setStatus( ts('Selected financial type account has been deleted.') );
         } else { 
 
@@ -273,10 +285,9 @@ class CRM_Financial_Form_FinancialTypeAccount extends CRM_Contribute_Form
             $financialTypeAccount = CRM_Financial_BAO_FinancialTypeAccount::add($params, $ids);
             CRM_Core_Session::setStatus( ts('The financial type Account has been saved.' ));
 
-            
+        }
             $buttonName = $this->controller->getButtonName( );
            
-        
             $session = CRM_Core_Session::singleton( );
             if ( $buttonName == $this->getButtonName( 'next', 'new' ) ) {
                 CRM_Core_Session::setStatus( ts(' You can add another Financial Account Type.') );
@@ -287,8 +298,8 @@ class CRM_Financial_Form_FinancialTypeAccount extends CRM_Contribute_Form
                                                                      "reset=1&action=browse&aid={$this->_aid}" ) );
             } 
             
+        
         }
     }
-}
 
  

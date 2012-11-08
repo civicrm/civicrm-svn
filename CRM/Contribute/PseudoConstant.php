@@ -40,13 +40,21 @@
 class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
 
   /**
-   * contribution types
+     * financial types
    * @var array
    * @static
    */
-  private static $contributionType;
+    private static $financialType;
+
 
   /**
+     * financial types
+     * @var array
+     * @static
+     */
+    private static $financialAccount;
+
+    /**
    * contribution pages
    * @var array
    * @static
@@ -99,22 +107,44 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
   private static $pcpStatus = array();
 
   /**
-   * Get all the contribution types
+   * Get all the financial types
    *
    * @access public
    *
-   * @return array - array reference of all contribution types if any
+     * @return array - array reference of all financial types if any
    * @static
    */
-    public static function &contributionType( $id = null, $financialAccountType = null )
+    public static function &financialType( $id = null )
     {
-    if (!self::$contributionType) {
-      CRM_Core_PseudoConstant::populate(self::$contributionType,
+        if ( ! self::$financialType ) {
+            CRM_Core_PseudoConstant::populate( self::$financialType,
+                                               'CRM_Financial_DAO_FinancialType' );
+            
+        }
+        
+        if ($id) {
+            $result = CRM_Utils_Array::value( $id, self::$financialType );
+            return $result;
+        }
+        return self::$financialType;
+    }
+
+    /**
+     * Get all the financial Accounts
+     *
+     * @access public
+     * @return array - array reference of all financial accounts if any
+     * @static
+     */
+    public static function &financialAccount( $id = null, $financialAccountType = null )
+    {
+        if ( ! self::$financialAccount ) {
+            CRM_Core_PseudoConstant::populate( self::$financialAccount,
                                                'CRM_Financial_DAO_FinancialAccount' );
             
     }
         if ( $financialAccountType ) {
-            CRM_Core_PseudoConstant::populate( self::$contributionType,
+            CRM_Core_PseudoConstant::populate( self::$financialAccount,
                                                'CRM_Financial_DAO_FinancialAccount',
                                                $all = false, 
                                                $retrieve = 'name', 
@@ -123,10 +153,10 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
             
         }
     if ($id) {
-      $result = CRM_Utils_Array::value($id, self::$contributionType);
+            $result = CRM_Utils_Array::value( $id, self::$financialAccount );
       return $result;
     }
-    return self::$contributionType;
+        return self::$financialAccount;
   }
 
   /**

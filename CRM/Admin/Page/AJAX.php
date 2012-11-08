@@ -132,7 +132,7 @@ class CRM_Admin_Page_AJAX {
           break;
 
         case 'CRM_Contribute_BAO_ContributionType':
-          $status = ts('Are you sure you want to disable this contribution type?');
+                $status = ts('Are you sure you want to disable this financial type?');
           break;
 
         case 'CRM_Core_BAO_PaymentProcessor':

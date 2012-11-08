@@ -65,12 +65,12 @@ class CRM_Contribute_Form_ContributionView extends CRM_Core_Form {
       $values['contribution_page_title'] = CRM_Utils_Array::value(CRM_Utils_Array::value('contribution_page_id', $values), $contribPages);
     }
 
-        // get to_financial_account from civicrm_financial_trxn
+        // get to_financial_type from civicrm_financial_trxn
         require_once 'CRM/Core/BAO/FinancialTrxn.php';
         $financialTrxnId = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnIds( $values['contribution_id'] );
         if ( CRM_Utils_Array::value( 'financialTrxnId', $financialTrxnId ) ){
             $values['to_financial_account_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialTrxn', $financialTrxnId['financialTrxnId'], 'to_financial_account_id' );   
-            $values['to_financial_account'] = CRM_Contribute_PseudoConstant::contributionType( $values['to_financial_account_id'] );
+            $values['to_financial_account'] = CRM_Contribute_PseudoConstant::financialAccount( $values['to_financial_account_id'] );
          }
         
     if (CRM_Utils_Array::value('honor_contact_id', $values)) {
@@ -96,7 +96,7 @@ class CRM_Contribute_Form_ContributionView extends CRM_Core_Form {
       }
     }
 
-    $groupTree = CRM_Core_BAO_CustomGroup::getTree('Contribution', $this, $id, 0, CRM_Utils_Array::value('financial_account_id', $values));
+    $groupTree = CRM_Core_BAO_CustomGroup::getTree('Contribution', $this, $id, 0, CRM_Utils_Array::value('financial_type_id', $values));
     CRM_Core_BAO_CustomGroup::buildCustomDataView($this, $groupTree);
 
     $premiumId = NULL;
@@ -172,7 +172,7 @@ class CRM_Contribute_Form_ContributionView extends CRM_Core_Form {
 
         $title = $displayName . 
             ' - (' . CRM_Utils_Money::format( $values['total_amount'] ) . ' ' . 
-            ' - ' . $values['financial_account'] . ')';
+            ' - ' . $values['financial_type'] . ')';
 
     $recentOther = array();
     if (CRM_Core_Permission::checkActionPermission('CiviContribute', CRM_Core_Action::UPDATE)) {

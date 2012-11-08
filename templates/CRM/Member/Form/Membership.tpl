@@ -208,10 +208,10 @@
                     </table>
                   </td>
                 </tr>{/if}
-                  <tr class="crm-membership-form-block-financial_account_id">
-                      <td class="label">{$form.financial_account_id.label}</td>
-                      <td>{$form.financial_account_id.html}<br />
-                    <span class="description">{ts}Select the appropriate contribution type for this payment.{/ts}</span></td>
+                  <tr class="crm-membership-form-block-financial_type_id">
+                      <td class="label">{$form.financial_type_id.label}</td>
+                      <td>{$form.financial_type_id.html}<br />
+                      <span class="description">{ts}Select the appropriate financial type for this payment.{/ts}</span></td>
                 </tr>
                 <tr class="crm-membership-form-block-total_amount">
                   <td class="label">{$form.total_amount.label}</td>
@@ -406,8 +406,8 @@
 
 	var allMemberships = {/literal}{$allMembershipInfo}{literal};
         if ( !mode ) {
-          // skip this for test and live modes because contribution type is set automatically
-    cj("#financial_account_id").val( allMemberships[memType]['financial_account_id'] );
+          // skip this for test and live modes because financial type is set automatically
+    cj("#financial_type_id").val( allMemberships[memType]['financial_type_id'] );
         }
 
   cj("#total_amount").val( allMemberships[memType]['total_amount'] );
@@ -733,7 +733,7 @@
       cj('#recordContribution').show( );
     }
     if ( setContributionType ) {
-      cj('#contribution_type_id').val(setContributionType);
+    cj('#financial_type_id').val(setContributionType);
     }
   }
   </script>

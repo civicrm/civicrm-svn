@@ -63,17 +63,17 @@ class CRM_Financial_BAO_FinancialAccount extends CRM_Financial_DAO_FinancialAcco
      * @param array $params   (reference ) an assoc array of name/value pairs
      * @param array $defaults (reference ) an assoc array to hold the flattened values
      *
-     * @return object CRM_Contribute_BAO_ContributionType object
+     * @return object CRM_Contribute_BAO_FinancialAccount object
      * @access public
      * @static
      */
     static function retrieve( &$params, &$defaults ) 
     {
-        $contributionType = new CRM_Financial_DAO_FinancialAccount( );
-        $contributionType->copyValues( $params );
-        if ( $contributionType->find( true ) ) {
-            CRM_Core_DAO::storeValues( $contributionType, $defaults );
-            return $contributionType;
+        $financialAccount = new CRM_Financial_DAO_FinancialAccount( );
+        $financialAccount->copyValues( $params );
+        if ( $financialAccount->find( true ) ) {
+            CRM_Core_DAO::storeValues( $financialAccount, $defaults );
+            return $financialAccount;
         }
         return null;
     }
@@ -93,7 +93,7 @@ class CRM_Financial_BAO_FinancialAccount extends CRM_Financial_DAO_FinancialAcco
     }
 
     /**
-     * function to add the contribution types
+     * function to add the financial types
      *
      * @param array $params reference array contains the values submitted by the form
      * @param array $ids    reference array contains the id
@@ -116,24 +116,24 @@ class CRM_Financial_BAO_FinancialAccount extends CRM_Financial_DAO_FinancialAcco
         }   
         
         // action is taken depending upon the mode
-        $contributionType               = new CRM_Financial_DAO_FinancialAccount( );
-        $contributionType->copyValues( $params );;
+        $financialAccount = new CRM_Financial_DAO_FinancialAccount( );
+        $financialAccount->copyValues( $params );;
         
-        $contributionType->id = CRM_Utils_Array::value( 'contributionType', $ids );
-        $contributionType->save( );
-        return $contributionType;
+        $financialAccount->id = CRM_Utils_Array::value( 'contributionType', $ids );
+        $financialAccount->save( );
+        return $financialAccount;
     }
     
     /**
-     * Function to delete contribution Types 
+     * Function to delete financial Types 
      * 
-     * @param int $contributionTypeId
+     * @param int $financialAccountId
      * @static
      */
     
-    static function del($contributionTypeId) 
+    static function del($financialAccountId) 
     {
-        //checking if contribution type is present  
+        //checking if financial type is present  
         $check = false;
         
         //check dependencies
@@ -145,7 +145,7 @@ class CRM_Financial_BAO_FinancialAccount extends CRM_Financial_DAO_FinancialAcco
         foreach ($dependancy as $name) {
             require_once (str_replace('_', DIRECTORY_SEPARATOR, "CRM_" . $name[0] . "_BAO_" . $name[1]) . ".php");
             eval('$bao = new CRM_' . $name[0] . '_BAO_' . $name[1] . '();');
-            $bao->financial_account_id = $contributionTypeId;
+            $bao->financial_type_id = $financialAccountId;
             if ($bao->find(true)) {
                 $check = true;
             }
@@ -154,15 +154,15 @@ class CRM_Financial_BAO_FinancialAccount extends CRM_Financial_DAO_FinancialAcco
         if ($check) {
             $session = CRM_Core_Session::singleton();
             CRM_Core_Session::setStatus( ts(
-                'This contribution type cannot be deleted because it is being referenced by one or more of the following types of records: Contributions, Contribution Pages, or Membership Types. Consider disabling this type instead if you no longer want it used.') );
+                'This financial type cannot be deleted because it is being referenced by one or more of the following types of records: Contributions, Contribution Pages, or Membership Types. Consider disabling this type instead if you no longer want it used.') );
             return CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/admin/financial/financialAccount', "reset=1&action=browse" ));
         }
         
-        //delete from contribution Type table
+        //delete from financial Type table
         require_once 'CRM/Contribute/DAO/Contribution.php';
-        $contributionType = new CRM_Financial_DAO_FinancialAccount( );
-        $contributionType->id = $contributionTypeId;
-        $contributionType->delete();
+        $financialAccount = new CRM_Financial_DAO_FinancialAccount( );
+        $financialAccount->id = $financialAccountId;
+        $financialAccount->delete();
     }
 }
 

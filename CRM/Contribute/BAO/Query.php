@@ -75,12 +75,12 @@ class CRM_Contribute_BAO_Query {
       $query->_tables['civicrm_contribution'] = $query->_whereTables['civicrm_contribution'] = 1;
     }
 
-    // get contribution_type
-        if ( CRM_Utils_Array::value( 'financial_account', $query->_returnProperties ) ) {
-            $query->_select['financial_account']  = "civicrm_financial_account.name as financial_account";
-            $query->_element['financial_account'] = 1;
+        // get financial_type
+        if ( CRM_Utils_Array::value( 'financial_type', $query->_returnProperties ) ) {
+            $query->_select['financial_type']  = "civicrm_financial_type.name as financial_type";
+            $query->_element['financial_type'] = 1;
       $query->_tables['civicrm_contribution'] = 1;
-            $query->_tables['civicrm_financial_account'] = 1;
+            $query->_tables['civicrm_financial_type'] = 1;
     }
 
     if (CRM_Utils_Array::value('contribution_note', $query->_returnProperties)) {
@@ -287,11 +287,11 @@ class CRM_Contribute_BAO_Query {
         $query->_tables['civicrm_contribution'] = $query->_whereTables['civicrm_contribution'] = 1;
         return;
 
-        case 'financial_account_id':
-        case 'financial_account':
+        case 'financial_type_id':
+        case 'financial_type':
         $cType = $value;
-        $types = CRM_Contribute_PseudoConstant::contributionType();
-            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_contribution.financial_account_id", 
+            $types = CRM_Contribute_PseudoConstant::financialType( );
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_contribution.financial_type_id", 
           $op, $value, "Integer"
         );
         $query->_qill[$grouping][] = ts('Contribution Type - %1', array(1 => $types[$cType]));
@@ -569,12 +569,12 @@ class CRM_Contribute_BAO_Query {
         $from = " $side JOIN civicrm_contribution_recur ON civicrm_contribution.contribution_recur_id = civicrm_contribution_recur.id ";
         break;
 
-        case 'civicrm_financial_account':
+        case 'civicrm_financial_type':
         if ($mode & CRM_Contact_BAO_Query::MODE_CONTRIBUTE) {
-                $from = " INNER JOIN civicrm_financial_account ON civicrm_contribution.financial_account_id = civicrm_financial_account.id ";
+                $from = " INNER JOIN civicrm_financial_type ON civicrm_contribution.financial_type_id = civicrm_financial_type.id ";
         }
         else {
-                $from = " $side JOIN civicrm_financial_account ON civicrm_contribution.financial_account_id = civicrm_financial_account.id ";
+                $from = " $side JOIN civicrm_financial_type ON civicrm_contribution.financial_type_id = civicrm_financial_type.id ";
         }
         break;
 
@@ -665,7 +665,7 @@ class CRM_Contribute_BAO_Query {
         'contact_sub_type' => 1,
         'sort_name' => 1,
         'display_name' => 1,
-                                'financial_account'       => 1,
+                                'financial_type'       => 1,
         'contribution_source' => 1,
         'receive_date' => 1,
         'thankyou_date' => 1,
@@ -743,11 +743,11 @@ class CRM_Contribute_BAO_Query {
       CRM_Core_PseudoConstant::currencySymbols('name')
     );
 
-        $form->add('select', 'financial_account_id', 
+        $form->add('select', 'financial_type_id', 
       ts('Contribution Type'),
       array(
         '' => ts('- any -')) +
-      CRM_Contribute_PseudoConstant::contributionType()
+                   CRM_Contribute_PseudoConstant::financialType( )
     );
 
     $form->add('select', 'contribution_page_id',

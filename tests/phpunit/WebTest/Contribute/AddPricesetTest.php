@@ -215,7 +215,37 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
 
     // load the Price Set Preview and check for expected values
     $this->_testVerifyPriceSet($validateStrings, $sid);
+      // Add new Financial Account
+      $orgName = 'Alberta '.substr(sha1(rand()), 0, 7);
+      $financialAccountTitle = 'Financial Account '.substr(sha1(rand()), 0, 4);
+      $financialAccountDescription = "{$financialAccountTitle} Description";
+      $accountingCode = 1033;
+      $financialAccountType = 'Asset';
+      $parentFinancialAccount = 'Donation';
+      $taxDeductible = FALSE;
+      $isActive = FALSE;
+      $headerAccount = TRUE;
+      $isTax = TRUE;
+      $taxRate = 10;
+      $isDefault = FALSE;
 
+        //Add new organisation
+       if( $orgName )
+            $this->webtestAddOrganization( $orgName );
+        
+       $this->_testAddFinancialAccount( $financialAccountTitle,
+                                         $financialAccountDescription,
+                                         $accountingCode,
+                                         $orgName,
+                                         $parentFinancialAccount,
+                                         $financialAccountType,
+                                         $taxDeductible,
+                                         $isActive,
+                                         $headerAccount,
+                                         $isTax,
+                                         $taxRate,
+                                         $isDefault
+                                         );
     $this->open($this->sboxPath . 'civicrm/contribute/add?reset=1&action=add&context=standalone');
 
     // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
@@ -228,12 +258,14 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
     $firstName = substr(sha1(rand()), 0, 7);
     $this->webtestNewDialogContact($firstName, 'Contributor', $firstName . '@example.com');
 
-    // select contribution type
-      $this->select('financial_account_id', 'value=1');
+      // select financial type
+      $this->select('financial_type_id', 'value=1');
 
     // fill in Received Date
     $this->webtestFillDate('receive_date');
 
+      //select recieved into
+      $this->select("to_financial_account_id", "label={$financialAccountTitle}");
     // source
     $this->type('source', 'Mailer 1');
 
@@ -358,7 +390,7 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
     // fill in step 1 (Title and Settings)
     $contributionPageTitle = "Title $contributionTitle";
     $this->type('title', $contributionPageTitle);
-      $this->select( 'financial_account_id', 'value=1' );
+      $this->select( 'financial_type_id', 'value=1' );
     $this->fillRichTextField('intro_text', 'This is Test Introductory Message', 'CKEditor');
     $this->fillRichTextField('footer_text', 'This is Test Footer Message', 'CKEditor');
 
@@ -451,8 +483,8 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
       3 => '590.00',
       7 => 'Completed',
     );
-    foreach ($expected as $value => $label) {
-      $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[$value]/td[2]", preg_quote($label));
+      foreach ( $expected as $label => $value ) {
+          $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody//tr/td[1][text()='$label']/../td[2]", preg_quote($value));
     }
   }
 
@@ -505,7 +537,7 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
     // fill in step 1 (Title and Settings)
     $contributionPageTitle = "Title $contributionTitle";
     $this->type('title', $contributionPageTitle);
-      $this->select( 'financial_account_id', 'value=1' );
+      $this->select( 'financial_type_id', 'value=1' );
     $this->fillRichTextField('intro_text', 'This is Test Introductory Message', 'CKEditor');
     $this->fillRichTextField('footer_text', 'This is Test Footer Message', 'CKEditor');
 
@@ -597,8 +629,8 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
       3 => '65.00',
       7 => 'Completed',
     );
-    foreach ($expected as $value => $label) {
-      $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[$value]/td[2]", preg_quote($label));
+      foreach ( $expected as $label => $value ) {
+          $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody//tr/td[1][text()='$label']/../td[2]", preg_quote($value));
     }
   }
 

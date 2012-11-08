@@ -93,7 +93,6 @@ class CRM_Price_Form_Option extends CRM_Core_Form {
       $defaults['value'] = CRM_Utils_Money::format(CRM_Utils_Array::value('value', $defaults), NULL, '%a');
     }
 
-
     if (!isset($defaults['weight']) || !$defaults['weight']) {
       $fieldValues = array('price_field_id' => $this->_fid);
       $defaults['weight'] = CRM_Utils_Weight::getDefaultWeight('CRM_Price_DAO_FieldValue', $fieldValues);
@@ -191,7 +190,28 @@ class CRM_Price_Form_Option extends CRM_Core_Form {
 
       $this->add('textarea', 'description', ts('Description'));
 
+            //Financial Type
+            require_once 'CRM/Contribute/PseudoConstant.php';
+            require_once 'CRM/Core/PseudoConstant.php';
+            $financialType = CRM_Contribute_PseudoConstant::financialType( );
+            $revenueFinancialType = array( );
+            CRM_Core_PseudoConstant::populate( $revenueFinancialType,
+                                               'CRM_Financial_DAO_EntityFinancialAccount',
+                                               $all = True, 
+                                               $retrieve = 'entity_id', 
+                                               $filter = null, 
+                                               'account_relationship = 1' );
 
+            foreach( $financialType as $key => $financialTypeName ){
+                if( !in_array( $key, $revenueFinancialType ) )
+                    unset( $financialType[$key] );
+            }
+             
+            $this->add('select', 'financial_type_id', 
+                               ts( 'Financial Type' ), 
+                               array(''=>ts( '- select -' )) + $financialType,
+                               true);
+            
       // weight
       $this->add('text', 'weight', ts('Order'), NULL, TRUE);
       $this->addRule('weight', ts('is a numeric field'), 'numeric');

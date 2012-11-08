@@ -77,6 +77,31 @@
          </table>
         {/if}
 
+working
+=======
+        <table id="contributionType" class="form-layout">
+            <tr class="crm-event-manage-fee-form-block-financial_type_id">
+               <td class="label">{$form.financial_type_id.label}<span class="marker"> *</span></td>
+               <td>{$form.financial_type_id.html}</td>
+            </tr>
+            <tr>
+               <td>&nbsp;</td>
+               <td class="description">{ts}This financial type will be assigned to payments made by participants when they register online.{/ts}
+               </td>
+            </tr>
+            <tr class="crm-event-manage-fee-form-block-fee_label">
+               <td class="label">{$form.fee_label.label}<span class="marker"> *</span>
+               </td>
+               <td>{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='fee_label' id=$id}{/if}{$form.fee_label.html}
+               </td>
+            </tr>
+            <tr>
+               <td>&nbsp;</td>
+               <td class="description">{ts}This label is displayed with the list of event fees.{/ts}
+               </td>
+            </tr>
+         </table>
+>>>>>>> .merge-right.r37954
         <table id="payLater" class="form-layout">
             <tr class="crm-event-manage-fee-form-block-is_pay_later">
                <td class="extra-long-fourty label">{$form.is_pay_later.html}</td>

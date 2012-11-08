@@ -93,7 +93,7 @@ class CRM_Contribute_BAO_ContributionTypeTest extends CiviUnitTestCase {
     $isActive = $this->assertDBNotNull('CRM_Contribute_BAO_ContributionType', $contributionType->id,
       'is_active', 'id',
                                             'Database check on updated for financial account is_active.' );
-    $this->assertEquals($isActive, 0, 'Verify contribution types is_active.');
+        $this->assertEquals( $isActive, 0, 'Verify financial types is_active.');
   }
 
   /**
@@ -111,7 +111,7 @@ class CRM_Contribute_BAO_ContributionTypeTest extends CiviUnitTestCase {
     CRM_Contribute_BAO_ContributionType::del($contributionType->id);
     $params = array('id' => $contributionType->id);
     $result = CRM_Contribute_BAO_ContributionType::retrieve($params, $defaults);
-    $this->assertEquals(empty($result), TRUE, 'Verify contribution types record deletion.');
+        $this->assertEquals( empty($result), true, 'Verify financial types record deletion.');
   }
 }
 

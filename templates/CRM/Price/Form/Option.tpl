@@ -55,6 +55,10 @@
             </tr>
             {* fix for CRM-10241 *}
             {if $form.count.html}
+	    <tr class="crm-price-option-form-block-financial-type">
+                <td class="label">{$form.financial_type_id.label}</td>
+                <td>{$form.financial_type_id.html}</td>
+            </tr>
             <tr class="crm-price-option-form-block-count">
                 <td class="label">{$form.count.label}</td>
                 <td>{$form.count.html} {help id="id-participant-count" file="CRM/Price/Page/Field.hlp"}</td>

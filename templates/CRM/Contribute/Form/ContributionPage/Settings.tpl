@@ -1,3 +1,4 @@
+
 {*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.2                                                |
@@ -27,9 +28,9 @@
 <div id="help">
     {if $action eq 0}
         <p>{ts}This is the first step in creating a new online Contribution Page. You can create one or more different Contribution Pages for different purposes, audiences, campaigns, etc. Each page can have it's own introductory message, pre-configured contribution amounts, custom data collection fields, etc.{/ts}</p>
-        <p>{ts}In this step, you will configure the page title, contribution type (donation, campaign contribution, etc.), goal amount, and introductory message. You will be able to go back and modify all aspects of this page at any time after completing the setup wizard.{/ts}</p>
+        <p>{ts}In this step, you will configure the page title, financial type (donation, campaign contribution, etc.), goal amount, and introductory message. You will be able to go back and modify all aspects of this page at any time after completing the setup wizard.{/ts}</p>
     {else}
-        {ts}Use this form to edit the page title, contribution type (e.g. donation, campaign contribution, etc.), goal amount, introduction, and status (active/inactive) for this online contribution page.{/ts}
+        {ts}Use this form to edit the page title, financial type (e.g. donation, campaign contribution, etc.), goal amount, introduction, and status (active/inactive) for this online contribution page.{/ts}
     {/if}
 </div>
     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
@@ -37,8 +38,8 @@
   <tr class="crm-contribution-contributionpage-settings-form-block-title"><td class="label">{$form.title.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contribution_page' field='title' id=$contributionPageID}{/if}</td><td>{$form.title.html}<br/>
             <span class="description">{ts}This title will be displayed at the top of the page.<br />Please use only alphanumeric, spaces, hyphens and dashes for Title.{/ts}</td>
   </tr>
-	<tr class="crm-contribution-contributionpage-settings-form-block-contribution_type_id"><td class="label">{$form.financial_account_id.label}</td><td>{$form.financial_account_id.html}<br />	
-            <span class="description">{ts}Select the corresponding contribution type for contributions made using this page.{/ts}</span> {help id="id-financial_account"}</td>
+	<tr class="crm-contribution-contributionpage-settings-form-block-contribution_type_id crm-contribution-contributionpage-settings-form-block-financial_type_id"><td class="label">{$form.financial_type_id.label}</td><td>{$form.financial_type_id.html}<br />	
+            <span class="description">{ts}Select the corresponding financial type for contributions made using this page.{/ts}</span> {help id="id-financial_type"}</td>
   </tr>
 
   {* CRM-7362 --add campaign to contribution page *}

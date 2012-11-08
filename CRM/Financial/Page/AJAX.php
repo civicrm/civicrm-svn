@@ -78,7 +78,7 @@ ORDER by f.name";
             CRM_Utils_System::civiExit( );
         }
         if( $_GET['_value'] == 'select'  ){
-            $result = CRM_Contribute_PseudoConstant::contributionType( );        
+            $result = CRM_Contribute_PseudoConstant::financialAccount( );        
         } else {
             $financialAccountType = array( '5' => 5, //expense
                                            '3' => 1, //AR relation
@@ -86,7 +86,7 @@ ORDER by f.name";
                                            );
  
             $financialAccountType = "financial_account_type_id = {$financialAccountType[$_GET['_value']]}";
-            $result = CRM_Contribute_PseudoConstant::contributionType( null, $financialAccountType );
+            $result = CRM_Contribute_PseudoConstant::financialAccount( null, $financialAccountType );
 }
         $elements = array( array( 'name'  => ts('- Select Financial Account -'),
                                   'value' => 'select' ) );

@@ -68,17 +68,17 @@
       <onDelete>RESTRICT</onDelete>
   </foreignKey>
   <field>
-      <name>financial_account_id</name>
+      <name>financial_type_id</name>
       <type>int unsigned</type>
       <required>true</required>
-      <comment>If membership is paid by a contribution - what financial account should be used. FK to civicrm_financial_account.id</comment>
+      <comment>If membership is paid by a contribution - what financial type should be used. FK to civicrm_financial_type.id</comment>
       <add>1.5</add>
       <change>4.1</change>
       <changedName>contribution_type_id</changedName>
   </field>
   <foreignKey> 
-      <name>financial_account_id</name> 
-      <table>civicrm_financial_account</table> 
+      <name>financial_type_id</name> 
+      <table>civicrm_financial_type</table> 
       <key>id</key> 
       <add>1.5</add>
       <change>4.1</change>

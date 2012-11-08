@@ -50,8 +50,8 @@
         <td class="bold">{$displayName}</td>
     </tr>
     <tr>
-        <td class="label">{ts}Contribution Type{/ts}</td>
-    	<td>{$financial_account}{if $is_test} {ts}(test){/ts} {/if}</td>
+        <td class="label">{ts}Financial Type{/ts}</td>
+    	<td>{$financial_type}{if $is_test} {ts}(test){/ts} {/if}</td>
     </tr>
     {if $lineItem}
     <tr>

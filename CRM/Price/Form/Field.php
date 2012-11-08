@@ -284,6 +284,27 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
     // is_display_amounts
     $this->add('checkbox', 'is_display_amounts', ts('Display Amount?'));
 
+        // Financial Type
+        require_once 'CRM/Contribute/PseudoConstant.php';
+        require_once 'CRM/Core/PseudoConstant.php';
+        $financialType = CRM_Contribute_PseudoConstant::financialType( );
+        $revenueFinancialType = array( );
+        CRM_Core_PseudoConstant::populate( $revenueFinancialType,
+                                           'CRM_Financial_DAO_EntityFinancialAccount',
+                                           $all = True, 
+                                           $retrieve = 'entity_id', 
+                                           $filter = null, 
+                                           'account_relationship = 1' );
+            
+        foreach( $financialType as $key => $financialTypeName ){
+            if( !in_array( $key, $revenueFinancialType ) )
+                unset( $financialType[$key] );
+        }
+             
+        $this->add('select', 'financial_type_id', 
+                   ts( 'Financial Type' ), 
+                   array(''=>ts( '- select -' )) + $financialType,
+                   true);
     // weight
     $this->add('text', 'weight', ts('Order'), CRM_Core_DAO::getAttribute('CRM_Price_DAO_Field', 'weight'), TRUE);
     $this->addRule('weight', ts('is a numeric field'), 'numeric');
@@ -575,6 +596,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
     $params['is_display_amounts'] = CRM_Utils_Array::value('is_display_amounts', $params, FALSE);
     $params['is_required'] = CRM_Utils_Array::value('is_required', $params, FALSE);
     $params['is_active'] = CRM_Utils_Array::value('is_active', $params, FALSE);
+        $params['financial_type_id']  = CRM_Utils_Array::value( 'financial_type_id', $params, false );
     if (isset($params['active_on'])) {
       $params['active_on'] = CRM_Utils_Date::processDate($params['active_on'],
         CRM_Utils_Array::value('active_on_time', $params),

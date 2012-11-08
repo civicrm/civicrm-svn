@@ -660,7 +660,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
     // fill in step 1 (Title and Settings)
     $this->type('title', $pageTitle);
-        $this->select('financial_account_id', 'value=1');
+        $this->select('financial_type_id', 'value=1');
 
     if ($onBehalf) {
       $this->click('is_organization');
@@ -790,7 +790,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $this->click('_qf_MembershipBlock_next');
       $this->waitForPageToLoad('30000');
       $this->waitForElementPresent('_qf_MembershipBlock_next-bottom');
-            $text = "'Membership' information has been saved.";
+            $text = "'MembershipBlock' information has been saved.";
       $this->assertTrue($this->isTextPresent($text), 'Missing text: ' . $text);
     }
 
@@ -997,7 +997,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     $memTypeParams = array(
       'membership_type' => $title,
       'member_org' => $membershipOrg,
-                                'financial_account' => 2,
+                                'financial_type' => 2,
       'period_type' => $period_type,
     );
 
@@ -1026,7 +1026,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     $this->waitForElementPresent("xpath=//div[@id='membership_type_form']/fieldset/table[2]/tbody/tr[2]/td[2]");
 
     $this->type('minimum_fee', '100');
-        $this->select( 'financial_account_id', "value={$memTypeParams['financial_account']}" );
+        $this->select( 'financial_type_id', "value={$memTypeParams['financial_type']}" );
 
     $this->type('duration_interval', $duration_interval);
     $this->select('duration_unit', "label={$duration_unit}");
@@ -1511,7 +1511,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         $this->waitForElementPresent( '_qf_FinancialAccount_next-botttom' );
         $this->click( '_qf_FinancialAccount_next-botttom' );
         $this->waitForElementPresent( 'link=Add Financial Account' );
-        $this->assertTrue($this->isTextPresent("Selected contribution type has been deleted."));
+        $this->assertTrue($this->isTextPresent("Selected financial type has been deleted."));
     }
     
     /**
@@ -1531,10 +1531,24 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         }
     }
     
-    function addFinancialType( $financialType ){
-        $this->open($this->sboxPath . 'civicrm/admin/financial/financialType?action=add&reset=1');
+    function addeditFinancialType( $financialType, $option = 'new' ){
+        $this->open($this->sboxPath . 'civicrm/admin/financial/financialType?reset=1');
+        if( $option == 'Delete' ){
+            $this->click ("xpath=id('ltype')/div/table/tbody/tr/td[1][text()='$financialType[name]']/../td[7]/span[2]");
+            $this->waitForElementPresent("css=span.btn-slide-active");
+            $this->click ("xpath=id('ltype')/div/table/tbody/tr/td[1][text()='$financialType[name]']/../td[7]/span[2]/ul/li[2]/a");
+            $this->waitForElementPresent("_qf_FinancialType_next");
+            $this->click("_qf_FinancialType_next"); sleep(10);
+            $this->assertTrue( $this->isTextPresent('Selected financial type has been deleted.'), 'Missing text: ' . 'Selected financial type has been deleted.' );
+            return;
+        }
+        if( $option == 'new' )
+             $this->click ("link=Add Financial Type");
+        else 
+            $this->click ("xpath=id('ltype')/div/table/tbody/tr/td[1][text()='$financialType[oldname]']/../td[7]/span/a[text()='Edit']");
         $this->waitForPageToLoad('30000');
         $this->type( 'name', $financialType['name'] );
+        if( $option == 'new' )
         $this->type( 'description',  $financialType['name'].' description' );
         
         if( $financialType['is_reserved'] )
@@ -1548,6 +1562,13 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             $this->uncheck( 'is_deductible' ); 
         
         $this->click( '_qf_FinancialType_next' );
+        $this->waitForPageToLoad('30000');
+        if( $option == 'new' ){
+            $text = "The financial type '{$financialType['name']}' has been added. You can add Financial Accounts to this Financial Type now.";
+        }else{sleep(12);
+            $text = "The financial type '{$financialType['name']}' has been saved.";
     }
+        $this->assertTrue( $this->isTextPresent($text), 'Missing text: ' . $text );
 }
 
+}

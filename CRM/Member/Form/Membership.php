@@ -442,7 +442,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form {
       $this->assign('autoRenewOption', CRM_Price_BAO_Set::checkAutoRenewForPriceSet($this->_priceSetId));
 
       $this->assign('optionsMembershipTypes', $optionsMembershipTypes);
-      $this->assign('contributionType', CRM_Utils_Array::value('contribution_type_id', $this->_priceSet));
+            $this->assign( 'contributionType', CRM_Utils_Array::value('financial_type_id', $this->_priceSet) );
 
       // get only price set form elements.
       if ($getOnlyPriceSetElements) {
@@ -648,10 +648,9 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
 
       $this->addElement('checkbox', 'record_contribution', ts('Record Membership Payment?'));
 
-            $this->add('select', 'financial_account_id', 
-        ts('Contribution Type'),
-        array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::contributionType()
-      );
+            $this->add('select', 'financial_type_id', 
+                       ts( 'Financial Type' ), 
+                       array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::financialType( ) );
 
       $this->add('text', 'total_amount', ts('Amount'));
       $this->addRule('total_amount', ts('Please enter a valid amount.'), 'money');
@@ -959,8 +958,8 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     //total amount condition arise when membership type having no
     //minimum fee
     if (isset($params['record_contribution'])) {
-            if ( ! $params['financial_account_id'] ) {
-                $errors['financial_account_id'] = ts('Please enter the contribution Type.');
+            if ( ! $params['financial_type_id'] ) {
+                $errors['financial_type_id'] = ts('Please enter the financial Type.');
       }
       if (CRM_Utils_System::isNull($params['total_amount'])) {
         $errors['total_amount'] = ts('Please enter the contribution.');
@@ -1154,7 +1153,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     }
     if (CRM_Utils_Array::value('record_contribution', $formValues)) {
       $recordContribution = array(
-        'total_amount', 'honor_type_id','financial_account_id', 'payment_instrument_id',
+        'total_amount', 'honor_type_id','financial_type_id', 'payment_instrument_id',
         'trxn_id', 'contribution_status_id', 'check_number', 'campaign_id', 'receive_date',
       );
 
@@ -1185,9 +1184,9 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
         $params['receipt_date'] = CRM_Utils_Array::value('receive_date', $params);
       }
 
-            //insert financial account name in receipt.
-            $formValues['contributionType_name'] = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialAccount',
-                                                                                $formValues['financial_account_id'] );
+            //insert financial type name in receipt.
+            $formValues['contributionType_name'] = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialType',
+                                                                                $formValues['financial_type_id'] );
     }
 
     // process line items, until no previous line items.
@@ -1211,16 +1210,13 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       }
 
       if ($priceSetId) {
-        $params['contribution_type_id'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set',
+                $params['financial_type_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set',
           $priceSetId,
-          'contribution_type_id'
-        );
-      }
-      else {
-            $params['financial_account_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
+                                                                               'financial_type_id' );
+            } else {
+                $params['financial_type_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
           end($this->_memTypeSelected),
-                                                                           'financial_account_id'
-        );
+                                                                               'financial_type_id' );
       }
 
       $this->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment($formValues['payment_processor_id'],
@@ -1282,7 +1278,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       $this->_params['currencyID'] = $config->defaultCurrency;
       $this->_params['payment_action'] = 'Sale';
       $this->_params['invoiceID'] = md5(uniqid(rand(), TRUE));
-            $this->_params['financial_account_id'] = $params['financial_account_id'];
+            $this->_params['financial_type_id'] = $params['financial_type_id'];
 
       // at this point we've created a contact and stored its address etc
       // all the payment processors expect the name and address to be in the
@@ -1319,13 +1315,13 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
           $paymentParams,
           $result,
                                                                                      $contactID, 
-                                                                                     $params['financial_account_id'],  
+                                                                                     $params['financial_type_id'],  
                                                                                      false,
                                                                                      true, 
                                                                                      false );
                 $paymentParams['contactID']           = $contactID;
         $paymentParams['contributionID'] = $contribution->id;
-                $paymentParams['contributionTypeID']  = $contribution->financial_account_id;
+                $paymentParams['contributionTypeID']  = $contribution->financial_type_id;
         $paymentParams['contributionPageID'] = $contribution->contribution_page_id;
         $paymentParams['contributionRecurID'] = $contribution->contribution_recur_id;
         $ids['contribution'] = $contribution->id;

@@ -51,6 +51,8 @@ function civicrm_api3_generic_getfields($apiRequest) {
       );
       return $results[$entity][$action];
 
+                case 'getfields':
+                  return civicrm_api3_create_success(_civicrm_api_get_fields($apiRequest['entity']));
     case 'create':
     case 'update':
     case 'replace':

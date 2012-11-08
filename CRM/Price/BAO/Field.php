@@ -137,6 +137,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
           'max_value' => CRM_Utils_Array::value($index, CRM_Utils_Array::value('option_max_value', $params), NULL),
           'description' => CRM_Utils_Array::value($index, CRM_Utils_Array::value('option_description', $params), NULL),
           'membership_type_id' => CRM_Utils_Array::value($index, CRM_Utils_Array::value('membership_type_id', $params), NULL),
+                                 'financial_type_id' => CRM_Utils_Array::value( 'financial_type_id', $params, null ),
           'weight' => $params['option_weight'][$index],
           'is_active' => 1,
           'is_default' => CRM_Utils_Array::value($params['option_weight'][$index], $defaultArray) ? $defaultArray[$params['option_weight'][$index]] : 0,

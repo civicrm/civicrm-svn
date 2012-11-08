@@ -79,10 +79,10 @@
         {if $contributionMode}
            <tr class="crm-contribution-form-block-payment_processor_id"><td class="label nowrap">{$form.payment_processor_id.label}<span class="marker"> * </span></td><td>{$form.payment_processor_id.html}</td></tr>
         {/if}
-        <tr class="crm-contribution-form-block-contribution_type_id"><td class="label">{$form.financial_account_id.label}</td><td{$valueStyle}>{$form.financial_account_id.html}&nbsp;
+        <tr class="crm-contribution-form-block-contribution_type_id crm-contribution-form-block-financial_type_id"><td class="label">{$form.financial_account_id.label}</td><td{$valueStyle}>{$form.financial_account_id.html}&nbsp;
         {if $is_test}
         {ts}(test){/ts}
-        {/if} {help id="id-financial_account"}
+        {/if} {help id="id-financial_type"}
         </td></tr>
 
   {if $action eq 2 and $lineItem and !$defaultContribution}
@@ -170,7 +170,7 @@
                     <span class="description">{ts}The date this contribution was received.{/ts}</span>
                 </td>
             </tr>
-	     <tr class="crm-contribution-form-block-contribution_type_id">
+	     <tr class="crm-contribution-form-block-contribution_type_id crm-contribution-form-block-financial_type_id">
 	     	 <td class="label">{$form.to_financial_account_id.label}</td><td{$valueStyle}>{$form.to_financial_account_id.html}&nbsp;
       	     	 </td>
 	     </tr>

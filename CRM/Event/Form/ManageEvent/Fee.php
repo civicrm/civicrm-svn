@@ -257,9 +257,8 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
       NULL, NULL, NULL, NULL,
       array('&nbsp;&nbsp;', '&nbsp;&nbsp;', '&nbsp;&nbsp;', '<br/>')
     );
-        $this->add('select', 'financial_account_id',ts( 'Contribution Type' ),
-      array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::contributionType()
-    );
+        $this->add('select', 'financial_type_id',ts( 'Financial Type' ),
+                   array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::financialType( ) );
 
     // add pay later options
     $this->addElement('checkbox', 'is_pay_later', ts('Enable Pay Later option?'), NULL,
@@ -480,9 +479,9 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
     }
 
     if ($values['is_monetary']) {
-            //check if financial account is selected
-            if ( !$values['financial_account_id'] ) {
-                $errors['financial_account_id'] = ts( "Please select contribution type." );
+            //check if financial type is selected
+            if ( !$values['financial_type_id'] ) {
+                $errors['financial_type_id'] = ts( "Please select financial type." );
       }
 
       //check for the event fee label (mandatory)
@@ -758,7 +757,7 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
         $priceSetID = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $params['price_field_id'], 'price_set_id');
         CRM_Price_BAO_Set::setIsQuickConfig($priceSetID,0);
       }
-            $params['financial_account_id'] = '';
+            $params['financial_type_id'] = '';
     }
 
     //update events table

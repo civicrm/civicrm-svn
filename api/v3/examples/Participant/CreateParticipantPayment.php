@@ -18,7 +18,7 @@ $params = array(
       'format.only_id' => 1,
     ),
   'api.contribution.create' => array( 
-      'contribution_type_id' => 11,
+      'financial_type_id' => 11,
       'total_amount' => 100,
       'format.only_id' => 1,
     ),

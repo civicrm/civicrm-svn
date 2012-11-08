@@ -294,7 +294,7 @@ class CRM_Contribute_Form_AdditionalInfo {
     $customFields = CRM_Core_BAO_CustomField::getFields('Contribution',
       FALSE,
       FALSE,
-                                                             CRM_Utils_Array::value('financial_account_id',
+                                                             CRM_Utils_Array::value('financial_type_id',
         $params
       )
     );
@@ -318,9 +318,9 @@ class CRM_Contribute_Form_AdditionalInfo {
    */
   function emailReceipt(&$form, &$params, $ccContribution = FALSE) {
     $this->assign('receiptType', 'contribution');
-    // Retrieve Contribution Type Name from contribution_type_id
-        $params['contributionType_name'] = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialAccount',
-                                                                        $params['financial_account_id'] );
+        // Retrieve Financial Type Name from financial_type_id
+        $params['contributionType_name'] = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialType',
+                                                                        $params['financial_type_id'] );
     if (CRM_Utils_Array::value('payment_instrument_id', $params)) {
       $paymentInstrument = CRM_Contribute_PseudoConstant::paymentInstrument();
       $params['paidBy'] = $paymentInstrument[$params['payment_instrument_id']];

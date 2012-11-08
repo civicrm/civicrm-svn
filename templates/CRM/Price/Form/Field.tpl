@@ -133,7 +133,10 @@
                    {/if}
                </td>
             </tr>
-
+	    <tr>
+		<td class="label">{$form.financial_type_id.label}</td>
+		<td>{$form.financial_type_id.html}</td>
+	    </tr>
             <tr class="crm-price-field-form-block-weight">
                <td class="label">{$form.weight.label}</td>
                <td>{$form.weight.html|crmAddClass:two}

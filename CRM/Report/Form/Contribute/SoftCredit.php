@@ -123,20 +123,18 @@ class CRM_Report_Form_Contribute_SoftCredit extends CRM_Report_Form {
         ),
         'grouping' => 'contact-fields',
       ),
-                   'civicrm_financial_account' =>
-                   array( 'dao'           => 'CRM_Financial_DAO_FinancialAccount',
+                   'civicrm_financial_type' =>
+                   array( 'dao'           => 'CRM_Financial_DAO_FinancialType',
         'fields' =>
-                          array( 'financial_account' => null, ), 
+                          array( 'financial_type' => null, ), 
         'filters' =>
         array(
           'id' =>
           array(
             'name' => 'id',
-            'title' => ts('Contribution Type'),
+                                        'title'   => ts( 'Financial Type' ),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-            'options' => CRM_Contribute_PseudoConstant::contributionType(),
-          ),
-        ),
+                                        'options' => CRM_Contribute_PseudoConstant::financialType( ) ),),
         'grouping' => 'softcredit-fields',
       ),
       'civicrm_contribution' =>
@@ -299,9 +297,9 @@ class CRM_Report_Form_Contribute_SoftCredit extends CRM_Report_Form {
               INNER JOIN civicrm_contact {$alias_constituent} 
                          ON {$this->_aliases['civicrm_contribution']}.contact_id = 
                             {$alias_constituent}.id
-              LEFT  JOIN civicrm_financial_account  {$this->_aliases['civicrm_financial_account']} 
-                         ON {$this->_aliases['civicrm_contribution']}.financial_account_id = 
-                            {$this->_aliases['civicrm_financial_account']}.id
+              LEFT  JOIN civicrm_financial_type  {$this->_aliases['civicrm_financial_type']} 
+                         ON {$this->_aliases['civicrm_contribution']}.financial_type_id = 
+                            {$this->_aliases['civicrm_financial_type']}.id
               LEFT  JOIN civicrm_contact {$alias_creditor}
                          ON {$this->_aliases['civicrm_contribution_soft']}.contact_id = 
                             {$alias_creditor}.id 

@@ -143,7 +143,7 @@ class WebTest_Contribute_OnlineRecurContributionTest extends CiviSeleniumTestCas
     // View Recurring Contribution Record
     $verifyData = array(
       'From' => "$contactName",
-      'Contribution Type' => 'Donation (test)',
+                          'Financial Type'        => 'Donation (test)',
       'Total Amount' => 'Installments: 12, Interval: 1 month(s)',
       'Contribution Status' => 'Pending : Incomplete Transaction',
       'Paid By' => 'Credit Card',

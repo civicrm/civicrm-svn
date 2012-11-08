@@ -283,11 +283,9 @@ function &civicrm_contribution_format_create(&$params) {
  * @access private
  */
 function _civicrm_contribute_check_params(&$params) {
-  static $required = array(
-    'contact_id' => NULL,
-    'total_amount' => NULL,
-    'contribution_type_id' => 'contribution_type',
-  );
+    static $required = array( 'contact_id'           => null, 
+                              'total_amount'         => null, 
+                              'financial_type_id' => 'financial_type' );
 
   // params should be an array
   if (!is_array($params)) {
@@ -423,16 +421,14 @@ function _civicrm_contribute_format_params(&$params, &$values, $create = FALSE) 
           return civicrm_create_error("currency not a valid code: $value");
         }
         break;
-
-      case 'contribution_type_id':
-            if ( !CRM_Utils_Array::value( $value, CRM_Contribute_PseudoConstant::financialAccount( ) ) ) {
+        case 'financial_type_id' :
+            if ( !CRM_Utils_Array::value( $value, CRM_Contribute_PseudoConstant::financialType( ) ) ) {
           return civicrm_create_error('Invalid Contribution Type Id');
         }
         break;
-
-      case 'contribution_type':
+        case 'financial_type':
         $contributionTypeId = CRM_Utils_Array::key(ucfirst($value),
-                                                        CRM_Contribute_PseudoConstant::financialAccount( ) );
+                                                        CRM_Contribute_PseudoConstant::financialType( ) );
         if ($contributionTypeId) {
                 if ( CRM_Utils_Array::value( 'financial_account_id', $values ) &&
                      $contributionTypeId != $values['financial_account_id'] ) {

@@ -157,5 +157,7 @@ class WebTest_Financial_FinancialAccountTest extends CiviSeleniumTestCase {
         
         //Delete Financial Account
         $this->_testDeleteFinancialAccount( $financialAccountTitle );
+$this->waitForElementPresent( "xpath=//tabdddle/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[7]/span/a[text()='Delete']" );
+        
     }
             }

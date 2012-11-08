@@ -37,7 +37,7 @@
 require_once 'CRM/Contribute/Form.php';
 require_once 'CRM/Core/PseudoConstant.php';
 /**
- * This class generates form components for Contribution Type
+ * This class generates form components for Financial Type
  * 
  */
 class CRM_Financial_Form_FinancialAccount extends CRM_Contribute_Form
@@ -62,7 +62,7 @@ class CRM_Financial_Form_FinancialAccount extends CRM_Contribute_Form
 
         $this->applyFilter('__ALL__', 'trim');
         $this->add('text', 'name', ts('Name'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialAccount', 'name' ),true);
-        $this->addRule( 'name', ts('A contribution type with this name already exists. Please select another name.'), 'objectExists', array( 'CRM_Financial_DAO_FinancialAccount', $this->_id ) );
+        $this->addRule( 'name', ts('A financial type with this name already exists. Please select another name.'), 'objectExists', array( 'CRM_Financial_DAO_FinancialAccount', $this->_id ) );
         
         $this->add('text', 'description', ts('Description'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialAccount', 'description' ) );
         $this->add('text', 'accounting_code', ts('Accounting Code'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialAccount', 'accounting_code' ) );

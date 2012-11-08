@@ -37,7 +37,7 @@
 require_once 'CRM/Core/Page/Basic.php';
 
 /**
- * Page for displaying list of contribution types
+ * Page for displaying list of financial types
  */
 class CRM_Financial_Page_FinancialAccount extends CRM_Core_Page_Basic 
 {
@@ -72,27 +72,27 @@ class CRM_Financial_Page_FinancialAccount extends CRM_Core_Page_Basic
                                                                     'name'  => ts('Edit'),
                                                                     'url'   => 'civicrm/admin/financial/financialAccount',
                                                                     'qs'    => 'action=update&id=%%id%%&reset=1',
-                                                                    'title' => ts('Edit Contribution Type') 
+                                                                    'title' => ts('Edit Financial Type') 
                                                                    ),
                                   CRM_Core_Action::DISABLE => array(
                                                                     'name'  => ts('Disable'),
                                                                     'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Financial_BAO_FinancialAccount' . '\',\'' . 'enable-disable' . '\' );"',
                                                                     'ref'   => 'disable-action',
                                                                     
-                                                                    'title' => ts('Disable Contribution Type') 
+                                                                    'title' => ts('Disable Financial Type') 
                                                                    ),
                                   CRM_Core_Action::ENABLE  => array(
                                                                     'name'  => ts('Enable'),
                                                                     'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Financial_BAO_FinancialAccount' . '\',\'' . 'disable-enable' . '\' );"',
                                                                     'ref'   => 'enable-action',
                                                                     
-                                                                    'title' => ts('Enable Contribution Type') 
+                                                                    'title' => ts('Enable Financial Type') 
                                                                     ),
                                   CRM_Core_Action::DELETE  => array(
                                                                     'name'  => ts('Delete'),
                                                                     'url'   => 'civicrm/admin/financial/financialAccount',
                                                                     'qs'    => 'action=delete&id=%%id%%',
-                                                                    'title' => ts('Delete Contribution Type') 
+                                                                    'title' => ts('Delete Financial Type') 
                                                                    )
                                  );
         }
@@ -188,7 +188,7 @@ class CRM_Financial_Page_FinancialAccount extends CRM_Core_Page_Basic
      */
     function editName() 
     {
-        return 'Contribution Types';
+        return 'Financial Types';
     }
     
     /**

@@ -60,9 +60,9 @@ class CRM_Financial_BAO_FinancialAccountTest extends CiviUnitTestCase
 
         $result = $this->assertDBNotNull( 'CRM_Financial_BAO_FinancialAccount', $contributionType->id ,
                                           'name', 'id',
-                                          'Database check on updated contribution type record.' );
+                                          'Database check on updated financial type record.' );
         
-        $this->assertEquals( $result, 'Donations', 'Verify contribution type name.');
+        $this->assertEquals( $result, 'Donations', 'Verify financial type name.');
     }
 
     /**
@@ -80,7 +80,7 @@ class CRM_Financial_BAO_FinancialAccountTest extends CiviUnitTestCase
         $defaults = array();
         $result = CRM_Financial_BAO_FinancialAccount::retrieve( $params, $defaults );
 
-        $this->assertEquals( $result->name, 'Donations', 'Verify contribution type name.');
+        $this->assertEquals( $result->name, 'Donations', 'Verify financial type name.');
     }
 
     /**
@@ -95,12 +95,12 @@ class CRM_Financial_BAO_FinancialAccountTest extends CiviUnitTestCase
         $ids = array();
         $contributionType = CRM_Financial_BAO_FinancialAccount::add( $params, $ids );
         $result = CRM_Financial_BAO_FinancialAccount::setIsActive( $contributionType->id, 0 );
-        $this->assertEquals( $result, true , 'Verify contribution type record updation for is_active.');
+        $this->assertEquals( $result, true , 'Verify financial type record updation for is_active.');
         
         $isActive = $this->assertDBNotNull( 'CRM_Financial_BAO_FinancialAccount', $contributionType->id ,
                                             'is_active', 'id',
-                                            'Database check on updated for contribution type is_active.' );
-        $this->assertEquals( $isActive, 0, 'Verify contribution types is_active.');
+                                            'Database check on updated for financial type is_active.' );
+        $this->assertEquals( $isActive, 0, 'Verify financial types is_active.');
     }
 
     /**
@@ -118,7 +118,7 @@ class CRM_Financial_BAO_FinancialAccountTest extends CiviUnitTestCase
         CRM_Financial_BAO_FinancialAccount::del( $contributionType->id );
         $params = array('id' => $contributionType->id );
         $result = CRM_Financial_BAO_FinancialAccount::retrieve( $params, $defaults );
-        $this->assertEquals( empty($result), true, 'Verify contribution types record deletion.');
+        $this->assertEquals( empty($result), true, 'Verify financial types record deletion.');
         
     }
 

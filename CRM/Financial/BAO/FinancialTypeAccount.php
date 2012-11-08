@@ -116,19 +116,19 @@ class CRM_Financial_BAO_FinancialTypeAccount extends CRM_Financial_DAO_EntityFin
     }
     
     /**
-     * Function to delete contribution Types 
+     * Function to delete financial Types 
      * 
      * @param int $contributionTypeId
      * @static
      */
     
-    static function del($financialTypeAccountId) 
+    static function del($financialTypeAccountId, $accountId = null) 
     {
         require_once "CRM/Core/DAO.php";
         //checking if financial type is present  
         $check = false;
         
-        $financialTypeAccountId = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_EntityFinancialAccount', $financialTypeAccountId, 'financial_account_id' );
+        $financialTypeAccountId = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_EntityFinancialAccount', $financialTypeAccountId, 'entity_id' );
         //check dependencies
         $dependancy = array( 
                             array('Contribute', 'Contribution'), 
@@ -138,7 +138,7 @@ class CRM_Financial_BAO_FinancialTypeAccount extends CRM_Financial_DAO_EntityFin
         foreach ($dependancy as $name) {
             require_once (str_replace('_', DIRECTORY_SEPARATOR, "CRM_" . $name[0] . "_BAO_" . $name[1]) . ".php");
             eval('$bao = new CRM_' . $name[0] . '_BAO_' . $name[1] . '();');
-            $bao->financial_account_id = $financialTypeAccountId;
+            $bao->financial_type_id = $financialTypeAccountId;
             if ($bao->find(true)) {
                 $check = true;
             }
@@ -148,10 +148,10 @@ class CRM_Financial_BAO_FinancialTypeAccount extends CRM_Financial_DAO_EntityFin
             $session = CRM_Core_Session::singleton();
             CRM_Core_Session::setStatus( ts(
                 'This financial type cannot be deleted because it is being referenced by one or more of the following types of records: Contributions, Contribution Pages, or Membership Types. Consider disabling this type instead if you no longer want it used.') );
-            return CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/admin/financial/financialType/accounts', "reset=1&action=browse" ));
+            return CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/admin/financial/financialType/accounts', "reset=1&action=browse&aid={$accountId}" ));
         }
         
-        //delete from contribution Type table
+        //delete from financial Type table
         require_once 'CRM/Contribute/DAO/Contribution.php';
         $financialType = new CRM_Financial_DAO_EntityFinancialAccount( );
         $financialType->id = $financialTypeAccountId;

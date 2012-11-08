@@ -878,7 +878,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       $priceFieldIds = $this->get('memberPriceFieldIDS');
 
       if (!empty($priceFieldIds)) {
-        $contributionTypeID = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $priceFieldIds['id'], 'contribution_type_id');
+                $contributionTypeID = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', $priceFieldIds['id'], 'financial_type_id' );
         unset($priceFieldIds['id']);
         $membershipTypeIds = array();
         foreach ($priceFieldIds as $priceFieldId) {
@@ -887,7 +887,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
           }
         }
         $membershipParams['selectMembership'] = $membershipTypeIds;
-        $membershipParams['contribution_type_id'] = $contributionTypeID;
+                $membershipParams['financial_type_id'] = $contributionTypeID;
       }
       if (CRM_Utils_Array::value('selectMembership', $membershipParams)) {
       CRM_Member_BAO_Membership::postProcessMembership($membershipParams, $contactID,
@@ -901,7 +901,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       // all the payment processors expect the name and address to be in the
       // so we copy stuff over to first_name etc.
       $paymentParams = $this->_params;
-            $contributionTypeId = $this->_values['financial_account_id'];
+            $contributionTypeId = $this->_values['financial_type_id'];
 
       $fieldTypes = array();
       if (!empty($paymentParams['onbehalf']) &&
@@ -1114,7 +1114,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
     // first create the contribution record
     $contribParams = array(
       'contact_id' => $contactID,
-                               'financial_account_id'  => $contributionType->id,
+                               'financial_type_id'  => $contributionType->id,
       'contribution_page_id' => $contributionPageId,
       'receive_date' => (CRM_Utils_Array::value('receive_date', $params)) ? CRM_Utils_Date::processDate($params['receive_date']) : date('YmdHis'),
       'non_deductible_amount' => $nonDeductibleAmount,
@@ -1294,7 +1294,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         $pledgeParams['installment_amount'] = $pledgeParams['actual_amount'] = $contribution->total_amount;
         $pledgeParams['contribution_id'] = $contribution->id;
         $pledgeParams['contribution_page_id'] = $contribution->contribution_page_id;
-                $pledgeParams['financial_account_id'   ] = $contribution->financial_account_id;
+                $pledgeParams['financial_type_id'   ] = $contribution->financial_type_id;
         $pledgeParams['frequency_interval'] = $params['pledge_frequency_interval'];
         $pledgeParams['installments'] = $params['pledge_installments'];
         $pledgeParams['frequency_unit'] = $params['pledge_frequency_unit'];
@@ -1446,7 +1446,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
     $recurParams['frequency_unit'] = CRM_Utils_Array::value('frequency_unit', $params);
     $recurParams['frequency_interval'] = CRM_Utils_Array::value('frequency_interval', $params);
     $recurParams['installments'] = CRM_Utils_Array::value('installments', $params);
-    $recurParams['contribution_type_id'] = CRM_Utils_Array::value('contribution_type_id', $params);
+    $recurParams['financial_type_id'] = CRM_Utils_Array::value('financial_type_id', $params);
 
     $recurParams['is_test'] = 0;
     if (($form->_action & CRM_Core_Action::PREVIEW) ||

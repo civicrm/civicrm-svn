@@ -35,14 +35,14 @@
       <import>true</import>
       <headerPattern>/(contrib(ution)?)?type/i</headerPattern>
       <dataPattern>/donation|member|campaign/i</dataPattern>
-      <comment>Contribution Type Name.</comment>
+      <comment>Financial Type Name.</comment>
       <add>4.1</add>
   </field>
   <field>
        <name>description</name>
        <type>varchar</type>
        <length>255</length>
-       <comment>Contribution Type Description.</comment>
+       <comment>Financial Type Description.</comment>
        <add>4.1</add>
   </field>
   <field>
@@ -50,7 +50,7 @@
        <type>boolean</type>
        <length>4</length>       
        <default>1</default>
-       <comment>Is this contribution type tax-deductible? If true, contributions of this type may be fully OR partially deductible - non-deductible amount is stored in the Contribution record.</comment>
+       <comment>Is this financial type tax-deductible? If true, contributions of this type may be fully OR partially deductible - non-deductible amount is stored in the Contribution record.</comment>
        <add>4.1</add>
   </field>
  

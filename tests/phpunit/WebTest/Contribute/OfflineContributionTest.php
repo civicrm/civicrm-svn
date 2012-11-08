@@ -101,8 +101,8 @@ class WebTest_Contribute_OfflineContributionTest extends CiviSeleniumTestCase {
       $this->click("link=Record Contribution (Check, Cash, EFT ...)");
       $this->waitForPageToLoad("30000");
 
-      // select contribution type
-      $this->select("financial_account_id", "value=1");
+      // select financial type
+      $this->select("financial_type_id", "value=1");
       
       // fill in Received Date
       $this->webtestFillDate('receive_date');
@@ -176,7 +176,7 @@ class WebTest_Contribute_OfflineContributionTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("_qf_ContributionView_cancel-bottom");
       
       $expected = array(
-                        'Contribution Type'   => 'Donation', 
+                        'Financial Type'   => 'Donation', 
                         'Total Amount'        => '100.00',
                         'Contribution Status' => 'Completed',
                         'Paid By'             => 'Check',

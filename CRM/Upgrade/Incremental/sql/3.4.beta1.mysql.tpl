@@ -16,5 +16,5 @@ UPDATE civicrm_uf_field SET field_name = 'membership_type' WHERE field_name = 'm
 
 UPDATE civicrm_uf_field SET field_name = 'membership_status' WHERE field_name = 'status_id';
 
-UPDATE civicrm_uf_field SET field_name = 'contribution_type' WHERE field_name = 'contribution_type_id';
+UPDATE civicrm_uf_field SET field_name = 'financial_type' WHERE field_name = 'financial_type_id';
 

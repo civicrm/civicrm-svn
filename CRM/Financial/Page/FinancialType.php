@@ -37,7 +37,7 @@
 require_once 'CRM/Core/Page/Basic.php';
 
 /**
- * Page for displaying list of contribution types
+ * Page for displaying list of financial types
  */
 class CRM_Financial_Page_FinancialType extends CRM_Core_Page_Basic 
 {
@@ -159,11 +159,14 @@ class CRM_Financial_Page_FinancialType extends CRM_Core_Page_Basic
             $financialType[$dao->id] = array();
             CRM_Core_DAO::storeValues( $dao, $financialType[$dao->id]);
             $defaults = $financialAccountId = array();
-            $financialAccounts = CRM_Contribute_PseudoConstant::contributionType( );
+            $financialAccounts = CRM_Contribute_PseudoConstant::financialAccount( );
             $financialAccountIds = CRM_Core_DAO::commonRetrieveAll( 'CRM_Financial_DAO_EntityFinancialAccount', 'entity_id', $dao->id, &$defaults, array( 'financial_account_id' ) );
             
-            foreach( $financialAccountIds as $key => $values)
-                $financialAccountId[$values['financial_account_id']] = $financialAccounts[$values['financial_account_id']];
+            foreach( $financialAccountIds as $key => $values){
+                if( CRM_Utils_Array::value( $values['financial_account_id'], $financialAccounts ) )
+                    $financialAccountId[$values['financial_account_id']] = CRM_Utils_Array::value( $values['financial_account_id'], $financialAccounts );
+            }
+            
             if( !empty ( $financialAccountId ) )
                 $financialType[$dao->id]['financial_account'] = implode( ',', $financialAccountId );
             // form all action links 

@@ -43,7 +43,7 @@ class WebTest_Financial_FinancialAccountTypeTest extends CiviSeleniumTestCase {
         $financialAccountTitle = 'Financial Account '.substr(sha1(rand()), 0, 4);
         $financialAccountDescription = "{$financialAccountTitle} Description";
         $accountingCode = 1033;
-        $financialAccountType = 'Expenses';
+        $financialAccountType = 'Revenue';
         $parentFinancialAccount = 'Donation';
         $taxDeductible = FALSE;
         $isActive = FALSE;
@@ -99,16 +99,14 @@ class WebTest_Financial_FinancialAccountTypeTest extends CiviSeleniumTestCase {
         $financialType['name'] = 'FinancialType '.substr(sha1(rand()), 0, 4);
         $financialType['is_deductible'] = true;
         $financialType['is_reserved'] = false;
-        $this->addFinancialType( $financialType );
-        $this->waitForElementPresent( '_qf_FinancialTypeAccount_next_new' );
-        $text = "The financial type '{$financialType['name']}' has been added. You can add Financial Accounts to this Financial Type now.";
-        $this->assertTrue( $this->isTextPresent($text), 'Missing text: ' . $text );
+        $this->addeditFinancialType( $financialType );
         $accountRelationship = "Income Account is";
         $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                              'account_relationship'  => $accountRelationship );
 
         
         $this->select( 'account_relationship', "label={$accountRelationship}" );
+        sleep(5);
         $this->select( 'financial_account_id', "label={$financialAccountTitle}" );
         $this->click( '_qf_FinancialTypeAccount_next_new' );
         $this->waitForPageToLoad('30000');
@@ -140,12 +138,22 @@ class WebTest_Financial_FinancialAccountTypeTest extends CiviSeleniumTestCase {
         $this->click( '_qf_FinancialTypeAccount_next' );
         $this->waitForElementPresent("xpath=id('ltype')/div/table/tbody/tr/td[1][text()='Event Fee']/../td[7]/span/a[text()='Edit']");
         $this->verifyText("xpath=id('ltype')/div/table/tbody/tr/td[1][text()='Event Fee']/../td[2]", preg_quote('AR Account is'));
-        $this->click("xpath=id('ltype')/div/table/tbody/tr/td[1][text()='Event Fee']/../td[7]/span/a[text()='Delete']"); 
+        $this->click("xpath=id('ltype')/div/table/tbody/tr/td[1][text()='Event Fee']/../td[7]/span/a[text()='Delete']"); $this->waitForPageToLoad('30000');
         $this->waitForElementPresent( '_qf_FinancialTypeAccount_next-botttom' );
         $this->click( '_qf_FinancialTypeAccount_next-botttom' );
          
         $this->waitForPageToLoad('30000');
         $this->assertTrue( $this->isTextPresent('Selected financial type account has been deleted.'), 'Missing text: ' . 'Selected financial type account has been deleted.' );
+        
+        //edit financial type
+        $financialType['oldname'] = $financialType['name'];
+        $financialType['name'] = 'Edited FinancialType '.substr(sha1(rand()), 0, 4);
+        $financialType['is_deductible'] = true;sleep(10);
+        $financialType['is_reserved'] = false;
+        $this->addeditFinancialType( $financialType , 'Edit' );
+
+        //delete financialtype
+        $this->addeditFinancialType( $financialType , 'Delete' );
     }
 
 

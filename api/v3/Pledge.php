@@ -112,7 +112,7 @@ function _civicrm_api3_pledge_create_spec(&$params) {
   }
   // @todo this can come from xml
   $params['amount']['api.aliases'] = array('pledge_amount');
-  $params['pledge_contribution_type_id']['api.aliases'] = array('contribution_type_id');
+  $params['pledge_contribution_type_id']['api.aliases'] = array('financial_type_id'); 
 }
 
 /**
