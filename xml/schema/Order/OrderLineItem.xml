@@ -5,6 +5,7 @@
   <class>OrderLineItem</class> 
   <name>civicrm_order_line_item</name> 
   <add>1.3</add>
+  <drop>4.1</drop>
   <change>4.1</change> 
   <changedName>civicrm_contribution</changedName>
   <log>true</log>

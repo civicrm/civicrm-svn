@@ -65,6 +65,14 @@ class CRM_Contribute_Form_ContributionView extends CRM_Core_Form {
       $values['contribution_page_title'] = CRM_Utils_Array::value(CRM_Utils_Array::value('contribution_page_id', $values), $contribPages);
     }
 
+        // get to_financial_account from civicrm_financial_trxn
+        require_once 'CRM/Core/BAO/FinancialTrxn.php';
+        $financialTrxnId = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnIds( $values['contribution_id'] );
+        if ( CRM_Utils_Array::value( 'financialTrxnId', $financialTrxnId ) ){
+            $values['to_financial_account_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialTrxn', $financialTrxnId['financialTrxnId'], 'to_financial_account_id' );   
+            $values['to_financial_account'] = CRM_Contribute_PseudoConstant::contributionType( $values['to_financial_account_id'] );
+         }
+        
     if (CRM_Utils_Array::value('honor_contact_id', $values)) {
       $sql    = "SELECT display_name FROM civicrm_contact WHERE id = %1";
       $params = array(1 => array($values['honor_contact_id'], 'Integer'));

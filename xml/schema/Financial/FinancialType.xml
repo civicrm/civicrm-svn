@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>  
+  
+<table>  
+  <base>CRM/Financial</base>  
+  <class>FinancialType</class>  
+  <name>civicrm_financial_type</name>  
+  <add>4.1</add> 
+  <comment>Formerly civicrm_contribution_type merged into this table in 4.1</comment>
+  <log>true</log> 
+  <field>  
+      <name>id</name>  
+      <type>int unsigned</type>
+      <length>10</length>
+      <required>true</required>  
+      <comment>ID of original financial_type so you can search this table by the financial_type.id and then select the relevant version based on the timestamp</comment>  
+      <add>4.1</add>
+  </field>
+  <field>  
+      <name>vid</name>  
+      <type>int unsigned</type>
+      <length>10</length>
+      <required>true</required>  
+      <comment>Version identifier of financial_type.</comment>  
+      <add>4.1</add>
+  </field>  
+  <primaryKey>  
+       <name>id</name>  
+       <autoincrement>true</autoincrement>  
+  </primaryKey>  
+  <field>
+      <name>name</name>
+      <type>varchar</type>
+      <length>64</length>
+      <required>true</required> 
+      <import>true</import>
+      <headerPattern>/(contrib(ution)?)?type/i</headerPattern>
+      <dataPattern>/donation|member|campaign/i</dataPattern>
+      <comment>Contribution Type Name.</comment>
+      <add>4.1</add>
+  </field>
+  <field>
+       <name>description</name>
+       <type>varchar</type>
+       <length>255</length>
+       <comment>Contribution Type Description.</comment>
+       <add>4.1</add>
+  </field>
+  <field>
+       <name>is_deductible</name>
+       <type>boolean</type>
+       <length>4</length>       
+       <default>1</default>
+       <comment>Is this contribution type tax-deductible? If true, contributions of this type may be fully OR partially deductible - non-deductible amount is stored in the Contribution record.</comment>
+       <add>4.1</add>
+  </field>
+ 
+  <field>
+       <name>is_reserved</name>
+       <type>boolean</type>
+       <length>4</length>           
+       <comment>Is this a predefined system object?</comment>
+       <add>4.1</add>
+  </field>
+  <field>
+       <name>is_active</name>
+       <type>boolean</type>
+       <length>4</length> 
+       <comment>Is this property active?</comment>
+       <add>4.1</add>
+  </field>
+   <field>
+       <name>timestamp</name>
+       <type>timestamp</type>
+       <length>11</length>
+       <default>CURRENT_TIMESTAMP</default>
+       <comment>A Unix timestamp indicating when this version was created.</comment>
+       <add>4.1</add>
+  </field>
+  <index>
+    <name>UI_name</name>
+    <fieldName>name</fieldName>
+    <unique>true</unique>
+    <add>4.1</add>
+  </index>
+<index>
+    <name>UI_id</name>
+    <fieldName>id</fieldName>
+    <unique>true</unique>
+    <add>4.1</add>
+  </index>
+
+</table>

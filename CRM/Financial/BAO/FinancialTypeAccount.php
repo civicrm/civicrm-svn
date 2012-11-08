@@ -34,9 +34,9 @@
  *
  */
 
-require_once 'CRM/Financial/DAO/FinancialAccount.php';
+require_once 'CRM/Financial/DAO/EntityFinancialAccount.php';
 
-class CRM_Financial_BAO_FinancialAccount extends CRM_Financial_DAO_FinancialAccount 
+class CRM_Financial_BAO_FinancialTypeAccount extends CRM_Financial_DAO_EntityFinancialAccount
 {
 
     /**
@@ -68,12 +68,13 @@ class CRM_Financial_BAO_FinancialAccount extends CRM_Financial_DAO_FinancialAcco
      * @static
      */
     static function retrieve( &$params, &$defaults ) 
+        
     {
-        $contributionType = new CRM_Financial_DAO_FinancialAccount( );
-        $contributionType->copyValues( $params );
-        if ( $contributionType->find( true ) ) {
-            CRM_Core_DAO::storeValues( $contributionType, $defaults );
-            return $contributionType;
+        $financialTypeAccount = new CRM_Financial_DAO_EntityFinancialAccount( );
+        $financialTypeAccount->copyValues( $params );
+        if ( $financialTypeAccount->find( true ) ) {
+            CRM_Core_DAO::storeValues( $financialTypeAccount, $defaults );
+            return $financialTypeAccount;
         }
         return null;
     }
@@ -87,13 +88,13 @@ class CRM_Financial_BAO_FinancialAccount extends CRM_Financial_DAO_FinancialAcco
      * @return Object             DAO object on sucess, null otherwise
      * @static
      */
-    static function setIsActive( $id, $is_active ) 
-    {
-        return CRM_Core_DAO::setFieldValue( 'CRM_Financial_DAO_FinancialAccount', $id, 'is_active', $is_active );
-    }
+    // static function setIsActive( $id, $is_active ) 
+    // {
+    //     return CRM_Core_DAO::setFieldValue( 'CRM_Financial_DAO_FinancialTypeAccount', $id, 'is_active', $is_active );
+    // }
 
     /**
-     * function to add the contribution types
+     * function to add the financial types
      *
      * @param array $params reference array contains the values submitted by the form
      * @param array $ids    reference array contains the id
@@ -105,23 +106,13 @@ class CRM_Financial_BAO_FinancialAccount extends CRM_Financial_DAO_FinancialAcco
     static function add(&$params, &$ids) 
     {
         
-        $params['is_active'] =  CRM_Utils_Array::value( 'is_active', $params, false );
-        $params['is_deductible'] =  CRM_Utils_Array::value( 'is_deductible', $params, false );
-        $params['is_tax'] =  CRM_Utils_Array::value( 'is_tax', $params, false );
-        $params['is_header_account'] =  CRM_Utils_Array::value( 'is_header_account', $params, false );
-        $params['is_default'] =  CRM_Utils_Array::value( 'is_default', $params, false );
-        if ( CRM_Utils_Array::value( 'is_default', $params ) ) {
-            $query = 'UPDATE civicrm_financial_account SET is_default = 0';
-            CRM_Core_DAO::executeQuery( $query );
-        }   
-        
         // action is taken depending upon the mode
-        $contributionType               = new CRM_Financial_DAO_FinancialAccount( );
-        $contributionType->copyValues( $params );;
+        $financialTypeAccount              = new CRM_Financial_DAO_EntityFinancialAccount( );
+        $financialTypeAccount->copyValues( $params );;
         
-        $contributionType->id = CRM_Utils_Array::value( 'contributionType', $ids );
-        $contributionType->save( );
-        return $contributionType;
+        $financialTypeAccount->id = CRM_Utils_Array::value( 'entityFinancialAccount', $ids );
+        $financialTypeAccount->save( );
+        return $financialTypeAccount;
     }
     
     /**
@@ -131,38 +122,38 @@ class CRM_Financial_BAO_FinancialAccount extends CRM_Financial_DAO_FinancialAcco
      * @static
      */
     
-    static function del($contributionTypeId) 
+    static function del($financialTypeAccountId) 
     {
-        //checking if contribution type is present  
+        //checking if financial type is present  
         $check = false;
         
         //check dependencies
-        $dependancy = array( 
-                            array('Contribute', 'Contribution'), 
-                            array('Contribute', 'ContributionPage'), 
-                            array('Member', 'MembershipType')
-                            );
-        foreach ($dependancy as $name) {
-            require_once (str_replace('_', DIRECTORY_SEPARATOR, "CRM_" . $name[0] . "_BAO_" . $name[1]) . ".php");
-            eval('$bao = new CRM_' . $name[0] . '_BAO_' . $name[1] . '();');
-            $bao->financial_account_id = $contributionTypeId;
-            if ($bao->find(true)) {
-                $check = true;
-            }
-        }
-        
-        if ($check) {
-            $session = CRM_Core_Session::singleton();
-            CRM_Core_Session::setStatus( ts(
-                'This contribution type cannot be deleted because it is being referenced by one or more of the following types of records: Contributions, Contribution Pages, or Membership Types. Consider disabling this type instead if you no longer want it used.') );
-            return CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/admin/financial/financialAccount', "reset=1&action=browse" ));
-        }
+        // $dependancy = array( 
+        //                     array('Contribute', 'Contribution'), 
+        //                     array('Contribute', 'ContributionPage'), 
+        //                     array('Member', 'MembershipType')
+        //                     );
+        // foreach ($dependancy as $name) {
+        //     require_once (str_replace('_', DIRECTORY_SEPARATOR, "CRM_" . $name[0] . "_BAO_" . $name[1]) . ".php");
+        //     eval('$bao = new CRM_' . $name[0] . '_BAO_' . $name[1] . '();');
+        //     $bao->financial_account_id = $financialTypeAccountId;
+        //     if ($bao->find(true)) {
+        //         $check = true;
+        //     }
+        // }
+       
+        // if ($check) {
+        //     $session = CRM_Core_Session::singleton();
+        //     CRM_Core_Session::setStatus( ts(
+        //         'This financial type cannot be deleted because it is being referenced by one or more of the following types of records: Contributions, Contribution Pages, or Membership Types. Consider disabling this type instead if you no longer want it used.') );
+        //     return CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/admin/financial/financialType/accounts', "reset=1&action=browse" ));
+        // }
         
         //delete from contribution Type table
         require_once 'CRM/Contribute/DAO/Contribution.php';
-        $contributionType = new CRM_Financial_DAO_FinancialAccount( );
-        $contributionType->id = $contributionTypeId;
-        $contributionType->delete();
+        $financialType = new CRM_Financial_DAO_EntityFinancialAccount( );
+        $financialType->id = $financialTypeAccountId;
+        $financialType->delete();
     }
 }
 

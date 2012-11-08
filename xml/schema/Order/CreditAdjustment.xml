@@ -5,6 +5,7 @@
   <class>CreditAdjustment</class>
   <name>civicrm_credit_adjustment</name>
   <add>1.3</add>
+  <drop>4.1</drop>
   <change>4.1</change>
   <changedName>civicrm_contribution</changedName> 
   <changedFilter>cancel_date is not null</changedFilter>

@@ -106,12 +106,22 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
    * @return array - array reference of all contribution types if any
    * @static
    */
-  public static function &contributionType($id = NULL) {
+    public static function &contributionType( $id = null, $financialAccountType = null )
+    {
     if (!self::$contributionType) {
       CRM_Core_PseudoConstant::populate(self::$contributionType,
                                                'CRM_Financial_DAO_FinancialAccount' );
             
     }
+        if ( $financialAccountType ) {
+            CRM_Core_PseudoConstant::populate( self::$contributionType,
+                                               'CRM_Financial_DAO_FinancialAccount',
+                                               $all = false, 
+                                               $retrieve = 'name', 
+                                               $filter = 'is_active', 
+                                               $financialAccountType );
+            
+        }
     if ($id) {
       $result = CRM_Utils_Array::value($id, self::$contributionType);
       return $result;

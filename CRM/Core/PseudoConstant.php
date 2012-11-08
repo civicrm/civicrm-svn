@@ -387,7 +387,7 @@ class CRM_Core_PseudoConstant {
      * @var array
      * @static
      */
-    private static $financialAccountType;
+    private static $accountOptionValues;
 
     /**
    * populate the object from the database. generic populate
@@ -2089,13 +2089,13 @@ ORDER BY name";
      * @return array - array reference of all Financial Account Type
      *
      */
-    public static function financialAccountType( )
+    public static function accountOptionValues( $optionGroupName )
     {
-        if ( ! self::$financialAccountType ) {
+        if ( ! self::$accountOptionValues ) {
             require_once 'CRM/Core/OptionGroup.php';
-            self::$financialAccountType = CRM_Core_OptionGroup::values('financial_account_type');
+            self::$accountOptionValues = CRM_Core_OptionGroup::values( $optionGroupName );
         }
-        return self::$financialAccountType;
+        return self::$accountOptionValues;
     }
 
   /**

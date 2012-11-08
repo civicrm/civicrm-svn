@@ -1393,12 +1393,11 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       $trxnParams = array(
         'contribution_id' => $contribution->id,
         'trxn_date' => $now,
-        'trxn_type' => 'Debit',
         'total_amount' => $params['amount'],
         'fee_amount' => CRM_Utils_Array::value('fee_amount', $result),
         'net_amount' => CRM_Utils_Array::value('net_amount', $result, $params['amount']),
         'currency' => $params['currencyID'],
-        'payment_processor' => $form->_paymentProcessor['payment_processor_type'],
+                                'payment_processor_id' => $form->_paymentProcessor['id'],
         'trxn_id' => $result['trxn_id'],
         'trxn_result_code' => (isset($result['trxn_result_code']) ? $result['trxn_result_code'] : FALSE),
       );

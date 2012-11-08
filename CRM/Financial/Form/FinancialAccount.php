@@ -80,7 +80,7 @@ class CRM_Financial_Form_FinancialAccount extends CRM_Contribute_Form
         $this->add('checkbox', 'is_tax', ts('Is Tax?'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialAccount', 'is_tax' ) );
         $this->add('checkbox', 'is_default', ts('Default?'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialAccount', 'is_default' ) );
 
-        $financialAccountType = CRM_Core_PseudoConstant::financialAccountType( );
+        $financialAccountType = CRM_Core_PseudoConstant::accountOptionValues( 'financial_account_type' );
         if ( !empty( $financialAccountType ) ) {
             $this->add('select', 'financial_account_type_id', ts('Financial Account Type'), array('select' => '--Select Financial Account Type--') + $financialAccountType );
         }
@@ -121,7 +121,7 @@ class CRM_Financial_Form_FinancialAccount extends CRM_Contribute_Form
         require_once 'CRM/Financial/BAO/FinancialAccount.php';
         if($this->_action & CRM_Core_Action::DELETE) {
             CRM_Financial_BAO_FinancialAccount::del($this->_id);
-            CRM_Core_Session::setStatus( ts('Selected contribution type has been deleted.') );
+            CRM_Core_Session::setStatus( ts('Selected Financial Account has been deleted.') );
         } else { 
 
             $params = $ids = array( );
@@ -133,7 +133,7 @@ class CRM_Financial_Form_FinancialAccount extends CRM_Contribute_Form
             }
             
             $contributionType = CRM_Financial_BAO_FinancialAccount::add($params, $ids);
-            CRM_Core_Session::setStatus( ts('The contribution type \'%1\' has been saved.', array( 1 => $contributionType->name )) );
+            CRM_Core_Session::setStatus( ts('The Financial Account \'%1\' has been saved.', array( 1 => $contributionType->name )) );
         }
     }
 }

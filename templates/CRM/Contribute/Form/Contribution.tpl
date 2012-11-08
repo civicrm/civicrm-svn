@@ -170,6 +170,10 @@
                     <span class="description">{ts}The date this contribution was received.{/ts}</span>
                 </td>
             </tr>
+	     <tr class="crm-contribution-form-block-contribution_type_id">
+	     	 <td class="label">{$form.to_financial_account_id.label}</td><td{$valueStyle}>{$form.to_financial_account_id.html}&nbsp;
+      	     	 </td>
+	     </tr>
             <tr class="crm-contribution-form-block-payment_instrument_id">
                 <td class="label">{$form.payment_instrument_id.label}</td><td{$valueStyle}>{$form.payment_instrument_id.html}<br />
                     <span class="description">{ts}Leave blank for non-monetary contributions.{/ts}</span>

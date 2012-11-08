@@ -24,10 +24,10 @@
  +--------------------------------------------------------------------+
 *}
 {if $action eq 1 or $action eq 2 or $action eq 8}
-   {include file="CRM/Financial/Form/FinancialAccount.tpl"}
+   {include file="CRM/Financial/Form/FinancialTypeAccount.tpl"}
 {else}
     <div id="help">
-        <p>{ts}Financial types are used to categorize contributions for reporting and accounting purposes. These are also referred to as <strong>Funds</strong>. You may set up as many types as needed. Each type can carry an accounting code which can be used to map contributions to codes in your accounting system. Commonly used contribution types are: Donation, Campaign Contribution, Membership Dues...{/ts}</p>
+        <p>{ts}{/ts}</p>
     </div>
 
 {if $rows}
@@ -39,21 +39,21 @@
  	{include file="CRM/common/enableDisable.tpl"}
         <table cellpadding="0" cellspacing="0" border="0">
            <thead class="sticky">
-            <th>{ts}Name{/ts}</th>
-            <th>{ts}Description{/ts}</th>
-            <th>{ts}Acctg Code{/ts}</th>
-            <th>{ts}Deductible?{/ts}</th>
-            <th>{ts}Reserved?{/ts}</th>
-            <th>{ts}Enabled?{/ts}</th>
+            <th>{ts}Financial Account{/ts}</th>
+            <th>{ts}Relationship{/ts}</th>
+	    <th>{ts}Accounting Code{/ts}</th>
+            <th>{ts}Owned By{/ts}</th>
+            <th>{ts}Account Type{/ts}</th>
+            <th>{ts}Is Active?{/ts}</th>
             <th></th>
           </thead>
          {foreach from=$rows item=row}
         <tr id="row_{$row.id}"class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
-	        <td>{$row.name}</td>	
-	        <td>{$row.description}</td>
-            	<td>{$row.accounting_code}</td>
-	        <td>{if $row.is_deductible eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-	        <td>{if $row.is_reserved eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+	        <td>{$row.financial_account}</td>	
+	        <td>{$row.account_relationship}</td>
+		<td>{$row.accounting_code}</td>	
+	        <td>{$row.owned_by}</td>
+		<td>{$row.financial_account_type}</td>
 	        <td id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
 	        <td>{$row.action|replace:'xx':$row.id}</td>
         </tr>
@@ -63,7 +63,7 @@
 
         {if $action ne 1 and $action ne 2}
 	    <div class="action-link">
-    	<a href="{crmURL q="action=add&reset=1"}" id="newFinancialAccount" class="button"><span><div class="icon add-icon"></div>{ts}Add Financial Account{/ts}</span></a>
+    	<a href="{crmURL q="action=add&reset=1&aid=$aid"}" id="newfinancialTypeAccount" class="button"><span><div class="icon add-icon"></div>{ts}Add Financial Type Account{/ts}</span></a>
         </div>
         {/if}
     </div>
@@ -71,8 +71,8 @@
 {else}
     <div class="messages status">
         <div class="icon inform-icon"></div>
-        {capture assign=crmURL}{crmURL q="action=add&reset=1"}{/capture}
-        {ts 1=$crmURL}There are no Financial Account entered. You can <a href='%1'>add one</a>.{/ts}
+        {capture assign=crmURL}{crmURL q="action=add&reset=1&aid=$aid"}{/capture}
+        {ts 1=$crmURL}There are no Financial Types Accounts entered. You can <a href='%1'>add one</a>.{/ts}
     </div>    
 {/if}
 {/if}

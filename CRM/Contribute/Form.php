@@ -65,16 +65,19 @@ class CRM_Contribute_Form extends CRM_Core_Form {
    * @return None
    */
   function setDefaultValues() {
+        require_once 'CRM/Utils/Array.php';
     $defaults = array();
     $params = array();
 
 
     if (isset($this->_id)) {
       $params = array('id' => $this->_id);
+            if( !empty( $this->_BAOName ) ){
       require_once (str_replace('_', DIRECTORY_SEPARATOR, $this->_BAOName) . ".php");
       eval($this->_BAOName . '::retrieve( $params, $defaults );');
     }
-    if ($this->_action == CRM_Core_Action::DELETE) {
+        }
+        if ($this->_action == CRM_Core_Action::DELETE && CRM_Utils_Array::value('name', $defaults) ) {
       $this->assign('delName', $defaults['name']);
     }
     elseif ($this->_action == CRM_Core_Action::ADD) {
@@ -84,7 +87,14 @@ class CRM_Contribute_Form extends CRM_Core_Form {
       $defaults['is_active'] = 1;
         }elseif ($this->_action & CRM_Core_Action::UPDATE){
             $organisationId = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialAccount', $this->_id, 'contact_id' );
-            $this->assign('organisationId', $organisationId );                            
+            if( !empty( $organisationId ) ){
+                $contactParams = array( 'id'      => $organisationId,
+                                        'version' => 3, 
+                                        );
+                $contactName = civicrm_api( 'Contact', 'Get', $contactParams);
+                $defaults['organisation_name'] = $contactName['values'][$organisationId]['sort_name'];
+                $defaults['parent_id'] = $contactName['id'];
+            }
             $parentId = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialAccount', $this->_id, 'parent_id' );
             $this->assign('parentId', $parentId ); 
     }
