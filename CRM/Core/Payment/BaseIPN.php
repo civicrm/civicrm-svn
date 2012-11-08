@@ -415,8 +415,9 @@ LIMIT 1;";
         $contribution->receipt_date = self::$_now;
         $values['is_email_receipt'] = 1;
       }
-
-      $participant->status_id = 1;
+      if (!CRM_Utils_Array::value('skipComponentSync', $input)) {
+        $participant->status_id = 1;
+      }
       $participant->save();
     }
 
@@ -429,7 +430,7 @@ LIMIT 1;";
     if (empty($contribution->id)) {
       $addLineItems = TRUE;
     }
-
+    
     $contribution->contribution_status_id = 1;
     $contribution->is_test = $input['is_test'];
     $contribution->fee_amount = CRM_Utils_Array::value('fee_amount', $input, 0);
