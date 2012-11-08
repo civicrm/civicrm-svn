@@ -338,7 +338,7 @@ class CRM_Core_PseudoConstant {
    * @var array
    * @static
    */
-  private static $moduleExtensions;
+  private static $extensions;
 
   /**
    * activity contacts
