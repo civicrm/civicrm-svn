@@ -526,6 +526,9 @@ function civicrm_api3_contact_getquick($params) {
       $list[$value] = $acOptions[$value];
     }
   }
+  if (!empty($params['field_name']) && !in_array($params['field_name'], $list)) {
+    $list[] = $params['field_name'];
+  }
 
   $select = $actualSelectElements = array('sort_name');
   $where  = '';
@@ -553,6 +556,16 @@ function civicrm_api3_contact_getquick($params) {
           $from['address'] = 'LEFT JOIN civicrm_address sts ON ( cc.id = sts.contact_id AND sts.is_primary = 1) ';
         }
         $from[$value] = " LEFT JOIN civicrm_{$value} {$suffix} ON ( sts.{$value}_id = {$suffix}.id  ) ";
+        break;
+
+      default:
+        if ($value != 'id') {
+          $suffix = 'cc';
+          if (!empty($params['field_name']) && $params['field_name'] == 'value') {
+            $suffix = CRM_Utils_Array::value('table_name', $params, 'cc');
+          }
+          $actualSelectElements[] = $select[] = $suffix . '.' . $value;
+        }
         break;
     }
   }
@@ -643,26 +656,25 @@ function civicrm_api3_contact_getquick($params) {
   if (!empty($params['field_name']) && !empty($params['table_name'])) {
     $field_name = $params['field_name'];
     $table_name = $params['table_name'];
-    if ($config->includeEmailInName) {
-        if (!in_array('email', $list)) {
-          $includeEmailFrom = "LEFT JOIN civicrm_email eml ON ( cc.id = eml.contact_id AND eml.is_primary = 1 )";
-        }
-    }
     $whereClause = " WHERE ( $table_name.$field_name LIKE '$strSearch')";
     $exactWhereClause = " WHERE ( $table_name.$field_name = '$name')";
+    // Search by id should be exact
+    if ($field_name == 'id' || $field_name == 'external_identifier') {
+      $whereClause = $exactWhereClause;
+    }
   }
   else {
-      if ($config->includeEmailInName) {
-        if (!in_array('email', $list)) {
-          $includeEmailFrom = "LEFT JOIN civicrm_email eml ON ( cc.id = eml.contact_id AND eml.is_primary = 1 )";
-        }
-        $whereClause = " WHERE ( email LIKE '$strSearch' OR sort_name LIKE '$strSearch' $includeNickName ) {$where} ";
-        $exactWhereClause = " WHERE ( email LIKE '$name' OR sort_name LIKE '$name' $exactIncludeNickName ) {$where} ";
+    if ($config->includeEmailInName) {
+      if (!in_array('email', $list)) {
+        $includeEmailFrom = "LEFT JOIN civicrm_email eml ON ( cc.id = eml.contact_id AND eml.is_primary = 1 )";
       }
-      else {
-        $whereClause = " WHERE ( sort_name LIKE '$strSearch' $includeNickName ) {$where} ";
-        $exactWhereClause = " WHERE ( sort_name LIKE '$name' $exactIncludeNickName ) {$where} ";
-      }
+      $whereClause = " WHERE ( email LIKE '$strSearch' OR sort_name LIKE '$strSearch' $includeNickName ) {$where} ";
+      $exactWhereClause = " WHERE ( email LIKE '$name' OR sort_name LIKE '$name' $exactIncludeNickName ) {$where} ";
+    }
+    else {
+      $whereClause = " WHERE ( sort_name LIKE '$strSearch' $includeNickName ) {$where} ";
+      $exactWhereClause = " WHERE ( sort_name LIKE '$name' $exactIncludeNickName ) {$where} ";
+    }
   }
 
   $additionalFrom = '';
