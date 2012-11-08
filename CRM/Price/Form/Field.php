@@ -426,10 +426,11 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
       $errors['price'] = ts('Price is a required field');
     }
 
-        if ( ( $form->_action & CRM_Core_Action::ADD || $form->_action & CRM_Core_Action::UPDATE ) &&
-             $fields['html_type'] == 'Text' && $fields['price'] ==  NULL && $fields['financial_type_id'] == '' ) {
-            $errors['financial_type_id'] = ts( 'Financial Type is a required field' );
-        }
+    if ( ( $form->_action & CRM_Core_Action::ADD || $form->_action & CRM_Core_Action::UPDATE ) &&
+         $fields['html_type'] == 'Text' && $fields['price'] ==  NULL && $fields['financial_type_id'] == '' ) {
+      $errors['financial_type_id'] = ts( 'Financial Type is a required field' );
+    }
+    
     //avoid the same price field label in Within PriceSet
     $priceFieldLabel = new CRM_Price_DAO_Field();
     $priceFieldLabel->label = $fields['label'];

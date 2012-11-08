@@ -104,8 +104,12 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem
             CRM_Financial_BAO_FinancialTypeAccount::retrieve( $searchParams, $result );
             $params['financial_account_id'] = CRM_Utils_Array::value( 'financial_account_id', $result );
         }
-        self::create( $params );
+        $trxn = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnIds( $contribution->id );
        
+        $trxnId['id'] = $trxn['financialTrxnId']; 
+        $int_name = 'txt-price_'.$lineItem->price_field_id;
+        $params['init_amount'] =  $lineItem->$int_name;
+        self::create( $params,null, $trxnId);    
     } 
     
     static function create( &$params, $ids = null, $trxnId = null  ) {
@@ -120,7 +124,7 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem
                                                   'entity_table'      => "civicrm_financial_item",
                                                   'entity_id'         => $financialItem->id,
                                                   'financial_trxn_id' => $trxnId['id'],
-                                                  'amount'            => $params['amount'],
+                                              'amount'            => array_key_exists('init_amount',$params)?$params['init_amount']:$params['amount'],
                                                   );
             $entity_trxn = new CRM_Financial_DAO_EntityFinancialTrxn();
             $entity_trxn->copyValues( $entity_financial_trxn_params );

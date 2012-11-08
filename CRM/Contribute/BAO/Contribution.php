@@ -272,7 +272,6 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
       if (!$noteParams['contact_id']) {
         $noteParams['contact_id'] = $params['contact_id'];
       }
-
       CRM_Core_BAO_Note::add($noteParams,
         CRM_Utils_Array::value('note', $ids)
       );
@@ -316,7 +315,6 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
     if (!$activity->find()) {
       CRM_Activity_BAO_Activity::addActivity($contribution, 'Offline');
     }
-
     // Handle soft credit and / or link to personal campaign page
     if (CRM_Utils_Array::value('soft_credit_to', $params) ||
       CRM_Utils_Array::value('pcp_made_through_id', $params)
@@ -1232,6 +1230,7 @@ LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.cont
       }
       $softContribution['soft_credit_to'] = $cs->contact_id;
       $softContribution['soft_credit_id'] = $cs->id;
+     
     }
     return $softContribution;
   }

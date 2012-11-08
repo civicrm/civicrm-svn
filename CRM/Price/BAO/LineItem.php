@@ -103,7 +103,6 @@ class CRM_Price_BAO_LineItem extends CRM_Price_DAO_LineItem {
    */
   static function getLineItems($entityId, $entity = 'participant', $isQuick = NULL) {
     $selectClause = $whereClause = $fromClause = NULL;
-
     $selectClause = "
 SELECT    li.id,
           li.label,

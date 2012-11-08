@@ -239,6 +239,12 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
   ) {
 
     $field = new CRM_Price_DAO_Field();
+    $mode = $qf->_mode;
+    if(empty( $mode )){
+      $is_pay_later = 1;
+    }else{
+      $is_pay_later = CRM_Utils_Array::value( 'is_pay_later', $qf->_values);
+    }
     $field->id = $fieldId;
     if (!$field->find(TRUE)) {
       /* FIXME: failure! */
@@ -297,7 +303,6 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
           $label .= '&nbsp;-&nbsp;';
           $label .= CRM_Utils_Money::format(CRM_Utils_Array::value($valueFieldName, $customOption[$optionKey]));
         }
-
         $element = &$qf->add('text', $elementName, $label,
           array_merge($extra,
             array('price' => json_encode(array($optionKey, $priceVal)),
@@ -306,6 +311,9 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
           ),
           $useRequired && $field->is_required
         );
+      if (  $is_pay_later ){
+        $qf->add( 'text', 'txt-'.$elementName, $label, array( 'size' => '4'));
+      }
 
         // CRM-6902
         if (in_array($optionKey, $feezeOptions)) {
@@ -353,12 +361,15 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
           }
           $choice[$opId] = $qf->createElement('radio', NULL, '', $opt['label'], $opt['id'], $extra);
 
+        if (  $is_pay_later ){
+          $qf->add( 'text', 'txt-'.$elementName, $label, array( 'size' => '4')); 
+        }
+          
           // CRM-6902
           if (in_array($opId, $feezeOptions)) {
             $choice[$opId]->freeze();
           }
         }
-
         if (property_exists($qf, '_membershipBlock') && CRM_Utils_Array::value('is_separate_payment', $qf->_membershipBlock) && $field->name == 'contribution_amount') {
           $choice[] = $qf->createElement('radio', NULL, '', 'No thank you', '-1',
             array(
@@ -411,7 +422,10 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
           if (!in_array($opt['id'], $feezeOptions)) {
             $allowedOptions[] = $opt['id'];
           }
+        if (  $is_pay_later ){
+          $qf->add( 'text', 'txt-'.$elementName, $label, array( 'size' => '4'));  
         }
+      }
         $element = &$qf->add('select', $elementName, $label,
           array(
             '' => ts('- select -')) + $selectOption,
@@ -444,7 +458,10 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
               'data-currency' => $currencyName,
             )
           );
-
+        if ( $is_pay_later ){
+          $txtcheck[$opId] =& $qf->createElement( 'text', $opId, $opt['label'], array( 'size' => '4' ) );
+          $qf->addGroup($txtcheck, 'txt-'.$elementName, $label);
+        }
           // CRM-6902
           if (in_array($opId, $feezeOptions)) {
             $check[$opId]->freeze();
@@ -630,5 +647,67 @@ WHERE  id IN (" . implode(',', array_keys($priceFields)) . ')';
       $error['_qf_default'] = ts("Please select at least one option from price set.");
     }
   }
+
+ public static function initialPayCreate( &$params, $page, $mode = 'offline' ) {
+   $values = array();
+      if ( $page == 'event' ) {
+        $values =  CRM_Utils_Array::value( 'event', $params->_values );
+      }else {
+        ( CRM_Utils_Array::value( '_values', $params )) ? $values =  $params->_values : $values[] = "";
+}
+      $params->add('checkbox', 'int_amount', ts('Record smaller intitial amount'));
+
+      if( !array_key_exists( 'initial_amount_label', $values ) ){
+        $values['initial_amount_label'] = "Amount to pay now:";
+      } 
+      
+      if( array_key_exists( 'initial_amount_help_text', $values ) ){
+        $params->assign( 'initialAmountHelpText', $values['initial_amount_help_text'] );
+      }
+      
+      $element = $params->addElement( 'text', 'initial_amount', 
+                                      $values['initial_amount_label'], null );
+      
+      if ( $mode == 'offline' ){
+        $optionTypes = array( '1' => ts( 'Distribute evenly among all selected items' ),
+                              '2' => ts( 'Apply to the items I specify') );
+        $params->addRadio( 'option_items',
+                           null,
+                           $optionTypes,
+                           array(), '<br/>' );
+      }
+      // return $params;
+    }
+    
+    public static function initialPayValidation( $filds, $files, $self ) {
+      $errors = array();
+      $newFields = array();
+      foreach( $filds as $key => $value ){
+        if (strstr( $key,'txt-price_' )){
+          // if ( is_array( $filds[$key] ) ){
+            foreach( $filds[$key] as $key1 => $value1 ){
+              $exploadValue = explode("_", $key);
+              $orignalValue = $self->_priceSet['fields'][$exploadValue[1]]['options'][$key1]['amount'];
+              ( $orignalValue < $value1 ) ? $errors[ 'qf_default' ] = $self->_priceSet['fields'][$exploadValue[1]]['options'][$key1]['label']." Initial Amount is greater than base Amount":'';
+            }
+            // }
+        }
+      }
+      if (CRM_Utils_Array::value( 'total_amount', $filds )){
+        $amount = CRM_Utils_Array::value( 'total_amount', $filds );
+      }elseif ( CRM_Utils_Array::value( 'amount', $filds )){
+        $amount = CRM_Utils_Array::value( 'amount', $filds );
+      }else{
+       $amount = CRM_Utils_Array::value( 'total_amount', $self->_values );
+      }
+      
+      if ( $amount < CRM_Utils_Array::value( 'initial_amount', $filds ) ){
+          $errors[ 'initial_amount' ] = 'Initial Amount is greater than base Amount.';
+      } 
+      return $errors;      
+    }
+    
+
+
 }
 

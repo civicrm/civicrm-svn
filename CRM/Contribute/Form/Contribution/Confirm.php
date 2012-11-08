@@ -1018,6 +1018,14 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                 $daoPremiumsProduct->find(true);
                 $params['financial_type_id'] = $daoPremiumsProduct->financial_type_id;
             }
+      if( CRM_Utils_Array::value( 'selectProduct', $premiumParams ) ){
+        require_once 'CRM/Contribute/DAO/PremiumsProduct.php';
+        $daoPremiumsProduct             = new CRM_Contribute_DAO_PremiumsProduct();
+        $daoPremiumsProduct->product_id = $premiumParams['selectProduct'];
+        $daoPremiumsProduct->premiums_id = $dao->id;
+        $daoPremiumsProduct->find(true);
+        $params['financial_type_id'] = $daoPremiumsProduct->financial_type_id;
+      }
       //Fixed For CRM-3901
       $daoContrProd = new CRM_Contribute_DAO_ContributionProduct();
       $daoContrProd->contribution_id = $contribution->id;
@@ -1240,21 +1248,21 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
 
     // process soft credit / pcp pages
     CRM_Contribute_Form_Contribution_Confirm::processPcpSoft($params, $contribution);
-
     // process price set, CRM-5095
     if ($contribution && $contribution->id && $form->_priceSetId) {
       if (CRM_Utils_Array::value('is_quick_config', $form->_params)) {
+  
         $temp = array();
         foreach ($form->_lineItem as $key => $val) {
           foreach ($val as $k => $v) {
             if (CRM_Utils_Money::format($v['line_total']) == CRM_Utils_Money::format($contribution->total_amount )) {
               $temp[$key][$k] = $form->_lineItem[$key][$k];
-              CRM_Price_BAO_LineItem::processPriceSet($contribution->id, $temp);
+              CRM_Contribute_Form_AdditionalInfo::processPriceSet($contribution->id, $temp, $contribution);
             }
           }
         }
       } elseif (!CRM_Utils_Array::value('is_quick_config', $form->_params)) {
-          CRM_Price_BAO_LineItem::processPriceSet($contribution->id, $form->_lineItem);
+        CRM_Contribute_Form_AdditionalInfo::processPriceSet($contribution->id, $form->_lineItem,$contribution);
       }
       if (!$form->_separateMembershipPayment && CRM_Utils_Array::value('is_quick_config', $form->_params)) {
         $form->_lineItem = null;
@@ -1384,19 +1392,21 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
     elseif (isset($params['cms_contactID'])) {
       $contactID = $params['cms_contactID'];
     }
-
     CRM_Contribute_BAO_Contribution_Utils::createCMSUser($params,
       $contactID,
       'email-' . $form->_bltID
     );
 
     // return if pending
-    if ($pending) {
-      return $contribution;
-    }
+    // if ($pending) {
+    //   return $contribution;
+    // }
 
     // next create the transaction record
-    if ($contribution && (!$online || $form->_values['is_monetary']) && $result['trxn_id']) {
+
+    if ( ( ! $online || $form->_values['is_monetary'] ) ) {
+      $params['amount'] = $params['initial_amount'];
+
       $trxnParams = array(
         'contribution_id' => $contribution->id,
         'trxn_date' => $now,
@@ -1409,7 +1419,52 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         'trxn_result_code' => (isset($result['trxn_result_code']) ? $result['trxn_result_code'] : FALSE),
       );
 
+      $revenueFinancialType = array( );
+      $statusID = $cId = $financialAccount = null;
+      if( $pending ){
+        CRM_Core_PseudoConstant::populate( $revenueFinancialType,
+                                           'CRM_Financial_DAO_EntityFinancialAccount',
+                                           $all = True, 
+                                           $retrieve = 'financial_account_id', 
+                                           $filter = null, 
+                                           " account_relationship = 3 AND entity_id = {$contribution->financial_type_id} " );
+        $financialAccount = current( $revenueFinancialType );
+        $statusID = key(CRM_CORE_PseudoConstant::accountOptionValues( 'financial_item_status', null, " AND v.name LIKE 'Unpaid' " ));
+      }else{
+        $finanTypeId = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_PaymentProcessor', $form->_paymentProcessor['id'], 'financial_type_id');
+        CRM_Core_PseudoConstant::populate( $revenueFinancialType,
+                                           'CRM_Financial_DAO_EntityFinancialAccount',
+                                           $all = True, 
+                                           $retrieve = 'financial_account_id', 
+                                           $filter = null, 
+                                           " account_relationship = 6 AND entity_id = {$finanTypeId} " );
+                
+        $financialAccount = current( $revenueFinancialType );
+        $statusID = key(CRM_CORE_PseudoConstant::accountOptionValues( 'financial_item_status', null, " AND v.name LIKE 'Paid' " ));
+      }
+      if( $financialAccount ){
+        $trxnParams['to_financial_account_id'] = $financialAccount;
+        $cId = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_FinancialAccount', $financialAccount, 'contact_id');
+      }
+
       $trxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
+      $itemsParams = array( 'created_date'         => date('YmdHis'),
+                            'transaction_date'     => $trxn->trxn_date,
+                            'contact_id'           => $cId,
+                            'amount'               => $trxn->total_amount,
+                            'currency'             => $trxn->currency,
+                            'entity_table'         => 'civicrm_financial_trxn',
+                            'entity_id'            => $trxn->id,
+                            'status_id'            => $statusID,
+                            );
+            
+      if($financialAccount){
+        $itemsParams['financial_account_id'] = $financialAccount;
+    }
+      require_once 'CRM/Financial/BAO/FinancialItem.php';
+      $trxnId['id'] = $trxn->id ;
+      $trxn = CRM_Financial_BAO_FinancialItem::create($itemsParams, null, $trxnId);
+
     }
 
     //create contribution activity w/ individual and target

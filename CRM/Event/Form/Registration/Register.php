@@ -78,7 +78,6 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
    */ 
   function preProcess() {
     parent::preProcess();
-
     $this->_ppType = CRM_Utils_Array::value('type', $_GET);
     $this->assign('ppType', FALSE);
     if ($this->_ppType) {
@@ -139,6 +138,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
       CRM_Core_Payment_ProcessorForm::preProcess($this);
       CRM_Core_Payment_ProcessorForm::buildQuickForm($this);
     }
+   
   }
 
   /**
@@ -310,6 +310,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
     if (!empty($getDefaults)) {
       $this->_defaults = array_merge($this->_defaults, $getDefaults);
     }
+    $this->_defaults['initial_amount']=$this->_values['event']['min_initial_amount'];
 
     return $this->_defaults;
   }
@@ -454,6 +455,11 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
         $this->addElement('hidden', 'payment_processor', array_pop(array_keys($pps)));
       }
     }
+
+   if ( $this->_values['event']['is_monetary'] ){
+      CRM_Price_BAO_Field::initialPayCreate( $this, 'event', 'online' );
+    }
+
 
     //lets add some qf element to bypass payment validations, CRM-4320
     if ($bypassPayment) {
@@ -944,7 +950,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
         }
       }
     }
-
+$errors =  CRM_Price_BAO_Field::initialPayValidation( $fields, $files, $self );
     return empty($errors) ? TRUE : $errors;
   }
 

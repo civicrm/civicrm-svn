@@ -415,7 +415,6 @@ WHERE  contribution_id = {$this->_id}
         $this->_noteID = $daoNote->id;
         $this->_values['note'] = $daoNote->note;
       }
-
             $this->_contributionType = $this->_values['financial_type_id'];
 
       $csParams = array('contribution_id' => $this->_id);
@@ -656,6 +655,9 @@ WHERE  contribution_id = {$this->_id}
     if ($this->_cdType) {
       return CRM_Custom_Form_CustomData::buildQuickForm($this);
     }
+    if ( $this->_action & CRM_Core_Action::ADD ) {
+      CRM_Price_BAO_Field::initialPayCreate( $this, 'contribution', 'offline' );
+    }
 
     // build price set form.
     $buildPriceSet = FALSE;
@@ -809,6 +811,68 @@ WHERE  contribution_id = {$this->_id}
     }
 
     $this->applyFilter('__ALL__', 'trim');
+
+    $allItem =  array();
+    if ( $this->_action & CRM_Core_Action::UPDATE ) {
+      
+      //This->_online is trxn id already fetch in preprocess;
+      $trxn          = $this->_online;
+      $txrnLineTotal = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnLineTotal($this->_id, 'civicrm_contribution');
+      CRM_Core_Error::debug( '$txrnLineTotal', $txrnLineTotal );
+      $LineTotal     = 0;
+      $trxTotal      = $lineItemTotal = array();
+      foreach($txrnLineTotal as $lineKey => $lineValue){
+        $trxAmount = 0;
+        foreach($lineValue as $itemKey => $itemValue){ 
+          $trxAmount = $trxAmount + $itemValue;
+          $LineTotal = $LineTotal + $itemValue;
+          if (!array_key_exists($itemKey, $lineItemTotal)){
+            $lineItemTotal[$itemKey] = 0;
+          }
+          $lineItemTotal[$itemKey] =  $lineItemTotal[$itemKey] + $itemValue;
+        } 
+        $trxTotal[$lineKey] = $trxAmount;
+      }
+      $pricefildTotal['LineItems'] =  $lineItemTotal;
+      $pricefildTotal['total'] =  $LineTotal ;
+      $this->assign('pricefildTotal',$pricefildTotal );
+
+        CRM_Core_Error::debug( '$trxTotal', $trxTotal );
+        exit;
+      $entity_trxn = new CRM_Financial_DAO_EntityFinancialTrxn();
+      $this->addElement( 'checkbox','ch_price', ts('Send Receipt?') );
+      
+      /* $totalItem = @CRM_Core_DAO::commonRetrieveAll( 'CRM_Financial_DAO_EntityFinancialTrxn','financial_trxn_id' , $trxn['financialTrxnId'] ); */
+      
+      /* foreach( $totalItem as $key => $value ){ */
+      /*   if ( $value['entity_table'] == 'civicrm_financial_item'){ */
+      /*     $allItem['civicrm_financial_item'][$key] = $value; */
+      /*     $trxn_items[$key]['entity_id'] = $value['entity_id']; */
+      /*     $searchParams = array('id' => $value['entity_id']); */
+      /*     CRM_Financial_BAO_FinancialItem::retrieve( $searchParams, $result ); */
+      /*     if( $result['entity_table'] == 'civicrm_line_item'){ */
+      /*       $test['civicrm_line_item'][$key] = $value; */
+      /*       $searchLineParams['id'] =  $result['entity_id']; */
+      /*       CRM_Price_BAO_LineItem::retrieve( $searchLineParams, $lineResult ); */
+      /*       $pricesetTitle = CRM_Price_BAO_Field::getTitle( $lineResult['price_field_id'] ); */
+      /*       $elementName = 'txt-price['.$lineResult['price_field_value_id'].']'; */
+      /*       $element = $this->addElement( 'text', $elementName ,$pricesetTitle .'-'.$result['description'], array('size' => 4, 'price' => $lineResult['line_total'], 'class' => 'distribute') ); */
+      /*       $element->setValue($value['amount']); */
+      /*       $lineTotal[$elementName] = $lineResult['line_total']; */
+      /*     }else{ */
+      /*       $allItem['civicrm_contribution'][$key] = $value; */
+            
+      /*     } */
+      /*   } */
+      /* } */
+      /* $this->assign('line', $lineTotal); */
+    }
+    $element  = $this->addElement( 'text', 'initial_amount','Payment Amount', array('size' => 4) );
+    /* if ( array_key_exists('civicrm_contribution', $allItem)){ */
+    /*   $maxArray = max( array_keys( $allItem['civicrm_contribution']  )); */
+    /*   $element->setValue($allItem['civicrm_contribution'][$maxArray]['amount'] ); */
+    /* }    */
+  
 
     if ($this->_action & CRM_Core_Action::DELETE) {
       $this->addButtons(array(
@@ -1163,6 +1227,7 @@ WHERE  contribution_id = {$this->_id}
         $errors['financial_type_id'] .= "'Expense Account is' is not configured for this Financial Type";
       }
     }
+    // $errors = CRM_Price_BAO_Field::initialPayValidation( $fields, $files, $self );
     
     return $errors;
   }
@@ -1182,6 +1247,15 @@ WHERE  contribution_id = {$this->_id}
 
     // get the submitted form values.
     $submittedValues = $this->controller->exportValues($this->_name);
+    // If Contribution action is update then calculate and set initial amount 
+    if ($this->_action & CRM_Core_Action::UPDATE){
+      $totalPrice = 0;
+      foreach($submittedValues['txt-price'] as $priceKey => $priceValue){    
+        $totalPrice = $totalPrice + $priceValue;
+      }
+      $submittedValues['initial_amount'] = $totalPrice;
+    }
+
     // process price set and get total amount and line items.
     $lineItem = array();
     $priceSetId = $pId = NULL;
@@ -1504,14 +1578,13 @@ WHERE  contribution_id = {$this->_id}
           FALSE, FALSE, FALSE
         );
       }
-
       if (($this->_context != 'participant') && !$pId) {
         $entityID = $contribution->id;
         $entityTable = 'contribution';
       }
       // process line items, until no previous line items.
       if (empty($this->_lineItems) && $entityID && !empty($lineItem)) {
-        CRM_Price_BAO_LineItem::processPriceSet($entityID, $lineItem, "civicrm_".$entityTable);
+        CRM_Contribute_Form_AdditionalInfo::processPriceSet($entityID, $lineItem, $contribution,null, "civicrm_".$entityTable);
       }
 
       //send receipt mail.
@@ -1666,8 +1739,15 @@ WHERE  contribution_id = {$this->_id}
             $now = date( 'YmdHis' );
       //create contribution.
       $contribution = CRM_Contribute_BAO_Contribution::create($params, $ids);
-      $now = date( 'YmdHis' );
-         
+      $init_amount = array();
+      foreach($submittedValues as $key => $value){
+        if ( strstr($key,'txt-price')){
+          $init_amount[$key] = $value;
+        }else if ( strstr($key,'txt-allprice')){
+          $init_amount[$key] = $value;
+        } 
+      }
+      $contribution->init_amount = $init_amount;
       //create entry in FinancialTrxn table
       $contributionStatus = CRM_Contribute_Pseudoconstant::contributionStatus( $contribution->contribution_status_id );
       if( !empty( $contribution->id ) ){
@@ -1675,18 +1755,18 @@ WHERE  contribution_id = {$this->_id}
                             'contribution_id'         => $contribution->id,
                             'to_financial_account_id' => $params['to_financial_account_id'],
                             'trxn_date'               => $now,
-                            'total_amount'            => $params['total_amount'],
-                            'fee_amount'              => CRM_Utils_Array::value( 'fee_amount',  $params),
-                            'net_amount'              => CRM_Utils_Array::value( 'net_amount', $params ),
+                            'total_amount'            => !empty($submittedValues['initial_amount'])?$submittedValues['initial_amount']:$params['total_amount'],
+                            'fee_amount'              => !empty($submittedValues['initial_amount'])?$submittedValues['initial_amount']:$params['total_amount'],
+                            'net_amount'              => !empty($submittedValues['initial_amount'])?$submittedValues['initial_amount']:$params['total_amount'],
                             'currency'                => $params['currency'],                                    
                             'trxn_id'                 => $params['trxn_id'],
                             'status_id'               => $contribution->contribution_status_id,
                             'trxn_result_code'        => ( !empty( $contribution->trxn_result_code ) ? $contribution->trxn_result_code : false ),
                             );
-               
         if( $paymentProcessorId = CRM_Utils_Array::value( 'id', $this->_paymentProcessor ) )
           $trxnParams['payment_processor_id'] = $paymentProcessorId; 
         $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
+        
         $orgId = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialAccount', $params['to_financial_account_id'], 'contact_id' );
         $itemsParams = array( 'created_date'         => date('YmdHis'),
                               'transaction_date'     => $trxn->trxn_date,
@@ -1698,12 +1778,10 @@ WHERE  contribution_id = {$this->_id}
                               );
         $itemsParams['financial_account_id'] = $params['to_financial_account_id'];
         $trxnId['id']                        = $trxn->id;
-        CRM_Financial_BAO_FinancialItem::create( $itemsParams, null, $trxnId  );
+        $ids['entityFinancialTrxnId'] =  $trxn->id;
+         CRM_Financial_BAO_FinancialItem::create( $itemsParams, $ids, $trxnId  );
         if( CRM_Utils_Array::value( 'fee_amount', $trxnParams ) ){
           $ExpenceRelation = key(CRM_CORE_PseudoConstant::accountOptionValues( 'account_relationship', null, " AND v.name LIKE 'Expense Account is' ", false ));
-                  
-
-                  
           $trxnParams['total_amount']              = $trxnParams['fee_amount'];
           unset($trxnParams['fee_amount']);
           $trxnParams['from_financial_account_id'] = $financialAccounts[6];  // FA with Asset account relationship
@@ -1712,13 +1790,12 @@ WHERE  contribution_id = {$this->_id}
           $trxnEntityTable['entity_id'] = $trxn->id;
           $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams, $trxnEntityTable );
                    
-          $itemsParams['amount']               = $trxn->total_amount;
-          $itemsParams['contact_id']           = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Domain', 1, 'contact_id' );
-          $itemsParams['financial_account_id'] = CRM_Utils_Array::value( $ExpenceRelation, $financialAccounts );
-          CRM_Financial_BAO_FinancialItem::create( $itemsParams, null, $trxnId  ); 
+          /* $itemsParams['amount']               = $trxn->total_amount; */
+          /* $itemsParams['contact_id']           = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Domain', 1, 'contact_id' ); */
+          /* $itemsParams['financial_account_id'] = CRM_Utils_Array::value( $ExpenceRelation, $financialAccounts ); */
+          /* CRM_Financial_BAO_FinancialItem::create( $itemsParams, null, $trxnId  ); */
         }
       }
-
 
       // 10117 update th line items for participants
       if ($this->_context != 'participant' && !$pId) {
@@ -1747,8 +1824,23 @@ WHERE  contribution_id = {$this->_id}
                 $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
             }
       // process line items, until no previous line items.
-      if (empty($this->_lineItems) && $entityID && !empty($lineItem)) {
-        CRM_Price_BAO_LineItem::processPriceSet($entityID, $lineItem, "civicrm_".$entityTable);
+      if ( empty( $this->_lineItems )  && $contribution->id && !empty( $lineItem ) ) { 
+        CRM_Contribute_Form_AdditionalInfo::processPriceSet( $contribution->id, $lineItem, $contribution );                      
+      }else{
+        foreach( $this->_lineItems[0] as $key => $value ){
+          $financialItemID  = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialItem', $key, 'id', 'entity_id' );
+          if( CRM_Utils_Array::value( 'id', $trxnId )){
+            $entity_financial_trxn_params = array(
+                                                  'entity_table'      => "civicrm_financial_item",
+                                                  'entity_id'         => $financialItemID,
+                                                  'financial_trxn_id' => $trxnId['id'],
+                                                  'amount'            => $formValues['txt-price'][$value['price_field_value_id']],
+                                                  );
+            $entity_trxn = new CRM_Financial_DAO_EntityFinancialTrxn();
+            $entity_trxn->copyValues( $entity_financial_trxn_params );
+            $entity_trxn->save();
+      }
+        }
       }
 
       // process associated membership / participant, CRM-4395

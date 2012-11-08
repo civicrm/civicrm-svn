@@ -135,12 +135,20 @@ class CRM_Contribute_BAO_Contribution_Utils {
         }
         else {
           if (!$form->_params['is_pay_later']) {
+    if ( $form->_params['initial_amount'] ){
+              $actulAmount = $form->_params['amount'];
+              $form->_params['amount'] = $form->_params['initial_amount'];
+            }
             if (is_object($payment)) 
             $result = &$payment->doTransferCheckout($form->_params, 'contribute');
             else 
               CRM_Core_Error::fatal($paymentObjError);
+            if ( $form->_params['initial_amount'] ){
+              $result['gross_amount'] = $actulAmount;
+              $result['amount']       = $actulAmount;
+
           }
-          else {
+          } else {
             // follow similar flow as IPN
             // send the receipt mail
             $form->set('params', $form->_params);
@@ -172,21 +180,28 @@ class CRM_Contribute_BAO_Contribution_Utils {
     }
     elseif ($form->_contributeMode == 'express') {
       if ($form->_values['is_monetary'] && $form->_amount > 0.0) {
-
         // determine if express + recurring and direct accordingly
+        if ( $paymentParams['initial_amount'] ){
+          $actulAmount = $paymentParams['amount'];
+          $paymentParams['amount'] = $paymentParams['initial_amount'];
+        }
         if ($paymentParams['is_recur'] == 1) {
           if (is_object($payment)) 
           $result = &$payment->createRecurringPayments($paymentParams);
           else 
             CRM_Core_Error::fatal($paymentObjError);
         }
-        else {
+                   
+				} else {
           if (is_object($payment)) 
           $result = &$payment->doExpressCheckout($paymentParams);
           else 
             CRM_Core_Error::fatal($paymentObjError);
-        }
+        if ( $paymentParams['initial_amount'] ){
+          $result['gross_amount'] = $actulAmount;
+          $result['amount']       = $actulAmount;	
       }
+    }
     }
     elseif ($form->_values['is_monetary'] && $form->_amount > 0.0) {
       if (CRM_Utils_Array::value('is_recur', $paymentParams) &&
@@ -215,11 +230,18 @@ class CRM_Contribute_BAO_Contribution_Utils {
           $paymentParams['contributionRecurID'] = $contribution->contribution_recur_id;
         }
       }
-
+if ( $paymentParams['initial_amount'] ) {
+        $actulAmount = $paymentParams['amount'];
+        $paymentParams['amount'] = $paymentParams['initial_amount'];   
+      }
       if (is_object($payment)) 
       $result = &$payment->doDirectPayment($paymentParams);
       else 
         CRM_Core_Error::fatal($paymentObjError);
+      if ( $paymentParams['initial_amount'] ) {
+        $result['gross_amount'] = $actulAmount;
+        $result['amount']       = $actulAmount;
+    }
     }
 
     if ($component == 'membership') {

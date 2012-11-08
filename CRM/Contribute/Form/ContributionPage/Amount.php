@@ -66,6 +66,7 @@ class CRM_Contribute_Form_ContributionPage_Amount extends CRM_Contribute_Form_Co
 
     $this->add('text', 'max_amount', ts('Maximum Amount'), array('size' => 8, 'maxlength' => 8));
     $this->addRule('max_amount', ts('Please enter a valid money value (e.g. %1).', array(1 => CRM_Utils_Money::format('99.99', ' '))), 'money');
+
     $this->add('select', "financial_type_id",ts('Financial Type'),
       array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::financialType( ));
 
@@ -141,6 +142,18 @@ SELECT id
       CRM_Core_DAO::getAttribute('CRM_Contribute_DAO_ContributionPage', 'pay_later_text'),
       FALSE
     );
+ $this->addElement('textarea', 'initial_amount_label', ts( 'Initial amount label' ),  
+                      CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_ContributionPage', 'initial_amount_label' ),
+                      false );
+        
+    $this->addElement('textarea', 'initial_amount_help_text', ts( 'Initial amount help text' ),  
+                      CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_ContributionPage', 'initial_amount_help_text' ),
+                      false );
+        
+    $this->addElement('text', 'min_initial_amount', ts( 'Minimum initial amount ($0.00 or more)' ),  
+                      CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_ContributionPage', 'min_initial_amount' ),
+                      false );
+
     $this->addElement('textarea', 'pay_later_receipt', ts('Pay later instructions'),
       CRM_Core_DAO::getAttribute('CRM_Contribute_DAO_ContributionPage', 'pay_later_receipt'),
       FALSE
@@ -588,6 +601,7 @@ SELECT id
               $fieldParams['option_amount'] = $params['value'];
               foreach ($options as $value) {
                 $fieldParams['option_weight'][$value['weight']] = $value['weight'];
+                $fieldParams['option_financial_type_id'][$value['weight']] = $params['financial_type_id'];
               }
               $fieldParams['default_option'] = $params['default'];
               $priceField = CRM_Price_BAO_Field::create($fieldParams);
@@ -606,6 +620,7 @@ SELECT id
                                       'label'              => 'Other Amount',
                                       'price_set_id'       => $priceSetId,
                                       'html_type'          => 'Text',
+                                      'financial_type_id'  => $params['financial_type_id'],
                                       'is_display_amounts' => 0,
                                       'weight'             => 3,
                                       );

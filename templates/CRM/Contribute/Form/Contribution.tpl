@@ -179,6 +179,31 @@
                 <span class="description">{ts}Date that a receipt was sent to the contributor.{/ts}</span></td></tr>
         {/if}
         {if !$contributionMode}
+                     <tr class="crm-contribution-form-block-contribution_status_id"><td class="label">{$form.contribution_status_id.label}</td><td>{$form.contribution_status_id.html}
+            {if $contribution_status_id eq 2}{if $is_pay_later }: {ts}Pay Later{/ts} {else}: {ts}Incomplete Transaction{/ts}{/if}{/if}</td></tr>
+
+            {* Cancellation fields are hidden unless contribution status is set to Cancelled *}
+            <tr id="cancelInfo" class="crm-contribution-form-block-cancelInfo"> 
+                <td>&nbsp;</td> 
+                <td><fieldset><legend>{ts}Cancellation Information{/ts}</legend>
+                <table class="form-layout-compressed">
+                  <tr id="cancelDate" class="crm-contribution-form-block-cancel_date">
+                    <td class="label">{$form.cancel_date.label}</td>
+                    <td>
+                        {if $hideCalendar neq true}
+                            {include file="CRM/common/jcalendar.tpl" elementName=cancel_date}
+                        {else}
+                            {$form.cancel_date.html|crmDate}
+                        {/if}
+                   </td>
+                  </tr>
+                  <tr id="cancelDescription" class="crm-contribution-form-block-cancel_reason"><td class="label">&nbsp;</td><td class="description">{ts}Enter the cancellation date, or you can skip this field and the cancellation date will be automatically set to TODAY.{/ts}</td></tr>
+                  <tr id="cancelReason"><td class="label" style="vertical-align: top;">{$form.cancel_reason.label}</td><td>{$form.cancel_reason.html|crmReplace:class:huge}</td></tr>
+               </table>
+               </fieldset>
+               </td>
+            </tr>
+        {/if}
             <tr class="crm-contribution-form-block-receive_date">
                 <td class="label">{$form.receive_date.label}</td>
                 <td{$valueStyle}>{if $hideCalender neq true}{include file="CRM/common/jcalendar.tpl" elementName=receive_date}{else}{$receive_date|crmDate}{/if}<br />
@@ -221,32 +246,6 @@
                     <span class="description">{ts}Date that a receipt was sent to the contributor.{/ts}</span>
                 </td>
             </tr>
-            <tr class="crm-contribution-form-block-contribution_status_id"><td class="label">{$form.contribution_status_id.label}</td><td>{$form.contribution_status_id.html}
-            {if $contribution_status_id eq 2}{if $is_pay_later }: {ts}Pay Later{/ts} {else}: {ts}Incomplete Transaction{/ts}{/if}{/if}</td></tr>
-
-            {* Cancellation fields are hidden unless contribution status is set to Cancelled *}
-            <tr id="cancelInfo" class="crm-contribution-form-block-cancelInfo">
-                <td>&nbsp;</td>
-                <td><fieldset><legend>{ts}Cancellation Information{/ts}</legend>
-                <table class="form-layout-compressed">
-                  <tr id="cancelDate" class="crm-contribution-form-block-cancel_date">
-                    <td class="label">{$form.cancel_date.label}</td>
-                    <td>
-                        {if $hideCalendar neq true}
-                            {include file="CRM/common/jcalendar.tpl" elementName=cancel_date}
-                        {else}
-                            {$form.cancel_date.html|crmDate}
-                        {/if}
-                   </td>
-                  </tr>
-                  <tr id="cancelDescription" class="crm-contribution-form-block-cancel_reason"><td class="label">&nbsp;</td><td class="description">{ts}Enter the cancellation date, or you can skip this field and the cancellation date will be automatically set to TODAY.{/ts}</td></tr>
-                  <tr id="cancelReason"><td class="label" style="vertical-align: top;">{$form.cancel_reason.label}</td><td>{$form.cancel_reason.html|crmAddClass:huge}</td></tr>
-               </table>
-               </fieldset>
-               </td>
-            </tr>
-        {/if}
-
         <tr id="softCreditID" class="crm-contribution-form-block-soft_credit_to"><td class="label">{$form.soft_credit_to.label}</td>
             <td {$valueStyle}>
                 {$form.soft_credit_to.html} {help id="id-soft_credit"}
@@ -285,11 +284,97 @@
         </tr>
         {/if}
       </table>
+ {if !$contributionMode && $action eq 1}
+      <div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-processed crm-accordion-open" id="submitPayment_Information">
+        <div class="crm-accordion-header">
+	<div class="icon crm-accordion-pointer"></div>
+	   Submit a Payment
+	</div>
+	<div class="crm-accordion-body" id="Donor_Information">
+	 {include file="CRM/Price/Form/InitialPayment.tpl" extends="Contribution"}
+           <div class="spacer"></div>
+	   <table>
+	      <tr class="crm-contribution-form-block-receive_date">
+                <td class="label">{$form.receive_date.label}</td>
+                <td{$valueStyle}>{if $hideCalender neq true}{include file="CRM/common/jcalendar.tpl" elementName=receive_date}{else}{$receive_date|crmDate}{/if}<br />
+                    <span class="description">{ts}The date this contribution was received.{/ts}</span>
+                </td>
+             </tr>
+	     <tr class="crm-contribution-form-block-payment_instrument_id">
+                <td class="label">{$form.payment_instrument_id.label}</td><td{$valueStyle}>{$form.payment_instrument_id.html}<br />
+                    <span class="description">{ts}Leave blank for non-monetary contributions.{/ts}</span>
+                </td>
+            </tr>
+            {if $showCheckNumber || !$isOnline}  
+                <tr id="checkNumber" class="crm-contribution-form-block-check_number"><td class="label">{$form.check_number.label}</td><td>{$form.check_number.html|crmReplace:class:six}</td></tr>
+            {/if}
+	     <tr class="crm-contribution-form-block-trxn_id"><td class="label">{$form.trxn_id.label}</td><td{$valueStyle}>{$form.trxn_id.html|crmReplace:class:twelve} {help id="id-trans_id"}</td></tr>
+            {if $email and $outBound_option != 2}
+                <tr class="crm-contribution-form-block-is_email_receipt"><td class="label">{$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html} <span class="description">{ts 1=$email}Automatically email a receipt for this contribution to %1?{/ts}</span></td></tr>
+            {elseif $context eq 'standalone' and $outBound_option != 2 }
+                <tr id="email-receipt" style="display:none;" class="crm-contribution-form-block-is_email_receipt"><td class="label">{$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html} <span class="description">{ts}Automatically email a receipt for this contribution to {/ts}<span id="email-address"></span>?</span></td></tr>
+            {/if}
+             <tr id="fromEmail" style="display:none;" >
+                <td class="label">{$form.from_email_address.label}</td>
+                <td>{$form.from_email_address.html}</td>
+            </tr>
+            <tr id="receiptDate" class="crm-contribution-form-block-receipt_date">
+                <td class="label">{$form.receipt_date.label}</td>
+                <td>{include file="CRM/common/jcalendar.tpl" elementName=receipt_date}<br />
+                    <span class="description">{ts}Date that a receipt was sent to the contributor.{/ts}</span>
+                </td>
+            </tr>
+        </table>
 
+        </div>
+      </div>
+{/if}
+{*
+ <div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-processed crm-accordion-open" id="existingobligations_Information">
+        <div class="crm-accordion-header">
+	<div class="icon crm-accordion-pointer"></div>
+	   Apply To Existing Obligations
+	</div>
+	<div class="crm-accordion-body" id="Payment_Information">
+	<div class="content">
+	<table>
+
+{foreach from=$form item=element key=keys}
+{if $keys eq 'txt-allprice'}
+ <tr>
+ <td>Applied to items</td>
+ <td><div id = "existingPayment">
+	<table>
+	<th><input type='checkbox' id = 'checkAll'> </th>
+	<th>LineItem</th>
+	<th>Item Amount</th>
+	<th>Payment Amount</th>
+     {foreach from=$element item=subElement key=subkeys}
+     {foreach from=$subElement item=subElement1 key=subkeys1}
+	<tr>
+	<td>{$form.ch_allprice[$subkeys].html} </td>
+	<td>{$subElement1.label}</td>
+	<td>{$line[$subElement1.name]}</td>
+	<td>{$subElement1.html}&nbsp; </td>
+	</tr>
+     {/foreach}
+ {/foreach}
+	</table>
+<div id='unlocateAmount'>  </div>
+</div>
+</td>
+</tr>	
+{/if}
+{/foreach}
+	</table>
+    	</div>
+	</div>
+	</div>
+</div>
+*}
     <div id="customData" class="crm-contribution-form-block-customData"></div>
 
-    {*include custom data js file*}
-    {include file="CRM/common/customData.tpl"}
+    {*include custom data js file*} {include file="CRM/common/customData.tpl"}
 
 {literal}
 <script type="text/javascript">

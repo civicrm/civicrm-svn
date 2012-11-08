@@ -81,7 +81,7 @@ class CRM_Financial_Form_FinancialTypeAccount extends CRM_Contribute_Form
         $this->_id  = CRM_Utils_Request::retrieve( 'id' , 'Positive', $this ); 
         if(!$this->_id && ( $this->_action & CRM_Core_Action::UPDATE  ))
             $this->_id = CRM_Utils_Type::escape( $this->_id , 'Positive' );
-        $this->_BAOName = $this->get( 'BAOName' );
+        $this->_BAOName = 'CRM_Financial_BAO_FinancialTypeAccount';
         if ( $this->_aid && ( $this->_action & CRM_Core_Action::ADD  ) ) {
             $this->_title = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialType', $this->_aid, 'name' );
             CRM_Utils_System::setTitle( $this->_title .' - '.ts( 'Financial Accounts' ) );

@@ -145,7 +145,7 @@
                    {/if}
                </td>
             </tr>
-	    {if !$useForEvent AND !$useForMember }
+	    {if !$useForEvent }
 	    <tr class="crm-price-field-form-block-financial_type">
 		<td class="label">{$form.financial_type_id.label}</td>
 		<td>

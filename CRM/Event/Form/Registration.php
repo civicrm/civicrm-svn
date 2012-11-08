@@ -305,13 +305,12 @@ class CRM_Event_Form_Registration extends CRM_Core_Form {
       $this->set('requireApproval', $this->_requireApproval);
 
       // also get the accounting code
-      if (CRM_Utils_Array::value('financial_type_id', $this->_values['event'])) {
-        $this->_values['event']['accountingCode'] = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_FinancialType',
-          $this->_values['event']['financial_type_id'],
-          'accounting_code'
-        );
-      }
-
+      /* if (CRM_Utils_Array::value('financial_type_id', $this->_values['event'])) { */
+      /*   $this->_values['event']['accountingCode'] = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_FinancialType', */
+      /*     $this->_values['event']['financial_type_id'], */
+      /*     'accounting_code' */
+      /*   ); */
+      /* } */
       if (isset($this->_values['event']['default_role_id'])) {
         $participant_role = CRM_Core_OptionGroup::values('participant_role');
         $this->_values['event']['participant_role'] = $participant_role["{$this->_values['event']['default_role_id']}"];
