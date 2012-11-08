@@ -876,8 +876,8 @@ VALUES
   (@option_group_id_label, '{ts escape="sql"}Avery L7163{/ts}', '{literal}{"paper-size":"a4","orientation":"portrait","font-name":"helvetica","font-size":9,"font-style":"","metric":"in","lMargin":0.18,"tMargin":0.6,"NX":2,"NY":7,"SpaceX":0.1,"SpaceY":0,"width":3.9,"height":1.5,"lPadding":0.20,"tPadding":0.20}{/literal}',          'L7163', 'Avery', NULL, 0, 11, NULL, 0, 1, 1, NULL, NULL);
 
 -- financial accounts
-SELECT @opval := value FROM civicrm_option_value WHERE name = 'Revenue';
-SELECT @opexp := value FROM civicrm_option_value WHERE name = 'Expense';
+SELECT @opval := value FROM civicrm_option_value WHERE name = 'Revenue' and option_group_id = @option_group_id_fat;
+SELECT @opexp := value FROM civicrm_option_value WHERE name = 'Expenses' and option_group_id = @option_group_id_fat;
 INSERT INTO
    `civicrm_financial_account` (`name`, `financial_account_type_id`, `is_reserved`, `is_active`, `is_deductible`, `is_default`)
 VALUES

@@ -174,7 +174,6 @@
         var options = $(this).data('options') || {};
         $(this).remove();
         // Duplicates were already removed server-side
-        options.unique = false;
         $().crmAlert(text, title, type, options);
       });
       // Handle qf form errors

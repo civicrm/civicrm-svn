@@ -102,14 +102,14 @@
   if (showContribution) {
 	    cj("#financial_type_id").show();
   }
-      cj("#extends_3").click(function(){
+    	cj("input[id='extends[3]']").click(function(){
       showHideContribution();
   });
 
     });
 
     function showHideContribution() {
-  if(cj("#extends_3").attr('checked') ) {
+	if(cj("input[id='extends[3]']").attr('checked') ) {
 	      cj("#financial_type_id").show();
   } else {
 	      cj("#financial_type_id").hide();

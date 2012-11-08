@@ -836,7 +836,14 @@ WHERE  contribution_id = {$this->_id}
           $entityParams['entity_table'] = 'civicrm_financial_item';
           $entityParams['entity_id'] = $fid[$i++];
           $prevAmount = 0;
-          $prevAmount = CRM_Financial_BAO_FinancialItem::retrievePreviousAmount($entityParams);
+          $entity_trxn = new CRM_Financial_DAO_EntityFinancialTrxn();
+          $entity_trxn->copyValues($entityParams);
+          $entity_trxn->find();
+          while($entity_trxn->fetch()) {
+            if($entity_trxn->financial_trxn_id < $this->_fID) { 
+              $prevAmount += $entity_trxn->amount;
+            }
+          }
           $lineItemTotal[$itemKey] =  $prevAmount;
           if (!array_key_exists($itemKey, $lineItemTotal)){
             $lineItemTotal[$itemKey] = 0;

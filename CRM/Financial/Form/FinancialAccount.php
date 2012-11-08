@@ -66,11 +66,9 @@ class CRM_Financial_Form_FinancialAccount extends CRM_Contribute_Form
         
         $this->add('text', 'description', ts('Description'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialAccount', 'description' ) );
         $this->add('text', 'accounting_code', ts('Accounting Code'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialAccount', 'accounting_code' ) );
-        $this->add('text', 'contact_name', ts('Contact Name'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialAccount', 'contact_id' ) );
-        // $this->add('text', 'organisation_name', ts('Contact Name'), '' );
+        $this->add('text', 'contact_name', ts('Owner'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialAccount', 'contact_id' ) );
         $this->add('hidden', 'contact_id', '', array( 'id' => 'contact_id') );
-        $this->add('text', 'parent_financial_account', ts('Financial Account'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialAccount', 'parent_financial_account' ) );
-        // $this->add('text', 'parent_financial_account', ts('Financial Account'), '' );
+        $this->add('text', 'parent_financial_account', ts('Parent Financial Account'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialAccount', 'parent_financial_account' ) );
         $this->add('hidden', 'parent_id', '', array( 'id' => 'parent_id') );
         $this->add('text', 'tax_rate', ts('Tax Rate'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialAccount', 'tax_rate' ) );
         

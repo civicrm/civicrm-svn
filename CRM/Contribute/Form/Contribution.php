@@ -887,7 +887,7 @@ WHERE  contribution_id = {$this->_id}
         $trxn = CRM_Core_BAO_FinancialTrxn::retrieve($trxnParams,$default);
         $pricefildTotal['trxn'][$trxn->id]['trxn_total'] = $value['amount'];
         $pricefildTotal['trxn'][$trxn->id]['trxn_date']  = $trxn->trxn_date;
-        if(!empty($trxn->trxn_type;)) {
+        if(!empty($trxn->trxn_type)) {
         $pricefildTotal['trxn'][$trxn->id]['trxn_type']  = $trxn->trxn_type;
       }   
       }   
@@ -1277,7 +1277,7 @@ WHERE  contribution_id = {$this->_id}
         $errors['financial_type_id'] .= "'Expense Account is' is not configured for this Financial Type";
       }
     }
-    $errors = CRM_Price_BAO_Field::initialPayValidation( $fields, $files, $self );
+    CRM_Price_BAO_Field::initialPayValidation( $fields, $files, $self, $errors);
     return $errors;
   }
 

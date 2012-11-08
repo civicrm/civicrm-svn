@@ -666,7 +666,7 @@ WHERE  id IN (" . implode(',', array_keys($priceFields)) . ')';
 }
     $params->add('checkbox', 'int_amount', ts('Record smaller initial amount'));
 
-      if( !array_key_exists( 'initial_amount_label', $values ) ){
+    if ( empty($values) || !array_key_exists('initial_amount_label', $values)) {
         $values['initial_amount_label'] = "Amount to pay now:";
       } 
       
@@ -700,8 +700,7 @@ WHERE  id IN (" . implode(',', array_keys($priceFields)) . ')';
    * @static
    *
    */   
-  public static function initialPayValidation($fields, $files, $self) {
-      $errors = array();
+  public static function initialPayValidation($fields, $files, $self, &$errors) {
       $newFields = array();
     foreach ($fields as $key => $value) {
         if (strstr( $key,'txt-price_' )){

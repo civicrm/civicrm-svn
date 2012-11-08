@@ -49,7 +49,7 @@
 	  </td>
        </tr>
        <tr class="crm-contribution-form-block-organisation_name">
-	  <td class="label"> {$form.contact_name.label}&nbsp;{help id="id-current-employer" file="CRM/Contact/Form/Contact.hlp"}
+	  <td class="label"> {$form.contact_name.label}&nbsp;{help id="id-financial-owner" file="CRM/Contact/Form/Contact.hlp"}
 	  </td>
 	  <td class="html-adjust">{$form.contact_name.html|crmReplace:class:twenty}
           </td>
