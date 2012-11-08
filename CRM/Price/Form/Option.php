@@ -93,6 +93,12 @@ class CRM_Price_Form_Option extends CRM_Core_Form {
       $defaults['value'] = CRM_Utils_Money::format(CRM_Utils_Array::value('value', $defaults), NULL, '%a');
     }
 
+    $memberComponentId = CRM_Core_Component::getComponentID('CiviMember');
+    $extendComponentId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_sid, 'extends', 'id');
+
+    if (!isset($defaults['membership_num_terms']) && $memberComponentId == $extendComponentId) {
+      $defaults['membership_num_terms'] = 1;
+    }
 
     if (!isset($defaults['weight']) || !$defaults['weight']) {
       $fieldValues = array('price_field_id' => $this->_fid);
@@ -127,6 +133,7 @@ class CRM_Price_Form_Option extends CRM_Core_Form {
       return;
     }
     else {
+      $attributes        = CRM_Core_DAO::getAttribute('CRM_Price_DAO_FieldValue');
       // lets trim all the whitespace
       $this->applyFilter('__ALL__', 'trim');
 
@@ -157,6 +164,7 @@ class CRM_Price_Form_Option extends CRM_Core_Form {
           '' => ' ') + $membershipTypes, FALSE,
           array('onClick' => "calculateRowValues( );")
         );
+        $this->add('text', 'membership_num_terms', ts('Number of terms'), $attributes['membership_num_terms']);
       }
       else {
         $allComponents = explode(CRM_Core_DAO::VALUE_SEPARATOR, $extendComponentId);

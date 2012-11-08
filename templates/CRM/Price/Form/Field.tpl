@@ -200,6 +200,12 @@
       cj.post( postUrl, {mtype: mtype}, function( data ) {
                 cj("#option_amount_"+ row).val( data.total_amount );
          cj("#option_label_"+ row).val( data.name );
+         if (data.name) {
+           cj("#membership_num_terms_"+ row).val( '1' );
+         }
+         else {
+           cj("#membership_num_terms_"+ row).val( '' );
+         }
       }, 'json');
      }
 

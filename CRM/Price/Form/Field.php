@@ -264,6 +264,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
           array(
             '' => ' ') + $membershipTypes, FALSE, $js
         );
+        $this->add('text', 'membership_num_terms[' . $i . ']', ts('Number of terms'), $attributes['membership_num_terms']);
       }
 
       // weight
@@ -625,6 +626,8 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
     if ($this->_fid) {
       $params['id'] = $this->_fid;
     }
+    
+    $params['membership_num_terms'] = (!empty($params['membership_type_id'])) ? CRM_Utils_Array::value('membership_num_terms', $params, 1) : NULL;
 
     $priceField = CRM_Price_BAO_Field::create($params);
 

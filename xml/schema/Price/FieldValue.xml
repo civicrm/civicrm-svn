@@ -62,6 +62,7 @@
       <type>varchar</type>
       <title>Amount</title>
       <length>512</length>
+      <size>EIGHT</size>
       <required>true</required>
       <comment>Price field option amount</comment>
       <add>3.3</add>
@@ -101,6 +102,13 @@
       <add>3.4</add>
       <onDelete>SET NULL</onDelete>
   </foreignKey>
+  <field>
+      <name>membership_num_terms</name>
+      <type>int unsigned</type>
+      <default>NULL</default>
+      <comment>Number of terms for this membership</comment>
+      <add>4.3</add>
+  </field>
   <field>
       <name>is_default</name>
       <type>boolean</type>

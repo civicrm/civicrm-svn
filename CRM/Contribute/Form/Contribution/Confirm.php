@@ -881,13 +881,22 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         $contributionTypeID = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $priceFieldIds['id'], 'contribution_type_id');
         unset($priceFieldIds['id']);
         $membershipTypeIds = array();
+        $membershipTypeTerms = array();
         foreach ($priceFieldIds as $priceFieldId) {
           if ($id = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_FieldValue', $priceFieldId, 'membership_type_id')) {
             $membershipTypeIds[] = $id;
+            $term = 1;
+            if ($term = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_FieldValue', $priceFieldId, 'membership_num_terms')) {
+              $membershipTypeTerms[$id] = ($term > 1) ? $term : 1;
+            }
+            else {
+              $membershipTypeTerms[$id] = 1;
+            }
           }
         }
         $membershipParams['selectMembership'] = $membershipTypeIds;
         $membershipParams['contribution_type_id'] = $contributionTypeID;
+        $membershipParams['types_terms'] = $membershipTypeTerms;
       }
       if (CRM_Utils_Array::value('selectMembership', $membershipParams)) {
       CRM_Member_BAO_Membership::postProcessMembership($membershipParams, $contactID,

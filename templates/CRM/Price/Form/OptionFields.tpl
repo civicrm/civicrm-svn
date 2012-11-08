@@ -38,6 +38,7 @@
       <th>{ts}Default{/ts}</th>
   {if $useForMember}
       <th>{ts}Membership Type{/ts} {help id="id-membership-type"}</th>
+      <th>{ts}Number of Terms{/ts}</th>
   {/if}
         <th>{ts}Label{/ts}</th>
         <th>{ts}Amount{/ts} {if $useForEvent}{help id="id-negative-options"}{/if}</th>
@@ -67,10 +68,11 @@
       </td>
       {if $useForMember}
           <td>{$form.membership_type_id.$index.html}</td>
+          <td>{$form.membership_num_terms.$index.html}</td>
       {/if}
       <td> {$form.option_label.$index.html}</td>
 
-      <td> {$form.option_amount.$index.html|crmAddClass:eight}</td>
+      <td> {$form.option_amount.$index.html}</td>
       {if $useForEvent}
           <td>{$form.option_count.$index.html}</td>
           <td>{$form.option_max_value.$index.html}</td>

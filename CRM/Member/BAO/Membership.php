@@ -1302,13 +1302,17 @@ AND civicrm_membership.is_test = %2";
         $form->_params['campaign_id'] = $membershipParams['onbehalf']['member_campaign_id'];
       }
       if (is_array($membershipTypeID)) {
+        $typesTerms = CRM_Utils_Array::value('types_terms', $membershipParams, array());
         $createdMemberships = array();
+
         foreach ($membershipTypeID as $memType) {
+          $numTerms = CRM_Utils_Array::value($memType, $typesTerms, 1);
           $membership = self::renewMembership($contactID, $memType,
             $isTest, $form, NULL,
             CRM_Utils_Array::value('cms_contactID', $membershipParams),
-            $customFieldsFormatted
+            $customFieldsFormatted, CRM_Utils_Array::value($memType, $typesTerms, 1)
           );
+          
           $createdMemberships[$memType] = $membership;
           if (isset($contribution[$index])) {
             //insert payment record
@@ -1345,7 +1349,7 @@ AND civicrm_membership.is_test = %2";
         $membership = self::renewMembership($contactID, $membershipTypeID,
           $isTest, $form, NULL,
           CRM_Utils_Array::value('cms_contactID', $membershipParams),
-          $customFieldsFormatted
+          $customFieldsFormatted, CRM_Utils_Array::value('types_terms', $membershipParams, 1)
         );
         if (isset($contribution[$index])) {
           //insert payment record
@@ -1632,7 +1636,7 @@ AND civicrm_membership.is_test = %2";
       );
 
       if (!$pending) {
-        $dates = CRM_Member_BAO_MembershipType::getDatesForMembershipType($membershipTypeID);
+        $dates = CRM_Member_BAO_MembershipType::getDatesForMembershipType($membershipTypeID, NULL, NULL, NULL, $numRenewTerms);
 
         $memParams['join_date'] = CRM_Utils_Array::value('join_date', $dates);
         $memParams['start_date'] = CRM_Utils_Array::value('start_date', $dates);

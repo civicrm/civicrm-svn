@@ -40,6 +40,11 @@
                  <td>{$form.membership_type_id.html}
                  <br /> <span class="description">{ts}If a membership type is selected, a membership will be created or renewed when users select this option. Leave this blank if you are using this for non-membership options (e.g. magazine subscription).{/ts} {help id="id-member-price-options" file="CRM/Price/Page/Field.hlp"}</span></td>
             </tr>
+            <tr class="crm-price-option-form-block-membership_num_terms">
+                 <td class="label">{$form.membership_num_terms.label}</td>
+                 <td>{$form.membership_num_terms.html}
+                 <br /> <span class="description">{ts}You can set this to a number other than one to allow multiple membership terms.{/ts}</span></td>
+            </tr>
       {/if}
       <tr class="crm-price-option-form-block-label">
                <td class="label">{$form.label.label}</td>
