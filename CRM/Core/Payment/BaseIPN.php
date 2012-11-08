@@ -139,7 +139,7 @@ class CRM_Core_Payment_BaseIPN {
     return $success;
   }
 
-  function failed(&$objects, &$transaction) {
+  function failed(&$objects, &$transaction, $input = array()) {
     $contribution = &$objects['contribution'];
     $memberships = array();
     if (CRM_Utils_Array::value('membership', $objects)) {
@@ -164,22 +164,24 @@ class CRM_Core_Payment_BaseIPN {
       $this->addrecurLineItems($objects['contributionRecur']->id, $contribution->id);
     }
 
-    if (!empty($memberships)) {
-      foreach ($memberships as $membership) {
-        if ($membership) {
-          $membership->status_id = 4;
-          $membership->save();
-          
-          //update related Memberships.
-          $params = array('status_id' => 4);
-          CRM_Member_BAO_Membership::updateRelatedMemberships($membership->id, $params);
+    if (!CRM_Utils_Array::value('skipComponentSync', $input)) {
+      if (!empty($memberships)) {
+        foreach ($memberships as $membership) {
+          if ($membership) {
+            $membership->status_id = 4;
+            $membership->save();
+            
+            //update related Memberships.
+            $params = array('status_id' => 4);
+            CRM_Member_BAO_Membership::updateRelatedMemberships($membership->id, $params);
+          }
         }
       }
-    }
-
-    if ($participant) {
-      $participant->status_id = 4;
-      $participant->save();
+      
+      if ($participant) {
+        $participant->status_id = 4;
+        $participant->save();
+      }
     }
 
     $transaction->commit();
@@ -619,7 +621,7 @@ LIMIT 1;";
       return $statusId;
     }
     elseif ($statusId == array_search('Failed', $contributionStatuses)) {
-      $baseIPN->failed($objects, $transaction);
+      $baseIPN->failed($objects, $transaction, $input);
       $transaction->commit();
       return $statusId;
     }
