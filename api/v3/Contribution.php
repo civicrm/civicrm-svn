@@ -58,6 +58,7 @@ require_once 'CRM/Contribute/PseudoConstant.php';
  */
 function civicrm_api3_contribution_create($params) {
   civicrm_api3_verify_one_mandatory($params, NULL, array('financial_type_id', 'financial_type'));
+
   $values = array();
 
   _civicrm_api3_contribute_format_params($params, $values);
@@ -270,7 +271,7 @@ function _civicrm_api3_contribute_format_params($params, &$values, $create = FAL
     switch ($key) {
 			case 'financial_type_id' :
 				if (! CRM_Utils_Array::value ( $value, CRM_Contribute_PseudoConstant::financialType() )) {
-          throw new Exception("Invalid Contribution Type Id");
+          throw new Exception("Invalid Financial Type Id");
         }
         break;
 			case 'financial_type' :
@@ -282,7 +283,7 @@ function _civicrm_api3_contribute_format_params($params, &$values, $create = FAL
 					$values ['financial_type_id'] = $contributionTypeId;
         }
         else {
-          throw new Exception("Invalid Contribution Type");
+          throw new Exception("Invalid Financial Type");
         }
         break;
 

@@ -340,7 +340,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     //flush component settings
     CRM_Core_Component::getEnabledComponents(TRUE);
 
-    $tablesToTruncate = array('civicrm_contact');
+    $tablesToTruncate = array('civicrm_domain', 'civicrm_contact');
     $this->quickCleanup($tablesToTruncate);
     if($this->_eNoticeCompliant ){
       error_reporting(E_ALL);

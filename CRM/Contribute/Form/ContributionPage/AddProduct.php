@@ -86,6 +86,11 @@ class CRM_Contribute_Form_ContributionPage_AddProduct extends CRM_Contribute_For
       $defaults['product_id'] = $dao->product_id;
             $defaults['financial_type_id']   = $dao->financial_type_id;
       $defaults['weight'] = $dao->weight;
+    } else {
+      $dao = new CRM_Contribute_DAO_Product();
+      $dao->id = key($this->_products);
+      $dao->find(TRUE);
+      $defaults['financial_type_id'] = $dao->financial_type_id;
     }
     if (!isset($defaults['weight']) || !($defaults['weight'])) {
       $pageID = CRM_Utils_Request::retrieve('id', 'Positive',
@@ -191,16 +196,28 @@ class CRM_Contribute_Form_ContributionPage_AddProduct extends CRM_Contribute_For
 
     
       $financialType = CRM_Contribute_PseudoConstant::financialType( );
-      $revenueFinancialType = array( );
-      CRM_Core_PseudoConstant::populate( $revenueFinancialType,
+    $premiumFinancialType = array();
+    CRM_Core_PseudoConstant::populate(
+      $premiumFinancialType,
                                          'CRM_Financial_DAO_EntityFinancialAccount',
                                          $all = True, 
                                          $retrieve = 'entity_id', 
                                          $filter = null, 
-                                         'account_relationship = 5' );
+      'account_relationship = 8' 
+    );
             
+    $costFinancialType = array();
+    CRM_Core_PseudoConstant::populate(
+      $costFinancialType,
+      'CRM_Financial_DAO_EntityFinancialAccount',
+      $all = True, 
+      $retrieve = 'entity_id', 
+      $filter = null, 
+      'account_relationship = 7' 
+    );
+    $productFinancialType = array_intersect($costFinancialType, $premiumFinancialType);
       foreach( $financialType as $key => $financialTypeName ){
-        if( !in_array( $key, $revenueFinancialType ) )
+      if(!in_array( $key, $productFinancialType))
           unset( $financialType[$key] );
       }
       if( count( $financialType ) ){
@@ -211,7 +228,6 @@ class CRM_Contribute_Form_ContributionPage_AddProduct extends CRM_Contribute_For
                  ts( 'Financial Type' ), 
         array(''=>ts('- Select Financial Type -')) + $financialType
       );
-
 
     $this->addRule('weight', ts('Please enter integer value for weight'), 'integer');
     $session->pushUserContext(CRM_Utils_System::url($urlParams, 'action=update&reset=1&id=' . $this->_id));

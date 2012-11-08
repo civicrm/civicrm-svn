@@ -224,7 +224,26 @@ class CRM_Financial_Form_FinancialTypeAccount extends CRM_Contribute_Form
     { 
         require_once "CRM/Financial/BAO/FinancialTypeAccount.php";
         $errorMsg = array( );
-        $error = FALSE;
+        $errorflag = FALSE;
+        if ($self->_action == CRM_Core_Action::DELETE ) {
+          $groupName = 'account_relationship';
+          $relationValues = CRM_Core_PseudoConstant::accountOptionValues($groupName);
+          if (CRM_Utils_Array::value( 'financial_account_id', $values ) != 'select' ) {
+            if ($relationValues[$values['account_relationship']] == 'Premiums Inventory Account is' || $relationValues[$values['account_relationship']] == 'Cost of Sales Account is') {
+              $premiumsProduct = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_PremiumsProduct', $values['financial_type_id'], 'product_id', 'financial_type_id');
+              $product = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_Product', $values['financial_type_id'], 'name', 'financial_type_id');
+              if (!empty($premiumsProduct) || !empty($product)) {
+                $errorMsg['account_relationship'] = 'You cannot remove '.$relationValues[$values['account_relationship']].' relationship while the Financial Type is used for a Premium.';
+              }
+            }
+          }
+        }
+        if( CRM_Utils_Array::value( 'account_relationship', $values ) == 'select' ){
+            $errorMsg['account_relationship'] = 'Financial Account relationship is a required field.';
+        }
+        if( CRM_Utils_Array::value( 'financial_account_id', $values ) == 'select' ){
+            $errorMsg['financial_account_id'] = 'Financial Account is a required field.';
+        }
         if( CRM_Utils_Array::value( 'account_relationship', $values ) && CRM_Utils_Array::value( 'financial_account_id', $values ) ){
             $params = array( 'account_relationship' => $values['account_relationship'],
                              'entity_id'            => $self->_aid,
@@ -252,7 +271,6 @@ class CRM_Financial_Form_FinancialTypeAccount extends CRM_Contribute_Form
             if( $error )
                 $errorMsg['account_relationship'] = ts( 'This account relationship already exits' );
         }
-    
         return CRM_Utils_Array::crmIsEmptyArray( $errorMsg ) ? true : $errorMsg;
     }
       
