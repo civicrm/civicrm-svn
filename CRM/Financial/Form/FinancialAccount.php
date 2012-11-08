@@ -108,6 +108,25 @@ class CRM_Financial_Form_FinancialAccount extends CRM_Contribute_Form
         return CRM_Utils_Array::crmIsEmptyArray( $errorMsg ) ? true : $errorMsg;
     }
        
+    
+    /**
+   * This function sets the default values for the form.
+   * the default values are retrieved from the database
+   *
+   * @access public
+   *
+   * @return None
+   */
+    function setDefaultValues() {
+      
+      $defaults = parent::setDefaultValues();
+      if($this->_action & CRM_Core_Action::ADD) {
+        $defaults['contact_id'] = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Domain', CRM_Core_Config::domainID(), 'contact_id');
+        $defaults['contact_name'] = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $defaults['contact_id'], 'sort_name');
+      }
+      return $defaults;
+    }
+
     /**
      * Function to process the form
      *

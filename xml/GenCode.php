@@ -652,7 +652,8 @@ Alternatively you can get a version of CiviCRM that matches your PHP version
         break;
 
       case 'decimal':
-        $field['sqlType'] = 'decimal(20,2)';
+        $length = $fieldXML->length ? $fieldXML->length : '20,2';
+        $field['sqlType'] = 'decimal(' . $length . ')';
         $field['phpType'] = 'float';
         $field['crmType'] = 'CRM_Utils_Type::T_MONEY';
         break;

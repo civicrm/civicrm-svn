@@ -395,7 +395,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
       }
       if ( CRM_Utils_Array::value('processPriceSet', $params) &&
            !empty($params['lineItems']) ) {
-        CRM_Contribute_Form_AdditionalInfo::processPriceSet( $contribution->id, $params['lineItems'], $contribution );   
+        CRM_Price_BAO_LineItem::processPriceSet( $contribution->id, $params['lineItems'], $contribution );   
       }
 
       //insert payment record for this membership

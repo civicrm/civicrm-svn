@@ -1625,7 +1625,7 @@ WHERE  contribution_id = {$this->_id}
       }
       // process line items, until no previous line items.
       if (empty($this->_lineItems) && $entityID && !empty($lineItem)) {
-        CRM_Contribute_Form_AdditionalInfo::processPriceSet($entityID, $lineItem, $contribution,null, "civicrm_".$entityTable);
+        CRM_Price_BAO_LineItem::processPriceSet($entityID, $lineItem, $contribution,null, "civicrm_".$entityTable);
       }
 
       //send receipt mail.

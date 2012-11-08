@@ -1,15 +1,19 @@
 {if $action == 1 || $action == ""}
 <div class="crm-section int_amount-section" >
-<div class="label">{$form.int_amount.html}</div>
-<div class="content">{$form.int_amount.label}</div>
+     <table class="form-layout-compressed"><tr>
+<td class="label">
+{$form.int_amount.html}</td>
+<td class="label">{$form.int_amount.label}</td></tr>
+</table>
 <div>
      <div class="crm-section {$form.initial_amount.name}-section">
-	<div class="label">{$form.initial_amount.label}</div>
-	<div class="content">
+     <table class="form-layout-compressed">
+	<tr><td class="label">{$form.initial_amount.label}</td>
+	<td >
 		{$form.initial_amount.html}
 		<p><span class="description">{ts}{$initialAmountHelpText}{/ts}</span></p>
-	    	</div>
-	                 
+	    	</td></tr>
+		</table>
            {if $context}
  	   <table id = 'option_item'>
                <tr id="adjust-option-items" class="crm-contribution-form-block-option_type">

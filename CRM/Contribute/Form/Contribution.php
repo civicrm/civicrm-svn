@@ -1906,7 +1906,7 @@ WHERE  contribution_id = {$this->_id}
           $ids['contribution'] = $contribution->id;
           CRM_Contribute_BAO_Contribution::create($contrib,$ids);
         }
-        CRM_Contribute_Form_AdditionalInfo::processPriceSet( $contribution->id, $lineItem, $contribution );                      
+        CRM_Price_BAO_LineItem::processPriceSet( $contribution->id, $lineItem, $contribution );
       }else{
         if(empty($this->_lineItems)) {
           $entityParams = array(
