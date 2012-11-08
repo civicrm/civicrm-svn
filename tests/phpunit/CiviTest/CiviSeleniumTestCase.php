@@ -1616,7 +1616,6 @@ function _testAddFinancialType(){
   $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                        'account_relationship'  => $accountRelationship );
   
-  
   $this->select( 'account_relationship', "label={$accountRelationship}" );
   sleep(2);
   $this->select( 'financial_account_id', "label={$financialAccountTitle}" );
@@ -1635,7 +1634,6 @@ function _testAddFinancialType(){
 function _testLineItem( $lineitem ){
   $i = 2;
   $this->waitForElementPresent("xpath= id('Contribution')/div[2]/table/tbody/");
-  sleep(50);
   foreach($lineitem as $key=>$valueArray){
     $total = $this->getText("xpath= id('Contribution')/div[2]/table/tbody/tr[3]/td[2]/table/tbody/tr[{$i}]/td[4]"); 
     $Paid = $this->getText("xpath= id('Contribution')/div[2]/table/tbody/tr[3]/td[2]/table/tbody/tr[{$i}]/td[5]"); 
@@ -1645,8 +1643,9 @@ function _testLineItem( $lineitem ){
     $Paid = explode(' ',$Paid); 
     $Paid = $Paid[1]; 
     $total= explode(' ',$total); 
-    $total = $total[1];  
-    $this->assertTrue(($total == ($Paid+$Owing)), 'Priceset Amount calculation incorrect');
+    $total =  (Float)(String)$total[1];
+    $sum = (Float)(String)($Paid+$Owing);
+    $this->assertTrue(($total == $sum), 'Priceset Amount calculation incorrect');
     $i++;
   }
   $this->click('_qf_Contribution_cancel'); 

@@ -994,7 +994,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
         CRM_Price_BAO_Field::priceSetValidation($priceSetId, $values, $errorMsg);
       }
     }
-    $errorMsg =  CRM_Price_BAO_Field::initialPayValidation( $fields, $files, $self );
+    $errorMsg =  CRM_Price_BAO_Field::initialPayValidation( $values, $files, $self );
     return CRM_Utils_Array::crmIsEmptyArray($errorMsg) ? TRUE : $errorMsg;
   }
 

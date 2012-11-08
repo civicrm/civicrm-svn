@@ -979,6 +979,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     ) {
       $errors['contribution_status_id'] = ts("Please select a valid payment status before updating.");
     }
+    $errors = CRM_Price_BAO_Field::initialPayValidation( $params, $files, $self );
 
     return empty($errors) ? TRUE : $errors;
   }
