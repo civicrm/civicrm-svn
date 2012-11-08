@@ -189,7 +189,7 @@ VALUES
    ('account_type'                  , '{ts escape="sql"}Account type{/ts}'                       , 1, 1),
    ('website_type'                  , '{ts escape="sql"}Website Type{/ts}'                       , 1, 1),
    ('tag_used_for'                  , '{ts escape="sql"}Tag Used For{/ts}'                       , 1, 1),
-   ('currencies_enabled'            , '{ts escape="sql"}List of currencies enabled for this site{/ts}', 1, 1),
+   ('currencies_enabled'            , '{ts escape="sql"}Currencies Enabled{/ts}'                 , 1, 1),
    ('event_badge'                   , '{ts escape="sql"}Event Name Badge{/ts}'                   , 1, 1),
    ('note_privacy'                  , '{ts escape="sql"}Privacy levels for notes{/ts}'           , 1, 1),
    ('campaign_type'                 , '{ts escape="sql"}Campaign Type{/ts}'                      , 1, 1),
@@ -213,7 +213,8 @@ VALUES
    ('financial_account_type'        , '{ts escape="sql"}Financial Account Type{/ts}'             , 1, 1),
    ('financial_item_status'         , '{ts escape="sql"}Financial Item Status{/ts}'              , 1, 1),
    ('grant_program_status'          , '{ts escape="sql"}Grant Program Status{/ts}'                , 1, 1),
-   ('allocation_algorithm'          , '{ts escape="sql"}Grant Program Allocation Algorithm{/ts}'  , 1, 1);
+   ('allocation_algorithm'          , '{ts escape="sql"}Grant Program Allocation Algorithm{/ts}'  , 1, 1),
+   ('batch_mode'                    , '{ts escape="sql"}Batch Mode{/ts}'                         , 1, 1);
 
 SELECT @option_group_id_pcm            := max(id) from civicrm_option_group where name = 'preferred_communication_method';
 SELECT @option_group_id_act            := max(id) from civicrm_option_group where name = 'activity_type';
@@ -287,6 +288,7 @@ SELECT @option_group_id_fat            := max(id) from civicrm_option_group wher
 SELECT @option_group_id_financial_item_status := max(id) from civicrm_option_group where name = 'financial_item_status';
 SELECT @option_group_id_grantProgramSt  := max(id) from civicrm_option_group where name = 'grant_program_status';
 SELECT @option_group_id_allocationAlgo  := max(id) from civicrm_option_group where name = 'allocation_algorithm';
+SELECT @option_group_id_batch_mode := max(id) from civicrm_option_group where name = 'batch_mode';
 
 
 SELECT @contributeCompId := max(id) FROM civicrm_component where name = 'CiviContribute';
@@ -827,7 +829,11 @@ VALUES
     (@option_group_id_arel, '{ts escape="sql"}AR Account is{/ts}', 3, 'AR Account is', NULL, 0, 0, 3, 'AR Account is', 0, 1, 1, 2, NULL),
     (@option_group_id_arel, '{ts escape="sql"}Credit Liability Account is{/ts}', 4, 'Credit Liability Account is', NULL, 0, 0, 4, 'Credit Liability Account is', 0, 1, 0, 2, NULL),
      (@option_group_id_arel, '{ts escape="sql"}Expense Account is{/ts}', 5, 'Expense Account is', NULL, 0, 0, 5, 'Expense Account is', 0, 1, 1, 2, NULL),
-     (@option_group_id_arel, '{ts escape="sql"}Is Asset Account of{/ts}', 6, 'Is Asset Account of', NULL, 0, 0, 6, 'Is Asset Account of', 0, 1, 1, 2, NULL),
+     (@option_group_id_arel, '{ts escape="sql"}Asset Account of{/ts}', 6, 'Asset Account of', NULL, 0, 0, 6, 'Asset Account of', 0, 1, 1, 2, NULL),
+
+-- Batch Mode
+   (@option_group_id_batch_mode, '{ts escape="sql"}Manual Batch{/ts}', 1, 'Manual Batch', NULL, 0, 0, 1, 'Manual Batch', 0, 1, 1, 2, NULL),
+   (@option_group_id_batch_mode, '{ts escape="sql"}Automatic Batch{/ts}', 2, 'Automatic Batch', NULL, 0, 0, 2, 'Automatic Batch', 0, 1, 1, 2, NULL),
 
 -- Financial Item Status
    (@option_group_id_financial_item_status, '{ts escape="sql"}Paid{/ts}', 1, 'Paid', NULL, 0, 0, 1, 'Paid', 0, 1, 1, 2, NULL),

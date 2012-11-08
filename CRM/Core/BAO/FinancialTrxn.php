@@ -75,7 +75,6 @@ class CRM_Core_BAO_FinancialTrxn extends CRM_Financial_DAO_FinancialTrxn
     $entity_financial_trxn_params =
       array(
       'entity_table' => "civicrm_contribution",
-      'entity_id' => $params['contribution_id'],
       'financial_trxn_id' => $trxn->id,
       //use net amount to include all received amount to the contribution
       'amount' => $contributionAmount,
@@ -85,6 +84,8 @@ class CRM_Core_BAO_FinancialTrxn extends CRM_Financial_DAO_FinancialTrxn
     if( !empty ( $trxnEntityTable ) ){
       $entity_financial_trxn_params['entity_table'] = $trxnEntityTable['entity_table'];
       $entity_financial_trxn_params['entity_id']    = $trxnEntityTable['entity_id'];
+    } else {
+      $entity_financial_trxn_params['entity_id'] =  $params['contribution_id'];
     }
         $entity_trxn = new CRM_Financial_DAO_EntityFinancialTrxn();
     $entity_trxn->copyValues($entity_financial_trxn_params);

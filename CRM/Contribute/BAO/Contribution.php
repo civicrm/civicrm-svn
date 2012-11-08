@@ -374,10 +374,8 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
       if($retrieverequired == 1){
         $contribution->find(true);
       }
-            $contributionTypes = CRM_Contribute_PseudoConstant::financialType();
-            $title = CRM_Contact_BAO_Contact::displayName( $contribution->contact_id ) . 
-                ' - (' . CRM_Utils_Money::format( $contribution->total_amount, $contribution->currency ) . ' ' . 
-                ' - ' . $contributionTypes[$contribution->financial_type_id] . ')';
+      $contributionTypes = CRM_Contribute_PseudoConstant::financialType();
+      $title = CRM_Contact_BAO_Contact::displayName($contribution->contact_id) . ' - (' . CRM_Utils_Money::format($contribution->total_amount, $contribution->currency) . ' ' . ' - ' . $contributionTypes[$contribution->financial_type_id] . ')';
 
       $recentOther = array();
       if (CRM_Core_Permission::checkActionPermission('CiviContribute', CRM_Core_Action::UPDATE)) {
@@ -1968,7 +1966,7 @@ SELECT source_contact_id
     }
     $paymentProcessorID = CRM_Utils_Array::value('paymentProcessor', $ids);
     $contributionType = new CRM_Financial_BAO_FinancialType();
-    $contributionType->id = $contribution->financial_type_id;
+    $contributionType->id = $this->financial_type_id;
     if (!$contributionType->find(TRUE)) {
       throw new Exception("Could not find financial type record: " . $this->financial_type_id);
     }

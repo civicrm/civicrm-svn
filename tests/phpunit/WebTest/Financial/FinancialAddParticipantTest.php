@@ -238,7 +238,7 @@ class WebTest_Financial_FinancialAddParticipantTest extends CiviSeleniumTestCase
                                      $isDefault
                                      );
 
-    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[7]/span/a[text()='Edit']" );
+    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[8]/span/a[text()='Edit']" );
     
     //Add new Financial Type
     $financialType = array();
@@ -247,7 +247,7 @@ class WebTest_Financial_FinancialAddParticipantTest extends CiviSeleniumTestCase
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Is Asset Account of"; //Is Asset Account of - Income Account is
+    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -464,7 +464,7 @@ class WebTest_Financial_FinancialAddParticipantTest extends CiviSeleniumTestCase
                                      $isDefault
                                      );
 
-    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[7]/span/a[text()='Edit']" );
+    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[8]/span/a[text()='Edit']" );
     
     //Add new Financial Type
     $financialType = array();
@@ -473,7 +473,7 @@ class WebTest_Financial_FinancialAddParticipantTest extends CiviSeleniumTestCase
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Is Asset Account of"; //Is Asset Account of - Income Account is
+    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -702,7 +702,7 @@ class WebTest_Financial_FinancialAddParticipantTest extends CiviSeleniumTestCase
                                      $isDefault
                                      );
 
-    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[7]/span/a[text()='Edit']" );
+    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[8]/span/a[text()='Edit']" );
     
     //Add new Financial Type
     $financialType = array();
@@ -711,7 +711,7 @@ class WebTest_Financial_FinancialAddParticipantTest extends CiviSeleniumTestCase
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Is Asset Account of"; //Is Asset Account of - Income Account is
+    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -944,7 +944,7 @@ function testParticipantSingleAllocate() {
                                      $isDefault
                                      );
 
-    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[7]/span/a[text()='Edit']" );
+    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[8]/span/a[text()='Edit']" );
     
     //Add new Financial Type
     $financialType = array();
@@ -953,7 +953,7 @@ function testParticipantSingleAllocate() {
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Is Asset Account of"; //Is Asset Account of - Income Account is
+    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -1177,7 +1177,7 @@ function testParticipantDoubleAllocate() {
                                      $isDefault
                                      );
 
-    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[7]/span/a[text()='Edit']" );
+    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[8]/span/a[text()='Edit']" );
     
     //Add new Financial Type
     $financialType = array();
@@ -1186,7 +1186,7 @@ function testParticipantDoubleAllocate() {
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Is Asset Account of"; //Is Asset Account of - Income Account is
+    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -1410,7 +1410,7 @@ function testParticipantRemoveLineItem(){
                                      $isDefault
                                      );
 
-    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[7]/span/a[text()='Edit']" );
+  $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[8]/span/a[text()='Edit']" );
     
     //Add new Financial Type
     $financialType = array();
@@ -1419,7 +1419,7 @@ function testParticipantRemoveLineItem(){
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Is Asset Account of"; //Is Asset Account of - Income Account is
+  $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -1650,7 +1650,7 @@ function testParticipantOverPayment(){
                                      $isDefault
                                      );
 
-    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[7]/span/a[text()='Edit']" );
+    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[8]/span/a[text()='Edit']" );
     //Add new Financial Type
     $financialType = array();
     $financialType['name'] = 'FinancialAsset '.substr(sha1(rand()), 0, 4);
@@ -1658,7 +1658,7 @@ function testParticipantOverPayment(){
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Is Asset Account of"; //Is Asset Account of - Income Account is
+    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -1864,7 +1864,7 @@ function testParticipantAddAndRemoveLineItem(){
                                      $isDefault
                                      );
 
-    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[7]/span/a[text()='Edit']" );
+    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[8]/span/a[text()='Edit']" );
     //Add new Financial Type
     $financialType = array();
     $financialType['name'] = 'FinancialAsset '.substr(sha1(rand()), 0, 4);
@@ -1872,7 +1872,7 @@ function testParticipantAddAndRemoveLineItem(){
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Is Asset Account of"; //Is Asset Account of - Income Account is
+    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     

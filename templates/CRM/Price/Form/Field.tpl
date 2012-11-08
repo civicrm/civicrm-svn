@@ -145,7 +145,6 @@
                    {/if}
                </td>
             </tr>
-	    {if !$useForEvent }
 	    <tr class="crm-price-field-form-block-financial_type">
 		<td class="label">{$form.financial_type_id.label}</td>
 		<td>
@@ -158,7 +157,6 @@
 		
 		</td>
 	    </tr>
-	    {/if}
             <tr class="crm-price-field-form-block-weight">
                <td class="label">{$form.weight.label}</td>
                <td>{$form.weight.html|crmAddClass:two}

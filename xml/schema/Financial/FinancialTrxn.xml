@@ -52,7 +52,7 @@
   <field>  
       <name>trxn_date</name>  
       <type>datetime</type>  
-      <required>true</required>  
+    <default>NULL</default> 
       <add>1.3</add>  
   </field>  
   <field>   

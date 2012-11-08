@@ -103,7 +103,7 @@
   <field>
        <name>is_tax</name>
        <type>boolean</type>
-       <default>1</default>
+       <default>0</default>
        <comment>Is this account for taxes?</comment>
        <add>4.1</add>
   </field>

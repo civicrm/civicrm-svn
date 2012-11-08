@@ -134,6 +134,7 @@
       <name>deductible_amount</name> 
       <title>Deductible Amount</title>
       <type>decimal</type> 
+      <default>0.0</default>
       <headerPattern>/unit?.?amoun/i</headerPattern>
       <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
       <required>true</required> 

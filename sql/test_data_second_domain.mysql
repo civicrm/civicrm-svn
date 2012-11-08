@@ -1,19 +1,22 @@
   SET @domainName := 'Second Domain';
+  INSERT INTO civicrm_contact(sort_name, display_name, contact_type, organization_name)
+  VALUES (@domainName, @domainName, 'Organization', @domainName);
+  SET @contactID:=LAST_INSERT_ID();  
   INSERT INTO civicrm_address ( contact_id, location_type_id, is_primary, is_billing, street_address, street_number, street_number_suffix, street_number_predirectional, street_name, street_type, street_number_postdirectional, street_unit, supplemental_address_1, supplemental_address_2, supplemental_address_3, city, county_id, state_province_id, postal_code_suffix, postal_code, usps_adc, country_id, geo_code_1, geo_code_2, timezone)
       VALUES
-      ( NULL, 1, 1, 1, '15 Main St', 15, 'S', NULL, 'Main', 'St', NULL, NULL, NULL, NULL, NULL, 'Collinsville', NULL, 1006, NULL, '6022', NULL, 1228, 41.8328, -72.9253, NULL);
+      ( @contactID, 1, 1, 1, '15 Main St', 15, 'S', NULL, 'Main', 'St', NULL, NULL, NULL, NULL, NULL, 'Collinsville', NULL, 1006, NULL, '6022', NULL, 1228, 41.8328, -72.9253, NULL);
 
 SELECT @addId := id from civicrm_address where street_address = '15 Main St';
 
 INSERT INTO civicrm_email (contact_id, location_type_id, email, is_primary, is_billing, on_hold, hold_date, reset_date)
       VALUES
-      (NULL, 1, '"Domain Email" <domainemail2@example.org>', 0, 0, 0, NULL, NULL);
+      (@contactID, 1, '"Domain Email" <domainemail2@example.org>', 0, 0, 0, NULL, NULL);
 
 SELECT @emailId := id from civicrm_email where email = 'domainemail2@example.org';
 
 INSERT INTO civicrm_phone (contact_id, location_type_id, is_primary, is_billing, mobile_provider_id, phone, phone_type_id)
       VALUES
-      (NULL, 1, 0, 0, NULL,'204 555-1001', 1);
+      (@contactID, 1, 0, 0, NULL,'204 555-1001', 1);
 
 SELECT @phoneId := id from civicrm_phone where phone = '204 555-1001';
 
@@ -24,7 +27,7 @@ INSERT INTO civicrm_loc_block ( address_id, email_id, phone_id, address_2_id, em
 SELECT @locBlockId := id from civicrm_loc_block where phone_id = @phoneId AND email_id = @emailId AND address_id = @addId;
   
   INSERT INTO civicrm_domain 
-  (name, version, loc_block_id) VALUES (@domainName, '4.2', @locBlockId);
+  (name, version,contact_id) VALUES (@domainName, '4.2', @contactID);
   SELECT @domainID := id FROM civicrm_domain where name = 'Second Domain';
   INSERT INTO
    `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `domain_id`, `visibility_id`)

@@ -2,7 +2,6 @@
 <!--  $Id:  -->
 <dataset>
   <table name="civicrm_financial_type">
-    <column>id</column>
     <column>name</column>
     <column>description</column>
     <column>is_deductible</column>
@@ -10,7 +9,6 @@
     <column>is_active</column>
     <column>is_current_revision</column>
     <row>
-      <value>10</value>  <!--  id  -->
       <value>Gift</value>  <!--  name  -->
       <value>For some worthwhile cause</value>  <!--  description  -->
       <value>0</value>  <!--  is_deductible  -->
@@ -19,7 +17,6 @@
       <value>1</value>   <!--  is_current_revision -->     
     </row>
     <row>
-      <value>11</value>  <!--  id  -->
       <value>Prize</value>  <!--  name  -->
       <value>Also for some worthwhile cause</value>  <!--  description  -->
       <value>0</value>  <!--  is_deductible  -->

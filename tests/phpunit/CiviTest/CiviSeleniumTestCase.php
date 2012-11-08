@@ -425,7 +425,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
    * @return void
    */
 
-  function webtestAddPaymentProcessor( $processorName, $processorType = 'Dummy', $processorSettings = null, $financialType = null ) {
+  function webtestAddPaymentProcessor( $processorName, $processorType = 'Dummy', $processorSettings = null, $financialType = 'Donation' ) {
     if (!$processorName) {
       $this->fail("webTestAddPaymentProcessor requires $processorName.");
     }
@@ -660,7 +660,6 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
     // fill in step 1 (Title and Settings)
     $this->type('title', $pageTitle);
-        $this->select('financial_type_id', 'value=1');
 
     if ($onBehalf) {
       $this->click('is_organization');
@@ -1608,7 +1607,7 @@ function _testAddFinancialType(){
                                    $taxRate,
                                    $isDefault
                                    );
-  $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[7]/span/a[text()='Edit']" );
+  $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[8]/span/a[text()='Edit']" );
   
   //Add new Financial Type
   $financialType['name'] = 'FinancialType '.substr(sha1(rand()), 0, 4);
@@ -1616,7 +1615,7 @@ function _testAddFinancialType(){
   $financialType['is_reserved'] = false; 
   $this->addeditFinancialType( $financialType );
   
-  $accountRelationship = "Income Account is"; //Is Asset Account - of Income Account is
+  $accountRelationship = "Income Account is"; //Asset Account - of Income Account is
   $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                        'account_relationship'  => $accountRelationship );
   

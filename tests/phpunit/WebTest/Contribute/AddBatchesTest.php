@@ -57,7 +57,6 @@ class WebTest_Contribute_AddBatchesTest extends CiviSeleniumTestCase {
     $this->type("total", 500);
     $this->click("_qf_Batch_next");
     $this->waitForPageToLoad('30000');
-
     // Add Contact Details
     $data = array();
     for ($i=1; $i<=$itemCount; $i++ ) {
@@ -127,7 +126,6 @@ class WebTest_Contribute_AddBatchesTest extends CiviSeleniumTestCase {
     $this->webtestNewDialogContact($data['first_name'], $data['last_name'], $email, 4, "primary_profiles_{$row}", "primary_{$row}");
     
     if ($type == "Contribution") {
-      
       $this->select("field_{$row}_financial_type", $data['financial_type']);
       $this->type("field_{$row}_total_amount", $data['amount']);
       $this->webtestFillDateTime("field_{$row}_receive_date", "+1 week");
@@ -217,5 +215,36 @@ class WebTest_Contribute_AddBatchesTest extends CiviSeleniumTestCase {
     foreach ($data as $value) {
       $this->_checkResult($value, $type);
     }
+  }
+
+  function webtestNewDialogContact($fname = 'Anthony', $lname = 'Anderson', $email = 'anthony@anderson.biz', $type = 4, $row) {
+    // 4 - Individual profile
+    // 5 - Organization profile
+    // 6 - Household profile
+    $this->select("{$row}", "value={$type}");
+    // create new contact using dialog
+    //   $this->waitForElementPresent('#first_name');
+    $this->waitForElementPresent('_qf_Edit_next');
+
+    switch ($type) {
+      case 4:
+        $this->type('first_name', $fname);
+        $this->type('last_name', $lname);
+        break;
+
+      case 5:
+        $this->type('organization_name', $fname);
+        break;
+
+      case 6:
+        $this->type('household_name', $fname);
+        break;
+}
+
+    $this->type('email-Primary', $email);
+    $this->click('_qf_Edit_next');
+
+    // Is new contact created?
+    $this->assertTrue($this->isTextPresent('New contact has been created.'), "Status message didn't show up after saving!");
   }
 }

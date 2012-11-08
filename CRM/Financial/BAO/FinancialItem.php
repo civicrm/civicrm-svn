@@ -125,6 +125,11 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem
                                                   'financial_trxn_id' => $trxnId['id'],
                                               'amount'            => array_key_exists('init_amount',$params)?$params['init_amount']:$params['amount'],
                                                   );
+        if($params['init_amount'] != 'NaN') {
+          $entity_financial_trxn_params['amount'] = $params['init_amount'];
+        }else{
+          $entity_financial_trxn_params['amount'] = $params['amount'];
+        }
             $entity_trxn = new CRM_Financial_DAO_EntityFinancialTrxn();
             $entity_trxn->copyValues( $entity_financial_trxn_params );
             if ( CRM_Utils_Array::value( 'entityFinancialTrxnId', $ids ) ) {

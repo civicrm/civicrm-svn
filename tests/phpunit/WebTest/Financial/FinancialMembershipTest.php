@@ -72,7 +72,7 @@ class WebTest_Financial_FinancialMembershipTest extends CiviSeleniumTestCase {
                                      $isDefault
                                      );
 
-    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[7]/span/a[text()='Edit']" );
+    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[8]/span/a[text()='Edit']" );
     
     //Add new Financial Type
     $financialType = array();
@@ -81,7 +81,7 @@ class WebTest_Financial_FinancialMembershipTest extends CiviSeleniumTestCase {
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Is Asset Account of"; //Is Asset Account of - Income Account is
+    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -180,7 +180,7 @@ class WebTest_Financial_FinancialMembershipTest extends CiviSeleniumTestCase {
                                      $isDefault
                                      );
 
-    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[7]/span/a[text()='Edit']" );
+    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[8]/span/a[text()='Edit']" );
     
     //Add new Financial Type
     $financialType = array();
@@ -189,7 +189,7 @@ class WebTest_Financial_FinancialMembershipTest extends CiviSeleniumTestCase {
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Is Asset Account of"; //Is Asset Account of - Income Account is
+    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -504,8 +504,8 @@ class WebTest_Financial_FinancialMembershipTest extends CiviSeleniumTestCase {
       $$date = CRM_Utils_Date::customFormat($$date, $configVars->dateformatFull);
     }
 
-    $this->click("xpath=//div[@id='priceset']/div[2]/div[2]/div/span/input");
-    $this->click("xpath=//div[@id='priceset']/div[3]/div[2]/div[2]/span/input");
+    $this->click("xpath=//div[@id='priceset']/div[3]/div[2]/div/span/input");
+    $this->click("xpath=//div[@id='priceset']/div[4]/div[2]/div[2]/span/input");
 
     $this->type('email-5', $contactParams['email-5']);
     $this->type('first_name', $contactParams['first_name']);
@@ -649,8 +649,7 @@ class WebTest_Financial_FinancialMembershipTest extends CiviSeleniumTestCase {
     // Create a new payment processor if requested
     if ($isAddPaymentProcessor) {
       if( list($processorName, $processorType) = each($processor)) { 
-        //   $this->webtestAddPaymentProcessor($processorName, $processorType);
-        $this->webtestAddPaymentProcessor( $processorName, '11', null, $processor['financial_type'] );
+        $this->webtestAddPaymentProcessor( $processorName, 'Dummy', null, $processor['financial_type'] );
       }  
    
     }

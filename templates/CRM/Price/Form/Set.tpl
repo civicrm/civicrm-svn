@@ -100,9 +100,10 @@
       showHideContribution();
   var showContribution = {/literal}"{$showContribution}"{literal};
   if (showContribution) {
-	    cj("#financial_type_id").show();
+      cj('tr#financial_type_id').show();
   }
     	cj("input[id='extends[3]']").click(function(){
+
       showHideContribution();
   });
 
@@ -112,7 +113,7 @@
 	if(cj("input[id='extends[3]']").attr('checked') ) {
 	      cj("#financial_type_id").show();
   } else {
-	      cj("#financial_type_id").hide();
+        cj('tr#financial_type_id').hide();
   }
 
 }

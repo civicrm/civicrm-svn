@@ -457,7 +457,6 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
     // fill in step 1 (Title and Settings)
     $contributionPageTitle = "Title $contributionTitle";
     $this->type('title', $contributionPageTitle);
-      $this->select( 'financial_type_id', 'value=1' );
     $this->fillRichTextField('intro_text', 'This is Test Introductory Message', 'CKEditor');
     $this->fillRichTextField('footer_text', 'This is Test Footer Message', 'CKEditor');
 
@@ -607,7 +606,6 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
     // fill in step 1 (Title and Settings)
     $contributionPageTitle = "Title $contributionTitle";
     $this->type('title', $contributionPageTitle);
-      $this->select( 'financial_type_id', 'value=1' );
     $this->fillRichTextField('intro_text', 'This is Test Introductory Message', 'CKEditor');
     $this->fillRichTextField('footer_text', 'This is Test Footer Message', 'CKEditor');
 

@@ -888,12 +888,12 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     $op = new PHPUnit_Extensions_Database_Operation_Insert();
     $op->execute($this->_dbconn,
       new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-        dirname(__FILE__) . '/../api/v' . $apiversion . '/dataset/financial_types.xml'
+        dirname(__FILE__) . '/../api/v' . API_LATEST_VERSION . '/dataset/financial_types.xml'
       )
     );
 
     require_once 'CRM/Contribute/PseudoConstant.php';
-    CRM_Contribute_PseudoConstant::flush('contributionType');
+    CRM_Contribute_PseudoConstant::flush('financialType');
     // FIXME: CHEATING LIKE HELL HERE, TO BE FIXED
     return 11;
   }
@@ -903,7 +903,6 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
    *      * @param int $contributionTypeId
    */
   function contributionTypeDelete($contributionTypeID = NULL) {
-        require_once 'CRM/Financial/DAO/FinancialType.php';
     if ($contributionTypeID === NULL) {
       civicrm_api('Contribution', 'get', array('version' => 3, 'financial_type_id' => 10, 'api.contribution.delete' => 1));
       civicrm_api('Contribution', 'get', array('version' => 3, 'financial_type_id' => 11, 'api.contribution.delete' => 1));

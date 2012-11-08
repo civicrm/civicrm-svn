@@ -575,8 +575,10 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     else {
       $this->type("label_1", "Member");
       $this->type("value_1", "250.00");
+      $this->select("financial_type_id_1", "value=1");
       $this->type("label_2", "Non-member");
       $this->type("value_2", "325.00");
+      $this->select("financial_type_id_2", "value=1");
       //set default
       $this->click("xpath=//table[@id='map-field-table']/tbody/tr[2]/td[3]/input");
     }

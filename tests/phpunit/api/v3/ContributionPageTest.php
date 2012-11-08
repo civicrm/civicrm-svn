@@ -96,7 +96,7 @@ class api_v3_ContributionPageTest extends CiviUnitTestCase {
   public static function tearDownAfterClass(){
     $tablesToTruncate = array(
       'civicrm_contact',
-      'civicrm_financial_account',
+      'civicrm_financial_type',
       'civicrm_contribution',
       'civicrm_contribution_page',
     );

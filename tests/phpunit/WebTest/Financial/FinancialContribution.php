@@ -94,7 +94,7 @@ class WebTest_Financial_FinancialContribution extends CiviSeleniumTestCase {
                                      $isDefault
                                      );
 
-    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[7]/span/a[text()='Edit']" );
+    $this->waitForElementPresent( "xpath=//div[@id='ltype']//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[8]/span/a[text()='Edit']" );
     
     //Add new Financial Type
     $financialType = array();
@@ -103,7 +103,7 @@ class WebTest_Financial_FinancialContribution extends CiviSeleniumTestCase {
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Is Asset Account of"; //Is Asset Account of - Income Account is
+    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -144,6 +144,7 @@ class WebTest_Financial_FinancialContribution extends CiviSeleniumTestCase {
     $this->type("xpath=//input[@class='form-text four']", "1");
     $this->click("xpath=//input[@class='form-radio']");
     $this->click("xpath=//input[@class='form-checkbox']");
+    $this->fireEvent("xpath=//input[@class='form-text four']", 'blur');  
          
     $this->click('submitPayment_Information');
     $this->click('int_amount');
@@ -220,7 +221,7 @@ class WebTest_Financial_FinancialContribution extends CiviSeleniumTestCase {
                                        $taxRate,
                                        $isDefault
                                        );
-      $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[7]/span/a[text()='Edit']" );
+      $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[8]/span/a[text()='Edit']" );
       
       //Add new Financial Type
       $financialType['name'] = 'FinancialType '.substr(sha1(rand()), 0, 4);
@@ -228,7 +229,7 @@ class WebTest_Financial_FinancialContribution extends CiviSeleniumTestCase {
       $financialType['is_reserved'] = false; 
       $this->addeditFinancialType( $financialType );
 
-      $accountRelationship = "Income Account is"; //Is Asset Account - of Income Account is
+      $accountRelationship = "Income Account is"; //Asset Account - of Income Account is
       $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                            'account_relationship'  => $accountRelationship );
 
@@ -423,7 +424,7 @@ function _testVerifyPriceSet( $validateStrings, $sid )
                                        $isDefault
                                        );
       
-      $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[7]/span/a[text()='Edit']" );
+      $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[8]/span/a[text()='Edit']" );
       
       //Add new Financial Type
       $financialType = array();
@@ -432,7 +433,7 @@ function _testVerifyPriceSet( $validateStrings, $sid )
       $financialType['is_reserved'] = false;
       $this->addeditFinancialType( $financialType , 'new');
       
-      $accountRelationship = "Is Asset Account of"; //Is Asset Account of - Income Account is
+      $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
       $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                            'account_relationship'  => $accountRelationship );
       
@@ -562,7 +563,7 @@ function _testVerifyPriceSet( $validateStrings, $sid )
       //View Contribution Record
       $expected = array(
                         'Contribution Amount' => '590.00',
-                        'Contribution Status' => 'Completed',
+                        'Contribution Status' => 'Pending : Incomplete Transaction',
                         );
       foreach ( $expected as $label => $value ) {
           $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody//tr/td[1][text()='$label']/../td[2]", preg_quote($value));
@@ -625,7 +626,7 @@ function testAddPriceSet()
                                    $isDefault
                                    );
 
-  $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[7]/span/a[text()='Edit']" );
+  $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[8]/span/a[text()='Edit']" );
     
   //Add new Financial Type
   $financialType = array();
@@ -634,7 +635,7 @@ function testAddPriceSet()
   $financialType['is_reserved'] = false;
   $this->addeditFinancialType( $financialType , 'new');
     
-  $accountRelationship = "Is Asset Account of"; //Is Asset Account of - Income Account is
+  $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
   $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                        'account_relationship'  => $accountRelationship );
     
@@ -743,7 +744,7 @@ function testAddPriceSet()
                                      $isDefault
                                      );
 
-    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[7]/span/a[text()='Edit']" );
+    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[8]/span/a[text()='Edit']" );
     
     //Add new Financial Type
     $financialType = array();
@@ -752,7 +753,7 @@ function testAddPriceSet()
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Is Asset Account of"; //Is Asset Account of - Income Account is
+    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -901,7 +902,7 @@ function testAddPriceSet()
                                      $isDefault
                                      );
 
-    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[7]/span/a[text()='Edit']" );
+    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[8]/span/a[text()='Edit']" );
     
     //Add new Financial Type
     $financialType = array();
@@ -910,7 +911,7 @@ function testAddPriceSet()
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Is Asset Account of"; //Is Asset Account of - Income Account is
+    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -1051,7 +1052,7 @@ function testAddPriceSet()
                                      $isDefault
                                      );
 
-    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[7]/span/a[text()='Edit']" );
+    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[8]/span/a[text()='Edit']" );
     
     //Add new Financial Type
     $financialType = array();
@@ -1060,7 +1061,7 @@ function testAddPriceSet()
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Is Asset Account of"; //Is Asset Account of - Income Account is
+    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -1203,7 +1204,7 @@ function testAddPriceSet()
                                      $isDefault
                                      );
 
-    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[7]/span/a[text()='Edit']" );
+    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[8]/span/a[text()='Edit']" );
     
     //Add new Financial Type
     $financialType = array();
@@ -1212,7 +1213,7 @@ function testAddPriceSet()
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Is Asset Account of"; //Is Asset Account of - Income Account is
+    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -1357,7 +1358,7 @@ function testContributionOverPayment(){
                                      $isDefault
                                      );
 
-    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[7]/span/a[text()='Edit']" );
+    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[8]/span/a[text()='Edit']" );
     
     //Add new Financial Type
     $financialType = array();
@@ -1366,7 +1367,7 @@ function testContributionOverPayment(){
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Is Asset Account of"; //Is Asset Account of - Income Account is
+    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -1514,7 +1515,7 @@ function testContributionAddAndRemoveLineItem(){
                                      $isDefault
                                      );
 
-    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[7]/span/a[text()='Edit']" );
+    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[8]/span/a[text()='Edit']" );
     
     //Add new Financial Type
     $financialType = array();
@@ -1523,7 +1524,7 @@ function testContributionAddAndRemoveLineItem(){
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Is Asset Account of"; //Is Asset Account of - Income Account is
+    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -1678,7 +1679,7 @@ function testContributeRefundZero(){
                                      $isDefault
                                      );
 
-    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[7]/span/a[text()='Edit']" );
+    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[8]/span/a[text()='Edit']" );
     
     //Add new Financial Type
     $financialType = array();
@@ -1687,7 +1688,7 @@ function testContributeRefundZero(){
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Is Asset Account of"; //Is Asset Account of - Income Account is
+    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -1833,7 +1834,7 @@ function testContributeFullAmount(){
                                      $isDefault
                                      );
 
-    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[7]/span/a[text()='Edit']" );
+    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[8]/span/a[text()='Edit']" );
     
     //Add new Financial Type
     $financialType = array();
@@ -1842,7 +1843,7 @@ function testContributeFullAmount(){
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Is Asset Account of"; //Is Asset Account of - Income Account is
+    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -1992,7 +1993,7 @@ function testContributionPartialPayment(){
                                      $isDefault
                                      );
 
-    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[7]/span/a[text()='Edit']" );
+    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[8]/span/a[text()='Edit']" );
     
     //Add new Financial Type
     $financialType = array();
@@ -2001,7 +2002,7 @@ function testContributionPartialPayment(){
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Is Asset Account of"; //Is Asset Account of - Income Account is
+    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -2160,7 +2161,7 @@ function testContributionNoPayment(){
                                    $isDefault
                                    );
 
-  $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[7]/span/a[text()='Edit']" );
+  $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[8]/span/a[text()='Edit']" );
     
   //Add new Financial Type
   $financialType = array();
@@ -2169,7 +2170,7 @@ function testContributionNoPayment(){
   $financialType['is_reserved'] = false;
   $this->addeditFinancialType( $financialType , 'new');
     
-  $accountRelationship = "Is Asset Account of"; //Is Asset Account of - Income Account is
+  $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
   $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                        'account_relationship'  => $accountRelationship );
     

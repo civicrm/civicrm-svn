@@ -834,7 +834,8 @@ WHERE  contribution_id = {$this->_id}
         $fid[] = $FinancialItem->id;
       }
    
-      $lineItemTotal = array(); 
+      $lineItemTotal = $LineTotal = array(); 
+      if(is_array($txrnLineTotal)) {
       foreach($txrnLineTotal as $lineKey => $lineValue){
        $i = $trxAmount = 0;
         foreach($lineValue as $itemKey => $itemValue){ 
@@ -853,8 +854,8 @@ WHERE  contribution_id = {$this->_id}
         $LineTotal[] = $prevAmount;
       }
       }
-       
-      $LineTotal = $LineTotal[0];
+      }
+      $LineTotal = CRM_Utils_Array::value(0, $LineTotal);
       if(!empty($lineKey)){
         $paramsEntity = array(
                               'entity_table' => 'civicrm_financial_trxn',
@@ -915,7 +916,7 @@ WHERE  contribution_id = {$this->_id}
                                                                 'style' => "background-color:#EBECE4",     
                                                                 'price' => $owingAmount,                                                                                      
                                                                 'size' => 4,) );
-        $this->addElement( 'checkbox','pay_full', ts('Pay Full'),array( 'class' => 'payfull'));                                                                                                     
+        $this->addElement( 'checkbox', 'pay_full', ts('Pay Full'), '', array( 'class' => 'payfull'));                                                                                                     
         $element  = $this->addElement( 'text', 'initial_amount','Amount of Current Payment Contribution Total', array('size' => 4,
                                                                                                                       ) ); 
   }  
@@ -1263,7 +1264,7 @@ WHERE  contribution_id = {$this->_id}
       if( !current( $financialAccount ) ) {
         $errors['financial_type_id'] = "Financial Account of account relationship of ";
         if( $flag ) 
-          $errors['financial_type_id'] .= "'Is Asset Account of' and "; 
+          $errors['financial_type_id'] .= "'Asset Account of' and "; 
         $errors['financial_type_id'] .= "'Expense Account is' is not configured for this Financial Type";
       }
     }
@@ -1289,8 +1290,10 @@ WHERE  contribution_id = {$this->_id}
     // If Contribution action is update then calculate and set initial amount 
     if ($this->_action & CRM_Core_Action::UPDATE){
       $totalPrice = 0;
+      if(CRM_Utils_Array::value('txt-price', $this->_submitValues)) {
       foreach($this->_submitValues['txt-price'] as $priceKey => $priceValue){    
         $totalPrice = $totalPrice + $priceValue;
+      }
       }
       $submittedValues['initial_amount'] = $totalPrice;
     }
@@ -1699,7 +1702,7 @@ WHERE  contribution_id = {$this->_id}
                                          $retrieve = 'financial_account_id', 
                                          $filter = null, 
                                          " entity_id = {$formValues['financial_type_id']} ", null, 'account_relationship' );
-      $assetRelation = key(CRM_CORE_PseudoConstant::accountOptionValues( 'account_relationship', null, " AND v.name LIKE 'Is Asset Account of' " ));   
+      $assetRelation = key(CRM_CORE_PseudoConstant::accountOptionValues( 'account_relationship', null, " AND v.name LIKE 'Asset Account of' " ));   
       $params['to_financial_account_id'] = CRM_Utils_Array::value( $assetRelation, $financialAccounts );
 
       // get current currency from DB or use default currency
@@ -1808,13 +1811,14 @@ WHERE  contribution_id = {$this->_id}
 
         $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
         }
-        $orgId = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialAccount', $params['to_financial_account_id'], 'contact_id' );
          
         if ($contribution->id && $this->_action & CRM_Core_Action::UPDATE) { 
           $total_amount = 0;           
+          if(CRM_Utils_Array::value( 'txt-price',$this->_submitValues)) {
         foreach ($this->_submitValues['txt-price'] as $key=>$value) {
           $total_amount += $value;
         }    
+          }  
           $itemsParams['amount'] = $total_amount;
         } else {          
           $itemsParams['amount'] = $trxn->total_amount;         
@@ -1940,7 +1944,7 @@ WHERE  contribution_id = {$this->_id}
                                 );
           $prevAmount = 0;
           $prevAmount = CRM_Financial_BAO_FinancialItem::retrievePreviousAmount($entityParams);        
-          $entityIDParams['entity_id'] = $trxnId['id'];
+          $entityIDParams['financial_trxn_id'] = $trxnId['id'];
           $entityIDParams['entity_table'] = 'civicrm_financial_trxn';
           $entityID = CRM_Financial_BAO_FinancialItem::retrieveMaxEntityFinancialTrxn($entityIDParams);
           $entityParams = array(

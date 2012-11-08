@@ -1245,7 +1245,7 @@ WHERE  contribution_id = {$this->_id}
         $filter = null, 
         " account_relationship = 6 AND entity_id = {$fields['financial_type_id']} " );
       if( !current( $Financialaccount ) ){
-        $errors['financial_type_id'] = "Financial Account of account relationship of 'Is Asset Account of' is not configured for this Financial Type";
+        $errors['financial_type_id'] = "Financial Account of account relationship of 'Asset Account of' is not configured for this Financial Type";
         $flag = true;
       }
     }
@@ -1261,7 +1261,7 @@ WHERE  contribution_id = {$this->_id}
       if( !current( $Financialaccount ) ){
         $errors['financial_type_id'] = "Financial Account of account relationship of ";
         if( $flag ) 
-          $errors['financial_type_id'] .= "'Is Asset Account of' and "; 
+          $errors['financial_type_id'] .= "'Asset Account of' and "; 
                 
         $errors['financial_type_id'] .= "'Expense Account is' is not configured for this Financial Type";
       }
@@ -1701,7 +1701,7 @@ WHERE  contribution_id = {$this->_id}
                                          $retrieve = 'financial_account_id', 
                                          $filter = null, 
                                          " entity_id = {$formValues['financial_type_id']} ", null, 'account_relationship' );
-      $assetRelation = key(CRM_CORE_PseudoConstant::accountOptionValues( 'account_relationship', null, " AND v.name LIKE 'Is Asset Account of' " ));   
+      $assetRelation = key(CRM_CORE_PseudoConstant::accountOptionValues( 'account_relationship', null, " AND v.name LIKE 'Asset Account of' " ));   
       $params['to_financial_account_id'] = CRM_Utils_Array::value( $assetRelation, $financialAccounts );
 
       // get current currency from DB or use default currency

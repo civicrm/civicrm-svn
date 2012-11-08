@@ -336,7 +336,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
                                          $filter = null, 
                                          " entity_id = {$contribution->financial_type_id} ", null, 'account_relationship' );
 
-      $assetRelation = key(CRM_CORE_PseudoConstant::accountOptionValues( 'account_relationship', null, " AND v.name LIKE 'Is Asset Account of' " ));   
+      $assetRelation = key(CRM_CORE_PseudoConstant::accountOptionValues( 'account_relationship', null, " AND v.name LIKE 'Asset Account of' " ));   
       $params['to_financial_account_id'] = CRM_Utils_Array::value( $assetRelation, $financialAccounts );
       if ( CRM_Utils_Array::value('to_financial_account_id', $params ) ){
              

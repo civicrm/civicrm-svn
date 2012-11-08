@@ -1687,26 +1687,122 @@ VALUES
     CRM_Core_DAO::executeQuery($pledgePayment, CRM_Core_DAO::$_nullArray);
   }
 
-  function addLineItem() {
-    $query = " INSERT INTO civicrm_line_item ( entity_table, entity_id, price_field_id, label, unit_price, qty, line_total, participant_count, price_field_value_id ) VALUES ('civicrm_contribution', 1, 1, 'Contribution Amount', 125, '1', '125.00', 0, 1),
-                   ('civicrm_contribution', 2, 1, 'Contribution Amount', 50, '1', '50.00', 0, 1),
-                   ('civicrm_contribution', 3, 1, 'Contribution Amount', 25, '1', '25.00', 0, 1),
-                   ('civicrm_contribution', 4, 1, 'Contribution Amount', 50, '1', '50.00', 0, 1),
-                   ('civicrm_contribution', 5, 1, 'Contribution Amount', 500, '1', '500.00', 0, 1),
-                   ('civicrm_contribution', 6, 1, 'Contribution Amount', 175, '1', '175.00', 0, 1),
-                   ('civicrm_contribution', 7, 1, 'Contribution Amount', 50, '1', '50.00', 0, 1),
-                   ('civicrm_contribution', 8, 1, 'Contribution Amount', 10, '1', '10.00', 0, 1),
-                   ('civicrm_contribution', 9, 1, 'Contribution Amount', 250, '1', '250.00', 0, 1),
-                   ('civicrm_contribution', 10, 1, 'Contribution Amount', 500, '1', '500.00', 0, 1),
-                   ('civicrm_contribution', 11, 1, 'Contribution Amount', 200, '1', '200.00', 0, 1),
-                   ('civicrm_contribution', 12, 1, 'Contribution Amount', 200, '1', '200.00', 0, 1),
-                   ('civicrm_contribution', 13, 1, 'Contribution Amount', 200, '1', '200.00', 0, 1);";
+  function addContributionLineItem() {
+    $query = " INSERT INTO civicrm_line_item (`entity_table`, `entity_id`, `price_field_id`, `label`, `qty`, `unit_price`, `line_total`, `participant_count`, `price_field_value_id`, `financial_type_id`)
+SELECT 'civicrm_contribution', cc.id, cpf.id as price_field, cpfv.label, 1, cc.total_amount, cc.total_amount line_total, 0, cpfv.id as price_field_value, cpfv.financial_type_id
+FROM civicrm_contribution cc 
+LEFT JOIN civicrm_price_set cps ON cps.name = 'default_contribution_amount'
+LEFT JOIN civicrm_price_field cpf ON cpf.price_set_id = cps.id
+LEFT JOIN civicrm_price_field_value cpfv ON cpfv.price_field_id = cpf.id 
+order by cc.id; ";
     CRM_Core_DAO::executeQuery($query, CRM_Core_DAO::$_nullArray);
+  }
+
+  function addContributionFinancialItem() {
+
+    $sql = "SELECT cc.id contribution_id, cli.id as line_item_id, cc.contact_id, cc.receive_date, cc.total_amount, cc.currency, cli.label, cli.financial_type_id
+FROM `civicrm_contribution` cc
+LEFT JOIN civicrm_line_item cli ON cli.entity_id = cc.id and cli.entity_table = 'civicrm_contribution';";
+    $result = CRM_Core_DAO::executeQuery($sql);
+    $financialAccountId = null;
+    $this->addFinancialItem($result, $financialAccountId);
+  }
+
+  function addParticipantFinancialItem() {
+   
+    $sql = " SELECT cpp.contribution_id, cli.id as line_item_id, cp.contact_id, now() as receive_date, cp.fee_amount as total_amount, cp.fee_currency as currency, cli.label, cli.financial_type_id
+FROM `civicrm_participant` cp
+LEFT JOIN civicrm_participant_payment cpp ON cpp.participant_id = cp.id
+LEFT JOIN civicrm_line_item cli ON cli.entity_id = cp.id and cli.entity_table = 'civicrm_participant'";
+    $result = CRM_Core_DAO::executeQuery($sql);
+    $financialAccountId = null;
+    $this->addFinancialItem($result, $financialAccountId);
+  }
+
+  function addFinancialItem($result, $financialAccountId = null) {
+    while($result->fetch()){
+      $trxnParams = array(
+        'trxn_date' => CRM_Utils_Date::processDate($result->receive_date),
+        'total_amount' => $result->total_amount, 
+        'currency' => $result->currency,
+        'status_id' => 1,
+        'contribution_id' => $result->contribution_id
+      );
+      $trxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
+      $financialItem = array(
+        'transaction_date' => CRM_Utils_Date::processDate($result->receive_date),
+        'amount' => $result->total_amount, 
+        'currency' => $result->currency,
+        'status_id' => 1,
+        'entity_id' => $result->line_item_id,
+        'contact_id' => $result->contact_id,
+        'entity_table' => 'civicrm_line_item',
+        'description' => $result->label
+      );
+      $trxnId['id'] = $trxn->id;
+      CRM_Financial_BAO_FinancialItem::create($financialItem, null, $trxnId);
+  }
   }
 
   function addLineItemParticipants() {
     $participant = new CRM_Event_DAO_Participant();
-    $participant->query("INSERT INTO civicrm_line_item (`entity_table`, `entity_id`, `price_field_id`, `label`, `qty`, `unit_price`, `line_total`, `participant_count`, `price_field_value_id`) SELECT 'civicrm_participant',cp.id, cpfv.price_field_id, cpfv.label, 1, cpfv.amount, cpfv.amount as line_total, 0, cpfv.id FROM civicrm_participant cp LEFT JOIN civicrm_price_set_entity cpe ON cpe.entity_id = cp.event_id LEFT JOIN civicrm_price_field cpf ON cpf.price_set_id = cpe.price_set_id LEFT JOIN civicrm_price_field_value cpfv ON cpfv.price_field_id = cpf.id WHERE cpfv.label = cp.fee_level");
+    $participant->query("INSERT INTO civicrm_line_item (`entity_table`, `entity_id`, `price_field_id`, `label`, `qty`, `unit_price`, `line_total`, `participant_count`, `price_field_value_id`, `financial_type_id`) 
+SELECT 'civicrm_participant',cp.id, cpfv.price_field_id, cpfv.label, 1, cpfv.amount, cpfv.amount as line_total, 0, cpfv.id, cpfv.financial_type_id FROM civicrm_participant cp LEFT JOIN civicrm_price_set_entity cpe ON cpe.entity_id = cp.event_id LEFT JOIN civicrm_price_field cpf ON cpf.price_set_id = cpe.price_set_id LEFT JOIN civicrm_price_field_value cpfv ON cpfv.price_field_id = cpf.id WHERE cpfv.label = cp.fee_level");
+  }
+  
+  function addMembershipPayment() {
+    $maxContribution = CRM_Core_DAO::singleValueQuery("select max(id) from civicrm_contribution");
+    $financialTypeID = CRM_Core_DAO::singleValueQuery("select id from civicrm_financial_type where name = 'Member Dues'");
+    $sql = "INSERT INTO civicrm_contribution (contact_id,financial_type_id,receive_date, total_amount, currency, source, contribution_status_id)
+SELECT  cm.contact_id, $financialTypeID, now(), cmt.minimum_fee, 'USD', CONCAT(cmt.name, ' Membership: Offline signup'), 1 FROM `civicrm_membership` cm
+LEFT JOIN civicrm_membership_type cmt ON cmt.id = cm.membership_type_id;"; 
+
+    CRM_Core_DAO::executeQuery($sql, CRM_Core_DAO::$_nullArray);
+
+    $sql = "INSERT INTO civicrm_membership_payment (contribution_id,membership_id)
+SELECT cc.id, cm.id FROM civicrm_contribution cc
+LEFT JOIN civicrm_membership cm ON cm.contact_id = cc.contact_id
+WHERE cc.id > $maxContribution;";
+
+    CRM_Core_DAO::executeQuery($sql, CRM_Core_DAO::$_nullArray);
+
+    $sql = "INSERT INTO civicrm_line_item (entity_table, entity_id, price_field_value_id, price_field_id, label, qty, unit_price, line_total, financial_type_id)
+SELECT  'civicrm_contribution', cmp.contribution_id, cpfv.id, cpfv.price_field_id, cpfv.label, 1, cpfv.amount, cpfv.amount as unit_price, cpfv.financial_type_id FROM `civicrm_membership` cm
+LEFT JOIN civicrm_membership_payment cmp ON cmp.membership_id = cm.id
+LEFT JOIN civicrm_price_field_value cpfv ON cpfv.membership_type_id = cm.membership_type_id
+LEFT JOIN civicrm_price_field cpf ON cpf.id = cpfv.price_field_id
+LEFT JOIN civicrm_price_set cps ON cps.id = cpf.price_set_id 
+WHERE cps.name = 'default_membership_type_amount'";
+
+    CRM_Core_DAO::executeQuery($sql, CRM_Core_DAO::$_nullArray);
+
+    $sql = "INSERT INTO civicrm_activity(source_contact_id, source_record_id, activity_type_id, subject, activity_date_time, status_id)
+SELECT contact_id, id, 6, CONCAT('$ ', total_amount, ' - ', source), now(), 2 FROM `civicrm_contribution` WHERE id > $maxContribution";
+
+    CRM_Core_DAO::executeQuery($sql, CRM_Core_DAO::$_nullArray);
+}
+
+  function addParticipantPayment() {
+    $maxContribution = CRM_Core_DAO::singleValueQuery("select max(id) from civicrm_contribution");
+    $financialTypeID = CRM_Core_DAO::singleValueQuery("select id from civicrm_financial_type where name = 'Event Fee'");
+    $sql = "INSERT INTO civicrm_contribution (contact_id, financial_type_id, receive_date, total_amount, currency, receipt_date, source, contribution_status_id)
+SELECT  `contact_id`, $financialTypeID, now(), `fee_amount`, 'USD', now(), CONCAT(ce.title, ' : Offline registration'), 1  FROM `civicrm_participant` cp
+LEFT JOIN civicrm_event ce ON ce.id = cp.event_id
+group by `contact_id`;";
+
+    CRM_Core_DAO::executeQuery($sql, CRM_Core_DAO::$_nullArray);
+
+    $sql = "INSERT INTO civicrm_participant_payment (contribution_id,participant_id)
+SELECT cc.id, cp.id FROM civicrm_contribution cc
+LEFT JOIN civicrm_participant cp ON cp.contact_id = cc.contact_id
+WHERE cc.id > $maxContribution";
+
+    CRM_Core_DAO::executeQuery($sql, CRM_Core_DAO::$_nullArray);
+    
+    $sql = "INSERT INTO civicrm_activity(source_contact_id, source_record_id, activity_type_id, subject, activity_date_time, status_id)
+SELECT contact_id, id, 6, CONCAT('$ ', total_amount, ' - ', source), now(), 2 FROM `civicrm_contribution` WHERE id > $maxContribution";
+
+    CRM_Core_DAO::executeQuery($sql, CRM_Core_DAO::$_nullArray);
   }
 }
 
@@ -1735,16 +1831,20 @@ $obj1->addEntityTag();
 $obj1->addGroup();
 $obj1->addNote();
 $obj1->addActivity();
-$obj1->addMembership();
-$obj1->addMembershipLog();
 $obj1->createEvent();
-$obj1->addParticipant();
 $obj1->addContribution();
+$obj1->addContributionLineItem();
+$obj1->addMembership();
+$obj1->addMembershipPayment();
+$obj1->addMembershipLog();
 $obj1->addPCP();
 $obj1->addSoftContribution();
 $obj1->addPledge();
 $obj1->addPledgePayment();
-$obj1->addLineItem();
+$obj1->addContributionFinancialItem();
+$obj1->addParticipant();
+$obj1->addParticipantPayment();
 $obj1->addLineItemParticipants();
+$obj1->addParticipantFinancialItem();
 echo ("Ending data generation on " . date("F dS h:i:s A") . "\n");
 

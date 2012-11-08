@@ -139,7 +139,7 @@ class CRM_Admin_Page_AJAX {
           $status = ts('Are you sure you want to disable this payment processor?') . ' <br/><br/>' . ts('Users will no longer be able to select this value when adding or editing transaction pages.');
           break;
 
-        case 'CRM_Core_BAO_PaymentProcessorType':
+      case 'CRM_Financial_BAO_PaymentProcessorType':
           $status = ts('Are you sure you want to disable this payment processor type?');
           break;
 
