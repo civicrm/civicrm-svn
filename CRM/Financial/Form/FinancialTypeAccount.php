@@ -157,6 +157,7 @@ class CRM_Financial_Form_FinancialTypeAccount extends CRM_Contribute_Form
                 $financialAccountType = array( '5' => 5, //expense
                                                '3' => 1, //AR relation
                                                '1' => 3, //revenue
+                                               '6' => 1  //Asset
                                                );
             
                 $financialAccountType = "financial_account_type_id = {$financialAccountType[$this->_submitValues['account_relationship']]}";
@@ -176,6 +177,7 @@ class CRM_Financial_Form_FinancialTypeAccount extends CRM_Contribute_Form
             $financialAccountType = array( '5' => 5, //expense
                                            '3' => 1, //AR relation
                                            '1' => 3, //revenue
+                                           '6' => 1  //Asset
                                            );
             
             $financialAccountType = "financial_account_type_id = {$financialAccountType[$this->_defaultValues['account_relationship']]}";
@@ -221,7 +223,6 @@ class CRM_Financial_Form_FinancialTypeAccount extends CRM_Contribute_Form
         $error = FALSE;
         if( CRM_Utils_Array::value( 'account_relationship', $values ) && CRM_Utils_Array::value( 'financial_account_id', $values ) ){
             $params = array( 'account_relationship' => $values['account_relationship'],
-                             'financial_account_id' => $values['financial_account_id'],
                              'entity_id'            => $self->_aid,
                              );
             $defaults = array();
@@ -232,11 +233,9 @@ class CRM_Financial_Form_FinancialTypeAccount extends CRM_Contribute_Form
                     $error = TRUE;
     }
             if( $self->_action == CRM_Core_Action::UPDATE ){
-                $getParams = array( 'entity_id' => $self->_aid,
-                                    'id'        => $self->_id,
-                                    );
-                $getResult = CRM_Financial_BAO_FinancialTypeAccount::retrieve( &$getParams, &$defaults );
-                if ( $values['account_relationship'] == $getResult->account_relationship  && $values['financial_account_id'] == $getResult->financial_account_id )
+
+
+                if ( $values['account_relationship'] == $self->_defaultValues['account_relationship'] && $values['financial_account_id'] == $self->_defaultValues['financial_account_id'] )
                    $error= FALSE;
                 else {
                     $result = CRM_Financial_BAO_FinancialTypeAccount::retrieve( &$params, &$defaults );
@@ -247,7 +246,7 @@ class CRM_Financial_Form_FinancialTypeAccount extends CRM_Contribute_Form
             } 
 
             if( $error )
-                $errorMsg['financial_account_id'] = ts( 'This already exits' );
+                $errorMsg['account_relationship'] = ts( 'This account relationship already exits' );
         }
     
         return CRM_Utils_Array::crmIsEmptyArray( $errorMsg ) ? true : $errorMsg;

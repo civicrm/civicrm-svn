@@ -144,7 +144,23 @@ class CRM_Contribute_Form_AdditionalInfo {
 
 
     $form->add('textarea', 'note', ts('Notes'), array("rows" => 4, "cols" => 60));
+        //Recieved into
+        $params = ' financial_account_type_id = 5 ' ;
+        $recievedInto = CRM_Contribute_PseudoConstant::financialAccount(  null, $params );
+        if( $counRecieved = count( $recievedInto ) ){
+            $this->assign( 'feeAmount', $counRecieved );
   }
+        if( $counRecieved != 1 ){
+            $this->add( 'select', 
+                        'fee_to_financial_account_id', 
+                        ts( 'Fee Account' ), 
+                        array(''=>ts( '- Select Recieved Into -' )) + $recievedInto );
+        }else{
+            $this->addElement( 'hidden', 'fee_to_financial_account_id', '', array( 'id' => 'fee_to_financial_account_id' ) );
+            $defaults['fee_to_financial_account_id'] = key($recievedInto);
+            $this->setDefaults($defaults);
+        }
+    }
 
   /**
    * Function to build the form for Honoree Information.

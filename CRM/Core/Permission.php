@@ -458,6 +458,8 @@ class CRM_Core_Permission {
                    'view all manual batches'           => $prefix . ts( 'view all manual batches' ),
                    'delete own manual batches'         => $prefix . ts( 'delete own manual batches' ),
                    'delete all manual batches'         => $prefix . ts( 'delete all manual batches' ),
+                   'export own manual batches'         => $prefix . ts( 'export own manual batches' ),
+                   'export all manual batches'         => $prefix . ts( 'export all manual batches' ),
     );
 
     return $permissions;

@@ -14,7 +14,7 @@
       <required>true</required> 
       <import>true</import>
       <add>4.1</add>
-      <comment>The table that contains the header information for this batch of financial_items - primarily this will just be civicrm_contribution, but in future it could be civicrm_financial_batch for a generic batch such as a quickbooks export, civicrm_order for the "printed order", civicrm_invoice for the "printed invoice", civicrm_official_receipt for the "printed receipt"</comment>
+      <comment>Contains the header information for this batch. Primarily this will be civicrm_contribution, but in future it could be for a generic batch such as a quickbooks export, official receipt, etc.</comment>
   </field>
   <primaryKey>  
        <name>entity_table</name>  

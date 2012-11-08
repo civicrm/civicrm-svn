@@ -141,6 +141,7 @@
 
 	{if $contributionMode }
 	   <tr class="crm-contribution-form-block-contribution_type_id crm-contribution-form-block-financial_type_id">
+	   {if $recievedInto neq 1}
 	     	 <td class="label">{$form.to_financial_account_id.label}</td><td{$valueStyle}>
 		 {if !$recievedInto }
 		     	{capture assign=ftUrl}{crmURL p='civicrm/admin/financial/financialAccount' q="reset=1"}{/capture}
@@ -149,6 +150,7 @@
 		 	{$form.to_financial_account_id.html}&nbsp;
 		{/if}				 
 		 </td>
+		 {/if}
 	     </tr>
 	 {/if}
 
@@ -184,6 +186,7 @@
                 </td>
             </tr>
 	     <tr class="crm-contribution-form-block-contribution_type_id crm-contribution-form-block-financial_type_id">
+	      {if $recievedInto neq 1}
 	     	 <td class="label">{$form.to_financial_account_id.label}</td><td{$valueStyle}>
 		 {if !$recievedInto }
 		     	{capture assign=ftUrl}{crmURL p='civicrm/admin/financial/financialAccount' q="reset=1"}{/capture}
@@ -192,6 +195,7 @@
 		 	{$form.to_financial_account_id.html}&nbsp;
 		{/if}				 
       	     	 </td>
+		 {/if}
 	     </tr>
             <tr class="crm-contribution-form-block-payment_instrument_id">
                 <td class="label">{$form.payment_instrument_id.label}</td><td{$valueStyle}>{$form.payment_instrument_id.html}<br />

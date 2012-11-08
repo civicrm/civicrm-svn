@@ -44,6 +44,18 @@
     <tr class="crm-paymentProcessor-form-block-description">
         <td class="label">{$form.description.label}</td><td>{$form.description.html}</td>
     </tr>
+    
+    <tr class="crm-paymentProcessor-form-block-financial_type">
+        <td class="label">{$form.financial_type_id.label}</td>
+	<td>
+	{if $financialType}
+	{$form.financial_type_id.html}
+    	{else}
+	{capture assign=ftUrl}{crmURL p='civicrm/admin/financial/financialType' q="reset=1"}{/capture}
+	{ts 1=$ftUrl}There is no Financial Type configured of 'Is Asset Account of'. <a href='%1'>Click here</a> if you want to configure financial type for your site.{/ts}
+    </tr>
+    {/if}
+    </td>
     <tr class="crm-paymentProcessor-form-block-is_active">
         <td></td><td>{$form.is_active.html}&nbsp;{$form.is_active.label}</td>
     </tr>

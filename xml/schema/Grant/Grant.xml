@@ -155,7 +155,7 @@
       <title>Financial Type</title>
       <type>int unsigned</type>  
       <default>NULL</default>
-      <comment>FK to Financial Type(for membership price sets only).</comment>
+      <comment>FK to Financial Type.</comment>
       <add>4.1</add> 
   </field>    
   <foreignKey>  

@@ -120,7 +120,7 @@
       <title>Financial Type</title>
       <type>int unsigned</type>  
       <default>NULL</default>
-      <comment>FK to Financial Type(for membership price sets only).</comment>
+      <comment>FK to Financial Type.</comment>
       <add>4.1</add> 
   </field>    
   <foreignKey>  
@@ -130,5 +130,15 @@
        <onDelete>SET NULL</onDelete>
        <add>4.1</add>
   </foreignKey>   
+  <field>  
+      <name>deductible_amount</name> 
+      <title>Deductible Amount</title>
+      <type>decimal</type> 
+      <headerPattern>/unit?.?amoun/i</headerPattern>
+      <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
+      <required>true</required> 
+      <comment>Tax-deductible portion of the amount</comment>
+      <add>4.1</add> 
+  </field>    
  </table>
 

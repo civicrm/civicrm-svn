@@ -1657,7 +1657,7 @@ WHERE  id = %1";
   public static function &paymentProcessorType($all = FALSE) {
     if (!self::$paymentProcessorType) {
             self::populate( self::$paymentProcessorType, 'CRM_Financial_DAO_PaymentProcessorType', $all, 
-                            'title', 'is_active', null, 'is_default, title', 'name' );
+                            'title', 'is_active', null, 'is_default, title', 'id' );
     }
     return self::$paymentProcessorType;
   }
@@ -2077,16 +2077,16 @@ ORDER BY name";
   }
 
     /**
-     * Get all Financial Account Types
+     * Get all options values
      *
-     * The static array financial_account_type is returned
+     * The static array option values is returned
      *
      * @access public
      * @static
      *
-     * @param boolean $all - get All Financial Account Type - default is to get only active ones.
+     * @param boolean $optionGroupName - get All  Option Group values- default is to get only active ones.
      *
-     * @return array - array reference of all Financial Account Type
+     * @return array - array reference of all Option Group Name
      *
      */
     public static function accountOptionValues( $optionGroupName, $id = null, $condition = null )

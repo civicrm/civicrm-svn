@@ -178,7 +178,29 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
         $this->add( 'select', 'payment_processor_type_id', ts( 'Payment Processor Type' ), $types, true,
                     array('onchange' => "reload(true)") );
 
+        // Financial Type
+        require_once 'CRM/Contribute/PseudoConstant.php';
+        require_once 'CRM/Core/PseudoConstant.php';
+        $financialType = CRM_Contribute_PseudoConstant::financialType( );
+        $revenueFinancialType = array( );
+        CRM_Core_PseudoConstant::populate( $revenueFinancialType,
+                                           'CRM_Financial_DAO_EntityFinancialAccount',
+                                           $all = True, 
+                                           $retrieve = 'entity_id', 
+                                           $filter = null, 
+                                           'account_relationship = 6' );
 
+        foreach( $financialType as $key => $financialTypeName ){
+            if( !in_array( $key, $revenueFinancialType ) )
+                unset( $financialType[$key] );
+        }           
+        if( $fcount = count( $financialType ) ){
+            $this->assign( 'financialType', $fcount );
+        }
+        $this->add('select', 'financial_type_id', 
+                   ts( 'Financial Type' ), 
+                   array(''=>ts( '- select -' )) + $financialType,
+                   true );
     // is this processor active ?
     $this->add('checkbox', 'is_active', ts('Is this Payment Processor active?'));
     $this->add('checkbox', 'is_default', ts('Is this Payment Processor the default?'));
@@ -347,6 +369,8 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
     $dao->name = $values['name'];
     $dao->description = $values['description'];
         $dao->payment_processor_type_id = $values['payment_processor_type_id'];
+        $dao->financial_type_id         = $values['financial_type_id'];
+
 
     foreach ($this->_fields as $field) {
       $fieldName = $test ? "test_{$field['name']}" : $field['name'];

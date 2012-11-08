@@ -83,6 +83,7 @@ ORDER by f.name";
             $financialAccountType = array( '5' => 5, //expense
                                            '3' => 1, //AR relation
                                            '1' => 3, //revenue
+                                           '6' => 1,
                                            );
  
             $financialAccountType = "financial_account_type_id = {$financialAccountType[$_GET['_value']]}";
@@ -111,9 +112,9 @@ ORDER by f.name";
         if( $_GET['_value'] == 'select'  ){
             $result = CRM_Core_PseudoConstant::accountOptionValues( 'account_relationship' );     
         } else {
-            $financialAccountType = array( '5' => array('5'), //expense
-                                           '1' => array('3'), //AR relation
-                                           '3' => array('1'), //revenue
+            $financialAccountType = array( '5' => array( 5 ), //expense
+                                           '1' => array( 3, 6 ), //AR relation
+                                           '3' => array( 1 ), //revenue
                                            );
             $financialAccountTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialAccount', $_GET['_value'], 'financial_account_type_id' );
             $result = CRM_Core_PseudoConstant::accountOptionValues( 'account_relationship' ); 

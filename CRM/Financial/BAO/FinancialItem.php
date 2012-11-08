@@ -104,9 +104,32 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem
             CRM_Financial_BAO_FinancialTypeAccount::retrieve( $searchParams, $result );
             $params['financial_account_id'] = CRM_Utils_Array::value( 'financial_account_id', $result );
         }
+        self::create( $params );
+       
+    } 
+    
+    static function create( &$params, $ids = null, $trxnId = null  ) {
         $financialItem = new CRM_Financial_DAO_FinancialItem( );
         $financialItem->copyValues( $params );
+        if( CRM_Utils_Array::value( 'id', $ids ) ){
+            $financialItem->id = $ids['id']; 
+        }
         $financialItem->save( );
+        if( CRM_Utils_Array::value( 'id', $trxnId ) ){
+            $entity_financial_trxn_params = array(
+                                                  'entity_table'      => "civicrm_financial_item",
+                                                  'entity_id'         => $financialItem->id,
+                                                  'financial_trxn_id' => $trxnId['id'],
+                                                  'amount'            => $params['amount'],
+                                                  );
+            $entity_trxn = new CRM_Financial_DAO_EntityFinancialTrxn();
+            $entity_trxn->copyValues( $entity_financial_trxn_params );
+            if ( CRM_Utils_Array::value( 'entityFinancialTrxnId', $ids ) ) {
+                $entity_trxn->id = $ids['entityFinancialTrxnId'];
+            }
+            $entity_trxn->save();
+        }
+        
         return $financialItem;
        
     }   

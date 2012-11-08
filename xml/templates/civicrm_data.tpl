@@ -816,6 +816,11 @@ VALUES
    (@option_group_id_batch_status, '{ts escape="sql"}Open{/ts}', 1, '{ts escape="sql"}Open{/ts}', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_batch_status, '{ts escape="sql"}Closed{/ts}', 2, '{ts escape="sql"}Closed{/ts}', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
 
+-- Financial Item Status
+   (@option_group_id_financial_item_status, '{ts escape="sql"}Paid{/ts}', 1, 'Paid', NULL, 0, 0, 1, 'Paid', 0, 1, 1, 2, NULL),
+   (@option_group_id_financial_item_status, '{ts escape="sql"}Partially paid{/ts}', 2, 'Partially paid', NULL, 0, 0, 2, 'Partially paid', 0, 1, 1, 2, NULL),
+   (@option_group_id_financial_item_status, '{ts escape="sql"}Unpaid{/ts}', 3, 'Unpaid', NULL, 0, 0, 1, 'Unpaid', 0, 1, 1, 2, NULL),
+
 -- sms_api_type
    (@option_group_id_sms_api_type, 'http', 1, 'http', NULL, NULL, 0, 1, NULL, 0, 1, 1, NULL, NULL),
    (@option_group_id_sms_api_type, 'xml',  2, 'xml',  NULL, NULL, 0, 2, NULL, 0, 1, 1, NULL, NULL),
@@ -842,6 +847,7 @@ VALUES
     (@option_group_id_arel, '{ts escape="sql"}AR Account is{/ts}', 3, 'AR Account is', NULL, 0, 0, 3, 'AR Account is', 0, 1, 1, 2, NULL),
     (@option_group_id_arel, '{ts escape="sql"}Credit Liability Account is{/ts}', 4, 'Credit Liability Account is', NULL, 0, 0, 4, 'Credit Liability Account is', 0, 1, 0, 2, NULL),
      (@option_group_id_arel, '{ts escape="sql"}Expense Account is{/ts}', 5, 'Expense Account is', NULL, 0, 0, 5, 'Expense Account is', 0, 1, 1, 2, NULL),
+     (@option_group_id_arel, '{ts escape="sql"}Is Asset Account of{/ts}', 6, 'Is Asset Account of', NULL, 0, 0, 6, 'Is Asset Account of', 0, 1, 1, 2, NULL),
 
 -- Label Formats
   (@option_group_id_label, '{ts escape="sql"}Avery 3475{/ts}', '{literal}{"paper-size":"a4","orientation":"portrait","font-name":"helvetica","font-size":10,"font-style":"","metric":"mm","lMargin":0,"tMargin":5,"NX":3,"NY":8,"SpaceX":0,"SpaceY":0,"width":70,"height":36,"lPadding":5.08,"tPadding":5.08}{/literal}',                   '3475',  'Avery', NULL, 0, 1,  NULL, 0, 1, 1, NULL, NULL),
@@ -858,13 +864,15 @@ VALUES
 
 -- financial accounts
 SELECT @opval := value FROM civicrm_option_value WHERE name = 'Revenue';
+SELECT @opexp := value FROM civicrm_option_value WHERE name = 'Expense';
 INSERT INTO
    `civicrm_financial_account` (`name`, `financial_account_type_id`, `is_reserved`, `is_active`, `is_deductible`, `is_default`)
 VALUES
-  ( '{ts escape="sql"}Donation{/ts}'             , @opval, 0, 1, 1, 1 ),
+  ( '{ts escape="sql"}Donation{/ts}'             , @opval, 0, 1, 1, 0 ),
   ( '{ts escape="sql"}Member Dues{/ts}'          , @opval, 0, 1, 1, 0 ), 
   ( '{ts escape="sql"}Campaign Contribution{/ts}', @opval, 0, 1, 0, 0 ),
-  ( '{ts escape="sql"}Event Fee{/ts}'            , @opval, 0, 1, 0, 0 );
+  ( '{ts escape="sql"}Event Fee{/ts}'            , @opval, 0, 1, 0, 0 ),
+  ( '{ts escape="sql"}Banking Fees{/ts}'         , @opexp, 0, 1, 0, 1 );
 
 -- Now insert option values which require domainID
 --

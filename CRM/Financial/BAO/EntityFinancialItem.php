@@ -140,26 +140,12 @@ class CRM_Financial_BAO_EntityFinancialItem extends CRM_Financial_DAO_EntityFina
         $from = " `civicrm_financial_item`
 LEFT JOIN civicrm_contact ON civicrm_contact.id = `civicrm_financial_item`.contact_id
 LEFT JOIN civicrm_entity_financial_item ON civicrm_entity_financial_item.financial_item_id= `civicrm_financial_item`.id
-LEFT JOIN civicrm_financial_type ON civicrm_financial_type.id = `civicrm_financial_item`.financial_type_id ";
+LEFT JOIN civicrm_financial_account ON civicrm_financial_account.id = `civicrm_financial_item`.financial_account_id ";
         if( !$notPresent ){
             $where =  " ( civicrm_entity_financial_item.entity_id = {$entityID} AND civicrm_entity_financial_item.entity_table = 'civicrm_batch' ) ";
         }else{
             $where = "( civicrm_entity_financial_item.financial_item_id IS NULL ) AND ( civicrm_financial_item.status_id = 1 )";
         }
- //    "SELECT  
-// `civicrm_financial_item`.id,
-// contact_id as id,
-// sort_name, 
-// total_amount, 
-// contact_type, 
-// contact_sub_type, 
-// date, 
-// name 
-// FROM    `civicrm_financial_item`
-// LEFT JOIN civicrm_contact ON civicrm_contact.id = `civicrm_financial_item`.contact_id
-// LEFT JOIN civicrm_entity_financial_item ON civicrm_entity_financial_item.financial_item_id= `civicrm_financial_item`.id
-// LEFT JOIN civicrm_financial_type ON civicrm_financial_type.id = `civicrm_financial_item`.financial_type_id
-// WHERE ( civicrm_entity_financial_item.entity_id = 10 ) ORDER BY `civicrm_financial_item`.id ";
    
     $sql = "SELECT {$select}
 FROM {$from}
