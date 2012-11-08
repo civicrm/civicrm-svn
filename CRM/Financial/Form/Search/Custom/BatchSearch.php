@@ -117,7 +117,7 @@ implements CRM_Contact_Form_Search_Interface {
                     ts( 'Batch Name' ) );
         
         $form->add( 'select', 
-                    'batch_type_id', 
+                    'type_id', 
                     ts( 'Batch Type' ), 
                     array( ''=> ts( '- Select Batch Type -' ) ) + CRM_Contribute_PseudoConstant::accountOptionValues( 'batch_type' ) );
 
@@ -147,7 +147,7 @@ implements CRM_Contact_Form_Search_Interface {
         //                array( 'class'   => 'form-submit',
         //                       'id'      => 'Go',
         //  
-        $form->assign( 'elements', array( 'name', 'sort_name', 'batch_type_id', 'close_date', 'open_date', 'payment_instrument_id', 'manual_number_trans', 'manual_total', ) );
+        $form->assign( 'elements', array( 'name', 'sort_name', 'type_id', 'close_date', 'open_date', 'payment_instrument_id', 'manual_number_trans', 'manual_total', ) );
 
     }
 
@@ -289,14 +289,14 @@ sum( cfi.total_amount ) AS `assigned_total`
     
 	// Regular JOIN statements here to limit results to contacts who have activities.
     function from( ) {
-        return " `civicrm_batch` as cb
-LEFT JOIN `civicrm_financial_batch` as fb ON fb.`batch_id` = cb.`id`
-LEFT JOIN `civicrm_contact` as cc ON cc.`id` = cb.`created_id`
-LEFT JOIN `civicrm_option_value` as covt ON covt.`value` = cb.`batch_type_id`
-INNER JOIN `civicrm_option_group` as cogt ON covt.`option_group_id` = cogt.`id` and cogt.`name` = 'batch_type'
-LEFT JOIN `civicrm_option_value` as covp ON covp.`value` = fb.`payment_instrument_id` and covp.`option_group_id` = 10
-LEFT JOIN `civicrm_option_value` as covs ON covs.`value` = cb.`batch_status_id`
-INNER JOIN `civicrm_option_group` as cogs ON covs.`option_group_id` = cogs.`id` and cogs.`name` = 'batch_status'
+        $from = " `civicrm_batch` AS cb
+LEFT JOIN `civicrm_financial_batch` AS fb ON fb.`batch_id` = cb.`id`
+LEFT JOIN `civicrm_contact` AS cc ON cc.`id` = cb.`created_id`
+LEFT JOIN `civicrm_option_value` AS covt ON covt.`value` = cb.`type_id`
+INNER JOIN `civicrm_option_group` AS cogt ON covt.`option_group_id` = cogt.`id` AND cogt.`name` = 'batch_type'
+LEFT JOIN `civicrm_option_value` AS covp ON covp.`value` = fb.`payment_instrument_id` AND covp.`option_group_id` = 10
+LEFT JOIN `civicrm_option_value` AS covs ON covs.`value` = cb.`status_id`
+INNER JOIN `civicrm_option_group` AS cogs ON covs.`option_group_id` = cogs.`id` AND cogs.`name` = 'batch_status'
 LEFT JOIN civicrm_entity_financial_item cefi ON cefi.entity_id = cb.id
 LEFT JOIN civicrm_financial_item cfi ON cfi.id = cefi.financial_item_id
 ";

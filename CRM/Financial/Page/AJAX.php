@@ -58,7 +58,7 @@ class CRM_Financial_Page_AJAX
             $whereClause .= " AND f.id = {$parentID} ";
         }
         $query ="
-SELECT f.name ,f.id
+SELECT CONCAT_WS(' :: ', f.name, accounting_code) as name, f.id
 FROM   civicrm_financial_account as f
 WHERE  {$whereClause}
 ORDER by f.name";

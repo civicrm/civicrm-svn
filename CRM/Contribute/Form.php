@@ -90,7 +90,7 @@ class CRM_Contribute_Form extends CRM_Core_Form {
       list($defaults['modified_date'],$defaults['modified_time']) = CRM_Utils_Date::setDateDefaults( CRM_Utils_Array::value( 'modified_date' , $defaults ) );
       if( CRM_Utils_Array::value( 'contact_id', $defaults ) || CRM_Utils_Array::value( 'created_id', $defaults ) ){
         // if( CRM_Utils_Array::value('created_id', $defaults) )
-        $contactID = CRM_Utils_Array::value('created_id', $defaults)?$defaults['created']:$defaults['contact_id'];
+        $contactID = CRM_Utils_Array::value('created_id', $defaults)?$defaults['created_id']:$defaults['contact_id'];
         
         $defaults['contact_name'] = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $contactID, 'sort_name' );
         //$defaults['parent_id'] = $contactName['id'];

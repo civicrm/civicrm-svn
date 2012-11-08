@@ -71,8 +71,8 @@
        
        {if $action eq 2}
        <tr class="crm-contribution-form-block-batch_type">	 
-    	  <td class="label">{$form.batch_type_id.label}</td>
-	  <td class="html-adjust">{$form.batch_type_id.html}</td>
+    	  <td class="label">{$form.type_id.label}</td>
+	  <td class="html-adjust">{$form.type_id.html}</td>
        </tr>
        {/if}
        <tr class="crm-contribution-form-block-manual_number_trans">	 
@@ -83,8 +83,6 @@
     	  <td class="label">{$form.manual_total.label}</td>
 	  <td class="html-adjust">{$form.manual_total.html}</td>
        </tr>
-
-
        {if $action eq 2}
         <tr class="crm-contribution-form-block-open_date">	 
     	  <td class="label">{$form.created_date.label}</td>
@@ -94,10 +92,9 @@
     	  <td class="label">{$form.modified_date.label}</td>
 	  <td class="html-adjust">{$form.modified_date.html}</td>
        </tr>
-       
        <tr class="crm-contribution-form-block-batch_status">	 
-    	  <td class="label">{$form.batch_status_id.label}</td>
-	  <td class="html-adjust">{$form.batch_status_id.html}</td>
+    	  <td class="label">{$form.status_id.label}</td>
+	  <td class="html-adjust">{$form.status_id.html}</td>
        </tr>
       {/if}
       </table> 

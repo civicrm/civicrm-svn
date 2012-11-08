@@ -70,6 +70,11 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form
                 if ( CRM_Core_Permission::check( 'edit own manual batches' ) && $session->get( 'userID' ) != $createdID && !CRM_Core_Permission::check( 'edit all manual batches' )){
                     CRM_Core_Error::statusBounce( ts('You dont have permission to edit this batch') );
     }
+
+            $status = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Batch', $this->_id, 'status_id' );            
+            $batchStatus = CRM_Core_PseudoConstant::accountOptionValues( 'batch_status' );
+            if( CRM_Utils_Array::value( $status, $batchStatus  ) != 'Open' ){
+               CRM_Core_Error::statusBounce( ts("You cannot edit {$batchStatus[$status]} Batch") ); 
             }
             else{
                 CRM_Core_Error::statusBounce( ts('You dont have permission to edit this batch') );
@@ -150,7 +155,7 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form
         if ( $this->_action & CRM_Core_Action::UPDATE && $this->_id ){
             
             $element = $this->add( 'select', 
-                                   'batch_type_id', 
+                                   'type_id', 
                                    ts( 'Batch Type' ), 
                                    array( ''=> ts( '- Select Batch Type -' ) ) + CRM_Core_PseudoConstant::accountOptionValues( 'batch_type' ) );
             
@@ -169,7 +174,7 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form
             $this->add('text', 'created_date', ts('Opened Date'), CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_Batch', 'created_date' ) );
             
             $this->add( 'select', 
-                        'batch_status_id', 
+                        'status_id', 
                         ts( 'Batch Status' ), 
                         array( ''=> ts( '- Select Batch Status -' ) ) + CRM_Core_PseudoConstant::accountOptionValues( 'batch_status' , null , " AND v.label != 'Exported' " ),
                         true );
@@ -180,7 +185,7 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form
         
         $this->add('text', 'name', ts('Batch Name'), CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_Batch', 'name' ), true );
         
-        $this->add('text', 'description', ts('Description'), CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_Batch', 'description' ), true );
+        $this->add('text', 'description', ts('Description'), CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_Batch', 'description'));
 
         $this->add( 'select', 
                     'payment_instrument_id', 
@@ -188,9 +193,9 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form
                     array( ''=> ts( '- Select Payment Instrument -' ) ) + CRM_Contribute_PseudoConstant::paymentInstrument( ),
                     false );
         
-        $this->add('text', 'manual_total', ts('Total Amount'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialBatch', 'manual_total' ) );
+        $this->add('text', 'manual_total', ts('Total Amount'), CRM_Core_DAO::getAttribute('CRM_Financial_DAO_FinancialBatch', 'manual_total'), true);
         
-        $this->add('text', 'manual_number_trans', ts('Number of Transactions'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialBatch', 'manual_number_trans' ) );
+        $this->add('text', 'manual_number_trans', ts('Number of Transactions'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialBatch', 'manual_number_trans' ), true);
          
          
          //$this->addFormRule( array( 'CRM_Financial_Form_FinancialBatch', 'formRule'), $this );
@@ -229,8 +234,11 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form
         if($this->_id){
             $ids['batchID'] = $this->_id;
         }
-        if( $this->_action & CRM_Core_Action::CLOSE ){
-            $params['batch_status_id'] = CRM_Utils_Array::key( 'Closed', $batchStatus );
+        // if( $this->_action & CRM_Core_Action::CLOSE ){
+        //     $params['batch_status_id'] = CRM_Utils_Array::key( 'Closed', $batchStatus );
+        // }
+        if( $this->_action & CRM_Core_Action::EXPORT ){
+            $params['status_id'] = CRM_Utils_Array::key( 'Exported', $batchStatus );
         }
         if( $this->_action & CRM_Core_Action::REOPEN ){
             $params['batch_status_id'] = CRM_Utils_Array::key( 'Open', $batchStatus );
@@ -247,19 +255,20 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form
         CRM_Core_Error::debug( '$paramssfsfs', $params );
             if( $this->_action & CRM_Core_Action::ADD ){
                 $batchType = CRM_Core_PseudoConstant::accountOptionValues( 'batch_type' );
-                $params['batch_type_id'] = CRM_Utils_Array::key( 'Manual batch', $batchType );  
-                $params['batch_status_id'] = CRM_Utils_Array::key( 'Open', $batchStatus );
-            $params['label'] = CRM_Utils_Array::value( 'name', $params );
+            $params['type_id'] = CRM_Utils_Array::key( 'Manual batch', $batchType );  
+            $params['status_id'] = CRM_Utils_Array::key( 'Open', $batchStatus );
+            $params['title'] = CRM_Utils_Array::value( 'name', $params );
             $params['created_date'] = date('YmdHis');
             $params['created_id'] = $session->get( 'userID' ); 
             }
 
         if ( $this->_action & CRM_Core_Action::UPDATE && $this->_id ) {
             
-            $params['label'] = CRM_Utils_Array::value( 'name', $params ); 
-            // if( CRM_Utils_Array::value( $params['batch_status_id'], $batchStatus ) == 'Closed' && ! CRM_Utils_Array::value( 'close_date', $params ) ){
-            //     $params['close_date'] = date('YmdHis');
-            // }
+            $params['title'] = CRM_Utils_Array::value( 'name', $params );
+            $details = "{$params['name']} batch has been edited by this contact.";
+            if( CRM_Utils_Array::value( $params['status_id'], $batchStatus ) == 'Closed'){
+            $details = "{$params['name']} batch has been closed by this contact.";
+            }
             // if( CRM_Utils_Array::value( $params['batch_status_id'], $batchStatus ) == 'Open' && CRM_Utils_Array::value( 'close_date', $params ) ){
             //     $params['close_date'] = ''; 
             // }
@@ -274,7 +283,7 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form
             CRM_Core_Session::setStatus( ts(' You can add another Financial Batch.') );
                 $session->replaceUserContext( CRM_Utils_System::url( 'civicrm/financial/batch', 
                                                                      "reset=1&action=add" ) );
-        } elseif( CRM_Utils_Array::value( $batch->batch_status_id, $batchStatus ) == 'Closed' ){
+        } elseif( CRM_Utils_Array::value( $batch->status_id, $batchStatus ) == 'Closed' ){
             if( $batch->name )
                 CRM_Core_Session::setStatus( ts("'{$batch->name}' batch has been saved.") );
             $session->replaceUserContext( CRM_Utils_System::url( 'civicrm','reset=1' ) );
