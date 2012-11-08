@@ -11,5 +11,7 @@
 <xi:include href="FinancialType.xml"          parse="xml" />
 <xi:include href="EntityFinancialAccount.xml" parse="xml" />
 <xi:include href="FinancialBatch.xml"         parse="xml" />
+<xi:include href="EntityFinancialItem.xml"    parse="xml" />
+<xi:include href="FinancialItem.xml"          parse="xml" />
 
 </tables>

@@ -294,7 +294,7 @@ class CRM_Contribute_BAO_Query {
             $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_contribution.financial_type_id", 
           $op, $value, "Integer"
         );
-        $query->_qill[$grouping][] = ts('Contribution Type - %1', array(1 => $types[$cType]));
+            $query->_qill[$grouping ][] = ts( 'Financial Type - %1', array( 1 => $types[$cType] ) );
         $query->_tables['civicrm_contribution'] = $query->_whereTables['civicrm_contribution'] = 1;
         return;
 
@@ -744,7 +744,7 @@ class CRM_Contribute_BAO_Query {
     );
 
         $form->add('select', 'financial_type_id', 
-      ts('Contribution Type'),
+                   ts( 'Financial Type' ),
       array(
         '' => ts('- any -')) +
                    CRM_Contribute_PseudoConstant::financialType( )

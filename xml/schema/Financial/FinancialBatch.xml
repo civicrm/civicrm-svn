@@ -18,43 +18,20 @@
        <autoincrement>true</autoincrement>  
   </primaryKey>  
   <field>
-      <name>name</name>  
-      <type>varchar</type> 
-      <length>255</length>
-      <required>true</required>
-      <comment>Batch Name</comment>
-      <add>4.1</add>
-  </field>
-  <field>
-      <name>batch_type_id</name>
+      <name>batch_id</name> 
+      <title>Batch ID</title>
       <type>int unsigned</type>
       <required>true</required>
-      <comment>fk to Batch Type options in civicrm_option_values</comment>
+      <comment>fk to civicrm_batch.id</comment> 
       <add>4.1</add>
   </field>
-  <field> 
-      <name>contact_id</name> 
-      <title>Contact ID</title>
-      <type>int unsigned</type>   
-      <required>true</required>  
-      <comment>fk to civicrm_contact.id of batch creator</comment> 
-      <add>4.1</add> 
-  </field> 
   <foreignKey> 
-       <name>contact_id</name> 
+       <name>batch_id</name> 
        <table>civicrm_contact</table> 
        <key>id</key> 
        <add>4.1</add> 
   </foreignKey> 
   <field>  
-      <name>description</name>  
-      <type>varchar</type> 
-      <length>255</length>
-      <required>true</required> 
-       <comment>Financial Batch Description.</comment>
-      <add>4.1</add>
-  </field>
-  <field>
        <name>payment_instrument_id</name>
        <type>int unsigned</type>
        <export>true</export>
@@ -75,26 +52,8 @@
        <add>4.1</add>
   </field>
   <field>
-       <name>open_date</name>
-       <type>timestamp</type>   
-       <default>CURRENT_TIMESTAMP</default> 
-       <add>4.1</add>
-  </field>
-  <field>
-       <name>close_date</name>
+       <name>exported_date</name>
        <type>datetime</type>
-       <add>4.1</add>
-  </field>
-  <field>
-       <name>export_date</name>
-       <type>datetime</type>
-       <add>4.1</add>
-  </field>
-  <field>
-       <name>batch_status_id</name>
-       <type>int unsigned</type> 
-       <required>true</required>  
-       <comment>fk to Batch Status options in civicrm_option_values</comment>
        <add>4.1</add>
   </field>
 </table>

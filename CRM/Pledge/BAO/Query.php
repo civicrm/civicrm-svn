@@ -373,7 +373,7 @@ class CRM_Pledge_BAO_Query {
           $value,
           'Integer'
         );
-        $query->_qill[$grouping][] = ts('Contribution Type - %1', array(1 => $type));
+            $query->_qill[$grouping][] = ts( 'Financial Type - %1', array( 1 => $type ) );
         $query->_tables['civicrm_pledge'] = $query->_whereTables['civicrm_pledge'] = 1;
         return;
 
@@ -586,7 +586,7 @@ class CRM_Pledge_BAO_Query {
     $form->addGroup($paymentStatus, 'pledge_payment_status_id', ts('Pledge Payment Status'));
 
     $form->add('select', 'pledge_contribution_type_id',
-      ts('Contribution Type'),
+                   ts( 'Financial Type' ),
                    array( '' => ts( '- select -' ) ) +
                    CRM_Contribute_PseudoConstant::financialType( ) );
 
