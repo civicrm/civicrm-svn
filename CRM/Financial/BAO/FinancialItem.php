@@ -105,10 +105,9 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem
             $params['financial_account_id'] = CRM_Utils_Array::value( 'financial_account_id', $result );
         }
         $trxn = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnIds( $contribution->id );
-       
         $trxnId['id'] = $trxn['financialTrxnId']; 
         $int_name = 'txt-price_'.$lineItem->price_field_id;
-        $params['init_amount'] =  $lineItem->$int_name;
+        $params['init_amount'] =  $lineItem->int_name;
         self::create( $params,null, $trxnId);    
     } 
     
@@ -137,5 +136,65 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem
         return $financialItem;
        
     }   
+
+
+  /**
+   * takes an associative array and creates a entity financial transaction object
+   *
+   * @param array  $params (reference ) an assoc array of name/value pairs
+   *
+   * @return object CRM_Core_BAO_FinancialTrxn object
+   * @access public
+   * @static
+   */
+
+  static function createEntityTrxn(&$params) {
+    $entity_trxn = new CRM_Financial_DAO_EntityFinancialTrxn();
+    if ( CRM_Utils_Array::value( 'id', $params ) ) {
+      $entity_trxn->id = $params['id'];
+      $entity_trxn->find(true);
+}
+    $entity_trxn->copyValues($params);
+    $entity_trxn->save();
+    return $entity_trxn;
+}
+
+    static function retrieveEntityFinancialTrxn( &$params ) {
+        $financialItem = new CRM_Financial_DAO_EntityFinancialTrxn( );
+        $financialItem->copyValues( $params );
+        $financialItem->find();
+        while ( $financialItem->fetch() ) {
+          $financialItems[$financialItem->id] = array(
+                                                      'id'                => $financialItem->id,
+                                                      'entity_table'      => $financialItem->entity_table,
+                                                      'entity_id'         => $financialItem->entity_id,
+                                                      'financial_trxn_id' => $financialItem->financial_trxn_id,
+                                                      'amount'            => $financialItem->amount,
+                                                      );
+        } 
+        if (!empty($financialItems)) {
+          return $financialItems;
+        }else {
+          return null;
+        }
+    }
+
+   static function retrieveMaxEntityFinancialTrxn( &$params ) {
+     
+     $query = "Select * from civicrm_entity_financial_trxn where id = (Select max(id) from civicrm_entity_financial_trxn where ";
+     $where = "";
+     foreach($params as $field=>$value) {
+       if(empty($where)){
+       $where .="$field = '$value'";
+       }else {
+       $where .=" AND $field = '$value'";
+       }
+     }
+     $where .= ');';
+     $query .=$where;
+     $dao = CRM_Core_DAO::executeQuery($query);
+     $dao->fetch();
+     return $dao;
+   } 
 }
 

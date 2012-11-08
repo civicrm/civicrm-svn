@@ -1292,38 +1292,47 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         $trxnParams['to_financial_account_id'] = $financialAccount;
         $cId = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_FinancialAccount', $financialAccount, 'contact_id');
       }
-
-      $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
-      $itemsParams = array( 'created_date'         => date('YmdHis'),
-                            'transaction_date'     => $trxn->trxn_date,
-                            'contact_id'           => $cId,
-                            'amount'               => $trxn->total_amount,
-                            'currency'             => $trxn->currency,
-                            'entity_table'         => 'civicrm_financial_trxn',
-                            'entity_id'            => $trxn->id,
-                            'status_id'            => $statusID,
-                            );
-            
-      if($financialAccount){
-        $itemsParams['financial_account_id'] = $financialAccount;
+      if((CRM_Utils_Array::value('is_separate_payment', $form->_membershipBlock))) {
+        foreach($form->_lineItem as $key=>$lineitem) {
+          foreach($lineitem as $id=>$value) {
+            if($value['field_title'] == 'Membership Amount') {
+              $mem_amount = $value['line_total'];
+            }else {
+              $contrib_amount = $value['line_total'];
+            }
+          }
+        }
+        $mratio = (float)$mem_amount/($mem_amount+$contrib_amount);
+        if(!(CRM_Utils_Array::value('contributionPageID', $params))) {
+          $trxnParams['total_amount'] = $mratio* $params['amount'];
+          $trxnParams['net_amount'] = $mratio* $params['amount'];
+        }else{
+          $trxnParams['total_amount'] = (1-$mratio)* $params['amount'];
+          $trxnParams['net_amount'] = (1-$mratio)* $params['amount'];
+        }
       }
-      $trxnId['id'] = $trxn->id ;
-      $trxn = CRM_Financial_BAO_FinancialItem::create($itemsParams, null, $trxnId);
-    }
+      $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
+      }
 
     // process price set, CRM-5095
     if ($contribution && $contribution->id && $form->_priceSetId) {
       if (CRM_Utils_Array::value('is_quick_config', $form->_params)) {
-  
         $temp = array();
         foreach ($form->_lineItem as $key => $val) {
           foreach ($val as $k => $v) {
             if (CRM_Utils_Money::format($v['line_total']) == CRM_Utils_Money::format($contribution->total_amount )) {
               $temp[$key][$k] = $form->_lineItem[$key][$k];
-              CRM_Contribute_Form_AdditionalInfo::processPriceSet($contribution->id, $temp, $contribution);
             }
           }
         }
+        if((CRM_Utils_Array::value('is_separate_payment', $form->_membershipBlock))) {
+          foreach($temp as $key=>$item) {
+            foreach($item as $k => $v) {
+              $contribution->init_amount['txt-price_'.$v['price_field_id']][$v['price_field_value_id']] = $trxnParams['total_amount'];
+            }
+          }        
+        }
+        CRM_Contribute_Form_AdditionalInfo::processPriceSet($contribution->id, $temp, $contribution);
       } elseif (!CRM_Utils_Array::value('is_quick_config', $form->_params)) {
         CRM_Contribute_Form_AdditionalInfo::processPriceSet($contribution->id, $form->_lineItem,$contribution);
       }

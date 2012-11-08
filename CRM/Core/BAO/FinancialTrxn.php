@@ -62,15 +62,10 @@ class CRM_Core_BAO_FinancialTrxn extends CRM_Financial_DAO_FinancialTrxn
     if( !$trxnEntityTable ){
     $fids = self::getFinancialTrxnIds($params['contribution_id'], 'civicrm_contribution');
     }
-    $trxn->save();
-    
     if ( CRM_Utils_Array::value( 'financialTrxnId', $fids ) && empty ( $trxnEntityTable )) {
       $trxn->id = $fids['financialTrxnId'];
-      //$trxnEntityTable['entity_id']    = $fids['financialTrxnId'];
-      //$trxnEntityTable['entity_table'] = 'civicrm_financial_trxn';
     }
-
-
+    $trxn->save();
 
     $contributionAmount = CRM_Utils_Array::value('net_amount', $params);
     if (!$contributionAmount && isset($params['total_amount'])) {
@@ -101,6 +96,29 @@ class CRM_Core_BAO_FinancialTrxn extends CRM_Financial_DAO_FinancialTrxn
   }
 
   /**
+     * Takes a bunch of params that are needed to match certain criteria and
+     * retrieves the relevant objects. Typically the valid params are only
+     * contact_id. We'll tweak this function to be more full featured over a period
+     * of time. This is the inverse function of create. It also stores all the retrieved
+     * values in the default array
+   *
+     * @param array $params   (reference ) an assoc array of name/value pairs
+     * @param array $defaults (reference ) an assoc array to hold the flattened values
+     *
+     * @return object CRM_Contribute_BAO_ContributionType object
+     * @access public
+     * @static
+     */
+    static function retrieve( &$params, &$defaults ) {
+        $financialItem = new CRM_Financial_DAO_FinancialTrxn( );
+        $financialItem->copyValues( $params );
+        if ( $financialItem->find( true ) ) {
+            CRM_Core_DAO::storeValues( $financialItem, $defaults );
+            return $financialItem;
+        }
+        return null;
+    }
+  /**
    *
    * Given an entity_id and entity_table, check for corresponding entity_financial_trxn and financial_trxn record.
    * NOTE: This should be moved to separate BAO for EntityFinancialTrxn when we start adding more code for that object.
@@ -128,7 +146,6 @@ class CRM_Core_BAO_FinancialTrxn extends CRM_Financial_DAO_FinancialTrxn
     $sqlParams = array(1 => array($entity_id, 'Integer'), 2 => array($entity_table, 'String'));
     $dao = CRM_Core_DAO::executeQuery($query, $sqlParams);
     if ($dao->fetch()) {
-      
       $ids['entityFinancialTrxnId'] = $dao->id;
       $ids['financialTrxnId'] = $dao->financial_trxn_id;
     }
@@ -188,11 +205,13 @@ WHERE lt.entity_id = %1 ";
     while($dao->fetch()){
       $result[$dao->financial_trxn_id][$dao->id] = $dao->amount;
     }
+    if(!empty($result)) {
     return $result;    
+    }else {
+      return null;
   }
 
-
-
+  }
 
 
   /**
