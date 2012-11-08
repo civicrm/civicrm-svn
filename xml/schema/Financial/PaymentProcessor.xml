@@ -160,18 +160,5 @@
       <comment>Payment Type: Credit or Debit</comment>
       <add>3.0</add>
   </field>
-  <field> 
-      <name>financial_account_id</name> 
-      <type>int unsigned</type>                 
-      <required>true</required>                  
-      <comment>Financial account representing the account that the payment processor deposits into.</comment> 
-      <add>4.1</add> 
-  </field> 
-  <foreignKey> 
-      <name>financial_account_id</name> 
-      <table>civicrm_financial_account</table> 
-      <key>id</key> 
-      <add>4.1</add> 
-  </foreignKey>
 
 </table>
