@@ -104,6 +104,11 @@ class CRM_Admin_Form_ContactType extends CRM_Admin_Form {
     if (!CRM_Core_DAO::objectExists($contactName, 'CRM_Contact_DAO_ContactType', $self->_id)) {
       $errors['label'] = ts('This contact type name already exists in database. Contact type names must be unique.');
     }
+
+    $reservedKeyWords = CRM_Core_SelectValues::customGroupExtends();
+    if(in_array($contactName, array_keys($reservedKeyWords))){
+        $errors['label'] = ts('Contact type names should not use reserved keywords.');
+    }
     return empty($errors) ? TRUE : $errors;
   }
 
