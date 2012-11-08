@@ -204,7 +204,8 @@ VALUES
    ('sms_api_type'                  , '{ts escape="sql"}Api Type{/ts}'                           , 1, 1),
    ('sms_provider_name'             , '{ts escape="sql"}Sms Provider Internal Name{/ts}'         , 1, 1),
    ('auto_renew_options'            , '{ts escape="sql"}Auto Renew Options{/ts}'         	 , 1, 1),
-   ('financial_account_type'        , '{ts escape="sql"}Financial Account Type{/ts}'             , 1, 1);
+   ('financial_account_type'        , '{ts escape="sql"}Financial Account Type{/ts}'             , 1, 1),
+   ('financial_item_status'         , '{ts escape="sql"}Financial Item Status{/ts}'              , 1, 1);
 
 SELECT @option_group_id_pcm            := max(id) from civicrm_option_group where name = 'preferred_communication_method';
 SELECT @option_group_id_act            := max(id) from civicrm_option_group where name = 'activity_type';
@@ -275,6 +276,7 @@ SELECT @option_group_id_sms_api_type   := max(id) from civicrm_option_group wher
 SELECT @option_group_id_sms_provider_name := max(id) from civicrm_option_group where name = 'sms_provider_name';
 SELECT @option_group_id_aro := max(id) from civicrm_option_group where name = 'auto_renew_options';
 SELECT @option_group_id_fat            := max(id) from civicrm_option_group where name = 'financial_account_type';
+SELECT @option_group_id_financial_item_status := max(id) from civicrm_option_group where name = 'financial_item_status';
 
 
 SELECT @contributeCompId := max(id) FROM civicrm_component where name = 'CiviContribute';

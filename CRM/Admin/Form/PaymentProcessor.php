@@ -56,8 +56,7 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
       if (!$this->_ppType) {
                 $this->_ppType = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_PaymentProcessor',
           $this->_id,
-          'payment_processor_type'
-        );
+                                                              'payment_processor_type_id' );
       }
       $this->set('pp', $this->_ppType);
     }
@@ -67,7 +66,7 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
 
     $this->assign('ppType', $this->_ppType);
         $this->_ppDAO = new CRM_Financial_DAO_PaymentProcessorType( );
-    $this->_ppDAO->name = $this->_ppType;
+        $this->_ppDAO->id = $this->_ppType;
 
     if (!$this->_ppDAO->find(TRUE)) {
       CRM_Core_Error::fatal(ts('Could not find payment processor meta information'));
@@ -176,9 +175,8 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
     );
 
     $types = CRM_Core_PseudoConstant::paymentProcessorType();
-    $this->add('select', 'payment_processor_type', ts('Payment Processor Type'), $types, TRUE,
-      array('onchange' => "reload(true)")
-    );
+        $this->add( 'select', 'payment_processor_type_id', ts( 'Payment Processor Type' ), $types, true,
+                    array('onchange' => "reload(true)") );
 
 
     // is this processor active ?
@@ -256,7 +254,7 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
   function setDefaultValues() {
     $defaults = array();
 
-    $defaults['payment_processor_type'] = $this->_ppType;
+        $defaults['payment_processor_type_id'] = $this->_ppType;
 
     if (!$this->_id) {
       $defaults['is_active'] = $defaults['is_default'] = 1;
@@ -296,7 +294,7 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
     }
 
     if ($this->_ppType) {
-      $defaults['payment_processor_type'] = $this->_ppType;
+            $defaults['payment_processor_type_id'] = $this->_ppType;
     }
 
     return $defaults;
@@ -348,7 +346,7 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
 
     $dao->name = $values['name'];
     $dao->description = $values['description'];
-    $dao->payment_processor_type = $values['payment_processor_type'];
+        $dao->payment_processor_type_id = $values['payment_processor_type_id'];
 
     foreach ($this->_fields as $field) {
       $fieldName = $test ? "test_{$field['name']}" : $field['name'];

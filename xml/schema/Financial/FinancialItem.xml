@@ -5,7 +5,7 @@
   <class>FinancialItem</class>  
   <name>civicrm_financial_item</name>  
   <add>4.1</add> 
-  <comment>Table to store the key data of any financial item, such as the purchase of an event ticket, membership or donation (but not payments which are currently in financial_trxn)</comment>
+  <comment>Financial data for civicrm_line_item, etc.</comment>
   <log>true</log> 
   <field>  
     <name>id</name>  
@@ -20,11 +20,18 @@
     <autoincrement>true</autoincrement>  
   </primaryKey> 
   <field>
-    <name>date</name>
+    <name>created_date</name>
+    <type>timestamp</type>
+    <required>true</required> 
+    <default>CURRENT_TIMESTAMP</default>     
+    <comment>Date and time the item was created</comment>
+    <add>4.1</add>
+  </field> 
+  <field>
+    <name>transaction_date</name>
     <type>datetime</type>
-       <export>true</export>
     <required>true</required>      
-    <comment></comment>
+    <comment>Date and time of the source transaction</comment>
     <add>4.1</add>
   </field> 
   <field>
@@ -42,106 +49,61 @@
     <add>4.1</add>
   </foreignKey>
   <field>
-    <name>contact_id_to</name>
-    <type>int unsigned</type>
-    <export>true</export>
-    <required>true</required> 
-    <comment>FK to Contact ID of contact the item is to (allows for obligations between contacts, so the one record will appear for both contacts) NB the contact_id and contact_id_to for an invoice are the reverse of the financial_items in it (as the "supplier" sends the invoice to the "customer")</comment>
-    <add>4.1</add>
-  </field>
-  <foreignKey>
-    <name>contact_id_to</name>
-    <table>civicrm_contact</table>
-    <key>id</key>
-    <add>4.1</add>
-  </foreignKey>
-  <field>
-    <name>quantity</name>
-    <type>int unsigned</type>
-    <required>true</required> 
-    <export>true</export>
-    <comment></comment>
-    <add>4.1</add>
-  </field>
-  <field>
     <name>description</name>
     <type>varchar</type>
-    <export>true</export>
     <length>255</length>
-    <comment>Financial Item Description.</comment>
+    <comment>Human readable description of this item, to ease display without lookup of source item.</comment>
     <add>4.1</add>
   </field>
   <field>     
-    <name>unit_amount</name>  
-    <title>Unit Amount</title>
-    <export>true</export>
+    <name>amount</name>  
+    <title>Amount</title>
     <type>decimal</type>
     <default>0</default>
     <required>true</required> 
     <headerPattern>/unit?.?amoun/i</headerPattern>
     <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
-    <comment></comment>  
+    <comment>Total amount of this item</comment>  
     <add>4.1</add>  
   </field>
   <field>     
-    <name>total_amount</name>  
-    <title>Total Amount</title>
-    <export>true</export>
-    <type>decimal</type>
-    <default>0</default>
-    <required>true</required> 
-    <headerPattern>/total?.?amoun/i</headerPattern>
-    <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
-    <comment></comment>  
-    <add>4.1</add>  
-  </field>
-  <field>
     <name>currency</name>
     <export>true</export>
     <type>varchar</type>
     <length>3</length>
-    <comment></comment>
+    <comment>Currency for the amount</comment>
     <add>4.1</add>
   </field>
   <field>
-    <name>deductiblity_id</name>
-    <export>true</export>
+    <name>financial_account_id</name>
     <type>int unsigned</type>
-    <comment></comment>
-    <add>4.1</add>
-  </field>
-  <field>
-    <name>financial_type_id</name>
-    <export>true</export>
-    <type>int unsigned</type>
-    <comment></comment>
+    <comment>FK to civicrm_financial_account</comment>
     <add>4.1</add>
   </field>
   <foreignKey>
-    <name>financial_type_id</name>
-    <table>civicrm_financial_type</table>
+    <name>financial_account_id</name>
+    <table>civicrm_financial_account</table>
     <key>id</key>
     <add>4.1</add>
-    <onDelete>SET NULL</onDelete>
   </foreignKey>
   <field>
     <name>status_id</name>
     <export>true</export>
     <type>int unsigned</type>
-    <comment>e.g. is_test, is_paid (otherwise assume is_pay_later)</comment>
+    <comment>Payment status: test, paid, part_paid, unpaid (if empty assume unpaid)</comment>
     <add>4.1</add>
   </field>
   <field>
     <name>entity_table</name>
     <type>varchar</type>
     <length>64</length>
-    <comment>The specific entity type that this financial_item is an instance of (thus not moved into entity_financial_item table)</comment>
+    <comment>The table providing the source of this item such as civicrm_line_item</comment>
     <add>4.1</add>
   </field>
   <field>
     <name>entity_id</name>
     <type>int unsigned</type>
-    <comment>The specific entity that this financial_item is an instance of (thus not moved into entity_financial_item table)</comment>
+    <comment>The specific source item that is responsible for the creation of this financial_item</comment>
     <add>4.1</add>
   </field>
   <index>
@@ -151,8 +113,13 @@
     <add>4.1</add>
   </index>
   <index>
-    <name>IX_date</name>
-    <fieldName>date</fieldName>
+    <name>IX_created_date</name>
+    <fieldName>created_date</fieldName>
+    <add>4.1</add>
+  </index>
+  <index>
+    <name>IX_transaction_date</name>
+    <fieldName>transaction_date</fieldName>
     <add>4.1</add>
   </index>
   <index>

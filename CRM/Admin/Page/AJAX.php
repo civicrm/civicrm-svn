@@ -131,7 +131,7 @@ class CRM_Admin_Page_AJAX {
           $status = ts('Are you sure you want to disable this relationship type?') . '<br/><br/>' . ts('Users will no longer be able to select this value when adding or editing relationships between contacts.');
           break;
 
-        case 'CRM_Contribute_BAO_ContributionType':
+            case 'CRM_Contribute_BAO_FinancialType':
                 $status = ts('Are you sure you want to disable this financial type?');
           break;
 

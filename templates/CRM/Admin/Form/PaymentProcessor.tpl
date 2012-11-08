@@ -36,7 +36,7 @@
 {else}
   <table class="form-layout-compressed">
     <tr class="crm-paymentProcessor-form-block-payment_processor_type">
-        <td class="label">{$form.payment_processor_type.label}</td><td>{$form.payment_processor_type.html} {help id='proc-type'}</td>
+        <td class="label">{$form.payment_processor_type_id.label}</td><td>{$form.payment_processor_type_id.html} {help id='proc-type'}</td>
     </tr>
     <tr class="crm-paymentProcessor-form-block-name">
         <td class="label">{$form.name.label}</td><td>{$form.name.html}</td>
@@ -141,7 +141,7 @@
 <script type="text/javascript" >
 {literal}
     function reload(refresh) {
-        var paymentProcessorType = document.getElementById("payment_processor_type");
+        var paymentProcessorType = document.getElementById("payment_processor_type_id");
         var url = {/literal}"{$refreshURL}"{literal}
         var post = url + "&pp=" + paymentProcessorType.value;
         if( refresh ) {

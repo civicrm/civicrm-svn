@@ -712,6 +712,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
     if ($this->_priceSetId &&
       !empty($this->_lineItem)
     ) {
+            require_once 'CRM/Financial/BAO/FinancialItem.php';
 
       // take all processed participant ids.
       $allParticipantIds = $this->_participantIDS;
@@ -738,7 +739,9 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
           foreach ($value as $line) {
             $line['entity_id'] = $entityId;
             $line['entity_table'] = $entityTable;
-            CRM_Price_BAO_LineItem::create($line);
+                        $lineItems = CRM_Price_BAO_LineItem::create( $line );
+                        CRM_Financial_BAO_FinancialItem::add( $lineItems, $contribution );
+                        
           }
         }
       }
