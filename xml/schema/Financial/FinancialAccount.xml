@@ -72,7 +72,7 @@
        <name>description</name>
        <type>varchar</type>
        <length>255</length>
-       <comment>Contribution Type Description.</comment>
+       <comment>Financial Type Description.</comment>
        <add>1.3</add>
   </field>
   <field>

@@ -9,7 +9,7 @@
 {ts}Contribution Information{/ts}
 
 ===========================================================
-{ts}Contribution Type{/ts}: {$formValues.contributionType_name}
+{ts}Financial Type{/ts}: {$formValues.contributionType_name}
 {if $lineItem}
 {foreach from=$lineItem item=value key=priceset}
 ---------------------------------------------------------

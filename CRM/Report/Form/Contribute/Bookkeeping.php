@@ -125,7 +125,7 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
                                  'financial_type_id'   =>
                                     array( 'title'        => ts( 'Financial Type' ), 
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-                                           'options'      => CRM_Contribute_PseudoConstant::financialType( )
+            'options' => CRM_Contribute_PseudoConstant::financialType(),
           ),
           'payment_instrument_id' =>
           array('title' => ts('Paid By'),
@@ -269,8 +269,8 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
         $entryFound = TRUE;
       }
 
-      if ($value = CRM_Utils_Array::value('civicrm_contribution_contribution_type_id', $row)) {
-        $rows[$rowNum]['civicrm_contribution_contribution_type_id'] = $contributionTypes[$value];
+      if ($value = CRM_Utils_Array::value('civicrm_contribution_financial_type_id', $row)) {
+        $rows[$rowNum]['civicrm_contribution_financial_type_id'] = $contributionTypes[$value];
         $entryFound = TRUE;
       }
 

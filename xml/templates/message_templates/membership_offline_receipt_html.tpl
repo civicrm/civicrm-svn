@@ -79,7 +79,7 @@
        {if $formValues.contributionType_name}
         <tr>
          <td {$labelStyle}>
-          {ts}Contribution Type{/ts}
+          {ts}Financial Type{/ts}
          </td>
          <td {$valueStyle}>
           {$formValues.contributionType_name}

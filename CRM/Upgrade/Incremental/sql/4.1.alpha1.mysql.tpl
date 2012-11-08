@@ -315,8 +315,8 @@ VALUES (@drgid, 'civicrm_contact', 'first_name',     '5'),
 
 
 -- CRM-9125
-ALTER TABLE `civicrm_contribution_recur` ADD `contribution_type_id` int(10) unsigned NULL COMMENT 'FK to Contribution Type';
-ALTER TABLE `civicrm_contribution_recur` ADD CONSTRAINT `FK_civicrm_contribution_recur_contribution_type_id` FOREIGN KEY (`contribution_type_id`) REFERENCES `civicrm_contribution_type` (`id`) ON DELETE SET NULL;
+ALTER TABLE `civicrm_contribution_recur` ADD `financial_type_id` int(10) unsigned NULL COMMENT 'FK to Financial Type';
+ALTER TABLE `civicrm_contribution_recur` ADD CONSTRAINT `FK_civicrm_contribution_recur_contribution_type_id` FOREIGN KEY (`financial_type_id`) REFERENCES `civicrm_contribution_type` (`id`) ON DELETE SET NULL;
 
 ALTER TABLE `civicrm_contribution_recur` ADD `payment_instrument_id` int(10) unsigned NULL COMMENT 'FK to Payment Instrument';
 ALTER TABLE `civicrm_contribution_recur` ADD INDEX UI_contribution_recur_payment_instrument_id ( payment_instrument_id );
@@ -324,7 +324,7 @@ ALTER TABLE `civicrm_contribution_recur` ADD INDEX UI_contribution_recur_payment
 ALTER TABLE `civicrm_contribution_recur` ADD `campaign_id` int(10) unsigned NULL COMMENT 'The campaign for which this contribution has been triggered.';
 ALTER TABLE `civicrm_contribution_recur` ADD CONSTRAINT `FK_civicrm_contribution_recur_campaign_id` FOREIGN KEY (`campaign_id`) REFERENCES `civicrm_campaign` (`id`) ON DELETE SET NULL;
 
-UPDATE `civicrm_contribution_recur` ccr INNER JOIN `civicrm_contribution` cc ON ccr.id = cc.contribution_recur_id SET ccr.campaign_id = cc.campaign_id, ccr.payment_instrument_id = cc.payment_instrument_id, ccr.contribution_type_id = cc.contribution_type_id;
+UPDATE `civicrm_contribution_recur` ccr INNER JOIN `civicrm_contribution` cc ON ccr.id = cc.contribution_recur_id SET ccr.campaign_id = cc.campaign_id, ccr.payment_instrument_id = cc.payment_instrument_id, ccr.financial_type_id = cc.financial_type_id;
 
 -- CRM-8962
 INSERT INTO civicrm_action_mapping ( entity, entity_value, entity_value_label, entity_status, entity_status_label, entity_date_start, entity_date_end, entity_recipient ) 

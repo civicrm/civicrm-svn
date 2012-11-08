@@ -155,7 +155,8 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
     $this->add('hidden', 'action', $this->_action);
 
         $this->add('select', 'financial_type_id', ts( 'Financial Type' ), 
-                   array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::financialType( ) );
+      array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::financialType()
+    );
 
     $relTypeInd = CRM_Contact_BAO_Relationship::getContactRelationshipType(NULL, NULL, NULL, NULL, TRUE);
     if (is_array($relTypeInd)) {

@@ -360,7 +360,7 @@ INSERT INTO civicrm_component (name, namespace) VALUES ('CiviPledge', 'CRM_Pledg
 CREATE TABLE `civicrm_pledge` (
   `id` int(10) unsigned NOT NULL auto_increment COMMENT 'Pledge ID',
   `contact_id` int(10) unsigned NOT NULL COMMENT 'Foreign key to civicrm_contact.id .',
-  `contribution_type_id` int(10) unsigned default NULL COMMENT 'FK to Contribution Type. This is propagated to contribution record when pledge payments are made.',
+  `financial_type_id` int(10) unsigned default NULL COMMENT 'FK to Financial Type. This is propagated to contribution record when pledge payments are made.',
   `contribution_page_id` int(10) unsigned default NULL COMMENT 'The Contribution Page which triggered this contribution',
   `amount` decimal(20,2) NOT NULL COMMENT 'Total pledged amount.',
   `frequency_unit` enum('day','week','month','year') collate utf8_unicode_ci default 'month' COMMENT 'Time units for recurrence of pledge payments.',
@@ -383,7 +383,7 @@ CREATE TABLE `civicrm_pledge` (
   PRIMARY KEY  (`id`),
   INDEX `index_status` (`status_id`),
   CONSTRAINT `FK_civicrm_pledge_contact_id` FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `FK_civicrm_pledge_contribution_type_id` FOREIGN KEY (`contribution_type_id`) REFERENCES `civicrm_contribution_type` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `FK_civicrm_pledge_contribution_type_id` FOREIGN KEY (`financial_type_id`) REFERENCES `civicrm_contribution_type` (`id`) ON DELETE SET NULL,
   CONSTRAINT `FK_civicrm_pledge_contribution_page_id` FOREIGN KEY (`contribution_page_id`) REFERENCES `civicrm_contribution_page` (`id`) ON DELETE SET NULL,
   CONSTRAINT `FK_civicrm_pledge_honor_contact_id` FOREIGN KEY (`honor_contact_id`) REFERENCES `civicrm_contact` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;

@@ -1215,7 +1215,7 @@ class CRM_Utils_Token {
     $key = 'contribution';
     if (self::$_tokens[$key] == NULL) {
       self::$_tokens[$key] = array_keys(array_merge(CRM_Contribute_BAO_Contribution::exportableFields('All'),
-          array('campaign', 'contribution_type')
+          array('campaign', 'financial_type')
         ));
     }
   }

@@ -198,7 +198,7 @@ class CRM_Report_Form_Member_ContributionDetail extends CRM_Report_Form {
             'csv_display' => TRUE,
             'title' => ts('Contribution ID'),
           ),
-          'contribution_type_id' => array('title' => ts('Contribution Type'),
+          'financial_type_id' => array('title' => ts('Financial Type'),
             'default' => TRUE,
           ),
           'contribution_recur_id' => array('title' => ts('Recurring Contribution Id'),
@@ -233,10 +233,10 @@ class CRM_Report_Form_Member_ContributionDetail extends CRM_Report_Form {
         array(
           'receive_date' =>
           array('operatorType' => CRM_Report_Form::OP_DATE),
-          'contribution_type_id' =>
-          array('title' => ts('Contribution Type'),
+          'financial_type_id' =>
+          array('title' => ts('Financial Type'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-            'options' => CRM_Contribute_PseudoConstant::contributionType(),
+            'options' => CRM_Contribute_PseudoConstant::financialType(),
           ),
           'payment_instrument_id' =>
           array('title' => ts('Payment Type'),
@@ -701,7 +701,7 @@ class CRM_Report_Form_Member_ContributionDetail extends CRM_Report_Form {
     $checkList = array();
 
     $entryFound         = FALSE;
-    $contributionTypes  = CRM_Contribute_PseudoConstant::contributionType();
+    $contributionTypes  = CRM_Contribute_PseudoConstant::financialType();
     $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus();
     $paymentInstruments = CRM_Contribute_PseudoConstant::paymentInstrument();
     $honorTypes         = CRM_Core_OptionGroup::values('honor_type', FALSE, FALSE, FALSE, NULL, 'label');
@@ -838,8 +838,8 @@ class CRM_Report_Form_Member_ContributionDetail extends CRM_Report_Form {
         $rows[$rowNum]['civicrm_contact_honor_sort_name_honor_hover'] = ts("View Contact Summary for Honoree.");
       }
 
-      if ($value = CRM_Utils_Array::value('civicrm_contribution_contribution_type_id', $row)) {
-        $rows[$rowNum]['civicrm_contribution_contribution_type_id'] = $contributionTypes[$value];
+      if ($value = CRM_Utils_Array::value('civicrm_contribution_financial_type_id', $row)) {
+        $rows[$rowNum]['civicrm_contribution_financial_type_id'] = $contributionTypes[$value];
         $entryFound = TRUE;
       }
       if ($value = CRM_Utils_Array::value('civicrm_contribution_contribution_status_id', $row)) {

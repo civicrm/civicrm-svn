@@ -58,7 +58,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase {
       'scheduled_date' => $this->scheduled_date,
       'amount' => 100.00,
       'pledge_status_id' => '2',
-      'pledge_financial_account_id' => '1',
+      'pledge_financial_type_id' => '1',
       'pledge_original_installment_amount' => 20,
       'frequency_interval' => 5,
       'frequency_unit' => 'year',
@@ -135,7 +135,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase {
     $pledge = civicrm_api('pledge', 'delete', $params2);
   }
   /*
-   * test  'return.pledge_financial_account' => 1 works
+   * test  'return.pledge_financial_type' => 1 works
    */
   function testGetPledgewithReturn() {
 
@@ -143,12 +143,12 @@ class api_v3_PledgeTest extends CiviUnitTestCase {
     $params = array(
       'pledge_id' => $this->_pledge['id'],
       'version' => $this->_apiversion,
-      'return.pledge_financial_account' => 1,
+      'return.pledge_financial_type' => 1,
     );
     $result = civicrm_api('pledge', 'get', $params);
     $pledge = $result['values'][$this->_pledge['id']];
     civicrm_api('pledge', 'delete', $pledge);
-    $this->assertEquals('Donation', $pledge['pledge_financial_account']);
+    $this->assertEquals('Donation', $pledge['pledge_financial_type']);
   }
 
   function testPledgeGetReturnFilters() {

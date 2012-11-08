@@ -85,7 +85,7 @@ class CRM_Member_Form_MembershipTest extends CiviUnitTestCase {
         'civicrm_mailing_component',
         'civicrm_mailing_bounce_type',
         'civicrm_mailing_bounce_pattern',
-        'civicrm_contribution_type',
+        'civicrm_financial_type',
         'civicrm_premiums',
         'civicrm_product',
         'civicrm_premiums_product',

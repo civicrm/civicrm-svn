@@ -422,7 +422,7 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase {
             CRM_Core_Error::debug_var( '$ids', $ids );
             CRM_Core_Error::debug_var( '$input', $input );
             
-            $paymentProcessorID = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_PaymentProcessorType',
+            $paymentProcessorID = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_PaymentProcessorType',
                                                                'AuthNet', 'id', 'name' );
             
             if ( ! $this->IPN->validateData( $input, $ids, $objects, true, $paymentProcessorID ) ) {

@@ -194,9 +194,11 @@ class CRM_Price_Form_Set extends CRM_Core_Form {
     $this->addGroup($extends, 'extends', ts('Used For'), '&nbsp;', TRUE);
 
     $this->addRule('extends', ts('%1 is a required field.', array(1 => ts('Used For'))), 'required');
-        $this->add( 'select', 'financial_type_id', 
-                    ts( 'Financial Type (Membership Fees)' ), 
-                    array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::financialType( ) );
+
+    $this->add('select', 'financial_type_id',
+      ts('Financial Type (Membership Fees)'),
+      array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::financialType()
+    );
 
     // help text
     $this->add('textarea', 'help_pre', ts('Pre-form Help'),
@@ -268,7 +270,7 @@ class CRM_Price_Form_Set extends CRM_Core_Form {
     $nameLength = CRM_Core_DAO::getAttribute('CRM_Price_DAO_Set', 'name');
     $params['name'] = CRM_Utils_String::titleToVar($params['title'], CRM_Utils_Array::value('maxlength', $nameLength));
     $params['is_active'] = CRM_Utils_Array::value('is_active', $params, FALSE);
-        $params['financial_type_id'] = CRM_Utils_Array::value( 'financial_type_id', $params, false );
+    $params['financial_type_id'] = CRM_Utils_Array::value('financial_type_id', $params, FALSE);
 
     $compIds = array();
     $extends = CRM_Utils_Array::value('extends', $params);

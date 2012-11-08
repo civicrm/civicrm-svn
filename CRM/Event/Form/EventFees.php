@@ -225,7 +225,7 @@ class CRM_Event_Form_EventFees {
         if ($form->_action == CRM_Core_Action::UPDATE && !$form->_originalDiscountId) {
           $form->_originalDiscountId = $defaults[$form->_pId]['discount_id'];
           if ($form->_originalDiscountId) {
-                        $optionGroupId = CRM_Core_DAO::getFieldValue( "CRM_Order_DAO_Discount", 
+            $optionGroupId = CRM_Core_DAO::getFieldValue('CRM_Order_DAO_Discount',
               $form->_originalDiscountId,
               'option_group_id'
             );
@@ -261,7 +261,7 @@ class CRM_Event_Form_EventFees {
               $discountKey,
               TRUE
             ));
-                    $optionGroupId = CRM_Core_DAO::getFieldValue( "CRM_Order_DAO_Discount", 
+          $optionGroupId = CRM_Core_DAO::getFieldValue('CRM_Order_DAO_Discount',
             $discountId,
             'option_group_id'
           );
@@ -491,7 +491,8 @@ SELECT  id, html_type
 
                 $form->add('select', 'financial_type_id', 
                            ts( 'Financial Type' ), 
-                           array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::financialType( ) );
+          array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::financialType()
+        );
 
         $form->addDate('receive_date', ts('Received'), FALSE, array('formatType' => 'activityDate'));
 

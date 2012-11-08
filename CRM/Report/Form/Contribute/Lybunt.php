@@ -140,7 +140,7 @@ class CRM_Report_Form_Contribute_Lybunt extends CRM_Report_Form {
                                   'financial_type_id'         => 
                                   array( 'title'   => ts( 'Financial Type' ),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-                                         'options'      => CRM_Contribute_PseudoConstant::financialType( )
+            'options' => CRM_Contribute_PseudoConstant::financialType(),
           ),
           'contribution_status_id' =>
           array('title' => ts('Contribution Status'),

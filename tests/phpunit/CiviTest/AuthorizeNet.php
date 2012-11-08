@@ -9,7 +9,7 @@ class AuthorizeNet extends PHPUnit_Framework_Testcase {
      */
   function create() {
 
-    $paymentProcessor = new CRM_Core_DAO_PaymentProcessor();
+    $paymentProcessor = new CRM_Financial_DAO_PaymentProcessor();
     $paymentParams = array(
       'name' => 'Authorize',
       'domain_id' => CRM_Core_Config::domainID(),
@@ -38,7 +38,7 @@ class AuthorizeNet extends PHPUnit_Framework_Testcase {
      * 
      */
   function delete($id) {
-    $paymentProcessor = new CRM_Core_DAO_PaymentProcessor();
+    $paymentProcessor = new CRM_Financial_DAO_PaymentProcessor();
     $paymentProcessor->id = $id;
     if ($paymentProcessor->find(TRUE)) {
       $result = $paymentProcessor->delete();

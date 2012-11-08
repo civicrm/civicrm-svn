@@ -1161,7 +1161,7 @@ WHERE 	line_item_civireport.id IS NOT NULL
   }
 
   /*
-    * Retrieve text for contribution type from pseudoconstant
+    * Retrieve text for financial type from pseudoconstant
     */
   function alterNickName($value, &$row) {
     if(empty($row['civicrm_contact_id'])){

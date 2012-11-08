@@ -178,7 +178,7 @@ class WebTest_Contribute_UpdatePendingContributionTest extends CiviSeleniumTestC
     $this->waitForElementPresent("_qf_ContributionView_cancel-bottom");
 
     $expected = array(
-      'Contribution Type' => 'Donation',
+      'Financial Type' => 'Donation',
       'Total Amount' => '100.00',
       'Contribution Status' => 'Pending',
       'Paid By' => 'Check',

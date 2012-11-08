@@ -1132,7 +1132,36 @@ WHERE  contribution_id = {$this->_id}
         $errors['pcp_made_through'] = ts('Please select a Personal Campaign Page, OR uncheck Display in Honor Roll and clear both the Honor Roll Name and the Personal Note field.');
       }
     }
+    $Financialaccount = array( );
+    $flag = false;
+    CRM_Core_PseudoConstant::populate( $Financialaccount,
+                                       'CRM_Financial_DAO_EntityFinancialAccount',
+                                       $all = True, 
+                                       $retrieve = 'financial_account_id', 
+                                       $filter = null, 
+                                       " account_relationship = 6 AND entity_id = {$fields['financial_type_id']} " );
+    if( !current( $Financialaccount ) ){
+      $errors['financial_type_id'] = "Financial Account of account relationship of 'Is Asset Account of' is not configured for this Financial Type";
+      $flag = true;
+    }
 
+    if( CRM_Utils_Array::value( 'fee_amount', $fields )  ){
+      $Financialaccount = array( );
+      CRM_Core_PseudoConstant::populate( $Financialaccount,
+                                         'CRM_Financial_DAO_EntityFinancialAccount',
+                                         $all = True, 
+                                         $retrieve = 'financial_account_id', 
+                                         $filter = null, 
+                                         " account_relationship = 5 AND entity_id = {$fields['financial_type_id']} " );
+      if( !current( $Financialaccount ) ){
+        $errors['financial_type_id'] = "Financial Account of account relationship of ";
+        if( $flag ) 
+          $errors['financial_type_id'] .= "'Is Asset Account of' and "; 
+                
+        $errors['financial_type_id'] .= "'Expense Account is' is not configured for this Financial Type";
+      }
+    }
+    
     return $errors;
   }
 
@@ -1549,6 +1578,16 @@ WHERE  contribution_id = {$this->_id}
 
       $params['contact_id'] = $this->_contactID;
 
+      $financialAccounts = array( );
+      CRM_Core_PseudoConstant::populate( $financialAccounts,
+                                         'CRM_Financial_DAO_EntityFinancialAccount',
+                                         $all = True, 
+                                         $retrieve = 'financial_account_id', 
+                                         $filter = null, 
+                                         " entity_id = {$formValues['financial_type_id']} ", null, 'account_relationship' );
+      $assetRelation = key(CRM_CORE_PseudoConstant::accountOptionValues( 'account_relationship', null, " AND v.name LIKE 'Is Asset Account of' " ));   
+      $params['to_financial_account_id'] = CRM_Utils_Array::value( $assetRelation, $financialAccounts );
+
       // get current currency from DB or use default currency
       $currentCurrency = CRM_Utils_Array::value('currency',
         $this->_values,
@@ -1561,7 +1600,8 @@ WHERE  contribution_id = {$this->_id}
         $currentCurrency
       );
 
-            $fields = array( 'financial_type_id',
+      $fields = array(
+        'financial_type_id',
         'contribution_status_id',
         'payment_instrument_id',
                              'to_financial_account_id',
@@ -1624,6 +1664,60 @@ WHERE  contribution_id = {$this->_id}
             $now = date( 'YmdHis' );
       //create contribution.
       $contribution = CRM_Contribute_BAO_Contribution::create($params, $ids);
+      $now = date( 'YmdHis' );
+         
+      //create entry in FinancialTrxn table
+      $contributionStatus = CRM_Contribute_Pseudoconstant::contributionStatus( $contribution->contribution_status_id );
+      if( !empty( $contribution->id ) ){
+        $trxnParams = array(
+                            'contribution_id'         => $contribution->id,
+                            'to_financial_account_id' => $params['to_financial_account_id'],
+                            'trxn_date'               => $now,
+                            'total_amount'            => $params['total_amount'],
+                            'fee_amount'              => CRM_Utils_Array::value( 'fee_amount',  $params),
+                            'net_amount'              => CRM_Utils_Array::value( 'net_amount', $params ),
+                            'currency'                => $params['currency'],                                    
+                            'trxn_id'                 => $params['trxn_id'],
+                            'status_id'               => $contribution->contribution_status_id,
+                            'trxn_result_code'        => ( !empty( $contribution->trxn_result_code ) ? $contribution->trxn_result_code : false ),
+                            );
+               
+        if( $paymentProcessorId = CRM_Utils_Array::value( 'id', $this->_paymentProcessor ) )
+          $trxnParams['payment_processor_id'] = $paymentProcessorId; 
+        $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
+        $orgId = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialAccount', $params['to_financial_account_id'], 'contact_id' );
+        $itemsParams = array( 'created_date'         => date('YmdHis'),
+                              'transaction_date'     => $trxn->trxn_date,
+                              'amount'               => $trxn->total_amount,
+                              'currency'             => $trxn->currency,
+                              'entity_table'         => 'civicrm_financial_trxn',
+                              'entity_id'            => $trxn->id,
+                              'contact_id'           => $orgId,
+                              );
+        $itemsParams['financial_account_id'] = $params['to_financial_account_id'];
+        $trxnId['id']                        = $trxn->id;
+        CRM_Financial_BAO_FinancialItem::create( $itemsParams, null, $trxnId  );
+        if( CRM_Utils_Array::value( 'fee_amount', $trxnParams ) ){
+          $ExpenceRelation = key(CRM_CORE_PseudoConstant::accountOptionValues( 'account_relationship', null, " AND v.name LIKE 'Expense Account is' ", false ));
+                  
+
+                  
+          $trxnParams['total_amount']              = $trxnParams['fee_amount'];
+          unset($trxnParams['fee_amount']);
+          $trxnParams['from_financial_account_id'] = $financialAccounts[6];  // FA with Asset account relationship
+          $trxnParams['to_financial_account_id']   = CRM_Utils_Array::value( $ExpenceRelation, $financialAccounts );
+          $trxnEntityTable['entity_table'] = 'civicrm_financial_trxn';
+          $trxnEntityTable['entity_id'] = $trxn->id;
+          $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams, $trxnEntityTable );
+                   
+          $itemsParams['amount']               = $trxn->total_amount;
+          $itemsParams['contact_id']           = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Domain', 1, 'contact_id' );
+          $itemsParams['financial_account_id'] = CRM_Utils_Array::value( $ExpenceRelation, $financialAccounts );
+          CRM_Financial_BAO_FinancialItem::create( $itemsParams, null, $trxnId  ); 
+        }
+      }
+
+
       // 10117 update th line items for participants
       if ($this->_context != 'participant' && !$pId) {
         $entityID = $contribution->id;

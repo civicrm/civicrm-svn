@@ -372,7 +372,6 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
     if (!CRM_Core_Permission::check('view all activities')) {
       unset($select['4']);
     }
-
     return $select;
   }
 

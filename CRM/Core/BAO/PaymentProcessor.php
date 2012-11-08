@@ -48,7 +48,7 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Financial_DAO_PaymentProcessor
      * @params array parameters for Processor entity
      */
   function create(&$params) {
-    $processor = new CRM_Core_DAO_PaymentProcessor();
+    $processor = new CRM_Financial_DAO_PaymentProcessor();
     $processor->copyValues($params);
     $processor->save();
     return $processor;
@@ -73,8 +73,9 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Financial_DAO_PaymentProcessor
    * @access public
    * @static
    */
-  static function retrieve(&$params, &$defaults) {
-        $paymentProcessor = new CRM_Financial_DAO_PaymentProcessor( );
+  static
+  function retrieve(&$params, &$defaults) {
+    $paymentProcessor = new CRM_Financial_DAO_PaymentProcessor();
     $paymentProcessor->copyValues($params);
     if ($paymentProcessor->find(TRUE)) {
       CRM_Core_DAO::storeValues($paymentProcessor, $defaults);
@@ -94,8 +95,9 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Financial_DAO_PaymentProcessor
    * @access public
    * @static
    */
-  static function setIsActive($id, $is_active) {
-        return CRM_Core_DAO::setFieldValue( 'CRM_Financial_DAO_PaymentProcessor', $id, 'is_active', $is_active );
+  static
+  function setIsActive($id, $is_active) {
+    return CRM_Core_DAO::setFieldValue('CRM_Financial_DAO_PaymentProcessor', $id, 'is_active', $is_active);
   }
 
   /**

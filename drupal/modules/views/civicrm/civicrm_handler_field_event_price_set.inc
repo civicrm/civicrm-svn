@@ -72,7 +72,7 @@ class civicrm_handler_field_event_price_set extends views_handler_field_prerende
             $discountId = CRM_Core_BAO_Discount::findSet($eventPageID, 'civicrm_event');
             if ($discountId) {
               CRM_Core_OptionGroup::getAssoc(
-                CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Discount',
+                CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_Discount',
                   $discountId,
                   'option_group_id'
                 ),

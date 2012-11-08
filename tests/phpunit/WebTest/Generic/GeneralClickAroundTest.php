@@ -220,7 +220,7 @@ class WebTest_Generic_GeneralClickAroundTest extends CiviSeleniumTestCase {
     $this->assertElementPresent("contribution_date_low");
     $this->assertElementPresent("contribution_amount_low");
     $this->assertElementPresent("contribution_check_number");
-    $this->assertTextPresent("Contribution Type");
+    $this->assertTextPresent("Financial Type");
     $this->assertTextPresent("Contribution Page");
     $this->assertElementPresent("contribution_in_honor_of");
     $this->assertElementPresent("contribution_source");

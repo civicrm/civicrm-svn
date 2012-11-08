@@ -390,7 +390,7 @@ SELECT id
     // get the submitted form values.
     $params = $this->controller->exportValues($this->_name);
     if (array_key_exists('payment_processor', $params)) {
-      if (array_key_exists(CRM_Core_DAO::getFieldValue('CRM_Core_DAO_PaymentProcessor', 'AuthNet',
+      if (array_key_exists(CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_PaymentProcessor', 'AuthNet',
             'id', 'payment_processor_type'
           ),
           CRM_Utils_Array::value('payment_processor', $params)

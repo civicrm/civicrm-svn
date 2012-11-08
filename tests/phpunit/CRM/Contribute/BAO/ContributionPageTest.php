@@ -162,7 +162,7 @@ class CRM_Contribute_BAO_ContributionPageTest extends CiviUnitTestCase {
     $paymentProcessor = PaypalPro::create();
     $params = array(
       'title' => 'Test Contribution Page',
-                         'financial_account_id'   => $this->_contributionTypeID,
+      'financial_type_id' => $this->_contributionTypeID,
       'is_active' => 1,
       'payment_processor_id' => $paymentProcessor,
     );

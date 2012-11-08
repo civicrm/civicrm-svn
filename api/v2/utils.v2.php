@@ -987,7 +987,8 @@ function _civicrm_contribute_formatted_param(&$params, &$values, $create = FALSE
           return civicrm_create_error("currency not a valid code: $value");
         }
         break;
-        case 'financial_type':            
+
+      case 'financial_type':
         require_once 'CRM/Contribute/PseudoConstant.php';
             $contriTypes = CRM_Contribute_PseudoConstant::financialType( );
         foreach ($contriTypes as $val => $type) {

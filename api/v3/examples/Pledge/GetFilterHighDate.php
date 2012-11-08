@@ -42,7 +42,7 @@ function pledge_get_expectedresult(){
           'pledge_next_pay_date' => '2011-03-03 00:00:00',
           'pledge_next_pay_amount' => '20.00',
           'pledge_outstanding_amount' => '20.00',
-          'pledge_contribution_type' => 'Donation',
+          'pledge_financial_type' => 'Donation',
           'pledge_contribution_page_id' => '',
           'pledge_frequency_interval' => '5',
           'pledge_frequency_unit' => 'year',

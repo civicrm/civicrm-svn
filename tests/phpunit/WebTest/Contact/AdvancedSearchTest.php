@@ -416,8 +416,8 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     // fill plegde start date
     $this->webtestFillDate("pledge_start_date_low", "-2 day");
     $this->webtestFillDate("pledge_start_date_high", "+2 day");
-      // fill financial type
-    $this->select("pledge_contribution_type_id", "label=Donation");
+    // fill contribution type
+    $this->select("pledge_financial_type_id", "Donation");
   }
 
   // function to create contact with details (contact details, address, Constituent information ...)

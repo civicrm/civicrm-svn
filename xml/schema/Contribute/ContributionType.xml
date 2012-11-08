@@ -11,7 +11,7 @@
       <name>id</name>
       <type>int unsigned</type>
       <required>true</required>
-      <comment>Contribution Type ID</comment>
+      <comment>Financial Type ID</comment>
        <add>1.3</add>
   </field>
   <primaryKey>
@@ -21,13 +21,13 @@
   <field>
        <name>name</name>
        <uniqueName>contribution_type</uniqueName> 
-       <title>Contribution Type</title>
+       <title>Financial Type</title>
        <type>varchar</type>
        <length>64</length>
        <import>true</import>
        <headerPattern>/(contrib(ution)?)?type/i</headerPattern>
        <dataPattern>/donation|member|campaign/i</dataPattern>
-       <comment>Contribution Type Name.</comment>
+       <comment>Financial Type Name.</comment>
        <add>1.3</add>
   </field>
   <field>

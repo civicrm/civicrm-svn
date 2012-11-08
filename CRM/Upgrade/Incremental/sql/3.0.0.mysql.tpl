@@ -22,7 +22,7 @@
     
     UPDATE civicrm_navigation SET permission ='access CiviContribute,administer CiviCRM',  permission_operator ='AND'
         WHERE civicrm_navigation.name IN ( 'New Contribution Page','Manage Contribution Pages','Personal Campaign Pages','Premiums',
-                                           'Contribution Types', 'Payment Instruments','Accepted Credit Cards' );
+                                           'Financial Types', 'Payment Instruments','Accepted Credit Cards' );
     UPDATE civicrm_navigation SET permission ='access CiviContribute,edit contributions',  permission_operator ='AND'                                       
         WHERE civicrm_navigation.name IN ( 'New Contribution','Import Contributions');
     UPDATE civicrm_navigation SET permission ='access CiviEvent'

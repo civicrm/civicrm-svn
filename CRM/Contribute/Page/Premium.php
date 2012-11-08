@@ -191,7 +191,7 @@ class CRM_Contribute_Page_Premium extends CRM_Core_Page_Basic {
     );
     $this->assign('rows', $premiums);
   }
-
+}
   /**
    * Get name of edit form
    *

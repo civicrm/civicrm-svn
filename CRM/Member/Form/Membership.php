@@ -1184,9 +1184,10 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
         $params['receipt_date'] = CRM_Utils_Array::value('receive_date', $params);
       }
 
-            //insert financial type name in receipt.
-            $formValues['contributionType_name'] = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialType',
-                                                                                $formValues['financial_type_id'] );
+      //insert financial type name in receipt.
+      $formValues['contributionType_name'] = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_FinancialType',
+        $formValues['financial_type_id']
+      );
     }
 
     // process line items, until no previous line items.

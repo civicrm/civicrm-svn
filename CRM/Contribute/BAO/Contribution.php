@@ -1968,10 +1968,10 @@ SELECT source_contact_id
       }
     }
     $paymentProcessorID = CRM_Utils_Array::value('paymentProcessor', $ids);
-    $contributionType = new CRM_Contribute_BAO_FinancialType();
+    $contributionType = new CRM_Financial_BAO_FinancialType();
     $contributionType->id = $contribution->financial_type_id;
     if (!$contributionType->find(TRUE)) {
-      throw new Exception("Could not find contribution type record: " . $this->contribution_type_id);
+      throw new Exception("Could not find financial type record: " . $this->financial_type_id);
     }
     if (!empty($ids['contact'])) {
       $this->_relatedObjects['contact'] = new CRM_Contact_BAO_Contact();

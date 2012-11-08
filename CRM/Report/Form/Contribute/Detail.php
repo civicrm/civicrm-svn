@@ -222,7 +222,7 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
           array('title' => ts('Contribution Amount')),
         ),
         'order_bys' => array( 
-          'contribution_type_id' => array('title' => ts('Contribution Type')), 
+          'financial_type_id' => array('title' => ts('Financial Type')), 
           'contribution_status_id' => array('title' => ts('Contribution Status')), 
           'payment_instrument_id' => array('title' => ts('Payment Instrument')), 
         ),
@@ -570,8 +570,8 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
         $rows[$rowNum]['civicrm_contact_honor_sort_name_honor_hover'] = ts("View Contact Summary for Honoree.");
       }
 
-      if ($value = CRM_Utils_Array::value('civicrm_contribution_contribution_type_id', $row)) {
-        $rows[$rowNum]['civicrm_contribution_contribution_type_id'] = $contributionTypes[$value];
+      if ($value = CRM_Utils_Array::value('civicrm_contribution_financial_type_id', $row)) {
+        $rows[$rowNum]['civicrm_contribution_financial_type_id'] = $contributionTypes[$value];
         $entryFound = TRUE;
       }
       if ($value = CRM_Utils_Array::value('civicrm_contribution_contribution_status_id', $row)) {

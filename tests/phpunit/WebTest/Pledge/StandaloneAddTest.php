@@ -100,7 +100,7 @@ class WebTest_Pledge_StandaloneAddTest extends CiviSeleniumTestCase {
         'To be paid in' => '10 installments of $ 10.00 every 1 week(s)',
         'Payments are due on the' => '2 day of the period',
         'Pledge Made' => $pledgeDate,
-        'Contribution Type' => 'Donation',
+        'Financial Type' => 'Donation',
         'Pledge Status' => 'Pending',
         'In Honor of' => 'Mr. ' . $honorFirstName . ' ' . $honorLastName,
         'Initial Reminder Day' => '4 days prior to schedule date',

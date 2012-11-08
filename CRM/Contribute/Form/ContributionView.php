@@ -170,9 +170,7 @@ class CRM_Contribute_Form_ContributionView extends CRM_Core_Form {
     $displayName = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $values['contact_id'], 'display_name');
     $this->assign('displayName', $displayName);
 
-        $title = $displayName . 
-            ' - (' . CRM_Utils_Money::format( $values['total_amount'] ) . ' ' . 
-            ' - ' . $values['financial_type'] . ')';
+    $title = $displayName . ' - (' . CRM_Utils_Money::format($values['total_amount']) . ' ' . ' - ' . $values['financial_type'] . ')';
 
     $recentOther = array();
     if (CRM_Core_Permission::checkActionPermission('CiviContribute', CRM_Core_Action::UPDATE)) {

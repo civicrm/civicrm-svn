@@ -92,11 +92,6 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
     // name
     $this->add('text', 'title', ts('Title'), $attributes['title'], TRUE);
 
-        $this->add('select', 'financial_type_id',
-                   ts( 'Financial Type' ),
-                   CRM_Contribute_PseudoConstant::financialType( ),
-      TRUE
-    );
 
     //CRM-7362 --add campaigns.
     CRM_Campaign_BAO_Campaign::addCampaign($this, CRM_Utils_Array::value('campaign_id', $this->_values));

@@ -281,7 +281,7 @@ registration process.{/ts}</p>
        {if $contributionTypeName}
         <tr>
          <td {$labelStyle}>
-          {ts}Contribution Type{/ts}
+          {ts}Financial Type{/ts}
          </td>
          <td {$valueStyle}>
           {$contributionTypeName}

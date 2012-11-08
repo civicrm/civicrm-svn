@@ -91,7 +91,7 @@ class WebTest_Import_ContributionTest extends ImportCiviSeleniumTestCase {
     $headers = array(
       'email' => 'Email',
       'fee_amount' => 'Fee Amount',
-                          'financial_type'         => 'Contribution Type',
+      'financial_type' => 'Financial Type',
       'contribution_status_id' => 'Contribution Status',
       'total_amount' => 'Total Amount',
     );
@@ -126,7 +126,7 @@ class WebTest_Import_ContributionTest extends ImportCiviSeleniumTestCase {
     $headers = array(
       'household' => 'Household Name',
       'fee_amount' => 'Fee Amount',
-                          'financial_type'         => 'Contribution Type',
+      'financial_type' => 'financial Type',
       'contribution_status_id' => 'Contribution Status',
       'total_amount' => 'Total Amount',
     );
@@ -161,7 +161,7 @@ class WebTest_Import_ContributionTest extends ImportCiviSeleniumTestCase {
     $headers = array(
       'organization' => 'Organization Name',
       'fee_amount' => 'Fee Amount',
-                          'financial_type'         => 'Contribution Type',
+      'financial_type' => 'Financial Type',
       'contribution_status_id' => 'Contribution Status',
       'total_amount' => 'Total Amount',
     );

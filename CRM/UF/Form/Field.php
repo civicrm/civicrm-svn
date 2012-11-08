@@ -170,9 +170,9 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
         'name' => 'product_name',
         'title' => ts('Premiums'),
       ),
-      'contribution_type' => array(
-        'name' => 'contribution_type',
-        'title' => ts('Contribution Type'),
+      'financial_type' => array(
+        'name' => 'financial_type',
+        'title' => ts('Financial Type'),
       ),
       'total_amount' => array(
         'name' => 'total_amount',

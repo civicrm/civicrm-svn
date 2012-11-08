@@ -88,11 +88,10 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
     else {
       $values['custom_post_id'] = '';
     }
-    // add an accounting code also
-    if (CRM_Utils_Array::value('financial_type_id', $values)) {
-            $values['accountingCode'] = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialType',
-                                                                     $values['financial_type_id'],
-                                                                     'accounting_code' );
+    // // add an accounting code also
+    // if ($values ['financial_type_id']) {
+    //   $values ['accountingCode'] = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialType', $values ['financial_type_id'], 'accounting_code' );
+    // }
     }
 
   /**

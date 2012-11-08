@@ -22,7 +22,7 @@
 
 ===========================================================
 {if $formValues.contributionType_name}
-{ts}Contribution Type{/ts}: {$formValues.contributionType_name}
+{ts}Financial Type{/ts}: {$formValues.contributionType_name}
 {/if}
 {ts}Amount{/ts}: {$formValues.total_amount|crmMoney}
 {if $receive_date}

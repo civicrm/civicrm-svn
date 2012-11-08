@@ -450,7 +450,7 @@ function civicrm_cck_event_field_values($field, $index = null) {
         foreach ( $eventInfo as $info ) {
             $discountId = CRM_Core_BAO_Discount::findSet( $info['id'], 'civicrm_event' );
             if ( $discountId ) {
-                CRM_Core_OptionGroup::getAssoc( CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Discount',
+                CRM_Core_OptionGroup::getAssoc( CRM_Core_DAO::getFieldValue( 'CRM_Order_DAO_Discount',
                                                                              $discountId, 'option_group_id' ),
                                                 $feeBlock, true, 'id' );
             } else {

@@ -95,6 +95,7 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
     $firstName = substr(sha1(rand()), 0, 7);
     $this->webtestNewDialogContact($firstName, "Contributor", $firstName . "@example.com");
 
+
       // select financial type
       $this->select("financial_type_id", "value=1");
 

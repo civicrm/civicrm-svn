@@ -56,7 +56,8 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
       if (!$this->_ppType) {
                 $this->_ppType = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_PaymentProcessor',
           $this->_id,
-                                                              'payment_processor_type_id' );
+          'payment_processor_type_id'
+        );
       }
       $this->set('pp', $this->_ppType);
     }
@@ -179,8 +180,6 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
                     array('onchange' => "reload(true)") );
 
         // Financial Type
-        require_once 'CRM/Contribute/PseudoConstant.php';
-        require_once 'CRM/Core/PseudoConstant.php';
         $financialType = CRM_Contribute_PseudoConstant::financialType( );
         $revenueFinancialType = array( );
         CRM_Core_PseudoConstant::populate( $revenueFinancialType,
@@ -275,9 +274,7 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
 
   function setDefaultValues() {
     $defaults = array();
-
-        $defaults['payment_processor_type_id'] = $this->_ppType;
-
+    $defaults['payment_processor_type_id'] = $this->_ppType;
     if (!$this->_id) {
       $defaults['is_active'] = $defaults['is_default'] = 1;
       $defaults['url_site'] = $this->_ppDAO->url_site_default;
@@ -369,6 +366,7 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
     $dao->name = $values['name'];
     $dao->description = $values['description'];
         $dao->payment_processor_type_id = $values['payment_processor_type_id'];
+
         $dao->financial_type_id         = $values['financial_type_id'];
 
 

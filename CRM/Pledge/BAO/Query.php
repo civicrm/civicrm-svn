@@ -366,9 +366,9 @@ class CRM_Pledge_BAO_Query {
         $query->_tables['civicrm_pledge'] = $query->_whereTables['civicrm_pledge'] = 1;
         return;
 
-      case 'pledge_contribution_type_id':
-            $type = CRM_Contribute_PseudoConstant::financialType( $value );
-            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_pledge.financial_type_id", 
+      case 'pledge_financial_type_id':
+        $type = CRM_Contribute_PseudoConstant::financialType($value);
+        $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause('civicrm_pledge.financial_type_id',
           $op,
           $value,
           'Integer'
@@ -384,7 +384,7 @@ class CRM_Pledge_BAO_Query {
           $value,
           'Integer'
         );
-        $query->_qill[$grouping][] = ts('Contribution Page - %1', array(1 => $page));
+        $query->_qill[$grouping][] = ts('Financial Page - %1', array(1 => $page));
         $query->_tables['civicrm_pledge'] = $query->_whereTables['civicrm_pledge'] = 1;
         return;
 
@@ -587,8 +587,10 @@ class CRM_Pledge_BAO_Query {
 
     $form->add('select', 'pledge_contribution_type_id',
                    ts( 'Financial Type' ),
-                   array( '' => ts( '- select -' ) ) +
-                   CRM_Contribute_PseudoConstant::financialType( ) );
+      array(
+        '' => ts('- select -')) +
+      CRM_Contribute_PseudoConstant::financialType()
+    );
 
     $form->add('select', 'pledge_contribution_page_id',
       ts('Contribution Page'),
