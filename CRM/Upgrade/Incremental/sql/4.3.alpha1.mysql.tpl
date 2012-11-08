@@ -144,3 +144,7 @@ INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES    
     ( {$domainID}, 'civicrm/report/list&compid=5&reset=1', '{ts escape="sql" skip="true"}Grant Reports{/ts}', 'Grant Reports', 'access CiviGrant', '', @reportlastID, '1', 0, (SELECT @max_weight := @max_weight+1) );
+
+-- CRM-11148 Multiple terms membership signup and renewal via price set
+ALTER TABLE `civicrm_price_field_value` ADD COLUMN `membership_num_terms` INT(10) NULL DEFAULT NULL COMMENT 'Maximum number of related memberships.' AFTER `membership_type_id`;
+
