@@ -1572,269 +1572,85 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     }
   }
 
-    /**
-     * Add new Financial Account
-     */
-    
-    function _testAddFinancialAccount( $financialAccountTitle,
-                                       $financialAccountDescription = FALSE,
-                                       $accountingCode = FALSE,
-                                       $firstName = FALSE,
-                                       $parentFinancialAccount = FALSE,
-                                       $financialAccountType = FALSE,
-                                       $taxDeductible = FALSE,
-                                       $isActive = FALSE,
-                                       $headerAccount = FALSE,
-                                       $isTax = FALSE,
-                                       $taxRate = FALSE,
-                                       $isDefault = FALSE
-                                       ){
-       
-        // Go directly to the URL
-        $this->open( $this->sboxPath . "civicrm/admin/financial/financialAccount?reset=1" );
-        $this->waitForPageToLoad("30000");
+function _testAddFinancialType(){
+  // Add new Financial Account
+  $orgName = 'Alberta '.substr(sha1(rand()), 0, 7);
+  $financialAccountTitle = 'Financial Account '.substr(sha1(rand()), 0, 4);
+  $financialAccountDescription = "{$financialAccountTitle} Description";
+  $accountingCode = 1033;
+  $financialAccountType = 'Revenue'; //Asset Revenue
+  $parentFinancialAccount = 'Donation';
+  $taxDeductible = FALSE;
+  $isActive = FALSE;
+  $headerAccount = TRUE;
+  $isTax = TRUE;
+  $taxRate = 10;
+  $isDefault = FALSE;
         
-        $this->click( "link=Add Financial Account" );
-        $this->waitForElementPresent( '_qf_FinancialAccount_cancel-botttom' );
-        
-        // Financial Account Name
-        $this->type( 'name', $financialAccountTitle );
-        
-        // Financial Description
-        if( $financialAccountDescription )
-            $this->type( 'description', $financialAccountDescription );
-
-        //Accounting Code
-        if( $accountingCode )
-            $this->type( 'accounting_code', $accountingCode );
-        
-        // Autofill Organization
-        if( $firstName )
-            $this->webtestOrganisationAutocomplete( $firstName );
-         
-        // Autofill Parent Financial Account Name
-        if( $parentFinancialAccount ){
-            $this->type("parent_financial_account", $parentFinancialAccount );
-            $this->click("parent_financial_account");
-            if ( !empty ( $firstName ) ){
-                $this->waitForElementPresent("xpath=//body/div[9]/div/ul/li");
-                $this->click("xpath=//body/div[9]/div/ul/li");
+  //Add new organisation
+  if( $orgName )
+          $this->webtestAddOrganization( $orgName );
+  
+  $this->_testAddFinancialAccount( $financialAccountTitle,
+                                   $financialAccountDescription,
+                                   $accountingCode,
+                                   $orgName,
+                                   $parentFinancialAccount,
+                                   $financialAccountType,
+                                   $taxDeductible,
+                                   $isActive,
+                                   $headerAccount,
+                                   $isTax,
+                                   $taxRate,
+                                   $isDefault
+                                   );
+  $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[7]/span/a[text()='Edit']" );
+  
+  //Add new Financial Type
+  $financialType['name'] = 'FinancialType '.substr(sha1(rand()), 0, 4);
+  $financialType['is_deductible'] = true;
+  $financialType['is_reserved'] = false; 
+  $this->addeditFinancialType( $financialType );
+  
+  $accountRelationship = "Income Account is"; //Is Asset Account - of Income Account is
+  $expected[] = array( 'financial_account'     => $financialAccountTitle, 
+                       'account_relationship'  => $accountRelationship );
+  
+  
+  $this->select( 'account_relationship', "label={$accountRelationship}" );
+  sleep(2);
+  $this->select( 'financial_account_id', "label={$financialAccountTitle}" );
+  $this->click( '_qf_FinancialTypeAccount_next' );
+  $this->waitForPageToLoad('30000');
+  $text = 'The financial type Account has been saved.';
+  $this->assertTrue( $this->isTextPresent($text), 'Missing text: ' . $text );
+  return $financialType['name'];
+  
             }
             else {
                 $this->waitForElementPresent("css=div.ac_results-inner li");
                 $this->click("css=div.ac_results-inner li");
             }
                 
-        }
-         
-        // Financial Account Type     
-        if( $financialAccountType )
-            $this->select( 'financial_account_type_id', "label={$financialAccountType}" );
-        
-        // Is Tax Deductible
-        if( $taxDeductible )
-            $this->check( 'is_deductible' );
-        else
-            $this->uncheck( 'is_deductible' ); 
-        // Is Active
-        if( !$isActive )
-            $this->check( 'is_active' );
-        else
-            $this->uncheck( 'is_active' );
-        // Is Tax
-        if( $isTax )
-            $this->check( 'is_tax' );
-        else
-            $this->uncheck( 'is_tax' );
-
-        // Tax Rate
-        if( $taxRate )
-            $this->type( 'tax_rate', $taxRate );
-         
-        // Is Header Account
-        if( $headerAccount )
-            $this->check( 'is_header_account' );
-        else
-            $this->uncheck( 'is_header_account' );
-
-        // Set Default
-        if( $isDefault )
-            $this->check( 'is_default' );
-        else
-            $this->uncheck( 'is_default' );
-        $this->click( '_qf_FinancialAccount_next-botttom' ); 
-        $this->waitForPageToLoad("30000");
-    }
-
-
-    /**
-     * Edit Financial Account
-     */
-    
-    function _testEditFinancialAccount ( $editfinancialAccount,
-                                         $financialAccountTitle = FALSE,
-                                         $financialAccountDescription = FALSE,
-                                         $accountingCode = FALSE,
-                                         $firstName = FALSE,
-                                         $parentFinancialAccount = FALSE,
-                                         $financialAccountType = FALSE,
-                                         $taxDeductible = FALSE,
-                                         $isActive = TRUE,
-                                         $headerAccount = FALSE,
-                                         $isTax = FALSE,
-                                         $taxRate = FALSE,
-                                         $isDefault = FALSE
-                                         ){
-        if( $firstName ){
-            $this->open( $this->sboxPath . "civicrm/admin/financial/financialAccount?reset=1" );
-            $this->waitForPageToLoad("30000");
-        }
-            
-        $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$editfinancialAccount}']/../td[7]/span/a[text()='Edit']" );
-        $this->click( "xpath=//table/tbody//tr/td[1][text()='{$editfinancialAccount}']/../td[7]/span/a[text()='Edit']" );
-
-        $this->waitForElementPresent( '_qf_FinancialAccount_cancel-botttom' );
-        
-        // Change Financial Account Name
-        if( $financialAccountTitle )
-            $this->type( 'name', $financialAccountTitle );  
-
-        // Financial Description
-        if( $financialAccountDescription )
-            $this->type( 'description', $financialAccountDescription );
-
-        //Accounting Code
-        if( $accountingCode )
-            $this->type( 'accounting_code', $accountingCode );
-        
-
-        // Autofill Edit Organization
-        if( $firstName )
-            $this->webtestOrganisationAutocomplete( $firstName );
-        
-        // Autofill Edit Financial Account Name
-        if( $parentFinancialAccount ){
-            $this->type("parent_financial_account", $parentFinancialAccount );
-            $this->click("parent_financial_account");
-            if( $firstName ){
-                $this->waitForElementPresent("xpath=//body/div[8]/div/ul/li");
-                $this->click("xpath=//body/div[8]/div/ul/li"); 
-            }
-            else{
-                $this->waitForElementPresent("css=div.ac_results-inner li");
-                $this->click("css=div.ac_results-inner li");
-            }
-        }
-        
-        // Financial Account Type  
-        if( $financialAccountType )
-            $this->select( 'financial_account_type_id', "label={$financialAccountType}" );
-        
-        // Is Tax Deductible
-        if( $taxDeductible )
-            $this->check( 'is_deductible' );
-        else
-            $this->uncheck( 'is_deductible' );
-
-        // Is Tax
-        if( $isTax )
-            $this->check( 'is_tax' );
-        else
-            $this->uncheck( 'is_tax' );
-        
-        // Tax Rate
-        if( $taxRate )
-            $this->type( 'tax_rate', $taxRate );
-        
-        // Is Header Account
-        if( $headerAccount )
-            $this->check( 'is_header_account' );
-        else
-            $this->uncheck( 'is_header_account' );
-
-        // Set Default
-        if( $isDefault )
-            $this->check( 'is_default' );
-        else
-            $this->uncheck( 'is_default' );
-        
-        // Is Active
-        if( $isActive )
-            $this->check( 'is_active' );
-        else
-            $this->uncheck( 'is_active' );
-        $this->click( '_qf_FinancialAccount_next-botttom' );
-        $this->waitForPageToLoad("30000");      
-    }
-    
-
-    /**
-     * Delete Financial Account
-     */
-    function _testDeleteFinancialAccount( $financialAccountTitle ) 
-    {     
-        $this->click( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[7]/span/a[text()='Delete']" );
-        $this->waitForElementPresent( '_qf_FinancialAccount_next-botttom' );
-        $this->click( '_qf_FinancialAccount_next-botttom' );
-        $this->waitForElementPresent( 'link=Add Financial Account' );
-        $this->assertTrue($this->isTextPresent("Selected financial type has been deleted."));
-    }
-    
-    /**
-     * Verify data after ADD and EDIT
-     */
-    function _assertFinancialAccount( $verifyData ){
-        foreach( $verifyData as $key => $expectedvalue ) {
-            $actualvalue = $this->getValue( $key );
-            $this->assertEquals( $expectedvalue, $actualvalue );
-        }
-        
-    }
-    function _assertSelectVerify( $verifySelectFieldData ){
-          foreach( $verifySelectFieldData as $key => $expectedvalue ) {
-            $actualvalue = $this->getSelectedLabel( $key );
-            $this->assertEquals( $expectedvalue, $actualvalue );
-        }
-    }
-    
-    function addeditFinancialType( $financialType, $option = 'new' ){
-        $this->open($this->sboxPath . 'civicrm/admin/financial/financialType?reset=1');
-        if( $option == 'Delete' ){
-            $this->click ("xpath=id('ltype')/div/table/tbody/tr/td[1][text()='$financialType[name]']/../td[7]/span[2]");
-            $this->waitForElementPresent("css=span.btn-slide-active");
-            $this->click ("xpath=id('ltype')/div/table/tbody/tr/td[1][text()='$financialType[name]']/../td[7]/span[2]/ul/li[2]/a");
-            $this->waitForElementPresent("_qf_FinancialType_next");
-            $this->click("_qf_FinancialType_next"); sleep(10);
-            $this->assertTrue( $this->isTextPresent('Selected financial type has been deleted.'), 'Missing text: ' . 'Selected financial type has been deleted.' );
-            return;
-        }
-        if( $option == 'new' )
-             $this->click ("link=Add Financial Type");
-        else 
-            $this->click ("xpath=id('ltype')/div/table/tbody/tr/td[1][text()='$financialType[oldname]']/../td[7]/span/a[text()='Edit']");
-        $this->waitForPageToLoad('30000');
-        $this->type( 'name', $financialType['name'] );
-        if( $option == 'new' )
-        $this->type( 'description',  $financialType['name'].' description' );
-        
-        if( $financialType['is_reserved'] )
-            $this->check( 'is_reserved' );
-        else
-            $this->uncheck( 'is_reserved' ); 
-        
-        if( $financialType['is_deductible'] )
-            $this->check( 'is_deductible' );
-        else
-            $this->uncheck( 'is_deductible' ); 
-        
-        $this->click( '_qf_FinancialType_next' );
-        $this->waitForPageToLoad('30000');
-        if( $option == 'new' ){
-            $text = "The financial type '{$financialType['name']}' has been added. You can add Financial Accounts to this Financial Type now.";
-        }else{sleep(12);
-            $text = "The financial type '{$financialType['name']}' has been saved.";
-    }
-        $this->assertTrue( $this->isTextPresent($text), 'Missing text: ' . $text );
+function _testLineItem( $lineitem ){
+  $i = 2;
+  $this->waitForElementPresent("xpath= id('Contribution')/div[2]/table/tbody/");
+  sleep(50);
+  foreach($lineitem as $key=>$valueArray){
+    $total = $this->getText("xpath= id('Contribution')/div[2]/table/tbody/tr[3]/td[2]/table/tbody/tr[{$i}]/td[4]"); 
+    $Paid = $this->getText("xpath= id('Contribution')/div[2]/table/tbody/tr[3]/td[2]/table/tbody/tr[{$i}]/td[5]"); 
+    $Owing = $this->getText("xpath= id('Contribution')/div[2]/table/tbody/tr[3]/td[2]/table/tbody/tr[{$i}]/td[6]");
+    $Owing = explode(' ',$Owing); 
+    $Owing = $Owing[1]; 
+    $Paid = explode(' ',$Paid); 
+    $Paid = $Paid[1]; 
+    $total= explode(' ',$total); 
+    $total = $total[1];  
+    $this->assertTrue(($total == ($Paid+$Owing)), 'Priceset Amount calculation incorrect');
+    $i++;
+  }
+  $this->click('_qf_Contribution_cancel'); 
 }
 
 }
+

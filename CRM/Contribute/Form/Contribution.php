@@ -818,7 +818,6 @@ WHERE  contribution_id = {$this->_id}
       //This->_online is trxn id already fetch in preprocess;
       $trxn          = $this->_online;
       $txrnLineTotal = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnLineTotal($this->_id, 'civicrm_contribution');
-      CRM_Core_Error::debug( '$txrnLineTotal', $txrnLineTotal );
       $LineTotal     = 0;
       $trxTotal      = $lineItemTotal = array();
       foreach($txrnLineTotal as $lineKey => $lineValue){
@@ -836,9 +835,6 @@ WHERE  contribution_id = {$this->_id}
       $pricefildTotal['LineItems'] =  $lineItemTotal;
       $pricefildTotal['total'] =  $LineTotal ;
       $this->assign('pricefildTotal',$pricefildTotal );
-
-        CRM_Core_Error::debug( '$trxTotal', $trxTotal );
-        exit;
       $entity_trxn = new CRM_Financial_DAO_EntityFinancialTrxn();
       $this->addElement( 'checkbox','ch_price', ts('Send Receipt?') );
       

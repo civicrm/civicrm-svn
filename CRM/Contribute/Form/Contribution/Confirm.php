@@ -1405,8 +1405,9 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
     // next create the transaction record
 
     if ( ( ! $online || $form->_values['is_monetary'] ) ) {
+      if (CRM_Utils_Array::value('int_amount', $params)) {
       $params['amount'] = $params['initial_amount'];
-
+      }
       $trxnParams = array(
         'contribution_id' => $contribution->id,
         'trxn_date' => $now,
