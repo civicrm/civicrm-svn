@@ -1134,6 +1134,7 @@ WHERE  contribution_id = {$this->_id}
     }
     $Financialaccount = array( );
     $flag = false;
+    if (CRM_Utils_Array::value('financial_type_id', $fields)) {
     CRM_Core_PseudoConstant::populate( $Financialaccount,
                                        'CRM_Financial_DAO_EntityFinancialAccount',
                                        $all = True, 
@@ -1143,6 +1144,7 @@ WHERE  contribution_id = {$this->_id}
     if( !current( $Financialaccount ) ){
       $errors['financial_type_id'] = "Financial Account of account relationship of 'Is Asset Account of' is not configured for this Financial Type";
       $flag = true;
+    }
     }
 
     if( CRM_Utils_Array::value( 'fee_amount', $fields )  ){

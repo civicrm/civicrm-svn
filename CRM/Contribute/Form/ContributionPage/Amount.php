@@ -66,6 +66,8 @@ class CRM_Contribute_Form_ContributionPage_Amount extends CRM_Contribute_Form_Co
 
     $this->add('text', 'max_amount', ts('Maximum Amount'), array('size' => 8, 'maxlength' => 8));
     $this->addRule('max_amount', ts('Please enter a valid money value (e.g. %1).', array(1 => CRM_Utils_Money::format('99.99', ' '))), 'money');
+    $this->add('select', "financial_type_id",ts('Financial Type'),
+      array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::financialType( ));
 
     $default = array();
     $this->add('hidden', "price_field_id", '', array('id' => "price_field_id"));
@@ -368,7 +370,7 @@ SELECT id
       foreach(array_keys($fields['payment_processor']) as $paymentProcessorID) {
       $paymentProcessorType = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_PaymentProcessor',
                                                             $paymentProcessorID,
-        'payment_processor_type'
+        'payment_processor_type_id'
       );
       if ($paymentProcessorType == 'Google_Checkout') {
         $errors['is_recur_interval'] = ts('Google Checkout does not support recurring intervals');
@@ -391,7 +393,7 @@ SELECT id
     $params = $this->controller->exportValues($this->_name);
     if (array_key_exists('payment_processor', $params)) {
       if (array_key_exists(CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_PaymentProcessor', 'AuthNet',
-            'id', 'payment_processor_type'
+            'id', 'payment_processor_type_id'
           ),
           CRM_Utils_Array::value('payment_processor', $params)
         )) {

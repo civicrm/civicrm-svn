@@ -436,7 +436,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
     }
     $this->assign('priceSetID', $this->_priceSetId);
 
-    if ($this->_paymentProcessor['payment_processor_type'] == 'Google_Checkout'
+    if ($this->_paymentProcessor['payment_processor_type_id'] == '4'
       && !$this->_params['is_pay_later'] && !($this->_amount == 0)
     ) {
       $this->_checkoutButtonName = $this->getButtonName('next', 'checkout');

@@ -223,7 +223,8 @@ WHERE     %2.id = %1";
         'membership_type_id' => CRM_Utils_Array::value('membership_type_id', $options[$oid]),
         'auto_renew' => CRM_Utils_Array::value('auto_renew', $options[$oid]),
                                    'html_type'            => $fields['html_type'],
-                                   'financial_type_id'    => CRM_Utils_Array::value( 'financial_type_id', $options[$oid]) );
+        'financial_type_id' => CRM_Utils_Array::value( 'financial_type_id', $options[$oid])
+      );
     }
   }
 

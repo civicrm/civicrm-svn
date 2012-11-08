@@ -128,7 +128,6 @@ class CRM_Contribute_Form_ContributionPage_AddProduct extends CRM_Contribute_For
         CRM_Utils_System::redirect($url);
       }
 
-
       $this->addButtons(array(
           array(
             'type' => 'next',
@@ -189,6 +188,29 @@ class CRM_Contribute_Form_ContributionPage_AddProduct extends CRM_Contribute_For
                    true);
      
     $this->addElement('text', 'weight', ts('Weight'), CRM_Core_DAO::getAttribute('CRM_Contribute_DAO_PremiumsProduct', 'weight'));
+
+    
+      $financialType = CRM_Contribute_PseudoConstant::financialType( );
+      $revenueFinancialType = array( );
+      CRM_Core_PseudoConstant::populate( $revenueFinancialType,
+                                         'CRM_Financial_DAO_EntityFinancialAccount',
+                                         $all = True, 
+                                         $retrieve = 'entity_id', 
+                                         $filter = null, 
+                                         'account_relationship = 5' );
+            
+      foreach( $financialType as $key => $financialTypeName ){
+        if( !in_array( $key, $revenueFinancialType ) )
+          unset( $financialType[$key] );
+      }
+      if( count( $financialType ) ){
+        $this->assign( 'financialType', $financialType );
+      } 
+      $this->add('select', 'financial_type_id', 
+                 ts( 'Financial Type' ), 
+                 array(''=>ts( '- Select Financial Type -' )) + $financialType,
+                 true);
+
 
     $this->addRule('weight', ts('Please enter integer value for weight'), 'integer');
     $session->pushUserContext(CRM_Utils_System::url($urlParams, 'action=update&reset=1&id=' . $this->_id));

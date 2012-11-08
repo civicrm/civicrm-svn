@@ -208,6 +208,29 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
 
     // Text box for Participant Count for a field
 
+    // Financial Type
+    $financialType = CRM_Contribute_PseudoConstant::financialType( );
+    $revenueFinancialType = array( );
+    CRM_Core_PseudoConstant::populate( $revenueFinancialType,
+      'CRM_Financial_DAO_EntityFinancialAccount',
+      $all = True, 
+      $retrieve = 'entity_id', 
+      $filter = null, 
+      'account_relationship = 1' 
+    );
+            
+    foreach( $financialType as $key => $financialTypeName ){
+      if ( !in_array( $key, $revenueFinancialType ) ) {
+        unset( $financialType[$key] );
+      } 
+    }
+    if( count( $financialType ) ){
+      $this->assign( 'financialType', $financialType );
+    }
+    $this->add('select', 'financial_type_id', 
+      ts( 'Financial Type' ), 
+      array(''=>ts( '- select -' )) + $financialType);
+
     $eventComponentId  = CRM_Core_Component::getComponentID('CiviEvent');
     $memberComponentId = CRM_Core_Component::getComponentID('CiviMember');
     $attributes        = CRM_Core_DAO::getAttribute('CRM_Price_DAO_FieldValue');

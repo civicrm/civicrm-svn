@@ -58,11 +58,11 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
     $this->_paymentProcessor = $paymentProcessor;
     $this->_processorName = ts('PayPal Pro');
 
-    if ($this->_paymentProcessor['payment_processor_type'] == 'PayPal_Standard') {
+    if ($this->_paymentProcessor['payment_processor_type_id'] == '1') {
       $this->_processorName = ts('PayPal Standard');
       return;
     }
-    elseif ($this->_paymentProcessor['payment_processor_type'] == 'PayPal_Express') {
+    elseif ($this->_paymentProcessor['payment_processor_type_id'] == '3') {
       $this->_processorName = ts('PayPal Express');
     }
 
@@ -353,15 +353,15 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
    */
   function checkConfig() {
     $error = array();
-    if ($this->_paymentProcessor['payment_processor_type'] == 'PayPal_Standard' ||
-      $this->_paymentProcessor['payment_processor_type'] == 'PayPal'
+    if ($this->_paymentProcessor['payment_processor_type_id'] == '1' ||
+      $this->_paymentProcessor['payment_processor_type_id'] == '2'
     ) {
       if (empty($this->_paymentProcessor['user_name'])) {
         $error[] = ts('User Name is not set in the Administer CiviCRM &raquo; System Settings &raquo; Payment Processors.');
       }
     }
 
-    if ($this->_paymentProcessor['payment_processor_type'] != 'PayPal_Standard') {
+    if ($this->_paymentProcessor['payment_processor_type_id'] != '1') {
       if (empty($this->_paymentProcessor['signature'])) {
         $error[] = ts('Signature is not set in the Administer CiviCRM &raquo; System Settings &raquo; Payment Processors.');
       }

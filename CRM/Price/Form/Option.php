@@ -190,30 +190,31 @@ class CRM_Price_Form_Option extends CRM_Core_Form {
 
       $this->add('textarea', 'description', ts('Description'));
 
-            //Financial Type
-            require_once 'CRM/Contribute/PseudoConstant.php';
-            require_once 'CRM/Core/PseudoConstant.php';
-            $financialType = CRM_Contribute_PseudoConstant::financialType( );
-            $revenueFinancialType = array( );
-            CRM_Core_PseudoConstant::populate( $revenueFinancialType,
-                                               'CRM_Financial_DAO_EntityFinancialAccount',
-                                               $all = True, 
-                                               $retrieve = 'entity_id', 
-                                               $filter = null, 
-                                               'account_relationship = 1' );
+       //Financial Type
+      $financialType = CRM_Contribute_PseudoConstant::financialType( );
+      $revenueFinancialType = array( );
+      CRM_Core_PseudoConstant::populate( $revenueFinancialType,
+        'CRM_Financial_DAO_EntityFinancialAccount',
+        $all = True, 
+        $retrieve = 'entity_id', 
+        $filter = null, 
+        'account_relationship = 1'
+      );
 
-            foreach( $financialType as $key => $financialTypeName ){
-                if( !in_array( $key, $revenueFinancialType ) )
-                    unset( $financialType[$key] );
-            }
-            if( count( $financialType ) ){
-                $this->assign( 'financialType', $financialType );
-            }
-            $this->add('select', 'financial_type_id', 
-                               ts( 'Financial Type' ), 
-                               array(''=>ts( '- select -' )) + $financialType,
-                               true);
+      foreach( $financialType as $key => $financialTypeName ){
+        if( !in_array( $key, $revenueFinancialType ) )
+          unset( $financialType[$key] );
+      }
+      if( count( $financialType ) ){
+        $this->assign( 'financialType', $financialType );
+      }
+      $this->add('select', 'financial_type_id', 
+        ts( 'Financial Type' ), 
+        array(''=>ts( '- select -' )) + $financialType,
+        true
+      );
             
+
       // weight
       $this->add('text', 'weight', ts('Order'), NULL, TRUE);
       $this->addRule('weight', ts('is a numeric field'), 'numeric');

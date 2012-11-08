@@ -141,7 +141,11 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
           'is_active' => 1,
           'is_default' => CRM_Utils_Array::value($params['option_weight'][$index], $defaultArray) ? $defaultArray[$params['option_weight'][$index]] : 0,
         );
-
+        if( CRM_Utils_Array::value('option_financial_type_id', $params) && CRM_Utils_Array::value( $index, $params['option_financial_type_id'], null ) ){
+          $options['financial_type_id'] = CRM_Utils_Array::value( $index, $params['option_financial_type_id'], null );    
+        } else {
+          $options['financial_type_id'] = CRM_Utils_Array::value( 'financial_type_id', $params );
+        }
         if ($opIds = CRM_Utils_Array::value('option_id', $params)) {
           if ($opId = CRM_Utils_Array::value($index, $opIds)) {
             $optionsIds['id'] = $opId;
