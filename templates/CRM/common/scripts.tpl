@@ -30,26 +30,26 @@
     $.crmURL('init', '{crmURL p="civicrm/example" q="placeholder" h=0 }');
   {rdelim});
 
-{*
+{*/*
  * Here we define the CRM object,
  * A single global variable to hold those things which absolutely MUST be global
- * (so in most cases scope your vars and don't put them here!).
- * Translated strings can be stored in the CRM.ts object
+ * Translated strings are stored in the CRM.strings object, and can be accessed via ts() in javascript
  * Very common strings are included here for convenience. Others should be added dynamically per-template.
  *
- * To extend this object for use in your own template, follow this example:
- *
+ * To extend this object from php:
+ * CRM_Core_Resources::singleton()->addSetting(array('foo' => 'bar'));
+ */
  *}
   {literal}
   var CRM = CRM || {};
   CRM = cj.extend(true, {
-    ts: {{/literal}
-      ok: '{ts escape="js"}OK{/ts}',
-      cancel: '{ts escape="js"}Cancel{/ts}',
-      yes: '{ts escape="js"}Yes{/ts}',
-      no: '{ts escape="js"}No{/ts}',
-      saved: '{ts escape="js"}Saved{/ts}',
-      error: '{ts escape="js"}Error{/ts}'
+    strings: {{/literal}
+      Ok: '{ts escape="js"}Ok{/ts}',
+      Cancel: '{ts escape="js"}Cancel{/ts}',
+      Yes: '{ts escape="js"}Yes{/ts}',
+      No: '{ts escape="js"}No{/ts}',
+      Saved: '{ts escape="js"}Saved{/ts}',
+      Error: '{ts escape="js"}Error{/ts}'
     {rdelim},
     urlIsPublic: {if $urlIsPublic}true{else}false{/if},
     userFramework: '{$config->userFramework}',

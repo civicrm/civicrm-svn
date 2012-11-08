@@ -121,12 +121,12 @@
           }
         },
         error: function(entity,field,value,data) {
-          $(this).crmError(data.error_message, CRM.ts.error);
+          $(this).crmError(data.error_message, ts('Error'));
           $(this).removeClass('crm-editable-saving');
         },
         success: function(entity,field,value,data) {
           var $i = $(this);
-          $().crmAlert('', CRM.ts.saved, 'success');
+          $().crmAlert('', ts('Saved'), 'success');
           $i.removeClass ('crm-editable-saving crm-error');
           $i.html(value);
         }
@@ -267,7 +267,7 @@
       'dialog': false,
       'load' : function (target){},
       'success' : function (result) {
-        $(this).html (CRM.ts.saved);
+        $(this).html(ts('Saved'));
        }
     }, options);
 
@@ -404,7 +404,7 @@
               $(this).closest('.crm-summary-block').load($.crmURL('civicrm/ajax/inline', data), function() {$(this).trigger('load');});
             });
           }
-          cj().crmAlert('', CRM.ts.saved, 'success');
+          cj().crmAlert('', ts('Saved'), 'success');
         }
       },
       error: function (obj, status) {

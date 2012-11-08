@@ -70,21 +70,18 @@
     });
   };
 
-  var ts = {};
-
   var defaults = {
     success: function(result,settings){
-      $().crmAlert('', CRM.ts.saved, 'success');
+      $().crmAlert('', ts('Saved'), 'success');
       return true;
     },
     error: function(result,settings){
-      $().crmError(result.error_message, CRM.ts.error);
+      $().crmError(result.error_message, ts('Error'));
       return false;
     },
     callBack: function(result,settings){
       if (result.is_error == 1) {
         return settings.error.call(this,result,settings);
-        return false;
       }
       return settings.success.call(this,result,settings);
     },

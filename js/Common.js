@@ -32,6 +32,25 @@
  *
  */
 
+/**
+ * Short-named function for string translation, defined in global scope so it's available everywhere.
+ *
+ * @param  $text   string  string for translating
+ * @param  $params object  key:value of additional parameters
+ *
+ * @return         string  the translated string
+ */
+function ts(text, params) {
+  text = CRM.strings[text] || text;
+  if (params && typeof(params) === 'object') {
+    for (var i in params) {
+      while (text.indexOf('%'+i) >= 0) {
+        text = text.replace('%'+i, params[i]);
+      }
+    }
+  }
+  return text;
+}
 
 /**
  *  This function can be used to clear default 'suggestive text' from an input field
