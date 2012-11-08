@@ -58,7 +58,8 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
     NAVIGATION_NAME = 'Navigation Menu',
     SYSTEM_PREFERENCES_NAME = 'CiviCRM Preferences',
     URL_PREFERENCES_NAME = 'URL Preferences',
-    LOCALIZATION_PREFERENCES_NAME = 'Localization Preferences';
+    LOCALIZATION_PREFERENCES_NAME = 'Localization Preferences',
+    SEARCH_PREFERENCES_NAME = 'Search Preferences';
   static $_cache = NULL;
 
   /**

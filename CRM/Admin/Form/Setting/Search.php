@@ -39,6 +39,10 @@
  */
 class CRM_Admin_Form_Setting_Search extends CRM_Admin_Form_Setting {
 
+  protected $_settings = array(
+    'search_autocomplete_count' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+  );
+
   /**
    * Function to build the form
    *
@@ -88,6 +92,7 @@ class CRM_Admin_Form_Setting_Search extends CRM_Admin_Form_Setting {
     );
     $element = $this->getElement('autocompleteContactReference');
     $element->_elements[0]->_flagFrozen = TRUE;
+
     parent::buildQuickForm();
   }
 }

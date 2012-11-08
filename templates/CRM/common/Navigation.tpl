@@ -26,19 +26,23 @@
 <div id="menu-container" style="display:none;">
     <ul id="civicrm-menu">
         {if call_user_func(array('CRM_Core_Permission','giveMeAllACLs'))}
-        <li id="crm-qsearch" class="menumain crm-link-home" tabindex="3">
+        <li id="crm-qsearch" class="menumain crm-link-home">
           <form action="{crmURL p='civicrm/contact/search/basic' h=0 }" name="search_block" id="id_search_block" method="post" onsubmit="getSearchURLValue( );">
               <div id="quickSearch">
+                <input type="text" class="form-text" id="sort_name_navigation" placeholder="{ts}Find Contacts by...{/ts}" name="sort_name" style="width: 12em;" />
+                <input type="hidden" id="sort_contact_id" value="" />
+                <input type="submit" value="{ts}Go{/ts}" name="_qf_Basic_refresh" class="form-submit default" style="display: none;" />
               </div>
             </form>
           <ul>
-            <li><label class="quickSearchField"><input type="radio" checked="" data-tablename="cc" value="" name="quickSearchField">{ts}Name/Email{/ts}</label></li>
+            <li><label class="quickSearchField"><input type="radio" checked="" data-tablename="cc" checked="checked" value="" name="quickSearchField">{ts}Name/Email{/ts}</label></li>
             <li><label class="quickSearchField"><input type="radio" data-tablename="cc" value="id" name="quickSearchField">{ts}Internal Id{/ts}</label></li>
             <li><label class="quickSearchField"><input type="radio" data-tablename="cc" value="external_identifier" name="quickSearchField">{ts}External Id{/ts}</label></li>
             <li><label class="quickSearchField"><input type="radio" data-tablename="cc" value="first_name" name="quickSearchField">{ts}First Name{/ts}</label></li>
             <li><label class="quickSearchField"><input type="radio" data-tablename="cc" value="last_name" name="quickSearchField">{ts}Last Name{/ts}</label></li>
             <li><label class="quickSearchField"><input type="radio" data-tablename="eml" value="email" name="quickSearchField">{ts}Email{/ts}</label></li>
             <li><label class="quickSearchField"><input type="radio" data-tablename="phe" value="phone" name="quickSearchField">{ts}Phone{/ts}</label></li>
+            <li><label class="quickSearchField"><input type="radio" data-tablename="sts" value="street_address" name="quickSearchField">{ts}Street Address{/ts}</label></li>
             <li><label class="quickSearchField"><input type="radio" data-tablename="sts" value="postal_code" name="quickSearchField">{ts}Postal Code{/ts}</label></li>
             <li><label class="quickSearchField"><input type="radio" data-tablename="cc" value="job_title" name="quickSearchField">{ts}Job Title {/ts}</label></li>
           </ul>
@@ -51,8 +55,8 @@
 
 {literal}
 <script type="text/javascript">
-//CRM-6776, enter-to-submit functionality is broken for IE due to hidden field
 cj( document ).ready( function( ) {
+  //CRM-6776, enter-to-submit functionality is broken for IE due to hidden field
   cj("#civicrm-menu >li").each(function(i){
     cj(this).attr("tabIndex",i+2);
   });
@@ -63,14 +67,46 @@ cj( document ).ready( function( ) {
     } else {
       htmlContent = '<input type="submit" value="Go" name="_qf_Basic_refresh" class="form-submit default" />';
     }
-    htmlContent += '<input type="text" class="form-text" id="sort_name_navigation" placeholder="Find Contacts by..." name="sort_name" style="width: 12em; margin-left: -45px;" /><input type="text" id="sort_contact_id" style="display: none" />';
-  } 
-  else {
-    htmlContent += '<input type="text" class="form-text" id="sort_name_navigation" placeholder="Find Contacts by..." name="sort_name" style="width: 12em;" />' +
-    '<input type="hidden" id="sort_contact_id" value="" />' +
-    '<input type="submit" value="{ts}Go{/ts}" name="_qf_Basic_refresh" class="form-submit default" style="display: none;" />';
+    htmlContent += '<input type="text" class="form-text" id="sort_name_navigation" placeholder="{/literal}{ts}Find Contacts by...{/ts}{literal}" name="sort_name" style="width: 12em; margin-left: -45px;" /><input type="text" id="sort_contact_id" style="display: none" />';
+    cj('#quickSearch').html(htmlContent);
   }
-  cj( '#quickSearch' ).html( htmlContent );
+
+  cj( "#admin-menu>ul>li>a" ).each( function( ) {
+      if ( cj( this ).html( ) == 'CiviCRM' ) {
+          cj( this ).click ( function( ) {
+              cj( "#civicrm-menu" ).toggle( );
+              return false;
+          });
+      }
+   });
+
+  var contactUrl = {/literal}"{crmURL p='civicrm/ajax/rest' q='className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=navigation' h=0 }"{literal};
+
+  cj( '#sort_name_navigation' ).autocomplete( contactUrl, {
+      width: 200,
+      selectFirst: false,
+      minChars:1,
+      matchContains: true,
+      delay: 400,
+      extraParams:{
+        limit: CRM.search_autocomplete_count,
+        fieldName:function () {
+          return  cj('input[name=quickSearchField]:checked').val();
+        },
+        tableName:function () {
+           return  cj('input[name=quickSearchField]:checked').attr("data-tablename");
+        }
+      }
+  }).result(function(event, data, formatted) {
+     document.location={/literal}"{crmURL p='civicrm/contact/view' h=0 q='reset=1&cid='}"{literal}+data[1];
+     return false;
+  });
+  cj('#sort_name_navigation').keydown(function() {
+    cj('.menu-div.outerbox').hide();
+  });
+  cj('.quickSearchField').click(function() {
+    cj('#sort_name_navigation').focus();
+  });
 });
 function getSearchURLValue( )
 {
@@ -97,44 +133,6 @@ function getSearchURLValue( )
         document.getElementById('id_search_block').action = url;
     }
 }
-
-cj( function() {
-    cj( "#admin-menu>ul>li>a" ).each( function( ) {
-        if ( cj( this ).html( ) == 'CiviCRM' ) {
-            cj( this ).click ( function( ) {
-                cj( "#civicrm-menu" ).toggle( );
-                return false;
-            });
-        }
-     });
-
-    var contactUrl = {/literal}"{crmURL p='civicrm/ajax/rest' q='className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=navigation' h=0 }"{literal};
-
-    cj( '#sort_name_navigation' ).autocomplete( contactUrl, {
-        width: 200,
-        selectFirst: false,
-        minChars:1,
-        matchContains: true,
-        delay: 400,
-        extraParams:{
-          fieldName:function () {
-            return  cj('input[name=quickSearchField]:checked').val();
-          },
-          tableName:function () {
-             return  cj('input[name=quickSearchField]:checked').attr("data-tablename");
-          }
-        }
-    }).result(function(event, data, formatted) {
-       document.location={/literal}"{crmURL p='civicrm/contact/view' h=0 q='reset=1&cid='}"{literal}+data[1];
-       return false;
-    });
-    cj('#sort_name_navigation').keydown(function() {
-      cj('.menu-div.outerbox').hide();
-    });
-    cj('.quickSearchField').click(function() {
-      cj('#sort_name_navigation').focus();
-    });
-});
 
 if (CRM.userFramework != 'Joomla') {
   cj('body').prepend( cj("#menu-container").html() );

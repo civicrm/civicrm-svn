@@ -54,6 +54,7 @@
     urlIsPublic: {if $urlIsPublic}true{else}false{/if},
     userFramework: '{$config->userFramework}',
     resourceBase: '{$config->resourceBase}',
+    search_autocomplete_count: {crmSetting name="search_autocomplete_count" group="Search Preferences"},
     {literal}
     validate: {
       use: false,

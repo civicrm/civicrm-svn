@@ -72,6 +72,11 @@
             <td>{$form.autocompleteContactReference.html}<br/>
             <span class="description">{ts}Selected fields will be displayed in autocomplete dropdown search results for 'Contact Reference' custom fields. Contact Name is always included. NOTE: You must assign 'access contact reference fields' permission to the anonymous role if you want to use custom contact reference fields in profiles on public pages. For most situations, you should use the 'Limit List to Group' setting when configuring a contact reference field which will be used in public forms to prevent exposing your entire contact list.{/ts}</span></td>
         </tr>
+        <tr class="crm-search-setting-form-block-search_autocomplete_count">
+            <td class="label">{$form.search_autocomplete_count.label}</td>
+            <td>{$form.search_autocomplete_count.html}<br />
+            <span class="description">{ts}The maximum number of contacts to show at a time when typing in an autocomplete field.{/ts}</span></td>
+        </tr>
        </table>
             <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
         

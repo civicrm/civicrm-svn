@@ -563,6 +563,7 @@ function civicrm_api3_contact_getquick($params) {
     switch ($value) {
       case 'street_address':
       case 'city':
+      case 'postal_code':
         $selectText = $value;
         $value      = "address";
         $suffix     = 'sts';
@@ -666,7 +667,7 @@ function civicrm_api3_contact_getquick($params) {
     $includeNickName = " OR nick_name LIKE '$strSearch'";
     $exactIncludeNickName = " OR nick_name LIKE '$name'";
   }
-    
+
   //CRM-10687  
   if (!empty($params['field_name']) && !empty($params['table_name'])) {
     $field_name = $params['field_name'];

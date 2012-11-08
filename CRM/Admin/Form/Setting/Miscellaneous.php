@@ -41,7 +41,8 @@ class CRM_Admin_Form_Setting_Miscellaneous extends CRM_Admin_Form_Setting {
 
   protected $_settings = array(
     'max_attachments' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
-    'contact_undelete' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME);
+    'contact_undelete' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME
+  );
 
   /**
    * Function to build the form
