@@ -75,8 +75,9 @@
           </td>
         </tr>
     {if $isQuick}
-    <tr>
-    <td></td><td><div class="status message">{ts}Click <a id = 'memQuickconfig' href='#'>here</a> if you want to configure the Membership Types below as part of a Price Set, with the added flexibility and complexity that entails.{/ts}</div></td>
+    <tr id="quickConfigConvertMessage">
+      <td></td>
+      <td><div class="status message">{ts}Click <a id = 'memQuickconfig' href='#'>here</a> if you want to configure the Membership Types below as part of a Price Set, with the added flexibility and complexity that entails.{/ts}</div></td>
     </tr>
     {/if}
           <tr id="membership_type-block" class="crm-member-membershipblock-form-block-membership_type">
@@ -144,7 +145,7 @@
             showHideMembershipBlock();
         });
 
-        //show/ hide blocks if price sete is selected
+        //show/ hide blocks if price set is selected
         checkIfPriceSetIsSelected( );
         cj('#member_price_set_id').change( function(){
             checkIfPriceSetIsSelected( );
@@ -167,6 +168,7 @@
             cj('#requiredSignup').hide();
             cj('#displayFee').hide();
             cj('#separatePayment').hide();
+            cj('#quickConfigConvertMessage').hide();
         } else {
             cj('#membership_type-block').show();
             cj('#requiredSignup').show();
