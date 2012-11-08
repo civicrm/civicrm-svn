@@ -42,6 +42,7 @@ require_once 'PHPUnit/Extensions/Database/DataSet/XmlDataSet.php';
 require_once 'PHPUnit/Extensions/Database/DataSet/QueryDataSet.php';
 require_once 'tests/phpunit/Utils.php';
 require_once 'api/api.php';
+require_once 'CRM/Financial/BAO/FinancialAccount.php';
 define('API_LATEST_VERSION', 3);
 
 /**
@@ -887,9 +888,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     $op = new PHPUnit_Extensions_Database_Operation_Insert();
     $op->execute($this->_dbconn,
       new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-        dirname(__FILE__) . '/../api/v' . API_LATEST_VERSION . '/dataset/contribution_types.xml'
-      )
-    );
+                                                                         dirname(__FILE__)
+                                                                         . '/../api/v' . $apiversion . '/dataset/financial_accounts.xml') );
 
     require_once 'CRM/Contribute/PseudoConstant.php';
     CRM_Contribute_PseudoConstant::flush('contributionType');
@@ -904,15 +904,15 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
   function contributionTypeDelete($contributionTypeID = NULL) {
         require_once 'CRM/Financial/DAO/FinancialAccount.php';
     if ($contributionTypeID === NULL) {
-      civicrm_api('Contribution', 'get', array('version' => 3, 'contribution_type_id' => 10, 'api.contribution.delete' => 1));
-      civicrm_api('Contribution', 'get', array('version' => 3, 'contribution_type_id' => 11, 'api.contribution.delete' => 1));
+            civicrm_api('Contribution', 'get',array('version' => 3, 'financial_account_id' => 10, 'api.contribution.delete' => 1 ));  
+            civicrm_api('Contribution', 'get',array('version' => 3, 'financial_account_id' => 11, 'api.contribution.delete' => 1));                  
       // we know those were loaded from /dataset/contribution_types.xml
-      $del = CRM_Contribute_BAO_ContributionType::del(10, 1);
-      $del = CRM_Contribute_BAO_ContributionType::del(11, 1);
+            $del= CRM_Financial_BAO_FinancialAccount::del(10,1);
+            $del= CRM_Financial_BAO_FinancialAccount::del(11,1);
     }
     else {
-      civicrm_api('Contribution', 'get', array('version' => 3, 'contribution_type_id' => $contributionTypeID, 'api.contribution.delete' => 1));
-      $del = CRM_Contribute_BAO_ContributionType::del($contributionTypeID, 1);
+            civicrm_api('Contribution', 'get',array('version' => 3, 'financial_account_id' => $contributionTypeID,  'api.contribution.delete' => 1));            
+            $del= CRM_Financial_BAO_FinancialAccount::del($contributionTypeID,1 );
     }
     if (is_array($del)) {
       $this->assertEquals(0, CRM_Utils_Array::value('is_error', $del), $del['error_message']);

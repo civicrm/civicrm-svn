@@ -26,6 +26,7 @@
 */
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'CRM/Financial/DAO/FinancialAccount.php';
+require_once 'CRM/Financial/BAO/FinancialAccount.php';
 
 class CRM_Financial_BAO_FinancialAccountTest extends CiviUnitTestCase 
 {

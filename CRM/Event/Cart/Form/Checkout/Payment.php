@@ -576,7 +576,7 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart {
       'payment_processor' => $this->_paymentProcessor['payment_processor_type'],
       'trxn_id' => $result['trxn_id'],
     );
-    $trxn = new CRM_Core_DAO_FinancialTrxn();
+	  $trxn = new CRM_Financial_DAO_FinancialTrxn();
     $trxn->copyValues($trxnParams);
     if (!CRM_Utils_Rule::currencyCode($trxn->currency)) {
       $config = CRM_Core_Config::singleton();
@@ -635,7 +635,7 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart {
         'amount' => $params['amount'],
         'currency' => CRM_Utils_Array::value('currencyID', $params),
       );
-      $entity_trxn = &new CRM_Core_DAO_EntityFinancialTrxn();
+		    $entity_trxn =& new CRM_Financial_DAO_EntityFinancialTrxn();
       $entity_trxn->copyValues($entity_financial_trxn_params);
       $entity_trxn->save();
     }

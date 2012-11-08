@@ -32,8 +32,11 @@
  * $Id$
  *
  */
-class CRM_Core_BAO_FinancialTrxn extends CRM_Core_DAO_FinancialTrxn {
-  function __construct() {
+
+class CRM_Core_BAO_FinancialTrxn extends CRM_Financial_DAO_FinancialTrxn
+{
+    function __construct()
+    {
     parent::__construct();
   }
 
@@ -48,7 +51,7 @@ class CRM_Core_BAO_FinancialTrxn extends CRM_Core_DAO_FinancialTrxn {
    */
   static
   function create(&$params) {
-    $trxn = new CRM_Core_DAO_FinancialTrxn();
+        $trxn = new CRM_Financial_DAO_FinancialTrxn();
     $trxn->copyValues($params);
 
     if (!CRM_Utils_Rule::currencyCode($trxn->currency)) {
@@ -77,7 +80,7 @@ class CRM_Core_BAO_FinancialTrxn extends CRM_Core_DAO_FinancialTrxn {
       'amount' => $contributionAmount,
       'currency' => $trxn->currency,
     );
-    $entity_trxn = new CRM_Core_DAO_EntityFinancialTrxn();
+        $entity_trxn = new CRM_Financial_DAO_EntityFinancialTrxn();
     $entity_trxn->copyValues($entity_financial_trxn_params);
     if ($fids['entityFinancialTrxnId']) {
       $entity_trxn->id = $fids['entityFinancialTrxnId'];

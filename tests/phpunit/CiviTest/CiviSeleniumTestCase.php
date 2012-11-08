@@ -790,7 +790,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $this->click('_qf_MembershipBlock_next');
       $this->waitForPageToLoad('30000');
       $this->waitForElementPresent('_qf_MembershipBlock_next-bottom');
-      $text = "'MembershipBlock' information has been saved.";
+            $text = "'Membership' information has been saved.";
       $this->assertTrue($this->isTextPresent($text), 'Missing text: ' . $text);
     }
 
@@ -834,7 +834,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
     if ($profilePreId || $profilePostId) {
       // fill in step 6 (Include Profiles)
-      $this->click("css=li#tab_custom a");
+            $this->click('css=li#tab_custom a');
       $this->waitForElementPresent('_qf_Custom_next-bottom');
 
       if ($profilePreId) {

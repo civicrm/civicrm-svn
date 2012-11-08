@@ -73,6 +73,7 @@ class WebTest_Contribute_OfflineRecurContributionTest extends CiviSeleniumTestCa
     $this->type('installments', '12');
 
     $this->click('is_email_receipt');
+      $this->waitForElementPresent('credit_card_type');
 
     // enter credit card info on form
     $this->webtestAddCreditCardDetails();
