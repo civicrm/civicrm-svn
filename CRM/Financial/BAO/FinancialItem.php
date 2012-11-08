@@ -132,6 +132,27 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem
             }
             $entity_trxn->save();
         }
+      $entity_params = array(
+                             'entity_id' => $financialItem->id,
+                             'entity_table' => 'civicrm_financial_item',
+                             );
+      $entity_trxn = new CRM_Financial_DAO_EntityFinancialTrxn();
+      $entity_trxn->copyValues( $entity_params );
+      $entity_trxn->find();
+      $line_amount =0;
+      while($entity_trxn->fetch()) {
+        $line_amount += $entity_trxn->amount;
+      }
+      if($line_amount < $financialItem->amount && $line_amount != 0) {
+        $financialItem->status_id = 2;
+      }
+      elseif($line_amount == 0) {
+        $financialItem->status_id = 3;
+      }elseif($line_amount == $financialItem->amount) {
+        $financialItem->status_id = 1;
+      }
+      $financialItem->transaction_date = null;
+      $financialItem->save();
         
         return $financialItem;
        
@@ -196,5 +217,16 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem
      $dao->fetch();
      return $dao;
    } 
+   
+   static function retrievePreviousAmount( &$params ) {
+      $entity_trxn = new CRM_Financial_DAO_EntityFinancialTrxn();
+      $entity_trxn->copyValues( $params );
+      $entity_trxn->find();
+      $line_amount =0;
+      while($entity_trxn->fetch()) {
+        $line_amount += $entity_trxn->amount;
+}
+      return $line_amount;
+   }
 }
 

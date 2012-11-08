@@ -664,7 +664,7 @@ WHERE  id IN (" . implode(',', array_keys($priceFields)) . ')';
       }else {
       CRM_Utils_Array::value('_values', $params) ? $values =  $params->_values : $values[] = "";
 }
-      $params->add('checkbox', 'int_amount', ts('Record smaller intitial amount'));
+    $params->add('checkbox', 'int_amount', ts('Record smaller initial amount'));
 
       if( !array_key_exists( 'initial_amount_label', $values ) ){
         $values['initial_amount_label'] = "Amount to pay now:";

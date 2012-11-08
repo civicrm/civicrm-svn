@@ -62,7 +62,7 @@
 <script type="text/javascript">
 {literal}
 var optionSep      = '|';
-
+var totalfee = 0;
 cj(document).ready(function(){ 
    cj('.initial_amount-section').hide();
   // cj('input[name = payment_processor ][value= 0]').hide();
@@ -91,7 +91,6 @@ cj('#int_amount').click(function(){
 if ( cj( this ).attr('checked') )
 apendValue();
 });
-
 
  cj('.payFull').live('click', function(){
       var txtID = Array( );
@@ -211,13 +210,6 @@ cj.fn.getParent = function(num) {
 
 function apendValue(){
      var counter = 0;
-  if ( !cj('#pricevalue').length && !cj('#priceset').length){
-      if ( !cj('#membership').length ){
-	      alert('Please select price set.');
-	      cj('#int_amount').removeAttr('checked');
-              return false;
-         }
-    }
 
    var options = "<div id = 'initialPayment'><table><th>Item</th><th>Amount</th>";
    var quickConfig = '{/literal}{$quickConfig}{literal}';

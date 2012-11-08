@@ -466,9 +466,10 @@ WHERE  contribution_id = {$this->_id}
 
     $this->_lineItems = array();
     if ($this->_id) {
-      if (empty($this->_compId) || ($this->_compContext != 'participant') || ($this->_context != 'participant')) {
+      if (empty($this->_compId)) {
       $lineItem = CRM_Price_BAO_LineItem::getLineItems($this->_id, 'contribution',1);
       } else {
+        $this->assign('compId',$this->_compId);
         $lineItem = CRM_Price_BAO_LineItem::getLineItems($this->_compId);
       }
       empty($lineItem) ? null :$this->_lineItems[] =  $lineItem;
@@ -800,7 +801,6 @@ WHERE  contribution_id = {$this->_id}
       $this->setDefaults(array('is_recur' => 0));
     }
     $this->assign('buildRecurBlock', $buildRecurBlock);
-
     $qfKey = $this->controller->_key;
     $this->assign('qfKey', $qfKey);
     $this->assign('allPanes', $allPanes);
@@ -819,7 +819,7 @@ WHERE  contribution_id = {$this->_id}
       //This->_online is trxn id already fetch in preprocess;
       $trxn          = $this->_online;
       
-      if (empty($this->_compId)|| ($this->_compContext != 'participant') || ($this->_context != 'participant')) {
+      if(empty($this->_compId)) {
         $LI = CRM_Price_BAO_LineItem::getLineItems($this->_id,'contribution');  
       $txrnLineTotal = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnLineTotal($this->_id, 'civicrm_contribution');
       } else {
@@ -841,14 +841,7 @@ WHERE  contribution_id = {$this->_id}
           $prevAmount = 0;
           $entityParams['entity_table'] = 'civicrm_financial_item';      
           $entityParams['entity_id'] = $fid[$i++];
-          $entityFinancialItem = new CRM_Financial_DAO_EntityFinancialTrxn( );
-          $entityFinancialItem->copyValues($entityParams);
-          if ($entityFinancialItem->find(true)) {
-            $prevAmount += $entityFinancialItem->amount;
-            while ($entityFinancialItem->fetch()) {
-              $prevAmount += $entityFinancialItem->amount;
-            }
-          }        
+          $prevAmount = CRM_Financial_BAO_FinancialItem::retrievePreviousAmount($entityParams);       
           $lineItemTotal[$itemKey] = $prevAmount;
           if (!array_key_exists($itemKey, $lineItemTotal)){
             $lineItemTotal[$itemKey] = 0;
@@ -894,7 +887,9 @@ WHERE  contribution_id = {$this->_id}
         $trxn = CRM_Core_BAO_FinancialTrxn::retrieve($trxnParams,$default);
         $pricefildTotal['trxn'][$trxn->id]['trxn_total'] = $value['amount'];
         $pricefildTotal['trxn'][$trxn->id]['trxn_date']  = $trxn->trxn_date;
+        if(!empty($trxn->trxn_type;)) {
         $pricefildTotal['trxn'][$trxn->id]['trxn_type']  = $trxn->trxn_type;
+      }   
       }   
       
       $pricefildTotal['LineItems'] =  $lineItemTotal;
@@ -1905,6 +1900,12 @@ WHERE  contribution_id = {$this->_id}
             }
           }
         }   
+       
+        if($this->_submitValues['initial_amount'] < $this->_submitValues['total_amount'] ) {
+          $contrib['contribution_status_id'] = 2;
+          $ids['contribution'] = $contribution->id;
+          CRM_Contribute_BAO_Contribution::create($contrib,$ids);
+        }
         CRM_Contribute_Form_AdditionalInfo::processPriceSet( $contribution->id, $lineItem, $contribution );                      
       }else{
         if(empty($this->_lineItems)) {
@@ -1928,14 +1929,11 @@ WHERE  contribution_id = {$this->_id}
                                 'entity_table' => 'civicrm_financial_item',
                                 'entity_id'    => $fid
                                 );
-          $entityTrxn = CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($entityParams);
           $prevAmount = 0;
-          foreach($entityTrxn as $key=>$value ) {
-            $prevAmount += $value['amount'];
-          }          
+          $prevAmount = CRM_Financial_BAO_FinancialItem::retrievePreviousAmount($entityParams);        
           $entityIDParams['entity_id'] = $trxnId['id'];
           $entityIDParams['entity_table'] = 'civicrm_financial_trxn';
-          CRM_Financial_BAO_FinancialItem::retrieveMaxEntityFinancialTrxn($entityIDParams);
+          $entityID = CRM_Financial_BAO_FinancialItem::retrieveMaxEntityFinancialTrxn($entityIDParams);
           $entityParams = array(
                                 'entity_table'      => 'civicrm_financial_item',
                                 'entity_id'         => $fid,
@@ -1943,6 +1941,28 @@ WHERE  contribution_id = {$this->_id}
                                 'amount'            => (Float)($this->_submitValues['initial_amount']- $prevAmount)
                                 );
           CRM_Financial_BAO_FinancialItem::createEntityTrxn($entityParams);
+          $entityParams = array(
+                                'entity_table'      => 'civicrm_financial_item',
+                                'entity_id'         => $fid,
+                                );
+          $prevamount = CRM_Financial_BAO_FinancialItem::retrievePreviousAmount($entityParams);   
+          $fTrxn['id'] = $fid;
+          $financialItem = new CRM_Financial_DAO_FinancialItem( );
+          $financialItem->copyValues( $fTrxn );
+          $financialItem->find(true);   
+          if($prevamount < $financialItem->amount && $prevamount != 0) {
+            $financialItem->status_id = 2;
+          }
+          elseif($prevamount == 0) {
+            $financialItem->status_id = 3;
+          }elseif($prevamount == $financialItem->amount) {
+            $financialItem->status_id = 1;       
+            $contrib['contribution_status_id'] = 1;
+            $ids['contribution'] = $contribution->id;
+            CRM_Contribute_BAO_Contribution::create($contrib,$ids);
+          }
+          $financialItem->transaction_date = null;
+          $financialItem->save( );   
         }else {
         foreach( $this->_lineItems[0] as $key => $value ){
           $financialItemID  = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialItem', $key, 'id', 'entity_id' );
@@ -1950,15 +1970,8 @@ WHERE  contribution_id = {$this->_id}
                                 'entity_table' => 'civicrm_financial_item',
                                 'entity_id' => $financialItemID,
                                 );      
-          $EFItem = new CRM_Financial_DAO_EntityFinancialTrxn();
-          $EFItem->copyValues( $entityParams );       
           $prevAmount = 0;
-          if ($EFItem->find(true)) { 
-            $prevAmount += $EFItem->amount; 
-            while ($EFItem->fetch()) {    
-              $prevAmount += $EFItem->amount;   
-            }
-          }
+          $prevAmount = CRM_Financial_BAO_FinancialItem::retrievePreviousAmount($entityParams);
           $entityIDParams['entity_id'] = $trxnId['id'];
           $entityIDParams['entity_table'] = 'civicrm_financial_trxn';
           $entityID = CRM_Financial_BAO_FinancialItem::retrieveMaxEntityFinancialTrxn($entityIDParams);
@@ -1969,7 +1982,34 @@ WHERE  contribution_id = {$this->_id}
                                                 'amount'             => (Float)($this->_submitValues['txt-price'][$value['price_field_value_id']] - $prevAmount)
                                                   );
           $etrxn = CRM_Financial_BAO_FinancialItem::createEntityTrxn($entity_financial_trxn_params);  
-        } }
+          $prevamount = CRM_Financial_BAO_FinancialItem::retrievePreviousAmount($entityParams);   
+          $fTrxn['id'] = $financialItemID;
+          $financialItem = new CRM_Financial_DAO_FinancialItem( );
+          $financialItem->copyValues( $fTrxn );
+          $financialItem->find(true);   
+          if($prevamount < $financialItem->amount && $prevamount != 0) {
+            $financialItem->status_id = 2;
+      }
+          elseif($prevamount == 0) {
+            $financialItem->status_id = 3;
+          }elseif($prevamount == $financialItem->amount) {
+            $financialItem->status_id = 1;
+          }
+          $financialItem->transaction_date = null;
+          $financialItem->save( );
+        }
+        $linetotal = 0;
+        foreach($this->_submitValues['txt-price'] as $value) {
+          $linetotal += $value;
+        }
+        if($this->_values['total_amount'] == $linetotal) {
+          $contrib['contribution_status_id'] = 1;
+        }else{
+          $contrib['contribution_status_id'] = 2;
+        }
+          $ids['contribution'] = $contribution->id;
+          CRM_Contribute_BAO_Contribution::create($contrib,$ids);
+        }
       }
       // process associated membership / participant, CRM-4395
       $relatedComponentStatusMsg = NULL;

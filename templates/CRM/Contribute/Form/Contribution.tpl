@@ -248,48 +248,9 @@ cj(document).ready(function(){
                </td>
             </tr>
         {/if}
-            <tr class="crm-contribution-form-block-receive_date">
-                <td class="label">{$form.receive_date.label}</td>
-                <td{$valueStyle}>{if $hideCalender neq true}{include file="CRM/common/jcalendar.tpl" elementName=receive_date}{else}{$receive_date|crmDate}{/if}<br />
-                    <span class="description">{ts}The date this contribution was received.{/ts}</span>
-                </td>
-            </tr>
-	     <tr class="crm-contribution-form-block-contribution_type_id crm-contribution-form-block-financial_type_id">
-	      {if $recievedInto neq 1}
-	     	 <td class="label">{$form.to_financial_account_id.label}</td><td{$valueStyle}>
-		 {if !$recievedInto }
-		     	{capture assign=ftUrl}{crmURL p='civicrm/admin/financial/financialAccount' q="reset=1"}{/capture}
-			{ts 1=$ftUrl}There is no Financial Account configured of Financial Account Type Asset. <a href='%1'>Click here</a> if you want to configure financial Account of Financial Account Type Asset for your site.{/ts}
-	        {else}  
-		 	{$form.to_financial_account_id.html}&nbsp;
-		{/if}				 
-      	     	 </td>
-		 {/if}
-	     </tr>
-            <tr class="crm-contribution-form-block-payment_instrument_id">
-                <td class="label">{$form.payment_instrument_id.label}</td><td{$valueStyle}>{$form.payment_instrument_id.html}<br />
-                    <span class="description">{ts}Leave blank for non-monetary contributions.{/ts}</span>
-                </td>
-            </tr>
             {if $showCheckNumber || !$isOnline}
                 <tr id="checkNumber" class="crm-contribution-form-block-check_number"><td class="label">{$form.check_number.label}</td><td>{$form.check_number.html|crmAddClass:six}</td></tr>
             {/if}
-            <tr class="crm-contribution-form-block-trxn_id"><td class="label">{$form.trxn_id.label}</td><td{$valueStyle}>{$form.trxn_id.html|crmAddClass:twelve} {help id="id-trans_id"}</td></tr>
-            {if $email and $outBound_option != 2}
-                <tr class="crm-contribution-form-block-is_email_receipt"><td class="label">{$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html} <span class="description">{ts 1=$email}Automatically email a receipt for this contribution to %1?{/ts}</span></td></tr>
-            {elseif $context eq 'standalone' and $outBound_option != 2 }
-                <tr id="email-receipt" style="display:none;" class="crm-contribution-form-block-is_email_receipt"><td class="label">{$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html} <span class="description">{ts}Automatically email a receipt for this contribution to {/ts}<span id="email-address"></span>?</span></td></tr>
-            {/if}
-            <tr id="fromEmail" style="display:none;" >
-                <td class="label">{$form.from_email_address.label}</td>
-                <td>{$form.from_email_address.html}</td>
-            </tr>
-            <tr id="receiptDate" class="crm-contribution-form-block-receipt_date">
-                <td class="label">{$form.receipt_date.label}</td>
-                <td>{include file="CRM/common/jcalendar.tpl" elementName=receipt_date}<br />
-                    <span class="description">{ts}Date that a receipt was sent to the contributor.{/ts}</span>
-                </td>
-            </tr>
         <tr id="softCreditID" class="crm-contribution-form-block-soft_credit_to"><td class="label">{$form.soft_credit_to.label}</td>
             <td {$valueStyle}>
                 {$form.soft_credit_to.html} {help id="id-soft_credit"}
@@ -349,23 +310,30 @@ cj(document).ready(function(){
 	 <td></td>
 	 <td></td>
 	 <td>
-	 <a href="{crmURL p='civicrm/contact/view/contribution/editpay' q="reset=1&id=$contribID&cid=$contactId&fid=$keys&action=view"}">View</a> /
+	 {if $compId}
+	 <a href="{crmURL p='civicrm/contact/view/contribution/editpay' q="reset=1&id=$contribID&cid=$contactId&fid=$keys&compId=$compId&action=view"}">View</a> /
+	 <a href="{crmURL p='civicrm/contact/view/contribution/editpay' q="reset=1&id=$contribID&cid=$contactId&fid=$keys&compId=$compId&action=update"}">Edit</a></td>
+	 {else}
+	 <a href="{crmURL p='civicrm/contact/view/contribution/editpay' q="reset=1&id=$contribID&cid=$contactId&fid=$keys&&action=view"}">View</a> /
 	 <a href="{crmURL p='civicrm/contact/view/contribution/editpay' q="reset=1&id=$contribID&cid=$contactId&fid=$keys&action=update"}">Edit</a></td>
+	 {/if}
 	 </tr>	
 {/foreach}
       </table>
 </td>	
 </tr>{/if}
       </table>
- {if !$contributionMode && $action eq 1}
+ {if !$contributionMode}
       <div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-processed crm-accordion-open" id="submitPayment_Information">
         <div class="crm-accordion-header">
 	<div class="icon crm-accordion-pointer"></div>
 	   Submit a Payment
 	</div>
+	{if $action eq 1}
 	<div class="crm-accordion-body" id="Donor_Information">
 	 {include file="CRM/Price/Form/InitialPayment.tpl" extends="Contribution"}
            <div class="spacer"></div>
+	   {/if}
 	   <table>
 	      <tr class="crm-contribution-form-block-receive_date">
                 <td class="label">{$form.receive_date.label}</td>
@@ -382,7 +350,7 @@ cj(document).ready(function(){
                 <tr id="checkNumber" class="crm-contribution-form-block-check_number"><td class="label">{$form.check_number.label}</td><td>{$form.check_number.html|crmReplace:class:six}</td></tr>
             {/if}
 	     <tr class="crm-contribution-form-block-trxn_id"><td class="label">{$form.trxn_id.label}</td><td{$valueStyle}>{$form.trxn_id.html|crmReplace:class:twelve} {help id="id-trans_id"}</td></tr>
-            {if $email and $outBound_option != 2}
+            {if $outBound_option != 2}
                 <tr class="crm-contribution-form-block-is_email_receipt"><td class="label">{$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html} <span class="description">{ts 1=$email}Automatically email a receipt for this contribution to %1?{/ts}</span></td></tr>
             {elseif $context eq 'standalone' and $outBound_option != 2 }
                 <tr id="email-receipt" style="display:none;" class="crm-contribution-form-block-is_email_receipt"><td class="label">{$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html} <span class="description">{ts}Automatically email a receipt for this contribution to {/ts}<span id="email-address"></span>?</span></td></tr>

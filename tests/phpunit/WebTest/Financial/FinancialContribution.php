@@ -176,7 +176,6 @@ class WebTest_Financial_FinancialContribution extends CiviSeleniumTestCase {
     //$this->assertTrue($this->isTextPresent('The contribution record has been saved.'), "Status message didn't show up after saving!");
    
     $this->waitForElementPresent( "xpath=//div[@id='Contributions']//table/tbody/tr/");
-    //$url = $this->getAttribute ( "xpath=//div[@id='Contributions']//table//tbody/tr[1]/td[8]/span/a[text()='Edit']@href" );  
     $url = $this->getAttribute ( "xpath=//div[@id='Contributions']//table//tbody/tr[1]/td[8]/span/a[text()='Edit']@href" );  
     $url = explode('&',$url);
     $valueID = $url[2];
@@ -185,7 +184,6 @@ class WebTest_Financial_FinancialContribution extends CiviSeleniumTestCase {
     $lineItem = CRM_Price_BAO_LineItem::getLineItems($contribId, 'contribution', 1);
     $this->click( "xpath=//div[@id='Contributions']//table//tbody/tr[1]/td[8]/span/a[text()='Edit']" );   
     $this->waitForPageToLoad('30000');
-    //$this->open($this->sboxPath .'civicrm/contact/view/contribution?reset=1&action=update&id=39&cid=156&context=search');
     $this->_testLineItem( $lineItem);
   
   }
@@ -448,7 +446,7 @@ function _testVerifyPriceSet( $validateStrings, $sid )
       
       // We need a payment processor
       $processorName = 'Webtest Dummy' . substr( sha1( rand( ) ), 0, 7 );
-      $this->webtestAddPaymentProcessor( $processorName, '11', null, $financialType['name'] );
+      $this->webtestAddPaymentProcessor( $processorName, 'Dummy', null, $financialType['name'] );
       
       $this->open( $this->sboxPath . 'civicrm/admin/contribute/add?reset=1&action=add' );
       $this->waitForPageToLoad( '30000' );
@@ -554,8 +552,6 @@ function _testVerifyPriceSet( $validateStrings, $sid )
       $valueID = explode('=',$valueID);
       $contribId = $valueID[1]; 
       $lineItem = CRM_Price_BAO_LineItem::getLineItems($contribId, 'contribution', 1);   
-      // $lineItem = CRM_Price_BAO_LineItem::getLineItems('20', 'contribution', 1);    
-      //$this->open($this->sboxPath."civicrm/contact/view/contribution?reset=1&action=update&id=20&cid=103&context=search");
       $this->click( "xpath=//div[@id='contributionSearch']//table//tbody/tr[1]/td[11]/span/a[text()='Edit']" );  
       $this->_testLineItem( $lineItem);      
       $this->waitForElementPresent( "xpath=//div[@id='contributionSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']" );
@@ -1934,7 +1930,7 @@ function testContributeFullAmount(){
     $this->_testLineItem( $lineItem);
   }
 
-function testContributionLessAmount(){
+function testContributionPartialPayment(){
     // This is the path where our testing install resides. 
     // The rest of URL is defined in CiviSeleniumTestCase base class, in
     // class attributes.
@@ -2322,13 +2318,19 @@ function testSeparatePayment(){
     $this->click("_qf_Search_refresh");   
     $this->waitForElementPresent("xpath= id('contributionSearch')");
     $this->click("xpath= id('contributionSearch')/table/tbody/tr/td[11]/span/a[text()='Edit']");
-    sleep(10);
-    // $this->_testLineItem( $lineItem);  
+    $this->waitForElementPresent('total_amount');
+    $total_amount =  $this->getValue("total_amount");
+    $paid = $this->getValue("paid");
+    $owing = $this->getValue("owing");
+    $this->assertTrue($total_amount == ($paid+$owing),"Incorrect Amount present");
     $this->click('_qf_Contribution_cancel');       
     $this->waitForElementPresent("xpath= id('contributionSearch')");
     $this->click("xpath= id('contributionSearch')/table/tbody/tr[2]/td[11]/span/a[text()='Edit']");
-    sleep(10);
-    // $this->_testLineItem( $lineItem);    
+    $this->waitForElementPresent('total_amount');
+    $total_amount = $this->getValue("total_amount");
+    $paid = $this->getValue("paid");
+    $owing = $this->getValue("owing");
+    $this->assertTrue($total_amount == ($paid+$owing),"Incorrect Amount present");
 }
 function webtestAddContributionPage($hash = NULL,
     $rand = NULL,

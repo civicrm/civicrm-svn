@@ -1483,20 +1483,6 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
         require_once 'CRM/Core/BAO/FinancialTrxn.php';
 
         $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
-        $itemsParams = array( 'created_date'     => date('YmdHis'),
-                              'transaction_date' => $trxn->trxn_date,
-                              'contact_id'       => $cId,
-                              'amount'           => $trxn->total_amount,
-                              'currency'         => $trxn->currency,
-                              'entity_table'     => 'civicrm_financial_trxn',
-                              'entity_id'        => $trxn->id,
-                              'status_id'        => $statusID,
-                              );
-         
-        $trxnId['id'] = $trxn->id;
-        if($financialAccount)
-          $itemsParams['financial_account_id'] = $financialAccount;
-        $trxn = CRM_Financial_BAO_FinancialItem::create($itemsParams, null, $trxnId);
         $transaction->commit();
       }
     }
@@ -1528,7 +1514,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
                 if ( is_array( $initValue ) ){
                   $initValue = CRM_Utils_Array::value( $line['price_field_value_id'],  $initValue );
             }
-                $lineItems->$int_name = $initValue;
+                $lineItems->int_name = $initValue;
                 CRM_Financial_BAO_FinancialItem::add(  $lineItems, $contributions[0] );
           }
         }

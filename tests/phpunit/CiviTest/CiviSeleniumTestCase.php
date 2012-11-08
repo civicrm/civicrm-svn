@@ -425,11 +425,11 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
    * @return void
    */
 
-  function webtestAddPaymentProcessor( $processorName, $processorType = '11', $processorSettings = null, $financialType = null ) {
+  function webtestAddPaymentProcessor( $processorName, $processorType = 'Dummy', $processorSettings = null, $financialType = null ) {
     if (!$processorName) {
       $this->fail("webTestAddPaymentProcessor requires $processorName.");
     }
-    if ( $processorType == '11' ) {
+    if ( $processorType == 'Dummy' ) {
       $processorSettings = array( 'user_name'      => 'dummy',
         'url_site' => 'http://dummy.com',
         'test_user_name' => 'dummytest',
@@ -456,7 +456,11 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     } elseif ( empty( $processorSettings ) ) {
       $this->fail("webTestAddPaymentProcessor requires $processorSettings array if processorType is not Dummy.");
     }
-    $this->open($this->sboxPath . 'civicrm/admin/paymentProcessor?action=add&reset=1&pp=' . $processorType);
+    $pid = CRM_Core_DAO::getFieldValue("CRM_Financial_DAO_PaymentProcessorType", $processorType, "id","name");
+    if(empty($pid)) {
+      $this->fail("$processorType processortype not found.");    
+    }
+    $this->open($this->sboxPath . 'civicrm/admin/paymentProcessor?action=add&reset=1&pp=' . $pid); 
     $this->waitForPageToLoad('30000');
     $this->type('name', $processorName);
     $this->select( 'financial_type_id', "label={$financialType}" );
@@ -1487,7 +1491,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $this->waitForElementPresent("css=span.btn-slide-active");
       $this->click ("xpath=id('ltype')/div/table/tbody/tr/td[1][text()='$financialType[name]']/../td[7]/span[2]/ul/li[2]/a");
       $this->waitForElementPresent("_qf_FinancialType_next");
-      $this->click("_qf_FinancialType_next"); sleep(10);
+      $this->click("_qf_FinancialType_next"); 
       $this->assertTrue( $this->isTextPresent('Selected financial type has been deleted.'), 'Missing text: ' . 'Selected financial type has been deleted.' );
       return;
     }
@@ -1514,7 +1518,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     $this->waitForPageToLoad('30000');
     if( $option == 'new' ){
       $text = "The financial type '{$financialType['name']}' has been added. You can add Financial Accounts to this Financial Type now.";
-    }else{sleep(12);
+    }else{
       $text = "The financial type '{$financialType['name']}' has been saved.";
     }
     $this->assertTrue( $this->isTextPresent($text), 'Missing text: ' . $text );

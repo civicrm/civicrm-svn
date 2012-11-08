@@ -262,7 +262,7 @@ class WebTest_Financial_FinancialAddParticipantTest extends CiviSeleniumTestCase
 
     // We need a payment processor
     $processorName = 'Webtest Dummy' . substr(sha1(rand()), 0, 7);
-    $this->webtestAddPaymentProcessor( $processorName, '11', null, $financialType['name'] );
+    $this->webtestAddPaymentProcessor( $processorName, 'Dummy', null, $financialType['name'] );
 
     // Go directly to the URL of the screen that you will be testing (New Event).
     $this->open($this->sboxPath . 'civicrm/event/add?reset=1&action=add');
@@ -488,7 +488,7 @@ class WebTest_Financial_FinancialAddParticipantTest extends CiviSeleniumTestCase
 
     // We need a payment processor
     $processorName = 'Webtest Dummy' . substr(sha1(rand()), 0, 7);
-    $this->webtestAddPaymentProcessor( $processorName, '11', null, $financialType['name'] );
+    $this->webtestAddPaymentProcessor( $processorName, 'Dummy', null, $financialType['name'] );
 
     // Go directly to the URL of the screen that you will be testing (New Event).
     $this->open($this->sboxPath . 'civicrm/event/add?reset=1&action=add');
@@ -723,10 +723,9 @@ class WebTest_Financial_FinancialAddParticipantTest extends CiviSeleniumTestCase
     $text = 'The financial type Account has been saved.';
     $this->assertTrue( $this->isTextPresent($text), 'Missing text: ' . $text );
 
-
     // We need a payment processor
     $processorName = 'Webtest Dummy' . substr(sha1(rand()), 0, 7);
-    $this->webtestAddPaymentProcessor( $processorName, '11', null, $financialType['name'] );
+    $this->webtestAddPaymentProcessor( $processorName, 'Dummy', null, $financialType['name'] );
 
     // Go directly to the URL of the screen that you will be testing (New Event).
     $this->open($this->sboxPath . 'civicrm/event/add?reset=1&action=add');
@@ -969,7 +968,7 @@ function testParticipantSingleAllocate() {
 
     // We need a payment processor
     $processorName = 'Webtest Dummy' . substr(sha1(rand()), 0, 7);
-    $this->webtestAddPaymentProcessor( $processorName, '11', null, $financialType['name'] );
+    $this->webtestAddPaymentProcessor( $processorName, 'Dummy', null, $financialType['name'] );
 
     // Go directly to the URL of the screen that you will be testing (New Event).
     $this->open($this->sboxPath . 'civicrm/event/add?reset=1&action=add');
@@ -1199,10 +1198,9 @@ function testParticipantDoubleAllocate() {
     $text = 'The financial type Account has been saved.';
     $this->assertTrue( $this->isTextPresent($text), 'Missing text: ' . $text );
 
-
     // We need a payment processor
     $processorName = 'Webtest Dummy' . substr(sha1(rand()), 0, 7);
-    $this->webtestAddPaymentProcessor( $processorName, '11', null, $financialType['name'] );
+    $this->webtestAddPaymentProcessor( $processorName, 'Dummy', null, $financialType['name'] );
 
     // Go directly to the URL of the screen that you will be testing (New Event).
     $this->open($this->sboxPath . 'civicrm/event/add?reset=1&action=add');
@@ -1436,7 +1434,7 @@ function testParticipantRemoveLineItem(){
 
     // We need a payment processor
     $processorName = 'Webtest Dummy' . substr(sha1(rand()), 0, 7);
-    $this->webtestAddPaymentProcessor( $processorName, '11', null, $financialType['name'] );
+  $this->webtestAddPaymentProcessor( $processorName, 'Dummy', null, $financialType['name'] );
 
     // Go directly to the URL of the screen that you will be testing (New Event).
     $this->open($this->sboxPath . 'civicrm/event/add?reset=1&action=add');
@@ -1674,7 +1672,7 @@ function testParticipantOverPayment(){
 
     // We need a payment processor
     $processorName = 'Webtest Dummy' . substr(sha1(rand()), 0, 7);
-    $this->webtestAddPaymentProcessor( $processorName, '11', null, $financialType['name'] );
+    $this->webtestAddPaymentProcessor( $processorName, 'Dummy', null, $financialType['name'] );
 
     // Go directly to the URL of the screen that you will be testing (New Event).
     $this->open($this->sboxPath . 'civicrm/event/add?reset=1&action=add');
@@ -1888,7 +1886,7 @@ function testParticipantAddAndRemoveLineItem(){
 
     // We need a payment processor
     $processorName = 'Webtest Dummy' . substr(sha1(rand()), 0, 7);
-    $this->webtestAddPaymentProcessor( $processorName, '11', null, $financialType['name'] );
+    $this->webtestAddPaymentProcessor( $processorName, 'Dummy', null, $financialType['name'] );
 
     // Go directly to the URL of the screen that you will be testing (New Event).
     $this->open($this->sboxPath . 'civicrm/event/add?reset=1&action=add');

@@ -1295,10 +1295,10 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       if((CRM_Utils_Array::value('is_separate_payment', $form->_membershipBlock))) {
         foreach($form->_lineItem as $key=>$lineitem) {
           foreach($lineitem as $id=>$value) {
-            if($value['field_title'] == 'Membership Amount') {
-              $mem_amount = $value['line_total'];
-            }else {
+            if($value['field_title'] == 'Contribution Amount') {
               $contrib_amount = $value['line_total'];
+            }else {
+              $mem_amount = $value['line_total'];
             }
           }
         }
@@ -1334,7 +1334,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         }
         CRM_Contribute_Form_AdditionalInfo::processPriceSet($contribution->id, $temp, $contribution);
       } elseif (!CRM_Utils_Array::value('is_quick_config', $form->_params)) {
-        CRM_Contribute_Form_AdditionalInfo::processPriceSet($contribution->id, $form->_lineItem,$contribution);
+        CRM_Contribute_Form_AdditionalInfo::processPriceSet($contribution->id, $form->_lineItem,$contribution,$form->_params['initial_amount']);
       }
       if (!$form->_separateMembershipPayment && CRM_Utils_Array::value('is_quick_config', $form->_params)) {
         $form->_lineItem = null;
