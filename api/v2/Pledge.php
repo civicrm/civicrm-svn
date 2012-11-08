@@ -450,8 +450,7 @@ function _civicrm_pledge_format_params(&$params, &$values, $create = FALSE) {
         if (!CRM_Utils_Rule::currencyCode($value)) {
           return civicrm_create_error("currency not a valid code: $value");
         }
-        break;
-        case 'financial_type_id':
+      case 'financial_type_id':
         require_once 'CRM/Contribute/PseudoConstant.php';
             $typeId = CRM_Contribute_PseudoConstant::financialType( $value );
         if (!CRM_Utils_Rule::integer($value) || !$typeId) {

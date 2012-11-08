@@ -888,8 +888,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     $op = new PHPUnit_Extensions_Database_Operation_Insert();
     $op->execute($this->_dbconn,
       new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-                                                                         dirname(__FILE__)
-                                                                         . '/../api/v' . $apiversion . '/dataset/financial_types.xml') );
+        dirname(__FILE__) . '/../api/v' . $apiversion . '/dataset/financial_types.xml'
+      )
+    );
 
     require_once 'CRM/Contribute/PseudoConstant.php';
     CRM_Contribute_PseudoConstant::flush('contributionType');
@@ -904,11 +905,11 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
   function contributionTypeDelete($contributionTypeID = NULL) {
         require_once 'CRM/Financial/DAO/FinancialType.php';
     if ($contributionTypeID === NULL) {
-            civicrm_api('Contribution', 'get',array('version' => 3, 'financial_type_id' => 10, 'api.contribution.delete' => 1 ));  
-            civicrm_api('Contribution', 'get',array('version' => 3, 'financial_type_id' => 11, 'api.contribution.delete' => 1));                  
-      // we know those were loaded from /dataset/contribution_types.xml
-            $del= CRM_Financial_BAO_FinancialType::del(10,1);
-            $del= CRM_Financial_BAO_FinancialType::del(11,1);
+      civicrm_api('Contribution', 'get', array('version' => 3, 'financial_type_id' => 10, 'api.contribution.delete' => 1));
+      civicrm_api('Contribution', 'get', array('version' => 3, 'financial_type_id' => 11, 'api.contribution.delete' => 1));
+      // we know those were loaded from /dataset/financial_types.xml
+      $del = CRM_Financial_BAO_FinancialType::del(10, 1);
+      $del = CRM_Financial_BAO_FinancialType::del(11, 1);
     }
     else {
             civicrm_api('Contribution', 'get',array('version' => 3, 'financial_type_id' => $contributionTypeID,  'api.contribution.delete' => 1));            

@@ -54,7 +54,7 @@ function contribution_get_expectedresult(){
           'contribution_status_id' => '1',
           'check_number' => '',
           'contribution_campaign_id' => '',
-          'financial_account_id' => '11',
+          'financial_type_id' => '11',
           'financial_account' => 'Prize',
           'accounting_code' => '1005',
           'instrument_id' => '',

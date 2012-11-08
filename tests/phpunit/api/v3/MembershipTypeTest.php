@@ -111,7 +111,8 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase {
     $membershiptype = civicrm_api('membership_type', 'create', $params);
     $this->assertEquals($membershiptype['is_error'], 1);
     $this->assertEquals($membershiptype['error_message'],
-                           'Mandatory key(s) missing from params array: domain_id, member_of_contact_id, financial_type_id, duration_unit, duration_interval, name');
+      'Mandatory key(s) missing from params array: domain_id, member_of_contact_id, financial_type_id, duration_unit, duration_interval, name'
+    );
   }
 
   function testCreateWithWrongParamsType() {
@@ -157,7 +158,8 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase {
     $membershiptype = civicrm_api('membership_type', 'create', $params);
     $this->assertEquals($membershiptype['is_error'], 1);
     $this->assertEquals($membershiptype['error_message'],
-                         'Mandatory key(s) missing from params array: financial_type_id');
+      'Mandatory key(s) missing from params array: financial_type_id'
+    );
   }
 
   function testCreateWithoutDurationUnit() {
@@ -195,7 +197,8 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase {
     $membershiptype = civicrm_api('membership_type', 'create', $params);
     $this->assertEquals($membershiptype['is_error'], 1);
     $this->assertEquals($membershiptype['error_message'],
-                           'Mandatory key(s) missing from params array: financial_type_id, duration_interval');
+      'Mandatory key(s) missing from params array: financial_type_id, duration_interval'
+    );
   }
 
   function testCreateWithoutNameandDomainIDandDurationUnit() {
@@ -272,7 +275,8 @@ class api_v3_MembershipTypeTest extends CiviUnitTestCase {
     $membershiptype = civicrm_api('membership_type', 'create', $params);
     $this->assertEquals($membershiptype['is_error'], 1);
     $this->assertEquals($membershiptype['error_message'],
-                           'Mandatory key(s) missing from params array: version, domain_id, member_of_contact_id, financial_type_id, duration_unit, duration_interval, name');
+      'Mandatory key(s) missing from params array: version, domain_id, member_of_contact_id, financial_type_id, duration_unit, duration_interval, name'
+    );
   }
 
   function testUpdateWithoutId() {

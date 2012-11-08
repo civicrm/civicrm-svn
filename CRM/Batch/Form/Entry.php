@@ -403,7 +403,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         }
 
         if ($value['contribution_type']) {
-          $value['contribution_type_id'] = $value['contribution_type'];
+          $value['financial_type_id'] = $value['contribution_type'];
         }
 
         if (CRM_Utils_Array::value('payment_instrument', $value)) {

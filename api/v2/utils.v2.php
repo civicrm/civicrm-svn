@@ -996,8 +996,8 @@ function _civicrm_contribute_formatted_param(&$params, &$values, $create = FALSE
             break;
           }
         }
-            if ( !CRM_Utils_Array::value( 'financial_account_id', $values ) ) {
-          return civicrm_create_error("Contribution Type is not valid: $value");
+        if (!CRM_Utils_Array::value('financial_type_id', $values)) {
+          return civicrm_create_error("Financial Type is not valid: $value");
         }
         break;
 

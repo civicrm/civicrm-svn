@@ -1,7 +1,7 @@
 <?php
 class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart {
   public $all_participants;
-  public $contribution_type_id;
+  public $financial_type_id;
   public $description;
   public $line_items;
   public $_fields = array();
@@ -464,7 +464,7 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart {
     $params['now'] = date('YmdHis');
     $params['invoiceID'] = md5(uniqid(rand(), TRUE));
     $params['amount'] = $this->total;
-    $params['contribution_type_id'] = $this->contribution_type_id;
+        $params['financial_type_id'] = $this->financial_type_id;
     if ($this->payment_required && !CRM_Utils_Array::value('is_pay_later', $params)) {
       $trxn = $this->make_payment($params);
       $params['trxn_id'] = $trxn->trxn_id;
@@ -525,8 +525,8 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart {
         // XXX move
         $params['amount'] = $mer_participant->cost - $mer_participant->discount_amount;
 
-        if ($event_in_cart->event->contribution_type_id && $mer_participant->cost) {
-          $params['contribution_type_id'] = $event_in_cart->event->contribution_type_id;
+            if ($event_in_cart->event->financial_type_id && $mer_participant->cost) {
+              $params['financial_type_id'] = $event_in_cart->event->financial_type_id;
           $params['participant_contact_id'] = $mer_participant->contact_id;
           $this->record_contribution($mer_participant, $params, $event_in_cart->event);
         }

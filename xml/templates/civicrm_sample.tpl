@@ -155,10 +155,10 @@ INSERT civicrm_price_field_value ( price_field_id, name, label, description, amo
 SELECT @priceFieldId, LOWER(name), name, description, minimum_fee, id as weight, id  FROM `civicrm_membership_type`;
 
 
-SELECT @contribution_type_id := max(id) FROM `civicrm_contribution_type` WHERE `name` = 'Member Dues';
+SELECT @financial_type_id := max(id) FROM `civicrm_financial_type` WHERE `name` = 'Member Dues';
 
-INSERT INTO `civicrm_price_set` (`name`,`title`,`is_active`,`extends`, `contribution_type_id`, `is_quick_config`)
-VALUES ('member_signup_and_renewal', 'Member Signup and Renewal', 1, 3, @contribution_type_id, 1),
+INSERT INTO `civicrm_price_set` (`name`,`title`,`is_active`,`extends`, `financial_type_id`, `is_quick_config`)
+VALUES ('member_signup_and_renewal', 'Member Signup and Renewal', 1, 3, @financial_type_id, 1),
        ('pledge_for_civicrm', 'Pledge for CiviCRM!',1,2,null,1);
 
 SELECT @priceSetId := max(id) FROM `civicrm_price_set` WHERE `is_quick_config` = 1 and name = 'member_signup_and_renewal';

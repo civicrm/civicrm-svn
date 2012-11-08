@@ -187,8 +187,8 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'contact_id' => 1,
       'total_amount' => 1,
       'version' => 3,
-      'check_permissions' => FALSE,
-      'financial_account_id' => 1,
+      'check_permissions' => false,
+      'financial_type_id' => 1,
     );
     $contribution = civicrm_api('contribution', 'create', $params);
     $this->assertEquals($contribution['is_error'], 0, 'In line ' . __LINE__);

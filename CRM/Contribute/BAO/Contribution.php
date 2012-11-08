@@ -955,7 +955,7 @@ GROUP BY p.id
     $honorDAO->find();
 
     $status = CRM_Contribute_PseudoConstant::contributionStatus($honorDAO->contribution_status_id);
-        $type   = CRM_Contribute_Pseudoconstant::financialType();
+    $type = CRM_Contribute_PseudoConstant::financialType();
 
     while ($honorDAO->fetch()) {
       $params[$honorDAO->id]['honorId'] = $honorDAO->contact_id;
@@ -1968,8 +1968,8 @@ SELECT source_contact_id
       }
     }
     $paymentProcessorID = CRM_Utils_Array::value('paymentProcessor', $ids);
-    $contributionType = new CRM_Contribute_BAO_ContributionType();
-    $contributionType->id = $this->contribution_type_id;
+    $contributionType = new CRM_Contribute_BAO_FinancialType();
+    $contributionType->id = $contribution->financial_type_id;
     if (!$contributionType->find(TRUE)) {
       throw new Exception("Could not find contribution type record: " . $this->contribution_type_id);
     }
@@ -2436,8 +2436,8 @@ WHERE  contribution_id = %1 ";
       $template->assign('totalAmount', $input['amount']);
     }
 
-    if ($this->contribution_type_id) {
-      $values['contribution_type_id'] = $this->contribution_type_id;
+    if ($this->financial_type_id) {
+      $values['financial_type_id'] = $this->financial_type_id;
     }
 
 
