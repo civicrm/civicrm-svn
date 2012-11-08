@@ -117,7 +117,7 @@
      <path>civicrm/admin/financial/financialAccount</path>
      <title>Financial Account</title>
      <page_callback>CRM_Financial_Page_FinancialAccount</page_callback>
-     <desc>Contribution types are used to categorize contributions for reporting and accounting purposes. These are also referred to as Funds.</desc>
+     <desc>Financial types are used to categorize contributions for reporting and accounting purposes. These are also referred to as Funds.</desc>
      <adminGroup>CiviContribute</adminGroup>
      <icon>admin/small/contribution_types.png</icon>
      <weight>370</weight>
@@ -165,6 +165,13 @@
      <access_arguments>access CiviContribute</access_arguments>
      <page_type>1</page_type>
      <weight>510</weight>
+  </item>
+  <item>
+     <path>civicrm/contribute/searchBatch</path>
+     <page_callback>CRM_Contribute_Controller_SearchBatch</page_callback>
+     <access_arguments>access CiviContribute</access_arguments>
+     <page_type>1</page_type>
+     <weight>588</weight>
   </item>
   <item>
      <path>civicrm/contribute/import</path>
@@ -269,6 +276,14 @@
      <weight>584</weight>
   </item>
   <item>
+     <path>civicrm/financial/batch</path>
+     <title>New Batch</title>
+     <page_callback>CRM_Financial_Page_FinancialBatch</page_callback>
+     <access_arguments>create manual batch</access_arguments>
+     <adminGroup>CiviContribute</adminGroup>
+     <weight>585</weight>
+ </item>
+ <item>
      <path>civicrm/ajax/jqFinancial</path>
      <page_callback>CRM_Financial_Page_AJAX::jqFinancial</page_callback>
      <access_arguments>make online contributions</access_arguments>

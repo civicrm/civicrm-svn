@@ -181,7 +181,8 @@
                 <tr>
                     <th class='link'>{ts}Contributor's Name{/ts}</th>
                     <th class="currency">{ts}Amount{/ts}</th>
-                    <th>{ts}Contribution Type{/ts}</th>
+
+                    <th>{ts}Financial Type{/ts}</th>
                     <th>{ts}Source{/ts}</th>
                     <th class="received_date">{ts}Received{/ts}</th>
                     <th>{ts}Status{/ts}</th>

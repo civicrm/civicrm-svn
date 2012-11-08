@@ -201,7 +201,7 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
             'default' => array(1),
           ),
                                    'financial_type_id'   =>
-          array('title' => ts('Contribution Type'),
+                                   array( 'title'        => ts( 'Financial Type' ), 
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
                                           'options'      => CRM_Contribute_PseudoConstant::financialType( )
           ),

@@ -18,18 +18,20 @@
        <autoincrement>true</autoincrement>  
   </primaryKey>  
   <field>
+      <name>name</name>  
+      <type>varchar</type> 
+      <length>255</length>
+      <required>true</required>
+      <comment>Batch Name</comment>
+      <add>4.1</add>
+  </field>
+  <field>
       <name>batch_type_id</name>
       <type>int unsigned</type>
       <required>true</required>
       <comment>fk to Batch Type options in civicrm_option_values</comment>
       <add>4.1</add>
   </field>
-  <foreignKey> 
-       <name>batch_type_id</name> 
-       <table>civicrm_option_values</table> 
-       <key>id</key> 
-       <add>4.1</add> 
-  </foreignKey> 
   <field> 
       <name>contact_id</name> 
       <title>Contact ID</title>
@@ -46,7 +48,7 @@
   </foreignKey> 
   <field>  
       <name>description</name>  
-      <type>VARCHAR</type> 
+      <type>varchar</type> 
       <length>255</length>
       <required>true</required> 
        <comment>Financial Batch Description.</comment>
@@ -59,12 +61,6 @@
        <comment>fk to Payment Instrument options in civicrm_option_values</comment>
        <add>4.1</add>
   </field>
-  <foreignKey> 
-       <name>payment_instrument_id</name> 
-       <table>civicrm_option_values</table> 
-       <key>id</key> 
-       <add>4.1</add> 
-  </foreignKey>
   <field>
        <name>manual_number_trans</name>
        <type>int unsigned</type>
@@ -73,7 +69,9 @@
   </field>
   <field>
        <name>manual_total</name>
-       <type>int unsigned</type>   
+       <type>decimal</type>
+       <headerPattern>/manual(.?to(ta)?l)?/i</headerPattern>
+       <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
        <add>4.1</add>
   </field>
   <field>
@@ -99,10 +97,4 @@
        <comment>fk to Batch Status options in civicrm_option_values</comment>
        <add>4.1</add>
   </field>
-  <foreignKey> 
-       <name>batch_status_id</name> 
-       <table>civicrm_option_values</table> 
-       <key>id</key> 
-       <add>4.1</add> 
-  </foreignKey>
 </table>

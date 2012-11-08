@@ -37,7 +37,7 @@
 require_once 'CRM/Contribute/Form.php';
 require_once 'CRM/Core/PseudoConstant.php';
 /**
- * This class generates form components for Contribution Type
+ * This class generates form components for Financial Type
  * 
  */
 class CRM_Financial_Form_FinancialType extends CRM_Contribute_Form

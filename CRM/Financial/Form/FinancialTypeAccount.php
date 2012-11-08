@@ -38,7 +38,7 @@ require_once 'CRM/Contribute/Form.php';
 require_once 'CRM/Core/PseudoConstant.php';
 require_once 'CRM/Contribute/PseudoConstant.php';
 /**
- * This class generates form components for Contribution Type
+ * This class generates form components for Financial Type Account
  * 
  */
 class CRM_Financial_Form_FinancialTypeAccount extends CRM_Contribute_Form
@@ -168,7 +168,7 @@ class CRM_Financial_Form_FinancialTypeAccount extends CRM_Contribute_Form
             }
         
             else  {
-                $financialAccountSelect = array( 'select'=>ts( '-Select Financial Account-' )) + CRM_Contribute_PseudoConstant::financialType( );; 
+                $financialAccountSelect = array( 'select'=>ts( '- Select Financial Account -' )) + CRM_Contribute_PseudoConstant::financialAccount( );; 
             }
         }
         if( $this->_action == CRM_Core_Action::UPDATE ){

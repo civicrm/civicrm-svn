@@ -137,7 +137,6 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
           'max_value' => CRM_Utils_Array::value($index, CRM_Utils_Array::value('option_max_value', $params), NULL),
           'description' => CRM_Utils_Array::value($index, CRM_Utils_Array::value('option_description', $params), NULL),
           'membership_type_id' => CRM_Utils_Array::value($index, CRM_Utils_Array::value('membership_type_id', $params), NULL),
-                                 'financial_type_id' => CRM_Utils_Array::value( $index, $params['option_financial_type_id'], null ),
           'weight' => $params['option_weight'][$index],
           'is_active' => 1,
           'is_default' => CRM_Utils_Array::value($params['option_weight'][$index], $defaultArray) ? $defaultArray[$params['option_weight'][$index]] : 0,
@@ -146,6 +145,13 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
         if ($opIds = CRM_Utils_Array::value('option_id', $params)) {
           if ($opId = CRM_Utils_Array::value($index, $opIds)) {
             $optionsIds['id'] = $opId;
+                if( CRM_Utils_Array::value( $index, $params['option_financial_type_id'], null ) ){
+                    $options['financial_type_id'] =  CRM_Utils_Array::value( $index, $params['option_financial_type_id'], null );    
+                }elseif( CRM_Utils_Array::value( 'financial_type_id', $params) )
+                    {
+                        $options['financial_type_id'] = CRM_Utils_Array::value( 'financial_type_id', $params );
+                    }
+                CRM_Price_BAO_FieldValue::add($options, $optionsIds);
           }
           else $optionsIds['id'] = NULL;
         }

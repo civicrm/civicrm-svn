@@ -478,7 +478,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
               $_flagOption = 1;
             }
           }
-                    if ( ! $noLabel && ! $noAmount &&  $fields['option_financial_type_id'][$index] == '' ) {
+                    if ( ! $noLabel && ! $noAmount &&  CRM_Utils_Array::value( 'option_financial_type_id', $fields ) && $fields['option_financial_type_id'][$index] == '' && $fields['html_type'] != 'Text' ) {
                         $errors["option_financial_type_id[{$index}]"] = ts( 'Financial Type is a Required field.' );
 
                     }

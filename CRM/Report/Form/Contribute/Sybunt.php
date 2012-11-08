@@ -134,7 +134,7 @@ class CRM_Report_Form_Contribute_Sybunt extends CRM_Report_Form {
             'default' => date('Y'),
           ),
                                   'financial_type_id'         => 
-          array('title' => ts('Contribution Type'),
+                                  array( 'title'   => ts( 'Financial Type' ),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
                                          'options'      => CRM_Contribute_PseudoConstant::financialType( )
           ),

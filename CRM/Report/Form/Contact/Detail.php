@@ -150,7 +150,7 @@ class CRM_Report_Form_Contact_Detail extends CRM_Report_Form {
             'default' => TRUE,
           ),
           'total_amount' => array('default' => TRUE),
-                                 'financial_type_id'   => array( 'title'   => ts('Contribution Type'),
+                                 'financial_type_id'   => array( 'title'   => ts('Financial Type'),
             'default' => TRUE,
           ),
           'trxn_id' => NULL,

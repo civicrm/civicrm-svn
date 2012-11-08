@@ -111,7 +111,7 @@ ORDER by f.name";
         if( $_GET['_value'] == 'select'  ){
             $result = CRM_Core_PseudoConstant::accountOptionValues( 'account_relationship' );     
         } else {
-            $financialAccountType = array( '5' => array('5','1'), //expense
+            $financialAccountType = array( '5' => array('5'), //expense
                                            '1' => array('3'), //AR relation
                                            '3' => array('1'), //revenue
                                            );
@@ -120,7 +120,7 @@ ORDER by f.name";
         }
         $elements = array( array( 'name'  => ts('- Select Financial Account Relationship -'),
                                   'value' => 'select' ) );
-        $countResult = count( $financialAccountTypeId[$financialAccountTypeId] );
+        $countResult = count( $financialAccountType[$financialAccountTypeId] );
         if( !empty( $result ) ){
             foreach ( $result as $id => $name ) {
                 if( in_array( $id, $financialAccountType[$financialAccountTypeId] )  && $_GET['_value'] != 'select' ){
