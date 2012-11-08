@@ -648,12 +648,21 @@ WHERE  id IN (" . implode(',', array_keys($priceFields)) . ')';
     }
   }
 
+  /**
+   * Create Initial Payment
+   *
+   * @param array $params
+   *
+   * @access public
+   * @static
+   *
+   */
  public static function initialPayCreate( &$params, $page, $mode = 'offline' ) {
    $values = array();
       if ( $page == 'event' ) {
         $values =  CRM_Utils_Array::value( 'event', $params->_values );
       }else {
-        ( CRM_Utils_Array::value( '_values', $params )) ? $values =  $params->_values : $values[] = "";
+      CRM_Utils_Array::value('_values', $params) ? $values =  $params->_values : $values[] = "";
 }
       $params->add('checkbox', 'int_amount', ts('Record smaller intitial amount'));
 
@@ -669,45 +678,60 @@ WHERE  id IN (" . implode(',', array_keys($priceFields)) . ')';
                                       $values['initial_amount_label'], null );
       
       if ( $mode == 'offline' ){
-        $optionTypes = array( '1' => ts( 'Distribute evenly among all selected items' ),
-                              '2' => ts( 'Apply to the items I specify') );
+      $optionTypes = array( 
+        '1' => ts( 'Distribute evenly among all selected items' ),
+        '2' => ts( 'Apply to the items I specify') 
+      );
         $params->addRadio( 'option_items',
                            null,
                            $optionTypes,
                            array(), '<br/>' );
       }
-      // return $params;
     }
     
-    public static function initialPayValidation( $filds, $files, $self ) {
+  /**
+   * Validate the Initial Payment
+   *
+   * @param array $files, array $fields, object $self
+   *
+   * return the error string
+   *
+   * @access public
+   * @static
+   *
+   */   
+  public static function initialPayValidation($fields, $files, $self) {
       $errors = array();
       $newFields = array();
-      foreach( $filds as $key => $value ){
+    foreach ($fields as $key => $value) {
         if (strstr( $key,'txt-price_' )){
-          // if ( is_array( $filds[$key] ) ){
-            foreach( $filds[$key] as $key1 => $value1 ){
+        foreach ($fields[$key] as $key1 => $value1) {
               $exploadValue = explode("_", $key);
               $orignalValue = $self->_priceSet['fields'][$exploadValue[1]]['options'][$key1]['amount'];
               ( $orignalValue < $value1 ) ? $errors[ 'qf_default' ] = $self->_priceSet['fields'][$exploadValue[1]]['options'][$key1]['label']." Initial Amount is greater than base Amount":'';
             }
-            // }
         }
       }
-      if (CRM_Utils_Array::value( 'total_amount', $filds )){
-        $amount = CRM_Utils_Array::value( 'total_amount', $filds );
-      }elseif ( CRM_Utils_Array::value( 'amount', $filds )){
-        $amount = CRM_Utils_Array::value( 'amount', $filds );
+    if (CRM_Utils_Array::value('total_amount', $fields)) {
+      $amount = CRM_Utils_Array::value('total_amount', $fields);
+    } elseif ( CRM_Utils_Array::value('amount', $fields)) {
+      $amount = CRM_Utils_Array::value('amount', $fields);
       }else{
        $amount = CRM_Utils_Array::value( 'total_amount', $self->_values );
       }
       
-      if ( $amount < CRM_Utils_Array::value( 'initial_amount', $filds ) ){
+    if (!empty($self->_values['min_initial_amount'])) {
+      if (CRM_Utils_Array::value('int_amount', $fields) && CRM_Utils_Array::value('initial_amount', $fields) < $self->_values['min_initial_amount']) {
+        $errors['initial_amount'] = 'Initial Amount should be greater than minimum amount .';
+      }
+    }  
+    if (CRM_Utils_Array::value('int_amount', $fields) && $amount < CRM_Utils_Array::value('initial_amount', $fields)) {
           $errors[ 'initial_amount' ] = 'Initial Amount is greater than base Amount.';
       } 
+    if (CRM_Utils_Array::value('int_amount', $fields) && CRM_Utils_Array::value('initial_amount', $fields) <= 0) {      
+      $errors['initial_amount'] = 'Initial Amount is not Positive .';
+    }
       return $errors;      
     }
-    
-
-
 }
 

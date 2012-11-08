@@ -468,8 +468,9 @@ GROUP BY  cp.currency
         'status' => CRM_Contribute_PseudoConstant::contributionStatus($honorDAO->status_id),
         'create_date' => $honorDAO->create_date,
         'acknowledge_date' => $honorDAO->acknowledge_date,
-                                            'type'             => CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialType', 
-                                                                                               $honorDAO->financial_type_id, 'name' ),
+        'type' => CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_FinancialType',
+          $honorDAO->financial_type_id, 'name'
+        ),
         'display_name' => CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact',
           $honorDAO->contact_id, 'display_name'
         ),

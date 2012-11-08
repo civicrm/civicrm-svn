@@ -1310,7 +1310,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       if (CRM_Utils_Array::value('is_recur', $paymentParams)) {
         $allStatus = CRM_Member_PseudoConstant::membershipStatus();
 
-        $contributionType = new CRM_Contribute_DAO_ContributionType();
+        $contributionType = new CRM_Financial_DAO_FinancialType();
         $contributionType->id = $params['contribution_type_id'];
         if (!$contributionType->find(TRUE)) {
           CRM_Core_Error::fatal('Could not find a system table');

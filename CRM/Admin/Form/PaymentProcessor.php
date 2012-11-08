@@ -274,7 +274,9 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
 
   function setDefaultValues() {
     $defaults = array();
+    if ($this->_ppType) {
     $defaults['payment_processor_type_id'] = $this->_ppType;
+    }
     if (!$this->_id) {
       $defaults['is_active'] = $defaults['is_default'] = 1;
       $defaults['url_site'] = $this->_ppDAO->url_site_default;
@@ -310,10 +312,6 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
         $testName = "test_{$field['name']}";
         $defaults[$testName] = $testDAO->{$field['name']};
       }
-    }
-
-    if ($this->_ppType) {
-            $defaults['payment_processor_type_id'] = $this->_ppType;
     }
 
     return $defaults;
@@ -365,8 +363,7 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
 
     $dao->name = $values['name'];
     $dao->description = $values['description'];
-        $dao->payment_processor_type_id = $values['payment_processor_type_id'];
-
+    $dao->payment_processor_type_id = $values['payment_processor_type_id'];
         $dao->financial_type_id         = $values['financial_type_id'];
 
 

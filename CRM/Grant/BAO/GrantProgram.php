@@ -124,8 +124,7 @@ class CRM_Grant_BAO_GrantProgram extends CRM_Grant_DAO_GrantProgram
     }  
 
     static function contributionTypes( ) {
-        require_once 'CRM/Contribute/DAO/ContributionType.php';
-        $typeDao = new CRM_Contribute_DAO_ContributionType();
+        $typeDao = new CRM_Financial_DAO_FinancialType();
         $typeDao->find();
         while( $typeDao->fetch() ){
             $contributionTypes[ $typeDao->id ] = $typeDao->name;
@@ -133,33 +132,31 @@ class CRM_Grant_BAO_GrantProgram extends CRM_Grant_DAO_GrantProgram
         return $contributionTypes;
     }
 
-    // static function getGrants( $params ) {
-    //     if ( !empty ($params) ) {
-    //         $where = "WHERE "; 
-    //         foreach ( $params as $key => $value ) {
-    //             $where .= "{$key} = '{$value}' AND ";
-    //         }
-    //         $where = rtrim( $where ," AND ");
+    static function getGrants( $params ) {
+        if ( !empty ($params) ) {
+            $where = "WHERE "; 
+            foreach ( $params as $key => $value ) {
+                $where .= "{$key} = '{$value}' AND ";
+            }
+            $where = rtrim( $where ," AND ");
             
-    //         $query = "SELECT * FROM civicrm_grant {$where} ORDER BY assessment DESC";
-    //         $dao = CRM_Core_DAO::executeQuery($query);
-    //         while( $dao->fetch() ) {
-    //             $grants[$dao->id]['assessment'] = $dao->assessment;
-    //             $grants[$dao->id]['amount_total'] = $dao->amount_total;
-    //             $grants[$dao->id]['amount_requested'] = $dao->amount_requested;
-    //             $grants[$dao->id]['amount_granted'] = $dao->amount_granted;
-    //             $grants[$dao->id]['status_id'] = $dao->status_id;
-    //         }
-    //     }
-    //     return $grants;
-    // }
+            $query = "SELECT * FROM civicrm_grant {$where} ORDER BY assessment DESC";
+            $dao = CRM_Core_DAO::executeQuery($query);
+            while( $dao->fetch() ) {
+                $grants[$dao->id]['assessment'] = $dao->assessment;
+                $grants[$dao->id]['amount_total'] = $dao->amount_total;
+                $grants[$dao->id]['amount_requested'] = $dao->amount_requested;
+                $grants[$dao->id]['amount_granted'] = $dao->amount_granted;
+                $grants[$dao->id]['status_id'] = $dao->status_id;
+            }
+        }
+        return $grants;
+    }
     
     static function create( &$params, &$ids )
     {
         $moneyFields = array( 'total_amount',
                               'remainder_amount' );
-        CRM_Core_Error::debug( '$params', $params );
-        exit;
         foreach ( $moneyFields as $field ) {
             if ( isset( $params[$field] ) ) {
                 $params[$field] = CRM_Utils_Rule::cleanMoney( $params[$field] );
