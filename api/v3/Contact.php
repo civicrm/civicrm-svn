@@ -59,15 +59,14 @@ function civicrm_api3_contact_create($params) {
 
   $contactID = CRM_Utils_Array::value('contact_id', $params, CRM_Utils_Array::value('id', $params));
   $dupeCheck = CRM_Utils_Array::value('dupe_check', $params, FALSE);
-  $values    = _civicrm_api3_contact_check_params($params, $dupeCheck);
+  $values = _civicrm_api3_contact_check_params($params, $dupeCheck);
   if ($values) {
     return $values;
   }
 
-  if (empty($contactID)) {
+  if (!$contactID) {
     // If we get here, we're ready to create a new contact
     if (($email = CRM_Utils_Array::value('email', $params)) && !is_array($params['email'])) {
-      require_once 'CRM/Core/BAO/LocationType.php';
       $defLocType = CRM_Core_BAO_LocationType::getDefault();
       $params['email'] = array(
         1 => array('email' => $email,
@@ -78,8 +77,7 @@ function civicrm_api3_contact_create($params) {
     }
   }
 
-  if (CRM_Utils_Array::value('home_url', $params)) {
-    require_once 'CRM/Core/PseudoConstant.php';
+  if (!empty($params['home_url'])) {
     $websiteTypes = CRM_Core_PseudoConstant::websiteType();
     $params['website'] = array(1 => array('website_type_id' => key($websiteTypes),
         'url' => $params['home_url'],
@@ -87,21 +85,15 @@ function civicrm_api3_contact_create($params) {
     );
   }
 
-  if (isset($params['suffix_id']) &&
-    !(is_numeric($params['suffix_id']))
-  ) {
+  if (isset($params['suffix_id']) && !(is_numeric($params['suffix_id']))) {
     $params['suffix_id'] = array_search($params['suffix_id'], CRM_Core_PseudoConstant::individualSuffix());
   }
 
-  if (isset($params['prefix_id']) &&
-    !(is_numeric($params['prefix_id']))
-  ) {
+  if (isset($params['prefix_id']) && !(is_numeric($params['prefix_id']))) {
     $params['prefix_id'] = array_search($params['prefix_id'], CRM_Core_PseudoConstant::individualPrefix());
   }
 
-  if (isset($params['gender_id'])
-    && !(is_numeric($params['gender_id']))
-  ) {
+  if (isset($params['gender_id']) && !(is_numeric($params['gender_id']))) {
     $params['gender_id'] = array_search($params['gender_id'], CRM_Core_PseudoConstant::gender());
   }
 
@@ -113,17 +105,12 @@ function civicrm_api3_contact_create($params) {
   $values = array();
   $entityId = $contactID;
 
-  if (!CRM_Utils_Array::value('contact_type', $params) &&
-    $entityId
-  ) {
+  if (empty($params['contact_type']) && $entityId) {
     $params['contact_type'] = CRM_Contact_BAO_Contact::getContactType($entityId);
   }
 
-  if (!($csType = CRM_Utils_Array::value('contact_sub_type', $params)) &&
-    $entityId
-  ) {
-    require_once 'CRM/Contact/BAO/Contact.php';
-    $csType = CRM_Contact_BAO_Contact::getContactSubType($entityId);
+  if (!isset($params['contact_sub_type']) && $entityId) {
+    $params['contact_sub_type'] = CRM_Contact_BAO_Contact::getContactSubType($entityId);
   }
 
   _civicrm_api3_custom_format_params($params, $values, $params['contact_type'], $entityId);
@@ -261,11 +248,7 @@ function _civicrm_api3_contact_get_supportanomalies(&$params, &$options) {
  */
 function civicrm_api3_contact_delete($params) {
 
-
-  require_once 'CRM/Contact/BAO/Contact.php';
-
   $contactID = CRM_Utils_Array::value('id', $params);
-
 
   $session = CRM_Core_Session::singleton();
   if ($contactID == $session->get('userID')) {
@@ -287,18 +270,18 @@ function _civicrm_api3_contact_check_params( &$params, $dupeCheck = true, $dupeE
 
   switch (strtolower(CRM_Utils_Array::value('contact_type', $params))) {
     case 'household':
-      civicrm_api3_verify_mandatory($params,null, array('household_name'));
+      civicrm_api3_verify_mandatory($params, null, array('household_name'));
       break;
     case 'organization':
-      civicrm_api3_verify_mandatory($params,null, array('organization_name'));
+      civicrm_api3_verify_mandatory($params, null, array('organization_name'));
       break;
     case 'individual':
-      civicrm_api3_verify_one_mandatory($params,null, array(
-          'first_name',
-          'last_name',
+      civicrm_api3_verify_one_mandatory($params, null, array(
+        'first_name',
+        'last_name',
         'email',
-          'display_name',
-         )
+        'display_name',
+      )
     );
     break;
   }
@@ -311,7 +294,6 @@ function _civicrm_api3_contact_check_params( &$params, $dupeCheck = true, $dupeE
 
   if ($dupeCheck) {
     // check for record already existing
-    require_once 'CRM/Dedupe/Finder.php';
     $dedupeParams = CRM_Dedupe_Finder::formatParams($params, $params['contact_type']);
 
     // CRM-6431
@@ -324,33 +306,28 @@ function _civicrm_api3_contact_check_params( &$params, $dupeCheck = true, $dupeE
 
     $ids = implode(',', CRM_Dedupe_Finder::dupesByParams($dedupeParams, $params['contact_type'], 'Strict', array()));
 
-    if ($ids != NULL) {
+    if ($ids) {
       throw new Exception("Found matching contacts: $ids");
     }
   }
 
   //check for organisations with same name
-  if (CRM_Utils_Array::value('current_employer', $params)) {
+  if (!empty($params['current_employer'])) {
     $organizationParams = array();
     $organizationParams['organization_name'] = $params['current_employer'];
 
-    require_once 'CRM/Dedupe/Finder.php';
     $dedupParams = CRM_Dedupe_Finder::formatParams($organizationParams, 'Organization');
 
     $dedupParams['check_permission'] = FALSE;
     $dupeIds = CRM_Dedupe_Finder::dupesByParams($dedupParams, 'Organization', 'Fuzzy');
 
     // check for mismatch employer name and id
-    if (CRM_Utils_Array::value('employer_id', $params)
-      && !in_array($params['employer_id'], $dupeIds)
-    ) {
+    if (!empty($params['employer_id']) && !in_array($params['employer_id'], $dupeIds)) {
       return civicrm_api3_create_error('Employer name and Employer id Mismatch');
     }
 
     // show error if multiple organisation with same name exist
-    if (!CRM_Utils_Array::value('employer_id', $params)
-      && (count($dupeIds) > 1)
-    ) {
+    if (empty($params['employer_id']) && (count($dupeIds) > 1)) {
       return civicrm_api3_create_error('Found more than one Organisation with same Name.');
     }
   }
@@ -370,13 +347,11 @@ function _civicrm_api3_contact_check_params( &$params, $dupeCheck = true, $dupeE
  * @static
  */
 function _civicrm_api3_contact_update($params, $contactID = NULL) {
-  require_once 'CRM/Core/Transaction.php';
   $transaction = new CRM_Core_Transaction();
 
   if ($contactID) {
     $params['contact_id'] = $contactID;
   }
-  require_once 'CRM/Contact/BAO/Contact.php';
 
   $contact = CRM_Contact_BAO_Contact::create($params);
 
@@ -397,8 +372,7 @@ function _civicrm_api3_contact_update($params, $contactID = NULL) {
  */
 function _civicrm_api3_greeting_format_params($params) {
   $greetingParams = array('', '_id', '_custom');
-  foreach (array(
-    'email', 'postal', 'addressee') as $key) {
+  foreach (array('email', 'postal', 'addressee') as $key) {
     $greeting = '_greeting';
     if ($key == 'addressee') {
       $greeting = '';
@@ -419,7 +393,6 @@ function _civicrm_api3_greeting_format_params($params) {
     }
 
     if (!$formatParams) {
-
       continue;
     }
 
@@ -538,7 +511,6 @@ function civicrm_api3_contact_getquick($params) {
   $name = CRM_Utils_Array::value('name', $params);
 
   // get the autocomplete options from settings
-  require_once 'CRM/Core/BAO/Setting.php';
   $acpref = explode(CRM_Core_DAO::VALUE_SEPARATOR,
     CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
       'contact_autocomplete_options'
@@ -554,7 +526,7 @@ function civicrm_api3_contact_getquick($params) {
       $list[$value] = $acOptions[$value];
     }
   }
-  
+
   $select = $actualSelectElements = array('sort_name');
   $where  = '';
   $from   = array();
@@ -586,7 +558,7 @@ function civicrm_api3_contact_getquick($params) {
   }
 
   $config = CRM_Core_Config::singleton();
-  $as     = $select;
+  $as  = $select;
   $select = implode(', ', $select);
   if (!empty($select)) {
     $select = ", $select";
@@ -602,7 +574,6 @@ function civicrm_api3_contact_getquick($params) {
   $limit = CRM_Utils_Array::value('limit', $params, 10);
 
   // add acl clause here
-  require_once 'CRM/Contact/BAO/Contact/Permission.php';
   list($aclFrom, $aclWhere) = CRM_Contact_BAO_Contact_Permission::cacheClause('cc');
 
   if ($aclWhere) {
@@ -668,7 +639,7 @@ function civicrm_api3_contact_getquick($params) {
     $exactIncludeNickName = " OR nick_name LIKE '$name'";
   }
 
-  //CRM-10687  
+  //CRM-10687
   if (!empty($params['field_name']) && !empty($params['table_name'])) {
     $field_name = $params['field_name'];
     $table_name = $params['table_name'];
@@ -678,8 +649,8 @@ function civicrm_api3_contact_getquick($params) {
         }
     }
     $whereClause = " WHERE ( $table_name.$field_name LIKE '$strSearch')";
-    $exactWhereClause = " WHERE ( $table_name.$field_name = '$name')";    
-  } 
+    $exactWhereClause = " WHERE ( $table_name.$field_name = '$name')";
+  }
   else {
       if ($config->includeEmailInName) {
         if (!in_array('email', $list)) {
@@ -693,7 +664,7 @@ function civicrm_api3_contact_getquick($params) {
         $exactWhereClause = " WHERE ( sort_name LIKE '$name' $exactIncludeNickName ) {$where} ";
       }
   }
-  
+
   $additionalFrom = '';
   if ($relType) {
     $additionalFrom = "
@@ -727,7 +698,6 @@ ORDER BY exactFirst, sort_name
 LIMIT    0, {$limit}
     ";
   // send query to hook to be modified if needed
-  require_once 'CRM/Utils/Hook.php';
   CRM_Utils_Hook::contactListQuery($query,
     $name,
     CRM_Utils_Array::value('context', $params),
@@ -799,7 +769,6 @@ function civicrm_api3_contact_merge($params) {
   $mode = CRM_Utils_Array::value('mode', $params, 'safe');
   $autoFlip = CRM_Utils_Array::value('auto_flip', $params, TRUE);
 
-  require_once 'CRM/Dedupe/Merger.php';
   $dupePairs = array(array('srcID' => CRM_Utils_Array::value('main_id', $params),
       'dstID' => CRM_Utils_Array::value('other_id', $params),
     ));
@@ -844,7 +813,6 @@ function civicrm_api3_contact_proximity($params) {
   //Distance in meters
   $distance = $distance * $conversionFactor;
 
-  require_once 'CRM/Contact/BAO/ProximityQuery.php';
   $whereClause = CRM_Contact_BAO_ProximityQuery::where($latitude, $longitude, $distance);
 
   $query = "
