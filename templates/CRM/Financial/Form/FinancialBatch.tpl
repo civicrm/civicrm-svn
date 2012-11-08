@@ -24,12 +24,27 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing/deleting financial type  *}
-<h3>{if $action eq 8}{ts}Delete Batch{/ts} - {$batchTitle}{elseif $action eq 1}{ts}Add New Batch{/ts}{elseif $action eq 2}{ts}Edit Batch{/ts} - {$batchTitle}{/if}</h3>
+<h3>{if $action eq 8}{ts}Delete Batch{/ts} - {$batchTitle}{elseif $action eq 1}{ts}Add New Batch{/ts}{elseif $action eq 2}{ts}Edit Batch{/ts} - {$batchTitle}{elseif $action eq 262144}{ts}Close Batch{/ts} - {$batchTitle}{elseif $action eq 128}{ts}Export Batch{/ts} - {$batchTitle}{/if}</h3>
 <div class="crm-block crm-form-block crm-financial_type-form-block">
    {if $action eq 8}
       <div class="messages status">
           <div class="icon inform-icon"></div>    
           {ts}WARNING: You cannot delete a financial type if it is currently used by any Contributions, Contribution Pages or Membership Types. Consider disabling this option instead.{/ts} {ts}Deleting a financial type cannot be undone.{/ts} {ts}Do you want to continue?{/ts}
+      </div>
+      { elseif $action eq 524288 }
+       <div class="messages status">
+          <div class="icon inform-icon"></div>    
+          {ts}WARNING: Do you want to Reopen '{$batchTitle}'- batch?{/ts}
+      </div>
+       { elseif $action eq 262144 }
+       <div class="messages status">
+          <div class="icon inform-icon"></div>    
+          {ts}WARNING: You will not be able to change the batch after it is closed. Are you sure you want to close this batch?{/ts}
+      </div>
+        {elseif $action eq 128}
+       <div class="messages status">
+          <div class="icon inform-icon"></div>    
+          {ts}Warning: You will not be able to reopen or change the batch after it is exported. Are you sure you want to export this batch?{/ts}
       </div>
    {else}
      <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
@@ -44,6 +59,10 @@
        <tr class="crm-contribution-form-block-description">	 
     	  <td class="label">{$form.description.label}</td>
 	  <td class="html-adjust">{$form.description.html}</td>
+       </tr>
+       <tr class="crm-contribution-form-block-contact">	 
+    	  <td class="label">{$form.contact_name.label}</td>
+	  <td class="html-adjust">{$form.contact_name.html}</td>
        </tr>
        <tr class="crm-contribution-form-block-payment_instrument">	 
     	  <td class="label">{$form.payment_instrument_id.label}</td>
@@ -68,12 +87,12 @@
 
        {if $action eq 2}
         <tr class="crm-contribution-form-block-open_date">	 
-    	  <td class="label">{$form.open_date.label}</td>
-	  <td class="html-adjust">{$form.open_date.html}</td>
+    	  <td class="label">{$form.created_date.label}</td>
+	  <td class="html-adjust">{$form.created_date.html}</td>
        </tr>
-        <tr class="crm-contribution-form-block-close_date">	 
-    	  <td class="label">{$form.close_date.label}</td>
-	  <td class="html-adjust">{$form.close_date.html}</td>
+        <tr class="crm-contribution-form-block-modified_date">	 
+    	  <td class="label">{$form.modified_date.label}</td>
+	  <td class="html-adjust">{$form.modified_date.html}</td>
        </tr>
        
        <tr class="crm-contribution-form-block-batch_status">	 
@@ -86,3 +105,35 @@
    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="botttom"}</div>
 </div>
 
+{literal}
+<script type="text/javascript">
+var dataUrl        = "{/literal}{$dataURL}{literal}";
+var newContactText = "{/literal}({ts}new contact record{/ts}){literal}";
+cj('#contact_name').autocomplete( dataUrl, { 
+                                      width        : 250, 
+                                      selectFirst  : false,
+                                      matchCase    : true, 
+                                      matchContains: true
+    }).result( function(event, data, formatted) {
+        var foundContact   = ( parseInt( data[1] ) ) ? cj( "#created_id" ).val( data[1] ) : cj( "#created_id" ).val('');
+        if ( ! foundContact.val() ) {
+            cj('div#employer_address').html(newContactText).show();    
+        } else {
+            cj('div#employer_address').html('').hide();    
+        }
+    }).bind('change blur', function() {
+        if ( !cj( "#created_id" ).val( ) ) {
+            cj('div#employer_address').html(newContactText).show();    
+        }
+});
+
+// remove current employer id when current employer removed.
+cj("form").submit(function() {
+  if ( !cj('#contact_name').val() ) cj( "#created_id" ).val('');
+});
+
+cj("input#contact_name").click( function( ) {
+    cj("input#created_id").val('');
+});
+</script>
+{/literal}

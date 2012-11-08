@@ -1693,7 +1693,7 @@ GROUP BY civicrm_primary_id ";
   }
 
   static
-  function writeCSVFromTable($exportTempTable, $headerRows, $sqlColumns, $exportMode) {
+  function writeCSVFromTable($exportTempTable, $headerRows, $sqlColumns, $exportMode, $saveFile = null, $batchItems = '') {
     $writeHeader = TRUE;
     $offset      = 0;
     $limit       = self::EXPORT_ROW_COUNT;
@@ -1722,14 +1722,22 @@ LIMIT $offset, $limit
 
         $componentDetails[] = $row;
       }
+            if( $exportMode == 'financial' )
+                $getExportFileName = 'CiviCRM Contribution Search';
+            else
+                $getExportFileName =self::getExportFileName( 'csv', $exportMode );
 
-      CRM_Core_Report_Excel::writeCSVFile(self::getExportFileName('csv', $exportMode),
+            $csvRows = CRM_Core_Report_Excel::writeCSVFile( $getExportFileName,
         $headerRows,
         $componentDetails,
-        NULL,
-        $writeHeader
-      );
-      $writeHeader = FALSE;
+                                                      null,
+                                                      $writeHeader,
+                                                      $saveFile );
+            if( $saveFile && !empty( $csvRows ) ){
+                $batchItems .= $csvRows;
+            }
+            
+            $writeHeader = false;
       $offset += $limit;
     }
   }

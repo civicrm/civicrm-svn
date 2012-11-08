@@ -23,14 +23,29 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{if $action eq 1 or $action eq 2 or $action eq 8 or $action eq 262144 or $action eq 524288 or $action eq 128}
-   {include file="CRM/Financial/Form/FinancialBatch.tpl"}
-{else}
-    <div id="help">
-        <p>{ts}Financial types are used to categorize contributions for reporting and accounting purposes. These are also referred to as <strong>Funds</strong>. You may set up as many types as needed. Each type can carry an accounting code which can be used to map contributions to codes in your accounting system. Commonly used financial types are: Donation, Campaign Contribution, Membership Dues...{/ts}</p>
-    </div>
+{* this template is used for adding/editing/deleting financial type  *}
+<div class="crm-form-block crm-search-form-block">
+<div class="crm-accordion-wrapper crm-activity_search-accordion {if $searchRows}crm-accordion-closed{else}crm-accordion-open{/if}">
+ <div class="crm-accordion-header crm-master-accordion-header">
+  <div class="icon crm-accordion-pointer"></div> 
+   {ts}Edit Search Criteria{/ts}
+</div><!-- /.crm-accordion-header -->
+ 
 
-{if $rows}
+<div class="crm-accordion-body">
+  <div id="searchForm" class="crm-block crm-form-block crm-contact-custom-search-activity-search-form-block">
+     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
+     <table class="form-layout-compressed">
+      
+      </table> 
+  
+   <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="botttom"}</div>
+</div>
+</div>	
+</div>
+</div>
+
+{if $searchRows}
 <div id="ltype">
 <p></p>
     <div class="form-item">
@@ -39,33 +54,28 @@
  	{include file="CRM/common/enableDisable.tpl"}
         <table cellpadding="0" cellspacing="0" border="0">
            <thead class="sticky">
-            <th>{ts}Name{/ts}</th>
-            <th>{ts}Description{/ts}</th>
-	    <th>{ts}Financial Accounts{/ts}</th>
-            <th>{ts}Deductible?{/ts}</th>
-            <th>{ts}Reserved?{/ts}</th>
-            <th>{ts}Enabled?{/ts}</th>
+	    <tr>
+            <th scope="col" title="Select All Rows">{$form.toggleSelect.html}</th>
+             {foreach from=$searchColumnHeader item=head}
+	     <th>{$head}</th>
+	     {/foreach}
             <th></th>
+	    </tr>
           </thead>
-         {foreach from=$rows item=row}
-        <tr id="row_{$row.id}"class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
-	        <td>{$row.name}</td>	
-	        <td>{$row.description}</td>
-		 <td>{$row.financial_account}</td>
-	        <td>{if $row.is_deductible eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-	        <td>{if $row.is_reserved eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-	        <td id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-	        <td>{$row.action|replace:'xx':$row.id}</td>
+
+         {foreach from=$searchRows item=row}
+        <tr id="row_{$row.id}"class="{cycle values="odd-row,even-row"} {$row.class}">
+	 {assign var=cbName value=$row.checkbox}
+                <td>{$form.$cbName.html}</td>
+	    {foreach from=$searchColumnHeader item=rowValue key=rowKey}
+	    <td>{$row.$rowKey}</td>
+	    {/foreach}
+	   <td>{$row.action}</td>  
         </tr>
         {/foreach}
          </table>
         {/strip}
-
-        {if $action ne 1 and $action ne 2}
-	    <div class="action-link">
-    	<a href="{crmURL q="action=add&reset=1"}" id="newFinancialType" class="button"><span><div class="icon add-icon"></div>{ts}Add Financial Type{/ts}</span></a>
-        </div>
-        {/if}
+    
     </div>
 </div>
 {else}
@@ -75,4 +85,10 @@
         {ts 1=$crmURL}There are no Financial Types entered. You can <a href='%1'>add one</a>.{/ts}
     </div>    
 {/if}
-{/if}
+{literal}
+<script type="text/javascript">
+cj(function() {
+   cj().crmaccordions(); 
+});
+</script>
+{/literal}

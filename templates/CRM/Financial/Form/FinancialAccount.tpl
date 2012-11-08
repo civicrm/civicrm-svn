@@ -49,9 +49,9 @@
 	  </td>
        </tr>
        <tr class="crm-contribution-form-block-organisation_name">
-	  <td class="label"> {$form.organisation_name.label}&nbsp;{help id="id-current-employer" file="CRM/Contact/Form/Contact.hlp"}
+	  <td class="label"> {$form.contact_name.label}&nbsp;{help id="id-current-employer" file="CRM/Contact/Form/Contact.hlp"}
 	  </td>
-	  <td class="html-adjust">{$form.organisation_name.html|crmReplace:class:twenty}
+	  <td class="html-adjust">{$form.contact_name.html|crmReplace:class:twenty}
           </td>
        </tr>
 
@@ -104,7 +104,7 @@
 <script type="text/javascript">
 var dataUrl        = "{/literal}{$dataURL}{literal}";
 var newContactText = "{/literal}({ts}new contact record{/ts}){literal}";
-cj('#organisation_name').autocomplete( dataUrl, { 
+cj('#contact_name').autocomplete( dataUrl, { 
                                       width        : 250, 
                                       selectFirst  : false,
                                       matchCase    : true, 
@@ -124,7 +124,7 @@ cj('#organisation_name').autocomplete( dataUrl, {
 
 // remove current employer id when current employer removed.
 cj("form").submit(function() {
-  if ( !cj('#organisation_name').val() ) cj( "#contact_id" ).val('');
+  if ( !cj('#contact_name').val() ) cj( "#contact_id" ).val('');
 });
 
 //current employer default setting
@@ -137,13 +137,13 @@ if ( employerId ) {
         success : function(html){
             //fixme for showing address in div
             htmlText = html.split( '|' , 2);
-            cj('input#organisation_name').val(htmlText[0]);
+            cj('input#contact_name').val(htmlText[0]);
             cj('input#contact_id').val(htmlText[1]);
         }
     }); 
 }
 
-cj("input#organisation_name").click( function( ) {
+cj("input#contact_name").click( function( ) {
     cj("input#contact_id").val('');
 });
 </script>

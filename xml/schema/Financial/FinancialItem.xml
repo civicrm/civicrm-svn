@@ -22,6 +22,7 @@
   <field>
     <name>date</name>
     <type>datetime</type>
+       <export>true</export>
     <required>true</required>      
     <comment></comment>
     <add>4.1</add>
@@ -30,6 +31,7 @@
     <name>contact_id</name>
     <type>int unsigned</type>
     <required>true</required> 
+    <export>true</export>
     <comment>FK to Contact ID of contact the item is from</comment>
     <add>4.1</add>
   </field>
@@ -42,6 +44,7 @@
   <field>
     <name>contact_id_to</name>
     <type>int unsigned</type>
+    <export>true</export>
     <required>true</required> 
     <comment>FK to Contact ID of contact the item is to (allows for obligations between contacts, so the one record will appear for both contacts) NB the contact_id and contact_id_to for an invoice are the reverse of the financial_items in it (as the "supplier" sends the invoice to the "customer")</comment>
     <add>4.1</add>
@@ -56,12 +59,14 @@
     <name>quantity</name>
     <type>int unsigned</type>
     <required>true</required> 
+    <export>true</export>
     <comment></comment>
     <add>4.1</add>
   </field>
   <field>
     <name>description</name>
     <type>varchar</type>
+    <export>true</export>
     <length>255</length>
     <comment>Financial Item Description.</comment>
     <add>4.1</add>
@@ -69,6 +74,7 @@
   <field>     
     <name>unit_amount</name>  
     <title>Unit Amount</title>
+    <export>true</export>
     <type>decimal</type>
     <default>0</default>
     <required>true</required> 
@@ -80,6 +86,7 @@
   <field>     
     <name>total_amount</name>  
     <title>Total Amount</title>
+    <export>true</export>
     <type>decimal</type>
     <default>0</default>
     <required>true</required> 
@@ -90,6 +97,7 @@
   </field>
   <field>
     <name>currency</name>
+    <export>true</export>
     <type>varchar</type>
     <length>3</length>
     <comment></comment>
@@ -97,12 +105,14 @@
   </field>
   <field>
     <name>deductiblity_id</name>
+    <export>true</export>
     <type>int unsigned</type>
     <comment></comment>
     <add>4.1</add>
   </field>
   <field>
     <name>financial_type_id</name>
+    <export>true</export>
     <type>int unsigned</type>
     <comment></comment>
     <add>4.1</add>
@@ -116,6 +126,7 @@
   </foreignKey>
   <field>
     <name>status_id</name>
+    <export>true</export>
     <type>int unsigned</type>
     <comment>e.g. is_test, is_paid (otherwise assume is_pay_later)</comment>
     <add>4.1</add>

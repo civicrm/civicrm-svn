@@ -57,7 +57,7 @@ class CRM_Financial_Page_FinancialBatch extends CRM_Core_Page_Basic
      */
     function getBAOName() 
     {
-        return 'CRM_Financial_BAO_FinancialBatch';
+        return 'CRM_Core_BAO_Batch';
     }
 
     /**
@@ -69,38 +69,7 @@ class CRM_Financial_Page_FinancialBatch extends CRM_Core_Page_Basic
         {
             if (!(self::$_links)) {
                 self::$_links = array(
-                                      CRM_Core_Action::BROWSE  => array(
-                                                                        'name'  => ts('Accounts'),
-                                                                        'url'   => 'civicrm/admin/financial/financialType/accounts',
-                                                                        'qs'    => 'reset=1&action=browse&aid=%%id%%',
-                                                                        'title' => ts('Accounts'),
-                                                                        ),
-                                      CRM_Core_Action::UPDATE  => array(
-                                                                        'name'  => ts('Edit'),
-                                                                        'url'   => 'civicrm/admin/financial/financialType',
-                                                                        'qs'    => 'action=update&id=%%id%%&reset=1',
-                                                                        'title' => ts('Edit Financial Type') 
-                                                                        ),
-                                      CRM_Core_Action::DISABLE => array(
-                                                                        'name'  => ts('Disable'),
-                                                                        'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Financial_BAO_FinancialType' . '\',\'' . 'enable-disable' . '\' );"',
-                                                                        'ref'   => 'disable-action',
                                                                     
-                                                                        'title' => ts('Disable Financial Type') 
-                                                                        ),
-                                      CRM_Core_Action::ENABLE  => array(
-                                                                        'name'  => ts('Enable'),
-                                                                        'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Financial_BAO_FinancialType' . '\',\'' . 'disable-enable' . '\' );"',
-                                                                        'ref'   => 'enable-action',
-                                                                    
-                                                                        'title' => ts('Enable Financial Type') 
-                                                                        ),
-                                      CRM_Core_Action::DELETE  => array(
-                                                                        'name'  => ts('Delete'),
-                                                                        'url'   => 'civicrm/admin/financial/financialType',
-                                                                        'qs'    => 'action=delete&id=%%id%%',
-                                                                        'title' => ts('Delete Financial Type') 
-                                                                        )
                                       );
             }
             return self::$_links;
@@ -125,10 +94,9 @@ class CRM_Financial_Page_FinancialBatch extends CRM_Core_Page_Basic
         $action = CRM_Utils_Request::retrieve('action', 'String',
                                               $this, false, 'browse'); // default to 'browse'
         // what action to take ?
-        if ($action & (CRM_Core_Action::UPDATE | CRM_Core_Action::ADD)) {
+        if ($action & (CRM_Core_Action::UPDATE | CRM_Core_Action::ADD | CRM_Core_Action::CLOSE | CRM_Core_Action::REOPEN | CRM_Core_Action::EXPORT)) {
             $this->edit($action, $id) ;
         } 
-
         // parent run 
         return parent::run();
     }
