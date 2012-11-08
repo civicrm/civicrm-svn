@@ -241,6 +241,6 @@ class CRM_Core_Resources {
       $file = '';
     }
     // TODO consider caching call_user_func results
-    return call_user_func($this->extMapper, $ext) . $file;
+    return call_user_func($this->extMapper, $ext) . '/' . $file;
   }
 }

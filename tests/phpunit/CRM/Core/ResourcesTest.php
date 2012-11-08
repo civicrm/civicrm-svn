@@ -44,9 +44,9 @@ class CRM_Core_ResourcesTest extends CiviUnitTestCase {
 
     $this->res = new CRM_Core_Resources(function($name) {
       if ($name == 'civicrm') {
-        return 'http://core-app/';
+        return 'http://core-app';
       } else {
-        return 'http://ext-dir/' . $name . '/';
+        return 'http://ext-dir/' . $name;
       }
     });
     CRM_Core_Resources::singleton($this->res);
