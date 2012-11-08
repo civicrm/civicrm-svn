@@ -206,10 +206,11 @@ class CRM_Contribute_Form_ContributionPage_AddProduct extends CRM_Contribute_For
       if( count( $financialType ) ){
         $this->assign( 'financialType', $financialType );
       } 
-      $this->add('select', 'financial_type_id', 
+      $this->add('select', 
+        'financial_type_id', 
                  ts( 'Financial Type' ), 
-                 array(''=>ts( '- Select Financial Type -' )) + $financialType,
-                 true);
+        array(''=>ts('- Select Financial Type -')) + $financialType
+      );
 
 
     $this->addRule('weight', ts('Please enter integer value for weight'), 'integer');

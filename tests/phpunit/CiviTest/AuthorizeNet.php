@@ -1,5 +1,4 @@
 <?php
-require_once "CRM/Core/DAO/PaymentProcessor.php";
 class AuthorizeNet extends PHPUnit_Framework_Testcase {
   /*
      * Helper function to create

@@ -736,7 +736,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form {
     // retrive all active price set fields.
     $discountId = CRM_Core_BAO_Discount::findSet($eventID, 'civicrm_event');
     if ($discountId) {
-      $priceSetId = CRM_Core_DAO::getFieldValue('CRM_Core_BAO_Discount', $discountId, 'option_group_id');
+      $priceSetId = CRM_Core_DAO::getFieldValue('CRM_Core_BAO_Discount', $discountId, 'price_set_id');
       $price = CRM_Price_BAO_Set::initSet($form, $eventID, 'civicrm_event', TRUE, $priceSetId);
     }
     else {

@@ -38,27 +38,31 @@
        <add>2.1</add>
   </index>
   <field>
-      <name>option_group_id</name>
+      <name>price_set_id</name>
       <uniqueName>participant_discount_name</uniqueName> 
       <title>Discount Name</title>
       <type>int unsigned</type>
       <required>true</required>
       <export>true</export>
-      <comment>FK to civicrm_option_group</comment>
+      <change>4.3</change>
+      <changedName>option_group_id</changedName>  
+      <comment>FK to civicrm_price_set</comment>
       <add>2.1</add>
   </field>
   <foreignKey>
-       <name>option_group_id</name>
-       <table>civicrm_option_group</table>
+       <name>price_set_id</name>
+       <table>civicrm_price_set</table>
        <key>id</key>
        <add>2.1</add>
+       <change>4.3</change>
+       <changedName>option_group_id</changedName>  
        <onDelete>CASCADE</onDelete>
   </foreignKey>
   <index>
        <name>index_entity_option_id</name>
        <fieldName>entity_table</fieldName>
        <fieldName>entity_id</fieldName>
-       <fieldName>option_group_id</fieldName>
+       <fieldName>price_set_id</fieldName>
        <add>2.1</add>
   </index>
   <field>

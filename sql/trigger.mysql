@@ -73,7 +73,6 @@ DECLARE financialTypeId INT;
   UPDATE civicrm_pledge SET financial_type_id = financialTypeId WHERE financial_type_id = NEW.id;
   UPDATE civicrm_contribution_recur SET financial_type_id = financialTypeId WHERE financial_type_id = NEW.id;
   UPDATE civicrm_product SET financial_type_id = financialTypeId WHERE financial_type_id = NEW.id;
-  UPDATE civicrm_price_field SET financial_type_id = financialTypeId WHERE financial_type_id = NEW.id;
   UPDATE civicrm_price_field_value SET financial_type_id = financialTypeId WHERE financial_type_id = NEW.id;
   UPDATE civicrm_premiums_product SET financial_type_id = financialTypeId WHERE financial_type_id = NEW.id;
   UPDATE civicrm_entity_financial_account SET entity_id = financialTypeId WHERE entity_id = NEW.id;

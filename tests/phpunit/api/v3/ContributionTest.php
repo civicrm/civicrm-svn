@@ -112,11 +112,14 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'version' => $this->_apiversion,
     );
     $contribution = civicrm_api('contribution', 'get', $params);
+    $financialParams['id'] = $this->_contributionTypeId;
+    $default = null;
+    $financialType  =  CRM_Financial_BAO_FinancialType::retrieve($financialParams,$default);
     $this->assertAPISuccess($contribution, 'In line ' . __LINE__);
     $this->assertEquals(1,$contribution['count']);
     $this->documentMe($params, $contribution, __FUNCTION__, __FILE__);
     $this->assertEquals($contribution['values'][$contribution['id']]['contact_id'], $this->_individualId, 'In line ' . __LINE__);
-        $this->assertEquals($contribution['values'][$contribution['id']]['financial_type_id'],$this->_contributionTypeId);        
+    $this->assertEquals($contribution['values'][$contribution['id']]['financial_type_id'], $financialType->name);
     $this->assertEquals($contribution['values'][$contribution['id']]['total_amount'], 100.00, 'In line ' . __LINE__);
     $this->assertEquals($contribution['values'][$contribution['id']]['non_deductible_amount'], 10.00, 'In line ' . __LINE__);
     $this->assertEquals($contribution['values'][$contribution['id']]['fee_amount'], 51.00, 'In line ' . __LINE__);

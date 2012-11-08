@@ -150,7 +150,6 @@ class CRM_Financial_BAO_FinancialType extends CRM_Financial_DAO_FinancialType
                             array('Contribute', 'Contribution'), 
                             array('Contribute', 'ContributionPage'), 
                             array( 'Member', 'MembershipType' ),
-                            array( 'Price', 'Field' ),
                             array( 'Price', 'FieldValue' ),
                             array( 'Grant', 'Grant' ),
                             array( 'Contribute', 'ManagePremiums' ),
@@ -165,23 +164,19 @@ class CRM_Financial_BAO_FinancialType extends CRM_Financial_DAO_FinancialType
             }
         }
         if ($check) {
-            $session = CRM_Core_Session::singleton();
-            CRM_Core_Session::setStatus( ts(
-                'This financial type cannot be deleted because it is being referenced by one or more of the following types of records: Contributions, Contribution Pages, or Membership Types. Consider disabling this type instead if you no longer want it used.') );
-            return CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/admin/financial/financialType', "reset=1&action=browse" ));
+        return TRUE;
         }
         
         //delete from financial Type table
-        require_once 'CRM/Contribute/DAO/Contribution.php';
         $financialType = new CRM_Financial_DAO_FinancialType( );
         $financialType->id = $financialTypeId;
         $financialType->delete();
         
-        require_once 'CRM/Financial/DAO/EntityFinancialAccount.php';
         $entityFinancialType = new CRM_Financial_DAO_EntityFinancialAccount( );
         $entityFinancialType->entity_id = $financialTypeId;
         $entityFinancialType->entity_table = 'civicrm_financial_type';
         $entityFinancialType ->delete();
+      return FALSE;
     }
 }
 

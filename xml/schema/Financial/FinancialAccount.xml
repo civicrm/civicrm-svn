@@ -90,6 +90,7 @@
   <field>
        <name>is_header_account</name>
        <type>boolean</type>  
+       <default>0</default>  
        <comment>Is this a header account which does not allow transactions to be posted against it directly, but only to its sub-accounts?</comment>  
        <add>4.1</add>
   </field>

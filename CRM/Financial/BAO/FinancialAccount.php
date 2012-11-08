@@ -175,7 +175,7 @@ class CRM_Financial_BAO_FinancialAccount extends CRM_Financial_DAO_FinancialAcco
         if ($check) {
             $session = CRM_Core_Session::singleton();
             CRM_Core_Session::setStatus( ts(
-                'This financial type cannot be deleted because it is being referenced by one or more of the following types of records: Contributions, Contribution Pages, or Membership Types. Consider disabling this type instead if you no longer want it used.') );
+                'This financial account cannot be deleted since it is being used as a header account. Please remove it from being a header account before trying to delete it again.') );
             return CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/admin/financial/financialAccount', "reset=1&action=browse" ));
         }
         

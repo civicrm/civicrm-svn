@@ -216,6 +216,7 @@
       {/if}
          {/section}
          <td scope="column">{ts}Default?{/ts}</td>
+         <td scope="column">{ts}Financial Type{/ts}</td>
       </tr>
 
             {section name=loop start=1 loop=11}
@@ -228,6 +229,7 @@
           {/if}
             {/section}
             <td class="even-row">{$form.discounted_default.$idx.html}</td>
+            <td class="even-row">{$form.discounted_financial_type_id.$idx.html}</td>
          </tr>
             {/section}
             </table>

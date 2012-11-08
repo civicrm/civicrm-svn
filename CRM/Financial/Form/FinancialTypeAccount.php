@@ -154,18 +154,20 @@ class CRM_Financial_Form_FinancialTypeAccount extends CRM_Contribute_Form
         
         if ( $this->_action == CRM_Core_Action::ADD ){
             if( CRM_Utils_Array::value( 'account_relationship', $this->_submitValues ) || CRM_Utils_Array::value( 'financial_account_id', $this->_submitValues ) ){  
-                $financialAccountType = array( '5' => 5, //expense
+            $financialAccountType = array( 
+              '5' => 5, //expense
                                                '3' => 1, //AR relation
                                                '1' => 3, //revenue
-                                               '6' => 1  //Asset
+              '6' => 1,  //Asset
+              '7' => 4, //cost of sales
+              '8' => 1, //premium inventory
+              '9' => 3 //discount account is
                                                );
             
                 $financialAccountType = "financial_account_type_id = {$financialAccountType[$this->_submitValues['account_relationship']]}";
-                require_once 'CRM/Contribute/PseudoConstant.php';
                 $result = CRM_Contribute_PseudoConstant::financialAccount( null, $financialAccountType );
 
                 $financialAccountSelect = array(''=>ts( '- Select Financial Account -' )) + $result;
-                //$defaults['']
             }
         
             else  {
@@ -173,15 +175,17 @@ class CRM_Financial_Form_FinancialTypeAccount extends CRM_Contribute_Form
             }
         }
         if( $this->_action == CRM_Core_Action::UPDATE ){
-            
-            $financialAccountType = array( '5' => 5, //expense
+          $financialAccountType = array( 
+             '5' => 5, //expense
                                            '3' => 1, //AR relation
                                            '1' => 3, //revenue
-                                           '6' => 1  //Asset
+             '6' => 1,  //Asset
+             '7' => 4, //cost of sales
+             '8' => 1, //premium inventory
+             '9' => 3 //discount account is
                                            );
             
             $financialAccountType = "financial_account_type_id = {$financialAccountType[$this->_defaultValues['account_relationship']]}";
-            require_once 'CRM/Contribute/PseudoConstant.php';
             $result = CRM_Contribute_PseudoConstant::financialAccount( null, $financialAccountType );
 
             $financialAccountSelect = array(''=>ts( '- Select Financial Account -' )) + $result;

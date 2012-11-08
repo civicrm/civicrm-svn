@@ -820,7 +820,7 @@ VALUES
    (@option_group_id_fat, '{ts escape="sql"}Asset{/ts}', 1, 'Asset', NULL, 0, 0, 1, 'Things you own', 0, 1, 1, 2, NULL),
    (@option_group_id_fat, '{ts escape="sql"}Liability{/ts}', 2, 'Liability', NULL, 0, 0, 2, 'Things you own, like a grant still to be disbursed', 0, 1, 1, 2, NULL),
    (@option_group_id_fat, '{ts escape="sql"}Revenue{/ts}', 3, 'Revenue', NULL, 0, 1, 3, 'Income from contributions and sales of tickets and memberships', 0, 1, 1, 2, NULL),
-   (@option_group_id_fat, '{ts escape="sql"}Cost of Goods Sold{/ts}', 4, 'Cost of Goods Sold', NULL, 0, 0, 4, 'Costs incurred to get revenue, e.g. premiums for donations, dinner for a fundraising dinner ticket', 0, 1, 1, 2, NULL),
+   (@option_group_id_fat, '{ts escape="sql"}Cost of Sales{/ts}', 4, 'Cost of Sales', NULL, 0, 0, 4, 'Costs incurred to get revenue, e.g. premiums for donations, dinner for a fundraising dinner ticket', 0, 1, 1, 2, NULL),
    (@option_group_id_fat, '{ts escape="sql"}Expenses{/ts}', 5, 'Expenses', NULL, 0, 0, 5, 'Things that are paid for that are consumable, e.g. grants disbursed', 0, 1, 1, 2, NULL),
 
 -- account_relationship
@@ -830,6 +830,9 @@ VALUES
     (@option_group_id_arel, '{ts escape="sql"}Credit Liability Account is{/ts}', 4, 'Credit Liability Account is', NULL, 0, 0, 4, 'Credit Liability Account is', 0, 1, 0, 2, NULL),
      (@option_group_id_arel, '{ts escape="sql"}Expense Account is{/ts}', 5, 'Expense Account is', NULL, 0, 0, 5, 'Expense Account is', 0, 1, 1, 2, NULL),
      (@option_group_id_arel, '{ts escape="sql"}Asset Account of{/ts}', 6, 'Asset Account of', NULL, 0, 0, 6, 'Asset Account of', 0, 1, 1, 2, NULL),
+     (@option_group_id_arel, '{ts escape="sql"}Cost of Sales Account is{/ts}', 7, 'Cost of Sales Account is', NULL, 0, 0, 7, 'Cost of Sales Account is', 0, 1, 1, 2, NULL),
+     (@option_group_id_arel, '{ts escape="sql"}Premiums Inventory Account is{/ts}', 8, 'Premiums Inventory Account is', NULL, 0, 0, 8, 'Premiums Inventory Account is', 0, 1, 1, 2, NULL),
+     (@option_group_id_arel, '{ts escape="sql"}Discounts Account is{/ts}', 9, 'Discounts Account is', NULL, 0, 0, 9, 'Discounts Account is', 0, 1, 1, 2, NULL),
 
 -- Batch Mode
    (@option_group_id_batch_mode, '{ts escape="sql"}Manual Batch{/ts}', 1, 'Manual Batch', NULL, 0, 0, 1, 'Manual Batch', 0, 1, 1, 2, NULL),
@@ -906,14 +909,26 @@ VALUES
 -- financial accounts
 SELECT @opval := value FROM civicrm_option_value WHERE name = 'Revenue' and option_group_id = @option_group_id_fat;
 SELECT @opexp := value FROM civicrm_option_value WHERE name = 'Expenses' and option_group_id = @option_group_id_fat;
+SELECT @opAsset := value FROM civicrm_option_value WHERE name = 'Asset' and option_group_id = @option_group_id_fat;
+SELECT @opLiability := value FROM civicrm_option_value WHERE name = 'Liability' and option_group_id = @option_group_id_fat;
+SELECT @opCost := value FROM civicrm_option_value WHERE name = 'Cost of Sales' and option_group_id = @option_group_id_fat;
+
 INSERT INTO
-   `civicrm_financial_account` (`name`, `financial_account_type_id`, `is_reserved`, `is_active`, `is_deductible`, `is_default`)
+   `civicrm_financial_account` (`name`, `contact_id`, `financial_account_type_id`, `description`, `accounting_code`, `is_reserved`, `is_active`, `is_deductible`, `is_default`)
 VALUES
-  ( '{ts escape="sql"}Donation{/ts}'             , @opval, 0, 1, 1, 0 ),
-  ( '{ts escape="sql"}Member Dues{/ts}'          , @opval, 0, 1, 1, 0 ), 
-  ( '{ts escape="sql"}Campaign Contribution{/ts}', @opval, 0, 1, 0, 0 ),
-  ( '{ts escape="sql"}Event Fee{/ts}'            , @opval, 0, 1, 0, 0 ),
-  ( '{ts escape="sql"}Banking Fees{/ts}'         , @opexp, 0, 1, 0, 1 );
+  ( '{ts escape="sql"}Donations{/ts}'             , @contactID, @opval, 'Default account for donations', '4200', 0, 1, 1, 0 ),
+  ( '{ts escape="sql"}Member Dues{/ts}'          , @contactID, @opval, 'Default account for membership sales', '4400', 0, 1, 1, 0 ), 
+  ( '{ts escape="sql"}Campaign Contribution{/ts}', @contactID, @opval, 'Sample account for recording payments to a campaign', '4100', 0, 1, 0, 0 ),
+  ( '{ts escape="sql"}Event Fee{/ts}'            , @contactID, @opval, 'Default account for event ticket sales', '4300', 0, 1, 0, 0 ),
+  ( '{ts escape="sql"}Banking Fees{/ts}'         , @contactID, @opexp, 'Payment processor fees and manually recorded banking fees', '5200', 0, 1, 0, 0 ),
+  ( '{ts escape="sql"}Deposit bank account{/ts}' , @contactID, @opAsset, 'All manually recorded cash and cheques go to this account', '1100', 0, 1, 0, 0 ),
+  ( '{ts escape="sql"}Accounts Receivable{/ts}'  , @contactID, @opAsset, 'Amounts to be received later (eg pay later event revenues)', '1200', 0, 1, 0, 1 ),
+  ( '{ts escape="sql"}Accounts Payable{/ts}'     , @contactID, @opLiability, 'Amounts to be paid out such as grants and refunds', '2200', 0, 1, 0, 0 ),
+  ( '{ts escape="sql"}Checking Account{/ts}'     , @contactID, @opAsset, 'Bank accounts against which checks to pay grants, refunds, etc are written', '1100', 0, 1, 0, 0 ),
+  ( '{ts escape="sql"}Premiums{/ts}'             , @contactID, @opCost, 'Account to record cost of premiums provided to payors', '5100', 0, 1, 0, 0 ),
+  ( '{ts escape="sql"}Premiums inventory{/ts}'   , @contactID, @opAsset, 'Account representing value of premiums inventory', '1375', 0, 1, 0, 0 ),
+  ( '{ts escape="sql"}Discounts{/ts}'            , @contactID, @opval, 'Contra-revenue account for amounts discounted from sales', '4900', 0, 1, 0, 0 ),
+  ( '{ts escape="sql"}Refunds{/ts}'              , @contactID, @opval, 'Contra-revenue account for amounts refunded', '4800', 0, 1, 0, 0 );
 
 -- Now insert option values which require domainID
 --
@@ -1506,7 +1521,7 @@ SELECT @financial_type_id_md	       := max(id) FROM `civicrm_financial_type` WHE
 SELECT @financial_type_id_cc	       := max(id) FROM `civicrm_financial_type` WHERE `name` = 'Campaign Contribution';
 SELECT @financial_type_id_ef	       := max(id) FROM `civicrm_financial_type` WHERE `name` = 'Event Fee';
 
-SELECT @financial_account_id_dtn       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Donation';
+SELECT @financial_account_id_dtn       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Donations';
 SELECT @financial_account_id_md	       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Member Dues';
 SELECT @financial_account_id_cc	       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Campaign Contribution';
 SELECT @financial_account_id_ef	       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Event Fee';

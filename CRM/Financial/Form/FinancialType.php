@@ -90,9 +90,13 @@ class CRM_Financial_Form_FinancialType extends CRM_Contribute_Form
      */
     public function postProcess() 
     {
-        require_once 'CRM/Financial/BAO/FinancialType.php';
         if($this->_action & CRM_Core_Action::DELETE) {
-            CRM_Financial_BAO_FinancialType::del($this->_id);
+            $isNotDeleted = CRM_Financial_BAO_FinancialType::del($this->_id);
+            if ($isNotDeleted) {
+              CRM_Core_Session::setStatus( ts(
+                'This financial type cannot be deleted because it is being referenced by one or more of the following types of records: Contributions, Contribution Pages, or Membership Types. Consider disabling this type instead if you no longer want it used.') );
+              return CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/admin/financial/financialType', "reset=1&action=browse" ));
+            }
             CRM_Core_Session::setStatus( ts('Selected financial type has been deleted.') );
         } else { 
 

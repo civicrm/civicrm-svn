@@ -102,7 +102,7 @@ class CRM_Core_BAO_Discount extends CRM_Order_DAO_Discount
     $dao->entity_table = $entityTable;
     $dao->find();
     while ($dao->fetch()) {
-      $optionGroupIDs[$dao->id] = $dao->option_group_id;
+      $optionGroupIDs[$dao->id] = $dao->price_set_id;
     }
     return $optionGroupIDs;
   }

@@ -44,8 +44,7 @@ class CRM_Financial_Page_AJAX
     /**
      * Function for building Event Type combo box
      */
-    function financialAccount( )
-    {
+  function financialAccount() {
         require_once 'CRM/Utils/Type.php';
         $name = trim( CRM_Utils_Type::escape( $_GET['s'], 'String' ) );
         if( !$name ) {
@@ -71,8 +70,12 @@ ORDER by f.name";
             CRM_Utils_System::civiExit( );
     }
 
+    /*
+     * Function to get finacial accounts of required account relationship
+     * $financialAccountType array with key account relationship and value financial account type option groups
+     *
+     */
     function jqFinancial( $config ) {
-        require_once 'CRM/Contribute/PseudoConstant.php';
         if ( ! isset( $_GET['_value'] ) ||
              empty( $_GET['_value'] ) ) {
             CRM_Utils_System::civiExit( );
@@ -80,31 +83,38 @@ ORDER by f.name";
         if( $_GET['_value'] == 'select'  ){
             $result = CRM_Contribute_PseudoConstant::financialAccount( );        
         } else {
-            $financialAccountType = array( '5' => 5, //expense
+      $financialAccountType = array( 
+        '5' => 5, //expense
                                            '3' => 1, //AR relation
                                            '1' => 3, //revenue
-                                           '6' => 1,
+        '6' => 1, // asset
+        '7' => 4, //cost of sales
+        '8' => 1, //premium inventory
+        '9' => 3, //discount account is
                                            );
  
             $financialAccountType = "financial_account_type_id = {$financialAccountType[$_GET['_value']]}";
-            $result = CRM_Contribute_PseudoConstant::financialAccount( null, $financialAccountType );
+      $result = CRM_Contribute_PseudoConstant::financialAccount(NULL, $financialAccountType);
 }
-        $elements = array( array( 'name'  => ts('- Select Financial Account -'),
-                                  'value' => 'select' ) );
+    $elements = array( 
+      array( 
+        'name'  => ts('- Select Financial Account -'),
+        'value' => 'select' 
+      )
+    );
         if( !empty( $result ) ){
             foreach ( $result as $id => $name ) {
-                $elements[] = array( 'name'  => $name,
-                                     'value' => $id );
+        $elements[] = array( 
+          'name'  => $name,
+          'value' => $id 
+        );
             }
         }
-        require_once "CRM/Utils/JSON.php";
         echo json_encode( $elements );
         CRM_Utils_System::civiExit( );
     }
     
     function jqFinancialRelation( $config ) {
-        require_once 'CRM/Core/PseudoConstant.php';
-        require_once 'CRM/Core/DAO.php';
         if ( ! isset( $_GET['_value'] ) ||
              empty( $_GET['_value'] ) ) {
             CRM_Utils_System::civiExit( );
@@ -112,36 +122,45 @@ ORDER by f.name";
         if( $_GET['_value'] == 'select'  ){
             $result = CRM_Core_PseudoConstant::accountOptionValues( 'account_relationship' );     
         } else {
-            $financialAccountType = array( '5' => array( 5 ), //expense
-                                           '1' => array( 3, 6 ), //AR relation
-                                           '3' => array( 1 ), //revenue
+      $financialAccountType = array( 
+        '5' => array(5), //expense
+        '1' => array(3, 6, 8), //Asset
+        '3' => array(1, 9), //revenue
+        '4' => array(7), //cost of sales
                                            );
             $financialAccountTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialAccount', $_GET['_value'], 'financial_account_type_id' );
             $result = CRM_Core_PseudoConstant::accountOptionValues( 'account_relationship' ); 
         }
-        $elements = array( array( 'name'  => ts('- Select Financial Account Relationship -'),
-                                  'value' => 'select' ) );
+    $elements = array( 
+      array( 
+        'name'  => ts('- Select Financial Account Relationship -'),
+        'value' => 'select' 
+        ) 
+    );
         $countResult = count( $financialAccountType[$financialAccountTypeId] );
         if( !empty( $result ) ){
             foreach ( $result as $id => $name ) {
                 if( in_array( $id, $financialAccountType[$financialAccountTypeId] )  && $_GET['_value'] != 'select' ){
                     if ( $countResult != 1){
-                        $elements[] = array( 'name'  => $name,
-                                             'value' => $id );
+            $elements[] = array( 
+              'name'  => $name,
+              'value' => $id 
+            );
                     }else{
-                        $elements[] = array( 'name'     => $name,
+            $elements[] = array( 
+              'name'     => $name,
                                              'value'    => $id,
-                                             'selected' => 'Selected', );
+              'selected' => 'Selected', 
+            );
                     }
                 }else if( $_GET['_value'] == 'select' ){
-
-                    $elements[] = array( 'name'  => $name,
-                                             'value' => $id ); 
+          $elements[] = array( 
+            'name'  => $name,
+            'value' => $id 
+          ); 
                                              }
-                
             }
         }
-        require_once "CRM/Utils/JSON.php";
         echo json_encode( $elements );
         CRM_Utils_System::civiExit( );
     }

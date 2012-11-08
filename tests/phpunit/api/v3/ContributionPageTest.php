@@ -17,6 +17,7 @@ class api_v3_ContributionPageTest extends CiviUnitTestCase {
     $this->contactIds[] = $this->individualCreate();
     $this->params = array(
       'version' => $this->_apiversion,
+      'title' => "Test Contribution Page",
       'financial_type_id' => 1,
       'currency' => 'NZD',
       'goal_amount' => $this->testAmount,
