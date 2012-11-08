@@ -53,6 +53,7 @@
        <table>civicrm_financial_account</table> 
        <key>id</key> 
        <add>4.1</add> 
+      <onDelete>RESTRICT</onDelete>
   </foreignKey>
  
 </table>

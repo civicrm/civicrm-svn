@@ -140,10 +140,43 @@ class CRM_Financial_Form_FinancialTypeAccount extends CRM_Contribute_Form
                        true );
         }
         
+        if ( $this->_action == CRM_Core_Action::ADD ){
+            if( CRM_Utils_Array::value( 'account_relationship', $this->_submitValues ) || CRM_Utils_Array::value( 'financial_account_id', $this->_submitValues ) ){  
+                $financialAccountType = array( '5' => 5, //expense
+                                               '3' => 1, //AR relation
+                                               '1' => 3, //revenue
+                                               );
+            
+                $financialAccountType = "financial_account_type_id = {$financialAccountType[$this->_submitValues['account_relationship']]}";
+                require_once 'CRM/Contribute/PseudoConstant.php';
+                $result = CRM_Contribute_PseudoConstant::contributionType( null, $financialAccountType );
+
+                $financialAccountSelect = array(''=>ts( '- Select Financial Account -' )) + $result;
+                //$defaults['']
+            }
+        
+            else  {
+                $financialAccountSelect = array( 'select'=>ts( '-Select Financial Account-' )) + CRM_Contribute_PseudoConstant::contributionType( );; 
+            }
+        }
+        if( $this->_action == CRM_Core_Action::UPDATE ){
+            
+            $financialAccountType = array( '5' => 5, //expense
+                                           '3' => 1, //AR relation
+                                           '1' => 3, //revenue
+                                           );
+            
+            $financialAccountType = "financial_account_type_id = {$financialAccountType[$this->_defaultValues['account_relationship']]}";
+            require_once 'CRM/Contribute/PseudoConstant.php';
+            $result = CRM_Contribute_PseudoConstant::contributionType( null, $financialAccountType );
+
+            $financialAccountSelect = array(''=>ts( '- Select Financial Account -' )) + $result;
+            
+        }
         $this->add('select', 
                    'financial_account_id', 
                    ts( 'Financial Account' ), 
-                   array(''=>ts( '- Select Financial Account-' )) + CRM_Contribute_PseudoConstant::contributionType( ),
+                    $financialAccountSelect,
                    true );
 
         $this->addButtons( array(
@@ -157,11 +190,57 @@ class CRM_Financial_Form_FinancialTypeAccount extends CRM_Contribute_Form
                                          'name'      => ts('Cancel') ),
                                  )
                            );
-        
-        //$this->addFormRule( array( 'CRM_Financial_Form_FinancialType', 'formRule'), $this );
+        $this->addFormRule( array( 'CRM_Financial_Form_FinancialTypeAccount', 'formRule'), $this );
     }
+        
+    /**
+     * global validation rules for the form
+     *
+     * @param array $fields posted values of the form
+     *
+     * @return array list of errors to be posted back to the form
+     * @static
+     * @access public
+     */
+    static function formRule( $values, $files, $self ) 
+    { 
+        require_once "CRM/Financial/BAO/FinancialTypeAccount.php";
+        $errorMsg = array( );
+        $error = FALSE;
+        if( CRM_Utils_Array::value( 'account_relationship', $values ) && CRM_Utils_Array::value( 'financial_account_id', $values ) ){
+            $params = array( 'account_relationship' => $values['account_relationship'],
+                             'financial_account_id' => $values['financial_account_id'],
+                             'entity_id'            => $self->_aid,
+                             );
+            $defaults = array();
+            if( $self->_action == CRM_Core_Action::ADD ){
+               
+                $result = CRM_Financial_BAO_FinancialTypeAccount::retrieve( &$params, &$defaults );
+                if( $result )
+                    $error = TRUE;
+    }
+            if( $self->_action == CRM_Core_Action::UPDATE ){
+                $getParams = array( 'entity_id' => $self->_aid,
+                                    'id'        => $self->_id,
+                                    );
+                $getResult = CRM_Financial_BAO_FinancialTypeAccount::retrieve( &$getParams, &$defaults );
+                if ( $values['account_relationship'] == $getResult->account_relationship  && $values['financial_account_id'] == $getResult->financial_account_id )
+                   $error= FALSE;
+                else {
+                    $result = CRM_Financial_BAO_FinancialTypeAccount::retrieve( &$params, &$defaults );
+                    if( $result )
+                        $error = TRUE;
+                }
 
+            } 
 
+            if( $error )
+                $errorMsg['financial_account_id'] = ts( 'This already exits' );
+        }
+    
+        return CRM_Utils_Array::crmIsEmptyArray( $errorMsg ) ? true : $errorMsg;
+    }
+      
     
     /**
      * Function to process the form
@@ -184,7 +263,9 @@ class CRM_Financial_Form_FinancialTypeAccount extends CRM_Contribute_Form
             if ($this->_action & CRM_Core_Action::UPDATE) {
                 $ids['entityFinancialAccount'] = $this->_id;
             }
-            
+            if ( $this->_action & CRM_Core_Action::ADD || $this->_action & CRM_Core_Action::UPDATE ) {
+                $params['financial_account_id'] = $this->_submitValues['financial_account_id'];  
+            }
             if ($this->_action & CRM_Core_Action::ADD) {
                 $params['entity_table'] = 'civicrm_financial_type';
                 $params['entity_id'] = $this->_aid;

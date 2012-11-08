@@ -74,6 +74,7 @@
        <length>11</length>
        <default>CURRENT_TIMESTAMP</default>
        <comment>A Unix timestamp indicating when this version was created.</comment>
+       <onUpdate>CURRENT_TIMESTAMP</onUpdate>
        <add>4.1</add>
   </field>
   <index>
