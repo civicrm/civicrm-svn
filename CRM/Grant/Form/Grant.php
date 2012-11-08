@@ -406,7 +406,7 @@ class CRM_Grant_Form_Grant extends CRM_Core_Form {
           $grantPayment->payment_number       = $paymentNumbers['payment_number'] + 1;
           $grantPayment->payment_batch_number = $paymentNumbers['payment_batch_number'] + 1;
           $grantPayment->contact_id           = $grant->contact_id;
-          $grantPayment->contribution_type_id = $grantProgram->contribution_type_id;
+          $grantPayment->financial_type_id    = $grantProgram->financial_type_id;
           $grantPayment->payment_date         = CRM_Utils_Date::processDate( $grant->application_received_date, null, true );
           $grantPayment->payment_created_date = CRM_Utils_Date::processDate( date('Y-m-d'), null, true );
           $grantPayment->payable_to_name      = CRM_Grant_BAO_GrantProgram::getDisplayName( $grant->contact_id );
@@ -417,7 +417,6 @@ class CRM_Grant_Form_Grant extends CRM_Core_Form {
           $grantPayment->save();
         }
       }
-      //$grantProgram->save();
     }
     $grantStatus   = $this->_grantStatus[$params['status_id']];
     $grantType     = $this->_grantType[$params['grant_type_id']];

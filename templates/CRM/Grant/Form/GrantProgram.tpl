@@ -25,7 +25,7 @@
 *}
 {* this template is used for adding/editing/deleting contribution type  *}
 <h3>{if $action eq 1}{ts}New Grant Program{/ts}{elseif $action eq 2}{ts}Edit Grant Program{/ts}{elseif $action eq 4}{ts}View Grant Program{/ts}{else}{ts}Delete Grant Program{/ts}{/if}</h3>
-<div class="crm-block crm-form-block crm-contribution_type-form-block">
+<div class="crm-block crm-form-block crm-contribution_type-form-block crm-financial_type-form-block">
    {if $action eq 4}
     
    {elseif $action eq 8}
@@ -52,9 +52,9 @@
     	  <td class="label">{$form.remainder_amount.label}</td>
 	  <td class="html-adjust">{$form.remainder_amount.html}</td>
        </tr>
-       <tr class="crm-grant_program-form-block-contribution_type_id">
-	  <td class="label">{$form.contribution_type_id.label}</td>
-	  <td class="html-adjust">{$form.contribution_type_id.html}</td>
+       <tr class="crm-grant_program-form-block-financial_type_id">
+	  <td class="label">{$form.financial_type_id.label}</td>
+	  <td class="html-adjust">{$form.financial_type_id.html}</td>
        </tr>
        <tr class="crm-grant_program-form-block-status_id">
 	  <td class="label">{$form.status_id.label}</td>

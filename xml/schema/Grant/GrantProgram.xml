@@ -72,12 +72,12 @@
     <add>4.1</add>
   </field>
   <field>
-    <name>contribution_type_id</name>
+    <name>financial_type_id</name>
     <type>int unsigned</type>
-    <uniqueName>contribution_type_id</uniqueName>
-    <title>Contribution Type ID</title>
+    <uniqueName>financial_type_id</uniqueName>
+    <title>Financial Type ID</title>
     <required>true</required>
-    <comment>Contribution Type ID</comment>
+    <comment>Financial Type ID</comment>
     <import>true</import>
     <add>4.1</add>
   </field>

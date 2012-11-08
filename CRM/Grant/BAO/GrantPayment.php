@@ -97,9 +97,9 @@ class CRM_Grant_BAO_GrantPayment extends CRM_Grant_DAO_GrantPayment
                                                                           'title'     => 'Payment Number',
                                                                           'name'      => 'payment_number',
                                                                           'data_type' => CRM_Utils_Type::T_INT ),
-                                      'contribution_type_id'     => array( 
-                                                                          'title'     => 'Contribution Type ID',
-                                                                          'name'      => 'contribution_type_id',
+                                      'financial_type_id'        => array( 
+                                                                          'title'     => 'Financial Type ID',
+                                                                          'name'      => 'financial_type_id',
                                                                           'data_type' => CRM_Utils_Type::T_INT ),
                                       'contact_id'               => array( 
                                                                           'title'     => 'Contact ID',

@@ -514,8 +514,8 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
           'payment_instrument_id' =>
           array('title' => ts('Payment Instrument'),
           ),
-         'contribution_type_id' =>
-          array('title' => ts('Contribution Type'),
+         'financial_type_id' =>
+          array('title' => ts('Financial Type'),
         ),
         ),
         'group_bys' =>

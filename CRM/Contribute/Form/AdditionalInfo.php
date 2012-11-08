@@ -496,34 +496,4 @@ class CRM_Contribute_Form_AdditionalInfo {
 
 }
 
-    if ( $initAmount > 0.00){
-      $initPoint = $contributionDetails->total_amount / $initAmount;
-    }else{
-      $initPoint = 1;
-    }
-    foreach ($lineItem as $priceSetId => $values) {
-      if (!$priceSetId) {
-        continue;
-      }
-        
-      foreach ($values as $line) {
-        $line['entity_table'] = $entityTable;
-        $line['entity_id'] = $contributionId;
-        $lineItems = CRM_Price_BAO_LineItem::create($line);
-        $int_name  = 'txt-price_'. $line['price_field_id'];
-        if ( isset($contributionDetails->init_amount) ){
-          $initValue = CRM_Utils_Array::value( $int_name , $contributionDetails->init_amount );
-          if ( is_array( $initValue ) ){
-            $initValue = CRM_Utils_Array::value( $line['price_field_value_id'],  $initValue );
-          }
-        }else{
-          $initvalue = (float) $line['unit_price']/$initPoint;
-          $initValue = number_format($initvalue, 2, '.', '');
-        }
-        $lineItems->int_name= $initValue;
-        CRM_Financial_BAO_FinancialItem::add( $lineItems, $contributionDetails );
-      }
-    }
-  }
-}
 

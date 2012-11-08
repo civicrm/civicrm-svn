@@ -1630,10 +1630,6 @@ function _testAddFinancialType(){
   return $financialType['name'];
   
             }
-            else {
-                $this->waitForElementPresent("css=div.ac_results-inner li");
-                $this->click("css=div.ac_results-inner li");
-            }
                 
 function _testLineItem( $lineitem ){
   $i = 2;

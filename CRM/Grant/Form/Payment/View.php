@@ -66,7 +66,7 @@ class CRM_Grant_Form_Payment_View extends CRM_Core_Form
         $paymentStatus = CRM_Core_OptionGroup::values( 'grant_payment_status' );
         $contributionTypes = CRM_Grant_BAO_GrantProgram::contributionTypes();
         $this->assign('payment_status_id',  $paymentStatus[$values['payment_status_id']] );
-        $this->assign('contribution_type_id',  $contributionTypes[$values['contribution_type_id']] );
+        $this->assign('financial_type_id',  $contributionTypes[$values['financial_type_id']] );
  
         $grantTokens = array( 'payment_batch_number','payment_number',
                               'payment_created_date','payment_date', 'payable_to_name', 

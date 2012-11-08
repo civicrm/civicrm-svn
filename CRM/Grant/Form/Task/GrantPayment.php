@@ -101,7 +101,7 @@ class CRM_Grant_Form_Task_GrantPayment extends CRM_Grant_Form_Task
         $attributes = CRM_Core_DAO::getAttribute( 'CRM_Grant_DAO_GrantProgram' );
         
         $this->_contributionTypes = CRM_Grant_BAO_GrantProgram::contributionTypes();
-        $this->add('select', 'contribution_type_id',  ts( 'From account' ),
+        $this->add('select', 'financial_type_id',  ts( 'From account' ),
                    array( '' => ts( '- select -' ) ) + $this->_contributionTypes , true);
 
         $this->add( 'text', 'payment_batch_number', ts( 'Payment Batch number' ),
@@ -235,7 +235,7 @@ class CRM_Grant_Form_Task_GrantPayment extends CRM_Grant_Form_Task
         foreach ( $details as $id => $value ) {
             
             $grantPayment[$id]['contact_id'] = $id;
-            $grantPayment[$id]['contribution_type_id'] = $values['contribution_type_id'];
+            $grantPayment[$id]['financial_type_id']    = $values['financial_type_id'];
             $grantPayment[$id]['payment_batch_number'] = $values['payment_batch_number'];
             $grantPayment[$id]['payment_number'      ] = $values['payment_number'];
             $grantPayment[$id]['payment_date'        ] = date("Y-m-d", strtotime($values['payment_date']));
@@ -442,8 +442,8 @@ class CRM_Grant_Form_Task_GrantPayment extends CRM_Grant_Form_Task
         $line = "";
         $comma = "";
         foreach($rows as $value) {
-            if ( isset( $value['contribution_type_id'] ) ) {
-                $value['contribution_type_id'] = $this->_contributionTypes[$value['contribution_type_id']];
+            if ( isset( $value['financial_type_id'] ) ) {
+                $value['financial_type_id'] = $this->_contributionTypes[$value['financial_type_id']];
             }
             $line .= implode( '; ', $value );
             $line .= "\n";

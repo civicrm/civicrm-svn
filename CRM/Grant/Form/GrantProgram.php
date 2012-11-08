@@ -141,7 +141,7 @@ class CRM_Grant_Form_GrantProgram extends CRM_Core_Form
         $this->addRule('remainder_amount', ts('Please enter a valid amount.'), 'money'); 
 
         $contributionTypes = CRM_Grant_BAO_GrantProgram::contributionTypes();
-        $this->add('select', 'contribution_type_id',  ts( 'Contribution Types' ),
+        $this->add('select', 'financial_type_id',  ts( 'Financial Types' ),
                    array( '' => ts( '- select -' ) ) + $contributionTypes , true);
         
         $grantStatus = CRM_Core_OptionGroup::values( 'grant_program_status' );
@@ -213,7 +213,7 @@ class CRM_Grant_Form_GrantProgram extends CRM_Core_Form
         $dao->grant_type_id           = CRM_Grant_BAO_GrantProgram::getOptionValueID( CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionGroup','grant_type','id','name'), $values['grant_type_id']);
         $dao->total_amount            = $values['total_amount'];
         $dao->remainder_amount        = $values['remainder_amount'];
-        $dao->contribution_type_id    = $values['contribution_type_id'];
+        $dao->financial_type_id       = $values['financial_type_id'];
         $dao->status_id               = CRM_Grant_BAO_GrantProgram::getOptionValueID( CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionGroup','grant_program_status','id','name'), $values['status_id']);
         $dao->applications_start_date = CRM_Utils_Date::processDate( $values['applications_start_date'] );
         $dao->applications_end_date   = CRM_Utils_Date::processDate( $values['applications_end_date'] );

@@ -20,7 +20,7 @@ class api_v3_LineItemTest extends CiviUnitTestCase {
       'contact_id' => $this->_individualId,
       'receive_date' => '20120511',
       'total_amount' => 100.00,
-      'financial_account_id' => $this->_contributionTypeId,
+      'financial_type_id' => $this->_contributionTypeId,
       'non_deductible_amount' => 10.00,
       'fee_amount' => 51.00,
       'net_amount' => 91.00,

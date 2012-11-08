@@ -64,7 +64,7 @@ class WebTest_Contribute_AddBatchesTest extends CiviSeleniumTestCase {
       $data[$i] = array (
                          'first_name' => 'Ma'.substr(sha1(rand()), 0, 7),
                          'last_name' => 'An'.substr(sha1(rand()), 0, 7),
-                         'contribution_type' => 'Donation',
+                         'financial_type' => 'Donation',
                          'amount' => 100,           
                          );
       $this->_fillData($data[$i], $i, "Contribution");
@@ -111,7 +111,7 @@ class WebTest_Contribute_AddBatchesTest extends CiviSeleniumTestCase {
                          'last_name' => 'An'.substr(sha1(rand()), 0, 7),
                          'membership_type' => 'Inner City Arts',
                          'amount' => 100,  
-                         'contribution_type' => 'Member Dues',
+                         'financial_type' => 'Member Dues',
                          );
       $this->_fillData($data[$i], $i, "Membership");
     }
@@ -128,7 +128,7 @@ class WebTest_Contribute_AddBatchesTest extends CiviSeleniumTestCase {
     
     if ($type == "Contribution") {
       
-      $this->select("field_{$row}_contribution_type", $data['contribution_type']);
+      $this->select("field_{$row}_financial_type", $data['financial_type']);
       $this->type("field_{$row}_total_amount", $data['amount']);
       $this->webtestFillDateTime("field_{$row}_receive_date", "+1 week");
       $this->type("field_{$row}_contribution_source", substr(sha1(rand()), 0, 10));
@@ -146,7 +146,7 @@ class WebTest_Contribute_AddBatchesTest extends CiviSeleniumTestCase {
       $this->webtestFillDate("field_{$row}_membership_end_date", "+1 month");
       $this->type("field_{$row}_membership_source", substr(sha1(rand()), 0, 10));
       $this->click("field[{$row}][send_receipt]");
-      $this->select("field_{$row}_contribution_type", $data['contribution_type']); 
+      $this->select("field_{$row}_financial_type", $data['financial_type']); 
       $this->webtestFillDateTime("field_{$row}_receive_date", "+1 week");
       $this->select("field_{$row}_payment_instrument", "Check");
       $this->type("field_{$row}_check_number", rand());
@@ -168,7 +168,7 @@ class WebTest_Contribute_AddBatchesTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("_qf_ContributionView_cancel-bottom");
       $expected = array(
                         'From'                => "{$data['first_name']} {$data['last_name']}",
-                        'Contribution Type'   => $data['contribution_type'],
+                        'Contribution Type'   => $data['financial_type'],
                         'Total Amount'        => $data['amount'],
                         'Contribution Status' => 'Completed',
                         );   
@@ -199,7 +199,7 @@ class WebTest_Contribute_AddBatchesTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("_qf_ContributionView_cancel-bottom");
       $expected = array(
                         'From'                => "{$data['first_name']} {$data['last_name']}",
-                        'Contribution Type'   => $data['contribution_type'],
+                        'Contribution Type'   => $data['financial_type'],
                         'Total Amount'        => $data['amount'],
                         'Contribution Status' => 'Completed',
                         );   

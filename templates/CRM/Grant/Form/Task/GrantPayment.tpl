@@ -24,14 +24,14 @@
  +--------------------------------------------------------------------+
 *}
 
-{* this template is used for adding/editing/deleting contribution type  *}
+{* this template is used for adding/editing/deleting financial type  *}
 <h3>{ts}Pay Grants{/ts}</h3>
-<div class="crm-block crm-form-block crm-contribution_type-form-block">
+<div class="crm-block crm-form-block crm-financial_type-form-block">
      <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
      <table class="form-layout-compressed">
-       <tr class="crm-grant_payment-form-block-contribution_type_id">
-	  <td class="label">{$form.contribution_type_id.label}</td>
-	  <td class="html-adjust">{$form.contribution_type_id.html}</td>
+       <tr class="crm-grant_payment-form-block-financial_type_id">
+	  <td class="label">{$form.financial_type_id.label}</td>
+	  <td class="html-adjust">{$form.financial_type_id.html}</td>
        </tr>
        <tr class="crm-grant_payment-form-block-payment_batch_number">
  	  <td class="label">{$form.payment_batch_number.label}</td>

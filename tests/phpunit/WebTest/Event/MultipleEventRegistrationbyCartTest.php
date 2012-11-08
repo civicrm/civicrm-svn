@@ -282,7 +282,7 @@ class WebTest_Event_MultipleEventRegistrationbyCartTest extends CiviSeleniumTest
     $this->waitForElementPresent("_qf_Fee_upload-bottom");
     $this->click("CIVICRM_QFID_1_2");
     $this->click("xpath=//tr[@class='crm-event-manage-fee-form-block-payment_processor']/td[2]/label[text()='$processorName']");
-    $this->select("contribution_type_id", "value=4");
+    $this->select("financial_type_id", "value=4");
     if ($priceSet) {
       // get one - TBD
     }

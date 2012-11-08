@@ -757,7 +757,7 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
     $this->webtestNewDialogContact($firstName, 'Contributor', $firstName . '@example.com');
 
     // select contribution type
-    $this->select('contribution_type_id', 'value=1');
+    $this->select('financial_type_id', 'value=1');
 
     // fill in Received Date
     $this->webtestFillDate('receive_date');
@@ -864,7 +864,7 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
     $contact      = CRM_Contact_BAO_Contact::retrieve( $params, $defaults, true );
     $expected = array(
                       1 => $fields['values'][$fields['id']]['display_name'],
-                      2 => $fields['values'][$fields['id']]['contribution_type'],
+                      2 => $fields['values'][$fields['id']]['financial_type'],
                       3 => $fields['values'][$fields['id']]['total_amount'],
                       8 => $fields['values'][$fields['id']]['contribution_status'],
                       9 => $fields['values'][$fields['id']]['contribution_payment_instrument'],
