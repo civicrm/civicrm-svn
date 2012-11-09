@@ -43,13 +43,15 @@ require_once 'CRM/Core/DAO.php';
  */
 class Engage_Report_Form_List extends CRM_Report_Form {
   /*
-     * Note: In order to detect column names of a particular custom group, we need to know 
-     * custom field ID or LABEL. Since labels are less likely to change on initial setup of the module, 
+     * Note: In order to detect column names of a particular custom group, we need to know
+     * custom field ID or LABEL. Since labels are less likely to change on initial setup of the module,
      * we 'll use label constants for now.
      *
      * Please note these values 'll need to be adjusted if custom field labels are modified.
      *
-     */CONSTCF_CONSTITUENT_TYPE_NAME = 'constituent_type', CF_OTHER_NAME_NAME = 'other_name', CG_VOTER_INFO_TABLE = 'civicrm_value_voter_info', CF_PARTY_REG_NAME = 'party_registration', CF_VOTER_HISTORY_NAME = 'voter_history', CG_DEMOGROPHICS_TABLE = 'civicrm_value_demographics';
+     */
+     CONST
+     CF_CONSTITUENT_TYPE_NAME = 'constituent_type', CF_OTHER_NAME_NAME = 'other_name', CG_VOTER_INFO_TABLE = 'civicrm_value_voter_info', CF_PARTY_REG_NAME = 'party_registration', CF_VOTER_HISTORY_NAME = 'voter_history', CG_DEMOGROPHICS_TABLE = 'civicrm_value_demographics';
 
   /**
    *  Address information needed in output
@@ -230,9 +232,9 @@ WHERE ov.option_group_id = (
     $this->_demoTable = $dao->table_name;
 
     $query = "
-SELECT column_name 
-FROM   civicrm_custom_field 
-WHERE custom_group_id={$demoTableID} AND column_name = '" . $this->_languageName . "' LIMIT 1";
+ SELECT column_name
+ FROM   civicrm_custom_field
+ WHERE custom_group_id={$demoTableID} AND column_name = '" . $this->_languageName . "' LIMIT 1";
     $dao = CRM_Core_DAO::executeQuery($query);
     $dao->fetch();
     $this->_demoLangCol = $dao->column_name;
@@ -245,17 +247,17 @@ WHERE custom_group_id={$demoTableID} AND column_name = '" . $this->_languageName
     $this->_coreInfoTable = $dao->table_name;
 
     $query = "
-SELECT column_name 
-FROM   civicrm_custom_field 
-WHERE custom_group_id={$coreInfoTableID} AND column_name='" . self::CF_OTHER_NAME_NAME . "' LIMIT 1";
+ SELECT column_name
+ FROM   civicrm_custom_field
+ WHERE custom_group_id={$coreInfoTableID} AND column_name='" . self::CF_OTHER_NAME_NAME . "' LIMIT 1";
     $dao = CRM_Core_DAO::executeQuery($query);
     $dao->fetch();
     $this->_coreOtherCol = $dao->column_name;
 
     $query = "
-SELECT column_name 
-FROM   civicrm_custom_field 
-WHERE custom_group_id={$coreInfoTableID} AND column_name='" . self::CF_CONSTITUENT_TYPE_NAME . "' LIMIT 1";
+ SELECT column_name
+ FROM   civicrm_custom_field
+ WHERE custom_group_id={$coreInfoTableID} AND column_name='" . self::CF_CONSTITUENT_TYPE_NAME . "' LIMIT 1";
     $dao = CRM_Core_DAO::executeQuery($query);
     $dao->fetch();
     $this->_coreTypeCol = $dao->column_name;
@@ -379,29 +381,29 @@ ORDER BY ov.label
 
     if (!empty($smartGroups)) {
       $smartGroups = implode(',', $smartGroups);
-      $smartGroupQuery = " UNION DISTINCT 
-                  SELECT DISTINCT smartgroup_contact.contact_id                                    
-                  FROM civicrm_group_contact_cache smartgroup_contact        
+      $smartGroupQuery = " UNION DISTINCT
+                  SELECT DISTINCT smartgroup_contact.contact_id
+                  FROM civicrm_group_contact_cache smartgroup_contact
                   WHERE smartgroup_contact.group_id IN ({$smartGroups}) ";
     }
 
     if ($this->_params['gid_op'] == 'in') {
-      return " {$this->_aliases['civicrm_contact']}.id IN ( 
-                          SELECT DISTINCT {$this->_aliases['civicrm_group']}.contact_id 
+      return " {$this->_aliases['civicrm_contact']}.id IN (
+                          SELECT DISTINCT {$this->_aliases['civicrm_group']}.contact_id
                           FROM civicrm_group_contact {$this->_aliases['civicrm_group']}
-                          WHERE {$clause} AND {$this->_aliases['civicrm_group']}.status = 'Added' 
+                          WHERE {$clause} AND {$this->_aliases['civicrm_group']}.status = 'Added'
                           {$smartGroupQuery} ) ";
     }
     elseif ($this->_params['gid_op'] == 'mand') {
-      $query = " {$this->_aliases['civicrm_contact']}.id IN ( 
-                          SELECT DISTINCT {$this->_aliases['civicrm_group']}1.contact_id 
+      $query = " {$this->_aliases['civicrm_contact']}.id IN (
+                          SELECT DISTINCT {$this->_aliases['civicrm_group']}1.contact_id
                           FROM civicrm_group_contact {$this->_aliases['civicrm_group']}1
 ";
 
       for ($i = 2; $i <= count($this->_params['gid_value']); $i++) {
         $j = $i - 1;
         $status[] = "{$this->_aliases['civicrm_group']}{$i}.group_id != {$this->_aliases['civicrm_group']}{$j}.group_id";
-        $query .= " INNER JOIN civicrm_group_contact {$this->_aliases['civicrm_group']}{$i} 
+        $query .= " INNER JOIN civicrm_group_contact {$this->_aliases['civicrm_group']}{$i}
                               ON {$this->_aliases['civicrm_group']}{$i}.contact_id = {$this->_aliases['civicrm_group']}{$j}.contact_id AND " . implode(" AND ", $status) . "
 ";
       }
