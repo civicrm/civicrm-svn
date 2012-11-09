@@ -247,7 +247,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
     $this->userHookClass = 'CRM_Utils_Hook_' . $userFramework;
     $userPermissionClass = 'CRM_Core_Permission_' . $userFramework;
     $this->userPermissionClass = new $userPermissionClass();
-    require_once (str_replace('_', DIRECTORY_SEPARATOR, $this->userFrameworkClass) . '.php');
+
     $class = $this->userFrameworkClass;
     // redundant with _initVariables
     $userSystem = $this->userSystem = new $class();
@@ -341,6 +341,8 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
       exit();
     }
 
+    $this->_initDAO();
+
     if (defined('CIVICRM_UF')) {
       $this->userFramework = CIVICRM_UF;
       $this->_setUserFrameworkConfig($this->userFramework);
@@ -349,8 +351,6 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
       echo 'You need to define CIVICRM_UF in civicrm.settings.php';
       exit();
     }
-
-    $this->_initDAO();
 
     // also initialize the logger
     self::$_log = Log::singleton('display');
