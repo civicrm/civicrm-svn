@@ -62,13 +62,16 @@
       <type>int unsigned</type>
       <comment>FK to Financial Type for (total_amount - non_deductible_amount).</comment>
       <add>1.3</add>  
+      <change>4.3</change>
+      <changedName>contribution_type_id</changedName>  
   </field>    
   <foreignKey>  
        <name>financial_type_id</name>  
        <table>civicrm_financial_type</table>  
        <key>id</key>         
        <add>1.3</add>  
-       <onDelete>SET NULL</onDelete>
+      <change>4.3</change>
+      <changedName>contribution_type_id</changedName>  
   </foreignKey>  
   <field> 
       <name>contribution_page_id</name> 

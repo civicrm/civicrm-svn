@@ -38,8 +38,7 @@
   </field>
   <field> 
       <name>financial_type_id</name> 
-      <type>int unsigned</type>                 
-      <required>true</required>                  
+      <type>int unsigned</type>                  
       <comment>default financial type assigned to contributions submitted via this page, e.g. Contribution, Campaign Contribution</comment> 
       <add>1.3</add> 
       <change>4.1</change>

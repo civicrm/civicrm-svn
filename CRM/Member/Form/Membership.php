@@ -1314,7 +1314,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
         $allStatus = CRM_Member_PseudoConstant::membershipStatus();
 
         $contributionType = new CRM_Financial_DAO_FinancialType();
-        $contributionType->id = $params['contribution_type_id'];
+        $contributionType->id = $params['financial_type_id'];
         if (!$contributionType->find(TRUE)) {
           CRM_Core_Error::fatal('Could not find a system table');
         }
@@ -1322,12 +1322,13 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
         $contribution = CRM_Contribute_Form_Contribution_Confirm::processContribution($this,
           $paymentParams,
           $result,
-                                                                                     $contactID, 
-                                                                                     $params['financial_type_id'],  
-                                                                                     false,
-                                                                                     true, 
-                                                                                     false );
-                $paymentParams['contactID']           = $contactID;
+          $this->_contributorContactID,
+          $contributionType,
+          FALSE,
+          TRUE,
+          FALSE
+        );
+        $paymentParams['contactID']           = $contactID;
         $paymentParams['contributionID'] = $contribution->id;
                 $paymentParams['contributionTypeID']  = $contribution->financial_type_id;
         $paymentParams['contributionPageID'] = $contribution->contribution_page_id;

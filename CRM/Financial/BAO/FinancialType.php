@@ -164,7 +164,16 @@ class CRM_Financial_BAO_FinancialType extends CRM_Financial_DAO_FinancialType
             }
         }
         if ($check) {
-        return TRUE;
+          if (!$skipRedirect) {
+            return TRUE;
+    }
+      else {
+        $error = array();
+        $error['is_error'] = 1;
+        //don't translate as api error message are not translated
+        $error['error_message'] = 'The Contribution Type cannot be deleted because it is being referenced by one or more of the following types of records: Contributions, Contribution Pages, or Membership Types.';
+        return $error;
+      } 
         }
         
         //delete from financial Type table

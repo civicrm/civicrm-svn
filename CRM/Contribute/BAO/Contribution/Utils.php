@@ -191,12 +191,12 @@ class CRM_Contribute_BAO_Contribution_Utils {
           else 
             CRM_Core_Error::fatal($paymentObjError);
         }
-                   
-				} else {
+        else {
           if (is_object($payment)) 
           $result = &$payment->doExpressCheckout($paymentParams);
           else 
             CRM_Core_Error::fatal($paymentObjError);
+        }
         if ( $paymentParams['initial_amount'] ){
           $result['gross_amount'] = $actulAmount;
           $result['amount']       = $actulAmount;	
