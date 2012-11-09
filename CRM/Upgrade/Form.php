@@ -594,6 +594,7 @@ SET    version = '$version'
     $upgrade = new CRM_Upgrade_Form();
     $upgrade->setVersion($rev);
     CRM_Utils_System::flushCache();
+    CRM_Core_BAO_SETTING::updateSettingsFromMetaData();
     return TRUE;
   }
 
