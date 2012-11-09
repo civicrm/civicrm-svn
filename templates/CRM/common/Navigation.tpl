@@ -29,7 +29,7 @@
         <li id="crm-qsearch" class="menumain crm-link-home">
           <form action="{crmURL p='civicrm/contact/search/basic' h=0 }" name="search_block" id="id_search_block" method="post" onsubmit="getSearchURLValue( );">
               <div id="quickSearch">
-                <input type="text" class="form-text" id="sort_name_navigation" placeholder="{ts}Find Contacts by...{/ts}" name="sort_name" style="width: 12em;" />
+                <input type="text" class="form-text" id="sort_name_navigation" placeholder="{ts}Name/Email{/ts}" name="sort_name" style="width: 12em;" />
                 <input type="hidden" id="sort_contact_id" value="" />
                 <input type="submit" value="{ts}Go{/ts}" name="_qf_Basic_refresh" class="form-submit default" style="display: none;" />
               </div>
@@ -103,15 +103,15 @@ cj( document ).ready( function( ) {
      return false;
   });
   cj('#sort_name_navigation').keydown(function() {
-    cj('.menu-div.outerbox').hide();
+    cj.Menu.closeAll();
   });
   cj('.quickSearchField').click(function() {
-    cj('#sort_name_navigation').flushCache().focus();
+    var label = cj(this).text();
+    cj('#sort_name_navigation').attr('placeholder', label).flushCache().focus();
   });
 });
 function getSearchURLValue( )
 {
-    // If an integer was typed, assume it to be contactId
     var input = cj('#sort_name_navigation').val();
     var contactId =  cj( '#sort_contact_id' ).val();
     if ( ! contactId || isNaN( contactId ) ) {
