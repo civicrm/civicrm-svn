@@ -263,8 +263,8 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
         $this->add('select', 'membership_type_id[' . $i . ']', ts('Membership Type'),
           array(
             '' => ' ') + $membershipTypes, FALSE, $js
-        );
-        $this->add('text', 'membership_num_terms[' . $i . ']', ts('Number of terms'), $attributes['membership_num_terms']);
+          );
+        $this->add('text', 'membership_num_terms[' . $i . ']', ts('Number of terms'), CRM_Utils_Array::value('membership_num_terms', $attributes));
       }
 
       // weight
