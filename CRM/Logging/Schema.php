@@ -185,13 +185,21 @@ AND    TABLE_NAME LIKE 'log_civicrm_%'
     $create = explode("\n", $dao->Create_Table);
     foreach ($cols as $col) {
       $line = substr(array_pop(preg_grep("/^  `$col` /", $create)), 0, -1);
+
       // CRM-11179
-      $line = preg_replace("/DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP/i", 'DEFAULT NULL', $line);
+      $line = self::fixTimeStampSQL($line);
+
       CRM_Core_DAO::executeQuery("ALTER TABLE `{$this->db}`.log_$table ADD $line");
     }
 
     // invoke the meta trigger creation call
     CRM_Core_DAO::triggerRebuild($table);
+  }
+
+  function fixTimeStampSQL($query) {
+    $query = str_ireplace("DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", '', $query);
+    $query = str_ireplace("DEFAULT CURRENT_TIMESTAMP", '', $query);
+    return $query;
   }
 
   /**
@@ -283,7 +291,7 @@ COLS;
     $query = preg_replace("/^  [^`].*$/m", '', $query);
     $query = preg_replace("/^\) ENGINE=[^ ]+ /im", ') ENGINE=ARCHIVE ', $query);
     $query = preg_replace("/^\) /m", "$cols\n) ", $query);
-    $query = preg_replace("/DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP/i", 'DEFAULT NULL', $query);
+    $query = self::fixTimeStampSQL($query);
 
     CRM_Core_DAO::executeQuery($query);
 
