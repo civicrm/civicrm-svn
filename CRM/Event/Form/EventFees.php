@@ -79,12 +79,12 @@ class CRM_Event_Form_EventFees {
     $defaults = array();
 
     if ($form->_eventId) {
-      //get receipt text and contribution type
-      $returnProperities = array('confirm_email_text', 'contribution_type_id', 'campaign_id');
+            //get receipt text and financial type
+            $returnProperities = array( 'confirm_email_text', 'financial_type_id', 'campaign_id' );
       $details = array();
       CRM_Core_DAO::commonRetrieveAll('CRM_Event_DAO_Event', 'id', $form->_eventId, $details, $returnProperities);
-      if (CRM_Utils_Array::value('contribution_type_id', $details[$form->_eventId])) {
-        $defaults[$form->_pId]['contribution_type_id'] = $details[$form->_eventId]['contribution_type_id'];
+            if ( CRM_Utils_Array::value( 'financial_type_id', $details[$form->_eventId] ) ) {
+                $defaults[$form->_pId]['financial_type_id'] = $details[$form->_eventId]['financial_type_id'];
       }
     }
 
@@ -225,7 +225,7 @@ class CRM_Event_Form_EventFees {
         if ($form->_action == CRM_Core_Action::UPDATE && !$form->_originalDiscountId) {
           $form->_originalDiscountId = $defaults[$form->_pId]['discount_id'];
           if ($form->_originalDiscountId) {
-            $optionGroupId = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Discount',
+            $optionGroupId = CRM_Core_DAO::getFieldValue('CRM_Order_DAO_Discount',
               $form->_originalDiscountId,
               'option_group_id'
             );
@@ -261,8 +261,7 @@ class CRM_Event_Form_EventFees {
               $discountKey,
               TRUE
             ));
-
-          $optionGroupId = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Discount',
+          $optionGroupId = CRM_Core_DAO::getFieldValue('CRM_Order_DAO_Discount',
             $discountId,
             'option_group_id'
           );
@@ -323,9 +322,8 @@ class CRM_Event_Form_EventFees {
     if ($contriId = $form->get('onlinePendingContributionId')) {
       $contribution = new CRM_Contribute_DAO_Contribution();
       $contribution->id = $contriId;
-      $contribution->find(TRUE);
-      foreach (array(
-        'contribution_type_id', 'payment_instrument_id', 'contribution_status_id', 'receive_date', 'total_amount') as $f) {
+            $contribution->find( true );
+            foreach( array('financial_type_id', 'payment_instrument_id','contribution_status_id', 'receive_date', 'total_amount' ) as $f ) {
         if ($f == 'receive_date') {
           list($defaults[$form->_pId]['receive_date']) = CRM_Utils_Date::setDateDefaults($contribution->$f);
         }
@@ -491,9 +489,9 @@ SELECT  id, html_type
           array('onclick' => "return showHideByValue('record_contribution','','payment_information','table-row','radio',false);")
         );
 
-        $form->add('select', 'contribution_type_id',
-          ts('Contribution Type'),
-          array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::contributionType()
+                $form->add('select', 'financial_type_id', 
+                           ts( 'Financial Type' ), 
+          array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::financialType()
         );
 
         $form->addDate('receive_date', ts('Received'), FALSE, array('formatType' => 'activityDate'));

@@ -48,7 +48,7 @@ function event_get_expectedresult(){
           'max_participants' => '100',
           'event_full_text' => 'Sorry! We are already full',
           'is_monetary' => 0,
-          'contribution_type_id' => 0,
+          'financial_type_id' => 0,
           'is_map' => 0,
           'is_active' => '1',
           'is_show_location' => 0,

@@ -47,7 +47,7 @@
     <tr class="{cycle values="odd-row,even-row"} crm-contribution">
         <td class="crm-contribution-sort_name">{$row.sort_name}</td>
         <td class="right bold crm-contribution-total_amount" nowrap>{$row.total_amount|crmMoney}</td>
-        <td class="crm-contribution-type crm-contribution-{$row.contribution_type}">{$row.contribution_type}</td>  
+        <td class="crm-contribution-type crm-contribution-{$row.financial_type} crm-financial-type crm-contribution-{$row.financial_type}">{$row.financial_type}</td>  
         <td class="crm-contribution-contribution_source">{$row.contribution_source}</td> 
         <td class="crm-contribution-receive_date">{$row.receive_date|truncate:10:''|crmDate}</td>
         <td class="crm-contribution-thankyou_date">{$row.thankyou_date|truncate:10:''|crmDate}</td>

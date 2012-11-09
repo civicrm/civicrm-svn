@@ -100,6 +100,18 @@
                </td>
             </tr>
       {if $useForEvent}
+        <tr class="crm-price-field-form-block-financial_type">
+		<td class="label">{$form.financial_type_id.label}</td>
+		<td>
+		{if !$financialType }
+			    	{capture assign=ftUrl}{crmURL p='civicrm/admin/financial/financialType' q="reset=1"}{/capture}
+				{ts 1=$ftUrl}There is no Financial Type configured of Account Relation Revenue. <a href='%1'>Click here</a> if you want to configure financial type for your site.{/ts}
+	        {else}  
+		{$form.financial_type_id.html}
+		{/if}
+		
+		</td>
+	    </tr>
       <tr class="crm-price-field-form-block-count">
               <td class="label">{$form.count.label}</td>
               <td>{$form.count.html}<br />
@@ -133,7 +145,18 @@
                    {/if}
                </td>
             </tr>
+	    <tr class="crm-price-field-form-block-financial_type">
+		<td class="label">{$form.financial_type_id.label}</td>
+		<td>
+		{if !$financialType }
+			    	{capture assign=ftUrl}{crmURL p='civicrm/admin/financial/financialType' q="reset=1"}{/capture}
+				{ts 1=$ftUrl}There is no Financial Type configured of Account Relation Revenue. <a href='%1'>Click here</a> if you want to configure financial type for your site.{/ts}
+	        {else}  
+		{$form.financial_type_id.html}
+		{/if}
 
+		</td>
+	    </tr>
             <tr class="crm-price-field-form-block-weight">
                <td class="label">{$form.weight.label}</td>
                <td>{$form.weight.html|crmAddClass:two}

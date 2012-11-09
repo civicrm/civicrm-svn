@@ -65,22 +65,42 @@ class CRM_Contribute_Form extends CRM_Core_Form {
    * @return None
    */
   function setDefaultValues() {
+        require_once 'CRM/Utils/Array.php';
     $defaults = array();
     $params = array();
 
+
     if (isset($this->_id)) {
       $params = array('id' => $this->_id);
+            if( !empty( $this->_BAOName ) ){
       require_once (str_replace('_', DIRECTORY_SEPARATOR, $this->_BAOName) . ".php");
       eval($this->_BAOName . '::retrieve( $params, $defaults );');
     }
-
-    if ($this->_action == CRM_Core_Action::DELETE) {
+        }
+        if ($this->_action == CRM_Core_Action::DELETE && CRM_Utils_Array::value('name', $defaults) ) {
       $this->assign('delName', $defaults['name']);
     }
     elseif ($this->_action == CRM_Core_Action::ADD) {
+            $condition = " AND is_default = 1";
+            $values = CRM_Core_OptionGroup::values( 'financial_account_type', false, false, false, $condition );
+            $defaults['financial_account_type_id'] = array_keys( $values );
       $defaults['is_active'] = 1;
+
+    } elseif ($this->_action & CRM_Core_Action::UPDATE) {
+      list($defaults['modified_date'],$defaults['modified_time']) = CRM_Utils_Date::setDateDefaults( CRM_Utils_Array::value( 'modified_date' , $defaults ) );
+      if( CRM_Utils_Array::value( 'contact_id', $defaults ) || CRM_Utils_Array::value( 'created_id', $defaults ) ){
+        // if( CRM_Utils_Array::value('created_id', $defaults) )
+        $contactID = CRM_Utils_Array::value('created_id', $defaults)?$defaults['created_id']:$defaults['contact_id'];
+        
+        $defaults['contact_name'] = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $contactID, 'sort_name' );
+        //$defaults['parent_id'] = $contactName['id'];
+    }
+            if( $parentId = CRM_Utils_Array::value('parent_id', $defaults) ){
+            $this->assign('parentId', $parentId ); 
     }
 
+        }
+        
     return $defaults;
   }
 

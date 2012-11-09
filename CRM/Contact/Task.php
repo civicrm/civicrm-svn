@@ -41,7 +41,9 @@
  *
  */
 class CRM_Contact_Task {
-  CONST GROUP_CONTACTS = 1, REMOVE_CONTACTS = 2, TAG_CONTACTS = 3, REMOVE_TAGS = 4, EXPORT_CONTACTS = 5, EMAIL_CONTACTS = 6, SMS_CONTACTS = 7, DELETE_CONTACTS = 8, HOUSEHOLD_CONTACTS = 9, ORGANIZATION_CONTACTS = 10, RECORD_CONTACTS = 11, MAP_CONTACTS = 12, SAVE_SEARCH = 13, SAVE_SEARCH_UPDATE = 14, PRINT_CONTACTS = 15, LABEL_CONTACTS = 16, BATCH_UPDATE = 17, ADD_EVENT = 18, PRINT_FOR_CONTACTS = 19, EMAIL_UNHOLD = 22, RESTORE = 23, DELETE_PERMANENTLY = 24;
+  CONST GROUP_CONTACTS = 1, REMOVE_CONTACTS = 2, TAG_CONTACTS = 3, REMOVE_TAGS = 4, EXPORT_CONTACTS = 5, EMAIL_CONTACTS = 6, SMS_CONTACTS = 7, DELETE_CONTACTS = 8, HOUSEHOLD_CONTACTS = 9, ORGANIZATION_CONTACTS = 10, RECORD_CONTACTS = 11, MAP_CONTACTS = 12, SAVE_SEARCH = 13, SAVE_SEARCH_UPDATE = 14, PRINT_CONTACTS = 15, LABEL_CONTACTS = 16, BATCH_UPDATE = 17, ADD_EVENT = 18, PRINT_FOR_CONTACTS = 19, EMAIL_UNHOLD = 22, RESTORE = 23, DELETE_PERMANENTLY = 24, REOPEN_BATCH = 25,
+        CLOSE_BATCH           =    26,
+        EXPORT_BATCH          =    27;
 
   /**
    * the task array
@@ -140,6 +142,15 @@ class CRM_Contact_Task {
           'class' => 'CRM_Contact_Form_Task_Delete',
           'result' => FALSE,
         ),
+                                  25 => array( 'title'  => ts( 'ReOpen Batch' ),
+                                              'class'  => 'CRM_Financial_Form_Task_ReOpen',
+                                              'result' => false ),
+                                  26 => array( 'title'  => ts( 'Close Batch' ),
+                                              'class'  => 'CRM_Financial_Form_Task_Close',
+                                              'result' => false ),
+                                  27 => array( 'title'  => ts( 'Export Batch' ),
+                                              'class'  => 'CRM_Financial_Form_Task_Export',
+                                              'result' => false ),
       );
 
       if (CRM_Contact_BAO_ContactType::isActive('Household')) {
@@ -283,10 +294,9 @@ class CRM_Contact_Task {
    * @return array set of tasks that are valid for the user
    * @access public
    */
-  static
-  function &permissionedTaskTitles($permission, $deletedContacts = FALSE) {
+    static function &permissionedTaskTitles($permission, $deletedContacts = false, $financialBatchStatus = false )
+    {
     self::initTasks();
-
     $tasks = array();
     if ($deletedContacts) {
       if (CRM_Core_Permission::check('access deleted contacts')) {
@@ -318,7 +328,15 @@ class CRM_Contact_Task {
         $tasks[20] = self::$_tasks[20]['title'];
       }
     }
+        if( $financialBatchStatus ){
+            $financialBatch['open'] = array( '26', '27' );
+            $financialBatch['closed'] = array( '25', '27' );
+            foreach( $tasks as $taskKey=> $taskName ){
+                if( !in_array( $taskKey, $financialBatch[strtolower($financialBatchStatus)] ) )
+                    unset($tasks[$taskKey]);
+            }   
 
+        }
     return $tasks;
   }
 

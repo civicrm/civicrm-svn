@@ -189,7 +189,7 @@ class CRM_Logging_Differ {
         $values[$table] = array(
           'contribution_page_id' => CRM_Contribute_PseudoConstant::contributionPage(),
           'contribution_status_id' => CRM_Contribute_PseudoConstant::contributionStatus(),
-          'contribution_type_id' => CRM_Contribute_PseudoConstant::contributionType(),
+                    'financial_type_id'              => CRM_Contribute_PseudoConstant::financialType(),
           'country_id' => CRM_Core_PseudoConstant::country(),
           'gender_id' => CRM_Core_PseudoConstant::gender(),
           'location_type_id' => CRM_Core_PseudoConstant::locationType(),

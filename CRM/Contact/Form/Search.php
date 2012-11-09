@@ -116,7 +116,16 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
    */
   protected $_searchButtonName;
 
+	
   /**
+     * Batch Status name
+     *
+     * @var string
+     * @access protected
+     */
+	protected $_financialBatchStatus = null;
+
+    /**
    * name of print button
    *
    * @var string
@@ -363,7 +372,6 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
     if (!CRM_Core_Permission::check('view all activities')) {
       unset($select['4']);
     }
-
     return $select;
   }
 
@@ -376,7 +384,10 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
    */
   function buildQuickForm() {
     $permission = CRM_Core_Permission::getPermission();
-
+        $financialBatchStatus = 0;
+        if( $this->_financialBatchStatus ){
+            $financialBatchStatus = "'{$this->_financialBatchStatus}'";
+        }
     // some tasks.. what do we want to do with the selected contacts ?
     $tasks = array('' => ts('- actions -'));
     if ($this->_componentMode == 1 ||
@@ -390,7 +401,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
     }
     else {
       require_once (str_replace('_', DIRECTORY_SEPARATOR, $this->_modeValue['taskClassName']) . '.php');
-      eval('$tasks += ' . $this->_modeValue['taskClassName'] . '::permissionedTaskTitles( $permission );');
+            eval( '$tasks += ' . $this->_modeValue['taskClassName'] . "::permissionedTaskTitles( $permission, false, $financialBatchStatus );" );
     }
 
     if (isset($this->_ssID)) {

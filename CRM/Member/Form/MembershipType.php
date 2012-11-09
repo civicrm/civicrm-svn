@@ -154,8 +154,8 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
     // required in form rule
     $this->add('hidden', 'action', $this->_action);
 
-    $this->add('select', 'contribution_type_id', ts('Contribution Type'),
-      array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::contributionType()
+        $this->add('select', 'financial_type_id', ts( 'Financial Type' ), 
+      array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::financialType()
     );
 
     $relTypeInd = CRM_Contact_BAO_Relationship::getContactRelationshipType(NULL, NULL, NULL, NULL, TRUE);
@@ -247,12 +247,12 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
         $errors['member_org'] = ts('Please select the membership organization');
       }
 
-      if (empty($params['contribution_type_id'])) {
-        $errors['contribution_type_id'] = ts('Please enter a contribution type.');
+            if ( empty( $params['financial_type_id'] ) ) {
+                $errors['financial_type_id'] = ts('Please enter a financial type.');
       }
 
-      if (($params['minimum_fee'] > 0) && !$params['contribution_type_id']) {
-        $errors['contribution_type_id'] = ts('Please enter the contribution type.');
+            if ( ($params['minimum_fee'] > 0 ) && !$params['financial_type_id'] ) {
+                $errors['financial_type_id'] = ts('Please enter the financial type.');
       }
 
       if (empty($params['duration_unit'])) {
@@ -358,7 +358,7 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
         'auto_renew',
         'duration_unit',
         'duration_interval',
-        'contribution_type_id',
+                             'financial_type_id',
         'fixed_period_start_day',
         'fixed_period_rollover_day',
         'month_fixed_period_rollover_day',

@@ -121,10 +121,10 @@
                     <span  class="description">{ts}Minimum fee required for this membership type. For free/complimentary memberships - set minimum fee to zero (0).{/ts}</span>
                  </td>
              </tr>
-             <tr class="crm-membership-type-form-block-contribution_type_id">
-                  <td class="label">{$form.contribution_type_id.label}<span class="marker"> *</span></td>
-                 <td>{$form.contribution_type_id.html}<br />
-                    <span class="description">{ts}Select the contribution type assigned to fees for this membership type (for example 'Membership Fees'). This is required for all membership types - including free or complimentary memberships.{/ts}</span>
+             <tr class="crm-membership-type-form-block-financial_type_id">
+           	     <td class="label">{$form.financial_type_id.label}<span class="marker"> *</span></td>
+                 <td>{$form.financial_type_id.html}<br />
+                    <span class="description">{ts}Select the financial type assigned to fees for this membership type (for example 'Membership Fees'). This is required for all membership types - including free or complimentary memberships.{/ts}</span>
                  </td>
              </tr>
        <tr class="crm-membership-type-form-block-auto_renew">

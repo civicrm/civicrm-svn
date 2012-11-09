@@ -67,9 +67,9 @@
            <td class ='html-adjust' colspan=2>
            <fieldset><legend>{ts}Payment Information{/ts}</legend>
              <table id="recordContribution" class="form-layout" style="width:auto;">
-                <tr class="crm-event-eventfees-form-block-contribution_type_id">
-                    <td class="label">{$form.contribution_type_id.label}<span class="marker"> *</span></td>
-                    <td>{$form.contribution_type_id.html}<br /><span class="description">{ts}Select the appropriate contribution type for this payment.{/ts}</span></td>
+                <tr class="crm-event-eventfees-form-block-financial_type_id">
+                    <td class="label">{$form.financial_type_id.label}<span class="marker"> *</span></td>
+                    <td>{$form.financial_type_id.html}<br /><span class="description">{ts}Select the appropriate financial type for this payment.{/ts}</span></td>
                 </tr>
                 <tr class="crm-event-eventfees-form-block-total_amount"><td class="label">{$form.total_amount.label}</td><td>{$form.total_amount.html|crmMoney:$currency}<br/><span class="description">{ts}Actual payment amount for this registration.{/ts}</span></td></tr>
                 <tr>

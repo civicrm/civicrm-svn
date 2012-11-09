@@ -450,7 +450,7 @@ function civicrm_cck_event_field_values($field, $index = null) {
         foreach ( $eventInfo as $info ) {
             $discountId = CRM_Core_BAO_Discount::findSet( $info['id'], 'civicrm_event' );
             if ( $discountId ) {
-                CRM_Core_OptionGroup::getAssoc( CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Discount',
+                CRM_Core_OptionGroup::getAssoc( CRM_Core_DAO::getFieldValue( 'CRM_Order_DAO_Discount',
                                                                              $discountId, 'option_group_id' ),
                                                 $feeBlock, true, 'id' );
             } else {
@@ -1521,7 +1521,7 @@ function civitest_civicrm_searchColumns( $objectName, &$headers,  &$values, &$se
                                                                                        'Integer' ) ) );
             // this is cheating, but allows us NOT to modify the template
             // override the values that we are not using
-            $values[$id]['contribution_type'] = $values[$id]['total'];
+            $values[$id]['financial_type'] = $values[$id]['total'];
         }
     }
 

@@ -240,7 +240,7 @@ function &civicrm_pledge_get(&$params) {
  * @access private
  */
 function _civicrm_pledge_check_params(&$params) {
-  static $required = array('contact_id', 'amount', 'contribution_type_id', 'installments', 'start_date');
+    static $required = array( 'contact_id', 'amount', 'financial_type_id' , 'installments','start_date');
   if ($params['pledge_amount']) {
     //can be in unique format or DB format but change to unique format here
     $params['amount'] = $params['pledge_amount'];
@@ -391,8 +391,8 @@ function _civicrm_pledge_format_params(&$params, &$values, $create = FALSE) {
   elseif (array_key_exists('start_date', $params)) {
     $values['scheduled_date'] = $params['start_date'];
   }
-  if (CRM_Utils_Array::value('contribution_type_id', $params)) {
-    $values['contribution_type_id'] = $params['contribution_type_id'];
+    if( CRM_Utils_Array::value( 'financial_type_id', $params ) ) {
+        $values['financial_type_id'] = $params['financial_type_id']; 
   }
   foreach ($values as $key => $value) {
     // ignore empty values or empty arrays etc
@@ -450,13 +450,11 @@ function _civicrm_pledge_format_params(&$params, &$values, $create = FALSE) {
         if (!CRM_Utils_Rule::currencyCode($value)) {
           return civicrm_create_error("currency not a valid code: $value");
         }
-        break;
-
-      case 'contribution_type_id':
+      case 'financial_type_id':
         require_once 'CRM/Contribute/PseudoConstant.php';
-        $typeId = CRM_Contribute_PseudoConstant::contributionType($value);
+            $typeId = CRM_Contribute_PseudoConstant::financialType( $value );
         if (!CRM_Utils_Rule::integer($value) || !$typeId) {
-          return civicrm_create_error("contribution type id is not valid: $value");
+                return civicrm_create_error( "financial type id is not valid: $value" );
         }
       default:
         break;

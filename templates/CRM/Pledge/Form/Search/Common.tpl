@@ -58,7 +58,7 @@
  </tr>
  <tr>
     <td>
-     <label>{ts}Contribution Type{/ts}</label>
+     <label>{ts}Financial Type{/ts}</label> 
      <br />{$form.pledge_contribution_type_id.html}
     </td>
     <td>

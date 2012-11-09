@@ -364,7 +364,6 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('_qf_Fee_upload-bottom');
     $this->click('CIVICRM_QFID_1_2');
     $this->click("xpath=//tr[@class='crm-event-manage-fee-form-block-payment_processor']/td[2]/label[text()='" . $params['payment_processor'] . "']");
-    $this->select('contribution_type_id', 'value=4');
 
     if (array_key_exists('price_set', $params)) {
       $this->select('price_set_id', 'label=' . $params['price_set']);

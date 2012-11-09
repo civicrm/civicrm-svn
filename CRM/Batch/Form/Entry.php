@@ -402,8 +402,8 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
           $value['receipt_date'] = date('Y-m-d His');
         }
 
-        if ($value['contribution_type']) {
-          $value['contribution_type_id'] = $value['contribution_type'];
+        if ($value['financial_type']) {
+          $value['financial_type_id'] = $value['financial_type'];
         }
 
         if (CRM_Utils_Array::value('payment_instrument', $value)) {
@@ -421,7 +421,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         $params['actualBatchTotal'] += $value['total_amount'];
 
         unset($value['contribution_note']);
-        unset($value['contribution_type']);
+        unset($value['financial_type']);
         unset($value['contribution_source']);
 
         $value['batch_id'] = $this->_batchId;
@@ -577,8 +577,8 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
           $membershipTypeId
         );
 
-        if (CRM_Utils_Array::value('contribution_type', $value)) {
-          $value['contribution_type_id'] = $value['contribution_type'];
+        if (CRM_Utils_Array::value('financial_type', $value)) {
+          $value['financial_type_id'] = $value['financial_type'];
         }
 
         if (CRM_Utils_Array::value('payment_instrument', $value)) {
@@ -596,7 +596,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
 
         $params['actualBatchTotal'] += $value['total_amount'];
 
-        unset($value['contribution_type']);
+        unset($value['financial_type']);
         unset($value['payment_instrument']);
 
         $value['batch_id'] = $this->_batchId;

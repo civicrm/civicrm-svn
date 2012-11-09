@@ -118,8 +118,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
         case 'total_amount':
           $this->_totalAmountIndex = $index;
           break;
-
-        case 'contribution_type':
+            case 'financial_type':
           $this->_contributionTypeIndex = $index;
           break;
       }

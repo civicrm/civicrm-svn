@@ -150,7 +150,7 @@ class CRM_Report_Form_Contact_Detail extends CRM_Report_Form {
             'default' => TRUE,
           ),
           'total_amount' => array('default' => TRUE),
-          'contribution_type_id' => array('title' => ts('Contribution Type'),
+                                 'financial_type_id'   => array( 'title'   => ts('Financial Type'),
             'default' => TRUE,
           ),
           'trxn_id' => NULL,
@@ -796,7 +796,8 @@ class CRM_Report_Form_Contact_Detail extends CRM_Report_Form {
           // handle contribution
           if ($component == 'contribution_civireport') {
             if ($val = CRM_Utils_Array::value('civicrm_contribution_contribution_type_id', $row)) {
-              $componentRows[$contactID][$component][$rowNum]['civicrm_contribution_contribution_type_id'] = CRM_Contribute_PseudoConstant::contributionType($val, FALSE);
+                            $componentRows[$contactID][$component][$rowNum]['civicrm_contribution_contribution_type_id'] = 
+                                CRM_Contribute_PseudoConstant::financialType( $val, false );
             }
 
             if ($val = CRM_Utils_Array::value('civicrm_contribution_contribution_status_id', $row)) {

@@ -62,6 +62,7 @@
          <tr>
             <th>{ts}Field Label{/ts}</th>
             <th>{ts}Field Type{/ts}</th>
+	        <th>{ts}Financial Type{/ts}</th>
             <th id="order" class="sortable">{ts}Order{/ts}</th>
             <th>{ts}Req?{/ts}</th>
             <th>{ts}Enabled?{/ts}</th>
@@ -76,6 +77,7 @@
       <tr id="row_{$row.id}"class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
             <td>{$row.label}</td>
             <td>{$row.html_type}</td>
+	        <td>{$row.financial_type_id}</td>
             <td class="nowrap">{$row.order}</td>
             <td>{if $row.is_required eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
             <td id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>

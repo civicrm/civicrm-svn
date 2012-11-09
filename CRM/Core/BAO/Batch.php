@@ -50,14 +50,27 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
    * @access public
    */
   static
-  function create(&$params) {
+    function create(&$params, $ids = null, $context = null) {
     if (!CRM_Utils_Array::value('id', $params)) {
       $params['name'] = CRM_Utils_String::titleToVar($params['title']);
     }
 
     $batch = new CRM_Core_DAO_Batch();
     $batch->copyValues($params);
+    if ($context == 'financialBatch' && CRM_Utils_Array::value('batchID', $ids)) {
+      $batch->id = $ids['batchID'];
+    }
     $batch->save();
+    
+    if ($context == 'financialBatch' && $batch->id) {
+      $financialParams = array(
+        'batch_id'              => $batch->id,
+        'payment_instrument_id' => CRM_Utils_Array::value('payment_instrument_id', $params),
+        'manual_number_trans'   => CRM_Utils_Array::value('manual_number_trans', $params),
+        'manual_total'          => CRM_Utils_Array::value('manual_total', $params),
+      );
+      $finanacialBatch = CRM_Financial_BAO_FinancialBatch::add($financialParams);
+    }
     return $batch;
   }
 

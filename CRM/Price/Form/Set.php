@@ -98,8 +98,8 @@ class CRM_Price_Form_Set extends CRM_Core_Form {
         $errors['extends'] = ts('If you plan on using this price set for membership signup and renewal, you can not also use it for Events or Contributions. However, a membership price set may include additional fields for non-membership options that require an additional fee (e.g. magazine subscription).');
       }
 
-      if (CRM_Utils_System::isNull($fields['contribution_type_id'])) {
-        $errors['contribution_type_id'] = ts('Contribution Type (Membership Fees) is a required field.');
+            if ( CRM_Utils_System::isNull( $fields['financial_type_id'] ) ) {
+                $errors['financial_type_id'] = ts('Financial Type (Membership Fees) is a required field.');
       }
     }
     //checks the given price set doesnot start with digit
@@ -194,9 +194,10 @@ class CRM_Price_Form_Set extends CRM_Core_Form {
     $this->addGroup($extends, 'extends', ts('Used For'), '&nbsp;', TRUE);
 
     $this->addRule('extends', ts('%1 is a required field.', array(1 => ts('Used For'))), 'required');
-    $this->add('select', 'contribution_type_id',
-      ts('Contribution Type (Membership Fees)'),
-      array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::contributionType()
+
+    $this->add('select', 'financial_type_id',
+      ts('Financial Type (Membership Fees)'),
+      array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::financialType()
     );
 
     // help text
@@ -269,7 +270,7 @@ class CRM_Price_Form_Set extends CRM_Core_Form {
     $nameLength = CRM_Core_DAO::getAttribute('CRM_Price_DAO_Set', 'name');
     $params['name'] = CRM_Utils_String::titleToVar($params['title'], CRM_Utils_Array::value('maxlength', $nameLength));
     $params['is_active'] = CRM_Utils_Array::value('is_active', $params, FALSE);
-    $params['contribution_type_id'] = CRM_Utils_Array::value('contribution_type_id', $params, FALSE);
+    $params['financial_type_id'] = CRM_Utils_Array::value('financial_type_id', $params, FALSE);
 
     $compIds = array();
     $extends = CRM_Utils_Array::value('extends', $params);

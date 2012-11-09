@@ -42,6 +42,7 @@ require_once 'PHPUnit/Extensions/Database/DataSet/XmlDataSet.php';
 require_once 'PHPUnit/Extensions/Database/DataSet/QueryDataSet.php';
 require_once 'tests/phpunit/Utils.php';
 require_once 'api/api.php';
+require_once 'CRM/Financial/BAO/FinancialType.php';
 define('API_LATEST_VERSION', 3);
 
 /**
@@ -339,7 +340,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     //flush component settings
     CRM_Core_Component::getEnabledComponents(TRUE);
 
-    $tablesToTruncate = array('civicrm_contact');
+    $tablesToTruncate = array('civicrm_domain', 'civicrm_contact');
     $this->quickCleanup($tablesToTruncate);
     if($this->_eNoticeCompliant ){
       error_reporting(E_ALL);
@@ -676,7 +677,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
       // FIXME: I know it's 1, cause it was loaded directly to the db.
       // FIXME: when we load all the data, we'll need to address this to
       // FIXME: avoid hunting numbers around.
-      'contribution_type_id' => $contributionTypeID,
+                         'financial_type_id' =>$contributionTypeID,
       'is_active' => 1,
       'version' => $version,
       'sequential' => 1,
@@ -878,41 +879,40 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
   }
 
   /**
-   * Function to create Contribution Type
+     * Function to create Financial Type
    *
-   * @return int $id of contribution type created
+     * @return int $id of financial account created
    */
   function contributionTypeCreate() {
 
     $op = new PHPUnit_Extensions_Database_Operation_Insert();
     $op->execute($this->_dbconn,
       new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-        dirname(__FILE__) . '/../api/v' . API_LATEST_VERSION . '/dataset/contribution_types.xml'
+        dirname(__FILE__) . '/../api/v' . API_LATEST_VERSION . '/dataset/financial_types.xml'
       )
     );
 
     require_once 'CRM/Contribute/PseudoConstant.php';
-    CRM_Contribute_PseudoConstant::flush('contributionType');
+    CRM_Contribute_PseudoConstant::flush('financialType');
     // FIXME: CHEATING LIKE HELL HERE, TO BE FIXED
     return 11;
   }
 
   /**
-   * Function to delete contribution Types
+     * Function to delete financial Types 
    *      * @param int $contributionTypeId
    */
   function contributionTypeDelete($contributionTypeID = NULL) {
-    require_once 'CRM/Contribute/BAO/ContributionType.php';
     if ($contributionTypeID === NULL) {
-      civicrm_api('Contribution', 'get', array('version' => 3, 'contribution_type_id' => 10, 'api.contribution.delete' => 1));
-      civicrm_api('Contribution', 'get', array('version' => 3, 'contribution_type_id' => 11, 'api.contribution.delete' => 1));
-      // we know those were loaded from /dataset/contribution_types.xml
-      $del = CRM_Contribute_BAO_ContributionType::del(10, 1);
-      $del = CRM_Contribute_BAO_ContributionType::del(11, 1);
+      civicrm_api('Contribution', 'get', array('version' => 3, 'financial_type_id' => 10, 'api.contribution.delete' => 1));
+      civicrm_api('Contribution', 'get', array('version' => 3, 'financial_type_id' => 11, 'api.contribution.delete' => 1));
+      // we know those were loaded from /dataset/financial_types.xml
+      $del = CRM_Financial_BAO_FinancialType::del(10, 1);
+      $del = CRM_Financial_BAO_FinancialType::del(11, 1);
     }
     else {
-      civicrm_api('Contribution', 'get', array('version' => 3, 'contribution_type_id' => $contributionTypeID, 'api.contribution.delete' => 1));
-      $del = CRM_Contribute_BAO_ContributionType::del($contributionTypeID, 1);
+            civicrm_api('Contribution', 'get',array('version' => 3, 'financial_type_id' => $contributionTypeID,  'api.contribution.delete' => 1));            
+            $del= CRM_Financial_BAO_FinancialType::del($contributionTypeID,1 );
     }
     if (is_array($del)) {
       $this->assertEquals(0, CRM_Utils_Array::value('is_error', $del), $del['error_message']);
@@ -980,7 +980,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
    * Function to create contribution
    *
    * @param int $cID      contact_id
-   * @param int $cTypeID  id of contribution type
+     * @param int $cTypeID  id of financial type
    *
    * @return int id of created contribution
    */
@@ -992,7 +992,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
       'scheduled_date' => date('Ymd'),
       'amount' => 100.00,
       'pledge_status_id' => '2',
-      'contribution_type_id' => '1',
+                        'financial_type_id'  => '1',
       'pledge_original_installment_amount' => 20,
       'frequency_interval' => 5,
       'frequency_unit' => 'year',
@@ -1022,7 +1022,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
    * Function to create contribution
    *
    * @param int $cID      contact_id
-   * @param int $cTypeID  id of contribution type
+     * @param int $cTypeID  id of financial type
    *
    * @return int id of created contribution
    */
@@ -1035,7 +1035,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
       'contact_id' => $cID,
       'receive_date' => date('Ymd'),
       'total_amount' => 100.00,
-      'contribution_type_id' => $cTypeID,
+                        'financial_type_id'   => $cTypeID,
       'payment_instrument_id' => 1,
       'non_deductible_amount' => 10.00,
       'fee_amount' => 50.00,

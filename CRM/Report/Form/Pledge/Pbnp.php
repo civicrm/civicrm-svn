@@ -71,8 +71,8 @@ class CRM_Report_Form_Pledge_Pbnp extends CRM_Report_Form {
           array('title' => ts('Pledge Made'),
             'required' => TRUE,
           ),
-          'contribution_type_id' =>
-          array('title' => ts('Contribution Type'),
+                                 'financial_type_id' =>
+                                 array( 'title'    => ts('Financial Type'),
             'requried' => TRUE,
           ),
           'amount' =>
@@ -91,10 +91,10 @@ class CRM_Report_Form_Pledge_Pbnp extends CRM_Report_Form {
             'title' => 'Pledge Made',
             'operatorType' => CRM_Report_Form::OP_DATE,
           ),
-          'contribution_type_id' =>
-          array('title' => ts('Contribution Type'),
+                                 'financial_type_id' =>
+                                 array( 'title'        =>  ts('Financial Type'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-            'options' => CRM_Contribute_PseudoConstant::contributionType(),
+                                        'options'      => CRM_Contribute_PseudoConstant::financialType(),
           ),
         ),
         'grouping' => 'pledge-fields',
@@ -287,10 +287,11 @@ class CRM_Report_Form_Pledge_Pbnp extends CRM_Report_Form {
         }
       }
 
-      //handle the Contribution Type Ids
+            //handle the Financial Type Ids
       if (array_key_exists('civicrm_pledge_contribution_type_id', $row)) {
         if ($value = $row['civicrm_pledge_contribution_type_id']) {
-          $rows[$rowNum]['civicrm_pledge_contribution_type_id'] = CRM_Contribute_PseudoConstant::contributionType($value, FALSE);
+                    $rows[$rowNum]['civicrm_pledge_contribution_type_id'] = 
+                        CRM_Contribute_PseudoConstant::financialType( $value, false );
         }
         $entryFound = TRUE;
       }

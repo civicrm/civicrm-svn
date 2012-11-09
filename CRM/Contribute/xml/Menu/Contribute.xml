@@ -114,10 +114,10 @@
      <weight>365</weight>
   </item>
   <item>
-     <path>civicrm/admin/contribute/contributionType</path>
-     <title>Contribution Types</title>
-     <page_callback>CRM_Contribute_Page_ContributionType</page_callback>
-     <desc>Contribution types are used to categorize contributions for reporting and accounting purposes. These are also referred to as Funds.</desc>
+     <path>civicrm/admin/financial/financialAccount</path>
+     <title>Financial Account</title>
+     <page_callback>CRM_Financial_Page_FinancialAccount</page_callback>
+     <desc>Financial types are used to categorize contributions for reporting and accounting purposes. These are also referred to as Funds.</desc>
      <adminGroup>CiviContribute</adminGroup>
      <icon>admin/small/contribution_types.png</icon>
      <weight>370</weight>
@@ -165,6 +165,13 @@
      <access_arguments>access CiviContribute</access_arguments>
      <page_type>1</page_type>
      <weight>510</weight>
+  </item>
+  <item>
+     <path>civicrm/contribute/searchBatch</path>
+     <page_callback>CRM_Contribute_Controller_SearchBatch</page_callback>
+     <access_arguments>access CiviContribute</access_arguments>
+     <page_type>1</page_type>
+     <weight>588</weight>
   </item>
   <item>
      <path>civicrm/contribute/import</path>
@@ -226,5 +233,94 @@
      <path>civicrm/contribute/subscriptionstatus</path>
      <page_callback>CRM_Contribute_Page_SubscriptionStatus</page_callback>
      <access_arguments>make online contributions</access_arguments>
+  </item>
+  <item>
+     <path>civicrm/ajax/FinancialAccount</path>
+     <page_callback>CRM_Financial_Page_AJAX::financialAccount</page_callback>
+     <access_arguments>make online contributions</access_arguments>
+  </item>
+ <item>
+     <path>civicrm/admin/financial/financialType</path>
+     <title>Financial Type</title>
+     <page_callback>CRM_Financial_Page_FinancialType</page_callback>
+     <desc>Formerly civicrm_contribution_type merged into this table in 4.1</desc>
+     <adminGroup>CiviContribute</adminGroup>
+     <weight>580</weight>
+  </item>
+ <item>
+     <path>civicrm/admin/financial/financialType/accounts</path>
+     <title>Financial Type</title>
+     <page_callback>CRM_Financial_Page_FinancialTypeAccount</page_callback>
+     <adminGroup>CiviContribute</adminGroup>
+     <weight>581</weight>
+  </item>
+ <item>
+     <path>civicrm/admin/financial/financialType/accounts/add</path>
+     <title>Financial Type</title>
+     <page_callback>CRM_Financial_Form_FinancialTypeAccount</page_callback>
+     <adminGroup>CiviContribute</adminGroup>
+     <weight>582</weight>
+  </item>
+  <item>
+     <path>civicrm/admin/financial/financialType/accounts/update</path>
+     <title>Financial Type</title>
+     <page_callback>CRM_Financial_Form_FinancialTypeAccount</page_callback>
+     <adminGroup>CiviContribute</adminGroup>
+     <weight>583</weight>
+  </item>
+ <item>
+     <path>civicrm/admin/financial/financialType/accounts/delete</path>
+     <title>Financial Type</title>
+     <page_callback>CRM_Financial_Form_FinancialTypeAccount</page_callback>
+     <adminGroup>CiviContribute</adminGroup>
+     <weight>584</weight>
+  </item>
+  <item>
+     <path>civicrm/financial/batch</path>
+     <title>Financial Transaction Batch</title>
+     <page_callback>CRM_Financial_Page_FinancialBatch</page_callback>
+     <access_arguments>create manual batch</access_arguments>
+     <adminGroup>CiviContribute</adminGroup>
+     <weight>585</weight>
+ </item>
+ <item>
+     <path>civicrm/batchtransaction</path>
+     <title>Financial Transaction Batch</title>
+     <page_callback>CRM_Financial_Page_BatchTransaction</page_callback>
+     <adminGroup>CiviContribute</adminGroup>
+     <weight>600</weight>
+ </item>
+
+ <item>
+
+     <path>civicrm/ajax/jqFinancial</path>
+     <page_callback>CRM_Financial_Page_AJAX::jqFinancial</page_callback>
+     <access_arguments>make online contributions</access_arguments>
+  </item>
+  <item>
+     <path>civicrm/ajax/jqFinancialRelation</path>
+     <page_callback>CRM_Financial_Page_AJAX::jqFinancialRelation</page_callback>
+     <access_arguments>make online contributions</access_arguments>
+  </item> 
+  <item>
+     <path>civicrm/ajax/jqFinancialType</path>
+     <page_callback>CRM_Financial_Page_AJAX::jqFinancialType</page_callback>
+     <access_arguments>make online contributions</access_arguments>
+  </item> 
+  <item>
+     <path>civicrm/ajax/getContactList</path>
+     <page_callback>CRM_Financial_Page_AJAX::getContactList</page_callback>
+     <access_arguments>edit all manual batches</access_arguments>
+  </item> 
+  <item>
+     <path>civicrm/ajax/ar</path>
+     <page_callback>CRM_Financial_Page_AJAX::assignRemove</page_callback>
+     <access_arguments>access CiviCRM</access_arguments>
+     <page_type>3</page_type>
+</item>
+  <item>
+    <path>civicrm/contact/view/contribution/editpay</path>
+    <title>Edit Payment</title>
+    <page_callback>CRM_Contribute_Form_EditPayment</page_callback>
   </item>
 </menu>

@@ -51,7 +51,7 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase {
     $this->_apiversion = 3;
     parent::setUp();
     $tablesToTruncate = array(
-      'civicrm_contribution', 'civicrm_contribution_type',
+      'civicrm_contribution', 'civicrm_financial_type',
       'civicrm_contact',
     );
     $this->quickCleanup($tablesToTruncate);

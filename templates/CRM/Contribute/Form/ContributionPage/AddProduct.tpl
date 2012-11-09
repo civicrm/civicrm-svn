@@ -45,6 +45,16 @@
   <table class="form-layout-compressed">
     <tr class="crm-contribution-form-block-product_id"><td class="label">{$form.product_id.label}</td><td class="html-adjust">{$form.product_id.html}<br />
     <span class="description">{ts 1=$managePremiumsURL}Pick a premium to include on this Contribution Page. Use <a href='%1'>Manage Premiums</a> to create or enable additional premium choices for your site.{/ts}</span></td></tr>
+    <tr class="crm-contribution-form-block-financial_type"><td class="label">{$form.financial_type_id.label}</td>
+    <td>
+{if !$financialType }
+		    	{capture assign=ftUrl}{crmURL p='civicrm/admin/financial/financialType' q="reset=1"}{/capture}
+      {ts 1=$ftUrl}There is no Financial Type configured of Account Relation that has both a 'Cost of Sales Premiums Account' and a 'Premiums Inventory Account' if you want to generate accounting transactions to track the cost of premiums used. <a href='%1'>Click here</a> if you want to configure financial type for your site.{/ts}
+	{else}		
+       {$form.financial_type_id.html}
+       {/if}		
+    </td></tr>
+
     <tr class="crm-contribution-form-block-weight"><td class="label">{$form.weight.label}</td><td class="html-adjust">{$form.weight.html}<br />
      <span class="description">{ts}Weight controls the order that premiums are displayed on the Contribution Page.{/ts}</span></td></tr>
     </table>
@@ -64,3 +74,40 @@
 
 {* include jscript to warn if unsaved form field changes *}
 {include file="CRM/common/formNavigate.tpl"}
+<script language="JavaScript" type="text/javascript">
+{literal}
+function getFinancialType()
+{
+{/literal}
+	 productID         = "#product_id";
+	 financialTypeID    = "#financial_type_id"	 
+	 callbackURL        = "{crmURL p='civicrm/ajax/jqFinancialType' h=0}"	
+{literal}
+            
+    	    var check          = cj(productID).val();
+	        callbackURL = callbackURL+"?_value="+check;
+                cj.ajax({
+                         url: callbackURL,
+                         context: document.body,
+                         success: function( data, textStatus ){
+			 data = eval(data);//get json array
+                              if ( data != null ) {
+			       cj(financialTypeID).val(data);
+			         
+			     }
+			    
+			}
+	       	});
+		
+	}
+
+cj(document).ready(function(){ 
+alert('hi');
+		getFinancialType(); 
+
+		cj("#product_id").change( function(){
+			   getFinancialType(); 
+		});		    
+});	
+{/literal}
+</script>

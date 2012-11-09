@@ -429,7 +429,7 @@ class CRM_UF_Page_Group extends CRM_Core_Page {
         switch ($valueParts[0]) {
           case 'ContributionType':
             $typeName = 'Contribution';
-            $valueLabels = CRM_Contribute_PseudoConstant::contributionType();
+                    $valueLabels = CRM_Contribute_PseudoConstant::financialType( );
             break;
 
           case 'ParticipantRole':

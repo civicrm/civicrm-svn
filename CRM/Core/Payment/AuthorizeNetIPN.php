@@ -55,7 +55,7 @@ class CRM_Core_Payment_AuthorizeNetIPN extends CRM_Core_Payment_BaseIPN {
       // load post ids in $ids
       $this->getIDs($ids, $input);
 
-      $paymentProcessorID = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_PaymentProcessorType',
+      $paymentProcessorID = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_PaymentProcessorType',
         'AuthNet', 'id', 'name'
       );
 
@@ -111,7 +111,7 @@ class CRM_Core_Payment_AuthorizeNetIPN extends CRM_Core_Payment_BaseIPN {
       // create a contribution and then get it processed
       $contribution = new CRM_Contribute_BAO_Contribution();
       $contribution->contact_id = $ids['contact'];
-      $contribution->contribution_type_id = $objects['contributionType']->id;
+            $contribution->financial_type_id  = $objects['contributionType']->id;
       $contribution->contribution_page_id = $ids['contributionPage'];
       $contribution->contribution_recur_id = $ids['contributionRecur'];
       $contribution->receive_date = $now;

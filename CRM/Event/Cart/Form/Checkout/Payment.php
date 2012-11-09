@@ -1,7 +1,7 @@
 <?php
 class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart {
   public $all_participants;
-  public $contribution_type_id;
+  public $financial_type_id;
   public $description;
   public $line_items;
   public $_fields = array();
@@ -123,7 +123,7 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart {
     foreach ($this->cart->get_main_events_in_carts() as $event_in_cart) {
       if ($payment_processor_id == NULL && $event_in_cart->event->payment_processor != NULL) {
         $payment_processor_id = $event_in_cart->event->payment_processor;
-        $this->contribution_type_id = $event_in_cart->event->contribution_type_id;
+		$this->financial_type_id = $event_in_cart->event->financial_type_id;
       }
       else {
         if ($event_in_cart->event->payment_processor != NULL && $event_in_cart->event->payment_processor != $payment_processor_id) {
@@ -464,7 +464,7 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart {
     $params['now'] = date('YmdHis');
     $params['invoiceID'] = md5(uniqid(rand(), TRUE));
     $params['amount'] = $this->total;
-    $params['contribution_type_id'] = $this->contribution_type_id;
+        $params['financial_type_id'] = $this->financial_type_id;
     if ($this->payment_required && !CRM_Utils_Array::value('is_pay_later', $params)) {
       $trxn = $this->make_payment($params);
       $params['trxn_id'] = $trxn->trxn_id;
@@ -525,8 +525,8 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart {
         // XXX move
         $params['amount'] = $mer_participant->cost - $mer_participant->discount_amount;
 
-        if ($event_in_cart->event->contribution_type_id && $mer_participant->cost) {
-          $params['contribution_type_id'] = $event_in_cart->event->contribution_type_id;
+            if ($event_in_cart->event->financial_type_id && $mer_participant->cost) {
+              $params['financial_type_id'] = $event_in_cart->event->financial_type_id;
           $params['participant_contact_id'] = $mer_participant->contact_id;
           $this->record_contribution($mer_participant, $params, $event_in_cart->event);
         }
@@ -576,7 +576,7 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart {
       'payment_processor' => $this->_paymentProcessor['payment_processor_type'],
       'trxn_id' => $result['trxn_id'],
     );
-    $trxn = new CRM_Core_DAO_FinancialTrxn();
+	  $trxn = new CRM_Financial_DAO_FinancialTrxn();
     $trxn->copyValues($trxnParams);
     if (!CRM_Utils_Rule::currencyCode($trxn->currency)) {
       $config = CRM_Core_Config::singleton();
@@ -604,7 +604,7 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart {
 
     $contribParams = array(
       'contact_id' => $payer,
-      'contribution_type_id' => $params['contribution_type_id'],
+      'financial_type_id' => $params['financial_type_id'],
       'receive_date' => $params['now'],
       'total_amount' => $params['amount'],
       'amount_level' => $mer_participant->fee_level,
@@ -635,7 +635,7 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart {
         'amount' => $params['amount'],
         'currency' => CRM_Utils_Array::value('currencyID', $params),
       );
-      $entity_trxn = &new CRM_Core_DAO_EntityFinancialTrxn();
+		    $entity_trxn =& new CRM_Financial_DAO_EntityFinancialTrxn();
       $entity_trxn->copyValues($entity_financial_trxn_params);
       $entity_trxn->save();
     }

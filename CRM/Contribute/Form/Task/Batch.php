@@ -156,7 +156,7 @@ class CRM_Contribute_Form_Task_Batch extends CRM_Contribute_Form_Task {
     //fix for CRM-2752
     $customFields = CRM_Core_BAO_CustomField::getFields('Contribution');
     foreach ($this->_contributionIds as $contributionId) {
-      $typeId = CRM_Core_DAO::getFieldValue("CRM_Contribute_DAO_Contribution", $contributionId, 'contribution_type_id');
+            $typeId = CRM_Core_DAO::getFieldValue( "CRM_Contribute_DAO_Contribution", $contributionId, 'financial_type_id' ); 
       foreach ($this->_fields as $name => $field) {
         if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($name)) {
           $customValue = CRM_Utils_Array::value($customFieldID, $customFields);
@@ -242,8 +242,8 @@ class CRM_Contribute_Form_Task_Batch extends CRM_Contribute_Form_Task {
             $value[$val] = CRM_Utils_Date::processDate($value[$val]);
           }
         }
-        if (CRM_Utils_Array::value('contribution_type', $value)) {
-          $value['contribution_type_id'] = $value['contribution_type'];
+        if (CRM_Utils_Array::value('financial_type', $value)) {
+          $value['financial_type_id'] = $value['financial_type'];
         }
 
         if (CRM_Utils_Array::value('payment_instrument', $value)) {
@@ -254,7 +254,7 @@ class CRM_Contribute_Form_Task_Batch extends CRM_Contribute_Form_Task {
           $value['source'] = $value['contribution_source'];
         }
 
-        unset($value['contribution_type']);
+                unset($value['financial_type']);
         unset($value['contribution_source']);
         $contribution = CRM_Contribute_BAO_Contribution::add($value, $ids);
 

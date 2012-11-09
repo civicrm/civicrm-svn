@@ -243,8 +243,8 @@ class CRM_Pledge_BAO_Pledge extends CRM_Pledge_DAO_Pledge {
     }
 
     $config            = CRM_Core_Config::singleton();
-    $contributionTypes = CRM_Contribute_PseudoConstant::contributionType();
-    $title             = CRM_Contact_BAO_Contact::displayName($pledge->contact_id) . ' - (' . ts('Pledged') . ' ' . CRM_Utils_Money::format($pledge->amount, $pledge->currency) . ' - ' . $contributionTypes[$pledge->contribution_type_id] . ')';
+        $contributionTypes = CRM_Contribute_PseudoConstant::financialType();
+    $title             = CRM_Contact_BAO_Contact::displayName($pledge->contact_id) . ' - (' . ts('Pledged') . ' ' . CRM_Utils_Money::format($pledge->amount, $pledge->currency) . ' - ' . $contributionTypes[$pledge->financial_type_id] . ')';
 
     // add the recently created Pledge
     CRM_Utils_Recent::add($title,
@@ -468,8 +468,8 @@ GROUP BY  cp.currency
         'status' => CRM_Contribute_PseudoConstant::contributionStatus($honorDAO->status_id),
         'create_date' => $honorDAO->create_date,
         'acknowledge_date' => $honorDAO->acknowledge_date,
-        'type' => CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_ContributionType',
-          $honorDAO->contribution_type_id, 'name'
+        'type' => CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_FinancialType',
+          $honorDAO->financial_type_id, 'name'
         ),
         'display_name' => CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact',
           $honorDAO->contact_id, 'display_name'

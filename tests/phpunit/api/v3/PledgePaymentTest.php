@@ -169,7 +169,7 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase {
       'version' => 3,
       'total_amount' => 20,
       'contact_id' => $this->_individualId,
-      'contribution_type_id' => $this->_contributionTypeId,
+      'financial_type_id' => $this->_contributionTypeId,
     );
     $contribution = civicrm_api('contribution', 'create', $contributionParams);
 
@@ -203,7 +203,7 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase {
         'version' => 3,
         'total_amount' => 20,
         'contact_id' => $this->_individualId,
-        'contribution_type_id' => $this->_contributionTypeId,
+        'financial_type_id' => $this->_contributionTypeId,
       );
       $contribution = civicrm_api('contribution', 'create', $contributionParams);
 
@@ -247,7 +247,7 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase {
       'scheduled_date' => $this->scheduled_date,
       'pledge_amount' => 100.00,
       'pledge_status_id' => '2',
-      'pledge_contribution_type_id' => '1',
+      'pledge_financial_type_id' => '1',
       'pledge_original_installment_amount' => 20,
       'frequency_interval' => 5,
       'frequency_unit' => 'year',

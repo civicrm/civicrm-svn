@@ -299,7 +299,7 @@ class WebTest_Contact_SearchbyDateFilterTest extends CiviSeleniumTestCase {
         'contribution' =>
         array(
           'headerLocator' => 'div#CiviContribute',
-          'bodyLocator' => 'select#contribution_type_id',
+          'bodyLocator' => 'select#financial_type_id',
           'title' => 'Contributions',
           'fields' =>
           array(

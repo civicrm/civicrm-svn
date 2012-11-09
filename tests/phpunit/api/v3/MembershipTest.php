@@ -380,7 +380,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase {
       'period_type' => 'rolling',
       'member_of_contact_id' => $membershipOrgId,
       'domain_id' => 1,
-      'contribution_type_id' => 1,
+                         'financial_type_id'   => 1,
       'relationship_type_id' => $relTypeID,
       'relationship_direction' => 'b_a',
       'is_active' => 1,

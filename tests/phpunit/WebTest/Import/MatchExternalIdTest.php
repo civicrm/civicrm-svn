@@ -109,7 +109,7 @@ class WebTest_Import_MatchExternalIdTest extends ImportCiviSeleniumTestCase {
     $headers = array(
       'external_identifier' => 'External Identifier',
       'fee_amount' => 'Fee Amount',
-      'contribution_type' => 'Contribution Type',
+                          'financial_type'         => 'Financial Type',
       'contribution_status_id' => 'Contribution Status',
       'total_amount' => 'Total Amount',
     );
@@ -118,21 +118,21 @@ class WebTest_Import_MatchExternalIdTest extends ImportCiviSeleniumTestCase {
       array(
         'external_identifier' => $externalId1,
         'fee_amount' => '200',
-        'contribution_type' => 'Donation',
+                             'financial_type'         => 'Donation',
         'contribution_status_id' => 'Completed',
         'total_amount' => '200',
       ),
       array(
         'external_identifier' => $externalId2,
         'fee_amount' => '400',
-        'contribution_type' => 'Donation',
+                             'financial_type'         => 'Donation',
         'contribution_status_id' => 'Completed',
         'total_amount' => '400',
       ),
     );
     $fieldMapper = array(
       'mapper[0][0]' => 'external_identifier',
-      'mapper[2][0]' => 'contribution_type',
+                              'mapper[2][0]' => 'financial_type',
       'mapper[4][0]' => 'total_amount',
     );
     return array($headers, $rows, $fieldMapper);
@@ -329,7 +329,7 @@ class WebTest_Import_MatchExternalIdTest extends ImportCiviSeleniumTestCase {
     $this->waitForElementPresent("_qf_Fee_upload-bottom");
     $this->click("CIVICRM_QFID_1_2");
     $this->click("xpath=//tr[@class='crm-event-manage-fee-form-block-payment_processor']/td[2]/label[text()='$processorName']");
-    $this->select("contribution_type_id", "value=4");
+        $this->select( "financial_type_id", "value=4" );
 
     $counter = 1;
     foreach ($params['fee_level'] as $label => $amount) {

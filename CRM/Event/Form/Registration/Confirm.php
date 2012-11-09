@@ -651,11 +651,11 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
           );
 
           $value['contributionID'] = $contribution->id;
-          $value['contributionTypeID'] = $contribution->contribution_type_id;
+                    $value['contributionTypeID'] = $contribution->financial_type_id; 
           $value['receive_date'] = $contribution->receive_date;
           $value['trxn_id'] = $contribution->trxn_id;
           $value['contributionID'] = $contribution->id;
-          $value['contributionTypeID'] = $contribution->contribution_type_id;
+                    $value['contributionTypeID'] = $contribution->financial_type_id;
         }
         $value['contactID'] = $contactID;
         $value['eventID']   = $this->_eventId;
@@ -680,7 +680,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
         $this->set('trxnId', CRM_Utils_Array::value('trxn_id', $value));
       }
 
-      $value['fee_amount'] = $value['amount'];
+      $value['fee_amount'] =  $value['initial_amount'];
       $this->set('value', $value);
 
       // handle register date CRM-4320
@@ -712,6 +712,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
     if ($this->_priceSetId &&
       !empty($this->_lineItem)
     ) {
+            require_once 'CRM/Financial/BAO/FinancialItem.php';
 
       // take all processed participant ids.
       $allParticipantIds = $this->_participantIDS;
@@ -723,6 +724,9 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
         $allParticipantIds = array_merge(array($registerByID), $this->_additionalParticipantIds);
       }
 
+      if ( $this->_params['initial_amount'] > 0.00){
+        $initPoint = $this->_params['amount'] / $this->_params['initial_amount'];
+      }
       $entityTable = 'civicrm_participant';
       foreach ($this->_lineItem as $key => $value) {
         if (($value != 'skip') &&
@@ -738,7 +742,14 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
           foreach ($value as $line) {
             $line['entity_id'] = $entityId;
             $line['entity_table'] = $entityTable;
-            CRM_Price_BAO_LineItem::create($line);
+            $lineItems = CRM_Price_BAO_LineItem::create( $line );
+
+            $int_name  = 'txt-price_'. $line['price_field_id'];
+            $initvalue = (float) $line['unit_price']/$initPoint;
+            $initValue = number_format($initvalue, 2, '.', '');
+            $lineItems->$int_name= $initValue;
+                        CRM_Financial_BAO_FinancialItem::add( $lineItems, $contribution );
+                        
           }
         }
       }
@@ -898,8 +909,8 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
 
     $contribParams = array(
       'contact_id' => $contactID,
-      'contribution_type_id' => $form->_values['event']['contribution_type_id'] ?
-      $form->_values['event']['contribution_type_id'] : $params['contribution_type_id'],
+                               'financial_type_id'     => $form->_values['event']['financial_type_id'] ?
+                               $form->_values['event']['financial_type_id'] : $params['financial_type_id'],
       'receive_date' => $now,
       'total_amount' => $params['amount'],
       'amount_level' => $params['amount_level'],
@@ -982,17 +993,17 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
     CRM_Contribute_Form_Contribution_Confirm::processPcpSoft($params, $contribution);
 
     // return if pending
-    if ($pending || ($contribution->total_amount == 0)) {
-      $transaction->commit();
-      return $contribution;
-    }
+    // if ($pending || ($contribution->total_amount == 0)) {
+    //   $transaction->commit();
+    //   return $contribution;
+    // }
 
     // next create the transaction record
     $trxnParams = array(
       'contribution_id' => $contribution->id,
       'trxn_date' => $now,
       'trxn_type' => 'Debit',
-      'total_amount' => $params['amount'],
+      'total_amount' => $params['initial_amount'],
       'fee_amount' => CRM_Utils_Array::value('fee_amount', $result),
       'net_amount' => CRM_Utils_Array::value('net_amount', $result, $params['amount']),
       'currency' => $params['currencyID'],
@@ -1000,8 +1011,53 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
       'trxn_id' => $result['trxn_id'],
     );
 
-    $trxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
+    $revenueFinancialType = array( );
+    $statusID = $cId = $financialAccount = null;
+        
+    if( $pending ){
+      CRM_Core_PseudoConstant::populate( $revenueFinancialType,
+                                         'CRM_Financial_DAO_EntityFinancialAccount',
+                                         $all = True, 
+                                         $retrieve = 'financial_account_id', 
+                                         $filter = null, 
+                                         " account_relationship = 3 AND entity_id = {$contribution->financial_type_id} " );
+      $financialAccount = current( $revenueFinancialType );
+      $statusID = key(CRM_CORE_PseudoConstant::accountOptionValues( 'financial_item_status', null, " AND v.name LIKE 'Unpaid' " ));
+    }else{
+      $finanTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_PaymentProcessor', $form->_paymentProcessor['id'], 'financial_type_id' );
+      CRM_Core_PseudoConstant::populate( $revenueFinancialType,
+                                         'CRM_Financial_DAO_EntityFinancialAccount',
+                                         $all = True, 
+                                         $retrieve = 'financial_account_id', 
+                                         $filter = null, 
+                                         " account_relationship = 6 AND entity_id = {$finanTypeId} " );
+                
+      $financialAccount = current( $revenueFinancialType );
+      $statusID = key(CRM_CORE_PseudoConstant::accountOptionValues( 'financial_item_status', null, " AND v.name LIKE 'Paid' " ));
+    }
 
+    if( $financialAccount ){
+      $trxnParams['to_financial_account_id'] = $financialAccount;
+      $cId = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialAccount', $financialAccount, 'contact_id' );
+    }
+            
+    require_once 'CRM/Core/BAO/FinancialTrxn.php';
+
+    $trxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
+    $itemsParams = array( 'created_date'     => date('YmdHis'),
+                          'transaction_date' => $trxn->trxn_date,
+                          'contact_id'       => $cId,
+                          'amount'           => $trxn->total_amount,
+                          'currency'         => $trxn->currency,
+                          'entity_table'     => 'civicrm_financial_trxn',
+                          'entity_id'        => $trxn->id,
+                          'status_id'        => $statusID,
+                          );
+    require_once 'CRM/Financial/BAO/FinancialItem.php';
+    $trxnId['id'] = $trxn->id ;
+    if( $financialAccount )
+      $itemsParams['financial_account_id'] = $financialAccount;
+    $trxn = CRM_Financial_BAO_FinancialItem::create( $itemsParams, null, $trxnId );
     $transaction->commit();
 
     return $contribution;

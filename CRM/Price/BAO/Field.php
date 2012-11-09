@@ -142,6 +142,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
           'is_default' => CRM_Utils_Array::value($params['option_weight'][$index], $defaultArray) ? $defaultArray[$params['option_weight'][$index]] : 0,
           'membership_num_terms' => NULL,
         );
+
         if ($options['membership_type_id']) {
           $options['membership_num_terms'] = CRM_Utils_Array::value($index, CRM_Utils_Array::value('membership_num_terms', $params), 1);
         }
@@ -149,6 +150,13 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
         if ($opIds = CRM_Utils_Array::value('option_id', $params)) {
           if ($opId = CRM_Utils_Array::value($index, $opIds)) {
             $optionsIds['id'] = $opId;
+                if( CRM_Utils_Array::value( $index, $params['option_financial_type_id'], null ) ){
+                    $options['financial_type_id'] =  CRM_Utils_Array::value( $index, $params['option_financial_type_id'], null );    
+                }elseif( CRM_Utils_Array::value( 'financial_type_id', $params) )
+                    {
+                        $options['financial_type_id'] = CRM_Utils_Array::value( 'financial_type_id', $params );
+          }
+                CRM_Price_BAO_FieldValue::add($options, $optionsIds);
           }
           else $optionsIds['id'] = NULL;
         }
@@ -232,6 +240,12 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
   ) {
 
     $field = new CRM_Price_DAO_Field();
+    $mode = $qf->_mode;
+    if(empty( $mode )){
+      $is_pay_later = 1;
+    }else{
+      $is_pay_later = CRM_Utils_Array::value( 'is_pay_later', $qf->_values);
+    }
     $field->id = $fieldId;
     if (!$field->find(TRUE)) {
       /* FIXME: failure! */
@@ -241,7 +255,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
 
     $otherAmount = $qf->get('values');
     $config = CRM_Core_Config::singleton();
-    $qf->assign('currencySymbol', CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Currency', $config->defaultCurrency, 'symbol', 'name'));
+        $qf->assign('currencySymbol', CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_Currency',$config->defaultCurrency,'symbol','name') );
     // get currency name for price field and option attributes
     $currencyName = $config->defaultCurrency;
 
@@ -290,7 +304,6 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
           $label .= '&nbsp;-&nbsp;';
           $label .= CRM_Utils_Money::format(CRM_Utils_Array::value($valueFieldName, $customOption[$optionKey]));
         }
-
         $element = &$qf->add('text', $elementName, $label,
           array_merge($extra,
             array('price' => json_encode(array($optionKey, $priceVal)),
@@ -299,6 +312,9 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
           ),
           $useRequired && $field->is_required
         );
+      if (  $is_pay_later ){
+        $qf->add( 'text', 'txt-'.$elementName, $label, array( 'size' => '4'));
+      }
 
         // CRM-6902
         if (in_array($optionKey, $feezeOptions)) {
@@ -346,12 +362,15 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
           }
           $choice[$opId] = $qf->createElement('radio', NULL, '', $opt['label'], $opt['id'], $extra);
 
+        if (  $is_pay_later ){
+          $qf->add( 'text', 'txt-'.$elementName, $label, array( 'size' => '4')); 
+        }
+          
           // CRM-6902
           if (in_array($opId, $feezeOptions)) {
             $choice[$opId]->freeze();
           }
         }
-
         if (property_exists($qf, '_membershipBlock') && CRM_Utils_Array::value('is_separate_payment', $qf->_membershipBlock) && $field->name == 'contribution_amount') {
           $choice[] = $qf->createElement('radio', NULL, '', 'No thank you', '-1',
             array(
@@ -404,7 +423,10 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
           if (!in_array($opt['id'], $feezeOptions)) {
             $allowedOptions[] = $opt['id'];
           }
+        if (  $is_pay_later ){
+          $qf->add( 'text', 'txt-'.$elementName, $label, array( 'size' => '4'));  
         }
+      }
         $element = &$qf->add('select', $elementName, $label,
           array(
             '' => ts('- select -')) + $selectOption,
@@ -437,7 +459,10 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
               'data-currency' => $currencyName,
             )
           );
-
+        if ( $is_pay_later ){
+          $txtcheck[$opId] =& $qf->createElement( 'text', $opId, $opt['label'], array( 'size' => '4' ) );
+          $qf->addGroup($txtcheck, 'txt-'.$elementName, $label);
+        }
           // CRM-6902
           if (in_array($opId, $feezeOptions)) {
             $check[$opId]->freeze();
@@ -623,5 +648,92 @@ WHERE  id IN (" . implode(',', array_keys($priceFields)) . ')';
       $error['_qf_default'] = ts("Please select at least one option from price set.");
     }
   }
+
+  /**
+   * Create Initial Payment
+   *
+   * @param array $params
+   *
+   * @access public
+   * @static
+   *
+   */
+ public static function initialPayCreate( &$params, $page, $mode = 'offline' ) {
+   $values = array();
+      if ( $page == 'event' ) {
+        $values =  CRM_Utils_Array::value( 'event', $params->_values );
+      }else {
+      CRM_Utils_Array::value('_values', $params) ? $values =  $params->_values : $values[] = "";
+}
+    $params->add('checkbox', 'int_amount', ts('Record smaller initial amount'));
+
+    if ( empty($values) || !array_key_exists('initial_amount_label', $values)) {
+        $values['initial_amount_label'] = "Amount to pay now:";
+      } 
+      
+      if( array_key_exists( 'initial_amount_help_text', $values ) ){
+        $params->assign( 'initialAmountHelpText', $values['initial_amount_help_text'] );
+      }
+      
+      $element = $params->addElement( 'text', 'initial_amount', 
+                                      $values['initial_amount_label'], null );
+      
+      if ( $mode == 'offline' ){
+      $optionTypes = array( 
+        '1' => ts( 'Distribute evenly among all selected items' ),
+        '2' => ts( 'Apply to the items I specify') 
+      );
+        $params->addRadio( 'option_items',
+                           null,
+                           $optionTypes,
+                           array(), '<br/>' );
+      }
+    }
+    
+  /**
+   * Validate the Initial Payment
+   *
+   * @param array $files, array $fields, object $self
+   *
+   * return the error string
+   *
+   * @access public
+   * @static
+   *
+   */   
+  public static function initialPayValidation($fields, $files, $self, &$errors) {
+      $newFields = array();
+    foreach ($fields as $key => $value) {
+        if (strstr( $key,'txt-price_' )){
+        foreach ($fields[$key] as $key1 => $value1) {
+              $exploadValue = explode("_", $key);
+              $orignalValue = $self->_priceSet['fields'][$exploadValue[1]]['options'][$key1]['amount'];
+          if($value1 !='NaN'){
+              ( $orignalValue < $value1 ) ? $errors[ 'qf_default' ] = $self->_priceSet['fields'][$exploadValue[1]]['options'][$key1]['label']." Initial Amount is greater than base Amount":'';
+            }
+        }
+      }
+    }
+    if (CRM_Utils_Array::value('total_amount', $fields)) {
+      $amount = CRM_Utils_Array::value('total_amount', $fields);
+    } elseif ( CRM_Utils_Array::value('amount', $fields)) {
+      $amount = CRM_Utils_Array::value('amount', $fields);
+      }else{
+       $amount = CRM_Utils_Array::value( 'total_amount', $self->_values );
+      }
+    $initial_amount = CRM_Utils_Array::value('initial_amount', $fields);
+    if (!empty($self->_values['min_initial_amount'])) {
+      if (CRM_Utils_Array::value('int_amount', $fields) && CRM_Utils_Array::value('initial_amount', $fields) < $self->_values['min_initial_amount']) {
+        $errors['initial_amount'] = 'Initial Amount should be greater than minimum amount .';
+      }
+    }  
+    if (CRM_Utils_Array::value('int_amount', $fields) && $amount < $initial_amount ) {
+          $errors[ 'initial_amount' ] = 'Initial Amount is greater than base Amount.';
+      } 
+    if (CRM_Utils_Array::value('int_amount', $fields) && !empty($initial_amount) && $initial_amount <= 0) {      
+      $errors['initial_amount'] = 'Initial Amount is not Positive .';
+    }
+      return $errors;      
+    }
 }
 

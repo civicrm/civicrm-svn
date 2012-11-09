@@ -134,7 +134,10 @@ class CRM_Price_Page_Option extends CRM_Core_Page {
     $config = CRM_Core_Config::singleton();
     foreach ($customOption as $id => $values) {
       $action = array_sum(array_keys($this->actionLinks()));
-
+             if( $values['financial_type_id'] ){
+                require_once 'CRM/Core/DAO.php';
+              $customOption[$id]['financial_type_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialType', $values['financial_type_id'], 'name' );
+            }
       // update enable/disable links depending on price_field properties.
       if ($this->_isSetReserved) {
         $action -= CRM_Core_Action::UPDATE + CRM_Core_Action::DELETE + CRM_Core_Action::DISABLE + CRM_Core_Action::ENABLE;

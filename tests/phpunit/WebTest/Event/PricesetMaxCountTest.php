@@ -1110,7 +1110,6 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->click('CIVICRM_QFID_1_2');
     $processorName = $params['payment_processor'];
     $this->click("xpath=//tr[@class='crm-event-manage-fee-form-block-payment_processor']/td[2]/label[text()='$processorName']");
-    $this->select('contribution_type_id', 'value=4');
 
     if (array_key_exists('price_set', $params)) {
       $this->select('price_set_id', 'label=' . $params['price_set']);

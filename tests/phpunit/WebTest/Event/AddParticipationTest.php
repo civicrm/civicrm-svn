@@ -130,7 +130,7 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
     $this->webtestVerifyTabularData(
       array(
         'From' => $displayName,
-        'Contribution Type' => 'Event Fee',
+        'Financial Type' => 'Event Fee',
         'Total Amount' => '$ 800.00',
         'Contribution Status' => 'Completed',
         'Paid By' => 'Check',
@@ -350,7 +350,7 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
     $this->webtestVerifyTabularData(
       array(
         'From' => $displayName,
-        'Contribution Type' => 'Event Fee',
+        'Financial Type' => 'Event Fee',
         'Total Amount' => '$ 800.00',
         'Contribution Status' => 'Completed',
         'Paid By' => 'Check',

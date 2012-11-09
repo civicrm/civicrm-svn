@@ -459,6 +459,7 @@ class CRM_Core_DAO extends DB_DataObject {
           $attributes[$name] = $attribute;
         }
       }
+            
       if (!empty($attributes)) {
         return $attributes;
       }

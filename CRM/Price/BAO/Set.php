@@ -220,8 +220,8 @@ WHERE
         case 'civicrm_contribution_page':
           $ids = implode(',', $entities);
           $queryString = "SELECT cp.id as id, cp.title as title, cp.start_date as startDate, cp.end_date as endDate,ct.name as type
-FROM      civicrm_contribution_page cp, civicrm_contribution_type ct
-WHERE     ct.id = cp.contribution_type_id AND
+FROM      civicrm_contribution_page cp, civicrm_financial_type ct
+WHERE     ct.id = cp.financial_type_id AND 
           cp.id IN ($ids) AND
           cp.is_active = 1;";
           $crmDAO = CRM_Core_DAO::executeQuery($queryString);
@@ -523,13 +523,13 @@ AND ( expire_on IS NULL OR expire_on >= {$currentTime} )
 
     // also get the pre and post help from this price set
     $sql = "
-SELECT extends, contribution_type_id, help_pre, help_post, is_quick_config
+SELECT extends, financial_type_id, help_pre, help_post, is_quick_config
 FROM   civicrm_price_set
 WHERE  id = %1";
     $dao = CRM_Core_DAO::executeQuery($sql, $params);
     if ($dao->fetch()) {
       $setTree[$setID]['extends'] = $dao->extends;
-      $setTree[$setID]['contribution_type_id'] = $dao->contribution_type_id;
+            $setTree[$setID]['financial_type_id']    = $dao->financial_type_id;
       $setTree[$setID]['help_pre'] = $dao->help_pre;
       $setTree[$setID]['help_post'] = $dao->help_post;
       $setTree[$setID]['is_quick_config'] = $dao->is_quick_config;

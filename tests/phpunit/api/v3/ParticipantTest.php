@@ -711,7 +711,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase {
         'format.only_id' => 1,
       ),
       'api.contribution.create' => array(
-        'contribution_type_id' => $this->_contributionTypeId,
+                        'financial_type_id' => $this->_contributionTypeId,
         'total_amount' => 100,
         'format.only_id' => 1,
       ),

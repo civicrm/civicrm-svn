@@ -264,6 +264,17 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant {
   public static function create(&$params, &$ids) {
     $transaction = new CRM_Core_Transaction();
 
+    $assessmentAmount = 0;
+    foreach ( $params['custom'] as $key => $value ) {
+      foreach( $value as $anountValue ) {
+        $assessmentAmount += $anountValue['value'];
+      }
+    }
+    if( !empty( $assessmentAmount ) ) {
+      $params['assessment'] = $assessmentAmount;
+    }
+    CRM_Utils_Hook::grantAssessment( $params );
+
     $grant = self::add($params, $ids);
 
     if (is_a($grant, 'CRM_Core_Error')) {
@@ -432,6 +443,103 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant {
   function getContactGrantCount($contactID) {
     $query = "SELECT count(*) FROM civicrm_grant WHERE civicrm_grant.contact_id = {$contactID} ";
     return CRM_Core_DAO::singleValueQuery($query);
+  }
+  
+  /**
+   * Function to get grant Programs 
+   *
+   * @param int $id grant program id
+   *
+   * @return array of all grant programs 
+   * @access public
+   * @static
+   */  
+  static function getGrantPrograms( $id = null ) {
+    $grantPrograms = array();
+    $where = ' WHERE is_active = 1';
+    if ( !empty( $id ) ) {
+      $where .= " AND id = {$id}";
+}
+    $query = "SELECT id, name FROM civicrm_grant_program ".$where;
+    $dao = CRM_Core_DAO::executeQuery( $query );
+    while($dao->fetch()) {
+      $grantPrograms[$dao->id] = $dao->name;
+    }
+    return $grantPrograms;
+  }
+
+  /**
+   * Function to get 
+   *
+   * @param int $params conditions
+   *
+   * @return grants
+   * @access public
+   * @static
+   */ 
+  static function getGrants( $params ) {
+    if ( !empty ($params) ) {
+      $where = "WHERE "; 
+      foreach ( $params as $key => $value ) {
+        $where .= "{$key} = '{$value}' AND ";
+      }
+      $where = rtrim( $where ," AND ");
+            
+      $query = "SELECT * FROM civicrm_grant {$where} ORDER BY assessment DESC";
+      $dao = CRM_Core_DAO::executeQuery($query);
+      while( $dao->fetch() ) {
+        $grants[$dao->id]['assessment'] = $dao->assessment;
+        $grants[$dao->id]['amount_total'] = $dao->amount_total;
+        $grants[$dao->id]['amount_requested'] = $dao->amount_requested;
+        $grants[$dao->id]['amount_granted'] = $dao->amount_granted;
+        $grants[$dao->id]['status_id'] = $dao->status_id;
+      }
+    }
+    return $grants;
+  }
+   
+  /**
+   * Function to sendmail for grant
+   *
+   * @param int $contactId Contact ID
+   *
+   * @param int $values mailing details
+   *
+   * @param int $grantStatus grant status
+   *
+   * @access public
+   * @static
+   */ 
+  static function sendMail( $contactID, &$values, $grantStatus ) {
+        
+    if ( CRM_Utils_Array::value( 'is_auto_email', $values ) ) {
+      require_once 'CRM/Contact/BAO/Contact/Location.php';
+      list( $displayName, $email ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $contactID );
+      if ( isset( $email ) ) {
+        $valueName = strtolower($grantStatus);
+        if ( $grantStatus == 'Awaiting Information' )  {
+          $explode = explode(' ', $grantStatus);
+          $valueName = strtolower($explode[0]).'_info';
+        }
+        $sendTemplateParams = array(
+          'groupName' => 'msg_tpl_workflow_grant',
+          'valueName' => 'grant_'.$valueName,
+          'contactId' => $contactID,
+          'tplParams' => array(
+            'email'              => $email,
+            'confirm_email_text' => CRM_Utils_Array::value('confirm_email_text', $value['event']),
+            'isShowLocation'     => CRM_Utils_Array::value('is_show_location',   $value['event']),
+          ),
+          'PDFFilename' => '',
+        );
+        require_once 'CRM/Core/BAO/MessageTemplates.php';
+        $sendTemplateParams['from']    = $email;
+        $sendTemplateParams['toName']  = $displayName;
+        $sendTemplateParams['toEmail'] = $email;
+        $sendTemplateParams['autoSubmitted'] = true;
+        CRM_Core_BAO_MessageTemplates::sendTemplate($sendTemplateParams);
+      }
+    }
   }
 }
 

@@ -177,7 +177,7 @@ You were registered by: {$payer.name}
 {ts}Transaction Date{/ts}: {$receive_date|crmDate}
 {/if}
 {if $contributionTypeName}
-{ts}Contribution Type{/ts}: {$contributionTypeName}
+{ts}Financial Type{/ts}: {$contributionTypeName}
 {/if}
 {if $trxn_id}
 {ts}Transaction #{/ts}: {$trxn_id}

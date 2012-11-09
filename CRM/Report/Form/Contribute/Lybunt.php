@@ -137,10 +137,10 @@ class CRM_Report_Form_Contribute_Lybunt extends CRM_Report_Form {
             'options' => $optionYear,
             'default' => date('Y'),
           ),
-          'contribution_type_id' =>
-          array('title' => ts('Contribution Type'),
+                                  'financial_type_id'         => 
+                                  array( 'title'   => ts( 'Financial Type' ),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-            'options' => CRM_Contribute_PseudoConstant::contributionType(),
+            'options' => CRM_Contribute_PseudoConstant::financialType(),
           ),
           'contribution_status_id' =>
           array('title' => ts('Contribution Status'),
@@ -269,7 +269,7 @@ class CRM_Report_Form_Contribute_Lybunt extends CRM_Report_Form {
                 CRM_Utils_Array::value("{$fieldName}_min", $this->_params),
                 CRM_Utils_Array::value("{$fieldName}_max", $this->_params)
               );
-              if (($fieldName == 'contribution_status_id' || $fieldName == 'contribution_type_id') && !empty($clause)) {
+                            if ( ($fieldName == 'contribution_status_id' || $fieldName == 'financial_type_id') && !empty( $clause ) ) {
                 $this->_statusClause .= " AND " . $clause;
               }
             }

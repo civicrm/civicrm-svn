@@ -13,7 +13,7 @@ $params = array(
   'scheduled_date' => '20120513',
   'amount' => '100',
   'pledge_status_id' => '2',
-  'pledge_contribution_type_id' => '1',
+  'pledge_financial_type_id' => '1',
   'pledge_original_installment_amount' => 20,
   'frequency_interval' => 5,
   'frequency_unit' => 'year',
@@ -43,7 +43,7 @@ function pledge_create_expectedresult(){
       '0' => array( 
           'id' => 1,
           'contact_id' => 1,
-          'contribution_type_id' => '1',
+          'financial_type_id' => '1',
           'contribution_page_id' => '',
           'amount' => 100,
           'original_installment_amount' => 20,

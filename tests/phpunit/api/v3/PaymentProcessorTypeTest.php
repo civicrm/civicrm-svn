@@ -104,7 +104,7 @@ class api_v3_PaymentProcessorTypeTest extends CiviUnitTestCase {
     unset($params['sequential']);
     $params['billing_mode'] = CRM_Core_Payment::BILLING_MODE_FORM;
     //assertDBState compares expected values in $result to actual values in the DB
-    $this->assertDBState('CRM_Core_DAO_PaymentProcessorType', $result['id'], $params);
+    $this->assertDBState('CRM_Financial_DAO_PaymentProcessorType', $result['id'], $params);
   }
 
   /**
@@ -229,7 +229,7 @@ class api_v3_PaymentProcessorTypeTest extends CiviUnitTestCase {
     $this->assertNotNull($result['id']);
     unset($params['version']);
     // assertDBState compares expected values in $result to actual values in the DB
-    $this->assertDBState('CRM_Core_DAO_PaymentProcessorType', $this->_ppTypeID, $params);
+    $this->assertDBState('CRM_Financial_DAO_PaymentProcessorType', $this->_ppTypeID, $params);
   }
 
   ///////////////// civicrm_payment_processor_types_get methods

@@ -50,8 +50,8 @@
         <td class="bold">{$displayName}</td>
     </tr>
     <tr>
-        <td class="label">{ts}Contribution Type{/ts}</td>
-      <td>{$contribution_type}{if $is_test} {ts}(test){/ts} {/if}</td>
+        <td class="label">{ts}Financial Type{/ts}</td>
+    	<td>{$financial_type}{if $is_test} {ts}(test){/ts} {/if}</td>
     </tr>
     {if $lineItem}
     <tr>
@@ -96,7 +96,13 @@
       <td class="label">{ts}Received{/ts}</td>
       <td>{if $receive_date}{$receive_date|crmDate}{else}({ts}not available{/ts}){/if}</td>
   </tr>
+	{if $to_financial_account }
   <tr>
+	    <td class="label">{ts}Received Into{/ts}</td>
+    	<td>{$to_financial_account}</td>
+	</tr>
+	{/if}
+	<tr>
       <td class="label">{ts}Contribution Status{/ts}</td>
       <td {if $contribution_status_id eq 3} class="font-red bold"{/if}>{$contribution_status}
       {if $contribution_status_id eq 2} {if $is_pay_later}: {ts}Pay Later{/ts} {else} : {ts}Incomplete Transaction{/ts} {/if}{/if}</td>

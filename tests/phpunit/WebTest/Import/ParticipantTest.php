@@ -308,7 +308,7 @@ class WebTest_Import_ParticipantTest extends ImportCiviSeleniumTestCase {
     $this->assertTrue($this->isTextPresent($processorName));
     $this->check($xpath);
 
-    $this->select("contribution_type_id", "value=4");
+        $this->select("financial_type_id", "value=4");
 
     $counter = 1;
     foreach ($params['fee_level'] as $label => $amount) {

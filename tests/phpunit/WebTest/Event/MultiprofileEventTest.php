@@ -568,15 +568,17 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     $xpath = "xpath=//label[text() = '{$processorName}']/preceding-sibling::input[1]";
     $this->assertTrue($this->isTextPresent($processorName));
     $this->check($xpath);
-    $this->select("contribution_type_id", "value=4");
+        $this->select("financial_type_id", "value=4");
     if ($priceSet) {
       // get one - TBD
     }
     else {
       $this->type("label_1", "Member");
       $this->type("value_1", "250.00");
+      $this->select("financial_type_id_1", "value=1");
       $this->type("label_2", "Non-member");
       $this->type("value_2", "325.00");
+      $this->select("financial_type_id_2", "value=1");
       //set default
       $this->click("xpath=//table[@id='map-field-table']/tbody/tr[2]/td[3]/input");
     }

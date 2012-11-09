@@ -33,7 +33,7 @@ function membership_type_get_expectedresult(){
           'domain_id' => '1',
           'name' => 'General',
           'member_of_contact_id' => '1',
-          'contribution_type_id' => '1',
+          'financial_type_id' => '1',
           'minimum_fee' => '0.00',
           'duration_unit' => 'year',
           'duration_interval' => '1',

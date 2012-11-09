@@ -57,7 +57,7 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase {
     $params = array(
       'contact_id' => $contactId,
       'currency' => 'USD',
-      'contribution_type_id' => 1,
+                         'financial_type_id'   => 1,
       'contribution_status_id' => 1,
       'payment_instrument_id' => 1,
       'source' => 'STUDENT',
@@ -116,7 +116,7 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase {
     $params = array(
       'contact_id' => $contactId,
       'currency' => 'USD',
-      'contribution_type_id' => 1,
+                         'financial_type_id'   => 1,
       'contribution_status_id' => 1,
       'payment_instrument_id' => 1,
       'source' => 'STUDENT',
@@ -177,7 +177,7 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase {
     $params = array(
       'contact_id' => $contactId,
       'currency' => 'USD',
-      'contribution_type_id' => 1,
+                         'financial_type_id'   => 1,
       'contribution_status_id' => 1,
       'payment_instrument_id' => 1,
       'source' => 'STUDENT',
@@ -236,7 +236,7 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase {
     $param = array(
       'contact_id' => $contactId,
       'currency' => 'USD',
-      'contribution_type_id' => 4,
+                        'financial_type_id'   => 4,
       'contribution_status_id' => 1,
       'receive_date' => date('Ymd'),
       'total_amount' => 66,
@@ -260,7 +260,7 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase {
     $annual = CRM_Contribute_BAO_Contribution::annual($contactId);
 
     $config = CRM_Core_Config::singleton();
-    $currencySymbol = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Currency', $config->defaultCurrency, 'symbol', 'name');
+        $currencySymbol = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_Currency',$config->defaultCurrency,'symbol','name') ;
     $this->assertDBCompareValue('CRM_Contribute_DAO_Contribution', $id, 'total_amount',
       'id', ltrim($annual[2], $currencySymbol), 'Check DB for total amount of the contribution'
     );
@@ -299,7 +299,7 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase {
     $param = array(
       'contact_id' => $contactId,
       'currency' => 'USD',
-      'contribution_type_id' => 1,
+                        'financial_type_id'   => 1,
       'contribution_status_id' => 1,
       'payment_instrument_id' => 1,
       'source' => 'STUDENT',
@@ -363,7 +363,7 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase {
     $param = array(
       'contact_id' => $contactId,
       'currency' => 'USD',
-      'contribution_type_id' => 1,
+                       'financial_type_id'   => 1,
       'contribution_status_id' => 1,
       'payment_instrument_id' => 1,
       'source' => 'STUDENT',
@@ -419,7 +419,7 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase {
     $param = array(
       'contact_id' => $contactId,
       'currency' => 'USD',
-      'contribution_type_id' => 1,
+                        'financial_type_id'   => 1,
       'contribution_status_id' => 1,
       'payment_instrument_id' => 1,
       'source' => 'STUDENT',

@@ -36,7 +36,7 @@
 {else}
   <table class="form-layout-compressed">
     <tr class="crm-paymentProcessor-form-block-payment_processor_type">
-        <td class="label">{$form.payment_processor_type.label}</td><td>{$form.payment_processor_type.html} {help id='proc-type'}</td>
+        <td class="label">{$form.payment_processor_type_id.label}</td><td>{$form.payment_processor_type_id.html} {help id='proc-type'}</td>
     </tr>
     <tr class="crm-paymentProcessor-form-block-name">
         <td class="label">{$form.name.label}</td><td>{$form.name.html}</td>
@@ -44,6 +44,18 @@
     <tr class="crm-paymentProcessor-form-block-description">
         <td class="label">{$form.description.label}</td><td>{$form.description.html}</td>
     </tr>
+    
+    <tr class="crm-paymentProcessor-form-block-financial_type">
+        <td class="label">{$form.financial_type_id.label}</td>
+	<td>
+	{if $financialType}
+	{$form.financial_type_id.html}
+    	{else}
+	{capture assign=ftUrl}{crmURL p='civicrm/admin/financial/financialType' q="reset=1"}{/capture}
+	{ts 1=$ftUrl}There is no Financial Type configured of 'Asset Account of'. <a href='%1'>Click here</a> if you want to configure financial types for your site.{/ts}
+    </tr>
+    {/if}
+    </td>
     <tr class="crm-paymentProcessor-form-block-is_active">
         <td></td><td>{$form.is_active.html}&nbsp;{$form.is_active.label}</td>
     </tr>
@@ -141,7 +153,7 @@
 <script type="text/javascript" >
 {literal}
     function reload(refresh) {
-        var paymentProcessorType = document.getElementById("payment_processor_type");
+        var paymentProcessorType = document.getElementById("payment_processor_type_id");
         var url = {/literal}"{$refreshURL}"{literal}
         var post = url + "&pp=" + paymentProcessorType.value;
         if( refresh ) {

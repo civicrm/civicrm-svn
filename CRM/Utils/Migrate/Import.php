@@ -147,7 +147,7 @@ WHERE      v.option_group_id = %1
 
     foreach ($xml->ContributionTypes as $contributionTypesXML) {
       foreach ($contributionTypesXML->ContributionType as $contributionTypeXML) {
-        $contributionType = new CRM_Contribute_DAO_ContributionType();
+                $contributionType = new CRM_Financial_DAO_FinancialType( );
         $this->copyData($contributionType, $contributionTypeXML, TRUE, 'name');
       }
     }

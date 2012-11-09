@@ -54,9 +54,9 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
     if ($this->_id) {
       $this->_ppType = CRM_Utils_Request::retrieve('pp', 'String', $this, FALSE, NULL);
       if (!$this->_ppType) {
-        $this->_ppType = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_PaymentProcessor',
+                $this->_ppType = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_PaymentProcessor',
           $this->_id,
-          'payment_processor_type'
+          'payment_processor_type_id'
         );
       }
       $this->set('pp', $this->_ppType);
@@ -66,8 +66,8 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
     }
 
     $this->assign('ppType', $this->_ppType);
-    $this->_ppDAO = new CRM_Core_DAO_PaymentProcessorType();
-    $this->_ppDAO->name = $this->_ppType;
+        $this->_ppDAO = new CRM_Financial_DAO_PaymentProcessorType( );
+        $this->_ppDAO->id = $this->_ppType;
 
     if (!$this->_ppDAO->find(TRUE)) {
       CRM_Core_Error::fatal(ts('Could not find payment processor meta information'));
@@ -163,24 +163,43 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
       return;
     }
 
-    $attributes = CRM_Core_DAO::getAttribute('CRM_Core_DAO_PaymentProcessor');
+        $attributes = CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_PaymentProcessor' );
 
     $this->add('text', 'name', ts('Name'),
       $attributes['name'], TRUE
     );
 
-    $this->addRule('name', ts('Name already exists in Database.'), 'objectExists', array('CRM_Core_DAO_PaymentProcessor', $this->_id));
+        $this->addRule( 'name', ts('Name already exists in Database.'), 'objectExists', array( 'CRM_Financial_DAO_PaymentProcessor', $this->_id ) );
 
     $this->add('text', 'description', ts('Description'),
       $attributes['description']
     );
 
     $types = CRM_Core_PseudoConstant::paymentProcessorType();
-    $this->add('select', 'payment_processor_type', ts('Payment Processor Type'), $types, TRUE,
-      array('onchange' => "reload(true)")
-    );
+        $this->add( 'select', 'payment_processor_type_id', ts( 'Payment Processor Type' ), $types, true,
+                    array('onchange' => "reload(true)") );
 
+        // Financial Type
+        $financialType = CRM_Contribute_PseudoConstant::financialType( );
+        $revenueFinancialType = array( );
+        CRM_Core_PseudoConstant::populate( $revenueFinancialType,
+                                           'CRM_Financial_DAO_EntityFinancialAccount',
+                                           $all = True, 
+                                           $retrieve = 'entity_id', 
+                                           $filter = null, 
+                                           'account_relationship = 6' );
 
+        foreach( $financialType as $key => $financialTypeName ){
+            if( !in_array( $key, $revenueFinancialType ) )
+                unset( $financialType[$key] );
+        }           
+        if( $fcount = count( $financialType ) ){
+            $this->assign( 'financialType', $fcount );
+        }
+        $this->add('select', 'financial_type_id', 
+                   ts( 'Financial Type' ), 
+                   array(''=>ts( '- select -' )) + $financialType,
+                   true );
     // is this processor active ?
     $this->add('checkbox', 'is_active', ts('Is this Payment Processor active?'));
     $this->add('checkbox', 'is_default', ts('Is this Payment Processor the default?'));
@@ -255,9 +274,9 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
 
   function setDefaultValues() {
     $defaults = array();
-
-    $defaults['payment_processor_type'] = $this->_ppType;
-
+    if ($this->_ppType) {
+    $defaults['payment_processor_type_id'] = $this->_ppType;
+    }
     if (!$this->_id) {
       $defaults['is_active'] = $defaults['is_default'] = 1;
       $defaults['url_site'] = $this->_ppDAO->url_site_default;
@@ -272,7 +291,7 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
     }
     $domainID = CRM_Core_Config::domainID();
 
-    $dao            = new CRM_Core_DAO_PaymentProcessor();
+        $dao = new CRM_Financial_DAO_PaymentProcessor( );
     $dao->id        = $this->_id;
     $dao->domain_id = $domainID;
     if (!$dao->find(TRUE)) {
@@ -282,7 +301,7 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
     CRM_Core_DAO::storeValues($dao, $defaults);
 
     // now get testID
-    $testDAO            = new CRM_Core_DAO_PaymentProcessor();
+        $testDAO = new CRM_Financial_DAO_PaymentProcessor( );
     $testDAO->name      = $dao->name;
     $testDAO->is_test   = 1;
     $testDAO->domain_id = $domainID;
@@ -293,10 +312,6 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
         $testName = "test_{$field['name']}";
         $defaults[$testName] = $testDAO->{$field['name']};
       }
-    }
-
-    if ($this->_ppType) {
-      $defaults['payment_processor_type'] = $this->_ppType;
     }
 
     return $defaults;
@@ -310,7 +325,7 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
    * @return Void
    */
   public function postProcess() {
-    CRM_Utils_System::flushCache('CRM_Core_DAO_PaymentProcessor');
+        CRM_Utils_System::flushCache( 'CRM_Financial_DAO_PaymentProcessor' );
 
     if ($this->_action & CRM_Core_Action::DELETE) {
       CRM_Core_BAO_PaymentProcessor::del($this->_id);
@@ -337,7 +352,7 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
    * @return Void
    */
   function updatePaymentProcessor(&$values, $domainID, $test) {
-    $dao = new CRM_Core_DAO_PaymentProcessor();
+        $dao = new CRM_Financial_DAO_PaymentProcessor( );
 
     $dao->id         = $test ? $this->_testID : $this->_id;
     $dao->domain_id  = $domainID;
@@ -348,7 +363,9 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
 
     $dao->name = $values['name'];
     $dao->description = $values['description'];
-    $dao->payment_processor_type = $values['payment_processor_type'];
+    $dao->payment_processor_type_id = $values['payment_processor_type_id'];
+        $dao->financial_type_id         = $values['financial_type_id'];
+
 
     foreach ($this->_fields as $field) {
       $fieldName = $test ? "test_{$field['name']}" : $field['name'];

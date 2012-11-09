@@ -82,14 +82,14 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
     $this->assign('restore', $this->_restore);
 
     if ($this->_restore) {
-
       CRM_Utils_System::setTitle(ts('Restore Contact'));
-
     }
 
     if ($cid) {
       if (!CRM_Contact_BAO_Contact_Permission::allow($cid, CRM_Core_Permission::EDIT)) {
         CRM_Core_Error::fatal(ts('You do not have permission to delete this contact. Note: you can delete contacts if you can edit them.'));
+      } elseif (CRM_Contact_BAO_Contact::checkDomainContact($cid)) {
+        CRM_Core_Error::fatal(ts('This contact is a special one for the contact information associated with the CiviCRM installation for this domain. No one is allowed to delete it because the information is used for special system purposes.'));
       }
 
       $this->_contactIds = array($cid);
@@ -206,6 +206,10 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
     $not_deleted = array();
     foreach ($this->_contactIds as $cid) {
       if ($currentUserId == $cid && !$this->_restore) {
+      if (CRM_Contact_BAO_Contact::checkDomainContact($contactId)) {
+        CRM_Core_Session::setStatus("This contact is a special one for the contact information associated with the CiviCRM installation for this domain. No one is allowed to delete it because the information is used for special system purposes.");
+        continue;
+      }
         $name = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $cid, 'display_name');
         $session->setStatus(ts("You are currently logged in as '%1'. You cannot delete yourself.", array(1 => $name)), 'Unable To Delete', 'error');
         continue;

@@ -562,7 +562,7 @@ ORDER BY title asc
       }
     }
 
-    $value = $this->get('contribution_type_id');
+        $value = $this->get( 'financial_type_id' );
     $val = array();
     if ($value) {
       if (is_array($value)) {
@@ -574,7 +574,7 @@ ORDER BY title asc
         $type = implode(',', $val);
       }
 
-      $clauses[] = "contribution_type_id IN ({$type})";
+             $clauses[] = "financial_type_id IN ({$type})";
     }
 
     if ($sortBy &&

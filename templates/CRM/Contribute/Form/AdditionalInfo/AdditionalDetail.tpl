@@ -33,6 +33,22 @@
             <span class="description">{ts}Non-deductible portion of this contribution.{/ts}</span></td></tr>
         <tr class="crm-contribution-form-block-fee_amount"><td class="label">{$form.fee_amount.label}</td><td{$valueStyle}>{$form.fee_amount.html|crmMoney:$currency:'XXX':'YYY'}<br />
             <span class="description">{ts}Processing fee for this transaction (if applicable).{/ts}</span></td></tr>
+
+        <tr class="crm-contribution-form-block-ftype">
+	{if $feeAmount neq 1}
+	<td class="label">{$form.fee_to_financial_account_id.label}</td>
+	<td{$valueStyle}>
+	{if $feeAmount}
+	    {$form.fee_to_financial_account_id.html}<br /><span class="description">{ts}Financial Account of type Expense{/ts}</span>
+	{else}
+	    {capture assign=ftUrl}{crmURL p='civicrm/admin/financial/financialAccount' q="reset=1"}{/capture}
+			{ts 1=$ftUrl}There is no Financial Account configured of Financial Account Type Expense. <a href='%1'>Click here</a> if you want to configure financial Account of Financial Account Type Expense for your site.{/ts}
+	{/if}
+	
+        </td>
+	{/if}    
+	</tr>
+
         <tr class="crm-contribution-form-block-net_amount"><td class="label">{$form.net_amount.label}</td><td{$valueStyle}>{$form.net_amount.html|crmMoney:$currency:'':1}<br />
             <span class="description">{ts}Net value of the contribution (Total Amount minus Fee).{/ts}</span></td></tr>
         <tr class="crm-contribution-form-block-invoice_id"><td class="label">{$form.invoice_id.label}</td><td{$valueStyle}>{$form.invoice_id.html}<br />

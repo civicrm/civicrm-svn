@@ -158,7 +158,7 @@ class CRM_Contact_Form_Search_Custom_FullText implements CRM_Contact_Form_Search
       'subject' => 'varchar(255)',
       'details' => 'varchar(255)',
       'contribution_id' => 'int unsigned',
-      'contribution_type' => 'varchar(255)',
+                  'financial_type'         => 'varchar(255)',
       'contribution_page' => 'varchar(255)',
       'contribution_receive_date' => 'datetime',
       'contribution_total_amount' => 'decimal(20,2)',
@@ -924,14 +924,14 @@ WHERE (ca.is_deleted = 0 OR ca.is_deleted IS NULL)
       case 'Contribution':
         $sql = "
 INSERT INTO {$this->_tableName}
-( table_name, contact_id, sort_name, contribution_id, contribution_type, contribution_page, contribution_receive_date,
+( table_name, contact_id, sort_name, contribution_id, financial_type, contribution_page, contribution_receive_date, 
   contribution_total_amount, contribution_trxn_Id, contribution_source, contribution_status, contribution_check_number )
    SELECT  'Contribution', c.id, c.sort_name, cc.id, cct.name, ccp.title, cc.receive_date,
            cc.total_amount, cc.trxn_id, cc.source, contribution_status.label, cc.check_number
      FROM  {$this->_entityIDTableName} ct
 INNER JOIN civicrm_contribution cc ON cc.id = ct.entity_id
 LEFT JOIN  civicrm_contact c ON cc.contact_id = c.id
-LEFT JOIN  civicrm_contribution_type cct ON cct.id = cc.contribution_type_id
+LEFT JOIN  civicrm_financial_type cct ON cct.id = cc.financial_type_id
 LEFT JOIN  civicrm_contribution_page ccp ON ccp.id = cc.contribution_page_id
 LEFT JOIN  civicrm_option_group option_group_contributionStatus ON option_group_contributionStatus.name = 'contribution_status'
 LEFT JOIN  civicrm_option_value contribution_status ON

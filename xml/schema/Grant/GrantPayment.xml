@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<table>
+  <base>CRM/Grant</base>
+  <class>GrantPayment</class>
+  <name>civicrm_payment</name>
+  <comment>This table stores information about grant payments given to a contact.</comment>
+  <add>4.1</add>
+  <log>true</log>
+  <field>
+    <name>id</name>
+    <type>int unsigned</type>
+    <uniqueName>id</uniqueName>
+    <title>Id</title>
+    <required>true</required>
+    <comment>Id</comment>
+    <import>true</import>
+    <add>4.1</add>
+  </field>
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+<field>
+    <name>payment_batch_number</name>
+    <type>int unsigned</type>
+    <uniqueName>payment_batch_number</uniqueName>
+    <title>Payment Batch Nnumber</title>
+    <required>true</required>
+    <comment>Payment Batch Nnumber</comment>
+    <import>true</import>
+    <add>4.1</add>
+  </field>
+  <field>
+    <name>payment_number</name>
+    <type>int unsigned</type>
+    <uniqueName>payment_number</uniqueName>
+    <title>Payment Number</title>
+    <required>true</required>
+    <comment>Payment Number</comment>
+    <import>true</import>
+    <add>4.1</add>
+  </field>
+  <field>
+    <name>financial_type_id</name>
+    <type>int unsigned</type>
+    <uniqueName>financial_type_id</uniqueName>
+    <title>Financial Type ID</title>
+    <required>true</required>
+    <comment>Financial Type ID</comment>
+    <import>true</import>
+    <add>4.1</add>
+  </field>
+  <field>
+    <name>contact_id</name>
+    <type>int unsigned</type>
+    <uniqueName>contact_id</uniqueName>
+    <title>Contact ID</title>
+    <required>true</required>
+    <comment>Contact ID</comment>
+    <import>true</import>
+    <add>4.1</add>
+  </field>
+  <field>
+    <name>payment_created_date</name>
+    <title>Payment Created Date</title>
+    <type>date</type>
+    <comment>Payment Created Date.</comment>
+    <import>true</import>
+    <add>4.1</add>
+  </field>
+  <field>
+    <name>payment_date</name>
+    <title>Payment Date</title>
+    <type>date</type>
+    <comment>Payment Date.</comment>
+    <import>true</import>
+    <add>4.1</add>
+  </field>
+  <field>
+    <name>payable_to_name</name>
+    <title>Payable To Name</title>
+    <type>varchar</type>
+    <import>true</import>
+    <length>255</length>
+    <comment>Payable To Name.</comment>
+    <add>4.1</add>
+  </field> 
+<field>
+    <name>payable_to_address</name>
+    <title>Payable To Address</title>
+    <type>varchar</type>
+    <import>true</import>
+    <length>255</length>
+    <comment>Payable To Address.</comment>
+    <add>4.1</add>
+  </field>
+ <field>     
+    <name>amount</name>
+    <title>Amount</title>
+    <type>decimal</type>
+    <required>true</required>
+    <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
+    <import>true</import>
+    <comment>Requested grant amount, in default currency.</comment>
+    <add>4.1</add>
+  </field>
+  <field>      
+      <name>currency</name>   
+      <type>varchar</type>   
+      <length>3</length>
+      <import>true</import>
+      <headerPattern>/cur(rency)?/i</headerPattern>
+      <dataPattern>/^[A-Z]{3}$/i</dataPattern>
+      <comment>3 character string, value from config setting or input via user.</comment>
+      <add>4.1</add>   
+  </field>
+  <field>
+    <name>payment_reason</name>
+    <title>Payment Reason</title>
+    <type>varchar</type>
+    <import>true</import>
+    <length>255</length>
+    <comment>Payment Reason.</comment>
+    <add>4.1</add>
+  </field>
+  <field>
+    <name>replaces_payment_id</name>
+    <type>varchar</type>
+    <length>8</length>
+    <comment>Replaces Payment Id.</comment>
+    <import>true</import>
+    <add>4.1</add>
+  </field>
+</table>

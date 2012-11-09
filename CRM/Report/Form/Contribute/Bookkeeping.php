@@ -91,14 +91,6 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
         'fields' =>
         array(
           'receive_date' => array('default' => TRUE),
-          'total_amount' => array('title' => ts('Amount'),
-            'required' => TRUE,
-            'statistics' =>
-            array('sum' => ts('Amount')),
-          ),
-          'contribution_type_id' => array('title' => ts('Contribution Type'),
-            'default' => TRUE,
-          ),
           'trxn_id' => array('title' => ts('Trans #'),
             'default' => TRUE,
           ),
@@ -117,15 +109,18 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
           'id' => array('title' => ts('Contribution #'),
             'default' => TRUE,
           ),
+          'financial_type_id' => array('title' => ts('Financial Type'),
+            'default' => TRUE,
+        ),
         ),
         'filters' =>
         array(
           'receive_date' =>
           array('operatorType' => CRM_Report_Form::OP_DATE),
-          'contribution_type_id' =>
-          array('title' => ts('Contribution Type'),
+                                 'financial_type_id'   =>
+                                    array( 'title'        => ts( 'Financial Type' ), 
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-            'options' => CRM_Contribute_PseudoConstant::contributionType(),
+            'options' => CRM_Contribute_PseudoConstant::financialType(),
           ),
           'payment_instrument_id' =>
           array('title' => ts('Paid By'),
@@ -143,6 +138,30 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
         ),
         'grouping' => 'contri-fields',
       ),
+      'civicrm_financial_account' =>
+      array(
+            'dao' => 'CRM_Financial_DAO_FinancialAccount',
+            'fields' =>  array (
+                                'accounting_code' => array('title' => ts('Financial Account Code- Debit'),
+                                                           'default' => TRUE,
+                                                           ),
+                                'credit_accounting_code' => array(
+                                                           'title' => ts('Financial Account Code- Credit'),
+                                                           'name' => 'accounting_code',
+                                                           'alias' =>  'credit',
+                                                           'default' => TRUE,
+                                                           ),
+                                )
+            ),    
+      'civicrm_entity_financial_trxn' =>
+      array(
+            'dao' => 'CRM_Financial_DAO_EntityFinancialTrxn',
+            'fields' =>  array (
+                                'amount' => array('title' => ts('Amount'),
+                                                           'default' => TRUE,
+                                                           ),
+                                ),
+            ),
     );
 
     parent::__construct();
@@ -177,22 +196,37 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
   function from() {
     $this->_from = NULL;
 
-    $this->_from = "
-        FROM  civicrm_contact      {$this->_aliases['civicrm_contact']} {$this->_aclFrom}
+    $this->_from = "FROM  civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom}
               INNER JOIN civicrm_contribution {$this->_aliases['civicrm_contribution']}
                       ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_contribution']}.contact_id AND {$this->_aliases['civicrm_contribution']}.is_test = 0
               LEFT JOIN civicrm_membership_payment payment
                         ON ( {$this->_aliases['civicrm_contribution']}.id = payment.contribution_id )
               LEFT JOIN civicrm_membership {$this->_aliases['civicrm_membership']}
-                    ON payment.membership_id = {$this->_aliases['civicrm_membership']}.id ";
+                    ON payment.membership_id = {$this->_aliases['civicrm_membership']}.id 
+              LEFT JOIN civicrm_entity_financial_trxn etrxn
+                    ON {$this->_aliases['civicrm_contribution']}.id = etrxn.entity_id     
+              LEFT JOIN civicrm_entity_financial_trxn {$this->_aliases['civicrm_entity_financial_trxn']}
+                    ON etrxn.financial_trxn_id = {$this->_aliases['civicrm_entity_financial_trxn']}.entity_id
+              LEFT JOIN civicrm_financial_item fitem
+                    ON fitem.id = {$this->_aliases['civicrm_entity_financial_trxn']}.entity_id 
+              LEFT JOIN civicrm_financial_trxn trxn
+                    ON trxn.id = {$this->_aliases['civicrm_entity_financial_trxn']}.financial_trxn_id
+              LEFT JOIN civicrm_financial_account {$this->_aliases['civicrm_financial_account']}
+                    ON trxn.to_financial_account_id = {$this->_aliases['civicrm_financial_account']}.id
+              LEFT JOIN civicrm_financial_account credit
+                    ON fitem.financial_account_id = credit.id";
   }
 
+  function where() {
+    $this->_where = NULL;
+  }
+  
   function groupBy() {
     $this->_groupBy = "";
   }
 
   function orderBy() {
-    $this->_orderBy = " ORDER BY {$this->_aliases['civicrm_contact']}.sort_name, {$this->_aliases['civicrm_contribution']}.id ";
+          $this->_orderBy = " ORDER BY {$this->_aliases['civicrm_contact']}.sort_name, {$this->_aliases['civicrm_contribution']}.id, {$this->_aliases['civicrm_entity_financial_trxn']}.id ";
   }
 
   function postProcess() {
@@ -205,12 +239,13 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
     $statistics = parent::statistics($rows);
 
     $select = "
-        SELECT COUNT({$this->_aliases['civicrm_contribution']}.total_amount ) as count,
-               SUM( {$this->_aliases['civicrm_contribution']}.total_amount ) as amount,
-               ROUND(AVG({$this->_aliases['civicrm_contribution']}.total_amount), 2) as avg
+        SELECT COUNT({$this->_aliases['civicrm_entity_financial_trxn']}.amount ) as count,
+               SUM( {$this->_aliases['civicrm_entity_financial_trxn']}.amount ) as amount,
+               ROUND(AVG({$this->_aliases['civicrm_entity_financial_trxn']}.amount), 2) as avg
         ";
 
-    $sql = "{$select} {$this->_from} {$this->_where}";
+   $this->_statWhere = " WHERE {$this->_aliases['civicrm_entity_financial_trxn']}.entity_table = 'civicrm_financial_item'";
+   $sql = "{$select} {$this->_from} {$this->_statWhere}";
     $dao = CRM_Core_DAO::executeQuery($sql);
 
     if ($dao->fetch()) {
@@ -234,7 +269,7 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
     $checkList          = array();
     $entryFound         = FALSE;
     $display_flag       = $prev_cid = $cid = 0;
-    $contributionTypes  = CRM_Contribute_PseudoConstant::contributionType();
+        $contributionTypes = CRM_Contribute_PseudoConstant::financialType( );
     $paymentInstruments = CRM_Contribute_PseudoConstant::paymentInstrument();
 
 
@@ -269,8 +304,8 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
         $entryFound = TRUE;
       }
 
-      if ($value = CRM_Utils_Array::value('civicrm_contribution_contribution_type_id', $row)) {
-        $rows[$rowNum]['civicrm_contribution_contribution_type_id'] = $contributionTypes[$value];
+      if ($value = CRM_Utils_Array::value('civicrm_contribution_financial_type_id', $row)) {
+        $rows[$rowNum]['civicrm_contribution_financial_type_id'] = $contributionTypes[$value];
         $entryFound = TRUE;
       }
 

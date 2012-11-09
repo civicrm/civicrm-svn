@@ -8,7 +8,7 @@
 function contribution_page_create_example(){
 $params = array( 
   'version' => 3,
-  'contribution_type_id' => 1,
+  'financial_type_id' => 1,
   'currency' => 'NZD',
   'goal_amount' => 34567,
 );
@@ -34,7 +34,7 @@ function contribution_page_create_expectedresult(){
           'id' => 1,
           'title' => '',
           'intro_text' => '',
-          'contribution_type_id' => 1,
+          'financial_type_id' => 1,
           'payment_processor' => '',
           'is_credit_card_only' => '',
           'is_monetary' => '',

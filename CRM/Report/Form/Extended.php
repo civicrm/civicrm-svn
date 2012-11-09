@@ -468,7 +468,7 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
           'contribution_id' => array(
             'name' => 'id',
           ),
-          'contribution_type_id' => array('title' => ts('Contribution Type'),
+          'financial_type_id' => array('title' => ts('Financial Type'),
             'default' => TRUE,
             'alter_display' => 'alterContributionType',
           ),
@@ -491,10 +491,10 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
         array(
           'receive_date' =>
           array('operatorType' => CRM_Report_Form::OP_DATE),
-          'contribution_type_id' =>
-          array('title' => ts('Contribution Type'),
+          'financial_type_id' =>
+          array('title' => ts('Financial Type'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-            'options' => CRM_Contribute_PseudoConstant::contributionType(),
+            'options' => CRM_Contribute_PseudoConstant::financialType(),
           ),
           'payment_instrument_id' =>
           array('title' => ts('Payment Type'),
@@ -514,14 +514,13 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
           'payment_instrument_id' =>
           array('title' => ts('Payment Instrument'),
           ),
-         'contribution_type_id' =>
-          array('title' => ts('Contribution Type'),
+         'financial_type_id' =>
+          array('title' => ts('Financial Type'),
         ),
         ),
         'group_bys' =>
-        array(
-          'contribution_type_id' =>
-          array('title' => ts('Contribution Type')),
+        array('financial_type_id' =>
+          array('title' => ts('Financial Type')),
           'payment_instrument_id' =>
           array('title' => ts('Payment Instrument')),
           'contribution_id' =>
@@ -1162,7 +1161,7 @@ WHERE 	line_item_civireport.id IS NOT NULL
   }
 
   /*
-    * Retrieve text for contribution type from pseudoconstant
+    * Retrieve text for financial type from pseudoconstant
     */
   function alterNickName($value, &$row) {
     if(empty($row['civicrm_contact_id'])){
@@ -1178,7 +1177,7 @@ WHERE 	line_item_civireport.id IS NOT NULL
    * Retrieve text for contribution type from pseudoconstant
    */
   function alterContributionType($value, &$row) {
-    return is_string(CRM_Contribute_PseudoConstant::contributionType($value, FALSE)) ? CRM_Contribute_PseudoConstant::contributionType($value, FALSE) : '';
+    return is_string( CRM_Contribute_PseudoConstant::financialType( $value, FALSE ) ) ? CRM_Contribute_PseudoConstant::financialType( $value, FALSE ) : '';
   }
   /*
     * Retrieve text for contribution status from pseudoconstant

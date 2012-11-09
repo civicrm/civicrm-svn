@@ -31,7 +31,7 @@ class api_v3_ContributionRecurTest extends CiviUnitTestCase {
       }
     }
     $tablesToTruncate = array(
-      'civicrm_contribution_type',
+      'civicrm_financial_type',
       'civicrm_contribution',
       'civicrm_contribution_recur',
       'civicrm_membership',

@@ -11,7 +11,7 @@ class ContributionPage extends PHPUnit_Framework_Testcase {
     $params = array(
       'title' => 'Help Test CiviCRM!',
       'intro_text' => 'Created for Test Coverage Online Contribution Page',
-      'contribution_type_id' => 1,
+                        'financial_type_id'     => 1,
       'payment_processor_id' => $id,
       'is_monetary' => 1,
       'is_allow_other_amount' => 1,

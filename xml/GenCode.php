@@ -652,7 +652,8 @@ Alternatively you can get a version of CiviCRM that matches your PHP version
         break;
 
       case 'decimal':
-        $field['sqlType'] = 'decimal(20,2)';
+        $length = $fieldXML->length ? $fieldXML->length : '20,2';
+        $field['sqlType'] = 'decimal(' . $length . ')';
         $field['phpType'] = 'float';
         $field['crmType'] = 'CRM_Utils_Type::T_MONEY';
         break;
@@ -732,7 +733,7 @@ Alternatively you can get a version of CiviCRM that matches your PHP version
 
     /** need to make sure there is a field of type name */
     if (!array_key_exists($name, $fields)) {
-      echo "primary key $name does not have a  field definition, ignoring\n";
+        echo "primary key $name in $table->name does not have a field definition, ignoring\n";
       return;
     }
 
@@ -813,7 +814,7 @@ Alternatively you can get a version of CiviCRM that matches your PHP version
 
     /** need to make sure there is a field of type name */
     if (!array_key_exists($name, $fields)) {
-      echo "foreign $name does not have a field definition, ignoring\n";
+        echo "foreign $name in $currentTableName does not have a field definition, ignoring\n";
       return;
     }
 

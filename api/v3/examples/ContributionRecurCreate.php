@@ -59,7 +59,7 @@ function contribution_recur_create_expectedresult(){
           'failure_retry_date' => '',
           'auto_renew' => '',
           'payment_processor_id' => '',
-          'contribution_type_id' => '',
+          'financial_type_id' => '',
           'payment_instrument_id' => '',
           'campaign_id' => '',
           'is_email_receipt' => '',

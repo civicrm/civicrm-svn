@@ -1222,7 +1222,7 @@ class CRM_GCD {
     $contact_id = $organizationDAO->contact_id;
 
     $membershipType = "INSERT INTO civicrm_membership_type
-        (name, description, member_of_contact_id, contribution_type_id, minimum_fee, duration_unit, duration_interval, period_type, fixed_period_start_day, fixed_period_rollover_day, relationship_type_id, relationship_direction, visibility, weight, is_active)
+        (name, description, member_of_contact_id, financial_type_id, minimum_fee, duration_unit, duration_interval, period_type, fixed_period_start_day, fixed_period_rollover_day, relationship_type_id, relationship_direction, visibility, weight, is_active)
         VALUES
         ('General', 'Regular annual membership.', " . $contact_id . ", 3, 100, 'year', 1, 'rolling',null, null, 7, 'b_a', 'Public', 1, 1),
         ('Student', 'Discount membership for full-time students.', " . $contact_id . ", 1, 50, 'year', 1, 'rolling', null, null, 7, 'b_a', 'Public', 2, 1),
@@ -1413,7 +1413,7 @@ VALUES
     $eventLok3 = CRM_Core_DAO::singleValueQuery($sql, CRM_Core_DAO::$_nullArray);
 
     $event = "INSERT INTO civicrm_event
-        ( title, summary, description, event_type_id, participant_listing_id, is_public, start_date, end_date, is_online_registration, registration_link_text, max_participants, event_full_text, is_monetary, contribution_type_id, is_map, is_active, fee_label, is_show_location, loc_block_id,intro_text, footer_text, confirm_title, confirm_text, confirm_footer_text, is_email_confirm, confirm_email_text, confirm_from_name, confirm_from_email, cc_confirm, bcc_confirm, default_fee_id, thankyou_title, thankyou_text, thankyou_footer_text, is_pay_later, pay_later_text, pay_later_receipt, is_multiple_registrations, allow_same_participant_emails, currency )
+        ( title, summary, description, event_type_id, participant_listing_id, is_public, start_date, end_date, is_online_registration, registration_link_text, max_participants, event_full_text, is_monetary, financial_type_id, is_map, is_active, fee_label, is_show_location, loc_block_id,intro_text, footer_text, confirm_title, confirm_text, confirm_footer_text, is_email_confirm, confirm_email_text, confirm_from_name, confirm_from_email, cc_confirm, bcc_confirm, default_fee_id, thankyou_title, thankyou_text, thankyou_footer_text, is_pay_later, pay_later_text, pay_later_receipt, is_multiple_registrations, allow_same_participant_emails, currency )
         VALUES
         ( 'Fall Fundraiser Dinner', 'Kick up your heels at our Fall Fundraiser Dinner/Dance at Glen Echo Park! Come by yourself or bring a partner, friend or the entire family!', 'This event benefits our teen programs. Admission includes a full 3 course meal and wine or soft drinks. Grab your dancing shoes, bring the kids and come join the party!', 3, 1, 1, '" . date('Y-m-d 17:00:00', strtotime("+6 months")) . "', '" . date('Y-m-d 17:00:00', strtotime("+6 months +2 days")) . "', 1, 'Register Now', 100, 'Sorry! The Fall Fundraiser Dinner is full. Please call Jane at 204 222-1000 ext 33 if you want to be added to the waiting list.', 1, 4, 1, 1, 'Dinner Contribution', 1 ,$eventLok1,'Fill in the information below to join as at this wonderful dinner event.', NULL, 'Confirm Your Registration Information', 'Review the information below carefully.', NULL, 1, 'Contact the Development Department if you need to make any changes to your registration.', 'Fundraising Dept.', 'development@example.org', NULL, NULL, NULL, 'Thanks for Registering!', '<p>Thank you for your support. Your contribution will help us build even better tools.</p><p>Please tell your friends and colleagues about this wonderful event.</p>', '<p><a href=http://civicrm.org>Back to CiviCRM Home Page</a></p>', 1, 'I will send payment by check', 'Send a check payable to Our Organization within 3 business days to hold your reservation. Checks should be sent to: 100 Main St., Suite 3, San Francisco CA 94110', 1, 0, 'USD' ),
         ( 'Summer Solstice Festival Day Concert', 'Festival Day is coming! Join us and help support your parks.', 'We will gather at noon, learn a song all together,  and then join in a joyous procession to the pavilion. We will be one of many groups performing at this wonderful concert which benefits our city parks.', 5, 1, 1, '" . date('Y-m-d 12:00:00', strtotime("-1 day")) . "', '" . date('Y-m-d 17:00:00', strtotime("-1 day")) . "', 1, 'Register Now', 50, 'We have all the singers we can handle. Come to the pavilion anyway and join in from the audience.', 1, 2, NULL, 1, 'Festival Fee', 1, $eventLok2, 'Complete the form below and click Continue to register online for the festival. Or you can register by calling us at 204 222-1000 ext 22.', '', 'Confirm Your Registration Information', '', '', 1, 'This email confirms your registration. If you have questions or need to change your registration - please do not hesitate to call us.', 'Event Dept.', 'events@example.org', '', NULL, NULL, 'Thanks for Your Joining In!', '<p>Thank you for your support. Your participation will help build new parks.</p><p>Please tell your friends and colleagues about the concert.</p>', '<p><a href=http://civicrm.org>Back to CiviCRM Home Page</a></p>', 0, NULL, NULL, 1, 0, 'USD' ),
@@ -1423,7 +1423,7 @@ VALUES
 
     //CRM-4464
     $eventTemplates = "INSERT INTO civicrm_event
-        ( is_template, template_title, event_type_id, default_role_id, participant_listing_id, is_public, is_monetary, is_online_registration, is_multiple_registrations, allow_same_participant_emails, is_email_confirm, contribution_type_id, fee_label, confirm_title, thankyou_title, confirm_from_name, confirm_from_email, is_active, currency )
+        ( is_template, template_title, event_type_id, default_role_id, participant_listing_id, is_public, is_monetary, is_online_registration, is_multiple_registrations, allow_same_participant_emails, is_email_confirm, financial_type_id, fee_label, confirm_title, thankyou_title, confirm_from_name, confirm_from_email, is_active, currency )
         VALUES
         ( 1, 'Free Meeting without Online Registration', 4, 1, 1, 1, 0, 0, null, null, null, null,             null, null, null, null, null, 1, 'USD'  ),
         ( 1, 'Free Meeting with Online Registration',    4, 1, 1, 1, 0, 1,    1,    1,    0, null,             null, 'Confirm Your Registration Information', 'Thanks for Registering!', null, null, 1, 'USD'  ),
@@ -1602,7 +1602,7 @@ VALUES
   function addContribution() {
     $query = "
 INSERT INTO civicrm_contribution
-    (contact_id, contribution_type_id, payment_instrument_id, receive_date, non_deductible_amount, total_amount, trxn_id, check_number, currency, cancel_date, cancel_reason, receipt_date, thankyou_date, source )
+    (contact_id, financial_type_id, payment_instrument_id, receive_date, non_deductible_amount, total_amount, trxn_id, check_number, currency, cancel_date, cancel_reason, receipt_date, thankyou_date, source )
 VALUES
     (2, 1, 4, '2010-04-11 00:00:00', 0.00, 125.00, NULL, '1041', 'USD', NULL, NULL, NULL, NULL, 'Apr 2007 Mailer 1' ),
     (4, 1, 1, '2010-03-21 00:00:00', 0.00, 50.00, 'P20901X1', NULL, 'USD', NULL, NULL, NULL, NULL, 'Online: Save the Penguins' ),
@@ -1661,7 +1661,7 @@ VALUES
 
   function addPledge() {
     $pledge = "INSERT INTO civicrm_pledge
-        (contact_id, contribution_type_id, contribution_page_id, amount, original_installment_amount, currency,frequency_unit, frequency_interval, frequency_day, installments, start_date, create_date, acknowledge_date, modified_date, cancel_date, end_date, honor_contact_id, honor_type_id, status_id, is_test)
+        (contact_id, financial_type_id, contribution_page_id, amount, original_installment_amount, currency,frequency_unit, frequency_interval, frequency_day, installments, start_date, create_date, acknowledge_date, modified_date, cancel_date, end_date, honor_contact_id, honor_type_id, status_id, is_test) 
         VALUES
        (71, 1, 1, 500.00, '500', 'USD', 'month', 1, 1, 1, '2009-07-01 00:00:00', '2009-06-26 00:00:00', NULL, NULL, NULL,'2009-07-01 00:00:00', NULL, NULL, 1, 0),
        (43, 1, 1, 800.00, '200', 'USD', 'month', 3, 1, 4, '2009-07-01 00:00:00', '2009-06-23 00:00:00', '2009-06-23 00:00:00', NULL, NULL, '2009-04-01 10:11:40', NULL, NULL, 5, 0),
@@ -1687,26 +1687,128 @@ VALUES
     CRM_Core_DAO::executeQuery($pledgePayment, CRM_Core_DAO::$_nullArray);
   }
 
-  function addLineItem() {
-    $query = " INSERT INTO civicrm_line_item ( entity_table, entity_id, price_field_id, label, unit_price, qty, line_total, participant_count, price_field_value_id ) VALUES ('civicrm_contribution', 1, 1, 'Contribution Amount', 125, '1', '125.00', 0, 1),
-                   ('civicrm_contribution', 2, 1, 'Contribution Amount', 50, '1', '50.00', 0, 1),
-                   ('civicrm_contribution', 3, 1, 'Contribution Amount', 25, '1', '25.00', 0, 1),
-                   ('civicrm_contribution', 4, 1, 'Contribution Amount', 50, '1', '50.00', 0, 1),
-                   ('civicrm_contribution', 5, 1, 'Contribution Amount', 500, '1', '500.00', 0, 1),
-                   ('civicrm_contribution', 6, 1, 'Contribution Amount', 175, '1', '175.00', 0, 1),
-                   ('civicrm_contribution', 7, 1, 'Contribution Amount', 50, '1', '50.00', 0, 1),
-                   ('civicrm_contribution', 8, 1, 'Contribution Amount', 10, '1', '10.00', 0, 1),
-                   ('civicrm_contribution', 9, 1, 'Contribution Amount', 250, '1', '250.00', 0, 1),
-                   ('civicrm_contribution', 10, 1, 'Contribution Amount', 500, '1', '500.00', 0, 1),
-                   ('civicrm_contribution', 11, 1, 'Contribution Amount', 200, '1', '200.00', 0, 1),
-                   ('civicrm_contribution', 12, 1, 'Contribution Amount', 200, '1', '200.00', 0, 1),
-                   ('civicrm_contribution', 13, 1, 'Contribution Amount', 200, '1', '200.00', 0, 1);";
+  function addContributionLineItem() {
+    $query = " INSERT INTO civicrm_line_item (`entity_table`, `entity_id`, `price_field_id`, `label`, `qty`, `unit_price`, `line_total`, `participant_count`, `price_field_value_id`, `financial_type_id`)
+SELECT 'civicrm_contribution', cc.id, cpf.id as price_field, cpfv.label, 1, cc.total_amount, cc.total_amount line_total, 0, cpfv.id as price_field_value, cpfv.financial_type_id
+FROM civicrm_contribution cc 
+LEFT JOIN civicrm_price_set cps ON cps.name = 'default_contribution_amount'
+LEFT JOIN civicrm_price_field cpf ON cpf.price_set_id = cps.id
+LEFT JOIN civicrm_price_field_value cpfv ON cpfv.price_field_id = cpf.id 
+order by cc.id; ";
     CRM_Core_DAO::executeQuery($query, CRM_Core_DAO::$_nullArray);
+  }
+
+  function addContributionFinancialItem() {
+
+    $sql = " SELECT cc.id contribution_id, cli.id as line_item_id, cc.contact_id, cc.receive_date, cc.total_amount, cc.currency, cli.label, cli.financial_type_id,  cefa.financial_account_id
+FROM `civicrm_contribution` cc
+LEFT JOIN civicrm_line_item cli ON cli.entity_id = cc.id and cli.entity_table = 'civicrm_contribution'
+LEFT JOIN civicrm_entity_financial_account cefa ON cefa.entity_id =  cli.financial_type_id
+WHERE cefa.account_relationship = 6; ";
+    $result = CRM_Core_DAO::executeQuery($sql);
+    $financialAccountId = null;
+    $this->addFinancialItem($result, $financialAccountId);
+  }
+
+  function addParticipantFinancialItem() {
+   
+    $sql = " SELECT cpp.contribution_id, cli.id as line_item_id, cp.contact_id, now() as receive_date, cp.fee_amount as total_amount, cp.fee_currency as currency, cli.label, cli.financial_type_id, cefa.financial_account_id
+FROM `civicrm_participant` cp
+LEFT JOIN civicrm_participant_payment cpp ON cpp.participant_id = cp.id
+LEFT JOIN civicrm_line_item cli ON cli.entity_id = cp.id and cli.entity_table = 'civicrm_participant'
+LEFT JOIN civicrm_entity_financial_account cefa ON cefa.entity_id =  cli.financial_type_id
+WHERE cefa.account_relationship = 6";
+    $result = CRM_Core_DAO::executeQuery($sql);
+    $financialAccountId = null;
+    $this->addFinancialItem($result, $financialAccountId);
+  }
+
+  function addFinancialItem($result, $financialAccountId = null) {
+    while($result->fetch()){
+      $trxnParams = array(
+        'trxn_date' => CRM_Utils_Date::processDate($result->receive_date),
+        'total_amount' => $result->total_amount, 
+        'currency' => $result->currency,
+        'status_id' => 1,
+        'contribution_id' => $result->contribution_id,
+        'to_financial_account_id' => $result->financial_account_id
+      );
+      $trxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
+      $financialItem = array(
+        'transaction_date' => CRM_Utils_Date::processDate($result->receive_date),
+        'amount' => $result->total_amount, 
+        'currency' => $result->currency,
+        'status_id' => 1,
+        'entity_id' => $result->line_item_id,
+        'contact_id' => $result->contact_id,
+        'entity_table' => 'civicrm_line_item',
+        'description' => $result->label,
+        'financial_account_id' => $result->financial_account_id
+      );
+      $trxnId['id'] = $trxn->id;
+      CRM_Financial_BAO_FinancialItem::create($financialItem, null, $trxnId);
+  }
   }
 
   function addLineItemParticipants() {
     $participant = new CRM_Event_DAO_Participant();
-    $participant->query("INSERT INTO civicrm_line_item (`entity_table`, `entity_id`, `price_field_id`, `label`, `qty`, `unit_price`, `line_total`, `participant_count`, `price_field_value_id`) SELECT 'civicrm_participant',cp.id, cpfv.price_field_id, cpfv.label, 1, cpfv.amount, cpfv.amount as line_total, 0, cpfv.id FROM civicrm_participant cp LEFT JOIN civicrm_price_set_entity cpe ON cpe.entity_id = cp.event_id LEFT JOIN civicrm_price_field cpf ON cpf.price_set_id = cpe.price_set_id LEFT JOIN civicrm_price_field_value cpfv ON cpfv.price_field_id = cpf.id WHERE cpfv.label = cp.fee_level");
+    $participant->query("INSERT INTO civicrm_line_item (`entity_table`, `entity_id`, `price_field_id`, `label`, `qty`, `unit_price`, `line_total`, `participant_count`, `price_field_value_id`, `financial_type_id`) 
+SELECT 'civicrm_participant',cp.id, cpfv.price_field_id, cpfv.label, 1, cpfv.amount, cpfv.amount as line_total, 0, cpfv.id, cpfv.financial_type_id FROM civicrm_participant cp LEFT JOIN civicrm_price_set_entity cpe ON cpe.entity_id = cp.event_id LEFT JOIN civicrm_price_field cpf ON cpf.price_set_id = cpe.price_set_id LEFT JOIN civicrm_price_field_value cpfv ON cpfv.price_field_id = cpf.id WHERE cpfv.label = cp.fee_level");
+  }
+  
+  function addMembershipPayment() {
+    $maxContribution = CRM_Core_DAO::singleValueQuery("select max(id) from civicrm_contribution");
+    $financialTypeID = CRM_Core_DAO::singleValueQuery("select id from civicrm_financial_type where name = 'Member Dues'");
+    $sql = "INSERT INTO civicrm_contribution (contact_id,financial_type_id,receive_date, total_amount, currency, source, contribution_status_id)
+SELECT  cm.contact_id, $financialTypeID, now(), cmt.minimum_fee, 'USD', CONCAT(cmt.name, ' Membership: Offline signup'), 1 FROM `civicrm_membership` cm
+LEFT JOIN civicrm_membership_type cmt ON cmt.id = cm.membership_type_id;"; 
+
+    CRM_Core_DAO::executeQuery($sql, CRM_Core_DAO::$_nullArray);
+
+    $sql = "INSERT INTO civicrm_membership_payment (contribution_id,membership_id)
+SELECT cc.id, cm.id FROM civicrm_contribution cc
+LEFT JOIN civicrm_membership cm ON cm.contact_id = cc.contact_id
+WHERE cc.id > $maxContribution;";
+
+    CRM_Core_DAO::executeQuery($sql, CRM_Core_DAO::$_nullArray);
+
+    $sql = "INSERT INTO civicrm_line_item (entity_table, entity_id, price_field_value_id, price_field_id, label, qty, unit_price, line_total, financial_type_id)
+SELECT  'civicrm_contribution', cmp.contribution_id, cpfv.id, cpfv.price_field_id, cpfv.label, 1, cpfv.amount, cpfv.amount as unit_price, cpfv.financial_type_id FROM `civicrm_membership` cm
+LEFT JOIN civicrm_membership_payment cmp ON cmp.membership_id = cm.id
+LEFT JOIN civicrm_price_field_value cpfv ON cpfv.membership_type_id = cm.membership_type_id
+LEFT JOIN civicrm_price_field cpf ON cpf.id = cpfv.price_field_id
+LEFT JOIN civicrm_price_set cps ON cps.id = cpf.price_set_id 
+WHERE cps.name = 'default_membership_type_amount'";
+
+    CRM_Core_DAO::executeQuery($sql, CRM_Core_DAO::$_nullArray);
+
+    $sql = "INSERT INTO civicrm_activity(source_contact_id, source_record_id, activity_type_id, subject, activity_date_time, status_id)
+SELECT contact_id, id, 6, CONCAT('$ ', total_amount, ' - ', source), now(), 2 FROM `civicrm_contribution` WHERE id > $maxContribution";
+
+    CRM_Core_DAO::executeQuery($sql, CRM_Core_DAO::$_nullArray);
+}
+
+  function addParticipantPayment() {
+    $maxContribution = CRM_Core_DAO::singleValueQuery("select max(id) from civicrm_contribution");
+    $financialTypeID = CRM_Core_DAO::singleValueQuery("select id from civicrm_financial_type where name = 'Event Fee'");
+    $sql = "INSERT INTO civicrm_contribution (contact_id, financial_type_id, receive_date, total_amount, currency, receipt_date, source, contribution_status_id)
+SELECT  `contact_id`, $financialTypeID, now(), `fee_amount`, 'USD', now(), CONCAT(ce.title, ' : Offline registration'), 1  FROM `civicrm_participant` cp
+LEFT JOIN civicrm_event ce ON ce.id = cp.event_id
+group by `contact_id`;";
+
+    CRM_Core_DAO::executeQuery($sql, CRM_Core_DAO::$_nullArray);
+
+    $sql = "INSERT INTO civicrm_participant_payment (contribution_id,participant_id)
+SELECT cc.id, cp.id FROM civicrm_contribution cc
+LEFT JOIN civicrm_participant cp ON cp.contact_id = cc.contact_id
+WHERE cc.id > $maxContribution";
+
+    CRM_Core_DAO::executeQuery($sql, CRM_Core_DAO::$_nullArray);
+    
+    $sql = "INSERT INTO civicrm_activity(source_contact_id, source_record_id, activity_type_id, subject, activity_date_time, status_id)
+SELECT contact_id, id, 6, CONCAT('$ ', total_amount, ' - ', source), now(), 2 FROM `civicrm_contribution` WHERE id > $maxContribution";
+
+    CRM_Core_DAO::executeQuery($sql, CRM_Core_DAO::$_nullArray);
   }
 }
 
@@ -1735,16 +1837,20 @@ $obj1->addEntityTag();
 $obj1->addGroup();
 $obj1->addNote();
 $obj1->addActivity();
-$obj1->addMembership();
-$obj1->addMembershipLog();
 $obj1->createEvent();
-$obj1->addParticipant();
 $obj1->addContribution();
+$obj1->addContributionLineItem();
+$obj1->addMembership();
+$obj1->addMembershipPayment();
+$obj1->addMembershipLog();
 $obj1->addPCP();
 $obj1->addSoftContribution();
 $obj1->addPledge();
 $obj1->addPledgePayment();
-$obj1->addLineItem();
+$obj1->addContributionFinancialItem();
+$obj1->addParticipant();
+$obj1->addParticipantPayment();
 $obj1->addLineItemParticipants();
+$obj1->addParticipantFinancialItem();
 echo ("Ending data generation on " . date("F dS h:i:s A") . "\n");
 

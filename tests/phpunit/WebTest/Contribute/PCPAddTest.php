@@ -205,7 +205,7 @@ class WebTest_Contribute_PCPAddTest extends CiviSeleniumTestCase {
     $expected = array(
       2 => 'Donation',
       3 => $contributionAmount,
-      7 => 'Completed',
+                           8  => 'Completed', 
       1 => "{$donorFirstName} {$donorLastName}",
     );
     foreach ($expected as $value => $label) {

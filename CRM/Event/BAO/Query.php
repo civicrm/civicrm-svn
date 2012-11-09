@@ -39,7 +39,7 @@ class CRM_Event_BAO_Query {
     $fields = array();
     $fields = array_merge($fields, CRM_Event_DAO_Event::import());
     $fields = array_merge($fields, self::getParticipantFields());
-    $fields = array_merge($fields, CRM_Core_DAO_Discount::export());
+    $fields = array_merge($fields, CRM_Order_DAO_Discount::export());
 
     return $fields;
   }
@@ -486,7 +486,7 @@ class CRM_Event_BAO_Query {
 
       case 'participant_discount_name':
         $from = " $side JOIN civicrm_discount discount ON ( civicrm_participant.discount_id = discount.id )";
-        $from .= " $side JOIN civicrm_option_group discount_name ON ( discount_name.id = discount.option_group_id ) ";
+        $from .= " $side JOIN civicrm_option_group discount_name ON ( discount_name.id = discount.price_set_id ) ";
         break;
     }
     return $from;

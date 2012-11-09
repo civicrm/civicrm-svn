@@ -53,7 +53,7 @@
     {if $cancel_date}
          <tr class="crm-pledge-form-block-cancel_date"><td class="label">{ts}Cancelled Date{/ts}</td><td>{$cancel_date|truncate:10:''|crmDate}</td></tr>
     {/if}
-        <tr class="crm-pledge-form-block-contribution_type"><td class="label">{ts}Contribution Type{/ts}</td><td>{$contribution_type}&nbsp;
+        <tr class="crm-pledge-form-block-contribution_type crm-pledge-form-block-financial_type"><td class="label">{ts}Financial Type{/ts}</td><td>{$financial_type}&nbsp;
     {if $is_test}
         {ts}(test){/ts}
     {/if}

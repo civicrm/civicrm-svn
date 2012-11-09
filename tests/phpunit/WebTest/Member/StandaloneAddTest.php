@@ -133,7 +133,7 @@ class WebTest_Member_StandaloneAddTest extends CiviSeleniumTestCase {
     // fill in Record Membership Payment?
     $this->click("record_contribution", "value=1");
     $this->waitForElementPresent("contribution_status_id");
-    // let contribution type be default
+      // let financial type be default
 
     // let the amount be default
 

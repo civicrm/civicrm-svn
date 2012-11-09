@@ -37,16 +37,20 @@
        <add>1.3</add>
   </field>
   <field> 
-      <name>contribution_type_id</name> 
+      <name>financial_type_id</name> 
       <type>int unsigned</type>                 
-      <required>true</required>                  
-      <comment>default Contribution type assigned to contributions submitted via this page, e.g. Contribution, Campaign Contribution</comment> 
+      <comment>default financial type assigned to contributions submitted via this page, e.g. Contribution, Campaign Contribution</comment> 
       <add>1.3</add> 
+      <change>4.1</change>
+      <changedName>contribution_type_id</changedName>
   </field> 
   <foreignKey> 
-       <name>contribution_type_id</name> 
-       <table>civicrm_contribution_type</table> 
+      <name>financial_type_id</name> 
+      <table>civicrm_financial_type</table> 
        <key>id</key> 
+      <add>1.3</add> 
+      <change>4.1</change>
+      <changedName>contribution_type_id</changedName>
   </foreignKey>
   <field> 
       <name>payment_processor</name> 
@@ -124,6 +128,28 @@
       <localizable>true</localizable>
       <comment>The receipt sent to the user instead of the normal receipt text</comment>   
       <add>2.0</add>   
+  </field>
+
+  <field>   
+      <name>initial_amount_label</name>   
+      <type>text</type>                   
+      <localizable>true</localizable>
+      <comment>Initial amount label for partial payment</comment>   
+      <add>4.2</add>   
+  </field>
+  <field>   
+      <name>initial_amount_help_text</name>   
+      <type>text</type>                   
+      <localizable>true</localizable>
+      <comment>Initial amount help text for partial payment</comment>   
+      <add>4.2</add>   
+  </field>
+  <field>  
+      <name>min_initial_amount</name> 
+      <type>decimal</type>                    
+      <localizable>true</localizable>
+      <comment>Minimum initial amount for partial payment</comment>   
+      <add>4.2</add>   
   </field>
   <field>   
       <name>is_allow_other_amount</name>   

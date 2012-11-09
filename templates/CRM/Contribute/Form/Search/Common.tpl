@@ -85,8 +85,8 @@
   </td>
 </tr>
 <tr>
-  <td><label>{ts}Contribution Type{/ts}</label> <br />
-  {$form.contribution_type_id.html|crmAddClass:twenty}</td>
+  <td><label>{ts}Financial Type{/ts}</label> <br />
+  {$form.financial_type_id.html|crmAddClass:twenty}</td>
   <td><label>{ts}Contribution Page{/ts}</label> <br />
   {$form.contribution_page_id.html|crmAddClass:twenty}</td>
 </tr>

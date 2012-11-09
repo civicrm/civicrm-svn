@@ -40,7 +40,13 @@
         <th class="right">{ts}Qty{/ts}</th>
                     <th class="right">{ts}Unit Price{/ts}</th>
         <th class="right">{ts}Total Price{/ts}</th>
+		   
+		     <th class="right">{ts}Paid{/ts}</th>
+		     <th class="right">{ts}Owing{/ts}</th>
+		     {if $action eq 2}
+		     <th class="right">{ts}Amount of<br>Current Payment {/ts}</th>
     {/if}
+		{/if}
 
      {if $pricesetFieldsCount}
         <th class="right">{ts}Total Participants{/ts}</th>{/if}
@@ -54,8 +60,69 @@
     {/if}
                 <td class="right">{$line.line_total|crmMoney}</td>
            {if $pricesetFieldsCount}<td class="right">{$line.participant_count}</td> {/if}
+		   <td class="right">{$pricefildTotal.LineItems[$line.price_field_value_id]|crmMoney}</td>
+		   <td class="right">
+		   {assign var="fildTotal" value= $line.line_total-$pricefildTotal.LineItems[$line.price_field_value_id]}
+		   {$fildTotal|crmMoney}
+		  </td>
+		 {if $action eq 2}
+		   <td class="left">$<input type='text' id= 'txt-price[{$line.price_field_value_id}]' name = 'txt-price[{$line.price_field_value_id}]' size='4' class= 'distribute'>&nbsp<input type='checkbox' id= 'cb-price[{$line.price_field_value_id}]' name = 'cb-price[{$line.price_field_value_id}]' price = '{$fildTotal}' class = 'payFull' /></td>
+		 {/if}  
             </tr>
             {/foreach}
+	     {if $context EQ "Contribution"  && $action eq 2}
+            <tr><td>
+		{ts}Contribution Total{/ts}:
+     
+     
+            </td>
+	     <td></td>
+	     <td></td>
+	     <td class="right">{$totalAmount|crmMoney}</td>
+	     <td class="right">{$pricefildTotal.total|crmMoney}</td>
+	     <td class="right">{assign var="total" value= $totalAmount-$pricefildTotal.total}{$total|crmMoney}</td>
+	     <td class="left"><h5 class='editPayment'></h5>
+{literal}
+<script type="text/javascript">
+cj(document).ready(function(){ 
+  cj('.distribute').live('blur', function() {
+   var totalAmount = 0;
+	 cj('.distribute').each(function (){
+	 if(cj(this).val( ).length > 0){
+		totalAmount     = parseFloat( totalAmount ) + parseFloat( cj(this).val( ) );	
+		}	
+	 });
+
+ 	 cj('.editPayment').text('$ '+totalAmount);
+      var unlocateAmount = '{/literal}{$total}{literal}';
+      cj('.unlocateAmount').text('$ '+(unlocateAmount - totalAmount));	
+   });
+
+
+ cj('.payFull').live('click', function(){ 
+ 	var txtID = Array( );
+      	txtID =cj(this).attr('id').split('-');
+ 	var ID = 'txt-'+txtID[1] ;
+      if(cj(this).attr('checked')){
+        cj("input[id='"+ID+"']").val(cj(this).attr('price'));
+       }else{
+       	 cj("input[id='"+ID+"']").val('');
+      }
+	cj('.distribute').trigger('blur');
+      });
+
+
+});
+</script>
+{/literal}
+
+	     </td>	
+	     </tr>
+	     <tr>
+	     <td colspan= 6 class="right"><strong>Unlocated Amount</strong></td>
+	     <td><h5 class='unlocateAmount'>{$total|crmMoney} </h5></td>	
+	     </tr>
+ {/if}
     </table>
     {/if}
 {/foreach}

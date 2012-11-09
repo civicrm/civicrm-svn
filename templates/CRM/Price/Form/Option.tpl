@@ -60,6 +60,17 @@
             </tr>
             {* fix for CRM-10241 *}
             {if $form.count.html}
+	    <tr class="crm-price-option-form-block-financial-type">
+                <td class="label">{$form.financial_type_id.label}</td>
+                <td>
+		{if !$financialType }
+			    	{capture assign=ftUrl}{crmURL p='civicrm/admin/financial/financialType' q="reset=1"}{/capture}
+				{ts 1=$ftUrl}There is no Financial Type configured of Account Relation Revenue. <a href='%1'>Click here</a> if you want to configure financial type for your site.{/ts}
+	        {else}  	
+		{$form.financial_type_id.html}
+		{/if}
+		</td>
+            </tr>
             <tr class="crm-price-option-form-block-count">
                 <td class="label">{$form.count.label}</td>
                 <td>{$form.count.html} {help id="id-participant-count" file="CRM/Price/Page/Field.hlp"}</td>

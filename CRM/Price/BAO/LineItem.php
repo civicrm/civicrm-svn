@@ -103,7 +103,6 @@ class CRM_Price_BAO_LineItem extends CRM_Price_DAO_LineItem {
    */
   static function getLineItems($entityId, $entity = 'participant', $isQuick = NULL) {
     $selectClause = $whereClause = $fromClause = NULL;
-
     $selectClause = "
 SELECT    li.id,
           li.label,
@@ -223,6 +222,7 @@ WHERE     %2.id = %1";
         'membership_type_id' => CRM_Utils_Array::value('membership_type_id', $options[$oid]),
         'auto_renew' => CRM_Utils_Array::value('auto_renew', $options[$oid]),
         'html_type' => $fields['html_type'],
+        'financial_type_id' => CRM_Utils_Array::value( 'financial_type_id', $options[$oid])
       );
     }
   }
@@ -258,24 +258,41 @@ WHERE     %2.id = %1";
    *
    * @return None
    */
-  function processPriceSet($contributionId, $lineItem, $entityTable = 'civicrm_contribution') {
+  function processPriceSet($contributionId, $lineItem, $contributionDetails = null, $initAmount = null, $entityTable = 'civicrm_contribution') {
     if (!$contributionId || !is_array($lineItem)
         || CRM_Utils_system::isNull($lineItem)
         ) {
       return;
     }
-    
+    if ( $initAmount > 0.00) {
+      $initPoint = $contributionDetails->total_amount / $initAmount;
+    }else {
+      $initPoint = 1;
+    }
     foreach ($lineItem as $priceSetId => $values) {
       if (!$priceSetId) {
         continue;
       }
+
       foreach ($values as $line) {
         $line['entity_table'] = $entityTable;
         $line['entity_id'] = $contributionId;
-        CRM_Price_BAO_LineItem::create($line);
+        $lineItems = CRM_Price_BAO_LineItem::create($line);
+        $int_name  = 'txt-price_'. $line['price_field_id'];
+        if ( isset($contributionDetails->init_amount) ) {
+          $initValue = CRM_Utils_Array::value( $int_name , $contributionDetails->init_amount );
+          if ( is_array( $initValue ) ) {
+            $initValue = CRM_Utils_Array::value( $line['price_field_value_id'],  $initValue );
       }
+        }else {
+          $initvalue = (float) $line['unit_price']/$initPoint;
+          $initValue = number_format($initvalue, 2, '.', '');
     }
+        $lineItems->int_name= $initValue;
+        CRM_Financial_BAO_FinancialItem::add( $lineItems, $contributionDetails );
   }
+    }
+  } 
 
   public static function syncLineItems($entityId, $entityTable = 'civicrm_contribution', $amount, $otherParams = NULL) {
     if (!$entityId || CRM_Utils_System::isNull($amount))

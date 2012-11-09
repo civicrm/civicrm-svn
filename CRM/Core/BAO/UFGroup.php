@@ -1817,14 +1817,11 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
     }
     elseif ($fieldName == 'payment_instrument') {
       $form->add('select', $name, $title,
-        array(
-          '' => ts('- select -')) + CRM_Contribute_PseudoConstant::paymentInstrument(), $required
-      );
-    }
-    elseif ($fieldName == 'contribution_type') {
+                       array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::paymentInstrument( ), $required );
+        } else if ($fieldName == 'financial_type' ) {
       $form->add('select', $name, $title,
         array(
-          '' => ts('- select -')) + CRM_Contribute_PseudoConstant::contributionType(), $required
+          '' => ts('- select -')) + CRM_Contribute_PseudoConstant::financialType(), $required
       );
     }
     elseif ($fieldName == 'contribution_status_id') {
@@ -2801,7 +2798,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
       case 'Contribute':
         $componentBAO     = 'CRM_Contribute_BAO_Contribution';
         $componentBAOName = 'Contribution';
-        $componentSubType = array('contribution_type_id');
+            $componentSubType = array( 'financial_type_id' );
         break;
 
       case 'Event':
@@ -2842,7 +2839,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         $defaults[$fldName] = array_pop($noteDetails);
       }
       elseif (in_array($name, array(
-        'contribution_type', 'payment_instrument', 'participant_status', 'participant_role'))) {
+        'financial_type', 'payment_instrument', 'participant_status', 'participant_role'))) {
         $defaults[$fldName] = $values["{$name}_id"];
       }
       elseif ($name == 'membership_type') {

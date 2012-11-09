@@ -181,7 +181,8 @@
                 <tr>
                     <th class='link'>{ts}Contributor's Name{/ts}</th>
                     <th class="currency">{ts}Amount{/ts}</th>
-                    <th>{ts}Contribution Type{/ts}</th>
+
+                    <th>{ts}Financial Type{/ts}</th>
                     <th>{ts}Source{/ts}</th>
                     <th class="received_date">{ts}Received{/ts}</th>
                     <th>{ts}Status{/ts}</th>
@@ -193,7 +194,7 @@
                     <tr class="{cycle values="odd-row,even-row"}">
                         <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`&context=fulltext&key=`$qfKey`"}" title="{ts}View contact details{/ts}">{$row.sort_name}</a></td>
                         <td>{$row.contribution_total_amount|crmMoney}</td>
-                        <td>{$row.contribution_type}</td>
+                        <td>{$row.financial_type}</td>
                         <td>{$row.contribution_source}</td>
                         <td>{$row.contribution_receive_date|crmDate:"%b %d, %Y %l:%M %P"}</td>
                         <td>{$row.contribution_status}</td>

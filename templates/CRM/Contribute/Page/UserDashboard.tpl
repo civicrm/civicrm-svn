@@ -30,7 +30,7 @@
         <table class="selector">
             <tr class="columnheader">
                 <th>{ts}Total Amount{/ts}</th>
-                <th>{ts}Contribution Type{/ts}</th>
+                <th>{ts}Financial Type{/ts}</th>
                 <th>{ts}Received date{/ts}</th>
                 <th>{ts}Receipt Sent{/ts}</th>
                 <th>{ts}Status{/ts}</th>
@@ -43,7 +43,7 @@
                             <br /> {ts}(Recurring Contribution){/ts}
                         {/if}
                     </td>
-                    <td>{$row.contribution_type}</td>
+                    <td>{$row.financial_type}</td>
                     <td>{$row.receive_date|truncate:10:''|crmDate}</td>
                     <td>{$row.receipt_date|truncate:10:''|crmDate}</td>
                     <td>{$row.contribution_status}</td>
@@ -72,7 +72,7 @@
                 <tr class="columnheader">
                     <th >{ts}Contributor{/ts}</th>
                     <th>{ts}Amount{/ts}</th>
-                    <th>{ts}Contribution Type{/ts}</th>
+                    <th>{ts}Financial Type{/ts}</th>
                     <th>{ts}Received date{/ts}</th>
                     <th>{ts}Receipt Sent{/ts}</th>
                     <th>{ts}Status{/ts}</th>

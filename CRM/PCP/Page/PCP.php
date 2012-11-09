@@ -34,7 +34,7 @@
  */
 
 /**
- * Page for displaying list of contribution types
+ * Page for displaying list of financial types
  */
 class CRM_PCP_Page_PCP extends CRM_Core_Page_Basic {
 

@@ -14,7 +14,7 @@ $params = array(
   'help_pre' => 'Please describe your goat in detail',
   'help_post' => 'thank you for your time',
   'extends' => 2,
-  'contribution_type_id' => 1,
+  'financial_type_id' => 1,
   'is_quick_config' => 1,
   'is_reserved' => 1,
 );
@@ -46,7 +46,7 @@ function price_set_create_expectedresult(){
           'help_post' => 'thank you for your time',
           'javascript' => '',
           'extends' => 2,
-          'contribution_type_id' => 1,
+          'financial_type_id' => 1,
           'is_quick_config' => 1,
           'is_reserved' => 1,
         ),

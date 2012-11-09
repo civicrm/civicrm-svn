@@ -16,7 +16,7 @@ function contact_create_example() {
     'api.contribution.create' => array(
       'receive_date' => '2010-01-01',
       'total_amount' => '100',
-      'contribution_type_id' => 1,
+      'financial_type_id' => 1,
       'payment_instrument_id' => 1,
       'non_deductible_amount' => '10',
       'fee_amount' => '50',
@@ -108,7 +108,7 @@ function contact_create_expectedresult() {
             '0' => array(
               'id' => 2,
               'contact_id' => 1,
-              'contribution_type_id' => 1,
+                      'financial_type_id' => 1,
               'contribution_page_id' => '',
               'payment_instrument_id' => 1,
               'receive_date' => '20100101000000',

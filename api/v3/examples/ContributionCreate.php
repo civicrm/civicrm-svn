@@ -10,7 +10,7 @@ $params = array(
   'contact_id' => 1,
   'receive_date' => '20120511',
   'total_amount' => '100',
-  'contribution_type_id' => 11,
+  'financial_type_id' => 11,
   'payment_instrument_id' => 1,
   'non_deductible_amount' => '10',
   'fee_amount' => '50',
@@ -42,7 +42,7 @@ function contribution_create_expectedresult(){
       '1' => array( 
           'id' => 1,
           'contact_id' => 1,
-          'contribution_type_id' => 11,
+          'financial_type_id' => 11,
           'contribution_page_id' => '',
           'payment_instrument_id' => 1,
           'receive_date' => '20120511000000',

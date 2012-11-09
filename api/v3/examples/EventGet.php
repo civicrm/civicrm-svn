@@ -39,7 +39,7 @@ function event_get_expectedresult(){
           'event_start_date' => '2008-10-21 00:00:00',
           'is_online_registration' => 0,
           'is_monetary' => 0,
-          'contribution_type_id' => 0,
+          'financial_type_id' => 0,
           'is_map' => 0,
           'is_active' => 0,
           'is_show_location' => '1',

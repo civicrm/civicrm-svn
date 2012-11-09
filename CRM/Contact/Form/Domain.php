@@ -46,6 +46,13 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
   protected $_id;
 
   /**
+   * the contact_id of domain
+   *
+   * @var int
+   */
+  protected $_contactId;
+
+  /**
    * default from email address option value id.
    *
    * @var int
@@ -58,8 +65,9 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
    * @var int
    * @const
    */
-  CONST LOCATION_BLOCKS = 1; function preProcess() {
+  CONST LOCATION_BLOCKS = 1; 
 
+  function preProcess() {
     CRM_Utils_System::setTitle(ts('Organization Address and Contact Info'));
     $breadCrumbPath = CRM_Utils_System::url('civicrm/admin', 'reset=1');
     CRM_Utils_System::appendBreadCrumb(ts('Administer CiviCRM'), $breadCrumbPath);
@@ -92,7 +100,7 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
     if (isset($this->_id)) {
       $params['id'] = $this->_id;
       CRM_Core_BAO_Domain::retrieve($params, $domainDefaults);
-
+      $this->_contactId = $domainDefaults['contact_id'];
       //get the default domain from email address. fix CRM-3552
       $optionValues = array();
       $grpParams['name'] = 'from_email_address';
@@ -109,6 +117,7 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
 
       unset($params['id']);
       $locParams = $params + array('entity_id' => $this->_id, 'entity_table' => 'civicrm_domain');
+      $locParams = array( 'contact_id' => $domainDefaults['contact_id'] );
       $defaults = CRM_Core_BAO_Location::getValues($locParams);
 
       $config = CRM_Core_Config::singleton();
@@ -239,10 +248,16 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
     $params['address'][1]['location_type_id'] = $defaultLocationType->id;
     $params['phone'][1]['location_type_id'] = $defaultLocationType->id;
     $params['email'][1]['location_type_id'] = $defaultLocationType->id;
+    $params += array('contact_id' => $this->_contactId);
+    $contactParams = array (
+      'sort_name'    => $domain->name,
+      'display_name' => $domain->name,
+      'legal_name'   => $domain->name,
+      'contact_id'   => $this->_contactId,              
+    );
+    CRM_Contact_BAO_Contact::add($contactParams);
+    $location = CRM_Core_BAO_Location::create($params, TRUE);
 
-    $location = CRM_Core_BAO_Location::create($params, TRUE, 'domain');
-
-    $params['loc_block_id'] = $location['id'];
 
     CRM_Core_BAO_Domain::edit($params, $this->_id);
 

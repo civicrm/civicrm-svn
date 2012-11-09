@@ -37,21 +37,23 @@ INSERT INTO civicrm_component (name, namespace) VALUES ('CiviCase'      , 'CRM_C
 INSERT INTO civicrm_component (name, namespace) VALUES ('CiviReport'    , 'CRM_Report' );
 INSERT INTO civicrm_component (name, namespace) VALUES ('CiviCampaign'  , 'CRM_Campaign' );
 
-INSERT INTO civicrm_address ( contact_id, location_type_id, is_primary, is_billing, street_address, street_number, street_number_suffix, street_number_predirectional, street_name, street_type, street_number_postdirectional, street_unit, supplemental_address_1, supplemental_address_2, supplemental_address_3, city, county_id, state_province_id, postal_code_suffix, postal_code, usps_adc, country_id, geo_code_1, geo_code_2, timezone)
-      VALUES
-      ( NULL, 1, 1, 1, '15S El Camino Way E', 14, 'S', NULL, 'El Camino', 'Way', NULL, NULL, NULL, NULL, NULL, 'Collinsville', NULL, 1006, NULL, '6022', NULL, 1228, 41.8328, -72.9253, NULL);
+-- Create organization contact
+INSERT INTO civicrm_contact( `contact_type`, `sort_name`, `display_name`, `legal_name`) 
+VALUES ('Organization', @domainName, @domainName, @domainName );
 
-SELECT @addId := id from civicrm_address where street_address = '15S El Camino Way E';
+SELECT @contactID := id from civicrm_contact where sort_name = "Default Domain Name" and display_name = "Default Domain Name";
+
+
 
 INSERT INTO civicrm_email (contact_id, location_type_id, email, is_primary, is_billing, on_hold, hold_date, reset_date)
       VALUES
-      (NULL, 1, '"Domain Email" <domainemail@example.org>', 0, 0, 0, NULL, NULL);
+      ( @contactID, 1, '"Domain Email" <domainemail@example.org>', 0, 0, 0, NULL, NULL);
 
-SELECT @emailId := id from civicrm_email where email = 'domainemail@example.org';
+SELECT @emailId := id from civicrm_email where email = '"Domain Email" <domainemail@example.org>';
 
 INSERT INTO civicrm_phone (contact_id, location_type_id, is_primary, is_billing, mobile_provider_id, phone, phone_type_id)
       VALUES
-      (NULL, 1, 0, 0, NULL,'204 222-1001', 1);
+      (@contactID, 1, 0, 0, NULL,'204 222-1001', 1);
 
 SELECT @phoneId := id from civicrm_phone where phone = '204 222-1001';
 
@@ -61,7 +63,8 @@ INSERT INTO civicrm_loc_block ( address_id, email_id, phone_id, address_2_id, em
 
 SELECT @locBlockId := id from civicrm_loc_block where phone_id = @phoneId AND email_id = @emailId AND address_id = @addId;
 
-INSERT INTO civicrm_domain (name, version, loc_block_id) VALUES (@domainName, '2.2', @locBlockId);
+
+INSERT INTO civicrm_domain (name, version, contact_id) VALUES (@domainName, '2.2', @contactID);
 SELECT @domainID := id FROM civicrm_domain where name = 'Default Domain Name';
 
 -- Sample location types
@@ -127,10 +130,9 @@ VALUES
     ('{ts escape="sql"}Auto-responder{/ts}','Reply','{ts escape="sql"}Please Send Inquiries to Our Contact Email Address{/ts}','{ts escape="sql"}This is an automated reply from an un-attended mailbox. Please send any inquiries to the contact email address listed on our web-site.{/ts}','{ts escape="sql"}This is an automated reply from an un-attended mailbox. Please send any inquiries to the contact email address listed on our web-site.{/ts}',1,1);
 
 
-
 -- contribution types
 INSERT INTO
-   civicrm_contribution_type(name, is_reserved, is_active, is_deductible)
+   civicrm_financial_type(name, is_reserved, is_active, is_deductible)
 VALUES
   ( '{ts escape="sql"}Donation{/ts}'             , 0, 1, 1 ),
   ( '{ts escape="sql"}Member Dues{/ts}'          , 0, 1, 1 ),
@@ -190,7 +192,7 @@ VALUES
    ('account_type'                  , '{ts escape="sql"}Account type{/ts}'                       , 1, 1),
    ('website_type'                  , '{ts escape="sql"}Website Type{/ts}'                       , 1, 1),
    ('tag_used_for'                  , '{ts escape="sql"}Tag Used For{/ts}'                       , 1, 1),
-   ('currencies_enabled'            , '{ts escape="sql"}List of currencies enabled for this site{/ts}', 1, 1),
+   ('currencies_enabled'            , '{ts escape="sql"}Currencies Enabled{/ts}'                 , 1, 1),
    ('event_badge'                   , '{ts escape="sql"}Event Name Badge{/ts}'                   , 1, 1),
    ('note_privacy'                  , '{ts escape="sql"}Privacy levels for notes{/ts}'           , 1, 1),
    ('campaign_type'                 , '{ts escape="sql"}Campaign Type{/ts}'                      , 1, 1),
@@ -203,13 +205,19 @@ VALUES
    ('pdf_format'                    , '{ts escape="sql"}PDF Page Format{/ts}'                    , 1, 1),
    ('label_format'                  , '{ts escape="sql"}Mailing Label Format{/ts}'               , 1, 1),
    ('activity_contacts'             , '{ts escape="sql"}Activity Contacts{/ts}'                  , 1, 1),
+   ('account_relationship'          , '{ts escape="sql"}Account Relationship{/ts}'               , 1, 1),	
    ('event_contacts'                , '{ts escape="sql"}Event Recipients{/ts}'                   , 1, 1),
    ('conference_slot'               , '{ts escape="sql"}Conference Slot{/ts}'                    , 1, 1),
    ('batch_type'                    , '{ts escape="sql"}Batch Type{/ts}'                         , 1, 1),
    ('batch_status'                  , '{ts escape="sql"}Batch Status{/ts}'                       , 1, 1),
    ('sms_api_type'                  , '{ts escape="sql"}Api Type{/ts}'                           , 1, 1),
    ('sms_provider_name'             , '{ts escape="sql"}Sms Provider Internal Name{/ts}'         , 1, 1),
-   ('auto_renew_options'            , '{ts escape="sql"}Auto Renew Options{/ts}'         	 , 1, 1);
+   ('auto_renew_options'            , '{ts escape="sql"}Auto Renew Options{/ts}'         	 , 1, 1),
+   ('financial_account_type'        , '{ts escape="sql"}Financial Account Type{/ts}'             , 1, 1),
+   ('financial_item_status'         , '{ts escape="sql"}Financial Item Status{/ts}'              , 1, 1),
+   ('grant_program_status'          , '{ts escape="sql"}Grant Program Status{/ts}'                , 1, 1),
+   ('allocation_algorithm'          , '{ts escape="sql"}Grant Program Allocation Algorithm{/ts}'  , 1, 1),
+   ('batch_mode'                    , '{ts escape="sql"}Batch Mode{/ts}'                         , 1, 1);
 
 SELECT @option_group_id_pcm            := max(id) from civicrm_option_group where name = 'preferred_communication_method';
 SELECT @option_group_id_act            := max(id) from civicrm_option_group where name = 'activity_type';
@@ -271,6 +279,7 @@ SELECT @option_group_id_cgeo           := max(id) from civicrm_option_group wher
 SELECT @option_group_id_paperSize      := max(id) from civicrm_option_group where name = 'paper_size';
 SELECT @option_group_id_label          := max(id) from civicrm_option_group where name = 'label_format';
 SELECT @option_group_id_aco            := max(id) from civicrm_option_group where name = 'activity_contacts';
+SELECT @option_group_id_arel           := max(id) from civicrm_option_group where name = 'account_relationship';
 SELECT @option_group_id_ere            := max(id) from civicrm_option_group where name = 'event_contacts';
 SELECT @option_group_id_conference_slot := max(id) from civicrm_option_group where name = 'conference_slot';
 SELECT @option_group_id_batch_type     := max(id) from civicrm_option_group where name = 'batch_type';
@@ -278,6 +287,11 @@ SELECT @option_group_id_batch_status   := max(id) from civicrm_option_group wher
 SELECT @option_group_id_sms_api_type   := max(id) from civicrm_option_group where name = 'sms_api_type';
 SELECT @option_group_id_sms_provider_name := max(id) from civicrm_option_group where name = 'sms_provider_name';
 SELECT @option_group_id_aro := max(id) from civicrm_option_group where name = 'auto_renew_options';
+SELECT @option_group_id_fat            := max(id) from civicrm_option_group where name = 'financial_account_type';
+SELECT @option_group_id_financial_item_status := max(id) from civicrm_option_group where name = 'financial_item_status';
+SELECT @option_group_id_grantProgramSt  := max(id) from civicrm_option_group where name = 'grant_program_status';
+SELECT @option_group_id_allocationAlgo  := max(id) from civicrm_option_group where name = 'allocation_algorithm';
+SELECT @option_group_id_batch_mode := max(id) from civicrm_option_group where name = 'batch_mode';
 
 
 SELECT @contributeCompId := max(id) FROM civicrm_component where name = 'CiviContribute';
@@ -349,6 +363,9 @@ VALUES
    (@option_group_id_act, '{ts escape="sql"}Update Recurring Contribution{/ts}',      39, 'Update Recurring Contribution', NULL,1, 0, 39, '', 0, 1, 1, NULL, NULL),
 
    (@option_group_id_act, '{ts escape="sql"}Reminder Sent{/ts}',      		      40, 'Reminder Sent', NULL, 1, 0, 40, '', 0, 1, 1, NULL, NULL),
+
+ -- Activity Types for Financial Transactions Batch
+ (@option_group_id_act, '{ts escape="sql"}Export of Financial Transactions Batch{/ts}',34, 'Export of Financial Transactions Batch', NULL,0, 0, 34, 'Export of Financial Transactions Batch', 0, 1, 1, 2, NULL),
 
    (@option_group_id_gender, '{ts escape="sql"}Female{/ts}',      1, 'Female',      NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_gender, '{ts escape="sql"}Male{/ts}',        2, 'Male',        NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
@@ -504,9 +521,12 @@ VALUES
   (@option_group_id_gType, 'Access Control'  , 1, NULL, NULL, 0, NULL, 1, NULL, 0, 1, 1, NULL, NULL),
   (@option_group_id_gType, 'Mailing List'    , 2, NULL, NULL, 0, NULL, 2, NULL, 0, 1, 1, NULL, NULL),
 
-  (@option_group_id_grantSt, '{ts escape="sql"}Pending{/ts}',  1, 'Pending',  NULL, 0, 1,    1, NULL, 0, 0, 1, NULL, NULL),
-  (@option_group_id_grantSt, '{ts escape="sql"}Granted{/ts}',  2, 'Granted',  NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_grantSt, '{ts escape="sql"}Submitted{/ts}',             1, 'Submitted',  NULL, 0, 1,    1, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_grantSt, '{ts escape="sql"}Approved{/ts}',              2, 'Approved',  NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_grantSt, '{ts escape="sql"}Rejected{/ts}', 3, 'Rejected', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_grantSt, '{ts escape="sql"}Paid{/ts}',                  4, 'Paid',     NULL, 0, NULL, 4, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_grantSt, '{ts escape="sql"}Awaiting Information'{/ts}', 5, 'Awaiting Information', NULL, 0, NULL, 5, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_grantSt, '{ts escape="sql"}Withdrawn{/ts}',             6, 'Withdrawn',     NULL, 0, NULL, 6, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_honorTyp, '{ts escape="sql"}In Honor of{/ts}'        , 1, 'In Honor of'       , NULL, 0, 1,    1, NULL, 0, 1, 1, NULL, NULL),
   (@option_group_id_honorTyp, '{ts escape="sql"}In Memory of{/ts}'       , 2, 'In Memory of'      , NULL, 0, NULL, 2, NULL, 0, 1, 1, NULL, NULL),
 
@@ -532,8 +552,8 @@ VALUES
   (@option_group_id_report , '{ts escape="sql"}Activity Report{/ts}',                         'activity',                       'CRM_Report_Form_Activity',                       NULL, 0, NULL, 3,  '{ts escape="sql"}Provides a list of constituent activity including activity statistics for one/all contacts during a given date range(required){/ts}', 0, 0, 1, NULL, NULL),
   (@option_group_id_report , '{ts escape="sql"}Walk / Phone List Report{/ts}',                'walklist',                       'CRM_Report_Form_Walklist_Walklist',                       NULL, 0, NULL, 4,  '{ts escape="sql"}Provides a detailed report for your walk/phonelist for targetted contacts{/ts}', 0, 0, 0, NULL, NULL),
   (@option_group_id_report , '{ts escape="sql"}Current Employer Report{/ts}',                 'contact/currentEmployer',        'CRM_Report_Form_Contact_CurrentEmployer',        NULL, 0, NULL, 5,  '{ts escape="sql"}Provides detail list of employer employee relationships along with employment details Ex Join Date{/ts}', 0, 0, 1, NULL, NULL),
-  (@option_group_id_report , '{ts escape="sql"}Contribution Summary Report{/ts}',             'contribute/summary',             'CRM_Report_Form_Contribute_Summary',             NULL, 0, NULL, 6,  '{ts escape="sql"}Groups and totals contributions by criteria including contact, time period, contribution type, contributor location, etc.{/ts}', 0, 0, 1, @contributeCompId, NULL),
-  (@option_group_id_report , '{ts escape="sql"}Contribution Detail Report{/ts}',              'contribute/detail',              'CRM_Report_Form_Contribute_Detail',              NULL, 0, NULL, 7,  '{ts escape="sql"}Lists specific contributions by criteria including contact, time period, contribution type, contributor location, etc. Contribution summary report points to this report for contribution details.{/ts}', 0, 0, 1, @contributeCompId, NULL),
+  (@option_group_id_report , '{ts escape="sql"}Contribution Summary Report{/ts}',             'contribute/summary',             'CRM_Report_Form_Contribute_Summary',             NULL, 0, NULL, 6,  '{ts escape="sql"}Groups and totals contributions by criteria including contact, time period, financial type, contributor location, etc.{/ts}', 0, 0, 1, @contributeCompId, NULL),
+  (@option_group_id_report , '{ts escape="sql"}Contribution Detail Report{/ts}',              'contribute/detail',              'CRM_Report_Form_Contribute_Detail',              NULL, 0, NULL, 7,  '{ts escape="sql"}Lists specific contributions by criteria including contact, time period, financial type, contributor location, etc. Contribution summary report points to this report for contribution details.{/ts}', 0, 0, 1, @contributeCompId, NULL),
   (@option_group_id_report , '{ts escape="sql"}Repeat Contributions Report{/ts}',             'contribute/repeat',              'CRM_Report_Form_Contribute_Repeat',              NULL, 0, NULL, 8,  '{ts escape="sql"}Given two date ranges, shows contacts who contributed in both the date ranges with the amount contributed in each and the percentage increase / decrease.{/ts}', 0, 0, 1, @contributeCompId, NULL),
   (@option_group_id_report , '{ts escape="sql"}Contributions by Organization Report{/ts}',    'contribute/organizationSummary', 'CRM_Report_Form_Contribute_OrganizationSummary', NULL, 0, NULL, 9,  '{ts escape="sql"}Displays a detailed list of contributions grouped by organization, which includes contributions made by employees for the organisation.{/ts}', 0, 0, 1, @contributeCompId, NULL),
   (@option_group_id_report , '{ts escape="sql"}Contributions by Household Report{/ts}',       'contribute/householdSummary',    'CRM_Report_Form_Contribute_HouseholdSummary',    NULL, 0, NULL, 10, '{ts escape="sql"}Displays a detailed list of contributions grouped by household which includes contributions made by members of the household.{/ts}', 0, 0, 1, @contributeCompId, NULL),
@@ -799,6 +819,33 @@ VALUES
    (@option_group_id_aco, '{ts escape="sql"}Activity Source{/ts}', 2, 'Activity Source', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_aco, '{ts escape="sql"}Activity Targets{/ts}', 3, 'Activity Targets', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
 
+-- financial_account_type
+   (@option_group_id_fat, '{ts escape="sql"}Asset{/ts}', 1, 'Asset', NULL, 0, 0, 1, 'Things you own', 0, 1, 1, 2, NULL),
+   (@option_group_id_fat, '{ts escape="sql"}Liability{/ts}', 2, 'Liability', NULL, 0, 0, 2, 'Things you own, like a grant still to be disbursed', 0, 1, 1, 2, NULL),
+   (@option_group_id_fat, '{ts escape="sql"}Revenue{/ts}', 3, 'Revenue', NULL, 0, 1, 3, 'Income from contributions and sales of tickets and memberships', 0, 1, 1, 2, NULL),
+   (@option_group_id_fat, '{ts escape="sql"}Cost of Sales{/ts}', 4, 'Cost of Sales', NULL, 0, 0, 4, 'Costs incurred to get revenue, e.g. premiums for donations, dinner for a fundraising dinner ticket', 0, 1, 1, 2, NULL),
+   (@option_group_id_fat, '{ts escape="sql"}Expenses{/ts}', 5, 'Expenses', NULL, 0, 0, 5, 'Things that are paid for that are consumable, e.g. grants disbursed', 0, 1, 1, 2, NULL),
+
+-- account_relationship
+    (@option_group_id_arel, '{ts escape="sql"}Income Account is{/ts}', 1, 'Income Account is', NULL, 0, 1, 1, 'Income Account is', 0, 1, 1, 2, NULL),
+    (@option_group_id_arel, '{ts escape="sql"}Credit/Contra Account is{/ts}', 2, 'Credit/Contra Account is', NULL, 0, 0, 2, 'Credit/Contra Account is', 0, 1, 0, 2, NULL),
+    (@option_group_id_arel, '{ts escape="sql"}AR Account is{/ts}', 3, 'AR Account is', NULL, 0, 0, 3, 'AR Account is', 0, 1, 1, 2, NULL),
+    (@option_group_id_arel, '{ts escape="sql"}Credit Liability Account is{/ts}', 4, 'Credit Liability Account is', NULL, 0, 0, 4, 'Credit Liability Account is', 0, 1, 0, 2, NULL),
+     (@option_group_id_arel, '{ts escape="sql"}Expense Account is{/ts}', 5, 'Expense Account is', NULL, 0, 0, 5, 'Expense Account is', 0, 1, 1, 2, NULL),
+     (@option_group_id_arel, '{ts escape="sql"}Asset Account of{/ts}', 6, 'Asset Account of', NULL, 0, 0, 6, 'Asset Account of', 0, 1, 1, 2, NULL),
+     (@option_group_id_arel, '{ts escape="sql"}Cost of Sales Account is{/ts}', 7, 'Cost of Sales Account is', NULL, 0, 0, 7, 'Cost of Sales Account is', 0, 1, 1, 2, NULL),
+     (@option_group_id_arel, '{ts escape="sql"}Premiums Inventory Account is{/ts}', 8, 'Premiums Inventory Account is', NULL, 0, 0, 8, 'Premiums Inventory Account is', 0, 1, 1, 2, NULL),
+     (@option_group_id_arel, '{ts escape="sql"}Discounts Account is{/ts}', 9, 'Discounts Account is', NULL, 0, 0, 9, 'Discounts Account is', 0, 1, 1, 2, NULL),
+
+-- Batch Mode
+   (@option_group_id_batch_mode, '{ts escape="sql"}Manual Batch{/ts}', 1, 'Manual Batch', NULL, 0, 0, 1, 'Manual Batch', 0, 1, 1, 2, NULL),
+   (@option_group_id_batch_mode, '{ts escape="sql"}Automatic Batch{/ts}', 2, 'Automatic Batch', NULL, 0, 0, 2, 'Automatic Batch', 0, 1, 1, 2, NULL),
+
+-- Financial Item Status
+   (@option_group_id_financial_item_status, '{ts escape="sql"}Paid{/ts}', 1, 'Paid', NULL, 0, 0, 1, 'Paid', 0, 1, 1, 2, NULL),
+   (@option_group_id_financial_item_status, '{ts escape="sql"}Partially paid{/ts}', 2, 'Partially paid', NULL, 0, 0, 2, 'Partially paid', 0, 1, 1, 2, NULL),
+   (@option_group_id_financial_item_status, '{ts escape="sql"}Unpaid{/ts}', 3, 'Unpaid', NULL, 0, 0, 1, 'Unpaid', 0, 1, 1, 2, NULL),
+
 -- event_contacts
    (@option_group_id_ere, '{ts escape="sql"}Participant Role{/ts}', 1, 'participant_role', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
 
@@ -809,10 +856,17 @@ VALUES
 -- default batch type
    (@option_group_id_batch_type, '{ts escape="sql"}Contribution{/ts}', 1, '{ts escape="sql"}Contribution{/ts}', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_batch_type, '{ts escape="sql"}Membership{/ts}', 2, '{ts escape="sql"}Membership{/ts}', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
+   (@option_group_id_batch_type, '{ts escape="sql"}Manual batch{/ts}', 3, '{ts escape="sql"}Manual batch{/ts}', NULL, 0, 0, 3, 'Manual batch', 0, 1, 1, 2, NULL),
+   (@option_group_id_batch_type, '{ts escape="sql"}Automatic batch{/ts}', 4, '{ts escape="sql"}Automatic batch{/ts}', NULL, 0, 0, 4, 'Automatic batch', 0, 1, 1, 2, NULL),
 
 -- default batch statues
    (@option_group_id_batch_status, '{ts escape="sql"}Open{/ts}', 1, '{ts escape="sql"}Open{/ts}', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_batch_status, '{ts escape="sql"}Closed{/ts}', 2, '{ts escape="sql"}Closed{/ts}', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
+
+-- Financial Item Status
+   (@option_group_id_financial_item_status, '{ts escape="sql"}Paid{/ts}', 1, 'Paid', NULL, 0, 0, 1, 'Paid', 0, 1, 1, 2, NULL),
+   (@option_group_id_financial_item_status, '{ts escape="sql"}Partially paid{/ts}', 2, 'Partially paid', NULL, 0, 0, 2, 'Partially paid', 0, 1, 1, 2, NULL),
+   (@option_group_id_financial_item_status, '{ts escape="sql"}Unpaid{/ts}', 3, 'Unpaid', NULL, 0, 0, 1, 'Unpaid', 0, 1, 1, 2, NULL),
 
 -- sms_api_type
    (@option_group_id_sms_api_type, 'http', 1, 'http', NULL, NULL, 0, 1, NULL, 0, 1, 1, NULL, NULL),
@@ -827,6 +881,21 @@ VALUES
    (@option_group_id_aro, 'Auto-renew Memberships Only', 2, 'Auto-renew Memberships Only', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_aro, 'Reminder for Both', 3, 'Reminder for Both', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
 
+-- financial_account_type
+   (@option_group_id_fat, '{ts escape="sql"}Asset{/ts}', 1, 'Asset', NULL, 0, 0, 1, 'Things you own', 0, 1, 1, 2, NULL),
+   (@option_group_id_fat, '{ts escape="sql"}Liability{/ts}', 2, 'Liability', NULL, 0, 0, 2, 'Things you own, like a grant still to be disbursed', 0, 1, 1, 2, NULL),
+   (@option_group_id_fat, '{ts escape="sql"}Revenue{/ts}', 3, 'Revenue', NULL, 0, 1, 3, 'Income from contributions and sales of tickets and memberships', 0, 1, 1, 2, NULL),
+   (@option_group_id_fat, '{ts escape="sql"}Cost of Goods Sold{/ts}', 4, 'Cost of Goods Sold', NULL, 0, 0, 4, 'Costs incurred to get revenue, e.g. premiums for donations, dinner for a fundraising dinner ticket', 0, 1, 1, 2, NULL),
+   (@option_group_id_fat, '{ts escape="sql"}Expenses{/ts}', 5, 'Expenses', NULL, 0, 0, 5, 'Things that are paid for that are consumable, e.g. grants disbursed', 0, 1, 1, 2, NULL),
+
+-- account_relationship
+    (@option_group_id_arel, '{ts escape="sql"}Income Account is{/ts}', 1, 'Income Account is', NULL, 0, 1, 1, 'Income Account is', 0, 1, 1, 2, NULL),
+    (@option_group_id_arel, '{ts escape="sql"}Credit/Contra Account is{/ts}', 2, 'Credit/Contra Account is', NULL, 0, 0, 2, 'Credit/Contra Account is', 0, 1, 0, 2, NULL),
+    (@option_group_id_arel, '{ts escape="sql"}AR Account is{/ts}', 3, 'AR Account is', NULL, 0, 0, 3, 'AR Account is', 0, 1, 1, 2, NULL),
+    (@option_group_id_arel, '{ts escape="sql"}Credit Liability Account is{/ts}', 4, 'Credit Liability Account is', NULL, 0, 0, 4, 'Credit Liability Account is', 0, 1, 0, 2, NULL),
+     (@option_group_id_arel, '{ts escape="sql"}Expense Account is{/ts}', 5, 'Expense Account is', NULL, 0, 0, 5, 'Expense Account is', 0, 1, 1, 2, NULL),
+     (@option_group_id_arel, '{ts escape="sql"}Is Asset Account of{/ts}', 6, 'Is Asset Account of', NULL, 0, 0, 6, 'Is Asset Account of', 0, 1, 1, 2, NULL),
+
 -- Label Formats
   (@option_group_id_label, '{ts escape="sql"}Avery 3475{/ts}', '{literal}{"paper-size":"a4","orientation":"portrait","font-name":"helvetica","font-size":10,"font-style":"","metric":"mm","lMargin":0,"tMargin":5,"NX":3,"NY":8,"SpaceX":0,"SpaceY":0,"width":70,"height":36,"lPadding":5.08,"tPadding":5.08}{/literal}',                   '3475',  'Avery', NULL, 0, 1,  NULL, 0, 1, 1, NULL, NULL),
   (@option_group_id_label, '{ts escape="sql"}Avery 5160{/ts}', '{literal}{"paper-size":"letter","orientation":"portrait","font-name":"helvetica","font-size":8,"font-style":"","metric":"in","lMargin":0.21975,"tMargin":0.5,"NX":3,"NY":10,"SpaceX":0.14,"SpaceY":0,"width":2.5935,"height":1,"lPadding":0.20,"tPadding":0.20}{/literal}', '5160',  'Avery', NULL, 0, 2,  NULL, 0, 1, 1, NULL, NULL),
@@ -839,6 +908,30 @@ VALUES
   (@option_group_id_label, '{ts escape="sql"}Avery L7161{/ts}', '{literal}{"paper-size":"a4","orientation":"portrait","font-name":"helvetica","font-size":9,"font-style":"","metric":"in","lMargin":0.28,"tMargin":0.35,"NX":3,"NY":6,"SpaceX":0.1,"SpaceY":0,"width":2.5,"height":1.83,"lPadding":0.20,"tPadding":0.20}{/literal}',        'L7161', 'Avery', NULL, 0, 9,  NULL, 0, 1, 1, NULL, NULL),
   (@option_group_id_label, '{ts escape="sql"}Avery L7162{/ts}', '{literal}{"paper-size":"a4","orientation":"portrait","font-name":"helvetica","font-size":9,"font-style":"","metric":"in","lMargin":0.18,"tMargin":0.51,"NX":2,"NY":8,"SpaceX":0.1,"SpaceY":0,"width":3.9,"height":1.33,"lPadding":0.20,"tPadding":0.20}{/literal}',        'L7162', 'Avery', NULL, 0, 10, NULL, 0, 1, 1, NULL, NULL),
   (@option_group_id_label, '{ts escape="sql"}Avery L7163{/ts}', '{literal}{"paper-size":"a4","orientation":"portrait","font-name":"helvetica","font-size":9,"font-style":"","metric":"in","lMargin":0.18,"tMargin":0.6,"NX":2,"NY":7,"SpaceX":0.1,"SpaceY":0,"width":3.9,"height":1.5,"lPadding":0.20,"tPadding":0.20}{/literal}',          'L7163', 'Avery', NULL, 0, 11, NULL, 0, 1, 1, NULL, NULL);
+
+-- financial accounts
+SELECT @opval := value FROM civicrm_option_value WHERE name = 'Revenue' and option_group_id = @option_group_id_fat;
+SELECT @opexp := value FROM civicrm_option_value WHERE name = 'Expenses' and option_group_id = @option_group_id_fat;
+SELECT @opAsset := value FROM civicrm_option_value WHERE name = 'Asset' and option_group_id = @option_group_id_fat;
+SELECT @opLiability := value FROM civicrm_option_value WHERE name = 'Liability' and option_group_id = @option_group_id_fat;
+SELECT @opCost := value FROM civicrm_option_value WHERE name = 'Cost of Sales' and option_group_id = @option_group_id_fat;
+
+INSERT INTO
+   `civicrm_financial_account` (`name`, `contact_id`, `financial_account_type_id`, `description`, `accounting_code`, `is_reserved`, `is_active`, `is_deductible`, `is_default`)
+VALUES
+  ( '{ts escape="sql"}Donations{/ts}'             , @contactID, @opval, 'Default account for donations', '4200', 0, 1, 1, 0 ),
+  ( '{ts escape="sql"}Member Dues{/ts}'          , @contactID, @opval, 'Default account for membership sales', '4400', 0, 1, 1, 0 ), 
+  ( '{ts escape="sql"}Campaign Contribution{/ts}', @contactID, @opval, 'Sample account for recording payments to a campaign', '4100', 0, 1, 0, 0 ),
+  ( '{ts escape="sql"}Event Fee{/ts}'            , @contactID, @opval, 'Default account for event ticket sales', '4300', 0, 1, 0, 0 ),
+  ( '{ts escape="sql"}Banking Fees{/ts}'         , @contactID, @opexp, 'Payment processor fees and manually recorded banking fees', '5200', 0, 1, 0, 0 ),
+  ( '{ts escape="sql"}Deposit bank account{/ts}' , @contactID, @opAsset, 'All manually recorded cash and cheques go to this account', '1100', 0, 1, 0, 0 ),
+  ( '{ts escape="sql"}Accounts Receivable{/ts}'  , @contactID, @opAsset, 'Amounts to be received later (eg pay later event revenues)', '1200', 0, 1, 0, 1 ),
+  ( '{ts escape="sql"}Accounts Payable{/ts}'     , @contactID, @opLiability, 'Amounts to be paid out such as grants and refunds', '2200', 0, 1, 0, 0 ),
+  ( '{ts escape="sql"}Checking Account{/ts}'     , @contactID, @opAsset, 'Bank accounts against which checks to pay grants, refunds, etc are written', '1100', 0, 1, 0, 0 ),
+  ( '{ts escape="sql"}Premiums{/ts}'             , @contactID, @opCost, 'Account to record cost of premiums provided to payors', '5100', 0, 1, 0, 0 ),
+  ( '{ts escape="sql"}Premiums inventory{/ts}'   , @contactID, @opAsset, 'Account representing value of premiums inventory', '1375', 0, 1, 0, 0 ),
+  ( '{ts escape="sql"}Discounts{/ts}'            , @contactID, @opval, 'Contra-revenue account for amounts discounted from sales', '4900', 0, 1, 0, 0 ),
+  ( '{ts escape="sql"}Refunds{/ts}'              , @contactID, @opval, 'Contra-revenue account for amounts refunded', '4800', 0, 1, 0, 0 );
 
 -- Now insert option values which require domainID
 --
@@ -854,6 +947,15 @@ VALUES
   (@option_group_id_grantTyp, '{ts escape="sql"}Family Support{/ts}'     , 2, 'Family Support'    , NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, @domainID, NULL),
   (@option_group_id_grantTyp, '{ts escape="sql"}General Protection{/ts}' , 3, 'General Protection', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, @domainID, NULL),
   (@option_group_id_grantTyp, '{ts escape="sql"}Impunity{/ts}'           , 4, 'Impunity'          , NULL, 0, NULL, 4, NULL, 0, 0, 1, NULL, @domainID, NULL),
+
+-- grant program status
+  (@option_group_id_grantProgramSt, '{ts escape="sql"}Accepting Applications{/ts}'          , 1, 'Accepting Applications'         , NULL, 0, 1,    1, NULL, 0, 0, 1, NULL, @domainID, NULL),    
+  (@option_group_id_grantProgramSt, '{ts escape="sql"}Trial Allocation{/ts}'     , 2, 'Trial Allocation'    , NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, @domainID, NULL),
+  (@option_group_id_grantProgramSt, '{ts escape="sql"}Allocation Finalized{/ts}' , 3, 'Allocation Finalized', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, @domainID, NULL),
+
+-- grant program alocation algorithm
+ (@option_group_id_allocationAlgo, '{ts escape="sql"}Over Threshold, Percentage of Request Funded{/ts}'          , 1, 'Over Threshold, Percentage of Request Funded'         , NULL, 0, 1,    1, NULL, 0, 0, 1, NULL, @domainID, NULL),    
+  (@option_group_id_allocationAlgo, '{ts escape="sql"}Best to Worst, Fully Funded{/ts}'     , 2, 'Best to Worst, Fully Funded'    , NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, @domainID, NULL),
 
 -- Mail Approval Status Preferences
   (@option_group_id_mail_approval_status, '{ts escape="sql"}Approved{/ts}' , 1, 'Approved', NULL, 0, 1, 1, NULL, 0, 1, 1, @mailCompId, @domainID, NULL),
@@ -1305,7 +1407,7 @@ INSERT INTO civicrm_uf_field
        (  9,           'postal_code',           1,           0,           6,      'User and User Admin Only',  0,           0,             3,             '{ts escape="sql"}Postal Code{/ts}',                    'Contact',    NULL,   NULL),
        (  9,           'country',               1,           0,           7,      'User and User Admin Only',  0,           0,             3,             '{ts escape="sql"}Country{/ts}',                        'Contact',    NULL,   NULL),
        (  9,           'state_province',        1,           0,           8,      'User and User Admin Only',  0,           0,             3,             '{ts escape="sql"}State / Province{/ts}',               'Contact',    NULL,   NULL),
-       ( 10,     'contribution_type',           1, 1, 1, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Type{/ts}', 'Contribution', NULL, NULL ),
+       ( 10,     'financial_type',           1, 1, 1, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Type{/ts}', 'Contribution', NULL, NULL ),
        ( 10,     'total_amount',                1, 1, 2, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Amount{/ts}', 'Contribution', NULL, NULL ),
        ( 10,     'contribution_status_id',      1, 1, 3, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Status{/ts}', 'Contribution', NULL, NULL ),
        ( 10,     'receive_date',                1, 1, 4, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Received{/ts}', 'Contribution', NULL, NULL ),
@@ -1319,9 +1421,8 @@ INSERT INTO civicrm_uf_field
        ( 11,     'membership_start_date',       0, 1, 3, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Start Date{/ts}', 'Membership', NULL, NULL ),
        ( 11,     'membership_end_date',         0, 1, 4, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}End Date{/ts}', 'Membership', NULL, NULL ),
        ( 11,     'membership_source',           0, 0, 5, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Source{/ts}', 'Membership', NULL, NULL ),
-
        ( 11,     'send_receipt',                0, 0, 6, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Send Receipt{/ts}', 'Membership', NULL, NULL ),
-       ( 11,     'contribution_type',           1, 1, 7, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Contribution Type{/ts}', 'Membership', NULL, NULL ),
+       ( 11,     'financial_type',           1, 1, 7, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Financial Type{/ts}', 'Membership', NULL, NULL ),
        ( 11,     'total_amount',                1, 1, 8, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Amount{/ts}', 'Membership', NULL, NULL ),
        ( 11,     'receive_date',                1, 1, 9, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Received{/ts}', 'Membership', NULL, NULL ),
        ( 11,     'payment_instrument',          0, 0, 10, 'User and User Admin Only', 0, 0, NULL, '{ts escape="sql"}Paid By{/ts}', 'Membership', NULL, NULL ),
@@ -1392,12 +1493,50 @@ format=[csv or print] optional-output CSV or print-friendly HTML, else PDF{/ts}'
     ( @domainID, 'Always' , NULL, '{ts escape="sql" skip="true"}Send Scheduled SMS{/ts}',           '{ts escape="sql" skip="true"}Sends out scheduled SMS{/ts}', 'job', 'process_sms',             NULL, 0),
     ( @domainID, 'Always' , NULL, '{ts escape="sql" skip="true"}Rebuild Smart Group Cache{/ts}', '{ts escape="sql" skip="true"}Rebuilds the smart group cache.{/ts}', 'job', 'group_rebuild', '{ts escape="sql" skip="true"}limit=Number optional-Limit the number of smart groups rebuild{/ts}', 0);
 
+SELECT @option_value_rel_id  := value FROM `civicrm_option_value` WHERE `option_group_id` = @option_group_id_arel AND `name` = 'Income Account is';
+SELECT @option_value_rel_id_exp  := value FROM `civicrm_option_value` WHERE `option_group_id` = @option_group_id_arel AND `name` = 'Expense Account is';
+SELECT @option_value_rel_id_ar  := value FROM `civicrm_option_value` WHERE `option_group_id` = @option_group_id_arel AND `name` = 'AR Account is';
+SELECT @option_value_rel_id_as  := value FROM `civicrm_option_value` WHERE `option_group_id` = @option_group_id_arel AND `name` = 'Asset Account of';
+
+SELECT @financial_type_id_dtn 	       := max(id) FROM `civicrm_financial_type` WHERE `name` = 'Donation';
+SELECT @financial_type_id_md	       := max(id) FROM `civicrm_financial_type` WHERE `name` = 'Member Dues';
+SELECT @financial_type_id_cc	       := max(id) FROM `civicrm_financial_type` WHERE `name` = 'Campaign Contribution';
+SELECT @financial_type_id_ef	       := max(id) FROM `civicrm_financial_type` WHERE `name` = 'Event Fee';
+
+SELECT @financial_account_id_dtn       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Donations';
+SELECT @financial_account_id_md	       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Member Dues';
+SELECT @financial_account_id_cc	       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Campaign Contribution';
+SELECT @financial_account_id_ef	       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Event Fee';
+SELECT @financial_account_id_bf	       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Banking Fees';
+SELECT @financial_account_id_ap	       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Accounts Payable';
+SELECT @financial_account_id_ar	       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Accounts Receivable';
+
+INSERT INTO `civicrm_entity_financial_account`
+     ( entity_table, entity_id, account_relationship, financial_account_id )
+VALUES 
+     ( 'civicrm_financial_type', @financial_type_id_dtn, @option_value_rel_id, @financial_account_id_dtn ),
+     ( 'civicrm_financial_type', @financial_type_id_dtn, @option_value_rel_id_exp, @financial_account_id_bf ),
+     ( 'civicrm_financial_type', @financial_type_id_dtn, @option_value_rel_id_ar, @financial_account_id_ap ),
+     ( 'civicrm_financial_type', @financial_type_id_dtn, @option_value_rel_id_as, @financial_account_id_ar ),
+     ( 'civicrm_financial_type', @financial_type_id_md, @option_value_rel_id, @financial_account_id_md ),
+     ( 'civicrm_financial_type', @financial_type_id_md, @option_value_rel_id_exp, @financial_account_id_bf ),
+     ( 'civicrm_financial_type', @financial_type_id_md, @option_value_rel_id_ar, @financial_account_id_ap ),
+     ( 'civicrm_financial_type', @financial_type_id_md, @option_value_rel_id_as, @financial_account_id_ar ),
+     ( 'civicrm_financial_type', @financial_type_id_cc, @option_value_rel_id, @financial_account_id_cc ),
+     ( 'civicrm_financial_type', @financial_type_id_cc, @option_value_rel_id_exp, @financial_account_id_bf ),
+     ( 'civicrm_financial_type', @financial_type_id_cc, @option_value_rel_id_as, @financial_account_id_ar ),
+     ( 'civicrm_financial_type', @financial_type_id_cc, @option_value_rel_id_ar, @financial_account_id_ap ),
+     ( 'civicrm_financial_type', @financial_type_id_ef, @option_value_rel_id_exp, @financial_account_id_bf ),
+     ( 'civicrm_financial_type', @financial_type_id_ef, @option_value_rel_id_ar, @financial_account_id_ap ),
+     ( 'civicrm_financial_type', @financial_type_id_ef, @option_value_rel_id_as, @financial_account_id_ar ),
+     ( 'civicrm_financial_type', @financial_type_id_ef, @option_value_rel_id, @financial_account_id_ef );
+
 -- CRM-9714
 
-SELECT @contribution_type_id := max(id) FROM `civicrm_contribution_type` WHERE `name` = 'Member Dues';
-INSERT INTO `civicrm_price_set` ( `name`, `title`, `is_active`, `extends`, `is_quick_config`, `contribution_type_id`, `is_reserved` )
+SELECT @financial_type_id := max(id) FROM `civicrm_financial_type` WHERE `name` = 'Member Dues';
+INSERT INTO `civicrm_price_set` ( `name`, `title`, `is_active`, `extends`, `is_quick_config`, `financial_type_id`, `is_reserved` )
 VALUES ( 'default_contribution_amount', 'Contribution Amount', '1', '2', '1', NULL,1),
-( 'default_membership_type_amount', 'Membership Amount', '1', '3', '1', @contribution_type_id,1);
+( 'default_membership_type_amount', 'Membership Amount', '1', '3', '1', @financial_type_id,1);
 
 SELECT @setID := max(id) FROM civicrm_price_set WHERE name = 'default_contribution_amount' AND extends = 2 AND is_quick_config = 1 ;
 
@@ -1406,5 +1545,6 @@ VALUES ( @setID, 'contribution_amount', 'Contribution Amount', 'Text', '1', '1',
 
 SELECT @fieldID := max(id) FROM civicrm_price_field WHERE name = 'contribution_amount' AND price_set_id = @setID;
 
-INSERT INTO `civicrm_price_field_value` (  `price_field_id`, `name`, `label`, `amount`, `weight`, `is_default`, `is_active`)
-VALUES ( @fieldID, 'contribution_amount', 'Contribution Amount', '1', '1', '0', '1');
+INSERT INTO `civicrm_price_field_value` (  `price_field_id`, `name`, `label`, `amount`, `weight`, `is_default`, `is_active`, `financial_type_id`)
+VALUES ( @fieldID, 'contribution_amount', 'Contribution Amount', '1', '1', '0', '1', 1);
+

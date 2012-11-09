@@ -63,7 +63,7 @@ class CRM_Member_BAO_MembershipLogTest extends CiviUnitTestCase {
       'duration_unit' => 'year',
       'period_type' => 'fixed',
       'duration_interval' => 1,
-      'contribution_type_id' => $this->_contributionTypeId,
+                         'financial_type_id' => $this->_contributionTypeId,
       'relationship_type_id' => $this->_relationshipTypeId,
       'visibility' => 'Public',
       'is_active' => 1,

@@ -109,7 +109,7 @@ class WebTest_Member_OnlineMembershipAddPricesetTest extends CiviSeleniumTestCas
     }
     elseif ($usedFor == 'Membership') {
       $this->click('extends[3]');
-      $this->waitForElementPresent('contribution_type_id');
+          $this->waitForElementPresent( 'financial_type_id' );
       $this->select("css=select.form-select", "label={$contributionType}");
     }
 

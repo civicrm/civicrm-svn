@@ -105,6 +105,13 @@
                 <td class="description">{ts}Instructions added to Confirmation and Thank-you pages when the user selects the 'pay later' option (e.g. 'Mail your check to ... within 3 business days.').{/ts}
                 </td>
             </tr>
+	     <tr class="crm-contribution-contributionpage-amount-form-block-initial_amount_label"><th scope="row" class="label">{$form.initial_amount_label.label} <span class="marker" title="This field is required.">*</span> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contribution_page' field='initial_amount_label' id=$contributionPageID}{/if}</th>
+                <td>{$form.initial_amount_label.html|crmReplace:class:big}<br />
+                   </td></tr> 
+		 <tr class="crm-contribution-contributionpage-amount-form-block-initial_amount_help_text"><th scope="row" class="label">{$form.initial_amount_help_text.label} <span class="marker" title="This field is required.">*</span> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contribution_page' field='initial_amount_help_text' id=$contributionPageID}{/if}</th>
+                <td>{$form.initial_amount_help_text.html|crmReplace:class:big}<br /></td></tr> 
+		 <tr class="crm-contribution-contributionpage-amount-form-block-min_initial_amount"><th scope="row" class="label">{$form.min_initial_amount.label} <span class="marker" title="This field is required.">*</span> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contribution_page' field='min_initial_amount' id=$contributionPageID}{/if}</th>
+                <td>{$form.min_initial_amount.html|crmReplace:class:big}<br /></td></tr> 
         </table>
 
         <table id="contributionType" class="form-layout">
@@ -152,10 +159,10 @@
         {ts}Use the table below to enter descriptive labels and amounts for up to ten event fee levels. These will be presented as a list of radio button options. Both the label and dollar amount will be displayed. You can also configure one or more sets of discounted fees by checking "Discounts by Signup Date" below.{/ts}<br />
   {if $isQuick}{ts}Click <a id = 'quickconfig' href='#'>here</a> if you want to configure the Regular Fees below as part of a Price Set, with the added flexibility and complexity that entails.{/ts}{/if}
         <table id="map-field-table">
-        <tr class="columnheader"><td scope="column">{ts}Fee Label{/ts}</td><td scope="column">{ts}Amount{/ts}</td><td scope="column">{ts}Default?{/ts}<br /><span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('default', 'Fee'); return false;" >{ts}clear{/ts}</a>)</span></td></tr>
+        <tr class="columnheader"><td scope="column">{ts}Fee Label{/ts}</td><td scope="column">{ts}Amount{/ts}</td><td scope="column">{ts}Default?{/ts}<br /><span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('default', 'Fee'); return false;" >{ts}clear{/ts}</a>)</span></td><td scope="column">{ts}Financial Type{/ts}</td></tr>
         {section name=loop start=1 loop=11}
            {assign var=idx value=$smarty.section.loop.index}
-           <tr><td class="even-row crm-event-manage-fee-form-block-label_{$idx}">{$form.label.$idx.html}</td><td class="crm-event-manage-fee-form-block-value_{$idx}">{$form.value.$idx.html|crmMoney}</td><td class="even-row crm-event-manage-fee-form-block-default_{$idx}">{$form.default.$idx.html}</td></tr>
+           <tr><td class="even-row crm-event-manage-fee-form-block-label_{$idx}">{$form.label.$idx.html}</td><td class="crm-event-manage-fee-form-block-value_{$idx}">{$form.value.$idx.html|crmMoney}</td><td class="even-row crm-event-manage-fee-form-block-default_{$idx}">{$form.default.$idx.html}</td><td class="crm-event-manage-fee-form-block-financial_type_id_{$idx}">{$form.financial_type_id.$idx.html}</td></tr>
         {/section}
         </table>
         </fieldset>
@@ -209,6 +216,7 @@
       {/if}
          {/section}
          <td scope="column">{ts}Default?{/ts}</td>
+         <td scope="column">{ts}Financial Type{/ts}</td>
       </tr>
 
             {section name=loop start=1 loop=11}
@@ -221,6 +229,7 @@
           {/if}
             {/section}
             <td class="even-row">{$form.discounted_default.$idx.html}</td>
+            <td class="even-row">{$form.discounted_financial_type_id.$idx.html}</td>
          </tr>
             {/section}
             </table>
@@ -323,6 +332,23 @@
             cj('#discountLink').show( );
         }
     }
+
+cj('#map-field-table input').blur( function(){
+    		var currentId = cj(this).attr('id');
+    		var arrayID = currentId.split('_');
+		if( ( arrayID[0] == 'label' || arrayID[0] == 'value' ) && arrayID[1] > 1 ){
+		    var value = cj("#"+currentId).val(); 
+		    if( value.length != 0  && cj("#financial_type_id_"+arrayID[1]).val() ==''){
+		    	var currentFtid = "#financial_type_id_"+arrayID[1];
+		    	var previousFtid = "#financial_type_id_"+ (arrayID[1]-1);
+		    	var financial_type = cj(previousFtid).val(); 
+		    	cj(currentFtid).val(financial_type); 
+		   }
+		   if( cj("#label_"+arrayID[1]).val().length == 0 && cj("#value_"+arrayID[1]).val().length == 0  )
+		   	cj("#financial_type_id_"+arrayID[1]).val('');
+		}
+		
+    });
 {/literal}
 </script>
 

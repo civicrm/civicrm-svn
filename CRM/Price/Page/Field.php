@@ -145,7 +145,10 @@ class CRM_Price_Page_Field extends CRM_Core_Page {
 
         $priceField[$priceFieldBAO->id]['price'] = CRM_Utils_Array::value('amount', $optionValues);
       }
-
+            if( $priceFieldBAO->financial_type_id){
+                require_once 'CRM/Core/DAO.php';
+                $priceField[$priceFieldBAO->id]['financial_type_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialType', $priceFieldBAO->financial_type_id, 'name' );
+            }
       $action = array_sum(array_keys($this->actionLinks()));
 
       if ($this->_isSetReserved) {

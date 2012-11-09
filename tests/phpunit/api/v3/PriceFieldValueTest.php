@@ -23,7 +23,7 @@ class api_v3_PriceFieldValueTest extends CiviUnitTestCase {
       'help_pre' => "Where does your goat sleep",
       'help_post' => "thank you for your time",
       'extends' => 2,
-      'contribution_type_id' => 1,
+      'financial_type_id' => 1,
       'is_quick_config' => 1,
       'is_reserved' => 1,
     );

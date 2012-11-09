@@ -59,7 +59,7 @@ class CRM_Core_Payment_AuthorizeNetTest extends CiviUnitTestCase {
 
   function tearDown() {
     $this->processorParams->delete();
-    $tablesToTruncate = array('civicrm_contribution_type', 'civicrm_contribution', 'civicrm_contribution_recur');
+        $tablesToTruncate = array( 'civicrm_financial_type', 'civicrm_contribution', 'civicrm_contribution_recur' );
     $this->quickCleanup($tablesToTruncate);
   }
 
@@ -91,7 +91,7 @@ class CRM_Core_Payment_AuthorizeNetTest extends CiviUnitTestCase {
 
     $contributionParams = array(
       'contact_id' => $contactId,
-      'contribution_type_id' => $this->_contributionTypeId,
+                                     'financial_type_id'   => $this->_contributionTypeId,
       'recieve_date' => date('Ymd'),
       'total_amount' => 150.00,
       'invoice_id' => 'c8acb91e080ad7bd8a2adc119c192885',
@@ -124,7 +124,7 @@ class CRM_Core_Payment_AuthorizeNetTest extends CiviUnitTestCase {
       'frequency_interval' => 1,
       'frequency_unit' => 'week',
       'installments' => 2,
-      'contribution_type_id' => $this->_contributionTypeId,
+                        'financial_type_id' => $this->_contributionTypeId,
       'is_email_receipt' => 1,
       'from_email_address' => 'gandalf',
       'receive_date' => date('Ymd'),
@@ -210,7 +210,7 @@ class CRM_Core_Payment_AuthorizeNetTest extends CiviUnitTestCase {
 
     $contributionParams = array(
       'contact_id' => $contactId,
-      'contribution_type_id' => $this->_contributionTypeId,
+                                     'financial_type_id'   => $this->_contributionTypeId,
       'recieve_date' => $start_date,
       'total_amount' => 100.00,
       'invoice_id' => 'f72ee3de0a877bfdc03ca1daf4a1d757',
@@ -243,7 +243,7 @@ class CRM_Core_Payment_AuthorizeNetTest extends CiviUnitTestCase {
       'frequency_interval' => 1,
       'frequency_unit' => 'month',
       'installments' => 3,
-      'contribution_type_id' => $this->_contributionTypeId,
+                        'financial_type_id' => $this->_contributionTypeId,
       'is_email_receipt' => 1,
       'from_email_address' => 'gandalf',
       'receive_date' => $start_date,

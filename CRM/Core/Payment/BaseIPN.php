@@ -275,7 +275,7 @@ class CRM_Core_Payment_BaseIPN {
       elseif ($recurContrib->id) {
         $contribution->contribution_page_id = NULL;
         $values['amount'] = $recurContrib->amount;
-        $values['contribution_type_id'] = $objects['contributionType']->id;
+                $values['financial_type_id'] = $objects['contributionType']->id;
         $values['title'] = $source = ts('Offline Recurring Contribution');
         $values['is_email_receipt'] = $recurContrib->is_email_receipt;
         $domainValues = CRM_Core_BAO_Domain::getNameAndEmail();

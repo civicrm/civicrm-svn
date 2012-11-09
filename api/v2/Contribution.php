@@ -283,10 +283,9 @@ function &civicrm_contribution_format_create(&$params) {
  * @access private
  */
 function _civicrm_contribute_check_params(&$params) {
-  static $required = array(
-    'contact_id' => NULL,
+  static $required = array('contact_id' => NULL,
     'total_amount' => NULL,
-    'contribution_type_id' => 'contribution_type',
+    'financial_type_id' => 'financial_type',
   );
 
   // params should be an array
@@ -423,27 +422,26 @@ function _civicrm_contribute_format_params(&$params, &$values, $create = FALSE) 
           return civicrm_create_error("currency not a valid code: $value");
         }
         break;
-
-      case 'contribution_type_id':
-        if (!CRM_Utils_Array::value($value, CRM_Contribute_PseudoConstant::contributionType())) {
-          return civicrm_create_error('Invalid Contribution Type Id');
+        case 'financial_type_id' :
+        if (!CRM_Utils_Array::value($value, CRM_Contribute_PseudoConstant::financialType())) {
+          return civicrm_create_error('Invalid Financial Type Id');
         }
         break;
 
-      case 'contribution_type':
+      case 'financial_type':
         $contributionTypeId = CRM_Utils_Array::key(ucfirst($value),
-          CRM_Contribute_PseudoConstant::contributionType()
+          CRM_Contribute_PseudoConstant::financialType()
         );
         if ($contributionTypeId) {
-          if (CRM_Utils_Array::value('contribution_type_id', $values) &&
-            $contributionTypeId != $values['contribution_type_id']
+          if (CRM_Utils_Array::value('financial_type_id', $values) &&
+            $contributionTypeId != $values['financial_type_id']
           ) {
-            return civicrm_create_error('Mismatched Contribution Type and Contribution Type Id');
+            return civicrm_create_error('Mismatched Financial Type and Financial Type Id');
           }
-          $values['contribution_type_id'] = $contributionTypeId;
+          $values['financial_type_id'] = $contributionTypeId;
         }
         else {
-          return civicrm_create_error('Invalid Contribution Type');
+          return civicrm_create_error('Invalid Financial Type');
         }
         break;
 

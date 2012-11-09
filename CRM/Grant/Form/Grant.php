@@ -195,10 +195,10 @@ class CRM_Grant_Form_Grant extends CRM_Core_Form {
     }
 
     $attributes = CRM_Core_DAO::getAttribute('CRM_Grant_DAO_Grant');
-    $grantType = CRM_Core_OptionGroup::values('grant_type');
+    $this->_grantType = CRM_Core_OptionGroup::values( 'grant_type' );
     $this->add('select', 'grant_type_id', ts('Grant Type'),
       array(
-        '' => ts('- select -')) + $grantType, TRUE,
+        '' => ts('- select -')) + $this->_grantType, TRUE,
       array('onChange' => "CRM.buildCustomData( 'Grant', this.value );")
     );
 
@@ -207,11 +207,19 @@ class CRM_Grant_Form_Grant extends CRM_Core_Form {
     $this->assign('customDataSubType', $this->_grantType);
     $this->assign('entityID', $this->_id);
 
-    $grantStatus = CRM_Core_OptionGroup::values('grant_status');
+    $this->_grantStatus = CRM_Core_OptionGroup::values('grant_status');
     $this->add('select', 'status_id', ts('Grant Status'),
       array(
-        '' => ts('- select -')) + $grantStatus, TRUE
+        '' => ts('- select -')) + $this->_grantStatus, TRUE
     );
+    $this->_reasonGrantRejected = CRM_Core_OptionGroup::values( 'reason_grant_rejected' );
+    $this->add('select', 'grant_rejected_reason_id',  ts( 'Reason Grant Rejected' ),
+      array( '' => ts( '- select -' ) ) + $this->_reasonGrantRejected , false);
+
+    $this->_grantPrograms = CRM_Grant_BAO_Grant::getGrantPrograms();
+
+    $this->add('select', 'grant_program_id',  ts( 'Grant Programs' ),
+      array( '' => ts( '- select -' ) ) + $this->_grantPrograms , true);
 
     $this->addDate('application_received_date', ts('Application Received'), FALSE, array('formatType' => 'custom'));
     $this->addDate('decision_date', ts('Grant Decision'), FALSE, array('formatType' => 'custom'));
@@ -232,6 +240,20 @@ class CRM_Grant_Form_Grant extends CRM_Core_Form {
     $noteAttrib = CRM_Core_DAO::getAttribute('CRM_Core_DAO_Note');
     $this->add('textarea', 'note', ts('Notes'), $noteAttrib['note']);
 
+        //Financial Type
+        require_once 'CRM/Contribute/PseudoConstant.php';
+        $financialType = CRM_Contribute_PseudoConstant::financialType( );
+        if( count( $financialType ) ){
+            $this->assign( 'financialType', $financialType );
+        }
+        $this->add( 'select', 'financial_type_id', 
+                               ts( 'Financial Type' ), 
+                               array(''=>ts( '- Select Financial Type -' )) + $financialType,
+                               false );
+        
+        //build custom data
+        CRM_Custom_Form_Customdata::buildQuickForm( $this );
+        
     // add attachments part
     CRM_Core_BAO_File::buildAttachment($this,
       'civicrm_grant',
@@ -261,9 +283,10 @@ class CRM_Grant_Form_Grant extends CRM_Core_Form {
 
     if ($this->_context == 'standalone') {
       CRM_Contact_Form_NewContact::buildQuickForm($this);
+            // $this->addFormRule( array( 'CRM_Grant_Form_Grant', 'formRule' ), $this );
+        }
       $this->addFormRule(array('CRM_Grant_Form_Grant', 'formRule'), $this);
     }
-  }
 
   /**
    * global form rule
@@ -280,11 +303,26 @@ class CRM_Grant_Form_Grant extends CRM_Core_Form {
   function formRule($fields, $files, $self) {
     $errors = array();
 
+
+    if( !empty( $fields['status_id'] ) ) {
+      $grantStatus = CRM_Core_OptionGroup::values( 'grant_status' );
+      if ( $grantStatus[$fields['status_id']] == 'Withdrawn' ) {
+        $errors['status_id'] = ts('Withdrawn is not allowed as the initial status of a grant application');
+      }
+            
+      if ( $grantStatus[$fields['status_id']] == 'Rejected' && empty( $fields['grant_rejected_reason_id'] ) ) {
+        $errors['grant_rejected_reason_id'] = ts('Please select grant rejected reason');
+      }
+    }
     //check if contact is selected in standalone mode
-    if (isset($fields['contact_select_id'][1]) && !$fields['contact_select_id'][1]) {
+        if ( CRM_Utils_Array::value( 'contact_select_id', $fields, false ) && isset( $fields['contact_select_id'][1] ) && !$fields['contact_select_id'][1] ) {
       $errors['contact[1]'] = ts('Please select a contact or create new contact');
     }
 
+        if (  CRM_Utils_Array::value( 'amount_granted', $fields, false ) && $fields['amount_granted'] > 0 && !CRM_Utils_Array::value( 'financial_type_id', $fields, false ) && CRM_Utils_Array::value( 'money_transfer_date', $fields, false ) ){
+            $errors['financial_type_id'] = ts('Financial Type is a required field if Amount is Granted');
+        }
+        
     return $errors;
   }
 
@@ -350,6 +388,69 @@ class CRM_Grant_Form_Grant extends CRM_Core_Form {
 
     $buttonName = $this->controller->getButtonName();
     $session = CRM_Core_Session::singleton();
+    $grantProgram  = new CRM_Grant_DAO_GrantProgram( );
+    $grantProgram->id = $params['grant_program_id'];
+    if ( $grantProgram->find( true ) ) {
+      $params['is_auto_email'] = $grantProgram->is_auto_email;
+    }
+    $status        = array( 'Submitted', 'Granted', 'Paid' );
+    require_once 'CRM/Utils/Hook.php';
+    if ( array_key_exists( 'status_id',  $this->_defaultValues ) ) {
+      if ( in_array( $this->_grantStatus[$this->_defaultValues['status_id']], $status ) ) {
+        //$grantProgram->total_amount += $params['amount_total'];
+        if ( $this->_grantStatus[$this->_defaultValues['status_id']] == 'Paid' && $this->_grantStatus[$grant->status_id] == 'Withdrawn' )  {
+          $paymentNumbers    = CRM_Grant_BAO_GrantPayment::getMaxPayementBatchNumber( );
+          $paymentStatus     = array_flip( CRM_Core_OptionGroup::values( 'grant_payment_status' ) );
+          $grantPayment      = new CRM_Grant_DAO_GrantPayment( );
+          $grantPayment->payment_date         = strftime("%m/%d/%Y", strtotime( date('Y/m/d') ));
+          $grantPayment->payment_number       = $paymentNumbers['payment_number'] + 1;
+          $grantPayment->payment_batch_number = $paymentNumbers['payment_batch_number'] + 1;
+          $grantPayment->contact_id           = $grant->contact_id;
+          $grantPayment->financial_type_id    = $grantProgram->financial_type_id;
+          $grantPayment->payment_date         = CRM_Utils_Date::processDate( $grant->application_received_date, null, true );
+          $grantPayment->payment_created_date = CRM_Utils_Date::processDate( date('Y-m-d'), null, true );
+          $grantPayment->payable_to_name      = CRM_Grant_BAO_GrantProgram::getDisplayName( $grant->contact_id );
+          $grantPayment->payable_to_address   = CRM_Utils_Array::value('address', CRM_Grant_BAO_GrantProgram::getAddress( $grant->contact_id ));
+          $grantPayment->amount               = CRM_Utils_Money::format( $grant->amount_total, null, null,true ) ;
+          $grantPayment->currency             = $grant->currency;
+          $grantPayment->payment_status_id    = $paymentStatus['Withdrawn'];
+          $grantPayment->save();
+        }
+      }
+    }
+    $grantStatus   = $this->_grantStatus[$params['status_id']];
+    $grantType     = $this->_grantType[$params['grant_type_id']];
+    $grantPrograms = $this->_grantPrograms[$params['grant_program_id']];
+    foreach( $params['custom'] as $key => $value ) {
+      foreach ( $value as $vkey => $vval ) {
+        if ( !empty( $vval['value'] ) ) {
+          $data[$vval['custom_group_id']][$vval['custom_field_id']] = $vval['value'];
+        }
+      }
+    }
+    require_once 'CRM/Core/DAO.php';
+    if ( !empty( $data ) ) {
+      foreach ( $data as $dataKey => $dataValue ) {
+        $customGroupName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomGroup',$dataKey,'title' );
+        $customGroup[$customGroupName] = $customGroupName;
+        $c = 0;
+        foreach ( $dataValue  as $dataValueKey => $dataValueValue ) {
+          $customField[$customGroupName][$c]['label'] = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomField',$dataValueKey,'label' );
+          $customField[$customGroupName][$c]['value'] = $dataValueValue;
+          $c++;
+        }
+      }
+      $this->assign( 'customGroup', $customGroup );
+      $this->assign( 'customField', $customField );
+    }
+        
+    $this->assign( 'grant_type', $grantType );
+    $this->assign( 'grant_programs', $grantPrograms );
+    $this->assign( 'grant_status', $grantStatus );
+    $this->assign( 'params', $params );
+        
+    CRM_Grant_BAO_Grant::sendMail( $this->_contactID, $params, $grantStatus );
+
     if ($this->_context == 'standalone') {
       if ($buttonName == $this->getButtonName('upload', 'new')) {
         $session->replaceUserContext(CRM_Utils_System::url('civicrm/grant/add',

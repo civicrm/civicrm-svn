@@ -95,6 +95,17 @@
         <span class="description">{ts}You may optionally record the actual cost of this premium to your organization. This may be useful when evaluating net return for this incentive.{/ts}</span>
        </td>
     </tr>
+     <tr class="crm-contribution-form-block-financial_type">
+       <td class="label">{$form.financial_type_id.label}</td>
+       <td class="html-adjust">
+       	{if !$financialType }
+		    	{capture assign=ftUrl}{crmURL p='civicrm/admin/financial/financialType' q="reset=1"}{/capture}
+			{ts 1=$ftUrl}There is no Financial Type configured of Account Relation Expense. <a href='%1'>Click here</a> if you want to configure financial type for your site.{/ts}
+			{else}
+       {$form.financial_type_id.html}
+       {/if}
+       </td>
+    </tr>
     <tr class="crm-contribution-form-block-options">
        <td class="label">{$form.options.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_product' field='options' id=$productId}{/if}</td>
       <td class="html-adjust">{$form.options.html}<br />

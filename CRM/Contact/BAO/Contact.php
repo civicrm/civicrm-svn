@@ -2903,4 +2903,27 @@ LEFT JOIN civicrm_address add2 ON ( add1.master_id = add2.id )
       );
       }
           }
+
+  /**
+   * Function to check if contact is being used in civicrm_domain
+   * based on $contactId
+   *
+   * @param  int     $contactId   contact id.
+   *
+   * @return true if present else false.
+   * @access public
+   * @static
+   */
+  static
+    function checkDomainContact($contactId) {
+    if (!$contactId) {
+      return FALSE;
+    $domainId =  CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Domain', $contactId, 'id', 'contact_id');
+
+    if ($domainId) {
+      return TRUE;
           }
+    return FALSE;
+  }
+}
+}

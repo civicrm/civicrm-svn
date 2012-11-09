@@ -41,22 +41,22 @@ INSERT INTO `civicrm_price_set_entity` (`entity_table`,`entity_id`,`price_set_id
 SELECT @priceFieldID := max(id) FROM `civicrm_price_field` WHERE `price_set_id` = @priceSetId AND name = 'contribution_amount';
 
 INSERT INTO 
-       `civicrm_price_field_value` (`price_field_id`,`name`,`label`, `amount`, `weight`, `is_active`, `is_default`) 
+       `civicrm_price_field_value` (`price_field_id`,`name`,`label`, `amount`, `weight`, `is_active`, `is_default`, `financial_type_id`) 
 VALUES
-    (@priceFieldID,'friend','Friend','1.00',1,1,0),
-    (@priceFieldID,'supporter', 'Supporter','5.00',2,1,0),
-    (@priceFieldID,'booster','Booster','10.00',3,1,1),
-    (@priceFieldID,'sustainer','Sustainer','50.00',4,1,0);
+    (@priceFieldID,'friend','Friend','1.00',1,1,0,1),
+    (@priceFieldID,'supporter', 'Supporter','5.00',2,1,0,1),
+    (@priceFieldID,'booster','Booster','10.00',3,1,1,1),
+    (@priceFieldID,'sustainer','Sustainer','50.00',4,1,0,1);
 
 SELECT @priceFieldID := max(id) FROM `civicrm_price_field` WHERE `price_set_id` = @priceSetId AND name = 'other_amount';
 
 INSERT INTO 
-       `civicrm_price_field_value` (`price_field_id`,`name`,`label`, `amount`, `weight`, `is_active`, `is_default`) 
+       `civicrm_price_field_value` (`price_field_id`,`name`,`label`, `amount`, `weight`, `is_active`, `is_default`, `financial_type_id`) 
 VALUES
-     (@priceFieldID, 'other_amount', 'Other Amount', 1, 3, 1, 0);
+     (@priceFieldID, 'other_amount', 'Other Amount', 1, 3, 1, 0, 1);
     
 INSERT INTO civicrm_contribution_page
-  (title,intro_text,contribution_type_id,is_monetary,is_allow_other_amount,default_amount_id,min_amount,max_amount,goal_amount,thankyou_title,thankyou_text,thankyou_footer,receipt_from_name,receipt_from_email,cc_receipt,bcc_receipt,receipt_text,is_active,footer_text,amount_block_is_active,honor_block_is_active,honor_block_title,honor_block_text,currency,is_email_receipt)
+  (title,intro_text,financial_type_id,is_monetary,is_allow_other_amount,default_amount_id,min_amount,max_amount,goal_amount,thankyou_title,thankyou_text,thankyou_footer,receipt_from_name,receipt_from_email,cc_receipt,bcc_receipt,receipt_text,is_active,footer_text,amount_block_is_active,honor_block_is_active,honor_block_title,honor_block_text,currency,is_email_receipt)
 VALUES
   ('Help Support CiviCRM!','Do you love CiviCRM? Do you use CiviCRM? Then please support CiviCRM and Contribute NOW by trying out our new online contribution features!',1,1,1,137,'10.00','10000.00','100000.00','Thanks for Your Support!','<p>Thank you for your support. Your contribution will help us build even better tools.</p><p>Please tell your friends and colleagues about CiviCRM!</p>','<p><a href=http://civicrm.org>Back to CiviCRM Home Page</a></p>','CiviCRM Fundraising Dept.','donationFake@civicrm.org','receipt@example.com','bcc@example.com','Your donation is tax deductible under IRS 501(c)(3) regulation. Our tax identification number is: 93-123-4567',1, NULL, 1,NULL, NULL, NULL, 'USD', 1),
   ('Member Signup and Renewal', 'Members are the life-blood of our organization. If you''re not already a member - please consider signing up today. You can select the membership level the fits your budget and needs below.', 2, 1, NULL, NULL, NULL, NULL, NULL, 'Thanks for Your Support!', 'Thanks for supporting our organization with your membership. You can learn more about membership benefits from our members only page.', NULL, 'Membership Department', 'memberships@civicrm.org', NULL, NULL, 'Thanks for supporting our organization with your membership. You can learn more about membership benefits from our members only page.\r\n\r\nKeep this receipt for your records.', 1, NULL, 0, NULL, NULL,NULL, 'USD', 1),
@@ -79,7 +79,7 @@ VALUES
     ('Organization',NULL,NULL,NULL,'Inner City Arts','Inner City Arts',NULL,NULL,'4','Both',0,0,0,0,'1902067651',0,'Inner City Arts');
 
 INSERT INTO civicrm_membership_type
-    (domain_id, name, description, member_of_contact_id, contribution_type_id, minimum_fee, duration_unit, duration_interval, period_type, fixed_period_start_day, fixed_period_rollover_day, relationship_type_id, relationship_direction, visibility, weight, is_active)
+    (domain_id, name, description, member_of_contact_id, financial_type_id, minimum_fee, duration_unit, duration_interval, period_type, fixed_period_start_day, fixed_period_rollover_day, relationship_type_id, relationship_direction, visibility, weight, is_active)
 VALUES
     (@domainID, 'General', 'Regular annual membership.', 1, 2, 100.00, 'year', 2, 'rolling', NULL, NULL, 7, 'b_a', 'Public', 1, 1),
     (@domainID, 'Student', 'Discount membership for full-time students.', 1, 1, 50.00, 'year', 1, 'rolling', NULL, NULL, NULL, NULL, 'Public', 2, 1),
@@ -98,8 +98,8 @@ VALUES
 INSERT INTO civicrm_premiums 
     VALUES (1, 'civicrm_contribution_page', 1, 1, 'Thank-you Gifts', 'We appreciate your support and invite you to choose from the exciting collection of thank-you gifts below. Minimum contribution amounts for each selection are included in the descriptions. (NOTE: These gifts are shown as examples only. No gifts will be sent to donors.)', 'premiums@example.org', NULL, 1);
 
-INSERT INTO civicrm_product VALUES (1, 'Coffee Mug', 'This heavy-duty mug is great for home or office, coffee or tea or hot chocolate. Show your support to family, friends and colleagues. Choose from three great colors.', 'MUG-101', 'White, Black, Green', NULL, NULL, 12.50, 'USD', 5.00, 2.25, 1, NULL, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO civicrm_premiums_product VALUES (1, 1, 1, 1);
+INSERT INTO civicrm_product VALUES (1, 'Coffee Mug', 'This heavy-duty mug is great for home or office, coffee or tea or hot chocolate. Show your support to family, friends and colleagues. Choose from three great colors.', 'MUG-101', 'White, Black, Green', NULL, NULL, 12.50, 'USD', NULL, 5.00, 2.25, 1, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO civicrm_premiums_product VALUES (1, 1, 1, 1, NULL);
 
 
 -- Add sample activity type
@@ -145,20 +145,20 @@ INSERT INTO `civicrm_dashboard`
    
 -- INSERT sample data for membership 
 
+SELECT @financial_type_id := max(id) FROM `civicrm_financial_type` WHERE `name` = 'Member Dues';
+
 SELECT @priceSetID := max(id) FROM `civicrm_price_set` WHERE `name` LIKE 'default_membership_type_amount' AND `is_quick_config` = 1;
 INSERT INTO `civicrm_price_field` ( `price_set_id`, `name`, `label`, `html_type` ) 
 VALUES ( @priceSetID, '1', 'Membership Amount', 'Radio' );
 
 SELECT @priceFieldId := max(id) FROM `civicrm_price_field` WHERE `name` LIKE '1';
 
-INSERT civicrm_price_field_value ( price_field_id, name, label, description, amount, weight, membership_type_id )
-SELECT @priceFieldId, LOWER(name), name, description, minimum_fee, id as weight, id  FROM `civicrm_membership_type`;
+INSERT civicrm_price_field_value ( price_field_id, name, label, description, amount, weight, membership_type_id, financial_type_id )
+SELECT @priceFieldId, LOWER(name), name, description, minimum_fee, id as weight, id, @financial_type_id FROM `civicrm_membership_type`;
 
 
-SELECT @contribution_type_id := max(id) FROM `civicrm_contribution_type` WHERE `name` = 'Member Dues';
-
-INSERT INTO `civicrm_price_set` (`name`,`title`,`is_active`,`extends`, `contribution_type_id`, `is_quick_config`)
-VALUES ('member_signup_and_renewal', 'Member Signup and Renewal', 1, 3, @contribution_type_id, 1),
+INSERT INTO `civicrm_price_set` (`name`,`title`,`is_active`,`extends`, `financial_type_id`, `is_quick_config`)
+VALUES ('member_signup_and_renewal', 'Member Signup and Renewal', 1, 3, @financial_type_id, 1),
        ('pledge_for_civicrm', 'Pledge for CiviCRM!',1,2,null,1);
 
 SELECT @priceSetId := max(id) FROM `civicrm_price_set` WHERE `is_quick_config` = 1 and name = 'member_signup_and_renewal';
@@ -174,10 +174,10 @@ SELECT @membershipIdG := max(id) FROM `civicrm_membership_type` WHERE name= 'Gen
 SELECT @membershipIdS := max(id) FROM `civicrm_membership_type` WHERE name= 'Student';
 
 INSERT INTO 
-       `civicrm_price_field_value` (`price_field_id`,`name`,`label`, `amount`, `weight`, `membership_type_id`,  `is_active`, `is_default`) 
+       `civicrm_price_field_value` (`price_field_id`,`name`,`label`, `amount`, `weight`, `membership_type_id`,  `is_active`, `is_default`, `financial_type_id`) 
 VALUES
-    (@priceFieldID,'General','General','100.00', 1, @membershipIdG, 1, 1),
-    (@priceFieldID,'Student','Student','50.00', 1, @membershipIdS , 1, 0);
+    (@priceFieldID,'General','General','100.00', 1, @membershipIdG, 1, 1, @financial_type_id),
+    (@priceFieldID,'Student','Student','50.00', 1, @membershipIdS , 1, 0, @financial_type_id);
 
 SELECT @priceSetId := max(id) FROM `civicrm_price_set` WHERE `is_quick_config` = 1 AND `name` = 'pledge_for_civicrm';
 
@@ -190,9 +190,9 @@ INSERT INTO `civicrm_price_set_entity` (`entity_table`,`entity_id`,`price_set_id
 SELECT @priceFieldID := max(id) FROM `civicrm_price_field` WHERE `price_set_id` = @priceSetId AND name = 'other_amount';
 
 INSERT INTO 
-       `civicrm_price_field_value` (`price_field_id`,`name`,`label`, `amount`, `weight`, `is_active`, `is_default`) 
+       `civicrm_price_field_value` (`price_field_id`,`name`,`label`, `amount`, `weight`, `is_active`, `is_default`, `financial_type_id`) 
 VALUES
-    (@priceFieldID,'other_amount','Contribution Amount','1',1,1,0);
+    (@priceFieldID,'other_amount','Contribution Amount','1',1,1,0,1);
 
 
 -- Insert sample data for event
@@ -213,11 +213,11 @@ INSERT INTO `civicrm_price_set_entity` (`entity_table`,`entity_id`,`price_set_id
 SELECT @priceFieldID := max(id) FROM `civicrm_price_field` WHERE `price_set_id` = @priceSetId AND name = 'tournament_fees';
 
 INSERT INTO 
-       `civicrm_price_field_value` (`price_field_id`,`name`,`label`, `amount`, `weight`, `is_active`, `is_default`) 
+       `civicrm_price_field_value` (`price_field_id`,`name`,`label`, `amount`, `weight`, `is_active`, `is_default`, `financial_type_id`) 
 VALUES
-    (@priceFieldID,'tiny_tots__ages_5_8_','Tiny-tots (ages 5-8)','800',1,1,1),
-    (@priceFieldID,'junior_Stars__ages_9_12_','Junior Stars (ages 9-12)','1000',2,1,0),
-    (@priceFieldID,'super_Stars__ages_13_18_','Super Stars (ages 13-18)','1500',3,1,0);
+    (@priceFieldID,'tiny_tots__ages_5_8_','Tiny-tots (ages 5-8)','800',1,1,1,4),
+    (@priceFieldID,'junior_Stars__ages_9_12_','Junior Stars (ages 9-12)','1000',2,1,0,4),
+    (@priceFieldID,'super_Stars__ages_13_18_','Super Stars (ages 13-18)','1500',3,1,0,4);
 
 SELECT @priceSetId := max(id) FROM `civicrm_price_set` WHERE `is_quick_config` = 1 AND `name` = 'fall_fundraiser_dinner';
 
@@ -230,11 +230,11 @@ INSERT INTO `civicrm_price_set_entity` (`entity_table`,`entity_id`,`price_set_id
 SELECT @priceFieldID := max(id) FROM `civicrm_price_field` WHERE `price_set_id` = @priceSetId AND name = 'dinner_contribution';
 
 INSERT INTO 
-       `civicrm_price_field_value` (`price_field_id`,`name`,`label`, `amount`, `weight`, `is_active`, `is_default`) 
+       `civicrm_price_field_value` (`price_field_id`,`name`,`label`, `amount`, `weight`, `is_active`, `is_default`, `financial_type_id`) 
 VALUES
-    (@priceFieldID,'single','Single','50',1,1,1),
-    (@priceFieldID,'couple','Couple','100',2,1,0),
-    (@priceFieldID,'family','Family','200',3,1,0);
+    (@priceFieldID,'single','Single','50',1,1,1,4),
+    (@priceFieldID,'couple','Couple','100',2,1,0,4),
+    (@priceFieldID,'family','Family','200',3,1,0,4);
 
 SELECT @priceSetId := max(id) FROM `civicrm_price_set` WHERE `is_quick_config` = 1 AND `name` = 'summer_solstice_festival_day_concert';
 
@@ -247,10 +247,10 @@ INSERT INTO `civicrm_price_set_entity` (`entity_table`,`entity_id`,`price_set_id
 SELECT @priceFieldID := max(id) FROM `civicrm_price_field` WHERE `price_set_id` = @priceSetId AND name = 'festival_fee';
 
 INSERT INTO 
-       `civicrm_price_field_value` (`price_field_id`,`name`,`label`, `amount`, `weight`, `is_active`, `is_default`) 
+       `civicrm_price_field_value` (`price_field_id`,`name`,`label`, `amount`, `weight`, `is_active`, `is_default`, `financial_type_id`) 
 VALUES
-    (@priceFieldID,'bass','Bass','25',1,1,1),
-    (@priceFieldID,'tenor','Tenor','40',2,1,0),
-    (@priceFieldID,'soprano','Soprano','50',3,1,0);
+    (@priceFieldID,'bass','Bass','25',1,1,1,2),
+    (@priceFieldID,'tenor','Tenor','40',2,1,0,2),
+    (@priceFieldID,'soprano','Soprano','50',3,1,0,2);
 
 

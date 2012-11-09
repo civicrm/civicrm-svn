@@ -173,7 +173,29 @@ class CRM_Contribute_Form_ManagePremiums extends CRM_Contribute_Form {
 
     $this->add('text', 'frequency_interval', ts('Frequency'), CRM_Core_DAO::getAttribute('CRM_Contribute_DAO_Product', 'frequency_interval'));
 
+     // Financial Type
+        require_once 'CRM/Contribute/PseudoConstant.php';
+        require_once 'CRM/Core/PseudoConstant.php';
+        $financialType = CRM_Contribute_PseudoConstant::financialType( );
+        $revenueFinancialType = array( );
+        CRM_Core_PseudoConstant::populate( $revenueFinancialType,
+                                           'CRM_Financial_DAO_EntityFinancialAccount',
+                                           $all = True, 
+                                           $retrieve = 'entity_id', 
+                                           $filter = null, 
+                                           'account_relationship = 5' );
 
+        foreach( $financialType as $key => $financialTypeName ){
+            if( !in_array( $key, $revenueFinancialType ) )
+                unset( $financialType[$key] );
+        }
+        if( count( $financialType ) ){
+            $this->assign( 'financialType', $financialType );
+        } 
+        $this->add('select', 'financial_type_id', 
+                   ts( 'Financial Type' ), 
+                   array(''=>ts( '- Select Financial Type -' )) + $financialType,
+                   true);
     $this->add('checkbox', 'is_active', ts('Enabled?'));
 
     $this->addFormRule(array('CRM_Contribute_Form_ManagePremiums', 'formRule'));

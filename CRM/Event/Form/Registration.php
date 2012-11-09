@@ -305,13 +305,12 @@ class CRM_Event_Form_Registration extends CRM_Core_Form {
       $this->set('requireApproval', $this->_requireApproval);
 
       // also get the accounting code
-      if (CRM_Utils_Array::value('contribution_type_id', $this->_values['event'])) {
-        $this->_values['event']['accountingCode'] = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_ContributionType',
-          $this->_values['event']['contribution_type_id'],
-          'accounting_code'
-        );
-      }
-
+      /* if (CRM_Utils_Array::value('financial_type_id', $this->_values['event'])) { */
+      /*   $this->_values['event']['accountingCode'] = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_FinancialType', */
+      /*     $this->_values['event']['financial_type_id'], */
+      /*     'accounting_code' */
+      /*   ); */
+      /* } */
       if (isset($this->_values['event']['default_role_id'])) {
         $participant_role = CRM_Core_OptionGroup::values('participant_role');
         $this->_values['event']['participant_role'] = $participant_role["{$this->_values['event']['default_role_id']}"];
@@ -737,7 +736,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form {
     // retrive all active price set fields.
     $discountId = CRM_Core_BAO_Discount::findSet($eventID, 'civicrm_event');
     if ($discountId) {
-      $priceSetId = CRM_Core_DAO::getFieldValue('CRM_Core_BAO_Discount', $discountId, 'option_group_id');
+      $priceSetId = CRM_Core_DAO::getFieldValue('CRM_Core_BAO_Discount', $discountId, 'price_set_id');
       $price = CRM_Price_BAO_Set::initSet($form, $eventID, 'civicrm_event', TRUE, $priceSetId);
     }
     else {

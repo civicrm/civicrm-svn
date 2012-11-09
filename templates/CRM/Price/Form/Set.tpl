@@ -52,9 +52,9 @@
           {/if}
           </td>
         </tr>
-  <tr id="contribution_type_id" class="crm-price-set-form-block-contribution_type_id">
-     <td class="label">{$form.contribution_type_id.label}</td>
-           <td>{$form.contribution_type_id.html}</td>
+	<tr id="financial_type_id" class="crm-price-set-form-block-contribution_type_id crm-price-set-form-block-financial_type_id">
+	   <td class="label">{$form.financial_type_id.label}</td>
+           <td>{$form.financial_type_id.html}</td>
            <td>&nbsp;</td>
         </tr>
         <tr class="crm-price-set-form-block-help_pre">
@@ -100,19 +100,20 @@
       showHideContribution();
   var showContribution = {/literal}"{$showContribution}"{literal};
   if (showContribution) {
-      cj("#contribution_type_id").show();
+      cj('tr#financial_type_id').show();
   }
-      cj("#extends_3").click(function(){
+    	cj("input[id='extends[3]']").click(function(){
+
       showHideContribution();
   });
 
     });
 
     function showHideContribution() {
-  if(cj("#extends_3").attr('checked') ) {
-        cj("#contribution_type_id").show();
+	if(cj("input[id='extends[3]']").attr('checked') ) {
+	      cj("#financial_type_id").show();
   } else {
-        cj("#contribution_type_id").hide();
+        cj('tr#financial_type_id').hide();
   }
 
 }

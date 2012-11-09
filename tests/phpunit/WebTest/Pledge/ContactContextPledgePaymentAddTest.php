@@ -83,7 +83,7 @@ class WebTest_Pledge_ContactContextPledgePaymentAddTest extends CiviSeleniumTest
     $this->type("frequency_day", "2");
 
     $this->webtestFillDate('acknowledge_date', 'now');
-    $this->select("contribution_type_id", "label=Donation");
+        $this->select( "financial_type_id", "label=Donation");
 
     $this->select("contribution_page_id", "value=3");
 
@@ -124,7 +124,7 @@ class WebTest_Pledge_ContactContextPledgePaymentAddTest extends CiviSeleniumTest
         'To be paid in' => '3 installments of $ 10.00 every 1 week(s)',
         'Payments are due on the' => '2 day of the period',
         'Pledge Made' => $pledgeDate,
-        'Contribution Type' => 'Donation',
+        'Financial Type' => 'Donation',
         'Pledge Status' => 'Pending',
         'In Honor of' => 'Mr. ' . $honreeFirstName . ' ' . $honreeLastName,
         'Initial Reminder Day' => '4 days prior to schedule date',
@@ -170,7 +170,7 @@ class WebTest_Pledge_ContactContextPledgePaymentAddTest extends CiviSeleniumTest
         'To be paid in' => '3 installments of $ 10.00 every 1 week(s)',
         'Payments are due on the' => '2 day of the period',
         'Pledge Made' => $pledgeDate,
-        'Contribution Type' => 'Donation',
+        'Financial Type' => 'Donation',
         'Pledge Status' => 'In Progress',
         'In Honor of' => 'Mr. ' . $honreeFirstName . ' ' . $honreeLastName,
         'Initial Reminder Day' => '4 days prior to schedule date',
@@ -215,7 +215,7 @@ class WebTest_Pledge_ContactContextPledgePaymentAddTest extends CiviSeleniumTest
         'To be paid in' => '3 installments of $ 10.00 every 1 week(s)',
         'Payments are due on the' => '2 day of the period',
         'Pledge Made' => $pledgeDate,
-        'Contribution Type' => 'Donation',
+        'Financial Type' => 'Donation',
         'Pledge Status' => 'Completed',
         'In Honor of' => 'Mr. ' . $honreeFirstName . ' ' . $honreeLastName,
         'Initial Reminder Day' => '4 days prior to schedule date',
@@ -315,7 +315,7 @@ class WebTest_Pledge_ContactContextPledgePaymentAddTest extends CiviSeleniumTest
         'To be paid in' => '3 installments of $ 10.00 every 1 week(s)',
         'Payments are due on the' => '2 day of the period',
         'Pledge Made' => $pledgeDate,
-        'Contribution Type' => 'Donation',
+        'Financial Type' => 'Donation',
         'Pledge Status' => 'Pending',
         'In Honor of' => 'Mr. ' . $honreeFirstName . ' ' . $honreeLastName,
         'Initial Reminder Day' => '4 days prior to schedule date',
@@ -365,7 +365,7 @@ class WebTest_Pledge_ContactContextPledgePaymentAddTest extends CiviSeleniumTest
         'To be paid in' => '3 installments of $ 10.00 every 1 week(s)',
         'Payments are due on the' => '2 day of the period',
         'Pledge Made' => $pledgeDate,
-        'Contribution Type' => 'Donation',
+        'Financial Type' => 'Donation',
         'Pledge Status' => 'In Progress',
         'In Honor of' => 'Mr. ' . $honreeFirstName . ' ' . $honreeLastName,
         'Initial Reminder Day' => '4 days prior to schedule date',
@@ -395,7 +395,7 @@ class WebTest_Pledge_ContactContextPledgePaymentAddTest extends CiviSeleniumTest
         'To be paid in' => '3 installments of $ 10.00 every 1 week(s)',
         'Payments are due on the' => '2 day of the period',
         'Pledge Made' => $pledgeDate,
-        'Contribution Type' => 'Donation',
+        'Financial Type' => 'Donation',
         'Pledge Status' => 'Completed',
         'In Honor of' => 'Mr. ' . $honreeFirstName . ' ' . $honreeLastName,
         'Initial Reminder Day' => '4 days prior to schedule date',
@@ -512,7 +512,7 @@ class WebTest_Pledge_ContactContextPledgePaymentAddTest extends CiviSeleniumTest
         'To be paid in' => '3 installments of $ 10.00 every 1 week(s)',
         'Payments are due on the' => '2 day of the period',
         'Pledge Made' => $pledgeDate,
-        'Contribution Type' => 'Donation',
+        'Financial Type' => 'Donation',
         'Pledge Status' => 'Completed',
         'In Honor of' => 'Mr. ' . $honreeFirstName . ' ' . $honreeLastName,
         'Initial Reminder Day' => '4 days prior to schedule date',

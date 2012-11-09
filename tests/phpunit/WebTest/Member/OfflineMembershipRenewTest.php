@@ -162,8 +162,8 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
     $this->click('record_contribution', 'value=1');
     $this->waitForElementPresent('contribution_status_id');
 
-    // select the contribution type for the selected membership type
-    $this->select('contribution_type_id', 'value=2');
+      // select the financial type for the selected membership type
+      $this->select('financial_type_id', 'value=2');
 
     // the amount for the selected membership type
     $this->type('total_amount', '100.00');
@@ -362,8 +362,8 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
 
     // Record contribution
     $this->click('record_contribution');
-    $this->waitForElementPresent('contribution_type_id');
-    $this->select('contribution_type_id', "label=Member Dues");
+      $this->waitForElementPresent( 'financial_type_id' );
+      $this->select( 'financial_type_id', "label=Member Dues" );
     $this->select('payment_instrument_id', "label=Check");
     $this->waitForElementPresent('check_number');
     $this->type('check_number', '1023');
@@ -391,7 +391,7 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('_qf_MembershipRenewal_cancel-bottom');
     // Record contribution and set number of terms to 2
     $this->click('record_contribution');
-    $this->waitForElementPresent('contribution_type_id');
+      $this->waitForElementPresent( 'financial_type_id' );
     $this->click('changeTermsLink');
     $this->waitForElementPresent('num_terms');
     $this->type('num_terms', '');
@@ -400,7 +400,7 @@ class WebTest_Member_OfflineMembershipRenewTest extends CiviSeleniumTestCase {
     sleep(2);
     $this->click('total_amount');
     $this->verifyValue('total_amount', "200.00");
-    $this->select('contribution_type_id', "label=Member Dues");
+      $this->select( 'financial_type_id', "label=Member Dues" );
     $this->select('payment_instrument_id', "label=Check");
     $this->waitForElementPresent('check_number');
     $this->type('check_number', '1024');

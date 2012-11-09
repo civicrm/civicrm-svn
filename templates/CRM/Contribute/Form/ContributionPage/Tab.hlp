@@ -30,7 +30,7 @@
 <table> 
 <tr>
     <td><a href="{crmURL p='civicrm/admin/contribute/settings' q="reset=1&action=update&id=`$contributionPageID`"}" id="idContribPageSettings">&raquo; {ts}Title and Settings{/ts}</a></td>
-    <td>{ts}Use this form to edit the page title, contribution type (e.g. donation, campaign contribution, etc.), goal amount, introduction, and status (active/inactive) for this online contribution page.{/ts}</td>
+    <td>{ts}Use this form to edit the page title, financial type (e.g. donation, campaign contribution, etc.), goal amount, introduction, and status (active/inactive) for this online contribution page.{/ts}</td>
 </tr>
 <tr>
     <td><a href="{crmURL p='civicrm/admin/contribute/amount' q="reset=1&action=update&id=`$contributionPageID`"}" id="idAmount">&raquo; {ts}Amount{/ts}</a></td>

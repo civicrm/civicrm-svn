@@ -98,7 +98,7 @@ class WebTest_Member_UpdateMembershipScriptTest extends CiviSeleniumTestCase {
     $memTypeParams = array(
       'membership_type' => $title,
       'member_org' => $membershipOrg,
-      'contribution_type' => 2,
+                                'financial_type' => 2,
       'relationship_type' => '4_b_a',
     );
 
@@ -116,7 +116,7 @@ class WebTest_Member_UpdateMembershipScriptTest extends CiviSeleniumTestCase {
 
     // Membership fees
     $this->type('minimum_fee', '100');
-    $this->select('contribution_type_id', "value={$memTypeParams['contribution_type']}");
+        $this->select( 'financial_type_id', "value={$memTypeParams['financial_type']}" );
 
     // Duration for which the membership will be active
     $this->type('duration_interval', 1);

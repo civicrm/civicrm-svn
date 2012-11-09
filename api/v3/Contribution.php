@@ -57,7 +57,7 @@ require_once 'CRM/Contribute/PseudoConstant.php';
  * {@getfields Contribution_create}
  */
 function civicrm_api3_contribution_create($params) {
-  civicrm_api3_verify_one_mandatory($params, NULL, array('contribution_type_id', 'contribution_type'));
+  civicrm_api3_verify_one_mandatory($params, NULL, array('financial_type_id', 'financial_type'));
 
   $values = array();
 
@@ -269,22 +269,21 @@ function _civicrm_api3_contribute_format_params($params, &$values, $create = FAL
     }
 
     switch ($key) {
-      case 'contribution_type_id':
-        if (!CRM_Utils_Array::value($value, CRM_Contribute_PseudoConstant::contributionType())) {
-          throw new Exception("Invalid Contribution Type Id");
+			case 'financial_type_id' :
+				if (! CRM_Utils_Array::value ( $value, CRM_Contribute_PseudoConstant::financialType() )) {
+          throw new Exception("Invalid Financial Type Id");
         }
         break;
-
-      case 'contribution_type':
-        $contributionTypeId = CRM_Utils_Array::key($value, CRM_Contribute_PseudoConstant::contributionType());
+			case 'financial_type' :
+				$contributionTypeId = CRM_Utils_Array::key ( ucfirst ( $value ), CRM_Contribute_PseudoConstant::financialType() );
         if ($contributionTypeId) {
-          if (CRM_Utils_Array::value('contribution_type_id', $values) && $contributionTypeId != $values['contribution_type_id']) {
-            throw new Exception("Mismatched Contribution Type and Contribution Type Id");
+          if (CRM_Utils_Array::value('financial_type_id', $values) && $contributionTypeId != $values['financial_type_id']) {
+            throw new Exception("Mismatched Financial Type and Financial Type Id");
           }
-          $values['contribution_type_id'] = $contributionTypeId;
+					$values ['financial_type_id'] = $contributionTypeId;
         }
         else {
-          throw new Exception("Invalid Contribution Type");
+          throw new Exception("Invalid Financial Type");
         }
         break;
 

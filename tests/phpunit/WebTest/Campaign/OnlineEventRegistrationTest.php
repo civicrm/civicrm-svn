@@ -229,7 +229,7 @@ class WebTest_Campaign_OnlineEventRegistrationTest extends CiviSeleniumTestCase 
     $this->waitForElementPresent("_qf_Fee_upload-bottom");
     $this->click("CIVICRM_QFID_1_2");
     $this->check("payment_processor[$processorId]");
-    $this->select("contribution_type_id", "value=4");
+       $this->select("financial_type_id", "value=4");
     if ($priceSet) {
       // get one - TBD
     }

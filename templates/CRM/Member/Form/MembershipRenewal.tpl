@@ -113,6 +113,7 @@
                         <td>{$form.num_terms.html|crmAddClass:two} {ts}membership periods{/ts}<br />
                         <span class="description">{ts}Extend the membership end date by this many membership periods. Make sure the appropriate corresponding fee is entered below.{/ts}</span></td>
                      </tr>
+<<<<<<ng
                        {if $context neq 'standalone'}
                      <tr class="crm-membership-form-block-contribution-contact">
                        <td class="label">{$form.contribution_contact.label}</td>
@@ -133,10 +134,10 @@
                       </td>
                     </tr>
                   {/if}
-                    <tr class="crm-member-membershiprenew-form-block-contribution_type">
-                       <td class="label">{$form.contribution_type_id.label}</td>
-                       <td>{$form.contribution_type_id.html}<br />
-                       <span class="description">{ts}Select the appropriate contribution type for this payment.{/ts}</span></td>
+                    <tr class="crm-member-membershiprenew-form-block-financial_type_id">	
+                       <td class="label">{$form.financial_type_id.label}</td>
+                       <td>{$form.financial_type_id.html}<br />
+                       <span class="description">{ts}Select the appropriate financial type for this payment.{/ts}</span></td>
                     </tr>
                     <tr class="crm-member-membershiprenew-form-block-total_amount">
                        <td class="label">{$form.total_amount.label}</td>

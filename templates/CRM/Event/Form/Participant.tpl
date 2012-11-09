@@ -258,7 +258,9 @@
 
       {* Fee block (EventFees.tpl) is injected here when an event is selected. *}
         <div id="feeBlock"></div>
-
+	     <fieldset class = 'initial-payment'>
+	     {include file="CRM/Price/Form/InitialPayment.tpl" extends="Contribution"}
+	 </fieldset>
         <fieldset>
           <table class="form-layout">
             <tr class="crm-participant-form-block-note">
@@ -576,6 +578,11 @@
 
 <script type="text/javascript">
   {literal}
+if(cj("#priceset").length == 0) {
+cj('.initial-payment').hide();
+}else {
+cj('.initial-payment').show();
+}
   sendNotification();
   cj("#notify").hide();
   function sendNotification( ) {

@@ -195,7 +195,7 @@ class CRM_Core_BAO_OptionGroup extends CRM_Core_DAO_OptionGroup {
       );
 
       if ($discountSuffix) {
-        $copyDiscount = &CRM_Core_DAO::copyGeneric('CRM_Core_DAO_Discount',
+                $copyDiscount =& CRM_Core_DAO::copyGeneric( 'CRM_Order_DAO_Discount',
           array(
             'entity_id' => $fromId,
             'entity_table' => 'civicrm_' . $component,

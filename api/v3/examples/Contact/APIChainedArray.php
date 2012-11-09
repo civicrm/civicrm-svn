@@ -142,7 +142,7 @@ function contact_get_expectedresult(){
                       'check_number' => '',
                       'contribution_campaign_id' => '',
                       'contribution_type_id' => '11',
-                      'contribution_type' => 'Prize',
+                      'financial_type' => 'Prize',
                       'accounting_code' => '1005',
                       'instrument_id' => '76',
                       'payment_instrument' => 'Credit Card',

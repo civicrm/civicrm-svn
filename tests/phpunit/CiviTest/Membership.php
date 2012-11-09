@@ -21,7 +21,7 @@ class Membership extends PHPUnit_Framework_Testcase {
       'fixed_period_start_day' => NULL,
       'fixed_period_rollover_day' => NULL,
       'action' => 1,
-      'contribution_type_id' => 1,
+                         'financial_type_id'      => 1,
       'relationship_type_id' => 4,
       'visibility' => 'Public',
       'weight' => 4,

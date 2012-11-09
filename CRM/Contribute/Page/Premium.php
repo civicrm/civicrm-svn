@@ -169,6 +169,10 @@ class CRM_Contribute_Page_Premium extends CRM_Core_Page_Basic {
         $premiums[$dao->product_id]['action'] = CRM_Core_Action::formLink(self::links(), $action,
           array('id' => $pageID, 'pid' => $dao->id)
         );
+                //Financial Type
+                if( !empty( $dao->financial_type_id )  ){
+                    require_once 'CRM/Core/DAO.php';
+                    $premiums[$productDAO->id]['financial_type_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialType', $dao->financial_type_id, 'name' );
       }
     }
 
@@ -187,7 +191,7 @@ class CRM_Contribute_Page_Premium extends CRM_Core_Page_Basic {
     );
     $this->assign('rows', $premiums);
   }
-
+}
   /**
    * Get name of edit form
    *

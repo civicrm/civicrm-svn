@@ -104,10 +104,10 @@ function _civicrm_contribute_data(&$data, $enabled) {
       'label' => t('CiviCRM Contact, with custom fields'),
     ),
   );
-  //Contribution Type
-  $data['civicrm_contribution']['contribution_type'] = array(
+  //Financial Type
+    $data['civicrm_contribution']['financial_type'] = array(
     'title' => t('Contribution Type'),
-    'real field' => 'contribution_type_id',
+                                                               'real field' => 'financial_type_id',
     'help' => t('The Type of Contribution made, ie Member Dues, Event Fees etc'),
     'field' => array(
       'handler' => 'civicrm_handler_field_pseudo_constant',

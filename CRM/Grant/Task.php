@@ -39,7 +39,7 @@
  *
  */
 class CRM_Grant_Task {
-  CONST DELETE_GRANTS = 1, PRINT_GRANTS = 2, EXPORT_GRANTS = 3, UPDATE_GRANTS = 4;
+  CONST DELETE_GRANTS = 1, PRINT_GRANTS = 2, EXPORT_GRANTS = 3, UPDATE_GRANTS = 4, PAY_GRANTS = 5;
 
   /**
    * the task array
@@ -87,6 +87,10 @@ class CRM_Grant_Task {
           'class' => 'CRM_Grant_Form_Task_Update',
           'result' => FALSE,
         ),
+        5 => array( 'title'  => ts( 'Pay Grants' ),
+          'class'  => array( 'CRM_Grant_Form_Task_Pay',
+                             'CRM_Grant_Form_Task_GrantPayment' ),
+          'result' => false ),
       );
     }
     if (!CRM_Core_Permission::check('delete in CiviGrant')) {

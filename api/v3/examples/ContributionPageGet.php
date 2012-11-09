@@ -10,7 +10,7 @@ $params = array(
   'version' => 3,
   'amount' => '34567',
   'currency' => 'NZD',
-  'contribution_type_id' => 1,
+  'financial_type_id' => 1,
 );
 
   require_once 'api/api.php';
@@ -32,7 +32,7 @@ function contribution_page_get_expectedresult(){
   'values' => array( 
       '3' => array( 
           'id' => '3',
-          'contribution_type_id' => '1',
+          'financial_type_id' => '1',
           'is_credit_card_only' => 0,
           'is_monetary' => '1',
           'is_recur' => 0,

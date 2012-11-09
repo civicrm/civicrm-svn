@@ -69,7 +69,7 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
     'sort_name',
     'amount_level',
     'total_amount',
-    'contribution_type',
+                                 'financial_type',
     'contribution_source',
     'receive_date',
     'thankyou_date',
@@ -362,7 +362,7 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
       }
 
       if ($row['is_test']) {
-        $row['contribution_type'] = $row['contribution_type'] . ' (' . ts('test') . ')';
+                $row['financial_type'] = $row['financial_type'] . ' (' . ts('test') . ')';
       }
 
       $row['checkbox'] = CRM_Core_Form::CB_PREFIX . $result->contribution_id;
@@ -428,7 +428,7 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
           'direction' => CRM_Utils_Sort::DONTCARE,
         ),
         array('name' => ts('Type'),
-          'sort' => 'contribution_type_id',
+                                                'sort'      => 'financial_type_id',
           'direction' => CRM_Utils_Sort::DONTCARE,
         ),
         array(

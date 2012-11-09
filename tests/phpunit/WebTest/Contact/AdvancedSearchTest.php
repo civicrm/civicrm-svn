@@ -351,8 +351,8 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $this->type("contribution_check_number", "chqNo$firstName");
     // fill transaction id
     $this->type("contribution_transaction_id", "trid$firstName");
-    // fill contribution type
-    $this->select("contribution_type_id", "Event Fee");
+      // fill financial type
+      $this->select("financial_type_id", "Event Fee");
     // fill currency type
     $this->select("contribution_currency_type", "USD");
   }
@@ -417,7 +417,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $this->webtestFillDate("pledge_start_date_low", "-2 day");
     $this->webtestFillDate("pledge_start_date_high", "+2 day");
     // fill contribution type
-    $this->select("pledge_contribution_type_id", "label=Donation");
+    $this->select("pledge_financial_type_id", "Donation");
   }
 
   // function to create contact with details (contact details, address, Constituent information ...)

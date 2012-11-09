@@ -57,7 +57,7 @@ class CRM_Contribute_Page_ContributionRecur extends CRM_Core_Page {
       // if there is a payment processor ID, get the name of the payment processor
       if (CRM_Utils_Array::value('payment_processor_id', $values)) {
         $values['payment_processor'] = CRM_Core_DAO::getFieldValue(
-          'CRM_Core_DAO_PaymentProcessor',
+          'CRM_Financial_DAO_PaymentProcessor',
           $values['payment_processor_id'],
           'name'
         );

@@ -316,7 +316,7 @@ class WebTest_Contact_AdvanceSearchPaneTest extends CiviSeleniumTestCase {
         'contribution' =>
         array(
           'headerLocator' => 'div#CiviContribute',
-          'bodyLocator' => 'select#contribution_type_id',
+                            'bodyLocator'   => 'select#financial_type_id',
           'title' => 'Contributions',
           'fields' =>
           array(
@@ -332,10 +332,10 @@ class WebTest_Contact_AdvanceSearchPaneTest extends CiviSeleniumTestCase {
               'locator' => 'contribution_amount_high',
               'values' => array('1000'),
             ),
-            'Contribution Type' =>
+                                   'Financial Type'   => 
             array(
               'type' => 'select',
-              'locator' => 'contribution_type_id',
+                                          'locator' => 'financial_type_id',
               'values' => array('Donation'),
             ),
             'Contribution Status' =>

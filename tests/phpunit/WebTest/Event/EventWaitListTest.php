@@ -1,4 +1,4 @@
-<?php
+a<?php
 /*
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2012                                |
@@ -65,6 +65,8 @@ class WebTest_Event_EventWaitListTest extends CiviSeleniumTestCase {
 
     // Type description in ckEditor (fieldname, text to type, editor)
     $this->fillRichTextField("description", $eventDescription, 'CKEditor');
+    $this->click('_qf_EventInfo_upload-bottom');
+    $this->waitForPageToLoad('30000');
 
     // Choose Start and End dates.
     // Using helper webtestFillDate function.
@@ -100,7 +102,6 @@ class WebTest_Event_EventWaitListTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("_qf_Fee_upload-bottom");
     $this->click("CIVICRM_QFID_1_2");
     $this->click("xpath=//tr[@class='crm-event-manage-fee-form-block-payment_processor']/td[2]/label[text()='$processorName']");
-    $this->select("contribution_type_id", "value=4");
 
     $this->type("label_1", "Member");
     $this->type("value_1", "250.00");

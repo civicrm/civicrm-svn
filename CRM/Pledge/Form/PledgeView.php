@@ -76,7 +76,7 @@ class CRM_Pledge_Form_PledgeView extends CRM_Core_Form {
       $values['contribution_page'] = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_ContributionPage', $values['contribution_page_id'], 'title');
     }
 
-    $values['contribution_type'] = CRM_Utils_Array::value($values['contribution_type_id'], CRM_Contribute_PseudoConstant::contributionType());
+        $values['financial_type'] = CRM_Utils_Array::value( $values['financial_type_id'], CRM_Contribute_PseudoConstant::financialType() );
 
     if ($values['status_id']) {
       $values['pledge_status'] = CRM_Utils_Array::value($values['status_id'], CRM_Contribute_PseudoConstant::contributionStatus());
@@ -101,7 +101,9 @@ class CRM_Pledge_Form_PledgeView extends CRM_Core_Form {
     $displayName = CRM_Contact_BAO_Contact::displayName($values['contact_id']);
     $this->assign('displayName', $displayName);
 
-    $title = $displayName . ' - (' . ts('Pledged') . ' ' . CRM_Utils_Money::format($values['pledge_amount']) . ' - ' . $values['contribution_type'] . ')';
+        $title = $displayName . 
+                 ' - (' . ts('Pledged') . ' ' . CRM_Utils_Money::format( $values['pledge_amount'] ) . 
+                 ' - ' . $values['financial_type'] . ')';
 
     // add Pledge to Recent Items
     CRM_Utils_Recent::add($title,

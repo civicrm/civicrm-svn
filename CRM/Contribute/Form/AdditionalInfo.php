@@ -144,7 +144,23 @@ class CRM_Contribute_Form_AdditionalInfo {
 
 
     $form->add('textarea', 'note', ts('Notes'), array("rows" => 4, "cols" => 60));
+        //Recieved into
+        $params = ' financial_account_type_id = 5 ' ;
+        $recievedInto = CRM_Contribute_PseudoConstant::financialAccount(  null, $params );
+        if( $counRecieved = count( $recievedInto ) ){
+            $this->assign( 'feeAmount', $counRecieved );
   }
+        if( $counRecieved != 1 ){
+            $this->add( 'select', 
+                        'fee_to_financial_account_id', 
+                        ts( 'Fee Account' ), 
+                        array(''=>ts( '- Select Recieved Into -' )) + $recievedInto );
+        }else{
+            $this->addElement( 'hidden', 'fee_to_financial_account_id', '', array( 'id' => 'fee_to_financial_account_id' ) );
+            $defaults['fee_to_financial_account_id'] = key($recievedInto);
+            $this->setDefaults($defaults);
+        }
+    }
 
   /**
    * Function to build the form for Honoree Information.
@@ -294,7 +310,7 @@ class CRM_Contribute_Form_AdditionalInfo {
     $customFields = CRM_Core_BAO_CustomField::getFields('Contribution',
       FALSE,
       FALSE,
-      CRM_Utils_Array::value('contribution_type_id',
+                                                             CRM_Utils_Array::value('financial_type_id',
         $params
       )
     );
@@ -318,10 +334,9 @@ class CRM_Contribute_Form_AdditionalInfo {
    */
   function emailReceipt(&$form, &$params, $ccContribution = FALSE) {
     $this->assign('receiptType', 'contribution');
-    // Retrieve Contribution Type Name from contribution_type_id
-    $params['contributionType_name'] = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_ContributionType',
-      $params['contribution_type_id']
-    );
+        // Retrieve Financial Type Name from financial_type_id
+        $params['contributionType_name'] = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialType',
+                                                                        $params['financial_type_id'] );
     if (CRM_Utils_Array::value('payment_instrument_id', $params)) {
       $paymentInstrument = CRM_Contribute_PseudoConstant::paymentInstrument();
       $params['paidBy'] = $paymentInstrument[$params['payment_instrument_id']];
@@ -480,4 +495,5 @@ class CRM_Contribute_Form_AdditionalInfo {
   }
 
 }
+
 

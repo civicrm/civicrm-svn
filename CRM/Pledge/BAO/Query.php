@@ -102,7 +102,7 @@ class CRM_Pledge_BAO_Query {
     }
 
     if (CRM_Utils_Array::value('pledge_contribution_type', $query->_returnProperties)) {
-      $query->_select['pledge_contribution_type'] = "(SELECT civicrm_contribution_type.name FROM civicrm_contribution_type WHERE civicrm_contribution_type.id = civicrm_pledge.contribution_type_id) as pledge_contribution_type";
+            $query->_select['pledge_contribution_type']  = "(SELECT civicrm_financial_type.name FROM civicrm_financial_type WHERE civicrm_financial_type.id = civicrm_pledge.financial_type_id) as pledge_contribution_type";
       $query->_element['pledge_contribution_type'] = 1;
       $query->_tables['civicrm_pledge'] = $query->_whereTables['civicrm_pledge'] = 1;
     }
@@ -366,14 +366,14 @@ class CRM_Pledge_BAO_Query {
         $query->_tables['civicrm_pledge'] = $query->_whereTables['civicrm_pledge'] = 1;
         return;
 
-      case 'pledge_contribution_type_id':
-        $type = CRM_Contribute_PseudoConstant::contributionType($value);
-        $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause('civicrm_pledge.contribution_type_id',
+      case 'pledge_financial_type_id':
+        $type = CRM_Contribute_PseudoConstant::financialType($value);
+        $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause('civicrm_pledge.financial_type_id',
           $op,
           $value,
           'Integer'
         );
-        $query->_qill[$grouping][] = ts('Contribution Type - %1', array(1 => $type));
+            $query->_qill[$grouping][] = ts( 'Financial Type - %1', array( 1 => $type ) );
         $query->_tables['civicrm_pledge'] = $query->_whereTables['civicrm_pledge'] = 1;
         return;
 
@@ -384,7 +384,7 @@ class CRM_Pledge_BAO_Query {
           $value,
           'Integer'
         );
-        $query->_qill[$grouping][] = ts('Contribution Page - %1', array(1 => $page));
+        $query->_qill[$grouping][] = ts('Financial Page - %1', array(1 => $page));
         $query->_tables['civicrm_pledge'] = $query->_whereTables['civicrm_pledge'] = 1;
         return;
 
@@ -447,7 +447,7 @@ class CRM_Pledge_BAO_Query {
         break;
 
       case 'pledge_contribution_type':
-        $from .= " $side JOIN civicrm_contribution_type ON civicrm_pledge.contribution_type_id = civicrm_contribution_type.id ";
+            $from .= " $side JOIN civicrm_financial_type ON civicrm_pledge.financial_type_id = civicrm_financial_type.id ";
         break;
 
       case 'pledge_contact_b':
@@ -586,10 +586,10 @@ class CRM_Pledge_BAO_Query {
     $form->addGroup($paymentStatus, 'pledge_payment_status_id', ts('Pledge Payment Status'));
 
     $form->add('select', 'pledge_contribution_type_id',
-      ts('Contribution Type'),
+                   ts( 'Financial Type' ),
       array(
-        '' => ts('- any -')) +
-      CRM_Contribute_PseudoConstant::contributionType()
+        '' => ts('- select -')) +
+      CRM_Contribute_PseudoConstant::financialType()
     );
 
     $form->add('select', 'pledge_contribution_page_id',

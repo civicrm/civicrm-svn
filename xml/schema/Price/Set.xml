@@ -95,18 +95,23 @@
       <add>3.1</add>
   </field>
  <field>  
-      <name>contribution_type_id</name> 
+      <name>financial_type_id</name> 
+      <title>Financial Type</title>
       <type>int unsigned</type>  
       <default>NULL</default>
-      <comment>FK to Contribution Type(for membership price sets only).</comment>
+      <comment>FK to Financial Type(for membership price sets only).</comment>
       <add>3.4</add>  
+      <change>4.1</change>
+      <changedName>contribution_type_id</changedName>  
   </field>    
   <foreignKey>  
-       <name>contribution_type_id</name>  
-       <table>civicrm_contribution_type</table>  
+       <name>financial_type_id</name>  
+       <table>civicrm_financial_type</table>  
        <key>id</key>  
        <add>3.4</add>  
        <onDelete>SET NULL</onDelete>
+       <change>4.1</change>
+       <changedName>contribution_type_id</changedName>  
   </foreignKey>  
   <field>
        <name>is_quick_config</name>

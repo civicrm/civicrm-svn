@@ -106,13 +106,13 @@ function _civicrm_api3_pledge_get_spec(&$params) {
  */
 function _civicrm_api3_pledge_create_spec(&$params) {
 
-  $required = array('contact_id', 'amount', 'installments', 'start_date', 'pledge_contribution_type_id');
+  $required = array('contact_id', 'amount', 'installments', 'start_date', 'pledge_financial_type_id');
   foreach ($required as $required_field) {
     $params[$required_field]['api.required'] = 1;
   }
   // @todo this can come from xml
   $params['amount']['api.aliases'] = array('pledge_amount');
-  $params['pledge_contribution_type_id']['api.aliases'] = array('contribution_type_id');
+  $params['pledge_financial_type_id']['api.aliases'] = array('financial_type_id');
 }
 
 /**
