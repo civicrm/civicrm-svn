@@ -72,7 +72,10 @@ class CRM_Utils_System_UnitTests extends CRM_Utils_System_Drupal {
     return;
   }
 
-  function url($path = NULL, $query = NULL, $absolute = TRUE, $fragment = NULL, $htmlize = TRUE, $frontend = FALSE) {
+  function url($path = NULL, $query = NULL, $absolute = FALSE,
+    $fragment = NULL, $htmlize = TRUE,
+    $frontend = FALSE, $forceBackend = FALSE
+  ) {
     $config = CRM_Core_Config::singleton();
     static $script = 'index.php';
 
