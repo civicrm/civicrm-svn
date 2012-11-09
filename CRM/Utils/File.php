@@ -535,7 +535,8 @@ HTACCESS;
         while (FALSE !== ($entry = readdir($dh))) {
           $path = $subdir . DIRECTORY_SEPARATOR . $entry;
           if ($entry == '.' || $entry == '..') {
-          } elseif (is_dir($path)) {
+          //a bit hackish but avoids trawling svn dirs
+          } elseif (is_dir($path) && !substr($path, -4) == '.svn') {
             $todos[] = $path;
           }
         }
