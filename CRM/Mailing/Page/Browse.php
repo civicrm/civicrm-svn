@@ -87,7 +87,8 @@ class CRM_Mailing_Page_Browse extends CRM_Core_Page {
    * @return void
    * @access public
    *
-   */ function preProcess() {
+   */
+  function preProcess() {
     $this->_unscheduled = $this->_archived = $archiveLinks = FALSE;
     $this->_mailingId   = CRM_Utils_Request::retrieve('mid', 'Positive', $this);
     $this->_sms         = CRM_Utils_Request::retrieve('sms', 'Positive', $this);
