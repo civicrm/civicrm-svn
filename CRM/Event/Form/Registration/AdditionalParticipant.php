@@ -1,4 +1,4 @@
-<?php
+<?php
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.2                                                |
@@ -393,7 +393,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
 
     if ($button != 'skip') {
       //Check that either an email or firstname+lastname is included in the form(CRM-9587)
-      CRM_Event_Form_Registration_Register::checkProfileComplete($fields, &$errors, $self->_eventId);
+      CRM_Event_Form_Registration_Register::checkProfileComplete($fields, $errors, $self->_eventId);
 
       //Additional Participant can also register for an event only once
       $isRegistered = CRM_Event_Form_Registration_Register::checkRegistration($fields, $self, TRUE);
