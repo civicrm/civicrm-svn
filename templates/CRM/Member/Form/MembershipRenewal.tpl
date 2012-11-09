@@ -113,8 +113,7 @@
                         <td>{$form.num_terms.html|crmAddClass:two} {ts}membership periods{/ts}<br />
                         <span class="description">{ts}Extend the membership end date by this many membership periods. Make sure the appropriate corresponding fee is entered below.{/ts}</span></td>
                      </tr>
-<<<<<<ng
-                       {if $context neq 'standalone'}
+                  {if $context neq 'standalone'}
                      <tr class="crm-membership-form-block-contribution-contact">
                        <td class="label">{$form.contribution_contact.label}</td>
                        <td>{$form.contribution_contact.html}&nbsp;&nbsp;{help id="id-contribution_contact"}</td>
