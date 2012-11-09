@@ -378,7 +378,7 @@ class InstallRequirements {
 
     $this->errors = NULL;
 
-    $this->requirePHPVersion('5.3.8', array("PHP Configuration", "PHP5 installed", NULL, "PHP version " . phpversion()));
+    $this->requirePHPVersion('5.3.3', array("PHP Configuration", "PHP5 installed", NULL, "PHP version " . phpversion()));
 
     // Check that we can identify the root folder successfully
     $this->requireFile($crmPath . CIVICRM_DIRECTORY_SEPARATOR . 'README.txt',

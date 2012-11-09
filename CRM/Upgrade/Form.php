@@ -388,7 +388,7 @@ SET    version = '$version'
     }
 
     $phpVersion = phpversion();
-    $minPhpVersion = '5.3.8';
+    $minPhpVersion = '5.3.3';
     if (version_compare($phpVersion, $minPhpVersion) <= 0) {
       $error = ts('CiviCRM %3 requires PHP version %1 (or newer), but the current system uses %2 ',
                array(
