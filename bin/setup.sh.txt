@@ -1,26 +1,26 @@
 #!/usr/bin/env bash
- 
+
 # define your schema file name here, will be overriden by
 # FIRST command line argument if given
-SCHEMA=schema/Schema.xml 
-# define your database name here, will be overriden by 
+SCHEMA=schema/Schema.xml
+# define your database name here, will be overriden by
 # SECOND command line argument if given
 DBNAME=
-# define your database usernamename here, will be overriden by 
+# define your database usernamename here, will be overriden by
 # THIRD command line argument if given
 DBUSER=
-# define your database password here, will be overriden by 
+# define your database password here, will be overriden by
 # FOURTH command line argument if given
 DBPASS=
 # any extra args you need in your mysql connect string
-# number of arguments should be specified within "" 
+# number of arguments should be specified within ""
 # FIFTH command line argument if given
 DBARGS=""
 # set your PHP5 bin dir path here, if it's not in PATH
 # The path should be terminated with dir separator!
 PHP5PATH=
 # Set a special DB load filename here for custom installs
-# If a filename is passed, civicrm_data.mysql AND the 
+# If a filename is passed, civicrm_data.mysql AND the
 # passed file will be loaded instead of civicrm_generated.mysql.
 # The DBLOAD file must be in the sql directory.
 DBLOAD=
@@ -113,20 +113,10 @@ if [ ! -z $DBADD ]; then
     echo; echo Loading $DBADD
     mysql -u $DBUSER $PASSWDSECTION $DBNAME < $DBADD
 fi
-    
+
+# run the cli script to build the menu and the triggers
+cd $CALLEDPATH/..
+"$PHP5PATH"php cli.php -e System -a flush --triggers 1 --session 1
 
 echo; echo "DONE!"
 
-# to generate a new data file do the following from the sql directory:
-# mysqladmin -f -u $DBUSER $PASSWDSECTION drop $DBNAME
-# mysqladmin -f -u $DBUSER $PASSWDSECTION create $DBNAME
-# mysql -u $DBUSER $PASSWDSECTION $DBNAME < civicrm.mysql
-# mysql -u $DBUSER $PASSWDSECTION $DBNAME < civicrm_data.mysql
-# mysql -u $DBUSER $PASSWDSECTION $DBNAME < civicrm_sample.mysql
-# mysql -u $DBUSER $PASSWDSECTION $DBNAME < zipcodes.mysql
-# php GenerateData.php
-# echo "drop table zipcodes ; update civicrm_domain set config_backend = null; UPDATE civicrm_setting SET value = NULL WHERE name = 'userFrameworkResourceURL';" | mysql -u $DBUSER $PASSWDSECTION $DBNAME
-# mysqldump -c -e -t -n -u $DBUSER $PASSWDSECTION $DBNAME  > civicrm_generated.mysql
-# add sample custom data 
-# cat civicrm_sample_custom_data.mysql >> civicrm_generated.mysql
-# cat ../CRM/Case/xml/configuration.sample/SampleConfig.mysql >> civicrm_generated.mysql
