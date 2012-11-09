@@ -71,7 +71,7 @@ class CRM_Core_Invoke {
          // TODO
         }*/
       }
-    } else { 
+    } else {
       // Symfony-based invocation path
       require_once CIVICRM_SYMFONY_PATH . '/app/bootstrap.php.cache';
       require_once CIVICRM_SYMFONY_PATH . '/app/AppKernel.php';
@@ -103,7 +103,7 @@ class CRM_Core_Invoke {
       }
     }
   }
-  
+
   /**
    * Perform general setup
    *
@@ -444,6 +444,7 @@ class CRM_Core_Invoke {
     // also cleanup all caches
     $config->cleanupCaches($sessionReset || CRM_Utils_Request::retrieve('sessionReset', 'Boolean', CRM_Core_DAO::$_nullObject, FALSE, 0, 'GET'));
 
+    CRM_Core_BAO_SETTING::updateSettingsFromMetaData();
     // also rebuild triggers if requested explicitly
     if (
       $triggerRebuild ||
