@@ -486,17 +486,21 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
       $cacheString .= "_{$filterField}_{$filterString}";
     }
 
-    $settingsMetadata = CRM_Core_BAO_Cache::getItem('CiviCRM setting Spec', $cacheString, $componentID);
+    $settingsMetadata = CRM_Core_BAO_Cache::getItem('CiviCRM setting Specs', $cacheString, $componentID);
     if ($settingsMetadata === NULL) {
-      global $civicrm_root;
-      $metaDataFolders = array($civicrm_root. '/settings');
-      CRM_Utils_Hook::alterSettingsFolders($metaDataFolders);
-      foreach ($metaDataFolders as $metaDataFolder) {
-        $settingsMetadata = self::loadSettingsMetaData($metaDataFolder);
-        self::_filterSettingsSpecification($filters, $settingsMetadata);
+      $settingsMetadata = CRM_Core_BAO_Cache::getItem('CiviCRM setting Spec', 'All');
+      if(empty($settingsMetadata)){
+        global $civicrm_root;
+        $metaDataFolders = array($civicrm_root. '/settings');
+        CRM_Utils_Hook::alterSettingsFolders($metaDataFolders);
+        foreach ($metaDataFolders as $metaDataFolder) {
+          $settingsMetadata = self::loadSettingsMetaData($metaDataFolder);
+        }
       }
+      self::_filterSettingsSpecification($filters, $settingsMetadata);
       CRM_Utils_Hook::alterSettingsMetaData($settingsMetadata, $domainID);
-      CRM_Core_BAO_Cache::setItem($settingsMetadata,'CiviCRM setting Spec', $cacheString, $componentID);
+      CRM_Core_BAO_Cache::setItem($settingsMetadata,'CiviCRM setting Specs', $cacheString, $componentID);
+
     }
     return $settingsMetadata;
 
@@ -511,6 +515,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
       $settings = include $file;
       $settingMetaData = array_merge($settingMetaData, $settings);
     }
+    CRM_Core_BAO_Cache::setItem($settingMetaData,'CiviCRM setting Spec', 'All');
     return $settingMetaData;
   }
 
