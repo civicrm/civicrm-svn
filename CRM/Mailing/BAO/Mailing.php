@@ -2061,10 +2061,9 @@ AND civicrm_contact.is_opt_out =0";
     // if they dont have universal access
     $groups = CRM_Core_PseudoConstant::group(null, false);
     if (!empty($groups)) {
-      $groupIDs = implode(',',
-        array_keys($groups)
-      );
+      $groupIDs = implode(',', array_keys($groups));
       $selectClause = ($count) ? 'COUNT( DISTINCT m.id) as count' : 'DISTINCT( m.id ) as id';
+
       // get all the mailings that are in this subset of groups
       $query = "
 SELECT    $selectClause
@@ -2074,10 +2073,12 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
     OR   ( g.entity_table IS NULL AND g.entity_id IS NULL ) )
    $condition";
       $dao = CRM_Core_DAO::executeQuery($query, CRM_Core_DAO::$_nullArray);
+
       if ($count) {
         $dao->fetch();
         return $dao->count;
       }
+
       $mailingIDs = array();
       while ($dao->fetch()) {
         $mailingIDs[] = $dao->id;

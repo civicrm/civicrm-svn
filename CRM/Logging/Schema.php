@@ -163,10 +163,13 @@ AND    TABLE_NAME LIKE 'log_civicrm_%'
   /**
    * Add missing (potentially specified) log table columns for the given table.
    *
-   * param $table string  name of the relevant table
-   * param $cols mixed    array of columns to add or null (to check for the missing columns)
+   * @param $table string  name of the relevant table
+   * @param $cols mixed    array of columns to add or null (to check for the missing columns)
+   * @param $rebuildTrigger boolean should we rebuild the triggers
+   *
+   * @return void
    */
-  function fixSchemaDifferencesFor($table, $cols = NULL) {
+  function fixSchemaDifferencesFor($table, $cols = NULL, $rebuildTrigger = TRUE) {
     if (empty($this->logs[$table])) {
       $this->createLogTableFor($table);
       return;
@@ -192,8 +195,10 @@ AND    TABLE_NAME LIKE 'log_civicrm_%'
       CRM_Core_DAO::executeQuery("ALTER TABLE `{$this->db}`.log_$table ADD $line");
     }
 
-    // invoke the meta trigger creation call
-    CRM_Core_DAO::triggerRebuild($table);
+    if ($rebuildTrigger) {
+      // invoke the meta trigger creation call
+      CRM_Core_DAO::triggerRebuild($table);
+    }
   }
 
   function fixTimeStampSQL($query) {
