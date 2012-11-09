@@ -116,11 +116,21 @@ class CRM_Core_BAO_Cache extends CRM_Core_DAO_Cache {
     $dao->path         = $path;
     $dao->component_id = $componentID;
 
+    // get a lock so that multiple ajax requests on the same page
+    // dont trample on each other
+    // CRM-11234
+    $lockName = "civicrm.cache.{$group}_{$path}._{$conponentID}";
+    $lock = new CRM_Core_Lock($lockName);
+    if (!$lock->isAcquired()) {
+      CRM_Core_Error::fatal();
+    }
+
     $dao->find(TRUE);
     $dao->data = serialize($data);
     $dao->created_date = date('YmdHis');
-
     $dao->save();
+
+    $lock->release();
 
     $dao->free();
   }
