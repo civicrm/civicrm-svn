@@ -188,7 +188,7 @@ SELECT *
       $sql .= " AND $additionalWhereCond";
     }
 
-    $this->sql($sql, $tableName, &$fields);
+    $this->sql($sql, $tableName, $fields);
   }
 
   function sql($sql, $tableName, &$fields) {
@@ -536,7 +536,7 @@ AND    entity_table = 'civicrm_contact'
 
     if (!$lastExportTime) {
       $sql = "
-SELECT id 
+SELECT id
 FROM   civicrm_contact
 ";
     }
