@@ -1066,7 +1066,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
     }
 
         // add these values for the recurringContrib function ,CRM-10188
-        $params['contribution_type_id'] = $contributionType->id;
+        $params['financial_type_id'] = $contributionType->id;
         $params['is_email_receipt'] = CRM_Utils_Array::value( 'is_email_receipt', $form->_values );
 
     $recurringContributionID = self::processRecurringContribution($form, $params, $contactID, $contributionType, $online);
@@ -1601,7 +1601,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
     // we need to add a unique trxn_id to avoid a unique key error
     // in paypal IPN we reset this when paypal sends us the real trxn id, CRM-2991
     $recurParams['trxn_id'] = CRM_Utils_Array::value('trxn_id', $params, $params['invoiceID']);
-    $recurParams['contribution_type_id'] = $contributionType->id;
+    $recurParams['financial_type_id'] = $contributionType->id;
 
     if (!$online || $form->_values['is_monetary']) {
       $recurParams['payment_instrument_id'] = 1;

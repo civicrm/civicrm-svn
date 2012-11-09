@@ -958,20 +958,7 @@ WHERE  contribution_id = {$this->_id}
                                ts( 'Financial Type' ), 
                                array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::financialType( ),
       TRUE, array('onChange' => "CRM.buildCustomData( 'Contribution', this.value );")
-    );
-        $params = 'financial_account_type_id = 1' ;
-        $recievedInto = CRM_Contribute_PseudoConstant::financialAccount(  null, $params );
-        if( count( $recievedInto ) ){
-            $this->assign( 'recievedInto', $recievedInto );
-        }
-        
-        $this->add( 'select', 
-                               'to_financial_account_id', 
-                               ts( 'Received Into' ), 
-                        array(''=>ts( '- Select Recieved Into -' )) + $recievedInto,
-                               TRUE );
-       
-        
+    );  
     if ($this->_online) {
       $element->freeze();
     }
@@ -1626,7 +1613,7 @@ WHERE  contribution_id = {$this->_id}
       }
       // process line items, until no previous line items.
       if (empty($this->_lineItems) && $entityID && !empty($lineItem)) {
-        CRM_Contribute_Form_AdditionalInfo::processPriceSet($entityID, $lineItem, $contribution,null, "civicrm_".$entityTable);
+        CRM_Price_BAO_LineItem::processPriceSet($entityID, $lineItem, "civicrm_".$entityTable);
       }
 
       //send receipt mail.

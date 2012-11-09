@@ -37,21 +37,23 @@ INSERT INTO civicrm_component (name, namespace) VALUES ('CiviCase'      , 'CRM_C
 INSERT INTO civicrm_component (name, namespace) VALUES ('CiviReport'    , 'CRM_Report' );
 INSERT INTO civicrm_component (name, namespace) VALUES ('CiviCampaign'  , 'CRM_Campaign' );
 
-INSERT INTO civicrm_address ( contact_id, location_type_id, is_primary, is_billing, street_address, street_number, street_number_suffix, street_number_predirectional, street_name, street_type, street_number_postdirectional, street_unit, supplemental_address_1, supplemental_address_2, supplemental_address_3, city, county_id, state_province_id, postal_code_suffix, postal_code, usps_adc, country_id, geo_code_1, geo_code_2, timezone)
-      VALUES
-      ( NULL, 1, 1, 1, '15S El Camino Way E', 14, 'S', NULL, 'El Camino', 'Way', NULL, NULL, NULL, NULL, NULL, 'Collinsville', NULL, 1006, NULL, '6022', NULL, 1228, 41.8328, -72.9253, NULL);
+-- Create organization contact
+INSERT INTO civicrm_contact( `contact_type`, `sort_name`, `display_name`, `legal_name`) 
+VALUES ('Organization', @domainName, @domainName, @domainName );
 
-SELECT @addId := id from civicrm_address where street_address = '15S El Camino Way E';
+SELECT @contactID := id from civicrm_contact where sort_name = "Default Domain Name" and display_name = "Default Domain Name";
+
+
 
 INSERT INTO civicrm_email (contact_id, location_type_id, email, is_primary, is_billing, on_hold, hold_date, reset_date)
       VALUES
-      (NULL, 1, '"Domain Email" <domainemail@example.org>', 0, 0, 0, NULL, NULL);
+      ( @contactID, 1, '"Domain Email" <domainemail@example.org>', 0, 0, 0, NULL, NULL);
 
-SELECT @emailId := id from civicrm_email where email = 'domainemail@example.org';
+SELECT @emailId := id from civicrm_email where email = '"Domain Email" <domainemail@example.org>';
 
 INSERT INTO civicrm_phone (contact_id, location_type_id, is_primary, is_billing, mobile_provider_id, phone, phone_type_id)
       VALUES
-      (NULL, 1, 0, 0, NULL,'204 222-1001', 1);
+      (@contactID, 1, 0, 0, NULL,'204 222-1001', 1);
 
 SELECT @phoneId := id from civicrm_phone where phone = '204 222-1001';
 
@@ -61,7 +63,8 @@ INSERT INTO civicrm_loc_block ( address_id, email_id, phone_id, address_2_id, em
 
 SELECT @locBlockId := id from civicrm_loc_block where phone_id = @phoneId AND email_id = @emailId AND address_id = @addId;
 
-INSERT INTO civicrm_domain (name, version, loc_block_id) VALUES (@domainName, '2.2', @locBlockId);
+
+INSERT INTO civicrm_domain (name, version, contact_id) VALUES (@domainName, '2.2', @contactID);
 SELECT @domainID := id FROM civicrm_domain where name = 'Default Domain Name';
 
 -- Sample location types
@@ -1490,30 +1493,6 @@ format=[csv or print] optional-output CSV or print-friendly HTML, else PDF{/ts}'
     ( @domainID, 'Always' , NULL, '{ts escape="sql" skip="true"}Send Scheduled SMS{/ts}',           '{ts escape="sql" skip="true"}Sends out scheduled SMS{/ts}', 'job', 'process_sms',             NULL, 0),
     ( @domainID, 'Always' , NULL, '{ts escape="sql" skip="true"}Rebuild Smart Group Cache{/ts}', '{ts escape="sql" skip="true"}Rebuilds the smart group cache.{/ts}', 'job', 'group_rebuild', '{ts escape="sql" skip="true"}limit=Number optional-Limit the number of smart groups rebuild{/ts}', 0);
 
--- CRM-9714
-
-SELECT @contribution_type_id := max(id) FROM `civicrm_contribution_type` WHERE `name` = 'Member Dues';
-INSERT INTO `civicrm_price_set` ( `name`, `title`, `is_active`, `extends`, `is_quick_config`, `contribution_type_id`, `is_reserved` )
-VALUES ( 'default_contribution_amount', 'Contribution Amount', '1', '2', '1', NULL,1),
-( 'default_membership_type_amount', 'Membership Amount', '1', '3', '1', @contribution_type_id,1);
-
-SELECT @setID := max(id) FROM civicrm_price_set WHERE name = 'default_contribution_amount' AND extends = 2 AND is_quick_config = 1 ;
-
-INSERT INTO `civicrm_price_field` (`price_set_id`, `name`, `label`, `html_type`,`weight`, `is_display_amounts`, `options_per_line`, `is_active`, `is_required`,`visibility_id` )
-VALUES ( @setID, 'contribution_amount', 'Contribution Amount', 'Text', '1', '1', '1', '1', '1', '1' );
-
-SELECT @fieldID := max(id) FROM civicrm_price_field WHERE name = 'contribution_amount' AND price_set_id = @setID;
-
-INSERT INTO `civicrm_price_field_value` (  `price_field_id`, `name`, `label`, `amount`, `weight`, `is_default`, `is_active`)
-VALUES ( @fieldID, 'contribution_amount', 'Contribution Amount', '1', '1', '0', '1');
-INSERT INTO `civicrm_financial_type`
-    ( name, description, is_deductible, is_reserved, is_active )
-VALUES 
-    ( 'Donation', 'Donation', 1, 1, 1 ),
-    ( 'Member Dues', 'Member Dues', 1, 1, 1 ),
-    ( 'Campaign Contribution', 'Campaign Contribution', 1, 1, 1 ),
-    ( 'Event Fee', 'Event Fee', 1, 1, 1 );
-
 SELECT @option_value_rel_id  := value FROM `civicrm_option_value` WHERE `option_group_id` = @option_group_id_arel AND `name` = 'Income Account is';
 SELECT @option_value_rel_id_exp  := value FROM `civicrm_option_value` WHERE `option_group_id` = @option_group_id_arel AND `name` = 'Expense Account is';
 SELECT @option_value_rel_id_ar  := value FROM `civicrm_option_value` WHERE `option_group_id` = @option_group_id_arel AND `name` = 'AR Account is';
@@ -1555,9 +1534,9 @@ VALUES
 -- CRM-9714
 
 SELECT @financial_type_id := max(id) FROM `civicrm_financial_type` WHERE `name` = 'Member Dues';
-INSERT INTO `civicrm_price_set` ( `name`, `title`, `is_active`, `extends`, `is_quick_config`, `financial_type_id` )
-VALUES ( 'default_contribution_amount', 'Contribution Amount', '1', '2', '1', NULL),
-( 'default_membership_type_amount', 'Membership Amount', '1', '3', '1', @financial_type_id);
+INSERT INTO `civicrm_price_set` ( `name`, `title`, `is_active`, `extends`, `is_quick_config`, `financial_type_id`, `is_reserved` )
+VALUES ( 'default_contribution_amount', 'Contribution Amount', '1', '2', '1', NULL,1),
+( 'default_membership_type_amount', 'Membership Amount', '1', '3', '1', @financial_type_id,1);
 
 SELECT @setID := max(id) FROM civicrm_price_set WHERE name = 'default_contribution_amount' AND extends = 2 AND is_quick_config = 1 ;
 

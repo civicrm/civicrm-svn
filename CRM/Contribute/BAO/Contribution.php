@@ -289,7 +289,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
         'contact_id',
         'total_amount',
         'currency',
-        'contribution_type_id',
+        'financial_type_id',
       );
       $retrieverequired = 0;
       foreach ($titleFields as $titleField) {
@@ -362,7 +362,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
         'contact_id',
         'total_amount',
         'currency',
-        'contribution_type_id',
+        'financial_type_id',
       );
       $retrieverequired = 0;
       foreach ($titleFields as $titleField) {

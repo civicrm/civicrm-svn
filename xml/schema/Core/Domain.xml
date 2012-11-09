@@ -98,7 +98,20 @@
       <type>int unsigned</type>
       <comment>FK to Location Block ID. This is specifically not an FK to avoid circular constraints</comment>
       <add>2.0</add>
+      <drop>4.1</drop>
   </field>
+  <field>
+      <name>contact_id</name>
+      <type>int unsigned</type>
+      <comment>FK to Contact ID. This is specifically not an FK to avoid circular constraints</comment>
+      <add>4.1</add>
+  </field>
+  <foreignKey> 
+       <name>contact_id</name> 
+       <table>civicrm_contact</table> 
+       <key>id</key> 
+       <add>4.1</add> 
+  </foreignKey> 
   <field>
     <name>locales</name>
     <type>text</type>

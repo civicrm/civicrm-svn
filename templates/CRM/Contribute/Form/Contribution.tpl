@@ -183,21 +183,6 @@ cj(document).ready(function(){
 
         <tr class="crm-contribution-form-block-source"><td class="label">{$form.source.label}</td><td{$valueStyle}>{$form.source.html|crmAddClass:huge} {help id="id-contrib_source"}</td></tr>
 
-	{if $contributionMode }
-	   <tr class="crm-contribution-form-block-contribution_type_id crm-contribution-form-block-financial_type_id">
-	   {if $recievedInto neq 1}
-	     	 <td class="label">{$form.to_financial_account_id.label}</td><td{$valueStyle}>
-		 {if !$recievedInto }
-		     	{capture assign=ftUrl}{crmURL p='civicrm/admin/financial/financialAccount' q="reset=1"}{/capture}
-			{ts 1=$ftUrl}There is no Financial Account configured of Financial Account Type Asset. <a href='%1'>Click here</a> if you want to configure financial Account of Financial Account Type Asset for your site.{/ts}
-	        {else}  
-		 	{$form.to_financial_account_id.html}&nbsp;
-		{/if}				 
-		 </td>
-		 {/if}
-	     </tr>
-	 {/if}
-
   {* CRM-7362 --add campaign to contributions *}
   {include file="CRM/Campaign/Form/addCampaignToComponent.tpl"
   campaignTrClass="crm-contribution-form-block-campaign_id"}

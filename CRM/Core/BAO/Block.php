@@ -205,7 +205,7 @@ class CRM_Core_BAO_Block {
    * @access public
    * @static
    */
-  static function create($blockName, &$params, $entity = NULL) {
+  static function create($blockName, &$params, $entity = NULL, $contactId = NULL) {
     if (!self::blockExists($blockName, $params)) {
       return NULL;
     }
