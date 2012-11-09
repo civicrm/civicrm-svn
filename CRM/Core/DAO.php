@@ -459,7 +459,7 @@ class CRM_Core_DAO extends DB_DataObject {
           $attributes[$name] = $attribute;
         }
       }
-            
+
       if (!empty($attributes)) {
         return $attributes;
       }
@@ -1456,6 +1456,7 @@ SELECT contact_id
   static function checkTriggerViewPermission($view = TRUE, $trigger = TRUE) {
     // test for create view and trigger permissions and if allowed, add the option to go multilingual
     // and logging
+    // I'm not sure why we use the getStaticProperty for an error, rather than checking for DB_Error
     CRM_Core_Error::ignoreException();
     $dao = new CRM_Core_DAO();
     if ($view) {
@@ -1467,9 +1468,8 @@ SELECT contact_id
     }
 
     if ($trigger) {
-      $dao->query('CREATE TRIGGER civicrm_domain_trigger BEFORE INSERT ON civicrm_domain FOR EACH ROW BEGIN END');
-
-      if (PEAR::getStaticProperty('DB_DataObject', 'lastError')) {
+      $result = $dao->query('CREATE TRIGGER civicrm_domain_trigger BEFORE INSERT ON civicrm_domain FOR EACH ROW BEGIN END');
+      if (PEAR::getStaticProperty('DB_DataObject', 'lastError') || is_a($result, 'DB_Error')) {
         CRM_Core_Error::setCallback();
         if ($view) {
           $dao->query('DROP VIEW IF EXISTS civicrm_domain_view');

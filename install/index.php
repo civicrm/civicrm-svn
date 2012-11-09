@@ -356,6 +356,16 @@ class InstallRequirements {
             'Unable to lock tables. This MySQL user is missing the LOCK TABLES privilege.',
           )
         );
+        $this->requireMySQLTrigger($databaseConfig['server'],
+          $databaseConfig['username'],
+          $databaseConfig['password'],
+          $databaseConfig['database'],
+          array(
+            "MySQL $dbName Configuration",
+            'Can I create triggers in the database',
+            'Unable to create triggers. This MySQL user is missing the CREATE TRIGGERS  privilege.',
+          )
+        );
       }
     }
   }
@@ -368,7 +378,7 @@ class InstallRequirements {
 
     $this->errors = NULL;
 
-    $this->requirePHPVersion('5.3.0', array("PHP Configuration", "PHP5 installed", NULL, "PHP version " . phpversion()));
+    $this->requirePHPVersion('5.3.8', array("PHP Configuration", "PHP5 installed", NULL, "PHP version " . phpversion()));
 
     // Check that we can identify the root folder successfully
     $this->requireFile($crmPath . CIVICRM_DIRECTORY_SEPARATOR . 'README.txt',
@@ -757,10 +767,45 @@ class InstallRequirements {
 
     $result = mysql_query('CREATE TEMPORARY TABLE civicrm_install_temp_table_test (test text)', $conn);
     if (!$result) {
+      $testDetails[2] = 'Could not create a temp table.';
       $this->error($testDetails);
     }
     $result = mysql_query('DROP TEMPORARY TABLE civicrm_install_temp_table_test');
   }
+
+  function requireMySQLTrigger($server, $username, $password, $database, $testDetails) {
+    $this->testing($testDetails);
+    $conn = @mysql_connect($server, $username, $password);
+    if (!$conn) {
+      $testDetails[2] = 'Could not login to the database.';
+      $this->error($testDetails);
+      return;
+    }
+
+    if (!@mysql_select_db($database, $conn)) {
+      $testDetails[2] = 'Could not select the database.';
+      $this->error($testDetails);
+      return;
+    }
+
+    $result = mysql_query('CREATE TABLE civicrm_install_temp_table_test (test text)', $conn);
+    if (!$result) {
+      $testDetails[2] = 'Could not create a table.';
+      $this->error($testDetails);
+    }
+
+    $result = mysql_query('CREATE TRIGGER civicrm_install_temp_table_test_trigger BEFORE INSERT ON civicrm_install_temp_table_test FOR EACH ROW BEGIN END');
+    if (!$result) {
+      mysql_query('DROP TABLE civicrm_install_temp_table_test');
+      $testDetails[2] = 'Could not create a trigger.';
+      $this->error($testDetails);
+    }
+
+
+    mysql_query('DROP TRIGGER civicrm_install_temp_table_test_trigger');
+    mysql_query('DROP TEMPORARY TABLE civicrm_install_temp_table_test');
+  }
+
 
   function requireMySQLLockTables($server, $username, $password, $database, $testDetails) {
     $this->testing($testDetails);

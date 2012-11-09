@@ -74,8 +74,8 @@ class CRM_Upgrade_Form extends CRM_Core_Form {
     7 => 'Seven',
     8 => 'Eight',
     9 => 'Nine',
-  ); 
-  
+  );
+
   function __construct($state = NULL,
     $action = CRM_Core_Action::NONE,
     $method = 'post',
@@ -388,14 +388,22 @@ SET    version = '$version'
     }
 
     $phpVersion = phpversion();
-    $minPhpVersion = '5.3.0';
+    $minPhpVersion = '5.3.8';
     if (version_compare($phpVersion, $minPhpVersion) <= 0) {
-      $error = ts('CiviCRM %3 requires PHP version %1 (or newer), but the current system uses %2 ', array(
-        1 => $minPhpVersion,
-        2 => $phpVersion,
-        3 => $latestVer,
-      ));
+      $error = ts('CiviCRM %3 requires PHP version %1 (or newer), but the current system uses %2 ',
+               array(
+                 1 => $minPhpVersion,
+                 2 => $phpVersion,
+                 3 => $latestVer,
+               ));
     }
+
+    // check for mysql trigger privileges
+    if (!CRM_Core_DAO::checkTriggerViewPermission(FALSE, TRUE)) {
+      $error = ts('CiviCRM %1 requires MySQL trigger privileges.',
+               array(1 => $latestVer));
+    }
+
     return $error;
   }
 
@@ -469,7 +477,7 @@ SET    version = '$version'
           "Upgrade DB to $rev"
         );
         $queue->createItem($task);
-        
+
         $task = new CRM_Queue_Task(
           // callback
           array('CRM_Upgrade_Form', 'doIncrementalUpgradeFinish'),
@@ -498,7 +506,7 @@ SET    version = '$version'
     // as soon as we start doing anything we append ".upgrade" to version.
     // this also helps detect any partial upgrade issues
     $upgrade->setVersion($rev . '.upgrade');
-    
+
     return TRUE;
   }
 
@@ -557,7 +565,7 @@ SET    version = '$version'
       else {
         $upgrade->processSQL($rev);
       }
-      
+
       // set post-upgrade-message if any
       if (is_callable(array(
         $versionObject, 'setPostUpgradeMessage'))) {
@@ -573,7 +581,7 @@ SET    version = '$version'
 
     return TRUE;
   }
-  
+
   /**
    * Perform an incremental version update
    *

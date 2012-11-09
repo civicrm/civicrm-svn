@@ -61,7 +61,6 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
       CRM_Utils_System::url('civicrm/dashboard', 'reset=1')
     );
 
-    // $action = CRM_Utils_Request::retrieve( 'action', 'String',  CRM_Core_DAO::$_nullObject, false, 'intro', null );
     $action = CRM_Utils_Array::value('action', $_REQUEST, 'intro');
     switch ($action) {
       case 'intro':
@@ -185,5 +184,5 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
     $content = $template->fetch('CRM/common/success.tpl');
     echo CRM_Utils_System::theme('page', $content, TRUE, $this->_print, FALSE, TRUE);
   }
-        }
+}
 
