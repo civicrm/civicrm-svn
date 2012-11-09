@@ -34,6 +34,7 @@
  */
 
 /**
+ * Retrieve CiviCRM settings from the api for use in templates
  */
 function smarty_function_crmSetting($params, &$smarty) {
 
@@ -51,7 +52,7 @@ function smarty_function_crmSetting($params, &$smarty) {
   }
 
   if (empty($params['var'])) {
-    return json_encode($result);
+    return is_numeric($result) ? $result : json_encode($result);
   }
   if (!empty($params['json'])) {
     $smarty->assign($params["var"], json_encode($result));
@@ -60,7 +61,3 @@ function smarty_function_crmSetting($params, &$smarty) {
     $smarty->assign($params["var"], $result);
   }
 }
-
-
-
-
