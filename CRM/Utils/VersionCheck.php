@@ -56,14 +56,21 @@ class CRM_Utils_VersionCheck {
    *
    * @var string
    */
-  var $localVersion = NULL;
+  public $localVersion = NULL;
 
   /**
    * The latest version of CiviCRM
    *
    * @var string
    */
-  var $latestVersion = NULL;
+  public $latestVersion = NULL;
+
+  /**
+   * Pinback params
+   *
+   * @var string
+   */
+  protected $params = array();
 
   /**
    * Class constructor
@@ -77,14 +84,14 @@ class CRM_Utils_VersionCheck {
     $localfile = $civicrm_root . DIRECTORY_SEPARATOR . self::LOCALFILE_NAME;
     $cachefile = $config->uploadDir . self::CACHEFILE_NAME;
 
-    if ($config->versionCheck &&
-      file_exists($localfile)
-    ) {
+    if (file_exists($localfile)) {
       require_once ($localfile);
       if (function_exists('civicrmVersion')) {
         $info = civicrmVersion();
         $this->localVersion = $info['version'];
       }
+    }
+    if ($config->versionCheck) {
       $expiryTime = time() - self::CACHEFILE_EXPIRE;
 
       // if there's a cachefile and it's not stale use it to
@@ -98,20 +105,28 @@ class CRM_Utils_VersionCheck {
         // the users would be presented with an unsuppressable warning
         ini_set('default_socket_timeout', self::CHECK_TIMEOUT);
         set_error_handler(array('CRM_Utils_VersionCheck', 'downloadError'));
-        $hash = md5($config->userFrameworkBaseURL);
+        $siteKey = defined('CIVICRM_SITE_KEY') ? CIVICRM_SITE_KEY : '';
 
-        $url = self::LATEST_VERSION_AT . "?version={$this->localVersion}&uf={$config->userFramework}&hash=$hash&lang={$config->lcMessages}&ufv={$config->userFrameworkVersion}";
+        $this->params = array(
+          'hash' => md5($siteKey . $config->userFrameworkBaseURL),
+          'version' => $this->localVersion,
+          'uf' => $config->userFramework,
+          'lang' => $config->lcMessages,
+          'co' => $config->defaultContactCountry,
+          'ufv' => $config->userFrameworkVersion,
+          'php' => phpversion(),
+        );
 
-        // add PHP and MySQL versions
+        // add MySQL version
         $dao = new CRM_Core_DAO;
         $dao->query('SELECT VERSION() AS version');
         $dao->fetch();
-        $url .= '&MySQL=' . $dao->version . '&PHP=' . phpversion();
+        $this->params['MySQL'] = $dao->version;
 
         $tables = array(
           'CRM_Activity_DAO_Activity' => 'is_test = 0',
-          'CRM_Case_DAO_Case' => NULL,
-          'CRM_Contact_DAO_Contact' => NULL,
+          'CRM_Case_DAO_Case' => 'is_deleted = 0',
+          'CRM_Contact_DAO_Contact' => 'is_deleted = 0',
           'CRM_Contact_DAO_Relationship' => NULL,
           'CRM_Contribute_DAO_Contribution' => 'is_test = 0',
           'CRM_Contribute_DAO_ContributionPage' => 'is_active = 1',
@@ -131,29 +146,31 @@ class CRM_Utils_VersionCheck {
           'CRM_Pledge_DAO_PledgeBlock' => NULL,
         );
 
-        // add &key=count pairs to $url, where key is the last part of the DAO
+        // add key count pairs to $this->params, where key is the last part of the DAO
         foreach ($tables as $daoName => $where) {
-          require_once str_replace('_', '/', $daoName) . '.php';
-          eval("\$dao = new $daoName;");
+          $dao = new $daoName;
           if ($where) {
             $dao->whereAdd($where);
           }
-          $url .= '&' . array_pop(explode('_', $daoName)) . "={$dao->count()}";
+          $this->params[array_pop(explode('_', $daoName))] = $dao->count();
         }
 
         // get active payment processor types
         $dao = new CRM_Core_DAO_PaymentProcessor;
         $dao->is_active = 1;
         $dao->find();
-
         $ppTypes = array();
-        while ($dao->fetch()) $ppTypes[] = $dao->payment_processor_type;
+        while ($dao->fetch()) {
+          $ppTypes[] = $dao->payment_processor_type;
+        }
+        // add the .-separated list of the processor types
+        $this->params['PPTypes'] = implode('.', array_unique($ppTypes));
+        
+        $this->params['ext'] = implode(',', array_keys(CRM_Core_PseudoConstant::getExtensions()));
 
-        // add the .-separated list of the processor types (urlencoded just in case)
-        $url .= '&PPTypes=' . urlencode(implode('.', array_unique($ppTypes)));
+        // get the latest version using stats-carrying $url
+        $this->pingBack();
 
-        // get the latest version using the stats-carrying $url
-        $this->latestVersion = file_get_contents($url);
         ini_restore('default_socket_timeout');
         restore_error_handler();
 
@@ -166,9 +183,11 @@ class CRM_Utils_VersionCheck {
 
         $fp = @fopen($cachefile, 'w');
         if (!$fp) {
-          CRM_Core_Session::setStatus(
-          	ts( 'Do not have permission to write to file: %1', array(1 => $cachefile) ),
-          	ts( 'Insufficient Permissions'), 'error');
+          if (CRM_Core_Permission::check('administer CiviCRM')) {
+            CRM_Core_Session::setStatus(
+              ts('Unable to write file: %1<br />Please check your system file permissions.', array(1 => $cachefile)),
+              ts('Insufficient Permissions'), 'error');
+          }
           return;
         }
 
@@ -198,28 +217,47 @@ class CRM_Utils_VersionCheck {
    *
    * @return string|null  returns the newer version's number or null if the versions are equal
    */
-  function newerVersion() {
-    $local = explode('.', $this->localVersion);
-    $latest = explode('.', $this->latestVersion);
+  public function newerVersion() {
+    $local = array_pad(explode('.', $this->localVersion), 3, 0);
+    $latest = array_pad(explode('.', $this->latestVersion), 3, 0);
     // compare by version part; this allows us to use trunk.$rev
     // for trunk versions ('trunk' is greater than '1')
-    // we only do major / minor version comparison, so stick to 2
-    // ignore 3.4 /4.0 comparison
-    for ($i = 0; $i < 2; $i++) {
-      if (CRM_Utils_Array::value($i, $local) > CRM_Utils_Array::value($i, $latest) OR
-        (CRM_Utils_Array::value($i, $local) == 3 && CRM_Utils_Array::value($i + 1, $local) == 4 &&
-          CRM_Utils_Array::value($i, $latest) == 4 && CRM_Utils_Array::value($i + 1, $latest) == 0
-        )
-      ) {
+    for ($i = 0; $i < 3; $i++) {
+      if ($local[$i] > $latest[$i]) {
         return NULL;
       }
-      elseif (CRM_Utils_Array::value($i, $local) < CRM_Utils_Array::value($i, $latest) and
-        preg_match('/^\d+\.\d+\.\d+$/', $this->latestVersion)
-      ) {
+      elseif ($local[$i] < $latest[$i] && preg_match('/^\d+\.\d+\.\d+$/', $this->latestVersion)) {
         return $this->latestVersion;
       }
     }
     return NULL;
+  }
+
+  /**
+   * Alert the site admin of new versions of CiviCRM
+   * Show the message once a day or on login
+   */
+  public function versionAlert() {
+    if (CRM_Core_Permission::check('administer CiviCRM') && $this->newerVersion()) {
+      $session = CRM_Core_Session::singleton();
+      if ($session->timer('version_alert', 24 * 60 * 60)) {
+        $msg = ts('A newer version of CiviCRM is available: %1', array(1 => $this->latestVersion))
+        . '<br />' . ts('<a href="%1">Download Now</a>', array(1 => 'http://civicrm.org/download'));
+        $session->setStatus($msg, ts('Update Available'));
+      }
+    }
+  }
+
+  /**
+   * Send the request to civicrm.org
+   */
+  private function pingBack() {
+    $url = self::LATEST_VERSION_AT . '?';
+    foreach ($this->params as &$param) {
+      $param = urlencode($param);
+    }
+    $url .= implode('&', $this->params);
+    $this->latestVersion = file_get_contents($url);
   }
 
   /**
@@ -229,4 +267,3 @@ class CRM_Utils_VersionCheck {
     return;
   }
 }
-

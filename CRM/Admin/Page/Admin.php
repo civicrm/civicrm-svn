@@ -38,6 +38,7 @@
  */
 class CRM_Admin_Page_Admin extends CRM_Core_Page {
   function run() {
+    $errorMessage = '';
     // ensure that all CiviCRM tables are InnoDB, else abort
     // this is not a very fast operation, so we do it randomly 10% of the times
     // but we do it for most / all tables
@@ -46,11 +47,11 @@ class CRM_Admin_Page_Admin extends CRM_Core_Page {
       CRM_Core_DAO::isDBMyISAM(150)
     ) {
       $errorMessage = ts('Your database is configured to use the MyISAM database engine. CiviCRM requires InnoDB. You will need to convert any MyISAM tables in your database to InnoDB. Using MyISAM tables will result in data integrity issues.');
-      CRM_Core_Session::setStatus($errorMessage, ts('Sorry'), "alert");
+      CRM_Core_Session::setStatus($errorMessage, ts('Warning'), "alert");
     }
 
     if (!CRM_Utils_System::isDBVersionValid($errorMessage)) {
-      CRM_Core_Session::setStatus($errorMessage, ts('Sorry'), "alert");
+      CRM_Core_Session::setStatus($errorMessage, ts('Warning'), "alert");
     }
 
     $groups = array('Customize Data and Screens' => ts('Customize Data and Screens'),
@@ -110,9 +111,6 @@ class CRM_Admin_Page_Admin extends CRM_Core_Page {
         $adminPanel[$groupId]['title'] = $title;
       }
     }
-    $versionCheck = CRM_Utils_VersionCheck::singleton();
-    $this->assign('newVersion', $versionCheck->newerVersion());
-    $this->assign('localVersion', $versionCheck->localVersion);
     $this->assign('adminPanel', $adminPanel);
     $this->_showHide->addToTemplate();
     return parent::run();

@@ -189,7 +189,17 @@ class CRM_Core_Page {
       CRM_Utils_System::civiExit();
     }
 
+    // Version check and intermittent alert to admins
+    $versionCheck = CRM_Utils_VersionCheck::singleton()->versionAlert();
+
     $config = CRM_Core_Config::singleton();
+    
+    // Debug msg once per hour
+    if ($config->debug && CRM_Core_Permission::check('administer CiviCRM') && CRM_Core_Session::singleton()->timer('debug_alert', 3600)) {
+      $msg = ts('Warning: Debug is enabled in <a href="%1">system settings</a>. This should not be enabled on production servers.', array(1 => CRM_Utils_System::url('civicrm/admin/setting/debug', 'reset=1')));
+      CRM_Core_Session::setStatus($msg, ts('Debug Mode'));
+    }
+    
     $content = self::$_template->fetch('CRM/common/' . strtolower($config->userFramework) . '.tpl');
 
     if ($region = CRM_Core_Region::instance('html-header', FALSE)) {

@@ -226,13 +226,12 @@ class CRM_Core_Invoke {
       }
 
       $template = CRM_Core_Smarty::singleton();
-      if (isset($item['is_public']) &&
-        $item['is_public']
-      ) {
+      if (!empty($item['is_public'])) {
         $template->assign('urlIsPublic', TRUE);
       }
       else {
         $template->assign('urlIsPublic', FALSE);
+        self::versionCheck($template);
       }
 
       if (isset($item['return_url'])) {
@@ -246,7 +245,6 @@ class CRM_Core_Invoke {
           ));
       }
 
-      // CRM_Core_Error::debug( $item ); exit( );
       $result = NULL;
       if (is_array($item['page_callback'])) {
         $newArgs = explode('/', $_GET[$config->userFrameworkURLVar]);
@@ -430,6 +428,17 @@ class CRM_Core_Invoke {
 
     $page = new CRM_Profile_Page_Listings();
     return $page->run();
+  }
+
+  /**
+   * Show the message about CiviCRM versions
+   *
+   */
+  static function versionCheck($template) {
+    $versionCheck = CRM_Utils_VersionCheck::singleton();
+    $newerVersion = $versionCheck->newerVersion();
+    $template->assign('current_civicrm_version', $versionCheck->localVersion);
+    $template->assign('newer_civicrm_version', $newerVersion);
   }
 
   static function rebuildMenuAndCaches($triggerRebuild = FALSE, $sessionReset = FALSE) {

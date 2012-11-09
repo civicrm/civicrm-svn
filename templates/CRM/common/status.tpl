@@ -36,10 +36,3 @@
     {include file="CRM/common/info.tpl" infoTitle=$statItem.title infoMessage=$statItem.text infoOptions=$statItem.options}
   {/foreach}
 {/if}
-
-{if !$urlIsPublic AND $config->debug}
-  {capture assign=infoTitle}{ts}Warning{/ts}{/capture}
-  {capture assign=infoMessage}{ts}Debug is currently enabled in Global Settings.{/ts} {docURL page="developer/development-environment/debugging"}{/capture}
-  {capture assign=infoOptions}{ldelim}"expires": 10000{rdelim}{/capture}
-  {include file="CRM/common/info.tpl" infoType="alert"}
-{/if}
