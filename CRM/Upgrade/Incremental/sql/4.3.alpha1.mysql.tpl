@@ -116,16 +116,16 @@ UPDATE civicrm_navigation SET  `label` = 'Financial Account', `name` = 'Financia
 
 
 -- Insert an entry for financial_account_type in civicrm_option_group and for the the following financial account types in civicrm_option_value as per CRM-8425
-INSERT INTO 
-   `civicrm_option_group` (`name`, `title`, `is_reserved`, `is_active`) 
+INSERT INTO
+   `civicrm_option_group` (`name`, `title`, `is_reserved`, `is_active`)
 VALUES
 ('financial_account_type', '{localize}Financial Account Type{/localize}' , 1, 1)
 ('batch_modes' , {localize}'Batch Modes'{/localize}, 1, 1);
 
 SELECT @option_group_id_fat := max(id) from civicrm_option_group where name = 'financial_account_type';
 
-INSERT INTO 
-   `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
+INSERT INTO
+   `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`)
 VALUES
  (@option_group_id_fat, '{ts escape="sql"}Asset{/ts}', 1, 'Asset', NULL, 0, 0, 1, 'Things you own', 0, 1, 1, 2, NULL),
    (@option_group_id_fat, '{ts escape="sql"}Liability{/ts}', 2, 'Liability', NULL, 0, 0, 2, 'Things you own, like a grant still to be disbursed', 0, 1, 1, 2, NULL),
@@ -189,7 +189,7 @@ ALTER TABLE `civicrm_financial_trxn`
 DROP FOREIGN KEY FK_civicrm_financial_trxn_to_account_id,
 DROP INDEX FK_civicrm_financial_trxn_to_account_id;
 
-ALTER TABLE `civicrm_financial_trxn` CHANGE `to_account_id` `to_financial_account_id` int unsigned; 
+ALTER TABLE `civicrm_financial_trxn` CHANGE `to_account_id` `to_financial_account_id` int unsigned;
 
 ALTER TABLE `civicrm_financial_trxn`
 ADD CONSTRAINT FK_civicrm_financial_trxn_to_financial_type_id FOREIGN KEY (`to_financial_account_id`) REFERENCES civicrm_financial_account (id);
@@ -202,7 +202,7 @@ ALTER TABLE `civicrm_financial_trxn` CHANGE `from_account_id` `from_financial_ac
 
 ALTER TABLE `civicrm_financial_trxn`
 ADD CONSTRAINT FK_civicrm_financial_trxn_from_financial_account_id FOREIGN KEY (`from_financial_account_id`) REFERENCES civicrm_financial_type (id);
-      
+
 ALTER TABLE `civicrm_financial_trxn` ADD `payment_processor_id` int unsigned COMMENT 'Payment Processor for this contribution Page';
 
 --
@@ -252,28 +252,26 @@ WHERE c.id = cft.trxn_id;
 SELECT @parent_id := id from `civicrm_navigation` where name = 'CiviContribute';
 SELECT @add_weight_id := weight from `civicrm_navigation` where `name` = 'Financial Account' and `parent_id` = @parent_id;
 
-UPDATE `civicrm_navigation` 
+UPDATE `civicrm_navigation`
 SET `weight` = `weight`+1
 WHERE `parent_id` = @parent_id
 AND `weight` >= @add_weight_id;
 
-SELECT @domainID := id FROM civicrm_domain where name = 'Default Domain Name';
-
-INSERT INTO `civicrm_navigation` 
+INSERT INTO `civicrm_navigation`
         ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES
-	( @domainID, 'civicrm/admin/financial/financialType&reset=1',      '{ts escape="sql" skip="true"}Financial Type{/ts}',         'Financial Type',        'access CiviContribute,administer CiviCRM', 'AND', @parent_id, '1', NULL, @add_weight_id );
+	( {$domainID}, 'civicrm/admin/financial/financialType&reset=1',      '{ts escape="sql" skip="true"}Financial Type{/ts}',         'Financial Type',        'access CiviContribute,administer CiviCRM', 'AND', @parent_id, '1', NULL, @add_weight_id );
 
 
 --
 -- Data migration from civicrm_contibution_type to civicrm_financial_account, civicrm_financial_type, civicrm_entity_financial_account
--- 
+--
 
 SELECT @revaccount  := max(id) FROM civicrm_option_value WHERE name = 'Revenue' AND option_group_id =  @option_group_id_fat;
 
-SELECT @domainContactId := contact_id from civicrm_domain where id = @domainID;
+SELECT @domainContactId := contact_id from civicrm_domain where id = {$domainID};
 
-INSERT INTO `civicrm_financial_account`  
+INSERT INTO `civicrm_financial_account`
        ( `id`, `name`,  `accounting_code`,  `is_deductible`, `is_reserved`, `is_active`, `financial_account_type_id`, `contact_id`)
 SELECT id, name, accounting_code, description, is_deductible, is_reserved, is_active, @revaccount, @domainContactId FROM `civicrm_financial_type`;
 
@@ -286,8 +284,8 @@ SELECT id, name, description, is_deductible, is_reserved, is_active FROM `civicr
 -- Create an entry for account_relationship in option groups
 --
 
-INSERT INTO 
-   `civicrm_option_group` (`name`, `title`, `is_reserved`, `is_active`) 
+INSERT INTO
+   `civicrm_option_group` (`name`, `title`, `is_reserved`, `is_active`)
 VALUES
    ('account_relationship'          , '{ts escape="sql"}Account Relationship{/ts}'               , 1, 1),
    ('financial_item_status'         , '{ts escape="sql"}}Financial Item Status{/ts}'             , 1, 1);
@@ -295,8 +293,8 @@ VALUES
 SELECT @option_group_id_arel           := max(id) from civicrm_option_group where name = 'account_relationship';
 SELECT @option_group_id_financial_item_status := max(id) from civicrm_option_group where name = 'financial_item_status';
 
-INSERT INTO 
-   `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
+INSERT INTO
+   `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`)
 VALUES
     (@option_group_id_arel, '{ts escape="sql"}Income Account is{/ts}', 1, 'Income Account is', NULL, 0, 1, 1, 'Income Account is', 0, 1, 1, 2, NULL),
     (@option_group_id_arel, '{ts escape="sql"}Credit/Contra Account is{/ts}', 2, 'Credit/Contra Account is', NULL, 0, 0, 2, 'Credit/Contra Account is', 0, 1, 0, 2, NULL),
@@ -325,9 +323,9 @@ FROM `civicrm_financial_type` as ft LEFT JOIN `civicrm_financial_account` as fa 
 
 
 -- CRM-9306
-INSERT INTO `civicrm_navigation` 
+INSERT INTO `civicrm_navigation`
         ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
-VALUES	
+VALUES
     ( {$domainID}, CONCAT('civicrm/report/instance/', @instanceID,'&reset=1'), '{ts escape="sql"}Mailing Detail Report{/ts}', 'Mailing Detail Report', 'administer CiviMail', 'OR', @reportlastID, '1', NULL, @nav_max_weight+1 );
 UPDATE civicrm_report_instance SET navigation_id = LAST_INSERT_ID() WHERE id = @instanceID;
 
@@ -340,11 +338,11 @@ ALTER TABLE `civicrm_prevnext_cache` ADD COLUMN is_selected tinyint(4) DEFAULT '
 
 -- CRM-9731
 
-ALTER TABLE `civicrm_payment_processor` ADD `payment_processor_type_id` int(10) unsigned NULL AFTER `description`, 
+ALTER TABLE `civicrm_payment_processor` ADD `payment_processor_type_id` int(10) unsigned NULL AFTER `description`,
 ADD CONSTRAINT `FK_civicrm_payment_processor_payment_processor_type_id` FOREIGN KEY (`payment_processor_type_id`) REFERENCES `civicrm_payment_processor_type` (`id`);
 
-UPDATE `civicrm_payment_processor` , `civicrm_payment_processor_type` 
-SET payment_processor_type_id = `civicrm_payment_processor_type`.id 
+UPDATE `civicrm_payment_processor` , `civicrm_payment_processor_type`
+SET payment_processor_type_id = `civicrm_payment_processor_type`.id
 WHERE payment_processor_type = `civicrm_payment_processor_type`.name;
 
 ALTER TABLE `civicrm_payment_processor` DROP `payment_processor_type`;
@@ -387,7 +385,7 @@ ALTER TABLE `civicrm_price_field_value` ADD `deductible_amount` DECIMAL( 20, 2 )
 
 ALTER TABLE `civicrm_line_item` ADD `deductible_amount` DECIMAL( 20, 2 ) NOT NULL COMMENT 'Tax-deductible portion of the amount';
 
-ALTER TABLE `civicrm_price_field`  ADD 
+ALTER TABLE `civicrm_price_field`  ADD
 `financial_type_id` int(10) unsigned DEFAULT NULL COMMENT 'FK to Financial Type.',
   ADD CONSTRAINT `FK_civicrm_price_field_financial_type_id` FOREIGN KEY (`financial_type_id`) REFERENCES `civicrm_financial_type` (`id`);
 
@@ -538,39 +536,39 @@ SELECT @contributionlastID := max(id) from civicrm_navigation where name = 'Cont
 SELECT @pledgeWeight := weight from civicrm_navigation where name = 'Pledges' and parent_id = @contributionlastID;
 
 
-UPDATE `civicrm_navigation` 
+UPDATE `civicrm_navigation`
 SET `weight` = `weight`+1
 WHERE `parent_id` = @contributionlastID
 AND `weight` > @pledgeWeight;
 
 INSERT INTO civicrm_navigation
     (domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight)
-VALUES 
-    (@domainID, NULL, '{ts escape="sql" skip="true"}Financial Transaction Batches{/ts}',  'Financial Transaction Batches', 'access CiviContribute', '', @contributionlastID, '1',  1,   @pledgeWeight+1);
-    
+VALUES
+    ({$domainID}, NULL, '{ts escape="sql" skip="true"}Financial Transaction Batches{/ts}',  'Financial Transaction Batches', 'access CiviContribute', '', @contributionlastID, '1',  1,   @pledgeWeight+1);
+
 SET @financialTransactionID:=LAST_INSERT_ID();
 
 
 INSERT INTO civicrm_navigation
     (domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
-VALUES 
-    (@domainID, 'civicrm/financial/batch&reset=1&action=add',                             '{ts escape="sql" skip="true"}New Batch{/ts}',          'New Batch',         'access CiviContribute', 'AND',  @financialTransactionID, '1', NULL, 1),
-    (@domainID, 'civicrm/contact/search/custom?reset=1&csid=16&context=Open&force=1', '{ts escape="sql" skip="true"}Open Batches{/ts}',          'Open Batches',         'access CiviContribute', 'AND',  @financialTransactionID, '1', NULL, 2),
-    (@domainID, 'civicrm/contact/search/custom?reset=1&csid=16&context=Closed&force=1', '{ts escape="sql" skip="true"}Closed Batches{/ts}',          'Closed Batches',         'access CiviContribute', 'AND',  @financialTransactionID, '1', NULL, 3),
-    (@domainID, 'civicrm/contact/search/custom?reset=1&csid=16&context=Exported&force=1', '{ts escape="sql" skip="true"}Exported Batches{/ts}',          'Exported Batches',         'access CiviContribute', 'AND',  @financialTransactionID, '1', NULL, 4); 
+VALUES
+    ({$domainID}, 'civicrm/financial/batch&reset=1&action=add',                             '{ts escape="sql" skip="true"}New Batch{/ts}',          'New Batch',         'access CiviContribute', 'AND',  @financialTransactionID, '1', NULL, 1),
+    ({$domainID}, 'civicrm/contact/search/custom?reset=1&csid=16&context=Open&force=1', '{ts escape="sql" skip="true"}Open Batches{/ts}',          'Open Batches',         'access CiviContribute', 'AND',  @financialTransactionID, '1', NULL, 2),
+    ({$domainID}, 'civicrm/contact/search/custom?reset=1&csid=16&context=Closed&force=1', '{ts escape="sql" skip="true"}Closed Batches{/ts}',          'Closed Batches',         'access CiviContribute', 'AND',  @financialTransactionID, '1', NULL, 3),
+    ({$domainID}, 'civicrm/contact/search/custom?reset=1&csid=16&context=Exported&force=1', '{ts escape="sql" skip="true"}Exported Batches{/ts}',          'Exported Batches',         'access CiviContribute', 'AND',  @financialTransactionID, '1', NULL, 4);
 
 -- CRM-10863
 SELECT @country_id := id from civicrm_country where name = 'Luxembourg' AND iso_code = 'LU';
 INSERT IGNORE INTO `civicrm_state_province`(`country_id`, `abbreviation`, `name`) VALUES
 (@country_id, 'L', 'Luxembourg');
 
--- CRM-10899 
+-- CRM-10899
 {if $multilingual}
   {foreach from=$locales item=locale}
-    UPDATE civicrm_option_group SET title_{$locale} = '{ts escape="sql"}Currencies Enabled{/ts}' WHERE name = "currencies_enabled";	
+    UPDATE civicrm_option_group SET title_{$locale} = '{ts escape="sql"}Currencies Enabled{/ts}' WHERE name = "currencies_enabled";
   {/foreach}
 {else}
-    UPDATE civicrm_option_group SET title = '{ts escape="sql"}Currencies Enabled{/ts}' WHERE name = "currencies_enabled";	
+    UPDATE civicrm_option_group SET title = '{ts escape="sql"}Currencies Enabled{/ts}' WHERE name = "currencies_enabled";
 {/if}
 
 -- CRM-11047
@@ -581,7 +579,7 @@ ALTER TABLE `civicrm_discount`
 DROP FOREIGN KEY FK_civicrm_discount_option_group_id,
 DROP INDEX FK_civicrm_discount_option_group_id;
 
-ALTER TABLE `civicrm_discount` CHANGE `option_group_id` `price_set_id` INT( 10 ) UNSIGNED; 
+ALTER TABLE `civicrm_discount` CHANGE `option_group_id` `price_set_id` INT( 10 ) UNSIGNED;
 
 ALTER TABLE `civicrm_discount`
   ADD CONSTRAINT `FK_civicrm_discount_price_set_id` FOREIGN KEY (`price_set_id`) REFERENCES `civicrm_price_set` (`id`) ON DELETE CASCADE;
@@ -590,11 +588,10 @@ ALTER TABLE `civicrm_discount`
 ALTER TABLE civicrm_group
   ADD refresh_date datetime default NULL COMMENT 'Date and time when we need to refresh the cache next.' AFTER `cache_date`;
 
-SELECT @domainID := min(id) FROM civicrm_domain;
 INSERT INTO `civicrm_job`
     ( domain_id, run_frequency, last_run, name, description, api_entity, api_action, parameters, is_active )
 VALUES
-    ( @domainID, 'Always' , NULL, '{ts escape="sql" skip="true"}Rebuild Smart Group Cache{/ts}', '{ts escape="sql" skip="true"}Rebuilds the smart group cache.{/ts}', 'job', 'group_rebuild', '{ts escape="sql" skip="true"}limit=Number optional-Limit the number of smart groups rebuild{/ts}', 0);
+    ( {$domainID}, 'Always' , NULL, '{ts escape="sql" skip="true"}Rebuild Smart Group Cache{/ts}', '{ts escape="sql" skip="true"}Rebuilds the smart group cache.{/ts}', 'job', 'group_rebuild', '{ts escape="sql" skip="true"}limit=Number optional-Limit the number of smart groups rebuild{/ts}', 0);
 
 -- CRM-11117
 INSERT IGNORE INTO `civicrm_setting` (`group_name`, `name`, `value`, `domain_id`, `is_domain`) VALUES ('CiviCRM Preferences', 'activity_assignee_notification_ics', 's:1:"0";', {$domainID}, '1');
@@ -664,7 +661,7 @@ SELECT @financial_account_id_ar	       := max(id) FROM `civicrm_financial_accoun
 
 INSERT INTO `civicrm_entity_financial_account`
      ( entity_table, entity_id, account_relationship, financial_account_id )
-VALUES 
+VALUES
      ( 'civicrm_financial_type', @financial_type_id_dtn, @option_value_rel_id_exp, @financial_account_id_bf ),
      ( 'civicrm_financial_type', @financial_type_id_dtn, @option_value_rel_id_ar, @financial_account_id_ap ),
      ( 'civicrm_financial_type', @financial_type_id_dtn, @option_value_rel_id_as, @financial_account_id_ar ),
@@ -684,39 +681,39 @@ SELECT @max_weight     := MAX(ROUND(weight)) from civicrm_navigation WHERE paren
 
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
-VALUES    
+VALUES
     ( {$domainID}, 'civicrm/report/list&compid=99&reset=1', '{ts escape="sql" skip="true"}Contact Reports{/ts}', 'Contact Reports', 'administer CiviCRM', '', @reportlastID, '1', 0, (SELECT @max_weight := @max_weight+1) );
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
-VALUES    
+VALUES
     ( {$domainID}, 'civicrm/report/list&compid=2&reset=1', '{ts escape="sql" skip="true"}Contribution Reports{/ts}', 'Contribution Reports', 'access CiviContribute', '', @reportlastID, '1', 0, (SELECT @max_weight := @max_weight+1) );
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
-VALUES    
+VALUES
     ( {$domainID}, 'civicrm/report/list&compid=6&reset=1', '{ts escape="sql" skip="true"}Pledge Reports{/ts}', 'Pledge Reports', 'access CiviPledge', '', @reportlastID, '1', 0, (SELECT @max_weight := @max_weight+1) );
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
-VALUES    
+VALUES
     ( {$domainID}, 'civicrm/report/list&compid=1&reset=1', '{ts escape="sql" skip="true"}Event Reports{/ts}', 'Event Reports', 'access CiviEvent', '', @reportlastID, '1', 0, (SELECT @max_weight := @max_weight+1));
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
-VALUES    
+VALUES
     ( {$domainID}, 'civicrm/report/list&compid=4&reset=1', '{ts escape="sql" skip="true"}Mailing Reports{/ts}', 'Mailing Reports', 'access CiviMail', '', @reportlastID, '1', 0,   (SELECT @max_weight := @max_weight+1));
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
-VALUES    
+VALUES
     ( {$domainID}, 'civicrm/report/list&compid=3&reset=1', '{ts escape="sql" skip="true"}Membership Reports{/ts}', 'Membership Reports', 'access CiviMember', '', @reportlastID, '1', 0, (SELECT @max_weight := @max_weight+1));
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
-VALUES    
+VALUES
     ( {$domainID}, 'civicrm/report/list&compid=9&reset=1', '{ts escape="sql" skip="true"}Campaign Reports{/ts}', 'Campaign Reports', 'interview campaign contacts,release campaign contacts,reserve campaign contacts,manage campaign,administer CiviCampaign,gotv campaign contacts', 'OR', @reportlastID, '1', 0, (SELECT @max_weight := @max_weight+1));
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
-VALUES    
+VALUES
     ( {$domainID}, 'civicrm/report/list&compid=7&reset=1', '{ts escape="sql" skip="true"}Case Reports{/ts}', 'Case Reports', 'access my cases and activities,access all cases and activities,administer CiviCase', 'OR', @reportlastID, '1', 0, (SELECT @max_weight := @max_weight+1) );
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
-VALUES    
+VALUES
     ( {$domainID}, 'civicrm/report/list&compid=5&reset=1', '{ts escape="sql" skip="true"}Grant Reports{/ts}', 'Grant Reports', 'access CiviGrant', '', @reportlastID, '1', 0, (SELECT @max_weight := @max_weight+1) );
 
 -- CRM-11148 Multiple terms membership signup and renewal via price set
