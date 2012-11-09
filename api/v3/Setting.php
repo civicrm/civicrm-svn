@@ -70,7 +70,9 @@ function civicrm_api3_setting_getfields_spec(&$params) {
 function civicrm_api3_setting_getdefaults(&$params){
   $settings = civicrm_api('setting','getfields', $params);
   $domains = _civicrm_api3_setting_getDomainArray($params);
+  $defaults = array();
   foreach ($domains as $domainID){
+    $defaults[$domainID] = array();
     $noDefaults = array();
     foreach ($settings['values'] as $setting => $spec){
       if(array_key_exists('default', $spec) && !is_null($spec['default'])){
