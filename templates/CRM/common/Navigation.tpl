@@ -89,6 +89,7 @@ cj( document ).ready( function( ) {
       minChars:1,
       matchContains: true,
       delay: 400,
+      max: CRM.search_autocomplete_count,
       extraParams:{
         limit: CRM.search_autocomplete_count,
         fieldName:function () {
