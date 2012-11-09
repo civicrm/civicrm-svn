@@ -344,7 +344,6 @@ class CRM_Core_Session {
       }
       array_push($this->_session[$this->_key][self::USER_CONTEXT], $userContext);
     }
-    // CRM_Core_Error::debug( 'UC', $this->_session[$this->_key][self::USER_CONTEXT] );
   }
 
   /**
