@@ -1262,6 +1262,7 @@ WHERE  v.option_group_id = g.id
       $optionsCountDetails = $priceSetDetails['optionsCountDetails']['fields'];
     }
     $feeBlock = $form->_feeBlock;
+    
     if (empty($feeBlock)) {
       $feeBlock = $priceSetDetails['fields'];
     }
@@ -1271,13 +1272,19 @@ WHERE  v.option_group_id = g.id
       if (!is_array($values) || $values == 'skip') {
         continue;
       }
+
       foreach ($values as $valKey => $value) {
         if (strpos($valKey, 'price_') === FALSE) {
           continue;
         }
         $priceFieldId = substr($valKey, 6);
+        $noneOptionValueSelected = FALSE;
+        if (!$feeBlock[$priceFieldId]['is_required'] && $value == 0) {
+          $noneOptionValueSelected = TRUE;
+        }
+        
         if (!$priceFieldId ||
-          !is_array($value)
+         (!$noneOptionValueSelected && !is_array($value))
         ) {
           continue;
         }
@@ -1285,7 +1292,10 @@ WHERE  v.option_group_id = g.id
         if (!$hasOptMaxValue) {
           continue;
         }
-
+        
+        if (!is_array($value)) {
+          continue;
+        }
         foreach ($value as $optId => $optVal) {
           if (CRM_Utils_Array::value('html_type', $feeBlock[$priceFieldId]) == 'Text') {
             $currentMaxValue = $optVal;

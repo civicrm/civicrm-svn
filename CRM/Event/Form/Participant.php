@@ -991,7 +991,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
       ($self->_id && !$self->_paymentId && isset($self->_values['line_items']) && is_array($self->_values['line_items']))
     ) {
       if ($priceSetId = CRM_Utils_Array::value('priceSetId', $values)) {
-        CRM_Price_BAO_Field::priceSetValidation($priceSetId, $values, $errorMsg);
+        CRM_Price_BAO_Field::priceSetValidation($priceSetId, $values, $errorMsg, TRUE);
       }
     }
 
@@ -1111,18 +1111,22 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
       }
 
       if (isset($params['priceSetId'])) {
-        $this->set('lineItem', $lineItem);
-        $this->_lineItem  = $lineItem;
-        $lineItem         = array_merge($lineItem, $additionalParticipantDetails);
-        $participantCount = array();
-        foreach ($lineItem as $k) {
-          foreach ($k as $v) {
-            if (CRM_Utils_Array::value('participant_count', $v) > 0) {
-              $participantCount[] = $v['participant_count'];
+        if (!empty($lineItem[0])) {
+          $this->set('lineItem', $lineItem);
+          
+          $this->_lineItem  = $lineItem;
+          $lineItem         = array_merge($lineItem, $additionalParticipantDetails);
+          
+          $participantCount = array();
+          foreach ($lineItem as $k) {
+            foreach ($k as $v) {
+              if (CRM_Utils_Array::value('participant_count', $v) > 0) {
+                $participantCount[] = $v['participant_count'];
+              }
             }
           }
         }
-        if ($participantCount) {
+        if (isset($participantCount)) {
           $this->assign('pricesetFieldsCount', $participantCount);
         }
          $this->assign('lineItem', empty($lineItem[0]) || $this->_quickConfig? FALSE : $lineItem);

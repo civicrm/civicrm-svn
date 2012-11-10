@@ -581,7 +581,7 @@ WHERE
    *
    */
 
-  public static function priceSetValidation($priceSetId, $fields, &$error) {
+  public static function priceSetValidation($priceSetId, $fields, &$error, $allowNoneSelection = FALSE) {
     // check for at least one positive
     // amount price field should be selected.
     $priceField = new CRM_Price_DAO_Field();
@@ -589,9 +589,22 @@ WHERE
     $priceField->find();
 
     $priceFields = array();
-
+    
+    if ($allowNoneSelection) {
+      $noneSelectedPriceFields = array();
+    }
+    
     while ($priceField->fetch()) {
       $key = "price_{$priceField->id}";
+      
+      if ($allowNoneSelection) {
+        if (array_key_exists($key, $fields)) {
+          if ($fields[$key] == 0 && !$priceField->is_required) {
+            $noneSelectedPriceFields[] = $priceField->id;
+          } 
+        }
+      }
+      
       if (CRM_Utils_Array::value($key, $fields)) {
         $priceFields[$priceField->id] = $fields[$key];
       }
@@ -616,9 +629,7 @@ WHERE  id IN (" . implode(',', array_keys($priceFields)) . ')';
         CRM_Price_BAO_FieldValue::getValues($fieldId, $options);
 
         if (empty($options)) {
-
           continue;
-
         }
 
         if ($type == 'Text') {
@@ -645,7 +656,13 @@ WHERE  id IN (" . implode(',', array_keys($priceFields)) . ')';
       }
     }
     else {
-      $error['_qf_default'] = ts("Please select at least one option from price set.");
+      if ($allowNoneSelection) {
+        if (empty($noneSelectedPriceFields)) {
+          $error['_qf_default'] = ts("Please select at least one option from price set.");
+        }
+      } else {
+        $error['_qf_default'] = ts("Please select at least one option from price set.");
+      }
     }
   }
 

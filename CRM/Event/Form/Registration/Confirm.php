@@ -67,6 +67,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
 
     // lineItem isn't set until Register postProcess
     $this->_lineItem = $this->get('lineItem');
+
     $this->_params = $this->get('params');
 
     $this->_params[0]['is_pay_later'] = $this->get('is_pay_later');
@@ -281,14 +282,20 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
 
     //$this->buildCustom($this->_values['custom_pre_id'], 'customPre', TRUE);
     //$this->buildCustom($this->_values['custom_post_id'], 'customPost', TRUE);
-
+  
     if ($this->_priceSetId && !CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_priceSetId, 'is_quick_config')) {
-
-      $this->assign('lineItem', $this->_lineItem);
-
+      $lineItemForTemplate = array();
+      foreach ($this->_lineItem as $key => $value) {
+        if (!empty($value)) {
+          $lineItemForTemplate[$key] = $value;
+        }
+      }
+      if (!empty($lineItemForTemplate)) {
+        $this->assign('lineItem', $lineItemForTemplate);
+      }
     }
-    //display additional participants profile.
 
+    //display additional participants profile.
     $participantParams = $this->_params;
     $formattedValues   = array();
     $count             = 1;
@@ -712,7 +719,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
     if ($this->_priceSetId &&
       !empty($this->_lineItem)
     ) {
-            require_once 'CRM/Financial/BAO/FinancialItem.php';
+      require_once 'CRM/Financial/BAO/FinancialItem.php';
 
       // take all processed participant ids.
       $allParticipantIds = $this->_participantIDS;
@@ -864,8 +871,10 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
           if ($this->_lineItem) {
             $lineItems  = $this->_lineItem;
             $lineItem   = array();
-            $lineItem[] = CRM_Utils_Array::value($participantNum, $lineItems);
-            $this->assign('lineItem', $lineItem);
+            if ($lineItemValue = CRM_Utils_Array::value($participantNum, $lineItems)) {
+              $lineItem[] = $lineItemValue;
+            }
+            $this->assign('lineItem', $lineItem);                        
           }
           $this->_values['params']['additionalParticipant'] = TRUE;
         }

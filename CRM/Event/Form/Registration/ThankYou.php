@@ -99,7 +99,15 @@ class CRM_Event_Form_Registration_ThankYou extends CRM_Event_Form_Registration {
     $this->assignToTemplate();
 
     if ($this->_priceSetId && !CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_priceSetId, 'is_quick_config')) {
-      $this->assign('lineItem', $this->_lineItem);
+      $lineItemForTemplate = array();
+      foreach ($this->_lineItem as $key => $value) {
+        if (!empty($value)) {
+          $lineItemForTemplate[$key] = $value;
+        }
+      }
+      if (!empty($lineItemForTemplate)) {
+        $this->assign('lineItem', $lineItemForTemplate);
+      }
     }
     $this->assign('totalAmount', $this->_totalAmount);
 
