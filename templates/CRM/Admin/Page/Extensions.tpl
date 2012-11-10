@@ -127,7 +127,7 @@
     cj(function() {
       cj('.crm-extensions-refresh').click(function(event){
         event.stopPropagation();
-        cj().crmAlert('', '{/literal}{ts escape="js"}Refreshing...{/ts}{literal}'), 'info');
+        cj().crmAlert('', '{/literal}{ts escape="js"}Refreshing...{/ts}{literal}', 'info');
         cj().crmAPI('Extension', 'refresh', {}, { 
           'callBack' : function(result){
             if (result.is_error) {
