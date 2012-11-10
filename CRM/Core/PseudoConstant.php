@@ -2013,7 +2013,7 @@ ORDER BY name";
       $dao = CRM_Core_DAO::executeQuery($sql);
       while ($dao->fetch()) {
         self::$extensions[$dao->full_name] = $dao->label;
-    }
+      }
     }
 
     return self::$extensions;

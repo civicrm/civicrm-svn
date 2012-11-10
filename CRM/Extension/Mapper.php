@@ -146,8 +146,8 @@ class CRM_Extension_Mapper {
   }
 
   /**
-   * @param string $key extension key
-   * @return CRM_Extension_Info
+   * @param string $key extension fully-qualified-name
+   * @return object CRM_Extension_Info
    */
   public function keyToInfo($key, $fresh = FALSE) {
     if ($fresh || !array_key_exists($key, $this->infos)) {
