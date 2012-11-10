@@ -47,7 +47,8 @@ class CRM_Logging_Schema {
 
   /**
    * Populate $this->tables and $this->logs with current db state.
-   */ function __construct() {
+   */
+  function __construct() {
     $dao = new CRM_Contact_DAO_Contact();
     $civiDBName = $dao->_database;
 

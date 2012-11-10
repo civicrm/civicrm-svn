@@ -1537,10 +1537,25 @@ SELECT contact_id
     self::createTriggers($info);
   }
 
-   /**
-    * @param $info array per hook_civicrm_triggerInfo
-    * @param $onlyTableName string the specific table requiring a rebuild; or NULL to rebuild all tables
-    */
+  /**
+   * Wrapper function to drop triggers
+   *
+   * @param $tableName string the specific table requiring a rebuild; or NULL to rebuild all tables
+   */
+  static function dropTriggers($tableName = NULL) {
+    $info = array();
+
+    $logging = new CRM_Logging_Schema;
+    $logging->triggerInfo($info, $tableName);
+
+    // drop all existing triggers on all tables
+    $logging->dropTriggers($tableName);
+  }
+
+  /**
+   * @param $info array per hook_civicrm_triggerInfo
+   * @param $onlyTableName string the specific table requiring a rebuild; or NULL to rebuild all tables
+   */
   static function createTriggers(&$info, $onlyTableName = NULL) {
     // Validate info array, should probably raise errors?
     if (is_array($info) == FALSE) {

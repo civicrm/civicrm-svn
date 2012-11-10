@@ -380,13 +380,6 @@ SET    version = '$version'
       );
     }
 
-    $config = CRM_Core_Config::singleton();
-    if ($config->logging == TRUE) {
-      $error = ts('Upgrade to CiviCRM %1 with the logging feature enabled is currently not supported. You will need to disable logging (Administer > System Settings > Undelete, Logging and ReCAPTCHA), run the upgrade, and then re-enable logging. This should not affect existing log entries, but you should always test the upgrade on a COPY of your production database to verify.',
-                  array(1 => $latestVer)
-                  );
-    }
-
     $phpVersion = phpversion();
     $minPhpVersion = '5.3.3';
     if (version_compare($phpVersion, $minPhpVersion) <= 0) {
@@ -607,6 +600,9 @@ SET    version = '$version'
     // cleanup caches CRM-8739
     $config = CRM_Core_Config::singleton();
     $config->cleanupCaches(1, FALSE);
+
+    // rebuild all triggers
+    CRM_Core_DAO::triggerRebuild();
   }
 
   /**

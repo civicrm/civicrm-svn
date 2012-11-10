@@ -142,6 +142,9 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
 
     $postUpgradeMessage = ts('CiviCRM upgrade was successful.');
 
+    // lets drop all the triggers here
+    CRM_Core_DAO::dropTriggers();
+
     // Persistent message storage across upgrade steps. TODO: Use structured message store
     // Note: In clustered deployments, this file must be accessible by all web-workers.
     $this->set('postUpgradeMessageFile', CRM_Utils_File::tempnam('civicrm-post-upgrade'));
