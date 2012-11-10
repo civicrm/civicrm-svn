@@ -229,6 +229,32 @@ function civicrm_api3_extension_refresh($params) {
 }
 
 /**
+ * Get a list of available extensions
+ *
+ * @return array API result
+ * @static void
+ * @access public
+ * @example ExtensionGet.php
+ *
+ */
+function civicrm_api3_extension_get($params) {
+  $statuses = CRM_Extension_System::singleton()->getManager()->getStatuses();
+  $mapper = CRM_Extension_System::singleton()->getMapper();
+  $result = array();
+  foreach ($statuses as $key => $status) {
+    //try {
+    //  $info = (array) $mapper->keyToInfo($key);
+    //} catch (CRM_Extension_Exception $e) {
+      $info = array();
+      $info['key'] = $key;
+    //}
+    $info['status'] = $status;
+    $result[] = $info;
+  }
+  return civicrm_api3_create_success($result);
+}
+
+/**
  * Determine the list of extension keys
  *
  * @param array $params API request params with 'key' or 'keys'
