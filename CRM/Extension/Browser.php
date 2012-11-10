@@ -72,7 +72,10 @@ class CRM_Extension_Browser {
   }
 
   public function refresh() {
-    unlink($this->getTsPath());
+    $file = $this->getTsPath();
+    if (file_exists($file)) {
+      unlink($file);
+    }
   }
 
   /**
