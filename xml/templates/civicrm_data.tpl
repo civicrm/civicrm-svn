@@ -24,6 +24,7 @@
 -- This file provides template to civicrm_data.mysql. Inserts all base data needed for a new CiviCRM DB
 
 SET @domainName := 'Default Domain Name';
+SET @defaultOrganization := 'Default Organization';
 
 -- Add components to system wide registry
 -- We're doing it early to avoid constraint errors.
@@ -39,7 +40,7 @@ INSERT INTO civicrm_component (name, namespace) VALUES ('CiviCampaign'  , 'CRM_C
 
 -- Create organization contact
 INSERT INTO civicrm_contact( `contact_type`, `sort_name`, `display_name`, `legal_name`, `organization_name`) 
-VALUES ('Organization', @domainName, @domainName, @domainName, @domainName );
+VALUES ('Organization', @defaultOrganization, @defaultOrganization, @defaultOrganization, @defaultOrganization);
 
 SELECT @contactID := id from civicrm_contact where sort_name = "Default Domain Name" and display_name = "Default Domain Name";
 
