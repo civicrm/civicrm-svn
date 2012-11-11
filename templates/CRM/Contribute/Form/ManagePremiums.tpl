@@ -98,11 +98,12 @@
      <tr class="crm-contribution-form-block-financial_type">
        <td class="label">{$form.financial_type_id.label}</td>
        <td class="html-adjust">
-       {if !$financialType }
+       {if !$financialType}
          {capture assign=ftUrl}{crmURL p='civicrm/admin/financial/financialType' q="reset=1"}{/capture}
-         {ts 1=$ftUrl}There is no Financial Type configured for both a 'Cost of Sales Premiums Account' and a 'Premiums Inventory Account'. <a href='%1'>Click here</a> if you want to configure financial type for your site.{/ts}
+         {ts 1=$ftUrl}There is no Financial Type configured of Account Relation that has both a 'Cost of Sales Premiums Account' and a 'Premiums Inventory Account' if you want to generate accounting transactions to track the cost of premiums used.  <a href='%1'>Click here</a> if you want to configure financial type for your site.{/ts}
        {else}
-         {$form.financial_type_id.html}
+         {$form.financial_type_id.html}<br />
+	 <span class="description">{ts}Select a Financial Type that has both a 'Cost of Sales Premiums Account' and a 'Premiums Inventory Account' if you want to generate accounting transactions to track the cost of premiums used.{/ts}</span>
        {/if}
        </td>
     </tr>
