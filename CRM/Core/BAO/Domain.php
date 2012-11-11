@@ -138,9 +138,9 @@ class CRM_Core_BAO_Domain extends CRM_Core_DAO_Domain {
    */
   function &getLocationValues() {
     if ($this->_location == NULL) {
+      $domain = self::getDomain(null);
       $params = array(
-        'entity_id' => $this->id,
-        'entity_table' => self::getTableName(),
+        'contact_id' => $domain->contact_id
       );
       $this->_location = CRM_Core_BAO_Location::getValues($params, TRUE);
 
