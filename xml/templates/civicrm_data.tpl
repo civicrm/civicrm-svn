@@ -38,7 +38,7 @@ INSERT INTO civicrm_component (name, namespace) VALUES ('CiviReport'    , 'CRM_R
 INSERT INTO civicrm_component (name, namespace) VALUES ('CiviCampaign'  , 'CRM_Campaign' );
 
 -- Create organization contact
-INSERT INTO civicrm_contact( `contact_type`, `sort_name`, `display_name`, `legal_name`, 'organization_name') 
+INSERT INTO civicrm_contact( `contact_type`, `sort_name`, `display_name`, `legal_name`, `organization_name`) 
 VALUES ('Organization', @domainName, @domainName, @domainName, @domainName );
 
 SELECT @contactID := id from civicrm_contact where sort_name = "Default Domain Name" and display_name = "Default Domain Name";
