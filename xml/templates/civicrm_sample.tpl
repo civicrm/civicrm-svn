@@ -73,11 +73,6 @@ INSERT INTO `civicrm_pcp_block`
 VALUES
     (1, 'civicrm_contribution_page', 1, 2, 1, 1, 5, 'Create your own Personal Campaign Page!', 1, 1);
 
-INSERT INTO civicrm_contact
-    (contact_type, contact_sub_type, legal_identifier, external_identifier, sort_name, display_name, nick_name, source, preferred_communication_method, preferred_mail_format, do_not_phone, do_not_email, do_not_mail, do_not_trade, hash, is_opt_out,organization_name)
-VALUES
-    ('Organization',NULL,NULL,NULL,'Inner City Arts','Inner City Arts',NULL,NULL,'4','Both',0,0,0,0,'1902067651',0,'Inner City Arts');
-
 INSERT INTO civicrm_membership_type
     (domain_id, name, description, member_of_contact_id, financial_type_id, minimum_fee, duration_unit, duration_interval, period_type, fixed_period_start_day, fixed_period_rollover_day, relationship_type_id, relationship_direction, visibility, weight, is_active)
 VALUES
