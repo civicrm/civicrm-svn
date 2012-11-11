@@ -476,7 +476,7 @@ ALTER TABLE `civicrm_domain` CHANGE `contact_id` `contact_id` INT( 10 ) UNSIGNED
 
  ADD CONSTRAINT `FK_civicrm_domain_contact_id` FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact` (`id`);
 
--- CRM-9923
+-- CRM-9923 and CRM-11037
 
 SELECT @option_group_id_batch_status   := max(id) from civicrm_option_group where name = 'batch_status';
 
@@ -485,8 +485,9 @@ SELECT @weight                 := MAX(value) FROM civicrm_option_value WHERE opt
 INSERT INTO
    `civicrm_option_value` (`option_group_id`, {localize field='label'}label{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`)
 VALUES
-   (@option_group_id_batch_status, {localize}'Reopened'{/localize}, @weight = @weight + 1, 'Reopened', NULL, 0, 0, @weight),
-   (@option_group_id_batch_status, {localize}'Exported'{/localize}, @weight = @weight + 1, 'Exported' , NULL, 0, 0, @weight);
+   (@option_group_id_batch_status, {localize}'Data Entry'{/localize}, @weight = @weight + 1, 'Data Entry', NULL, 0, 0, @weight = @weight + 1),
+   (@option_group_id_batch_status, {localize}'Reopened'{/localize}, @weight = @weight + 1, 'Reopened', NULL, 0, 0, @weight = @weight + 1),
+   (@option_group_id_batch_status, {localize}'Exported'{/localize}, @weight = @weight + 1, 'Exported' , NULL, 0, 0, @weight = @weight + 1);
 
 -- Insert Batch Modes.
 

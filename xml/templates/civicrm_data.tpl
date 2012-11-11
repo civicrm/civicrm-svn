@@ -861,6 +861,9 @@ VALUES
 -- default batch statues
    (@option_group_id_batch_status, '{ts escape="sql"}Open{/ts}', 1, '{ts escape="sql"}Open{/ts}', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_batch_status, '{ts escape="sql"}Closed{/ts}', 2, '{ts escape="sql"}Closed{/ts}', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
+   (@option_group_id_batch_status, '{ts escape="sql"}Data Entry{/ts}', 3, '{ts escape="sql"}Data Entry{/ts}', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
+   (@option_group_id_batch_status, '{ts escape="sql"}Reopened{/ts}', 4, '{ts escape="sql"}Reopened{/ts}', NULL, 0, NULL, 4, NULL, 0, 0, 1, NULL, NULL),
+   (@option_group_id_batch_status, '{ts escape="sql"}Exported{/ts}', 5, '{ts escape="sql"}Exported{/ts}', NULL, 0, NULL, 5, NULL, 0, 0, 1, NULL, NULL),
 
 -- Financial Item Status
    (@option_group_id_financial_item_status, '{ts escape="sql"}Paid{/ts}', 1, 'Paid', NULL, 0, 0, 1, 'Paid', 0, 1, 1, 2, NULL),
