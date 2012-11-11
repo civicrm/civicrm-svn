@@ -454,6 +454,9 @@ SELECT @opAsset := value FROM civicrm_option_value WHERE name = 'Asset' and opti
 SELECT @opLiability := value FROM civicrm_option_value WHERE name = 'Liability' and option_group_id = @option_group_id_fat;
 SELECT @opCost := value FROM civicrm_option_value WHERE name = 'Cost of Sales' and option_group_id = @option_group_id_fat;
 
+-- CRM-11127
+UPDATE civicrm_financial_account SET name = 'Donations' WHERE name = 'Donation';
+
 INSERT INTO
    `civicrm_financial_account` (`name`, `contact_id`, `financial_account_type_id`, `description`, `accounting_code`, `is_reserved`, `is_active`, `is_deductible`, `is_default`)
 VALUES
