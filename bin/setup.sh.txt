@@ -100,18 +100,18 @@ mysql -u $DBUSER $PASSWDSECTION $DBARGS $DBNAME < civicrm.mysql
 # load civicrm_generated.mysql sample data unless special DBLOAD is passed
 if [ -z $DBLOAD ]; then
     echo; echo Populating database with example data - civicrm_generated.mysql
-    mysql -u $DBUSER $PASSWDSECTION $DBNAME < civicrm_generated.mysql
+    mysql -u $DBUSER $PASSWDSECTION $DBARGS $DBNAME < civicrm_generated.mysql
 else
     echo; echo Populating database with required data - civicrm_data.mysql
-    mysql -u $DBUSER $PASSWDSECTION $DBNAME < civicrm_data.mysql
+    mysql -u $DBUSER $PASSWDSECTION $DBARGS $DBNAME < civicrm_data.mysql
     echo; echo Populating database with $DBLOAD data
-    mysql -u $DBUSER $PASSWDSECTION $DBNAME < $DBLOAD
+    mysql -u $DBUSER $PASSWDSECTION $DBARGS $DBNAME < $DBLOAD
 fi
 
 # load additional script if DBADD defined
 if [ ! -z $DBADD ]; then
     echo; echo Loading $DBADD
-    mysql -u $DBUSER $PASSWDSECTION $DBNAME < $DBADD
+    mysql -u $DBUSER $PASSWDSECTION $DBARGS $DBNAME < $DBADD
 fi
 
 # run the cli script to build the menu and the triggers
