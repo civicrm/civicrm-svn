@@ -81,7 +81,9 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
    */
   static function create(&$params) {
 
+
     $transaction = new CRM_Core_Transaction();
+    CRM_Core_Error::debug( '$params', $params );
 
     $priceField = self::add($params);
 
@@ -146,24 +148,24 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
         if ($options['membership_type_id']) {
           $options['membership_num_terms'] = CRM_Utils_Array::value($index, CRM_Utils_Array::value('membership_num_terms', $params), 1);
         }
-
+        
+        if (CRM_Utils_Array::value( $index, CRM_Utils_Array::value('option_financial_type_id', $params))) {
+          $options['financial_type_id'] =  $params['option_financial_type_id'][$index];    
+        } elseif (CRM_Utils_Array::value( 'financial_type_id', $params )) {
+          $options['financial_type_id'] = $params['financial_type_id'];
+        }
+        
         if ($opIds = CRM_Utils_Array::value('option_id', $params)) {
           if ($opId = CRM_Utils_Array::value($index, $opIds)) {
             $optionsIds['id'] = $opId;
-                if( CRM_Utils_Array::value( $index, $params['option_financial_type_id'], null ) ){
-                    $options['financial_type_id'] =  CRM_Utils_Array::value( $index, $params['option_financial_type_id'], null );    
-                }elseif( CRM_Utils_Array::value( 'financial_type_id', $params) )
-                    {
-                        $options['financial_type_id'] = CRM_Utils_Array::value( 'financial_type_id', $params );
+          } else { 
+            $optionsIds['id'] = NULL;
           }
-                CRM_Price_BAO_FieldValue::add($options, $optionsIds);
-          }
-          else $optionsIds['id'] = NULL;
         }
         CRM_Price_BAO_FieldValue::create($options, $optionsIds);
       }
     }
-
+    
     $transaction->commit();
     return $priceField;
   }
