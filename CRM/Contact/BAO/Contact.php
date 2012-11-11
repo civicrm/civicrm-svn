@@ -2916,14 +2916,14 @@ LEFT JOIN civicrm_address add2 ON ( add1.master_id = add2.id )
    */
   static
     function checkDomainContact($contactId) {
-    if (!$contactId) {
+    if (!$contactId) 
       return FALSE;
     $domainId =  CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Domain', $contactId, 'id', 'contact_id');
 
     if ($domainId) {
       return TRUE;
-          }
-    return FALSE;
+    } else {
+      return FALSE;
+    }
   }
-}
 }
