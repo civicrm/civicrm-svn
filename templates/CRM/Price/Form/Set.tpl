@@ -100,9 +100,9 @@
       showHideContribution();
   var showContribution = {/literal}"{$showContribution}"{literal};
   if (showContribution) {
-      cj('tr#financial_type_id').show();
+      cj('#financial_type_id').show();
   }
-    	cj("input[id='extends[3]']").click(function(){
+    	cj("input[id='extends_3']").click(function(){
 
       showHideContribution();
   });
@@ -110,10 +110,10 @@
     });
 
     function showHideContribution() {
-	if(cj("input[id='extends[3]']").attr('checked') ) {
+	if(cj("input[id='extends_3']").attr('checked') ) {
 	      cj("#financial_type_id").show();
   } else {
-        cj('tr#financial_type_id').hide();
+        cj('#financial_type_id').hide();
   }
 
 }
