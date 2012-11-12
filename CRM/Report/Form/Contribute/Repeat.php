@@ -182,14 +182,14 @@ contribution_civireport2.total_amount_sum as contribution2_total_amount_sum',
         'filters' =>
         array(
           'receive_date1' =>
-          array('title' => ts('Date Range One'),
+          array('title' => ts('Initial Date Range'),
             'default' => 'previous.year',
             'type' => CRM_Utils_Type::T_DATE,
             'operatorType' => CRM_Report_Form::OP_DATE,
             'name' => 'receive_date',
           ),
           'receive_date2' =>
-          array('title' => ts('Date Range Two'),
+          array('title' => ts('Second Date Range'),
             'default' => 'this.year',
             'type' => CRM_Utils_Type::T_DATE,
             'operatorType' => CRM_Report_Form::OP_DATE,
@@ -714,7 +714,7 @@ SELECT COUNT({$this->_aliases['civicrm_contribution']}1.total_amount_count )    
     
     if ($dao->fetch()) {
       $statistics['counts']['range_one_title'] = array(
-                                                       'title' => 'Date Range One:',
+                                                       'title' => 'Initial Date Range:',
                                                        );
       $statistics['counts']['amount'] = array(
                                               'value' => $dao->amount,
@@ -731,7 +731,7 @@ SELECT COUNT({$this->_aliases['civicrm_contribution']}1.total_amount_count )    
                                               'type' => CRM_Utils_Type::T_MONEY,
                                               );
 	    $statistics['counts']['range_two_title'] = array(
-                                              'title' => 'Date Range Two:',
+                                              'title' => 'Second Date Range:',
                                               );
       $statistics['counts']['amount2'] = array(
                                               'value' => $dao->amount2,
