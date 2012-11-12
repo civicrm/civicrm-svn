@@ -344,7 +344,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
     // set success status
     CRM_Core_Session::setStatus("", ts("Batch Processed."), "success");
 
-    CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/batch', 'reset=1&status=2'));
+    CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/batch', 'reset=1'));
   }
 
   /**
@@ -437,7 +437,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
           $value, $lineItem[$priceSetId]
         );
 
-        CRM_Price_BAO_LineItem::processPriceSet($contribution->id, $lineItem);
+        CRM_Price_BAO_LineItem::processPriceSet($contribution->id, $lineItem, $contribution);
 
         //process premiums
         if (CRM_Utils_Array::value('product_name', $value)) {
