@@ -134,7 +134,7 @@ class CRM_Core_BAO_FinancialTrxn extends CRM_Financial_DAO_FinancialTrxn {
    * @access public
    * @static
    */
-  static function getFinancialTrxnIds($entity_id, $entity_table = 'civicrm_contribution',$return = NULL) {
+  static function getFinancialTrxnIds($entity_id, $entity_table = 'civicrm_contribution') {
     $ids = array('entityFinancialTrxnId' => NULL, 'financialTrxnId' => NULL);
 
     $query = "
@@ -160,8 +160,7 @@ class CRM_Core_BAO_FinancialTrxn extends CRM_Financial_DAO_FinancialTrxn {
    * @param string $entityTable name of the entity table usually 'civicrm_contact'
    * @param int $entityID id of the entity usually the contactID.
    *
-   * @return array(
-     ) reference $tag array of catagory id's the contact belongs to.
+   * @return array( ) reference $tag array of catagory id's the contact belongs to.
    *
    * @access public
    * @static
@@ -221,17 +220,12 @@ WHERE lt.entity_id = %1 ";
 
     if ($fids['financialTrxnId']) {
       // delete enity financial transaction before financial transaction since financial_trxn_id will be set to null if financial transaction deleted first
-      $query = "
-                DELETE FROM civicrm_entity_financial_trxn
-              WHERE financial_trxn_id = %1";
+      $query = 'DELETE FROM civicrm_entity_financial_trxn  WHERE financial_trxn_id = %1';
       CRM_Core_DAO::executeQuery($query, array(1 => array($fids['financialTrxnId'], 'Integer')));
 
       // delete financial transaction
-      $query = "
-              DELETE FROM civicrm_financial_trxn
-                WHERE id = %1";
+      $query = 'DELETE FROM civicrm_financial_trxn WHERE id = %1';
       CRM_Core_DAO::executeQuery($query, array(1 => array($fids['financialTrxnId'], 'Integer')));
-
       return TRUE;
     }
     else {
