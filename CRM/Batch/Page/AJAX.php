@@ -51,8 +51,7 @@ class CRM_Batch_Page_AJAX {
     CRM_Utils_System::civiExit();
   }
 
-  static
-  function getBatchList() {
+  static function getBatchList() {
     $sortMapper = array(
       0 => 'batch.title', 1 => 'batch.type_id', 2 => '',
       3 => 'batch.total', 4 => 'batch.status_id', 5 => '',
@@ -71,6 +70,9 @@ class CRM_Batch_Page_AJAX {
 
     $params['page'] = ($offset / $rowCount) + 1;
     $params['rp'] = $rowCount;
+
+    //show only data entry status batches
+    $params['status'] = 3;
 
     // get batch list
     $batches = CRM_Core_BAO_Batch::getBatchListSelector($params);

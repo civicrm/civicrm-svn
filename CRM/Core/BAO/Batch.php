@@ -49,8 +49,7 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
    * @return batch array
    * @access public
    */
-  static
-    function create(&$params, $ids = null, $context = null) {
+  static function create(&$params, $ids = null, $context = null) {
     if (!CRM_Utils_Array::value('id', $params)) {
       $params['name'] = CRM_Utils_String::titleToVar($params['title']);
     }
@@ -84,8 +83,7 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
    * @access public
    * @static
    */
-  static
-  function retrieve(&$params, &$defaults) {
+  static function retrieve(&$params, &$defaults) {
     $batch = new CRM_Core_DAO_Batch();
     $batch->copyValues($params);
     if ($batch->find(TRUE)) {
@@ -103,8 +101,7 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
    * @return int  $profileId   profile id
    * @static
    */
-  static
-  function getProfileId($batchTypeId) {
+  static function getProfileId($batchTypeId) {
     //retrieve the profile specific to batch type
 
     switch ($batchTypeId) {
@@ -128,8 +125,7 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
    * @return batch name
    * @static
    */
-  static
-  function generateBatchName() {
+  static function generateBatchName() {
     $sql = "SELECT max(id) FROM civicrm_batch";
     $batchNo = CRM_Core_DAO::singleValueQuery($sql);
     $batchNo++;
@@ -143,8 +139,7 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
    * @return batch array
    * @access public
    */
-  static
-  function addBatchEntity(&$params) {
+  static function addBatchEntity(&$params) {
     $entityBatch = new CRM_Core_DAO_EntityBatch();
     $entityBatch->copyValues($params);
     $entityBatch->save();
@@ -159,8 +154,7 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
    * @return void
    * @access public
    */
-  static
-  function deleteBatch($batchId) {
+  static function deleteBatch($batchId) {
     //delete batch entries from cache
     $cacheKeyString = CRM_Core_BAO_Batch::getCacheKeyForBatch($batchId);
     CRM_Core_BAO_Cache::deleteGroup('batch entry', $cacheKeyString, FALSE);
@@ -180,8 +174,7 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
    * @static
    * @access public
    */
-  static
-  function getCacheKeyForBatch($batchId) {
+  static function getCacheKeyForBatch($batchId) {
     return "batch-entry-{$batchId}";
   }
 
@@ -228,8 +221,7 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
    * @param  array   $params associated array for params
    * @access public
    */
-  static
-  function getBatchList(&$params) {
+  static function getBatchList(&$params) {
     $config = CRM_Core_Config::singleton();
 
     $whereClause = self::whereClause($params, FALSE);
@@ -286,8 +278,7 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
     return $values;
   }
 
-  static
-  function getBatchCount(&$params) {
+  static function getBatchCount(&$params) {
     $whereClause = self::whereClause($params, FALSE);
     $query = " SELECT COUNT(*) FROM civicrm_batch batch WHERE {$whereClause}";
     return CRM_Core_DAO::singleValueQuery($query, $params);
@@ -370,6 +361,4 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
     }
     return $batches;
   }
-
 }
-

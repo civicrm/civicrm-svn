@@ -52,10 +52,6 @@
           <td class="label">{$form.description.label}</td>
           <td>{$form.description.html}</td>
       </tr>
-      <tr class="crm-batch-form-block-status_id">
-          <td class="label">{$form.status_id.label}</td>
-          <td>{$form.status_id.html}</td>
-      </tr>
       <tr class="crm-batch-form-block-item_count">
           <td class="label">{$form.item_count.label}</td>
           <td>{$form.item_count.html}</td>

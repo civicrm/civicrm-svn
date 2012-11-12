@@ -63,7 +63,11 @@ class CRM_Batch_Form_Batch extends CRM_Admin_Form {
     $attributes = CRM_Core_DAO::getAttribute('CRM_Core_DAO_Batch');
     $this->add('text', 'title', ts('Batch Name'), $attributes['name'], TRUE);
 
-    $type = $this->add('select', 'type_id', ts('Type'), CRM_Core_PseudoConstant::getBatchType());
+    $batchTypes = CRM_Core_PseudoConstant::getBatchType();
+    // unset non-related types
+    unset($batchTypes[3]);
+    unset($batchTypes[4]);
+    $type = $this->add('select', 'type_id', ts('Type'), $batchTypes);
 
     if ($this->_action & CRM_Core_Action::UPDATE) {
       $type->freeze();
@@ -72,7 +76,6 @@ class CRM_Batch_Form_Batch extends CRM_Admin_Form {
     $this->add('textarea', 'description', ts('Description'), $attributes['description']);
     $this->add('text', 'item_count', ts('Number of items'), $attributes['item_count'], TRUE);
     $this->add('text', 'total', ts('Total Amount'), $attributes['total'], TRUE);
-    $this->add('select', 'status_id', ts('Status'), CRM_Core_PseudoConstant::getBatchStatus());
   }
 
   /**
@@ -120,7 +123,9 @@ class CRM_Batch_Form_Batch extends CRM_Admin_Form {
       $params['created_id'] = $session->get('userID');
       $params['created_date'] = CRM_Utils_Date::processDate(date("Y-m-d his"));
     }
-
+    
+    // always create with data entry status
+    $params['status_id'] = 3; 
     $batch = CRM_Core_BAO_Batch::create($params);
 
     // redirect to batch entry page.

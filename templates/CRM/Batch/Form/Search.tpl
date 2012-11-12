@@ -33,12 +33,7 @@
           {ts}Complete OR partial batch name.{/ts}
         </span>
       </td>
-      <td>
-        &nbsp;&nbsp;&nbsp;{$form.batch_status.label}&nbsp;{$form.batch_status.html}
-      </td>
-    </tr>
-    <tr>
-      <td>{$form.buttons.html}</td><td></td>
+      <td>{$form.buttons.html}</td>
     </tr>
   </table>
 </div>
@@ -67,6 +62,7 @@ cj( function() {
         buildBatchSelector( true );
     });
 });
+
 function buildBatchSelector( filterSearch ) {
   var status = {/literal}{$status}{literal};
   if ( filterSearch ) {
@@ -117,24 +113,9 @@ function buildBatchSelector( filterSearch ) {
                         }
                     },
         "fnServerData": function ( sSource, aoData, fnCallback ) {
-            aoData.push( {name:'status', value: status });
             if ( filterSearch ) {
-                var batchStatus = '';
-                if ( cj('.crm-batch-search-form-block #batch_status_1').prop('checked') ) {
-                    batchStatus = '1';
-                }
-
-                if ( cj('.crm-batch-search-form-block #batch_status_2').prop('checked') ) {
-                    if ( batchStatus ) {
-                        batchStatus = '3';
-                    } else {
-                        batchStatus = '2';
-                    }
-                }
-
                 aoData.push(
-                    {name:'title', value: cj('.crm-batch-search-form-block #title').val()},
-                    {name:'status', value: cj('.crm-batch-search-form-block #batch_status').val() }
+                    {name:'title', value: cj('.crm-batch-search-form-block #title').val()}
                 );
             }
             cj.ajax( {

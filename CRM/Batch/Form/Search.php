@@ -47,10 +47,6 @@ class CRM_Batch_Form_Search extends CRM_Core_Form {
       CRM_Core_DAO::getAttribute('CRM_Core_DAO_Batch', 'title')
     );
 
-    $this->add('select', 'batch_status', ts('Status'),
-      array('' => ts('- all -')) + CRM_Core_PseudoConstant::getBatchStatus()
-    );
-
     $this->addButtons(
       array(
         array(
