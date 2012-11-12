@@ -612,6 +612,139 @@ LEFT JOIN civicrm_temp_civireport_repeat2 {$this->_aliases['civicrm_contribution
 
   function statistics(&$rows) {
     $statistics = parent::statistics($rows);
+    
+	//fetch contributions for both date ranges from pre-existing temp tables
+	$sql = "
+			CREATE TEMPORARY TABLE civicrm_temp_civireport_repeat3
+			SELECT contact_id FROM civicrm_temp_civireport_repeat1 UNION SELECT contact_id FROM civicrm_temp_civireport_repeat2;
+			";
+	$dao = CRM_Core_DAO::executeQuery($sql);
+
+  $sql = "
+			SELECT civicrm_temp_civireport_repeat3.contact_id, 
+			civicrm_temp_civireport_repeat1.total_amount_sum as contribution1_total_amount_sum,
+			civicrm_temp_civireport_repeat2.total_amount_sum as contribution2_total_amount_sum
+			FROM civicrm_temp_civireport_repeat3
+			LEFT JOIN civicrm_temp_civireport_repeat1
+			ON civicrm_temp_civireport_repeat3.contact_id = civicrm_temp_civireport_repeat1.contact_id
+			LEFT JOIN civicrm_temp_civireport_repeat2
+			ON civicrm_temp_civireport_repeat3.contact_id = civicrm_temp_civireport_repeat2.contact_id
+			";
+			
+	$dao = CRM_Core_DAO::executeQuery($sql);
+	
+	//store contributions in array 'contact_sums' for comparison
+	$contact_sums = array();		
+	while ($dao->fetch()) {
+    $contact_sums[$dao->contact_id] = array(
+									'contribution1_total_amount_sum' => $dao->contribution1_total_amount_sum,
+									'contribution2_total_amount_sum' => $dao->contribution2_total_amount_sum
+									);
+    }
+    
+    $total_distinct_contacts = count($contact_sums);
+    $number_maintained = 0;
+    $number_upgraded = 0;
+    $number_downgraded = 0;
+    $number_new = 0;
+    $number_lapsed = 0;
+    
+    foreach ($contact_sums as $uid => $row) {
+      if ($row['contribution1_total_amount_sum'] && $row['contribution2_total_amount_sum']) {
+        $change = ($row['contribution1_total_amount_sum'] - $row['contribution2_total_amount_sum']);
+        if($change == 0)
+          $number_maintained += 1;
+        elseif($change > 0)
+          $number_upgraded += 1;
+        elseif($change < 0)
+          $number_downgraded += 1;
+      }
+      elseif ($row['contribution1_total_amount_sum']) {
+        $number_new +=1;
+      }
+      elseif ($row['contribution2_total_amount_sum']) {
+        $number_lapsed +=1;
+      }
+    }
+    
+    //calculate percentages from numbers
+    $percent_maintained = ($number_maintained / $total_distinct_contacts) * 100;
+    $percent_upgraded = ($number_upgraded / $total_distinct_contacts) * 100;
+    $percent_downgraded = ($number_downgraded / $total_distinct_contacts) * 100;
+    $percent_new = ($number_new / $total_distinct_contacts) * 100;
+    $percent_lapsed = ($number_lapsed / $total_distinct_contacts) * 100;
+    
+    //display percentages for new, lapsed, upgraded, downgraded, and maintained contributors
+    $statistics['counts']['count_new'] = array(
+                                              'value' => $percent_new,
+                                              'title' => '% New Donors',
+                                              );
+    $statistics['counts']['count_lapsed'] = array(
+                                              'value' => $percent_lapsed,
+                                              'title' => '% Lapsed Donors',
+                                              );  
+    $statistics['counts']['count_upgraded'] = array(
+                                              'value' => $percent_upgraded,
+                                              'title' => '% Upgraded Donors',
+                                              );
+    $statistics['counts']['count_downgraded'] = array(
+                                              'value' => $percent_downgraded,
+                                              'title' => '% Downgraded Donors',
+                                              ); 
+    $statistics['counts']['count_maintained'] = array(
+                                              'value' => $percent_maintained,
+                                              'title' => '% Maintained Donors',
+                                              );
+
+    $select = "
+            SELECT COUNT({$this->_aliases['civicrm_contribution']}1.total_amount_count )       as count,
+                   SUM({$this->_aliases['civicrm_contribution']}1.total_amount_sum )         as amount,
+                   ROUND(AVG({$this->_aliases['civicrm_contribution']}1.total_amount_sum), 2) as avg,
+				   COUNT({$this->_aliases['civicrm_contribution']}2.total_amount_count )       as count2,
+                   SUM({$this->_aliases['civicrm_contribution']}2.total_amount_sum )         as amount2,
+                   ROUND(AVG({$this->_aliases['civicrm_contribution']}2.total_amount_sum), 2) as avg2
+            ";
+
+    $sql = "{$select} {$this->_from} {$this->_where}";
+    $dao = CRM_Core_DAO::executeQuery($sql);
+    
+    if ($dao->fetch()) {
+	  $statistics['counts']['range_one_title'] = array(
+                                              'title' => 'Date Range One:',
+                                              );
+      $statistics['counts']['amount'] = array(
+                                              'value' => $dao->amount,
+                                              'title' => 'Total Amount',
+                                              'type' => CRM_Utils_Type::T_MONEY,
+                                              );
+      $statistics['counts']['count '] = array(
+                                              'value' => $dao->count,
+                                              'title' => 'Total Donations',
+                                              );
+      $statistics['counts']['avg   '] = array(
+                                              'value' => $dao->avg,
+                                              'title' => 'Average',
+                                              'type' => CRM_Utils_Type::T_MONEY,
+                                              );
+	    $statistics['counts']['range_two_title'] = array(
+                                              'title' => 'Date Range Two:',
+                                              );
+      $statistics['counts']['amount2'] = array(
+                                              'value' => $dao->amount2,
+                                              'title' => 'Total Amount',
+                                              'type' => CRM_Utils_Type::T_MONEY,
+                                              );
+      $statistics['counts']['count2 '] = array(
+                                              'value' => $dao->count2,
+                                              'title' => 'Total Donations',
+                                              );
+      $statistics['counts']['avg2   '] = array(
+                                              'value' => $dao->avg2,
+                                              'title' => 'Average',
+                                              'type' => CRM_Utils_Type::T_MONEY,
+                                              );
+    }
+
     return $statistics;
   }
 
