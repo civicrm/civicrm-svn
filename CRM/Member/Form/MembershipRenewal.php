@@ -765,7 +765,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
 
       if ($this->_mode) {
         $trxnParams = array(
-          'contribution_id' => $contribution->id,
+          'contribution_id' => CRM_Utils_Array::value('contribution_id', $formValues),
           'trxn_date' => $now,
           'trxn_type' => 'Debit',
           'total_amount' => $formValues['total_amount'],
