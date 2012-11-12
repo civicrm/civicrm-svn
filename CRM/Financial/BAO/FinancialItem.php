@@ -79,7 +79,7 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem {
    */
   static function add( $lineItem, $contribution ) {
     $params = array(
-      'transaction_date'  => $contribution->receive_date,
+      'transaction_date'  => CRM_Utils_Date::isoToMysql($contribution->receive_date),
       'contact_id'        => $contribution->contact_id, 
       'amount'            => $lineItem->line_total,
       'currency'          => $contribution->currency,
@@ -88,8 +88,8 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem {
       'entity_id'         => $lineItem->id,
       'description'       => ( $lineItem->qty != 1 ? $lineItem->qty . ' of ' : ''). ' ' . $lineItem->label
     );
-
-    if ($lineItem->financial_type_id ) {
+    
+    if ($lineItem->financial_type_id) {
       $searchParams = array( 
         'entity_table'         => 'civicrm_financial_type',
         'entity_id'            => $lineItem->financial_type_id,
@@ -161,6 +161,7 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem {
     elseif ($line_amount == $financialItem->amount) {
       $financialItem->status_id = 1;
     }
+
     $financialItem->transaction_date = null;
     $financialItem->save();
 
