@@ -80,10 +80,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
    * @static
    */
   static function create(&$params) {
-
-
     $transaction = new CRM_Core_Transaction();
-    CRM_Core_Error::debug( '$params', $params );
 
     $priceField = self::add($params);
 
@@ -116,14 +113,12 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
       }
     }
     else {
-      if (CRM_Utils_Array::value('default_option', $params)
-      ) {
+      if (CRM_Utils_Array::value('default_option', $params)) {
         $defaultArray[$params['default_option']] = 1;
       }
     }
 
     for ($index = 1; $index <= $maxIndex; $index++) {
-
       if (array_key_exists('option_amount', $params) && 
           array_key_exists($index, $params['option_amount']) && 
           (CRM_Utils_Array::value($index, CRM_Utils_Array::value('option_label', $params)) || 
