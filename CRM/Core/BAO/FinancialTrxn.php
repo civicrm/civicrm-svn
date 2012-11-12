@@ -144,8 +144,8 @@ class CRM_Core_BAO_FinancialTrxn extends CRM_Financial_DAO_FinancialTrxn {
             AND entity_table = %2
         ";
 
-    $sqlParams = array(1 => array($entity_id, 'Integer'), 2 => array($entity_table, 'String'));
-    $dao = CRM_Core_DAO::executeQuery($query, $sqlParams);
+    $params = array(1 => array($entity_id, 'Integer'), 2 => array($entity_table, 'String'));
+    $dao = CRM_Core_DAO::executeQuery($query, $params);
     if ($dao->fetch()) {
       $ids['entityFinancialTrxnId'] = $dao->id;
       $ids['financialTrxnId'] = $dao->financial_trxn_id;

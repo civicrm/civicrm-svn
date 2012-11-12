@@ -104,26 +104,26 @@ class CRM_Price_BAO_LineItem extends CRM_Price_DAO_LineItem {
   static function getLineItems($entityId, $entity = 'participant', $isQuick = NULL) {
     $selectClause = $whereClause = $fromClause = NULL;
     $selectClause = "
-SELECT    li.id,
-          li.label,
-          li.qty,
-          li.unit_price,
-          li.line_total,
-          pf.label as field_title,
-          pf.html_type,
-          pfv.membership_type_id,
-          li.price_field_id,
-          li.participant_count,
-          li.price_field_value_id,
-          pfv.description";
+      SELECT    li.id,
+      li.label,
+      li.qty,
+      li.unit_price,
+      li.line_total,
+      pf.label as field_title,
+      pf.html_type,
+      pfv.membership_type_id,
+      li.price_field_id,
+      li.participant_count,
+      li.price_field_value_id,
+      pfv.description";
 
     $fromClause = "
-FROM      civicrm_%2 as %2
-LEFT JOIN civicrm_line_item li ON ( li.entity_id = %2.id AND li.entity_table = 'civicrm_%2')
-LEFT JOIN civicrm_price_field_value pfv ON ( pfv.id = li.price_field_value_id )
-LEFT JOIN civicrm_price_field pf ON (pf.id = li.price_field_id )";
+      FROM      civicrm_%2 as %2
+      LEFT JOIN civicrm_line_item li ON ( li.entity_id = %2.id AND li.entity_table = 'civicrm_%2')
+      LEFT JOIN civicrm_price_field_value pfv ON ( pfv.id = li.price_field_value_id )
+      LEFT JOIN civicrm_price_field pf ON (pf.id = li.price_field_id )";
     $whereClause = "
-WHERE     %2.id = %1";
+      WHERE     %2.id = %1";
 
     if ($isQuick) {
       $fromClause .= " LEFT JOIN civicrm_price_set cps on cps.id = pf.price_set_id ";
@@ -260,13 +260,14 @@ WHERE     %2.id = %1";
    */
   function processPriceSet($contributionId, $lineItem, $contributionDetails = null, $initAmount = null, $entityTable = 'civicrm_contribution') {
     if (!$contributionId || !is_array($lineItem)
-        || CRM_Utils_system::isNull($lineItem)
-        ) {
+      || CRM_Utils_system::isNull($lineItem)
+    ) {
       return;
     }
     if ( $initAmount > 0.00) {
       $initPoint = $contributionDetails->total_amount / $initAmount;
-    }else {
+    }
+    else {
       $initPoint = 1;
     }
     foreach ($lineItem as $priceSetId => $values) {
@@ -283,47 +284,49 @@ WHERE     %2.id = %1";
           $initValue = CRM_Utils_Array::value( $int_name , $contributionDetails->init_amount );
           if ( is_array( $initValue ) ) {
             $initValue = CRM_Utils_Array::value( $line['price_field_value_id'],  $initValue );
-      }
-        }else {
+          }
+        }
+        else {
           $initvalue = (float) $line['unit_price']/$initPoint;
           $initValue = number_format($initvalue, 2, '.', '');
-    }
+        }
         $lineItems->int_name= $initValue;
         CRM_Financial_BAO_FinancialItem::add( $lineItems, $contributionDetails );
-  }
+      }
     }
   } 
 
   public static function syncLineItems($entityId, $entityTable = 'civicrm_contribution', $amount, $otherParams = NULL) {
     if (!$entityId || CRM_Utils_System::isNull($amount))
       return;
-    
+
     $from = " civicrm_line_item li
-LEFT JOIN   civicrm_price_field pf ON pf.id = li.price_field_id
-LEFT JOIN   civicrm_price_set ps ON ps.id = pf.price_set_id ";
+      LEFT JOIN   civicrm_price_field pf ON pf.id = li.price_field_id
+      LEFT JOIN   civicrm_price_set ps ON ps.id = pf.price_set_id ";
 
     $set = " li.unit_price = %3, 
-             li.line_total = %3 ";
+      li.line_total = %3 ";
 
     $where = " li.entity_id = %1 AND 
-               li.entity_table = %2 ";
-    
+      li.entity_table = %2 ";
+
     $params = array(
       1 => array($entityId, 'Integer'),
       2 => array($entityTable, 'String'),
       3 => array($amount, 'Float'),
     );
-    
+
     if ($entityTable == 'civicrm_contribution') {
       $entityName = 'default_contribution_amount';
       $where .= " AND ps.name = %4 ";
       $params[4] = array($entityName, 'String'); 
-    } elseif ($entityTable == 'civicrm_participant') {
+    } 
+    elseif ($entityTable == 'civicrm_participant') {
       $from .= "
-LEFT JOIN civicrm_price_set_entity cpse ON cpse.price_set_id = ps.id
-LEFT JOIN civicrm_price_field_value cpfv ON cpfv.price_field_id = pf.id and cpfv.label = %4 ";
+        LEFT JOIN civicrm_price_set_entity cpse ON cpse.price_set_id = ps.id
+        LEFT JOIN civicrm_price_field_value cpfv ON cpfv.price_field_id = pf.id and cpfv.label = %4 ";
       $set .= " ,li.label = %4,
-                li.price_field_value_id = cpfv.id ";
+        li.price_field_value_id = cpfv.id ";
       $where .= " AND cpse.entity_table = 'civicrm_event' AND cpse.entity_id = %5 ";
       $amount = empty($amount) ? 0: $amount;
       $params += array(
@@ -333,10 +336,10 @@ LEFT JOIN civicrm_price_field_value cpfv ON cpfv.price_field_id = pf.id and cpfv
     }
 
     $query = "                                                                                                                                                                                             
-UPDATE $from
-SET    $set
-WHERE  $where    
-";
+      UPDATE $from
+      SET    $set
+      WHERE  $where    
+      ";
 
     CRM_Core_DAO::executeQuery($query, $params);
   }
