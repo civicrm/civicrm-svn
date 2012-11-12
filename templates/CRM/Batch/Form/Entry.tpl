@@ -123,11 +123,11 @@
         });
 
         // set payment info accord to membership type
-        cj( 'select[id*="][membership_type][0]"]').change( function() {
+        cj( 'select[id*="_membership_type_0"]').change( function() {
           setPaymentBlock( cj(this), null );
         });
 
-        cj( 'select[id*="][membership_type][1]"]').change( function() {
+        cj( 'select[id*="_membership_type_1"]').change( function() {
           setPaymentBlock( cj(this), cj(this).val() );
         });
 
