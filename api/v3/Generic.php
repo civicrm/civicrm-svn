@@ -97,7 +97,7 @@ function civicrm_api3_generic_getfields($apiRequest) {
   $fieldsToResolve = CRM_Utils_Array::value('get_options', $apiOptions, array());
 
   foreach ($metadata as $fieldname => $fieldSpec) {
-    _civicrm_api3_generic_get_metatdata_options($metadata, $fieldname, $fieldSpec, $fieldsToResolve);
+    _civicrm_api3_generic_get_metadata_options($metadata, $fieldname, $fieldSpec, $fieldsToResolve);
   }
 
   $results[$entity][$action] = civicrm_api3_create_success($metadata, $apiRequest['params'], NULL, 'getfields');
@@ -196,6 +196,7 @@ function civicrm_api3_generic_getoptions($apiRequest) {
   $result = civicrm_api($apiRequest['entity'], 'getfields', $getFieldsArray);
   return $result['values'][$apiRequest['params']['field']]['options'];
 }
+
 /*
  * Function fills the 'options' array on the metadata returned by getfields if
  * 1) the param option 'get_options' is defined - e.g. $params['options']['get_options'] => array('custom_1)
@@ -212,7 +213,7 @@ function civicrm_api3_generic_getoptions($apiRequest) {
  * @param array $fieldSpec metadata for that field
  * @param array $fieldsToResolve anny field resolutions specifically requested
  */
-function _civicrm_api3_generic_get_metatdata_options(&$metadata, $fieldname, $fieldSpec, $fieldsToResolve){
+function _civicrm_api3_generic_get_metadata_options(&$metadata, $fieldname, $fieldSpec, $fieldsToResolve){
   if (array_key_exists('enumValues', $fieldSpec)) {
     // use of a space after the comma is inconsistent in xml
     $enumStr = str_replace(', ', ',', $fieldSpec['enumValues']);
