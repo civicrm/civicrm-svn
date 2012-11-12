@@ -66,11 +66,11 @@ class CRM_Utils_VersionCheck {
   public $latestVersion = NULL;
 
   /**
-   * Pinback params
+   * Pingback params
    *
    * @var string
    */
-  protected $params = array();
+  protected $stats = array();
 
   /**
    * Class constructor
@@ -96,103 +96,45 @@ class CRM_Utils_VersionCheck {
 
       // if there's a cachefile and it's not stale use it to
       // read the latestVersion, else read it from the Internet
-      if (file_exists($cachefile) and (filemtime($cachefile) > $expiryTime)) {
+      if (file_exists($cachefile) && (filemtime($cachefile) > $expiryTime)) {
         $this->latestVersion = file_get_contents($cachefile);
       }
       else {
-        // we have to set the error handling to a dummy function, otherwise
-        // if the URL is not working (e.g., due to our server being down)
-        // the users would be presented with an unsuppressable warning
-        ini_set('default_socket_timeout', self::CHECK_TIMEOUT);
-        set_error_handler(array('CRM_Utils_VersionCheck', 'downloadError'));
-        $siteKey = defined('CIVICRM_SITE_KEY') ? CIVICRM_SITE_KEY : '';
+        $siteKey = md5(defined('CIVICRM_SITE_KEY') ? CIVICRM_SITE_KEY : '');
 
-        $this->params = array(
+        $this->stats = array(
           'hash' => md5($siteKey . $config->userFrameworkBaseURL),
           'version' => $this->localVersion,
           'uf' => $config->userFramework,
           'lang' => $config->lcMessages,
           'co' => $config->defaultContactCountry,
           'ufv' => $config->userFrameworkVersion,
-          'php' => phpversion(),
+          'PHP' => phpversion(),
+          'MySQL' => CRM_CORE_DAO::singleValueQuery('SELECT VERSION()'),
         );
 
-        // add MySQL version
-        $dao = new CRM_Core_DAO;
-        $dao->query('SELECT VERSION() AS version');
-        $dao->fetch();
-        $this->params['MySQL'] = $dao->version;
+        // Add usage stats
+        $this->payProcStats();
+        $this->entityStats();
+        $this->extensionStats();
 
-        $tables = array(
-          'CRM_Activity_DAO_Activity' => 'is_test = 0',
-          'CRM_Case_DAO_Case' => 'is_deleted = 0',
-          'CRM_Contact_DAO_Contact' => 'is_deleted = 0',
-          'CRM_Contact_DAO_Relationship' => NULL,
-          'CRM_Contribute_DAO_Contribution' => 'is_test = 0',
-          'CRM_Contribute_DAO_ContributionPage' => 'is_active = 1',
-          'CRM_Contribute_DAO_ContributionProduct' => NULL,
-          'CRM_Contribute_DAO_Widget' => 'is_active = 1',
-          'CRM_Order_DAO_Discount' => NULL,
-          'CRM_Price_DAO_SetEntity' => NULL,
-          'CRM_Core_DAO_UFGroup' => 'is_active = 1',
-          'CRM_Event_DAO_Event' => 'is_active = 1',
-          'CRM_Event_DAO_Participant' => 'is_test = 0',
-          'CRM_Friend_DAO_Friend' => 'is_active = 1',
-          'CRM_Grant_DAO_Grant' => NULL,
-          'CRM_Mailing_DAO_Mailing' => 'is_completed = 1',
-          'CRM_Member_DAO_Membership' => 'is_test = 0',
-          'CRM_Member_DAO_MembershipBlock' => 'is_active = 1',
-          'CRM_Pledge_DAO_Pledge' => 'is_test = 0',
-          'CRM_Pledge_DAO_PledgeBlock' => NULL,
-        );
-
-        // add key count pairs to $this->params, where key is the last part of the DAO
-        foreach ($tables as $daoName => $where) {
-          $dao = new $daoName;
-          if ($where) {
-            $dao->whereAdd($where);
-          }
-          $this->params[array_pop(explode('_', $daoName))] = $dao->count();
-        }
-
-        // get active payment processor types
-                $dao = new CRM_Financial_DAO_PaymentProcessor;
-        $dao->is_active = 1;
-        $dao->find();
-        $ppTypes = array();
-        while ($dao->fetch()) {
-          $ppTypes[] = $dao->payment_processor_type;
-        }
-        // add the .-separated list of the processor types
-        $this->params['PPTypes'] = implode('.', array_unique($ppTypes));
-        
-        $this->params['ext'] = implode(',', array_keys(CRM_Core_PseudoConstant::getExtensions()));
-
-        // get the latest version using stats-carrying $url
+        // Get the latest version and send site info
         $this->pingBack();
 
-        ini_restore('default_socket_timeout');
-        restore_error_handler();
-
-        if (!preg_match('/^\d+\.\d+\.\d+$/', $this->latestVersion)) {
-          $this->latestVersion = NULL;
-        }
-        if (!$this->latestVersion) {
-          return;
-        }
-
-        $fp = @fopen($cachefile, 'w');
-        if (!$fp) {
-          if (CRM_Core_Permission::check('administer CiviCRM')) {
-            CRM_Core_Session::setStatus(
-              ts('Unable to write file: %1<br />Please check your system file permissions.', array(1 => $cachefile)),
-              ts('Insufficient Permissions'), 'error');
+        // Update cache file
+        if ($this->latestVersion) {
+          $fp = @fopen($cachefile, 'w');
+          if (!$fp) {
+            if (CRM_Core_Permission::check('administer CiviCRM')) {
+              CRM_Core_Session::setStatus(
+                ts('Unable to write file') . ":$cachefile<br />" . t('Please check your system file permissions.'),
+                ts('File Error'), 'error');
+            }
+            return;
           }
-          return;
+          fwrite($fp, $this->latestVersion);
+          fclose($fp);
         }
-
-        fwrite($fp, $this->latestVersion);
-        fclose($fp);
       }
     }
   }
@@ -215,19 +157,21 @@ class CRM_Utils_VersionCheck {
   /**
    * Get the latest version number if it's newer than the local one
    *
-   * @return string|null  returns the newer version's number or null if the versions are equal
+   * @return string|null
+   * Returns the newer version's number or null if the versions are equal
    */
   public function newerVersion() {
-    $local = array_pad(explode('.', $this->localVersion), 3, 0);
-    $latest = array_pad(explode('.', $this->latestVersion), 3, 0);
-    // compare by version part; this allows us to use trunk.$rev
-    // for trunk versions ('trunk' is greater than '1')
-    for ($i = 0; $i < 3; $i++) {
-      if ($local[$i] > $latest[$i]) {
-        return NULL;
-      }
-      elseif ($local[$i] < $latest[$i] && preg_match('/^\d+\.\d+\.\d+$/', $this->latestVersion)) {
-        return $this->latestVersion;
+    if ($this->latestVersion) {
+      $local = array_pad(explode('.', $this->localVersion), 3, 0);
+      $latest = array_pad(explode('.', $this->latestVersion), 3, 0);
+
+      for ($i = 0; $i < 3; $i++) {
+        if ($local[$i] > $latest[$i]) {
+          return NULL;
+        }
+        elseif ($local[$i] < $latest[$i]) {
+          return $this->latestVersion;
+        }
       }
     }
     return NULL;
@@ -235,7 +179,7 @@ class CRM_Utils_VersionCheck {
 
   /**
    * Alert the site admin of new versions of CiviCRM
-   * Show the message once a day or on login
+   * Show the message once a day
    */
   public function versionAlert() {
     if (CRM_Core_Permission::check('administer CiviCRM') && $this->newerVersion()) {
@@ -249,21 +193,108 @@ class CRM_Utils_VersionCheck {
   }
 
   /**
-   * Send the request to civicrm.org
+   * Get active payment processor types
    */
-  private function pingBack() {
-    $url = self::LATEST_VERSION_AT . '?';
-    foreach ($this->params as &$param) {
-      $param = urlencode($param);
+  private function payProcStats() {
+    $dao = new CRM_Financial_DAO_PaymentProcessor;
+    $dao->is_active = 1;
+    $dao->find();
+    $ppTypes = array();
+    while ($dao->fetch()) {
+      $ppTypes[] = $dao->payment_processor_type;
     }
-    $url .= implode('&', $this->params);
-    $this->latestVersion = file_get_contents($url);
+    // add the .-separated list of the processor types
+    $this->stats['PPTypes'] = implode('.', array_unique($ppTypes));
   }
 
   /**
-   * A dummy function required for suppressing download errors
+   * Fetch counts from entity tables
+   * Add info to the 'entities' array
    */
-  static function downloadError($errorNumber, $errorString) {
-    return;
+  private function entityStats() {
+    $tables = array(
+      'CRM_Activity_DAO_Activity' => 'is_test = 0',
+      'CRM_Case_DAO_Case' => 'is_deleted = 0',
+      'CRM_Contact_DAO_Contact' => 'is_deleted = 0',
+      'CRM_Contact_DAO_Relationship' => NULL,
+      'CRM_Campaign_DAO_Campaign' => NULL,
+      'CRM_Contribute_DAO_Contribution' => 'is_test = 0',
+      'CRM_Contribute_DAO_ContributionPage' => 'is_active = 1',
+      'CRM_Contribute_DAO_ContributionProduct' => NULL,
+      'CRM_Contribute_DAO_Widget' => 'is_active = 1',
+      'CRM_Order_DAO_Discount' => NULL,
+      'CRM_Price_DAO_SetEntity' => NULL,
+      'CRM_Core_DAO_UFGroup' => 'is_active = 1',
+      'CRM_Event_DAO_Event' => 'is_active = 1',
+      'CRM_Event_DAO_Participant' => 'is_test = 0',
+      'CRM_Friend_DAO_Friend' => 'is_active = 1',
+      'CRM_Grant_DAO_Grant' => NULL,
+      'CRM_Mailing_DAO_Mailing' => 'is_completed = 1',
+      'CRM_Member_DAO_Membership' => 'is_test = 0',
+      'CRM_Member_DAO_MembershipBlock' => 'is_active = 1',
+      'CRM_Pledge_DAO_Pledge' => 'is_test = 0',
+      'CRM_Pledge_DAO_PledgeBlock' => NULL,
+    );
+    foreach ($tables as $daoName => $where) {
+      $dao = new $daoName;
+      if ($where) {
+        $dao->whereAdd($where);
+      }
+      $short_name = substr($daoName, strrpos($daoName, '_') + 1);
+      $this->stats['entities'][] = array(
+        'name' => $short_name,
+        'size' => $dao->count(),
+      );
+    }
   }
+
+  /**
+   * Fetch stats about enabled components/extensions
+   * Add info to the 'extensions' array
+   */
+  private function extensionStats() {
+    // Core components
+    $config = CRM_Core_Config::singleton();
+    foreach ($config->enableComponents as $comp) {
+      $this->stats['extensions'][] = array(
+        'name' => 'org.civicrm.component.' . strtolower($comp),
+        'enabled' => 1,
+        'version' => $this->stats['version'],
+      );
+    }
+    // Contrib extensions
+    $mapper = CRM_Extension_System::singleton()->getMapper();
+    $dao = new CRM_Core_DAO_Extension();
+    $dao->find();
+    while ($dao->fetch()) {
+      $info = $mapper->keyToInfo($dao->full_name);
+      $this->stats['extensions'][] = array(
+        'name' => $dao->full_name,
+        'enabled' => $dao->is_active,
+        'version' => isset($info->version) ? $info->version : NULL,
+      );
+    }
+  }
+
+  /**
+   * Send the request to civicrm.org
+   * Set timeout and suppress errors
+   */
+  private function pingBack() {
+    ini_set('default_socket_timeout', self::CHECK_TIMEOUT);
+    $params = array(
+      'http' => array(
+        'method' => 'POST',
+        'header' => 'Content-type: application/x-www-form-urlencoded',
+        'content' => http_build_query($this->stats),
+      ),
+    );
+    $ctx = stream_context_create($params);
+    $this->latestVersion = @file_get_contents(self::LATEST_VERSION_AT, FALSE, $ctx);
+    if (!preg_match('/^\d+\.\d+\.\d+$/', $this->latestVersion)) {
+      $this->latestVersion = NULL;
+    }
+    ini_restore('default_socket_timeout');
+  }
+
 }
