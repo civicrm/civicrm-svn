@@ -134,12 +134,19 @@ class CRM_Report_Form_Contribute_Repeat extends CRM_Report_Form {
           ),
         ),
       ),
-                   'civicrm_financial_type' =>
-                   array( 'dao'           => 'CRM_Financial_DAO_FinancialType',
-                          'fields'        => array( 'financial_type'   => null, ),
-        'grouping' => 'contri-fields',
-                          'group_bys'     => array( 'financial_type'   => array('name' => 'id'), ), ),
-
+      'civicrm_financial_type' =>
+      array( 'dao'           => 'CRM_Financial_DAO_FinancialType',
+             'fields'        => array( 'financial_type' => 
+                                       array('title' => ts('Financial Type'),), 
+                                       ),
+             'grouping'  => 'contri-fields',
+             'group_bys' => 
+             array( 'financial_type'   => 
+                    array('name' => 'id',
+                          'title' => ts('Financial Type'),
+                          ), 
+                    ), 
+             ),
       'civicrm_contribution' =>
       array(
         'dao' => 'CRM_Contribute_DAO_Contribution',
@@ -416,11 +423,11 @@ LEFT JOIN civicrm_temp_civireport_repeat2 {$this->_aliases['civicrm_contribution
 
     if (!$this->_amountClauseWithAND) {
       $amountClauseWithAND = array();
-      if ($clauses['total_amount1']) {
+      if (CRM_Utils_Array::value('total_amount1', $clauses)) {
         $amountClauseWithAND[] = str_replace("{$this->_aliases['civicrm_contribution']}.total_amount", 
                                              "{$this->_aliases['civicrm_contribution']}1.total_amount_sum", $clauses['total_amount1']);
       }
-      if ($clauses['total_amount2']) {
+      if (CRM_Utils_Array::value('total_amount2', $clauses)) {
         $amountClauseWithAND[] = str_replace("{$this->_aliases['civicrm_contribution']}.total_amount", 
                                              "{$this->_aliases['civicrm_contribution']}2.total_amount_sum", $clauses['total_amount2']);
       }
@@ -613,33 +620,32 @@ LEFT JOIN civicrm_temp_civireport_repeat2 {$this->_aliases['civicrm_contribution
   function statistics(&$rows) {
     $statistics = parent::statistics($rows);
     
-	//fetch contributions for both date ranges from pre-existing temp tables
-	$sql = "
-			CREATE TEMPORARY TABLE civicrm_temp_civireport_repeat3
-			SELECT contact_id FROM civicrm_temp_civireport_repeat1 UNION SELECT contact_id FROM civicrm_temp_civireport_repeat2;
-			";
-	$dao = CRM_Core_DAO::executeQuery($sql);
+    //fetch contributions for both date ranges from pre-existing temp tables
+    $sql = "
+CREATE TEMPORARY TABLE civicrm_temp_civireport_repeat3
+SELECT contact_id FROM civicrm_temp_civireport_repeat1 UNION SELECT contact_id FROM civicrm_temp_civireport_repeat2;";
+    $dao = CRM_Core_DAO::executeQuery($sql);
 
-  $sql = "
-			SELECT civicrm_temp_civireport_repeat3.contact_id, 
-			civicrm_temp_civireport_repeat1.total_amount_sum as contribution1_total_amount_sum,
-			civicrm_temp_civireport_repeat2.total_amount_sum as contribution2_total_amount_sum
-			FROM civicrm_temp_civireport_repeat3
-			LEFT JOIN civicrm_temp_civireport_repeat1
-			ON civicrm_temp_civireport_repeat3.contact_id = civicrm_temp_civireport_repeat1.contact_id
-			LEFT JOIN civicrm_temp_civireport_repeat2
-			ON civicrm_temp_civireport_repeat3.contact_id = civicrm_temp_civireport_repeat2.contact_id
-			";
+    $sql = "
+SELECT civicrm_temp_civireport_repeat3.contact_id, 
+			 civicrm_temp_civireport_repeat1.total_amount_sum as contribution1_total_amount_sum,
+			 civicrm_temp_civireport_repeat2.total_amount_sum as contribution2_total_amount_sum
+FROM civicrm_temp_civireport_repeat3
+LEFT JOIN civicrm_temp_civireport_repeat1
+			 ON civicrm_temp_civireport_repeat3.contact_id = civicrm_temp_civireport_repeat1.contact_id
+LEFT JOIN civicrm_temp_civireport_repeat2
+			 ON civicrm_temp_civireport_repeat3.contact_id = civicrm_temp_civireport_repeat2.contact_id";
 			
-	$dao = CRM_Core_DAO::executeQuery($sql);
+    $dao = CRM_Core_DAO::executeQuery($sql);
 	
-	//store contributions in array 'contact_sums' for comparison
-	$contact_sums = array();		
-	while ($dao->fetch()) {
-    $contact_sums[$dao->contact_id] = array(
-									'contribution1_total_amount_sum' => $dao->contribution1_total_amount_sum,
-									'contribution2_total_amount_sum' => $dao->contribution2_total_amount_sum
-									);
+    //store contributions in array 'contact_sums' for comparison
+    $contact_sums = array();		
+    while ($dao->fetch()) {
+      $contact_sums[$dao->contact_id] = 
+        array(
+              'contribution1_total_amount_sum' => $dao->contribution1_total_amount_sum,
+              'contribution2_total_amount_sum' => $dao->contribution2_total_amount_sum
+              );
     }
     
     $total_distinct_contacts = count($contact_sums);
@@ -697,21 +703,19 @@ LEFT JOIN civicrm_temp_civireport_repeat2 {$this->_aliases['civicrm_contribution
                                               );
 
     $select = "
-            SELECT COUNT({$this->_aliases['civicrm_contribution']}1.total_amount_count )       as count,
-                   SUM({$this->_aliases['civicrm_contribution']}1.total_amount_sum )         as amount,
-                   ROUND(AVG({$this->_aliases['civicrm_contribution']}1.total_amount_sum), 2) as avg,
-				   COUNT({$this->_aliases['civicrm_contribution']}2.total_amount_count )       as count2,
-                   SUM({$this->_aliases['civicrm_contribution']}2.total_amount_sum )         as amount2,
-                   ROUND(AVG({$this->_aliases['civicrm_contribution']}2.total_amount_sum), 2) as avg2
-            ";
-
+SELECT COUNT({$this->_aliases['civicrm_contribution']}1.total_amount_count )       as count,
+       SUM({$this->_aliases['civicrm_contribution']}1.total_amount_sum )           as amount,
+       ROUND(AVG({$this->_aliases['civicrm_contribution']}1.total_amount_sum), 2)  as avg,
+  	   COUNT({$this->_aliases['civicrm_contribution']}2.total_amount_count )       as count2,
+       SUM({$this->_aliases['civicrm_contribution']}2.total_amount_sum )           as amount2,
+       ROUND(AVG({$this->_aliases['civicrm_contribution']}2.total_amount_sum), 2)  as avg2";
     $sql = "{$select} {$this->_from} {$this->_where}";
     $dao = CRM_Core_DAO::executeQuery($sql);
     
     if ($dao->fetch()) {
-	  $statistics['counts']['range_one_title'] = array(
-                                              'title' => 'Date Range One:',
-                                              );
+      $statistics['counts']['range_one_title'] = array(
+                                                       'title' => 'Date Range One:',
+                                                       );
       $statistics['counts']['amount'] = array(
                                               'value' => $dao->amount,
                                               'title' => 'Total Amount',
