@@ -235,9 +235,9 @@ class CRM_Contribute_Form_AdditionalInfo {
       $premium = $dao->save();
     }
     
-    //FIXME CRM-11106
+    //CRM-11106
     $params = array(
-      'id' => 1,
+      'id' => $params['product_name'][0],
     );
     $productDetails = array();
     CRM_Contribute_BAO_ManagePremiums::retrieve($params, $productDetails);

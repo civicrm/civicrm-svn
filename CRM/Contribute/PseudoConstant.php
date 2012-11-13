@@ -401,10 +401,6 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
       );            
     }
     
-    if ($entityId) {
-      $result = CRM_Utils_Array::value( $entityId, self::$financialTypeAccount );
-      return $result;
-    }
     return self::$financialTypeAccount;
   }
 }
