@@ -272,13 +272,8 @@ SELECT @revaccount  := max(id) FROM civicrm_option_value WHERE name = 'Revenue' 
 SELECT @domainContactId := contact_id from civicrm_domain where id = {$domainID};
 
 INSERT INTO `civicrm_financial_account`
-       ( `id`, `name`,  `accounting_code`,  `is_deductible`, `is_reserved`, `is_active`, `financial_account_type_id`, `contact_id`)
-SELECT id, name, accounting_code, description, is_deductible, is_reserved, is_active, @revaccount, @domainContactId FROM `civicrm_financial_type`;
-
-
-INSERT INTO `civicrm_financial_type`
-       ( id, name, description, is_deductible, is_reserved, is_active )
-SELECT id, name, description, is_deductible, is_reserved, is_active FROM `civicrm_contibution_type`;
+       (`id`, `name`, `description`, `is_deductible`, `is_reserved`, `is_active`, `financial_account_type_id`, `contact_id`)
+SELECT id, name, description, is_deductible, is_reserved, is_active, @revaccount, @domainContactId FROM `civicrm_financial_type`;
 
 --
 -- Create an entry for account_relationship in option groups
@@ -289,7 +284,7 @@ INSERT INTO
 VALUES
    ('account_relationship'          , '{ts escape="sql"}Account Relationship{/ts}'               , 1, 1),
    ('financial_item_status'         , '{ts escape="sql"}}Financial Item Status{/ts}'             , 1, 1);
-
+   
 SELECT @option_group_id_arel           := max(id) from civicrm_option_group where name = 'account_relationship';
 SELECT @option_group_id_financial_item_status := max(id) from civicrm_option_group where name = 'financial_item_status';
 
@@ -314,11 +309,6 @@ VALUES
 
 SELECT @option_value_rel_id  := value FROM `civicrm_option_value` WHERE `option_group_id` = @option_group_id_arel AND `name` = 'Income Account is';
 
-
-INSERT INTO `civicrm_entity_financial_account`
-     ( entity_table, entity_id, account_relationship, financial_account_id )
-SELECT 'civicrm_financial_type', ft.id, @option_value_rel_id, fa.id
-FROM `civicrm_financial_type` as ft LEFT JOIN `civicrm_financial_account` as fa ON ft.id = fa.id;
 
 
 
@@ -455,7 +445,10 @@ SELECT @opLiability := value FROM civicrm_option_value WHERE name = 'Liability' 
 SELECT @opCost := value FROM civicrm_option_value WHERE name = 'Cost of Sales' and option_group_id = @option_group_id_fat;
 
 -- CRM-11127
-UPDATE civicrm_financial_account SET name = 'Donations' WHERE name = 'Donation';
+UPDATE civicrm_financial_account SET name = 'Donations', description = 'Default account for donations', accounting_code = 4200 WHERE name = 'Donation';
+UPDATE civicrm_financial_account SET description = 'Default account for event ticket sales', accounting_code =4300 WHERE name = 'Event Fee';
+UPDATE civicrm_financial_account SET description = 'Sample account for recording payments to a campaign', accounting_code = 4100 WHERE name = 'Campaign Contribution';
+UPDATE civicrm_financial_account SET description = 'Default account for membership sales', accounting_code = 4400 WHERE name = 'Member Dues';
 
 INSERT INTO
    `civicrm_financial_account` (`name`, `contact_id`, `financial_account_type_id`, `description`, `accounting_code`, `is_reserved`, `is_active`, `is_deductible`, `is_default`)
@@ -650,34 +643,34 @@ SELECT @option_value_rel_id_exp  := value FROM `civicrm_option_value` WHERE `opt
 SELECT @option_value_rel_id_ar  := value FROM `civicrm_option_value` WHERE `option_group_id` = @option_group_id_arel AND `name` = 'AR Account is';
 SELECT @option_value_rel_id_as  := value FROM `civicrm_option_value` WHERE `option_group_id` = @option_group_id_arel AND `name` = 'Asset Account of';
 
-SELECT @financial_type_id_dtn 	       := max(id) FROM `civicrm_financial_type` WHERE `name` = 'Donation';
-SELECT @financial_type_id_md	       := max(id) FROM `civicrm_financial_type` WHERE `name` = 'Member Dues';
-SELECT @financial_type_id_cc	       := max(id) FROM `civicrm_financial_type` WHERE `name` = 'Campaign Contribution';
-SELECT @financial_type_id_ef	       := max(id) FROM `civicrm_financial_type` WHERE `name` = 'Event Fee';
-
-SELECT @financial_account_id_dtn       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Donations';
-SELECT @financial_account_id_md	       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Member Dues';
-SELECT @financial_account_id_cc	       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Campaign Contribution';
-SELECT @financial_account_id_ef	       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Event Fee';
 SELECT @financial_account_id_bf	       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Banking Fees';
 SELECT @financial_account_id_ap	       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Accounts Receivable';
 SELECT @financial_account_id_ar	       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Deposit bank account';
 
+
 INSERT INTO `civicrm_entity_financial_account`
      ( entity_table, entity_id, account_relationship, financial_account_id )
-VALUES
-     ( 'civicrm_financial_type', @financial_type_id_dtn, @option_value_rel_id_exp, @financial_account_id_bf ),
-     ( 'civicrm_financial_type', @financial_type_id_dtn, @option_value_rel_id_ar, @financial_account_id_ap ),
-     ( 'civicrm_financial_type', @financial_type_id_dtn, @option_value_rel_id_as, @financial_account_id_ar ),
-     ( 'civicrm_financial_type', @financial_type_id_md, @option_value_rel_id_exp, @financial_account_id_bf ),
-     ( 'civicrm_financial_type', @financial_type_id_md, @option_value_rel_id_ar, @financial_account_id_ap ),
-     ( 'civicrm_financial_type', @financial_type_id_md, @option_value_rel_id_as, @financial_account_id_ar ),
-     ( 'civicrm_financial_type', @financial_type_id_cc, @option_value_rel_id_exp, @financial_account_id_bf ),
-     ( 'civicrm_financial_type', @financial_type_id_cc, @option_value_rel_id_as, @financial_account_id_ar ),
-     ( 'civicrm_financial_type', @financial_type_id_cc, @option_value_rel_id_ar, @financial_account_id_ap ),
-     ( 'civicrm_financial_type', @financial_type_id_ef, @option_value_rel_id_exp, @financial_account_id_bf ),
-     ( 'civicrm_financial_type', @financial_type_id_ef, @option_value_rel_id_ar, @financial_account_id_ap ),
-     ( 'civicrm_financial_type', @financial_type_id_ef, @option_value_rel_id_as, @financial_account_id_ar );
+SELECT 'civicrm_financial_type', ft.id, @option_value_rel_id, fa.id
+FROM `civicrm_financial_type` as ft LEFT JOIN `civicrm_financial_account` as fa ON ft.id = fa.id;
+
+-- Banking Fees
+INSERT INTO `civicrm_entity_financial_account`
+     ( entity_table, entity_id, account_relationship, financial_account_id )
+SELECT 'civicrm_financial_type', ft.id, @option_value_rel_id_exp,  @financial_account_id_bf
+FROM `civicrm_financial_type` as ft;
+
+-- Accounts Receivable
+INSERT INTO `civicrm_entity_financial_account`
+     ( entity_table, entity_id, account_relationship, financial_account_id )
+SELECT 'civicrm_financial_type', ft.id, @option_value_rel_id_ar, @financial_account_id_ap
+FROM `civicrm_financial_type` as ft;
+
+-- Deposit Bank account
+INSERT INTO `civicrm_entity_financial_account`
+     ( entity_table, entity_id, account_relationship, financial_account_id )
+SELECT 'civicrm_financial_type', ft.id, @option_value_rel_id_as, @financial_account_id_ar
+FROM `civicrm_financial_type` as ft;
+
 
 -- CRM-10621 Add component report links to reports menu for upgrade
 SELECT @reportlastID       := MAX(id) FROM civicrm_navigation where name = 'Reports';
