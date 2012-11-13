@@ -154,7 +154,7 @@ class CRM_Price_Form_Option extends CRM_Core_Form {
       ) {
         $this->_sid = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $this->_fid, 'price_set_id', 'id');
       }
-
+      $this->isEvent = False;
       $extendComponentId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_sid, 'extends', 'id');
       $this->assign('showMember', FALSE);
       if ($memberComponentId == $extendComponentId) {
@@ -170,12 +170,39 @@ class CRM_Price_Form_Option extends CRM_Core_Form {
         $allComponents = explode(CRM_Core_DAO::VALUE_SEPARATOR, $extendComponentId);
         $eventComponentId = CRM_Core_Component::getComponentID('CiviEvent');
         if (in_array($eventComponentId, $allComponents)) {
+          $this->isEvent = TRUE;
           // count
           $this->add('text', 'count', ts('Participants Count'));
           $this->addRule('count', ts('Please enter a valid Max Participants.'), 'positiveInteger');
-
+          
           $this->add('text', 'max_value', ts('Max Participants'));
           $this->addRule('max_value', ts('Please enter a valid Max Participants.'), 'positiveInteger');
+          //Financial Type
+          $financialType = CRM_Contribute_PseudoConstant::financialType( );
+          $revenueFinancialType = array( );
+          CRM_Core_PseudoConstant::populate( 
+            $revenueFinancialType,
+            'CRM_Financial_DAO_EntityFinancialAccount',
+            $all = True, 
+            $retrieve = 'entity_id', 
+            $filter = null, 
+            'account_relationship = 1'
+          ); 
+
+          foreach( $financialType as $key => $financialTypeName ){
+            if( !in_array( $key, $revenueFinancialType ) )
+              unset( $financialType[$key] );
+          }
+          if( count( $financialType ) ){
+            $this->assign( 'financialType', $financialType );
+          }
+          $this->add(
+            'select', 
+            'financial_type_id', 
+            ts( 'Financial Type' ), 
+            array(''=>ts( '- select -' )) + $financialType,
+            true
+          ); 
         }
       }
 
@@ -198,31 +225,6 @@ class CRM_Price_Form_Option extends CRM_Core_Form {
       $this->addRule('amount', ts('Please enter a monetary value for this field.'), 'money');
 
       $this->add('textarea', 'description', ts('Description'));
-
-       //Financial Type
-      $financialType = CRM_Contribute_PseudoConstant::financialType( );
-      $revenueFinancialType = array( );
-      CRM_Core_PseudoConstant::populate( $revenueFinancialType,
-        'CRM_Financial_DAO_EntityFinancialAccount',
-        $all = True, 
-        $retrieve = 'entity_id', 
-        $filter = null, 
-        'account_relationship = 1'
-      );
-
-      foreach( $financialType as $key => $financialTypeName ){
-        if( !in_array( $key, $revenueFinancialType ) )
-          unset( $financialType[$key] );
-      }
-      if( count( $financialType ) ){
-        $this->assign( 'financialType', $financialType );
-      }
-      $this->add('select', 'financial_type_id', 
-        ts( 'Financial Type' ), 
-        array(''=>ts( '- select -' )) + $financialType,
-        true
-      );
-            
 
       // weight
       $this->add('text', 'weight', ts('Order'), NULL, TRUE);
@@ -323,12 +325,13 @@ class CRM_Price_Form_Option extends CRM_Core_Form {
       $params['amount'] = CRM_Utils_Rule::cleanMoney(trim($params['amount']));
       $params['price_field_id'] = $this->_fid;
       $params['is_default'] = CRM_Utils_Array::value('is_default', $params, FALSE);
-
+      if (!$this->isEvent && !$this->_oid) {
+        $params['financial_type_id'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_FieldValue', $this->_fid, 'financial_type_id', 'price_field_id');
+      }
       $ids = array();
       if ($this->_oid) {
         $ids['id'] = $this->_oid;
       }
-
       $optionValue = CRM_Price_BAO_FieldValue::create($params, $ids);
 
       CRM_Core_Session::setStatus(ts("The option '%1' has been saved.", array(1 => $params['label'])), ts('Value Saved'), 'success');
