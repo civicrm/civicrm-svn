@@ -131,6 +131,11 @@
     <div id="amountFields">
         <table class="form-layout-compressed">
             {* handle CiviPledge fields *}
+             <tr>
+	    <th scope="row" class="label" width="20%">{$form.financial_type_id.label}</th>
+	     <td class="crm-contribution-amount-form-block-financial_type_id">{$form.financial_type_id.html}<br />	
+            <span class="description">{ts}Select the corresponding financial type for contributions made using this page.{/ts}</span> {help id="id-financial_type"}</td> 
+	     </tr>
             {if $civiPledge}
             <tr class="crm-contribution-form-block-is_pledge_active"><th scope="row" class="label" width="20%">{$form.is_pledge_active.label}</th>
                 <td>{$form.is_pledge_active.html}<br />
