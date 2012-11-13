@@ -33,8 +33,6 @@
  *
  */
 
-require_once 'api/api.php';
-
 /**
  * This class contains the funtions for Component export
  *
@@ -608,7 +606,6 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
     $count = -1;
 
     // for CRM-3157 purposes
-    require_once 'CRM/Core/I18n.php';
     $i18n = CRM_Core_I18n::singleton();
 
     while (1) {
@@ -1120,11 +1117,9 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
       if (method_exists($parserName, 'errorFileName') &&
         method_exists($parserName, 'saveFileName')
       ) {
-        eval('$errorFileName =' . $parserName . '::errorFileName( $type );');
-        eval('$saveFileName =' . $parserName . '::saveFileName( $type );');
-        if (!empty($errorFileName) &&
-          !empty($saveFileName)
-        ) {
+        $errorFileName = $parserName::errorFileName($type);
+        $saveFileName = $parserName::saveFileName($type);
+        if (!empty($errorFileName) && !empty($saveFileName)) {
           header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
           header('Content-Description: File Transfer');
           header('Content-Type: text/csv');
@@ -1146,7 +1141,7 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
     else {
       require_once ($ext->classToPath($customSearchClass));
     }
-    eval('$search = new ' . $customSearchClass . '( $formValues );');
+    $search = new $customSearchClass($formValues);
 
     $includeContactIDs = FALSE;
     if ($formValues['radio_ts'] == 'ts_sel') {
