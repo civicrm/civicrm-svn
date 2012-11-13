@@ -178,29 +178,6 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
     // label
     $this->add('text', 'label', ts('Field Label'), CRM_Core_DAO::getAttribute('CRM_Price_DAO_Field', 'label'), TRUE);
 
-        // Financial Type
-        require_once 'CRM/Contribute/PseudoConstant.php';
-        require_once 'CRM/Core/PseudoConstant.php';
-        $financialType = CRM_Contribute_PseudoConstant::financialType( );
-        $revenueFinancialType = array( );
-        CRM_Core_PseudoConstant::populate( $revenueFinancialType,
-                                           'CRM_Financial_DAO_EntityFinancialAccount',
-                                           $all = True, 
-                                           $retrieve = 'entity_id', 
-                                           $filter = null, 
-                                           'account_relationship = 1' );
-            
-        foreach( $financialType as $key => $financialTypeName ){
-            if( !in_array( $key, $revenueFinancialType ) )
-                unset( $financialType[$key] );
-        }
-        if( count( $financialType ) ){
-            $this->assign( 'financialType', $financialType );
-        }
-        $this->add('select', 'financial_type_id', 
-                   ts( 'Financial Type' ), 
-                   array(''=>ts( '- select -' )) + $financialType);
-        
     // html_type
     $javascript = 'onchange="option_html_type(this.form)";';
 
@@ -209,9 +186,10 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
     // Text box for Participant Count for a field
 
     // Financial Type
-    $financialType = CRM_Contribute_PseudoConstant::financialType( );
-    $revenueFinancialType = array( );
-    CRM_Core_PseudoConstant::populate( $revenueFinancialType,
+    $financialType = CRM_Contribute_PseudoConstant::financialType();
+    $revenueFinancialType = array();
+    CRM_Core_PseudoConstant::populate( 
+      $revenueFinancialType,
       'CRM_Financial_DAO_EntityFinancialAccount',
       $all = True, 
       $retrieve = 'entity_id', 
@@ -219,21 +197,30 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
       'account_relationship = 1' 
     );
             
-    foreach( $financialType as $key => $financialTypeName ){
-      if ( !in_array( $key, $revenueFinancialType ) ) {
-        unset( $financialType[$key] );
+    foreach($financialType as $key => $financialTypeName){
+      if (!in_array($key, $revenueFinancialType)) {
+        unset($financialType[$key]);
       } 
     }
-    if( count( $financialType ) ){
-      $this->assign( 'financialType', $financialType );
+    if(count($financialType)){
+      $this->assign('financialType', $financialType);
     }
-    $this->add('select', 'financial_type_id', 
-      ts( 'Financial Type' ), 
-      array(''=>ts( '- select -' )) + $financialType);
-
+   
     $eventComponentId  = CRM_Core_Component::getComponentID('CiviEvent');
     $memberComponentId = CRM_Core_Component::getComponentID('CiviMember');
     $attributes        = CRM_Core_DAO::getAttribute('CRM_Price_DAO_FieldValue');
+    if (!in_array($eventComponentId, $this->_extendComponentId)) {
+      $required = TRUE;
+    } else {
+      $required = FALSE;
+    }
+    
+    $this->add('select', 'financial_type_id', 
+      ts('Financial Type'), 
+      array(''=>ts('- select -')) + $financialType,
+      $required
+    );
+
     $this->assign('useForMember', FALSE);
     if (in_array($eventComponentId, $this->_extendComponentId)) {
       $this->add('text', 'count', ts('Participant Count'), $attributes['count']);
@@ -295,10 +282,13 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
         $this->add('text', 'option_count[' . $i . ']', ts('Participant Count'), $attributes['count']);
         $this->addRule('option_count[' . $i . ']', ts('Please enter a valid Participants Count.'), 'positiveInteger');
 
-                //Financial Type
-                $this->add('select', 'option_financial_type_id['.$i.']', 
-                   ts( 'Financial Type' ), 
-                   array(''=>ts( '- select -' )) + $financialType );
+        //Financial Type
+        $this->add(
+          'select', 
+          'option_financial_type_id['.$i.']', 
+          ts( 'Financial Type' ), 
+          array(''=>ts( '- select -' )) + $financialType 
+        );
         // max_value
         $this->add('text', 'option_max_value[' . $i . ']', ts('Max Participants'), $attributes['max_value']);
         $this->addRule('option_max_value[' . $i . ']', ts('Please enter a valid Max Participants.'), 'positiveInteger');
@@ -427,9 +417,9 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
       $errors['price'] = ts('Price is a required field');
     }
 
-    if ( ( $form->_action & CRM_Core_Action::ADD || $form->_action & CRM_Core_Action::UPDATE ) &&
-         $fields['html_type'] == 'Text' && $fields['price'] ==  NULL && $fields['financial_type_id'] == '' ) {
-      $errors['financial_type_id'] = ts( 'Financial Type is a required field' );
+    if (( $form->_action & CRM_Core_Action::ADD || $form->_action & CRM_Core_Action::UPDATE) &&
+         $fields['html_type'] == 'Text' && $fields['financial_type_id'] == '') {
+      $errors['financial_type_id'] = ts('Financial Type is a required field');
     }
     
     //avoid the same price field label in Within PriceSet
@@ -503,10 +493,9 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
               $_flagOption = 1;
             }
           }
-                    if ( ! $noLabel && ! $noAmount &&  CRM_Utils_Array::value( 'option_financial_type_id', $fields ) && $fields['option_financial_type_id'][$index] == '' && $fields['html_type'] != 'Text' ) {
-                        $errors["option_financial_type_id[{$index}]"] = ts( 'Financial Type is a Required field.' );
-
-                    }
+          if ( ! $noLabel && ! $noAmount &&  CRM_Utils_Array::value( 'option_financial_type_id', $fields ) && $fields['option_financial_type_id'][$index] == '' && $fields['html_type'] != 'Text' ) {
+            $errors["option_financial_type_id[{$index}]"] = ts( 'Financial Type is a Required field.' );
+          } 
           if ($noLabel && !$noAmount) {
             $errors["option_label[{$index}]"] = ts('Label cannot be empty.');
             $_flagOption = 1;
