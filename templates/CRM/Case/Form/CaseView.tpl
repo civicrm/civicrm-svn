@@ -52,7 +52,7 @@
     <td colspan="4" class="label">
     {ts}Clients:{/ts}
     {foreach from=$caseRoles.client item=client name=clients}
-      <a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$client.contact_id`"}" title="view contact record">{$client.display_name}</a>{if not $smarty.foreach.clients.last}, &nbsp; {/if}
+      <a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$client.contact_id`"}" title={ts}"view contact record"{/ts}>{$client.display_name}</a>{if not $smarty.foreach.clients.last}, &nbsp; {/if}
         {/foreach}
     <a href="#" title="{ts}add new client to the case{/ts}" onclick="addClient( );return false;">
       <span class="icon edit-icon"></span>
@@ -92,13 +92,13 @@
             <span class="crm-case-summary-label">{ts}Case Subject{/ts}:</span>&nbsp;{$caseDetails.case_subject}
         </td>
         <td class="crm-case-caseview-case_type label">
-            <span class="crm-case-summary-label">{ts}Case Type{/ts}:</span>&nbsp;{$caseDetails.case_type}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseTypeId`"}" title="Change case type (creates activity record)"><span class="icon edit-icon"></span></a>
+            <span class="crm-case-summary-label">{ts}Case Type{/ts}:</span>&nbsp;{$caseDetails.case_type}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseTypeId`"}" title={ts}"Change case type (creates activity record)"{/ts}><span class="icon edit-icon"></span></a>
         </td>
         <td class="crm-case-caseview-case_status label">
-            <span class="crm-case-summary-label">{ts}Status{/ts}:</span>&nbsp;{$caseDetails.case_status}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseStatusId`"}" title="Change case status (creates activity record)"><span class="icon edit-icon"></span></a>
+            <span class="crm-case-summary-label">{ts}Status{/ts}:</span>&nbsp;{$caseDetails.case_status}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseStatusId`"}" title={ts}"Change case status (creates activity record)"{/ts}><span class="icon edit-icon"></span></a>
         </td>
         <td class="crm-case-caseview-case_start_date label">
-            <span class="crm-case-summary-label">{ts}Start Date{/ts}:</span>&nbsp;{$caseDetails.case_start_date|crmDate}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseStartDateId`"}" title="Change case start date (creates activity record)"><span class="icon edit-icon"></span></a>
+            <span class="crm-case-summary-label">{ts}Start Date{/ts}:</span>&nbsp;{$caseDetails.case_start_date|crmDate}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseStartDateId`"}" title={ts}"Change case start date (creates activity record)"{/ts}><span class="icon edit-icon"></span></a
         </td>
         <td class="crm-case-caseview-{$caseID} label">
             <span class="crm-case-summary-label">{ts}Case ID{/ts}:</span>&nbsp;{$caseID}

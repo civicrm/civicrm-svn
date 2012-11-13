@@ -62,6 +62,7 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     }
     elseif ($apiRequest['function'] && !$apiRequest['is_generic']) {
       _civicrm_api3_validate_fields($apiRequest['entity'], $apiRequest['action'], $apiRequest['params']);
+      
       $result = isset($extra) ? $function($apiRequest['params'], $extra) : $function($apiRequest['params']);
     }
     else {
