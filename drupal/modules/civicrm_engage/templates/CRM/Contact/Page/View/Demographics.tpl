@@ -11,14 +11,14 @@
                 {$birth_date_display|crmDate:$birthDateViewFormat}
             {else}
                 {$birth_date_display|crmDate}</td>
-            {/if} 
+            {/if}
         </tr>
 	{/if}
         {if $is_deceased eq 1}
            {if $deceased_date}<td class="label">{ts}Date Deceased{/ts}</td>
         <tr>
              <td>
-             {if $birthDateViewFormat}          
+             {if $birthDateViewFormat}
 		{$deceased_date_display|crmDate:$birthDateViewFormat}
              {else}
                 {$deceased_date_display|crmDate}
