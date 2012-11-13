@@ -62,15 +62,37 @@
                     <span class="description">{ts}Browse to the <strong>file</strong> you want to upload.{/ts}{if $numAttachments GT 1} {ts 1=$numAttachments}You can have a maximum of %1 attachment(s).{/ts}{/if} Each file must be less than {$config->maxFileSize}M in size. You can also add a short description.</span>
                 </td>
             </tr>
+            {if $form.tag_1.html}
+              <tr>
+                <td class="label">{$form.tag_1.label}</td>
+                <td class="view-value"><div class="crm-select-container">{$form.tag_1.html}</div></td>
+              </tr>
+            {/if}
         {section name=attachLoop start=2 loop=$numAttachments+1}
           {assign var=index value=$smarty.section.attachLoop.index}
           {assign var=attachName value="attachFile_"|cat:$index}
           {assign var=attachDesc value="attachDesc_"|cat:$index}
+          {assign var=tagElement value="tag_"|cat:$index}
             <tr>
                 <td class="label"></td>
                 <td>{$form.$attachName.html}&nbsp;{$form.$attachDesc.html}<span class="crm-clear-link">(<a href="javascript:clearAttachment( '#{$attachName}' );">{ts}clear{/ts}</a>)</span></td>
             </tr>
+            <tr>
+              <td class="label">{$form.$tagElement.label}</td>
+              <td class="view-value"><div class="crm-select-container">{$form.$tagElement.html}</div></td>
+            </tr>
         {/section}
+        {literal}
+          <script type="text/javascript">
+            cj("select[multiple]").crmasmSelect({
+              addItemTarget: 'bottom',
+              animate: true,
+              highlight: true,
+              sortable: true,
+              respectParents: true
+            });
+          </script>
+        {/literal}
       {/if}
     {if $currentAttachmentInfo}
         <tr>
@@ -102,46 +124,48 @@
   {if !$noexpand}
     {literal}
     <script type="text/javascript">
-  cj(function() {
-     cj().crmAccordions();
-  });
+    cj(function() {
+       cj().crmAccordions();
+    });
     </script>
     {/literal}
   {/if}
     {literal}
     <script type="text/javascript">
-        function clearAttachment( element, desc ) {
-            cj(element).val('');
-            cj(desc).val('');
-        }
+      function clearAttachment( element, desc ) {
+        cj(element).val('');
+        cj(desc).val('');
+      }
     </script>
     {/literal}
  {/if} {* edit/add if*}
 {if $currentAttachmentInfo}
 <script type="text/javascript">
-    {literal}
-    function hideStatus( ) {
-        cj( '#attachStatusMesg' ).hide( );
-    }
-    function showDelete( fileName, postURLData, fileID ) {
-        var confirmMsg = '{/literal}{ts escape="js"}Are you sure you want to delete attachment: {/ts}{literal}' + fileName + '&nbsp; <a href="javascript:deleteAttachment( \'' + postURLData + '\',' + fileID + ' );" style="text-decoration: underline;">{/literal}{ts}Yes{/ts}{literal}</a>&nbsp;&nbsp;&nbsp;<a href="javascript:hideStatus( );" style="text-decoration: underline;">{/literal}{ts}No{/ts}{literal}</a>';
-        cj( '#attachStatusMesg' ).show( ).html( confirmMsg );
-    }
-    function deleteAttachment( postURLData, fileID ) {
-        var postUrl = {/literal}"{crmURL p='civicrm/file/delete' h=0 }"{literal};
-        cj.ajax({
-          type: "GET",
-          data:  postURLData,
-          url: postUrl,
-          success: function(html){
-              var resourceBase   = {/literal}"{$config->resourceBase}"{literal};
-              var successMsg = '{/literal}{ts escape="js"}The selected attachment has been deleted.{/ts}{literal} &nbsp;&nbsp;<a href="javascript:hideStatus( );"><img title="{/literal}{ts}close{/ts}{literal}" src="' +resourceBase+'i/close.png"/></a>';
-              cj( '#attachFileRecord_' + fileID ).hide( );
-              cj( '#attachStatusMesg' ).show( ).html( successMsg );
-          }
-        });
-    }
-    {/literal}
+{literal}
+  function hideStatus( ) {
+    cj( '#attachStatusMesg' ).hide( );
+  }
+
+  function showDelete( fileName, postURLData, fileID ) {
+    var confirmMsg = '{/literal}{ts escape="js"}Are you sure you want to delete attachment: {/ts}{literal}' + fileName + '&nbsp; <a href="javascript:deleteAttachment( \'' + postURLData + '\',' + fileID + ' );" style="text-decoration: underline;">{/literal}{ts}Yes{/ts}{literal}</a>&nbsp;&nbsp;&nbsp;<a href="javascript:hideStatus( );" style="text-decoration: underline;">{/literal}{ts}No{/ts}{literal}</a>';
+    cj( '#attachStatusMesg' ).show( ).html( confirmMsg );
+  }
+
+  function deleteAttachment( postURLData, fileID ) {
+    var postUrl = {/literal}"{crmURL p='civicrm/file/delete' h=0 }"{literal};
+    cj.ajax({
+      type: "GET",
+      data:  postURLData,
+      url: postUrl,
+      success: function(html){
+        var resourceBase   = {/literal}"{$config->resourceBase}"{literal};
+        var successMsg = '{/literal}{ts escape="js"}The selected attachment has been deleted.{/ts}{literal} &nbsp;&nbsp;<a href="javascript:hideStatus( );"><img title="{/literal}{ts}close{/ts}{literal}" src="' +resourceBase+'i/close.png"/></a>';
+        cj( '#attachFileRecord_' + fileID ).hide( );
+        cj( '#attachStatusMesg' ).show( ).html( successMsg );
+      }
+    });
+  }
+{/literal}
 </script>
 {/if}
 {/if} {* top level if *}

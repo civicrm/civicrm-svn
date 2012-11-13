@@ -155,6 +155,11 @@ class CRM_Core_BAO_File extends CRM_Core_DAO_File {
     $entityFileDAO->entity_id = $entityID;
     $entityFileDAO->file_id = $fileDAO->id;
     $entityFileDAO->save();
+
+    //save static tags
+    if (!empty($fileParams['tag'])) {
+      CRM_Core_BAO_EntityTag::create($fileParams['tag'], 'civicrm_file', $entityFileDAO->id);
+    }
   }
 
   /**
@@ -333,6 +338,8 @@ AND       CEF.entity_id    = %2";
 
     $form->assign('numAttachments', $numAttachments);
 
+    $tags = CRM_Core_BAO_Tag::getTags('civicrm_file');
+
     // add attachments
     for ($i = 1; $i <= $numAttachments; $i++) {
       $form->addElement('file', "attachFile_$i", ts('Attach File'), 'size=30 maxlength=60');
@@ -345,8 +352,13 @@ AND       CEF.entity_id    = %2";
         $maxFileSize * 1024 * 1024
       );
       $form->addElement('text', "attachDesc_$i", ts('Description'), 'size=40 maxlength=255');
-    }
 
+      if (!empty($tags)) {
+        $form->add('select', "tag_$i", ts('Tags'), $tags, FALSE,
+          array('id' => "tags_$i", 'multiple' => 'multiple', 'title' => ts('- select -'))
+        );
+      }
+    }
   }
 
   /**
@@ -396,7 +408,16 @@ AND       CEF.entity_id    = %2";
     for ($i = 1; $i <= $numAttachments; $i++) {
       $attachName = "attachFile_$i";
       $attachDesc = "attachDesc_$i";
+      $attachTags = "tag_$i";
       if (isset($formValues[$attachName]) && !empty($formValues[$attachName])) {
+        // add static tags if selects
+        $tagParams = array();
+        if (!empty($formValues[$attachTags])) {
+          foreach ($formValues[$attachTags] as $tag) {
+            $tagParams[$tag] = 1;
+          }
+        }
+
         // we dont care if the file is empty or not
         // CRM-7448
         $fileParams = array(
@@ -405,17 +426,15 @@ AND       CEF.entity_id    = %2";
           'location' => $formValues[$attachName]['name'],
           'description' => $formValues[$attachDesc],
           'upload_date' => $now,
+          'tag' => $tagParams
         );
+
         $params[$attachName] = $fileParams;
       }
     }
   }
 
-  static function processAttachment(
-    &$params,
-    $entityTable,
-    $entityID
-  ) {
+  static function processAttachment(&$params, $entityTable, $entityID) {
     $numAttachments = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'max_attachments');
 
     for ($i = 1; $i <= $numAttachments; $i++) {

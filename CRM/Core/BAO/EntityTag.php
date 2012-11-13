@@ -77,7 +77,6 @@ class CRM_Core_BAO_EntityTag extends CRM_Core_DAO_EntityTag {
    * @static
    */
   static function add(&$params) {
-
     $dataExists = self::dataExists($params);
     if (!$dataExists) {
       return NULL;
@@ -96,7 +95,6 @@ class CRM_Core_BAO_EntityTag extends CRM_Core_DAO_EntityTag {
       $object = array(0 => array(0 => $params['entity_id']), 1 => $params['entity_table']);
       CRM_Utils_Hook::post('create', 'EntityTag', $params['tag_id'], $object);
     }
-
     return $entityTag;
   }
 
@@ -232,7 +230,7 @@ class CRM_Core_BAO_EntityTag extends CRM_Core_DAO_EntityTag {
    * @static
    */
   static function create(&$params, $entityTable, $entityID) {
-    // get categories for the contact id
+    // get categories for the entity id
     $entityTag = CRM_Core_BAO_EntityTag::getTag($entityID, $entityTable);
 
     // get the list of all the categories
