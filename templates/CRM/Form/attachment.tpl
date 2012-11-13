@@ -57,18 +57,21 @@
         {if $context EQ 'pcpCampaign'}
             <div class="description">{ts}You can upload a picture or image to include on your page. Your file should be in .jpg, .gif, or .png format. Recommended image size is 250 x 250 pixels. Maximum size is 360 x 360 pixels.{/ts}</div>
         {/if}
-            <tr>
-                <td class="label">{$form.attachFile_1.label}</td>
-                <td>{$form.attachFile_1.html}&nbsp;{$form.attachDesc_1.html}<span class="crm-clear-link">(<a href="javascript:clearAttachment( '#attachFile_1', '#attachDesc_1' );">{ts}clear{/ts}</a>)</span><br />
-                    <span class="description">{ts}Browse to the <strong>file</strong> you want to upload.{/ts}{if $numAttachments GT 1} {ts 1=$numAttachments}You can have a maximum of %1 attachment(s).{/ts}{/if} Each file must be less than {$config->maxFileSize}M in size. You can also add a short description.</span>
-                </td>
-            </tr>
-            {if $form.tag_1.html}
-              <tr>
-                <td class="label">{$form.tag_1.label}</td>
-                <td class="view-value"><div class="crm-select-container">{$form.tag_1.html}</div></td>
-              </tr>
-            {/if}
+        <tr>
+          <td class="label">{$form.attachFile_1.label}</td>
+          <td>{$form.attachFile_1.html}&nbsp;{$form.attachDesc_1.html}<span class="crm-clear-link">(<a href="javascript:clearAttachment( '#attachFile_1', '#attachDesc_1' );">{ts}clear{/ts}</a>)</span><br />
+            <span class="description">{ts}Browse to the <strong>file</strong> you want to upload.{/ts}{if $numAttachments GT 1} {ts 1=$numAttachments}You can have a maximum of %1 attachment(s).{/ts}{/if} Each file must be less than {$config->maxFileSize}M in size. You can also add a short description.</span>
+          </td>
+        </tr>
+        {if $form.tag_1.html}
+          <tr>
+            <td class="label">{$form.tag_1.label}</td>
+            <td class="view-value"><div class="crm-select-container">{$form.tag_1.html}</div></td>
+          </tr>
+        {/if}
+        {if $tagsetInfo_attachment}
+          <tr><td colspan="2">{include file="CRM/common/Tag.tpl" tagsetType='attachment' tagsetNumber=1 }</td></tr>
+        {/if}
         {section name=attachLoop start=2 loop=$numAttachments+1}
           {assign var=index value=$smarty.section.attachLoop.index}
           {assign var=attachName value="attachFile_"|cat:$index}
@@ -82,7 +85,11 @@
               <td class="label">{$form.$tagElement.label}</td>
               <td class="view-value"><div class="crm-select-container">{$form.$tagElement.html}</div></td>
             </tr>
+            {if $tagsetInfo_attachment}
+              <tr><td colspan="2">{include file="CRM/common/Tag.tpl" tagsetType='attachment' tagsetNumber=$index}</td></tr>
+            {/if}
         {/section}
+
         {literal}
           <script type="text/javascript">
             cj("select[multiple]").crmasmSelect({

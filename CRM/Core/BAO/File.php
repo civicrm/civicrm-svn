@@ -362,6 +362,9 @@ AND       CEF.entity_id    = %2";
 
     $tags = CRM_Core_BAO_Tag::getTags('civicrm_file');
 
+    // get tagset info
+    $parentNames = CRM_Core_BAO_Tag::getTagSet('civicrm_file');
+
     // add attachments
     for ($i = 1; $i <= $numAttachments; $i++) {
       $form->addElement('file', "attachFile_$i", ts('Attach File'), 'size=30 maxlength=60');
@@ -380,6 +383,9 @@ AND       CEF.entity_id    = %2";
           array('id' => "tags_$i", 'multiple' => 'multiple', 'title' => ts('- select -'))
         );
       }
+
+      // build tagset widget
+      CRM_Core_Form_Tag::buildQuickForm($form, $parentNames, 'civicrm_file', NULL, FALSE, TRUE, FALSE, "attachment_taglist_$i");
     }
   }
 

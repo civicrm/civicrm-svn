@@ -47,14 +47,17 @@ class CRM_Core_Form_Tag {
    * @param string  $parentName parent name ( tag name)
    * @param string  $entityTable entitytable 'eg: civicrm_contact'
    * @param int     $entityId    entityid  'eg: contact id'
+   * @param boolean $skipTagCreate true if tag need be created using ajax
+   * @param boolean $skipEntityAction true if need to add entry in entry table via ajax
+   * @param boolean $searchMode true if widget is used in search eg: advanced search
+   * @param string  $tagsetElementName if you need to create tagsetlist with specific name
    *
    * @return void
    * @access public
    * @static
    */
   static function buildQuickForm(&$form, $parentNames, $entityTable, $entityId = NULL, $skipTagCreate = FALSE,
-    $skipEntityAction = FALSE, $searchMode = FALSE
-  ) {
+    $skipEntityAction = FALSE, $searchMode = FALSE, $tagsetElementName = NULL ) {
     $tagset = $form->_entityTagValues = array();
     $mode = NULL;
 
@@ -76,10 +79,7 @@ class CRM_Core_Form_Tag {
           $qparams .= '&search=1';
         }
 
-        $tagUrl = CRM_Utils_System::url('civicrm/ajax/taglist',
-          $qparams,
-          FALSE, NULL, FALSE
-        );
+        $tagUrl = CRM_Utils_System::url('civicrm/ajax/taglist', $qparams, FALSE, NULL, FALSE);
 
         $tagset[$tagsetItem]['tagUrl'] = $tagUrl;
         $tagset[$tagsetItem]['entityTable'] = $entityTable;
@@ -95,6 +95,10 @@ class CRM_Core_Form_Tag {
           case 'civicrm_case':
             $tagsetElementName = "case_taglist";
             $mode = 'case';
+            break;
+
+          case 'civicrm_file':
+            $mode = 'attachment';
             break;
 
           default:
@@ -150,6 +154,29 @@ class CRM_Core_Form_Tag {
                     'id' => $tagId,
                     'name' => $tagName,
                   );
+                }
+              }
+              break;
+            case 'civicrm_file':
+              $numAttachments = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'max_attachments');
+              for ($i = 1; $i <= $numAttachments; $i++) {
+                if (!empty($form->_submitValues["attachment_taglist_$i"]) &&
+                  CRM_Utils_Array::value($parentId, $form->_submitValues["attachment_taglist_$i"])
+                ) {
+                  $allTags = CRM_Core_PseudoConstant::tag();
+                  $tagIds = explode(',', $form->_submitValues["attachment_taglist_$i"][$parentId]);
+                  foreach ($tagIds as $tagId) {
+                    if (is_numeric($tagId)) {
+                      $tagName = $allTags[$tagId];
+                    }
+                    else {
+                      $tagName = $tagId;
+                    }
+                    $entityTags[$tagId] = array(
+                      'id' => $tagId,
+                      'name' => $tagName,
+                    );
+                  }
                 }
               }
               break;
