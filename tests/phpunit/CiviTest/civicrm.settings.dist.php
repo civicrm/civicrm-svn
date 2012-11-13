@@ -1,10 +1,5 @@
 <?php
 
-// Set a variable on your shell $export CIVICRM_TEST_DSN= mysql://db_username:db_password@localhost/civicrm_tests_dev
-// or modify and uncomment the configuration string under with your own config
-
-//define( 'CIVICRM_DSN'          , "mysql://db_username:db_password@localhost/civicrm_tests_dev" );
-
 //--- you shouldn't have to modify anything under this line, but might want to put the compiled templates CIVICRM_TEMPLATE_COMPILEDIR in a different folder than our default location ----------
 
 if ( ! defined( 'CIVICRM_DSN' ) && ! empty( $GLOBALS['mysql_user'] ) ) {
@@ -18,7 +13,7 @@ if (!defined("CIVICRM_DSN")) {
   if (!empty ($dsn)) {
     define("CIVICRM_DSN",$dsn);
   } else {
-    echo "\nFATAL: no DB connection configured (CIVICRM_DSN). \nYou can either edit " . __FILE__ . " (user guide inside)\n";
+    echo "\nFATAL: no DB connection configured (CIVICRM_DSN). \nYou can either create/edit " . __DIR__ . "/civicrm.settings.local.php\n";
     if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
       echo "OR set it in your shell:\n \$export CIVICRM_TEST_DSN=mysql://db_username:db_password@localhost/civicrm_tests_dev \n";
     } else {

@@ -29,9 +29,13 @@
 /**
  *  Include configuration
  */
-define('CIVICRM_SETTINGS_PATH', 'tests/phpunit/CiviTest/civicrm.settings.php');
-require_once CIVICRM_SETTINGS_PATH;
+define('CIVICRM_SETTINGS_PATH', __DIR__ . '/civicrm.settings.dist.php');
+define('CIVICRM_SETTINGS_LOCAL_PATH', __DIR__ . '/civicrm.settings.local.php');
 
+if(file_exists(CIVICRM_SETTINGS_LOCAL_PATH)){
+  require_once CIVICRM_SETTINGS_LOCAL_PATH;
+}
+require_once CIVICRM_SETTINGS_PATH;
 /**
  *  Include class definitions
  */
