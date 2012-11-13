@@ -716,3 +716,11 @@ VALUES
 -- CRM-11148 Multiple terms membership signup and renewal via price set
 ALTER TABLE `civicrm_price_field_value` ADD COLUMN `membership_num_terms` INT(10) NULL DEFAULT NULL COMMENT 'Maximum number of related memberships.' AFTER `membership_type_id`;
 
+-- CRM-11070
+SELECT @option_group_id_tuf := max(id) from civicrm_option_group where name = 'tag_used_for';
+SELECT @weight              := MAX(weight) FROM civicrm_option_value WHERE option_group_id = @option_group_id_tuf;
+
+INSERT INTO
+`civicrm_option_value` (`option_group_id`, {localize field='label'}label{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`)
+VALUES
+(@option_group_id_tuf, {localize}'Attachments'{/localize}, 'civicrm_file', 'Attachments', NULL, 0, 0, @weight = @weight + 1);
