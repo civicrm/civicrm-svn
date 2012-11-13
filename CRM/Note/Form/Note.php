@@ -84,9 +84,6 @@ class CRM_Note_Form_Note extends CRM_Core_Form {
       CRM_Core_Error::statusBounce(ts('You do not have access to this note.'));
     }
 
-    // add attachments part
-    CRM_Core_BAO_File::buildAttachment($this, 'civicrm_note', $this->_id, NULL, TRUE);
-
     // set title to "Note - " + Contact Name
     $displayName = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $this->_entityId, 'display_name');
     $pageTitle = 'Note - ' . $displayName;
@@ -127,7 +124,6 @@ class CRM_Note_Form_Note extends CRM_Core_Form {
    * @access public
    */
   public function buildQuickForm() {
-
     if ($this->_action & CRM_Core_Action::DELETE) {
       $this->addButtons(array(
           array(
@@ -149,6 +145,9 @@ class CRM_Note_Form_Note extends CRM_Core_Form {
     $this->add('select', 'privacy', ts('Privacy:'), CRM_Core_OptionGroup::values('note_privacy'));
 
     $this->add('hidden', 'parent_id');
+
+    // add attachments part
+    CRM_Core_BAO_File::buildAttachment($this, 'civicrm_note', $this->_id, NULL, TRUE);
 
     $this->addButtons(array(
         array(
