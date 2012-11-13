@@ -33,6 +33,7 @@
                 <div id="attachFileRecord_{$attVal.fileID}">
                   <strong><a href="{$attVal.url}">{$attVal.cleanName}</a></strong>&nbsp;-&nbsp;{$attVal.description}
                   <br/>
+                  {ts}Tags{/ts}: {$attVal.tag}
                 </div>
           {/foreach}
         </td>
@@ -105,6 +106,8 @@
                   {if $attVal.deleteURLArgs}
                    <a href="javascript:showDelete('{$attVal.cleanName}', '{$attVal.deleteURLArgs}', {$attVal.fileID})" title="{ts}Delete this attachment{/ts}"><span class="icon red-icon delete-icon" style="margin:0px 0px -5px 20px" title="{ts}Delete this attachment{/ts}"></span></a>
                   {/if}
+                  <br/>
+                  {ts}Tags{/ts}: {$attVal.tag}
                   <br/>
                 </div>
           {/foreach}

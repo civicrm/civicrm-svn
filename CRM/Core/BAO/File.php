@@ -228,6 +228,14 @@ class CRM_Core_BAO_File extends CRM_Core_DAO_File {
       // Delete file only if there no any entity using this file.
       $deleteFiles = array();
       foreach ($cfIDs as $fId => $fUri) {
+        //delete tags from entity tag table
+        $tagParams = array(
+          'entity_table' => 'civicrm_file',
+          'entity_id'    => $fId
+        );
+
+        CRM_Core_BAO_EntityTag::del($tagParams);
+
         if (!CRM_Core_DAO::getFieldValue('CRM_Core_DAO_EntityFile', $fId, 'id', 'file_id')) {
           unlink($config->customFileUploadDir . DIRECTORY_SEPARATOR . $fUri);
           $deleteFiles[$fId] = $fId;
@@ -267,11 +275,25 @@ class CRM_Core_BAO_File extends CRM_Core_DAO_File {
       $result['fullPath']  = $config->customFileUploadDir . DIRECTORY_SEPARATOR . $dao->uri;
       $result['url']       = CRM_Utils_System::url('civicrm/file', "reset=1&id={$dao->cfID}&eid={$entityID}");
       $result['href']      = "<a href=\"{$result['url']}\">{$result['cleanName']}</a>";
+      $result['tag']       = CRM_Core_BAO_EntityTag::getTag($dao->cfID, 'civicrm_file');
       if ($addDeleteArgs) {
         $result['deleteURLArgs'] =  self::deleteURLArgs($entityTable, $entityID, $dao->cfID);
       }
       $results[$dao->cfID] = $result;
     }
+
+    //fix tag names
+    $tags = CRM_Core_BAO_Tag::getTags('civicrm_file');
+    foreach($results as &$values) {
+      if (!empty($values['tag'])) {
+        $tagNames = array();
+        foreach( $values['tag'] as $tid ) {
+          $tagNames[] = $tags[$tid];
+        }
+        $values['tag'] = implode(', ', $tagNames);
+      }
+    }
+
     $dao->free();
     return $results;
   }
