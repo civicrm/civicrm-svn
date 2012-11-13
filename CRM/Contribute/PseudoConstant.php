@@ -38,22 +38,29 @@
  * polluting the core class and isolates the mass mailer class
  */
 class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
-
+  
   /**
-     * financial types
+   * financial types
    * @var array
    * @static
    */
-    private static $financialType;
-
-
+  private static $financialType;
+  
   /**
-     * financial types
-     * @var array
-     * @static
-     */
-    private static $financialAccount;
-
+   * financial types
+   * @var array
+   * @static
+   */
+  private static $financialTypeAccount;
+  
+  
+  /**
+   * financial types
+   * @var array
+   * @static
+   */
+  private static $financialAccount;
+  
     /**
    * contribution pages
    * @var array
@@ -368,6 +375,37 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
       );
     }
     return self::$pcpStatus[$column];
+  } 
+  /**
+   * Get all financial accounts for a Financial type.
+   *
+   * The static array  $financialTypeAccount is returned
+   *
+   * @access public
+   * @static
+   *
+   * @return array - array reference of all financial accounts for a Financial type
+   */
+  public static function &financialAccountType($entityId) {
+    if (!self::$financialTypeAccount) {
+      $condition = " entity_id = $entityId";
+      CRM_Core_PseudoConstant::populate( 
+        self::$financialTypeAccount,
+        'CRM_Financial_DAO_EntityFinancialAccount',
+        $all = true,
+        $retrieve = 'financial_Account_id', 
+        $filter = NULL,
+        $condition,
+        NULL,
+        'account_relationship'
+      );            
+    }
+    
+    if ($entityId) {
+      $result = CRM_Utils_Array::value( $entityId, self::$financialTypeAccount );
+      return $result;
+    }
+    return self::$financialTypeAccount;
   }
 }
 
