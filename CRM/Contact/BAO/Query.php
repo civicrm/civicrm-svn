@@ -386,11 +386,6 @@ class CRM_Contact_BAO_Query {
     $operator          = 'AND'
   ) {
 
-    // CRM_Core_Error::backtrace( );
-    // CRM_Core_Error::debug( 'params', $params );
-
-    // CRM_Core_Error::debug( 'post', $_POST );
-    // CRM_Core_Error::debug( 'r', $returnProperties );
     $this->_params = &$params;
     if ($this->_params == NULL) {
       $this->_params = array();
@@ -527,10 +522,6 @@ class CRM_Contact_BAO_Query {
     $properties = array();
 
     $this->addSpecialFields();
-
-    // CRM_Core_Error::debug( 'f', $this->_fields );
-    // CRM_Core_Error::debug( 'p', $this->_params );
-    // CRM_Core_Error::debug( 'p', $this->_paramLookup );
 
     foreach ($this->_fields as $name => $field) {
 
@@ -749,8 +740,6 @@ class CRM_Contact_BAO_Query {
     $processed     = array();
     $index         = 0;
 
-    // CRM_Core_Error::debug( 'd', $this->_fields );
-    // CRM_Core_Error::debug( 'r', $this->_returnProperties );
     $addressCustomFields = CRM_Core_BAO_CustomField::getFieldsForImport('Address');
     $addressCustomFieldIds = array();
 
@@ -3811,9 +3800,6 @@ civicrm_relationship.start_date > CURDATE()
         $onlyDeleted,
         $this->_skipDeleteClause
       );
-      // CRM_Core_Error::debug( 'p', $permission );
-      // CRM_Core_Error::debug( 't', $this->_tables );
-      // CRM_Core_Error::debug( 'w', $this->_whereTables );
 
       // regenerate fromClause since permission might have added tables
       if ($permission) {
@@ -3853,9 +3839,6 @@ civicrm_relationship.start_date > CURDATE()
       $where = "$where AND $permission";
     }
 
-    // CRM_Core_Error::debug( 't', $this );
-    // CRM_Core_Error::debug( 'w', $where );
-    // CRM_Core_Error::debug( 'a', $additionalWhereClause );
     if ($additionalWhereClause) {
       $where = $where . ' AND ' . $additionalWhereClause;
     }
@@ -4026,10 +4009,6 @@ civicrm_relationship.start_date > CURDATE()
     else {
       $query = "$select $from $where $having $groupBy $order $limit";
     }
-
-    // CRM_Core_Error::debug('query', $query);
-    // CRM_Core_Error::debug('query', $where);
-    // CRM_Core_Error::debug('this', $this );
 
     if ($returnQuery) {
       return $query;
