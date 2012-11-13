@@ -237,9 +237,7 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form {
       $defaults['membership_type_id'] = $this->_memType;
     }
 
-        $defaults['financial_type_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
-      $this->_memType,
-                                                                         'financial_type_id' );
+    $defaults['financial_type_id'] = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType', $this->_memType, 'financial_type_id');
 
     $defaults['total_amount'] = CRM_Utils_Money::format(CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType',
         $this->_memType,
@@ -350,7 +348,7 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form {
         // build membership info array, which is used to set the payment information block when
         // membership type is selected.
         $allMembershipInfo[$key] = array(
-          'contribution_type_id' => CRM_Utils_Array::value('contribution_type_id', $values),
+          'financial_type_id' => CRM_Utils_Array::value('financial_type_id', $values),
           'total_amount'         => CRM_Utils_Money::format($values['minimum_fee'], NULL, '%a'),
           'total_amount_numeric' => CRM_Utils_Array::value('minimum_fee', $values)
         );
@@ -430,8 +428,8 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     $this->addDate('renewal_date', ts('Date Renewal Entered'), FALSE, array('formatType' => 'activityDate'));
     if (CRM_Core_Permission::access('CiviContribute') && !$this->_mode) {
       $this->addElement('checkbox', 'record_contribution', ts('Record Renewal Payment?'), NULL, array('onclick' => "checkPayment();"));
-            $this->add('select', 'financial_type_id', ts( 'Financial Type' ), 
-                       array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::financialType( )
+      $this->add('select', 'financial_type_id', ts('Financial Type'), 
+        array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::financialType()
       );
 
       $this->add('text', 'total_amount', ts('Amount'));
@@ -528,8 +526,8 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     //total amount condition arise when membership type having no
     //minimum fee
     if (isset($params['record_contribution'])) {
-            if ( ! $params['financial_type_id'] ) {
-                $errors['financial_type_id'] = ts('Please select a Financial Type.');
+      if (!$params['financial_type_id']) {
+        $errors['financial_type_id'] = ts('Please select a Financial Type.');
       }
       if (!$params['total_amount']) {
         $errors['total_amount'] = ts('Please enter a Contribution Amount.');
@@ -582,8 +580,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       $formValues['total_amount'] = CRM_Utils_Array::value('total_amount', $this->_params, CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType',
           $this->_memType, 'minimum_fee'
         ));
-            $formValues['financial_type_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
-                $this->_memType,'financial_type_id' );
+      $formValues['financial_type_id'] = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType', $this->_memType,'financial_type_id');
 
       $this->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment($formValues['payment_processor_id'],
         $this->_mode
