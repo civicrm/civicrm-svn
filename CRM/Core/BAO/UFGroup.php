@@ -475,7 +475,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
               $fields[$name]['date_format'] = $customFields[$field->field_name]['date_format'];
               $fields[$name]['time_format'] = $customFields[$field->field_name]['time_format'];
             }
-            
+
             $fields[$name]['is_multi_summary'] = $field->is_multi_summary;
           }
           else {
@@ -1668,7 +1668,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
       else {
         $profileType = $gId ? CRM_Core_BAO_UFField::getProfileType($gId) : NULL;
         if ($profileType == 'Contact') {
-          $profileType = 'Individual';  
+          $profileType = 'Individual';
         }
       }
 
@@ -1914,7 +1914,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
       $form->addWysiwyg($fieldName, $title, array('rows' => 4, 'cols' => 60), $required);
     }
     elseif ($fieldName == 'activity_duration') {
-      $form->add('text', $fieldName, $title, $attributes, $required);
+      $form->add('text', $name, $title, $attributes, $required);
       $form->addRule($name, ts('Please enter the duration as number of minutes (integers only).'), 'positiveInteger');
     }
     else {
@@ -2433,7 +2433,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
       "reset=1&cid=$contactID",
        TRUE, NULL, FALSE, FALSE, TRUE
     );
- 
+
     //get the default domain email address.
     list($domainEmailName, $domainEmailAddress) = CRM_Core_BAO_Domain::getNameAndEmail();
 
@@ -2843,8 +2843,8 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         $defaults[$fldName] = $values["{$name}_id"];
       }
       elseif ($name == 'membership_type') {
-        // since membership_type field is a hierselect - 
-        $defaults[$fldName][0] = 
+        // since membership_type field is a hierselect -
+        $defaults[$fldName][0] =
           CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType',$values['membership_type_id'],'member_of_contact_id','id');
         $defaults[$fldName][1] = $values['membership_type_id'];
       }
@@ -3206,7 +3206,7 @@ SELECT  group_id
     }
     return $profileIds;
   }
-  
+
   static function shiftMultiRecordFields(&$source, &$destination, $returnMultiSummaryFields = FALSE) {
     $multiSummaryFields = $returnMultiSummaryFields ? array( ) : NULL;
     foreach ($source as $field => $properties) {
