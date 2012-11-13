@@ -2657,7 +2657,7 @@ WHERE      civicrm_membership.is_test = 0";
     $contributionParams['soft_credit_to'] = CRM_Utils_Array::value('soft_credit_to', $params);
     $contributionParams['non_deductible_amount'] = 'null';
     $recordContribution = array(
-      'contact_id', 'total_amount', 'receive_date', 'contribution_type_id',
+      'contact_id', 'total_amount', 'receive_date', 'financial_type_id',
       'payment_instrument_id', 'trxn_id', 'invoice_id', 'is_test',
       'honor_contact_id', 'honor_type_id',
       'contribution_status_id', 'check_number', 'campaign_id', 'is_pay_later',
