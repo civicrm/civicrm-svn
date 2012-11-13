@@ -210,7 +210,7 @@ class CRM_Contribute_Form_AdditionalInfo {
    *
    * @return None
    */
-  function processPremium(&$params, $contributionID, $premiumID = NULL, &$options = NULL) {
+  function processPremium(&$params, $contributionID, $premiumID = NULL, &$options = NULL, $trxnId = NULL) {
     $dao = new CRM_Contribute_DAO_ContributionProduct();
     $dao->contribution_id = $contributionID;
     $dao->product_id = $params['product_name'][0];
@@ -233,6 +233,29 @@ class CRM_Contribute_Form_AdditionalInfo {
     }
     else {
       $premium = $dao->save();
+    }
+    
+    //FIXME CRM-11106
+    $params = array(
+      'id' => 1,
+    );
+    $productDetails = array();
+    CRM_Contribute_BAO_ManagePremiums::retrieve($params, $productDetails);
+    if (CRM_Utils_Array::value('cost', $productDetails) && CRM_Utils_Array::value('financial_type_id', $productDetails)) { 
+      $financialAccountType = CRM_Contribute_PseudoConstant::financialAccountType($productDetails['financial_type_id']);
+      $accountRelationship = CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND label IN ('Premiums Inventory Account is', 'Cost of Sales Account is')");
+      $accountRelationship = array_flip($accountRelationship);
+      $financialtrxn = array(
+        'from_financial_account_id' => $financialAccountType[$accountRelationship['Cost of Sales Account is']],
+        'to_financial_account_id' => $financialAccountType[$accountRelationship['Premiums Inventory Account is']],
+        'trxn_date' => date('YmdHis'),
+        'total_amount' => CRM_Utils_Array::value('cost', $productDetails),
+        'currency' => CRM_Utils_Array::value('currency', $productDetails),
+        'financial_trxn_status_id' => 1,
+      );
+      $trxnEntityTable['entity_table'] = 'civicrm_financial_trxn';
+      $trxnEntityTable['entity_id'] = $trxnId;
+      CRM_Core_BAO_FinancialTrxn::create($financialtrxn, $trxnEntityTable);
     }
   }
 

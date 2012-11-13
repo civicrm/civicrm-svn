@@ -1781,22 +1781,23 @@ WHERE  contribution_id = {$this->_id}
       $contributionStatus = CRM_Contribute_Pseudoconstant::contributionStatus( $contribution->contribution_status_id );
       if( !empty( $contribution->id ) ){
         if($this->_action & CRM_Core_Action::ADD) { 
-        $trxnParams = array(
-                            'contribution_id'         => $contribution->id,
-                            'to_financial_account_id' => $params['to_financial_account_id'],
-                            'trxn_date'               => $now,
-                            'total_amount'            => !empty($submittedValues['initial_amount'])?$submittedValues['initial_amount']:$params['total_amount'],
-                            'fee_amount'              => CRM_Utils_Array::value( 'fee_amount',  $params),
-                            'net_amount'              => CRM_Utils_Array::value( 'net_amount', $params ),
-                            'currency'                => $params['currency'],                                    
-                            'trxn_id'                 => $params['trxn_id'],
-                            'status_id'               => $contribution->contribution_status_id,
-                            'trxn_result_code'        => ( !empty( $contribution->trxn_result_code ) ? $contribution->trxn_result_code : false ),
-                            );
-        if( $paymentProcessorId = CRM_Utils_Array::value( 'id', $this->_paymentProcessor ) )
-          $trxnParams['payment_processor_id'] = $paymentProcessorId; 
-
-        $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
+          $trxnParams = array(
+            'contribution_id'         => $contribution->id,
+            'to_financial_account_id' => $params['to_financial_account_id'],
+            'trxn_date'               => $now,
+            'total_amount'            => !empty($submittedValues['initial_amount'])?$submittedValues['initial_amount']:$params['total_amount'],
+            'fee_amount'              => CRM_Utils_Array::value( 'fee_amount',  $params),
+            'net_amount'              => CRM_Utils_Array::value( 'net_amount', $params ),
+            'currency'                => $params['currency'],                                    
+            'trxn_id'                 => $params['trxn_id'],
+            'status_id'               => $contribution->contribution_status_id,
+            'trxn_result_code'        => ( !empty( $contribution->trxn_result_code ) ? $contribution->trxn_result_code : false ),
+          );
+          if( $paymentProcessorId = CRM_Utils_Array::value( 'id', $this->_paymentProcessor ) )
+            $trxnParams['payment_processor_id'] = $paymentProcessorId; 
+          
+          $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
+          $mainTrxnId = $trxn->id;
         }
          
         if ($contribution->id && $this->_action & CRM_Core_Action::UPDATE) { 
@@ -1817,18 +1818,18 @@ WHERE  contribution_id = {$this->_id}
           $trxnParams['to_financial_account_id']   = CRM_Utils_Array::value( $ExpenceRelation, $financialAccounts );
           $trxnEntityTable['entity_table'] = 'civicrm_financial_trxn';
           $trxnEntityTable['entity_id'] = $trxn->id;
-             $total_amount = 0;
-             if(!empty($this->_submitValues['txt-price'])) {
-             foreach ($this->_submitValues['txt-price'] as $key=>$value) {
-               $total_amount += $value;
-             }            
-             } else {
-               $total_amount = $this->_submitValues['initial_amount'];
-             }
+          $total_amount = 0;
+          if(!empty($this->_submitValues['txt-price'])) {
+            foreach ($this->_submitValues['txt-price'] as $key=>$value) {
+              $total_amount += $value;
+            }            
+          } else {
+            $total_amount = $this->_submitValues['initial_amount'];
+          }
              
-             $trxnParams['total_amount'] = $total_amount;
-           $trxnParams['fee_amount'] = $trxnParams['fee_amount']; 
-           $trxnParams['net_amount'] = $trxnParams['net_amount'];  
+          $trxnParams['total_amount'] = $total_amount;
+          $trxnParams['fee_amount'] = $trxnParams['fee_amount']; 
+          $trxnParams['net_amount'] = $trxnParams['net_amount'];  
           $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams, $trxnEntityTable );
         }
              if($this->_action & CRM_Core_Action::UPDATE) {  
@@ -2028,7 +2029,7 @@ WHERE  contribution_id = {$this->_id}
       //process premium
       if ($contribution->id && isset($formValues['product_name'][0])) {
         CRM_Contribute_Form_AdditionalInfo::processPremium($formValues, $contribution->id,
-          $this->_premiumID, $this->_options
+          $this->_premiumID, $this->_options, $mainTrxnId
         );
       }
 
