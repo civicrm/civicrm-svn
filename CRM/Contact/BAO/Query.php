@@ -1418,6 +1418,7 @@ class CRM_Contact_BAO_Query {
       case 'activity_campaign_id':
       case 'activity_engagement_level':
       case 'activity_id':
+      case 'source_contact':
         CRM_Activity_BAO_Query::whereClauseSingle($values, $this);
         return;
 
@@ -1511,7 +1512,6 @@ class CRM_Contact_BAO_Query {
 
     $this->includeContactIds();
     if (!empty($this->_params)) {
-      $activity = FALSE;
 
       foreach (array_keys($this->_params) as $id) {
         if (!CRM_Utils_Array::value(0, $this->_params[$id])) {
@@ -1530,10 +1530,6 @@ class CRM_Contact_BAO_Query {
         }
         else {
           $this->whereClauseSingle($this->_params[$id]);
-        }
-
-        if (substr($this->_params[$id][0], 0, 9) == 'activity_') {
-          $activity = TRUE;
         }
       }
 
@@ -2224,6 +2220,7 @@ class CRM_Contact_BAO_Query {
         case 'activity_type':
         case 'activity_status':
         case 'civicrm_activity_contact':
+        case 'source_contact':
           $from .= CRM_Activity_BAO_Query::from($name, $mode, $side);
           continue;
 

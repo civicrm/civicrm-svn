@@ -2160,6 +2160,12 @@ AND cl.modified_id  = c.id
         if (isset($exportableFields['activity_campaign_id'])) {
           $exportableFields['activity_campaign'] = array('title' => ts('Campaign Title'));
         }
+        $exportableFields['source_contact_id']['title'] = ts('Source Contact ID');
+        $exportableFields['source_contact'] = array(
+          'title' => ts('Source Contact'),
+          'type' => CRM_Utils_Type::T_STRING,
+        );
+          
 
         $Activityfields = array(
           'activity_type' => array('title' => ts('Activity Type'), 'type' => CRM_Utils_Type::T_STRING),

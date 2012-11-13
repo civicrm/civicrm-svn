@@ -138,6 +138,12 @@ class CRM_Activity_BAO_Query {
       $query->_element['activity_engagement_level'] = 1;
       $query->_tables['civicrm_activity'] = $query->_whereTables['civicrm_activity'] = 1;
     }
+
+    if (CRM_Utils_Array::value('source_contact', $query->_returnProperties)) {
+      $query->_select['source_contact'] = 'source_contact.display_name as source_contact';
+      $query->_element['source_contact'] = 1;
+      $query->_tables['source_contact'] = $query->_whereTables['source_contact'] = 1;
+    }
   }
 
   /**
@@ -454,6 +460,10 @@ class CRM_Activity_BAO_Query {
 
       case 'civicrm_activity_tag':
         $from .= " $side JOIN civicrm_entity_tag as civicrm_activity_tag ON ( civicrm_activity_tag.entity_table = 'civicrm_activity' AND civicrm_activity_tag.entity_id = civicrm_activity.id ) ";
+        break;
+
+      case 'source_contact':
+        $from = " $side JOIN civicrm_contact source_contact ON source_contact.id = civicrm_activity.source_contact_id";
         break;
     }
 
