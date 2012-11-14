@@ -145,7 +145,7 @@ class CRM_Contact_Form_Task_AddToTag extends CRM_Contact_Form_Task {
         $status[] = ts('%count contact already had this tag', array('count' => $notAdded, 'plural' => '%count contacts already had this tag'));
       }
       $status = '<ul><li>' . implode('</li><li>', $status) . '</li></ul>';
-      CRM_Core_Session::setStatus($status, ts('Tagged Contact as %2', array(2 => $this->_tags[$key], 'count' => $added, 'plural' => 'Tagged Contacts as %2')), 'success', array('expires' => 0));
+      CRM_Core_Session::setStatus($status, ts("Added Tag <em>%1</em>", array(1 => $this->_tags[$key])), 'success', array('expires' => 0));
     }
 
   }
