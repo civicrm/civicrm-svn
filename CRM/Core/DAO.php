@@ -1280,7 +1280,10 @@ SELECT contact_id
       $fields = &$object->fields();
       foreach ($fields as $name => $value) {
         $dbName = $value['name'];
-
+        if($dbName == 'contact_sub_type' && empty($params['contact_sub_type'])){
+          //coming up with a rule to set this is too complex let's not set it
+          continue;
+        }
         $FKClassName = CRM_Utils_Array::value('FKClassName', $value);
         $required = CRM_Utils_Array::value('required', $value);
         if (CRM_Utils_Array::value($dbName, $params) !== NULL && !is_array($params[$dbName])) {
