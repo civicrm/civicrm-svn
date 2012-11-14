@@ -73,6 +73,7 @@ function contact_create_expectedresult(){
           'preferred_communication_method' => '',
           'preferred_language' => 'en_US',
           'preferred_mail_format' => 'Both',
+          'hash' => '67eac7789eaee00',
           'api_key' => '',
           'first_name' => 'abc3',
           'middle_name' => '',
@@ -99,7 +100,7 @@ function contact_create_expectedresult(){
           'sic_code' => '',
           'user_unique_id' => '',
           'created_date' => '',
-          'modified_date' => '2012-11-05 16:01:45',
+          'modified_date' => '2012-11-14',
           'api.contribution.create' => array( 
               'is_error' => 0,
               'version' => 3,

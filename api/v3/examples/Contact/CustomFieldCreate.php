@@ -51,6 +51,7 @@ function contact_create_expectedresult(){
           'preferred_communication_method' => '',
           'preferred_language' => 'en_US',
           'preferred_mail_format' => 'Both',
+          'hash' => '67eac7789eaee00',
           'api_key' => '',
           'first_name' => 'abc1',
           'middle_name' => '',
@@ -77,7 +78,7 @@ function contact_create_expectedresult(){
           'sic_code' => '',
           'user_unique_id' => '',
           'created_date' => '',
-          'modified_date' => '2012-11-05 16:01:30',
+          'modified_date' => '2012-11-14',
         ),
     ),
 );

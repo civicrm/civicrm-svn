@@ -23,7 +23,7 @@ $params = array(
  */
 function contact_get_expectedresult(){
 
-  $expectedResult = 1;
+  $expectedResult = '1';
 
   return $expectedResult  ;
 }

@@ -899,7 +899,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
   }
 
   /**
-     * Function to delete financial Types 
+     * Function to delete financial Types
    *      * @param int $contributionTypeId
    */
   function contributionTypeDelete($contributionTypeID = NULL) {
@@ -911,7 +911,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
       $del = CRM_Financial_BAO_FinancialType::del(11, 1);
     }
     else {
-            civicrm_api('Contribution', 'get',array('version' => 3, 'financial_type_id' => $contributionTypeID,  'api.contribution.delete' => 1));            
+            civicrm_api('Contribution', 'get',array('version' => 3, 'financial_type_id' => $contributionTypeID,  'api.contribution.delete' => 1));
             $del= CRM_Financial_BAO_FinancialType::del($contributionTypeID,1 );
     }
     if (is_array($del)) {
@@ -1821,12 +1821,17 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
       $entityAction = ucwords($action);
     }
 
-    //unset hash field if it's in the values array because it changes every time so it makes the examples
-    // change too often if we leave it there. Alternative is just to set it to something random I guess
-    if (isset($result['values']) && is_array($result['values'])) {
-      foreach ($result['values'] as $key => $value) {
-        if (is_array($value) && array_key_exists('hash', $value)) {
-          unset($result['values'][$key]['hash']);
+    $fieldsToChange = array(
+      'hash' => '67eac7789eaee00',
+      'modified_date' => '2012-11-14 16:02:35',
+    );
+    //swap out keys that change too often
+    foreach ($fieldsToChange as $changeKey => $changeValue){
+      if (isset($result['values']) && is_array($result['values'])) {
+        foreach ($result['values'] as $key => $value) {
+          if (is_array($value) && array_key_exists($changeKey, $value)) {
+            $result['values'][$key][$changeKey] = $changeValue;
+          }
         }
       }
     }
@@ -2174,7 +2179,7 @@ AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
     }
     CRM_Extension_System::setSingleton($this->origExtensionSystem);
   }
-  
+
   function unsetExtensionSystem() {
     if ($this->origExtensionSystem !== NULL) {
       CRM_Extension_System::setSingleton($this->origExtensionSystem);

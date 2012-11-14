@@ -7,7 +7,7 @@
     /* This param causes only a single value of the only entity to be returned as an string.
     /* it will be ignored if there is not exactly 1 result
  */
-function contact_get_example(){
+function contact_getvalue_example(){
 $params = array( 
   'version' => 3,
   'id' => 17,
@@ -15,7 +15,7 @@ $params = array(
 );
 
   require_once 'api/api.php';
-  $result = civicrm_api( 'contact','get',$params );
+  $result = civicrm_api( 'contact','getvalue',$params );
 
   return $result;
 }
@@ -23,7 +23,7 @@ $params = array(
 /*
  * Function returns array of result expected from previous function
  */
-function contact_get_expectedresult(){
+function contact_getvalue_expectedresult(){
 
   $expectedResult = 'Test Contact';
 
