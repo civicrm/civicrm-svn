@@ -73,7 +73,7 @@ class CRM_Contact_Form_Search_Custom_ContributionAggregate implements CRM_Contac
     $form->addDate('start_date', ts('Contribution Date From'), FALSE, array('formatType' => 'custom'));
     $form->addDate('end_date', ts('...through'), FALSE, array('formatType' => 'custom'));
 
-    $contribution_types = CRM_Contribute_PseudoConstant::contributionType();
+    $contribution_types = CRM_Contribute_PseudoConstant::financialType();
     foreach($contribution_types as $contribution_type_id => $contribution_type) {
       $form->addElement('checkbox', "contribution_type_id[{$contribution_type_id}]", 'Contribution Type', $contribution_type);
     }
