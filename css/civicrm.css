@@ -1719,11 +1719,11 @@ div.grippie {
 }
 
 
-.crm-tab-button {
-  border-bottom:0 none !important;
+.ui-tabs .ui-tabs-nav li.crm-tab-button {
+  border-bottom: 0 none;
   float:left;
   margin:0 0.2em 1px 0;
-  padding:0;
+  padding: 0 0 1px;
   position:relative;
   top:1px;
   white-space:nowrap;
