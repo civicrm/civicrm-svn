@@ -44,13 +44,13 @@
                     {/if}
                 </tr>
             {/foreach}
-            <tr class="crm-contact-custom-search-contributionDetails-form-block-contribution_type">
-                <td class="label">{ts}Contribution Type{/ts}</td>
+            <tr class="crm-contact-custom-search-contributionDetails-form-block-financial_type">
+                <td class="label">{ts}Financial Type{/ts}</td>
                 <td>
                     <div class="listing-box">
-                        {foreach from=$form.contribution_type_id item="contribution_type_val"}
+                        {foreach from=$form.financial_type_id item="financial_type_val"}
                             <div class="{cycle values="odd-row,even-row"}">
-                                {$contribution_type_val.html}
+                                {$financial_type_val.html}
                             </div>
                         {/foreach}
                     </div>
