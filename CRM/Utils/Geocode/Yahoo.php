@@ -163,13 +163,17 @@ class CRM_Utils_Geocode_Yahoo {
 
           // if a postal code was already entered, don't change it, except to make it more precise
           if (strpos($new_pc_complete, $current_pc_complete) !== 0) {
-            $msg = ts('The Yahoo Geocoding system returned a different postal code (%1) than the one you entered (%2). If you want the Yahoo value, please delete the current postal code and save again.',
-              array(
-                1 => $ret['postal'],
-                2 => $current_pc_suffix ? "$current_pc-$current_pc_suffix" : $current_pc
-              )
-            );
-            CRM_Core_Session::setStatus($msg);
+            // Don't bother anonymous users with the message - they can't change a form they just submitted anyway
+            if(CRM_Utils_System::isUserLoggedIn()) {
+              $msg = ts('The Yahoo Geocoding system returned a different postal code (%1) than the one you entered (%2). If you want the Yahoo value, please delete the current postal code and save again.',
+                array(
+                  1 => $ret['postal'],
+                  2 => $current_pc_suffix ? "$current_pc-$current_pc_suffix" : $current_pc
+                )
+              );
+            
+              CRM_Core_Session::setStatus($msg);
+            }
             $skip_postal = TRUE;
           }
         }
