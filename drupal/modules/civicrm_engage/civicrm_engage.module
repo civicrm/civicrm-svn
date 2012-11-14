@@ -104,14 +104,19 @@ function civicrm_engage_civicrm_postProcess($class, &$form) {
 }
 
 function civicrm_engage_civicrm_pageRun(&$page) {
-  if ($page->getVar('_name') == 'CRM_Contact_Page_View_Summary') {
+  if ($page->getVar('_name') == 'CRM_Contact_Page_View_Summary' ||
+    $page->getVar('_name') == 'CRM_Contact_Page_Inline_Demographics') {
     $cgID = _civicrm_engage_getCustomGroupID(CIVICRM_ENGAGE_CG_DEMOGRAPHICS_NAME);
     if (empty($cgID)) {
       return;
     }
+    $contactId = $page->getVar('_contactId');
+    if(empty($contactId)) {
+      $contactId = CRM_Utils_Request::retrieve('cid', 'Positive', $this, TRUE, NULL, $_REQUEST);
+    }
     $groupTree = &CRM_Core_BAO_CustomGroup::getTree('Individual',
       $page,
-      $page->getVar('_contactId'),
+      $contactId,
       $cgID,
       NULL, NULL
     );
