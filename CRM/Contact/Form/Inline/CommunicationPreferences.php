@@ -52,7 +52,7 @@ class CRM_Contact_Form_Inline_CommunicationPreferences extends CRM_Core_Form {
    * call preprocess
    */
   public function preProcess() {
-    //get all the existing email addresses
+    // Get contact id
     $this->_contactId = CRM_Utils_Request::retrieve('cid', 'Positive', $this, TRUE, NULL, $_REQUEST);
     $this->assign('contactId', $this->_contactId);
 
@@ -63,7 +63,7 @@ class CRM_Contact_Form_Inline_CommunicationPreferences extends CRM_Core_Form {
   }
 
   /**
-   * build the form elements for an email object
+   * build the form elements for communication preferences
    *
    * @return void
    * @access public
@@ -155,4 +155,3 @@ class CRM_Contact_Form_Inline_CommunicationPreferences extends CRM_Core_Form {
     CRM_Utils_System::civiExit();
   }
 }
-
