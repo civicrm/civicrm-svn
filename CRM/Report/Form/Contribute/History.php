@@ -301,8 +301,16 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
               $this->_columnHeaders[$fieldName]['title'] = $field['title'];
               continue;
             }
-            elseif ($fieldName == 'receive_date') {
-              $select[] = "YEAR({$field['dbAlias']}) as {$tableName}_{$fieldName}";
+            elseif ($fieldName == 'receive_date') { 
+                if ((CRM_Utils_Array::value('this_year_op', $this->_params) == 'fiscal' && 
+                     CRM_Utils_Array::value('this_year_value', $this->_params)) ||
+                    (CRM_Utils_Array::value('other_year_op', $this->_params == 'fiscal') && 
+                      CRM_Utils_Array::value('other_year_value', $this->_params)
+                     )){
+                    $select[] = self::fiscalYearOffset($field['dbAlias']) . " as {$tableName}_{$fieldName}";
+                }else{
+                    $select[] = " YEAR(".$field['dbAlias'].")" . " as {$tableName}_{$fieldName}";
+                }
             }
             else {
               $select[] = "{$field['dbAlias']} as {$tableName}_{$fieldName}";
@@ -363,9 +371,7 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
           $clause = NULL;
           if ($fieldName == 'this_year' || $fieldName == 'other_year') {
             continue;
-          }
-
-          if (CRM_Utils_Array::value('type', $field) & CRM_Utils_Type::T_DATE) {
+          }elseif (CRM_Utils_Array::value('type', $field) & CRM_Utils_Type::T_DATE) {
             $relative = CRM_Utils_Array::value("{$fieldName}_relative", $this->_params);
             $from     = CRM_Utils_Array::value("{$fieldName}_from", $this->_params);
             $to       = CRM_Utils_Array::value("{$fieldName}_to", $this->_params);
@@ -516,16 +522,16 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
     $addWhere = '';
 
     if (CRM_Utils_Array::value('other_year', $this->_referenceYear)) {
-      $addWhere .= " AND {$this->_aliases['civicrm_contact']}.id NOT IN ( SELECT DISTINCT cont.id FROM civicrm_contact cont, civicrm_contribution contri WHERE  cont.id = contri.contact_id AND YEAR (contri.receive_date) = {$this->_referenceYear['other_year']} AND contri.is_test = 0 ) ";
+        (CRM_Utils_Array::value('other_year_op', $this->_params) == 'calendar') ? $other_receive_date = 'YEAR (contri.receive_date)' : $other_receive_date = self::fiscalYearOffset('contri.receive_date');
+        $addWhere .= " AND {$this->_aliases['civicrm_contact']}.id NOT IN ( SELECT DISTINCT cont.id FROM civicrm_contact cont, civicrm_contribution contri WHERE  cont.id = contri.contact_id AND {$other_receive_date} = {$this->_referenceYear['other_year']} AND contri.is_test = 0 ) ";
     }
-
     if (CRM_Utils_Array::value('this_year', $this->_referenceYear)) {
-      $addWhere .= " AND {$this->_aliases['civicrm_contact']}.id IN ( SELECT DISTINCT cont.id FROM civicrm_contact cont, civicrm_contribution contri WHERE cont.id = contri.contact_id AND YEAR (contri.receive_date) = {$this->_referenceYear['this_year']} AND contri.is_test = 0 ) ";
-    }
-
+        (CRM_Utils_Array::value('this_year_op', $this->_params) == 'calendar') ? $receive_date = 'YEAR (contri.receive_date)' : $receive_date = self::fiscalYearOffset('contri.receive_date');
+        $addWhere .= " AND {$this->_aliases['civicrm_contact']}.id IN ( SELECT DISTINCT cont.id FROM civicrm_contact cont, civicrm_contribution contri WHERE cont.id = contri.contact_id AND {$receive_date} = {$this->_referenceYear['this_year']} AND contri.is_test = 0 ) ";
+    }  
     $this->limit();
     $getContacts = "SELECT SQL_CALC_FOUND_ROWS {$this->_aliases['civicrm_contact']}.id as cid, SUM({$this->_aliases['civicrm_contribution']}.total_amount) as civicrm_contribution_total_amount_sum {$this->_from} {$this->_where} {$addWhere} GROUP BY {$this->_aliases['civicrm_contact']}.id {$this->_having} {$this->_limit}";
-
+    
     $dao = CRM_Core_DAO::executeQuery($getContacts);
 
     while ($dao->fetch()) {
@@ -677,6 +683,16 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
     $dao->free();
     return array($relationshipRows, $relatedContactIds);
   }
+  
+  // Override "This Year" $op options
+  function getOperationPair($type = "string", $fieldName = NULL) {
+      if ($fieldName == 'this_year' || $fieldName == 'other_year') {
+          return array('calendar' => ts('Is Calendar Year'), 'fiscal' => ts('Fiscal Year Starting'));
+      }
+      return parent::getOperationPair($type, $fieldName);
+  }
+  
+  
 
   function alterDisplay(&$rows) {
     if (empty($rows)) {
@@ -723,5 +739,5 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
       }
     }
   }
-}
+ }
 

@@ -3120,7 +3120,7 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
   function fiscalYearOffset($fieldName) {
     $config = CRM_Core_Config::singleton();
     $fy = $config->fiscalYearStart;
-    if ($this->_params['yid_op'] == 'calendar' || ($fy['d'] == 1 && $fy['M'] == 1)) {
+    if (CRM_Utils_Array::value('yid_op', $this->_params) == 'calendar' || ($fy['d'] == 1 && $fy['M'] == 1)) {
       return "YEAR( $fieldName )";
     }
     return "YEAR( $fieldName - INTERVAL " . ($fy['M'] - 1) . " MONTH" . ($fy['d'] > 1 ? (" - INTERVAL " . ($fy['d'] - 1) . " DAY") : '') . " )";
