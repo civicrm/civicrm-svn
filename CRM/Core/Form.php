@@ -257,9 +257,7 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
    *
    */
   function postProcessHook() {
-    CRM_Utils_Hook::postProcess(get_class($this),
-      $this
-    );
+    CRM_Utils_Hook::postProcess(get_class($this), $this);
   }
 
   /**
@@ -983,8 +981,7 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
     return $this->getRootTitle() . $this->getTitle();
   }
 
-  static
-  function &getTemplate() {
+  static function &getTemplate() {
     return self::$_template;
   }
 
