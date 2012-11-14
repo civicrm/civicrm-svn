@@ -430,7 +430,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
       }
       $out = "{$prefix}$out\n";
     }
-    if ($log) {
+    if ($log && CRM_Core_Permission::check('view debug output')) {
       echo $out;
     }
 
@@ -504,7 +504,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
     $file_log = self::createDebugLogger($comp);
     $file_log->log("$message\n");
     $str = "<p/><code>$message</code>";
-    if ($out) {
+    if ($out && CRM_Core_Permission::check('view debug output')) {
       echo $str;
     }
     $file_log->close();
