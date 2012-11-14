@@ -648,7 +648,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
         ),
       ),
     );
-    
+
     $description = "demonstrates creating two websites as an array";
     $subfile     = "ChainTwoWebsitesSyntax2";
     $result      = civicrm_api('Contact', 'create', $params);
@@ -1296,6 +1296,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
 
 
     $result = civicrm_api('Contact', 'create', $params);
+    $this->assertAPISuccess($result);
     $params = array(
       'id' => $result['id'], 'version' => $this->_apiversion,
       'api.website.get' => array(),
