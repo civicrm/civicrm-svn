@@ -446,7 +446,7 @@ class CRM_Utils_REST {
     if (array_key_exists('json', $_REQUEST) &&  $_REQUEST['json'][0] == "{") {
       $params = json_decode($_REQUEST['json'], TRUE);
       if(empty($params)) {
-        echo json_encode(array('is_error' => 1, 'error_message', 'invalid json format: ?{"param_with_double_quote":"value"}'));
+        echo json_encode(array('is_error' => 1, 'error_message', 'Unable to decode supplied JSON.'));
         CRM_Utils_System::civiExit();
       }
     }
