@@ -34,33 +34,9 @@
  */
 
 /**
- * form helper class for communication preferences inline edit section 
+ * form helper class for communication preferences inline edit section
  */
-class CRM_Contact_Form_Inline_CommunicationPreferences extends CRM_Core_Form {
-
-  /**
-   * contact id of the contact that is been viewed
-   */
-  private $_contactId;
-
-  /**
-   * contact type of the contact that is been viewed
-   */
-  public $_contactType;
-
-  /**
-   * call preprocess
-   */
-  public function preProcess() {
-    // Get contact id
-    $this->_contactId = CRM_Utils_Request::retrieve('cid', 'Positive', $this, TRUE, NULL, $_REQUEST);
-    $this->assign('contactId', $this->_contactId);
-
-    // Get contact type if not set
-    if (empty($this->_contactType)) {
-      $this->_contactType = CRM_Contact_BAO_Contact::getContactType($this->_contactId);
-    }
-  }
+class CRM_Contact_Form_Inline_CommunicationPreferences extends CRM_Contact_Form_Inline {
 
   /**
    * build the form elements for communication preferences
@@ -69,51 +45,20 @@ class CRM_Contact_Form_Inline_CommunicationPreferences extends CRM_Core_Form {
    * @access public
    */
   public function buildQuickForm() {
-    CRM_Contact_Form_Inline_Lock::buildQuickForm($this, $this->_contactId);
-    CRM_Contact_Form_Edit_CommunicationPreferences::buildQuickForm( $this );
+    parent::buildQuickForm();
+    CRM_Contact_Form_Edit_CommunicationPreferences::buildQuickForm($this);
     $this->addFormRule(array('CRM_Contact_Form_Edit_CommunicationPreferences', 'formRule'), $this);
- 
-    $buttons = array(
-      array(
-        'type' => 'upload',
-        'name' => ts('Save'),
-        'isDefault' => TRUE,
-      ),
-      array(
-        'type' => 'cancel',
-        'name' => ts('Cancel'),
-      ),
-    );
-
-    $this->addButtons($buttons);
-  }
-
-  /**
-   * Override default cancel action
-   */
-  function cancelAction() {
-    $response = array('status' => 'cancel');
-    echo json_encode($response);
-    CRM_Utils_System::civiExit();
   }
 
   /**
    * set defaults for the form
    *
-   * @return void
+   * @return array
    * @access public
    */
   public function setDefaultValues() {
-    $defaults = array();
-    $params = array(
-      'id' => $this->_contactId
-    );
+    $defaults = parent::setDefaultValues();
 
-    $defaults = array();
-    CRM_Contact_BAO_Contact::getValues( $params, $defaults );
-    
-    $this->_contactType = CRM_Utils_Array::value('contact_type', $defaults);
- 
     if (!empty($defaults['preferred_language'])) {
       $languages = array_flip(CRM_Core_PseudoConstant::languages());
       $defaults['preferred_language'] = $languages[$defaults['preferred_language']];
@@ -141,17 +86,14 @@ class CRM_Contact_Form_Inline_CommunicationPreferences extends CRM_Core_Form {
   public function postProcess() {
     $params = $this->exportValues();
 
-    // need to process / save communication preferences 
-    
+    // Process / save communication preferences
+
     // this is a chekbox, so mark false if we dont get a POST value
     $params['is_opt_out'] = CRM_Utils_Array::value('is_opt_out', $params, FALSE);
     $params['contact_type'] = $this->_contactType;
-    $params['contact_id']   = $this->_contactId;
-    CRM_Contact_BAO_Contact::create( $params );
+    $params['contact_id'] = $this->_contactId;
+    CRM_Contact_BAO_Contact::create($params);
 
-    $response = array('status' => 'save');
-    $response = array_merge($response, CRM_Contact_Form_Inline_Lock::getResponse($this->_contactId));
-    echo json_encode($response);
-    CRM_Utils_System::civiExit();
+    $this->response();
   }
 }

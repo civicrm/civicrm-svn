@@ -34,87 +34,22 @@
  */
 
 /**
- * form helper class for contact name section 
+ * form helper class for contact name section
  */
-class CRM_Contact_Form_Inline_ContactName extends CRM_Core_Form {
+class CRM_Contact_Form_Inline_ContactName extends CRM_Contact_Form_Inline {
 
   /**
-   * contact id of the contact that is been viewed
-   */
-  public $_contactId;
-
-  /**
-   * contact type of the contact that is been viewed
-   */
-  private $_contactType;
-
-  /**
-   * call preprocess
-   */
-  public function preProcess() {
-    //get all the existing email addresses
-    $this->_contactId = CRM_Utils_Request::retrieve('cid', 'Positive', $this, TRUE, NULL, $_REQUEST);
-    $this->assign('contactId', $this->_contactId);
-    
-    $this->_contactType = CRM_Core_DAO::getFieldValue(
-      'CRM_Contact_DAO_Contact',
-      $this->_contactId, 'contact_type'
-    );
-    $this->assign('contactType', $this->_contactType);
-  }
-
-  /**
-   * build the form elements for an email object
+   * build the form elements
    *
    * @return void
    * @access public
    */
   public function buildQuickForm() {
-    CRM_Contact_Form_Inline_Lock::buildQuickForm($this, $this->_contactId);
+    parent::buildQuickForm();
 
-    //build contact type specific fields
-    eval('CRM_Contact_Form_Edit_' . $this->_contactType . '::buildQuickForm( $this, 1 );');
-
-    $buttons = array(
-      array(
-        'type' => 'upload',
-        'name' => ts('Save'),
-        'isDefault' => TRUE,
-      ),
-      array(
-        'type' => 'cancel',
-        'name' => ts('Cancel'),
-      ),
-    );
-
-    $this->addButtons($buttons);
-  }
-
-  /**
-   * Override default cancel action
-   */
-  function cancelAction() {
-    $response = array('status' => 'cancel');
-    echo json_encode($response);
-    CRM_Utils_System::civiExit();
-  }
-
-  /**
-   * set defaults for the form
-   *
-   * @return void
-   * @access public
-   */
-  public function setDefaultValues() {
-    $defaults = array();
-    $params = array(
-      'id' => $this->_contactId
-    );
-
-    $defaults = array();
-    CRM_Contact_BAO_Contact::getValues( $params, $defaults );
-
-    return $defaults;
+    // Build contact type specific fields
+    $class = 'CRM_Contact_Form_Edit_' . $this->_contactType;
+    $class::buildQuickForm($this, 1);
   }
 
   /**
@@ -126,16 +61,11 @@ class CRM_Contact_Form_Inline_ContactName extends CRM_Core_Form {
   public function postProcess() {
     $params = $this->exportValues();
 
-    // need to process / save contact info 
-
+    // Process / save contact info
     $params['contact_type'] = $this->_contactType;
     $params['contact_id']   = $this->_contactId;
-    CRM_Contact_BAO_Contact::create( $params );
+    CRM_Contact_BAO_Contact::create($params);
 
-    $response = array('status' => 'save');
-    $response = array_merge($response, CRM_Contact_Form_Inline_Lock::getResponse($this->_contactId));
-    echo json_encode($response);
-    CRM_Utils_System::civiExit();
+    $this->response();
   }
 }
-

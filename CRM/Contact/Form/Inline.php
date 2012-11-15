@@ -34,95 +34,112 @@
  */
 
 /**
- * form helper class for an Website object
+ * Parent class for inline contact forms
  */
-class CRM_Contact_Form_Inline_Website extends CRM_Contact_Form_Inline {
+abstract class CRM_Contact_Form_Inline extends CRM_Core_Form {
 
   /**
-   * websitess of the contact that is been viewed
+   * Id of the contact that is being edited
    */
-  private $_websites = array();
+  public $_contactId;
 
   /**
-   * No of website blocks for inline edit
+   * Type of contact being edited
    */
-  private $_blockCount = 6;
+  public $_contactType;
 
   /**
-   * call preprocess
+   * Common preprocess: fetch contact ID and contact type
    */
   public function preProcess() {
-    parent::preProcess();
+    $this->_contactId = CRM_Utils_Request::retrieve('cid', 'Positive', $this, TRUE, NULL, $_REQUEST);
+    $this->assign('contactId', $this->_contactId);
 
-    //get all the existing websites
-    $params = array('contact_id' => $this->_contactId);
-    $values = array();
-    $this->_websites = CRM_Core_BAO_Website::getValues($params, $values);
+    // Get contact type
+    if (empty($this->_contactType)) {
+      $this->_contactType = CRM_Contact_BAO_Contact::getContactType($this->_contactId);
+    }
+    $this->assign('contactType', $this->_contactType);
   }
 
   /**
-   * build the form elements for website object
+   * Common form elements
    *
    * @return void
    * @access public
    */
   public function buildQuickForm() {
-    parent::buildQuickForm();
+    CRM_Contact_Form_Inline_Lock::buildQuickForm($this, $this->_contactId);
 
-    $totalBlocks = $this->_blockCount;
-    $actualBlockCount = 1;
-    if (count($this->_websites) > 1) {
-      $actualBlockCount = $totalBlocks = count($this->_websites);
-      if ($totalBlocks < $this->_blockCount) {
-        $additionalBlocks = $this->_blockCount - $totalBlocks;
-        $totalBlocks += $additionalBlocks;
-      }
-      else {
-        $actualBlockCount++;
-        $totalBlocks++;
-      }
-    }
-
-    $this->assign('actualBlockCount', $actualBlockCount);
-    $this->assign('totalBlocks', $totalBlocks);
-
-    $this->applyFilter('__ALL__', 'trim');
-
-    for ($blockId = 1; $blockId < $totalBlocks; $blockId++) {
-      CRM_Contact_Form_Edit_Website::buildQuickForm($this, $blockId, TRUE);
-    }
-
+    $buttons = array(
+      array(
+        'type' => 'upload',
+        'name' => ts('Save'),
+        'isDefault' => TRUE,
+      ),
+      array(
+        'type' => 'cancel',
+        'name' => ts('Cancel'),
+      ),
+    );
+    $this->addButtons($buttons);
   }
 
   /**
-   * set defaults for the form
+   * Override default cancel action
+   *
+   * @return void
+   * @access public
+   */
+  public function cancelAction() {
+    $response = array('status' => 'cancel');
+    echo json_encode($response);
+    CRM_Utils_System::civiExit();
+  }
+
+  /**
+   * Set defaults for the form
    *
    * @return array
    * @access public
    */
   public function setDefaultValues() {
-    $defaults = array();
-    if (!empty($this->_websites)) {
-      foreach ($this->_websites as $id => $value) {
-        $defaults['website'][$id] = $value;
-      }
-    }
+    $defaults = $params = array();
+    $params['id'] = $this->_contactId;
+
+    CRM_Contact_BAO_Contact::getValues($params, $defaults);
+
     return $defaults;
   }
 
   /**
-   * process the form
+   * Add entry to log table
    *
    * @return void
-   * @access public
+   * @protected
    */
-  public function postProcess() {
-    $params = $this->exportValues();
+  protected function log() {
+    CRM_Core_BAO_Log::register($this->_contactId,
+      'civicrm_contact',
+      $this->_contactId
+    );
+  }
 
-    // Process / save websites
-    CRM_Core_BAO_Website::create($params['website'], $this->_contactId, true);
-
-    $this->log();
-    $this->response();
+  /**
+   * Final response from successful form submit
+   *
+   * @param response: array - data to send to the client
+   *
+   * @return void
+   * @protected
+   */
+  protected function response($response = array()) {
+    $response = array_merge(
+      array('status' => 'save'),
+      $response,
+      CRM_Contact_Form_Inline_Lock::getResponse($this->_contactId)
+    );
+    echo json_encode($response);
+    CRM_Utils_System::civiExit();
   }
 }

@@ -36,12 +36,7 @@
 /**
  * form helper class for an OpenID object
  */
-class CRM_Contact_Form_Inline_OpenID extends CRM_Core_Form {
-
-  /**
-   * contact id of the contact that is been viewed
-   */
-  private $_contactId;
+class CRM_Contact_Form_Inline_OpenID extends CRM_Contact_Form_Inline {
 
   /**
    * ims of the contact that is been viewed
@@ -57,10 +52,9 @@ class CRM_Contact_Form_Inline_OpenID extends CRM_Core_Form {
    * call preprocess
    */
   public function preProcess() {
-    //get all the existing ims
-    $this->_contactId = CRM_Utils_Request::retrieve('cid', 'Positive', $this, TRUE, NULL, $_REQUEST);
+    parent::preProcess();
 
-    $this->assign('contactId', $this->_contactId);
+    //get all the existing openids
     $openid = new CRM_Core_BAO_OpenID();
     $openid->contact_id = $this->_contactId;
 
@@ -68,19 +62,19 @@ class CRM_Contact_Form_Inline_OpenID extends CRM_Core_Form {
   }
 
   /**
-   * build the form elements for im object
+   * build the form elements for openID object
    *
    * @return void
    * @access public
    */
   public function buildQuickForm() {
-    CRM_Contact_Form_Inline_Lock::buildQuickForm($this, $this->_contactId);
+    parent::buildQuickForm();
 
     $totalBlocks = $this->_blockCount;
     $actualBlockCount = 1;
     if (count($this->_openids) > 1) {
       $actualBlockCount = $totalBlocks = count($this->_openids);
-      if ( $totalBlocks < $this->_blockCount ) {
+      if ($totalBlocks < $this->_blockCount) {
         $additionalBlocks = $this->_blockCount - $totalBlocks;
         $totalBlocks += $additionalBlocks;
       }
@@ -99,21 +93,7 @@ class CRM_Contact_Form_Inline_OpenID extends CRM_Core_Form {
       CRM_Contact_Form_Edit_OpenID::buildQuickForm($this, $blockId, TRUE);
     }
 
-    $buttons = array(
-      array(
-        'type' => 'upload',
-        'name' => ts('Save'),
-        'isDefault' => TRUE,
-      ),
-      array(
-        'type' => 'cancel',
-        'name' => ts('Cancel'),
-      ),
-    );
-
-    $this->addButtons($buttons);
-    
-    $this->addFormRule( array( 'CRM_Contact_Form_Inline_OpenID', 'formRule' ) );
+    $this->addFormRule(array('CRM_Contact_Form_Inline_OpenID', 'formRule'));
   }
 
   /**
@@ -126,48 +106,39 @@ class CRM_Contact_Form_Inline_OpenID extends CRM_Core_Form {
    * @static
    * @access public
    */
-  static function formRule( $fields, $errors ) {
-    $hasData = $hasPrimary = $errors = array( );
-    if ( CRM_Utils_Array::value( 'openid', $fields ) && is_array( $fields['openid'] ) ) {
-      foreach ( $fields['openid'] as $instance => $blockValues ) {
-        $dataExists = CRM_Contact_Form_Contact::blockDataExists( $blockValues );
+  static function formRule($fields, $errors) {
+    $hasData = $hasPrimary = $errors = array();
+    if (CRM_Utils_Array::value('openid', $fields) && is_array($fields['openid'])) {
+      foreach ($fields['openid'] as $instance => $blockValues) {
+        $dataExists = CRM_Contact_Form_Contact::blockDataExists($blockValues);
 
-        if ( $dataExists ) {
+        if ($dataExists) {
           $hasData[] = $instance;
-          if ( CRM_Utils_Array::value( 'is_primary', $blockValues ) ) {
+          if (CRM_Utils_Array::value('is_primary', $blockValues)) {
             $hasPrimary[] = $instance;
-            if ( !$primaryID &&
-              CRM_Utils_Array::value( 'openid', $blockValues ) ) {
+            if (!$primaryID &&
+              CRM_Utils_Array::value('openid', $blockValues)) {
                 $primaryID = $blockValues['openid'];
             }
           }
         }
       }
 
-      if ( empty( $hasPrimary ) && !empty( $hasData ) ) {
-        $errors["openid[1][is_primary]"] = ts('One OpenID should be marked as primary.' );
+      if (empty($hasPrimary) && !empty($hasData)) {
+        $errors["openid[1][is_primary]"] = ts('One OpenID should be marked as primary.');
       }
 
-      if ( count( $hasPrimary ) > 1 ) {
-        $errors["openid[".array_pop($hasPrimary)."][is_primary]"] = ts( 'Only one OpenID can be marked as primary.' );
+      if (count($hasPrimary) > 1) {
+        $errors["openid[".array_pop($hasPrimary)."][is_primary]"] = ts('Only one OpenID can be marked as primary.');
       }
     }
     return $errors;
   }
 
   /**
-   * Override default cancel action
-   */
-  function cancelAction() {
-    $response = array('status' => 'cancel');
-    echo json_encode($response);
-    CRM_Utils_System::civiExit();
-  }
-
-  /**
    * set defaults for the form
    *
-   * @return void
+   * @return array
    * @access public
    */
   public function setDefaultValues() {
@@ -194,23 +165,12 @@ class CRM_Contact_Form_Inline_OpenID extends CRM_Core_Form {
   public function postProcess() {
     $params = $this->exportValues();
 
-    // need to process / save phones
+    // Process / save openID
     $params['contact_id'] = $this->_contactId;
     $params['updateBlankLocInfo'] = TRUE;
-
-    // save OpenID changes
     CRM_Core_BAO_Block::create('openid', $params);
 
-    // make entry in log table
-    CRM_Core_BAO_Log::register( $this->_contactId,
-      'civicrm_contact',
-      $this->_contactId
-    );
-
-    $response = array('status' => 'save');
-    $response = array_merge($response, CRM_Contact_Form_Inline_Lock::getResponse($this->_contactId));
-    echo json_encode($response);
-    CRM_Utils_System::civiExit();
+    $this->log();
+    $this->response();
   }
 }
-

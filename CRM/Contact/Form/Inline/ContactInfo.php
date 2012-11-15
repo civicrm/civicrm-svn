@@ -34,34 +34,9 @@
  */
 
 /**
- * form helper class for contact info section 
+ * form helper class for contact info section
  */
-class CRM_Contact_Form_Inline_ContactInfo extends CRM_Core_Form {
-
-  /**
-   * contact id of the contact that is been viewed
-   */
-  public $_contactId;
-
-  /**
-   * contact type of the contact that is been viewed
-   */
-  private $_contactType;
-
-  /**
-   * call preprocess
-   */
-  public function preProcess() {
-    //get all the existing email addresses
-    $this->_contactId = CRM_Utils_Request::retrieve('cid', 'Positive', $this, TRUE, NULL, $_REQUEST);
-    $this->assign('contactId', $this->_contactId);
-    
-    $this->_contactType = CRM_Core_DAO::getFieldValue(
-      'CRM_Contact_DAO_Contact',
-      $this->_contactId, 'contact_type'
-    );
-    $this->assign('contactType', $this->_contactType);
-  }
+class CRM_Contact_Form_Inline_ContactInfo extends CRM_Contact_Form_Inline {
 
   /**
    * build the form elements
@@ -70,55 +45,27 @@ class CRM_Contact_Form_Inline_ContactInfo extends CRM_Core_Form {
    * @access public
    */
   public function buildQuickForm() {
-    CRM_Contact_Form_Inline_Lock::buildQuickForm($this, $this->_contactId);
+    parent::buildQuickForm();
 
-    //build contact type specific fields
-    eval('CRM_Contact_Form_Edit_' . $this->_contactType . '::buildQuickForm( $this, 2 );');
-
-    $buttons = array(
-      array(
-        'type' => 'upload',
-        'name' => ts('Save'),
-        'isDefault' => TRUE,
-      ),
-      array(
-        'type' => 'cancel',
-        'name' => ts('Cancel'),
-      ),
-    );
-
-    $this->addButtons($buttons);
-  }
-
-  /**
-   * Override default cancel action
-   */
-  function cancelAction() {
-    $response = array('status' => 'cancel');
-    echo json_encode($response);
-    CRM_Utils_System::civiExit();
+    // Build contact type specific fields
+    $class = 'CRM_Contact_Form_Edit_' . $this->_contactType;
+    $class::buildQuickForm($this, 2);
   }
 
   /**
    * set defaults for the form
    *
-   * @return void
+   * @return array
    * @access public
    */
   public function setDefaultValues() {
-    $defaults = array();
-    $params = array(
-      'id' => $this->_contactId
-    );
+    $defaults = parent::setDefaultValues();
 
-    $defaults = array();
-    CRM_Contact_BAO_Contact::getValues( $params, $defaults );
-
-    if ( $this->_contactType == 'Individual' ) {
+    if ($this->_contactType == 'Individual') {
       // set current employer details
       $currentEmployer = CRM_Contact_BAO_Relationship::getCurrentEmployer(array($this->_contactId));
       $defaults['current_employer_id'] = CRM_Utils_Array::value('org_id', $currentEmployer[$this->_contactId]);
-    
+
       $this->assign('currentEmployer', CRM_Utils_Array::value('current_employer_id', $defaults));
     }
 
@@ -134,16 +81,11 @@ class CRM_Contact_Form_Inline_ContactInfo extends CRM_Core_Form {
   public function postProcess() {
     $params = $this->exportValues();
 
-    // need to process / save contact info 
-
+    // Process / save contact info
     $params['contact_type'] = $this->_contactType;
     $params['contact_id']   = $this->_contactId;
-    CRM_Contact_BAO_Contact::create( $params );
+    CRM_Contact_BAO_Contact::create($params);
 
-    $response = array('status' => 'save');
-    $response = array_merge($response, CRM_Contact_Form_Inline_Lock::getResponse($this->_contactId));
-    echo json_encode($response);
-    CRM_Utils_System::civiExit();
+    $this->response();
   }
 }
-
