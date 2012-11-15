@@ -62,7 +62,7 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     }
     elseif ($apiRequest['function'] && !$apiRequest['is_generic']) {
       _civicrm_api3_validate_fields($apiRequest['entity'], $apiRequest['action'], $apiRequest['params']);
-      
+
       $result = isset($extra) ? $function($apiRequest['params'], $extra) : $function($apiRequest['params']);
     }
     else {
@@ -427,6 +427,9 @@ function _civicrm_api_call_nested_api(&$params, &$result, $action, $entity, $ver
 
 
         $subParams['version'] = $version;
+        if(!empty($params['check_permissions'])){
+          $subParams['check_permissions'] = $params['check_permissions'];
+        }
         $subParams['sequential'] = 1;
         $subParams['api.has_parent'] = 1;
         if (array_key_exists(0, $newparams)) {
