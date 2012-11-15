@@ -232,5 +232,31 @@ WHERE lt.entity_id = %1 ";
       return FALSE;
     }
   }
+
+  /**
+   * create financial transaction for premium
+   *
+   * @access public
+   * @static
+   */
+  static  function createPremiumTrxn($params) {
+    if (!CRM_Utils_Array::value('financial_type_id', $params) && !CRM_Utils_Array::value('trxn_id', $params)) {
+      return;
+    }
+    $financialAccountType = CRM_Contribute_PseudoConstant::financialAccountType($params['financial_type_id']);
+    $accountRelationship = CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND label IN ('Premiums Inventory Account is', 'Cost of Sales Account is')");
+    $accountRelationship = array_flip($accountRelationship);
+    $financialtrxn = array(
+      'from_financial_account_id' => $financialAccountType[$accountRelationship['Cost of Sales Account is']],
+      'to_financial_account_id' => $financialAccountType[$accountRelationship['Premiums Inventory Account is']],
+      'trxn_date' => date('YmdHis'),
+      'total_amount' => CRM_Utils_Array::value('cost', $params),
+      'currency' => CRM_Utils_Array::value('currency', $params),
+      'financial_trxn_status_id' => 1,
+    );
+    $trxnEntityTable['entity_table'] = 'civicrm_financial_trxn';
+    $trxnEntityTable['entity_id'] = $params['trxn_id'];
+    CRM_Core_BAO_FinancialTrxn::create($financialtrxn, $trxnEntityTable);
+  }
 }
 

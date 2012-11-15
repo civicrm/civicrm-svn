@@ -955,7 +955,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       $this->assign('option', CRM_Utils_Array::value('options_' . $premiumParams['selectProduct'], $premiumParams));
 
       $periodType = $productDAO->period_type;
-
+      
       if ($periodType) {
         $fixed_period_start_day = $productDAO->fixed_period_start_day;
         $duration_unit = $productDAO->duration_unit;
@@ -1018,13 +1018,6 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         'start_date' => CRM_Utils_Date::customFormat($startDate, '%Y%m%d'),
         'end_date' => CRM_Utils_Date::customFormat($endDate, '%Y%m%d'),
       );
-            if( CRM_Utils_Array::value( 'selectProduct', $premiumParams ) ){
-                $daoPremiumsProduct             = new CRM_Contribute_DAO_PremiumsProduct();
-                $daoPremiumsProduct->product_id = $premiumParams['selectProduct'];
-                $daoPremiumsProduct->premiums_id = $dao->id;
-                $daoPremiumsProduct->find(true);
-                $params['financial_type_id'] = $daoPremiumsProduct->financial_type_id;
-            }
       if( CRM_Utils_Array::value( 'selectProduct', $premiumParams ) ){
         $daoPremiumsProduct             = new CRM_Contribute_DAO_PremiumsProduct();
         $daoPremiumsProduct->product_id = $premiumParams['selectProduct'];
@@ -1038,8 +1031,17 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       if ($daoContrProd->find(TRUE)) {
         $params['id'] = $daoContrProd->id;
       }
-
+      
       CRM_Contribute_BAO_Contribution::addPremium($params);
+      if ($productDAO->cost && CRM_Utils_Array::value('financial_type_id', $params)) {       $trxnId = $contribution->id;
+        $trxnParams = array(
+          'cost' => $productDAO->cost,
+          'currency' => $productDAO->currency,
+          'financial_type_id' => $params['financial_type_id'],
+          'trxn_id' => $trxnId,
+        );
+        CRM_Core_BAO_FinancialTrxn::createPremiumTrxn($trxnParams);
+      }
     }
     elseif ($selectProduct == 'no_thanks') {
       //Fixed For CRM-3901
@@ -1563,7 +1565,6 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
     }
 
     $transaction->commit();
-
     return $contribution;
   }
 
