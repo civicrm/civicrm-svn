@@ -45,5 +45,19 @@ class CRM_Core_Permission_UnitTests extends CRM_Core_Permission_Base {
     // return the stubbed permission (defaulting to true if the array is missing)
     return is_array($this->permissions) ? in_array($str, $this->permissions) : TRUE;
   }
+
+  /**
+   * Get the permissioned where clause for the user
+   *
+   * @param int $type the type of permission needed
+   * @param  array $tables (reference ) add the tables that are needed for the select clause
+   * @param  array $whereTables (reference ) add the tables that are needed for the where clause
+   *
+   * @return string the group where clause for this user
+   * @access public
+   */
+  public function whereClause($type, &$tables, &$whereTables) {
+    return '( 1 )';
+  }
 }
 

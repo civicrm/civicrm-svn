@@ -136,12 +136,27 @@ class CRM_Contact_BAO_Query {
   public $_whereClause;
 
   /**
+   * additional permission Where Clause
+   *
+   * @var string
+   *
+   */
+  public $_permissionWhereClause;
+  /**
    * the from string
    *
    * @var string
    *
    */
   public $_fromClause;
+
+  /**
+   * additional permission from clause
+   *
+   * @var string
+   *
+   */
+  public $_permissionFromClause;
 
   /**
    * the from clause for the simple select and alphabetical
@@ -3705,16 +3720,34 @@ civicrm_relationship.start_date > CURDATE()
     $offset           = 0,
     $row_count        = 25,
     $smartGroupCache  = TRUE,
-    $count = FALSE
+    $count = FALSE,
+    $skipPermissions = FALSE
   ) {
+
     $query = new CRM_Contact_BAO_Query($params, $returnProperties,
       NULL, TRUE, FALSE, 1,
-      FALSE, TRUE, $smartGroupCache
+      $skipPermissions,
+      TRUE, $smartGroupCache
     );
-
+   //this should add a check for view deleted if permissions are enabled
+   if($skipPermissions){
+     $query->_skipDeleteClause = True;
+   }
+    $query->generatePermissionClause(False, $count);
     list($select, $from, $where, $having) = $query->query($count);
+
     $options = $query->_options;
+    if(!empty($query->_permissionWhereClause)){
+      if (empty($where)) {
+        $where = "WHERE $query->_permissionWhereClause";
+      }
+      else {
+        $where = "$where AND $query->_permissionWhereClause";
+      }
+    }
+
     $sql = "$select $from $where $having";
+
     // add group by
     if ($query->_useGroupBy) {
       $sql .= ' GROUP BY contact_a.id';
@@ -3788,39 +3821,7 @@ civicrm_relationship.start_date > CURDATE()
         break;
       }
     }
-
-    if (!$this->_skipPermission) {
-      $permission = CRM_ACL_API::whereClause(CRM_Core_Permission::VIEW,
-        $this->_tables,
-        $this->_whereTables,
-        NULL,
-        $onlyDeleted,
-        $this->_skipDeleteClause
-      );
-
-      // regenerate fromClause since permission might have added tables
-      if ($permission) {
-        //fix for row count in qill (in contribute/membership find)
-        if (!$count) {
-          $this->_useDistinct = TRUE;
-        }
-        $this->_fromClause = self::fromClause($this->_tables, NULL, NULL, $this->_primaryLocation, $this->_mode);
-        $this->_simpleFromClause = self::fromClause($this->_whereTables, NULL, NULL, $this->_primaryLocation, $this->_mode);
-      }
-    }
-    else {
-      // add delete clause if needed even if we are skipping permission
-      // CRM-7639
-      if (!$this->_skipDeleteClause) {
-        if (CRM_Core_Permission::check('access deleted contacts') and $onlyDeleted) {
-          $permission = '(contact_a.is_deleted)';
-        }
-        else {
-          // CRM-6181
-          $permission = '(contact_a.is_deleted = 0)';
-        }
-      }
-    }
+    $this->generatePermissionClause($onlyDeleted, $count);
 
     list($select, $from, $where, $having) = $this->query($count, $sortByChar, $groupContacts);
 
@@ -3830,10 +3831,10 @@ civicrm_relationship.start_date > CURDATE()
     }
 
     if (empty($where)) {
-      $where = "WHERE $permission";
+      $where = "WHERE $this->_permissionWhereClause";
     }
     else {
-      $where = "$where AND $permission";
+      $where = "$where AND $this->_permissionWhereClause";
     }
 
     if ($additionalWhereClause) {
@@ -4025,6 +4026,42 @@ civicrm_relationship.start_date > CURDATE()
     }
 
     return $dao;
+  }
+
+  function generatePermissionClause($onlyDeleted = false, $count = false){
+
+      if (!$this->_skipPermission) {
+        $this->_permissionWhereClause = CRM_ACL_API::whereClause(CRM_Core_Permission::VIEW,
+        $this->_tables,
+        $this->_whereTables,
+        NULL,
+        $onlyDeleted,
+        $this->_skipDeleteClause
+      );
+
+      // regenerate fromClause since permission might have added tables
+      if ($this->_permissionWhereClause) {
+        //fix for row count in qill (in contribute/membership find)
+        if (!$count) {
+          $this->_useDistinct = TRUE;
+        }
+        $this->_fromClause = self::fromClause($this->_tables, NULL, NULL, $this->_primaryLocation, $this->_mode);
+        $this->_simpleFromClause = self::fromClause($this->_whereTables, NULL, NULL, $this->_primaryLocation, $this->_mode);
+      }
+    }
+    else {
+      // add delete clause if needed even if we are skipping permission
+      // CRM-7639
+      if (!$this->_skipDeleteClause) {
+        if (CRM_Core_Permission::check('access deleted contacts') and $onlyDeleted) {
+          $this->_permissionWhereClause = '(contact_a.is_deleted)';
+        }
+        else {
+          // CRM-6181
+          $this->_permissionWhereClause = '(contact_a.is_deleted = 0)';
+        }
+      }
+    }
   }
 
   function setSkipPermission($val) {
