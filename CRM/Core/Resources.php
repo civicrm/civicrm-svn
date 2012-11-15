@@ -195,20 +195,17 @@ class CRM_Core_Resources {
    * // The string is now available to javascript code i.e.
    * ts('Hello');
    *
-   * Complex example with substitutions from multiple scopes:
-   * // One of the variables is calculated server-side
-   * CRM_Core_Resources::singleton()->addString('Your %1 has been %2', array(1 => $objName));
-   * // The other is calculated client-side
-   * ts('Your %1 has been %2', {2: actionTaken});
-   * Final result: 'Your foo has been barred'
+   * Example with client-side substitutions:
+   * // From php:
+   * CRM_Core_Resources::singleton()->addString('Your %1 has been %2');
+   * // ts() in javascript works the same as in php, for example:
+   * ts('Your %1 has been %2', {1: objectName, 2: actionTaken});
    *
    * @param $text string
-   * @param $params substitutions to pass to ts function()
-   *        (omit those which will be supplied client-side)
    * @return CRM_Core_Resources
    */
-  public function addString($text, $params = array()) {
-    $translated = ts($text, $params);
+  public function addString($text) {
+    $translated = ts($text);
     // We only need to push this string to client if the translation
     // is actually different from the original
     if ($translated != $text) {

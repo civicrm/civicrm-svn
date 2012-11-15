@@ -44,10 +44,10 @@ function ts(text, params) {
   text = CRM.strings[text] || text;
   if (params && typeof(params) === 'object') {
     for (var i in params) {
-      while (text.indexOf('%'+i) >= 0) {
-        text = text.replace('%'+i, params[i]);
-      }
+      // sprintf emulation: escape % characters in the replacements to avoid conflicts
+      text = text.replace(new RegExp('%'+i, 'g'), params[i].replace(/%/g, '%-crmescaped-'));
     }
+    return text.replace(/%-crmescaped-/g, '%');
   }
   return text;
 }
