@@ -449,6 +449,7 @@ function _civicrm_api_call_nested_api(&$params, &$result, $action, $entity, $ver
 
 
         $subParams['version'] = $version;
+        $subParams['check_permissions'] = $params['check_permissions'];
         $subParams['sequential'] = 1;
         $subParams['api.has_parent'] = 1;
         if (array_key_exists(0, $newparams)) {
