@@ -39,7 +39,7 @@ INSERT INTO civicrm_component (name, namespace) VALUES ('CiviReport'    , 'CRM_R
 INSERT INTO civicrm_component (name, namespace) VALUES ('CiviCampaign'  , 'CRM_Campaign' );
 
 -- Create organization contact
-INSERT INTO civicrm_contact( `contact_type`, `sort_name`, `display_name`, `legal_name`, `organization_name`) 
+INSERT INTO civicrm_contact( `contact_type`, `sort_name`, `display_name`, `legal_name`, `organization_name`)
 VALUES ('Organization', @defaultOrganization, @defaultOrganization, @defaultOrganization, @defaultOrganization);
 SET @contactID:=LAST_INSERT_ID();
 
@@ -203,7 +203,7 @@ VALUES
    ('pdf_format'                    , '{ts escape="sql"}PDF Page Format{/ts}'                    , 1, 1),
    ('label_format'                  , '{ts escape="sql"}Mailing Label Format{/ts}'               , 1, 1),
    ('activity_contacts'             , '{ts escape="sql"}Activity Contacts{/ts}'                  , 1, 1),
-   ('account_relationship'          , '{ts escape="sql"}Account Relationship{/ts}'               , 1, 1),	
+   ('account_relationship'          , '{ts escape="sql"}Account Relationship{/ts}'               , 1, 1),
    ('event_contacts'                , '{ts escape="sql"}Event Recipients{/ts}'                   , 1, 1),
    ('conference_slot'               , '{ts escape="sql"}Conference Slot{/ts}'                    , 1, 1),
    ('batch_type'                    , '{ts escape="sql"}Batch Type{/ts}'                         , 1, 1),
@@ -907,7 +907,7 @@ INSERT INTO
    `civicrm_financial_account` (`name`, `contact_id`, `financial_account_type_id`, `description`, `accounting_code`, `is_reserved`, `is_active`, `is_deductible`, `is_default`)
 VALUES
   ( '{ts escape="sql"}Donations{/ts}'             , @contactID, @opval, 'Default account for donations', '4200', 0, 1, 1, 0 ),
-  ( '{ts escape="sql"}Member Dues{/ts}'          , @contactID, @opval, 'Default account for membership sales', '4400', 0, 1, 1, 0 ), 
+  ( '{ts escape="sql"}Member Dues{/ts}'          , @contactID, @opval, 'Default account for membership sales', '4400', 0, 1, 1, 0 ),
   ( '{ts escape="sql"}Campaign Contribution{/ts}', @contactID, @opval, 'Sample account for recording payments to a campaign', '4100', 0, 1, 0, 0 ),
   ( '{ts escape="sql"}Event Fee{/ts}'            , @contactID, @opval, 'Default account for event ticket sales', '4300', 0, 1, 0, 0 ),
   ( '{ts escape="sql"}Banking Fees{/ts}'         , @contactID, @opexp, 'Payment processor fees and manually recorded banking fees', '5200', 0, 1, 0, 0 ),
@@ -936,12 +936,12 @@ VALUES
   (@option_group_id_grantTyp, '{ts escape="sql"}Impunity{/ts}'           , 4, 'Impunity'          , NULL, 0, NULL, 4, NULL, 0, 0, 1, NULL, @domainID, NULL),
 
 -- grant program status
-  (@option_group_id_grantProgramSt, '{ts escape="sql"}Accepting Applications{/ts}'          , 1, 'Accepting Applications'         , NULL, 0, 1,    1, NULL, 0, 0, 1, NULL, @domainID, NULL),    
+  (@option_group_id_grantProgramSt, '{ts escape="sql"}Accepting Applications{/ts}'          , 1, 'Accepting Applications'         , NULL, 0, 1,    1, NULL, 0, 0, 1, NULL, @domainID, NULL),
   (@option_group_id_grantProgramSt, '{ts escape="sql"}Trial Allocation{/ts}'     , 2, 'Trial Allocation'    , NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, @domainID, NULL),
   (@option_group_id_grantProgramSt, '{ts escape="sql"}Allocation Finalized{/ts}' , 3, 'Allocation Finalized', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, @domainID, NULL),
 
 -- grant program alocation algorithm
- (@option_group_id_allocationAlgo, '{ts escape="sql"}Over Threshold, Percentage of Request Funded{/ts}'          , 1, 'Over Threshold, Percentage of Request Funded'         , NULL, 0, 1,    1, NULL, 0, 0, 1, NULL, @domainID, NULL),    
+ (@option_group_id_allocationAlgo, '{ts escape="sql"}Over Threshold, Percentage of Request Funded{/ts}'          , 1, 'Over Threshold, Percentage of Request Funded'         , NULL, 0, 1,    1, NULL, 0, 0, 1, NULL, @domainID, NULL),
   (@option_group_id_allocationAlgo, '{ts escape="sql"}Best to Worst, Fully Funded{/ts}'     , 2, 'Best to Worst, Fully Funded'    , NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, @domainID, NULL),
 
 -- Mail Approval Status Preferences
@@ -1478,7 +1478,8 @@ format=[csv or print] optional-output CSV or print-friendly HTML, else PDF{/ts}'
     ( @domainID, 'Always' , NULL, '{ts escape="sql" skip="true"}Process Survey Respondents{/ts}',   '{ts escape="sql" skip="true"}Releases reserved survey respondents when they have been reserved for longer than the Release Frequency days specified for that survey.{/ts}', 'job', 'process_respondent',NULL, 0),
     ( @domainID, 'Hourly' , NULL, '{ts escape="sql" skip="true"}Clean-up Temporary Data and Files{/ts}','{ts escape="sql" skip="true"}Removes temporary data and files, and clears old data from cache tables. Recommend running this job every hour to help prevent database and file system bloat.{/ts}', 'job', 'cleanup', NULL, 0),
     ( @domainID, 'Always' , NULL, '{ts escape="sql" skip="true"}Send Scheduled SMS{/ts}',           '{ts escape="sql" skip="true"}Sends out scheduled SMS{/ts}', 'job', 'process_sms',             NULL, 0),
-    ( @domainID, 'Always' , NULL, '{ts escape="sql" skip="true"}Rebuild Smart Group Cache{/ts}', '{ts escape="sql" skip="true"}Rebuilds the smart group cache.{/ts}', 'job', 'group_rebuild', '{ts escape="sql" skip="true"}limit=Number optional-Limit the number of smart groups rebuild{/ts}', 0);
+    ( @domainID, 'Always' , NULL, '{ts escape="sql" skip="true"}Rebuild Smart Group Cache{/ts}', '{ts escape="sql" skip="true"}Rebuilds the smart group cache.{/ts}', 'job', 'group_rebuild', '{ts escape="sql" skip="true"}limit=Number optional-Limit the number of smart groups rebuild{/ts}', 0),
+    ( @domainID, 'Daily' , NULL, '{ts escape="sql" skip="true"}Validate Email Address from Mailings.{/ts}', '{ts escape="sql" skip="true"}Updates the reset_date on an email address to indicate that there was a valid delivery to this email address.{/ts}', 'mailing', 'update_email_resetdate', '{ts escape="sql" skip="true"}minDays, maxDays=Consider mailings that have completed between minDays and maxDays{/ts}', 0);
 
 SELECT @option_value_rel_id  := value FROM `civicrm_option_value` WHERE `option_group_id` = @option_group_id_arel AND `name` = 'Income Account is';
 SELECT @option_value_rel_id_exp  := value FROM `civicrm_option_value` WHERE `option_group_id` = @option_group_id_arel AND `name` = 'Expense Account is';
@@ -1500,7 +1501,7 @@ SELECT @financial_account_id_ar	       := max(id) FROM `civicrm_financial_accoun
 
 INSERT INTO `civicrm_entity_financial_account`
      ( entity_table, entity_id, account_relationship, financial_account_id )
-VALUES 
+VALUES
      ( 'civicrm_financial_type', @financial_type_id_dtn, @option_value_rel_id, @financial_account_id_dtn ),
      ( 'civicrm_financial_type', @financial_type_id_dtn, @option_value_rel_id_exp, @financial_account_id_bf ),
      ( 'civicrm_financial_type', @financial_type_id_dtn, @option_value_rel_id_ar, @financial_account_id_ap ),

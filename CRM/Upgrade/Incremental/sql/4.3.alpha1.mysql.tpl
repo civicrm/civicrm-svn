@@ -284,7 +284,7 @@ INSERT INTO
 VALUES
    ('account_relationship'          , '{ts escape="sql"}Account Relationship{/ts}'               , 1, 1),
    ('financial_item_status'         , '{ts escape="sql"}}Financial Item Status{/ts}'             , 1, 1);
-   
+
 SELECT @option_group_id_arel           := max(id) from civicrm_option_group where name = 'account_relationship';
 SELECT @option_group_id_financial_item_status := max(id) from civicrm_option_group where name = 'financial_item_status';
 
@@ -581,14 +581,15 @@ ALTER TABLE `civicrm_discount` CHANGE `option_group_id` `price_set_id` INT( 10 )
 ALTER TABLE `civicrm_discount`
   ADD CONSTRAINT `FK_civicrm_discount_price_set_id` FOREIGN KEY (`price_set_id`) REFERENCES `civicrm_price_set` (`id`) ON DELETE CASCADE;
 
--- CRM-11068
+-- CRM-11068, CRM-10678
 ALTER TABLE civicrm_group
   ADD refresh_date datetime default NULL COMMENT 'Date and time when we need to refresh the cache next.' AFTER `cache_date`;
 
 INSERT INTO `civicrm_job`
     ( domain_id, run_frequency, last_run, name, description, api_entity, api_action, parameters, is_active )
 VALUES
-    ( {$domainID}, 'Always' , NULL, '{ts escape="sql" skip="true"}Rebuild Smart Group Cache{/ts}', '{ts escape="sql" skip="true"}Rebuilds the smart group cache.{/ts}', 'job', 'group_rebuild', '{ts escape="sql" skip="true"}limit=Number optional-Limit the number of smart groups rebuild{/ts}', 0);
+    ( {$domainID}, 'Always' , NULL, '{ts escape="sql" skip="true"}Rebuild Smart Group Cache{/ts}', '{ts escape="sql" skip="true"}Rebuilds the smart group cache.{/ts}', 'job', 'group_rebuild', '{ts escape="sql" skip="true"}limit=Number optional-Limit the number of smart groups rebuild{/ts}', 0),
+    ( {$domainID}, 'Daily' , NULL, '{ts escape="sql" skip="true"}Validate Email Address from Mailings.{/ts}', '{ts escape="sql" skip="true"}Updates the reset_date on an email address to indicate that there was a valid delivery to this email address.{/ts}', 'mailing', 'update_email_resetdate', '{ts escape="sql" skip="true"}minDays, maxDays=Consider mailings that have completed between minDays and maxDays{/ts}', 0);
 
 -- CRM-11117
 INSERT IGNORE INTO `civicrm_setting` (`group_name`, `name`, `value`, `domain_id`, `is_domain`) VALUES ('CiviCRM Preferences', 'activity_assignee_notification_ics', 's:1:"0";', {$domainID}, '1');
