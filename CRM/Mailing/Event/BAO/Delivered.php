@@ -238,7 +238,7 @@ class CRM_Mailing_Event_BAO_Delivered extends CRM_Mailing_Event_DAO_Delivered {
     }
 
     while (!empty($values)) {
-      $input = array_splice($values, 0, CRM_Core_DAO::BULK_INSERT_COUNT);
+      $input = array_splice($values, 0, CRM_Core_DAO::BULK_INSET_COUNT);
       $str   = implode(',', $input);
       $sql   = "INSERT INTO civicrm_mailing_event_delivered ( event_queue_id, time_stamp ) VALUES $str;";
       CRM_Core_DAO::executeQuery($sql);
@@ -268,32 +268,21 @@ class CRM_Mailing_Event_BAO_Delivered extends CRM_Mailing_Event_DAO_Delivered {
     $query = "
 CREATE TEMPORARY TABLE civicrm_email_temp_values (
   id           int primary key,
-  on_hold      tinyint,
-  hold_date    datetime,
-  reset_date   datetime,
-  contact_id   int,
-  display_name varchar(255),
-  email        varchar(255)
+  reset_date   datetime
 ) ENGINE = HEAP;
 ";
     CRM_Core_DAO::executeQuery($query);
 
     $query = "
-            INSERT INTO civicrm_email_temp_values (id, on_hold, hold_date, reset_date, contact_id, display_name, email)
+            INSERT INTO civicrm_email_temp_values (id, reset_date)
             SELECT      civicrm_email.id as email_id,
-                        0 as on_hold,
-                        null as hold_date,
-                        civicrm_mailing_event_delivered.time_stamp as reset_date,
-                        civicrm_contact.id as contact_id,
-                        civicrm_contact.display_name as display_name,
-                        civicrm_email.email as email
-            FROM        civicrm_contact
-            INNER JOIN  civicrm_mailing_event_queue ON civicrm_mailing_event_queue.contact_id = civicrm_contact.id
+                        max(civicrm_mailing_event_delivered.time_stamp) as reset_date
+            FROM        civicrm_mailing_event_queue
             INNER JOIN  civicrm_email ON  civicrm_mailing_event_queue.email_id = civicrm_email.id
             INNER JOIN  civicrm_mailing_event_delivered ON civicrm_mailing_event_delivered.event_queue_id = civicrm_mailing_event_queue.id
             LEFT JOIN   civicrm_mailing_event_bounce ON civicrm_mailing_event_bounce.event_queue_id = civicrm_mailing_event_queue.id
             INNER JOIN  civicrm_mailing_job ON civicrm_mailing_event_queue.job_id = civicrm_mailing_job.id AND civicrm_mailing_job.is_test = 0
-            WHERE       civicrm_mailing_event_bounce.id IS null
+            WHERE       civicrm_mailing_event_bounce.id IS NULL
               AND       civicrm_mailing_job.status = 'Complete'
               AND       civicrm_mailing_job.end_date BETWEEN DATE_SUB(NOW(), INTERVAL $maxDays day) AND DATE_SUB(NOW(), INTERVAL $minDays day)
               AND       (civicrm_email.reset_date IS NULL OR civicrm_email.reset_date < civicrm_mailing_job.start_date)
@@ -303,8 +292,8 @@ CREATE TEMPORARY TABLE civicrm_email_temp_values (
     $query = "
 UPDATE     civicrm_email e
 INNER JOIN civicrm_email_temp_values et ON e.id = et.id
-SET        e.on_hold = et.on_hold,
-           e.hold_date = et.hold_date,
+SET        e.on_hold = 0,
+           e.hold_date = NULL,
            e.reset_date = et.reset_date
 ";
     CRM_Core_DAO::executeQuery($query);
