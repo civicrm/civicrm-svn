@@ -219,6 +219,7 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Financial_DAO_PaymentProcessor
     foreach ($fields as $name) {
       $result[$name] = $dao->$name;
     }
+    $result['payment_processor_type'] = CRM_Core_PseudoConstant::paymentProcessorType(FALSE, $dao->payment_processor_type_id);
 
     $result['instance'] =& CRM_Core_Payment::singleton($mode, $result);
 
