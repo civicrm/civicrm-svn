@@ -222,7 +222,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Core_Form {
     if ($this->_mode) {
       $validProcessors = array();
       $processors = CRM_Core_PseudoConstant::paymentProcessor(FALSE, FALSE, "billing_mode IN ( 1, 3 )");
-
+      
       foreach ($processors as $ppID => $label) {
         $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment($ppID, $this->_mode);
         // at this stage only Authorize.net has been tested to support future start dates so if it's enabled let the template know
@@ -1513,7 +1513,7 @@ WHERE  contribution_id = {$this->_id}
           FALSE
         );
         $paymentParams['contributionID'] = $contribution->id;
-                $paymentParams['contributionTypeID']  = $contribution->financial_type_id;
+        $paymentParams['contributionTypeID']  = $contribution->financial_type_id;
         $paymentParams['contributionPageID'] = $contribution->contribution_page_id;
         $paymentParams['contributionRecurID'] = $contribution->contribution_recur_id;
       }
@@ -1613,7 +1613,7 @@ WHERE  contribution_id = {$this->_id}
       }
       // process line items, until no previous line items.
       if (empty($this->_lineItems) && $entityID && !empty($lineItem)) {
-        CRM_Price_BAO_LineItem::processPriceSet($entityID, $lineItem, "civicrm_".$entityTable);
+        CRM_Price_BAO_LineItem::processPriceSet($entityID, $lineItem, $contribution, null, "civicrm_".$entityTable);
       }
 
       //send receipt mail.
@@ -1632,7 +1632,8 @@ WHERE  contribution_id = {$this->_id}
       }
       //process premium
       if ($contribution->id && isset($params['product_name'][0])) {
-        CRM_Contribute_Form_AdditionalInfo::processPremium($params, $contribution->id, NULL, $this->_options);
+        $mainTrxnId = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnIds($contribution->id);
+        CRM_Contribute_Form_AdditionalInfo::processPremium($params, $contribution->id, NULL, $this->_options, $mainTrxnId['financialTrxnId']);
       }
 
       //update pledge payment status.
