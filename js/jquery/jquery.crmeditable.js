@@ -342,13 +342,6 @@
         o.animate({height: '' + newHeight + 'px'}, diff * 2, function(){o.removeAttr('style');});
         removeCiviOverlay(o);
         $('form', o).ajaxForm( {beforeSubmit: requestHandler} );
-        $(':submit[name$=cancel]', o).click(function() {
-          var container = $(this).closest('.crm-inline-edit.form');
-          $('.inline-edit-hidden-content', container).nextAll().remove();
-          $('.inline-edit-hidden-content > *:first-child', container).unwrap();
-          container.removeClass('form');
-          return false;
-        });
         o.trigger('crmFormLoad');
       });
     }
@@ -356,6 +349,7 @@
 
   function requestHandler(formData, jqForm, options) {
     var o = jqForm.closest('div.crm-inline-edit.form');
+    addCiviOverlay($('.crm-container-snippet', o));
     var data = o.data('edit-params');
     data.snippet = 5;
     data.reset = 1;
@@ -503,6 +497,13 @@
       if (clicking === this && button.which == 1) {
         $(this).crmFormInline();
       }
+    });
+    $('.crm-inline-edit-container').on('click', '.crm-inline-edit :submit[name$=cancel]', function() {
+      var container = $(this).closest('.crm-inline-edit.form');
+      $('.inline-edit-hidden-content', container).nextAll().remove();
+      $('.inline-edit-hidden-content > *:first-child', container).unwrap();
+      container.removeClass('form');
+      return false;
     });
     // Trigger cancel button on esc keypress
     $(document).keydown(function(key) {
