@@ -215,6 +215,14 @@ class CRM_Contribute_Form_AdditionalInfo {
     $dao->contribution_id = $contributionID;
     $dao->product_id = $params['product_name'][0];
     $dao->fulfilled_date = CRM_Utils_Date::processDate($params['fulfilled_date'], NULL, TRUE);
+      
+    //CRM-11106
+    $premiumParams = array(
+      'id' => $params['product_name'][0],
+    );
+    $productDetails = array();
+    CRM_Contribute_BAO_ManagePremiums::retrieve($premiumParams, $productDetails);
+    $dao->financial_type_id = CRM_Utils_Array::value('financial_type_id', $productDetails); 
     if (CRM_Utils_Array::value($params['product_name'][0], $options)) {
       $dao->product_option = $options[$params['product_name'][0]][$params['product_name'][1]];
     }
@@ -234,28 +242,15 @@ class CRM_Contribute_Form_AdditionalInfo {
     else {
       $premium = $dao->save();
     }
-    
     //CRM-11106
-    $params = array(
-      'id' => $params['product_name'][0],
-    );
-    $productDetails = array();
-    CRM_Contribute_BAO_ManagePremiums::retrieve($params, $productDetails);
     if (CRM_Utils_Array::value('cost', $productDetails) && CRM_Utils_Array::value('financial_type_id', $productDetails)) { 
-      $financialAccountType = CRM_Contribute_PseudoConstant::financialAccountType($productDetails['financial_type_id']);
-      $accountRelationship = CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND label IN ('Premiums Inventory Account is', 'Cost of Sales Account is')");
-      $accountRelationship = array_flip($accountRelationship);
-      $financialtrxn = array(
-        'from_financial_account_id' => $financialAccountType[$accountRelationship['Cost of Sales Account is']],
-        'to_financial_account_id' => $financialAccountType[$accountRelationship['Premiums Inventory Account is']],
-        'trxn_date' => date('YmdHis'),
-        'total_amount' => CRM_Utils_Array::value('cost', $productDetails),
+      $params = array(
+        'cost' => CRM_Utils_Array::value('cost', $productDetails),
         'currency' => CRM_Utils_Array::value('currency', $productDetails),
-        'financial_trxn_status_id' => 1,
+        'financial_type_id' => $productDetails['financial_type_id'],
+        'trxn_id' => $trxnId,
       );
-      $trxnEntityTable['entity_table'] = 'civicrm_financial_trxn';
-      $trxnEntityTable['entity_id'] = $trxnId;
-      CRM_Core_BAO_FinancialTrxn::create($financialtrxn, $trxnEntityTable);
+      CRM_Core_BAO_FinancialTrxn::createPremiumTrxn($params);
     }
   }
 

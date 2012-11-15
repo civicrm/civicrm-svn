@@ -1832,35 +1832,35 @@ WHERE  contribution_id = {$this->_id}
           $trxnParams['net_amount'] = $trxnParams['net_amount'];  
           $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams, $trxnEntityTable );
         }
-             if($this->_action & CRM_Core_Action::UPDATE) {  
-               $ExpenceRelation = key(CRM_CORE_PseudoConstant::accountOptionValues( 'account_relationship', null, " AND v.name LIKE 'Expense Account is' ", false ));        
-               $trxnParams['from_financial_account_id'] = $financialAccounts[6];// FA with Asset account relationship
-               $trxnParams['to_financial_account_id']   = CRM_Utils_Array::value( $ExpenceRelation, $financialAccounts );       
-               $entityParams = array(
-                                     'entity_table' => 'civicrm_contribution',
-                                     'entity_id'    => $this->_values['contribution_id']
-                                     );
-               $entityTrxn = CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($entityParams);
-               foreach($entityTrxn as $key=>$value) {
-                 $fid = $value['financial_trxn_id'];
-      }
-               $trxnEntityTable['entity_table'] = 'civicrm_financial_trxn';
-               $trxnEntityTable['entity_id'] = $fid;  
-               $total_amount = 0;
-               if(!empty($this->_submitValues['txt-price'])) {
-                 foreach ($this->_submitValues['txt-price'] as $key=>$value) {
-                   $total_amount += $value;
-      }
-               } else {
-                   $total_amount = $this->_submitValues['initial_amount'];
-               }
+        if($this->_action & CRM_Core_Action::UPDATE) {  
+          $ExpenceRelation = key(CRM_CORE_PseudoConstant::accountOptionValues( 'account_relationship', null, " AND v.name LIKE 'Expense Account is' ", false ));        
+          $trxnParams['from_financial_account_id'] = $financialAccounts[6];// FA with Asset account relationship
+          $trxnParams['to_financial_account_id']   = CRM_Utils_Array::value( $ExpenceRelation, $financialAccounts );       
+          $entityParams = array(
+            'entity_table' => 'civicrm_contribution',
+            'entity_id'    => $this->_values['contribution_id']
+          );
+          $entityTrxn = CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($entityParams);
+          foreach($entityTrxn as $key => $value) {
+            $fid = $value['financial_trxn_id'];
+          }
+          $trxnEntityTable['entity_table'] = 'civicrm_financial_trxn';
+          $mainTrxnId = $trxnEntityTable['entity_id'] = $fid;  
+          $total_amount = 0;
+          if(!empty($this->_submitValues['txt-price'])) {
+            foreach ($this->_submitValues['txt-price'] as $key => $value) {
+              $total_amount += $value;
+            }
+          } else {
+            $total_amount = $this->_submitValues['initial_amount'];
+          }
 
-               $trxnParams['total_amount'] = $total_amount;
-               $trxnParams['fee_amount'] = $params['fee_amount']; 
-               $trxnParams['net_amount'] = $params['net_amount'];  
-               $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams, $trxnEntityTable );
-               $trxnId['id']  = $trxn->id;
-             }
+          $trxnParams['total_amount'] = $total_amount;
+          $trxnParams['fee_amount'] = $params['fee_amount']; 
+          $trxnParams['net_amount'] = $params['net_amount'];  
+          $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams, $trxnEntityTable );
+          $trxnId['id']  = $trxn->id;
+        }
              
       }
 
