@@ -28,7 +28,7 @@
  */
 
 require_once 'CiviTest/CiviUnitTestCase.php';
-/*
+/**
  * This class is intended to test ACL permission using the multisite module
  */
 class api_v3_ACLPermissionTest extends CiviUnitTestCase {
@@ -49,7 +49,10 @@ class api_v3_ACLPermissionTest extends CiviUnitTestCase {
     $config = CRM_Core_Config::singleton();
     $config->userPermissionClass->permissions = array();
   }
-
+/**
+ * (non-PHPdoc)
+ * @see CiviUnitTestCase::tearDown()
+ */
   function tearDown() {
     $this->hookClass->reset();
     $tablesToTruncate = array(
@@ -59,7 +62,7 @@ class api_v3_ACLPermissionTest extends CiviUnitTestCase {
     $config = CRM_Core_Config::singleton();
     unset($config->userPermissionClass->permissions);
   }
-/*
+/**
  * Function just tests that an empty where hook returns the 2 expected results
  */
   function testContactGetNoResultsHook(){
@@ -74,7 +77,7 @@ class api_v3_ACLPermissionTest extends CiviUnitTestCase {
     $this->assertEquals(0, $result['count']);
   }
 
-  /*
+  /**
    * Function tests all results are returned
   */
   function testContactGetAllResultsHook(){
@@ -88,7 +91,7 @@ class api_v3_ACLPermissionTest extends CiviUnitTestCase {
     $this->assertAPISuccess($result,"this should succeed but return no results. line " . __LINE__);
     $this->assertEquals(2, $result['count']);
   }
-  /*
+  /**
    * Function just tests that an empty where hook returns the 2 expected results
   */
   function testContactGetPermissionHookNoDeleted(){
@@ -104,6 +107,9 @@ class api_v3_ACLPermissionTest extends CiviUnitTestCase {
     $this->assertEquals(1, $result['count']);
   }
 
+  /**
+   * test permissions limited by hook
+   */
   function testContactGetHookLimitingHook(){
     $this->hookClass->setHook('civicrm_aclWhereClause', array($this, 'aclWhereOnlySecond'));
 
@@ -116,7 +122,7 @@ class api_v3_ACLPermissionTest extends CiviUnitTestCase {
     $this->assertEquals(1, $result['count']);
   }
 
-/*
+/**
  * confirm that without check permissions we still get 2 contacts returned
  */
   function testContactGetHookLimitingHookDontCheck(){
@@ -129,7 +135,7 @@ class api_v3_ACLPermissionTest extends CiviUnitTestCase {
     $this->assertAPISuccess($result, 'api call succeeded');
     $this->assertEquals(2, $result['count']);
   }
-/*
+/**
  * Check that address IS returned
  */
     function testContactGetAddressReturned(){
@@ -158,7 +164,7 @@ class api_v3_ACLPermissionTest extends CiviUnitTestCase {
         $this->assertArrayHasKey($element, $result['values'][0]);
       }
     }
-    /*
+    /**
      * Check that pledge IS not returned
     */
     function testContactGetPledgeIDNotReturned(){
@@ -177,7 +183,7 @@ class api_v3_ACLPermissionTest extends CiviUnitTestCase {
       $this->assertArrayNotHasKey('pledge_id', $result['values'][0]);
     }
 
-    /*
+    /**
      * Check that pledge IS not an allowable filter
     */
     function testContactGetPledgeIDNotFiltered(){
@@ -196,7 +202,7 @@ class api_v3_ACLPermissionTest extends CiviUnitTestCase {
       $this->assertEquals(2, $result['count']);
     }
 
-    /*
+    /**
      * Check that chaining doesn't bypass permissions
     */
     function testContactGetPledgeNotChainable(){
@@ -214,18 +220,18 @@ class api_v3_ACLPermissionTest extends CiviUnitTestCase {
       $this->assertEquals('Error in call to pledge_get : API permission check failed for pledge/get call; missing permission: access CiviCRM.', $result['error_message']);
     }
 
-  /*
+  /**
    * no results returned
    */
   function aclWhereHookNoResults($type, &$tables, &$whereTables, &$contactID, &$where) {
   }
-  /*
+  /**
    * all results returned
   */
   function aclWhereHookAllResults($type, &$tables, &$whereTables, &$contactID, &$where) {
     $where = " (1) ";
   }
-  /*
+  /**
    * full results returned
   */
   function aclWhereOnlySecond($type, &$tables, &$whereTables, &$contactID, &$where) {
