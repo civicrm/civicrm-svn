@@ -173,9 +173,48 @@ class CRM_Core_Resources {
     }
     return $this;
   }
-  
+
+  /**
+   * Helper fn for addSetting
+   * Render JavaScript variables for the global CRM object.
+   *
+   * @return string
+   */
   public function renderSetting() {
     return 'CRM = cj.extend(true, ' . json_encode($this->settings) . ', CRM);';
+  }
+
+  /**
+   * Add translated string to the js CRM object.
+   * It can then be retrived from the client-side ts() function
+   * Variable substitutions can happen from server-side or client-side or both
+   *
+   * Simple example:
+   * // From php:
+   * CRM_Core_Resources::singleton()->addString('Hello');
+   * // The string is now available to javascript code i.e.
+   * ts('Hello');
+   *
+   * Complex example with substitutions from multiple scopes:
+   * // One of the variables is calculated server-side
+   * CRM_Core_Resources::singleton()->addString('Your %1 has been %2', array(1 => $objName));
+   * // The other is calculated client-side
+   * ts('Your %1 has been %2', {2: actionTaken});
+   * Final result: 'Your foo has been barred'
+   *
+   * @param $text string
+   * @param $params substitutions to pass to ts function()
+   *        (omit those which will be supplied client-side)
+   * @return CRM_Core_Resources
+   */
+  public function addString($text, $params = array()) {
+    $translated = ts($text, $params);
+    // We only need to push this string to client if the translation
+    // is actually different from the original
+    if ($translated != $text) {
+      $this->addSetting(array('strings' => array($text => $translated)));
+    }
+    return $this;
   }
 
   /**
