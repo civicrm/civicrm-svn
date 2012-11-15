@@ -53,24 +53,6 @@ function ts(text, params) {
 }
 
 /**
- *  This function can be used to clear default 'suggestive text' from an input field
- *  When the cursor is moved into the field.
- *
- *  It is generally invoked by the input field's onFocus event. Use the reserved
- *  word 'this' to pass this object. EX: onFocus="clearFldVal(this);"
- *
- * @access public
- * @param  fld The form field object whose value is to be cleared
- * @param  hideBlocks Array of element Id's to be hidden
- * @return none
- */
-function clearFldVal(fld) {
-    if (fld.value == fld.defaultValue) {
-        fld.value = "";
-    }
-}
-
-/**
  *  This function is called by default at the bottom of template files which have forms that have
  *  conditionally displayed/hidden sections and elements. The PHP is responsible for generating
  *  a list of 'blocks to show' and 'blocks to hide' and the template passes these parameters to
@@ -425,61 +407,6 @@ function submitOnce(obj,formId,procText) {
             alert("Your request is currently being processed ... Please wait.");
             return false;
         }
-    }
-}
-
-/**
- * Function submits referenced form on click of wizard nav link.
- * Populates targetPage hidden field prior to POST.
- *
- * @param formID string - the id of the form being submitted
- * @param targetPage - identifier of wizard section target
- * @return null
- */
-function submitCurrentForm(formId,targetPage) {
-    alert(formId + ' ' + targetPage);
-    document.getElementById(formId).targetPage.value = targetPage;
-    document.getElementById(formId).submit();
-}
-
-/**
- * Function counts and controls maximum word count for textareas.
- *
- * @param essay_id string - the id of the essay (textarea) field
- * @param wc - int - number of words allowed
- * @return null
- */
-function countit(essay_id,wc){
-    var text_area       = document.getElementById("essay_" + essay_id);
-    var count_element   = document.getElementById("word_count_" + essay_id);
-    var count           = 0;
-    var text_area_value = text_area.value;
-    var regex           = /\n/g;
-    var essay           = text_area_value.replace(regex," ");
-    var words           = essay.split(' ');
-
-    for (z=0; z<words.length; z++){
-        if (words[z].length>0){
-            count++;
-        }
-    }
-
-    count_element.value     = count;
-    if (count>=wc) {
-        /*text_area.value     = essay;*/
-
-        var dataString = '';
-        for (z=0; z<wc; z++){
-    if (words[z].length>0) {
-      dataString = dataString + words[z] + ' ';
-    }
-  }
-
-  text_area.value = dataString;
-        text_area.blur();
-  count = wc;
-        count_element.value = count;
-        alert("You have reached the "+ wc +" word limit.");
     }
 }
 
