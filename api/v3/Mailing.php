@@ -201,3 +201,16 @@ function civicrm_api3_mailing_event_open($params) {
   return civicrm_api3_create_success($params);
 }
 
+
+/**
+ * Fix the reset dates on the email record based on when a mail was last delivered
+ * We only consider mailings that were completed and finished in the last 3 to 7 days
+ * Both the min and max days can be set via the params
+ */
+function civicrm_api3_mailing_update_email_resetdate($params) {
+  CRM_Mailing_Event_BAO_Delivered::updateEmailResetDate(
+    CRM_Utils_Array::value('minDays', $params, 3),
+    CRM_Utils_Array::value('maxDays', $params, 3)
+  );
+  return civicrm_api3_create_success();
+}

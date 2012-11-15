@@ -266,9 +266,7 @@ class CRM_Mailing_Form_Schedule extends CRM_Core_Form {
 
     foreach (array(
       'now', 'start_date', 'start_date_time') as $parameter) {
-      $params[$parameter] = $this->controller->exportValue($this->_name,
-        $parameter
-      );
+      $params[$parameter] = $this->controller->exportValue($this->_name, $parameter);
     }
 
     $mailing = new CRM_Mailing_BAO_Mailing();
