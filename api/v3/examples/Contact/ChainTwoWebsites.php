@@ -97,7 +97,7 @@ function contact_create_expectedresult(){
           'sic_code' => '',
           'user_unique_id' => '',
           'created_date' => '',
-          'modified_date' => '2012-11-14',
+          'modified_date' => '2012-11-14 16:02:35',
           'api.contribution.create' => array( 
               'is_error' => 0,
               'version' => 3,
