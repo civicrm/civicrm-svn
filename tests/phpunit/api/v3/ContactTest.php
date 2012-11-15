@@ -51,7 +51,8 @@ class api_v3_ContactTest extends CiviUnitTestCase {
    *  Constructor
    *
    *  Initialize configuration
-   */ function __construct() {
+   */
+  function __construct() {
     parent::__construct();
   }
 
@@ -72,7 +73,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
       'last_name' => 'xyz1',
       'version' => $this->_apiversion,
     );
-    $this->_contributionTypeId = $this->contributionTypeCreate();
+    $this->_contributionTypeId = 1;// don't rely on flaky xml based fn - use built in
   }
 
   function tearDown() {
@@ -583,7 +584,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
       'api.contribution.create' => array(
         'receive_date' => '2010-01-01',
         'total_amount' => 100.00,
-                             'financial_type_id'   => 1,
+        'financial_type_id'   => 1,
         'payment_instrument_id' => 1,
         'non_deductible_amount' => 10.00,
         'fee_amount' => 50.00,
@@ -603,8 +604,8 @@ class api_v3_ContactTest extends CiviUnitTestCase {
 
     $result = civicrm_api('Contact', 'create', $params);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__, $description, $subfile);
-    $this->assertEquals(0, $result['is_error'], "In line " . __LINE__ . " error message: " . CRM_Utils_Array::value('error_message', $result)
-    );
+    $this->assertAPISuccess( $result, "In line " . __LINE__ );
+
     $this->assertEquals(1, $result['id'], "In line " . __LINE__);
     $this->assertEquals(0, $result['values'][$result['id']]['api.website.create']['is_error'], "In line " . __LINE__);
     $this->assertEquals("http://chained.org", $result['values'][$result['id']]['api.website.create.2']['values'][0]['url'], "In line " . __LINE__);
@@ -628,7 +629,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
       'api.contribution.create' => array(
         'receive_date' => '2010-01-01',
         'total_amount' => 100.00,
-                             'financial_type_id'   => 1,
+        'financial_type_id'   => 1,
         'payment_instrument_id' => 1,
         'non_deductible_amount' => 10.00,
         'fee_amount' => 50.00,
@@ -1264,7 +1265,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
       'api.contribution.create' => array(
         'receive_date' => '2010-01-01',
         'total_amount' => 100.00,
-        'financial_type_id' => $this->_contributionTypeId,
+        'financial_type_id' => 1,
         'payment_instrument_id' => 1,
         'non_deductible_amount' => 10.00,
         'fee_amount' => 50.00,
@@ -1293,7 +1294,6 @@ class api_v3_ContactTest extends CiviUnitTestCase {
         ),
       ),
     );
-
 
     $result = civicrm_api('Contact', 'create', $params);
     $this->assertAPISuccess($result);
@@ -1417,7 +1417,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
       'api.contribution.create' => array(
         'receive_date' => '2010-01-01',
         'total_amount' => 100.00,
-                             'financial_type_id'   => 1,
+        'financial_type_id'   => 1,
         'payment_instrument_id' => 1,
         'non_deductible_amount' => 10.00,
         'fee_amount' => 50.00,
@@ -1430,7 +1430,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
       'api.contribution.create.1' => array(
         'receive_date' => '2011-01-01',
         'total_amount' => 120.00,
-                             'financial_type_id'   => 1,
+        'financial_type_id'   => 1,
         'payment_instrument_id' => 1,
         'non_deductible_amount' => 10.00,
         'fee_amount' => 50.00,
