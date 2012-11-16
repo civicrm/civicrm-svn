@@ -44,15 +44,14 @@ class CRM_Extension_Manager_SMS extends CRM_Extension_Manager_Base {
    */
   public function onPreInstall(CRM_Extension_Info $info) {
     $groupID = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionGroup', 'sms_provider_name','id','name');
-    $params = array( 
-                    'option_group_id' => $groupID,
-                    'label' => $info->label,
-                    'value' => $info->key,
-                    'name'  => $info->name,
-                    'is_default' => 1,
-                    'is_active' => 1,
-                    'version' => 3,
-                     );
+    $params  = 
+      array('option_group_id' => $groupID,
+            'label' => $info->label,
+            'value' => $info->key,
+            'name'  => $info->name,
+            'is_default' => 1,
+            'is_active'  => 1,
+            'version'    => 3,);
     require_once 'api/api.php';
     $result = civicrm_api( 'option_value','create',$params );
   }
@@ -68,8 +67,10 @@ class CRM_Extension_Manager_SMS extends CRM_Extension_Manager_Base {
    */
   public function onPreUninstall(CRM_Extension_Info $info) {
     $optionID = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionValue', $info->name,'id','name');
-    CRM_Core_BAO_OptionValue::del($optionID); 
-    $filter  =  array('name'  => $info->name  );
+    if ($optionID)
+      CRM_Core_BAO_OptionValue::del($optionID); 
+
+    $filter    =  array('name'  => $info->key  );
     $Providers =  CRM_SMS_BAO_Provider::getProviders(False, $filter, False);
     if ($Providers){
       foreach($Providers as $key => $value){
@@ -83,8 +84,10 @@ class CRM_Extension_Manager_SMS extends CRM_Extension_Manager_Base {
    */
   public function onPreDisable(CRM_Extension_Info $info) {
     $optionID = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionValue', $info->name,'id','name');
-    CRM_Core_BAO_OptionValue::setIsActive($optionID, FALSE);
-    $filter  =  array('name' =>  $info->name);
+    if ($optionID)
+      CRM_Core_BAO_OptionValue::setIsActive($optionID, FALSE);
+
+    $filter    =  array('name' =>  $info->key);
     $Providers =  CRM_SMS_BAO_Provider::getProviders(False, $filter, False);
     if ($Providers){
       foreach($Providers as $key => $value){
@@ -98,8 +101,10 @@ class CRM_Extension_Manager_SMS extends CRM_Extension_Manager_Base {
    */
   public function onPreEnable(CRM_Extension_Info $info) {
     $optionID = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionValue', $info->name ,'id','name');
-    CRM_Core_BAO_OptionValue::setIsActive($optionID, TRUE); 
-    $filter  =  array('name' => $info->name );
+    if ($optionID)
+      CRM_Core_BAO_OptionValue::setIsActive($optionID, TRUE); 
+
+    $filter    =  array('name' => $info->key );
     $Providers =  CRM_SMS_BAO_Provider::getProviders(False, $filter, False);
     if ($Providers){
       foreach($Providers as $key => $value){
