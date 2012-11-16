@@ -41,7 +41,7 @@ class CRM_Activity_Form_ActivityLinks extends CRM_Core_Form {
   public function buildQuickForm() {
     $contactId = CRM_Utils_Request::retrieve('cid', 'Positive', $this);
     if (!$contactId) {
-      $contactId = CRM_Utils_Request::retrieve('cid', 'Positive', CRM_Core_DAO::$_nullObject, TRUE, NULL, $_REQUEST);
+      $contactId = CRM_Utils_Request::retrieve('cid', 'Positive', CRM_Core_DAO::$_nullObject, FALSE, NULL, $_REQUEST);
     }
     $urlParams = "action=add&reset=1&cid={$contactId}&selectedChild=activity&atype=";
 
