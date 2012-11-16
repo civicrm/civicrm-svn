@@ -201,6 +201,12 @@ class CRM_Core_Resources {
    * // ts() in javascript works the same as in php, for example:
    * ts('Your %1 has been %2', {1: objectName, 2: actionTaken});
    *
+   * NOTE: This function does not work with server-side substitutions
+   * (as this might result in collisions and unwanted variable injections)
+   * Instead, use code like:
+   * CRM_Core_Resources::singleton()->addSetting(array('myNamespace' => array('myString' => ts('Your %1 has been %2', array(subs)))));
+   * And from javascript access it at CRM.myNamespace.myString
+   *
    * @param $text string
    * @return CRM_Core_Resources
    */
