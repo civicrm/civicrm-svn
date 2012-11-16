@@ -146,24 +146,26 @@ class CRM_Activity_Form_Task_PickOption extends CRM_Activity_Form_Task {
    */
 
   public function postProcess() {
+    // Clear any formRule errors from Email form in case they came back here via Cancel button
+    $this->controller->resetPage('Email');
     $params = $this->exportValues();
     $this->_contacts = array();
     //get assignee contacts
-    if ($params['assigned_to']) {
+    if (!empty($params['assigned_to'])) {
       foreach ($this->_activityHolderIds as $key => $id) {
         $ids = array_keys(CRM_Activity_BAO_ActivityAssignment::getAssigneeNames($id));
         $this->_contacts = array_merge($this->_contacts, $ids);
       }
     }
     //get target contacts
-    if ($params['with_contact']) {
+    if (!empty($params['with_contact'])) {
       foreach ($this->_activityHolderIds as $key => $id) {
         $ids = array_keys(CRM_Activity_BAO_ActivityTarget::getTargetNames($id));
         $this->_contacts = array_merge($this->_contacts, $ids);
       }
     }
     //get 'Added by' contacts
-    if ($params['created_by']) {
+    if (!empty($params['created_by'])) {
       parent::setContactIDs();
       if (!empty($this->_contactIds)) {
         $this->_contacts = array_merge($this->_contacts, $this->_contactIds);
