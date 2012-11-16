@@ -727,3 +727,7 @@ VALUES
 (@option_group_id_tuf, {localize}'Attachments'{/localize}, 'civicrm_file', 'Attachments', NULL, 0, 0, @weight = @weight + 1);
 
 ALTER TABLE civicrm_extension MODIFY COLUMN type ENUM( 'payment', 'search', 'report', 'module','sms') CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ;
+
+-- CRM-9914
+SELECT @option_group_id_sms_provider_name := max(id) from civicrm_option_group where name = 'sms_provider_name';
+DELETE FROM civicrm_option_value WHERE option_group_id = @option_group_id_sms_provider_name AND name = 'Clickatell';
