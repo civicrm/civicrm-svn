@@ -21,7 +21,7 @@
     <name>type</name>
     <title>Type</title>
     <type>enum</type>
-    <values>payment, search, report, module</values>
+    <values>payment, search, report, module, sms</values>
     <required>true</required>
     <comment></comment>
     <add>4.2</add>

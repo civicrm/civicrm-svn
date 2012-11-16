@@ -43,13 +43,12 @@ class CRM_Extension_Manager_SMS extends CRM_Extension_Manager_Base {
    * {@inheritdoc}
    */
   public function onPreInstall(CRM_Extension_Info $info) {
-    //FIXME: generalise me
     $groupID = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionGroup', 'sms_provider_name','id','name');
     $params = array( 
                     'option_group_id' => $groupID,
-                    'label' => 'Clickatell',
-                    'value' =>'Clickatell',
-                    'name'  => 'Clickatell',
+                    'label' => $info->label,
+                    'value' => $info->key,
+                    'name'  => $info->name,
                     'is_default' => 1,
                     'is_active' => 1,
                     'version' => 3,
@@ -68,10 +67,9 @@ class CRM_Extension_Manager_SMS extends CRM_Extension_Manager_Base {
    * {@inheritdoc}
    */
   public function onPreUninstall(CRM_Extension_Info $info) {
-    //FIXME: generalise me
-    $optionID = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionValue', 'Clickatell','id','name');
+    $optionID = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionValue', $info->name,'id','name');
     CRM_Core_BAO_OptionValue::del($optionID); 
-    $filter  =  array('name' => 'Clickatell' );
+    $filter  =  array('name'  => $info->name  );
     $Providers =  CRM_SMS_BAO_Provider::getProviders(False, $filter, False);
     if ($Providers){
       foreach($Providers as $key => $value){
@@ -84,10 +82,9 @@ class CRM_Extension_Manager_SMS extends CRM_Extension_Manager_Base {
    * {@inheritdoc}
    */
   public function onPreDisable(CRM_Extension_Info $info) {
-    //FIXME: generalise me
-    $optionID = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionValue', 'Clickatell','id','name');
+    $optionID = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionValue', $info->name,'id','name');
     CRM_Core_BAO_OptionValue::setIsActive($optionID, FALSE);
-    $filter  =  array('name' => 'Clickatell' );
+    $filter  =  array('name' =>  $info->name);
     $Providers =  CRM_SMS_BAO_Provider::getProviders(False, $filter, False);
     if ($Providers){
       foreach($Providers as $key => $value){
@@ -100,10 +97,9 @@ class CRM_Extension_Manager_SMS extends CRM_Extension_Manager_Base {
    * {@inheritdoc}
    */
   public function onPreEnable(CRM_Extension_Info $info) {
-    //FIXME: generalise me
-    $optionID = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionValue', 'Clickatell','id','name');
+    $optionID = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionValue', $info->name ,'id','name');
     CRM_Core_BAO_OptionValue::setIsActive($optionID, TRUE); 
-    $filter  =  array('name' => 'Clickatell' );
+    $filter  =  array('name' => $info->name );
     $Providers =  CRM_SMS_BAO_Provider::getProviders(False, $filter, False);
     if ($Providers){
       foreach($Providers as $key => $value){

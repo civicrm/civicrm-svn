@@ -725,3 +725,5 @@ INSERT INTO
 `civicrm_option_value` (`option_group_id`, {localize field='label'}label{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`)
 VALUES
 (@option_group_id_tuf, {localize}'Attachments'{/localize}, 'civicrm_file', 'Attachments', NULL, 0, 0, @weight = @weight + 1);
+
+ALTER TABLE civicrm_extension MODIFY COLUMN type ENUM( 'payment', 'search', 'report', 'module','sms') CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ;
