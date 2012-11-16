@@ -326,9 +326,13 @@ SELECT module
       if ($this->_isContactActivityProfile && $this->_activityId) {
         $urlParams .= "&aid={$this->_activityId}";
       }
-      // get checksum if present
+      // Get checksum if present
       if ($this->get('cs')) {
         $urlParams .= "&cs=" . $this->get('cs');
+      }
+      // Generate one if needed
+      else {
+        $urlParams .= "&cs=" . CRM_Contact_BAO_Contact_Utils::generateChecksum($this->_id);
       }
       $url = CRM_Utils_System::url('civicrm/profile/view', $urlParams);
     }
