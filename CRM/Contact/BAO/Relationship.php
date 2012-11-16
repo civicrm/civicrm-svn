@@ -473,7 +473,17 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship {
     //get the relationship type id of "Employee of"
     $relTypeId = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_RelationshipType', 'Employee of', 'id', 'name_a_b');
     if ($relTypeId && ($action & CRM_Core_Action::DISABLE)) {
-      CRM_Contact_BAO_Contact_Utils::clearCurrentEmployer($relationship->contact_id_a);
+      if ($relationship->relationship_type_id == 4 || $relationship->relationship_type_id == 7) {
+        $sharedContact = new CRM_Contact_DAO_Contact();
+        $sharedContact->id = $relationship->contact_id_a;
+        $sharedContact->find(TRUE);
+        
+        if ($relationship->relationship_type_id == 4 &&
+          $relationship->contact_id_b == $sharedContact->employer_id
+        ) {
+          CRM_Contact_BAO_Contact_Utils::clearCurrentEmployer($relationship->contact_id_a);
+        }
+      }
     }
 
     if (CRM_Core_Permission::access('CiviMember')) {
