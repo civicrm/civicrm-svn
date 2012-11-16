@@ -138,5 +138,26 @@ class api_v3_OptionValueTest extends CiviUnitTestCase {
     $this->assertEquals(0, $result['is_error'], 'In line ' . __LINE__);
     $this->assertEquals(0, $result['count'], 'In line ' . __LINE__);
   }
+/*
+ * Check that domain_id is honoured
+ */
+  public function testCreateOptionSpecifyDomain() {
+    $result = civicrm_api('option_group', 'get', array(
+      'name' => 'from_email_address',
+      'sequential' => 1,
+      'version' => $this->_apiversion,
+      'api.option_value.create' => array('domain_id' => 2, 'name' => 'my@y.com')
+      ));
+    $this->assertAPISuccess($result);
+    $optionValueId = $result['values'][0]['api.option_value.create']['id'];
+    $domain_id = civicrm_api('option_value', 'getvalue', array(
+      'id' => $optionValueId,
+      'version' => $this->_apiversion,
+      'return' => 'domain_id',
+    ));
+    $this->assertEquals(2, $domain_id);
+
+  }
+
 }
 

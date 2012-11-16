@@ -43,12 +43,8 @@ function civicrm_api3_option_value_get($params) {
 function civicrm_api3_option_value_create($params) {
 
   $weight = 0;
-  if (!array_key_exists('label', $params) && array_key_exists('name', $params)) {
-    // no idea why that's a "mandatory" field
-    $params['label'] = $params['name'];
-  }
+
   if (!CRM_Utils_Array::value('value', $params) && array_key_exists('option_group_id', $params)) {
-    require_once 'CRM/Utils/Weight.php';
     $fieldValues = array('option_group_id' => $params['option_group_id']);
     // use the next available value
     /* CONVERT(value, DECIMAL) is used to convert varchar
@@ -92,7 +88,7 @@ function civicrm_api3_option_value_create($params) {
 
 /*
  * Adjust Metadata for Create action
- * 
+ *
  * The metadata is used for setting defaults, documentation & validation
  * @param array $params array or parameters determined by getfields
  */
@@ -100,6 +96,7 @@ function _civicrm_api3_option_value_create_spec(&$params) {
   $params['is_active']['api.default'] = 1;
   $params['component']['type'] = CRM_Utils_Type::T_STRING;
   $params['component']['options'] = array_values(CRM_Core_PseudoConstant::component());
+  $params['name']['api.aliases'] = array('label');
   // $params['component_id']['pseudoconstant'] = 'component';
 }
 
