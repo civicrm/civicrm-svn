@@ -270,7 +270,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
           }
         }
       }
-
+     
       $this->assign('part', $this->_part);
       $this->set('part', $this->_part);
       $this->assign('amounts', $this->_amount);
@@ -864,9 +864,9 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
           if ($this->_amount) {
             $amount = array();
             $params = $this->get('params');
-            $amount[$participantNum]['label'] = $params[$participantNum]['amount_level'];
+            $amount[$participantNum]['label'] = preg_replace('//', '', $params[$participantNum]['amount_level']);
             $amount[$participantNum]['amount'] = $params[$participantNum]['amount'];
-            $this->assign('amount', $amount);
+            $this->assign('amounts', $amount);
           }
           if ($this->_lineItem) {
             $lineItems  = $this->_lineItem;

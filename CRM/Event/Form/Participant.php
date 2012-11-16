@@ -1717,11 +1717,11 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
           // fix amount for each of participants ( for bulk mode )
           $eventAmount = array();
           if (!empty($additionalParticipantDetails)) {
-            $params['amount_level'] = $params['amount_level'] . ' - ' . $this->_contributorDisplayName;
+            $params['amount_level'] = preg_replace('//', '', $params['amount_level']) . ' - ' . $this->_contributorDisplayName;
           }
 
           $eventAmount[$num] = array(
-            'label' => $params['amount_level'],
+            'label' => preg_replace('//', '', $params['amount_level']),
             'amount' => $params['fee_amount'],
           );
           //as we are using same template for online & offline registration.
