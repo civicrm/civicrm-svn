@@ -74,3 +74,17 @@
   </fieldset>
 </div>
 
+{if $action eq 1  or $action eq 2}
+<script type="text/javascript" >
+{literal}
+    function reload(refresh) {
+        var provider = document.getElementById("name");
+        var url = {/literal}"{$refreshURL}"{literal}
+        var post = url + "&key=" + provider.value;
+        if( refresh ) {
+            window.location = post; 
+        }
+    }
+{/literal}
+</script>
+{/if}

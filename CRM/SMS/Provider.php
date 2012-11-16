@@ -58,7 +58,7 @@ abstract class CRM_SMS_Provider {
     $providerID   = CRM_Utils_Array::value('provider_id', $providerParams);
 
     // make clickatell default provider for now
-    $providerName = CRM_Utils_Array::value('provider', $providerParams, 'org.civicrm.sms.clickatell');
+    $providerName = CRM_Utils_Array::value('provider', $providerParams);
 
     if (!$providerID && $mailingID) {
       $providerID = CRM_Core_DAO::getFieldValue('CRM_Mailing_DAO_Mailing', $mailingID, 'sms_provider_id', 'id');

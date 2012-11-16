@@ -103,7 +103,7 @@ class CRM_SMS_Form_Provider extends CRM_Core_Form {
     $providerNames = CRM_Core_OptionGroup::values('sms_provider_name', FALSE, FALSE, FALSE, NULL, 'label');
     $apiTypes = CRM_Core_OptionGroup::values('sms_api_type', FALSE, FALSE, FALSE, NULL, 'label');
 
-    $this->add('select', 'name', ts('Name'), $providerNames, TRUE);
+    $this->add('select', 'name', ts('Name'), array('' => '- select -') + $providerNames, TRUE, array('onchange' => "reload(true)"));
 
     $this->add('text', 'title', ts('Title'),
       $attributes['title'], TRUE
@@ -134,17 +134,26 @@ class CRM_SMS_Form_Provider extends CRM_Core_Form {
 
   function setDefaultValues() {
     $defaults = array();
-    $providerValues = CRM_SMS_Provider::singleton(array('provider' => 'Clickatell'));
-    $defaults['api_url'] = $providerValues->_apiURL;
+
+    $name = CRM_Utils_Request::retrieve('key', 'String', $this, FALSE, NULL);
+    if ($name) {
+      $defaults['name'] = $name;
+      $info = CRM_Extension_System::singleton()->getMapper()->keyToInfo($name);
+      if (is_a($info, 'CRM_Extension_Info'))
+        $defaults['api_url'] = $info->typeInfo['api_url'];
+    }
 
     if (!$this->_id) {
       $defaults['is_active'] = $defaults['is_default'] = 1;
-
       return $defaults;
     }
 
     $dao = new CRM_SMS_DAO_Provider();
     $dao->id = $this->_id;
+
+    if ($name)
+      $dao->name = $name;
+
     if (!$dao->find(TRUE)) {
       return $defaults;
     }
