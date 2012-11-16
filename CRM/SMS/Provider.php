@@ -58,7 +58,7 @@ abstract class CRM_SMS_Provider {
     $providerID   = CRM_Utils_Array::value('provider_id', $providerParams);
 
     // make clickatell default provider for now
-    $providerName = CRM_Utils_Array::value('provider', $providerParams, 'clickatell');
+    $providerName = CRM_Utils_Array::value('provider', $providerParams, 'org.civicrm.sms.clickatell');
 
     if (!$providerID && $mailingID) {
       $providerID = CRM_Core_DAO::getFieldValue('CRM_Mailing_DAO_Mailing', $mailingID, 'sms_provider_id', 'id');
@@ -73,11 +73,18 @@ abstract class CRM_SMS_Provider {
     }
 
     $providerName = CRM_Utils_Type::escape($providerName, 'String');
-    $providerName = ucfirst($providerName);
     $cacheKey     = "{$providerName}_" . (int) $providerID . "_" . (int) $mailingID;
 
     if (!isset(self::$_singleton[$cacheKey]) || $force) {
-      self::$_singleton[$cacheKey] = eval('return ' . "CRM_SMS_Provider_{$providerName}" . '::singleton( $providerParams, $force );');
+      $ext = CRM_Extension_System::singleton()->getMapper();
+      if ($ext->isExtensionKey($providerName)) {
+        $paymentClass = $ext->keyToClass($providerName);
+        CRM_Core_Error::debug_var( '$paymentClass', $paymentClass );
+      } else {
+        CRM_Core_Error::fatal("Could not locate extension for {$providerName}.");
+      }
+
+      self::$_singleton[$cacheKey] = eval('return ' . $paymentClass . '::singleton( $providerParams, $force );');
     }
     return self::$_singleton[$cacheKey];
   }
