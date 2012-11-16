@@ -166,8 +166,6 @@ class CRM_Mailing_Form_Settings extends CRM_Core_Form {
   }
 
   public function postProcess() {
-    // Clear any formRule errors from Upload form in case they came back here via 'Previous' button
-    $this->controller->resetPage('Upload');
     $params = $ids = array();
 
     $uploadParams = array('reply_id', 'unsubscribe_id', 'optout_id', 'resubscribe_id');
