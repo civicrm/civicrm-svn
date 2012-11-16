@@ -2837,10 +2837,11 @@ LEFT JOIN civicrm_address add2 ON ( add1.master_id = add2.id )
         'created_date' => $timestamps->created_date,
         'modified_date' => $timestamps->modified_date,
       );
-    } else {
+    }
+    else {
       return NULL;
-      }
-      }
+    }
+  }
 
   /**
    * Get a list of triggers for the contact table
@@ -2857,7 +2858,7 @@ LEFT JOIN civicrm_address add2 ON ( add1.master_id = add2.id )
         'event' => array('INSERT'),
         'sql' => "\nSET NEW.created_date = CURRENT_TIMESTAMP;\n",
       );
-          }
+    }
 
     // Update timestamp when modifying closely related core tables
     $relatedTables = array(
@@ -2887,7 +2888,7 @@ LEFT JOIN civicrm_address add2 ON ( add1.master_id = add2.id )
     $customGroupDAO->find();
     while ($customGroupDAO->fetch()) {
       $customGroupTables[] = $customGroupDAO->table_name;
-          }
+    }
     if (!empty($customGroupTables)) {
       $info[] = array(
         'table' => $customGroupTables,
@@ -2901,8 +2902,8 @@ LEFT JOIN civicrm_address add2 ON ( add1.master_id = add2.id )
         'event' => array('DELETE'),
         'sql' => "\nUPDATE civicrm_contact SET modified_date = CURRENT_TIMESTAMP WHERE id = OLD.entity_id;\n",
       );
-      }
-          }
+    }
+  }
 
   /**
    * Function to check if contact is being used in civicrm_domain
