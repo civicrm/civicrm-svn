@@ -200,28 +200,11 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
         }
       }
 
-      $values = array();
-      $fields = CRM_Core_BAO_UFGroup::getFields($this->_profileIds, FALSE, CRM_Core_Action::VIEW,
-        NULL, NULL, FALSE, $this->_restrict,
-        $this->_skipPermission, NULL,
-        CRM_Core_Permission::VIEW
-      );
-
-      if ($this->_multiRecord & CRM_Core_Action::VIEW && $this->_recordId && !$this->_allFields) {
-        CRM_Core_BAO_UFGroup::shiftMultiRecordFields($fields, $multiRecordFields);
-        $fields = $multiRecordFields;
-      }
-      if ($this->_isContactActivityProfile && $this->_gid) {
-        $errors = CRM_Profile_Form::validateContactActivityProfile($this->_activityId, $this->_id, $this->_gid);
-        if (!empty($errors)) {
-          CRM_Core_Error::fatal(array_pop($errors));
-        }
-      }
-
       $session = CRM_Core_Session::singleton();
       $userID = $session->get('userID');
 
       $this->_isPermissionedChecksum = FALSE;
+      $permissionType = CRM_Core_Permission::VIEW;
       if ($this->_id != $userID) {
         // do not allow edit for anon users in joomla frontend, CRM-4668, unless u have checksum CRM-5228
         if ($config->userFrameworkFrontend) {
@@ -229,6 +212,9 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
         }
         else {
           $this->_isPermissionedChecksum = CRM_Contact_BAO_Contact_Permission::validateChecksumContact($this->_id, $this, FALSE);
+        }
+        if ($this->_isPermissionedChecksum) {
+          $permissionType = CRM_Core_Permission::CREATE;          
         }
       }
 
@@ -244,6 +230,24 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
         $this->_isPermissionedChecksum
       ) {
         $admin = TRUE;
+      }
+
+      $values = array();
+      $fields = CRM_Core_BAO_UFGroup::getFields($this->_profileIds, FALSE, CRM_Core_Action::VIEW,
+        NULL, NULL, FALSE, $this->_restrict,
+        $this->_skipPermission, NULL,
+        $permissionType
+      );
+
+      if ($this->_multiRecord & CRM_Core_Action::VIEW && $this->_recordId && !$this->_allFields) {
+        CRM_Core_BAO_UFGroup::shiftMultiRecordFields($fields, $multiRecordFields);
+        $fields = $multiRecordFields;
+      }
+      if ($this->_isContactActivityProfile && $this->_gid) {
+        $errors = CRM_Profile_Form::validateContactActivityProfile($this->_activityId, $this->_id, $this->_gid);
+        if (!empty($errors)) {
+          CRM_Core_Error::fatal(array_pop($errors));
+        }
       }
 
       if (!$admin) {
