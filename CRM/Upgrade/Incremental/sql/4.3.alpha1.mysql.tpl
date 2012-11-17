@@ -731,3 +731,10 @@ ALTER TABLE civicrm_extension MODIFY COLUMN type ENUM( 'payment', 'search', 'rep
 -- CRM-9914
 SELECT @option_group_id_sms_provider_name := max(id) from civicrm_option_group where name = 'sms_provider_name';
 DELETE FROM civicrm_option_value WHERE option_group_id = @option_group_id_sms_provider_name AND name = 'Clickatell';
+
+-- CRM-11292
+ALTER TABLE `civicrm_phone`
+ADD `phone_numeric` varchar(16) 
+COMMENT 'Phone number stripped of all whitespace, letters, and punctuation.'
+AFTER `civicrm_phone`,
+ADD INDEX phone_numeric_index(`phone_numeric`);

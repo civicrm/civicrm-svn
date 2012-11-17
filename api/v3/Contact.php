@@ -554,8 +554,13 @@ function civicrm_api3_contact_getquick($params) {
       $list[$value] = $acOptions[$value];
     }
   }
-  if (!empty($params['field_name']) && !in_array($params['field_name'], $list)) {
-    $list[] = $params['field_name'];
+  // If we are doing quicksearch by a field other than name, make sure that field is added to results
+  if (!empty($params['field_name'])) {
+    // phone_numeric should be phone
+    $searchField = str_replace('_numeric', '', $params['field_name']);
+    if(!in_array($searchField, $list)) {
+      $list[] = $searchField;
+    }
   }
 
   $select = $actualSelectElements = array('sort_name');

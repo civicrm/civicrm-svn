@@ -88,9 +88,30 @@ function civicrm_main(&$config) {
 
   civicrm_source($dsn, $sqlPath . DIRECTORY_SEPARATOR . 'civicrm.mysql');
 
-  if (isset($config['loadGenerated']) &&
-    $config['loadGenerated']
-  ) {
+  // Adding function for stripping phone numbers
+  $db = DB::connect($dsn);
+  $query = "DELIMITER $$
+    CREATE FUNCTION civicrm_strip_non_numeric(input VARCHAR(255))
+       RETURNS VARCHAR(255)
+    BEGIN
+       DECLARE output   VARCHAR(255) DEFAULT '';
+       DECLARE iterator INT          DEFAULT 1;
+       WHILE iterator < (LENGTH(input) + 1) DO
+          IF SUBSTRING(input, iterator, 1) IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9') THEN
+             SET output = CONCAT(output, SUBSTRING(input, iterator, 1));
+          END IF;
+          SET iterator = iterator + 1;
+       END WHILE;
+       RETURN output;
+    END
+    $$";
+  $res = &$db->query($query);
+  if (PEAR::isError($res)) {
+    print_r($res);
+    die('Error creating function');
+  }
+
+  if (!empty($config['loadGenerated'])) {
     civicrm_source($dsn, $sqlPath . DIRECTORY_SEPARATOR . 'civicrm_generated.mysql', TRUE);
   }
   else {
@@ -120,6 +141,7 @@ function civicrm_main(&$config) {
   civicrm_write_file($configFile,
     $string
   );
+
 }
 
 function civicrm_source($dsn, $fileName, $lineMode = FALSE) {

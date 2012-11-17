@@ -238,6 +238,13 @@ class CRM_Contact_Form_Search_Criteria {
     //CRM-6138 Preferred Language
     $langPreff = CRM_Core_PseudoConstant::languages();
     $form->add('select', 'preferred_language', ts('Preferred Language'), array('' => ts('- any -')) + $langPreff);
+
+    // Phone search
+    $form->addElement('text', 'phone_numeric', ts('Phone Number'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Phone', 'phone'));
+    $locationType = CRM_Core_PseudoConstant::locationType();
+    $phoneType = CRM_Core_PseudoConstant::phoneType();
+    $form->add('select', 'phone_location_type_id', ts('Phone Location'), array('' => ts('- any -')) + $locationType);
+    $form->add('select', 'phone_phone_type_id', ts('Phone Type'), array('' => ts('- any -')) + $phoneType);
   }
 
 

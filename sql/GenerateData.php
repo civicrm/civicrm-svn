@@ -914,11 +914,13 @@ class CRM_GCD {
 
   private function _addPhone($locationTypeId, $contactId, $phoneType, $isPrimary = FALSE, $locationBlockID = NULL, $offset = 1) {
     if ($contactId % 3) {
+      $number = mt_rand(1000000, 9999999);
       $phone = new CRM_Core_DAO_Phone();
       $phone->location_type_id = $locationTypeId;
       $phone->contact_id = $contactId;
       $phone->is_primary = $isPrimary;
-      $phone->phone = mt_rand(11111111, 99999999);
+      $phone->phone = $number;
+      $phone->phone_numeric = $number;
       $phone->phone_type_id = $phoneType;
       $this->_insert($phone);
     }
@@ -1381,11 +1383,11 @@ VALUES
     $sql         = "SELECT id from civicrm_email where email = 'celebration@example.org'";
     $eventEmail3 = CRM_Core_DAO::singleValueQuery($sql, CRM_Core_DAO::$_nullArray);
 
-    $event = "INSERT INTO civicrm_phone (contact_id, location_type_id, is_primary, is_billing, mobile_provider_id, phone, phone_type_id)
+    $event = "INSERT INTO civicrm_phone (contact_id, location_type_id, is_primary, is_billing, mobile_provider_id, phone, phone_numeric, phone_type_id)
        VALUES
-       (NULL, 1, 0, 0, NULL,'204 222-1000', '1'),
-       (NULL, 1, 0, 0, NULL,'204 223-1000', '1'),
-       (NULL, 1, 0, 0, NULL,'303 323-1000', '1')
+       (NULL, 1, 0, 0, NULL, '204 222-1000', '2042221000', '1'),
+       (NULL, 1, 0, 0, NULL, '204 223-1000', '2042231000', '1'),
+       (NULL, 1, 0, 0, NULL, '303 323-1000', '3033231000', '1')
        ";
     CRM_Core_DAO::executeQuery($event, CRM_Core_DAO::$_nullArray);
 

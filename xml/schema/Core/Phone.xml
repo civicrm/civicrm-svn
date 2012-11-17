@@ -109,6 +109,18 @@
        <add>3.3</add>
   </field>
   <field>
+       <name>phone_numeric</name>
+       <type>varchar</type>
+       <length>16</length>
+       <comment>Phone number stripped of all whitespace, letters, and punctuation.</comment>
+       <add>4.3</add>
+  </field>
+  <index>
+    <name>index_phone_numeric</name>
+    <fieldName>phone_numeric</fieldName>
+    <add>4.3</add>
+  </index>
+  <field>
        <name>phone_type</name>
        <type>enum</type>
        <values>Phone, Mobile, Fax, Pager</values>

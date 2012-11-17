@@ -1383,6 +1383,15 @@ class CRM_Contact_BAO_Query {
         $this->email($values);
         return;
 
+      case 'phone_numeric':
+        $this->phone_numeric($values);
+        return;
+
+      case 'phone_phone_type_id':
+      case 'phone_location_type_id':
+        $this->phone_option_group($values);
+        return;
+
       case 'street_address':
         $this->street_address($values);
         return;
@@ -2927,6 +2936,39 @@ WHERE  id IN ( $groupIDs )
     }
 
     $this->_tables['civicrm_email'] = $this->_whereTables['civicrm_email'] = 1;
+  }
+
+  /**
+   * where / qill clause for phone number
+   *
+   * @return void
+   * @access public
+   */
+  function phone_numeric(&$values) {
+    list($name, $op, $value, $grouping, $wildcard) = $values;
+    // Strip non-numeric characters
+    $number = preg_replace('/[^\d]/', '', $value);
+    if ($number) {
+      $this->_qill[$grouping][] = ts('Phone number contains') . " $number";
+      $this->_where[$grouping][] = self::buildClause('civicrm_phone.phone_numeric', 'LIKE', "%$number%", 'String');
+      $this->_tables['civicrm_phone'] = $this->_whereTables['civicrm_phone'] = 1;
+    }
+  }
+
+  /**
+   * where / qill clause for phone type/location
+   *
+   * @return void
+   * @access public
+   */
+  function phone_option_group($values) {
+    list($name, $op, $value, $grouping, $wildcard) = $values;
+    $option = $name == 'phone_phone_type_id' ? 'phoneType' : 'locationType';
+    $options = CRM_Core_PseudoConstant::$option();
+    $optionName = $options[$value];
+    $this->_qill[$grouping][] = ts('Phone') . ' ' . ($name == 'phone_phone_type_id' ? ts('type') : ('location')) . " $op $optionName";
+    $this->_where[$grouping][] = self::buildClause('civicrm_phone.' . substr($name, 6), $op, $value, 'Integer');
+    $this->_tables['civicrm_phone'] = $this->_whereTables['civicrm_phone'] = 1;
   }
 
   /**

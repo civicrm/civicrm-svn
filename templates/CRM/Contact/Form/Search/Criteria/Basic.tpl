@@ -163,6 +163,18 @@
             <td colspan="5">{include file="CRM/common/Tag.tpl"}</td>
         </tr>
         <tr>
+          <td>
+            <div>
+              {$form.phone_numeric.label}<br />{$form.phone_numeric.html}
+            </div>
+            <div class="description font-italic">
+              {ts}Punctuation and spaces are ignored.{/ts}
+            </div>
+          </td>
+          <td>{$form.phone_location_type_id.label}<br />{$form.phone_location_type_id.html}</td>
+          <td>{$form.phone_phone_type_id.label}<br />{$form.phone_phone_type_id.html}</td>
+        </tr>
+        <tr>
             <td colspan="2">
                 <table class="form-layout-compressed">
                 <tr>

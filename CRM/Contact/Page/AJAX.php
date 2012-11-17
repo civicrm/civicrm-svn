@@ -55,6 +55,12 @@ class CRM_Contact_Page_AJAX {
     //CRM-10687: Allow quicksearch by multiple fields
     if (!empty($_GET['fieldName'])) {
       $params['field_name'] = CRM_Utils_Type::escape($_GET['fieldName'], 'String');
+      if ($params['field_name'] == 'phone_numeric') {
+        $params['name'] = preg_replace('/[^\d]/', '', $params['name']);
+      }
+      if (!$params['name']) {
+        CRM_Utils_System::civiExit();
+      }
     }
 
     if (!empty($_GET['tableName'])) {

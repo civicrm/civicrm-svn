@@ -2903,6 +2903,16 @@ LEFT JOIN civicrm_address add2 ON ( add1.master_id = add2.id )
         'sql' => "\nUPDATE civicrm_contact SET modified_date = CURRENT_TIMESTAMP WHERE id = OLD.entity_id;\n",
       );
     }
+    
+    // Update phone table to populate phone_numeric field
+    if (!$tableName || $tableName == 'civicrm_phone') {
+      $info[] = array(
+        'table' => array('civicrm_phone'),
+        'when' => 'BEFORE',
+        'event' => array('INSERT', 'UPDATE'),
+        'sql' => "\nSET NEW.phone_numeric = civicrm_strip_non_numeric(NEW.phone);\n",
+      );
+    }
   }
 
   /**
