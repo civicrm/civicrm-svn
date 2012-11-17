@@ -214,6 +214,7 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
           $this->_isPermissionedChecksum = CRM_Contact_BAO_Contact_Permission::validateChecksumContact($this->_id, $this, FALSE);
         }
         if ($this->_isPermissionedChecksum) {
+          // Switch permission type here for checksum authenticated user so they can view their own record after creating it - CRM-10853
           $permissionType = CRM_Core_Permission::CREATE;          
         }
       }
