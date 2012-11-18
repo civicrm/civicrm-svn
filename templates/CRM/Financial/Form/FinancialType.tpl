@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{* this template is used for adding/editing/deleting financial type  *}
+{* this template is used for adding/editing/deleting financial type  *}{debug}
 <h3>{if $action eq 1}{ts}New Financial Type{/ts}{elseif $action eq 2}{ts}Edit Financial Type{/ts}{else}{ts}Delete Financial Type{/ts}{/if}</h3>
 <div class="crm-block crm-form-block crm-financial_type-form-block">
    {if $action eq 8}
@@ -33,12 +33,6 @@
       </div>
    {else}
      <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
-{if $action eq 2 or $action eq 4 } {* Update or View*}
-    <div class="action-link">
-	<a href="{crmURL p='civicrm/admin/financial/financialType/accounts' q="action=browse&reset=1&aid=$aid"}" class="button"><span>{ts}View or Edit Fields for this Profile{/ts}</a></span>
-	<div class="clear"></div>
-    </div>
-{/if} 
      <table class="form-layout">
       <tr class="crm-contribution-form-block-name">
  	  <td class="label">{$form.name.label}</td>
@@ -67,5 +61,10 @@
       </table> 
    {/if}
    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="botttom"}</div>
+   {if $action eq 2 or $action eq 4 } {* Update or View*}
+    <div class="crm-submit-buttons">
+   	  <a href="{crmURL p='civicrm/admin/financial/financialType/accounts' q="action=browse&reset=1&aid=$aid"}" class="button"><span>{ts}View or Edit Financial Accounts{/ts}</a></span>
+    </div>
+   {/if} 
 </div>
 
