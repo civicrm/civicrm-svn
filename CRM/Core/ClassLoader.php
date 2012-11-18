@@ -72,8 +72,9 @@ class CRM_Core_ClassLoader {
     }
 
     // we do this to prevent a autoloader errors with joomla / 3rd party packages
+    // use absolute path since we dont know the content of include_path as yet
     // CRM-11304
-    require_once 'IDS/vendors/htmlpurifier/HTMLPurifier/Bootstrap.php';
+    require_once dirname(__FILE__) . '/../../packages/IDS/vendors/htmlpurifier/HTMLPurifier/Bootstrap.php';
     if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
       spl_autoload_register(array($this, 'loadClass'), TRUE, $prepend);
       spl_autoload_register(array('HTMLPurifier_Bootstrap', 'autoload'), TRUE, $prepend);
