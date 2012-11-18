@@ -544,7 +544,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
         'contact_id' => $this->_individualId,
         'receive_date' => '2012-01-01',
         'total_amount' => 100.00,
-        'contribution_type_id' => $this->_contributionTypeId,
+        'financial_type_id' => $this->_contributionTypeId,
         'payment_instrument_id' => 1,
         'non_deductible_amount' => 10.00,
         'fee_amount' => 50.00,

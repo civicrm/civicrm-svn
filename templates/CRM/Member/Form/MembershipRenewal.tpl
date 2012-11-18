@@ -345,7 +345,7 @@ function setPaymentBlock( ) {
   var mode   = {/literal}'{$membershipMode}'{literal};
   if ( !mode ) {
     // skip this for test and live modes because contribution type is set automatically
-    cj("#contribution_type_id").val( allMemberships[memType]['contribution_type_id'] );
+    cj("#financial_type_id").val( allMemberships[memType]['financial_type_id'] );
   }
 
   var term = cj("#num_terms").val();

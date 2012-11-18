@@ -531,7 +531,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form {
         // build membership info array, which is used to set the payment information block when
         // membership type is selected.
         $allMembershipInfo[$key] = array(
-          'contribution_type_id' => CRM_Utils_Array::value('contribution_type_id', $values),
+          'financial_type_id' => CRM_Utils_Array::value('financial_type_id', $values),
           'total_amount'         => CRM_Utils_Money::format($values['minimum_fee'], NULL, '%a'),
           'auto_renew'           => CRM_Utils_Array::value('auto_renew', $values)
         );
@@ -1330,7 +1330,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
         );
         $paymentParams['contactID']           = $contactID;
         $paymentParams['contributionID'] = $contribution->id;
-                $paymentParams['contributionTypeID']  = $contribution->financial_type_id;
+        $paymentParams['contributionTypeID']  = $contribution->financial_type_id;
         $paymentParams['contributionPageID'] = $contribution->contribution_page_id;
         $paymentParams['contributionRecurID'] = $contribution->contribution_recur_id;
         $ids['contribution'] = $contribution->id;
