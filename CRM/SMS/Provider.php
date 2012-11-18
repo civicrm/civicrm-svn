@@ -79,7 +79,7 @@ abstract class CRM_SMS_Provider {
       $ext = CRM_Extension_System::singleton()->getMapper();
       if ($ext->isExtensionKey($providerName)) {
         $paymentClass = $ext->keyToClass($providerName);
-        require_once ($ext->classToPath($paymentClass));
+        require_once ("{$paymentClass}.php");
       } else {
         CRM_Core_Error::fatal("Could not locate extension for {$providerName}.");
       }

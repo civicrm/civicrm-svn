@@ -147,7 +147,6 @@ class CRM_Extension_System {
     if ($this->manager === NULL) {
       $typeManagers = array(
         'payment' => new CRM_Extension_Manager_Payment($this->getMapper()),
-        'sms'    => new CRM_Extension_Manager_SMS(),
         'report' => new CRM_Extension_Manager_Report(),
         'search' => new CRM_Extension_Manager_Search(),
         'module' => new CRM_Extension_Manager_Module($this->getMapper()),
