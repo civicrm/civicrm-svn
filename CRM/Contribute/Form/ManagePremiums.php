@@ -206,7 +206,7 @@ class CRM_Contribute_Form_ManagePremiums extends CRM_Contribute_Form {
       'select', 
       'financial_type_id', 
       ts( 'Financial Type' ), 
-      array(''=>ts('- Select Financial Type -')) + $financialType
+      array(''=>ts('- select -')) + $financialType
     );
     
     $this->add('checkbox', 'is_active', ts('Enabled?'));

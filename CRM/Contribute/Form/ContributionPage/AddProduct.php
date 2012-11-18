@@ -202,7 +202,7 @@ class CRM_Contribute_Form_ContributionPage_AddProduct extends CRM_Contribute_For
       'select', 
       'financial_type_id', 
       ts( 'Financial Type' ), 
-      array(''=>ts('- Select Financial Type -')) + $financialType
+      array(''=>ts('- select -')) + $financialType
     );
     $this->addRule('weight', ts('Please enter integer value for weight'), 'integer');
     $session->pushUserContext(CRM_Utils_System::url($urlParams, 'action=update&reset=1&id=' . $this->_id));
