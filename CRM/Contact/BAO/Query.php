@@ -3744,13 +3744,22 @@ civicrm_relationship.start_date > CURDATE()
   }
 
   /**
-   * wrapper for a api search query
+   * These are stub comments as this function needs more explanation - particularly in terms of how it
+   * relates to $this->searchQuery and why it replicates rather than calles $this->searchQuery.
+   *
+   * This function was originally written as a wrapper for the api query but is called from multiple places
+   * in the core code directly so the name is misleading. This function does not use the searchQuery function
+   * but it is unclear as to whehter that is historical or there is a reason
+   *  CRM-11290 led to the permissioning action being extracted from searchQuery & shared with this function
    *
    * @param array  $params
    * @param array  $returnProperties
    * @param string $sort
    * @param int    $offset
    * @param int    $row_count
+   * @params bool $smartGroupCache ?? update smart group cache?
+   * @param bool $count return count obnly
+   * @param bool $skipPermissions Should permissions be ignored or should the logged in user's permissions be applied
    *
    * @return void
    * @access public
@@ -3763,7 +3772,7 @@ civicrm_relationship.start_date > CURDATE()
     $row_count        = 25,
     $smartGroupCache  = TRUE,
     $count = FALSE,
-    $skipPermissions = FALSE
+    $skipPermissions = True
   ) {
 
     $query = new CRM_Contact_BAO_Query($params, $returnProperties,
@@ -4069,7 +4078,20 @@ civicrm_relationship.start_date > CURDATE()
 
     return $dao;
   }
-
+/**
+ * Populate $this->_permissionWhereClause with permission related clause and update other
+ * query related properties.
+ *
+ * Function calls ACL permission class and hooks to filter the query appropriately
+ *
+ * Note that these 2 params were in the code when extracted from another function
+ * and a second round extraction would be to make them properties of the class
+ *
+ * @param bool $onlyDeleted Only get deleted contacts
+ * @param bool $count Return Count only
+ *
+ * @return null
+ */
   function generatePermissionClause($onlyDeleted = false, $count = false){
 
       if (!$this->_skipPermission) {
