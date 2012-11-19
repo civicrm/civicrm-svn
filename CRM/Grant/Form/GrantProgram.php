@@ -140,7 +140,7 @@ class CRM_Grant_Form_GrantProgram extends CRM_Core_Form
                     $attributes['remainder_amount'], false );
         $this->addRule('remainder_amount', ts('Please enter a valid amount.'), 'money'); 
 
-        $contributionTypes = CRM_Grant_BAO_GrantProgram::contributionTypes();
+        $contributionTypes = CRM_Contribute_PseudoConstant::financialType();
         $this->add('select', 'financial_type_id',  ts( 'Financial Types' ),
                    array( '' => ts( '- select -' ) ) + $contributionTypes , true);
         

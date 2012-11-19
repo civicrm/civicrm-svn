@@ -56,15 +56,9 @@ class CRM_Grant_Form_Payment_View extends CRM_Core_Form
         $this->assign( 'context', $context );
         $values = array( ); 
         $params['id'] = $this->_id;
-        // $session = CRM_Core_Session::singleton();
-        // $url = CRM_Utils_System::url('civicrm/grant/payment/search', '_qf_PaymentSearch_display=true&qfKey='.$_GET['qfKey'] );
-        // $session->pushUserContext( $url );
-        require_once 'CRM/Grant/BAO/GrantPayment.php';
-        require_once 'CRM/Core/OptionGroup.php';
-        require_once 'CRM/Grant/BAO/GrantProgram.php';
         CRM_Grant_BAO_GrantPayment::retrieve( $params, $values);
         $paymentStatus = CRM_Core_OptionGroup::values( 'grant_payment_status' );
-        $contributionTypes = CRM_Grant_BAO_GrantProgram::contributionTypes();
+        $contributionTypes = CRM_Contribute_PseudoConstant::financialType();
         $this->assign('payment_status_id',  $paymentStatus[$values['payment_status_id']] );
         $this->assign('financial_type_id',  $contributionTypes[$values['financial_type_id']] );
  
