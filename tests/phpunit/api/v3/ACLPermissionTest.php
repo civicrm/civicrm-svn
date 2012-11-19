@@ -135,6 +135,23 @@ class api_v3_ACLPermissionTest extends CiviUnitTestCase {
     $this->assertAPISuccess($result, 'api call succeeded');
     $this->assertEquals(2, $result['count']);
   }
+  /**
+   * Check that id works as a filter
+   */
+  function testContactGetIDFilter(){
+    $this->hookClass->setHook('civicrm_aclWhereClause', array($this, 'aclWhereHookAllResults'));
+    $result = civicrm_api('contact', 'get', array(
+      'version' => $this->_apiversion,
+      'sequential' => 1,
+      'id' => 2,
+      'check_permissions' => 1,
+    ));
+
+    $this->assertAPISuccess($result, 'api call succeeded');
+    $this->assertEquals(1, $result['count']);
+    $this->assertEquals(2, $result['id']);
+  }
+
 /**
  * Check that address IS returned
  */
