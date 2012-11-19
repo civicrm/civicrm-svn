@@ -41,7 +41,7 @@ class CRM_SMS_Page_Callback
     
     if (array_key_exists('status',$_REQUEST)){
       $provider->callback();
-    } elseif (array_key_exists('api_id',$_REQUEST) && array_key_exists('moMsgId',$_REQUEST)){
+    } else {
       $provider->inbound();
     }
   }

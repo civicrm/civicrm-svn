@@ -125,6 +125,13 @@ INNER JOIN civicrm_mailing_job mj ON mj.mailing_id = m.id AND mj.id = %1";
       $sourceContactID = $session->get('userID');
     }
 
+    if (!$sourceContactID) {
+    	$sourceContactID = CRM_Utils_Array::value('Contact', $headers);
+    }
+    if (!$sourceContactID) {
+    	return false;
+    }
+
     $activityTypeID = CRM_Core_OptionGroup::getValue('activity_type', 'SMS', 'name');
     // note: lets not pass status here, assuming status will be updated by callback
     $activityParams = array(
@@ -153,8 +160,33 @@ INNER JOIN civicrm_mailing_job mj ON mj.mailing_id = m.id AND mj.id = %1";
   }
 
   function inbound($from, $body, $to = NULL, $trackID = NULL) {
-    $from = CRM_Utils_Type::escape($from, 'String');
-    $fromContactID = CRM_Core_DAO::singleValueQuery('SELECT contact_id FROM civicrm_phone WHERE phone LIKE "' . $from . '"');
+  	$formatFrom   = $this->formatPhone($this->stripPhone($from), $like, "like"); 
+    $escapedFrom  = CRM_Utils_Type::escape($formatFrom, 'String');
+    $fromContactID = CRM_Core_DAO::singleValueQuery('SELECT contact_id FROM civicrm_phone WHERE phone LIKE "' . $escapedFrom . '"');
+    
+    if (! $fromContactID) {
+    	// unknown mobile sender -- create new contact
+    	// use fake @mobile.sms email address for new contact since civi
+    	// requires email or name for all contacts
+    	$locationTypes =& CRM_Core_PseudoConstant::locationType();
+    	$phoneTypes    =& CRM_Core_PseudoConstant::phoneType();
+    	$phoneloc  = array_search( 'Home',  $locationTypes );
+    	$phonetype = array_search( 'Mobile', $phoneTypes );
+    	$stripFrom = $this->stripPhone($from);
+    	$contactparams = 
+        Array ( 'contact_type' => 'Individual',
+                'email' => Array ( 1 => Array ( 'location_type_id' => $phoneloc,
+                                                'email' => $stripFrom . '@mobile.sms' )
+                                   ),
+                'phone' => Array ( 1 => Array( 'phone_type_id' => $phonetype,
+                                               'location_type_id' => $phoneloc,
+                                               'phone' => $stripFrom )
+                                   )
+                );
+    	$fromContact = CRM_Contact_BAO_Contact::create($contactparams, FALSE, TRUE, FALSE);
+      $fromContactID = $fromContact->id;
+    }
+
     if ($to) {
       $to = CRM_Utils_Type::escape($to, 'String');
       $toContactID = CRM_Core_DAO::singleValueQuery('SELECT contact_id FROM civicrm_phone WHERE phone LIKE "' . $to . '"');
@@ -185,10 +217,6 @@ INNER JOIN civicrm_mailing_job mj ON mj.mailing_id = m.id AND mj.id = %1";
       $result = CRM_Activity_BAO_Activity::create($activityParams);
       CRM_Core_Error::debug_log_message("Inbound SMS recorded for cid={$contactID}.");
       return $result;
-    }
-    else {
-      // FIXME: should we just create a new contact with just phone no ? civicrm doesn't allow creating contact with just phone number.
-      // probably we would need some dummy name / email ?
     }
   }
 
