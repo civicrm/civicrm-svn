@@ -41,25 +41,16 @@ INSERT INTO civicrm_component (name, namespace) VALUES ('CiviCampaign'  , 'CRM_C
 -- Create organization contact
 INSERT INTO civicrm_contact( `contact_type`, `sort_name`, `display_name`, `legal_name`, `organization_name`)
 VALUES ('Organization', @defaultOrganization, @defaultOrganization, @defaultOrganization, @defaultOrganization);
-SET @contactID:=LAST_INSERT_ID();
+SET @contactID := LAST_INSERT_ID();
 
 INSERT INTO civicrm_email (contact_id, location_type_id, email, is_primary, is_billing, on_hold, hold_date, reset_date)
       VALUES
-      ( @contactID, 1, '"Domain Email" <domainemail@example.org>', 0, 0, 0, NULL, NULL);
-
-SELECT @emailId := id from civicrm_email where email = '"Domain Email" <domainemail@example.org>';
-
-INSERT INTO civicrm_phone (contact_id, location_type_id, is_primary, is_billing, mobile_provider_id, phone, phone_type_id)
-      VALUES
-      (@contactID, 1, 0, 0, NULL,'204 222-1001', 1);
-
-SELECT @phoneId := id from civicrm_phone where phone = '204 222-1001';
+      ( @contactID, 1, 'fixme.domainemail@example.org', 0, 0, 0, NULL, NULL);
+SET @emailId := LAST_INSERT_ID();
 
 INSERT INTO civicrm_loc_block ( address_id, email_id, phone_id, address_2_id, email_2_id, phone_2_id)
       VALUES
-      ( @addId, @emailId, @phoneId, NULL,NULL,NULL);
-
-SELECT @locBlockId := id from civicrm_loc_block where phone_id = @phoneId AND email_id = @emailId AND address_id = @addId;
+      ( NULL, @emailId, NULL, NULL,NULL,NULL);
 
 
 INSERT INTO civicrm_domain (name, version, contact_id) VALUES (@domainName, '2.2', @contactID);
