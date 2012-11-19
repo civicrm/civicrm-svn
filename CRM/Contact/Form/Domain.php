@@ -116,8 +116,7 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
       }
 
       unset($params['id']);
-      $locParams = $params + array('entity_id' => $this->_id, 'entity_table' => 'civicrm_domain');
-      $locParams = array( 'contact_id' => $domainDefaults['contact_id'] );
+      $locParams = array('contact_id' => $domainDefaults['contact_id']);
       $defaults = CRM_Core_BAO_Location::getValues($locParams);
 
       $config = CRM_Core_Config::singleton();
@@ -253,7 +252,8 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
       'sort_name'    => $domain->name,
       'display_name' => $domain->name,
       'legal_name'   => $domain->name,
-      'contact_id'   => $this->_contactId,              
+      'organization_name' => $domain->name,
+      'contact_id' => $this->_contactId,              
     );
     CRM_Contact_BAO_Contact::add($contactParams);
     $location = CRM_Core_BAO_Location::create($params, TRUE);
