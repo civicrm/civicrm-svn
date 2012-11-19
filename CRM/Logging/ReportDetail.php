@@ -39,6 +39,7 @@ class CRM_Logging_ReportDetail extends CRM_Report_Form {
   protected $log_date;
   protected $raw;
   protected $tables = array();
+  protected $interval = '10 SECOND';
 
   // detail/summary report ids
   protected $detail;
@@ -122,7 +123,7 @@ class CRM_Logging_ReportDetail extends CRM_Report_Form {
   protected function diffsInTable($table) {
     $rows = array();
 
-    $differ = new CRM_Logging_Differ($this->log_conn_id, $this->log_date);
+    $differ = new CRM_Logging_Differ($this->log_conn_id, $this->log_date, $this->interval);
     $diffs = $differ->diffsInTable($table, $this->cid);
 
     // return early if nothing found

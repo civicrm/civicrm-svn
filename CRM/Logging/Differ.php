@@ -36,12 +36,14 @@ class CRM_Logging_Differ {
   private $db;
   private $log_conn_id;
   private $log_date;
+  private $interval;
 
-  function __construct($log_conn_id, $log_date) {
+  function __construct($log_conn_id, $log_date, $interval = '10 SECOND') {
     $dsn               = defined('CIVICRM_LOGGING_DSN') ? DB::parseDSN(CIVICRM_LOGGING_DSN) : DB::parseDSN(CIVICRM_DSN);
     $this->db          = $dsn['database'];
     $this->log_conn_id = $log_conn_id;
     $this->log_date    = $log_date;
+    $this->interval    = $interval;
   }
 
   function diffsInTables($tables) {
@@ -88,7 +90,8 @@ class CRM_Logging_Differ {
     }
 
     // find ids in this table that were affected in the given connection (based on connection id and a ±10 s time period around the date)
-    $sql = "SELECT DISTINCT id FROM `{$this->db}`.`log_$table` WHERE log_conn_id = %1 AND log_date BETWEEN DATE_SUB(%2, INTERVAL 10 SECOND) AND DATE_ADD(%2, INTERVAL 10 SECOND) {$contactIdClause}";
+    $sql = "SELECT DISTINCT id FROM `{$this->db}`.`log_$table` WHERE log_conn_id = %1 AND log_date BETWEEN DATE_SUB(%2, INTERVAL {$this->interval}) AND DATE_ADD(%2, INTERVAL {$this->interval}) {$contactIdClause}";
+
     $dao = CRM_Core_DAO::executeQuery($sql, $params);
     while ($dao->fetch()) {
       $diffs = array_merge($diffs, $this->diffsInTableForId($table, $dao->id));
@@ -106,8 +109,8 @@ class CRM_Logging_Differ {
       3 => array($id, 'Integer'),
     );
 
-    // look for all the changes in the given connection that happended less than 10 seconds later than log_date to the given id to catch multi-query changes
-    $changedSQL = "SELECT * FROM `{$this->db}`.`log_$table` WHERE log_conn_id = %1 AND log_date < DATE_ADD(%2, INTERVAL 10 SECOND) AND id = %3 ORDER BY log_date DESC LIMIT 1";
+    // look for all the changes in the given connection that happended less than {$this->interval} s later than log_date to the given id to catch multi-query changes
+    $changedSQL = "SELECT * FROM `{$this->db}`.`log_$table` WHERE log_conn_id = %1 AND log_date < DATE_ADD(%2, INTERVAL {$this->interval}) AND id = %3 ORDER BY log_date DESC LIMIT 1";
 
     $changedDAO = CRM_Core_DAO::executeQuery($changedSQL, $params);
     while ($changedDAO->fetch( )) {
