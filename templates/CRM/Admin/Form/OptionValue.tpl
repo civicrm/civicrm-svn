@@ -41,8 +41,14 @@
         </tr>    
         <tr class="crm-admin-optionvalue-form-block-value">
             <td class="label">{$form.value.label}</td>
-            <td>{$form.value.html}<br /> {if $config->languageLimit|@count >= 2}
-            <span class="description">{ts}The same option value is stored for all languages. Changing this value will change it for all languages.{/ts}</span> {/if} </td>
+            <td>{$form.value.html}<br />
+            {if $action eq 2}
+              <span class="description red"><div class="icon alert-icon"></div>{ts}Changing the Value field will unlink records which have been marked with this option. This change can not be undone except by restoring the previous value.{/ts}</span>
+            {/if}
+            {if $config->languageLimit|@count >= 2}<br />
+              <span class="description">{ts}The same option value is stored for all languages. Changing this value will change it for all languages.{/ts}</span>
+            {/if}
+            </td>
         </tr> 
         <tr class="crm-admin-optionvalue-form-block-name">   
             <td class="label">{$form.name.label}</td>
