@@ -364,12 +364,13 @@ function _civicrm_api3_store_values(&$fields, &$params, &$values) {
   }
   return $valueFound;
 }
-/*
+/**
  * The API supports 2 types of get requestion. The more complex uses the BAO query object.
  *  This is a generic function for those functions that call it
  *
  *  At the moment only called by contact we should extend to contribution &
- *  others that use the query object
+ *  others that use the query object. Note that this function passes permission information in.
+ *  The others don't
  *
  * @param array $params as passed into api get or getcount function
  * @param array $options array of options (so we can modify the filter)
