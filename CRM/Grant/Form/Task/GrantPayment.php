@@ -100,7 +100,7 @@ class CRM_Grant_Form_Task_GrantPayment extends CRM_Grant_Form_Task
         $this->applyFilter('__ALL__','trim');
         $attributes = CRM_Core_DAO::getAttribute( 'CRM_Grant_DAO_GrantProgram' );
         
-        $this->_contributionTypes = CRM_Grant_BAO_GrantProgram::contributionTypes();
+        $this->_contributionTypes = CRM_Contribute_PseudoConstant::financialType();
         $this->add('select', 'financial_type_id',  ts( 'From account' ),
                    array( '' => ts( '- select -' ) ) + $this->_contributionTypes , true);
 

@@ -57,7 +57,7 @@ class CRM_Grant_Form_GrantProgramView extends CRM_Core_Form
         $values = array( ); 
         $params['id'] = $this->_id;
         CRM_Grant_BAO_GrantProgram::retrieve( $params, $values );
-        $contributionTypes = CRM_Grant_BAO_GrantProgram::contributionTypes();
+        $contributionTypes = CRM_Contribute_PseudoConstant::financialType();
         $this->assign('grantType', CRM_Grant_BAO_GrantProgram::getOptionName( $values['grant_type_id'] ) );
         $this->assign('grantProgramStatus', CRM_Grant_BAO_GrantProgram::getOptionName($values['status_id'] ) );
         $this->assign('contributionType', $contributionTypes[$values['financial_type_id']] );
