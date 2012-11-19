@@ -400,6 +400,8 @@ function _civicrm_api3_get_using_query_object($entity, $params, $additional_opti
   if(!empty($params['check_permissions'])){
     // we will filter query object against getfields
     $fields = civicrm_api($entity, 'getfields', array('version' => 3, 'action' => 'get'));
+    // we need to add this in as earlier in this function 'id' was unset in favour of $entity_id
+    $fields['values'][$entity . '_id'] = array();
     $varsToFilter = array('returnProperties', 'inputParams');
     foreach ($varsToFilter as $varToFilter){
       if(!is_array($$varToFilter)){
@@ -409,7 +411,7 @@ function _civicrm_api3_get_using_query_object($entity, $params, $additional_opti
       //would need to diff out of exceptions arr other keys like 'options', 'return', 'api. etcetc
       //so we are silently ignoring parts of their request
       //$exceptionsArr = array_diff(array_keys($$varToFilter), array_keys($fields['values']));
-      $$varToFilter = array_intersect_key($$varToFilter, array_keys($fields['values']));
+      $$varToFilter = array_intersect_key($$varToFilter, $fields['values']);
     }
   }
   $options = array_merge($options,$additional_options);
