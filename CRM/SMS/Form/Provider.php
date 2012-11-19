@@ -138,9 +138,8 @@ class CRM_SMS_Form_Provider extends CRM_Core_Form {
     $name = CRM_Utils_Request::retrieve('key', 'String', $this, FALSE, NULL);
     if ($name) {
       $defaults['name'] = $name;
-      $info = CRM_Extension_System::singleton()->getMapper()->keyToInfo($name);
-      if (is_a($info, 'CRM_Extension_Info'))
-        $defaults['api_url'] = $info->typeInfo['api_url'];
+      $provider = CRM_SMS_Provider::singleton(array('provider' => $name));
+      $defaults['api_url'] = $provider->_apiURL;
     }
 
     if (!$this->_id) {

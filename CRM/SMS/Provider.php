@@ -56,8 +56,6 @@ abstract class CRM_SMS_Provider {
     ), $force = FALSE) {
     $mailingID    = CRM_Utils_Array::value('mailing_id', $providerParams);
     $providerID   = CRM_Utils_Array::value('provider_id', $providerParams);
-
-    // make clickatell default provider for now
     $providerName = CRM_Utils_Array::value('provider', $providerParams);
 
     if (!$providerID && $mailingID) {
