@@ -1524,20 +1524,3 @@ SELECT @fieldID := max(id) FROM civicrm_price_field WHERE name = 'contribution_a
 INSERT INTO `civicrm_price_field_value` (  `price_field_id`, `name`, `label`, `amount`, `weight`, `is_default`, `is_active`, `financial_type_id`)
 VALUES ( @fieldID, 'contribution_amount', 'Contribution Amount', '1', '1', '0', '1', 1);
 
-DROP FUNCTION IF EXISTS civicrm_strip_non_numeric;
-DELIMITER $$
-CREATE FUNCTION civicrm_strip_non_numeric(input VARCHAR(255))
-   RETURNS VARCHAR(255)
-BEGIN
-   DECLARE output   VARCHAR(255) DEFAULT '';
-   DECLARE iterator INT          DEFAULT 1;
-   WHILE iterator < (LENGTH(input) + 1) DO
-      IF SUBSTRING(input, iterator, 1) IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9') THEN
-         SET output = CONCAT(output, SUBSTRING(input, iterator, 1));
-      END IF;
-      SET iterator = iterator + 1;
-   END WHILE;
-   RETURN output;
-END
-$$
-DELIMITER ;
