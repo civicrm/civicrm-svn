@@ -58,7 +58,7 @@ class CRM_Profile_Form_Edit extends CRM_Profile_Form {
    *
    * @access public
    *
-   */ 
+   */
   function preProcess() {
     $this->_mode = CRM_Profile_Form::MODE_CREATE;
 
@@ -146,11 +146,11 @@ SELECT module
       CRM_Core_Error::fatal();
     }
 
-    // set the title    
+    // set the title
     if ($this->_multiRecord && $this->_customGroupTitle) {
       $groupTitle = ($this->_multiRecord & CRM_Core_Action::UPDATE) ?
         'Edit ' . $this->_customGroupTitle . ' Record' : $this->_customGroupTitle;
-      
+
     } else {
       $groupTitle = $ufGroup->title;
     }
@@ -200,7 +200,7 @@ SELECT module
 
       if ($this->_multiRecordProfile) {
         $urlParams = "reset=1&id={$this->_id}&gid={$gidString}";
-        
+
         // get checksum if present
         if ($this->get('cs')) {
           $urlParams .= "&cs=" . $this->get('cs');
@@ -209,12 +209,12 @@ SELECT module
         $this->_cancelURL = CRM_Utils_System::url('civicrm/profile/edit', $urlParams);
 
         //passing the post url to template so the popup form does
-        //proper redirection and proccess form errors if any 
+        //proper redirection and proccess form errors if any
         $popupRedirect = CRM_Utils_System::url('civicrm/profile/edit', $urlParams, FALSE, NULL, FALSE);
         $this->assign('urlParams', $urlParams);
         $this->assign('postUrl', $popupRedirect);
       }
-      
+
       // we do this gross hack since qf also does entity replacement
       $this->_postURL = str_replace('&amp;', '&', $this->_postURL);
       $this->_cancelURL = str_replace('&amp;', '&', $this->_cancelURL);
@@ -238,15 +238,15 @@ SELECT module
     }
 
     parent::buildQuickForm();
-    
+
     if (($this->_multiRecord & CRM_Core_Action::DELETE) && $this->_recordExists) {
       $this->_deleteButtonName = $this->getButtonName('upload', 'delete');
-      
+
       $this->addElement('submit',
         $this->_deleteButtonName,
         ts('Delete')
-      ); 
-       
+      );
+
       $buttons[] = array(
         'type' => 'cancel',
         'name' => ts('Cancel'),
@@ -254,8 +254,8 @@ SELECT module
       );
       $this->addButtons($buttons);
       return;
-    } 
-    
+    }
+
     //get the value from session, this is set if there is any file
     //upload field
     $uploadNames = $this->get('uploadNames');
@@ -308,7 +308,7 @@ SELECT module
       echo json_encode($returnArray);
       CRM_Utils_System::civiExit();
     }
-    
+
     //for delete record handling
     if (!CRM_Utils_Array::value($this->_deleteButtonName, $_POST)) {
       CRM_Core_Session::setStatus(ts('Your information has been saved.'), ts('Thank you.'), 'success');
@@ -342,7 +342,7 @@ SELECT module
         'contact_id' => $this->_id,
         'version' => 3,
       );
-      require_once 'api/api.php';
+
       $contact = civicrm_api('contact', 'get', $contactParams);
       $contact = reset($contact['values']);
 
