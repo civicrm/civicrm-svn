@@ -16,9 +16,6 @@
       <add>4.1</add>
       <comment>Contains the header information for this batch. Primarily this will be civicrm_contribution, but in future it could be for a generic batch such as a quickbooks export, official receipt, etc.</comment>
   </field>
-  <primaryKey>  
-       <name>entity_table</name>  
-  </primaryKey>
   <field>  
       <name>entity_id</name>  
       <type>int unsigned</type>  
@@ -26,9 +23,6 @@
       <add>4.1</add>
       <comment>Links to an id in the entity_table, such as id in civicrm_batch</comment>
   </field>
-  <primaryKey>  
-       <name>entity_id</name>  
-  </primaryKey>
  <field>
       <name>financial_item_id</name> 
       <type>int unsigned</type>  
@@ -36,9 +30,6 @@
       <add>4.1</add>        
       <comment>FK to the civicrm_financial_item.id</comment>
   </field>
-  <primaryKey>  
-       <name>financial_item_id</name>  
-  </primaryKey>
   <foreignKey> 
        <name>financial_item_id</name> 
        <table>civicrm_financial_item</table> 
