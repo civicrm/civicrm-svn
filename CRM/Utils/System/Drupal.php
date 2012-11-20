@@ -601,7 +601,7 @@ AND    u.status = 1
 
     if (!file_exists("$cmsPath/includes/bootstrap.inc")) {
       if ($throwError) {
-        echo '<br />Sorry, could not locate bootstrap.inc.';
+        echo '<br />Sorry, could not locate bootstrap.inc\n';
         exit();
       }
       return FALSE;

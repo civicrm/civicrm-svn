@@ -388,6 +388,27 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship {
     return $relationshipType;
   }
 
+  static function clearCurrentEmployer($id, $action) {
+    $relationship = new CRM_Contact_DAO_Relationship();
+    $relationship->id = $id;
+    $relationship->find(TRUE);
+
+    //to delete relationship between household and individual                                                                                          \
+    //or between individual and orgnization
+    if (($action & CRM_Core_Action::DISABLE) || ($action & CRM_Core_Action::DELETE)) {
+    if ($relationship->relationship_type_id == 4 || $relationship->relationship_type_id == 7) {
+      $sharedContact = new CRM_Contact_DAO_Contact();
+      $sharedContact->id = $relationship->contact_id_a;
+      $sharedContact->find(TRUE);
+
+        if ($relationship->relationship_type_id == 4 && $relationship->contact_id_b == $sharedContact->employer_id) {
+        CRM_Contact_BAO_Contact_Utils::clearCurrentEmployer($relationship->contact_id_a);
+      }
+    }
+    }
+    return  $relationship;
+  }
+
   /**
    * Function to delete the relationship
    *
@@ -402,25 +423,7 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship {
     // delete from relationship table
     CRM_Utils_Hook::pre('delete', 'Relationship', $id, CRM_Core_DAO::$_nullArray);
 
-    $relationship = new CRM_Contact_DAO_Relationship();
-    $relationship->id = $id;
-
-    $relationship->find(TRUE);
-
-    //to delete relationship between household and individual
-    //or between individual and orgnization
-    if ($relationship->relationship_type_id == 4 || $relationship->relationship_type_id == 7) {
-      $sharedContact = new CRM_Contact_DAO_Contact();
-      $sharedContact->id = $relationship->contact_id_a;
-      $sharedContact->find(TRUE);
-
-      if ($relationship->relationship_type_id == 4 &&
-        $relationship->contact_id_b == $sharedContact->employer_id
-      ) {
-        CRM_Contact_BAO_Contact_Utils::clearCurrentEmployer($relationship->contact_id_a);
-      }
-    }
-
+    $relationship = self::clearCurrentEmployer($id, CRM_Core_Action::DELETE);
     if (CRM_Core_Permission::access('CiviMember')) {
       // create $params array which isrequired to delete memberships
       // of the related contacts.
@@ -466,16 +469,7 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship {
    * @static
    */
   static function disableEnableRelationship($id, $action) {
-    $relationship = new CRM_Contact_DAO_Relationship();
-    $relationship->id = $id;
-
-    $relationship->find(TRUE);
-    //get the relationship type id of "Employee of"
-    $relTypeId = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_RelationshipType', 'Employee of', 'id', 'name_a_b');
-    if ($relTypeId && ($action & CRM_Core_Action::DISABLE)) {
-      CRM_Contact_BAO_Contact_Utils::clearCurrentEmployer($relationship->contact_id_a);
-    }
-
+    $relationship = self::clearCurrentEmployer($id, $action);
     if (CRM_Core_Permission::access('CiviMember')) {
       // create $params array which isrequired to delete memberships
       // of the related contacts.
@@ -1266,10 +1260,12 @@ SELECT relationship_type_id, relationship_direction
    *
    */
   function isDeleteRelatedMembership($relTypeIds, $contactId, $mainRelatedContactId, $relTypeId, $relIds) {
-    if (in_array($relTypeId, $relTypeIds) ||
-      empty($relIds)
-    ) {
+    if (in_array($relTypeId, $relTypeIds)) {
       return TRUE;
+    }
+
+    if (empty($relIds)) {
+      return FALSE;
     }
 
     $relParamas = array(1 => array($contactId, 'Integer'),
@@ -1287,9 +1283,7 @@ SELECT relationship_type_id, relationship_direction
     $recordsFound = (int)CRM_Core_DAO::singleValueQuery("SELECT COUNT(*) FROM civicrm_relationship WHERE relationship_type_id IN ( " . implode(',', $relTypeIds) . " ) AND contact_id_a IN ( %1, %2 ) AND contact_id_b IN ( %1, %2 ) AND id NOT IN (" . implode(',', $relIds) . ")", $relParamas);
 
     if ($recordsFound) {
-
       return FALSE;
-
     }
 
     return TRUE;

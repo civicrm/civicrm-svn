@@ -48,6 +48,14 @@ class CRM_Core_Invoke {
    * @access public
    */
   static function invoke($args) {
+    try {
+      return self::_invoke($args);
+    } catch (Exception $e) {
+      return CRM_Core_Error::handleUnhandledException($e);
+    }
+  }
+  
+  protected static function _invoke($args) {
     if ($args[0] !== 'civicrm') {
       return;
     }

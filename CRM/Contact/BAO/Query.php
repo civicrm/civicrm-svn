@@ -4366,7 +4366,7 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
       }
 
       if (!$appendTimeStamp) {
-        $firstDate = substr($date, 0, 8);
+        $firstDate = substr($firstDate, 0, 8);
       }
       $firstDateFormat = CRM_Utils_Date::customFormat($firstDate);
 

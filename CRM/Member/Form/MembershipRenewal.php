@@ -115,11 +115,6 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form {
       )
     );
 
-    $orgId = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType', $this->_memType, 'member_of_contact_id');
-
-    $this->assign('memType', CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType', $this->_memType, 'name'));
-    $this->assign('orgName', CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $orgId, 'display_name'));
-
     //using credit card :: CRM-2759
     $this->_mode = CRM_Utils_Request::retrieve('mode', 'String', $this);
     if ($this->_mode) {
@@ -360,6 +355,11 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form {
     }
 
     $this->assign('allMembershipInfo', json_encode($allMembershipInfo));
+
+    if ($this->_memType) {
+      $this->assign('orgName', $selMemTypeOrg[$allMemberships[$this->_memType]['member_of_contact_id']]);
+      $this->assign('memType', $allMemberships[$this->_memType]['name']);
+    }
 
     // force select of organization by default, if only one organization in
     // the list
@@ -760,7 +760,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
 
       if ($this->_mode) {
         $trxnParams = array(
-          'contribution_id' => $contribution->id,
+          'contribution_id' => CRM_Utils_Array::value('contribution_id', $formValues),
           'trxn_date' => $now,
           'trxn_type' => 'Debit',
           'total_amount' => $formValues['total_amount'],

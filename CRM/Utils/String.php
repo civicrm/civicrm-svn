@@ -580,8 +580,6 @@ class CRM_Utils_String {
   static function purifyHTML($string) {
     static $_filter = null;
     if ( ! $_filter ) {
-      require_once 'packages/IDS/vendors/htmlpurifier/HTMLPurifier.auto.php';
-
       $config = HTMLPurifier_Config::createDefault();
       $config->set('Core.Encoding', 'UTF-8');
 

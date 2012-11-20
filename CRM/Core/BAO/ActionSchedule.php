@@ -864,9 +864,8 @@ reminder.action_schedule_id = %1";
         $operator          = ($actionSchedule->start_action_condition == 'before' ? "DATE_SUB" : "DATE_ADD");
         $date              = $operator . "({$dateField}, INTERVAL {$actionSchedule->start_action_offset} {$actionSchedule->start_action_unit})";
         $startDateClause[] = "'{$now}' >= {$date}";
-
         if ($mapping->entity == 'civicrm_participant') {
-          $startDateClause[] = $operator. "({$now}, INTERVAL 1 DAY ) {$op} " . $actionSchedule->start_action_date;
+          $startDateClause[] = $operator. "({$now}, INTERVAL 1 DAY ) {$op} " . $dateField;
         }
         else {
           $startDateClause[] = "DATE_SUB({$now}, INTERVAL 1 DAY ) <= {$date}";

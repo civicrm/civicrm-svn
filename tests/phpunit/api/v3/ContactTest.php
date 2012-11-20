@@ -92,7 +92,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
   }
 
   /**
-   *  Test civicrm_contact_add()
+   *  Test civicrm_contact_create
    *
    *  Verify that attempt to create individual contact with only
    *  first and last names succeeds
@@ -114,6 +114,35 @@ class api_v3_ContactTest extends CiviUnitTestCase {
       $contact['id'],
       $params
     );
+  }
+
+  /**
+   *  Test civicrm_contact_create with sub-types
+   *
+   *  Verify that sub-types are created successfully and not deleted by subsequent updates
+   */
+  function testIndividualSubType() {
+    $params = array(
+      'first_name' => 'test abc',
+      'contact_type' => 'Individual',
+      'last_name' => 'test xyz',
+      'contact_sub_type' => array('Student', 'Staff'),
+      'version' => $this->_apiversion,
+    );
+    $contact = civicrm_api('contact', 'create', $params);
+    $cid = $contact['id'];
+    
+    $params = array(
+      'id' => $cid,
+      'middle_name' => 'foo',
+      'version' => $this->_apiversion,
+    );
+    civicrm_api('contact', 'create', $params);
+    unset($params['middle_name']);
+    
+    $contact = civicrm_api('contact', 'get', $params);
+    
+    $this->assertEquals(array('Student', 'Staff'), $contact['values'][$cid]['contact_sub_type'], "In line " . __LINE__);
   }
 
   /**
@@ -569,8 +598,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
   }
 
   /**
-   *  Verify that attempt to create individual contact with first
-   *  and last names and email succeeds
+   *  Verify that attempt to create individual contact with two chained websites succeeds
    */
   function testCreateIndividualWithContributionDottedSyntax() {
     $description = "test demonstrates the syntax to create 2 chained entities";
@@ -616,8 +644,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
   }
 
   /**
-   *  Verify that attempt to create individual contact with first
-   *  and last names and email succeeds
+   *  Verify that attempt to create individual contact with chained contribution and website succeeds
    */
   function testCreateIndividualWithContributionChainedArrays() {
     $params = array(
@@ -687,8 +714,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     civicrm_api('contact', 'delete', $contact);
   }
   /**
-   *  Verify that attempt to create individual contact with first
-   *  and last names and email succeeds
+   *  Verify that attempt to create individual contact with no data fails
    */
   function testCreateIndividualWithOutNameEmail() {
     $params = array(
@@ -1246,8 +1272,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
   }
 
   /**
-   *  Verify that attempt to create individual contact with first
-   *  and last names and email succeeds
+   *  Verify attempt to create individual with chained arrays
    */
   function testGetIndividualWithChainedArrays() {
     $ids = $this->entityCustomGroupWithSingleFieldCreate(__FUNCTION__, __FILE__);

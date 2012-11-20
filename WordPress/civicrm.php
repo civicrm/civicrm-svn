@@ -425,8 +425,8 @@ function civicrm_wp_frontend($shortcode = FALSE) {
       CRM_Utils_Array::value(1, $args) == 'ajax'
     )
   ) {
-    civicrm_wp_invoke();
-    CRM_Utils_System::civiExit( );
+    add_filter('init', 'civicrm_wp_invoke');
+    return;
   }
 
   // this places civicrm inside frontend theme

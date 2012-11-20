@@ -148,8 +148,7 @@
  </div>
 
  <div id="billing-payment-block"></div>
- {include file="CRM/common/paymentBlock.tpl'}
-
+ {include file="CRM/common/paymentBlock.tpl"}
 
 {include file="CRM/UF/Form/Block.tpl" fields=$customPost}
 

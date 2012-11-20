@@ -139,6 +139,7 @@ abstract class CRM_Contact_Form_Inline extends CRM_Core_Form {
       $response,
       CRM_Contact_Form_Inline_Lock::getResponse($this->_contactId)
     );
+    $this->postProcessHook();
     echo json_encode($response);
     CRM_Utils_System::civiExit();
   }

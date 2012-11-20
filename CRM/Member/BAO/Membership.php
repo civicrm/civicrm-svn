@@ -1297,7 +1297,7 @@ AND civicrm_membership.is_test = %2";
     //adding contribution record  to contribution table.
     //this condition arises when separate membership payment is
     //enabled and contribution amount is not selected. fix for CRM-3010
-    if ($form->_amount > 0.0) {
+    if ($form->_amount > 0.0 && $membershipParams['amount']) {
       $result = CRM_Contribute_BAO_Contribution_Utils::processConfirm($form, $membershipParams,
         $premiumParams, $contactID,
         $contributionTypeId,

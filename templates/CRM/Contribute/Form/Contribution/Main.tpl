@@ -298,7 +298,7 @@ var priceset = {/literal}{if $priceset}'#{$priceset}'{else}0{/if}{literal}
     {/if}
 
     <div id="billing-payment-block"></div>
-    {include file="CRM/common/paymentBlock.tpl'}
+    {include file="CRM/common/paymentBlock.tpl"}
 
     <div class="crm-group custom_post_profile-group">
     {include file="CRM/UF/Form/Block.tpl" fields=$customPost}

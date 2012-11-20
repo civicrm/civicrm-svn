@@ -336,6 +336,7 @@
       cj('#membership_type_id_1').change( function( ) {
         setPaymentBlock( mode );
       });
+  setPaymentBlock( mode );
 
       // show/hide different contact section
       setDifferentContactBlock();
