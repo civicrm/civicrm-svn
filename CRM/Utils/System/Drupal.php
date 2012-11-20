@@ -609,6 +609,14 @@ AND    u.status = 1
     // load drupal bootstrap
     chdir($cmsPath);
     define('DRUPAL_ROOT', $cmsPath);
+
+    // For drupal multi-site CRM-11313
+    if ($realPath && strpos($realPath, 'sites/all/modules/') === FALSE) {
+      preg_match('@sites/([^/]*)/modules@s', $realPath, $matches);
+      if (!empty($matches[1])) {
+        $_SERVER['HTTP_HOST'] = $matches[1];
+      }
+    }
     require_once 'includes/bootstrap.inc';
     drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
 
