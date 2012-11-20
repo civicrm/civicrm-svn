@@ -196,10 +196,9 @@ ADD `tax_rate` decimal(9,8) DEFAULT '0.00' COMMENT 'The percentage of the total_
 ADD `is_reserved` tinyint(4) DEFAULT NULL COMMENT 'Is this a predefined system object?',
 ADD `is_active` tinyint(4) DEFAULT NULL COMMENT 'Is this property active?',
 ADD `is_default` tinyint(4) DEFAULT NULL COMMENT 'Is this account the default one (or default tax one) for its financial_account_type?',
+ADD CONSTRAINT `UI_name` UNIQUE INDEX (`name`),
 ADD CONSTRAINT `FK_civicrm_financial_account_contact_id` FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact`(id),
 ADD CONSTRAINT `FK_civicrm_financial_account_parent_id` FOREIGN KEY (`parent_id`) REFERENCES `civicrm_financial_account`(id);
-
--- FIXME
 
 -- CRM-8425
 -- Rename table civicrm_contribution_type to civicrm_financial_type
@@ -213,10 +212,7 @@ ADD KEY `UI_is_current_revision` (is_current_revision),
 DROP accounting_code,
 ADD CONSTRAINT `UI_id` UNIQUE INDEX(id),
 ADD CONSTRAINT `FK_civicrm_financial_type_original_id` FOREIGN KEY (`original_id`) REFERENCES `civicrm_financial_type` (`id`),
-    DROP INDEX UI_name;
-
--- EOF FIXME 
-
+DROP INDEX UI_name;
 
 CREATE TABLE IF NOT EXISTS `civicrm_entity_financial_account` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
@@ -225,8 +221,9 @@ CREATE TABLE IF NOT EXISTS `civicrm_entity_financial_account` (
   `account_relationship` int(10) unsigned NOT NULL COMMENT 'FK to a new civicrm_option_value (account_relationship)',
   `financial_account_id` int(10) unsigned NOT NULL COMMENT 'FK to the financial_account_id',
   PRIMARY KEY (`id`),
-  KEY `FK_civicrm_entity_financial_account_financial_account_id` (`financial_account_id`)
-);
+KEY `FK_civicrm_entity_financial_account_financial_account_id` (`financial_account_id`)
+)ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
 -- Constraints for table `civicrm_entity_financial_account`
  ALTER TABLE `civicrm_entity_financial_account`
   ADD CONSTRAINT `FK_civicrm_entity_financial_account_financial_account_id` FOREIGN KEY (`financial_account_id`) REFERENCES `civicrm_financial_account` (`id`);
@@ -253,7 +250,44 @@ CREATE TABLE IF NOT EXISTS `civicrm_financial_item` (
   KEY `IX_entity` (`entity_table`,`entity_id`),
   KEY `FK_civicrm_financial_item_contact_id` (`contact_id`),
   KEY `FK_civicrm_financial_item_financial_account_id` (`financial_account_id`)
-);
+)ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `civicrm_payment` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Id',
+  `payment_batch_number` int(10) unsigned NOT NULL COMMENT 'Payment Batch Nnumber',
+  `payment_number` int(10) unsigned NOT NULL COMMENT 'Payment Number',
+  `financial_type_id` int(10) unsigned NOT NULL COMMENT 'Financial Type ID',
+  `contact_id` int(10) unsigned NOT NULL COMMENT 'Contact ID',
+  `payment_created_date` date DEFAULT NULL COMMENT 'Payment Created Date.',
+  `payment_date` date DEFAULT NULL COMMENT 'Payment Date.',
+  `payable_to_name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Payable To Name.',
+  `payable_to_address` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Payable To Address.',
+  `amount` decimal(20,2) NOT NULL COMMENT 'Requested grant amount, in default currency.',
+  `currency` varchar(3) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '3 character string, value from config setting or input via user.',
+  `payment_reason` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Payment Reason.',
+  `replaces_payment_id` varchar(8) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Replaces Payment Id.',
+  PRIMARY KEY (`id`)
+)ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `civicrm_grant_program` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Grant Program ID',
+  `label` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Label displayed to users',
+  `name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Stores a fixed (non-translated) name for the grant program.',
+  `grant_type_id` int(10) unsigned NOT NULL COMMENT 'Type of grant. Implicit FK to civicrm_option_value in grant_type option_group.',
+  `total_amount` decimal(20,2) NOT NULL COMMENT 'Requested grant program amount, in default currency.',
+  `remainder_amount` decimal(20,2) NOT NULL COMMENT 'Requested grant program remainder amount, in default currency.',
+  `financial_type_id` int(10) unsigned NOT NULL COMMENT 'Financial Type ID',
+  `status_id` int(10) unsigned NOT NULL COMMENT 'Id of Grant status.',
+  `allocation_date` date DEFAULT NULL COMMENT 'Allocation date.',
+  `is_active` tinyint(4) DEFAULT '1' COMMENT 'Is this grant program active?',
+  `is_auto_email` tinyint(4) DEFAULT '1' COMMENT 'Is auto email active?',
+  `payment_id` int(10) unsigned NOT NULL COMMENT 'Type of grant. Implicit FK to civicrm_payment.',
+  PRIMARY KEY (`id`),
+  KEY `FK_civicrm_grant_program_grant_type_id` (`grant_type_id`),
+  KEY `FK_civicrm_grant_program_status_id` (`status_id`),
+  KEY `FK_civicrm_grant_program_payment_id` (`payment_id`)
+)ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
 
 ALTER TABLE `civicrm_financial_item`
   ADD CONSTRAINT `FK_civicrm_financial_item_contact_id` FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact` (`id`),
@@ -270,10 +304,35 @@ CREATE TABLE IF NOT EXISTS `civicrm_financial_batch` (
   `exported_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_civicrm_financial_batch_batch_id` (`batch_id`)
-);
+)ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
  
+CREATE TABLE IF NOT EXISTS `civicrm_entity_financial_item` (
+  `entity_table` varchar(64) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Contains the header information for this batch. Primarily this will be civicrm_contribution, but in future it could be for a generic batch such as a quickbooks export, official receipt, etc.',
+  `entity_id` int(10) unsigned NOT NULL COMMENT 'Links to an id in the entity_table, such as id in civicrm_batch',
+  `financial_item_id` int(10) unsigned NOT NULL COMMENT 'FK to the civicrm_financial_item.id',
+  KEY `FK_civicrm_entity_financial_item_financial_item_id` (`financial_item_id`)
+)ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `civicrm_entity_payment` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `payment_id` int(10) unsigned NOT NULL COMMENT 'Type of grant. Implicit FK to civicrm_payment.',
+  `entity_table` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Entity Table.',
+  `entity_id` int(10) unsigned NOT NULL COMMENT 'Entity ID',
+  PRIMARY KEY (`id`),
+  KEY `FK_civicrm_entity_payment_payment_id` (`payment_id`)
+)ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+ALTER TABLE `civicrm_entity_financial_item`
+  ADD CONSTRAINT `FK_civicrm_entity_financial_item_financial_item_id` FOREIGN KEY (`financial_item_id`) REFERENCES `civicrm_financial_item` (`id`);
+
+ALTER TABLE `civicrm_entity_payment`
+  ADD CONSTRAINT `FK_civicrm_entity_payment_payment_id` FOREIGN KEY (`payment_id`) REFERENCES `civicrm_payment` (`id`);
+
 ALTER TABLE `civicrm_financial_batch`
   ADD CONSTRAINT `FK_civicrm_financial_batch_batch_id` FOREIGN KEY (`batch_id`) REFERENCES `civicrm_contact` (`id`);
+
+ALTER TABLE `civicrm_entity_financial_trxn`
+DROP currency;
 
 -- CRM 9189 and CRM-8425 change fk's to financial_account.id in our branch that will need to be changed to an fk to financial_type.id
 
@@ -282,7 +341,7 @@ DROP FOREIGN KEY FK_civicrm_pledge_contribution_type_id,
 DROP INDEX FK_civicrm_pledge_contribution_type_id;
 
 ALTER TABLE `civicrm_pledge`
-CHANGE `contribution_type_id` `financial_type_id` int unsigned;
+CHANGE `contribution_type_id` `financial_type_id` int unsigned COMMENT 'FK to Financial Type';
 
 ALTER TABLE `civicrm_pledge`
 ADD CONSTRAINT FK_civicrm_pledge_financial_type_id  FOREIGN KEY (`financial_type_id`) REFERENCES civicrm_financial_type (id);
@@ -292,58 +351,87 @@ DROP FOREIGN KEY FK_civicrm_membership_type_contribution_type_id,
 DROP INDEX FK_civicrm_membership_type_contribution_type_id;
 
 ALTER TABLE `civicrm_membership_type`
-CHANGE `contribution_type_id` `financial_type_id` int unsigned;
+CHANGE `contribution_type_id` `financial_type_id` int unsigned NOT NULL COMMENT 'If membership is paid by a contribution - what financial type should be used. FK to civicrm_financial_type.id';
 
 ALTER TABLE `civicrm_membership_type`
 ADD CONSTRAINT FK_civicrm_membership_type_financial_type_id  FOREIGN KEY (`financial_type_id`) REFERENCES civicrm_financial_type (id);
 
+ALTER TABLE `civicrm_price_set`
+DROP FOREIGN KEY FK_civicrm_price_set_contribution_type_id,
+DROP INDEX FK_civicrm_price_set_contribution_type_id;
+
+ALTER TABLE `civicrm_price_set`
+CHANGE `contribution_type_id` `financial_type_id` int unsigned COMMENT 'If membership is paid by a contribution - what financial type should be used. FK to civicrm_financial_type.id';
+
+ALTER TABLE `civicrm_price_set`
+ADD CONSTRAINT FK_civicrm_price_set_financial_type_id  FOREIGN KEY (`financial_type_id`) REFERENCES civicrm_financial_type (id);
+
 ALTER TABLE `civicrm_event`
-CHANGE `contribution_type_id` `financial_type_id` int unsigned;
+CHANGE `contribution_type_id` `financial_type_id` int unsigned COMMENT 'Financial type assigned to paid event registrations for this event. Required if is_monetary is true.';
 
 ALTER TABLE `civicrm_contribution`
 DROP FOREIGN KEY FK_civicrm_contribution_contribution_type_id,
 DROP INDEX FK_civicrm_contribution_contribution_type_id;
 
 ALTER TABLE `civicrm_contribution`
-CHANGE `contribution_type_id` `financial_type_id` int unsigned;
+CHANGE `contribution_type_id` `financial_type_id` int unsigned COMMENT 'FK to Financial Type for (total_amount - non_deductible_amount).';
 
 ALTER TABLE `civicrm_contribution`
 ADD CONSTRAINT FK_civicrm_contribution_financial_type_id FOREIGN KEY (`financial_type_id`) REFERENCES civicrm_financial_type (id);
+
+ALTER TABLE `civicrm_contribution_page`
+DROP FOREIGN KEY FK_civicrm_contribution_page_contribution_type_id,
+DROP INDEX FK_civicrm_contribution_page_contribution_type_id;
+
+ALTER TABLE `civicrm_contribution_page`
+CHANGE `contribution_type_id` `financial_type_id` int unsigned DEFAULT NULL COMMENT 'default financial type assigned to contributions submitted via this page, e.g. Contribution, Campaign Contribution',
+ADD `initial_amount_label` text COLLATE utf8_unicode_ci COMMENT 'Initial amount label for partial payment',
+ADD `initial_amount_help_text` text COLLATE utf8_unicode_ci COMMENT 'Initial amount help text for partial payment',
+ADD `min_initial_amount` decimal(20,2) DEFAULT NULL COMMENT 'Minimum initial amount for partial payment';
+
+ALTER TABLE `civicrm_contribution_page`
+ADD CONSTRAINT  FK_civicrm_contribution_page_financial_type_id FOREIGN KEY (`financial_type_id`) REFERENCES civicrm_financial_type (id);
 
 ALTER TABLE `civicrm_contribution_recur`
 DROP INDEX FK_civicrm_contribution_recur_contribution_type_id;
 
 ALTER TABLE `civicrm_contribution_recur`
-CHANGE `contribution_type_id` `financial_type_id` int unsigned;
+CHANGE `contribution_type_id` `financial_type_id` int unsigned COMMENT 'FK to Financial Type';
 
 ALTER TABLE `civicrm_contribution_recur`
 ADD CONSTRAINT FK_civicrm_contribution_recur_financial_type_id FOREIGN KEY (`financial_type_id`) REFERENCES civicrm_financial_type (id);
 
+ALTER TABLE `civicrm_grant_program`
+  ADD CONSTRAINT `FK_civicrm_grant_program_grant_type_id` FOREIGN KEY (`grant_type_id`) REFERENCES `civicrm_option_value` (`id`),
+  ADD CONSTRAINT `FK_civicrm_grant_program_status_id` FOREIGN KEY (`status_id`) REFERENCES `civicrm_option_value` (`id`),
+  ADD CONSTRAINT `FK_civicrm_grant_program_payment_id` FOREIGN KEY (`payment_id`) REFERENCES `civicrm_payment` (`id`);
+
+
 -- CRM-9083
 ALTER TABLE `civicrm_financial_trxn`
 DROP FOREIGN KEY FK_civicrm_financial_trxn_to_account_id,
-DROP INDEX FK_civicrm_financial_trxn_to_account_id;
-
-ALTER TABLE `civicrm_financial_trxn` CHANGE `to_account_id` `to_financial_account_id` int unsigned;
-
-ALTER TABLE `civicrm_financial_trxn`
-ADD CONSTRAINT FK_civicrm_financial_trxn_to_financial_type_id FOREIGN KEY (`to_financial_account_id`) REFERENCES civicrm_financial_account (id);
-
-ALTER TABLE `civicrm_financial_trxn`
+DROP INDEX FK_civicrm_financial_trxn_to_account_id,
 DROP FOREIGN KEY FK_civicrm_financial_trxn_from_account_id,
 DROP INDEX FK_civicrm_financial_trxn_from_account_id;
 
-ALTER TABLE `civicrm_financial_trxn` CHANGE `from_account_id` `from_financial_account_id` int unsigned;
+ALTER TABLE `civicrm_financial_trxn` CHANGE `to_account_id` `to_financial_account_id` int unsigned COMMENT 'FK to financial_financial_account table.',
+CHANGE `from_account_id` `from_financial_account_id` int unsigned COMMENT 'FK to financial_account table.',
+ADD `status_id` int(10) unsigned DEFAULT NULL,
+CHANGE `trxn_id` trxn_id varchar(255) COMMENT 'unique processor transaction id, bank id + trans id,... depending on payment_method',
+CHANGE `trxn_date` trxn_date datetime DEFAULT NULL;
 
 ALTER TABLE `civicrm_financial_trxn`
+ADD CONSTRAINT FK_civicrm_financial_trxn_to_financial_account_id FOREIGN KEY (`to_financial_account_id`) REFERENCES civicrm_financial_account (id),
 ADD CONSTRAINT FK_civicrm_financial_trxn_from_financial_account_id FOREIGN KEY (`from_financial_account_id`) REFERENCES civicrm_financial_type (id);
 
+
+-- FIXME
 ALTER TABLE `civicrm_financial_trxn` ADD `payment_processor_id` int unsigned COMMENT 'Payment Processor for this contribution Page';
 
 -- Fill in the payment_processor_id based on a lookup using the payment_processor field
 UPDATE `civicrm_payment_processor` cppt,  `civicrm_financial_trxn` cft
 SET cft.`payment_processor_id` = cppt.`id`
-WHERE cft.`payment_processor_id` = cppt.`payment_processor_type` and `is_test` = 0;
+WHERE cft.`payment_processor` = cppt.`payment_processor_type` and `is_test` = 0;
 
 -- remove payment_processor field
 ALTER TABLE `civicrm_financial_trxn` DROP `payment_processor`;
@@ -399,7 +487,7 @@ ALTER TABLE `civicrm_contribution_product` ADD
 ADD CONSTRAINT `FK_civicrm_contribution_product_financial_type_id` FOREIGN KEY (`financial_type_id`) REFERENCES `civicrm_financial_type` (`id`);
 
 ALTER TABLE `civicrm_payment_processor` ADD
-`financial_type_id` int(10) unsigned DEFAULT NULL COMMENT 'FK to Financial Type.';
+`financial_type_id` int(10) unsigned NOT NULL COMMENT 'FK to Financial Type.';
 
 ALTER TABLE `civicrm_payment_processor`
  ADD CONSTRAINT `FK_civicrm_payment_processor_financial_type_id` FOREIGN KEY (`financial_type_id`) REFERENCES `civicrm_financial_type` (`id`);
@@ -409,7 +497,7 @@ ALTER TABLE `civicrm_discount`
 DROP FOREIGN KEY FK_civicrm_discount_option_group_id,
 DROP INDEX FK_civicrm_discount_option_group_id;
 
-ALTER TABLE `civicrm_discount` CHANGE `option_group_id` `price_set_id` INT( 10 ) UNSIGNED;
+ALTER TABLE `civicrm_discount` CHANGE `option_group_id` `price_set_id` INT( 10 ) UNSIGNED NOT NULL COMMENT 'FK to civicrm_price_set';
 
 ALTER TABLE `civicrm_discount`
   ADD CONSTRAINT `FK_civicrm_discount_price_set_id` FOREIGN KEY (`price_set_id`) REFERENCES `civicrm_price_set` (`id`) ON DELETE CASCADE;
