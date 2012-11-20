@@ -855,6 +855,7 @@ SELECT   a.operation, a.object_id
    AND   a.is_active    =  1
    AND   a.object_table = %1
    AND   a.id        IN ( $aclKeys )
+GROUP BY a.operation,a.object_id
 ORDER BY a.object_id
 ";
       $params = array(1 => array($tableName, 'String'));
