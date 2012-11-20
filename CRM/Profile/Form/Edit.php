@@ -331,7 +331,7 @@ SELECT module
         $urlParams .= "&cs=" . $this->get('cs');
       }
       // Generate one if needed
-      elseif (!CRM_Core_Permission::check('profile view')) {
+      elseif (!CRM_Utils_System::isUserLoggedIn() || !CRM_Contact_BAO_Contact_Permission::allow($this->id)) {
         $urlParams .= "&cs=" . CRM_Contact_BAO_Contact_Utils::generateChecksum($this->_id);
       }
       $url = CRM_Utils_System::url('civicrm/profile/view', $urlParams);
