@@ -159,7 +159,7 @@ class CRM_Contact_Form_Search_Custom_FullText implements CRM_Contact_Form_Search
       'subject' => 'varchar(255)',
       'details' => 'varchar(255)',
       'contribution_id' => 'int unsigned',
-                  'financial_type'         => 'varchar(255)',
+      'financial_type'         => 'varchar(255)',
       'contribution_page' => 'varchar(255)',
       'contribution_receive_date' => 'datetime',
       'contribution_total_amount' => 'decimal(20,2)',
@@ -334,7 +334,10 @@ AND        cf.html_type IN ( 'Text', 'TextArea', 'RichTextEditor' )
 
     $maxRowCount = 0;
     foreach ($tables as $tableName => $tableValues) {
-      if ($tableName == 'sql') {
+      if ($tableName == 'final') {
+        continue;
+      }
+      else if ($tableName == 'sql') {
         foreach ($tableValues as $sqlStatement) {
           $sql = "
 REPLACE INTO {$this->_entityIDTableName} ( entity_id )
@@ -384,6 +387,12 @@ GROUP BY {$tableValues['id']}
       }
     }
 
+    if (isset($tables['final'])) {
+      foreach ($tables['final'] as $sqlStatement) {
+        CRM_Core_DAO::executeQuery($sqlStatement);
+      }
+    }
+
     $rowCount = "SELECT count(*) FROM {$this->_entityIDTableName}";
     $tableKey = array_keys($tables);
     $this->_foundRows[ucfirst(str_replace('civicrm_', '', $tableKey[0]))] =
@@ -402,8 +411,15 @@ AND        t.name LIKE {$this->_text}
 GROUP BY   et.entity_id
 ";
 
+    // lets delete all the deceased contacts from the entityID box
+    // this allows us to keep numbers in sync
+    // when we have acl contacts, the situation gets even more murky
+    $final = array();
+    $final[] = "DELETE FROM {$this->_entityIDTableName} WHERE entity_id IN (SELECT id FROM civicrm_contact WHERE is_deleted = 1)";
+
     $tables = array(
-      'civicrm_contact' => array('id' => 'id',
+      'civicrm_contact' => array(
+        'id' => 'id',
         'fields' => array(
           'sort_name' => NULL,
           'nick_name' => NULL,
@@ -434,7 +450,8 @@ GROUP BY   et.entity_id
           'note' => NULL,
         ),
       ),
-      'sql' => $contactSQL,
+      'sql'   => $contactSQL,
+      'final' => $final,
     );
 
     // get the custom data info
@@ -987,7 +1004,7 @@ FROM       {$this->_entityIDTableName} ct
 INNER JOIN civicrm_case cc ON cc.id = ct.entity_id
 LEFT JOIN  civicrm_case_contact ccc ON cc.id = ccc.case_id
 LEFT JOIN  civicrm_contact c ON ccc.contact_id = c.id
-{$this->_limitClause}
+{$this->_limitDetailClause}
 ";
         break;
 
