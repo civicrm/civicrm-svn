@@ -140,6 +140,13 @@ class CRM_Report_Form_Instance {
 
     $form->add('select', 'parent_id', ts('Parent Menu'), array('' => ts('-- select --')) + $parentMenu);
 
+    // For now we only providing drilldown for one primary detail report only. In future this could be multiple reports
+    foreach ($form->_drilldownReport as $reportUrl => $drillLabel) {
+      $instanceList = CRM_Report_Utils_Report::getInstanceList($reportUrl);
+      $form->add('select', 'drilldown_id', $drillLabel, array('' => ts('- select -')) + $instanceList);
+      break;
+    }
+
     $form->addButtons(array(
         array(
           'type' => 'submit',

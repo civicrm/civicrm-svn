@@ -45,6 +45,8 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
   protected $_customGroupExtends = array('Contribution');
   protected $_customGroupGroupBy = TRUE; 
 
+  public $_drilldownReport = array('contribute/detail' => 'Link to Detail Report');
+
   function __construct() {
     $config = CRM_Core_Config::singleton();
     $campaignEnabled = in_array("CiviCampaign", $config->enableComponents);
@@ -111,7 +113,7 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
                           array( 'financial_type'   => null, ), 
         'grouping' => 'contri-fields',
         'group_bys' =>
-                          array( 'financial_type'   => null, ), ),
+                          array( 'financial_type'   => array('title' => ts('Financial Type')), ), ),
       'civicrm_contribution' =>
       array(
         'dao' => 'CRM_Contribute_DAO_Contribution',
@@ -553,10 +555,11 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
             break;
         }
         $url = CRM_Report_Utils_Report::getNextUrl('contribute/detail',
-          "reset=1&force=1&receive_date_from={$dateStart}&receive_date_to={$dateEnd}",
-          $this->_absoluteUrl,
-          $this->_id
-        );
+                                                   "reset=1&force=1&receive_date_from={$dateStart}&receive_date_to={$dateEnd}",
+                                                   $this->_absoluteUrl,
+                                                   $this->_id,
+                                                   $this->_drilldownReport
+                                                   );
         $rows[$rowNum]['civicrm_contribution_receive_date_start_link'] = $url;
         $rows[$rowNum]['civicrm_contribution_receive_date_start_hover'] = ts('List all contribution(s) for this date unit.');
         $entryFound = TRUE;

@@ -104,13 +104,17 @@ WHERE  TRIM(BOTH '/' FROM CONCAT(report_id, '/', name)) = %1";
     return CRM_Utils_Array::value($path, $valId);
   }
 
-  static
-  function getNextUrl($urlValue, $query = 'reset=1', $absolute = FALSE, $instanceID = NULL) {
+  static function getNextUrl($urlValue, $query = 'reset=1', $absolute = FALSE, $instanceID = NULL, $drilldownReport = array()) {
     if ($instanceID) {
-      $instanceID = self::getInstanceIDForValue($urlValue);
+      $drilldownInstanceID = false;
+      if (array_key_exists($urlValue, $drilldownReport)) 
+        $drilldownInstanceID = CRM_Core_DAO::getFieldValue('CRM_Report_DAO_Instance', $instanceID, 'drilldown_id', 'id');
 
-      if ($instanceID) {
-        return CRM_Utils_System::url("civicrm/report/instance/{$instanceID}",
+      if (!$drilldownInstanceID) 
+        $drilldownInstanceID = self::getInstanceIDForValue($urlValue);
+
+      if ($drilldownInstanceID) {
+        return CRM_Utils_System::url("civicrm/report/instance/{$drilldownInstanceID}",
           "{$query}", $absolute
         );
       }
@@ -472,5 +476,22 @@ WHERE  inst.report_id = %1";
     }
     return $query_string;
   }
-}
 
+  static function getInstanceList($reportUrl) {
+    static $instanceDetails = array();
+    
+    if (!array_key_exists($reportUrl, $instanceDetails )) {
+      $instanceDetails[$reportUrl] = array();
+
+      $sql = "
+SELECT id, title FROM civicrm_report_instance
+WHERE  report_id = %1";
+      $params = array(1 => array($reportUrl, 'String'));
+      $result = CRM_Core_DAO::executeQuery($sql, $params);
+      while( $result->fetch()) {
+        $instanceDetails[$reportUrl][$result->id] = $result->title;
+      }
+    }
+    return $instanceDetails[$reportUrl];
+  }
+}

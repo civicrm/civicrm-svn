@@ -146,6 +146,21 @@
        <add>3.0</add> 
        <onDelete>SET NULL</onDelete>
   </foreignKey> 
+  <field> 
+      <name>drilldown_id</name> 
+      <title>Drilldown Report ID</title>
+      <type>int unsigned</type> 
+      <import>true</import>
+      <comment>FK to instance ID drilldown to</comment> 
+      <add>4.3</add> 
+  </field> 
+  <foreignKey> 
+       <name>drilldown_id</name> 
+       <table>civicrm_report_instance</table>
+       <key>id</key> 
+       <add>4.3</add> 
+       <onDelete>SET NULL</onDelete>
+  </foreignKey> 
   <field>
     <name>is_reserved</name>
     <type>boolean</type>
