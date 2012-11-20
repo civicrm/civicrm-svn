@@ -52,7 +52,8 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
    * @access public
    */
   function createUser(&$params, $mail) {
-    require_once JPATH_SITE . '/components/com_users/models/registration.php';
+    $baseDir = JPATH_SITE;
+    require_once $baseDir . '/components/com_users/models/registration.php';
 
     $userParams = JComponentHelper::getParams('com_users');
     $model      = new UsersModelRegistration();
@@ -82,7 +83,7 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
     $values['email1']    = $values['email2'] = trim($params[$mail]);
 
     $lang = JFactory::getLanguage();
-    $lang->load('com_users');
+    $lang->load('com_users', $baseDir);
 
     $register = $model->register($values);
 
