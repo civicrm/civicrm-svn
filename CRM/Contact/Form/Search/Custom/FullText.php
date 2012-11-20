@@ -121,7 +121,8 @@ class CRM_Contact_Form_Search_Custom_FullText implements CRM_Contact_Form_Search
     }
   }
 
-  function __destruct() {}
+  function __destruct() {
+  }
 
   function initialize() {
     static $initialized = FALSE;
@@ -317,9 +318,7 @@ AND        cf.html_type IN ( 'Text', 'TextArea', 'RichTextEditor' )
 
     $dao = CRM_Core_DAO::executeQuery($sql);
     while ($dao->fetch()) {
-      if (!array_key_exists($dao->table_name,
-          $tables
-        )) {
+      if (!array_key_exists($dao->table_name, $tables)) {
         $tables[$dao->table_name] = array(
           'id' => 'entity_id',
           'fields' => array(),
@@ -373,11 +372,12 @@ $sqlStatement
         }
 
         $sql = "
-REPLACE INTO {$this->_entityIDTableName} ( entity_id )
-SELECT  distinct {$tableValues['id']}
-FROM    $tableName
-WHERE   ( $whereClause )
-AND     {$tableValues['id']} IS NOT NULL
+REPLACE  INTO {$this->_entityIDTableName} ( entity_id )
+SELECT   {$tableValues['id']}
+FROM     $tableName
+WHERE    ( $whereClause )
+AND      {$tableValues['id']} IS NOT NULL
+GROUP BY {$tableValues['id']}
 {$this->_limitClause}
 ";
         CRM_Core_DAO::executeQuery($sql);
@@ -463,12 +463,12 @@ INNER JOIN civicrm_contact c ON ca.source_contact_id = c.id
 LEFT JOIN  civicrm_email e ON e.contact_id = c.id
 LEFT JOIN  civicrm_option_group og ON og.name = 'activity_type'
 LEFT JOIN  civicrm_option_value ov ON ( ov.option_group_id = og.id )
-WHERE      (c.sort_name LIKE {$this->_text} OR c.display_name LIKE {$this->_text}) OR
-           ( e.email LIKE {$this->_text}    AND
-             ca.activity_type_id = ov.value AND
-             ov.name IN ('Inbound Email', 'Email') )
-AND (ca.is_deleted = 0 OR ca.is_deleted IS NULL OR
-     c.is_deleted = 0 OR c.is_deleted IS NULL)
+WHERE      ( (c.sort_name LIKE {$this->_text} OR c.display_name LIKE {$this->_text}) OR
+             (e.email LIKE {$this->_text}    AND
+              ca.activity_type_id = ov.value AND
+              ov.name IN ('Inbound Email', 'Email') ) )
+AND        (ca.is_deleted = 0 OR ca.is_deleted IS NULL)
+AND        (c.is_deleted = 0 OR c.is_deleted IS NULL)
 ";
 
     $contactSQL[] = "
@@ -479,12 +479,12 @@ INNER JOIN civicrm_contact c ON cat.target_contact_id = c.id
 LEFT  JOIN civicrm_email e ON cat.target_contact_id = e.contact_id
 LEFT  JOIN civicrm_option_group og ON og.name = 'activity_type'
 LEFT  JOIN civicrm_option_value ov ON ( ov.option_group_id = og.id )
-WHERE      (c.sort_name LIKE {$this->_text} OR c.display_name LIKE {$this->_text}) OR
-           ( e.email LIKE {$this->_text}    AND
-             ca.activity_type_id = ov.value AND
-             ov.name IN ('Inbound Email', 'Email') )
-AND (ca.is_deleted = 0 OR ca.is_deleted IS NULL OR
-     c.is_deleted = 0 OR c.is_deleted IS NULL)
+WHERE      ( (c.sort_name LIKE {$this->_text} OR c.display_name LIKE {$this->_text}) OR
+             ( e.email LIKE {$this->_text}    AND
+               ca.activity_type_id = ov.value AND
+               ov.name IN ('Inbound Email', 'Email') ) )
+AND        (ca.is_deleted = 0 OR ca.is_deleted IS NULL)
+AND        (c.is_deleted = 0 OR c.is_deleted IS NULL)
 ";
 
     $contactSQL[] = "
@@ -497,31 +497,35 @@ LEFT  JOIN civicrm_option_group og ON og.name = 'activity_type'
 LEFT  JOIN civicrm_option_value ov ON ( ov.option_group_id = og.id )
 WHERE      caa.activity_id = ca.id
 AND        caa.assignee_contact_id = c.id
-AND        (c.sort_name LIKE {$this->_text} OR c.display_name LIKE {$this->_text})  OR
-           ( e.email LIKE {$this->_text} AND
-             ca.activity_type_id = ov.value AND
-             ov.name IN ('Inbound Email', 'Email') )
-AND (ca.is_deleted = 0 OR ca.is_deleted IS NULL OR
-     c.is_deleted = 0 OR c.is_deleted IS NULL)
+AND        ( (c.sort_name LIKE {$this->_text} OR c.display_name LIKE {$this->_text})  OR
+             (e.email LIKE {$this->_text} AND
+              ca.activity_type_id = ov.value AND
+              ov.name IN ('Inbound Email', 'Email')) )
+AND        (ca.is_deleted = 0 OR ca.is_deleted IS NULL)
+AND        (c.is_deleted = 0 OR c.is_deleted IS NULL)
 ";
 
     $contactSQL[] = "
 SELECT     et.entity_id
 FROM       civicrm_entity_tag et
 INNER JOIN civicrm_tag t ON et.tag_id = t.id
+INNER JOIN civicrm_activity ca ON et.entity_id = ca.id
 WHERE      et.entity_table = 'civicrm_activity'
 AND        et.tag_id       = t.id
 AND        t.name LIKE {$this->_text}
+AND        (ca.is_deleted = 0 OR ca.is_deleted IS NULL)
 GROUP BY   et.entity_id
 ";
 
+    $contactSQL[] = "
+SELECT distinct ca.id
+FROM   civicrm_activity ca
+WHERE  (ca.subject LIKE  {$this->_text} OR ca.details LIKE  {$this->_text})
+AND    (ca.is_deleted = 0 OR ca.is_deleted IS NULL)
+";
+
     $tables = array(
-      'civicrm_activity' => array('id' => 'id',
-        'fields' => array(
-          'subject' => NULL,
-          'details' => NULL,
-        ),
-      ),
+      'civicrm_activity' => array( 'fields' => array() ),
       'sql' => $contactSQL,
     );
 
@@ -917,6 +921,7 @@ LEFT JOIN  civicrm_contact c3 ON cat.target_contact_id = c3.id
 LEFT JOIN  civicrm_case_activity cca ON cca.activity_id = ca.id
 LEFT JOIN  civicrm_case_contact ccc ON ccc.case_id = cca.case_id
 WHERE (ca.is_deleted = 0 OR ca.is_deleted IS NULL)
+GROUP BY ca.id
 {$this->_limitDetailClause}
 ";
         break;
@@ -924,7 +929,7 @@ WHERE (ca.is_deleted = 0 OR ca.is_deleted IS NULL)
       case 'Contribution':
         $sql = "
 INSERT INTO {$this->_tableName}
-( table_name, contact_id, sort_name, contribution_id, financial_type, contribution_page, contribution_receive_date, 
+( table_name, contact_id, sort_name, contribution_id, financial_type, contribution_page, contribution_receive_date,
   contribution_total_amount, contribution_trxn_Id, contribution_source, contribution_status, contribution_check_number )
    SELECT  'Contribution', c.id, c.sort_name, cc.id, cct.name, ccp.title, cc.receive_date,
            cc.total_amount, cc.trxn_id, cc.source, contribution_status.label, cc.check_number
