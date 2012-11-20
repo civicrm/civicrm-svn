@@ -213,9 +213,14 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
         else {
           $this->_isPermissionedChecksum = CRM_Contact_BAO_Contact_Permission::validateChecksumContact($this->_id, $this, FALSE);
         }
-        if ($this->_isPermissionedChecksum) {
-          // Switch permission type here for checksum authenticated user so they can view their own record after creating it - CRM-10853
-          $permissionType = CRM_Core_Permission::CREATE;          
+      }
+      // CRM-10853
+      // Users with create or edit permission should be allowed to view their own profile
+      if ($this->_id == $userID || $this->_isPermissionedChecksum) {
+        if (!CRM_Core_Permission::check('profile view')) {
+          if (CRM_Core_Permission::check('profile create') || CRM_Core_Permission::check('profile edit')) {
+            $this->_skipPermission = TRUE;
+          }
         }
       }
 
@@ -224,7 +229,7 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
       if ((!$config->userFrameworkFrontend &&
           (CRM_Core_Permission::check('administer users') ||
             CRM_Core_Permission::check('view all contacts') ||
-            CRM_Contact_BAO_Contact_Permission::allow($this->_id, CRM_Core_Permission::VIEW)
+            CRM_Contact_BAO_Contact_Permission::allow($this->_id)
           )
         ) ||
         $this->_id == $userID ||
