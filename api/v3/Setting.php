@@ -296,7 +296,9 @@ function _civicrm_api3_setting_getDomainArray(&$params){
 
   if($params['domain_id'] == 'all'){
     $domainAPIResult = civicrm_api('domain','get',array('version' => 3, 'return' => 'id'));
-    $params['domain_id'] = array_keys($domainAPIResult['values']);
+    if (isset($domainAPIResult['values'])) {
+      $params['domain_id'] = array_keys($domainAPIResult['values']);
+    }
   }
   if(is_array($params['domain_id'])){
     $domains = $params['domain_id'];
