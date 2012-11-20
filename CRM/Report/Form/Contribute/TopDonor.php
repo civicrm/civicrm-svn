@@ -38,6 +38,8 @@ class CRM_Report_Form_Contribute_TopDonor extends CRM_Report_Form {
 
   protected $_summary = NULL;
 
+  public $_drilldownReport = array('contribute/detail' => 'Link to Detail Report');
+
   protected $_charts = array(
     '' => 'Tabular',
     'barChart' => 'Bar Chart',
@@ -405,7 +407,7 @@ ORDER BY civicrm_contribution_total_amount_sum DESC
         ) {
           $url = CRM_Report_Utils_Report::getNextUrl('contribute/detail',
             'reset=1&force=1&id_op=eq&id_value=' . $row['civicrm_contact_id'],
-            $this->_absoluteUrl, $this->_id
+            $this->_absoluteUrl, $this->_id, $this->_drilldownReport
           );
           $rows[$rowNum]['civicrm_contact_display_name_link'] = $url;
           $entryFound = TRUE;

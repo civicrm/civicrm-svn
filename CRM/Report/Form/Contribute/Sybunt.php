@@ -41,6 +41,8 @@ class CRM_Report_Form_Contribute_Sybunt extends CRM_Report_Form {
     'barChart' => 'Bar Chart',
     'pieChart' => 'Pie Chart',
   );
+  public $_drilldownReport = array('contribute/detail' => 'Link to Detail Report');
+
   protected $_add2groupSupported = FALSE; function __construct() {
     $yearsInPast   = 10;
     $yearsInFuture = 1;
@@ -438,7 +440,7 @@ class CRM_Report_Form_Contribute_Sybunt extends CRM_Report_Form {
       ) {
         $url = CRM_Report_Utils_Report::getNextUrl('contribute/detail',
           'reset=1&force=1&id_op=eq&id_value=' . $row['civicrm_contribution_contact_id'],
-          $this->_absoluteUrl, $this->_id
+          $this->_absoluteUrl, $this->_id, $this->_drilldownReport
         );
         $rows[$rowNum]['civicrm_contact_sort_name_link'] = $url;
         $rows[$rowNum]['civicrm_contact_sort_name_hover'] = ts("View Contribution Details for this Contact.");

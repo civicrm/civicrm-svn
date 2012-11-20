@@ -37,6 +37,8 @@
 class CRM_Report_Form_Contribute_Repeat extends CRM_Report_Form {
   protected $_amountClauseWithAND = NULL;
 
+  public $_drilldownReport = array('contribute/detail' => 'Link to Detail Report');
+
   function __construct() {
     $this->_columns = array(
       'civicrm_contact' =>
@@ -915,7 +917,7 @@ total_amount_count int
             "reset=1&force=1&" .
             "country_id_op=in&country_id_value={$value}&" .
             "$dateUrl",
-            $this->_absoluteUrl, $this->_id
+            $this->_absoluteUrl, $this->_id, $this->_drilldownReport
           );
 
 
@@ -934,7 +936,7 @@ total_amount_count int
             "reset=1&force=1&" .
             "state_province_id_op=in&state_province_id_value={$value}&" .
             "$dateUrl",
-            $this->_absoluteUrl, $this->_id
+            $this->_absoluteUrl, $this->_id, $this->_drilldownReport
           );
           $rows[$rowNum]['address_civireport_state_province_id_link'] = $url;
           $rows[$rowNum]['address_civireport_state_province_id_hover'] = ts("View repeatDetails for this state.");
@@ -948,7 +950,7 @@ total_amount_count int
       ) {
         $url = CRM_Report_Utils_Report::getNextUrl('contribute/detail',
           'reset=1&force=1&id_op=eq&id_value=' . $row['contact_civireport_id'],
-          $this->_absoluteUrl, $this->_id
+          $this->_absoluteUrl, $this->_id, $this->_drilldownReport
         );
         $rows[$rowNum]['contact_civireport_sort_name_link'] = $url;
         $rows[$rowNum]['contact_civireport_sort_name_hover'] = ts("View Contribution details for this contact");

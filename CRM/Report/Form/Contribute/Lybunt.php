@@ -43,6 +43,8 @@ class CRM_Report_Form_Contribute_Lybunt extends CRM_Report_Form {
     'pieChart' => 'Pie Chart',
   );
 
+  public $_drilldownReport = array('contribute/detail' => 'Link to Detail Report');
+
   protected $lifeTime_from = NULL;
   protected $lifeTime_where = NULL; function __construct() {
     $yearsInPast   = 10;
@@ -424,7 +426,7 @@ class CRM_Report_Form_Contribute_Lybunt extends CRM_Report_Form {
       ) {
         $url = CRM_Report_Utils_Report::getNextUrl('contribute/detail',
           'reset=1&force=1&id_op=eq&id_value=' . $row['civicrm_contribution_contact_id'],
-          $this->_absoluteUrl, $this->_id
+          $this->_absoluteUrl, $this->_id, $this->_drilldownReport
         );
         $rows[$rowNum]['civicrm_contact_sort_name_link'] = $url;
         $rows[$rowNum]['civicrm_contact_sort_name_hover'] = ts("View Contribution Details for this Contact.");
