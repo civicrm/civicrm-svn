@@ -1718,8 +1718,7 @@ div.grippie {
   height        : 20%;
 }
 
-
-.ui-tabs .ui-tabs-nav li.crm-tab-button {
+#crm-container ul li.crm-tab-button {
   border-bottom: 0 none;
   float:left;
   margin:0 0.2em 1px 0;
