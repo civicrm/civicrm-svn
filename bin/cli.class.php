@@ -199,10 +199,8 @@ class civicrm_cli {
     require_once $civicrm_root . '/CRM/Core/ClassLoader.php';
     CRM_Core_ClassLoader::singleton()->register();
 
-    require_once ('CRM/Core/Config.php');
     $this->_config = CRM_Core_Config::singleton();
 
-    require_once ('CRM/Utils/System.php');
     $class = 'CRM_Utils_System_' . $this->_config->userFramework;
 
     $cms = new $class();

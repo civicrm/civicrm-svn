@@ -601,12 +601,11 @@ AND    u.status = 1
 
     if (!file_exists("$cmsPath/includes/bootstrap.inc")) {
       if ($throwError) {
-        echo '<br />Sorry, could not able to locate bootstrap.inc.';
+        echo '<br />Sorry, could not locate bootstrap.inc.';
         exit();
       }
       return FALSE;
     }
-
     // load drupal bootstrap
     chdir($cmsPath);
     define('DRUPAL_ROOT', $cmsPath);
@@ -619,7 +618,7 @@ AND    u.status = 1
       !module_exists('civicrm')
     ) {
       if ($throwError) {
-        echo '<br />Sorry, could not able to load drupal bootstrap.';
+        echo '<br />Sorry, could not load drupal bootstrap.';
         exit();
       }
       return FALSE;
