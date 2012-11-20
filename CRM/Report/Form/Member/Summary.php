@@ -47,7 +47,8 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
 
   protected $_customGroupExtends = array('Membership');
   protected $_customGroupGroupBy = FALSE; 
-  
+  public $_drilldownReport = array('member/detail' => 'Link to Detail Report');
+
   function __construct() {
     // UI for selecting columns to appear in the report list
     // array conatining the columns, group_bys and filters build and provided to Form
@@ -554,7 +555,7 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
         }
         $url = CRM_Report_Utils_Report::getNextUrl('member/detail',
           "reset=1&force=1&join_date_from={$dateStart}&join_date_to={$dateEnd}{$typeUrl}{$statusUrl}",
-          $this->_absoluteUrl, $this->_id
+          $this->_absoluteUrl, $this->_id, $this->_drilldownReport
         );
         $row['civicrm_membership_join_date_start'] = CRM_Utils_Date::format($row['civicrm_membership_join_date_start']);
         $rows[$rowNum]['civicrm_membership_join_date_start_link'] = $url;

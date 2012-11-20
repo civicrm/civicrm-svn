@@ -40,6 +40,8 @@ class CRM_Report_Form_Contact_CurrentEmployer extends CRM_Report_Form {
 
   protected $_customGroupExtends = array(
     'Contact', 'Individual');
+
+  public $_drilldownReport = array('contact/detail' => 'Link to Detail Report');
   
   function __construct() {
 
@@ -305,7 +307,7 @@ FROM civicrm_contact {$this->_aliases['civicrm_contact']}
       ) {
         $url = CRM_Report_Utils_Report::getNextUrl('contact/detail',
           'reset=1&force=1&id_op=eq&id_value=' . $row['civicrm_employer_id'],
-          $this->_absoluteUrl, $this->_id
+          $this->_absoluteUrl, $this->_id, $this->_drilldownReport
         );
         $rows[$rowNum]['civicrm_employer_organization_name_link'] = $url;
         $entryFound = TRUE;
@@ -342,7 +344,7 @@ FROM civicrm_contact {$this->_aliases['civicrm_contact']}
       ) {
         $url = CRM_Report_Utils_Report::getNextUrl('contact/detail',
           'reset=1&force=1&id_op=eq&id_value=' . $row['civicrm_contact_id'],
-          $this->_absoluteUrl, $this->_id
+          $this->_absoluteUrl, $this->_id, $this->_drilldownReport
         );
         $rows[$rowNum]['civicrm_contact_display_name_link'] = $url;
         $entryFound = TRUE;

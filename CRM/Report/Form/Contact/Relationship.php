@@ -41,6 +41,8 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
   protected $_emailField_b = FALSE;
   protected $_customGroupExtends = array(
     'Relationship'); 
+  public $_drilldownReport = array('contact/detail' => 'Link to Detail Report');
+  
   function __construct() {
 
     $contact_type = CRM_Contact_BAO_ContactType::getSelectElements(FALSE, TRUE, '_');
@@ -533,7 +535,7 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
       ) {
         $url = CRM_Report_Utils_Report::getNextUrl('contact/detail',
           'reset=1&force=1&id_op=eq&id_value=' . $row['civicrm_contact_id'],
-          $this->_absoluteUrl, $this->_id
+          $this->_absoluteUrl, $this->_id, $this->_drilldownReport
         );
         $rows[$rowNum]['civicrm_contact_sort_name_a_link'] = $url;
         $rows[$rowNum]['civicrm_contact_sort_name_a_hover'] = ts("View Contact details for this contact.");
@@ -545,7 +547,7 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
       ) {
         $url = CRM_Report_Utils_Report::getNextUrl('contact/detail',
           'reset=1&force=1&id_op=eq&id_value=' . $row['civicrm_contact_b_id'],
-          $this->_absoluteUrl, $this->_id
+          $this->_absoluteUrl, $this->_id, $this->_drilldownReport
         );
         $rows[$rowNum]['civicrm_contact_b_sort_name_b_link'] = $url;
         $rows[$rowNum]['civicrm_contact_b_sort_name_b_hover'] = ts("View Contact details for this contact.");

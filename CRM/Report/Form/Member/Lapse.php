@@ -43,6 +43,7 @@ class CRM_Report_Form_Member_Lapse extends CRM_Report_Form {
   protected $_charts = array('' => 'Tabular');
   protected $_customGroupExtends = array(
     'Membership'); 
+  public $_drilldownReport = array('member/detail' => 'Link to Detail Report');
   
   function __construct() {
     // UI for selecting columns to appear in the report list
@@ -409,7 +410,7 @@ class CRM_Report_Form_Member_Lapse extends CRM_Report_Form {
       ) {
         $url = CRM_Report_Utils_Report::getNextUrl('member/detail',
           'reset=1&force=1&id_op=eq&id_value=' . $row['civicrm_contact_id'],
-          $this->_absoluteUrl, $this->_id
+          $this->_absoluteUrl, $this->_id, $this->_drilldownReport
         );
         $rows[$rowNum]['civicrm_contact_sort_name_link'] = $url;
         $rows[$rowNum]['civicrm_contact_sort_name_hover'] = ts("View Membership Detail for this Contact.");

@@ -43,6 +43,7 @@ class CRM_Report_Form_Mailing_Summary extends CRM_Report_Form {
 
   protected $_customGroupExtends = array();
 
+  public $_drilldownReport = array('contact/detail' => 'Link to Detail Report');
 
   protected $_charts = array(
     '' => 'Tabular',
@@ -514,7 +515,7 @@ class CRM_Report_Form_Mailing_Summary extends CRM_Report_Form {
       ) {
         $url = CRM_Report_Utils_Report::getNextUrl('contact/detail',
           'reset=1&force=1&id_op=eq&id_value=' . $row['civicrm_contact_id'],
-          $this->_absoluteUrl, $this->_id
+          $this->_absoluteUrl, $this->_id, $this->_drilldownReport
         );
         $rows[$rowNum]['civicrm_contact_display_name_link'] = $url;
         $rows[$rowNum]['civicrm_contact_display_name_hover'] = ts("View Contact details for this contact.");
