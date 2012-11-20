@@ -50,19 +50,19 @@
       <length>255</length>
       <comment>Payment Processor Type.</comment>
       <add>1.8</add>
-      <drop>4.1</drop>
+      <drop>4.3</drop>
   </field>
   <field>
       <name>payment_processor_type_id</name>
       <type>int unsigned</type>
       <length>10</length>
-      <add>4.1</add>
+      <add>4.3</add>
   </field>
   <foreignKey>
        <name>payment_processor_type_id</name>
        <table>civicrm_payment_processor_type</table>
        <key>id</key>
-       <add>4.1</add>
+       <add>4.3</add>
   </foreignKey>  
   <field>
        <name>is_active</name>
