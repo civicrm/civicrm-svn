@@ -194,7 +194,7 @@ function civicrm_user_view($user, $view_mode) {
 
     $ctype = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $userID, 'contact_type');
 
-    $ufGroups = CRM_Core_BAO_UFGroup::getModuleUFGroup('User Account', 0, FALSE);
+    $ufGroups = CRM_Core_BAO_UFGroup::getModuleUFGroup('User Account', 0, TRUE);
     $weight = 100;
     foreach ($ufGroups as $id => $title) {
 
@@ -212,7 +212,7 @@ function civicrm_user_view($user, $view_mode) {
       $editURL = '';
       if (user_edit_access($user)) {
         $editURL = '<span class="user-page-link" id="user-page-profile-' . substr($title['title'], 0, 3) . '" ><span class="user-page-bullet">&raquo;</span> ' . l(ts("Edit %1", array(1 => $title['title'])),
-          "user/{$user->uid}/edit/" . urlencode($title['title'])
+          "user/{$user->uid}/edit/" . $title['title']
         ) . '</span>';
       }
 

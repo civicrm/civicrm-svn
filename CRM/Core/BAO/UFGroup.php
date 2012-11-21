@@ -1394,7 +1394,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
    * @access public
    * @static
    */
-  public static function getModuleUFGroup($moduleName = NULL, $count = 0, $skipPermission = TRUE) {
+  public static function getModuleUFGroup($moduleName = NULL, $count = 0, $skipPermission = TRUE, $op = CRM_Core_Permission::VIEW) {
 
     $dao = new CRM_Core_DAO();
     $queryString = 'SELECT civicrm_uf_group.id, title, civicrm_uf_group.is_active, is_reserved, group_type
@@ -1410,7 +1410,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
 
     // add permissioning for profiles only if not registration
     if (!$skipPermission) {
-      $permissionClause = CRM_Core_Permission::ufGroupClause(CRM_Core_Permission::VIEW, 'civicrm_uf_group.');
+      $permissionClause = CRM_Core_Permission::ufGroupClause($op, 'civicrm_uf_group.');
       if (strpos($queryString, 'WHERE') !== FALSE) {
         $queryString .= " AND $permissionClause ";
       }

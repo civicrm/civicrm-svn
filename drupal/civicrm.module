@@ -482,7 +482,7 @@ function _civicrm_categories_access($profile_id) {
   }
 
   require_once 'CRM/Core/BAO/UFGroup.php';
-  $allUFGroups = CRM_Core_BAO_UFGroup::getModuleUFGroup('User Account', 0, FALSE);
+  $allUFGroups = CRM_Core_BAO_UFGroup::getModuleUFGroup('User Account', 0, TRUE);
 
   require_once 'CRM/Utils/Array.php';
   if (is_array(CRM_Utils_Array::value($profile_id, $allUFGroups))) {
