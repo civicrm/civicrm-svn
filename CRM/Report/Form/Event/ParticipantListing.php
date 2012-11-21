@@ -40,7 +40,7 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form_Event {
 
   protected $_customGroupExtends = array(
     'Participant'); 
-  public $_drilldownReport = array('contact/detail' => 'Link to Detail Report');
+  public $_drilldownReport = array('event/income' => 'Link to Detail Report');
 
   function __construct() {
     $this->_columns = array(

@@ -680,3 +680,8 @@ VALUES
    (@option_group_id_batch_modes, {localize}'Automatic Batch'{/localize}, @weight = @weight + 1, 'Automatic Batch' , NULL, 0, 0, @weight = @weight + 1);
 
 -- End of civiaccounts upgrade
+
+-- CRM-10933
+ALTER TABLE `civicrm_report_instance` 
+ADD COLUMN  `drilldown_id` int(10) unsigned DEFAULT NULL COMMENT 'FK to instance ID drilldown to',
+ADD CONSTRAINT `FK_civicrm_report_instance_drilldown_id` FOREIGN KEY (`drilldown_id`) REFERENCES `civicrm_report_instance` (`id`) ON DELETE SET NULL;
