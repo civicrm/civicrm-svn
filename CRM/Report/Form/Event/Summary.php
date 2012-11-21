@@ -48,6 +48,8 @@ class CRM_Report_Form_Event_Summary extends CRM_Report_Form_Event {
 
   protected $_customGroupExtends = array(
     'Event'); 
+  public $_drilldownReport = array('event/income' => 'Link to Detail Report');
+  
   function __construct() {
 
     $this->_columns = array(
@@ -365,7 +367,7 @@ class CRM_Report_Form_Event_Summary extends CRM_Report_Form_Event {
             //CRM_Event_PseudoConstant::event( $value, false );
             $url = CRM_Report_Utils_Report::getNextUrl('event/income',
               'reset=1&force=1&id_op=in&id_value=' . $value,
-              $this->_absoluteUrl, $this->_id
+              $this->_absoluteUrl, $this->_id, $this->_drilldownReport
             );
             $rows[$rowNum]['civicrm_event_title_link'] = $url;
             $rows[$rowNum]['civicrm_event_title_hover'] = ts("View Event Income For this Event");

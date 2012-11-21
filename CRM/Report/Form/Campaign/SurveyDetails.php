@@ -45,6 +45,7 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
   protected $_summary = NULL;
   protected $_customGroupGroupBy = FALSE;
   protected $_customGroupExtends = array('Contact', 'Individual', 'Household', 'Organization', 'Activity');
+  public $_drilldownReport = array('contact/detail' => 'Link to Detail Report');
 
   private static $_surveyRespondentStatus; function __construct() {
 
@@ -589,7 +590,7 @@ INNER JOIN  civicrm_option_value val ON ( val.option_group_id = survey.result_id
         $url = CRM_Report_Utils_Report::getNextUrl('contact/detail',
           'reset=1&force=1&id_op=eq&id_value=' .
           $row['civicrm_contact_id'],
-          $this->_absoluteUrl, $this->_id
+          $this->_absoluteUrl, $this->_id, $this->_drilldownReport
         );
         $rows[$rowNum]['civicrm_contact_sort_name_link'] = $url;
         $entryFound = TRUE;
