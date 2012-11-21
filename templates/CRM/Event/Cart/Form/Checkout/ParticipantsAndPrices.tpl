@@ -62,7 +62,8 @@ function add_participant( cart_id, event_id ) {
     }
   );
 
-  cj.get("/civicrm/ajax/event/add_participant_to_cart?&cart_id=" + cart_id + "&event_id=" + event_id,
+  // FIXME: this get should be a post according to restful standards
+  cj.get(cj.crmURL("civicrm/ajax/event/add_participant_to_cart", {cart_id: cart_id,  event_id: event_id}),
     function(data) {
       cj('#event_' + event_id + '_participants').append(data);
     }
@@ -71,8 +72,9 @@ function add_participant( cart_id, event_id ) {
 
 function delete_participant( event_id, participant_id )
 {
+  // FIXME: this get should be a post according to restful standards
   cj('#event_' + event_id + '_participant_' + participant_id).remove();
-  cj.get("/civicrm/ajax/event/remove_participant_from_cart?id=" + participant_id);
+  cj.get(cj.crmURL("civicrm/ajax/event/remove_participant_from_cart", {id: participant_id}));
 }
 
 

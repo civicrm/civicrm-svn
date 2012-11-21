@@ -85,7 +85,7 @@
                                             {else}
               <td class="html-adjust">
                         {if $element.contact_ref_id}
-                            <a href='/civicrm/contact/view?reset=1&cid={$element.contact_ref_id}'>
+                          <a href='{crmURL p="civicrm/contact/view" q="reset=1&cid=`$element.contact_ref_id`"}'>
                         {/if}
                         {$element.field_value}
                         {if $element.contact_ref_id}
