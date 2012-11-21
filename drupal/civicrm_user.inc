@@ -52,7 +52,6 @@ function civicrm_user_login(&$edit, $user) {
   if (!civicrm_initialize()) {
     return;
   }
-  require_once 'CRM/Core/BAO/UFMatch.php';
   return CRM_Core_BAO_UFMatch::synchronize($user, FALSE, 'Drupal',
     civicrm_get_ctype('Individual')
   );
@@ -76,7 +75,6 @@ function civicrm_user_insert(&$edit, &$user, $category = NULL) {
     civicrm_register_data($edit, $user, $category, FALSE);
   }
   else {
-    require_once 'CRM/Core/BAO/UFMatch.php';
     CRM_Core_BAO_UFMatch::synchronize($user, FALSE, 'Drupal',
       civicrm_get_ctype('Individual')
     );
@@ -96,8 +94,6 @@ function civicrm_user_update(&$edit, &$user, $category) {
   if (isset($edit['mail']) &&
     !empty($edit['mail'])
   ) {
-    require_once 'CRM/Core/BAO/UFMatch.php';
-    require_once 'CRM/Contact/BAO/Contact.php';
     $contactID = CRM_Core_BAO_UFMatch::getContactId($user->uid);
     // cant find the contactID, so lets skip
     if (!$contactID) {
@@ -115,7 +111,6 @@ function civicrm_user_update(&$edit, &$user, $category) {
     $editRoleDiff  = array_diff($editRoles, $orginRoles);
     $orginRoleDiff = array_diff($orginRoles, $editRoles);
     if (!empty($editRoleDiff) || !empty($orginRoleDiff)) {
-      require_once 'CRM/Core/BAO/Navigation.php';
       CRM_Core_BAO_Navigation::resetNavigation($contactID);
     }
   }
@@ -128,7 +123,6 @@ function civicrm_user_delete($account) {
   if (!civicrm_initialize()) {
     return;
   }
-  require_once 'CRM/Core/BAO/UFMatch.php';
   CRM_Core_BAO_UFMatch::deleteUser($account->uid);
 }
 
@@ -139,9 +133,6 @@ function civicrm_user_categories() {
   if (!civicrm_initialize()) {
     return;
   }
-
-  require_once 'CRM/Core/BAO/UFGroup.php';
-  require_once 'CRM/Core/BAO/UFField.php';
 
   $allUFGroups = CRM_Core_BAO_UFGroup::getModuleUFGroup('User Account');
   $ufGroups = array();
@@ -173,12 +164,9 @@ function civicrm_user_view($user, $view_mode) {
   if (!civicrm_initialize()) {
     return;
   }
-  require_once 'CRM/Core/BAO/UFMatch.php';
   $userID = CRM_Core_BAO_UFMatch::getContactId($user->uid);
   if ($userID) {
     // make sure user has permission to view the record
-    require_once 'CRM/Contact/BAO/Contact.php';
-    require_once 'CRM/Contact/BAO/Contact/Permission.php';
     $contactURL = NULL;
     $civiPerm = CRM_Contact_BAO_Contact_Permission::allow($userID);
     if (CRM_Core_Permission::check('access CiviCRM') && $civiPerm) {
@@ -204,10 +192,6 @@ function civicrm_user_view($user, $view_mode) {
   '</span>';
     }
 
-    require_once 'CRM/Profile/Page/Dynamic.php';
-    require_once 'CRM/Core/BAO/UFGroup.php';
-    require_once 'CRM/Core/BAO/UFField.php';
-
     $ctype = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $userID, 'contact_type');
 
     $ufGroups = CRM_Core_BAO_UFGroup::getModuleUFGroup('User Account', 0, FALSE);
@@ -228,7 +212,7 @@ function civicrm_user_view($user, $view_mode) {
       $editURL = '';
       if (user_edit_access($user)) {
         $editURL = '<span class="user-page-link" id="user-page-profile-' . substr($title['title'], 0, 3) . '" ><span class="user-page-bullet">&raquo;</span> ' . l(ts("Edit %1", array(1 => $title['title'])),
-          "user/{$user->uid}/edit/{$title['title']}"
+          "user/{$user->uid}/edit/" . urlencode($title['title'])
         ) . '</span>';
       }
 
