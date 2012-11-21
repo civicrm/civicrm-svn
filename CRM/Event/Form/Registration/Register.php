@@ -310,7 +310,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
     if (!empty($getDefaults)) {
       $this->_defaults = array_merge($this->_defaults, $getDefaults);
     }
-    $this->_defaults['initial_amount']=$this->_values['event']['min_initial_amount'];
+    $this->_defaults['initial_amount'] = CRM_Utils_Array::value('min_initial_amount', $this->_values['event']);
 
     return $this->_defaults;
   }
@@ -950,7 +950,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
         }
       }
     }
-$errors =  CRM_Price_BAO_Field::initialPayValidation( $fields, $files, $self );
+    CRM_Price_BAO_Field::initialPayValidation( $fields, $files, $self, $errors);
     return empty($errors) ? TRUE : $errors;
   }
 

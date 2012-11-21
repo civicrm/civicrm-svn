@@ -1308,7 +1308,7 @@ WHERE  v.option_group_id = g.id
             $currentMaxValue = $optionsCountDetails[$priceFieldId]['options'][$optId] * $optVal;
           }
 
-          $optionMaxValues[$priceFieldId][$optId] = $currentMaxValue + CRM_Utils_Array::value($optId, $optionMaxValues[$priceFieldId], 0);
+          $optionMaxValues[$priceFieldId][$optId] = $currentMaxValue + CRM_Utils_Array::value($optId, CRM_Utils_Array::value($priceFieldId, $optionMaxValues), 0);
         }
       }
     }
