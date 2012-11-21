@@ -101,14 +101,12 @@ class CRM_Custom_Form_CustomData {
 
     $gid = (isset($form->_groupID)) ? $form->_groupID : NULL;
     $getCachedTree = isset($form->_getCachedTree) ? $form->_getCachedTree : TRUE;
-    
-    $subType = NULL;
-    if (isset($form->_subType) && !is_array($form->_subType) && !strpos($form->_subType, ',')) {
-      $subType = str_replace( CRM_Core_DAO::VALUE_SEPARATOR, ',', trim( $form->_subType, CRM_Core_DAO::VALUE_SEPARATOR));
-    } elseif (isset($form->_subType)) {
-      $subType = $form->_subType;
+
+    $subType = $form->_subType;
+    if (!is_array($subType) && strstr($subType, CRM_Core_DAO::VALUE_SEPARATOR)) {
+      $subType = str_replace(CRM_Core_DAO::VALUE_SEPARATOR, ',', trim($subType, CRM_Core_DAO::VALUE_SEPARATOR));
     }
-        
+    
     $groupTree = &CRM_Core_BAO_CustomGroup::getTree($form->_type,
       $form,
       $form->_entityId,
