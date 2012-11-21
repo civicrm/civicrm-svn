@@ -220,6 +220,7 @@ class CRM_Price_BAO_LineItem extends CRM_Price_DAO_LineItem {
         'participant_count' => $qty * $participantsPerField,
         'max_value' => CRM_Utils_Array::value('max_value', $options[$oid]),
         'membership_type_id' => CRM_Utils_Array::value('membership_type_id', $options[$oid]),
+        'membership_num_terms' => CRM_Utils_Array::value('membership_num_terms', $options[$oid]),
         'auto_renew' => CRM_Utils_Array::value('auto_renew', $options[$oid]),
         'html_type' => $fields['html_type'],
         'financial_type_id' => CRM_Utils_Array::value( 'financial_type_id', $options[$oid])

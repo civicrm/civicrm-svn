@@ -91,9 +91,9 @@ class CRM_Price_Form_Set extends CRM_Core_Form {
    */
   static function formRule($fields, $files, $options) {
     $errors = array();
-    $count = count($fields['extends']);
+    $count = count(CRM_Utils_Array::value('extends', $fields));
     //price sets configured for membership
-    if (array_key_exists(CRM_Core_Component::getComponentID('CiviMember'), $fields['extends'])) {
+    if ($count && array_key_exists(CRM_Core_Component::getComponentID('CiviMember'), $fields['extends'])) {
       if ($count > 1) {
         $errors['extends'] = ts('If you plan on using this price set for membership signup and renewal, you can not also use it for Events or Contributions. However, a membership price set may include additional fields for non-membership options that require an additional fee (e.g. magazine subscription).');
       }

@@ -889,12 +889,8 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
 
     $statusMsg = ts('%1 membership for %2 has been renewed.', array(1 => $memType, 2 => $this->_memberDisplayName));
 
-    $endDate = CRM_Utils_Date::customFormat(CRM_Core_DAO::getFieldValue('CRM_Member_DAO_Membership',
-        $this->_id,
-        'end_date'
-      ));
     if ($endDate) {
-      $statusMsg .= ' ' . ts('The new membership End Date is %1.', array(1 => $endDate));
+      $statusMsg .= ' ' . ts('The new membership End Date is %1.', array(1 => CRM_Utils_Date::customFormat(substr($endDate,0,8))));
     }
 
     if ($receiptSend && $mailSend) {

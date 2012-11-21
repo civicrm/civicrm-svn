@@ -352,7 +352,7 @@ function setPaymentBlock( ) {
   if ( term ) {
     var renewTotal = allMemberships[memType]['total_amount_numeric'] * term;
         cj("#total_amount").val( renewTotal.toFixed(2) );
-}
+  }
   else {
     cj("#total_amount").val( allMemberships[memType]['total_amount'] );
   }

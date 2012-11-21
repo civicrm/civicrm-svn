@@ -274,6 +274,8 @@ class CRM_Member_Form_Membership extends CRM_Member_Form {
     else {
       $defaults["membership_type_id"] = $this->_memType;
     }
+    
+    $defaults['num_terms'] = 1;
 
     if (CRM_Utils_Array::value('id', $defaults)) {
       if ($this->_onlinePendingContributionId) {
@@ -616,6 +618,10 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
 
     $this->applyFilter('__ALL__', 'trim');
 
+    if ($this->_action & CRM_Core_Action::ADD) {
+      $this->add('text', 'num_terms', ts('Number of Terms'), array('size' => 6));
+    }
+
     $this->addDate('join_date', ts('Member Since'), FALSE, array('formatType' => 'activityDate'));
     $this->addDate('start_date', ts('Start Date'), FALSE, array('formatType' => 'activityDate'));
     $endDate = $this->addDate('end_date', ts('End Date'), FALSE, array('formatType' => 'activityDate'));
@@ -820,6 +826,13 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     }
     else {
       $self->_memTypeSelected[] = $params['membership_type_id'][1];
+    }
+
+    if (!$priceSetId) {
+      $numterms = CRM_Utils_Array::value('num_terms', $params);
+      if ($numterms && intval($numterms) != $numterms) {
+        $errors['num_terms'] = ts('Please enter an integer for the number of terms.');
+      }
     }
 
     // Return error if empty $self->_memTypeSelected
@@ -1048,10 +1061,19 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       CRM_Member_BAO_Membership::createLineItems($this, $formValues['membership_type_id'], $priceSetId);
     }
 
+    $termsByType = array();
+
     if ($priceSetId) {
       CRM_Price_BAO_Set::processAmount($this->_priceSet['fields'],
         $this->_params, $lineItem[$priceSetId]);
       $params['total_amount'] = CRM_Utils_Array::value('amount', $this->_params);
+      foreach ($lineItem[$priceSetId] as $li) {
+        if (CRM_Utils_Array::value('membership_type_id', $li)) {
+          if (CRM_Utils_Array::value('membership_num_terms', $li)) {
+            $termsByType[$li['membership_type_id']] = $li['membership_num_terms'];
+          }
+        }
+      }
     }
 
     $this->storeContactFields($formValues);
@@ -1092,10 +1114,13 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       'end_date',
     );
 
+    $num_terms = CRM_Utils_Array::value('num_terms', $formValues, 1);
+
     $calcDates = array();
     foreach ($this->_memTypeSelected as $memType) {
+      $memTypeNumTerms = CRM_Utils_Array::value($memType, $termsByType, $num_terms);
       $calcDates[$memType] = CRM_Member_BAO_MembershipType::getDatesForMembershipType($memType,
-        $joinDate, $startDate, $endDate
+        $joinDate, $startDate, $endDate, $memTypeNumTerms
       );
     }
 

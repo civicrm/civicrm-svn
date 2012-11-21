@@ -110,6 +110,14 @@
 {include file="CRM/Price/Form/InitialPayment.tpl" context="standalone" extends="membership"}
           </td>
         </tr>
+        {if $action eq 1}
+          <tr id="num_terms_row" class="crm-membership-form-block-num_terms">
+            <td class="label">{$form.num_terms.label}</td>
+            <td>&nbsp;{$form.num_terms.html}<br />
+              <span class="description">{ts}Set the membership end date this many membership periods from now. Make sure the appropriate corresponding fee is entered below.{/ts}</span>
+            </td>
+          </tr>
+        {/if}
         <tr class="crm-membership-form-block-source">
           <td class="label">{$form.source.label}</td>
           <td>&nbsp;{$form.source.html}<br />
@@ -336,7 +344,10 @@
       cj('#membership_type_id_1').change( function( ) {
         setPaymentBlock( mode );
       });
-  setPaymentBlock( mode );
+      cj('#num_terms').change( function( ) {
+        setPaymentBlock( mode );
+      });
+      setPaymentBlock( mode );
 
       // show/hide different contact section
       setDifferentContactBlock();
@@ -406,13 +417,19 @@
         return;
       }
 
-	var allMemberships = {/literal}{$allMembershipInfo}{literal};
-        if ( !mode ) {
+	    var allMemberships = {/literal}{$allMembershipInfo}{literal};
+      if ( !mode ) {
           // skip this for test and live modes because financial type is set automatically
-    cj("#financial_type_id").val( allMemberships[memType]['financial_type_id'] );
-        }
-
-  cj("#total_amount").val( allMemberships[memType]['total_amount'] );
+          cj("#financial_type_id").val( allMemberships[memType]['financial_type_id'] );
+      }
+      var term = cj('#num_terms').val();
+      if ( term ) {
+        var feeTotal = allMemberships[memType]['total_amount'] * term;
+        cj("#total_amount").val( feeTotal.toFixed(2) );
+      }
+      else {
+        cj("#total_amount").val( allMemberships[memType]['total_amount'] );
+      }
     }
 
     {/literal}
@@ -570,6 +587,7 @@
     cj( "#totalAmountORPriceSet" ).hide( );
     cj( "#mem_type_id" ).hide( );
     cj('#total_amount').attr("readonly", true);
+    cj( "#num_terms_row" ).hide( );
     {/literal}{/if}{literal}
 
     function buildAmount( priceSetId ) {
@@ -588,6 +606,7 @@
         cj( "#mem_type_id").show( );
         cj( "#totalAmountORPriceSet" ).show( );
         cj('#total_amount').removeAttr("readonly");
+        cj( "#num_terms_row").show( );
 
         {/literal}{if $allowAutoRenew}{literal}
         cj('#autoRenew').hide();
@@ -613,6 +632,7 @@
 
       cj( "#totalAmountORPriceSet" ).hide( );
       cj( "#mem_type_id" ).hide( );
+      cj( "#num_terms_row" ).hide( );
     }
 
     var lastMembershipTypes = new Array;
