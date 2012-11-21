@@ -1389,6 +1389,8 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
    *
    * @param string $moduleName module name
    * $param int    $count no to increment the weight
+   * $param bool   $skipPermision - whether to add permission clause
+   * $param int    $op - which operation (view, edit, create, etc) to check permission for
    *
    * @return array $ufGroups array of ufgroups for a module
    * @access public
