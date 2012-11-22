@@ -275,7 +275,7 @@ class CRM_Core_Payment_BaseIPN {
       elseif ($recurContrib->id) {
         $contribution->contribution_page_id = NULL;
         $values['amount'] = $recurContrib->amount;
-                $values['financial_type_id'] = $objects['contributionType']->id;
+        $values['financial_type_id'] = $objects['contributionType']->id;
         $values['title'] = $source = ts('Offline Recurring Contribution');
         $values['is_email_receipt'] = $recurContrib->is_email_receipt;
         $domainValues = CRM_Core_BAO_Domain::getNameAndEmail();
@@ -289,6 +289,7 @@ class CRM_Core_Payment_BaseIPN {
       }
 
       if (!empty($memberships)) {
+        $membershipsUpdate = array( );
         foreach ($memberships as $membershipTypeIdKey => $membership) {
           if ($membership) {
             $format = '%Y%m%d';
@@ -378,14 +379,19 @@ LIMIT 1;";
             //update the membership type key of membership relatedObjects array
             //if it has changed after membership update
             if ($membershipTypeIdKey != $membership->membership_type_id) {
-              $memberships[$membership->membership_type_id] = $membership;
+              $membershipsUpdate[$membership->membership_type_id] = $membership;
               $contribution->_relatedObjects['membership'][$membership->membership_type_id] = $membership;
               unset($contribution->_relatedObjects['membership'][$membershipTypeIdKey]);
               unset($memberships[$membershipTypeIdKey]);
+            }
           }
         }
+        //update the memberships object with updated membershipTypeId data
+        //if membershipTypeId has changed after membership update
+        if (!empty($membershipsUpdate)) {
+          $memberships = $memberships + $membershipsUpdate;
+        }
       }
-    }
     }
     else {
       // event
