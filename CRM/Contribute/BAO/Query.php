@@ -198,7 +198,7 @@ class CRM_Contribute_BAO_Query {
       if (!CRM_Utils_Array::value(0, $query->_params[$id])) {
         continue;
       }
-      if (substr($query->_params[$id][0], 0, 13) == 'contribution_') {
+      if (substr($query->_params[$id][0], 0, 13) == 'contribution_' || substr($query->_params[$id][0], 0, 10) == 'financial_') {
         if ($query->_mode == CRM_Contact_BAO_QUERY::MODE_CONTACTS) {
           $query->_useDistinct = TRUE;
         }

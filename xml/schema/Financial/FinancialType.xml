@@ -21,11 +21,13 @@
   </primaryKey>  
   <field>
       <name>name</name>
+      <uniqueName>financial_type</uniqueName> 
+      <title>Financial Type</title>
       <type>varchar</type>
       <length>64</length>
       <required>true</required> 
       <import>true</import>
-      <headerPattern>/(contrib(ution)?)?type/i</headerPattern>
+      <headerPattern>/(finan(cial)?)?type/i</headerPattern>
       <dataPattern>/donation|member|campaign/i</dataPattern>
       <comment>Financial Type Name.</comment>
       <add>4.1</add>
