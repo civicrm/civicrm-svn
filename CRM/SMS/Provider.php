@@ -208,6 +208,7 @@ INNER JOIN civicrm_mailing_job mj ON mj.mailing_id = m.id AND mj.id = %1";
         'subject' => 'SMS Received',
         'status_id' => $actStatusIDs['Completed'],
         'details' => $body,
+        'phone_number' => $from
       );
       if ($trackID) {
         $trackID = CRM_Utils_Type::escape($trackID, 'String');
@@ -215,7 +216,7 @@ INNER JOIN civicrm_mailing_job mj ON mj.mailing_id = m.id AND mj.id = %1";
       }
 
       $result = CRM_Activity_BAO_Activity::create($activityParams);
-      CRM_Core_Error::debug_log_message("Inbound SMS recorded for cid={$contactID}.");
+      CRM_Core_Error::debug_log_message("Inbound SMS recorded for cid={$fromContactID}.");
       return $result;
     }
   }
