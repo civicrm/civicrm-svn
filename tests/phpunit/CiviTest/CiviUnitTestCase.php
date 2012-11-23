@@ -287,6 +287,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     }
 
     unset($query, $query2, $query3);
+
+    // Rebuild triggers
+    civicrm_api('system', 'flush', array('version' => 3, 'triggers' => 1));
   }
 
   public static function setUpBeforeClass() {

@@ -163,7 +163,6 @@ class api_v3_PhoneTest extends CiviUnitTestCase {
   
   /**
    * Ensure numeric_phone field is correctly populated (this happens via sql trigger)
-   * TODO: This test will fail unless triggers have been initialized for the test db
    */
   public function testNumericPhone() {
     $result = civicrm_api('phone', 'create', $this->_params);
