@@ -151,10 +151,10 @@ class CRM_Case_Audit_Audit {
       }
 
       if ($printReport) {
-        uasort($caseActivities, array($this, "compareActivities"));
+        @uasort($caseActivities, array($this, "compareActivities"));
       }
       else {
-        uasort($retval, array($this, "compareActivities"));
+        @uasort($retval, array($this, "compareActivities"));
       }
     }
 
