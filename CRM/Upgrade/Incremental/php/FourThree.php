@@ -78,26 +78,13 @@ class CRM_Upgrade_Incremental_php_FourThree {
     if ($config->userFramework == 'WordPress') {
       civicrm_wp_set_capabilities( );
     }
-    
-    $fn = "
-      CREATE FUNCTION IF NOT EXISTS civicrm_strip_non_numeric(input VARCHAR(255))
-         RETURNS VARCHAR(255)
-      BEGIN
-         DECLARE output   VARCHAR(255) DEFAULT '';
-         DECLARE iterator INT          DEFAULT 1;
-         WHILE iterator < (LENGTH(input) + 1) DO
-            IF SUBSTRING(input, iterator, 1) IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9') THEN
-               SET output = CONCAT(output, SUBSTRING(input, iterator, 1));
-            END IF;
-            SET iterator = iterator + 1;
-         END WHILE;
-         RETURN output;
-      END";
-    CRM_Core_DAO::executeQuery($fn);
 
     // now rebuild all the triggers
     // CRM-9716
     CRM_Core_DAO::triggerRebuild();
+
+    // Update phones CRM-11292. This must happen after trigger rebuild
+    CRM_Core_DAO::executeQuery("UPDATE civicrm_phone SET phone_numeric = civicrm_strip_non_numeric(phone)");
 
     return TRUE;
   }

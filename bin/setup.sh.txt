@@ -95,7 +95,6 @@ echo "SELECT table_name FROM information_schema.TABLES  WHERE TABLE_SCHEMA='${DB
 
 echo; echo Creating database structure
 mysql -u $DBUSER $PASSWDSECTION $DBARGS $DBNAME < civicrm.mysql
-mysql -u $DBUSER $PASSWDSECTION $DBARGS $DBNAME < civicrm_procedures.mysql
 
 # load civicrm_generated.mysql sample data unless special DBLOAD is passed
 if [ -z $DBLOAD ]; then
@@ -118,5 +117,5 @@ fi
 cd $CALLEDPATH/..
 "$PHP5PATH"php bin/cli.php -e System -a flush --triggers 1 --session 1
 
-echo; echo "DONE!"
+echo; echo "Setup Complete. Logout from your CMS to avoid session conflicts."
 
