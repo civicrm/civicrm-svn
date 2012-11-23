@@ -58,3 +58,15 @@ function civicrm_api3_system_flush($params) {
   );
   return civicrm_api3_create_success();
 }
+
+/*
+ * Adjust Metadata for Flush action
+ *
+ * The metadata is used for setting defaults, documentation & validation
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_system_flush_spec(&$params){
+  $params['triggers'] = array('title' => 'rebuild triggers (boolean)');
+  $params['session'] = array('title' => 'refresh sessions (boolean)');
+
+}
