@@ -348,23 +348,23 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
    * @param array $params Parameters as passed into API
    * @param array $fields empty array to be populated with fields metadata
    * @param bool $createMode
-   * 
+   *
    * @return array $fieldstoset name => value array of the fields to be set (with extraneous removed)
    */
   static function validateSettingsInput($params, &$fields, $createMode = TRUE) {
     $group = CRM_Utils_Array::value('group', $params);
 
     $ignoredParams = array(
-      'version' => 1,
-      'id' => 1,
-      'domain_id' => 1,
-      'debug' => 1,
+      'version',
+      'id',
+      'domain_id',
+      'debug',
       'created_id',
       'component_id',
       'contact_id',
       'filters',
     );
-    $settingParams = array_diff_key($params, $ignoredParams);
+    $settingParams = array_diff_key($params, array_fill_keys($ignoredParams, TRUE));
     $getFieldsParams = array('version' => 3);
     if (count($settingParams) ==1) {
       // ie we are only setting one field - we'll pass it into getfields for efficiency
