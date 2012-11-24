@@ -347,9 +347,11 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
    * This function filters on the fields like 'version' & 'debug' that are not settings
    * @param array $params Parameters as passed into API
    * @param array $fields empty array to be populated with fields metadata
+   * @param bool $createMode
+   * 
    * @return array $fieldstoset name => value array of the fields to be set (with extraneous removed)
    */
-  static function validateSettingsInput(&$params, &$fields, $createMode = TRUE) {
+  static function validateSettingsInput($params, &$fields, $createMode = TRUE) {
     $group = CRM_Utils_Array::value('group', $params);
 
     $ignoredParams = array(
@@ -555,19 +557,21 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
    * a number of settings
    */
   static function updateSettingsFromMetaData() {
-    $apiArray = array(
-        'version' => 3,
-        'domain_id' => 'all',
+    $apiParams = array(
+      'version' => 3,
+      'domain_id' => 'all',
     );
-    $existing = civicrm_api('setting','get', $apiArray);
-    $allSettings = civicrm_api('setting', 'getfields', array('version' => 3));
-    foreach ($existing['values'] as $domainID => $domainSettings) {
-      CRM_Core_BAO_Domain::setDomain($domainID);
-      $missing = array_diff_key($allSettings['values'], $domainSettings);
-      foreach ($missing as $name => $settings) {
-        self::convertConfigToSetting($name, $domainID);
+    $existing = civicrm_api('setting', 'get', $apiParams);
+    if (!empty($existing['values'])) {
+      $allSettings = civicrm_api('setting', 'getfields', array('version' => 3));
+      foreach ($existing['values'] as $domainID => $domainSettings) {
+        CRM_Core_BAO_Domain::setDomain($domainID);
+        $missing = array_diff_key($allSettings['values'], $domainSettings);
+        foreach ($missing as $name => $settings) {
+          self::convertConfigToSetting($name, $domainID);
+        }
+        CRM_Core_BAO_Domain::resetDomain();
       }
-      CRM_Core_BAO_Domain::resetDomain();
     }
   }
 
