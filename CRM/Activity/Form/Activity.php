@@ -323,9 +323,10 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task {
     }
     else {
       //set the appropriate action
-      $url           = CRM_Utils_System::currentPath();
-      $seachPath     = array_pop(explode('/', $url));
-      $searchType    = 'basic';
+      $url = CRM_Utils_System::currentPath();
+      $urlArray = explode('/', $url);
+      $seachPath = array_pop($urlArray);
+      $searchType = 'basic';
       $this->_action = CRM_Core_Action::BASIC;
       switch ($seachPath) {
         case 'basic':

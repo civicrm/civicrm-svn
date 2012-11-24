@@ -258,7 +258,8 @@ class CRM_Dedupe_Finder {
     // if the key is dotted, keep just the last part of it
     foreach ($flat as $key => $value) {
       if (substr_count($key, '.')) {
-        $last = array_pop(explode('.', $key));
+        $last = explode('.', $key);
+        $last = array_pop($last);
         // make sure the first occurence is kept, not the last
         if (!isset($flat[$last])) {
           $flat[$last] = $value;
