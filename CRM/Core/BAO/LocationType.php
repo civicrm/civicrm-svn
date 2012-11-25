@@ -117,6 +117,35 @@ class CRM_Core_BAO_LocationType extends CRM_Core_DAO_LocationType {
   }
 
   /**
+   * Function to add a Location Type
+   *
+   * @param array $params reference array contains the values submitted by the form
+   * @param array $ids    reference array contains the id
+   *
+   * @access public
+   * @static
+   *
+   * @return object
+   */
+  static function create(&$params) {
+    $params['is_active'] = CRM_Utils_Array::value('is_active', $params, FALSE);
+    $params['is_default'] = CRM_Utils_Array::value('is_default', $params, FALSE);
+    $params['is_reserved'] = CRM_Utils_Array::value('is_reserved', $params, FALSE);
+
+    // action is taken depending upon the mode
+    $locationType = new CRM_Core_DAO_LocationType();
+    $locationType->copyValues($params);
+
+    if ($params['is_default']) {
+      $query = "UPDATE civicrm_location_type SET is_default = 0";
+      CRM_Core_DAO::executeQuery($query, CRM_Core_DAO::$_nullArray);
+    }
+
+    $locationType->save();
+    return $locationType;
+  }
+
+  /**
    * Function to delete location Types
    *
    * @param  int  $locationTypeId     ID of the location type to be deleted.
