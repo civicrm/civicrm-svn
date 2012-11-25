@@ -233,11 +233,9 @@ class api_v3_SettingTest extends CiviUnitTestCase {
     $params = array('version' => $this->_apiversion,
         'domain_id' => 'all',
         'uniq_email_per_site' => 1,
-      'debug' => 1,
     );
     $result = civicrm_api('setting', 'create', $params);
     $description = "shows setting a variable for all domains";
-    print_r($result);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__,$description, 'CreateAllDomains');
     $this->assertAPISuccess($result, "in line " . __LINE__);
     $this->assertEquals(1, $result['values'][3]['uniq_email_per_site']);
