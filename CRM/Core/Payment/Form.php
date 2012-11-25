@@ -146,7 +146,7 @@ class CRM_Core_Payment_Form {
       'attributes' => array('size' => 5, 'maxlength' => 10, 'autocomplete' => 'off'),
       'is_required' => CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::CONTRIBUTE_PREFERENCES_NAME,
         'cvv_backoffice_required',
-        CRM_Core_Component::getComponentID('CiviContribute')
+        null
         ,1
       ),
     );

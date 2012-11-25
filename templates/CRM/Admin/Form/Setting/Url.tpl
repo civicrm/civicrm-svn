@@ -77,6 +77,13 @@
             {$form.verifySSL.html} {help id='id-verify_ssl'}
         </td>
     </tr>
+    <tr class="crm-miscellaneous-form-block-cvv-backoffice-required">
+          <td class="label">{$form.cvv_backoffice_required.label}</td>
+          <td>
+            {$form.cvv_backoffice_required.html}<br />
+            <p class="description">{ts}{$cvv_backoffice_required_description}{/ts}</p>
+          </td>
+        </tr>
 </table>
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>
