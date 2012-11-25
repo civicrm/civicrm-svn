@@ -83,6 +83,7 @@ class api_v3_SettingTest extends CiviUnitTestCase {
 
   function tearDown() {
     parent::tearDown();
+    civicrm_api('system','flush', array('version' => $this->_apiversion));
   }
 
   /**
@@ -96,14 +97,6 @@ class api_v3_SettingTest extends CiviUnitTestCase {
     $this->assertAPISuccess($result, "in line " . __LINE__);
     $this->assertArrayHasKey('customCSSURL', $result['values']);
 
-    //let's check it's loading from cache by meddling with the cache
-    $settingsMetadata = array();
-    CRM_Core_BAO_Cache::setItem($settingsMetadata,'CiviCRM setting Spec', 'settingsMetadata_');
-    $result = civicrm_api('setting', 'getfields', array('version' => $this->_apiversion));
-    $this->assertAPISuccess($result, "in line " . __LINE__);
-    $this->assertArrayNotHasKey('customCSSURL', $result['values']);
-
-    civicrm_api('system','flush', array('version' => $this->_apiversion));
     $description = 'Demonstrate return from getfields';
     $result = civicrm_api('setting', 'getfields', array('version' => $this->_apiversion));
     //  $this->documentMe($params, $result, __FUNCTION__, __FILE__, $description, 'GetFieldsGroup');
@@ -111,11 +104,24 @@ class api_v3_SettingTest extends CiviUnitTestCase {
     $this->assertArrayHasKey('customCSSURL', $result['values']);
     civicrm_api('system','flush', array('version' => $this->_apiversion));
   }
+
+  /**
+   * let's check it's loading from cache by meddling with the cache
+   */
+  function testGetFieldsCaching() {
+    $settingsMetadata = array();
+    CRM_Core_BAO_Cache::setItem($settingsMetadata,'CiviCRM setting Specs', 'settingsMetadata_');
+    $result = civicrm_api('setting', 'getfields', array('version' => $this->_apiversion));
+    $this->assertAPISuccess($result, "in line " . __LINE__);
+    $this->assertArrayNotHasKey('customCSSURL', $result['values']);
+  }
+
   function testGetFieldsFilters() {
     $params = array('version' => $this->_apiversion);
     $filters = array('name' => 'advanced_search_options');
     $result = civicrm_api('setting', 'getfields', $params + $filters);
     $this->assertAPISuccess($result, ' in LINE ' . __LINE__);
+
     $this->assertArrayNotHasKey('customCSSURL', $result['values']);
     $this->assertArrayHasKey('advanced_search_options',$result['values']);
   }
@@ -227,9 +233,11 @@ class api_v3_SettingTest extends CiviUnitTestCase {
     $params = array('version' => $this->_apiversion,
         'domain_id' => 'all',
         'uniq_email_per_site' => 1,
+      'debug' => 1,
     );
     $result = civicrm_api('setting', 'create', $params);
     $description = "shows setting a variable for all domains";
+    print_r($result);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__,$description, 'CreateAllDomains');
     $this->assertAPISuccess($result, "in line " . __LINE__);
     $this->assertEquals(1, $result['values'][3]['uniq_email_per_site']);
