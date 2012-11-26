@@ -197,7 +197,7 @@ function _civicrm_api3_permissions($entity, $action, &$params)
     // let third parties modify the permissions
     CRM_Utils_Hook::alterAPIPermissions($entity, $action, $params, $permissions);
 
-    return isset($permissions[$entity][$action]) ? $permissions[$entity][$action] : array('access CiviCRM');
+    return isset($permissions[$entity][$action]) ? $permissions[$entity][$action] : array('administer CiviCRM');
 }
 
 # FIXME: not sure how to permission the following API 3 calls:
