@@ -221,9 +221,10 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
     if (!empty($settingsToReturn) && !is_array($settingsToReturn)) {
       $settingsToReturn = array($settingsToReturn);
     }
-    $fields = array();
+    $fields = $result = array();
     $fieldsToGet = self::validateSettingsInput(array_flip($settingsToReturn), $fields, FALSE);
     foreach ($domains as $domain) {
+      $result[$domain] = array();
       foreach ($fieldsToGet as $name => $value) {
         $setting =
           CRM_Core_BAO_Setting::getItem(
