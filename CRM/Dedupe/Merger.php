@@ -48,7 +48,7 @@ class CRM_Dedupe_Merger {
   // FIXME: consider creating a common structure with cidRefs() and eidRefs()
   // FIXME: the sub-pages references by the URLs should
   // be loaded dynamically on the merge form instead
-  static function &relTables() {
+  static function relTables() {
     static $relTables;
 
     $config = CRM_Core_Config::singleton();
@@ -185,9 +185,7 @@ class CRM_Dedupe_Merger {
           }
         }
         foreach ($sqls as $sql) {
-          if (CRM_Core_DAO::singleValueQuery($sql,
-              CRM_Core_DAO::$_nullArray
-            ) > 0) {
+          if (CRM_Core_DAO::singleValueQuery($sql) > 0) {
             $groups[] = $group;
           }
         }
@@ -199,7 +197,7 @@ class CRM_Dedupe_Merger {
   /**
    * Return tables and their fields referencing civicrm_contact.contact_id explicitely
    */
-  static function &cidRefs() {
+  static function cidRefs() {
     static $cidRefs;
     if (!$cidRefs) {
       // FIXME: this should be generated dynamically from the schema's
@@ -238,14 +236,14 @@ class CRM_Dedupe_Merger {
       );
 
       // Add ContactReference custom fields CRM-9561
-      $sql = "
-              SELECT cg.table_name, cf.column_name
+      $sql = "SELECT cg.table_name, cf.column_name
               FROM civicrm_custom_group cg, civicrm_custom_field cf
               WHERE cg.id = cf.custom_group_id AND cf.data_type = 'ContactReference'";
-      $dao = &CRM_Core_DAO::executeQuery($sql);
+      $dao = CRM_Core_DAO::executeQuery($sql);
       while ($dao->fetch()) {
         $cidRefs[$dao->table_name][] = $dao->column_name;
       }
+      $dao->free();
 
       // Allow hook_civicrm_merge() to adjust $cidRefs
       CRM_Utils_Hook::merge('cidRefs', $cidRefs);
@@ -256,7 +254,7 @@ class CRM_Dedupe_Merger {
   /**
    * Return tables and their fields referencing civicrm_contact.contact_id with entity_id
    */
-  static function &eidRefs() {
+  static function eidRefs() {
     static $eidRefs;
     if (!$eidRefs) {
       // FIXME: this should be generated dynamically from the schema
@@ -282,7 +280,7 @@ class CRM_Dedupe_Merger {
   /**
    * return custom processing tables.
    */
-  static function &cpTables() {
+  static function cpTables() {
     static $tables;
     if (!$tables) {
       $tables = array(
@@ -306,7 +304,7 @@ class CRM_Dedupe_Merger {
   /**
    * return payment related table.
    */
-  static function &paymentTables() {
+  static function paymentTables() {
     static $tables;
     if (!$tables) {
       $tables = array('civicrm_pledge', 'civicrm_membership', 'civicrm_participant');
@@ -787,7 +785,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
    * @static void
    * @access public
    */
-  function &getRowsElementsAndInfo($mainId, $otherId) {
+  function getRowsElementsAndInfo($mainId, $otherId) {
     $qfZeroBug = 'e8cddb72-a257-11dc-b9cc-0016d3330ee9';
     $mainParams = array('contact_id' => $mainId, 'return.display_name' => 1, 'return.contact_sub_type' => 1);
     $otherParams = array('contact_id' => $otherId, 'return.display_name' => 1, 'return.contact_sub_type' => 1);
