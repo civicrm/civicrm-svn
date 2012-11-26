@@ -2231,6 +2231,17 @@ INNER JOIN  civicrm_case_contact ON ( civicrm_case.id = civicrm_case_contact.cas
   }
 
   /**
+   * Merge two duplicate contacts' cases - follow CRM-5758 rules.
+   *
+   * @see CRM_Dedupe_Merger::cpTables()
+   *
+   * TODO: use the 3rd $sqls param to append sql statements rather than executing them here
+   */
+  static function mergeContacts($mainContactId, $otherContactId) {
+    self::mergeCases($mainContactId, NULL, $otherContactId);
+  }
+
+  /**
    * Function perform two task.
    * 1. Merge two duplicate contacts cases - follow CRM-5758 rules.
    * 2. Merge two cases of same contact - follow CRM-5598 rules.
@@ -2243,7 +2254,7 @@ INNER JOIN  civicrm_case_contact ON ( civicrm_case.id = civicrm_case_contact.cas
    * @return void.
    * @static
    */
-  function mergeCases($mainContactId, $mainCaseId = NULL,
+  static function mergeCases($mainContactId, $mainCaseId = NULL,
     $otherContactId = NULL, $otherCaseId = NULL, $changeClient = FALSE
   ) {
     $moveToTrash = TRUE;

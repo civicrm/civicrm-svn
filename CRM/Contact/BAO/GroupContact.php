@@ -590,13 +590,16 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
    * along with subscription history
    *
    * @param int $mainContactId    contact id of main contact record.
-   * @param int $dontCare         something the protocol sends, which we ignore for now
    * @param int $otherContactId   contact id of record which is going to merge.
+   *
+   * @see CRM_Dedupe_Merger::cpTables()
+   *
+   * TODO: use the 3rd $sqls param to append sql statements rather than executing them here
    *
    * @return void.
    * @static
    */
-  static function mergeGroupContact($mainContactId, $dontCare, $otherContactId) {
+  static function mergeGroupContact($mainContactId, $otherContactId) {
     $params = array(1 => array($mainContactId, 'Integer'),
       2 => array($otherContactId, 'Integer'),
     );
@@ -688,22 +691,6 @@ AND       group_id IN ( $groupIDString )
   WHERE  contact_id = %2
   ";
     CRM_Core_DAO::executeQuery($sql, $params);
-  }
-
-  /**
-   * Function merges the groups from otherContactID to mainContactID
-   * along with subscription history
-   *
-   * @param int $mainContactId    contact id of main contact record.
-   * @param int $dontCare         something the protocol sends, which we ignore for now
-   * @param int $otherContactId   contact id of record which is going to merge.
-   *
-   * @return void.
-   * @static
-   */
-  static function ignoreMergeSubscriptionHistory($mainContactId, $dontCare, $otherContactId) {
-    // this is handled by merge group contacts
-    return;
   }
 
   /**
