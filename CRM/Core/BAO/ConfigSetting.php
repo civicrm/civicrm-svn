@@ -41,6 +41,21 @@
 class CRM_Core_BAO_ConfigSetting {
 
   /**
+   * Function to create civicrm settings. This is the same as add but it clears the cache and reloads the config object
+   *
+   * @params array $params associated array of civicrm variables
+   *
+   * @return null
+   * @static
+   */
+  static function create($params) {
+    self::add($params);
+    $cache = CRM_Utils_Cache::singleton();
+    $cache->delete('CRM_Core_Config');
+    $config = CRM_Core_Config::singleton(TRUE, TRUE);
+  }
+
+  /**
    * Function to add civicrm settings
    *
    * @params array $params associated array of civicrm variables
