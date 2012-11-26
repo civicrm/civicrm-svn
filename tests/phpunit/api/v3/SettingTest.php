@@ -113,6 +113,7 @@ class api_v3_SettingTest extends CiviUnitTestCase {
     $result = civicrm_api('setting', 'getfields', array('version' => $this->_apiversion));
     $this->assertAPISuccess($result, "in line " . __LINE__);
     $this->assertArrayNotHasKey('customCSSURL', $result['values']);
+    $this->quickCleanup(array('civicrm_cache'));
   }
 
   function testGetFieldsFilters() {
