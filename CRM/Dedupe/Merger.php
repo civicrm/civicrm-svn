@@ -284,20 +284,11 @@ class CRM_Dedupe_Merger {
     static $tables;
     if (!$tables) {
       $tables = array(
-        'civicrm_case_contact' => array('path' => 'CRM_Case_BAO_Case',
-          'function' => 'mergeCases',
-        ),
-        'civicrm_group_contact' => array(
-          'path' => 'CRM_Contact_BAO_GroupContact',
-          'function' => 'mergeGroupContact',
-        ),
-        'civicrm_subscription_history' => array(
-          'path' => 'CRM_Contact_BAO_GroupContact',
-          'function' => 'ignoreMergeSubscriptionHistory',
-        ),
+        'civicrm_case_contact' => array('CRM_Case_BAO_Case' => 'mergeCases'),
+        'civicrm_group_contact' => array('CRM_Contact_BAO_GroupContact' => 'mergeGroupContact'),
+        'civicrm_subscription_history' => array('CRM_Contact_BAO_GroupContact' => 'ignoreMergeSubscriptionHistory'),
       );
     }
-
     return $tables;
   }
 
@@ -432,14 +423,12 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
     // there's a UNIQUE restriction on ($field, some_other_field) pair
     $sqls = array();
     foreach ($affected as $table) {
-      //here we require custom processing.
-      if (array_key_exists($table, $cpTables)) {
-        $path = CRM_Utils_Array::value('path', $cpTables[$table]);
-        $fName = CRM_Utils_Array::value('function', $cpTables[$table]);
-        if ($path && $fName) {
-          require_once (str_replace('_', DIRECTORY_SEPARATOR, $path) . ".php");
-          eval("$path::$fName( $mainId, null, $otherId );");
+      // Call custom processing function for objects that require it
+      if (isset($cpTables[$table])) {
+        foreach ($cpTables[$table] as $className => $fnName) {
+          $className::$fnName($mainId, null, $otherId);
         }
+        // Skip normal processing
         continue;
       }
 
