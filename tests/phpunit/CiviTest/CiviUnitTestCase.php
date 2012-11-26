@@ -347,8 +347,6 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     //flush component settings
     CRM_Core_Component::getEnabledComponents(TRUE);
 
-    $tablesToTruncate = array('civicrm_domain', 'civicrm_contact');
-    $this->quickCleanup($tablesToTruncate);
     if($this->_eNoticeCompliant ){
       error_reporting(E_ALL);
   }
@@ -388,6 +386,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
    */
   protected function tearDown() {
     error_reporting(E_ALL & ~E_NOTICE);
+    $tablesToTruncate = array('civicrm_domain', 'civicrm_contact');
+    $this->quickCleanup($tablesToTruncate);
     $this->cleanTempDirs();
     $this->unsetExtensionSystem();
   }
