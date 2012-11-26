@@ -212,7 +212,6 @@ ORDER BY  civicrm_email.is_primary DESC, email_id ASC ";
     $sql = " SELECT email, ltype.name as locationType, e.is_primary as is_primary, e.on_hold as on_hold,e.id as email_id, e.location_type_id as locationTypeId
 FROM civicrm_loc_block loc, civicrm_email e, civicrm_location_type ltype, {$entityTable} ev
 WHERE ev.id = %1
-AND   loc.id = ev.loc_block_id
 AND   e.id IN (loc.email_id, loc.email_2_id)
 AND   ltype.id = e.location_type_id
 ORDER BY e.is_primary DESC, email_id ASC ";

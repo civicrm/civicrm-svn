@@ -142,7 +142,6 @@ ORDER BY
     $sql = "SELECT cim.name as im, ltype.name as locationType, cim.is_primary as is_primary, cim.id as im_id, cim.location_type_id as locationTypeId
 FROM civicrm_loc_block loc, civicrm_im cim, civicrm_location_type ltype, {$entityTable} ev
 WHERE ev.id = %1
-AND   loc.id = ev.loc_block_id
 AND   cim.id IN (loc.im_id, loc.im_2_id)
 AND   ltype.id = cim.location_type_id
 ORDER BY cim.is_primary DESC, im_id ASC ";

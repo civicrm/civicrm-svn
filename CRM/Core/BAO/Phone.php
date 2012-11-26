@@ -215,7 +215,6 @@ ORDER BY civicrm_phone.is_primary DESC,  phone_id ASC ";
      ph.id as phone_id, ph.location_type_id as locationTypeId
 FROM civicrm_loc_block loc, civicrm_phone ph, civicrm_location_type ltype, {$entityTable} ev
 WHERE ev.id = %1
-AND   loc.id = ev.loc_block_id
 AND   ph.id IN (loc.phone_id, loc.phone_2_id)
 AND   ltype.id = ph.location_type_id
 ORDER BY ph.is_primary DESC, phone_id ASC ";
