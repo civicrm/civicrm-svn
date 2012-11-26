@@ -1230,7 +1230,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
         if (!is_array($block) || CRM_Utils_System::isNull($block)) {
           continue;
         }
-        $daoName = $locComponent[$name];
+        $daoName = 'CRM_Core_DAO_' . $locComponent[$name];
         $primaryDAOId = (array_key_exists($name, $primaryBlockIds)) ? array_pop($primaryBlockIds[$name]) : NULL;
         $billingDAOId = (array_key_exists($name, $billingBlockIds)) ? array_pop($billingBlockIds[$name]) : NULL;
 
@@ -1256,7 +1256,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
           }
 
           // for the block which belongs to other-contact, link the contact to main-contact
-          eval("\$otherBlockDAO = new CRM_Core_DAO_$daoName();");
+          $otherBlockDAO = new $daoName();
           $otherBlockDAO->id = $otherBlockId;
           $otherBlockDAO->contact_id = $mainId;
           $otherBlockDAO->location_type_id = $locTypeId;
@@ -1271,7 +1271,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
 
           // overwrite - need to delete block which belongs to  main-contact.
           if ($mainBlockId && ($operation == 2)) {
-            eval("\$deleteDAO = new CRM_Core_DAO_$daoName();");
+            $deleteDAO = new $daoName();
             $deleteDAO->id = $mainBlockId;
             $deleteDAO->find(TRUE);
 
