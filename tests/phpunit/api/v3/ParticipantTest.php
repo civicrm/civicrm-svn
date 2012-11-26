@@ -711,7 +711,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase {
         'format.only_id' => 1,
       ),
       'api.contribution.create' => array(
-                        'financial_type_id' => $this->_contributionTypeId,
+        'financial_type_id' => 1,
         'total_amount' => 100,
         'format.only_id' => 1,
       ),
@@ -723,7 +723,6 @@ class api_v3_ParticipantTest extends CiviUnitTestCase {
 
     $result = civicrm_api('contact', 'create', $params);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__, $description, $subfile);
-
     $this->assertEquals(1, $result['values'][$result['id']]['api.participant_payment.create']['count']);
     civicrm_api('contact', 'delete', array('id' => $result['id'], 'version' => $this->_apiversion));
   }
