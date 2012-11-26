@@ -238,9 +238,10 @@ class api_v3_SettingTest extends CiviUnitTestCase {
     $description = "shows setting a variable for all domains";
     $this->documentMe($params, $result, __FUNCTION__, __FILE__,$description, 'CreateAllDomains');
     $this->assertAPISuccess($result, "in line " . __LINE__);
-    $this->assertEquals(1, $result['values'][3]['uniq_email_per_site']);
     $this->assertEquals(1, $result['values'][2]['uniq_email_per_site']);
     $this->assertEquals(1, $result['values'][1]['uniq_email_per_site']);
+    $this->assertArrayHasKey(3, $result['values'], 'Domain create probably failed Debug this IF domain test is passing');
+    $this->assertEquals(1, $result['values'][3]['uniq_email_per_site'], 'failed to set setting for domain 3.');
 
     $params = array('version' => $this->_apiversion,
         'domain_id' => 'all',
@@ -251,10 +252,9 @@ class api_v3_SettingTest extends CiviUnitTestCase {
     $description = "shows getting a variable for all domains";
     $this->documentMe($params, $result, __FUNCTION__, __FILE__,$description, 'GetAllDomains', 'Get');
     $this->assertAPISuccess($result, "in line " . __LINE__);
-    $this->assertEquals(1, $result['values'][3]['uniq_email_per_site']);
     $this->assertEquals(1, $result['values'][2]['uniq_email_per_site']);
     $this->assertEquals(1, $result['values'][1]['uniq_email_per_site']);
-
+    $this->assertEquals(1, $result['values'][3]['uniq_email_per_site']);
 
     $params = array('version' => $this->_apiversion,
         'domain_id' => array(1,3),
@@ -402,17 +402,17 @@ class api_v3_SettingTest extends CiviUnitTestCase {
     $result = civicrm_api('setting', 'create', $params);
     $params = array(
       'version' => $this->_apiversion,
-      'domain_id' => $this->_domainID2,
+      'domain_id' => $this->_domainID3,
     );
     $result = civicrm_api('setting', 'get', $params);
     $this->assertAPISuccess($result, "in line " . __LINE__);
-    $this->assertArrayNotHasKey('tag_unconfirmed', $result['values'][$this->_domainID2]);
+    $this->assertArrayNotHasKey('tag_unconfirmed', $result['values'][$this->_domainID3],'setting for domain 3 should not be set. Debug this IF domain test is passing');
     $result = civicrm_api('setting', 'fill', $params);
     $this->assertAPISuccess($result, "in line " . __LINE__);
     $result = civicrm_api('setting', 'get', $params);
     $this->assertAPISuccess($result, "in line " . __LINE__);
-    $this->assertArrayHasKey('tag_unconfirmed', $result['values'][$this->_domainID2]);
-    $this->assertEquals('Unconfirmed', $result['values'][$this->_domainID2]['tag_unconfirmed']);
+    $this->assertArrayHasKey('tag_unconfirmed', $result['values'][$this->_domainID3]);
+    $this->assertEquals('Unconfirmed', $result['values'][$this->_domainID3]['tag_unconfirmed']);
   }
 }
 
