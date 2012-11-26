@@ -64,7 +64,6 @@ class api_v3_SettingTest extends CiviUnitTestCase {
         'description' => 'domain of chaos',
         'version' => 3,
         'domain_version' => '4.3',
-        'loc_block_id' => '2',
     );
     $result = civicrm_api( 'domain','get',$params);
     if(empty($result['id'])){
