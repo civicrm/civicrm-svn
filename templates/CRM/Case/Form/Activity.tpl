@@ -296,13 +296,13 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
                 <td class="view-value"><div class="crm-select-container">{$form.tag.html}</div>
                                         {literal}
                                         <script type="text/javascript">
-                                                               cj("select[multiple]").crmasmSelect({
-                                                                        addItemTarget: 'bottom',
-                                                                        animate: true,
-                                                                        highlight: true,
-                                                                        sortable: true,
-                                                                        respectParents: true
-                                                               });
+                                           cj(".crm-case-activity-form-block-tag select[multiple]").crmasmSelect({
+                                                    addItemTarget: 'bottom',
+                                                    animate: true,
+                                                    highlight: true,
+                                                    sortable: true,
+                                                    respectParents: true
+                                           });
                                         </script>
                                         {/literal}
 

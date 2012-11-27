@@ -114,7 +114,7 @@
       <td class="view-value"><div class="crm-select-container">{$form.tag.html}</div>
 {literal}
 <script type="text/javascript">
-cj("select[multiple]").crmasmSelect({
+cj(".crm-select-container select[multiple]").crmasmSelect({
     addItemTarget: 'bottom',
     animate: true,
     highlight: true,
