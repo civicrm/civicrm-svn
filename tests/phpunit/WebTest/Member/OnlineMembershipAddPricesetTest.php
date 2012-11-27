@@ -94,6 +94,110 @@ class WebTest_Member_OnlineMembershipAddPricesetTest extends CiviSeleniumTestCas
     $this->_testSignUpOrRenewMembership($registerUrl, $contactParams, $memTypeTitle1, $memTypeTitle2, $renew = TRUE);
   }
 
+  function testAddPriceSetWithMultipleTerms() {
+    // This is the path where our testing install resides.
+    // The rest of URL is defined in CiviSeleniumTestCase base class, in
+    // class attributes.
+    $this->open($this->sboxPath);
+    
+    // Log in using webtestLogin() method
+    $this->webtestLogin();
+    
+    // add the required Drupal permission
+
+    $permissions = array('edit-1-make-online-contributions');
+    $this->changePermissions($permissions);
+
+    $title            = substr(sha1(rand()), 0, 7);
+    $setTitle         = "Membership Fees - $title";
+    $usedFor          = 'Membership';
+    $contributionType = 'Member Dues';
+    $setHelp          = 'Select your membership options.';
+    $memTypeParams1 = $this->webtestAddMembershipType();
+    $memTypeTitle1  = $memTypeParams1['membership_type'];
+    $memTypeId1     = explode('&id=', $this->getAttribute("xpath=//div[@id='membership_type']/div[2]/table/tbody//tr/td[text()='{$memTypeTitle1}']/../td[11]/span/a[3]@href"));
+    $memTypeId1     = $memTypeId1[1];
+    $this->_testAddSet($setTitle, $usedFor, $contributionType, $setHelp);
+
+    // Get the price set id ($sid) by retrieving and parsing the URL of the New Price Field form
+    // which is where we are after adding Price Set.
+    $elements = $this->parseURL();
+    $sid = $elements['queryString']['sid'];
+    $this->assertType('numeric', $sid);
+
+    $fields = array("National Membership $title", "Radio");
+    $this->open($this->sboxPath . "civicrm/admin/price/field?reset=1&action=add&sid={$sid}");
+    
+    $validateStrings[] = $fields[0];
+    $this->type('label', $fields[0]);
+    $this->select('html_type', "value={$fields[1]}");
+    $options = array(
+            1 => array('label' => $memTypeTitle1."_1",
+              'membership_type_id' => $memTypeId1,
+              'amount' => 50.00,
+              'membership_num_terms' => 1,
+            ),
+            2 => array(
+              'label' => $memTypeTitle1."_2",
+              'membership_type_id' => $memTypeId1,
+              'amount' => 90.00,
+              'membership_num_terms' => 2,
+            ),
+            3 => array(
+              'label' => $memTypeTitle1."_3",
+              'membership_type_id' => $memTypeId1,
+              'amount' => 120.00,
+              'membership_num_terms' => 3,
+            ),
+       
+          );
+    $i = 2;
+    foreach($options as $index => $values){
+      $this->select("membership_type_id_{$index}", "value={$values['membership_type_id']}");
+      sleep(1);
+      $this->type("xpath=//table[@id='optionField']/tbody/tr[$i]/td[4]/input",$values['membership_num_terms']);
+      $this->type("xpath=//table[@id='optionField']/tbody/tr[$i]/td[5]/input",$values['label']);
+      $this->type("xpath=//table[@id='optionField']/tbody/tr[$i]/td[6]/input",$values['amount']);
+      if($i > 3){
+        $this->click('link=another choice'); 
+      }
+      $i++;
+    }
+    $this->waitForElementPresent( 'financial_type_id' );
+    $this->select("financial_type_id", "label={$contributionType}");
+    $this->waitForElementPresent('_qf_Field_next-bottom');
+    $this->click('_qf_Field_next-bottom');
+    $this->waitForPageToLoad('30000');
+    $this->assertTrue($this->isTextPresent("Price Field '{$fields[0]}' has been saved."));
+ 
+    // load the Price Set Preview and check for expected values
+    $this->_testVerifyPriceSet($validateStrings, $sid);
+
+    $contributionPageTitle = "Contribution Page $title";
+    $paymentProcessor = "Webtest Dummy $title";
+    $this->webtestAddContributionPage(NULL, NULL, $contributionPageTitle, array($paymentProcessor => 'Dummy'),
+      TRUE, FALSE, FALSE, FALSE, FALSE, TRUE, $sid, FALSE, 1, NULL
+    );
+
+    // Sign up for membership
+    $registerUrl = $this->_testVerifyRegisterPage($contributionPageTitle);
+
+    $firstName = 'John_' . substr(sha1(rand()), 0, 7);
+    $lastName  = 'Anderson_' . substr(sha1(rand()), 0, 7);
+    $email     = "{$firstName}.{$lastName}@example.com";
+
+    $contactParams = array(
+      'first_name' => $firstName,
+      'last_name' => $lastName,
+      'email-5' => $email,
+    );
+    //membership with number of terms as 2
+    $this->_testMultilpeTermsMembershipRegistration($registerUrl, $contactParams, $memTypeTitle1, 2);
+    //membership with number of terms as 3 which will renew the above membership
+    $this->_testMultilpeTermsMembershipRegistration($registerUrl, $contactParams, $memTypeTitle1, 3, TRUE);
+
+  }
+
   function _testAddSet($setTitle, $usedFor, $contributionType = NULL, $setHelp) {
     $this->open($this->sboxPath . 'civicrm/admin/price?reset=1&action=add');
     $this->waitForPageToLoad('30000');
@@ -326,5 +430,118 @@ class WebTest_Member_OnlineMembershipAddPricesetTest extends CiviSeleniumTestCas
       );
     }
   }
+  
+  function _testMultilpeTermsMembershipRegistration($registerUrl, $contactParams, $memTypeTitle1, $term, $renew = FALSE){
+    if($renew){
+      $this->open($this->sboxPath . "civicrm/member/search?reset=1");
+      $this->waitForElementPresent("member_end_date_high");
+      $this->type("sort_name", "{$contactParams['first_name']} {$contactParams['last_name']}");
+      $this->click("_qf_Search_refresh");
+      $this->waitForPageToLoad('30000');
+      $this->waitForElementPresent("xpath=//div[@id='memberSearch']/table/tbody/tr");
+      $this->click("xpath=//div[@id='memberSearch']/table/tbody//tr/td[4][text()='{$memTypeTitle1}']/../td[11]/span/a[text()='View']");
+      $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
+      $year = CRM_Utils_Date::processDate($this->getText("xpath=//form[@id='MembershipView']//table/tbody/tr/td[text()='End date']/following-sibling::td"));
+      $prevYear = substr($year, 0, 4);
+    }
+    
+    $this->open($this->sboxPath . 'civicrm/logout?reset=1');
+    $this->waitForPageToLoad('30000');
+
+    $this->open($this->sboxPath . $registerUrl);
+    $this->waitForElementPresent('_qf_Main_upload-bottom');
+
+    //build the membership dates.
+    require_once 'CRM/Core/Config.php';
+    require_once 'CRM/Utils/Array.php';
+    require_once 'CRM/Utils/Date.php';
+    $currentYear  = date('Y');
+    $currentMonth = date('m');
+    $previousDay  = date('d') - 1;
+    $endYear      = ($term == 3) ? $currentYear + 3 : (($term == 2) ? $currentYear + 2 : $currentYear + 1);
+    $endYear      = ($renew) ? $endYear + ($prevYear - $currentYear) : $endYear; 
+    $joinDate     = date('Y-m-d', mktime(0, 0, 0, $currentMonth, date('d'), $currentYear));
+    $startDate    = date('Y-m-d', mktime(0, 0, 0, $currentMonth, date('d'), $currentYear));
+    $endDate      = date('Y-m-d', mktime(0, 0, 0, $currentMonth, $previousDay, $endYear));
+    $configVars   = new CRM_Core_Config_Variables();
+    foreach (array(
+      'joinDate', 'startDate', 'endDate') as $date) {
+      $$date = CRM_Utils_Date::customFormat($$date, $configVars->dateformatFull);
+    }
+    $i      = ($term == 3) ? 3 : (($term == 2) ? 2 : 1 );
+    $this->waitForElementPresent("xpath=//div[@id='priceset']/div[2]/div[2]/div[$i]/span/input");
+    $this->click("xpath=//div[@id='priceset']/div[2]/div[2]/div[$i]/span/input");
+    $amount = $this->getText("xpath=//div[@id='priceset']/div[2]/div[2]/div[$i]/span/label/span[@class='crm-price-amount-amount']");
+
+    $this->type('email-5', $contactParams['email-5']);
+    $this->type('first_name', $contactParams['first_name']);
+    $this->type('last_name', $contactParams['last_name']);
+
+    $streetAddress = "100 Main Street";
+    $this->type("street_address-1", $streetAddress);
+    $this->type("city-1", "San Francisco");
+    $this->type("postal_code-1", "94117");
+    $this->select("country-1", "value=1228");
+    $this->select("state_province-1", "value=1001");
+
+    //Credit Card Info
+    $this->select("credit_card_type", "value=Visa");
+    $this->type("credit_card_number", "4111111111111111");
+    $this->type("cvv2", "000");
+    $this->select("credit_card_exp_date[M]", "value=1");
+    $this->select("credit_card_exp_date[Y]", "value=2020");
+
+    //Billing Info
+    $this->type("billing_first_name", $contactParams['first_name'] . "billing");
+    $this->type("billing_last_name", $contactParams['last_name'] . "billing");
+    $this->type("billing_street_address-5", "15 Main St.");
+    $this->type(" billing_city-5", "San Jose");
+    $this->select("billing_country_id-5", "value=1228");
+    $this->select("billing_state_province_id-5", "value=1004");
+    $this->type("billing_postal_code-5", "94129");
+    $this->click("_qf_Main_upload-bottom");
+
+    $this->waitForPageToLoad('30000');
+    $this->waitForElementPresent("_qf_Confirm_next-bottom");
+
+    $this->click("_qf_Confirm_next-bottom");
+    $this->waitForPageToLoad('30000');
+
+    //login to check membership
+    $this->open($this->sboxPath);
+
+    // Log in using webtestLogin() method
+    $this->webtestLogin();
+
+    $this->open($this->sboxPath . "civicrm/member/search?reset=1");
+    $this->waitForElementPresent("member_end_date_high");
+
+    $this->type("sort_name", "{$contactParams['first_name']} {$contactParams['last_name']}");
+    $this->click("_qf_Search_refresh");
+
+    $this->waitForPageToLoad('30000');
+    $this->assertTrue($this->isTextPresent("1 Result "));
+
+    $this->waitForElementPresent("xpath=//div[@id='memberSearch']/table/tbody/tr");
+    $this->click("xpath=//div[@id='memberSearch']/table/tbody//tr/td[4][text()='{$memTypeTitle1}']/../td[11]/span/a[text()='View']");
+    $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
+    sleep(10);
+    //View Membership Record
+    $verifyData = array(
+      'Membership Type' => "$memTypeTitle1",
+      'Status' => 'New',
+      'Member Since' => $joinDate,
+      'Start date' => $startDate,
+      'End date' => $endDate,
+    );
+    foreach ($verifyData as $label => $value) {
+      $this->verifyText("xpath=//form[@id='MembershipView']//table/tbody/tr/td[text()='{$label}']/following-sibling::td",
+        preg_quote($value)
+      );
+    }
+    //check if the membership amount is correct
+    $this->assertTrue($this->isElementPresent("xpath=//form[@id='MembershipView']/div[2]/div/table[2]/tbody/tr/td/span[text()='{$amount}']"));
+  }
+
 }
 
