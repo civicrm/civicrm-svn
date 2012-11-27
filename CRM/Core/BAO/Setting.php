@@ -221,20 +221,29 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
     if (!empty($settingsToReturn) && !is_array($settingsToReturn)) {
       $settingsToReturn = array($settingsToReturn);
     }
+    $config = CRM_Core_Config::singleton();
     $fields = $result = array();
     $fieldsToGet = self::validateSettingsInput(array_flip($settingsToReturn), $fields, FALSE);
     foreach ($domains as $domain) {
       $result[$domain] = array();
       foreach ($fieldsToGet as $name => $value) {
-        $setting =
-          CRM_Core_BAO_Setting::getItem(
-          $fields['values'][$name]['group_name'],
-          $name,
-          CRM_Utils_Array::value('component_id', $params),
-          CRM_Utils_Array::value('default_value', $params),
-          CRM_Utils_Array::value('contact_id', $params),
-          $domain
-        );
+        if(!empty($fields['values'][$name]['prefetch'])){
+          $configKey = CRM_Utils_Array::value('config_key', $fields['values'][$name],  $name);
+          if(isset($config->$configKey)){
+            $setting = $config->$configKey;
+          }
+        }
+        else {
+          $setting =
+            CRM_Core_BAO_Setting::getItem(
+            $fields['values'][$name]['group_name'],
+            $name,
+            CRM_Utils_Array::value('component_id', $params),
+            CRM_Utils_Array::value('default_value', $params),
+            CRM_Utils_Array::value('contact_id', $params),
+            $domain
+          );
+        }
         if (!is_null($setting)) {
           // we won't return if not set - helps in return all scenario - otherwise we can't indentify the missing ones
           // e.g for revert of fill actions
@@ -595,6 +604,8 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
   /**
    * move an item from being in the config array to being stored as a setting
    * remove from config - as appropriate based on metadata
+   *
+   * Note that where the key name is being changed the 'legacy_key' will give us the old name
    */
   static function convertConfigToSetting($name, $domainID = null) {
     $config = CRM_Core_Config::singleton();

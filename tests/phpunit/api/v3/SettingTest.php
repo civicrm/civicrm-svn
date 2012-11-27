@@ -320,6 +320,31 @@ class api_v3_SettingTest extends CiviUnitTestCase {
     $dao->fetch();
     $this->assertEquals($dao->c, 0);
   }
+  /**
+   * setting api should set & fetch settings stored in config as well as those in settings table
+   */
+  function testGetConfigSetting() {
+    $settings = civicrm_api('setting', 'get', array(
+      'name' => 'defaultCurrency',
+      'version' => $this->_apiversion,
+      'sequential' => 1,
+      'debug' => 1)
+    );
+    $this->assertAPISuccess($settings);
+    $this->assertEquals('USD', $settings['values'][0]['defaultCurrency']);
+  }
+/*
+ * Use getValue against a config setting
+ */
+  function testGetValueConfigSetting() {
+    $params = array(
+      'version' => $this->_apiversion,
+      'name' => 'monetaryThousandSeparator',
+      'group' => 'Localization Setting',
+    );
+    $result = civicrm_api('setting', 'getvalue', $params);
+    $this->assertEquals(',', $result);
+  }
 
   function testGetValue() {
     $params = array(

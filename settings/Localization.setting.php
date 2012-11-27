@@ -37,10 +37,12 @@
  */
 
 return array(
-  'monetary_thousand_separator' => array(
+  'monetaryThousandSeparator' => array(
     'group_name' => 'Localization Preferences',
     'group' => 'localization',
-    'name' => 'monetary_thousand_separator',
+    'name' => 'monetaryThousandSeparator',
+    'prefetch' => 1,
+    'config_only' => 1,
     'type' => 'String',
     'quick_form_type' => 'Element',
     'html_type' => 'text',
@@ -50,15 +52,17 @@ return array(
     'default' => ',',
     'add' => '4.3',
     'title' => 'Thousands Separator',
-   'is_domain' => 1,
+    'is_domain' => 1,
     'is_contact' => 0,
     'description' => null,
     'help_text' => null,
   ),
-  'default_currency' => array(
+  'defaultCurrency' => array(
     'group_name' => 'Localization Preferences',
     'group' => 'localization',
-    'name' => 'default_currency',
+    'name' => 'defaultCurrency',
+    'prefetch' => 1,
+    'config_only' => 1,
     'type' => 'String',
     'quick_form_type' => 'Element',
     'html_type' => 'text',
