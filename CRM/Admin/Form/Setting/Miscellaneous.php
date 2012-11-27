@@ -41,7 +41,10 @@ class CRM_Admin_Form_Setting_Miscellaneous extends CRM_Admin_Form_Setting {
 
   protected $_settings = array(
     'max_attachments' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
-    'contact_undelete' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME
+    'contact_undelete' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+    'versionCheck' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+    'maxFileSize' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+    'doNotAttachPDFReceipt' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
   );
 
   /**
@@ -66,17 +69,10 @@ class CRM_Admin_Form_Setting_Miscellaneous extends CRM_Admin_Form_Setting {
     $this->assign('validTriggerPermission', $validTriggerPermission);
     $this->addYesNo('logging', ts('Logging'), NULL, NULL, $attribs);
 
-    $this->addYesNo('versionCheck', ts('Version Check & Statistics Reporting'));
-
-    $this->addYesNo('doNotAttachPDFReceipt', ts('Attach PDF copy to receipts'));
-
     $this->addElement('text', 'wkhtmltopdfPath', ts('Path to wkhtmltopdf executable'),
       array('size' => 64, 'maxlength' => 256)
     );
 
-    $this->addElement('text', 'maxFileSize', ts('Maximum File Size'),
-      array('size' => 2, 'maxlength' => 8)
-    );
     $this->addElement('text', 'recaptchaPublicKey', ts('Public Key'),
       array('size' => 64, 'maxlength' => 64)
     );
@@ -94,7 +90,6 @@ class CRM_Admin_Form_Setting_Miscellaneous extends CRM_Admin_Form_Setting {
       array('size' => 64, 'maxlength' => 64)
     );
 
-    $this->addRule('maxFileSize', ts('Value should be a positive number'), 'positiveInteger');
     $this->addRule('checksumTimeout', ts('Value should be a positive number'), 'positiveInteger');
 
     parent::buildQuickForm();

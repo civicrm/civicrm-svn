@@ -92,10 +92,19 @@ class CRM_Admin_Form_Setting extends CRM_Core_Form {
         '1' => 1) + $autoSearchFields;
       $this->_defaults['autocompleteContactReference'] = array(
         '1' => 1) + $cRSearchFields;
+
+      // we can handle all the ones defined in the metadata here. Others to be converted
       foreach ($this->_settings as $setting => $group){
         $settingMetaData = civicrm_api('setting', 'getfields', array('version' => 3, 'name' => $setting));
-        $this->_defaults[$setting] = CRM_Core_BAO_Setting::getItem($group, $setting, null, CRM_Utils_Array::value('default',$settingMetaData['values'][$setting]));
+        $this->_defaults[$setting] = civicrm_api('setting', 'getvalue', array(
+          'version' => 3,
+          'name' => $setting,
+          'group' => $group,
+          'default_value' => CRM_Utils_Array::value('default', $settingMetaData['values'][$setting])
+          )
+        );
       }
+
       $this->_defaults['enableSSL'] = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'enableSSL', NULL, 0);
       $this->_defaults['verifySSL'] = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'verifySSL', NULL, 1);
 
@@ -151,10 +160,14 @@ LIMIT  1
         else{
           $this->$add($setting, ts($settingMetaData['values'][$setting]['title']));
         }
-        $this->assign("{$setting}_description", $settingMetaData['values'][$setting]['description']);
+        $this->assign("{$setting}_description", ts($settingMetaData['values'][$setting]['description']));
         if($setting == 'max_attachments'){
-          //temp hack
+          //temp hack @todo fix to get from metadata
           $this->addRule('max_attachments', ts('Value should be a positive number'), 'positiveInteger');
+        }
+        if($setting == 'maxFileSize'){
+          //temp hack
+          $this->addRule('maxFileSize', ts('Value should be a positive number'), 'positiveInteger');
         }
 
       }
@@ -245,16 +258,12 @@ AND    time_format <> ''
       unset($params['enableSSL']);
     }
     $settings = array_intersect_key($params, $this->_settings);
+    $result = civicrm_api('setting', 'create', $settings + array('version' => 3));
     foreach ($settings as $setting => $settingGroup){
-      CRM_Core_BAO_Setting::setItem($params[$setting], $this->_settings[$setting], $setting);
+      //@todo array_diff this
       unset($params[$setting]);
     }
-    CRM_Core_BAO_ConfigSetting::add($params);
-
-    // also delete the CRM_Core_Config key from the database
-    $cache = CRM_Utils_Cache::singleton();
-    $cache->delete('CRM_Core_Config');
-
+    CRM_Core_BAO_ConfigSetting::create($params);
     CRM_Core_Session::setStatus("", ts('Changes Saved.'), "success");
   }
 
