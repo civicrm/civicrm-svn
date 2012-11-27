@@ -438,7 +438,7 @@ class WebTest_Admin_MoveCustomDataTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad("30000");
 
     //assert success
-    $this->assertTrue($this->isTextPresent("record has been saved"), "Contact Record could not be saved");
+    $this->assertTrue($this->isTextPresent("has been updated"), "Contact Record could not be saved");
   }
 }
 

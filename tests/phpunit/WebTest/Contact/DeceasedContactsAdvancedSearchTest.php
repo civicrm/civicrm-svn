@@ -79,7 +79,8 @@ class WebTest_Contact_DeceasedContactsAdvancedSearchTest extends CiviSeleniumTes
     $this->waitForElementPresent('Go');
     $this->assertTrue($this->isTextPresent('2 Contacts'));
     $this->click("toggleSelect");
-
+    sleep(1);
+    
     $this->select('task', 'label=Remove Contacts from Group');
     $this->click("xpath=//div[@id='search-status']/table/tbody/tr[3]/td/ul/input[2]");
     $this->waitForElementPresent('_qf_RemoveFromGroup_back-bottom');
@@ -87,7 +88,7 @@ class WebTest_Contact_DeceasedContactsAdvancedSearchTest extends CiviSeleniumTes
     $this->select('group_id', "label={$groupName}");
     $this->click('_qf_RemoveFromGroup_next-bottom');
     $this->waitForPageToLoad('30000');
-    $this->assertTrue($this->isTextPresent("Removed Contact(s) from {$groupName}"));
+    $this->assertTrue($this->isTextPresent("2 contacts removed from '{$groupName}'"));
 
     // Search for the contacts who are not deceased
     $this->open($this->sboxPath . 'civicrm/contact/search/advanced?reset=1');

@@ -269,6 +269,12 @@ class WebTest_Contact_AdvanceSearchPaneTest extends CiviSeleniumTestCase {
           'title' => 'Demographics',
           'fields' =>
           array(
+            'Birth Date Range' =>
+            array(
+              'type' => 'select',
+              'locator' => 'birth_date_relative',
+              'values' => array('Choose Date Range'),
+            ),
             'Birth Date from' =>
             array(
               'type' => 'date',

@@ -76,7 +76,7 @@ class WebTest_Contact_PrevNextTest extends CiviSeleniumTestCase {
     $this->select('group_id', "label={$groupName}");
     $this->click('_qf_GroupContact_next');
     $this->waitForPageToLoad("30000");
-    $this->assertTrue($this->isTextPresent("Contact has been added to the selected group "));
+    $this->assertTrue($this->isTextPresent("Contact has been added to '{$groupName}'."));
 
     // Individual 2
     $contact2 = substr(sha1(rand()), 0, 7);
@@ -88,7 +88,7 @@ class WebTest_Contact_PrevNextTest extends CiviSeleniumTestCase {
     $this->select('group_id', "label={$groupName}");
     $this->click('_qf_GroupContact_next');
     $this->waitForPageToLoad("30000");
-    $this->assertTrue($this->isTextPresent("Contact has been added to the selected group "));
+    $this->assertTrue($this->isTextPresent("Contact has been added to '{$groupName}'."));
 
     // Individual 3
     $contact3 = substr(sha1(rand()), 0, 7);
@@ -100,7 +100,7 @@ class WebTest_Contact_PrevNextTest extends CiviSeleniumTestCase {
     $this->select('group_id', "label={$groupName}");
     $this->click('_qf_GroupContact_next');
     $this->waitForPageToLoad("30000");
-    $this->assertTrue($this->isTextPresent("Contact has been added to the selected group "));
+    $this->assertTrue($this->isTextPresent("Contact has been added to '{$groupName}'."));
 
     // Search contacts
     $this->open($this->sboxPath . "civicrm/contact/search?reset=1");
