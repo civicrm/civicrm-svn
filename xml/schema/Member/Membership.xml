@@ -149,7 +149,13 @@
     <fieldName>owner_membership_id</fieldName>
     <add>1.7</add>
   </index>
-  <field>     
+  <field>
+      <name>max_related</name>
+      <type>int</type>
+      <comment>Maximum number of related memberships (membership_type override).</comment>
+      <add>4.3</add>
+  </field>
+  <field>
       <name>is_test</name>  
       <title>Test</title>
       <uniqueName>member_is_test</uniqueName> 

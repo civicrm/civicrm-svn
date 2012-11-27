@@ -107,6 +107,11 @@ class CRM_Member_BAO_Query {
         $query->_select['owner_membership_id'] = "civicrm_membership.owner_membership_id as owner_membership_id";
         $query->_element['owner_membership_id'] = 1;
       }
+      //add max_related
+      if (CRM_Utils_Array::value('max_related', $query->_returnProperties)) {
+        $query->_select['max_related'] = "civicrm_membership.max_related as max_related";
+        $query->_element['max_related'] = 1;
+      }
       //add recur id w/o taking contribution table in join.
       if (CRM_Utils_Array::value('membership_recur_id', $query->_returnProperties)) {
         $query->_select['membership_recur_id'] = "civicrm_membership.contribution_recur_id as membership_recur_id";
@@ -367,6 +372,7 @@ class CRM_Member_BAO_Query {
         'membership_status' => 1,
         'membership_id' => 1,
         'owner_membership_id' => 1,
+        'max_related' => 1,
         'membership_recur_id' => 1,
         'member_campaign_id' => 1,
       );

@@ -40,6 +40,73 @@
 class CRM_Member_Form_MembershipView extends CRM_Core_Form {
 
   /**
+   * The action links that we need to display for the browse screen
+   *
+   * @var array
+   * @static
+   */
+  static $_links = NULL;
+
+  /**
+   * Get action Links
+   *
+   * @return array (reference) of action links
+   */
+  function &links() {
+    if (!(self::$_links)) {
+      self::$_links = array(
+        CRM_Core_Action::DELETE => array(
+          'name' => ts('Delete'),
+          'url' => 'civicrm/contact/view/membership',
+          'qs' => 'action=view&id=%%id%%&cid=%%cid%%&relAction=delete&mid=%%mid%%&reset=1',
+          'title' => ts('Cancel Related Membership'),
+        ),
+        CRM_Core_Action::ADD => array(
+          'name' => ts('Create'),
+          'url' => 'civicrm/contact/view/membership',
+          'qs' => 'action=view&id=%%id%%&cid=%%cid%%&relAction=create&rid=%%rid%%&reset=1',
+          'title' => ts('Create Related Membership'),
+        ),
+      );
+    }
+    return self::$_links;
+  }
+
+  /**
+   * Perform action on related memberships
+   *
+   */
+  function relAction($action, $owner) {
+    switch ($action) {
+      case 'delete':
+        $id = CRM_Utils_Request::retrieve('mid', 'Positive', $this);
+        $relatedContactId = CRM_Utils_Request::retrieve('cid', 'Positive', $this);
+        $relatedDisplayName = CRM_Contact_BAO_Contact::displayName($relatedContactId);
+        CRM_Member_BAO_Membership::deleteMembership($id);
+        CRM_Core_Session::setStatus(ts('Related membership for %1 has been deleted.', array(1 => $relatedDisplayName)), ts('Membership Deleted'), 'success');
+        break;
+      case 'create':
+        $ids = array(
+          'membership' => CRM_Utils_Request::retrieve('mid', 'Positive', $this),
+        );
+        $params = array(
+          'contact_id'           => CRM_Utils_Request::retrieve('rid', 'Positive', $this),
+          'membership_type_id'   => $owner['membership_type_id'],
+          'owner_membership_id'  => $owner['id'],
+          'start_date'           => str_replace('-','',$owner['start_date']),
+          'end_date'             => $owner['end_date'],
+          'source'               => ts('Manual Assignment of Related Membership'),
+          );
+        CRM_Member_BAO_Membership::create($params, $ids);
+        $relatedDisplayName = CRM_Contact_BAO_Contact::displayName($params['contact_id']);
+        CRM_Core_Session::setStatus(ts('Related membership for %1 has been added.', array(1 => $relatedDisplayName)), ts('Membership Added'), 'success');
+        break;
+      default:
+        CRM_Core_Error::fatal(ts("Invalid action specified in URL"));
+    }
+  }
+
+  /**
    * Function to set variables up before form is built
    *
    * @return void
@@ -58,6 +125,13 @@ class CRM_Member_Form_MembershipView extends CRM_Core_Form {
       $params = array('id' => $id);
 
       CRM_Member_BAO_Membership::retrieve($params, $values);
+      $membershipType = CRM_Member_BAO_MembershipType::getMembershipTypeDetails($values['membership_type_id']);
+
+      // Do the action on related Membership if needed
+      $relAction = CRM_Utils_Request::retrieve('relAction', 'String', $this);
+      if ($relAction) {
+        $this->relAction($relAction, $values);
+      }
 
       // build associated contributions
       CRM_Member_Page_Tab::associatedContribution($values['contact_id'], $id);
@@ -97,14 +171,14 @@ END AS 'relType'
         $dao = CRM_Core_DAO::executeQuery($sql);
         $values['relationship'] = NULL;
         while ($dao->fetch()) {
-          $membershipType['relationship_type_id'] = $dao->relationship_type_id;
+          $typeId = $dao->relationship_type_id;
           $direction = $dao->relType;
-          if ($direction && $membershipType['relationship_type_id']) {
+          if ($direction && $typeId) {
             if ($values['relationship']) {
               $values['relationship'] .= ',';
             }
             $values['relationship'] .= CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_RelationshipType',
-              $membershipType['relationship_type_id'],
+              $typeId,
               "name_$direction",
               'id'
             );
@@ -117,6 +191,77 @@ END AS 'relType'
         'display_name'
       );
       $this->assign('displayName', $displayName);
+      // if membership can be granted to related contacts, display related memberships
+      if (!isset($membershipType['relationship_type_id'])) {
+        $this->assign('has_related', FALSE);
+      } else {
+        $this->assign('has_related', TRUE);
+        $this->assign('max_related', $values['max_related']);
+        // split the relations in 2 arrays based on direction
+        $relTypeId = explode(',', $membershipType['relationship_type_id']);
+        $relDirection = explode(',', $membershipType['relationship_direction']);
+        foreach ($relTypeId as $rid) {
+          $dir = each($relDirection);
+          $relTypeDir[substr($dir['value'], 0, 1)][] = $rid;
+        }
+        // build query in 2 parts with a UNION if necessary
+        // _x and _y are replaced with _a and _b first, then vice-versa
+        // comment is a qualifier for the relationship - now just job_title
+        $select = "
+SELECT r.id, c.id as cid, c.display_name as name, c.job_title as comment,
+       rt.name_x_y as relation, r.start_date, r.end_date,
+       m.id as mid, ms.is_current_member, ms.label as status
+  FROM civicrm_relationship r
+  LEFT JOIN civicrm_relationship_type rt ON rt.id = r.relationship_type_id
+  LEFT JOIN civicrm_contact c ON c.id = r.contact_id_x
+  LEFT JOIN civicrm_membership m ON (m.owner_membership_id = {$values['id']} AND m.contact_id = r.contact_id_x AND m.is_test = 0)
+  LEFT JOIN civicrm_membership_status ms ON ms.id = m.status_id
+ WHERE r.contact_id_y = {$values['contact_id']} AND r.is_active = 1  AND c.is_deleted = 0";
+        $query = '';
+        foreach (array('a', 'b') as $dir ) {
+          if ($relTypeDir[$dir]) {
+            $query .= ($query ? ' UNION ' : '')
+              . str_replace('_y', '_'.$dir, str_replace('_x', '_'.($dir=='a'?'b':'a'), $select))
+              . ' AND r.relationship_type_id IN (' . implode(',', $relTypeDir[$dir]) .')';
+          }
+        }
+        $query .= " ORDER BY is_current_member DESC";
+        $dao = CRM_Core_DAO::executeQuery($query);
+        $relatedRemaining = ($values['max_related'] ? $values['max_related'] : PHP_INT_MAX);
+        while ($dao->fetch()) {
+          $row = array();
+          foreach (array('id', 'cid', 'name', 'comment', 'relation', 'mid', 'start_date', 'end_date', 'is_current_member', 'status') as $field) {
+            $row[$field] = $dao->$field;
+          }
+          if ($row['mid'] && ($row['is_current_member'] == 1)) {
+            $relatedRemaining--;
+            $row['action'] = CRM_Core_Action::formLink(self::links(), CRM_Core_Action::DELETE,
+              array(
+                'id' => CRM_Utils_Request::retrieve('id', 'Positive', $this),
+                'cid' => $row['cid'],
+                'mid' => $row['mid'],
+              )
+            );
+          } else if ($relatedRemaining > 0) {
+              $row['action'] = CRM_Core_Action::formLink(self::links(), CRM_Core_Action::ADD,
+                array(
+                  'id' => CRM_Utils_Request::retrieve('id', 'Positive', $this),
+                  'cid' => $row['cid'],
+                  'rid' => $row['cid'],
+                )
+              );
+          }
+          $related[] = $row;
+        }
+        $this->assign('related', $related);
+        if ($relatedRemaining <= 0) {
+          $this->assign('related_text', ts('None available'));
+        } else if ($relatedRemaining < 100000) {
+          $this->assign('related_text', ts('%1 available', array(1 => $relatedRemaining)));
+        } else {
+          $this->assign('related_text', ts('Unlimited', array(1 => $relatedRemaining)));
+        }
+      }
 
       // add viewed membership to recent items list
       $url = CRM_Utils_System::url('civicrm/contact/view/membership',

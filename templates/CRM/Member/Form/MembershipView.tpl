@@ -50,6 +50,9 @@
             <tr><td class="label">{ts}By Relationship{/ts}</td><td>{$relationship}&nbsp;&nbsp;<a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=$owner_contact_id&context=$context"}" title="{ts}View primary member contact summary{/ts}">{$owner_display_name}</a>&nbsp;</td></tr>
         {/if}
         <tr><td class="label">{ts}Membership Type{/ts}</td><td>{$membership_type}</td></tr>
+        {if $has_related}
+            <tr><td class="label">{ts}Max related{/ts}</td><td>{$max_related}</td></tr>
+        {/if}
         <tr><td class="label">{ts}Status{/ts}</td><td>{$status}</td></tr>
         <tr><td class="label">{ts}Source{/ts}</td><td>{$source}</td></tr>
   {if $campaign}<tr><td class="label">{ts}Campaign{/ts}</td><td>{$campaign}</td></tr>{/if}
@@ -65,8 +68,12 @@
         {include file="CRM/Contribute/Form/Selector.tpl" context="Search"}
     {/if}
 
+    {if $has_related}
+        {include file="CRM/Member/Form/MembershipRelated.tpl" context="Search"}
+    {/if}
+
     <div class="crm-submit-buttons">
-        {* Check permissions and make sure this is not an inherited membership (edit and delete not allowed for inherited memberships) *}
+        {* Check permissions and make sure this is not a related membership (edit and delete not allowed for related memberships) *}
         {if ! $owner_contact_id AND call_user_func(array('CRM_Core_Permission','check'), 'edit memberships') }
           {assign var='urlParams' value="reset=1&id=$id&cid=$contact_id&action=update&context=$context"}
           {if ( $context eq 'fulltext' || $context eq 'search' ) && $searchKey}

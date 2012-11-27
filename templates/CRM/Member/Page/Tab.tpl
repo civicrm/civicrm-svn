@@ -76,6 +76,7 @@
                 <th>{ts}Status{/ts}</th>
                 <th>{ts}Source{/ts}</th>
                 <th>{ts}Auto-renew{/ts}</th>
+                <th>{ts}Related{/ts}</th>
                 <th></th>
             </tr>
             </thead>
@@ -91,10 +92,11 @@
                 <td class="crm-membership-status">{$activeMember.status}</td>
                 <td class="crm-membership-source">{$activeMember.source}</td>
                 <td class="crm-membership-auto_renew">{if $activeMember.auto_renew}<img src="{$config->resourceBase}i/check.gif" alt="{ts}Auto-renew{/ts}" /> {/if}</td>
+                <td class="crm-membership-related_count">{$activeMember.related_count}</td>
     <td>
                     {$activeMember.action|replace:'xx':$activeMember.id}
                     {if $activeMember.owner_membership_id}
-                        &nbsp;|&nbsp;<a href="{crmURL p='civicrm/membership/view' q="reset=1&id=`$activeMember.owner_membership_id`&action=view&context=membership&selectedChild=member"}" title="{ts}View Primary member record{/ts}">{ts}View Primary{/ts}</a>
+                      <a href="{crmURL p='civicrm/membership/view' q="reset=1&id=`$activeMember.owner_membership_id`&action=view&context=membership&selectedChild=member"}" title="{ts}View Primary member record{/ts}" class="action-item">{ts}View Primary{/ts}</a>
                     {/if}
                 </td>
             </tr>
@@ -132,11 +134,10 @@
                 <td class="crm-membership-source">{$inActiveMember.source}</td>
                 <td class="crm-membership-auto_renew">{if $inActiveMember.auto_renew}<img src="{$config->resourceBase}i/check.gif" alt="{ts}Auto-renew{/ts}" /> {/if}</td>
     <td>{$inActiveMember.action|replace:'xx':$inActiveMember.id}
-        {if $inActiveMember.owner_membership_id}
-                        &nbsp;|&nbsp;
-      <a href="{crmURL p='civicrm/membership/view' q="reset=1&id=`$inActiveMember.owner_membership_id`&action=view&context=membership&selectedChild=member"}" title="{ts}View Primary member record{/ts}">{ts}View Primary{/ts}
+    {if $inActiveMember.owner_membership_id}
+      <a href="{crmURL p='civicrm/membership/view' q="reset=1&id=`$inActiveMember.owner_membership_id`&action=view&context=membership&selectedChild=member"}" title="{ts}View Primary member record{/ts}" class="action-item">{ts}View Primary{/ts}
       </a>
-                    {/if}
+    {/if}
     </td>
             </tr>
             {/foreach}

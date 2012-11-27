@@ -166,6 +166,7 @@ class CRM_Member_Page_MembershipType extends CRM_Core_Page_Basic {
             $value, $relationshipName
           );
         }
+        $membershipType[$dao->id]['maxRelated'] = CRM_Utils_Array::value('max_related', $membershipType[$dao->id]);
       }
       // form all action links
       $action = array_sum(array_keys($this->links()));

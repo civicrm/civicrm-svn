@@ -1394,6 +1394,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
           'modified_id' => $userId,
           'modified_date' => date('Ymd'),
           'membership_type_id' => $dao->membership_type_id,
+          'max_related' => $dao->max_related,
         );
 
 

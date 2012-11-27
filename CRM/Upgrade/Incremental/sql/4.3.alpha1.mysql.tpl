@@ -685,3 +685,11 @@ VALUES
 ALTER TABLE `civicrm_report_instance` 
 ADD COLUMN  `drilldown_id` int(10) unsigned DEFAULT NULL COMMENT 'FK to instance ID drilldown to',
 ADD CONSTRAINT `FK_civicrm_report_instance_drilldown_id` FOREIGN KEY (`drilldown_id`) REFERENCES `civicrm_report_instance` (`id`) ON DELETE SET NULL;
+
+-- CRM-10012
+ALTER TABLE `civicrm_membership_type`
+ADD COLUMN `max_related` INT(10) unsigned DEFAULT NULL COMMENT 'Maximum number of related memberships.' AFTER `relationship_direction`;
+ALTER TABLE `civicrm_membership`
+ADD COLUMN `max_related` INT(10) unsigned DEFAULT NULL COMMENT 'Maximum number of related memberships (membership_type override).' AFTER `owner_membership_id`;
+ALTER TABLE `civicrm_membership_log`
+ADD COLUMN `max_related` INT(10) unsigned DEFAULT NULL COMMENT 'Maximum number of related memberships.' AFTER `membership_type_id`;

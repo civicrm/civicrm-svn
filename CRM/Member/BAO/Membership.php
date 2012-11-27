@@ -115,6 +115,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
       'end_date' => CRM_Utils_Date::isoToMysql($membership->end_date),
       'modified_date' => date('Ymd'),
       'membership_type_id' => $values[$membership->id]['membership_type_id'],
+      'max_related' => $membership->max_related,
     );
 
     $session = CRM_Core_Session::singleton();
@@ -284,6 +285,21 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
         return $error;
       }
       $params['status_id'] = $calcStatus['id'];
+    }
+
+    // data cleanup only: all verifications on number of related memberships are done upstream in:
+    //    CRM_Member_BAO_Membership::createRelatedMemberships()
+    //    CRM_Contact_BAO_Relationship::relatedMemberships()
+    if (isset($params['owner_membership_id'])) {
+      unset($params['max_related']);
+    } else {
+      // if membership allows related, default max_related to value in membership_type
+      if (!array_key_exists('max_related', $params)) {
+        $membershipType = CRM_Member_BAO_MembershipType::getMembershipTypeDetails($params['membership_type_id']);
+        if (isset($membershipType['relationship_type_id'])) {
+          $params['max_related'] = $membershipType['max_related'];
+        }
+      }
     }
 
     $transaction = new CRM_Core_Transaction();
@@ -572,6 +588,8 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
       }
     }
 
+    // Sort by contact_id ascending
+    ksort($contacts);
     return $contacts;
   }
 
@@ -636,13 +654,14 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
             status.label as status,
             status.is_current_member as is_current_member,
             type.id as membership_type_id,
-            type.name as membership_type
+            type.name as membership_type,
+            type.relationship_type_id as relationship_type_id
       FROM  civicrm_membership membership
 INNER JOIN  civicrm_membership_status status ON ( status.id = membership.status_id )
 INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_type_id )
      WHERE  membership.id = %1';
     $dao = CRM_Core_DAO::executeQuery($sql, array(1 => array($membershipId, 'Positive')));
-    $properties = array('status', 'status_id', 'membership_type', 'membership_type_id', 'is_current_member');
+    $properties = array('status', 'status_id', 'membership_type', 'membership_type_id', 'is_current_member', 'relationship_type_id');
     while ($dao->fetch()) {
       foreach ($properties as $property) {
         $values[$dao->id][$property] = $dao->$property;
@@ -1611,6 +1630,7 @@ AND civicrm_membership.is_test = %2";
             $format
           ),
           'membership_type_id' => $membershipTypeID,
+          'max_related' => $membershipTypeDetails['max_related'],
         );
         $session = CRM_Core_Session::singleton();
         // If we have an authenticated session, set modified_id to that user's contact_id, else set to membership.contact_id
@@ -1896,6 +1916,7 @@ AND civicrm_membership.is_test = %2";
           $format
         ),
         'membership_type_id' => $currentMembership['membership_type_id'],
+        'max_related' => $currentMembership['max_related'],
       );
 
       $session = CRM_Core_Session::singleton();
@@ -2043,6 +2064,7 @@ WHERE  civicrm_membership.contact_id = civicrm_contact.id
 
   /**
    * function to create memberships for related contacts
+   * takes into account the maximum related memberships
    *
    * @param  array      $params       array of key - value pairs
    * @param  object     $membership   membership object
@@ -2063,6 +2085,23 @@ WHERE  civicrm_membership.contact_id = civicrm_contact.id
       return;
     }
     $deceasedStatusId = array_search('Deceased', CRM_Member_PseudoConstant::membershipStatus());
+    // FIXME : While updating/ renewing the
+    // membership, if the relationship is PAST then
+    // the membership of the related contact must be
+    // expired.
+    // For that, getting Membership Status for which
+    // is_current_member is 0. It works for the
+    // generated data as there is only one membership
+    // status having is_current_member = 0.
+    // But this wont work exactly if there will be
+    // more than one status having is_current_member = 0.
+    $membershipStatus = new CRM_Member_DAO_MembershipStatus();
+    $membershipStatus->is_current_member = 0;
+    if ($membershipStatus->find(TRUE)) {
+      $expiredStatusId = $membershipStatus->id;
+    } else {
+      $expiredStatusId = array_search('Expired', CRM_Member_PseudoConstant::membershipStatus());
+    }
 
     $allRelatedContacts = array();
     $relatedContacts = array();
@@ -2102,6 +2141,8 @@ WHERE  civicrm_membership.contact_id = civicrm_contact.id
     else {
       // Edit the params array
       unset($params['id']);
+      // Reminder should be sent only to the direct membership
+      unset($params['reminder_date']);
       // unset the custom value ids
       if (is_array(CRM_Utils_Array::value('custom', $params))) {
         foreach ($params['custom'] as $k => $v) {
@@ -2111,6 +2152,12 @@ WHERE  civicrm_membership.contact_id = civicrm_contact.id
       if (!isset($params['membership_type_id'])) {
         $params['membership_type_id'] = $membership->membership_type_id;
       }
+
+      // max_related should be set in the parent membership
+      unset($params['max_related']);
+      // Number of inherited memberships available - NULL is interpreted as unlimited, '0' as none
+      $available = ($membership->max_related == NULL ? PHP_INT_MAX : $membership->max_related);
+      $queue = array(); // will be used to queue potential memberships to be created
 
       foreach ($relatedContacts as $contactId => $relationshipStatus) {
         //use existing membership record.
@@ -2136,22 +2183,8 @@ WHERE  civicrm_membership.contact_id = civicrm_contact.id
         elseif ((CRM_Utils_Array::value('action', $params) & CRM_Core_Action::UPDATE) &&
           ($relationshipStatus == CRM_Contact_BAO_Relationship::PAST)
         ) {
-          // FIXME : While updating/ renewing the
-          // membership, if the relationship is PAST then
-          // the membership of the related contact must be
-          // expired.
-          // For that, getting Membership Status for which
-          // is_current_member is 0. It works for the
-          // generated data as there is only one membership
-          // status having is_current_member = 0.
-          // But this wont work exactly if there will be
-          // more than one status having is_current_member = 0.
-          $membershipStatus = new CRM_Member_DAO_MembershipStatus();
-          $membershipStatus->is_current_member = 0;
-          if ($membershipStatus->find(TRUE)) {
-            $params['status_id'] = $membershipStatus->id;
+            $params['status_id'] = $expiredStatusId;
           }
-        }
 
         //don't calculate status again in create( );
         $params['skipStatusCal'] = TRUE;
@@ -2164,7 +2197,29 @@ WHERE  civicrm_membership.contact_id = civicrm_contact.id
         // we should not created contribution record for related contacts, CRM-3371
         unset($params['contribution_status_id']);
 
+        if (($params['status_id'] == $deceasedStatusId) || ($params['status_id'] == $expiredStatusId)) {
+          // related membership is not active so does not count towards maximum
+          CRM_Member_BAO_Membership::create($params, $relMemIds);
+        } else {
+          // related membership already exists, so this is just an update
+          if (isset($params['id'])) {
+            if ($available > 0) {
         CRM_Member_BAO_Membership::create($params, $relMemIds);
+              $available --;
+            } else { // we have run out of inherited memberships, so delete extras
+              CRM_Member_BAO_Membership::deleteMembership($params['id']);
+            }
+          // we need to first check if there will remain inherited memberships, so queue it up
+          } else {
+            $queue[] = $params;
+          }
+        }
+      }
+      // now go over the queue and create any available related memberships
+      reset($queue);
+      while (($available > 0) && ($params = each($queue))) {
+        CRM_Member_BAO_Membership::create($params['value'], $relMemIds);
+        $available --;
       }
     }
   }
@@ -2215,7 +2270,8 @@ FROM   civicrm_membership_type
     $membershipTypeValues = array();
     $membershipTypeFields = array(
       'id', 'minimum_fee', 'name', 'is_active',
-      'description', 'financial_type_id', 'auto_renew','member_of_contact_id'
+      'description', 'contribution_type_id', 'auto_renew','member_of_contact_id',
+      'relationship_type_id', 'relationship_direction', 'max_related',
     );
 
     while ($dao->fetch()) {

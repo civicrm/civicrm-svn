@@ -177,6 +177,12 @@
                     <span class="description">{ts}Memberships can be automatically granted to related contacts by selecting a Relationship Type.{/ts} {help id="rel-type"}</span>
                  </td>
              </tr>
+             <tr id="maxRelated" class="crm-membership-type-form-block-max_related">
+                 <td class="label">{$form.max_related.label}</td>
+                 <td>{$form.max_related.html}<br />
+                     <span class="description">{ts}Maximum number of related memberships (leave blank for unlimited).{/ts}</span>
+                 </td>
+             </tr>
              <tr class="crm-membership-type-form-block-visibility">
                  <td class="label">{$form.visibility.label}</td>
                  <td>{$form.visibility.html}<br />
@@ -265,6 +271,16 @@
        funName = 'hide();';
        if ( autoRenewOpt == 1 || autoRenewOpt == 2 ) funName = 'show();';
        eval( "cj('#autoRenewalMsgId')." + funName );
+    }
+
+    showHideMaxRelated(cj('#relationship_type_id').val());
+
+    function showHideMaxRelated( relTypeId ) {
+       if (relTypeId) {
+          cj('#maxRelated').show();
+       } else {
+          cj('#maxRelated').hide();
+       }
     }
     </script>
 {/literal}

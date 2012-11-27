@@ -162,7 +162,8 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
     if (is_array($relTypeInd)) {
       asort($relTypeInd);
     }
-    $memberRel = &$this->add('select', 'relationship_type_id', ts('Relationship Type'), array('' => ts('- select -')) + $relTypeInd);
+    $memberRel = &$this->add('select', 'relationship_type_id', ts('Relationship Type'), array('' => ts('- select -')) + $relTypeInd,
+                                FALSE, array('onChange' => "showHideMaxRelated(this.value);"));
     $memberRel->setMultiple(TRUE);
 
     $this->add('select', 'visibility', ts('Visibility'), CRM_Core_SelectValues::memberVisibility());
@@ -219,6 +220,10 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
     }
 
     $this->assign('membershipRecordsExists', $membershipRecords);
+
+    $this->add('text', 'max_related', ts('Max related'),
+        CRM_Core_DAO::getAttribute('CRM_Member_DAO_MembershipType', 'max_related')
+    );
 
     $this->addElement('submit', $this->getButtonName('refresh'), $searchBtn, array('class' => 'form-submit'));
 
@@ -362,6 +367,7 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
         'fixed_period_start_day',
         'fixed_period_rollover_day',
         'month_fixed_period_rollover_day',
+        'max_related',
       );
 
       $params = $ids = array();
@@ -395,7 +401,7 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
         }
       }
       if (!$hasRelTypeVal) {
-        $params['relationship_type_id'] = $params['relationship_direction'] = 'NULL';
+        $params['relationship_type_id'] = $params['relationship_direction'] = $params['max_related'] = 'NULL';
       }
 
       if ($params['duration_unit'] == 'lifetime' &&

@@ -530,12 +530,15 @@ class CRM_Member_Form_Membership extends CRM_Member_Form {
           }
         }
 
-        // build membership info array, which is used to set the payment information block when
-        // membership type is selected.
+        // build membership info array, which is used when membership type is selected to:
+        // - set the payment information block
+        // - set the max related block
         $allMembershipInfo[$key] = array(
           'financial_type_id' => CRM_Utils_Array::value('financial_type_id', $values),
           'total_amount'         => CRM_Utils_Money::format($values['minimum_fee'], NULL, '%a'),
-          'auto_renew'           => CRM_Utils_Array::value('auto_renew', $values)
+          'auto_renew'           => CRM_Utils_Array::value('auto_renew', $values),
+          'has_related'          => isset($values['relationship_type_id']),
+          'max_related'          => CRM_Utils_Array::value('max_related', $values),
         );
       }
     }
@@ -603,6 +606,12 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     $this->assign('allowAutoRenew', $allowAutoRenew);
     $this->assign('autoRenewOptions', json_encode($autoRenew));
     $this->assign('recurProcessor', json_encode($recurProcessor));
+
+    // for max_related: a little JS to show/hide & set default value
+    $memTypeJs['onChange'] = "buildMaxRelated(this.value,true); " . $memTypeJs['onChange'];
+    $this->add('text', 'max_related', ts('Max related'),
+      CRM_Core_DAO::getAttribute('CRM_Member_DAO_Membership', 'max_related')
+    );
 
     $sel = &$this->addElement('hierselect',
       'membership_type_id',
@@ -1134,6 +1143,13 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
 
         $membershipTypeValues[$memType][$d] = CRM_Utils_Date::processDate($date);
         //$params[$d] = CRM_Utils_Date::processDate( $date );
+      }
+    }
+
+    // max related memberships - take from form or inherit from membership type
+    foreach ($this->_memTypeSelected as $memType) {
+      if (array_key_exists('max_related', $formValues)) {
+        $membershipTypeValues[$memType]['max_related'] = CRM_Utils_Array::value('max_related', $formValues);
       }
     }
 

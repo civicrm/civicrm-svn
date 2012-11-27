@@ -1236,6 +1236,15 @@ SELECT relationship_type_id, relationship_direction
               CRM_Member_BAO_Membership::deleteRelatedMemberships($membershipId, $relatedContactId);
             }
 
+            // check whether we have some related memberships still available
+            $query = "
+SELECT count(*)
+  FROM civicrm_membership
+    LEFT JOIN civicrm_membership_status ON (civicrm_membership_status.id = civicrm_membership.status_id)
+ WHERE membership_type_id = {$membershipValues['membership_type_id']} AND owner_membership_id = {$membershipValues['owner_membership_id']}
+    AND is_current_member = 1";
+            $result = CRM_Core_DAO::singleValueQuery($query);
+            if ($result < $membershipValues['max_related'])
             CRM_Member_BAO_Membership::create($membershipValues, CRM_Core_DAO::$_nullArray);
           }
         }

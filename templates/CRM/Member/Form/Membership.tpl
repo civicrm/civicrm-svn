@@ -110,6 +110,12 @@
 {include file="CRM/Price/Form/InitialPayment.tpl" context="standalone" extends="membership"}
           </td>
         </tr>
+        <tr id="maxRelated" class="crm-membership-form-block-max_related">
+          <td class="label">{$form.max_related.label}</td>
+          <td>{$form.max_related.html}<br />
+            <span class="description">{ts}Maximum number of related memberships (leave blank for unlimited).{/ts}</span>
+          </td>
+        </tr>
         {if $action eq 1}
           <tr id="num_terms_row" class="crm-membership-form-block-num_terms">
             <td class="label">{$form.num_terms.label}</td>
@@ -633,6 +639,20 @@
       cj( "#totalAmountORPriceSet" ).hide( );
       cj( "#mem_type_id" ).hide( );
       cj( "#num_terms_row" ).hide( );
+    }
+
+    buildMaxRelated(cj('#membership_type_id_1', false).val());
+
+    function buildMaxRelated( memType, setDefault ) {
+      var allMemberships = {/literal}{$allMembershipInfo}{literal};
+
+      if ((memType > 0) && (allMemberships[memType]['has_related'])) {
+        if (setDefault) cj('#max_related').val(allMemberships[memType]['max_related']);
+        cj('#maxRelated').show();
+      } else {
+        cj('#max_related').val('');
+        cj('#maxRelated').hide();
+      }
     }
 
     var lastMembershipTypes = new Array;

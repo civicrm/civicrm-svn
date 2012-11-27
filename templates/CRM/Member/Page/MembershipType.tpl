@@ -48,6 +48,7 @@
                     <th>{ts}Duration{/ts}</th>
                     <th>{ts}Auto-renew Option{/ts}</th>
                     <th>{ts}Related{/ts}</th>
+                    <th>{ts}Max{/ts}</th>
                     <th>{ts}Visibility{/ts}</th>
                     <th id="order" class="sortable">{ts}Order{/ts}</th>
                    <th>{ts}Enabled?{/ts}</th>
@@ -64,6 +65,7 @@
                     <td class="crm-membership-type-duration_interval_unit">{$row.duration_interval} {$row.duration_unit}</td>
                     <td class="crm-membership-type-auto-renew">{if $row.auto_renew EQ 2}{ts}Required{/ts}{elseif $row.auto_renew EQ 1}{ts}Optional{/ts}{else}{ts}No{/ts}{/if}</td>
                     <td class="crm-membership-type-relationship_type_name">{$row.relationshipTypeName}</td>
+                    <td class="crm-membership-type-max_related" align="right">{$row.maxRelated}</td>
                     <td class="crm-membership-type-visibility">{$row.visibility}</td>
                     <td class="nowrap crm-membership_type-order">{$row.order}</td>
                     <td class="crm-membership-type-status_{$row.id}" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>

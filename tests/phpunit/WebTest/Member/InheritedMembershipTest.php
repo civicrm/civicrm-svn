@@ -74,6 +74,8 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase {
     $this->removeSelection('relationship_type_id', 'label=- select -');
     $this->addSelection('relationship_type_id', 'label=Employer of');
 
+    $this->type('max_related', '5');
+
     $this->click('_qf_MembershipType_upload-bottom');
     $this->waitForElementPresent('link=Add Membership Type');
     $this->assertTrue($this->isTextPresent("The membership type 'Membership Type $title' has been saved."));
@@ -137,6 +139,7 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase {
         'Member Since' => $joinDate,
         'Start date' => $startDate,
         'End date' => $endDate,
+        'Related' => "0 out of 5",
       )
     );
 

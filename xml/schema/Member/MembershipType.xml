@@ -147,8 +147,14 @@
       <type>varchar</type>  
       <length>128</length>                  
       <add>1.7</add>  
-  </field> 
-  <field>  
+  </field>
+  <field>
+      <name>max_related</name>
+      <type>int</type>
+      <comment>Maximum number of related memberships.</comment>
+      <add>4.3</add>
+  </field>
+  <field>
       <name>visibility</name>     
       <title>Visible</title>
       <type>varchar</type>
