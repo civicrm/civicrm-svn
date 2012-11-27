@@ -481,32 +481,21 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
    * @static
    */
   static function findDifferences($mainId, $otherId) {
-    $mainParams = array('contact_id' => (int) $mainId, 'version' => 3);
-    $otherParams = array('contact_id' => (int) $otherId, 'version' => 3);
+    // Fetch contacts
+    foreach (array('main' => $mainId, 'other' => $otherId) as $contact => $cid) {
+      $params = array('contact_id' => $cid, 'version' => 3, 'return' => self::$validFields);
+      $result = civicrm_api('contact', 'get', $params);
 
-    foreach (self::$validFields as $field) {
-      $mainParams["return.$field"] = $otherParams["return.$field"] = 1;
-    }
-    require_once 'api/v2/Contact.php';
-    $main = civicrm_contact_get($mainParams);
-    $other = civicrm_contact_get($otherParams);
-
-    //CRM-4524
-    if (CRM_Utils_Array::value('values', $main)) {
-      $main = reset($main['values']);
-    }
-    if (CRM_Utils_Array::value('values', $other)) {
-      $other = reset($other['values']);
+      if (empty($result['values'][$cid]['contact_type'])) {
+        return FALSE;
+      }
+      $$contact = $result['values'][$cid];
     }
 
-    if (CRM_Utils_Array::value('contact_type', $main) != CRM_Utils_Array::value('contact_type', $other)) {
-      return FALSE;
-    }
-
-    $diffs = array();
+    $result = array();
     foreach (self::$validFields as $validField) {
       if (CRM_Utils_Array::value($validField, $main) != CRM_Utils_Array::value($validField, $other)) {
-        $diffs['contact'][] = $validField;
+        $result['contact'][] = $validField;
       }
     }
 
@@ -517,11 +506,10 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
       $key1 = CRM_Utils_Array::value($key, $mainEvs);
       $key2 = CRM_Utils_Array::value($key, $otherEvs);
       if ($key1 != $key2) {
-        $diffs['custom'][] = $key;
+        $result['custom'][] = $key;
       }
     }
-    unset($main, $other, $mainEvs, $otherEvs);
-    return $diffs;
+    return $result;
   }
 
   /**
@@ -851,7 +839,7 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
       foreach (array('main', 'other') as $moniker) {
         $contact = &$$moniker;
         $value = CRM_Utils_Array::value($field, $contact);
-        if (isset($specialValues[$moniker][$field])) {
+        if (isset($specialValues[$moniker][$field]) && is_string($specialValues[$moniker][$field])) {
           $value = CRM_Core_DAO::VALUE_SEPARATOR . trim($specialValues[$moniker][$field], CRM_Core_DAO::VALUE_SEPARATOR) . CRM_Core_DAO::VALUE_SEPARATOR;
         }
         $label = isset($specialValues[$moniker][$field]) ? $specialValues[$moniker]["{$field}_display"] : $value;
