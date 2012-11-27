@@ -300,6 +300,26 @@ class api_v3_SettingTest extends CiviUnitTestCase {
     $this->assertAPISuccess($result, "in line " . __LINE__);
     $this->assertArrayHasKey(CRM_Core_Config::domainID(), $result['values']);
   }
+/**
+ * setting api should set & fetch settings stored in config as well as those in settings table
+ */
+  function testSetConfigSetting() {
+    $config = CRM_Core_Config::singleton();
+    $this->assertFalse($config->debug == 1);
+    $params = array('version' => $this->_apiversion,
+      'domain_id' => $this->_domainID2,
+      'debug_enabled' => 1,
+    );
+    $result = civicrm_api('setting', 'create', $params);
+    $this->assertAPISuccess($result, "in line " . __LINE__);
+    $config = CRM_Core_Config::singleton();
+    $this->assertTrue($config->debug == 1);
+    // this should NOT be stored in the settings table now - only in config
+    $sql = " SELECT count(*) as c FROM civicrm_setting WHERE name LIKE '%debug%'";
+    $dao = CRM_Core_DAO::executeQuery($sql);
+    $dao->fetch();
+    $this->assertEquals($dao->c, 0);
+  }
 
   function testGetValue() {
     $params = array(

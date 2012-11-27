@@ -310,7 +310,13 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
   }
 
   /**
-   * Store multiple items in the setting table
+   * Store multiple items in the setting table. Note that this will also store config keys
+   * the storage is determined by the metdata and is affected by
+   *  'name' setting's name
+   *  'prefetch' = store in config
+   *  'config_only' = don't store in settings
+   *  'config_key' = the config key is different to the settings key - e.g. debug where there was a conflict
+   *  'legacy_key' = rename from config or setting with this name
    *
    * @param array $params (required) An api formatted array of keys and values
    * @domains array an array of domains to get settings for. Default is the current domain
@@ -323,22 +329,32 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
     if (empty($domains)) {
       $domains[] = CRM_Core_Config::domainID();
     }
-    $fields = array();
+    $fields = $config_keys = array();
     $fieldsToSet = self::validateSettingsInput($params, $fields);
     foreach ($domains as $domain) {
       foreach ($fieldsToSet as $name => $value) {
-        CRM_Core_BAO_Setting::setItem(
-        $value,
-        $fields['values'][$name]['group_name'],
-        $name,
-        CRM_Utils_Array::value('component_id', $params),
-        CRM_Utils_Array::value('contact_id', $params),
-        CRM_Utils_Array::value('created_id', $params),
-        $domain
-        );
+        if(empty($fields['values'][$name]['config_only'])){
+          CRM_Core_BAO_Setting::setItem(
+          $value,
+          $fields['values'][$name]['group_name'],
+          $name,
+          CRM_Utils_Array::value('component_id', $params),
+          CRM_Utils_Array::value('contact_id', $params),
+          CRM_Utils_Array::value('created_id', $params),
+          $domain
+         );
+        }
+        if(!empty($fields['values'][$name]['prefetch'])){
+          if(!empty($fields['values'][$name]['config_key'])){
+            $name = $fields['values'][$name]['config_key'];
+          }
+          $config_keys[$name] = $value;
+        }
         $result[$domain][$name] = $value;
       }
+      CRM_Core_BAO_ConfigSetting::create($config_keys);
     }
+
     return $result;
   }
 
@@ -373,12 +389,12 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
       $getFieldsParams['name'] = $name;
     }
     $fields = civicrm_api('setting','getfields', $getFieldsParams);
-    $invalidParams = (array_diff_key($settingParams,$fields['values']));
+    $invalidParams = (array_diff_key($settingParams, $fields['values']));
     if (!empty($invalidParams)) {
       throw new api_Exception(implode(',', $invalidParams) . " not valid settings");
     }
     if (!empty($settingParams)) {
-      $filteredFields = array_intersect_key($settingParams,$fields['values']);
+      $filteredFields = array_intersect_key($settingParams, $fields['values']);
     }
     else {
       // no filters so we are interested in all - ie. get mode when no filters specified
@@ -391,7 +407,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
     foreach ($filteredFields as $settingField => &$settingValue) {
       self::validateSetting($settingValue, $fields['values'][$settingField]);
     }
-    return$filteredFields;
+    return $filteredFields;
   }
 
   /**
@@ -593,17 +609,21 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
     }
     $spec = self::getSettingSpecification(null, array('name' => $name), $domainID);
     $configKey = CRM_Utils_Array::value('config_key', $spec[$name], CRM_Utils_Array::value('legacy_key', $spec[$name], $name));
-    if ($values[$configKey]) {
-      civicrm_api('setting', 'create', array('version' => 3, $name => $values[$configKey], 'domain_id' => $domainID));
-    }
-    else {
-      civicrm_api('setting', 'fill', array('version' => 3, 'name' => $name, 'domain_id' => $domainID));
-    }
-    if (empty($spec[$name]['prefetch']) && !empty($values[$configKey])) {
-      unset($values[$configKey]);
-      $domain->config_backend = serialize($values);
-      $domain->save();
-      unset($config->$configKey);
+    //if the key is set to config_only we don't need to do anything
+    if(empty($spec[$name]['config_only'])){
+      if ($values[$configKey]) {
+        civicrm_api('setting', 'create', array('version' => 3, $name => $values[$configKey], 'domain_id' => $domainID));
+      }
+      else {
+        civicrm_api('setting', 'fill', array('version' => 3, 'name' => $name, 'domain_id' => $domainID));
+      }
+
+      if (empty($spec[$name]['prefetch']) && !empty($values[$configKey])) {
+        unset($values[$configKey]);
+        $domain->config_backend = serialize($values);
+        $domain->save();
+        unset($config->$configKey);
+      }
     }
   }
 
