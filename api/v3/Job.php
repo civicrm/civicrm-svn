@@ -102,7 +102,7 @@ function civicrm_api3_job_geocode($params) {
     return civicrm_api3_create_error($result['messages']);
   }
 }
-/*
+/**
  * First check on Code documentation
  */
 function _civicrm_api3_job_geocode_spec(&$params) {
@@ -189,7 +189,7 @@ function civicrm_api3_job_update_greeting($params) {
   }
 }
 
-/*
+/**
  * Adjust Metadata for Get action
 *
 * The metadata is used for setting defaults, documentation & validation
@@ -276,7 +276,9 @@ function civicrm_api3_job_process_sms($params) {
     return civicrm_api3_create_success($values, $params, 'mailing', 'process');
   }
 }
-
+/**
+ * Job to get mail responses from civimailing
+ */
 function civicrm_api3_job_fetch_bounces($params) {
   require_once 'CRM/Utils/Mail/EmailProcessor.php';
   require_once 'CRM/Core/Lock.php';
@@ -293,6 +295,9 @@ function civicrm_api3_job_fetch_bounces($params) {
   return civicrm_api3_create_success($values, $params, 'mailing', 'bounces');
 }
 
+/**
+ * Job to get mail and create activities
+ */
 function civicrm_api3_job_fetch_activities($params) {
   require_once 'CRM/Utils/Mail/EmailProcessor.php';
   require_once 'CRM/Core/Lock.php';
@@ -332,16 +337,16 @@ function civicrm_api3_job_process_participant($params) {
 }
 
 
-/*
+/**
  * This api checks and updates the status of all membership records for a given domain using the calc_membership_status and
  * update_contact_membership APIs.
  *
  * IMPORTANT:
  * Sending renewal reminders has been migrated from this job to the Scheduled Reminders function as of 4.3.
  *
- * @param  array       $params (reference ) input parameters NOT USED
+ * @param  array $params input parameters NOT USED
  *
- * @return boolean        true if success, else false
+ * @return boolean true if success, else false
  * @static void
  * @access public
  */
@@ -357,7 +362,7 @@ function civicrm_api3_job_process_membership($params) {
   }
 }
 
-/*
+/**
  * This api checks and updates the status of all survey respondants.
  *
  * @param  array       $params (reference ) input parameters
@@ -450,7 +455,7 @@ function civicrm_api3_job_run_payment_cron($params) {
   );
 }
 
-/*
+/**
  * This api cleans up all the old session entries and temp tables. We recommend that sites run this on an hourly basis
  *
  * @param  array    $params (reference ) - sends in various config parameters to decide what needs to be cleaned
