@@ -65,8 +65,6 @@ class WebTest_Event_EventWaitListTest extends CiviSeleniumTestCase {
 
     // Type description in ckEditor (fieldname, text to type, editor)
     $this->fillRichTextField("description", $eventDescription, 'CKEditor');
-    $this->click('_qf_EventInfo_upload-bottom');
-    $this->waitForPageToLoad('30000');
 
     // Choose Start and End dates.
     // Using helper webtestFillDate function.
@@ -105,8 +103,10 @@ class WebTest_Event_EventWaitListTest extends CiviSeleniumTestCase {
 
     $this->type("label_1", "Member");
     $this->type("value_1", "250.00");
+    $this->select("financial_type_id_1", "Donation");
     $this->type("label_2", "Non-member");
     $this->type("value_2", "325.00");
+    $this->select("financial_type_id_2", "Donation");
     //set default
     $this->click("xpath=//table[@id='map-field-table']/tbody/tr[2]/td[3]/input");
 
