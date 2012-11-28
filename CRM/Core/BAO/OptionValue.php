@@ -90,14 +90,17 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue {
    * @return object
    */
   static function add(&$params, &$ids) {
-    $params['is_active'] = CRM_Utils_Array::value('is_active', $params, FALSE);
-    $params['is_default'] = CRM_Utils_Array::value('is_default', $params, FALSE);
-    $params['is_optgroup'] = CRM_Utils_Array::value('is_optgroup', $params, FALSE);
-    $params['filter'] = CRM_Utils_Array::value('filter', $params, FALSE);
+    // CRM-10921: do not reset attributes to default if this is an update
+    if (!CRM_Utils_Array::value('optionValue', $ids)) {
+      $params['is_active'] = CRM_Utils_Array::value('is_active', $params, FALSE);
+      $params['is_default'] = CRM_Utils_Array::value('is_default', $params, FALSE);
+      $params['is_optgroup'] = CRM_Utils_Array::value('is_optgroup', $params, FALSE);
+      $params['filter'] = CRM_Utils_Array::value('filter', $params, FALSE);
+    }
 
     // action is taken depending upon the mode
     $optionValue = new CRM_Core_DAO_OptionValue();
-    $optionValue->copyValues($params);;
+    $optionValue->copyValues($params);
 
     if (CRM_Utils_Array::value('is_default', $params)) {
       $query = 'UPDATE civicrm_option_value SET is_default = 0 WHERE  option_group_id = %1';

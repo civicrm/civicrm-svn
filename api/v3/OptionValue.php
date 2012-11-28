@@ -42,32 +42,31 @@ function civicrm_api3_option_value_get($params) {
  */
 function civicrm_api3_option_value_create($params) {
 
-  $weight = 0;
-
-  if (!CRM_Utils_Array::value('value', $params) && array_key_exists('option_group_id', $params)) {
-    $fieldValues = array('option_group_id' => $params['option_group_id']);
-    // use the next available value
-    /* CONVERT(value, DECIMAL) is used to convert varchar
-       field 'value' to decimal->integer                    */
-
-
-    $params['value'] = (int) CRM_Utils_Weight::getDefaultWeight('CRM_Core_DAO_OptionValue',
-      $fieldValues,
-      'CONVERT(value, DECIMAL)'
-    );
-    $weight = $params['value'];
-  }
-  if (!array_key_exists('weight', $params) && array_key_exists('value', $params)) {
-    // no idea why that's a "mandatory" field
-    $params['weight'] = $params['value'];
-  } elseif (array_key_exists('weight', $params) && $params['weight'] == 'next') {
-    // weight is numeric, so it's safe-ish to treat symbol 'next' as magical value
-    $params['weight'] = CRM_Utils_Weight::getDefaultWeight('CRM_Core_DAO_OptionValue',
-      array('option_group_id' => $params['option_group_id'])
-    );
+  // CRM-10921: do not fill-in defaults if this is an update
+  if (!CRM_Utils_Array::value('id', $params)) {
+    if (!CRM_Utils_Array::value('label', $params) && CRM_Utils_Array::value('name', $params)) {
+      // 'label' defaults to 'name'
+      $params['label'] = $params['name'];
+    }
+    if (!CRM_Utils_Array::value('value', $params) && CRM_Utils_Array::value('option_group_id', $params)) {
+      // 'value' defaults to next weight in option_group
+      $params['value'] = (int) CRM_Utils_Weight::getDefaultWeight('CRM_Core_DAO_OptionValue',
+        array('option_group_id' => $params['option_group_id'])
+      );
+    }
+    if (!CRM_Utils_Array::value('weight', $params) && CRM_Utils_Array::value('value', $params)) {
+      // 'weight' defaults to 'value'
+      $params['weight'] = $params['value'];
+    } elseif (CRM_Utils_Array::value('weight', $params) && $params['weight'] == 'next' && CRM_Utils_Array::value('option_group_id', $params)) {
+      // weight is numeric, so it's safe-ish to treat symbol 'next' as magical value
+      $params['weight'] = (int) CRM_Utils_Weight::getDefaultWeight('CRM_Core_DAO_OptionValue',
+        array('option_group_id' => $params['option_group_id'])
+      );
+    }
   }
 
-  if (array_key_exists('component', $params)) {
+  if (CRM_Utils_Array::value('component', $params)) {
+    // convert 'component' to 'component_id'
     if (empty($params['component'])) {
       $params['component_id'] = '';
     } else {
