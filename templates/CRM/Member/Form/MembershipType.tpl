@@ -217,18 +217,15 @@
     <script type="text/javascript">
     if ( ( document.getElementsByName("period_type")[0].value   == "fixed" ) &&
          ( document.getElementsByName("duration_unit")[0].value == "year"  ) ) {
-           show('fixed_start_day_row', 'table-row');
-           show('fixed_rollover_day_row', 'table-row');
+           cj('#fixed_start_day_row, #fixed_rollover_day_row').show();
     } else {
-        hide('fixed_start_day_row', 'table-row');
-        hide('fixed_rollover_day_row', 'table-row');
+        cj('#fixed_start_day_row, #fixed_rollover_day_row').hide();
     }
   function showHidePeriodSettings(){
         if ( ( document.getElementsByName("period_type")[0].value   == "fixed" ) &&
              ( document.getElementsByName("duration_unit")[0].value == "year"  ) ) {
-          show('fixed_start_day_row', 'table-row');
-          show('fixed_rollover_day_row', 'table-row');
-          hide('month_fixed_rollover_day_row', 'table-row');
+          cj('#fixed_start_day_row, #fixed_rollover_day_row').show();
+          cj('#month_fixed_rollover_day_row').hide();
           document.getElementsByName("fixed_period_start_day[M]")[0].value = "1";
           document.getElementsByName("fixed_period_start_day[d]")[0].value = "1";
           document.getElementsByName("fixed_period_rollover_day[M]")[0].value = "12";
@@ -236,14 +233,12 @@
           document.getElementsByName("month_fixed_rollover_day_row")[0].value = "";
         } else if ( ( document.getElementsByName("period_type")[0].value   == "fixed" ) &&
                 ( document.getElementsByName("duration_unit")[0].value == "month"  ) ) {
-          show('month_fixed_rollover_day_row', 'table-row');
+          cj('#month_fixed_rollover_day_row').show();
           document.getElementsByName("fixed_period_start_day[M]")[0].value = "";
           document.getElementsByName("fixed_period_start_day[d]")[0].value = "";
           document.getElementsByName("fixed_period_rollover_day[M]")[0].value = "";
         }else {
-          hide('fixed_start_day_row', 'table-row');
-          hide('fixed_rollover_day_row', 'table-row');
-          hide('month_fixed_rollover_day_row', 'table-row');
+          cj('#fixed_start_day_row, #fixed_rollover_day_row, #month_fixed_rollover_day_row').hide();
           document.getElementsByName("fixed_period_start_day[M]")[0].value = "";
           document.getElementsByName("fixed_period_start_day[d]")[0].value = "";
           document.getElementsByName("fixed_period_rollover_day[M]")[0].value = "";

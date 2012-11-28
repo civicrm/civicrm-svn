@@ -394,16 +394,16 @@ function enableHonorType( ) {
     }
   }
   if ( isHonor ) {
-    show('honorType', 'block');
-    show('honorTypeEmail', 'block');
+    cj('#honorType').show();
+    cj('#honorTypeEmail').show();
   }
   else {
     document.getElementById('honor_first_name').value = '';
     document.getElementById('honor_last_name').value  = '';
     document.getElementById('honor_email').value      = '';
     document.getElementById('honor_prefix_id').value  = '';
-    hide('honorType', 'block');
-    hide('honorTypeEmail', 'block');
+    cj('#honorType').hide();
+    cj('#honorTypeEmail').hide();
   }
 }
 
@@ -413,18 +413,18 @@ function pcpAnonymous( ) {
         document.getElementById('pcp_roll_nickname').value = '';
     }
     if ( ! document.getElementsByName("pcp_display_in_roll")[0].checked ) {
-        hide('nickID', 'block');
-        hide('nameID', 'block');
-  hide('personalNoteID', 'block');
+        cj('#nickID').hide();
+        cj('#nameID').hide();
+  cj('#personalNoteID').hide();
     } else {
         if ( document.getElementsByName("pcp_is_anonymous")[0].checked ) {
-            show('nameID', 'block');
-            show('nickID', 'block');
-      show('personalNoteID', 'block');
+            cj('#nameID').show();
+            cj('#nickID').show();
+      cj('#personalNoteID').show();
         } else {
-            show('nameID', 'block');
-            hide('nickID', 'block');
-      hide('personalNoteID', 'block');
+            cj('#nameID').show();
+            cj('#nickID').hide();
+      cj('#personalNoteID').hide();
         }
     }
 }
@@ -445,9 +445,9 @@ function toggleConfirmButton() {
    }
 
    if (payPalExpressId !=0 && payPalExpressId == processorTypeId) {
-      hide("crm-submit-buttons");
+      cj("#crm-submit-buttons").hide();
    } else {
-      show("crm-submit-buttons");
+      cj("#crm-submit-buttons").show();
    }
 }
 
@@ -461,12 +461,12 @@ cj(function() {
 
 function showHidePayPalExpressOption() {
   if (cj('input[name="is_pay_later"]').is(':checked')) {
-    show("crm-submit-buttons");
-    hide("paypalExpress");
+    cj("#crm-submit-buttons").show();
+    cj("#paypalExpress").hide();
   }
   else {
-    show("paypalExpress");
-    hide("crm-submit-buttons");
+    cj("#paypalExpress").show();
+    cj("#crm-submit-buttons").hide();
   }
 }
 

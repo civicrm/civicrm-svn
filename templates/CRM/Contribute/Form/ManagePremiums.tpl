@@ -120,11 +120,11 @@
   </table>
   <div id="time-delimited[show]" class="data-group-first">
   <div class="spacer"></div>
-        <a href="#" onclick="hide('time-delimited[show]'); show('time-delimited'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a><label>{ts}Subscription or Service Settings{/ts}</label><br />
+        <a href="#" onclick="cj('#time-delimited[show]').hide(); cj('#time-delimited').show(); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a><label>{ts}Subscription or Service Settings{/ts}</label><br />
   </div>
   <div id="time-delimited">
   <div class="spacer"></div>
-    <fieldset><legend><a href="#" onclick="hide('time-delimited'); show('time-delimited[show]'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{ts}Subscription or Service Settings{/ts}</legend>
+    <fieldset><legend><a href="#" onclick="cj('#time-delimited').hide(); cj('#time-delimited[show]').show(); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{ts}Subscription or Service Settings{/ts}</legend>
   <table class="form-layout-compressed">
     <tr class="crm-contribution-form-block-period_type">
        <td class="label">{$form.period_type.label}</td>

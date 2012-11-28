@@ -179,9 +179,9 @@ function toggleConfirmButton() {
    }
 
    if (payPalExpressId !=0 && payPalExpressId == processorTypeId) {
-      hide("crm-submit-buttons");
+      cj("#crm-submit-buttons").hide();
    } else {
-      show("crm-submit-buttons");
+      cj("#crm-submit-buttons").show();
    }
 }
 
@@ -221,11 +221,11 @@ cj(function() {
   var payLaterElement = {/literal}{if $form.is_pay_later}true{else}false{/if}{literal};
   if ( ( cj("#bypass_payment").val( ) == 1 ) ||
        ( payLaterElement && document.getElementsByName('is_pay_later')[0].checked ) ) {
-    show("crm-submit-buttons");
-    hide("paypalExpress");
+    cj("#crm-submit-buttons").show();
+    cj("#paypalExpress").hide();
   } else {
-    show("paypalExpress");
-    hide("crm-submit-buttons");
+    cj("#paypalExpress").show();
+    cj("#crm-submit-buttons").hide();
   }
     }
 
@@ -239,9 +239,9 @@ cj(function() {
 
   if ( ( cj("#bypass_payment").val( ) == 1 ) ||
        ( payLater && document.getElementsByName('is_pay_later')[0].checked ) ) {
-       hide( 'billing-payment-block' );
+       cj('#billing-payment-block').hide();
   } else {
-             show( 'billing-payment-block' );
+      cj('#billing-payment-block').show();
   }
     }
 
@@ -320,18 +320,13 @@ cj(function() {
             document.getElementById('pcp_roll_nickname').value = '';
         }
         if ( ! document.getElementsByName("pcp_display_in_roll")[0].checked ) {
-            hide('nickID', 'block');
-            hide('nameID', 'block');
-      hide('personalNoteID', 'block');
+            cj('#nickID, #nameID, #personalNoteID').hide();
         } else {
             if ( document.getElementsByName("pcp_is_anonymous")[0].checked ) {
-                show('nameID', 'block');
-                show('nickID', 'block');
-              show('personalNoteID', 'block');
+                cj('#nameID, #nickID, #personalNoteID').show();
             } else {
-                show('nameID', 'block');
-                hide('nickID', 'block');
-          hide('personalNoteID', 'block');
+                cj('#nameID').show();
+                cj('#nickID, #personalNoteID').hide();
             }
         }
     }

@@ -130,28 +130,28 @@
         if ( ot[i].checked ) {
             switch(ot[i].value) {
                 case "1":
-                    show('id-group-acl');
-                    hide('id-profile-acl');
-                    hide('id-custom-acl');
-                    hide('id-event-acl');
+                    cj('#id-group-acl').show();
+                    cj('#id-profile-acl').hide();
+                    cj('#id-custom-acl').hide();
+                    cj('#id-event-acl').hide();
                     break;
                 case "2":
-                    hide('id-group-acl');
-                    show('id-profile-acl');
-                    hide('id-custom-acl');
-                    hide('id-event-acl');
+                    cj('#id-group-acl').hide();
+                    cj('#id-profile-acl').show();
+                    cj('#id-custom-acl').hide();
+                    cj('#id-event-acl').hide();
                     break;
                 case "3":
-                    hide('id-group-acl');
-                    hide('id-profile-acl');
-                    show('id-custom-acl');
-                    hide('id-event-acl');
+                    cj('#id-group-acl').hide();
+                    cj('#id-profile-acl').hide();
+                    cj('#id-custom-acl').show();
+                    cj('#id-event-acl').hide();
                     break;
                 case "4":
-                    hide('id-group-acl');
-                    hide('id-profile-acl');
-                    hide('id-custom-acl');
-                    show('id-event-acl');
+                    cj('#id-group-acl').hide();
+                    cj('#id-profile-acl').hide();
+                    cj('#id-custom-acl').hide();
+                    cj('#id-event-acl').show();
                     break;
             }
         }

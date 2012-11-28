@@ -85,5 +85,5 @@
 </fieldset>
 <script type="text/javascript">
     // Always open attachment div by default for this form
-    show('attachments');
+    cj('#attachments').show();
 </script>

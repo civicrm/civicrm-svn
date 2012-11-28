@@ -117,13 +117,13 @@
     function showHideUpload()
     {
   if (document.getElementsByName("upload_type")[0].checked) {
-            hide('compose_id');
+            cj('#compose_id').hide();
       cj('.crm-mailing-upload-form-block-template').hide();
-      show('upload_id');
+      cj('#upload_id').show();
         } else {
-            show('compose_id');
+            cj('#compose_id').show();
       cj('.crm-mailing-upload-form-block-template').show();
-      hide('upload_id');
+      cj('#upload_id').hide();
             verify( );
         }
     }

@@ -115,14 +115,14 @@
 <script type="text/javascript">
   var is_act = document.getElementsByName('tf_is_active');
     if ( ! is_act[0].checked) {
-           hide('friendFields');
+           cj('#friendFields').hide();
   }
        function friendBlock(chkbox) {
            if (chkbox.checked) {
-        show('friendFields');
+        cj('#friendFields').show();
         return;
            } else {
-        hide('friendFields');
+        cj('#friendFields').hide();
             return;
      }
        }

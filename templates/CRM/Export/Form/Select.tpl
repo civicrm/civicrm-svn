@@ -114,9 +114,9 @@
   var element = document.getElementsByName("exportOption");
 
   if ( element[1].checked ) {
-    show('map');
+    cj('#map').show();
         } else {
-    hide('map');
+    cj('#map').hide();
   }
      }
      showMappingOption( );

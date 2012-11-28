@@ -63,9 +63,9 @@
                amount[0] = '';
 
                if( product_id > 0 ) {
-      show('premium_contri');
+      cj('#premium_contri').show();
                } else {
-            hide('premium_contri');
+            cj('#premium_contri').hide();
              }
 
       {/literal}

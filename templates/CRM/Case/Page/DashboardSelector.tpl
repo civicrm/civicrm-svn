@@ -98,7 +98,7 @@
      </td>
    </tr>
  <script type="text/javascript">
-     hide('minus{$context}{$list}{$row.case_id}_hide');
+     cj('#minus{$context}{$list}{$row.case_id}_hide').hide();
  </script>
   {/foreach}
 
@@ -138,15 +138,15 @@ function {/literal}{$context}{$list}{literal}CaseDetails( caseId, contactId, typ
 }
 
 function showCaseActivities( caseId, type, context ) {
-    show( context + '-' + type +'-casedetails-'+ caseId , 'table-row' );
-    hide( context+type+caseId+'_show' );
-    show( 'minus'+context+type+caseId+'_hide' );
+    cj('#' + context + '-' + type +'-casedetails-'+ caseId).show();
+    cj('#' + context+type+caseId+'_show').hide();
+    cj('#minus'+context+type+caseId+'_hide').show();
 }
 
 function hideCaseActivities( caseId , type, context ) {
-    hide( context + '-' + type +'-casedetails-' + caseId );
-    show( context+type+caseId+'_show', 'table-row' );
-    hide( 'minus'+context+type+caseId+'_hide' );
+    cj('#' + context + '-' + type +'-casedetails-' + caseId).hide();
+    cj('#' + context+type+caseId+'_show').show();
+    cj('minus'+context+type+caseId+'_hide').hide();
 }
 
 </script>

@@ -64,15 +64,15 @@
   }
       }
       if ( isHonor ) {
-   show('honorType', 'table-row');
-   show('honorTypeEmail', 'table-row');
+   cj('#honorType').show();
+   cj('#honorTypeEmail').show();
       } else {
    cj('#honor_first_name').val('');
    cj('#honor_last_name').val('');
    cj('#honor_email').val('');
    cj('#honor_prefix_id').val('');
-   hide('honorType', 'table-row');
-   hide('honorTypeEmail', 'table-row');
+   cj('#honorType').hide();
+   cj('#honorTypeEmail').hide();
       }
    }
 </script>

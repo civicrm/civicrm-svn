@@ -186,8 +186,8 @@ class CRM_Core_ShowHideBlocks {
    * @access public
    */
   static function links(&$form, $prefix, $showLinkText, $hideLinkText, $assign = TRUE) {
-    $showCode = "show('id_{$prefix}'); hide('id_{$prefix}_show');";
-    $hideCode = "hide('id_{$prefix}'); show('id_{$prefix}_show'); return false;";
+    $showCode = "cj('#id_{$prefix}').show(); cj('#id_{$prefix}_show').hide();";
+    $hideCode = "cj('#id_{$prefix}').hide(); cj('#id_{$prefix}_show').show(); return false;";
 
     self::setIcons();
     $values         = array();
@@ -226,35 +226,35 @@ class CRM_Core_ShowHideBlocks {
     else {
       $next = $index + 1;
       if ($elementType) {
-        $showCode = "show('${prefix}_${next}_show','table-row'); return false;";
+        $showCode = "cj('#${prefix}_${next}_show').show(); return false;";
         if ($hideLink) {
           $hideCode = $hideLink;
         }
         else {
-          $hideCode = "hide('${prefix}_${next}_show','table-row'); hide('${prefix}_${next}'); return false;";
+          $hideCode = "cj('#${prefix}_${next}_show, #${prefix}_${next}').hide(); return false;";
         }
       }
       else {
-        $showCode = "show('{$showHidePrefix}_{$next}_show'); return false;";
-        $hideCode = "hide('{$showHidePrefix}_{$next}_show'); hide('{$showHidePrefix}_{$next}'); return false;";
+        $showCode = "cj('#{$showHidePrefix}_{$next}_show').show(); return false;";
+        $hideCode = "cj('#{$showHidePrefix}_{$next}_show, #{$showHidePrefix}_{$next}').hide(); return false;";
       }
     }
 
     self::setIcons();
     if ($elementType) {
       $form->addElement('link', "${prefix}[${index}][show]", NULL, "#${prefix}_${index}", self::$_showIcon . $showLinkText,
-        array('onclick' => "hide('${prefix}_${index}_show'); show('${prefix}_${index}','table-row');" . $showCode)
+        array('onclick' => "cj('#${prefix}_${index}_show').hide(); cj('#${prefix}_${index}').show();" . $showCode)
       );
       $form->addElement('link', "${prefix}[${index}][hide]", NULL, "#${prefix}_${index}", self::$_hideIcon . $hideLinkText,
-        array('onclick' => "hide('${prefix}_${index}'); show('${prefix}_${index}_show');" . $hideCode)
+        array('onclick' => "cj('#${prefix}_${index}').hide(); cj('#${prefix}_${index}_show').show();" . $hideCode)
       );
     }
     else {
       $form->addElement('link', "${prefix}[${index}][show]", NULL, "#${prefix}_${index}", self::$_showIcon . $showLinkText,
-        array('onclick' => "hide('{$showHidePrefix}_{$index}_show'); show('{$showHidePrefix}_{$index}');" . $showCode)
+        array('onclick' => "cj('#{$showHidePrefix}_{$index}_show').hide(); cj('#{$showHidePrefix}_{$index}').show();" . $showCode)
       );
       $form->addElement('link', "${prefix}[${index}][hide]", NULL, "#${prefix}_${index}", self::$_hideIcon . $hideLinkText,
-        array('onclick' => "hide('{$showHidePrefix}_{$index}'); show('{$showHidePrefix}_{$index}_show');" . $hideCode)
+        array('onclick' => "cj('#{$showHidePrefix}_{$index}').hide(); cj('#{$showHidePrefix}_{$index}_show').show();" . $hideCode)
       );
     }
   }

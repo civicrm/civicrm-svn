@@ -25,11 +25,9 @@
 */
 
 /**
- *
- * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2012
- * $Id$
- *
+ * @file: global functions for CiviCRM
+ * FIXME: We are moving away from using global functions. DO NOT ADD MORE.
+ * @see CRM object - the better alternative to adding global functions
  */
 
 /**
@@ -153,26 +151,6 @@ function showHideByValue(trigger_field_id, trigger_value, target_element_id, tar
             }
         }
     }
-}
-
-/**
- * This function was used to display a page element before we had jQuery.
- *
- * FIXME: This function is deprecated and will be removed soon
- *
- */
-function show(block_id) {
-  cj('#' + block_id).show();
-}
-
-/**
- * This function was used to hide a block before we had jQuery.
- *
- * FIXME: This function is deprecated and will be removed soon
- * 
- */
-function hide(block_id) {
-  cj('#' + block_id).hide();
 }
 
 /**

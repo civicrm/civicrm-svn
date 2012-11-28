@@ -231,7 +231,7 @@
 
     {if $instanceForm OR $instanceFormError} {* settings section starts *}
     <div class="crm-accordion-wrapper crm-report_setting-accordion {if $rows}collapsed{/if}">
-    <div class="crm-accordion-header" {if $updateReportButton} onclick="hide('update-button'); return false;" {/if} >
+    <div class="crm-accordion-header" {if $updateReportButton} onclick="cj('#update-button').hide(); return false;" {/if} >
     {if $mode eq 'template'}{ts}Create Report{/ts}{else}{ts}Report Settings{/ts}{/if}
     </div><!-- /.crm-accordion-header -->
     <div class="crm-accordion-body">

@@ -74,27 +74,21 @@ function processAddressFields( name, blockId, loadData ) {
       if (streetAddress === null) streetAddress = '';
   }
 
-  var showBlockName = '';
-  var hideBlockName = '';
-
         if ( name == 'addressElements' ) {
              if ( loadData ) {
             streetAddress = '';
        }
 
-             showBlockName = 'addressElements_' + blockId;
-       hideBlockName = 'streetAddress_' + blockId;
+       cj('#addressElements_' + blockId).show();
+       cj('#streetAddress_' + blockId).hide();
   } else {
              if ( loadData ) {
                   streetNumber = streetName = streetUnit = '';
              }
 
-             showBlockName = 'streetAddress_' +  blockId;
-             hideBlockName = 'addressElements_'+ blockId;
+             cj('#streetAddress_' +  blockId).show();
+             cj('#addressElements_'+ blockId).hide();
        }
-
-       show( showBlockName );
-       hide( hideBlockName );
 
        // set the values.
        if ( loadData ) {

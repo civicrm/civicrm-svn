@@ -28,13 +28,13 @@
 {assign var="hideBlock" value="'searchForm_show','searchForm_hide'"}
 <div class="crm-block crm-form-block crm-search-form-block">
 <div id="searchForm_show" class="form-item">
-    <a href="#" onclick="hide('searchForm_show'); show('searchForm'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}" /></a>
+    <a href="#" onclick="cj('#searchForm_show').hide(); cj('#searchForm').show(); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}" /></a>
     <label>{ts}Edit Search Criteria{/ts}</label>
 </div>
 
 <div id="searchForm" class="crm-block crm-form-block crm-contact-custom-search-eventDetails-form-block">
     <fieldset>
-        <legend><span id="searchForm_hide"><a href="#" onclick="hide('searchForm','searchForm_hide'); show('searchForm_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}" /></a></span>{ts}Search Criteria{/ts}</legend>
+        <legend><span id="searchForm_hide"><a href="#" onclick="cj('#searchForm').hide(); cj('#searchForm_show').show(); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}" /></a></span>{ts}Search Criteria{/ts}</legend>
       <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
         <table class="form-layout-compressed">
             {* Loop through all defined search criteria fields (defined in the buildForm() function). *}
@@ -136,8 +136,7 @@
 
         <script type="text/javascript">
             {* this function is called to change the color of selected row(s) *}
-            var fname = "{$form.formName}";
-            on_load_init_checkboxes(fname);
+            on_load_init_checkboxes("{$form.formName}");
         </script>
 
         {include file="CRM/common/pager.tpl" location="bottom"}

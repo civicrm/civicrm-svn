@@ -523,11 +523,9 @@ cj( function() {
 });
 
 {/literal}{if $searchRows || $callAjax}{literal}
-show('saveElements');
-show('saveButtons');
+  cj('#saveElements, #saveButtons').show();
 {/literal}{else}{literal}
-hide('saveElements');
-hide('saveButtons');
+  cj('#saveElements, #saveButtons').hide();
 {/literal}{/if}{/if}{literal}
 
 cj( function( ) {
@@ -548,25 +546,25 @@ function buildRelationFields( relType ) {
         var relTypeId = relType.split("_");
         if ( relTypeId[0] == 4 ) {
             if ( relTypeId[1] == 'a' ) {
-                show('addCurrentEmployee');
-                hide('addCurrentEmployer');
+                cj('#addCurrentEmployee').show();
+                cj('#addCurrentEmployer').hide();
             } else {
-                hide('addCurrentEmployee');
-                show('addCurrentEmployer');
+                cj('#addCurrentEmployee').hide();
+                cj('#addCurrentEmployer').show();
             }
         } else {
-            hide('addCurrentEmployee');
-            hide('addCurrentEmployer');
+            cj('#addCurrentEmployee').hide();
+            cj('#addCurrentEmployer').hide();
         }
-        hide('relationship-refresh');
-        show('relationship-refresh-save');
-        show('details-save');
-        show('saveElements');
-        show('saveDetails');
+        cj('#relationship-refresh').hide();
+        cj('#relationship-refresh-save').show();
+        cj('#details-save').show();
+        cj('#saveElements').show();
+        cj('#saveDetails').show();
         {/literal}{if $searchRows || $callAjax}{literal}
-        hide('searchResult');
+        cj('#searchResult').hide();
         {/literal}{/if}{literal}
-        hide('saveButtons');
+        cj('#saveButtons').hide();
     }
     {/literal}{/if}{literal}
 }
@@ -574,13 +572,13 @@ function buildRelationFields( relType ) {
 function changeCustomData( cType ) {
     {/literal}{if $action EQ 1} {literal}
     cj('#customData').html('');
-    show('relationship-refresh');
-    hide('saveElements');
-    hide('addCurrentEmployee');
-    hide('addCurrentEmployer');
-    hide('saveDetails');
+    cj('#relationship-refresh').show();
+    cj('#saveElements').hide();
+    cj('#addCurrentEmployee').hide();
+    cj('#addCurrentEmployer').hide();
+    cj('#saveDetails').hide();
     {/literal}{if $searchRows || $callAjax}{literal}
-    hide('searchResult');
+    cj('#searchResult').hide();
     {/literal}{/if}{literal}
     {/literal}{/if} {literal}
 
@@ -606,17 +604,17 @@ function changeCustomData( cType ) {
    {
       var relType = document.getElementById('relationship_type_id').value;
       if ( relType == '4_a_b' ) {
-           show('current_employer', 'block');
-           show('employee', 'block');
-           hide('employer', 'block');
+           cj('#current_employer').show();
+           cj('#employee').show();
+           cj('#employer').hide();
       } else if ( relType == '4_b_a' ) {
-     show('current_employer', 'block');
-           show('employer', 'block');
-           hide('employee', 'block');
+     cj('#current_employer').show();
+           cj('#employer').show();
+           cj('#employee').hide();
       } else {
-           hide('employer', 'block');
-           hide('employee', 'block');
-     hide('current_employer', 'block');
+           cj('#employer').hide();
+           cj('#employee').hide();
+     cj('#current_employer').hide();
       }
    }
 </script>

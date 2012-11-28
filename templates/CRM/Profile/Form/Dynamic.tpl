@@ -277,9 +277,9 @@ cj(function() {
   {if $drupalCms}
   {literal}
     if ( document.getElementsByName("cms_create_account")[0].checked ) {
-       show('details');
+       cj('#details').show();
     } else {
-       hide('details');
+       cj('#details').hide();
     }
   {/literal}
   {/if}

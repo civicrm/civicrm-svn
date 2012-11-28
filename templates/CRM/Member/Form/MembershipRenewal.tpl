@@ -298,7 +298,7 @@ function checkPayment() {
     var record_contribution = document.getElementsByName('record_contribution');
     if ( record_contribution[0].checked ) {
         document.getElementsByName('send_receipt')[0].checked = true;
-        show('fromEmail', 'table-row');
+        cj('#fromEmail').show();
   }
   else {
         document.getElementsByName('send_receipt')[0].checked = false;

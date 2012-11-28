@@ -264,20 +264,20 @@
     {if $price}
     {literal}
     // Re-show Fee Level grid if Price Set select has been set to none.
-    if ( document.getElementById('price_set_id').options[document.getElementById('price_set_id').selectedIndex].value == '' ) {
-       show( 'map-field' );
+    if (cj('#price_set_id').val() == '') {
+       cj('#map-field').show();
     }
     {/literal}
     {/if}
     {literal}
 
     if ( document.getElementsByName('is_monetary')[0].checked ) {
-        show( 'event-fees', 'block' );
+        cj('#event-fees').show();
     }
 
     function warnDiscountDel( ) {
         if ( ! document.getElementsByName('is_discount')[0].checked ) {
-            alert('{/literal}{ts escape="js"}If you uncheck "Discounts by Signup Date" and Save this form, any existing discount sets will be deleted.{/ts} {ts escape="js"}This action cannot be undone.{/ts} {ts escape="js"}If this is NOT what you want to do, you can check "Discounts by Signup Date" again.{/ts}{literal}');
+            cj().crmAlert('{/literal}{ts escape="js"}If you uncheck "Discounts by Signup Date" and Save this form, any existing discount sets will be deleted.{/ts} {ts escape="js"}This action cannot be undone.{/ts} {ts escape="js"}If this is NOT what you want to do, you can check "Discounts by Signup Date" again.{/ts}', '{ts escape="js}Warning{/ts}{literal}', 'alert', {expires: 0});
         }
     }
 

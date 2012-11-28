@@ -120,17 +120,17 @@
 <script type="text/javascript">
   var is_act = document.getElementsByName('is_active');
     if ( ! is_act[0].checked) {
-           hide('widgetFields');
-     hide('preview');
+           cj('#widgetFields').hide();
+     cj('#preview').hide();
   }
     function widgetBlock(chkbox) {
         if (chkbox.checked) {
-        show('widgetFields');
-        show('preview');
+        cj('#widgetFields').show();
+        cj('#preview').show();
         return;
         } else {
-        hide('widgetFields');
-        hide('preview');
+        cj('#widgetFields').hide();
+        cj('#preview').hide();
               return;
      }
     }

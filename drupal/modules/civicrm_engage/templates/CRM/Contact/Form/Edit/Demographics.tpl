@@ -64,9 +64,9 @@
     function showDeceasedDate( )
     {
         if (document.getElementsByName("is_deceased")[0].checked) {
-            show('showDeceasedDate');
+          cj('#showDeceasedDate').show();
         } else {
-      hide('showDeceasedDate');
+          cj('#showDeceasedDate').hide();
         }
     }
 </script>

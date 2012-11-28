@@ -231,25 +231,27 @@
     });
   var element_other_amount = document.getElementsByName('is_allow_other_amount');
     if (! element_other_amount[0].checked) {
-     hide('minMaxFields', 'table-row');
+     cj('#minMaxFields').hide();
   }
   var amount_block = document.getElementsByName('amount_block_is_active');
   var priceSetID = {/literal}'{$priceSetID}'{literal};
 
   if ( ! amount_block[0].checked || priceSetID ) {
-     if ( !priceSetID ) hide('priceSet', 'table-row' );
-     hide('amountFields', 'block');
+     if ( !priceSetID ) {
+       cj('#priceSet').hide();
+     }
+     cj('#amountFields').hide();
         }
   var pay_later = document.getElementsByName('is_pay_later');
     if ( ! pay_later[0].checked) {
-      hide('payLaterFields', 'table-row');
+      cj('#payLaterFields').hide();
         }
 
   function minMax(chkbox) {
            if (chkbox.checked) {
-       show('minMaxFields', 'table-row');
+       cj('#minMaxFields').show();
       } else {
-     hide('minMaxFields');
+     cj('#minMaxFields').hide();
      document.getElementById("min_amount").value = '';
      document.getElementById("max_amount").value = '';
     }
@@ -257,9 +259,9 @@
 
   function payLater(chkbox) {
            if (chkbox.checked) {
-         show('payLaterFields',  'table-row');
+         cj('#payLaterFields').show();
      } else {
-         hide('payLaterFields',  'table-row');
+         cj('#payLaterFields').hide();
      }
         }
 
@@ -272,9 +274,9 @@
      switch ( elementName ) {
       case 'price_set_id':
            if ( element ) {
-               hide('amountFields', 'block');
+               cj('#amountFields').hide();
            } else {
-               show('amountFields', 'block');
+               cj('#amountFields').show();
            }
            cj("#amount_block_is_active").attr( 'checked', true );
       break;
@@ -283,7 +285,7 @@
       case 'is_allow_other_amount' :
            if ( element.checked ) {
                if ( priceSetID ) cj( "#price_set_id" ).val( '' );
-             show('amountFields', 'block');
+             cj('#amountFields').show();
                  }
            cj("#amount_block_is_active").attr( 'checked', true );
       break;
@@ -291,19 +293,16 @@
          case 'amount_block_is_active' :
            if ( element.checked ) {
                if ( priceSetID ) {
-           hide('amountFields', 'block' );
+           cj('#amountFields').hide();
            cj( "#price_set_id" ).val( priceSetID );
         } else {
-           show('amountFields', 'block');
+           cj('#amountFields').show();
            cj( "#price_set_id" ).val( '' );
         }
-        show('priceSet', 'table-row' );
-            show( 'recurringFields', 'block' );
+        cj('#priceSet, #recurringFields').show();
            } else {
             cj( "#price_set_id" ).val( '' );
-            hide('amountFields', 'block' );
-        hide('priceSet', 'table-row' );
-            hide( 'recurringFields', 'block' );
+            cj('#amountFields, #priceSet, #recurringFields').hide();
            }
       break;
      }

@@ -114,10 +114,10 @@
     <div id="registration">
         {*Registration Block*}
         <div id="registration_screen_show" class="section-hidden section-hidden-border">
-            <a href="#" onclick="hide('registration_screen_show'); show('registration_screen'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a><label>{ts}Registration Screen{/ts}</label><br />
+            <a href="#" onclick="cj('#registration_screen_show').hide(); cj('#registration_screen').show(); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a><label>{ts}Registration Screen{/ts}</label><br />
         </div>
         <div id="registration_screen">
-        <h3><a href="#" onclick= "hide('registration_screen'); show('registration_screen_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{ts}Registration Screen{/ts}</h3>
+        <h3><a href="#" onclick= "cj('#registration_screen').hide(); cj('#registration_screen_show').show(); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{ts}Registration Screen{/ts}</h3>
         <table class= "form-layout-compressed">
          <tr class="crm-event-manage-registration-form-block-intro_text">
             <td scope="row" class="label" width="20%">{$form.intro_text.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='intro_text' id=$eventID}{/if}</td>
@@ -204,11 +204,11 @@
 
         {*Confirmation Block*}
         <div id="confirm_show" class="section-hidden section-hidden-border">
-            <a href="#" onclick="hide('confirm_show'); show('confirm'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a><label>{ts}Confirmation Screen{/ts}</label><br />
+            <a href="#" onclick="cj('#confirm_show').hide(); cj('#confirm').show(); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a><label>{ts}Confirmation Screen{/ts}</label><br />
         </div>
 
         <div id="confirm">
-        <h3><a href="#" onclick="hide('confirm'); show('confirm_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{ts}Confirmation Screen{/ts}</h3>
+        <h3><a href="#" onclick="cj('#confirm').hide(); cj('#confirm_show').show(); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{ts}Confirmation Screen{/ts}</h3>
          <table class= "form-layout-compressed">
            <tr class="crm-event-manage-registration-form-block-confirm_title">
               <td scope="row" class="label" width="20%">{$form.confirm_title.label} <span class="marker">*</span> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='confirm_title' id=$eventID}{/if}</td>
@@ -233,11 +233,11 @@
 
          {*ThankYou Block*}
         <div id="thankyou_show" class="section-hidden section-hidden-border">
-            <a href="#" onclick="hide('thankyou_show'); show('thankyou'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a><label>{ts}Thank-you Screen{/ts}</label><br />
+            <a href="#" onclick="cj('#thankyou_show').hide(); cj('#thankyou').show(); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a><label>{ts}Thank-you Screen{/ts}</label><br />
         </div>
 
         <div id="thankyou">
-        <h3><a href="#" onclick="hide('thankyou'); show('thankyou_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{ts}Thank-you Screen{/ts}</h3>
+        <h3><a href="#" onclick="cj('#thankyou').hide(); cj('#thankyou_show').show(); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{ts}Thank-you Screen{/ts}</h3>
          <table class= "form-layout-compressed">
            <tr class="crm-event-manage-registration-form-block-confirm_thankyou_title">
               <td scope="row" class="label" width="20%">{$form.thankyou_title.label} <span class="marker">*</span> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='thankyou_title' id=$eventID}{/if}</td>
@@ -262,11 +262,11 @@
 
         {* Confirmation Email Block *}
         <div id="mail_show" class="section-hidden section-hidden-border">
-            <a href="#" onclick="hide('mail_show'); show('mail'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a><label>{ts}Confirmation Email{/ts}</label><br />
+            <a href="#" onclick="cj('#mail_show').hide(); cj('#mail').show(); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a><label>{ts}Confirmation Email{/ts}</label><br />
         </div>
 
         <div id="mail">
-        <h3><a href="#" onclick="hide('mail'); show('mail_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{ts}Confirmation Email{/ts}</h3>
+        <h3><a href="#" onclick="cj('#mail').hide(); cj('#mail_show').show(); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{ts}Confirmation Email{/ts}</h3>
           <table class= "form-layout-compressed">
             <tr class="crm-event-manage-registration-form-block-is_email_confirm">
               <td scope="row" class="label" width="20%">{$form.is_email_confirm.label}</td>

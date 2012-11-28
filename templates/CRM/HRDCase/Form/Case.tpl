@@ -111,7 +111,7 @@ function buildContact( count, pref )
     {/literal}
     {if $action eq 1  OR $action eq 2}
     {literal}
-  hide( pref + '_' + prevCount + '_show');
+  cj('#' + pref + '_' + prevCount + '_show').hide();
     {/literal}
     {/if}
     {literal}

@@ -66,18 +66,18 @@
     {if $context != 'case'}
         <td class="crm-case-id crm-case-id_{$row.case_id}">
         <span id="{$list}{$row.case_id}_show">
-            <a href="#" onclick="show('caseDetails{$list}{$row.case_id}', 'table-row');
+            <a href="#" onclick="cj('#caseDetails{$list}{$row.case_id}').show();
                                  buildCaseDetails('{$list}{$row.case_id}','{$row.contact_id}');
-                                 hide('{$list}{$row.case_id}_show');
-                                 show('minus{$list}{$row.case_id}_hide');
-                                 show('{$list}{$row.case_id}_hide','table-row');
+                                 cj('#{$list}{$row.case_id}_show').hide();
+                                 cj('#minus{$list}{$row.case_id}_hide').show();
+                                 cj('#{$list}{$row.case_id}_hide').show();
                                  return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a>
         </span>
         <span id="minus{$list}{$row.case_id}_hide">
-            <a href="#" onclick="hide('caseDetails{$list}{$row.case_id}');
-                                 show('{$list}{$row.case_id}_show', 'table-row');
-                                 hide('{$list}{$row.case_id}_hide');
-                                 hide('minus{$list}{$row.case_id}_hide');
+            <a href="#" onclick="cj('#caseDetails{$list}{$row.case_id}').hide();
+                                 cj('#{$list}{$row.case_id}_show').show();
+                                 cj('#{$list}{$row.case_id}_hide').hide();
+                                 cj('#minus{$list}{$row.case_id}_hide').hide();
                                  return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a>
         </td>
     {/if}
@@ -110,8 +110,8 @@
      </td>
    </tr>
  <script type="text/javascript">
-     hide('{$list}{$row.case_id}_hide');
-     hide('minus{$list}{$row.case_id}_hide');
+     cj('#{$list}{$row.case_id}_hide').hide();
+     cj('#minus{$list}{$row.case_id}_hide').hide();
  </script>
 {/if}
   {/foreach}

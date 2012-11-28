@@ -91,8 +91,8 @@
             <td colspan= {if $context EQ 'Search'} "10" {else} "8" {/if} class="enclosingNested" id="paymentDetails{$row.pledge_id}">&nbsp;</td>
         </tr>
         <script type="text/javascript">
-            hide('{$row.pledge_id}_hide');
-            hide('minus{$row.pledge_id}_hide');
+            cj('#{$row.pledge_id}_hide').hide();
+            cj('#minus{$row.pledge_id}_hide').hide();
         </script>
     {/foreach}
 

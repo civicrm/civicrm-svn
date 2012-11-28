@@ -95,9 +95,9 @@
       </div>
       <script type="text/javascript">
              {if $mappingDetailsError }
-                show('saveDetails');
+                cj('#saveDetails').show();
              {else}
-              hide('saveDetails');
+              cj('#saveDetails').hide();
              {/if}
 
            {literal}
