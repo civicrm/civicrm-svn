@@ -1415,9 +1415,8 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
           }
         }
 
-                //insert financial type name in receipt.
-                $this->assign( 'contributionTypeName', CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialType',
-                                                                                    $contributionParams['financial_type_id'] ) );
+        //insert financial type name in receipt.
+        $this->assign('contributionTypeName', CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_FinancialType', $contributionParams['financial_type_id']));
         $contributions = array();
         if ($this->_single) {
           $contributions[] = CRM_Contribute_BAO_Contribution::create($contributionParams, $ids);
@@ -1440,22 +1439,15 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
           }
         }
         // next create the transaction record
-        require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
         $trxnParams = array(
-                            'contribution_id'   => $contributions[0]->id,
-                            'trxn_date'         => date( 'YmdHis' ),
-                            'trxn_type'         => 'Debit',
-                            'total_amount'      => $params['initial_amount'],
-                            'fee_amount'        => CRM_Utils_Array::value( 'fee_amount', $result ),
-                            'net_amount'        => CRM_Utils_Array::value( 'net_amount', $result ),
-                            'currency'          => $params['fee_currency'],
-                            'payment_processor' => $this->_paymentProcessor['id'],
-                            'trxn_id'           => $params['trxn_id'],
-                            );
-              
-
-            
+          'contribution_id'   => $contributions[0]->id,
+          'trxn_date'         => date( 'YmdHis' ),
+          'total_amount'      =>  CRM_Utils_Array::value('int_amount', $params ) ? $params['initial_amount'] : $params['total_amount'],
+          'currency'          => $params['fee_currency'],
+          'trxn_id'           => $params['trxn_id'],
+        );
+                    
         $revenueFinancialType = array( );
         $statusID = $cId = $financialAccount = null;
         
