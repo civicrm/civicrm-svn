@@ -357,7 +357,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
       if ( CRM_Utils_Array::value('to_financial_account_id', $params ) ){
              
         $now = date( 'YmdHis' );
-        $contribution->init_amount = $params['init_amount'];
+        $contribution->init_amount = CRM_Utils_Array::value( 'init_amount', $params );
         if( !empty( $contribution->id ) ){
           if(!empty($params['init_amount'])){
             $total_amount = 0;
@@ -368,17 +368,17 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
             }
           }
           $trxnParams = array(
-                              'contribution_id'         => $contribution->id,
-                              'to_financial_account_id' => $params['to_financial_account_id'],
-                              'trxn_date'               => $now,
-                              'total_amount'            => !empty($params['init_amount'])?$total_amount:$params['total_amount'],
-                              'fee_amount'              => CRM_Utils_Array::value( 'fee_amount',  $params),
-                              'net_amount'              => CRM_Utils_Array::value( 'net_amount', $params ),
-                              'currency'                => $params['currency'],                                    
-                              'trxn_id'                 => $params['trxn_id'],
-                              'status_id'               => $contribution->contribution_status_id,
-                              'trxn_result_code'        => ( !empty( $contribution->trxn_result_code ) ? $contribution->trxn_result_code : false ),
-                              );
+            'contribution_id' => $contribution->id,
+            'to_financial_account_id' => $params['to_financial_account_id'],
+            'trxn_date' => $now,
+            'total_amount' => !empty($params['init_amount'])? $total_amount: $params['total_amount'],
+            'fee_amount' => CRM_Utils_Array::value('fee_amount', $params),
+            'net_amount' => CRM_Utils_Array::value('net_amount', $params),
+            'currency' => $config->defaultCurrency,                                    
+            'trxn_id' => $params['trxn_id'],
+            'status_id' => $contribution->contribution_status_id,
+            'trxn_result_code' => (!empty( $contribution->trxn_result_code) ? $contribution->trxn_result_code : false),
+          );
                 
             
           require_once 'CRM/Core/BAO/FinancialTrxn.php';
@@ -404,11 +404,13 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
           }
         }
       }
-      if ( CRM_Utils_Array::value('processPriceSet', $params) &&
+      if (CRM_Utils_Array::value('processPriceSet', $params) &&
            !empty($params['lineItems']) ) {
-        foreach($params['lineItems'] as $key=>$lineItem) {
-          foreach($lineItem as $id=> $value) {
-            $params['lineItems'][$key][$id]['init_amount'] = $params['init_amount']['txt-price_'.$value['price_field_id']][$id];
+        if (CRM_Utils_Array::value('init_amount', $params)) {
+          foreach($params['lineItems'] as $key=>$lineItem) {
+            foreach($lineItem as $id=> $value) {
+              $params['lineItems'][$key][$id]['init_amount'] = $params['init_amount']['txt-price_'.$value['price_field_id']][$id];
+            }
           }
         }
         CRM_Price_BAO_LineItem::processPriceSet( $contribution->id, $params['lineItems'], $contribution );   
@@ -2270,7 +2272,7 @@ FROM   civicrm_membership_type
     $membershipTypeValues = array();
     $membershipTypeFields = array(
       'id', 'minimum_fee', 'name', 'is_active',
-      'description', 'contribution_type_id', 'auto_renew','member_of_contact_id',
+      'description', 'financial_type_id', 'auto_renew','member_of_contact_id',
       'relationship_type_id', 'relationship_direction', 'max_related',
     );
 

@@ -1549,14 +1549,17 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
           ) {
             $membershipTypeValues[$memType]['relate_contribution_id'] = $relateContribution;
           }
+           
           $membershipParams = array_merge($params, $membershipTypeValues[$memType]);
-          $init_amount = array();
-          foreach($formValues as $key => $value){
-            if ( strstr($key,'txt-price')){
-              $init_amount[$key] = $value;
-            } 
+          if (CRM_Utils_Array::value('int_amount', $formValues)) {
+            $init_amount = array();
+            foreach($formValues as $key => $value){
+              if (strstr($key,'txt-price')){
+                $init_amount[$key] = $value;
+              } 
+            }
+            $membershipParams['init_amount'] = $init_amount;
           }
-          $membershipParams['init_amount'] = $init_amount;
           $membership = CRM_Member_BAO_Membership::create($membershipParams, $ids);
 
           $this->_membershipIDs[] = $membership->id;
