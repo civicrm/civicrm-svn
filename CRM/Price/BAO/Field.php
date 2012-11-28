@@ -369,7 +369,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
           }
         }
         if (property_exists($qf, '_membershipBlock') && CRM_Utils_Array::value('is_separate_payment', $qf->_membershipBlock) && $field->name == 'contribution_amount') {
-          $choice[] = $qf->createElement('radio', NULL, '', 'No thank you', '-1',
+          $choice[] = $qf->createElement('radio', NULL, '', ts('No thank you'), '-1',
             array(
               'onclick' => 'clearAmountOther();',
             )
@@ -379,11 +379,11 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
         if (!$field->is_required) {
           // add "none" option
           if (CRM_Utils_Array::value('is_allow_other_amount', $otherAmount) && $field->name == 'contribution_amount') {
-            $none = 'Other Amount';
+            $none = ts('Other Amount');
           } elseif (property_exists($qf, '_membershipBlock') && !CRM_Utils_Array::value('is_required', $qf->_membershipBlock) && $field->name == 'membership_amount') {
-            $none = 'No thank you';
+            $none = ts('No thank you');
           } else {
-            $none = '-none-';
+            $none = ts('- none -');
           }
 
           $choice[] = $qf->createElement('radio', NULL, '', $none, '0',
