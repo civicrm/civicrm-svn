@@ -48,6 +48,32 @@ class api_v3_PriceFieldValueTest extends CiviUnitTestCase {
       'name' => 'ryegrass',
       'label' => 'juicy and healthy'
      );
+  
+    $membershipOrgId = $this->organizationCreate(NULL);
+    $this->_membershipTypeID = $this->membershipTypeCreate($membershipOrgId);
+    $priceSetparams1 = array(
+      'version' => $this->_apiversion,
+      'name' => 'priceset',
+      'title' => 'Priceset with Multiple Terms',
+      'is_active' => 1,
+      'extends' => 3,
+      'financial_type_id' => 2,
+      'is_quick_config' => 1,
+      'is_reserved' => 1,
+    );
+    $price_set1 = civicrm_api('price_set', 'create',$priceSetparams1);
+    $this->priceSetID1 = $price_set1['id'];
+    $priceFieldparams1 = array(
+      'version' => $this->_apiversion,
+      'price_set_id' => $this->priceSetID1,
+      'name' => 'memtype',
+      'label' => 'memtype',
+      'html_type' => 'Radio',
+      'is_enter_qty' => 1,
+      'is_active' => 1,
+    );
+    $priceField1 = civicrm_api('price_field','create', $priceFieldparams1);
+    $this->priceFieldID1 = $priceField1['id'];
   }
 
   function tearDown() {
@@ -56,6 +82,15 @@ class api_v3_PriceFieldValueTest extends CiviUnitTestCase {
         'civicrm_contribution',
     );
     $this->quickCleanup($tablesToTruncate);
+    $this->membershipTypeDelete(array('id' => $this->_membershipTypeID));
+    civicrm_api('PriceField','delete', array(
+        'version' => 3,
+        'id' => $this->priceFieldID1,
+    ));
+    civicrm_api('PriceSet','delete', array(
+      'version' => 3,
+      'id' => $this->priceSetID1,
+    ));
     civicrm_api('PriceField','delete', array(
         'version' => 3,
         'id' => $this->priceFieldID,
@@ -114,5 +149,55 @@ class api_v3_PriceFieldValueTest extends CiviUnitTestCase {
     $this->assertEquals(1, $result['values']['max_value']['type']);
   }
 
+  public function testCreatePriceFieldValuewithMultipleTerms() {
+    $params = array(
+      'version' => 3,
+      'price_field_id' => $this->priceFieldID1,
+      'membership_type_id' =>  $this->_membershipTypeID,
+      'name' => 'memType1',
+      'label' => 'memType1',
+      'amount' => 90,
+      'membership_num_terms' => 2,
+      'is_active' => 1,
+      'financial_type_id' => 2,
+     );
+    $result = civicrm_api($this->_entity, 'create', $params);
+    $this->documentMe($params, $result, __FUNCTION__, __FILE__);
+    $this->assertAPISuccess($result, 'In line ' . __LINE__);
+    $this->assertEquals($result['values'][$result['id']]['membership_num_terms'], 2);
+    $this->assertEquals(1, $result['count'], 'In line ' . __LINE__);
+    civicrm_api($this->_entity, 'delete', array('version' => 3, 'id' => $result['id']));
+  }
+  public function testGetPriceFieldValuewithMultipleTerms() {
+    $params1 = array(
+      'version' => 3,
+      'price_field_id' => $this->priceFieldID1,
+      'membership_type_id' =>  $this->_membershipTypeID,
+      'name' => 'memType1',
+      'label' => 'memType1',
+      'amount' => 90,
+      'membership_num_terms' => 2,
+      'is_active' => 1,
+      'financial_type_id' => 2,
+     );
+    $params2 = array(
+      'version' => 3,
+      'price_field_id' => $this->priceFieldID1,
+      'membership_type_id' =>  $this->_membershipTypeID,
+      'name' => 'memType2',
+      'label' => 'memType2',
+      'amount' => 120,
+      'membership_num_terms' => 3,
+      'is_active' => 1,
+      'financial_type_id' => 2,
+     );
+    $result1 = civicrm_api($this->_entity, 'create', $params1);
+    $result2 = civicrm_api($this->_entity, 'create', $params2);
+    $result = civicrm_api($this->_entity, 'get', array( 'version' => 3, 'price_field_id' =>$this->priceFieldID1 ));
+    $this->assertAPISuccess($result, 'In line ' . __LINE__);
+    $this->assertEquals(2, $result['count'], 'In line ' . __LINE__);
+    civicrm_api($this->_entity,'delete', array('version' => 3, 'id' => $result1['id']));
+    civicrm_api($this->_entity,'delete', array('version' => 3, 'id' => $result2['id']));
+  }
 }
 
