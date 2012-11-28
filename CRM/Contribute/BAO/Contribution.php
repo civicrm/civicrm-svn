@@ -2011,8 +2011,7 @@ WHERE  contribution_id = %1 ";
               $membership->join_date = CRM_Utils_Date::isoToMysql($membership->join_date);
               $membership->start_date = CRM_Utils_Date::isoToMysql($membership->start_date);
               $membership->end_date = CRM_Utils_Date::isoToMysql($membership->end_date);
-              $membership->reminder_date = CRM_Utils_Date::isoToMysql($membership->reminder_date);
-            $this->_relatedObjects['membership'][$membership->membership_type_id] = $membership;
+              $this->_relatedObjects['membership'][$membership->membership_type_id] = $membership;
               $membership->free();
             }
           }
