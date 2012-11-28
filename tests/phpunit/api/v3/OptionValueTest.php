@@ -159,5 +159,22 @@ class api_v3_OptionValueTest extends CiviUnitTestCase {
 
   }
 
+  /*
+   * Check that domain_id is honoured
+  */
+  public function testCreateOptionNoName() {
+    $optionGroup = civicrm_api('option_group', 'get', array(
+      'name' => 'gender',
+      'sequential' => 1,
+      'version' => $this->_apiversion,
+    ));
+
+    $params = array('option_group_id' => $optionGroup['id'], 'label' => 'my@y.com', 'version' => $this->_apiversion);
+    $optionValue = civicrm_api('option_value', 'create',  $params);
+    $this->assertAPISuccess($optionValue);
+    $this->getAndCheck($params, $optionValue['id'], 'option_value');
+  }
+
+
 }
 

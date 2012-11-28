@@ -44,6 +44,10 @@ function civicrm_api3_option_value_create($params) {
 
   // CRM-10921: do not fill-in defaults if this is an update
   if (!CRM_Utils_Array::value('id', $params)) {
+    if (!CRM_Utils_Array::value('label', $params) && CRM_Utils_Array::value('name', $params)) {
+      // 'label' defaults to 'name'
+      $params['label'] = $params['name'];
+    }
     if (!CRM_Utils_Array::value('value', $params) && CRM_Utils_Array::value('option_group_id', $params)) {
       // 'value' defaults to next weight in option_group
       $params['value'] = (int) CRM_Utils_Weight::getDefaultWeight('CRM_Core_DAO_OptionValue',
