@@ -184,8 +184,7 @@ ADD INDEX phone_numeric_index(`phone_numeric`);
 
 -- ADD fields w.r.t 10.6 mwb
 ALTER TABLE `civicrm_financial_account`
-ADD `contact_id` int(10) unsigned DEFAULT NULL COMMENT 'Version identifier of financial_type' AFTER `name`,
-CHANGE `account_type_id` financial_account_type_id int(10) unsigned NOT NULL DEFAULT '3' COMMENT 'Version identifier of financial_type' AFTER `contact_id`,
+CHANGE `account_type_id` financial_account_type_id int(10) unsigned NOT NULL DEFAULT '3' COMMENT 'Version identifier of financial_type',
 ADD `description` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Financial Type Description.',
 ADD `parent_id` int(10) unsigned DEFAULT NULL COMMENT 'Parent ID in account hierarchy',
 ADD `is_header_account` tinyint(4) DEFAULT NULL COMMENT 'Is this a header account which does not allow transactions to be posted against it directly, but only to its sub-accounts?',
@@ -197,7 +196,6 @@ ADD `is_reserved` tinyint(4) DEFAULT NULL COMMENT 'Is this a predefined system o
 ADD `is_active` tinyint(4) DEFAULT NULL COMMENT 'Is this property active?',
 ADD `is_default` tinyint(4) DEFAULT NULL COMMENT 'Is this account the default one (or default tax one) for its financial_account_type?',
 ADD CONSTRAINT `UI_name` UNIQUE INDEX (`name`),
-ADD CONSTRAINT `FK_civicrm_financial_account_contact_id` FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact`(id),
 ADD CONSTRAINT `FK_civicrm_financial_account_parent_id` FOREIGN KEY (`parent_id`) REFERENCES `civicrm_financial_account`(id);
 
 -- CRM-8425
@@ -393,9 +391,6 @@ ALTER TABLE `civicrm_contribution_page`
 ADD CONSTRAINT  FK_civicrm_contribution_page_financial_type_id FOREIGN KEY (`financial_type_id`) REFERENCES civicrm_financial_type (id);
 
 ALTER TABLE `civicrm_contribution_recur`
-DROP INDEX FK_civicrm_contribution_recur_contribution_type_id;
-
-ALTER TABLE `civicrm_contribution_recur`
 CHANGE `contribution_type_id` `financial_type_id` int unsigned COMMENT 'FK to Financial Type';
 
 ALTER TABLE `civicrm_contribution_recur`
@@ -408,12 +403,6 @@ ALTER TABLE `civicrm_grant_program`
 
 
 -- CRM-9083
-ALTER TABLE `civicrm_financial_trxn`
-DROP FOREIGN KEY FK_civicrm_financial_trxn_to_account_id,
-DROP INDEX FK_civicrm_financial_trxn_to_account_id,
-DROP FOREIGN KEY FK_civicrm_financial_trxn_from_account_id,
-DROP INDEX FK_civicrm_financial_trxn_from_account_id;
-
 ALTER TABLE `civicrm_financial_trxn` CHANGE `to_account_id` `to_financial_account_id` int unsigned COMMENT 'FK to financial_financial_account table.',
 CHANGE `from_account_id` `from_financial_account_id` int unsigned COMMENT 'FK to financial_account table.',
 ADD `status_id` int(10) unsigned DEFAULT NULL,
@@ -502,10 +491,6 @@ ALTER TABLE `civicrm_discount` CHANGE `option_group_id` `price_set_id` INT( 10 )
 ALTER TABLE `civicrm_discount`
   ADD CONSTRAINT `FK_civicrm_discount_price_set_id` FOREIGN KEY (`price_set_id`) REFERENCES `civicrm_price_set` (`id`) ON DELETE CASCADE;
 
--- Change loc_block_id to contact_id
-ALTER TABLE `civicrm_domain` CHANGE `loc_block_id` `contact_id` INT( 10 ) UNSIGNED NULL DEFAULT NULL COMMENT 'FK to Contact ID. This is specifically not an FK to avoid circular constraints',
- ADD CONSTRAINT `FK_civicrm_domain_contact_id` FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact` (`id`);
-
 -- CRM-8425
 
 UPDATE civicrm_navigation SET  `label` = 'Financial Types', `name` = 'Financial Types', `url` = 'civicrm/admin/financial/financialType?reset=1' WHERE `name` = 'Contribution Types';
@@ -587,9 +572,7 @@ VALUES
    (@option_group_id_financial_item_status, '{ts escape="sql"}Partially paid{/ts}', 2, 'Partially paid', NULL, 0, 0, 2, 'Partially paid', 0, 1, 1, 2, NULL),
    (@option_group_id_financial_item_status, '{ts escape="sql"}Unpaid{/ts}', 3, 'Unpaid', NULL, 0, 0, 1, 'Unpaid', 0, 1, 1, 2, NULL);
 
---
 -- Data migration from civicrm_contibution_type to civicrm_financial_account, civicrm_financial_type, civicrm_entity_financial_account
---
 SELECT @opval := value FROM civicrm_option_value WHERE name = 'Revenue' and option_group_id = @option_group_id_fat;
 SELECT @domainContactId := contact_id from civicrm_domain where id = {$domainID};
 

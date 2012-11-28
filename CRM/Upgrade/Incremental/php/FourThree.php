@@ -58,6 +58,8 @@ class CRM_Upgrade_Incremental_php_FourThree {
   }
 
   function upgrade_4_3_alpha1($rev) {
+    self::createDomainContacts();
+    self::task_4_3_alpha1_checkDBConstraints();
     $upgrade = new CRM_Upgrade_Form();
     $upgrade->processSQL($rev);
 
@@ -87,6 +89,72 @@ class CRM_Upgrade_Incremental_php_FourThree {
     CRM_Core_DAO::executeQuery("UPDATE civicrm_phone SET phone_numeric = civicrm_strip_non_numeric(phone)");
 
     return TRUE;
+  }
+
+  function createDomainContacts() {
+    $domainParams = array();
+    $locParams['entity_table'] = CRM_Core_BAO_Domain::getTableName();
+    $query = "
+ALTER TABLE `civicrm_domain` ADD `contact_id` INT( 10 ) UNSIGNED NULL DEFAULT NULL COMMENT 'FK to Contact ID. This is specifically not an FK to avoid circular constraints',
+ ADD CONSTRAINT `FK_civicrm_domain_contact_id` FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact` (`id`);";
+    CRM_Core_DAO::executeQuery($query, $params, TRUE, NULL, FALSE, FALSE);
+    $dao = new CRM_Core_DAO_Domain();
+    $dao->find();
+    while($dao->fetch()) {
+      $params = array(
+        'sort_name' => $dao->name,
+        'display_name' => $dao->name,
+        'legal_name' => $dao->name,
+        'organization_name' => $dao->name, 
+        'contact_type' => 'Organization'
+      );
+      
+      $contact = CRM_Contact_BAO_Contact::add($params);
+      $domainParams['contact_id'] = $contact->id;
+      CRM_Core_BAO_Domain::edit($domainParams, $dao->id);
+    }
+    CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_domain` DROP loc_block_id;", $params, TRUE, NULL, FALSE, FALSE);
+  }
+  
+  function task_4_3_alpha1_checkDBConstraints() {
+    //checking whether the foreign key exists before dropping it CRM-11260
+    $config = CRM_Core_Config::singleton();
+    $dbUf = DB::parseDSN($config->dsn);
+    $params = array();
+    $tables = array(
+      'autorenewal_msg_id' => array('tableName' => 'civicrm_membership_type', 'fkey' => 'FK_civicrm_membership_autorenewal_msg_id'),
+      'to_account_id' =>  array('tableName' => 'civicrm_financial_trxn', 'constraintName' => 'civicrm_financial_trxn_ibfk_2'),
+      'from_account_id' => array('tableName' =>  'civicrm_financial_trxn', 'constraintName' => 'civicrm_financial_trxn_ibfk_1'),
+      'contribution_type_id' => array('tableName' => 'civicrm_contribution_recur', 'fkey' => 'FK_civicrm_contribution_recur_contribution_type_id'), 
+    );
+    $query = "SELECT * FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
+WHERE table_name = 'civicrm_contribution_recur'
+AND constraint_name = 'FK_civicrm_contribution_recur_contribution_type_id'
+AND TABLE_SCHEMA = '{$dbUf['database']}'";
+
+    $dao = CRM_Core_DAO::executeQuery($query, $params, TRUE, NULL, FALSE, FALSE);
+    foreach($tables as $columnName => $value){
+      if ($value['tableName'] == 'civicrm_membership_type' || $value['tableName'] == 'civicrm_contribution_recur') {
+        $foreignKeyExists = CRM_Core_DAO::checkConstraintExists($value['tableName'], $value['fkey']);
+        $fKey = $value['fkey'];
+      } else {
+        $foreignKeyExists = CRM_Core_DAO::checkFKConstraintInFormat($value['tableName'], $columnName);
+        $fKey = "`FK_{$value['tableName']}_{$columnName}`";
+      }
+      if ($foreignKeyExists || $value['tableName'] == 'civicrm_financial_trxn') {
+        if ($value['tableName'] != 'civicrm_contribution_recur' || ($value['tableName'] == 'civicrm_contribution_recur' && $dao->N)) {
+          $constraintName  = $foreignKeyExists ? $fKey : $value['constraintName'];
+          CRM_Core_DAO::executeQuery("ALTER TABLE {$value['tableName']} DROP FOREIGN KEY {$constraintName}", $params, TRUE, NULL, FALSE, FALSE);
+        }
+        CRM_Core_DAO::executeQuery("ALTER TABLE {$value['tableName']} DROP INDEX {$fKey}", $params, TRUE, NULL, FALSE, FALSE);  
+      } 
+    }
+    // check if column contact_id is present or not in civicrm_financial_account 
+    $fieldExists = CRM_Core_DAO::checkFieldExists('civicrm_financial_account', 'contact_id', FALSE);
+    if (!$fieldExists) {
+      $query = "ALTER TABLE civicrm_financial_account ADD `contact_id` int(10) unsigned DEFAULT NULL COMMENT 'Version identifier of financial_type' AFTER `name`, ADD CONSTRAINT `FK_civicrm_financial_account_contact_id` FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact`(id);"; 
+      CRM_Core_DAO::executeQuery($query, $params, TRUE, NULL, FALSE, FALSE);
+    }
   }
 
   /**
