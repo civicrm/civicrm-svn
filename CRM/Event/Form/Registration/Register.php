@@ -442,6 +442,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
     if (CRM_Utils_Array::value('is_pay_later', $this->_values['event']) &&
       ($this->_allowConfirmation || (!$this->_requireApproval && !$this->_allowWaitlist))
     ) {
+      $this->assign('initialPayment', 1);
       $pps[0] = $this->_values['event']['pay_later_text'];
     }
 

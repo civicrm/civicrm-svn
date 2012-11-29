@@ -100,8 +100,9 @@
         </div>
     {/if}
 {/if}
-
-{include file="CRM/Price/Form/InitialPayment.tpl" extends="Contribution"}
+{if $initialPayment}
+  {include file="CRM/Price/Form/InitialPayment.tpl" extends="Contribution"}
+{/if}
 {if $pcp && $is_honor_roll }
     <fieldset class="crm-group pcp-group">
         <div class="crm-section pcp-section">
