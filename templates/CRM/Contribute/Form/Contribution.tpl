@@ -222,9 +222,6 @@ cj(document).ready(function(){
                </td>
             </tr>
         {/if}
-            {if $showCheckNumber || !$isOnline}
-                <tr id="checkNumber" class="crm-contribution-form-block-check_number"><td class="label">{$form.check_number.label}</td><td>{$form.check_number.html|crmAddClass:six}</td></tr>
-            {/if}
         <tr id="softCreditID" class="crm-contribution-form-block-soft_credit_to"><td class="label">{$form.soft_credit_to.label}</td>
             <td {$valueStyle}>
                 {$form.soft_credit_to.html} {help id="id-soft_credit"}
