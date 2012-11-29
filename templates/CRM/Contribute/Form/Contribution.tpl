@@ -195,7 +195,7 @@ cj(document).ready(function(){
         {/if}
         {if !$contributionMode}
             {if $email and $outBound_option != 2}
-                <tr id="email-receipt" style="display:none;" class="crm-contribution-form-block-is_email_receipt"><td class="label">{$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html} <span class="description">{ts}Automatically email a receipt for this contribution to {/ts}<span id="email-address"></span>?</span></td></tr>
+                <tr id="email-receipt" style="display:none;" class="crm-contribution-form-block-is_email_receipt"><td class="label">{$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html} <span class="description">{ts}Automatically email a receipt for this payment to {/ts}<span id="email-address"></span>?</span></td></tr>
             {/if}
             <tr class="crm-contribution-form-block-contribution_status_id"><td class="label">{$form.contribution_status_id.label}</td><td>{$form.contribution_status_id.html}
             {if $contribution_status_id eq 2}{if $is_pay_later }: {ts}Pay Later{/ts} {else}: {ts}Incomplete Transaction{/ts}{/if}{/if}</td></tr>
@@ -328,11 +328,11 @@ cj(document).ready(function(){
                 <tr class="crm-contribution-form-block-is_email_receipt">
                     <td class="label">
                         {$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html}&nbsp;
-                        <span class="description">{ts 1=$email}Automatically email a receipt for this contribution to %1?{/ts}</span>
+                        <span class="description">{ts 1=$email}Automatically email a receipt for this payment to %1?{/ts}</span>
                     </td>
                 </tr>
             {elseif $context eq 'standalone' and $outBound_option != 2 }
-                <tr id="email-receipt" style="display:none;" class="crm-contribution-form-block-is_email_receipt"><td class="label">{$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html} <span class="description">{ts}Automatically email a receipt for this contribution to {/ts}<span id="email-address"></span>?</span></td></tr>
+                <tr id="email-receipt" style="display:none;" class="crm-contribution-form-block-is_email_receipt"><td class="label">{$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html} <span class="description">{ts}Automatically email a receipt for this payment to {/ts}<span id="email-address"></span>?</span></td></tr>
             {/if}
             <tr id="receiptDate" class="crm-contribution-form-block-receipt_date">
                 <td class="label">{$form.receipt_date.label}</td>
