@@ -174,7 +174,7 @@ WHERE  cacheKey = %1
     return (@unserialize($string) !== false);
   }
 
-  function setItem($values) {
+  static function setItem($values) {
     $insert = "INSERT INTO civicrm_prevnext_cache ( entity_table, entity_id1, entity_id2, cacheKey, data ) VALUES \n";
     $query = $insert . implode(",\n ", $values);
 
@@ -182,7 +182,7 @@ WHERE  cacheKey = %1
     CRM_Core_DAO::executeQuery($query);
   }
 
-  function getCount($cacheKey, $join = NULL, $where = NULL, $op = "=") {
+  static function getCount($cacheKey, $join = NULL, $where = NULL, $op = "=") {
     $query = "
 SELECT COUNT(*) FROM civicrm_prevnext_cache pn
        {$join}
