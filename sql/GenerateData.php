@@ -96,8 +96,13 @@ CRM_Core_ClassLoader::singleton()->register();
 class CRM_GCD {
 
   /**
-   * constants
+   * Constants
    */
+
+  // Set ADD_TO_DB = FALSE to do a dry run
+  CONST ADD_TO_DB = TRUE;
+  CONST DEBUG_LEVEL = 1;
+
   CONST DATA_FILENAME = "sample_data.xml";
   CONST NUM_DOMAIN = 1;
   CONST NUM_CONTACT = 200;
@@ -107,7 +112,7 @@ class CRM_GCD {
   CONST NUM_INDIVIDUAL_PER_HOUSEHOLD = 4;
   CONST NUM_ACTIVITY = 150;
 
-  // relationship types from the table crm_relationship_type
+  // Relationship types from the table crm_relationship_type
   CONST CHILD_OF = 1;
   CONST SPOUSE_OF = 2;
   CONST SIBLING_OF = 3;
@@ -115,16 +120,11 @@ class CRM_GCD {
   CONST HEAD_OF_HOUSEHOLD = 6;
   CONST MEMBER_OF_HOUSEHOLD = 7;
 
-
-  // location types from the table crm_location_type
+  // Location types from the table crm_location_type
   CONST HOME = 1;
   CONST WORK = 2;
   CONST MAIN = 3;
   CONST OTHER = 4;
-
-  // Set ADD_TO_DB = FALSE to do a dry run
-  CONST ADD_TO_DB = TRUE;
-  CONST DEBUG_LEVEL = 1;
 
   /**
    * Class constructor
@@ -379,8 +379,19 @@ class CRM_GCD {
     return 0;
   }
 
+  /**
+   * Execute a query unless we are doing a dry run
+   * Note: this wrapper should not be used for SELECT queries
+   */
+  private function _query($query, $params = array()) {
+    if (self::ADD_TO_DB) {
+      return CRM_Core_DAO::executeQuery($query, $params);
+    }
+  }
 
-  // insert data into db's
+  /**
+   * Call dao insert method unless we are doing a dry run
+   */
   private function _insert(&$dao) {
     if (self::ADD_TO_DB) {
       if (!$dao->insert()) {
@@ -391,7 +402,9 @@ class CRM_GCD {
     }
   }
 
-  // update data into db's
+  /**
+   * Call dao update method unless we are doing a dry run
+   */
   private function _update(&$dao) {
     if (self::ADD_TO_DB) {
       if (!$dao->update()) {
@@ -402,7 +415,9 @@ class CRM_GCD {
     }
   }
 
-  // add core DAO object
+  /**
+   * Add core DAO object
+   */
   private function _addDAO($type, $params) {
     $daoName = "CRM_Core_DAO_$type";
     $obj = new $daoName();
@@ -415,6 +430,9 @@ class CRM_GCD {
     $this->_insert($obj);
   }
 
+  /**
+   * Fetch contact type based on stored mapping
+   */
   private function getContactType($id) {
     foreach (array('Individual', 'Household', 'Organization') as $type) {
       if (in_array($id, $this->$type)) {
@@ -778,7 +796,7 @@ class CRM_GCD {
     }
 
     // Add current employer relationships
-    CRM_Core_DAO::executeQuery("INSERT INTO civicrm_relationship
+    $this->_query("INSERT INTO civicrm_relationship
       (contact_id_a, contact_id_b, relationship_type_id, is_active)
       (SELECT id, employer_id, " . self::EMPLOYEE_OF . ", 1 FROM civicrm_contact WHERE employer_id IN (" . implode(',', $this->Organization) . "))"
     );
@@ -1222,7 +1240,7 @@ class CRM_GCD {
         ('Student', 'Discount membership for full-time students.', " . $contact_id . ", 1, 50, 'year', 1, 'rolling', null, null, 7, 'b_a', 'Public', 2, 1),
         ('Lifetime', 'Lifetime membership.', " . $contact_id . ", 2, 1200, 'lifetime', 1, 'rolling', null, null, 7, 'b_a', 'Admin', 3, 1);
         ";
-    CRM_Core_DAO::executeQuery($membershipType);
+    $this->_query($membershipType);
   }
 
   private function addMembership() {
@@ -1308,9 +1326,9 @@ VALUES
       }
     }
 
-    CRM_Core_DAO::executeQuery($membership);
+    $this->_query($membership);
 
-    CRM_Core_DAO::executeQuery($activity);
+    $this->_query($activity);
   }
 
   static
@@ -1350,7 +1368,7 @@ VALUES
       ( NULL, 1, 1, 1, '11B Woodbridge Path SW', 11, 'B', NULL, 'Woodbridge', 'Path', NULL, NULL, NULL, NULL, NULL, 'Dayton', NULL, 1034, NULL, '45417', NULL, 1228, 39.7531, -84.2471, NULL),
       ( NULL, 1, 1, 1, '581O Lincoln Dr SW', 581, 'O', NULL, 'Lincoln', 'Dr', NULL, NULL, NULL, NULL, NULL, 'Santa Fe', NULL, 1030, NULL, '87594', NULL, 1228, 35.5212, -105.982, NULL)
       ";
-    CRM_Core_DAO::executeQuery($event);
+    $this->_query($event);
 
     $sql = "SELECT id from civicrm_address where street_address = '14S El Camino Way E'";
     $eventAdd1 = CRM_Core_DAO::singleValueQuery($sql);
@@ -1365,7 +1383,7 @@ VALUES
        (NULL, 1, 'tournaments@example.org', 0, 0, 0, NULL, NULL),
        (NULL, 1, 'celebration@example.org', 0, 0, 0, NULL, NULL)
        ";
-    CRM_Core_DAO::executeQuery($event);
+    $this->_query($event);
 
     $sql = "SELECT id from civicrm_email where email = 'development@example.org'";
     $eventEmail1 = CRM_Core_DAO::singleValueQuery($sql);
@@ -1380,7 +1398,7 @@ VALUES
        (NULL, 1, 0, 0, NULL, '204 223-1000', '2042231000', '1'),
        (NULL, 1, 0, 0, NULL, '303 323-1000', '3033231000', '1')
        ";
-    CRM_Core_DAO::executeQuery($event);
+    $this->_query($event);
 
     $sql = "SELECT id from civicrm_phone where phone = '204 222-1000'";
     $eventPhone1 = CRM_Core_DAO::singleValueQuery($sql);
@@ -1396,7 +1414,7 @@ VALUES
       ( $eventAdd3, $eventEmail3, $eventPhone3, NULL,NULL,NULL)
        ";
 
-    CRM_Core_DAO::executeQuery($event);
+    $this->_query($event);
 
     $sql = "SELECT id from civicrm_loc_block where phone_id = $eventPhone1 AND email_id = $eventEmail1 AND address_id = $eventAdd1";
     $eventLok1 = CRM_Core_DAO::singleValueQuery($sql);
@@ -1412,7 +1430,7 @@ VALUES
         ( 'Summer Solstice Festival Day Concert', 'Festival Day is coming! Join us and help support your parks.', 'We will gather at noon, learn a song all together,  and then join in a joyous procession to the pavilion. We will be one of many groups performing at this wonderful concert which benefits our city parks.', 5, 1, 1, '" . date('Y-m-d 12:00:00', strtotime("-1 day")) . "', '" . date('Y-m-d 17:00:00', strtotime("-1 day")) . "', 1, 'Register Now', 50, 'We have all the singers we can handle. Come to the pavilion anyway and join in from the audience.', 1, 2, NULL, 1, 'Festival Fee', 1, $eventLok2, 'Complete the form below and click Continue to register online for the festival. Or you can register by calling us at 204 222-1000 ext 22.', '', 'Confirm Your Registration Information', '', '', 1, 'This email confirms your registration. If you have questions or need to change your registration - please do not hesitate to call us.', 'Event Dept.', 'events@example.org', '', NULL, NULL, 'Thanks for Your Joining In!', '<p>Thank you for your support. Your participation will help build new parks.</p><p>Please tell your friends and colleagues about the concert.</p>', '<p><a href=http://civicrm.org>Back to CiviCRM Home Page</a></p>', 0, NULL, NULL, 1, 0, 'USD' ),
         ( 'Rain-forest Cup Youth Soccer Tournament', 'Sign up your team to participate in this fun tournament which benefits several Rain-forest protection groups in the Amazon basin.', 'This is a FYSA Sanctioned Tournament, which is open to all USSF/FIFA affiliated organizations for boys and girls in age groups: U9-U10 (6v6), U11-U12 (8v8), and U13-U17 (Full Sided).', 3, 1, 1, '" . date('Y-m-d 07:00:00', strtotime("+7 months")) . "', '" . date('Y-m-d 17:00:00', strtotime("+7 months +3 days")) . "', 1, 'Register Now', 500, 'Sorry! All available team slots for this tournament have been filled. Contact Jill Futbol for information about the waiting list and next years event.', 1, 4, NULL, 1, 'Tournament Fees',1, $eventLok3, 'Complete the form below to register your team for this year''s tournament.', '<em>A Soccer Youth Event</em>', 'Review and Confirm Your Registration Information', '', '<em>A Soccer Youth Event</em>', 1, 'Contact our Tournament Director for eligibility details.', 'Tournament Director', 'tournament@example.org', '', NULL, NULL, 'Thanks for Your Support!', '<p>Thank you for your support. Your participation will help save thousands of acres of rainforest.</p>', '<p><a href=http://civicrm.org>Back to CiviCRM Home Page</a></p>', 0, NULL, NULL, 0, 0, 'USD' )
          ";
-    CRM_Core_DAO::executeQuery($event);
+    $this->_query($event);
 
     //CRM-4464
     $eventTemplates = "INSERT INTO civicrm_event
@@ -1422,7 +1440,7 @@ VALUES
         ( 1, 'Free Meeting with Online Registration',    4, 1, 1, 1, 0, 1,    1,    1,    0, null,             null, 'Confirm Your Registration Information', 'Thanks for Registering!', null, null, 1, 'USD'  ),
         ( 1, 'Paid Conference with Online Registration', 1, 1, 1, 1, 1, 1,    1,    1,    1,     4, 'Conference Fee', 'Confirm Your Registration Information', 'Thanks for Registering!', 'Event Template Dept.', 'event_templates@example.org', 1, 'USD' )";
 
-    CRM_Core_DAO::executeQuery($eventTemplates);
+    $this->_query($eventTemplates);
 
     $ufJoinValues = $tellFriendValues = array();
     $profileID = CRM_Core_DAO::singleValueQuery("Select id from civicrm_uf_group where name ='event_registration'");
@@ -1445,7 +1463,7 @@ SELECT  id
       $includeProfile = "INSERT INTO civicrm_uf_join
                                (is_active, module, entity_table, entity_id, weight, uf_group_id )
                                VALUES " . implode(',', $ufJoinValues);
-      CRM_Core_DAO::executeQuery($includeProfile);
+      $this->_query($includeProfile);
     }
 
     //insert values in civicrm_tell_friend
@@ -1454,7 +1472,7 @@ SELECT  id
                            (entity_table, entity_id, title, intro, suggested_message,
                            general_link,  thankyou_title, thankyou_text, is_active)
                            VALUES " . implode(',', $tellFriendValues);
-      CRM_Core_DAO::executeQuery($tellFriend);
+      $this->_query($tellFriend);
     }
   }
 
@@ -1522,7 +1540,7 @@ VALUES
         ( " . $randomContacts[48] . ", 3, 3, 1, '2009-03-11', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
         ( " . $randomContacts[49] . ", 3, 2, 2, '2009-04-05', 'Check', 'Tiny-tots (ages 5-8)', 0, 800, 'USD');
 ";
-    CRM_Core_DAO::executeQuery($participant);
+    $this->_query($participant);
 
     $query = "
 INSERT INTO civicrm_activity
@@ -1579,7 +1597,7 @@ VALUES
     ($randomContacts[48], 49, 5, 'NULL', '2009-03-11 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
     ($randomContacts[49], 50, 5, 'NULL', '2009-04-05 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 )
     ";
-    CRM_Core_DAO::executeQuery($query);
+    $this->_query($query);
   }
 
   private function addPCP() {
@@ -1589,7 +1607,7 @@ INSERT INTO `civicrm_pcp`
 VALUES
     ({$this->Individual[3]}, 2, 'My Personal Civi Fundraiser', 'I''m on a mission to get all my friends and family to help support my favorite open-source civic sector CRM.', '<p>Friends and family - please help build much needed infrastructure for the civic sector by supporting my personal campaign!</p>\r\n<p><a href=\"http://civicrm.org\">You can learn more about CiviCRM here</a>.</p>\r\n<p>Then click the <strong>Contribute Now</strong> button to go to our easy-to-use online contribution form.</p>', 'Contribute Now', 1, 'contribute', 1, 1, 5000.00, 'USD', 1, 1);
 ";
-    CRM_Core_DAO::executeQuery($query);
+    $this->_query($query);
   }
 
   private function addContribution() {
@@ -1611,7 +1629,7 @@ VALUES
     (32, 1, 1, '2009-10-01 11:53:50', 0.00, 200.00, 'PL32I', NULL, 'USD', NULL, NULL, NULL, NULL, NULL ),
     (32, 1, 1, '2009-12-01 12:55:41', 0.00, 200.00, 'PL32II', NULL, 'USD', NULL, NULL, NULL, NULL, NULL );
 ";
-    CRM_Core_DAO::executeQuery($query);
+    $this->_query($query);
 
     $query = "
 INSERT INTO civicrm_activity
@@ -1631,7 +1649,7 @@ VALUES
     (32, 12, 6, NULL, '2009-10-01 11:53:50', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
     (32, 13, 6, NULL, '2009-12-01 12:55:41', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 );
     ";
-    CRM_Core_DAO::executeQuery($query);
+    $this->_query($query);
   }
 
   private function addSoftContribution() {
@@ -1649,7 +1667,7 @@ VALUES
     ( $contriId1, {$this->Individual[3]}, 10.00, 'USD', 1, 1, 'Jones Family', 'Helping Hands'),
     ( $contriId2, {$this->Individual[3]}, 250.00, 'USD', 1, 1, 'Annie and the kids', 'Annie Helps');
  ";
-    CRM_Core_DAO::executeQuery($query);
+    $this->_query($query);
   }
 
   private function addPledge() {
@@ -1660,7 +1678,7 @@ VALUES
        (43, 1, 1, 800.00, '200', 'USD', 'month', 3, 1, 4, '2009-07-01 00:00:00', '2009-06-23 00:00:00', '2009-06-23 00:00:00', NULL, NULL, '2009-04-01 10:11:40', NULL, NULL, 5, 0),
        (32, 1, 1, 600.00, '200', 'USD', 'month', 1, 1, 3, '2009-10-01 00:00:00', '2009-09-14 00:00:00', '2009-09-14 00:00:00', NULL, NULL, '2009-12-01 00:00:00', NULL, NULL, 5, 0);
 ";
-    CRM_Core_DAO::executeQuery($pledge);
+    $this->_query($pledge);
   }
 
   private function addPledgePayment() {
@@ -1677,7 +1695,7 @@ VALUES
          (3, 13,   200.00, 200.00, 'USD', '2009-11-01 00:0:00', '2009-10-28 00:00:00', 1, 1),
          (3, null, 200.00, null, 'USD', '2009-12-01 00:00:00', null, 0, 2 );
         ";
-    CRM_Core_DAO::executeQuery($pledgePayment);
+    $this->_query($pledgePayment);
   }
 
   private function addContributionLineItem() {
@@ -1688,7 +1706,7 @@ LEFT JOIN civicrm_price_set cps ON cps.name = 'default_contribution_amount'
 LEFT JOIN civicrm_price_field cpf ON cpf.price_set_id = cps.id
 LEFT JOIN civicrm_price_field_value cpfv ON cpfv.price_field_id = cpf.id
 order by cc.id; ";
-    CRM_Core_DAO::executeQuery($query);
+    $this->_query($query);
   }
 
   private function addContributionFinancialItem() {
@@ -1756,14 +1774,14 @@ SELECT 'civicrm_participant',cp.id, cpfv.price_field_id, cpfv.label, 1, cpfv.amo
 SELECT  cm.contact_id, $financialTypeID, now(), cmt.minimum_fee, 'USD', CONCAT(cmt.name, ' Membership: Offline signup'), 1 FROM `civicrm_membership` cm
 LEFT JOIN civicrm_membership_type cmt ON cmt.id = cm.membership_type_id;";
 
-    CRM_Core_DAO::executeQuery($sql);
+    $this->_query($sql);
 
     $sql = "INSERT INTO civicrm_membership_payment (contribution_id,membership_id)
 SELECT cc.id, cm.id FROM civicrm_contribution cc
 LEFT JOIN civicrm_membership cm ON cm.contact_id = cc.contact_id
 WHERE cc.id > $maxContribution;";
 
-    CRM_Core_DAO::executeQuery($sql);
+    $this->_query($sql);
 
     $sql = "INSERT INTO civicrm_line_item (entity_table, entity_id, price_field_value_id, price_field_id, label, qty, unit_price, line_total, financial_type_id)
 SELECT  'civicrm_contribution', cmp.contribution_id, cpfv.id, cpfv.price_field_id, cpfv.label, 1, cpfv.amount, cpfv.amount as unit_price, cpfv.financial_type_id FROM `civicrm_membership` cm
@@ -1773,12 +1791,12 @@ LEFT JOIN civicrm_price_field cpf ON cpf.id = cpfv.price_field_id
 LEFT JOIN civicrm_price_set cps ON cps.id = cpf.price_set_id
 WHERE cps.name = 'default_membership_type_amount'";
 
-    CRM_Core_DAO::executeQuery($sql);
+    $this->_query($sql);
 
     $sql = "INSERT INTO civicrm_activity(source_contact_id, source_record_id, activity_type_id, subject, activity_date_time, status_id)
 SELECT contact_id, id, 6, CONCAT('$ ', total_amount, ' - ', source), now(), 2 FROM `civicrm_contribution` WHERE id > $maxContribution";
 
-    CRM_Core_DAO::executeQuery($sql);
+    $this->_query($sql);
 }
 
   private function addParticipantPayment() {
@@ -1789,19 +1807,19 @@ SELECT  `contact_id`, $financialTypeID, now(), `fee_amount`, 'USD', now(), CONCA
 LEFT JOIN civicrm_event ce ON ce.id = cp.event_id
 group by `contact_id`;";
 
-    CRM_Core_DAO::executeQuery($sql);
+    $this->_query($sql);
 
     $sql = "INSERT INTO civicrm_participant_payment (contribution_id,participant_id)
 SELECT cc.id, cp.id FROM civicrm_contribution cc
 LEFT JOIN civicrm_participant cp ON cp.contact_id = cc.contact_id
 WHERE cc.id > $maxContribution";
 
-    CRM_Core_DAO::executeQuery($sql);
+    $this->_query($sql);
 
     $sql = "INSERT INTO civicrm_activity(source_contact_id, source_record_id, activity_type_id, subject, activity_date_time, status_id)
 SELECT contact_id, id, 6, CONCAT('$ ', total_amount, ' - ', source), now(), 2 FROM `civicrm_contribution` WHERE id > $maxContribution";
 
-    CRM_Core_DAO::executeQuery($sql);
+    $this->_query($sql);
   }
 }
 
