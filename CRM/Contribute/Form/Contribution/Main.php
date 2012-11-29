@@ -411,7 +411,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         'size' => 30, 'maxlength' => 60), TRUE
     );
     $this->addRule("email-{$this->_bltID}", ts('Email is not valid.'), 'email');
- CRM_Price_BAO_Field::initialPayCreate( $this, 'contribution', 'online' );
+    CRM_Price_BAO_Field::initialPayCreate( $this, 'contribution', 'online' );
     $this->_paymentProcessors = $this->get('paymentProcessors');
     if (!empty($this->_paymentProcessors)) {
       $pps = $this->_paymentProcessors;
@@ -421,6 +421,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     }
     if (CRM_Utils_Array::value('is_pay_later', $this->_values)) {
       $pps[0] = $this->_values['pay_later_text'];
+      $this->assign('initialPayment', 1);
     }
 
     if (count($pps) > 1) {
