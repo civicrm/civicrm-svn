@@ -395,7 +395,7 @@ WHERE  cacheKey LIKE %1
     return $val;
   }
 
-  function buildSelectedContactPager( &$obj, &$params) {
+  static function buildSelectedContactPager( &$obj, &$params) {
     $params['status'] = ts('Contacts %%StatusMessage%%');
     $params['csvString'] = NULL;
     $params['buttonTop'] = 'PagerTopButton';

@@ -838,9 +838,9 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
    */
   function postProcess() {
     /*
-         * sometime we do a postProcess early on, so we dont need to repeat it
-         * this will most likely introduce some more bugs :(
-         */
+     * sometime we do a postProcess early on, so we dont need to repeat it
+     * this will most likely introduce some more bugs :(
+     */
 
     if ($this->_done) {
       return;
