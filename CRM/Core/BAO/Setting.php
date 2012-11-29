@@ -528,11 +528,10 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
           $settingsMetadata = self::loadSettingsMetaData($metaDataFolder);
         }
       }
-      self::_filterSettingsSpecification($filters, $settingsMetadata);
-      CRM_Utils_Hook::alterSettingsMetaData($settingsMetadata, $domainID);
-      CRM_Core_BAO_Cache::setItem($settingsMetadata,'CiviCRM setting Specs', $cacheString, $componentID);
-
     }
+    $hookCacheString = CRM_Utils_Hook::alterSettingsMetaData($settingsMetadata, $domainID);
+    self::_filterSettingsSpecification($filters, $settingsMetadata);
+    CRM_Core_BAO_Cache::setItem($settingsMetadata,'CiviCRM setting Specs', $cacheString . $hookCacheString, $componentID);
     return $settingsMetadata;
 
   }
