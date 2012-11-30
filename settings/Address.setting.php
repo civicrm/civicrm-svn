@@ -72,7 +72,7 @@ return array (
     'html_type' => 'Text',
     'default' => null,
     'add' => '4.1',
-    'title' => 'Web service user ID',
+    'title' => 'Web service url',
     'is_domain' => 1,
     'is_contact' => 0,
     'description' => null,
