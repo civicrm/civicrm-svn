@@ -65,8 +65,8 @@ class WebTest_Member_EditMembershipTest extends CiviSeleniumTestCase {
     $this->click("_qf_Membership_upload");
 
     //View Membership
-    $this->waitForElementPresent("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[8]/span/a[text()='View']");
-    $this->click("xpath=//div[@id='memberships']//table/tbody/tr[1]/td[8]/span/a[text()='View']");
+    $this->waitForElementPresent("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[9]/span/a[text()='View']");
+    $this->click("xpath=//div[@id='memberships']//table/tbody/tr[1]/td[9]/span/a[text()='View']");
     $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
     $expected = array(
       2 => $membershipTypes['membership_type'],

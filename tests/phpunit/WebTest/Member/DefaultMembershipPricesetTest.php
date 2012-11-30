@@ -55,10 +55,10 @@ class WebTest_Member_DefaultMembershipPricesetTest extends CiviSeleniumTestCase 
     $this->assertType('numeric', $sid);
 
     $fields = array("National Membership $title" => 'Radio');
-    list($memTypeTitle1, $memTypeTitle2, $memTypeTitle3) = $this->_testAddPriceFields($fields, $validateStrings, FALSE, $title, $sid, TRUE);
+    list($memTypeTitle1, $memTypeTitle2, $memTypeTitle3) = $this->_testAddPriceFields($fields, $validateStrings, FALSE, $title, $sid, TRUE, $contributionType);
 
     $fields = array("Second Membership $title" => 'CheckBox');
-    list($memTypeTitle1, $memTypeTitle2, $memTypeTitle3) = $this->_testAddPriceFields($fields, $validateStrings, FALSE, $title, $sid, FALSE);
+    list($memTypeTitle1, $memTypeTitle2, $memTypeTitle3) = $this->_testAddPriceFields($fields, $validateStrings, FALSE, $title, $sid, FALSE, $contributionType);
 
     $hash = substr(sha1(rand()), 0, 7);
     $rand = 2 * rand(2, 50);
@@ -194,7 +194,7 @@ class WebTest_Member_DefaultMembershipPricesetTest extends CiviSeleniumTestCase 
     $this->assertTrue($this->isTextPresent("Your Set '{$setTitle}' has been added. You can add fields to this set now."));
   }
 
-  function _testAddPriceFields(&$fields, &$validateString, $dateSpecificFields = FALSE, $title, $sid, $defaultPriceSet = FALSE) {
+  function _testAddPriceFields(&$fields, &$validateString, $dateSpecificFields = FALSE, $title, $sid, $defaultPriceSet = FALSE, $contributionType) {
     if ($defaultPriceSet) {
 
       $memTypeTitle1 = 'General';
@@ -209,17 +209,17 @@ class WebTest_Member_DefaultMembershipPricesetTest extends CiviSeleniumTestCase 
     elseif (!$defaultPriceSet) {
       $memTypeParams1 = $this->webtestAddMembershipType();
       $memTypeTitle1  = $memTypeParams1['membership_type'];
-      $memTypeId1     = explode('&id=', $this->getAttribute("xpath=//div[@id='membership_type']/div[2]/table/tbody//tr/td[text()='{$memTypeTitle1}']/../td[11]/span/a[3]@href"));
+      $memTypeId1     = explode('&id=', $this->getAttribute("xpath=//div[@id='membership_type']/div[2]/table/tbody//tr/td[text()='{$memTypeTitle1}']/../td[12]/span/a[3]@href"));
       $memTypeId1     = $memTypeId1[1];
 
       $memTypeParams2 = $this->webtestAddMembershipType();
       $memTypeTitle2  = $memTypeParams2['membership_type'];
-      $memTypeId2     = explode('&id=', $this->getAttribute("xpath=//div[@id='membership_type']/div[2]/table/tbody//tr/td[text()='{$memTypeTitle2}']/../td[11]/span/a[3]@href"));
+      $memTypeId2     = explode('&id=', $this->getAttribute("xpath=//div[@id='membership_type']/div[2]/table/tbody//tr/td[text()='{$memTypeTitle2}']/../td[12]/span/a[3]@href"));
       $memTypeId2     = $memTypeId2[1];
 
       $memTypeParams3 = $this->webtestAddMembershipType();
       $memTypeTitle3  = $memTypeParams3['membership_type'];
-      $memTypeId3     = explode('&id=', $this->getAttribute("xpath=//div[@id='membership_type']/div[2]/table/tbody//tr/td[text()='{$memTypeTitle3}']/../td[11]/span/a[3]@href"));
+      $memTypeId3     = explode('&id=', $this->getAttribute("xpath=//div[@id='membership_type']/div[2]/table/tbody//tr/td[text()='{$memTypeTitle3}']/../td[12]/span/a[3]@href"));
       $memTypeId3     = $memTypeId3[1];
     }
 
@@ -275,6 +275,7 @@ class WebTest_Member_DefaultMembershipPricesetTest extends CiviSeleniumTestCase 
         default:
           break;
       }
+      $this->select("financial_type_id", "label={$contributionType}");
       $this->click('_qf_Field_next_new-bottom');
       $this->waitForPageToLoad('30000');
       $this->waitForElementPresent('_qf_Field_next-bottom');
