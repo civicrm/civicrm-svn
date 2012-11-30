@@ -156,6 +156,9 @@
     {/foreach}
     {literal}
     $(cids.join(',')).attr('checked', 'checked');
+    if (cids.length > 0) {
+      $('input[name=radio_ts][value=ts_sel]').attr('checked', 'checked');
+    }
     var params = {getCount: cids.length};
     countSelections(params);
     on_load_init_checkboxes("{/literal}{$form.formName}{literal}");
