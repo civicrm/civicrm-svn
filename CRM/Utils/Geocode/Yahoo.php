@@ -124,7 +124,8 @@ class CRM_Utils_Geocode_Yahoo {
     $request = new HTTP_Request($query);
     $request->sendRequest();
     $string = $request->getResponseBody();
-    $xml = simplexml_load_string($string);
+    // see CRM-11359 for why we suppress errors with @
+    $xml = @simplexml_load_string($string);
 
     if ($xml === FALSE) {
       // account blocked maybe?
