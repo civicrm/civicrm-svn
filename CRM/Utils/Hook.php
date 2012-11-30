@@ -218,9 +218,9 @@ abstract class CRM_Utils_Hook {
    *
    * @access public
    */
-  static 
+  static
   function grantAssessment( &$params ) {
-    return self::singleton( )->invoke( 1, $params, self::$_nullObject , self::$_nullObject,  self::$_nullObject, self::$_nullObject, 'civicrm_grantAssessment' ); 
+    return self::singleton( )->invoke( 1, $params, self::$_nullObject , self::$_nullObject,  self::$_nullObject, self::$_nullObject, 'civicrm_grantAssessment' );
   }
 
   /**
@@ -1156,9 +1156,9 @@ abstract class CRM_Utils_Hook {
    * @domainID integer $domainID
    */
 
-  static function alterSettingsMetaData(&$settingsMetaData, $domainID) {
-    return self::singleton()->invoke(2, $settingsMetaData,
-        $domainID, self::$_nullObject,
+  static function alterSettingsMetaData(&$settingsMetaData, $domainID, $profile) {
+    return self::singleton()->invoke(3, $settingsMetaData,
+        $domainID, $profile,
         self::$_nullObject, self::$_nullObject,
         'civicrm_alterSettingsMetaData'
     );

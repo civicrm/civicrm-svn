@@ -43,7 +43,9 @@ function civicrm_api3_setting_getfields($params) {
   }
   $result = CRM_Core_BAO_Setting::getSettingSpecification(
     CRM_Utils_Array::value('component_id',$params),
-    CRM_Utils_Array::value('filters', $params, array() )
+    CRM_Utils_Array::value('filters', $params, array()),
+    CRM_Utils_Array::value('domain_id', $params, null),
+    CRM_Utils_Array::value('profile', $params, null)
   );
   // find any supplemental information
   if(CRM_Utils_Array::value('action',$params)){
@@ -60,7 +62,7 @@ function civicrm_api3_setting_getfields($params) {
 function civicrm_api3_setting_getfields_spec(&$params) {
   $params['filters'] = array('title' => 'Fields you wish to filter by e.g. array("group_name" => "CiviCRM Preferences")');
   $params['component_id'] = array('title' => 'id of relevant component');
-
+  $params['profile'] = array('title' => 'profile is passed through to hooks & added to cachestring');
 }
 /*
  * Return default values for settings. We will domain key this as it could vary by domain (ie. urls)

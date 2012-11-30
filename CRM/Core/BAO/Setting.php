@@ -510,9 +510,9 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
    * - help_text
    */
   static
-  function getSettingSpecification($componentID = null, $filters = array(), $domainID = null) {
+  function getSettingSpecification($componentID = null, $filters = array(), $domainID = null, $profile = null) {
 
-    $cacheString = 'settingsMetadata_' . $domainID;
+    $cacheString = 'settingsMetadata_' . $domainID . '_' . $profile;
     foreach ($filters as $filterField => $filterString) {
       $cacheString .= "_{$filterField}_{$filterString}";
     }
@@ -529,7 +529,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
         }
       }
     }
-    $hookCacheString = CRM_Utils_Hook::alterSettingsMetaData($settingsMetadata, $domainID);
+    $hookCacheString = CRM_Utils_Hook::alterSettingsMetaData($settingsMetadata, $domainID, $profile);
     self::_filterSettingsSpecification($filters, $settingsMetadata);
     CRM_Core_BAO_Cache::setItem($settingsMetadata,'CiviCRM setting Specs', $cacheString . $hookCacheString, $componentID);
     return $settingsMetadata;
