@@ -52,18 +52,13 @@ class civicrm_handler_field_pseudo_constant extends views_handler_field {
     }
 
     // Include and call the Pseudo Class method
-    require_once str_replace('_', DIRECTORY_SEPARATOR, $this->definition['pseudo class']) . '.php';
     $this->_pseudo_constant = call_user_func_array($this->definition['pseudo class'] . "::" . $this->definition['pseudo method'], $pseudo_args);
   }
 
   function render($values) {
-    $sid = $values->{$this->field_alias};
-    if (empty($sid) ||
-      (int ) $sid <= 0
-    ) {
-      return NULL;
+    if (!empty($values->{$this->field_alias})) {
+      return $this->_pseudo_constant[$values->{$this->field_alias}];
     }
-    return $this->_pseudo_constant[$values->{$this->field_alias}];
   }
 }
 

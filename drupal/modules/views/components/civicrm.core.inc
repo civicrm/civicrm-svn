@@ -505,8 +505,8 @@ function _civicrm_core_data(&$data, $enabled) {
     'field' => array(
       'handler' => 'civicrm_handler_field_pseudo_constant',
       'click sortable' => TRUE,
-      'pseudo class' => t('CRM_Core_SelectValues'),
-      'pseudo method' => t('contactType'),
+      'pseudo class' => t('CRM_Contact_BAO_ContactType'),
+      'pseudo method' => t('basicTypePairs'),
     ),
     'sort' => array(
       'handler' => 'views_handler_sort',
