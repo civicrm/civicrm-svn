@@ -297,7 +297,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
       if (!array_key_exists('max_related', $params)) {
         $membershipType = CRM_Member_BAO_MembershipType::getMembershipTypeDetails($params['membership_type_id']);
         if (isset($membershipType['relationship_type_id'])) {
-          $params['max_related'] = $membershipType['max_related'];
+          $params['max_related'] = CRM_Utils_Array::value('max_related', $membershipType);
         }
       }
     }

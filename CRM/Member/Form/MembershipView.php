@@ -48,6 +48,21 @@ class CRM_Member_Form_MembershipView extends CRM_Core_Form {
   static $_links = NULL;
 
   /**
+   * Add context information at the end of a link
+   *
+   * @return text extra query parameters
+   */
+  function addContext() {
+    $extra = '';
+    foreach (array('context', 'selectedChild') as $arg) {
+      if ($value = CRM_Utils_Request::retrieve($arg, 'String', $this)) {
+        $extra .= "&{$arg}={$value}";
+      }
+    }
+    return $extra;
+  }
+
+  /**
    * Get action Links
    *
    * @return array (reference) of action links
@@ -58,13 +73,13 @@ class CRM_Member_Form_MembershipView extends CRM_Core_Form {
         CRM_Core_Action::DELETE => array(
           'name' => ts('Delete'),
           'url' => 'civicrm/contact/view/membership',
-          'qs' => 'action=view&id=%%id%%&cid=%%cid%%&relAction=delete&mid=%%mid%%&reset=1',
+          'qs' => 'action=view&id=%%id%%&cid=%%cid%%&relAction=delete&mid=%%mid%%&reset=1' . $this->addContext(),
           'title' => ts('Cancel Related Membership'),
         ),
         CRM_Core_Action::ADD => array(
           'name' => ts('Create'),
           'url' => 'civicrm/contact/view/membership',
-          'qs' => 'action=view&id=%%id%%&cid=%%cid%%&relAction=create&rid=%%rid%%&reset=1',
+          'qs' => 'action=view&id=%%id%%&cid=%%cid%%&relAction=create&rid=%%rid%%&reset=1' . $this->addContext(),
           'title' => ts('Create Related Membership'),
         ),
       );
@@ -86,24 +101,39 @@ class CRM_Member_Form_MembershipView extends CRM_Core_Form {
         CRM_Core_Session::setStatus(ts('Related membership for %1 has been deleted.', array(1 => $relatedDisplayName)), ts('Membership Deleted'), 'success');
         break;
       case 'create':
-        $ids = array(
-          'membership' => CRM_Utils_Request::retrieve('mid', 'Positive', $this),
-        );
+        $ids = array();
         $params = array(
           'contact_id'           => CRM_Utils_Request::retrieve('rid', 'Positive', $this),
           'membership_type_id'   => $owner['membership_type_id'],
           'owner_membership_id'  => $owner['id'],
-          'start_date'           => str_replace('-','',$owner['start_date']),
-          'end_date'             => $owner['end_date'],
+          'join_date'            => CRM_Utils_Date::processDate($owner['join_date'], NULL, TRUE, 'Ymd'),
+          'start_date'           => CRM_Utils_Date::processDate($owner['start_date'], NULL, TRUE, 'Ymd'),
+          'end_date'             => CRM_Utils_Date::processDate($owner['end_date'], NULL, TRUE, 'Ymd'),
           'source'               => ts('Manual Assignment of Related Membership'),
-          );
+          'is_test'              => $owner['is_test'],
+          'campaign_id'          => $owner['campaign_id'],
+          'status_id'            => $owner['status_id'],
+          'skipStatusCal'        => TRUE,
+          'createActivity'       => TRUE,
+        );
         CRM_Member_BAO_Membership::create($params, $ids);
         $relatedDisplayName = CRM_Contact_BAO_Contact::displayName($params['contact_id']);
-        CRM_Core_Session::setStatus(ts('Related membership for %1 has been added.', array(1 => $relatedDisplayName)), ts('Membership Added'), 'success');
+        CRM_Core_Session::setStatus(ts('Related membership for %1 has been created.', array(1 => $relatedDisplayName)), ts('Membership Added'), 'success');
         break;
       default:
         CRM_Core_Error::fatal(ts("Invalid action specified in URL"));
     }
+
+    // Redirect to the same page but without the relAction parameters
+    $session = CRM_Core_Session::singleton();
+    $id = CRM_Utils_Request::retrieve('id', 'Positive', $this);
+    $cid = CRM_Utils_Request::retrieve('cid', 'Positive', $this);
+    CRM_Utils_System::redirect(
+      CRM_Utils_System::url(
+        'civicrm/contact/view/membership',
+        "action=view&reset=1&id={$id}&cid={$cid}" . $this->addContext()
+      )
+    );
   }
 
   /**
@@ -136,7 +166,6 @@ class CRM_Member_Form_MembershipView extends CRM_Core_Form {
       // build associated contributions
       CRM_Member_Page_Tab::associatedContribution($values['contact_id'], $id);
 
-
       //Provide information about membership source when it is the result of a relationship (CRM-1901)
       $values['owner_membership_id'] = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_Membership',
         $id,
@@ -156,7 +185,6 @@ class CRM_Member_Form_MembershipView extends CRM_Core_Form {
           'id'
         );
 
-        $membershipType = CRM_Member_BAO_MembershipType::getMembershipTypeDetails($values['membership_type_id']);
         $direction = strrev($membershipType['relationship_direction']);
         // To display relationship type in view membership page
         $relTypeIds = str_replace(CRM_Core_DAO::VALUE_SEPARATOR, ",", $membershipType['relationship_type_id']);
@@ -191,12 +219,14 @@ END AS 'relType'
         'display_name'
       );
       $this->assign('displayName', $displayName);
-      // if membership can be granted to related contacts, display related memberships
-      if (!isset($membershipType['relationship_type_id'])) {
-        $this->assign('has_related', FALSE);
-      } else {
+
+      $this->assign('has_related', FALSE);
+      // if membership can be granted, and we are the owner of the membership
+      if (CRM_Utils_Array::value('relationship_type_id', $membershipType)
+          && !CRM_Utils_Array::value('owner_membership_id', $values)) {
+        // display related contacts/membership block
         $this->assign('has_related', TRUE);
-        $this->assign('max_related', $values['max_related']);
+        $this->assign('max_related', CRM_Utils_Array::value('max_related',$values,''));
         // split the relations in 2 arrays based on direction
         $relTypeId = explode(',', $membershipType['relationship_type_id']);
         $relDirection = explode(',', $membershipType['relationship_direction']);
@@ -219,7 +249,7 @@ SELECT r.id, c.id as cid, c.display_name as name, c.job_title as comment,
  WHERE r.contact_id_y = {$values['contact_id']} AND r.is_active = 1  AND c.is_deleted = 0";
         $query = '';
         foreach (array('a', 'b') as $dir ) {
-          if ($relTypeDir[$dir]) {
+          if (CRM_Utils_Array::value($dir, $relTypeDir)) {
             $query .= ($query ? ' UNION ' : '')
               . str_replace('_y', '_'.$dir, str_replace('_x', '_'.($dir=='a'?'b':'a'), $select))
               . ' AND r.relationship_type_id IN (' . implode(',', $relTypeDir[$dir]) .')';
