@@ -82,8 +82,8 @@
 
 <div id="configure-dashlet" class='hiddenElement'></div>
 <div id="civicrm-dashboard">
-  <!-- You can put anything you like here.  jQuery.dashboard() will remove it. -->
-  {ts}Javascript must be enabled in your browser in order to use the dashboard features.{/ts}
+  {* You can put anything you like here.  jQuery.dashboard() will remove it. *}
+  <noscript>{ts}Javascript must be enabled in your browser in order to use the dashboard features.{/ts}</noscript>
 </div>
 <div class="clear"></div>
 {literal}
@@ -103,7 +103,7 @@
          }
       });
   }
-
+  cj().crmAccordions();
 </script>
 {/literal}
 </div>
