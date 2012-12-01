@@ -55,7 +55,7 @@ class CRM_Utils_Request {
   function __construct() {}
 
   /**
-   * get the variable information from the request (GET/POST/SESSION
+   * get the variable information from the request (GET/POST/REQUEST
    *
    * @param $name    name of the variable to be retrieved
    * @param $type    type of the variable (see CRM_Utils_Type for details)
