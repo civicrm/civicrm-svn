@@ -55,7 +55,7 @@ class CRM_Utils_Request {
   function __construct() {}
 
   /**
-   * get the variable information from the request (GET/POST/REQUEST
+   * Retrieve a value from the request (GET/POST/REQUEST)
    *
    * @param $name    name of the variable to be retrieved
    * @param $type    type of the variable (see CRM_Utils_Type for details)
@@ -64,7 +64,7 @@ class CRM_Utils_Request {
    * @param $default default value of the variable if not present
    * @param $method  where should we look for the variable
    *
-   * @return string  the value of the variable
+   * @return mixed the value of the variable
    * @access public
    * @static
    *
