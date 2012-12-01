@@ -111,7 +111,7 @@ class CRM_Member_Form_MembershipView extends CRM_Core_Form {
           'end_date'             => CRM_Utils_Date::processDate($owner['end_date'], NULL, TRUE, 'Ymd'),
           'source'               => ts('Manual Assignment of Related Membership'),
           'is_test'              => $owner['is_test'],
-          'campaign_id'          => $owner['campaign_id'],
+          'campaign_id'          => CRM_Utils_Array::value('campaign_id', $owner),
           'status_id'            => $owner['status_id'],
           'skipStatusCal'        => TRUE,
           'createActivity'       => TRUE,
@@ -226,7 +226,7 @@ END AS 'relType'
           && !CRM_Utils_Array::value('owner_membership_id', $values)) {
         // display related contacts/membership block
         $this->assign('has_related', TRUE);
-        $this->assign('max_related', CRM_Utils_Array::value('max_related',$values,''));
+        $this->assign('max_related', CRM_Utils_Array::value('max_related', $values, ts('Unlimited')));
         // split the relations in 2 arrays based on direction
         $relTypeId = explode(',', $membershipType['relationship_type_id']);
         $relDirection = explode(',', $membershipType['relationship_direction']);
@@ -257,7 +257,8 @@ SELECT r.id, c.id as cid, c.display_name as name, c.job_title as comment,
         }
         $query .= " ORDER BY is_current_member DESC";
         $dao = CRM_Core_DAO::executeQuery($query);
-        $relatedRemaining = ($values['max_related'] ? $values['max_related'] : PHP_INT_MAX);
+        $related = array();
+        $relatedRemaining = CRM_Utils_Array::value('max_related', $values, PHP_INT_MAX);
         while ($dao->fetch()) {
           $row = array();
           foreach (array('id', 'cid', 'name', 'comment', 'relation', 'mid', 'start_date', 'end_date', 'is_current_member', 'status') as $field) {
