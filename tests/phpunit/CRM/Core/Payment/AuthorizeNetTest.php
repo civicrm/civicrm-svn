@@ -58,8 +58,8 @@ class CRM_Core_Payment_AuthorizeNetTest extends CiviUnitTestCase {
   }
 
   function tearDown() {
-    $this->processorParams->delete();
-        $tablesToTruncate = array( 'civicrm_financial_type', 'civicrm_contribution', 'civicrm_contribution_recur' );
+    $this->paymentProcessor->delete($this->processorParams->id);
+    $tablesToTruncate = array( 'civicrm_financial_type', 'civicrm_contribution', 'civicrm_contribution_recur' );
     $this->quickCleanup($tablesToTruncate);
   }
 
