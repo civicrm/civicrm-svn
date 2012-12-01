@@ -116,17 +116,21 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard {
     // if empty then make entry in contact dashboard for this contact
     if (empty($dashlets) && !$hasDashlets) {
       $defaultDashlets = self::getDashlets();
+      
+      // Set civicrm blog as default enabled
+      $blog = CRM_Core_DAO::singleValueQuery("SELECT id FROM civicrm_dashboard WHERE url LIKE '%blog%' LIMIT 1");
 
       //now you need make dashlet entries for logged in contact
       // need to optimize this sql
       foreach ($defaultDashlets as $key => $values) {
-        $valuesArray[] = " ( {$key}, $contactID )";
+        $default = $key == $blog ? 1 : 0;
+        $valuesArray[] = " ($key, $contactID, $default, $default)";
       }
 
       if (!empty($defaultDashlets)) {
         $valuesString = implode(',', $valuesArray);
         $query = "
-                    INSERT INTO civicrm_dashboard_contact ( dashboard_id, contact_id )
+                    INSERT INTO civicrm_dashboard_contact (dashboard_id, contact_id, column_no, is_active)
                     VALUES {$valuesString}";
 
         CRM_Core_DAO::executeQuery($query);
