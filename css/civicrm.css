@@ -5,6 +5,10 @@
   display: inline;
 }
 
+.crm-quickSearchField {
+  font-weight: normal;
+}
+
 #crm-container .hiddenElement, .crm-container-snippet .hiddenElement {
   display: none;
 }
