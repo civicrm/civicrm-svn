@@ -81,7 +81,7 @@ class CRM_Contact_Page_DashBoard extends CRM_Core_Page {
 
       list($domainEmailName, $domainEmailAddress) = CRM_Core_BAO_Domain::getNameAndEmail(TRUE);
 
-      if (!$domainEmailAddress || $domainEmailAddress == 'info@FIXME.ORG') {
+      if (!$domainEmailAddress || $domainEmailAddress == 'info@EXAMPLE.ORG') {
         $fixEmailUrl = CRM_Utils_System::url("civicrm/admin/domain", "action=update&reset=1&civicrmDestination={$destination}");
         $this->assign('fixEmailUrl', $fixEmailUrl);
         $fromEmailOK = FALSE;
@@ -97,7 +97,7 @@ class CRM_Contact_Page_DashBoard extends CRM_Core_Page {
 
       $config = CRM_Core_Config::singleton();
       if (in_array('CiviMail', $config->enableComponents) &&
-        CRM_Core_BAO_MailSettings::defaultDomain() == "FIXME.ORG"
+        CRM_Core_BAO_MailSettings::defaultDomain() == "EXAMPLE.ORG"
       ) {
         $fixDefaultMailbox = CRM_Utils_System::url('civicrm/admin/mailSettings', "reset=1&civicrmDestination={$destination}");
         $this->assign('fixDefaultMailbox', $fixDefaultMailbox);

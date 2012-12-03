@@ -86,7 +86,7 @@ VALUES
 
 -- mail settings 
 
-INSERT INTO civicrm_mail_settings (domain_id, name, is_default, domain) VALUES (@domainID, 'default', true, 'FIXME.ORG');
+INSERT INTO civicrm_mail_settings (domain_id, name, is_default, domain) VALUES (@domainID, 'default', true, 'EXAMPLE.ORG');
 
 -- activity and case dashlets 
 

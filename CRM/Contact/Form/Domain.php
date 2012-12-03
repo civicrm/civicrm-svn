@@ -214,7 +214,7 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
     }
 
     // Check for default from email address and organization (domain) name. Force them to change it.
-    if ($fields['email_address'] == 'info@FIXME.ORG') {
+    if ($fields['email_address'] == 'info@EXAMPLE.ORG') {
       $errors['email_address'] = ts('Please enter a valid default FROM email address for system-generated emails.');
     }
     if ($fields['name'] == 'Default Domain Name') {

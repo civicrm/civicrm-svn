@@ -49,7 +49,7 @@ function domain_get_expectedresult(){
               'geo_code_1' => '',
               'geo_code_2' => '',
             ),
-          'from_email' => 'info@FIXME.ORG',
+          'from_email' => 'info@EXAMPLE.ORG',
           'from_name' => 'FIXME',
         ),
     ),

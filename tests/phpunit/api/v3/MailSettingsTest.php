@@ -52,7 +52,7 @@ class api_v3_MailSettingsTest extends CiviUnitTestCase {
     $checkDeleted = civicrm_api('MailSettings', 'get', array(
       'version' => 3,
       ));
-    $this->assertEquals('FIXME.ORG', $checkDeleted['values'][$checkDeleted['id']]['domain'], 'In line ' . __LINE__);
+    $this->assertEquals('EXAMPLE.ORG', $checkDeleted['values'][$checkDeleted['id']]['domain'], 'In line ' . __LINE__);
   }
 
   public function testGetMailSettingsChainDelete() {

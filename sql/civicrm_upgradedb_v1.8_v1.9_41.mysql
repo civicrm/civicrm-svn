@@ -90,8 +90,8 @@ CREATE TABLE civicrm_mailing_spool (
 	    DROP contact_name;
 
     UPDATE `civicrm_domain` SET `email_name`='FIXME';	
-    UPDATE `civicrm_domain` SET `email_address`='info@FIXME.ORG';	
-    UPDATE `civicrm_domain` SET `email_domain`='FIXME.ORG';
+    UPDATE `civicrm_domain` SET `email_address`='info@EXAMPLE.ORG';	
+    UPDATE `civicrm_domain` SET `email_domain`='EXAMPLE.ORG';
 	
 -- /*******************************************************
 -- *
