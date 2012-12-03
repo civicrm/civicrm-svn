@@ -272,6 +272,9 @@ class CRM_Report_Form extends CRM_Core_Form {
     $this->_section = CRM_Utils_Request::retrieve('section', 'Integer', CRM_Core_DAO::$_nullObject);
 
     $this->assign('section', $this->_section);
+    CRM_Core_Region::instance('page-header')->add(array(
+      'markup' => sprintf('<!-- Report class: [%s] -->', htmlentities(get_class($this))),
+    ));
 
     $this->_id = $this->get('instanceId');
     if (!$this->_id) {

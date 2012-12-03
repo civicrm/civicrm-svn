@@ -107,6 +107,8 @@ class WebTest_Contact_InlineFieldsEditTest extends CiviSeleniumTestCase {
     $ucFieldName = ucfirst($field);
     $this->click("_qf_{$ucFieldName}_upload");
     
+    //to wait for load effect to end
+    $this->waitForElementPresent("xpath=//div[@id='crm-{$field}-content']");
     //checking done for location values
     $i = 1;
     foreach ($assertValues as $location => $value) {
@@ -194,7 +196,8 @@ class WebTest_Contact_InlineFieldsEditTest extends CiviSeleniumTestCase {
       'postal_greeting_display' => array('label' => "Postal Greeting", 'content' => "Dear {$firstName}"),
       'addressee_display' => array('label' => "Addressee", 'content' => "{$firstName} {$lastName}")
     );
-    
+    //to wait for load effect to end 
+    $this->waitForElementPresent("xpath=//div[@id='crm-communication-pref-content']");
     //privacy options check
     $this->verifyText("xpath=//div[@id='crm-communication-pref-content']/div[@class='crm-clear']/div/div[@class='crm-label']", "Privacy");
     $assertCheck = array_merge($privacyOptions, array("No Bulk Emails (User Opt Out)"));

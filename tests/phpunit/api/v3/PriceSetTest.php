@@ -41,9 +41,6 @@ class api_v3_PriceSetTest extends CiviUnitTestCase {
   }
 
   public function testGetBasicPriceSet() {
-    $createResult = civicrm_api($this->_entity, 'create', array('version' => 3,));
-    $this->id = $createResult['id'];
-    $this->assertAPISuccess($createResult);
     $getParams = array(
       'version' => $this->_apiversion,
       'name' => 'default_contribution_amount',
@@ -52,6 +49,36 @@ class api_v3_PriceSetTest extends CiviUnitTestCase {
     $this->documentMe($getParams, $getResult, __FUNCTION__, __FILE__);
     $this->assertAPISuccess($getResult, 'In line ' . __LINE__);
     $this->assertEquals(1, $getResult['count'], 'In line ' . __LINE__);
+  }
+
+  public function testEventPriceSet() {
+    $event = civicrm_api('event', 'create', array(
+      'version' => $this->_apiversion,
+      'title' => 'Event with Price Set',
+      'event_type_id' => 1,
+      'is_public' => 1,
+      'start_date' => 20151021,
+      'end_date' => 20151023,
+      'is_active' => 1,
+    ));
+    $this->assertAPISuccess($event);
+    $createParams = array(
+      'version' => $this->_apiversion,
+      'entity_table' => 'civicrm_event',
+      'entity_id' => $event['id'],
+      'name' => 'event price',
+      'title' => 'event price',
+      'extends' => 1,
+    );
+    $createResult = civicrm_api($this->_entity, 'create', $createParams);
+    $this->documentMe($createParams, $createResult, __FUNCTION__, __FILE__);
+    $this->assertAPISuccess($createResult, 'In line ' . __LINE__);
+    $id = $createResult['id'];
+    $result = civicrm_api($this->_entity, 'get', array(
+      'version' => $this->_apiversion,
+      'id' => $id,
+    ));
+    $this->assertEquals(array('civicrm_event' => array($event['id'])), $result['values'][$id]['entity'], 'In line ' . __LINE__);
   }
 
   public function testDeletePriceSet() {

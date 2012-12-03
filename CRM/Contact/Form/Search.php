@@ -847,7 +847,11 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
     }
     $this->_done = TRUE;
 
-    if (array_key_exists($this->_searchButtonName, $_POST) || $this->_force) {
+    //for prev/next pagination
+    $crmPID = CRM_Utils_Request::retrieve('crmPID', 'Integer', CRM_Core_DAO::$_nullObject);
+
+    if (array_key_exists($this->_searchButtonName, $_POST) ||
+      ($this->_force && !$crmPID)) {
       //reset the cache table for new search
       $cacheKey = "civicrm search {$this->controller->_key}";
       CRM_Core_BAO_PrevNextCache::deleteItem(NULL, $cacheKey);

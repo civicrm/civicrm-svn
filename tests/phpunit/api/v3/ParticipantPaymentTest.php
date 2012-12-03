@@ -305,6 +305,7 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase {
   public function testGet() {
     //Create Contribution & get contribution ID
     $contributionID = $this->contributionCreate($this->_contactID3, $this->_contributionTypeId);
+    $participantPaymentID = $this->participantPaymentCreate($this->_participantID4, $contributionID);
 
     //Create Participant Payment record With Values
     $params = array(

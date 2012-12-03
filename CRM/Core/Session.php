@@ -526,4 +526,3 @@ class CRM_Core_Session {
     return empty($_SESSION) ? TRUE : FALSE;
   }
 }
-

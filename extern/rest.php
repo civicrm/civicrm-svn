@@ -41,4 +41,3 @@ else {
   header('Content-Type: text/xml');
 }
 echo $rest->run();
-
