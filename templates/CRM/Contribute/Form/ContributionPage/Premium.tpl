@@ -80,6 +80,20 @@
             <span class="description">{ts}Should the minimum contribution amount be automatically displayed after each premium description?{/ts}</span>
       </td>
     </tr>
+    <tr class="crm-contribution-contributionpage-premium-form-block-premiums_nothankyou_label">
+       <td class="label">{$form.premiums_nothankyou_label.label}
+       </td>
+       <td class="html-adjust">{$form.premiums_nothankyou_label.html}<br />
+            <span class="description">{ts}You can change the text for the 'No thank-you' radio button.{/ts}</span>
+      </td>
+    </tr>
+    <tr class="crm-contribution-contributionpage-premium-form-block-premiums_nothankyou_position">
+       <td class="label">{$form.premiums_nothankyou_position.label}
+       </td>
+       <td class="html-adjust">{$form.premiums_nothankyou_position.html}<br />
+            <span class="description">{ts}Place the 'No thank-you' radio button before OR after the list of premiums offered on this page.{/ts}</span>
+      </td>
+    </tr>
     </table>
     </div><!-- /.crm-accordion-body -->
     </div><!-- /.crm-accordion-wrapper -->
