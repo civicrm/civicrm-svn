@@ -123,7 +123,7 @@ class WebTest_Profile_ProfileGroupSubscriptionTest extends CiviSeleniumTestCase 
     $this->type("email-Primary", $radomEmail);
 
     // check advisory group ( may be we should create a separate group to test this)
-    $this->click("group[4]");
+    $this->click("group_4");
 
     $this->click('_qf_Edit_next');
 

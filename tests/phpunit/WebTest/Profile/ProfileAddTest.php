@@ -60,8 +60,8 @@ class WebTest_Profile_ProfileAddTest extends CiviSeleniumTestCase {
     $this->type('title', $profileTitle);
 
     //profile Used for
-    $this->click('uf_group_type[User Registration]');
-    $this->click('uf_group_type[User Account]');
+    $this->click('uf_group_type_User Registration');
+    $this->click('uf_group_type_User Account');
 
     //Profile Advance Settings
     $this->click("//form[@id='Group']/div[2]/div[2]/div[1]");
@@ -133,8 +133,8 @@ class WebTest_Profile_ProfileAddTest extends CiviSeleniumTestCase {
 
   function _testdeleteProfile($profileTitle) {
     //$this->waitForPageToLoad('30000');
-    $this->waitForElementPresent("//div[@id='user-profiles']/div/div/table/tbody//tr/td[1]/span[text() = '$profileTitle']/../following-sibling::td[4]/span[2][text()='more ']/ul/li[4]/a[text()='Delete']");
-    $this->click("//div[@id='user-profiles']/div/div/table/tbody//tr/td[1]/span[text() = '$profileTitle']/../following-sibling::td[4]/span[2][text()='more ']/ul/li[4]/a[text()='Delete']");
+    $this->waitForElementPresent("//div[@id='user-profiles']/div/div/table/tbody//tr/td[1]/span[text() = '$profileTitle']/../following-sibling::td[4]/span[2][text()='more']/ul/li[4]/a[text()='Delete']");
+    $this->click("//div[@id='user-profiles']/div/div/table/tbody//tr/td[1]/span[text() = '$profileTitle']/../following-sibling::td[4]/span[2][text()='more']/ul/li[4]/a[text()='Delete']");
 
     $this->waitForElementPresent('_qf_Group_next-bottom');
     $this->click('_qf_Group_next-bottom');
