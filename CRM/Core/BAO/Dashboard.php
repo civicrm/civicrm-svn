@@ -76,13 +76,11 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard {
    * and if there are no dashlets for contact return default dashlets and update
    * contact's preference entry
    *
-   * @param int $contactID contactID
-   *
    * @return array $dashlets  array of dashlets
    * @access public
    * @static
    */
-  static function getContactDashlets($flatFormat = FALSE) {
+  static function getContactDashlets() {
     $dashlets = array();
 
     $session = CRM_Core_Session::singleton();
@@ -106,10 +104,6 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard {
       else {
         $dashlets[$dao->dashboard_id] = $dao->dashboard_id;
       }
-    }
-
-    if ($flatFormat) {
-      return $dashlets;
     }
 
     // if empty then make entry in contact dashboard for this contact
@@ -290,12 +284,8 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard {
     $session = CRM_Core_Session::singleton();
     $contactID = $session->get('userID');
 
-    // $columns = array( 0 => array( 2 => 0 ),
-    //                   1 => array( 1 => 0 )
-    //                  );
-
     //we need to get existing dashletes, so we know when to update or insert
-    $contactDashlets = CRM_Core_BAO_Dashboard::getContactDashlets(TRUE);
+    $contactDashlets = CRM_Core_BAO_Dashboard::getContactDashlets();
 
     $dashletIDs = array();
     if (is_array($columns)) {
