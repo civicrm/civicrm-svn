@@ -64,7 +64,7 @@ class CRM_Event_Form_Registration_ParticipantConfirm extends CRM_Event_Form_Regi
       );
     }
 
-    $this->_participantStatusId = $values['status_id'];
+    $this->_participantStatusId = CRM_Utils_Array::value('status_id', $values);
     $this->_eventId = CRM_Utils_Array::value('event_id', $values);
     $csContactId = CRM_Utils_Array::value('contact_id', $values);
 
