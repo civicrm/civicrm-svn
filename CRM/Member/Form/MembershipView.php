@@ -88,7 +88,10 @@ class CRM_Member_Form_MembershipView extends CRM_Core_Form {
   }
 
   /**
-   * Perform action on related memberships
+   * Perform create or delete action on related memberships
+   *
+   * @param string $action create or delete
+   * @param array $owner primary membership info (membership_id, contact_id, membership_type ...)
    *
    */
   function relAction($action, $owner) {
@@ -124,14 +127,11 @@ class CRM_Member_Form_MembershipView extends CRM_Core_Form {
         CRM_Core_Error::fatal(ts("Invalid action specified in URL"));
     }
 
-    // Redirect to the same page but without the relAction parameters
-    $session = CRM_Core_Session::singleton();
-    $id = CRM_Utils_Request::retrieve('id', 'Positive', $this);
-    $cid = CRM_Utils_Request::retrieve('cid', 'Positive', $this);
+    // Redirect back to membership view page for the owner, without the relAction parameters
     CRM_Utils_System::redirect(
       CRM_Utils_System::url(
         'civicrm/contact/view/membership',
-        "action=view&reset=1&id={$id}&cid={$cid}" . $this->addContext()
+        "action=view&reset=1&id={$owner['membership_id']}&cid={$owner['contact_id']}" . $this->addContext()
       )
     );
   }
