@@ -156,10 +156,11 @@ WHERE       ps.name = '{$entityName}'
    * Return a list of all forms which use this price set.
    *
    * @param int  $id id of price set
+   * @param str  $simpleReturn - get raw data. Possible values: 'entity', 'table'
    *
    * @return array
    */
-  public static function &getUsedBy($id, $onlyTable = FALSE) {
+  public static function &getUsedBy($id, $simpleReturn = FALSE) {
     $usedBy = $forms = $tables = array();
     $queryString = "
 SELECT   entity_table, entity_id
@@ -172,8 +173,8 @@ WHERE    price_set_id = %1";
       $forms[$crmFormDAO->entity_table][] = $crmFormDAO->entity_id;
       $tables[] = $crmFormDAO->entity_table;
     }
-
-    if ($onlyTable == TRUE) {
+    // Return only tables
+    if ($simpleReturn == 'table') {
       return $tables;
     }
     if (empty($forms)) {
@@ -191,6 +192,10 @@ WHERE     cpf.price_set_id = %1";
       if (empty($forms)) {
         return $usedBy;
       }
+    }
+    // Return only entity data
+    if ($simpleReturn == 'entity') {
+      return $forms;
     }
     foreach ($forms as $table => $entities) {
       switch ($table) {
