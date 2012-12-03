@@ -883,7 +883,7 @@ function _civicrm_core_data(&$data, $enabled) {
     'real field' => 'county_id',
     'help' => t('The County of the Address'),
     'field' => array(
-      'handler' => 'civicrm_handler_field_pseudo_constant',
+      'handler' => 'civicrm_handler_field_county',
       'click sortable' => TRUE,
       'pseudo class' => 'CRM_Core_PseudoConstant',
       'pseudo method' => 'county',
