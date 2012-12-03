@@ -619,12 +619,14 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
     $domain->find(TRUE);
     if ($domain->config_backend) {
       $values = unserialize($domain->config_backend);
+    } else {
+      $values = array();
     }
     $spec = self::getSettingSpecification(null, array('name' => $name), $domainID);
     $configKey = CRM_Utils_Array::value('config_key', $spec[$name], CRM_Utils_Array::value('legacy_key', $spec[$name], $name));
     //if the key is set to config_only we don't need to do anything
     if(empty($spec[$name]['config_only'])){
-      if ($values[$configKey]) {
+      if (!empty($values[$configKey])) {
         civicrm_api('setting', 'create', array('version' => 3, $name => $values[$configKey], 'domain_id' => $domainID));
       }
       else {
