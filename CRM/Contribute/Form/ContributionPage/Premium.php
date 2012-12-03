@@ -67,9 +67,6 @@ class CRM_Contribute_Form_ContributionPage_Premium extends CRM_Contribute_Form_C
    * @access public
    */
   public function buildQuickForm() {
-    crm_core_error::backtrace('this', $form);
-    exit();
-    
     $attributes = CRM_Core_DAO::getAttribute('CRM_Contribute_DAO_Premium');
     $this->addElement('checkbox', 'premiums_active', ts('Premiums Section Enabled?'), NULL, array('onclick' => "premiumBlock(this);"));
 
