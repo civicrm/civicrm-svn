@@ -35,11 +35,10 @@
 
 /**
  * Main page for blog dashlet
- *
  */
 class CRM_Dashlet_Page_Blog extends CRM_Core_Page {
 
-  const CHECK_TIMEOUT = 5, CACHE_DAYS = 2;
+  const CHECK_TIMEOUT = 5, CACHE_DAYS = 1;
 
   /**
    * List blog articles as dashlet
@@ -72,6 +71,8 @@ class CRM_Dashlet_Page_Blog extends CRM_Core_Page {
       // Refresh data after CACHE_DAYS
       if (strtotime($cache->created_date) < $expire) {
         $new_data = $this->_getFeed();
+        // If fetching the new rss feed was successful, return it
+        // Otherwise use the old cached data - it's better than nothing
         if ($new_data) {
           return $new_data;
         }
@@ -95,9 +96,10 @@ class CRM_Dashlet_Page_Blog extends CRM_Core_Page {
     $blog = array();
     if ($feed && !empty($feed->channel->item)) {
       foreach ($feed->channel->item as $item) {
-        // Clean up
         $item = (array) $item;
-        $item['description'] = strip_tags($item['description'], "<a> <p>");
+        // Clean up description - remove tags that would break dashboard layout
+        $description = preg_replace('#<h[1-3][^>]*>(.+?)</h[1-3][^>]*>#s', '<h4>$1</h4>', $item['description']);
+        $item['description'] = strip_tags($description, "<a><p><h4><h5><h6><b><i><em><strong><ol><ul><li><dd><dt><code><pre><br>");
         $blog[] = $item;
       }
       if ($blog) {

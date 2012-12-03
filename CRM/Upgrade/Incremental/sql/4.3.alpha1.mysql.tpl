@@ -676,3 +676,13 @@ ALTER TABLE `civicrm_membership`
 ADD COLUMN `max_related` INT(10) unsigned DEFAULT NULL COMMENT 'Maximum number of related memberships (membership_type override).' AFTER `owner_membership_id`;
 ALTER TABLE `civicrm_membership_log`
 ADD COLUMN `max_related` INT(10) unsigned DEFAULT NULL COMMENT 'Maximum number of related memberships.' AFTER `membership_type_id`;
+
+-- CRM-11358
+INSERT INTO `civicrm_dashboard` 
+(`domain_id`, `label`, `url`, `permission`, `permission_operator`, `column_no`, `is_minimized`, `is_active`, `weight`, `fullscreen_url`, `is_fullscreen`, `is_reserved`) 
+SELECT id, '{ts escape="sql"}CiviCRM News{/ts}', 'civicrm/dashlet/blog&reset=1&snippet=5', 'access CiviCRM', NULL, 0, 0, 1, 0, 'civicrm/dashlet/blog&reset=1&snippet=5&context=dashletFullscreen', 1, 1
+FROM `civicrm_domain`;
+
+INSERT INTO `civicrm_dashboard_contact` (dashboard_id, contact_id, column_no, is_active)
+SELECT (SELECT MAX(id) FROM `civicrm_dashboard`), contact_id, 1, IF (SUM(is_active) > 0, 0, 1)
+FROM `civicrm_dashboard_contact` WHERE 1 GROUP BY contact_id;
