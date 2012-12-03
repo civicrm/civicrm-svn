@@ -118,7 +118,7 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
     $this->click("xpath=//div[@class='crm-search-results']/table/tbody//td/span/a[text()='View']");
     $this->waitForPageToLoad("30000"); 
 
-    $xpath = "xpath=//div/table/tbody/tr/td[@class='crm-contact_type_label']";
+    $xpath = "xpath=//div[@id='contact-summary']/div/div[2]/div/div/div[2]/div[@class='crm-content crm-contact_type_label']";
     $this->verifyText($xpath, preg_quote("Student"));
 
     $this->open($this->sboxPath . "civicrm/contact/search?reset=1");
@@ -130,7 +130,7 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
     $this->click("xpath=//div[@class='crm-search-results']/table/tbody//td/span/a[text()='View']");
     $this->waitForPageToLoad("30000"); 
     
-    $xpath = "xpath=//div/table/tbody/tr/td[@class='crm-contact_type_label']";
+    $xpath = "xpath=//div[@id='contact-summary']/div/div[2]/div/div/div[2]/div[@class='crm-content crm-contact_type_label']";
     $this->verifyText($xpath, preg_quote("Staff"));
   }
 
@@ -391,8 +391,10 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad('30000');
 
     //Reserve and interview responsedents
-    $this->waitForElementPresent("xpath=//table[@id='surveys']/tbody//tr/td[2][text()='{$surveyTitle}']/../td[@class='crm-campaign-voterLinks']/span/ul/li/a");
-    $this->click("xpath=//table[@id='surveys']/tbody//tr/td[2][text()='{$surveyTitle}']/../td[@class='crm-campaign-voterLinks']/span/ul/li/a");
+    $this->open($this->sboxPath . "civicrm/campaign?reset=1&subPage=survey");
+    $this->waitForPageToLoad('30000');
+    $this->waitForElementPresent("xpath=//table[@id='surveys']/tbody//tr/td[2]/a[text()='{$surveyTitle}']/../following-sibling::td[@class='crm-campaign-voterLinks']/span/ul/li/a");
+    $this->click("xpath=//table[@id='surveys']/tbody//tr/td[2]/a[text()='{$surveyTitle}']/../following-sibling::td[@class='crm-campaign-voterLinks']/span/ul/li/a");
     $this->waitForPageToLoad('30000');
     $this->click("xpath=//div[@id='search_form_reserve']/div");
     $this->waitForElementPresent('sort_name');

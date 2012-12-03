@@ -1568,13 +1568,13 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     //$this->assertTrue($this->isTextPresent("Your CiviCRM Profile '{$profileTitle}' has been added. You can add fields to this profile now."));
 
     foreach ($profileFields as $field) {
-      $this->waitForElementPresent('field_name[0]');
+      $this->waitForElementPresent('field_name_0');
       // $this->waitForPageToLoad("30000");
-      $this->click("id=field_name[0]");
-      $this->select("id=field_name[0]", "label=" . $field['type']);
-      $this->waitForElementPresent('field_name[1]');
-      $this->click("id=field_name[1]");
-      $this->select("id=field_name[1]", "label=" . $field['name']);
+      $this->click("id=field_name_0");
+      $this->select("id=field_name_0", "label=" . $field['type']);
+      $this->waitForElementPresent('field_name_1');
+      $this->click("id=field_name_1");
+      $this->select("id=field_name_1", "label=" . $field['name']);
       $this->waitForElementPresent('label');
       $this->type("id=label", $field['label']);
       $this->click("id=_qf_Field_next_new-top");
