@@ -98,6 +98,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
    *  first and last names succeeds
    */
   function testAddCreateIndividual() {
+    $oldCount = CRM_Core_DAO::singleValueQuery('select count(*) from civicrm_contact');
     $params = array(
       'first_name' => 'abc1',
       'contact_type' => 'Individual',
@@ -107,7 +108,10 @@ class api_v3_ContactTest extends CiviUnitTestCase {
 
     $contact = civicrm_api('contact', 'create', $params);
     $this->assertApiSuccess($contact, "In line " . __LINE__);
-    $this->assertEquals(1, $contact['id'], "In line " . __LINE__);
+    $this->assertTrue(is_numeric($contact['id']), "In line " . __LINE__);
+    $this->assertTrue($contact['id'] > 0, "In line " . __LINE__);
+    $newCount = CRM_Core_DAO::singleValueQuery('select count(*) from civicrm_contact');
+    $this->assertEquals($oldCount+1, $newCount);
 
     unset($params['version']);
     $this->assertDBState('CRM_Contact_DAO_Contact',
