@@ -36,11 +36,11 @@
 
 require_once 'CRM/Core/Page/Basic.php';
 require_once 'CRM/Financial/Form/BatchTransaction.php';
+
 /**
- * Page for displaying list of financial types
+ * Page for displaying list of financial batches
  */
-class CRM_Financial_Page_BatchTransaction extends CRM_Core_Page_Basic
-{
+class CRM_Financial_Page_BatchTransaction extends CRM_Core_Page_Basic {
   /**
    * The action links that we need to display for the browse screen
    *
@@ -117,7 +117,7 @@ class CRM_Financial_Page_BatchTransaction extends CRM_Core_Page_Basic
   }
 
   /**
-   * Browse all custom data groups.
+   * Browse all financial batch transactions
    *
    *
    * @return void
@@ -125,7 +125,6 @@ class CRM_Financial_Page_BatchTransaction extends CRM_Core_Page_Basic
    * @static
    */
   function browse() {
-    // get all custom groups sorted by weight
     $financialitems = array();
     require_once 'CRM/Financial/BAO/EntityFinancialItem.php';
     require_once 'CRM/Contact/BAO/Contact/Utils.php';
@@ -193,7 +192,7 @@ class CRM_Financial_Page_BatchTransaction extends CRM_Core_Page_Basic
    * @return string user context.
    */
   function userContext($mode = null) {
-    return 'civicrm/batch';
+    return 'civicrm/batchtransaction';
   }
 
 }

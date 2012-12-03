@@ -49,8 +49,7 @@ class CRM_Financial_Form_BatchTransaction extends CRM_Contribute_Form
    * @return None
    * @access public
    */
-  public function buildQuickForm( )
-  {
+  public function buildQuickForm( ) {
     parent::buildQuickForm( );
     $this->_entityID = CRM_Utils_Request::retrieve( 'bid' , 'Positive' );
     require_once 'CRM/Core/DAO.php';

@@ -63,18 +63,19 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form
     $session = CRM_Core_Session::singleton( );
     if( $this->_id ){
       $createdID = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Batch', $this->_id, 'created_id' );
-      if ( ( CRM_Core_Permission::check( 'edit own manual batches' )  || CRM_Core_Permission::check( 'edit all manual batches' ) ) ){
-        if ( CRM_Core_Permission::check( 'edit own manual batches' ) && $session->get( 'userID' ) != $createdID && !CRM_Core_Permission::check( 'edit all manual batches' )){
-          CRM_Core_Error::statusBounce( ts('You dont have permission to edit this batch') );
+      if ((CRM_Core_Permission::check('edit own manual batches')  ||
+          CRM_Core_Permission::check('edit all manual batches'))) {
+
+        if (CRM_Core_Permission::check('edit own manual batches') &&
+          $session->get( 'userID' ) != $createdID &&
+          !CRM_Core_Permission::check('edit all manual batches')) {
+          CRM_Core_Error::statusBounce( ts('You do not have permission to edit this batch') );
         }
 
         $status = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Batch', $this->_id, 'status_id' );
         $batchStatus = CRM_Core_PseudoConstant::accountOptionValues( 'batch_status' );
-        if( CRM_Utils_Array::value( $status, $batchStatus  ) != 'Open' ){
+        if (CRM_Utils_Array::value( $status, $batchStatus  ) != 'Open') {
           CRM_Core_Error::statusBounce( ts("You cannot edit {$batchStatus[$status]} Batch") );
-        }
-        else{
-          CRM_Core_Error::statusBounce( ts('You dont have permission to edit this batch') );
         }
       }
     }
