@@ -60,7 +60,7 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
       $batch->id = $ids['batchID'];
     }
     $batch->save();
-    
+
     if ($context == 'financialBatch' && $batch->id) {
       $financialParams = array(
         'batch_id'              => $batch->id,
@@ -238,8 +238,8 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
     }
 
     $query = "
-      SELECT batch.*, c.sort_name created_by 
-      FROM  civicrm_batch batch 
+      SELECT batch.*, c.sort_name created_by
+      FROM  civicrm_batch batch
       INNER JOIN civicrm_contact c ON batch.created_id = c.id
     WHERE {$whereClause}
     {$orderBy}
@@ -353,7 +353,7 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
       WHERE type_id IN (1,2)
       AND status_id = 2
       ORDER BY id DESC';
-    
+
     $batches = array();
     $dao = CRM_Core_DAO::executeQuery( $query );
     while ( $dao->fetch( ) ) {
