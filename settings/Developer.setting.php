@@ -93,7 +93,7 @@ In the case of Drupal, this will cause all CiviCRM error messages to appear in t
     'config_only' => 1, // store only in config - this is expected to be transitional
     'type' => 'String',
     'quick_form_type' => 'text',
-    'default' => 'null',
+    'default' => 'CRM/common/fatal.tpl',
     'add' => '4.3',
     'title' => 'Fatal Error Template',
     'is_domain' => 1,
