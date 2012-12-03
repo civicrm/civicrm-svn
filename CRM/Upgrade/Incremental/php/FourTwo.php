@@ -144,6 +144,9 @@ INNER JOIN civicrm_price_set cps ON cps.id = cpf.price_set_id AND cps.name <>'de
         ));
       }
     }
+    if ($rev == '4.2.7') {
+      $postUpgradeMessage .= '<br />' . ts('If you have configured a report instance to allow anonymous access, you will need to reset the permission to Everyone for that instance (under the Report Settings pane).');
+    }
   }
 
   function upgrade_4_2_alpha1($rev) {
