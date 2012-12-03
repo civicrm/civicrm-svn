@@ -38,62 +38,68 @@ require_once 'CRM/Financial/DAO/FinancialBatch.php';
 
 class CRM_Financial_BAO_FinancialBatch extends CRM_Financial_DAO_FinancialBatch {
 
-    /**
-     * static holder for the default LT
-     */
-    static $_defaultContributionType = null;
-    
-    /**
-     * class constructor
-     */
-    function __construct( ) 
-    {
-        parent::__construct( );
-    }
-    
-    /**
-     * Takes a bunch of params that are needed to match certain criteria and
-     * retrieves the relevant objects. Typically the valid params are only
-     * contact_id. We'll tweak this function to be more full featured over a period
-     * of time. This is the inverse function of create. It also stores all the retrieved
-     * values in the default array
-     *
-     * @param array $params   (reference ) an assoc array of name/value pairs
-     * @param array $defaults (reference ) an assoc array to hold the flattened values
-     *
-     * @return object CRM_Contribute_BAO_ContributionType object
-     * @access public
-     * @static
-     */
+  /**
+   * static holder for the default LT
+   */
+  static $_defaultContributionType = null;
+
+  /**
+   * class constructor
+   */
+  function __construct( )
+  {
+    parent::__construct( );
+  }
+
+  /**
+   * Takes a bunch of params that are needed to match certain criteria and
+   * retrieves the relevant objects. Typically the valid params are only
+   * contact_id. We'll tweak this function to be more full featured over a period
+   * of time. This is the inverse function of create. It also stores all the retrieved
+   * values in the default array
+   *
+   * @param array $params   (reference ) an assoc array of name/value pairs
+   * @param array $defaults (reference ) an assoc array to hold the flattened values
+   *
+   * @return object CRM_Contribute_BAO_ContributionType object
+   * @access public
+   * @static
+   */
   static function retrieve( &$params, &$defaults ) {
-        $financialBatch = new CRM_Financial_DAO_FinancialBatch( );
-        $financialBatch->copyValues( $params );
-        if ( $financialBatch->find( true ) ) {
-            CRM_Core_DAO::storeValues( $financialBatch, $defaults );
-            return $financialBatch;
-        }
-        return null;
+    $financialBatch = new CRM_Financial_DAO_FinancialBatch( );
+    $financialBatch->copyValues( $params );
+    if ( $financialBatch->find( true ) ) {
+      CRM_Core_DAO::storeValues( $financialBatch, $defaults );
+      return $financialBatch;
     }
-  
-    /**
-     * function to add the financial types
-     *
-     * @param array $params reference array contains the values submitted by the form
-     * @param array $ids    reference array contains the id
-     * 
-     * @access public
-     * @static 
-     * @return object
-     */
+    return null;
+  }
+
+  /**
+   * function to add the financial types
+   *
+   * @param array $params reference array contains the values submitted by the form
+   * @param array $ids    reference array contains the id
+   *
+   * @access public
+   * @static
+   * @return object
+   */
   static function add(&$params) {
-        // action is taken depending upon the mode
-        $financialBatch              = new CRM_Financial_DAO_FinancialBatch( );
+    // action is taken depending upon the mode
+    $financialBatch              = new CRM_Financial_DAO_FinancialBatch( );
     $financialBatch->copyValues( $params );
     if (CRM_Utils_Array::value('batch_id', $params)) {
       $financialBatch->id = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_FinancialBatch', $params['batch_id'], 'id', 'batch_id');
     }
-        $financialBatch->save( );
-        return $financialBatch;
-    }
+    $financialBatch->save( );
+    return $financialBatch;
+  }
+
+  static function exportBatch(&$params) {
+    CRM_Core_Error::debug('p', $params);
+    CRM_Core_Error::fatal('not yet implemented');
+  }
+
 }
 

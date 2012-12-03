@@ -214,8 +214,9 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form
     $params = $ids = array( );
     $params = $this->exportValues();
     $batchStatus = CRM_Core_PseudoConstant::accountOptionValues( 'batch_status' );
-    if($this->_id){
-      $ids['batchID'] = $this->_id;
+    if ($this->_id) {
+      // first step towards obsoleting $ids parameter
+      $ids['batchID'] = $params['batch_id'] = $this->_id;
     }
 
     if( $this->_action & CRM_Core_Action::EXPORT ){
@@ -230,7 +231,7 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form
     $params['modified_date'] = date('YmdHis');
     $params['modified_id'] = $session->get( 'userID' );
     if ( $this->_action & CRM_Core_Action::EXPORT ) {
-      CRM_Core_BAO_Batch::exportBatch( $ids, $params);
+      CRM_Financial_BAO_FinancialBatch::exportBatch($params);
     }
 
     if( CRM_Utils_Array::value( 'created_date', $params ) ) {
