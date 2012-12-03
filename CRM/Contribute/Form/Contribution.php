@@ -213,7 +213,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Core_Form {
 
     $this->_paymentProcessor = array('billing_mode' => 1);
 
-    $this->assign('showCheckNumber', FALSE);
+    $this->assign('showCheckNumber', TRUE);
 
     $this->_fromEmails = CRM_Core_BAO_Email::getFromEmail();
 
@@ -418,7 +418,7 @@ WHERE  contribution_id = {$this->_id}
         $this->_noteID = $daoNote->id;
         $this->_values['note'] = $daoNote->note;
       }
-            $this->_contributionType = $this->_values['financial_type_id'];
+      $this->_contributionType = $this->_values['financial_type_id'];
 
       $csParams = array('contribution_id' => $this->_id);
       $softCredit = CRM_Contribute_BAO_Contribution::getSoftContribution($csParams, TRUE);
@@ -442,21 +442,12 @@ WHERE  contribution_id = {$this->_id}
         $this->_values['pcp_roll_nickname'] = CRM_Utils_Array::value('pcp_roll_nickname', $softCredit);
         $this->_values['pcp_personal_note'] = CRM_Utils_Array::value('pcp_personal_note', $softCredit);
       }
-
-      //display check number field only if its having value or its offline mode.
-      if (CRM_Utils_Array::value('payment_instrument_id',
-          $this->_values
-        ) == CRM_Core_OptionGroup::getValue('payment_instrument', 'Check', 'name')
-        || CRM_Utils_Array::value('check_number', $this->_values)
-      ) {
-        $this->assign('showCheckNumber', TRUE);
-      }
     }
 
     // when custom data is included in this page
     if (CRM_Utils_Array::value('hidden_custom', $_POST)) {
       $this->set('type', 'Contribution');
-            $this->set('subType',  CRM_Utils_Array::value( 'financial_type_id', $_POST ) );
+      $this->set('subType',  CRM_Utils_Array::value('financial_type_id', $_POST));
       $this->set('entityId', $this->_id);
 
       CRM_Custom_Form_CustomData::preProcess($this);
@@ -489,18 +480,17 @@ WHERE  contribution_id = {$this->_id}
       $defaults['total_amount'] = CRM_Utils_Array::value('scheduled_amount', $this->_pledgeValues['pledgePayment']);
       $defaults['honor_type_id'] = CRM_Utils_Array::value('honor_type_id', $this->_pledgeValues);
       $defaults['honor_contact_id'] = CRM_Utils_Array::value('honor_contact_id', $this->_pledgeValues);
-            $defaults['financial_type_id'] = CRM_Utils_Array::value( 'financial_type_id', $this->_pledgeValues );
+      $defaults['financial_type_id'] = CRM_Utils_Array::value('financial_type_id', $this->_pledgeValues);
       $defaults['currency'] = CRM_Utils_Array::value('currency', $this->_pledgeValues);
       $defaults['option_type'] = 1;
     }
 
-        if ( $this->_action & CRM_Core_Action::UPDATE ) {
-            require_once 'CRM/Core/BAO/FinancialTrxn.php';
-            $financialTrxnId = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnIds( $defaults['contribution_id'] );
-            if ( CRM_Utils_Array::value( 'financialTrxnId', $financialTrxnId ) ){
-                $defaults['to_financial_account_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialTrxn', $financialTrxnId['financialTrxnId'], 'to_financial_account_id' );  
-            }
-        }
+    if ($this->_action & CRM_Core_Action::UPDATE) {
+      $financialTrxnId = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnIds($defaults['contribution_id']);
+      if (CRM_Utils_Array::value('financialTrxnId', $financialTrxnId)) {
+        $defaults['to_financial_account_id'] = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_FinancialTrxn', $financialTrxnId['financialTrxnId'], 'to_financial_account_id');  
+      }
+    }
 
     $fields = array();
     if ($this->_action & CRM_Core_Action::DELETE) {
@@ -562,7 +552,7 @@ WHERE  contribution_id = {$this->_id}
     }
 
     if ($this->_contributionType) {
-            $defaults['financial_type_id'] = $this->_contributionType;
+      $defaults['financial_type_id'] = $this->_contributionType;
     }
 
     if (CRM_Utils_Array::value('is_test', $defaults)) {
@@ -954,39 +944,22 @@ WHERE  contribution_id = {$this->_id}
 
     $attributes = CRM_Core_DAO::getAttribute('CRM_Contribute_DAO_Contribution');
 
-        $element = $this->add('select', 'financial_type_id', 
-                               ts( 'Financial Type' ), 
-                               array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::financialType( ),
-      TRUE, array('onChange' => "CRM.buildCustomData( 'Contribution', this.value );")
+    $this->add('select', 'financial_type_id', 
+      ts('Financial Type'), array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::financialType()
     );
-    if ($this->_online) {
-      $element->freeze();
-    }
+  
     if (!$this->_mode) {
-      $element = $this->add('select', 'payment_instrument_id',
+      $this->add('select', 'payment_instrument_id',
         ts('Paid By'),
         array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::paymentInstrument(),
         FALSE, array('onChange' => "return showHideByValue('payment_instrument_id','4','checkNumber','table-row','select',false);")
       );
-
-      if ($this->_online) {
-        $element->freeze();
-      }
     }
 
-    $element = $this->add('text', 'trxn_id', ts('Transaction ID'),
+    $this->add('text', 'trxn_id', ts('Transaction ID'),
       $attributes['trxn_id']
     );
-    if ($this->_online) {
-      $element->freeze();
-    }
-    else {
-      $this->addRule('trxn_id',
-        ts('This Transaction ID already exists in the database. Include the account number for checks.'),
-        'objectExists',
-        array('CRM_Contribute_DAO_Contribution', $this->_id, 'trxn_id')
-      );
-    }
+
     //add receipt for offline contribution
     $this->addElement('checkbox', 'is_email_receipt', ts('Send Receipt?'));
 
@@ -1017,16 +990,13 @@ WHERE  contribution_id = {$this->_id}
     if ($this->_online) {
       $this->assign('hideCalender', TRUE);
     }
-    $element = $this->add('text', 'check_number', ts('Check Number'), $attributes['check_number']);
-    if ($this->_online) {
-      $element->freeze();
-    }
-
+    $this->add('text', 'check_number', ts('Check Number'), $attributes['check_number']);
+    
     $this->addDateTime('receipt_date', ts('Receipt Date'), FALSE, array('formatType' => 'activityDateTime'));
     $this->addDateTime('cancel_date', ts('Cancelled Date'), FALSE, array('formatType' => 'activityDateTime'));
-
+    
     $this->add('textarea', 'cancel_reason', ts('Cancellation Reason'), $attributes['cancel_reason']);
-
+    
     $recurJs = NULL;
     if ($buildRecurBlock) {
       $recurJs = array('onChange' => "buildRecurBlock( this.value ); return false;");
@@ -1469,19 +1439,17 @@ WHERE  contribution_id = {$this->_id}
       $paymentParams['contactID'] = $this->_contactID;
       CRM_Core_Payment_Form::mapParams($this->_bltID, $this->_params, $paymentParams, TRUE);
 
-            $contributionType = new CRM_Financial_DAO_FinancialType( );
-            $contributionType->id = $params['financial_type_id'];
+      $contributionType = new CRM_Financial_DAO_FinancialType( );
+      $contributionType->id = $params['financial_type_id'];
       if (!$contributionType->find(TRUE)) {
         CRM_Core_Error::fatal('Could not find a system table');
       }
 
-            // add some financial type details to the params list
+      // add some financial type details to the params list
       // if folks need to use it
-            $paymentParams['contributionType_name']                = 
-                $this->_params['contributionType_name']            = $contributionType->name;
-            // $paymentParams['contributionType_accounting_code']     = 
-            //     $this->_params['contributionType_accounting_code'] = $contributionType->accounting_code;
-            $paymentParams['contributionPageID']                   = null;
+      $paymentParams['contributionType_name'] = 
+        $this->_params['contributionType_name'] = $contributionType->name;
+      $paymentParams['contributionPageID'] = null;
       if (CRM_Utils_Array::value('is_email_receipt', $this->_params)) {
         $paymentParams['email'] = $this->userEmail;
         $paymentParams['is_email_receipt'] = 1;
@@ -1584,9 +1552,7 @@ WHERE  contribution_id = {$this->_id}
 
       // build custom data getFields array
       $customFieldsContributionType = CRM_Core_BAO_CustomField::getFields('Contribution', FALSE, FALSE,
-                                                                                 CRM_Utils_Array::value( 'financial_type_id', 
-          $params
-        )
+        CRM_Utils_Array::value('financial_type_id', $params)
       );
       $customFields = CRM_Utils_Array::crmArrayMerge($customFieldsContributionType,
         CRM_Core_BAO_CustomField::getFields('Contribution', FALSE, FALSE, NULL, NULL, TRUE)

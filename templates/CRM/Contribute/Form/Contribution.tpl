@@ -301,14 +301,14 @@ cj(document).ready(function(){
 	   Submit a Payment
 	</div>
 	{if $action eq 1}
-	<div class="crm-accordion-body" id="Donor_Information">
+	<div class="crm-accordion-body" id="initialPayment">
 	 {include file="CRM/Price/Form/InitialPayment.tpl" extends="Contribution"}
            <div class="spacer"></div>
 	   {/if}
 	   <table class="form-layout-compressed" >
 	      <tr class="crm-contribution-form-block-receive_date">
                 <td class="label">{$form.receive_date.label}</td>
-                <td{$valueStyle}>{if $hideCalender neq true}{include file="CRM/common/jcalendar.tpl" elementName=receive_date}{else}{$receive_date|crmDate}{/if}<br />
+                <td{$valueStyle}>{include file="CRM/common/jcalendar.tpl" elementName=receive_date}<br />
                     <span class="description">{ts}The date this contribution was received.{/ts}</span>
                 </td>
              </tr>

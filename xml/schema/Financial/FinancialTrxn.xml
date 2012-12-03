@@ -121,7 +121,8 @@
     <title>Financial Transaction Status Id</title>
     <type>int unsigned</type>
       <import>true</import>
-      <export>true</export>
+      <export>true</export>                 
+      <comment>pseudo FK to civicrm_option_value of financial_item status option_group</comment> 
       <headerPattern>/status/i</headerPattern>
       <add>4.3</add>
   </field>
