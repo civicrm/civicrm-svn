@@ -444,6 +444,9 @@ class CRM_Core_Invoke {
    * @param obj: $template (reference)
    */
   static function versionCheck($template) {
+    if (CRM_Core_Config::isUpgradeMode()) {
+      return;
+    }
     $versionCheck = CRM_Utils_VersionCheck::singleton();
     $newerVersion = $versionCheck->newerVersion();
     $template->assign('newer_civicrm_version', $newerVersion);
