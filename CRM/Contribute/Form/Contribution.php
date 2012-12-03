@@ -1868,8 +1868,19 @@ WHERE  contribution_id = {$this->_id}
           }
         }   
 
+        // CRM-11361 - allow 0 for partial (initial_amount) payment but if they didn't choose partial and initial is blank then set initial to total.
+        // int_amount is the checkbox
+watchdog('dave' , print_r($this->_submitValues, true));
+        if ( $this->_submitValues['initial_amount'] === '' ) {
+          if ( empty( $this->_submitValues['int_amount'] ) ) {
+            $this->_submitValues['initial_amount'] = $this->_submitValues['total_amount'];
+          } else {
+            $this->_submitValues['initial_amount'] = 0;
+          }
+        }
+        
         if($this->_submitValues['initial_amount'] < $this->_submitValues['total_amount'] ) {
-          $contrib['contribution_status_id'] = 2;
+          $contrib['contribution_status_id'] = CRM_Core_OptionGroup::getValue('contribution_status', 'Pending', 'name');
           $ids['contribution'] = $contribution->id;
           CRM_Contribute_BAO_Contribution::create($contrib,$ids);
         }
