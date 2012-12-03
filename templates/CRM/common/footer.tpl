@@ -40,8 +40,9 @@
 {/if}
 
 <div class="footer" id="civicrm-footer">
-  {ts 1=$current_civicrm_version}Powered by CiviCRM %1.{/ts}
-  {if $newer_civicrm_version}
+  {include file="CRM/common/version.tpl" assign=version}
+  {ts 1=$version}Powered by CiviCRM %1.{/ts}
+  {if !empty($newer_civicrm_version)}
     <span class="status">{ts 1=$newer_civicrm_version}A newer version (%1){/ts}
     <a href="http://civicrm.org/download">{ts}is available for download{/ts}</a>.</span>
   {/if}

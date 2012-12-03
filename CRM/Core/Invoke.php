@@ -441,11 +441,11 @@ class CRM_Core_Invoke {
   /**
    * Show the message about CiviCRM versions
    *
+   * @param obj: $template (reference)
    */
   static function versionCheck($template) {
     $versionCheck = CRM_Utils_VersionCheck::singleton();
     $newerVersion = $versionCheck->newerVersion();
-    $template->assign('current_civicrm_version', $versionCheck->localVersion);
     $template->assign('newer_civicrm_version', $newerVersion);
   }
 

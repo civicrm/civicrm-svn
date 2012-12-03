@@ -33,10 +33,11 @@
  *
  */
 class CRM_Utils_VersionCheck {
-  // timeout for when the connection or the server is slow
   CONST LATEST_VERSION_AT = 'http://latest.civicrm.org/stable.php',
+  // timeout for when the connection or the server is slow
+  CHECK_TIMEOUT = 5,
   // relative to $civicrm_root
-  CHECK_TIMEOUT = 5, LOCALFILE_NAME = 'civicrm-version.php',
+  LOCALFILE_NAME = 'civicrm-version.php',
   // relative to $config->uploadDir
   CACHEFILE_NAME = 'latest-version-cache.txt',
   // cachefile expiry time (in seconds) - a week
