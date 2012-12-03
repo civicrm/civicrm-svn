@@ -210,7 +210,7 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule {
             }
           }
           break;
-          
+
       case '':
           $sel3[$id] = '';
           break;
@@ -632,7 +632,7 @@ LEFT  JOIN civicrm_phone phone ON phone.id = lb.phone_id
         $tokenEntity = 'membership';
         $tokenFields = array('fee', 'id', 'join_date', 'start_date', 'end_date', 'status', 'type');
         $extraSelect = ", mt.minimum_fee as fee, e.id as id , e.join_date, e.start_date, e.end_date, ms.name as status, mt.name as type";
-        $extraJoin   = "                                                                                                                                                 
+        $extraJoin   = "
  INNER JOIN civicrm_membership_type mt ON e.membership_type_id = mt.id
  INNER JOIN civicrm_membership_status ms ON e.status_id = ms.id";
       }
@@ -656,7 +656,7 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
         foreach ($tokenFields as $field) {
           if ($field == 'location') {
             $loc = array();
-            $stateProvince = CRM_Core_PseudoConstant::stateProvince(); 
+            $stateProvince = CRM_Core_PseudoConstant::stateProvince();
             $loc['street_address'] = $dao->street_address;
             $loc['city'] = $dao->city;
             $loc['state_province'] = CRM_Utils_array::value($dao->state_province_id, $stateProvince);
