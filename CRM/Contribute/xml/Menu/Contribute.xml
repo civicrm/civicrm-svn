@@ -115,7 +115,7 @@
   </item>
   <item>
      <path>civicrm/admin/financial/financialAccount</path>
-     <title>Financial Account</title>
+     <title>Financial Accounts</title>
      <page_callback>CRM_Financial_Page_FinancialAccount</page_callback>
      <desc>Financial types are used to categorize contributions for reporting and accounting purposes. These are also referred to as Funds.</desc>
      <adminGroup>CiviContribute</adminGroup>
@@ -241,7 +241,7 @@
   </item>
  <item>
      <path>civicrm/admin/financial/financialType</path>
-     <title>Financial Type</title>
+     <title>Financial Types</title>
      <page_callback>CRM_Financial_Page_FinancialType</page_callback>
      <desc>Formerly civicrm_contribution_type merged into this table in 4.1</desc>
      <adminGroup>CiviContribute</adminGroup>
@@ -249,28 +249,28 @@
   </item>
  <item>
      <path>civicrm/admin/financial/financialType/accounts</path>
-     <title>Financial Type</title>
+     <title>Financial Type Accounts</title>
      <page_callback>CRM_Financial_Page_FinancialTypeAccount</page_callback>
      <adminGroup>CiviContribute</adminGroup>
      <weight>581</weight>
   </item>
  <item>
      <path>civicrm/admin/financial/financialType/accounts/add</path>
-     <title>Financial Type</title>
+     <title>Add Financial Type Account</title>
      <page_callback>CRM_Financial_Form_FinancialTypeAccount</page_callback>
      <adminGroup>CiviContribute</adminGroup>
      <weight>582</weight>
   </item>
   <item>
      <path>civicrm/admin/financial/financialType/accounts/update</path>
-     <title>Financial Type</title>
+     <title>Edit Financial Type Account</title>
      <page_callback>CRM_Financial_Form_FinancialTypeAccount</page_callback>
      <adminGroup>CiviContribute</adminGroup>
      <weight>583</weight>
   </item>
  <item>
      <path>civicrm/admin/financial/financialType/accounts/delete</path>
-     <title>Financial Type</title>
+     <title>Delete Financial Type Account</title>
      <page_callback>CRM_Financial_Form_FinancialTypeAccount</page_callback>
      <adminGroup>CiviContribute</adminGroup>
      <weight>584</weight>
