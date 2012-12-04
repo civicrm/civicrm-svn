@@ -825,8 +825,8 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
       );
 
       // api 3 returns pref_comm_method as an array, which breaks the lookup; so we reconstruct
-      $prefCommList = is_array($specialValues[$moniker]['preferred_communication_method']) ? 
-        implode(CRM_Core_DAO::VALUE_SEPARATOR, $specialValues[$moniker]['preferred_communication_method']) : 
+      $prefCommList = is_array($specialValues[$moniker]['preferred_communication_method']) ?
+        implode(CRM_Core_DAO::VALUE_SEPARATOR, $specialValues[$moniker]['preferred_communication_method']) :
         $specialValues[$moniker]['preferred_communication_method'];
       $specialValues[$moniker]['preferred_communication_method'] = CRM_Core_DAO::VALUE_SEPARATOR . $prefCommList . CRM_Core_DAO::VALUE_SEPARATOR;
 
@@ -1137,7 +1137,10 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
               $rows["move_custom_$fid"]['other'] = CRM_Core_BAO_CustomGroup::formatCustomValues($values,
                 $field, TRUE
               );
-              $value = $values['data'] ? $values['data'] : $value;
+              if ($values['data'] === 0 || $values['data'] === '0') {
+                $values['data'] = $qfZeroBug;
+              }
+              $value = ($values['data']) ? $values['data'] : $value;
             }
           }
           $rows["move_custom_$fid"]['title'] = $field['label'];
