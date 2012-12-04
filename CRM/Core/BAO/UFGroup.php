@@ -854,9 +854,20 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
           $params[$index] = $details->$name;
         }
         elseif ($name == 'contact_sub_type') {
-          $values[$index] = str_replace(CRM_Core_DAO::VALUE_SEPARATOR, ', ',
-            trim($details->$name, CRM_Core_DAO::VALUE_SEPARATOR)
-          );
+          $contactSubTypeNames = explode(CRM_Core_DAO::VALUE_SEPARATOR, $details->$name);
+          if (!empty($contactSubTypeNames)) {
+            $contactSubTypeLabels = array();
+            // get all contact subtypes
+            $allContactSubTypes = CRM_Contact_BAO_ContactType::subTypeInfo();
+            // build contact subtype labels array
+            foreach( $contactSubTypeNames as $cstName ) {
+              if ($cstName) {
+                $contactSubTypeLabels[] = $allContactSubTypes[$cstName]['label'];
+              }
+            }
+            $values[$index] = implode(',', $contactSubTypeLabels);
+          }
+
           $params[$index] = $details->$name;
         }
         else {
