@@ -44,73 +44,71 @@ require_once 'CRM/Core/BAO/Batch.php';
  */
 class CRM_Financial_Form_Task_Close extends CRM_Financial_Form_Task {
 
-    /**
-     * Are we operating in "single mode", i.e. deleting one
-     * specific contribution?
-     *
-     * @var boolean
-     */
-    protected $_single = false;
+  /**
+   * Are we operating in "single mode", i.e. deleting one
+   * specific contribution?
+   *
+   * @var boolean
+   */
+  protected $_single = false;
 
-    /**
-     * build all the data structures needed to build the form
-     *
-     * @return void
-     * @access public
-     */
-    function preProcess() {
-        //check for delete
-        if ( !CRM_Core_Permission::checkActionPermission( 'CiviContribute', CRM_Core_Action::UPDATE ) ) {
-            CRM_Core_Error::fatal( ts( 'You do not have permission to access this page' ) );  
-        }
-        parent::preProcess();
+  /**
+   * build all the data structures needed to build the form
+   *
+   * @return void
+   * @access public
+   */
+  function preProcess() {
+    //check for delete
+    if ( !CRM_Core_Permission::checkActionPermission( 'CiviContribute', CRM_Core_Action::UPDATE ) ) {
+      CRM_Core_Error::fatal( ts( 'You do not have permission to access this page' ) );  
     }
-
-    /**
-     * Build the form
-     *
-     * @access public
-     * @return void
-     */
-    function buildQuickForm() {
-        $this->addDefaultButtons(ts('Close Batch(s)'), 'done');
-        foreach ( $this->_financialBatchIds as $financialBatchId )
-            $batchNames[] = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Batch', $financialBatchId, 'name' );
-        $this->assign( 'batchNames', $batchNames );
-        $this->assign( 'batchCount', count( $this->_financialBatchIds ) );
+    parent::preProcess();
+  }
+  
+  /**
+   * Build the form
+   *
+   * @access public
+   * @return void
+   */
+  function buildQuickForm() {
+    $this->addDefaultButtons(ts('Close Batch(s)'), 'done');
+    foreach ( $this->_financialBatchIds as $financialBatchId )
+      $batchNames[] = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Batch', $financialBatchId, 'name' );
+    $this->assign( 'batchNames', $batchNames );
+    $this->assign( 'batchCount', count( $this->_financialBatchIds ) );
+  }
+  
+  /**
+   * process the form after the input has been submitted and validated
+   *
+   * @access public
+   * @return None
+   */
+  public function postProcess( ) {
+    $closedBatches = 0;
+    $batchStatus = CRM_Core_PseudoConstant::accountOptionValues( 'batch_status' );
+    
+    $params['modified_date'] = date('YmdHis');
+    $params['batch_status_id'] = CRM_Utils_Array::key( 'Closed', $batchStatus );
+    foreach ( $this->_financialBatchIds as $financialBatchId ) {
+      $ids = array( );
+      if ( $financialBatchId ) {
+        $ids['batchID'] = $financialBatchId;
+      }
+      if ( CRM_Core_BAO_Batch::create( $params, $ids ) ) {
+        $closedBatches++;
+      }
     }
-
-    /**
-     * process the form after the input has been submitted and validated
-     *
-     * @access public
-     * @return None
-     */
-    public function postProcess( ) 
-    {
-        $closedBatches = 0;
-        $batchStatus = CRM_Core_PseudoConstant::accountOptionValues( 'batch_status' );
-        
-        $params['modified_date'] = date('YmdHis');
-        $params['batch_status_id'] = CRM_Utils_Array::key( 'Closed', $batchStatus );
-        foreach ( $this->_financialBatchIds as $financialBatchId ) {
-            $ids = array( );
-            if( $financialBatchId ){
-                $ids['batchID'] = $financialBatchId;
-            }
-            if ( CRM_Core_BAO_Batch::create( $params, $ids ) ) {
-                $closedBatches++;
-            }
-        }
-
-        $status = array(
-                        ts('Closed Batch(s): %1', array(1 => $closedBatches)),
-                        ts('Total Selected Batch(s): %1', array(1 => count($this->_financialBatchIds))),
-                        );
-        CRM_Core_Session::setStatus($status);
-    }
-
-
+    
+    $status = array(
+      ts('Closed Batch(s): %1', array(1 => $closedBatches)),
+      ts('Total Selected Batch(s): %1', array(1 => count($this->_financialBatchIds))),
+     );
+    CRM_Core_Session::setStatus($status);
+  }
+  
 }
 
 

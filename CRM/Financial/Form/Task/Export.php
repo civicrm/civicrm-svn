@@ -44,58 +44,53 @@ require_once 'CRM/Core/BAO/Batch.php';
  */
 class CRM_Financial_Form_Task_Export extends CRM_Financial_Form_Task {
 
-    /**
-     * Are we operating in "single mode", i.e. deleting one
-     * specific contribution?
-     *
-     * @var boolean
-     */
-    protected $_single = false;
-
-    /**
-     * build all the data structures needed to build the form
-     *
-     * @return void
-     * @access public
-     */
-    function preProcess() {
-        //check for delete
-        if ( !CRM_Core_Permission::checkActionPermission( 'CiviContribute', CRM_Core_Action::UPDATE ) ) {
-            CRM_Core_Error::fatal( ts( 'You do not have permission to access this page' ) );  
-        }
-        parent::preProcess();
+  /**
+   * Are we operating in "single mode", i.e. deleting one
+   * specific contribution?
+   *
+   * @var boolean
+   */
+  protected $_single = false;
+  
+  /**
+   * build all the data structures needed to build the form
+   *
+   * @return void
+   * @access public
+   */
+  function preProcess() {
+    //check for delete
+    if ( !CRM_Core_Permission::checkActionPermission( 'CiviContribute', CRM_Core_Action::UPDATE ) ) {
+      CRM_Core_Error::fatal( ts( 'You do not have permission to access this page' ) );  
     }
-
-    /**
-     * Build the form
-     *
-     * @access public
-     * @return void
-     */
-    function buildQuickForm() {
-        
-        $this->addDefaultButtons(ts('Export Batch(s)'), 'done');
-        foreach ( $this->_financialBatchIds as $financialBatchId )
-            $batchNames[] = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Batch', $financialBatchId, 'name' );
-        $this->assign( 'batchNames', $batchNames );
-        $this->assign( 'batchCount', count( $this->_financialBatchIds ) );
-    }
-
-    /**
-     * process the form after the input has been submitted and validated
-     *
-     * @access public
-     * @return None
-     */
-    public function postProcess( ) 
-    {
-        $ids =array();
-        CRM_Core_BAO_Batch::exportBatch( $this->_financialBatchIds, $ids );
-        
-
-    }
-
-
+    parent::preProcess();
+  }
+  
+  /**
+   * Build the form
+   *
+   * @access public
+   * @return void
+   */
+  function buildQuickForm() {
+    $this->addDefaultButtons(ts('Export Batch(s)'), 'done');
+    foreach ( $this->_financialBatchIds as $financialBatchId )
+      $batchNames[] = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Batch', $financialBatchId, 'name' );
+    $this->assign( 'batchNames', $batchNames );
+    $this->assign( 'batchCount', count( $this->_financialBatchIds ) );
+  }
+  
+  /**
+   * process the form after the input has been submitted and validated
+   *
+   * @access public
+   * @return None
+   */
+  public function postProcess( ) {
+    $ids =array();
+    CRM_Core_BAO_Batch::exportBatch( $this->_financialBatchIds, $ids );
+  }
+  
 }
 
 
