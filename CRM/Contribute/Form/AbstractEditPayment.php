@@ -387,6 +387,21 @@ LEFT JOIN  civicrm_contribution on (civicrm_contribution.contact_id = civicrm_co
     $this->assign_by_ref('paymentProcessor', $paymentProcessor);
     $this->assign('hidePayPalExpress', TRUE);
   }
+  public function getFinancialAccounts($financialTypeId) {
+    $financialAccounts = array();
+    CRM_Core_PseudoConstant::populate($financialAccounts,
+      'CRM_Financial_DAO_EntityFinancialAccount',
+      $all = TRUE,
+      $retrieve = 'financial_account_id',
+      $filter = NULL,
+      " entity_id = {$financialTypeId} ", NULL, 'account_relationship');
+    return $financialAccounts;
+  }
+
+  public function getFinancialAccount($financialTypeId, $relationTypeId) {
+    $financialAccounts = $this->getFinancialAccounts($financialTypeId);
+    return CRM_Utils_Array::value($relationTypeId, $financialAccounts);
+  }
 
   public function unsetCreditCardFields($submittedValues) {
     //Offline Contribution.

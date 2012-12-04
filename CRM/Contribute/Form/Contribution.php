@@ -38,6 +38,7 @@
  *
  */
 class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditPayment {
+  const FA_ASSET_ACCOUNT_RELATION = 6;
 
   /**
    * Function to set variables up before form is built
@@ -1138,17 +1139,8 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
 
       $params['contact_id'] = $this->_contactID;
 
-      $financialAccounts = array();
-      CRM_Core_PseudoConstant::populate($financialAccounts,
-        'CRM_Financial_DAO_EntityFinancialAccount',
-        $all = TRUE,
-        $retrieve = 'financial_account_id',
-        $filter = NULL,
-        " entity_id = {$formValues['financial_type_id']} ", NULL, 'account_relationship');
-
-
       $assetRelation = key(CRM_CORE_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Asset Account of' "));
-      $params['to_financial_account_id'] = CRM_Utils_Array::value($assetRelation, $financialAccounts);
+      $params['to_financial_account_id'] = $this->getFinancialAccount($formValues['financial_type_id'], $assetRelation);
 
       // get current currency from DB or use default currency
       $currentCurrency = CRM_Utils_Array::value('currency',
@@ -1276,8 +1268,8 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
 
         if ($this->_action & CRM_Core_Action::ADD && CRM_Utils_Array::value('fee_amount', $trxnParams)) {
           $ExpenceRelation = key(CRM_CORE_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Expense Account is' ", FALSE));
-          $trxnParams['from_financial_account_id'] = $financialAccounts[6]; // FA with Asset account relationship
-          $trxnParams['to_financial_account_id'] = CRM_Utils_Array::value($ExpenceRelation, $financialAccounts);
+          $trxnParams['from_financial_account_id'] = $this->getFinancialAccount($formValues['financial_type_id'], self::FA_ASSET_ACCOUNT_RELATION);
+          $trxnParams['to_financial_account_id'] = $this->getFinancialAccount($formValues['financial_type_id'], $ExpenceRelation);
           $trxnEntityTable['entity_table'] = 'civicrm_financial_trxn';
           $trxnEntityTable['entity_id'] = $trxn->id;
           $total_amount = 0;
@@ -1297,8 +1289,8 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
         }
         if ($this->_action & CRM_Core_Action::UPDATE) {
           $ExpenceRelation = key(CRM_CORE_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Expense Account is' ", FALSE));
-          $trxnParams['from_financial_account_id'] = $financialAccounts[6]; // FA with Asset account relationship
-          $trxnParams['to_financial_account_id'] = CRM_Utils_Array::value($ExpenceRelation, $financialAccounts);
+          $trxnParams['from_financial_account_id'] = $this->getFinancialAccount($formValues['financial_type_id'],self::FA_ASSET_ACCOUNT_RELATION);
+          $trxnParams['to_financial_account_id'] = $this->getFinancialAccount($formValues['financial_type_id'], $ExpenceRelation);
           $entityParams = array(
             'entity_table' => 'civicrm_contribution',
             'entity_id' => $this->_values['contribution_id']

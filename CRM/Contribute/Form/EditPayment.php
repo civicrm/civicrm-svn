@@ -1175,15 +1175,8 @@ class CRM_Contribute_Form_EditPayment extends CRM_Contribute_Form_AbstractEditPa
 
       $params['contact_id'] = $this->_contactID;
 
-      $financialAccounts = array();
-      CRM_Core_PseudoConstant::populate($financialAccounts,
-        'CRM_Financial_DAO_EntityFinancialAccount',
-        $all = TRUE,
-        $retrieve = 'financial_account_id',
-        $filter = NULL,
-        " entity_id = {$formValues['financial_type_id']} ", NULL, 'account_relationship');
       $assetRelation = key(CRM_CORE_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Asset Account of' "));
-      $params['to_financial_account_id'] = CRM_Utils_Array::value($assetRelation, $financialAccounts);
+      $params['to_financial_account_id'] = $this->getFinancialAccount($formValues['financial_type_id'], $assetRelation);
 
       // get current currency from DB or use default currency
       $currentCurrency = CRM_Utils_Array::value('currency',
