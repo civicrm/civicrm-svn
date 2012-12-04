@@ -100,38 +100,8 @@ class CRM_Contribute_Form_EditPayment extends CRM_Contribute_Form_AbstractEditPa
     //ensure that processor has a valid config
     //only valid processors get display to user
     if ($this->_mode) {
-      $validProcessors = array();
-      $processors = CRM_Core_PseudoConstant::paymentProcessor(FALSE, FALSE, "billing_mode IN ( 1, 3 )");
-
-      foreach ($processors as $ppID => $label) {
-        $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment($ppID, $this->_mode);
-        // at this stage only Authorize.net has been tested to support future start dates so if it's enabled let the template know
-        // to show receive date
-        $processorsSupportingFutureStartDate = array('AuthNet');
-        if (in_array($paymentProcessor['payment_processor_type'], $processorsSupportingFutureStartDate)) {
-          $this->assign('processorSupportsFutureStartDate', TRUE);
-        }
-        if ($paymentProcessor['payment_processor_type'] == 'PayPal' && !$paymentProcessor['user_name']) {
-          continue;
-        }
-        elseif ($paymentProcessor['payment_processor_type'] == 'Dummy' && $this->_mode == 'live') {
-          continue;
-        }
-        else {
-          $paymentObject = CRM_Core_Payment::singleton($this->_mode, $paymentProcessor, $this);
-          $error = $paymentObject->checkConfig();
-          if (empty($error)) {
-            $validProcessors[$ppID] = $label;
-          }
-          $paymentObject = NULL;
-        }
-      }
-      if (empty($validProcessors)) {
-        CRM_Core_Error::fatal(ts('You will need to configure the %1 settings for your Payment Processor before you can submit credit card transactions.', array(1 => $this->_mode)));
-      }
-      else {
-        $this->_processors = $validProcessors;
-      }
+      $paymentProcessor = $this->getValidProcessors();
+      $this->_processors = $paymentProcessor;
 
       //get the valid recurring processors.
       $recurring = CRM_Core_PseudoConstant::paymentProcessor(FALSE, FALSE, 'is_recur = 1');
