@@ -45,8 +45,7 @@ class CRM_Event_Form_EventFees {
    * @return void
    * @access public
    */
-  static
-  function preProcess(&$form) {
+  static function preProcess(&$form) {
     //as when call come from register.php
     if (!$form->_eventId) {
       $form->_eventId = CRM_Utils_Request::retrieve('eventId', 'Positive', $form);
@@ -74,17 +73,16 @@ class CRM_Event_Form_EventFees {
    *
    * @return None
    */
-  static
-  function setDefaultValues(&$form) {
+  static function setDefaultValues(&$form) {
     $defaults = array();
 
     if ($form->_eventId) {
-            //get receipt text and financial type
-            $returnProperities = array( 'confirm_email_text', 'financial_type_id', 'campaign_id' );
+      //get receipt text and financial type
+      $returnProperities = array( 'confirm_email_text', 'financial_type_id', 'campaign_id' );
       $details = array();
       CRM_Core_DAO::commonRetrieveAll('CRM_Event_DAO_Event', 'id', $form->_eventId, $details, $returnProperities);
-            if ( CRM_Utils_Array::value( 'financial_type_id', $details[$form->_eventId] ) ) {
-                $defaults[$form->_pId]['financial_type_id'] = $details[$form->_eventId]['financial_type_id'];
+      if ( CRM_Utils_Array::value( 'financial_type_id', $details[$form->_eventId] ) ) {
+        $defaults[$form->_pId]['financial_type_id'] = $details[$form->_eventId]['financial_type_id'];
       }
     }
 
@@ -343,8 +341,7 @@ class CRM_Event_Form_EventFees {
    *
    * @return None
    */
-  static
-  function setDefaultPriceSet($participantID, $eventID = NULL) {
+  static function setDefaultPriceSet($participantID, $eventID = NULL) {
     $defaults = array();
     if (!$eventID && $participantID) {
       $eventID = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_Participant', $participantID, 'event_id');
@@ -427,8 +424,7 @@ SELECT  id, html_type
    * @return None
    * @access public
    */
-  static
-  function buildQuickForm(&$form) {
+  static function buildQuickForm(&$form) {
     if ($form->_eventId) {
       $form->_isPaidEvent = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_Event', $form->_eventId, 'is_monetary');
       if ($form->_isPaidEvent) {

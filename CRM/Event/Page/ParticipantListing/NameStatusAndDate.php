@@ -40,7 +40,9 @@ class CRM_Event_Page_ParticipantListing_NameStatusAndDate extends CRM_Core_Page 
 
   protected $_eventTitle;
 
-  protected $_pager; function preProcess() {
+  protected $_pager;
+  
+  function preProcess() {
     $this->_id = CRM_Utils_Request::retrieve('id', 'Integer', $this, TRUE);
 
     // ensure that there is a particpant type for this

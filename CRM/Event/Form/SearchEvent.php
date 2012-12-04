@@ -33,6 +33,7 @@
  *
  */
 class CRM_Event_Form_SearchEvent extends CRM_Core_Form {
+
   function setDefaultValues() {
     $defaults = array();
     $defaults['eventsByDates'] = 0;

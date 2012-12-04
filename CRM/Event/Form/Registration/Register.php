@@ -1208,15 +1208,15 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
   //end of function
 
   /*
-     *Function to process Registration of free event
-     *
-     *@param  array $param Form valuess
-     *@param  int contactID
-     *
-     *@return None
-     *access public
-     *
-     */
+   *Function to process Registration of free event
+   *
+   *@param  array $param Form valuess
+   *@param  int contactID
+   *
+   *@return None
+   *access public
+   *
+   */
   public function processRegistration($params, $contactID = NULL) {
     $session = CRM_Core_Session::singleton();
     $this->_participantInfo = array();
