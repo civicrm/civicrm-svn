@@ -37,7 +37,9 @@
  * This class generates form components for processing a contribution
  *
  */
-class CRM_Contribute_Form_AbstractEditPayment extends CRM_Core_Form {  /**
+class CRM_Contribute_Form_AbstractEditPayment extends CRM_Core_Form {
+  
+  /**
    * This function process contribution related objects.
    */
   protected function updateRelatedComponent($contributionId, $statusId, $previousStatusId = NULL) {
