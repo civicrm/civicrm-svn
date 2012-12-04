@@ -93,19 +93,19 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact {
         $params['contact_sub_type'] = 'null';
       }
       else {
-      if (!CRM_Contact_BAO_ContactType::isExtendsContactType($params['contact_sub_type'],
+        if (!CRM_Contact_BAO_ContactType::isExtendsContactType($params['contact_sub_type'],
           $params['contact_type'], TRUE
         )) {
-        // we'll need to fix tests to handle this
-        // CRM-7925
-        CRM_Core_Error::fatal(ts('The Contact Sub Type does not match the Contact type for this record'));
-      }
-      if (is_array($params['contact_sub_type'])) {
-        $params['contact_sub_type'] = CRM_Core_DAO::VALUE_SEPARATOR . implode(CRM_Core_DAO::VALUE_SEPARATOR, $params['contact_sub_type']) . CRM_Core_DAO::VALUE_SEPARATOR;
-      }
-      else {
-        $params['contact_sub_type'] = CRM_Core_DAO::VALUE_SEPARATOR . trim($params['contact_sub_type'], CRM_Core_DAO::VALUE_SEPARATOR) . CRM_Core_DAO::VALUE_SEPARATOR;
-      }
+          // we'll need to fix tests to handle this
+          // CRM-7925
+          CRM_Core_Error::fatal(ts('The Contact Sub Type does not match the Contact type for this record'));
+        }
+        if (is_array($params['contact_sub_type'])) {
+          $params['contact_sub_type'] = CRM_Core_DAO::VALUE_SEPARATOR . implode(CRM_Core_DAO::VALUE_SEPARATOR, $params['contact_sub_type']) . CRM_Core_DAO::VALUE_SEPARATOR;
+        }
+        else {
+          $params['contact_sub_type'] = CRM_Core_DAO::VALUE_SEPARATOR . trim($params['contact_sub_type'], CRM_Core_DAO::VALUE_SEPARATOR) . CRM_Core_DAO::VALUE_SEPARATOR;
+        }
       }
     }
     else {
