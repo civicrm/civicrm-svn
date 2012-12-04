@@ -116,21 +116,13 @@ class CRM_Contribute_Form_EditPayment extends CRM_Contribute_Form_AbstractEditPa
     $this->assign('hidePayPalExpress', TRUE);
 
     if ($this->_contactID) {
-      list($this->userDisplayName,
-        $this->userEmail
-        ) = CRM_Contact_BAO_Contact_Location::getEmailDetails($this->_contactID);
+      list($this->userDisplayName, $this->userEmail) = CRM_Contact_BAO_Contact_Location::getEmailDetails($this->_contactID);
       $this->assign('displayName', $this->userDisplayName);
     }
 
     // also check for billing information
     // get the billing location type
-    $locationTypes = CRM_Core_PseudoConstant::locationType();
-    $this->_bltID = array_search('Billing', $locationTypes);
-    if (!$this->_bltID) {
-      CRM_Core_Error::fatal(ts('Please set a location type of %1', array(1 => 'Billing')));
-    }
-    $this->set('bltID', $this->_bltID);
-    $this->assign('bltID', $this->_bltID);
+    $this->assignBillingType();
 
     $this->_fields = array();
 

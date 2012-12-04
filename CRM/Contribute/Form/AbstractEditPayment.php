@@ -281,4 +281,19 @@ LEFT JOIN  civicrm_contribution on (civicrm_contribution.contact_id = civicrm_co
     }
   }
 
+  /**
+   * Assign billing type id to bltID
+   *
+   * @return void
+   */
+  public function assignBillingType() {
+    $locationTypes = CRM_Core_PseudoConstant::locationType();
+    $this->_bltID = array_search('Billing', $locationTypes);
+    if (!$this->_bltID) {
+      CRM_Core_Error::fatal(ts('Please set a location type of %1', array(1 => 'Billing')));
+    }
+    $this->set('bltID', $this->_bltID);
+    $this->assign('bltID', $this->_bltID);
+  }
+
 }
