@@ -941,12 +941,12 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
     if ($onlySameParentOrg && $memType) {
       // see if there is a membership that has same parent as $memType but different parent than $membershipID
 
-            if ( $dao->id && CRM_Core_Permission::check( 'edit memberships' ) ) {
-                // CRM-10016, This is probably a backend renewal, and make sure we return the same membership thats being renewed.
-                $dao->whereAdd ( );
-            } else {
-      unset($dao->id);
-            }
+      if ( $dao->id && CRM_Core_Permission::check( 'edit memberships' ) ) {
+        // CRM-10016, This is probably a backend renewal, and make sure we return the same membership thats being renewed.
+        $dao->whereAdd ( );
+      } else {
+        unset($dao->id);
+      }
 
       unset($dao->membership_type_id);
       if ($dao->find(TRUE)) {
@@ -2353,19 +2353,18 @@ INNER JOIN  civicrm_contact contact ON ( contact.id = membership.contact_id AND 
     return NULL;
   }
 
-  /*
-     * The function checks and updates the status of all membership records for a given domain using the
-     * calc_membership_status and update_contact_membership APIs.
-     *
-     * IMPORTANT:
-     * It uses the default Domain FROM Name and FROM Email Address as the From email address for emails sent by this api.
-     * Verify that this value has been properly set from Administer > Configure > Domain Information
-     * If you want to use some other FROM email address, modify line 125 and set your valid email address.
-     *
-     * @return void
-     * @access public
-     */
-
+  /**
+   * The function checks and updates the status of all membership records for a given domain using the
+   * calc_membership_status and update_contact_membership APIs.
+   *
+   * IMPORTANT:
+   * It uses the default Domain FROM Name and FROM Email Address as the From email address for emails sent by this api.
+   * Verify that this value has been properly set from Administer > Configure > Domain Information
+   * If you want to use some other FROM email address, modify line 125 and set your valid email address.
+   *
+   * @return array $result
+   * @access public
+   */
   static function updateAllMembershipStatus() {
     require_once 'api/api.php';
 
@@ -2781,9 +2780,9 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
       $qf->_priceSet = $priceSets = current(CRM_Price_BAO_Set::getSetDetail($priceSetId));
     }
     $editedFieldParams = array(
-                               'price_set_id' => $priceSetId,
-                               'name' => $membershipType[0],
-                               );
+      'price_set_id' => $priceSetId,
+      'name' => $membershipType[0],
+    );
     $editedResults = array();
     CRM_Price_BAO_Field::retrieve($editedFieldParams, $editedResults);
 
@@ -2793,9 +2792,9 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
       unset($qf->_priceSet['fields'][$editedResults['id']]['options']);
       $fid = $editedResults['id'];
       $editedFieldParams = array(
-                                 'price_field_id' => $editedResults['id'],
-                                 'membership_type_id' => $membershipType[1],
-                                 );
+        'price_field_id' => $editedResults['id'],
+        'membership_type_id' => $membershipType[1],
+      );
       $editedResults = array();
       CRM_Price_BAO_FieldValue::retrieve($editedFieldParams, $editedResults);
       $qf->_priceSet['fields'][$fid]['options'][$editedResults['id']] = $priceSets['fields'][$fid]['options'][$editedResults['id']];
