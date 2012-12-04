@@ -703,3 +703,7 @@ ALTER TABLE `civicrm_event`
     ADD `initial_amount_label` text COLLATE utf8_unicode_ci COMMENT 'Initial amount label for partial payment',
     ADD `initial_amount_help_text` text COLLATE utf8_unicode_ci COMMENT 'Initial amount help text for partial payment';
 {/if}
+
+-- CRM-11347
+UPDATE `civicrm_option_value` SET is_reserved = 0
+WHERE name = 'Urgent' AND option_group_id = (SELECT id FROM `civicrm_option_group` WHERE name = 'case_status');
