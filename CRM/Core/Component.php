@@ -37,7 +37,7 @@
 class CRM_Core_Component {
 
   /*
-     * End part (filename) of the component information class'es name 
+     * End part (filename) of the component information class'es name
      * that needs to be present in components main directory.
      */
   CONST COMPONENT_INFO_CLASS = 'Info';
@@ -357,6 +357,11 @@ class CRM_Core_Component {
     if (is_dir($crmFolderDir)) {
       $dir = opendir($crmFolderDir);
       while ($subDir = readdir($dir)) {
+        // skip the extensions diretory since it has an Info.php file also
+        if ($subDir == 'Extension') {
+          continue;
+        }
+
         $infoFile = $crmFolderDir . "/{$subDir}/" . self::COMPONENT_INFO_CLASS . '.php';
         if (file_exists($infoFile)) {
           $infoClass = 'CRM_' . $subDir . '_' . self::COMPONENT_INFO_CLASS;
