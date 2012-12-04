@@ -474,7 +474,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         array(
           'class' => 'form-submit',
           'id' => 'Go',
-          'onclick' => "return checkPerformAction('mark_x', '" . $this->getName() . "', 0, 1);",
+          'onclick' => "return checkPerformAction('mark_x', '" . $this->getName() . "', 0, " . (int) empty($this->_customSearchClass) . ");",
         )
       );
     }
