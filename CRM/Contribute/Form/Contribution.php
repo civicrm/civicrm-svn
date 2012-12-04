@@ -224,72 +224,8 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
 
     // current contribution id
     if ($this->_id) {
-      //to get Premium id
-      $sql = "
-SELECT *
-FROM   civicrm_contribution_product
-WHERE  contribution_id = {$this->_id}
-";
-      $dao = CRM_Core_DAO::executeQuery($sql,
-        CRM_Core_DAO::$_nullArray
-      );
-      if ($dao->fetch()) {
-        $this->_premiumID = $dao->id;
-        $this->_productDAO = $dao;
-      }
-      $dao->free();
-
-      $ids = array();
-      $params = array('id' => $this->_id);
-      CRM_Contribute_BAO_Contribution::getValues($params, $this->_values, $ids);
-
-      //do check for online / recurring contributions
-      $fids = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnIds($this->_id, 'civicrm_contribution');
-      $this->_online = CRM_Utils_Array::value('entityFinancialTrxnId', $fids);
-      //don't allow to update all fields for recuring contribution.
-      if (!$this->_online) {
-        $this->_online = CRM_Utils_Array::value('contribution_recur_id', $this->_values);
-      }
-      $this->assign('isOnline', $this->_online ? TRUE : FALSE);
-
-      //unset the honor type id:when delete the honor_contact_id
-      //and edit the contribution, honoree infomation pane open
-      //since honor_type_id is present
-      if (!CRM_Utils_Array::value('honor_contact_id', $this->_values)) {
-        unset($this->_values['honor_type_id']);
-      }
-      //to get note id
-      $daoNote = new CRM_Core_BAO_Note();
-      $daoNote->entity_table = 'civicrm_contribution';
-      $daoNote->entity_id = $this->_id;
-      if ($daoNote->find(TRUE)) {
-        $this->_noteID = $daoNote->id;
-        $this->_values['note'] = $daoNote->note;
-      }
-      $this->_contributionType = $this->_values['financial_type_id'];
-
-      $csParams = array('contribution_id' => $this->_id);
-      $softCredit = CRM_Contribute_BAO_Contribution::getSoftContribution($csParams, TRUE);
-
-      if (CRM_Utils_Array::value('soft_credit_to', $softCredit)) {
-        $softCredit['sort_name'] = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact',
-          $softCredit['soft_credit_to'], 'sort_name'
-        );
-      }
-      $this->_values['soft_credit_to'] = CRM_Utils_Array::value('sort_name', $softCredit);
-      $this->_values['softID'] = CRM_Utils_Array::value('soft_credit_id', $softCredit);
-      $this->_values['soft_contact_id'] = CRM_Utils_Array::value('soft_credit_to', $softCredit);
-
-      if (CRM_Utils_Array::value('pcp_id', $softCredit)) {
-        $pcpId = CRM_Utils_Array::value('pcp_id', $softCredit);
-        $pcpTitle = CRM_Core_DAO::getFieldValue('CRM_PCP_DAO_PCP', $pcpId, 'title');
-        $contributionPageTitle = CRM_PCP_BAO_PCP::getPcpPageTitle($pcpId, 'contribute');
-        $this->_values['pcp_made_through'] = CRM_Utils_Array::value('sort_name', $softCredit) . " :: " . $pcpTitle . " :: " . $contributionPageTitle;
-        $this->_values['pcp_made_through_id'] = CRM_Utils_Array::value('pcp_id', $softCredit);
-        $this->_values['pcp_display_in_roll'] = CRM_Utils_Array::value('pcp_display_in_roll', $softCredit);
-        $this->_values['pcp_roll_nickname'] = CRM_Utils_Array::value('pcp_roll_nickname', $softCredit);
-        $this->_values['pcp_personal_note'] = CRM_Utils_Array::value('pcp_personal_note', $softCredit);
-      }
+      $this->assignPremiumProduct();
+      $this->buildValues();
     }
 
     // when custom data is included in this page
@@ -316,6 +252,7 @@ WHERE  contribution_id = {$this->_id}
     }
     $this->assign('lineItem', empty($this->_lineItems) ? FALSE : $this->_lineItems);
   }
+
 
   function setDefaultValues() {
     if ($this->_cdType) {
