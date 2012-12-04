@@ -99,23 +99,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
     $this->assign('showCheckNumber', TRUE);
 
     $this->_fromEmails = CRM_Core_BAO_Email::getFromEmail();
-
-    //ensure that processor has a valid config
-    //only valid processors get display to user
-    if ($this->_mode) {
-      list($this->_processors, $paymentProcessor) = $this->getValidProcessorsAndAssignFutureStartDate();
-
-      //get the valid recurring processors.
-      $recurring = CRM_Core_PseudoConstant::paymentProcessor(FALSE, FALSE, 'is_recur = 1');
-      $this->_recurPaymentProcessors = array_intersect_assoc($this->_processors, $recurring);
-    }
-    $this->assign('recurringPaymentProcessorIds',
-      empty($this->_recurPaymentProcessors) ? '' : implode(',', array_keys($this->_recurPaymentProcessors))
-    );
-
-    // this required to show billing block
-    $this->assign_by_ref('paymentProcessor', $paymentProcessor);
-    $this->assign('hidePayPalExpress', TRUE);
+    $this->assignProcessors();
 
     if ($this->_contactID) {
       list($this->userDisplayName, $this->userEmail) = CRM_Contact_BAO_Contact_Location::getEmailDetails($this->_contactID);
@@ -252,7 +236,6 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
     }
     $this->assign('lineItem', empty($this->_lineItems) ? FALSE : $this->_lineItems);
   }
-
 
   function setDefaultValues() {
     if ($this->_cdType) {

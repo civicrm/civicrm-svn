@@ -366,4 +366,26 @@ LEFT JOIN  civicrm_contribution on (civicrm_contribution.contact_id = civicrm_co
     $this->assign('bltID', $this->_bltID);
   }
 
+  /**
+   * Assign $this->processors, $this->recurPaymentProcessors, and related Smarty variables
+   */
+  public function assignProcessors() {
+    //ensure that processor has a valid config
+    //only valid processors get display to user
+    if ($this->_mode) {
+      list($this->_processors, $paymentProcessor) = $this->getValidProcessorsAndAssignFutureStartDate();
+
+      //get the valid recurring processors.
+      $recurring = CRM_Core_PseudoConstant::paymentProcessor(FALSE, FALSE, 'is_recur = 1');
+      $this->_recurPaymentProcessors = array_intersect_assoc($this->_processors, $recurring);
+    }
+    $this->assign('recurringPaymentProcessorIds',
+      empty($this->_recurPaymentProcessors) ? '' : implode(',', array_keys($this->_recurPaymentProcessors))
+    );
+
+    // this required to show billing block
+    $this->assign_by_ref('paymentProcessor', $paymentProcessor);
+    $this->assign('hidePayPalExpress', TRUE);
+  }
+
 }
