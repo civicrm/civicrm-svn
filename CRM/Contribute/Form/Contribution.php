@@ -1141,18 +1141,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
 
       $assetRelation = key(CRM_CORE_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Asset Account of' "));
       $params['to_financial_account_id'] = $this->getFinancialAccount($formValues['financial_type_id'], $assetRelation);
-
-      // get current currency from DB or use default currency
-      $currentCurrency = CRM_Utils_Array::value('currency',
-        $this->_values,
-        $config->defaultCurrency
-      );
-
-      // use submitted currency if present else use current currency
-      $params['currency'] = CRM_Utils_Array::value('currency',
-        $submittedValues,
-        $currentCurrency
-      );
+      $params['currency'] = $this->getCurrency($submittedValues);
 
       $fields = array(
         'financial_type_id',

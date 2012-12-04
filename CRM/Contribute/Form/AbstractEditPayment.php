@@ -387,6 +387,23 @@ LEFT JOIN  civicrm_contribution on (civicrm_contribution.contact_id = civicrm_co
     $this->assign_by_ref('paymentProcessor', $paymentProcessor);
     $this->assign('hidePayPalExpress', TRUE);
   }
+
+  public function getCurrency($submittedValues) { // get current currency from DB or use default currency
+    $config = CRM_Core_Config::singleton();
+
+    $currentCurrency = CRM_Utils_Array::value('currency',
+      $this->_values,
+      $config->defaultCurrency
+    );
+
+    // use submitted currency if present else use current currency
+    $result = CRM_Utils_Array::value('currency',
+      $submittedValues,
+      $currentCurrency
+    );
+    return $result;
+  }
+
   public function getFinancialAccounts($financialTypeId) {
     $financialAccounts = array();
     CRM_Core_PseudoConstant::populate($financialAccounts,
