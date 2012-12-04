@@ -1448,9 +1448,29 @@ INNER JOIN  civicrm_membership membership2 ON membership1.membership_type_id = m
       }
 
       // move the other contact's file to main contact
-      $sql = "UPDATE {$tableName} SET {$columnName} = {$fileIds[$otherId]} WHERE entity_id = {$mainId}";
+      //NYSS need to INSERT or UPDATE depending on whether main contact has an existing record
+      if ( CRM_Core_DAO::singleValueQuery("SELECT id FROM {$tableName} WHERE entity_id = {$mainId}") ) {
+        $sql = "UPDATE {$tableName} SET {$columnName} = {$fileIds[$otherId]} WHERE entity_id = {$mainId}";
+      }
+      else {
+        $sql = "INSERT INTO {$tableName} ( entity_id, {$columnName} ) VALUES ( {$mainId}, {$fileIds[$otherId]} )";
+      }
       CRM_Core_DAO::executeQuery($sql, CRM_Core_DAO::$_nullArray);
-      $sql = "UPDATE civicrm_entity_file SET entity_id = {$mainId} WHERE entity_table = '{$tableName}' AND file_id = {$fileIds[$otherId]}";
+
+      if ( CRM_Core_DAO::singleValueQuery("
+        SELECT id
+        FROM civicrm_entity_file
+        WHERE entity_table = '{$tableName}' AND file_id = {$fileIds[$otherId]}") ) {
+        $sql = "
+          UPDATE civicrm_entity_file
+          SET entity_id = {$mainId}
+          WHERE entity_table = '{$tableName}' AND file_id = {$fileIds[$otherId]}";
+      }
+      else {
+        $sql = "
+          INSERT INTO civicrm_entity_file ( entity_table, entity_id, file_id )
+          VALUES ( '{$tableName}', {$mainId}, {$fileIds[$otherId]} )";
+      }
       CRM_Core_DAO::executeQuery($sql, CRM_Core_DAO::$_nullArray);
     }
 
