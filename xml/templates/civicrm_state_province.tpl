@@ -3491,7 +3491,7 @@ INSERT INTO civicrm_state_province (id, country_id, abbreviation, name) VALUES
 (5010, 1230, "SU", "Surxondaryo"),
 (5011, 1230, "TO", "Toshkent"),
 (5012, 1230, "XO", "Xorazm"),
-(5013, 1232, "A", "Diatrito Federal"),
+(5013, 1232, "A", "Distrito Federal"),
 (5014, 1232, "B", "Anzoategui"),
 (5015, 1232, "C", "Apure"),
 (5016, 1232, "D", "Aragua"),

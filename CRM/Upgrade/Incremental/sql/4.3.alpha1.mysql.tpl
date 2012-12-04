@@ -707,3 +707,6 @@ ALTER TABLE `civicrm_event`
 -- CRM-11347
 UPDATE `civicrm_option_value` SET is_reserved = 0
 WHERE name = 'Urgent' AND option_group_id = (SELECT id FROM `civicrm_option_group` WHERE name = 'case_status');
+
+-- CRM-11400
+UPDATE `civicrm_state_province` SET name = 'Distrito Federal' WHERE name = 'Diatrito Federal';
