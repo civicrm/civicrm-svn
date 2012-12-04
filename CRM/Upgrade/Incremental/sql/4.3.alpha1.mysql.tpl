@@ -689,8 +689,8 @@ FROM `civicrm_dashboard_contact` WHERE 1 GROUP BY contact_id;
 
 -- CRM-11387
 ALTER TABLE `civicrm_event`
-  ADD `is_partial_payment` tinyint(4) DEFAULT '0' COMMENT 'is partial payment enabled for this event' AFTER pay_later_receipt,
-  ADD `min_initial_amount` decimal(20,2) DEFAULT NULL COMMENT 'Minimum initial amount for partial payment' AFTER is_partial_payment;
+  ADD `is_partial_payment` tinyint(4) DEFAULT '0' COMMENT 'is partial payment enabled for this event',
+  ADD `min_initial_amount` decimal(20,2) DEFAULT NULL COMMENT 'Minimum initial amount for partial payment';
 
 {if $multilingual}
   {foreach from=$locales item=loc}
@@ -700,6 +700,6 @@ ALTER TABLE `civicrm_event`
   {/foreach}
 {else}
   ALTER TABLE `civicrm_event`
-    ADD `initial_amount_label` text COLLATE utf8_unicode_ci COMMENT 'Initial amount label for partial payment' AFTER min_initial_amount,
-    ADD `initial_amount_help_text` text COLLATE utf8_unicode_ci COMMENT 'Initial amount help text for partial payment' AFTER initial_amount_label;
+    ADD `initial_amount_label` text COLLATE utf8_unicode_ci COMMENT 'Initial amount label for partial payment',
+    ADD `initial_amount_help_text` text COLLATE utf8_unicode_ci COMMENT 'Initial amount help text for partial payment';
 {/if}

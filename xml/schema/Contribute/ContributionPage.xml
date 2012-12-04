@@ -129,27 +129,25 @@
       <comment>The receipt sent to the user instead of the normal receipt text</comment>   
       <add>2.0</add>   
   </field>
-
   <field>   
       <name>initial_amount_label</name>   
       <type>text</type>                   
       <localizable>true</localizable>
       <comment>Initial amount label for partial payment</comment>   
-      <add>4.2</add>   
+      <add>4.3</add>   
   </field>
   <field>   
       <name>initial_amount_help_text</name>   
       <type>text</type>                   
       <localizable>true</localizable>
       <comment>Initial amount help text for partial payment</comment>   
-      <add>4.2</add>   
+      <add>4.3</add>   
   </field>
   <field>  
       <name>min_initial_amount</name> 
       <type>decimal</type>                    
-      <localizable>true</localizable>
       <comment>Minimum initial amount for partial payment</comment>   
-      <add>4.2</add>   
+      <add>4.3</add>   
   </field>
   <field>   
       <name>is_allow_other_amount</name>   
