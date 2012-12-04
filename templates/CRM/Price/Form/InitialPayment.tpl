@@ -39,18 +39,18 @@
 		<p><span class="description">{ts}{$initialAmountHelpText}{/ts}</span></p>
 	    	</td></tr>
 		</table>
-           {if $context}
+    {if $context}
  	   <table id = 'option_item'>
-               <tr id="adjust-option-items" class="crm-contribution-form-block-option_type">
-               <td>{$form.option_items.html}</td> 
-    	       </tr> 
-	        </table>
-           {/if}
+       <tr id="adjust-option-items" class="crm-contribution-form-block-option_type">
+         <td>{$form.option_items.html}</td> 
+       </tr> 
+	    </table>
+    {/if}
 	     
-	 {if $context}
-	<div id='dynamic_elements'> </div>
-        <div id='unlocateAmount'>  </div>
-         {/if}
+    {if $context}
+	    <div id='dynamic_elements'> </div>
+      <div id='unallocatedAmount'>  </div>
+    {/if}
 </div>
 </div>
 </div>
@@ -78,7 +78,7 @@
 	</tr>
      {/foreach}
 	</table>
-<div id='unlocateAmount'>  </div>
+<div id='unallocatedAmount'>  </div>
 </div>
 </td>
 </tr>	
@@ -178,10 +178,10 @@ apendValue();
 
  if(cj( this ).attr('checked') ){
        cj('.initial_amount-section').show();
-       cj('#dynamic_elements,#unlocateAmount, #option_item').hide();
+       cj('#dynamic_elements,#unallocatedAmount, #option_item').hide();
       }else{
         cj('.initial_amount-section').hide();
-	cj('#dynamic_elements,#unlocateAmount, #option_item').hide();
+	cj('#dynamic_elements,#unallocatedAmount, #option_item').hide();
       }
 if ( cj('#pricevalue').length){
      apendValue();	
@@ -360,44 +360,44 @@ function apendValue(){
 });
     cj('#dynamic_elements').html(options + "</table></div>");
 if (counter <=1){
-cj('#dynamic_elements,#unlocateAmount, #option_item').hide();
+cj('#dynamic_elements,#unallocatedAmount, #option_item').hide();
 }else{
-cj('#dynamic_elements,#unlocateAmount, #option_item').show();
+cj('#dynamic_elements,#unallocatedAmount, #option_item').show();
 }
     calculateUnlocate();
 }
 
 function calculateUnlocate(){
-var unlocatedAmount = cj('#initial_amount').val();
-var totalAmount = 0;
-	 cj(".distribute").each(function (){
-  	 	unlocatedAmount = parseFloat( unlocatedAmount - cj(this).val( )).toFixed(2);
-		totalAmount     = parseFloat( totalAmount ) + parseFloat( cj(this).val( ) );	
-	 });
-   var action = '{/literal}{$action}{literal}';
-   var roundAmount =  parseFloat( cj('#initialPayment').find('input:first').val()) + parseFloat(unlocatedAmount);
-	 if ( unlocatedAmount > 0.00 && action == 2){   
-	   cj('#initialPayment').find('input:first').val(roundAmount);
-	      unlocatedAmount = '0.00';
-	     }else if ( unlocatedAmount > 0.00 && action != 2 && cj('input:radio[name=option_items]:eq(0)').attr('checked') ){
-	      cj('#initialPayment').find('input:first').val(roundAmount);  
-                unlocatedAmount = '0.00';
-	     }
-	       cj('#unlocateAmount').html("<table><tr><td>Unlocated Amount:<strong> $ "+ unlocatedAmount +"</strong></td></tr></table><input type= 'hidden' id= 'hidden-amount' name= 'hidden-amount' value='"+totalAmount+"' >");
+  var unlocatedAmount = cj('#initial_amount').val();
+  var totalAmount = 0;
+  cj(".distribute").each(function (){
+	 	unlocatedAmount = parseFloat( unlocatedAmount - cj(this).val( )).toFixed(2);
+	  totalAmount     = parseFloat( totalAmount ) + parseFloat( cj(this).val( ) );	
+  });
+  var action = '{/literal}{$action}{literal}';
+  var roundAmount =  parseFloat( cj('#initialPayment').find('input:first').val()) + parseFloat(unlocatedAmount);
+  if ( unlocatedAmount > 0.00 && action == 2){   
+   cj('#initialPayment').find('input:first').val(roundAmount);
+      unlocatedAmount = '0.00';
+  } else if ( unlocatedAmount > 0.00 && action != 2 && cj('input:radio[name=option_items]:eq(0)').attr('checked') ){
+    cj('#initialPayment').find('input:first').val(roundAmount);  
+              unlocatedAmount = '0.00';
+  }
+  cj('#unallocatedAmount').html("<table><tr><td>Unallocated Amount:<strong> $ "+ unlocatedAmount +"</strong></td></tr></table><input type= 'hidden' id= 'hidden-amount' name= 'hidden-amount' value='"+totalAmount+"' >");
 	    
 }
 
 function feelTextbox(){
   var amount = parseFloat('{/literal}{$totalAmount}{literal}').toFixed(2);
-	 cj('#initialPayment input:text').each(function (){	
+	cj('#initialPayment input:text').each(function (){	
 	   fullAmount = cj('#initial_amount').val();
            fullAmountRate = parseFloat( amount /fullAmount );
 	   var price = cj(this).attr('price'); 
 	   fullAmount = parseFloat( price /fullAmountRate).toFixed(2);
            cj(this).val(fullAmount);
-	 });
-	 calculateUnlocate();	
-	  }
+	});
+	calculateUnlocate();	
+}
 
 {/literal}
 </script>

@@ -103,7 +103,7 @@ cj(document).ready(function(){
 	     </td>	
 	     </tr>
 	     <tr>
-	     <td colspan= 6 class="right"><strong>Unlocated Amount</strong></td>
+	     <td colspan= 6 class="right"><strong>Unallocated Amount</strong></td>
 	     <td><h5 class='unlocateAmount'>{$total|crmMoney} </h5></td>	
 	     </tr>
  {/if}
