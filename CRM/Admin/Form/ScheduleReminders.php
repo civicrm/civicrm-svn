@@ -75,9 +75,6 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form {
       $this->_context = CRM_Utils_Request::retrieve('context', 'String', $this);
       if ($this->_context == 'event') {
         $this->_eventId = CRM_Utils_Request::retrieve('eventId', 'Integer', $this);
-            $this->_context = CRM_Utils_Request::retrieve( 'context', 'String', $this ); 
-            if ( $this->_context == 'event') {
-                $this->_eventId = CRM_Utils_Request::retrieve( 'eventId', 'Integer', $this );
       }
     }
 
@@ -217,7 +214,6 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form {
 
     $this->addFormRule(array('CRM_Admin_Form_ScheduleReminders', 'formRule'));
   }
-}
   /**
    * global form rule
    *
