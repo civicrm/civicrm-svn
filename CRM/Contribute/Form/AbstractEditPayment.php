@@ -277,7 +277,7 @@ LEFT JOIN  civicrm_contribution on (civicrm_contribution.contact_id = civicrm_co
       CRM_Core_Error::fatal(ts('You will need to configure the %1 settings for your Payment Processor before you can submit credit card transactions.', array(1 => $this->_mode)));
     }
     else {
-      return $paymentProcessor;
+      return array($validProcessors, $paymentProcessor);
     }
   }
 

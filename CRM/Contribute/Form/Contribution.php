@@ -103,8 +103,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
     //ensure that processor has a valid config
     //only valid processors get display to user
     if ($this->_mode) {
-      $paymentProcessor = $this->getValidProcessorsAndAssignFutureStartDate();
-      $this->_processors = $paymentProcessor;
+      list($this->_processors, $paymentProcessor) = $this->getValidProcessorsAndAssignFutureStartDate();
 
       //get the valid recurring processors.
       $recurring = CRM_Core_PseudoConstant::paymentProcessor(FALSE, FALSE, 'is_recur = 1');
