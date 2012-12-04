@@ -603,7 +603,8 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
     }
 
     $params['is_pay_later'] = CRM_Utils_Array::value('is_pay_later', $params, 0);
-
+    $params['is_partial_payment'] = CRM_Utils_Array::value('is_partial_payment', $params, 0);
+    
     if ($this->_id) {
 
       // delete all the prior label values or discounts in the custom options table
