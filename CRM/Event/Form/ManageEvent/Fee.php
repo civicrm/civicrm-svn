@@ -64,7 +64,8 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
    *
    * @return void
    * @access public
-   */ function preProcess() {
+   */ 
+  function preProcess() {
     parent::preProcess();
   }
 
@@ -110,7 +111,6 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
               $defaults['value'][$countRow] = $optionValue['amount'];
               $defaults['label'][$countRow] = $optionValue['label'];
               $defaults['name'][$countRow] = $optionValue['name'];
-              $defaults['financial_type_id'][$countRow] = $optionValue['financial_type_id'];
               $defaults['weight'][$countRow] = $optionValue['weight'];
               $defaults["price_field_value"][$countRow] = $optionValue['id'];
               if ($optionValue['is_default']) {
@@ -151,7 +151,6 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
         foreach ($discountFields['options'] as $discountFieldsval) {
           $defaults["discounted_label"][$discountFieldsval['weight']] = $discountFieldsval['label'];
           $defaults["discounted_value"][$discountFieldsval['weight']][$rowCount] = $discountFieldsval['amount'];
-          $defaults["discounted_financial_type_id"][$discountFieldsval['weight']][$rowCount] = CRM_Utils_Array::value('financial_type_id', $discountFieldsval);
           $defaults['discount_option_id'][$rowCount][]= $discountFieldsval['id'];
           if (CRM_Utils_Array::value('is_default', $discountFieldsval)) {
             $defaults['discounted_default'] = $discountFieldsval['weight'];
@@ -260,6 +259,9 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
       array('&nbsp;&nbsp;', '&nbsp;&nbsp;', '&nbsp;&nbsp;', '<br/>')
     );
 
+    $this->add('select', 'financial_type_id', ts( 'Financial Type' ),
+      array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::financialType( ) );
+    
     // add pay later options
     $this->addElement('checkbox', 'is_pay_later', ts('Enable Pay Later option?'), NULL,
       array('onclick' => "return showHideByValue('is_pay_later','','payLaterOptions','block','radio',false);")
@@ -305,15 +307,11 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
       // label
       $this->add('text', "label[$i]", ts('Label'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_OptionValue', 'label'));
       $this->add('hidden', "price_field_value[$i]", '', array('id' => "price_field_value[$i]"));
-            
-            // Financial Type
-            $this->add('select', "financial_type_id[$i]",ts( 'Financial Type' ),
-                   array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::financialType( ) );
+
       // value
       $this->add('text', "value[$i]", ts('Value'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_OptionValue', 'value'));
       $this->addRule("value[$i]", ts('Please enter a valid money value for this field (e.g. %1).', array(1 => CRM_Utils_Money::format('99.99', ' '))), 'money');
-      $this->add('select', "financial_type_id[$i]",ts('Financial Type'),
-        array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::financialType( ));
+
       // default
       $default[] = $this->createElement('radio', NULL, NULL, NULL, $i);
     }
@@ -425,15 +423,9 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
    * @static
    * @access public
    */
-  static
-  function formRule($values) {
+  static function formRule($values) {
     $errors = array();
-    for ($i = 1; $i <= self::NUM_DISCOUNT; $i++) {
 
-      if (!empty($values['label'][$i]) && !empty($values['value'][$i]) && empty($values['financial_type_id'][$i]) ) {
-        $errors["financial_type_id[{$i}]"] = ts( 'Financial Type is a Required field.' );
-      }
-    }
     if (CRM_Utils_Array::value('is_discount', $values)) {
       $occurDiscount   = array_count_values($values['discount_name']);
       $countemptyrows  = 0;
@@ -495,9 +487,6 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
             if (empty($values['discounted_value'][$index][$i])) {
               $countemptyvalue++;
             }
-            if (!empty($values['discounted_label'][$index]) && !empty($values['discounted_value'][$index][$i]) && empty($values['discounted_financial_type_id'][$index])) {
-                $errors["discounted_financial_type_id[{$index}]"] = ts('Financial Type is a Required field.');
-          }
           }
           if (CRM_Utils_Array::value('_qf_Fee_next', $values) && ($countemptyrows == 11 || $countemptyvalue == 11)) {
             $errors["discounted_label[1]"] = $errors["discounted_value[1][$i]"] = ts('At least one fee should be entered for your Discount Set. If you do not see the table to enter discount fees, click the "Add Discount Set to Fee Table" button.');
@@ -506,8 +495,8 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
       }
     }
     if ( $values['is_monetary'] ) { //check if financial type is selected                                                              
-            if ( !$values['financial_type_id'] ) {
-                $errors['financial_type_id'] = ts( "Please select financial type." );
+      if ( !$values['financial_type_id'] ) {
+        $errors['financial_type_id'] = ts( "Please select financial type." );
       }
 
       //check for the event fee label (mandatory)
@@ -558,9 +547,7 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
     for ($i = 1; $i <= self::NUM_OPTION; $i++) {
       // label
       $this->add('text', "discounted_label[$i]", ts('Label'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_OptionValue', 'label'));
-      //financial type
-      $this->add('select', "discounted_financial_type_id[$i]",ts('Financial Type'),
-        array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::financialType( ));
+
       // value
       for ($j = 1; $j <= self::NUM_DISCOUNT; $j++) {
         $this->add('text', "discounted_value[$i][$j]", ts('Value'), array('size' => 10));
@@ -626,9 +613,6 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
         $labels  = CRM_Utils_Array::value('label', $params);
         $values  = CRM_Utils_Array::value('value', $params);
         $default = CRM_Utils_Array::value('default', $params);
-                $financialType = CRM_Utils_Array::value( 'financial_type_id', $params );
-
-                
         $options = array();
         if (!CRM_Utils_System::isNull($labels) && !CRM_Utils_System::isNull($values)) {
           for ($i = 1; $i < self::NUM_OPTION; $i++) {
@@ -638,7 +622,7 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
                                  'weight' => $i,
                                  'is_active' => 1,
                                  'is_default' => $default == $i,
-                                                'financial_type_id' => trim( $financialType[$i] ) );
+                                 );
             }
           }
           if (!empty($options)) {
@@ -679,7 +663,6 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
               CRM_Price_BAO_Set::addTo('civicrm_event', $this->_id, $priceSet->id);
               $fieldParams['option_label'] = $params['label'];
               $fieldParams['option_amount'] = $params['value'];
-              $fieldParams['option_financial_type_id'] = $params['financial_type_id'];
               foreach ($options as $value) $fieldParams['option_weight'][$value['weight']] = $value['weight'];
               $fieldParams['default_option'] = $params['default'];
               $priceField = CRM_Price_BAO_Field::create($fieldParams);
@@ -695,7 +678,6 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
           $labels  = CRM_Utils_Array::value('discounted_label', $params);
           $values  = CRM_Utils_Array::value('discounted_value', $params);
           $default = CRM_Utils_Array::value('discounted_default', $params);
-          $dicountFinancialtype = CRM_Utils_Array::value('discounted_financial_type_id', $params);
 
           if (!CRM_Utils_System::isNull($labels) && !CRM_Utils_System::isNull($values)) {
             for ($j = 1; $j <= self::NUM_DISCOUNT; $j++) {
@@ -709,7 +691,6 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
                                              'weight' => $i,
                                              'is_active' => 1,
                                              'is_default' => $default == $i,
-                                             'financial_type_id' => $dicountFinancialtype[$i],
                                              );
                 }
               }
@@ -751,7 +732,6 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
                   $fieldParams['option_label'][$value['weight']] = $value['label'];
                   $fieldParams['option_amount'][$value['weight']] = $value['value'];
                   $fieldParams['option_weight'][$value['weight']] = $value['weight'];
-                  $fieldParams['option_financial_type_id'][$value['weight']] = $value['financial_type_id'];
                   if (CRM_Utils_Array::value('is_default', $value)) {
                     $fieldParams['default_option'] = $value['weight'];
                   }
@@ -791,7 +771,7 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
         $priceSetID = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $params['price_field_id'], 'price_set_id');
         CRM_Price_BAO_Set::setIsQuickConfig($priceSetID,0);
       }
-            $params['financial_type_id'] = '';
+      $params['financial_type_id'] = '';
     }
 
     //update events table
