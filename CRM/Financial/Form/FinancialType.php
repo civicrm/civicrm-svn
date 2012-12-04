@@ -36,91 +36,84 @@
 
 require_once 'CRM/Contribute/Form.php';
 require_once 'CRM/Core/PseudoConstant.php';
+
 /**
  * This class generates form components for Financial Type
  * 
  */
-class CRM_Financial_Form_FinancialType extends CRM_Contribute_Form
-{ 
-    /**
-     * Function to build the form
-     *
-     * @return None
-     * @access public
-     */
-    public function buildQuickForm( ) 
-    {
-        parent::buildQuickForm( );
-
-        require_once 'CRM/Core/DAO.php';
-        $this->_id  = CRM_Utils_Request::retrieve( 'id' , 'Positive', $this );
-        if ( $this->_id ) {
-            $this->_title = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialType', $this->_id, 'name' );
-            CRM_Utils_System::setTitle( $this->_title .' - '.ts( 'Financial Type' ) );
-            
-        }
-        if ($this->_action & CRM_Core_Action::DELETE ) { 
-            return;
-        }
-        $this->applyFilter('__ALL__', 'trim');
-        $this->add('text', 'name', ts('Name'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialType', 'name' ),true);
-        
-        $this->add('text', 'description', ts('Description'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialType', 'description' ) );
-        
-        $this->add('checkbox', 'is_deductible', ts('Tax-Deductible?'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialType', 'is_deductible' ) );
-        $this->add('checkbox', 'is_active', ts('Enabled?'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialType', 'is_active' ) );
-        $this->add('checkbox', 'is_reserved', ts('Reserved?'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialType', 'is_reserved' ) );
-        if ( $this->_action == CRM_Core_Action::UPDATE )
-            $this->assign( 'aid', $this->_id );
-        if ( $this->_action == CRM_Core_Action::UPDATE && CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialType', $this->_id, 'is_reserved','vid' )) { 
-            
-            $this->freeze(array( 'is_active' ));
-           
-        }
-       
-        //$this->addFormRule( array( 'CRM_Financial_Form_FinancialType', 'formRule'), $this );
+class CRM_Financial_Form_FinancialType extends CRM_Contribute_Form { 
+    
+  /**
+   * Function to build the form
+   *
+   * @return None
+   * @access public
+   */
+  public function buildQuickForm( ) {
+    parent::buildQuickForm( );
+    
+    require_once 'CRM/Core/DAO.php';
+    $this->_id  = CRM_Utils_Request::retrieve( 'id' , 'Positive', $this );
+    if ( $this->_id ) {
+      $this->_title = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialType', $this->_id, 'name' );
+      CRM_Utils_System::setTitle( $this->_title .' - '.ts( 'Financial Type' ) );
     }
-
-
-    /**
-     * Function to process the form
-     *
-     * @access public
-     * @return None
-     */
-    public function postProcess() 
-    {
-        if($this->_action & CRM_Core_Action::DELETE) {
-            $isNotDeleted = CRM_Financial_BAO_FinancialType::del($this->_id);
-            if ($isNotDeleted) {
-              CRM_Core_Session::setStatus( ts(
-                'This financial type cannot be deleted because it is being referenced by one or more of the following types of records: Contributions, Contribution Pages, or Membership Types. Consider disabling this type instead if you no longer want it used.') );
-              return CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/admin/financial/financialType', "reset=1&action=browse" ));
-            }
-            CRM_Core_Session::setStatus( ts('Selected financial type has been deleted.') );
-        } else { 
-
-            $params = $ids = array( );
-            // store the submitted values in an array
-            $params = $this->exportValues();
-            
-            if ($this->_action & CRM_Core_Action::UPDATE) {
-                $ids['financialType'] = $this->_id;
-            }
-            
-            $financialType = CRM_Financial_BAO_FinancialType::add($params, $ids);
-            if ( $this->_action & CRM_Core_Action::UPDATE ) {
-                $url = CRM_Utils_System::url( 'civicrm/admin/financial/financialType', 'reset=1&action=browse');
-                CRM_Core_Session::setStatus( ts('The financial type \'%1\' has been saved.', array( 1 => $financialType->name )) );
-            }else {
-                $url = CRM_Utils_System::url( 'civicrm/admin/financial/financialType/accounts/add', 'reset=1&action=add&aid=' . $financialType->id);
-                CRM_Core_Session::setStatus( ts('The financial type \'%1\' has been added. You can add Financial Accounts to this Financial Type now.', array( 1 => $financialType->name )) );
-            }
-            
-            $session = CRM_Core_Session::singleton( );
-            $session->replaceUserContext($url);            
-        }
+    if ($this->_action & CRM_Core_Action::DELETE ) { 
+      return;
     }
+    $this->applyFilter('__ALL__', 'trim');
+    $this->add('text', 'name', ts('Name'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialType', 'name' ),true);
+    
+    $this->add('text', 'description', ts('Description'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialType', 'description' ) );
+    
+    $this->add('checkbox', 'is_deductible', ts('Tax-Deductible?'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialType', 'is_deductible' ) );
+    $this->add('checkbox', 'is_active', ts('Enabled?'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialType', 'is_active' ) );
+    $this->add('checkbox', 'is_reserved', ts('Reserved?'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialType', 'is_reserved' ) );
+    if ( $this->_action == CRM_Core_Action::UPDATE )
+      $this->assign( 'aid', $this->_id );
+    if ( $this->_action == CRM_Core_Action::UPDATE && CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialType', $this->_id, 'is_reserved','vid' )) { 
+      $this->freeze(array( 'is_active' ));
+    }
+    
+    //$this->addFormRule( array( 'CRM_Financial_Form_FinancialType', 'formRule'), $this );
+  }
+  
+  /**
+   * Function to process the form
+   *
+   * @access public
+   * @return None
+   */
+  public function postProcess() {
+    if ($this->_action & CRM_Core_Action::DELETE) {
+      $isNotDeleted = CRM_Financial_BAO_FinancialType::del($this->_id);
+      if ($isNotDeleted) {
+        CRM_Core_Session::setStatus( ts('This financial type cannot be deleted because it is being referenced by one or more of the following types of records: Contributions, Contribution Pages, or Membership Types. Consider disabling this type instead if you no longer want it used.') );
+        return CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/admin/financial/financialType', "reset=1&action=browse" ));
+      }
+      CRM_Core_Session::setStatus( ts('Selected financial type has been deleted.') );
+    } else { 
+      $params = $ids = array( );
+      // store the submitted values in an array
+      $params = $this->exportValues();
+      
+      if ($this->_action & CRM_Core_Action::UPDATE) {
+        $ids['financialType'] = $this->_id;
+      }
+      
+      $financialType = CRM_Financial_BAO_FinancialType::add($params, $ids);
+      if ( $this->_action & CRM_Core_Action::UPDATE ) {
+        $url = CRM_Utils_System::url( 'civicrm/admin/financial/financialType', 'reset=1&action=browse');
+        CRM_Core_Session::setStatus( ts('The financial type \'%1\' has been saved.', array( 1 => $financialType->name )) );
+      } else {
+        $url = CRM_Utils_System::url( 'civicrm/admin/financial/financialType/accounts/add', 'reset=1&action=add&aid=' . $financialType->id);
+        CRM_Core_Session::setStatus( ts('The financial type \'%1\' has been added. You can add Financial Accounts to this Financial Type now.', array( 1 => $financialType->name )) );
+      }
+      
+      $session = CRM_Core_Session::singleton( );
+      $session->replaceUserContext($url);            
+    }
+  }
 }
 
 
