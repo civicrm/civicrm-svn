@@ -224,8 +224,8 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
 
     // current contribution id
     if ($this->_id) {
-      $this->assignPremiumProduct();
-      $this->buildValues();
+      $this->assignPremiumProduct($this->_id);
+      $this->buildValuesAndAssignOnline_Note_Type($this->_id, $this->_values);
     }
 
     // when custom data is included in this page

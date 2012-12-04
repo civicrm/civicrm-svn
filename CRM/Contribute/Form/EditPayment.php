@@ -224,8 +224,8 @@ class CRM_Contribute_Form_EditPayment extends CRM_Contribute_Form_AbstractEditPa
 
     // current contribution id
     if ($this->_id) {
-      $this->assignPremiumProduct();
-      $this->buildValues();
+      $this->assignPremiumProduct($this->_id);
+      $this->buildValuesAndAssignOnline_Note_Type($this->_id, $this->_values);
 
       //display check number field only if its having value or its offline mode.
       if (CRM_Utils_Array::value('payment_instrument_id',
