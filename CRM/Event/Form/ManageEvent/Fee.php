@@ -64,7 +64,7 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
    *
    * @return void
    * @access public
-   */ 
+   */
   function preProcess() {
     parent::preProcess();
   }
@@ -130,10 +130,10 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
         $defaults['discount_price_set'][] = $optionGroupId;
         $name = $defaults["discount_name[$i]"] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $optionGroupId, 'title');
 
-        list($defaults["discount_start_date[$i]"]) = CRM_Utils_Date::setDateDefaults(CRM_Core_DAO::getFieldValue('CRM_Order_DAO_Discount', $optionGroupId,
+        list($defaults["discount_start_date[$i]"]) = CRM_Utils_Date::setDateDefaults(CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Discount', $optionGroupId,
           'start_date', 'price_set_id'
           ));
-        list($defaults["discount_end_date[$i]"]) = CRM_Utils_Date::setDateDefaults(CRM_Core_DAO::getFieldValue('CRM_Order_DAO_Discount', $optionGroupId,
+        list($defaults["discount_end_date[$i]"]) = CRM_Utils_Date::setDateDefaults(CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Discount', $optionGroupId,
           'end_date', 'price_set_id'
           ));
         $defaultDiscounts[] = CRM_Price_BAO_Set::getSetDetail($optionGroupId);
@@ -260,7 +260,7 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
 
     $this->add('select', 'financial_type_id', ts( 'Financial Type' ),
       array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::financialType( ) );
-    
+
     // add pay later options
     $this->addElement('checkbox', 'is_pay_later', ts('Enable Pay Later option?'), NULL,
       array('onclick' => "return showHideByValue('is_pay_later','','payLaterOptions','block','radio',false);")
@@ -279,15 +279,15 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
       array('onclick' => "return showHideByValue('is_partial_payment','','partialPaymentOptions','block','radio',false);")
     );
 
-    $this->addElement('textarea', 'initial_amount_label', ts( 'Initial amount label' ),  
+    $this->addElement('textarea', 'initial_amount_label', ts( 'Initial amount label' ),
       CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_ContributionPage', 'initial_amount_label' ),
       false );
-        
-    $this->addElement('textarea', 'initial_amount_help_text', ts( 'Initial amount help text' ),  
+
+    $this->addElement('textarea', 'initial_amount_help_text', ts( 'Initial amount help text' ),
       CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_ContributionPage', 'initial_amount_help_text' ),
       false );
-        
-    $this->addElement('text', 'min_initial_amount', ts( 'Minimum initial amount ($0.00 or more)' ),  
+
+    $this->addElement('text', 'min_initial_amount', ts( 'Minimum initial amount ($0.00 or more)' ),
       CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_ContributionPage', 'min_initial_amount' ),
       false );
 
@@ -343,7 +343,7 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
       else {
         $_showHide->addShow($showBlocks);
       }
-              
+
       //Increment by 1 of start date of previous end date.
       if (is_array($this->_submitValues) &&
         !empty($this->_submitValues['discount_name'][$i]) &&
@@ -496,7 +496,7 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
         }
       }
     }
-    if ( $values['is_monetary'] ) { //check if financial type is selected                                                              
+    if ( $values['is_monetary'] ) { //check if financial type is selected
       if ( !$values['financial_type_id'] ) {
         $errors['financial_type_id'] = ts( 'Please select financial type.' );
       }
@@ -604,7 +604,7 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
 
     $params['is_pay_later'] = CRM_Utils_Array::value('is_pay_later', $params, 0);
     $params['is_partial_payment'] = CRM_Utils_Array::value('is_partial_payment', $params, 0);
-    
+
     if ($this->_id) {
 
       // delete all the prior label values or discounts in the custom options table
@@ -671,6 +671,7 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
                 }
                 $fieldParams['id'] = CRM_Utils_Array::value('price_field_id', $params);
                 $fieldParams['option_id'] = $params['price_field_value'];
+                $priceSet = new CRM_Price_BAO_Set();
                 $priceSet->id = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', CRM_Utils_Array::value('price_field_id', $params), 'price_set_id');
               }
               $fieldParams['html_type'] = 'Radio';
@@ -708,7 +709,7 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
                     );
                 }
               }
-   
+
               if (!empty($discountOptions)) {
                 $fieldParams = array();
                 $params['default_discount_fee_id'] = NULL;
@@ -732,7 +733,7 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
                   $setParams['extends'] = CRM_Core_Component::getComponentID('CiviEvent');
                   $priceSet = CRM_Price_BAO_Set::create($setParams);
                   $priceSetID = $priceSet->id;
-                } else { 
+                } else {
                   $priceSetID = $discountPriceSets[$j-1];
                   unset($discountPriceSets[$j-1]);
                   $fieldParams['id'] = CRM_Core_DAO::getFieldValue('CRM_Price_BAO_Field', $priceSetID, 'id', 'price_set_id');
@@ -758,7 +759,7 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
                 $priceField = CRM_Price_BAO_Field::create($fieldParams);
                 if (!empty($discountFieldIDs)) {
                   foreach($discountFieldIDs as $fID){
-                    CRM_Price_BAO_FieldValue::setIsActive($fID, '0'); 
+                    CRM_Price_BAO_FieldValue::setIsActive($fID, '0');
                   }
                 }
 
@@ -774,7 +775,7 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
             }
           }
         }
-        if (!empty($discountPriceSets)) { 
+        if (!empty($discountPriceSets)) {
           foreach ($discountPriceSets as $setId) {
             CRM_Price_BAO_Set::setIsQuickConfig($setId, 0);
           }

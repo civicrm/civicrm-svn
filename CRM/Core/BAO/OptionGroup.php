@@ -195,7 +195,7 @@ class CRM_Core_BAO_OptionGroup extends CRM_Core_DAO_OptionGroup {
       );
 
       if ($discountSuffix) {
-                $copyDiscount =& CRM_Core_DAO::copyGeneric( 'CRM_Order_DAO_Discount',
+        $copyDiscount =& CRM_Core_DAO::copyGeneric( 'CRM_Core_DAO_Discount',
           array(
             'entity_id' => $fromId,
             'entity_table' => 'civicrm_' . $component,
@@ -210,7 +210,7 @@ class CRM_Core_BAO_OptionGroup extends CRM_Core_DAO_OptionGroup {
 
       if ($defaultId) {
         $query = "
-SELECT second.id default_id 
+SELECT second.id default_id
 FROM civicrm_option_value first, civicrm_option_value second
 WHERE second.option_group_id =%1
 AND first.option_group_id =%2

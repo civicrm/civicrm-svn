@@ -39,7 +39,7 @@ class CRM_Event_BAO_Query {
     $fields = array();
     $fields = array_merge($fields, CRM_Event_DAO_Event::import());
     $fields = array_merge($fields, self::getParticipantFields());
-    $fields = array_merge($fields, CRM_Order_DAO_Discount::export());
+    $fields = array_merge($fields, CRM_Core_DAO_Discount::export());
 
     return $fields;
   }

@@ -389,7 +389,7 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant {
       $query = "
     SELECT  participant.id id,
             event.event_full_text as event_full_text
-      FROM  civicrm_participant participant 
+      FROM  civicrm_participant participant
 INNER JOIN  civicrm_event event ON ( event.id = participant.event_id )
             {$whereClause}";
 
@@ -415,7 +415,7 @@ INNER JOIN  civicrm_event event ON ( event.id = participant.event_id )
     SELECT  participant.id id,
             event.event_full_text as event_full_text,
             event.max_participants as max_participants
-      FROM  civicrm_participant participant 
+      FROM  civicrm_participant participant
 INNER JOIN  civicrm_event event ON ( event.id = participant.event_id )
             {$whereClause}";
 
@@ -524,10 +524,10 @@ SELECT  event.event_full_text,
             value.count,
             field.html_type
       FROM  civicrm_line_item line
-INNER JOIN  civicrm_participant participant ON ( line.entity_table  = 'civicrm_participant' 
-                                                 AND participant.id = line.entity_id ) 
+INNER JOIN  civicrm_participant participant ON ( line.entity_table  = 'civicrm_participant'
+                                                 AND participant.id = line.entity_id )
 INNER JOIN  civicrm_price_field_value value ON ( value.id = line.price_field_value_id )
-INNER JOIN  civicrm_price_field field       ON ( value.price_field_id = field.id )   
+INNER JOIN  civicrm_price_field field       ON ( value.price_field_id = field.id )
      WHERE  participant.event_id = %1
             {$statusIdClause}
             {$isTestClause}
@@ -738,7 +738,7 @@ GROUP BY  participant.event_id
         $participantFields['participant_campaign'] = array('title' => ts('Campaign Title'));
       }
 
-            $discountFields  = CRM_Order_DAO_Discount::export( );
+            $discountFields  = CRM_Core_DAO_Discount::export( );
 
       $fields = array_merge($participantFields, $participantStatus, $participantRole, $noteField, $discountFields);
 
@@ -763,7 +763,7 @@ GROUP BY  participant.event_id
   static function participantDetails($participantId) {
     $query = "
 SELECT civicrm_contact.sort_name as name, civicrm_event.title as title, civicrm_contact.id as cid
-FROM   civicrm_participant 
+FROM   civicrm_participant
    LEFT JOIN civicrm_event   ON (civicrm_participant.event_id = civicrm_event.id)
    LEFT JOIN civicrm_contact ON (civicrm_participant.contact_id = civicrm_contact.id)
 WHERE  civicrm_participant.id = {$participantId}
@@ -1028,11 +1028,11 @@ SELECT  participant.id         as id,
     $from = 'FROM civicrm_participant participant';
     if ($hasLineItems) {
       $select .= ' ,
-lineItem.id          as lineId, 
-lineItem.label       as label, 
-lineItem.qty         as qty, 
-lineItem.unit_price  as unit_price, 
-lineItem.line_total  as line_total, 
+lineItem.id          as lineId,
+lineItem.label       as label,
+lineItem.qty         as qty,
+lineItem.unit_price  as unit_price,
+lineItem.line_total  as line_total,
 field.label          as field_title,
 field.html_type      as html_type,
 field.id             as price_field_id,
@@ -1040,10 +1040,10 @@ value.id             as price_field_value_id,
 value.description    as description,
 IF( value.count, value.count, 0 ) as participant_count';
       $from .= "
-INNER JOIN civicrm_line_item lineItem      ON ( lineItem.entity_table = 'civicrm_participant' 
+INNER JOIN civicrm_line_item lineItem      ON ( lineItem.entity_table = 'civicrm_participant'
                                                 AND lineItem.entity_id = participant.id )
 INNER JOIN civicrm_price_field field ON ( field.id = lineItem.price_field_id )
-INNER JOIN civicrm_price_field_value value ON ( value.id = lineItem.price_field_value_id ) 
+INNER JOIN civicrm_price_field_value value ON ( value.id = lineItem.price_field_value_id )
 ";
     }
     $where = 'WHERE participant.id IN ( ' . implode(', ', $participantIds) . ' )';
@@ -1159,8 +1159,8 @@ INNER JOIN civicrm_price_field_value value ON ( value.id = lineItem.price_field_
     $participantIdClause = '( ' . implode(',', $participantIds) . ' )';
 
     $query = "
-UPDATE  civicrm_participant 
-   SET  {$setClause} 
+UPDATE  civicrm_participant
+   SET  {$setClause}
  WHERE  id IN {$participantIdClause}";
 
     $dao = CRM_Core_DAO::executeQuery($query);
@@ -1168,9 +1168,9 @@ UPDATE  civicrm_participant
 
   /*
      * Function takes participant ids and statuses
-     * update status from $fromStatusId to $toStatusId 
+     * update status from $fromStatusId to $toStatusId
      * and send mail + create activities.
-     *      
+     *
      * @param  array $participantIds   participant ids.
      * @param  int   $toStatusId       update status id.
      * @param  int   $fromStatusId     from status id
@@ -1653,9 +1653,9 @@ UPDATE  civicrm_participant
    * @static
    */
   static function getContactParticipantCount($contactID) {
-    $query = "SELECT count(*) 
-FROM     civicrm_participant 
-WHERE    civicrm_participant.contact_id = {$contactID} AND 
+    $query = "SELECT count(*)
+FROM     civicrm_participant
+WHERE    civicrm_participant.contact_id = {$contactID} AND
          civicrm_participant.is_test = 0";
     return CRM_Core_DAO::singleValueQuery($query);
   }

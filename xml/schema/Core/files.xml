@@ -10,6 +10,7 @@
 <xi:include href="CustomGroup.xml"          parse="xml" />
 <xi:include href="CustomField.xml"          parse="xml" />
 <xi:include href="Dashboard.xml"            parse="xml" />
+<xi:include href="Discount.xml"             parse="xml" />
 <xi:include href="Domain.xml"               parse="xml" />
 <xi:include href="Email.xml"                parse="xml" />
 <xi:include href="EntityBatch.xml"          parse="xml" />

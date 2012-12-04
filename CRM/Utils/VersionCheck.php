@@ -223,7 +223,7 @@ class CRM_Utils_VersionCheck {
       'CRM_Contribute_DAO_ContributionPage' => 'is_active = 1',
       'CRM_Contribute_DAO_ContributionProduct' => NULL,
       'CRM_Contribute_DAO_Widget' => 'is_active = 1',
-      'CRM_Order_DAO_Discount' => NULL,
+      'CRM_Core_DAO_Discount' => NULL,
       'CRM_Price_DAO_SetEntity' => NULL,
       'CRM_Core_DAO_UFGroup' => 'is_active = 1',
       'CRM_Event_DAO_Event' => 'is_active = 1',
