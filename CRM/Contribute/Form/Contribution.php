@@ -1130,30 +1130,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
       $this->processCreditCard($submittedValues, $config, $session, $pId, $lineItem);
     }
     else {
-      //Offline Contribution.
-      $unsetParams = array(
-        'payment_processor_id',
-        "email-{$this->_bltID}",
-        'hidden_buildCreditCard',
-        'hidden_buildDirectDebit',
-        'billing_first_name',
-        'billing_middle_name',
-        'billing_last_name',
-        'street_address-5',
-        "city-{$this->_bltID}",
-        "state_province_id-{$this->_bltID}",
-        "postal_code-{$this->_bltID}",
-        "country_id-{$this->_bltID}",
-        'credit_card_number',
-        'cvv2',
-        'credit_card_exp_date',
-        'credit_card_type',
-      );
-      foreach ($unsetParams as $key) {
-        if (isset($submittedValues[$key])) {
-          unset($submittedValues[$key]);
-        }
-      }
+      $submittedValues = $this->unsetCreditCardFields($submittedValues);
 
       // get the required field value only.
       $formValues = $submittedValues;
