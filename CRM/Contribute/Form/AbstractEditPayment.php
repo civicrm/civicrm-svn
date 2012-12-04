@@ -246,7 +246,7 @@ LEFT JOIN  civicrm_contribution on (civicrm_contribution.contact_id = civicrm_co
   /**
    * @return array (int $ppId => string $label)
    */
-  public function getValidProcessors() {
+  public function getValidProcessorsAndAssignFutureStartDate() {
     $validProcessors = array();
     $processors = CRM_Core_PseudoConstant::paymentProcessor(FALSE, FALSE, "billing_mode IN ( 1, 3 )");
 
