@@ -46,8 +46,7 @@ class CRM_Financial_BAO_FinancialBatch extends CRM_Financial_DAO_FinancialBatch 
   /**
    * class constructor
    */
-  function __construct( )
-  {
+  function __construct( ) {
     parent::__construct( );
   }
 
