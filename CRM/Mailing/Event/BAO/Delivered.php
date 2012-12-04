@@ -238,7 +238,7 @@ class CRM_Mailing_Event_BAO_Delivered extends CRM_Mailing_Event_DAO_Delivered {
     }
 
     while (!empty($values)) {
-      $input = array_splice($values, 0, CRM_Core_DAO::BULK_INSET_COUNT);
+      $input = array_splice($values, 0, CRM_Core_DAO::BULK_INSERT_COUNT);
       $str   = implode(',', $input);
       $sql   = "INSERT INTO civicrm_mailing_event_delivered ( event_queue_id, time_stamp ) VALUES $str;";
       CRM_Core_DAO::executeQuery($sql);
