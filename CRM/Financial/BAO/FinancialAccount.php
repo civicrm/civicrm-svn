@@ -146,33 +146,33 @@ class CRM_Financial_BAO_FinancialAccount extends CRM_Financial_DAO_FinancialAcco
    */
   static function del($financialAccountId) {
     //checking if financial type is present  
-      $check = false;
-      
-      //check dependencies
-      $dependancy = array( 
-        array('Core', 'FinancialTrxn', 'to_financial_account_id'), 
-        array('Financial', 'FinancialTypeAccount', 'financial_account_id' ), 
-        );
-      foreach ($dependancy as $name) {
-        require_once (str_replace('_', DIRECTORY_SEPARATOR, "CRM_" . $name[0] . "_BAO_" . $name[1]) . ".php");
-        eval('$bao = new CRM_' . $name[0] . '_BAO_' . $name[1] . '();');
-        $bao->$name[2] = $financialAccountId;
-        if ($bao->find(true)) {
-          $check = true;
-        }
+    $check = false;
+    
+    //check dependencies
+    $dependancy = array( 
+      array('Core', 'FinancialTrxn', 'to_financial_account_id'), 
+      array('Financial', 'FinancialTypeAccount', 'financial_account_id' ), 
+      );
+    foreach ($dependancy as $name) {
+      require_once (str_replace('_', DIRECTORY_SEPARATOR, "CRM_" . $name[0] . "_BAO_" . $name[1]) . ".php");
+      eval('$bao = new CRM_' . $name[0] . '_BAO_' . $name[1] . '();');
+      $bao->$name[2] = $financialAccountId;
+      if ($bao->find(true)) {
+        $check = true;
       }
+    }
+    
+    if ($check) {
+      $session = CRM_Core_Session::singleton();
+      CRM_Core_Session::setStatus( ts('This financial account cannot be deleted since it is being used as a header account. Please remove it from being a header account before trying to delete it again.') );
+      return CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/admin/financial/financialAccount', "reset=1&action=browse" ));
+    }
       
-      if ($check) {
-        $session = CRM_Core_Session::singleton();
-        CRM_Core_Session::setStatus( ts('This financial account cannot be deleted since it is being used as a header account. Please remove it from being a header account before trying to delete it again.') );
-        return CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/admin/financial/financialAccount', "reset=1&action=browse" ));
-      }
-      
-      //delete from financial Type table
-      require_once 'CRM/Contribute/DAO/Contribution.php';
-      $financialAccount = new CRM_Financial_DAO_FinancialAccount( );
-      $financialAccount->id = $financialAccountId;
-      $financialAccount->delete();
+    //delete from financial Type table
+    require_once 'CRM/Contribute/DAO/Contribution.php';
+    $financialAccount = new CRM_Financial_DAO_FinancialAccount( );
+    $financialAccount->id = $financialAccountId;
+    $financialAccount->delete();
   }
 }
 

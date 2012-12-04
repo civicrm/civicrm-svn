@@ -60,8 +60,7 @@ class CRM_Financial_BAO_PaymentProcessorType extends CRM_Financial_DAO_PaymentPr
    * @access public
    * @static
    */
-  static
-  function retrieve(&$params, &$defaults) {
+  static function retrieve(&$params, &$defaults) {
     $paymentProcessorType = new CRM_Financial_DAO_PaymentProcessorType();
     $paymentProcessorType->copyValues($params);
     if ($paymentProcessorType->find(TRUE)) {
@@ -82,8 +81,7 @@ class CRM_Financial_BAO_PaymentProcessorType extends CRM_Financial_DAO_PaymentPr
    * @access public
    * @static
    */
-  static
-  function setIsActive($id, $is_active) {
+  static function setIsActive($id, $is_active) {
     return CRM_Core_DAO::setFieldValue('CRM_Financial_DAO_PaymentProcessorType', $id, 'is_active', $is_active);
   }
 
@@ -97,8 +95,7 @@ class CRM_Financial_BAO_PaymentProcessorType extends CRM_Financial_DAO_PaymentPr
    * @static
    * @access public
    */
-  static
-  function &getDefault() {
+  static function &getDefault() {
     if (self::$_defaultPaymentProcessorType == NULL) {
       $params = array('is_default' => 1);
       $defaults = array();
@@ -118,8 +115,7 @@ class CRM_Financial_BAO_PaymentProcessorType extends CRM_Financial_DAO_PaymentPr
    * @static
    *
    */
-  static
-  function create(&$params) {
+  static function create(&$params) {
     $paymentProcessorType = new CRM_Financial_DAO_PaymentProcessorType();
     $paymentProcessorType->copyValues($params);
 
@@ -187,8 +183,7 @@ class CRM_Financial_BAO_PaymentProcessorType extends CRM_Financial_DAO_PaymentPr
    * @access public
    * @static
    */
-  static
-  function del($paymentProcessorTypeId) {
+  static function del($paymentProcessorTypeId) {
     $query = "SELECT pp.id processor_id
                   FROM civicrm_payment_processor pp, civicrm_payment_processor_type ppt
                   WHERE pp.payment_processor_type = ppt.name AND ppt.id = %1";
@@ -209,14 +204,14 @@ class CRM_Financial_BAO_PaymentProcessorType extends CRM_Financial_DAO_PaymentPr
     }
   }
 
-static private function getAllPaymentProcessorTypes($attr) {
-  $ppt = array();
-  $dao = new CRM_Financial_DAO_PaymentProcessorType();
-  $dao->find();
-  while ($dao->fetch()) {
-    $ppt[$dao->$attr] = $dao->id;
+  static private function getAllPaymentProcessorTypes($attr) {
+    $ppt = array();
+    $dao = new CRM_Financial_DAO_PaymentProcessorType();
+    $dao->find();
+    while ($dao->fetch()) {
+        $ppt[$dao->$attr] = $dao->id;
+    }
+    return $ppt;
   }
-  return $ppt;
-}
 }
 
