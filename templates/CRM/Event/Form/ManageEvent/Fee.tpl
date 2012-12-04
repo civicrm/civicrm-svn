@@ -101,20 +101,41 @@
                <td>{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='pay_later_receipt' id=$id}{/if}{$form.pay_later_receipt.html|crmAddClass:big}
                </td>
             </tr>
+	    <tr>
                 <td>&nbsp;</td>
                 <td class="description">{ts}Instructions added to Confirmation and Thank-you pages when the user selects the 'pay later' option (e.g. 'Mail your check to ... within 3 business days.').{/ts}
                 </td>
             </tr>
-	    
-	     <tr class="crm-contribution-contributionpage-amount-form-block-initial_amount_label"><th scope="row" class="label">{$form.initial_amount_label.label} <span class="marker" title="This field is required.">*</span> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contribution_page' field='initial_amount_label' id=$contributionPageID}{/if}</th>
-                <td>{$form.initial_amount_label.html|crmReplace:class:big}<br />
-                   </td></tr> 
-		 <tr class="crm-contribution-contributionpage-amount-form-block-initial_amount_help_text"><th scope="row" class="label">{$form.initial_amount_help_text.label} <span class="marker" title="This field is required.">*</span> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contribution_page' field='initial_amount_help_text' id=$contributionPageID}{/if}</th>
-                <td>{$form.initial_amount_help_text.html|crmReplace:class:big}<br /></td></tr> 
-		 <tr class="crm-contribution-contributionpage-amount-form-block-min_initial_amount"><th scope="row" class="label">{$form.min_initial_amount.label} <span class="marker" title="This field is required.">*</span> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contribution_page' field='min_initial_amount' id=$contributionPageID}{/if}</th>
-                <td>{$form.min_initial_amount.html|crmReplace:class:big}<br /></td></tr> 
-        </table>
-
+	   
+            <tr class="crm-event-manage-fee-form-block-is_partial_payment">
+              <td class="extra-long-fourty label">{$form.is_partial_payment.html}</td>
+              <td>{$form.is_partial_payment.label}</td>
+            </tr>
+	      
+           <!-- partial payment options section-->
+	     <tr>
+	      <td colspan=2>
+	        <table id='partialPaymentOptions'>
+	         <tr class="crm-contribution-contributionpage-amount-form-block-initial_amount_label">
+	           <td scope="row" class="label">
+		   {$form.initial_amount_label.label} <span class="marker" title="This field is required.">*</span> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contribution_page' field='initial_amount_label' id=$contributionPageID}{/if}
+		   </td>
+                   <td>{$form.initial_amount_label.html|crmReplace:class:big}<br /></td>
+                 </tr> 
+		 <tr class="crm-contribution-contributionpage-amount-form-block-initial_amount_help_text">
+		 <td scope="row" class="label">
+		  {$form.initial_amount_help_text.label} <span class="marker" title="This field is required.">*</span> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contribution_page' field='initial_amount_help_text' id=$contributionPageID}{/if}
+		</td>
+                <td>{$form.initial_amount_help_text.html|crmReplace:class:big}<br /></td>
+		</tr> 
+		 <tr class="crm-contribution-contributionpage-amount-form-block-min_initial_amount"><td scope="row" class="label">{$form.min_initial_amount.label} <span class="marker" title="This field is required.">*</span> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contribution_page' field='min_initial_amount' id=$contributionPageID}{/if}</td>
+                <td>{$form.min_initial_amount.html|crmReplace:class:big}<br /></td>
+		</tr>
+               </table>
+	      </td> 
+             </tr>
+      	   <!--close partial payment section-->	       
+	    </table>
 
         <table id="contributionType" class="form-layout">
 	    <tr class="crm-event-manage-fee-form-block-financial_type_id">
@@ -370,6 +391,14 @@ cj('#map-field-table input').blur( function(){
     trigger_field_id    ="is_discount"
     trigger_value       =""
     target_element_id   ="discount"
+    target_element_type ="block"
+    field_type          ="radio"
+    invert              = 0
+}
+{include file="CRM/common/showHideByFieldValue.tpl"
+    trigger_field_id    ="is_partial_payment"
+    trigger_value       =""
+    target_element_id   ="partialPaymentOptions"
     target_element_type ="block"
     field_type          ="radio"
     invert              = 0

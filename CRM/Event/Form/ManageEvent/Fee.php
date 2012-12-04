@@ -275,6 +275,11 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
       FALSE
     );
 
+    //partial payment options
+    $this->addElement('checkbox', 'is_partial_payment', ts('Enable partial payment option?'), NULL,
+      array('onclick' => "return showHideByValue('is_partial_payment','','partialPaymentOptions','block','radio',false);")
+    );
+
     $this->addElement('textarea', 'initial_amount_label', ts( 'Initial amount label' ),  
                       CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_ContributionPage', 'initial_amount_label' ),
                       false );
@@ -535,6 +540,18 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
         }
         if (empty($values['pay_later_receipt'])) {
           $errors['pay_later_receipt'] = ts('Please enter the Pay Later instructions to be displayed to your users.');
+        }
+        //partial payment check
+        if (isset($values['is_partial_payment'])) {
+          if (empty($values['initial_amount_label'])) {
+            $errors['initial_amount_label'] = ts('Please enter initial amount label');
+          }
+          if (empty($values['initial_amount_help_text'])) {
+            $errors['initial_amount_help_text'] = ts('Please enter initial amount help text');
+          }
+          if (empty($values['min_initial_amount'])) {
+            $errors['min_initial_amount'] = ts('Please enter minimum initial amount');
+          }
         }
       }
     }
