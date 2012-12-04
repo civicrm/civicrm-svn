@@ -38,7 +38,124 @@
  *
  */
 class CRM_Contribute_Form_AbstractEditPayment extends CRM_Core_Form {
-  
+  public $_mode;
+
+  public $_action;
+
+  public $_bltID;
+
+  public $_fields;
+
+  public $_paymentProcessor;
+  public $_recurPaymentProcessors;
+
+  public $_processors;
+
+  /**
+   * the id of the contribution that we are proceessing
+   *
+   * @var int
+   * @public
+   */
+  public $_id;
+
+  /**
+   * the id of the premium that we are proceessing
+   *
+   * @var int
+   * @public
+   */
+  public $_premiumID = NULL;
+  public $_productDAO = NULL;
+
+  /**
+   * the id of the note
+   *
+   * @var int
+   * @public
+   */
+  public $_noteID;
+
+  /**
+   * the id of the contact associated with this contribution
+   *
+   * @var int
+   * @public
+   */
+  public $_contactID;
+
+  /**
+   * the id of the pledge payment that we are processing
+   *
+   * @var int
+   * @public
+   */
+  public $_ppID;
+
+  /**
+   * the id of the pledge that we are processing
+   *
+   * @var int
+   * @public
+   */
+  public $_pledgeID;
+
+  /**
+   * is this contribution associated with an online
+   * financial transaction
+   *
+   * @var boolean
+   * @public
+   */
+  public $_online = FALSE;
+
+  /**
+   * Stores all product option
+   *
+   * @var array
+   * @public
+   */
+  public $_options;
+
+  /**
+   * stores the honor id
+   *
+   * @var int
+   * @public
+   */
+  public $_honorID = NULL;
+
+  /**
+   * Store the contribution Type ID
+   *
+   * @var array
+   */
+  public $_contributionType;
+
+  /**
+   * The contribution values if an existing contribution
+   */
+  public $_values;
+
+  /**
+   * The pledge values if this contribution is associated with pledge
+   */
+  public $_pledgeValues;
+
+  public $_contributeMode = 'direct';
+
+  public $_context;
+
+  public $_compId;
+
+  /*
+   * Store the line items if price set used.
+   */
+  public $_lineItems;
+
+  protected $_formType;
+  protected $_cdType;
+
   /**
    * This function process contribution related objects.
    */
