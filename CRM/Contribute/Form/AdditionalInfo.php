@@ -39,9 +39,9 @@ class CRM_Contribute_Form_AdditionalInfo {
    *
    * @access public
    *
-   * @return None
+   * @return void
    */
-  function buildPremium(&$form) {
+  static function buildPremium(&$form) {
     //premium section
     $form->add('hidden', 'hidden_Premium', 1);
     $sel1 = $sel2 = array();
@@ -79,7 +79,7 @@ class CRM_Contribute_Form_AdditionalInfo {
     $js .= "</script>\n";
     $form->assign('initHideBoxes', $js);
 
-    $this->addDate('fulfilled_date', ts('Fulfilled'), FALSE, array('formatType' => 'activityDate'));
+    $form->addDate('fulfilled_date', ts('Fulfilled'), FALSE, array('formatType' => 'activityDate'));
     $form->addElement('text', 'min_amount', ts('Minimum Contribution Amount'));
   }
 
@@ -88,15 +88,15 @@ class CRM_Contribute_Form_AdditionalInfo {
    *
    * @access public
    *
-   * @return None
+   * @return void
    */
-  function buildAdditionalDetail(&$form) {
+  static function buildAdditionalDetail(&$form) {
     //Additional information section
     $form->add('hidden', 'hidden_AdditionalDetail', 1);
 
     $attributes = CRM_Core_DAO::getAttribute('CRM_Contribute_DAO_Contribution');
 
-    $this->addDateTime('thankyou_date', ts('Thank-you Sent'), FALSE, array('formatType' => 'activityDateTime'));
+    $form->addDateTime('thankyou_date', ts('Thank-you Sent'), FALSE, array('formatType' => 'activityDateTime'));
 
     // add various amounts
     $element = &$form->add('text', 'non_deductible_amount', ts('Non-deductible Amount'),
@@ -148,17 +148,17 @@ class CRM_Contribute_Form_AdditionalInfo {
         $params = ' financial_account_type_id = 5 ' ;
         $recievedInto = CRM_Contribute_PseudoConstant::financialAccount(  null, $params );
         if( $counRecieved = count( $recievedInto ) ){
-            $this->assign( 'feeAmount', $counRecieved );
+          $form->assign( 'feeAmount', $counRecieved );
   }
         if( $counRecieved != 1 ){
-            $this->add( 'select', 
+          $form->add( 'select',
                         'fee_to_financial_account_id', 
                         ts( 'Fee Account' ), 
                         array(''=>ts( '- Select Recieved Into -' )) + $recievedInto );
         }else{
-            $this->addElement( 'hidden', 'fee_to_financial_account_id', '', array( 'id' => 'fee_to_financial_account_id' ) );
+          $form->addElement( 'hidden', 'fee_to_financial_account_id', '', array( 'id' => 'fee_to_financial_account_id' ) );
             $defaults['fee_to_financial_account_id'] = key($recievedInto);
-            $this->setDefaults($defaults);
+          $form->setDefaults($defaults);
         }
     }
 
@@ -169,7 +169,7 @@ class CRM_Contribute_Form_AdditionalInfo {
    *
    * @return None
    */
-  function buildHonoree(&$form) {
+  static function buildHonoree(&$form) {
     //Honoree section
     $form->add('hidden', 'hidden_Honoree', 1);
     $honor = CRM_Core_PseudoConstant::honor();
@@ -210,7 +210,7 @@ class CRM_Contribute_Form_AdditionalInfo {
    *
    * @return None
    */
-  function processPremium(&$params, $contributionID, $premiumID = NULL, &$options = NULL, $trxnId = NULL) {
+  static function processPremium(&$params, $contributionID, $premiumID = NULL, &$options = NULL, $trxnId = NULL) {
     $dao = new CRM_Contribute_DAO_ContributionProduct();
     $dao->contribution_id = $contributionID;
     $dao->product_id = $params['product_name'][0];
@@ -261,7 +261,7 @@ class CRM_Contribute_Form_AdditionalInfo {
    *
    * @return None
    */
-  function processNote(&$params, $contactID, $contributionID, $contributionNoteID = NULL) {
+  static function processNote(&$params, $contactID, $contributionID, $contributionNoteID = NULL) {
     //process note
     $noteParams = array(
       'entity_table' => 'civicrm_contribution',

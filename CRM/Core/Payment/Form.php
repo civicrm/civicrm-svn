@@ -40,7 +40,7 @@ class CRM_Core_Payment_Form {
    * @return void
    * @access protected
    */
-  protected function _setPaymentFields(&$form) {
+  static protected function _setPaymentFields(&$form) {
     $bltID = $form->_bltID;
 
     $form->_paymentFields['billing_first_name'] = array(
@@ -126,7 +126,7 @@ class CRM_Core_Payment_Form {
    * @return void
    * @access public
    */
-  function setCreditCardFields(&$form) {
+  static function setCreditCardFields(&$form) {
     CRM_Core_Payment_Form::_setPaymentFields($form);
 
     $form->_paymentFields['credit_card_number'] = array(
@@ -176,7 +176,7 @@ class CRM_Core_Payment_Form {
    * @return void
    * @access public
    */
-  function setDirectDebitFields(&$form) {
+  static function setDirectDebitFields(&$form) {
     CRM_Core_Payment_Form::_setPaymentFields($form);
 
     $form->_paymentFields['account_holder'] = array(
@@ -381,7 +381,7 @@ class CRM_Core_Payment_Form {
    * function to return state/province is_required = true/false
    *
    */
-  function checkRequiredStateProvince($form) {
+  static function checkRequiredStateProvince($form) {
     // If selected country has possible values for state/province mark the
     // state/province field as required.
     $config = CRM_Core_Config::singleton();
