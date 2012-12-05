@@ -1,59 +1,59 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>  
-  
+
 <table>  
   <base>CRM/Financial</base>  
   <class>FinancialBatch</class>  
   <name>civicrm_financial_batch</name>  
-  <add>4.1</add> 
+  <add>4.3</add> 
   <log>true</log> 
   <field>  
-      <name>id</name>  
-      <type>int unsigned</type>  
-      <required>true</required>  
-      <comment>Unique Address ID</comment>  
-      <add>4.1</add>
+    <name>id</name>  
+    <type>int unsigned</type>  
+    <required>true</required>  
+    <comment>Unique Address ID</comment>  
+    <add>4.3</add>
   </field>  
   <primaryKey>  
-       <name>id</name>  
-       <autoincrement>true</autoincrement>  
+    <name>id</name>  
+    <autoincrement>true</autoincrement>  
   </primaryKey>  
   <field>
-      <name>batch_id</name> 
-      <title>Batch ID</title>
-      <type>int unsigned</type>
-      <required>true</required>
-      <comment>fk to civicrm_batch.id</comment> 
-      <add>4.1</add>
+    <name>batch_id</name> 
+    <title>Batch ID</title>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>fk to civicrm_batch.id</comment> 
+    <add>4.3</add>
   </field>
   <foreignKey> 
-       <name>batch_id</name> 
-       <table>civicrm_contact</table> 
-       <key>id</key> 
-       <add>4.1</add> 
+    <name>batch_id</name> 
+    <table>civicrm_contact</table> 
+    <key>id</key> 
+    <add>4.3</add> 
   </foreignKey> 
   <field>  
-       <name>payment_instrument_id</name>
-       <type>int unsigned</type>
-       <export>true</export>
-       <comment>fk to Payment Instrument options in civicrm_option_values</comment>
-       <add>4.1</add>
+    <name>payment_instrument_id</name>
+    <type>int unsigned</type>
+    <export>true</export>
+    <comment>fk to Payment Instrument options in civicrm_option_values</comment>
+    <add>4.3</add>
   </field>
   <field>
-       <name>manual_number_trans</name>
-       <type>int unsigned</type>
-       <comment></comment>
-       <add>4.1</add>
+    <name>manual_number_trans</name>
+    <type>int unsigned</type>
+    <comment></comment>
+    <add>4.3</add>
   </field>
   <field>
-       <name>manual_total</name>
-       <type>decimal</type>
-       <headerPattern>/manual(.?to(ta)?l)?/i</headerPattern>
-       <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
-       <add>4.1</add>
+    <name>manual_total</name>
+    <type>decimal</type>
+    <headerPattern>/manual(.?to(ta)?l)?/i</headerPattern>
+    <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
+    <add>4.1</add>
   </field>
   <field>
-       <name>exported_date</name>
-       <type>datetime</type>
-       <add>4.1</add>
+    <name>exported_date</name>
+    <type>datetime</type>
+    <add>4.3</add>
   </field>
 </table>
