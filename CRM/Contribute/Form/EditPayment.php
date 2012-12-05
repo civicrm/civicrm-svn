@@ -147,12 +147,11 @@ class CRM_Contribute_Form_EditPayment extends CRM_Contribute_Form_AbstractEditPa
     if ($this->_id) {
       if (empty($this->_compId)) {
         $lineItem = CRM_Price_BAO_LineItem::getLineItems($this->_id, 'contribution', 1);
-        empty($lineItem) ? NULL : $this->_lineItems[] = $lineItem;
       }
       else {
         $lineItem = CRM_Price_BAO_LineItem::getLineItems($this->_compId);
-        empty($lineItem) ? NULL : $this->_lineItems[] = $lineItem;
       }
+      empty($lineItem) ? NULL : $this->_lineItems[] = $lineItem;
     }
     $this->assign('lineItem', empty($this->_lineItems) ? FALSE : $this->_lineItems);
   }
@@ -493,7 +492,6 @@ class CRM_Contribute_Form_EditPayment extends CRM_Contribute_Form_AbstractEditPa
       $this->setDefaults(array('is_recur' => 0));
     }
     $this->assign('buildRecurBlock', $buildRecurBlock);
-
     $qfKey = $this->controller->_key;
     $this->assign('qfKey', $qfKey);
     $this->assign('allPanes', $allPanes);
@@ -658,7 +656,8 @@ class CRM_Contribute_Form_EditPayment extends CRM_Contribute_Form_AbstractEditPa
     $element = $this->add('select', 'financial_type_id',
       ts('Financial Type'),
       array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::financialType(),
-      TRUE, array('onChange' => "buildCustomData( 'Contribution', this.value );")
+      TRUE,
+      array('onChange' => "buildCustomData( 'Contribution', this.value );")
     );
     if ($this->_online) {
       $element->freeze();
@@ -884,7 +883,6 @@ class CRM_Contribute_Form_EditPayment extends CRM_Contribute_Form_AbstractEditPa
     $this->addFormRule(array('CRM_Contribute_Form_Contribution', 'formRule'), $this);
 
     if ($this->_action & CRM_Core_Action::VIEW) {
-
       $this->freeze();
     }
   }
@@ -900,8 +898,7 @@ class CRM_Contribute_Form_EditPayment extends CRM_Contribute_Form_AbstractEditPa
    * @access public
    * @static
    */
-  static
-  function formRule($fields, $files, $self) {
+  static function formRule($fields, $files, $self) {
     $errors = array();
 
     //check if contact is selected in standalone mode
@@ -971,7 +968,6 @@ class CRM_Contribute_Form_EditPayment extends CRM_Contribute_Form_AbstractEditPa
         if ($flag) {
           $errors['financial_type_id'] .= "'Asset Account of' and ";
         }
-
         $errors['financial_type_id'] .= "'Expense Account is' is not configured for this Financial Type";
       }
     }
@@ -985,7 +981,7 @@ class CRM_Contribute_Form_EditPayment extends CRM_Contribute_Form_AbstractEditPa
    *
    * @access public
    *
-   * @return None
+   * @return void
    */
   public function postProcess() {
     if ($this->_action & CRM_Core_Action::DELETE) {
@@ -995,7 +991,6 @@ class CRM_Contribute_Form_EditPayment extends CRM_Contribute_Form_AbstractEditPa
 
     // get the submitted form values.
     $submittedValues = $this->controller->exportValues($this->_name);
-
     // If Contribution action is update then calculate and set initial amount 
     if ($this->_action & CRM_Core_Action::UPDATE) {
       $totalPrice = 0;
@@ -1074,8 +1069,7 @@ class CRM_Contribute_Form_EditPayment extends CRM_Contribute_Form_AbstractEditPa
 
     //Credit Card Contribution.
     if ($this->_mode) {
-      $this->processCreditCard($submittedValues, $config, $session, $lineItem);
-      //submit credit card contribution ends.
+      $this->processCreditCard($submittedValues, $config, $session, $pId, $lineItem);
     }
     else {
       //Offline Contribution.
@@ -1401,7 +1395,7 @@ class CRM_Contribute_Form_EditPayment extends CRM_Contribute_Form_AbstractEditPa
     }
   }
 
-  public function processCreditCard($submittedValues, $config, $session, $lineItem) {
+  public function processCreditCard($submittedValues, $config, $session, $pId, $lineItem) {
     $unsetParams = array(
       'trxn_id',
       'payment_instrument_id',

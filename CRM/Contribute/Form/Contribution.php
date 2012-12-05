@@ -654,19 +654,21 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
 
     $attributes = CRM_Core_DAO::getAttribute('CRM_Contribute_DAO_Contribution');
 
-    $this->add('select', 'financial_type_id',
-      ts('Financial Type'), array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::financialType(), TRUE
+    $element = $this->add('select', 'financial_type_id',
+      ts('Financial Type'),
+      array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::financialType(),
+      TRUE
     );
 
     if (!$this->_mode) {
-      $this->add('select', 'payment_instrument_id',
+      $element = $this->add('select', 'payment_instrument_id',
         ts('Paid By'),
         array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::paymentInstrument(),
         FALSE, array('onChange' => "return showHideByValue('payment_instrument_id','4','checkNumber','table-row','select',false);")
       );
     }
 
-    $this->add('text', 'trxn_id', ts('Transaction ID'),
+    $element = $this->add('text', 'trxn_id', ts('Transaction ID'),
       $attributes['trxn_id']
     );
 
@@ -703,7 +705,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
     if ($this->_online) {
       $this->assign('hideCalender', TRUE);
     }
-    $this->add('text', 'check_number', ts('Check Number'), $attributes['check_number']);
+    $element = $this->add('text', 'check_number', ts('Check Number'), $attributes['check_number']);
 
     $this->addDateTime('receipt_date', ts('Receipt Date'), FALSE, array('formatType' => 'activityDateTime'));
     $this->addDateTime('cancel_date', ts('Cancelled Date'), FALSE, array('formatType' => 'activityDateTime'));
@@ -1045,6 +1047,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
       $this->processCreditCard($submittedValues, $config, $session, $pId, $lineItem);
     }
     else {
+      //Offline Contribution.
       $submittedValues = $this->unsetCreditCardFields($submittedValues);
 
       // get the required field value only.
