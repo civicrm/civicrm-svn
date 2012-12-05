@@ -1,29 +1,29 @@
 <?php
 
 /*
-  +--------------------------------------------------------------------+
-  | CiviCRM version 4.0                                                |
-  +--------------------------------------------------------------------+
-  | Copyright CiviCRM LLC (c) 2004-2011                                |
-  +--------------------------------------------------------------------+
-  | This file is a part of CiviCRM.                                    |
-  |                                                                    |
-  | CiviCRM is free software; you can copy, modify, and distribute it  |
-  | under the terms of the GNU Affero General Public License           |
-  | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
-  |                                                                    |
-  | CiviCRM is distributed in the hope that it will be useful, but     |
-  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
-  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
-  | See the GNU Affero General Public License for more details.        |
-  |                                                                    |
-  | You should have received a copy of the GNU Affero General Public   |
-  | License and the CiviCRM Licensing Exception along                  |
-  | with this program; if not, contact CiviCRM LLC                     |
-  | at info[AT]civicrm[DOT]org. If you have questions about the        |
-  | GNU Affero General Public License or the licensing of CiviCRM,     |
-  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
-  +--------------------------------------------------------------------+
+ +--------------------------------------------------------------------+
+ | CiviCRM version 4.0                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
 */
 
 /**
@@ -36,11 +36,10 @@
 
 /**
  * This class generates form components for Financial Batch
- *
+ * 
  */
 class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
-
-
+      
   /**
    * The financial batch id, used when editing the field
    *
@@ -56,26 +55,28 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
    * @access public
    */
 
-  public function preProcess() {
+  public function preProcess() { 
     $this->_id = CRM_Utils_Request::retrieve('id', 'Positive', $this);
     parent::preProcess();
     $session = CRM_Core_Session::singleton();
-    if ($this->_id){
+    if ($this->_id) {
+      $permissions = array( 
+        CRM_Core_Action::UPDATE => array('permission' => array('edit own manual batches','edit all manual batches'),
+          'actionName' => 'edit'),
+        CRM_Core_Action::EXPORT => array('permission' => array('export own manual batches', 'export all manual batches'),
+          'actionName' => 'export'),
+        CRM_Core_Action::DELETE => array('permission' => array('delete own manual batches', 'delete all manual batches'),
+          'actionName' => 'delete'),
+      );
       $createdID = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Batch', $this->_id, 'created_id');
-      if ((CRM_Core_Permission::check('edit own manual batches')  ||
-        CRM_Core_Permission::check('edit all manual batches'))) {
+      if (CRM_Utils_Array::value($this->_action, $permissions)) {
+        $this->checkPermissions($this->_action, $permissions[$this->_action]['permission'], $createdID, $session->get('userID'), $permissions[$this->_action]['actionName'] );
+      }
 
-        if (CRM_Core_Permission::check('edit own manual batches') &&
-          $session->get('userID') != $createdID &&
-          !CRM_Core_Permission::check('edit all manual batches')) {
-          CRM_Core_Error::statusBounce(ts('You do not have permission to edit this batch'));
-        }
-
-        $status = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Batch', $this->_id, 'status_id');
-        $batchStatus = CRM_Core_PseudoConstant::accountOptionValues('batch_status');
-        if (CRM_Utils_Array::value($status, $batchStatus ) != 'Open') {
-          CRM_Core_Error::statusBounce(ts("You cannot edit {$batchStatus[$status]} Batch"));
-        }
+      $status = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Batch', $this->_id, 'status_id');            
+      $batchStatus = CRM_Core_PseudoConstant::accountOptionValues('batch_status');
+      if (CRM_Utils_Array::value($status, $batchStatus) != 'Open') {
+        CRM_Core_Error::statusBounce(ts("You cannot edit {$batchStatus[$status]} Batch")); 
       }
     }
   }
@@ -87,8 +88,7 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
    * @access public
    */
   public function buildQuickForm() {
-    parent::buildQuickForm( );
-
+    parent::buildQuickForm();       
     if (isset( $this->_id)) {
       $params = array('batch_id' => $this->_id);
       CRM_Financial_BAO_FinancialBatch::retrieve($params, $defaults);
@@ -97,177 +97,214 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
       $this->assign('batchTitle', $this->_title);
       $this->setDefaults($defaults);
     }
-    if ($this->_action & (CRM_Core_Action::CLOSE | CRM_Core_Action::REOPEN  | CRM_Core_Action::EXPORT)){
-      if($this->_action &  CRM_Core_Action::CLOSE)
+    if ($this->_action & (CRM_Core_Action::CLOSE | CRM_Core_Action::REOPEN | CRM_Core_Action::EXPORT)) { 
+      if ($this->_action & CRM_Core_Action::CLOSE) {
         $buttonName = 'Close Batch';
-      elseif($this->_action &  CRM_Core_Action::REOPEN)
+      } elseif ($this->_action & CRM_Core_Action::REOPEN) {
         $buttonName = 'ReOpen Batch';
-      elseif($this->_action &  CRM_Core_Action::EXPORT)
+      } elseif ($this->_action & CRM_Core_Action::EXPORT) {
         $buttonName = 'Export Batch';
+      }
       $this->addButtons(
-        array(
-          array ( 
-            'type' => 'next',
-            'name' => ts($buttonName),
-            'spacing'  => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
-            'isDefault' => true   
-          ),
+        array( 
           array( 
-            'type'      => 'cancel',
-            'name'      => ts('Cancel') 
-          ),
-        )
+            'type' => 'next', 
+            'name' => ts($buttonName), 
+            'spacing' => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', 
+            'isDefault' => true   
+          ), 
+          array( 
+            'type' => 'cancel', 
+            'name' => ts('Cancel')
+          ), 
+        ) 
       );
-      $this->assign( 'actionName', $buttonName );
+      $this->assign('actionName', $buttonName);
       return;
     }
-
+         
     $this->applyFilter('__ALL__', 'trim');
+         
     $this->addButtons( 
       array(
         array( 
           'type' => 'next',
           'name' => ts('Save'),
-          'isDefault' => true 
+          'isDefault' => true
         ),
         array( 
           'type' => 'next',
           'name' => ts('Save and New'),
           'subName' => 'new'
         ),
-        array ( 
+        array( 
           'type' => 'cancel',
-          'name' => ts('Cancel') 
+          'name' => ts('Cancel')
         ),
       )
     );
-
-    if ( $this->_action & CRM_Core_Action::UPDATE && $this->_id ){
-      $element = $this->add( 
-        'select',
-        'type_id',
-        ts('Batch Type'),
+    
+    if ($this->_action & CRM_Core_Action::UPDATE && $this->_id) {
+            
+      $element = $this->add('select', 'type_id', ts('Batch Type'), 
         array('' => ts('- Select Batch Type -')) + CRM_Core_PseudoConstant::accountOptionValues('batch_type'));
-      
+            
       $element->freeze();
-      if($flag = CRM_Core_Permission::check('edit all manual batches')){
+      if ($flag = CRM_Core_Permission::check('edit all manual batches')) {
         $dataURL = CRM_Utils_System::url('civicrm/ajax/getContactList', 'json=1&users=1', false, null, false);
         $this->assign('dataURL', $dataURL);
         $this->add('text', 'contact_name', ts('Created By'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Batch', 'created_id'));
         $this->add('hidden', 'created_id', '', array('id' => 'created_id'));
       }
+      
       $element = $this->add('text', 'modified_date', ts('Modified Date'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Batch', 'modified_date'));
       $element->freeze();
       $this->add('text', 'created_date', ts('Opened Date'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Batch', 'created_date'));
-
-      $this->add('select', 'status_id', ts('Batch Status'),
-        array( '' => ts('- Select Batch Status -')) + CRM_Core_PseudoConstant::accountOptionValues('batch_status' , null , " AND v.label != 'Exported' "),
-        true 
-      );
+            
+      $batchstatus = CRM_Core_PseudoConstant::accountOptionValues('batch_status');
+      //unset exported status
+      unset($batchstatus[3]);
+      $this->add('select', 'status_id', ts('Batch Status'), array('' => ts('- Select Batch Status -')) + $batchstatus, true); 
     }
-
+      
     $this->add('text', 'name', ts('Batch Name'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Batch', 'name'), true);
-
+        
     $this->add('text', 'description', ts('Description'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Batch', 'description'));
 
-    $this->add('select', 'payment_instrument_id', ts( 'Payment Instrument' ),
-      array( '' => ts('- Select Payment Instrument -' ) ) + CRM_Contribute_PseudoConstant::paymentInstrument( ),
+    $this->add('select', 'payment_instrument_id', ts('Payment Instrument'), 
+      array('' => ts('- Select Payment Instrument -')) + CRM_Contribute_PseudoConstant::paymentInstrument(),
       false 
     );
-
+        
     $this->add('text', 'manual_total', ts('Total Amount'), CRM_Core_DAO::getAttribute('CRM_Financial_DAO_FinancialBatch', 'manual_total'), true);
+        
+    $this->add('text', 'manual_number_trans', ts('Number of Transactions'), CRM_Core_DAO::getAttribute('CRM_Financial_DAO_FinancialBatch', 'manual_number_trans'), true);      
+    $this->addFormRule(array('CRM_Financial_Form_FinancialBatch', 'formRule'), $this);    
+   } 
 
-    $this->add('text', 'manual_number_trans', ts('Number of Transactions'), CRM_Core_DAO::getAttribute('CRM_Financial_DAO_FinancialBatch', 'manual_number_trans'), true);
-  }
 
-  /**
-   * global validation rules for the form
-   *
-   * @param array $fields posted values of the form
-   *
-   * @return array list of errors to be posted back to the form
-   * @static
-   * @access public
-   */
-  static function formRule($values, $files, $self) {
+   /**
+    * global validation rules for the form
+    *
+    * @param array $fields posted values of the form
+    *
+    * @return array list of errors to be posted back to the form
+    * @static
+    * @access public
+    */
+   static function formRule($values, $files, $self) {
+     $errorMsg = array();
+     if (!is_numeric($values['manual_number_trans'])) {
+       $errorMsg['manual_number_trans'] = ts('Number of Transactions should be numeric');
+     }
+     if (!is_numeric($values['manual_total'])) {
+       $errorMsg['manual_total'] = ts('Total Amount should be numeric');
+     }
+     if (date('Y-m-d') < date('Y-m-d', strtotime($values['created_date']))) {
+       $errorMsg['created_date'] = ts('Created date cannot be greater than current date');
+     }
+     return CRM_Utils_Array::crmIsEmptyArray($errorMsg) ? true : $errorMsg; 
+   } 
 
-  }
 
-  /**
-   * Function to process the form
-   *
-   * @access public
-   * @return None
-   */
-  public function postProcess() {
-    $session = CRM_Core_Session::singleton();
-    $params = $ids = array();
-    $params = $this->exportValues();
-    $batchStatus = CRM_Core_PseudoConstant::accountOptionValues('batch_status');
-    if ($this->_id) {
-      // first step towards obsoleting $ids parameter
-      $ids['batchID'] = $params['batch_id'] = $this->_id;
-    }
 
-    if ($this->_action & CRM_Core_Action::EXPORT) {
-      $params['status_id'] = CRM_Utils_Array::key('Exported', $batchStatus);
-    }
+   /**
+    * Function to process the form
+    *
+    * @access public
+    * @return None
+    */
+   public function postProcess() {
+     $session = CRM_Core_Session::singleton();
+     $params = $ids = array();
+     $params = $this->exportValues();
+     $batchStatus = CRM_Core_PseudoConstant::accountOptionValues('batch_status');
+     if ($this->_id) {
+       $ids['batchID'] = $this->_id;
+     }
+     if ($this->_action & CRM_Core_Action::EXPORT) {
+       $params['status_id'] = CRM_Utils_Array::key('Exported', $batchStatus);
+     }
+     // store the submitted values in an array
+     $params['modified_date'] = date('YmdHis');
+     $params['modified_id'] = $session->get('userID');
+     if (CRM_Utils_Array::value('created_date', $params)) {
+       $params['created_date'] = CRM_Utils_Date::processDate($params['created_date']);
+     }
+     if ($this->_action & CRM_Core_Action::ADD) {
+       $batchType = CRM_Core_PseudoConstant::accountOptionValues('batch_type');
+       $params['type_id'] = CRM_Utils_Array::key('Manual batch', $batchType);  
+       $params['status_id'] = CRM_Utils_Array::key('Open', $batchStatus);
+       $params['title'] = CRM_Utils_Array::value('name', $params);
+       $params['created_date'] = date('YmdHis');
+       $params['created_id'] = $session->get('userID'); 
+       $details = "{$params['name']} batch has been created by this contact.";
+     }
 
-    if ($this->_action & CRM_Core_Action::REOPEN) {
-      $params['batch_status_id'] = CRM_Utils_Array::key('Open', $batchStatus);
-    }
+     if ($this->_action & CRM_Core_Action::UPDATE && $this->_id) {
+       $params['title'] = CRM_Utils_Array::value('name', $params);
+       $details = "{$params['name']} batch has been edited by this contact.";
+       if (CRM_Utils_Array::value($params['status_id'], $batchStatus) == 'Closed') {
+         $details = "{$params['name']} batch has been closed by this contact.";
+       }
+     }
+     $batch = CRM_Core_BAO_Batch::create($params, $ids, $context = 'financialBatch');
 
-    // store the submitted values in an array
-    $params['modified_date'] = date('YmdHis');
-    $params['modified_id'] = $session->get( 'userID' );
-    if ($this->_action & CRM_Core_Action::EXPORT) {
-      CRM_Financial_BAO_FinancialBatch::exportBatch($params);
-    }
+     if ($this->_action & CRM_Core_Action::EXPORT) {
+       CRM_Core_BAO_Batch::exportBatch($ids, $params);
+     } 
 
-    if (CRM_Utils_Array::value( 'created_date', $params)) {
-      $params['created_date'] = CRM_Utils_Date::processDate($params['created_date']);
-    }
+     //create activity. 
+     $activityParams = array( 
+       'activity_type_id' => 47, 
+       'subject' => CRM_Utils_Array::value('name', $params). "- Batch", 
+       'status_id' => 2, 
+       'priority_id' => 2,
+       'activity_date_time' => date('YmdHis'),
+       'source_contact_id' => $session->get('userID'),
+       'source_contact_qid' => $session->get('userID'),
+       'details' => $details,    
+     );
+     $activity = CRM_Activity_BAO_Activity::create($activityParams);
+     $buttonName = $this->controller->getButtonName();
 
-    if ($this->_action & CRM_Core_Action::ADD) {
-      $batchType = CRM_Core_PseudoConstant::accountOptionValues('batch_type');
-      $params['type_id'] = CRM_Utils_Array::key('Manual batch', $batchType);
-      $params['status_id'] = CRM_Utils_Array::key('Open', $batchStatus);
-      $params['title'] = CRM_Utils_Array::value('name', $params);
-      $params['created_date'] = date('YmdHis');
-      $params['created_id'] = $session->get('userID');
-      $params['total']      = $params['manual_total'];
-      $params['item_count'] = $params['manual_number_trans'];
-    }
+     $session = CRM_Core_Session::singleton();
+     if ($buttonName == $this->getButtonName('next', 'new')) {
+       CRM_Core_Session::setStatus(ts(' You can add another Financial Batch.'));
+       $session->replaceUserContext(CRM_Utils_System::url('civicrm/financial/batch', 
+         "reset=1&action=add"));
+     } elseif (CRM_Utils_Array::value($batch->status_id, $batchStatus) == 'Closed') {
+       if ($batch->name) {
+         CRM_Core_Session::setStatus(ts("'{$batch->name}' batch has been saved."));
+       }
+       $session->replaceUserContext(CRM_Utils_System::url('civicrm','reset=1'));
+     } else {
+       if ($batch->name) {
+         CRM_Core_Session::setStatus(ts("'{$batch->name}' batch  has been saved."));
+       }
+       $session->replaceUserContext(CRM_Utils_System::url('civicrm/financial/batch', 
+         "reset=1&action=update&id={$batch->id}"));
+     }     
+   } 
 
-    if ($this->_action & CRM_Core_Action::UPDATE && $this->_id) {
-      $params['title'] = CRM_Utils_Array::value('name', $params);
-      $details = "{$params['name']} batch has been edited by this contact.";
-      if (CRM_Utils_Array::value($params['status_id'], $batchStatus) == 'Closed') {
-        $details = "{$params['name']} batch has been closed by this contact.";
+   /**
+    * global validation rules for the form
+    *
+    * @param array $fields posted values of the form
+    *
+    * @return array list of errors to be posted back to the form
+    * @static
+    * @access public
+    */
+  function checkPermissions($action, $permissions, $createdID, $userContactID, $actionName) {
+    if ((CRM_Core_Permission::check($permissions[0]) || CRM_Core_Permission::check($permissions[1]))) {
+      if (CRM_Core_Permission::check($permissions[0]) && $userContactID != $createdID && !CRM_Core_Permission::check($permissions[1])) {
+        CRM_Core_Error::statusBounce(ts('You dont have permission to {$actionName} this batch'));
       }
-    }
-
-
-    $batch = CRM_Core_BAO_Batch::create($params, $ids, $context = 'financialBatch');
-    $buttonName = $this->controller->getButtonName();
-
-    if ($buttonName == $this->getButtonName('next', 'new')) {
-      CRM_Core_Session::setStatus(ts(' You can add another Financial Batch.'));
-      $session->replaceUserContext(CRM_Utils_System::url('civicrm/financial/batch',
-        "reset=1&action=add"));
-    } elseif (CRM_Utils_Array::value($batch->status_id, $batchStatus) == 'Closed') {
-      if ($batch->name) {
-        CRM_Core_Session::setStatus(ts("'{$batch->name}' batch has been saved."));
-      }
-      $session->replaceUserContext(CRM_Utils_System::url('civicrm/financial/batch','reset=1'));
     } else {
-      if ($batch->name) {
-        CRM_Core_Session::setStatus(ts("'{$batch->name}' batch  has been saved."));
-      }
-      $session->replaceUserContext(CRM_Utils_System::url('civicrm/financial/batch',
-        "reset=1&action=update&id={$batch->id}"));
+      CRM_Core_Error::statusBounce(ts('You dont have permission to {$actionName} this batch'));
     }
-  }
+  } 
 }
 
-
+ 
