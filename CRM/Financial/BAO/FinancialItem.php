@@ -177,7 +177,7 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem {
    * @access public
    * @static
    */
-  static function createEntityTrxn(&$params) {
+  static function createEntityTrxn($params) {
     $entity_trxn = new CRM_Financial_DAO_EntityFinancialTrxn();
     if (CRM_Utils_Array::value('id', $params)) {
       $entity_trxn->id = $params['id'];
@@ -188,7 +188,7 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem {
     return $entity_trxn;
   }
 
-  static function retrieveEntityFinancialTrxn( &$params ) {
+  static function retrieveEntityFinancialTrxn( $params ) {
     $financialItem = new CRM_Financial_DAO_EntityFinancialTrxn( );
     $financialItem->copyValues( $params );
     $financialItem->find();
@@ -209,7 +209,7 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem {
     }
   }
 
-  static function retrieveMaxEntityFinancialTrxn( &$params ) {
+  static function retrieveMaxEntityFinancialTrxn($params) {
     $query = "select * from civicrm_entity_financial_trxn where id = (Select max(id) from civicrm_entity_financial_trxn where ";
     $where = "";
     foreach($params as $field=>$value) {
@@ -228,7 +228,7 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem {
     return $dao;
   } 
 
-  static function retrievePreviousAmount( &$params ) {
+  static function retrievePreviousAmount($params) {
     $entity_trxn = new CRM_Financial_DAO_EntityFinancialTrxn();
     $entity_trxn->copyValues( $params );
     $entity_trxn->find();

@@ -1192,7 +1192,6 @@ class CRM_Contribute_Form_EditPayment extends CRM_Contribute_Form_AbstractEditPa
         'pcp_roll_nickname',
         'pcp_personal_note',
       );
-
       foreach ($fields as $f) {
         $params[$f] = CRM_Utils_Array::value($f, $formValues);
       }
@@ -1307,9 +1306,8 @@ class CRM_Contribute_Form_EditPayment extends CRM_Contribute_Form_AbstractEditPa
           foreach ($eId as $key => $value) {
             $eId = $value['id'];
           }
-          $FTparams['id'] = $this->_fID;
           $trxn = new CRM_Financial_DAO_FinancialTrxn();
-          $trxn->copyValues($FTparams);
+          $trxn->id = $this->_fID;
           $trxn->find(TRUE);
           $trxn->trxn_date = NULL;
           $trxn->fee_amount = $trxn->total_amount = $trxn->net_amount = $paytotalAmount;
@@ -1321,57 +1319,49 @@ class CRM_Contribute_Form_EditPayment extends CRM_Contribute_Form_AbstractEditPa
           CRM_Financial_BAO_FinancialItem::createEntityTrxn($etparams);
         }
         else {
-          $entityParams = array(
+          $entityTrxn = CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn(array(
             'entity_table' => 'civicrm_contribution',
             'entity_id' => $this->_id,
-          );
-          $entityTrxn = CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($entityParams);
+          ));
           foreach ($entityTrxn as $key => $value) {
             $fid = $value['financial_trxn_id'];
           }
-          $entityParams = array(
+          $entityTrxn = CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn(array(
             'entity_table' => 'civicrm_financial_item',
             'entity_id' => $fid,
-          );
-          $entityTrxn = CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($entityParams);
+          ));
           foreach ($entityTrxn as $key => $value) {
             $eid = $value['entity_id'];
           }
 
-          $entityParams = array(
+          $prevAmount = CRM_Financial_BAO_FinancialItem::retrievePreviousAmount(array(
             'entity_table' => 'civicrm_financial_item',
             'entity_id' => $eid,
-          );
-          $prevAmount = 0;
-          $prevAmount = CRM_Financial_BAO_FinancialItem::retrievePreviousAmount($entityParams);
+          ));
           $amount = $this->_submitValues['initial_amount'] - $prevAmount;
-          $entityParams = array(
+          $etrxn = CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn(array(
             'entity_table' => 'civicrm_financial_item',
             'financial_trxn_id' => $this->_fID,
-          );
-          $etrxn = CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($entityParams);
+          ));
           foreach ($etrxn as $value) {
             $eid = $value['id'];
           }
-          $entityParams = array(
+          $etrxn = CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn(array(
             'entity_table' => 'civicrm_financial_trxn',
             'financial_trxn_id' => $this->_fID,
-          );
-          $etrxn = CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($entityParams);
+          ));
           if (empty($etrxn)) {
-            $entityParams = array(
+            $etrxn = CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn(array(
               'entity_table' => 'civicrm_contribution',
               'financial_trxn_id' => $this->_fID,
-            );
-            $etrxn = CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($entityParams);
+            ));
             $flag = TRUE;
           }
           foreach ($etrxn as $value) {
             $trxn_eid = $value['id'];
           }
-          $FTparams['id'] = $this->_fID;
           $trxn = new CRM_Financial_DAO_FinancialTrxn();
-          $trxn->copyValues($FTparams);
+          $trxn->id = $this->_fID;
           $trxn->find(TRUE);
           $trxn->fee_amount = $trxn->total_amount = $trxn->net_amount = $this->_submitValues['initial_amount'];
           $trxn->save();

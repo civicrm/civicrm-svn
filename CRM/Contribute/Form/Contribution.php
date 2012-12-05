@@ -1156,7 +1156,6 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
         'pcp_roll_nickname',
         'pcp_personal_note',
       );
-
       foreach ($fields as $f) {
         $params[$f] = CRM_Utils_Array::value($f, $formValues);
       }
@@ -1278,7 +1277,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
         }
         if ($this->_action & CRM_Core_Action::UPDATE) {
           $ExpenceRelation = key(CRM_CORE_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Expense Account is' ", FALSE));
-          $trxnParams['from_financial_account_id'] = $this->getFinancialAccount($formValues['financial_type_id'],self::FA_ASSET_ACCOUNT_RELATION);
+          $trxnParams['from_financial_account_id'] = $this->getFinancialAccount($formValues['financial_type_id'], self::FA_ASSET_ACCOUNT_RELATION);
           $trxnParams['to_financial_account_id'] = $this->getFinancialAccount($formValues['financial_type_id'], $ExpenceRelation);
           $entityParams = array(
             'entity_table' => 'civicrm_contribution',
@@ -1368,46 +1367,40 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
       else {
 
         if (empty($this->_lineItems)) {
-          $entityParams = array(
+          $entityTrxn = CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn(array(
             'entity_table' => 'civicrm_contribution',
             'entity_id' => $this->_values['contribution_id']
-          );
-          $entityTrxn = CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($entityParams);
+          ));
           foreach ($entityTrxn as $key => $value) {
-            $txId = $value['financial_trxn_id'];
-            $entityParams = array(
+            $entityTrxn = CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn(array(
               'entity_table' => 'civicrm_financial_item',
-              'financial_trxn_id' => $txId
-            );
-            $entityTrxn = CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($entityParams);
+              'financial_trxn_id' => $value['financial_trxn_id']
+            ));
           }
           foreach ($entityTrxn as $value) {
             $fid = $value['entity_id'];
           }
-          $entityParams = array(
+          $prevAmount = CRM_Financial_BAO_FinancialItem::retrievePreviousAmount(array(
             'entity_table' => 'civicrm_financial_item',
             'entity_id' => $fid
-          );
-          $prevAmount = 0;
-          $prevAmount = CRM_Financial_BAO_FinancialItem::retrievePreviousAmount($entityParams);
-          $entityIDParams['financial_trxn_id'] = $trxnId['id'];
-          $entityIDParams['entity_table'] = 'civicrm_financial_trxn';
-          $entityID = CRM_Financial_BAO_FinancialItem::retrieveMaxEntityFinancialTrxn($entityIDParams);
-          $entityParams = array(
+          ));
+          $entityID = CRM_Financial_BAO_FinancialItem::retrieveMaxEntityFinancialTrxn(array(
+            'financial_trxn_id' => $trxnId['id'],
+            'entity_table' => 'civicrm_financial_trxn',
+          ));
+          CRM_Financial_BAO_FinancialItem::createEntityTrxn(array(
             'entity_table' => 'civicrm_financial_item',
             'entity_id' => $fid,
             'financial_trxn_id' => $entityID->financial_trxn_id,
             'amount' => (Float) ($this->_submitValues['initial_amount'] - $prevAmount)
-          );
-          CRM_Financial_BAO_FinancialItem::createEntityTrxn($entityParams);
-          $entityParams = array(
+          ));
+          $prevamount = CRM_Financial_BAO_FinancialItem::retrievePreviousAmount(array(
             'entity_table' => 'civicrm_financial_item',
             'entity_id' => $fid,
-          );
-          $prevamount = CRM_Financial_BAO_FinancialItem::retrievePreviousAmount($entityParams);
+          ));
           $fTrxn['id'] = $fid;
           $financialItem = new CRM_Financial_DAO_FinancialItem();
-          $financialItem->copyValues($fTrxn);
+          $financialItem->id = $fid;
           $financialItem->find(TRUE);
           if ($prevamount < $financialItem->amount && $prevamount != 0) {
             $financialItem->status_id = 2;
@@ -1431,20 +1424,17 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
               'entity_table' => 'civicrm_financial_item',
               'entity_id' => $financialItemID,
             );
-            $prevAmount = 0;
             $prevAmount = CRM_Financial_BAO_FinancialItem::retrievePreviousAmount($entityParams);
 
-            $entity_financial_trxn_params = array(
+            $etrxn = CRM_Financial_BAO_FinancialItem::createEntityTrxn(array(
               'entity_table' => "civicrm_financial_item",
               'entity_id' => $financialItemID,
               'financial_trxn_id' => $trxnId['id'],
               'amount' => (Float) ($this->_submitValues['txt-price'][$value['price_field_value_id']] - $prevAmount)
-            );
-            $etrxn = CRM_Financial_BAO_FinancialItem::createEntityTrxn($entity_financial_trxn_params);
+            ));
             $prevamount = CRM_Financial_BAO_FinancialItem::retrievePreviousAmount($entityParams);
-            $fTrxn['id'] = $financialItemID;
             $financialItem = new CRM_Financial_DAO_FinancialItem();
-            $financialItem->copyValues($fTrxn);
+            $financialItem->id = $financialItemID;
             $financialItem->find(TRUE);
             if ($prevamount < $financialItem->amount && $prevamount != 0) {
               $financialItem->status_id = 2;
