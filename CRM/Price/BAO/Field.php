@@ -674,35 +674,37 @@ WHERE  id IN (" . implode(',', array_keys($priceFields)) . ')';
    */
  public static function initialPayCreate( &$params, $page, $mode = 'offline' ) {
    $values = array();
-      if ( $page == 'event' ) {
-        $values =  CRM_Utils_Array::value( 'event', $params->_values );
-      }else {
-      CRM_Utils_Array::value('_values', $params) ? $values =  $params->_values : $values[] = "";
-}
-    $params->add('checkbox', 'int_amount', ts('Record smaller initial amount'));
-
-    if ( empty($values) || !array_key_exists('initial_amount_label', $values)) {
-        $values['initial_amount_label'] = "Amount to pay now:";
-      } 
-      
-      if( array_key_exists( 'initial_amount_help_text', $values ) ){
-        $params->assign( 'initialAmountHelpText', $values['initial_amount_help_text'] );
-      }
-      
-      $element = $params->addElement( 'text', 'initial_amount', 
-                                      $values['initial_amount_label'], null );
-      
-      if ( $mode == 'offline' ){
-      $optionTypes = array( 
-        '1' => ts( 'Distribute evenly among all selected items' ),
-        '2' => ts( 'Apply to the items I specify') 
-      );
-        $params->addRadio( 'option_items',
-                           null,
-                           $optionTypes,
-                           array(), '<br/>' );
-      }
-    }
+   if ($page == 'event') {
+     $values = CRM_Utils_Array::value('event', $params->_values);
+   } else {
+     if (property_exists($params, '_values')) {
+       $values = $params->_values; 
+     }
+   }
+   $params->add('checkbox', 'int_amount', ts('Record smaller initial amount'));
+   
+   if (empty($values) || !array_key_exists('initial_amount_label', $values)) {
+     $values['initial_amount_label'] = "Amount to pay now:";
+   } 
+   
+   if (array_key_exists('initial_amount_help_text', $values)) {
+     $params->assign( 'initialAmountHelpText', $values['initial_amount_help_text'] );
+   }
+   
+   $element = $params->addElement( 'text', 'initial_amount', 
+                                   $values['initial_amount_label'], NULL );
+   
+   if ($mode == 'offline') {
+     $optionTypes = array( 
+       '1' => ts( 'Distribute evenly among all selected items' ),
+       '2' => ts( 'Apply to the items I specify') 
+     );
+     $params->addRadio( 'option_items',
+                        NULL,
+                        $optionTypes,
+                        array(), '<br/>' );
+   }
+ }
     
   /**
    * Validate the Initial Payment
