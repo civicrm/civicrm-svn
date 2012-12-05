@@ -201,8 +201,8 @@
 
 {literal}
 <script type="text/javascript">
-    var updateVote = "{/literal}{ts}Update Response{/ts}{literal}";
-    var updateVoteforall = "{/literal}{ts}Update Responses for All{/ts}{literal}";
+    var updateVote = "{/literal}{ts escape='js'}Update Response{/ts}{literal}";
+    var updateVoteforall = "{/literal}{ts escape='js'}Update Responses for All{/ts}{literal}";
     cj( function( ) {
         var count = 0; var columns='';
 
@@ -364,14 +364,14 @@
             cj( '#interview_voter_button_' + voterId ).hide( );
             cj( '#restmsg_release_or_reserve' + voterId ).fadeIn( 'slow' ).fadeOut( 'slow' );
             cj( '#row_' + voterId + ' td.name' ).addClass( 'disabled' );
-            cj( '#release_voter_button_'+ voterId ).html( "{/literal}{ts}reserve{/ts}{literal}"  );
-            cj( '#release_voter_button_' + voterId ).attr('title',"{/literal}{ts}Reserve{/ts}{literal}");
+            cj( '#release_voter_button_'+ voterId ).html( "{/literal}{ts escape='js'}reserve{/ts}{literal}"  );
+            cj( '#release_voter_button_' + voterId ).attr('title',"{/literal}{ts escape='js'}Reserve{/ts}{literal}");
         } else {
             cj( '#interview_voter_button_' + voterId ).show( );
             cj( '#restmsg_release_or_reserve' + voterId ).fadeIn( 'slow' ).fadeOut( 'slow' );
             cj( '#row_' + voterId + ' td.name' ).removeClass( 'disabled' );
-            cj( '#release_voter_button_'+ voterId ).html( "{/literal}{ts}release{/ts}{literal}"  );
-            cj( '#release_voter_button_' + voterId ).attr('title',"{/literal}{ts}Release{/ts}{literal}");
+            cj( '#release_voter_button_'+ voterId ).html( "{/literal}{ts escape='js'}release{/ts}{literal}"  );
+            cj( '#release_voter_button_' + voterId ).attr('title',"{/literal}{ts escape='js'}Release{/ts}{literal}");
         }
               cj( '#field_' + voterId + '_is_release_or_reserve' ).val( isReleaseOrReserve );
           }

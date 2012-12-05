@@ -131,13 +131,13 @@
 var start=true;
 function roll_start_stop( ) {
   if ( start ) {
-    document.getElementById('roll').innerHTML = "{/literal}{ts}Start{/ts}{literal}";
-    document.getElementById('roll').title = "{/literal}{ts}Start scrolling{/ts}{literal}";
+    document.getElementById('roll').innerHTML = "{/literal}{ts escape='js'}Start{/ts}{literal}";
+    document.getElementById('roll').title = "{/literal}{ts escape='js'}Start scrolling{/ts}{literal}";
     document.getElementById('pcp_roll').stop();
     start=false;
          } else {
-    document.getElementById('roll').innerHTML = "{/literal}{ts}Stop{/ts}{literal}";
-    document.getElementById('roll').title = "{/literal}{ts}Stop scrolling{/ts}{literal}";
+    document.getElementById('roll').innerHTML = "{/literal}{ts escape='js'}Stop{/ts}{literal}";
+    document.getElementById('roll').title = "{/literal}{ts escape='js'}Stop scrolling{/ts}{literal}";
     document.getElementById('pcp_roll').start();
     start=true;
          }

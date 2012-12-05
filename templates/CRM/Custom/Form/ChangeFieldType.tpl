@@ -53,7 +53,7 @@
 
     if ( ( cj.inArray(srcHtmlType, multiValOps) > -1 ) &&
          ( cj.inArray(dstHtmlType, singleValOps) > -1 ) ) {
-    return confirm( "{/literal}{ts}Changing a 'multi option' html type to a 'single option' html type, might results in a data loss. Please consider to take db backup before change the html type. Click 'Ok' to continue.{/ts}{literal}" );
+    return confirm( "{/literal}{ts escape='js'}Changing a 'multi option' html type to a 'single option' html type, might results in a data loss. Please consider to take db backup before change the html type. Click 'Ok' to continue.{/ts}{literal}" );
     }
     return true;
   }

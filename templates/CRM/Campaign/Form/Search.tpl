@@ -61,7 +61,7 @@
 
   //load interviewer autocomplete.
   var interviewerDataUrl = "{/literal}{$dataUrl}{literal}";
-  var hintText = "{/literal}{ts}Type in a partial or complete name of an existing contact.{/ts}{literal}";
+  var hintText = "{/literal}{ts escape='js'}Type in a partial or complete name of an existing contact.{/ts}{literal}";
   cj( "#survey_interviewer_name" ).autocomplete( interviewerDataUrl,
                                                  { width : 256,
                                                    selectFirst : false,

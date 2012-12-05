@@ -130,9 +130,9 @@ function buildRemvd( ) {
 
 function getMatches(id) {
     if ( selObj.options.length == 1 ) {
-        document.getElementById("match"+id).innerHTML = "{/literal}{ts}1 match{/ts}{literal}";
+        document.getElementById("match"+id).innerHTML = "{/literal}{ts escape='js'}1 match{/ts}{literal}";
     } else {
-        document.getElementById("match"+id).innerHTML = selObj.options.length +"&nbsp;{/literal}{ts}matches{/ts}{literal}";
+        document.getElementById("match"+id).innerHTML = selObj.options.length +"&nbsp;{/literal}{ts escape='js'}matches{/ts}{literal}";
     }
 }
 {/literal}

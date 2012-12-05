@@ -206,24 +206,24 @@ function processVoterData( element, operation )
                    var msgId = '#success_msg_' + cj( element ).val( );
        cj( msgId ).fadeIn('slow').fadeOut('slow');
        if ( operation == 'release' ) {
-                 msg = '{/literal}{ts}Save as voted.{/ts}{literal}';
+                 msg = '{/literal}{ts escape='js'}Save as voted.{/ts}{literal}';
            var isDeleted = cj( element ).attr( 'checked') ? 1:0;
-           if ( !isDeleted ) msg = '{/literal}{ts}Save as non voted.{/ts}{literal}';
+           if ( !isDeleted ) msg = '{/literal}{ts escape='js'}Save as non voted.{/ts}{literal}';
        } else if ( operation == 'gotv' ) {
-           msg = '{/literal}{ts}Vote Recorded.{/ts}{literal}';
+           msg = '{/literal}{ts escape='js'}Vote Recorded.{/ts}{literal}';
            var hasVoted = cj( element ).attr( 'checked') ? 1:0;
            var trObject = cj( '[id^="survey_activity['+ cj( element ).val() +']"]' ).parents('tr' );
            var methodName = 'addClass';
            if ( !hasVoted ) {
-        msg = '{/literal}{ts}Vote Cancelled.{/ts}{literal}';
+        msg = '{/literal}{ts escape='js'}Vote Cancelled.{/ts}{literal}';
         methodName = 'removeClass';
            }
            eval( 'trObject.' + methodName + "( 'name disabled' )" );
        } else if ( operation == 'reserve' ) {
            if ( cj( element ).attr( 'checked') ) {
-               msg = '{/literal}{ts}Reserved.{/ts}{literal}';
+               msg = '{/literal}{ts escape='js'}Reserved.{/ts}{literal}';
            } else {
-               msg = '{/literal}{ts}Released.{/ts}{literal}';
+               msg = '{/literal}{ts escape='js'}Released.{/ts}{literal}';
            }
        }
        cj( msgId ).html( msg );

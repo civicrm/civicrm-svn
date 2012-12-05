@@ -175,12 +175,12 @@
 
     $('a#expand').click( function() {
       if( $(this).attr('href') == '#expand') {
-        var message = {/literal}"{ts}Collapse all tabs{/ts}"{literal};
+        var message = {/literal}"{ts escape='js'}Collapse all tabs{/ts}"{literal};
         $(this).attr('href', '#collapse');
         $('.crm-accordion-wrapper.collapsed').crmAccordionToggle();
       }
       else {
-        var message = {/literal}"{ts}Expand all tabs{/ts}"{literal};
+        var message = {/literal}"{ts escape='js'}Expand all tabs{/ts}"{literal};
         $('.crm-accordion-wrapper:not(.collapsed)').crmAccordionToggle();
         $(this).attr('href', '#expand');
       }

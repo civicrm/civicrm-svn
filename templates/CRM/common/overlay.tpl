@@ -35,7 +35,7 @@ display message message.
  * function to add overlay during ajax action
  */
 function addCiviOverlay( element ) {
-  var message = {/literal}"{ts}Please wait...{/ts}"{literal}; 
+  var message = {/literal}"{ts escape='js'}Please wait...{/ts}"{literal}; 
   cj( element ).block({
     message: message,
     theme: true,

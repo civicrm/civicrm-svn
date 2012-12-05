@@ -145,7 +145,7 @@
                                                        cj("#contact-subtype").show();
                                                        cj("#subType").empty();
 
-                                                       cj("#subType").append("<option value=''>- {/literal}{ts}select{/ts}{literal} -</option>");
+                                                       cj("#subType").append("<option value=''>- {/literal}{ts escape='js'}select{/ts}{literal} -</option>");
                                                        for ( var key in  subtype ) {
                                                            // stick these new options in the subtype select
                                                            cj("#subType").append("<option value="+key+">"+subtype[key]+" </option>");
@@ -173,7 +173,7 @@
                                                        cj("#contact-dedupe").show();
                                                        cj("#dedupe").empty();
 
-                                                       cj("#dedupe").append("<option value=''>- {/literal}{ts}select{/ts}{literal} -</option>");
+                                                       cj("#dedupe").append("<option value=''>- {/literal}{ts escape='js'}select{/ts}{literal} -</option>");
                                                        for ( var key in  dedupe ) {
                                                            // stick these new options in the dedupe select
                                                            cj("#dedupe").append("<option value="+key+">"+dedupe[key]+" </option>");

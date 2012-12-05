@@ -842,7 +842,7 @@ function addTags() {
     cj("#manageTags").show( );
 
     cj("#manageTags").dialog({
-        title: "{/literal}{ts}Change Case Tags{/ts}{literal}",
+        title: "{/literal}{ts escape='js'}Change Case Tags{/ts}{literal}",
         modal: true,
         height: 'auto',
         width: 'auto',

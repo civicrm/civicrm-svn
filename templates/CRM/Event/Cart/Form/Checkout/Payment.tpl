@@ -172,7 +172,7 @@ cj("document").ready(function() {
     var sel = cj(this).attr("id");
     cj(".check_number-section").toggle(
         cj(this).is(":checked") &&
-        cj("label[for="+sel+"]").html() == "{/literal}{ts}Check{/ts}{literal}"
+        cj("label[for="+sel+"]").html() == "{/literal}{ts escape='js'}Check{/ts}{literal}"
     );
   });
   refresh();

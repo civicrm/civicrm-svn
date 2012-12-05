@@ -407,8 +407,9 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
 
     $this->applyFilter('__ALL__', 'trim');
     $this->add('text', "email-{$this->_bltID}",
-      ts('Email Address'), array(
-        'size' => 30, 'maxlength' => 60), TRUE
+      ts('Email Address'),
+      array('size' => 30, 'maxlength' => 60, 'class' => 'email'),
+      TRUE
     );
     $this->addRule("email-{$this->_bltID}", ts('Email is not valid.'), 'email');
     CRM_Price_BAO_Field::initialPayCreate( $this, 'contribution', 'online' );
@@ -715,7 +716,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     $this->addElement('text', 'honor_last_name', ts('Last Name'), $attributes['last_name']);
 
     //email
-    $this->addElement('text', 'honor_email', ts('Email Address'));
+    $this->addElement('text', 'honor_email', ts('Email Address'), array('class' => 'email'));
     $this->addRule('honor_email', ts('Honoree Email is not valid.'), 'email');
   }
 

@@ -109,12 +109,12 @@
       // don't allow deleting of home
       var homeMenuId = {/literal}"{$homeMenuId}"{literal};
       if ( nodeID == homeMenuId ) {
-        var cannotDeleteMsg = {/literal}"{ts}You cannot delete this menu item:{/ts}" + " "{literal} + menuName;
-        cj().crmAlert( cannotDeleteMsg, {/literal}"{ts}Cannot Delete{/ts}"{literal} );
+        var cannotDeleteMsg = {/literal}"{ts escape='js'}You cannot delete this menu item:{/ts}" + " "{literal} + menuName;
+        cj().crmAlert( cannotDeleteMsg, {/literal}"{ts escape='js'}Cannot Delete{/ts}"{literal} );
         cj("#navigation-tree").jstree('refresh');
         return false;
       }
-      var deleteMsg = {/literal}"{ts}Are you sure you want to delete this menu item:{/ts}" + " "{literal} + menuName + {/literal}" ? {ts}This action can not be undone.{/ts}"{literal};
+      var deleteMsg = {/literal}"{ts escape='js'}Are you sure you want to delete this menu item:{/ts}" + " "{literal} + menuName + {/literal}" ? {ts}This action can not be undone.{/ts}"{literal};
       var isDelete  = confirm( deleteMsg );
       if ( isDelete ) {
         var postURL = {/literal}"{crmURL p='civicrm/ajax/menutree' h=0 q='key='}{crmKey name='civicrm/ajax/menutree'}"{literal};

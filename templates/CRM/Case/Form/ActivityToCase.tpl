@@ -88,7 +88,7 @@ if ( target_contact_id ) {
 }
 
 var tokenDataUrl  = "{/literal}{$tokenUrl}{literal}";
-var hintText = "{/literal}{ts}Type in a partial or complete name or email address of an existing contact.{/ts}{literal}";
+var hintText = "{/literal}{ts escape='js'}Type in a partial or complete name or email address of an existing contact.{/ts}{literal}";
 cj( "#target_contact_id" ).tokenInput(tokenDataUrl,{prePopulate: target_contact, theme: 'facebook', hintText: hintText });
 cj( 'ul.token-input-list-facebook, div.token-input-dropdown-facebook' ).css( 'width', '450px' );
 

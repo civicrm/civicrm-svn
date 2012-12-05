@@ -285,7 +285,7 @@ function loadPanes( id ) {
         {/if}
     {literal}
    if ( ! cj('div.'+id).html() ) {
-	    var loading = '<img src="{/literal}{$config->resourceBase}i/loading.gif{literal}" alt="{/literal}{ts}loading{/ts}{literal}" />&nbsp;{/literal}{ts}Loading{/ts}{literal}...';
+	    var loading = '<img src="{/literal}{$config->resourceBase}i/loading.gif{literal}" alt="{/literal}{ts escape='js'}loading{/ts}{literal}" />&nbsp;{/literal}{ts escape='js'}Loading{/ts}{literal}...';
 	    cj('div.'+id).html(loading);
 	    cj.ajax({
 	        url    : url,
@@ -346,7 +346,7 @@ function loadPanes( id ) {
      function verify( ) {
        var element = document.getElementsByName("is_email_receipt");
         if ( element[0].checked ) {
-         var ok = confirm( '{/literal}{ts}Click OK to save this contribution record AND send a receipt to the contributor now{/ts}{literal}.' );    
+         var ok = confirm( '{/literal}{ts escape='js'}Click OK to save this contribution record AND send a receipt to the contributor now{/ts}{literal}.' );    
           if (!ok ) {
             return false;
           }

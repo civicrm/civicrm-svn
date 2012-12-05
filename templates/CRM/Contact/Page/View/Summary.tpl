@@ -406,8 +406,8 @@
 <script type="text/javascript">
 cj(function($) {
   $('.crm-inline-edit-container').crmFormContactLock({
-    ignoreLabel: "{/literal}{ts}Ignore{/ts}{literal}",
-    reloadLabel: "{/literal}{ts}Start Over{/ts}{literal}"
+    ignoreLabel: "{/literal}{ts escape='js'}Ignore{/ts}{literal}",
+    reloadLabel: "{/literal}{ts escape='js'}Start Over{/ts}{literal}"
   });
 });
 </script>

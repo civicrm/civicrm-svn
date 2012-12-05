@@ -85,7 +85,7 @@ var sourceDataUrl = "{/literal}{$dataUrl}{literal}";
 var tokenDataUrl_target  = "{/literal}{$tokenUrl}&context=case_activity_target{literal}";
 var tokenDataUrl_assignee  = "{/literal}{$tokenUrl}&context=case_activity_assignee{literal}";
 
-var hintText = "{/literal}{ts}Type in a partial or complete name or email address of an existing contact.{/ts}{literal}";
+var hintText = "{/literal}{ts escape='js'}Type in a partial or complete name or email address of an existing contact.{/ts}{literal}";
 cj( "#assignee_contact_id").tokenInput( tokenDataUrl_assignee, { prePopulate: assignee_contact, theme: 'facebook', hintText: hintText });
 cj( "#target_contact_id"  ).tokenInput( tokenDataUrl_target, { prePopulate: target_contact,   theme: 'facebook', hintText: hintText });
 cj( 'ul.token-input-list-facebook, div.token-input-dropdown-facebook' ).css( 'width', '450px' );

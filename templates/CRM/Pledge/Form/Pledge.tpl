@@ -167,7 +167,7 @@ function loadPanes( id ) {
         {/if}
     {literal}
    if ( ! cj('div.'+id).html() ) {
-      var loading = '<img src="{/literal}{$config->resourceBase}i/loading.gif{literal}" alt="{/literal}{ts}loading{/ts}{literal}" />&nbsp;{/literal}{ts}Loading{/ts}{literal}...';
+      var loading = '<img src="{/literal}{$config->resourceBase}i/loading.gif{literal}" alt="{/literal}{ts escape='js'}loading{/ts}{literal}" />&nbsp;{/literal}{ts escape='js'}Loading{/ts}{literal}...';
       cj('div.'+id).html(loading);
       cj.ajax({
           url    : url,

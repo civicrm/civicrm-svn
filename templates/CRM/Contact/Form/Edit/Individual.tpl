@@ -51,11 +51,11 @@ cj(function($) {
           if (data.is_error == 1 || data.count == 0) {
             return;
           }
-          var msg = "<em>{/literal}{ts}If the person you were trying to add is listed below, click their name to view or edit their record{/ts}{literal}:</em>";
+          var msg = "<em>{/literal}{ts escape='js'}If the person you were trying to add is listed below, click their name to view or edit their record{/ts}{literal}:</em>";
           if ( data.count == 1 ) {
-            var title = "{/literal}{ts}Similar Contact Found{/ts}{literal}";
+            var title = "{/literal}{ts escape='js'}Similar Contact Found{/ts}{literal}";
           } else {
-            var title = "{/literal}{ts}Similar Contacts Found{/ts}{literal}";
+            var title = "{/literal}{ts escape='js'}Similar Contacts Found{/ts}{literal}";
           }
           msg += '<ul class="matching-contacts-actions">';
           cj.each(data.values, function(i,contact){

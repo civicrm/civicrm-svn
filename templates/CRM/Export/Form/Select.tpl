@@ -139,7 +139,7 @@
 
      function showOther( ele )
      {
-        if ( cj('option:selected', ele).text( ) == '{/literal}{ts}Other{/ts}{literal}' ) {
+        if ( cj('option:selected', ele).text( ) == '{/literal}{ts escape='js'}Other{/ts}{literal}' ) {
      cj('#' + cj(ele).attr('id') + '_other_wrapper').show( );
         } else {
           cj('#' + cj(ele).attr('id') + '_other').val('');

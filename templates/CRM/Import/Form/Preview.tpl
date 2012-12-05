@@ -47,7 +47,7 @@ function pollLoop( ){
 }
 
 function verify( ) {
-    if (! confirm('{/literal}{ts}Are you sure you want to Import now{/ts}{literal}?') ) {
+    if (! confirm('{/literal}{ts escape='js'}Are you sure you want to Import now{/ts}{literal}?') ) {
         return false;
     }
 

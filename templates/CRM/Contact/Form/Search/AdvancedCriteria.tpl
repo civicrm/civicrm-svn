@@ -89,8 +89,8 @@ cj(function($) {
     var header = $('#' + id);
     var body = $('.crm-accordion-body.' + id);
     if (header.length > 0 && body.length > 0 && !body.html()) {
-      body.html('<div class="crm-loading-element"><span class="loading-text">{/literal}{ts}Loading{/ts}{literal}...</span></div>');
-      header.append('<a href="#" class="close-accordion" title="{/literal}{ts}Remove from search criteria{/ts}{literal}">{/literal}{ts}Reset{/ts}{literal} [x]</a>');
+      body.html('<div class="crm-loading-element"><span class="loading-text">{/literal}{ts escape='js'}Loading{/ts}{literal}...</span></div>');
+      header.append('<a href="#" class="close-accordion" title="{/literal}{ts escape='js'}Remove from search criteria{/ts}{literal}">{/literal}{ts escape='js'}Reset{/ts}{literal} [x]</a>');
       header.addClass('active');
       $.ajax({
         url : url,

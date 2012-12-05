@@ -116,7 +116,7 @@
     existingTokens = existingTokens + newToken;
     eval( 'existingTokens = [' + existingTokens + ']');
 
-    var hintText = "{/literal}{ts}Type in a partial or complete name of an existing contact.{/ts}{literal}";
+    var hintText = "{/literal}{ts escape='js'}Type in a partial or complete name of an existing contact.{/ts}{literal}";
     var contactUrl = {/literal}"{crmURL p='civicrm/ajax/checkemail' q='id=1&noemail=1' h=0 }"{literal};
 
     cj('#' + prefix + 'contact_' + blockNo).tokenInput( contactUrl, { prePopulate:existingTokens, theme: 'facebook', hintText: hintText });

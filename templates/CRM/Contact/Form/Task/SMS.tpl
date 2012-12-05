@@ -93,7 +93,7 @@
 
 {literal}
 
-var hintText = "{/literal}{ts}Type in a partial or complete name or email address of an existing contact.{/ts}{literal}";
+var hintText = "{/literal}{ts escape='js'}Type in a partial or complete name or email address of an existing contact.{/ts}{literal}";
 var sourceDataUrl = "{/literal}{crmURL p='civicrm/ajax/checkphone' h=0 }{literal}";
 var toDataUrl     = "{/literal}{crmURL p='civicrm/ajax/checkphone' q='id=1' h=0 }{literal}";
 

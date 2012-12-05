@@ -157,7 +157,7 @@
   }
 
   function showDelete( fileName, postURLData, fileID ) {
-    var confirmMsg = '{/literal}{ts escape="js"}Are you sure you want to delete attachment: {/ts}{literal}' + fileName + '&nbsp; <a href="javascript:deleteAttachment( \'' + postURLData + '\',' + fileID + ' );" style="text-decoration: underline;">{/literal}{ts}Yes{/ts}{literal}</a>&nbsp;&nbsp;&nbsp;<a href="javascript:hideStatus( );" style="text-decoration: underline;">{/literal}{ts}No{/ts}{literal}</a>';
+    var confirmMsg = '{/literal}{ts escape="js"}Are you sure you want to delete attachment: {/ts}{literal}' + fileName + '&nbsp; <a href="javascript:deleteAttachment( \'' + postURLData + '\',' + fileID + ' );" style="text-decoration: underline;">{/literal}{ts escape='js'}Yes{/ts}{literal}</a>&nbsp;&nbsp;&nbsp;<a href="javascript:hideStatus( );" style="text-decoration: underline;">{/literal}{ts escape='js'}No{/ts}{literal}</a>';
     cj( '#attachStatusMesg' ).show( ).html( confirmMsg );
   }
 
@@ -169,7 +169,7 @@
       url: postUrl,
       success: function(html){
         var resourceBase   = {/literal}"{$config->resourceBase}"{literal};
-        var successMsg = '{/literal}{ts escape="js"}The selected attachment has been deleted.{/ts}{literal} &nbsp;&nbsp;<a href="javascript:hideStatus( );"><img title="{/literal}{ts}close{/ts}{literal}" src="' +resourceBase+'i/close.png"/></a>';
+        var successMsg = '{/literal}{ts escape="js"}The selected attachment has been deleted.{/ts}{literal} &nbsp;&nbsp;<a href="javascript:hideStatus( );"><img title="{/literal}{ts escape='js'}close{/ts}{literal}" src="' +resourceBase+'i/close.png"/></a>';
         cj( '#attachFileRecord_' + fileID ).hide( );
         cj( '#attachStatusMesg' ).show( ).html( successMsg );
       }

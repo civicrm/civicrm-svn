@@ -74,7 +74,7 @@
 
     var sourceDataUrl = "{/literal}{$dataUrl}{literal}";
     var tokenDataUrl  = "{/literal}{$tokenUrl}{literal}";
-    var hintText = "{/literal}{ts}Type in a partial or complete name of an existing recipient.{/ts}{literal}";
+    var hintText = "{/literal}{ts escape='js'}Type in a partial or complete name of an existing recipient.{/ts}{literal}";
     cj( "#recipient_manual_id").tokenInput( tokenDataUrl, { prePopulate: recipient_manual, classes: tokenClass, hintText: hintText });
     cj( 'ul.token-input-list-facebook, div.token-input-dropdown-facebook' ).css( 'width', '450px' );
     cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst : false, hintText: hintText, matchContains: true, minChars: 1

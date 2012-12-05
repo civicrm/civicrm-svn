@@ -68,7 +68,7 @@ cj( document ).ready( function( ) {
     } else {
       htmlContent = '<input type="submit" value="Go" name="_qf_Basic_refresh" class="form-submit default" />';
     }
-    htmlContent += '<input type="text" class="form-text" id="sort_name_navigation" placeholder="{/literal}{ts}Find Contacts by...{/ts}{literal}" name="sort_name" style="width: 12em; margin-left: -45px;" /><input type="text" id="sort_contact_id" style="display: none" />';
+    htmlContent += '<input type="text" class="form-text" id="sort_name_navigation" placeholder="{/literal}{ts escape='js'}Find Contacts by...{/ts}{literal}" name="sort_name" style="width: 12em; margin-left: -45px;" /><input type="text" id="sort_contact_id" style="display: none" />';
     cj('#quickSearch').html(htmlContent);
   }
 

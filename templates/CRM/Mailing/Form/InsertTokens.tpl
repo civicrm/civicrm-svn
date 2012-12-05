@@ -320,7 +320,7 @@ function selectValue( val ) {
     function showToken(element, id ) {
   initFilter(id);
   cj("#token"+id).css({"width":"290px", "size":"8"});
-  var tokenTitle = {/literal}'{ts}Select Token{/ts}'{literal};
+  var tokenTitle = {/literal}'{ts escape="js"}Select Token{/ts}'{literal};
         cj("#token"+element ).show( ).dialog({
             title       : tokenTitle,
             modal       : true,

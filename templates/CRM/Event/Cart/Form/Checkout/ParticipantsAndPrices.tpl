@@ -81,7 +81,7 @@ function delete_participant( event_id, participant_id )
 //XXX missing
 cj('#ajax_error').ajaxError(
   function( e, xrh, settings, exception ) {
-    cj(this).append('<div class="error">{/literal}{ts}Error adding a participant at{/ts}{literal} ' + settings.url + ': ' + exception);
+    cj(this).append('<div class="error">{/literal}{ts escape='js'}Error adding a participant at{/ts}{literal} ' + settings.url + ': ' + exception);
   }
 );
 //]]>

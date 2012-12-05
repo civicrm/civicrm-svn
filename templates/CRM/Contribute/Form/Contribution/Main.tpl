@@ -483,3 +483,6 @@ cj(function(){
 {/literal}
 </script>
 {/if}
+
+{* jQuery validate *}
+{include file="CRM/Form/validate.tpl"}

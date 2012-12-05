@@ -179,7 +179,7 @@ function loadSurveyList( )
      var surveyTypes    = {/literal}{$surveyTypes}{literal};
      var surveyCampaigns = {/literal}{$surveyCampaigns}{literal};
 
-     var noRecordFoundMsg  = {/literal}{ts}'No matches found for:'{/ts}{literal};
+     var noRecordFoundMsg  = {/literal}{ts escape='js'}'No matches found for:'{/ts}{literal};
      noRecordFoundMsg += '<div class="qill">';
 
      var count = 0;
@@ -278,8 +278,8 @@ function displayResultSet( surveyId, surveyTitle, OptionGroupId ) {
   data['survey_id']       = surveyId;
 
   var dataUrl  = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Campaign_Page_AJAX&fnName=loadOptionGroupDetails' }"{literal};
-  var content  = '<tr><th>{/literal}{ts}Label{/ts}{literal}</th><th>{/literal}{ts}Value{/ts}{literal}</th><th>{/literal}{ts}Recontact Interval{/ts}{literal}</th><th>{/literal}{ts}Weight{/ts}{literal}</th></tr>';
-  var setTitle = '{/literal}{ts}Result Set for{/ts} {literal}' + surveyTitle;
+  var content  = '<tr><th>{/literal}{ts escape='js'}Label{/ts}{literal}</th><th>{/literal}{ts escape='js'}Value{/ts}{literal}</th><th>{/literal}{ts escape='js'}Recontact Interval{/ts}{literal}</th><th>{/literal}{ts escape='js'}Weight{/ts}{literal}</th></tr>';
+  var setTitle = '{/literal}{ts escape='js'}Result Set for{/ts} {literal}' + surveyTitle;
 
   cj.post( dataUrl, data, function( opGroup ) {
     if ( opGroup.status == 'success' ) {

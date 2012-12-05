@@ -221,12 +221,12 @@ cj('#crm-group-selector').on( 'click', 'span.show-children', function(){
     levelClass = 'level_3';
   }
   if ( cj(this).hasClass('collapsed') ) {
-    cj(this).removeClass("collapsed").addClass("expanded").attr("title",{/literal}"{ts}hide child groups{/ts}"{literal});
+    cj(this).removeClass("collapsed").addClass("expanded").attr("title",{/literal}"{ts escape='js'}hide child groups{/ts}"{literal});
     showChildren( parent_id, showOrgInfo, group_id, levelClass );
   }
   else {
-    cj(this).removeClass("expanded").addClass("collapsed").attr("title",{/literal}"{ts}show child groups{/ts}"{literal});
-    cj('.parent_is_' + parent_id).find('.show-children').removeClass("expanded").addClass("collapsed").attr("title",{/literal}"{ts}show child groups{/ts}"{literal});
+    cj(this).removeClass("expanded").addClass("collapsed").attr("title",{/literal}"{ts escape='js'}show child groups{/ts}"{literal});
+    cj('.parent_is_' + parent_id).find('.show-children').removeClass("expanded").addClass("collapsed").attr("title",{/literal}"{ts escape='js'}show child groups{/ts}"{literal});
     cj('.parent_is_' + parent_id).hide();
     cj('.parent_is_' + parent_id).each(function(i, obj) {
       // also hide children of children
