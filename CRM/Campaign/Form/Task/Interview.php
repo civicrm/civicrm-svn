@@ -422,7 +422,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
     $activity->selectAdd();
     $activity->selectAdd('activity_date_time, status_id, result, subject');
     $activity->find(TRUE);
-    $activity->activity_date_time = date('Ymdhis');
+    $activity->activity_date_time = date('YmdHis');
     $activity->status_id = $statusId;
     
     if (CRM_Utils_Array::value('details', $params)) {
