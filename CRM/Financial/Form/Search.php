@@ -58,12 +58,12 @@ class CRM_Financial_Form_Search extends CRM_Core_Form {
                 array( ''=> ts( '- Select Payment Instrument -' ) ) + CRM_Contribute_PseudoConstant::paymentInstrument( ),
                 false );
     
-    $this->add('text', 'manual_total', ts('Total Amount'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialBatch', 'manual_total' ) );
+    $this->add('text', 'total', ts('Total Amount'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Batch', 'total'));
     
-    $this->add('text', 'manual_number_trans', ts('Number of Transactions'), CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_FinancialBatch', 'manual_number_trans' ) );
-    $this->add('text', 'sort_name', ts('Created By'), CRM_Core_DAO::getAttribute( 'CRM_Contact_DAO_Contact', 'sort_name' ) );
+    $this->add('text', 'item_count', ts('Number of Transactions'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Batch', 'item_count'));
+    $this->add('text', 'sort_name', ts('Created By'), CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'sort_name'));
   
-    $this->assign( 'elements', array( 'title', 'sort_name', 'type_id', 'close_date', 'open_date', 'payment_instrument_id', 'manual_number_trans', 'manual_total', ) );
+    $this->assign('elements', array('title', 'sort_name', 'type_id', 'close_date', 'open_date', 'payment_instrument_id', 'item_count', 'total'));
 
     $this->addButtons(
       array(

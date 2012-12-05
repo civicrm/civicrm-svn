@@ -90,12 +90,9 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
   public function buildQuickForm() {
     parent::buildQuickForm();       
     if (isset( $this->_id)) {
-      $params = array('batch_id' => $this->_id);
-      CRM_Financial_BAO_FinancialBatch::retrieve($params, $defaults);
       $this->_title = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Batch', $this->_id, 'name');
       CRM_Utils_System::setTitle($this->_title .' - '.ts( 'Financial Batch'));
       $this->assign('batchTitle', $this->_title);
-      $this->setDefaults($defaults);
     }
     if ($this->_action & (CRM_Core_Action::CLOSE | CRM_Core_Action::REOPEN | CRM_Core_Action::EXPORT)) { 
       if ($this->_action & CRM_Core_Action::CLOSE) {
@@ -177,9 +174,9 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
       false 
     );
         
-    $this->add('text', 'manual_total', ts('Total Amount'), CRM_Core_DAO::getAttribute('CRM_Financial_DAO_FinancialBatch', 'manual_total'), true);
+    $this->add('text', 'total', ts('Total Amount'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Batch', 'total'), true);
         
-    $this->add('text', 'manual_number_trans', ts('Number of Transactions'), CRM_Core_DAO::getAttribute('CRM_Financial_DAO_FinancialBatch', 'manual_number_trans'), true);      
+    $this->add('text', 'item_count', ts('Number of Transactions'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Batch', 'item_count'), true);      
     $this->addFormRule(array('CRM_Financial_Form_FinancialBatch', 'formRule'), $this);    
    } 
 
@@ -209,11 +206,11 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
     */
    static function formRule($values, $files, $self) {
      $errorMsg = array();
-     if (!is_numeric($values['manual_number_trans'])) {
-       $errorMsg['manual_number_trans'] = ts('Number of Transactions should be numeric');
+     if (!is_numeric($values['item_count'])) {
+       $errorMsg['item_count'] = ts('Number of Transactions should be numeric');
      }
-     if (!is_numeric($values['manual_total'])) {
-       $errorMsg['manual_total'] = ts('Total Amount should be numeric');
+     if (!is_numeric($values['total'])) {
+       $errorMsg['total'] = ts('Total Amount should be numeric');
      }
      if (CRM_Utils_Array::value('created_date', $values) && date('Y-m-d') < date('Y-m-d', strtotime($values['created_date']))) {
        $errorMsg['created_date'] = ts('Created date cannot be greater than current date');
@@ -253,7 +250,6 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
        $params['title'] = CRM_Utils_Array::value('name', $params);
        $params['created_date'] = date('YmdHis');
        $params['created_id'] = $session->get('userID');
-       $params['item_count'] = CRM_Utils_Array::value('manual_number_trans', $params);
        $details = "{$params['name']} batch has been created by this contact.";
      }
 

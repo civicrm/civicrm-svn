@@ -75,13 +75,13 @@
 	  <td class="html-adjust">{$form.type_id.html}</td>
        </tr>
        {/if}
-       <tr class="crm-contribution-form-block-manual_number_trans">	 
-    	  <td class="label">{$form.manual_number_trans.label}</td>
-	  <td class="html-adjust">{$form.manual_number_trans.html}</td>
+       <tr class="crm-contribution-form-block-item_count">	 
+    	  <td class="label">{$form.item_count.label}</td>
+	  <td class="html-adjust">{$form.item_count.html}</td>
        </tr>
-       <tr class="crm-contribution-form-block-manual_total">	 
-    	  <td class="label">{$form.manual_total.label}</td>
-	  <td class="html-adjust">{$form.manual_total.html}</td>
+       <tr class="crm-contribution-form-block-total">	 
+    	  <td class="label">{$form.total.label}</td>
+	  <td class="html-adjust">{$form.total.html}</td>
        </tr>
        {if $action eq 2}
         <tr class="crm-contribution-form-block-open_date">	 

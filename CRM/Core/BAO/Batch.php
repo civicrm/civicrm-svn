@@ -61,15 +61,6 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
     }
     $batch->save();
 
-    if ($context == 'financialBatch' && $batch->id) {
-      $financialParams = array(
-        'batch_id'              => $batch->id,
-        'payment_instrument_id' => CRM_Utils_Array::value('payment_instrument_id', $params),
-        'manual_number_trans'   => CRM_Utils_Array::value('manual_number_trans', $params),
-        'manual_total'          => CRM_Utils_Array::value('manual_total', $params),
-      );
-      $finanacialBatch = CRM_Financial_BAO_FinancialBatch::add($financialParams);
-    }
     return $batch;
   }
 
