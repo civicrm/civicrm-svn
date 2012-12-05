@@ -1017,6 +1017,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
       'net_amount' => CRM_Utils_Array::value('net_amount', $result, $params['amount']),
       'currency' => $params['currencyID'],
       'payment_processor' => $form->_paymentProcessor['payment_processor_type'],
+      'payment_processor_id' => $form->_paymentProcessor['id'],
       'trxn_id' => $result['trxn_id'],
     );
 
@@ -1031,7 +1032,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
         $filter = null, 
         " account_relationship = 3 AND entity_id = {$contribution->financial_type_id} " );
       $financialAccount = current( $revenueFinancialType );
-      $statusID = key(CRM_CORE_PseudoConstant::accountOptionValues( 'financial_item_status', null, " AND v.name LIKE 'Unpaid' " ));
+      $statusID = key(CRM_Core_PseudoConstant::accountOptionValues( 'financial_item_status', null, " AND v.name LIKE 'Unpaid' " ));
     } else {
       $finanTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_PaymentProcessor', $form->_paymentProcessor['id'], 'financial_type_id' );
       CRM_Core_PseudoConstant::populate( $revenueFinancialType,
@@ -1042,10 +1043,10 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
         " account_relationship = 6 AND entity_id = {$finanTypeId} " );
                 
       $financialAccount = current( $revenueFinancialType );
-      $statusID = key(CRM_CORE_PseudoConstant::accountOptionValues( 'financial_item_status', null, " AND v.name LIKE 'Paid' " ));
+      $statusID = key(CRM_Core_PseudoConstant::accountOptionValues( 'financial_item_status', null, " AND v.name LIKE 'Paid' " ));
     }
 
-    if( $financialAccount ){
+    if ( $financialAccount ) {
       $trxnParams['to_financial_account_id'] = $financialAccount;
       $cId = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialAccount', $financialAccount, 'contact_id' );
     }
@@ -1053,6 +1054,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
     require_once 'CRM/Core/BAO/FinancialTrxn.php';
     $trxnParams['status_id'] = $statusID;
     $trxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
+
     $itemsParams = array( 
       'created_date'     => date('YmdHis'),
       'transaction_date' => $trxn->trxn_date,
