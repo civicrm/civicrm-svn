@@ -1698,9 +1698,9 @@ WHERE  id = $cfID
   }
 
   /* Function to retrieve all events those having location block set.
-     *
-     * @return array $events array of all events.
-     */
+   *
+   * @return array $events array of all events.
+   */
   static function getLocationEvents() {
     $events = array();
 
@@ -1765,11 +1765,11 @@ WHERE  ce.loc_block_id = $locBlockId";
   }
 
   /* Function to Show - Hide the Registration Link.
-     *
-     * @param  array   $values key/value event info
-     * @return boolean true if allow registration otherwise false
-     * @access public
-     */
+   *
+   * @param  array   $values key/value event info
+   * @return boolean true if allow registration otherwise false
+   * @access public
+   */
   static function showHideRegistrationLink($values) {
 
     $session           = CRM_Core_Session::singleton();
@@ -1797,11 +1797,11 @@ WHERE  ce.loc_block_id = $locBlockId";
   }
 
   /* Function to check if given contact is already registered.
-     *
-     * @param  array   $params key/value participant info
-     * @return boolean $alreadyRegistered true/false
-     * @access public
-     */
+   *
+   * @param  array   $params key/value participant info
+   * @return boolean $alreadyRegistered true/false
+   * @access public
+   */
   function checkRegistration($params) {
     $alreadyRegistered = FALSE;
     if (!CRM_Utils_Array::value('contact_id', $params)) {
@@ -1969,13 +1969,13 @@ LEFT  JOIN  civicrm_price_field_value value ON ( value.id = lineItem.price_field
   }
 
   /*
-     * Retrieve event template default values to be set
-     *  as default values for current new event.
-     *
-     * @params int $templateId event template id.
-     *
-     * @return $defaults an array of custom data defaults.
-     */
+   * Retrieve event template default values to be set
+   *  as default values for current new event.
+   *
+   * @params int $templateId event template id.
+   *
+   * @return $defaults an array of custom data defaults.
+   */
   public function getTemplateDefaultValues($templateId) {
     $defaults = array();
     if (!$templateId) {

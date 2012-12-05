@@ -1167,18 +1167,18 @@ UPDATE  civicrm_participant
   }
 
   /*
-     * Function takes participant ids and statuses
-     * update status from $fromStatusId to $toStatusId
-     * and send mail + create activities.
-     *
-     * @param  array $participantIds   participant ids.
-     * @param  int   $toStatusId       update status id.
-     * @param  int   $fromStatusId     from status id
-     *
-     * return  void
-     * @access public
-     * @static
-     */
+   * Function takes participant ids and statuses
+   * update status from $fromStatusId to $toStatusId
+   * and send mail + create activities.
+   *
+   * @param  array $participantIds   participant ids.
+   * @param  int   $toStatusId       update status id.
+   * @param  int   $fromStatusId     from status id
+   *
+   * return  void
+   * @access public
+   * @static
+   */
   static function transitionParticipants($participantIds, $toStatusId,
     $fromStatusId = NULL, $returnResult = FALSE, $skipCascadeRule = FALSE
   ) {
