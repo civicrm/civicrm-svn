@@ -105,17 +105,17 @@ ALTER TABLE `civicrm_domain` ADD `contact_id` INT( 10 ) UNSIGNED NULL DEFAULT NU
         'sort_name' => $dao->name,
         'display_name' => $dao->name,
         'legal_name' => $dao->name,
-        'organization_name' => $dao->name, 
+        'organization_name' => $dao->name,
         'contact_type' => 'Organization'
       );
-      
+
       $contact = CRM_Contact_BAO_Contact::add($params);
       $domainParams['contact_id'] = $contact->id;
       CRM_Core_BAO_Domain::edit($domainParams, $dao->id);
     }
     CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_domain` DROP loc_block_id;", $params, TRUE, NULL, FALSE, FALSE);
   }
-  
+
   function task_4_3_alpha1_checkDBConstraints() {
     //checking whether the foreign key exists before dropping it CRM-11260
     $config = CRM_Core_Config::singleton();
@@ -125,7 +125,7 @@ ALTER TABLE `civicrm_domain` ADD `contact_id` INT( 10 ) UNSIGNED NULL DEFAULT NU
       'autorenewal_msg_id' => array('tableName' => 'civicrm_membership_type', 'fkey' => 'FK_civicrm_membership_autorenewal_msg_id'),
       'to_account_id' =>  array('tableName' => 'civicrm_financial_trxn', 'constraintName' => 'civicrm_financial_trxn_ibfk_2'),
       'from_account_id' => array('tableName' =>  'civicrm_financial_trxn', 'constraintName' => 'civicrm_financial_trxn_ibfk_1'),
-      'contribution_type_id' => array('tableName' => 'civicrm_contribution_recur', 'fkey' => 'FK_civicrm_contribution_recur_contribution_type_id'), 
+      'contribution_type_id' => array('tableName' => 'civicrm_contribution_recur', 'fkey' => 'FK_civicrm_contribution_recur_contribution_type_id'),
     );
     $query = "SELECT * FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
 WHERE table_name = 'civicrm_contribution_recur'
@@ -146,13 +146,13 @@ AND TABLE_SCHEMA = '{$dbUf['database']}'";
           $constraintName  = $foreignKeyExists ? $fKey : $value['constraintName'];
           CRM_Core_DAO::executeQuery("ALTER TABLE {$value['tableName']} DROP FOREIGN KEY {$constraintName}", $params, TRUE, NULL, FALSE, FALSE);
         }
-        CRM_Core_DAO::executeQuery("ALTER TABLE {$value['tableName']} DROP INDEX {$fKey}", $params, TRUE, NULL, FALSE, FALSE);  
-      } 
+        CRM_Core_DAO::executeQuery("ALTER TABLE {$value['tableName']} DROP INDEX {$fKey}", $params, TRUE, NULL, FALSE, FALSE);
+      }
     }
-    // check if column contact_id is present or not in civicrm_financial_account 
+    // check if column contact_id is present or not in civicrm_financial_account
     $fieldExists = CRM_Core_DAO::checkFieldExists('civicrm_financial_account', 'contact_id', FALSE);
     if (!$fieldExists) {
-      $query = "ALTER TABLE civicrm_financial_account ADD `contact_id` int(10) unsigned DEFAULT NULL COMMENT 'Version identifier of financial_type' AFTER `name`, ADD CONSTRAINT `FK_civicrm_financial_account_contact_id` FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact`(id);"; 
+      $query = "ALTER TABLE civicrm_financial_account ADD `contact_id` int(10) unsigned DEFAULT NULL COMMENT 'Version identifier of financial_type' AFTER `name`, ADD CONSTRAINT `FK_civicrm_financial_account_contact_id` FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact`(id);";
       CRM_Core_DAO::executeQuery($query, $params, TRUE, NULL, FALSE, FALSE);
     }
   }

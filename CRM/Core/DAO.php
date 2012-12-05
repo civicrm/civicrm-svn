@@ -891,7 +891,8 @@ FROM   civicrm_domain
    * @static
    * @access public
    */
-  static function &executeQuery($query,
+  static function &executeQuery(
+    $query,
     $params        = array(),
     $abort         = TRUE,
     $daoName       = NULL,
@@ -969,7 +970,7 @@ FROM   civicrm_domain
     return $ret;
   }
 
-  static function composeQuery($query, &$params, $abort) {
+  static function composeQuery($query, &$params, $abort = TRUE) {
     $tr = array();
     foreach ($params as $key => $item) {
       if (is_numeric($key)) {
