@@ -25,66 +25,57 @@
 *}
 {* this template is used for adding/editing/deleting financial type  *}
 <div class="crm-form-block crm-search-form-block">
-<div class="crm-accordion-wrapper crm-activity_search-accordion {if $searchRows}crm-accordion-closed{else}crm-accordion-open{/if}">
- <div class="crm-accordion-header crm-master-accordion-header">
-  <div class="icon crm-accordion-pointer"></div> 
-   {ts}Edit Search Criteria{/ts}
-</div><!-- /.crm-accordion-header -->
+  <div class="crm-accordion-wrapper crm-activity_search-accordion {if $searchRows}crm-accordion-closed{else}crm-accordion-open{/if}">
+    <div class="crm-accordion-header crm-master-accordion-header">
+      <div class="icon crm-accordion-pointer"></div> 
+      {ts}Edit Search Criteria{/ts}
+    </div><!-- /.crm-accordion-header -->
  
-
-<div class="crm-accordion-body">
-  <div id="searchForm" class="crm-block crm-form-block crm-contact-custom-search-activity-search-form-block">
-     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
-     <table class="form-layout-compressed">
-      
-      </table> 
-  
-   <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="botttom"}</div>
-</div>
-</div>	
-</div>
+    <div class="crm-accordion-body">
+      <div id="searchForm" class="crm-block crm-form-block crm-contact-custom-search-activity-search-form-block">
+        <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
+        <table class="form-layout-compressed">
+        </table> 
+        <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="botttom"}</div>
+      </div>
+    </div>	
+  </div>
 </div>
 
 {if $searchRows}
-<div id="ltype">
-<p></p>
+  <div id="ltype">
+    <p></p>
     <div class="form-item">
-        {strip}
-	{* handle enable/disable actions*}
- 	{include file="CRM/common/enableDisable.tpl"}
-        <table cellpadding="0" cellspacing="0" border="0">
-           <thead class="sticky">
-	    <tr>
-            <th scope="col" title="Select All Rows">{$form.toggleSelect.html}</th>
-             {foreach from=$searchColumnHeader item=head}
-	     <th>{$head}</th>
-	     {/foreach}
-            <th></th>
-	    </tr>
-          </thead>
+      {strip}
+      {* handle enable/disable actions*}
+      {include file="CRM/common/enableDisable.tpl"}
+      <table cellpadding="0" cellspacing="0" border="0">
+        <thead class="sticky">
+	<tr>
+          <th scope="col" title="Select All Rows">{$form.toggleSelect.html}</th>
+          {foreach from=$searchColumnHeader item=head}
+	    <th>{$head}</th>
+	  {/foreach}
+          <th></th>
+	</tr>
+        </thead>
 
-         {foreach from=$searchRows item=row}
+        {foreach from=$searchRows item=row}
         <tr id="row_{$row.id}"class="{cycle values="odd-row,even-row"} {$row.class}">
-	 {assign var=cbName value=$row.checkbox}
-                <td>{$form.$cbName.html}</td>
-	    {foreach from=$searchColumnHeader item=rowValue key=rowKey}
+	  {assign var=cbName value=$row.checkbox}
+          <td>{$form.$cbName.html}</td>
+	  {foreach from=$searchColumnHeader item=rowValue key=rowKey}
 	    <td>{$row.$rowKey}</td>
-	    {/foreach}
-	   <td>{$row.action}</td>  
+	  {/foreach}
+	  <td>{$row.action}</td>  
         </tr>
         {/foreach}
-         </table>
-        {/strip}
-    
+      </table>
+      {/strip}
     </div>
-</div>
-{else}
-    <div class="messages status">
-        <div class="icon inform-icon"></div>
-        {capture assign=crmURL}{crmURL q="action=add&reset=1"}{/capture}
-        {ts 1=$crmURL}There are no Financial Types entered. You can <a href='%1'>add one</a>.{/ts}
-    </div>    
+  </div>   
 {/if}
+
 {literal}
 <script type="text/javascript">
 cj(function() {
