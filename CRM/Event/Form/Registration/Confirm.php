@@ -687,7 +687,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
         $this->set('trxnId', CRM_Utils_Array::value('trxn_id', $value));
       }
 
-      $value['fee_amount'] =  $value['initial_amount'];
+      $value['fee_amount'] = CRM_Utils_Array::value('initial_amount', $value);
       $this->set('value', $value);
 
       // handle register date CRM-4320
@@ -731,7 +731,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
         $allParticipantIds = array_merge(array($registerByID), $this->_additionalParticipantIds);
       }
 
-      if ( $this->_params['initial_amount'] > 0.00){
+      if ( CRM_Utils_Array::value('initial_amount', $this->_params) > 0.00) {
         $initPoint = $this->_params['amount'] / $this->_params['initial_amount'];
       }
       $entityTable = 'civicrm_participant';
@@ -755,8 +755,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
             $initvalue = (float) $line['unit_price']/$initPoint;
             $initValue = number_format($initvalue, 2, '.', '');
             $lineItems->$int_name= $initValue;
-                        CRM_Financial_BAO_FinancialItem::add( $lineItems, $contribution );
-                        
+            CRM_Financial_BAO_FinancialItem::add( $lineItems, $contribution );
           }
         }
       }
@@ -1012,7 +1011,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
       'contribution_id' => $contribution->id,
       'trxn_date' => $now,
       'trxn_type' => 'Debit',
-      'total_amount' => $params['initial_amount'],
+      'total_amount' => CRM_Utils_Array::value('initial_amount', $params),
       'fee_amount' => CRM_Utils_Array::value('fee_amount', $result),
       'net_amount' => CRM_Utils_Array::value('net_amount', $result, $params['amount']),
       'currency' => $params['currencyID'],
