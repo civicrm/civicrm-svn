@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
+
 <table>
   <base>CRM/Grant</base>
   <class>EntityPayment</class>
   <name>civicrm_entity_payment</name>
   <comment>This table stores information about entity payments.</comment>
-  <add>4.1</add>
+  <add>4.3</add>
   <log>true</log>
   <field>
     <name>id</name>
@@ -14,37 +15,37 @@
     <required>true</required>
     <comment>ID</comment>
     <import>true</import>
-    <add>4.1</add>
+    <add>4.3</add>
   </field>
   <primaryKey>
     <name>id</name>
     <autoincrement>true</autoincrement>
   </primaryKey>
-   <field>
+  <field>
     <name>payment_id</name>
     <type>int unsigned</type>
     <title>Payment Id</title>
     <export>false</export>
     <required>true</required>
     <comment>Type of grant. Implicit FK to civicrm_payment.</comment>
-    <add>4.1</add>
+    <add>4.3</add>
   </field>
-   <foreignKey>
-       <name>payment_id</name>
-       <table>civicrm_payment</table>
-       <key>id</key>
-       <add>4.1</add>
+  <foreignKey>
+    <name>payment_id</name>
+    <table>civicrm_payment</table>
+    <key>id</key>
+    <add>4.3</add>
   </foreignKey> 
- <field>
+  <field>
     <name>entity_table</name>
     <title>Entity Table</title>
     <type>varchar</type>
     <import>true</import>
     <length>255</length>
     <comment>Entity Table.</comment>
-    <add>4.1</add>
+    <add>4.3</add>
   </field> 
- <field>
+  <field>
     <name>entity_id</name>
     <type>int unsigned</type>
     <uniqueName>id</uniqueName>
@@ -52,6 +53,6 @@
     <required>true</required>
     <comment>Entity ID</comment>
     <import>true</import>
-    <add>4.1</add>
+    <add>4.3</add>
   </field>
 </table>

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
+
 <table>
   <base>CRM/Grant</base>
   <class>GrantProgram</class>
   <name>civicrm_grant_program</name>
   <comment>This table stores information about grant programs given to a contact.</comment>
-  <add>4.1</add>
+  <add>4.3</add>
   <log>true</log>
   <field>
     <name>id</name>
@@ -14,7 +15,7 @@
     <required>true</required>
     <comment>Grant Program ID</comment>
     <import>true</import>
-    <add>4.1</add>
+    <add>4.3</add>
   </field>
   <primaryKey>
     <name>id</name>
@@ -26,7 +27,7 @@
     <type>varchar</type>
     <length>255</length>
     <comment>Label displayed to users</comment>
-    <add>4.1</add>
+    <add>4.3</add>
   </field> 
   <field>
     <name>name</name>
@@ -34,7 +35,7 @@
     <type>varchar</type>
     <length>255</length>
     <comment>Stores a fixed (non-translated) name for the grant program.</comment>
-    <add>4.1</add>
+    <add>4.3</add>
   </field>
   <field>
     <name>grant_type_id</name>
@@ -43,13 +44,13 @@
     <export>false</export>
     <required>true</required>
     <comment>Type of grant. Implicit FK to civicrm_option_value in grant_type option_group.</comment>
-    <add>4.1</add>
+    <add>4.3</add>
   </field>
-   <foreignKey>
-       <name>grant_type_id</name>
-       <table>civicrm_option_value</table>
-       <key>id</key>
-       <add>4.1</add>
+  <foreignKey>
+    <name>grant_type_id</name>
+    <table>civicrm_option_value</table>
+    <key>id</key>
+    <add>4.3</add>
   </foreignKey> 
   <field>     
     <name>total_amount</name>
@@ -59,7 +60,7 @@
     <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
     <import>true</import>
     <comment>Requested grant program amount, in default currency.</comment>
-    <add>4.1</add>
+    <add>4.3</add>
   </field>
   <field>     
     <name>remainder_amount</name>
@@ -69,7 +70,7 @@
     <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
     <import>true</import>
     <comment>Requested grant program remainder amount, in default currency.</comment>
-    <add>4.1</add>
+    <add>4.3</add>
   </field>
   <field>
     <name>financial_type_id</name>
@@ -79,46 +80,46 @@
     <required>true</required>
     <comment>Financial Type ID</comment>
     <import>true</import>
-    <add>4.1</add>
+    <add>4.3</add>
   </field>
- <field> 
-   <name>status_id</name>
-   <type>int unsigned</type>
-   <title>Grant Program Status Id</title>
-   <uniqueName>grant_status_id</uniqueName>
-   <required>true</required>
-   <import>true</import> 
-   <export>false</export>
-   <comment>Id of Grant status.</comment>
-   <add>4.1</add>
- </field>
- <foreignKey>
-       <name>status_id</name>
-       <table>civicrm_option_value</table>
-       <key>id</key>
-       <add>4.1</add>
+  <field> 
+    <name>status_id</name>
+    <type>int unsigned</type>
+    <title>Grant Program Status Id</title>
+    <uniqueName>grant_status_id</uniqueName>
+    <required>true</required>
+    <import>true</import> 
+    <export>false</export>
+    <comment>Id of Grant status.</comment>
+    <add>4.3</add>
+  </field>
+  <foreignKey>
+    <name>status_id</name>
+    <table>civicrm_option_value</table>
+    <key>id</key>
+    <add>4.3</add>
   </foreignKey>
- <field>
-   <name>allocation_date</name>
-   <title>Allocation date</title>
-   <type>date</type>
-   <comment>Allocation date.</comment>
-   <import>true</import>
-   <add>4.1</add>
- </field>
- <field>
-       <name>is_active</name>
-       <type>boolean</type>
-       <default>1</default> 
-       <comment>Is this grant program active?</comment>
-       <add>4.1</add>
+  <field>
+    <name>allocation_date</name>
+    <title>Allocation date</title>
+    <type>date</type>
+    <comment>Allocation date.</comment>
+    <import>true</import>
+    <add>4.3</add>
   </field>
-<field>
-       <name>is_auto_email</name>
-       <type>boolean</type>
-       <default>1</default> 
-       <comment>Is auto email active?</comment>
-       <add>4.1</add>
+  <field>
+    <name>is_active</name>
+    <type>boolean</type>
+    <default>1</default> 
+    <comment>Is this grant program active?</comment>
+    <add>4.3</add>
+  </field>
+  <field>
+    <name>is_auto_email</name>
+    <type>boolean</type>
+    <default>1</default> 
+    <comment>Is auto email active?</comment>
+    <add>4.3</add>
   </field>
   <field>
     <name>payment_id</name>
@@ -127,12 +128,12 @@
     <export>false</export>
     <required>true</required>
     <comment>Type of grant. Implicit FK to civicrm_payment.</comment>
-    <add>4.1</add>
+    <add>4.3</add>
   </field>
-   <foreignKey>
-       <name>payment_id</name>
-       <table>civicrm_payment</table>
-       <key>id</key>
-       <add>4.1</add>
+  <foreignKey>
+    <name>payment_id</name>
+    <table>civicrm_payment</table>
+    <key>id</key>
+    <add>4.3</add>
   </foreignKey> 
 </table>

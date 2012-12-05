@@ -1,42 +1,41 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>  
-  
+
 <table>  
   <base>CRM/Financial</base>  
   <class>EntityFinancialItem</class>  
   <name>civicrm_entity_financial_item</name>  
-  <add>4.1</add>
+  <add>4.3</add>
   <comment>Map between an entity and a batch, where there is a specific relationship between the financial batch and the entity</comment>
   <log>true</log>  
   <field>
-      <name>entity_table</name>
-      <type>varchar</type>
-      <length>64</length>
-      <required>true</required> 
-      <import>true</import>
-      <add>4.1</add>
-      <comment>Contains the header information for this batch. Primarily this will be civicrm_contribution, but in future it could be for a generic batch such as a quickbooks export, official receipt, etc.</comment>
+    <name>entity_table</name>
+    <type>varchar</type>
+    <length>64</length>
+    <required>true</required> 
+    <import>true</import>
+    <add>4.3</add>
+    <comment>Contains the header information for this batch. Primarily this will be civicrm_contribution, but in future it could be for a generic batch such as a quickbooks export, official receipt, etc.</comment>
   </field>
   <field>  
-      <name>entity_id</name>  
-      <type>int unsigned</type>  
-      <required>true</required>  
-      <add>4.1</add>
-      <comment>Links to an id in the entity_table, such as id in civicrm_batch</comment>
+    <name>entity_id</name>  
+    <type>int unsigned</type>  
+    <required>true</required>  
+    <add>4.3</add>
+    <comment>Links to an id in the entity_table, such as id in civicrm_batch</comment>
   </field>
- <field>
-      <name>financial_item_id</name> 
-      <type>int unsigned</type>  
-      <required>true</required>
-      <add>4.1</add>        
-      <comment>FK to the civicrm_financial_item.id</comment>
+  <field>
+    <name>financial_item_id</name> 
+    <type>int unsigned</type>  
+    <required>true</required>
+    <add>4.3</add>        
+    <comment>FK to the civicrm_financial_item.id</comment>
   </field>
   <foreignKey> 
-       <name>financial_item_id</name> 
-       <table>civicrm_financial_item</table> 
-       <key>id</key> 
-       <add>4.1</add>
-      <onDelete>RESTRICT</onDelete>
+    <name>financial_item_id</name> 
+    <table>civicrm_financial_item</table> 
+    <key>id</key> 
+    <add>4.3</add>
+    <onDelete>RESTRICT</onDelete>
   </foreignKey>
- 
 </table>
 

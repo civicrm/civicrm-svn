@@ -91,14 +91,14 @@
       <type>int unsigned</type>  
       <default>NULL</default>
       <comment>FK to Financial Type.</comment>
-      <add>4.1</add> 
+      <add>4.3</add> 
   </field>    
   <foreignKey>  
        <name>financial_type_id</name>  
        <table>civicrm_financial_type</table>  
        <key>id</key>  
        <onDelete>SET NULL</onDelete>
-       <add>4.1</add>
+       <add>4.3</add>
   </foreignKey> 
   
   <field>     
