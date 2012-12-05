@@ -529,9 +529,9 @@ INSERT INTO civicrm_navigation
     (domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES
     ({$domainID}, 'civicrm/financial/batch&reset=1&action=add',                             '{ts escape="sql" skip="true"}New Batch{/ts}',          'New Batch',         'access CiviContribute', 'AND',  @financialTransactionID, '1', NULL, 1),
-    ({$domainID}, 'civicrm/contact/search/custom?reset=1&csid=16&context=Open&force=1', '{ts escape="sql" skip="true"}Open Batches{/ts}',          'Open Batches',         'access CiviContribute', 'AND',  @financialTransactionID, '1', NULL, 2),
-    ({$domainID}, 'civicrm/contact/search/custom?reset=1&csid=16&context=Closed&force=1', '{ts escape="sql" skip="true"}Closed Batches{/ts}',          'Closed Batches',         'access CiviContribute', 'AND',  @financialTransactionID, '1', NULL, 3),
-    ({$domainID}, 'civicrm/contact/search/custom?reset=1&csid=16&context=Exported&force=1', '{ts escape="sql" skip="true"}Exported Batches{/ts}',          'Exported Batches',         'access CiviContribute', 'AND',  @financialTransactionID, '1', NULL, 4);
+    ({$domainID}, 'civicrm/financial/financialBatches?reset=1&batchStatus=1', '{ts escape="sql" skip="true"}Open Batches{/ts}',          'Open Batches',         'access CiviContribute', 'AND',  @financialTransactionID, '1', NULL, 2),
+    ({$domainID}, 'civicrm/financial/financialBatches?reset=1&batchStatus=2', '{ts escape="sql" skip="true"}Closed Batches{/ts}',          'Closed Batches',         'access CiviContribute', 'AND',  @financialTransactionID, '1', NULL, 3),
+    ({$domainID}, 'civicrm/financial/financialBatches?reset=1&batchStatus=5', '{ts escape="sql" skip="true"}Exported Batches{/ts}',          'Exported Batches',         'access CiviContribute', 'AND',  @financialTransactionID, '1', NULL, 4);
 
 -- Insert an entry for financial_account_type in civicrm_option_group and for the the following financial account types in civicrm_option_value as per CRM-8425
 INSERT INTO
