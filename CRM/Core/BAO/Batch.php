@@ -247,7 +247,7 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
 
     $object = CRM_Core_DAO::executeQuery($query, $params, TRUE, 'CRM_Core_DAO_Batch');
 
-    $links = self::links();
+    $links = isset($params['context']) ? self::links($params['context']) : self::links();
 
     $batchTypes = CRM_Core_PseudoConstant::getBatchType();
     $batchStatus = CRM_Core_PseudoConstant::getBatchStatus();
@@ -274,7 +274,7 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
         array('id' => $object->id)
       );
     }
-
+   
     return $values;
   }
 
@@ -317,8 +317,42 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
    * @return array $links array of action links
    * @access public
    */
-  function links() {
-    $links = array(
+  function links( $context = null ) {
+    if ($context == 'financialBatch') {
+      $links = array(
+        'transaction' =>  array(
+                               'name'  => ts( 'Transaction' ),
+                               'url'   => 'civicrm/batchtransaction',
+                               'qs'    => 'reset=1&bid=%%id%%',
+                               'title' => ts( 'View all Transaction' ),
+                               ),
+        'edit' =>    array(
+                           'name'  => ts( 'Edit' ),
+                           'url'   => 'civicrm/financial/batch',
+                           'qs'    => 'reset=1&action=update&id=%%id%%',
+                           'title' => ts( 'Edit Batch' ),
+                          ), 
+        'close' =>   array(
+                           'name'  => ts( 'Close' ),
+                           'title' => ts( 'Close Batch' ), 
+                           'extra' => 'onclick = "closeReopen( %%id%%,\'' . 'close' . '\' );"',
+                          ),
+        'export' =>  array(
+                           'name'  => ts( 'Export' ),
+                           'url'   => 'civicrm/financial/batch',
+                           'qs'    => 'reset=1&action=export&id=%%id%%',
+                           'title' => ts( 'Export Batch' ),
+                          ),
+        'reopen' =>  array(
+                           'name'  => ts( 'ReOpen' ),
+                           'title' => ts( 'ReOpen Batch' ), 
+                           'extra' => 'onclick = "closeReopen( %%id%%,\'' . 'reopen' . '\' );"',
+                          )  
+       
+                   );
+    } 
+    else {
+      $links = array(
       CRM_Core_Action::COPY => array(
         'name' => ts('Enter records'),
         'url' => 'civicrm/batch/entry',
@@ -338,7 +372,7 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
         'title' => ts('Delete Batch'),
       ),
     );
-
+    }
     return $links;
   }
 

@@ -284,6 +284,13 @@
      <weight>585</weight>
  </item>
  <item>
+     <path>civicrm/financial/financialBatches</path>
+     <title>Financial Batches</title>
+     <page_callback>CRM_Financial_Page_Batch</page_callback>
+     <adminGroup>CiviContribute</adminGroup>
+     <weight>586</weight>
+ </item>
+ <item>
      <path>civicrm/batchtransaction</path>
      <title>Financial Transaction Batch</title>
      <page_callback>CRM_Financial_Page_BatchTransaction</page_callback>
