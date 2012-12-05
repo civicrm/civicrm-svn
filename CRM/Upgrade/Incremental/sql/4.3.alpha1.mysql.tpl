@@ -476,7 +476,7 @@ ALTER TABLE `civicrm_contribution_product` ADD
 ADD CONSTRAINT `FK_civicrm_contribution_product_financial_type_id` FOREIGN KEY (`financial_type_id`) REFERENCES `civicrm_financial_type` (`id`);
 
 ALTER TABLE `civicrm_payment_processor` ADD
-`financial_type_id` int(10) unsigned NOT NULL COMMENT 'FK to Financial Type.';
+`financial_type_id` int(10) unsigned DEFAULT NULL COMMENT 'FK to Financial Type.';
 
 ALTER TABLE `civicrm_payment_processor`
  ADD CONSTRAINT `FK_civicrm_payment_processor_financial_type_id` FOREIGN KEY (`financial_type_id`) REFERENCES `civicrm_financial_type` (`id`);
