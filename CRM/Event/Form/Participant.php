@@ -994,7 +994,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
     }
 
     CRM_Financial_BAO_FinancialAccount::financialAccountValidation($values,$errorMsg);
-    $errorMsg =  CRM_Price_BAO_Field::initialPayValidation( $values, $files, $self, $errorMsg );
+    CRM_Price_BAO_Field::initialPayValidation( $values, $files, $self, $errorMsg);
     return CRM_Utils_Array::crmIsEmptyArray($errorMsg) ? TRUE : $errorMsg;
   }
 

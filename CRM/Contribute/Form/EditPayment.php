@@ -971,9 +971,9 @@ class CRM_Contribute_Form_EditPayment extends CRM_Contribute_Form_AbstractEditPa
         $errors['financial_type_id'] .= "'Expense Account is' is not configured for this Financial Type";
       }
     }
-    // $errors = CRM_Price_BAO_Field::initialPayValidation( $fields, $files, $self );
+    // CRM_Price_BAO_Field::initialPayValidation( $fields, $files, $self, $errors);
 
-    return $errors;
+    return empty($errors) ? TRUE : $errors;
   }
 
   /**
@@ -991,7 +991,7 @@ class CRM_Contribute_Form_EditPayment extends CRM_Contribute_Form_AbstractEditPa
 
     // get the submitted form values.
     $submittedValues = $this->controller->exportValues($this->_name);
-    // If Contribution action is update then calculate and set initial amount 
+    // If Contribution action is update then calculate and set initial amount
     if ($this->_action & CRM_Core_Action::UPDATE) {
       $totalPrice = 0;
       foreach ($submittedValues['txt-price'] as $priceKey => $priceValue) {
