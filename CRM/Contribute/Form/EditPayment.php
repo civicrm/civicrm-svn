@@ -777,15 +777,15 @@ class CRM_Contribute_Form_EditPayment extends CRM_Contribute_Form_AbstractEditPa
     $this->add('select', 'from_email_address', ts('Receipt From'), $this->_fromEmails);
 
     $status = CRM_Contribute_PseudoConstant::contributionStatus();
-    // supressing contribution statuses that are NOT relevant to pledges (CRM-5169)
+    // suppressing contribution statuses that are NOT relevant to pledges (CRM-5169)
     if ($this->_ppID) {
       $statusName = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
       foreach (array(
                  'Cancelled',
                  'Failed',
                  'In Progress'
-               ) as $supress) {
-        unset($status[CRM_Utils_Array::key($supress, $statusName)]);
+               ) as $suppress) {
+        unset($status[CRM_Utils_Array::key($suppress, $statusName)]);
       }
     }
 
