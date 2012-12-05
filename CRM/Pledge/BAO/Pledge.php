@@ -63,8 +63,7 @@ class CRM_Pledge_BAO_Pledge extends CRM_Pledge_DAO_Pledge {
    * @access public
    * @static
    */
-  static
-  function retrieve(&$params, &$defaults) {
+  static function retrieve(&$params, &$defaults) {
     $pledge = new CRM_Pledge_DAO_Pledge();
     $pledge->copyValues($params);
     if ($pledge->find(TRUE)) {
@@ -84,8 +83,7 @@ class CRM_Pledge_BAO_Pledge extends CRM_Pledge_DAO_Pledge {
    *
    * @return object
    */
-  static
-  function add(&$params) {
+  static function add(&$params) {
     if (CRM_Utils_Array::value('id', $params)) {
       CRM_Utils_Hook::pre('edit', 'Pledge', $params['id'], $params);
     }
@@ -132,8 +130,7 @@ class CRM_Pledge_BAO_Pledge extends CRM_Pledge_DAO_Pledge {
    * @access public
    * @static
    */
-  static
-  function &getValues(&$params, &$values, $returnProperties = NULL) {
+  static function &getValues(&$params, &$values, $returnProperties = NULL) {
     if (empty($params)) {
       return NULL;
     }
@@ -150,8 +147,7 @@ class CRM_Pledge_BAO_Pledge extends CRM_Pledge_DAO_Pledge {
    * @access public
    * @static
    */
-  static
-  function &create(&$params) {
+  static function &create(&$params) {
     //FIXME: a cludgy hack to fix the dates to MySQL format
     $dateFields = array('start_date', 'create_date', 'acknowledge_date', 'modified_date', 'cancel_date', 'end_date');
     foreach ($dateFields as $df) {
@@ -268,8 +264,7 @@ class CRM_Pledge_BAO_Pledge extends CRM_Pledge_DAO_Pledge {
    * @static
    *
    */
-  static
-  function deletePledge($id) {
+  static function deletePledge($id) {
     CRM_Utils_Hook::pre('delete', 'Pledge', $id, CRM_Core_DAO::$_nullArray);
 
     $transaction = new CRM_Core_Transaction();
@@ -453,8 +448,7 @@ GROUP BY  cp.currency
    * @access public
    * @static
    */
-  static
-  function getHonorContacts($honorId) {
+  static function getHonorContacts($honorId) {
     $params = array();
     $honorDAO = new CRM_Pledge_DAO_Pledge();
     $honorDAO->honor_contact_id = $honorId;
@@ -700,8 +694,7 @@ GROUP BY  cp.currency
    * @access public
    * @static
    */
-  static
-  function &exportableFields() {
+  static function &exportableFields() {
     if (!self::$_exportableFields) {
       if (!self::$_exportableFields) {
         self::$_exportableFields = array();
@@ -770,8 +763,7 @@ GROUP BY  cp.currency
    * @return array associated array of pledge id(s)
    * @static
    */
-  static
-  function getContactPledges($contactID) {
+  static function getContactPledges($contactID) {
     $pledgeDetails = array();
     $pledgeStatuses = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
 
@@ -816,8 +808,7 @@ WHERE civicrm_pledge.status_id  {$statusClause}
    * @access public
    * @static
    */
-  static
-  function getContactPledgeCount($contactID) {
+  static function getContactPledgeCount($contactID) {
     $query = "SELECT count(*) FROM civicrm_pledge WHERE civicrm_pledge.contact_id = {$contactID} AND civicrm_pledge.is_test = 0";
     return CRM_Core_DAO::singleValueQuery($query);
   }
