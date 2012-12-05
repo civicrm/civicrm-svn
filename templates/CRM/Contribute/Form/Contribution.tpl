@@ -226,7 +226,7 @@ cj(document).ready(function(){
             <td {$valueStyle}>
                 {$form.soft_credit_to.html} {help id="id-soft_credit"}
               {if $siteHasPCPs}
-                  <div id="showPCPLink">{ts}<a href='#' onclick='showPCP(); return false;'>credit this contribution to a personal campaign page</a>{/ts}{help id="id-link_pcp"}</div>
+                  <div id="showPCPLink"><a href='#' onclick='showPCP(); return false;'>{ts}credit this contribution to a personal campaign page{/ts}</a>{help id="id-link_pcp"}</div>
               {/if}
             </td>
         </tr>
@@ -259,139 +259,100 @@ cj(document).ready(function(){
             </td>
         </tr>
         {/if}
-{if !empty($pricefildTotal)}<tr>
-<td>Payment(s)</td>
-<td>
-<table class="selector">
-<thead class="sticky">
-<tr>
-	<th scope="col">Received</th>
-	<th scope="col">Paid By</th>
-	<th scope="col">Amount</th> 
-	<th scope="col">Payment Status</th>
-	<th scope="col">Distributed Payment</th>
-	<th scope="col">Actions</th>
-</tr>
-</thead >
-{foreach from=$pricefildTotal.trxn item=element key=keys}
-	 <tr class="{cycle values="odd-row,even-row"}">
-	 <td>{$element.trxn_date}</td>
-	 <td>{$element.trxn_type}</td>
-	 <td>{$element.trxn_total|crmMoney}</td>
-	 <td></td>
-	 <td></td>
-	 <td>
-	 {if $compId}
-	 <a href="{crmURL p='civicrm/contact/view/contribution/editpay' q="reset=1&id=$contribID&cid=$contactId&fid=$keys&compId=$compId&action=view"}">View</a> /
-	 <a href="{crmURL p='civicrm/contact/view/contribution/editpay' q="reset=1&id=$contribID&cid=$contactId&fid=$keys&compId=$compId&action=update"}">Edit</a></td>
-	 {else}
-	 <a href="{crmURL p='civicrm/contact/view/contribution/editpay' q="reset=1&id=$contribID&cid=$contactId&fid=$keys&&action=view"}">View</a> /
-	 <a href="{crmURL p='civicrm/contact/view/contribution/editpay' q="reset=1&id=$contribID&cid=$contactId&fid=$keys&action=update"}">Edit</a></td>
-	 {/if}
-	 </tr>	
-{/foreach}
-      </table>
-</td>	
-</tr>{/if}
-      </table>
+  {if !empty($pricefildTotal)}
+  <tr>
+  <td>{ts}Payment(s){/ts}</td>
+  <td>
+  <table class="selector">
+    <thead class="sticky">
+    <tr>
+      <th scope="col">{ts}Received{/ts}</th>
+      <th scope="col">{ts}Paid By{/ts}</th>
+      <th scope="col">{ts}Amount{/ts}</th>
+      <th scope="col">{ts}Payment Status{/ts}</th>
+      <th scope="col">{ts}Distributed Payment{/ts}</th>
+      <th scope="col">{ts}Actions{/ts}</th>
+    </tr>
+    </thead>
+    {foreach from=$pricefildTotal.trxn item=element key=keys}
+      <tr class="{cycle values="odd-row,even-row"}">
+        <td>{$element.trxn_date}</td>
+        <td>{$element.trxn_type}</td>
+        <td>{$element.trxn_total|crmMoney}</td>
+        <td></td>
+        <td></td>
+      <td>
+        {if $compId}
+          <a href="{crmURL p='civicrm/contact/view/contribution/editpay' q="reset=1&id=$contribID&cid=$contactId&fid=$keys&compId=$compId&action=view"}">{ts}View{/ts}</a> /
+          <a href="{crmURL p='civicrm/contact/view/contribution/editpay' q="reset=1&id=$contribID&cid=$contactId&fid=$keys&compId=$compId&action=update"}">{ts}Edit{/ts}</a></td>
+        {else}
+          <a href="{crmURL p='civicrm/contact/view/contribution/editpay' q="reset=1&id=$contribID&cid=$contactId&fid=$keys&&action=view"}">{ts}View{/ts}</a> /
+          <a href="{crmURL p='civicrm/contact/view/contribution/editpay' q="reset=1&id=$contribID&cid=$contactId&fid=$keys&action=update"}">{ts}Edit{/ts}</a></td>
+        {/if}
+      </tr>
+    {/foreach}
+  </table>
+  </td>
+  </tr>
+  {/if}
+</table>
  {if !$contributionMode}
-      <div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-processed crm-accordion-open" id="submitPayment_Information">
-        <div class="crm-accordion-header">
-	<div class="icon crm-accordion-pointer"></div>
-	   Submit a Payment
-	</div>
-	{if $action eq 1}
-	<div class="crm-accordion-body" id="initialPayment">
-	 {include file="CRM/Price/Form/InitialPayment.tpl" extends="Contribution"}
-           <div class="spacer"></div>
-	   {/if}
-	   <table class="form-layout-compressed" >
-	      <tr class="crm-contribution-form-block-receive_date">
-                <td class="label">{$form.receive_date.label}</td>
-                <td{$valueStyle}>{include file="CRM/common/jcalendar.tpl" elementName=receive_date}<br />
-                    <span class="description">{ts}The date this contribution was received.{/ts}</span>
-                </td>
-             </tr>
-	     <tr class="crm-contribution-form-block-payment_instrument_id">
-                <td class="label">{$form.payment_instrument_id.label}</td><td{$valueStyle}>{$form.payment_instrument_id.html}<br />
-                    <span class="description">{ts}Leave blank for non-monetary contributions.{/ts}</span>
-                </td>
-            </tr>
-            {if $showCheckNumber || !$isOnline}  
-                <tr id="checkNumber" class="crm-contribution-form-block-check_number"><td class="label">{$form.check_number.label}</td><td>{$form.check_number.html|crmReplace:class:six}</td></tr>
-            {/if}
-	     <tr class="crm-contribution-form-block-trxn_id"><td class="label">{$form.trxn_id.label}</td><td{$valueStyle}>{$form.trxn_id.html|crmReplace:class:twelve} {help id="id-trans_id"}</td></tr>
-	     {if $email and $outBound_option != 2}
-                <tr class="crm-contribution-form-block-is_email_receipt">
-                    <td class="label">
-                        {$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html}&nbsp;
-                        <span class="description">{ts 1=$email}Automatically email a receipt for this payment to %1?{/ts}</span>
-                    </td>
-                </tr>
-            {elseif $context eq 'standalone' and $outBound_option != 2 }
-                <tr id="email-receipt" style="display:none;" class="crm-contribution-form-block-is_email_receipt"><td class="label">{$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html} <span class="description">{ts}Automatically email a receipt for this payment to {/ts}<span id="email-address"></span>?</span></td></tr>
-            {/if}
-            <tr id="receiptDate" class="crm-contribution-form-block-receipt_date">
-                <td class="label">{$form.receipt_date.label}</td>
-                <td>{include file="CRM/common/jcalendar.tpl" elementName=receipt_date}<br />
-                    <span class="description">{ts}Date that a receipt was sent to the contributor.{/ts}</span>
-                </td>
-            </tr>
-             <tr id="fromEmail" class="crm-contribution-form-block-receipt_date" style="display:none;">
-                <td class="label">{$form.from_email_address.label}</td>
-                <td>{$form.from_email_address.html}</td>
-            </tr>
-        </table>
+ <div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-processed crm-accordion-open" id="submitPayment_Information">
+   <div class="crm-accordion-header">
+     <div class="icon crm-accordion-pointer"></div>
+     {ts}Submit a Payment{/ts}
+   </div>
+   {if $action eq 1}
+   <div class="crm-accordion-body" id="initialPayment">
+   {include file="CRM/Price/Form/InitialPayment.tpl" extends="Contribution"}
+     <div class="spacer"></div>
+   {/if}
+   <table class="form-layout-compressed" >
+     <tr class="crm-contribution-form-block-receive_date">
+       <td class="label">{$form.receive_date.label}</td>
+       <td{$valueStyle}>{include file="CRM/common/jcalendar.tpl" elementName=receive_date}<br />
+         <span class="description">{ts}The date this contribution was received.{/ts}</span>
+       </td>
+     </tr>
+     <tr class="crm-contribution-form-block-payment_instrument_id">
+       <td class="label">{$form.payment_instrument_id.label}</td><td{$valueStyle}>{$form.payment_instrument_id.html}<br />
+       <span class="description">{ts}Leave blank for non-monetary contributions.{/ts}</span>
+     </td>
+     </tr>
+     {if $showCheckNumber || !$isOnline}
+       <tr id="checkNumber" class="crm-contribution-form-block-check_number"><td class="label">{$form.check_number.label}</td><td>{$form.check_number.html|crmReplace:class:six}</td></tr>
+     {/if}
+     <tr class="crm-contribution-form-block-trxn_id"><td class="label">{$form.trxn_id.label}</td><td{$valueStyle}>{$form.trxn_id.html|crmReplace:class:twelve} {help id="id-trans_id"}</td></tr>
+     {if $email and $outBound_option != 2}
+       <tr class="crm-contribution-form-block-is_email_receipt">
+         <td class="label">
+           {$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html}&nbsp;
+         <span class="description">{ts 1=$email}Automatically email a receipt for this payment to %1?{/ts}</span>
+       </td>
+       </tr>
+       {elseif $context eq 'standalone' and $outBound_option != 2 }
+       <tr id="email-receipt" style="display:none;" class="crm-contribution-form-block-is_email_receipt"><td class="label">{$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html} <span class="description">{ts}Automatically email a receipt for this payment to {/ts}<span id="email-address"></span>?</span></td></tr>
+     {/if}
+     <tr id="receiptDate" class="crm-contribution-form-block-receipt_date">
+       <td class="label">{$form.receipt_date.label}</td>
+       <td>{include file="CRM/common/jcalendar.tpl" elementName=receipt_date}<br />
+         <span class="description">{ts}Date that a receipt was sent to the contributor.{/ts}</span>
+       </td>
+     </tr>
+     <tr id="fromEmail" class="crm-contribution-form-block-receipt_date" style="display:none;">
+       <td class="label">{$form.from_email_address.label}</td>
+       <td>{$form.from_email_address.html}</td>
+     </tr>
+   </table>
 
-        </div>
-      </div>
+ </div>
+ </div>
 {/if}
-{*
- <div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-processed crm-accordion-open" id="existingobligations_Information">
-        <div class="crm-accordion-header">
-	<div class="icon crm-accordion-pointer"></div>
-	   Apply To Existing Obligations
-	</div>
-	<div class="crm-accordion-body" id="Payment_Information">
-	<div class="content">
-	<table>
 
-{foreach from=$form item=element key=keys}
-{if $keys eq 'txt-allprice'}
- <tr>
- <td>Applied to items</td>
- <td><div id = "existingPayment">
-	<table>
-	<th><input type='checkbox' id = 'checkAll'> </th>
-	<th>LineItem</th>
-	<th>Item Amount</th>
-	<th>Payment Amount</th>
-     {foreach from=$element item=subElement key=subkeys}
-     {foreach from=$subElement item=subElement1 key=subkeys1}
-	<tr>
-	<td>{$form.ch_allprice[$subkeys].html} </td>
-	<td>{$subElement1.label}</td>
-	<td>{$line[$subElement1.name]}</td>
-	<td>{$subElement1.html}&nbsp; </td>
-	</tr>
-     {/foreach}
- {/foreach}
-	</table>
-<div id='unlocateAmount'>  </div>
-</div>
-</td>
-</tr>	
-{/if}
-{/foreach}
-	</table>
-    	</div>
-	</div>
-	</div>
-</div>
-*}
-    <div id="customData" class="crm-contribution-form-block-customData"></div>
+  <div id="customData" class="crm-contribution-form-block-customData"></div>
 
-    {*include custom data js file*} {include file="CRM/common/customData.tpl"}
+  {*include custom data js file*}
+  {include file="CRM/common/customData.tpl"}
 
 {literal}
 <script type="text/javascript">
