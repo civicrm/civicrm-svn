@@ -901,9 +901,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
     require_once 'CRM/Contribute/PseudoConstant.php';
     $financialType = CRM_Contribute_PseudoConstant::financialType();
-    $type = $financialType[0]['id'];
     CRM_Contribute_PseudoConstant::flush('financialType');
-    return $type;
+    return key($financialType);
   }
 
   /**
