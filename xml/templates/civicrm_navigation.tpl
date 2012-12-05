@@ -208,7 +208,7 @@ VALUES
     ( @domainID, 'civicrm/financial/batch&reset=1&action=add',                             '{ts escape="sql" skip="true"}New Batch{/ts}',          'New Batch',         'access CiviContribute,administer CiviCRM', 'AND',  @financialTransactionID, '1', NULL, 1 ),
     ( @domainID, 'civicrm/financial/financialBatches?reset=1&batchStatus=1', '{ts escape="sql" skip="true"}Open Batches{/ts}',          'Open Batches',         'access CiviContribute,administer CiviCRM', 'AND',  @financialTransactionID, '1', NULL, 2 ),
     ( @domainID, 'civicrm/financial/financialBatches?reset=1&batchStatus=2', '{ts escape="sql" skip="true"}Closed Batches{/ts}',          'Closed Batches',         'access CiviContribute,administer CiviCRM', 'AND',  @financialTransactionID, '1', NULL, 3 ),
-    ( @domainID, 'civicrm/contact/search/custom?reset=1&csid=16&context=Exported&force=1', '{ts escape="sql" skip="true"}Exported Batches{/ts}',          'Exported Batches',         'access CiviContribute,administer CiviCRM', 'AND',  @financialTransactionID, '1', NULL, 4 );
+    ( @domainID, 'civicrm/financial/financialBatches?reset=1&batchStatus=5', '{ts escape="sql" skip="true"}Exported Batches{/ts}',          'Exported Batches',         'access CiviContribute,administer CiviCRM', 'AND',  @financialTransactionID, '1', NULL, 4 );
     
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
