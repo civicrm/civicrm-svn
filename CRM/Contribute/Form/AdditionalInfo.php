@@ -65,8 +65,8 @@ class CRM_Contribute_Form_AdditionalInfo {
     }
     $form->_options = $sel2;
     $form->assign('mincontribution', $min_amount);
-    $sel      = &$form->addElement('hierselect', "product_name", ts('Premium'), 'onclick="showMinContrib();"');
-    $js       = "<script type='text/javascript'>\n";
+    $sel = & $form->addElement('hierselect', "product_name", ts('Premium'), 'onclick="showMinContrib();"');
+    $js = "<script type='text/javascript'>\n";
     $formName = 'document.forms.' . $form->getName();
 
     for ($k = 1; $k < 2; $k++) {
@@ -99,7 +99,7 @@ class CRM_Contribute_Form_AdditionalInfo {
     $form->addDateTime('thankyou_date', ts('Thank-you Sent'), FALSE, array('formatType' => 'activityDateTime'));
 
     // add various amounts
-    $element = &$form->add('text', 'non_deductible_amount', ts('Non-deductible Amount'),
+    $element = & $form->add('text', 'non_deductible_amount', ts('Non-deductible Amount'),
       $attributes['non_deductible_amount']
     );
     $form->addRule('non_deductible_amount', ts('Please enter a valid monetary value for Non-deductible Amount.'), 'money');
@@ -107,21 +107,21 @@ class CRM_Contribute_Form_AdditionalInfo {
     if ($form->_online) {
       $element->freeze();
     }
-    $element = &$form->add('text', 'fee_amount', ts('Fee Amount'),
+    $element = & $form->add('text', 'fee_amount', ts('Fee Amount'),
       $attributes['fee_amount']
     );
     $form->addRule('fee_amount', ts('Please enter a valid monetary value for Fee Amount.'), 'money');
     if ($form->_online) {
       $element->freeze();
     }
-    $element = &$form->add('text', 'net_amount', ts('Net Amount'),
+    $element = & $form->add('text', 'net_amount', ts('Net Amount'),
       $attributes['net_amount']
     );
     $form->addRule('net_amount', ts('Please enter a valid monetary value for Net Amount.'), 'money');
     if ($form->_online) {
       $element->freeze();
     }
-    $element = &$form->add('text', 'invoice_id', ts('Invoice ID'),
+    $element = & $form->add('text', 'invoice_id', ts('Invoice ID'),
       $attributes['invoice_id']
     );
     if ($form->_online) {
@@ -138,29 +138,31 @@ class CRM_Contribute_Form_AdditionalInfo {
     $form->add('select', 'contribution_page_id',
       ts('Online Contribution Page'),
       array(
-        '' => ts('- select -')) +
-      CRM_Contribute_PseudoConstant::contributionPage()
+        '' => ts('- select -')
+      ) +
+        CRM_Contribute_PseudoConstant::contributionPage()
     );
 
 
     $form->add('textarea', 'note', ts('Notes'), array("rows" => 4, "cols" => 60));
-        //Recieved into
-        $params = ' financial_account_type_id = 5 ' ;
-        $recievedInto = CRM_Contribute_PseudoConstant::financialAccount(  null, $params );
-        if( $counRecieved = count( $recievedInto ) ){
-          $form->assign( 'feeAmount', $counRecieved );
-  }
-        if( $counRecieved != 1 ){
-          $form->add( 'select',
-                        'fee_to_financial_account_id', 
-                        ts( 'Fee Account' ), 
-                        array(''=>ts( '- Select Recieved Into -' )) + $recievedInto );
-        }else{
-          $form->addElement( 'hidden', 'fee_to_financial_account_id', '', array( 'id' => 'fee_to_financial_account_id' ) );
-            $defaults['fee_to_financial_account_id'] = key($recievedInto);
-          $form->setDefaults($defaults);
-        }
+    //Recieved into
+    $params = ' financial_account_type_id = 5 ';
+    $recievedInto = CRM_Contribute_PseudoConstant::financialAccount(NULL, $params);
+    if ($counRecieved = count($recievedInto)) {
+      $form->assign('feeAmount', $counRecieved);
     }
+    if ($counRecieved != 1) {
+      $form->add('select',
+        'fee_to_financial_account_id',
+        ts('Fee Account'),
+        array('' => ts('- Select Recieved Into -')) + $recievedInto);
+    }
+    else {
+      $form->addElement('hidden', 'fee_to_financial_account_id', '', array('id' => 'fee_to_financial_account_id'));
+      $defaults['fee_to_financial_account_id'] = key($recievedInto);
+      $form->setDefaults($defaults);
+    }
+  }
 
   /**
    * Function to build the form for Honoree Information.
@@ -195,14 +197,14 @@ class CRM_Contribute_Form_AdditionalInfo {
    * @return void
    *
   function buildPaymentReminders(&$form) {
-    //PaymentReminders section
-    $form->add('hidden', 'hidden_PaymentReminders', 1);
-    $form->add('text', 'initial_reminder_day', ts('Send Initial Reminder'), array('size' => 3));
-    $this->addRule('initial_reminder_day', ts('Please enter a valid reminder day.'), 'positiveInteger');
-    $form->add('text', 'max_reminders', ts('Send up to'), array('size' => 3));
-    $this->addRule('max_reminders', ts('Please enter a valid No. of reminders.'), 'positiveInteger');
-    $form->add('text', 'additional_reminder_day', ts('Send additional reminders'), array('size' => 3));
-    $this->addRule('additional_reminder_day', ts('Please enter a valid additional reminder day.'), 'positiveInteger');
+  //PaymentReminders section
+  $form->add('hidden', 'hidden_PaymentReminders', 1);
+  $form->add('text', 'initial_reminder_day', ts('Send Initial Reminder'), array('size' => 3));
+  $this->addRule('initial_reminder_day', ts('Please enter a valid reminder day.'), 'positiveInteger');
+  $form->add('text', 'max_reminders', ts('Send up to'), array('size' => 3));
+  $this->addRule('max_reminders', ts('Please enter a valid No. of reminders.'), 'positiveInteger');
+  $form->add('text', 'additional_reminder_day', ts('Send additional reminders'), array('size' => 3));
+  $this->addRule('additional_reminder_day', ts('Please enter a valid additional reminder day.'), 'positiveInteger');
   }*/
 
   /**
@@ -217,14 +219,14 @@ class CRM_Contribute_Form_AdditionalInfo {
     $dao->contribution_id = $contributionID;
     $dao->product_id = $params['product_name'][0];
     $dao->fulfilled_date = CRM_Utils_Date::processDate($params['fulfilled_date'], NULL, TRUE);
-      
+
     //CRM-11106
     $premiumParams = array(
       'id' => $params['product_name'][0],
     );
     $productDetails = array();
     CRM_Contribute_BAO_ManagePremiums::retrieve($premiumParams, $productDetails);
-    $dao->financial_type_id = CRM_Utils_Array::value('financial_type_id', $productDetails); 
+    $dao->financial_type_id = CRM_Utils_Array::value('financial_type_id', $productDetails);
     if (CRM_Utils_Array::value($params['product_name'][0], $options)) {
       $dao->product_option = $options[$params['product_name'][0]][$params['product_name'][1]];
     }
@@ -245,7 +247,7 @@ class CRM_Contribute_Form_AdditionalInfo {
       $premium = $dao->save();
     }
     //CRM-11106
-    if (CRM_Utils_Array::value('cost', $productDetails) && CRM_Utils_Array::value('financial_type_id', $productDetails)) { 
+    if (CRM_Utils_Array::value('cost', $productDetails) && CRM_Utils_Array::value('financial_type_id', $productDetails)) {
       $params = array(
         'cost' => CRM_Utils_Array::value('cost', $productDetails),
         'currency' => CRM_Utils_Array::value('currency', $productDetails),
@@ -330,7 +332,7 @@ class CRM_Contribute_Form_AdditionalInfo {
     $customFields = CRM_Core_BAO_CustomField::getFields('Contribution',
       FALSE,
       FALSE,
-                                                             CRM_Utils_Array::value('financial_type_id',
+      CRM_Utils_Array::value('financial_type_id',
         $params
       )
     );
@@ -354,9 +356,9 @@ class CRM_Contribute_Form_AdditionalInfo {
    */
   function emailReceipt(&$form, &$params, $ccContribution = FALSE) {
     $this->assign('receiptType', 'contribution');
-        // Retrieve Financial Type Name from financial_type_id
-        $params['contributionType_name'] = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialType',
-                                                                        $params['financial_type_id'] );
+    // Retrieve Financial Type Name from financial_type_id
+    $params['contributionType_name'] = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_FinancialType',
+      $params['financial_type_id']);
     if (CRM_Utils_Array::value('payment_instrument_id', $params)) {
       $paymentInstrument = CRM_Contribute_PseudoConstant::paymentInstrument();
       $params['paidBy'] = $paymentInstrument[$params['payment_instrument_id']];
@@ -486,7 +488,7 @@ class CRM_Contribute_Form_AdditionalInfo {
     $form->assign_by_ref('formValues', $params);
     list($contributorDisplayName,
       $contributorEmail
-    ) = CRM_Contact_BAO_Contact_Location::getEmailDetails($params['contact_id']);
+      ) = CRM_Contact_BAO_Contact_Location::getEmailDetails($params['contact_id']);
     $this->assign('contactID', $params['contact_id']);
     $this->assign('contributionID', $params['contribution_id']);
 
