@@ -258,10 +258,10 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
   /**
    * Get meta details of the contact.
    *
-   * @return void
+   * @return array contact fields in fixed order
    * @access public
    */
-  function getContactDetails($contactId) {
+  static function getContactDetails($contactId) {
     return list($displayName,
       $contactImage,
       $contactType,
@@ -364,7 +364,7 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
     }
   }
 
-  function setTitle($contactId, $isDeleted = FALSE) {
+  static function setTitle($contactId, $isDeleted = FALSE) {
     static $contactDetails;
     $displayName = $contactImage = NULL;
     if (!isset($contactDetails[$contactId])) {
