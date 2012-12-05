@@ -741,7 +741,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
     $attributes = CRM_Core_DAO::getAttribute('CRM_Contribute_DAO_Contribution');
 
     $this->add('select', 'financial_type_id',
-      ts('Financial Type'), array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::financialType()
+      ts('Financial Type'), array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::financialType(), TRUE
     );
 
     if (!$this->_mode) {
