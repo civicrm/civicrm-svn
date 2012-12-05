@@ -43,7 +43,9 @@ class CRM_Report_Form_Pledge_Pbnp extends CRM_Report_Form {
   public $_drilldownReport = array('pledge/summary' => 'Link to Detail Report');
   
   protected $_customGroupExtends = array(
-    'Pledge'); function __construct() {
+    'Pledge');
+  
+  function __construct() {
     $this->_columns = array(
       'civicrm_contact' =>
       array(

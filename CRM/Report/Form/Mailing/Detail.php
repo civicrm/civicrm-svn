@@ -36,7 +36,9 @@
  */
 class CRM_Report_Form_Mailing_Detail extends CRM_Report_Form {
 
-  protected $_exposeContactID = FALSE; function __construct() {
+  protected $_exposeContactID = FALSE;
+  
+  function __construct() {
     $this->_columns = array();
 
     $this->_columns['civicrm_contact'] = array(

@@ -299,6 +299,7 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
                          ON payment.contribution_id = {$this->_aliases['civicrm_contribution']}.id";
   }
   // end of from
+
   function where() {
     $clauses = array();
     foreach ($this->_columns as $tableName => $table) {

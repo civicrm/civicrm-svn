@@ -41,7 +41,9 @@ class CRM_Report_Form_Pledge_Summary extends CRM_Report_Form {
   protected $_customGroupExtends = array('Pledge', 'Individual');
   protected $_customGroupGroupBy = TRUE;
   protected $_addressField = FALSE;
-  protected $_emailField = FALSE; function __construct() {
+  protected $_emailField = FALSE;
+
+  function __construct() {
     $this->_columns = array(
       'civicrm_contact' =>
       array(

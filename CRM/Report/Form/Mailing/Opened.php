@@ -48,7 +48,9 @@ class CRM_Report_Form_Mailing_Opened extends CRM_Report_Form {
     '' => 'Tabular',
     'barChart' => 'Bar Chart',
     'pieChart' => 'Pie Chart',
-  ); function __construct() {
+  );
+  
+  function __construct() {
     $this->_columns = array();
 
     $this->_columns['civicrm_contact'] = array(
@@ -200,8 +202,7 @@ class CRM_Report_Form_Mailing_Opened extends CRM_Report_Form {
     $this->_select = "SELECT " . implode(', ', $select) . " ";
   }
 
-  static
-  function formRule($fields, $files, $self) {
+  static function formRule($fields, $files, $self) {
     $errors = $grouping = array();
     return $errors;
   }

@@ -40,8 +40,9 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
   protected $_summary = NULL;
 
   protected $_customGroupExtends = array();
-  protected $_baseTable = 'civicrm_contact'; function __construct() {
+  protected $_baseTable = 'civicrm_contact';
 
+  function __construct() {
     parent::__construct();
   }
 
@@ -52,9 +53,11 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
   function select() {
     parent::select();
   }
+
+
   /*
- * From clause build where baseTable & fromClauses are defined
- */
+   * From clause build where baseTable & fromClauses are defined
+   */
   function from() {
     if (!empty($this->_baseTable)) {
       $this->buildACLClause($this->_aliases['civicrm_contact']);
@@ -69,6 +72,7 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
       }
     }
   }
+
   /*
    * Define any from clauses in use (child classes to override)
    */
@@ -660,16 +664,16 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
   }
 
   /*
-     * function for adding address fields to construct function in reports
-     * @param array $options Options for the report
-     * - prefix prefix to add (e.g. 'honor' when getting address details for honor contact
-     * - prefix_label optional prefix lable eg. "Honoree " for front end
-     * - group_by enable these fields for group by - default false 
-     * - order_by enable these fields for order by
-     * - filters enable these fields for filtering
-     * - defaults - (is this working?) values to pre-populate
-     * @return array address fields for construct clause
-     */
+   * function for adding address fields to construct function in reports
+   * @param array $options Options for the report
+   * - prefix prefix to add (e.g. 'honor' when getting address details for honor contact
+   * - prefix_label optional prefix lable eg. "Honoree " for front end
+   * - group_by enable these fields for group by - default false 
+   * - order_by enable these fields for order by
+   * - filters enable these fields for filtering
+   * - defaults - (is this working?) values to pre-populate
+   * @return array address fields for construct clause
+   */
   function getAddressColumns($options = array()) {
     $defaultOptions = array(
       'prefix' => '', 
@@ -974,6 +978,7 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
       ON {$this->_aliases['civicrm_line_item']}.price_field_id = {$this->_aliases['civicrm_price_field']}.id
      ";
   }
+
   /*
    * Define join from line item table to participant table
    */
@@ -998,6 +1003,7 @@ class CRM_Report_Form_Extended extends CRM_Report_Form {
       ON pp.membership_id = {$this->_aliases['civicrm_membership']}.id
     ";
   }
+
   /*
    * Define join from Participant to Contribution table
    */
@@ -1179,15 +1185,17 @@ WHERE 	line_item_civireport.id IS NOT NULL
   function alterContributionType($value, &$row) {
     return is_string( CRM_Contribute_PseudoConstant::financialType( $value, FALSE ) ) ? CRM_Contribute_PseudoConstant::financialType( $value, FALSE ) : '';
   }
+
   /*
-    * Retrieve text for contribution status from pseudoconstant
-    */
+   * Retrieve text for contribution status from pseudoconstant
+   */
   function alterContributionStatus($value, &$row) {
     return CRM_Contribute_PseudoConstant::contributionStatus($value);
   }
+
   /*
-    * Retrieve text for payment instrument from pseudoconstant
-    */
+   * Retrieve text for payment instrument from pseudoconstant
+   */
   function alterEventType($value, &$row) {
     return CRM_Event_PseudoConstant::eventType($value);
   }

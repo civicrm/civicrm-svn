@@ -90,6 +90,7 @@ abstract class CRM_Utils_Hook {
     &$arg1, &$arg2, &$arg3, &$arg4, &$arg5,
     $fnSuffix
   );
+
   function commonInvoke($numParams,
     &$arg1, &$arg2, &$arg3, &$arg4, &$arg5,
     $fnSuffix, $fnPrefix
@@ -218,8 +219,7 @@ abstract class CRM_Utils_Hook {
    *
    * @access public
    */
-  static
-  function grantAssessment( &$params ) {
+  static function grantAssessment( &$params ) {
     return self::singleton( )->invoke( 1, $params, self::$_nullObject , self::$_nullObject,  self::$_nullObject, self::$_nullObject, 'civicrm_grantAssessment' );
   }
 
@@ -396,12 +396,10 @@ abstract class CRM_Utils_Hook {
     );
 
     /*
-         * Note we need this seemingly unnecessary code because in the event that the implementation
-         * of the hook declares the second parameter but doesn't set it, then it comes back unset even
-		 * though we have a default value in this function's declaration above.
-		 */
-
-
+     * Note we need this seemingly unnecessary code because in the event that the implementation
+     * of the hook declares the second parameter but doesn't set it, then it comes back unset even
+     * though we have a default value in this function's declaration above.
+     */
     if (!isset($contentPlacement)) {
       $contentPlacement = self::DASHBOARD_BELOW;
     }
@@ -1121,12 +1119,12 @@ abstract class CRM_Utils_Hook {
       'civicrm_upgrade'
     );
   }
+
   /**
    * This hook is called when an email has been successfully sent by CiviCRM, but not on an error.
    *
    * @param array $params - the mailing parameters array fields include: groupName, from, toName, toEmail, subject, cc, bcc, text, html, returnPath, replyTo, headers, attachments (array)
    */
-
   static function postEmailSend(&$params) {
     return self::singleton()->invoke(1, $params,
       self::$_nullObject, self::$_nullObject,
@@ -1134,12 +1132,12 @@ abstract class CRM_Utils_Hook {
       'civicrm_postEmailSend'
     );
   }
+
   /**
    * This hook is called when Settings specifications are loaded
    *
    * @param array $settingsFolders - list of paths from which to derive metadata
    */
-
   static function alterSettingsFolders(&$settingsFolders) {
     return self::singleton()->invoke(1, $settingsFolders,
         self::$_nullObject, self::$_nullObject,
@@ -1155,7 +1153,6 @@ abstract class CRM_Utils_Hook {
    * @param array $settingsMetaData - Settings Metadata
    * @domainID integer $domainID
    */
-
   static function alterSettingsMetaData(&$settingsMetaData, $domainID, $profile) {
     return self::singleton()->invoke(3, $settingsMetaData,
         $domainID, $profile,

@@ -33,25 +33,24 @@
  *
  */
 class CRM_SMS_BAO_Provider extends CRM_SMS_DAO_Provider {
+
   function __construct() {
     parent::__construct();
   }
 
-  static
-  function activeProviderCount() {
+  static function activeProviderCount() {
     $activeProviders = CRM_Core_DAO::singleValueQuery('SELECT MAX(id) FROM civicrm_sms_provider WHERE is_active = 1');
     return $activeProviders;
   }
-  /*
-     * Retrieves the list of providers from the database
-     * 
-     * @access public
-     * $selectArr array of coloumns to fetch
-     * $getActive boolean to get active providers
-     */
 
-  static
-  function getProviders($selectArr = NULL, $filter = NULL, $getActive = TRUE, $orderBy = 'id') {
+  /*
+   * Retrieves the list of providers from the database
+   * 
+   * @access public
+   * $selectArr array of coloumns to fetch
+   * $getActive boolean to get active providers
+   */
+  static function getProviders($selectArr = NULL, $filter = NULL, $getActive = TRUE, $orderBy = 'id') {
 
     $providers = array();
     $temp      = array();
@@ -77,15 +76,13 @@ class CRM_SMS_BAO_Provider extends CRM_SMS_DAO_Provider {
     return $providers;
   }
 
-  static
-  function saveRecord($values) {
+  static function saveRecord($values) {
     $dao = new CRM_SMS_DAO_Provider();
     $dao->copyValues($values);
     $dao->save();
   }
 
-  static
-  function updateRecord($values, $providerId) {
+  static function updateRecord($values, $providerId) {
     $dao = new CRM_SMS_DAO_Provider();
     $dao->id = $providerId;
     if ($dao->find(TRUE)) {
@@ -94,13 +91,11 @@ class CRM_SMS_BAO_Provider extends CRM_SMS_DAO_Provider {
     }
   }
 
-  static
-  function setIsActive($id, $is_active) {
+  static function setIsActive($id, $is_active) {
     return CRM_Core_DAO::setFieldValue('CRM_SMS_DAO_Provider', $id, 'is_active', $is_active);
   }
 
-  static
-  function del($providerID) {
+  static function del($providerID) {
     if (!$providerID) {
       CRM_Core_Error::fatal(ts('Invalid value passed to delete function'));
     }

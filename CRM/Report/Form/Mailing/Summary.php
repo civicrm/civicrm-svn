@@ -48,7 +48,9 @@ class CRM_Report_Form_Mailing_Summary extends CRM_Report_Form {
   protected $_charts = array(
     '' => 'Tabular',
     'bar_3dChart' => 'Bar Chart',
-  ); function __construct() {
+  );
+
+  function __construct() {
     $this->_columns = array();
 
     $this->_columns['civicrm_mailing'] = array(
@@ -404,8 +406,7 @@ class CRM_Report_Form_Mailing_Summary extends CRM_Report_Form {
     $this->endPostProcess($rows);
   }
 
-  static
-  function getChartCriteria() {
+  static function getChartCriteria() {
     return array('count' => array('civicrm_mailing_event_delivered_delivered_count' => ts('Delivered'),
         'civicrm_mailing_event_bounce_bounce_count' => ts('Bounce'),
         'civicrm_mailing_event_opened_open_count' => ts('Opened'),
