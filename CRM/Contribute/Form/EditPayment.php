@@ -223,13 +223,7 @@ class CRM_Contribute_Form_EditPayment extends CRM_Contribute_Form_AbstractEditPa
 
     // when custom data is included in this page
     if (CRM_Utils_Array::value('hidden_custom', $_POST)) {
-      $this->set('type', 'Contribution');
-      $this->set('subType', CRM_Utils_Array::value('financial_type_id', $_POST));
-      $this->set('entityId', $this->_id);
-
-      CRM_Custom_Form_CustomData::preProcess($this);
-      CRM_Custom_Form_CustomData::buildQuickForm($this);
-      CRM_Custom_Form_CustomData::setDefaultValues($this);
+      $this->applyCustomData('Contribution', CRM_Utils_Array::value('financial_type_id', $_POST), $this->_id);
     }
 
     $this->_lineItems = array();
@@ -1237,7 +1231,7 @@ class CRM_Contribute_Form_EditPayment extends CRM_Contribute_Form_AbstractEditPa
       $ids['contribution'] = $params['id'] = $this->_id;
 
       //Add Additional common information  to formatted params
-      CRM_Contribute_Form_AdditionalInfo::postProcessCommon($formValues, $params);
+      CRM_Contribute_Form_AdditionalInfo::postProcessCommon($formValues, $params, $this);
 
       $now = date('YmdHis');
       //create contribution.
@@ -1255,8 +1249,6 @@ class CRM_Contribute_Form_EditPayment extends CRM_Contribute_Form_AbstractEditPa
       }
       $contribution->init_amount = $init_amount;
       //create entry in FinancialTrxn table
-      $contributionStatus = CRM_Contribute_Pseudoconstant::contributionStatus($contribution->contribution_status_id);
-
 
       // 10117 update th line items for participants
       if ($this->_context != 'participant') {
@@ -1600,7 +1592,7 @@ class CRM_Contribute_Form_EditPayment extends CRM_Contribute_Form_AbstractEditPa
     $this->_params['pcp_personal_note'] = CRM_Utils_Array::value('pcp_personal_note', $params);
 
     //Add common data to formatted params
-    CRM_Contribute_Form_AdditionalInfo::postProcessCommon($params, $this->_params);
+    CRM_Contribute_Form_AdditionalInfo::postProcessCommon($params, $this->_params, $this);
 
     if (empty($this->_params['invoice_id'])) {
       $this->_params['invoiceID'] = md5(uniqid(rand(), TRUE));

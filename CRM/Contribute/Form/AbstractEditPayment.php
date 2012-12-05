@@ -210,6 +210,21 @@ class CRM_Contribute_Form_AbstractEditPayment extends CRM_Core_Form {
     }
   }
 
+  /**
+   * @param string $type eg 'Contribution'
+   * @param string $subType
+   * @param int $entityId
+   */
+  public function applyCustomData($type, $subType, $entityId) {
+    $this->set('type', $type);
+    $this->set('subType', $subType);
+    $this->set('entityId', $entityId);
+
+    CRM_Custom_Form_CustomData::preProcess($this);
+    CRM_Custom_Form_CustomData::buildQuickForm($this);
+    CRM_Custom_Form_CustomData::setDefaultValues($this);
+  }
+
   public function assignPremiumProduct($id) { //to get Premium id
     $sql = "
 SELECT *

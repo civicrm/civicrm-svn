@@ -187,7 +187,7 @@ class CRM_Contribute_Form_AdditionalInfo {
 
   /**
    * TODO: Delete this function; it is never called.
-   * 
+   *
    * Function to build the form for PaymentReminders Information.
    *
    * @access public
@@ -286,7 +286,7 @@ class CRM_Contribute_Form_AdditionalInfo {
    *
    * @return None
    */
-  function postProcessCommon(&$params, &$formatted) {
+  static function postProcessCommon(&$params, &$formatted, &$form) {
     $fields = array(
       'non_deductible_amount',
       'total_amount',
@@ -314,8 +314,8 @@ class CRM_Contribute_Form_AdditionalInfo {
     }
 
     if (CRM_Utils_Array::value('honor_type_id', $params)) {
-      if ($this->_honorID) {
-        $honorId = CRM_Contribute_BAO_Contribution::createHonorContact($params, $this->_honorID);
+      if ($form->_honorID) {
+        $honorId = CRM_Contribute_BAO_Contribution::createHonorContact($params, $form->_honorID);
       }
       else {
         $honorId = CRM_Contribute_BAO_Contribution::createHonorContact($params);

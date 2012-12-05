@@ -215,13 +215,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
 
     // when custom data is included in this page
     if (CRM_Utils_Array::value('hidden_custom', $_POST)) {
-      $this->set('type', 'Contribution');
-      $this->set('subType', CRM_Utils_Array::value('financial_type_id', $_POST));
-      $this->set('entityId', $this->_id);
-
-      CRM_Custom_Form_CustomData::preProcess($this);
-      CRM_Custom_Form_CustomData::buildQuickForm($this);
-      CRM_Custom_Form_CustomData::setDefaultValues($this);
+      $this->applyCustomData('Contribution', CRM_Utils_Array::value('financial_type_id', $_POST), $this->_id);
     }
 
     $this->_lineItems = array();
@@ -1036,7 +1030,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
    *
    * @access public
    *
-   * @return None
+   * @return void
    */
   public function postProcess() {
     if ($this->_action & CRM_Core_Action::DELETE) {
@@ -1200,7 +1194,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
       $ids['contribution'] = $params['id'] = $this->_id;
 
       //Add Additional common information  to formatted params
-      CRM_Contribute_Form_AdditionalInfo::postProcessCommon($formValues, $params);
+      CRM_Contribute_Form_AdditionalInfo::postProcessCommon($formValues, $params, $this);
 
       $now = date('YmdHis');
       //create contribution.
@@ -1218,7 +1212,6 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
       }
       $contribution->init_amount = $init_amount;
       //create entry in FinancialTrxn table
-      $contributionStatus = CRM_Contribute_Pseudoconstant::contributionStatus($contribution->contribution_status_id);
       if (!empty($contribution->id)) {
         if ($this->_action & CRM_Core_Action::ADD) {
           $trxnParams = array(
@@ -1313,7 +1306,6 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
         $entityTable = 'contribution';
       }
       //create entry in FinancialTrxn table
-      $contributionStatus = CRM_Contribute_Pseudoconstant::contributionStatus($contribution->contribution_status_id);
       if (!empty($contribution->id)) {
         $trxnParams = array(
           'contribution_id' => $contribution->id,
@@ -1689,7 +1681,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
     $this->_params['pcp_personal_note'] = CRM_Utils_Array::value('pcp_personal_note', $params);
 
     //Add common data to formatted params
-    CRM_Contribute_Form_AdditionalInfo::postProcessCommon($params, $this->_params);
+    CRM_Contribute_Form_AdditionalInfo::postProcessCommon($params, $this->_params, $this);
 
     if (empty($this->_params['invoice_id'])) {
       $this->_params['invoiceID'] = md5(uniqid(rand(), TRUE));
