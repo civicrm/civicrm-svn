@@ -57,7 +57,8 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
     $this->assign('cdType', FALSE);
     if ($this->_cdType) {
       $this->assign('cdType', TRUE);
-      return CRM_Custom_Form_CustomData::preProcess($this);
+      CRM_Custom_Form_CustomData::preProcess($this);
+      return;
     }
 
     $this->_formType = CRM_Utils_Array::value('formType', $_GET);
@@ -155,7 +156,6 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
       else {
         // Not making a pledge payment, so if adding a new contribution we should check if pledge payment(s) are due for this contact so we can alert the user. CRM-5206
         if (isset($this->_contactID)) {
-          $contactPledges = array();
           $contactPledges = CRM_Pledge_BAO_Pledge::getContactPledges($this->_contactID);
 
           if (!empty($contactPledges)) {
@@ -413,12 +413,13 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
   /**
    * Function to build the form
    *
-   * @return None
+   * @return void
    * @access public
    */
   public function buildQuickForm() {
     if ($this->_cdType) {
-      return CRM_Custom_Form_CustomData::buildQuickForm($this);
+      CRM_Custom_Form_CustomData::buildQuickForm($this);
+      return;
     }
     if ($this->_action & CRM_Core_Action::ADD) {
       CRM_Price_BAO_Field::initialPayCreate($this, 'contribution', 'offline');
@@ -587,7 +588,6 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
 
     $this->applyFilter('__ALL__', 'trim');
 
-    $allItem = array();
     if ($this->_action & CRM_Core_Action::UPDATE) {
 
       //This->_online is trxn id already fetch in preprocess;
@@ -1271,8 +1271,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
           }
 
           $trxnParams['total_amount'] = $total_amount;
-          $trxnParams['fee_amount'] = $trxnParams['fee_amount'];
-          $trxnParams['net_amount'] = $trxnParams['net_amount'];
+          // FIXME: What about fee_amount and net_amount?
           $trxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams, $trxnEntityTable);
         }
         if ($this->_action & CRM_Core_Action::UPDATE) {

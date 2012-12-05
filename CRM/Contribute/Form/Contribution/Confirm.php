@@ -1056,7 +1056,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
   /**
    * Process the contribution
    *
-   * @return void
+   * @return CRM_Contribute_DAO_Contribution
    * @access public
    */
   static function processContribution(&$form,

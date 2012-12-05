@@ -57,7 +57,8 @@ class CRM_Contribute_Form_EditPayment extends CRM_Contribute_Form_AbstractEditPa
     $this->assign('cdType', FALSE);
     if ($this->_cdType) {
       $this->assign('cdType', TRUE);
-      return CRM_Custom_Form_CustomData::preProcess($this);
+      CRM_Custom_Form_CustomData::preProcess($this);
+      return;
     }
 
     $this->_formType = CRM_Utils_Array::value('formType', $_GET);
@@ -154,7 +155,6 @@ class CRM_Contribute_Form_EditPayment extends CRM_Contribute_Form_AbstractEditPa
       else {
         // Not making a pledge payment, so if adding a new contribution we should check if pledge payment(s) are due for this contact so we can alert the user. CRM-5206
         if (isset($this->_contactID)) {
-          $contactPledges = array();
           $contactPledges = CRM_Pledge_BAO_Pledge::getContactPledges($this->_contactID);
 
           if (!empty($contactPledges)) {
@@ -419,12 +419,13 @@ class CRM_Contribute_Form_EditPayment extends CRM_Contribute_Form_AbstractEditPa
   /**
    * Function to build the form
    *
-   * @return None
+   * @return void
    * @access public
    */
   public function buildQuickForm() {
     if ($this->_cdType) {
-      return CRM_Custom_Form_CustomData::buildQuickForm($this);
+      CRM_Custom_Form_CustomData::buildQuickForm($this);
+      return;
     }
     if ($this->_action & CRM_Core_Action::ADD) {
       CRM_Price_BAO_Field::initialPayCreate($this, 'contribution', 'offline');

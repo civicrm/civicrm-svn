@@ -38,6 +38,15 @@
  */
 class CRM_Custom_Form_CustomData {
 
+  /**
+   * @param CRM_Core_Form $form
+   * @param null|string $subName
+   * @param null|string $subType
+   * @param null|int $groupCount
+   * @param null|String $type
+   * @param null|int $entityID
+   * @return void
+   */
   static function preProcess(&$form, $subName = NULL, $subType = NULL,
     $groupCount = NULL, $type = NULL, $entityID = NULL
   ) {
@@ -139,6 +148,10 @@ class CRM_Custom_Form_CustomData {
     return $defaults;
   }
 
+  /**
+   * @param CRM_Core_Form $form
+   * @return void
+   */
   static function buildQuickForm(&$form) {
     $form->addElement('hidden', 'hidden_custom', 1);
     $form->addElement('hidden', "hidden_custom_group_count[{$form->_groupID}]", $form->_groupCount);
