@@ -107,7 +107,7 @@
     <name>trxn_id</name>     
     <type>varchar</type>     
     <length>255</length>
-      <comment>unique processor transaction id, bank id + trans id,... depending on payment_method</comment>     
+      <comment>user-specified unique processor transaction id, bank id + trans id,... depending on payment_method</comment>     
       <add>1.3</add>     
   </field>   
   <field>         
