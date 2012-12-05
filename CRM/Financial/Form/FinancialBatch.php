@@ -159,12 +159,13 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
       
       $element = $this->add('text', 'modified_date', ts('Modified Date'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Batch', 'modified_date'));
       $element->freeze();
-      $this->add('text', 'created_date', ts('Opened Date'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Batch', 'created_date'));
-            
-      $batchstatus = CRM_Core_PseudoConstant::accountOptionValues('batch_status');
+      $element = $this->add('text', 'created_date', ts('Opened Date'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Batch', 'created_date'));
+      $element->freeze();     
+      $batchStatus = CRM_Core_PseudoConstant::accountOptionValues('batch_status');
       //unset exported status
-      unset($batchstatus[3]);
-      $this->add('select', 'status_id', ts('Batch Status'), array('' => ts('- Select Batch Status -')) + $batchstatus, true); 
+      $exportedStatusId = CRM_Utils_Array::key('Exported', $batchStatus );
+      unset($batchStatus[$exportedStatusId]);
+      $this->add('select', 'status_id', ts('Batch Status'), array('' => ts('- Select Batch Status -')) + $batchStatus, true); 
     }
       
     $this->add('text', 'name', ts('Batch Name'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Batch', 'name'), true);
@@ -182,6 +183,20 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
     $this->addFormRule(array('CRM_Financial_Form_FinancialBatch', 'formRule'), $this);    
    } 
 
+  /**
+   * This function sets the default values for the form. Note that in edit/view mode
+   * the default values are retrieved from the database
+   *
+   * @access public
+   *
+   * @return void
+   */
+  function setDefaultValues() {
+    $defaults = parent::setDefaultValues();
+    list($defaults['modified_date'], $defaults['modified_time']) = CRM_Utils_Date::setDateDefaults(CRM_Utils_Array::value('modified_date', $defaults));
+    list($defaults['created_date'], $defaults['created_time']) = CRM_Utils_Date::setDateDefaults(CRM_Utils_Array::value('created_date', $defaults));
+    return $defaults; 
+  }
 
    /**
     * global validation rules for the form
@@ -200,7 +215,7 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
      if (!is_numeric($values['manual_total'])) {
        $errorMsg['manual_total'] = ts('Total Amount should be numeric');
      }
-     if (date('Y-m-d') < date('Y-m-d', strtotime($values['created_date']))) {
+     if (CRM_Utils_Array::value('created_date', $values) && date('Y-m-d') < date('Y-m-d', strtotime($values['created_date']))) {
        $errorMsg['created_date'] = ts('Created date cannot be greater than current date');
      }
      return CRM_Utils_Array::crmIsEmptyArray($errorMsg) ? true : $errorMsg; 
@@ -237,7 +252,8 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
        $params['status_id'] = CRM_Utils_Array::key('Open', $batchStatus);
        $params['title'] = CRM_Utils_Array::value('name', $params);
        $params['created_date'] = date('YmdHis');
-       $params['created_id'] = $session->get('userID'); 
+       $params['created_id'] = $session->get('userID');
+       $params['item_count'] = CRM_Utils_Array::value('manual_number_trans', $params);
        $details = "{$params['name']} batch has been created by this contact.";
      }
 

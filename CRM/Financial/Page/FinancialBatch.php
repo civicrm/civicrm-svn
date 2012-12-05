@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page/Basic.php';
-
 /**
  * Page for displaying list of financial types
  */
@@ -101,7 +99,6 @@ class CRM_Financial_Page_FinancialBatch extends CRM_Core_Page_Basic {
         CRM_Core_Action::EXPORT)) {
       $this->edit($action, $id) ;
     }
-
     // parent run
     return parent::run();
   }
@@ -127,11 +124,12 @@ class CRM_Financial_Page_FinancialBatch extends CRM_Core_Page_Basic {
 
   /**
    * Get user context.
+   *  
+   * Redirect to civicrm home page when clicked on cancel button
    *
    * @return string user context.
    */
   function userContext($mode = null) {
-    return 'civicrm/financial/batch';
+    return 'civicrm';
   }
-
 }
