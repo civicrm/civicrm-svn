@@ -260,7 +260,7 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
       CRM_Core_DAO::storeValues($object, $values[$object->id]);
       $action = array_sum(array_keys($newLinks));
 
-      if ($values[$object->id]['status_id'] == 2) {
+      if ($values[$object->id]['status_id'] == 2 && $params['context'] != 'financialBatch' ) {
         $newLinks = array();
       }
 
