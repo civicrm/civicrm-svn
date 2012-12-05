@@ -254,12 +254,17 @@ class CRM_Price_BAO_LineItem extends CRM_Price_DAO_LineItem {
 
   /**
    * Function to process price set and line items.
+   * @param int $contributionId contribution id
+   * @param array $lineItem line item array
+   * @param object $contributionDetails
+   * @param decimal $initAmount amount
+   * @param string $entityTable entity table
    *
    * @access public
-   *
-   * @return None
+   * @return void
+   * @static
    */
-  function processPriceSet($contributionId, $lineItem, $contributionDetails = null, $initAmount = null, $entityTable = 'civicrm_contribution') {
+  static function processPriceSet($contributionId, $lineItem, $contributionDetails = NULL, $initAmount = NULL, $entityTable = 'civicrm_contribution') {
     if (!$contributionId || !is_array($lineItem)
       || CRM_Utils_system::isNull($lineItem)
     ) {
