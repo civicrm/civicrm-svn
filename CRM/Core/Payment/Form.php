@@ -35,6 +35,21 @@
 class CRM_Core_Payment_Form {
 
   /**
+   * Add payment fields are depending on payment type
+   *
+   * @param int $type eg CRM_Core_Payment::PAYMENT_TYPE_DIRECT_DEBIT
+   * @param CRM_Core_Form $form
+   */
+  static public function setPaymentFieldsByType($type, &$form) {
+    if ($type & CRM_Core_Payment::PAYMENT_TYPE_DIRECT_DEBIT) {
+      CRM_Core_Payment_Form::setDirectDebitFields($form);
+    }
+    else {
+      CRM_Core_Payment_Form::setCreditCardFields($form);
+    }
+  }
+
+  /**
    * create all common fields needed for a credit card or direct debit transaction
    *
    * @return void
@@ -146,7 +161,7 @@ class CRM_Core_Payment_Form {
       'attributes' => array('size' => 5, 'maxlength' => 10, 'autocomplete' => 'off'),
       'is_required' => CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::CONTRIBUTE_PREFERENCES_NAME,
         'cvv_backoffice_required',
-        null
+        NULL
         ,1
       ),
     );

@@ -329,7 +329,7 @@ LEFT JOIN  civicrm_contribution on (civicrm_contribution.contact_id = civicrm_co
   }
 
   /**
-   * @return array (int $ppId => string $label)
+   * @return array (0 => array(int $ppId => string $label), 1 => array(...payproc details...))
    */
   public function getValidProcessorsAndAssignFutureStartDate() {
     $validProcessors = array();

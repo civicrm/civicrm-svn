@@ -110,13 +110,7 @@ class CRM_Contribute_Form_EditPayment extends CRM_Contribute_Form_AbstractEditPa
 
     $this->_fields = array();
 
-    // payment fields are depending on payment type
-    if (CRM_Utils_Array::value('payment_type', $this->_processors) & CRM_Core_Payment::PAYMENT_TYPE_DIRECT_DEBIT) {
-      CRM_Core_Payment_Form::setDirectDebitFields($this);
-    }
-    else {
-      CRM_Core_Payment_Form::setCreditCardFields($this);
-    }
+    CRM_Core_Payment_Form::setPaymentFieldsByType(CRM_Utils_Array::value('payment_type', $this->_processors), $this);
 
     if ($this->_action & CRM_Core_Action::DELETE) {
       return;
