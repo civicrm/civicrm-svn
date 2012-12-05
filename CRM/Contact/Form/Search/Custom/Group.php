@@ -270,9 +270,9 @@ class CRM_Contact_Form_Search_Custom_Group extends CRM_Contact_Form_Search_Custo
       if ($xGroups != 0) {
         $excludeGroup = "INSERT INTO  Xg_{$this->_tableName} ( contact_id )
                   SELECT  DISTINCT civicrm_group_contact.contact_id
-                  FROM civicrm_group_contact, civicrm_contact                    
-                  WHERE 
-                     civicrm_contact.id = civicrm_group_contact.contact_id AND 
+                  FROM civicrm_group_contact, civicrm_contact
+                  WHERE
+                     civicrm_contact.id = civicrm_group_contact.contact_id AND
                      civicrm_group_contact.status = 'Added' AND
                      civicrm_group_contact.group_id IN( {$xGroups})";
 
@@ -285,8 +285,8 @@ class CRM_Contact_Form_Search_Custom_Group extends CRM_Contact_Form_Search_Custo
 
             $smartSql = CRM_Contact_BAO_SavedSearch::contactIDsSQL($ssId);
 
-            $smartSql = $smartSql . " AND contact_a.id NOT IN ( 
-                              SELECT contact_id FROM civicrm_group_contact 
+            $smartSql = $smartSql . " AND contact_a.id NOT IN (
+                              SELECT contact_id FROM civicrm_group_contact
                               WHERE civicrm_group_contact.group_id = {$values} AND civicrm_group_contact.status = 'Removed')";
 
             $smartGroupQuery = " INSERT IGNORE INTO Xg_{$this->_tableName}(contact_id) $smartSql";
@@ -325,7 +325,7 @@ class CRM_Contact_Form_Search_Custom_Group extends CRM_Contact_Form_Search_Custo
       }
 
       if ($iGroups) {
-        $includeGroup .= " WHERE           
+        $includeGroup .= " WHERE
                                      civicrm_group_contact.status = 'Added'  AND
                                      civicrm_group_contact.group_id IN($iGroups)";
       }
@@ -349,7 +349,7 @@ class CRM_Contact_Form_Search_Custom_Group extends CRM_Contact_Form_Search_Custo
 
           $smartSql = CRM_Contact_BAO_SavedSearch::contactIDsSQL($ssId);
 
-          $smartSql .= " AND contact_a.id NOT IN ( 
+          $smartSql .= " AND contact_a.id NOT IN (
                               SELECT contact_id FROM civicrm_group_contact
                               WHERE civicrm_group_contact.group_id = {$values} AND civicrm_group_contact.status = 'Removed')";
 
@@ -358,14 +358,14 @@ class CRM_Contact_Form_Search_Custom_Group extends CRM_Contact_Form_Search_Custo
             $smartSql .= " AND contact_a.id NOT IN (SELECT contact_id FROM  Xg_{$this->_tableName})";
           }
 
-          $smartGroupQuery = " INSERT IGNORE INTO Ig_{$this->_tableName}(contact_id) 
+          $smartGroupQuery = " INSERT IGNORE INTO Ig_{$this->_tableName}(contact_id)
                                      $smartSql";
 
           CRM_Core_DAO::executeQuery($smartGroupQuery);
           $insertGroupNameQuery = "UPDATE IGNORE Ig_{$this->_tableName}
                                          SET group_names = (SELECT title FROM civicrm_group
                                                             WHERE civicrm_group.id = $values)
-                                         WHERE Ig_{$this->_tableName}.contact_id IS NOT NULL 
+                                         WHERE Ig_{$this->_tableName}.contact_id IS NOT NULL
                                          AND Ig_{$this->_tableName}.group_names IS NULL";
           CRM_Core_DAO::executeQuery($insertGroupNameQuery);
         }
@@ -405,10 +405,10 @@ class CRM_Contact_Form_Search_Custom_Group extends CRM_Contact_Form_Search_Custo
       if ($xTags != 0) {
         $excludeTag = "INSERT INTO  Xt_{$this->_tableName} ( contact_id )
                   SELECT  DISTINCT civicrm_entity_tag.entity_id
-                  FROM civicrm_entity_tag, civicrm_contact                    
-                  WHERE 
+                  FROM civicrm_entity_tag, civicrm_contact
+                  WHERE
                      civicrm_entity_tag.entity_table = 'civicrm_contact' AND
-                     civicrm_contact.id = civicrm_entity_tag.entity_id AND 
+                     civicrm_contact.id = civicrm_entity_tag.entity_id AND
                      civicrm_entity_tag.tag_id IN( {$xTags})";
 
         CRM_Core_DAO::executeQuery($excludeTag);
@@ -546,7 +546,7 @@ class CRM_Contact_Form_Search_Custom_Group extends CRM_Contact_Form_Search_Custo
     return $where;
   }
 
-  /* 
+  /*
      * Functions below generally don't need to be modified
      */
   function count() {

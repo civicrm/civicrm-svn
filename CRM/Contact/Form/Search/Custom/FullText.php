@@ -869,17 +869,24 @@ WHERE      (c.sort_name LIKE {$this->_text} OR c.display_name LIKE {$this->_text
   }
 
   function all($offset = 0, $rowcount = 0, $sort = NULL,
-    $includeContactIDs = FALSE
+    $includeContactIDs = FALSE, $justIDs = FALSE
   ) {
     $this->initialize();
 
-    $sql = "
-SELECT
+    if ($justIDs) {
+      $select = "contact_a.contact_id as contact_id";
+    }
+    else {
+      $select = "
   contact_a.contact_id   as contact_id  ,
   contact_a.sort_name as sort_name
-FROM
-  {$this->_tableName} contact_a
-{$this->_limitRowClause}
+";
+    }
+
+    $sql = "
+SELECT $select
+FROM   {$this->_tableName} contact_a
+       {$this->_limitRowClause}
 ";
     return $sql;
   }
