@@ -1050,22 +1050,6 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
     $trxnParams['status_id'] = $statusID;
     $trxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
 
-    $itemsParams = array( 
-      'created_date'     => date('YmdHis'),
-      'transaction_date' => $trxn->trxn_date,
-      'contact_id'       => $cId,
-      'amount'           => $trxn->total_amount,
-      'currency'         => $trxn->currency,
-      'entity_table'     => 'civicrm_financial_trxn',
-      'entity_id'        => $trxn->id,
-      'status_id'        => $statusID,
-     );
-
-    $trxnId['id'] = $trxn->id ;
-    if ( $financialAccount ) {
-      $itemsParams['financial_account_id'] = $financialAccount;
-    }
-    $trxn = CRM_Financial_BAO_FinancialItem::create( $itemsParams, null, $trxnId );
     $transaction->commit();
 
     return $contribution;
