@@ -64,7 +64,6 @@
     </tr>
   </thead>
 </table>
-
 {literal}
 <script type="text/javascript">
 cj( function() {
@@ -86,7 +85,7 @@ function buildBatchSelector( filterSearch ) {
   }
 
     var columns = '';
-    var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/batchlist" h=0 q="snippet=4&context=financialBatch"}'{literal};
+    var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/batchlist" h=0 q="snippet=4&context=financialBatch&batchStatus=$batchStatus"}'{literal};
 
     crmBatchSelector = cj('#crm-batch-selector').dataTable({
         "bFilter"    : false,

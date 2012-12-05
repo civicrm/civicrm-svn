@@ -63,6 +63,7 @@ class CRM_Batch_Page_AJAX {
     $sort      = isset($_REQUEST['iSortCol_0']) ? CRM_Utils_Array::value(CRM_Utils_Type::escape($_REQUEST['iSortCol_0'], 'Integer'), $sortMapper) : NULL;
     $sortOrder = isset($_REQUEST['sSortDir_0']) ? CRM_Utils_Type::escape($_REQUEST['sSortDir_0'], 'String') : 'asc';
     $context   = isset($_REQUEST['context']) ? CRM_Utils_Type::escape($_REQUEST['context'], 'String') : NULL;
+    $batchStatus = isset($_REQUEST['batchStatus']) ? CRM_Utils_Type::escape($_REQUEST['batchStatus'], 'String') : NULL;
 
     $params = $_POST;
     if ($sort && $sortOrder) {
@@ -73,7 +74,7 @@ class CRM_Batch_Page_AJAX {
     $params['rp'] = $rowCount;
 
     //show only data entry status batches
-    $params['status'] = ($context == 'financialBatch') ? 1 : 3;
+    $params['status'] = ($context == 'financialBatch') ? (($batchStatus == 1) ? 1 : 2) : 3;
 
     $params['context'] = $context;
 
