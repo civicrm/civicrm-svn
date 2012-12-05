@@ -286,24 +286,14 @@ CREATE TABLE IF NOT EXISTS `civicrm_grant_program` (
   KEY `FK_civicrm_grant_program_payment_id` (`payment_id`)
 )ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+ALTER TABLE `civicrm_batch`
+ADD `payment_instrument_id` int(10) unsigned DEFAULT NULL COMMENT 'fk to Payment Instrument options in civicrm_option_values',
+ADD `exported_date` datetime DEFAULT NULL;
 
 ALTER TABLE `civicrm_financial_item`
   ADD CONSTRAINT `FK_civicrm_financial_item_contact_id` FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact` (`id`),
   ADD CONSTRAINT `FK_civicrm_financial_item_financial_account_id` FOREIGN KEY (`financial_account_id`) REFERENCES `civicrm_financial_account` (`id`);
 
--- Table structure for table `civicrm_financial_batch`
-
-CREATE TABLE IF NOT EXISTS `civicrm_financial_batch` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Unique Address ID',
-  `batch_id` int(10) unsigned NOT NULL COMMENT 'fk to civicrm_batch.id',
-  `payment_instrument_id` int(10) unsigned DEFAULT NULL COMMENT 'fk to Payment Instrument options in civicrm_option_values',
-  `manual_number_trans` int(10) unsigned DEFAULT NULL,
-  `manual_total` decimal(20,2) DEFAULT NULL,
-  `exported_date` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK_civicrm_financial_batch_batch_id` (`batch_id`)
-)ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
- 
 CREATE TABLE IF NOT EXISTS `civicrm_entity_financial_item` (
   `entity_table` varchar(64) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Contains the header information for this batch. Primarily this will be civicrm_contribution, but in future it could be for a generic batch such as a quickbooks export, official receipt, etc.',
   `entity_id` int(10) unsigned NOT NULL COMMENT 'Links to an id in the entity_table, such as id in civicrm_batch',
@@ -325,9 +315,6 @@ ALTER TABLE `civicrm_entity_financial_item`
 
 ALTER TABLE `civicrm_entity_payment`
   ADD CONSTRAINT `FK_civicrm_entity_payment_payment_id` FOREIGN KEY (`payment_id`) REFERENCES `civicrm_payment` (`id`);
-
-ALTER TABLE `civicrm_financial_batch`
-  ADD CONSTRAINT `FK_civicrm_financial_batch_batch_id` FOREIGN KEY (`batch_id`) REFERENCES `civicrm_contact` (`id`);
 
 ALTER TABLE `civicrm_entity_financial_trxn`
 DROP currency;

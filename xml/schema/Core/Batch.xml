@@ -141,4 +141,15 @@
        <comment>Number of items in a batch.</comment>
        <add>4.2</add>
   </field>
+  <field>  
+    <name>payment_instrument_id</name>
+    <type>int unsigned</type>
+    <comment>fk to Payment Instrument options in civicrm_option_values</comment>
+    <add>4.3</add>
+  </field>
+  <field>
+    <name>exported_date</name>
+    <type>datetime</type>
+    <add>4.3</add>
+  </field>
 </table>
