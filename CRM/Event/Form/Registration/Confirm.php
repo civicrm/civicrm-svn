@@ -166,7 +166,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
         $registerParams["billing_country-{$this->_bltID}"] = CRM_Core_PseudoConstant::countryIsoCode($registerParams["billing_country_id-{$this->_bltID}"]);
       }
       if (isset($registerParams['credit_card_exp_date'])) {
-        $registerParams['year'] = CRM_Core_Payment_Form::getCreditCardExpirationYear($registerParams);
+        $registerParams['year']  = CRM_Core_Payment_Form::getCreditCardExpirationYear($registerParams);
         $registerParams['month'] = CRM_Core_Payment_Form::getCreditCardExpirationMonth($registerParams);
       }
       if ($this->_values['event']['is_monetary']) {
@@ -451,7 +451,6 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
    * @return None
    */
   public function postProcess() {
-
     $now           = date('YmdHis');
     $config        = CRM_Core_Config::singleton();
     $session       = CRM_Core_Session::singleton();
@@ -523,9 +522,9 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
       ) {
         $billingFields = array(
           "email-{$this->_bltID}",
-          "billing_first_name",
-          "billing_middle_name",
-          "billing_last_name",
+          'billing_first_name',
+          'billing_middle_name',
+          'billing_last_name',
           "billing_street_address-{$this->_bltID}",
           "billing_city-{$this->_bltID}",
           "billing_state_province-{$this->_bltID}",
@@ -719,8 +718,6 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
     if ($this->_priceSetId &&
       !empty($this->_lineItem)
     ) {
-      require_once 'CRM/Financial/BAO/FinancialItem.php';
-
       // take all processed participant ids.
       $allParticipantIds = $this->_participantIDS;
 
@@ -901,7 +898,6 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
   static function processContribution(&$form, $params, $result, $contactID,
     $pending = FALSE, $isAdditionalAmount = FALSE
   ) {
-    require_once 'CRM/Core/Transaction.php';
     $transaction = new CRM_Core_Transaction();
 
     $config      = CRM_Core_Config::singleton();
@@ -1012,7 +1008,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
       'contribution_id' => $contribution->id,
       'trxn_date' => $now,
       'trxn_type' => 'Debit',
-      'total_amount' => CRM_Utils_Array::value('initial_amount', $params),
+      'total_amount' => CRM_Utils_Array::value('amount', $params),
       'fee_amount' => CRM_Utils_Array::value('fee_amount', $result),
       'net_amount' => CRM_Utils_Array::value('net_amount', $result, $params['amount']),
       'currency' => $params['currencyID'],
@@ -1051,7 +1047,6 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
       $cId = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialAccount', $financialAccount, 'contact_id' );
     }
 
-    require_once 'CRM/Core/BAO/FinancialTrxn.php';
     $trxnParams['status_id'] = $statusID;
     $trxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
 
@@ -1065,7 +1060,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
       'entity_id'        => $trxn->id,
       'status_id'        => $statusID,
      );
-    require_once 'CRM/Financial/BAO/FinancialItem.php';
+
     $trxnId['id'] = $trxn->id ;
     if ( $financialAccount ) {
       $itemsParams['financial_account_id'] = $financialAccount;
