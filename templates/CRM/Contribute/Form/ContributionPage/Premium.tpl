@@ -41,7 +41,7 @@
    <div class="crm-accordion-wrapper crm-plain_text_email-accordion collapsed">
    <div class="crm-accordion-header">
         {ts}Premiums Settings{/ts}
-   </div><!-- /.crm-accordion-header -->
+   </div>
    <div class="crm-accordion-body">
 
    <table class="form-layout-compressed">

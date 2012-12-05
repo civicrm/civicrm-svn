@@ -118,57 +118,43 @@
        <td class="html-adjust">{$form.is_active.html}</td>
     </tr>
   </table>
-  <div id="time-delimited[show]" class="data-group-first">
-  <div class="spacer"></div>
-        <a href="#" onclick="cj('#time-delimited[show]').hide(); cj('#time-delimited').show(); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a><label>{ts}Subscription or Service Settings{/ts}</label><br />
-  </div>
-  <div id="time-delimited">
-  <div class="spacer"></div>
-    <fieldset><legend><a href="#" onclick="cj('#time-delimited').hide(); cj('#time-delimited[show]').show(); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{ts}Subscription or Service Settings{/ts}</legend>
-  <table class="form-layout-compressed">
-    <tr class="crm-contribution-form-block-period_type">
-       <td class="label">{$form.period_type.label}</td>
-       <td class="html-adjust">{$form.period_type.html}<br />
-          <span class="description">{ts}Select 'Rolling' if the subscription or service starts on the current day. Select 'Fixed' if the start date is a fixed month and day within the current year (set this value in the next field).{/ts}</span>
-       </td>
-    </tr>
-    <tr class="crm-contribution-form-block-fixed_period_start_day">
-       <td class="label">{$form.fixed_period_start_day.label}</td>
-       <td class="html-adjust">{$form.fixed_period_start_day.html}<br />
-          <span class="description">{ts}Month and day (MMDD) on which a fixed period subscription or service will start. EXAMPLE: A fixed period subscription with Start Day set to 0101 means that the subscription period would be 1/1/06 - 12/31/06 for anyone signing up during 2006.{/ts}</span>
-       </td>
-    </tr>
-    <tr class="crm-contribution-form-block-duration_interval">
-       <td class="label">{$form.duration_interval.label}</td>
-       <td class="html-adjust">{$form.duration_interval.html} &nbsp; {$form.duration_unit.html}<br />
-          <span class="description">{ts}Duration of subscription or service (e.g. 12-month subscription).{/ts}</span>
-       </td>
-    </tr>
-    <tr class="crm-contribution-form-block-frequency_interval">
-       <td class="label">{$form.frequency_interval.label}</td>
-       <td class="html-adjust">{$form.frequency_interval.html} &nbsp; {$form.frequency_unit.html}<br />
-          <span class="description">{ts}Frequency of subscription or service (e.g. journal delivered every two months).{/ts}</span>
-    </td>
-    </tr>
-    </table>
-    </fieldset>
+  <fieldset id="time-delimited" class="crm-collapsible {if empty($showSubscriptions)}collapsed{/if}">
+    <legend class="collapsible-title">{ts}Subscription or Service Settings{/ts}</legend>
+    <div>
+      <table class="form-layout-compressed">
+        <tr class="crm-contribution-form-block-period_type">
+           <td class="label">{$form.period_type.label}</td>
+           <td class="html-adjust">{$form.period_type.html}<br />
+              <span class="description">{ts}Select 'Rolling' if the subscription or service starts on the current day. Select 'Fixed' if the start date is a fixed month and day within the current year (set this value in the next field).{/ts}</span>
+           </td>
+        </tr>
+        <tr class="crm-contribution-form-block-fixed_period_start_day">
+           <td class="label">{$form.fixed_period_start_day.label}</td>
+           <td class="html-adjust">{$form.fixed_period_start_day.html}<br />
+              <span class="description">{ts}Month and day (MMDD) on which a fixed period subscription or service will start. EXAMPLE: A fixed period subscription with Start Day set to 0101 means that the subscription period would be 1/1/06 - 12/31/06 for anyone signing up during 2006.{/ts}</span>
+           </td>
+        </tr>
+        <tr class="crm-contribution-form-block-duration_interval">
+           <td class="label">{$form.duration_interval.label}</td>
+           <td class="html-adjust">{$form.duration_interval.html} &nbsp; {$form.duration_unit.html}<br />
+              <span class="description">{ts}Duration of subscription or service (e.g. 12-month subscription).{/ts}</span>
+           </td>
+        </tr>
+        <tr class="crm-contribution-form-block-frequency_interval">
+           <td class="label">{$form.frequency_interval.label}</td>
+           <td class="html-adjust">{$form.frequency_interval.html} &nbsp; {$form.frequency_unit.html}<br />
+              <span class="description">{ts}Frequency of subscription or service (e.g. journal delivered every two months).{/ts}</span>
+        </td>
+        </tr>
+      </table>
     </div>
+  </fieldset>
  {/if}
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </fieldset>
 {if $action eq 1 or $action eq 2 }
 
 <script type="text/javascript">
-var myElement1 = document.getElementById('time-delimited');
-var myElement2 = document.getElementById('time-delimited[show]');
-
-{if $showSubscriptions }
-  myElement1.style.display = 'block';
-  myElement2.style.display = 'none';
-{else}
-  myElement1.style.display = 'none';
-  myElement2.style.display = 'block';
-{/if}
 {literal}
 
 function add_upload_file_block(parms) {
@@ -185,9 +171,7 @@ function add_upload_file_block(parms) {
   }
 }
 
-function select_option() {
-
-}
+cj().crmAccordions();
 
 {/literal}
 </script>

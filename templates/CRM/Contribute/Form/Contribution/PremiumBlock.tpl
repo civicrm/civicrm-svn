@@ -120,13 +120,6 @@
       cj(function($){
         var is_separate_payment = {/literal}{if $membershipBlock.is_separate_payment}{$membershipBlock.is_separate_payment}{else}0{/if}{literal};
 
-        // highlight premiums on hover
-        cj('.premium-short').hover(function(){
-          cj(this).addClass('hover');
-        }, function(){
-          cj(this).removeClass('hover');
-        });
-
         // select a new premium
         function select_premium(premium_id) { 
           if(cj(premium_id).length) {

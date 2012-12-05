@@ -2508,7 +2508,7 @@ span.icon {
 
 /* accordion styles */
 
-.crm-accordion-header {
+#crm-container .crm-accordion-header {
   background-image: url("../i/TreeMinusWhite.gif");
   background-repeat: no-repeat;
   background-position: 2px center;
@@ -2519,63 +2519,63 @@ span.icon {
   background-color:#5D677B;
 }
 
-.crm-accordion-header:hover {
+#crm-container .crm-accordion-header:hover {
   background-color:#32414f;
 }
 
-.collapsed .crm-accordion-header {
+#crm-container .collapsed .crm-accordion-header {
   background-image: url("../i/TreePlusWhite.gif");
 }
 
-.collapsed .crm-accordion-body,
-.crm-collapsible.collapsed .collapsible-title + * {
+#crm-container .collapsed .crm-accordion-body,
+#crm-container .crm-collapsible.collapsed .collapsible-title + * {
   display: none;
 }
 
-.crm-accordion-inner .crm-accordion-header,
-.crm-accordion-wrapper .crm-master-accordion-header,
-.crm-collapsible .collapsible-title {
+#crm-container .crm-accordion-inner .crm-accordion-header,
+#crm-container .crm-accordion-wrapper .crm-master-accordion-header,
+#crm-container .crm-collapsible .collapsible-title {
   background-image: url("../i/TreeMinus.gif");
   background-color: transparent;
   color: #3E3E3E;
 }
 
-.crm-accordion-inner.collapsed .crm-accordion-header,
-.crm-accordion-wrapper.collapsed .crm-master-accordion-header,
-.crm-collapsible.collapsed .collapsible-title {
+#crm-container .crm-accordion-inner.collapsed .crm-accordion-header,
+#crm-container .crm-accordion-wrapper.collapsed .crm-master-accordion-header,
+#crm-container .crm-collapsible.collapsed .collapsible-title {
   background-image: url("../i/TreePlus.gif");
 }
 
-.crm-accordion-wrapper .crm-master-accordion-header {
+#crm-container .crm-accordion-wrapper .crm-master-accordion-header {
   background-color: transparent;
   font-size:16px;
   color: #3e3e3e;
   margin-bottom: 0px
 }
 
-.crm-accordion-inner .crm-accordion-header {
+#crm-container .crm-accordion-inner .crm-accordion-header {
   font-size:12px;
 }
 
-.crm-accordion-wrapper {
+#crm-container .crm-accordion-wrapper {
   margin-bottom:4px;
 }
 
-.crm-accordion-header {
+#crm-container .crm-accordion-header {
   -moz-border-radius: 4px 4px 0px 0px;
   -webkit-border-radius: 4px 4px 0px 0px;
   -khtml-border-radius: 4px 4px 0px 0px;
   border-radius:4px 4px 0px 0px;
 }
 
-.collapsed .crm-accordion-header {
+#crm-container .collapsed .crm-accordion-header {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   -khtml-border-radius: 4px;
   border-radius:4px;
 }
 
-.crm-accordion-body {
+#crm-container .crm-accordion-body {
   -moz-border-radius: 0px 0px 4px 4px;
   -webkit-border-radius: 0px 0px 4px 4px;
   -khtml-border-radius: 0px 0px 4px 4px;
@@ -2585,7 +2585,7 @@ span.icon {
   padding: 4px 0px;
 }
 
-.crm-collapsible .collapsible-title {
+#crm-container .crm-collapsible .collapsible-title {
   padding-left: 19px;
   text-decoration: none;
   background-repeat: no-repeat;
@@ -2593,38 +2593,38 @@ span.icon {
   cursor: pointer;
 }
 
-#crm-container .crm-master-accordion-header+.crm-accordion-body  {
+#crm-container .crm-master-accordion-header+.crm-accordion-body {
   border:none;
   padding: 0px;
 }
 
-.crm-form-block {
+#crm-container .crm-form-block {
   background-color:#E6E6DC;
   color:#3E3E3E;
 }
 
-.crm-accordion-header.active {
+#crm-container .crm-accordion-header.active {
   font-weight:bold;
   background-color: #41477E;
 }
 
-.crm-accordion-header.active:hover {
+#crm-container .crm-accordion-header.active:hover {
   background-color: #2E3471;
 }
 
-.crm-accordion-header a.close-accordion {
+#crm-container .crm-accordion-header a.close-accordion {
   font-weight: normal !important;
   float: right;
   color: #FFF !important;
   text-decoration: none;
 }
 
-.crm-accordion-header a.close-accordion:hover {
+#crm-container .crm-accordion-header a.close-accordion:hover {
   text-decoration: underline !important;
 }
 
-.crm-master-accordion-header.crm-accordion-header:hover,
-.crm-collapsible .collapsible-title:hover {
+#crm-container .crm-master-accordion-header.crm-accordion-header:hover,
+#crm-container .crm-collapsible .collapsible-title:hover {
   background-color: transparent;
   color: #0200A0;
 }
@@ -3491,7 +3491,7 @@ h2.crm-editable-enabled input {min-height:1.4em;}
   cursor: pointer;
 }
 
-#crm-container.crm-public #premiums-listings .premium .premium-short.hover {
+#crm-container.crm-public #premiums-listings .premium .premium-short:hover {
   border: 2px solid #b0b0b0;
 }
 
