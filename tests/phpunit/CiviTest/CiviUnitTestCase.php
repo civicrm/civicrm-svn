@@ -1448,7 +1448,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
       $contactParams = array(
         'first_name' => 'Julia',
         'Last_name' => 'Anderson',
-        'prefix' => 'Ms',
+        'prefix' => 'Ms.',
         'email' => 'julia_anderson@civicrm.org',
         'contact_type' => 'Individual',
         'version' => API_LATEST_VERSION,
