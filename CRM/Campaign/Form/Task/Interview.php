@@ -305,9 +305,11 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
     //load default data for only contact fields.
     $contactFields = $defaults = array();
     foreach ($this->_surveyFields as $name => $field) {
-      if ($field['field_type'] == 'Contact') {
+      $acceptable_types = CRM_Contact_BAO_ContactType::basicTypes();
+      $acceptable_types[] = 'Contact';
+      if(in_array($field['field_type'], $acceptable_types)) {
         $contactFields[$name] = $field;
-      }
+      }  
     }
     if (!empty($contactFields)) {
       foreach ($this->_contactIds as $contactId) {
