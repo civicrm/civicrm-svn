@@ -135,29 +135,31 @@ SELECT id
     }
 
     // add pay later options
-    $this->addElement('checkbox', 'is_pay_later', ts('Pay later option'),
-      NULL, array('onclick' => "payLater(this);")
-    );
+    $this->addElement('checkbox', 'is_pay_later', ts('Pay later option'), NULL);
     $this->addElement('textarea', 'pay_later_text', ts('Pay later label'),
       CRM_Core_DAO::getAttribute('CRM_Contribute_DAO_ContributionPage', 'pay_later_text'),
       FALSE
     );
-    $this->addElement('text', 'initial_amount_label', ts( 'Initial Amount label' ),  
-                      CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_ContributionPage', 'initial_amount_label' ),
-                      false );
-        
-    $this->addElement('textarea', 'initial_amount_help_text', ts( 'Initial Amount Help' ),  
-                      CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_ContributionPage', 'initial_amount_help_text' ),
-                      false );
-        
-    $this->addElement('text', 'min_initial_amount', ts( 'Minimum Initial Amount ($0.00 or more)' ),  
-                      CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_ContributionPage', 'min_initial_amount' ),
-                      false );
-
     $this->addElement('textarea', 'pay_later_receipt', ts('Pay later instructions'),
       CRM_Core_DAO::getAttribute('CRM_Contribute_DAO_ContributionPage', 'pay_later_receipt'),
       FALSE
     );
+    
+    //add partial payment options
+    $this->addElement('checkbox', 'is_partial_payment', ts('Enable partial payment option?'), NULL);
+    $this->addElement('text', 'initial_amount_label', ts( 'Initial Amount label' ),  
+      CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_ContributionPage', 'initial_amount_label' ),
+      FALSE
+    );
+    $this->addElement('textarea', 'initial_amount_help_text', ts( 'Initial Amount Help' ),  
+      CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_ContributionPage', 'initial_amount_help_text' ),
+      FALSE
+    );
+    $this->addElement('text', 'min_initial_amount', ts( 'Minimum Initial Amount ($0.00 or more)' ),  
+      CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_ContributionPage', 'min_initial_amount' ),
+      FALSE
+    );
+
     // add price set fields
     $price = CRM_Price_BAO_Set::getAssoc(FALSE, 'CiviContribute');
     if (CRM_Utils_System::isNull($price)) {
@@ -323,7 +325,7 @@ SELECT id
         $errors['min_amount'] = ts('Minimum Amount should be less than Maximum Amount');
       }
     }
-
+ 
     if (isset($fields['is_pay_later'])) {
       if (empty($fields['pay_later_text'])) {
         $errors['pay_later_text'] = ts('Please enter the text for the \'pay later\' checkbox displayed on the contribution form.');
@@ -331,8 +333,20 @@ SELECT id
       if (empty($fields['pay_later_receipt'])) {
         $errors['pay_later_receipt'] = ts('Please enter the instructions to be sent to the contributor when they choose to \'pay later\'.');
       }
+      //partial payment check
+      if (isset($fields['is_partial_payment'])) {
+        if (empty($fields['initial_amount_label'])) {
+          $errors['initial_amount_label'] = ts('Please enter initial amount label');
+        }
+        if (empty($fields['initial_amount_help_text'])) {
+          $errors['initial_amount_help_text'] = ts('Please enter initial amount help text');
+        }
+        if (empty($fields['min_initial_amount'])) {
+          $errors['min_initial_amount'] = ts('Please enter minimum initial amount');
+        }
+      }
     }
-
+    
     // don't allow price set w/ membership signup, CRM-5095
     if ($priceSetId = CRM_Utils_Array::value('price_set_id', $fields)) {
       // don't allow price set w/ membership.
@@ -428,6 +442,7 @@ SELECT id
       'max_amount' => "null",
       'is_monetary' => FALSE,
       'is_pay_later' => FALSE,
+      'is_partial_payment' => FALSE,
       'is_recur_interval' => FALSE,
       'is_recur_installments' => FALSE,
       'recur_frequency_unit' => "null",

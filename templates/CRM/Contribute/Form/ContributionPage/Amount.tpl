@@ -69,12 +69,26 @@
                 <tr class="crm-contribution-contributionpage-amount-form-block-pay_later_receipt"><th scope="row" class="label">{$form.pay_later_receipt.label} <span class="marker" title="This field is required.">*</span> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contribution_page' field='pay_later_receipt' id=$contributionPageID}{/if}</th>
                 <td>{$form.pay_later_receipt.html|crmAddClass:big}<br />
                   <span class="description">{ts}Instructions added to Confirmation and Thank-you pages, as well as the confirmation email, when the user selects the 'pay later' option (e.g. 'Mail your check to ... within 3 business days.').{/ts}</span></td></tr>
+		      
+		 <tr class="crm-contribution-contributionpage-amount-form-block-is_partial_payment">
+		    <th scope="row" class="label">{$form.is_partial_payment.label}</th>
+          	       <td>{$form.is_partial_payment.html}
+		 </tr>
+
+		 <tr id='partialPaymentOptions'><td>&nbsp;</td>
+	             <td>
+		     <table class='form-layout'>
 		            <tr class="crm-contribution-contributionpage-amount-form-block-initial_amount_label"><th scope="row" class="label">{$form.initial_amount_label.label} <span class="marker" title="This field is required.">*</span> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contribution_page' field='initial_amount_label' id=$contributionPageID}{/if}</th>
-                  <td>{$form.initial_amount_label.html|crmReplace:class:big}<br /></td></tr> 
-  		          <tr class="crm-contribution-contributionpage-amount-form-block-min_initial_amount"><th scope="row" class="label">{$form.min_initial_amount.label} <span class="marker" title="This field is required.">*</span> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contribution_page' field='min_initial_amount' id=$contributionPageID}{/if}</th>
-                  <td>{$form.min_initial_amount.html|crmReplace:class:big}<br /></td></tr> 
-		            <tr class="crm-contribution-contributionpage-amount-form-block-initial_amount_help_text"><th scope="row" class="label">{$form.initial_amount_help_text.label} <span class="marker" title="This field is required.">*</span> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contribution_page' field='initial_amount_help_text' id=$contributionPageID}{/if}</th>
-                  <td>{$form.initial_amount_help_text.html|crmReplace:class:big}<br /></td></tr> 
+                            <td>{$form.initial_amount_label.html|crmReplace:class:big}<br /></td></tr> 
+  	                    
+			    <tr class="crm-contribution-contributionpage-amount-form-block-min_initial_amount"><th scope="row" class="label">{$form.min_initial_amount.label} <span class="marker" title="This field is required.">*</span> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contribution_page' field='min_initial_amount' id=$contributionPageID}{/if}</th>
+                            <td>{$form.min_initial_amount.html|crmReplace:class:big}<br /></td></tr> 
+		            
+			    <tr class="crm-contribution-contributionpage-amount-form-block-initial_amount_help_text"><th scope="row" class="label">{$form.initial_amount_help_text.label} <span class="marker" title="This field is required.">*</span> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contribution_page' field='initial_amount_help_text' id=$contributionPageID}{/if}</th>
+                            <td>{$form.initial_amount_help_text.html|crmReplace:class:big}<br /></td></tr> 
+                   </table>
+	           </td>
+	        </tr>
             </table>
             </td>
         </tr>
@@ -241,28 +255,41 @@
      }
      cj('#amountFields').hide();
         }
-  var pay_later = document.getElementsByName('is_pay_later');
-    if ( ! pay_later[0].checked) {
-      cj('#payLaterFields').hide();
-        }
+
+  cj(function() {
+    payLater('is_pay_later', false);
+    payLater('is_partial_payment', true);
+  });
+
+  cj('#is_pay_later').click( function() {
+     payLater('is_pay_later', false);
+  });
+  
+  cj('#is_partial_payment').click( function() {
+     payLater('is_partial_payment', true);
+  });
 
   function minMax(chkbox) {
-           if (chkbox.checked) {
+    if (chkbox.checked) {
        cj('#minMaxFields').show();
-      } else {
+    } else {
      cj('#minMaxFields').hide();
      document.getElementById("min_amount").value = '';
      document.getElementById("max_amount").value = '';
     }
   }
 
-  function payLater(chkbox) {
-           if (chkbox.checked) {
-         cj('#payLaterFields').show();
-     } else {
-         cj('#payLaterFields').hide();
-     }
-        }
+  function payLater(chkbox, partialPaymentOptions) {
+    var elementId = 'payLaterFields';
+    if (partialPaymentOptions) {
+       elementId = 'partialPaymentOptions';
+    }
+    if (cj('#' + chkbox).attr('checked')) {
+      cj('#' + elementId).show();
+    } else {
+      cj('#' + elementId).hide();
+    }
+  }
 
   function showHideAmountBlock( element, elementName )
         {
