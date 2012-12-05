@@ -303,9 +303,7 @@ class CRM_Contact_Form_Task_PDFLetterCommon {
       $tokenHtml = CRM_Utils_Token::replaceContactTokens($html_message, $contact[$contactId], TRUE, $messageToken);
       $tokenHtml = CRM_Utils_Token::replaceHookTokens($tokenHtml, $contact[$contactId], $categories, TRUE);
 
-      if (defined('CIVICRM_MAIL_SMARTY') &&
-        CIVICRM_MAIL_SMARTY
-      ) {
+      if (defined('CIVICRM_MAIL_SMARTY') && CIVICRM_MAIL_SMARTY) {
         $smarty = CRM_Core_Smarty::singleton();
         // also add the contact tokens to the template
         $smarty->assign_by_ref('contact', $contact);
@@ -364,7 +362,8 @@ class CRM_Contact_Form_Task_PDFLetterCommon {
 
   function formatMessage(&$message) {
     $newLineOperators = array(
-      'p' => array('oper' => '<p>',
+      'p' => array(
+        'oper' => '<p>',
         'pattern' => '/<(\s+)?p(\s+)?>/m',
       ),
       'br' => array(
