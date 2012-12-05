@@ -423,7 +423,8 @@
   </field>
   <field>   
       <name>initial_amount_label</name>   
-      <type>text</type>                   
+      <type>varchar</type>                   
+      <length>255</length> 
       <localizable>true</localizable>
       <comment>Initial amount label for partial payment</comment>   
       <add>4.3</add>   

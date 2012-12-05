@@ -279,16 +279,16 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
       array('onclick' => "return showHideByValue('is_partial_payment','','partialPaymentOptions','block','radio',false);")
     );
 
-    $this->addElement('textarea', 'initial_amount_label', ts( 'Initial amount label' ),
+    $this->addElement('text', 'initial_amount_label', ts( 'Initial Amount Label' ),
       CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_ContributionPage', 'initial_amount_label' ),
       false );
 
-    $this->addElement('textarea', 'initial_amount_help_text', ts( 'Initial amount help text' ),
-      CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_ContributionPage', 'initial_amount_help_text' ),
+    $this->addElement('textarea', 'initial_amount_help_text', ts( 'Initial Amount Help' ),
+      CRM_Core_DAO::getAttribute( 'CRM_Event_DAO_Event', 'initial_amount_help_text' ),
       false );
 
-    $this->addElement('text', 'min_initial_amount', ts( 'Minimum initial amount ($0.00 or more)' ),
-      CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_ContributionPage', 'min_initial_amount' ),
+    $this->addElement('text', 'min_initial_amount', ts( 'Minimum Initial Amount ($0.00 or more)' ),
+      CRM_Core_DAO::getAttribute( 'CRM_Event_DAO_Event', 'min_initial_amount' ),
       false );
 
     $this->add('text', 'fee_label', ts('Fee Label'));

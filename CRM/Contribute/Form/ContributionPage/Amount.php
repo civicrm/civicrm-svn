@@ -142,15 +142,15 @@ SELECT id
       CRM_Core_DAO::getAttribute('CRM_Contribute_DAO_ContributionPage', 'pay_later_text'),
       FALSE
     );
- $this->addElement('textarea', 'initial_amount_label', ts( 'Initial amount label' ),  
+    $this->addElement('text', 'initial_amount_label', ts( 'Initial Amount label' ),  
                       CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_ContributionPage', 'initial_amount_label' ),
                       false );
         
-    $this->addElement('textarea', 'initial_amount_help_text', ts( 'Initial amount help text' ),  
+    $this->addElement('textarea', 'initial_amount_help_text', ts( 'Initial Amount Help' ),  
                       CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_ContributionPage', 'initial_amount_help_text' ),
                       false );
         
-    $this->addElement('text', 'min_initial_amount', ts( 'Minimum initial amount ($0.00 or more)' ),  
+    $this->addElement('text', 'min_initial_amount', ts( 'Minimum Initial Amount ($0.00 or more)' ),  
                       CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_ContributionPage', 'min_initial_amount' ),
                       false );
 
