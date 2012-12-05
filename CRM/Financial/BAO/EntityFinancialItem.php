@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Financial/DAO/EntityFinancialItem.php';
-
 class CRM_Financial_BAO_EntityFinancialItem extends CRM_Financial_DAO_EntityFinancialItem {
 
   /**
@@ -113,11 +111,12 @@ class CRM_Financial_BAO_EntityFinancialItem extends CRM_Financial_DAO_EntityFina
    * @static 
    * @return object
    */
-  static function getBatchFinancialItems( $entityID, $returnvalues, $notPresent = null, $sort = 'id' ) {
+  static function getBatchFinancialItems($entityID, $returnvalues, $notPresent = null, $sort = 'id') {
     // action is taken depending upon the mode
     $select = ' `civicrm_financial_item`.id ';
-    if (!empty( $returnvalues ) )
-      $select .= " , ".implode( ' , ', $returnvalues );
+    if (!empty( $returnvalues)) {
+      $select .= " , ".implode(' , ', $returnvalues);
+    }
     
     if ($sort) {
       $orderBy = " ORDER BY {$sort}";
@@ -138,8 +137,7 @@ FROM {$from}
 WHERE {$where}
 {$orderBy}
 ";
-
-    $result = CRM_Core_DAO::executeQuery( $sql );
+    $result = CRM_Core_DAO::executeQuery($sql);
     return $result;
   }
   

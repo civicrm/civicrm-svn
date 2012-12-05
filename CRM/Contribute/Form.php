@@ -89,7 +89,7 @@ class CRM_Contribute_Form extends CRM_Core_Form {
         $contactID = CRM_Utils_Array::value('created_id', $defaults) ? $defaults['created_id'] : $defaults['contact_id'];
         $defaults['contact_name'] = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $contactID, 'sort_name');
       }
-      if($parentId = CRM_Utils_Array::value('parent_id', $defaults)){
+      if ($parentId = CRM_Utils_Array::value('parent_id', $defaults)) {
         $this->assign('parentId', $parentId); 
       }
     }   
