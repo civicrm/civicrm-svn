@@ -128,7 +128,7 @@
     };
     if ($(this).length) {
       if (title == '') {
-        var label = $('label[for="' + $(this).attr('name') + '"], label[for="' + $(this).attr('id') + '"]');
+        var label = $('label[for="' + $(this).attr('name') + '"], label[for="' + $(this).attr('id') + '"]').not('[generated=true]');
         if (label.length) {
           label.addClass('crm-error');
           var $label = label.clone();

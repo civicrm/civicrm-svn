@@ -39,7 +39,7 @@
 {/if}
 
 <tr id="Website_Block_{$blockId}">
-    <td>{$form.website.$blockId.url.html|crmAddClass:twenty}&nbsp;</td>
+    <td>{$form.website.$blockId.url.html|crmAddClass:url}&nbsp;</td>
     <td>{$form.website.$blockId.website_type_id.html}</td>
     <td colspan="3">{if $blockId > 1} <a href="#" title="{ts}Delete Website Block{/ts}" onClick="removeBlock('Website','{$blockId}'); return false;">{ts}delete{/ts}</a>{/if}</td>
 </tr>

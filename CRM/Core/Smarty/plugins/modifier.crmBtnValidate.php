@@ -1,4 +1,5 @@
-{*
+<?php
+/*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
@@ -22,15 +23,36 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*}
-{if ! $suppressForm}
-<form {$form.attributes} >
-{/if}
+*/
 
-{include file="CRM/Form/body.tpl"}
+/**
+ *
+ * @package CRM
+ * @copyright CiviCRM LLC (c) 2004-2012
+ * $Id$
+ *
+ */
 
-{include file=$tplFile}
+/**
+ * Based on the QF id, give this button a class 'validate' or 'cancel' which will be used by jQuery.validate
+ *
+ * @param string $btnName
+ *
+ * @return string
+ *
+ * @see smarty_modifier_crmBtnType
+ * @access public
+ */
+function smarty_modifier_crmBtnValidate($btnName) {
+  // split the string into 5 or more
+  // button name are typically: '_qf_Contact_refresh' OR '_qf_Contact_refresh_dedupe'
+  // button type is always the 3rd element
+  // note the first _
+  $substr = CRM_Utils_System::explode('_', $btnName, 5);
 
-{if ! $suppressForm}
-</form>
-{/if}
+  if (in_array($substr[3], array('upload', 'next', 'submit', 'done', 'process'))) {
+    return 'validate';
+  }
+  return 'cancel';
+}
+

@@ -657,11 +657,14 @@ div.spacer,
   font-weight: bold;
 }
 
-#crm-container .crm-error {
+#crm-container .crm-error,
+#crm-container .crm-inline-error {
   background:#FBE3E4 none repeat scroll 0 0;
   border:none;
-  padding:4px;
   color:#8A1F11;
+}
+#crm-container .crm-error {
+  padding:4px;
 }
 
 #crm-container div.view-data {

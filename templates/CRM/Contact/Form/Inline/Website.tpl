@@ -48,7 +48,7 @@
     {section name='i' start=1 loop=$totalBlocks}
     {assign var='blockId' value=$smarty.section.i.index} 
     <tr id="Website_Block_{$blockId}" {if $blockId gt $actualBlockCount}class="hiddenElement"{/if}>
-      <td>{$form.website.$blockId.url.html}&nbsp;</td>
+      <td>{$form.website.$blockId.url.html|crmAddClass:url}&nbsp;</td>
       <td>{$form.website.$blockId.website_type_id.html}</td>
       <td>
         {if $blockId > 1} 
@@ -71,3 +71,6 @@
     });
 </script>
 {/literal}
+
+{* jQuery validate *}
+{include file="CRM/Form/validate.tpl"}

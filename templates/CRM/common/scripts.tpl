@@ -32,12 +32,12 @@
 
 {*/*
  * Here we define the CRM object,
- * A single global variable to hold those things which absolutely MUST be global
+ * A single global variable to hold everything that needs to be accessed from the global scope
  * Translated strings are stored in the CRM.strings object, and can be accessed via ts() in javascript
- * Very common strings are included here for convenience. Others should be added dynamically per-template.
+ * Very common strings are included here for convenience. Others should be added dynamically per-page.
  *
  * To extend this object from php:
- * CRM_Core_Resources::singleton()->addSetting(array('foo' => 'bar'));
+ * CRM_Core_Resources::singleton()->addSetting(array('myNamespace' => array('foo' => 'bar')));
  */
  *}
   {literal}
@@ -57,12 +57,12 @@
     search_autocomplete_count: {crmSetting name="search_autocomplete_count" group="Search Preferences"},
     {literal}
     validate: {
-      use: false,
       params: {},
       functions: []
     }
   }, CRM);
   {/literal}
+  {* Dynamically add server-side variables to the CRM object *}
   {crmRegion name='settings'}
   {/crmRegion}
 </script>

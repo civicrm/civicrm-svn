@@ -249,6 +249,9 @@
 </script>
 {/literal}
 
+{* jQuery validate *}
+{include file="CRM/Form/validate.tpl"}
+
 {* include common additional blocks tpl *}
 {include file="CRM/common/additionalBlocks.tpl"}
 

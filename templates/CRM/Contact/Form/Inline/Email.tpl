@@ -47,7 +47,7 @@
     {section name='i' start=1 loop=$totalBlocks}
     {assign var='blockId' value=$smarty.section.i.index}
         <tr id="Email_Block_{$blockId}" {if $blockId gt $actualBlockCount}class="hiddenElement"{/if}>
-            <td>{$form.email.$blockId.email.html}&nbsp;{$form.email.$blockId.location_type_id.html}
+            <td>{$form.email.$blockId.email.html|crmAddClass:email}&nbsp;{$form.email.$blockId.location_type_id.html}
             </td>
             <td align="center">{$form.email.$blockId.on_hold.html}</td>
             {if $multipleBulk}
@@ -81,3 +81,5 @@
 
 </script>
 {/literal}
+{* jQuery validate *}
+{include file="CRM/Form/validate.tpl"}

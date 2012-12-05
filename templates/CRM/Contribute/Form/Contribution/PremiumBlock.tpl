@@ -117,7 +117,7 @@
   {if $context EQ "makeContribution"}
     {literal}
     <script> 
-      cj(function(){
+      cj(function($){
         var is_separate_payment = {/literal}{if $membershipBlock.is_separate_payment}{$membershipBlock.is_separate_payment}{else}0{/if}{literal};
 
         // highlight premiums on hover
@@ -274,7 +274,7 @@
         });
 
         // validation of premiums
-        var error_message = '{/literal}{ts escape="js"}You must contribute more to get that premium{/ts}{literal}';
+        var error_message = '{/literal}{ts escape="js"}You must contribute more to get that item{/ts}{literal}';
         cj.validator.addMethod('premiums', function(value, element, params){
           var premium_id = cj('#selectProduct').val();
           var premium$ = cj('#premium_id-'+premium_id);
@@ -294,12 +294,12 @@
         
         // need to use jquery validate's ignore option, so that it will not ignore hidden fields
         CRM.validate.params['ignore'] = '.ignore';
-
-        // enable jquery validation for this form
-        CRM.validate.use = true;
       });
     </script>
     {/literal}
+    {* jQuery validate *}
+    {include file="CRM/Form/validate.tpl"}
+
   {else}
     {literal}
     <script>
