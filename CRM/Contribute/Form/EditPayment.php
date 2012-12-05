@@ -117,85 +117,8 @@ class CRM_Contribute_Form_EditPayment extends CRM_Contribute_Form_AbstractEditPa
     }
 
     $config = CRM_Core_Config::singleton();
-    if (in_array('CiviPledge', $config->enableComponents) &&
-      !$this->_formType
-    ) {
-      //get the payment values associated with given pledge payment id OR check for payments due.
-      $this->_pledgeValues = array();
-      if ($this->_ppID) {
-        $payParams = array('id' => $this->_ppID);
-
-        CRM_Pledge_BAO_PledgePayment::retrieve($payParams, $this->_pledgeValues['pledgePayment']);
-        $this->_pledgeID = CRM_Utils_Array::value('pledge_id', $this->_pledgeValues['pledgePayment']);
-        $paymentStatusID = CRM_Utils_Array::value('status_id', $this->_pledgeValues['pledgePayment']);
-        $this->_id = CRM_Utils_Array::value('contribution_id', $this->_pledgeValues['pledgePayment']);
-
-        //get all status
-        $allStatus = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
-        if (!($paymentStatusID == array_search('Pending', $allStatus) ||
-          $paymentStatusID == array_search('Overdue', $allStatus)
-        )
-        ) {
-          CRM_Core_Error::fatal(ts("Pledge payment status should be 'Pending' or  'Overdue'."));
-        }
-
-        //get the pledge values associated with given pledge payment.
-
-        $ids = array();
-        $pledgeParams = array('id' => $this->_pledgeID);
-        CRM_Pledge_BAO_Pledge::getValues($pledgeParams, $this->_pledgeValues, $ids);
-        $this->assign('ppID', $this->_ppID);
-      }
-      else {
-        // Not making a pledge payment, so if adding a new contribution we should check if pledge payment(s) are due for this contact so we can alert the user. CRM-5206
-        if (isset($this->_contactID)) {
-          $contactPledges = CRM_Pledge_BAO_Pledge::getContactPledges($this->_contactID);
-
-          if (!empty($contactPledges)) {
-            $payments = $paymentsDue = NULL;
-            $multipleDue = FALSE;
-            foreach ($contactPledges as $key => $pledgeId) {
-              $payments = CRM_Pledge_BAO_PledgePayment::getOldestPledgePayment($pledgeId);
-              if ($payments) {
-                if ($paymentsDue) {
-                  $multipleDue = TRUE;
-                  break;
-                }
-                else {
-                  $paymentsDue = $payments;
-                }
-              }
-            }
-            if ($multipleDue) {
-              // Show link to pledge tab since more than one pledge has a payment due
-              $pledgeTab = CRM_Utils_System::url('civicrm/contact/view',
-                "reset=1&force=1&cid={$this->_contactID}&selectedChild=pledge"
-              );
-              CRM_Core_Session::setStatus(ts('This contact has pending or overdue pledge payments. <a href="%1">Click here to view their Pledges tab</a> and verify whether this contribution should be applied as a pledge payment.', array(1 => $pledgeTab)));
-            }
-            elseif ($paymentsDue) {
-              // Show user link to oldest Pending or Overdue pledge payment
-              $ppAmountDue = CRM_Utils_Money::format($payments['amount'], $payments['currency']);
-              $ppSchedDate = CRM_Utils_Date::customFormat(CRM_Core_DAO::getFieldValue('CRM_Pledge_DAO_PledgePayment', $payments['id'], 'scheduled_date'));
-              if ($this->_mode) {
-                $ppUrl = CRM_Utils_System::url('civicrm/contact/view/contribution',
-                  "reset=1&action=add&cid={$this->_contactID}&ppid={$payments['id']}&context=pledge&mode=live"
-                );
-              }
-              else {
-                $ppUrl = CRM_Utils_System::url('civicrm/contact/view/contribution',
-                  "reset=1&action=add&cid={$this->_contactID}&ppid={$payments['id']}&context=pledge"
-                );
-              }
-              CRM_Core_Session::setStatus(ts('This contact has a pending or overdue pledge payment of %2 which is scheduled for %3. <a href="%1">Click here to enter a pledge payment</a>.', array(
-                1 => $ppUrl,
-                2 => $ppAmountDue,
-                3 => $ppSchedDate
-              )));
-            }
-          }
-        }
-      }
+    if (in_array('CiviPledge', $config->enableComponents) && !$this->_formType) {
+      $this->preProcessPledge();
     }
 
     $this->_values = array();
