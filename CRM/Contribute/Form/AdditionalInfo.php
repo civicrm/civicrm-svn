@@ -186,12 +186,14 @@ class CRM_Contribute_Form_AdditionalInfo {
   }
 
   /**
+   * TODO: Delete this function; it is never called.
+   * 
    * Function to build the form for PaymentReminders Information.
    *
    * @access public
    *
-   * @return None
-   */
+   * @return void
+   *
   function buildPaymentReminders(&$form) {
     //PaymentReminders section
     $form->add('hidden', 'hidden_PaymentReminders', 1);
@@ -201,7 +203,7 @@ class CRM_Contribute_Form_AdditionalInfo {
     $this->addRule('max_reminders', ts('Please enter a valid No. of reminders.'), 'positiveInteger');
     $form->add('text', 'additional_reminder_day', ts('Send additional reminders'), array('size' => 3));
     $this->addRule('additional_reminder_day', ts('Please enter a valid additional reminder day.'), 'positiveInteger');
-  }
+  }*/
 
   /**
    * Function to process the Premium Information
