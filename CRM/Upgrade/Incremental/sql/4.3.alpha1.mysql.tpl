@@ -383,9 +383,20 @@ DROP INDEX FK_civicrm_contribution_page_contribution_type_id;
 
 ALTER TABLE `civicrm_contribution_page`
 CHANGE `contribution_type_id` `financial_type_id` int unsigned DEFAULT NULL COMMENT 'default financial type assigned to contributions submitted via this page, e.g. Contribution, Campaign Contribution',
-ADD `initial_amount_label` text COLLATE utf8_unicode_ci COMMENT 'Initial amount label for partial payment',
-ADD `initial_amount_help_text` text COLLATE utf8_unicode_ci COMMENT 'Initial amount help text for partial payment',
+ADD `is_partial_payment` tinyint(4) DEFAULT '0' COMMENT 'is partial payment enabled for this event',
 ADD `min_initial_amount` decimal(20,2) DEFAULT NULL COMMENT 'Minimum initial amount for partial payment';
+
+{if $multilingual}
+  {foreach from=$locales item=loc}
+    ALTER TABLE `civicrm_contribution_page`
+      ADD `initial_amount_label_{$loc}` varchar(255) COLLATE utf8_unicode_ci COMMENT 'Initial amount label for partial payment',
+      ADD `initial_amount_help_text_{$loc}` text COLLATE utf8_unicode_ci COMMENT 'Initial amount help text for partial payment';
+  {/foreach}
+{else}
+  ALTER TABLE `civicrm_contribution_page` 
+    ADD `initial_amount_label` varchar(255) COLLATE utf8_unicode_ci COMMENT 'Initial amount label for partial payment',
+    ADD `initial_amount_help_text` text COLLATE utf8_unicode_ci COMMENT 'Initial amount help text for partial payment';
+{/if}
 
 ALTER TABLE `civicrm_contribution_page`
 ADD CONSTRAINT  FK_civicrm_contribution_page_financial_type_id FOREIGN KEY (`financial_type_id`) REFERENCES civicrm_financial_type (id);
@@ -695,12 +706,12 @@ ALTER TABLE `civicrm_event`
 {if $multilingual}
   {foreach from=$locales item=loc}
     ALTER TABLE `civicrm_event`
-      ADD `initial_amount_label_{$loc}` text COLLATE utf8_unicode_ci COMMENT 'Initial amount label for partial payment',
+      ADD `initial_amount_label_{$loc}` varchar(255) COLLATE utf8_unicode_ci COMMENT 'Initial amount label for partial payment',
       ADD `initial_amount_help_text_{$loc}` text COLLATE utf8_unicode_ci COMMENT 'Initial amount help text for partial payment';
   {/foreach}
 {else}
   ALTER TABLE `civicrm_event`
-    ADD `initial_amount_label` text COLLATE utf8_unicode_ci COMMENT 'Initial amount label for partial payment',
+    ADD `initial_amount_label` varchar(255) COLLATE utf8_unicode_ci COMMENT 'Initial amount label for partial payment',
     ADD `initial_amount_help_text` text COLLATE utf8_unicode_ci COMMENT 'Initial amount help text for partial payment';
 {/if}
 
