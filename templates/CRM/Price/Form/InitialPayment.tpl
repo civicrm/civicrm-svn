@@ -25,7 +25,35 @@
 *}
 {if $action == 1 || $action == ""}
 <div class="crm-section int_amount-section" >
-  <table class="form-layout-compressed"><tr>
+{if $paymentMode eq 'online'}
+ <table> 
+   <tr>
+      <td>
+         <div class="label">{$form.int_amount.label}</div>     
+         <div class='content'> {$form.int_amount.html}
+           <div class="crm-section {$form.initial_amount.name}-section">
+	    {$form.initial_amount.html}
+            <p><span class="description">{$initialAmountHelpText}</span></p>
+           </div>
+         </div>
+        <div class="crm-section {$form.initial_amount.name}-section">
+        {if $context}
+        <table id = 'option_item'>
+          <tr id="adjust-option-items" class="crm-contribution-form-block-option_type">
+            <td>{$form.option_items.html}</td>
+          </tr>
+        </table>
+      {/if}
+      {if $context}
+        <div id='dynamic_elements'></div>
+        <div id='unallocatedAmount'></div>
+      {/if}
+    </div>
+  </td>
+ </tr>
+</table>
+{else}
+ <table class="form-layout-compressed"><tr>
     <td class="label">
       {$form.int_amount.html}</td>
     <td class="label">{$form.int_amount.label}</td></tr>
@@ -52,6 +80,7 @@
       {/if}
     </div>
   </div>
+{/if}
 </div>
 {elseif $action == 2 }
 <div class="content">

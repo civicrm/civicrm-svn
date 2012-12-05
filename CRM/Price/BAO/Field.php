@@ -681,18 +681,20 @@ WHERE  id IN (" . implode(',', array_keys($priceFields)) . ')';
        $values = $params->_values; 
      }
    }
-   $params->add('checkbox', 'int_amount', ts('Record smaller initial amount'));
    
    if (empty($values) || !array_key_exists('initial_amount_label', $values)) {
      $values['initial_amount_label'] = "Amount to pay now:";
-   } 
-   
+     $intAmount = ts('Record smaller initial amount');
+   } else {
+     $intAmount = ts('%1', array(1 => $values['initial_amount_label']));
+   }
+
+   $params->add('checkbox', 'int_amount', $intAmount);   
+
    if (array_key_exists('initial_amount_help_text', $values)) {
      $params->assign( 'initialAmountHelpText', $values['initial_amount_help_text'] );
    }
-   
-   $element = $params->addElement( 'text', 'initial_amount', 
-                                   $values['initial_amount_label'], NULL );
+   $element = $params->addElement( 'text', 'initial_amount', ts('%1', array(1 => $values['initial_amount_label'])), NULL );
    
    if ($mode == 'offline') {
      $optionTypes = array( 
@@ -700,9 +702,9 @@ WHERE  id IN (" . implode(',', array_keys($priceFields)) . ')';
        '2' => ts( 'Apply to the items I specify') 
      );
      $params->addRadio( 'option_items',
-                        NULL,
-                        $optionTypes,
-                        array(), '<br/>' );
+       NULL,
+       $optionTypes,
+       array(), '<br/>' );
    }
  }
     

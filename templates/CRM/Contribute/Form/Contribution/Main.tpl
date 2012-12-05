@@ -133,7 +133,7 @@ var priceset = {/literal}{if $priceset}'#{$priceset}'{else}0{/if}{literal}
       {/if}
   {/if}
   {if $initialPayment}
-    {include file="CRM/Price/Form/InitialPayment.tpl" extends="Contribution"}
+    {include file="CRM/Price/Form/InitialPayment.tpl" extends="Contribution" paymentMode='online'}
   {/if}
   {if $form.is_recur}
     <div class="crm-section {$form.is_recur.name}-section">
