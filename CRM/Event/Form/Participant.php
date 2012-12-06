@@ -564,16 +564,16 @@ SELECT civicrm_custom_group.name as name,
 
       if ($this->_mode) {
         $fields["email-{$this->_bltID}"] = 1;
-        $fields["email-Primary"] = 1;
+        $fields['email-Primary'] = 1;
 
         if ($this->_contactId) {
           CRM_Core_BAO_UFGroup::setProfileDefaults($this->_contactId, $fields, $defaults);
         }
 
         if (empty($defaults["email-{$this->_bltID}"]) &&
-          !empty($defaults["email-Primary"])
+          !empty($defaults['email-Primary'])
         ) {
-          $defaults[$this->_id]["email-{$this->_bltID}"] = $defaults["email-Primary"];
+          $defaults[$this->_id]["email-{$this->_bltID}"] = $defaults['email-Primary'];
         }
       }
 
@@ -645,7 +645,6 @@ SELECT civicrm_custom_group.name as name,
    * @return None
    * @access public
    */
-
   public function buildQuickForm() {
     if ($this->_showFeeBlock) {
       return CRM_Event_Form_EventFees::buildQuickForm($this);
@@ -731,7 +730,7 @@ SELECT civicrm_custom_group.name as name,
     $this->add('hidden', 'past_event');
 
     $events = array();
-    if ( $this->_eID ){
+    if ( $this->_eID ) {
       $eventEndDate = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_Event', $this->_eID,'end_date');
     }
     $this->assign('past', FALSE);
@@ -966,8 +965,8 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
       }
     }
 
-        if ( CRM_Utils_Array::value( 'record_contribution', $values ) && !  CRM_Utils_Array::value( 'financial_type_id', $values ) ){
-            $errorMsg['financial_type_id'] = ts( 'Please enter the associated Financial Type' );
+    if ( CRM_Utils_Array::value( 'record_contribution', $values ) && !  CRM_Utils_Array::value( 'financial_type_id', $values ) ) {
+      $errorMsg['financial_type_id'] = ts( 'Please enter the associated Financial Type' );
     }
 
     // validate contribution status for 'Failed'.
@@ -1190,8 +1189,8 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
       $fields = array();
 
       // set email for primary location.
-      $fields["email-Primary"] = 1;
-      $params["email-Primary"] = $params["email-{$this->_bltID}"] = $this->_contributorEmail;
+      $fields['email-Primary'] = 1;
+      $params['email-Primary'] = $params["email-{$this->_bltID}"] = $this->_contributorEmail;
 
       $params['register_date'] = $now;
 
@@ -1409,7 +1408,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
         $contributionParams['non_deductible_amount'] = 'null';
         $contributionParams['receipt_date'] = CRM_Utils_Array::value('send_receipt', $params) ? CRM_Utils_Array::value('receive_date', $params) : 'null';
 
-                $recordContribution = array( 'contact_id', 'financial_type_id',
+        $recordContribution = array( 'contact_id', 'financial_type_id',
           'payment_instrument_id', 'trxn_id',
           'contribution_status_id', 'receive_date',
           'check_number', 'campaign_id',
@@ -1458,50 +1457,51 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
         $revenueFinancialType = array( );
         $statusID = $cId = $financialAccount = null;
 
-        if( $params['contribution_status_id'] == 2 ){
+        if ( $params['contribution_status_id'] == 2 ) {
           CRM_Core_PseudoConstant::populate( $revenueFinancialType,
-                                             'CRM_Financial_DAO_EntityFinancialAccount',
-                                             $all = True,
-                                             $retrieve = 'financial_account_id',
-                                             $filter = null,
-                                             " account_relationship = 3 AND entity_id = ".$params['financial_type_id'] );
+            'CRM_Financial_DAO_EntityFinancialAccount',
+            $all = True,
+            $retrieve = 'financial_account_id',
+            $filter = null,
+            " account_relationship = 3 AND entity_id = ".$params['financial_type_id'] );
           $financialAccount = current( $revenueFinancialType );
-          $statusID = key(CRM_CORE_PseudoConstant::accountOptionValues( 'financial_item_status', null, " AND v.name LIKE 'Unpaid' " ));
-        }else{
+          $statusID = key(CRM_Core_PseudoConstant::accountOptionValues( 'financial_item_status', null, " AND v.name LIKE 'Unpaid' " ));
+        } 
+        else {
           //$finanTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_PaymentProcessor', $this->_paymentProcessor['id'], 'financial_type_id' );
           CRM_Core_PseudoConstant::populate( $revenueFinancialType,
-                                             'CRM_Financial_DAO_EntityFinancialAccount',
-                                             $all = True,
-                                             $retrieve = 'financial_account_id',
-                                             $filter = null,
-                                             " account_relationship = 6 AND entity_id = ".$params['financial_type_id']);
+            'CRM_Financial_DAO_EntityFinancialAccount',
+            $all = True,
+            $retrieve = 'financial_account_id',
+            $filter = null,
+            " account_relationship = 6 AND entity_id = ".$params['financial_type_id']);
 
           $financialAccount = current( $revenueFinancialType );
-          $statusID = key(CRM_CORE_PseudoConstant::accountOptionValues( 'financial_item_status', null, " AND v.name LIKE 'Paid' " ));
-      }
+          $statusID = key(CRM_Core_PseudoConstant::accountOptionValues( 'financial_item_status', null, " AND v.name LIKE 'Paid' " ));
+        }
 
-        if( $financialAccount ){
+        if ( $financialAccount ) { 
           $trxnParams['to_financial_account_id'] = $financialAccount;
           $cId = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialAccount', $financialAccount, 'contact_id' );
-    }
+        }
 
         require_once 'CRM/Core/BAO/FinancialTrxn.php';
         $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
         $checkDiscount = CRM_Core_BAO_Discount::findSet($this->_eventId,'civicrm_event');
         if (!empty($checkDiscount)) {
           CRM_Core_PseudoConstant::populate( $fromaccount,
-                                             'CRM_Financial_DAO_EntityFinancialAccount',
-                                             $all = True,
-                                             $retrieve = 'financial_account_id',
-                                             $filter = null,
-                                             " account_relationship = 9 AND entity_id = ".$params['financial_type_id'] );
+            'CRM_Financial_DAO_EntityFinancialAccount',
+            $all = True,
+            $retrieve = 'financial_account_id',
+            $filter = null,
+            " account_relationship = 9 AND entity_id = ".$params['financial_type_id'] );
           $trxnParams['from_financial_account_id'] = current($fromaccount);
           CRM_Core_PseudoConstant::populate( $toaccount,
-                                             'CRM_Financial_DAO_EntityFinancialAccount',
-                                             $all = True,
-                                             $retrieve = 'financial_account_id',
-                                             $filter = null,
-                                             " account_relationship = 1 AND entity_id = ".$params['financial_type_id'] );
+            'CRM_Financial_DAO_EntityFinancialAccount',
+            $all = True,
+            $retrieve = 'financial_account_id',
+            $filter = null,
+            " account_relationship = 1 AND entity_id = ".$params['financial_type_id'] );
           $trxnParams['to_financial_account_id'] = current($toaccount);
           $trxnParams['total_amount'] = $params['total_amount'];
           unset($trxnParams['contribution_id']);
@@ -1513,7 +1513,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
     }
 
     //do cleanup line  items if participant edit the Event Fee.
-        if ( ( $this->_lineItem || !isset($params['proceSetId'] ) ) && !$this->_paymentId && isset($params['participant_id'])  ) {
+    if ( ( $this->_lineItem || !isset($params['proceSetId'] ) ) && !$this->_paymentId && isset($params['participant_id'])  ) {
       CRM_Price_BAO_LineItem::deleteLineItems($params['participant_id'], 'civicrm_participant');
     }
 
@@ -1529,25 +1529,24 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
               $line['entity_id'] = $participants[$num]->id;
               //10117 update the line items for participants if contribution amount is recorded
               if ($this->_quickConfig && CRM_Utils_Array::value('total_amount', $params )) {
-                $line['unit_price'] =
-                  $line['line_total'] = $params['total_amount'];
+                $line['unit_price'] = $line['line_total'] = $params['total_amount'];
               }
-              $lineItems =CRM_Price_BAO_LineItem::create($line);
+              $lineItems = CRM_Price_BAO_LineItem::create($line);
               if ( CRM_Utils_Array::value( 'record_contribution', $params ) ) {
                 $int_name  = 'txt-price_'. $line['price_field_id'];
                 $initValue = CRM_Utils_Array::value( $int_name , $params );
-                if ( is_array( $initValue ) ){
+                if ( is_array( $initValue ) ) {
                   $initValue = CRM_Utils_Array::value( $line['price_field_value_id'],  $initValue );
-            }
+                }
                 $lineItems->int_name = $initValue;
                 CRM_Financial_BAO_FinancialItem::add(  $lineItems, $contributions[0] );
+              }
+            }
           }
         }
       }
     }
-      }
-    }
-
+    
     $updateStatusMsg = NULL;
     //send mail when participant status changed, CRM-4326
     if ($this->_id && $this->_statusId &&
