@@ -383,6 +383,15 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
           require_once 'CRM/Core/BAO/FinancialTrxn.php';
           $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
 
+          if (CRM_Utils_Array::value('batch_id', $params)) {
+            $entityParams = array(
+              'batch_id' => $params['batch_id'],
+              'entity_table' => 'civicrm_financial_trxn',
+              'entity_id' => $trxn->id
+            );
+            CRM_Core_BAO_Batch::addBatchEntity($entityParams);
+          }
+
           if (CRM_Utils_Array::value('fee_amount', $trxnParams)) {
             $expenceRelation = key(CRM_CORE_PseudoConstant::accountOptionValues( 'account_relationship', NULL, " AND v.name LIKE 'Expense Account is' ", FALSE ));
 
