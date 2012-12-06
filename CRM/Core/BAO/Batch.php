@@ -417,37 +417,20 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
   static function exportFinancialBatch( $batchIds ) {
     CRM_Core_Error::debug_log_message('batchIds: ', print_r($batchIds, true));
 
-    /*
-     * OLD NOTES TO SELF (ignore this it isn't correct anymore, but helps me remember. Will remove later.)
-     * 
-     * Using the batchId, match up to civicrm_entity_batch.batch_id,
-     * then use civicrm_entity_batch.entity_id where entity_table='civicrm_contribution'
-     * to match to civicrm_contribution.id,
-     * then match to civicrm_line_item.entity_id where entity_table='civicrm_contribution' to get civicrm_line_item.id
-     * then match to civicrm_financial_item.entity_id where entity_table='civicrm_line_item'
-     * and that will give you civicrm_financial_item.financial_account_id which can
-     * be matched to civicrm_financial_account.id to get the account.
-     * 
-     * Note ignore civicrm_financial_batch which may be removed completely. At the time of this writing
-     * it only contains partially completed batch entries.
-     * 
-     * Then these are going to be TRNS/SPL entries in IIF, where the TRNS account is the income account associated with the batch(?)
-     * and the SPL account (one for each contribution in the batch) is the account associated with the contribution.
-     */
-
+    // Instantiate appropriate exporter based on user-selected format.
+//TEST
+self::$_exportFormat = 'IIF';
+//ENDTEST
+    $exporterClass = "CRM_Financial_BAO_ExportFormat_" . self::$_exportFormat;
+    if ( class_exists( $exporterClass ) ) {
+      $exporter = new $exporterClass();
+    } else {
+      CRM_Core_Error::fatal("Could not locate exporter: $exporterClass");
+    }
 
     $id_list = implode(',', $batchIds);
-/*    $sql = "SELECT
-      con.id as contribution_id,
-      con.
-      FROM civicrm_entity_batch eb
-      LEFT JOIN civicrm_contribution con ON (eb.entity_id = con.id AND eb.entity_table='civicrm_contribution')
-      LEFT JOIN civicrm_line_item li ON (li.entity_id = con.id AND li.entity_table='civicrm_contribution')
-      LEFT JOIN civicrm_financial_item fi ON (fi.entity_id = li.id AND entity_table='civicrm_line_item')
-      LEFT JOIN civicrm_financial_account fa ON fa.id = fi.financial_account_id
-      WHERE eb.batch_id IN ( %1 )";
-*/   
-     $sql = "SELECT
+
+    $sql = "SELECT
       ft.id as financial_trxn_id,
       ft.trxn_date,
       ft.total_amount,
@@ -473,12 +456,6 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
       LEFT JOIN civicrm_option_value ov_to ON (ov_to.option_group_id = og_to.id AND ov_to.value = fa_to.financial_account_type_id)
       WHERE eb.batch_id IN ( %1 )";
       
-/*LEFT JOIN civicrm_line_item li ON (li.entity_id = con.id AND li.entity_table='civicrm_contribution')
-      LEFT JOIN civicrm_financial_item fi ON (fi.entity_id = li.id AND entity_table='civicrm_line_item')
-      LEFT JOIN civicrm_financial_account fa ON fa.id = fi.financial_account_id
-      WHERE eb.batch_id IN ( %1 )";
-  */
-
     $params = array( 1 => array( 'String', $id_list ) );
     
     // Keep running list of accounts and contacts used in this batch, since we need to
@@ -497,18 +474,18 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
       
       if ( !empty( $dao->from_account_name ) && !isset( $accounts[$dao->from_account_id] ) ) {
         $accounts[$dao->from_account_id] = array(
-          'name' => $dao->from_account_name,
-          'account_code' => $dao->from_account_code,
-          'description' => $dao->from_account_description,
-          'type' => $dao->from_qb_account_type,
+          'name' => $exporter->format( $dao->from_account_name ),
+          'account_code' => $exporter->format( $dao->from_account_code ),
+          'description' => $exporter->format( $dao->from_account_description ),
+          'type' => $exporter->format( $dao->from_qb_account_type ),
         );
       }
       if ( !empty( $dao->to_account_name ) && !isset( $accounts[$dao->to_account_id] ) ) {
         $accounts[$dao->to_account_id] = array(
-          'name' => $dao->to_account_name,
-          'account_code' => $dao->to_account_code,
-          'description' => $dao->to_account_description,
-          'type' => $dao->to_qb_account_type,
+          'name' => $exporter->format( $dao->to_account_name ),
+          'account_code' => $exporter->format( $dao->to_account_code ),
+          'description' => $exporter->format( $dao->to_account_description ),
+          'type' => $exporter->format( $dao->to_qb_account_type ),
         );        
       }
 
@@ -517,9 +494,9 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
       // set up the journal entries for this financial trxn
       $journalEntries[$dao->financial_trxn_id] = array(
         'to_account' => array(
-          'trxn_date' => $dao->trxn_date,
-          'account_name' => $dao->to_account_name,
-          'amount' => $dao->total_amount,
+          'trxn_date' => $exporter->format( $dao->trxn_date, 'date' ),
+          'account_name' => $exporter->format( $dao->to_account_name ),
+          'amount' => $exporter->format( $dao->total_amount ),
         ),
         'splits' => array(),
       );
@@ -555,10 +532,10 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
           // add to running list of accounts
           if ( !isset( $accounts[$item_dao->account_id] ) ) {
             $accounts[$item_dao->account_id] = array(
-              'name' => $item_dao->account_name,
-              'account_code' => $item_dao->account_code,
-              'description' => $dao->account_description,
-              'type' => $item_dao->qb_account_type,
+              'name' => $exporter->format( $item_dao->account_name ),
+              'account_code' => $exporter->format( $item_dao->account_code ),
+              'description' => $exporter->format( $dao->account_description ),
+              'type' => $exporter->format( $item_dao->qb_account_type ),
             );
           }
         
@@ -566,9 +543,9 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
         
           // add split line for this item
           $journalEntries[$dao->financial_trxn_id]['splits'][$item_dao->financial_item_id] = array(
-            'trxn_date' => $item_dao->transaction_date,
-            'account_name' => $item_dao->account_name,
-            'amount' => (-1) * $item_dao->amount,
+            'trxn_date' => $exporter->format( $item_dao->transaction_date, 'date' ),
+            'account_name' => $exporter->format( $item_dao->account_name ),
+            'amount' => $exporter->format( (-1) * $item_dao->amount ),
           );
         } // end items loop
         $item_dao->free();
@@ -576,9 +553,9 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
       } else {
         // In this case, split record just uses the FROM account from the trxn, and there's only one record here
         $journalEntries[$dao->financial_trxn_id]['splits'][] = array(
-          'trxn_date' => $dao->trxn_date,
-          'account_name' => $dao->from_account_name,
-          'amount' => (-1) * $dao->total_amount,
+          'trxn_date' => $exporter->format( $dao->trxn_date, 'date' ),
+          'account_name' => $exporter->format( $dao->from_account_name ),
+          'amount' => $exporter->format( (-1) * $dao->total_amount ),
         );
       }
     }
@@ -590,17 +567,6 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
       'journalEntries' => $journalEntries,
     );
     
-    // Instantiate appropriate exporter based on user-selected format.
-//TEST
-self::$_exportFormat = 'IIF';
-//ENDTEST
-    $exporterClass = "CRM_Financial_BAO_ExportFormat_" . self::$_exportFormat;
-    if ( class_exists( $exporterClass ) ) {
-      $exporter = new $exporterClass( $exportParams );
-      $exporter->export();
-    } else {
-      CRM_Core_Error::fatal("Could not locate exporter: $exporterClass");
-    }
-  }
-
+    $exporter->export( $exportParams );
+  }    
 }

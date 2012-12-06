@@ -34,6 +34,22 @@
  *
  */
 
+// **************************************
+// FIXME: This doesn't do anything. PHP has built-in csv functions, and there will be multiple output files,
+// so this is different from IIF.
+// **************************************
+// TODO: For csv we need to export multiple files. Create a ZIP?
+// TODO: There's some csv export code in CRM_Export_BAO_Export that first writes to a temp db table and then
+// exports. Decide if want to follow same strategy or just go straight to filesystem.
+/*
+    CRM_Utils_System::download(CRM_Utils_String::munge($fileName),
+      'text/x-csv',
+      CRM_Core_DAO::$_nullObject,
+      'csv',
+      FALSE
+    );
+ */
+
 class CRM_Financial_BAO_ExportFormat_CSV extends CRM_Financial_BAO_ExportFormat {
 
   // For this phase, we always output these records too so that there isn't data referenced in the journal entries that isn't defined anywhere.
@@ -46,12 +62,12 @@ class CRM_Financial_BAO_ExportFormat_CSV extends CRM_Financial_BAO_ExportFormat 
   /**
    * class constructor
    */
-  function __construct( $params ) {
-    parent::__construct( $params );
+  function __construct() {
+    parent::__construct();
   }
 
-  function export() {    
-// TODO: For csv we need to export multiple files. Create a ZIP?
+  function export( $exportParams ) {   
+    parent::export( $exportParams );
     
     foreach( self::$complementaryTables as $rct ) {
       $func = "export{$rct}";
@@ -60,6 +76,8 @@ class CRM_Financial_BAO_ExportFormat_CSV extends CRM_Financial_BAO_ExportFormat 
     
     // now do general journal entries
     $this->exportTRANS();
+    
+    $this->output();
   }
   
   function exportACCNT() {

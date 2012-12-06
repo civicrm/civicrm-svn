@@ -36,15 +36,8 @@
 
 class CRM_Financial_BAO_ExportFormat_IIF extends CRM_Financial_BAO_ExportFormat {
 
-//****************
-// FIXME: This whole class is still a work in progress. At the moment I'm thinking it really just needs
-// to format each data item so Quickbooks won't choke, decide which items to pass on to the smarty template,
-// then run the template, then let the parent class present the resulting download to the user.
-//****************
-
-
   // Tab character. Some people's editors replace tabs with spaces so I'm scared to use actual tabs.
-  // Can't set it here using chr() because static. Same thing if a const.
+  // Can't set it here using chr() because static. Same thing if a const. So it's set in constructor.
   static $SEPARATOR;
   
   // For this phase, we always output these records too so that there isn't data referenced in the journal entries that isn't defined anywhere.
@@ -78,13 +71,14 @@ class CRM_Financial_BAO_ExportFormat_IIF extends CRM_Financial_BAO_ExportFormat 
   /**
    * class constructor
    */
-  function __construct( $params ) {
-    parent::__construct( $params );
+  function __construct() {
+    parent::__construct();
     self::$SEPARATOR = chr(9);
   }
 
-  function export() {
-    
+  function export( $exportParams ) {
+    parent::export( $exportParams );
+
     foreach( self::$complementaryTables as $rct ) {
       $func = "export{$rct}";
       $this->$func();
@@ -92,45 +86,31 @@ class CRM_Financial_BAO_ExportFormat_IIF extends CRM_Financial_BAO_ExportFormat 
     
     // now do general journal entries
     $this->exportTRANS();
-
-// TODO: There's some csv export code in CRM_Export_BAO_Export that first writes to a temp db table and then exports. Decide if want to follow same strategy or just go straight to filesystem. See outputRow().
-/*
-    CRM_Utils_System::download(CRM_Utils_String::munge($fileName),
-      'text/x-csv',
-      CRM_Core_DAO::$_nullObject,
-      'csv',
-      FALSE
-    );
- */
+    
+    $this->output();
   }
   
   function exportACCNT() {
-    foreach( $this->_exportParams['accounts'] as $acct ) {
-      $row = self::format( $acct );      
-      $this->outputRow( $row );
-    }
+    self::assign( 'accounts', $this->_exportParams['accounts'] );
   }
 
   function exportCUST() {
+    self::assign( 'contacts', $this->_exportParams['contacts'] );
   }
   
   function exportTRANS() {
+    self::assign( 'journalEntries', $this->_exportParams['journalEntries'] );
   }
-  
-//FIXME: I need to fix this up.
-  function outputRow( $row ) {
-    // see comment in export() above - need to decide on output strategy, so using this function should just be able to change here to accommodate any choice
-    // $row is a string already formatted
     
-    echo $row . "\n";
+  function getTemplateFileName() {
+    return 'CRM/Financial/ExportFormat/IIF.tpl';
   }
-  
+
   /*
-   * $s the input string or array of strings
+   * $s the input string
    * $type can be string, date, or notepad
-   *       if date then $s should be a string
    */
-  static function format($s, $type = 'string') {
+  static function format( $s, $type = 'string' ) {
     // If I remember right there's a couple things:
     // NOTEPAD field needs to be surrounded by quotes and then get rid of double quotes inside, also newlines should be literal \n, and ditch any ascii 0x0d's.
     // Date handling has changed over the years. It used to only understand mm/dd/yy but I think now it might depend on your OS settings. Sometimes mm/dd/yyyy works but sometimes it wants yyyy/mm/dd, at least where I had used it.

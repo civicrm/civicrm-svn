@@ -36,6 +36,7 @@
 /**
  * Base class for Export Formats
  * Create a subclass for a specific format.
+ *
  */
 
 class CRM_Financial_BAO_ExportFormat {
@@ -48,17 +49,46 @@ class CRM_Financial_BAO_ExportFormat {
   /*
    * smarty template
    */
-  protected $_templateFile;
+  static protected $_template;
   
   /**
    * class constructor
    */
-  function __construct( $params ) {
-    $this->_exportParams = $params;
+  function __construct() {
+    if ( !isset( self::$_template ) ) {
+      self::$_template = CRM_Core_Smarty::singleton();
+    }
   }
   
-  function export() {
-    CRM_Core_Error::fatal( ts('Subclass needs to override export() to implement desired format.') );
+  // Override to assemble the appropriate subset of financial data for the specific export format
+  function export( $exportParams ) {
+    $this->_exportParams = $exportParams;
   }
 
+  function output() {
+    self::getTemplate()->fetch( $this->getTemplateFileName() );  
+  }
+  
+  // Override this if appropriate
+  function getTemplateFileName() {
+    return null;
+  }
+  
+  static function &getTemplate() {
+    return self::$_template;
+  }
+
+  static function assign($var, $value = NULL) {
+    self::$_template->assign($var, $value);
+  }
+  
+  /*
+   * This gets called for every item of data being compiled before being sent to the exporter for output.
+   * 
+   * Depending on the output format might want to override this, e.g. for IIF tabs need to be escaped etc,
+   * but for CSV it doesn't make sense because php has built in csv output functions.
+   */
+  static function format( $s, $type = 'string' ) {
+    return $s;
+  }
 }
