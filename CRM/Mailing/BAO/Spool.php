@@ -83,8 +83,8 @@ class CRM_Mailing_BAO_Spool extends CRM_Mailing_DAO_Spool {
       $params['is_completed'] = 1;
       $params['is_archived'] = 1;
       $params['body_html'] = $headerStr . "\n\n" . $body;
-      $params['subject'] = $headers['subject'];
-      $params['name'] = $headers['subject'];
+      $params['subject'] = $headers['Subject'];
+      $params['name'] = $headers['Subject'];
       $ids = array();
       $mailing = CRM_Mailing_BAO_Mailing::create($params, $ids);
       
