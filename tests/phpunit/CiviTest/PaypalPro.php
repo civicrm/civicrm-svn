@@ -2,14 +2,14 @@
 require_once "CRM/Financial/DAO/PaymentProcessor.php";
 class PaypalPro extends PHPUnit_Framework_Testcase {
   /*
-     * Helper function to create
-     * a payment processor of type Paypal Pro
-     *
-     * @return $paymentProcessor id of created payment processor
-     */
-  function create() {
+   * Helper function to create
+   * a payment processor of type Paypal Pro
+   *
+   * @return $paymentProcessor id of created payment processor
+   */
+  static function create() {
 
-        $paymentProcessor = new CRM_Financial_DAO_PaymentProcessor( );
+    $paymentProcessor = new CRM_Financial_DAO_PaymentProcessor( );
     $paymentParams = array(
       'name' => 'demo',
       'domain_id' => CRM_Core_Config::domainID(),
@@ -25,6 +25,7 @@ class PaypalPro extends PHPUnit_Framework_Testcase {
       'url_button' => 'https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif',
       'class_name' => 'Payment_PayPalImpl',
       'billing_mode' => 3,
+      'financial_type_id' => 1,
     );
     $paymentProcessor->copyValues($paymentParams);
     $paymentProcessor->save();
@@ -32,15 +33,15 @@ class PaypalPro extends PHPUnit_Framework_Testcase {
   }
 
   /*
-     * Helper function to delete a PayPal Pro 
-     * payment processor
-     * @param  int $id - id of the PayPal Pro payment processor
-     * to be deleted
-     * @return boolean true if payment processor deleted, false otherwise
-     * 
-     */
-  function delete($id) {
-        $pp     = new CRM_Financial_DAO_PaymentProcessor( );
+   * Helper function to delete a PayPal Pro
+   * payment processor
+   * @param  int $id - id of the PayPal Pro payment processor
+   * to be deleted
+   * @return boolean true if payment processor deleted, false otherwise
+   *
+   */
+  static function delete($id) {
+    $pp     = new CRM_Financial_DAO_PaymentProcessor( );
     $pp->id = $id;
     if ($pp->find(TRUE)) {
       $result = $pp->delete();
