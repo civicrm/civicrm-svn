@@ -454,7 +454,15 @@ self::$_exportFormat = 'IIF';
       fa_to.accounting_code as to_account_code,
       fa_to.financial_account_type_id as to_account_type_id,
       fa_to.description as to_account_description,
-      ov_to.grouping as to_qb_account_type
+      ov_to.grouping as to_qb_account_type,
+      contact_from.id as contact_from_id,
+      contact_from.display_name as contact_from_name,
+      contact_from.first_name as contact_from_first_name,
+      contact_from.last_name as contact_from_last_name,
+      contact_to.id as contact_to_id,
+      contact_to.display_name as contact_to_name,
+      contact_to.first_name as contact_to_first_name,
+      contact_to.last_name as contact_to_last_name
       FROM civicrm_entity_batch eb
       LEFT JOIN civicrm_financial_trxn ft ON (eb.entity_id = ft.id AND eb.entity_table = 'civicrm_financial_trxn')
       LEFT JOIN civicrm_financial_account fa_from ON fa_from.id = ft.from_financial_account_id
@@ -463,6 +471,8 @@ self::$_exportFormat = 'IIF';
       LEFT JOIN civicrm_option_value ov_from ON (ov_from.option_group_id = og_from.id AND ov_from.value = fa_from.financial_account_type_id)
       LEFT JOIN civicrm_option_group og_to ON og_to.name = 'financial_account_type'
       LEFT JOIN civicrm_option_value ov_to ON (ov_to.option_group_id = og_to.id AND ov_to.value = fa_to.financial_account_type_id)
+      LEFT JOIN civicrm_contact contact_from ON contact_from.id = fa_from.contact_id
+      LEFT JOIN civicrm_contact contact_to ON contact_to.id = fa_to.contact_id
       WHERE eb.batch_id IN ( %1 )";
       
     $params = array( 1 => array( $id_list, 'String' ) );
@@ -478,7 +488,8 @@ self::$_exportFormat = 'IIF';
     $dao = CRM_Core_DAO::executeQuery( $sql, $params );
     while ( $dao->fetch() ) {
       
-      if ( !empty( $dao->from_account_name ) && !isset( $accounts[$dao->from_account_id] ) ) {
+      // add to running list of accounts
+      if ( !empty( $dao->from_account_id ) && !isset( $accounts[$dao->from_account_id] ) ) {
         $accounts[$dao->from_account_id] = array(
           'name' => $exporter->format( $dao->from_account_name ),
           'account_code' => $exporter->format( $dao->from_account_code ),
@@ -486,7 +497,7 @@ self::$_exportFormat = 'IIF';
           'type' => $exporter->format( $dao->from_qb_account_type ),
         );
       }
-      if ( !empty( $dao->to_account_name ) && !isset( $accounts[$dao->to_account_id] ) ) {
+      if ( !empty( $dao->to_account_id ) && !isset( $accounts[$dao->to_account_id] ) ) {
         $accounts[$dao->to_account_id] = array(
           'name' => $exporter->format( $dao->to_account_name ),
           'account_code' => $exporter->format( $dao->to_account_code ),
@@ -495,9 +506,22 @@ self::$_exportFormat = 'IIF';
         );        
       }
 
-// TODO: add to contact list
-// Unsure about schema for this. It's clear below when working with individual items in the trxn, but
-// what do we use for contact in the above sql query?
+      // add to running list of contacts
+      if ( !empty( $dao->contact_from_id ) && !isset( $contacts[$dao->contact_from_id] ) ) {
+        $contacts[$dao->contact_from_id] = array(
+            'name' => $exporter->format( $dao->contact_from_name ),
+            'first_name' => $exporter->format( $dao->contact_from_first_name ),
+            'last_name' => $exporter->format( $dao->contact_from_last_name ),
+        );
+      }
+
+      if ( !empty( $dao->contact_to_id ) && !isset( $contacts[$dao->contact_to_id] ) ) {
+        $contacts[$dao->contact_to_id] = array(
+            'name' => $exporter->format( $dao->contact_to_name ),
+            'first_name' => $exporter->format( $dao->contact_to_first_name ),
+            'last_name' => $exporter->format( $dao->contact_to_last_name ),
+        );
+      }
 
       // set up the journal entries for this financial trxn
       $journalEntries[$dao->financial_trxn_id] = array(
@@ -505,6 +529,7 @@ self::$_exportFormat = 'IIF';
           'trxn_date' => $exporter->format( $dao->trxn_date, 'date' ),
           'account_name' => $exporter->format( $dao->to_account_name ),
           'amount' => $exporter->format( $dao->total_amount ),
+          'contact_name' => $exporter->format( $dao->contact_to_name ),
         ),
         'splits' => array(),
       );
@@ -543,7 +568,7 @@ self::$_exportFormat = 'IIF';
         while ( $item_dao->fetch() ) {
           
           // add to running list of accounts
-          if ( !isset( $accounts[$item_dao->account_id] ) ) {
+          if ( !empty( $item_dao->account_id ) && !isset( $accounts[$item_dao->account_id] ) ) {
             $accounts[$item_dao->account_id] = array(
               'name' => $exporter->format( $item_dao->account_name ),
               'account_code' => $exporter->format( $item_dao->account_code ),
@@ -552,7 +577,7 @@ self::$_exportFormat = 'IIF';
             );
           }
         
-          if ( !isset( $contacts[$item_dao->contact_id] ) ) {
+          if ( !empty( $item_dao->contact_id ) && !isset( $contacts[$item_dao->contact_id] ) ) {
             $contacts[$item_dao->contact_id] = array(
                 'name' => $exporter->format( $item_dao->contact_name ),
                 'first_name' => $exporter->format( $item_dao->contact_first_name ),
@@ -576,6 +601,7 @@ self::$_exportFormat = 'IIF';
           'trxn_date' => $exporter->format( $dao->trxn_date, 'date' ),
           'account_name' => $exporter->format( $dao->from_account_name ),
           'amount' => $exporter->format( (-1) * $dao->total_amount ),
+          'contact_name' => $exporter->format( $dao->contact_from_name ),
         );
       }
     }
