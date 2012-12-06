@@ -1538,7 +1538,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
                 if ( is_array( $initValue ) ) {
                   $initValue = CRM_Utils_Array::value( $line['price_field_value_id'],  $initValue );
                 }
-                $lineItems->int_name = $initValue;
+                $lineItems->$int_name = $initValue;
                 CRM_Financial_BAO_FinancialItem::add(  $lineItems, $contributions[0] );
               }
             }

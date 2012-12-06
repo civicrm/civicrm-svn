@@ -296,7 +296,7 @@ class CRM_Price_BAO_LineItem extends CRM_Price_DAO_LineItem {
           $initvalue = (float) $line['unit_price']/$initPoint;
           $initValue = number_format($initvalue, 2, '.', '');
         }
-        $lineItems->int_name= $initValue;
+        $lineItems->$int_name= $initValue;
         CRM_Financial_BAO_FinancialItem::add( $lineItems, $contributionDetails );
       }
     }

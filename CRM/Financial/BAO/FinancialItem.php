@@ -101,11 +101,13 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem {
       $params['financial_account_id'] = CRM_Utils_Array::value( 'financial_account_id', $result );
     }
 
-    $trxn = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnIds( $contribution->id );
-    $trxnId['id'] = $trxn['financialTrxnId']; 
+    $trxn = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnIds($contribution->id);
+    $trxnId['id'] = $trxn['financialTrxnId'];
+
     $int_name = 'txt-price_'.$lineItem->price_field_id;
     $params['init_amount'] =  $lineItem->$int_name;
-    self::create( $params,null, $trxnId);    
+
+    self::create($params, null, $trxnId);
   } 
 
   static function create( &$params, $ids = null, $trxnId = null  ) {
