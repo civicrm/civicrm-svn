@@ -748,14 +748,14 @@ WHERE  id IN (" . implode(',', array_keys($priceFields)) . ')';
     $initialAmount = CRM_Utils_Array::value('initial_amount', $fields);
     if (!empty($minInitialAmount)) {
       if (CRM_Utils_Array::value('int_amount', $fields) && CRM_Utils_Array::value('initial_amount', $fields) < $minInitialAmount) {
-        $errors['initial_amount'] = " Your initial payment must be at least {$minInitialAmount}";
+        $errors['initial_amount'] = ts('Your initial payment must be at least %1', array(1 => $minInitialAmount));
       }
     }
     if (CRM_Utils_Array::value('int_amount', $fields) && $amount < $initialAmount) {
-      $errors[ 'initial_amount' ] = 'Initial Amount is greater than base Amount.';
+      $errors[ 'initial_amount' ] = ts('Initial Amount is greater than base Amount.');
     }
     if (CRM_Utils_Array::value('int_amount', $fields) && !empty($initialAmount) && $initialAmount <= 0) {
-      $errors['initial_amount'] = 'Initial Amount is not Positive .';
+      $errors['initial_amount'] = ts('Initial Amount is not Positive .');
     }
     return $errors;
   }
