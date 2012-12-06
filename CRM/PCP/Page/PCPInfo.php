@@ -100,7 +100,7 @@ class CRM_PCP_Page_PCPInfo extends CRM_Core_Page {
       CRM_Core_Session::setStatus($anonMessage, ts('Success'), 'success');
     }
     else {
-      $statusMessage = ts('The personal campaign page you requested is currently unavailable. However you can still support the campaign by making a contribution here.', ts('Page Unavailable'), 'alert');
+      $statusMessage = ts('The personal campaign page you requested is currently unavailable. However you can still support the campaign by making a contribution here.');
     }
 
     $pcpBlock = new CRM_PCP_DAO_PCPBlock();
