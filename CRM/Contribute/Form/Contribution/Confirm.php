@@ -55,11 +55,11 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
   public function preProcess() {
     $config = CRM_Core_Config::singleton();
     parent::preProcess();
-
+    
     // lineItem isn't set until Register postProcess
     $this->_lineItem = $this->get('lineItem');
     $this->_paymentProcessor = $this->get('paymentProcessor');
-
+    
     if ($this->_contributeMode == 'express') {
       // rfp == redirect from paypal
       $rfp = CRM_Utils_Request::retrieve('rfp', 'Boolean',
@@ -74,7 +74,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         $this->_params['payer_status'] = $expressParams['payer_status'];
 
         CRM_Core_Payment_Form::mapParams($this->_bltID, $expressParams, $this->_params, FALSE);
-
+        
         // fix state and country id if present
         if (!empty($this->_params["billing_state_province_id-{$this->_bltID}"]) && $this->_params["billing_state_province_id-{$this->_bltID}"]) {
           $this->_params["billing_state_province-{$this->_bltID}"] = CRM_Core_PseudoConstant::stateProvinceAbbreviation($this->_params["billing_state_province_id-{$this->_bltID}"]);
@@ -1076,12 +1076,12 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       $honorCId = $form->createHonorContact();
     }
 
-        // add these values for the recurringContrib function ,CRM-10188
-        $params['financial_type_id'] = $contributionType->id;
-        $params['is_email_receipt'] = CRM_Utils_Array::value( 'is_email_receipt', $form->_values );
-
+    // add these values for the recurringContrib function ,CRM-10188
+    $params['financial_type_id'] = $contributionType->id;
+    $params['is_email_receipt'] = CRM_Utils_Array::value( 'is_email_receipt', $form->_values );
+    
     $recurringContributionID = self::processRecurringContribution($form, $params, $contactID, $contributionType, $online);
-
+    
     if (!$online && isset($params['honor_contact_id'])) {
       $honorCId = $params['honor_contact_id'];
     }
@@ -1137,7 +1137,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
     // first create the contribution record
     $contribParams = array(
       'contact_id' => $contactID,
-                               'financial_type_id'  => $contributionType->id,
+      'financial_type_id'  => $contributionType->id,
       'contribution_page_id' => $contributionPageId,
       'receive_date' => (CRM_Utils_Array::value('receive_date', $params)) ? CRM_Utils_Date::processDate($params['receive_date']) : date('YmdHis'),
       'non_deductible_amount' => $nonDeductibleAmount,
@@ -1277,27 +1277,28 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       );
 
       $revenueFinancialType = array( );
-      $statusID = $cId = $financialAccount = null;
+      $statusID = $cId = $financialAccount = NULL;
       if( $pending ){
         CRM_Core_PseudoConstant::populate( $revenueFinancialType,
-                                           'CRM_Financial_DAO_EntityFinancialAccount',
-                                           $all = True, 
-                                           $retrieve = 'financial_account_id', 
-                                           $filter = null, 
-                                           " account_relationship = 3 AND entity_id = {$contribution->financial_type_id} " );
+          'CRM_Financial_DAO_EntityFinancialAccount',
+          $all = TRUE, 
+          $retrieve = 'financial_account_id', 
+          $filter = NULL, 
+          " account_relationship = 3 AND entity_id = {$contribution->financial_type_id} " );
         $financialAccount = current( $revenueFinancialType );
-        $statusID = key(CRM_CORE_PseudoConstant::accountOptionValues( 'financial_item_status', null, " AND v.name LIKE 'Unpaid' " ));
-      }else{
+        $statusID = key(CRM_CORE_PseudoConstant::accountOptionValues( 'financial_item_status', NULL, " AND v.name LIKE 'Unpaid' " ));
+      }else {
         $finanTypeId = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_PaymentProcessor', $form->_paymentProcessor['id'], 'financial_type_id');
         CRM_Core_PseudoConstant::populate( $revenueFinancialType,
-                                           'CRM_Financial_DAO_EntityFinancialAccount',
-                                           $all = True, 
-                                           $retrieve = 'financial_account_id', 
-                                           $filter = null, 
-                                           " account_relationship = 6 AND entity_id = {$finanTypeId} " );
+          'CRM_Financial_DAO_EntityFinancialAccount',
+          $all = TRUE, 
+          $retrieve = 'financial_account_id', 
+          $filter = NULL, 
+          " account_relationship = 6 AND entity_id = {$finanTypeId} "
+        );
                 
         $financialAccount = current( $revenueFinancialType );
-        $statusID = key(CRM_CORE_PseudoConstant::accountOptionValues( 'financial_item_status', null, " AND v.name LIKE 'Paid' " ));
+        $statusID = key(CRM_CORE_PseudoConstant::accountOptionValues( 'financial_item_status', NULL, " AND v.name LIKE 'Paid' " ));
       }
       if( $financialAccount ){
         $trxnParams['to_financial_account_id'] = $financialAccount;
@@ -1323,8 +1324,8 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         }
       }
       $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
-      }
-
+    }
+    
     // process price set, CRM-5095
     if ($contribution && $contribution->id && $form->_priceSetId) {
       if (CRM_Utils_Array::value('is_quick_config', $form->_params)) {
@@ -1392,7 +1393,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         $pledgeParams['installment_amount'] = $pledgeParams['actual_amount'] = $contribution->total_amount;
         $pledgeParams['contribution_id'] = $contribution->id;
         $pledgeParams['contribution_page_id'] = $contribution->contribution_page_id;
-                $pledgeParams['financial_type_id'   ] = $contribution->financial_type_id;
+        $pledgeParams['financial_type_id'] = $contribution->financial_type_id;
         $pledgeParams['frequency_interval'] = $params['pledge_frequency_interval'];
         $pledgeParams['installments'] = $params['pledge_installments'];
         $pledgeParams['frequency_unit'] = $params['pledge_frequency_unit'];
@@ -1498,7 +1499,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         'fee_amount' => CRM_Utils_Array::value('fee_amount', $result),
         'net_amount' => CRM_Utils_Array::value('net_amount', $result, $params['amount']),
         'currency' => $params['currencyID'],
-                                'payment_processor_id' => $form->_paymentProcessor['id'],
+        'payment_processor_id' => $form->_paymentProcessor['id'],
         'trxn_id' => $result['trxn_id'],
         'trxn_result_code' => (isset($result['trxn_result_code']) ? $result['trxn_result_code'] : FALSE),
       );
@@ -1507,24 +1508,26 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       $statusID = $cId = $financialAccount = null;
       if( $pending ){
         CRM_Core_PseudoConstant::populate( $revenueFinancialType,
-                                           'CRM_Financial_DAO_EntityFinancialAccount',
-                                           $all = True, 
-                                           $retrieve = 'financial_account_id', 
-                                           $filter = null, 
-                                           " account_relationship = 3 AND entity_id = {$contribution->financial_type_id} " );
+          'CRM_Financial_DAO_EntityFinancialAccount',
+          $all = TRUE, 
+          $retrieve = 'financial_account_id', 
+          $filter = NULL, 
+          " account_relationship = 3 AND entity_id = {$contribution->financial_type_id} "
+        );
         $financialAccount = current( $revenueFinancialType );
-        $statusID = key(CRM_CORE_PseudoConstant::accountOptionValues( 'financial_item_status', null, " AND v.name LIKE 'Unpaid' " ));
+        $statusID = key(CRM_CORE_PseudoConstant::accountOptionValues( 'financial_item_status', NULL, " AND v.name LIKE 'Unpaid' " ));
       }else{
         $finanTypeId = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_PaymentProcessor', $form->_paymentProcessor['id'], 'financial_type_id');
         CRM_Core_PseudoConstant::populate( $revenueFinancialType,
-                                           'CRM_Financial_DAO_EntityFinancialAccount',
-                                           $all = True, 
-                                           $retrieve = 'financial_account_id', 
-                                           $filter = null, 
-                                           " account_relationship = 6 AND entity_id = {$finanTypeId} " );
+          'CRM_Financial_DAO_EntityFinancialAccount',
+          $all = TRUE, 
+          $retrieve = 'financial_account_id', 
+          $filter = NULL, 
+          " account_relationship = 6 AND entity_id = {$finanTypeId} "
+        );
                 
         $financialAccount = current( $revenueFinancialType );
-        $statusID = key(CRM_CORE_PseudoConstant::accountOptionValues( 'financial_item_status', null, " AND v.name LIKE 'Paid' " ));
+        $statusID = key(CRM_CORE_PseudoConstant::accountOptionValues( 'financial_item_status', NULL, " AND v.name LIKE 'Paid' " ));
       }
       if( $financialAccount ){
         $trxnParams['to_financial_account_id'] = $financialAccount;
@@ -1532,25 +1535,25 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       }
 
       $trxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
-      $itemsParams = array( 'created_date'         => date('YmdHis'),
-                            'transaction_date'     => $trxn->trxn_date,
-                            'contact_id'           => $cId,
-                            'amount'               => $trxn->total_amount,
-                            'currency'             => $trxn->currency,
-                            'entity_table'         => 'civicrm_financial_trxn',
-                            'entity_id'            => $trxn->id,
-                            'status_id'            => $statusID,
-                            );
+      $itemsParams = array(
+        'created_date'         => date('YmdHis'),
+        'transaction_date'     => $trxn->trxn_date,
+        'contact_id'           => $cId,
+        'amount'               => $trxn->total_amount,
+        'currency'             => $trxn->currency,
+        'entity_table'         => 'civicrm_financial_trxn',
+        'entity_id'            => $trxn->id,
+        'status_id'            => $statusID,
+      );
             
       if($financialAccount){
         $itemsParams['financial_account_id'] = $financialAccount;
-    }
+      }
       require_once 'CRM/Financial/BAO/FinancialItem.php';
       $trxnId['id'] = $trxn->id ;
       $trxn = CRM_Financial_BAO_FinancialItem::create($itemsParams, null, $trxnId);
-
     }
-
+    
     //create contribution activity w/ individual and target
     //activity w/ organisation contact id when onbelf, CRM-4027
     $targetContactID = NULL;
@@ -1660,10 +1663,10 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       //don't create contact - possibly the form was left blank
       return null;
     }
-
+    
     //assign to template for email receipt
     $honor_block_is_active = $this->get('honor_block_is_active');
-
+    
     $this->assign('honor_block_is_active', $honor_block_is_active);
     $this->assign('honor_block_title', CRM_Utils_Array::value('honor_block_title', $this->_values));
 
@@ -1791,8 +1794,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
    * @static
    * @access public
    */
-  static
-  function processPcpSoft(&$params, &$contribution) {
+  static function processPcpSoft(&$params, &$contribution) {
     //add soft contribution due to pcp or Submit Credit / Debit Card Contribution by admin.
     if (CRM_Utils_Array::value('soft_credit_to', $params)) {
       $contribSoftParams = array();
@@ -1823,8 +1825,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
    * @static
    * @access public
    */
-  static
-  function processPcp(&$page, $params) {
+  static function processPcp(&$page, $params) {
     $params['pcp_made_through_id'] = $page->_pcpInfo['pcp_id'];
     $page->assign('pcpBlock', TRUE);
     if (CRM_Utils_Array::value('pcp_display_in_roll', $params) &&
