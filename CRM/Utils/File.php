@@ -470,7 +470,7 @@ HTACCESS;
    *
    * @return string
    */
-  function relativize($directory, $basePath) {
+  static function relativize($directory, $basePath) {
     if (substr($directory, 0, strlen($basePath)) == $basePath) {
       return substr($directory, strlen($basePath));
     } else {
