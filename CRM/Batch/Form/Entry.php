@@ -369,6 +369,8 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
     $this->_priceSet = current(CRM_Price_BAO_Set::getSetDetail($priceSetId));
     $fieldID = key($this->_priceSet['fields']);
 
+    $assetRelation = key(CRM_CORE_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Asset Account of' "));
+
     if (isset($params['field'])) {
       foreach ($params['field'] as $key => $value) {
         // if contact is not selected we should skip the row
@@ -438,6 +440,22 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         );
 
         CRM_Price_BAO_LineItem::processPriceSet($contribution->id, $lineItem, $contribution);
+
+        // make entry in financial transaction table
+        $trxnParams = array(
+          'contribution_id' => $contribution->id,
+          'to_financial_account_id' => CRM_Utils_Array::value($assetRelation, CRM_Contribute_Form_AbstractEditPayment::getFinancialAccounts($contribution->financial_type_id)),
+          'trxn_date' => $value['receive_date'],
+          'total_amount' => $value['total_amount'],
+          'fee_amount' => CRM_Utils_Array::value('fee_amount', $value),
+          'net_amount' => CRM_Utils_Array::value('net_amount', $value),
+          'currency' => $contribution->currency,
+          'trxn_id' => $contribution->trxn_id,
+          'status_id' => $contribution->contribution_status_id,
+          'trxn_result_code' => (!empty($contribution->trxn_result_code) ? $contribution->trxn_result_code : FALSE),
+        );
+
+        CRM_Core_BAO_FinancialTrxn::create($trxnParams);
 
         //process premiums
         if (CRM_Utils_Array::value('product_name', $value)) {
