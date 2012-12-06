@@ -65,8 +65,7 @@ class CRM_Grant_Task {
    * @static
    * @access public
    */
-  static
-  function &tasks() {
+  static function &tasks() {
     if (!(self::$_tasks)) {
       self::$_tasks = array(1 => array('title' => ts('Delete Grants'),
           'class' => 'CRM_Grant_Form_Task_Delete',
@@ -108,8 +107,7 @@ class CRM_Grant_Task {
    * @static
    * @access public
    */
-  static
-  function &taskTitles() {
+  static function &taskTitles() {
     self::tasks();
     $titles = array();
     foreach (self::$_tasks as $id => $value) {
@@ -130,8 +128,7 @@ class CRM_Grant_Task {
    * @return array set of tasks that are valid for the user
    * @access public
    */
-  static
-  function &permissionedTaskTitles($permission) {
+  static function &permissionedTaskTitles($permission) {
     $tasks = array();
     if (($permission == CRM_Core_Permission::EDIT)
       || CRM_Core_Permission::check('edit grants')
@@ -159,8 +156,7 @@ class CRM_Grant_Task {
    * @static
    * @access public
    */
-  static
-  function getTask($value) {
+  static function getTask($value) {
     self::tasks();
     if (!$value || !CRM_Utils_Array::value($value, self::$_tasks)) {
       // make the print task by default
