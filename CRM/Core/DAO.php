@@ -1651,7 +1651,8 @@ SELECT contact_id
           $triggerSQL  = "CREATE TRIGGER $triggerName $whenName $eventName ON $tableName FOR EACH ROW BEGIN $varString $sqlString END";
 
           CRM_Core_DAO::executeQuery("DROP TRIGGER IF EXISTS $triggerName");
-          CRM_Core_DAO::executeQuery($triggerSQL,
+          CRM_Core_DAO::executeQuery(
+            $triggerSQL,
             array(),
             TRUE,
             NULL,
@@ -1661,6 +1662,33 @@ SELECT contact_id
         }
       }
     }
+  }
+
+  /**
+   * Check the tables sent in, to see if there are any tables where there is a value for
+   * a column
+   *
+   * This is typically used when we want to delete a row, but want to avoid the FK errors
+   * that it might cause due to this being a required FK
+   *
+   * @param array an array of values (tableName, columnName)
+   * @param array the parameter array with the value and type
+   * @param array (reference) the tables which had an entry for this value
+   *
+   * @return boolean true if no value exists in all the tables
+   * @static
+   */
+  function doesValueExistInTable(&$tables, $params, &$errors) {
+    $errors = array();
+    foreach ($tables as $table) {
+      $sql = "SELECT count(*) FROM {$table['table']} WHERE {$table['column']} = %1";
+      $count = self::singleValueQuery($sql, $params);
+      if ($count > 0) {
+        $errors[$table['table']] = $count;
+      }
+    }
+
+    return (empty($errors)) ? FALSE : TRUE;
   }
 }
 

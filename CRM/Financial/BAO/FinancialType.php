@@ -1,29 +1,29 @@
 <?php
 
 /*
- +--------------------------------------------------------------------+
- | CiviCRM version 4.0                                                |
- +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
- +--------------------------------------------------------------------+
- | This file is a part of CiviCRM.                                    |
- |                                                                    |
- | CiviCRM is free software; you can copy, modify, and distribute it  |
- | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
- |                                                                    |
- | CiviCRM is distributed in the hope that it will be useful, but     |
- | WITHOUT ANY WARRANTY; without even the implied warranty of         |
- | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
- | See the GNU Affero General Public License for more details.        |
- |                                                                    |
- | You should have received a copy of the GNU Affero General Public   |
- | License and the CiviCRM Licensing Exception along                  |
- | with this program; if not, contact CiviCRM LLC                     |
- | at info[AT]civicrm[DOT]org. If you have questions about the        |
- | GNU Affero General Public License or the licensing of CiviCRM,     |
- | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
- +--------------------------------------------------------------------+
+  +--------------------------------------------------------------------+
+  | CiviCRM version 4.0                                                |
+  +--------------------------------------------------------------------+
+  | Copyright CiviCRM LLC (c) 2004-2011                                |
+  +--------------------------------------------------------------------+
+  | This file is a part of CiviCRM.                                    |
+  |                                                                    |
+  | CiviCRM is free software; you can copy, modify, and distribute it  |
+  | under the terms of the GNU Affero General Public License           |
+  | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+  |                                                                    |
+  | CiviCRM is distributed in the hope that it will be useful, but     |
+  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+  | See the GNU Affero General Public License for more details.        |
+  |                                                                    |
+  | You should have received a copy of the GNU Affero General Public   |
+  | License and the CiviCRM Licensing Exception along                  |
+  | with this program; if not, contact CiviCRM LLC                     |
+  | at info[AT]civicrm[DOT]org. If you have questions about the        |
+  | GNU Affero General Public License or the licensing of CiviCRM,     |
+  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+  +--------------------------------------------------------------------+
 */
 
 /**
@@ -49,7 +49,7 @@ class CRM_Financial_BAO_FinancialType extends CRM_Financial_DAO_FinancialType {
   function __construct( ) {
     parent::__construct( );
   }
-    
+
   /**
    * Takes a bunch of params that are needed to match certain criteria and
    * retrieves the relevant objects. Typically the valid params are only
@@ -73,7 +73,7 @@ class CRM_Financial_BAO_FinancialType extends CRM_Financial_DAO_FinancialType {
     }
     return null;
   }
-  
+
   /**
    * update the is_active flag in the db
    *
@@ -86,27 +86,27 @@ class CRM_Financial_BAO_FinancialType extends CRM_Financial_DAO_FinancialType {
   static function setIsActive( $id, $is_active ) {
     return CRM_Core_DAO::setFieldValue( 'CRM_Financial_DAO_FinancialType', $id, 'is_active', $is_active );
   }
-  
+
   /**
    * function to add the financial types
    *
    * @param array $params reference array contains the values submitted by the form
    * @param array $ids    reference array contains the id
-   * 
+   *
    * @access public
-   * @static 
+   * @static
    * @return object
    */
   static function add(&$params, &$ids) {
     $params['is_active'] =  CRM_Utils_Array::value( 'is_active', $params, false );
     $params['is_deductible'] =  CRM_Utils_Array::value( 'is_deductible', $params, false );
     $params['is_reserved'] =  CRM_Utils_Array::value( 'is_reserved', $params, false );
-    
+
     // action is taken depending upon the mode
     $financialType               = new CRM_Financial_DAO_FinancialType( );
     $financialType->copyValues( $params );;
-    
-    if (CRM_Utils_Array::value( 'financialType', $ids ) ){            
+
+    if (CRM_Utils_Array::value( 'financialType', $ids ) ){
       $oldFinancialType      = new CRM_Financial_DAO_FinancialType( );
       $oldFinancialType->id  = CRM_Utils_Array::value( 'financialType', $ids );
       $oldFinancialType->is_current_revision = 0;
@@ -115,60 +115,74 @@ class CRM_Financial_BAO_FinancialType extends CRM_Financial_DAO_FinancialType {
       else
         $financialType->original_id = $oldFinancialType->id;
     }
-    
+
     $financialType->save( );
     if (CRM_Utils_Array::value( 'financialType', $ids ) ){
-      $oldFinancialType->save( ); 
+      $oldFinancialType->save( );
     }
     return $financialType;
   }
-    
+
   /**
-   * Function to delete financial Types 
-   * 
+   * Function to delete financial Types
+   *
    * @param int $contributionTypeId
    * @static
    */
   static function del($financialTypeId) {
-    //checking if financial type is present  
+    //checking if financial type is present
     $check = false;
-      
-    //check dependencies
-    $dependancy = array( 
-      array('Contribute', 'Contribution'), 
-      array('Contribute', 'ContributionPage'), 
-      array( 'Member', 'MembershipType' ),
-      array( 'Price', 'FieldValue' ),
-      array( 'Grant', 'Grant' ),
-      array( 'Contribute', 'ManagePremiums' ),
+
+    // ensure that we have no objects that have an FK to this financial type id that cannot be null
+    $tables =
+      array(
+        array(
+          'table'  => 'civicrm_contribution',
+          'column' => 'financial_type_id'
+        ),
+        array(
+          'table'  => 'civicrm_contribution_page',
+          'column' => 'financial_type_id'
+        ),
+        array(
+          'table'  => 'civicrm_contribution_recur',
+          'column' => 'financial_type_id'
+        ),
+        array(
+          'table'  => 'civicrm_grant_program',
+          'column' => 'financial_type_id'
+        ),
+        array(
+          'table'  => 'civicrm_membership_type',
+          'column' => 'financial_type_id'
+        ),
+        array(
+          'table'  => 'civicrm_payment_processor',
+          'column' => 'financial_type_id'
+        ),
+        array(
+          'table'  => 'civicrm_pledge',
+          'column' => 'financial_type_id'
+        ),
       );
-    foreach ($dependancy as $name) {
-      require_once (str_replace('_', DIRECTORY_SEPARATOR, "CRM_" . $name[0] . "_BAO_" . $name[1]) . ".php");
-      eval('$bao = new CRM_' . $name[0] . '_BAO_' . $name[1] . '();');
-      $bao->financial_type_id = $financialTypeId;
-      if ($bao->find(true)) {
-        $check = true;
-        break;
-      }
+
+    $errors = array();
+    $params = array( 1 => array($financialTypeId, 'Integer'));
+    if (CRM_Core_DAO::doesValueExistInTable( $tables, $params, $errors)) {
+      $message  = ts('The following tables have an entry for this financial type') . ': ';
+      $message .= implode( ', ', array_keys($errors));
+
+      $errors = array();
+      $errors['is_error'] = 1;
+      $errors['error_message'] = $message;
+      return $errors;
     }
-    if ($check) {
-      if (!$skipRedirect) {
-        return TRUE;
-      }
-      else {
-        $error = array();
-        $error['is_error'] = 1;
-        //don't translate as api error message are not translated
-        $error['error_message'] = 'The Contribution Type cannot be deleted because it is being referenced by one or more of the following types of records: Contributions, Contribution Pages, or Membership Types.';
-        return $error;
-      } 
-    }
-    
+
     //delete from financial Type table
     $financialType = new CRM_Financial_DAO_FinancialType( );
     $financialType->id = $financialTypeId;
     $financialType->delete();
-    
+
     $entityFinancialType = new CRM_Financial_DAO_EntityFinancialAccount( );
     $entityFinancialType->entity_id = $financialTypeId;
     $entityFinancialType->entity_table = 'civicrm_financial_type';
