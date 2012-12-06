@@ -1,144 +1,144 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>  
-  
+
 <table>  
   <base>CRM/Financial</base>  
   <class>FinancialAccount</class>  
   <name>civicrm_financial_account</name>  
   <add>3.2</add> 
-  <change>4.1</change>
-  <changedName>civicrm_contribution_type</changedName>
-  <comment>civicrm_contribution_type merged into this table in 4.1</comment>
   <log>true</log> 
   <field>  
-      <name>id</name>  
-      <type>int unsigned</type>  
-      <required>true</required>  
-      <comment>ID</comment>  
-      <add>3.2</add>
+    <name>id</name>  
+    <type>int unsigned</type>  
+    <required>true</required>  
+    <comment>ID</comment>  
+    <add>3.2</add>
   </field>  
   <primaryKey>  
-       <name>id</name>  
-       <autoincrement>true</autoincrement>  
+    <name>id</name>  
+    <autoincrement>true</autoincrement>  
   </primaryKey>  
   <field>
-      <name>name</name>
-      <type>varchar</type>
-      <length>255</length>
-      <required>true</required> 
-      <import>true</import>
-      <headerPattern>/(contrib(ution)?)?type/i</headerPattern>
-      <dataPattern>/donation|member|campaign/i</dataPattern>
-      <comment>Financial Account Name.</comment>
-      <add>3.2</add>
+    <name>name</name>
+    <type>varchar</type>
+    <length>255</length>
+    <required>true</required> 
+    <import>true</import>
+    <headerPattern>/(contrib(ution)?)?type/i</headerPattern>
+    <dataPattern>/donation|member|campaign/i</dataPattern>
+    <comment>Financial Account Name.</comment>
+    <add>3.2</add>
   </field>
   <field> 
-      <name>contact_id</name> 
-      <uniqueName>financial_account_contact_id</uniqueName>
-      <title>Contact ID</title>
-      <type>int unsigned</type> 
-      <import>true</import>
-      <headerPattern>/contact(.?id)?/i</headerPattern>
-      <dataPattern>/^\d+$/</dataPattern>
-      <comment>FK to Contact ID that is responsible for the funds in this account</comment> 
-      <add>4.1</add> 
+    <name>contact_id</name> 
+    <uniqueName>financial_account_contact_id</uniqueName>
+    <title>Contact ID</title>
+    <type>int unsigned</type> 
+    <import>true</import>
+    <headerPattern>/contact(.?id)?/i</headerPattern>
+    <dataPattern>/^\d+$/</dataPattern>
+    <comment>FK to Contact ID that is responsible for the funds in this account</comment> 
+    <add>4.3</add> 
   </field> 
   <foreignKey> 
-       <name>contact_id</name> 
-       <table>civicrm_contact</table> 
-       <key>id</key> 
-       <add>4.1</add> 
-       <onDelete>SET NULL</onDelete>
-  </foreignKey> 
+    <name>contact_id</name> 
+    <table>civicrm_contact</table> 
+    <key>id</key> 
+    <add>4.3</add> 
+    <onDelete>SET NULL</onDelete>
+  </foreignKey>
   <field>  
-      <name>financial_account_type_id</name>  
-      <type>int unsigned</type>  
-      <required>true</required>  
-      <default>3</default> 
-      <add>3.2</add>
-      <change>4.1</change>
-      <changedName>account_type_id</changedName>
-      <comment>pseudo FK into civicrm_option_value.</comment>
+    <name>account_type_id</name>  
+    <type>int unsigned</type>  
+    <required>true</required>  
+    <add>3.2</add> 
+    <drop>4.3</drop>
+  </field> 
+  <field>  
+    <name>financial_account_type_id</name>  
+    <type>int unsigned</type>  
+    <required>true</required>  
+    <default>3</default> 
+    <add>4.3</add>
+    <comment>pseudo FK into civicrm_option_value.</comment>
   </field>
   <field>
-       <name>accounting_code</name>
-       <title>Accounting Code</title>
-       <type>varchar</type>
-       <length>64</length>
-       <export>true</export>
-       <comment>Optional value for mapping monies owed and received to accounting system codes.</comment>
-       <add>1.3</add>
+    <name>accounting_code</name>
+    <title>Accounting Code</title>
+    <type>varchar</type>
+    <length>64</length>
+    <export>true</export>
+    <comment>Optional value for mapping monies owed and received to accounting system codes.</comment>
+    <add>4.3</add>
   </field>
   <field>
-       <name>description</name>
-       <type>varchar</type>
-       <length>255</length>
-       <comment>Financial Type Description.</comment>
-       <add>1.3</add>
+    <name>description</name>
+    <type>varchar</type>
+    <length>255</length>
+    <comment>Financial Type Description.</comment>
+    <add>4.3</add>
   </field>
   <field>
-       <name>parent_id</name>
-       <type>int unsigned</type>  
-       <comment>Parent ID in account hierarchy</comment>  
-       <add>4.1</add>
+    <name>parent_id</name>
+    <type>int unsigned</type>  
+    <comment>Parent ID in account hierarchy</comment>  
+    <add>4.3</add>
   </field>
   <foreignKey> 
-      <name>parent_id</name> 
-      <table>civicrm_financial_account</table> 
-      <key>id</key> 
-      <add>4.1</add> 
+    <name>parent_id</name> 
+    <table>civicrm_financial_account</table> 
+    <key>id</key> 
+    <add>4.3</add> 
   </foreignKey>
   <field>
-       <name>is_header_account</name>
-       <type>boolean</type>  
-       <default>0</default>  
-       <comment>Is this a header account which does not allow transactions to be posted against it directly, but only to its sub-accounts?</comment>  
-       <add>4.1</add>
+    <name>is_header_account</name>
+    <type>boolean</type>  
+    <default>0</default>  
+    <comment>Is this a header account which does not allow transactions to be posted against it directly, but only to its sub-accounts?</comment>  
+    <add>4.3</add>
   </field>
   <field>
-       <name>is_deductible</name>
-       <type>boolean</type>
-       <default>1</default>
-       <comment>Is this account tax-deductible?</comment>
-       <add>1.3</add>
+    <name>is_deductible</name>
+    <type>boolean</type>
+    <default>1</default>
+    <comment>Is this account tax-deductible?</comment>
+    <add>4.3</add>
   </field>
   <field>
-       <name>is_tax</name>
-       <type>boolean</type>
-       <default>0</default>
-       <comment>Is this account for taxes?</comment>
-       <add>4.1</add>
+    <name>is_tax</name>
+    <type>boolean</type>
+    <default>0</default>
+    <comment>Is this account for taxes?</comment>
+    <add>4.3</add>
   </field>
   <field>
-       <name>tax_rate</name>
-       <type>decimal</type>
-       <length>9,8</length>
-       <comment>The percentage of the total_amount that is due for this tax.</comment>
-       <add>4.1</add>
+    <name>tax_rate</name>
+    <type>decimal</type>
+    <length>9,8</length>
+    <comment>The percentage of the total_amount that is due for this tax.</comment>
+    <add>4.3</add>
   </field>
   <field>
-       <name>is_reserved</name>
-       <type>boolean</type>
-       <comment>Is this a predefined system object?</comment>
-       <add>1.3</add>
+    <name>is_reserved</name>
+    <type>boolean</type>
+    <comment>Is this a predefined system object?</comment>
+    <add>4.3</add>
   </field>
   <field>
-       <name>is_active</name>
-       <type>boolean</type>
-       <comment>Is this property active?</comment>
-       <add>1.3</add>
+    <name>is_active</name>
+    <type>boolean</type>
+    <comment>Is this property active?</comment>
+    <add>4.3</add>
   </field>
   <field>
-       <name>is_default</name>
-       <type>boolean</type>
-       <comment>Is this account the default one (or default tax one) for its financial_account_type?</comment>
-       <add>4.1</add>
+    <name>is_default</name>
+    <type>boolean</type>
+    <comment>Is this account the default one (or default tax one) for its financial_account_type?</comment>
+    <add>4.3</add>
   </field>
   <index>
     <name>UI_name</name>
     <fieldName>name</fieldName>
     <unique>true</unique>
-    <add>1.3</add>
+    <add>4.3</add>
   </index>
-
-
 </table>
