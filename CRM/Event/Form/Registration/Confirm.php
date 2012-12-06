@@ -75,9 +75,9 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
     if ($this->_params[0]['is_pay_later']) {
       $this->assign('pay_later_receipt', $this->_values['event']['pay_later_receipt']);
     }
-
+    
     CRM_Utils_Hook::eventDiscount($this, $this->_params);
-
+    
     if (CRM_Utils_Array::value('discount', $this->_params[0]) &&
       CRM_Utils_Array::value('applied', $this->_params[0]['discount'])
     ) {
@@ -270,7 +270,11 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
           }
         }
       }
-     
+
+      if (CRM_Utils_Array::value('int_amount', $this->_params[0])
+          && $initialAmount = CRM_Utils_Array::value('initial_amount', $this->_params[0])) {
+        $this->assign('initialAmount', $initialAmount);
+      }
       $this->assign('part', $this->_part);
       $this->set('part', $this->_part);
       $this->assign('amounts', $this->_amount);
@@ -606,7 +610,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
         }
         elseif ($this->_contributeMode == 'express' && CRM_Utils_Array::value('is_primary', $value)) {
           if (is_object($payment)) 
-          $result = &$payment->doExpressCheckout($value);
+            $result = &$payment->doExpressCheckout($value);
           else 
             CRM_Core_Error::fatal($paymentObjError);
         }

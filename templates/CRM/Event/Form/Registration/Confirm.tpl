@@ -118,7 +118,7 @@
                     {/foreach}
             </div>
                 {if $totalAmount}
-              <div class="crm-section no-label total-amount-section">
+                <div class="crm-section no-label total-amount-section">
                     <div class="content bold">{ts}Total Amount{/ts}:&nbsp;&nbsp;{$totalAmount|crmMoney}</div>
                     <div class="clear"></div>
                   </div>
@@ -129,6 +129,12 @@
                     </div>
                 {/if}
             {/if}
+            {if $initialAmount}
+		<div class="crm-section no-label initial-amount-section">
+                 <div class="content bold"> {ts}Initial Amount{/ts}:&nbsp;&nbsp;{$initialAmount|crmMoney}</div>
+               </div>
+            {/if}
+
         </div>
     {/if}
 

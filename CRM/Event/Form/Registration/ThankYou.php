@@ -109,6 +109,11 @@ class CRM_Event_Form_Registration_ThankYou extends CRM_Event_Form_Registration {
         $this->assign('lineItem', $lineItemForTemplate);
       }
     }
+
+    if (CRM_Utils_Array::value('int_amount', $this->_params[0])
+        && $initialAmount = CRM_Utils_Array::value('initial_amount', $this->_params[0])) {
+      $this->assign('initialAmount', $initialAmount);
+    }
     $this->assign('totalAmount', $this->_totalAmount);
 
     $hookDiscount = $this->get('hookDiscount');
