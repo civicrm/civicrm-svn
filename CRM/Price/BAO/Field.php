@@ -722,7 +722,7 @@ WHERE  id IN (" . implode(',', array_keys($priceFields)) . ')';
   public static function initialPayValidation($fields, $files, $self, &$errors, $page = NULL) {
     //get the minimum initial amount
     if ($page == 'event') {
-      $minInitialAmount = $self->_values['event']['min_initial_amount'];
+      $minInitialAmount = CRM_Utils_Array::value('min_initial_amount', $self->_values['event']);
     } else {
       $minInitialAmount = CRM_Utils_Array::value('min_initial_amount', $self->_values);
     }

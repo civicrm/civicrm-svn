@@ -104,7 +104,7 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem {
     $trxn = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnIds( $contribution->id );
     $trxnId['id'] = $trxn['financialTrxnId']; 
     $int_name = 'txt-price_'.$lineItem->price_field_id;
-    $params['init_amount'] =  $lineItem->int_name;
+    $params['init_amount'] =  $lineItem->$int_name;
     self::create( $params,null, $trxnId);    
   } 
 
