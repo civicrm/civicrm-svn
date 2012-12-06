@@ -36,7 +36,7 @@
 /**
  * Base class for Export Formats
  * Create a subclass for a specific format.
- *
+ * @see http://wiki.civicrm.org/confluence/display/CRM/CiviAccounts+Specifications+-++Batches#CiviAccountsSpecifications-Batches-%C2%A0Overviewofimplementation
  */
 
 class CRM_Financial_BAO_ExportFormat {
@@ -66,7 +66,8 @@ class CRM_Financial_BAO_ExportFormat {
   }
 
   function output() {
-    self::getTemplate()->fetch( $this->getTemplateFileName() );  
+    $out = self::getTemplate()->fetch( $this->getTemplateFileName() );  
+    // TODO: present $out as a download to user 
   }
   
   // Override this if appropriate

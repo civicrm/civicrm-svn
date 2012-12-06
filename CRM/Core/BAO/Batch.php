@@ -414,6 +414,9 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
     return $batches;
   }
   
+  /*
+   * @see http://wiki.civicrm.org/confluence/display/CRM/CiviAccounts+Specifications+-++Batches#CiviAccountsSpecifications-Batches-%C2%A0Overviewofimplementation
+   */
   static function exportFinancialBatch( $batchIds ) {
     CRM_Core_Error::debug_log_message('batchIds: ', print_r($batchIds, true));
 
