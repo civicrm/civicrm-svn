@@ -170,6 +170,11 @@
                 </p>
             {/if}
         </div>
+        {if $initialAmount}
+        <div class='display_block'>
+           {ts}Initial Amount{/ts}: <strong>{$initialAmount|crmMoney}</strong>
+        </div>
+        {/if}
     </div>
     {/if}
 

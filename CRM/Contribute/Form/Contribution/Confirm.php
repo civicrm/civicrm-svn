@@ -352,6 +352,10 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
     $this->assignToTemplate();
 
     $params = $this->_params;
+    if (CRM_Utils_Array::value('int_amount', $params)
+        && $initialAmount = CRM_Utils_Array::value('initial_amount', $params)) {
+      $this->assign('initialAmount', $initialAmount);
+    }
     $honor_block_is_active = $this->get('honor_block_is_active');
     // make sure we have values for it
     if ($honor_block_is_active &&
@@ -1250,15 +1254,15 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
     }
 
     if ($params['amount']) {
-    //add contribution record
-    $contribution = &CRM_Contribute_BAO_Contribution::add($contribParams, $ids);
+      //add contribution record
+      $contribution = &CRM_Contribute_BAO_Contribution::add($contribParams, $ids);
     }
-
+    
     // process soft credit / pcp pages
     CRM_Contribute_Form_Contribution_Confirm::processPcpSoft($params, $contribution);
 
-      // next create the transaction record
-
+    // next create the transaction record
+    
     if ( ( ! $online || $form->_values['is_monetary'] ) ) {
       if (CRM_Utils_Array::value('int_amount', $params)) {
         $params['amount'] = $params['initial_amount'];

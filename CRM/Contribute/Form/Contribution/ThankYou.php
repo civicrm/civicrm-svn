@@ -119,7 +119,10 @@ class CRM_Contribute_Form_Contribution_ThankYou extends CRM_Contribute_Form_Cont
     $this->assign('useForMember', $this->get('useForMember'));
 
     $params = $this->_params;
-
+    if (CRM_Utils_Array::value('int_amount', $params)
+        && $initialAmount = CRM_Utils_Array::value('initial_amount', $params)) {
+      $this->assign('initialAmount', $initialAmount);
+    }
     $honor_block_is_active = $this->get('honor_block_is_active');
     if ($honor_block_is_active &&
       ((!empty($params["honor_first_name"]) && !empty($params["honor_last_name"])) ||
@@ -138,7 +141,7 @@ class CRM_Contribute_Form_Contribution_ThankYou extends CRM_Contribute_Form_Cont
       $this->assign('honor_email', $params["honor_email"]);
     }
 
-        $qParams = "reset=1&amp;id={$this->_id}";
+    $qParams = "reset=1&amp;id={$this->_id}";
     //pcp elements
     if ($this->_pcpId) {
       $qParams .= "&amp;pcpId={$this->_pcpId}";
@@ -151,7 +154,7 @@ class CRM_Contribute_Form_Contribution_ThankYou extends CRM_Contribute_Form_Cont
       }
     }
 
-        $this->assign( 'qParams' , $qParams );
+    $this->assign( 'qParams' , $qParams );
 
     if ($membershipTypeID) {
       $transactionID    = $this->get('membership_trx_id');

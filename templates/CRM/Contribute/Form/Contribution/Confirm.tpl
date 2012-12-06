@@ -119,9 +119,13 @@
                 {/if}
             {/if}
         </div>
+        {if $initialAmount}
+        <div class='display_block'>
+           {ts}Initial Amount{/ts}: <strong>{$initialAmount|crmMoney}</strong>
+        </div>
+        {/if}
     </div>
     {/if}
-
     {include file="CRM/Contribute/Form/Contribution/Honor.tpl"}
 
     {if $customPre}
