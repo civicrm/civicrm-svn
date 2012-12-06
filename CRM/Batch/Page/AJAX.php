@@ -73,9 +73,27 @@ class CRM_Batch_Page_AJAX {
     $params['page'] = ($offset / $rowCount) + 1;
     $params['rp'] = $rowCount;
 
-    //show only data entry status batches
-    $params['status'] = ($context == 'financialBatch') ? (($batchStatus == 1) ? 1 : 2) : 3;
-
+    if ( $context == 'financialBatch' ) {
+      switch ($batchStatus) {
+      case '1':
+        //Open status
+        $params['status'] = 1;
+        break;
+      case '2':
+        //Closed status
+        $params['status'] = 2;
+        break;
+      case '5':
+        //Exported status
+        $params['status'] = 5;
+        break;
+      }
+    } 
+    else {
+      // data entry status batches
+      $params['status'] = 3;
+    }
+    
     $params['context'] = $context;
 
     // get batch list

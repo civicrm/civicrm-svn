@@ -254,6 +254,24 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
       if ($values[$object->id]['status_id'] == 2 && $params['context'] != 'financialBatch' ) {
         $newLinks = array();
       }
+      elseif ($params['context'] == 'financialBatch') {
+        $status = $values[$object->id]['status_id'];
+        switch ($status) {
+        case '1':
+          unset($newLinks['reopen']);
+          unset($newLinks['download']);
+          break;
+        case '2':
+          unset($newLinks['close']);
+          unset($newLinks['edit']);
+          unset($newLinks['download']);
+          break;
+        case '5':
+          unset($newLinks['edit']);
+          unset($newLinks['close']);
+          unset($newLinks['reopen']);
+        }
+      }
 
       $values[$object->id]['batch_type'] = $batchTypes[$values[$object->id]['type_id']];
       $values[$object->id]['batch_status'] = $batchStatus[$values[$object->id]['status_id']];
@@ -338,8 +356,17 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
                            'name'  => ts( 'ReOpen' ),
                            'title' => ts( 'ReOpen Batch' ), 
                            'extra' => 'onclick = "closeReopen( %%id%%,\'' . 'reopen' . '\' );"',
-                          )  
-       
+                          ),  
+        'delete' =>  array(
+                           'name'  => ts( 'Delete' ),
+                           'title' => ts( 'Delete Batch' ),
+                          ),
+        'download' => array(
+                            'name'  => ts( 'Download' ),
+                            'url'   => 'civicrm/file',
+                            'qs'    => 'reset=1&id=%%fid%%&eid=%%id%%',
+                            'title' => ts( 'Download Batch' ),
+                            )  
                    );
     } 
     else {
