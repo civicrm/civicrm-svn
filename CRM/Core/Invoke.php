@@ -54,7 +54,7 @@ class CRM_Core_Invoke {
       return CRM_Core_Error::handleUnhandledException($e);
     }
   }
-  
+
   protected static function _invoke($args) {
     if ($args[0] !== 'civicrm') {
       return;
@@ -287,7 +287,7 @@ class CRM_Core_Invoke {
             $addSequence = $addSequence ? 'true' : 'false';
             unset($pageArgs['addSequence']);
           }
-            $object = new $item['page_callback'] ($title, true, $mode, null, $addSequence );
+          $object = new $item['page_callback'] ($title, true, $mode, null, $addSequence );
         }
         else {
           CRM_Core_Error::fatal();
