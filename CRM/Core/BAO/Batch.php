@@ -44,6 +44,12 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
   static $_batch = NULL;
 
   /**
+   * Not sure this is the best way to do this. Depends on how exportFinancialBatch() below gets called.
+   * Maybe a parameter to that function is better.
+   */
+  static $_exportFormat = null;
+  
+  /**
    * Create a new batch
    *
    * @return batch array
@@ -418,12 +424,12 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
    * @see http://wiki.civicrm.org/confluence/display/CRM/CiviAccounts+Specifications+-++Batches#CiviAccountsSpecifications-Batches-%C2%A0Overviewofimplementation
    */
   static function exportFinancialBatch( $batchIds ) {
-    CRM_Core_Error::debug_log_message('batchIds: ', print_r($batchIds, true));
 
-    // Instantiate appropriate exporter based on user-selected format.
 //TEST
+$batchIds = array(1);
 self::$_exportFormat = 'IIF';
 //ENDTEST
+    // Instantiate appropriate exporter based on user-selected format.
     $exporterClass = "CRM_Financial_BAO_ExportFormat_" . self::$_exportFormat;
     if ( class_exists( $exporterClass ) ) {
       $exporter = new $exporterClass();
@@ -459,7 +465,7 @@ self::$_exportFormat = 'IIF';
       LEFT JOIN civicrm_option_value ov_to ON (ov_to.option_group_id = og_to.id AND ov_to.value = fa_to.financial_account_type_id)
       WHERE eb.batch_id IN ( %1 )";
       
-    $params = array( 1 => array( 'String', $id_list ) );
+    $params = array( 1 => array( $id_list, 'String' ) );
     
     // Keep running list of accounts and contacts used in this batch, since we need to
     // include those in the output. Only want to include ones used in the batch, not everything in the db,
@@ -467,10 +473,7 @@ self::$_exportFormat = 'IIF';
     $accounts = array();
     $contacts = array();
 
-    $journalEntries = array(
-      'to_account' => array(),
-      'splits' => array(),
-    );
+    $journalEntries = array();
     
     $dao = CRM_Core_DAO::executeQuery( $sql, $params );
     while ( $dao->fetch() ) {
@@ -524,7 +527,7 @@ self::$_exportFormat = 'IIF';
           contact.id as contact_id,
           contact.display_name as contact_name,
           contact.first_name as contact_first_name,
-          contact.last_name as contact_last_name,
+          contact.last_name as contact_last_name
           FROM civicrm_entity_financial_trxn eft
           LEFT JOIN civicrm_financial_item fi ON eft.entity_id = fi.id
           LEFT JOIN civicrm_financial_account fa ON fa.id = fi.financial_account_id
@@ -534,7 +537,7 @@ self::$_exportFormat = 'IIF';
           WHERE eft.entity_table = 'civicrm_financial_item'
           AND eft.financial_trxn_id = %1";
         
-        $item_params = array( 1 => array( 'Integer', $dao->financial_trxn_id ) );
+        $item_params = array( 1 => array( $dao->financial_trxn_id, 'Integer' ) );
         
         $item_dao = CRM_Core_DAO::executeQuery( $item_sql, $item_params );
         while ( $item_dao->fetch() ) {
@@ -552,8 +555,8 @@ self::$_exportFormat = 'IIF';
           if ( !isset( $contacts[$item_dao->contact_id] ) ) {
             $contacts[$item_dao->contact_id] = array(
                 'name' => $exporter->format( $item_dao->contact_name ),
-                'first_name' => $exporter->format( $item_dao->first_name ),
-                'last_name' => $exporter->format( $item_dao->last_name ),
+                'first_name' => $exporter->format( $item_dao->contact_first_name ),
+                'last_name' => $exporter->format( $item_dao->contact_last_name ),
             );
           }
           

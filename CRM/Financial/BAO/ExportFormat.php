@@ -66,7 +66,8 @@ class CRM_Financial_BAO_ExportFormat {
   }
 
   function output() {
-    $out = self::getTemplate()->fetch( $this->getTemplateFileName() );  
+    $tplFile = $this->getTemplateFileName();
+    $out = self::getTemplate()->fetch( $tplFile );
     
     $fileName = 'Financial_Transactions_' . date('YmdHis');   
     CRM_Utils_System::download(CRM_Utils_String::munge($fileName),
