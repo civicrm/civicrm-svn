@@ -468,7 +468,7 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
     $dao = CRM_Core_DAO::executeQuery( $sql, $params );
     while ( $dao->fetch() ) {
       
-      if ( !empty( $dao->from_account_name ) && !isset( $accounts( [$dao->from_account_id] ) ) ) {
+      if ( !empty( $dao->from_account_name ) && !isset( $accounts[$dao->from_account_id] ) ) {
         $accounts[$dao->from_account_id] = array(
           'name' => $dao->from_account_name,
           'account_code' => $dao->from_account_code,
@@ -476,7 +476,7 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
           'type' => $dao->from_qb_account_type,
         );
       }
-      if ( !empty( $dao->to_account_name ) && !isset( $accounts( [$dao->to_account_id] ) ) ) {
+      if ( !empty( $dao->to_account_name ) && !isset( $accounts[$dao->to_account_id] ) ) {
         $accounts[$dao->to_account_id] = array(
           'name' => $dao->to_account_name,
           'account_code' => $dao->to_account_code,
@@ -526,7 +526,7 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
         while ( $item_dao->fetch() ) {
           
           // add to running list of accounts
-          if ( !isset( $accounts( [$item_dao->account_id] ) ) ) {
+          if ( !isset( $accounts[$item_dao->account_id] ) ) {
             $accounts[$item_dao->account_id] = array(
               'name' => $item_dao->account_name,
               'account_code' => $item_dao->account_code,
