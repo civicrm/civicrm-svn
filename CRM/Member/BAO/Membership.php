@@ -375,7 +375,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
             'fee_amount' => CRM_Utils_Array::value('fee_amount', $params),
             'net_amount' => CRM_Utils_Array::value('net_amount', $params),
             'currency' => $config->defaultCurrency,
-            'trxn_id' => $params['trxn_id'],
+            'trxn_id' => CRM_Utils_Array::value('trxn_id', $params),
             'status_id' => $contribution->contribution_status_id,
             'trxn_result_code' => (!empty( $contribution->trxn_result_code) ? $contribution->trxn_result_code : false),
           );
