@@ -455,7 +455,14 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
           'trxn_result_code' => (!empty($contribution->trxn_result_code) ? $contribution->trxn_result_code : FALSE),
         );
 
-        CRM_Core_BAO_FinancialTrxn::create($trxnParams);
+        $financialTransaction = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
+
+        $entityParams = array(
+          'batch_id' => $params['batch_id'],
+          'entity_table' => 'civicrm_financial_trxn',
+          'entity_id' => $financialTransaction->id
+        );
+        CRM_Core_BAO_Batch::addBatchEntity($entityParams);
 
         //process premiums
         if (CRM_Utils_Array::value('product_name', $value)) {

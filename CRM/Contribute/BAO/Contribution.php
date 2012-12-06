@@ -279,11 +279,6 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
 
     // make entry in batch entity batch table
     if (CRM_Utils_Array::value('batch_id', $params)) {
-      $entityParams = array(
-        'batch_id' => $params['batch_id'],
-        'entity_table' => 'civicrm_contribution',
-        'entity_id' => $contribution->id,
-      );
       // in some update cases we need to get extra fields - ie an update that doesn't pass in all these params
       $titleFields = array(
         'contact_id',
@@ -298,10 +293,9 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
           break;
         }
       }
-      if($retrieverequired == 1){
+      if ($retrieverequired == 1) {
         $contribution->find(true);
       }
-      CRM_Core_BAO_Batch::addBatchEntity($entityParams);
     }
 
     // check if activity record exist for this contribution, if
