@@ -71,7 +71,7 @@ class CRM_Core_BAO_FinancialTrxn extends CRM_Financial_DAO_FinancialTrxn {
     }
     
     // save to entity_financial_trxn table
-    $entity_financial_trxn_params =
+    $entityFinancialTrxnParams =
       array(
       'entity_table' => "civicrm_contribution",
       'financial_trxn_id' => $trxn->id,
@@ -81,19 +81,19 @@ class CRM_Core_BAO_FinancialTrxn extends CRM_Financial_DAO_FinancialTrxn {
     );
     
     if (!empty($trxnEntityTable)) {
-      $entity_financial_trxn_params['entity_table'] = $trxnEntityTable['entity_table'];
-      $entity_financial_trxn_params['entity_id']    = $trxnEntityTable['entity_id'];
+      $entityFinancialTrxnParams['entity_table'] = $trxnEntityTable['entity_table'];
+      $entityFinancialTrxnParams['entity_id']    = $trxnEntityTable['entity_id'];
     } 
     else {
-      $entity_financial_trxn_params['entity_id'] =  $params['contribution_id'];
+      $entityFinancialTrxnParams['entity_id'] =  $params['contribution_id'];
     }
 
-    $entity_trxn = new CRM_Financial_DAO_EntityFinancialTrxn();
-    $entity_trxn->copyValues($entity_financial_trxn_params);
+    $entityTrxn = new CRM_Financial_DAO_EntityFinancialTrxn();
+    $entityTrxn->copyValues($entityFinancialTrxnParams);
     if (CRM_Utils_Array::value('entityFinancialTrxnId', $fids) && empty($trxnEntityTable)) {
-      $entity_trxn->id = $fids['entityFinancialTrxnId'];
+      $entityTrxn->id = $fids['entityFinancialTrxnId'];
     }
-    $entity_trxn->save();
+    $entityTrxn->save();
     return $trxn;
   }
 
