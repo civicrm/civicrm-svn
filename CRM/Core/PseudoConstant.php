@@ -1834,7 +1834,9 @@ ORDER BY name";
     global $tsLocale;
     if ($tsLocale != '' and $tsLocale != 'en_US') {
       $i18n = CRM_Core_I18n::singleton();
-      $i18n->localizeArray($result);
+      $i18n->localizeArray($result, array(
+        'context' => 'province',
+      ));
       $result = CRM_Utils_Array::asort($result);
     }
 
