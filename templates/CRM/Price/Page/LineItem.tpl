@@ -40,11 +40,13 @@
         <th class="right">{ts}Qty{/ts}</th>
         <th class="right">{ts}Unit Price{/ts}</th>
         <th class="right">{ts}Total Price{/ts}</th>
+	{if $context NEQ "Event"}
 	<th class="right">{ts}Paid{/ts}</th>
 	<th class="right">{ts}Owing{/ts}</th>
 	{if $action eq 2}
 	<th class="right">{ts}Amount of<br>Current Payment {/ts}</th>
     	{/if}
+	{/if}
 	{/if}
 
      	{if $pricesetFieldsCount}
@@ -59,12 +61,14 @@
           <td class="right">{$line.unit_price|crmMoney}</td>
     	  {/if}
           <td class="right">{$line.line_total|crmMoney}</td>
+	  {if $context NEQ "Event"}
           {if $pricesetFieldsCount}<td class="right">{$line.participant_count}</td> {/if}
-	  <td class="right">{$pricefildTotal.LineItems[$line.price_field_value_id]|crmMoney}</td>
+	  <td class="right">{$pricefildTotal.lineItems[$line.price_field_value_id]|crmMoney}</td>
 	  <td class="right">{assign var="fildTotal" value= $line.line_total-$pricefildTotal.LineItems[$line.price_field_value_id]}{$fildTotal|crmMoney}</td>
 	  {if $action eq 2}
 	  <td class="left">$<input type='text' id= 'txt-price[{$line.price_field_value_id}]' name = 'txt-price[{$line.price_field_value_id}]' size='4' class= 'distribute'>&nbsp<input type='checkbox' id= 'cb-price[{$line.price_field_value_id}]' name = 'cb-price[{$line.price_field_value_id}]' price = '{$fildTotal}' class = 'payFull' /></td>
 	  {/if}  
+	  {/if}
         </tr>
       {/foreach}
       {if $context EQ "Contribution"  && $action eq 2}
