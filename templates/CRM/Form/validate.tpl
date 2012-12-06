@@ -47,25 +47,24 @@ cj( function($) {
       maxlength: $.validator.format("{ts escape='js'}Please enter no more than {ldelim}0{rdelim} characters.{/ts}"),
       minlength: $.validator.format("{ts escape='js'}Please enter at least {ldelim}0{rdelim} characters.{/ts}"),
       rangelength: $.validator.format("{ts escape='js'}Please enter a value between {ldelim}0{rdelim} and {ldelim}1{rdelim} characters long.{/ts}"),
-      range: $.validator.format("{ts escape='js'}Please enter a value between {ldelim}0} and {ldelim}1{rdelim}.{/ts}"),
+      range: $.validator.format("{ts escape='js'}Please enter a value between {ldelim}0{rdelim} and {ldelim}1{rdelim}.{/ts}"),
       max: $.validator.format("{ts escape='js'}Please enter a value less than or equal to {ldelim}0{rdelim}.{/ts}"),
       min: $.validator.format("{ts escape='js'}Please enter a value greater than or equal to {ldelim}0{rdelim}.{/ts}")
     {literal}}
   };
 
   // use civicrm notifications when there are errors
-    params.invalidHandler = function(form, validator) {
-      var errors = validator.errorList;
-      if (!CRM.urlIsPublic) {
-        for (var i in errors) {
-          $(errors[i].element).crmError(errors[i].message);
-        }
-      }
-      else {
-        alert({/literal}"{ts escape='js'}Please review the highlighted fields.{/ts}"{literal});
+  params.invalidHandler = function(form, validator) {
+    var errors = validator.errorList;
+    if (!CRM.urlIsPublic) {
+      for (var i in errors) {
+        $(errors[i].element).crmError(errors[i].message);
       }
     }
-  }
+    else {
+      alert({/literal}"{ts escape='js'}Please review and correct the highlighted fields before continuing.{/ts}"{literal});
+    }
+  };
 
   if (CRM.validate && CRM.validate.params) {
     cj.extend(params, CRM.validate.params, true);

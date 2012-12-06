@@ -79,7 +79,7 @@
                         </div>
                         <div class="crm-section {$form.credit_card_number.name}-section">
                              <div class="label">{$form.credit_card_number.label}</div>
-                             <div class="content">{$form.credit_card_number.html}</div>
+                             <div class="content">{$form.credit_card_number.html|crmAddClass:creditcard}</div>
                              <div class="clear"></div>
                         </div>
                         <div class="crm-section {$form.cvv2.name}-section">

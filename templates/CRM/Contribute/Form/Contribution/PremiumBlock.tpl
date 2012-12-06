@@ -77,7 +77,7 @@
             <div class="premium-full-content">
               <div class="premium-full-title">{$row.name}</div>
               <div class="premium-full-disabled">
-                {ts 1=$row.min_contribution}You must contribute at least $%1 to get this premium{/ts}<br/>
+                {ts 1=$row.min_contribution}You must contribute at least $%1 to get this item{/ts}<br/>
                 <input type="button" value="Contribute ${$row.min_contribution} Instead" amount="{$row.min_contribution}" />
               </div>
               <div class="premium-full-description">
@@ -273,7 +273,6 @@
           var premium$ = cj('#premium_id-'+premium_id);
           if(premium$.length) {
             if(premium$.hasClass('premium-disabled')) {
-              alert(error_message);
               return false;
             }
           }
