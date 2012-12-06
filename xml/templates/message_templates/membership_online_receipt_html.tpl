@@ -226,7 +226,16 @@
 
 
      {/if}
-
+    {if $initialAmount}
+       <tr>
+	 <td {$labelStyle}>
+	   {ts}Initial Amount{/ts}
+	 </td>  
+	 <td {$labelStyle}>
+            {$initialAmount|crmMoney}
+	 </td>
+       </tr> 
+    {/if}
 
      {if $receive_date}
       <tr>
