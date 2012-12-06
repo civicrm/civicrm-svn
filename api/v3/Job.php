@@ -493,6 +493,20 @@ function civicrm_api3_job_cleanup( $params ) {
 }
 
 /**
+ * Set expired relationships to disabled.
+ *
+ */
+function civicrm_api3_job_disable_expired_relationships($params) {
+  $result = CRM_Contact_BAO_Relationship::disableExpiredRelationships();
+  if ($result) {
+    return civicrm_api3_create_success();
+  }
+  else {
+    return civicrm_api3_create_error('Failed to disable all expired relationships.');
+  }
+}
+
+/**
  * This api reloads all the smart groups. If the org has a large number of smart groups
  * it is recommended that they use the limit clause to limit the number of smart groups
  * evaluated on a per job basis. Might also help to increase the smartGroupCacheTimeout

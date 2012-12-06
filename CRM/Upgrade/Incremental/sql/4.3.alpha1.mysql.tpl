@@ -718,3 +718,10 @@ SELECT @CompId     := MAX(id)     FROM civicrm_component where name = 'CiviContr
 INSERT INTO civicrm_option_value
   (option_group_id, {localize field='label'}label{/localize}, value, name, weight, {localize field='description'}description{/localize}, is_active, is_reserved, component_id)
 VALUES (@option_group_id_act, {localize field='label'}'Export of Financial Transactions Batch'{/localize}, @max_val+1, 'Export of Financial Transactions Batch', @max_wt+1, {localize field='description'}'Export of Financial Transactions Batch'{/localize}, 1, 1, @CompId);
+
+-- CRM-11341
+INSERT INTO
+  `civicrm_job` (domain_id, run_frequency, last_run, name, description, api_entity, api_action, parameters, is_active)
+SELECT
+  id, 'Daily' , NULL, '{ts escape="sql" skip="true"}Disable expired relationships{/ts}', '{ts escape="sql" skip="true"}Disables relationships that have expired (ie. those relationships whose end date is in the past).{/ts}', 'job', 'disable_expired_relationships', NULL, 0
+FROM `civicrm_domain`;
