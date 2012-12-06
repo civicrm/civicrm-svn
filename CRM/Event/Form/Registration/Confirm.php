@@ -751,6 +751,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
           foreach ($value as $line) {
             $line['entity_id'] = $entityId;
             $line['entity_table'] = $entityTable;
+            $line['financial_type_id'] = $this->_values['event']['financial_type_id'];
             $lineItems = CRM_Price_BAO_LineItem::create( $line );
 
             $int_name  = 'txt-price_'. $line['price_field_id'];
@@ -1024,7 +1025,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
     $revenueFinancialType = array( );
     $statusID = $cId = $financialAccount = null;
         
-    if( $pending ){
+    if ( $pending ) {
       CRM_Core_PseudoConstant::populate( $revenueFinancialType,
         'CRM_Financial_DAO_EntityFinancialAccount',
         $all = True, 
