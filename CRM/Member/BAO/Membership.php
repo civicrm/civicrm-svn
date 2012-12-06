@@ -358,11 +358,11 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
 
         $now = date( 'YmdHis' );
         $contribution->init_amount = CRM_Utils_Array::value( 'init_amount', $params );
-        if( !empty( $contribution->id ) ){
-          if(!empty($params['init_amount'])){
+        if (!empty( $contribution->id )) {
+          if (!empty($params['init_amount'])) {
             $total_amount = 0;
-            foreach($params['init_amount'] as $key=>$value) {
-              foreach($value as $amount) {
+            foreach ($params['init_amount'] as $key=>$value) {
+              foreach ($value as $amount) {
                 $total_amount += $amount;
               }
             }
@@ -380,32 +380,30 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
             'trxn_result_code' => (!empty( $contribution->trxn_result_code) ? $contribution->trxn_result_code : false),
           );
 
-
           require_once 'CRM/Core/BAO/FinancialTrxn.php';
           $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
-          if (  $params['to_financial_account_id'] ) {
-            $orgId = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialAccount', $params['to_financial_account_id'], 'contact_id' );
-          }
 
-          if( CRM_Utils_Array::value( 'fee_amount', $trxnParams ) ){
-            $ExpenceRelation = key(CRM_CORE_PseudoConstant::accountOptionValues( 'account_relationship', null, " AND v.name LIKE 'Expense Account is' ", false ));
+          if (CRM_Utils_Array::value('fee_amount', $trxnParams)) {
+            $expenceRelation = key(CRM_CORE_PseudoConstant::accountOptionValues( 'account_relationship', NULL, " AND v.name LIKE 'Expense Account is' ", FALSE ));
 
             $trxnParams['total_amount']              = $trxnParams['fee_amount'];
             unset($trxnParams['fee_amount']);
             $trxnParams['from_financial_account_id'] = $financialAccounts[6];  // FA with Asset account relationship
-            $trxnParams['to_financial_account_id']   = CRM_Utils_Array::value( $ExpenceRelation, $financialAccounts );
+            $trxnParams['to_financial_account_id']   = CRM_Utils_Array::value( $expenceRelation, $financialAccounts );
             $trxnEntityTable['entity_table'] = 'civicrm_financial_trxn';
             $trxnEntityTable['entity_id'] = $trxn->id;
+
             $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams, $trxnEntityTable );
             $itemsParams['amount']               = $trxn->total_amount;
             $itemsParams['contact_id']           = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Domain', 1, 'contact_id' );
-            $itemsParams['financial_account_id'] = CRM_Utils_Array::value( $ExpenceRelation, $financialAccounts );
-            CRM_Financial_BAO_FinancialItem::create( $itemsParams, null, $trxnId  );
+            $itemsParams['financial_account_id'] = CRM_Utils_Array::value( $expenceRelation, $financialAccounts );
+            CRM_Financial_BAO_FinancialItem::create( $itemsParams, NULL, $trxnId  );
           }
         }
       }
+
       if (CRM_Utils_Array::value('processPriceSet', $params) &&
-           !empty($params['lineItems']) ) {
+           !empty($params['lineItems'])) {
         if (CRM_Utils_Array::value('init_amount', $params)) {
           foreach($params['lineItems'] as $key=>$lineItem) {
             foreach($lineItem as $id=> $value) {
@@ -413,16 +411,16 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
             }
           }
         }
-        CRM_Price_BAO_LineItem::processPriceSet( $contribution->id, $params['lineItems'], $contribution );
+        CRM_Price_BAO_LineItem::processPriceSet($contribution->id, $params['lineItems'], $contribution);
       }
 
       //insert payment record for this membership
-      if( !CRM_Utils_Array::value( 'contribution', $ids ) ||
-          CRM_Utils_Array::value( 'is_recur', $params ) ) {
+      if (!CRM_Utils_Array::value( 'contribution', $ids ) ||
+          CRM_Utils_Array::value( 'is_recur', $params )) {
         $mpDAO = new CRM_Member_DAO_MembershipPayment();
         $mpDAO->membership_id   = $membership->id;
         $mpDAO->contribution_id = $contribution->id;
-        if ( CRM_Utils_Array::value( 'is_recur', $params ) ) {
+        if (CRM_Utils_Array::value('is_recur', $params)) {
           $mpDAO->find( );
         }
 
@@ -430,7 +428,6 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
         $mpDAO->save();
         CRM_Utils_Hook::post( 'create', 'MembershipPayment', $mpDAO->id, $mpDAO );
       }
-
     }
 
     if (CRM_Utils_Array::value('relate_contribution_id', $params)) {
@@ -450,7 +447,6 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
       $activityType == 'Membership Renewal' ||
       CRM_Utils_Array::value('createActivity', $params)
     ) {
-
       if (CRM_Utils_Array::value('membership', $ids)) {
         CRM_Core_DAO::commonRetrieveAll('CRM_Member_DAO_Membership',
           'id',
