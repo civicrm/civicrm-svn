@@ -104,7 +104,15 @@ class CRM_Financial_BAO_ExportFormat_IIF extends CRM_Financial_BAO_ExportFormat 
   function exportTRANS() {
     self::assign( 'journalEntries', $this->_exportParams['journalEntries'] );
   }
-    
+
+  function getMimeType() {
+    return 'application/octet-stream';
+  }
+  
+  function getFileExtension() {
+    return 'iif';
+  }
+
   function getTemplateFileName() {
     return 'CRM/Financial/ExportFormat/IIF.tpl';
   }

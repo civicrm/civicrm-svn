@@ -492,7 +492,9 @@ self::$_exportFormat = 'IIF';
         );        
       }
 
-// TODO: compile contact list
+// TODO: add to contact list
+// Unsure about schema for this. It's clear below when working with individual items in the trxn, but
+// what do we use for contact in the above sql query?
 
       // set up the journal entries for this financial trxn
       $journalEntries[$dao->financial_trxn_id] = array(
@@ -518,12 +520,17 @@ self::$_exportFormat = 'IIF';
           fi.id as financial_item_id,
           fi.transaction_date,
           fi.amount,
-          ov.grouping as qb_account_type
+          ov.grouping as qb_account_type,
+          contact.id as contact_id,
+          contact.display_name as contact_name,
+          contact.first_name as contact_first_name,
+          contact.last_name as contact_last_name,
           FROM civicrm_entity_financial_trxn eft
           LEFT JOIN civicrm_financial_item fi ON eft.entity_id = fi.id
           LEFT JOIN civicrm_financial_account fa ON fa.id = fi.financial_account_id
           LEFT JOIN civicrm_option_group og ON og.name = 'financial_account_type'
           LEFT JOIN civicrm_option_value ov ON (ov.option_group_id = og.id AND ov.value = fa.financial_account_type_id)
+          LEFT JOIN civicrm_contact contact ON contact.id = fi.contact_id
           WHERE eft.entity_table = 'civicrm_financial_item'
           AND eft.financial_trxn_id = %1";
         
@@ -542,13 +549,20 @@ self::$_exportFormat = 'IIF';
             );
           }
         
-// TODO: add contact to running list of contacts
-        
+          if ( !isset( $contacts[$item_dao->contact_id] ) ) {
+            $contacts[$item_dao->contact_id] = array(
+                'name' => $exporter->format( $item_dao->contact_name ),
+                'first_name' => $exporter->format( $item_dao->first_name ),
+                'last_name' => $exporter->format( $item_dao->last_name ),
+            );
+          }
+          
           // add split line for this item
           $journalEntries[$dao->financial_trxn_id]['splits'][$item_dao->financial_item_id] = array(
             'trxn_date' => $exporter->format( $item_dao->transaction_date, 'date' ),
             'account_name' => $exporter->format( $item_dao->account_name ),
             'amount' => $exporter->format( (-1) * $item_dao->amount ),
+            'contact_name' => $exporter->format( $item_dao->contact_name ),
           );
         } // end items loop
         $item_dao->free();

@@ -67,7 +67,22 @@ class CRM_Financial_BAO_ExportFormat {
 
   function output() {
     $out = self::getTemplate()->fetch( $this->getTemplateFileName() );  
-    // TODO: present $out as a download to user 
+    
+    $fileName = 'Financial_Transactions_' . date('YmdHis');   
+    CRM_Utils_System::download(CRM_Utils_String::munge($fileName),
+      $this->getMimeType(),
+      $out,
+      $this->getFileExtension(),
+      TRUE
+    );
+  }
+  
+  function getMimeType() {
+    return 'text/plain';
+  }
+  
+  function getFileExtension() {
+    return 'txt';
   }
   
   // Override this if appropriate

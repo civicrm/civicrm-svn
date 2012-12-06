@@ -47,18 +47,17 @@ ACCNT{$tabchar}{$acct.name}{$tabchar}{$tabchar}{$tabchar}{$acct.type}{$tabchar}{
 {if !empty($exportParams['contacts'])}
 !CUST{$tabchar}NAME{$tabchar}REFNUM{$tabchar}TIMESTAMP{$tabchar}BADDR1{$tabchar}BADDR2{$tabchar}BADDR3{$tabchar}BADDR4{$tabchar}BADDR5{$tabchar}SADDR1{$tabchar}SADDR2{$tabchar}SADDR3{$tabchar}SADDR4{$tabchar}SADDR5{$tabchar}PHONE1{$tabchar}PHONE2{$tabchar}FAXNUM{$tabchar}EMAIL{$tabchar}NOTE{$tabchar}CONT1{$tabchar}CONT2{$tabchar}CTYPE{$tabchar}TERMS{$tabchar}TAXABLE{$tabchar}SALESTAXCODE{$tabchar}LIMIT{$tabchar}RESALENUM{$tabchar}REP{$tabchar}TAXITEM{$tabchar}NOTEPAD{$tabchar}SALUTATION{$tabchar}COMPANYNAME{$tabchar}FIRSTNAME{$tabchar}MIDINIT{$tabchar}LASTNAME{$tabchar}CUSTFLD1{$tabchar}CUSTFLD2{$tabchar}CUSTFLD3{$tabchar}CUSTFLD4{$tabchar}CUSTFLD5{$tabchar}CUSTFLD6{$tabchar}CUSTFLD7{$tabchar}CUSTFLD8{$tabchar}CUSTFLD9{$tabchar}CUSTFLD10{$tabchar}CUSTFLD11{$tabchar}CUSTFLD12{$tabchar}CUSTFLD13{$tabchar}CUSTFLD14{$tabchar}CUSTFLD15{$tabchar}JOBDESC{$tabchar}JOBTYPE{$tabchar}JOBSTATUS{$tabchar}JOBSTART{$tabchar}JOBPROJEND{$tabchar}JOBEND{$tabchar}HIDDEN{$tabchar}DELCOUNT{$tabchar}PRICELEVEL
 {foreach from=$exportParams.contacts key=contact_id item=contact}
-CUST{*TODO*}
+CUST{$tabchar}{$contact.name}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$contact.first_name}{$tabchar}{$tabchar}{$contact.last_name}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}
 {/foreach}
 {/if}
 {if !empty($exportParams['journalEntries'])}
-!TRNS{$tabchar}TRNSID{$tabchar}TRNSTYPE{$tabchar}DATE{$tabchar}ACCNT{$tabchar}CLASS{$tabchar}AMOUNT{$tabchar}DOCNUM{$tabchar}MEMO
-!SPL{$tabchar}SPLID{$tabchar}TRNSTYPE{$tabchar}DATE{$tabchar}ACCNT{$tabchar}CLASS{$tabchar}AMOUNT{$tabchar}DOCNUM{$tabchar}MEMO
+!TRNS{$tabchar}TRNSID{$tabchar}TRNSTYPE{$tabchar}DATE{$tabchar}ACCNT{$tabchar}NAME{$tabchar}CLASS{$tabchar}AMOUNT{$tabchar}DOCNUM{$tabchar}MEMO
+!SPL{$tabchar}SPLID{$tabchar}TRNSTYPE{$tabchar}DATE{$tabchar}ACCNT{$tabchar}NAME{$tabchar}CLASS{$tabchar}AMOUNT{$tabchar}DOCNUM{$tabchar}MEMO
 !ENDTRNS								
 {foreach from=$exportParams.journalEntries key=id item=je}
-{*TODO*}
-TRNS{$tabchar}{$tabchar}GENERAL JOURNAL{$tabchar}{$je.to_account.trxn_date}{$tabchar}{$je.to_account.account_name}{$tabchar}{$tabchar}{$je.to_account.amount}{$tabchar}{$tabchar}
+TRNS{$tabchar}{$tabchar}GENERAL JOURNAL{$tabchar}{$je.to_account.trxn_date}{$tabchar}{$je.to_account.account_name}{$tabchar}{$je.contact_name}{$tabchar}{$tabchar}{$je.to_account.amount}{$tabchar}{$tabchar}
 {foreach from=$je.splits key=spl_id item=spl}
-SPL{$tabchar}{$tabchar}GENERAL JOURNAL{$tabchar}{$spl.trxn_date}{$tabchar}{$spl.account_name}{$tabchar}{$tabchar}{$spl.amount}{$tabchar}{$tabchar}
+SPL{$tabchar}{$tabchar}GENERAL JOURNAL{$tabchar}{$spl.trxn_date}{$tabchar}{$spl.account_name}{$tabchar}{$spl.contact_name}{$tabchar}{$tabchar}{$spl.amount}{$tabchar}{$tabchar}
 {/foreach}
 ENDTRNS	
 {/foreach}
