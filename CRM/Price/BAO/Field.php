@@ -719,14 +719,20 @@ WHERE  id IN (" . implode(',', array_keys($priceFields)) . ')';
    * @static
    *
    */
-  public static function initialPayValidation($fields, $files, $self, &$errors) {
-    $newFields = array();
+  public static function initialPayValidation($fields, $files, $self, &$errors, $page = NULL) {
+    //get the minimum initial amount
+    if ($page == 'event') {
+      $minInitialAmount = $self->_values['event']['min_initial_amount'];
+    } else {
+      $minInitialAmount = CRM_Utils_Array::value('min_initial_amount', $self->_values);
+    }
+    
     foreach ($fields as $key => $value) {
-      if (strstr( $key,'txt-price_' )){
+      if (strstr( $key,'txt-price_' )) {
         foreach ($fields[$key] as $key1 => $value1) {
           $exploadValue = explode("_", $key);
           $orignalValue = $self->_priceSet['fields'][$exploadValue[1]]['options'][$key1]['amount'];
-          if($value1 !='NaN'){
+          if ($value1 !='NaN') {
             ( $orignalValue < $value1 ) ? $errors[ 'qf_default' ] = $self->_priceSet['fields'][$exploadValue[1]]['options'][$key1]['label']." Initial Amount is greater than base Amount":'';
           }
         }
@@ -734,21 +740,21 @@ WHERE  id IN (" . implode(',', array_keys($priceFields)) . ')';
     }
     if (CRM_Utils_Array::value('total_amount', $fields)) {
       $amount = CRM_Utils_Array::value('total_amount', $fields);
-    } elseif ( CRM_Utils_Array::value('amount', $fields)) {
+    } elseif (CRM_Utils_Array::value('amount', $fields)) {
       $amount = CRM_Utils_Array::value('amount', $fields);
-    }else{
+    }else {
       $amount = CRM_Utils_Array::value( 'total_amount', $self->_values );
     }
-    $initial_amount = CRM_Utils_Array::value('initial_amount', $fields);
-    if (!empty($self->_values['min_initial_amount'])) {
-      if (CRM_Utils_Array::value('int_amount', $fields) && CRM_Utils_Array::value('initial_amount', $fields) < $self->_values['min_initial_amount']) {
-        $errors['initial_amount'] = 'Initial Amount should be greater than minimum amount .';
+    $initialAmount = CRM_Utils_Array::value('initial_amount', $fields);
+    if (!empty($minInitialAmount)) {
+      if (CRM_Utils_Array::value('int_amount', $fields) && CRM_Utils_Array::value('initial_amount', $fields) < $minInitialAmount) {
+        $errors['initial_amount'] = " Your initial payment must be at least {$minInitialAmount}";
       }
     }
-    if (CRM_Utils_Array::value('int_amount', $fields) && $amount < $initial_amount ) {
+    if (CRM_Utils_Array::value('int_amount', $fields) && $amount < $initialAmount) {
       $errors[ 'initial_amount' ] = 'Initial Amount is greater than base Amount.';
     }
-    if (CRM_Utils_Array::value('int_amount', $fields) && !empty($initial_amount) && $initial_amount <= 0) {
+    if (CRM_Utils_Array::value('int_amount', $fields) && !empty($initialAmount) && $initialAmount <= 0) {
       $errors['initial_amount'] = 'Initial Amount is not Positive .';
     }
     return $errors;

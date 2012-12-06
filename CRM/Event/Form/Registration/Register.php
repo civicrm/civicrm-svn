@@ -951,7 +951,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
         }
       }
     }
-    CRM_Price_BAO_Field::initialPayValidation( $fields, $files, $self, $errors);
+    CRM_Price_BAO_Field::initialPayValidation( $fields, $files, $self, $errors, 'event');
     return empty($errors) ? TRUE : $errors;
   }
 

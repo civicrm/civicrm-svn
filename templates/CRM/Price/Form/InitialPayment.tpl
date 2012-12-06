@@ -147,6 +147,13 @@ cj(function(){
       apendValue();
   });
 
+  
+  if( cj('.int_amount-section input:checkbox').attr('checked') ){
+    cj('.initial_amount-section').show();
+  }else{
+    cj('.initial_amount-section').hide();
+  }
+
   cj('.payFull').live('click', function(){
     var txtID = Array( );
     txtID =cj(this).attr('id').split('-');
