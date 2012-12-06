@@ -283,17 +283,19 @@ LIMIT    0, {$limit}
             }
             $ids['batchID'] = $recordID;
             $batchStatus = CRM_Core_PseudoConstant::accountOptionValues( 'batch_status' );
-            $params['batch_status_id'] = CRM_Utils_Array::key( $status, $batchStatus );
+            $params['status_id'] = CRM_Utils_Array::key( $status, $batchStatus );
             $session = CRM_Core_Session::singleton( );
             $params['modified_date'] = date('YmdHis');
             $params['modified_id'] = $session->get( 'userID' );
+            $params['id'] = $recordID;
+            $context = "financialBatch";
             break;
 
           }
           
           if ( method_exists( $recordBAO, $methods[$op] ) ) {
             $updated = call_user_func_array( array( $recordBAO, $methods[$op] ),
-              array( $params, $ids ) );
+                                             array( &$params, $ids, $context ) );
             if ( $updated ) {   
               $status = array( 'status' => 'record-updated-success' );
             }

@@ -48,6 +48,13 @@
 </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
 </div><!-- /.crm-form-block -->
+{if $batchStatus eq 1}
+    {assign var=batchStatusLabel value="Open"}
+{elseif $batchStatus eq 2}
+    {assign var=batchStatusLabel value="Closed"}
+{else}
+    {assign var=batchStatusLabel value="Exported"}
+{/if}		
 <div class="crm-submit-buttons">
     <a accesskey="N" href="{crmURL p='civicrm/financial/batch' q='reset=1&action=add'}" id="newBatch" class="button"><span><div class="icon add-icon"></div>{ts}New Financial Batch{/ts}</span></a><br/>
 </div>
@@ -79,7 +86,7 @@ function buildBatchSelector( filterSearch ) {
     crmBatchSelector.fnDestroy();
     var ZeroRecordText = '<div class="status messages">{/literal}{ts escape="js"}No matching Financial Batches found for your search criteria.{/ts}{literal}</li></ul></div>';
   } else if ( status == 1 ) {
-    var ZeroRecordText = {/literal}'<div class="status messages">{ts escape="js"}You do not have any Open Financial Batches.{/ts}</div>'{literal};
+    var ZeroRecordText = {/literal}'<div class="status messages">{ts escape="js"}You do not have any {$batchStatusLabel} Financial Batches.{/ts}</div>'{literal};
   } else {
     var ZeroRecordText = {/literal}'<div class="status messages">{ts escape="js"}No Financial Batches have been created for this site.{/ts}</div>'{literal};
   }
@@ -138,6 +145,74 @@ function buildBatchSelector( filterSearch ) {
         }
     });
 }
+
+function closeReopen( recordID, op ) {
+
+	var recordBAO = 'CRM_Core_BAO_Batch';	
+	if ( op == 'close' ) {
+       	   var st = {/literal}'{ts escape="js"}Close the Batch{/ts}'{literal};
+    	} else if ( op == 'reopen' ) {
+       	   var st = {/literal}'{ts escape="js"}Reopen the Batch{/ts}'{literal};
+    	}
+
+	cj("#enableDisableStatusMsg").show( );
+	cj("#enableDisableStatusMsg").dialog({
+		title: st,
+		modal: true,
+		bgiframe: true,
+		position: "right",
+		overlay: { 
+			opacity: 0.5, 
+			background: "black" 
+		},
+
+		open:function() {
+       		        var postUrl = {/literal}"{crmURL p='civicrm/ajax/statusmsg' h=0 }"{literal};
+		        cj.post( postUrl, { recordID: recordID, recordBAO: recordBAO, op: op  }, function( statusMessage ) {
+			        if ( statusMessage.status ) {
+ 			            cj( '#enableDisableStatusMsg' ).show().html( statusMessage.status );
+       	     		        }
+			
+	       	        }, 'json' );
+		},
+	
+		buttons: { 
+			"Cancel": function() { 
+				cj(this).dialog("close"); 
+			},
+			"OK": function() {    
+			        saveRecord( recordID, op, recordBAO);
+			        cj(this).dialog("close");			        
+			}
+		} 
+	});
+}
+		
+function noServerResponse( ) {
+    if ( !responseFromServer ) { 
+        var serverError =  '{/literal}{ts escape="js"}There is no response from server therefore selected record is not updated.{/ts}{literal}'  + '&nbsp;&nbsp;<a href="javascript:hideEnableDisableStatusMsg();"><img title="{/literal}{ts escape="js"}close{/ts}{literal}" src="' +resourceBase+'i/close.png"/></a>';
+        cj( '#enableDisableStatusMsg' ).show( ).html( serverError ); 
+    }
+}
+
+function saveRecord( recordID, op, recordBAO) {
+    cj( '#enableDisableStatusMsg' ).hide( );
+    var postUrl = {/literal}"{crmURL p='civicrm/ajax/ar' h=0 }"{literal};
+    //post request and get response
+    cj.post( postUrl, { recordID: recordID, recordBAO: recordBAO, op:op, key: {/literal}"{crmKey name='civicrm/ajax/ar'}"{literal}  }, function( html ){
+        responseFromServer = true;      
+       
+        //this is custom status set when record update success.
+        if ( html.status == 'record-updated-success' ) {
+               document.location.reload( );
+           } 
+
+              }, 'json' );
+
+        //if no response from server give message to user.
+        setTimeout( "noServerResponse( )", 1500 ); 
+    }
+
 
 </script>
 {/literal}
