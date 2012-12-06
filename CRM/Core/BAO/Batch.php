@@ -386,4 +386,194 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
     }
     return $batches;
   }
+  
+  static function exportFinancialBatch( $batchIds ) {
+    CRM_Core_Error::debug_log_message('batchIds: ', print_r($batchIds, true));
+
+    /*
+     * OLD NOTES TO SELF (ignore this it isn't correct anymore, but helps me remember. Will remove later.)
+     * 
+     * Using the batchId, match up to civicrm_entity_batch.batch_id,
+     * then use civicrm_entity_batch.entity_id where entity_table='civicrm_contribution'
+     * to match to civicrm_contribution.id,
+     * then match to civicrm_line_item.entity_id where entity_table='civicrm_contribution' to get civicrm_line_item.id
+     * then match to civicrm_financial_item.entity_id where entity_table='civicrm_line_item'
+     * and that will give you civicrm_financial_item.financial_account_id which can
+     * be matched to civicrm_financial_account.id to get the account.
+     * 
+     * Note ignore civicrm_financial_batch which may be removed completely. At the time of this writing
+     * it only contains partially completed batch entries.
+     * 
+     * Then these are going to be TRNS/SPL entries in IIF, where the TRNS account is the income account associated with the batch(?)
+     * and the SPL account (one for each contribution in the batch) is the account associated with the contribution.
+     */
+
+
+    $id_list = implode(',', $batchIds);
+/*    $sql = "SELECT
+      con.id as contribution_id,
+      con.
+      FROM civicrm_entity_batch eb
+      LEFT JOIN civicrm_contribution con ON (eb.entity_id = con.id AND eb.entity_table='civicrm_contribution')
+      LEFT JOIN civicrm_line_item li ON (li.entity_id = con.id AND li.entity_table='civicrm_contribution')
+      LEFT JOIN civicrm_financial_item fi ON (fi.entity_id = li.id AND entity_table='civicrm_line_item')
+      LEFT JOIN civicrm_financial_account fa ON fa.id = fi.financial_account_id
+      WHERE eb.batch_id IN ( %1 )";
+*/   
+     $sql = "SELECT
+      ft.id as financial_trxn_id,
+      ft.trxn_date,
+      ft.total_amount,
+      fa_from.id as from_account_id,
+      fa_from.name as from_account_name,
+      fa_from.accounting_code as from_account_code,
+      fa_from.financial_account_type_id as from_account_type_id,
+      fa_from.description as from_account_description,
+      ov_from.grouping as from_qb_account_type,
+      fa_to.id as to_account_id,
+      fa_to.name as to_account_name,
+      fa_to.accounting_code as to_account_code,
+      fa_to.financial_account_type_id as to_account_type_id,
+      fa_to.description as to_account_description,
+      ov_to.grouping as to_qb_account_type
+      FROM civicrm_entity_batch eb
+      LEFT JOIN civicrm_financial_trxn ft ON (eb.entity_id = ft.id AND eb.entity_table = 'civicrm_financial_trxn')
+      LEFT JOIN civicrm_financial_account fa_from ON fa_from.id = ft.from_financial_account_id
+      LEFT JOIN civicrm_financial_account fa_to ON fa_to.id = ft.to_financial_account_id
+      LEFT JOIN civicrm_option_group og_from ON og_from.name = 'financial_account_type'
+      LEFT JOIN civicrm_option_value ov_from ON (ov_from.option_group_id = og_from.id AND ov_from.value = fa_from.financial_account_type_id)
+      LEFT JOIN civicrm_option_group og_to ON og_to.name = 'financial_account_type'
+      LEFT JOIN civicrm_option_value ov_to ON (ov_to.option_group_id = og_to.id AND ov_to.value = fa_to.financial_account_type_id)
+      WHERE eb.batch_id IN ( %1 )";
+      
+/*LEFT JOIN civicrm_line_item li ON (li.entity_id = con.id AND li.entity_table='civicrm_contribution')
+      LEFT JOIN civicrm_financial_item fi ON (fi.entity_id = li.id AND entity_table='civicrm_line_item')
+      LEFT JOIN civicrm_financial_account fa ON fa.id = fi.financial_account_id
+      WHERE eb.batch_id IN ( %1 )";
+  */
+
+    $params = array( 1 => array( 'String', $id_list ) );
+    
+    // Keep running list of accounts and contacts used in this batch, since we need to
+    // include those in the output. Only want to include ones used in the batch, not everything in the db,
+    // since would increase the chance of messing up user's existing Quickbooks entries.
+    $accounts = array();
+    $contacts = array();
+
+    $journalEntries = array(
+      'to_account' => array(),
+      'splits' => array(),
+    );
+    
+    $dao = CRM_Core_DAO::executeQuery( $sql, $params );
+    while ( $dao->fetch() ) {
+      
+      if ( !empty( $dao->from_account_name ) && !isset( $accounts( [$dao->from_account_id] ) ) ) {
+        $accounts[$dao->from_account_id] = array(
+          'name' => $dao->from_account_name,
+          'account_code' => $dao->from_account_code,
+          'description' => $dao->from_account_description,
+          'type' => $dao->from_qb_account_type,
+        );
+      }
+      if ( !empty( $dao->to_account_name ) && !isset( $accounts( [$dao->to_account_id] ) ) ) {
+        $accounts[$dao->to_account_id] = array(
+          'name' => $dao->to_account_name,
+          'account_code' => $dao->to_account_code,
+          'description' => $dao->to_account_description,
+          'type' => $dao->to_qb_account_type,
+        );        
+      }
+
+// TODO: compile contact list
+
+      // set up the journal entries for this financial trxn
+      $journalEntries[$dao->financial_trxn_id] = array(
+        'to_account' => array(
+          'trxn_date' => $dao->trxn_date,
+          'account_name' => $dao->to_account_name,
+          'amount' => $dao->total_amount,
+        ),
+        'splits' => array(),
+      );
+      
+      /*
+       * splits has two possibilities depending on FROM account     
+       */
+
+      if ( empty( $dao->from_account_name ) ) {
+        // In this case, split records need to use the individual financial_item account for each item in the trxn
+        $item_sql = "SELECT
+          fa.id as account_id,
+          fa.name as account_name,
+          fa.accounting_code as account_code,
+          fa.description as account_description,
+          fi.id as financial_item_id,
+          fi.transaction_date,
+          fi.amount,
+          ov.grouping as qb_account_type
+          FROM civicrm_entity_financial_trxn eft
+          LEFT JOIN civicrm_financial_item fi ON eft.entity_id = fi.id
+          LEFT JOIN civicrm_financial_account fa ON fa.id = fi.financial_account_id
+          LEFT JOIN civicrm_option_group og ON og.name = 'financial_account_type'
+          LEFT JOIN civicrm_option_value ov ON (ov.option_group_id = og.id AND ov.value = fa.financial_account_type_id)
+          WHERE eft.entity_table = 'civicrm_financial_item'
+          AND eft.financial_trxn_id = %1";
+        
+        $item_params = array( 1 => array( 'Integer', $dao->financial_trxn_id ) );
+        
+        $item_dao = CRM_Core_DAO::executeQuery( $item_sql, $item_params );
+        while ( $item_dao->fetch() ) {
+          
+          // add to running list of accounts
+          if ( !isset( $accounts( [$item_dao->account_id] ) ) ) {
+            $accounts[$item_dao->account_id] = array(
+              'name' => $item_dao->account_name,
+              'account_code' => $item_dao->account_code,
+              'description' => $dao->account_description,
+              'type' => $item_dao->qb_account_type,
+            );
+          }
+        
+// TODO: add contact to running list of contacts
+        
+          // add split line for this item
+          $journalEntries[$dao->financial_trxn_id]['splits'][$item_dao->financial_item_id] = array(
+            'trxn_date' => $item_dao->transaction_date,
+            'account_name' => $item_dao->account_name,
+            'amount' => (-1) * $item_dao->amount,
+          );
+        } // end items loop
+        $item_dao->free();
+        
+      } else {
+        // In this case, split record just uses the FROM account from the trxn, and there's only one record here
+        $journalEntries[$dao->financial_trxn_id]['splits'][] = array(
+          'trxn_date' => $dao->trxn_date,
+          'account_name' => $dao->from_account_name,
+          'amount' => (-1) * $dao->total_amount,
+        );
+      }
+    }
+    $dao->free();
+    
+    $exportParams = array(
+      'accounts' => $accounts,
+      'contacts' => $contacts,
+      'journalEntries' => $journalEntries,
+    );
+    
+    // Instantiate appropriate exporter based on user-selected format.
+//TEST
+self::$_exportFormat = 'IIF';
+//ENDTEST
+    $exporterClass = "CRM_Financial_BAO_ExportFormat_" . self::$_exportFormat;
+    if ( class_exists( $exporterClass ) ) {
+      $exporter = new $exporterClass( $exportParams );
+      $exporter->export();
+    } else {
+      CRM_Core_Error::fatal("Could not locate exporter: $exporterClass");
+    }
+  }
+
 }
