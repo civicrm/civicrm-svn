@@ -61,8 +61,6 @@
 
   <civicrm_entity_financial_account />
 
-  <civicrm_financial_batch />
-
   <civicrm_financial_item />
 
   <civicrm_sms_provider />
