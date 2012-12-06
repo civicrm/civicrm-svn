@@ -502,8 +502,8 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
         'mailing_backend'
       );
 
-      if (defined('CIVICRM_MAILER_SPOOL') &&
-        CIVICRM_MAILER_SPOOL
+      if ( $mailingInfo['outBound_option'] == 4 ||
+              ( defined('CIVICRM_MAILER_SPOOL') && CIVICRM_MAILER_SPOOL )
       ) {
         self::$_mail = new CRM_Mailing_BAO_Spool();
       }

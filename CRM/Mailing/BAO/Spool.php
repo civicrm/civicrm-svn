@@ -83,9 +83,12 @@ class CRM_Mailing_BAO_Spool extends CRM_Mailing_DAO_Spool {
       $params['is_completed'] = 1;
       $params['is_archived'] = 1;
       $params['body_html'] = $headerStr . "\n\n" . $body;
-      $params['name'] = 'CIVICRM_MAILER_SPOOL';
+      $params['subject'] = $headers['subject'];
+      $params['name'] = $headers['subject'];
       $ids = array();
       $mailing = CRM_Mailing_BAO_Mailing::create($params, $ids);
+      
+      // TODO: check for error and return PEAR::raiseError('error msg');
     
       $job = new CRM_Mailing_BAO_Job();
       $job->is_test = 0; // if set to 1 it doesn't show in the UI

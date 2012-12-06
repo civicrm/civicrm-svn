@@ -48,7 +48,7 @@ class CRM_Admin_Form_Setting_Smtp extends CRM_Admin_Form_Setting {
    */
   public function buildQuickForm() {
 
-    $outBoundOption = array('3' => ts('mail()'), '0' => ts('SMTP'), '1' => ts('Sendmail'), '2' => ts('Disable Outbound Email'));
+    $outBoundOption = array('3' => ts('mail()'), '0' => ts('SMTP'), '1' => ts('Sendmail'), '2' => ts('Disable Outbound Email'), '4' => ts('Redirect to Database'));
     $this->addRadio('outBound_option', ts('Select Mailer'), $outBoundOption);
 
     CRM_Utils_System::setTitle(ts('Settings - Outbound Mail'));
@@ -83,6 +83,8 @@ class CRM_Admin_Form_Setting_Smtp extends CRM_Admin_Form_Setting {
     if ($buttonName == $this->_testButtonName) {
       if ($formValues['outBound_option'] == 2) {
         CRM_Core_Session::setStatus(ts('You have selected "Disable Outbound Email". A test email can not be sent.'), ts("Email Disabled"), "error");
+      } elseif ( $formValues['outBound_option'] == 4 ) {
+        CRM_Core_Session::setStatus(ts('You have selected "Redirect to Database". A test email can not be sent.'), ts("Email Disabled"), "error");
       }
       else {
         $session = CRM_Core_Session::singleton();
