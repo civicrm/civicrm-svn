@@ -89,8 +89,8 @@
                 <td class="bold">{$rel.relation}</strong></td>
                 <td>{$rel.name}</td>
             {/if}
-                <td>{$rel.start_date|crmDate}</td>
-                <td>{$rel.end_date|crmDate}</td>
+                <td id='rel_start_date'>{$rel.start_date|crmDate}</td>
+                <td id='rel_end_date'>{$rel.end_date|crmDate}</td>
                 <td>{$rel.city}</td>
                 <td>{$rel.state}</td>
                 <td>{$rel.email}</td>
