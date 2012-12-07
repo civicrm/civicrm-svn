@@ -523,7 +523,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
         $fid[] = $FinancialItem->id;
       }
 
-      $lineItemTotal = $LineTotal = array();
+      $lineItemTotal = $lineTotal = array();
       if (is_array($txrnLineTotal)) {
         foreach ($txrnLineTotal as $lineKey => $lineValue) {
           $i = $trxAmount = 0;
@@ -537,15 +537,15 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
               $lineItemTotal[$itemKey] = 0;
             }
           }
-          if (!empty($LineTotal)) {
-            $LineTotal[] += $prevAmount;
+          if (!empty($lineTotal)) {
+            $lineTotal[] += $prevAmount;
           }
           else {
-            $LineTotal[] = $prevAmount;
+            $lineTotal[] = $prevAmount;
           }
         }
       }
-      $LineTotal = CRM_Utils_Array::value(0, $LineTotal);
+      $lineTotal = CRM_Utils_Array::value(0, $lineTotal);
       if (!empty($lineKey)) {
         $paramsEntity = array(
           'entity_table' => 'civicrm_financial_trxn',
@@ -574,23 +574,25 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
             $entityTrxn = array_merge_recursive($entityTrxn1, $entityTrxn);
           }
         }
+        
         foreach ($entityTrxn as $key => $value) {
           $trxnParams['id'] = $value['financial_trxn_id'];
           $default = NULL;
           $trxn = CRM_Core_BAO_FinancialTrxn::retrieve($trxnParams, $default);
-          $pricefildTotal['trxn'][$trxn->id]['trxn_total'] = $value['amount'];
-          $pricefildTotal['trxn'][$trxn->id]['trxn_date'] = $trxn->trxn_date;
+
+          $pricefieldTotal['trxn'][$trxn->id]['trxn_total'] = $value['amount'];
+          $pricefieldTotal['trxn'][$trxn->id]['trxn_date'] = $trxn->trxn_date;
           if (!empty($trxn->trxn_type)) {
-            $pricefildTotal['trxn'][$trxn->id]['trxn_type'] = $trxn->trxn_type;
+            $pricefieldTotal['trxn'][$trxn->id]['trxn_type'] = $trxn->trxn_type;
           }
         }
 
-        $pricefildTotal['LineItems'] = $lineItemTotal;
-        $pricefildTotal['total'] = 0;
-        foreach ($pricefildTotal['LineItems'] as $key => $value) {
-          $pricefildTotal['total'] += $value;
+        $pricefieldTotal['lineItems'] = $lineItemTotal;
+        $pricefieldTotal['total'] = 0;
+        foreach ($pricefieldTotal['lineItems'] as $key => $value) {
+          $pricefieldTotal['total'] += $value;
         }
-        $this->assign('pricefildTotal', $pricefildTotal);
+        $this->assign('pricefieldTotal', $pricefieldTotal);
       }
 
       if (empty($this->_lineItems)) {
@@ -598,10 +600,10 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
           'READONLY' => TRUE,
           'style' => "background-color:#EBECE4",
           'size' => 4,
-          'price' => $LineTotal
+          'price' => $lineTotal
         ));
-        $element->setValue($LineTotal);
-        $owingAmount = (Float) $this->_values['total_amount'] - $LineTotal;
+        $element->setValue($lineTotal);
+        $owingAmount = (float) $this->_values['total_amount'] - $lineTotal;
         $element = $this->addElement('text', 'owing', 'Owing', array(
           'READONLY' => TRUE,
           'style' => "background-color:#EBECE4",
@@ -609,22 +611,21 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
         ));
 
         $element->setValue($owingAmount);
-        $element = $this->addElement('text', '', 'Owing', array(
+        $this->addElement('text', '', 'Owing', array(
           'READONLY' => TRUE,
           'style' => "background-color:#EBECE4",
           'price' => $owingAmount,
           'size' => 4,
         ));
         $this->addElement('checkbox', 'pay_full', ts('Pay Full'), '', array('class' => 'payfull'));
-        $element = $this->addElement('text', 'initial_amount', 'Amount of Current Payment Contribution Total', array(
+        $this->addElement('text', 'initial_amount', 'Amount of Current Payment Contribution Total', array(
           'size' => 4,
         ));
       }
 
-      $entity_trxns = new CRM_Financial_DAO_EntityFinancialTrxn();
       $this->addElement('checkbox', 'ch_price', ts('Send Receipt?'));
     }
-    $element = $this->addElement('text', 'initial_amount', 'Payment Amount', array('size' => 4));
+    $this->addElement('text', 'initial_amount', 'Payment Amount', array('size' => 4));
 
     if ($this->_action & CRM_Core_Action::DELETE) {
       $this->addButtons(array(
@@ -769,7 +770,6 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
       $this->assign('hasPriceSets', $hasPriceSets);
       $currencyFreeze = FALSE;
       if ($this->_online || $this->_ppID) {
-
         $attributes['total_amount'] = array_merge($attributes['total_amount'], array(
           'READONLY' => TRUE,
           'style' => "background-color:#EBECE4",
@@ -799,7 +799,6 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
 
     //CRM-7362 --add campaigns.
     CRM_Campaign_BAO_Campaign::addCampaign($this, CRM_Utils_Array::value('campaign_id', $this->_values));
-
 
     // CRM-7368 allow user to set or edit PCP link for contributions
     $siteHasPCPs = CRM_Contribute_PseudoConstant::pcPage();

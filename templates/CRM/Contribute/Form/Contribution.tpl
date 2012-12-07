@@ -274,7 +274,7 @@
       </td>
     </tr>
     {/if}
-    {if !empty($pricefildTotal)}
+    {if !empty($pricefieldTotal)}
     <tr>
       <td>{ts}Payment(s){/ts}</td>
       <td>
@@ -289,7 +289,7 @@
             <th scope="col">{ts}Actions{/ts}</th>
           </tr>
           </thead>
-          {foreach from=$pricefildTotal.trxn item=element key=keys}
+          {foreach from=$pricefieldTotal.trxn item=element key=keys}
             <tr class="{cycle values="odd-row,even-row"}">
               <td>{$element.trxn_date}</td>
               <td>{$element.trxn_type}</td>
