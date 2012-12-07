@@ -503,20 +503,16 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
     $this->applyFilter('__ALL__', 'trim');
 
     if ($this->_action & CRM_Core_Action::UPDATE) {
-
-      //This->_online is trxn id already fetch in preprocess;
-      $trxn = $this->_online;
-
       if (empty($this->_compId)) {
-        $LI = CRM_Price_BAO_LineItem::getLineItems($this->_id, 'contribution');
+        $lineItem = CRM_Price_BAO_LineItem::getLineItems($this->_id, 'contribution');
         $txrnLineTotal = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnLineTotal($this->_id, 'civicrm_contribution');
       }
       else {
-        $LI = CRM_Price_BAO_LineItem::getLineItems($this->_compId);
+        $lineItem = CRM_Price_BAO_LineItem::getLineItems($this->_compId);
         $txrnLineTotal = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnLineTotal($this->_compId, 'civicrm_participant');
       }
       $default = NULL;
-      foreach ($LI as $key => $value) {
+      foreach ($lineItem as $key => $value) {
         $params['entity_id'] = $key;
         $params['entity_table'] = 'civicrm_line_item';
         $FinancialItem = CRM_Financial_BAO_FinancialItem::retrieve($params, $default);
@@ -545,6 +541,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
           }
         }
       }
+
       $lineTotal = CRM_Utils_Array::value(0, $lineTotal);
       if (!empty($lineKey)) {
         $paramsEntity = array(
@@ -574,7 +571,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
             $entityTrxn = array_merge_recursive($entityTrxn1, $entityTrxn);
           }
         }
-        
+
         foreach ($entityTrxn as $key => $value) {
           $trxnParams['id'] = $value['financial_trxn_id'];
           $default = NULL;
