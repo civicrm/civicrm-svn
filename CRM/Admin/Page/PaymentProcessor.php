@@ -108,7 +108,7 @@ class CRM_Admin_Page_PaymentProcessor extends CRM_Core_Page_Basic {
     CRM_Utils_System::setTitle(ts('Settings - Payment Processor'));
     $breadCrumb = array(array('title' => ts('Administration'),
         'url' => CRM_Utils_System::url('civicrm/admin',
-          'reset=1'
+        'reset=1'
         ),
       ));
     CRM_Utils_System::appendBreadCrumb($breadCrumb);
@@ -125,7 +125,7 @@ class CRM_Admin_Page_PaymentProcessor extends CRM_Core_Page_Basic {
   function browse($action = NULL) {
     // get all custom groups sorted by weight
     $paymentProcessor = array();
-        $dao = new CRM_Financial_DAO_PaymentProcessor();
+    $dao = new CRM_Financial_DAO_PaymentProcessor();
     $dao->is_test     = 0;
     $dao->domain_id   = CRM_Core_Config::domainID();
     $dao->orderBy('name');
@@ -134,6 +134,9 @@ class CRM_Admin_Page_PaymentProcessor extends CRM_Core_Page_Basic {
     while ($dao->fetch()) {
       $paymentProcessor[$dao->id] = array();
       CRM_Core_DAO::storeValues($dao, $paymentProcessor[$dao->id]);
+      $paymentProcessor[$dao->id]['payment_processor_type'] = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_PaymentProcessorType', 
+        $paymentProcessor[$dao->id]['payment_processor_type_id']);
+
       // form all action links
       $action = array_sum(array_keys($this->links()));
 
@@ -149,6 +152,7 @@ class CRM_Admin_Page_PaymentProcessor extends CRM_Core_Page_Basic {
         array('id' => $dao->id)
       );
     }
+
     $this->assign('rows', $paymentProcessor);
   }
 
