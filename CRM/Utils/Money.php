@@ -109,16 +109,12 @@ class CRM_Utils_Money {
     // If it contains tags, means that HTML was passed and the
     // amount is already converted properly,
     // so don't mess with it again.
-    if (strip_tags($amount) === $amount) {
-      $money = strtr($amount, $rep);
+    if (strpos($amount, '<') === FALSE) {
+      $amount = strtr($amount, $rep);
     }
-    else {
-      $money = $amount;
-    }
-
 
     $replacements = array(
-      '%a' => $money,
+      '%a' => $amount,
       '%C' => $currency,
       '%c' => CRM_Utils_Array::value($currency, self::$_currencySymbols, $currency),
     );
