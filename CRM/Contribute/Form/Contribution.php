@@ -312,7 +312,11 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
     $this->assign('receive_date', CRM_Utils_Date::processDate(CRM_Utils_Array::value('receive_date', $defaults),
       CRM_Utils_Array::value('receive_date_time', $defaults)
     ));
-    $this->assign('currency', CRM_Utils_Array::value('currency', $defaults));
+    $currency = CRM_Utils_Array::value('currency', $defaults);
+    $this->assign('currency', $currency);
+    // Hack to get currency info to the js layer. CRM-11440
+    CRM_Utils_Money::format(1);
+    $this->assign('currencySymbol', CRM_Utils_Array::value($currency, CRM_Utils_Money::$_currencySymbols));
     $this->assign('totalAmount', CRM_Utils_Array::value('total_amount', $defaults));
 
     //inherit campaign from pledge.

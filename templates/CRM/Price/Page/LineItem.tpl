@@ -79,7 +79,7 @@
             </td>
             {if $action eq 2}
               <td class="right">
-                --<input type='checkbox' id= 'cb-price[{$line.price_field_value_id}]' name = 'cb-price[{$line.price_field_value_id}]' price='{$fildTotal}' class='payFull' title='{ts escape="js"}Pay in full{/ts}' style='position: relative; margin: 0px; top: 0.3em;'/>--&gt;
+                --<input type='checkbox' data-price='{$fildTotal}' class='payFull' title='{ts escape="js"}Pay in full{/ts}' style='position: relative; margin: 0px; top: 0.3em;'/>--&gt;
                 &nbsp &nbsp $<input type='text' id='txt-price[{$line.price_field_value_id}]' name='txt-price[{$line.price_field_value_id}]' size='4' class='distribute'>
               </td>
             {/if}
@@ -98,29 +98,41 @@
 {literal}
 <script type="text/javascript">
 cj(document).ready(function($) {
+  {/literal}
+    var comma = '{$config->monetaryThousandSeparator}';
+    var dot = '{$config->monetaryDecimalPoint}';
+    var format = '{$config->moneyformat}';
+    var currency = '{$currency}';
+    var currencySymbol = '{$currencySymbol}';
+  {literal} 
+  // Todo: This function should be a utility
+  function moneyFormat(amount) {
+    amount = parseFloat(amount).toFixed(2);
+    amount = amount.replace(',', 'comma').replace('.', 'dot');
+    amount = amount.replace('comma', comma).replace('dot', dot);
+    return format.replace('%C', currency).replace('%c', currencySymbol).replace('%a', amount);
+  }
+
   $('.distribute').keyup(function() {
     var totalAmount = 0;
-    $('.distribute').each(function (){
+    $('.distribute').each(function () {
       if($(this).val().length > 0){
         totalAmount = parseFloat(totalAmount) + parseFloat($(this).val());
       }
     });
-    $('.editPayment').text('$ '+totalAmount);
-    var unlocateAmount = '{/literal}{$total}{literal}';
-    $('.unlocateAmount').text('$ '+(unlocateAmount - totalAmount));
+    $('.editPayment').text(moneyFormat(totalAmount));
+    var unlocateAmount = {/literal}{$total}{literal};
+    $('.unlocateAmount').text(moneyFormat(unlocateAmount - totalAmount));
   });
 
-
-  $('.payFull').click(function(){
-    var txtID = $(this).attr('id').split('-');
-    var ID = 'txt-'+txtID[1] ;
+  $('.payFull').click(function() {
+    var ele = $(this).siblings('.distribute');
     if($(this).attr('checked')){
-      $("input[id='"+ID+"']").val($(this).attr('price'));
+      ele.val($(this).attr('data-price')).keyup();
     }
     else{
-      $("input[id='"+ID+"']").val('');
+      ele.val('').keyup();
     }
-    $('.distribute').trigger('keyup');
   });
 });
 </script>
