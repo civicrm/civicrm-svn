@@ -36,8 +36,7 @@
  */
 class CRM_Report_Form_Instance {
 
-  static
-  function buildForm(&$form) {
+  static function buildForm(&$form) {
     // we should not build form elements in dashlet mode
     if ($form->_section) {
       return;
@@ -164,8 +163,7 @@ class CRM_Report_Form_Instance {
     $form->addFormRule(array('CRM_Report_Form_Instance', 'formRule'), $form);
   }
 
-  static
-  function formRule($fields, $errors, $self) {
+  static function formRule($fields, $errors, $self) {
     $buttonName = $self->controller->getButtonName();
     $selfButtonName = $self->getVar('_instanceButtonName');
 
@@ -180,8 +178,7 @@ class CRM_Report_Form_Instance {
     return empty($errors) ? TRUE : $errors;
   }
 
-  static
-  function setDefaultValues(&$form, &$defaults) {
+  static function setDefaultValues(&$form, &$defaults) {
     // we should not build form elements in dashlet mode
     if ($form->_section) {
       return;
@@ -243,8 +240,7 @@ class CRM_Report_Form_Instance {
     }
   }
 
-  static
-  function postProcess(&$form) {
+  static function postProcess(&$form) {
     $params              = $form->getVar('_params');
     $config              = CRM_Core_Config::singleton();
     $params['header']    = CRM_Utils_Array::value('report_header',$params);

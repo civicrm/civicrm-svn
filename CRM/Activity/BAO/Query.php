@@ -41,8 +41,7 @@ class CRM_Activity_BAO_Query {
    * @return void
    * @access public
    */
-  static
-  function select(&$query) {
+  static function select(&$query) {
     if (CRM_Utils_Array::value('activity_id', $query->_returnProperties)) {
       $query->_select['activity_id'] = "civicrm_activity.id as activity_id";
       $query->_element['activity_id'] = 1;
@@ -153,8 +152,7 @@ class CRM_Activity_BAO_Query {
    * @return void
    * @access public
    */
-  static
-  function where(&$query) {
+  static function where(&$query) {
     $grouping = $testCondition = NULL;
     foreach (array_keys($query->_params) as $id) {
       if (substr($query->_params[$id][0], 0, 9) == 'activity_') {
@@ -184,8 +182,7 @@ class CRM_Activity_BAO_Query {
    * @return void
    * @access public
    */
-  static
-  function whereClauseSingle(&$values, &$query) {
+  static function whereClauseSingle(&$values, &$query) {
     list($name, $op, $value, $grouping, $wildcard) = $values;
 
     $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
@@ -381,8 +378,7 @@ class CRM_Activity_BAO_Query {
     }
   }
 
-  static
-  function from($name, $mode, $side) {
+  static function from($name, $mode, $side) {
     $from = NULL;
     switch ($name) {
       case 'civicrm_activity':
@@ -488,8 +484,7 @@ class CRM_Activity_BAO_Query {
    * @return void
    * @static
    */
-  static
-  function buildSearchForm(&$form) {
+  static function buildSearchForm(&$form) {
     $activityOptions = CRM_Core_PseudoConstant::activityType(TRUE, TRUE, FALSE, 'label', TRUE);
     asort($activityOptions);
     foreach ($activityOptions as $activityID => $activity) {
@@ -560,14 +555,12 @@ class CRM_Activity_BAO_Query {
     $form->setDefaults(array('activity_test' => 0));
   }
 
-  static
-  function addShowHide(&$showHide) {
+  static function addShowHide(&$showHide) {
     $showHide->addHide('caseActivityForm');
     $showHide->addShow('caseActivityForm_show');
   }
 
-  static
-  function defaultReturnProperties($mode,
+  static function defaultReturnProperties($mode,
     $includeCustomFields = TRUE
   ) {
     $properties = NULL;

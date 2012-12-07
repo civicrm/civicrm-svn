@@ -230,7 +230,8 @@ class CRM_Report_Form extends CRM_Core_Form {
 
   /**
    *
-   */ function __construct() {
+   */
+  function __construct() {
     parent::__construct();
 
     // build tag filter
@@ -1065,8 +1066,7 @@ class CRM_Report_Form extends CRM_Core_Form {
     }
   }
 
-  static
-    function getSQLOperator($operator = "like") {
+  static function getSQLOperator($operator = "like") {
     switch ($operator) {
       case 'eq':
         return '=';
@@ -1285,8 +1285,7 @@ class CRM_Report_Form extends CRM_Core_Form {
     return NULL;
   }
 
-  static
-    function dateDisplay($relative, $from, $to) {
+  static function dateDisplay($relative, $from, $to) {
     list($from, $to) = self::getFromTo($relative, $from, $to);
 
     if ($from) {
@@ -1310,8 +1309,7 @@ class CRM_Report_Form extends CRM_Core_Form {
     return NULL;
   }
 
-  static
-    function getFromTo($relative, $from, $to, $fromtime = NULL, $totime = NULL) {
+  static function getFromTo($relative, $from, $to, $fromtime = NULL, $totime = NULL) {
     if (empty($totime)) {
       $totime = '235959';
     }
@@ -2398,6 +2396,7 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
       CRM_Report_Form_Instance::postProcess($this);
     }
   }
+  
   /*
    * Get Template file name - use default form template if a specific one has not been set up for this report
    *
