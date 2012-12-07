@@ -414,7 +414,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
 
     $paneNames = array(
       ts('Additional Details') => 'AdditionalDetail',
-      ts('Honoree Information') => 'Honoree',
+      ts('Honoree Information') => 'Honoree'
     );
 
     //Add Premium pane only if Premium is exists.
@@ -456,7 +456,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
       $allPanes[$name] = array(
         'url' => CRM_Utils_System::url('civicrm/contact/view/contribution', $urlParams),
         'open' => $open,
-        'id' => $type,
+        'id' => $type
       );
 
       // see if we need to include this paneName in the current form
@@ -546,13 +546,13 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
       if (!empty($lineKey)) {
         $paramsEntity = array(
           'entity_table' => 'civicrm_financial_trxn',
-          'financial_trxn_id' => $lineKey,
+          'financial_trxn_id' => $lineKey
         );
         $entityFID = CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($paramsEntity);
         if (empty($entityFID)) {
           $paramsEntity = array(
             'entity_table' => 'civicrm_contribution',
-            'financial_trxn_id' => $lineKey,
+            'financial_trxn_id' => $lineKey
           );
           $entityTrxn = CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($paramsEntity);
         }
@@ -560,12 +560,12 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
           foreach ($entityFID as $key => $value) {
             $paramsEntity = array(
               'entity_table' => 'civicrm_contribution',
-              'financial_trxn_id' => $entityFID[$key]['entity_id'],
+              'financial_trxn_id' => $entityFID[$key]['entity_id']
             );
             $entityTrxn1 = CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($paramsEntity);
             $paramsEntity = array(
               'entity_table' => 'civicrm_financial_trxn',
-              'entity_id' => $entityFID[$key]['entity_id'],
+              'entity_id' => $entityFID[$key]['entity_id']
             );
             $entityTrxn = CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($paramsEntity);
             $entityTrxn = array_merge_recursive($entityTrxn1, $entityTrxn);
@@ -604,7 +604,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
         $element = $this->addElement('text', 'owing', 'Owing', array(
           'READONLY' => TRUE,
           'style' => "background-color:#EBECE4",
-          'size' => 4,
+          'size' => 4
         ));
 
         $element->setValue($owingAmount);
@@ -612,11 +612,11 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
           'READONLY' => TRUE,
           'style' => "background-color:#EBECE4",
           'price' => $owingAmount,
-          'size' => 4,
+          'size' => 4
         ));
         $this->addElement('checkbox', 'pay_full', ts('Pay Full'), '', array('class' => 'payfull'));
         $this->addElement('text', 'initial_amount', 'Amount of Current Payment Contribution Total', array(
-          'size' => 4,
+          'size' => 4
         ));
       }
 
@@ -635,7 +635,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
           array(
             'type' => 'cancel',
             'name' => ts('Cancel'),
-          ),
+          )
         )
       );
       return;
@@ -769,7 +769,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
       if ($this->_online || $this->_ppID) {
         $attributes['total_amount'] = array_merge($attributes['total_amount'], array(
           'READONLY' => TRUE,
-          'style' => "background-color:#EBECE4",
+          'style' => "background-color:#EBECE4"
         ));
         $optionTypes = array(
           '1' => ts('Adjust Pledge Payment Schedule?'),
@@ -840,17 +840,17 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
           'type' => 'upload',
           'name' => ts('Save'),
           'js' => $js,
-          'isDefault' => TRUE,
+          'isDefault' => TRUE
         ),
         array(
           'type' => 'upload',
           'name' => ts('Save and New'),
           'js' => $js,
-          'subName' => 'new',
+          'subName' => 'new'
         ),
         array(
           'type' => 'cancel',
-          'name' => ts('Cancel'),
+          'name' => ts('Cancel')
         ),
       )
     );

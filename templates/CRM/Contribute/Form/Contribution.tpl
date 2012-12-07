@@ -392,7 +392,7 @@
 
     // bind first click of accordion header to load crm-accordion-body with snippet
     // everything else taken care of by cj().crm-accordions()
-    cj(document).ready( function() {
+    cj(function() {
       cj('#adjust-option-type').hide();
       cj('.crm-ajax-accordion .crm-accordion-header').one('click', function() {
         loadPanes(cj(this).attr('id'));
@@ -403,30 +403,31 @@
     });
     // load panes function calls for snippet based on id of crm-accordion-header
     function loadPanes( id ) {
-    var url = "{/literal}{crmURL p='civicrm/contact/view/contribution' q='snippet=4&formType=' h=0}{literal}" + id;
-  {/literal}
-    {if $contributionMode}
-      url = url + "&mode={$contributionMode}";
-    {/if}
-    {if $qfKey}
-      url = url + "&qfKey={$qfKey}";
-    {/if}
-    {literal}
-      if ( ! cj('div.'+id).html() ) {
-    var loading = '<img src="{/literal}{$config->resourceBase}i/loading.gif{literal}" alt="{/literal}{ts escape='js'}loading{/ts}{literal}" />&nbsp;{/literal}{ts escape='js'}Loading{/ts}{literal}...';
-    cj('div.'+id).html(loading);
-    cj.ajax({
-      url    : url,
-      success: function(data) { cj('div.'+id).html(data); }
-    });
-  }
-  }
+      var url = "{/literal}{crmURL p='civicrm/contact/view/contribution' q='snippet=4&formType=' h=0}{literal}" + id;
+      {/literal}
+      {if $contributionMode}
+        url = url + "&mode={$contributionMode}";
+      {/if}
+      {if $qfKey}
+        url = url + "&qfKey={$qfKey}";
+      {/if}
+      {literal}
+      if (! cj('div.'+id).html()) {
+        var loading = '<img src="{/literal}{$config->resourceBase}i/loading.gif{literal}" alt="{/literal}{ts escape='js'}loading{/ts}{literal}" />&nbsp;{/literal}{ts escape='js'}Loading{/ts}{literal}...';
+        cj('div.'+id).html(loading);
+        cj.ajax({
+          url    : url,
+          success: function(data) { cj('div.'+id).html(data); }
+        });
+      }
+    }
 
   var url = "{/literal}{$dataUrl}{literal}";
 
   cj('#soft_credit_to').autocomplete( url, { width : 180, selectFirst : false, matchContains: true
-  }).result( function(event, data, formatted) { cj( "#soft_contact_id" ).val( data[1] );
-    });
+  }).result( function(event, data, formatted) {
+      cj( "#soft_contact_id" ).val( data[1] );
+  });
   {/literal}
     {if $context eq 'standalone' and $outBound_option != 2 }
       {literal}
@@ -441,20 +442,21 @@
       function checkEmail( ) {
         var contactID = cj("input[name='contact_select_id[1]']").val();
         if ( contactID ) {
-      var postUrl = "{/literal}{crmURL p='civicrm/ajax/checkemail' h=0}{literal}";
-      cj.post( postUrl, {contact_id: contactID},
-        function ( response ) {
-          if ( response ) {
-            cj("#email-receipt").show( );
-            cj("#email-address").html( response );
-          } else {
-            cj("#email-receipt").hide( );
-          }
+          var postUrl = "{/literal}{crmURL p='civicrm/ajax/checkemail' h=0}{literal}";
+          cj.post( postUrl, {contact_id: contactID},
+            function ( response ) {
+              if ( response ) {
+                cj("#email-receipt").show( );
+                cj("#email-address").html( response );
+              } else {
+                cj("#email-receipt").hide( );
+              }
+            }
+          );
         }
-      );
-    } else {
-      cj("#email-receipt").hide( );
-    }
+        else {
+          cj("#email-receipt").hide( );
+        }
     }
 
     function profileCreateCallback( blockNo ) {
