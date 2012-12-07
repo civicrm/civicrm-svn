@@ -63,14 +63,27 @@ class WebTest_Mailing_SpoolTest extends CiviSeleniumTestCase {
     $this->click( "_qf_Email_upload" );
 
     $this->open( $this->sboxPath . 'civicrm/mailing/browse/archived?reset=1' );
+// I don't understand but for some reason we have to load the page twice for our mailing to appear.
     $this->waitForPageToLoad("30000");
+    $this->open( $this->sboxPath . 'civicrm/mailing/browse/archived?reset=1' );
+    $this->waitForElementPresent( 'css=td.crm-mailing-name' );
 
-// TODO: This is failing even though when I view it manually it's there
     $this->assertText( 'css=td.crm-mailing-name', 'test spool' );
 
     // should always be mid=1 if starting with a blank sandbox
     // alternatively could click the Report link but not sure how to select it since it wouldn't be unique if there was more than one
     $this->open( $this->sboxPath . 'civicrm/mailing/report?mid=1&reset=1' );
-    $this->click('link="View complete message"');
-  } 
+
+    // Not sure how robust this is if text changes, but there isn't a good
+    // identifier for this link either.
+    $this->waitForElementPresent( '//a[contains(text(), "View complete message")]' );
+    $this->click( '//a[contains(text(), "View complete message")]' );
+
+    $this->waitForPopUp( null, 30000 );
+    $this->selectPopUp( null );
+    $msg = $this->getBodyText();
+    $this->assertNotEmpty( $msg, 'Mail message empty or not found.' );
+    echo $msg;
+//TODO: parse msg (using EZC?) and check it matches. Consider providing reusable class to do common parsing for unit testing emails.
+  }
 }
