@@ -161,7 +161,8 @@ class CRM_Core_BAO_LabelFormat extends CRM_Core_DAO_OptionValue {
    *
    * @return array   array of page orientations
    * @access public
-   */ function getPageOrientations() {
+   */
+  function getPageOrientations() {
     return array(
       'portrait' => ts('Portrait'),
       'landscape' => ts('Landscape'),
@@ -249,8 +250,7 @@ class CRM_Core_BAO_LabelFormat extends CRM_Core_DAO_OptionValue {
    * @static
    * @access public
    */
-  static
-  function addOrder(&$list, $returnURL) {
+  static function addOrder(&$list, $returnURL) {
     $filter = "option_group_id = " . self::_getGid();
     CRM_Utils_Weight::addOrder($list, 'CRM_Core_DAO_OptionValue', 'id', $returnURL, $filter);
   }
@@ -264,8 +264,7 @@ class CRM_Core_BAO_LabelFormat extends CRM_Core_DAO_OptionValue {
    * @static
    * @access public
    */
-  static
-  function &getList($namesOnly = FALSE) {
+  static function &getList($namesOnly = FALSE) {
     static $list = array();
     if (self::_getGid()) {
       // get saved label formats from Option Value table
@@ -295,8 +294,7 @@ class CRM_Core_BAO_LabelFormat extends CRM_Core_DAO_OptionValue {
    * @static
    * @access public
    */
-  static
-  function &getDefaultValues() {
+  static function &getDefaultValues() {
     $params = array('is_active' => 1, 'is_default' => 1);
     $defaults = array();
     if (!self::retrieve($params, $defaults)) {
@@ -318,8 +316,7 @@ class CRM_Core_BAO_LabelFormat extends CRM_Core_DAO_OptionValue {
    * @return array  $values (reference) associative array of name/value pairs
    * @access public
    */
-  static
-  function &getLabelFormat($field, $val) {
+  static function &getLabelFormat($field, $val) {
     $params = array('is_active' => 1, $field => $val);
     $labelFormat = array();
     if (self::retrieve($params, $labelFormat)) {
@@ -338,8 +335,7 @@ class CRM_Core_BAO_LabelFormat extends CRM_Core_DAO_OptionValue {
    * @return array  $values (reference) associative array of name/value pairs
    * @access public
    */
-  static
-  function &getByName($name) {
+  static function &getByName($name) {
     return self::getLabelFormat('name', $name);
   }
 
@@ -351,8 +347,7 @@ class CRM_Core_BAO_LabelFormat extends CRM_Core_DAO_OptionValue {
    * @return array  $values (reference) associative array of name/value pairs
    * @access public
    */
-  static
-  function &getById($id) {
+  static function &getById($id) {
     return self::getLabelFormat('id', $id);
   }
 
@@ -367,8 +362,7 @@ class CRM_Core_BAO_LabelFormat extends CRM_Core_DAO_OptionValue {
    * @access public
    * @static
    */
-  static
-  function getValue($field, &$values, $default = NULL) {
+  static function getValue($field, &$values, $default = NULL) {
     if (array_key_exists($field, self::$optionValueFields)) {
       switch (self::$optionValueFields[$field]['type']) {
         case CRM_Utils_Type::T_INT:
@@ -399,8 +393,7 @@ class CRM_Core_BAO_LabelFormat extends CRM_Core_DAO_OptionValue {
    * @access public
    * @static
    */
-  static
-  function retrieve(&$params, &$values) {
+  static function retrieve(&$params, &$values) {
     $optionValue = new CRM_Core_DAO_OptionValue();
     $optionValue->copyValues($params);
     $optionValue->option_group_id = self::_getGid();
@@ -509,8 +502,7 @@ class CRM_Core_BAO_LabelFormat extends CRM_Core_DAO_OptionValue {
    * @access public
    * @static
    */
-  static
-  function del($id) {
+  static function del($id) {
     if ($id) {
       $dao = new CRM_Core_DAO_OptionValue();
       $dao->id = $id;

@@ -2533,9 +2533,6 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id AND grp.n
           }
         }
         if ( $values['activity_type'] == 'Bulk Email'){
-          require_once 'CRM/Mailing/Event/BAO/Opened.php';
-          require_once 'CRM/Mailing/Event/BAO/TrackableURLOpen.php';
-
           $contactActivities[$activityId]['openstats'] = "Opens: ".
             count(CRM_Mailing_Event_BAO_Opened::getRows(
                CRM_Utils_Array::value('source_record_id', $values), NULL, FALSE, NULL, NULL, NULL, $params['contact_id']

@@ -140,13 +140,11 @@ class CRM_Export_Form_Select extends CRM_Core_Form {
         $componentName = array('', 'Activity');
         break;
       case 5:
-        require_once 'CRM/Member/Form/Task.php';
         CRM_Member_Form_Task::preProcessCommon($this, TRUE);
         $this->_exportMode = self::MEMBER_EXPORT;
         $componentName = array('', 'Member');
         break;
       case 6:
-        require_once 'CRM/Case/Form/Task.php';
         CRM_Case_Form_Task::preProcessCommon($this, TRUE);
         $this->_exportMode = self::CASE_EXPORT;
         $componentName = array('', 'Case');

@@ -213,8 +213,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
    * @static
    * @access public
    */
-  static
-  function getItems(&$params, $domains = null, $settingsToReturn) {
+  static function getItems(&$params, $domains = null, $settingsToReturn) {
     if (empty($domains)) {
       $domains[] = CRM_Core_Config::domainID();
     }
@@ -333,8 +332,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
    * @static
    * @access public
    */
-  static
-  function setItems(&$params, $domains = null) {
+  static function setItems(&$params, $domains = null) {
     if (empty($domains)) {
       $domains[] = CRM_Core_Config::domainID();
     }
@@ -512,8 +510,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
    * - description
    * - help_text
    */
-  static
-  function getSettingSpecification($componentID = null, $filters = array(), $domainID = null, $profile = null) {
+  static function getSettingSpecification($componentID = null, $filters = array(), $domainID = null, $profile = null) {
 
     $cacheString = 'settingsMetadata_' . $domainID . '_' . $profile;
     foreach ($filters as $filterField => $filterString) {
@@ -538,6 +535,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
     return $settingsMetadata;
 
   }
+
   /**
    * Load up settings metadata from files
    */

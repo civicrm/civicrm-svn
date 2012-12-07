@@ -215,7 +215,7 @@ WHERE lt.entity_id = %1 ";
    * @access public
    * @static
    */
-  static  function deleteFinancialTrxn($entity_id, $entity_table = 'civicrm_contribution') {
+  static function deleteFinancialTrxn($entity_id, $entity_table = 'civicrm_contribution') {
     $fids = self::getFinancialTrxnIds($entity_id, $entity_table);
 
     if ($fids['financialTrxnId']) {
@@ -239,7 +239,7 @@ WHERE lt.entity_id = %1 ";
    * @access public
    * @static
    */
-  static  function createPremiumTrxn($params) {
+  static function createPremiumTrxn($params) {
     if (!CRM_Utils_Array::value('financial_type_id', $params) && !CRM_Utils_Array::value('trxn_id', $params)) {
       return;
     }

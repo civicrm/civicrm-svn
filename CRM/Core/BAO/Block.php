@@ -405,22 +405,22 @@ class CRM_Core_BAO_Block {
   }
 
   /**
-     * Handling for is_primary.
-     * $params is_primary could be
-     *  #  1 - find other entries with is_primary = 1 &  reset them to 0
-     *  #  0 - make sure at least one entry is set to 1
-     *            - if no other entry is 1 change to 1
-     *            - if one other entry exists change that to 1
-     *            - if more than one other entry exists change first one to 1
-     *              @fixme - perhaps should choose by location_type
-     *  #  empty - same as 0 as once we have checked first step
-     *             we know if it should be 1 or 0
-     *
-     *  if $params['id'] is set $params['contact_id'] may need to be retrieved
-     *
-     *  @param array $params
-     * @static
-     */
+   * Handling for is_primary.
+   * $params is_primary could be
+   *  #  1 - find other entries with is_primary = 1 &  reset them to 0
+   *  #  0 - make sure at least one entry is set to 1
+   *            - if no other entry is 1 change to 1
+   *            - if one other entry exists change that to 1
+   *            - if more than one other entry exists change first one to 1
+   *              @fixme - perhaps should choose by location_type
+   *  #  empty - same as 0 as once we have checked first step
+   *             we know if it should be 1 or 0
+   *
+   *  if $params['id'] is set $params['contact_id'] may need to be retrieved
+   *
+   *  @param array $params
+   * @static
+   */
   public static function handlePrimary(&$params, $class) {
     switch ($class) {
       case 'CRM_Core_BAO_Phone':

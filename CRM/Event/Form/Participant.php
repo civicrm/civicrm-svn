@@ -1483,7 +1483,6 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
           $cId = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialAccount', $financialAccount, 'contact_id' );
         }
 
-        require_once 'CRM/Core/BAO/FinancialTrxn.php';
         $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
         $checkDiscount = CRM_Core_BAO_Discount::findSet($this->_eventId,'civicrm_event');
         if (!empty($checkDiscount)) {

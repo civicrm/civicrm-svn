@@ -3132,15 +3132,15 @@ SELECT  group_id
   }
 
   /**
-     * function to get group type values of the profile
-     *
-     * @params Integer $profileId       Profile Id
-     * @params String  $groupType       Group Type
-     *
-     * @return Array   group type values
-     * @static
-     * @access public
-     */
+   * function to get group type values of the profile
+   *
+   * @params Integer $profileId       Profile Id
+   * @params String  $groupType       Group Type
+   *
+   * @return Array   group type values
+   * @static
+   * @access public
+   */
   static function groupTypeValues($profileId, $groupType = NULL) {
     $groupTypeValue = array();
     $groupTypes = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', $profileId, 'group_type');

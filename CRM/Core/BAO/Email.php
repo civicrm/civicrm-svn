@@ -37,13 +37,13 @@
  * This class contains functions for email handling
  */
 class CRM_Core_BAO_Email extends CRM_Core_DAO_Email {
+
   /*
    * Create email address - note that the create function calls 'add' but
    * has more business logic
    *
    * @param array $params input parameters
    */
-
   static function create($params) {
     if (is_numeric(CRM_Utils_Array::value('is_primary', $params)) ||
       // if id is set & is_primary isn't we can assume no change

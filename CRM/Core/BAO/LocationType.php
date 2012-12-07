@@ -104,10 +104,11 @@ class CRM_Core_BAO_LocationType extends CRM_Core_DAO_LocationType {
     }
     return self::$_defaultLocationType;
   }
+
   /*
-     * Get ID of billing location type
-     * @return integer
-     */
+   * Get ID of billing location type
+   * @return integer
+   */
   function getBilling() {
     if (self::$_billingLocationType == NULL) {
       $locationTypes = CRM_Core_PseudoConstant::locationType();

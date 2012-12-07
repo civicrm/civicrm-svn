@@ -37,7 +37,9 @@
  * This file is used to build the form configuring mass sms details
  */
 class CRM_SMS_Form_Upload extends CRM_Core_Form {
-  public $_mailingID; function preProcess() {
+  public $_mailingID;
+
+  function preProcess() {
     $this->_mailingID = $this->get('mailing_id');
     if (CRM_Core_Permission::check('administer CiviCRM')) {
       $this->assign('isAdmin', 1);
@@ -294,8 +296,7 @@ class CRM_SMS_Form_Upload extends CRM_Core_Form {
    * @access public
    * @static
    */
-  static
-  function formRule($params, $files, $self) {
+  static function formRule($params, $files, $self) {
     if (CRM_Utils_Array::value('_qf_Import_refresh', $_POST)) {
       return TRUE;
     }

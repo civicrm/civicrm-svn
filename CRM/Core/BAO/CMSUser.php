@@ -345,15 +345,14 @@ class CRM_Core_BAO_CMSUser {
   }
 
   /*
-     * Checks that there is a valid username & email 
-     *  optionally checks password is present & matches DB & gets the CMS to validate 
-     *  
-     *  @params array $fields Posted values of form
-     *  @param  array $files uploaded files if any 
-     *  @param array $self reference to form object
-     * 
-     */
-
+   * Checks that there is a valid username & email 
+   *  optionally checks password is present & matches DB & gets the CMS to validate 
+   *  
+   *  @params array $fields Posted values of form
+   *  @param  array $files uploaded files if any 
+   *  @param array $self reference to form object
+   * 
+   */
   static function formRule($fields, $files, $self) {
     if (!CRM_Utils_Array::value('cms_create_account', $fields)) {
       return TRUE;

@@ -174,7 +174,6 @@ WHERE e.id = %1";
    * @access public
    * @static
    */
-
   public static function deleteLocBlock($locBlockId) {
     if (!$locBlockId) {
       return;
@@ -300,12 +299,11 @@ WHERE e.id = %1";
   }
 
   /* Function to copy or update location block.
-     *
-     * @param  int  $locBlockId  location block id.
-     * @param  int  $updateLocBlockId update location block id
-     * @return int  newly created/updated location block id.
-     */
-
+   *
+   * @param  int  $locBlockId  location block id.
+   * @param  int  $updateLocBlockId update location block id
+   * @return int  newly created/updated location block id.
+   */
   static function copyLocBlock($locBlockId, $updateLocBlockId = NULL) {
     //get the location info.
     $defaults = $updateValues = array();

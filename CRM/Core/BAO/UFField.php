@@ -361,9 +361,9 @@ WHERE cf.id IN (". $customFieldIds .") AND is_multiple = 1 LIMIT 0,1";
   }
 
   /*
-     * Function to find out whether given profile group using Activity
-     * Profile fields with contact fields
-     */
+   * Function to find out whether given profile group using Activity
+   * Profile fields with contact fields
+   */
   static function checkContactActivityProfileType($ufGroupId) {
     $ufGroup = new CRM_Core_DAO_UFGroup();
     $ufGroup->id = $ufGroupId;
@@ -408,15 +408,15 @@ WHERE cf.id IN (". $customFieldIds .") AND is_multiple = 1 LIMIT 0,1";
   }
 
   /* Function to find out whether given profile group uses $required 
-     * and/or $optionalprofile types
-     *  
-     * @param integer $ufGroupId  profile id
-     * @param array   $required   array of types those are required
-     * @param array   $optional   array of types those are optional
-     *
-     * @return boolean $valid  
-     * @static
-     */
+   * and/or $optionalprofile types
+   *  
+   * @param integer $ufGroupId  profile id
+   * @param array   $required   array of types those are required
+   * @param array   $optional   array of types those are optional
+   *
+   * @return boolean $valid  
+   * @static
+   */
   static function checkValidProfileType($ufGroupId, $required, $optional = NULL) {
     if (!is_array($required) || empty($required)) {
       return;
@@ -711,22 +711,22 @@ SELECT  id
   }
 
   /**
-     * Add fields to $profileAddressFields as appropriate.
-     * profileAddressFields is assigned to the template to tell it
-     * what fields are in the profile address
-     * that potentially should be copied to the Billing fields
-     * we want to give precedence to 
-     *   1) Billing & 
-     *   2) then Primary designated as 'Primary
-     *   3) location_type is primary
-     *   4) if none of these apply then it just uses the first one
-     *   
-     *   as this will be used to
-     * transfer profile address data to billing fields
-     * http://issues.civicrm.org/jira/browse/CRM-5869
-     * @param string $key Field key - e.g. street_address-Primary, first_name
-     * @params array $profileAddressFields array of profile fields that relate to address fields
-     */
+   * Add fields to $profileAddressFields as appropriate.
+   * profileAddressFields is assigned to the template to tell it
+   * what fields are in the profile address
+   * that potentially should be copied to the Billing fields
+   * we want to give precedence to 
+   *   1) Billing & 
+   *   2) then Primary designated as 'Primary
+   *   3) location_type is primary
+   *   4) if none of these apply then it just uses the first one
+   *   
+   *   as this will be used to
+   * transfer profile address data to billing fields
+   * http://issues.civicrm.org/jira/browse/CRM-5869
+   * @param string $key Field key - e.g. street_address-Primary, first_name
+   * @params array $profileAddressFields array of profile fields that relate to address fields
+   */
   static function assignAddressField($key, &$profileAddressFields) {
     $billing_id = CRM_Core_BAO_LocationType::getBilling();
     list($prefixName, $index) = CRM_Utils_System::explode('-', $key, 2);

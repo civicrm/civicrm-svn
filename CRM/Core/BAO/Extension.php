@@ -53,8 +53,7 @@ class CRM_Core_BAO_Extension extends CRM_Core_DAO_Extension {
    * @access public
    * @static
    */
-  static
-  function retrieve(&$params, &$defaults) {
+  static function retrieve(&$params, &$defaults) {
     $extension = new CRM_Core_DAO_Extension();
     $extension->copyValues($params);
     if ($extension->find(TRUE)) {
@@ -74,8 +73,7 @@ class CRM_Core_BAO_Extension extends CRM_Core_DAO_Extension {
    * @access public
    * @static
    */
-  static
-  function del($id) {
+  static function del($id) {
     $extension = new CRM_Core_DAO_Extension();
     $extension->id = $id;
     return $extension->delete();

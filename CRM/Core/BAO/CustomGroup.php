@@ -1899,126 +1899,123 @@ SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 
             return $retValue;
           }
 
-          /**
-           * Get the custom group titles by custom field ids.
-           *
-           * @param  array $fieldIds    - array of custom field ids.
-           *
-           * @return array $groupLabels - array consisting of groups and fields labels with ids.
-           * @access public
-           */
-          function getGroupTitles($fieldIds) {
-            if (!is_array($fieldIds) && empty($fieldIds)) {
-              return;
-            }
-
-            $groupLabels = array();
-            $fIds = "(" . implode(',', $fieldIds) . ")";
-
-            $query = "
+  /**
+   * Get the custom group titles by custom field ids.
+   *
+   * @param  array $fieldIds    - array of custom field ids.
+   *
+   * @return array $groupLabels - array consisting of groups and fields labels with ids.
+   * @access public
+   */
+  function getGroupTitles($fieldIds) {
+    if (!is_array($fieldIds) && empty($fieldIds)) {
+      return;
+    }
+    
+    $groupLabels = array();
+    $fIds = "(" . implode(',', $fieldIds) . ")";
+    
+    $query = "
 SELECT  civicrm_custom_group.id as groupID, civicrm_custom_group.title as groupTitle,
         civicrm_custom_field.label as fieldLabel, civicrm_custom_field.id as fieldID
   FROM  civicrm_custom_group, civicrm_custom_field
  WHERE  civicrm_custom_group.id = civicrm_custom_field.custom_group_id
    AND  civicrm_custom_field.id IN {$fIds}";
 
-            $dao = CRM_Core_DAO::executeQuery($query);
-            while ($dao->fetch()) {
-              $groupLabels[$dao->fieldID] = array(
-                'fieldID' => $dao->fieldID,
-                'fieldLabel' => $dao->fieldLabel,
-                'groupID' => $dao->groupID,
-                'groupTitle' => $dao->groupTitle,
-              );
-            }
+    $dao = CRM_Core_DAO::executeQuery($query);
+    while ($dao->fetch()) {
+      $groupLabels[$dao->fieldID] = array(
+        'fieldID' => $dao->fieldID,
+        'fieldLabel' => $dao->fieldLabel,
+        'groupID' => $dao->groupID,
+        'groupTitle' => $dao->groupTitle,
+       );
+    }
 
-            return $groupLabels;
-          }
-
+    return $groupLabels;
+  }
+  
   static function dropAllTables() {
-            $query = "SELECT table_name FROM civicrm_custom_group";
-            $dao = CRM_Core_DAO::executeQuery($query);
+    $query = "SELECT table_name FROM civicrm_custom_group";
+    $dao = CRM_Core_DAO::executeQuery($query);
+    
+    while ($dao->fetch()) {
+      $query = "DROP TABLE IF EXISTS {$dao->table_name}";
+      CRM_Core_DAO::executeQuery($query);
+    }
+  }
+  
+  /**
+   * Check whether custom group is empty or not.
+   *
+   * @param   int $gID    - custom group id.
+   *
+   * @return boolean true if empty otherwise false.
+   * @access public
+   */
+  function isGroupEmpty($gID) {
+    if (!$gID) {
+      return;
+    }
+    
+    $tableName = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_CustomGroup',
+       $gID,
+       'table_name'
+      );
 
-            while ($dao->fetch()) {
-              $query = "DROP TABLE IF EXISTS {$dao->table_name}";
-              CRM_Core_DAO::executeQuery($query);
-            }
-          }
-
-          /**
-           * Check whether custom group is empty or not.
-           *
-           * @param   int $gID    - custom group id.
-           *
-           * @return boolean true if empty otherwise false.
-           * @access public
-           */
-          function isGroupEmpty($gID) {
-            if (!$gID) {
-              return;
-            }
-
-            $tableName = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_CustomGroup',
-              $gID,
-              'table_name'
-            );
-
-            $query = "SELECT count(id) FROM {$tableName} WHERE id IS NOT NULL LIMIT 1";
-            $value = CRM_Core_DAO::singleValueQuery($query);
-
-            if (empty($value)) {
-              return TRUE;
-            }
-
-            return FALSE;
-          }
-
-          /**
-           * Get the list of types for objects that a custom group extends to.
-           *
-           * @param  array $types - var which should have the list appended.
-           *
-           * @return array of types.
-           * @access public
-           */
+    $query = "SELECT count(id) FROM {$tableName} WHERE id IS NOT NULL LIMIT 1";
+    $value = CRM_Core_DAO::singleValueQuery($query);
+    
+    if (empty($value)) {
+      return TRUE;
+    }
+    
+    return FALSE;
+  }
+  
+  /**
+   * Get the list of types for objects that a custom group extends to.
+   *
+   * @param  array $types - var which should have the list appended.
+   *
+   * @return array of types.
+   * @access public
+   */
   static function getExtendedObjectTypes(&$types = array( )) {
-            static $flag = FALSE, $objTypes = array();
-
-            if (!$flag) {
-              $extendObjs = array();
-              CRM_Core_OptionValue::getValues(array('name' => 'cg_extend_objects'), $extendObjs);
-
-              foreach ($extendObjs as $ovId => $ovValues) {
-                if ($ovValues['description']) {
-                  // description is expected to be a callback func to subtypes
-                  list($callback, $args) = explode(';', trim($ovValues['description']));
-
-                  if (!empty($args)) {
-                    eval('$args = ' . $args . ';');
-                  }
-                  else {
-                    $args = array();
-                  }
-
-                  if (!is_array($args)) {
-                    CRM_Core_Error::fatal('Arg is not of type array');
-                  }
-
-                  list($className) = explode('::', $callback);
-                  require_once (str_replace('_',
-                      DIRECTORY_SEPARATOR,
-                      $className
-                    ) . '.php');
-
-                  $objTypes[$ovValues['value']] = call_user_func_array($callback, $args);
-                }
-              }
-              $flag = TRUE;
-            }
-
-            $types = array_merge($types, $objTypes);
-            return $objTypes;
+    static $flag = FALSE, $objTypes = array();
+    
+    if (!$flag) {
+      $extendObjs = array();
+      CRM_Core_OptionValue::getValues(array('name' => 'cg_extend_objects'), $extendObjs);
+      
+      foreach ($extendObjs as $ovId => $ovValues) {
+        if ($ovValues['description']) {
+          // description is expected to be a callback func to subtypes
+          list($callback, $args) = explode(';', trim($ovValues['description']));
+          
+          if (!empty($args)) {
+            eval('$args = ' . $args . ';');
           }
+          else {
+            $args = array();
+          }
+          
+          if (!is_array($args)) {
+            CRM_Core_Error::fatal('Arg is not of type array');
+          }
+          
+          list($className) = explode('::', $callback);
+          require_once (str_replace('_',DIRECTORY_SEPARATOR, $className) . '.php');
+          
+          $objTypes[$ovValues['value']] = call_user_func_array($callback, $args);
+        }
+      }
+      $flag = TRUE;
+    }
+    
+    $types = array_merge($types, $objTypes);
+    return $objTypes;
+  }
   
   function hasReachedMaxLimit($customGroupId, $entityId) {
     //check whether the group is multiple

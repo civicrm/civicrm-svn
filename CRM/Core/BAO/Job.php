@@ -117,7 +117,7 @@ class CRM_Core_BAO_Job extends CRM_Core_DAO_Job {
 
     if ( $count <= $maxEntriesToKeep) {
       return;
-}
+    }
 
     $count = $count - $maxEntriesToKeep;
 

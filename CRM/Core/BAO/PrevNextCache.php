@@ -289,7 +289,6 @@ AND        c.created_date < date_sub( NOW( ), INTERVAL %2 day )
    * $action select   - select a particular contact
    *         unselect - unselect a particular contact
    */
-
   static function markSelection($cacheKey, $action = 'unselect', $cIds = NULL, $entity_table = 'civicrm_contact') {
     if (!$cacheKey) {
       return;
