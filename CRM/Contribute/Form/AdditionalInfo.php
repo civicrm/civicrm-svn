@@ -188,7 +188,7 @@ class CRM_Contribute_Form_AdditionalInfo {
   }
 
   /**
-   * TODO: Delete this function; it is never called.
+   * This function is used by  CRM_Contribute_Form_AdditionalInfo
    *
    * Function to build the form for PaymentReminders Information.
    *
