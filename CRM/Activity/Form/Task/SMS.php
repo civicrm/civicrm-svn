@@ -51,7 +51,8 @@ class CRM_Activity_Form_Task_SMS extends CRM_Activity_Form_Task {
    *
    * @return void
    * @access public
-   */ function preProcess() {
+   */
+  function preProcess() {
     parent::preProcess();
     CRM_Contact_Form_Task_SMSCommon::preProcessProvider($this);
     $this->assign('single', $this->_single);

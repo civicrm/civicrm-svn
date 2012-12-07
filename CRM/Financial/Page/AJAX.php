@@ -43,7 +43,6 @@ class CRM_Financial_Page_AJAX {
    * Function for building Event Type combo box
    */
   function financialAccount() {
-    require_once 'CRM/Utils/Type.php';
     $name = trim( CRM_Utils_Type::escape( $_GET['s'], 'String' ) );
     if (!$name) {
       $name = '%';
@@ -171,10 +170,8 @@ ORDER by f.name";
       empty( $_GET['_value'] ) ) {
         CRM_Utils_System::civiExit( );
     }
-    require_once 'CRM/Core/DAO.php';
+
     $elements = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_Product', $_GET['_value'], 'financial_type_id' );
-    
-    require_once "CRM/Utils/JSON.php";
     echo json_encode( $elements );
     CRM_Utils_System::civiExit( );
   }

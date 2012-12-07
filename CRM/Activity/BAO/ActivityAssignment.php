@@ -73,8 +73,7 @@ class CRM_Activity_BAO_ActivityAssignment extends CRM_Activity_DAO_ActivityAssig
    * @access public
    *
    */
-  static
-  function retrieveAssigneeIdsByActivityId($activity_id) {
+  static function retrieveAssigneeIdsByActivityId($activity_id) {
     $assigneeArray = array();
     if (!CRM_Utils_Rule::positiveInteger($activity_id)) {
       return $assigneeArray;
@@ -106,8 +105,7 @@ class CRM_Activity_BAO_ActivityAssignment extends CRM_Activity_DAO_ActivityAssig
    * @access public
    *
    */
-  static
-  function getAssigneeNames($activityID, $isDisplayName = FALSE, $skipDetails = TRUE) {
+  static function getAssigneeNames($activityID, $isDisplayName = FALSE, $skipDetails = TRUE) {
     $assigneeNames = array();
     if (empty($activityID)) {
       return $assigneeNames;

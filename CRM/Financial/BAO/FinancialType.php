@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Financial/DAO/FinancialType.php';
-
 class CRM_Financial_BAO_FinancialType extends CRM_Financial_DAO_FinancialType {
 
   /**

@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Financial/DAO/EntityFinancialAccount.php';
-
 class CRM_Financial_BAO_FinancialTypeAccount extends CRM_Financial_DAO_EntityFinancialAccount {
   /**
    * static holder for the default LT

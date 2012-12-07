@@ -139,8 +139,6 @@ class CRM_Financial_Page_FinancialType extends CRM_Core_Page_Basic {
   function browse() {
     // get all custom groups sorted by weight
     $financialType = array();
-    require_once 'CRM/Financial/DAO/FinancialType.php';
-    require_once 'CRM/Contribute/PseudoConstant.php';
     $dao = new CRM_Financial_DAO_FinancialType();
     $dao->is_current_revision =1;
     $dao->orderBy('name');

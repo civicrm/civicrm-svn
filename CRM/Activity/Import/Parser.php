@@ -192,7 +192,9 @@ abstract class CRM_Activity_Import_Parser {
    *
    * @var boolean
    */
-  protected $_haveColumnHeader; function __construct() {
+  protected $_haveColumnHeader;
+  
+  function __construct() {
     $this->_maxLinesToProcess = 0;
     $this->_maxErrorCount = self::MAX_ERRORS;
   }
@@ -596,8 +598,7 @@ abstract class CRM_Activity_Import_Parser {
    * @return void
    * @access public
    */
-  static
-  function exportCSV($fileName, $header, $data) {
+  static function exportCSV($fileName, $header, $data) {
     $output = array();
     $fd = fopen($fileName, 'w');
 
@@ -627,8 +628,7 @@ abstract class CRM_Activity_Import_Parser {
    * @static
    * @access public
    */
-  static
-  function encloseScrub(&$values, $enclosure = "'") {
+  static function encloseScrub(&$values, $enclosure = "'") {
     if (empty($values)) {
       return;
     }

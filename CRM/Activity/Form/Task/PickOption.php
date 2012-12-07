@@ -68,11 +68,12 @@ class CRM_Activity_Form_Task_PickOption extends CRM_Activity_Form_Task {
    *
    * @return void
    * @access public
-   */ function preProcess() {
+   */
+  function preProcess() {
     /*
-         * initialize the task and row fields
-         */
-
+     * initialize the task and row fields
+     */
+      
     parent::preProcess();
     $session = CRM_Core_Session::singleton();
     $this->_userContext = $session->readUserContext();
@@ -126,8 +127,7 @@ class CRM_Activity_Form_Task_PickOption extends CRM_Activity_Form_Task {
    * @static
    * @access public
    */
-  static
-  function formRule($fields) {
+  static function formRule($fields) {
     if ( !isset($fields['with_contact']) &&
       !isset($fields['assigned_to']) &&
       !isset($fields['created_by'])
@@ -144,7 +144,6 @@ class CRM_Activity_Form_Task_PickOption extends CRM_Activity_Form_Task {
    *
    * @return None
    */
-
   public function postProcess() {
     // Clear any formRule errors from Email form in case they came back here via Cancel button
     $this->controller->resetPage('Email');

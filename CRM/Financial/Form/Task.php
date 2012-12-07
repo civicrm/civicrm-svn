@@ -34,10 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/SelectValues.php';
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Financial/Form/Task.php';
-require_once 'CRM/Financial/Task.php';
 /**
  * This class generates form components for relationship
  * 
@@ -107,7 +103,6 @@ class CRM_Financial_Form_Task extends CRM_Core_Form {
         }
       }
     } else {
-      require_once 'CRM/Contribute/Form/Search/Custom/BatchSearch.php';
       $sear = new CRM_Contribute_Form_Search_Custom_BatchSearch( $values );
       $result = $sear->all();
       $dao = CRM_Core_DAO::executeQuery( $result );
@@ -132,7 +127,6 @@ class CRM_Financial_Form_Task extends CRM_Core_Form {
     $session = CRM_Core_Session::singleton( );
     
     $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $form );
-    require_once 'CRM/Utils/Rule.php';
     $urlParams = 'force=1';
     if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
     

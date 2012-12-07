@@ -131,7 +131,8 @@ class CRM_Pledge_Form_Search extends CRM_Core_Form {
    *
    * @return void
    * @access public
-   */ function preProcess() {
+   */
+  function preProcess() {
 
     /**
      * set the button names
@@ -144,10 +145,9 @@ class CRM_Pledge_Form_Search extends CRM_Core_Form {
     $this->defaults = array();
 
     /* 
-         * we allow the controller to set force/reset externally, useful when we are being 
-         * driven by the wizard framework 
-         */
-
+     * we allow the controller to set force/reset externally, useful when we are being 
+     * driven by the wizard framework 
+     */
     $this->_reset   = CRM_Utils_Request::retrieve('reset', 'Boolean', CRM_Core_DAO::$_nullObject);
     $this->_force   = CRM_Utils_Request::retrieve('force', 'Boolean', $this, FALSE);
     $this->_limit   = CRM_Utils_Request::retrieve('limit', 'Positive', $this);
@@ -226,10 +226,9 @@ class CRM_Pledge_Form_Search extends CRM_Core_Form {
     CRM_Pledge_BAO_Query::buildSearchForm($this);
 
     /* 
-         * add form checkboxes for each row. This is needed out here to conform to QF protocol 
-         * of all elements being declared in builQuickForm 
-         */
-
+     * add form checkboxes for each row. This is needed out here to conform to QF protocol 
+     * of all elements being declared in builQuickForm 
+     */
     $rows = $this->get('rows');
     if (is_array($rows)) {
 
@@ -405,8 +404,7 @@ class CRM_Pledge_Form_Search extends CRM_Core_Form {
    * @static
    * @access public
    */
-  static
-  function formRule($fields) {
+  static function formRule($fields) {
     $errors = array();
 
     if (!empty($errors)) {

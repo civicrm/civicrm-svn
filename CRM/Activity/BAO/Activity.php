@@ -1538,7 +1538,6 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
    * @access public
    * @static
    */
-
   static function sendSMSMessage($toID,
     &$tokenText,
     &$tokenHtml,

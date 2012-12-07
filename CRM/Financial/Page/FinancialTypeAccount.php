@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page/Basic.php';
-
 /**
  * Page for displaying list of financial types
  */
@@ -133,10 +131,6 @@ class CRM_Financial_Page_FinancialTypeAccount extends CRM_Core_Page {
   function browse() {
     // get all custom groups sorted by weight
     $financialType = array();
-    require_once 'CRM/Financial/DAO/EntityFinancialAccount.php';
-    require_once  "CRM/Core/OptionGroup.php";
-    require_once 'CRM/Financial/BAO/FinancialAccount.php';
-    require_once 'CRM/Contact/BAO/Contact.php';
     $params = array();
     $dao = new CRM_Financial_DAO_EntityFinancialAccount();
     $params['entity_id'] = $this->_aid;

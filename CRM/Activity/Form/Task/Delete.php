@@ -53,7 +53,8 @@ class CRM_Activity_Form_Task_Delete extends CRM_Activity_Form_Task {
    *
    * @return void
    * @access public
-   */ function preProcess() {
+   */
+  function preProcess() {
     parent::preProcess();
   }
 

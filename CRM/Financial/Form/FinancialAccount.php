@@ -34,9 +34,6 @@
  *
  */
 
-require_once 'CRM/Contribute/Form.php';
-require_once 'CRM/Core/PseudoConstant.php';
-
 /**
  * This class generates form components for Financial Type
  * 
@@ -130,7 +127,6 @@ class CRM_Financial_Form_FinancialAccount extends CRM_Contribute_Form {
    * @return None
    */
   public function postProcess() {
-    require_once 'CRM/Financial/BAO/FinancialAccount.php';
     if ($this->_action & CRM_Core_Action::DELETE) {
       CRM_Financial_BAO_FinancialAccount::del($this->_id);
       CRM_Core_Session::setStatus( ts('Selected Financial Account has been deleted.') );

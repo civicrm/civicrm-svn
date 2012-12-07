@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Financial/DAO/FinancialAccount.php';
-
 class CRM_Financial_BAO_FinancialAccount extends CRM_Financial_DAO_FinancialAccount {
 
   /**
@@ -169,7 +167,6 @@ class CRM_Financial_BAO_FinancialAccount extends CRM_Financial_DAO_FinancialAcco
     }
       
     //delete from financial Type table
-    require_once 'CRM/Contribute/DAO/Contribution.php';
     $financialAccount = new CRM_Financial_DAO_FinancialAccount( );
     $financialAccount->id = $financialAccountId;
     $financialAccount->delete();

@@ -34,9 +34,6 @@
  *
  */
 
-require_once 'CRM/Financial/Form/Task.php';
-require_once 'CRM/Core/BAO/Batch.php';
-
 /**
  * This class provides the functionality to delete a group of
  * contributions. This class provides functionality for the actual

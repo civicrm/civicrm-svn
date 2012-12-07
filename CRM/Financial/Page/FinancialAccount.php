@@ -34,8 +34,6 @@
  *
  */
 
-require_once 'CRM/Core/Page/Basic.php';
-
 /**
  * Page for displaying list of financial types
  */
@@ -135,7 +133,6 @@ class CRM_Financial_Page_FinancialAccount extends CRM_Core_Page_Basic {
   function browse() {
     // get all custom groups sorted by weight
     $contributionType = array();
-    require_once 'CRM/Financial/DAO/FinancialAccount.php';
     $dao = new CRM_Financial_DAO_FinancialAccount();
     $dao->orderBy('name');
     $dao->find();
