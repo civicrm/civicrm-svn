@@ -188,7 +188,7 @@ class CRM_Contribute_Form_AdditionalInfo {
   }
 
   /**
-   * This function is used by  CRM_Contribute_Form_AdditionalInfo
+   * This function is used by  CRM/Pledge/Form/Pledge.php
    *
    * Function to build the form for PaymentReminders Information.
    *
