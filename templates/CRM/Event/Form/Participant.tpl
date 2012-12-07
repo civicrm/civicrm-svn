@@ -159,7 +159,7 @@
 
       {if $action eq 8} {* If action is Delete *}
         <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
-        <div class="crm-participant-form-block-delete messages status">
+        <div class="crm-participant-form-block-delete messages status no-popup">
           <div class="crm-content">
             <div class="icon inform-icon"></div> &nbsp;
             {ts}WARNING: Deleting this registration will result in the loss of related payment records (if any).{/ts} {ts}Do you want to continue?{/ts}
