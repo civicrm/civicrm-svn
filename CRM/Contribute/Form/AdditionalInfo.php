@@ -1,28 +1,28 @@
 <?php
 /*
- +--------------------------------------------------------------------+
- | CiviCRM version 4.2                                                |
- +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2012                                |
- +--------------------------------------------------------------------+
- | This file is a part of CiviCRM.                                    |
- |                                                                    |
- | CiviCRM is free software; you can copy, modify, and distribute it  |
- | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
- |                                                                    |
- | CiviCRM is distributed in the hope that it will be useful, but     |
- | WITHOUT ANY WARRANTY; without even the implied warranty of         |
- | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
- | See the GNU Affero General Public License for more details.        |
- |                                                                    |
- | You should have received a copy of the GNU Affero General Public   |
- | License and the CiviCRM Licensing Exception along                  |
- | with this program; if not, contact CiviCRM LLC                     |
- | at info[AT]civicrm[DOT]org. If you have questions about the        |
- | GNU Affero General Public License or the licensing of CiviCRM,     |
- | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
- +--------------------------------------------------------------------+
+  +--------------------------------------------------------------------+
+  | CiviCRM version 4.2                                                |
+  +--------------------------------------------------------------------+
+  | Copyright CiviCRM LLC (c) 2004-2012                                |
+  +--------------------------------------------------------------------+
+  | This file is a part of CiviCRM.                                    |
+  |                                                                    |
+  | CiviCRM is free software; you can copy, modify, and distribute it  |
+  | under the terms of the GNU Affero General Public License           |
+  | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+  |                                                                    |
+  | CiviCRM is distributed in the hope that it will be useful, but     |
+  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+  | See the GNU Affero General Public License for more details.        |
+  |                                                                    |
+  | You should have received a copy of the GNU Affero General Public   |
+  | License and the CiviCRM Licensing Exception along                  |
+  | with this program; if not, contact CiviCRM LLC                     |
+  | at info[AT]civicrm[DOT]org. If you have questions about the        |
+  | GNU Affero General Public License or the licensing of CiviCRM,     |
+  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+  +--------------------------------------------------------------------+
 */
 
 /**
@@ -100,7 +100,7 @@ class CRM_Contribute_Form_AdditionalInfo {
 
     // add various amounts
     $element = & $form->add('text', 'non_deductible_amount', ts('Non-deductible Amount'),
-      $attributes['non_deductible_amount']
+               $attributes['non_deductible_amount']
     );
     $form->addRule('non_deductible_amount', ts('Please enter a valid monetary value for Non-deductible Amount.'), 'money');
 
@@ -108,21 +108,21 @@ class CRM_Contribute_Form_AdditionalInfo {
       $element->freeze();
     }
     $element = & $form->add('text', 'fee_amount', ts('Fee Amount'),
-      $attributes['fee_amount']
+               $attributes['fee_amount']
     );
     $form->addRule('fee_amount', ts('Please enter a valid monetary value for Fee Amount.'), 'money');
     if ($form->_online) {
       $element->freeze();
     }
     $element = & $form->add('text', 'net_amount', ts('Net Amount'),
-      $attributes['net_amount']
+               $attributes['net_amount']
     );
     $form->addRule('net_amount', ts('Please enter a valid monetary value for Net Amount.'), 'money');
     if ($form->_online) {
       $element->freeze();
     }
     $element = & $form->add('text', 'invoice_id', ts('Invoice ID'),
-      $attributes['invoice_id']
+               $attributes['invoice_id']
     );
     if ($form->_online) {
       $element->freeze();
@@ -140,7 +140,7 @@ class CRM_Contribute_Form_AdditionalInfo {
       array(
         '' => ts('- select -')
       ) +
-        CRM_Contribute_PseudoConstant::contributionPage()
+      CRM_Contribute_PseudoConstant::contributionPage()
     );
 
 
@@ -196,16 +196,17 @@ class CRM_Contribute_Form_AdditionalInfo {
    *
    * @return void
    *
+   */
   function buildPaymentReminders(&$form) {
-  //PaymentReminders section
-  $form->add('hidden', 'hidden_PaymentReminders', 1);
-  $form->add('text', 'initial_reminder_day', ts('Send Initial Reminder'), array('size' => 3));
-  $this->addRule('initial_reminder_day', ts('Please enter a valid reminder day.'), 'positiveInteger');
-  $form->add('text', 'max_reminders', ts('Send up to'), array('size' => 3));
-  $this->addRule('max_reminders', ts('Please enter a valid No. of reminders.'), 'positiveInteger');
-  $form->add('text', 'additional_reminder_day', ts('Send additional reminders'), array('size' => 3));
-  $this->addRule('additional_reminder_day', ts('Please enter a valid additional reminder day.'), 'positiveInteger');
-  }*/
+    //PaymentReminders section
+    $form->add('hidden', 'hidden_PaymentReminders', 1);
+    $form->add('text', 'initial_reminder_day', ts('Send Initial Reminder'), array('size' => 3));
+    $this->addRule('initial_reminder_day', ts('Please enter a valid reminder day.'), 'positiveInteger');
+    $form->add('text', 'max_reminders', ts('Send up to'), array('size' => 3));
+    $this->addRule('max_reminders', ts('Please enter a valid No. of reminders.'), 'positiveInteger');
+    $form->add('text', 'additional_reminder_day', ts('Send additional reminders'), array('size' => 3));
+    $this->addRule('additional_reminder_day', ts('Please enter a valid additional reminder day.'), 'positiveInteger');
+  }
 
   /**
    * Function to process the Premium Information
