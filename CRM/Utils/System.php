@@ -160,14 +160,19 @@ class CRM_Utils_System {
     return $config->userSystem->theme($type, $content, $args, $print, $ret, $maintenance);
   }
 
+  /**
+   * Generate a query string if input is an array
+   *
+   * @param mixed $query: array or string
+   * @return str
+   *
+   * @static
+   */
   static function makeQueryString($query) {
     if (is_array($query)) {
       $buf = '';
       foreach ($query as $key => $value) {
-        if ($buf != '') {
-          $buf .= '&';
-        }
-        $buf .= urlencode($key) . '=' . urlencode($value);
+        $buf .= ($buf ? '&' : '') . urlencode($key) . '=' . urlencode($value);
       }
       $query = $buf;
     }
