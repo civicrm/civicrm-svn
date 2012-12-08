@@ -68,7 +68,6 @@ packages/jquery/plugins/jquery.ui.datepicker.validation.pack.js
 packages/jquery/plugins/jquery-fieldselection.js
 
 packages/jquery/plugins/jquery.jeditable.mini.js
-packages/jquery/plugins/jquery.mustache.js
 
 packages/jquery/plugins/jquery.blockUI.js
 

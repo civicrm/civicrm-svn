@@ -68,7 +68,6 @@
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery-fieldselection.js"></script>
 
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.jeditable.mini.js"></script>
-<script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.mustache.js"></script>
 
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.blockUI.js"></script>
 
