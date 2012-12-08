@@ -81,15 +81,13 @@ class CRM_Upgrade_Incremental_php_FourThree {
       civicrm_wp_set_capabilities( );
     }
 
+    // Update phones CRM-11292.
+    $this->addTask(ts('Upgrade Phone Numbers'), 'phoneNumeric');
+
     // Rebuild logging schema and triggers
     // CRM-9716 CRM-11418
     $logging = new CRM_Logging_Schema();
     $logging->fixSchemaDifferences();
-
-    // Update phones CRM-11292.
-    CRM_Core_DAO::executeQuery(CRM_Contact_BAO_Contact::DROP_STRIP_FUNCTION_43);
-    CRM_Core_DAO::executeQuery(CRM_Contact_BAO_Contact::CREATE_STRIP_FUNCTION_43);
-    CRM_Core_DAO::executeQuery("UPDATE civicrm_phone SET phone_numeric = civicrm_strip_non_numeric(phone)");
 
     return TRUE;
   }
@@ -190,6 +188,15 @@ AND TABLE_SCHEMA = '{$dbUf['database']}'";
     }
 
     return TRUE;
+  }
+
+  /**
+   * Update phones CRM-11292
+   */
+  function phoneNumeric() {
+    CRM_Core_DAO::executeQuery(CRM_Contact_BAO_Contact::DROP_STRIP_FUNCTION_43);
+    CRM_Core_DAO::executeQuery(CRM_Contact_BAO_Contact::CREATE_STRIP_FUNCTION_43);
+    CRM_Core_DAO::executeQuery("UPDATE civicrm_phone SET phone_numeric = civicrm_strip_non_numeric(phone)");
   }
 
   /**
