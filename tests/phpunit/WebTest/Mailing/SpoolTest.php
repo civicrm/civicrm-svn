@@ -26,6 +26,9 @@
 
 
 require_once 'CiviTest/CiviSeleniumTestCase.php';
+require_once 'CiviTest/CiviMailUnitTest.php';
+require_once 'ezc/Base/src/ezc_bootstrap.php';
+require_once 'ezc/autoload/mail_autoload.php';
 class WebTest_Mailing_SpoolTest extends CiviSeleniumTestCase {
 
   protected function setUp() {
@@ -37,53 +40,42 @@ class WebTest_Mailing_SpoolTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath);
     $this->webtestLogin();
 
-    // Change outbound mail setting
-    $this->open($this->sboxPath . "civicrm/admin/setting/smtp?reset=1");
-    $this->waitForElementPresent("_qf_Smtp_next");
-    $this->click("xpath=//input[@name='outBound_option' and @value='4']");
-    $this->click("_qf_Smtp_next");
-    $this->waitForPageToLoad("30000");
-    
-    // Is there supposed to be a status message displayed when outbound email settings are changed?
-    // assert something?
+    // Start spooling mail
+    $mut = new CiviMailUnitTest( $this, true );
 
+    // Add a contact
     $fname = substr(sha1(rand()), 0, 6);
     $lname = substr(sha1(rand()), 0, 6);
     $email = $this->webtestAddContact($fname, $lname, TRUE);
 
+    // Get the contact id of the newly added contact
     $urlElements = $this->parseURL();
     $cid = $urlElements['queryString']['cid'];
     $this->assertNotEmpty( $cid, 'Could not find cid after adding contact' );
 
-    // Create an email to the added contact
+    // Send an email to the added contact
     $this->open( $this->sboxPath . 'civicrm/activity/email/add?action=add&reset=1&cid=' . $cid . '&selectedChild=activity&atype=3' );
     $this->waitForPageToLoad("30000");
     $this->type( 'subject', 'test spool' );
     $this->fillRichTextField( 'html_message', 'Unit tests keep children safe.' );
     $this->click( "_qf_Email_upload" );
 
-    $this->open( $this->sboxPath . 'civicrm/mailing/browse/archived?reset=1' );
-// I don't understand but for some reason we have to load the page twice for our mailing to appear.
-    $this->waitForPageToLoad("30000");
-    $this->open( $this->sboxPath . 'civicrm/mailing/browse/archived?reset=1' );
-    $this->waitForElementPresent( 'css=td.crm-mailing-name' );
-
-    $this->assertText( 'css=td.crm-mailing-name', 'test spool' );
-
-    // should always be mid=1 if starting with a blank sandbox
-    // alternatively could click the Report link but not sure how to select it since it wouldn't be unique if there was more than one
-    $this->open( $this->sboxPath . 'civicrm/mailing/report?mid=1&reset=1' );
-
-    // Not sure how robust this is if text changes, but there isn't a good
-    // identifier for this link either.
-    $this->waitForElementPresent( '//a[contains(text(), "View complete message")]' );
-    $this->click( '//a[contains(text(), "View complete message")]' );
-
-    $this->waitForPopUp( null, 30000 );
-    $this->selectPopUp( null );
-    $msg = $this->getBodyText();
+    // Retrieve an ezc mail object version of the email
+    //$msg = $mut->getMostRecentEmail( 'ezc' );
+    $msg = $mut->getMostRecentEmail( 'raw' );
     $this->assertNotEmpty( $msg, 'Mail message empty or not found.' );
-    echo $msg;
-//TODO: parse msg (using EZC?) and check it matches. Consider providing reusable class to do common parsing for unit testing emails.
+    return;
+
+    print_r($msg);
+    $context = new ezcMailPartWalkContext( array( get_class($this), 'mailWalkCallback' ) );
+    $msg->walkParts( $context, $msg );
+  }
+
+  public static function mailWalkCallback( $context, $mailPart ) {
+    print_r($mailPart);
+    $disp = $mailPart->contentDisposition;
+    if ( $disp ) {
+      print_r($disp);
+    }
   }
 }
