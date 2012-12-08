@@ -86,7 +86,9 @@ class CRM_Upgrade_Incremental_php_FourThree {
     $logging = new CRM_Logging_Schema();
     $logging->fixSchemaDifferences();
 
-    // Update phones CRM-11292. This must happen after trigger rebuild
+    // Update phones CRM-11292.
+    CRM_Core_DAO::executeQuery(CRM_Contact_BAO_Contact::DROP_STRIP_FUNCTION_43);
+    CRM_Core_DAO::executeQuery(CRM_Contact_BAO_Contact::CREATE_STRIP_FUNCTION_43);
     CRM_Core_DAO::executeQuery("UPDATE civicrm_phone SET phone_numeric = civicrm_strip_non_numeric(phone)");
 
     return TRUE;

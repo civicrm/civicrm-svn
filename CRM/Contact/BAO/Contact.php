@@ -34,6 +34,24 @@
  */
 class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact {
 
+  const DROP_STRIP_FUNCTION_43 = "DROP FUNCTION IF EXISTS civicrm_strip_non_numeric";
+
+  const CREATE_STRIP_FUNCTION_43 = "CREATE FUNCTION civicrm_strip_non_numeric(input VARCHAR(255))
+          RETURNS VARCHAR(255)
+          DETERMINISTIC
+          NO SQL
+        BEGIN
+          DECLARE output   VARCHAR(255) DEFAULT '';
+          DECLARE iterator INT          DEFAULT 1;
+          WHILE iterator < (LENGTH(input) + 1) DO
+            IF SUBSTRING(input, iterator, 1) IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9') THEN
+              SET output = CONCAT(output, SUBSTRING(input, iterator, 1));
+            END IF;
+            SET iterator = iterator + 1;
+          END WHILE;
+          RETURN output;
+        END";
+
   /**
    * the types of communication preferences
    *
@@ -2372,7 +2390,7 @@ AND       civicrm_openid.is_primary = 1";
     // fields that are required to calculate greeting and
     // also other fields used in tokens etc,
     // hence we need to retrieve it again.
-    $contact->find(true);
+    $contact->find(TRUE);
 
     // store object values to an array
     $contactDetails = array();
@@ -2907,23 +2925,8 @@ LEFT JOIN civicrm_address add2 ON ( add1.master_id = add2.id )
     // Update phone table to populate phone_numeric field
     if (!$tableName || $tableName == 'civicrm_phone') {
       // Define stored sql function needed for phones
-      CRM_Core_DAO::executeQuery("DROP FUNCTION IF EXISTS civicrm_strip_non_numeric");
-      CRM_Core_DAO::executeQuery("
-        CREATE FUNCTION civicrm_strip_non_numeric(input VARCHAR(255))
-          RETURNS VARCHAR(255)
-          DETERMINISTIC
-          NO SQL
-        BEGIN
-          DECLARE output   VARCHAR(255) DEFAULT '';
-          DECLARE iterator INT          DEFAULT 1;
-          WHILE iterator < (LENGTH(input) + 1) DO
-            IF SUBSTRING(input, iterator, 1) IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9') THEN
-              SET output = CONCAT(output, SUBSTRING(input, iterator, 1));
-            END IF;
-            SET iterator = iterator + 1;
-          END WHILE;
-          RETURN output;
-        END");
+      CRM_Core_DAO::executeQuery(self::DROP_STRIP_FUNCTION_43);
+      CRM_Core_DAO::executeQuery(self::CREATE_STRIP_FUNCTION_43);
       $info[] = array(
         'table' => array('civicrm_phone'),
         'when' => 'BEFORE',
