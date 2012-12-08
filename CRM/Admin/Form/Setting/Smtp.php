@@ -48,7 +48,13 @@ class CRM_Admin_Form_Setting_Smtp extends CRM_Admin_Form_Setting {
    */
   public function buildQuickForm() {
 
-    $outBoundOption = array('3' => ts('mail()'), '0' => ts('SMTP'), '1' => ts('Sendmail'), '2' => ts('Disable Outbound Email'), '4' => ts('Redirect to Database'));
+    $outBoundOption = array(
+      CRM_Mailing_Config::OUTBOUND_OPTION_MAIL => ts('mail()'),
+      CRM_Mailing_Config::OUTBOUND_OPTION_SMTP => ts('SMTP'),
+      CRM_Mailing_Config::OUTBOUND_OPTION_SENDMAIL => ts('Sendmail'),
+      CRM_Mailing_Config::OUTBOUND_OPTION_DISABLED => ts('Disable Outbound Email'),
+      CRM_Mailing_Config::OUTBOUND_OPTION_REDIRECT_TO_DB => ts('Redirect to Database'),
+    );
     $this->addRadio('outBound_option', ts('Select Mailer'), $outBoundOption);
 
     CRM_Utils_System::setTitle(ts('Settings - Outbound Mail'));
@@ -81,9 +87,9 @@ class CRM_Admin_Form_Setting_Smtp extends CRM_Admin_Form_Setting {
     $buttonName = $this->controller->getButtonName();
     // check if test button
     if ($buttonName == $this->_testButtonName) {
-      if ($formValues['outBound_option'] == 2) {
+      if ($formValues['outBound_option'] == CRM_Mailing_Config::OUTBOUND_OPTION_DISABLED) {
         CRM_Core_Session::setStatus(ts('You have selected "Disable Outbound Email". A test email can not be sent.'), ts("Email Disabled"), "error");
-      } elseif ( $formValues['outBound_option'] == 4 ) {
+      } elseif ( $formValues['outBound_option'] == CRM_Mailing_Config::OUTBOUND_OPTION_REDIRECT_TO_DB ) {
         CRM_Core_Session::setStatus(ts('You have selected "Redirect to Database". A test email can not be sent.'), ts("Email Disabled"), "error");
       }
       else {
@@ -112,7 +118,7 @@ class CRM_Admin_Form_Setting_Smtp extends CRM_Admin_Form_Setting {
         $testMailStatusMsg = ts('Sending test email. FROM: %1 TO: %2.<br />', array(1 => $domainEmailAddress, 2 => $toEmail));
 
         $params = array();
-        if ($formValues['outBound_option'] == 0) {
+        if ($formValues['outBound_option'] == CRM_Mailing_Config::OUTBOUND_OPTION_SMTP) {
           $subject = "Test for SMTP settings";
           $message = "SMTP settings are correct.";
 
@@ -137,14 +143,14 @@ class CRM_Admin_Form_Setting_Smtp extends CRM_Admin_Form_Setting {
 
           $mailerName = 'smtp';
         }
-        elseif ($formValues['outBound_option'] == 1) {
+        elseif ($formValues['outBound_option'] == CRM_Mailing_Config::OUTBOUND_OPTION_SENDMAIL) {
           $subject = "Test for Sendmail settings";
           $message = "Sendmail settings are correct.";
           $params['sendmail_path'] = $formValues['sendmail_path'];
           $params['sendmail_args'] = $formValues['sendmail_args'];
           $mailerName = 'sendmail';
         }
-        elseif ($formValues['outBound_option'] == 3) {
+        elseif ($formValues['outBound_option'] == CRM_Mailing_Config::OUTBOUND_OPTION_MAIL) {
           $subject    = "Test for PHP mail settings";
           $message    = "mail settings are correct.";
           $mailerName = 'mail';
@@ -200,7 +206,7 @@ class CRM_Admin_Form_Setting_Smtp extends CRM_Admin_Form_Setting {
    */
   static
   function formRule($fields) {
-    if ($fields['outBound_option'] == 0) {
+    if ($fields['outBound_option'] == CRM_Mailing_Config::OUTBOUND_OPTION_SMTP) {
       if (!CRM_Utils_Array::value('smtpServer', $fields)) {
         $errors['smtpServer'] = 'SMTP Server name is a required field.';
       }
@@ -216,7 +222,7 @@ class CRM_Admin_Form_Setting_Smtp extends CRM_Admin_Form_Setting {
         }
       }
     }
-    if ($fields['outBound_option'] == 1) {
+    if ($fields['outBound_option'] == CRM_Mailing_Config::OUTBOUND_OPTION_SENDMAIL) {
       if (!$fields['sendmail_path']) {
         $errors['sendmail_path'] = 'Sendmail Path is a required field.';
       }

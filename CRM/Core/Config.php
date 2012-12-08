@@ -502,12 +502,12 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
         'mailing_backend'
       );
 
-      if ( $mailingInfo['outBound_option'] == 4 ||
+      if ( $mailingInfo['outBound_option'] == CRM_Mailing_Config::OUTBOUND_OPTION_REDIRECT_TO_DB ||
               ( defined('CIVICRM_MAILER_SPOOL') && CIVICRM_MAILER_SPOOL )
       ) {
         self::$_mail = new CRM_Mailing_BAO_Spool();
       }
-      elseif ($mailingInfo['outBound_option'] == 0) {
+      elseif ($mailingInfo['outBound_option'] == CRM_Mailing_Config::OUTBOUND_OPTION_SMTP) {
         if ($mailingInfo['smtpServer'] == '' ||
           !$mailingInfo['smtpServer']
         ) {
@@ -538,7 +538,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
 
         self::$_mail = Mail::factory('smtp', $params);
       }
-      elseif ($mailingInfo['outBound_option'] == 1) {
+      elseif ($mailingInfo['outBound_option'] == CRM_Mailing_Config::OUTBOUND_OPTION_SENDMAIL) {
         if ($mailingInfo['sendmail_path'] == '' ||
           !$mailingInfo['sendmail_path']
         ) {
@@ -549,11 +549,11 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
 
         self::$_mail = Mail::factory('sendmail', $params);
       }
-      elseif ($mailingInfo['outBound_option'] == 3) {
+      elseif ($mailingInfo['outBound_option'] == CRM_Mailing_Config::OUTBOUND_OPTION_MAIL) {
         $params = array();
         self::$_mail = Mail::factory('mail', $params);
       }
-      elseif ($mailingInfo['outBound_option'] == 4) {
+      elseif ($mailingInfo['outBound_option'] == CRM_Mailing_Config::OUTBOUND_OPTION_MOCK) {
         self::$_mail = Mail::factory('mock', $params);
       }
       else {

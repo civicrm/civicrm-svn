@@ -264,10 +264,10 @@ class CRM_Utils_Mail {
     $mailingInfo = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
       'mailing_backend'
     );
-    if ($mailingInfo['outBound_option'] == 3) {
+    if ($mailingInfo['outBound_option'] == CRM_Mailing_Config::OUTBOUND_OPTION_MAIL) {
       return TRUE;
     }
-    elseif ($mailingInfo['outBound_option'] == 0) {
+    elseif ($mailingInfo['outBound_option'] == CRM_Mailing_Config::OUTBOUND_OPTION_SMTP) {
       if (!isset($mailingInfo['smtpServer']) || $mailingInfo['smtpServer'] == '' ||
         $mailingInfo['smtpServer'] == 'YOUR SMTP SERVER' ||
         ($mailingInfo['smtpAuth'] && ($mailingInfo['smtpUsername'] == '' || $mailingInfo['smtpPassword'] == ''))
@@ -276,10 +276,13 @@ class CRM_Utils_Mail {
       }
       return TRUE;
     }
-    elseif ($mailingInfo['outBound_option'] == 1) {
+    elseif ($mailingInfo['outBound_option'] == CRM_Mailing_Config::OUTBOUND_OPTION_SENDMAIL) {
       if (!$mailingInfo['sendmail_path'] || !$mailingInfo['sendmail_args']) {
         return FALSE;
       }
+      return TRUE;
+    }
+    elseif ($mailingInfo['outBound_option'] == CRM_Mailing_Config::OUTBOUND_OPTION_REDIRECT_TO_DB) {
       return TRUE;
     }
     return FALSE;
