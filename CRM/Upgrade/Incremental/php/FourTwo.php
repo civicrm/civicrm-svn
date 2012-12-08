@@ -315,8 +315,8 @@ HAVING COUNT(cpse.price_set_id) > 1 AND MIN(cpse1.id) <> cpse.id ";
     $dao = CRM_Core_DAO::executeQuery($sql);
     while ($dao->fetch()) {
       if ($dao->price_set_id) {
-        $copyPriceSet = &CRM_Price_BAO_Set::copy($dao->price_set_id);
-        CRM_Price_BAO_Set::addTo('civicrm_event', $dao->entity_id, $copyPriceSet->id);
+        $copyPriceSet = &CRM_Upgrade_Snapshot_V4p2_Price_BAO_Set::copy($dao->price_set_id);
+        CRM_Upgrade_Snapshot_V4p2_Price_BAO_Set::addTo('civicrm_event', $dao->entity_id, $copyPriceSet->id);
       }
     }
   }
@@ -433,7 +433,7 @@ WHERE     cpse.price_set_id IS NULL";
         return;
     }
 
-    if (! CRM_Core_DAO::getFieldValue('CRM_Price_BAO_Set', $pageTitle, 'id', 'name', true)) {
+    if (! CRM_Core_DAO::getFieldValue('CRM_Upgrade_Snapshot_V4p2_Price_BAO_Set', $pageTitle, 'id', 'name', true)) {
       $setParams['name'] = $pageTitle;
     }
     else {
@@ -442,8 +442,8 @@ WHERE     cpse.price_set_id IS NULL";
     }
     $setParams['extends'] = $daoName[$addTo[0]][1];
     $setParams['is_quick_config'] = 1;
-    $priceSet = CRM_Price_BAO_Set::create($setParams);
-    CRM_Price_BAO_Set::addTo($addTo[0], $addTo[2], $priceSet->id, 1);
+    $priceSet = CRM_Upgrade_Snapshot_V4p2_Price_BAO_Set::create($setParams);
+    CRM_Upgrade_Snapshot_V4p2_Price_BAO_Set::addTo($addTo[0], $addTo[2], $priceSet->id, 1);
 
     $fieldParams['price_set_id'] = $priceSet->id;
     if (CRM_Utils_Array::value('optionGroup', $options)) {
@@ -472,7 +472,7 @@ WHERE     cpse.price_set_id IS NULL";
       if ($defaultAmount = CRM_Core_DAO::getFieldValue($daoName[$addTo[0]][0], $addTo[2], $defaultAmountColumn)) {
         $fieldParams['default_option'] = array_search($defaultAmount, $optionValue['amount_id']);
       }
-      $priceField = CRM_Price_BAO_Field::create($fieldParams);
+      $priceField = CRM_Upgrade_Snapshot_V4p2_Price_BAO_Field::create($fieldParams);
 
     }
     if (CRM_Utils_Array::value('membership', $options)) {
@@ -505,14 +505,14 @@ WHERE     cpse.price_set_id IS NULL";
               $fieldParams['default_option'] = $rowcount;
             }
           }
-          $priceField = CRM_Price_BAO_Field::create($fieldParams);
+          $priceField = CRM_Upgrade_Snapshot_V4p2_Price_BAO_Field::create($fieldParams);
 
           $setParams = array(
             'id'                   => $priceSet->id,
             'extends'              => CRM_Core_Component::getComponentID('CiviMember'),
             'contribution_type_id' => CRM_Core_DAO::getFieldValue($daoName[$addTo[0]][0], $addTo[2], 'contribution_type_id'),
           );
-          CRM_Price_BAO_Set::create($setParams);
+          CRM_Upgrade_Snapshot_V4p2_Price_BAO_Set::create($setParams);
         }
       }
     }
@@ -531,7 +531,7 @@ WHERE     cpse.price_set_id IS NULL";
       $fieldParams['option_label'][1]  = "Other Amount";
       $fieldParams['option_amount'][1] = 1;
       $fieldParams['option_weight'][1] = 1;
-      $priceField = CRM_Price_BAO_Field::create($fieldParams);
+      $priceField = CRM_Upgrade_Snapshot_V4p2_Price_BAO_Field::create($fieldParams);
     }
   }
 
@@ -609,7 +609,7 @@ WHERE     cpf.price_set_id = %1
           );
         }
         else {
-          $lineParams['price_field_id'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $result->price_set_id, 'id', 'price_set_id');
+          $lineParams['price_field_id'] = CRM_Core_DAO::getFieldValue('CRM_Upgrade_Snapshot_V4p2_Price_DAO_Field', $result->price_set_id, 'id', 'price_set_id');
           $lineParams['label'] = 'Membership Amount';
           $lineParams['qty'] = 1;
           $lineParams['unit_price'] = $lineParams['line_total'] = $result->total_amount;
@@ -640,16 +640,16 @@ WHERE     cpf.price_set_id = %1
             'name' => 'other_amount',
           );
           $defaults = array();
-          CRM_Price_BAO_Field::retrieve($params, $defaults);
+          CRM_Upgrade_Snapshot_V4p2_Price_BAO_Field::retrieve($params, $defaults);
           if (!empty($defaults)) {
             $lineParams['price_field_id'] = $defaults['id'];
             $lineParams['label'] = $defaults['label'];
             $lineParams['price_field_value_id'] =
-              CRM_Core_DAO::getFieldValue('CRM_Price_DAO_FieldValue', $defaults['id'], 'id', 'price_field_id');
+              CRM_Core_DAO::getFieldValue('CRM_Upgrade_Snapshot_V4p2_Price_DAO_FieldValue', $defaults['id'], 'id', 'price_field_id');
           }
           else {
             $lineParams['price_field_id'] =
-              CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $result->price_set_id, 'id', 'price_set_id');
+              CRM_Core_DAO::getFieldValue('CRM_Upgrade_Snapshot_V4p2_Price_DAO_Field', $result->price_set_id, 'id', 'price_set_id');
             $lineParams['label'] = 'Contribution Amount';
           }
           $lineParams['qty'] = 1;
@@ -657,7 +657,7 @@ WHERE     cpf.price_set_id = %1
           $lineParams['unit_price'] = $lineParams['line_total'] = $result->total_amount;
         }
       }
-      CRM_Price_BAO_LineItem::create($lineParams);
+      CRM_Upgrade_Snapshot_V4p2_Price_BAO_LineItem::create($lineParams);
     }
 
     return TRUE;
@@ -692,8 +692,8 @@ AND       cli.entity_id IS NULL AND cp.fee_amount IS NOT NULL";
     );
     $dao = CRM_Core_DAO::executeQuery($query, $sqlParams);
     if ($dao->N) {
-      $defaultPriceSetId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', 'default_contribution_amount', 'id', 'name');
-      $priceSets = current(CRM_Price_BAO_Set::getSetDetail($defaultPriceSetId));
+      $defaultPriceSetId = CRM_Core_DAO::getFieldValue('CRM_Upgrade_Snapshot_V4p2_Price_DAO_Set', 'default_contribution_amount', 'id', 'name');
+      $priceSets = current(CRM_Upgrade_Snapshot_V4p2_Price_BAO_Set::getSetDetail($defaultPriceSetId));
       $fieldID = key($priceSets['fields']);
     }
 
@@ -717,7 +717,7 @@ AND       cli.entity_id IS NULL AND cp.fee_amount IS NOT NULL";
         $lineParams['price_field_id'] = $fieldID;
         $priceSetId = $defaultPriceSetId;
       }
-      CRM_Price_BAO_LineItem::create($lineParams);
+      CRM_Upgrade_Snapshot_V4p2_Price_BAO_LineItem::create($lineParams);
     }
     return TRUE;
   }
