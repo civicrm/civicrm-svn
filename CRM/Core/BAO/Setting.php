@@ -275,6 +275,10 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
     $domainID    = NULL
   ) {
 
+    if (empty($domainID)) {
+      $domainID = CRM_Core_Config::domainID();
+    }
+
     $dao = self::dao($group, $name, $componentID, $contactID, $domainID);
     $dao->find(TRUE);
 
