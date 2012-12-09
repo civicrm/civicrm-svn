@@ -2498,7 +2498,8 @@ SELECT  $mailing.id as mailing_id
     if (!$isSMS) {
       $html = CRM_Utils_Request::retrieve('html', 'Boolean', $form);
       if ($html) {
-        echo $htmlHeader . $report['mailing']['body_html'] . $htmlFooter;
+        $output = $htmlHeader . $report['mailing']['body_html'] . $htmlFooter ;
+        echo str_replace( "\n", '<br />', $output );
         CRM_Utils_System::civiExit();
       }
     }

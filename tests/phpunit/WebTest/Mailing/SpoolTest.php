@@ -61,14 +61,20 @@ class WebTest_Mailing_SpoolTest extends CiviSeleniumTestCase {
     $this->click( "_qf_Email_upload" );
 
     // Retrieve an ezc mail object version of the email
-    //$msg = $mut->getMostRecentEmail( 'ezc' );
-    $msg = $mut->getMostRecentEmail( 'raw' );
+    $msg = $mut->getMostRecentEmail( 'ezc' );
     $this->assertNotEmpty( $msg, 'Mail message empty or not found.' );
-    return;
 
     print_r($msg);
     $context = new ezcMailPartWalkContext( array( get_class($this), 'mailWalkCallback' ) );
     $msg->walkParts( $context, $msg );
+
+    // Now try a regular activity with cc to assignee
+    $this->WebtestAddActivity();
+    $msg = $mut->getMostRecentEmail( 'raw' );
+    echo $msg;
+    $this->assertNotEmpty( $msg, 'Mail message empty or not found.' );
+
+    $mut->stop();
   }
 
   public static function mailWalkCallback( $context, $mailPart ) {

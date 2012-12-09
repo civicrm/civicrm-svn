@@ -64,7 +64,7 @@ class CiviMailUnitTest {
     $this->_ut->waitForElementPresent("_qf_Smtp_next");
 
     // First remember the current setting
-    $this->_outBound_option = $this->_ut->getValue( 'xpath=//input[@name="outBound_option"]' );
+    $this->_outBound_option = $this->getSelectedOutboundOption();
 
     $this->_ut->click('xpath=//input[@name="outBound_option" and @value="' . CRM_Mailing_Config::OUTBOUND_OPTION_REDIRECT_TO_DB . '"]');
     $this->_ut->click("_qf_Smtp_next");
@@ -108,7 +108,8 @@ class CiviMailUnitTest {
      * Argh.
      * getBodyText() doesn't work because it's just one big long string without line breaks. getHtmlSource() doesn't work because it sees email addresses as html tags and inserts its own closing tags.
      */
-    $msg = $this->_ut->getHtmlSource();
+    //$msg = $this->_ut->getHtmlSource();
+    $msg = $this->_ut->getBodyText();
     switch ( $type ) {
     case 'raw':
       return $msg;
@@ -163,5 +164,19 @@ class CiviMailUnitTest {
   function assertMailLogEmpty($prefix = ''){
     $mail = file_get_contents(CIVICRM_MAIL_LOG);
     $this->assertEmpty($mail, 'mail sent when it should not have been ' . $prefix);
+  }
+
+  function getSelectedOutboundOption() {
+    $selectedOption = CRM_Mailing_Config::OUTBOUND_OPTION_MAIL;
+    // Is there a better way to do this?
+    for( $i = 0; $i <= 5; $i++ ) {
+      if ( $i != CRM_Mailing_Config::OUTBOUND_OPTION_MOCK ) {
+        if ( $this->_ut->getValue( 'xpath=//input[@name="outBound_option" and @value="' . $i . '"]' ) == "on" ) {
+          $selectedOption = $i;
+          break;
+        }
+      }
+    }
+    return $selectedOption;
   }
 }
