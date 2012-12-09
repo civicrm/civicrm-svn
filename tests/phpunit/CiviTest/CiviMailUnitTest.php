@@ -28,6 +28,15 @@
  *  Mail utils for use during unit testing to allow retrieval
  *  and examination of 'sent' emails.
  *
+ *  Basic usage:
+ *
+ *  $mut = new CiviUnitMailTest( $this );
+ *  ... do stuff ...
+ *  $msg = $mut->getMostRecentEmail( 'ezc' ); // or 'raw'
+ *  ... assert stuff about $msg ...
+ *  $mut->stop();
+ *
+ *
  *  @package CiviCRM
  */
 
