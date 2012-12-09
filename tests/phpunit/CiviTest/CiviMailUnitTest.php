@@ -94,6 +94,7 @@ class CiviMailUnitTest {
       // assert something?
 
     } else {
+
       // save current setting for outbound option, then change it
       $mailingBackend = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
         'mailing_backend'
@@ -104,6 +105,10 @@ class CiviMailUnitTest {
 
       CRM_Core_BAO_Setting::setItem($mailingBackend,
         CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
+        'mailing_backend'
+      );
+
+      $mailingBackend = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
         'mailing_backend'
       );
     }
