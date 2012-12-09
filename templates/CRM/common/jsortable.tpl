@@ -26,6 +26,7 @@
 {literal}
 <script type="text/javascript">
 cj( function( ) {
+// for date sorting see http://issues.civicrm.org/jira/browse/CRM-11436
 var useAjax = {/literal}{if $useAjax}1{else}0{/if}{literal};
 
 var sourceUrl = '';
