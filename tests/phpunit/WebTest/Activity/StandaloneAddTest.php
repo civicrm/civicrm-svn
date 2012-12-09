@@ -69,7 +69,7 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
     // We can not use id as selector for these input widgets. Use css selector, starting with the table row containing this field (which will have a unique class)
     // Typing contact's name into the field (using typeKeys(), not type()!)...
     $this->click("css=tr.crm-activity-form-block-target_contact_id input#token-input-target_contact_id");
-    $this->type("css=tr.crm-activity-form-block-target_contact_id input#token-input-target_contact_id", "$firstName1");
+//    $this->type("css=tr.crm-activity-form-block-target_contact_id input#token-input-target_contact_id", "$firstName1");
     $this->typeKeys("css=tr.crm-activity-form-block-target_contact_id input#token-input-target_contact_id", "$firstName1");
 
     // ...waiting for drop down with results to show up...
@@ -88,7 +88,7 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
     // Now we're doing the same for "Assigned To" field.
     // Typing contact's name into the field (using typeKeys(), not type()!)...
     $this->click("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id");
-    $this->type("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id", "$firstName2");
+//    $this->type("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id", "$firstName2");
     $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id", "$firstName2");
 
     // ...waiting for drop down with results to show up...

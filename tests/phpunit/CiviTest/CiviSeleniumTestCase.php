@@ -1105,21 +1105,23 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
     // Typing contact's name into the field (using typeKeys(), not type()!)...
     $this->click("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id");
-    $this->type("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id", $firstName1);
+//    $this->type("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id", $firstName1);
     $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input#token-input-assignee_contact_id", $firstName1);
 
     // ...waiting for drop down with results to show up...
     $this->waitForElementPresent("css=div.token-input-dropdown-facebook");
     $this->waitForElementPresent("css=li.token-input-input-token-facebook");
 
-    //.need to use mouseDownAt on first result (which is a li element), click does not work
-    $this->mouseDownAt("css=li.token-input-input-token-facebook");
+    //.need to use mouseDown on first result (which is a li element), click does not work
+    // Note that if you are using firebug this appears at the bottom of the html source, before the closing </body> tag, not where the <li> referred to above is, which is a different <li>.
+    $this->waitForElementPresent("css=div.token-input-dropdown-facebook li");
+    $this->mouseDown("css=div.token-input-dropdown-facebook li");
 
     // ...again, waiting for the box with contact name to show up...
-    //$this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td ul li span.token-input-delete-token-facebook");
+    $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td ul li span.token-input-delete-token-facebook");
 
     // ...and verifying if the page contains properly formatted display name for chosen contact.
-    //$this->assertTrue($this->isTextPresent("Summerson, " . $firstName1), "Contact not found in line " . __LINE__);
+    $this->assertTrue($this->isTextPresent("Summerson, " . $firstName1), "Contact not found in line " . __LINE__);
 
     // Putting the contents into subject field - assigning the text to variable, it'll come in handy later
     $subject = "This is subject of test activity being added through activity tab of contact summary screen.";
