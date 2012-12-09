@@ -90,6 +90,7 @@ class WebTest_Activity_IcalTest extends CiviSeleniumTestCase {
         // check the resulting email
         $mail = $mailer->getMostRecentEmail( 'ezc' );
         $this->assertNotNull( $mail, ts('Assignee email not generated or problem locating it.') );
+        $this->assertEquals( $mail->subject, "$subject" );
         $context = new ezcMailPartWalkContext( array( get_class($this), 'mailWalkCallback' ) );
         $mail->walkParts( $context, $mail );
 
