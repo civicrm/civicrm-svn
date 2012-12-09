@@ -88,7 +88,9 @@ class CRM_Mailing_BAO_Spool extends CRM_Mailing_DAO_Spool {
       $ids = array();
       $mailing = CRM_Mailing_BAO_Mailing::create($params, $ids);
       
-      // TODO: check for error and return PEAR::raiseError('error msg');
+      if ( empty( $mailing ) || is_a( $mailing, 'CRM_Core_Error' ) ) {
+        return PEAR::raiseError( 'Unable to create spooled mailing.' );
+      }
     
       $job = new CRM_Mailing_BAO_Job();
       $job->is_test = 0; // if set to 1 it doesn't show in the UI

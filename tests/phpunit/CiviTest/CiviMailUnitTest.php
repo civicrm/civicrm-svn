@@ -112,30 +112,33 @@ class CiviMailUnitTest {
     $msg = $this->_ut->getBodyText();
     switch ( $type ) {
     case 'raw':
-      return $msg;
+      // nothing to do
       break;
     case 'ezc':
       $set = new ezcMailVariableSet( $msg );
       $parser = new ezcMailParser();
       $mail = $parser->parseMail( $set );
       $this->_ut->assertNotEmpty( $mail, 'Cannot parse mail' );
-      return $mail[0];
+      $msg = $mail[0];
       break;
     }
-    return null;
+    $this->_ut->close();
+    $this->_ut->selectWindow( null );
+    return $msg;
   }
 
-  /**
-   * At the moment only one email at a time is supported, and the parameter
-   * is ignored. The intention is to allow for e.g. raw message source or
-   * non-EZC return formats, but for now we always return an ezcMailPart
-   * object.
-   */
-  function &fetch( $params = null ) {
-      $set = new ezcMailFileSet( array('something') );
-      $parser = new ezcMailParser();
-      $mail = $parser->parseMail( $set );
-      return $mail[0];
+  function getSelectedOutboundOption() {
+    $selectedOption = CRM_Mailing_Config::OUTBOUND_OPTION_MAIL;
+    // Is there a better way to do this?
+    for( $i = 0; $i <= 5; $i++ ) {
+      if ( $i != CRM_Mailing_Config::OUTBOUND_OPTION_MOCK ) {
+        if ( $this->_ut->getValue( 'xpath=//input[@name="outBound_option" and @value="' . $i . '"]' ) == "on" ) {
+          $selectedOption = $i;
+          break;
+        }
+      }
+    }
+    return $selectedOption;
   }
 
   /*
@@ -164,19 +167,5 @@ class CiviMailUnitTest {
   function assertMailLogEmpty($prefix = ''){
     $mail = file_get_contents(CIVICRM_MAIL_LOG);
     $this->assertEmpty($mail, 'mail sent when it should not have been ' . $prefix);
-  }
-
-  function getSelectedOutboundOption() {
-    $selectedOption = CRM_Mailing_Config::OUTBOUND_OPTION_MAIL;
-    // Is there a better way to do this?
-    for( $i = 0; $i <= 5; $i++ ) {
-      if ( $i != CRM_Mailing_Config::OUTBOUND_OPTION_MOCK ) {
-        if ( $this->_ut->getValue( 'xpath=//input[@name="outBound_option" and @value="' . $i . '"]' ) == "on" ) {
-          $selectedOption = $i;
-          break;
-        }
-      }
-    }
-    return $selectedOption;
   }
 }

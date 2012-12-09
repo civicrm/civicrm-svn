@@ -62,26 +62,37 @@ class WebTest_Mailing_SpoolTest extends CiviSeleniumTestCase {
 
     // Retrieve an ezc mail object version of the email
     $msg = $mut->getMostRecentEmail( 'ezc' );
-    $this->assertNotEmpty( $msg, 'Mail message empty or not found.' );
+    // print_r($msg);
 
-    print_r($msg);
+    $this->assertNotEmpty( $msg, 'Mail message empty or not found.' );
+    $this->assertEquals( $msg->subject, 'test spool' );
+    $this->assertContains( $email, implode(';', $msg->to), 'Recipient incorrect.' ); // should really walk through the 'to' array, but this is legal according to the docs
+
     $context = new ezcMailPartWalkContext( array( get_class($this), 'mailWalkCallback' ) );
     $msg->walkParts( $context, $msg );
 
-    // Now try a regular activity with cc to assignee
+    /*
+     *  Now try a regular activity with cc to assignee
+     */
     $this->WebtestAddActivity();
     $msg = $mut->getMostRecentEmail( 'raw' );
-    echo $msg;
+//    echo $msg;
     $this->assertNotEmpty( $msg, 'Mail message empty or not found.' );
+    $this->assertContains( 'Subject: This is subject of test activity', $msg, 'Subject of email is wrong.' );
 
     $mut->stop();
   }
 
   public static function mailWalkCallback( $context, $mailPart ) {
-    print_r($mailPart);
+//    print_r($mailPart);
+    if ( $mailPart instanceof ezcMailText ) {
+      self::assertEquals( $mailPart->subType, 'html' );
+      self::assertContains( 'Unit tests keep children safe', $mailPart->generateBody() );
+    }
+
     $disp = $mailPart->contentDisposition;
     if ( $disp ) {
-      print_r($disp);
+//     print_r($disp);
     }
   }
 }
