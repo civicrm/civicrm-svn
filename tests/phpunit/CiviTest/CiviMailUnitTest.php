@@ -30,9 +30,9 @@
  *
  *  Basic usage:
  *
- *  $mut = new CiviUnitMailTest( $this );
+ *  $mut = new CiviUnitMailTest( $this, true ); //true automatically starts spooling
  *  ... do stuff ...
- *  $msg = $mut->getMostRecentEmail( 'ezc' ); // or 'raw'
+ *  $msg = $mut->getMostRecentEmail( 'raw' ); // or 'ezc' to get an ezc mail object
  *  ... assert stuff about $msg ...
  *  $mut->stop();
  *
@@ -51,6 +51,11 @@ class CiviMailUnitTest {
   protected $_outBound_option = null;
 
   /*
+   * is this a webtest
+   */
+  protected $_webtest = false;
+
+  /*
    * Constructor
    *
    * @param $unit_test object The currently running test
@@ -58,6 +63,11 @@ class CiviMailUnitTest {
    */
   function __construct( &$unit_test, $startImmediately = true ) {
     $this->_ut = $unit_test;
+
+    // Check if running under webtests or not
+    if ( is_subclass_of( $unit_test, 'CiviSeleniumTestCase' ) ) {
+        $this->_webtest = true;
+    }
 
     if ( $startImmediately ) {
       $this->start();
@@ -68,57 +78,108 @@ class CiviMailUnitTest {
    * Start writing emails to db instead of current option
    */
   function start() {
-    // Change outbound mail setting
-    $this->_ut->open($this->_ut->sboxPath . "civicrm/admin/setting/smtp?reset=1");
-    $this->_ut->waitForElementPresent("_qf_Smtp_next");
+    if ( $this->_webtest ) {
+      // Change outbound mail setting
+      $this->_ut->open($this->_ut->sboxPath . "civicrm/admin/setting/smtp?reset=1");
+      $this->_ut->waitForElementPresent("_qf_Smtp_next");
 
-    // First remember the current setting
-    $this->_outBound_option = $this->getSelectedOutboundOption();
+      // First remember the current setting
+      $this->_outBound_option = $this->getSelectedOutboundOption();
 
-    $this->_ut->click('xpath=//input[@name="outBound_option" and @value="' . CRM_Mailing_Config::OUTBOUND_OPTION_REDIRECT_TO_DB . '"]');
-    $this->_ut->click("_qf_Smtp_next");
-    $this->_ut->waitForPageToLoad("30000");
+      $this->_ut->click('xpath=//input[@name="outBound_option" and @value="' . CRM_Mailing_Config::OUTBOUND_OPTION_REDIRECT_TO_DB . '"]');
+      $this->_ut->click("_qf_Smtp_next");
+      $this->_ut->waitForPageToLoad("30000");
 
-    // Is there supposed to be a status message displayed when outbound email settings are changed?
-    // assert something?
+      // Is there supposed to be a status message displayed when outbound email settings are changed?
+      // assert something?
+
+    } else {
+      // save current setting for outbound option, then change it
+      $mailingBackend = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
+        'mailing_backend'
+      );
+
+      $this->_outBound_option = $mailingBackend['outBound_option'];
+      $mailingBackend['outBound_option'] = CRM_Mailing_Config::OUTBOUND_OPTION_REDIRECT_TO_DB;
+
+      CRM_Core_BAO_Setting::setItem($mailingBackend,
+        CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
+        'mailing_backend'
+      );
+    }
   }
 
   function stop() {
-    $this->_ut->open($this->_ut->sboxPath . "civicrm/admin/setting/smtp?reset=1");
-    $this->_ut->waitForElementPresent("_qf_Smtp_next");
-    $this->_ut->click('xpath=//input[@name="outBound_option" and @value="' . $this->_outBound_option . '"]');
-    $this->_ut->click("_qf_Smtp_next");
-    $this->_ut->waitForPageToLoad("30000");
+    if ( $this->_webtest ) {
 
-    // Is there supposed to be a status message displayed when outbound email settings are changed?
-    // assert something?
+      $this->_ut->open($this->_ut->sboxPath . "civicrm/admin/setting/smtp?reset=1");
+      $this->_ut->waitForElementPresent("_qf_Smtp_next");
+      $this->_ut->click('xpath=//input[@name="outBound_option" and @value="' . $this->_outBound_option . '"]');
+      $this->_ut->click("_qf_Smtp_next");
+      $this->_ut->waitForPageToLoad("30000");
+
+      // Is there supposed to be a status message displayed when outbound email settings are changed?
+      // assert something?
+
+    } else {
+
+      $mailingBackend = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
+        'mailing_backend'
+      );
+ 
+      $mailingBackend['outBound_option'] = $this->_outBound_option;
+
+      CRM_Core_BAO_Setting::setItem($mailingBackend,
+        CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
+        'mailing_backend'
+      );
+    }
   }
 
   function getMostRecentEmail( $type = 'raw' ) {
-    $this->_ut->open( $this->_ut->sboxPath . 'civicrm/mailing/browse/archived?reset=1' );
-    // I don't understand but for some reason we have to load the page twice for a recent mailing to appear.
-    $this->_ut->waitForPageToLoad("30000");
-    $this->_ut->open( $this->_ut->sboxPath . 'civicrm/mailing/browse/archived?reset=1' );
-    $this->_ut->waitForElementPresent( 'css=td.crm-mailing-name' );
+    $msg = '';
+ 
+    // Check if running under webtests or not
+    if ( $this->_webtest ) {
 
-    // This should select the first "Report" link in the table, which is sorted by Completion Date descending, so in theory is the most recent email. Not sure of a more robust way at the moment.
-    $this->_ut->click( 'xpath=//tr[contains(@id, "crm-mailing_")]//a[text()="Report"]' );
+      $this->_ut->open( $this->_ut->sboxPath . 'civicrm/mailing/browse/archived?reset=1' );
+      // I don't understand but for some reason we have to load the page twice for a recent mailing to appear.
+      $this->_ut->waitForPageToLoad("30000");
+      $this->_ut->open( $this->_ut->sboxPath . 'civicrm/mailing/browse/archived?reset=1' );
+      $this->_ut->waitForElementPresent( 'css=td.crm-mailing-name' );
 
-    // Also not sure how robust this is, but there isn't a good
-    // identifier for this link either.
-    $this->_ut->waitForElementPresent( 'xpath=//a[contains(text(), "View complete message")]' );
-    $this->_ut->click( 'xpath=//a[contains(text(), "View complete message")]' );
+      // This should select the first "Report" link in the table, which is sorted by Completion Date descending, so in theory is the most recent email. Not sure of a more robust way at the moment.
+      $this->_ut->click( 'xpath=//tr[contains(@id, "crm-mailing_")]//a[text()="Report"]' );
 
-    $this->_ut->waitForPopUp( null, 30000 );
-    $this->_ut->selectPopUp( null );
-    /*
-     * FIXME:
-     *
-     * Argh.
-     * getBodyText() doesn't work because it's just one big long string without line breaks. getHtmlSource() doesn't work because it sees email addresses as html tags and inserts its own closing tags.
-     */
-    //$msg = $this->_ut->getHtmlSource();
-    $msg = $this->_ut->getBodyText();
+      // Also not sure how robust this is, but there isn't a good
+      // identifier for this link either.
+      $this->_ut->waitForElementPresent( 'xpath=//a[contains(text(), "View complete message")]' );
+      $this->_ut->click( 'xpath=//a[contains(text(), "View complete message")]' );
+
+      $this->_ut->waitForPopUp( null, 30000 );
+      $this->_ut->selectPopUp( null );
+      /*
+       * FIXME:
+       *
+       * Argh.
+       * getBodyText() doesn't work because you can't get the actual html, just the rendered version.
+       * getHtmlSource() doesn't work because it sees email addresses as html tags and inserts its own closing tags.
+       *
+       * At the moment the combination of escaping just the headers in CRM_Mailing_BAO_Spool plus using getBodyText() works well enough to do basic unit testing and also not screw up the display in the actual UI.
+       */
+      //$msg = $this->_ut->getHtmlSource();
+      $msg = $this->_ut->getBodyText();
+      $this->_ut->close();
+      $this->_ut->selectWindow( null );
+
+    } else {
+      $dao = CRM_Core_DAO::executeQuery( 'SELECT headers,body FROM civicrm_mailing_spool ORDER BY id DESC LIMIT 1' );
+      if ( $dao->fetch() ) {
+        $msg = $dao->headers . "\n\n" . $dao->body;
+      }
+      $dao->free();
+    }
+
     switch ( $type ) {
     case 'raw':
       // nothing to do
@@ -131,14 +192,12 @@ class CiviMailUnitTest {
       $msg = $mail[0];
       break;
     }
-    $this->_ut->close();
-    $this->_ut->selectWindow( null );
     return $msg;
   }
 
   function getSelectedOutboundOption() {
     $selectedOption = CRM_Mailing_Config::OUTBOUND_OPTION_MAIL;
-    // Is there a better way to do this?
+    // Is there a better way to do this? How do you get the currently selected value of a radio button in selenium?
     for( $i = 0; $i <= 5; $i++ ) {
       if ( $i != CRM_Mailing_Config::OUTBOUND_OPTION_MOCK ) {
         if ( $this->_ut->getValue( 'xpath=//input[@name="outBound_option" and @value="' . $i . '"]' ) == "on" ) {
@@ -152,20 +211,22 @@ class CiviMailUnitTest {
 
   /*
    * Utility functions (previously part of CiviUnitTestCase)
+   * Included for backward compatibility with existing tests.
    */
 
   /*
    * Check contents of mail log
    * @param array $strings strings that should be included
    * @param array $absentStrings strings that should not be included
+   *
    */
   function checkMailLog($strings, $absentStrings = array(), $prefix = ''){
-    $mail = file_get_contents(CIVICRM_MAIL_LOG);
+    $mail = $this->getMostRecentEmail( 'raw' );
     foreach ($strings as $string) {
-    $this->assertContains($string, $mail, "$string .  not found in  $mail  $prefix");
+    $this->_ut->assertContains($string, $mail, "$string .  not found in  $mail  $prefix");
     }
     foreach ($absentStrings as $string) {
-    $this->assertEmpty(strstr($mail,$string),"$string  incorrectly found in $mail $prefix");;
+    $this->_ut->assertEmpty(strstr($mail,$string),"$string  incorrectly found in $mail $prefix");;
     }
     return $mail;
   }
@@ -174,7 +235,7 @@ class CiviMailUnitTest {
    * Check that mail log is empty
    */
   function assertMailLogEmpty($prefix = ''){
-    $mail = file_get_contents(CIVICRM_MAIL_LOG);
-    $this->assertEmpty($mail, 'mail sent when it should not have been ' . $prefix);
+    $mail = $this->getMostRecentEmail( 'raw' );
+    $this->_ut->assertEmpty($mail, 'mail sent when it should not have been ' . $prefix);
   }
 }
