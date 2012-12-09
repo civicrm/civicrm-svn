@@ -51,13 +51,15 @@
         <tr>
             <th>{ts}Relationship{/ts}</th>
             <th></th>
-            <th>{ts}Start{/ts}</th>
-            <th>{ts}End{/ts}</th>
+            <th id="start_date">{ts}Start{/ts}</th>
+            <th id="end_date">{ts}End{/ts}</th>
             <th>{ts}City{/ts}</th>
             <th>{ts}State/Prov{/ts}</th>
             <th>{ts}Email{/ts}</th>
             <th>{ts}Phone{/ts}</th>
             <th></th>
+            <th class="hiddenElement"></th>
+            <th class="hiddenElement"></th>
         </tr>
         </thead>
         {foreach from=$currentRelationships item=rel}
@@ -89,13 +91,15 @@
                 <td class="bold">{$rel.relation}</strong></td>
                 <td>{$rel.name}</td>
             {/if}
-                <td>{$rel.start_date|crmDate}</td>
-                <td>{$rel.end_date|crmDate}</td>
+                <td class="crm-rel-start_date">{$rel.start_date}</td>
+                <td class="crm-rel-end_date">{$rel.end_date}</td>
                 <td>{$rel.city}</td>
                 <td>{$rel.state}</td>
                 <td>{$rel.email}</td>
                 <td>{$rel.phone}</td>
                 <td class="nowrap">{$rel.action|replace:'xx':$rel.id}</td>
+                <td class="start_date hiddenElement">{$rel.start_date|crmDate}</td>
+                <td class="end_date hiddenElement">{$rel.end_date|crmDate}</td>
             </tr>
         {/foreach}
         </table>
@@ -161,9 +165,9 @@
             <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$rel.cid`"}">{$rel.name}</a></td>
             <td>{$rel.city}</td>
             <td>{$rel.state}</td>
-          <td>{$rel.phone}</td>
-            <td>{$rel.end_date|crmDate}</td>
+            <td>{$rel.phone}</td>
             <td class="nowrap">{$rel.action|replace:'xx':$rel.id}</td>
+            <td>{$rel.end_date|crmDate}</td>
           </tr>
         {/foreach}
         </table>
