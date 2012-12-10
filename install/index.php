@@ -311,6 +311,19 @@ class InstallRequirements {
             "An auto_increment_increment value greater than 1 is not currently supported. Please see issue CRM-7923 for further details and potential workaround.",
           )
         );
+        // @see CRM_Upgrade_Form::MINIMUM_THREAD_STACK
+        define('CIVICRM_INSTALL_MINIMUM_THREAD_STACK', 192);
+        $this->requireMySQLThreadStack($databaseConfig['server'],
+          $databaseConfig['username'],
+          $databaseConfig['password'],
+          $databaseConfig['database'],
+          CIVICRM_INSTALL_MINIMUM_THREAD_STACK,
+          array(
+            "MySQL $dbName Configuration",
+            "Does MySQL thread_stack meet minimum (" . CIVICRM_INSTALL_MINIMUM_THREAD_STACK . "k)",
+            "", // "The MySQL thread_stack does not meet minimum " . CRM_Upgrade_Form::MINIMUM_THREAD_STACK . "k. Please update thread_stack in my.cnf.",
+          )
+        );
       }
       $onlyRequire = ($dbName == 'Drupal') ? TRUE : FALSE;
       $this->requireDatabaseOrCreatePermissions(
@@ -870,6 +883,34 @@ class InstallRequirements {
         $testDetails[3] = 'MySQL server auto_increment_increment is 1';
       }
       else {
+        $this->error($testDetails);
+      }
+    }
+  }
+
+  function requireMySQLThreadStack($server, $username, $password, $database, $minValueKB, $testDetails) {
+    $this->testing($testDetails);
+    $conn = @mysql_connect($server, $username, $password);
+    if (!$conn) {
+      $testDetails[2] = 'Could not login to the database.';
+      $this->error($testDetails);
+      return;
+    }
+
+    if (!@mysql_select_db($database, $conn)) {
+      $testDetails[2] = 'Could not select the database.';
+      $this->error($testDetails);
+      return;
+    }
+
+    $result = mysql_query('SELECT @@GLOBAL.thread_stack', $conn); // bytes => kb
+    if (!$result) {
+      $testDetails[2] = 'Could not query thread_stack.';
+      $this->error($testDetails);
+    } else {
+      $values = mysql_fetch_row($result);
+      if ($values[0] <= (1024*$minValueKB)) {
+        $testDetails[2] = 'MySQL "thread_stack" is ' . ($values[0]/1024) . 'k';
         $this->error($testDetails);
       }
     }
