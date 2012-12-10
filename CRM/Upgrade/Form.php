@@ -35,6 +35,11 @@
 class CRM_Upgrade_Form extends CRM_Core_Form {
   CONST QUEUE_NAME = 'CRM_Upgrade';
 
+  /**
+   * Minimum size of MySQL's thread_stack option
+   */
+  const MINIMUM_THREAD_STACK = 192;
+
   protected $_config;
 
   // note latestVersion is legacy code, and
@@ -395,6 +400,13 @@ SET    version = '$version'
     if (!CRM_Core_DAO::checkTriggerViewPermission(FALSE, TRUE)) {
       $error = ts('CiviCRM %1 requires MySQL trigger privileges.',
                array(1 => $latestVer));
+    }
+    
+    if (CRM_Core_DAO::singleValueQuery('SELECT @@GLOBAL.thread_stack') < (1024*self::MINIMUM_THREAD_STACK)) {
+      $error = ts('CiviCRM %1 requires MySQL thread stack >= %2k', array(
+        1 => $latestVer,
+        2 => self::MINIMUM_THREAD_STACK,
+      ));
     }
 
     return $error;
