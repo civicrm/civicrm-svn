@@ -261,6 +261,14 @@ define( 'CIVICRM_MEMCACHE_PREFIX', '' );
 // define('CIVICRM_LANGUAGE_MAPPING_ZH', 'zh_TW');
 
 /**
+ * Configure MySQL to throw more errors when encountering unusual SQL expressions.
+ *
+ * If undefined, the value is determined automatically. For CiviCRM tarballs, it defaults
+ * to FALSE; for SVN checkouts, it defaults to TRUE.
+ */
+// define( 'CIVICRM_MYSQL_STRICT', TRUE );
+
+/**
  *
  * Do not change anything below this line. Keep as is
  *

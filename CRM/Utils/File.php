@@ -260,6 +260,9 @@ class CRM_Utils_File {
     if (PEAR::isError($db)) {
       die("Cannot open $dsn: " . $db->getMessage());
     }
+    if (CRM_Utils_Constant::value('CIVICRM_MYSQL_STRICT', CRM_Utils_System::isDevelopment())) {
+      $db->query('SET SESSION sql_mode = STRICT_TRANS_TABLES');
+    }
 
     if (!$isQueryString) {
       $string = $prefix . file_get_contents($fileName);

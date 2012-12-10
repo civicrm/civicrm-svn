@@ -373,6 +373,9 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
     $factoryClass = $this->DAOFactoryClass;
     require_once str_replace('_', DIRECTORY_SEPARATOR, $factoryClass) . '.php';
     CRM_Core_DAO::setFactory(new $factoryClass());
+    if (CRM_Utils_Constant::value('CIVICRM_MYSQL_STRICT', CRM_Utils_System::isDevelopment())) {
+      CRM_Core_DAO::executeQuery('SET SESSION sql_mode = STRICT_TRANS_TABLES');
+    }
   }
 
   /**

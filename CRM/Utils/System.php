@@ -1513,5 +1513,19 @@ class CRM_Utils_System {
 
     CRM_Utils_System::redirect($redirectUrl);
   }
+
+  /**
+   * Determine whether this is a developmental system.
+   *
+   * @return bool
+   */
+  static function isDevelopment() {
+    static $cache = NULL;
+    if ($cache === NULL) {
+      global $civicrm_root;
+      $cache = file_exists("{$civicrm_root}/.svn") || file_exists("{$civicrm_root}/.git");
+    }
+    return $cache;
+  }
 }
 
