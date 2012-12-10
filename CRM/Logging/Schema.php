@@ -150,15 +150,14 @@ AND    TABLE_NAME LIKE 'log_civicrm_%'
    * Add missing log table columns.
    */
   function fixSchemaDifferences() {
-    // this path
     $config = CRM_Core_Config::singleton();
-    if (!$config->logging) {
-      return;
+    if ($config->logging) {
+      foreach ($this->schemaDifferences() as $table => $cols) {
+        $this->fixSchemaDifferencesFor($table, $cols, FALSE);
+      }
     }
-
-    foreach ($this->schemaDifferences() as $table => $cols) {
-      $this->fixSchemaDifferencesFor($table, $cols);
-    }
+    // invoke the meta trigger creation call
+    CRM_Core_DAO::triggerRebuild();
   }
 
   /**
