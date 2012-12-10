@@ -204,8 +204,7 @@ class CRM_Admin_Form_Setting_Smtp extends CRM_Admin_Form_Setting {
    * @static
    * @access  public
    */
-  static
-  function formRule($fields) {
+  static function formRule($fields) {
     if ($fields['outBound_option'] == CRM_Mailing_Config::OUTBOUND_OPTION_SMTP) {
       if (!CRM_Utils_Array::value('smtpServer', $fields)) {
         $errors['smtpServer'] = 'SMTP Server name is a required field.';

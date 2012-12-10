@@ -40,7 +40,9 @@
 class CRM_Admin_Form_PaymentProcessorType extends CRM_Admin_Form {
   protected $_id = NULL;
 
-  protected $_fields = NULL; function preProcess() {
+  protected $_fields = NULL;
+
+  function preProcess() {
     parent::preProcess();
 
     $this->_fields = array(
@@ -206,7 +208,7 @@ class CRM_Admin_Form_PaymentProcessorType extends CRM_Admin_Form {
    * @return None
    */
   public function postProcess() {
-        CRM_Utils_System::flushCache( 'CRM_Financial_DAO_PaymentProcessorType' );
+    CRM_Utils_System::flushCache( 'CRM_Financial_DAO_PaymentProcessorType' );
 
     if ($this->_action & CRM_Core_Action::DELETE) {
       CRM_Financial_BAO_PaymentProcessorType::del($this->_id);

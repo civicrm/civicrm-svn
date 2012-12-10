@@ -41,8 +41,7 @@ class CRM_Admin_Page_AJAX {
   /**
    * Function to build menu tree
    */
-  static
-  function getNavigationList() {
+  static function getNavigationList() {
     echo CRM_Core_BAO_Navigation::buildNavigation(TRUE, FALSE);
     CRM_Utils_System::civiExit();
   }
@@ -50,8 +49,7 @@ class CRM_Admin_Page_AJAX {
   /**
    * Function to process drag/move action for menu tree
    */
-  static
-  function menuTree() {
+  static function menuTree() {
     echo CRM_Core_BAO_Navigation::processNavigation($_GET);
     CRM_Utils_System::civiExit();
   }
@@ -60,8 +58,7 @@ class CRM_Admin_Page_AJAX {
    * Function to build status message while
    * enabling/ disabling various objects
    */
-  static
-  function getStatusMsg() {
+  static function getStatusMsg() {
     $recordID  = CRM_Utils_Type::escape($_POST['recordID'], 'Integer');
     $recordBAO = CRM_Utils_Type::escape($_POST['recordBAO'], 'String');
     $op        = CRM_Utils_Type::escape($_POST['op'], 'String');
@@ -227,8 +224,7 @@ class CRM_Admin_Page_AJAX {
     CRM_Utils_System::civiExit();
   }
 
-  static
-  function getTagList() {
+  static function getTagList() {
     $name = CRM_Utils_Type::escape($_GET['name'], 'String');
     $parentId = CRM_Utils_Type::escape($_GET['parentId'], 'Integer');
 
@@ -266,8 +262,7 @@ class CRM_Admin_Page_AJAX {
     CRM_Utils_System::civiExit();
   }
 
-  static
-  function mergeTagList() {
+  static function mergeTagList() {
     $name   = CRM_Utils_Type::escape($_GET['s'], 'String');
     $fromId = CRM_Utils_Type::escape($_GET['fromId'], 'Integer');
     $limit  = CRM_Utils_Type::escape($_GET['limit'], 'Integer');
@@ -311,8 +306,7 @@ LIMIT $limit";
     CRM_Utils_System::civiExit();
   }
 
-  static
-  function processTags() {
+  static function processTags() {
     $skipTagCreate = $skipEntityAction = $entityId = NULL;
     $action        = CRM_Utils_Type::escape($_POST['action'], 'String');
     $parentId      = CRM_Utils_Type::escape($_POST['parentId'], 'Integer');
@@ -451,8 +445,7 @@ LIMIT $limit";
     CRM_Utils_System::civiExit();
   }
 
-  static
-  function mergeTags() {
+  static function mergeTags() {
     $tagAId = CRM_Utils_Type::escape($_POST['fromId'], 'Integer');
     $tagBId = CRM_Utils_Type::escape($_POST['toId'], 'Integer');
 

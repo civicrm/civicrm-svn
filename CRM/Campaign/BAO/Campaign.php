@@ -47,8 +47,7 @@ Class CRM_Campaign_BAO_Campaign extends CRM_Campaign_DAO_Campaign {
    * @access public
    * @static
    */
-  static
-  function create(&$params) {
+  static function create(&$params) {
     if (empty($params)) {
       return;
     }
@@ -285,10 +284,9 @@ Order By  camp.title";
   }
 
   /*
-     * Is CiviCampaign enabled.
-     *
-     */
-
+   * Is CiviCampaign enabled.
+   *
+   */
   public static function isCampaignEnable() {
     static $isEnable = NULL;
 
@@ -308,8 +306,7 @@ Order By  camp.title";
    *
    * @static
    */
-  static
-  function getCampaignSummary($params = array(
+  static function getCampaignSummary($params = array(
     ), $onlyCount = FALSE) {
     $campaigns = array();
 
@@ -458,8 +455,7 @@ SELECT  campaign.id               as id,
    *
    * @static
    */
-  static
-  function getCampaignCount() {
+  static function getCampaignCount() {
     return (int)CRM_Core_DAO::singleValueQuery('SELECT COUNT(*) FROM civicrm_campaign');
   }
 
@@ -470,8 +466,7 @@ SELECT  campaign.id               as id,
    *
    * @static
    */
-  static
-  function getCampaignGroups($campaignId) {
+  static function getCampaignGroups($campaignId) {
     static $campaignGroups;
     if (!$campaignId) {
       return array();
@@ -506,13 +501,11 @@ INNER JOIN  civicrm_group grp ON ( grp.id = campgrp.entity_id )
    * @return Object             DAO object on sucess, null otherwise
    * @static
    */
-  static
-  function setIsActive($id, $is_active) {
+  static function setIsActive($id, $is_active) {
     return CRM_Core_DAO::setFieldValue('CRM_Campaign_DAO_Campaign', $id, 'is_active', $is_active);
   }
 
-  static
-  function accessCampaign() {
+  static function accessCampaign() {
     static $allow = NULL;
 
     if (!isset($allow)) {
@@ -609,11 +602,10 @@ INNER JOIN  civicrm_group grp ON ( grp.id = campgrp.entity_id )
   }
 
   /*
-     * Add campaign in compoent search.
-     * and assign needful info to templates.
-     *
-     */
-
+   * Add campaign in compoent search.
+   * and assign needful info to templates.
+   *
+   */
   public static function addCampaignInComponentSearch(&$form, $elementName = 'campaign_id') {
     $campaignInfo    = array();
     $campaignDetails = self::getPermissionedCampaigns(NULL, NULL, FALSE, FALSE, FALSE, TRUE);

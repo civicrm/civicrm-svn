@@ -675,14 +675,12 @@ INNER JOIN  civicrm_contact contact_a ON ( activityTarget.target_contact_id = co
   }
 
   /**
-     * This function retrieve all option groups which are created as a result set 
-     *
-     * @return $resultSets an array of option groups.
-     * @static
-     */
-
-  static
-  function getResultSets( $valueColumnName = 'title' ) {
+   * This function retrieve all option groups which are created as a result set 
+   *
+   * @return $resultSets an array of option groups.
+   * @static
+   */
+  static function getResultSets( $valueColumnName = 'title' ) {
     $resultSets = array();
     $valueColumnName = CRM_Utils_Type::escape($valueColumnName, 'String');
 
@@ -696,13 +694,13 @@ INNER JOIN  civicrm_contact contact_a ON ( activityTarget.target_contact_id = co
   }
 
   /**
-     * This function is to check survey activity.  
-     *
-     * @param int $activityId activity id.
-     * @param int $activityTypeId activity type id.
+   * This function is to check survey activity.  
+   *
+   * @param int $activityId activity id.
+   * @param int $activityTypeId activity type id.
    * @return boolean $isSurveyActivity true/false boolean.
-     * @static
-     */
+   * @static
+   */
   static function isSurveyActivity($activityId) {
     $isSurveyActivity = FALSE;
     if (!$activityId) {
@@ -725,12 +723,12 @@ INNER JOIN  civicrm_contact contact_a ON ( activityTarget.target_contact_id = co
   }
 
   /**
-     * This function retrive all response options of survey
-     *
-     * @param int $surveyId survey id.
-     * @return $responseOptions an array of option values
-     * @static
-     */
+   * This function retrive all response options of survey
+   *
+   * @param int $surveyId survey id.
+   * @return $responseOptions an array of option values
+   * @static
+   */
   static function getResponsesOptions($surveyId) {
     $responseOptions = array();
     if (!$surveyId) {
@@ -746,11 +744,11 @@ INNER JOIN  civicrm_contact contact_a ON ( activityTarget.target_contact_id = co
   }
 
   /**
-     * This function return all voter links with respecting permissions
-     *
-     * @return $url array of permissioned links
-     * @static
-     */
+   * This function return all voter links with respecting permissions
+   *
+   * @return $url array of permissioned links
+   * @static
+   */
   static function buildPermissionLinks($surveyId, $enclosedInUL = FALSE, $extraULName = 'more') {
     $menuLinks = array();
     if (!$surveyId) {
@@ -900,13 +898,13 @@ INNER JOIN  civicrm_contact contact_a ON ( activityTarget.target_contact_id = co
 
   /**
    * Get the valid survey response fields those
-     * are configured with profile and custom fields.
-     *
-     * @param int $surveyId     survey id.
-     * @param int $surveyTypeId survey activity type id.
-     *
+   * are configured with profile and custom fields.
+   *
+   * @param int $surveyId     survey id.
+   * @param int $surveyTypeId survey activity type id.
+   *
    * @return array an array of valid survey response fields.
-     */
+   */
   public static function getSurveyResponseFields($surveyId, $surveyTypeId = NULL) {
     if (empty($surveyId)) {
       return array();

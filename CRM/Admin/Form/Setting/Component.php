@@ -76,8 +76,7 @@ class CRM_Admin_Form_Setting_Component extends CRM_Admin_Form_Setting {
    * @access public
    * @static
    */
-  static
-  function formRule($fields) {
+  static function formRule($fields) {
     $errors = array();
 
     if (is_array($fields['enableComponents'])) {
@@ -95,7 +94,6 @@ class CRM_Admin_Form_Setting_Component extends CRM_Admin_Form_Setting {
 
     return $errors;
   }
-
 
   private function _getComponentSelectValues() {
     $ret = array();

@@ -37,8 +37,7 @@
  */
 class CRM_Campaign_Page_AJAX {
 
-  static
-  function registerInterview() {
+  static function registerInterview() {
     $fields = array(
       'result',
       'voter_id',
@@ -109,8 +108,7 @@ class CRM_Campaign_Page_AJAX {
     CRM_Utils_System::civiExit();
   }
 
-  static
-  function loadOptionGroupDetails() {
+  static function loadOptionGroupDetails() {
 
     $id       = CRM_Utils_Array::value('option_group_id', $_POST);
     $status   = 'fail';

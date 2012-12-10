@@ -38,7 +38,9 @@
  */
 class CRM_Campaign_Page_Survey extends CRM_Core_Page {
 
-  private static $_actionLinks; function &actionLinks() {
+  private static $_actionLinks;
+
+  function &actionLinks() {
     // check if variable _actionsLinks is populated
     if (!isset(self::$_actionLinks)) {
 

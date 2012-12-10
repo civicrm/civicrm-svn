@@ -223,8 +223,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form {
    * @access public
    * @static
    */
-  static
-  function formRule($fields) {
+  static function formRule($fields) {
     $errors = array();
 
     if ((array_key_exists(1, $fields['entity']) && $fields['entity'][1][0] == 0) ||

@@ -110,8 +110,7 @@ class CRM_Admin_Form_MailSettings extends CRM_Admin_Form {
    * @static
    * @access public
    */
-  static
-  function formRule($fields) {
+  static function formRule($fields) {
     $errors = array();
     // Check for default from email address and organization (domain) name. Force them to change it.
     if ($fields['domain'] == 'EXAMPLE.ORG') {
