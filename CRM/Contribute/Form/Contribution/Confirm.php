@@ -1036,8 +1036,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
    * @return void
    * @access public
    */
-  static
-  function processContribution(&$form,
+  static function processContribution(&$form,
     $params,
     $result,
     $contactID,
@@ -1054,9 +1053,9 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       $honorCId = $form->createHonorContact();
     }
 
-        // add these values for the recurringContrib function ,CRM-10188
-        $params['contribution_type_id'] = $contributionType->id;
-        $params['is_email_receipt'] = CRM_Utils_Array::value( 'is_email_receipt', $form->_values );
+    // add these values for the recurringContrib function ,CRM-10188
+    $params['contribution_type_id'] = $contributionType->id;
+    $params['is_email_receipt'] = CRM_Utils_Array::value( 'is_email_receipt', $form->_values );
 
     $recurringContributionID = self::processRecurringContribution($form, $params, $contactID, $contributionType, $online);
 
