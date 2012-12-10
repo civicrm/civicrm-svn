@@ -211,10 +211,8 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
         $defaults["billing_country_id-{$this->_bltID}"] = $config->defaultContactCountry;
       }
 
-
       // now fix all state country selectors
       CRM_Core_BAO_Address::fixAllStateSelects($this, $defaults);
-
     }
 
     if ($this->_id) {
@@ -515,12 +513,12 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
         $lineItem = CRM_Price_BAO_LineItem::getLineItems($this->_compId);
         $txrnLineTotal = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnLineTotal($this->_compId, 'civicrm_participant');
       }
-      $default = NULL;
+
       foreach ($lineItem as $key => $value) {
         $params['entity_id'] = $key;
         $params['entity_table'] = 'civicrm_line_item';
-        $FinancialItem = CRM_Financial_BAO_FinancialItem::retrieve($params, $default);
-        $fid[] = $FinancialItem->id;
+        $financialItem = CRM_Financial_BAO_FinancialItem::retrieve($params, CRM_Core_DAO::$_nullArray);
+        $fid[] = $financialItem->id;
       }
 
       $lineItemTotal = $lineTotal = array();
@@ -528,7 +526,6 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
         foreach ($txrnLineTotal as $lineKey => $lineValue) {
           $i = $trxAmount = 0;
           foreach ($lineValue as $itemKey => $itemValue) {
-            $prevAmount = 0;
             $entityParams['entity_table'] = 'civicrm_financial_item';
             $entityParams['entity_id'] = $fid[$i++];
             $prevAmount = CRM_Financial_BAO_FinancialItem::retrievePreviousAmount($entityParams);
@@ -578,8 +575,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
 
         foreach ($entityTrxn as $key => $value) {
           $trxnParams['id'] = $value['financial_trxn_id'];
-          $default = NULL;
-          $trxn = CRM_Core_BAO_FinancialTrxn::retrieve($trxnParams, $default);
+          $trxn = CRM_Core_BAO_FinancialTrxn::retrieve($trxnParams, CRM_Core_DAO::$_nullArray);
 
           $pricefieldTotal['trxn'][$trxn->id]['trxn_total'] = $value['amount'];
           $pricefieldTotal['trxn'][$trxn->id]['trxn_date'] = $trxn->trxn_date;
