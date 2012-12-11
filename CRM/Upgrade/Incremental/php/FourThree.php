@@ -84,11 +84,6 @@ class CRM_Upgrade_Incremental_php_FourThree {
     // Update phones CRM-11292.
     $this->addTask(ts('Upgrade Phone Numbers'), 'phoneNumeric');
 
-    // Rebuild logging schema and triggers
-    // CRM-9716 CRM-11418
-    $logging = new CRM_Logging_Schema();
-    $logging->fixSchemaDifferences();
-
     return TRUE;
   }
 

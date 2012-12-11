@@ -615,8 +615,9 @@ SET    version = '$version'
     $config = CRM_Core_Config::singleton();
     $config->cleanupCaches(1, FALSE);
 
-    // rebuild all triggers
-    CRM_Core_DAO::triggerRebuild();
+    // Rebuild all triggers and re-enable logging if needed
+    $logging = new CRM_Logging_Schema();
+    $logging->fixSchemaDifferences();
   }
 
   /**

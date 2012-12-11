@@ -98,6 +98,9 @@ AND    TABLE_NAME LIKE 'log_civicrm_%'
    * Disable logging by dropping the triggers (but keep the log tables intact).
    */
   function disableLogging() {
+    $config = CRM_Core_Config::singleton();
+    $config->logging = FALSE;
+
     $this->dropTriggers();
 
     // invoke the meta trigger creation call
@@ -133,24 +136,27 @@ AND    TABLE_NAME LIKE 'log_civicrm_%'
   }
 
   /**
-   * Enable logging by creating the log tables (where needed) and creating the triggers.
+   * Enable sitewide logging.
+   *
+   * @return void
    */
   function enableLogging() {
-    foreach ($this->schemaDifferences() as $table => $cols) {
-      $this->fixSchemaDifferencesFor($table, $cols);
-    }
-
-    // invoke the meta trigger creation call
-    CRM_Core_DAO::triggerRebuild();
-
+    $this->fixSchemaDifferences(TRUE);
     $this->addReports();
   }
 
   /**
-   * Add missing log table columns.
+   * Sync log tables and rebuild triggers.
+   *
+   * @param bool $enableLogging: Ensure logging is enabled
+   *
+   * @return void
    */
-  function fixSchemaDifferences() {
+  function fixSchemaDifferences($enableLogging = FALSE) {
     $config = CRM_Core_Config::singleton();
+    if ($enableLogging) {
+      $config->logging = TRUE;
+    }
     if ($config->logging) {
       foreach ($this->schemaDifferences() as $table => $cols) {
         $this->fixSchemaDifferencesFor($table, $cols, FALSE);

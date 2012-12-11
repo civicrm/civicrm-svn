@@ -120,11 +120,9 @@ class CRM_Admin_Form_Setting_Miscellaneous extends CRM_Admin_Form_Setting {
     if ($config->logging != $values['logging']) {
       $logging = new CRM_Logging_Schema;
       if ($values['logging']) {
-        $config->logging = TRUE;
         $logging->enableLogging();
       }
       else {
-        $config->logging = FALSE;
         $logging->disableLogging();
       }
     }

@@ -50,6 +50,9 @@ class CRM_Upgrade_Headless {
       throw new Exception($error);
     }
 
+    // Disable our SQL triggers
+    CRM_Core_DAO::dropTriggers();
+
     // CRM-11156
     $preUpgradeMessage = NULL;
     $upgrade->setPreUpgradeMessage($preUpgradeMessage, $currentVer, $latestVer);
