@@ -816,7 +816,7 @@ class InstallRequirements {
 
 
     mysql_query('DROP TRIGGER civicrm_install_temp_table_test_trigger');
-    mysql_query('DROP TEMPORARY TABLE civicrm_install_temp_table_test');
+    mysql_query('DROP TABLE civicrm_install_temp_table_test');
   }
 
 
