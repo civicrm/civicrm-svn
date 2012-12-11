@@ -138,7 +138,8 @@ class CRM_GCD {
 
     // Parse data file
     foreach((array) simplexml_load_file(self::DATA_FILENAME) as $key => $val) {
-      $this->sampleData[$key] = (array) $val->item;
+      $val = (array) $val;
+      $this->sampleData[$key] = (array) $val['item'];
     }
     // Init DB
     $config = CRM_Core_Config::singleton();
@@ -965,6 +966,10 @@ class CRM_GCD {
         $email = "$f$m$last";
         break;
     }
+    //to ensure we dont insert 
+    //invalid characters in email
+    $email = preg_replace("([^a-zA-Z0-9_\.-]*)", "", $email);
+    
     // Some people have numbers in their address
     if ($this->probability(.4)) {
       $email .= mt_rand(1, 99);
