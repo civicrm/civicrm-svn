@@ -909,7 +909,7 @@ class InstallRequirements {
       $this->error($testDetails);
     } else {
       $values = mysql_fetch_row($result);
-      if ($values[0] <= (1024*$minValueKB)) {
+      if ($values[0] < (1024*$minValueKB)) {
         $testDetails[2] = 'MySQL "thread_stack" is ' . ($values[0]/1024) . 'k';
         $this->error($testDetails);
       }
