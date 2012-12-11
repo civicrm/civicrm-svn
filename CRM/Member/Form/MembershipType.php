@@ -154,7 +154,7 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
     // required in form rule
     $this->add('hidden', 'action', $this->_action);
 
-        $this->add('select', 'financial_type_id', ts( 'Financial Type' ), 
+    $this->add('select', 'financial_type_id', ts( 'Financial Type' ),
       array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::financialType()
     );
 
@@ -252,12 +252,12 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
         $errors['member_org'] = ts('Please select the membership organization');
       }
 
-            if ( empty( $params['financial_type_id'] ) ) {
-                $errors['financial_type_id'] = ts('Please enter a financial type.');
+      if (empty( $params['financial_type_id'] ) ) {
+        $errors['financial_type_id'] = ts('Please enter a financial type.');
       }
 
-            if ( ($params['minimum_fee'] > 0 ) && !$params['financial_type_id'] ) {
-                $errors['financial_type_id'] = ts('Please enter the financial type.');
+      if (($params['minimum_fee'] > 0 ) && !$params['financial_type_id'] ) {
+        $errors['financial_type_id'] = ts('Please enter the financial type.');
       }
 
       if (empty($params['duration_unit'])) {
@@ -287,7 +287,6 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
         $errors['period_type'] = ts('Period type should be Rolling when duration unit is Day');
       }
 
-      $config = CRM_Core_Config::singleton();
       if (($params['period_type'] == 'fixed') &&
         ($params['duration_unit'] == 'year')
       ) {
@@ -410,7 +409,6 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
         $params['duration_interval'] = 1;
       }
 
-      $config = CRM_Core_Config::singleton();
       $periods = array('fixed_period_start_day', 'fixed_period_rollover_day');
       foreach ($periods as $per) {
         if (CRM_Utils_Array::value('M', $params[$per]) &&
@@ -502,7 +500,6 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
     $searchValues[] = array('contact_type', '=', 'organization', 0, 0);
 
     // get the count of contact
-    $contactBAO  = new CRM_Contact_BAO_Contact();
     $query       = new CRM_Contact_BAO_Query($searchValues);
     $searchCount = $query->searchQuery(0, 0, NULL, TRUE);
     $this->set('searchCount', $searchCount);
