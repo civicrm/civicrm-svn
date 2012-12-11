@@ -158,7 +158,8 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
    * @return void
    * @access private
    */
-  private function __construct() {}
+  private function __construct() {
+  }
 
   /**
    * Singleton function used to manage this object.
@@ -433,8 +434,9 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
         $value = CRM_Utils_File::addTrailingSlash($value, '/');
       }
       elseif (in_array($key, $dirArray)) {
-        if ($value)
-        $value = CRM_Utils_File::addTrailingSlash($value);
+        if ($value) {
+          $value = CRM_Utils_File::addTrailingSlash($value);
+        }
         if (empty($value) || (CRM_Utils_File::createDir($value, FALSE) === FALSE)) {
           // seems like we could not create the directories
           // settings might have changed, lets suppress a message for now
@@ -443,7 +445,10 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
           // CRM-4949
           $value = $this->templateCompileDir;
           $url = CRM_Utils_System::url('civicrm/admin/setting/path', 'reset=1');
-          CRM_Core_Session::setStatus(ts('%1 has an incorrect directory path. Please go to the <a href="%2">path setting page</a> and correct it.', array(1 => $key, 2 => $url)), ts('Check Settings'), 'alert');
+          CRM_Core_Session::setStatus(ts('%1 has an incorrect directory path. Please go to the <a href="%2">path setting page</a> and correct it.', array(
+            1 => $key,
+            2 => $url
+          )), ts('Check Settings'), 'alert');
         }
       }
       elseif ($key == 'lcMessages') {
@@ -505,8 +510,8 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
         'mailing_backend'
       );
 
-      if ( $mailingInfo['outBound_option'] == CRM_Mailing_Config::OUTBOUND_OPTION_REDIRECT_TO_DB ||
-              ( defined('CIVICRM_MAILER_SPOOL') && CIVICRM_MAILER_SPOOL )
+      if ($mailingInfo['outBound_option'] == CRM_Mailing_Config::OUTBOUND_OPTION_REDIRECT_TO_DB ||
+        (defined('CIVICRM_MAILER_SPOOL') && CIVICRM_MAILER_SPOOL)
       ) {
         self::$_mail = new CRM_Mailing_BAO_Spool();
       }
@@ -523,7 +528,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
         if ($mailingInfo['smtpAuth']) {
           $params['username'] = $mailingInfo['smtpUsername'];
           $params['password'] = CRM_Utils_Crypt::decrypt($mailingInfo['smtpPassword']);
-          $params['auth']     = TRUE;
+          $params['auth'] = TRUE;
         }
         else {
           $params['auth'] = FALSE;
@@ -622,12 +627,12 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
   /**
    * one function to get domain ID
    */
-  static function domainID($domainID = null, $reset = false) {
+  static function domainID($domainID = NULL, $reset = FALSE) {
     static $domain;
-    if($domainID){
+    if ($domainID) {
       $domain = $domainID;
     }
-    if ($reset || empty($domain)){
+    if ($reset || empty($domain)) {
       $domain = defined('CIVICRM_DOMAIN_ID') ? CIVICRM_DOMAIN_ID : 1;
     }
 
@@ -646,9 +651,9 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
     $this->clearDBCache();
 
     if ($sessionReset) {
-    $session = CRM_Core_Session::singleton();
-    $session->reset(2);
-  }
+      $session = CRM_Core_Session::singleton();
+      $session->reset(2);
+    }
   }
 
   /**
@@ -700,9 +705,9 @@ OR       TABLE_NAME LIKE 'civicrm_export_temp%'
 OR       TABLE_NAME LIKE 'civicrm_task_action_temp%' )
 ";
 
-    $params   = array(1 => array($dao->database(), 'String'));
+    $params = array(1 => array($dao->database(), 'String'));
     $tableDAO = CRM_Core_DAO::executeQuery($query, $params);
-    $tables   = array();
+    $tables = array();
     while ($tableDAO->fetch()) {
       $tables[] = $tableDAO->tableName;
     }
