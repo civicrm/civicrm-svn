@@ -34,7 +34,7 @@
  */
 
 /**
- * This class generates form components generic to Mobile provider
+ * Base class for membership / membership type forms
  *
  */
 class CRM_Member_Form extends CRM_Core_Form {
@@ -68,7 +68,6 @@ class CRM_Member_Form extends CRM_Core_Form {
    */
   function setDefaultValues() {
     $defaults = array();
-    $params = array();
 
     if (isset($this->_id)) {
       $params = array('id' => $this->_id);
@@ -79,7 +78,6 @@ class CRM_Member_Form extends CRM_Core_Form {
     if (isset($defaults['minimum_fee'])) {
       $defaults['minimum_fee'] = CRM_Utils_Money::format($defaults['minimum_fee'], NULL, '%a');
     }
-
 
     if (isset($defaults['status'])) {
       $this->assign('membershipStatus', $defaults['status']);
@@ -111,12 +109,12 @@ class CRM_Member_Form extends CRM_Core_Form {
           array(
             'type' => 'upload',
             'name' => ts('Renew'),
-            'isDefault' => TRUE,
+            'isDefault' => TRUE
           ),
           array(
             'type' => 'cancel',
-            'name' => ts('Cancel'),
-          ),
+            'name' => ts('Cancel')
+          )
         )
       );
     }
@@ -125,12 +123,12 @@ class CRM_Member_Form extends CRM_Core_Form {
           array(
             'type' => 'next',
             'name' => ts('Delete'),
-            'isDefault' => TRUE,
+            'isDefault' => TRUE
           ),
           array(
             'type' => 'cancel',
-            'name' => ts('Cancel'),
-          ),
+            'name' => ts('Cancel')
+          )
         )
       );
     }
@@ -139,21 +137,22 @@ class CRM_Member_Form extends CRM_Core_Form {
           array(
             'type' => 'upload',
             'name' => ts('Save'),
-            'isDefault' => TRUE,
+            'isDefault' => TRUE
           ),
           array(
             'type' => 'upload',
             'name' => ts('Save and New'),
-            'subName' => 'new',
+            'subName' => 'new'
           ),
           array(
             'type' => 'cancel',
-            'name' => ts('Cancel'),
-          ),
+            'name' => ts('Cancel')
+          )
         )
       );
     }
   }
+
   /*
    * Function to extract values from the contact create boxes on the form and assign appropriatley  to
    *
@@ -173,11 +172,10 @@ class CRM_Member_Form extends CRM_Core_Form {
    *  - contribution_contact_select_id[1]
    */
   function storeContactFields($formValues){
-
     // in a 'standalone form' (contact id not in the url) the contact will be in the form values
     if (CRM_Utils_Array::value('contact_select_id', $formValues)) {
       $this->_contactID = $formValues['contact_select_id'][1];
-}
+    }
 
     list($this->_memberDisplayName,
          $this->_memberEmail
@@ -190,7 +188,7 @@ class CRM_Member_Form extends CRM_Core_Form {
        list( $this->_contributorDisplayName,
          $this->_contributorEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $this->_contributorContactID );
     }
-    else{
+    else {
       $this->_receiptContactId = $this->_contributorContactID = $this->_contactID;
       $this->_contributorDisplayName = $this->_memberDisplayName;
       $this->_contributorEmail = $this->_memberEmail;
