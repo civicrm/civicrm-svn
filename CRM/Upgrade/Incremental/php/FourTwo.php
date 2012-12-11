@@ -704,7 +704,7 @@ AND       cli.entity_id IS NULL AND cp.fee_amount IS NOT NULL";
       $lineParams = array(
         'entity_table' => 'civicrm_participant',
         'entity_id' => $dao->participant_id,
-        'label' =>  ? $dao->fee_level : ts('Default'),
+        'label' => $dao->fee_level ? $dao->fee_level : ts('Default'),
         'qty' => 1,
         'unit_price' => $dao->fee_amount,
         'line_total' => $dao->fee_amount,
