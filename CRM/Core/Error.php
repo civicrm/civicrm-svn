@@ -223,8 +223,18 @@ class CRM_Core_Error extends PEAR_ErrorStack {
     $error['user_info']  = $pearError->getUserInfo();
     $error['to_string']  = $pearError->toString();
 
-    $errorDetails = CRM_Core_Error::debug('Initialization Error', $error);
-    CRM_Core_Error::backtrace();
+    CRM_Core_Error::debug('Initialization Error', $error);
+
+    $config = CRM_Core_Config::singleton();
+    // if user has instructed to print on screen, do so
+    if ($config->backtrace) {
+      self::backtrace();
+    }
+
+      self::backtrace();
+    // always log the backtrace to a file
+    self::backtrace('backTrace', TRUE);
+
     exit(0);
   }
 
@@ -262,7 +272,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
       'message' => $message,
       'code' => $code,
     );
-    
+
     if (self::$modeException) {
       // CRM-11043
       CRM_Core_Error::debug_var('Fatal Error Details', $vars);
@@ -274,7 +284,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
       }
       throw new Exception($details, $code);
     }
-    
+
     if (!$message) {
       $message = ts('We experienced an unexpected error. Please post a detailed description and the backtrace on the CiviCRM forums: %1', array(1 => 'http://forum.civicrm.org/'));
     }
@@ -368,7 +378,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
         self::abend(CRM_Core_Error::FATAL_ERROR);
       }
     }
-    
+
     // Case C: Default error handler
 
     // log to file
@@ -570,8 +580,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
     return Log::singleton('file', $fileName);
   }
 
-  static
-  function backtrace($msg = 'backTrace', $log = FALSE) {
+  static function backtrace($msg = 'backTrace', $log = FALSE) {
     $backTrace = debug_backtrace();
     $message = self::formatBacktrace($backTrace);
     if (!$log) {
@@ -592,13 +601,18 @@ class CRM_Core_Error extends PEAR_ErrorStack {
    * @see debug_backtrace
    * @see Exception::getTrace()
    */
-  static
-  function formatBacktrace($backTrace, $showArgs = TRUE, $maxArgLen = 80) {
+  static function formatBacktrace($backTrace, $showArgs = TRUE, $maxArgLen = 80) {
     $message = '';
     foreach ($backTrace as $idx => $trace) {
       $args = array();
+      $fnName = CRM_Utils_Array::value('function', $trace);
+      $className = array_key_exists('class', $trace) ? ($trace['class'] . $trace['type']) : '';
+
+      // do now show args for a few password related functions
+      $skipArgs = ($className == 'DB::' && $fnName == 'connect') ? TRUE : FALSE;
+
       foreach ($trace['args'] as $arg) {
-        if (! $showArgs) {
+        if (! $showArgs || $skipArgs) {
           $args[] = '(' . gettype($arg) . ')';
           continue;
         }
@@ -631,12 +645,13 @@ class CRM_Core_Error extends PEAR_ErrorStack {
         }
       }
 
-      $message .= sprintf("#%s %s(%s): %s%s(%s)\n",
+      $message .= sprintf(
+        "#%s %s(%s): %s%s(%s)\n",
         $idx,
         CRM_Utils_Array::value('file', $trace, '[internal function]'),
         CRM_Utils_Array::value('line', $trace, ''),
-        array_key_exists('class', $trace) ? ($trace['class'] . $trace['type']) : '',
-        CRM_Utils_Array::value('function', $trace),
+        $className,
+        $fnName,
         implode(", ", $args)
       );
     }
