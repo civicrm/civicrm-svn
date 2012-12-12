@@ -52,7 +52,7 @@ class CRM_Contact_Form_Search_Custom_GroupTestDataProvider implements Iterator {
     array('fv' => array('excludeGroups' => array('3')),
       'id' => array(
         '9', '10', '11', '12', '13', '14',
-        '15', '16', '26'
+        '15', '16', '26',
       ),
     ),
     //  Include static group 3
@@ -87,7 +87,7 @@ class CRM_Contact_Form_Search_Custom_GroupTestDataProvider implements Iterator {
     array('fv' => array('excludeTags' => array('7')),
       'id' => array(
         '9', '10', '13', '14', '17', '18',
-        '21', '22', '25', '27', '29',
+        '21', '22', '27',
       ),
     ),
     //  Include tag 7
@@ -157,15 +157,15 @@ class CRM_Contact_Form_Search_Custom_GroupTestDataProvider implements Iterator {
         'excludeGroups' => array('5'),
       ),
       'id' => array(
-        '9', '11', '17', '19', '25',
-        '26', '27', '28', '29'
+        '9', '11', '17', '19',
+        '26', '27', '28',
       ),
     ),
     //  Include smart group 6
     array('fv' => array('includeGroups' => array('6')),
       'id' => array(
         '9', '10', '11', '12', '13', '14',
-        '15', '16', '25', '26', '29'
+        '15', '16', '26',
       ),
     ),
     //  Include smart group 4

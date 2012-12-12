@@ -162,7 +162,7 @@ class CRM_Contact_Form_Search_Custom_Group extends CRM_Contact_Form_Search_Custo
   ) {
 
     if ($justIDs) {
-      $selectClause = "contact_a.id as contact_id";
+      $selectClause = "DISTINCT contact_a.id as contact_id";
     }
     else {
       $selectClause = "contact_a.id as contact_id,
