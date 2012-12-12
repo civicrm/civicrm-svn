@@ -225,12 +225,6 @@ class CRM_Core_Error extends PEAR_ErrorStack {
 
     CRM_Core_Error::debug('Initialization Error', $error);
 
-    $config = CRM_Core_Config::singleton();
-    // if user has instructed to print on screen, do so
-    if ($config->backtrace) {
-      self::backtrace();
-    }
-
     // always log the backtrace to a file
     self::backtrace('backTrace', TRUE);
 
