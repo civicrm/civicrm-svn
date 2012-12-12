@@ -268,6 +268,14 @@ class CRM_Contribute_Form_ContributionPage_AddProduct extends CRM_Contribute_For
       $premiumID = $dao->id;
       $params['premiums_id'] = $premiumID;
 
+      $oldWeight = NULL;
+      if ($this->_pid) {
+        $oldWeight = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_PremiumsProduct', $this->_pid, 'weight', 'id');
+      }
+      
+      // updateOtherWeights needs to filter on premiums_id
+      $filter = array('premiums_id' => $params['premiums_id']);
+      $params['weight'] = CRM_Utils_Weight::updateOtherWeights('CRM_Contribute_DAO_PremiumsProduct', $oldWeight, $params['weight'], $filter);
 
       $dao = new CRM_Contribute_DAO_PremiumsProduct();
       $dao->copyValues($params);

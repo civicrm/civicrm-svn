@@ -54,13 +54,13 @@
 
     {strip}
       <div id="premiums-listings">
-      {if $showPremium AND !$preview }
+      {if $showPremium AND !$preview AND $premiumBlock.premiums_nothankyou_position EQ 1}
         <div class="premium premium-no_thanks" id="premium_id-no_thanks" min_contribution="0">
           <div class="premium-short">
-            <input type="checkbox" disabled="disabled" /> {ts}No thank you{/ts}
+            <input type="checkbox" disabled="disabled" /> {$premiumBlock.premiums_nothankyou_label}
           </div>
           <div class="premium-full">
-            <input type="checkbox" checked="checked" disabled="disabled" /> {ts}No thank you{/ts}
+            <input type="checkbox" checked="checked" disabled="disabled" /> {$premiumBlock.premiums_nothankyou_label}
           </div>
         </div>
       {/if}          
@@ -104,6 +104,16 @@
           <div style="clear:both"></div>
         </div>
       {/foreach}
+      {if $showPremium AND !$preview AND $premiumBlock.premiums_nothankyou_position EQ 2}
+        <div class="premium premium-no_thanks" id="premium_id-no_thanks" min_contribution="0">
+          <div class="premium-short">
+            <input type="checkbox" disabled="disabled" /> {$premiumBlock.premiums_nothankyou_label}
+          </div>
+          <div class="premium-full">
+            <input type="checkbox" checked="checked" disabled="disabled" /> {$premiumBlock.premiums_nothankyou_label}
+          </div>
+        </div>
+      {/if}          
       </div>
     {/strip}
 
