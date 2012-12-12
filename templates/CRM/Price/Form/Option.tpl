@@ -65,7 +65,7 @@
                 <td>
 		{if !$financialType }
 			    	{capture assign=ftUrl}{crmURL p='civicrm/admin/financial/financialType' q="reset=1"}{/capture}
-				{ts 1=$ftUrl}There is no Financial Type configured of Account Relation Revenue. <a href='%1'>Click here</a> if you want to configure financial type for your site.{/ts}
+				{ts 1=$ftUrl}There are no financial types configured with a linked 'Revenue Account of' account. <a href='%1'>Click here</a> if you want to configure financial types for your site.{/ts}
 	        {else}  	
 		{$form.financial_type_id.html}
 		{/if}
