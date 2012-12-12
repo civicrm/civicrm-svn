@@ -39,11 +39,11 @@
  * This class contains  grant program related functions.
  */
 class CRM_Grant_BAO_GrantProgram extends CRM_Grant_DAO_GrantProgram {
+  
   /**
    * class constructor
    */
-  function __construct( ) 
-  {
+  function __construct( ) {
     parent::__construct( );
   }
 
@@ -59,8 +59,7 @@ class CRM_Grant_BAO_GrantProgram extends CRM_Grant_DAO_GrantProgram {
    * @access public
    * @static
    */
-  static function retrieve( &$params, &$defaults ) 
-  {
+  static function retrieve( &$params, &$defaults ) {
     $program = new CRM_Grant_DAO_GrantProgram( );
     $program->copyValues( $params );
     if ( $program->find( true ) ) {
@@ -69,6 +68,7 @@ class CRM_Grant_BAO_GrantProgram extends CRM_Grant_DAO_GrantProgram {
     }
     return null;
   }
+
   /**
    * Function  to delete Grant Program
    * 

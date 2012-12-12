@@ -37,6 +37,7 @@
  * This file is used to build the form configuring mailing details
  */
 class CRM_Mailing_Form_Settings extends CRM_Core_Form {
+
   /**
    * Function to set variables up before form is built
    *

@@ -183,7 +183,7 @@ class CRM_PCP_Form_Campaign extends CRM_Core_Form {
    * @return None
    */
   public function postProcess() {
-        $params  = $this->controller->exportValues( $this->_name );
+    $params  = $this->controller->exportValues( $this->_name );
     $checkBoxes = array('is_thermometer', 'is_honor_roll', 'is_active');
 
     foreach ($checkBoxes as $key) {
@@ -196,21 +196,21 @@ class CRM_PCP_Form_Campaign extends CRM_Core_Form {
     if (!$contactID) {
       $contactID = $this->get('contactID');
     }
-        $params['title'] = $params['pcp_title'];
-        $params['intro_text'] = $params['pcp_intro_text'];
+    $params['title'] = $params['pcp_title'];
+    $params['intro_text'] = $params['pcp_intro_text'];
     $params['contact_id'] = $contactID;
     $params['page_id'] = $this->get('component_page_id') ? $this->get('component_page_id') : $this->_contriPageId;
     $params['page_type'] = $this->_component;
 
-        // since we are allowing html input from the user
-        // we also need to purify it, so lets clean it up
-        $htmlFields = array( 'intro_text', 'page_text', 'title' );
-        foreach ( $htmlFields as $field ) {
-          if ( ! empty($params[$field]) ) {
-            $params[$field] = CRM_Utils_String::purifyHTML($params[$field]);
-          }
-        }
-
+    // since we are allowing html input from the user
+    // we also need to purify it, so lets clean it up
+    $htmlFields = array( 'intro_text', 'page_text', 'title' );
+    foreach ( $htmlFields as $field ) {
+      if ( ! empty($params[$field]) ) {
+        $params[$field] = CRM_Utils_String::purifyHTML($params[$field]);
+      }
+    }
+    
     $entity_table = CRM_PCP_BAO_PCP::getPcpEntityTable($params['page_type']);
 
     $pcpBlock = new CRM_PCP_DAO_PCPBlock();

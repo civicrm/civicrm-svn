@@ -86,7 +86,8 @@ class CRM_Mailing_BAO_Mailing extends CRM_Mailing_DAO_Mailing {
 
   /**
    * class constructor
-   */ function __construct() {
+   */
+  function __construct() {
     parent::__construct();
   }
 
@@ -2027,7 +2028,6 @@ AND civicrm_contact.is_opt_out =0";
     return $this->count;
   }
 
-
   static function checkPermission($id) {
     if (!$id) {
       return;
@@ -2184,7 +2184,6 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
    * @static
    * @access public
    */
-
   static function showEmailDetails($id) {
     return CRM_Utils_System::url('civicrm/mailing/report', "mid=$id");
   }
@@ -2275,7 +2274,6 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
    * @return None
    * @access public
    */
-
   public function commonCompose(&$form) {
     //get the tokens.
     $tokens = CRM_Core_SelectValues::contactTokens();
@@ -2374,7 +2372,6 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
    * @return None
    * @access public
    */
-
   public function commonLetterCompose(&$form) {
     //get the tokens.
     $tokens = CRM_Core_SelectValues::contactTokens();

@@ -400,8 +400,8 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
 
 
   /*
-     * Add PCP form elements to a form
-     */
+   * Add PCP form elements to a form
+   */
   function buildPcp($pcpId, &$page, &$elements = NULL) {
 
     $prms = array('id' => $pcpId);
@@ -439,8 +439,8 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
   }
 
   /*
-     * Process a PCP contribution/
-     */
+   * Process a PCP contribution/
+   */
   function handlePcp($pcpId, $component, $entity) {
 
     $entity_table = self::getPcpEntityTable($component);
