@@ -471,7 +471,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
    * @return void
    * @static
    * @access public
-   */
+   *
   static function deleteItem($group, $name = NULL, $componentID = NULL, $contactID = NULL) {
     $dao = self::dao($group, $name, $componentID, $contactID);
     $dao->delete();
@@ -488,7 +488,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
         unset(self::$_cache[$cacheKey]);
       }
     }
-  }
+  }*/
 
   /**
    * This provides information about the setting - similar to the fields concept for DAO information.
