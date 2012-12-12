@@ -84,7 +84,7 @@ class CRM_Contribute_Form_ContributionPage_Premium extends CRM_Contribute_Form_C
 
     $this->addElement('checkbox', 'premiums_display_min_contribution', ts('Display Minimum Contribution Amount?'));
 
-    // CRM-NNNN Control label and position for No Thank-you radio button
+    // CRM-10999 Control label and position for No Thank-you radio button
     $this->add('text', 'premiums_nothankyou_label', ts('No Thank-you Label'), $attributes['premiums_nothankyou_label'], TRUE);
     $positions = array(1 => ts('Before Premiums'), 2 => ts('After Premiums'));
     $this->add('select','premiums_nothankyou_position', ts('No Thank-you Option'), $positions);

@@ -24,7 +24,8 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing/deleting premium  *}
-<fieldset><legend>{if $action eq 1}{ts}New Premium{/ts}{elseif $action eq 2}{ts}Edit Premium{/ts}{elseif $action eq 1024}{ts}Preview a Premium{/ts}{else}{ts}Delete Premium Product{/ts}{/if}</legend>
+<h3>{if $action eq 1}{ts}New Premium{/ts}{elseif $action eq 2}{ts}Edit Premium{/ts}{elseif $action eq 1024}{ts}Preview a Premium{/ts}{else}{ts}Delete Premium Product{/ts}{/if}</h3>
+<div class="crm-block crm-form-block crm-contribution-manage_premiums-form-block">
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
    {if $action eq 8}
       <div class="messages status no-popup">
@@ -100,10 +101,10 @@
        <td class="html-adjust">
        {if !$financialType}
          {capture assign=ftUrl}{crmURL p='civicrm/admin/financial/financialType' q="reset=1"}{/capture}
-         {ts 1=$ftUrl}There is no Financial Type configured of Account Relation that has both a 'Cost of Sales Premiums Account' and a 'Premiums Inventory Account' if you want to generate accounting transactions to track the cost of premiums used.  <a href='%1'>Click here</a> if you want to configure financial type for your site.{/ts}
+         {ts 1=$ftUrl}There are no financial types configured with linked 'Cost of Sales Premiums' and 'Premiums Inventory Account' accounts. If you want to generate accounting transactions which track the cost of premiums used <a href='%1'>click here</a> to configure financial types and accounts.{/ts}
        {else}
          {$form.financial_type_id.html}<br />
-	 <span class="description">{ts}Select a Financial Type that has both a 'Cost of Sales Premiums Account' and a 'Premiums Inventory Account' if you want to generate accounting transactions to track the cost of premiums used.{/ts}</span>
+	 <span class="description">{ts}Select a financial type that is linked to both a 'Cost of Sales Premiums Account' and a 'Premiums Inventory Account' if you want to generate accounting transactions to track the cost of premiums used.{/ts}</span>
        {/if}
        </td>
     </tr>
@@ -151,7 +152,7 @@
   </fieldset>
  {/if}
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
-</fieldset>
+</div>
 {if $action eq 1 or $action eq 2 }
 
 <script type="text/javascript">
