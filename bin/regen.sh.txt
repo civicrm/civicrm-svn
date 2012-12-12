@@ -51,7 +51,7 @@ php GenerateData.php
 cd $SVNROOT
 "$PHP5PATH"php bin/cli.php -e System -a flush --triggers 1 --session 1
 
-mysql -u$DBUSER $PASSWDSECTION $DBARGS $DBNAME -e "DROP TABLE zipcodes; UPDATE civicrm_domain SET config_backend = NULL; UPDATE civicrm_setting SET value = NULL WHERE name = 'userFrameworkResourceURL';"
+mysql -u$DBUSER $PASSWDSECTION $DBARGS $DBNAME -e "DROP TABLE zipcodes; UPDATE civicrm_domain SET config_backend = NULL; UPDATE civicrm_setting SET value = NULL WHERE name = 'userFrameworkResourceURL'  OR name = 'imageUploadURL';"
 
 cd $SVNROOT/sql
 mysqldump -cent -u $DBUSER $PASSWDSECTION $DBARGS $DBNAME > civicrm_generated.mysql
