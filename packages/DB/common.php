@@ -472,7 +472,7 @@ class DB_common extends PEAR
     function quoteBoolean($boolean) {
         return $boolean ? '1' : '0';
     }
-     
+
     // }}}
     // {{{ quoteFloat()
 
@@ -488,7 +488,7 @@ class DB_common extends PEAR
     function quoteFloat($float) {
         return "'".$this->escapeSimple(str_replace(',', '.', strval(floatval($float))))."'";
     }
-     
+
     // }}}
     // {{{ escapeSimple()
 
@@ -1873,9 +1873,10 @@ class DB_common extends PEAR
      *
      * @see PEAR_Error
      */
-    function &raiseError($code = DB_ERROR, $mode = null, $options = null,
-                         $userinfo = null, $nativecode = null)
+    function &raiseError($message = null, $code = null, $mode = null, $options = null,
+        $userinfo = null, $error_class = NULL, $skipmsg = false)
     {
+        $nativecode = null;
         // The error is yet a DB error object
         if (is_object($code)) {
             // because we the static PEAR::raiseError, our global
