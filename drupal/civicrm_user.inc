@@ -91,9 +91,7 @@ function civicrm_user_update(&$edit, &$user, $category) {
   }
   // this always comes in via user hook
   // in D7 we dont know if the email has changed, so we go ahead and update
-  if (isset($edit['mail']) &&
-    !empty($edit['mail'])
-  ) {
+  if (isset($edit['mail']) && !empty($edit['mail'])) {
     $contactID = CRM_Core_BAO_UFMatch::getContactId($user->uid);
     // cant find the contactID, so lets skip
     if (!$contactID) {
