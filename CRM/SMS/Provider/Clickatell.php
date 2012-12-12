@@ -280,8 +280,10 @@ class CRM_SMS_Provider_Clickatell extends CRM_SMS_Provider {
       $send = explode(":", $response['data']);
 
       if ($send[0] == "ID") {
-        $this->createActivity($send[1], $message, $header, $jobID);
-        return $send[1];
+        //trim whitespace around the id
+        $apiMsgID = trim($send[1], " \t\r\n");
+        $this->createActivity($apiMsgID, $message, $header, $jobID);
+        return $apiMsgID;
       }
       else {
         // delete any parent activity & throw error
