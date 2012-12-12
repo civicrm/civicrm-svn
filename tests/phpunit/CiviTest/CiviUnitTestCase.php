@@ -127,8 +127,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
    *  @param  string $name
    *  @param  array  $data
    *  @param  string $dataName
-   */ function __construct($name = NULL, array$data = array(
-     ), $dataName = '') {
+   */
+
+  function __construct($name = NULL, array$data = array(), $dataName = '') {
     parent::__construct($name, $data, $dataName);
 
 
@@ -160,8 +161,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     return $this->DBResetRequired;
   }
 
-  static
-  function getDBName() {
+  static function getDBName() {
     $dbName = !empty($GLOBALS['mysql_db']) ? $GLOBALS['mysql_db'] : 'civicrm_tests_dev';
     return $dbName;
   }
