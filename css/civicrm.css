@@ -2414,6 +2414,7 @@ div.grippie {
   background:transparent url("../i/icons/jquery-ui-52534D.png") no-repeat top right;
   float:left;
   text-indent: -10000px;
+  margin-right: 5px;
 }
 
 span.icon {
