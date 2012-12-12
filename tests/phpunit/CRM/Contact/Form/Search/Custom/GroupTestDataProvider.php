@@ -52,7 +52,7 @@ class CRM_Contact_Form_Search_Custom_GroupTestDataProvider implements Iterator {
     array('fv' => array('excludeGroups' => array('3')),
       'id' => array(
         '9', '10', '11', '12', '13', '14',
-        '15', '16', '25', '26', '29'
+        '15', '16', '26'
       ),
     ),
     //  Include static group 3
@@ -73,7 +73,7 @@ class CRM_Contact_Form_Search_Custom_GroupTestDataProvider implements Iterator {
     array('fv' => array('includeGroups' => array('3', '5')),
       'id' => array(
         '13', '14', '15', '16', '17', '18',
-        '19', '20', '21', '22', '23', '24', 
+        '19', '20', '21', '22', '23', '24',
         '27', '28',
       ),
     ),
@@ -86,7 +86,7 @@ class CRM_Contact_Form_Search_Custom_GroupTestDataProvider implements Iterator {
     //  Exclude tag 7
     array('fv' => array('excludeTags' => array('7')),
       'id' => array(
-        '9', '10', '13', '14', '17', '18', 
+        '9', '10', '13', '14', '17', '18',
         '21', '22', '25', '27', '29',
       ),
     ),
@@ -126,7 +126,7 @@ class CRM_Contact_Form_Search_Custom_GroupTestDataProvider implements Iterator {
         'andOr' => 0,
       ),
       'id' => array(
-        '11', '12', '15', '16', '17', '18', 
+        '11', '12', '15', '16', '17', '18',
         '19', '20', '21', '22', '23', '24',
         '26', '27', '28',
       ),
@@ -157,7 +157,7 @@ class CRM_Contact_Form_Search_Custom_GroupTestDataProvider implements Iterator {
         'excludeGroups' => array('5'),
       ),
       'id' => array(
-        '9', '11', '17', '19', '25', 
+        '9', '11', '17', '19', '25',
         '26', '27', '28', '29'
       ),
     ),
@@ -182,51 +182,6 @@ class CRM_Contact_Form_Search_Custom_GroupTestDataProvider implements Iterator {
         '19', '20', '21', '22', '23', '24',
         '27', '28',
       ),
-    ),
-    //  Include activities with subject like "sailing"
-    array(
-      'fv' => array('activity_include' => '[["subject like sailing"]]'),
-      'id' => array('25', '26'),
-    ),
-    //  Exclude activities with subject like "conference"
-    array(
-      'fv' => array('activity_exclude' => '[["subject like conference"]]'),
-      'id' => array(
-        '9', '10', '11', '12', '13', '14',
-        '15', '16', '17', '18', '19', '20',
-        '21', '22', '23', '24', '25',
-      ),
-    ),
-    //  Include activities with subject like "conference" and date after 5/1/2012
-    array(
-      'fv' => array('activity_include' => '[["subject like conference","activity_date_time >= 05/01/2012"]]'),
-      'id' => array('28', '29'),
-    ),
-    //  Include activities with status of scheduled and date before 7/31/2012
-    array(
-      'fv' => array('activity_include' => '[["activity_status_id = 1","activity_date_time <= 07/31/2012"]]'),
-      'id' => array('27'),
-    ),
-    //  Include activities with status of scheduled and tag 7 (either)
-    array(
-      'fv' => array(
-        'activity_include' => '[["activity_status_id = 1"]]',
-        'includeTags' => array('7'),
-        'andOr' => 0,
-      ),
-      'id' => array(
-        '11', '12', '15', '16', '19', '20',
-        '23', '24', '26', '27', '28', '29',
-      ),
-    ),
-    //  Include activities with status of scheduled and tag 7 (both)
-    array(
-      'fv' => array(
-        'activity_include' => '[["activity_status_id = 1"]]',
-        'includeTags' => array('7'),
-        'andOr' => 1,
-      ),
-      'id' => array('28'),
     ),
   );
 
