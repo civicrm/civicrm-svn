@@ -1,6 +1,4 @@
 <?php
-// vim: set si ai expandtab tabstop=4 shiftwidth=4 softtabstop=4:
-
 /**
  *  File for the CRM_Contact_Form_Search_Custom_GroupTest class
  *
@@ -168,8 +166,9 @@ class CRM_Contact_Form_Search_Custom_GroupTest extends CiviUnitTestCase {
     $dao = CRM_Core_DAO::executeQuery($sql);
     $contacts = array();
     while ($dao->fetch()) {
-      $contacts[] = $dao->contact_id;
+      $contacts[$dao->contact_id] = 1;
     }
+    $contacts = array_keys($contacts);
     sort($contacts, SORT_NUMERIC);
     $this->assertEquals($ids, $contacts, 'In line ' . __LINE__);
   }
