@@ -2578,4 +2578,51 @@ WHERE  contribution_id = %1 ";
     }
     return FALSE;
   }
+
+  /**
+   * Function to create all financial accounts entry 
+   *
+   * @access public
+   * @static
+   */
+  static function recordFinancialAccounts($params, $ids = NULL) {
+    $contributionStatuses = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
+    if ($params['contribution_status_id'] == array_search('Completed', $contributionStatuses)) {
+      $accountRelationType = 'Asset Account of';
+    } elseif ($params['contribution_status_id'] == array_search('Pending', $contributionStatuses)) {
+      $accountRelationType = 'AR Account is';
+    } elseif (CRM_Utils_Array::value('payment_processor_id', $params)) {
+      $accountRelationType = 'Expense Account is';
+    }
+    //get financial account id 
+    $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE '{$accountRelationType}' "));
+    $params['to_financial_account_id'] = CRM_Contribute_PseudoConstant::financialAccountType($params['financial_type_id'], $relationTypeId);
+    $now = date('YmdHis');
+
+    //record financial transaction
+    $trxnParams = array(
+      'contribution_id' => $params['contribution']->id,
+      'to_financial_account_id' => $params['to_financial_account_id'],
+      'from_financial_account_id' => CRM_Utils_Array::value('from_financial_account_id', $params, NULL),
+      'trxn_date' => $now,
+      'total_amount' => CRM_Utils_Array::value('initial_amount', $params) ? $params['initial_amount'] : $params['total_amount'],
+      'fee_amount' => CRM_Utils_Array::value('net_amount', $params),
+      'net_amount' => CRM_Utils_Array::value('fee_amount', $params),
+      'currency' => $params['contribution']->currency,
+      'trxn_id' => CRM_Utils_Array::value('trxn_id', $params),
+      'status_id' => CRM_Utils_Array::value('contribution_status_id', $params)
+    );
+
+    if (CRM_Utils_Array::value('payment_processor_id', $params)) {
+      $trxnParams['payment_processor_id'] = $params['payment_processor_id'];
+    }
+    $trxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
+    
+    if (!CRM_Utils_Array::value('contribution', $ids)) {
+      // record Line Items and Finacial Items
+      $entityId = $params['contribution']->id;
+      $entityTable = 'civicrm_contribution';
+      CRM_Price_BAO_LineItem::processPriceSet($entityId, $params['line_item'], $params['contribution'], null, $entityTable, $trxn);
+    }
+  }
 }
