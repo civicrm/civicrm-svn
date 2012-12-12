@@ -376,6 +376,7 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
     }
     return self::$pcpStatus[$column];
   } 
+
   /**
    * Get all financial accounts for a Financial type.
    *
@@ -386,22 +387,26 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
    *
    * @return array - array reference of all financial accounts for a Financial type
    */
-  public static function &financialAccountType($entityId) {
-    if (!self::$financialTypeAccount) {
-      $condition = " entity_id = $entityId";
+  public static function financialAccountType($financialTypeId, $relationTypeId = NULL) {
+    if (!CRM_Utils_Array::value($financialTypeId, self::$financialTypeAccount)) {
+      $condition = " entity_id = $financialTypeId ";
       CRM_Core_PseudoConstant::populate( 
-        self::$financialTypeAccount,
+        self::$financialTypeAccount[$financialTypeId],
         'CRM_Financial_DAO_EntityFinancialAccount',
         $all = true,
-        $retrieve = 'financial_Account_id', 
+        $retrieve = 'financial_account_id', 
         $filter = NULL,
         $condition,
         NULL,
         'account_relationship'
       );            
     }
+
+    if ($relationTypeId) {
+      return CRM_Utils_Array::value($relationTypeId, self::$financialTypeAccount[$financialTypeId]);
+    }
     
-    return self::$financialTypeAccount;
+    return self::$financialTypeAccount[$financialTypeId];
   }
 }
 

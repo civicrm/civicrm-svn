@@ -2078,31 +2078,29 @@ ORDER BY name";
   }
 
   /**
-     * Get all options values
-     *
-     * The static array option values is returned
-     *
-     * @access public
-     * @static
-     *
-     * @param boolean $optionGroupName - get All  Option Group values- default is to get only active ones.
-     *
-     * @return array - array reference of all Option Group Name
-     *
-     */
-    public static function accountOptionValues( $optionGroupName, $id = null, $condition = null )
-    {
-        $cacheKey = $optionGroupName . '_' . $condition;
-        if (empty( self::$accountOptionValues[$cacheKey])) {
-            require_once 'CRM/Core/OptionGroup.php';
-            self::$accountOptionValues[$cacheKey] = CRM_Core_OptionGroup::values( $optionGroupName, false, false, false, $condition );
-        }
-        if ($id) {
-          return CRM_Utils_Array::value( $id, $accountOptionValues[$cacheKey] );          
-        }
-        
-        return self::$accountOptionValues[$cacheKey];
+   * Get all options values
+   *
+   * The static array option values is returned
+   *
+   * @access public
+   * @static
+   *
+   * @param boolean $optionGroupName - get All  Option Group values- default is to get only active ones.
+   *
+   * @return array - array reference of all Option Group Name
+   *
+   */
+  public static function accountOptionValues($optionGroupName, $id = null, $condition = null) {
+    $cacheKey = $optionGroupName . '_' . $condition;
+    if (empty(self::$accountOptionValues[$cacheKey])) {
+      self::$accountOptionValues[$cacheKey] = CRM_Core_OptionGroup::values($optionGroupName, false, false, false, $condition);
     }
+    if ($id) {
+      return CRM_Utils_Array::value($id, $accountOptionValues[$cacheKey]);          
+    }
+        
+    return self::$accountOptionValues[$cacheKey];
+  }
 
   /**
    * Get all batch types
