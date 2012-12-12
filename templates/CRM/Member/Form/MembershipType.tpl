@@ -34,7 +34,7 @@
       {ts}WARNING: Deleting this option will result in the loss of all membership records of this type.{/ts} {ts}This may mean the loss of a substantial amount of data, and the action cannot be undone.{/ts} {ts}Do you want to continue?{/ts}
     </div>
     <div> {include file="CRM/common/formButtons.tpl"}</div>
-    {else}
+  {else}
     <table class="form-layout-compressed">
       <tr class="crm-membership-type-form-block-name">
         <td class="label">{$form.name.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_membership_type' field='name' id=$membershipTypeId}{/if}
@@ -144,7 +144,7 @@
       <tr class="crm-membership-type-form-block-period_type">
         <td class="label">{$form.period_type.label}<span class="marker"> *</span></td>
         <td>{$form.period_type.html}<br />
-          <span class="description">{ts}Select 'rolling' if membership periods begin at date of signup. Select 'fixed' if membership periods begin on a set calendar date.{/ts} {help id="period-type"}</span>
+          <span class="description">{ts}Select 'rolling' if membership periods begin at date of signup. Select 'fixed' if membership periods begin on a set calendar date.{/ts} {help id="period-type" file="CRM/Member/Page/MembershipType.hlp"}</span>
         </td>
       </tr>
       <tr id="fixed_start_day_row" class="crm-membership-type-form-block-fixed_period_start_day">
@@ -174,7 +174,7 @@
             {else}
             {$form.relationship_type_id.html}<div class="status message">{ts}You cannot modify relationship type because there are membership records associated with this membership type.{/ts}</div>
           {/if}
-          <span class="description">{ts}Memberships can be automatically granted to related contacts by selecting a Relationship Type.{/ts} {help id="rel-type"}</span>
+          <span class="description">{ts}Memberships can be automatically granted to related contacts by selecting a Relationship Type.{/ts} {help id="rel-type" file="CRM/Member/Page/MembershipType.hlp"}</span>
         </td>
       </tr>
       <tr id="maxRelated" class="crm-membership-type-form-block-max_related">

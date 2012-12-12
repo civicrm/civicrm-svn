@@ -44,6 +44,17 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
    */
   CONST MAX_CONTACTS = 50;
 
+  function preProcess() {
+    $this->_id = CRM_Utils_Request::retrieve('id', 'Positive', $this, FALSE, 0 );
+    $this->_BAOName = 'CRM_Member_BAO_MembershipType';
+    $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, FALSE, 'add');
+    $this->assign('action', $this->_action);
+
+    $session = CRM_Core_Session::singleton();
+    $url = CRM_Utils_System::url('civicrm/admin/member/membershipType', 'reset=1');
+    $session->pushUserContext($url);
+  }
+
   /**
    * This function sets the default values for the form. MobileProvider that in edit/view mode
    * the default values are retrieved from the database

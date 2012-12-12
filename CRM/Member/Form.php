@@ -34,7 +34,7 @@
  */
 
 /**
- * Base class for membership / membership type forms
+ * Base class for offline membership / membership type / membership renewal and membership status forms
  *
  */
 class CRM_Member_Form extends CRM_Core_Form {

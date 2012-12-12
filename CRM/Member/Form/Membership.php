@@ -34,7 +34,7 @@
  */
 
 /**
- * This class generates form components for Membership Type
+ * This class generates form components for offline membership form
  *
  */
 class CRM_Member_Form_Membership extends CRM_Member_Form {
