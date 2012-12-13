@@ -130,13 +130,10 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
     );
     $this->addRule('minimum_fee', ts('Please enter a monetary value for the Minimum Fee.'), 'money');
 
-    $this->addElement('select', 'duration_unit', ts('Duration') . ' ',
-      CRM_Core_SelectValues::unitList('duration'), array('onchange' => 'showHidePeriodSettings()')
-    );
+    $this->addElement('select', 'duration_unit', ts('Duration'), CRM_Core_SelectValues::unitList('duration'));
+
     //period type
-    $this->addElement('select', 'period_type', ts('Period Type'),
-      CRM_Core_SelectValues::periodType(), array('onchange' => 'showHidePeriodSettings()')
-    );
+    $this->addElement('select', 'period_type', ts('Period Type'), CRM_Core_SelectValues::periodType());
 
     $this->add('text', 'duration_interval', ts('Duration Interval'),
       CRM_Core_DAO::getAttribute('CRM_Member_DAO_MembershipType', 'duration_interval')
@@ -187,8 +184,8 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
     if (is_array($relTypeInd)) {
       asort($relTypeInd);
     }
-    $memberRel = &$this->add('select', 'relationship_type_id', ts('Relationship Type'), array('' => ts('- select -')) + $relTypeInd,
-                                FALSE, array('onChange' => "showHideMaxRelated(this.value);"));
+    $memberRel = &$this->add('select', 'relationship_type_id', ts('Relationship Type'),
+      array('' => ts('- select -')) + $relTypeInd);
     $memberRel->setMultiple(TRUE);
 
     $this->add('select', 'visibility', ts('Visibility'), CRM_Core_SelectValues::memberVisibility());

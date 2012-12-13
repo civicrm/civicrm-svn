@@ -79,7 +79,7 @@
         {/if}
       </tr>
       <tr class="crm-membership-type-form-block-duration_unit_interval">
-        <td class="label">{$form.duration_unit.label}<span class="marker">*</span></td>
+        <td class="label">{$form.duration_unit.label}&nbsp;<span class="marker">*</span></td>
         <td>{$form.duration_interval.html}&nbsp;&nbsp;{$form.duration_unit.html}<br />
           <span class="description">{ts}Duration of this membership (e.g. 30 days, 2 months, 5 years, 1 lifetime){/ts}</span>
         </td>
@@ -160,6 +160,7 @@
 {literal}
 <script type="text/javascript">
 cj(function(){
+  // start of member org autocomplete
   var orgDataUrl = "{/literal}{$dataUrl}{literal}";
   var hintText = "{/literal}{ts escape='js'}Type in a partial or complete name of an existing contact.{/ts}{literal}";
   cj('#member_of_contact').autocomplete( orgDataUrl,
@@ -191,20 +192,24 @@ cj(function(){
       }
     });
   {/literal}{/if}{literal}
+  // end of member org autocomplete
+
+  showHidePeriodSettings();
+  cj('#duration_unit').change(function(){
+    showHidePeriodSettings();
+  });
+
+  cj('#period_type').change(function(){
+    showHidePeriodSettings();
+  });
+
+  showHideMaxRelated(cj('#relationship_type_id :selected').val());
+  cj('#relationship_type_id').change(function(){
+    showHideMaxRelated(cj('#relationship_type_id :selected').val());
+  });
 });
 
-/*
-FIX ME: I don't understand below code, need to check and cleanup
-*/
-if ((document.getElementsByName("period_type")[0].value   == "fixed" ) &&
-  ( document.getElementsByName("duration_unit")[0].value == "year"  ) ) {
-  cj('#fixed_start_day_row, #fixed_rollover_day_row').show();
-}
-else {
-  cj('#fixed_start_day_row, #fixed_rollover_day_row').hide();
-}
-
-function showHidePeriodSettings(){
+function showHidePeriodSettings() {
   if ((document.getElementsByName("period_type")[0].value   == "fixed" ) &&
     (document.getElementsByName("duration_unit")[0].value == "year"  ) ) {
     cj('#fixed_start_day_row, #fixed_rollover_day_row').show();
@@ -213,13 +218,16 @@ function showHidePeriodSettings(){
     document.getElementsByName("fixed_period_start_day[d]")[0].value = "1";
     document.getElementsByName("fixed_period_rollover_day[M]")[0].value = "12";
     document.getElementsByName("fixed_period_rollover_day[d]")[0].value = "31";
-    document.getElementsByName("month_fixed_rollover_day_row")[0].value = "";
+    document.getElementsByName("month_fixed_rollover_day_row").value = "";
   }
   else if ((document.getElementsByName("period_type")[0].value   == "fixed" ) &&
     ( document.getElementsByName("duration_unit")[0].value == "month"  ) ) {
     cj('#month_fixed_rollover_day_row').show();
+    cj('#fixed_start_day_row, #fixed_rollover_day_row').hide();
     document.getElementsByName("fixed_period_start_day[M]")[0].value = "";
     document.getElementsByName("fixed_period_start_day[d]")[0].value = "";
+    document.getElementsByName("fixed_period_rollover_day[M]")[0].value = "";
+    document.getElementsByName("fixed_period_rollover_day[d]")[0].value = "";
     document.getElementsByName("fixed_period_rollover_day[M]")[0].value = "";
   }
   else {
@@ -228,7 +236,7 @@ function showHidePeriodSettings(){
     document.getElementsByName("fixed_period_start_day[d]")[0].value = "";
     document.getElementsByName("fixed_period_rollover_day[M]")[0].value = "";
     document.getElementsByName("fixed_period_rollover_day[d]")[0].value = "";
-    document.getElementsByName("month_fixed_rollover_day_row")[0].value = "";
+    document.getElementsByName("month_fixed_rollover_day_row").value = "";
   }
 }
 
@@ -253,12 +261,11 @@ function setReminder( autoRenewOpt ) {
   eval( "cj('#autoRenewalMsgId')." + funName );
 }
 
-showHideMaxRelated(cj('#relationship_type_id').val());
-
-function showHideMaxRelated( relTypeId ) {
+function showHideMaxRelated(relTypeId) {
   if (relTypeId) {
     cj('#maxRelated').show();
-  } else {
+  }
+  else {
     cj('#maxRelated').hide();
   }
 }
