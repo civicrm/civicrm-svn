@@ -159,10 +159,8 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
       CRM_Core_SelectValues::date(NULL, 'M d'), FALSE
     );
     $this->add('date', 'month_fixed_period_rollover_day', ts('Fixed Period Rollover Day'),
-        CRM_Core_SelectValues::date(NULL, 'd'), FALSE
+      CRM_Core_SelectValues::date(NULL, 'd'), FALSE
     );
-    // required in form rule
-    $this->add('hidden', 'action', $this->_action);
 
     $this->add('select', 'financial_type_id', ts( 'Financial Type' ),
       array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::financialType()
