@@ -189,15 +189,18 @@ class CRM_Core_Page {
       CRM_Utils_System::civiExit();
     }
 
-    // Version check and intermittent alert to admins
-    $versionCheck = CRM_Utils_VersionCheck::singleton()->versionAlert();
-
     $config = CRM_Core_Config::singleton();
 
-    // Debug msg once per hour
-    if ($config->debug && CRM_Core_Permission::check('administer CiviCRM') && CRM_Core_Session::singleton()->timer('debug_alert', 3600)) {
-      $msg = ts('Warning: Debug is enabled in <a href="%1">system settings</a>. This should not be enabled on production servers.', array(1 => CRM_Utils_System::url('civicrm/admin/setting/debug', 'reset=1')));
-      CRM_Core_Session::setStatus($msg, ts('Debug Mode'));
+    // TODO: Is there a better way to ensure these actions don't happen during AJAX requests?
+    if (empty($_GET['snippet'])) {
+      // Version check and intermittent alert to admins
+      CRM_Utils_VersionCheck::singleton()->versionAlert();
+  
+      // Debug msg once per hour
+      if ($config->debug && CRM_Core_Permission::check('administer CiviCRM') && CRM_Core_Session::singleton()->timer('debug_alert', 3600)) {
+        $msg = ts('Warning: Debug is enabled in <a href="%1">system settings</a>. This should not be enabled on production servers.', array(1 => CRM_Utils_System::url('civicrm/admin/setting/debug', 'reset=1')));
+        CRM_Core_Session::setStatus($msg, ts('Debug Mode'));
+      }
     }
 
     $content = self::$_template->fetch('CRM/common/' . strtolower($config->userFramework) . '.tpl');
