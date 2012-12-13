@@ -111,7 +111,7 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard {
       $defaultDashlets = self::getDashlets();
 
       // Set civicrm blog as default enabled
-      $blog = CRM_Core_DAO::singleValueQuery("SELECT id FROM civicrm_dashboard WHERE url LIKE '%blog%' LIMIT 1");
+      $blog = CRM_Core_DAO::singleValueQuery("SELECT id FROM civicrm_dashboard WHERE url LIKE 'civicrm/dashlet/blog%' LIMIT 1");
 
       //now you need make dashlet entries for logged in contact
       // need to optimize this sql
