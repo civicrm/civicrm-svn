@@ -294,8 +294,8 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
        if ($batch->name) {
          CRM_Core_Session::setStatus(ts("'{$batch->name}' batch  has been saved."));
        }
-       $session->replaceUserContext(CRM_Utils_System::url('civicrm/financial/batch', 
-         "reset=1&action=update&id={$batch->id}"));
+       $session->replaceUserContext(CRM_Utils_System::url('civicrm/batchtransaction', 
+         "reset=1&bid={$batch->id}"));
      }     
    } 
 

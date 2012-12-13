@@ -211,7 +211,17 @@ class CRM_Admin_Page_AJAX {
             $status .= '<br /><br /><strong>' . ts('This recurring contribution is linked to an auto-renew membership. If you cancel it, the associated membership will no longer renew automatically. However, the current membership status will not be affected.') . '</strong>';
           }
           break;
-
+          
+      case 'CRM_Core_BAO_Batch':
+        $batchStatusId = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Batch', $recordID, 'status_id');
+        if ($batchStatusId == CRM_Core_OptionGroup::getValue("batch_status","Open")) {
+          $status = ts('Are you sure you want to close this batch?');
+        }
+        else {
+          $status = ts('Are you sure you want to reopen this batch?');
+        }
+        break;
+        
         default:
           $status = ts('Are you sure you want to disable this record?');
           break;
