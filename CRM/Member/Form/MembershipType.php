@@ -256,7 +256,7 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
         $errors['name'] = ts('Please enter a membership type name.');
       }
 
-      if (!CRM_Utils_Array::value('contact_check', $params) && $params['action'] != CRM_Core_Action::UPDATE) {
+      if (!CRM_Utils_Array::value('contact_check', $params) && $this->_action != CRM_Core_Action::UPDATE) {
         $errors['member_org'] = ts('Please select the membership organization');
       }
 
