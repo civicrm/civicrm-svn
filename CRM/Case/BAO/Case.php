@@ -1438,11 +1438,10 @@ SELECT case_status.label AS case_status, status_id, case_type.label AS case_type
 
       if ($result[$info['contact_id']]) {
         /*
-               * Really only need to record one activity with all the targets combined.
-               * Originally the template was going to possibly have different content, e.g. depending on permissions,
-               * but it's always the same content at the moment.
-               */
-
+         * Really only need to record one activity with all the targets combined.
+         * Originally the template was going to possibly have different content, e.g. depending on permissions,
+         * but it's always the same content at the moment.
+         */
         if (empty($recordedActivityParams)) {
           $recordedActivityParams = $activityParams;
         }
