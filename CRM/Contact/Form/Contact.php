@@ -455,10 +455,10 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
   }
 
   /**
-     * do the set default related to location type id,
-     * primary location,  default country
-     *
-     */
+   * do the set default related to location type id,
+   * primary location,  default country
+   *
+   */
   function blockSetDefaults(&$defaults) {
     $locationTypeKeys = array_filter(array_keys(CRM_Core_PseudoConstant::locationType()), 'is_int');
     sort($locationTypeKeys);
@@ -1268,13 +1268,13 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
 
   /**
    * check parse result and if some address block fails then this
-     * function return the status message for all address blocks.
-     *
-     * @param  $parseResult an array of address blk instance and its status.
-     *
-     * @return $statusMsg   string status message for all address blocks.
+   * function return the status message for all address blocks.
+   *
+   * @param  $parseResult an array of address blk instance and its status.
+   *
+   * @return $statusMsg   string status message for all address blocks.
    * @static
-     */
+   */
   static function parseAddressStatusMsg($parseResult) {
     $statusMsg = NULL;
     if (!is_array($parseResult) || empty($parseResult)) {
@@ -1298,14 +1298,14 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
   }
 
   /**
-     * Convert normal number to ordinal number format.
-     * like 1 => 1st, 2 => 2nd and so on...
-     *
-     * @param  $number int number to convert in to ordinal number.
-     *
-     * @return ordinal number for given number.
+   * Convert normal number to ordinal number format.
+   * like 1 => 1st, 2 => 2nd and so on...
+   *
+   * @param  $number int number to convert in to ordinal number.
+   *
+   * @return ordinal number for given number.
    * @static
-     */
+   */
   static function ordinalNumber($number) {
     if (empty($number)) {
       return NULL;
@@ -1335,12 +1335,12 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
 
   /**
    * Update membership status to deceased
-     * function return the status message for updated membership.
-     *
-     * @param  $deceasedParams array  having contact id and deceased value.
-     *
-     * @return $updateMembershipMsg string  status message for updated membership.
-     */
+   * function return the status message for updated membership.
+   *
+   * @param  $deceasedParams array  having contact id and deceased value.
+   *
+   * @return $updateMembershipMsg string  status message for updated membership.
+   */
   function updateMembershipStatus($deceasedParams) {
     $updateMembershipMsg = NULL;
     $contactId           = CRM_Utils_Array::value('contact_id', $deceasedParams);

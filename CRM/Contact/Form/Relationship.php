@@ -104,7 +104,9 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form {
   /**
    * casid if it called from case context
    */
-  protected $_caseId; function preProcess() {
+  protected $_caseId;
+  
+  function preProcess() {
     //custom data related code
     $this->_cdType = CRM_Utils_Array::value('type', $_GET);
     $this->assign('cdType', FALSE);
@@ -697,8 +699,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form {
    * @access public
    * @static
    */
-  static
-  function formRule($params, $files, $form) {
+  static function formRule($params, $files, $form) {
     // hack, no error check for refresh
     if (CRM_Utils_Array::value('_qf_Relationship_refresh', $_POST) ||
       CRM_Utils_Array::value('_qf_Relationship_refresh_save', $_POST) ||
@@ -773,8 +774,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form {
    * @access public
    * @static
    */
-  static
-  function dateRule($params) {
+  static function dateRule($params) {
     $errors = array();
 
     // check start and end date

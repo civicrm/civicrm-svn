@@ -84,15 +84,13 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
   }
 
   /*
-     * This function sets the default values for the form.
-     * the default values are retrieved from the database
-     *
-     * @access public
-     * @return None
-     */
+   * This function sets the default values for the form.
+   * the default values are retrieved from the database
+   *
+   * @access public
+   * @return None
+   */
   function setDefaultValues() {
-
-
     $defaults  = array();
     $params    = array();
     $locParams = array();
@@ -148,7 +146,6 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
    * @return None
    * @access public
    */
-
   public function buildQuickForm() {
 
     $this->add('text', 'name', ts('Organization Name'), array('size' => 25), TRUE);
@@ -201,8 +198,7 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
    * @static
    * @access public
    */
-  static
-  function formRule($fields) {
+  static function formRule($fields) {
     $errors = array();
     // check for state/country mapping
     CRM_Contact_Form_Edit_Address::formRule($fields, $errors);
@@ -230,12 +226,8 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
    * @return void
    * @access public
    */
-
   public function postProcess() {
-
-
     $params = array();
-
     $params = $this->exportValues();
     $params['entity_id'] = $this->_id;
     $params['entity_table'] = CRM_Core_BAO_Domain::getTableName();

@@ -2305,7 +2305,6 @@ AND       civicrm_openid.is_primary = 1";
    * @access public
    * @static
    */
-
   static function getCountComponent($component, $contactId, $tableName = NULL) {
     $object = NULL;
     switch ($component) {
@@ -2946,8 +2945,7 @@ LEFT JOIN civicrm_address add2 ON ( add1.master_id = add2.id )
    * @access public
    * @static
    */
-  static
-    function checkDomainContact($contactId) {
+  static function checkDomainContact($contactId) {
     if (!$contactId) 
       return FALSE;
     $domainId =  CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Domain', $contactId, 'id', 'contact_id');
