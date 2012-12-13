@@ -38,6 +38,7 @@
  *
  * To extend this object from php:
  * CRM_Core_Resources::singleton()->addSetting(array('myNamespace' => array('foo' => 'bar')));
+ * It can then be accessed client-side via CRM.myNamespace.foo
  */
  *}
   {literal}
@@ -50,12 +51,13 @@
       No: '{ts escape="js"}No{/ts}',
       Saved: '{ts escape="js"}Saved{/ts}',
       Error: '{ts escape="js"}Error{/ts}'
-    {rdelim},
-    urlIsPublic: {if $urlIsPublic}true{else}false{/if},
-    userFramework: '{$config->userFramework}',
-    resourceBase: '{$config->resourceBase}',
-    search_autocomplete_count: {crmSetting name="search_autocomplete_count" group="Search Preferences"},
-    {literal}
+    {literal}},
+    config: {{/literal}
+      urlIsPublic: {if $urlIsPublic}true{else}false{/if},
+      userFramework: '{$config->userFramework}',
+      resourceBase: '{$config->resourceBase}',
+      search_autocomplete_count: {crmSetting name="search_autocomplete_count" group="Search Preferences"},
+    {literal}},
     validate: {
       params: {},
       functions: []

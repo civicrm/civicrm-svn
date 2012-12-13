@@ -86,12 +86,12 @@ cj( document ).ready( function( ) {
   cj( '#sort_name_navigation' ).autocomplete( contactUrl, {
       width: 200,
       selectFirst: false,
-      minChars:1,
+      minChars: 1,
       matchContains: true,
       delay: 400,
-      max: CRM.search_autocomplete_count,
+      max: CRM.config.search_autocomplete_count,
       extraParams:{
-        limit: CRM.search_autocomplete_count,
+        limit: CRM.config.search_autocomplete_count,
         fieldName:function () {
           return  cj('input[name=quickSearchField]:checked').val();
         },
@@ -157,6 +157,6 @@ if (CRM.userFramework != 'Joomla') {
       cj('img.menu-item-arrow').css({ 'top' : '4px' });
     });
 }
-  cj('#civicrm-menu').menu( {arrowSrc: CRM.resourceBase + 'packages/jquery/css/images/arrow.png'} );
+  cj('#civicrm-menu').menu( {arrowSrc: CRM.config.resourceBase + 'packages/jquery/css/images/arrow.png'} );
 </script>
 {/literal}

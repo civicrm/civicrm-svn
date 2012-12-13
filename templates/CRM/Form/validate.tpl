@@ -29,7 +29,7 @@
 
 {literal}
 <script type="text/javascript" >
-cj( function($) {
+cj(function($) {
   var params = {
     'errorClass': 'crm-inline-error',
     messages: {{/literal}
@@ -56,7 +56,7 @@ cj( function($) {
   // use civicrm notifications when there are errors
   params.invalidHandler = function(form, validator) {
     var errors = validator.errorList;
-    if (!CRM.urlIsPublic) {
+    if (CRM && CRM.config && CRM.config.urlIsPublic === false) {
       for (var i in errors) {
         $(errors[i].element).crmError(errors[i].message);
       }
@@ -67,13 +67,13 @@ cj( function($) {
   };
 
   if (CRM.validate && CRM.validate.params) {
-    cj.extend(params, CRM.validate.params, true);
+    $.extend(params, CRM.validate.params, true);
   }
-  cj("#{/literal}{$form.formName}{literal}").validate(params);
+  $("#{/literal}{$form.formName}{literal}").validate(params);
 
-  // validation stuff after the form validate is initialized
-  if(CRM.validate && CRM.validate.functions) {
-    for(var i in CRM.validate.functions) {
+  // Call any post-initialization callbacks
+  if (CRM.validate && CRM.validate.functions) {
+    for (var i in CRM.validate.functions) {
       CRM.validate.functions[i]();
     }
   }
