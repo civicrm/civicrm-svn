@@ -50,71 +50,14 @@
           <span class="description">{ts}Description of this membership type for display on signup forms. May include eligibility, benefits, terms, etc.{/ts}</span>
         </td>
       </tr>
-      {if !$searchDone or !$searchCount or !$searchRows}
-        <tr class="crm-membership-type-form-block-member_org">
-          <td class="label">{$form.member_org.label}<span class="marker"> *</span></td>
-          <td><label>{$form.member_org.html}</label>&nbsp;&nbsp;{$form._qf_MembershipType_refresh.html}<br />
-            <span class="description">{ts}Members assigned this membership type belong to which organization (e.g. this is for membership in 'Save the Whales - Northwest Chapter'). NOTE: This organization/group/chapter must exist as a CiviCRM Organization type contact.{/ts}</span>
-          </td>
-        </tr>
-      {/if}
-    </table>
 
-    <div class="spacer"></div>
-    {if $searchDone} {* Search button clicked *}
-      {if $searchCount}
-        {if $searchRows} {* we've got rows to display *}
-          <fieldset><legend>{ts}Select Target Contact for the Membership-Organization{/ts}</legend>
-            <table class="form-layout-compressed">
-              <tr class="crm-membership-type-form-block-member_org" >
-                <td class="label">{$form.member_org.label}</td>
-                <td>{$form.member_org.html}&nbsp;&nbsp;{$form._qf_MembershipType_refresh.html}<br />
-                  <span class="description">{ts}Organization, who is the owner for this membership type.{/ts}</span>
-                </td>
-              </tr>
-            </table>
-            <div class="spacer"></div>
+      <tr class="crm-membership-type-form-block-member_org">
+        <td class="label">{$form.member_of_contact.label}</td>
+        <td><label>{$form.member_of_contact.html}</label><br />
+          <span class="description">{ts}Members assigned this membership type belong to which organization (e.g. this is for membership in 'Save the Whales - Northwest Chapter'). NOTE: This organization/group/chapter must exist as a CiviCRM Organization type contact.{/ts}</span>
+        </td>
+      </tr>
 
-            <div class="description">
-              {ts}Select the target contact for this membership-organization if it appears below. Otherwise you may modify the search name above and click Search again.{/ts}
-            </div>
-            {strip}
-              <table>
-              {*Column Headers*}
-                <tr class="columnheader">
-                  <td>&nbsp;</td>
-                  <td>{ts}Name{/ts}</td>
-                  <td>{ts}City{/ts}</td>
-                  <td>{ts}State{/ts}</td>
-                  <td>{ts}Email{/ts}</td>
-                  <td>{ts}Phone{/ts}</td>
-                </tr>
-              {*Data to be displyed*}
-                {foreach from=$searchRows item=row}
-                  <tr class="{cycle values="odd-row,even-row"}">
-                    <td>{$form.contact_check[$row.id].html}</td>
-                    <td>{$row.type} {$row.name}</td>
-                    <td>{$row.city}</td>
-                    <td>{$row.state}</td>
-                    <td>{$row.email}</td>
-                    <td>{$row.phone}</td>
-                  </tr>
-                {/foreach}
-              </table>
-            {/strip}
-          </fieldset>{*End of Membership Organization Block*}
-          {else} {* too many results - we're only displaying 50 *}
-          {capture assign=infoTitle}{ts}Too many matching results.{/ts}{/capture}
-          {capture assign=infoMessage}{ts}Please narrow your search by entering a more complete target contact name.{/ts}{/capture}
-        {include file="CRM/common/info.tpl"}
-        {/if}
-        {else} {* no valid matches for name + contact_type *}
-        {capture assign=infoTitle}{ts}No matching results for{/ts}{/capture}
-        {capture assign=infoMessage}{ts 1=$form.member_org.value 2=Organization}<ul><li>Name like: %1</li><li>Contact type: %2</li></ul>Check your spelling, or try fewer letters for the target contact name.{/ts}{/capture}
-      {include file="CRM/common/info.tpl"}
-      {/if} {* end if searchCount *}
-    {/if} {* end if searchDone *}
-    <table class="form-layout-compressed">
       <tr class="crm-membership-type-form-block-minimum_fee">
         <td class="label">{$form.minimum_fee.label}</td>
         <td>{$form.minimum_fee.html|crmMoney}<br />
@@ -131,7 +74,7 @@
         <td class="label">{$form.auto_renew.label}</td>
         {if $authorize}
           <td>{$form.auto_renew.html}</td>
-          {else}
+        {else}
           <td>{ts}You will need to select and configure a supported payment processor (currently Authorize.Net, PayPal Pro, or PayPal Website Standard) in order to offer automatically renewing memberships.{/ts} {docURL page="user/contributions/payment-processors"}</td>
         {/if}
       </tr>
@@ -216,6 +159,43 @@
 
 {literal}
 <script type="text/javascript">
+cj(function(){
+  var orgDataUrl = "{/literal}{$dataUrl}{literal}";
+  var hintText = "{/literal}{ts escape='js'}Type in a partial or complete name of an existing contact.{/ts}{literal}";
+  cj('#member_of_contact').autocomplete( orgDataUrl,
+    { width : 180, selectFirst : false, hintText: hintText, matchContains: true, minChars: 1
+  }).result(
+    function(event, data, formatted) {
+      ( parseInt( data[1] ) ) ? cj( "#member_of_contact_id" ).val( data[1] ) : cj( "#member_of_contact_id" ).val('');
+    }).bind('click', function( ) {
+      cj('#member_of_contact_id').val('');
+    });
+
+  {/literal}
+  {if $member_org}
+    {literal} cj('#member_of_contact').val( "{/literal}{$member_org}{literal}");{/literal}
+  {/if}
+
+  {* setdefault in edit mode *}
+  {if $action eq 2}
+    var memberOrgId = "{$member_org_id}";
+    {literal}
+    var dataUrl = "{/literal}{crmURL p='civicrm/ajax/rest' h=0
+    q="className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=contact&org=1&id=" }{literal}" + memberOrgId;
+
+    cj.ajax({
+      url     : dataUrl,
+      success : function(html){
+        htmlText = html.split( '|' , 2);
+        cj('input#member_of_contact').val(htmlText[0]);
+      }
+    });
+  {/literal}{/if}{literal}
+});
+
+/*
+FIX ME: I don't understand below code, need to check and cleanup
+*/
 if ((document.getElementsByName("period_type")[0].value   == "fixed" ) &&
   ( document.getElementsByName("duration_unit")[0].value == "year"  ) ) {
   cj('#fixed_start_day_row, #fixed_rollover_day_row').show();

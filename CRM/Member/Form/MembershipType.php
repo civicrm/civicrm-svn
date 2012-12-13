@@ -66,6 +66,11 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
   public function setDefaultValues() {
     $defaults = parent::setDefaultValues();
 
+    // get the member org display name
+    if ( $this->_id && CRM_Utils_Array::value('member_of_contact_id', $defaults)) {
+      $this->assign('member_org_id', $defaults['member_of_contact_id']);
+    }
+
     //finding default weight to be put
     if (!isset($defaults['weight']) || (!$defaults['weight'])) {
       $defaults['weight'] = CRM_Utils_Weight::getDefaultWeight('CRM_Member_DAO_MembershipType');
@@ -137,7 +142,18 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
       CRM_Core_DAO::getAttribute('CRM_Member_DAO_MembershipType', 'duration_interval')
     );
 
-    $memberOrg = &$this->add('text', 'member_org', ts('Membership Organization'), 'size=30 maxlength=120');
+    $dataUrl = CRM_Utils_System::url("civicrm/ajax/rest",
+      "className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=membershipType&reset=1&org=1",
+      FALSE, NULL, FALSE
+    );
+    $this->assign('dataUrl', $dataUrl);
+
+    $memberOrg = &$this->add('text', 'member_of_contact', ts('Membership Organization'), NULL, TRUE);
+    $this->add('hidden', 'member_of_contact_id', '', array('id' => 'member_of_contact_id'));
+    if ($memberOrg->getValue()) {
+      $this->assign('member_org', $memberOrg->getValue());
+    }
+
     //start day
     $this->add('date', 'fixed_period_start_day', ts('Fixed Period Start Day'),
       CRM_Core_SelectValues::date(NULL, 'M d'), FALSE
@@ -151,6 +167,7 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
       $isAuthorize = TRUE;
       $options = array(ts('No auto-renew option'), ts('Give option, but not required'), ts('Auto-renew required '));
     }
+
     $this->addRadio('auto_renew', ts('Auto-renew Option'), $options);
     $this->assign('authorize', $isAuthorize);
 
@@ -180,39 +197,6 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
     );
     $this->add('checkbox', 'is_active', ts('Enabled?'));
 
-    $searchRows  = $this->get('searchRows');
-    $searchCount = $this->get('searchCount');
-    $searchDone  = $this->get('searchDone');
-
-    if ($searchRows) {
-      $checkBoxes = array();
-      $chekFlag = 0;
-      foreach ($searchRows as $id => $row) {
-        $checked = '';
-        if (!$chekFlag) {
-          $checked = array('checked' => NULL);
-          $chekFlag++;
-        }
-
-        $checkBoxes[$id] = $this->createElement('radio', NULL, NULL, NULL, $id, $checked);
-      }
-
-      $this->addGroup($checkBoxes, 'contact_check');
-      $this->assign('searchRows', $searchRows);
-    }
-
-    $this->assign('searchCount', $searchCount);
-    $this->assign('searchDone', $searchDone);
-
-    if ($searchDone) {
-      $searchBtn = ts('Search Again');
-    }
-    elseif ($this->_action & CRM_Core_Action::UPDATE) {
-      $searchBtn = ts('Change');
-    }
-    else {
-      $searchBtn = ts('Search');
-    }
     $membershipRecords = FALSE;
     if ($this->_action & CRM_Core_Action::UPDATE) {
       $membershipType = new CRM_Member_BAO_Membership();
@@ -221,10 +205,6 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
         $membershipRecords = TRUE;
         $memberRel->freeze();
       }
-      $memberOrg->freeze();
-      if ($searchDone) {
-        $memberOrg->unfreeze();
-      }
     }
 
     $this->assign('membershipRecordsExists', $membershipRecords);
@@ -232,8 +212,6 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
     $this->add('text', 'max_related', ts('Max related'),
         CRM_Core_DAO::getAttribute('CRM_Member_DAO_MembershipType', 'max_related')
     );
-
-    $this->addElement('submit', $this->getButtonName('refresh'), $searchBtn, array('class' => 'form-submit'));
 
     $this->addFormRule(array('CRM_Member_Form_MembershipType', 'formRule'));
 
@@ -251,67 +229,66 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
    */
   static function formRule($params) {
     $errors = array();
-    if (!isset($params['_qf_MembershipType_refresh']) || !$params['_qf_MembershipType_refresh']) {
-      if (!$params['name']) {
-        $errors['name'] = ts('Please enter a membership type name.');
-      }
 
-      if (!CRM_Utils_Array::value('contact_check', $params) && $this->_action != CRM_Core_Action::UPDATE) {
-        $errors['member_org'] = ts('Please select the membership organization');
-      }
+    if (!$params['name']) {
+      $errors['name'] = ts('Please enter a membership type name.');
+    }
 
-      if (empty( $params['financial_type_id'] ) ) {
-        $errors['financial_type_id'] = ts('Please enter a financial type.');
-      }
+    if ($params['member_of_contact'] && !is_numeric($params['member_of_contact_id'])) {
+      $errors['member_of_contact'] = ts('Please select valid organization contact.');
+    }
 
-      if (($params['minimum_fee'] > 0 ) && !$params['financial_type_id'] ) {
-        $errors['financial_type_id'] = ts('Please enter the financial type.');
-      }
+    if (empty( $params['financial_type_id'] ) ) {
+      $errors['financial_type_id'] = ts('Please enter a financial type.');
+    }
 
-      if (empty($params['duration_unit'])) {
-        $errors['duration_unit'] = ts('Please enter a duration unit.');
-      }
+    if (($params['minimum_fee'] > 0 ) && !$params['financial_type_id'] ) {
+      $errors['financial_type_id'] = ts('Please enter the financial type.');
+    }
 
-      if (empty($params['duration_interval']) and $params['duration_unit'] != 'lifetime') {
-        $errors['duration_interval'] = ts('Please enter a duration interval.');
-      }
+    if (empty($params['duration_unit'])) {
+      $errors['duration_unit'] = ts('Please enter a duration unit.');
+    }
 
-      if (in_array(CRM_Utils_Array::value('auto_renew', $params), array(
-        1, 2))) {
-        if (($params['duration_interval'] > 1 && $params['duration_unit'] == 'year') ||
-          ($params['duration_interval'] > 12 && $params['duration_unit'] == 'month')
-        ) {
-          $errors['duration_unit'] = ts('Automatic renewals are not supported by the currently available payment processors when the membership duration is greater than 1 year / 12 months.');
-        }
-      }
+    if (empty($params['duration_interval']) and $params['duration_unit'] != 'lifetime') {
+      $errors['duration_interval'] = ts('Please enter a duration interval.');
+    }
 
-      if (empty($params['period_type'])) {
-        $errors['period_type'] = ts('Please select a period type.');
-      }
-
-      if ($params['period_type'] == 'fixed' &&
-        $params['duration_unit'] == 'day'
+    if (in_array(CRM_Utils_Array::value('auto_renew', $params), array(
+      1, 2))) {
+      if (($params['duration_interval'] > 1 && $params['duration_unit'] == 'year') ||
+        ($params['duration_interval'] > 12 && $params['duration_unit'] == 'month')
       ) {
-        $errors['period_type'] = ts('Period type should be Rolling when duration unit is Day');
+        $errors['duration_unit'] = ts('Automatic renewals are not supported by the currently available payment processors when the membership duration is greater than 1 year / 12 months.');
       }
+    }
 
-      if (($params['period_type'] == 'fixed') &&
-        ($params['duration_unit'] == 'year')
-      ) {
-        $periods = array('fixed_period_start_day', 'fixed_period_rollover_day');
-        foreach ($periods as $period) {
-          $month = $params[$period]['M'];
-          $date = $params[$period]['d'];
-          if (!$month || !$date) {
-            switch ($period) {
-              case 'fixed_period_start_day':
-                $errors[$period] = ts('Please enter a valid fixed period start day');
-                break;
+    if (empty($params['period_type'])) {
+      $errors['period_type'] = ts('Please select a period type.');
+    }
 
-              case 'fixed_period_rollover_day':
-                $errors[$period] = ts('Please enter a valid fixed period rollover day');
-                break;
-            }
+    if ($params['period_type'] == 'fixed' &&
+      $params['duration_unit'] == 'day'
+    ) {
+      $errors['period_type'] = ts('Period type should be Rolling when duration unit is Day');
+    }
+
+    if (($params['period_type'] == 'fixed') &&
+      ($params['duration_unit'] == 'year')
+    ) {
+      $periods = array('fixed_period_start_day', 'fixed_period_rollover_day');
+      foreach ($periods as $period) {
+        $month = $params[$period]['M'];
+        $date = $params[$period]['d'];
+        if (!$month || !$date) {
+          switch ($period) {
+            case 'fixed_period_start_day':
+              $errors[$period] = ts('Please enter a valid fixed period start day');
+              break;
+
+            case 'fixed_period_rollover_day':
+              $errors[$period] = ts('Please enter a valid fixed period rollover day');
+              break;
           }
         }
       }
@@ -351,18 +328,11 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
       $buttonName = $this->controller->getButtonName();
       $submitted = $this->controller->exportValues($this->_name);
 
-      $this->set('searchDone', 0);
-      if ($buttonName == '_qf_MembershipType_refresh') {
-        $this->search($submitted);
-        $this->set('searchDone', 1);
-        return;
-      }
-
       $fields = array(
         'name',
         'weight',
         'is_active',
-        'member_org',
+        'member_of_contact_id',
         'visibility',
         'period_type',
         'minimum_fee',
@@ -370,11 +340,11 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
         'auto_renew',
         'duration_unit',
         'duration_interval',
-                             'financial_type_id',
+        'financial_type_id',
         'fixed_period_start_day',
         'fixed_period_rollover_day',
         'month_fixed_period_rollover_day',
-        'max_related',
+        'max_related'
       );
 
       $params = $ids = array();
@@ -437,7 +407,6 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
         }
       }
       $oldWeight = NULL;
-      $ids['memberOfContact'] = CRM_Utils_Array::value('contact_check', $submitted);
 
       if ($this->_id) {
         $oldWeight = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType',
@@ -451,7 +420,6 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
       if ($this->_action & CRM_Core_Action::UPDATE) {
         $ids['membershipType'] = $this->_id;
       }
-
 
       $membershipType = CRM_Member_BAO_MembershipType::add($params, $ids);
 
@@ -486,59 +454,6 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
         CRM_Price_BAO_FieldValue::retrieve($editedFieldParams, $editedResults);
         $optionsIds['option_id'][1] = CRM_Utils_Array::value('id', $editedResults);
       }
-    }
-  }
-
-  /**
-   * This function is to get the result of the search for membership organisation.
-   *
-   * @param  array $params  This contains elements for search criteria
-   *
-   * @access public
-   *
-   * @return None
-   *
-   */
-  function search(&$params) {
-    //max records that will be listed
-    $searchValues = array();
-    if (!empty($params['member_org'])) {
-      $searchValues[] = array('sort_name', 'LIKE', $params['member_org'], 0, 1);
-    }
-    $searchValues[] = array('contact_type', '=', 'organization', 0, 0);
-
-    // get the count of contact
-    $query       = new CRM_Contact_BAO_Query($searchValues);
-    $searchCount = $query->searchQuery(0, 0, NULL, TRUE);
-    $this->set('searchCount', $searchCount);
-    if ($searchCount <= self::MAX_CONTACTS) {
-      // get the result of the search
-      $result = $query->searchQuery(0, self::MAX_CONTACTS, NULL);
-
-      $config = CRM_Core_Config::singleton();
-      $searchRows = array();
-
-      while ($result->fetch()) {
-        $contactID = $result->contact_id;
-
-        $searchRows[$contactID]['id'] = $contactID;
-        $searchRows[$contactID]['name'] = $result->sort_name;
-        $searchRows[$contactID]['city'] = $result->city;
-        $searchRows[$contactID]['state'] = $result->state_province;
-        $searchRows[$contactID]['email'] = $result->email;
-        $searchRows[$contactID]['phone'] = $result->phone;
-
-        $contact_type = '<img src="' . $config->resourceBase . 'i/contact_';
-
-        $contact_type .= 'org.gif" alt="' . ts('Organization') . '" height="16" width="18" />';
-
-        $searchRows[$contactID]['type'] = $contact_type;
-      }
-      $this->set('searchRows', $searchRows);
-    }
-    else {
-      // resetting the session variables if many records are found
-      $this->set('searchRows', NULL);
     }
   }
 }
