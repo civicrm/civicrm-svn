@@ -87,16 +87,23 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form {
       }
     }
 
-    $config = CRM_Core_Config::singleton();
+
     //setting default fixed_period_start_day & fixed_period_rollover_day
     $periods = array('fixed_period_start_day', 'fixed_period_rollover_day');
     foreach ($periods as $per) {
       if (isset($defaults[$per])) {
-        $dat                 = $defaults[$per];
-        $dat                 = ($dat < 999) ? '0' . $dat : $dat;
-        $defaults[$per]      = array();
-        $defaults[$per]['M'] = substr($dat, 0, 2);
-        $defaults[$per]['d'] = substr($dat, 2, 3);
+        $date            = $defaults[$per];
+
+        $defaults[$per] = array();
+        if ($date > 31) {
+          $date                 = ($date < 999) ? '0' . $date : $date;
+          $defaults[$per]['M'] = substr($date, 0, 2);
+          $defaults[$per]['d'] = substr($date, 2, 3);
+        }
+        else {
+          //special case when only day is rollover and duration is month
+          $defaults['month_fixed_period_rollover_day']['d'] = $date;
+        }
       }
     }
 

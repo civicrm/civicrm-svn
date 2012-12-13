@@ -202,23 +202,28 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType {
     foreach ($membershipType as $id => $details) {
       foreach ($periodDays as $pDay) {
         if (CRM_Utils_Array::value($pDay, $details)) {
-          $month    = substr($details[$pDay], 0, strlen($details[$pDay]) - 2);
-          $day      = substr($details[$pDay], -2);
-          $monthMap = array(
-            '1' => 'Jan',
-            '2' => 'Feb',
-            '3' => 'Mar',
-            '4' => 'Apr',
-            '5' => 'May',
-            '6' => 'Jun',
-            '7' => 'Jul',
-            '8' => 'Aug',
-            '9' => 'Sep',
-            '10' => 'Oct',
-            '11' => 'Nov',
-            '12' => 'Dec',
-          );
-          $membershipType[$id][$pDay] = $monthMap[$month] . ' ' . $day;
+          if ($details[$pDay] > 31) {
+            $month    = substr($details[$pDay], 0, strlen($details[$pDay]) - 2);
+            $day      = substr($details[$pDay], -2);
+            $monthMap = array(
+              '1' => 'Jan',
+              '2' => 'Feb',
+              '3' => 'Mar',
+              '4' => 'Apr',
+              '5' => 'May',
+              '6' => 'Jun',
+              '7' => 'Jul',
+              '8' => 'Aug',
+              '9' => 'Sep',
+              '10' => 'Oct',
+              '11' => 'Nov',
+              '12' => 'Dec',
+            );
+            $membershipType[$id][$pDay] = $monthMap[$month] . ' ' . $day;
+          }
+          else {
+            $membershipType[$id][$pDay] = $details[$pDay];
+          }
         }
       }
     }
