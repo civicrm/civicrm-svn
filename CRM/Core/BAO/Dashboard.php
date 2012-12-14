@@ -73,18 +73,17 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard {
 
   /**
    * Function to get the list of dashlets for a contact
-   * and if there are no dashlets for contact return default dashlets and update
-   * contact's preference entry
    *
-   * @return array $dashlets  array of dashlets
+   * Initializes the dashboard with defaults if this is the user's first visit to their dashboard
+   *
+   * @return array $dashlets array of dashlets
    * @access public
    * @static
    */
   static function getContactDashlets() {
     $dashlets = array();
 
-    $session = CRM_Core_Session::singleton();
-    $contactID = $session->get('userID');
+    $contactID = CRM_Core_Session::singleton()->get('userID');
 
     // get contact dashboard dashlets
     $hasDashlets = FALSE;
@@ -93,36 +92,26 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard {
     $dao->orderBy('column_no asc, weight asc');
     $dao->find();
     while ($dao->fetch()) {
-      if (!$flatFormat) {
-        $hasDashlets = TRUE;
-        if (!$dao->is_active) {
-          continue;
-        }
+      $hasDashlets = TRUE;
+      if ($dao->is_active) {
         // append weight so that order is preserved.
         $dashlets[$dao->column_no]["{$dao->weight}-{$dao->dashboard_id}"] = $dao->is_minimized;
       }
-      else {
-        $dashlets[$dao->dashboard_id] = $dao->dashboard_id;
-      }
     }
 
-    // if empty then make entry in contact dashboard for this contact
-    if (empty($dashlets) && !$hasDashlets) {
+    // If empty then initialize contact dashboard for this user
+    if (!$hasDashlets) {
       $defaultDashlets = self::getDashlets();
-
-      // Set civicrm blog as default enabled
-      $blog = CRM_Core_DAO::singleValueQuery("SELECT id FROM civicrm_dashboard WHERE url LIKE 'civicrm/dashlet/blog%' LIMIT 1");
-
-      //now you need make dashlet entries for logged in contact
-      // need to optimize this sql
-      foreach ($defaultDashlets as $key => $values) {
-        $default = $key == $blog ? 1 : 0;
-        $valuesArray[] = " ($key, $contactID, $default, $default)";
-      }
-
-      if (!empty($defaultDashlets)) {
-        $valuesString = implode(',', $valuesArray);
-        $query = "INSERT INTO civicrm_dashboard_contact (dashboard_id, contact_id, column_no, is_active) VALUES $valuesString";
+      if ($defaultDashlets) {
+        // Add dashlet entries for logged in contact
+        // TODO: need to optimize this sql
+        $items = '';
+        foreach ($defaultDashlets as $key => $values) {
+          // Set civicrm blog as default enabled
+          $default = $values['url'] == 'civicrm/dashlet/blog&reset=1&snippet=5' ? 1 : 0;
+          $items .= ($items ? ', ' : '') . "($key, $contactID, $default, $default)";
+        }
+        $query = "INSERT INTO civicrm_dashboard_contact (dashboard_id, contact_id, column_no, is_active) VALUES $items";
         CRM_Core_DAO::executeQuery($query);
       }
     }
