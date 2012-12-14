@@ -48,7 +48,7 @@ class CRM_Batch_BAO_Batch extends CRM_Core_DAO_Batch {
    * Maybe a parameter to that function is better.
    */
   static $_exportFormat = null;
-  
+
   /**
    * Create a new batch
    *
@@ -100,7 +100,6 @@ class CRM_Batch_BAO_Batch extends CRM_Core_DAO_Batch {
    */
   static function getProfileId($batchTypeId) {
     //retrieve the profile specific to batch type
-
     switch ($batchTypeId) {
       case 1:
         //batch profile used for contribution
@@ -219,8 +218,6 @@ class CRM_Batch_BAO_Batch extends CRM_Core_DAO_Batch {
    * @access public
    */
   static function getBatchList(&$params) {
-    $config = CRM_Core_Config::singleton();
-
     $whereClause = self::whereClause($params, FALSE);
 
     if (!empty($params['rowCount']) &&
@@ -250,7 +247,6 @@ class CRM_Batch_BAO_Batch extends CRM_Core_DAO_Batch {
     $batchStatus = CRM_Core_PseudoConstant::getBatchStatus();
 
     $values = array();
-    $creatorIds = array();
     while ($object->fetch()) {
       $newLinks = $links;
       $values[$object->id] = array();
@@ -263,19 +259,19 @@ class CRM_Batch_BAO_Batch extends CRM_Core_DAO_Batch {
       elseif ($params['context'] == 'financialBatch') {
         $status = $values[$object->id]['status_id'];
         switch ($status) {
-        case '1':
-          unset($newLinks['reopen']);
-          unset($newLinks['download']);
-          break;
-        case '2':
-          unset($newLinks['close']);
-          unset($newLinks['edit']);
-          unset($newLinks['download']);
-          break;
-        case '5':
-          unset($newLinks['edit']);
-          unset($newLinks['close']);
-          unset($newLinks['reopen']);
+          case '1':
+            unset($newLinks['reopen']);
+            unset($newLinks['download']);
+            break;
+          case '2':
+            unset($newLinks['close']);
+            unset($newLinks['edit']);
+            unset($newLinks['download']);
+            break;
+          case '5':
+            unset($newLinks['edit']);
+            unset($newLinks['close']);
+            unset($newLinks['reopen']);
         }
       }
 
@@ -289,7 +285,7 @@ class CRM_Batch_BAO_Batch extends CRM_Core_DAO_Batch {
         array('id' => $object->id)
       );
     }
-   
+
     return $values;
   }
 
@@ -300,7 +296,6 @@ class CRM_Batch_BAO_Batch extends CRM_Core_DAO_Batch {
   }
 
   function whereClause(&$params, $sortBy = TRUE, $excludeHidden = TRUE) {
-    $values = array();
     $clauses = array();
 
     $title = CRM_Utils_Array::value('title', $params);
@@ -332,70 +327,70 @@ class CRM_Batch_BAO_Batch extends CRM_Core_DAO_Batch {
    * @return array $links array of action links
    * @access public
    */
-  function links( $context = null ) {
+  function links($context = null) {
     if ($context == 'financialBatch') {
       $links = array(
         'transaction' =>  array(
-                               'name'  => ts( 'Transaction' ),
-                               'url'   => 'civicrm/batchtransaction',
-                               'qs'    => 'reset=1&bid=%%id%%',
-                               'title' => ts( 'View all Transaction' ),
-                               ),
+          'name'  => ts('Transactions'),
+          'url'   => 'civicrm/batchtransaction',
+          'qs'    => 'reset=1&bid=%%id%%',
+          'title' => ts( 'View all Transaction' )
+        ),
         'edit' =>    array(
-                           'name'  => ts( 'Edit' ),
-                           'url'   => 'civicrm/financial/batch',
-                           'qs'    => 'reset=1&action=update&id=%%id%%',
-                           'title' => ts( 'Edit Batch' ),
-                          ), 
+          'name'  => ts('Edit'),
+          'url'   => 'civicrm/financial/batch',
+          'qs'    => 'reset=1&action=update&id=%%id%%',
+          'title' => ts( 'Edit Batch' )
+        ),
         'close' =>   array(
-                           'name'  => ts( 'Close' ),
-                           'title' => ts( 'Close Batch' ), 
-                           'extra' => 'onclick = "closeReopen( %%id%%,\'' . 'close' . '\' );"',
-                          ),
+          'name'  => ts('Close'),
+          'title' => ts('Close Batch'),
+          'extra' => 'onclick = "closeReopen( %%id%%,\'' . 'close' . '\' );"'
+        ),
         'export' =>  array(
-                           'name'  => ts( 'Export' ),
-                           'url'   => 'civicrm/financial/batch',
-                           'qs'    => 'reset=1&action=export&id=%%id%%',
-                           'title' => ts( 'Export Batch' ),
-                          ),
+          'name'  => ts('Export'),
+          'url'   => 'civicrm/financial/batch',
+          'qs'    => 'reset=1&action=export&id=%%id%%',
+          'title' => ts('Export Batch')
+        ),
         'reopen' =>  array(
-                           'name'  => ts( 'ReOpen' ),
-                           'title' => ts( 'ReOpen Batch' ), 
-                           'extra' => 'onclick = "closeReopen( %%id%%,\'' . 'reopen' . '\' );"',
-                          ),  
+          'name'  => ts('ReOpen'),
+          'title' => ts('ReOpen Batch'),
+          'extra' => 'onclick = "closeReopen( %%id%%,\'' . 'reopen' . '\' );"'
+        ),
         'delete' =>  array(
-                           'name'  => ts( 'Delete' ),
-                           'title' => ts( 'Delete Batch' ),
-                          ),
+          'name'  => ts('Delete'),
+          'title' => ts('Delete Batch')
+        ),
         'download' => array(
-                            'name'  => ts( 'Download' ),
-                            'url'   => 'civicrm/file',
-                            'qs'    => 'reset=1&id=%%fid%%&eid=%%id%%',
-                            'title' => ts( 'Download Batch' ),
-                            )  
-                   );
-    } 
+          'name'  => ts('Download'),
+          'url'   => 'civicrm/file',
+          'qs'    => 'reset=1&id=%%fid%%&eid=%%id%%',
+          'title' => ts('Download Batch')
+        )
+      );
+    }
     else {
       $links = array(
-      CRM_Core_Action::COPY => array(
-        'name' => ts('Enter records'),
-        'url' => 'civicrm/batch/entry',
-        'qs' => 'id=%%id%%&reset=1',
-        'title' => ts('Bulk Data Entry'),
-      ),
-      CRM_Core_Action::UPDATE => array(
-        'name' => ts('Edit'),
-        'url' => 'civicrm/batch',
-        'qs' => 'action=update&id=%%id%%&reset=1',
-        'title' => ts('Edit Batch'),
-      ),
-      CRM_Core_Action::DELETE => array(
-        'name' => ts('Delete'),
-        'url' => 'civicrm/batch',
-        'qs' => 'action=delete&id=%%id%%',
-        'title' => ts('Delete Batch'),
-      ),
-    );
+        CRM_Core_Action::COPY => array(
+          'name' => ts('Enter records'),
+          'url' => 'civicrm/batch/entry',
+          'qs' => 'id=%%id%%&reset=1',
+          'title' => ts('Bulk Data Entry')
+        ),
+        CRM_Core_Action::UPDATE => array(
+          'name' => ts('Edit'),
+          'url' => 'civicrm/batch',
+          'qs' => 'action=update&id=%%id%%&reset=1',
+          'title' => ts('Edit Batch')
+        ),
+        CRM_Core_Action::DELETE => array(
+          'name' => ts('Delete'),
+          'url' => 'civicrm/batch',
+          'qs' => 'action=delete&id=%%id%%',
+          'title' => ts('Delete Batch')
+        )
+      );
     }
     return $links;
   }
@@ -413,27 +408,27 @@ class CRM_Batch_BAO_Batch extends CRM_Core_DAO_Batch {
       ORDER BY id DESC';
 
     $batches = array();
-    $dao = CRM_Core_DAO::executeQuery( $query );
+    $dao = CRM_Core_DAO::executeQuery($query);
     while ( $dao->fetch( ) ) {
       $batches[$dao->id] = $dao->title;
     }
     return $batches;
   }
-  
+
   /*
    * @see http://wiki.civicrm.org/confluence/display/CRM/CiviAccounts+Specifications+-++Batches#CiviAccountsSpecifications-Batches-%C2%A0Overviewofimplementation
    */
   static function exportFinancialBatch( $batchIds ) {
-
-//TEST
-$batchIds = array(1);
-self::$_exportFormat = 'IIF';
-//ENDTEST
+    //TEST
+    $batchIds = array(1);
+    self::$_exportFormat = 'IIF';
+    //ENDTEST
     // Instantiate appropriate exporter based on user-selected format.
     $exporterClass = "CRM_Financial_BAO_ExportFormat_" . self::$_exportFormat;
     if ( class_exists( $exporterClass ) ) {
       $exporter = new $exporterClass();
-    } else {
+    }
+    else {
       CRM_Core_Error::fatal("Could not locate exporter: $exporterClass");
     }
 
@@ -474,9 +469,9 @@ self::$_exportFormat = 'IIF';
       LEFT JOIN civicrm_contact contact_from ON contact_from.id = fa_from.contact_id
       LEFT JOIN civicrm_contact contact_to ON contact_to.id = fa_to.contact_id
       WHERE eb.batch_id IN ( %1 )";
-      
+
     $params = array( 1 => array( $id_list, 'String' ) );
-    
+
     // Keep running list of accounts and contacts used in this batch, since we need to
     // include those in the output. Only want to include ones used in the batch, not everything in the db,
     // since would increase the chance of messing up user's existing Quickbooks entries.
@@ -484,17 +479,17 @@ self::$_exportFormat = 'IIF';
     $contacts = array();
 
     $journalEntries = array();
-    
+
     $dao = CRM_Core_DAO::executeQuery( $sql, $params );
     while ( $dao->fetch() ) {
-      
+
       // add to running list of accounts
       if ( !empty( $dao->from_account_id ) && !isset( $accounts[$dao->from_account_id] ) ) {
         $accounts[$dao->from_account_id] = array(
           'name' => $exporter->format( $dao->from_account_name ),
           'account_code' => $exporter->format( $dao->from_account_code ),
           'description' => $exporter->format( $dao->from_account_description ),
-          'type' => $exporter->format( $dao->from_qb_account_type ),
+          'type' => $exporter->format( $dao->from_qb_account_type )
         );
       }
       if ( !empty( $dao->to_account_id ) && !isset( $accounts[$dao->to_account_id] ) ) {
@@ -502,24 +497,24 @@ self::$_exportFormat = 'IIF';
           'name' => $exporter->format( $dao->to_account_name ),
           'account_code' => $exporter->format( $dao->to_account_code ),
           'description' => $exporter->format( $dao->to_account_description ),
-          'type' => $exporter->format( $dao->to_qb_account_type ),
-        );        
+          'type' => $exporter->format( $dao->to_qb_account_type )
+        );
       }
 
       // add to running list of contacts
       if ( !empty( $dao->contact_from_id ) && !isset( $contacts[$dao->contact_from_id] ) ) {
         $contacts[$dao->contact_from_id] = array(
-            'name' => $exporter->format( $dao->contact_from_name ),
-            'first_name' => $exporter->format( $dao->contact_from_first_name ),
-            'last_name' => $exporter->format( $dao->contact_from_last_name ),
+          'name' => $exporter->format( $dao->contact_from_name ),
+          'first_name' => $exporter->format( $dao->contact_from_first_name ),
+          'last_name' => $exporter->format( $dao->contact_from_last_name )
         );
       }
 
       if ( !empty( $dao->contact_to_id ) && !isset( $contacts[$dao->contact_to_id] ) ) {
         $contacts[$dao->contact_to_id] = array(
-            'name' => $exporter->format( $dao->contact_to_name ),
-            'first_name' => $exporter->format( $dao->contact_to_first_name ),
-            'last_name' => $exporter->format( $dao->contact_to_last_name ),
+          'name' => $exporter->format( $dao->contact_to_name ),
+          'first_name' => $exporter->format( $dao->contact_to_first_name ),
+          'last_name' => $exporter->format( $dao->contact_to_last_name )
         );
       }
 
@@ -529,16 +524,15 @@ self::$_exportFormat = 'IIF';
           'trxn_date' => $exporter->format( $dao->trxn_date, 'date' ),
           'account_name' => $exporter->format( $dao->to_account_name ),
           'amount' => $exporter->format( $dao->total_amount ),
-          'contact_name' => $exporter->format( $dao->contact_to_name ),
+          'contact_name' => $exporter->format( $dao->contact_to_name )
         ),
         'splits' => array(),
       );
-      
+
       /*
        * splits has two possibilities depending on FROM account     
        */
-
-      if ( empty( $dao->from_account_name ) ) {
+      if (empty($dao->from_account_name)) {
         // In this case, split records need to use the individual financial_item account for each item in the trxn
         $item_sql = "SELECT
           fa.id as account_id,
@@ -561,58 +555,58 @@ self::$_exportFormat = 'IIF';
           LEFT JOIN civicrm_contact contact ON contact.id = fi.contact_id
           WHERE eft.entity_table = 'civicrm_financial_item'
           AND eft.financial_trxn_id = %1";
-        
+
         $item_params = array( 1 => array( $dao->financial_trxn_id, 'Integer' ) );
-        
+
         $item_dao = CRM_Core_DAO::executeQuery( $item_sql, $item_params );
-        while ( $item_dao->fetch() ) {
-          
+        while ($item_dao->fetch()) {
           // add to running list of accounts
-          if ( !empty( $item_dao->account_id ) && !isset( $accounts[$item_dao->account_id] ) ) {
+          if (!empty($item_dao->account_id) && !isset($accounts[$item_dao->account_id])) {
             $accounts[$item_dao->account_id] = array(
               'name' => $exporter->format( $item_dao->account_name ),
               'account_code' => $exporter->format( $item_dao->account_code ),
               'description' => $exporter->format( $dao->account_description ),
-              'type' => $exporter->format( $item_dao->qb_account_type ),
+              'type' => $exporter->format( $item_dao->qb_account_type )
             );
           }
-        
-          if ( !empty( $item_dao->contact_id ) && !isset( $contacts[$item_dao->contact_id] ) ) {
+
+          if (!empty($item_dao->contact_id) && !isset($contacts[$item_dao->contact_id])) {
             $contacts[$item_dao->contact_id] = array(
-                'name' => $exporter->format( $item_dao->contact_name ),
-                'first_name' => $exporter->format( $item_dao->contact_first_name ),
-                'last_name' => $exporter->format( $item_dao->contact_last_name ),
+              'name' => $exporter->format( $item_dao->contact_name ),
+              'first_name' => $exporter->format( $item_dao->contact_first_name ),
+              'last_name' => $exporter->format( $item_dao->contact_last_name )
             );
           }
-          
+
           // add split line for this item
           $journalEntries[$dao->financial_trxn_id]['splits'][$item_dao->financial_item_id] = array(
             'trxn_date' => $exporter->format( $item_dao->transaction_date, 'date' ),
             'account_name' => $exporter->format( $item_dao->account_name ),
             'amount' => $exporter->format( (-1) * $item_dao->amount ),
-            'contact_name' => $exporter->format( $item_dao->contact_name ),
+            'contact_name' => $exporter->format( $item_dao->contact_name )
           );
         } // end items loop
         $item_dao->free();
-        
-      } else {
+
+      }
+      else {
         // In this case, split record just uses the FROM account from the trxn, and there's only one record here
         $journalEntries[$dao->financial_trxn_id]['splits'][] = array(
           'trxn_date' => $exporter->format( $dao->trxn_date, 'date' ),
           'account_name' => $exporter->format( $dao->from_account_name ),
           'amount' => $exporter->format( (-1) * $dao->total_amount ),
-          'contact_name' => $exporter->format( $dao->contact_from_name ),
+          'contact_name' => $exporter->format( $dao->contact_from_name )
         );
       }
     }
     $dao->free();
-    
+
     $exportParams = array(
       'accounts' => $accounts,
       'contacts' => $contacts,
       'journalEntries' => $journalEntries,
     );
-    
+
     $exporter->export( $exportParams );
-  }    
+  }
 }
