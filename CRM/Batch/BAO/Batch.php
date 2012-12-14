@@ -199,6 +199,9 @@ class CRM_Batch_BAO_Batch extends CRM_Core_DAO_Batch {
 
     if (!empty($batches)) {
       foreach ($batches as $id => $value) {
+        if (($params['context'] == 'financialBatch')) {
+          $batchList[$id]['check'] = $value['check'];
+        }
         $batchList[$id]['batch_name'] = $value['title'];
         $batchList[$id]['batch_type'] = $value['batch_type'];
         $batchList[$id]['item_count'] = $value['item_count'];
@@ -257,6 +260,7 @@ class CRM_Batch_BAO_Batch extends CRM_Core_DAO_Batch {
         $newLinks = array();
       }
       elseif ($params['context'] == 'financialBatch') {
+        $values[$object->id]['check'] = "<input type='checkbox' id='check_".$object->id."' name='check_".$object->id."' value='1' onclick='enableActions()'></input>";
         $status = $values[$object->id]['status_id'];
         switch ($status) {
           case '1':
@@ -609,4 +613,19 @@ class CRM_Batch_BAO_Batch extends CRM_Core_DAO_Batch {
 
     $exporter->export( $exportParams );
   }
+   
+  static function closeReOpen($batchIds = array(), $status) {
+    $batchStatus = CRM_Core_PseudoConstant::accountOptionValues( 'batch_status' );
+    $params['status_id'] = CRM_Utils_Array::key( $status, $batchStatus );
+    $session = CRM_Core_Session::singleton( );
+    $params['modified_date'] = date('YmdHis');
+    $params['modified_id'] = $session->get( 'userID' );
+    foreach ($batchIds as $key => $value) {
+      $params['id'] = $ids['batchID'] = $value;
+      self::create($params, $ids);
+    }
+    $url = CRM_Utils_System::url('civicrm/financial/financialBatches',"reset=1&batchStatus={$params['status_id']}");
+    CRM_Utils_System::redirect($url);
+  }
+
 }

@@ -57,10 +57,12 @@
 {/if}		
 <div class="crm-submit-buttons">
     <a accesskey="N" href="{crmURL p='civicrm/financial/batch' q='reset=1&action=add'}" id="newBatch" class="button"><span><div class="icon add-icon"></div>{ts}New Financial Batch{/ts}</span></a><br/>
-</div>
+</div><br/>
+<div class="form-layout-compressed">{$form.batch_status.html}&nbsp;{$form.submit.html}</div><br/>
 <table id="crm-batch-selector">
   <thead>
     <tr>
+      <th class="crm-batch-checkbox">{$form.toggleSelect.html}</th>
       <th class="crm-batch-name">{ts}Batch Name{/ts}</th>
       <th class="crm-batch-type">{ts}Type{/ts}</th>
       <th class="crm-batch-item_count">{ts}Item Count{/ts}</th>
@@ -78,7 +80,19 @@ cj( function() {
     cj('#_qf_Search_refresh').click( function() {
         buildBatchSelector( true );
     });
+    cj("#batch_status").attr('disabled',true);
+    cj("#toggleSelect").click( function() {
+      if (cj("#toggleSelect").is(':checked')) {
+       	  cj("#crm-batch-selector input[id^='check_']").prop('checked',true);    
+      }
+      else {
+          cj("#crm-batch-selector input[id^='check_']").prop('checked',false);	
+      }
+   });
 });
+function enableActions() {
+    cj("#batch_status").attr('disabled',false);
+}
 
 function buildBatchSelector( filterSearch ) {
   var status = {/literal}{$status}{literal};
@@ -99,6 +113,7 @@ function buildBatchSelector( filterSearch ) {
         "bAutoWidth" : false,
         "aaSorting"  : [],
         "aoColumns"  : [
+		        {sClass:'crm-batch-checkbox', bSortable:false},
                         {sClass:'crm-batch-name'},
                         {sClass:'crm-batch-type'},
                         {sClass:'crm-batch-item_count right'},
@@ -213,6 +228,19 @@ function saveRecord( recordID, op, recordBAO) {
         setTimeout( "noServerResponse( )", 1500 ); 
     }
 
-
+function selectAction() {
+  if (cj('#batch_status').is(':disabled')) {
+     return false;
+  }
+  else if (!cj("#toggleSelect").is(':checked') && !cj("#crm-batch-selector input[id^='check_']").is(':checked') && cj("#batch_status").val() != "") {
+     alert ("Please select one or more batches for this action.");
+     return false;
+  }
+  else if (cj("#batch_status").val() == "") {
+     alert ("Please select an action from the drop-down menu.");
+     return false; 
+  }
+}
+ 
 </script>
 {/literal}
