@@ -75,9 +75,10 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
 
       $status = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Batch', $this->_id, 'status_id');            
       $batchStatus = CRM_Core_PseudoConstant::accountOptionValues('batch_status');
-      if (CRM_Utils_Array::value($status, $batchStatus) != 'Open') {
-        CRM_Core_Error::statusBounce(ts("You cannot edit {$batchStatus[$status]} Batch")); 
-      }
+      //FIXME
+      //if (CRM_Utils_Array::value($status, $batchStatus) != 'Open') {
+      // CRM_Core_Error::statusBounce(ts("You cannot edit {$batchStatus[$status]} Batch")); 
+      //}
     }
   }
 
@@ -233,6 +234,7 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
      $batchStatus = CRM_Core_PseudoConstant::accountOptionValues('batch_status');
      if ($this->_id) {
        $ids['batchID'] = $this->_id;
+       $params['id'] = $this->_id;
      }
      if ($this->_action & CRM_Core_Action::EXPORT) {
        $params['status_id'] = CRM_Utils_Array::key('Exported', $batchStatus);
@@ -252,20 +254,20 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
        $params['created_id'] = $session->get('userID');
        $details = "{$params['name']} batch has been created by this contact.";
      }
-
+     
      if ($this->_action & CRM_Core_Action::UPDATE && $this->_id) {
        $params['title'] = CRM_Utils_Array::value('name', $params);
        $details = "{$params['name']} batch has been edited by this contact.";
        if (CRM_Utils_Array::value($params['status_id'], $batchStatus) == 'Closed') {
          $details = "{$params['name']} batch has been closed by this contact.";
        }
-     }
-     $batch = CRM_Batch_BAO_Batch::create($params, $ids, $context = 'financialBatch');
-
-     if ($this->_action & CRM_Core_Action::EXPORT) {
-       CRM_Batch_BAO_Batch::exportBatch($ids, $params);
      } 
-
+     $batch = CRM_Batch_BAO_Batch::create($params, $ids, $context = 'financialBatch');
+     
+     if ($this->_action & CRM_Core_Action::EXPORT) {
+       CRM_Batch_BAO_Batch::exportFinancialBatch($ids);
+     } 
+     
      //create activity. 
      $activityParams = array( 
        'activity_type_id' => 47, 
