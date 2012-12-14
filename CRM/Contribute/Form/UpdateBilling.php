@@ -213,8 +213,7 @@ class CRM_Contribute_Form_UpdateBilling extends CRM_Core_Form {
    * @access public
    * @static
    */
-  static
-  function formRule($fields, $files, $self) {
+  static function formRule($fields, $files, $self) {
     foreach ($self->_fields as $name => $fld) {
       if ($fld['is_required'] &&
         CRM_Utils_System::isNull(CRM_Utils_Array::value($name, $fields))

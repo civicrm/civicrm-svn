@@ -249,7 +249,9 @@ abstract class CRM_Contribute_Import_Parser {
    * @var int
    */
 
-  public $_contactType; function __construct() {
+  public $_contactType;
+
+  function __construct() {
     $this->_maxLinesToProcess = 0;
     $this->_maxErrorCount = self::MAX_ERRORS;
   }
@@ -761,8 +763,7 @@ abstract class CRM_Contribute_Import_Parser {
    * @return void
    * @access public
    */
-  static
-  function exportCSV($fileName, $header, $data) {
+  static function exportCSV($fileName, $header, $data) {
     $output = array();
     $fd = fopen($fileName, 'w');
 
@@ -802,8 +803,7 @@ abstract class CRM_Contribute_Import_Parser {
    * @static
    * @access public
    */
-  static
-  function encloseScrub(&$values, $enclosure = "'") {
+  static function encloseScrub(&$values, $enclosure = "'") {
     if (empty($values)) {
       return;
     }

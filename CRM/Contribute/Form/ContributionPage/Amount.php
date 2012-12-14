@@ -286,8 +286,7 @@ SELECT id
    * @access public
    * @static
    */
-  static
-  function formRule($fields, $files, $self) {
+  static function formRule($fields, $files, $self) {
     $errors = array();
     //as for separate membership payment we has to have
     //contribution amount section enabled, hence to disable it need to
