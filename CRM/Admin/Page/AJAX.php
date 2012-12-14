@@ -213,12 +213,20 @@ class CRM_Admin_Page_AJAX {
           break;
           
       case 'CRM_Core_BAO_Batch':
-        $batchStatusId = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Batch', $recordID, 'status_id');
-        if ($batchStatusId == CRM_Core_OptionGroup::getValue("batch_status","Open")) {
+        if ($op == 'close') {
           $status = ts('Are you sure you want to close this batch?');
         }
         else {
           $status = ts('Are you sure you want to reopen this batch?');
+        }
+        break;
+        
+      case 'CRM_Financial_BAO_EntityFinancialItem':
+        if ($op == 'remove') {
+          $status = ts('Are you sure you want to remove this financial item?');
+        }
+        else {
+          $status = ts('Are you sure you want to assign this financial item to the batch?');
         }
         break;
         

@@ -81,13 +81,14 @@ class CRM_Financial_Form_BatchTransaction extends CRM_Contribute_Form {
 
     $contactID = CRM_Utils_Type::escape(1, 'Integer');
     $context   = CRM_Utils_Type::escape('batch', 'String');
-  
+ 
     $params['batch_id'] = $_POST['batch_id'];
     $params['contact_id'] = $contactID;
     $params['context'   ] = $context;
 
     $this->_returnvalues = array(
       'civicrm_financial_item.contact_id',
+      'civicrm_contribution.id as contributionID',
       'sort_name',
       'amount',
       'contact_type',
@@ -116,7 +117,7 @@ class CRM_Financial_Form_BatchTransaction extends CRM_Contribute_Form {
       }
       $row['checkbox'] = CRM_Core_Form::CB_PREFIX . $financialItem->id;
 
-      $row['action'] = CRM_Core_Action::formLink( self::links(), null, array('id' => $financialItem->id));
+      $row['action'] = CRM_Core_Action::formLink( self::links(), null, array('id' => $financialItem->id, 'contid' => $financialItem->contributionID, 'cid' => $financialItem->contact_id ));
       $row['contact_type' ] = CRM_Contact_BAO_Contact_Utils::getImage(CRM_Utils_Array::value('contact_sub_type',$row) ?
                               CRM_Utils_Array::value('contact_sub_type',$row) : CRM_Utils_Array::value('contact_type',$row) ,false, $financialItem->contact_id);
       $this->_searchRows[] = $row;
@@ -134,8 +135,8 @@ class CRM_Financial_Form_BatchTransaction extends CRM_Contribute_Form {
       self::$_links = array(
         'view'  => array(
           'name'  => ts('View'),
-          'url'   => 'civicrm/admin/financial/financialType/accounts',
-          'qs'    => 'reset=1&action=browse&aid=%%id%%',
+          'url'   => 'civicrm/contact/view/contribution',
+          'qs'    => 'reset=1&id=%%contid%%&cid=%%cid%%&action=view&context=contribution&selectedChild=contribute',
           'title' => ts('Accounts'),
         ),
         'assign' => array(

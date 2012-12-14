@@ -47,8 +47,6 @@
     <p></p>
     <div class="form-item">
       {strip}
-      {* handle enable/disable actions*}
-      {include file="CRM/common/enableDisable.tpl"}
       <table cellpadding="0" cellspacing="0" border="0">
         <thead class="sticky">
 	<tr>
@@ -76,10 +74,3 @@
   </div>   
 {/if}
 
-{literal}
-<script type="text/javascript">
-cj(function() {
-   cj().crmaccordions(); 
-});
-</script>
-{/literal}

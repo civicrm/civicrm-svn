@@ -69,8 +69,8 @@ class CRM_Financial_Page_BatchTransaction extends CRM_Core_Page_Basic {
       self::$_links = array(
         'view'  => array(
           'name'  => ts('View'),
-          'url'   => 'civicrm/admin/financial/financialType/accounts',
-          'qs'    => 'reset=1&action=browse&aid=%%id%%',
+          'url'   => 'civicrm/contact/view/contribution',
+          'qs'    => 'reset=1&id=%%contid%%&cid=%%cid%%&action=view&context=contribution&selectedChild=contribute',
           'title' => ts('Accounts'),
         ),
         'remove'  => array(
@@ -119,6 +119,7 @@ class CRM_Financial_Page_BatchTransaction extends CRM_Core_Page_Basic {
     $financialitems = array();
     $this->_returnvalues = array( 
       'civicrm_financial_item.contact_id',
+      'civicrm_contribution.id as contributionID',
       'sort_name',
       'amount',
       'contact_type',
@@ -147,7 +148,7 @@ class CRM_Financial_Page_BatchTransaction extends CRM_Core_Page_Basic {
         $row[$columnKey] = $financialItem->$columnKey;
       }
       $row['checkbox'] = 'mark_y_'. $financialItem->id;
-      $row['action'] = CRM_Core_Action::formLink(self::links(), null, array('id' => $financialItem->id));
+      $row['action'] = CRM_Core_Action::formLink(self::links(), null, array('id' => $financialItem->id, 'contid' => $financialItem->contributionID, 'cid' => $financialItem->contact_id));
       $row['contact_type' ] = CRM_Contact_BAO_Contact_Utils::getImage( CRM_Utils_Array::value('contact_sub_type',$row) ?
                               CRM_Utils_Array::value('contact_sub_type',$row) : CRM_Utils_Array::value('contact_type',$row) ,false, $financialItem->contact_id);
       $financialitems[] = $row;

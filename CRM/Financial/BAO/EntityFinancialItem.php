@@ -85,7 +85,6 @@ class CRM_Financial_BAO_EntityFinancialItem extends CRM_Financial_DAO_EntityFina
   static function add($params, $ids=null) {
     // action is taken depending upon the mode
     $financialItem = new CRM_Financial_DAO_EntityFinancialItem( );
-    CRM_Core_Error::debug( '$params', $params );
     $financialItem->copyValues( $params );;
     $financialItem->save( );
     
@@ -95,7 +94,6 @@ class CRM_Financial_BAO_EntityFinancialItem extends CRM_Financial_DAO_EntityFina
   static function remove($params) {
     // action is taken depending upon the mode
     $financialItem = new CRM_Financial_DAO_EntityFinancialItem( );
-    CRM_Core_Error::debug( '$params', $params );
     $financialItem->copyValues( $params );
     $financialItem->delete();
     return $financialItem;
@@ -111,7 +109,7 @@ class CRM_Financial_BAO_EntityFinancialItem extends CRM_Financial_DAO_EntityFina
    * @static 
    * @return object
    */
-  static function getBatchFinancialItems($entityID, $returnvalues, $notPresent = null, $sort = 'id') {
+  static function getBatchFinancialItems($entityID, $returnvalues, $notPresent = null, $sort = '`civicrm_financial_item`.id') {
     // action is taken depending upon the mode
     $select = ' `civicrm_financial_item`.id ';
     if (!empty( $returnvalues)) {
@@ -125,7 +123,9 @@ class CRM_Financial_BAO_EntityFinancialItem extends CRM_Financial_DAO_EntityFina
     $from = " `civicrm_financial_item`
 LEFT JOIN civicrm_contact ON civicrm_contact.id = `civicrm_financial_item`.contact_id
 LEFT JOIN civicrm_entity_financial_item ON civicrm_entity_financial_item.financial_item_id= `civicrm_financial_item`.id
-LEFT JOIN civicrm_financial_account ON civicrm_financial_account.id = `civicrm_financial_item`.financial_account_id ";
+LEFT JOIN civicrm_financial_account ON civicrm_financial_account.id = `civicrm_financial_item`.financial_account_id 
+LEFT JOIN civicrm_line_item ON civicrm_line_item.id = `civicrm_financial_item`.entity_id
+LEFT JOIN civicrm_contribution ON civicrm_contribution.id = civicrm_line_item.entity_id";
     if (!$notPresent) {
       $where =  " ( civicrm_entity_financial_item.entity_id = {$entityID} AND civicrm_entity_financial_item.entity_table = 'civicrm_batch' ) ";
     } else {
@@ -137,6 +137,7 @@ FROM {$from}
 WHERE {$where}
 {$orderBy}
 ";
+ 
     $result = CRM_Core_DAO::executeQuery($sql);
     return $result;
   }
