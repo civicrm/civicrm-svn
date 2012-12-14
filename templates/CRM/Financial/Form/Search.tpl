@@ -148,7 +148,7 @@ function buildBatchSelector( filterSearch ) {
 
 function closeReopen( recordID, op ) {
 
-	var recordBAO = 'CRM_Core_BAO_Batch';	
+	var recordBAO = 'CRM_Batch_BAO_Batch';
 	if ( op == 'close' ) {
        	   var st = {/literal}'{ts escape="js"}Close the Batch{/ts}'{literal};
     	} else if ( op == 'reopen' ) {

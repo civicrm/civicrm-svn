@@ -36,7 +36,7 @@
 /**
  *
  */
-class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
+class CRM_Batch_BAO_Batch extends CRM_Core_DAO_Batch {
 
   /**
    * Cache for the current batch object
@@ -76,7 +76,7 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
    * @param array $params   (reference ) an assoc array of name/value pairs
    * @param array $defaults (reference ) an assoc array to hold the flattened values
    *
-   * @return array CRM_Core_BAO_Batch object on success, null otherwise
+   * @return array CRM_Batch_BAO_Batch object on success, null otherwise
    * @access public
    * @static
    */
@@ -137,7 +137,7 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
    * @access public
    */
   static function addBatchEntity(&$params) {
-    $entityBatch = new CRM_Core_DAO_EntityBatch();
+    $entityBatch = new CRM_Batch_DAO_EntityBatch();
     $entityBatch->copyValues($params);
     $entityBatch->save();
     return $entityBatch;
@@ -153,7 +153,7 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
    */
   static function deleteBatch($batchId) {
     //delete batch entries from cache
-    $cacheKeyString = CRM_Core_BAO_Batch::getCacheKeyForBatch($batchId);
+    $cacheKeyString = CRM_Batch_BAO_Batch::getCacheKeyForBatch($batchId);
     CRM_Core_BAO_Cache::deleteGroup('batch entry', $cacheKeyString, FALSE);
 
     // delete entry from batch table
@@ -190,10 +190,10 @@ class CRM_Core_BAO_Batch extends CRM_Core_DAO_Batch {
     $params['sort']     = CRM_Utils_Array::value('sortBy', $params);
 
     // get batches
-    $batches = CRM_Core_BAO_Batch::getBatchList($params);
+    $batches = CRM_Batch_BAO_Batch::getBatchList($params);
 
     // add total
-    $params['total'] = CRM_Core_BAO_Batch::getBatchCount($params);
+    $params['total'] = CRM_Batch_BAO_Batch::getBatchCount($params);
 
     // format params and add links
     $batchList = array();

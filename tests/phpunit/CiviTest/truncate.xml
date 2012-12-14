@@ -43,6 +43,10 @@
 
   <civicrm_contact_type />
 
+  <civicrm_batch />
+
+  <civicrm_entity_batch />
+
   <civicrm_mailing_component />
 
   <civicrm_mailing_bounce_type />
@@ -105,8 +109,6 @@
 
   <civicrm_pcp />
 
-  <civicrm_batch />
-
   <civicrm_cache />
 
   <civicrm_country />
@@ -118,8 +120,6 @@
   <civicrm_domain />
 
   <civicrm_email />
-
-  <civicrm_entity_batch />
 
   <civicrm_entity_file />
 

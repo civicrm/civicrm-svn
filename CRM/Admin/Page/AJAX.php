@@ -212,7 +212,7 @@ class CRM_Admin_Page_AJAX {
           }
           break;
           
-      case 'CRM_Core_BAO_Batch':
+      case 'CRM_Batch_BAO_Batch':
         if ($op == 'close') {
           $status = ts('Are you sure you want to close this batch?');
         }

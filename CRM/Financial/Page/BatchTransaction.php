@@ -56,7 +56,7 @@ class CRM_Financial_Page_BatchTransaction extends CRM_Core_Page_Basic {
    * @return string Classname of BAO.
    */
   function getBAOName() {
-    return 'CRM_Core_BAO_Batch';
+    return 'CRM_Batch_BAO_Batch';
   }
 
   /**

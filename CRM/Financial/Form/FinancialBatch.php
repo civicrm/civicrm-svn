@@ -260,10 +260,10 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
          $details = "{$params['name']} batch has been closed by this contact.";
        }
      }
-     $batch = CRM_Core_BAO_Batch::create($params, $ids, $context = 'financialBatch');
+     $batch = CRM_Batch_BAO_Batch::create($params, $ids, $context = 'financialBatch');
 
      if ($this->_action & CRM_Core_Action::EXPORT) {
-       CRM_Core_BAO_Batch::exportBatch($ids, $params);
+       CRM_Batch_BAO_Batch::exportBatch($ids, $params);
      } 
 
      //create activity. 

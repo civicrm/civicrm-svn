@@ -90,7 +90,7 @@ class CRM_Batch_Form_Batch extends CRM_Admin_Form {
 
     if ($this->_action & CRM_Core_Action::ADD) {
       // set batch name default
-      $defaults['title'] = CRM_Core_BAO_Batch::generateBatchName();
+      $defaults['title'] = CRM_Batch_BAO_Batch::generateBatchName();
     }
     else {
       $defaults = $this->_values;
@@ -111,7 +111,7 @@ class CRM_Batch_Form_Batch extends CRM_Admin_Form {
     $params = $this->controller->exportValues($this->_name);
     if ($this->_action & CRM_Core_Action::DELETE) {
       CRM_Core_Session::setStatus("", ts("Batch Deleted"), "success");
-      CRM_Core_BAO_Batch::deleteBatch($this->_id);
+      CRM_Batch_BAO_Batch::deleteBatch($this->_id);
       return;
     }
 
@@ -126,7 +126,7 @@ class CRM_Batch_Form_Batch extends CRM_Admin_Form {
     
     // always create with data entry status
     $params['status_id'] = 3; 
-    $batch = CRM_Core_BAO_Batch::create($params);
+    $batch = CRM_Batch_BAO_Batch::create($params);
 
     // redirect to batch entry page.
     $session = CRM_Core_Session::singleton();

@@ -407,7 +407,7 @@ class CRM_Report_Form_Member_ContributionDetail extends CRM_Report_Form {
     $this->_tagFilter = TRUE;
 
     // Don't show Batch display column and filter unless batches are being used
-    $this->_closedBatches = CRM_Core_BAO_Batch::getBatches();
+    $this->_closedBatches = CRM_Batch_BAO_Batch::getBatches();
     if (!empty($this->_closedBatches)) {
       $this->_columns['civicrm_batch']['dao'] = 'CRM_Core_DAO_Batch';
       $this->_columns['civicrm_batch']['fields']['batch_id'] = array(

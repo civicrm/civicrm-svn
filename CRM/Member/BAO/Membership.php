@@ -389,7 +389,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
               'entity_table' => 'civicrm_financial_trxn',
               'entity_id' => $trxn->id
             );
-            CRM_Core_BAO_Batch::addBatchEntity($entityParams);
+            CRM_Batch_BAO_Batch::addBatchEntity($entityParams);
           }
 
           if (CRM_Utils_Array::value('fee_amount', $trxnParams)) {

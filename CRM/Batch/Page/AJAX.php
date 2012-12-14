@@ -41,7 +41,7 @@ class CRM_Batch_Page_AJAX {
     // save in cache table
     $batchId = CRM_Utils_Type::escape($_POST['batch_id'], 'Positive');
 
-    $cacheKeyString = CRM_Core_BAO_Batch::getCacheKeyForBatch($batchId);
+    $cacheKeyString = CRM_Batch_BAO_Batch::getCacheKeyForBatch($batchId);
 
     // check if we can retrieve from database cache
     unset($_POST['qfKey']);
@@ -97,7 +97,7 @@ class CRM_Batch_Page_AJAX {
     $params['context'] = $context;
 
     // get batch list
-    $batches = CRM_Core_BAO_Batch::getBatchListSelector($params);
+    $batches = CRM_Batch_BAO_Batch::getBatchListSelector($params);
 
     $iFilteredTotal = $iTotal = $params['total'];
     $selectorElements = array(

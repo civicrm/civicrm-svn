@@ -85,7 +85,7 @@ class CRM_Financial_Form_Task_Export extends CRM_Financial_Form_Task {
    */
   public function postProcess( ) {
     $ids =array();
-    CRM_Core_BAO_Batch::exportBatch( $this->_financialBatchIds, $ids );
+    CRM_Batch_BAO_Batch::exportBatch( $this->_financialBatchIds, $ids );
   }
   
 }

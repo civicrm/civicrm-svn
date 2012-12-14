@@ -93,7 +93,7 @@ class CRM_Financial_Form_Task_ReOpen extends CRM_Financial_Form_Task {
       if ( $financialBatchId ){
         $ids['batchID'] = $financialBatchId;
       }
-      if ( CRM_Core_BAO_Batch::create( $params, $ids ) ) {
+      if ( CRM_Batch_BAO_Batch::create( $params, $ids ) ) {
           $reOpenedBatches++;
       }
     }

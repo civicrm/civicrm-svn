@@ -89,13 +89,13 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
     
     if (empty($this->_batchInfo)) {
       $params = array('id' => $this->_batchId);
-      CRM_Core_BAO_Batch::retrieve($params, $this->_batchInfo);
+      CRM_Batch_BAO_Batch::retrieve($params, $this->_batchInfo);
 
       $this->assign('batchTotal', $this->_batchInfo['total']);
       $this->assign('batchType', $this->_batchInfo['type_id']);
 
       // get the profile id associted with this batch type
-      $this->_profileId = CRM_Core_BAO_Batch::getProfileId($this->_batchInfo['type_id']);
+      $this->_profileId = CRM_Batch_BAO_Batch::getProfileId($this->_batchInfo['type_id']);
     }
   }
 
@@ -301,7 +301,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
     }
     else {
       // get the existing batch values from cache table
-      $cacheKeyString = CRM_Core_BAO_Batch::getCacheKeyForBatch($this->_batchId);
+      $cacheKeyString = CRM_Batch_BAO_Batch::getCacheKeyForBatch($this->_batchId);
       $defaults = CRM_Core_BAO_Cache::getItem('batch entry', $cacheKeyString);
     }
     return $defaults;
@@ -335,10 +335,10 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
       'total' => $params['actualBatchTotal'],
     );
 
-    CRM_Core_BAO_Batch::create($paramValues);
+    CRM_Batch_BAO_Batch::create($paramValues);
 
     // delete from cache table
-    $cacheKeyString = CRM_Core_BAO_Batch::getCacheKeyForBatch($this->_batchId);
+    $cacheKeyString = CRM_Batch_BAO_Batch::getCacheKeyForBatch($this->_batchId);
     CRM_Core_BAO_Cache::deleteGroup('batch entry', $cacheKeyString, FALSE);
 
     // set success status
@@ -462,7 +462,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
           'entity_table' => 'civicrm_financial_trxn',
           'entity_id' => $financialTransaction->id
         );
-        CRM_Core_BAO_Batch::addBatchEntity($entityParams);
+        CRM_Batch_BAO_Batch::addBatchEntity($entityParams);
 
         //process premiums
         if (CRM_Utils_Array::value('product_name', $value)) {
