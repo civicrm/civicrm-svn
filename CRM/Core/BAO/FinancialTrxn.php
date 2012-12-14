@@ -69,21 +69,21 @@ class CRM_Core_BAO_FinancialTrxn extends CRM_Financial_DAO_FinancialTrxn {
     if (!$contributionAmount && isset($params['total_amount'])) {
       $contributionAmount = $params['total_amount'];
     }
-    
+
     // save to entity_financial_trxn table
     $entityFinancialTrxnParams =
       array(
-      'entity_table' => "civicrm_contribution",
-      'financial_trxn_id' => $trxn->id,
-      //use net amount to include all received amount to the contribution
-      'amount' => $contributionAmount,
-      'currency' => $trxn->currency,
-    );
-    
+        'entity_table' => "civicrm_contribution",
+        'financial_trxn_id' => $trxn->id,
+        //use net amount to include all received amount to the contribution
+        'amount' => $contributionAmount,
+        'currency' => $trxn->currency,
+      );
+
     if (!empty($trxnEntityTable)) {
       $entityFinancialTrxnParams['entity_table'] = $trxnEntityTable['entity_table'];
       $entityFinancialTrxnParams['entity_id']    = $trxnEntityTable['entity_id'];
-    } 
+    }
     else {
       $entityFinancialTrxnParams['entity_id'] =  $params['contribution_id'];
     }
@@ -171,10 +171,59 @@ class CRM_Core_BAO_FinancialTrxn extends CRM_Financial_DAO_FinancialTrxn {
 LEFT JOIN civicrm_entity_financial_trxn AS ceft ON ft.financial_trxn_id = ceft.entity_id 
 WHERE ft.entity_table = 'civicrm_contribution' AND ft.entity_id = %1
         ";
-    
+
     $sqlParams = array(1 => array($entity_id, 'Integer'));
     return  CRM_Core_DAO::singleValueQuery($query, $sqlParams);
-    
+
+  }
+  /**
+   * Given an financial_trxn_id  check for previous entity_financial_trxn.
+   *
+   * @param int $financialTrxn_id id of the latest payment.
+   *
+   * @return array( ) $payment array of previous payments
+   *
+   * @access public
+   * @static
+   */
+  static function getPayments($financial_trxn_id) {
+    $query = "
+SELECT ef1.financial_trxn_id, sum(ef1.amount) amount
+FROM civicrm_entity_financial_trxn ef1
+LEFT JOIN civicrm_entity_financial_trxn ef2 ON ef1.financial_trxn_id = ef2.entity_id
+WHERE ef2.financial_trxn_id =%1
+  AND ef2.entity_table = 'civicrm_financial_trxn'
+  AND ef1.entity_table = 'civicrm_financial_item'
+GROUP BY ef1.financial_trxn_id
+UNION
+SELECT ef1.financial_trxn_id, ef1.amount
+FROM civicrm_entity_financial_trxn ef1
+LEFT JOIN civicrm_entity_financial_trxn ef2 ON ef1.entity_id = ef2.entity_id
+WHERE  ef2.financial_trxn_id =%1
+  AND ef2.entity_table = 'civicrm_financial_trxn'
+  AND ef1.entity_table = 'civicrm_financial_trxn'";
+
+    $sqlParams = array(1 => array($financial_trxn_id, 'Integer'));
+    $dao = CRM_Core_DAO::executeQuery($query, $sqlParams);
+    $i = 0;
+    $result = array();
+    while ($dao->fetch()) {
+      $result[$i]['financial_trxn_id'] = $dao->financial_trxn_id;
+      $result[$i]['amount'] = $dao->amount;
+      $i++;
+    }
+
+    if (empty($result)) {
+      $query = "SELECT sum( amount ) amount FROM civicrm_entity_financial_trxn WHERE financial_trxn_id =%1 AND entity_table = 'civicrm_financial_item'";
+      $sqlParams = array(1 => array($financial_trxn_id, 'Integer'));
+      $dao = CRM_Core_DAO::executeQuery($query, $sqlParams);
+
+      if ($dao->fetch()) {
+        $result[0]['financial_trxn_id'] = $financial_trxn_id;
+        $result[0]['amount'] = $dao->amount;
+      }
+    }
+    return $result;
   }
 
   /**
@@ -191,17 +240,17 @@ WHERE ft.entity_table = 'civicrm_contribution' AND ft.entity_id = %1
    */
   static function getFinancialTrxnLineTotal($entity_id, $entity_table = 'civicrm_contribution') {
     $query = "SELECT lt.price_field_value_id AS id, ft.financial_trxn_id,ft.amount AS amount FROM civicrm_entity_financial_trxn AS ft
-LEFT JOIN civicrm_financial_item AS fi ON fi.id = ft.entity_id AND fi.entity_table = 'civicrm_line_item'
+LEFT JOIN civicrm_financial_item AS fi ON fi.id = ft.entity_id AND fi.entity_table = 'civicrm_line_item' AND ft.entity_table = 'civicrm_financial_item'
 LEFT JOIN civicrm_line_item AS lt ON lt.id = fi.entity_id AND lt.entity_table = %2 
 WHERE lt.entity_id = %1 ";
-    
+
     $sqlParams = array(1 => array($entity_id, 'Integer'), 2 => array($entity_table, 'String'));
     $dao =  CRM_Core_DAO::executeQuery($query, $sqlParams);
     while($dao->fetch()){
       $result[$dao->financial_trxn_id][$dao->id] = $dao->amount;
     }
     if (!empty($result)) {
-      return $result;    
+      return $result;
     }
     else {
       return null;

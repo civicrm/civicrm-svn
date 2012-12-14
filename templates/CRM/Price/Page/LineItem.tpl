@@ -72,10 +72,10 @@
               <td class="right">{$line.participant_count}</td>
             {/if}
             <td class="right">
-              {$pricefildTotal.lineItems[$line.price_field_value_id]|crmMoney}
+              {$pricefieldTotal.lineItems[$line.price_field_value_id]|crmMoney}
             </td>
             <td class="right">
-              {assign var="fildTotal" value= $line.line_total-$pricefildTotal.LineItems[$line.price_field_value_id]}{$fildTotal|crmMoney}
+              {assign var="fieldTotal" value= $line.line_total-$pricefieldTotal.lineItems[$line.price_field_value_id]}{$fieldTotal|crmMoney}
             </td>
             {if $action eq 2}
               <td class="right">
@@ -92,8 +92,8 @@
           <td></td>
           <td></td>
           <td class="right">{$totalAmount|crmMoney}</td>
-          <td class="right">{$pricefildTotal.total|crmMoney}</td>
-          <td class="right">{assign var="total" value= $totalAmount-$pricefildTotal.total}{$total|crmMoney}</td>
+          <td class="right">{$pricefieldTotal.total|crmMoney}</td>
+          <td class="right">{assign var="total" value= $totalAmount-$pricefieldTotal.total}{$total|crmMoney}</td>
           <td class="right"><h5 class='editPayment'></h5>
 {literal}
 <script type="text/javascript">

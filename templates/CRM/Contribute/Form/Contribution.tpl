@@ -143,7 +143,7 @@
                 var owing = cj('#owing').val();
                 var init_amount =  cj('#initial_amount').val();
                 cj('td.unallocate').text(parseFloat(owing - init_amount).toFixed(2));
-              });
+              });					  
             });
           </script>
         {/literal}
@@ -291,10 +291,10 @@
           </thead>
           {foreach from=$pricefieldTotal.trxn item=element key=keys}
             <tr class="{cycle values="odd-row,even-row"}">
-              <td>{$element.trxn_date}</td>
+              <td>{$element.trxn_date|crmDate}</td>
               <td>{$element.trxn_type}</td>
               <td>{$element.trxn_total|crmMoney}</td>
-              <td></td>
+              <td>{$element.status}</td>
               <td></td>
             <td>
               {if $compId}
