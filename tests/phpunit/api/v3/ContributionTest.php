@@ -26,6 +26,7 @@
 */
 
 require_once 'CiviTest/CiviUnitTestCase.php';
+require_once 'CiviTest/CiviMailUnitTest.php';
 class api_v3_ContributionTest extends CiviUnitTestCase {
 
   /**
@@ -846,7 +847,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
    * Test sending a mail via the API
    */
   function testSendMail() {
-    $this->prepareMailLog();
+    $mut = new CiviMailUnitTest( $this, true );
     $contribution = civicrm_api('contribution','create',$this->_params);
     $this->assertAPISuccess($contribution);
     $apiResult = civicrm_api('contribution', 'sendconfirmation', array(
@@ -854,7 +855,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'id' => $contribution['id'])
     );
     $this->assertAPISuccess($apiResult);
-    $this->checkMailLog(array(
+    $mut->checkMailLog(array(
         '$ 100.00',
         'Contribution Information',
         'Please print this confirmation for your records',
@@ -862,13 +863,14 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
         'Event'
       )
     );
+    $mut->stop();
   }
 
   /*
    * Test sending a mail via the API
    */
   function testSendMailEvent() {
-    $this->prepareMailLog();
+    $mut = new CiviMailUnitTest( $this, true );
     $contribution = civicrm_api('contribution','create',$this->_params);
     $event          = $this->eventCreate(array('is_email_confirm' => 1));
     $this->_eventID = $event['id'];
@@ -893,7 +895,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'version' => $this->_apiversion,
       'id' => $contribution['id']) );
     $this->assertAPISuccess($apiResult);
-    $this->checkMailLog(array(
+    $mut->checkMailLog(array(
         'Annual CiviCRM meet',
         'Event',
         'To: "Mr. Anthony Anderson II" <anthony_anderson@civicrm.org>',
@@ -901,6 +903,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
 
       )
     );
+    $mut->stop();
   }
 
   ///////////////  _civicrm_contribute_format_params for $create
