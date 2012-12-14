@@ -210,33 +210,27 @@ cj(function(){
 });
 
 function showHidePeriodSettings() {
-  if ((document.getElementsByName("period_type")[0].value   == "fixed" ) &&
-    (document.getElementsByName("duration_unit")[0].value == "year"  ) ) {
+  if ((cj("#period_type :selected").val() == "fixed") &&
+    (cj("#duration_unit :selected").val() == "year")) {
     cj('#fixed_start_day_row, #fixed_rollover_day_row').show();
     cj('#month_fixed_rollover_day_row').hide();
-    document.getElementsByName("fixed_period_start_day[M]")[0].value = "1";
-    document.getElementsByName("fixed_period_start_day[d]")[0].value = "1";
-    document.getElementsByName("fixed_period_rollover_day[M]")[0].value = "12";
-    document.getElementsByName("fixed_period_rollover_day[d]")[0].value = "31";
-    document.getElementsByName("month_fixed_rollover_day_row").value = "";
+    cj("#fixed_period_start_day_M, #fixed_period_start_day_d").val("1");
+    cj("#fixed_period_rollover_day_M").val("12");
+    cj("#fixed_period_rollover_day_d").val("31");
+    cj("#month_fixed_rollover_day_row").val("");
   }
-  else if ((document.getElementsByName("period_type")[0].value   == "fixed" ) &&
-    ( document.getElementsByName("duration_unit")[0].value == "month"  ) ) {
+  else if ((cj("#period_type :selected").val() == "fixed" ) &&
+    (cj("#duration_unit :selected").val() == "month" )) {
     cj('#month_fixed_rollover_day_row').show();
     cj('#fixed_start_day_row, #fixed_rollover_day_row').hide();
-    document.getElementsByName("fixed_period_start_day[M]")[0].value = "";
-    document.getElementsByName("fixed_period_start_day[d]")[0].value = "";
-    document.getElementsByName("fixed_period_rollover_day[M]")[0].value = "";
-    document.getElementsByName("fixed_period_rollover_day[d]")[0].value = "";
-    document.getElementsByName("fixed_period_rollover_day[M]")[0].value = "";
+    cj("#fixed_period_start_day_M, #fixed_period_start_day_d").val("");
+    cj("#fixed_period_rollover_day_M, #fixed_period_rollover_day_d").val("");
   }
   else {
     cj('#fixed_start_day_row, #fixed_rollover_day_row, #month_fixed_rollover_day_row').hide();
-    document.getElementsByName("fixed_period_start_day[M]")[0].value = "";
-    document.getElementsByName("fixed_period_start_day[d]")[0].value = "";
-    document.getElementsByName("fixed_period_rollover_day[M]")[0].value = "";
-    document.getElementsByName("fixed_period_rollover_day[d]")[0].value = "";
-    document.getElementsByName("month_fixed_rollover_day_row").value = "";
+    cj("#fixed_period_start_day_M, #fixed_period_start_day_d").val("");
+    cj("#fixed_period_rollover_day_M, #fixed_period_rollover_day_d").val("");
+    cj("#month_fixed_rollover_day_row").val("");
   }
 }
 
