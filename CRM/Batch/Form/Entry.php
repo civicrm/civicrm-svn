@@ -430,17 +430,6 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         $value['skipRecentView'] = TRUE;
         $contribution = CRM_Contribute_BAO_Contribution::create($value, CRM_Core_DAO::$_nullArray);
 
-        // make entry in line item for contribution
-        $this->_priceSet['fields'][$fieldID]['options'][$fieldID]['amount'] =  $value['total_amount'];
-        $value['price_'.$fieldID] = 1;
-
-        $lineItem = array();
-        CRM_Price_BAO_Set::processAmount($this->_priceSet['fields'],
-          $value, $lineItem[$priceSetId]
-        );
-
-        CRM_Price_BAO_LineItem::processPriceSet($contribution->id, $lineItem, $contribution);
-
         // make entry in financial transaction table
         $trxnParams = array(
           'contribution_id' => $contribution->id,
@@ -456,6 +445,17 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         );
 
         $financialTransaction = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
+
+        // make entry in line item for contribution
+        $this->_priceSet['fields'][$fieldID]['options'][$fieldID]['amount'] =  $value['total_amount'];
+        $value['price_'.$fieldID] = 1;
+
+        $lineItem = array();
+        CRM_Price_BAO_Set::processAmount($this->_priceSet['fields'],
+          $value, $lineItem[$priceSetId]
+        );
+
+        CRM_Price_BAO_LineItem::processPriceSet($contribution->id, $lineItem, $contribution);
 
         $entityParams = array(
           'batch_id' => $params['batch_id'],

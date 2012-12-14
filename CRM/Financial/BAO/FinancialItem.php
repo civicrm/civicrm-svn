@@ -83,7 +83,6 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem {
       'contact_id'        => $contribution->contact_id, 
       'amount'            => $lineItem->line_total,
       'currency'          => $contribution->currency,
-      'status_id'         => 3,
       'entity_table'      => 'civicrm_line_item',
       'entity_id'         => $lineItem->id,
       'description'       => ( $lineItem->qty != 1 ? $lineItem->qty . ' of ' : ''). ' ' . $lineItem->label
