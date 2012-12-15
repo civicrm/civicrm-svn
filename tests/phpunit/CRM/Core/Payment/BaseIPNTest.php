@@ -232,14 +232,15 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase {
   function testsendMailParticipantObjectsCheckLog() {
     $this->_setUpParticipantObjects();
     $values = array();
-    $this->prepareMailLog();
+    $mut = new CiviMailUnitTest( $this, true );
     $this->IPN->loadObjects($this->input, $this->ids, $this->objects, FALSE, $this->_processorId);
     $this->IPN->sendMail($this->input, $this->ids, $this->objects, $values, FALSE, FALSE);
-    $msg = $this->checkMailLog(array(
+    $mut->checkMailLog(array(
       'Thank you for your participation',
       'Annual CiviCRM meet',
       'Mr. Anthony Anderson II')
     );
+    $mut->stop();
   }
   /**
    * Test the LoadObjects function with recurring membership data
@@ -252,10 +253,15 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase {
     $event->is_email_confirm = FALSE;
     $event->save();
     $values = array();
-    $this->prepareMailLog();
+    $tablesToTruncate = array(
+      'civicrm_mailing_spool',
+    );
+    $this->quickCleanup($tablesToTruncate, FALSE);
+    $mut = new CiviMailUnitTest( $this, true );
     $this->IPN->loadObjects($this->input, $this->ids, $this->objects, FALSE, $this->_processorId);
     $this->IPN->sendMail($this->input, $this->ids, $this->objects, $values, FALSE, FALSE);
-    $this->assertMailLogEmpty('no mail should have been send as event set to no confirm');
+    $mut->assertMailLogEmpty('no mail should have been send as event set to no confirm');
+    $mut->stop();
   }
   
   /*
