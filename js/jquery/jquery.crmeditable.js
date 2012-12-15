@@ -99,8 +99,8 @@
             return false;
           params['value']=checked?'1':'0';//seems that the ajax backend gets lost with boolean
 
-          //$().crmAPI.call(this,entity,'create',params,{ create is still too buggy & perf
-          $().crmAPI.call(this,entity,'setvalue',params,{
+          //CRM.api.call(this,entity,'create',params,{ create is still too buggy & perf
+          CRM.api.call(this,entity,'setvalue',params,{
             error: function (data) {
               editableSettings.error.call(this,entity,fieldName,checked,data);
             },
@@ -242,7 +242,7 @@
           } else {
             action="setvalue";
           }
-          $().crmAPI.call(this,entity,action,params,{
+          CRM.api.call(this,entity,action,params,{
               error: function (data) {
                 editableSettings.error.call(this,entity,fieldName,value,data);
               },
@@ -275,7 +275,7 @@
     return this.each(function() {
       var formLoaded = function (target) {
         var $this =$(target);
-        var destination="<input type='hidden' name='civicrmDestination' value='"+$.crmURL('civicrm/ajax/rest',{
+        var destination="<input type='hidden' name='civicrmDestination' value='"+CRM.url('civicrm/ajax/rest',{
           'sequential':settings.sequential,
           'json':'html',
           'entity':settings.entity,
@@ -330,7 +330,7 @@
       o.addClass('form');
       addCiviOverlay(o);
       $.ajax({
-        url: $.crmURL('civicrm/ajax/inline', data),
+        url: CRM.url('civicrm/ajax/inline', data),
       }).done( function(response) {
         o.css('overflow', 'hidden').wrapInner('<div class="inline-edit-hidden-content" style="display:none" />').append(response);
         // Smooth resizing
@@ -357,7 +357,7 @@
     var queryString = $.param(formData) + '&' + $.param(data); 
     $.ajax({
       type: "POST",
-      url: $.crmURL('civicrm/ajax/inline'),
+      url: CRM.url('civicrm/ajax/inline'),
       data: queryString,
       dataType: "json",
       success: function( response ) {
@@ -395,7 +395,7 @@
               data.reset = 1;
               data.class_name = data.class_name.replace('Form', 'Page');
               data.type = 'page';
-              $(this).closest('.crm-summary-block').load($.crmURL('civicrm/ajax/inline', data), function() {$(this).trigger('load');});
+              $(this).closest('.crm-summary-block').load(CRM.url('civicrm/ajax/inline', data), function() {$(this).trigger('load');});
             });
           }
           cj().crmAlert('', ts('Saved'), 'success');

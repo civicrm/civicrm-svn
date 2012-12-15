@@ -60,12 +60,12 @@
         //get current tag label
         var currentTagLabel = cj("#tagLabel_" + tagid ).text( );
         if (this.checked) {
-          cj().crmAPI ('entity_tag','create',{entity_table:entityTable,entity_id:entityID,tag_id:tagid});
+          CRM.api('entity_tag','create',{entity_table:entityTable,entity_id:entityID,tag_id:tagid});
           // add check to tab label array
           tagsArray.push( currentTagLabel );
         }
         else {
-          cj().crmAPI ('entity_tag','delete',{entity_table:entityTable,entity_id:entityID,tag_id:tagid});
+          CRM.api('entity_tag','delete',{entity_table:entityTable,entity_id:entityID,tag_id:tagid});
           // build array of tag labels
           tagsArray = cj.map(tagsArray, function (a) {
             if ( cj.trim( a ) != currentTagLabel ) {

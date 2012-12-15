@@ -30,6 +30,8 @@
  * @see CRM object - the better alternative to adding global functions
  */
 
+var CRM = CRM || {};
+
 /**
  * Short-named function for string translation, defined in global scope so it's available everywhere.
  *
@@ -515,6 +517,11 @@ function advmultiselectResize() {
     cj('#crm-container .contact_basic_information-section.xnarrowform').removeClass('xnarrowform');
   }
 }
+
+CRM.validate = CRM.validate || {
+  params: {},
+  functions: []
+};
 
 (function($) {
   $(document).ready(function() {

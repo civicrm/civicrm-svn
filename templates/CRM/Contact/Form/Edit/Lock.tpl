@@ -21,7 +21,7 @@
     });
     
     cj('#qf_StartOver').click(function() {
-      window.location = cj.crmURL('civicrm/contact/add', {
+      window.location = CRM.url('civicrm/contact/add', {
         reset: 1,
         action: 'update',
         cid: {/literal}{$contactId}{literal}

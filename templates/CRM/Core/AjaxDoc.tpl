@@ -7,16 +7,16 @@
 .required {font-weight:bold;}
 .helpmsg {background:yellow;}
 #explorer label {display:inline;}
-
+code {line-height:1em;}
 {/literal}
 </style>
+{include file="CRM/common/scripts.tpl"}
 <script>
-resourceBase = '{$config->resourceBase}';
 if (!jQuery) {ldelim}
    var head= document.getElementsByTagName('head')[0];
    var script= document.createElement('script');
    script.type= 'text/javascript';
-   script.src= resourceBase + '/packages/jquery/jquery.min.js';
+   script.src= CRM.config.resourceBase + '/packages/jquery/jquery.min.js';
    head.appendChild(script);
 {rdelim}
 
@@ -49,7 +49,7 @@ function buildForm (entity, action) {
     return;
   }
 
-  cj().crmAPI (entity,'getFields',{version : 3}
+  CRM.api(entity,'getFields',{version : 3}
              ,{ success:function (data){
                   h='<i>Available fields (click on it to add it to the query):</i>';
                   $.each(data.values, function(key, value) {
@@ -118,47 +118,51 @@ function generateQuery () {
 }
 
 function runQuery(query) {
-    var vars = [], hash,smarty = '',php = " array (version => \'3\',",json = "{  ", link ="";
+    var vars = [], hash, smarty = '', php = "$params = array(<br />&nbsp;&nbsp;'version' => 3,", json = "{", link = "", key, value;
     window.location.hash = query;
     $('#result').html('<i>Loading...</i>');
     $.post(query,function(data) {
       $('#result').text(data);
     },'text');
     link="<a href='"+query+"' title='open in a new tab' target='_blank'>ajax query</a>&nbsp;";
-    var RESTquery = resourceBase +"/extern/rest.php?"+ query.substring(restURL.length,query.length) + "&api_key={yoursitekey}&key={yourkey}";
+    var RESTquery = CRM.config.resourceBase +"/extern/rest.php?"+ query.substring(restURL.length,query.length) + "&api_key={yoursitekey}&key={yourkey}";
     $("#link").html(link+"|<a href='"+RESTquery+"' title='open in a new tab' target='_blank'>REST query</a>.");
 
     var hashes = query.slice(query.indexOf('?') + 1).split('&');
     for(var i = 0; i < hashes.length; i++) {
 
         hash = hashes[i].split('=');
+        key = hash[0];
+        value = hash[1];
 
-        switch (hash[0]) {
+        switch (key) {
            case 'version':
            case 'debug':
            case 'json':
              break;
            case 'action':
-             var action= hash[1];
+             var action = value;
              break;
            case 'entity':
-             var entity= hash[1];
+             var entity = value;
              break;
            default:
-             if (typeof hash[1] == 'undefined')
+             if (typeof value == 'undefined') {
                break;
-             smarty = smarty+ hash[0] + '="'+hash[1]+ '" ';
-             php = php+"'"+ hash[0] +"' =>'"+hash[1]+ "', ";
-             json = json+"'"+ hash[0] +"' :'"+hash[1]+ "', ";
+             }
+             value = isNaN(value) ? "'" + value + "'" : value;
+             smarty += ' ' + key + '=' + value;
+             php += "<br />&nbsp;&nbsp'" + key +"' => " + value + ",";
+             json += "'" + key + "': " + value + ", ";
         }
     }
-    json = json.slice (0,-2) + '}';
-    php = php.slice (0,-2) + ')';
-    $('#php').html('$results=civicrm_api("'+entity+'","'+action+"\",\n  "+php+');');
-    $('#jQuery').html ("cj().crmAPI ('"+entity+"','"+action+"',"+json+"<br>&nbsp;&nbsp;,{ success:function (data){&nbsp;&nbsp;&nbsp;&nbsp;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cj.each(data, function(key, value) {// do something  });<br> &nbsp;&nbsp;&nbsp;&nbsp;}<br> });");
+    json = (json.length > 1 ? json.slice (0,-2) : '{') + '}';
+    php += "<br />);<br />";
+    $('#php').html(php + "$result = civicrm_api('" + entity + "', '" + action + "', $params);");
+    $('#jQuery').html ("CRM.api('"+entity+"', '"+action+"', "+json+",<br />&nbsp;&nbsp;{success: function(data) {<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cj.each(data, function(key, value) {// do something  });<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;}<br />);");
 
     if (action == "get") {//using smarty only make sense for get action
-      $('#smarty').html('{crmAPI var="'+entity+'S" entity="'+entity+'" action="'+action+'" '+smarty+'}<br>{foreach from=$'+entity+'S.values item='+entity+'}<br/>  &lt;li&gt;{$'+entity+'.example}&lt;/li&gt;<br>{/foreach}');
+      $('#smarty').html("{crmAPI var='result' entity='" + entity + "' action='" + action + "' " + smarty + '}<br />{foreach from=$result.values item=' + entity + '}<br/>&nbsp;&nbsp;&lt;li&gt;{$' + entity +'.example}&lt;/li&gt;<br />{/foreach}');
     } else {
       $('#smarty').html("smarty uses only 'get' actions");
     }
@@ -217,7 +221,7 @@ cj(function ($) {
 <input type="checkbox" id="sequential" checked="checked">
 <label>json</label>
 <input type="checkbox" id="json" checked="checked">
-<br>
+<br />
 <div id="selector"></div>
 <div id="extra"></div>
 <input size="90" maxsize=300 id="query" value="{crmURL p="civicrm/ajax/rest" q="json=1&debug=on&entity=Contact&action=get&sequential=1&return=display_name,email,phone"}"/>
@@ -225,9 +229,9 @@ cj(function ($) {
 <table id="generated" border=1 style="display:none;">
 <caption>Generated codes for this api call</caption>
 <tr><td>URL<td><div id="link"></div></td></tr>
-<tr><td>smarty<td><div id="smarty" title='smarty syntax (mostly works for get actions)'></div></td></tr>
-<tr><td>php<td><div id="php" title='php syntax'></div></td></tr>
-<tr><td>jQuery<td><div id="jQuery" title='jQuery syntax'></div></td></tr>
+<tr><td>smarty<td><code id="smarty" title='smarty syntax (mostly works for get actions)'></code></td></tr>
+<tr><td>php<td><code id="php" title='php syntax'></code></td></tr>
+<tr><td>javascript<td><code id="jQuery" title='javascript syntax'></code></td></tr>
 </table>
 <pre id="result">
 You can choose an entity and an action (eg Tag Get to retrieve a list of the tags)

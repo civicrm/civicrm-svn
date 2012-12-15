@@ -63,7 +63,7 @@
     h = $().crmAlert('...', title, 'crm-help crm-msg-loading', options);
     params.class_name = 'CRM_Core_Page_Help';
     params.type = 'page';
-    $.ajax($.crmURL('civicrm/ajax/inline'),
+    $.ajax(CRM.url('civicrm/ajax/inline'),
       {
         data: params,
         dataType: 'html',

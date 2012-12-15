@@ -25,10 +25,8 @@
 *}
 
 <script type="text/javascript">
-  cj(function($) {ldelim}
-    {* Initialize cj.crmURL *}
-    $.crmURL('init', '{crmURL p="civicrm/example" q="placeholder" h=0 }');
-  {rdelim});
+  {* Initialize CRM.url *}
+  CRM.url('init', '{crmURL p="civicrm/example" q="placeholder" h=0 }');
 
 {*/*
  * Here we define the CRM object,
@@ -50,7 +48,8 @@
       Yes: '{ts escape="js"}Yes{/ts}',
       No: '{ts escape="js"}No{/ts}',
       Saved: '{ts escape="js"}Saved{/ts}',
-      Error: '{ts escape="js"}Error{/ts}'
+      Error: '{ts escape="js"}Error{/ts}',
+      Removed: '{ts escape="js"}Removed{/ts}'
     {literal}},
     config: {{/literal}
       urlIsPublic: {if $urlIsPublic}true{else}false{/if},
@@ -58,10 +57,6 @@
       resourceBase: '{$config->resourceBase}',
       search_autocomplete_count: {crmSetting name="search_autocomplete_count" group="Search Preferences"},
     {literal}},
-    validate: {
-      params: {},
-      functions: []
-    }
   }, CRM);
   {/literal}
   {* Dynamically add server-side variables to the CRM object *}

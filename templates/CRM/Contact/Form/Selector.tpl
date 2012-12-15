@@ -180,7 +180,7 @@ function countSelections(obj) {
   on_load_init_checkboxes("{/literal}{$form.formName}{literal}");
 }
 function toggleContactSelection(name, qfKey, selection) {
-  var url = cj.crmURL('civicrm/ajax/markSelection');
+  var url = CRM.url('civicrm/ajax/markSelection');
   var params = {qfKey: qfKey};
   if (!(cj('#' + name).is(':checked'))) {
     params.action = 'unselect';

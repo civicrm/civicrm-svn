@@ -252,7 +252,7 @@
     {/if}
     {literal}
 
-    cj().crmAPI ('Contact','get',{
+    CRM.api('Contact','get',{
       'sequential' :'1',
       'contact_id': contactId,
       'return': returnProperties },
@@ -272,7 +272,7 @@
     // for membership batch entry based on contact we need to enable / disable
     // add membership select
     {/literal}{if $batchType eq 2}{literal}
-    cj().crmAPI ('Membership','get',{
+    CRM.api('Membership','get',{
       'sequential' :'1',
       'contact_id': contactId,
       },
@@ -281,7 +281,7 @@
           //get the information on membership type
           var membershipTypeId   = data.values[0].membership_type_id;
           var membershipJoinDate = data.values[0].join_date;
-          cj().crmAPI ('MembershipType','get',{
+          CRM.api('MembershipType','get',{
             'sequential' :'1',
             'id' : membershipTypeId
             },

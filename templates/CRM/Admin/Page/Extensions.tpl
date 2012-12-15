@@ -128,7 +128,7 @@
       cj('.crm-extensions-refresh').click(function(event){
         event.stopPropagation();
         cj().crmAlert('', '{/literal}{ts escape="js"}Refreshing...{/ts}{literal}', 'crm-msg-loading', {expires: 0});
-        cj().crmAPI('Extension', 'refresh', {}, { 
+        CRM.api('Extension', 'refresh', {}, { 
           'callBack' : function(result){
             if (result.is_error) {
               cj().crmAlert(result.error_message, '{/literal}{ts escape="js"}Refresh Error{/ts}{literal}', 'error');
