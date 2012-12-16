@@ -156,6 +156,10 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
     $contribution->trxn_result_code = CRM_Utils_Array::value('trxn_result_code', $params);
     $contribution->payment_processor = CRM_Utils_Array::value('payment_processor', $params);
 
+    //add Account details
+    $params['contribution'] = $contribution;
+    self::recordFinancialAccounts($params, $ids = NULL);
+
     // Add soft_contribution details as part of fix for CRM-8908
     $contribution->soft_credit_to = CRM_Utils_Array::value('soft_credit_to', $params);
 
@@ -2589,9 +2593,11 @@ WHERE  contribution_id = %1 ";
     $contributionStatuses = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
     if ($params['contribution_status_id'] == array_search('Completed', $contributionStatuses)) {
       $accountRelationType = 'Asset Account of';
-    } elseif ($params['contribution_status_id'] == array_search('Pending', $contributionStatuses)) {
+    } 
+    elseif ($params['contribution_status_id'] == array_search('Pending', $contributionStatuses)) {
       $accountRelationType = 'AR Account is';
-    } elseif (CRM_Utils_Array::value('payment_processor_id', $params)) {
+    }
+    elseif (CRM_Utils_Array::value('payment_processor_id', $params)) {
       $accountRelationType = 'Expense Account is';
     }
     //get financial account id 
@@ -2622,7 +2628,7 @@ WHERE  contribution_id = %1 ";
       // record Line Items and Finacial Items
       $entityId = $params['contribution']->id;
       $entityTable = 'civicrm_contribution';
-      CRM_Price_BAO_LineItem::processPriceSet($entityId, $params['line_item'], $params['contribution'], null, $entityTable, $trxn);
+      CRM_Price_BAO_LineItem::processPriceSet($entityId, $params['line_item'], $params['contribution'], $entityTable);
     }
   }
 }
