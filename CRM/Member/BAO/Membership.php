@@ -329,116 +329,10 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
 
     //record contribution for this membership
     if (CRM_Utils_Array::value('contribution_status_id', $params) && !CRM_Utils_Array::value('relate_contribution_id', $params)) {
-      $contributionParams = array( );
-      $config = CRM_Core_Config::singleton();
-      $contributionParams['currency'  ] = $config->defaultCurrency;
-      $contributionParams['receipt_date'] = ( CRM_Utils_Array::value('receipt_date', $params ) ) ? $params['receipt_date'] : 'null';
-      $contributionParams['source']       = CRM_Utils_Array::value( 'contribution_source', $params );
-      $contributionParams['non_deductible_amount'] = 'null';
-      $recordContribution = array( 'contact_id', 'total_amount', 'receive_date', 'financial_type_id',
-                                   'payment_instrument_id', 'trxn_id', 'invoice_id', 'is_test',
-                                   'contribution_status_id', 'check_number', 'campaign_id','is_pay_later' );
-      foreach ( $recordContribution as $f ) {
-        $contributionParams[$f] = CRM_Utils_Array::value( $f, $params );
+      $params['contribution'] = self::recordMembershipContribution( $params, $ids, $membership->id );
     }
-
-      $contribution = CRM_Contribute_BAO_Contribution::create( $contributionParams, $ids );
-
-      $financialAccounts = array( );
-      CRM_Core_PseudoConstant::populate( $financialAccounts,
-                                         'CRM_Financial_DAO_EntityFinancialAccount',
-                                         $all = True,
-                                         $retrieve = 'financial_account_id',
-                                         $filter = null,
-                                         " entity_id = {$contribution->financial_type_id} ", null, 'account_relationship' );
-
-      $assetRelation = key(CRM_CORE_PseudoConstant::accountOptionValues( 'account_relationship', null, " AND v.name LIKE 'Asset Account of' " ));
-      $params['to_financial_account_id'] = CRM_Utils_Array::value( $assetRelation, $financialAccounts );
-      if ( CRM_Utils_Array::value('to_financial_account_id', $params ) ){
-
-        $now = date( 'YmdHis' );
-        $contribution->init_amount = CRM_Utils_Array::value( 'init_amount', $params );
-        if (!empty( $contribution->id )) {
-          if (!empty($params['init_amount'])) {
-            $total_amount = 0;
-            foreach ($params['init_amount'] as $key=>$value) {
-              foreach ($value as $amount) {
-                $total_amount += $amount;
-              }
-            }
-          }
-          $trxnParams = array(
-            'contribution_id' => $contribution->id,
-            'to_financial_account_id' => $params['to_financial_account_id'],
-            'trxn_date' => $now,
-            'total_amount' => !empty($params['init_amount'])? $total_amount: $params['total_amount'],
-            'fee_amount' => CRM_Utils_Array::value('fee_amount', $params),
-            'net_amount' => CRM_Utils_Array::value('net_amount', $params),
-            'currency' => $config->defaultCurrency,
-            'trxn_id' => CRM_Utils_Array::value('trxn_id', $params),
-            'status_id' => $contribution->contribution_status_id,
-            'trxn_result_code' => (!empty( $contribution->trxn_result_code) ? $contribution->trxn_result_code : false),
-          );
-
-          require_once 'CRM/Core/BAO/FinancialTrxn.php';
-          $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
-
-          if (CRM_Utils_Array::value('batch_id', $params)) {
-            $entityParams = array(
-              'batch_id' => $params['batch_id'],
-              'entity_table' => 'civicrm_financial_trxn',
-              'entity_id' => $trxn->id
-            );
-            CRM_Batch_BAO_Batch::addBatchEntity($entityParams);
-          }
-
-          if (CRM_Utils_Array::value('fee_amount', $trxnParams)) {
-            $expenceRelation = key(CRM_CORE_PseudoConstant::accountOptionValues( 'account_relationship', NULL, " AND v.name LIKE 'Expense Account is' ", FALSE ));
-
-            $trxnParams['total_amount']              = $trxnParams['fee_amount'];
-            unset($trxnParams['fee_amount']);
-            $trxnParams['from_financial_account_id'] = $financialAccounts[6];  // FA with Asset account relationship
-            $trxnParams['to_financial_account_id']   = CRM_Utils_Array::value( $expenceRelation, $financialAccounts );
-            $trxnEntityTable['entity_table'] = 'civicrm_financial_trxn';
-            $trxnEntityTable['entity_id'] = $trxn->id;
-
-            $trxn = CRM_Core_BAO_FinancialTrxn::create( $trxnParams, $trxnEntityTable );
-            $itemsParams['amount']               = $trxn->total_amount;
-            $itemsParams['contact_id']           = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Domain', 1, 'contact_id' );
-            $itemsParams['financial_account_id'] = CRM_Utils_Array::value( $expenceRelation, $financialAccounts );
-            CRM_Financial_BAO_FinancialItem::create( $itemsParams, NULL, $trxnId  );
-          }
-        }
-      }
-
-      if (CRM_Utils_Array::value('processPriceSet', $params) &&
-           !empty($params['lineItems'])) {
-        if (CRM_Utils_Array::value('init_amount', $params)) {
-          foreach($params['lineItems'] as $key=>$lineItem) {
-            foreach($lineItem as $id=> $value) {
-              $params['lineItems'][$key][$id]['init_amount'] = $params['init_amount']['txt-price_'.$value['price_field_id']][$id];
-            }
-          }
-        }
-        CRM_Price_BAO_LineItem::processPriceSet($contribution->id, $params['lineItems'], $contribution);
-      }
-
-      //insert payment record for this membership
-      if (!CRM_Utils_Array::value( 'contribution', $ids ) ||
-          CRM_Utils_Array::value( 'is_recur', $params )) {
-        $mpDAO = new CRM_Member_DAO_MembershipPayment();
-        $mpDAO->membership_id   = $membership->id;
-        $mpDAO->contribution_id = $contribution->id;
-        if (CRM_Utils_Array::value('is_recur', $params)) {
-          $mpDAO->find( );
-        }
-
-        CRM_Utils_Hook::pre( 'create', 'MembershipPayment', null, $mpDAO );
-        $mpDAO->save();
-        CRM_Utils_Hook::post( 'create', 'MembershipPayment', $mpDAO->id, $mpDAO );
-      }
-    }
-
+  
+    //insert payment record for this membership
     if (CRM_Utils_Array::value('relate_contribution_id', $params)) {
       $mpDAO = new CRM_Member_DAO_MembershipPayment();
       $mpDAO->membership_id = $membership->id;
@@ -2738,17 +2632,18 @@ WHERE      civicrm_membership.is_test = 0";
       // deal with possibility of a different person paying for contribution
       $contributionParams['contact_id'] = $params['contribution_contact_id'];
     }
-
+    
+    if (CRM_Utils_Array::value('processPriceSet', $params) &&
+      !empty($params['lineItems'])
+    ) {
+      $contributionParams['line_item'] = CRM_Utils_Array::value('lineItems', $params, NULL);
+    }
+    
     $contribution = CRM_Contribute_BAO_Contribution::create($contributionParams, $ids);
 
     // store contribution id
     $params['contribution_id'] = $contribution->id;
 
-    if (CRM_Utils_Array::value('processPriceSet', $params) &&
-      !empty($params['lineItems'])
-    ) {
-      CRM_Price_BAO_LineItem::processPriceSet($contribution->id, $params['lineItems'],$contribution);
-    }
 
     //insert payment record for this membership
     if (!CRM_Utils_Array::value('contribution', $ids) ||
@@ -2785,9 +2680,9 @@ WHERE      civicrm_membership.is_test = 0";
       $qf->_priceSet = $priceSets = current(CRM_Price_BAO_Set::getSetDetail($priceSetId));
     }
     $editedFieldParams = array(
-                               'price_set_id' => $priceSetId,
-                               'name' => $membershipType[0],
-                               );
+      'price_set_id' => $priceSetId,
+      'name' => $membershipType[0],
+    );
     $editedResults = array();
     CRM_Price_BAO_Field::retrieve($editedFieldParams, $editedResults);
 
@@ -2797,9 +2692,9 @@ WHERE      civicrm_membership.is_test = 0";
       unset($qf->_priceSet['fields'][$editedResults['id']]['options']);
       $fid = $editedResults['id'];
       $editedFieldParams = array(
-                                 'price_field_id' => $editedResults['id'],
-                                 'membership_type_id' => $membershipType[1],
-                                 );
+        'price_field_id' => $editedResults['id'],
+        'membership_type_id' => $membershipType[1],
+      );
       $editedResults = array();
       CRM_Price_BAO_FieldValue::retrieve($editedFieldParams, $editedResults);
       $qf->_priceSet['fields'][$fid]['options'][$editedResults['id']] = $priceSets['fields'][$fid]['options'][$editedResults['id']];
