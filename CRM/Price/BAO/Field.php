@@ -723,7 +723,8 @@ WHERE  id IN (" . implode(',', array_keys($priceFields)) . ')';
     //get the minimum initial amount
     if ($page == 'event') {
       $minInitialAmount = CRM_Utils_Array::value('min_initial_amount', $self->_values['event']);
-    } else {
+    } 
+    elseif ($page != NULL) {
       $minInitialAmount = CRM_Utils_Array::value('min_initial_amount', $self->_values);
     }
     
@@ -740,9 +741,11 @@ WHERE  id IN (" . implode(',', array_keys($priceFields)) . ')';
     }
     if (CRM_Utils_Array::value('total_amount', $fields)) {
       $amount = CRM_Utils_Array::value('total_amount', $fields);
-    } elseif (CRM_Utils_Array::value('amount', $fields)) {
+    } 
+    elseif (CRM_Utils_Array::value('amount', $fields)) {
       $amount = CRM_Utils_Array::value('amount', $fields);
-    }else {
+    }
+    else {
       $amount = CRM_Utils_Array::value( 'total_amount', $self->_values );
     }
     $initialAmount = CRM_Utils_Array::value('initial_amount', $fields);
