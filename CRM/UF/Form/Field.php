@@ -98,12 +98,12 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
   /**
    * Batch entry fields
    */
-  protected $_contriBatchEntryFields;
+  static $_contriBatchEntryFields = array();
 
   /**
    * Batch entry fields
    */
-  protected $_memberBatchEntryFields;
+  static $_memberBatchEntryFields = array();
  
   /**
    * Function to set variables up before form is built
@@ -138,7 +138,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
     $this->_fields = CRM_Contact_BAO_Contact::importableFields('All', TRUE, TRUE, TRUE, TRUE, TRUE);
     $this->_fields = array_merge(CRM_Activity_BAO_Activity::exportableFields('Activity'), $this->_fields);
 
-    $this->_contriBatchEntryFields = array(
+    self::$_contriBatchEntryFields = array(
       'send_receipt' => array(
         'name' => 'send_receipt',
         'title' => ts('Send Receipt'),
@@ -157,7 +157,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
       ),
     );
 
-    $this->_memberBatchEntryFields = array(
+    self::$_memberBatchEntryFields = array(
       'send_receipt' => array(
         'name' => 'send_receipt',
         'title' => ts('Send Receipt'),
@@ -202,7 +202,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
 
     if (CRM_Core_Permission::access('CiviContribute')) {
       $this->_fields = array_merge(CRM_Contribute_BAO_Contribution::getContributionFields(FALSE), $this->_fields);
-      $this->_fields = array_merge($this->_contriBatchEntryFields, $this->_fields);
+      $this->_fields = array_merge(self::$_contriBatchEntryFields, $this->_fields);
     }
 
     if (CRM_Core_Permission::access('CiviMember')) {
@@ -315,175 +315,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
     //hidden field to catch the field id in profile
     $this->add('hidden', 'field_id', $this->_id);
 
-    $fields = array();
-    $fields['Individual'] = CRM_Contact_BAO_Contact::importableFields('Individual', FALSE, FALSE, TRUE, TRUE, TRUE);
-
-    $fields['Household'] = CRM_Contact_BAO_Contact::importableFields('Household', FALSE, FALSE, TRUE, TRUE, TRUE);
-    $fields['Organization'] = CRM_Contact_BAO_Contact::importableFields('Organization', FALSE, FALSE, TRUE, TRUE, TRUE);
-
-    // add current employer for individuals
-    $fields['Individual']['current_employer'] = array(
-      'name' => 'organization_name',
-      'title' => ts('Current Employer'),
-    );
-
-    $addressOptions = CRM_Core_BAO_Setting::valueOptions(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
-      'address_options', TRUE, NULL, TRUE
-    );
-
-    if (!$addressOptions['county']) {
-      unset($fields['Individual']['county']);
-      unset($fields['Household']['county']);
-      unset($fields['Organization']['county']);
-    }
-
-    $fields['Contact'] = array();
-
-    //build the common contact fields array CRM-3037.
-    foreach ($fields['Individual'] as $key => $value) {
-      if (CRM_Utils_Array::value($key, $fields['Household']) &&
-        CRM_Utils_Array::value($key, $fields['Organization'])
-      ) {
-        $fields['Contact'][$key] = $value;
-        //as we move common fields to contacts. There fore these fields
-        //are unset from resoective array's.
-        unset($fields['Individual'][$key]);
-        unset($fields['Household'][$key]);
-        unset($fields['Organization'][$key]);
-      }
-    }
-
-    // add current employer for individuals
-    $fields['Contact']['id'] = array(
-      'name' => 'id',
-      'title' => ts('Internal Contact ID'),
-    );
-
-    unset($fields['Contact']['contact_type']);
-
-    // since we need a hierarchical list to display contact types & subtypes,
-    // this is what we going to display in first selector
-    $contactTypes = CRM_Contact_BAO_ContactType::getSelectElements(FALSE, FALSE);
-    unset($contactTypes['']);
-
-    // include Subtypes For Profile
-    $subTypes = CRM_Contact_BAO_ContactType::subTypeInfo();
-    foreach ($subTypes as $name => $val) {
-      //custom fields for sub type
-      $subTypeFields = CRM_Core_BAO_CustomField::getFieldsForImport($name);
-
-      if (array_key_exists($val['parent'], $fields)) {
-        $fields[$name] = $fields[$val['parent']] + $subTypeFields;
-      }
-      else {
-        $fields[$name] = $subTypeFields;
-      }
-    }
-
-    //group selected and unwanted fields list
-    $groupFieldList = array_merge(CRM_Core_BAO_UFGroup::getFields($this->_gid, FALSE, NULL, NULL, NULL, TRUE, NULL, TRUE),
-      array('note', 'email_greeting_custom', 'postal_greeting_custom', 'addressee_custom', 'id')
-    );
-    //unset selected fields
-    foreach ($groupFieldList as $key => $value) {
-      if (is_integer($key)) {
-        unset($fields['Individual'][$value], $fields['Household'][$value], $fields['Organization'][$value]);
-        continue;
-      }
-      if (CRM_Utils_Array::value('field_name', $defaults)
-        && $defaults['field_name']['0'] == $value['field_type']
-        && $defaults['field_name']['1'] == $key
-      ) {
-        continue;
-      }
-      unset($fields[$value['field_type']][$key]);
-    }
-    unset($subTypes);
-
-    // add current employer for individuals
-    $fields['Contact']['id'] = array(
-      'name' => 'id',
-      'title' => ts('Internal Contact ID'),
-    );
-
-    if (CRM_Core_Permission::access('CiviContribute')) {
-      $contribFields = CRM_Contribute_BAO_Contribution::getContributionFields(FALSE);
-      if (!empty($contribFields)) {
-        unset($contribFields['is_test']);
-        unset($contribFields['is_pay_later']);
-        unset($contribFields['contribution_id']);
-        $contribFields['contribution_note'] = array(
-          'name' => 'contribution_note',
-          'title' => ts('Contribution Note'),
-        );
-        if ($this->_gid && CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', $this->_gid, 'name') == 'contribution_batch_entry') {
-          $fields['Contribution'] = &array_merge($contribFields, $this->_contriBatchEntryFields);
-        }
-        else {
-          $fields['Contribution'] = &$contribFields;
-        }
-      }
-    }
-
-    if (CRM_Core_Permission::access('CiviEvent')) {
-      $participantFields = CRM_Event_BAO_Query::getParticipantFields(TRUE);
-      if (!empty($participantFields)) {
-        unset($participantFields['external_identifier']);
-        unset($participantFields['event_id']);
-        unset($participantFields['participant_contact_id']);
-        unset($participantFields['participant_role_id']);
-        unset($participantFields['participant_status_id']);
-        unset($participantFields['participant_is_test']);
-        unset($participantFields['participant_fee_level']);
-        unset($participantFields['participant_id']);
-        unset($participantFields['participant_is_pay_later']);
-        if (isset($participantFields['participant_campaign_id'])) {
-          $participantFields['participant_campaign_id']['title'] = ts('Campaign');
-          if (isset($participantFields['participant_campaign'])) {
-            unset($participantFields['participant_campaign']);
-          }
-        }
-        $fields['Participant'] = &$participantFields;
-      }
-    }
-
-    if (CRM_Core_Permission::access('CiviMember')) {
-      $membershipFields = CRM_Member_BAO_Membership::getMembershipFields();
-      unset($membershipFields['membership_id']);
-      //unset( $membershipFields['join_date'] );
-      //unset( $membershipFields['membership_start_date'] );
-      unset($membershipFields['membership_type_id']);
-      //unset( $membershipFields['membership_end_date'] );
-      unset($membershipFields['member_is_test']);
-      unset($membershipFields['is_override']);
-      unset($membershipFields['status_id']);
-      unset($membershipFields['member_is_pay_later']);
-
-      if ($this->_gid && CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', $this->_gid, 'name') == 'membership_batch_entry') {
-        $fields['Membership'] = &array_merge($membershipFields, $this->_memberBatchEntryFields);
-      }
-      else {
-        $fields['Membership'] = &$membershipFields;
-      }
-    }
-
-    $activityFields = CRM_Activity_BAO_Activity::getProfileFields();
-    if (!empty($activityFields)) {
-      //unset campaign related fields.
-      if (isset($activityFields['activity_campaign_id'])) {
-        $activityFields['activity_campaign_id']['title'] = ts('Campaign');
-      }
-
-      $fields['Activity'] = $activityFields;
-    }
-
-    $formattingFields["format_free_html_" . rand(1000, 9999)] = array(
-      "name" => "free_html",
-      "import" => FALSE,
-      "export" => FALSE,
-      "title" => "Free HTML",
-    );
-    $fields["Formatting"] = $formattingFields;
+    $fields = self::getFields($this->_gid, $defaults);
 
     $noSearchable = array();
     $addressCustomFields = array_keys(CRM_Core_BAO_CustomField::getFieldsForImport('Address'));
@@ -534,14 +366,17 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
         $defaultLocationType->id => $defaultLocation) + $this->_location_types;
     }
 
-    $this->_location_types = array(
-      'Primary') + $this->_location_types;
+    $this->_location_types = array('Primary') + $this->_location_types;
+
+    // since we need a hierarchical list to display contact types & subtypes,
+    // this is what we going to display in first selector
+    $contactTypes = CRM_Contact_BAO_ContactType::getSelectElements(FALSE, FALSE);
+    unset($contactTypes['']);
 
     $contactTypes = !empty($contactTypes) ? array('Contact' => 'Contacts') + $contactTypes : array();
-    $sel1 = array(
-      '' => '- select -') + $contactTypes;
+    $sel1 = array('' => '- select -') + $contactTypes;
 
-    if (!empty($activityFields)) {
+    if (!empty($fields['Activity'])) {
       $sel1['Activity'] = 'Activity';
     }
 
@@ -549,15 +384,15 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
       $sel1['Participant'] = 'Participants';
     }
 
-    if (!empty($contribFields)) {
+    if (!empty($fields['Contribution'])) {
       $sel1['Contribution'] = 'Contributions';
     }
 
-    if (!empty($membershipFields)) {
+    if (!empty($fields['Membership'])) {
       $sel1['Membership'] = 'Membership';
     }
 
-    if (!empty($formattingFields)) {
+    if (!empty($fields['Formatting'])) {
       $sel1['Formatting'] = 'Formatting';
     }
 
@@ -1190,5 +1025,162 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
     }
     return empty($errors) ? TRUE : $errors;
   }
-}
 
+  /**
+   * Get profie fields
+   *
+   * @param $gid: UF group ID
+   * @param $defaults: Form defaults
+   *
+   * @static
+   */
+  static function getFields($gid = NULL, $defaults = array()) {
+    $fields = array(
+      'Contact' => array(),
+      'Individual' => CRM_Contact_BAO_Contact::importableFields('Individual', FALSE, FALSE, TRUE, TRUE, TRUE),
+      'Household' => CRM_Contact_BAO_Contact::importableFields('Household', FALSE, FALSE, TRUE, TRUE, TRUE),
+      'Organization' => CRM_Contact_BAO_Contact::importableFields('Organization', FALSE, FALSE, TRUE, TRUE, TRUE),
+    );
+
+    // add current employer for individuals
+    $fields['Individual']['current_employer'] = array(
+      'name' => 'organization_name',
+      'title' => ts('Current Employer'),
+    );
+
+    $addressOptions = CRM_Core_BAO_Setting::valueOptions(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+      'address_options', TRUE, NULL, TRUE
+    );
+
+    if (!$addressOptions['county']) {
+      unset($fields['Individual']['county'], $fields['Household']['county'], $fields['Organization']['county']);
+    }
+
+    // Break out common contact fields array CRM-3037.
+    // FIXME: From a UI perspective this makes very little sense
+    foreach ($fields['Individual'] as $key => $value) {
+      if (!empty($fields['Household'][$key]) && !empty($fields['Organization'][$key])) {
+        $fields['Contact'][$key] = $value;
+        unset($fields['Individual'][$key], $fields['Household'][$key], $fields['Organization'][$key]);
+      }
+    }
+
+    // Internal field not exposed to forms
+    unset($fields['Contact']['contact_type']);
+
+    // include Subtypes For Profile
+    $subTypes = CRM_Contact_BAO_ContactType::subTypeInfo();
+    foreach ($subTypes as $name => $val) {
+      //custom fields for sub type
+      $subTypeFields = CRM_Core_BAO_CustomField::getFieldsForImport($name);
+
+      if (array_key_exists($val['parent'], $fields)) {
+        $fields[$name] = $fields[$val['parent']] + $subTypeFields;
+      }
+      else {
+        $fields[$name] = $subTypeFields;
+      }
+    }
+
+    //group selected and unwanted fields list
+    $ufFields = $gid ? CRM_Core_BAO_UFGroup::getFields($gid, FALSE, NULL, NULL, NULL, TRUE, NULL, TRUE) : array();
+    $groupFieldList = array_merge($ufFields, array('note', 'email_greeting_custom', 'postal_greeting_custom', 'addressee_custom', 'id'));
+    //unset selected fields
+    foreach ($groupFieldList as $key => $value) {
+      if (is_integer($key)) {
+        unset($fields['Individual'][$value], $fields['Household'][$value], $fields['Organization'][$value]);
+        continue;
+      }
+      if (!empty($defaults['field_name'])
+        && $defaults['field_name']['0'] == $value['field_type']
+        && $defaults['field_name']['1'] == $key
+      ) {
+        continue;
+      }
+      unset($fields[$value['field_type']][$key]);
+    }
+    unset($subTypes);
+
+    if (CRM_Core_Permission::access('CiviContribute')) {
+      $contribFields = CRM_Contribute_BAO_Contribution::getContributionFields(FALSE);
+      if (!empty($contribFields)) {
+        unset($contribFields['is_test']);
+        unset($contribFields['is_pay_later']);
+        unset($contribFields['contribution_id']);
+        $contribFields['contribution_note'] = array(
+          'name' => 'contribution_note',
+          'title' => ts('Contribution Note'),
+        );
+        if ($gid && CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', $gid, 'name') == 'contribution_batch_entry') {
+          $fields['Contribution'] = array_merge($contribFields, self::$_contriBatchEntryFields);
+        }
+        else {
+          $fields['Contribution'] = $contribFields;
+        }
+      }
+    }
+
+    if (CRM_Core_Permission::access('CiviEvent')) {
+      $participantFields = CRM_Event_BAO_Query::getParticipantFields(TRUE);
+      if ($participantFields) {
+        unset($participantFields['external_identifier']);
+        unset($participantFields['event_id']);
+        unset($participantFields['participant_contact_id']);
+        unset($participantFields['participant_role_id']);
+        unset($participantFields['participant_status_id']);
+        unset($participantFields['participant_is_test']);
+        unset($participantFields['participant_fee_level']);
+        unset($participantFields['participant_id']);
+        unset($participantFields['participant_is_pay_later']);
+
+        if (isset($participantFields['participant_campaign_id'])) {
+          $participantFields['participant_campaign_id']['title'] = ts('Campaign');
+          if (isset($participantFields['participant_campaign'])) {
+            unset($participantFields['participant_campaign']);
+          }
+        }
+        $fields['Participant'] = $participantFields;
+      }
+    }
+
+    if (CRM_Core_Permission::access('CiviMember')) {
+      $membershipFields = CRM_Member_BAO_Membership::getMembershipFields();
+      unset($membershipFields['membership_id']);
+      unset($membershipFields['membership_type_id']);
+      unset($membershipFields['member_is_test']);
+      unset($membershipFields['is_override']);
+      unset($membershipFields['status_id']);
+      unset($membershipFields['member_is_pay_later']);
+
+      if ($gid && CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', $gid, 'name') == 'membership_batch_entry') {
+        $fields['Membership'] = array_merge($membershipFields, self::$_memberBatchEntryFields);
+      }
+      else {
+        $fields['Membership'] = $membershipFields;
+      }
+    }
+
+    $activityFields = CRM_Activity_BAO_Activity::getProfileFields();
+    if ($activityFields) {
+      // campaign related fields.
+      if (isset($activityFields['activity_campaign_id'])) {
+        $activityFields['activity_campaign_id']['title'] = ts('Campaign');
+      }
+      $fields['Activity'] = $activityFields;
+    }
+
+    $fields['Formatting']['format_free_html_' . rand(1000, 9999)] = array(
+      'name' => 'free_html',
+      'import' => FALSE,
+      'export' => FALSE,
+      'title' => 'Free HTML',
+    );
+
+    // Sort by title
+    foreach ($fields as &$values) {
+      $values = CRM_Utils_Array::crmArraySortByField($values, 'title');
+    }
+
+    return $fields;
+  }
+}
