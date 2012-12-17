@@ -52,7 +52,7 @@ class CRM_Financial_Form_Search extends CRM_Core_Form {
   public function buildQuickForm() {
        
     $this->add('text', 'title', ts('Batch Name'),
-      CRM_Core_DAO::getAttribute('CRM_Core_DAO_Batch', 'title')
+      CRM_Core_DAO::getAttribute('CRM_Batch_DAO_Batch', 'title')
     );
     $this->add( 'select', 
                 'type_id', 
@@ -64,9 +64,9 @@ class CRM_Financial_Form_Search extends CRM_Core_Form {
                 array( ''=> ts( '- Select Payment Instrument -' ) ) + CRM_Contribute_PseudoConstant::paymentInstrument( ),
                 false );
     
-    $this->add('text', 'total', ts('Total Amount'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Batch', 'total'));
+    $this->add('text', 'total', ts('Total Amount'), CRM_Core_DAO::getAttribute('CRM_Batch_DAO_Batch', 'total'));
     
-    $this->add('text', 'item_count', ts('Number of Transactions'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Batch', 'item_count'));
+    $this->add('text', 'item_count', ts('Number of Transactions'), CRM_Core_DAO::getAttribute('CRM_Batch_DAO_Batch', 'item_count'));
     $this->add('text', 'sort_name', ts('Created By'), CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'sort_name'));
   
     $this->assign('elements', array('title', 'sort_name', 'type_id', 'close_date', 'open_date', 'payment_instrument_id', 'item_count', 'total'));

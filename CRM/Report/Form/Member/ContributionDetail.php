@@ -409,7 +409,7 @@ class CRM_Report_Form_Member_ContributionDetail extends CRM_Report_Form {
     // Don't show Batch display column and filter unless batches are being used
     $this->_closedBatches = CRM_Batch_BAO_Batch::getBatches();
     if (!empty($this->_closedBatches)) {
-      $this->_columns['civicrm_batch']['dao'] = 'CRM_Core_DAO_Batch';
+      $this->_columns['civicrm_batch']['dao'] = 'CRM_Batch_DAO_Batch';
       $this->_columns['civicrm_batch']['fields']['batch_id'] = array(
         'name' => 'id',
         'title' => ts('Batch Name'),
@@ -421,7 +421,7 @@ class CRM_Report_Form_Member_ContributionDetail extends CRM_Report_Form {
         'operatorType' => CRM_Report_Form::OP_MULTISELECT,
         'options' => $this->_closedBatches,
       );
-      $this->_columns['civicrm_entity_batch']['dao'] = 'CRM_Core_DAO_EntityBatch';
+      $this->_columns['civicrm_entity_batch']['dao'] = 'CRM_Batch_DAO_EntityBatch';
       $this->_columns['civicrm_entity_batch']['fields']['entity_batch_id'] = array(
         'name' => 'batch_id',
         'default' => TRUE,
@@ -791,7 +791,7 @@ class CRM_Report_Form_Member_ContributionDetail extends CRM_Report_Form {
 
       if (array_key_exists('civicrm_batch_batch_id', $row)) {
         if ($value = $row['civicrm_batch_batch_id']) {
-          $rows[$rowNum]['civicrm_batch_batch_id'] = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Batch', $value, 'title');
+          $rows[$rowNum]['civicrm_batch_batch_id'] = CRM_Core_DAO::getFieldValue('CRM_Batch_DAO_Batch', $value, 'title');
         }
         $entryFound = TRUE;
       }

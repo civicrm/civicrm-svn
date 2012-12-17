@@ -44,7 +44,7 @@ class CRM_Batch_Form_Search extends CRM_Core_Form {
 
   public function buildQuickForm() {
     $this->add('text', 'title', ts('Find'),
-      CRM_Core_DAO::getAttribute('CRM_Core_DAO_Batch', 'title')
+      CRM_Core_DAO::getAttribute('CRM_Batch_DAO_Batch', 'title')
     );
 
     $this->addButtons(

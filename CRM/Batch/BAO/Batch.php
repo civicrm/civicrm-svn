@@ -36,7 +36,7 @@
 /**
  *
  */
-class CRM_Batch_BAO_Batch extends CRM_Core_DAO_Batch {
+class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
 
   /**
    * Cache for the current batch object
@@ -60,7 +60,7 @@ class CRM_Batch_BAO_Batch extends CRM_Core_DAO_Batch {
       $params['name'] = CRM_Utils_String::titleToVar($params['title']);
     }
 
-    $batch = new CRM_Core_DAO_Batch();
+    $batch = new CRM_Batch_DAO_Batch();
     $batch->copyValues($params);
     if ($context == 'financialBatch' && CRM_Utils_Array::value('batchID', $ids)) {
       $batch->id = $ids['batchID'];
@@ -81,7 +81,7 @@ class CRM_Batch_BAO_Batch extends CRM_Core_DAO_Batch {
    * @static
    */
   static function retrieve(&$params, &$defaults) {
-    $batch = new CRM_Core_DAO_Batch();
+    $batch = new CRM_Batch_DAO_Batch();
     $batch->copyValues($params);
     if ($batch->find(TRUE)) {
       CRM_Core_DAO::storeValues($batch, $defaults);
@@ -156,7 +156,7 @@ class CRM_Batch_BAO_Batch extends CRM_Core_DAO_Batch {
     CRM_Core_BAO_Cache::deleteGroup('batch entry', $cacheKeyString, FALSE);
 
     // delete entry from batch table
-    $batch = new CRM_Core_DAO_Batch();
+    $batch = new CRM_Batch_DAO_Batch();
     $batch->id = $batchId;
     $batch->delete();
   }
@@ -242,7 +242,7 @@ class CRM_Batch_BAO_Batch extends CRM_Core_DAO_Batch {
     {$orderBy}
     {$limit}";
 
-    $object = CRM_Core_DAO::executeQuery($query, $params, TRUE, 'CRM_Core_DAO_Batch');
+    $object = CRM_Core_DAO::executeQuery($query, $params, TRUE, 'CRM_Batch_DAO_Batch');
 
     $links = isset($params['context']) ? self::links($params['context']) : self::links();
 

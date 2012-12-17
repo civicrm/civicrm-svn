@@ -68,12 +68,12 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
         CRM_Core_Action::DELETE => array('permission' => array('delete own manual batches', 'delete all manual batches'),
           'actionName' => 'delete'),
       );
-      $createdID = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Batch', $this->_id, 'created_id');
+      $createdID = CRM_Core_DAO::getFieldValue('CRM_Batch_DAO_Batch', $this->_id, 'created_id');
       if (CRM_Utils_Array::value($this->_action, $permissions)) {
         $this->checkPermissions($this->_action, $permissions[$this->_action]['permission'], $createdID, $session->get('userID'), $permissions[$this->_action]['actionName'] );
       }
 
-      $status = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Batch', $this->_id, 'status_id');            
+      $status = CRM_Core_DAO::getFieldValue('CRM_Batch_DAO_Batch', $this->_id, 'status_id');            
       $batchStatus = CRM_Core_PseudoConstant::accountOptionValues('batch_status');
       //FIXME
       //if (CRM_Utils_Array::value($status, $batchStatus) != 'Open') {
@@ -91,7 +91,7 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
   public function buildQuickForm() {
     parent::buildQuickForm();       
     if (isset( $this->_id)) {
-      $this->_title = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Batch', $this->_id, 'name');
+      $this->_title = CRM_Core_DAO::getFieldValue('CRM_Batch_DAO_Batch', $this->_id, 'name');
       CRM_Utils_System::setTitle($this->_title .' - '.ts( 'Financial Batch'));
       $this->assign('batchTitle', $this->_title);
     }
@@ -151,13 +151,13 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
       if ($flag = CRM_Core_Permission::check('edit all manual batches')) {
         $dataURL = CRM_Utils_System::url('civicrm/ajax/getContactList', 'json=1&users=1', false, null, false);
         $this->assign('dataURL', $dataURL);
-        $this->add('text', 'contact_name', ts('Created By'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Batch', 'created_id'));
+        $this->add('text', 'contact_name', ts('Created By'), CRM_Core_DAO::getAttribute('CRM_Batch_DAO_Batch', 'created_id'));
         $this->add('hidden', 'created_id', '', array('id' => 'created_id'));
       }
       
-      $element = $this->add('text', 'modified_date', ts('Modified Date'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Batch', 'modified_date'));
+      $element = $this->add('text', 'modified_date', ts('Modified Date'), CRM_Core_DAO::getAttribute('CRM_Batch_DAO_Batch', 'modified_date'));
       $element->freeze();
-      $element = $this->add('text', 'created_date', ts('Opened Date'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Batch', 'created_date'));
+      $element = $this->add('text', 'created_date', ts('Opened Date'), CRM_Core_DAO::getAttribute('CRM_Batch_DAO_Batch', 'created_date'));
       $element->freeze();     
       $batchStatus = CRM_Core_PseudoConstant::accountOptionValues('batch_status');
       //unset exported status
@@ -166,18 +166,18 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
       $this->add('select', 'status_id', ts('Batch Status'), array('' => ts('- Select Batch Status -')) + $batchStatus, true); 
     }
       
-    $this->add('text', 'name', ts('Batch Name'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Batch', 'name'), true);
+    $this->add('text', 'name', ts('Batch Name'), CRM_Core_DAO::getAttribute('CRM_Batch_DAO_Batch', 'name'), true);
         
-    $this->add('text', 'description', ts('Description'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Batch', 'description'));
+    $this->add('text', 'description', ts('Description'), CRM_Core_DAO::getAttribute('CRM_Batch_DAO_Batch', 'description'));
 
     $this->add('select', 'payment_instrument_id', ts('Payment Instrument'), 
       array('' => ts('- Select Payment Instrument -')) + CRM_Contribute_PseudoConstant::paymentInstrument(),
       false 
     );
         
-    $this->add('text', 'total', ts('Total Amount'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Batch', 'total'), true);
+    $this->add('text', 'total', ts('Total Amount'), CRM_Core_DAO::getAttribute('CRM_Batch_DAO_Batch', 'total'), true);
         
-    $this->add('text', 'item_count', ts('Number of Transactions'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_Batch', 'item_count'), true);      
+    $this->add('text', 'item_count', ts('Number of Transactions'), CRM_Core_DAO::getAttribute('CRM_Batch_DAO_Batch', 'item_count'), true);      
     $this->addFormRule(array('CRM_Financial_Form_FinancialBatch', 'formRule'), $this);    
    } 
 
