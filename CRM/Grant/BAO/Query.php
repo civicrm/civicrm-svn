@@ -34,8 +34,7 @@
  *
  */
 class CRM_Grant_BAO_Query {
-  static
-  function &getFields() {
+  static function &getFields() {
     $fields = array();
     $fields = CRM_Grant_BAO_Grant::exportableFields();
     return $fields;
@@ -47,8 +46,7 @@ class CRM_Grant_BAO_Query {
    * @return void
    * @access public
    */
-  static
-  function select(&$query) {
+  static function select(&$query) {
     if ($query->_mode & CRM_Contact_BAO_Query::MODE_GRANT) {
       if (CRM_Utils_Array::value('grant_status_id', $query->_returnProperties)) {
         $query->_select['grant_status_id'] = 'grant_status.id as grant_status_id';
@@ -103,8 +101,7 @@ class CRM_Grant_BAO_Query {
    * @return void
    * @access public
    */
-  static
-  function where(&$query) {
+  static function where(&$query) {
     foreach (array_keys($query->_params) as $id) {
       if (substr($query->_params[$id][0], 0, 6) == 'grant_') {
         self::whereClauseSingle($query->_params[$id], $query);
@@ -112,8 +109,7 @@ class CRM_Grant_BAO_Query {
     }
   }
 
-  static
-  function whereClauseSingle(&$values, &$query) {
+  static function whereClauseSingle(&$values, &$query) {
     $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
     list($name, $op, $value, $grouping, $wildcard) = $values;
     switch ($name) {
@@ -226,8 +222,7 @@ class CRM_Grant_BAO_Query {
     }
   }
 
-  static
-  function from($name, $mode, $side) {
+  static function from($name, $mode, $side) {
     $from = NULL;
     switch ($name) {
       case 'civicrm_grant':
@@ -267,8 +262,7 @@ class CRM_Grant_BAO_Query {
     return (isset($this->_qill)) ? $this->_qill : "";
   }
 
-  static
-  function defaultReturnProperties($mode,
+  static function defaultReturnProperties($mode,
     $includeCustomFields = TRUE
   ) {
     $properties = NULL;
@@ -299,8 +293,7 @@ class CRM_Grant_BAO_Query {
    * @return void
    * @static
    */
-  static
-  function buildSearchForm(&$form) {
+  static function buildSearchForm(&$form) {
 
     $grantType = CRM_Core_OptionGroup::values('grant_type');
     $form->add('select', 'grant_type_id', ts('Grant Type'),
@@ -363,16 +356,13 @@ class CRM_Grant_BAO_Query {
     $form->assign('validGrant', TRUE);
   }
 
-  static
-  function addShowHide(&$showHide) {
+  static function addShowHide(&$showHide) {
     $showHide->addHide('grantForm');
     $showHide->addShow('grantForm_show');
   }
 
-  static
-  function searchAction(&$row, $id) {}
+  static function searchAction(&$row, $id) {}
 
-  static
-  function tableNames(&$tables) {}
+  static function tableNames(&$tables) {}
 }
 
