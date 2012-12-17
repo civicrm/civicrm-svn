@@ -71,15 +71,15 @@ function civicrm_api3_contribution_create($params) {
   if (CRM_Utils_Array::value('id', $params)) {
     $ids['contribution'] = $params['id'];
   }
+
+  if(!empty($params['use_default_price_set']) && empty($params['id'] )){
+   $values['line_item'] = _civicrm_api3_contribution_createdefaultlineitem($params, $contribution);
+  }
   $contribution = CRM_Contribute_BAO_Contribution::create($values, $ids);
 
   if(is_a($contribution, 'CRM_Core_Error')) {
     return civicrm_api3_create_error($contribution->_errors[0]['message']);
   } 
-
-  if(!empty($params['use_default_price_set']) && empty($params['id'] )){
-    _civicrm_api3_contribution_createdefaultlineitem($params, $contribution);
-  }
   _civicrm_api3_object_to_array($contribution, $contributeArray[$contribution->id]);
 
   return civicrm_api3_create_success($contributeArray, $params, 'contribution', 'create', $contribution);
@@ -124,7 +124,7 @@ function _civicrm_api3_contribution_create_spec(&$params) {
 /*
  * Create a default contribution line item
  */
- function _civicrm_api3_contribution_createdefaultlineitem(&$params, $contribution){
+ function _civicrm_api3_contribution_createdefaultlineitem(&$params){
    $priceSetDetails = CRM_Price_BAO_Set::getDefaultPriceSet();
    foreach ($priceSetDetails as $field => $values){
      $priceFieldValueBAO = new CRM_Price_BAO_FieldValue();
@@ -132,22 +132,20 @@ function _civicrm_api3_contribution_create_spec(&$params) {
      $priceFieldValueBAO->selectAdd();
      $priceFieldValueBAO->selectAdd('id');
      $priceFieldValueBAO->selectAdd('label');
+     $priceFieldValueBAO->selectAdd('financial_type_id');
      $priceFieldValueBAO->find(true);
      continue;
    }
-   $lineItemparams = array(
-     'version' => 3,
+   $lineItemparams[$values['setID']][$priceFieldValueBAO->price_field_id] = array(
      'price_field_id' => $priceFieldValueBAO->price_field_id,
      'price_field_value_id' => $priceFieldValueBAO->id,
-     'entity_table' => 'civicrm_contribution',
-     'entity_id' => $contribution->id,
      'label' => $priceFieldValueBAO->label,
      'qty' => 1,
-     'unit_price' => $contribution->total_amount,
-     'line_total' => $contribution->total_amount,
-     'version' => 3,
+     'unit_price' => $params['total_amount'],
+     'line_total' => $params['total_amount'],
+     'financial_type_id' => $priceFieldValueBAO->financial_type_id,
    );
-   civicrm_api('line_item','create',$lineItemparams);
+   return $lineItemparams;
  }
 
 
