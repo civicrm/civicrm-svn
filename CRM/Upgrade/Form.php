@@ -601,7 +601,10 @@ SET    version = '$version'
     $upgrade = new CRM_Upgrade_Form();
     $upgrade->setVersion($rev);
     CRM_Utils_System::flushCache();
-    CRM_Core_BAO_SETTING::updateSettingsFromMetaData();
+    
+    if (version_compare($currentVer, '4.1.alpha1') >= 0) {
+      CRM_Core_BAO_Setting::updateSettingsFromMetaData();
+    }
     return TRUE;
   }
 
@@ -639,10 +642,10 @@ SET    version = '$version'
         version_compare($rev, '3.2.alpha1') > 0
       ) {
         $versionObject = $this->incrementalPhpObject($rev);
-        if (is_callable(array(
+         if (is_callable(array(
           $versionObject, 'setPreUpgradeMessage'))) {
-          $versionObject->setPreUpgradeMessage($preUpgradeMessage, $rev);
-}
+           $versionObject->setPreUpgradeMessage($preUpgradeMessage, $rev, $currentVer);
+         }
       }
     }
   }

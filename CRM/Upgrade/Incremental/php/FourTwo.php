@@ -51,7 +51,7 @@ class CRM_Upgrade_Incremental_php_FourTwo {
    * @param $rev string, a version number, e.g. '4.2.alpha1', '4.2.beta3', '4.2.0'
    * @return void
    */
-  function setPreUpgradeMessage(&$preUpgradeMessage, $rev) {
+  function setPreUpgradeMessage(&$preUpgradeMessage, $rev, $currentVer = NULL) {
     if ($rev == '4.2.alpha1') {
       $tables = array('civicrm_contribution_page','civicrm_event','civicrm_group','civicrm_contact');
       if (!CRM_Core_DAO::schemaRequiresRebuilding($tables)){
@@ -111,7 +111,7 @@ ORDER BY mp.contribution_id, mp.membership_id";
         ));
       }
     }
-    if ($rev == '4.2.2') {
+    if ($rev == '4.2.2' && version_compare($currentVer, '3.3.alpha1') >= 0) {
       $query = " SELECT cli.id
 FROM `civicrm_line_item` cli
 INNER JOIN civicrm_membership_payment cmp ON cmp.contribution_id = cli.entity_id AND cli.entity_table = 'civicrm_contribution'
@@ -121,7 +121,7 @@ INNER JOIN civicrm_price_set cps ON cps.id = cpf.price_set_id AND cps.name <>'de
       $dao = CRM_Core_DAO::executeQuery($query);
       if ($dao->N) {
         $preUpgradeMessage .= "<br /><strong>". ts('We have identified extraneous data in your database that a previous upgrade likely introduced. We STRONGLY recommend making a backup of your site before continuing. We also STRONGLY suggest fixing this issue with unneeded records BEFORE you upgrade. You can find more information about this issue and the way to fix it by visiting <a href="http://forum.civicrm.org/index.php/topic,26181.0.html">http://forum.civicrm.org/index.php/topic,26181.0.html</a>.') ."</strong>";
-  }
+      }
     }
   }
 
