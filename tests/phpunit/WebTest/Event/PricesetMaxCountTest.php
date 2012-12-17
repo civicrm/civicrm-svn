@@ -52,6 +52,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
         'amount' => '525.00',
         'max_count' => 2,
         'is_required' => TRUE,
+        'financial_type_id' => 1,
       ),
       'Meal Choice' => array(
         'type' => 'Select',
@@ -59,11 +60,13 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
           1 => array('label' => 'Chicken',
             'amount' => '525.00',
             'max_count' => 1,
+            'financial_type_id' => 1,
           ),
           2 => array(
             'label' => 'Vegetarian',
             'amount' => '200.00',
             'max_count' => 5,
+            'financial_type_id' => 1,
           ),
         ),
       ),
@@ -73,11 +76,13 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
           1 => array('label' => 'Yes',
             'amount' => '50.00',
             'max_count' => 1,
+            'financial_type_id' => 1,
           ),
           2 => array(
             'label' => 'No',
             'amount' => '10',
             'max_count' => 5,
+            'financial_type_id' => 1,
           ),
         ),
       ),
@@ -87,11 +92,13 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
           1 => array('label' => 'First Five',
             'amount' => '100.00',
             'max_count' => 2,
+            'financial_type_id' => 1,
           ),
           2 => array(
             'label' => 'Second Four',
             'amount' => '50.00',
             'max_count' => 4,
+            'financial_type_id' => 1,
           ),
         ),
       ),
@@ -123,7 +130,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
 
     // get select field ids
     // get select field option1
-    $this->click("xpath=//div[@id='field_page']//table/tbody/tr[1]/td[6]/span[1]/a[1]");
+    $this->click("xpath=//div[@id='field_page']//table/tbody/tr[1]/td[7]/span[1]/a[1]");
     $this->waitForPageToLoad('30000');
     $matches = array();
     preg_match('/oid=([0-9]+)/', $this->getLocation(), $matches);
@@ -133,7 +140,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad('30000');
 
     // get select field option2
-    $this->click("xpath=//div[@id='field_page']//table/tbody/tr[2]/td[6]/span[1]/a[1]");
+    $this->click("xpath=//div[@id='field_page']//table/tbody/tr[2]/td[7]/span[1]/a[1]");
     $this->waitForPageToLoad('30000');
     $matches = array();
     preg_match('/oid=([0-9]+)/', $this->getLocation(), $matches);
@@ -243,6 +250,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
         'max_count' => 4,
         'count' => 2,
         'is_required' => TRUE,
+        'financial_type_id' => 1,
       ),
       'Meal Choice' => array(
         'type' => 'Select',
@@ -251,12 +259,14 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
             'amount' => '525.00',
             'max_count' => 2,
             'count' => 2,
+            'financial_type_id' => 1,
           ),
           2 => array(
             'label' => 'Vegetarian',
             'amount' => '200.00',
             'max_count' => 10,
             'count' => 5,
+            'financial_type_id' => 1,
           ),
         ),
       ),
@@ -267,12 +277,14 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
             'amount' => '50.00',
             'max_count' => 2,
             'count' => 1,
+            'financial_type_id' => 1,
           ),
           2 => array(
             'label' => 'No',
             'amount' => '10',
             'max_count' => 10,
             'count' => 5,
+            'financial_type_id' => 1,
           ),
         ),
       ),
@@ -283,12 +295,14 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
             'amount' => '100.00',
             'max_count' => 4,
             'count' => 2,
+            'financial_type_id' => 1,
           ),
           2 => array(
             'label' => 'Second Four',
             'amount' => '50.00',
             'max_count' => 8,
             'count' => 4,
+            'financial_type_id' => 1,
           ),
         ),
       ),
@@ -320,7 +334,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
 
     // get select field ids
     // get select field option1
-    $this->click("xpath=//div[@id='field_page']//table/tbody/tr[1]/td[6]/span[1]/a[1]");
+    $this->click("xpath=//div[@id='field_page']//table/tbody/tr[1]/td[7]/span[1]/a[1]");
     $this->waitForPageToLoad('30000');
     $matches = array();
     preg_match('/oid=([0-9]+)/', $this->getLocation(), $matches);
@@ -330,7 +344,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad('30000');
 
     // get select field option2
-    $this->click("xpath=//div[@id='field_page']//table/tbody/tr[2]/td[6]/span[1]/a[1]");
+    $this->click("xpath=//div[@id='field_page']//table/tbody/tr[2]/td[7]/span[1]/a[1]");
     $this->waitForPageToLoad('30000');
     $matches = array();
     preg_match('/oid=([0-9]+)/', $this->getLocation(), $matches);
@@ -440,6 +454,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
         'amount' => '525.00',
         'max_count' => 6,
         'is_required' => TRUE,
+        'financial_type_id' => 1,
       ),
       'Meal Choice' => array(
         'type' => 'Select',
@@ -447,11 +462,13 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
           1 => array('label' => 'Chicken',
             'amount' => '525.00',
             'max_count' => 3,
+            'financial_type_id' => 1,
           ),
           2 => array(
             'label' => 'Vegetarian',
             'amount' => '200.00',
             'max_count' => 2,
+            'financial_type_id' => 1,
           ),
         ),
       ),
@@ -461,11 +478,13 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
           1 => array('label' => 'Yes',
             'amount' => '50.00',
             'max_count' => 4,
+            'financial_type_id' => 1,
           ),
           2 => array(
             'label' => 'No',
             'amount' => '10',
             'max_count' => 5,
+            'financial_type_id' => 1,
           ),
         ),
       ),
@@ -475,11 +494,13 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
           1 => array('label' => 'First Five',
             'amount' => '100.00',
             'max_count' => 6,
+            'financial_type_id' => 1,
           ),
           2 => array(
             'label' => 'Second Four',
             'amount' => '50.00',
             'max_count' => 4,
+            'financial_type_id' => 1,
           ),
         ),
       ),
@@ -511,7 +532,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
 
     // get select field ids
     // get select field option1
-    $this->click("xpath=//div[@id='field_page']//table/tbody/tr[1]/td[6]/span[1]/a[1]");
+    $this->click("xpath=//div[@id='field_page']//table/tbody/tr[1]/td[7]/span[1]/a[1]");
     $this->waitForPageToLoad('30000');
     $matches = array();
     preg_match('/oid=([0-9]+)/', $this->getLocation(), $matches);
@@ -521,7 +542,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad('30000');
 
     // get select field option2
-    $this->click("xpath=//div[@id='field_page']//table/tbody/tr[2]/td[6]/span[1]/a[1]");
+    $this->click("xpath=//div[@id='field_page']//table/tbody/tr[2]/td[7]/span[1]/a[1]");
     $this->waitForPageToLoad('30000');
     $matches = array();
     preg_match('/oid=([0-9]+)/', $this->getLocation(), $matches);
@@ -721,6 +742,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
         'count' => 2,
         'max_count' => 12,
         'is_required' => TRUE,
+        'financial_type_id' => 1,
       ),
       'Meal Choice' => array(
         'type' => 'Select',
@@ -729,12 +751,14 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
             'amount' => '525.00',
             'count' => 1,
             'max_count' => 3,
+            'financial_type_id' => 1,
           ),
           2 => array(
             'label' => 'Vegetarian',
             'amount' => '200.00',
             'count' => 2,
             'max_count' => 4,
+            'financial_type_id' => 1,
           ),
         ),
       ),
@@ -745,12 +769,14 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
             'amount' => '50.00',
             'count' => 2,
             'max_count' => 8,
+            'financial_type_id' => 1,
           ),
           2 => array(
             'label' => 'No',
             'amount' => '10',
             'count' => 5,
             'max_count' => 25,
+            'financial_type_id' => 1,
           ),
         ),
       ),
@@ -761,12 +787,14 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
             'amount' => '100.00',
             'count' => 2,
             'max_count' => 16,
+            'financial_type_id' => 1,
           ),
           2 => array(
             'label' => 'Second Four',
             'amount' => '50.00',
             'count' => 1,
             'max_count' => 4,
+            'financial_type_id' => 1,
           ),
         ),
       ),
@@ -798,7 +826,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
 
     // get select field ids
     // get select field option1
-    $this->click("xpath=//div[@id='field_page']//table/tbody/tr[1]/td[6]/span[1]/a[1]");
+    $this->click("xpath=//div[@id='field_page']//table/tbody/tr[1]/td[7]/span[1]/a[1]");
     $this->waitForPageToLoad('30000');
     $matches = array();
     preg_match('/oid=([0-9]+)/', $this->getLocation(), $matches);
@@ -808,7 +836,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad('30000');
 
     // get select field option2
-    $this->click("xpath=//div[@id='field_page']//table/tbody/tr[2]/td[6]/span[1]/a[1]");
+    $this->click("xpath=//div[@id='field_page']//table/tbody/tr[2]/td[7]/span[1]/a[1]");
     $this->waitForPageToLoad('30000');
     $matches = array();
     preg_match('/oid=([0-9]+)/', $this->getLocation(), $matches);
@@ -1028,6 +1056,11 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
           $this->waitForElementPresent('max_value');
           $this->type('max_value', $field['max_count']);
         }
+
+        if (isset($field['financial_type_id'])) {
+          $this->waitForElementPresent('financial_type_id');
+          $this->select('financial_type_id', "value={$field['financial_type_id']}");
+        }        
       }
       else {
         $this->_testAddMultipleChoiceOptions($field['options'], $field['type']);
@@ -1063,7 +1096,11 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
         $this->waitForElementPresent("option_max_value_{$oIndex}");
         $this->type("option_max_value_{$oIndex}", $oValue['max_count']);
       }
-
+      
+      if (CRM_Utils_Array::value( 'financial_type_id', $oValue )) {
+        $this->select( "option_financial_type_id_{$oIndex}", "value={$oValue['financial_type_id']}" );
+      }
+      
       $this->click('link=another choice');
     }
 
@@ -1110,7 +1147,8 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->click('CIVICRM_QFID_1_2');
     $processorName = $params['payment_processor'];
     $this->click("xpath=//tr[@class='crm-event-manage-fee-form-block-payment_processor']/td[2]/label[text()='$processorName']");
-
+    $this->select('financial_type_id', 'value=4');
+    
     if (array_key_exists('price_set', $params)) {
       $this->select('price_set_id', 'label=' . $params['price_set']);
     }
