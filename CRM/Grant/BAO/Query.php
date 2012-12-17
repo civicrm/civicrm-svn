@@ -298,13 +298,13 @@ class CRM_Grant_BAO_Query {
     $grantType = CRM_Core_OptionGroup::values('grant_type');
     $form->add('select', 'grant_type_id', ts('Grant Type'),
       array(
-        '' => ts('- select -')) + $grantType
+        '' => ts('- any -')) + $grantType
     );
 
     $grantStatus = CRM_Core_OptionGroup::values('grant_status');
     $form->add('select', 'grant_status_id', ts('Grant Status'),
       array(
-        '' => ts('- select -')) + $grantStatus
+        '' => ts('- any -')) + $grantStatus
     );
 
     $form->addDate('grant_application_received_date_low', ts('App. Received Date - From'), FALSE, array('formatType' => 'searchDate'));
