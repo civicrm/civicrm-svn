@@ -299,7 +299,7 @@ function verify( ) {
   var allMixTypes = ["Participant", "Membership", "Contribution"];
   var type = document.forms.Field['field_name[0]'].value;
   if ( allMixTypes.indexOf( type ) != -1 ) {
-    var message = {/literal}{ts escape='js'}'Oops. One or more fields in this profile are configured to be Searchable and / or shown in a Results Column, AND you are trying to add a '{/ts}
+    var message = {/literal}'{ts escape='js'}Oops. One or more fields in this profile are configured to be Searchable and / or shown in a Results Column, AND you are trying to add a {/ts}'
     + type + '{ts} field. Profiles with a mixture of field types can not include Searchable or Results Column fields. If you save this field now, the Seachable and Results Column settings will be removed for all fields in this profile. Do you want to continue?{/ts}'{literal};
     var ok = confirm( message );
     if ( !ok ) {

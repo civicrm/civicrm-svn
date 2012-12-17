@@ -674,7 +674,7 @@ SELECT ufg.id as id
    *
    *@return boolean $result    true/false.
    */
-  function checkSearchableORInSelector($profileID) {
+  static function checkSearchableORInSelector($profileID) {
     $result = FALSE;
     if (!$profileID) {
       return $result;
