@@ -103,7 +103,7 @@ class WebTest_Financial_FinancialContribution extends CiviSeleniumTestCase {
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
+    $accountRelationship = "Asset Account is"; //Asset Account is - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -433,7 +433,7 @@ function _testVerifyPriceSet( $validateStrings, $sid )
       $financialType['is_reserved'] = false;
       $this->addeditFinancialType( $financialType , 'new');
       
-      $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
+      $accountRelationship = "Asset Account is"; //Asset Account is - Income Account is
       $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                            'account_relationship'  => $accountRelationship );
       
@@ -635,7 +635,7 @@ function testAddPriceSet()
   $financialType['is_reserved'] = false;
   $this->addeditFinancialType( $financialType , 'new');
     
-  $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
+  $accountRelationship = "Asset Account is"; //Asset Account is - Income Account is
   $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                        'account_relationship'  => $accountRelationship );
     
@@ -753,7 +753,7 @@ function testAddPriceSet()
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
+    $accountRelationship = "Asset Account is"; //Asset Account is - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -911,7 +911,7 @@ function testAddPriceSet()
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
+    $accountRelationship = "Asset Account is"; //Asset Account is - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -1061,7 +1061,7 @@ function testAddPriceSet()
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
+    $accountRelationship = "Asset Account is"; //Asset Account is - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -1213,7 +1213,7 @@ function testAddPriceSet()
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
+    $accountRelationship = "Asset Account is"; //Asset Account is - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -1367,7 +1367,7 @@ function testContributionOverPayment(){
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
+    $accountRelationship = "Asset Account is"; //Asset Account is - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -1524,7 +1524,7 @@ function testContributionAddAndRemoveLineItem(){
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
+    $accountRelationship = "Asset Account is"; //Asset Account is - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -1688,7 +1688,7 @@ function testContributeRefundZero(){
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
+    $accountRelationship = "Asset Account is"; //Asset Account is - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -1843,7 +1843,7 @@ function testContributeFullAmount(){
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
+    $accountRelationship = "Asset Account is"; //Asset Account is - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -2002,7 +2002,7 @@ function testContributionPartialPayment(){
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
+    $accountRelationship = "Asset Account is"; //Asset Account is - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -2170,7 +2170,7 @@ function testContributionNoPayment(){
   $financialType['is_reserved'] = false;
   $this->addeditFinancialType( $financialType , 'new');
     
-  $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
+  $accountRelationship = "Asset Account is"; //Asset Account is - Income Account is
   $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                        'account_relationship'  => $accountRelationship );
     

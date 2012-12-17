@@ -950,7 +950,7 @@ class CRM_Contribute_Form_EditPayment extends CRM_Contribute_Form_AbstractEditPa
         $filter = NULL,
         " account_relationship = 6 AND entity_id = {$fields['financial_type_id']} ");
       if (!current($Financialaccount)) {
-        $errors['financial_type_id'] = "Financial Account of account relationship of 'Asset Account of' is not configured for this Financial Type";
+        $errors['financial_type_id'] = "Financial Account of account relationship of 'Asset Account is' is not configured for this Financial Type";
         $flag = TRUE;
       }
     }
@@ -966,7 +966,7 @@ class CRM_Contribute_Form_EditPayment extends CRM_Contribute_Form_AbstractEditPa
       if (!current($Financialaccount)) {
         $errors['financial_type_id'] = "Financial Account of account relationship of ";
         if ($flag) {
-          $errors['financial_type_id'] .= "'Asset Account of' and ";
+          $errors['financial_type_id'] .= "'Asset Account is' and ";
         }
         $errors['financial_type_id'] .= "'Expense Account is' is not configured for this Financial Type";
       }
@@ -1081,7 +1081,7 @@ class CRM_Contribute_Form_EditPayment extends CRM_Contribute_Form_AbstractEditPa
 
       $params['contact_id'] = $this->_contactID;
 
-      $assetRelation = key(CRM_CORE_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Asset Account of' "));
+      $assetRelation = key(CRM_CORE_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Asset Account is' "));
       $params['to_financial_account_id'] = $this->getFinancialAccount($formValues['financial_type_id'], $assetRelation);
       $params['currency'] = $this->getCurrency($submittedValues);
 

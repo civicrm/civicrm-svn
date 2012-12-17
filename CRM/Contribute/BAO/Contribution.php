@@ -2592,7 +2592,7 @@ WHERE  contribution_id = %1 ";
   static function recordFinancialAccounts($params, $ids = NULL) {
     $contributionStatuses = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
     if ($params['contribution_status_id'] == array_search('Completed', $contributionStatuses)) {
-      $accountRelationType = 'Asset Account of';
+      $accountRelationType = 'Asset Account is';
     } 
     elseif ($params['contribution_status_id'] == array_search('Pending', $contributionStatuses)) {
       $accountRelationType = 'AR Account is';

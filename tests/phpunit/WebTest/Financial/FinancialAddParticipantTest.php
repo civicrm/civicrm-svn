@@ -247,7 +247,7 @@ class WebTest_Financial_FinancialAddParticipantTest extends CiviSeleniumTestCase
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
+    $accountRelationship = "Asset Account is"; //Asset Account is - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -473,7 +473,7 @@ class WebTest_Financial_FinancialAddParticipantTest extends CiviSeleniumTestCase
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
+    $accountRelationship = "Asset Account is"; //Asset Account is - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -711,7 +711,7 @@ class WebTest_Financial_FinancialAddParticipantTest extends CiviSeleniumTestCase
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
+    $accountRelationship = "Asset Account is"; //Asset Account is - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -953,7 +953,7 @@ function testParticipantSingleAllocate() {
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
+    $accountRelationship = "Asset Account is"; //Asset Account is - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -1186,7 +1186,7 @@ function testParticipantDoubleAllocate() {
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
+    $accountRelationship = "Asset Account is"; //Asset Account is - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -1419,7 +1419,7 @@ function testParticipantRemoveLineItem(){
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-  $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
+  $accountRelationship = "Asset Account is"; //Asset Account is - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -1658,7 +1658,7 @@ function testParticipantOverPayment(){
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
+    $accountRelationship = "Asset Account is"; //Asset Account is - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     
@@ -1872,7 +1872,7 @@ function testParticipantAddAndRemoveLineItem(){
     $financialType['is_reserved'] = false;
     $this->addeditFinancialType( $financialType , 'new');
     
-    $accountRelationship = "Asset Account of"; //Asset Account of - Income Account is
+    $accountRelationship = "Asset Account is"; //Asset Account is - Income Account is
     $expected[] = array( 'financial_account'     => $financialAccountTitle, 
                          'account_relationship'  => $accountRelationship );
     

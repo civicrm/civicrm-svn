@@ -131,7 +131,7 @@ class CRM_Financial_BAO_FinancialAccount extends CRM_Financial_DAO_FinancialAcco
         $filter = null, 
         " account_relationship = 6 AND entity_id = {$fields['financial_type_id']} " );
       if ( !current( $financialAccount ) ) {
-        $errors['financial_type_id'] = "Financial Account of account relationship of 'Asset Account of' is not configured for this Financial Type";
+        $errors['financial_type_id'] = "Financial Account of account relationship of 'Asset Account is' is not configured for this Financial Type";
       }
     }
   }

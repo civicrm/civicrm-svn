@@ -908,7 +908,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
       if (!current($financialAccount)) {
         $errors['financial_type_id'] = "Financial Account of account relationship of ";
         if ($flag) {
-          $errors['financial_type_id'] .= "'Asset Account of' and ";
+          $errors['financial_type_id'] .= "'Asset Account is' and ";
         }
         $errors['financial_type_id'] .= "'Expense Account is' is not configured for this Financial Type";
       }
@@ -1026,7 +1026,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
 
       $params['contact_id'] = $this->_contactID;
 
-      $assetRelation = key(CRM_CORE_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Asset Account of' "));
+      $assetRelation = key(CRM_CORE_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Asset Account is' "));
       $params['to_financial_account_id'] = $this->getFinancialAccount($formValues['financial_type_id'], $assetRelation);
       $params['currency'] = $this->getCurrency($submittedValues);
 
