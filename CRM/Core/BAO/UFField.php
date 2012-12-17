@@ -40,6 +40,17 @@
 class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField {
 
   /**
+   * Batch entry fields
+   */
+  private static $_contriBatchEntryFields = NULL;
+
+  /**
+   * Batch entry fields
+   */
+  private static $_memberBatchEntryFields = NULL;
+
+
+  /**
    * Takes a bunch of params that are needed to match certain criteria and
    * retrieves the relevant objects. Typically the valid params are only
    * contact_id. We'll tweak this function to be more full featured over a period
@@ -757,5 +768,228 @@ SELECT  id
       $profileAddressFields[$prefixName] = $index;
     }
   }
+
+  /**
+   * Get a list of fields which can be added to profiles
+   *
+   * @param int $gid: UF group ID
+   * @param array $defaults: Form defaults
+   * @return array, multidimensional; e.g. $result['FieldGroup']['field_name']['label']
+   * @static
+   */
+  public static function getAvailableFields($gid = NULL, $defaults = array()) {
+    $fields = array(
+      'Contact' => array(),
+      'Individual' => CRM_Contact_BAO_Contact::importableFields('Individual', FALSE, FALSE, TRUE, TRUE, TRUE),
+      'Household' => CRM_Contact_BAO_Contact::importableFields('Household', FALSE, FALSE, TRUE, TRUE, TRUE),
+      'Organization' => CRM_Contact_BAO_Contact::importableFields('Organization', FALSE, FALSE, TRUE, TRUE, TRUE),
+    );
+
+    // add current employer for individuals
+    $fields['Individual']['current_employer'] = array(
+      'name' => 'organization_name',
+      'title' => ts('Current Employer'),
+    );
+
+    $addressOptions = CRM_Core_BAO_Setting::valueOptions(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+      'address_options', TRUE, NULL, TRUE
+    );
+
+    if (!$addressOptions['county']) {
+      unset($fields['Individual']['county'], $fields['Household']['county'], $fields['Organization']['county']);
+    }
+
+    // Break out common contact fields array CRM-3037.
+    // FIXME: From a UI perspective this makes very little sense
+    foreach ($fields['Individual'] as $key => $value) {
+      if (!empty($fields['Household'][$key]) && !empty($fields['Organization'][$key])) {
+        $fields['Contact'][$key] = $value;
+        unset($fields['Individual'][$key], $fields['Household'][$key], $fields['Organization'][$key]);
+      }
+    }
+
+    // Internal field not exposed to forms
+    unset($fields['Contact']['contact_type']);
+
+    // include Subtypes For Profile
+    $subTypes = CRM_Contact_BAO_ContactType::subTypeInfo();
+    foreach ($subTypes as $name => $val) {
+      //custom fields for sub type
+      $subTypeFields = CRM_Core_BAO_CustomField::getFieldsForImport($name);
+
+      if (array_key_exists($val['parent'], $fields)) {
+        $fields[$name] = $fields[$val['parent']] + $subTypeFields;
+      }
+      else {
+        $fields[$name] = $subTypeFields;
+      }
+    }
+
+    //group selected and unwanted fields list
+    $ufFields = $gid ? CRM_Core_BAO_UFGroup::getFields($gid, FALSE, NULL, NULL, NULL, TRUE, NULL, TRUE) : array();
+    $groupFieldList = array_merge($ufFields, array('note', 'email_greeting_custom', 'postal_greeting_custom', 'addressee_custom', 'id'));
+    //unset selected fields
+    foreach ($groupFieldList as $key => $value) {
+      if (is_integer($key)) {
+        unset($fields['Individual'][$value], $fields['Household'][$value], $fields['Organization'][$value]);
+        continue;
+      }
+      if (!empty($defaults['field_name'])
+        && $defaults['field_name']['0'] == $value['field_type']
+        && $defaults['field_name']['1'] == $key
+      ) {
+        continue;
+      }
+      unset($fields[$value['field_type']][$key]);
+    }
+    unset($subTypes);
+
+    if (CRM_Core_Permission::access('CiviContribute')) {
+      $contribFields = CRM_Contribute_BAO_Contribution::getContributionFields(FALSE);
+      if (!empty($contribFields)) {
+          unset($contribFields['is_test']);
+        unset($contribFields['is_pay_later']);
+        unset($contribFields['contribution_id']);
+        $contribFields['contribution_note'] = array(
+          'name' => 'contribution_note',
+          'title' => ts('Contribution Note'),
+        );
+        if ($gid && CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', $gid, 'name') == 'contribution_batch_entry') {
+          $fields['Contribution'] = array_merge($contribFields, self::getContribBatchEntryFields());
+        }
+        else {
+          $fields['Contribution'] = $contribFields;
+        }
+      }
+    }
+
+    if (CRM_Core_Permission::access('CiviEvent')) {
+      $participantFields = CRM_Event_BAO_Query::getParticipantFields();
+      if ($participantFields) {
+        unset($participantFields['external_identifier']);
+        unset($participantFields['event_id']);
+        unset($participantFields['participant_contact_id']);
+        unset($participantFields['participant_role_id']);
+        unset($participantFields['participant_status_id']);
+        unset($participantFields['participant_is_test']);
+        unset($participantFields['participant_fee_level']);
+        unset($participantFields['participant_id']);
+        unset($participantFields['participant_is_pay_later']);
+
+        if (isset($participantFields['participant_campaign_id'])) {
+          $participantFields['participant_campaign_id']['title'] = ts('Campaign');
+          if (isset($participantFields['participant_campaign'])) {
+            unset($participantFields['participant_campaign']);
+          }
+        }
+        $fields['Participant'] = $participantFields;
+      }
+    }
+
+    if (CRM_Core_Permission::access('CiviMember')) {
+      $membershipFields = CRM_Member_BAO_Membership::getMembershipFields();
+      unset($membershipFields['membership_id']);
+      unset($membershipFields['membership_type_id']);
+      unset($membershipFields['member_is_test']);
+      unset($membershipFields['is_override']);
+      unset($membershipFields['status_id']);
+      unset($membershipFields['member_is_pay_later']);
+
+      if ($gid && CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', $gid, 'name') == 'membership_batch_entry') {
+        $fields['Membership'] = array_merge($membershipFields, self::getMemberBatchEntryFields());
+      }
+      else {
+        $fields['Membership'] = $membershipFields;
+      }
+    }
+
+    $activityFields = CRM_Activity_BAO_Activity::getProfileFields();
+    if ($activityFields) {
+      // campaign related fields.
+      if (isset($activityFields['activity_campaign_id'])) {
+        $activityFields['activity_campaign_id']['title'] = ts('Campaign');
+      }
+      $fields['Activity'] = $activityFields;
+    }
+
+    $fields['Formatting']['format_free_html_' . rand(1000, 9999)] = array(
+      'name' => 'free_html',
+      'import' => FALSE,
+      'export' => FALSE,
+      'title' => 'Free HTML',
+    );
+
+    // Sort by title
+    foreach ($fields as &$values) {
+      $values = CRM_Utils_Array::crmArraySortByField($values, 'title');
+    }
+
+    return $fields;
+  }
+
+  static function getContribBatchEntryFields() {
+    if (self::$_contriBatchEntryFields === NULL) {
+      self::$_contriBatchEntryFields = array(
+        'send_receipt' => array(
+          'name' => 'send_receipt',
+          'title' => ts('Send Receipt'),
+        ),
+        'soft_credit' => array(
+          'name' => 'soft_credit',
+          'title' => ts('Soft Credit'),
+        ),
+        'product_name' => array(
+          'name' => 'product_name',
+          'title' => ts('Premiums'),
+        ),
+        'contribution_note' => array(
+          'name' => 'contribution_note',
+          'title' => ts('Contribution Note'),
+        ),
+      );
+    }
+    return self::$_contriBatchEntryFields;
+  }
+
+  public static function getMemberBatchEntryFields() {
+    if (self::$_memberBatchEntryFields === NULL) {
+      self::$_memberBatchEntryFields = array(
+        'send_receipt' => array(
+          'name' => 'send_receipt',
+          'title' => ts('Send Receipt'),
+        ),
+        'soft_credit' => array(
+          'name' => 'soft_credit',
+          'title' => ts('Soft Credit'),
+        ),
+        'product_name' => array(
+          'name' => 'product_name',
+          'title' => ts('Premiums'),
+        ),
+        'financial_type' => array(
+          'name' => 'financial_type',
+          'title' => ts('Financial Type'),
+        ),
+        'total_amount' => array(
+          'name' => 'total_amount',
+          'title' => ts('Total Amount'),
+        ),
+        'receive_date' => array(
+          'name' => 'receive_date',
+          'title' => ts('Receive Date'),
+        ),
+        'payment_instrument' => array(
+          'name' => 'payment_instrument',
+          'title' => ts('Payment Instrument'),
+        ),
+        'contribution_status_id' => array(
+          'name' => 'contribution_status_id',
+          'title' => ts('Contribution Status'),
+        ),
+      );
+    }
+    return self::$_memberBatchEntryFields;
+  }
+
 }
 
