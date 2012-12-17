@@ -89,6 +89,14 @@ cj( function() {
           cj("#crm-batch-selector input[id^='check_']").prop('checked',false);	
       }
    });
+
+   cj('#toggleSelect').click( function() {
+     enableActions();
+   });
+   cj('#Go').click( function() {
+     return selectAction();
+   });
+
 });
 function enableActions() {
     cj("#batch_status").attr('disabled',false);

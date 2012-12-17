@@ -70,7 +70,7 @@ class CRM_Financial_Form_Search extends CRM_Core_Form {
     $this->add('text', 'sort_name', ts('Created By'), CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'sort_name'));
   
     $this->assign('elements', array('title', 'sort_name', 'type_id', 'close_date', 'open_date', 'payment_instrument_id', 'item_count', 'total'));
-    $this->addElement('checkbox', 'toggleSelect', NULL, NULL, array('onclick' => 'enableActions();'));
+    $this->addElement('checkbox', 'toggleSelect', NULL, NULL);
     $batchAction = array( 'Open' => ts( 'ReOpen Batch' ),
                           'Closed' => ts( 'Close Batch' ),
                           'Exported' => ts( 'Export Batch' ),
@@ -89,7 +89,6 @@ class CRM_Financial_Form_Search extends CRM_Core_Form {
                array(
                      'class' => 'form-submit',
                      'id' => 'Go',
-                     'onclick' => "return selectAction();",
                      ));
 
     $this->addButtons(

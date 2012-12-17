@@ -624,7 +624,7 @@ class CRM_Batch_BAO_Batch extends CRM_Core_DAO_Batch {
       $params['id'] = $ids['batchID'] = $value;
       self::create($params, $ids);
     }
-    $url = CRM_Utils_System::url('civicrm/financial/financialBatches',"reset=1&batchStatus={$params['status_id']}");
+    $url = CRM_Utils_System::url('civicrm/financial/financialbatches',"reset=1&batchStatus={$params['status_id']}");
     CRM_Utils_System::redirect($url);
   }
 

@@ -284,7 +284,7 @@
      <weight>585</weight>
  </item>
  <item>
-     <path>civicrm/financial/financialBatches</path>
+     <path>civicrm/financial/financialbatches</path>
      <title>Financial Batches</title>
      <page_callback>CRM_Financial_Page_Batch</page_callback>
      <adminGroup>CiviContribute</adminGroup>
