@@ -99,8 +99,6 @@
 
   <civicrm_grant />
 
-  <civicrm_payment />
-
   <civicrm_tell_friend />
 
   <civicrm_pledge_block />
@@ -198,10 +196,6 @@
   <civicrm_activity_target />
 
   <civicrm_case_activity />
-
-  <civicrm_entity_payment />
-
-  <civicrm_grant_program />
 
   <civicrm_pledge />
 

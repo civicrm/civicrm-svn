@@ -58,7 +58,6 @@ class CRM_Grant_Info extends CRM_Core_Component_Info {
     return array(
       'access CiviGrant',
       'edit grants',
-      'edit grant program',
       'delete in CiviGrant',
     );
   }
@@ -107,15 +106,6 @@ class CRM_Grant_Info extends CRM_Core_Component_Info {
             'title' => ts('Grant'),
           )));
     }
-    if ( CRM_Core_Permission::check('access CiviGrant') &&
-         CRM_Core_Permission::check('edit grant program') ) {
-      $shortCuts = array_merge($shortCuts, array( 
-        array( 
-          'path'  => 'civicrm/grant_program',
-          'query' => "reset=1&action=browse&id=1",
-          'ref'   => 'new-grant program',
-          'title' => ts('Grant Program') ) ));
   }
-}
 }
 

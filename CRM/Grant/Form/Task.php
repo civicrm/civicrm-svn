@@ -82,18 +82,14 @@ class CRM_Grant_Form_Task extends CRM_Core_Form {
   function preProcessCommon(&$form, $useTable = FALSE) {
     $form->_grantIds = array();
 
-    if ( !CRM_Utils_Array::value( 'prid', $_GET  ) ) {
     $values = $form->controller->exportValues('Search');
-    }
 
-    $form->_task = CRM_Utils_Array::value( 'task', $values );
+    $form->_task = $values['task'];
     $grantTasks = CRM_Grant_Task::tasks();
-    if ( !empty( $form->_task ) ) {
     $form->assign('taskName', $grantTasks[$form->_task]);
-    }
 
     $ids = array();
-    if ( CRM_Utils_Array::value( 'radio_ts', $values ) == 'ts_sel' ) {
+    if ($values['radio_ts'] == 'ts_sel') {
       foreach ($values as $name => $value) {
         if (substr($name, 0, CRM_Core_Form::CB_PREFIX_LEN) == CRM_Core_Form::CB_PREFIX) {
           $ids[] = substr($name, CRM_Core_Form::CB_PREFIX_LEN);
@@ -151,7 +147,7 @@ class CRM_Grant_Form_Task extends CRM_Core_Form {
    * @return void
    * @access public
    */
-  function addDefaultButtons($title, $nextType = 'next', $backType = 'back', $submitOnce = FALSE) {
+  function addDefaultButtons($title, $nextType = 'next', $backType = 'back') {
     $this->addButtons(array(
         array(
           'type' => $nextType,

@@ -56,12 +56,8 @@ class CRM_Grant_Form_GrantView extends CRM_Core_Form {
     CRM_Grant_BAO_Grant::retrieve($params, $values);
     $grantType = CRM_Grant_PseudoConstant::grantType();
     $grantStatus = CRM_Grant_PseudoConstant::grantStatus();
-    $grantRejectedReason = CRM_Grant_PseudoConstant::grantRejectedReason( );
     $this->assign('grantType', $grantType[$values['grant_type_id']]);
     $this->assign('grantStatus', $grantStatus[$values['status_id']]);
-    if (!empty($values['grant_rejected_reason_id']) ) {
-      $this->assign('grantRejectedReason',$grantRejectedReason[$values['grant_rejected_reason_id']] );
-    }
     $grantTokens = array(
       'amount_total', 'amount_requested', 'amount_granted',
       'rationale', 'grant_report_received', 'application_received_date',
@@ -113,7 +109,9 @@ class CRM_Grant_Form_GrantView extends CRM_Core_Form {
       $recentOther
     );
 
-    $attachment = CRM_Core_BAO_File::attachmentInfo('civicrm_grant', $this->_id);
+    $attachment = CRM_Core_BAO_File::attachmentInfo('civicrm_grant',
+      $this->_id
+    );
     $this->assign('attachment', $attachment);
 
     $grantType = CRM_Core_DAO::getFieldValue("CRM_Grant_DAO_Grant", $this->_id, "grant_type_id");

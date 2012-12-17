@@ -35,7 +35,7 @@
             <a class="button" href="{crmURL p='civicrm/contact/view/grant' q=$urlParams}" accesskey="e"><span><div class="icon edit-icon"></div> {ts}Edit{/ts}</span></a>
         {/if}
         {if call_user_func(array('CRM_Core_Permission','check'), 'delete in CiviGrant')}
-          {assign var='urlParams' value="reset=1&id=$id&cid=$contactId&action=delete&context=$context"}
+    	    {assign var='urlParams' value="reset=1&id=$id&cid=$contactId&action=delete&context=$context"}
             {if ( $context eq 'fulltext' || $context eq 'search' ) && $searchKey}
                 {assign var='urlParams' value="reset=1&id=$id&cid=$contactId&action=delete&context=$context&key=$searchKey"}
             {/if}
@@ -47,9 +47,6 @@
         <tr class="crm-grant-view-form-block-name"><td class="label">{ts}Name{/ts}</td><td class="bold">{$displayName}</td></tr>
         <tr class="crm-grant-view-form-block-status_id"><td class="label">{ts}Grant Status{/ts}</td> <td>{$grantStatus}</td></tr>
         <tr class="crm-grant-view-form-block-grant_type_id"><td class="label">{ts}Grant Type{/ts}</td> <td>{$grantType}</td></tr>
-	{if $grantRejectedReason}
- 	<tr class="crm-grant-view-form-block-grant_rejected_reason_id"><td class="label">{ts}Grant Rejected Reason{/ts}</td> <td>{$grantRejectedReason}</td></tr>
-	{/if}
         <tr class="crm-grant-view-form-block-application_received_date"><td class="label">{ts}Application Received{/ts}</td> <td>{$application_received_date|crmDate}</td></tr>
         <tr class="crm-grant-view-form-block-decision_date"><td class="label">{ts}Grant Decision{/ts}</td> <td>{$decision_date|crmDate}</td></tr>
         <tr class="crm-grant-view-form-block-money_transfer_date"><td class="label">{ts}Money Transferred{/ts}</td> <td>{$money_transfer_date|crmDate}</td></tr>
@@ -69,16 +66,16 @@
     <div class="crm-submit-buttons">
         {if call_user_func(array('CRM_Core_Permission','check'), 'edit grants')}
             {assign var='urlParams' value="reset=1&id=$id&cid=$contactId&action=update&context=$context"}
-          {if ( $context eq 'fulltext' || $context eq 'search' ) && $searchKey}
-              {assign var='urlParams' value="reset=1&id=$id&cid=$contactId&action=update&context=$context&key=$searchKey"}
-          {/if}
+	        {if ( $context eq 'fulltext' || $context eq 'search' ) && $searchKey}
+	            {assign var='urlParams' value="reset=1&id=$id&cid=$contactId&action=update&context=$context&key=$searchKey"}
+	        {/if}
             <a class="button" href="{crmURL p='civicrm/contact/view/grant' q=$urlParams}" accesskey="e"><span><div class="icon edit-icon"></div> {ts}Edit{/ts}</span></a>
         {/if}
         {if call_user_func(array('CRM_Core_Permission','check'), 'delete in CiviGrant')}
-        {assign var='urlParams' value="reset=1&id=$id&cid=$contactId&action=delete&context=$context"}
-          {if ( $context eq 'fulltext' || $context eq 'search' ) && $searchKey}
-              {assign var='urlParams' value="reset=1&id=$id&cid=$contactId&action=delete&context=$context&key=$searchKey"}
-          {/if}
+		    {assign var='urlParams' value="reset=1&id=$id&cid=$contactId&action=delete&context=$context"}
+	        {if ( $context eq 'fulltext' || $context eq 'search' ) && $searchKey}
+	            {assign var='urlParams' value="reset=1&id=$id&cid=$contactId&action=delete&context=$context&key=$searchKey"}
+	        {/if}
             <a class="button" href="{crmURL p='civicrm/contact/view/grant' q=$urlParams}"><span><div class="icon delete-icon"></div>{ts}Delete{/ts}</span></a>
         {/if}
         {include file="CRM/common/formButtons.tpl" location="bottom"}

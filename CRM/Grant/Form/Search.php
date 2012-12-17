@@ -382,7 +382,7 @@ class CRM_Grant_Form_Search extends CRM_Core_Form {
    *
    * @return array the default array reference
    */
-  function setDefaultValues() {
+  function &setDefaultValues() {
     return $this->_formValues;
   }
 

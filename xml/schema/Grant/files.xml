@@ -2,7 +2,4 @@
 
 <tables xmlns:xi="http://www.w3.org/2001/XInclude">
 <xi:include href="Grant.xml"                 parse="xml" />
-<xi:include href="EntityPayment.xml"         parse="xml" />
-<xi:include href="GrantPayment.xml"          parse="xml" />
-<xi:include href="GrantProgram.xml"          parse="xml" />
 </tables>

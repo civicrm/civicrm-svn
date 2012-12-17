@@ -56,22 +56,6 @@ class CRM_Grant_PseudoConstant extends CRM_Core_PseudoConstant {
   private static $grantType;
 
   /**
-   * grant Program Status
-   *
-   * @var array
-   * @static
-   */
-
-  private static $grantProgramStatus; 
-  /**
-   * grant Rejected Reason
-   *
-   * @var array
-   * @static
-   */
-
-  private static $grantRejectedReason;
-  /**
    * Get all the n grant statuses
    *
    * @access public
@@ -111,48 +95,6 @@ class CRM_Grant_PseudoConstant extends CRM_Core_PseudoConstant {
     }
 
     return self::$grantType;
-  }
-
-  /**
-   * Get all the n grant program statuses
-   *
-   * @access public
-   * @return array - array reference of all grant program statuses if any
-   * @static
-   */
-  public static function &grantProgramStatus( $id = null )
-  {
-    if ( ! self::$grantProgramStatus ) {
-      self::$grantProgramStatus = array( );
-      self::$grantProgramStatus = CRM_Core_OptionGroup::values( 'grant_program_status' );
-}
-
-    if( $id ) {
-      return self::$grantProgramStatus[$id];
-    }
-        
-    return self::$grantProgramStatus ;
-  }
-
-  /**
-   * Get all the n grant rejected reasons
-   *
-   * @access public
-   * @return array - array reference of all grant rejected reasons if any
-   * @static
-   */
-  public static function &grantRejectedReason( $id = null )
-  {
-    if ( ! self::$grantRejectedReason ) {
-      self::$grantRejectedReason = array( );
-      self::$grantRejectedReason = CRM_Core_OptionGroup::values( 'reason_grant_rejected' );
-    }
-        
-    if( $id ) {
-      return self::$grantRejectedReason[$id];
-    }
-        
-    return self::$grantRejectedReason ;
   }
 }
 

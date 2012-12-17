@@ -37,37 +37,4 @@
      <page_callback>CRM_Grant_Page_Tab</page_callback>
      <access_arguments>access CiviGrant</access_arguments>
   </item>
-
-  <item>
-     <path>civicrm/grant_program</path>
-     <title>Grant Programs</title>
-     <desc>List of grant programs which can be assigned to Grants</desc>
-     <page_callback>CRM_Grant_Page_GrantProgram</page_callback>
-     <access_arguments>edit grant program</access_arguments>
-     <page_type>1</page_type>
-     <weight>1011</weight>
-  </item> 
-  <item>
-     <path>civicrm/grant/payment</path>
-     <title>Grant Payment</title>
-     <desc>Grant Payment.</desc>
-     <page_callback>CRM_Grant_Page_Payment</page_callback>
-     <access_arguments>access CiviCRM</access_arguments>
-  </item>
-  <item>
-     <path>civicrm/grant/payment/search</path>
-     <title>Find Grant Payments</title>
-     <page_callback>CRM_Grant_Form_PaymentSearch</page_callback>
-     <access_arguments>access CiviGrant</access_arguments>
-     <page_type>1</page_type>
-     <component>CiviGrant</component>
-  </item>   
-  <item>
-     <path>civicrm/grant/payment/reprint</path>
-     <title>Grant Payment Reprint</title>
-     <desc>Grant Payment Reprint.</desc>
-     <path_arguments>action=add</path_arguments>
-     <page_callback>CRM_Grant_Form_Task_GrantPayment</page_callback>
-     <access_arguments>access CiviGrant</access_arguments>
-  </item> 
 </menu>

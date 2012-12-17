@@ -65,15 +65,13 @@ class CRM_Grant_Form_Task_Update extends CRM_Grant_Form_Task {
   function buildQuickForm() {
     $grantStatus = CRM_Grant_PseudoConstant::grantStatus();
     $this->addElement('select', 'status_id', ts('Grant Status'), array('' => '') + $grantStatus);
-    $this->setDefaults( array( 'radio_ts'=> 'amount_granted' ) );
 
-    $this->addElement('text', 'amount_granted', ts('Other Amount') );
+    $this->addElement('text', 'amount_granted', ts('Amount Granted'));
     $this->addRule('amount_granted', ts('Please enter a valid amount.'), 'money');
 
-    $this->addElement('radio', 'radio_ts', null, 'Amount Allocated', 'amount_total' );
-    
     $this->addDate('decision_date', ts('Grant Decision'), FALSE, array('formatType' => 'custom'));
 
+    $this->assign('elements', array('status_id', 'amount_granted', 'decision_date'));
     $this->assign('totalSelectedGrants', count($this->_grantIds));
 
     $this->addDefaultButtons(ts('Update Grants'), 'done');
@@ -91,12 +89,9 @@ class CRM_Grant_Form_Task_Update extends CRM_Grant_Form_Task {
 
     // get the submitted form values.
     $params = $this->controller->exportValues($this->_name);
-    if ($params['radio_ts'] == 'amount_total') {
-      unset($params['granted_amount']);
-    }
     $qfKey = $params['qfKey'];
     foreach ($params as $key => $value) {
-      if ($value == '' || $key == 'qfKey' || $key == 'radio_ts') {
+      if ($value == '' || $key == 'qfKey') {
         unset($params[$key]);
       }
     }
@@ -112,9 +107,12 @@ class CRM_Grant_Form_Task_Update extends CRM_Grant_Form_Task {
         $updatedGrants++;
       }
     }
-      
-    CRM_Core_Session::setStatus(ts('Updated Grant(s): %1', array(1 => $updatedGrants)), '', 'info');
-    CRM_Core_Session::setStatus(ts('Total Selected Grant(s): %1', array(1 => count($this->_grantIds))), '', 'info');
+
+    $status = array(
+      ts('Updated Grant(s): %1', array(1 => $updatedGrants)),
+      ts('Total Selected Grant(s): %1', array(1 => count($this->_grantIds))),
+    );
+    CRM_Core_Session::setStatus($status);
     CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/grant/search', 'force=1&qfKey=' . $qfKey));
   }
 }

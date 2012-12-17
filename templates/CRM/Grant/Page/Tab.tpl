@@ -49,7 +49,7 @@
         
         {include file="CRM/Grant/Form/Selector.tpl"}
     {else}
-        <div class="messages status no-popup">
+        <div class="messages status">
              <div class="icon inform-icon"></div>&nbsp;
              {ts}No grants have been recorded for this contact.{/ts}
        </div>

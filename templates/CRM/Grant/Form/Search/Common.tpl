@@ -36,31 +36,14 @@
         {$form.grant_type_id.label}<br />
         {$form.grant_type_id.html} 
     </td>
+</tr>
+<tr>
     <td>
-        {$form.grant_program_id.label}<br />
-        {$form.grant_program_id.html} 
-    </td>
-</tr>
-<tr>
-    <td colspan = "2"><label>{ts}Assessment{/ts}</label> <br />
-        {$form.grant_assessment_low.label}
-        {$form.grant_assessment_low.html} &nbsp;
-	 {$form.grant_assessment_high.label}
-        {$form.grant_assessment_high.html}
-    </td>
-</tr>
-<tr>
-    <td colspan = "2"><label>{ts}Amount Allocated{/ts}</label> <br />
-        {$form.grant_amount_total_low.label}
-        {$form.grant_amount_total_low.html}
-	 {$form.grant_amount_total_high.label}
-        {$form.grant_amount_total_high.html}
-    </td>
-</tr>
-<tr>
-    <td colspan = "2"><label>{ts}Amount Granted{/ts}</label> <br />
-        {$form.grant_amount_low.label}
+        {$form.grant_amount_low.label}<br />
         {$form.grant_amount_low.html}
+    </td> 
+    <td colspan="2">
+        {$form.grant_amount_high.label}<br />
         {$form.grant_amount_high.html}
     </td>
 </tr>

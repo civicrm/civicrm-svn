@@ -34,7 +34,8 @@
  *
  */
 class CRM_Grant_BAO_Query {
-  static function &getFields() {
+  static
+  function &getFields() {
     $fields = array();
     $fields = CRM_Grant_BAO_Grant::exportableFields();
     return $fields;
@@ -46,7 +47,8 @@ class CRM_Grant_BAO_Query {
    * @return void
    * @access public
    */
-  static function select(&$query) {
+  static
+  function select(&$query) {
     if ($query->_mode & CRM_Contact_BAO_Query::MODE_GRANT) {
       if (CRM_Utils_Array::value('grant_status_id', $query->_returnProperties)) {
         $query->_select['grant_status_id'] = 'grant_status.id as grant_status_id';
@@ -101,7 +103,8 @@ class CRM_Grant_BAO_Query {
    * @return void
    * @access public
    */
-  static function where(&$query) {
+  static
+  function where(&$query) {
     foreach (array_keys($query->_params) as $id) {
       if (substr($query->_params[$id][0], 0, 6) == 'grant_') {
         self::whereClauseSingle($query->_params[$id], $query);
@@ -109,7 +112,8 @@ class CRM_Grant_BAO_Query {
     }
   }
 
-  static function whereClauseSingle(&$values, &$query) {
+  static
+  function whereClauseSingle(&$values, &$query) {
     $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
     list($name, $op, $value, $grouping, $wildcard) = $values;
     switch ($name) {
@@ -182,19 +186,6 @@ class CRM_Grant_BAO_Query {
 
         return;
 
-    case 'grant_program_id':
-            
-      $value = $strtolower(CRM_Core_DAO::escapeString(trim($value)));
-
-      $query->_where[$grouping][] = "civicrm_grant.grant_program_id $op '{$value}'";
-            
-      $grantPrograms = CRM_Grant_BAO_Grant::getGrantPrograms();
-      $value = $grantPrograms[$value];
-      $query->_qill[$grouping ][] = ts( 'Grant Type %2 %1', array( 1 => $value, 2 => $op) );
-      $query->_tables['civicrm_grant'] = $query->_whereTables['civicrm_grant'] = 1;
-
-      return;
-
       case 'grant_status_id':
 
         $value = $strtolower(CRM_Core_DAO::escapeString(trim($value)));
@@ -230,22 +221,13 @@ class CRM_Grant_BAO_Query {
       case 'grant_amount_low':
       case 'grant_amount_high':
         $query->numberRangeBuilder($values,
-                                 'civicrm_grant', 'grant_amount', 'amount_granted', 'Total Granted'
+          'civicrm_grant', 'grant_amount', 'amount_total', 'Total Amount'
         );
-    case 'grant_amount_total':
-    case 'grant_amount_total_low':
-    case 'grant_amount_total_high':
-      $query->numberRangeBuilder( $values,
-                                  'civicrm_grant', 'grant_amount_total', 'amount_total', 'Amount Allocated' );
-    case 'grant_assessment':
-    case 'grant_assessment_low':
-    case 'grant_assessment_high':
-      $query->numberRangeBuilder( $values,
-                                  'civicrm_grant', 'grant_assessment', 'assessment', 'Assessment' );
     }
   }
 
-  static function from($name, $mode, $side) {
+  static
+  function from($name, $mode, $side) {
     $from = NULL;
     switch ($name) {
       case 'civicrm_grant':
@@ -285,7 +267,8 @@ class CRM_Grant_BAO_Query {
     return (isset($this->_qill)) ? $this->_qill : "";
   }
 
-  static function defaultReturnProperties($mode,
+  static
+  function defaultReturnProperties($mode,
     $includeCustomFields = TRUE
   ) {
     $properties = NULL;
@@ -316,22 +299,19 @@ class CRM_Grant_BAO_Query {
    * @return void
    * @static
    */
-  static function buildSearchForm(&$form) {
+  static
+  function buildSearchForm(&$form) {
 
-    $grantPrograms = CRM_Grant_BAO_Grant::getGrantPrograms();
-    $form->add('select', 'grant_program_id',  ts( 'Grant Programs' ),
-      array( '' => ts( '- select -' ) ) + $grantPrograms);
-    
     $grantType = CRM_Core_OptionGroup::values('grant_type');
     $form->add('select', 'grant_type_id', ts('Grant Type'),
       array(
-        '' => ts('- any -')) + $grantType
+        '' => ts('- select -')) + $grantType
     );
 
     $grantStatus = CRM_Core_OptionGroup::values('grant_status');
     $form->add('select', 'grant_status_id', ts('Grant Status'),
       array(
-        '' => ts('- any -')) + $grantStatus
+        '' => ts('- select -')) + $grantStatus
     );
 
     $form->addDate('grant_application_received_date_low', ts('App. Received Date - From'), FALSE, array('formatType' => 'searchDate'));
@@ -356,21 +336,12 @@ class CRM_Grant_BAO_Query {
 
     $form->addYesNo('grant_report_received', ts('Grant report received?'));
 
-    $form->add('text', 'grant_amount_total_low', ts('From'), array( 'size' => 8, 'maxlength' => 8 ) ); 
-    $form->addRule('grant_amount_total_low', ts('Please enter a valid money value (e.g. %1).', array(1 => CRM_Utils_Money::format('9.99', ' '))), 'money');
-        
-    $form->add('text', 'grant_amount_total_high', ts('To'), array( 'size' => 8, 'maxlength' => 8 ) ); 
-    $form->addRule('grant_amount_total_high', ts('Please enter a valid money value (e.g. %1).', array(1 => CRM_Utils_Money::format('99.99', ' '))), 'money');
-        
-    $form->add('text', 'grant_amount_low', ts('From'), array( 'size' => 8, 'maxlength' => 8 ) ); 
+    $form->add('text', 'grant_amount_low', ts('Minimum Amount'), array('size' => 8, 'maxlength' => 8));
     $form->addRule('grant_amount_low', ts('Please enter a valid money value (e.g. %1).', array(1 => CRM_Utils_Money::format('9.99', ' '))), 'money');
 
-    $form->add('text', 'grant_amount_high', ts('To'), array('size' => 8, 'maxlength' => 8));
+    $form->add('text', 'grant_amount_high', ts('Maximum Amount'), array('size' => 8, 'maxlength' => 8));
     $form->addRule('grant_amount_high', ts('Please enter a valid money value (e.g. %1).', array(1 => CRM_Utils_Money::format('99.99', ' '))), 'money');
 
-    $form->add('text', 'grant_assessment_low', ts('From'), array( 'size' => 9, 'maxlength' => 9 ) ); 
-    $form->add('text', 'grant_assessment_high', ts('To'), array( 'size' => 9, 'maxlength' => 9 ) );
-        
     // add all the custom  searchable fields
     $grant = array('Grant');
     $groupDetails = CRM_Core_BAO_CustomGroup::getGroupDetail(NULL, TRUE, $grant);
@@ -392,13 +363,16 @@ class CRM_Grant_BAO_Query {
     $form->assign('validGrant', TRUE);
   }
 
-  static function addShowHide(&$showHide) {
+  static
+  function addShowHide(&$showHide) {
     $showHide->addHide('grantForm');
     $showHide->addShow('grantForm_show');
   }
 
-  static function searchAction(&$row, $id) {}
+  static
+  function searchAction(&$row, $id) {}
 
-  static function tableNames(&$tables) {}
+  static
+  function tableNames(&$tables) {}
 }
 

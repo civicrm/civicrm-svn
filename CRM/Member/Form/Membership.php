@@ -274,7 +274,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form {
     else {
       $defaults["membership_type_id"] = $this->_memType;
     }
-    
+
     $defaults['num_terms'] = 1;
 
     if (CRM_Utils_Array::value('id', $defaults)) {
@@ -663,8 +663,8 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
 
       $this->addElement('checkbox', 'record_contribution', ts('Record Membership Payment?'));
 
-            $this->add('select', 'financial_type_id', 
-                       ts( 'Financial Type' ), 
+            $this->add('select', 'financial_type_id',
+                       ts( 'Financial Type' ),
                        array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::financialType( ) );
 
       $this->add('text', 'total_amount', ts('Amount'));
@@ -1266,7 +1266,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
           $priceSetId,
                                                                                'financial_type_id' );
             } else {
-                $params['financial_type_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
+                $params['financial_type_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType',
           end($this->_memTypeSelected),
                                                                                'financial_type_id' );
       }
@@ -1552,14 +1552,14 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
           ) {
             $membershipTypeValues[$memType]['relate_contribution_id'] = $relateContribution;
           }
-           
+
           $membershipParams = array_merge($params, $membershipTypeValues[$memType]);
           if (CRM_Utils_Array::value('int_amount', $formValues)) {
             $init_amount = array();
             foreach($formValues as $key => $value){
               if (strstr($key,'txt-price')){
                 $init_amount[$key] = $value;
-              } 
+              }
             }
             $membershipParams['init_amount'] = $init_amount;
           }

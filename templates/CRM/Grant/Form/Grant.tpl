@@ -30,114 +30,94 @@
 {else}
 
 {if $action eq 1 and $context ne 'standalone'}
-  <h3>{ts}New Grant{/ts}</h3>
+	<h3>{ts}New Grant{/ts}</h3>
 {elseif $action eq 2}
-  <h3>{ts}Edit Grant{/ts}</h3>
+	<h3>{ts}Edit Grant{/ts}</h3>
 {elseif $action eq 8}
-  <h3>{ts}Delete Grant{/ts}</h3>
+	<h3>{ts}Delete Grant{/ts}</h3>
 {/if}
 
 <div class="crm-block crm-form-block crm-grant-form-block">
 
-  {if $action eq 8}
-      <div class="messages status no-popup">
+  {if $action eq 8} 
+      <div class="messages status">
              <p><div class="icon inform-icon"></div>&nbsp;
              {ts}Are you sure you want to delete this Grant?{/ts} {ts}This operation cannot be undone.{/ts}</p>
              <p>{include file="CRM/Grant/Form/Task.tpl"}</p>
       </div>
   {else}
 
-<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div> 	
 
-    <table class="form-layout-compressed">
-        {if $context eq 'standalone'}
+		<table class="form-layout-compressed">  
+		    {if $context eq 'standalone'}
                 {include file="CRM/Contact/Form/NewContact.tpl"}
             {/if}
-      <tr class="crm-grant-form-block-status_id">
-           <td class="label">{$form.status_id.label}</td>
-           <td>{$form.status_id.html}</td>
-      </tr>
-			<tr class="crm-grant-form-block-grant_rejected_reason_id grant_rejected_reason_id">
-			     <td class="label">{$form.grant_rejected_reason_id.label}</td>
-			     <td>{$form.grant_rejected_reason_id.html}</td>
+			<tr class="crm-grant-form-block-status_id">
+			     <td class="label">{$form.status_id.label}</td>
+			     <td>{$form.status_id.html}</td>
+			</tr>   
+			<tr class="crm-grant-form-block-grant_type_id">
+			     <td class="label">{$form.grant_type_id.label}</td>
+			     <td>{$form.grant_type_id.html}</td>
+			</tr>   
+			<tr class="crm-grant-form-block-amount_total">
+			     <td class="label">{$form.amount_total.label}</td>
+			     <td>{$form.amount_total.html}</td>
 			</tr>
-      <tr class="crm-grant-form-block-grant_type_id">
-           <td class="label">{$form.grant_type_id.label}</td>
-           <td>{$form.grant_type_id.html}</td>
-      </tr>
-			<tr class="crm-grant-form-block-grant_program_id">
-			     <td class="label">{$form.grant_program_id.label}</td>
-			     <td>{$form.grant_program_id.html}</td>
-			</tr>    
-      <tr class="crm-grant-form-block-amount_total">
-           <td class="label">{$form.amount_total.label}</td>
-           <td>{$form.amount_total.html}</td>
-      </tr>
-      <tr class="crm-grant-form-block-amount_requested">
-           <td class="label">{$form.amount_requested.label}</td>
-           <td>{$form.amount_requested.html}<br />
-                       <span class="description">{ts}Amount requested for grant in original currency (if different).{/ts}</span></td>
-            </tr>
-      <tr class="crm-grant-form-block-amount_granted">
-           <td class="label">{$form.amount_granted.label}</td>
-           <td>{$form.amount_granted.html}</td>
-            </tr>
+			<tr class="crm-grant-form-block-amount_requested">
+			     <td class="label">{$form.amount_requested.label}</td>
+			     <td>{$form.amount_requested.html}<br />
+                	     <span class="description">{ts}Amount requested for grant in original currency (if different).{/ts}</span></td>
+		        </tr>
+			<tr class="crm-grant-form-block-amount_granted">
+			     <td class="label">{$form.amount_granted.label}</td>
+			     <td>{$form.amount_granted.html}</td>
+		        </tr>
 
-      <tr class="crm-grant-form-block-application_received_date">
-           <td class="label">{$form.application_received_date.label}</td>
-        <td>
-            {if $hideCalendar neq true}
+			<tr class="crm-grant-form-block-application_received_date">
+			     <td class="label">{$form.application_received_date.label}</td>
+				<td>
+    				{if $hideCalendar neq true}
                         {include file="CRM/common/jcalendar.tpl" elementName=application_received_date}
                     {else}
                         {$form.application_received_date.html|crmDate}
                     {/if}
-        </td>
-      </tr>
-      <tr class="crm-grant-form-block-decision_date"><td class="label">{$form.decision_date.label}</td>
-      <td>{if $hideCalendar neq true}
+				</td>
+			</tr>
+			<tr class="crm-grant-form-block-decision_date"><td class="label">{$form.decision_date.label}</td>
+			<td>{if $hideCalendar neq true}
                     {include file="CRM/common/jcalendar.tpl" elementName=decision_date}
                 {else}
                     {$form.decision_date.html|crmDate}
                 {/if}
-      <br />
+			<br />
                 <span class="description">{ts}Date on which the grant decision was finalized.{/ts}</span></td></tr>
-      <tr class="crm-grant-form-block-money_transfer_date"><td class="label">{$form.money_transfer_date.label}</td>
-        <td>{if $hideCalendar neq true}
+			<tr class="crm-grant-form-block-money_transfer_date"><td class="label">{$form.money_transfer_date.label}</td>
+				<td>{if $hideCalendar neq true}
                         {include file="CRM/common/jcalendar.tpl" elementName=money_transfer_date}
                     {else}
                         {$form.money_transfer_date.html|crmDate}
                     {/if}<br />
                     <span class="description">{ts}Date on which the grant money was transferred.{/ts}</span></td></tr>
-		    
-			<tr class="crm-grant-form-block-financial_type">
-			    <td class="label">{$form.financial_type_id.label}</td>
-			    <td>
-			    {if !$financialType }
-			    	{capture assign=ftUrl}{crmURL p='civicrm/admin/financial/financialType' q="reset=1"}{/capture}
-				{ts 1=$ftUrl}There is no Financial Type configured.<a href='%1'> Click here</a> if you want to configure financial type for your site.{/ts}
-			    {else}
-				{$form.financial_type_id.html}
-			    {/if}
-			    </td>
-			</tr>
-      <tr class="crm-grant-form-block-grant_due_date"><td class="label">{$form.grant_due_date.label}</td>
-        <td>
-            {if $hideCalendar neq true}
+			<tr class="crm-grant-form-block-grant_due_date"><td class="label">{$form.grant_due_date.label}</td>
+				<td>
+				    {if $hideCalendar neq true}
                         {include file="CRM/common/jcalendar.tpl" elementName=grant_due_date}
                     {else}
                         {$form.grant_due_date.html|crmDate}
                     {/if}
-        </td>
-      </tr>
-      <tr class="crm-grant-form-block-grant_report_received"><td class="label">{$form.grant_report_received.label}</td><td>{$form.grant_report_received.html}</td></tr>
-      <tr class="crm-grant-form-block-rationale"><td class="label">{$form.rationale.label}</td><td>{$form.rationale.html}</td></tr>
-      <tr class="crm-grant-form-block-note">
-           <td class="label">{$form.note.label}</td>
-           <td>{$form.note.html}</td>
-      </tr>
+				</td>
+			</tr>
+			<tr class="crm-grant-form-block-grant_report_received"><td class="label">{$form.grant_report_received.label}</td><td>{$form.grant_report_received.html}</td></tr>
+			<tr class="crm-grant-form-block-rationale"><td class="label">{$form.rationale.label}</td><td>{$form.rationale.html}</td></tr>
+			<tr class="crm-grant-form-block-note">
+			     <td class="label">{$form.note.label}</td>
+			     <td>{$form.note.html}</td>
+			</tr>
 
-    </table>
-
+		</table>
+		
         <div id="customData" class="crm-grant-form-block-custom_data"></div>
         {*include custom data js file*}
         {include file="CRM/common/customData.tpl"}
@@ -146,56 +126,25 @@
 <script type="text/javascript">
     cj( function( ) {
         {/literal}
-        CRM.buildCustomData( '{$customDataType}' );
+        buildCustomData( '{$customDataType}' );
         {if $customDataSubType}
-        CRM.buildCustomData( '{$customDataType}', {$customDataSubType} );
+        buildCustomData( '{$customDataType}', {$customDataSubType} );
         {/if}
         {literal}
     });
 
     cj(function() {
-       cj().crmAccordions();
+       cj().crmaccordions(); 
     });
 </script>
 {/literal}
 
-    <div class="crm-grant-form-block-attachment">
-         {include file="CRM/Form/attachment.tpl"}
-    </div>
+		<div class="crm-grant-form-block-attachment">
+		     {include file="CRM/Form/attachment.tpl"}
+		</div>
 
    {/if}
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>
 
-{/if} {* closing of main custom data if *}
-
-
- <script type="text/javascript">
-    {literal}
-var total = 0;
-cj(".form-select").change(function(){
-cj(".form-select").each(function(){
-
-var name = cj(this).attr('id');
-    var customName = name.split('_');
-if ( customName[0] == 'custom' ) {
-   total += parseInt(cj('#'+name).val());
-}
-});
-});
-cj(document).ready(function(){
-if ( cj("#status_id option:selected").text() == 'Rejected') {
-  cj('.grant_rejected_reason_id').show();
-} else {
-  cj('.grant_rejected_reason_id').hide();
-}
-cj('#status_id').change(function(){
-if ( this.options[this.selectedIndex].text == 'Rejected' ) {
-  cj('.grant_rejected_reason_id').show();
-} else {
-  cj('.grant_rejected_reason_id').hide();
-}
-});
-});
-{/literal}
-</script>
+{/if} {* closing of main custom data if *} 
