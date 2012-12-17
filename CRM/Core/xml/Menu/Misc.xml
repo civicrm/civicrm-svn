@@ -88,12 +88,13 @@
   </item>
   <item>
      <path>civicrm/api/explorer</path>
-     <page_callback>CRM_Utils_REST::ajaxDoc</page_callback>
+     <page_callback>CRM_Admin_Page_APIExplorer</page_callback>
      <access_arguments>access CiviCRM</access_arguments>
   </item>
   <item>
      <path>civicrm/api/doc</path>
-     <page_callback>CRM_Utils_REST::APIDoc</page_callback>
+     <aapage_callback>CRM_Utils_REST::APIDoc</aapage_callback>
+     <page_callback>CRM_Admin_Page_APIDoc</page_callback>
      <access_arguments>access CiviCRM</access_arguments>
   </item>
   <item>
