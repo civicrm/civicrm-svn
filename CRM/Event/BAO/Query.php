@@ -44,8 +44,8 @@ class CRM_Event_BAO_Query {
     return $fields;
   }
 
-  static function &getParticipantFields() {
-    $fields = CRM_Event_BAO_Participant::importableFields('Individual', TRUE, TRUE);
+  static function &getParticipantFields($onlyParticipant = FALSE) {
+    $fields = CRM_Event_BAO_Participant::importableFields('Individual', TRUE, $onlyParticipant);
     return $fields;
   }
 
