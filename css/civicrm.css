@@ -2414,7 +2414,6 @@ div.grippie {
   background:transparent url("../i/icons/jquery-ui-52534D.png") no-repeat top right;
   float:left;
   text-indent: -10000px;
-  margin-right: 5px;
 }
 
 span.icon {
@@ -2463,7 +2462,7 @@ span.icon {
 
 .user-record-icon { background-position:-145px -98px; }
 
-.inform-icon { background-position: -16px -144px; }
+.inform-icon { background-position: -16px -144px; margin-right: 5px; }
 
 .dropdown-icon { background-position:-46px -32px; float:right;}
 
