@@ -69,10 +69,14 @@
 				if(tmp.styleSheet) {
 					if(is_new) { 
 						document.getElementsByTagName("head")[0].appendChild(tmp); 
-						tmp.styleSheet.cssText = opts.str; 
+						if(!tmp.styleSheet.disabled) {
+              tmp.styleSheet.cssText = opts.str;
+            }
 					}
 					else {
-						tmp.styleSheet.cssText = tmp.styleSheet.cssText + " " + opts.str; 
+						if(!tmp.styleSheet.disabled) {
+              tmp.styleSheet.cssText = tmp.styleSheet.cssText + " " + opts.str;
+            }
 					}
 				}
 				else {
