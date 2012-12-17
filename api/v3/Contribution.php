@@ -72,12 +72,12 @@ function civicrm_api3_contribution_create($params) {
     $ids['contribution'] = $params['id'];
   }
 
-  if(!empty($params['use_default_price_set']) && empty($params['id'] )){
-   $values['line_item'] = _civicrm_api3_contribution_createdefaultlineitem($params, $contribution);
+  if (!empty($params['use_default_price_set']) && empty($params['id'])) {
+   $values['line_item'] = _civicrm_api3_contribution_createdefaultlineitem($params);
   }
   $contribution = CRM_Contribute_BAO_Contribution::create($values, $ids);
 
-  if(is_a($contribution, 'CRM_Core_Error')) {
+  if (is_a($contribution, 'CRM_Core_Error')) {
     return civicrm_api3_create_error($contribution->_errors[0]['message']);
   } 
   _civicrm_api3_object_to_array($contribution, $contributeArray[$contribution->id]);
@@ -124,9 +124,9 @@ function _civicrm_api3_contribution_create_spec(&$params) {
 /*
  * Create a default contribution line item
  */
- function _civicrm_api3_contribution_createdefaultlineitem(&$params){
+ function _civicrm_api3_contribution_createdefaultlineitem(&$params) {
    $priceSetDetails = CRM_Price_BAO_Set::getDefaultPriceSet();
-   foreach ($priceSetDetails as $field => $values){
+   foreach ($priceSetDetails as $field => $values) {
      $priceFieldValueBAO = new CRM_Price_BAO_FieldValue();
      $priceFieldValueBAO->price_field_id = $values['priceFieldID'];
      $priceFieldValueBAO->selectAdd();
