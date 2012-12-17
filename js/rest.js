@@ -99,12 +99,10 @@ var CRM = CRM || {};
   };
 
   CRM.api = function(entity, action, params, options) {
-    params.entity = entity;
-    params.action = action.toLowerCase();
-    params.json = 1;
+    action = action.toLowerCase();
     var settings = defaults;
     // Default success handler
-    switch (params.action) {
+    switch (action) {
       case "update":
       case "create":
       case "setvalue":
@@ -121,11 +119,30 @@ var CRM = CRM || {};
         };
     }
     $.extend(settings, options);
+    var json = false;
+    for (var i in params) {
+      if (i.slice(0, 4) == 'api.' || typeof(params[i]) == 'Object') {
+        json = true;
+        break;
+      }
+    }
+    if (json) {
+      params = {
+        entity: entity,
+        action: action,
+        json: JSON.stringify(params)
+      };
+    }
+    else {
+      params.entity = entity;
+      params.action = action;
+      params.json = 1;
+    }
     $.ajax({
       url: settings.ajaxURL.indexOf('http') === 0 ? settings.ajaxURL : CRM.url(settings.ajaxURL),
       dataType: 'json',
       data: params,
-      type: params.action.indexOf('get') < 0 ? 'POST' : 'GET',
+      type: action.indexOf('get') < 0 ? 'POST' : 'GET',
       context:this,
       success: function(result) {
         settings.callBack.call(this, result, settings);
