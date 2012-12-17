@@ -267,7 +267,7 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
      if ($this->_action & CRM_Core_Action::EXPORT) {
        CRM_Batch_BAO_Batch::exportFinancialBatch($ids);
      } 
-     $activityTypes = CRM_Core_PseudoConstant::activityType(TRUE, FALSE, FALSE, 'name')
+     $activityTypes = CRM_Core_PseudoConstant::activityType(TRUE, FALSE, FALSE, 'name');
      //create activity. 
      $activityParams = array( 
        'activity_type_id' => array_search('Export of Financial Transactions Batch', $activityTypes), 
