@@ -109,9 +109,8 @@ class CRM_Grant_Form_GrantView extends CRM_Core_Form {
       $recentOther
     );
 
-    $attachment = CRM_Core_BAO_File::attachmentInfo('civicrm_grant',
-      $this->_id
-    );
+    list($attachment, $dontCare) =
+      CRM_Core_BAO_File::attachmentInfo('civicrm_grant', $this->_id);
     $this->assign('attachment', $attachment);
 
     $grantType = CRM_Core_DAO::getFieldValue("CRM_Grant_DAO_Grant", $this->_id, "grant_type_id");
