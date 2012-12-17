@@ -210,7 +210,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
     }
 
     if (CRM_Core_Permission::access('CiviEvent')) {
-      $this->_fields = array_merge(CRM_Event_BAO_Query::getParticipantFields(TRUE), $this->_fields);
+      $this->_fields = array_merge(CRM_Event_BAO_Query::getParticipantFields(), $this->_fields);
     }
 
     $this->_selectFields = array();
@@ -1121,7 +1121,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
     }
 
     if (CRM_Core_Permission::access('CiviEvent')) {
-      $participantFields = CRM_Event_BAO_Query::getParticipantFields(TRUE);
+      $participantFields = CRM_Event_BAO_Query::getParticipantFields();
       if ($participantFields) {
         unset($participantFields['external_identifier']);
         unset($participantFields['event_id']);
