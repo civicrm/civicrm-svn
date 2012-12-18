@@ -642,6 +642,7 @@ ORDER BY civicrm_address.is_primary DESC, address_id ASC";
 SELECT civicrm_address.id as address_id
 FROM civicrm_loc_block loc, civicrm_location_type ltype, civicrm_address, {$entityTable} ev
 WHERE ev.id = %1
+  AND loc.id = ev.loc_block_id
   AND civicrm_address.id IN (loc.address_id, loc.address_2_id)
   AND ltype.id = civicrm_address.location_type_id
 ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC, address_id ASC ";
