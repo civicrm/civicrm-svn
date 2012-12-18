@@ -940,6 +940,26 @@ SELECT  id
     return $fields;
   }
 
+  /**
+   * Get a list of fields which can be added to profiles
+   *
+   * @return array, multidimensional; e.g. $result['field_name']['label']
+   * @static
+   */
+  public static function getAvailableFieldsFlat() {
+    $fieldTree = self::getAvailableFields();
+    $result = array();
+    foreach ($fieldTree as $field_type => $fields) {
+      foreach ($fields as $field_name => $field) {
+        if (!isset($result[$field_name])) {
+          $field['field_type'] = $field_type;
+          $result[$field_name] = $field;
+        }
+      }
+    }
+    return $result;
+  }
+
   static function getContribBatchEntryFields() {
     if (self::$_contriBatchEntryFields === NULL) {
       self::$_contriBatchEntryFields = array(

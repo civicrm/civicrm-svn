@@ -67,6 +67,9 @@ class CRM_Core_BAO_UFFieldTest extends CiviUnitTestCase {
     $this->assertFalse(isset($fields['Contribution']['is_pay_later']));
     $this->assertFalse(isset($fields['Participant']['participant_role_id']));
     $this->assertFalse(isset($fields['Membership']['membership_type_id']));
+
+    // This behavior is not necessarily desirable, but it's the status quo
+    $this->assertEquals('first_name', $fields['Staff']['first_name']['name']);
   }
 
   /**
@@ -126,6 +129,43 @@ class CRM_Core_BAO_UFFieldTest extends CiviUnitTestCase {
     $this->assertFalse(isset($fields['Contribution']['is_pay_later']));
     $this->assertFalse(isset($fields['Participant']['participant_role_id']));
     $this->assertFalse(isset($fields['Membership']['membership_type_id']));
+
+    // This behavior is not necessarily desirable, but it's the status quo
+    $this->assertEquals('first_name', $fields['Staff']['first_name']['name']);
+  }
+
+  /**
+   * When omitting a GID, return a list of all fields.
+   */
+  public function testGetAvailableFlat() {
+    $fields = CRM_Core_BAO_UFField::getAvailableFieldsFlat();
+
+    // Make sure that each entity appears with at least one field
+    $this->assertEquals('Contact', $fields['do_not_sms']['field_type']);
+    $this->assertEquals('Contact', $fields['city']['field_type']);
+
+    $this->assertEquals('Individual', $fields['first_name']['field_type']);
+    $this->assertEquals('Individual', $fields['birth_date']['field_type']);
+
+    $this->assertEquals('Organization', $fields['organization_name']['field_type']);
+    $this->assertEquals('Organization', $fields['legal_name']['field_type']);
+
+    $this->assertEquals('Contribution', $fields['amount_level']['field_type']);
+    $this->assertEquals('Contribution', $fields['cancel_reason']['field_type']);
+
+    $this->assertEquals('Participant', $fields['participant_note']['field_type']);
+    $this->assertEquals('Participant', $fields['participant_role']['field_type']);
+
+    $this->assertEquals('Membership', $fields['join_date']['field_type']);
+    $this->assertEquals('Membership', $fields['membership_end_date']['field_type']);
+
+    $this->assertEquals('Activity', $fields['activity_date_time']['field_type']);
+    $this->assertEquals('Activity', $fields['activity_subject']['field_type']);
+
+    // Make sure that some of the blacklisted fields don't appear
+    $this->assertFalse(isset($fields['is_pay_later']));
+    $this->assertFalse(isset($fields['participant_role_id']));
+    $this->assertFalse(isset($fields['membership_type_id']));
   }
 
   /**
