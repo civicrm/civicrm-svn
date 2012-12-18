@@ -50,54 +50,57 @@ class CRM_Financial_Form_Search extends CRM_Core_Form {
   }
 
   public function buildQuickForm() {
-       
-    $this->add('text', 'title', ts('Batch Name'),
-      CRM_Core_DAO::getAttribute('CRM_Batch_DAO_Batch', 'title')
-    );
+    $attributes = CRM_Core_DAO::getAttribute('CRM_Batch_DAO_Batch');
+    $this->add('text', 'title', ts('Batch Name'), $attributes['title']));
+
     $this->add( 'select', 
                 'type_id', 
                 ts( 'Batch Type' ), 
-                array( ''=> ts( '- Select Batch Type -' ) ) + CRM_Contribute_PseudoConstant::accountOptionValues( 'batch_type' ) );
+                array( ''=> ts( '- select -' ) ) + CRM_Contribute_PseudoConstant::accountOptionValues( 'batch_type' ) );
     $this->add( 'select', 
                 'payment_instrument_id', 
                 ts( 'Payment Instrument' ), 
-                array( ''=> ts( '- Select Payment Instrument -' ) ) + CRM_Contribute_PseudoConstant::paymentInstrument( ),
+                array( ''=> ts( '- select -' ) ) + CRM_Contribute_PseudoConstant::paymentInstrument( ),
                 false );
     
-    $this->add('text', 'total', ts('Total Amount'), CRM_Core_DAO::getAttribute('CRM_Batch_DAO_Batch', 'total'));
+    $this->add('text', 'total', ts('Total Amount'), $attributes['total']);
     
-    $this->add('text', 'item_count', ts('Number of Transactions'), CRM_Core_DAO::getAttribute('CRM_Batch_DAO_Batch', 'item_count'));
+    $this->add('text', 'item_count', ts('Number of Transactions'), $attributes['item_count']);
     $this->add('text', 'sort_name', ts('Created By'), CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'sort_name'));
   
     $this->assign('elements', array('title', 'sort_name', 'type_id', 'close_date', 'open_date', 'payment_instrument_id', 'item_count', 'total'));
     $this->addElement('checkbox', 'toggleSelect', NULL, NULL);
-    $batchAction = array( 'Open' => ts( 'ReOpen Batch' ),
-                          'Closed' => ts( 'Close Batch' ),
-                          'Exported' => ts( 'Export Batch' ),
-                          );
+    $batchAction = array(
+      'Open' => ts('ReOpen Batch'),
+      'Closed' => ts('Close Batch'),
+      'Exported' => ts('Export Batch')
+    );
+
     if ($this->_batchStatus == 1) { 
       unset($batchAction['Open']); 
     }
     elseif ($this->_batchStatus == 2) { 
       unset($batchAction['Closed']); 
-    } 
-    $this->add( 'select', 
-                'batch_status', 
-                ts( 'Task' ), 
-                array( ''  => ts( '- actions -' )) + $batchAction);
-    $this->add('submit','submit', ts('Go'),   
-               array(
-                     'class' => 'form-submit',
-                     'id' => 'Go',
-                     ));
+    }
+
+    $this->add( 'select',
+      'batch_status',
+      ts( 'Task' ),
+      array( ''  => ts( '- actions -' )) + $batchAction);
+
+    $this->add('submit','submit', ts('Go'),
+      array(
+        'class' => 'form-submit',
+        'id' => 'Go'
+      ));
 
     $this->addButtons(
       array(
         array(
           'type' => 'refresh',
           'name' => ts('Search'),
-          'isDefault' => TRUE,
-        ),
+          'isDefault' => TRUE
+        )
       )
     );
 
