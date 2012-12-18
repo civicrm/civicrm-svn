@@ -158,19 +158,19 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
 
     // Log in using webtestLogin() method
     $this->webtestLogin();
-
+   
     // Go directly to the URL of the screen that you will be testing (New Event).
     $this->open($this->sboxPath . "civicrm/event/add?reset=1&action=add");
-
+   
     $eventTitle = 'My Free Meeting - ' . substr(sha1(rand()), 0, 7);
     $eventDescription = "Here is a description for this free meeting.";
     // Select "Free Meeting with Online Registration" template (id = 5).
     $templateID = 5;
-    $eventTypeID = 4;
+    $eventTypeID = 4; 
     $this->_testAddEventInfoFromTemplate($eventTitle, $eventDescription, $templateID, $eventTypeID);
-
-    $streetAddress = "100 Main Street";
-    $this->_testAddLocation($streetAddress);
+ 
+    $streetAddress = "100 Main Street"; 
+    $this->_testAddLocation($streetAddress); 
 
     // Go to Fees tab and check that Paid Event is false (No)
     $this->click("link=Fees");
@@ -223,20 +223,20 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
     // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
     // button at the end of this page to show up, to make sure it's fully loaded.
     $this->waitForElementPresent("_qf_EventInfo_upload-bottom");
-
+    
     // Let's start filling the form with values.
     // Select event template. Use option value, not label - since labels can be translated and test would fail
-    $this->select("template_id", "value={$templateID}");
+    $this->select("template_id", "value={$templateID}"); 
 
     // Wait for event type to be filled in (since page reloads)
     $this->waitForPageToLoad('30000');
-    $this->verifySelectedValue("event_type_id", $eventTypeID);
+    $this->verifySelectedValue("event_type_id", $eventTypeID); 
 
     // Attendee role s/b selected now.
     $this->verifySelectedValue("default_role_id", "1");
 
     // Enter Event Title, Summary and Description
-    $this->type("title", $eventTitle);
+    $this->type("title", $eventTitle); 
     $this->type("summary", "This is a great conference. Sign up now!");
 
     // Type description in ckEditor (fieldname, text to type, editor)
@@ -249,7 +249,7 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
 
     $this->type("max_participants", "50");
     $this->click("is_map");
-    $this->click("_qf_EventInfo_upload-bottom");
+    $this->click("_qf_EventInfo_upload-bottom"); 
   }
 
   function _testAddLocation($streetAddress) {
@@ -278,16 +278,15 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("_qf_Fee_upload-bottom");
     $this->click("CIVICRM_QFID_1_2");
     $this->click("xpath=//tr[@class='crm-event-manage-fee-form-block-payment_processor']/td[2]/label[text()='$processorName']");
+    $this->select("financial_type_id", "value=4");
     if ($priceSet) {
       // get one - TBD
     }
     else {
       $this->type("label_1", "Member");
       $this->type("value_1", "250.00");
-      $this->select("financial_type_id_1", "value=1");
       $this->type("label_2", "Non-member");
       $this->type("value_2", "325.00");
-      $this->select("financial_type_id_2", "value=1");
       $this->click("CIVICRM_QFID_1_6");
     }
 
@@ -326,10 +325,10 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
     }
 
     $this->fillRichTextField("intro_text", $registerIntro);
-
+    
     // enable confirmation email
     $this->click("CIVICRM_QFID_1_2");
-    $this->type("confirm_from_name", "Jane Doe");
+    $this->type("confirm_from_name", "Jane Doe"); 
     $this->type("confirm_from_email", "jane.doe@example.org");
 
     $this->click("_qf_Registration_upload-bottom");
@@ -368,11 +367,12 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
       $this->open($this->sboxPath . "civicrm/logout?reset=1");
       $this->waitForPageToLoad('30000');
     }
+   
     $this->open($registerUrl);
 
     $this->select("additional_participants", "value=" . $numberRegistrations);
     $this->type("email-Primary", "smith" . substr(sha1(rand()), 0, 7) . "@example.org");
-
+   
     $this->select("credit_card_type", "value=Visa");
     $this->type("credit_card_number", "4111111111111111");
     $this->type("cvv2", "000");
