@@ -51,16 +51,16 @@ class CRM_Core_BAO_UFFieldTest extends CiviUnitTestCase {
     $this->assertEquals('organization_name', $fields['Organization']['organization_name']['name']);
     $this->assertEquals('legal_name', $fields['Organization']['legal_name']['name']);
 
-    $this->assertFalse(isset($fields['Contribution']['amount_level']));
+    $this->assertFalse(isset($fields['Contribution']['amount_level'])); // already used
     $this->assertEquals('cancel_reason', $fields['Contribution']['cancel_reason']['name']);
 
     $this->assertFalse(isset($fields['Participant']['participant_note'])); // already used
     $this->assertEquals('participant_role', $fields['Participant']['participant_role']['name']);
 
-    $this->assertFalse(isset($fields['Membership']['join_date']));
+    $this->assertFalse(isset($fields['Membership']['join_date'])); // already used
     $this->assertEquals('end_date', $fields['Membership']['membership_end_date']['name']);
 
-    $this->assertFalse(isset($fields['Activity']['activity_date_time']));
+    $this->assertFalse(isset($fields['Activity']['activity_date_time'])); // already used
     $this->assertEquals('subject', $fields['Activity']['activity_subject']['name']);
 
     // Make sure that some of the blacklisted fields don't appear
@@ -132,12 +132,12 @@ class CRM_Core_BAO_UFFieldTest extends CiviUnitTestCase {
    * Make sure that the existence of a profile doesn't break listing all fields
    *
   public function testGetAvailable_mixed() {
-    FIXME
+    // FIXME
     $this->testGetAvailable_full();
-    $this->testGetAvailable_byGid();
+    // $this->testGetAvailable_byGid();
     $this->testGetAvailable_full();
-    $this->testGetAvailable_byGid();
-  }*/
+    // $this->testGetAvailable_byGid();
+  } // */
 
   /**
    * @param array $fields list of fields to include in the profile
