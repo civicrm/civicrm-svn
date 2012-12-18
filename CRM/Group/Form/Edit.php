@@ -85,7 +85,8 @@ class CRM_Group_Form_Edit extends CRM_Core_Form {
    *
    * @return void
    * @acess protected
-   */ function preProcess() {
+   */
+  function preProcess() {
     $this->_id = $this->get('id');
 
     if ($this->_id) {
@@ -146,12 +147,12 @@ class CRM_Group_Form_Edit extends CRM_Core_Form {
   }
 
   /*
-     * This function sets the default values for the form. LocationType that in edit/view mode
-     * the default values are retrieved from the database
-     *
-     * @access public
-     * @return None
-     */
+   * This function sets the default values for the form. LocationType that in edit/view mode
+   * the default values are retrieved from the database
+   *
+   * @access public
+   * @return None
+   */
   function setDefaultValues() {
     $defaults = array();
 
@@ -360,8 +361,7 @@ class CRM_Group_Form_Edit extends CRM_Core_Form {
    * @static
    * @access public
    */
-  static
-  function formRule($fields, $fileParams, $options) {
+  static function formRule($fields, $fileParams, $options) {
     $errors = array();
 
     $doParentCheck = $options['doParentCheck'];

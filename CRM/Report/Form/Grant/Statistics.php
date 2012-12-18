@@ -40,7 +40,8 @@ class CRM_Report_Form_Grant_Statistics extends CRM_Report_Form {
 
   protected $_customGroupExtends = array('Grant');
 
-  protected $_add2groupSupported = FALSE; function __construct() {
+  protected $_add2groupSupported = FALSE;
+  function __construct() {
     $this->_columns = array(
       'civicrm_grant' =>
       array(
@@ -555,8 +556,7 @@ SELECT COUNT({$this->_aliases['civicrm_grant']}.id) as count ,
     }
   }
 
-  static
-  function getStatistics(&$grantStatistics, $fieldValue, $values,
+  static function getStatistics(&$grantStatistics, $fieldValue, $values,
     $awardedGrants, $awardedGrantsAmount, $customData = FALSE
   ) {
     if (!$awardedGrantsAmount) {

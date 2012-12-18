@@ -50,7 +50,8 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
   );
   protected $_yearStatisticsFrom = '';
 
-  protected $_yearStatisticsTo = ''; function __construct() {
+  protected $_yearStatisticsTo = '';
+  function __construct() {
     $yearsInPast = 4;
     $date        = CRM_Core_SelectValues::date('custom', NULL, $yearsInPast, 0);
     $count       = $date['maxYear'];
@@ -468,8 +469,7 @@ class CRM_Report_Form_Contribute_History extends CRM_Report_Form {
     return $statistics;
   }
 
-  static
-  function formRule($fields, $files, $self) {
+  static function formRule($fields, $files, $self) {
     $errors = array();
     if (CRM_Utils_Array::value('this_year_value', $fields) &&
       CRM_Utils_Array::value('other_year_value', $fields) &&

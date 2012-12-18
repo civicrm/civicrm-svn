@@ -61,8 +61,7 @@ class CRM_Contact_Task {
    */
   static $_optionalTasks = NULL;
 
-  static
-  function initTasks() {
+  static function initTasks() {
     if (!self::$_tasks) {
       self::$_tasks = array(
         1 => array('title' => ts('Add Contacts to Group'),
@@ -250,8 +249,7 @@ class CRM_Contact_Task {
    * @static
    * @access public
    */
-  static
-  function &taskTitles() {
+  static function &taskTitles() {
     self::initTasks();
 
     $titles = array();
@@ -294,8 +292,7 @@ class CRM_Contact_Task {
    * @return array set of tasks that are valid for the user
    * @access public
    */
-    static function &permissionedTaskTitles($permission, $deletedContacts = false, $financialBatchStatus = false )
-    {
+  static function &permissionedTaskTitles($permission, $deletedContacts = false, $financialBatchStatus = false ) {
     self::initTasks();
     $tasks = array();
     if ($deletedContacts) {
@@ -347,16 +344,14 @@ class CRM_Contact_Task {
    * @static
    * @access public
    */
-  static
-  function &optionalTaskTitle() {
+  static function &optionalTaskTitle() {
     $tasks = array(
       14 => self::$_tasks[14]['title'],
     );
     return $tasks;
   }
 
-  static
-  function getTask($value) {
+  static function getTask($value) {
     self::initTasks();
 
     if (!CRM_Utils_Array::value($value, self::$_tasks)) {

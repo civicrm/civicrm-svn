@@ -39,7 +39,9 @@ class CRM_Report_Form_Grant_Detail extends CRM_Report_Form {
   protected $_addressField = FALSE;
 
   protected $_customGroupExtends = array(
-    'Grant'); function __construct() {
+    'Grant');
+
+  function __construct() {
     $this->_columns = array(
       'civicrm_contact' =>
       array(

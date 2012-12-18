@@ -57,7 +57,8 @@ class CRM_UF_Page_Group extends CRM_Core_Page {
    *
    * @return array $_actionLinks
    *
-   */ function &actionLinks() {
+   */
+  function &actionLinks() {
     // check if variable _actionsLinks is populated
     if (!self::$_actionLinks) {
       // helper variable for nicer formatting
@@ -409,8 +410,7 @@ class CRM_UF_Page_Group extends CRM_Core_Page {
     $session->pushUserContext($url);
   }
 
-  static
-  function extractGroupTypes($groupType) {
+  static function extractGroupTypes($groupType) {
     $returnGroupTypes = array();
     if (!$groupType) {
       return $returnGroupTypes;

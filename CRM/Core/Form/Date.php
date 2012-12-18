@@ -47,8 +47,7 @@ Class CRM_Core_Form_Date {
    * @static
    * @access public
    */
-  static
-  function buildAllowedDateFormats(&$form) {
+  static function buildAllowedDateFormats(&$form) {
 
     $dateOptions = array();
 
@@ -78,8 +77,7 @@ Class CRM_Core_Form_Date {
    * @static
    * @access public
    */
-  static
-  function buildDateRange(&$form, $fieldName, $count = 1, $from = '_from', $to = '_to', $fromLabel = 'From:', $required = FALSE, $addReportFilters = TRUE, $dateFormat = 'searchDate') {
+  static function buildDateRange(&$form, $fieldName, $count = 1, $from = '_from', $to = '_to', $fromLabel = 'From:', $required = FALSE, $addReportFilters = TRUE, $dateFormat = 'searchDate') {
     $selector = array('' => ts('- any -'),
       0 => ts('Choose Date Range'),
       'this.year' => ts('This Year'),

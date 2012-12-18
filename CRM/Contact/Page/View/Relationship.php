@@ -58,7 +58,8 @@ class CRM_Contact_Page_View_Relationship extends CRM_Core_Page {
    * @return void
    *
    * @access public
-   */ function view() {
+   */
+  function view() {
     $viewRelationship = CRM_Contact_BAO_Relationship::getRelationship($this->_contactId, NULL, NULL, NULL, $this->_id);
     //To check whether selected contact is a contact_id_a in
     //relationship type 'a_b' in relationship table, if yes then
@@ -305,8 +306,7 @@ class CRM_Contact_Page_View_Relationship extends CRM_Core_Page {
    * @return array (reference) of action links
    * @static
    */
-  static
-  function &links() {
+  static function &links() {
     if (!(self::$_links)) {
       $deleteExtra  = ts('Are you sure you want to delete this relationship?');
       $disableExtra = ts('Are you sure you want to disable this relationship?');
