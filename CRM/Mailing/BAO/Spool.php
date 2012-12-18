@@ -61,7 +61,6 @@ class CRM_Mailing_BAO_Spool extends CRM_Mailing_DAO_Spool {
    * @access public
    */
   function send($recipient, $headers, $body, $job_id = null) {
-
     $headerStr = array();
     foreach ($headers as $name => $value) {
       $headerStr[] = "$name: $value";
@@ -87,11 +86,11 @@ class CRM_Mailing_BAO_Spool extends CRM_Mailing_DAO_Spool {
       $params['name'] = $headers['Subject'];
       $ids = array();
       $mailing = CRM_Mailing_BAO_Mailing::create($params, $ids);
-      
+
       if ( empty( $mailing ) || is_a( $mailing, 'CRM_Core_Error' ) ) {
         return PEAR::raiseError( 'Unable to create spooled mailing.' );
       }
-    
+
       $job = new CRM_Mailing_BAO_Job();
       $job->is_test = 0; // if set to 1 it doesn't show in the UI
       $job->status = 'Complete';
@@ -118,7 +117,7 @@ class CRM_Mailing_BAO_Spool extends CRM_Mailing_DAO_Spool {
         $recipient = implode( ';', $recipient );
       }
     }
-    
+
     $session = CRM_Core_Session::singleton();
 
     $params = array(

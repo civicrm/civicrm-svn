@@ -516,9 +516,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
         self::$_mail = new CRM_Mailing_BAO_Spool();
       }
       elseif ($mailingInfo['outBound_option'] == CRM_Mailing_Config::OUTBOUND_OPTION_SMTP) {
-        if ($mailingInfo['smtpServer'] == '' ||
-          !$mailingInfo['smtpServer']
-        ) {
+        if ($mailingInfo['smtpServer'] == '' || !$mailingInfo['smtpServer']) {
           CRM_Core_Error::fatal(ts('There is no valid smtp server setting. Click <a href=\'%1\'>Administer CiviCRM >> Global Settings</a> to set the SMTP Server.', array(1 => CRM_Utils_System::url('civicrm/admin/setting', 'reset=1'))));
         }
 

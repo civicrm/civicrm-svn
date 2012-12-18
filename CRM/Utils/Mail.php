@@ -118,17 +118,17 @@ class CRM_Utils_Mail {
     }
 
     //make sure we has to have space, CRM-6977
-    foreach (array(
-      'From', 'To', 'Cc', 'Bcc', 'Reply-To', 'Return-Path') as $fld) {
+    foreach (array('From', 'To', 'Cc', 'Bcc', 'Reply-To', 'Return-Path') as $fld) {
       if (isset($headers[$fld])) {
-      $headers[$fld] = str_replace('"<', '" <', $headers[$fld]);
-    }
+        $headers[$fld] = str_replace('"<', '" <', $headers[$fld]);
+      }
     }
 
     // quote FROM, if comma is detected AND is not already quoted. CRM-7053
     if (strpos($headers['From'], ',') !== FALSE) {
       $from = explode(' <', $headers['From']);
-      $headers['From'] = self::formatRFC822Email($from[0],
+      $headers['From'] = self::formatRFC822Email(
+        $from[0],
         substr(trim($from[1]), 0, -1),
         TRUE
       );
@@ -146,7 +146,8 @@ class CRM_Utils_Mail {
 
     if (!empty($attachments)) {
       foreach ($attachments as $fileID => $attach) {
-        $msg->addAttachment($attach['fullPath'],
+        $msg->addAttachment(
+          $attach['fullPath'],
           $attach['mime_type'],
           $attach['cleanName']
         );
