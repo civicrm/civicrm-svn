@@ -325,9 +325,4 @@
      <access_arguments>access CiviCRM</access_arguments>
      <page_type>3</page_type>
 </item>
-  <item>
-    <path>civicrm/contact/view/contribution/editpay</path>
-    <title>Edit Payment</title>
-    <page_callback>CRM_Contribute_Form_EditPayment</page_callback>
-  </item>
 </menu>

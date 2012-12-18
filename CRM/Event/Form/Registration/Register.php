@@ -310,7 +310,6 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
     if (!empty($getDefaults)) {
       $this->_defaults = array_merge($this->_defaults, $getDefaults);
     }
-    $this->_defaults['initial_amount'] = CRM_Utils_Array::value('min_initial_amount', $this->_values['event']);
 
     return $this->_defaults;
   }
@@ -442,7 +441,6 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
     if (CRM_Utils_Array::value('is_pay_later', $this->_values['event']) &&
       ($this->_allowConfirmation || (!$this->_requireApproval && !$this->_allowWaitlist))
     ) {
-      $this->assign('initialPayment', CRM_Utils_Array::value('is_partial_payment', $this->_values['event']));
       $pps[0] = $this->_values['event']['pay_later_text'];
     }
 
@@ -951,7 +949,6 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
         }
       }
     }
-    CRM_Price_BAO_Field::initialPayValidation( $fields, $files, $self, $errors, 'event');
     return empty($errors) ? TRUE : $errors;
   }
 

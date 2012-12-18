@@ -107,7 +107,6 @@
             {/if}
             {if $member_is_test} {ts}(test){/ts}{/if}<br />
             <span class="description">{ts}Select Membership Organization and then Membership Type.{/ts}</span>
-{include file="CRM/Price/Form/InitialPayment.tpl" context="standalone" extends="membership"}
           </td>
         </tr>
         <tr id="maxRelated" class="crm-membership-form-block-max_related">

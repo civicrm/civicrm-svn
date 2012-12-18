@@ -75,20 +75,7 @@
           	       <td>{$form.is_partial_payment.html}
 		 </tr>
 
-		 <tr id='partialPaymentOptions'><td>&nbsp;</td>
-	             <td>
-		     <table class='form-layout'>
-		            <tr class="crm-contribution-contributionpage-amount-form-block-initial_amount_label"><th scope="row" class="label">{$form.initial_amount_label.label} <span class="marker" title="This field is required.">*</span> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contribution_page' field='initial_amount_label' id=$contributionPageID}{/if}</th>
-                            <td>{$form.initial_amount_label.html|crmReplace:class:big}<br /></td></tr> 
-  	                    
-			    <tr class="crm-contribution-contributionpage-amount-form-block-min_initial_amount"><th scope="row" class="label">{$form.min_initial_amount.label} <span class="marker" title="This field is required.">*</span> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contribution_page' field='min_initial_amount' id=$contributionPageID}{/if}</th>
-                            <td>{$form.min_initial_amount.html|crmReplace:class:big}<br /></td></tr> 
-		            
-			    <tr class="crm-contribution-contributionpage-amount-form-block-initial_amount_help_text"><th scope="row" class="label">{$form.initial_amount_help_text.label} <span class="marker" title="This field is required.">*</span> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contribution_page' field='initial_amount_help_text' id=$contributionPageID}{/if}</th>
-                            <td>{$form.initial_amount_help_text.html|crmReplace:class:big}<br /></td></tr> 
-                   </table>
-	           </td>
-	        </tr>
+
             </table>
             </td>
         </tr>

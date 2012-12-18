@@ -146,19 +146,6 @@ SELECT id
     );
     
     //add partial payment options
-    $this->addElement('checkbox', 'is_partial_payment', ts('Enable partial payment option?'), NULL);
-    $this->addElement('text', 'initial_amount_label', ts( 'Initial Amount label' ),  
-      CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_ContributionPage', 'initial_amount_label' ),
-      FALSE
-    );
-    $this->addElement('textarea', 'initial_amount_help_text', ts( 'Initial Amount Help' ),  
-      CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_ContributionPage', 'initial_amount_help_text' ),
-      FALSE
-    );
-    $this->addElement('text', 'min_initial_amount', ts( 'Minimum Initial Amount ($0.00 or more)' ),  
-      CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_ContributionPage', 'min_initial_amount' ),
-      FALSE
-    );
 
     // add price set fields
     $price = CRM_Price_BAO_Set::getAssoc(FALSE, 'CiviContribute');

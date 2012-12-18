@@ -141,11 +141,12 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
     $this->_lineItems = array();
     if ($this->_id) {
       if (empty($this->_compId)) {
-        $lineItem = CRM_Price_BAO_LineItem::getLineItems($this->_id, 'contribution', 1);
+        $lineItem = CRM_Price_BAO_LineItem::getLineItems($this->_id, 'contribution');
       }
       else {
         $this->assign('compId', $this->_compId);
         $lineItem = CRM_Price_BAO_LineItem::getLineItems($this->_compId);
+
       }
       empty($lineItem) ? NULL : $this->_lineItems[] = $lineItem;
     }
@@ -545,30 +546,6 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
       }
 
       $lineTotal = CRM_Utils_Array::value(0, $lineTotal);
-      end($txrnLineTotal);
-      $maxTrxn = key($txrnLineTotal);
-      if (!empty($maxTrxn)) {
-        $paymentInstrument = CRM_Contribute_PseudoConstant::paymentInstrument();
-        $payments = CRM_Core_BAO_FinancialTrxn::getPayments($maxTrxn);
-        foreach ($payments as $key => $value) {
-          $trxnParams['id'] = $value['financial_trxn_id'];
-          $trxn = CRM_Core_BAO_FinancialTrxn::retrieve($trxnParams, CRM_Core_DAO::$_nullArray);
-          $pricefieldTotal['trxn'][$trxn->id]['trxn_total'] = $value['amount'];
-          $pricefieldTotal['trxn'][$trxn->id]['trxn_date'] = $trxn->trxn_date;
-          if (!empty($this->_values['payment_instrument_id'])) {
-            $pricefieldTotal['trxn'][$trxn->id]['trxn_type'] = $paymentInstrument[$this->_values['payment_instrument_id']]; 
-          }
-          $pricefieldTotal['trxn'][$trxn->id]['status'] = CRM_Core_OptionGroup::getLabel('financial_item_status', $trxn->status_id);
-        }
-
-        $pricefieldTotal['lineItems'] = $lineItemTotal;
-        $pricefieldTotal['total'] = 0;
-        foreach ($pricefieldTotal['lineItems'] as $key => $value) {
-          $pricefieldTotal['total'] += $value;
-        }
-        $this->assign('pricefieldTotal', $pricefieldTotal);
-      }
-
       if (empty($this->_lineItems)) {
         $element = $this->addElement('text', 'paid', 'Paid', array(
           'READONLY' => TRUE,
@@ -591,15 +568,10 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
           'price' => $owingAmount,
           'size' => 4
         ));
-        $this->addElement('checkbox', 'pay_full', ts('Pay Full'), '', array('class' => 'payfull'));
-        $this->addElement('text', 'initial_amount', 'Amount of Current Payment Contribution Total', array(
-          'size' => 4
-        ));
       }
 
       $this->addElement('checkbox', 'ch_price', ts('Send Receipt?'));
-    }
-    $this->addElement('text', 'initial_amount', 'Payment Amount', array('size' => 4));
+    } 
 
     if ($this->_action & CRM_Core_Action::DELETE) {
       $this->addButtons(array(
@@ -913,7 +885,6 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
         $errors['financial_type_id'] .= "'Expense Account is' is not configured for this Financial Type";
       }
     }
-    CRM_Price_BAO_Field::initialPayValidation($fields, $files, $self, $errors);
     return $errors;
   }
 

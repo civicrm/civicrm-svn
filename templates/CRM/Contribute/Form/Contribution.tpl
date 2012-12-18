@@ -86,7 +86,6 @@
       {/if} {help id="id-financial_type"}
       </td>
     </tr>
-
     {if $action eq 2 and $lineItem and !$defaultContribution}
     <tr>
       <td class="label">{ts}Contribution Amount{/ts}</td>
@@ -108,47 +107,6 @@
       </td>
     </tr>
 
-      {if !$lineItem and $action eq 2}
-      <tr class="crm-contribution-form-block-total_amount">
-        <td class="label">{$form.paid.label}</td>
-        <td {$valueStyle}>{$form.currency.html|crmReplace:class:eight}&nbsp;{$form.paid.html}</td>
-      </tr>
-      <tr class="crm-contribution-form-block-total_amount">
-        <td class="label">{$form.owing.label}</td>
-        <td {$valueStyle}>{$form.currency.html|crmReplace:class:eight}&nbsp;{$form.owing.html}</td>
-      </tr>
-      <tr class="crm-contribution-form-block-total_amount">
-        <td class="label">{$form.initial_amount.label} </td>
-        <td {$valueStyle}>{$form.currency.html|crmReplace:class:eight}&nbsp;{$form.initial_amount.html} &nbsp;{$form.pay_full.html}{$form.pay_full.label} </td>
-      </tr>
-      <tr  class="crm-contribution-form-block-total_amount">
-        <td class="label"><label for="unallocate">Unallocated Amount</lable></td>
-        <td class = 'unallocate'></td>
-
-        {literal}
-          <script type="text/javascript">
-            cj(function(){
-              cj('#pay_full').click( function(){
-                if(cj(this).attr('checked')){
-                  cj('#initial_amount').val(cj('#initial_amount').attr('price'));
-                  var owing = cj('#owing').val();
-                  var init_amount =  cj('#initial_amount').val();
-                  cj('td.unallocate').text(parseFloat(owing - init_amount).toFixed(2));
-                }else{
-                  cj('#initial_amount').val('');
-                  cj('td.unallocate').text('');
-                }
-              });
-              cj('#initial_amount').blur( function(){
-                var owing = cj('#owing').val();
-                var init_amount =  cj('#initial_amount').val();
-                cj('td.unallocate').text(parseFloat(owing - init_amount).toFixed(2));
-              });					  
-            });
-          </script>
-        {/literal}
-      </tr>
-      {/if}
       {if $buildRecurBlock && !$ppID}
       <tr id='recurringPaymentBlock' class='hiddenElement'>
         <td></td>
@@ -274,42 +232,6 @@
       </td>
     </tr>
     {/if}
-    {if !empty($pricefieldTotal)}
-    <tr>
-      <td>{ts}Payment(s){/ts}</td>
-      <td>
-        <table class="selector">
-          <thead class="sticky">
-          <tr>
-            <th scope="col">{ts}Received{/ts}</th>
-            <th scope="col">{ts}Paid By{/ts}</th>
-            <th scope="col">{ts}Amount{/ts}</th>
-            <th scope="col">{ts}Payment Status{/ts}</th>
-            <th scope="col">{ts}Distributed Payment{/ts}</th>
-            <th scope="col">{ts}Actions{/ts}</th>
-          </tr>
-          </thead>
-          {foreach from=$pricefieldTotal.trxn item=element key=keys}
-            <tr class="{cycle values="odd-row,even-row"}">
-              <td>{$element.trxn_date|crmDate}</td>
-              <td>{$element.trxn_type}</td>
-              <td>{$element.trxn_total|crmMoney}</td>
-              <td>{$element.status}</td>
-              <td></td>
-            <td>
-              {if $compId}
-                <a href="{crmURL p='civicrm/contact/view/contribution/editpay' q="reset=1&id=$contribID&cid=$contactId&fid=$keys&compId=$compId&action=view"}">{ts}View{/ts}</a> /
-                <a href="{crmURL p='civicrm/contact/view/contribution/editpay' q="reset=1&id=$contribID&cid=$contactId&fid=$keys&compId=$compId&action=update"}">{ts}Edit{/ts}</a></td>
-                {else}
-                <a href="{crmURL p='civicrm/contact/view/contribution/editpay' q="reset=1&id=$contribID&cid=$contactId&fid=$keys&&action=view"}">{ts}View{/ts}</a> /
-                <a href="{crmURL p='civicrm/contact/view/contribution/editpay' q="reset=1&id=$contribID&cid=$contactId&fid=$keys&action=update"}">{ts}Edit{/ts}</a></td>
-              {/if}
-            </tr>
-          {/foreach}
-        </table>
-      </td>
-    </tr>
-    {/if}
   </table>
     {if !$contributionMode}
     <div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-processed crm-accordion-open" id="submitPayment_Information">
@@ -317,11 +239,6 @@
         <div class="icon crm-accordion-pointer"></div>
         {ts}Submit a Payment{/ts}
       </div>
-      {if $action eq 1}
-      <div class="crm-accordion-body" id="initialPayment">
-      {include file="CRM/Price/Form/InitialPayment.tpl" extends="Contribution"}
-        <div class="spacer"></div>
-      {/if}
       <table class="form-layout-compressed" >
         <tr class="crm-contribution-form-block-receive_date">
           <td class="label">{$form.receive_date.label}</td>

@@ -258,9 +258,6 @@
 
       {* Fee block (EventFees.tpl) is injected here when an event is selected. *}
         <div id="feeBlock"></div>
-	     <fieldset class = 'initial-payment'>
-	     {include file="CRM/Price/Form/InitialPayment.tpl" extends="Contribution"}
-	 </fieldset>
         <fieldset>
           <table class="form-layout">
             <tr class="crm-participant-form-block-note">

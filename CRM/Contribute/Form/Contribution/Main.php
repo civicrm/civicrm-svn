@@ -1124,7 +1124,6 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
       }
     }
 
-    CRM_Price_BAO_Field::initialPayValidation( $fields, $files, $self, $errors);
     // also return if paylater mode
     if (CRM_Utils_Array::value('payment_processor', $fields) == 0) {
       return empty($errors) ? TRUE : $errors;

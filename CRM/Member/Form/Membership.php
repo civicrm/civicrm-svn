@@ -1004,9 +1004,6 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
 
     CRM_Financial_BAO_FinancialAccount::financialAccountValidation($params, $errors);
     
-    if (CRM_Utils_Array::value('int_amount', $params)) {
-      CRM_Price_BAO_Field::initialPayValidation($params, $files, $self, $errors);
-    }
 
     return empty($errors) ? TRUE : $errors;
   }
@@ -1246,9 +1243,6 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       $params['lineItems'] = $lineItem;
       $params['processPriceSet'] = TRUE;
     }
-    //crm_core_error::debug('params', $params );
-    //crm_core_error::debug('formValue', $formValues );
-    //exit;
     $createdMemberships = array();
     if ($this->_mode) {
       if (empty($formValues['total_amount']) && !$priceSetId) {

@@ -274,23 +274,6 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
       FALSE
     );
 
-    //partial payment options
-    $this->addElement('checkbox', 'is_partial_payment', ts('Enable partial payment option?'), NULL,
-      array('onclick' => "return showHideByValue('is_partial_payment','','partialPaymentOptions','block','radio',false);")
-    );
-
-    $this->addElement('text', 'initial_amount_label', ts( 'Initial Amount Label' ),
-      CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_ContributionPage', 'initial_amount_label' ),
-      false );
-
-    $this->addElement('textarea', 'initial_amount_help_text', ts( 'Initial Amount Help' ),
-      CRM_Core_DAO::getAttribute( 'CRM_Event_DAO_Event', 'initial_amount_help_text' ),
-      false );
-
-    $this->addElement('text', 'min_initial_amount', ts( 'Minimum Initial Amount ($0.00 or more)' ),
-      CRM_Core_DAO::getAttribute( 'CRM_Event_DAO_Event', 'min_initial_amount' ),
-      false );
-
     $this->add('text', 'fee_label', ts('Fee Label'));
 
     $price = CRM_Price_BAO_Set::getAssoc(FALSE, 'CiviEvent');

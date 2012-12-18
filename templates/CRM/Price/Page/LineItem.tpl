@@ -34,117 +34,30 @@
       <strong>{ts}Participant {$priceset+1}{/ts}</strong> {$part.$priceset.info}
     {/if}
     <table>
-      <tr class="columnheader">
-        <th>{ts}Item{/ts}</th>
-        {if $context EQ "Membership"}
-          <th class="right">{ts}Fee{/ts}</th>
-        {else}
-          <th class="right">{ts}Qty{/ts}</th>
-          <th class="right">{ts}Unit Price{/ts}</th>
-          <th class="right">{ts}Total Price{/ts}</th>
-          {if $context NEQ "Event"}
-            <th class="right">{ts}Paid{/ts}</th>
-            <th class="right">{ts}Owing{/ts}</th>
-            {if $action eq 2}
-              <th class="right">{ts}Current Payment{/ts}</th>
-            {/if}
-          {/if}
-        {/if}
-        {if $pricesetFieldsCount}
-          <th class="right">{ts}Total Participants{/ts}</th>
-        {/if}
-      </tr>
-
-      {foreach from=$value item=line}
-        <tr>
-          <td>
-            {if $line.html_type eq 'Text'}{$line.label}{else}{$line.field_title} - {$line.label}{/if} {if $line.description}<div class="description">{$line.description}</div>{/if}
-          </td>
-          {if $context NEQ "Membership"}
-            <td class="right">{$line.qty}</td>
-            <td class="right">{$line.unit_price|crmMoney}</td>
-          {/if}
-          <td class="right">
-            {$line.line_total|crmMoney}
-          </td>
-          {if $context NEQ "Event"}
-            {if $pricesetFieldsCount}
-              <td class="right">{$line.participant_count}</td>
-            {/if}
-            <td class="right">
-              {$pricefieldTotal.lineItems[$line.price_field_value_id]|crmMoney}
-            </td>
-            <td class="right">
-              {assign var="fieldTotal" value= $line.line_total-$pricefieldTotal.lineItems[$line.price_field_value_id]}{$fieldTotal|crmMoney}
-            </td>
-            {if $action eq 2}
-              <td class="right">
-                --<input type='checkbox' data-price='{$fildTotal}' class='payFull' title='{ts escape="js"}Pay in full{/ts}' style='position: relative; margin: 0px; top: 0.3em;'/>--&gt;
-                &nbsp &nbsp $<input type='text' id='txt-price[{$line.price_field_value_id}]' name='txt-price[{$line.price_field_value_id}]' size='4' class='distribute'>
-              </td>
-            {/if}
-          {/if}
-        </tr>
-      {/foreach}
-      {if $context EQ "Contribution"  && $action eq 2}
-        <tr>
-          <td>{ts}Contribution Total{/ts}:</td>
-          <td></td>
-          <td></td>
-          <td class="right">{$totalAmount|crmMoney}</td>
-          <td class="right">{$pricefieldTotal.total|crmMoney}</td>
-          <td class="right">{assign var="total" value= $totalAmount-$pricefieldTotal.total}{$total|crmMoney}</td>
-          <td class="right"><h5 class='editPayment'></h5>
-{literal}
-<script type="text/javascript">
-cj(document).ready(function($) {
-  {/literal}
-    var comma = '{$config->monetaryThousandSeparator}';
-    var dot = '{$config->monetaryDecimalPoint}';
-    var format = '{$config->moneyformat}';
-    var currency = '{$currency}';
-    var currencySymbol = '{$currencySymbol}';
-  {literal} 
-  // Todo: This function should be a utility
-  function moneyFormat(amount) {
-    amount = parseFloat(amount).toFixed(2);
-    amount = amount.replace(',', 'comma').replace('.', 'dot');
-    amount = amount.replace('comma', comma).replace('dot', dot);
-    return format.replace('%C', currency).replace('%c', currencySymbol).replace('%a', amount);
-  }
-
-  $('.distribute').keyup(function() {
-    var totalAmount = 0;
-    $('.distribute').each(function () {
-      if($(this).val().length > 0){
-        totalAmount = parseFloat(totalAmount) + parseFloat($(this).val());
-      }
-    });
-    $('.editPayment').text(moneyFormat(totalAmount));
-    var unlocateAmount = {/literal}{$total}{literal};
-    $('.unlocateAmount').text(moneyFormat(unlocateAmount - totalAmount));
-  });
-
-  $('.payFull').click(function() {
-    var ele = $(this).siblings('.distribute');
-    if($(this).attr('checked')){
-      ele.val($(this).attr('data-price')).keyup();
-    }
-    else{
-      ele.val('').keyup();
-    }
-  });
-});
-</script>
-{/literal}
-
-       </td>
-     </tr>
-     <tr>
-       <td colspan= 6 class="right"><strong>Unallocated Amount</strong></td>
-       <td class="right"><h5 class='unlocateAmount'>{$total|crmMoney} </h5></td>
-     </tr>
- {/if}
+            <tr class="columnheader">
+		    <th>{ts}Item{/ts}</th>
+     	       {if $context EQ "Membership"}	
+		    <th class="right">{ts}Fee{/ts}</th>
+                {else}
+		    <th class="right">{ts}Qty{/ts}</th>
+                    <th class="right">{ts}Unit Price{/ts}</th>
+		    <th class="right">{ts}Total Price{/ts}</th>
+		{/if}
+                
+	 	{if $pricesetFieldsCount}
+		    <th class="right">{ts}Total Participants{/ts}</th>{/if} 
+            </tr>
+            {foreach from=$value item=line}
+            <tr>
+                <td>{if $line.html_type eq 'Text'}{$line.label}{else}{$line.field_title} - {$line.label}{/if} {if $line.description}<div class="description">{$line.description}</div>{/if}</td>
+		{if $context NEQ "Membership"}
+		    <td class="right">{$line.qty}</td>
+                    <td class="right">{$line.unit_price|crmMoney}</td>
+		{/if}
+                <td class="right">{$line.line_total|crmMoney}</td>
+         	{if $pricesetFieldsCount}<td class="right">{$line.participant_count}</td> {/if}
+            </tr>
+            {/foreach}
     </table>
     {/if}
 {/foreach}
@@ -188,3 +101,22 @@ cj(document).ready(function($) {
       <em>({$hookDiscount.message})</em>
   </div>
 {/if}
+{literal}
+<script type="text/javascript">
+cj(document).ready(function($) {
+  {/literal}
+    var comma = '{$config->monetaryThousandSeparator}';
+    var dot = '{$config->monetaryDecimalPoint}';
+    var format = '{$config->moneyformat}';
+    var currency = '{$currency}';
+    var currencySymbol = '{$currencySymbol}';
+  {literal} 
+  // Todo: This function should be a utility
+  function moneyFormat(amount) {
+    amount = parseFloat(amount).toFixed(2);
+    amount = amount.replace(',', 'comma').replace('.', 'dot');
+    amount = amount.replace('comma', comma).replace('dot', dot);
+    return format.replace('%C', currency).replace('%c', currencySymbol).replace('%a', amount);
+  }
+</script>
+{/literal}
