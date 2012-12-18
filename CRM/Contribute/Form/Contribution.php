@@ -149,9 +149,8 @@ class CRM_Contribute_Form_Contribution extends CRM_Core_Form {
   public $_compId;
 
   /*
-     * Store the line items if price set used.
-     */
-
+   * Store the line items if price set used.
+   */
   public $_lineItems;
 
   protected $_formType;
@@ -1070,8 +1069,7 @@ WHERE  contribution_id = {$this->_id}
    * @access public
    * @static
    */
-  static
-  function formRule($fields, $files, $self) {
+  static function formRule($fields, $files, $self) {
     $errors = array();
 
     //check if contact is selected in standalone mode
@@ -1124,8 +1122,12 @@ WHERE  contribution_id = {$this->_id}
    * @return None
    */
   public function postProcess() {
+    $session = CRM_Core_Session::singleton();
     if ($this->_action & CRM_Core_Action::DELETE) {
       CRM_Contribute_BAO_Contribution::deleteContribution($this->_id);
+      $session->replaceUserContext(CRM_Utils_System::url('civicrm/contact/view',
+        "reset=1&cid={$this->_contactID}&selectedChild=contribute"
+      ));
       return;
     }
 
@@ -1197,7 +1199,6 @@ WHERE  contribution_id = {$this->_id}
     }
 
     $config = CRM_Core_Config::singleton();
-    $session = CRM_Core_Session::singleton();
 
     //Credit Card Contribution.
     if ($this->_mode) {
