@@ -85,7 +85,6 @@ class WebTest_Contact_AdvanceSearchPrivacyOptionsTest extends CiviSeleniumTestCa
       $assertCheck = FALSE;
     }
     $this->assertTrue($assertCheck, 'Do not phone / mail assertion failed using criteria(include , OR )');
-
     $this->_addPrivacyCriteria('exclude', $privacyOptions['dn_phone_mail'], 'OR', $allPrivacyOptions);
     $this->click('_qf_Advanced_refresh');
     $this->waitForPageToLoad('30000');
@@ -122,7 +121,6 @@ class WebTest_Contact_AdvanceSearchPrivacyOptionsTest extends CiviSeleniumTestCa
       $assertCheck = FALSE;
     }
     $this->assertTrue($assertCheck, 'Do not phone / mail assertion failed using criteria(exclude , AND )');
-
     $this->_addPrivacyCriteria('include', $privacyOptions['dn_trade_sms'], 'AND', $allPrivacyOptions);
     $this->click('_qf_Advanced_refresh');
     $this->waitForPageToLoad('30000');
@@ -142,28 +140,27 @@ class WebTest_Contact_AdvanceSearchPrivacyOptionsTest extends CiviSeleniumTestCa
     $this->select('privacy_operator', "{$privacyOperator}");
     foreach ($privacyOptions as $privacyOption) {
       $privacyOptionVal = $this->getOptionVal($privacyOption);
-      if (!$this->isElementPresent("xpath=//ul[@id='crmasmList3']//li//span[text()='{$privacyOptionVal}']")) {
-        $this->select('crmasmSelect3', "value={$privacyOption}");
-
-        $this->waitForElementPresent("xpath=//ul[@id='crmasmList3']//li//span[text()='{$privacyOptionVal}']");
+      
+      if (!$this->isElementPresent("xpath=//ul[@id='crmasmList4']//li//span[text()='{$privacyOptionVal}']")) {
+        $this->select('crmasmSelect4', "value={$privacyOption}");
+        $this->waitForElementPresent("xpath=//ul[@id='crmasmList4']//li//span[text()='{$privacyOptionVal}']");
       }
     }
-
+    
     foreach ($allPrivacyOptions as $allPrivacyOption) {
-
       if (!in_array($allPrivacyOption, $privacyOptions)) {
         $privacyOptionVal = $this->getOptionVal($allPrivacyOption);
-        if ($this->isElementPresent("xpath=//ul[@id='crmasmList3']//li//span[text()='{$privacyOptionVal}']")) {
-          $this->click("xpath=//ul[@id='crmasmList3']//li//span[text()='{$privacyOptionVal}']/../a[@class='crmasmListItemRemove']");
+        if ($this->isElementPresent("xpath=//ul[@id='crmasmList4']//li//span[text()='{$privacyOptionVal}']")) {
+          $this->click("xpath=//ul[@id='crmasmList4']//li//span[text()='{$privacyOptionVal}']/../a[@class='crmasmListItemRemove']");
         }
       }
     }
   }
-
+  
   function _searchSortNameCriteria($firstName, $lastName) {
     //type in the criteria
-    $this->type("sort_name", "{$lastName}, {$firstName}");
-    $this->click("_qf_Advanced_refresh");
+    $this->type("sort_name", "{$lastName}, {$firstName}"); 
+    $this->click("_qf_Advanced_refresh"); 
     $this->waitForPageToLoad('30000');
     
     //return its presence
@@ -192,7 +189,7 @@ class WebTest_Contact_AdvanceSearchPrivacyOptionsTest extends CiviSeleniumTestCa
   function _addIndividual($firstName, $lastName, $options) {
 
     $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
-
+  
     //fill in first name
     $this->type("first_name", $firstName);
 
@@ -207,14 +204,14 @@ class WebTest_Contact_AdvanceSearchPrivacyOptionsTest extends CiviSeleniumTestCa
 
     foreach ($options as $option) {
       //Select preferred method for Privacy
-      $this->click("privacy[{$option}]");
+      $this->click("privacy_{$option}");
     }
-
+  
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
     $this->waitForPageToLoad("30000");
+    $this->assertTrue($this->isTextPresent("{$firstName} {$lastName} has been created."));
 
-    $this->assertTrue($this->isTextPresent("Your Individual contact record has been saved."));
   }
 }
 

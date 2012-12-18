@@ -56,12 +56,14 @@ class WebTest_Contact_AddressParsingTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
 
     //contact details section
-
+    $firstName = "John" . substr(sha1(rand()), 0, 7);
+    $lastName = "Smith" . substr(sha1(rand()), 0, 7);
+   
     //fill in first name
-    $this->type("first_name", "John" . substr(sha1(rand()), 0, 7));
+    $this->type("first_name", $firstName);
 
     //fill in last name
-    $this->type("last_name", "Smith" . substr(sha1(rand()), 0, 7));
+    $this->type("last_name", $lastName);
 
     //address section
     $this->click("addressBlock");
@@ -111,8 +113,7 @@ class WebTest_Contact_AddressParsingTest extends CiviSeleniumTestCase {
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
     $this->waitForPageToLoad("30000");
-
-    $this->assertTrue($this->isTextPresent("Your Individual contact record has been saved."));
+    $this->assertTrue($this->isTextPresent("{$firstName} {$lastName} has been created."));
 
     //Get the is of newly created contact
     $matches = array();

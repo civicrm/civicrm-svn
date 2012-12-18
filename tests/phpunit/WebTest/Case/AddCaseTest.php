@@ -170,7 +170,7 @@ class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
       $this->assertText("css=div.crm-case-roles-block", $role);
     }
     // check that case creator role has been assigned to logged in user
-    $this->assertText("relName_1", $creatorName);
+    $this->verifyText("xpath=//table[@id='caseRoles-selector']/tbody/tr[4]/td[2]", $creatorName);
   }
 
   function _testVerifyCaseActivities($activityTypes) {
