@@ -1198,7 +1198,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField {
         }
         else {
           // remove time element display if time is not set
-          if (!CRM_Utils_Array::value('time_format', $option['attributes'])) {
+          if (empty($option['attributes']['time_format'])) {
             $value = substr($value, 0, 10);
           }
           $display = CRM_Utils_Date::customFormat($value);
