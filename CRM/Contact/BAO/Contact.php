@@ -1071,7 +1071,8 @@ WHERE id={$id}; ";
     $cacheKeyString .= $isProfile ? '_1' : '_0';
     $cacheKeyString .= $checkPermission ? '_1' : '_0';
 
-    if (!self::$_importableFields || !CRM_Utils_Array::value($cacheKeyString, self::$_importableFields)) {
+    $fields = CRM_Utils_Array::value($cacheKeyString, self::$_importableFields);
+    if (!$fields) {
       if (!self::$_importableFields) {
         self::$_importableFields = array();
       }
