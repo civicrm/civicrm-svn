@@ -133,8 +133,8 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField {
    * @param array $params an associative array with field and values
    * @ids   array $ids    array that containd ids
    *
-   *@access public
-   *@static
+   * @access public
+   * @static
    */
   public static function duplicateField($params, $ids) {
     $ufField = new CRM_Core_DAO_UFField();
@@ -174,24 +174,25 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField {
     if (!empty($customFieldIds) && count($customFieldIds) == 1) {
       $customFieldId = array_pop($customFieldIds);
       $isMultiRecordFieldPresent = CRM_Core_BAO_CustomField::isMultiRecordField($customFieldId);
-    } elseif (count($customFieldIds) > 1) {
+    }
+    elseif (count($customFieldIds) > 1) {
       $customFieldIds = implode(", ", $customFieldIds);
       $queryString = "
       SELECT cg.id as cgId
  FROM civicrm_custom_group cg
  INNER JOIN civicrm_custom_field cf 
  ON cg.id = cf.custom_group_id
-WHERE cf.id IN (". $customFieldIds .") AND is_multiple = 1 LIMIT 0,1";
+WHERE cf.id IN (" . $customFieldIds . ") AND is_multiple = 1 LIMIT 0,1";
 
       $dao = CRM_Core_DAO::executeQuery($queryString);
       if ($dao->fetch()) {
         $isMultiRecordFieldPresent = ($dao->cgId) ? $dao->cgId : FALSE;
       }
-    }    
+    }
 
     return $isMultiRecordFieldPresent;
   }
-  
+
   /**
    * function to add the UF Field
    *
@@ -206,7 +207,7 @@ WHERE cf.id IN (". $customFieldIds .") AND is_multiple = 1 LIMIT 0,1";
    */
   static function add(&$params, &$ids) {
     // set values for uf field properties and save
-    $ufField             = new CRM_Core_DAO_UFField();
+    $ufField = new CRM_Core_DAO_UFField();
     $ufField->field_type = $params['field_name'][0];
     $ufField->field_name = $params['field_name'][1];
 
@@ -506,8 +507,8 @@ WHERE cf.id IN (". $customFieldIds .") AND is_multiple = 1 LIMIT 0,1";
     CRM_Contact_BAO_ContactType::suppressSubTypes($profileTypes);
 
     $contactTypes = array('Contact', 'Individual', 'Household', 'Organization');
-    $components   = array('Contribution', 'Participant', 'Membership', 'Activity');
-    $fields       = array();
+    $components = array('Contribution', 'Participant', 'Membership', 'Activity');
+    $fields = array();
 
     // check for mix profile condition
     if (count($profileTypes) > 1) {
@@ -551,8 +552,8 @@ WHERE cf.id IN (". $customFieldIds .") AND is_multiple = 1 LIMIT 0,1";
 
     $components = array('Contribution', 'Participant', 'Membership', 'Activity');
 
-    $ufGroup            = new CRM_Core_DAO_UFGroup();
-    $ufGroup->id        = $ufGroupId;
+    $ufGroup = new CRM_Core_DAO_UFGroup();
+    $ufGroup->id = $ufGroupId;
     $ufGroup->is_active = 1;
 
     $ufGroup->find(TRUE);
@@ -681,9 +682,9 @@ SELECT ufg.id as id
   /**
    * check for searchable or in selector field for given profile.
    *
-   *@params int     $profileID profile id.
+   * @params int     $profileID profile id.
    *
-   *@return boolean $result    true/false.
+   * @return boolean $result    true/false.
    */
   static function checkSearchableORInSelector($profileID) {
     $result = FALSE;
@@ -709,9 +710,9 @@ SELECT  id
   /**
    *Reset In selector and is seachable values for given $profileID.
    *
-   *@params int $profileID profile id.
+   * @params int $profileID profile id.
    *
-   *@return void.
+   * @return void.
    */
   function resetInSelectorANDSearchable($profileID) {
     if (!$profileID) {
@@ -726,12 +727,12 @@ SELECT  id
    * profileAddressFields is assigned to the template to tell it
    * what fields are in the profile address
    * that potentially should be copied to the Billing fields
-   * we want to give precedence to 
-   *   1) Billing & 
+   * we want to give precedence to
+   *   1) Billing &
    *   2) then Primary designated as 'Primary
    *   3) location_type is primary
    *   4) if none of these apply then it just uses the first one
-   *   
+   *
    *   as this will be used to
    * transfer profile address data to billing fields
    * http://issues.civicrm.org/jira/browse/CRM-5869
@@ -741,30 +742,37 @@ SELECT  id
   static function assignAddressField($key, &$profileAddressFields) {
     $billing_id = CRM_Core_BAO_LocationType::getBilling();
     list($prefixName, $index) = CRM_Utils_System::explode('-', $key, 2);
-    
+
     //check for valid fields ( fields that are present in billing block )
     $validBillingFields = array(
-      'first_name','middle_name','last_name','street_address',
-      'supplemental_address_1','city','state_province',
-      'postal_code','country'
+      'first_name',
+      'middle_name',
+      'last_name',
+      'street_address',
+      'supplemental_address_1',
+      'city',
+      'state_province',
+      'postal_code',
+      'country'
     );
 
-    if ( !in_array($prefixName, $validBillingFields) ) {
+    if (!in_array($prefixName, $validBillingFields)) {
       return;
     }
-    
+
     if (!empty($index) && (
-        // it's empty so we set it OR
-        !CRM_Utils_array::value($prefixName, $profileAddressFields)
+      // it's empty so we set it OR
+      !CRM_Utils_array::value($prefixName, $profileAddressFields)
         //we are dealing with billing id (precedence)
         || $index == $billing_id
         // we are dealing with primary & billing not set
         || ($index == 'Primary' && $profileAddressFields[$prefixName] != $billing_id)
         || ($index == CRM_Core_BAO_LocationType::getDefault()->id
-          && $profileAddressFields[$prefixName] != $billing_id
-          && $profileAddressFields[$prefixName] != 'Primary'
-        )
-      )) {
+        && $profileAddressFields[$prefixName] != $billing_id
+        && $profileAddressFields[$prefixName] != 'Primary'
+      )
+    )
+    ) {
       $profileAddressFields[$prefixName] = $index;
     }
   }
@@ -828,7 +836,7 @@ SELECT  id
     if (CRM_Core_Permission::access('CiviContribute')) {
       $contribFields = CRM_Contribute_BAO_Contribution::getContributionFields(FALSE);
       if (!empty($contribFields)) {
-          unset($contribFields['is_test']);
+        unset($contribFields['is_test']);
         unset($contribFields['is_pay_later']);
         unset($contribFields['contribution_id']);
         $contribFields['contribution_note'] = array(
@@ -907,7 +915,13 @@ SELECT  id
 
     //group selected and unwanted fields list
     $ufFields = $gid ? CRM_Core_BAO_UFGroup::getFields($gid, FALSE, NULL, NULL, NULL, TRUE, NULL, TRUE) : array();
-    $groupFieldList = array_merge($ufFields, array('note', 'email_greeting_custom', 'postal_greeting_custom', 'addressee_custom', 'id'));
+    $groupFieldList = array_merge($ufFields, array(
+      'note',
+      'email_greeting_custom',
+      'postal_greeting_custom',
+      'addressee_custom',
+      'id'
+    ));
     //unset selected fields
     foreach ($groupFieldList as $key => $value) {
       if (is_integer($key)) {
