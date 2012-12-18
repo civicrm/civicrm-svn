@@ -37,85 +37,84 @@ class WebTest_Contribute_ContactContextAddTest extends CiviSeleniumTestCase {
     // The rest of URL is defined in CiviSeleniumTestCase base class, in
     // class attributes.
     $this->open($this->sboxPath);
-
+    
     // Log in using webtestLogin() method
     $this->webtestLogin();
-
+    
     // Create a contact to be used as soft creditor
     $softCreditFname = substr(sha1(rand()), 0, 7);
     $softCreditLname = substr(sha1(rand()), 0, 7);
     $this->webtestAddContact($softCreditFname, $softCreditLname, FALSE);
-
+    
     // Adding contact with randomized first name (so we can then select that contact when creating contribution.)
     // We're using Quick Add block on the main page for this.
     $firstName = substr(sha1(rand()), 0, 7);
-      // Add new Financial Account
-      $orgName = 'Alberta '.substr(sha1(rand()), 0, 7);
-      $financialAccountTitle = 'Financial Account '.substr(sha1(rand()), 0, 4);
-      $financialAccountDescription = "{$financialAccountTitle} Description";
-      $accountingCode = 1033;
-      $financialAccountType = 'Asset';
-      $parentFinancialAccount = 'Donation';
-      $taxDeductible = FALSE;
-      $isActive = FALSE;
-      $headerAccount = TRUE;
-      $isTax = TRUE;
-      $taxRate = 10;
-      $isDefault = FALSE;
+    // Add new Financial Account
+    $orgName = 'Alberta '.substr(sha1(rand()), 0, 7);
+    $financialAccountTitle = 'Financial Account '.substr(sha1(rand()), 0, 4);
+    $financialAccountDescription = "{$financialAccountTitle} Description";
+    $accountingCode = 1033;
+    $financialAccountType = 'Asset';
+    $parentFinancialAccount = 'Donation';
+    $taxDeductible = FALSE;
+    $isActive = FALSE;
+    $headerAccount = TRUE;
+    $isTax = TRUE;
+    $taxRate = 9.99999999;
+    $isDefault = FALSE;
+    
+    //Add new organisation
+    if($orgName) {
+      $this->webtestAddOrganization($orgName);
+    }
+    $this->_testAddFinancialAccount($financialAccountTitle,
+      $financialAccountDescription,
+      $accountingCode,
+      $orgName,
+      $parentFinancialAccount,
+      $financialAccountType,
+      $taxDeductible,
+      $isActive,
+      $headerAccount,
+      $isTax,
+      $taxRate,
+      $isDefault
+    );
 
-        //Add new organisation
-       if( $orgName )
-            $this->webtestAddOrganization( $orgName );
-        
-       $this->_testAddFinancialAccount( $financialAccountTitle,
-                                         $financialAccountDescription,
-                                         $accountingCode,
-                                         $orgName,
-                                         $parentFinancialAccount,
-                                         $financialAccountType,
-                                         $taxDeductible,
-                                         $isActive,
-                                         $headerAccount,
-                                         $isTax,
-                                         $taxRate,
-                                         $isDefault
-                                         );
-
-      $this->webtestAddContact( $firstName, "Anderson", true );
-
+    $this->webtestAddContact( $firstName, "Anderson", true );
+    
     // Get the contact id of the new contact
     $contactUrl = $this->parseURL();
     $cid = $contactUrl['queryString']['cid'];
     $this->assertType('numeric', $cid);
-
+      
     // go to contribution tab and add contribution.
     $this->click("css=li#tab_contribute a");
-
+      
     // wait for Record Contribution elenment.
     $this->waitForElementPresent("link=Record Contribution (Check, Cash, EFT ...)");
     $this->click("link=Record Contribution (Check, Cash, EFT ...)");
-
+      
     $this->waitForElementPresent("_qf_Contribution_cancel-bottom");
-      // fill financial type.
-      $this->select("financial_type_id", "Donation");
-
+    // fill financial type.
+    $this->select("financial_type_id", "Donation");
+      
     // fill in Received Date
     $this->webtestFillDate('receive_date');
-
+      
     // source
     $this->type("source", "Mailer 1");
-
+      
     // total amount
     $this->type("total_amount", "100");
-
+      
     // select payment instrument type = Check and enter chk number
     $this->select("payment_instrument_id", "value=4");
     $this->waitForElementPresent("check_number");
     $this->type("check_number", "check #1041");
-      //select Recieved Into
-      $this->select("to_financial_account_id", "label={$financialAccountTitle}");
+    
     $this->type("trxn_id", "P20901X1" . rand(100, 10000));
-
+    
     // soft credit
     $this->click("soft_credit_to");
     $this->type("soft_credit_to", $softCreditFname);
@@ -130,7 +129,7 @@ class WebTest_Contribute_ContactContextAddTest extends CiviSeleniumTestCase {
     //Additional Detail section
     $this->click("AdditionalDetail");
     $this->waitForElementPresent("thankyou_date");
-
+    
     $this->type("note", "Test note for {$firstName}.");
     $this->type("non_deductible_amount", "10");
     $this->type("fee_amount", "0");
@@ -158,12 +157,12 @@ class WebTest_Contribute_ContactContextAddTest extends CiviSeleniumTestCase {
     // Clicking save.
     $this->click("_qf_Contribution_upload-bottom");
     $this->waitForPageToLoad("30000");
-      sleep(5);
+    sleep(5);
     // Is status message correct?
     $this->assertTrue($this->isTextPresent("The contribution record has been saved"));
-
+    
     $this->waitForElementPresent("xpath=//div[@id='Contributions']//table/tbody/tr/td[8]/span/a[text()='View']");
-
+    
     // click through to the Contribution view screen
     $this->click("xpath=//div[@id='Contributions']//table/tbody/tr/td[8]/span/a[text()='View']");
     $this->waitForElementPresent('_qf_ContributionView_cancel-bottom');
@@ -171,7 +170,7 @@ class WebTest_Contribute_ContactContextAddTest extends CiviSeleniumTestCase {
     // verify Contribution created
     $verifyData = array(
       'From' => $firstName . " Anderson",
-                          'Financial Type'                  => 'Donation',
+      'Financial Type' => 'Donation',
       'Contribution Status' => 'Completed',
       'Paid By' => 'Check',
       'Total Amount' => '$ 100.00',
@@ -187,7 +186,7 @@ class WebTest_Contribute_ContactContextAddTest extends CiviSeleniumTestCase {
     $viewUrl = $this->parseURL();
     $id = $viewUrl['queryString']['id'];
     $this->assertType('numeric', $id);
-
+    
     $searchParams = array('id' => $id);
     $compareParams = array(
       'contact_id' => $cid,
@@ -195,9 +194,8 @@ class WebTest_Contribute_ContactContextAddTest extends CiviSeleniumTestCase {
     );
     $this->assertDBCompareValues('CRM_Contribute_DAO_Contribution', $searchParams, $compareParams);
 
-
     // go to soft creditor contact view page
-      $this->click( "xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[17]/td[2]/a[text()='{$softCreditFname} {$softCreditLname}']" );
+    $this->click( "xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[17]/td[2]/a[text()='{$softCreditFname} {$softCreditLname}']" );
 
     // go to contribution tab
     $this->waitForElementPresent("css=li#tab_contribute a");
