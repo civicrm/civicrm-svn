@@ -35,46 +35,46 @@
  */
 
 /**
- * This class generates form components for relationship
- * 
+ * This class generates form components for financial batch task action
+ *
  */
 class CRM_Financial_Form_Task extends CRM_Core_Form {
-  
+
   /**
    * the task being performed
    *
    * @var int
    */
   protected $_task;
-    
+
   /**
    * The additional clause that we restrict the search with
    *
    * @var string
    */
   protected $_componentClause = null;
-  
+
   /**
    * The array that holds all the component ids
    *
    * @var array
    */
   protected $_componentIds;
-  
+
   /**
    * The array that holds all the contribution ids
    *
    * @var array
    */
   protected $_financialBatchIds;
-  
+
   /**
    * The array that holds all the contact ids
    *
    * @var array
    */
   public $_contactIds;
-  
+
   /**
    * build all the data structures needed to build the form
    *
@@ -85,16 +85,16 @@ class CRM_Financial_Form_Task extends CRM_Core_Form {
   function preProcess( ) {
     self::preProcessCommon( $this );
   }
-  
+
   static function preProcessCommon( &$form, $useTable = false ) {
     $form->_financialBatchIds = array();
-    
+
     $values = $form->controller->exportValues( $form->get( 'searchFormName' ) );
-    
+
     $form->_task = $values['task'];
     $contributeTasks = CRM_Financial_Task::tasks();
     $form->assign( 'taskName', $contributeTasks[$form->_task] );
-    
+
     $ids = array();
     if ( $values['radio_ts'] == 'ts_sel' ) {
       foreach ( $values as $name => $value ) {
@@ -102,43 +102,45 @@ class CRM_Financial_Form_Task extends CRM_Core_Form {
           $ids[] = substr( $name, CRM_Core_Form::CB_PREFIX_LEN );
         }
       }
-    } else {
+    }
+    else {
       $sear = new CRM_Contribute_Form_Search_Custom_BatchSearch( $values );
       $result = $sear->all();
       $dao = CRM_Core_DAO::executeQuery( $result );
       while ($dao->fetch()) {
         $ids[] = $dao->contact_id;
       }
-      
+
       $form->assign( 'totalSelectedContributions', $form->get( 'rowCount' ) );
     }
-    
+
     if ( ! empty( $ids ) ) {
       $form->_componentClause =
         ' civicrm_financial_batch.id IN ( ' .
-        implode( ',', $ids ) . ' ) ';
-      
+          implode( ',', $ids ) . ' ) ';
+
       $form->assign( 'totalSelectedContributions', count( $ids ) );
     }
-    
+
     $form->_financialBatchIds = $form->_componentIds = $ids;
-    
+
     //set the context for redirection for any task actions
     $session = CRM_Core_Session::singleton( );
-    
+
     $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $form );
     $urlParams = 'force=1';
     if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
-    
+
     $searchFormName = strtolower( $form->get( 'searchFormName' ) );
     if ( $searchFormName == 'search' ) {
       $session->replaceUserContext( CRM_Utils_System::url( 'civicrm/contribute/search', $urlParams ) );
-    } else {
+    }
+    else {
       $session->replaceUserContext( CRM_Utils_System::url( "civicrm/contact/search/$searchFormName",
         $urlParams ) );
     }
   }
-  
+
   /**
    * Given the contribution id, compute the contact id
    * since its used for things like send email
@@ -147,7 +149,7 @@ class CRM_Financial_Form_Task extends CRM_Core_Form {
     $this->_contactIds =& CRM_Core_DAO::getContactIDsFromComponent( $this->_financialBatchIds,
       'civicrm_contribution' );
   }
-  
+
   /**
    * simple shell that derived classes can call to add buttons to
    * the form with a customized title for the main Submit
@@ -159,13 +161,17 @@ class CRM_Financial_Form_Task extends CRM_Core_Form {
    */
   function addDefaultButtons( $title, $nextType = 'next', $backType = 'back' ) {
     $this->addButtons( array(
-      array ( 'type'      => $nextType,
-              'name'      => $title,
-              'isDefault' => true   ),
-      array ( 'type'      => $backType,
-              'name'      => ts('Cancel') ),
-                             )
-                       );
+        array (
+          'type'      => $nextType,
+          'name'      => $title,
+          'isDefault' => true
+        )
+        array (
+          'type'      => $backType,
+          'name'      => ts('Cancel')
+        )
+      )
+    );
   }
 }
 
