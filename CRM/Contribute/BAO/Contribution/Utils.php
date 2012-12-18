@@ -138,20 +138,22 @@ class CRM_Contribute_BAO_Contribution_Utils {
         }
         else {
           if (!$form->_params['is_pay_later']) {
-    if ( $form->_params['initial_amount'] ){
+            if (CRM_Utils_Array::value('initial_amount', $form->_params)) {
               $actulAmount = $form->_params['amount'];
               $form->_params['amount'] = $form->_params['initial_amount'];
             }
-            if (is_object($payment)) 
-            $result = &$payment->doTransferCheckout($form->_params, 'contribute');
-            else 
+            if (is_object($payment)) {  
+              $result = &$payment->doTransferCheckout($form->_params, 'contribute');
+            }
+            else{ 
               CRM_Core_Error::fatal($paymentObjError);
-            if ( $form->_params['initial_amount'] ){
+            }
+            if (CRM_Utils_Array::value('initial_amount', $form->_params)){
               $result['gross_amount'] = $actulAmount;
-              $result['amount']       = $actulAmount;
-
-          }
-          } else {
+              $result['amount'] = $actulAmount; 
+            }
+          } 
+          else {
             // follow similar flow as IPN
             // send the receipt mail
             $form->set('params', $form->_params);
@@ -184,27 +186,31 @@ class CRM_Contribute_BAO_Contribution_Utils {
     elseif ($form->_contributeMode == 'express') {
       if ($form->_values['is_monetary'] && $form->_amount > 0.0) {
         // determine if express + recurring and direct accordingly
-        if ( $paymentParams['initial_amount'] ){
+        if (CRM_Utils_Array::value('initial_amount', $paymentParams)) {
           $actulAmount = $paymentParams['amount'];
           $paymentParams['amount'] = $paymentParams['initial_amount'];
         }
         if ($paymentParams['is_recur'] == 1) {
-          if (is_object($payment)) 
-          $result = &$payment->createRecurringPayments($paymentParams);
-          else 
+          if (is_object($payment)) {
+            $result = &$payment->createRecurringPayments($paymentParams);
+          }
+          else { 
             CRM_Core_Error::fatal($paymentObjError);
+          }
         }
         else {
-          if (is_object($payment)) 
-          $result = &$payment->doExpressCheckout($paymentParams);
-          else 
+          if (is_object($payment)) { 
+            $result = &$payment->doExpressCheckout($paymentParams);
+          }
+          else { 
             CRM_Core_Error::fatal($paymentObjError);
+          }
         }
-        if ( $paymentParams['initial_amount'] ){
+        if (CRM_Utils_Array::value('initial_amount', $paymentParams)) {
           $result['gross_amount'] = $actulAmount;
           $result['amount']       = $actulAmount;	
+        }
       }
-    }
     }
     elseif ($form->_values['is_monetary'] && $form->_amount > 0.0) {
       if (CRM_Utils_Array::value('is_recur', $paymentParams) &&
@@ -226,25 +232,27 @@ class CRM_Contribute_BAO_Contribution_Utils {
         );
 
         $paymentParams['contributionID'] = $contribution->id;
-                $paymentParams['contributionTypeID'] = $contribution->financial_type_id;
+        $paymentParams['contributionTypeID'] = $contribution->financial_type_id;
         $paymentParams['contributionPageID'] = $contribution->contribution_page_id;
 
         if ($form->_values['is_recur'] && $contribution->contribution_recur_id) {
           $paymentParams['contributionRecurID'] = $contribution->contribution_recur_id;
         }
       }
-if ( $paymentParams['initial_amount'] ) {
+      if (CRM_Utils_Array::value('initial_amount', $paymentParams)) {
         $actulAmount = $paymentParams['amount'];
         $paymentParams['amount'] = $paymentParams['initial_amount'];   
       }
-      if (is_object($payment)) 
-      $result = &$payment->doDirectPayment($paymentParams);
-      else 
+      if (is_object($payment)) {
+        $result = &$payment->doDirectPayment($paymentParams);
+      }
+      else { 
         CRM_Core_Error::fatal($paymentObjError);
-      if ( $paymentParams['initial_amount'] ) {
+      }
+      if (CRM_Utils_Array::value('initial_amount', $paymentParams)) {
         $result['gross_amount'] = $actulAmount;
         $result['amount']       = $actulAmount;
-    }
+      }
     }
 
     if ($component == 'membership') {
@@ -464,9 +472,9 @@ INNER JOIN   civicrm_contact contact ON ( contact.id = contrib.contact_id )
       $transaction['trxn_id'] = md5(uniqid(rand(), TRUE));
     }
 
-        if ( ! isset( $transaction['financial_type_id'] ) ) {
-            $contributionTypes = array_keys( CRM_Contribute_PseudoConstant::financialType( ) );
-            $transaction['financial_type_id'] = $contributionTypes[0];
+    if (!isset( $transaction['financial_type_id'])) {
+      $contributionTypes = array_keys(CRM_Contribute_PseudoConstant::financialType());
+      $transaction['financial_type_id'] = $contributionTypes[0];
     }
 
     if (($type == 'paypal') && (!isset($transaction['net_amount']))) {
@@ -711,7 +719,7 @@ INNER JOIN   civicrm_contact contact ON ( contact.id = contrib.contact_id )
     $customFields = CRM_Core_BAO_CustomField::getFields('Contribution',
       FALSE,
       FALSE,
-                                                   CRM_Utils_Array::value('financial_type_id',
+      CRM_Utils_Array::value('financial_type_id',
         $params
       )
     );
