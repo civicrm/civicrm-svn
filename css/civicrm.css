@@ -660,6 +660,7 @@ div.spacer,
 #crm-container .crm-marker {
   color:#8A1F11;
   font-weight: bold;
+  margin-right:5px;
 }
 
 #crm-container .crm-error,
