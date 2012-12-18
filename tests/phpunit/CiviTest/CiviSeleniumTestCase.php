@@ -1543,6 +1543,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     $this->waitForElementPresent('edit-submit');
     foreach ($permission as $key => $value) {
       $this->check($value);
+    }
     $this->click('edit-submit');
     $this->waitForPageToLoad('30000');
     $this->assertTrue($this->isTextPresent('The changes have been saved.'));
@@ -1551,8 +1552,6 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     $this->webtestLogin();
     $this->waitForPageToLoad('30000');
   }
-  }
-
 
   function addProfile($profileTitle, $profileFields) {
     // Go directly to the URL of the screen that you will be testing (New Profile).
