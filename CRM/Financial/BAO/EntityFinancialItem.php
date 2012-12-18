@@ -137,9 +137,26 @@ FROM {$from}
 WHERE {$where}
 {$orderBy}
 ";
- 
+
     $result = CRM_Core_DAO::executeQuery($sql);
     return $result;
   }
   
+  static function assignRemove( $IDs, $entityID, $action = 'Assign') {
+    foreach ($IDs as $key => $value) {
+      $params = array( 'entity_id' => $entityID,
+                       'entity_table' => 'civicrm_batch',
+                       'financial_item_id' => $value,
+                       );
+      if ($action == 'Assign') {
+        self::add($params);
+      } 
+      else {
+        self::remove($params);
+      }
+    }
+    $url = CRM_Utils_System::url('civicrm/batchtransaction',"reset=1&bid={$entityID}");
+    CRM_Utils_System::redirect($url);
+  }
+
 }

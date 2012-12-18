@@ -100,7 +100,7 @@ class CRM_Financial_Page_BatchTransaction extends CRM_Core_Page_Basic {
 
     // assign vars to templates
     $this->assign('action', $action);
-
+    
     $this->_entityID = CRM_Utils_Request::retrieve( 'bid' , 'Positive' );
 
     $this->edit($action, $this->_entityID ) ;
@@ -116,45 +116,7 @@ class CRM_Financial_Page_BatchTransaction extends CRM_Core_Page_Basic {
    * @static
    */
   function browse() {
-    $financialitems = array();
-    $this->_returnvalues = array( 
-      'civicrm_financial_item.contact_id',
-      'civicrm_contribution.id as contributionID',
-      'sort_name',
-      'amount',
-      'contact_type',
-      'contact_sub_type',
-      'transaction_date',
-      'name'
-    );
-    $this->_columnHeader = array( 
-      'contact_type' => '',
-      'sort_name' => ts('Contact Name'),
-      'amount'   => ts('Amount'),
-      'transaction_date' => ts('Received'),
-      'name' => ts('Type')
-    );
-    $this->_entityID = 1;
-    $this->assign('entityID', $this->_entityID);
-    $financialItem = CRM_Financial_BAO_EntityFinancialItem::getBatchFinancialItems($this->_entityID, $this->_returnvalues);
-    $financialitems = array();
-    while ($financialItem->fetch()) {
-      $row = array();
-      foreach ($this->_columnHeader as $columnKey => $columnValue) {
-        if ($financialItem->contact_sub_type && $columnKey == 'contact_type') {
-          $row[$columnKey] = $financialItem->contact_sub_type;
-          continue;
-        }
-        $row[$columnKey] = $financialItem->$columnKey;
-      }
-      $row['checkbox'] = 'mark_y_'. $financialItem->id;
-      $row['action'] = CRM_Core_Action::formLink(self::links(), null, array('id' => $financialItem->id, 'contid' => $financialItem->contributionID, 'cid' => $financialItem->contact_id));
-      $row['contact_type' ] = CRM_Contact_BAO_Contact_Utils::getImage( CRM_Utils_Array::value('contact_sub_type',$row) ?
-                              CRM_Utils_Array::value('contact_sub_type',$row) : CRM_Utils_Array::value('contact_type',$row) ,false, $financialItem->contact_id);
-      $financialitems[] = $row;
-    }
-    $this->assign('columnHeader', $this->_columnHeader);
-    $this->assign('rows', $financialitems);
+    
   }
 
   /**

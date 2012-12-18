@@ -24,18 +24,19 @@
  +--------------------------------------------------------------------+
 *}
  <div id="enableDisableStatusMsg" class="success-status" style="display:none;"></div> 
- 
+
 {if $rows}
+  <div class="form-layout-compressed">{$form.trans_remove.html}&nbsp;{$form.rSubmit.html}</div><br/>
   <div id="ltype">
     <p></p>
     <div class="form-item">
     {strip}
-    <table cellpadding="0" cellspacing="0" border="0">
+    <table id="crm-transaction-selector-remove" cellpadding="0" cellspacing="0" border="0">
       <thead class="sticky">
       <tr>
-        <th scope="col" title="Select All Rows">{$form.toggleSelects.html}</th>
-        {foreach from=$columnHeader item=head}
-	  <th>{$head}</th>
+        <th class='crm-batch-checkbox' scope="col" title="Select All Rows">{$form.toggleSelects.html}</th>
+        {foreach from=$columnHeader item=head key=class}
+	  <th class='crm-{$class}'>{$head}</th>
 	{/foreach}
         <th></th>
       </tr>
@@ -56,13 +57,13 @@
 
   
     </div>
-  </div>  
+  </div><br/>  
 {/if}
 {include file="CRM/Financial/Form/BatchTransaction.tpl"}
 
 {literal}
 <script type="text/javascript">
-	
+
 function assignRemove(recordID, op) {
   var recordBAO = 'CRM_Financial_BAO_EntityFinancialItem';	
   if (op == 'remove') {
