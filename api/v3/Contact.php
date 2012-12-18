@@ -628,10 +628,6 @@ function civicrm_api3_contact_getquick($params) {
 
   if (CRM_Utils_Array::value('org', $params)) {
     $where .= " AND contact_type = \"Organization\"";
-    //set default for current_employer
-    if ($orgId = CRM_Utils_Array::value('id', $params)) {
-      $where .= " AND cc.id = {$orgId}";
-    }
 
     // CRM-7157, hack: get current employer details when
     // employee_id is present.
@@ -659,6 +655,11 @@ function civicrm_api3_contact_getquick($params) {
         }
       }
     }
+  }
+
+  //set default for current_employer or return contact with particular id
+  if (CRM_Utils_Array::value('id', $params)) {
+    $where .= " AND cc.id = " .$params['id'];
   }
 
   if (CRM_Utils_Array::value('cid', $params)) {

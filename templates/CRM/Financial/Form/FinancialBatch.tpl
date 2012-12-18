@@ -51,8 +51,8 @@
 
   <table class="form-layout">
     <tr class="crm-contribution-form-block-name">
-      <td class="label">{$form.name.label}</td>
-      <td class="html-adjust">{$form.name.html}</td>
+      <td class="label">{$form.title.label}</td>
+      <td class="html-adjust">{$form.title.html}</td>
     </tr>
     <tr class="crm-contribution-form-block-description">
       <td class="label">{$form.description.label}</td>
@@ -95,6 +95,7 @@
 
 {literal}
 <script type="text/javascript">
+cj(function(){
   var dataUrl        = "{/literal}{$dataURL}{literal}";
   cj('#contact_name').autocomplete( dataUrl, {
     width        : 250,
@@ -108,15 +109,33 @@
     else {
       cj( "#created_id" ).val('');
     }
+  }).bind('click', function( ) {
+      cj('#created_id').val('');
   });
 
-  // remove current employer id when current employer removed.
-  cj("form").submit(function() {
-    if (!cj('#contact_name').val()) cj('#created_id').val('');
+  {/literal}
+  {if $contact_name}
+    {literal} cj('#contact_name').val("{/literal}{$contact_name}{literal}");{/literal}
+  {/if}
+
+  {if $action eq 2}
+  var created_id = "{$created_id}";
+  {literal}
+  var contactUrl = "{/literal}{crmURL p='civicrm/ajax/rest' h=0
+  q="className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=contact&id=" }{literal}" + created_id;
+
+  cj.ajax({
+    url     : contactUrl,
+    success : function(html){
+      htmlText = html.split( '|' , 2);
+      cj('#contact_name').val(htmlText[0]);
+    }
   });
+  {/literal}{/if}{literal}
 
   cj("input#contact_name").click( function( ) {
     cj("input#created_id").val('');
   });
+});
 </script>
 {/literal}

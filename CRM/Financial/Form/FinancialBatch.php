@@ -162,8 +162,11 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
       if ($flag = CRM_Core_Permission::check('edit all manual batches')) {
         $dataURL = CRM_Utils_System::url('civicrm/ajax/getContactList', 'json=1&users=1', false, null, false);
         $this->assign('dataURL', $dataURL);
-        $this->add('text', 'contact_name', ts('Created By'));
+        $creator = $this->add('text', 'contact_name', ts('Created By'));
         $this->add('hidden', 'created_id', '', array('id' => 'created_id'));
+        if ($creator->getValue()) {
+          $this->assign('contact_name', $creator->getValue());
+        }
       }
       
       $batchStatus = CRM_Core_PseudoConstant::accountOptionValues('batch_status');
@@ -176,7 +179,7 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
 
     $attributes = CRM_Core_DAO::getAttribute('CRM_Batch_DAO_Batch');
 
-    $this->add('text', 'name', ts('Batch Name'), $attributes['name'], true);
+    $this->add('text', 'title', ts('Batch Name'), $attributes['name'], true);
         
     $this->add('text', 'description', ts('Description'), $attributes['description']);
 
@@ -221,6 +224,9 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
     */
    static function formRule($values, $files, $self) {
      $errors = array();
+     if (CRM_Utils_Array::value('contact_name', $values) && !is_numeric($values['created_id'])) {
+       $errors['contact_name'] = ts('Please select a valid contact.');
+     }
      if (!is_numeric($values['item_count'])) {
        $errors['item_count'] = ts('Number of Transactions should be numeric');
      }
@@ -262,17 +268,15 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
        $batchType = CRM_Core_PseudoConstant::accountOptionValues('batch_type');
        $params['type_id'] = CRM_Utils_Array::key('Manual batch', $batchType);  
        $params['status_id'] = CRM_Utils_Array::key('Open', $batchStatus);
-       $params['title'] = CRM_Utils_Array::value('name', $params);
        $params['created_date'] = date('YmdHis');
        $params['created_id'] = $session->get('userID');
        $details = "{$params['name']} batch has been created by this contact.";
      }
      
      if ($this->_action & CRM_Core_Action::UPDATE && $this->_id) {
-       $params['title'] = CRM_Utils_Array::value('name', $params);
-       $details = "{$params['name']} batch has been edited by this contact.";
+       $details = "{$params['title']} batch has been edited by this contact.";
        if (CRM_Utils_Array::value($params['status_id'], $batchStatus) == 'Closed') {
-         $details = "{$params['name']} batch has been closed by this contact.";
+         $details = "{$params['title']} batch has been closed by this contact.";
        }
      }
 
@@ -286,13 +290,13 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
      //create activity. 
      $activityParams = array( 
        'activity_type_id' => array_search('Export of Financial Transactions Batch', $activityTypes), 
-       'subject' => CRM_Utils_Array::value('name', $params). "- Batch", 
+       'subject' => CRM_Utils_Array::value('title', $params). "- Batch",
        'status_id' => 2, 
        'priority_id' => 2,
        'activity_date_time' => date('YmdHis'),
        'source_contact_id' => $session->get('userID'),
        'source_contact_qid' => $session->get('userID'),
-       'details' => $details,    
+       'details' => $details
      );
 
      CRM_Activity_BAO_Activity::create($activityParams);
@@ -305,14 +309,14 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
          "reset=1&action=add"));
      }
      elseif (CRM_Utils_Array::value($batch->status_id, $batchStatus) == 'Closed') {
-       if ($batch->name) {
-         CRM_Core_Session::setStatus(ts("'%1' batch has been saved.", array(1 => $batch->name)));
+       if ($batch->title) {
+         CRM_Core_Session::setStatus(ts("'%1' batch has been saved.", array(1 => $batch->title)));
        }
        $session->replaceUserContext(CRM_Utils_System::url('civicrm','reset=1'));
      }
      else {
-       if ($batch->name) {
-         CRM_Core_Session::setStatus(ts("'%1' batch has been saved.", array(1 => $batch->name)));
+       if ($batch->title) {
+         CRM_Core_Session::setStatus(ts("'%1' batch has been saved.", array(1 => $batch->title)));
        }
        $session->replaceUserContext(CRM_Utils_System::url('civicrm/batchtransaction', 
          "reset=1&bid={$batch->id}"));

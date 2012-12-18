@@ -84,10 +84,11 @@ class CRM_Contribute_Form extends CRM_Core_Form {
       $defaults['financial_account_type_id'] = array_keys($values);
       $defaults['is_active'] = 1;
 
-    } elseif ($this->_action & CRM_Core_Action::UPDATE) {
+    }
+    elseif ($this->_action & CRM_Core_Action::UPDATE) {
       if (CRM_Utils_Array::value('contact_id', $defaults) || CRM_Utils_Array::value('created_id', $defaults)) {
         $contactID = CRM_Utils_Array::value('created_id', $defaults) ? $defaults['created_id'] : $defaults['contact_id'];
-        $defaults['contact_name'] = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $contactID, 'sort_name');
+        $this->assign('created_id', $contactID);
       }
       if ($parentId = CRM_Utils_Array::value('parent_id', $defaults)) {
         $this->assign('parentId', $parentId); 
