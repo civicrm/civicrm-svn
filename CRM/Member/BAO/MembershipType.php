@@ -380,13 +380,14 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType {
         }
       }
       elseif ($membershipTypeDetails['duration_unit'] == 'month') {
-        //here start date is always from start of the joining
-        //month irrespective when you join during the month,
-        //so if you join on 1 Jan or 15 Jan your start
-        //date will always be 1 Jan
-        if($actualStartDate >= $membershipTypeDetails['fixed_period_rollover_day']){
+        // Check if we are on or after rollover day of the month - CRM-10585
+        // If so, set fixed_period_rollover TRUE so we increment end_date month below.
+        $dateParts = explode('-', $actualStartDate);
+        if ($dateParts[2] >= $membershipTypeDetails['fixed_period_rollover_day']){
           $fixed_period_rollover = True;
         }
+        
+        // Start date is always first day of actualStartDate month
         if (!$startDate) {
           $actualStartDate = $startDate = $year . '-' . $month . '-01';
         }
