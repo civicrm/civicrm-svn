@@ -825,25 +825,6 @@ SELECT  id
       }
     }
 
-    //group selected and unwanted fields list
-    $ufFields = $gid ? CRM_Core_BAO_UFGroup::getFields($gid, FALSE, NULL, NULL, NULL, TRUE, NULL, TRUE) : array();
-    $groupFieldList = array_merge($ufFields, array('note', 'email_greeting_custom', 'postal_greeting_custom', 'addressee_custom', 'id'));
-    //unset selected fields
-    foreach ($groupFieldList as $key => $value) {
-      if (is_integer($key)) {
-        unset($fields['Individual'][$value], $fields['Household'][$value], $fields['Organization'][$value]);
-        continue;
-      }
-      if (!empty($defaults['field_name'])
-        && $defaults['field_name']['0'] == $value['field_type']
-        && $defaults['field_name']['1'] == $key
-      ) {
-        continue;
-      }
-      unset($fields[$value['field_type']][$key]);
-    }
-    unset($subTypes);
-
     if (CRM_Core_Permission::access('CiviContribute')) {
       $contribFields = CRM_Contribute_BAO_Contribution::getContributionFields(FALSE);
       if (!empty($contribFields)) {
@@ -922,6 +903,24 @@ SELECT  id
     // Sort by title
     foreach ($fields as &$values) {
       $values = CRM_Utils_Array::crmArraySortByField($values, 'title');
+    }
+
+    //group selected and unwanted fields list
+    $ufFields = $gid ? CRM_Core_BAO_UFGroup::getFields($gid, FALSE, NULL, NULL, NULL, TRUE, NULL, TRUE) : array();
+    $groupFieldList = array_merge($ufFields, array('note', 'email_greeting_custom', 'postal_greeting_custom', 'addressee_custom', 'id'));
+    //unset selected fields
+    foreach ($groupFieldList as $key => $value) {
+      if (is_integer($key)) {
+        unset($fields['Individual'][$value], $fields['Household'][$value], $fields['Organization'][$value]);
+        continue;
+      }
+      if (!empty($defaults['field_name'])
+        && $defaults['field_name']['0'] == $value['field_type']
+        && $defaults['field_name']['1'] == $key
+      ) {
+        continue;
+      }
+      unset($fields[$value['field_type']][$key]);
     }
 
     return $fields;
