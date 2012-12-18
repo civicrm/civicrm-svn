@@ -1254,6 +1254,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
     }
 
     if ($params['amount']) {
+      $contribParams['line_item'] = $form->_lineItem;
       //add contribution record
       $contribution = &CRM_Contribute_BAO_Contribution::add($contribParams, $ids);
     }
@@ -1388,79 +1389,6 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       $contactID,
       'email-' . $form->_bltID
     );
-
-    // return if pending
-    // if ($pending) {
-    //   return $contribution;
-    // }
-
-    // next create the transaction record
-
-    if ( ( ! $online || $form->_values['is_monetary'] ) ) {
-      if (CRM_Utils_Array::value('int_amount', $params)) {
-      $params['amount'] = $params['initial_amount'];
-      }
-      $trxnParams = array(
-        'contribution_id' => $contribution->id,
-        'trxn_date' => $now,
-        'total_amount' => $params['amount'],
-        'fee_amount' => CRM_Utils_Array::value('fee_amount', $result),
-        'net_amount' => CRM_Utils_Array::value('net_amount', $result, $params['amount']),
-        'currency' => $params['currencyID'],
-        'payment_processor_id' => $form->_paymentProcessor['id'],
-        'trxn_id' => $result['trxn_id'],
-        'trxn_result_code' => (isset($result['trxn_result_code']) ? $result['trxn_result_code'] : FALSE),
-      );
-
-      $revenueFinancialType = array( );
-      $statusID = $cId = $financialAccount = null;
-      if( $pending ){
-        CRM_Core_PseudoConstant::populate( $revenueFinancialType,
-          'CRM_Financial_DAO_EntityFinancialAccount',
-          $all = TRUE, 
-          $retrieve = 'financial_account_id', 
-          $filter = NULL, 
-          " account_relationship = 3 AND entity_id = {$contribution->financial_type_id} "
-        );
-        $financialAccount = current( $revenueFinancialType );
-        $statusID = key(CRM_CORE_PseudoConstant::accountOptionValues( 'financial_item_status', NULL, " AND v.name LIKE 'Unpaid' " ));
-      }else{
-        $finanTypeId = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_PaymentProcessor', $form->_paymentProcessor['id'], 'financial_type_id');
-        CRM_Core_PseudoConstant::populate( $revenueFinancialType,
-          'CRM_Financial_DAO_EntityFinancialAccount',
-          $all = TRUE, 
-          $retrieve = 'financial_account_id', 
-          $filter = NULL, 
-          " account_relationship = 6 AND entity_id = {$finanTypeId} "
-        );
-                
-        $financialAccount = current( $revenueFinancialType );
-        $statusID = key(CRM_CORE_PseudoConstant::accountOptionValues( 'financial_item_status', NULL, " AND v.name LIKE 'Paid' " ));
-      }
-      if( $financialAccount ){
-        $trxnParams['to_financial_account_id'] = $financialAccount;
-        $cId = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_FinancialAccount', $financialAccount, 'contact_id');
-      }
-
-      $trxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
-      $itemsParams = array(
-        'created_date'         => date('YmdHis'),
-        'transaction_date'     => $trxn->trxn_date,
-        'contact_id'           => $cId,
-        'amount'               => $trxn->total_amount,
-        'currency'             => $trxn->currency,
-        'entity_table'         => 'civicrm_financial_trxn',
-        'entity_id'            => $trxn->id,
-        'status_id'            => $statusID,
-      );
-            
-      if($financialAccount){
-        $itemsParams['financial_account_id'] = $financialAccount;
-      }
-      require_once 'CRM/Financial/BAO/FinancialItem.php';
-      $trxnId['id'] = $trxn->id ;
-      $trxn = CRM_Financial_BAO_FinancialItem::create($itemsParams, null, $trxnId);
-    }
     
     //create contribution activity w/ individual and target
     //activity w/ organisation contact id when onbelf, CRM-4027
