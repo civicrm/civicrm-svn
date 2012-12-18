@@ -43,10 +43,6 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField {
    * Batch entry fields
    */
   private static $_contriBatchEntryFields = NULL;
-
-  /**
-   * Batch entry fields
-   */
   private static $_memberBatchEntryFields = NULL;
 
 
@@ -855,21 +851,21 @@ SELECT  id
     if (CRM_Core_Permission::access('CiviEvent')) {
       $participantFields = CRM_Event_BAO_Query::getParticipantFields();
       if ($participantFields) {
-        unset($participantFields['external_identifier']);
-        unset($participantFields['event_id']);
-        unset($participantFields['participant_contact_id']);
-        unset($participantFields['participant_role_id']);
-        unset($participantFields['participant_status_id']);
-        unset($participantFields['participant_is_test']);
-        unset($participantFields['participant_fee_level']);
-        unset($participantFields['participant_id']);
-        unset($participantFields['participant_is_pay_later']);
-
+        // Remove fields not supported by profiles
+        CRM_Utils_Array::remove($participantFields,
+          'external_identifier',
+          'event_id',
+          'participant_contact_id',
+          'participant_role_id',
+          'participant_status_id',
+          'participant_is_test',
+          'participant_fee_level',
+          'participant_id',
+          'participant_is_pay_later',
+          'participant_campaign'
+        );
         if (isset($participantFields['participant_campaign_id'])) {
           $participantFields['participant_campaign_id']['title'] = ts('Campaign');
-          if (isset($participantFields['participant_campaign'])) {
-            unset($participantFields['participant_campaign']);
-          }
         }
         $fields['Participant'] = $participantFields;
       }
@@ -877,13 +873,15 @@ SELECT  id
 
     if (CRM_Core_Permission::access('CiviMember')) {
       $membershipFields = CRM_Member_BAO_Membership::getMembershipFields();
-      unset($membershipFields['membership_id']);
-      unset($membershipFields['membership_type_id']);
-      unset($membershipFields['member_is_test']);
-      unset($membershipFields['is_override']);
-      unset($membershipFields['status_id']);
-      unset($membershipFields['member_is_pay_later']);
-
+      // Remove fields not supported by profiles
+      CRM_Utils_Array::remove($membershipFields,
+        'membership_id',
+        'membership_type_id',
+        'member_is_test',
+        'is_override',
+        'status_id',
+        'member_is_pay_later'
+      );
       if ($gid && CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', $gid, 'name') == 'membership_batch_entry') {
         $fields['Membership'] = array_merge($membershipFields, self::getMemberBatchEntryFields());
       }

@@ -460,8 +460,7 @@ class CRM_Utils_Array {
    *  @return  array  Sorted array
    *  @static
    */
-  static function asort($array = array(
-    )) {
+  static function asort($array = array()) {
     $lcMessages = CRM_Utils_System::getUFLocale();
 
     if ($lcMessages && $lcMessages != 'en_US' && class_exists('Collator')) {
@@ -475,17 +474,24 @@ class CRM_Utils_Array {
     return $array;
   }
 
-  static function urlEncode($values) {
-    $uri = '';
-    foreach ($values as $key => $value) {
-      $value = urlencode($value);
-      $uri .= "&{$key}={$value}";
-}
-    if (!empty($uri)) {
-      $uri = substr($uri, 1);
-    }
-    return $uri;
-  }
+  /**
+   * Convenient way to unset a bunch of items from an array
+   *
+   * @param array $items (reference)
+   * @param string/int/array $itemN: other params to this function will be treated as keys (or arrays of keys) to unset
+   */
+   static function remove(&$items) {
+     foreach (func_get_args() as $n => $key) {
+       if ($n && is_array($key)) {
+         foreach($key as $k) {
+           unset($items[$k]);
+         }
+       }
+       elseif ($n) {
+         unset($items[$key]);
+       }
+     }
+   }
 
 }
 
