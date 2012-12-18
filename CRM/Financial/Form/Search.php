@@ -51,7 +51,7 @@ class CRM_Financial_Form_Search extends CRM_Core_Form {
 
   public function buildQuickForm() {
     $attributes = CRM_Core_DAO::getAttribute('CRM_Batch_DAO_Batch');
-    $this->add('text', 'title', ts('Batch Name'), $attributes['title']));
+    $this->add('text', 'title', ts('Batch Name'), $attributes['title']);
 
     $this->add( 'select', 
                 'type_id', 
