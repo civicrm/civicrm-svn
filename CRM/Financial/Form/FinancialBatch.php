@@ -159,10 +159,6 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
     );
     
     if ($this->_action & CRM_Core_Action::UPDATE && $this->_id) {
-      $element = $this->add('select', 'type_id', ts('Batch Type'),
-        array('' => ts('- select -')) + CRM_Core_PseudoConstant::accountOptionValues('batch_type'));
-            
-      $element->freeze();
       if ($flag = CRM_Core_Permission::check('edit all manual batches')) {
         $dataURL = CRM_Utils_System::url('civicrm/ajax/getContactList', 'json=1&users=1', false, null, false);
         $this->assign('dataURL', $dataURL);
@@ -170,10 +166,6 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
         $this->add('hidden', 'created_id', '', array('id' => 'created_id'));
       }
       
-      $element = $this->add('text', 'modified_date', ts('Modified Date'));
-      $element->freeze();
-      $element = $this->add('text', 'created_date', ts('Opened Date'));
-      $element->freeze();     
       $batchStatus = CRM_Core_PseudoConstant::accountOptionValues('batch_status');
 
       //unset exported status
@@ -209,9 +201,13 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
    */
   function setDefaultValues() {
     $defaults = parent::setDefaultValues();
-    list($defaults['modified_date'], $defaults['modified_time']) = CRM_Utils_Date::setDateDefaults(CRM_Utils_Array::value('modified_date', $defaults));
-    list($defaults['created_date'], $defaults['created_time']) = CRM_Utils_Date::setDateDefaults(CRM_Utils_Array::value('created_date', $defaults));
-    return $defaults; 
+
+    if ($this->_id) {
+      $this->assign('modified_date', $defaults['modified_date']);
+      $this->assign('created_date', $defaults['created_date']);
+    }
+
+    return $defaults;
   }
 
    /**
