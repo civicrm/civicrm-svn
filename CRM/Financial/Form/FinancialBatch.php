@@ -265,12 +265,12 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
        $params['created_date'] = CRM_Utils_Date::processDate($params['created_date']);
      }
      if ($this->_action & CRM_Core_Action::ADD) {
-       $batchType = CRM_Core_PseudoConstant::accountOptionValues('batch_type');
-       $params['type_id'] = CRM_Utils_Array::key('Manual batch', $batchType);  
+       $batchMode = CRM_Core_PseudoConstant::getBatchMode('name');
+       $params['mode_id'] = CRM_Utils_Array::key('Manual Batch', $batchMode);
        $params['status_id'] = CRM_Utils_Array::key('Open', $batchStatus);
        $params['created_date'] = date('YmdHis');
        $params['created_id'] = $session->get('userID');
-       $details = "{$params['name']} batch has been created by this contact.";
+       $details = "{$params['title']} batch has been created by this contact.";
      }
      
      if ($this->_action & CRM_Core_Action::UPDATE && $this->_id) {

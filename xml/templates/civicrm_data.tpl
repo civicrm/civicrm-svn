@@ -198,6 +198,7 @@ VALUES
    ('event_contacts'                , '{ts escape="sql"}Event Recipients{/ts}'                   , 1, 1),
    ('conference_slot'               , '{ts escape="sql"}Conference Slot{/ts}'                    , 1, 1),
    ('batch_type'                    , '{ts escape="sql"}Batch Type{/ts}'                         , 1, 1),
+   ('batch_mode'                    , '{ts escape="sql"}Batch Mode{/ts}'                         , 1, 1),
    ('batch_status'                  , '{ts escape="sql"}Batch Status{/ts}'                       , 1, 1),
    ('sms_api_type'                  , '{ts escape="sql"}Api Type{/ts}'                           , 1, 1),
    ('sms_provider_name'             , '{ts escape="sql"}Sms Provider Internal Name{/ts}'         , 1, 1),
@@ -205,8 +206,7 @@ VALUES
    ('financial_account_type'        , '{ts escape="sql"}Financial Account Type{/ts}'             , 1, 1),
    ('financial_item_status'         , '{ts escape="sql"}Financial Item Status{/ts}'              , 1, 1),
    ('grant_program_status'          , '{ts escape="sql"}Grant Program Status{/ts}'                , 1, 1),
-   ('allocation_algorithm'          , '{ts escape="sql"}Grant Program Allocation Algorithm{/ts}'  , 1, 1),
-   ('batch_mode'                    , '{ts escape="sql"}Batch Mode{/ts}'                         , 1, 1);
+   ('allocation_algorithm'          , '{ts escape="sql"}Grant Program Allocation Algorithm{/ts}'  , 1, 1);
 
 SELECT @option_group_id_pcm            := max(id) from civicrm_option_group where name = 'preferred_communication_method';
 SELECT @option_group_id_act            := max(id) from civicrm_option_group where name = 'activity_type';
@@ -273,6 +273,7 @@ SELECT @option_group_id_ere            := max(id) from civicrm_option_group wher
 SELECT @option_group_id_conference_slot := max(id) from civicrm_option_group where name = 'conference_slot';
 SELECT @option_group_id_batch_type     := max(id) from civicrm_option_group where name = 'batch_type';
 SELECT @option_group_id_batch_status   := max(id) from civicrm_option_group where name = 'batch_status';
+SELECT @option_group_id_batch_mode     := max(id) from civicrm_option_group where name = 'batch_mode';
 SELECT @option_group_id_sms_api_type   := max(id) from civicrm_option_group where name = 'sms_api_type';
 SELECT @option_group_id_sms_provider_name := max(id) from civicrm_option_group where name = 'sms_provider_name';
 SELECT @option_group_id_aro := max(id) from civicrm_option_group where name = 'auto_renew_options';
@@ -280,7 +281,6 @@ SELECT @option_group_id_fat            := max(id) from civicrm_option_group wher
 SELECT @option_group_id_financial_item_status := max(id) from civicrm_option_group where name = 'financial_item_status';
 SELECT @option_group_id_grantProgramSt  := max(id) from civicrm_option_group where name = 'grant_program_status';
 SELECT @option_group_id_allocationAlgo  := max(id) from civicrm_option_group where name = 'allocation_algorithm';
-SELECT @option_group_id_batch_mode := max(id) from civicrm_option_group where name = 'batch_mode';
 
 
 SELECT @contributeCompId := max(id) FROM civicrm_component where name = 'CiviContribute';
@@ -828,10 +828,6 @@ VALUES
      (@option_group_id_arel, '{ts escape="sql"}Premiums Inventory Account is{/ts}', 8, 'Premiums Inventory Account is', NULL, 0, 0, 8, 'Premiums Inventory Account is', 0, 1, 1, 2, NULL),
      (@option_group_id_arel, '{ts escape="sql"}Discounts Account is{/ts}', 9, 'Discounts Account is', NULL, 0, 0, 9, 'Discounts Account is', 0, 1, 1, 2, NULL),
 
--- Batch Mode
-   (@option_group_id_batch_mode, '{ts escape="sql"}Manual Batch{/ts}', 1, 'Manual Batch', NULL, 0, 0, 1, 'Manual Batch', 0, 1, 1, 2, NULL),
-   (@option_group_id_batch_mode, '{ts escape="sql"}Automatic Batch{/ts}', 2, 'Automatic Batch', NULL, 0, 0, 2, 'Automatic Batch', 0, 1, 1, 2, NULL),
-
 -- event_contacts
    (@option_group_id_ere, '{ts escape="sql"}Participant Role{/ts}', 1, 'participant_role', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
 
@@ -842,8 +838,6 @@ VALUES
 -- default batch type
    (@option_group_id_batch_type, '{ts escape="sql"}Contribution{/ts}', 1, '{ts escape="sql"}Contribution{/ts}', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_batch_type, '{ts escape="sql"}Membership{/ts}', 2, '{ts escape="sql"}Membership{/ts}', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
-   (@option_group_id_batch_type, '{ts escape="sql"}Manual batch{/ts}', 3, '{ts escape="sql"}Manual batch{/ts}', NULL, 0, 0, 3, 'Manual batch', 0, 1, 1, 2, NULL),
-   (@option_group_id_batch_type, '{ts escape="sql"}Automatic batch{/ts}', 4, '{ts escape="sql"}Automatic batch{/ts}', NULL, 0, 0, 4, 'Automatic batch', 0, 1, 1, 2, NULL),
 
 -- default batch statues
    (@option_group_id_batch_status, '{ts escape="sql"}Open{/ts}', 1, '{ts escape="sql"}Open{/ts}', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
@@ -851,6 +845,10 @@ VALUES
    (@option_group_id_batch_status, '{ts escape="sql"}Data Entry{/ts}', 3, '{ts escape="sql"}Data Entry{/ts}', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_batch_status, '{ts escape="sql"}Reopened{/ts}', 4, '{ts escape="sql"}Reopened{/ts}', NULL, 0, NULL, 4, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_batch_status, '{ts escape="sql"}Exported{/ts}', 5, '{ts escape="sql"}Exported{/ts}', NULL, 0, NULL, 5, NULL, 0, 0, 1, NULL, NULL),
+
+-- default batch modes
+   (@option_group_id_batch_mode, '{ts escape="sql"}Manual Batch{/ts}', 1, 'Manual Batch', NULL, 0, 0, 1, 'Manual Batch', 0, 1, 1, 2, NULL),
+   (@option_group_id_batch_mode, '{ts escape="sql"}Automatic Batch{/ts}', 2, 'Automatic Batch', NULL, 0, 0, 2, 'Automatic Batch', 0, 1, 1, 2, NULL),
 
 -- Financial Item Status
    (@option_group_id_financial_item_status, '{ts escape="sql"}Paid{/ts}', 1, 'Paid', NULL, 0, 0, 1, 'Paid', 0, 1, 1, 2, NULL),

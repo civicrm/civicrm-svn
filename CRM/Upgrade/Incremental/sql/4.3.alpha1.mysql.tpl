@@ -844,3 +844,7 @@ INSERT IGNORE INTO civicrm_state_province (country_id, abbreviation, name) VALUE
 (@country_id, '106', 'Ventspils novads'),
 (@country_id, 'JKB', 'Jēkabpils'),
 (@country_id, 'VMR', 'Valmiera');
+
+-- CRM-11507
+ALTER TABLE `civicrm_batch` CHANGE `type_id` `type_id` INT( 10 ) UNSIGNED NULL COMMENT 'fk to Batch Type options in civicrm_option_values';
+UPDATE `civicrm_batch` SET `mode_id` = '1';

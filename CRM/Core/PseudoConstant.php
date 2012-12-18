@@ -362,6 +362,13 @@ class CRM_Core_PseudoConstant {
   private static $autoRenew;
 
   /**
+   * batch mode options
+   * @var array
+   * @static
+   */
+  private static $batchModes;
+
+  /**
    * batch type options
    * @var array
    * @static
@@ -2100,6 +2107,24 @@ ORDER BY name";
     }
         
     return self::$accountOptionValues[$cacheKey];
+  }
+
+  /**
+   * Get all batch modes
+   *
+   * The static array batchModes
+   *
+   * @access public
+   * @static
+   *
+   * @return array - array reference of all batch modes
+   */
+  public static function &getBatchMode($columnName = 'label') {
+    if (!self::$batchModes) {
+      self::$batchModes = CRM_Core_OptionGroup::values('batch_mode', false, false, false, null, $columnName);
+    }
+
+    return self::$batchModes;
   }
 
   /**
