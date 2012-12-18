@@ -171,5 +171,25 @@ class CRM_Financial_BAO_FinancialAccount extends CRM_Financial_DAO_FinancialAcco
     $financialAccount->id = $financialAccountId;
     $financialAccount->delete();
   }
+  
+  /**
+   * get accounting code for a financial type with account relation Income Account is
+   *
+   * @financialTypeId int      Financial Type Id
+   *
+   * @return accounting code
+   * @static
+   */
+  static function getAccountingCode($financialTypeId) {
+    $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Income Account is' "));
+    $query = "SELECT cfa.accounting_code FROM `civicrm_financial_type` cft
+LEFT JOIN civicrm_entity_financial_account cefa ON cefa.entity_id = cft.id AND cefa.entity_table = 'civicrm_financial_type'
+LEFT JOIN  civicrm_financial_account cfa ON cefa.financial_account_id = cfa.id
+WHERE cft.id = %1 AND account_relationship = %2";
+    $params = array(1 => array($financialTypeId, 'Integer'),
+      2 => array($relationTypeId, 'Integer')
+    );
+    return CRM_Core_DAO::singleValueQuery($query, $params);
+  }
 }
 

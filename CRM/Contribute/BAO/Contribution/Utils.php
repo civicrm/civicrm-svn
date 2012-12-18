@@ -61,25 +61,28 @@ class CRM_Contribute_BAO_Contribution_Utils {
   ) {
     CRM_Core_Payment_Form::mapParams($form->_bltID, $form->_params, $paymentParams, TRUE);
 
-        $contributionType = new CRM_Financial_DAO_FinancialType( );
-        if ( isset( $paymentParams['financial_type'] ) ) {
-            $contributionType->id = $paymentParams['financial_type'];
+    $contributionType = new CRM_Financial_DAO_FinancialType();
+    if (isset($paymentParams['financial_type'])) {
+      $contributionType->id = $paymentParams['financial_type'];
     }
     elseif (CRM_Utils_Array::value('pledge_id', $form->_values)) {
       $contributionType->id = CRM_Core_DAO::getFieldValue('CRM_Pledge_DAO_Pledge',
         $form->_values['pledge_id'],
-                                                                 'financial_type_id' );
-        } else {
+        'financial_type_id' 
+      );
+    } 
+    else {
       $contributionType->id = $contributionTypeId;
     }
     if (!$contributionType->find(TRUE)) {
       CRM_Core_Error::fatal('Could not find a system table');
     }
-
-        // add some financial type details to the params list
+    
+    // add some financial type details to the params list
     // if folks need to use it
     $paymentParams['contributionType_name'] = $form->_params['contributionType_name'] = $contributionType->name;
-    $paymentParams['contributionType_accounting_code'] = $form->_params['contributionType_accounting_code'] = $contributionType->accounting_code;
+    //CRM-11456
+    $paymentParams['contributionType_accounting_code'] = $form->_params['contributionType_accounting_code'] = CRM_Financial_BAO_FinancialAccount::getAccountingCode($contributionType->id);
     $paymentParams['contributionPageID'] = $form->_params['contributionPageID'] = $form->_values['id'];
 
 
