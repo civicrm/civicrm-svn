@@ -27,4 +27,5 @@
 
 <div class="form-item">
     {$form.group_id.label} &nbsp; {$form.group_id.html} {$form.buttons.html}
+    {include file="CRM/Form/validate.tpl"}
 </div>
