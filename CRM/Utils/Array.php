@@ -261,6 +261,18 @@ class CRM_Utils_Array {
   }
 
   /**
+   * In some cases, functions return an array by reference, but we really don't
+   * want to receive a reference.
+   *
+   * @param $array
+   * @return mixed
+   */
+  static function breakReference($array) {
+    $copy = $array;
+    return $copy;
+  }
+
+  /**
    * Array splice function that preserves associative keys
    * defauly php array_splice function doesnot preserve keys
    * So specify start and end of the array that you want to remove
