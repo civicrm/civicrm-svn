@@ -65,7 +65,8 @@ class CRM_UF_Form_Preview extends CRM_Core_Form {
    *
    * @access public
    *
-   */ function preProcess() {
+   */
+  function preProcess() {
     $flag = FALSE;
     $this->_gid = $this->get('id');
     $this->set('gid', $this->_gid);
@@ -73,8 +74,8 @@ class CRM_UF_Form_Preview extends CRM_Core_Form {
 
     if ($field) {
       $this->_fields = CRM_Core_BAO_UFGroup::getFields($this->_gid, FALSE, NULL, NULL, NULL, TRUE);
-      $fieldDAO      = new CRM_Core_DAO_UFField();
-      $fieldDAO->id  = $this->get('fieldId');
+      $fieldDAO = new CRM_Core_DAO_UFField();
+      $fieldDAO->id = $this->get('fieldId');
       $fieldDAO->find(TRUE);
 
       if ($fieldDAO->is_active == 0) {
@@ -85,7 +86,23 @@ class CRM_UF_Form_Preview extends CRM_Core_Form {
       }
       $name = $fieldDAO->field_name;
       // preview for field
-      $specialFields = array('address_name', 'street_address', 'supplemental_address_1', 'supplemental_address_2', 'city', 'postal_code', 'postal_code_suffix', 'geo_code_1', 'geo_code_2', 'state_province', 'country', 'county', 'phone', 'email', 'im');
+      $specialFields = array(
+        'address_name',
+        'street_address',
+        'supplemental_address_1',
+        'supplemental_address_2',
+        'city',
+        'postal_code',
+        'postal_code_suffix',
+        'geo_code_1',
+        'geo_code_2',
+        'state_province',
+        'country',
+        'county',
+        'phone',
+        'email',
+        'im'
+      );
 
       if ($fieldDAO->location_type_id) {
         $name .= '-' . $fieldDAO->location_type_id;
@@ -118,8 +135,8 @@ class CRM_UF_Form_Preview extends CRM_Core_Form {
 
     $this->set('fieldId', NULL);
     $this->assign("fields", $this->_fields);
-    }
-    
+  }
+
   /**
    * Set the default form values
    *

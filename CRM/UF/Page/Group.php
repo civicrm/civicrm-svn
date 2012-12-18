@@ -143,7 +143,7 @@ class CRM_UF_Page_Group extends CRM_Core_Page {
       // default to 'browse'
       'browse'
     );
-    
+
     // assign vars to templates
     $this->assign('action', $action);
     $id = CRM_Utils_Request::retrieve('id', 'Positive',
@@ -185,7 +185,7 @@ class CRM_UF_Page_Group extends CRM_Core_Page {
   /**
    * This function is to make a copy of a profile, including
    * all the fields in the profile
-   * 
+   *
    * @return void
    * @access public
    */
@@ -240,8 +240,10 @@ class CRM_UF_Page_Group extends CRM_Core_Page {
     if ($config->userFramework == 'Joomla') {
       $profile = str_replace('/administrator/', '/index.php', $profile);
     }
-    else if ($config->userFramework == 'WordPress') {
-      $profile = str_replace('/wp-admin/admin.php', '/index.php', $profile);
+    else {
+      if ($config->userFramework == 'WordPress') {
+        $profile = str_replace('/wp-admin/admin.php', '/index.php', $profile);
+      }
     }
 
     // add jquery files
@@ -293,7 +295,7 @@ class CRM_UF_Page_Group extends CRM_Core_Page {
    * @static
    */
   function browse($action = NULL) {
-    $ufGroup     = array();
+    $ufGroup = array();
     $allUFGroups = array();
     $allUFGroups = CRM_Core_BAO_UFGroup::getModuleUFGroup();
     if (empty($allUFGroups)) {
@@ -424,12 +426,12 @@ class CRM_UF_Page_Group extends CRM_Core_Page {
     if (CRM_Utils_Array::value(1, $groupTypeParts)) {
       foreach (explode(',', $groupTypeParts[1]) as $typeValue) {
         $groupTypeValues = $valueLabels = array();
-        $valueParts      = explode(':', $typeValue);
-        $typeName        = NULL;
+        $valueParts = explode(':', $typeValue);
+        $typeName = NULL;
         switch ($valueParts[0]) {
           case 'ContributionType':
             $typeName = 'Contribution';
-                    $valueLabels = CRM_Contribute_PseudoConstant::financialType( );
+            $valueLabels = CRM_Contribute_PseudoConstant::financialType();
             break;
 
           case 'ParticipantRole':
