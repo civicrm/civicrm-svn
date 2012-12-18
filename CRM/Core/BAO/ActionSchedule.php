@@ -81,7 +81,7 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule {
     $participantStatus = CRM_Event_PseudoConstant::participantStatus(NULL, NULL, 'label');
     $event             = CRM_Event_PseudoConstant::event(NULL, FALSE, "( is_template IS NULL OR is_template != 1 )");
     $eventType         = CRM_Event_PseudoConstant::eventType();
-    
+
     $autoRenew = CRM_Core_PseudoConstant::autoRenew();
     $membershipType = CRM_Member_PseudoConstant::membershipType();
 
@@ -204,13 +204,13 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule {
             }
             if ( $auto ) {
               $vval = $statusLabel + $autoRenew;
-            } 
+            }
             else {
               $vval = $statusLabel;
             }
           }
           break;
-          
+
       case '':
           $sel3[$id] = '';
           break;
@@ -621,7 +621,7 @@ INNER JOIN civicrm_option_value ov ON e.activity_type_id = ov.value AND ov.optio
 INNER JOIN civicrm_event ev ON e.event_id = ev.id
 INNER JOIN civicrm_option_group og ON og.name = 'event_type'
 INNER JOIN civicrm_option_value ov ON ev.event_type_id = ov.value AND ov.option_group_id = og.id
-LEFT  JOIN civicrm_loc_block lb ON lb.id = ev.loc_block_id                                                                                                                                                 
+LEFT  JOIN civicrm_loc_block lb ON lb.id = ev.loc_block_id
 LEFT  JOIN civicrm_address address ON address.id = lb.address_id
 LEFT  JOIN civicrm_email email ON email.id = lb.email_id
 LEFT  JOIN civicrm_phone phone ON phone.id = lb.phone_id
@@ -632,7 +632,7 @@ LEFT  JOIN civicrm_phone phone ON phone.id = lb.phone_id
         $tokenEntity = 'membership';
         $tokenFields = array('fee', 'id', 'join_date', 'start_date', 'end_date', 'status', 'type');
         $extraSelect = ", mt.minimum_fee as fee, e.id as id , e.join_date, e.start_date, e.end_date, ms.name as status, mt.name as type";
-        $extraJoin   = "                                                                                                                                                 
+        $extraJoin   = "
  INNER JOIN civicrm_membership_type mt ON e.membership_type_id = mt.id
  INNER JOIN civicrm_membership_status ms ON e.status_id = ms.id";
       }
@@ -650,13 +650,11 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
       );
 
       while ($dao->fetch()) {
-
         $entityTokenParams = array();
-
         foreach ($tokenFields as $field) {
           if ($field == 'location') {
             $loc = array();
-            $stateProvince = CRM_Core_PseudoConstant::stateProvince(); 
+            $stateProvince = CRM_Core_PseudoConstant::stateProvince();
             $loc['street_address'] = $dao->street_address;
             $loc['city'] = $dao->city;
             $loc['state_province'] = CRM_Utils_array::value($dao->state_province_id, $stateProvince);
