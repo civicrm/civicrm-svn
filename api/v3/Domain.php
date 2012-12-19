@@ -60,8 +60,7 @@ function civicrm_api3_domain_get($params) {
   foreach ($domains as $domain) {
     $values = array();
     $locparams = array(
-      'entity_id' => $domain['id'],
-      'entity_table' => 'civicrm_domain',
+      'contact_id' => $domain['contact_id']
     );
     require_once 'CRM/Core/BAO/Location.php';
     $values['location'] = CRM_Core_BAO_Location::getValues($locparams, TRUE);
