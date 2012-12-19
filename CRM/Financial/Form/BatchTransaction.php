@@ -48,7 +48,7 @@ class CRM_Financial_Form_BatchTransaction extends CRM_Contribute_Form {
     $this->assign('entityID', $this->_entityID);
     if (isset($this->_entityID)) {
       $batchTitle = CRM_Core_DAO::getFieldValue('CRM_Batch_BAO_Batch', $this->_entityID, 'title');
-      CRM_Utils_System::setTitle(ts('Financial Transaction Batch - %1',
+      CRM_Utils_System::setTitle(ts('Accounting Batch - %1',
                                     array(1 => $batchTitle)
                                     ));
     }

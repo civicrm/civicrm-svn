@@ -516,7 +516,7 @@ AND `weight` > @pledgeWeight;
 INSERT INTO civicrm_navigation
     (domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight)
 VALUES
-    ({$domainID}, NULL, '{ts escape="sql" skip="true"}Financial Transaction Batches{/ts}',  'Financial Transaction Batches', 'access CiviContribute', '', @contributionlastID, '1',  1,   @pledgeWeight+1);
+    ({$domainID}, NULL, '{ts escape="sql" skip="true"}Accounting Batches{/ts}',  'Accounting Batches', 'access CiviContribute', '', @contributionlastID, '1',  1,   @pledgeWeight+1);
 SET @financialTransactionID:=LAST_INSERT_ID();
 
 INSERT INTO civicrm_navigation

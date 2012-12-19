@@ -119,7 +119,7 @@ class CRM_Financial_Page_FinancialBatch extends CRM_Core_Page_Basic {
    * @return string name of this page.
    */
   function editName() {
-    return 'Financial Transaction Batch';
+    return 'Accounting Batch';
   }
 
   /**

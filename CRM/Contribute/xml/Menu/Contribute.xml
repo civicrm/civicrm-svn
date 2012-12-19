@@ -277,7 +277,7 @@
   </item>
   <item>
      <path>civicrm/financial/batch</path>
-     <title>Financial Transaction Batch</title>
+     <title>Accounting Batch</title>
      <page_callback>CRM_Financial_Page_FinancialBatch</page_callback>
      <access_arguments>create manual batch</access_arguments>
      <adminGroup>CiviContribute</adminGroup>
@@ -292,7 +292,7 @@
  </item>
  <item>
      <path>civicrm/batchtransaction</path>
-     <title>Financial Transaction Batch</title>
+     <title>Accounting Batch</title>
      <page_callback>CRM_Financial_Page_BatchTransaction</page_callback>
      <adminGroup>CiviContribute</adminGroup>
      <weight>600</weight>
