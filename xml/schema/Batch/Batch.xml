@@ -136,7 +136,6 @@
   <field>
     <name>item_count</name>
     <type>int unsigned</type>
-    <required>true</required>
     <comment>Number of items in a batch.</comment>
     <add>4.2</add>
   </field>

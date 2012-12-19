@@ -36,10 +36,10 @@
 
 /**
  * This class generates form components for Financial Batch
- * 
+ *
  */
 class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
-      
+
   /**
    * The financial batch id, used when editing the field
    *
@@ -55,12 +55,12 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
    * @access public
    */
 
-  public function preProcess() { 
+  public function preProcess() {
     $this->_id = CRM_Utils_Request::retrieve('id', 'Positive', $this);
     parent::preProcess();
     $session = CRM_Core_Session::singleton();
     if ($this->_id) {
-      $permissions = array( 
+      $permissions = array(
         CRM_Core_Action::UPDATE => array(
           'permission' => array(
             'edit own manual batches',
@@ -86,11 +86,11 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
         $this->checkPermissions($this->_action, $permissions[$this->_action]['permission'], $createdID, $session->get('userID'), $permissions[$this->_action]['actionName'] );
       }
 
-      $status = CRM_Core_DAO::getFieldValue('CRM_Batch_DAO_Batch', $this->_id, 'status_id');            
+      $status = CRM_Core_DAO::getFieldValue('CRM_Batch_DAO_Batch', $this->_id, 'status_id');
       $batchStatus = CRM_Core_PseudoConstant::accountOptionValues('batch_status');
       //FIXME
       //if (CRM_Utils_Array::value($status, $batchStatus) != 'Open') {
-      // CRM_Core_Error::statusBounce(ts("You cannot edit {$batchStatus[$status]} Batch")); 
+      // CRM_Core_Error::statusBounce(ts("You cannot edit {$batchStatus[$status]} Batch"));
       //}
     }
   }
@@ -102,14 +102,14 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
    * @access public
    */
   public function buildQuickForm() {
-    parent::buildQuickForm();       
+    parent::buildQuickForm();
     if (isset( $this->_id)) {
       $this->_title = CRM_Core_DAO::getFieldValue('CRM_Batch_DAO_Batch', $this->_id, 'name');
       CRM_Utils_System::setTitle($this->_title .' - '.ts( 'Financial Batch'));
       $this->assign('batchTitle', $this->_title);
     }
 
-    if ($this->_action & (CRM_Core_Action::CLOSE | CRM_Core_Action::REOPEN | CRM_Core_Action::EXPORT)) { 
+    if ($this->_action & (CRM_Core_Action::CLOSE | CRM_Core_Action::REOPEN | CRM_Core_Action::EXPORT)) {
       if ($this->_action & CRM_Core_Action::CLOSE) {
         $buttonName = ts('Close Batch');
       }
@@ -120,44 +120,44 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
         $buttonName = ts('Export Batch');
       }
       $this->addButtons(
-        array( 
-          array( 
-            'type' => 'next', 
+        array(
+          array(
+            'type' => 'next',
             'name' => $buttonName,
-            'spacing' => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', 
-            'isDefault' => true   
-          ), 
-          array( 
-            'type' => 'cancel', 
+            'spacing' => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+            'isDefault' => true
+          ),
+          array(
+            'type' => 'cancel',
             'name' => ts('Cancel')
-          ), 
-        ) 
+          ),
+        )
       );
       $this->assign('actionName', $buttonName);
       return;
     }
-         
+
     $this->applyFilter('__ALL__', 'trim');
-         
-    $this->addButtons( 
+
+    $this->addButtons(
       array(
-        array( 
+        array(
           'type' => 'next',
           'name' => ts('Save'),
           'isDefault' => true
         ),
-        array( 
+        array(
           'type' => 'next',
           'name' => ts('Save and New'),
           'subName' => 'new'
         ),
-        array( 
+        array(
           'type' => 'cancel',
           'name' => ts('Cancel')
         )
       )
     );
-    
+
     if ($this->_action & CRM_Core_Action::UPDATE && $this->_id) {
       if ($flag = CRM_Core_Permission::check('edit all manual batches')) {
         $dataURL = CRM_Utils_System::url('civicrm/ajax/getContactList', 'json=1&users=1', false, null, false);
@@ -168,7 +168,7 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
           $this->assign('contact_name', $creator->getValue());
         }
       }
-      
+
       $batchStatus = CRM_Core_PseudoConstant::accountOptionValues('batch_status');
 
       //unset exported status
@@ -180,19 +180,19 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
     $attributes = CRM_Core_DAO::getAttribute('CRM_Batch_DAO_Batch');
 
     $this->add('text', 'title', ts('Batch Name'), $attributes['name'], true);
-        
+
     $this->add('text', 'description', ts('Description'), $attributes['description']);
 
-    $this->add('select', 'payment_instrument_id', ts('Payment Instrument'), 
+    $this->add('select', 'payment_instrument_id', ts('Payment Instrument'),
       array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::paymentInstrument(),
-      false 
+      false
     );
-        
-    $this->add('text', 'total', ts('Total Amount'), $attributes['total'], true);
-        
-    $this->add('text', 'item_count', ts('Number of Transactions'), $attributes['item_count'], true);
-    $this->addFormRule(array('CRM_Financial_Form_FinancialBatch', 'formRule'), $this);    
-   } 
+
+    $this->add('text', 'total', ts('Total Amount'), $attributes['total']);
+
+    $this->add('text', 'item_count', ts('Number of Transactions'), $attributes['item_count']);
+    $this->addFormRule(array('CRM_Financial_Form_FinancialBatch', 'formRule'), $this);
+   }
 
   /**
    * This function sets the default values for the form. Note that in edit/view mode
@@ -276,7 +276,7 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
        $params['created_id'] = $session->get('userID');
        $details = "{$params['title']} batch has been created by this contact.";
      }
-     
+
      if ($this->_action & CRM_Core_Action::UPDATE && $this->_id) {
        $details = "{$params['title']} batch has been edited by this contact.";
        if (CRM_Utils_Array::value($params['status_id'], $batchStatus) == 'Closed') {
@@ -285,17 +285,17 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
      }
 
      $batch = CRM_Batch_BAO_Batch::create($params, $ids, $context='financialBatch');
-     
+
      if ($this->_action & CRM_Core_Action::EXPORT) {
        CRM_Batch_BAO_Batch::exportFinancialBatch($ids);
      }
 
      $activityTypes = CRM_Core_PseudoConstant::activityType(TRUE, FALSE, FALSE, 'name');
-     //create activity. 
-     $activityParams = array( 
-       'activity_type_id' => array_search('Export of Financial Transactions Batch', $activityTypes), 
+     //create activity.
+     $activityParams = array(
+       'activity_type_id' => array_search('Export of Financial Transactions Batch', $activityTypes),
        'subject' => CRM_Utils_Array::value('title', $params). "- Batch",
-       'status_id' => 2, 
+       'status_id' => 2,
        'priority_id' => 2,
        'activity_date_time' => date('YmdHis'),
        'source_contact_id' => $session->get('userID'),
@@ -309,7 +309,7 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
      $session = CRM_Core_Session::singleton();
      if ($buttonName == $this->getButtonName('next', 'new')) {
        CRM_Core_Session::setStatus(ts(' You can add another Financial Batch.'));
-       $session->replaceUserContext(CRM_Utils_System::url('civicrm/financial/batch', 
+       $session->replaceUserContext(CRM_Utils_System::url('civicrm/financial/batch',
          "reset=1&action=add"));
      }
      elseif (CRM_Utils_Array::value($batch->status_id, $batchStatus) == 'Closed') {
@@ -322,9 +322,9 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
        if ($batch->title) {
          CRM_Core_Session::setStatus(ts("'%1' batch has been saved.", array(1 => $batch->title)));
        }
-       $session->replaceUserContext(CRM_Utils_System::url('civicrm/batchtransaction', 
+       $session->replaceUserContext(CRM_Utils_System::url('civicrm/batchtransaction',
          "reset=1&bid={$batch->id}"));
-     }     
+     }
    }
 
   /**
@@ -345,7 +345,7 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
     else {
       CRM_Core_Error::statusBounce(ts('You dont have permission to %1 this batch'), array(1 => $actionName));
     }
-  } 
+  }
 }
 
- 
+
