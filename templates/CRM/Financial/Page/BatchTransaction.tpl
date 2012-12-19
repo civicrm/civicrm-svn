@@ -23,42 +23,32 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+	
  <div id="enableDisableStatusMsg" class="success-status" style="display:none;"></div> 
 
-{if $rows}
   <div class="form-layout-compressed">{$form.trans_remove.html}&nbsp;{$form.rSubmit.html}</div><br/>
   <div id="ltype">
     <p></p>
     <div class="form-item">
     {strip}
     <table id="crm-transaction-selector-remove" cellpadding="0" cellspacing="0" border="0">
-      <thead class="sticky">
-      <tr>
-        <th class='crm-batch-checkbox' scope="col" title="Select All Rows">{$form.toggleSelects.html}</th>
-        {foreach from=$columnHeader item=head key=class}
-	  <th class='crm-{$class}'>{$head}</th>
-	{/foreach}
-        <th></th>
-      </tr>
-      </thead>
-
-      {foreach from=$rows item=row}
-        <tr id="row_{$row.id}"class="{cycle values="odd-row,even-row"} {$row.class}">
-	  {assign var=cbName value=$row.checkbox}
-          <td>{$form.$cbName.html}</td>
-	  {foreach from=$columnHeader item=rowValue key=rowKey}
-	    <td>{$row.$rowKey}</td>
-	  {/foreach}
-	  <td>{$row.action}</td>  
-        </tr>
-      {/foreach}
+      <thead>
+          <tr>
+            <th class="crm-transaction-checkbox">{$form.toggleSelects.html}</th>
+	    <th class="crm-contact-type"></th>
+            <th class="crm-contact-name">{ts}Contact Name{/ts}</th>
+            <th class="crm-amount">{ts}Amount{/ts}</th>
+            <th class="crm-received">{ts}Received{/ts}</th>
+      	    <th class="crm-type">{ts}Type{/ts}</th>
+      	    <th class="crm-transaction-links"></th>
+    	  </tr>
+  	</thead>
     </table>
     {/strip}
 
   
     </div>
   </div><br/>  
-{/if}
 {include file="CRM/Financial/Form/BatchTransaction.tpl"}
 
 {literal}

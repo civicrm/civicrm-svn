@@ -30,55 +30,93 @@
       <div class="icon crm-accordion-pointer"></div> 
       {ts}Edit Search Criteria{/ts}
     </div><!-- /.crm-accordion-header -->
- 
     <div class="crm-accordion-body">
       <div id="searchForm" class="crm-block crm-form-block crm-contact-custom-search-activity-search-form-block">
         <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
         <table class="form-layout-compressed">
+          <tr> 
+            <td class="font-size12pt" colspan="2">{$form.sort_name.label}&nbsp;&nbsp;{$form.sort_name.html|crmAddClass:'twenty'}</td>
+          </tr>
+	    <tr>
+              {if $form.contact_tags}
+                <td><label>{ts}Contributor Tag(s){/ts}</label>
+                    {$form.contact_tags.html}
+		     {literal}
+                    <script type="text/javascript">
+
+                    cj("select#contact_tags").crmasmSelect({
+                        addItemTarget: 'bottom',
+                        animate: false,
+                        highlight: true,
+                        sortable: true,
+                        respectParents: true
+                    });
+                    </script>
+                    {/literal}   
+                
+                </td>
+              {else}
+                <td>&nbsp;</td>
+              {/if}
+              {if $form.group}
+                <td><label>{ts}Contributor Group(s){/ts}</label>
+                    {$form.group.html}
+               	     {literal}
+                    <script type="text/javascript">
+                    cj("select#group").crmasmSelect({
+                        addItemTarget: 'bottom',
+                        animate: false,
+                        highlight: true,
+                        sortable: true,
+                        respectParents: true
+                    });
+
+                    </script>
+                    {/literal}
+                </td>
+              {else}
+                <td>&nbsp;</td>
+              {/if}
+	      {include file="CRM/Contribute/Form/Search/Common.tpl"}
         </table> 
         <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="botttom"}</div>
       </div>
     </div>	
   </div>
 </div>
-{if $searchRows}
+
   <div class="form-layout-compressed">{$form.trans_assign.html}&nbsp;{$form.submit.html}</div><br/>
   <div id="ltype">
     <p></p>
     <div class="form-item">
       {strip}
       <table id="crm-transaction-selector-assign" cellpadding="0" cellspacing="0" border="0">
-        <thead class="sticky">
- 	  <tr>
-            <th class='crm-batch-checkbox' scope="col" title="Select All Rows">{$form.toggleSelect.html}</th>
-              {foreach from=$columnHeader item=head key=class}
-	        <th class='crm-{$class}'>{$head}</th>
-	      {/foreach}
-            <th></th>
-            </tr>
-        </thead>
+        <thead>
+          <tr>
+            <th class="crm-transaction-checkbox">{$form.toggleSelect.html}</th>
+	    <th class="crm-contact-type"></th>
+            <th class="crm-contact-name">{ts}Contact Name{/ts}</th>
+            <th class="crm-amount">{ts}Amount{/ts}</th>
+            <th class="crm-received">{ts}Received{/ts}</th>
+      	    <th class="crm-type">{ts}Type{/ts}</th>
+      	    <th class="crm-transaction-links"></th>
+    	  </tr>
+  	</thead>
 
-        {foreach from=$searchRows item=row}
-        <tr id="row_{$row.id}"class="{cycle values="odd-row,even-row"} {$row.class}">
-	  {assign var=cbName value=$row.checkbox}
-          <td>{$form.$cbName.html}</td>
-	  {foreach from=$searchColumnHeader item=rowValue key=rowKey}
-	    <td>{$row.$rowKey}</td>
-	  {/foreach}
-	  <td>{$row.action}</td>  
-        </tr>
-        {/foreach}
       </table>
       {/strip}
     </div>
   </div>   
-{/if}
+
 
 {literal}
 <script type="text/javascript">
 cj( function() {
-   buildTransactionSelector("crm-transaction-selector-assign");
-   buildTransactionSelector("crm-transaction-selector-remove");
+    buildTransactionSelectorAssign( false );
+    buildTransactionSelectorRemove();	
+    cj('#_qf_BatchTransaction_submit-botttom, #_qf_BatchTransaction_submit-top').click( function() {
+	  buildTransactionSelectorAssign( true );
+    });
 
    cj("#trans_assign").attr('disabled',true);
    cj("#trans_remove").attr('disabled',true);	
@@ -131,26 +169,116 @@ function enableActions( type ) {
   }
 }
 
-function buildTransactionSelector( tableID ) {
-  var columns='';
-  cj("#" + tableID + " th").each( function( ) {
-        columns += '{ "bSortable": false },';
-  });
+function buildTransactionSelectorAssign( filterSearch ) {
+  if ( filterSearch ) {
+    crmBatchSelector1.fnDestroy();
+    var ZeroRecordText = '<div class="status messages">{/literal}{ts escape="js"}No Contributions found for your search criteria.{/ts}{literal}</li></ul></div>';
+  }
+    var columns = '';
+    var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/transactionlist" h=0 q="snippet=4&context=financialBatch&entityID=$entityID&notPresent=1"}'{literal};
+ 
+    crmBatchSelector1 = cj('#crm-transaction-selector-assign').dataTable({
+        "bFilter"    : false,
+        "bAutoWidth" : false,
+        "aaSorting"  : [[4, 'desc']],
+        "aoColumns"  : [
+		        {sClass:'crm-transaction-checkbox', bSortable:false},
+			{sClass:'crm-contact-type'},
+                        {sClass:'crm-contact-name'},
+                        {sClass:'crm-amount'},
+                        {sClass:'crm-received'},
+                        {sClass:'crm-type'},
+                        {sClass:'crm-transaction-links', bSortable:false}
+                       ],
+        "bProcessing": true,
+        "asStripClasses" : [ "odd-row", "even-row" ],
+        "sPaginationType": "full_numbers",
+        "sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',
+        "bServerSide": true,
+        "bJQueryUI": true,
+        "sAjaxSource": sourceUrl,
+        "iDisplayLength": 25,
+        "oLanguage": { "sZeroRecords":  ZeroRecordText,
+                       "sProcessing":    {/literal}"{ts escape='js'}Processing...{/ts}"{literal},
+                       "sLengthMenu":    {/literal}"{ts escape='js'}Show _MENU_ entries{/ts}"{literal},
+                       "sInfo":          {/literal}"{ts escape='js'}Showing _START_ to _END_ of _TOTAL_ entries{/ts}"{literal},
+                       "sInfoEmpty":     {/literal}"{ts escape='js'}Showing 0 to 0 of 0 entries{/ts}"{literal},
+                       "sInfoFiltered":  {/literal}"{ts escape='js'}(filtered from _MAX_ total entries){/ts}"{literal},
+                       "sSearch":        {/literal}"{ts escape='js'}Search:{/ts}"{literal},
+                       "oPaginate": {
+                            "sFirst":    {/literal}"{ts escape='js'}First{/ts}"{literal},
+                            "sPrevious": {/literal}"{ts escape='js'}Previous{/ts}"{literal},
+                            "sNext":     {/literal}"{ts escape='js'}Next{/ts}"{literal},
+                            "sLast":     {/literal}"{ts escape='js'}Last{/ts}"{literal}
+                        }
+                    },
+        "fnServerData": function ( sSource, aoData, fnCallback ) {
+            if ( filterSearch ) {
+                aoData.push(
+                    {name:'sort_name', value: cj('#searchForm #sort_name').val()}
+                );
+            }
+            cj.ajax( {
+                "dataType": 'json',
+                "type": "POST",
+                "url": sSource,
+                "data": aoData,
+                "success": fnCallback
+            } );
+        }
+    });
+}
 
-  columns    = columns.substring(0, columns.length - 1 );
-  eval('columns =[' + columns + ']');
-  //load jQuery data table.
-  cj("#" + tableID).dataTable( {
-			    "bAutoWidth" : false,
-    		  	    "sPaginationType": "full_numbers",
-    		            "bJQueryUI"  : true,
-    	            	    "aoColumns"  : columns,
-			    "sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',
-			    "iDisplayLength": 25,
-    			    "bFilter"    : false,
-			    "asStripClasses" : [ "odd-row", "even-row" ]
-        	         });
-
+function buildTransactionSelectorRemove( ) {
+    var columns = '';
+    var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/transactionlist" h=0 q="snippet=4&context=financialBatch&entityID=$entityID"}'{literal};	 
+ 
+    crmBatchSelector = cj('#crm-transaction-selector-remove').dataTable({
+       
+        "bFilter"    : false,
+        "bAutoWidth" : false,
+        "aaSorting"  : [[4, 'desc']],
+        "aoColumns"  : [
+		        {sClass:'crm-transaction-checkbox', bSortable:false},
+			{sClass:'crm-contact-type'},
+                        {sClass:'crm-contact-name'},
+                        {sClass:'crm-amount'},
+                        {sClass:'crm-received'},
+                        {sClass:'crm-type'},
+                        {sClass:'crm-transaction-links', bSortable:false}
+                       ],
+        "bProcessing": true,
+        "asStripClasses" : [ "odd-row", "even-row" ],
+        "sPaginationType": "full_numbers",
+        "sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',
+        "bServerSide": true,
+        "bJQueryUI": true,
+        "sAjaxSource": sourceUrl,
+        "iDisplayLength": 25,
+        "oLanguage": { 
+                       "sProcessing":    {/literal}"{ts escape='js'}Processing...{/ts}"{literal},
+                       "sLengthMenu":    {/literal}"{ts escape='js'}Show _MENU_ entries{/ts}"{literal},
+                       "sInfo":          {/literal}"{ts escape='js'}Showing _START_ to _END_ of _TOTAL_ entries{/ts}"{literal},
+                       "sInfoEmpty":     {/literal}"{ts escape='js'}Showing 0 to 0 of 0 entries{/ts}"{literal},
+                       "sInfoFiltered":  {/literal}"{ts escape='js'}(filtered from _MAX_ total entries){/ts}"{literal},
+                       "sSearch":        {/literal}"{ts escape='js'}Search:{/ts}"{literal},
+                       "oPaginate": {
+                            "sFirst":    {/literal}"{ts escape='js'}First{/ts}"{literal},
+                            "sPrevious": {/literal}"{ts escape='js'}Previous{/ts}"{literal},
+                            "sNext":     {/literal}"{ts escape='js'}Next{/ts}"{literal},
+                            "sLast":     {/literal}"{ts escape='js'}Last{/ts}"{literal}
+                        }
+                    },
+        "fnServerData": function ( sSource, aoData, fnCallback ) {
+            cj.ajax( {
+                "dataType": 'json',
+                "type": "POST",
+                "url": sSource,
+                "data": aoData,
+                "success": fnCallback
+            } );
+        }
+    });
 }
 
 function selectAction( id, toggleSelectId, checkId ) {

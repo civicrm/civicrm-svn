@@ -109,16 +109,24 @@ class CRM_Financial_BAO_EntityFinancialItem extends CRM_Financial_DAO_EntityFina
    * @static 
    * @return object
    */
-  static function getBatchFinancialItems($entityID, $returnvalues, $notPresent = null, $sort = '`civicrm_financial_item`.id') {
+  static function getBatchFinancialItems($entityID, $returnvalues, $notPresent = null, $params = null) {
+    if (!empty($params['rowCount']) &&
+        $params['rowCount'] > 0
+        ) {
+      $limit = " LIMIT {$params['offset']}, {$params['rowCount']} ";
+    }
+    
     // action is taken depending upon the mode
     $select = ' `civicrm_financial_item`.id ';
     if (!empty( $returnvalues)) {
       $select .= " , ".implode(' , ', $returnvalues);
     }
     
-    if ($sort) {
-      $orderBy = " ORDER BY {$sort}";
-    }
+      $orderBy = " ORDER BY `civicrm_financial_item`.id";
+      if (CRM_Utils_Array::value('sort', $params)) {
+        $orderBy = ' ORDER BY ' . CRM_Utils_Array::value('sort', $params);
+      }
+
     
     $from = " `civicrm_financial_item`
 LEFT JOIN civicrm_contact ON civicrm_contact.id = `civicrm_financial_item`.contact_id
@@ -136,6 +144,7 @@ LEFT JOIN civicrm_contribution ON civicrm_contribution.id = civicrm_line_item.en
 FROM {$from}
 WHERE {$where}
 {$orderBy}
+{$limit}
 ";
 
     $result = CRM_Core_DAO::executeQuery($sql);

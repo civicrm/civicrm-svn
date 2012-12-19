@@ -43,47 +43,15 @@ class CRM_Financial_Form_BatchTransaction extends CRM_Contribute_Form {
   static $_entityID;
 
   function preProcess() {
-    $this->_returnvalues = array(
-      'civicrm_financial_item.contact_id',
-      'civicrm_contribution.id as contributionID',
-      'sort_name',
-      'amount',
-      'contact_type',
-      'contact_sub_type',
-      'transaction_date',
-      'name'
-    );
-    $this->_columnHeader = array( 
-      'contact_type' => '',
-      'sort_name' => ts('Contact Name'),
-      'amount'   => ts('Amount'),
-      'transaction_date' => ts('Received'),
-      'name' => ts('Type')
-    );
-   
+    $this->assign('suppressForm', TRUE);
     $this->_entityID = CRM_Utils_Request::retrieve( 'bid' , 'Positive' ) ? CRM_Utils_Request::retrieve( 'bid' , 'Positive' ) : $_POST['batch_id'];
-    
     $this->assign('entityID', $this->_entityID);
-    $financialItem = CRM_Financial_BAO_EntityFinancialItem::getBatchFinancialItems($this->_entityID, $this->_returnvalues);
-    $financialitems = array();
-    while ($financialItem->fetch()) {
-      $row = array();
-      foreach ($this->_columnHeader as $columnKey => $columnValue) {
-        if ($financialItem->contact_sub_type && $columnKey == 'contact_type') {
-          $row[$columnKey] = $financialItem->contact_sub_type;
-          continue;
-        }
-        $row[$columnKey] = $financialItem->$columnKey;
-      }
-      $row['checkbox'] = "mark_y_". $financialItem->id;
-      $row['action'] = CRM_Core_Action::formLink( CRM_Financial_Page_BatchTransaction::links(), null, array('id' => $financialItem->id, 'contid' => $financialItem->contributionID, 'cid' => $financialItem->contact_id));
-      $row['contact_type' ] = CRM_Contact_BAO_Contact_Utils::getImage( CRM_Utils_Array::value('contact_sub_type',$row) ?
-                              CRM_Utils_Array::value('contact_sub_type',$row) : CRM_Utils_Array::value('contact_type',$row) ,false, $financialItem->contact_id);
-      $financialitems[] = $row;
-      $this->addElement('checkbox', $row['checkbox'],null, null);
+    if (isset($this->_entityID)) {
+      $batchTitle = CRM_Core_DAO::getFieldValue('CRM_Batch_BAO_Batch', $this->_entityID, 'title');
+      CRM_Utils_System::setTitle(ts('Financial Transaction Batch - %1',
+                                    array(1 => $batchTitle)
+                                    ));
     }
-    $this->assign('columnHeader', $this->_columnHeader);
-    $this->assign('rows', $financialitems);
   }
   /**
    * Function to build the form
@@ -93,6 +61,31 @@ class CRM_Financial_Form_BatchTransaction extends CRM_Contribute_Form {
    */
   public function buildQuickForm() {
     parent::buildQuickForm();
+    // text for sort_name
+    $this->addElement('text',
+                      'sort_name',
+                      ts('Contributor Name or Email'),
+                      CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact',
+                                                 'sort_name'
+                                                 )
+                      );
+    
+    $this->_group = CRM_Core_PseudoConstant::group();
+    
+    // multiselect for groups
+    if ($this->_group) {
+      $this->add('select', 'group', ts('Groups'), $this->_group, FALSE,
+                 array('id' => 'group', 'multiple' => 'multiple', 'title' => ts('- select -'))
+                 );
+    }
+    $contactTags = CRM_Core_BAO_Tag::getTags();
+    
+    if ($contactTags) {
+      $this->add('select', 'contact_tags', ts('Tags'), $contactTags, FALSE,
+                 array('id' => 'contact_tags', 'multiple' => 'multiple', 'title' => ts('- select -'))
+                 );
+    }
+    CRM_Contribute_BAO_Query::buildSearchForm($this);
     $this->addElement('checkbox', 'toggleSelects', NULL, NULL);
 
     $this->add( 'select',
@@ -143,37 +136,6 @@ class CRM_Financial_Form_BatchTransaction extends CRM_Contribute_Form {
    * @return None
    */
   public function postProcess() {  
-    $contactID = CRM_Utils_Type::escape(1, 'Integer');
-    $context   = CRM_Utils_Type::escape('batch', 'String');
- 
-    $params['batch_id'] = $_POST['batch_id'];
-    $params['contact_id'] = $contactID;
-    $params['context'   ] = $context;
-  
-    $this->_entityID = $params['batch_id'];
-    $financialItem = CRM_Financial_BAO_EntityFinancialItem::getBatchFinancialItems($this->_entityID, $this->_returnvalues, $notPresent = 1);
-  
-    while ($financialItem->fetch()) {
-      $row = array();
-      foreach ($this->_columnHeader as $columnKey => $columnValue) {
-        if ($financialItem->contact_sub_type && $columnKey == 'contact_type') {
-          $row[$columnKey] = $financialItem->contact_sub_type;
-          continue;
-        }
-        $row[$columnKey] = $financialItem->$columnKey;
-      }
-      $row['checkbox'] = CRM_Core_Form::CB_PREFIX . $financialItem->id;
-
-      $row['action'] = CRM_Core_Action::formLink( self::links(), null, array('id' => $financialItem->id, 'contid' => $financialItem->contributionID, 'cid' => $financialItem->contact_id ));
-      $row['contact_type' ] = CRM_Contact_BAO_Contact_Utils::getImage(CRM_Utils_Array::value('contact_sub_type',$row) ?
-                              CRM_Utils_Array::value('contact_sub_type',$row) : CRM_Utils_Array::value('contact_type',$row) ,false, $financialItem->contact_id);
-      $this->_searchRows[] = $row;
-      $this->addElement('checkbox', $row['checkbox'],
-                        null, null);
-    }
-    $this->assign('searchColumnHeader', $this->_columnHeader);
-    $this->assign('searchRows',  $this->_searchRows);
-    
     $formValues = $this->exportValues();
     $contributionIds = array();
     foreach ($formValues as $key => $value) {

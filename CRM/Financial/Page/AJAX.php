@@ -305,4 +305,110 @@ LIMIT    0, {$limit}
         CRM_Utils_System::civiExit( );
       }
     }
-}
+    
+    static function getFinancialTransactionsList() {
+      $sortMapper = 
+        array(
+              0 => '', 1 => '', 2 => 'sort_name',
+              3 => 'amount', 4 => 'transaction_date', 5 => '',
+              );
+      
+      $sEcho     = CRM_Utils_Type::escape($_REQUEST['sEcho'], 'Integer');
+      $offset    = isset($_REQUEST['iDisplayStart']) ? CRM_Utils_Type::escape($_REQUEST['iDisplayStart'], 'Integer') : 0;
+      $rowCount  = isset($_REQUEST['iDisplayLength']) ? CRM_Utils_Type::escape($_REQUEST['iDisplayLength'], 'Integer') : 25;
+      $sort      = isset($_REQUEST['iSortCol_0']) ? CRM_Utils_Array::value(CRM_Utils_Type::escape($_REQUEST['iSortCol_0'], 'Integer'), $sortMapper) : NULL;
+      $sortOrder = isset($_REQUEST['sSortDir_0']) ? CRM_Utils_Type::escape($_REQUEST['sSortDir_0'], 'String') : 'asc';
+      $context   = isset($_REQUEST['context']) ? CRM_Utils_Type::escape($_REQUEST['context'], 'String') : NULL;
+      $entityID  = isset($_REQUEST['entityID']) ? CRM_Utils_Type::escape($_REQUEST['entityID'], 'String') : NULL;
+      $notPresent = isset($_REQUEST['notPresent']) ? CRM_Utils_Type::escape($_REQUEST['notPresent'], 'String') : NULL;
+      
+      $params = $_POST;
+      if ($sort && $sortOrder) {
+        $params['sortBy'] = $sort . ' ' . $sortOrder;
+      }
+      
+      $returnvalues = 
+        array(
+              'civicrm_financial_item.contact_id',
+              'civicrm_contribution.id as contributionID',
+              'sort_name',
+              'amount',
+              'contact_type',
+              'contact_sub_type',
+              'transaction_date',
+              'name'
+              );
+      $columnHeader = 
+        array( 
+              'contact_type' => '',
+              'sort_name' => ts('Contact Name'),
+              'amount'   => ts('Amount'),
+              'transaction_date' => ts('Received'),
+              'name' => ts('Type')
+               );
+      if ($sort && $sortOrder) {
+        $params['sortBy'] = $sort . ' ' . $sortOrder;
+      }
+      
+      $params['page'] = ($offset / $rowCount) + 1;
+      $params['rp'] = $rowCount;
+      
+      $params['context'] = $context;
+      $params['offset']   = ($params['page'] - 1) * $params['rp'];
+      $params['rowCount'] = $params['rp'];
+      $params['sort']     = CRM_Utils_Array::value('sortBy', $params);
+      
+      // get batch list
+      if (isset($notPresent)) { 
+        $financialItem = CRM_Financial_BAO_EntityFinancialItem::getBatchFinancialItems($entityID, $returnvalues, $notPresent, $params);
+        $unassignedTransactions = CRM_Financial_BAO_EntityFinancialItem::getBatchFinancialItems($entityID, $returnvalues, 1);
+        while ($unassignedTransactions->fetch()) {
+          $unassignedTransactionsCount[] = $unassignedTransactions->id;
+        }
+        $params['total']   =  count($unassignedTransactionsCount);
+        
+      }
+      else {
+        $financialItem = CRM_Financial_BAO_EntityFinancialItem::getBatchFinancialItems($entityID, $returnvalues, NULL, $params);
+        $assignedTransactions = CRM_Financial_BAO_EntityFinancialItem::getBatchFinancialItems($entityID, $returnvalues);
+        while ($assignedTransactions->fetch()) {
+          $assignedTransactionsCount[] = $assignedTransactions->id;
+        }
+        $params['total']   =  count($assignedTransactionsCount);
+      }
+      $financialitems = array();
+      while ($financialItem->fetch()) {
+        $row[$financialItem->id] = array();
+        foreach ($columnHeader as $columnKey => $columnValue) {
+          if ($financialItem->contact_sub_type && $columnKey == 'contact_type') {
+            $row[$financialItem->id][$columnKey] = $financialItem->contact_sub_type;
+            continue;
+          }
+          $row[$financialItem->id][$columnKey] = $financialItem->$columnKey;
+        }
+        if (isset($notPresent)) {
+           $js = "enableActions('x')";
+           $row[$financialItem->id]['check'] = "<input type='checkbox' id='mark_x_". $financialItem->id."' name='mark_x_". $financialItem->id."' value='1' onclick={$js}></input>";
+           $row[$financialItem->id]['action'] = CRM_Core_Action::formLink( CRM_Financial_Form_BatchTransaction::links(), null, array('id' => $financialItem->id, 'contid' => $financialItem->contributionID, 'cid' => $financialItem->contact_id));
+        }
+        else {
+          $js = "enableActions('y')";
+          $row[$financialItem->id]['check'] = "<input type='checkbox' id='mark_y_". $financialItem->id."' name='mark_y_". $financialItem->id."' value='1' onclick={$js}></input>";
+          $row[$financialItem->id]['action'] = CRM_Core_Action::formLink( CRM_Financial_Page_BatchTransaction::links(), null, array('id' => $financialItem->id, 'contid' => $financialItem->contributionID, 'cid' => $financialItem->contact_id)); 
+        }
+        $row[$financialItem->id]['contact_type' ] = CRM_Contact_BAO_Contact_Utils::getImage( CRM_Utils_Array::value('contact_sub_type',$row[$financialItem->id]) ? CRM_Utils_Array::value('contact_sub_type',$row[$financialItem->id]) : CRM_Utils_Array::value('contact_type',$row[$financialItem->id]) ,false, $financialItem->contact_id);
+        $financialitems = $row;
+      }
+      
+   
+      $iFilteredTotal = $iTotal =  $params['total'];
+      $selectorElements = 
+        array(
+              'check', 'contact_type', 'sort_name',
+              'amount', 'transaction_date', 'name', 'action'
+              );
+      
+      echo CRM_Utils_JSON::encodeDataTableSelector($financialitems, $sEcho, $iTotal, $iFilteredTotal, $selectorElements);
+      CRM_Utils_System::civiExit();
+    } 
+  }

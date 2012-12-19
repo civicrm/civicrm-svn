@@ -236,6 +236,10 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
      if (CRM_Utils_Array::value('created_date', $values) && date('Y-m-d') < date('Y-m-d', strtotime($values['created_date']))) {
        $errors['created_date'] = ts('Created date cannot be greater than current date');
      }
+     $batchName = $values['title'];
+     if (!CRM_Core_DAO::objectExists($batchName, 'CRM_Batch_DAO_Batch', $self->_id)) {
+       $errors['title'] = ts('This name already exists in database. Batch names must be unique.');
+     }
      return CRM_Utils_Array::crmIsEmptyArray($errors) ? true : $errors;
    }
 
