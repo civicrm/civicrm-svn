@@ -2595,7 +2595,7 @@ WHERE  contribution_id = %1 ";
       $accountRelationType = 'Asset Account is';
     } 
     elseif ($params['contribution_status_id'] == array_search('Pending', $contributionStatuses)) {
-      $accountRelationType = 'AR Account is';
+      $accountRelationType = 'Accounts Receivable Account is';
     }
     elseif (CRM_Utils_Array::value('payment_processor_id', $params)) {
       $accountRelationType = 'Expense Account is';

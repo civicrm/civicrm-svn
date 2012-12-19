@@ -133,11 +133,11 @@ class WebTest_Financial_FinancialAccountTypeTest extends CiviSeleniumTestCase {
         $this->waitForElementPresent( 'newfinancialTypeAccount' );
         $this->click("xpath=id('ltype')/div/table/tbody/tr/td[1][text()='Member Dues']/../td[7]/span/a[text()='Edit']");
         $this->waitForElementPresent( '_qf_FinancialTypeAccount_next' );
-        $this->select( 'account_relationship', "label=AR Account is" );
+        $this->select( 'account_relationship', "label=Accounts Receivable Account is" );
         $this->select( 'financial_account_id', "label=Event Fee" );
         $this->click( '_qf_FinancialTypeAccount_next' );
         $this->waitForElementPresent("xpath=id('ltype')/div/table/tbody/tr/td[1][text()='Event Fee']/../td[7]/span/a[text()='Edit']");
-        $this->verifyText("xpath=id('ltype')/div/table/tbody/tr/td[1][text()='Event Fee']/../td[2]", preg_quote('AR Account is'));
+        $this->verifyText("xpath=id('ltype')/div/table/tbody/tr/td[1][text()='Event Fee']/../td[2]", preg_quote('Accounts Receivable Account is'));
         $this->click("xpath=id('ltype')/div/table/tbody/tr/td[1][text()='Event Fee']/../td[7]/span/a[text()='Delete']"); $this->waitForPageToLoad('30000');
         $this->waitForElementPresent( '_qf_FinancialTypeAccount_next-botttom' );
         $this->click( '_qf_FinancialTypeAccount_next-botttom' );
