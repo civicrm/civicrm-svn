@@ -147,7 +147,7 @@ class CRM_Financial_Page_FinancialTypeAccount extends CRM_Core_Page {
         
         $params = array( 'id' => $dao->financial_account_id );
         $defaults = array();
-        $financialAccount = CRM_Financial_BAO_FinancialAccount::retrieve( &$params, &$defaults );
+        $financialAccount = CRM_Financial_BAO_FinancialAccount::retrieve($params, $defaults);
         if (!empty($financialAccount)) {
           $financialType[$dao->id]['financial_account'] =  $financialAccount->name;
           $financialType[$dao->id]['accounting_code'] = $financialAccount->accounting_code;
