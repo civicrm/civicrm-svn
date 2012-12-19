@@ -301,6 +301,9 @@ function _civicrm_api3_setting_getDomainArray(&$params){
     if (isset($domainAPIResult['values'])) {
       $params['domain_id'] = array_keys($domainAPIResult['values']);
     }
+    else{
+      throw new Exception('All domains not retrieved - problem with Domain Get api call ' . $domainAPIResult['error_message']);
+    }
   }
   if(is_array($params['domain_id'])){
     $domains = $params['domain_id'];
