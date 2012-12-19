@@ -117,6 +117,6 @@ cj(document).ready(function($) {
     amount = amount.replace(',', 'comma').replace('.', 'dot');
     amount = amount.replace('comma', comma).replace('dot', dot);
     return format.replace('%C', currency).replace('%c', currencySymbol).replace('%a', amount);
-  }
+  }});
 </script>
 {/literal}

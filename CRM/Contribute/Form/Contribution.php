@@ -146,7 +146,6 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
   protected $_cdType;
 
   /**
->>>>>>> .merge-right.r44311
    * Function to set variables up before form is built
    *
    * @return void
@@ -246,13 +245,12 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
 
     $this->_lineItems = array();
     if ($this->_id) {
-      if (empty($this->_compId)) {
-        $lineItem = CRM_Price_BAO_LineItem::getLineItems($this->_id, 'contribution');
-      }
-      else {
+      if (!empty($this->_compId) && $this->_compContext == 'participant') {
         $this->assign('compId', $this->_compId);
         $lineItem = CRM_Price_BAO_LineItem::getLineItems($this->_compId);
-
+      }
+      else {
+        $lineItem = CRM_Price_BAO_LineItem::getLineItems($this->_id, 'contribution',1);
       }
       empty($lineItem) ? NULL : $this->_lineItems[] = $lineItem;
     }
@@ -619,18 +617,17 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
         $txrnLineTotal = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnLineTotal($this->_compId, 'civicrm_participant');
       }
 
-      reset($txrnLineTotal);
-      $fitemParams = array(
-        'entity_table' => 'civicrm_financial_item',
-        'financial_trxn_id' => key($txrnLineTotal)
-      );
-      $financialItems = CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($fitemParams);
-      foreach($financialItems as $key => $value) {
-        $fid[] = $value['entity_id'];
-      }
-
       $lineItemTotal = $lineTotal = array();
       if (is_array($txrnLineTotal)) {
+        reset($txrnLineTotal);
+        $fitemParams = array(
+          'entity_table' => 'civicrm_financial_item',
+          'financial_trxn_id' => key($txrnLineTotal)
+        );
+        $financialItems = CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($fitemParams);
+        foreach($financialItems as $key => $value) {
+          $fid[] = $value['entity_id'];
+        }
         foreach ($txrnLineTotal as $lineKey => $lineValue) {
           $i = $trxAmount = 0;
           foreach ($lineValue as $itemKey => $itemValue) {
@@ -689,7 +686,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
           ),
           array(
             'type' => 'cancel',
-            'name' => ts('Cancel'),
+            'name' => ts('Cancel')
           )
         )
       );
@@ -814,13 +811,14 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
             '' => ts('Choose price set')
           ) + $priceSets,
           NULL, array('onchange' => "buildAmount( this.value );")
-        );
-        if ($this->_online) {
+        ); 
+        if ($this->_online && !($this->_action & CRM_Core_Action::UPDATE)) {
           $element->freeze();
         }
       }
       $this->assign('hasPriceSets', $hasPriceSets);
       $currencyFreeze = FALSE;
+      if (!($this->_action & CRM_Core_Action::UPDATE)) {
       if ($this->_online || $this->_ppID) {
         $attributes['total_amount'] = array_merge($attributes['total_amount'], array(
           'READONLY' => TRUE,
@@ -837,6 +835,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
         );
 
         $currencyFreeze = TRUE;
+      }
       }
 
       $this->addMoney('total_amount',
