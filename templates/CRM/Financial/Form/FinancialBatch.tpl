@@ -62,18 +62,6 @@
       <td class="label">{$form.contact_name.label}</td>
       <td class="html-adjust">{$form.contact_name.html}</td>
     </tr>
-    <tr class="crm-contribution-form-block-payment_instrument">
-      <td class="label">{$form.payment_instrument_id.label}</td>
-      <td class="html-adjust">{$form.payment_instrument_id.html}</td>
-    </tr>
-    <tr class="crm-contribution-form-block-item_count">
-      <td class="label">{$form.item_count.label}</td>
-      <td class="html-adjust">{$form.item_count.html}</td>
-    </tr>
-    <tr class="crm-contribution-form-block-total">
-      <td class="label">{$form.total.label}</td>
-      <td class="html-adjust">{$form.total.html}</td>
-    </tr>
     {if $action eq 2}
       <tr class="crm-contribution-form-block-open_date">
         <td class="label">{ts}Opened Date{/ts}</td>
@@ -89,14 +77,32 @@
       </tr>
     {/if}
   </table>
+  <fieldset class="crm-collapsible">
+    <legend class="collapsible-title">{ts}Optional Constraints{/ts}</legend>
+    <table class="form-layout">
+      <tr class="crm-contribution-form-block-payment_instrument">
+        <td class="label">{$form.payment_instrument_id.label}</td>
+        <td class="html-adjust">{$form.payment_instrument_id.html}</td>
+      </tr>
+      <tr class="crm-contribution-form-block-item_count">
+        <td class="label">{$form.item_count.label}</td>
+        <td class="html-adjust">{$form.item_count.html}</td>
+      </tr>
+      <tr class="crm-contribution-form-block-total">
+        <td class="label">{$form.total.label}</td>
+        <td class="html-adjust">{$form.total.html}</td>
+      </tr>
+    </table>
+  </fieldset>
 {/if}
   <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="botttom"}</div>
 </div>
-
+{include file="CRM/Form/validate.tpl"}
 {literal}
 <script type="text/javascript">
-cj(function(){
-  var dataUrl        = "{/literal}{$dataURL}{literal}";
+cj(function($){
+  $().crmAccordions();
+  var dataUrl = "{/literal}{$dataURL}{literal}";
   cj('#contact_name').autocomplete( dataUrl, {
     width        : 250,
     selectFirst  : false,
