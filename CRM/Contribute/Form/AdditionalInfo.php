@@ -145,23 +145,6 @@ class CRM_Contribute_Form_AdditionalInfo {
 
 
     $form->add('textarea', 'note', ts('Notes'), array("rows" => 4, "cols" => 60));
-    //Recieved into
-    $params = ' financial_account_type_id = 5 ';
-    $recievedInto = CRM_Contribute_PseudoConstant::financialAccount(NULL, $params);
-    if ($counRecieved = count($recievedInto)) {
-      $form->assign('feeAmount', $counRecieved);
-    }
-    if ($counRecieved != 1) {
-      $form->add('select',
-        'fee_to_financial_account_id',
-        ts('Fee Account'),
-        array('' => ts('- Select Recieved Into -')) + $recievedInto);
-    }
-    else {
-      $form->addElement('hidden', 'fee_to_financial_account_id', '', array('id' => 'fee_to_financial_account_id'));
-      $defaults['fee_to_financial_account_id'] = key($recievedInto);
-      $form->setDefaults($defaults);
-    }
   }
 
   /**
