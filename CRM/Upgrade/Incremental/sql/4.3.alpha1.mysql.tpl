@@ -473,12 +473,6 @@ ALTER TABLE `civicrm_contribution_product` ADD
 `financial_type_id` int(10) unsigned DEFAULT NULL COMMENT 'FK to Financial Type.',
 ADD CONSTRAINT `FK_civicrm_contribution_product_financial_type_id` FOREIGN KEY (`financial_type_id`) REFERENCES `civicrm_financial_type` (`id`);
 
-ALTER TABLE `civicrm_payment_processor` ADD
-`financial_type_id` int(10) unsigned DEFAULT NULL COMMENT 'FK to Financial Type.';
-
-ALTER TABLE `civicrm_payment_processor`
- ADD CONSTRAINT `FK_civicrm_payment_processor_financial_type_id` FOREIGN KEY (`financial_type_id`) REFERENCES `civicrm_financial_type` (`id`);
-
 -- CRM-11122
 ALTER TABLE `civicrm_discount`
 DROP FOREIGN KEY FK_civicrm_discount_option_group_id,
@@ -604,6 +598,7 @@ VALUES
   ('{ts escape="sql"}Premiums{/ts}'             , @domainContactId, @opCost, 'Account to record cost of premiums provided to payors', '5100', 0, 1, 0, 0),
   ('{ts escape="sql"}Premiums inventory{/ts}'   , @domainContactId, @opAsset, 'Account representing value of premiums inventory', '1375', 0, 1, 0, 0),
   ('{ts escape="sql"}Discounts{/ts}'            , @domainContactId, @opval, 'Contra-revenue account for amounts discounted from sales', '4900', 0, 1, 0, 0),
+  ('{ts escape="sql"}Payment Processor Account{/ts}', @domainContactId, @opAsset, 'Account to record payments into a payment processor merchant account', '1150', 0, 1, 0, 0),
   ('{ts escape="sql"}Refunds{/ts}'              , @domainContactId, @opval, 'Contra-revenue account for amounts refunded', '4800', 0, 1, 0, 0);
 
 -- CRM-10926

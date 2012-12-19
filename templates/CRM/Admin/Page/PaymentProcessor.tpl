@@ -42,6 +42,7 @@
             <th >{ts}Name{/ts}</th>
             <th >{ts}Processor Type{/ts}</th>
             <th >{ts}Description{/ts}</th>
+            <th >{ts}Financial Account{/ts}</th>
             <th >{ts}Enabled?{/ts}</th>
       <th >{ts}Default?{/ts}</th>
             <th ></th>
@@ -51,6 +52,7 @@
             <td class="crm-payment_processor-name">{$row.name}</td>
             <td class="crm-payment_processor-payment_processor_type">{$row.payment_processor_type}</td>
             <td class="crm-payment_processor-description">{$row.description}</td>
+            <td class="crm-payment_processor-financialAccount">{$row.financialAccount}</td>
             <td id="row_{$row.id}_status" class="crm-payment_processor-is_active">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
             <td class="crm-payment_processor-is_default">{if $row.is_default eq 1}<img src="{$config->resourceBase}i/check.gif" alt="{ts}Default{/ts}" />{/if}&nbsp;</td>
           <td>{$row.action|replace:'xx':$row.id}</td>

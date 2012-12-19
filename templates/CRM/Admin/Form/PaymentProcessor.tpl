@@ -45,17 +45,17 @@
         <td class="label">{$form.description.label}</td><td>{$form.description.html}</td>
     </tr>
     
-    <tr class="crm-paymentProcessor-form-block-financial_type">
-        <td class="label">{$form.financial_type_id.label}</td>
-	<td>
-	{if $financialType}
-	{$form.financial_type_id.html}
+    <tr class="crm-paymentProcessor-form-block-financial_account">
+      <td class="label">{$form.financial_account_id.label}</td>
+      <td>
+	{if $financialAccount}
+	  {$form.financial_account_id.html}
     	{else}
-	{capture assign=ftUrl}{crmURL p='civicrm/admin/financial/financialType' q="reset=1"}{/capture}
-	{ts 1=$ftUrl}There are no financial types configured with a linked 'Asset Account is' account. <a href='%1'>Click here</a> if you want to configure financial types for your site.{/ts}
+  	  {capture assign=ftUrl}{crmURL p='civicrm/admin/financial/financialAccount' q="reset=1"}{/capture}
+	  {ts 1=$ftUrl}There are no financial accounts configured with Financial Account Type 'Asset' Type. <a href='%1'>Click here</a> if you want to configure financial accounts for your site.{/ts}
+        {/if}
+      </td>
     </tr>
-    {/if}
-    </td>
     <tr class="crm-paymentProcessor-form-block-is_active">
         <td></td><td>{$form.is_active.html}&nbsp;{$form.is_active.label}</td>
     </tr>

@@ -56,7 +56,7 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
     if ($this->_id) {
       $this->_ppType = CRM_Utils_Request::retrieve('pp', 'String', $this, FALSE, NULL);
       if (!$this->_ppType) {
-                $this->_ppType = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_PaymentProcessor',
+        $this->_ppType = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_PaymentProcessor',
           $this->_id,
           'payment_processor_type_id'
         );
@@ -68,8 +68,8 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
     }
 
     $this->assign('ppType', $this->_ppType);
-        $this->_ppDAO = new CRM_Financial_DAO_PaymentProcessorType( );
-        $this->_ppDAO->id = $this->_ppType;
+    $this->_ppDAO = new CRM_Financial_DAO_PaymentProcessorType( );
+    $this->_ppDAO->id = $this->_ppType;
 
     if (!$this->_ppDAO->find(TRUE)) {
       CRM_Core_Error::fatal(ts('Could not find payment processor meta information'));
@@ -165,43 +165,32 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
       return;
     }
 
-        $attributes = CRM_Core_DAO::getAttribute( 'CRM_Financial_DAO_PaymentProcessor' );
+    $attributes = CRM_Core_DAO::getAttribute('CRM_Financial_DAO_PaymentProcessor');
 
     $this->add('text', 'name', ts('Name'),
       $attributes['name'], TRUE
     );
 
-        $this->addRule( 'name', ts('Name already exists in Database.'), 'objectExists', array( 'CRM_Financial_DAO_PaymentProcessor', $this->_id ) );
+    $this->addRule('name', ts('Name already exists in Database.'), 'objectExists', array('CRM_Financial_DAO_PaymentProcessor', $this->_id));
 
     $this->add('text', 'description', ts('Description'),
       $attributes['description']
     );
 
     $types = CRM_Core_PseudoConstant::paymentProcessorType();
-        $this->add( 'select', 'payment_processor_type_id', ts( 'Payment Processor Type' ), $types, true,
-                    array('onchange' => "reload(true)") );
+    $this->add( 'select', 'payment_processor_type_id', ts('Payment Processor Type'), $types, true,
+      array('onchange' => "reload(true)") 
+    );
 
-        // Financial Type
-        $financialType = CRM_Contribute_PseudoConstant::financialType( );
-        $revenueFinancialType = array( );
-        CRM_Core_PseudoConstant::populate( $revenueFinancialType,
-                                           'CRM_Financial_DAO_EntityFinancialAccount',
-                                           $all = True, 
-                                           $retrieve = 'entity_id', 
-                                           $filter = null, 
-                                           'account_relationship = 6' );
-
-        foreach( $financialType as $key => $financialTypeName ){
-            if( !in_array( $key, $revenueFinancialType ) )
-                unset( $financialType[$key] );
-        }           
-        if( $fcount = count( $financialType ) ){
-            $this->assign( 'financialType', $fcount );
-        }
-        $this->add('select', 'financial_type_id', 
-                   ts( 'Financial Type' ), 
-                   array(''=>ts( '- select -' )) + $financialType,
-                   true );
+    // Financial Account of account type asset CRM-11515
+    $financialAccount = CRM_Contribute_PseudoConstant::financialAccount(NULL, 'Asset');
+    if ($fcount = count($financialAccount)) {
+      $this->assign('financialAccount', $fcount);
+    }
+    $this->add('select', 'financial_account_id', ts('Financial Account'), 
+      array('' => ts('- select -')) + $financialAccount,
+      true 
+    );
     // is this processor active ?
     $this->add('checkbox', 'is_active', ts('Is this Payment Processor active?'));
     $this->add('checkbox', 'is_default', ts('Is this Payment Processor the default?'));
@@ -291,7 +280,7 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
     }
     $domainID = CRM_Core_Config::domainID();
 
-        $dao = new CRM_Financial_DAO_PaymentProcessor( );
+    $dao = new CRM_Financial_DAO_PaymentProcessor( );
     $dao->id        = $this->_id;
     $dao->domain_id = $domainID;
     if (!$dao->find(TRUE)) {
@@ -301,7 +290,7 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
     CRM_Core_DAO::storeValues($dao, $defaults);
 
     // now get testID
-        $testDAO = new CRM_Financial_DAO_PaymentProcessor( );
+    $testDAO = new CRM_Financial_DAO_PaymentProcessor();
     $testDAO->name      = $dao->name;
     $testDAO->is_test   = 1;
     $testDAO->domain_id = $domainID;
@@ -313,6 +302,7 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
         $defaults[$testName] = $testDAO->{$field['name']};
       }
     }
+    $defaults['financial_account_id'] = CRM_Financial_BAO_FinancialTypeAccount::getFinancialAccount($dao->id, 'civicrm_payment_processor', 'financial_account_id');
 
     return $defaults;
   }
@@ -352,7 +342,7 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
    * @return Void
    */
   function updatePaymentProcessor(&$values, $domainID, $test) {
-        $dao = new CRM_Financial_DAO_PaymentProcessor( );
+    $dao = new CRM_Financial_DAO_PaymentProcessor( );
 
     $dao->id         = $test ? $this->_testID : $this->_id;
     $dao->domain_id  = $domainID;
@@ -364,8 +354,6 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
     $dao->name = $values['name'];
     $dao->description = $values['description'];
     $dao->payment_processor_type_id = $values['payment_processor_type_id'];
-        $dao->financial_type_id         = $values['financial_type_id'];
-
 
     foreach ($this->_fields as $field) {
       $fieldName = $test ? "test_{$field['name']}" : $field['name'];
@@ -382,5 +370,16 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
     $dao->payment_type = $this->_ppDAO->payment_type;
 
     $dao->save();
+    
+    //CRM-11515
+    
+    $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Asset Account is' "));
+    $params = array(
+      'entity_table' => 'civicrm_payment_processor',
+      'entity_id' => $dao->id,
+      'account_relationship' => $relationTypeId,
+      'financial_account_id' => $values['financial_account_id']
+    );
+    CRM_Financial_BAO_FinancialTypeAccount::add($params);
   }
 }

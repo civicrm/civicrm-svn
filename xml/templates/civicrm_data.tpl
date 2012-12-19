@@ -888,7 +888,7 @@ SELECT @opCost := value FROM civicrm_option_value WHERE name = 'Cost of Sales' a
 INSERT INTO
    `civicrm_financial_account` (`name`, `contact_id`, `financial_account_type_id`, `description`, `accounting_code`, `is_reserved`, `is_active`, `is_deductible`, `is_default`)
 VALUES
-  ( '{ts escape="sql"}Donations{/ts}'             , @contactID, @opval, 'Default account for donations', '4200', 0, 1, 1, 0 ),
+  ( '{ts escape="sql"}Donations{/ts}'            , @contactID, @opval, 'Default account for donations', '4200', 0, 1, 1, 0 ),
   ( '{ts escape="sql"}Member Dues{/ts}'          , @contactID, @opval, 'Default account for membership sales', '4400', 0, 1, 1, 0 ),
   ( '{ts escape="sql"}Campaign Contribution{/ts}', @contactID, @opval, 'Sample account for recording payments to a campaign', '4100', 0, 1, 0, 0 ),
   ( '{ts escape="sql"}Event Fee{/ts}'            , @contactID, @opval, 'Default account for event ticket sales', '4300', 0, 1, 0, 0 ),
@@ -900,6 +900,7 @@ VALUES
   ( '{ts escape="sql"}Premiums{/ts}'             , @contactID, @opCost, 'Account to record cost of premiums provided to payors', '5100', 0, 1, 0, 0 ),
   ( '{ts escape="sql"}Premiums inventory{/ts}'   , @contactID, @opAsset, 'Account representing value of premiums inventory', '1375', 0, 1, 0, 0 ),
   ( '{ts escape="sql"}Discounts{/ts}'            , @contactID, @opval, 'Contra-revenue account for amounts discounted from sales', '4900', 0, 1, 0, 0 ),
+  ( '{ts escape="sql"}Payment Processor Account{/ts}', @contactID, @opAsset, 'Account to record payments into a payment processor merchant account', '1150', 0, 1, 0, 0 ),
   ( '{ts escape="sql"}Refunds{/ts}'              , @contactID, @opval, 'Contra-revenue account for amounts refunded', '4800', 0, 1, 0, 0 );
 
 -- Now insert option values which require domainID

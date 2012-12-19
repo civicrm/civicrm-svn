@@ -118,58 +118,58 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
    *
    * @access public
    *
-     * @return array - array reference of all financial types if any
+   * @return array - array reference of all financial types if any
    * @static
    */
-    public static function &financialType( $id = null )
-    {
-        if ( ! self::$financialType ) {
-            $condition = " is_active = 1 and is_current_revision = 1 ";
-            CRM_Core_PseudoConstant::populate( self::$financialType,
-                                               'CRM_Financial_DAO_FinancialType',
-                                               $all = true,
-                                               $retrieve = 'name', 
-                                               $filter = NULL, 
-                                               $condition
-      );
-            
+  public static function &financialType($id = NULL) {
+    if (!self::$financialType) {
+      $condition = " is_active = 1 and is_current_revision = 1 ";
+      CRM_Core_PseudoConstant::populate( 
+        self::$financialType,
+        'CRM_Financial_DAO_FinancialType',
+        TRUE,
+        'name', 
+        NULL, 
+        $condition
+      );    
     }
         
     if ($id) {
-            $result = CRM_Utils_Array::value( $id, self::$financialType );
+      $result = CRM_Utils_Array::value($id, self::$financialType);
       return $result;
     }
-        return self::$financialType;
+    return self::$financialType;
   }
 
   /**
-     * Get all the financial Accounts
-     *
-     * @access public
-     * @return array - array reference of all financial accounts if any
-     * @static
-     */
-    public static function &financialAccount( $id = null, $financialAccountType = null )
-    {
-        if ( ! self::$financialAccount ) {
-            CRM_Core_PseudoConstant::populate( self::$financialAccount,
-                                               'CRM_Financial_DAO_FinancialAccount' );
+   * Get all the financial Accounts
+   *
+   * @access public
+   * @return array - array reference of all financial accounts if any
+   * @static
+   */
+  public static function &financialAccount($id = NULL, $financialAccountType = NULL) {
+    if ($financialAccountType) {
+      $accountType = CRM_Core_PseudoConstant::accountOptionValues('financial_account_type', NULL, " AND v.name = '{$financialAccountType}' ");
+      $condition = " financial_account_type_id = ". CRM_Utils_Array::key($financialAccountType, $accountType);
+    }
+    $cacheKey = "{$id}_{$financialAccountType}";
+    if (!isset(self::$financialAccount[$cacheKey])) {
+      CRM_Core_PseudoConstant::populate( 
+        self::$financialAccount[$cacheKey],
+        'CRM_Financial_DAO_FinancialAccount',
+        TRUE, 
+        'name', 
+        'is_active', 
+        $condition 
+      );
             
     }
-        if ( $financialAccountType ) {
-            CRM_Core_PseudoConstant::populate( self::$financialAccount,
-                                               'CRM_Financial_DAO_FinancialAccount',
-                                               $all = false, 
-                                               $retrieve = 'name', 
-                                               $filter = 'is_active', 
-                                               $financialAccountType );
-            
-        }
     if ($id) {
-            $result = CRM_Utils_Array::value( $id, self::$financialAccount );
+      $result = CRM_Utils_Array::value($id, self::$financialAccount[$cacheKey]);
       return $result;
     }
-        return self::$financialAccount;
+    return self::$financialAccount[$cacheKey];
   }
 
   /**

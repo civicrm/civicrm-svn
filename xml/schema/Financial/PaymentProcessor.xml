@@ -173,18 +173,4 @@
     <comment>Payment Type: Credit or Debit</comment>
     <add>3.0</add>
   </field>
-  <field>  
-    <name>financial_type_id</name> 
-    <title>Financial Type</title>
-    <type>int unsigned</type>  
-    <required>true</required>
-    <comment>FK to Financial Type.</comment>
-    <add>4.3</add> 
-  </field>    
-  <foreignKey>  
-    <name>financial_type_id</name>  
-    <table>civicrm_financial_type</table>  
-    <key>id</key>  
-    <add>4.3</add>
-  </foreignKey> 
 </table>

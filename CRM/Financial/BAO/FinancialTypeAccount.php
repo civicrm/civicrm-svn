@@ -35,10 +35,6 @@
  */
 
 class CRM_Financial_BAO_FinancialTypeAccount extends CRM_Financial_DAO_EntityFinancialAccount {
-  /**
-   * static holder for the default LT
-   */
-  static $_defaultContributionType = null;
 
   /**
    * class constructor
@@ -72,20 +68,6 @@ class CRM_Financial_BAO_FinancialTypeAccount extends CRM_Financial_DAO_EntityFin
   }
   
   /**
-   * update the is_active flag in the db
-   *
-   * @param int      $id        id of the database record
-   * @param boolean  $is_active value we want to set the is_active field
-   *
-   * @return Object             DAO object on sucess, null otherwise
-   * @static
-   */
-  // static function setIsActive( $id, $is_active ) 
-  // {
-  //     return CRM_Core_DAO::setFieldValue( 'CRM_Financial_DAO_FinancialTypeAccount', $id, 'is_active', $is_active );
-  // }
-  
-  /**
    * function to add the financial types
    *
    * @param array $params reference array contains the values submitted by the form
@@ -95,12 +77,19 @@ class CRM_Financial_BAO_FinancialTypeAccount extends CRM_Financial_DAO_EntityFin
    * @static 
    * @return object
    */
-  static function add(&$params, &$ids) {
+  static function add(&$params, &$ids = NULL) {
     // action is taken depending upon the mode
-    $financialTypeAccount = new CRM_Financial_DAO_EntityFinancialAccount( );
-    $financialTypeAccount->copyValues( $params );;
-    $financialTypeAccount->id = CRM_Utils_Array::value( 'entityFinancialAccount', $ids );
-    $financialTypeAccount->save( );
+    $financialTypeAccount = new CRM_Financial_DAO_EntityFinancialAccount();
+    if ($params['entity_table'] == 'civicrm_payment_processor') {
+      $financialTypeAccount->entity_id = $params['entity_id'];
+      $financialTypeAccount->entity_table = $params['entity_table'];
+      $financialTypeAccount->find(TRUE);
+    }
+    else {
+      $financialTypeAccount->id = CRM_Utils_Array::value('entityFinancialAccount', $ids);
+    }
+    $financialTypeAccount->copyValues($params);
+    $financialTypeAccount->save();
     return $financialTypeAccount;
   }
     
@@ -150,6 +139,30 @@ class CRM_Financial_BAO_FinancialTypeAccount extends CRM_Financial_DAO_EntityFin
     $financialType = new CRM_Financial_DAO_EntityFinancialAccount( );
     $financialType->id = $financialTypeAccountId;
     $financialType->delete();
+  }
+  
+  /**
+   * Function to get Financial Account Name 
+   * 
+   * @param int $entityId
+   * 
+   * @param string $entityTable 
+   * 
+   * @param string $columnName Column to fetch
+   * @static
+   */
+  static function getFinancialAccount($entityId, $entityTable, $columnName = 'name') {
+    
+    $join = $columnName == 'name' ? 'LEFT JOIN civicrm_financial_account ON civicrm_entity_financial_account.financial_account_id = civicrm_financial_account.id' : NULL;
+    $query = "SELECT {$columnName}
+FROM civicrm_entity_financial_account
+{$join}
+WHERE entity_table = %1
+AND entity_id = %2"; 
+    $params = array(1 => array($entityTable, 'String'),
+      2 => array($entityId, 'Integer')
+    );
+    return CRM_Core_DAO::singleValueQuery($query, $params);
   }
 }
 
