@@ -56,11 +56,11 @@ class CRM_Financial_Form_Search extends CRM_Core_Form {
     $this->add( 'select', 
                 'type_id', 
                 ts( 'Batch Type' ), 
-                array( ''=> ts( '- select -' ) ) + CRM_Contribute_PseudoConstant::accountOptionValues( 'batch_type' ) );
+                array( ''=> ts( '- any -' ) ) + CRM_Contribute_PseudoConstant::accountOptionValues( 'batch_type' ) );
     $this->add( 'select', 
                 'payment_instrument_id', 
                 ts( 'Payment Instrument' ), 
-                array( ''=> ts( '- select -' ) ) + CRM_Contribute_PseudoConstant::paymentInstrument( ),
+                array( ''=> ts( '- any -' ) ) + CRM_Contribute_PseudoConstant::paymentInstrument( ),
                 false );
     
     $this->add('text', 'total', ts('Total Amount'), $attributes['total']);
