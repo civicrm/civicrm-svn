@@ -235,8 +235,8 @@ class CRM_Financial_Form_FinancialTypeAccount extends CRM_Contribute_Form {
         'entity_id'            => $self->_aid,
                        );
       $defaults = array();
-      if ($self->_action == CRM_Core_Action::ADD) {               
-        $result = CRM_Financial_BAO_FinancialTypeAccount::retrieve(&$params, &$defaults);
+      if ($self->_action == CRM_Core_Action::ADD) {
+        $result = CRM_Financial_BAO_FinancialTypeAccount::retrieve($params, $defaults);
         if ($result)
           $errorFlag = TRUE;
       }
@@ -244,7 +244,7 @@ class CRM_Financial_Form_FinancialTypeAccount extends CRM_Contribute_Form {
         if ($values['account_relationship'] == $self->_defaultValues['account_relationship'] && $values['financial_account_id'] == $self->_defaultValues['financial_account_id'])
           $errorFlag = FALSE;
         else {
-          $result = CRM_Financial_BAO_FinancialTypeAccount::retrieve(&$params, &$defaults);
+          $result = CRM_Financial_BAO_FinancialTypeAccount::retrieve($params, $defaults);
           if ($result)
             $errorFlag = TRUE;
         }
