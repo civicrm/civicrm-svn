@@ -148,12 +148,11 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
    * @return array - array reference of all financial accounts if any
    * @static
    */
-  public static function &financialAccount($id = NULL, $financialAccountType = NULL) {
-    if ($financialAccountType) {
-      $accountType = CRM_Core_PseudoConstant::accountOptionValues('financial_account_type', NULL, " AND v.name = '{$financialAccountType}' ");
-      $condition = " financial_account_type_id = ". CRM_Utils_Array::key($financialAccountType, $accountType);
+  public static function &financialAccount($id = NULL, $financialAccountTypeId = NULL) {
+    if ($financialAccountTypeId) {
+      $condition = " financial_account_type_id = ". $financialAccountTypeId;
     }
-    $cacheKey = "{$id}_{$financialAccountType}";
+    $cacheKey = "{$id}_{$financialAccountTypeId}";
     if (!isset(self::$financialAccount[$cacheKey])) {
       CRM_Core_PseudoConstant::populate( 
         self::$financialAccount[$cacheKey],

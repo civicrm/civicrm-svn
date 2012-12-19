@@ -183,7 +183,8 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
     );
 
     // Financial Account of account type asset CRM-11515
-    $financialAccount = CRM_Contribute_PseudoConstant::financialAccount(NULL, 'Asset');
+    $accountType = CRM_Core_PseudoConstant::accountOptionValues('financial_account_type', NULL, " AND v.name = 'Asset' ");
+    $financialAccount = CRM_Contribute_PseudoConstant::financialAccount(NULL, key($accountType));
     if ($fcount = count($financialAccount)) {
       $this->assign('financialAccount', $fcount);
     }
