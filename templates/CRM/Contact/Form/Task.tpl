@@ -27,84 +27,97 @@
 
 {if $searchtype eq 'ts_sel'}
 <div id="popupContainer">
-<table id="selectedRecords" class="display crm-copy-fields">
+  <table id="selectedRecords" class="display crm-copy-fields">
     <thead>
-       <tr class="columnheader">
-          <th class="contact_details">Name</th>
-       </tr>
+    <tr class="columnheader">
+      <th class="contact_details">{ts}Name{/ts}</th>
+    </tr>
     </thead>
 
     <tbody>
-  {foreach from=$value item='row'}
-  <tr class="{cycle values="odd-row,even-row"}">
-         <td class="name">{$row}</td>
+      {foreach from=$value item='row'}
+      <tr class="{cycle values="odd-row,even-row"}">
+        <td class="name">{$row}</td>
+      </tr>
       {/foreach}
-  </tr>
     </tbody>
-</table>
+  </table>
+
 </div><br />
-<a href="#" id="button"title="Contacts selected in the Find Contacts page"> {ts}View Selected Contacts{/ts}</a>
+<a href="#" id="popup-button" title="{ts}View Selected Contacts{/ts}">{ts}View Selected Contacts{/ts}</a>
 {/if}
+
 {if $searchtype eq 'ts_sel'}
 {literal}
 <script type="text/javascript">
-cj("#popupContainer").hide();
-cj("#button").click(function(){
-  cj("#popupContainer").dialog({
-    title: "Selected Contacts",
-    width:700,
-    height:500,
-    modal: true,
-    overlay: {
-                 opacity: 0.5,
-                  background: "black"
-                  }
-     });
-  });
-
-  cj( function( ) {
-        var count = 0; var columns=''; var sortColumn = '';
-
-        cj('#selectedRecords th').each( function( ) {
-          if ( cj(this).attr('class') == 'contact_details' ) {
-      sortColumn += '[' + count + ', "asc" ],';
-      columns += '{"sClass": "contact_details"},';
-    } else {
-      columns += '{ "bSortable": false },';
-    }
-    count++;
-  });
-
-  columns    = columns.substring(0, columns.length - 1 );
-  sortColumn = sortColumn.substring(0, sortColumn.length - 1 );
-  eval('sortColumn =[' + sortColumn + ']');
-  eval('columns =[' + columns + ']');
-
-  //load jQuery data table.
-        cj('#selectedRecords').dataTable( {
-    "sPaginationType": "full_numbers",
-    "bJQueryUI"  : true,
-    "aaSorting"  : sortColumn,
-    "aoColumns"  : columns,
-    "bFilter"    : false
-        });
-
+  cj(function() {
+    cj("#popupContainer").css({
+      "background-color":"#E0E0E0",
+      'display':'none',
     });
+
+    cj("#popup-button").click(function() {
+      cj("#popupContainer").dialog({
+        title: "Selected Contacts",
+        width:700,
+        height:500,
+        modal: true,
+        overlay: {
+          opacity: 0.5,
+          background: "black"
+        }
+      });
+      return false;
+    });
+
+    var count = 0; var columns = ''; var sortColumn = '';
+    cj('#selectedRecords th').each( function( ) {
+      if (cj(this).attr('class') == 'contact_details') {
+        sortColumn += '[' + count + ', "asc" ],';
+        columns += '{"sClass": "contact_details"},';
+      }
+      else {
+        columns += '{ "bSortable": false },';
+      }
+      count++;
+    });
+
+    // FIXME
+    var url=location.href.split('&');
+    if (url[3]) {
+      $('#popup-button').click();
+    }
+
+    columns    = columns.substring(0, columns.length - 1 );
+    sortColumn = sortColumn.substring(0, sortColumn.length - 1 );
+    eval('sortColumn =[' + sortColumn + ']');
+    eval('columns =[' + columns + ']');
+
+    //load jQuery data table.
+    cj('#selectedRecords').dataTable( {
+      "sPaginationType": "full_numbers",
+      "bJQueryUI"  : true,
+      "aaSorting"  : sortColumn,
+      "aoColumns"  : columns,
+      "bFilter"    : false
+    });
+  });
 
 </script>
 {/literal}
 {/if}
-{if $rows }
+
+{if $rows}
 <div class="form-item">
-<table width="30%">
-  <tr class="columnheader">
-    <th>{ts}Name{/ts}</th>
-  </tr>
-{foreach from=$rows item=row}
-<tr class="{cycle values="odd-row,even-row"}">
-<td>{$row.displayName}</td>
-</tr>
-{/foreach}
-</table>
+  <table width="30%">
+    <tr class="columnheader">
+      <th>{ts}Name{/ts}</th>
+    </tr>
+    {foreach from=$rows item=row}
+      <tr class="{cycle values="odd-row,even-row"}">
+        <td>{$row.displayName}</td>
+      </tr>
+    {/foreach}
+  </table>
 </div>
 {/if}

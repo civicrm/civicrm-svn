@@ -280,7 +280,7 @@ INSERT INTO civicrm_price_field_value ( price_field_id, name, {localize field='l
 SELECT
 cpf.id, cmt.name{$loc} as label1, {localize field='name'}cmt.name as label2{/localize},{localize field='description'}cmt.description{/localize}, cmt.minimum_fee, cmt.id
 FROM `civicrm_membership_type` cmt
-LEFT JOIN civicrm_price_field cpf ON cmt.member_of_contact_id = cpf.name;
+LEFT JOIN civicrm_price_field cpf ON cmt.member_of_contact_id = BINARY cpf.name;
 
 -- CRM-9714
 SELECT @fieldID := cpf.id, @fieldValueID := cpfv.id FROM civicrm_price_set cps

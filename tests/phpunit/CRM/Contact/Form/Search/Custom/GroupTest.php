@@ -1,6 +1,4 @@
 <?php
-// vim: set si ai expandtab tabstop=4 shiftwidth=4 softtabstop=4:
-
 /**
  *  File for the CRM_Contact_Form_Search_Custom_GroupTest class
  *
@@ -65,8 +63,6 @@ class CRM_Contact_Form_Search_Custom_GroupTest extends CiviUnitTestCase {
     'civicrm_contact',
     'civicrm_option_value',
     'civicrm_option_group',
-    'civicrm_activity',
-    'civicrm_activity_target',
   );
   function get_info() {
     return array(
@@ -170,8 +166,9 @@ class CRM_Contact_Form_Search_Custom_GroupTest extends CiviUnitTestCase {
     $dao = CRM_Core_DAO::executeQuery($sql);
     $contacts = array();
     while ($dao->fetch()) {
-      $contacts[] = $dao->contact_id;
+      $contacts[$dao->contact_id] = 1;
     }
+    $contacts = array_keys($contacts);
     sort($contacts, SORT_NUMERIC);
     $this->assertEquals($ids, $contacts, 'In line ' . __LINE__);
   }
@@ -263,14 +260,3 @@ class CRM_Contact_Form_Search_Custom_GroupTest extends CiviUnitTestCase {
     );
   }
 }
-// class CRM_Contact_Form_Search_Custom_GroupTest
-
-// -- set Emacs parameters --
-// Local variables:
-// mode: php;
-// tab-width: 4
-// c-basic-offset: 4
-// c-hanging-comment-ender-p: nil
-// indent-tabs-mode: nil
-// End:
-

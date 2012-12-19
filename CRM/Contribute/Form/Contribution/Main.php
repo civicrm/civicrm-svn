@@ -414,6 +414,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     $this->addRule("email-{$this->_bltID}", ts('Email is not valid.'), 'email');
     CRM_Price_BAO_Field::initialPayCreate( $this, 'contribution', 'online' );
     $this->_paymentProcessors = $this->get('paymentProcessors');
+    $pps = array();
     if (!empty($this->_paymentProcessors)) {
       $pps = $this->_paymentProcessors;
       foreach ($pps as $key => & $name) {

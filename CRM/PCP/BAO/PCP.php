@@ -605,7 +605,7 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
     switch (ucfirst($config->userFramework)) {
       case 'Joomla':
         $loginUrl = str_replace('administrator/', '', $loginUrl);
-        $loginUrl .= 'index.php?option=com_user&view=login';
+        $loginUrl .= 'index.php?option=com_users&view=login';
         break;
 
       case 'Drupal':

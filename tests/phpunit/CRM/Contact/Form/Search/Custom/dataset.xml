@@ -161,17 +161,7 @@
         first_name="Test"
         last_name="Contact 24"
     />
-    <!--  Groups: none  Tags: none  Activities: Sailing  -->
-    <civicrm_contact
-        id="25"
-        contact_type="Individual"
-        is_opt_out="0"
-        display_name="Test Contact 25"
-        sort_name="Test Contact 25"
-        first_name="Test"
-        last_name="Contact 25"
-    />
-    <!--  Groups: none  Tags: 7  Activities: Sailing, Conference call  -->
+    <!--  Groups: none  Tags: 7  -->
     <civicrm_contact
         id="26"
         contact_type="Individual"
@@ -181,7 +171,7 @@
         first_name="Test"
         last_name="Contact 26"
     />
-    <!--  Groups: 3  Tags: none  Activities: Conference call, Dinner plans  -->
+    <!--  Groups: 3  Tags: none  -->
     <civicrm_contact
         id="27"
         contact_type="Individual"
@@ -191,7 +181,7 @@
         first_name="Test"
         last_name="Contact 27"
     />
-    <!--  Groups: 3  Tags: 7  Activities: Conference call, Test development conference  -->
+    <!--  Groups: 3  Tags: 7  -->
     <civicrm_contact
         id="28"
         contact_type="Individual"
@@ -200,16 +190,6 @@
         sort_name="Test Contact 28"
         first_name="Test"
         last_name="Contact 28"
-    />
-    <!--  Groups: none  Tags: none  Activities: Test development conference  -->
-    <civicrm_contact
-        id="29"
-        contact_type="Individual"
-        is_opt_out="0"
-        display_name="Test Contact 29"
-        sort_name="Test Contact 29"
-        first_name="Test"
-        last_name="Contact 29"
     />
     <civicrm_tag
         id="7"
@@ -456,22 +436,6 @@
        is_reserved="0"
        is_active="1"
     />
-    <civicrm_option_group
-      id='25'
-      name='activity_status'
-      title='Activity Status'
-      description='Activity Status'
-      is_reserved='1'
-      is_active='1'
-    />
-    <civicrm_option_group
-      id='2'
-      name='activity_type'
-      title='Activity Type'
-      description='Activity Type'
-      is_reserved='1'
-      is_active='1'
-    />
     <civicrm_option_value
        id="153"
        option_group_id="24"
@@ -484,125 +448,5 @@
        is_optgroup="0"
        is_reserved="0"
        is_active="1"
-    />
-    <civicrm_option_value
-       id='6'
-       option_group_id='2'
-       label='Meeting'
-       value='1'
-       name='Meeting'
-       filter='0'
-       weight='1'
-       is_optgroup='0'
-       is_reserved='1'
-       is_active='1'
-     />
-    <civicrm_option_value
-       id='7'
-       option_group_id='2'
-       label='Phone Call'
-       value='2'
-       name='Phone Call'
-       filter='0'
-       weight='2'
-       is_optgroup='0'
-       is_reserved='1'
-       is_active='1'
-     />
-     <civicrm_option_value
-       id='226'
-       option_group_id='25'
-       label='Scheduled'
-       value='1'
-       name='Scheduled'
-       filter='0'
-       weight='1'
-       is_optgroup='0'
-       is_reserved='1'
-       is_active='1'
-     />
-     <civicrm_option_value
-       id='227'
-       option_group_id='25'
-       label='Completed'
-       value='2'
-       name='Completed'
-       filter='0'
-       weight='2'
-       is_optgroup='0'
-       is_reserved='1'
-       is_active='1'
-     />
-    <civicrm_activity
-       id="201"
-       source_contact_id="9"
-       activity_type_id="1"
-       subject="Sailing on the Chesapeake Bay"
-       status_id="2"
-       activity_date_time="2011-07-04 12:46:16"
-    />
-    <civicrm_activity
-       id="202"
-       source_contact_id="9"
-       activity_type_id="2"
-       subject="Conference call"
-       status_id="2"
-       activity_date_time="2012-01-09 09:00:00"
-    />
-    <civicrm_activity
-       id="203"
-       source_contact_id="9"
-       activity_type_id="2"
-       subject="Dinner plans"
-       status_id="1"
-       activity_date_time="2012-07-04 17:00:00"
-    />
-    <civicrm_activity
-       id="204"
-       source_contact_id="9"
-       activity_type_id="1"
-       subject="Test development conference"
-       status_id="1"
-       activity_date_time="2012-12-01 08:30:00"
-    />
-    <civicrm_activity_target
-       id="251"
-       activity_id="201"
-       target_contact_id="25"
-    />
-    <civicrm_activity_target
-       id="252"
-       activity_id="201"
-       target_contact_id="26"
-    />
-    <civicrm_activity_target
-       id="253"
-       activity_id="202"
-       target_contact_id="26"
-    />
-    <civicrm_activity_target
-       id="254"
-       activity_id="202"
-       target_contact_id="27"
-    />
-    <civicrm_activity_target
-       id="255"
-       activity_id="202"
-       target_contact_id="28"
-    />
-    <civicrm_activity_target
-       id="256"
-       activity_id="203"
-       target_contact_id="27"
-    />
-    <civicrm_activity_target
-       id="257"
-       activity_id="204"
-       target_contact_id="28"
-    />
-    <civicrm_activity_target
-       id="258"
-       activity_id="204"
-       target_contact_id="29"
     />
 </dataset>

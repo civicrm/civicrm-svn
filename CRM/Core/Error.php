@@ -223,8 +223,11 @@ class CRM_Core_Error extends PEAR_ErrorStack {
     $error['user_info']  = $pearError->getUserInfo();
     $error['to_string']  = $pearError->toString();
 
-    $errorDetails = CRM_Core_Error::debug('Initialization Error', $error);
-    CRM_Core_Error::backtrace();
+    CRM_Core_Error::debug('Initialization Error', $error);
+
+    // always log the backtrace to a file
+    self::backtrace('backTrace', TRUE);
+
     exit(0);
   }
 
@@ -589,8 +592,14 @@ class CRM_Core_Error extends PEAR_ErrorStack {
     $message = '';
     foreach ($backTrace as $idx => $trace) {
       $args = array();
+      $fnName = CRM_Utils_Array::value('function', $trace);
+      $className = array_key_exists('class', $trace) ? ($trace['class'] . $trace['type']) : '';
+
+      // do now show args for a few password related functions
+      $skipArgs = ($className == 'DB::' && $fnName == 'connect') ? TRUE : FALSE;
+
       foreach ($trace['args'] as $arg) {
-        if (! $showArgs) {
+        if (! $showArgs || $skipArgs) {
           $args[] = '(' . gettype($arg) . ')';
           continue;
         }
@@ -623,12 +632,13 @@ class CRM_Core_Error extends PEAR_ErrorStack {
         }
       }
 
-      $message .= sprintf("#%s %s(%s): %s%s(%s)\n",
+      $message .= sprintf(
+        "#%s %s(%s): %s%s(%s)\n",
         $idx,
         CRM_Utils_Array::value('file', $trace, '[internal function]'),
         CRM_Utils_Array::value('line', $trace, ''),
-        array_key_exists('class', $trace) ? ($trace['class'] . $trace['type']) : '',
-          CRM_Utils_Array::value('function', $trace),
+        $className,
+        $fnName,
         implode(", ", $args)
       );
     }

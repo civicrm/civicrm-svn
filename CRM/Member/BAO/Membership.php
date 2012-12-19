@@ -1310,7 +1310,7 @@ AND civicrm_membership.is_test = %2";
           $result,
           $contactID,
           $contributionType,
-          FALSE,
+          TRUE,
           $pending
         );
       }
@@ -2400,17 +2400,16 @@ INNER JOIN  civicrm_contact contact ON ( contact.id = membership.contact_id AND 
     return NULL;
   }
 
-  /*
+  /**
      * The function checks and updates the status of all membership records for a given domain using the
      * calc_membership_status and update_contact_membership APIs.
      *
      * IMPORTANT:
      * Sending renewal reminders has been migrated from this job to the Scheduled Reminders function as of 4.3.
      *
-     * @return void
+   * @return array $result
      * @access public
      */
-
   static function updateAllMembershipStatus() {
     require_once 'api/api.php';
 

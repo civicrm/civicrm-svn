@@ -10,3 +10,6 @@ WHERE report_id = 'member/contributionDetail' and permission = '';
 
 UPDATE civicrm_report_instance SET permission = 'access CiviGrant'
 WHERE report_id = 'grant/statistics' and permission = '';
+
+UPDATE civicrm_report_instance SET permission = 'access CiviReport'
+WHERE permission = '0' OR permission = '' OR permission IS NULL;

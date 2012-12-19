@@ -68,7 +68,7 @@ interface CRM_Contact_Form_Search_Interface {
    * Used by different tasks. Will be also used to optimize the
    * 'all' query below to avoid excessive LEFT JOIN blowup
    */
-  function contactIDs($offset = 0, $rowcount = 0, $sort = NULLo);
+  function contactIDs($offset = 0, $rowcount = 0, $sort = NULL);
 
   /**
    * Retrieve all the values that match the current input parameters

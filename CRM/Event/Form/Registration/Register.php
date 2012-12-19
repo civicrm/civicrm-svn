@@ -150,6 +150,10 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
    * @return None
    */
   function setDefaultValues() {
+    if ($this->_ppType) {
+      return;
+    }
+
     $contactID = parent::getContactID();
     if ($contactID) {
       $options = array();

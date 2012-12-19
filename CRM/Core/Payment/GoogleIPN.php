@@ -117,8 +117,11 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
       $ids['contributionRecur'] = self::retrieve('contributionRecurID', 'Integer', $privateData, FALSE);
     }
 
-    $paymentProcessorID = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_PaymentProcessorType',
-      'Google_Checkout', 'id', 'name'
+    $paymentProcessorID = CRM_Core_DAO::getFieldValue(
+      'CRM_Core_DAO_PaymentProcessorType',
+      'Google_Checkout',
+      'id',
+      'payment_processor_type'
     );
 
     if (!$this->validateData($input, $ids, $objects, TRUE, $paymentProcessorID)) {
@@ -282,8 +285,11 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
       }
     }
 
-    $paymentProcessorID = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_PaymentProcessorType',
-      'Google_Checkout', 'id', 'name'
+    $paymentProcessorID = CRM_Core_DAO::getFieldValue(
+      'CRM_Core_DAO_PaymentProcessorType',
+      'Google_Checkout',
+      'id',
+      'payment_processor_type'
     );
 
     $this->loadObjects($input, $ids, $objects, TRUE, $paymentProcessorID);
@@ -316,10 +322,15 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
   function completeRecur($input, $ids, $objects) {
     if ($ids['contributionRecur']) {
       $recur               = &$objects['contributionRecur'];
-      $contributionCount   = CRM_Core_DAO::singleValueQuery("SELECT count(*) FROM civicrm_contribution WHERE contribution_recur_id = {$ids['contributionRecur']}");
+      $contributionCount   = CRM_Core_DAO::singleValueQuery("
+SELECT count(*)
+FROM   civicrm_contribution
+WHERE  contribution_recur_id = {$ids['contributionRecur']}
+");
       $autoRenewMembership = FALSE;
       if ($recur->id &&
-        isset($ids['membership']) && $ids['membership']
+        isset($ids['membership']) &&
+        $ids['membership']
       ) {
         $autoRenewMembership = TRUE;
       }
@@ -336,7 +347,8 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
         $recur->save();
 
         //send recurring Notification email for user
-        CRM_Contribute_BAO_ContributionPage::recurringNotify(CRM_Core_Payment::RECURRING_PAYMENT_END,
+        CRM_Contribute_BAO_ContributionPage::recurringNotify(
+          CRM_Core_Payment::RECURRING_PAYMENT_END,
           $ids['contact'],
           $ids['contributionPage'],
           $recur,
@@ -344,7 +356,8 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
         );
       }
       elseif ($contributionCount == 1) {
-        CRM_Contribute_BAO_ContributionPage::recurringNotify(CRM_Core_Payment::RECURRING_PAYMENT_START,
+        CRM_Contribute_BAO_ContributionPage::recurringNotify(
+          CRM_Core_Payment::RECURRING_PAYMENT_START,
           $ids['contact'],
           $ids['contributionPage'],
           $recur,
@@ -400,7 +413,6 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
    * @static
    */
   function getContext($privateData, $orderNo, $root, $response, $serial) {
-
     $contributionID = $privateData['contributionID'];
     $contribution = new CRM_Contribute_DAO_Contribution();
     if ($root == 'new-order-notification') {
@@ -439,14 +451,16 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
         $ids['event'] = $privateData['eventID'];
       }
       else {
-        list($ids['event'], $ids['participant']) = explode(CRM_Core_DAO::VALUE_SEPARATOR,
-          $contribution->trxn_id
-        );
+        list($ids['event'], $ids['participant']) =
+          explode(CRM_Core_DAO::VALUE_SEPARATOR, $contribution->trxn_id);
       }
     }
 
-    $paymentProcessorID = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_PaymentProcessor',
-      'Google_Checkout', 'id', 'payment_processor_type'
+    $paymentProcessorID = CRM_Core_DAO::getFieldValue(
+      'CRM_Core_DAO_PaymentProcessor',
+      'Google_Checkout',
+      'id',
+      'payment_processor_type'
     );
 
     $this->loadObjects($input, $ids, $objects, FALSE, $paymentProcessorID);
@@ -466,11 +480,11 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
    *
    */
   static function main($xml_response) {
-    require_once ('Google/library/googleresponse.php');
-    require_once ('Google/library/googlerequest.php');
-    require_once ('Google/library/googlemerchantcalculations.php');
-    require_once ('Google/library/googleresult.php');
-    require_once ('Google/library/xml-processing/gc_xmlparser.php');
+    require_once 'Google/library/googleresponse.php';
+    require_once 'Google/library/googlerequest.php';
+    require_once 'Google/library/googlemerchantcalculations.php';
+    require_once 'Google/library/googleresult.php';
+    require_once 'Google/library/xml-processing/gc_xmlparser.php';
 
     $config = CRM_Core_Config::singleton();
 
@@ -503,9 +517,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
     list($mode, $module, $paymentProcessorID) = $ipn->getContext($privateData, $orderNo, $root, $response, $serial);
     $mode = $mode ? 'test' : 'live';
 
-    $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment($paymentProcessorID,
-      $mode
-    );
+    $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment($paymentProcessorID, $mode);
     $merchant_id = $paymentProcessor['user_name'];
     $merchant_key = $paymentProcessor['password'];
     $response->SetMerchantAuthentication($merchant_id, $merchant_key);
@@ -535,6 +547,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
           $ipn->newOrderNotify($data[$root], $privateData, $module);
           break;
         }
+
       case "order-state-change-notification": {
           $response->SendAck($serial, FALSE);
           $new_financial_state = $data[$root]['new-financial-order-state']['VALUE'];
@@ -560,6 +573,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
           }
           break;
         }
+
       case "authorization-amount-notification": {
           $response->SendAck($serial, FALSE);
           $new_financial_state = $data[$root]['order-summary']['financial-order-state']['VALUE'];
@@ -588,6 +602,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
           }
           break;
         }
+
       case "charge-amount-notification":
       case "chargeback-amount-notification":
       case "refund-amount-notification":

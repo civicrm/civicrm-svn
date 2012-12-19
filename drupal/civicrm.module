@@ -1013,7 +1013,7 @@ function _civicrm_filter_process($text, $filter, $format, $langcode, $cache, $ca
  */
 function civicrm_civicrm_postProcess($formName, $form) {
   // Reset Views Cache when CiviCRM components page is saved
-  if ($form instanceof CRM_Admin_Form_Setting_Component) {
+  if ($form instanceof CRM_Admin_Form_Setting_Component || $form instanceof CRM_Custom_Form_Group || $form instanceof CRM_Custom_Form_Field) {
     if (module_exists('views')) {
       views_invalidate_cache();
     }

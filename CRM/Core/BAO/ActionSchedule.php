@@ -650,9 +650,7 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
       );
 
       while ($dao->fetch()) {
-
         $entityTokenParams = array();
-
         foreach ($tokenFields as $field) {
           if ($field == 'location') {
             $loc = array();

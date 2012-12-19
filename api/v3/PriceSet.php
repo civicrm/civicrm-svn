@@ -89,7 +89,7 @@ function civicrm_api3_price_set_get($params) {
   foreach ($result as &$item) {
     $item['entity'] = CRM_Price_BAO_Set::getUsedBy($item['id'], 'entity');
   }
-  return civicrm_api3_create_success($result);
+  return civicrm_api3_create_success($result, $params);
 }
 
 /**

@@ -144,6 +144,9 @@ INNER JOIN civicrm_price_set cps ON cps.id = cpf.price_set_id AND cps.name <>'de
         ));
   }
     }
+    if ($rev == '4.2.7') {
+      $postUpgradeMessage .= '<br />' . ts('If you have configured a report instance to allow anonymous access, you will need to reset the permission to Everyone for that instance (under the Report Settings pane).');
+  }
   }
 
   function upgrade_4_2_alpha1($rev) {
@@ -554,7 +557,7 @@ WHERE     cpse.price_set_id IS NULL";
  LEFT JOIN civicrm_line_item cli ON cc.id=cli.entity_id and cli.entity_table = 'civicrm_contribution'
  LEFT JOIN civicrm_membership cm ON cm.id=cmp.membership_id
  LEFT JOIN civicrm_membership_type cmt ON cmt.id = cm.membership_type_id
- LEFT JOIN civicrm_price_field cpf ON cpf.name = cmt.member_of_contact_id
+ LEFT JOIN civicrm_price_field cpf ON BINARY cpf.name = cmt.member_of_contact_id
  LEFT JOIN civicrm_price_field_value cpfv ON cpfv.membership_type_id = cm.membership_type_id AND cpf.id = cpfv.price_field_id
  WHERE (cc.id BETWEEN %1 AND %2) AND cli.entity_id IS NULL ;
  ";
@@ -701,7 +704,7 @@ AND       cli.entity_id IS NULL AND cp.fee_amount IS NOT NULL";
       $lineParams = array(
         'entity_table' => 'civicrm_participant',
         'entity_id' => $dao->participant_id,
-        'label' => $dao->fee_level,
+        'label' => $dao->fee_level ? $dao->fee_level : ts('Default'),
         'qty' => 1,
         'unit_price' => $dao->fee_amount,
         'line_total' => $dao->fee_amount,

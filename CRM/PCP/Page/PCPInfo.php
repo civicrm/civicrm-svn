@@ -88,7 +88,7 @@ class CRM_PCP_Page_PCPInfo extends CRM_Core_Page {
       switch (ucfirst($config->userFramework)) {
         case 'Joomla':
           $loginUrl = str_replace('administrator/', '', $loginUrl);
-          $loginUrl .= 'index.php?option=com_user&view=login';
+          $loginUrl .= 'index.php?option=com_users&view=login';
           break;
 
         case 'Drupal':

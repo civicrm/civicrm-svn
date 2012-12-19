@@ -112,7 +112,7 @@ class CRM_Report_Form_Instance {
       $form->addElement('select',
         'permission',
         ts('Permission'),
-        array('0' => '- Any One -') + CRM_Core_Permission::basicPermissions()
+        array('0' => ts('Everyone (includes anonymous)')) + CRM_Core_Permission::basicPermissions()
       );
 
       // prepare user_roles to save as names not as ids
@@ -187,7 +187,7 @@ class CRM_Report_Form_Instance {
     $instanceID = $form->getVar('_id');
     $navigationDefaults = array();
 
-    if (!CRM_Utils_Array::value('permission', $defaults)){
+    if (!isset($defaults['permission'])){
     $permissions = array_flip(CRM_Core_Permission::basicPermissions( ));
     $defaults['permission'] = $permissions['CiviReport: access CiviReport'];
     }

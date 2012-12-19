@@ -135,7 +135,6 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
    * @static
    * @access public
    */
-
   static function getRegistrationFields($action, $mode, $ctype = NULL) {
     if ($mode & CRM_Profile_Form::MODE_REGISTER) {
       $ufGroups = CRM_Core_BAO_UFGroup::getModuleUFGroup('User Registration');
@@ -2834,7 +2833,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
     CRM_Core_DAO::commonRetrieve($componentBAO, $params, $values);
 
     $formattedGroupTree = array();
-    $dateTimeFields = array('participant_register_date', 'activity_date_time', 'receive_date', 'receipt_date', 'cancel_date', 'thankyou_date');
+    $dateTimeFields = array('participant_register_date', 'activity_date_time', 'receive_date', 'receipt_date', 'cancel_date', 'thankyou_date', 'membership_start_date', 'membership_end_date', 'join_date');
     foreach ($fields as $name => $field) {
       $fldName = $isStandalone ? $name : "field[$componentId][$name]";
       if (in_array($name, $dateTimeFields)) {

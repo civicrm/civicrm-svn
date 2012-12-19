@@ -41,6 +41,112 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
   const FA_ASSET_ACCOUNT_RELATION = 6;
 
   /**
+   * the id of the contribution that we are proceessing
+   *
+   * @var int
+   * @public
+   */
+  public $_id;
+
+  /**
+   * the id of the premium that we are proceessing
+   *
+   * @var int
+   * @public
+   */
+  public $_premiumID = NULL;
+  public $_productDAO = NULL;
+
+  /**
+   * the id of the note
+   *
+   * @var int
+   * @public
+   */
+  public $_noteID;
+
+  /**
+   * the id of the contact associated with this contribution
+   *
+   * @var int
+   * @public
+   */
+  public $_contactID;
+
+  /**
+   * the id of the pledge payment that we are processing
+   *
+   * @var int
+   * @public
+   */
+  public $_ppID;
+
+  /**
+   * the id of the pledge that we are processing
+   *
+   * @var int
+   * @public
+   */
+  public $_pledgeID;
+
+  /**
+   * is this contribution associated with an online
+   * financial transaction
+   *
+   * @var boolean
+   * @public
+   */
+  public $_online = FALSE;
+
+  /**
+   * Stores all product option
+   *
+   * @var array
+   * @public
+   */
+  public $_options;
+
+  /**
+   * stores the honor id
+   *
+   * @var int
+   * @public
+   */
+  public $_honorID = NULL;
+
+  /**
+   * Store the contribution Type ID
+   *
+   * @var array
+   */
+  public $_contributionType;
+
+  /**
+   * The contribution values if an existing contribution
+   */
+  public $_values;
+
+  /**
+   * The pledge values if this contribution is associated with pledge
+   */
+  public $_pledgeValues;
+
+  public $_contributeMode = 'direct';
+
+  public $_context;
+
+  public $_compId;
+
+  /*
+   * Store the line items if price set used.
+   */
+  public $_lineItems;
+
+  protected $_formType;
+  protected $_cdType;
+
+  /**
+>>>>>>> .merge-right.r44311
    * Function to set variables up before form is built
    *
    * @return void
@@ -896,8 +1002,12 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
    * @return void
    */
   public function postProcess() {
+    $session = CRM_Core_Session::singleton();
     if ($this->_action & CRM_Core_Action::DELETE) {
       CRM_Contribute_BAO_Contribution::deleteContribution($this->_id);
+      $session->replaceUserContext(CRM_Utils_System::url('civicrm/contact/view',
+        "reset=1&cid={$this->_contactID}&selectedChild=contribute"
+      ));
       return;
     }
 
@@ -981,7 +1091,6 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
     }
 
     $config = CRM_Core_Config::singleton();
-    $session = CRM_Core_Session::singleton();
 
     //Credit Card Contribution.
     if ($this->_mode) {

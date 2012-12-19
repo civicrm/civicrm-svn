@@ -54,6 +54,11 @@ class CRM_Core_Page_AJAX {
     if (!$className) {
       CRM_Core_Error::fatal(ts('Invalid className: %1', array(1 => $className)));
     }
+
+    if (!self::checkAuthz($type, $className)) {
+      CRM_Utils_System::civiExit();
+    }
+
     if (!$type) {
       $wrapper = new CRM_Utils_Wrapper();
       $wrapper->run($className);
@@ -93,5 +98,23 @@ class CRM_Core_Page_AJAX {
     CRM_Utils_System::civiExit();
   }
 
+  /**
+   * Determine whether the request is for a valid class/method name.
+   *
+   * @param string $type 'method'|'class'|''
+   * @param string $className 'Class_Name' or 'Class_Name::method_name'
+   */
+  static function checkAuthz($type, $className) {
+    switch ($type) {
+      case 'method':
+        return preg_match('/^CRM_[a-zA-Z0-9]+_Page_AJAX::[a-zA-Z0-9]+$/', $className);
+      case 'page':
+      case 'class':
+      case '':
+        return preg_match('/^CRM_[a-zA-Z0-9]+_(Page|Form)_Inline_[a-zA-Z0-9]+$/', $className);
+      default:
+        return FALSE;
+}
+  }
 }
 
