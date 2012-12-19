@@ -591,10 +591,9 @@ INSERT INTO
    `civicrm_financial_account` (`name`, `contact_id`, `financial_account_type_id`, `description`, `accounting_code`, `is_reserved`, `is_active`, `is_deductible`, `is_default`)
 VALUES
   ('{ts escape="sql"}Banking Fees{/ts}'         , @domainContactId, @opexp, 'Payment processor fees and manually recorded banking fees', '5200', 0, 1, 0, 0),
-  ('{ts escape="sql"}Deposit bank account{/ts}' , @domainContactId, @opAsset, 'All manually recorded cash and cheques go to this account', '1100', 0, 1, 0, 0),
-  ('{ts escape="sql"}Accounts Receivable{/ts}'  , @domainContactId, @opAsset, 'Amounts to be received later (eg pay later event revenues)', '1200', 0, 1, 0, 1),
+  ('{ts escape="sql"}Deposit bank account{/ts}' , @domainContactId, @opAsset, 'All manually recorded cash and cheques go to this account', '1100', 0, 1, 0, 1),
+  ('{ts escape="sql"}Accounts Receivable{/ts}'  , @domainContactId, @opAsset, 'Amounts to be received later (eg pay later event revenues)', '1200', 0, 1, 0, 0),
   ('{ts escape="sql"}Accounts Payable{/ts}'     , @domainContactId, @opLiability, 'Amounts to be paid out such as grants and refunds', '2200', 0, 1, 0, 0),
-  ('{ts escape="sql"}Checking Account{/ts}'     , @domainContactId, @opAsset, 'Bank accounts against which checks to pay grants, refunds, etc are written', '1100', 0, 1, 0, 0),
   ('{ts escape="sql"}Premiums{/ts}'             , @domainContactId, @opCost, 'Account to record cost of premiums provided to payors', '5100', 0, 1, 0, 0),
   ('{ts escape="sql"}Premiums inventory{/ts}'   , @domainContactId, @opAsset, 'Account representing value of premiums inventory', '1375', 0, 1, 0, 0),
   ('{ts escape="sql"}Discounts{/ts}'            , @domainContactId, @opval, 'Contra-revenue account for amounts discounted from sales', '4900', 0, 1, 0, 0),
@@ -608,7 +607,6 @@ SELECT @option_value_rel_id_as  := value FROM `civicrm_option_value` WHERE `opti
 
 SELECT @financial_account_id_bf	       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Banking Fees';
 SELECT @financial_account_id_ap	       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Accounts Receivable';
-SELECT @financial_account_id_ar	       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Deposit bank account';
 
 INSERT INTO `civicrm_entity_financial_account`
      ( entity_table, entity_id, account_relationship, financial_account_id )
@@ -627,11 +625,13 @@ INSERT INTO `civicrm_entity_financial_account`
 SELECT 'civicrm_financial_type', ft.id, @option_value_rel_id_ar, @financial_account_id_ap
 FROM `civicrm_financial_type` as ft;
 
--- Deposit Bank account
-INSERT INTO `civicrm_entity_financial_account`
-     ( entity_table, entity_id, account_relationship, financial_account_id )
-SELECT 'civicrm_financial_type', ft.id, @option_value_rel_id_as, @financial_account_id_ar
-FROM `civicrm_financial_type` as ft;
+-- CRM-11516
+SELECT @financial_account_id_ar := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Deposit bank account';
+
+INSERT INTO  civicrm_entity_financial_account (entity_table, entity_id, account_relationship, financial_account_id)
+SELECT 'civicrm_option_value', cov.id, @option_value_rel_id_as, @financial_account_id_ar  FROM `civicrm_option_group` cog
+LEFT JOIN civicrm_option_value cov ON cog.id = cov.option_group_id
+WHERE cog.name = 'payment_instrument';
 
 -- CRM-9923 and CRM-11037
 SELECT @option_group_id_batch_status   := max(id) from civicrm_option_group where name = 'batch_status';

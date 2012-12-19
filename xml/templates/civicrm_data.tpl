@@ -893,10 +893,9 @@ VALUES
   ( '{ts escape="sql"}Campaign Contribution{/ts}', @contactID, @opval, 'Sample account for recording payments to a campaign', '4100', 0, 1, 0, 0 ),
   ( '{ts escape="sql"}Event Fee{/ts}'            , @contactID, @opval, 'Default account for event ticket sales', '4300', 0, 1, 0, 0 ),
   ( '{ts escape="sql"}Banking Fees{/ts}'         , @contactID, @opexp, 'Payment processor fees and manually recorded banking fees', '5200', 0, 1, 0, 0 ),
-  ( '{ts escape="sql"}Deposit bank account{/ts}' , @contactID, @opAsset, 'All manually recorded cash and cheques go to this account', '1100', 0, 1, 0, 0 ),
-  ( '{ts escape="sql"}Accounts Receivable{/ts}'  , @contactID, @opAsset, 'Amounts to be received later (eg pay later event revenues)', '1200', 0, 1, 0, 1 ),
+  ( '{ts escape="sql"}Deposit bank account{/ts}' , @contactID, @opAsset, 'All manually recorded cash and cheques go to this account', '1100', 0, 1, 0, 1 ),
+  ( '{ts escape="sql"}Accounts Receivable{/ts}'  , @contactID, @opAsset, 'Amounts to be received later (eg pay later event revenues)', '1200', 0, 1, 0, 0 ),
   ( '{ts escape="sql"}Accounts Payable{/ts}'     , @contactID, @opLiability, 'Amounts to be paid out such as grants and refunds', '2200', 0, 1, 0, 0 ),
-  ( '{ts escape="sql"}Checking Account{/ts}'     , @contactID, @opAsset, 'Bank accounts against which checks to pay grants, refunds, etc are written', '1100', 0, 1, 0, 0 ),
   ( '{ts escape="sql"}Premiums{/ts}'             , @contactID, @opCost, 'Account to record cost of premiums provided to payors', '5100', 0, 1, 0, 0 ),
   ( '{ts escape="sql"}Premiums inventory{/ts}'   , @contactID, @opAsset, 'Account representing value of premiums inventory', '1375', 0, 1, 0, 0 ),
   ( '{ts escape="sql"}Discounts{/ts}'            , @contactID, @opval, 'Contra-revenue account for amounts discounted from sales', '4900', 0, 1, 0, 0 ),
@@ -1481,7 +1480,7 @@ SELECT @financial_account_id_cc	       := max(id) FROM `civicrm_financial_accoun
 SELECT @financial_account_id_ef	       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Event Fee';
 SELECT @financial_account_id_bf	       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Banking Fees';
 SELECT @financial_account_id_ap	       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Accounts Receivable';
-SELECT @financial_account_id_ar	       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Deposit bank account';
+SELECT @financial_account_id_ar        := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Deposit bank account';
 
 INSERT INTO `civicrm_entity_financial_account`
      ( entity_table, entity_id, account_relationship, financial_account_id )
@@ -1489,19 +1488,21 @@ VALUES
      ( 'civicrm_financial_type', @financial_type_id_dtn, @option_value_rel_id, @financial_account_id_dtn ),
      ( 'civicrm_financial_type', @financial_type_id_dtn, @option_value_rel_id_exp, @financial_account_id_bf ),
      ( 'civicrm_financial_type', @financial_type_id_dtn, @option_value_rel_id_ar, @financial_account_id_ap ),
-     ( 'civicrm_financial_type', @financial_type_id_dtn, @option_value_rel_id_as, @financial_account_id_ar ),
      ( 'civicrm_financial_type', @financial_type_id_md, @option_value_rel_id, @financial_account_id_md ),
      ( 'civicrm_financial_type', @financial_type_id_md, @option_value_rel_id_exp, @financial_account_id_bf ),
      ( 'civicrm_financial_type', @financial_type_id_md, @option_value_rel_id_ar, @financial_account_id_ap ),
-     ( 'civicrm_financial_type', @financial_type_id_md, @option_value_rel_id_as, @financial_account_id_ar ),
      ( 'civicrm_financial_type', @financial_type_id_cc, @option_value_rel_id, @financial_account_id_cc ),
      ( 'civicrm_financial_type', @financial_type_id_cc, @option_value_rel_id_exp, @financial_account_id_bf ),
-     ( 'civicrm_financial_type', @financial_type_id_cc, @option_value_rel_id_as, @financial_account_id_ar ),
      ( 'civicrm_financial_type', @financial_type_id_cc, @option_value_rel_id_ar, @financial_account_id_ap ),
      ( 'civicrm_financial_type', @financial_type_id_ef, @option_value_rel_id_exp, @financial_account_id_bf ),
      ( 'civicrm_financial_type', @financial_type_id_ef, @option_value_rel_id_ar, @financial_account_id_ap ),
-     ( 'civicrm_financial_type', @financial_type_id_ef, @option_value_rel_id_as, @financial_account_id_ar ),
      ( 'civicrm_financial_type', @financial_type_id_ef, @option_value_rel_id, @financial_account_id_ef );
+
+-- CRM-11516
+INSERT INTO  civicrm_entity_financial_account (entity_table, entity_id, account_relationship, financial_account_id)
+SELECT 'civicrm_option_value', cov.id, @option_value_rel_id_as, @financial_account_id_ar  FROM `civicrm_option_group` cog
+LEFT JOIN civicrm_option_value cov ON cog.id = cov.option_group_id
+WHERE cog.name = 'payment_instrument';
 
 -- CRM-9714
 

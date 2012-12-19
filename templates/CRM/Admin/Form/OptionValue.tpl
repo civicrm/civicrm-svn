@@ -58,6 +58,12 @@
             <td class="label">{$form.grouping.label}</td>
             <td>{$form.grouping.html}</td>
         </tr>
+	{if $form.financial_account_id}
+          <tr class="crm-admin-optionvalue-form-block-financialAccount">
+            <td class="label">{$form.financial_account_id.label}</td>
+            <td>{$form.financial_account_id.html}</td>
+          </tr>
+	{/if}
         <tr class="crm-admin-optionvalue-form-block-description">
             <td class="label">{$form.description.label}</td>
             <td>{$form.description.html}</td>
