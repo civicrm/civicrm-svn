@@ -275,7 +275,7 @@ ORDER by f.name";
 
     $returnvalues =
       array(
-        'civicrm_financial_item.contact_id',
+        'civicrm_contribution.contact_id as contact_id',
         'civicrm_contribution.id as contributionID',
         'sort_name',
         'civicrm_entity_financial_trxn.amount',

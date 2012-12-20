@@ -672,8 +672,8 @@ LEFT JOIN civicrm_entity_financial_trxn ON civicrm_entity_financial_trxn.financi
 LEFT JOIN civicrm_entity_batch ON civicrm_entity_batch.entity_id = civicrm_financial_trxn.id
 LEFT JOIN civicrm_financial_item ON civicrm_entity_financial_trxn.entity_id = civicrm_financial_item.id
 LEFT JOIN civicrm_financial_account ON civicrm_financial_account.id = civicrm_financial_item.financial_account_id
-LEFT JOIN civicrm_contact contact ON contact.id = civicrm_financial_item.contact_id
-LEFT JOIN civicrm_contribution ON civicrm_contribution.id = civicrm_entity_financial_trxn.entity_id";
+LEFT JOIN civicrm_contribution ON civicrm_contribution.id = civicrm_entity_financial_trxn.entity_id
+LEFT JOIN civicrm_contact contact ON contact.id = civicrm_contribution.contact_id";
     if (!$notPresent) {
       $where =  " ( civicrm_entity_batch.batch_id = {$entityID} AND civicrm_entity_batch.entity_table = 'civicrm_financial_trxn' AND civicrm_entity_financial_trxn.entity_table = 'civicrm_contribution') ";
     } else {
@@ -685,7 +685,8 @@ FROM {$from}
 WHERE {$where}
 {$orderBy}
 {$limit}
-"; 
+";
+    
     $result = CRM_Core_DAO::executeQuery($sql);
     return $result;
   }
