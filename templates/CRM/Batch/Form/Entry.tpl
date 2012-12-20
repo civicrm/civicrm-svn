@@ -147,7 +147,7 @@
      var dataUrl = {/literal}"{crmURL p='civicrm/ajax/memType' h=0}"{literal};
 
      if ( !memType ) {
-      memType = cj( 'select[id="field['+ rowID+'][membership_type][1]"]').val();
+      memType = cj( 'select[id="field_'+ rowID+'_membership_type_1"]').val();
      }
 
      cj.post( dataUrl, {mtype: memType}, function( data ) {
@@ -286,8 +286,8 @@
                 { success: function (data){
                   var memTypeContactId = data.values[0].member_of_contact_id;
                   cj('select[id="member_option_' + blockNo + '"]').removeAttr('disabled').val(2);
-                  cj('select[id="field[' + blockNo + '][membership_type][0]"]').val( memTypeContactId ).change();
-                  cj('select[id="field[' + blockNo + '][membership_type][1]"]').val( membershipTypeId ).change();
+                  cj('select[id="field_' + blockNo + '_membership_type_0"]').val( memTypeContactId ).change();
+                  cj('select[id="field_' + blockNo + '_membership_type_1"]').val( membershipTypeId ).change();
                   setDateFieldValue( 'join_date', membershipJoinDate, blockNo )
                 }
               });
