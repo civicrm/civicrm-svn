@@ -70,12 +70,12 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem {
   /**
    * function to add the financial items and financial trxn
    *
-   * @lineItem object   contains line item object
-   * @contribution object $ids contains contribution object
+   * @param object $lineItem     line item object
+   * @param object $contribution contribution object
    * 
    * @access public
    * @static 
-   * @return object
+   * @return void
    */
   static function add($lineItem, $contribution) {
     $contributionStatuses = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
@@ -116,19 +116,17 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem {
   } 
 
   /**
-   * function to create the financial Items and financial trxn
+   * function to create the financial Items and financial enity trxn
    *
-   * @params array   contains params to create financial item
-   *
-   * @ids array  financial item id
-   *
-   * @trxnId array financial trxn id for financial item
+   * @param array $params  associated array to create financial items
+   * @param array $ids financial item ids
+   * @param array $trxnIds financial item ids
    * 
    * @access public
    * @static 
    * @return object
    */
-  static function create(&$params, $ids = NULL, $trxnId = NULL) {
+  static function create(&$params, $ids = NULL, $trxnIds = NULL) {
     $financialItem = new CRM_Financial_DAO_FinancialItem();
     $financialItem->copyValues($params);
     if (CRM_Utils_Array::value('id', $ids)) {
@@ -136,11 +134,11 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem {
     }
 
     $financialItem->save();
-    if (CRM_Utils_Array::value('id', $trxnId)) {
+    if (CRM_Utils_Array::value('id', $trxnIds)) {
       $entity_financial_trxn_params = array(
         'entity_table'      => "civicrm_financial_item",
         'entity_id'         => $financialItem->id,
-        'financial_trxn_id' => $trxnId['id'],
+        'financial_trxn_id' => $trxnIds['id'],
         'amount'            => $params['amount'],
       );
       
