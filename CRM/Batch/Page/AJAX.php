@@ -101,10 +101,13 @@ class CRM_Batch_Page_AJAX {
 
     $iFilteredTotal = $iTotal = $params['total'];
     $selectorElements = array(
-      'check', 'batch_name', 'batch_type',
+      'batch_name', 'batch_type',
       'item_count', 'total_amount', 'status', 'created_by', 'links'
     );
 
+    if ( $context == 'financialBatch' ) {
+      $selectorElements = array_merge(array('check'), $selectorElements);
+    }
     echo CRM_Utils_JSON::encodeDataTableSelector($batches, $sEcho, $iTotal, $iFilteredTotal, $selectorElements);
     CRM_Utils_System::civiExit();
   }
