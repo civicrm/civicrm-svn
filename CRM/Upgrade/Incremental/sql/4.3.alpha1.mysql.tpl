@@ -284,9 +284,6 @@ CREATE TABLE IF NOT EXISTS `civicrm_entity_payment` (
   KEY `FK_civicrm_entity_payment_payment_id` (`payment_id`)
 )ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-ALTER TABLE `civicrm_entity_financial_item`
-  ADD CONSTRAINT `FK_civicrm_entity_financial_item_financial_item_id` FOREIGN KEY (`financial_item_id`) REFERENCES `civicrm_financial_item` (`id`);
-
 ALTER TABLE `civicrm_entity_payment`
   ADD CONSTRAINT `FK_civicrm_entity_payment_payment_id` FOREIGN KEY (`payment_id`) REFERENCES `civicrm_payment` (`id`);
 
