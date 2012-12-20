@@ -294,13 +294,6 @@ ALTER TABLE `civicrm_financial_item`
   ADD CONSTRAINT `FK_civicrm_financial_item_contact_id` FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact` (`id`),
   ADD CONSTRAINT `FK_civicrm_financial_item_financial_account_id` FOREIGN KEY (`financial_account_id`) REFERENCES `civicrm_financial_account` (`id`);
 
-CREATE TABLE IF NOT EXISTS `civicrm_entity_financial_item` (
-  `entity_table` varchar(64) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Contains the header information for this batch. Primarily this will be civicrm_contribution, but in future it could be for a generic batch such as a quickbooks export, official receipt, etc.',
-  `entity_id` int(10) unsigned NOT NULL COMMENT 'Links to an id in the entity_table, such as id in civicrm_batch',
-  `financial_item_id` int(10) unsigned NOT NULL COMMENT 'FK to the civicrm_financial_item.id',
-  KEY `FK_civicrm_entity_financial_item_financial_item_id` (`financial_item_id`)
-)ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
 CREATE TABLE IF NOT EXISTS `civicrm_entity_payment` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `payment_id` int(10) unsigned NOT NULL COMMENT 'Type of grant. Implicit FK to civicrm_payment.',

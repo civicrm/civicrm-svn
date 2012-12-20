@@ -47,7 +47,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
    * Not sure this is the best way to do this. Depends on how exportFinancialBatch() below gets called.
    * Maybe a parameter to that function is better.
    */
-  static $_exportFormat = null;
+  static $_exportFormat = NULL;
 
   /**
    * Create a new batch
@@ -55,7 +55,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
    * @return batch array
    * @access public
    */
-  static function create(&$params, $ids = null, $context = null) {
+  static function create(&$params, $ids = NULL, $context = NULL) {
     if (!CRM_Utils_Array::value('id', $params)) {
       $params['name'] = CRM_Utils_String::titleToVar($params['title']);
     }
@@ -129,7 +129,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
 
   /**
    * create entity batch entry
-   *
+   * @param array $params associated array
    * @return batch array
    * @access public
    */
@@ -137,6 +137,18 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
     $entityBatch = new CRM_Batch_DAO_EntityBatch();
     $entityBatch->copyValues($params);
     $entityBatch->save();
+    return $entityBatch;
+  }
+
+  /**
+   * Remove entries from entity batch
+   * @param array $params associated array
+   * @return object CRM_Batch_DAO_EntityBatch
+   */
+  static function removeBatchEntity($params) {
+    $entityBatch = new CRM_Batch_DAO_EntityBatch();
+    $entityBatch->copyValues($params);
+    $entityBatch->delete();
     return $entityBatch;
   }
 
@@ -329,7 +341,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
    * @return array $links array of action links
    * @access public
    */
-  function links($context = null) {
+  function links($context = NULL) {
     if ($context == 'financialBatch') {
       $links = array(
         'transaction' =>  array(
@@ -623,6 +635,77 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
       self::create($params, $ids);
     }
     $url = CRM_Utils_System::url('civicrm/financial/financialbatches',"reset=1&batchStatus={$params['status_id']}");
+    CRM_Utils_System::redirect($url);
+  }
+
+  /**
+   * Function to retrieve financial items assigned for a batch
+   *
+   * @param int $entityID
+   * @param array $returnValues
+   * @param null $notPresent
+   * @param null $params
+   * @return Object
+   */
+  static function getBatchFinancialItems($entityID, $returnValues, $notPresent = NULL, $params = NULL) {
+    //FIX ME
+    return;
+
+    if (!empty($params['rowCount']) &&
+      $params['rowCount'] > 0
+    ) {
+      $limit = " LIMIT {$params['offset']}, {$params['rowCount']} ";
+    }
+
+    // action is taken depending upon the mode
+    $select = ' `civicrm_financial_item`.id ';
+    if (!empty( $returnValues)) {
+      $select .= " , ".implode(' , ', $returnValues);
+    }
+
+    $orderBy = " ORDER BY `civicrm_financial_item`.id";
+    if (CRM_Utils_Array::value('sort', $params)) {
+      $orderBy = ' ORDER BY ' . CRM_Utils_Array::value('sort', $params);
+    }
+
+
+    $from = " `civicrm_financial_item`
+LEFT JOIN civicrm_contact ON civicrm_contact.id = `civicrm_financial_item`.contact_id
+LEFT JOIN civicrm_entity_financial_item ON civicrm_entity_financial_item.financial_item_id= `civicrm_financial_item`.id
+LEFT JOIN civicrm_financial_account ON civicrm_financial_account.id = `civicrm_financial_item`.financial_account_id
+LEFT JOIN civicrm_line_item ON civicrm_line_item.id = `civicrm_financial_item`.entity_id
+LEFT JOIN civicrm_contribution ON civicrm_contribution.id = civicrm_line_item.entity_id";
+    if (!$notPresent) {
+      $where =  " ( civicrm_entity_financial_item.entity_id = {$entityID} AND civicrm_entity_financial_item.entity_table = 'civicrm_batch' ) ";
+    } else {
+      $where = "( civicrm_entity_financial_item.financial_item_id IS NULL ) AND ( civicrm_financial_item.status_id = 1 )";
+    }
+
+    $sql = "SELECT {$select}
+FROM {$from}
+WHERE {$where}
+{$orderBy}
+{$limit}
+";
+
+    $result = CRM_Core_DAO::executeQuery($sql);
+    return $result;
+  }
+
+  static function assignRemoveFinancialTransactions( $IDs, $entityID, $action = 'Assign') {
+    foreach ($IDs as $key => $value) {
+      $params = array( 'entity_id' => $entityID,
+        'entity_table' => 'civicrm_batch',
+        'financial_item_id' => $value,
+      );
+      if ($action == 'Assign') {
+        self::addBatchEntity($params);
+      }
+      else {
+        self::removeBatchEntity($params);
+      }
+    }
+    $url = CRM_Utils_System::url('civicrm/batchtransaction',"reset=1&bid={$entityID}");
     CRM_Utils_System::redirect($url);
   }
 

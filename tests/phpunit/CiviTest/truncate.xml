@@ -183,8 +183,6 @@
 
   <civicrm_payment_processor />
 
-  <civicrm_entity_financial_item />
-
   <civicrm_membership_type />
 
   <civicrm_membership_block />

@@ -147,7 +147,7 @@ class CRM_Financial_Form_BatchTransaction extends CRM_Contribute_Form {
     if (CRM_Utils_Array::value('batch_id', $formValues)) {
       if (CRM_Utils_Array::value('trans_assign', $formValues) || CRM_Utils_Array::value('trans_remove', $formValues)) {
         $action = CRM_Utils_Array::value('trans_assign', $formValues) ? CRM_Utils_Array::value('trans_assign', $formValues) : CRM_Utils_Array::value('trans_remove', $formValues);
-        CRM_Financial_BAO_EntityFinancialItem::assignRemove($contributionIds, $formValues['batch_id'], $action);
+        CRM_Batch_BAO_Batch::assignRemoveFinancialTransactions($contributionIds, $formValues['batch_id'], $action);
       }
     }
   }
