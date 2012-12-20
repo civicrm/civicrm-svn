@@ -21,10 +21,7 @@
     <name>name</name>
     <type>varchar</type>
     <length>255</length>
-    <required>true</required> 
-    <import>true</import>
-    <headerPattern>/(contrib(ution)?)?type/i</headerPattern>
-    <dataPattern>/donation|member|campaign/i</dataPattern>
+    <required>true</required>
     <comment>Financial Account Name.</comment>
     <add>3.2</add>
   </field>
@@ -33,10 +30,7 @@
     <uniqueName>financial_account_contact_id</uniqueName>
     <title>Contact ID</title>
     <type>int unsigned</type> 
-    <import>true</import>
-    <headerPattern>/contact(.?id)?/i</headerPattern>
-    <dataPattern>/^\d+$/</dataPattern>
-    <comment>FK to Contact ID that is responsible for the funds in this account</comment> 
+    <comment>FK to Contact ID that is responsible for the funds in this account</comment>
     <add>4.3</add> 
   </field> 
   <foreignKey> 
