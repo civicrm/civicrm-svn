@@ -195,6 +195,13 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
       $errors['onbehalf_profile_id'] = ts('Please select a profile to collect organization information on this contribution page.');
     }
 
+    //CRM-11494
+    $start = CRM_Utils_Date::processDate($values['start_date']);
+    $end = CRM_Utils_Date::processDate($values['end_date']);
+    if (($end < $start) && ($end != 0)) {
+        $errors['end_date'] = ts('End date should be after Start date.');
+    }
+ 
     return $errors;
   }
 

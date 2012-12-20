@@ -57,7 +57,7 @@
   {ts}Date Range{/ts}
 {/htxt}
 {htxt id="id-start_date"}
-{ts}You can optionally set an "active date range" for this contribution page. These dates are currently only used by the "Contribution Widget" - which will give a "Campaign is over" message if it is accessed outside of the specified range.{/ts}
+{ts}You can optionally set an "active date range" for this contribution page. These dates are currently used by the "Contribution Widget" and "Personal Campaign Pages". The widget will give a "Campaign is over" message if it is accessed outside of the specified range. The "Donate" button will be hidden on Personal Campaign Pages if accessed outside of the specified range.{/ts}
 {/htxt}
 
 {htxt id="id-honoree_section-title"}
