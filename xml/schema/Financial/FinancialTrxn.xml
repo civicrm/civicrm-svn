@@ -160,5 +160,37 @@
     <onDelete>SET NULL</onDelete>
     <add>4.3</add> 
   </foreignKey>
+  <field>
+    <name>payment_instrument_id</name>
+    <uniqueName>financial_trxn_payment_instrument_id</uniqueName>
+    <title>Payment Instrument</title>
+    <type>int unsigned</type>
+    <comment>FK to payment_instrument option group values</comment>
+    <pseudoconstant>
+      <name>paymentInstrument</name>
+      <optionGroupName>paymentInstrument</optionGroupName>
+      <class>CRM_Contribute_PseudoConstant</class>
+    </pseudoconstant>
+    <add>4.3</add>
+  </field>
+  <index>
+    <name>UI_ftrxn_payment_instrument_id</name>
+    <fieldName>payment_instrument_id</fieldName>
+    <add>4.3</add>
+  </index>
+  <field>
+    <name>check_number</name>
+    <uniqueName>financial_trxn_check_number</uniqueName>
+    <title>Check Number</title>
+    <type>varchar</type>
+    <length>255</length>
+    <size>SIX</size>
+    <add>4.3</add>
+  </field>
+  <index>
+    <name>UI_ftrxn_check_number</name>
+    <fieldName>check_number</fieldName>
+    <add>4.3</add>
+  </index>
 </table>
 
