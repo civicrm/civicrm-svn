@@ -9,7 +9,7 @@ class CRM_Core_Page_Help {
     $args = $_REQUEST;
     if (!empty($args['file'])) {
       $file = $args['file'] . '.hlp';
-      unset($args['file'], $args['class_name'], $args['type']);
+      CRM_Utils_Array::remove($args, 'file', 'class_name', 'type', 'q');
       $smarty = CRM_Core_Smarty::singleton();
       foreach ($args as $id => $arg) {
         $smarty->assign($id, $arg);
