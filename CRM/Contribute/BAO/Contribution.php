@@ -2589,7 +2589,7 @@ WHERE  contribution_id = %1 ";
    * @access public
    * @static
    */
-  static function recordFinancialAccounts($params, $ids = NULL) {
+  static function recordFinancialAccounts(&$params, $ids = NULL) {
     $contributionStatuses = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
     if ($params['contribution_status_id'] == array_search('Pending', $contributionStatuses)) {
       $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Accounts Receivable Account is' "));
@@ -2616,12 +2616,15 @@ WHERE  contribution_id = %1 ";
       'net_amount' => CRM_Utils_Array::value('fee_amount', $params),
       'currency' => $params['contribution']->currency,
       'trxn_id' => CRM_Utils_Array::value('trxn_id', $params),
-      'status_id' => CRM_Utils_Array::value('contribution_status_id', $params)
+      'status_id' => CRM_Utils_Array::value('contribution_status_id', $params),
+      'payment_instrument_id' => CRM_Utils_Array::value('payment_instrument_id', $params),
+      'check_number' => CRM_Utils_Array::value('check_number', $params)
     );
 
     if (CRM_Utils_Array::value('payment_processor_id', $params)) {
       $trxnParams['payment_processor_id'] = $params['payment_processor_id'];
     }
+
     $trxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
 
     if (!CRM_Utils_Array::value('contribution', $ids)) {
