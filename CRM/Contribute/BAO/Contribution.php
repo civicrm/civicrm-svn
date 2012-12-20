@@ -2585,9 +2585,9 @@ WHERE  contribution_id = %1 ";
   /**
    * Function to create all financial accounts entry 
    *
-   * @params contribution object, line item array and params for trxn
+   * @param array $params contribution object, line item array and params for trxn
    *
-   * @ids array of contribution id
+   * @param array $ids of contribution id
    *
    * @access public
    * @static
@@ -2615,8 +2615,8 @@ WHERE  contribution_id = %1 ";
       'from_financial_account_id' => CRM_Utils_Array::value('from_financial_account_id', $params, NULL),
       'trxn_date' => date('YmdHis'),
       'total_amount' => CRM_Utils_Array::value('initial_amount', $params) ? $params['initial_amount'] : $params['total_amount'],
-      'fee_amount' => CRM_Utils_Array::value('net_amount', $params),
-      'net_amount' => CRM_Utils_Array::value('fee_amount', $params),
+      'fee_amount' => CRM_Utils_Array::value('fee_amount', $params),
+      'net_amount' => CRM_Utils_Array::value('net_amount', $params),
       'currency' => $params['contribution']->currency,
       'trxn_id' => CRM_Utils_Array::value('trxn_id', $params),
       'status_id' => CRM_Utils_Array::value('contribution_status_id', $params),
@@ -2631,12 +2631,10 @@ WHERE  contribution_id = %1 ";
     //records finanical trxn and entity financial trxn
     $financialTxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
 
-    if (!CRM_Utils_Array::value('contribution', $ids)) {
       // record line items and finacial items
       $entityId = $params['contribution']->id;
       $entityTable = 'civicrm_contribution';
       CRM_Price_BAO_LineItem::processPriceSet($entityId, $params['line_item'], $params['contribution'], $entityTable);
-    }
 
     // create batch entry if batch_id is passed
     if (CRM_Utils_Array::value('batch_id', $params)) {

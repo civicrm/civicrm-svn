@@ -43,7 +43,7 @@ class CRM_Core_BAO_FinancialTrxn extends CRM_Financial_DAO_FinancialTrxn {
    *
    * @param array  $params (reference ) an assoc array of name/value pairs
    *
-   * @trxnEntityTable string entity_table
+   * @param string $trxnEntityTable entity_table
    *
    * @return object CRM_Core_BAO_FinancialTrxn object
    * @access public
