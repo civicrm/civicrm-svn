@@ -1686,13 +1686,13 @@ AND civicrm_membership.is_test = %2";
       if (CRM_Utils_Array::value('membership_source', $form->_params)) {
         $memParams['source'] = $form->_params['membership_source'];
       }
-      else {
+      elseif (CRM_Utils_Array::value('title', $form->_values)) {
         $memParams['source'] = ts('Online Contribution:') . ' ' . $form->_values['title'];
       }
       $memParams['contribution_recur_id'] = CRM_Utils_Array::value('contributionRecurID', $form->_params);
 
       $memParams['is_test'] = $is_test;
-      $memParams['is_pay_later'] = $form->_params['is_pay_later'];
+      $memParams['is_pay_later'] = CRM_Utils_Array::value('is_pay_later', $form->_params);
     }
 
     //CRM-4555
