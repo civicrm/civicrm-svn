@@ -1162,7 +1162,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
       CRM_Contribute_Form_AdditionalInfo::postProcessCommon($formValues, $params, $this);
 
       $params['line_item'] = $lineItem;
-      $params['payment_processor_id'] = CRM_Utils_Array::value('id', $this->_paymentProcessor);
+      $params['payment_processor_id'] = $params['payment_processor'] = CRM_Utils_Array::value('id', $this->_paymentProcessor);
       //create contribution.
       $contribution = CRM_Contribute_BAO_Contribution::create($params, $ids);
 

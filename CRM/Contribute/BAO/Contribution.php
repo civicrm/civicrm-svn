@@ -2595,8 +2595,8 @@ WHERE  contribution_id = %1 ";
       $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Accounts Receivable Account is' "));
       $params['to_financial_account_id'] = CRM_Contribute_PseudoConstant::financialAccountType($params['financial_type_id'], $relationTypeId);
     }
-    elseif (CRM_Utils_Array::value('payment_processor_id', $params)) {
-      $params['to_financial_account_id'] = CRM_Financial_BAO_FinancialTypeAccount::getFinancialAccount('civicrm_payment_processor', $params['payment_processor_id'], 'financial_account_id');
+    elseif (CRM_Utils_Array::value('payment_processor', $params)) {
+      $params['to_financial_account_id'] = CRM_Financial_BAO_FinancialTypeAccount::getFinancialAccount($params['payment_processor'], 'civicrm_payment_processor', 'financial_account_id');
     } 
     elseif (CRM_Utils_Array::value('payment_instrument_id', $params)) {
       $params['to_financial_account_id'] = CRM_Financial_BAO_FinancialTypeAccount::getInstrumentFinancialAccount($params['payment_instrument_id']);
@@ -2621,8 +2621,8 @@ WHERE  contribution_id = %1 ";
       'check_number' => CRM_Utils_Array::value('check_number', $params)
     );
 
-    if (CRM_Utils_Array::value('payment_processor_id', $params)) {
-      $trxnParams['payment_processor_id'] = $params['payment_processor_id'];
+    if (CRM_Utils_Array::value('payment_processor', $params)) {
+      $trxnParams['payment_processor_id'] = $params['payment_processor'];
     }
 
     $trxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
