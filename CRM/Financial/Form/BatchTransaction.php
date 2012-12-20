@@ -128,30 +128,6 @@ class CRM_Financial_Form_BatchTransaction extends CRM_Contribute_Form {
     $this->add('text', 'name', ts('Batch Name'));
   }
 
-
-  /**
-   * Function to process the form
-   *
-   * @access public
-   * @return None
-   */
-  public function postProcess() {  
-    $formValues = $this->exportValues();
-    $contributionIds = array();
-    foreach ($formValues as $key => $value) {
-      if ((substr($key,0,7) == "mark_x_" && CRM_Utils_Array::value('trans_assign', $formValues)) || (substr($key,0,7) == "mark_y_" && CRM_Utils_Array::value('trans_remove', $formValues))) {
-        $contributions = explode("_",$key);
-        $contributionIds[] = $contributions[2];
-      }
-    }
-    if (CRM_Utils_Array::value('batch_id', $formValues)) {
-      if (CRM_Utils_Array::value('trans_assign', $formValues) || CRM_Utils_Array::value('trans_remove', $formValues)) {
-        $action = CRM_Utils_Array::value('trans_assign', $formValues) ? CRM_Utils_Array::value('trans_assign', $formValues) : CRM_Utils_Array::value('trans_remove', $formValues);
-        CRM_Batch_BAO_Batch::assignRemoveFinancialTransactions($contributionIds, $formValues['batch_id'], $action);
-      }
-    }
-  }
-
   function &links() {
     if (!(self::$_links)) {
       self::$_links = array(

@@ -107,7 +107,8 @@ function saveRecord(recordID, op, recordBAO, entityID) {
     responseFromServer = true;      
     //this is custom status set when record update success.
     if (html.status == 'record-updated-success') {
-      document.location.reload();
+       buildTransactionSelectorAssign( false );
+       buildTransactionSelectorRemove();	
     } 
   }, 'json');
 

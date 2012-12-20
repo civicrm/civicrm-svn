@@ -164,4 +164,9 @@
     <page_callback>CRM_Financial_Page_AJAX::getFinancialTransactionsList</page_callback>
     <access_arguments>access CiviCRM</access_arguments>
   </item>
+  <item>
+    <path>civicrm/ajax/bulkassignremove</path>
+    <page_callback>CRM_Financial_Page_AJAX::bulkAssignRemove</page_callback>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
 </menu>

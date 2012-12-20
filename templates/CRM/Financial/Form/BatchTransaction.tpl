@@ -132,7 +132,16 @@ cj( function() {
    cj('#GoRemove').click( function() {
      return selectAction("trans_remove","toggleSelects", "crm-transaction-selector-remove input[id^='mark_y_']");
    });
- 
+   cj('#Go').click( function() {
+     if (cj("#trans_assign" ).val() != "" && cj("input[id^='mark_x_']").is(':checked')) {
+       bulkAssignRemove('Assign');
+     }
+   });
+   cj('#GoRemove').click( function() {
+     if (cj("#trans_remove" ).val() != "" && cj("input[id^='mark_y_']").is(':checked')) {
+       bulkAssignRemove('Remove');
+     }
+   });
    cj("#crm-transaction-selector-assign input[id^='mark_x_']").click( function() {
      enableActions('x');
    });
@@ -178,6 +187,7 @@ function buildTransactionSelectorAssign( filterSearch ) {
     var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/transactionlist" h=0 q="snippet=4&context=financialBatch&entityID=$entityID&notPresent=1"}'{literal};
  
     crmBatchSelector1 = cj('#crm-transaction-selector-assign').dataTable({
+        "bDestroy"   : true,
         "bFilter"    : false,
         "bAutoWidth" : false,
         "aaSorting"  : [[4, 'desc']],
@@ -234,7 +244,7 @@ function buildTransactionSelectorRemove( ) {
     var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/transactionlist" h=0 q="snippet=4&context=financialBatch&entityID=$entityID"}'{literal};	 
  
     crmBatchSelector = cj('#crm-transaction-selector-remove').dataTable({
-       
+       	"bDestroy"   : true,	     
         "bFilter"    : false,
         "bAutoWidth" : false,
         "aaSorting"  : [[4, 'desc']],
@@ -295,5 +305,28 @@ function selectAction( id, toggleSelectId, checkId ) {
   }
 }
 
+function bulkAssignRemove( action ) {
+  var postUrl = {/literal}"{crmURL p='civicrm/ajax/bulkassignremove' h=0 q="entityID=$entityID" }"{literal};
+  var fids = [];
+  if (action == 'Assign') {
+    cj("input[id^='mark_x_']:checked").each( function () {
+      var a = cj(this).attr('id');
+      fids.push(a);
+    });
+  }
+  if (action == 'Remove') {
+    cj("input[id^='mark_y_']:checked").each( function () {
+      var a = cj(this).attr('id');
+      fids.push(a);
+    });
+  }
+  cj.post(postUrl, { ID: fids, action:action }, function(data) {     
+    //this is custom status set when record update success.
+    if (data.status == 'record-updated-success') {
+      buildTransactionSelectorAssign( false );
+      buildTransactionSelectorRemove();	
+    }
+  }, 'json');
+}	 
 </script>
 {/literal}

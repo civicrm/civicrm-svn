@@ -420,4 +420,37 @@ LIMIT    0, {$limit}
     echo CRM_Utils_JSON::encodeDataTableSelector($financialitems, $sEcho, $iTotal, $iFilteredTotal, $selectorElements);
     CRM_Utils_System::civiExit();
   }
-}
+  
+  static function bulkAssignRemove() {
+    $checkIDs = $_REQUEST['ID'];
+    $entityID = CRM_Utils_Type::escape($_REQUEST['entityID'], 'String');
+    $action   = CRM_Utils_Type::escape($_REQUEST['action'], 'String');
+    foreach ($checkIDs as $key => $value) {
+      if ((substr($value,0,7) == "mark_x_" && $action == 'Assign') || (substr($value,0,7) == "mark_y_" && $action == 'Remove')) {
+        $contributions = explode("_",$value);
+        $cIDs[] = $contributions[2];
+      }
+    }
+    
+    foreach ($cIDs as $key => $value) {
+      $params = 
+        array( 'entity_id' => $value,
+               'entity_table' => 'civicrm_financial_trxn',
+               'batch_id' => $entityID,
+               );
+      if ($action == 'Assign') {
+        $updated = CRM_Batch_BAO_Batch::addBatchEntity($params);
+      } 
+      else {
+        $updated = CRM_Batch_BAO_Batch::removeBatchEntity($params);
+      }
+    }
+    if ($updated) {
+      $status = array( 'status' => 'record-updated-success' );
+    }
+    echo json_encode( $status );
+    CRM_Utils_System::civiExit( );
+    
+  }
+  
+  }

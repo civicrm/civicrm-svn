@@ -689,22 +689,4 @@ WHERE {$where}
     $result = CRM_Core_DAO::executeQuery($sql);
     return $result;
   }
-
-  static function assignRemoveFinancialTransactions( $IDs, $entityID, $action = 'Assign') {
-    foreach ($IDs as $key => $value) {
-      $params = array( 'entity_id' => $value,
-        'entity_table' => 'civicrm_batch',
-        'batch_id' => $entityID,
-      );
-      if ($action == 'Assign') {
-        self::addBatchEntity($params);
-      }
-      else {
-        self::removeBatchEntity($params);
-      }
-    }
-    $url = CRM_Utils_System::url('civicrm/batchtransaction',"reset=1&bid={$entityID}");
-    CRM_Utils_System::redirect($url);
-  }
-
 }
