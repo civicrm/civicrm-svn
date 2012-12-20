@@ -634,6 +634,9 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
             elseif ($field == 'provider_id') {
               $headerRows[] = 'Im Service Provider';
             }
+            elseif ($field == 'accounting_code') {
+              $headerRows[] = 'Accounting Code';
+            }
             elseif (is_array($value) && $field == 'location') {
               // fix header for location type case
               foreach ($value as $ltype => $val) {
