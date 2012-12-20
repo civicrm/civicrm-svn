@@ -267,25 +267,6 @@ CREATE TABLE IF NOT EXISTS `civicrm_payment` (
   PRIMARY KEY (`id`)
 )ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `civicrm_grant_program` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Grant Program ID',
-  `label` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Label displayed to users',
-  `name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Stores a fixed (non-translated) name for the grant program.',
-  `grant_type_id` int(10) unsigned NOT NULL COMMENT 'Type of grant. Implicit FK to civicrm_option_value in grant_type option_group.',
-  `total_amount` decimal(20,2) NOT NULL COMMENT 'Requested grant program amount, in default currency.',
-  `remainder_amount` decimal(20,2) NOT NULL COMMENT 'Requested grant program remainder amount, in default currency.',
-  `financial_type_id` int(10) unsigned NOT NULL COMMENT 'Financial Type ID',
-  `status_id` int(10) unsigned NOT NULL COMMENT 'Id of Grant status.',
-  `allocation_date` date DEFAULT NULL COMMENT 'Allocation date.',
-  `is_active` tinyint(4) DEFAULT '1' COMMENT 'Is this grant program active?',
-  `is_auto_email` tinyint(4) DEFAULT '1' COMMENT 'Is auto email active?',
-  `payment_id` int(10) unsigned NOT NULL COMMENT 'Type of grant. Implicit FK to civicrm_payment.',
-  PRIMARY KEY (`id`),
-  KEY `FK_civicrm_grant_program_grant_type_id` (`grant_type_id`),
-  KEY `FK_civicrm_grant_program_status_id` (`status_id`),
-  KEY `FK_civicrm_grant_program_payment_id` (`payment_id`)
-)ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
 ALTER TABLE `civicrm_batch`
 ADD `payment_instrument_id` int(10) unsigned DEFAULT NULL COMMENT 'fk to Payment Instrument options in civicrm_option_values',
 ADD `exported_date` datetime DEFAULT NULL;
@@ -386,12 +367,6 @@ CHANGE `contribution_type_id` `financial_type_id` int unsigned COMMENT 'FK to Fi
 
 ALTER TABLE `civicrm_contribution_recur`
 ADD CONSTRAINT FK_civicrm_contribution_recur_financial_type_id FOREIGN KEY (`financial_type_id`) REFERENCES civicrm_financial_type (id);
-
-ALTER TABLE `civicrm_grant_program`
-  ADD CONSTRAINT `FK_civicrm_grant_program_grant_type_id` FOREIGN KEY (`grant_type_id`) REFERENCES `civicrm_option_value` (`id`),
-  ADD CONSTRAINT `FK_civicrm_grant_program_status_id` FOREIGN KEY (`status_id`) REFERENCES `civicrm_option_value` (`id`),
-  ADD CONSTRAINT `FK_civicrm_grant_program_payment_id` FOREIGN KEY (`payment_id`) REFERENCES `civicrm_payment` (`id`);
-
 
 -- CRM-9083
 ALTER TABLE `civicrm_financial_trxn` CHANGE `to_account_id` `to_financial_account_id` int unsigned COMMENT 'FK to financial_financial_account table.',
