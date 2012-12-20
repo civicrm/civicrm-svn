@@ -57,14 +57,14 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem {
    * @access public
    * @static
    */
-  static function retrieve( &$params, &$defaults ) {
-    $financialItem = new CRM_Financial_DAO_FinancialItem( );
-    $financialItem->copyValues( $params );
-    if ( $financialItem->find( true ) ) {
-      CRM_Core_DAO::storeValues( $financialItem, $defaults );
+  static function retrieve(&$params, &$defaults) {
+    $financialItem = new CRM_Financial_DAO_FinancialItem();
+    $financialItem->copyValues($params);
+    if ($financialItem->find(TRUE)) {
+      CRM_Core_DAO::storeValues($financialItem, $defaults);
       return $financialItem;
     }
-    return null;
+    return NULL;
   }
 
   /**
@@ -77,7 +77,15 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem {
    * @static 
    * @return object
    */
-  static function add( $lineItem, $contribution ) {
+  static function add($lineItem, $contribution) {
+    $contributionStatuses = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
+    $financialItemStatus = CRM_Core_PseudoConstant::accountOptionValues('financial_item_status');
+    if ($contribution->contribution_status_id == array_search('Completed', $contributionStatuses)) {
+      $itemStatus = array_search('Paid', $financialItemStatus);
+    } 
+    elseif ($contribution->contribution_status_id == array_search('Pending', $contributionStatuses)) {
+      $itemStatus = array_search('Unpaid', $financialItemStatus);
+    } 
     $params = array(
       'transaction_date'  => CRM_Utils_Date::isoToMysql($contribution->receive_date),
       'contact_id'        => $contribution->contact_id, 
@@ -85,7 +93,8 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem {
       'currency'          => $contribution->currency,
       'entity_table'      => 'civicrm_line_item',
       'entity_id'         => $lineItem->id,
-      'description'       => ( $lineItem->qty != 1 ? $lineItem->qty . ' of ' : ''). ' ' . $lineItem->label
+      'description'       => ( $lineItem->qty != 1 ? $lineItem->qty . ' of ' : ''). ' ' . $lineItem->label,
+      'status_id'         => $itemStatus
     );
     
     if ($lineItem->financial_type_id) {
@@ -95,7 +104,7 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem {
         'account_relationship' => 1
       );
 
-      $result = array( );
+      $result = array();
       CRM_Financial_BAO_FinancialTypeAccount::retrieve( $searchParams, $result );
       $params['financial_account_id'] = CRM_Utils_Array::value( 'financial_account_id', $result );
     }
@@ -103,70 +112,32 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem {
     $trxn = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnIds($contribution->id);
     $trxnId['id'] = $trxn['financialTrxnId'];
 
-    $int_name = 'txt-price_'.$lineItem->price_field_id;
-    if (!empty($lineItem->$int_name)) {
-      $params['init_amount'] = $lineItem->$int_name;
-    }
-    self::create($params, null, $trxnId);
+    self::create($params, NULL, $trxnId);
   } 
 
-  static function create( &$params, $ids = null, $trxnId = null  ) {
-    $financialItem = new CRM_Financial_DAO_FinancialItem( );
-    $financialItem->copyValues( $params );
-    if (CRM_Utils_Array::value( 'id', $ids )) {
+  static function create(&$params, $ids = NULL, $trxnId = NULL) {
+    $financialItem = new CRM_Financial_DAO_FinancialItem();
+    $financialItem->copyValues($params);
+    if (CRM_Utils_Array::value('id', $ids)) {
       $financialItem->id = $ids['id']; 
     }
 
-    $financialItem->save( );
+    $financialItem->save();
     if (CRM_Utils_Array::value('id', $trxnId)) {
       $entity_financial_trxn_params = array(
         'entity_table'      => "civicrm_financial_item",
         'entity_id'         => $financialItem->id,
         'financial_trxn_id' => $trxnId['id'],
-        'amount'            => array_key_exists('init_amount',$params)?$params['init_amount']:$params['amount'],
+        'amount'            => $params['amount'],
       );
-
-      if (CRM_Utils_Array::value('init_amount', $params) && $params['init_amount'] != 'NaN') {
-        $entity_financial_trxn_params['amount'] = $params['init_amount'];
-      }
-      else{
-        $entity_financial_trxn_params['amount'] = $params['amount'];
-      }
       
       $entity_trxn = new CRM_Financial_DAO_EntityFinancialTrxn();
-      $entity_trxn->copyValues( $entity_financial_trxn_params );
-      if ( CRM_Utils_Array::value( 'entityFinancialTrxnId', $ids ) ) {
+      $entity_trxn->copyValues($entity_financial_trxn_params);
+      if (CRM_Utils_Array::value('entityFinancialTrxnId', $ids)) {
         $entity_trxn->id = $ids['entityFinancialTrxnId'];
       }
       $entity_trxn->save();
     }
-
-    $entity_params = array(
-      'entity_id' => $financialItem->id,
-      'entity_table' => 'civicrm_financial_item',
-    );
-
-    $entity_trxn = new CRM_Financial_DAO_EntityFinancialTrxn();
-    $entity_trxn->copyValues( $entity_params );
-    $entity_trxn->find();
-    $line_amount =0;
-    while ($entity_trxn->fetch()) {
-      $line_amount += $entity_trxn->amount;
-    }
-
-    if ($line_amount < $financialItem->amount && $line_amount != 0) {
-      $financialItem->status_id = 2;
-    }
-    elseif ($line_amount == 0) {
-      $financialItem->status_id = 3;
-    }
-    elseif ($line_amount == $financialItem->amount) {
-      $financialItem->status_id = 1;
-    }
-
-    $financialItem->transaction_date = null;
-    $financialItem->save();
-
     return $financialItem;
   }   
 
@@ -183,18 +154,18 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem {
     $entity_trxn = new CRM_Financial_DAO_EntityFinancialTrxn();
     if (CRM_Utils_Array::value('id', $params)) {
       $entity_trxn->id = $params['id'];
-      $entity_trxn->find(true);
+      $entity_trxn->find(TRUE);
     }
     $entity_trxn->copyValues($params);
     $entity_trxn->save();
     return $entity_trxn;
   }
 
-  static function retrieveEntityFinancialTrxn( $params ) {
-    $financialItem = new CRM_Financial_DAO_EntityFinancialTrxn( );
-    $financialItem->copyValues( $params );
+  static function retrieveEntityFinancialTrxn($params) {
+    $financialItem = new CRM_Financial_DAO_EntityFinancialTrxn();
+    $financialItem->copyValues($params);
     $financialItem->find();
-    while ( $financialItem->fetch() ) {
+    while ($financialItem->fetch()) {
       $financialItems[$financialItem->id] = array(
         'id'                => $financialItem->id,
         'entity_table'      => $financialItem->entity_table,

@@ -2591,13 +2591,11 @@ WHERE  contribution_id = %1 ";
    */
   static function recordFinancialAccounts($params, $ids = NULL) {
     $contributionStatuses = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
-    if ($params['contribution_status_id'] == array_search('Completed', $contributionStatuses)) {
-      $accountRelationType = 'Asset Account is';
-    } 
-    elseif ($params['contribution_status_id'] == array_search('Pending', $contributionStatuses)) {
-      $accountRelationType = 'Accounts Receivable Account is';
+    if ($params['contribution_status_id'] == array_search('Pending', $contributionStatuses)) {
+      $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Accounts Receivable Account is' "));
+      $params['to_financial_account_id'] = CRM_Contribute_PseudoConstant::financialAccountType($params['financial_type_id'], $relationTypeId);
     }
-    if (CRM_Utils_Array::value('payment_processor_id', $params)) {
+    elseif (CRM_Utils_Array::value('payment_processor_id', $params)) {
       $params['to_financial_account_id'] = CRM_Financial_BAO_FinancialTypeAccount::getFinancialAccount('civicrm_payment_processor', $params['payment_processor_id'], 'financial_account_id');
     } 
     elseif (CRM_Utils_Array::value('payment_instrument_id', $params)) {
@@ -2606,15 +2604,13 @@ WHERE  contribution_id = %1 ";
     else {
       $params['to_financial_account_id'] = CRM_Core_DAO::singleValueQuery("SELECT id FROM civicrm_financial_account WHERE is_default = 1");
     } 
-    
-    $now = date('YmdHis');
 
     //record financial transaction
     $trxnParams = array(
       'contribution_id' => $params['contribution']->id,
       'to_financial_account_id' => $params['to_financial_account_id'],
       'from_financial_account_id' => CRM_Utils_Array::value('from_financial_account_id', $params, NULL),
-      'trxn_date' => $now,
+      'trxn_date' => date('YmdHis'),
       'total_amount' => CRM_Utils_Array::value('initial_amount', $params) ? $params['initial_amount'] : $params['total_amount'],
       'fee_amount' => CRM_Utils_Array::value('net_amount', $params),
       'net_amount' => CRM_Utils_Array::value('fee_amount', $params),
