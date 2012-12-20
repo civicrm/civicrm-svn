@@ -101,9 +101,9 @@ class CRM_Financial_Page_BatchTransaction extends CRM_Core_Page_Basic {
     // assign vars to templates
     $this->assign('action', $action);
     
-    $this->_entityID = CRM_Utils_Request::retrieve( 'bid' , 'Positive' );
+    self::$_entityID = CRM_Utils_Request::retrieve('bid' , 'Positive');
 
-    $this->edit($action, $this->_entityID ) ;
+    $this->edit($action, self::$_entityID);
     return parent::run();
   }
 

@@ -79,20 +79,22 @@
   </table>
   <fieldset class="crm-collapsible">
     <legend class="collapsible-title">{ts}Optional Constraints{/ts}</legend>
-    <table class="form-layout">
-      <tr class="crm-contribution-form-block-payment_instrument">
-        <td class="label">{$form.payment_instrument_id.label}</td>
-        <td class="html-adjust">{$form.payment_instrument_id.html}</td>
-      </tr>
-      <tr class="crm-contribution-form-block-item_count">
-        <td class="label">{$form.item_count.label}</td>
-        <td class="html-adjust">{$form.item_count.html}</td>
-      </tr>
-      <tr class="crm-contribution-form-block-total">
-        <td class="label">{$form.total.label}</td>
-        <td class="html-adjust">{$form.total.html}</td>
-      </tr>
-    </table>
+      <div>
+      <table class="form-layout">
+        <tr class="crm-contribution-form-block-payment_instrument">
+          <td class="label">{$form.payment_instrument_id.label}</td>
+          <td class="html-adjust">{$form.payment_instrument_id.html}</td>
+        </tr>
+        <tr class="crm-contribution-form-block-item_count">
+          <td class="label">{$form.item_count.label}</td>
+          <td class="html-adjust">{$form.item_count.html|crmAddClass:number}</td>
+        </tr>
+        <tr class="crm-contribution-form-block-total">
+          <td class="label">{$form.total.label}</td>
+          <td class="html-adjust">{$form.total.html|crmAddClass:number}</td>
+        </tr>
+      </table>
+    </div>
   </fieldset>
 {/if}
   <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="botttom"}</div>

@@ -227,11 +227,11 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
      if (CRM_Utils_Array::value('contact_name', $values) && !is_numeric($values['created_id'])) {
        $errors['contact_name'] = ts('Please select a valid contact.');
      }
-     if (!is_numeric($values['item_count'])) {
-       $errors['item_count'] = ts('Number of Transactions should be numeric');
+     if ($values['item_count'] && (!is_numeric($values['item_count']) || $values['item_count'] < 1)) {
+       $errors['item_count'] = ts('Number of Transactions should a positive number');
      }
-     if (!is_numeric($values['total'])) {
-       $errors['total'] = ts('Total Amount should be numeric');
+     if ($values['total'] && (!is_numeric($values['total']) || $values['total'] <= 0)) {
+       $errors['total'] = ts('Total Amount should be a positive number');
      }
      if (CRM_Utils_Array::value('created_date', $values) && date('Y-m-d') < date('Y-m-d', strtotime($values['created_date']))) {
        $errors['created_date'] = ts('Created date cannot be greater than current date');
@@ -307,21 +307,17 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
      $buttonName = $this->controller->getButtonName();
 
      $session = CRM_Core_Session::singleton();
+     if ($batch->title) {
+       CRM_Core_Session::setStatus(ts("'%1' batch has been saved.", array(1 => $batch->title)), ts('Saved'), 'success');
+     }
      if ($buttonName == $this->getButtonName('next', 'new')) {
-       CRM_Core_Session::setStatus(ts(' You can add another Financial Batch.'));
        $session->replaceUserContext(CRM_Utils_System::url('civicrm/financial/batch',
          "reset=1&action=add"));
      }
      elseif (CRM_Utils_Array::value($batch->status_id, $batchStatus) == 'Closed') {
-       if ($batch->title) {
-         CRM_Core_Session::setStatus(ts("'%1' batch has been saved.", array(1 => $batch->title)));
-       }
-       $session->replaceUserContext(CRM_Utils_System::url('civicrm','reset=1'));
+       $session->replaceUserContext(CRM_Utils_System::url('civicrm', 'reset=1'));
      }
      else {
-       if ($batch->title) {
-         CRM_Core_Session::setStatus(ts("'%1' batch has been saved.", array(1 => $batch->title)));
-       }
        $session->replaceUserContext(CRM_Utils_System::url('civicrm/batchtransaction',
          "reset=1&bid={$batch->id}"));
      }

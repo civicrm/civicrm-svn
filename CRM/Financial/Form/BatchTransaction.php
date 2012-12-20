@@ -44,10 +44,10 @@ class CRM_Financial_Form_BatchTransaction extends CRM_Contribute_Form {
 
   function preProcess() {
     $this->assign('suppressForm', TRUE);
-    $this->_entityID = CRM_Utils_Request::retrieve( 'bid' , 'Positive' ) ? CRM_Utils_Request::retrieve( 'bid' , 'Positive' ) : $_POST['batch_id'];
-    $this->assign('entityID', $this->_entityID);
-    if (isset($this->_entityID)) {
-      $batchTitle = CRM_Core_DAO::getFieldValue('CRM_Batch_BAO_Batch', $this->_entityID, 'title');
+    self::$_entityID = CRM_Utils_Request::retrieve( 'bid' , 'Positive' ) ? CRM_Utils_Request::retrieve( 'bid' , 'Positive' ) : $_POST['batch_id'];
+    $this->assign('entityID', self::$_entityID);
+    if (isset(self::$_entityID)) {
+      $batchTitle = CRM_Core_DAO::getFieldValue('CRM_Batch_BAO_Batch', self::$_entityID, 'title');
       CRM_Utils_System::setTitle(ts('Accounting Batch - %1',
                                     array(1 => $batchTitle)
                                     ));
@@ -99,7 +99,7 @@ class CRM_Financial_Form_BatchTransaction extends CRM_Contribute_Form {
         'id' => 'GoRemove'
       ));
 
-    $this->_entityID = CRM_Utils_Request::retrieve('bid' , 'Positive');
+    self::$_entityID = CRM_Utils_Request::retrieve('bid' , 'Positive');
 
     $this->addButtons(
       array(
@@ -123,7 +123,7 @@ class CRM_Financial_Form_BatchTransaction extends CRM_Contribute_Form {
                      ));
     $this->applyFilter('__ALL__', 'trim');
 
-    $this->addElement('hidden', 'batch_id' ,$this->_entityID);
+    $this->addElement('hidden', 'batch_id', self::$_entityID);
 
     $this->add('text', 'name', ts('Batch Name'));
   }
