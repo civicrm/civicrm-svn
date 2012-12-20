@@ -181,13 +181,13 @@ AND entity_id = %2";
    */
   static function getInstrumentFinancialAccount($paymentInstrumentValue = NULL) {
     if (!self::$financialAccount) {
-      $query = "SELECT cov.value, ceft.financial_account_id FROM `civicrm_entity_financial_account` ceft
+      $query = "SELECT ceft.financial_account_id, cov.value  FROM `civicrm_entity_financial_account` ceft
 INNER JOIN civicrm_option_value cov ON cov.id = ceft.entity_id AND ceft.entity_table = 'civicrm_option_value' 
 INNER JOIN civicrm_option_group cog ON cog.id = cov.option_group_id 
 WHERE cog.name = 'payment_instrument' ";
     
       if ($paymentInstrumentValue) {
-        $query .= " AND cov.value = {$paymentInstrumentValue} ";
+        $query .= " AND cov.value = '{$paymentInstrumentValue}' ";
         return CRM_Core_DAO::singleValueQuery($query);
       } 
       else {

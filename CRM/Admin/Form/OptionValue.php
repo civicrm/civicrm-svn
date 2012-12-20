@@ -97,7 +97,7 @@ class CRM_Admin_Form_OptionValue extends CRM_Admin_Form {
     }
     
     // CRM-11516
-    if ($this->_gName == 'payment_instrument') {
+    if ($this->_gName == 'payment_instrument' && $this->_id) {
       $defaults['financial_account_id'] = CRM_Financial_BAO_FinancialTypeAccount::getFinancialAccount($this->_id, 'civicrm_option_value', 'financial_account_id');
     }
     //setDefault of contact types for email greeting, postal greeting, addressee, CRM-4575
