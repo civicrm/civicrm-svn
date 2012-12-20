@@ -285,7 +285,7 @@
  </item>
  <item>
      <path>civicrm/financial/financialbatches</path>
-     <title>Financial Batches</title>
+     <title>Accounting Batches</title>
      <page_callback>CRM_Financial_Page_Batch</page_callback>
      <adminGroup>CiviContribute</adminGroup>
      <weight>586</weight>

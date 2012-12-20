@@ -77,7 +77,7 @@ class CRM_Financial_Page_Batch extends CRM_Core_Page_Basic {
    * @return string name of this page.
    */
   function editName() {
-    return ts('Financial Batch Processing');
+    return ts('Accounting Batch Processing');
   }
 
   /**

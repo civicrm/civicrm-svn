@@ -24,29 +24,28 @@
  +--------------------------------------------------------------------+
 *}
 
-{* Template for "Sample" custom search component. *}
+{* Financial search component. *}
 <div id="enableDisableStatusMsg" class="success-status" style="display:none;"></div> 
 <div class="crm-form-block crm-search-form-block">
-<div class="crm-accordion-wrapper crm-activity_search-accordion">
- <div class="crm-accordion-header crm-master-accordion-header">
-  <div class="icon crm-accordion-pointer"></div> 
-   {ts}Edit Search Criteria{/ts}
-</div><!-- /.crm-accordion-header -->
-<div class="crm-accordion-body">
-<div id="searchForm" class="crm-block crm-form-block crm-contact-custom-search-activity-search-form-block">
-      <div class="crm-submit-buttons">{$form.buttons.html}</div>
+  <div class="crm-accordion-wrapper crm-activity_search-accordion">
+    <div class="crm-accordion-header crm-master-accordion-header">
+      {ts}Edit Search Criteria{/ts}
+    </div><!-- /.crm-accordion-header -->
+    <div class="crm-accordion-body">
+      <div id="searchForm" class="crm-block crm-form-block crm-contact-custom-search-activity-search-form-block">
+        <div class="crm-submit-buttons">{$form.buttons.html}</div>
         <table class="form-layout-compressed">
-            {* Loop through all defined search criteria fields (defined in the buildForm() function). *}
-            {foreach from=$elements item=element}
-                <tr class="crm-contact-custom-search-Constituent-search-form-block-{$element}">
-                    <td class="label">{$form.$element.label}</td>
-                    <td>{$form.$element.html}</td>
-                </tr>
-            {/foreach}
+          {* Loop through all defined search criteria fields (defined in the buildForm() function). *}
+          {foreach from=$elements item=element}
+            <tr class="crm-contact-custom-search-Constituent-search-form-block-{$element}">
+              <td class="label">{$form.$element.label}</td>
+              <td>{$form.$element.html}</td>
+            </tr>
+          {/foreach}
         </table>
-</div>
-</div><!-- /.crm-accordion-body -->
-</div><!-- /.crm-accordion-wrapper -->
+      </div>
+    </div><!-- /.crm-accordion-body -->
+  </div><!-- /.crm-accordion-wrapper -->
 </div><!-- /.crm-form-block -->
 {if $batchStatus eq 1}
     {assign var=batchStatusLabel value="Open"}
@@ -56,7 +55,7 @@
     {assign var=batchStatusLabel value="Exported"}
 {/if}		
 <div class="crm-submit-buttons">
-    <a accesskey="N" href="{crmURL p='civicrm/financial/batch' q='reset=1&action=add'}" id="newBatch" class="button"><span><div class="icon add-icon"></div>{ts}New Financial Batch{/ts}</span></a><br/>
+    <a accesskey="N" href="{crmURL p='civicrm/financial/batch' q='reset=1&action=add'}" id="newBatch" class="button"><span><div class="icon add-icon"></div>{ts}New Accounting Batch{/ts}</span></a><br/>
 </div><br/>
 <div class="form-layout-compressed">{$form.batch_status.html}&nbsp;{$form.submit.html}</div><br/>
 <table id="crm-batch-selector">
@@ -106,11 +105,11 @@ function buildBatchSelector( filterSearch ) {
   var status = {/literal}{$status}{literal};
   if ( filterSearch ) {
     crmBatchSelector.fnDestroy();
-    var ZeroRecordText = '<div class="status messages">{/literal}{ts escape="js"}No matching Financial Batches found for your search criteria.{/ts}{literal}</li></ul></div>';
+    var ZeroRecordText = '<div class="status messages">{/literal}{ts escape="js"}No matching Accounting Batches found for your search criteria.{/ts}{literal}</li></ul></div>';
   } else if ( status == 1 ) {
-    var ZeroRecordText = {/literal}'<div class="status messages">{ts escape="js"}You do not have any {$batchStatusLabel} Financial Batches.{/ts}</div>'{literal};
+    var ZeroRecordText = {/literal}'<div class="status messages">{ts escape="js"}You do not have any {$batchStatusLabel} Accounting Batches.{/ts}</div>'{literal};
   } else {
-    var ZeroRecordText = {/literal}'<div class="status messages">{ts escape="js"}No Financial Batches have been created for this site.{/ts}</div>'{literal};
+    var ZeroRecordText = {/literal}'<div class="status messages">{ts escape="js"}No Accounting Batches have been created for this site.{/ts}</div>'{literal};
   }
 
     var columns = '';

@@ -35,7 +35,7 @@
  */
 
 /**
- * This class generates form components for Financial Batch
+ * This class generates form components for Accounting Batch
  *
  */
 class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
@@ -105,7 +105,7 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
     parent::buildQuickForm();
     if (isset( $this->_id)) {
       $this->_title = CRM_Core_DAO::getFieldValue('CRM_Batch_DAO_Batch', $this->_id, 'name');
-      CRM_Utils_System::setTitle($this->_title .' - '.ts( 'Financial Batch'));
+      CRM_Utils_System::setTitle($this->_title .' - '.ts( 'Accounting Batch'));
       $this->assign('batchTitle', $this->_title);
     }
 
