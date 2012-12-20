@@ -158,7 +158,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
 
     //add Account details
     $params['contribution'] = $contribution;
-    self::recordFinancialAccounts($params, $ids = NULL);
+    self::recordFinancialAccounts($params, $ids);
 
     // Add soft_contribution details as part of fix for CRM-8908
     $contribution->soft_credit_to = CRM_Utils_Array::value('soft_credit_to', $params);
@@ -534,7 +534,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
       $fields = array_merge($fields, $tmpFields);
       $fields = array_merge($fields, $note);
       $fields = array_merge($fields, $optionFields);
-            $fields = array_merge($fields, CRM_Financial_DAO_FinancialType::export( ) );
+      $fields = array_merge($fields, CRM_Financial_DAO_FinancialType::export());
       $fields = array_merge($fields, CRM_Core_BAO_CustomField::getFieldsForImport('Contribution'));
       self::$_importableFields = $fields;
     }
@@ -550,7 +550,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
       $impFields          = CRM_Contribute_DAO_Contribution::export();
       $expFieldProduct    = CRM_Contribute_DAO_Product::export();
       $expFieldsContrib   = CRM_Contribute_DAO_ContributionProduct::export();
-            $typeField          = CRM_Financial_DAO_FinancialType::export( );
+      $typeField          = CRM_Financial_DAO_FinancialType::export();
       $optionField        = CRM_Core_OptionValue::getFields($mode = 'contribute');
       $contributionStatus = array(
         'contribution_status' => array('title' => 'Contribution Status',
@@ -2584,6 +2584,10 @@ WHERE  contribution_id = %1 ";
 
   /**
    * Function to create all financial accounts entry 
+   *
+   * @params contribution object, line item array and params for trxn
+   *
+   * @ids array of contribution id
    *
    * @access public
    * @static

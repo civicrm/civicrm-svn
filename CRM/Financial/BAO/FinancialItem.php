@@ -68,10 +68,10 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem {
   }
 
   /**
-   * function to add the financial Items
+   * function to add the financial items and financial trxn
    *
-   * @param array $params reference array contains the values submitted by the form
-   * @param array $ids    reference array contains the id
+   * @lineItem object   contains line item object
+   * @contribution object $ids contains contribution object
    * 
    * @access public
    * @static 
@@ -115,6 +115,19 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem {
     self::create($params, NULL, $trxnId);
   } 
 
+  /**
+   * function to create the financial Items and financial trxn
+   *
+   * @params array   contains params to create financial item
+   *
+   * @ids array  financial item id
+   *
+   * @trxnId array financial trxn id for financial item
+   * 
+   * @access public
+   * @static 
+   * @return object
+   */
   static function create(&$params, $ids = NULL, $trxnId = NULL) {
     $financialItem = new CRM_Financial_DAO_FinancialItem();
     $financialItem->copyValues($params);
