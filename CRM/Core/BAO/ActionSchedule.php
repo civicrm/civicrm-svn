@@ -814,6 +814,7 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
         $dateField = str_replace('event_', 'r.', $actionSchedule->start_action_date);
       }
 
+      $notINClause = '';
       if ($mapping->entity == 'civicrm_membership') {
         $contactField = "e.contact_id";
 
@@ -832,8 +833,8 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
         }
 
         $dateField = str_replace('membership_', 'e.', $actionSchedule->start_action_date);
+        $notINClause = self::permissionedRelationships($contactField);
       }
-
 
       if ($actionSchedule->group_id) {
         $join[] = "INNER JOIN civicrm_group_contact grp ON {$contactField} = grp.contact_id AND grp.status = 'Added'";
@@ -890,7 +891,7 @@ INSERT INTO civicrm_action_log (contact_id, entity_id, entity_table, action_sche
 {$fromClause}
 {$joinClause}
 LEFT JOIN {$reminderJoinClause}
-{$whereClause} AND {$dateClause}";
+{$whereClause} AND {$dateClause} {$notINClause}";
 
       CRM_Core_DAO::executeQuery($query, array(1 => array($actionSchedule->id, 'Integer')));
 
@@ -939,6 +940,36 @@ INNER JOIN {$reminderJoinClause}
         }
       }
     }
+  }
+
+  static function permissionedRelationships($field) {
+      $query = "
+SELECT    cm.id AS owner_id, cm.contact_id AS owner_contact, m.id AS slave_id, m.contact_id AS slave_contact, cmt.relationship_type_id AS relation_type, rel.contact_id_a, rel.contact_id_b, rel.is_permission_a_b, rel.is_permission_b_a
+FROM      civicrm_membership m
+LEFT JOIN civicrm_membership cm ON cm.id = m.owner_membership_id
+LEFT JOIN civicrm_membership_type cmt ON cmt.id = m.membership_type_id
+LEFT JOIN civicrm_relationship rel ON ( ( rel.contact_id_a = m.contact_id AND rel.contact_id_b = cm.contact_id AND rel.relationship_type_id = cmt.relationship_type_id )
+                                        OR ( rel.contact_id_a = cm.contact_id AND rel.contact_id_b = m.contact_id AND rel.relationship_type_id = cmt.relationship_type_id ) )
+WHERE     m.owner_membership_id IS NOT NULL AND 
+          ( rel.is_permission_a_b = 0 OR rel.is_permission_b_a = 0)
+
+";  
+      $excludeIds = array();
+      $dao = CRM_Core_DAO::executeQuery($query, array());
+      while ($dao->fetch()) {
+          if ($dao->slave_contact == $dao->contact_id_a && $dao->is_permission_b_a == 0) {
+            $excludeIds[] = $dao->slave_contact;  
+          } 
+          elseif ($dao->slave_contact == $dao->contact_id_b && $dao->is_permission_a_b == 0) {
+            $excludeIds[] = $dao->slave_contact;
+          }
+      }
+  
+      if (!empty($excludeIds)) {
+          $clause = "AND {$field} NOT IN ( " .implode(', ', $excludeIds) . ' ) ';
+          return  $clause;
+      } 
+      return NULL;
   }
 
   static function processQueue($now = NULL) {

@@ -377,13 +377,7 @@ class CRM_Utils_REST {
 
       // functions that are defined only in AJAX.php can be called via
       // rest interface
-      if (!CRM_Core_Page_AJAX::checkAuthz('method', $params['className'] . '::' . $params['fnName'])) {
-        return self::error('Unknown function invocation.');
-      }
-
-      // evaluate and call the AJAX function
-      require_once (str_replace('_', DIRECTORY_SEPARATOR, $params['className']) . ".php");
-      if (!method_exists($params['className'], $params['fnName'])) {
+      if (!CRM_Core_Page_AJAX::checkAuthz('method', $params['className'], $params['fnName'])) {
         return self::error('Unknown function invocation.');
       }
 

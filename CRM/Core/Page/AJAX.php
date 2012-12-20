@@ -55,7 +55,12 @@ class CRM_Core_Page_AJAX {
       CRM_Core_Error::fatal(ts('Invalid className: %1', array(1 => $className)));
     }
 
-    if (!self::checkAuthz($type, $className)) {
+    $fnName = NULL;
+    if (isset($_REQUEST['fn_name'])) {
+      $fnName = CRM_Utils_Type::escape($_REQUEST['fn_name'], 'String');
+    }
+
+    if (!self::checkAuthz($type, $className, $fnName)) {
       CRM_Utils_System::civiExit();
     }
 
@@ -65,11 +70,10 @@ class CRM_Core_Page_AJAX {
     }
     else {
       if ( $type == 'method' ) {
-        $execute = "{$className}();";
-        eval($execute);
+        call_user_func(array($className, $fnName));
       }
       else {
-        $page = new $className();
+        $page = new $className;
         $page->run();
       }
     }
@@ -84,7 +88,7 @@ class CRM_Core_Page_AJAX {
    */
   static function setIsQuickConfig() {
     if (!$id = CRM_Utils_Array::value('id', $_GET)) {
-        return false;
+      return false;
     }
     $priceSetId = CRM_Price_BAO_Set::getFor($_GET['context'], $id, NULL);
     if ($priceSetId) {
@@ -102,19 +106,32 @@ class CRM_Core_Page_AJAX {
    * Determine whether the request is for a valid class/method name.
    *
    * @param string $type 'method'|'class'|''
-   * @param string $className 'Class_Name' or 'Class_Name::method_name'
+   * @param string $className 'Class_Name'
+   * @param string $fnName method name
    */
-  static function checkAuthz($type, $className) {
+  static function checkAuthz($type, $className, $fnName = null) {
     switch ($type) {
       case 'method':
-        return preg_match('/^CRM_[a-zA-Z0-9]+_Page_AJAX::[a-zA-Z0-9]+$/', $className);
+        if (!preg_match('/^CRM_[a-zA-Z0-9]+_Page_AJAX$/', $className)) {
+          return FALSE;
+        }
+        if (!preg_match('/^[a-zA-Z0-9]+$/', $fnName)) {
+          return FALSE;
+        }
+
+        // ensure that function exists
+        return method_exists($className, $fnName);
+
       case 'page':
       case 'class':
       case '':
-        return preg_match('/^CRM_[a-zA-Z0-9]+_(Page|Form)_Inline_[a-zA-Z0-9]+$/', $className);
+        if (!preg_match('/^CRM_[a-zA-Z0-9]+_(Page|Form)_Inline_[a-zA-Z0-9]+$/', $className)) {
+          return FALSE;
+        }
+        return class_exists($className);
       default:
         return FALSE;
-}
+    }
   }
 }
 
