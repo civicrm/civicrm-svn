@@ -193,7 +193,7 @@ WHERE cog.name = 'payment_instrument' ";
       else {
         $result = CRM_Core_DAO::executeQuery($query);
         while ($result->fetch()) {
-          $financialAccount[$result->value] = $result->financial_account_id;
+          self::$financialAccount[$result->value] = $result->financial_account_id;
         }
         return self::$financialAccount;
       }
