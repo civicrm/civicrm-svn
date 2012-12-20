@@ -1153,7 +1153,7 @@ function _civicrm_api3_deprecated_duplicate_formatted_contact($params) {
   else {
     require_once 'CRM/Dedupe/Finder.php';
     $dedupeParams = CRM_Dedupe_Finder::formatParams($params, $params['contact_type']);
-    $ids = CRM_Dedupe_Finder::dupesByParams($dedupeParams, $params['contact_type'], 'Strict');
+    $ids = CRM_Dedupe_Finder::dupesByParams($dedupeParams, $params['contact_type'], 'Unsupervised');
 
     if (!empty($ids)) {
       $ids = implode(',', $ids);
@@ -1565,7 +1565,7 @@ function _civicrm_api3_deprecated_contact_check_params(&$params, $dupeCheck = TR
       $dedupeParams['check_permission'] = $params['check_permission'];
     }
 
-    $ids = implode(',', CRM_Dedupe_Finder::dupesByParams($dedupeParams, $params['contact_type'], 'Strict', array(), $dedupeRuleGroupID));
+    $ids = implode(',', CRM_Dedupe_Finder::dupesByParams($dedupeParams, $params['contact_type'], 'Unsupervised', array(), $dedupeRuleGroupID));
 
     if ($ids != NULL) {
       if ($dupeErrorArray) {
@@ -1589,7 +1589,7 @@ function _civicrm_api3_deprecated_contact_check_params(&$params, $dupeCheck = TR
     $dedupParams = CRM_Dedupe_Finder::formatParams($organizationParams, 'Organization');
 
     $dedupParams['check_permission'] = FALSE;
-    $dupeIds = CRM_Dedupe_Finder::dupesByParams($dedupParams, 'Organization', 'Fuzzy');
+    $dupeIds = CRM_Dedupe_Finder::dupesByParams($dedupParams, 'Organization', 'Supervised');
 
     // check for mismatch employer name and id
     if (CRM_Utils_Array::value('employer_id', $params)
