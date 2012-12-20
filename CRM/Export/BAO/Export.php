@@ -405,10 +405,6 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
     if ($mergeSameHousehold == 1) {
       if (!$returnProperties['id']) {
         $returnProperties['id'] = 1;
-        $setId = TRUE;
-      }
-      else {
-        $setId = FALSE;
       }
 
       //also merge Head of Household
@@ -569,7 +565,7 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
 
     $multipleSelectFields = array('preferred_communication_method' => 1);
 
-    $header = $addPaymentHeader = FALSE;
+    $addPaymentHeader = FALSE;
 
     $paymentDetails = array();
     if ($paymentFields) {
