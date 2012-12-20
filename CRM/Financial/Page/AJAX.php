@@ -255,8 +255,8 @@ LIMIT    0, {$limit}
     $recordBAO = CRM_Utils_Type::escape( $_POST['recordBAO'],  'String'   );
 
     $entityID  = CRM_Utils_Array::value( 'entityID', $_POST );
-    $methods = array( 'assign' => 'add',
-      'remove' => 'remove',
+    $methods = array( 'assign' => 'addBatchEntity',
+      'remove' => 'removeBatchEntity',
       'reopen' => 'create',
       'close'  => 'create' );
     $params = array( );
@@ -273,9 +273,9 @@ LIMIT    0, {$limit}
         switch ($op) {
           case 'assign':
           case 'remove':
-            $params = array( 'entity_id' => $entityID,
-              'entity_table' => 'civicrm_batch',
-              'financial_item_id' => $recordID,
+            $params = array( 'entity_id' => $recordID,
+              'entity_table' => 'civicrm_financial_trxn',
+              'batch_id' => $entityID,
             );
             break;
 
@@ -340,7 +340,7 @@ LIMIT    0, {$limit}
         'civicrm_financial_item.contact_id',
         'civicrm_contribution.id as contributionID',
         'sort_name',
-        'amount',
+        'civicrm_entity_financial_trxn.amount',
         'contact_type',
         'contact_sub_type',
         'transaction_date',
@@ -409,8 +409,7 @@ LIMIT    0, {$limit}
       $row[$financialItem->id]['contact_type' ] = CRM_Contact_BAO_Contact_Utils::getImage( CRM_Utils_Array::value('contact_sub_type',$row[$financialItem->id]) ? CRM_Utils_Array::value('contact_sub_type',$row[$financialItem->id]) : CRM_Utils_Array::value('contact_type',$row[$financialItem->id]) ,false, $financialItem->contact_id);
       $financialitems = $row;
     }
-
-
+    
     $iFilteredTotal = $iTotal =  $params['total'];
     $selectorElements =
       array(

@@ -55,7 +55,7 @@
 <script type="text/javascript">
 
 function assignRemove(recordID, op) {
-  var recordBAO = 'CRM_Financial_BAO_EntityFinancialItem';	
+  var recordBAO = 'CRM_Batch_BAO_Batch';	
   if (op == 'remove') {
     var st = {/literal}'{ts escape="js"}Remove from Batch{/ts}'{literal};
   } else if ( op == 'assign' ) {

@@ -216,17 +216,14 @@ class CRM_Admin_Page_AJAX {
         if ($op == 'close') {
           $status = ts('Are you sure you want to close this batch?');
         }
-        else {
+        elseif ($op == 'open') {
           $status = ts('Are you sure you want to reopen this batch?');
         }
-        break;
-        
-      case 'CRM_Financial_BAO_EntityFinancialItem':
-        if ($op == 'remove') {
-          $status = ts('Are you sure you want to remove this financial item?');
+        elseif ($op == 'remove') {
+          $status = ts('Are you sure you want to remove this financial transaction?');
         }
         else {
-          $status = ts('Are you sure you want to assign this financial item to the batch?');
+          $status = ts('Are you sure you want to assign this financial transaction to the batch?');
         }
         break;
         
