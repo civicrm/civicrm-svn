@@ -256,7 +256,7 @@
       'sequential' :'1',
       'contact_id': contactId,
       'return': returnProperties },
-      { success:function (data) {
+      { success: function (data) {
         cj.each ( data.values[0], function( key, value ) {
           // set the values
           var actualFldName = profileFields[key];
@@ -266,38 +266,37 @@
           }
           setFieldValue( actualFldName, value, blockNo )
         });
-      }
-    });
 
-    // for membership batch entry based on contact we need to enable / disable
-    // add membership select
-    {/literal}{if $batchType eq 2}{literal}
-    CRM.api('Membership','get',{
-      'sequential' :'1',
-      'contact_id': contactId,
-      },
-      { success:function (data){
-        if ( data.count > 0 ) {
-          //get the information on membership type
-          var membershipTypeId   = data.values[0].membership_type_id;
-          var membershipJoinDate = data.values[0].join_date;
-          CRM.api('MembershipType','get',{
+        // for membership batch entry based on contact we need to enable / disable
+        // add membership select
+        {/literal}{if $batchType eq 2}{literal}
+        CRM.api('Membership','get',{
             'sequential' :'1',
-            'id' : membershipTypeId
-            },
-            { success:function (data){
-                var memTypeContactId = data.values[0].member_of_contact_id;
-                cj('select[id="member_option_' + blockNo + '"]').removeAttr('disabled').val(2);
-                cj('select[id="field[' + blockNo + '][membership_type][0]"]').val( memTypeContactId ).change();
-                cj('select[id="field[' + blockNo + '][membership_type][1]"]').val( membershipTypeId ).change();
-                setDateFieldValue( 'join_date', membershipJoinDate, blockNo )
-              }
-          });
-        }
+            'contact_id': contactId,
+          },
+          { success: function (data) {
+            if ( data.count > 0 ) {
+              //get the information on membership type
+              var membershipTypeId   = data.values[0].membership_type_id;
+              var membershipJoinDate = data.values[0].join_date;
+              CRM.api('MembershipType','get',{
+                  'sequential' :'1',
+                  'id' : membershipTypeId
+                },
+                { success: function (data){
+                  var memTypeContactId = data.values[0].member_of_contact_id;
+                  cj('select[id="member_option_' + blockNo + '"]').removeAttr('disabled').val(2);
+                  cj('select[id="field[' + blockNo + '][membership_type][0]"]').val( memTypeContactId ).change();
+                  cj('select[id="field[' + blockNo + '][membership_type][1]"]').val( membershipTypeId ).change();
+                  setDateFieldValue( 'join_date', membershipJoinDate, blockNo )
+                }
+              });
+            }
+          }
+        });
+        {/literal}{/if}{literal}
       }
     });
-    {/literal}{/if}{literal}
-
   }
 
 /**
