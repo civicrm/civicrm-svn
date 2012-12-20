@@ -86,8 +86,7 @@ class CRM_Contact_Form_Task_SMSCommon {
    *
    * @return void
    */
-  static
-  function buildQuickForm(&$form) {
+  static function buildQuickForm(&$form) {
 
     $toArray = array();
 
@@ -308,8 +307,7 @@ class CRM_Contact_Form_Task_SMSCommon {
    * @access public
    *
    */
-  static
-  function formRule($fields, $dontCare, $self) {
+  static function formRule($fields, $dontCare, $self) {
     $errors = array();
 
     $template = CRM_Core_Smarty::singleton();
@@ -342,8 +340,7 @@ class CRM_Contact_Form_Task_SMSCommon {
    *
    * @return None
    */
-  static
-  function postProcess(&$form) {
+  static function postProcess(&$form) {
 
     // check and ensure that
     $thisValues = $form->controller->exportValues($form->getName());

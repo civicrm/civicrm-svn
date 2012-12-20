@@ -38,8 +38,7 @@
  *
  */
 class CRM_Case_Form_Activity_LinkCases {
-  static
-  function preProcess(&$form) {
+  static function preProcess(&$form) {
     if (!isset($form->_caseId)) {
       CRM_Core_Error::fatal(ts('Case Id not found.'));
     }
@@ -72,8 +71,7 @@ class CRM_Case_Form_Activity_LinkCases {
     return $defaults = array();
   }
 
-  static
-  function buildQuickForm(&$form) {
+  static function buildQuickForm(&$form) {
     $form->add('text', 'link_to_case', ts('Link To Case'));
     $form->add('hidden', 'link_to_case_id', '', array('id' => 'link_to_case_id'));
   }
@@ -87,8 +85,7 @@ class CRM_Case_Form_Activity_LinkCases {
    * @static
    * @access public
    */
-  static
-  function formRule($values, $files, $form) {
+  static function formRule($values, $files, $form) {
     $errors = array();
 
     $linkCaseId = CRM_Utils_Array::value('link_to_case_id', $values);

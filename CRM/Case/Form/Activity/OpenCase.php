@@ -116,8 +116,7 @@ class CRM_Case_Form_Activity_OpenCase {
     return $defaults;
   }
 
-  static
-  function buildQuickForm(&$form) {
+  static function buildQuickForm(&$form) {
     if ($form->_context == 'caseActivity') {
       return;
     }
@@ -228,8 +227,7 @@ class CRM_Case_Form_Activity_OpenCase {
    * @static
    * @access public
    */
-  static
-  function formRule($fields, $files, $form) {
+  static function formRule($fields, $files, $form) {
     if ($form->_context == 'caseActivity') {
       return TRUE;
     }

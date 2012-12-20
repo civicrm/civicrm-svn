@@ -69,9 +69,8 @@ class CRM_Contact_Form_Task_AddToGroup extends CRM_Contact_Form_Task {
    */
   function preProcess() {
     /*
-         * initialize the task and row fields
-         */
-
+     * initialize the task and row fields
+     */
     parent::preProcess();
 
     $this->_context = $this->get('context');
@@ -189,8 +188,7 @@ class CRM_Contact_Form_Task_AddToGroup extends CRM_Contact_Form_Task {
    * @static
    * @access public
    */
-  static
-  function formRule($params) {
+  static function formRule($params) {
     $errors = array();
 
     if (!empty($params['group_option']) && empty($params['title'])) {

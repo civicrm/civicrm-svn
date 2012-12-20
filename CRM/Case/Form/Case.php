@@ -86,7 +86,8 @@ class CRM_Case_Form_Case extends CRM_Core_Form {
    *
    * @return None
    * @access public
-   */ function preProcess() {
+   */
+  function preProcess() {
     $this->_cdType = CRM_Utils_Array::value('type', $_GET);
     $this->assign('cdType', FALSE);
     if ($this->_cdType) {
@@ -310,8 +311,7 @@ class CRM_Case_Form_Case extends CRM_Core_Form {
    * @static
    * @access public
    */
-  static
-  function formRule($values, $files, $form) {
+  static function formRule($values, $files, $form) {
     return TRUE;
   }
 

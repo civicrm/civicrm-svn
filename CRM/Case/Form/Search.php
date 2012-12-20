@@ -131,7 +131,8 @@ class CRM_Case_Form_Search extends CRM_Core_Form {
    *
    * @return void
    * @access public
-   */ function preProcess() {
+   */
+  function preProcess() {
     $this->set('searchFormName', 'Search');
 
     //check for civicase access.
@@ -244,10 +245,9 @@ class CRM_Case_Form_Search extends CRM_Core_Form {
     CRM_Case_BAO_Query::buildSearchForm($this);
 
     /*
-         * add form checkboxes for each row. This is needed out here to conform to QF protocol
-         * of all elements being declared in builQuickForm
-         */
-
+     * add form checkboxes for each row. This is needed out here to conform to QF protocol
+     * of all elements being declared in builQuickForm
+     */
     $rows = $this->get('rows');
     if (is_array($rows)) {
 
@@ -334,11 +334,8 @@ class CRM_Case_Form_Search extends CRM_Core_Form {
     }
 
     $this->_done = TRUE;
-
     $this->_formValues = $this->controller->exportValues($this->_name);
-
     $this->fixFormValues();
-
 
     if (isset($this->_ssID) && empty($_POST)) {
       // if we are editing / running a saved search and the form has not been posted
@@ -443,8 +440,7 @@ class CRM_Case_Form_Search extends CRM_Core_Form {
    * @static
    * @access public
    */
-  static
-  function formRule($fields) {
+  static function formRule($fields) {
     $errors = array();
 
     if (!empty($errors)) {

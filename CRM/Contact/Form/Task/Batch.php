@@ -73,11 +73,11 @@ class CRM_Contact_Form_Task_Batch extends CRM_Contact_Form_Task {
    *
    * @return void
    * @access public
-   */ function preProcess() {
+   */
+  function preProcess() {
     /*
-         * initialize the task and row fields
-         */
-
+     * initialize the task and row fields
+     */
     parent::preProcess();
   }
 
@@ -204,8 +204,7 @@ class CRM_Contact_Form_Task_Batch extends CRM_Contact_Form_Task {
    * @access public
    * @static
    */
-  static
-  function formRule($fields) {
+  static function formRule($fields) {
     $errors = array();
     $externalIdentifiers = array();
     foreach ($fields['field'] as $componentId => $field) {
@@ -266,6 +265,7 @@ class CRM_Contact_Form_Task_Batch extends CRM_Contact_Form_Task {
     }
   }
   //end of function
+
   function parseStreetAddress(&$contactValues, &$form) {
     if (!is_array($contactValues) ||
       !is_array($form->_fields)
