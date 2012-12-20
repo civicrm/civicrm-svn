@@ -2598,10 +2598,10 @@ WHERE  contribution_id = %1 ";
       $accountRelationType = 'Accounts Receivable Account is';
     }
     if (CRM_Utils_Array::value('payment_processor_id', $params)) {
-      $params['to_financial_account_id'] = CRM_Financial_BAO_FinancialTypeAccount::getInstrumentFinancialAccount('civicrm_payment_processor', $params['payment_processor_id'], 'financial_account_id');
+      $params['to_financial_account_id'] = CRM_Financial_BAO_FinancialTypeAccount::getFinancialAccount('civicrm_payment_processor', $params['payment_processor_id'], 'financial_account_id');
     } 
     elseif (CRM_Utils_Array::value('payment_instrument_id', $params)) {
-      $params['to_financial_account_id'] = CRM_Financial_BAO_FinancialTypeAccount::getFinancialAccount($params['payment_instrument_id']);
+      $params['to_financial_account_id'] = CRM_Financial_BAO_FinancialTypeAccount::getInstrumentFinancialAccount($params['payment_instrument_id']);
     } 
     else {
       $params['to_financial_account_id'] = CRM_Core_DAO::singleValueQuery("SELECT id FROM civicrm_financial_account WHERE is_default = 1");
