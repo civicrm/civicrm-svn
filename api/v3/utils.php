@@ -1433,6 +1433,9 @@ function _civicrm_api3_validate_html(&$params, &$fieldname, &$fieldInfo) {
 function _civicrm_api3_validate_string(&$params, &$fieldname, &$fieldInfo) {
   // If fieldname exists in params
   if ($value = CRM_Utils_Array::value($fieldname, $params)) {
+    if (!CRM_Utils_Rule::xssString($value)) {
+      throw new Exception('Illegal characters in input (potential scripting attack)');
+    }
     if ($fieldname == 'currency') {
       if (!CRM_Utils_Rule::currencyCode($value)) {
         throw new Exception("Currency not a valid code: $value");
