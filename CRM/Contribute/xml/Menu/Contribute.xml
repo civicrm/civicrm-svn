@@ -306,11 +306,6 @@
      <access_arguments>make online contributions</access_arguments>
   </item> 
   <item>
-     <path>civicrm/ajax/getContactList</path>
-     <page_callback>CRM_Financial_Page_AJAX::getContactList</page_callback>
-     <access_arguments>edit all manual batches</access_arguments>
-  </item> 
-  <item>
      <path>civicrm/ajax/ar</path>
      <page_callback>CRM_Financial_Page_AJAX::assignRemove</page_callback>
      <access_arguments>access CiviCRM</access_arguments>
