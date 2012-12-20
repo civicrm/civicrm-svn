@@ -27,7 +27,7 @@
  * If you MODIFY this file, please make sure you also modify jquery.tpl.
  * We will unify the two files in a future release
  *}
-packages/jquery/jquery-1.8.2.min.js
+packages/jquery/jquery-1.8.3.min.js
 packages/jquery/jquery-ui-1.9.0/js/jquery-ui-1.9.0.custom.min.js
 packages/jquery/jquery-ui-1.9.0/css/smoothness/jquery-ui-1.9.0.custom.min.css
 
