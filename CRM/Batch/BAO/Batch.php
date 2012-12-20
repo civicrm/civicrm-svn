@@ -434,8 +434,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
    */
   static function exportFinancialBatch( $batchIds ) {
     //TEST
-    $batchIds = array(1);
-    self::$_exportFormat = 'IIF';
+    self::$_exportFormat = 'CSV';
     //ENDTEST
     // Instantiate appropriate exporter based on user-selected format.
     $exporterClass = "CRM_Financial_BAO_ExportFormat_" . self::$_exportFormat;
@@ -447,7 +446,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
     }
 
     $id_list = implode(',', $batchIds);
-
+    
     $sql = "SELECT
       ft.id as financial_trxn_id,
       ft.trxn_date,
@@ -619,8 +618,9 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
       'accounts' => $accounts,
       'contacts' => $contacts,
       'journalEntries' => $journalEntries,
+      'batchIds' => $batchIds,
     );
-
+    
     $exporter->export( $exportParams );
   }
    

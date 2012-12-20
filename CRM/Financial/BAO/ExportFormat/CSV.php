@@ -70,9 +70,20 @@ class CRM_Financial_BAO_ExportFormat_CSV extends CRM_Financial_BAO_ExportFormat 
   }
 
   function export( $exportParams ) {   
-    parent::export( $exportParams );
+    $export = parent::export($exportParams);
+      
+    $fileName = 'Financial_Transactions.csv' ; //absolute filepath derived from config variable.
+
+    $out = fopen($fileName, 'w');
     
-    foreach( self::$complementaryTables as $rct ) {
+    fputcsv($out, $export['headers']);
+    unset($export['headers']);
+    foreach ($export as $fields) {
+      fputcsv($out, $fields);
+    }
+    fclose($out);
+  
+    foreach ( self::$complementaryTables as $rct ) {
       $func = "export{$rct}";
       $this->$func();
     }

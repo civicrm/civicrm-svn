@@ -292,22 +292,23 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
 
      if ($this->_action & CRM_Core_Action::EXPORT) {
        CRM_Batch_BAO_Batch::exportFinancialBatch($ids);
-     }
+     } 
+     else {
+       $activityTypes = CRM_Core_PseudoConstant::activityType(TRUE, FALSE, FALSE, 'name');
+       //create activity. 
+       $activityParams = array( 
+         'activity_type_id' => array_search('Export of Financial Transactions Batch', $activityTypes), 
+         'subject' => CRM_Utils_Array::value('name', $params). "- Batch", 
+         'status_id' => 2, 
+         'priority_id' => 2,
+         'activity_date_time' => date('YmdHis'),
+         'source_contact_id' => $session->get('userID'),
+         'source_contact_qid' => $session->get('userID'),
+         'details' => $details,    
+       );
+       $activity = CRM_Activity_BAO_Activity::create($activityParams);
+     }     
 
-     $activityTypes = CRM_Core_PseudoConstant::activityType(TRUE, FALSE, FALSE, 'name');
-     //create activity.
-     $activityParams = array(
-       'activity_type_id' => array_search('Export of Financial Transactions Batch', $activityTypes),
-       'subject' => CRM_Utils_Array::value('title', $params). "- Batch",
-       'status_id' => 2,
-       'priority_id' => 2,
-       'activity_date_time' => date('YmdHis'),
-       'source_contact_id' => $session->get('userID'),
-       'source_contact_qid' => $session->get('userID'),
-       'details' => $details
-     );
-
-     CRM_Activity_BAO_Activity::create($activityParams);
      $buttonName = $this->controller->getButtonName();
 
      $session = CRM_Core_Session::singleton();
