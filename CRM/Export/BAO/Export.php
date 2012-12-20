@@ -61,8 +61,7 @@ class CRM_Export_BAO_Export {
    * @static
    * @access public
    */
-  static
-  function exportComponents($selectAll,
+  static function exportComponents($selectAll,
     $ids,
     $params,
     $order = NULL,
@@ -629,13 +628,13 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
               $headerRows[] = $query->_fields[$field]['title'];
             }
             elseif ($field == 'phone_type_id') {
-              $headerRows[] = 'Phone Type';
+              $headerRows[] = ts('Phone Type');
             }
             elseif ($field == 'provider_id') {
-              $headerRows[] = 'Im Service Provider';
+              $headerRows[] = ts('IM Service Provider');
             }
             elseif ($field == 'accounting_code') {
-              $headerRows[] = 'Accounting Code';
+              $headerRows[] = ts('Accounting Code');
             }
             elseif (is_array($value) && $field == 'location') {
               // fix header for location type case
@@ -1180,8 +1179,7 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
     CRM_Utils_System::civiExit();
   }
 
-  static
-  function sqlColumnDefn(&$query, &$sqlColumns, $field) {
+  static function sqlColumnDefn(&$query, &$sqlColumns, $field) {
     if (substr($field, -4) == '_a_b' ||
       substr($field, -4) == '_b_a'
     ) {
@@ -1270,8 +1268,7 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
     }
   }
 
-  static
-  function writeDetailsToTable($tableName, &$details, &$sqlColumns) {
+  static function writeDetailsToTable($tableName, &$details, &$sqlColumns) {
     if (empty($details)) {
       return;
     }
@@ -1314,8 +1311,7 @@ VALUES $sqlValueString
     CRM_Core_DAO::executeQuery($sql);
   }
 
-  static
-  function createTempTable(&$sqlColumns) {
+  static function createTempTable(&$sqlColumns) {
     //creating a temporary table for the search result that need be exported
     $exportTempTable = CRM_Core_DAO::createTempTableName('civicrm_export', TRUE);
 
@@ -1350,8 +1346,7 @@ CREATE TABLE {$exportTempTable} (
     return $exportTempTable;
   }
 
-  static
-  function mergeSameAddress($tableName, &$headerRows, &$sqlColumns, $exportParams) {
+  static function mergeSameAddress($tableName, &$headerRows, &$sqlColumns, $exportParams) {
     // check if any records are present based on if they have used shared address feature,
     // and not based on if city / state .. matches.
     $sql = "
@@ -1454,8 +1449,7 @@ WHERE  id IN ( $deleteIDString )
     }
   }
 
-  static
-  function _replaceMergeTokens($contactId, $exportParams) {
+  static function _replaceMergeTokens($contactId, $exportParams) {
     $greetings = array();
     $contact = NULL;
 
@@ -1490,8 +1484,7 @@ WHERE  id IN ( $deleteIDString )
      *
      */
 
-  static
-  function _trimNonTokens(&$parsedString, $defaultGreeting,
+  static function _trimNonTokens(&$parsedString, $defaultGreeting,
     $addressMergeGreetings, $greetingType = 'postal_greeting'
   ) {
     if (CRM_Utils_Array::value($greetingType, $addressMergeGreetings)) {
@@ -1510,8 +1503,7 @@ WHERE  id IN ( $deleteIDString )
     return $parsedString;
   }
 
-  static
-  function _buildMasterCopyArray($sql, $exportParams, $sharedAddress = FALSE) {
+  static function _buildMasterCopyArray($sql, $exportParams, $sharedAddress = FALSE) {
     static $contactGreetingTokens = array();
 
     $addresseeOptions = CRM_Core_OptionGroup::values('addressee');
@@ -1616,8 +1608,7 @@ WHERE  id IN ( $deleteIDString )
    * @param array  $sqlColumns array of names of the table columns of the temp table
    * @param string $prefix name of the relationship type that is prefixed to the table columns
    */
-  static
-  function mergeSameHousehold($exportTempTable, &$headerRows, &$sqlColumns, $prefix) {
+  static function mergeSameHousehold($exportTempTable, &$headerRows, &$sqlColumns, $prefix) {
     $prefixColumn = $prefix . '_';
     $allKeys      = array_keys($sqlColumns);
     $replaced     = array();
@@ -1631,7 +1622,7 @@ WHERE  id IN ( $deleteIDString )
       'contact_is_deleted' => 'is_deleted',
       'name' => 'address_name',
       'provider_id' => 'im_service_provider',
-      'phone_type_id' => 'phone_type',
+      'phone_type_id' => 'phone_type'
     );
 
     //figure out which columns are to be replaced by which ones
@@ -1681,25 +1672,22 @@ CREATE TABLE {$exportTempTable}_temp SELECT *
 FROM {$exportTempTable}
 GROUP BY civicrm_primary_id ";
 
-    $dao = CRM_Core_DAO::executeQuery($query);
+    CRM_Core_DAO::executeQuery($query);
 
     $query = "DROP TABLE $exportTempTable";
-    $dao = CRM_Core_DAO::executeQuery($query);
+    CRM_Core_DAO::executeQuery($query);
 
     $query = "ALTER TABLE {$exportTempTable}_temp RENAME TO {$exportTempTable}";
-    $dao = CRM_Core_DAO::executeQuery($query);
+    CRM_Core_DAO::executeQuery($query);
   }
 
-  static
-  function writeCSVFromTable($exportTempTable, $headerRows, $sqlColumns, $exportMode, $saveFile = null, $batchItems = '') {
+  static function writeCSVFromTable($exportTempTable, $headerRows, $sqlColumns, $exportMode, $saveFile = null, $batchItems = '') {
     $writeHeader = TRUE;
     $offset      = 0;
     $limit       = self::EXPORT_ROW_COUNT;
 
-    $query = "
-SELECT *
-FROM   $exportTempTable
-";
+    $query = "SELECT * FROM $exportTempTable";
+
     while (1) {
       $limitQuery = $query . "
 LIMIT $offset, $limit
@@ -1717,25 +1705,26 @@ LIMIT $offset, $limit
         foreach ($sqlColumns as $column => $dontCare) {
           $row[$column] = $dao->$column;
         }
-
         $componentDetails[] = $row;
       }
-            if( $exportMode == 'financial' )
-                $getExportFileName = 'CiviCRM Contribution Search';
-            else
-                $getExportFileName =self::getExportFileName( 'csv', $exportMode );
-
-            $csvRows = CRM_Core_Report_Excel::writeCSVFile( $getExportFileName,
+      if ( $exportMode == 'financial' ) {
+        $getExportFileName = 'CiviCRM Contribution Search';
+      }
+      else {
+        $getExportFileName =self::getExportFileName( 'csv', $exportMode );
+      }
+      $csvRows = CRM_Core_Report_Excel::writeCSVFile( $getExportFileName,
         $headerRows,
         $componentDetails,
-                                                      null,
-                                                      $writeHeader,
-                                                      $saveFile );
-            if( $saveFile && !empty( $csvRows ) ){
-                $batchItems .= $csvRows;
-            }
-            
-            $writeHeader = false;
+        null,
+        $writeHeader,
+        $saveFile );
+
+      if ($saveFile && !empty($csvRows)) {
+        $batchItems .= $csvRows;
+      }
+
+      $writeHeader = false;
       $offset += $limit;
     }
   }
