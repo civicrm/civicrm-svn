@@ -327,8 +327,10 @@
         });
       }
       function refreshTitle() {
-        var contactName = $('.crm-summary-display_name').text().trim();
-        $('title').html($('title').html().replace(oldName, contactName));
+        var contactName = $('.crm-summary-display_name').text();
+        contactName = $.trim(contactName);
+        var title = $('title').html().replace(oldName, contactName);
+        document.title = title;
         oldName = contactName;
       }
       $('#contactname-block').load(refreshTitle);
