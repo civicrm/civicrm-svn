@@ -398,7 +398,11 @@ ALTER TABLE `civicrm_financial_trxn` CHANGE `to_account_id` `to_financial_accoun
 CHANGE `from_account_id` `from_financial_account_id` int unsigned COMMENT 'FK to financial_account table.',
 ADD `status_id` int(10) unsigned DEFAULT NULL,
 CHANGE `trxn_id` trxn_id varchar(255) COMMENT 'unique processor transaction id, bank id + trans id,... depending on payment_method',
-CHANGE `trxn_date` trxn_date datetime DEFAULT NULL;
+CHANGE `trxn_date` trxn_date datetime DEFAULT NULL,
+ADD `payment_instrument_id` int unsigned DEFAULT NULL COMMENT 'FK to payment_instrument option group values',
+ADD `check_number` VARCHAR( 255 ) NULL DEFAULT NULL,
+ADD INDEX `UI_ftrxn_check_number` (`check_number`),
+ADD INDEX `UI_ftrxn_payment_instrument_id` (`payment_instrument_id`);
 
 ALTER TABLE `civicrm_financial_trxn`
 ADD CONSTRAINT FK_civicrm_financial_trxn_to_financial_account_id FOREIGN KEY (`to_financial_account_id`) REFERENCES civicrm_financial_account (id),
