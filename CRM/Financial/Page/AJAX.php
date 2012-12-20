@@ -40,7 +40,7 @@
 class CRM_Financial_Page_AJAX {
 
   /**
-   * Function for building Event Type combo box
+   * Function for building financial account select 
    */
   function financialAccount() {
     $name = trim( CRM_Utils_Type::escape( $_GET['s'], 'String' ) );
@@ -180,68 +180,6 @@ ORDER by f.name";
 
     $elements = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_Product', $_GET['_value'], 'financial_type_id' );
     echo json_encode( $elements );
-    CRM_Utils_System::civiExit( );
-  }
-
-  function getContactList( ) {
-    // if context is 'customfield'
-    if ( CRM_Utils_Array::value( 'context', $_GET ) == 'customfield' ) {
-      return self::contactReference( );
-    }
-
-    $name  = CRM_Utils_Array::value( 's', $_GET );
-    $name  = CRM_Utils_Type::escape( $name, 'String' );
-
-    $limit = 10;
-    if ( CRM_Utils_Array::value( 'limit', $_GET) ) {
-      $limit = CRM_Utils_Type::escape( $_GET['limit'], 'Positive' );
-    }
-
-    if ( CRM_Utils_Array::value( 'cid', $_GET) ) {
-      $cid = CRM_Utils_Type::escape( $_GET['cid'], 'Positive' );
-    }
-
-    $userPerm = 0;
-    if ( CRM_Utils_Array::value( 'users', $_GET) ) {
-      $userPerm = CRM_Utils_Type::escape( $_GET['users'], 'Integer' );
-    }
-
-    require_once 'DB.php';
-    $config = CRM_Core_Config::singleton( );
-    $db_uf = DB::parseDSN($config->userFrameworkDSN);
-    $select = ' sort_name, email ';
-    $from = " LEFT JOIN civicrm_email eml ON ( cc.id = eml.contact_id AND eml.is_primary = 1 )
-LEFT  JOIN civicrm_uf_match as cum on cum.contact_id = cc.id
-LEFT  JOIN {$db_uf['database']}.users as users on users.uid = cum.uf_id
-LEFT  JOIN {$db_uf['database']}.users_roles as users_roles ON users.uid = users_roles.uid
-INNER JOIN {$db_uf['database']}.role_permission AS permission  ON ( permission.rid = users_roles.rid ) ";
-    $where = " AND permission.permission LIKE 'edit own manual batches' or permission.permission LIKE 'create manual batch' or permission.permission LIKE 'edit all manual batches' AND users.status = 1 AND cc.is_deleted = 0";
-    $whereClause = " WHERE ( email LIKE '%{$name}%' OR sort_name LIKE '%{$name}%'  ) ";
-    $exactWhereClause = " WHERE ( email LIKE '$name' OR sort_name LIKE '$name'  ) ";
-    $query = "
-        SELECT DISTINCT(id), data, {$select}
-        FROM   (
-            ( SELECT 0 as exactFirst, cc.id as id, {$select},CONCAT_WS( ' :: ', {$select} ) as data
-            FROM   civicrm_contact cc {$from}
-    {$exactWhereClause}
-    GROUP BY sort_name
-    LIMIT 0, {$limit} )
-    UNION
-    ( SELECT 1 as exactFirst, cc.id as id, {$select}, CONCAT_WS( ' :: ', {$select} ) as data
-    FROM   civicrm_contact cc {$from}
-    {$whereClause}
-    GROUP BY sort_name
-    ORDER BY sort_name
-    LIMIT 0, {$limit} )
-) t
-ORDER BY exactFirst, sort_name
-LIMIT    0, {$limit}
-    ";
-
-    $dao =CRM_Core_DAO::executeQuery( $query );
-    while( $dao->fetch() ){
-      echo $contactList = "{$dao->data}|{$dao->id}\n";
-    }
     CRM_Utils_System::civiExit( );
   }
 
