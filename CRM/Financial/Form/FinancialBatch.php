@@ -168,8 +168,12 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
 
     if ($this->_action & CRM_Core_Action::UPDATE && $this->_id) {
       if ($flag = CRM_Core_Permission::check('edit all manual batches')) {
-        $dataURL = CRM_Utils_System::url('civicrm/ajax/getContactList', 'json=1&users=1', false, null, false);
-        $this->assign('dataURL', $dataURL);
+        $dataUrl = CRM_Utils_System::url("civicrm/ajax/rest",
+          "className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=batch&reset=1&cmsuser=1",
+          FALSE, NULL, FALSE
+        );
+
+        $this->assign('dataURL', $dataUrl);
         $creator = $this->add('text', 'contact_name', ts('Created By'));
         $this->add('hidden', 'created_id', '', array('id' => 'created_id'));
         if ($creator->getValue()) {

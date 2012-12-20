@@ -721,6 +721,13 @@ function civicrm_api3_contact_getquick($params) {
             )";
   }
 
+  // check if only CMS users are requested
+  if (CRM_Utils_Array::value('cmsuser', $params)) {
+    $additionalFrom = "
+      INNER JOIN civicrm_uf_match um ON (um.contact_id=cc.id)
+      ";
+  }
+
   //CRM-5954
   $query = "
         SELECT DISTINCT(id), data, sort_name {$selectAliases}

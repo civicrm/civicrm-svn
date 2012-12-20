@@ -94,6 +94,10 @@ class CRM_Contact_Page_AJAX {
       $params['rel'] = $_GET['rel'];
     }
 
+    if (CRM_Utils_Array::value('cmsuser', $_GET)) {
+      $params['cmsuser'] = CRM_Utils_Type::escape($_GET['cmsuser'], 'Boolean');
+    }
+
     $result = civicrm_api('Contact', 'getquick', $params);
     if (empty($result['is_error']) && !empty($result['values'])) {
       foreach ($result['values'] as $key => $val) {
