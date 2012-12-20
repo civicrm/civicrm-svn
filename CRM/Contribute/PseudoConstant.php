@@ -149,6 +149,7 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
    * @static
    */
   public static function &financialAccount($id = NULL, $financialAccountTypeId = NULL) {
+    $condition = NUll;
     if ($financialAccountTypeId) {
       $condition = " financial_account_type_id = ". $financialAccountTypeId;
     }
