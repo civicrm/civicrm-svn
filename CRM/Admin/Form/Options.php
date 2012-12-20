@@ -132,6 +132,10 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form {
       'email_greeting', 'postal_greeting', 'addressee'))) {
       $defaults['contactOptions'] = (CRM_Utils_Array::value('filter', $defaults)) ? $defaults['filter'] : NULL;
     }
+    // CRM-11516
+    if ($this->_gName == 'payment_instrument' && $this->_id) {
+      $defaults['financial_account_id'] = CRM_Financial_BAO_FinancialTypeAccount::getFinancialAccount($this->_id, 'civicrm_option_value', 'financial_account_id');
+    }
     return $defaults;
   }
 
@@ -183,6 +187,15 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form {
       if ($isReserved) {
         $grouping->freeze();
       }
+    }
+    // CRM-11516
+    if ($this->_gName == 'payment_instrument') {
+      $accountType = CRM_Core_PseudoConstant::accountOptionValues('financial_account_type', NULL, " AND v.name = 'Asset' ");
+      $financialAccount = CRM_Contribute_PseudoConstant::financialAccount(NULL, key($accountType));
+      
+      $this->add('select', 'financial_account_id', ts('Financial Account'), 
+        array('' => ts('- select -')) + $financialAccount
+      );
     }
 
     $required = FALSE;
@@ -389,6 +402,18 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form {
 
       $groupParams = array('name' => ($this->_gName));
       $optionValue = CRM_Core_OptionValue::addOptionValue($params, $groupParams, $this->_action, $this->_id);
+      
+      // CRM-11516
+      if (CRM_Utils_Array::value('financial_account_id', $params)) {
+        $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Asset Account is' "));
+        $params = array(
+          'entity_table' => 'civicrm_option_value',
+          'entity_id' => $optionValue->id,
+          'account_relationship' => $relationTypeId,
+          'financial_account_id' => $params['financial_account_id']
+        );
+        CRM_Financial_BAO_FinancialTypeAccount::add($params);
+      }
 
       CRM_Core_Session::setStatus(ts('The %1 \'%2\' has been saved.', array(1 => $this->_GName, 2 => $optionValue->label)), ts('Saved'), 'success');
     }
