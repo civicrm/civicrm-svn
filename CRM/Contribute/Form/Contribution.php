@@ -970,10 +970,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
       }
     }
 
-    CRM_Financial_BAO_FinancialAccount::financialAccountValidation($fields, $errors);
-    if (isset($errors['financial_type_id'])) {
-      $flag = TRUE;
-    }
+    //FIXME FOR NEW DATA FLOW http://wiki.civicrm.org/confluence/display/CRM/CiviAccounts+4.3+Data+Flow
     if (CRM_Utils_Array::value('fee_amount', $fields)) {
       $financialAccount = array();
       CRM_Core_PseudoConstant::populate($financialAccount,
@@ -983,11 +980,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
         $filter = NULL,
         " account_relationship = 5 AND entity_id = {$fields['financial_type_id']} ");
       if (!current($financialAccount)) {
-        $errors['financial_type_id'] = "Financial Account of account relationship of ";
-        if ($flag) {
-          $errors['financial_type_id'] .= "'Asset Account is' and ";
-        }
-        $errors['financial_type_id'] .= "'Expense Account is' is not configured for this Financial Type";
+        $errors['financial_type_id'] = "Financial Account of account relationship of 'Expense Account is' is not configured for this Financial Type";
       }
     }
     return $errors;
