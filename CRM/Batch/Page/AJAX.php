@@ -34,9 +34,13 @@
  */
 
 /**
- * This class contains all the function that are called using AJAX
+ * This class contains functions that are called using AJAX
  */
 class CRM_Batch_Page_AJAX {
+
+  /**
+   * Save record
+   */
   function batchSave() {
     // save in cache table
     $batchId = CRM_Utils_Type::escape($_POST['batch_id'], 'Positive');
@@ -51,6 +55,9 @@ class CRM_Batch_Page_AJAX {
     CRM_Utils_System::civiExit();
   }
 
+  /**
+   * Retrieve records
+   */
   static function getBatchList() {
     $sortMapper = array(
       0 => 'batch.title', 1 => 'batch.type_id', 2 => '',
@@ -63,7 +70,6 @@ class CRM_Batch_Page_AJAX {
     $sort      = isset($_REQUEST['iSortCol_0']) ? CRM_Utils_Array::value(CRM_Utils_Type::escape($_REQUEST['iSortCol_0'], 'Integer'), $sortMapper) : NULL;
     $sortOrder = isset($_REQUEST['sSortDir_0']) ? CRM_Utils_Type::escape($_REQUEST['sSortDir_0'], 'String') : 'asc';
     $context   = isset($_REQUEST['context']) ? CRM_Utils_Type::escape($_REQUEST['context'], 'String') : NULL;
-    $batchStatus = isset($_REQUEST['batchStatus']) ? CRM_Utils_Type::escape($_REQUEST['batchStatus'], 'String') : NULL;
 
     $params = $_POST;
     if ($sort && $sortOrder) {
@@ -73,25 +79,9 @@ class CRM_Batch_Page_AJAX {
     $params['page'] = ($offset / $rowCount) + 1;
     $params['rp'] = $rowCount;
 
-    if ( $context == 'financialBatch' ) {
-      switch ($batchStatus) {
-      case '1':
-        //Open status
-        $params['status'] = 1;
-        break;
-      case '2':
-        //Closed status
-        $params['status'] = 2;
-        break;
-      case '5':
-        //Exported status
-        $params['status'] = 5;
-        break;
-      }
-    } 
-    else {
+    if ($context != 'financialBatch') {
       // data entry status batches
-      $params['status'] = 3;
+      $params['status_id'] = 3;
     }
     
     $params['context'] = $context;

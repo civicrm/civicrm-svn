@@ -37,21 +37,36 @@ class CRM_Financial_Form_Search extends CRM_Core_Form {
   public $_batchStatus;
 
   function preProcess() {
-    $batchStatus = CRM_Utils_Request::retrieve('batchStatus', 'Positive', CRM_Core_DAO::$_nullObject, FALSE, 1);
+    $batchStatus = CRM_Utils_Request::retrieve('batchStatus', 'Positive', CRM_Core_DAO::$_nullObject, FALSE, NULL);
     $this->_batchStatus = $batchStatus;
-    $this->assign("batchStatus",$batchStatus);
   }
 
   function setDefaultValues() {
     $defaults = array();
     $status = CRM_Utils_Request::retrieve('status', 'Positive', CRM_Core_DAO::$_nullObject, FALSE, 1);
-    $defaults['batch_status'] = $status;
+    $defaults['batch_update'] = $status;
+    if ($this->_batchStatus) {
+      $defaults['status_id'] = $this->_batchStatus;
+    }
     return $defaults;
   }
 
   public function buildQuickForm() {
     $attributes = CRM_Core_DAO::getAttribute('CRM_Batch_DAO_Batch');
     $this->add('text', 'title', ts('Batch Name'), $attributes['title']);
+
+    $this->add(
+      'select',
+      'status_id',
+      ts('Batch Status'),
+      array(
+        '' => ts('- any -' ),
+        1 => ts('Open'),
+        2 => ts('Closed'),
+        3 => ts('Exported'),
+      ),
+      false
+    );
 
     $this->add(
       'select',
@@ -66,7 +81,7 @@ class CRM_Financial_Form_Search extends CRM_Core_Form {
     $this->add('text', 'item_count', ts('Number of Transactions'), $attributes['item_count']);
     $this->add('text', 'sort_name', ts('Created By'), CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'sort_name'));
 
-    $this->assign('elements', array('title', 'sort_name', 'payment_instrument_id', 'item_count', 'total'));
+    $this->assign('elements', array('status_id', 'title', 'sort_name', 'payment_instrument_id', 'item_count', 'total'));
     $this->addElement('checkbox', 'toggleSelect', NULL, NULL);
     $batchAction = array(
       'Open' => ts('ReOpen Batch'),
@@ -74,15 +89,8 @@ class CRM_Financial_Form_Search extends CRM_Core_Form {
       'Exported' => ts('Export Batch')
     );
 
-    if ($this->_batchStatus == 1) {
-      unset($batchAction['Open']);
-    }
-    elseif ($this->_batchStatus == 2) {
-      unset($batchAction['Closed']);
-    }
-
     $this->add('select',
-      'batch_status',
+      'batch_update',
       ts('Task' ),
       array('' => ts('- actions -')) + $batchAction);
 
@@ -113,8 +121,8 @@ class CRM_Financial_Form_Search extends CRM_Core_Form {
         $batchIds[] = $batch[1];
       }
     }
-    if (CRM_Utils_Array::value('batch_status', $_POST)) {
-      CRM_Batch_BAO_Batch::closeReOpen($batchIds, $_POST['batch_status']);
+    if (CRM_Utils_Array::value('batch_update', $_POST)) {
+      CRM_Batch_BAO_Batch::closeReOpen($batchIds, $_POST['batch_update']);
     }
   }
 }

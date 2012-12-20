@@ -194,9 +194,9 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
    */
   public function getBatchListSelector(&$params) {
     // format the params
-    $params['offset']   = ($params['page'] - 1) * $params['rp'];
+    $params['offset'] = ($params['page'] - 1) * $params['rp'];
     $params['rowCount'] = $params['rp'];
-    $params['sort']     = CRM_Utils_Array::value('sortBy', $params);
+    $params['sort'] = CRM_Utils_Array::value('sortBy', $params);
 
     // get batches
     $batches = CRM_Batch_BAO_Batch::getBatchList($params);
@@ -323,7 +323,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
       }
     }
 
-    $status = CRM_Utils_Array::value('status', $params);
+    $status = CRM_Utils_Array::value('status_id', $params);
     if ($status) {
       $clauses[] = 'batch.status_id = %3';
       $params[3] = array($status, 'Integer');
@@ -348,39 +348,39 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
           'name'  => ts('Transactions'),
           'url'   => 'civicrm/batchtransaction',
           'qs'    => 'reset=1&bid=%%id%%',
-          'title' => ts( 'View all Transaction' )
+          'title' => ts('View all Transaction'),
         ),
         'edit' =>    array(
           'name'  => ts('Edit'),
           'url'   => 'civicrm/financial/batch',
           'qs'    => 'reset=1&action=update&id=%%id%%',
-          'title' => ts( 'Edit Batch' )
+          'title' => ts('Edit Batch'),
         ),
         'close' =>   array(
           'name'  => ts('Close'),
           'title' => ts('Close Batch'),
-          'extra' => 'onclick = "closeReopen( %%id%%,\'' . 'close' . '\' );"'
+          'extra' => 'class="closeReopenBatch" data-id="%%id%%" rel="close"',
         ),
         'export' =>  array(
           'name'  => ts('Export'),
           'url'   => 'civicrm/financial/batch',
           'qs'    => 'reset=1&action=export&id=%%id%%',
-          'title' => ts('Export Batch')
+          'title' => ts('Export Batch'),
         ),
         'reopen' =>  array(
           'name'  => ts('ReOpen'),
           'title' => ts('ReOpen Batch'),
-          'extra' => 'onclick = "closeReopen( %%id%%,\'' . 'reopen' . '\' );"'
+          'extra' => 'class="closeReopenBatch" data-id="%%id%%" rel="reopen"',
         ),
         'delete' =>  array(
           'name'  => ts('Delete'),
-          'title' => ts('Delete Batch')
+          'title' => ts('Delete Batch'),
         ),
         'download' => array(
           'name'  => ts('Download'),
           'url'   => 'civicrm/file',
           'qs'    => 'reset=1&id=%%fid%%&eid=%%id%%',
-          'title' => ts('Download Batch')
+          'title' => ts('Download Batch'),
         )
       );
     }
