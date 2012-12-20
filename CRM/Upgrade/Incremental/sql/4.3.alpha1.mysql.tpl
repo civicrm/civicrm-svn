@@ -602,6 +602,10 @@ SELECT 'civicrm_option_value', cov.id, @option_value_rel_id_as, @financial_accou
 LEFT JOIN civicrm_option_value cov ON cog.id = cov.option_group_id
 WHERE cog.name = 'payment_instrument';
 
+-- CRM-11515
+INSERT INTO civicrm_entity_financial_account (`entity_table`, `entity_id`, `account_relationship`, `financial_account_id`)
+SELECT 'civicrm_payment_processor', id, @option_value_rel_id_as, @financial_account_id_ar FROM `civicrm_payment_processor`;
+
 -- CRM-9923 and CRM-11037
 SELECT @option_group_id_batch_status   := max(id) from civicrm_option_group where name = 'batch_status';
 
