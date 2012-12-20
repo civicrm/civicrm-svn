@@ -42,7 +42,14 @@ class CRM_Financial_BAO_FinancialTypeAccount extends CRM_Financial_DAO_EntityFin
   function __construct( ) {
     parent::__construct( );
   }
-  
+
+  /**
+   * financial account
+   * @var array
+   * @static
+   */
+  private static $financialAccount;
+
   /**
    * Takes a bunch of params that are needed to match certain criteria and
    * retrieves the relevant objects. Typically the valid params are only
@@ -163,6 +170,36 @@ AND entity_id = %2";
       2 => array($entityId, 'Integer')
     );
     return CRM_Core_DAO::singleValueQuery($query, $params);
+  }
+
+  /**
+   * Function to financial Account for payment instrument 
+   * 
+   * @param int $paymentInstrumentValue payment instrument value
+   * 
+   * @static
+   */
+  static function getInstrumentFinancialAccount($paymentInstrumentValue = NULL) {
+    if (!self::$financialAccount) {
+      $query = "SELECT cov.value, ceft.financial_account_id FROM `civicrm_entity_financial_account` ceft
+INNER JOIN civicrm_option_value cov ON cov.id = ceft.entity_id AND ceft.entity_table = 'civicrm_option_value' 
+INNER JOIN civicrm_option_group cog ON cog.id = cov.option_group_id 
+WHERE cog.name = 'payment_instrument' ";
+    
+      if ($paymentInstrumentValue) {
+        $query .= " AND cov.value = {$paymentInstrumentValue} ";
+        return CRM_Core_DAO::singleValueQuery($query);
+      } 
+      else {
+        $result = CRM_Core_DAO::executeQuery($query);
+        while ($result->fetch()) {
+          $financialAccount[$result->value] = $result->financial_account_id;
+        }
+        return self::$financialAccount;
+      }
+    }
+    
+    return $paymentInstrumentValue ? self::$financialAccount[$paymentInstrumentValue] : self::$financialAccount;
   }
 }
 

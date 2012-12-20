@@ -2597,12 +2597,16 @@ WHERE  contribution_id = %1 ";
     elseif ($params['contribution_status_id'] == array_search('Pending', $contributionStatuses)) {
       $accountRelationType = 'Accounts Receivable Account is';
     }
-    elseif (CRM_Utils_Array::value('payment_processor_id', $params)) {
-      $accountRelationType = 'Expense Account is';
-    }
-    //get financial account id 
-    $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE '{$accountRelationType}' "));
-    $params['to_financial_account_id'] = CRM_Contribute_PseudoConstant::financialAccountType($params['financial_type_id'], $relationTypeId);
+    if (CRM_Utils_Array::value('payment_processor_id', $params)) {
+      $params['to_financial_account_id'] = CRM_Financial_BAO_FinancialTypeAccount::getInstrumentFinancialAccount('civicrm_payment_processor', $params['payment_processor_id'], 'financial_account_id');
+    } 
+    elseif (CRM_Utils_Array::value('payment_instrument_id', $params)) {
+      $params['to_financial_account_id'] = CRM_Financial_BAO_FinancialTypeAccount::getFinancialAccount($params['payment_instrument_id']);
+    } 
+    else {
+      $params['to_financial_account_id'] = CRM_Core_DAO::singleValueQuery("SELECT id FROM civicrm_financial_account WHERE is_default = 1");
+    } 
+    
     $now = date('YmdHis');
 
     //record financial transaction
@@ -2623,12 +2627,17 @@ WHERE  contribution_id = %1 ";
       $trxnParams['payment_processor_id'] = $params['payment_processor_id'];
     }
     $trxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
-    
+
     if (!CRM_Utils_Array::value('contribution', $ids)) {
       // record Line Items and Finacial Items
       $entityId = $params['contribution']->id;
       $entityTable = 'civicrm_contribution';
       CRM_Price_BAO_LineItem::processPriceSet($entityId, $params['line_item'], $params['contribution'], $entityTable);
+    }
+    
+    // when a fee is charged  
+    if (CRM_Utils_Array::value('net_amount', $params) && !CRM_Utils_Array::value('contribution', $ids)) {
+      //CRM_Core_BAO_FinancialTrxn::recordFees();
     }
   }
 }
