@@ -114,6 +114,14 @@
      <weight>365</weight>
   </item>
   <item>
+     <path>civicrm/admin/financial/financialType</path>
+     <title>Financial Types</title>
+     <page_callback>CRM_Financial_Page_FinancialType</page_callback>
+     <desc>Formerly civicrm_contribution_type merged into this table in 4.1</desc>
+     <adminGroup>CiviContribute</adminGroup>
+     <weight>580</weight>
+  </item>
+  <item>
      <path>civicrm/admin/financial/financialAccount</path>
      <title>Financial Accounts</title>
      <page_callback>CRM_Financial_Page_FinancialAccount</page_callback>
@@ -239,15 +247,7 @@
      <page_callback>CRM_Financial_Page_AJAX::financialAccount</page_callback>
      <access_arguments>make online contributions</access_arguments>
   </item>
- <item>
-     <path>civicrm/admin/financial/financialType</path>
-     <title>Financial Types</title>
-     <page_callback>CRM_Financial_Page_FinancialType</page_callback>
-     <desc>Formerly civicrm_contribution_type merged into this table in 4.1</desc>
-     <adminGroup>CiviContribute</adminGroup>
-     <weight>580</weight>
-  </item>
- <item>
+  <item>
      <path>civicrm/admin/financial/financialType/accounts</path>
      <title>Financial Type Accounts</title>
      <page_callback>CRM_Financial_Page_FinancialTypeAccount</page_callback>
