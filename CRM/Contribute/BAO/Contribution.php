@@ -116,7 +116,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
       'non_deductible_amount',
     );
     //if priceset is used, no need to cleanup money
-    if (CRM_UTils_Array::value('skipCleanMoney', $params)) {
+    if (CRM_Utils_Array::value('skipCleanMoney', $params)) {
       unset($moneyFields[0]);
     }
 
@@ -217,7 +217,6 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
    * @static
    */
   static function &create(&$params, &$ids) {
-    // FIXME: a cludgy hack to fix the dates to MySQL format
     $dateFields = array('receive_date', 'cancel_date', 'receipt_date', 'thankyou_date');
     foreach ($dateFields as $df) {
       if (isset($params[$df])) {
@@ -2626,13 +2625,23 @@ WHERE  contribution_id = %1 ";
     }
 
     //records finanical trxn and entity financial trxn
-    CRM_Core_BAO_FinancialTrxn::create($trxnParams);
+    $financialTxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
 
     if (!CRM_Utils_Array::value('contribution', $ids)) {
       // record line items and finacial items
       $entityId = $params['contribution']->id;
       $entityTable = 'civicrm_contribution';
       CRM_Price_BAO_LineItem::processPriceSet($entityId, $params['line_item'], $params['contribution'], $entityTable);
+    }
+
+    // create batch entry if batch_id is passed
+    if (CRM_Utils_Array::value('batch_id', $params)) {
+      $entityParams = array(
+        'batch_id' => $params['batch_id'],
+        'entity_table' => 'civicrm_financial_trxn',
+        'entity_id' => $financialTxn->id
+      );
+      CRM_Batch_BAO_Batch::addBatchEntity($entityParams);
     }
     
     // when a fee is charged

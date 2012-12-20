@@ -146,9 +146,6 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
 
     $this->addFormRule(array('CRM_Batch_Form_Entry', 'formRule'), $this);
 
-    //should we restrict number of fields for batch entry
-    //$this->_fields  = array_slice($this->_fields, 0, $this->_maxFields);
-
     // add the force save button
     $forceSave = $this->getButtonName('upload', 'force');
 
@@ -161,12 +158,12 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         array(
           'type' => 'upload',
           'name' => ts('Validate & Process the Batch'),
-          'isDefault' => TRUE,
+          'isDefault' => TRUE
         ),
         array(
           'type' => 'cancel',
           'name' => ts('Save & Continue Later'),
-        ),
+        )
       )
     );
 
@@ -428,41 +425,17 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
 
         $value['batch_id'] = $this->_batchId;
         $value['skipRecentView'] = TRUE;
-        $contribution = CRM_Contribute_BAO_Contribution::create($value, CRM_Core_DAO::$_nullArray);
 
-        // make entry in financial transaction table
-        $trxnParams = array(
-          'contribution_id' => $contribution->id,
-          'to_financial_account_id' => CRM_Utils_Array::value($assetRelation, CRM_Contribute_Form_AbstractEditPayment::getFinancialAccounts($contribution->financial_type_id)),
-          'trxn_date' => $value['receive_date'],
-          'total_amount' => $value['total_amount'],
-          'fee_amount' => CRM_Utils_Array::value('fee_amount', $value),
-          'net_amount' => CRM_Utils_Array::value('net_amount', $value),
-          'currency' => $contribution->currency,
-          'trxn_id' => $contribution->trxn_id,
-          'status_id' => $contribution->contribution_status_id,
-          'trxn_result_code' => (!empty($contribution->trxn_result_code) ? $contribution->trxn_result_code : FALSE),
-        );
-
-        $financialTransaction = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
-
-        // make entry in line item for contribution
+        // build line item params
         $this->_priceSet['fields'][$fieldID]['options'][$fieldID]['amount'] =  $value['total_amount'];
         $value['price_'.$fieldID] = 1;
 
         $lineItem = array();
-        CRM_Price_BAO_Set::processAmount($this->_priceSet['fields'],
-          $value, $lineItem[$priceSetId]
-        );
+        CRM_Price_BAO_Set::processAmount($this->_priceSet['fields'], $value, $lineItem[$priceSetId]);
+        $value['line_item'] = $lineItem;
 
-        CRM_Price_BAO_LineItem::processPriceSet($contribution->id, $lineItem, $contribution);
-
-        $entityParams = array(
-          'batch_id' => $params['batch_id'],
-          'entity_table' => 'civicrm_financial_trxn',
-          'entity_id' => $financialTransaction->id
-        );
-        CRM_Batch_BAO_Batch::addBatchEntity($entityParams);
+        //finally call contribution create for all the magic
+        $contribution = CRM_Contribute_BAO_Contribution::create($value, CRM_Core_DAO::$_nullArray);
 
         //process premiums
         if (CRM_Utils_Array::value('product_name', $value)) {
@@ -474,7 +447,6 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
               $value['product_name'][1],
               $options[$value['product_name'][0]]
             );
-
 
             $premiumParams = array(
               'product_id' => $value['product_name'][0],
@@ -490,7 +462,6 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         //send receipt mail.
         if ( $contribution->id &&
           CRM_Utils_Array::value( 'send_receipt', $value ) ) {
-
             // add the domain email id
             $domainEmail = CRM_Core_BAO_Domain::getNameAndEmail();
             $domainEmail = "$domainEmail[0] <$domainEmail[1]>";
