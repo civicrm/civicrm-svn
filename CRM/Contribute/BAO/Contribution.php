@@ -133,6 +133,11 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
       }
     }
 
+    // contribution status is missing, choose Completed as default status
+    if (!CRM_Utils_Array::value('contribution_status_id', $params)) {
+      $params['contribution_status_id'] = CRM_Core_OptionGroup::getValue('contribution_status', 'Completed', 'name');
+    }
+
     if (CRM_Utils_Array::value('contribution', $ids)) {
       CRM_Utils_Hook::pre('edit', 'Contribution', $ids['contribution'], $params);
     }
@@ -2605,7 +2610,7 @@ WHERE  contribution_id = %1 ";
    */
   static function recordFinancialAccounts(&$params, &$ids) {
     $contributionStatuses = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
-    if ($params['contribution_status_id'] == array_search('Pending', $contributionStatuses)) {
+    if (CRM_Utils_Array::value('contribution_status_id', $params) == array_search('Pending', $contributionStatuses)) {
       $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Accounts Receivable Account is' "));
       $params['to_financial_account_id'] = CRM_Contribute_PseudoConstant::financialAccountType($params['financial_type_id'], $relationTypeId);
     }
