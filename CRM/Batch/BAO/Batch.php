@@ -123,10 +123,8 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
    */
   static function generateBatchName() {
     $sql = "SELECT max(id) FROM civicrm_batch";
-    $batchNo = CRM_Core_DAO::singleValueQuery($sql);
-    $batchNo++;
-    $batchName = "Batch {$batchNo} - " . date('Y-m-d');
-    return $batchName;
+    $batchNo = CRM_Core_DAO::singleValueQuery($sql) + 1;
+    return ts('Batch %1', array(1 => $batchNo)) . ': ' . date('Y-m-d');
   }
 
   /**

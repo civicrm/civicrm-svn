@@ -181,7 +181,7 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
 
     $this->add('text', 'title', ts('Batch Name'), $attributes['name'], true);
 
-    $this->add('text', 'description', ts('Description'), $attributes['description']);
+    $this->add('textarea', 'description', ts('Description'), $attributes['description']);
 
     $this->add('select', 'payment_instrument_id', ts('Payment Instrument'),
       array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::paymentInstrument(),
@@ -208,6 +208,10 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
     if ($this->_id) {
       $this->assign('modified_date', $defaults['modified_date']);
       $this->assign('created_date', $defaults['created_date']);
+    }
+    else {
+      // set batch name default
+      $defaults['title'] = CRM_Batch_BAO_Batch::generateBatchName();
     }
 
     return $defaults;

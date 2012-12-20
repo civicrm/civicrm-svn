@@ -83,15 +83,15 @@
       <table class="form-layout">
         <tr class="crm-contribution-form-block-payment_instrument">
           <td class="label">{$form.payment_instrument_id.label}</td>
-          <td class="html-adjust">{$form.payment_instrument_id.html}</td>
+          <td class="html-adjust">{$form.payment_instrument_id.html} {help id="payment_instrument"}</td>
         </tr>
         <tr class="crm-contribution-form-block-item_count">
           <td class="label">{$form.item_count.label}</td>
-          <td class="html-adjust">{$form.item_count.html|crmAddClass:number}</td>
+          <td class="html-adjust">{$form.item_count.html|crmAddClass:number} {help id="item_count"}</td>
         </tr>
         <tr class="crm-contribution-form-block-total">
           <td class="label">{$form.total.label}</td>
-          <td class="html-adjust">{$form.total.html|crmAddClass:number}</td>
+          <td class="html-adjust">{$form.total.html|crmAddClass:number} {help id="total"}</td>
         </tr>
       </table>
     </div>
