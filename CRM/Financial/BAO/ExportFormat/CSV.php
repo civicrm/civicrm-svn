@@ -71,18 +71,18 @@ class CRM_Financial_BAO_ExportFormat_CSV extends CRM_Financial_BAO_ExportFormat 
 
   function export( $exportParams ) {   
     $export = parent::export($exportParams);
+    $config = CRM_Core_Config::singleton();
       
-    $fileName = 'Financial_Transactions.csv' ; //absolute filepath derived from config variable.
-
+    $fileName = $config->uploadDir.'Financial_Transactions_'.date('YmdHis').'.csv' ;
     $out = fopen($fileName, 'w');
-    
+
     fputcsv($out, $export['headers']);
     unset($export['headers']);
     foreach ($export as $fields) {
       fputcsv($out, $fields);
     }
     fclose($out);
-  
+    
     foreach ( self::$complementaryTables as $rct ) {
       $func = "export{$rct}";
       $this->$func();
@@ -91,7 +91,11 @@ class CRM_Financial_BAO_ExportFormat_CSV extends CRM_Financial_BAO_ExportFormat 
     // now do general journal entries
     $this->exportTRANS();
     
-    $this->output();
+    $this->output($fileName);
+  }
+
+  function getFileExtension() {
+    return 'csv';
   }
   
   function exportACCNT() {

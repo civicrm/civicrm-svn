@@ -432,9 +432,9 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
   /*
    * @see http://wiki.civicrm.org/confluence/display/CRM/CiviAccounts+Specifications+-++Batches#CiviAccountsSpecifications-Batches-%C2%A0Overviewofimplementation
    */
-  static function exportFinancialBatch( $batchIds ) {
+  static function exportFinancialBatch($batchIds, $exportFormat) {
     //TEST
-    self::$_exportFormat = 'CSV';
+    self::$_exportFormat = $exportFormat;
     //ENDTEST
     // Instantiate appropriate exporter based on user-selected format.
     $exporterClass = "CRM_Financial_BAO_ExportFormat_" . self::$_exportFormat;

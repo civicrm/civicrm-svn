@@ -26,6 +26,15 @@
 {* this template is used for adding/editing/deleting financial type  *}
 <h3>{if $action eq 8}{ts}Delete Batch{/ts} - {$batchTitle}{elseif $action eq 1}{ts}Add New Batch{/ts}{elseif $action eq 2}{ts}Edit Batch{/ts} - {$batchTitle}{elseif $action eq 262144}{ts}Close Batch{/ts} - {$batchTitle}{elseif $action eq 128}{ts}Export Batch{/ts} - {$batchTitle}{/if}</h3>
 <div class="crm-block crm-form-block crm-financial_type-form-block">
+{if $action eq 128}
+<table class="form-layout">
+  <tr class="crm-contribution-form-block-name">
+    <td class="html-adjust">
+     {$form.export_format.html}
+    </td>
+  </tr>
+</table>
+{/if}
 {if $action eq 8}
   <div class="messages status">
     <div class="icon inform-icon"></div>

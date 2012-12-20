@@ -40,17 +40,17 @@
  */
 
 class CRM_Financial_BAO_ExportFormat {
-  
+
   /*
    * Array of data which the individual export formats will output in the desired format
    */
   protected $_exportParams;
-  
+
   /*
    * smarty template
    */
   static protected $_template;
-  
+
   /**
    * class constructor
    */
@@ -59,7 +59,7 @@ class CRM_Financial_BAO_ExportFormat {
       self::$_template = CRM_Core_Smarty::singleton();
     }
   }
-  
+
   // Override to assemble the appropriate subset of financial data for the specific export format
   function export( $exportParams ) {
     $this->_exportParams = $exportParams;
@@ -67,39 +67,35 @@ class CRM_Financial_BAO_ExportFormat {
     foreach ($this->_exportParams['batchIds'] as $batchId) {
       $export = self::createExport($batchId);
     }
-    
-    return $export; 
+
+    return $export;
   }
 
-  function output() {
+  function output($fileName) {
     $tplFile = $this->getTemplateFileName();
     $out = self::getTemplate()->fetch( $tplFile );
-    
-    self::createActivityExport($this->_exportParams['batchIds']['batchID']);
-
-    $fileName = 'Financial_Transactions_' . date('YmdHis'); 
-
-    CRM_Utils_System::download(CRM_Utils_String::munge($fileName),
-      $this->getMimeType(),
-      $out,
-      $this->getFileExtension(),
-      TRUE
-    );
+    self::createActivityExport($this->_exportParams['batchIds']['batchID'], $fileName);
+    if ($this->getFileExtension() == 'csv') {
+      self::createCSVDownload($fileName);
+    }
+    else {
+      self::createIIFDownload($fileName);
+    }
   }
-  
+
   function getMimeType() {
     return 'text/plain';
   }
-  
+
   function getFileExtension() {
     return 'txt';
   }
-  
+
   // Override this if appropriate
   function getTemplateFileName() {
     return null;
   }
-  
+
   static function &getTemplate() {
     return self::$_template;
   }
@@ -107,7 +103,7 @@ class CRM_Financial_BAO_ExportFormat {
   function assign($var, $value = NULL) {
     self::$_template->assign($var, $value);
   }
-  
+
   /*
    * This gets called for every item of data being compiled before being sent to the exporter for output.
    * 
@@ -118,7 +114,15 @@ class CRM_Financial_BAO_ExportFormat {
     return $s;
   }
 
-  static function createActivityExport($batchIds) {
+  function createCSVDownload($fileName) {
+    $config = CRM_Core_Config::singleton();
+    header('Content-Type: text/csv');
+    header('Content-Disposition: attachment; filename='.CRM_Utils_File::cleanFileName(basename($fileName)));
+    readfile($config->customFileUploadDir.CRM_Utils_File::cleanFileName(basename($fileName)));
+    CRM_Utils_System::civiExit();
+  }
+
+  static function createActivityExport($batchIds, $fileName) {
     $session = CRM_Core_Session::singleton();
     $values = array();
     $params = array(
@@ -128,20 +132,26 @@ class CRM_Financial_BAO_ExportFormat {
     $createdBy = CRM_Contact_BAO_Contact::displayName($values['created_id']);
     $modifiedBy = CRM_Contact_BAO_Contact::displayName($values['modified_id']);
     $paymentInstrument = array_flip(CRM_Contribute_PseudoConstant::paymentInstrument('label'));
-    
-    $details = '<p>' . ts('Record: ') . $values['title'] . '</p><p>' . ts('Description: ') . $values['description'] . '</p><p>' . ts('Created By: ') . $createdBy . '</p><p>' . ts('Created Date: ') . $values['created_date'] . '</p><p>' . ts('Last Modified By: ') . $modifiedBy . '</p><p>' . ts('Payment Instrument: ') . array_search($values['payment_instrument_id'], $paymentInstrument) . '</p>';    
-    
+
+    $details = '<p>' . ts('Record: ') . $values['title'] . '</p><p>' . ts('Description: ') . $values['description'] . '</p><p>' . ts('Created By: ') . $createdBy . '</p><p>' . ts('Created Date: ') . $values['created_date'] . '</p><p>' . ts('Last Modified By: ') . $modifiedBy . '</p><p>' . ts('Payment Instrument: ') . array_search($values['payment_instrument_id'], $paymentInstrument) . '</p>';
+
     //create activity. 
     $activityTypes = CRM_Core_PseudoConstant::activityType(TRUE, FALSE, FALSE, 'name');
-    $activityParams = array( 
-      'activity_type_id' => array_search('Export of Financial Transactions Batch', $activityTypes), 
-      'subject' => 'Total ['.$values['total'].'], Count ['.$values['item_count'].'], Batch ['.$values['title'].']', 
-      'status_id' => 2, 
+    $activityParams = array(
+      'activity_type_id' => array_search('Export of Financial Transactions Batch', $activityTypes),
+      'subject' => 'Total ['.$values['total'].'], Count ['.$values['item_count'].'], Batch ['.$values['title'].']',
+      'status_id' => 2,
       'activity_date_time' => date('YmdHis'),
       'source_contact_id' => $session->get('userID'),
       'source_record_id' => $values['id'],
       'target_contact_id' => $session->get('userID'),
-      'details' => $details,    
+      'details' => $details,
+      'attachFile_1' => array (
+        'uri' => $fileName,
+        'type' => 'text/csv',
+        'location' => $fileName,
+        'upload_date' => date('YmdHis')
+      )
     );
     $activity = CRM_Activity_BAO_Activity::create($activityParams);
     return $activity;
@@ -151,12 +161,12 @@ class CRM_Financial_BAO_ExportFormat {
     $arrayKeys = array_keys($values);
     foreach ($values[$arrayKeys[0]] as $title => $value) {
       $headers[] = $title;
-    } 
-    return $headers;    
+    }
+    return $headers;
   }
 
   function createExport($batchId) {
-   
+
     $exportQuery = "SELECT 
       ft.id as id,
       ft.trxn_date as trxn_date, 
@@ -180,12 +190,12 @@ class CRM_Financial_BAO_ExportFormat {
       LEFT JOIN civicrm_financial_account fac ON fac.id = fi.financial_account_id
       LEFT JOIN civicrm_entity_batch b ON b.entity_id = ft.id AND b.entity_table = 'civicrm_financial_trxn'
       WHERE b.batch_id = $batchId";
-  
+
     $dao = CRM_Core_DAO::executeQuery($exportQuery);
-  
+
     //TBD: perform check based on export format, IIF vs CSV.
     $financialItems = array();
-    
+
     while ($dao->fetch()) {
       $financialItems[$dao->id]['Transaction Date'] = $dao->trxn_date;
       $financialItems[$dao->id]['Debit Account'] = $dao->debit_account;
@@ -200,8 +210,8 @@ class CRM_Financial_BAO_ExportFormat {
       $financialItems[$dao->id]['Credit Account Name'] = $dao->credit_account_name;
       $financialItems[$dao->id]['Item Description'] = $dao->item_description;
     }
-    
+
     $financialItems['headers'] = self::formatHeaders($financialItems);
-    return $financialItems;    
+    return $financialItems;
   }
 }
