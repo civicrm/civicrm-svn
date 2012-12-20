@@ -2589,7 +2589,7 @@ WHERE  contribution_id = %1 ";
    * @access public
    * @static
    */
-  static function recordFinancialAccounts(&$params, $ids = NULL) {
+  static function recordFinancialAccounts(&$params, &$ids) {
     $contributionStatuses = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
     if ($params['contribution_status_id'] == array_search('Pending', $contributionStatuses)) {
       $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Accounts Receivable Account is' "));
@@ -2605,7 +2605,7 @@ WHERE  contribution_id = %1 ";
       $params['to_financial_account_id'] = CRM_Core_DAO::singleValueQuery("SELECT id FROM civicrm_financial_account WHERE is_default = 1");
     } 
 
-    //record financial transaction
+    //build financial transaction params
     $trxnParams = array(
       'contribution_id' => $params['contribution']->id,
       'to_financial_account_id' => $params['to_financial_account_id'],
@@ -2625,16 +2625,18 @@ WHERE  contribution_id = %1 ";
       $trxnParams['payment_processor_id'] = $params['payment_processor'];
     }
 
-    $trxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
+    //records finanical trxn and entity financial trxn
+    CRM_Core_BAO_FinancialTrxn::create($trxnParams);
 
     if (!CRM_Utils_Array::value('contribution', $ids)) {
-      // record Line Items and Finacial Items
+      // record line items and finacial items
       $entityId = $params['contribution']->id;
       $entityTable = 'civicrm_contribution';
       CRM_Price_BAO_LineItem::processPriceSet($entityId, $params['line_item'], $params['contribution'], $entityTable);
     }
     
-    // when a fee is charged  
+    // when a fee is charged
+    // FIX ME: work in progress
     if (CRM_Utils_Array::value('net_amount', $params) && !CRM_Utils_Array::value('contribution', $ids)) {
       //CRM_Core_BAO_FinancialTrxn::recordFees();
     }
