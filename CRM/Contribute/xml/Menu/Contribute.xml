@@ -243,11 +243,6 @@
      <access_arguments>make online contributions</access_arguments>
   </item>
   <item>
-     <path>civicrm/ajax/FinancialAccount</path>
-     <page_callback>CRM_Financial_Page_AJAX::financialAccount</page_callback>
-     <access_arguments>make online contributions</access_arguments>
-  </item>
-  <item>
      <path>civicrm/admin/financial/financialType/accounts</path>
      <title>Financial Type Accounts</title>
      <page_callback>CRM_Financial_Page_FinancialTypeAccount</page_callback>
@@ -290,25 +285,5 @@
      <page_callback>CRM_Financial_Page_BatchTransaction</page_callback>
      <weight>600</weight>
  </item>
- <item>
-     <path>civicrm/ajax/jqFinancial</path>
-     <page_callback>CRM_Financial_Page_AJAX::jqFinancial</page_callback>
-     <access_arguments>make online contributions</access_arguments>
-  </item>
-  <item>
-     <path>civicrm/ajax/jqFinancialRelation</path>
-     <page_callback>CRM_Financial_Page_AJAX::jqFinancialRelation</page_callback>
-     <access_arguments>make online contributions</access_arguments>
-  </item> 
-  <item>
-     <path>civicrm/ajax/jqFinancialType</path>
-     <page_callback>CRM_Financial_Page_AJAX::jqFinancialType</page_callback>
-     <access_arguments>make online contributions</access_arguments>
-  </item> 
-  <item>
-     <path>civicrm/ajax/ar</path>
-     <page_callback>CRM_Financial_Page_AJAX::assignRemove</page_callback>
-     <access_arguments>access CiviCRM</access_arguments>
-     <page_type>3</page_type>
-</item>
+
 </menu>

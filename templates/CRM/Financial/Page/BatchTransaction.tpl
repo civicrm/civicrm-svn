@@ -101,7 +101,7 @@ function noServerResponse() {
 
 function saveRecord(recordID, op, recordBAO, entityID) {
   cj( '#enableDisableStatusMsg' ).hide( );
-  var postUrl = {/literal}"{crmURL p='civicrm/ajax/ar' h=0 }"{literal};
+  var postUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Financial_Page_AJAX&fnName=assignRemove'}"{literal};
   //post request and get response
   cj.post( postUrl, { recordID: recordID, recordBAO: recordBAO, op:op, entityID:entityID, key: {/literal}"{crmKey name='civicrm/ajax/ar'}"{literal}  }, function( html ){
     responseFromServer = true;      

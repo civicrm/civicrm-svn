@@ -184,7 +184,7 @@ function buildTransactionSelectorAssign( filterSearch ) {
     var ZeroRecordText = '<div class="status messages">{/literal}{ts escape="js"}No Contributions found for your search criteria.{/ts}{literal}</li></ul></div>';
   }
     var columns = '';
-    var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/transactionlist" h=0 q="snippet=4&context=financialBatch&entityID=$entityID&notPresent=1"}'{literal};
+    var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/rest" h=0 q="className=CRM_Financial_Page_AJAX&fnName=getFinancialTransactionsList&snippet=4&context=financialBatch&entityID=$entityID&notPresent=1"}'{literal};
  
     crmBatchSelector1 = cj('#crm-transaction-selector-assign').dataTable({
         "bDestroy"   : true,
@@ -241,7 +241,7 @@ function buildTransactionSelectorAssign( filterSearch ) {
 
 function buildTransactionSelectorRemove( ) {
     var columns = '';
-    var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/transactionlist" h=0 q="snippet=4&context=financialBatch&entityID=$entityID"}'{literal};	 
+    var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/rest" h=0 q="className=CRM_Financial_Page_AJAX&fnName=getFinancialTransactionsList&snippet=4&context=financialBatch&entityID=$entityID"}'{literal};	 
  
     crmBatchSelector = cj('#crm-transaction-selector-remove').dataTable({
        	"bDestroy"   : true,	     
@@ -306,7 +306,7 @@ function selectAction( id, toggleSelectId, checkId ) {
 }
 
 function bulkAssignRemove( action ) {
-  var postUrl = {/literal}"{crmURL p='civicrm/ajax/bulkassignremove' h=0 q="entityID=$entityID" }"{literal};
+  var postUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q="className=CRM_Financial_Page_AJAX&fnName=bulkAssignRemove&entityID=$entityID" }"{literal};
   var fids = [];
   if (action == 'Assign') {
     cj("input[id^='mark_x_']:checked").each( function () {

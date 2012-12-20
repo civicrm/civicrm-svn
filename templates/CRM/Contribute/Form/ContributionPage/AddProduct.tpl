@@ -81,11 +81,11 @@ function getFinancialType()
 {/literal}
 	 productID         = "#product_id";
 	 financialTypeID    = "#financial_type_id"	 
-	 callbackURL        = "{crmURL p='civicrm/ajax/jqFinancialType' h=0}"	
+	 callbackURL        = "{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Financial_Page_AJAX&fnName=jqFinancialType'}"	
 {literal}
             
     	    var check          = cj(productID).val();
-	        callbackURL = callbackURL+"?_value="+check;
+	        callbackURL = callbackURL+"&_value="+check;
                 cj.ajax({
                          url: callbackURL,
                          context: document.body,

@@ -57,12 +57,12 @@ cj("#financial_account_id").change(function()
 {/literal}
             relationID         = "#account_relationship"
 	    financialAccountID = "#financial_account_id"
-            callbackURL        = "{crmURL p='civicrm/ajax/jqFinancialRelation' h=0}"
+            callbackURL        = "{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Financial_Page_AJAX&fnName=jqFinancialRelation'}"
 {literal}
             var financialId    = cj("#financial_account_id").val();
     	    var check          = cj(relationID).val();
             if( check == 'select' || financialId == 'select' ){
-	        callbackURL = callbackURL+"?_value="+financialId;
+	        callbackURL = callbackURL+"&_value="+financialId;
                 cj.ajax({
                          url: callbackURL,
                          context: document.body,
@@ -85,9 +85,9 @@ cj("#financial_account_id").change(function()
 		if( financialId == 'select' ){
 {/literal}
 	
-		     callbackURLs       = "{crmURL p='civicrm/ajax/jqFinancial' h=0}"
+		     callbackURLs       = "{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Financial_Page_AJAX&fnName=jqFinancial'}"
 {literal}
-		     callbackURLs = callbackURLs+"?_value=select";
+		     callbackURLs = callbackURLs+"&_value=select";
 		      cj.ajax({
                         url: callbackURLs,
                         context: document.body,
@@ -114,12 +114,12 @@ cj("#account_relationship").change(function()
 {/literal}
 	    relationID         = "#account_relationship"
 	    financialAccountID = "#financial_account_id"
-            callbackURLs       = "{crmURL p='civicrm/ajax/jqFinancial' h=0}"
+            callbackURLs       = "{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Financial_Page_AJAX&fnName=jqFinancial'}"
 {literal}
 	    var financialId    = cj("#account_relationship").val();
 	    var check          = cj(financialAccountID).val();
             if(  check == 'select' || financialId == 'select' ){
-	      callbackURLs = callbackURLs+"?_value="+financialId;
+	      callbackURLs = callbackURLs+"&_value="+financialId;
               cj.ajax({
                        url: callbackURLs,
                        context: document.body,
@@ -137,9 +137,9 @@ cj("#account_relationship").change(function()
 	     
 	     if( financialId == 'select' ){
 {/literal}
-		 callbackURL   = "{crmURL p='civicrm/ajax/jqFinancialRelation' h=0}"     
+		 callbackURL   = "{crmURL p='civicrm/ajax/jqFinancialRelation' h=0 q='className=CRM_Financial_Page_AJAX&fnName=jqFinancialRelation'}"     
 {literal}	     	 
-		 callbackURL = callbackURL+"?_value=select";
+		 callbackURL = callbackURL+"&_value=select";
 	         cj.ajax({
                          url: callbackURL,
                          context: document.body,
