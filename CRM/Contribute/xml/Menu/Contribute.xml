@@ -251,28 +251,24 @@
      <path>civicrm/admin/financial/financialType/accounts</path>
      <title>Financial Type Accounts</title>
      <page_callback>CRM_Financial_Page_FinancialTypeAccount</page_callback>
-     <adminGroup>CiviContribute</adminGroup>
      <weight>581</weight>
   </item>
  <item>
      <path>civicrm/admin/financial/financialType/accounts/add</path>
      <title>Add Financial Type Account</title>
      <page_callback>CRM_Financial_Form_FinancialTypeAccount</page_callback>
-     <adminGroup>CiviContribute</adminGroup>
      <weight>582</weight>
   </item>
   <item>
      <path>civicrm/admin/financial/financialType/accounts/update</path>
      <title>Edit Financial Type Account</title>
      <page_callback>CRM_Financial_Form_FinancialTypeAccount</page_callback>
-     <adminGroup>CiviContribute</adminGroup>
      <weight>583</weight>
   </item>
  <item>
      <path>civicrm/admin/financial/financialType/accounts/delete</path>
      <title>Delete Financial Type Account</title>
      <page_callback>CRM_Financial_Form_FinancialTypeAccount</page_callback>
-     <adminGroup>CiviContribute</adminGroup>
      <weight>584</weight>
   </item>
   <item>
@@ -280,26 +276,21 @@
      <title>Accounting Batch</title>
      <page_callback>CRM_Financial_Page_FinancialBatch</page_callback>
      <access_arguments>create manual batch</access_arguments>
-     <adminGroup>CiviContribute</adminGroup>
      <weight>585</weight>
  </item>
  <item>
      <path>civicrm/financial/financialbatches</path>
      <title>Accounting Batches</title>
      <page_callback>CRM_Financial_Page_Batch</page_callback>
-     <adminGroup>CiviContribute</adminGroup>
      <weight>586</weight>
  </item>
  <item>
      <path>civicrm/batchtransaction</path>
      <title>Accounting Batch</title>
      <page_callback>CRM_Financial_Page_BatchTransaction</page_callback>
-     <adminGroup>CiviContribute</adminGroup>
      <weight>600</weight>
  </item>
-
  <item>
-
      <path>civicrm/ajax/jqFinancial</path>
      <page_callback>CRM_Financial_Page_AJAX::jqFinancial</page_callback>
      <access_arguments>make online contributions</access_arguments>
