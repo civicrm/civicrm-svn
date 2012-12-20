@@ -26,25 +26,27 @@
 {if $action eq 1 or $action eq 2 or $action eq 8}
    {include file="CRM/Financial/Form/FinancialAccount.tpl"}
 {else}
-    <div id="help">
-        <p>{ts}Financial types are used to categorize contributions for reporting and accounting purposes. These are also referred to as <strong>Funds</strong>. You may set up as many types as needed. Each type can carry an accounting code which can be used to map contributions to codes in your accounting system. Commonly used financial types are: Donation, Campaign Contribution, Membership Dues...{/ts}</p>
-    </div>
+  <div id="help">
+    <p>{ts}Financial types are used to categorize contributions for reporting and accounting purposes. These are also referred to as <strong>Funds</strong>. You may set up as many types as needed. Each type can carry an accounting code which can be used to map contributions to codes in your accounting system. Commonly used financial types are: Donation, Campaign Contribution, Membership Dues...{/ts}</p>
+  </div>
 
 {if $rows}
+{include file="CRM/common/jsortable.tpl"}
 <div id="ltype">
 <p></p>
     <div class="form-item">
         {strip}
 	{* handle enable/disable actions*}
  	{include file="CRM/common/enableDisable.tpl"}
-        <table cellpadding="0" cellspacing="0" border="0">
+        <table id="crm-financial_accounts" class="display">
            <thead class="sticky">
             <th>{ts}Name{/ts}</th>
             <th>{ts}Description{/ts}</th>
             <th>{ts}Acctg Code{/ts}</th>
-            <th>{ts}Financial Account Type{/ts}</th>
+            <th id="sortable">{ts}Financial Account Type{/ts}</th>
             <th>{ts}Deductible?{/ts}</th>
             <th>{ts}Reserved?{/ts}</th>
+            <th>{ts}Default?{/ts}</th>
             <th>{ts}Enabled?{/ts}</th>
             <th></th>
           </thead>
@@ -52,11 +54,12 @@
         <tr id="row_{$row.id}"class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
 	        <td>{$row.name}</td>	
 	        <td>{$row.description}</td>
-            	<td>{$row.accounting_code}</td>
-            	<td>{$row.financial_account_type_id}</td>
+          <td>{$row.accounting_code}</td>
+          <td>{$row.financial_account_type_id}</td>
 	        <td>{if $row.is_deductible eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
 	        <td>{if $row.is_reserved eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-	        <td id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+          <td>{if $row.is_default eq 1}<img src="{$config->resourceBase}i/check.gif" alt="{ts}Default{/ts}" /> {/if}</td>
+          <td id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
 	        <td>{$row.action|replace:'xx':$row.id}</td>
         </tr>
         {/foreach}
