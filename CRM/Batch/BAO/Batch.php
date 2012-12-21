@@ -274,6 +274,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
       elseif ($params['context'] == 'financialBatch') {
         $values[$object->id]['check'] = "<input type='checkbox' id='check_".$object->id."' name='check_".$object->id."' value='1' data-id='".$object->id."' data-status_id='".$values[$object->id]['status_id']."' class='crm-batch-select'></input>";
         $status = $values[$object->id]['status_id'];
+
         switch ($status) {
           case '1':
             unset($newLinks['reopen']);
@@ -298,7 +299,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
       $values[$object->id]['action'] = CRM_Core_Action::formLink(
         $newLinks,
         $action,
-        array('id' => $object->id)
+        array('id' => $object->id, 'status' => $status )
       );
     }
 
@@ -374,8 +375,8 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
         ),
         'export' =>  array(
           'name'  => ts('Export'),
-          'url'   => 'civicrm/financial/batch',
-          'qs'    => 'reset=1&action=export&id=%%id%%',
+          'url'   => 'civicrm/financial/batch/export',
+          'qs'    => 'reset=1&action=export&id=%%id%%&status=%%status%%',
           'title' => ts('Export Batch'),
         ),
         'reopen' =>  array(
