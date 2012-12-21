@@ -169,6 +169,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
     $batch = new CRM_Batch_DAO_Batch();
     $batch->id = $batchId;
     $batch->delete();
+    return true;
   }
 
   /**

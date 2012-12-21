@@ -40,7 +40,7 @@
 class CRM_Financial_Page_AJAX {
 
   /**
-   * Function for building financial account select 
+   * Function for building financial account select
    */
   function financialAccount() {
     $name = trim(CRM_Utils_Type::escape($_GET['s'], 'String'));
@@ -202,18 +202,18 @@ ORDER by f.name";
       'remove' => 'removeBatchEntity',
       'reopen' => 'create',
       'close' => 'create',
-      'delete' => 'delete'
+      'delete' => 'deleteBatch',
     );
     $response = array('status' => 'record-updated-fail');
-    foreach ($records as $recordID) {
-      $params = array();
-      // first munge and clean the recordBAO and get rid of any non alpha numeric characters
-      $recordBAO = CRM_Utils_String::munge($recordBAO);
-      $recordClass = explode('_', $recordBAO);
-      $ids = null;
-      // make sure recordClass is in the CRM namespace and
-      // at least 3 levels deep
-      if ($recordClass[0] == 'CRM' && count($recordClass) >= 3) {
+    // first munge and clean the recordBAO and get rid of any non alpha numeric characters
+    $recordBAO = CRM_Utils_String::munge($recordBAO);
+    $recordClass = explode('_', $recordBAO);
+    // make sure recordClass is in the CRM namespace and
+    // at least 3 levels deep
+    if ($recordClass[0] == 'CRM' && count($recordClass) >= 3) {
+      foreach ($records as $recordID) {
+        $params = array();
+        $ids = null;
         switch ($op) {
           case 'assign':
           case 'remove':
@@ -233,6 +233,11 @@ ORDER by f.name";
             $params['modified_date'] = date('YmdHis');
             $params['modified_id'] = $session->get('userID');
             $params['id'] = $recordID;
+            $context = "financialBatch";
+            break;
+
+          case 'delete':
+            $params = $recordID;
             $context = "financialBatch";
             break;
         }
@@ -347,7 +352,7 @@ ORDER by f.name";
       $row[$financialItem->id]['contact_type'] = CRM_Contact_BAO_Contact_Utils::getImage(CRM_Utils_Array::value('contact_sub_type',$row[$financialItem->id]) ? CRM_Utils_Array::value('contact_sub_type',$row[$financialItem->id]) : CRM_Utils_Array::value('contact_type',$row[$financialItem->id]) ,false, $financialItem->contact_id);
       $financialitems = $row;
     }
-    
+
     $iFilteredTotal = $iTotal =  $params['total'];
     $selectorElements =
       array(
@@ -358,7 +363,7 @@ ORDER by f.name";
     echo CRM_Utils_JSON::encodeDataTableSelector($financialitems, $sEcho, $iTotal, $iFilteredTotal, $selectorElements);
     CRM_Utils_System::civiExit();
   }
-  
+
   static function bulkAssignRemove() {
     $checkIDs = $_REQUEST['ID'];
     $entityID = CRM_Utils_Type::escape($_REQUEST['entityID'], 'String');
@@ -369,16 +374,16 @@ ORDER by f.name";
         $cIDs[] = $contributions[2];
       }
     }
-    
+
     foreach ($cIDs as $key => $value) {
-      $params = 
+      $params =
         array('entity_id' => $value,
                'entity_table' => 'civicrm_financial_trxn',
                'batch_id' => $entityID,
                );
       if ($action == 'Assign') {
         $updated = CRM_Batch_BAO_Batch::addBatchEntity($params);
-      } 
+      }
       else {
         $updated = CRM_Batch_BAO_Batch::removeBatchEntity($params);
       }
@@ -388,7 +393,7 @@ ORDER by f.name";
     }
     echo json_encode($status);
     CRM_Utils_System::civiExit();
-    
+
   }
-  
+
   }
