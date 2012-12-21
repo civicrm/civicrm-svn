@@ -98,7 +98,7 @@ ORDER by f.name";
     }
     $elements = array(
       array(
-        'name'  => ts('- Select Financial Account -'),
+        'name'  => ts('- select -'),
         'value' => 'select'
       )
     );
@@ -116,7 +116,7 @@ ORDER by f.name";
   }
 
   function jqFinancialRelation($config) {
-    if (! isset($_GET['_value']) ||
+    if (!isset($_GET['_value']) ||
       empty($_GET['_value'])) {
       CRM_Utils_System::civiExit();
     }
@@ -247,9 +247,6 @@ ORDER by f.name";
           if ($updated) {
             $response = array('status' => 'record-updated-success');
           }
-
-          // // call hook enableDisable
-          // CRM_Utils_Hook::enableDisable($recordBAO, $recordID, $isActive);
         }
       }
     }
