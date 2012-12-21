@@ -208,12 +208,13 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
     $batchList = array();
 
     if (!empty($batches)) {
+      $pid = CRM_Contribute_PseudoConstant::paymentInstrument();
       foreach ($batches as $id => $value) {
         if (($params['context'] == 'financialBatch')) {
           $batchList[$id]['check'] = $value['check'];
         }
         $batchList[$id]['batch_name'] = $value['title'];
-        $batchList[$id]['batch_type'] = $value['batch_type'];
+        $batchList[$id]['payment_instrument_id'] = $value['payment_instrument_id'] ? $pid[$value['payment_instrument_id']] : '';
         $batchList[$id]['item_count'] = $value['item_count'];
         $batchList[$id]['total_amount'] = CRM_Utils_Money::format($value['total']);
         $batchList[$id]['status'] = $value['batch_status'];
@@ -231,17 +232,17 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
    * @access public
    */
   static function getBatchList(&$params) {
-    $whereClause = self::whereClause($params, FALSE);
+    $whereClause = self::whereClause($params);
 
-    if (!empty($params['rowCount']) &&
-      $params['rowCount'] > 0
+    if (!empty($params['rowCount']) && is_numeric($params['rowCount'])
+      && is_numeric($params['offset']) && $params['rowCount'] > 0
     ) {
       $limit = " LIMIT {$params['offset']}, {$params['rowCount']} ";
     }
 
     $orderBy = ' ORDER BY batch.id desc';
-    if (CRM_Utils_Array::value('sort', $params)) {
-      $orderBy = ' ORDER BY ' . CRM_Utils_Array::value('sort', $params);
+    if (!empty($params['sort'])) {
+      $orderBy = ' ORDER BY ' . $params['sort'];
     }
 
     $query = "
@@ -270,7 +271,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
         $newLinks = array();
       }
       elseif ($params['context'] == 'financialBatch') {
-        $values[$object->id]['check'] = "<input type='checkbox' id='check_".$object->id."' name='check_".$object->id."' value='1' onclick='enableActions()'></input>";
+        $values[$object->id]['check'] = "<input type='checkbox' id='check_".$object->id."' name='check_".$object->id."' value='1' data-id='".$object->id."' data-status_id='".$values[$object->id]['status_id']."' class='crm-batch-select'></input>";
         $status = $values[$object->id]['status_id'];
         switch ($status) {
           case '1':
@@ -304,35 +305,43 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
   }
 
   static function getBatchCount(&$params) {
-    $whereClause = self::whereClause($params, FALSE);
-    $query = " SELECT COUNT(*) FROM civicrm_batch batch WHERE {$whereClause}";
-    return CRM_Core_DAO::singleValueQuery($query, $params);
+    $args = array();
+    $whereClause = self::whereClause($params, $args);
+    $query = " SELECT COUNT(*) FROM civicrm_batch batch 
+      INNER JOIN civicrm_contact c ON batch.created_id = c.id
+      WHERE {$whereClause}";
+    return CRM_Core_DAO::singleValueQuery($query);
   }
 
-  function whereClause(&$params, $sortBy = TRUE, $excludeHidden = TRUE) {
+  function whereClause($params) {
     $clauses = array();
+    $i = 1;
 
-    $title = CRM_Utils_Array::value('title', $params);
-    if ($title) {
-      $clauses[] = "batch.title LIKE %1";
-      if (strpos($title, '%') !== FALSE) {
-        $params[1] = array($title, 'String', FALSE);
+    $fields = array(
+      'title' => 'String',
+      'sort_name' => 'String',
+      'status_id' => 'Integer',
+      'payment_instrument_id' => 'Integer',
+      'item_count' => 'Integer',
+      'total' => 'Float',
+    );
+
+    foreach ($fields as $field => $type) {
+      $table = $field == 'sort_name' ? 'c' : 'batch';
+      if (isset($params[$field])) {
+        $value = CRM_Utils_Type::escape($params[$field], $type, FALSE);
+        if ($value && $type == 'String') {
+          $clauses[] = "$table.$field LIKE '%$value%'";
+        }
+        elseif ($value && $type == 'Float') {
+          $clauses[] = "$table.$field = '$value'";
+        }
+        elseif ($value) {
+          $clauses[] = "$table.$field = $value";
+        }
       }
-      else {
-        $params[1] = array($title, 'String', TRUE);
-      }
     }
-
-    $status = CRM_Utils_Array::value('status_id', $params);
-    if ($status) {
-      $clauses[] = 'batch.status_id = %3';
-      $params[3] = array($status, 'Integer');
-    }
-
-    if (empty($clauses)) {
-      return '1';
-    }
-    return implode(' AND ', $clauses);
+    return $clauses ? implode(' AND ', $clauses) : '1';
   }
 
   /**
@@ -348,7 +357,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
           'name'  => ts('Transactions'),
           'url'   => 'civicrm/batchtransaction',
           'qs'    => 'reset=1&bid=%%id%%',
-          'title' => ts('View all Transaction'),
+          'title' => ts('View/Add Transactions to Batch'),
         ),
         'edit' =>    array(
           'name'  => ts('Edit'),
@@ -359,7 +368,8 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
         'close' =>   array(
           'name'  => ts('Close'),
           'title' => ts('Close Batch'),
-          'extra' => 'class="closeReopenBatch" data-id="%%id%%" rel="close"',
+          'url'   => '#',
+          'extra' => 'rel="close"',
         ),
         'export' =>  array(
           'name'  => ts('Export'),
@@ -370,11 +380,14 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
         'reopen' =>  array(
           'name'  => ts('ReOpen'),
           'title' => ts('ReOpen Batch'),
-          'extra' => 'class="closeReopenBatch" data-id="%%id%%" rel="reopen"',
+          'url'   => '#',
+          'extra' => 'rel="reopen"',
         ),
         'delete' =>  array(
           'name'  => ts('Delete'),
           'title' => ts('Delete Batch'),
+          'url'   => '#',
+          'extra' => 'rel="delete"',
         ),
         'download' => array(
           'name'  => ts('Download'),

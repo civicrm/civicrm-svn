@@ -71,7 +71,7 @@ class CRM_Batch_Page_AJAX {
     $sortOrder = isset($_REQUEST['sSortDir_0']) ? CRM_Utils_Type::escape($_REQUEST['sSortDir_0'], 'String') : 'asc';
     $context   = isset($_REQUEST['context']) ? CRM_Utils_Type::escape($_REQUEST['context'], 'String') : NULL;
 
-    $params = $_POST;
+    $params = $_REQUEST;
     if ($sort && $sortOrder) {
       $params['sortBy'] = $sort . ' ' . $sortOrder;
     }
@@ -91,11 +91,16 @@ class CRM_Batch_Page_AJAX {
 
     $iFilteredTotal = $iTotal = $params['total'];
     $selectorElements = array(
-      'batch_name', 'batch_type',
-      'item_count', 'total_amount', 'status', 'created_by', 'links'
+      'batch_name',
+      'payment_instrument_id',
+      'item_count',
+      'total_amount',
+      'status',
+      'created_by',
+      'links',
     );
 
-    if ( $context == 'financialBatch' ) {
+    if ($context == 'financialBatch') {
       $selectorElements = array_merge(array('check'), $selectorElements);
     }
     echo CRM_Utils_JSON::encodeDataTableSelector($batches, $sEcho, $iTotal, $iFilteredTotal, $selectorElements);

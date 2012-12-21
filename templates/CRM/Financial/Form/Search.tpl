@@ -32,7 +32,7 @@
 <div class="crm-form-block crm-search-form-block">
   <div class="crm-accordion-wrapper crm-activity_search-accordion">
     <div class="crm-accordion-header">
-      {ts}Filters{/ts}
+      {ts}Filter Results{/ts}
     </div>
     <div class="crm-accordion-body">
       <div id="financial-search-form" class="crm-block crm-form-block">
@@ -55,7 +55,7 @@
     <tr>
       <th class="crm-batch-checkbox">{$form.toggleSelect.html}</th>
       <th class="crm-batch-name">{ts}Batch Name{/ts}</th>
-      <th class="crm-batch-type">{ts}Type{/ts}</th>
+      <th class="crm-batch-payment_instrument_id">{ts}Payment Instrument{/ts}</th>
       <th class="crm-batch-item_count">{ts}Item Count{/ts}</th>
       <th class="crm-batch-total_amount">{ts}Total Amount{/ts}</th>
       <th class="crm-batch-status">{ts}Status{/ts}</th>
@@ -64,6 +64,7 @@
     </tr>
   </thead>
 </table>
+{include file="CRM/Form/validate.tpl"}
 {literal}
 <script type="text/javascript">
 cj(function($) {
@@ -72,21 +73,20 @@ cj(function($) {
   $("#batch_update").removeAttr('disabled');
 
   $('#financial-search-form :input').change(function() {
-    batchSelector.fnDraw();
+    if (!$(this).hasClass('crm-inline-error')) {
+      batchSelector.fnDraw();
+    }
   });
 
   $("#toggleSelect").click(function() {
-    $("#crm-batch-selector input[id^='check_']").prop('checked', $(this).is(':checked'));    
+    $("#crm-batch-selector input[id^='check_']").prop('checked', $(this).is(':checked'));
   });
 
   function buildBatchSelector(filterSearch) {
     var ZeroRecordText = '<div class="status messages">{/literal}{ts escape="js"}No matching Accounting Batches found for your search criteria.{/ts}{literal}</li></ul></div>';
-    if (0) {
-      var ZeroRecordText = {/literal}'<div class="status messages">{ts escape="js"}No Accounting Batches have been created for this site.{/ts}</div>'{literal};
-    }
 
     var columns = '';
-    var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/batchlist" h=0 q="snippet=4&context=financialBatch&batchStatus="}'{literal};
+    var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/batchlist" h=0 q="snippet=4&context=financialBatch"}'{literal};
 
     batchSelector = $('#crm-batch-selector').dataTable({
       "bFilter" : false,
@@ -95,15 +95,15 @@ cj(function($) {
       "aoColumns" : [
         {sClass:'crm-batch-checkbox', bSortable:false},
         {sClass:'crm-batch-name'},
-        {sClass:'crm-batch-type'},
+        {sClass:'crm-batch-payment_instrument_id'},
         {sClass:'crm-batch-item_count right'},
         {sClass:'crm-batch-total_amount right'},
         {sClass:'crm-batch-status'},
         {sClass:'crm-batch-created_by'},
-        {sClass:'crm-batch-links', bSortable:false}
+        {sClass:'crm-batch-links', bSortable:false},
        ],
       "bProcessing": true,
-      "asStripClasses" : [ "odd-row", "even-row" ],
+      "asStripClasses" : ["odd-row", "even-row"],
       "sPaginationType": "full_numbers",
       "sDom" : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',
       "bServerSide": true,
@@ -125,7 +125,7 @@ cj(function($) {
           "sLast": {/literal}"{ts escape='js'}Last{/ts}"{literal}
         }
       },
-      "fnServerData": function (sSource, aoData, fnCallback) {
+      "fnServerParams": function (aoData) {
         $('#financial-search-form :input').each(function() {
           if ($(this).val()) {
             aoData.push(
@@ -133,97 +133,115 @@ cj(function($) {
             );
           }
         });
-        $.ajax({
-          "dataType": 'json',
-          "type": "POST",
-          "url": sSource,
-          "data": aoData,
-          "success": fnCallback
-        });
+      },
+      "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+        var box = $(aData[0]);
+        $(nRow).addClass('crm-entity').attr('data-entity', 'batch').attr('data-id', box.attr('data-id')).attr('data-status_id', box.attr('data-status_id'));
+        $('td:eq(1)', nRow).wrapInner('<div class="crm-editable crmf-title" />');
+        return nRow;
+      },
+      "fnDrawCallback": function(oSettings) {
+        $('.crm-editable').not('.crm-editable-enabled').crmEditable();
       }
     });
   }
 
-  function closeReopen(recordID, op) {
+  function editRecords(records, op) {
     var recordBAO = 'CRM_Batch_BAO_Batch';
-    if (op == 'close') {
-      var st = {/literal}'{ts escape="js"}Close the Batch{/ts}'{literal};
-    }
-    else if (op == 'reopen') {
-      var st = {/literal}'{ts escape="js"}Reopen the Batch{/ts}'{literal};
-    }
 
-    $("#enableDisableStatusMsg").show();
     $("#enableDisableStatusMsg").dialog({
-      title: st,
+      title: {/literal}'{ts escape="js"}Confirm Changes{/ts}'{literal},
       modal: true,
       bgiframe: true,
-      position: "right",
-      overlay: { 
-        opacity: 0.5, 
-        background: "black" 
+      position: "center",
+      overlay: {
+        opacity: 0.5,
+        background: "black"
       },
       open:function() {
-        var postUrl = {/literal}"{crmURL p='civicrm/ajax/statusmsg' h=0 }"{literal};
-        $.post(postUrl, { recordID: recordID, recordBAO: recordBAO, op: op  }, function(statusMessage) {
-          if (statusMessage.status) {
-            $('#enableDisableStatusMsg' ).show().html(statusMessage.status );
-                    }
-  
-              }, 'json' );
-    },
-  
-    buttons: { 
-      "{ts escape='js'}Cancel{/ts}": function() { 
-        $(this).dialog("close"); 
+        switch (op) {{/literal}
+          case 'reopen':
+            var msg = '{ts escape="js"}Are you sure you want to re-open:{/ts}';
+            break;
+          case 'delete':
+            var msg = '{ts escape="js"}Are you sure you want to delete:{/ts}';
+            break;
+          case 'close':
+            var msg = '{ts escape="js"}Are you sure you want to close:{/ts}';
+            break;
+        {literal}}
+        msg += listRecords(records);
+        $('#enableDisableStatusMsg').show().html(msg);
       },
-      "{ts escape='js'}Ok{/ts}": function() {    
-              saveRecord(recordID, op, recordBAO);
-              $(this).dialog("close");             
+      buttons: {
+        {/literal}"{ts escape='js'}Cancel{/ts}"{literal}: function() {
+          $(this).dialog("close");
+        },
+        {/literal}"{ts escape='js'}OK{/ts}{literal}": function() {
+          saveRecords(records, op, recordBAO);
+          $(this).dialog("close");
+        }
       }
-    } 
-  });
-}
-    
-  function noServerResponse() {
-    if (!responseFromServer) { 
-      var serverError =  '{/literal}{ts escape="js"}There is no response from server therefore selected record is not updated.{/ts}{literal}'  + '&nbsp;&nbsp;<a href="javascript:hideEnableDisableStatusMsg();"><img title="{/literal}{ts escape="js"}close{/ts}{literal}" src="' +resourceBase+'i/close.png"/></a>';
-      $('#enableDisableStatusMsg' ).show().html(serverError ); 
-    }
+    });
   }
 
-  function saveRecord(recordID, op, recordBAO) {
-    $('#enableDisableStatusMsg').hide();
+  function listRecords(records) {
+    var msg = '<ul>';
+    for (var i in records) {
+      msg += '<li>' + $('tr[data-id='+records[i]+'] .crmf-title').text() + '</li>';
+    }
+    return msg + '</ul>';
+  }
+
+  function saveRecords(records, op, recordBAO) {
     var postUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Financial_Page_AJAX&fnName=assignRemove'}"{literal};
     //post request and get response
-    $.post(postUrl, {recordID: recordID, recordBAO: recordBAO, op:op, key: {/literal}"{crmKey name='civicrm/ajax/ar'}"{literal}},
+    $.post(postUrl, {records: records, recordBAO: recordBAO, op: op, key: {/literal}"{crmKey name='civicrm/ajax/ar'}"{literal}},
       function(response) {
-        responseFromServer = true;      
         //this is custom status set when record update success.
         if (response.status == 'record-updated-success') {
           batchSelector.fnDraw();
-          $().crmAlert('', ts('Saved'), 'success');
-        } 
+          $().crmAlert(listRecords(records), op == 'delete' ? {/literal}'{ts escape="js"}Deleted{/ts}' : '{ts escape="js"}Updated{/ts}'{literal}, 'success');
+        }
+        else {
+          serverError();
+        }
       },
-      'json'
-    );
-
-      //if no response from server give message to user.
-      setTimeout("noServerResponse()", 1500 ); 
+      'json').error(serverError);
+       
+  }
+  
+  function serverError() {
+     $().crmError({/literal}'{ts escape="js"}No response from the server. Check your internet connection and try reloading the page.{/ts}', '{ts escape="js"}Network Error{/ts}'{literal});
   }
 
   $('#Go').click(function() {
-    if (!$("#toggleSelect").is(':checked') && !$("#crm-batch-selector input[id^='check_']").is(':checked') && $("#batch_update").val() != "") {
+    var op = $("#batch_update").val();
+    if (op == "") {
+       $().crmAlert({/literal}'{ts escape="js"}Please select an action from the menu.{/ts}', '{ts escape="js"}No Action Selected{/ts}'{literal});
+       return false;
+    }
+    else if (!$("input.crm-batch-select:checked").length) {
        $().crmAlert({/literal}'{ts escape="js"}Please select one or more batches for this action.{/ts}', '{ts escape="js"}No Batches Selected{/ts}'{literal});
        return false;
     }
-    else if ($("#batch_update").val() == "") {
-       $().crmAlert({/literal}'{ts escape="js"}Please select an action from the menu.{/ts}', '{ts escape="js"}No Action Selected{/ts}'{literal});
-       return false; 
+    else if (op == 'close' || op == 'reopen' || op == 'delete') {
+      records = [];
+      $("input.crm-batch-select:checked").each(function() {
+        records.push($(this).attr('data-id'));
+      });
+      editRecords(records, op);
+      return false;
     }
   });
 
+  $('#crm-container').on('click', 'a.action-item[href="#"]', function(event) {
+    event.stopImmediatePropagation();
+    editRecords([$(this).closest('tr').attr('data-id')], $(this).attr('rel'));
+    return false;
+  });
+
 });
- 
+
 </script>
 {/literal}

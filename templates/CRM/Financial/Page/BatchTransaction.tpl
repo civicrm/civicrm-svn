@@ -91,7 +91,7 @@ function assignRemove(recordID, op) {
     } 
   });
 }
-		
+
 function noServerResponse() {
   if (!responseFromServer) { 
     var serverError =  '{/literal}{ts escape="js"}There is no response from server therefore selected record is not updated.{/ts}{literal}'  + '&nbsp;&nbsp;<a href="javascript:hideEnableDisableStatusMsg();"><img title="{/literal}{ts escape="js"}close{/ts}{literal}" src="' +resourceBase+'i/close.png"/></a>';
@@ -103,7 +103,7 @@ function saveRecord(recordID, op, recordBAO, entityID) {
   cj( '#enableDisableStatusMsg' ).hide( );
   var postUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Financial_Page_AJAX&fnName=assignRemove'}"{literal};
   //post request and get response
-  cj.post( postUrl, { recordID: recordID, recordBAO: recordBAO, op:op, entityID:entityID, key: {/literal}"{crmKey name='civicrm/ajax/ar'}"{literal}  }, function( html ){
+  cj.post( postUrl, { records: [recordID], recordBAO: recordBAO, op:op, entityID:entityID, key: {/literal}"{crmKey name='civicrm/ajax/ar'}"{literal}  }, function( html ){
     responseFromServer = true;      
     //this is custom status set when record update success.
     if (html.status == 'record-updated-success') {

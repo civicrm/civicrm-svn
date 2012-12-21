@@ -53,6 +53,7 @@ class CRM_Financial_Form_Search extends CRM_Core_Form {
 
   public function buildQuickForm() {
     $attributes = CRM_Core_DAO::getAttribute('CRM_Batch_DAO_Batch');
+    $attributes['total']['class'] = $attributes['item_count']['class'] = 'number';
     $this->add('text', 'title', ts('Batch Name'), $attributes['title']);
 
     $this->add(
@@ -78,15 +79,16 @@ class CRM_Financial_Form_Search extends CRM_Core_Form {
 
     $this->add('text', 'total', ts('Total Amount'), $attributes['total']);
 
-    $this->add('text', 'item_count', ts('Number of Transactions'), $attributes['item_count']);
+    $this->add('text', 'item_count', ts('Number of Items'), $attributes['item_count']);
     $this->add('text', 'sort_name', ts('Created By'), CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'sort_name'));
 
     $this->assign('elements', array('status_id', 'title', 'sort_name', 'payment_instrument_id', 'item_count', 'total'));
     $this->addElement('checkbox', 'toggleSelect', NULL, NULL);
     $batchAction = array(
-      'Open' => ts('ReOpen Batch'),
-      'Closed' => ts('Close Batch'),
-      'Exported' => ts('Export Batch')
+      'reopen' => ts('Re-open'),
+      'close' => ts('Close'),
+      'export' => ts('Export'),
+      'delete' => ts('Delete'),
     );
 
     $this->add('select',

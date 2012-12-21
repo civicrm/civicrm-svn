@@ -43,14 +43,14 @@ class CRM_Financial_Page_AJAX {
    * Function for building financial account select 
    */
   function financialAccount() {
-    $name = trim( CRM_Utils_Type::escape( $_GET['s'], 'String' ) );
+    $name = trim(CRM_Utils_Type::escape($_GET['s'], 'String'));
     if (!$name) {
       $name = '%';
     }
     $whereClause = " f.name LIKE '$name%' ";
 
-    //if( CRM_Utils_Array::getValue( 'id',$_GET ) )
-    if (array_key_exists( 'parentID', $_GET )) {
+    //if(CRM_Utils_Array::getValue('id',$_GET))
+    if (array_key_exists('parentID', $_GET)) {
       $parentID = $_GET['parentID'];
       $whereClause .= " AND f.id = {$parentID} ";
     }
@@ -61,11 +61,11 @@ FROM   civicrm_financial_account as f
 WHERE  {$whereClause}
 ORDER by f.name";
 
-    $dao = CRM_Core_DAO::executeQuery( $query );
-    while ( $dao->fetch( ) ) {
+    $dao = CRM_Core_DAO::executeQuery($query);
+    while ($dao->fetch()) {
       echo $elements = "$dao->name|$dao->id\n";
     }
-    CRM_Utils_System::civiExit( );
+    CRM_Utils_System::civiExit();
   }
 
   /*
@@ -73,14 +73,14 @@ ORDER by f.name";
    * $financialAccountType array with key account relationship and value financial account type option groups
    *
    */
-  function jqFinancial( $config ) {
-    if (!isset( $_GET['_value']) ||
-      empty( $_GET['_value'] ) ) {
-      CRM_Utils_System::civiExit( );
+  function jqFinancial($config) {
+    if (!isset($_GET['_value']) ||
+      empty($_GET['_value'])) {
+      CRM_Utils_System::civiExit();
     }
 
     if ($_GET['_value'] == 'select') {
-      $result = CRM_Contribute_PseudoConstant::financialAccount( );
+      $result = CRM_Contribute_PseudoConstant::financialAccount();
     }
     else {
       $financialAccountType = array(
@@ -103,26 +103,26 @@ ORDER by f.name";
       )
     );
 
-    if (!empty( $result )){
-      foreach ( $result as $id => $name ) {
+    if (!empty($result)){
+      foreach ($result as $id => $name) {
         $elements[] = array(
           'name'  => $name,
           'value' => $id
         );
       }
     }
-    echo json_encode( $elements );
-    CRM_Utils_System::civiExit( );
+    echo json_encode($elements);
+    CRM_Utils_System::civiExit();
   }
 
-  function jqFinancialRelation( $config ) {
-    if ( ! isset( $_GET['_value'] ) ||
-      empty( $_GET['_value'] ) ) {
-      CRM_Utils_System::civiExit( );
+  function jqFinancialRelation($config) {
+    if (! isset($_GET['_value']) ||
+      empty($_GET['_value'])) {
+      CRM_Utils_System::civiExit();
     }
 
     if ($_GET['_value'] == 'select') {
-      $result = CRM_Core_PseudoConstant::accountOptionValues( 'account_relationship' );
+      $result = CRM_Core_PseudoConstant::accountOptionValues('account_relationship');
     }
     else {
       $financialAccountType = array(
@@ -131,8 +131,8 @@ ORDER by f.name";
         '3' => array(1, 9), //revenue
         '4' => array(7), //cost of sales
       );
-      $financialAccountTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialAccount', $_GET['_value'], 'financial_account_type_id' );
-      $result = CRM_Core_PseudoConstant::accountOptionValues( 'account_relationship' );
+      $financialAccountTypeId = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_FinancialAccount', $_GET['_value'], 'financial_account_type_id');
+      $result = CRM_Core_PseudoConstant::accountOptionValues('account_relationship');
     }
 
     $elements = array(
@@ -142,11 +142,11 @@ ORDER by f.name";
       )
     );
 
-    $countResult = count( $financialAccountType[$financialAccountTypeId] );
-    if (!empty( $result )) {
-      foreach ( $result as $id => $name ) {
-        if (in_array( $id, $financialAccountType[$financialAccountTypeId] )  && $_GET['_value'] != 'select') {
-          if ( $countResult != 1){
+    $countResult = count($financialAccountType[$financialAccountTypeId]);
+    if (!empty($result)) {
+      foreach ($result as $id => $name) {
+        if (in_array($id, $financialAccountType[$financialAccountTypeId])  && $_GET['_value'] != 'select') {
+          if ($countResult != 1){
             $elements[] = array(
               'name'  => $name,
               'value' => $id
@@ -160,7 +160,7 @@ ORDER by f.name";
             );
           }
         }
-        elseif ( $_GET['_value'] == 'select' ){
+        elseif ($_GET['_value'] == 'select'){
           $elements[] = array(
             'name'  => $name,
             'value' => $id
@@ -168,50 +168,56 @@ ORDER by f.name";
         }
       }
     }
-    echo json_encode( $elements );
-    CRM_Utils_System::civiExit( );
+    echo json_encode($elements);
+    CRM_Utils_System::civiExit();
   }
 
-  function jqFinancialType( $config ) {
-    if ( ! isset( $_GET['_value'] ) ||
-      empty( $_GET['_value'] ) ) {
-      CRM_Utils_System::civiExit( );
+  function jqFinancialType($config) {
+    if (! isset($_GET['_value']) ||
+      empty($_GET['_value'])) {
+      CRM_Utils_System::civiExit();
     }
 
-    $elements = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_Product', $_GET['_value'], 'financial_type_id' );
-    echo json_encode( $elements );
-    CRM_Utils_System::civiExit( );
+    $elements = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_Product', $_GET['_value'], 'financial_type_id');
+    echo json_encode($elements);
+    CRM_Utils_System::civiExit();
   }
 
   /**
-   * Function to perform remove/assign actions on record.
-   *
+   * Function to perform action on records.
    */
-  static function assignRemove( ) {
-    $op        = CRM_Utils_Type::escape( $_POST['op'       ],  'String'   );
-    $recordID  = CRM_Utils_Type::escape( $_POST['recordID' ],  'Positive' );
-    $recordBAO = CRM_Utils_Type::escape( $_POST['recordBAO'],  'String'   );
+  static function assignRemove() {
+    $op = CRM_Utils_Type::escape($_POST['op'], 'String');
+    $recordBAO = CRM_Utils_Type::escape($_POST['recordBAO'], 'String');
+    foreach ($_POST['records'] as $record) {
+      $recordID = CRM_Utils_Type::escape($record, 'Positive', FALSE);
+      if ($recordID) {
+        $records[] = $recordID;
+      }
+    }
 
-    $entityID  = CRM_Utils_Array::value( 'entityID', $_POST );
-    $methods = array( 'assign' => 'addBatchEntity',
+    $entityID  = CRM_Utils_Array::value('entityID', $_POST);
+    $methods = array(
+      'assign' => 'addBatchEntity',
       'remove' => 'removeBatchEntity',
       'reopen' => 'create',
-      'close'  => 'create' );
-    $params = array( );
-    $status = array( 'status' => 'record-updated-fail' );
-    if ( isset( $recordID ) ) {
+      'close' => 'create',
+      'delete' => 'delete'
+    );
+    $response = array('status' => 'record-updated-fail');
+    foreach ($records as $recordID) {
+      $params = array();
       // first munge and clean the recordBAO and get rid of any non alpha numeric characters
-      $recordBAO = CRM_Utils_String::munge( $recordBAO );
-      $recordClass = explode( '_', $recordBAO );
+      $recordBAO = CRM_Utils_String::munge($recordBAO);
+      $recordClass = explode('_', $recordBAO);
       $ids = null;
       // make sure recordClass is in the CRM namespace and
       // at least 3 levels deep
-      if ( $recordClass[0] == 'CRM' && count( $recordClass ) >= 3 ) {
-        require_once(str_replace('_', DIRECTORY_SEPARATOR, $recordBAO) . ".php");
+      if ($recordClass[0] == 'CRM' && count($recordClass) >= 3) {
         switch ($op) {
           case 'assign':
           case 'remove':
-            $params = array( 'entity_id' => $recordID,
+            $params = array('entity_id' => $recordID,
               'entity_table' => 'civicrm_financial_trxn',
               'batch_id' => $entityID,
             );
@@ -219,37 +225,31 @@ ORDER by f.name";
 
           case 'reopen':
           case 'close':
-            if ( $op == 'close' ){
-              $status = 'Closed';
-            } else {
-              $status = 'Open';
-            }
+            $status = $op == 'close' ? 'Closed' : 'Open';
             $ids['batchID'] = $recordID;
-            $batchStatus = CRM_Core_PseudoConstant::accountOptionValues( 'batch_status' );
-            $params['status_id'] = CRM_Utils_Array::key( $status, $batchStatus );
-            $session = CRM_Core_Session::singleton( );
+            $batchStatus = CRM_Core_PseudoConstant::accountOptionValues('batch_status');
+            $params['status_id'] = CRM_Utils_Array::key($status, $batchStatus);
+            $session = CRM_Core_Session::singleton();
             $params['modified_date'] = date('YmdHis');
-            $params['modified_id'] = $session->get( 'userID' );
+            $params['modified_id'] = $session->get('userID');
             $params['id'] = $recordID;
             $context = "financialBatch";
             break;
-
         }
 
-        if ( method_exists( $recordBAO, $methods[$op] ) ) {
-          $updated = call_user_func_array( array( $recordBAO, $methods[$op] ),
-            array( &$params, $ids, $context ) );
-          if ( $updated ) {
-            $status = array( 'status' => 'record-updated-success' );
+        if (method_exists($recordBAO, $methods[$op])) {
+          $updated = call_user_func_array(array($recordBAO, $methods[$op]), array(&$params, $ids, $context));
+          if ($updated) {
+            $response = array('status' => 'record-updated-success');
           }
 
           // // call hook enableDisable
-          // CRM_Utils_Hook::enableDisable( $recordBAO, $recordID, $isActive );
+          // CRM_Utils_Hook::enableDisable($recordBAO, $recordID, $isActive);
         }
       }
-      echo json_encode( $status );
-      CRM_Utils_System::civiExit( );
     }
+    echo json_encode($response);
+    CRM_Utils_System::civiExit();
   }
 
   static function getFinancialTransactionsList() {
@@ -337,14 +337,14 @@ ORDER by f.name";
       if (isset($notPresent)) {
         $js = "enableActions('x')";
         $row[$financialItem->id]['check'] = "<input type='checkbox' id='mark_x_". $financialItem->id."' name='mark_x_". $financialItem->id."' value='1' onclick={$js}></input>";
-        $row[$financialItem->id]['action'] = CRM_Core_Action::formLink( CRM_Financial_Form_BatchTransaction::links(), null, array('id' => $financialItem->id, 'contid' => $financialItem->contributionID, 'cid' => $financialItem->contact_id));
+        $row[$financialItem->id]['action'] = CRM_Core_Action::formLink(CRM_Financial_Form_BatchTransaction::links(), null, array('id' => $financialItem->id, 'contid' => $financialItem->contributionID, 'cid' => $financialItem->contact_id));
       }
       else {
         $js = "enableActions('y')";
         $row[$financialItem->id]['check'] = "<input type='checkbox' id='mark_y_". $financialItem->id."' name='mark_y_". $financialItem->id."' value='1' onclick={$js}></input>";
-        $row[$financialItem->id]['action'] = CRM_Core_Action::formLink( CRM_Financial_Page_BatchTransaction::links(), null, array('id' => $financialItem->id, 'contid' => $financialItem->contributionID, 'cid' => $financialItem->contact_id));
+        $row[$financialItem->id]['action'] = CRM_Core_Action::formLink(CRM_Financial_Page_BatchTransaction::links(), null, array('id' => $financialItem->id, 'contid' => $financialItem->contributionID, 'cid' => $financialItem->contact_id));
       }
-      $row[$financialItem->id]['contact_type' ] = CRM_Contact_BAO_Contact_Utils::getImage( CRM_Utils_Array::value('contact_sub_type',$row[$financialItem->id]) ? CRM_Utils_Array::value('contact_sub_type',$row[$financialItem->id]) : CRM_Utils_Array::value('contact_type',$row[$financialItem->id]) ,false, $financialItem->contact_id);
+      $row[$financialItem->id]['contact_type'] = CRM_Contact_BAO_Contact_Utils::getImage(CRM_Utils_Array::value('contact_sub_type',$row[$financialItem->id]) ? CRM_Utils_Array::value('contact_sub_type',$row[$financialItem->id]) : CRM_Utils_Array::value('contact_type',$row[$financialItem->id]) ,false, $financialItem->contact_id);
       $financialitems = $row;
     }
     
@@ -372,7 +372,7 @@ ORDER by f.name";
     
     foreach ($cIDs as $key => $value) {
       $params = 
-        array( 'entity_id' => $value,
+        array('entity_id' => $value,
                'entity_table' => 'civicrm_financial_trxn',
                'batch_id' => $entityID,
                );
@@ -384,10 +384,10 @@ ORDER by f.name";
       }
     }
     if ($updated) {
-      $status = array( 'status' => 'record-updated-success' );
+      $status = array('status' => 'record-updated-success');
     }
-    echo json_encode( $status );
-    CRM_Utils_System::civiExit( );
+    echo json_encode($status);
+    CRM_Utils_System::civiExit();
     
   }
   
