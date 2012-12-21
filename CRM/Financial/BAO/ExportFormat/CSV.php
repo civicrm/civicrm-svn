@@ -73,12 +73,12 @@ class CRM_Financial_BAO_ExportFormat_CSV extends CRM_Financial_BAO_ExportFormat 
     $export = parent::export($exportParams);
     $config = CRM_Core_Config::singleton();
       
-    $fileName = $config->uploadDir.'Financial_Transactions_'.date('YmdHis').'.csv' ;
+    $fileName = $config->uploadDir.'Financial_Transactions_'.date('YmdHis').'.'.$this->getFileExtension() ;
     $out = fopen($fileName, 'w');
-
-    fputcsv($out, $export['headers']);
-    unset($export['headers']);
-    foreach ($export as $fields) {
+    fputcsv($out, $export['csvExport']['headers']);
+    unset($export['csvExport']['headers']);
+   
+    foreach ($export['csvExport'] as $fields) {
       fputcsv($out, $fields);
     }
     fclose($out);

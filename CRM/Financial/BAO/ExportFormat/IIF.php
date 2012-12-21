@@ -81,7 +81,6 @@ class CRM_Financial_BAO_ExportFormat_IIF extends CRM_Financial_BAO_ExportFormat 
 
   function export( $exportParams ) {
     parent::export( $exportParams );
-
     foreach( self::$complementaryTables as $rct ) {
       $func = "export{$rct}";
       $this->$func();
@@ -90,7 +89,7 @@ class CRM_Financial_BAO_ExportFormat_IIF extends CRM_Financial_BAO_ExportFormat 
     // now do general journal entries
     $this->exportTRANS();
     
-    $this->output();
+    $this->output($fileName);
   }
   
   function exportACCNT() {

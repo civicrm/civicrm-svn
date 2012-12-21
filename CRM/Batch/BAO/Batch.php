@@ -444,6 +444,14 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
     return $batches;
   }
 
+  function formatHeaders($values) {
+    $arrayKeys = array_keys($values);
+    foreach ($values[$arrayKeys[0]] as $title => $value) {
+      $headers[] = $title;
+    }
+    return $headers;
+  }
+
   /*
    * @see http://wiki.civicrm.org/confluence/display/CRM/CiviAccounts+Specifications+-++Batches#CiviAccountsSpecifications-Batches-%C2%A0Overviewofimplementation
    */
@@ -465,7 +473,13 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
     $sql = "SELECT
       ft.id as financial_trxn_id,
       ft.trxn_date,
-      ft.total_amount,
+      ft.total_amount as debit_total_amount,
+      eft.amount as amount,
+      ft.currency as currency,
+      ft.trxn_id AS trxn_id, 
+      c.source as source,
+      cov.label as payment_instrument,
+      ft.check_number,
       fa_from.id as from_account_id,
       fa_from.name as from_account_name,
       fa_from.accounting_code as from_account_code,
@@ -474,6 +488,9 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
       ov_from.grouping as from_qb_account_type,
       fa_to.id as to_account_id,
       fa_to.name as to_account_name,
+      fac.accounting_code AS credit_account, 
+      fac.name AS credit_account_name, 
+      fi.description AS item_description,
       fa_to.accounting_code as to_account_code,
       fa_to.financial_account_type_id as to_account_type_id,
       fa_to.description as to_account_description,
@@ -489,6 +506,13 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
       FROM civicrm_entity_batch eb
       LEFT JOIN civicrm_financial_trxn ft ON (eb.entity_id = ft.id AND eb.entity_table = 'civicrm_financial_trxn')
       LEFT JOIN civicrm_financial_account fa_from ON fa_from.id = ft.from_financial_account_id
+      LEFT JOIN civicrm_option_group cog ON cog.name = 'payment_instrument'
+      LEFT JOIN civicrm_entity_financial_trxn eft ON eft.financial_trxn_id  = ft.id AND eft.entity_table = 'civicrm_financial_item'
+      LEFT JOIN civicrm_entity_financial_trxn eftc ON eftc.financial_trxn_id  = ft.id AND eftc.entity_table = 'civicrm_contribution'
+      LEFT JOIN civicrm_contribution c ON c.id = eftc.entity_id
+      LEFT JOIN civicrm_financial_item fi ON fi.id = eft.entity_id 
+      LEFT JOIN civicrm_financial_account fac ON fac.id = fi.financial_account_id
+      LEFT JOIN civicrm_option_value cov ON (cov.value = ft.payment_instrument_id AND cov.option_group_id = cog.id)
       LEFT JOIN civicrm_financial_account fa_to ON fa_to.id = ft.to_financial_account_id
       LEFT JOIN civicrm_option_group og_from ON og_from.name = 'financial_account_type'
       LEFT JOIN civicrm_option_value ov_from ON (ov_from.option_group_id = og_from.id AND ov_from.value = fa_from.financial_account_type_id)
@@ -509,134 +533,168 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
     $journalEntries = array();
 
     $dao = CRM_Core_DAO::executeQuery( $sql, $params );
-    while ( $dao->fetch() ) {
 
-      // add to running list of accounts
-      if ( !empty( $dao->from_account_id ) && !isset( $accounts[$dao->from_account_id] ) ) {
-        $accounts[$dao->from_account_id] = array(
-          'name' => $exporter->format( $dao->from_account_name ),
-          'account_code' => $exporter->format( $dao->from_account_code ),
-          'description' => $exporter->format( $dao->from_account_description ),
-          'type' => $exporter->format( $dao->from_qb_account_type )
-        );
+    if (self::$_exportFormat == "CSV") {
+      while ($dao->fetch()) {
+        $financialItems[$dao->financial_trxn_id]['Transaction Date'] = $dao->trxn_date;
+        $financialItems[$dao->financial_trxn_id]['Debit Account'] = $dao->to_account_code;
+        $financialItems[$dao->financial_trxn_id]['Debit Account Name'] = $dao->to_account_name;
+        $financialItems[$dao->financial_trxn_id]['Debit Account Amount (Unsplit)'] = $dao->debit_total_amount;
+        $financialItems[$dao->financial_trxn_id]['Transaction ID (Unsplit)'] = $dao->trxn_id;
+        $financialItems[$dao->financial_trxn_id]['Payment Instrument'] = $dao->payment_instrument;
+        $financialItems[$dao->financial_trxn_id]['Check Number'] = $dao->check_number;
+        $financialItems[$dao->financial_trxn_id]['Source'] = $dao->source;
+        $financialItems[$dao->financial_trxn_id]['Currency'] = $dao->currency;
+        $financialItems[$dao->financial_trxn_id]['Amount'] = $dao->amount;
+        $financialItems[$dao->financial_trxn_id]['Credit Account'] = $dao->credit_account;
+        $financialItems[$dao->financial_trxn_id]['Credit Account Name'] = $dao->credit_account_name;
+        $financialItems[$dao->financial_trxn_id]['Item Description'] = $dao->item_description;
       }
-      if ( !empty( $dao->to_account_id ) && !isset( $accounts[$dao->to_account_id] ) ) {
-        $accounts[$dao->to_account_id] = array(
-          'name' => $exporter->format( $dao->to_account_name ),
-          'account_code' => $exporter->format( $dao->to_account_code ),
-          'description' => $exporter->format( $dao->to_account_description ),
-          'type' => $exporter->format( $dao->to_qb_account_type )
-        );
-      }
+      $financialItems['headers'] = self::formatHeaders($financialItems);
+    } 
+    else {
+      while ( $dao->fetch() ) {
 
-      // add to running list of contacts
-      if ( !empty( $dao->contact_from_id ) && !isset( $contacts[$dao->contact_from_id] ) ) {
-        $contacts[$dao->contact_from_id] = array(
-          'name' => $exporter->format( $dao->contact_from_name ),
-          'first_name' => $exporter->format( $dao->contact_from_first_name ),
-          'last_name' => $exporter->format( $dao->contact_from_last_name )
-        );
-      }
-
-      if ( !empty( $dao->contact_to_id ) && !isset( $contacts[$dao->contact_to_id] ) ) {
-        $contacts[$dao->contact_to_id] = array(
-          'name' => $exporter->format( $dao->contact_to_name ),
-          'first_name' => $exporter->format( $dao->contact_to_first_name ),
-          'last_name' => $exporter->format( $dao->contact_to_last_name )
-        );
-      }
-
-      // set up the journal entries for this financial trxn
-      $journalEntries[$dao->financial_trxn_id] = array(
-        'to_account' => array(
-          'trxn_date' => $exporter->format( $dao->trxn_date, 'date' ),
-          'account_name' => $exporter->format( $dao->to_account_name ),
-          'amount' => $exporter->format( $dao->total_amount ),
-          'contact_name' => $exporter->format( $dao->contact_to_name )
-        ),
-        'splits' => array(),
-      );
-
-      /*
-       * splits has two possibilities depending on FROM account     
-       */
-      if (empty($dao->from_account_name)) {
-        // In this case, split records need to use the individual financial_item account for each item in the trxn
-        $item_sql = "SELECT
-          fa.id as account_id,
-          fa.name as account_name,
-          fa.accounting_code as account_code,
-          fa.description as account_description,
-          fi.id as financial_item_id,
-          fi.transaction_date,
-          fi.amount,
-          ov.grouping as qb_account_type,
-          contact.id as contact_id,
-          contact.display_name as contact_name,
-          contact.first_name as contact_first_name,
-          contact.last_name as contact_last_name
-          FROM civicrm_entity_financial_trxn eft
-          LEFT JOIN civicrm_financial_item fi ON eft.entity_id = fi.id
-          LEFT JOIN civicrm_financial_account fa ON fa.id = fi.financial_account_id
-          LEFT JOIN civicrm_option_group og ON og.name = 'financial_account_type'
-          LEFT JOIN civicrm_option_value ov ON (ov.option_group_id = og.id AND ov.value = fa.financial_account_type_id)
-          LEFT JOIN civicrm_contact contact ON contact.id = fi.contact_id
-          WHERE eft.entity_table = 'civicrm_financial_item'
-          AND eft.financial_trxn_id = %1";
-
-        $item_params = array( 1 => array( $dao->financial_trxn_id, 'Integer' ) );
-
-        $item_dao = CRM_Core_DAO::executeQuery( $item_sql, $item_params );
-        while ($item_dao->fetch()) {
-          // add to running list of accounts
-          if (!empty($item_dao->account_id) && !isset($accounts[$item_dao->account_id])) {
-            $accounts[$item_dao->account_id] = array(
-              'name' => $exporter->format( $item_dao->account_name ),
-              'account_code' => $exporter->format( $item_dao->account_code ),
-              'description' => $exporter->format( $dao->account_description ),
-              'type' => $exporter->format( $item_dao->qb_account_type )
-            );
-          }
-
-          if (!empty($item_dao->contact_id) && !isset($contacts[$item_dao->contact_id])) {
-            $contacts[$item_dao->contact_id] = array(
-              'name' => $exporter->format( $item_dao->contact_name ),
-              'first_name' => $exporter->format( $item_dao->contact_first_name ),
-              'last_name' => $exporter->format( $item_dao->contact_last_name )
-            );
-          }
-
-          // add split line for this item
-          $journalEntries[$dao->financial_trxn_id]['splits'][$item_dao->financial_item_id] = array(
-            'trxn_date' => $exporter->format( $item_dao->transaction_date, 'date' ),
-            'account_name' => $exporter->format( $item_dao->account_name ),
-            'amount' => $exporter->format( (-1) * $item_dao->amount ),
-            'contact_name' => $exporter->format( $item_dao->contact_name )
+        // add to running list of accounts
+        if ( !empty( $dao->from_account_id ) && !isset( $accounts[$dao->from_account_id] ) ) {
+          $accounts[$dao->from_account_id] = array(
+            'name' => $exporter->format( $dao->from_account_name ),
+            'account_code' => $exporter->format( $dao->from_account_code ),
+            'description' => $exporter->format( $dao->from_account_description ),
+            'type' => $exporter->format( $dao->from_qb_account_type )
+           );
+        }
+        if ( !empty( $dao->to_account_id ) && !isset( $accounts[$dao->to_account_id] ) ) {
+          $accounts[$dao->to_account_id] = array(
+            'name' => $exporter->format( $dao->to_account_name ),
+            'account_code' => $exporter->format( $dao->to_account_code ),
+            'description' => $exporter->format( $dao->to_account_description ),
+            'type' => $exporter->format( $dao->to_qb_account_type )
           );
-        } // end items loop
-        $item_dao->free();
-
-      }
-      else {
-        // In this case, split record just uses the FROM account from the trxn, and there's only one record here
-        $journalEntries[$dao->financial_trxn_id]['splits'][] = array(
-          'trxn_date' => $exporter->format( $dao->trxn_date, 'date' ),
-          'account_name' => $exporter->format( $dao->from_account_name ),
-          'amount' => $exporter->format( (-1) * $dao->total_amount ),
-          'contact_name' => $exporter->format( $dao->contact_from_name )
+        }
+        
+        // add to running list of contacts
+        if ( !empty( $dao->contact_from_id ) && !isset( $contacts[$dao->contact_from_id] ) ) {
+          $contacts[$dao->contact_from_id] = array(
+            'name' => $exporter->format( $dao->contact_from_name ),
+            'first_name' => $exporter->format( $dao->contact_from_first_name ),
+            'last_name' => $exporter->format( $dao->contact_from_last_name )
+          );
+        }
+        
+        if ( !empty( $dao->contact_to_id ) && !isset( $contacts[$dao->contact_to_id] ) ) {
+          $contacts[$dao->contact_to_id] = array(
+            'name' => $exporter->format( $dao->contact_to_name ),
+            'first_name' => $exporter->format( $dao->contact_to_first_name ),
+            'last_name' => $exporter->format( $dao->contact_to_last_name )
+          );
+        }
+        
+        // set up the journal entries for this financial trxn
+        $journalEntries[$dao->financial_trxn_id] = array(
+          'to_account' => array(
+            'trxn_date' => $exporter->format( $dao->trxn_date, 'date' ),
+            'account_name' => $exporter->format( $dao->to_account_name ),
+            'amount' => $exporter->format( $dao->total_amount ),
+            'contact_name' => $exporter->format( $dao->contact_to_name ),
+            'payment_instrument' => $exporter->format( $item_dao->payment_instrument ),
+            'check_number' => $exporter->format( $item_dao->check_number )
+           ),
+          'splits' => array(),
         );
-      }
-    }
-    $dao->free();
+        
+        /*
+         * splits has two possibilities depending on FROM account     
+         */
+        if (empty($dao->from_account_id)) {
+          // In this case, split records need to use the individual financial_item account for each item in the trxn
+          $item_sql = "SELECT
+            fa.id as account_id,
+            fa.name as account_name,
+            fa.accounting_code as account_code,
+            fa.description as account_description,
+            fi.id as financial_item_id,
+            ft.currency as currency,
+            cov.label as payment_instrument,
+            ft.check_number as check_number,
+            fi.transaction_date,
+            fi.amount,
+            ov.grouping as qb_account_type,
+            contact.id as contact_id,
+            contact.display_name as contact_name,
+            contact.first_name as contact_first_name,
+            contact.last_name as contact_last_name
+            FROM civicrm_entity_financial_trxn eft
+            LEFT JOIN civicrm_financial_item fi ON eft.entity_id = fi.id
+            LEFT JOIN civicrm_financial_trxn ft ON ft.id = eft.financial_trxn_id 
+            LEFT JOIN civicrm_option_group cog ON cog.name = 'payment_instrument'
+            LEFT JOIN civicrm_option_value cov ON (cov.value = ft.payment_instrument_id AND cov.option_group_id = cog.id)
+            LEFT JOIN civicrm_financial_account fa ON fa.id = fi.financial_account_id
+            LEFT JOIN civicrm_option_group og ON og.name = 'financial_account_type'
+            LEFT JOIN civicrm_option_value ov ON (ov.option_group_id = og.id AND ov.value = fa.financial_account_type_id)
+            LEFT JOIN civicrm_contact contact ON contact.id = fi.contact_id
+            WHERE eft.entity_table = 'civicrm_financial_item'
+            AND eft.financial_trxn_id = %1";
+          
+          $item_params = array( 1 => array( $dao->financial_trxn_id, 'Integer' ) );
+          
+          $item_dao = CRM_Core_DAO::executeQuery( $item_sql, $item_params );
+          while ($item_dao->fetch()) {
+            // add to running list of accounts
+            if (!empty($item_dao->account_id) && !isset($accounts[$item_dao->account_id])) {
+              $accounts[$item_dao->account_id] = array(
+                'name' => $exporter->format( $item_dao->account_name ),
+                'account_code' => $exporter->format( $item_dao->account_code ),
+                'description' => $exporter->format( $dao->account_description ),
+                'type' => $exporter->format( $item_dao->qb_account_type )
+              );
+            }
+            
+            if (!empty($item_dao->contact_id) && !isset($contacts[$item_dao->contact_id])) {
+              $contacts[$item_dao->contact_id] = array(
+                'name' => $exporter->format( $item_dao->contact_name ),
+                'first_name' => $exporter->format( $item_dao->contact_first_name ),
+                'last_name' => $exporter->format( $item_dao->contact_last_name )
+              );
+            }
 
-    $exportParams = array(
-      'accounts' => $accounts,
-      'contacts' => $contacts,
-      'journalEntries' => $journalEntries,
-      'batchIds' => $batchIds,
-    );
+            // add split line for this item
+            $journalEntries[$dao->financial_trxn_id]['splits'][$item_dao->financial_item_id] = array(
+              'trxn_date' => $exporter->format( $item_dao->transaction_date, 'date' ),
+              'account_name' => $exporter->format( $item_dao->account_name ),
+              'amount' => $exporter->format( (-1) * $item_dao->amount ),
+              'contact_name' => $exporter->format( $item_dao->contact_name ),
+              'payment_instrument' => $exporter->format( $item_dao->payment_instrument ),
+              'check_number' => $exporter->format( $item_dao->check_number )
+            );
+          } // end items loop
+          $item_dao->free();
+        }
+        else {
+          // In this case, split record just uses the FROM account from the trxn, and there's only one record here
+          $journalEntries[$dao->financial_trxn_id]['splits'][] = array(
+            'trxn_date' => $exporter->format( $dao->trxn_date, 'date' ),
+            'account_name' => $exporter->format( $dao->from_account_name ),
+            'amount' => $exporter->format( (-1) * $dao->total_amount ),
+            'contact_name' => $exporter->format( $dao->contact_from_name ),
+            'payment_instrument' => $exporter->format( $item_dao->payment_instrument ),
+            'check_number' => $exporter->format( $item_dao->check_number ),
+            'currency' => $exporter->format( $item_dao->currency )
+          );
+        }
+      }
+      $dao->free();
+    }   
+      $exportParams = array(
+        'accounts' => $accounts,
+        'contacts' => $contacts,
+        'journalEntries' => $journalEntries,
+        'batchIds' => $batchIds,
+        'csvExport' => $financialItems,
+      );
+      
+      $exporter->export( $exportParams );
     
-    $exporter->export( $exportParams );
   }
    
   static function closeReOpen($batchIds = array(), $status) {
