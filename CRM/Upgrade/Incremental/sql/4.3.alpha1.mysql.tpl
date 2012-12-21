@@ -207,7 +207,6 @@ ADD `version_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'A 
 ADD `is_current_revision` tinyint(4) DEFAULT '1' COMMENT 'is_current_revision',
 ADD `original_id` int(10) unsigned DEFAULT NULL,
 ADD KEY `UI_is_current_revision` (is_current_revision),
-DROP accounting_code,
 ADD CONSTRAINT `UI_id` UNIQUE INDEX(id),
 ADD CONSTRAINT `FK_civicrm_financial_type_original_id` FOREIGN KEY (`original_id`) REFERENCES `civicrm_financial_type` (`id`),
 DROP INDEX UI_name;
@@ -538,8 +537,9 @@ SELECT @opval := value FROM civicrm_option_value WHERE name = 'Revenue' and opti
 SELECT @domainContactId := contact_id from civicrm_domain where id = {$domainID};
 
 INSERT INTO `civicrm_financial_account`
-       (`id`, `name`, `description`, `is_deductible`, `is_reserved`, `is_active`, `financial_account_type_id`, `contact_id`)
-SELECT id, name, description, is_deductible, is_reserved, is_active, @opval, @domainContactId FROM `civicrm_financial_type`;
+  (`id`, `name`, `description`, `is_deductible`, `is_reserved`, `is_active`, `financial_account_type_id`, `contact_id`, accounting_code)
+  SELECT id, name, CONCAT('Default account for ', name), is_deductible, is_reserved, is_active, @opval, @domainContactId, accounting_code 
+  FROM `civicrm_financial_type`;
 
 -- CRM-9306
 UPDATE `civicrm_financial_account` SET `is_default` =0;
@@ -550,11 +550,8 @@ SELECT @opAsset := value FROM civicrm_option_value WHERE name = 'Asset' and opti
 SELECT @opLiability := value FROM civicrm_option_value WHERE name = 'Liability' and option_group_id = @option_group_id_fat;
 SELECT @opCost := value FROM civicrm_option_value WHERE name = 'Cost of Sales' and option_group_id = @option_group_id_fat;
 
--- CRM-11127
-UPDATE civicrm_financial_account SET name = 'Donations', description = 'Default account for donations', accounting_code = 4200 WHERE name = 'Donation';
-UPDATE civicrm_financial_account SET description = 'Default account for event ticket sales', accounting_code =4300 WHERE name = 'Event Fee';
-UPDATE civicrm_financial_account SET description = 'Sample account for recording payments to a campaign', accounting_code = 4100 WHERE name = 'Campaign Contribution';
-UPDATE civicrm_financial_account SET description = 'Default account for membership sales', accounting_code = 4400 WHERE name = 'Member Dues';
+-- CRM-11522 drop accounting_code after coping its values into financial_account
+ALTER TABLE civicrm_financial_type DROP accounting_code;
 
 INSERT INTO
    `civicrm_financial_account` (`name`, `contact_id`, `financial_account_type_id`, `description`, `accounting_code`, `is_reserved`, `is_active`, `is_deductible`, `is_default`)
