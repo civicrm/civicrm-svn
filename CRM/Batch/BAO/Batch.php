@@ -215,7 +215,10 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
           $batchList[$id]['check'] = $value['check'];
         }
         $batchList[$id]['batch_name'] = $value['title'];
-        $batchList[$id]['payment_instrument_id'] = $value['payment_instrument_id'] ? $pid[$value['payment_instrument_id']] : '';
+        $batchList[$id]['payment_instrument_id'] = '';
+        if (isset($value['payment_instrument_id'])) {
+          $batchList[$id]['payment_instrument_id'] = $pid[$value['payment_instrument_id']];
+        }
         $batchList[$id]['item_count'] = $value['item_count'];
         $batchList[$id]['total_amount'] = CRM_Utils_Money::format($value['total']);
         $batchList[$id]['status'] = $value['batch_status'];
