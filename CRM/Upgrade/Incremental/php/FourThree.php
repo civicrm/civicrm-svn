@@ -83,10 +83,136 @@ class CRM_Upgrade_Incremental_php_FourThree {
 
     // Update phones CRM-11292.
     $this->addTask(ts('Upgrade Phone Numbers'), 'phoneNumeric');
-
+    
+    //CRM-11514 create financial records for contributions
+    $this->addTask(ts('Create financial records for contributions'), 'createFinancialRecords');
+    
     return TRUE;
   }
 
+  function createFinancialRecords() {
+    //fetch completed and pending contributions
+    $sql = "SELECT con.id, con.payment_instrument_id, con.currency, con.total_amount, con.net_amount, con.fee_amount, con.trxn_id, con.contribution_status_id, con.payment_instrument_id, con.contact_id, con.receive_date, con.check_number, con.is_pay_later FROM civicrm_contribution con 
+      WHERE con.contribution_status_id IN (%1, %2)";
+    
+    $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
+    $completedStatus = array_search('Completed', $contributionStatus);
+    $pendingStatus = array_search('Pending', $contributionStatus);
+    $queryParams = array(
+      1 => array($completedStatus, 'Integer'),
+      2 => array($pendingStatus, 'Integer')
+    );
+    $dao = CRM_Core_DAO::executeQuery($sql, $queryParams);
+    $trxnIds = array();
+    $financialItemStatusRecord = array();
+
+    $accountType = key(CRM_Core_PseudoConstant::accountOptionValues('financial_account_type', NULL, " AND v.name = 'Asset' "));
+    $financialAccountId =
+      CRM_Core_DAO::singleValueQuery("SELECT id FROM civicrm_financial_account WHERE is_default = 1 AND financial_account_type_id = {$accountType}");
+
+    $accountRelationsips = CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name IN ('Income Account is', 'Accounts Receivable Account is') ");
+    $financialItemStatus = CRM_Core_PseudoConstant::accountOptionValues('financial_item_status');
+    
+    $paymentInstrumentIds = CRM_Financial_BAO_FinancialTypeAccount::getInstrumentFinancialAccount();
+
+    //record financial transaction
+    while($dao->fetch()) {
+      if ($dao->is_pay_later && $dao->contribution_status_id == $pendingStatus) {
+        //evaluate financial item status
+        $financialItemStatusRecord[$dao->id] = array_search('Unpaid', $financialItemStatus);
+        
+        $toFinancialAccountId = self::_getFinancialAccountId($dao->financial_type_id, 
+          array_search('Accounts Receivable Account is', $accountRelationsips));
+      }
+      elseif ($dao->contribution_status_id == $completedStatus) {
+        $financialItemStatusRecord[$dao->id] = array_search('Paid', $financialItemStatus);
+        if ($dao->payment_instrument_id) {
+          $toFinancialAccountId = $paymentInstrumentIds[$dao->payment_instrument_id];
+        }
+        else {
+          $toFinancialAccountId = $financialAccountId;
+        } 
+      }
+     
+      $trxnParams = array(
+        'contribution_id' => $dao->id,
+        'to_financial_account_id' => $toFinancialAccountId,
+        'from_financial_account_id' => NULL,
+        'trxn_date' => date('YmdHis'),
+        'total_amount' =>$dao->total_amount,
+        'fee_amount' => $dao->net_amount,
+        'net_amount' => $dao->fee_amount,
+        'currency' =>$dao->currency,
+        'trxn_id' => $dao->trxn_id,
+        'payment_instrument_id' => $dao->payment_instrument_id,
+        'check_number' => $dao->check_number,
+        'status_id' => $dao->contribution_status_id
+      );
+      $trxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
+      $trxnIds[$dao->id] = $trxn->id;
+    }
+        
+    //update all linked line_item rows - set line_item.financial_type_id = contribution.financial_type_id
+    $updateLineItemSql = "UPDATE civicrm_line_item li
+      INNER JOIN civicrm_contribution con ON (li.entity_id = con.id)
+      SET li.financial_type_id = con.financial_type_id
+      WHERE li.entity_table = 'civicrm_contribution'
+      AND con.contribution_status_id IN (%1, %2)";
+    CRM_Core_DAO::executeQuery($updateLineItemSql, $queryParams);
+    
+    //add financial_item entries so loop the line item and build appropriate details needed for financial_item records
+    $lineItemSql = "
+      SELECT li.entity_id as contribution_id, con.contact_id as con_contact_id, li.line_total, con.currency,
+        li.id as line_item_id, li.label as line_item_label, con.receive_date, li.financial_type_id
+      FROM civicrm_line_item li
+      INNER JOIN civicrm_contribution con ON (li.entity_id = con.id)
+      WHERE li.entity_table = 'civicrm_contribution'
+      AND con.contribution_status_id IN (%1, %2)";
+    $data = CRM_Core_DAO::executeQuery($lineItemSql, $queryParams);
+    
+    $relationshipId = array_search('Income Account is', $accountRelationsips);
+    //looping the line items
+    while($data->fetch()) {
+      $financialItemEntry = array(
+        'transaction_date' => CRM_Utils_Date::isoToMysql($data->receive_date),
+        'contact_id'    => $data->con_contact_id, 
+        'amount'        => $data->line_total,
+        'currency'      => $data->currency,
+        'entity_table'  => 'civicrm_line_item',
+        'entity_id'     => $data->line_item_id,
+        'description'   => $data->line_item_label,
+        'status_id'     => $financialItemStatusRecord[$data->contribution_id]
+      );
+    
+      if ($data->financial_type_id) {
+        $financialItemEntry['financial_account_id'] = self::_getFinancialAccountId($data->financial_type_id, $relationshipId);
+      }
+      $trxnId['id'] = $trxnIds[$data->contribution_id];
+      CRM_Financial_BAO_FinancialItem::create($financialItemEntry, NULL, $trxnId);
+    }
+    return TRUE;
+  }
+
+  static function _getFinancialAccountId($financialTypeId, $relationshipId) {
+    $cacheKey = "FINANCIAL_{$financialTypeId}_{$relationshipId}";
+    $cache = CRM_Utils_Cache::singleton();
+    $accId = $cache->get($cacheKey);
+    if ($accId) {
+      return $accId;
+    }
+
+    $searchParams = array( 
+      'entity_table' => 'civicrm_financial_type',
+      'entity_id' => $financialTypeId,
+      'account_relationship' => $relationshipId
+    );
+    $result = array();
+    CRM_Financial_BAO_FinancialTypeAccount::retrieve($searchParams, $result);
+    $accId = CRM_Utils_Array::value('financial_account_id', $result);
+    $cache->set($cacheKey, $accId);
+    return $accId;
+  }
+  
   function createDomainContacts() {
     $domainParams = array();
     $locParams['entity_table'] = CRM_Core_BAO_Domain::getTableName();
