@@ -1037,12 +1037,12 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       }
       
       CRM_Contribute_BAO_Contribution::addPremium($params);
-      if ($productDAO->cost && CRM_Utils_Array::value('financial_type_id', $params)) {       $trxnId = $contribution->id;
+      if ($productDAO->cost && CRM_Utils_Array::value('financial_type_id', $params)) {    
         $trxnParams = array(
           'cost' => $productDAO->cost,
           'currency' => $productDAO->currency,
           'financial_type_id' => $params['financial_type_id'],
-          'trxn_id' => $trxnId,
+          'contributionId' => $contribution->id
         );
         CRM_Core_BAO_FinancialTrxn::createPremiumTrxn($trxnParams);
       }

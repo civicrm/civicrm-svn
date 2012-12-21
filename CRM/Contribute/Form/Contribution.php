@@ -1187,7 +1187,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
         // get initial financial_trxn for this contribution so we can link premium trxn to it
         $mainTrxnId = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnIds($contribution->id);        
         CRM_Contribute_Form_AdditionalInfo::processPremium($formValues, $contribution->id,
-          $this->_premiumID, $this->_options,  $mainTrxnId['financialTrxnId']
+          $this->_premiumID, $this->_options
         );
       }
 
@@ -1563,7 +1563,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
     //process premium
     if ($contribution->id && isset($params['product_name'][0])) {
       $mainTrxnId = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnIds($contribution->id);
-      CRM_Contribute_Form_AdditionalInfo::processPremium($params, $contribution->id, NULL, $this->_options, $mainTrxnId['financialTrxnId']);
+      CRM_Contribute_Form_AdditionalInfo::processPremium($params, $contribution->id, NULL, $this->_options);
     }
 
     //update pledge payment status.

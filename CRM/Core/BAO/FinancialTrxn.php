@@ -291,23 +291,46 @@ WHERE lt.entity_id = %1 ";
    * @static
    */
   static function createPremiumTrxn($params) {
-    if (!CRM_Utils_Array::value('financial_type_id', $params) && !CRM_Utils_Array::value('trxn_id', $params)) {
+    if ((!CRM_Utils_Array::value('financial_type_id', $params) || !CRM_Utils_Array::value('contributionId', $params)) && !CRM_Utils_Array::value('oldPremium', $params)) {
       return;
     }
-    $financialAccountType = CRM_Contribute_PseudoConstant::financialAccountType($params['financial_type_id']);
-    $accountRelationship = CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND label IN ('Premiums Inventory Account is', 'Cost of Sales Account is')");
-    $accountRelationship = array_flip($accountRelationship);
-    $financialtrxn = array(
-      'from_financial_account_id' => $financialAccountType[$accountRelationship['Cost of Sales Account is']],
-      'to_financial_account_id' => $financialAccountType[$accountRelationship['Premiums Inventory Account is']],
-      'trxn_date' => date('YmdHis'),
-      'total_amount' => CRM_Utils_Array::value('cost', $params),
-      'currency' => CRM_Utils_Array::value('currency', $params),
-      'financial_trxn_status_id' => 1,
-    );
-    $trxnEntityTable['entity_table'] = 'civicrm_financial_trxn';
-    $trxnEntityTable['entity_id'] = $params['trxn_id'];
-    CRM_Core_BAO_FinancialTrxn::create($financialtrxn, $trxnEntityTable);
+    
+    if (CRM_Utils_Array::value('cost', $params)) {
+      $fids = self::getFinancialTrxnIds($params['contributionId'], 'civicrm_contribution');
+      $contributionStatuses = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
+      $financialAccountType = CRM_Contribute_PseudoConstant::financialAccountType($params['financial_type_id']);
+      $accountRelationship = CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND label IN ('Premiums Inventory Account is', 'Cost of Sales Account is')");
+      $toFinancialAccount = CRM_Utils_Array::value('isDeleted', $params) ? 'Premiums Inventory Account is' : 'Cost of Sales Account is';
+      $fromFinancialAccount = CRM_Utils_Array::value('isDeleted', $params) ? 'Cost of Sales Account is': 'Premiums Inventory Account is';
+      $accountRelationship = array_flip($accountRelationship);
+      $financialtrxn = array(
+        'to_financial_account_id' => $financialAccountType[$accountRelationship[$toFinancialAccount]],
+        'from_financial_account_id' => $financialAccountType[$accountRelationship[$fromFinancialAccount]],
+        'trxn_date' => date('YmdHis'),
+        'total_amount' => CRM_Utils_Array::value('cost', $params) ? $params['cost'] : 0,
+        'currency' => CRM_Utils_Array::value('currency', $params),
+        'financial_trxn_status_id' => array_search('Completed', $contributionStatuses)
+      );
+      $trxnEntityTable['entity_table'] = 'civicrm_financial_trxn';
+      $trxnEntityTable['entity_id'] = $fids['financialTrxnId'];
+      CRM_Core_BAO_FinancialTrxn::create($financialtrxn, $trxnEntityTable);
+    }
+
+    if (CRM_Utils_Array::value('oldPremium', $params)) {
+      $premiumParams = array(
+        'id' => $params['oldPremium']['product_id']
+      );
+      $productDetails = array();
+      CRM_Contribute_BAO_ManagePremiums::retrieve($premiumParams, $productDetails);
+      $params = array(
+        'cost' => CRM_Utils_Array::value('cost', $productDetails),
+        'currency' => CRM_Utils_Array::value('currency', $productDetails),
+        'financial_type_id' => CRM_Utils_Array::value('financial_type_id', $productDetails),
+        'contributionId' => $params['oldPremium']['contribution_id'],
+        'isDeleted' => TRUE
+      );
+      CRM_Core_BAO_FinancialTrxn::createPremiumTrxn($params);
+    }
   }
 }
 

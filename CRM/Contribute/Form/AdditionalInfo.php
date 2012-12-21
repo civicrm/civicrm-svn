@@ -198,12 +198,12 @@ class CRM_Contribute_Form_AdditionalInfo {
    *
    * @return None
    */
-  static function processPremium(&$params, $contributionID, $premiumID = NULL, &$options = NULL, $trxnId = NULL) {
+  static function processPremium(&$params, $contributionID, $premiumID = NULL, &$options = NULL) {
     $dao = new CRM_Contribute_DAO_ContributionProduct();
     $dao->contribution_id = $contributionID;
     $dao->product_id = $params['product_name'][0];
     $dao->fulfilled_date = CRM_Utils_Date::processDate($params['fulfilled_date'], NULL, TRUE);
-
+    $isDeleted = False;
     //CRM-11106
     $premiumParams = array(
       'id' => $params['product_name'][0],
@@ -224,6 +224,7 @@ class CRM_Contribute_Form_AdditionalInfo {
       }
       else {
         $premoumDAO->delete();
+        $isDeleted = TRUE;
         $premium = $dao->save();
       }
     }
@@ -231,13 +232,17 @@ class CRM_Contribute_Form_AdditionalInfo {
       $premium = $dao->save();
     }
     //CRM-11106
-    if (CRM_Utils_Array::value('cost', $productDetails) && CRM_Utils_Array::value('financial_type_id', $productDetails)) {
+    if ($premiumID = NULL || $isDeleted) {
       $params = array(
         'cost' => CRM_Utils_Array::value('cost', $productDetails),
         'currency' => CRM_Utils_Array::value('currency', $productDetails),
-        'financial_type_id' => $productDetails['financial_type_id'],
-        'trxn_id' => $trxnId,
+        'financial_type_id' => CRM_Utils_Array::value('financial_type_id', $productDetails),
+        'contributionId' => $contributionID
       );
+      if ($isDeleted) {
+        $params['oldPremium']['product_id'] = $premoumDAO->product_id;
+        $params['oldPremium']['contribution_id'] = $premoumDAO->contribution_id;
+      }
       CRM_Core_BAO_FinancialTrxn::createPremiumTrxn($params);
     }
   }
