@@ -888,7 +888,7 @@ SELECT @opCost := value FROM civicrm_option_value WHERE name = 'Cost of Sales' a
 INSERT INTO
    `civicrm_financial_account` (`name`, `contact_id`, `financial_account_type_id`, `description`, `accounting_code`, `is_reserved`, `is_active`, `is_deductible`, `is_default`)
 VALUES
-  ( '{ts escape="sql"}Donations{/ts}'            , @contactID, @opval, 'Default account for donations', '4200', 0, 1, 1, 0 ),
+  ( '{ts escape="sql"}Donation{/ts}'            , @contactID, @opval, 'Default account for donations', '4200', 0, 1, 1, 0 ),
   ( '{ts escape="sql"}Member Dues{/ts}'          , @contactID, @opval, 'Default account for membership sales', '4400', 0, 1, 1, 0 ),
   ( '{ts escape="sql"}Campaign Contribution{/ts}', @contactID, @opval, 'Sample account for recording payments to a campaign', '4100', 0, 1, 0, 0 ),
   ( '{ts escape="sql"}Event Fee{/ts}'            , @contactID, @opval, 'Default account for event ticket sales', '4300', 0, 1, 0, 0 ),
@@ -1474,7 +1474,7 @@ SELECT @financial_type_id_md	       := max(id) FROM `civicrm_financial_type` WHE
 SELECT @financial_type_id_cc	       := max(id) FROM `civicrm_financial_type` WHERE `name` = 'Campaign Contribution';
 SELECT @financial_type_id_ef	       := max(id) FROM `civicrm_financial_type` WHERE `name` = 'Event Fee';
 
-SELECT @financial_account_id_dtn       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Donations';
+SELECT @financial_account_id_dtn       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Donation';
 SELECT @financial_account_id_md	       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Member Dues';
 SELECT @financial_account_id_cc	       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Campaign Contribution';
 SELECT @financial_account_id_ef	       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Event Fee';
