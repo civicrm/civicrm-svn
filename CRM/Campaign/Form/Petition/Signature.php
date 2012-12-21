@@ -392,7 +392,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form {
       $dedupeParams = CRM_Dedupe_Finder::formatParams($params, $params['contact_type']);
       $dedupeParams['check_permission'] = '';
 
-      //dupesByParams($params, $ctype, $level = 'Strict', $except = array())
+      //dupesByParams($params, $ctype, $level = 'Unsupervised', $except = array())
       $ids = CRM_Dedupe_Finder::dupesByParams($dedupeParams, $params['contact_type']);
     }
 
