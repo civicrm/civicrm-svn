@@ -717,9 +717,7 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
    * @nvpstr is NVPString.
    * @nvpArray is Associative Array.
    */
-
-  static
-  function deformat($str) {
+  static function deformat($str) {
     $result = array();
 
     while (strlen($str)) {

@@ -175,8 +175,6 @@ WHERE  v.option_group_id = g.id
     if ($var) {
       return $var;
     }
-
-
     $query = "
 SELECT  v.{$labelColumnName} as {$labelColumnName} ,v.value as value, v.grouping as grouping
 FROM   civicrm_option_value v,
@@ -432,8 +430,7 @@ ORDER BY v.weight
     }
   }
 
-  static
-  function deleteAssoc($groupName, $operator = "=") {
+  static function deleteAssoc($groupName, $operator = "=") {
     $query = "
 DELETE g, v
   FROM civicrm_option_group g,
@@ -446,8 +443,7 @@ DELETE g, v
     $dao = CRM_Core_DAO::executeQuery($query, $params);
   }
 
-  static
-  function optionLabel($groupName, $value) {
+  static function optionLabel($groupName, $value) {
     $query = "
 SELECT v.label
   FROM civicrm_option_group g,
@@ -461,8 +457,7 @@ SELECT v.label
     return CRM_Core_DAO::singleValueQuery($query, $params);
   }
 
-  static
-  function getRowValues($groupName, $fieldValue, $field = 'name',
+  static function getRowValues($groupName, $fieldValue, $field = 'name',
     $fieldType = 'String', $active = TRUE
   ) {
     $query = "
