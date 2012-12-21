@@ -595,10 +595,10 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
           'to_account' => array(
             'trxn_date' => $exporter->format( $dao->trxn_date, 'date' ),
             'account_name' => $exporter->format( $dao->to_account_name ),
-            'amount' => $exporter->format( $dao->total_amount ),
+            'amount' => $exporter->format( $dao->debit_total_amount ),
             'contact_name' => $exporter->format( $dao->contact_to_name ),
-            'payment_instrument' => $exporter->format( $item_dao->payment_instrument ),
-            'check_number' => $exporter->format( $item_dao->check_number )
+            'payment_instrument' => $exporter->format( $dao->payment_instrument ),
+            'check_number' => $exporter->format( $dao->check_number )
            ),
           'splits' => array(),
         );
@@ -645,7 +645,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
               $accounts[$item_dao->account_id] = array(
                 'name' => $exporter->format( $item_dao->account_name ),
                 'account_code' => $exporter->format( $item_dao->account_code ),
-                'description' => $exporter->format( $dao->account_description ),
+                'description' => $exporter->format( $item_dao->account_description ),
                 'type' => $exporter->format( $item_dao->qb_account_type )
               );
             }
@@ -690,7 +690,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
         'contacts' => $contacts,
         'journalEntries' => $journalEntries,
         'batchIds' => $batchIds,
-        'csvExport' => $financialItems,
+        'csvExport' => isset($financialItems) ? $financialItems : NULL,
       );
       
       $exporter->export( $exportParams );

@@ -89,7 +89,7 @@ class CRM_Financial_BAO_ExportFormat_IIF extends CRM_Financial_BAO_ExportFormat 
     // now do general journal entries
     $this->exportTRANS();
     
-    $this->output($fileName);
+    $this->output();
   }
   
   function exportACCNT() {

@@ -66,7 +66,7 @@ class CRM_Financial_BAO_ExportFormat {
     return $exportParams;
   }
 
-  function output($fileName) {
+  function output($fileName = NULL) {
     $tplFile = $this->getTemplateFileName();
     $out = self::getTemplate()->fetch( $tplFile );
         
@@ -107,7 +107,12 @@ class CRM_Financial_BAO_ExportFormat {
    * but for CSV it doesn't make sense because php has built in csv output functions.
    */
   static function format( $s, $type = 'string' ) {
-    return $s;
+    if (!empty($s)) {
+      return $s;
+    }
+    else {
+      return NULL;
+    }
   }
 
   function createCSVDownload($fileName) {
@@ -142,7 +147,7 @@ class CRM_Financial_BAO_ExportFormat {
     $createdBy = CRM_Contact_BAO_Contact::displayName($values['created_id']);
     $modifiedBy = CRM_Contact_BAO_Contact::displayName($values['modified_id']);
     $paymentInstrument = array_flip(CRM_Contribute_PseudoConstant::paymentInstrument('label'));
-
+    $values['payment_instrument_id'] = isset($values['payment_instrument_id']) ? $values['payment_instrument_id'] : NULL ;
     $details = '<p>' . ts('Record: ') . $values['title'] . '</p><p>' . ts('Description: ') . $values['description'] . '</p><p>' . ts('Created By: ') . $createdBy . '</p><p>' . ts('Created Date: ') . $values['created_date'] . '</p><p>' . ts('Last Modified By: ') . $modifiedBy . '</p><p>' . ts('Payment Instrument: ') . array_search($values['payment_instrument_id'], $paymentInstrument) . '</p>';
 
     //create activity. 
