@@ -147,15 +147,7 @@ class CRM_Financial_BAO_FinancialType extends CRM_Financial_DAO_FinancialType {
           'column' => 'financial_type_id'
         ),
         array(
-          'table'  => 'civicrm_grant_program',
-          'column' => 'financial_type_id'
-        ),
-        array(
           'table'  => 'civicrm_membership_type',
-          'column' => 'financial_type_id'
-        ),
-        array(
-          'table'  => 'civicrm_payment_processor',
           'column' => 'financial_type_id'
         ),
         array(
