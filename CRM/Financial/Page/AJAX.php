@@ -93,7 +93,7 @@ ORDER by f.name";
         '9' => 3, //discount account is
       );
 
-      $financialAccountType = "financial_account_type_id = {$financialAccountType[$_GET['_value']]}";
+      $financialAccountType = "{$financialAccountType[$_GET['_value']]}";
       $result = CRM_Contribute_PseudoConstant::financialAccount(NULL, $financialAccountType);
     }
     $elements = array(
