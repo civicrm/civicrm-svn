@@ -40,8 +40,24 @@
  *
  */
 
-class CRM_Core_HTMLInputCoder {
+require_once 'api/Wrapper.php';
+class CRM_Core_HTMLInputCoder implements API_Wrapper {
   private static $skipFields = NULL;
+
+  /**
+   * @var CRM_Core_HTMLInputCoder
+   */
+  private static $_singleton = NULL;
+
+  /**
+   * @return CRM_Core_HTMLInputCoder
+   */
+  public static function singleton() {
+    if (self::$_singleton === NULL) {
+      self::$_singleton = new CRM_Core_HTMLInputCoder();
+    }
+    return self::$_singleton;
+  }
 
   /**
    * @return array<string> list of field names
@@ -94,9 +110,9 @@ class CRM_Core_HTMLInputCoder {
     }
     return self::$skipFields;
   }
-  
+
   /**
-   * @param string $fldName 
+   * @param string $fldName
    * @return bool TRUE if encoding should be skipped for this field
    */
   public static function isSkippedField($fldName) {
@@ -115,24 +131,75 @@ class CRM_Core_HTMLInputCoder {
    * submitted values across XSS vulnerability.
    *
    * @param array|string $values
+   * @param bool $castToString If TRUE, all scalars will be filtered (and therefore cast to strings)
+   *    If FALSE, then non-string values will be preserved
    */
-  public static function encodeInput(&$values) {
+  public static function encodeInput(&$values, $castToString = TRUE) {
     if (is_array($values)) {
       foreach ($values as &$value) {
         self::encodeInput($value);
       }
-    } else {
+    } elseif ($castToString || is_string($values)) {
       $values = str_replace(array('<', '>'), array('&lt;', '&gt;'), $values);
     }
   }
-  
-  public static function decodeOutput(&$values) {
+
+  public static function decodeOutput(&$values, $castToString = TRUE) {
     if (is_array($values)) {
       foreach ($values as &$value) {
         self::decodeOutput($value);
       }
-    } else {
+    } elseif ($castToString || is_string($values)) {
       $values = str_replace(array('&lt;', '&gt;'), array('<', '>'), $values);
     }
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function fromApiInput($apiRequest) {
+    $lowerAction = strtolower($apiRequest['action']);
+    if ($apiRequest['version'] == 3 && in_array($lowerAction, array('get', 'create'))) {
+      // note: 'getsingle', 'replace', 'update', and chaining all build on top of 'get'/'create'
+      foreach ($apiRequest['params'] as $key => $value) {
+        // Don't apply escaping to API control parameters (e.g. 'api.foo' or 'options.foo')
+        // and don't apply to other skippable fields
+        if (!self::isApiControlField($key) && !self::isSkippedField($key)) {
+          self::encodeInput($apiRequest['params'][$key], FALSE);
+        }
+      }
+    } elseif ($apiRequest['version'] == 3 && $lowerAction == 'setvalue') {
+      if (isset($apiRequest['params']['field']) && isset($apiRequest['params']['value'])) {
+        if (!self::isSkippedField($apiRequest['params']['field'])) {
+          self::encodeInput($apiRequest['params']['value'], FALSE);
+        }
+      }
+    }
+    return $apiRequest;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function toApiOutput($apiRequest, $result) {
+    $lowerAction = strtolower($apiRequest['action']);
+    if ($apiRequest['version'] == 3 && in_array($lowerAction, array('get', 'create', 'setvalue'))) {
+      foreach ($result as $key => $value) {
+        // Don't apply escaping to API control parameters (e.g. 'api.foo' or 'options.foo')
+        // and don't apply to other skippable fields
+        if (!self::isApiControlField($key) && !self::isSkippedField($key)) {
+          self::decodeOutput($result[$key], FALSE);
+        }
+      }
+    }
+    // setvalue?
+    return $result;
+  }
+
+  /**
+   * @return bool
+   */
+  protected function isApiControlField($key) {
+    return (FALSE !== strpos($key, '.'));
   }
 }
