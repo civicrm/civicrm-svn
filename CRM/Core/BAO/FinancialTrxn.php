@@ -309,7 +309,7 @@ WHERE lt.entity_id = %1 ";
         'trxn_date' => date('YmdHis'),
         'total_amount' => CRM_Utils_Array::value('cost', $params) ? $params['cost'] : 0,
         'currency' => CRM_Utils_Array::value('currency', $params),
-        'financial_trxn_status_id' => array_search('Completed', $contributionStatuses)
+        'status_id' => array_search('Completed', $contributionStatuses)
       );
       $trxnEntityTable['entity_table'] = 'civicrm_financial_trxn';
       $trxnEntityTable['entity_id'] = $fids['financialTrxnId'];

@@ -232,7 +232,7 @@ class CRM_Contribute_Form_AdditionalInfo {
       $premium = $dao->save();
     }
     //CRM-11106
-    if ($premiumID = NULL || $isDeleted) {
+    if ($premiumID == NULL || $isDeleted) {
       $params = array(
         'cost' => CRM_Utils_Array::value('cost', $productDetails),
         'currency' => CRM_Utils_Array::value('currency', $productDetails),
