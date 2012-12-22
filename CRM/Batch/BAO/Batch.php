@@ -320,7 +320,10 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
 
   function whereClause($params) {
     $clauses = array();
-    $i = 1;
+    // Exclude data-entry batches
+    if (empty($params['status_id'])) {
+      $clauses[] = 'batch.status_id <> 3';
+    }
 
     $fields = array(
       'title' => 'String',

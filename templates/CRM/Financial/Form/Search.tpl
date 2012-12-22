@@ -141,76 +141,112 @@ cj(function($) {
         return nRow;
       },
       "fnDrawCallback": function(oSettings) {
-        $('.crm-editable').not('.crm-editable-enabled').crmEditable();
+        $('.crm-editable', '#crm-batch-selector').crmEditable();
       }
     });
   }
 
   function editRecords(records, op) {
-    var recordBAO = 'CRM_Batch_BAO_Batch';
-
-    $("#enableDisableStatusMsg").dialog({
-      title: {/literal}'{ts escape="js"}Confirm Changes{/ts}'{literal},
-      modal: true,
-      bgiframe: true,
-      position: "center",
-      overlay: {
-        opacity: 0.5,
-        background: "black"
-      },
-      open:function() {
-        switch (op) {{/literal}
-          case 'reopen':
-            var msg = '{ts escape="js"}Are you sure you want to re-open:{/ts}';
-            break;
-          case 'delete':
-            var msg = '{ts escape="js"}Are you sure you want to delete:{/ts}';
-            break;
-          case 'close':
-            var msg = '{ts escape="js"}Are you sure you want to close:{/ts}';
-            break;
-        {literal}}
-        msg += listRecords(records);
-        $('#enableDisableStatusMsg').show().html(msg);
-      },
-      buttons: {
-        {/literal}"{ts escape='js'}Cancel{/ts}"{literal}: function() {
-          $(this).dialog("close");
+    records = validateOp(records, op);
+    if (records.length) {
+      $("#enableDisableStatusMsg").dialog({
+        title: {/literal}'{ts escape="js"}Confirm Changes{/ts}'{literal},
+        modal: true,
+        bgiframe: true,
+        position: "center",
+        overlay: {
+          opacity: 0.5,
+          background: "black"
         },
-        {/literal}"{ts escape='js'}OK{/ts}{literal}": function() {
-          saveRecords(records, op, recordBAO);
-          $(this).dialog("close");
+        open:function() {
+          switch (op) {{/literal}
+            case 'reopen':
+              var msg = '{ts escape="js"}Are you sure you want to re-open:{/ts}';
+              break;
+            case 'delete':
+              var msg = '{ts escape="js"}Are you sure you want to delete:{/ts}';
+              break;
+            case 'close':
+              var msg = '{ts escape="js"}Are you sure you want to close:{/ts}';
+              break;
+          {literal}}
+          msg += listRecords(records);
+          $('#enableDisableStatusMsg').show().html(msg);
+        },
+        buttons: {
+          {/literal}"{ts escape='js'}Cancel{/ts}"{literal}: function() {
+            $(this).dialog("close");
+          },
+          {/literal}"{ts escape='js'}OK{/ts}{literal}": function() {
+            saveRecords(records, op, recordBAO);
+            $(this).dialog("close");
+          }
         }
-      }
-    });
-  }
-
-  function listRecords(records) {
-    var msg = '<ul>';
-    for (var i in records) {
-      msg += '<li>' + $('tr[data-id='+records[i]+'] .crmf-title').text() + '</li>';
+      });
     }
-    return msg + '</ul>';
   }
 
-  function saveRecords(records, op, recordBAO) {
+  function listRecords(records, tally) {
+    var txt = '<ul>';
+    for (var i in records) {
+      txt += '<li>' + $('tr[data-id=' + records[i] + '] .crmf-title').text();
+      if (tally) {
+        
+      }
+      txt += '</li>';
+    }
+    return txt + '</ul>';
+  }
+
+  function saveRecords(records, op) {
     var postUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Financial_Page_AJAX&fnName=assignRemove'}"{literal};
     //post request and get response
-    $.post(postUrl, {records: records, recordBAO: recordBAO, op: op, key: {/literal}"{crmKey name='civicrm/ajax/ar'}"{literal}},
+    $.post(postUrl, {records: records, recordBAO: 'CRM_Batch_BAO_Batch', op: op, key: {/literal}"{crmKey name='civicrm/ajax/ar'}"{literal}},
       function(response) {
         //this is custom status set when record update success.
         if (response.status == 'record-updated-success') {
-          batchSelector.fnDraw();
           $().crmAlert(listRecords(records), op == 'delete' ? {/literal}'{ts escape="js"}Deleted{/ts}' : '{ts escape="js"}Updated{/ts}'{literal}, 'success');
+          batchSelector.fnDraw();
         }
         else {
           serverError();
         }
       },
       'json').error(serverError);
-       
   }
-  
+
+  function validateOp(records, op) {
+    var invalid = [];
+    switch (op) {
+      case 'reopen':
+        var status = 1;
+        break;
+      case 'close':
+        var status = 2;
+        break;
+      default:
+        return records;
+    }
+    var len = records.length;
+    var i = 0;
+    while (i < len) {
+      if ($('tr[data-id='+records[i]+']').data('status_id') == status) {
+        $('.crm-batch-select[data-id='+records[i]+']').prop('checked', false);
+        invalid.push(records[i]);
+        records.splice(i, 1);
+        --len;
+      }
+      else {
+        i++;
+      }
+    }
+    if (invalid.length) {
+      var msg = (invalid.length == 1 ? {/literal}'{ts escape="js"}This record already has the status{/ts}' : '{ts escape="js"}The following records already have the status{/ts}'{literal}) + ' ' + $('tr[data-id='+invalid[0]+'] .crm-batch-status').text() + '.' + listRecords(invalid);
+      $().crmAlert(msg, {/literal}'{ts escape="js"}Cannot Change Status{/ts}'{literal});
+    }
+    return records;
+  }
+
   function serverError() {
      $().crmError({/literal}'{ts escape="js"}No response from the server. Check your internet connection and try reloading the page.{/ts}', '{ts escape="js"}Network Error{/ts}'{literal});
   }

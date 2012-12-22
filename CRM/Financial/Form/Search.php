@@ -64,7 +64,7 @@ class CRM_Financial_Form_Search extends CRM_Core_Form {
         '' => ts('- any -' ),
         1 => ts('Open'),
         2 => ts('Closed'),
-        3 => ts('Exported'),
+        5 => ts('Exported'),
       ),
       false
     );
@@ -111,7 +111,6 @@ class CRM_Financial_Form_Search extends CRM_Core_Form {
         )
       )
     );
-
     parent::buildQuickForm();
   }
 
