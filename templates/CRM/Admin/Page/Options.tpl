@@ -42,7 +42,7 @@
   {elseif $gName eq "activity_type"}
      {ts}Activities are 'interactions with contacts' which you want to record and track. This list is sorted by component and then by weight within the component.{/ts} {help id='id-activity-types'}
   {elseif $gName eq "payment_instrument"}
-     {ts}You may choose to record the Payment Instrument used for each Contribution. Reserved payment methods are required - you may modify their labels but they can not be deleted (e.g. Check, Credit Card, Debit Card). If your site requires additional payment methods, you can add them here.{/ts}
+     {ts}You may choose to record the payment method used for each contribution and fee. Reserved payment methods are required - you may modify their labels but they can not be deleted (e.g. Check, Credit Card, Debit Card). If your site requires additional payment methods, you can add them here. You can associate each payment method with a Financial Account which specifies where the payment is going (e.g. a bank account for checks and cash).{/ts}
   {elseif $gName eq "accept_creditcard"}
     {ts}This page lists the credit card options that will be offered to contributors using your Online Contribution pages. You will need to verify which cards are accepted by your chosen Payment Processor and update these entries accordingly.{/ts}<br /><br />
     {ts}IMPORTANT: This page does NOT control credit card/payment method choices for sites and/or contributors using the PayPal Express service (e.g. where billing information is collected on the Payment Processor's website).{/ts}
@@ -84,16 +84,16 @@
                 <th>{ts}Component{/ts}</th>
             {/if}
             <th>
-                {if $gName eq "redaction_rule"}
-                    {ts}Match Value or Expression{/ts}
-                {else}
-                    {ts}Label{/ts}
-                {/if}
+              {if $gName eq "redaction_rule"}
+                  {ts}Match Value or Expression{/ts}
+              {else}
+                  {ts}Label{/ts}
+              {/if}
             </th>
-      {if $gName eq "case_status"}
-        <th>
-        {ts}Status Class{/ts}
-    </th>
+            {if $gName eq "case_status"}
+              <th>
+                {ts}Status Class{/ts}
+              </th>
             {/if}
             <th>
                 {if $gName eq "redaction_rule"}
@@ -104,42 +104,46 @@
                     {ts}Value{/ts}
                 {/if}
             </th>
+            {if $gName eq "payment_instrument"}<th>Account</th>{/if}
             {if $showCounted}<th>{ts}Counted?{/ts}</th>{/if}
             {if $showVisibility}<th>{ts}Visibility{/ts}</th>{/if}
             <th id="nosort">{ts}Description{/ts}</th>
             <th id="order">{ts}Order{/ts}</th>
-          {if $showIsDefault}<th>{ts}Default{/ts}</th>{/if}
+            {if $showIsDefault}<th>{ts}Default{/ts}</th>{/if}
             <th>{ts}Reserved{/ts}</th>
             <th>{ts}Enabled?{/ts}</th>
             <th class="hiddenElement"></th>
             <th></th>
-            </tr>
-            </thead>
-            <tbody>
+          </tr>
+          </thead>
+          <tbody>
         {foreach from=$rows item=row}
-        <tr id="row_{$row.id}" class="crm-admin-options crm-admin-options_{$row.id} {cycle values="odd-row,even-row"}{if NOT $row.is_active} disabled{/if}">
+          <tr id="row_{$row.id}" class="crm-admin-options crm-admin-options_{$row.id} {cycle values="odd-row,even-row"}{if NOT $row.is_active} disabled{/if}">
             {if $showComponent}
-                <td class="crm-admin-options-component_name">{$row.component_name}</td>
+              <td class="crm-admin-options-component_name">{$row.component_name}</td>
             {/if}
-          <td class="crm-admin-options-label">{$row.label}</td>
-          {if $gName eq "case_status"}
-            <td class="crm-admin-options-grouping">{$row.grouping}</td>
+            <td class="crm-admin-options-label">{$row.label}</td>
+            {if $gName eq "case_status"}
+              <td class="crm-admin-options-grouping">{$row.grouping}</td>
             {/if}
-          <td class="crm-admin-options-value">{$row.value}</td>
-        {if $showCounted}
-            <td class="yes-no crm-admin-options-filter">{if $row.filter eq 1}<img src="{$config->resourceBase}i/check.gif" alt="{ts}Counted{/ts}" />{/if}</td>
-        {/if}
+            <td class="crm-admin-options-value">{$row.value}</td>
+            {if $gName eq "payment_instrument"}
+              <td>{$row.financial_account}</td>
+            {/if}
+            {if $showCounted}
+              <td class="yes-no crm-admin-options-filter">{if $row.filter eq 1}<img src="{$config->resourceBase}i/check.gif" alt="{ts}Counted{/ts}" />{/if}</td>
+            {/if}
             {if $showVisibility}<td class="crm-admin-visibility_label">{$row.visibility_label}</td>{/if}
-          <td class="crm-admin-options-description">{$row.description}</td>
-          <td class="nowrap crm-admin-options-order">{$row.order}</td>
+            <td class="crm-admin-options-description">{$row.description}</td>
+            <td class="nowrap crm-admin-options-order">{$row.order}</td>
             {if $showIsDefault}
-            <td class="crm-admin-options-is_default" align="center">{if $row.is_default eq 1}<img src="{$config->resourceBase}i/check.gif" alt="{ts}Default{/ts}" />{/if}&nbsp;</td>
-          {/if}
-          <td class="crm-admin-options-is_reserved">{if $row.is_reserved eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-          <td class="crm-admin-options-is_active" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-          <td>{$row.action|replace:'xx':$row.id}</td>
-          <td class="order hiddenElement">{$row.weight}</td>
-        </tr>
+              <td class="crm-admin-options-is_default" align="center">{if $row.is_default eq 1}<img src="{$config->resourceBase}i/check.gif" alt="{ts}Default{/ts}" />{/if}&nbsp;</td>
+            {/if}
+            <td class="crm-admin-options-is_reserved">{if $row.is_reserved eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+            <td class="crm-admin-options-is_active" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+            <td>{$row.action|replace:'xx':$row.id}</td>
+            <td class="order hiddenElement">{$row.weight}</td>
+          </tr>
         {/foreach}
         </tbody>
         </table>
