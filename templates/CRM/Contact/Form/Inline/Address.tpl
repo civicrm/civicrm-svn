@@ -100,7 +100,7 @@
       cj('.crm-inline-edit.address.form :checkbox:checked[id$="' + ids + '"]').not(this).removeAttr('checked');
     }
     else if (cj(this).is("[id*=is_primary]")) {
-      cj(this).crmError("{/literal} {ts escape='js'}Please choose another address to be primary before changing this one.{/ts}");
+      cj(this).crmError("{/literal} {ts escape='js'}Please choose another address to be primary before changing this one.{/ts}{literal}");
       cj(this).attr('checked', 'checked');
     }
   });
