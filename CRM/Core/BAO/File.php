@@ -40,12 +40,7 @@
 
    static $_signableFields = array('entityTable', 'entityID', 'fileID');
 
-   function path($fileID,
-     $entityID,
-     $entityTable = NULL,
-     $quest = FALSE
-   ) {
-
+   function path($fileID, $entityID, $entityTable = NULL) {
      $entityFileDAO = new CRM_Core_DAO_EntityFile();
      if ($entityTable) {
        $entityFileDAO->entity_table = $entityTable;
@@ -58,18 +53,7 @@
        $fileDAO->id = $fileID;
        if ($fileDAO->find(TRUE)) {
          $config = CRM_Core_Config::singleton();
-         if ($quest) {
-           if ($quest == '1') {
-             // to make quest part work as before
-             $path = $config->customFileUploadDir . 'Student' . DIRECTORY_SEPARATOR . $entityID . DIRECTORY_SEPARATOR . $fileDAO->uri;
-           }
-           else {
-             $path = $config->customFileUploadDir . $quest . DIRECTORY_SEPARATOR . $entityID . DIRECTORY_SEPARATOR . $fileDAO->uri;
-           }
-         }
-         else {
-           $path = $config->customFileUploadDir . $fileDAO->uri;
-         }
+         $path = $config->customFileUploadDir . $fileDAO->uri;
 
          if (file_exists($path) && is_readable($path)) {
            return array($path, $fileDAO->mime_type);

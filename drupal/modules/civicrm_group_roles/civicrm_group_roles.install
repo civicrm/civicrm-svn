@@ -43,7 +43,7 @@ function civicrm_group_roles_install() {
  * Implementation of hook_enable().
  */
 function civicrm_group_roles_enable() {
-  db_query("UPDATE {system} SET weight = 110 WHERE name = 'civicrm_group_roles'");  
+  db_query("UPDATE {system} SET weight = 110 WHERE name = 'civicrm_group_roles'");
 }
 
 /**
