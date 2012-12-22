@@ -230,7 +230,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
   }
 
   /**
-   * This function to get list of batches
+   * Get list of batches
    *
    * @param  array   $params associated array for params
    * @access public
@@ -264,49 +264,45 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
     $batchTypes = CRM_Core_PseudoConstant::getBatchType();
     $batchStatus = CRM_Core_PseudoConstant::getBatchStatus();
 
-    $values = array();
+    $results = array();
     while ($object->fetch()) {
+      $values = array();
       $newLinks = $links;
-      $values[$object->id] = array();
-      CRM_Core_DAO::storeValues($object, $values[$object->id]);
+      CRM_Core_DAO::storeValues($object, $values);
       $action = array_sum(array_keys($newLinks));
 
-      if ($values[$object->id]['status_id'] == 2 && $params['context'] != 'financialBatch' ) {
+      if ($values['status_id'] == 2 && $params['context'] != 'financialBatch' ) {
         $newLinks = array();
       }
       elseif ($params['context'] == 'financialBatch') {
-        $values[$object->id]['check'] = "<input type='checkbox' id='check_".$object->id."' name='check_".$object->id."' value='1' data-id='".$object->id."' data-status_id='".$values[$object->id]['status_id']."' class='crm-batch-select'></input>";
-        $status = $values[$object->id]['status_id'];
+        $values['check'] = "<input type='checkbox' id='check_".$object->id."' name='check_".$object->id."' value='1'  data-status_id='".$values['status_id']."' class='crm-batch-select'></input>";
+        $status = $values['status_id'];
 
         switch ($status) {
           case '1':
-            unset($newLinks['reopen']);
-            unset($newLinks['download']);
+            CRM_Utils_Array::remove($newLinks, 'reopen', 'download');
             break;
           case '2':
-            unset($newLinks['close']);
-            unset($newLinks['edit']);
-            unset($newLinks['download']);
+            CRM_Utils_Array::remove($newLinks, 'close', 'edit', 'download');
             break;
           case '5':
-            unset($newLinks['edit']);
-            unset($newLinks['close']);
-            unset($newLinks['reopen']);
+            CRM_Utils_Array::remove($newLinks, 'close', 'edit', 'reopen');
         }
       }
 
-      $values[$object->id]['batch_type'] = $batchTypes[$values[$object->id]['type_id']];
-      $values[$object->id]['batch_status'] = $batchStatus[$values[$object->id]['status_id']];
-      $values[$object->id]['created_by'] = $object->created_by;
+      $values['batch_type'] = $batchTypes[$values['type_id']];
+      $values['batch_status'] = $batchStatus[$values['status_id']];
+      $values['created_by'] = $object->created_by;
 
-      $values[$object->id]['action'] = CRM_Core_Action::formLink(
+      $values['action'] = CRM_Core_Action::formLink(
         $newLinks,
         $action,
-        array('id' => $object->id, 'status' => $status )
+        array('id' => $object->id, 'status' => $status)
       );
+      $results[$object->id] = $values;
     }
 
-    return $values;
+    return $results;
   }
 
   static function getBatchCount(&$params) {

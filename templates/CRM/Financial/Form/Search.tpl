@@ -78,14 +78,17 @@ cj(function($) {
     }
   });
 
-  $("#toggleSelect").click(function() {
-    $("#crm-batch-selector input[id^='check_']").prop('checked', $(this).is(':checked'));
+  $("#toggleSelect").change(function() {
+    $("#crm-batch-selector input.crm-batch-select").prop('checked', $(this).is(':checked'));
   });
 
-  function buildBatchSelector(filterSearch) {
-    var ZeroRecordText = '<div class="status messages">{/literal}{ts escape="js"}No matching Accounting Batches found for your search criteria.{/ts}{literal}</li></ul></div>';
+  $("#crm-batch-selector").on('change', 'input[id^=check_]', function() {
+    $("#toggleSelect").prop('checked', $("#crm-batch-selector .crm-batch-select:not(':checked')").length < 1);
+  });
 
-    var columns = '';
+  var checkedRows = [];
+  function buildBatchSelector() {
+    var ZeroRecordText = {/literal}'<div class="status messages">{ts escape="js"}No Accounting Batches match your search criteria.{/ts}</div>'{literal};
     var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/batchlist" h=0 q="snippet=4&context=financialBatch"}'{literal};
 
     batchSelector = $('#crm-batch-selector').dataTable({
@@ -133,15 +136,27 @@ cj(function($) {
             );
           }
         });
+        checkedRows = [];
+        $("#crm-batch-selector input.crm-batch-select:checked").each(function() {
+          checkedRows.push('#' + $(this).attr('id'));
+        });
       },
       "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
         var box = $(aData[0]);
-        $(nRow).addClass('crm-entity').attr('data-entity', 'batch').attr('data-id', box.attr('data-id')).attr('data-status_id', box.attr('data-status_id'));
+        var id = box.attr('id').replace('check_', '');
+        $(nRow).addClass('crm-entity').attr('data-entity', 'batch').attr('data-id', id).attr('data-status_id', box.attr('data-status_id'));
         $('td:eq(1)', nRow).wrapInner('<div class="crm-editable crmf-title" />');
         return nRow;
       },
       "fnDrawCallback": function(oSettings) {
         $('.crm-editable', '#crm-batch-selector').crmEditable();
+        if (checkedRows.length) {
+          $(checkedRows.join(',')).prop('checked', true);
+          $("#toggleSelect").prop('checked', $("#crm-batch-selector .crm-batch-select:not(':checked')").length < 1);
+        }
+        else {
+          $("#toggleSelect").prop('checked', false);
+        }
       }
     });
   }
@@ -231,7 +246,7 @@ cj(function($) {
     var i = 0;
     while (i < len) {
       if ($('tr[data-id='+records[i]+']').data('status_id') == status) {
-        $('.crm-batch-select[data-id='+records[i]+']').prop('checked', false);
+        $('#check_' + records[i] + ':checked').prop('checked', false).trigger('change');
         invalid.push(records[i]);
         records.splice(i, 1);
         --len;
@@ -264,7 +279,7 @@ cj(function($) {
     else if (op == 'close' || op == 'reopen' || op == 'delete') {
       records = [];
       $("input.crm-batch-select:checked").each(function() {
-        records.push($(this).attr('data-id'));
+        records.push($(this).attr('id').replace('check_', ''));
       });
       editRecords(records, op);
       return false;

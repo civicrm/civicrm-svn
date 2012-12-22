@@ -108,7 +108,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
    */
   function buildQuickForm() {
     if (!$this->_profileId) {
-      CRM_Core_Error::fatal('Profile that is used for bulk data entry is missing.');
+      CRM_Core_Error::fatal(ts('Profile for bulk data entry is missing.'));
     }
 
     $this->addElement('hidden', 'batch_id', $this->_batchId);
