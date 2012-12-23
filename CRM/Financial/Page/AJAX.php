@@ -184,7 +184,7 @@ ORDER by f.name";
   }
 
   /**
-   * Function to perform action on records.
+   * Callback to perform action on batch records.
    */
   static function assignRemove() {
     $op = CRM_Utils_Type::escape($_POST['op'], 'String');
@@ -204,6 +204,9 @@ ORDER by f.name";
       'close' => 'create',
       'delete' => 'deleteBatch',
     );
+    if ($op == 'close') {
+      $totals = CRM_Batch_BAO_Batch::batchTotals($records);
+    }
     $response = array('status' => 'record-updated-fail');
     // first munge and clean the recordBAO and get rid of any non alpha numeric characters
     $recordBAO = CRM_Utils_String::munge($recordBAO);
@@ -223,8 +226,10 @@ ORDER by f.name";
             );
             break;
 
-          case 'reopen':
           case 'close':
+            // Update totals when closing a batch
+            $params = $totals[$recordID];
+          case 'reopen':
             $status = $op == 'close' ? 'Closed' : 'Open';
             $ids['batchID'] = $recordID;
             $batchStatus = CRM_Core_PseudoConstant::accountOptionValues('batch_status');

@@ -55,9 +55,9 @@
     <tr>
       <th class="crm-batch-checkbox">{$form.toggleSelect.html}</th>
       <th class="crm-batch-name">{ts}Batch Name{/ts}</th>
-      <th class="crm-batch-payment_instrument_id">{ts}Payment Instrument{/ts}</th>
+      <th class="crm-batch-payment_instrument">{ts}Payment Instrument{/ts}</th>
       <th class="crm-batch-item_count">{ts}Item Count{/ts}</th>
-      <th class="crm-batch-total_amount">{ts}Total Amount{/ts}</th>
+      <th class="crm-batch-total">{ts}Total Amount{/ts}</th>
       <th class="crm-batch-status">{ts}Status{/ts}</th>
       <th class="crm-batch-created_by">{ts}Created By{/ts}</th>
       <th></th>
@@ -98,9 +98,9 @@ cj(function($) {
       "aoColumns" : [
         {sClass:'crm-batch-checkbox', bSortable:false},
         {sClass:'crm-batch-name'},
-        {sClass:'crm-batch-payment_instrument_id'},
+        {sClass:'crm-batch-payment_instrument'},
         {sClass:'crm-batch-item_count right'},
-        {sClass:'crm-batch-total_amount right'},
+        {sClass:'crm-batch-total right'},
         {sClass:'crm-batch-status'},
         {sClass:'crm-batch-created_by'},
         {sClass:'crm-batch-links', bSortable:false},
@@ -185,7 +185,7 @@ cj(function($) {
               var msg = '{ts escape="js"}Are you sure you want to close:{/ts}';
               break;
           {literal}}
-          msg += listRecords(records);
+          msg += listRecords(records, op == 'close');
           $('#enableDisableStatusMsg').show().html(msg);
         },
         buttons: {
@@ -193,7 +193,7 @@ cj(function($) {
             $(this).dialog("close");
           },
           {/literal}"{ts escape='js'}OK{/ts}{literal}": function() {
-            saveRecords(records, op, recordBAO);
+            saveRecords(records, op);
             $(this).dialog("close");
           }
         }
@@ -201,16 +201,31 @@ cj(function($) {
     }
   }
 
-  function listRecords(records, tally) {
-    var txt = '<ul>';
+  function listRecords(records, compareValues) {
+    var txt = '<ul>',
+    mismatch = false;
     for (var i in records) {
-      txt += '<li>' + $('tr[data-id=' + records[i] + '] .crmf-title').text();
-      if (tally) {
-        
+      var $tr = $('tr[data-id=' + records[i] + ']');
+      txt += '<li>' + $('.crmf-title', $tr).text();
+      if (compareValues) {
+        $('.actual-value.crm-error', $tr).each(function() {
+          mismatch = true;
+          var $th = $tr.closest('table').find('th').eq($(this).closest('td').index());
+          var $expected = $(this).siblings('.expected-value');
+          var label = $th.text();
+          var actual = $(this).text();
+          var expected = $expected.text();
+          txt += {/literal}'<br /><span class="crm-error">' +
+          label + ' {ts escape="js"}mismatch.{/ts} {ts escape="js"}Expected{/ts}: ' + expected + ' {ts escape="js"}Current Total{/ts}: ' + actual + '</span>'{literal};
+        });
       }
       txt += '</li>';
     }
-    return txt + '</ul>';
+    txt += '</ul>';
+    if (mismatch) {
+      txt += {/literal}'<div class="messages status">{ts escape="js"}Click OK to override and update expected values.{/ts}</div>'{literal}
+    }
+    return txt;
   }
 
   function saveRecords(records, op) {

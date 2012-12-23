@@ -92,9 +92,9 @@ class CRM_Batch_Page_AJAX {
     $iFilteredTotal = $iTotal = $params['total'];
     $selectorElements = array(
       'batch_name',
-      'payment_instrument_id',
+      'payment_instrument',
       'item_count',
-      'total_amount',
+      'total',
       'status',
       'created_by',
       'links',

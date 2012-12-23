@@ -200,33 +200,45 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
     $params['sort'] = CRM_Utils_Array::value('sortBy', $params);
 
     // get batches
-    $batches = CRM_Batch_BAO_Batch::getBatchList($params);
+    $batches = self::getBatchList($params);
 
-    // add total
-    $params['total'] = CRM_Batch_BAO_Batch::getBatchCount($params);
+    // get batch totals for open batches
+    $fetchTotals = array();
+    if ($params['context'] == 'financialBatch') {
+      foreach ($batches as $id => $batch) {
+        if ($batch['status_id'] == 1) {
+          $fetchTotals[] = $id;
+        }
+      }
+    }
+    $totals = self::batchTotals($fetchTotals);
+
+    // add count
+    $params['total'] = self::getBatchCount($params);
 
     // format params and add links
     $batchList = array();
 
-    if (!empty($batches)) {
-      $pid = CRM_Contribute_PseudoConstant::paymentInstrument();
-      foreach ($batches as $id => $value) {
-        if (($params['context'] == 'financialBatch')) {
-          $batchList[$id]['check'] = $value['check'];
-        }
-        $batchList[$id]['batch_name'] = $value['title'];
-        $batchList[$id]['payment_instrument_id'] = '';
-        if (isset($value['payment_instrument_id'])) {
-          $batchList[$id]['payment_instrument_id'] = $pid[$value['payment_instrument_id']];
-        }
-        $batchList[$id]['item_count'] = $value['item_count'];
-        $batchList[$id]['total_amount'] = CRM_Utils_Money::format($value['total']);
-        $batchList[$id]['status'] = $value['batch_status'];
-        $batchList[$id]['created_by'] = $value['created_by'];
-        $batchList[$id]['links'] = $value['action'];
+    foreach ($batches as $id => $value) {
+      $batch = array();
+      if (($params['context'] == 'financialBatch')) {
+        $batch['check'] = $value['check'];
       }
-      return $batchList;
+      $batch['batch_name'] = $value['title'];
+      $batch['payment_instrument'] = $value['payment_instrument'];
+      $batch['item_count'] = $value['item_count'];
+      $batch['total'] = $value['total'] ? CRM_Utils_Money::format($value['total']) : '';
+      // Compare totals with actuals
+      if (isset($totals[$id])) {
+        $batch['item_count'] = self::displayTotals($totals[$id]['item_count'], $value['item_count']);
+        $batch['total'] = self::displayTotals(CRM_Utils_Money::format($totals[$id]['total']), $batch['total']);
+      }
+      $batch['status'] = $value['batch_status'];
+      $batch['created_by'] = $value['created_by'];
+      $batch['links'] = $value['action'];
+      $batchList[$id] = $batch;
     }
+    return $batchList;
   }
 
   /**
@@ -263,6 +275,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
 
     $batchTypes = CRM_Core_PseudoConstant::getBatchType();
     $batchStatus = CRM_Core_PseudoConstant::getBatchStatus();
+    $paymentInstrument = CRM_Contribute_PseudoConstant::paymentInstrument();
 
     $results = array();
     while ($object->fetch()) {
@@ -271,14 +284,13 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
       CRM_Core_DAO::storeValues($object, $values);
       $action = array_sum(array_keys($newLinks));
 
-      if ($values['status_id'] == 2 && $params['context'] != 'financialBatch' ) {
+      if ($values['status_id'] == 2 && $params['context'] != 'financialBatch') {
         $newLinks = array();
       }
       elseif ($params['context'] == 'financialBatch') {
         $values['check'] = "<input type='checkbox' id='check_".$object->id."' name='check_".$object->id."' value='1'  data-status_id='".$values['status_id']."' class='crm-batch-select'></input>";
-        $status = $values['status_id'];
 
-        switch ($status) {
+        switch ($values['status_id']) {
           case '1':
             CRM_Utils_Array::remove($newLinks, 'reopen', 'download');
             break;
@@ -293,11 +305,12 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
       $values['batch_type'] = $batchTypes[$values['type_id']];
       $values['batch_status'] = $batchStatus[$values['status_id']];
       $values['created_by'] = $object->created_by;
+      $values['payment_instrument'] = $object->payment_instrument_id ? $paymentInstrument[$object->payment_instrument_id] : '';
 
       $values['action'] = CRM_Core_Action::formLink(
         $newLinks,
         $action,
-        array('id' => $object->id, 'status' => $status)
+        array('id' => $object->id, 'status' => $values['status_id'])
       );
       $results[$object->id] = $values;
     }
@@ -305,15 +318,27 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
     return $results;
   }
 
+  /**
+   * Get count of batches
+   *
+   * @param  array   $params associated array for params
+   * @access public
+   */
   static function getBatchCount(&$params) {
     $args = array();
     $whereClause = self::whereClause($params, $args);
-    $query = " SELECT COUNT(*) FROM civicrm_batch batch 
+    $query = " SELECT COUNT(*) FROM civicrm_batch batch
       INNER JOIN civicrm_contact c ON batch.created_id = c.id
       WHERE {$whereClause}";
     return CRM_Core_DAO::singleValueQuery($query);
   }
 
+  /**
+   * Format where clause for getting lists of batches
+   *
+   * @param  array   $params associated array for params
+   * @access public
+   */
   function whereClause($params) {
     $clauses = array();
     // Exclude data-entry batches
@@ -446,12 +471,61 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
     return $batches;
   }
 
+  /**
+   * Format table headers
+   *
+   * @param array $values
+   * @return array
+   */
   function formatHeaders($values) {
     $arrayKeys = array_keys($values);
     foreach ($values[$arrayKeys[0]] as $title => $value) {
       $headers[] = $title;
     }
     return $headers;
+  }
+
+  /**
+   * Calculate sum of all entries in a batch
+   * Used to validate and update item_count and total when closing an accounting batch
+   *
+   * @param array $batchIds
+   * @return array
+   */
+  static function batchTotals($batchIds) {
+    $totals = array_fill_keys($batchIds, array('item_count' => 0, 'total' => 0));
+    if ($batchIds) {
+      $sql = "SELECT eb.batch_id, COUNT(tx.id) AS item_count, SUM(tx.total_amount) AS total
+      FROM civicrm_entity_batch eb
+      INNER JOIN civicrm_financial_trxn tx ON tx.id = eb.entity_id AND eb.entity_table = 'civicrm_financial_trxn'
+      WHERE eb.batch_id IN (" . implode(',', $batchIds) . ")
+      GROUP BY eb.batch_id";
+      $dao = CRM_Core_DAO::executeQuery($sql);
+      while ($dao->fetch()) {
+        $totals[$dao->batch_id] = (array) $dao;
+      }
+      $dao->free();
+    }
+    return $totals;
+  }
+
+  /**
+   * Format markup for comparing two totals
+   *
+   * @param $actual: calculated total
+   * @param $expected: user-entered total
+   * @return array
+   */
+  static function displayTotals($actual, $expected) {
+    $class = 'actual-value';
+    if ($expected && $expected != $actual) {
+      $class .= ' crm-error';
+    }
+    $output = "<span class='$class'>$actual</span>";
+    if ($expected) {
+      $output .= " / <span class='expected-value'>$expected</span>";
+    }
+    return $output;
   }
 
   /*
@@ -471,14 +545,14 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
     }
 
     $id_list = implode(',', $batchIds);
-    
+
     $sql = "SELECT
       ft.id as financial_trxn_id,
       ft.trxn_date,
       ft.total_amount as debit_total_amount,
       eft.amount as amount,
       ft.currency as currency,
-      ft.trxn_id AS trxn_id, 
+      ft.trxn_id AS trxn_id,
       c.source as source,
       cov.label as payment_instrument,
       ft.check_number,
@@ -490,8 +564,8 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
       ov_from.grouping as from_qb_account_type,
       fa_to.id as to_account_id,
       fa_to.name as to_account_name,
-      fac.accounting_code AS credit_account, 
-      fac.name AS credit_account_name, 
+      fac.accounting_code AS credit_account,
+      fac.name AS credit_account_name,
       fi.description AS item_description,
       fa_to.accounting_code as to_account_code,
       fa_to.financial_account_type_id as to_account_type_id,
@@ -512,7 +586,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
       LEFT JOIN civicrm_entity_financial_trxn eft ON eft.financial_trxn_id  = ft.id AND eft.entity_table = 'civicrm_financial_item'
       LEFT JOIN civicrm_entity_financial_trxn eftc ON eftc.financial_trxn_id  = ft.id AND eftc.entity_table = 'civicrm_contribution'
       LEFT JOIN civicrm_contribution c ON c.id = eftc.entity_id
-      LEFT JOIN civicrm_financial_item fi ON fi.id = eft.entity_id 
+      LEFT JOIN civicrm_financial_item fi ON fi.id = eft.entity_id
       LEFT JOIN civicrm_financial_account fac ON fac.id = fi.financial_account_id
       LEFT JOIN civicrm_option_value cov ON (cov.value = ft.payment_instrument_id AND cov.option_group_id = cog.id)
       LEFT JOIN civicrm_financial_account fa_to ON fa_to.id = ft.to_financial_account_id
@@ -553,7 +627,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
         $financialItems[$dao->financial_trxn_id]['Item Description'] = $dao->item_description;
       }
       $financialItems['headers'] = self::formatHeaders($financialItems);
-    } 
+    }
     else {
       while ( $dao->fetch() ) {
 
@@ -574,7 +648,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
             'type' => $exporter->format( $dao->to_qb_account_type )
           );
         }
-        
+
         // add to running list of contacts
         if ( !empty( $dao->contact_from_id ) && !isset( $contacts[$dao->contact_from_id] ) ) {
           $contacts[$dao->contact_from_id] = array(
@@ -583,7 +657,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
             'last_name' => $exporter->format( $dao->contact_from_last_name )
           );
         }
-        
+
         if ( !empty( $dao->contact_to_id ) && !isset( $contacts[$dao->contact_to_id] ) ) {
           $contacts[$dao->contact_to_id] = array(
             'name' => $exporter->format( $dao->contact_to_name ),
@@ -591,7 +665,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
             'last_name' => $exporter->format( $dao->contact_to_last_name )
           );
         }
-        
+
         // set up the journal entries for this financial trxn
         $journalEntries[$dao->financial_trxn_id] = array(
           'to_account' => array(
@@ -604,9 +678,9 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
            ),
           'splits' => array(),
         );
-        
+
         /*
-         * splits has two possibilities depending on FROM account     
+         * splits has two possibilities depending on FROM account
          */
         if (empty($dao->from_account_id)) {
           // In this case, split records need to use the individual financial_item account for each item in the trxn
@@ -628,7 +702,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
             contact.last_name as contact_last_name
             FROM civicrm_entity_financial_trxn eft
             LEFT JOIN civicrm_financial_item fi ON eft.entity_id = fi.id
-            LEFT JOIN civicrm_financial_trxn ft ON ft.id = eft.financial_trxn_id 
+            LEFT JOIN civicrm_financial_trxn ft ON ft.id = eft.financial_trxn_id
             LEFT JOIN civicrm_option_group cog ON cog.name = 'payment_instrument'
             LEFT JOIN civicrm_option_value cov ON (cov.value = ft.payment_instrument_id AND cov.option_group_id = cog.id)
             LEFT JOIN civicrm_financial_account fa ON fa.id = fi.financial_account_id
@@ -637,9 +711,9 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
             LEFT JOIN civicrm_contact contact ON contact.id = fi.contact_id
             WHERE eft.entity_table = 'civicrm_financial_item'
             AND eft.financial_trxn_id = %1";
-          
+
           $item_params = array( 1 => array( $dao->financial_trxn_id, 'Integer' ) );
-          
+
           $item_dao = CRM_Core_DAO::executeQuery( $item_sql, $item_params );
           while ($item_dao->fetch()) {
             // add to running list of accounts
@@ -651,7 +725,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
                 'type' => $exporter->format( $item_dao->qb_account_type )
               );
             }
-            
+
             if (!empty($item_dao->contact_id) && !isset($contacts[$item_dao->contact_id])) {
               $contacts[$item_dao->contact_id] = array(
                 'name' => $exporter->format( $item_dao->contact_name ),
@@ -686,7 +760,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
         }
       }
       $dao->free();
-    }   
+    }
       $exportParams = array(
         'accounts' => $accounts,
         'contacts' => $contacts,
@@ -694,11 +768,11 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
         'batchIds' => $batchIds,
         'csvExport' => isset($financialItems) ? $financialItems : NULL,
       );
-      
+
       $exporter->export( $exportParams );
-    
+
   }
-   
+
   static function closeReOpen($batchIds = array(), $status) {
     $batchStatus = CRM_Core_PseudoConstant::accountOptionValues( 'batch_status' );
     $params['status_id'] = CRM_Utils_Array::key( $status, $batchStatus );
@@ -761,7 +835,7 @@ WHERE {$where}
 {$orderBy}
 {$limit}
 ";
-    
+
     $result = CRM_Core_DAO::executeQuery($sql);
     return $result;
   }
