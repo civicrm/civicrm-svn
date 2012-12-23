@@ -249,10 +249,10 @@ cj(function($) {
     var invalid = [];
     switch (op) {
       case 'reopen':
-        var status = 1;
+        var notAllowed = [1, 5];
         break;
       case 'close':
-        var status = 2;
+        var notAllowed = [2, 5];
         break;
       default:
         return records;
@@ -260,7 +260,8 @@ cj(function($) {
     var len = records.length;
     var i = 0;
     while (i < len) {
-      if ($('tr[data-id='+records[i]+']').data('status_id') == status) {
+      var status = $('tr[data-id='+records[i]+']').data('status_id');
+      if ($.inArray(status, notAllowed) >= 0) {
         $('#check_' + records[i] + ':checked').prop('checked', false).trigger('change');
         invalid.push(records[i]);
         records.splice(i, 1);
@@ -271,8 +272,8 @@ cj(function($) {
       }
     }
     if (invalid.length) {
-      var msg = (invalid.length == 1 ? {/literal}'{ts escape="js"}This record already has the status{/ts}' : '{ts escape="js"}The following records already have the status{/ts}'{literal}) + ' ' + $('tr[data-id='+invalid[0]+'] .crm-batch-status').text() + '.' + listRecords(invalid);
-      $().crmAlert(msg, {/literal}'{ts escape="js"}Cannot Change Status{/ts}'{literal});
+      var msg = (invalid.length == 1 ? {/literal}'{ts escape="js"}This record already has the status{/ts}' : '{ts escape="js"}The following records already have the status{/ts}'{literal}) + ' ' + $('tr[data-id='+invalid[0]+'] .crm-batch-status').text() + ':' + listRecords(invalid);
+      $().crmAlert(msg, {/literal}'{ts escape="js"}Cannot{/ts} '{literal} + $("#batch_update option[value=" + op + "]").text());
     }
     return records;
   }
