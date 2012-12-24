@@ -123,6 +123,9 @@ class CRM_Core_Page_AJAX {
         return method_exists($className, $fnName);
 
       case 'page':
+        if (preg_match('/^CRM_Core_Page_Help$/', $className)) {
+          return class_exists($className);
+        }
       case 'class':
       case '':
         if (!preg_match('/^CRM_[a-zA-Z0-9]+_(Page|Form)_Inline_[a-zA-Z0-9]+$/', $className)) {
