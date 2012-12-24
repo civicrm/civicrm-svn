@@ -563,8 +563,9 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     $now = CRM_Utils_Date::getToday( null, 'YmdHis');
     if (CRM_Utils_Array::value('receive_date', $this->_params)) {
       $formValues['receive_date'] = CRM_Utils_Date::processDate($this->_params['receive_date']);
-    } else {
-    $formValues['receive_date'] = $now;
+    }
+    else {
+      $formValues['receive_date'] = $now;
     }
     $this->assign('receive_date', $formValues['receive_date']);
 
@@ -648,12 +649,13 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       $paymentParams['contactID'] = $this->_contributorContactID;
       //CRM-10377 if payment is by an alternate contact then we need to set that person
       // as the contact in the payment params
-      if($this->_contributorContactID != $this->_contactID){
-        if(CRM_Utils_Array::value('honor_type_id', $this->_params)){
+      if ($this->_contributorContactID != $this->_contactID) {
+        if (CRM_Utils_Array::value('honor_type_id', $this->_params)) {
           $paymentParams['honor_contact_id'] = $this->_contactID;
           $paymentParams['honor_type_id'] = $this->_params['honor_type_id'];
         }
       }
+
       CRM_Core_Payment_Form::mapParams($this->_bltID, $this->_params, $paymentParams, TRUE);
 
       $payment = CRM_Core_Payment::singleton($this->_mode, $this->_paymentProcessor, $this);
@@ -697,11 +699,13 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
         NULL, NULL, TRUE
       )
     );
+
     $customFieldsFormatted = CRM_Core_BAO_CustomField::postProcess($formValues,
       $customFields,
       $this->_id,
       'Membership'
     );
+
     // check for test membership.
     $isTestMembership = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_Membership', $this->_membershipId, 'is_test');
 
