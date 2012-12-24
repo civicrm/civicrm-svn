@@ -31,9 +31,13 @@
           {foreach from=$currentAttachmentInfo key=attKey item=attVal}
                 <div id="attachStatusMesg" class="status hiddenElement"></div>
                 <div id="attachFileRecord_{$attVal.fileID}">
-                  <strong><a href="{$attVal.url}">{$attVal.cleanName}</a></strong>&nbsp;-&nbsp;{$attVal.description}
-                  <br/>
-                  {ts}Tags{/ts}: {$attVal.tag}
+                  <strong><a href="{$attVal.url}">{$attVal.cleanName}</a></strong>
+                  {if $attVal.description}&nbsp;-&nbsp;{$attVal.description}{/if}
+                  {if !empty($attVal.tag)}
+                    <br />
+                    {ts}Tags{/ts}: {$attVal.tag}
+                    <br />
+                  {/if}
                 </div>
           {/foreach}
         </td>
@@ -109,13 +113,16 @@
           {foreach from=$currentAttachmentInfo key=attKey item=attVal}
                 <div id="attachStatusMesg" class="status hiddenElement"></div>
                 <div id="attachFileRecord_{$attVal.fileID}">
-                  <strong><a href="{$attVal.url}">{$attVal.cleanName}</a></strong>&nbsp;-&nbsp;{$attVal.description}
+                  <strong><a href="{$attVal.url}">{$attVal.cleanName}</a></strong>
+                  {if $attVal.description}&nbsp;-&nbsp;{$attVal.description}{/if}
                   {if $attVal.deleteURLArgs}
                    <a href="javascript:showDelete('{$attVal.cleanName}', '{$attVal.deleteURLArgs}', {$attVal.fileID})" title="{ts}Delete this attachment{/ts}"><span class="icon red-icon delete-icon" style="margin:0px 0px -5px 20px" title="{ts}Delete this attachment{/ts}"></span></a>
                   {/if}
-                  <br/>
-                  {ts}Tags{/ts}: {$attVal.tag}
-                  <br/>
+                  {if !empty($attVal.tag)}
+                    <br/>
+                    {ts}Tags{/ts}: {$attVal.tag}
+                    <br/>
+                  {/if}
                 </div>
           {/foreach}
             </td>
