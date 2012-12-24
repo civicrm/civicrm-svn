@@ -43,18 +43,18 @@
   {ts}If you know in advance the number of transactions in this batch, you may specify it now.{/ts}
 </p>
 <p>
-  {ts}When you close your batch, CiviCRM will verify that you have entered the correct number (although you will have the opportunity to override the warning).{/ts}
+  {ts}When you close your batch, CiviCRM will verify that you have entered the correct number{/ts} ({ts}you will have the opportunity to override the warning if they do not match{/ts}).
 </p>
 {/htxt}
 
 {htxt id="total-title"}
-  {ts}Number of Transactions{/ts}
+  {ts}Total Amount{/ts}
 {/htxt}
 {htxt id="total"}
 <p>
   {ts}If you know in advance the total amount in this batch, you may specify it now.{/ts}
 </p>
 <p>
-  {ts}When you close your batch, CiviCRM will verify the totals entered match this number (although you will have the opportunity to override the warning).{/ts}
+  {ts}When you close your batch, CiviCRM will verify the totals entered match this number{/ts} ({ts}you will have the opportunity to override the warning if they do not match{/ts}).
 </p>
 {/htxt}
