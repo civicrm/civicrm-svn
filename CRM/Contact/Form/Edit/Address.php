@@ -224,6 +224,7 @@ class CRM_Contact_Form_Edit_Address {
       $form,
       $entityId
     );
+
     if (isset($groupTree) && is_array($groupTree)) {
       // use simplified formatted groupTree
       $groupTree = CRM_Core_BAO_CustomGroup::formatGroupTree($groupTree, 1, $form);
@@ -235,22 +236,24 @@ class CRM_Contact_Form_Edit_Address {
           $groupTree[$id]['fields'][$fldId]['element_name'] = "address[$blockId][{$field['element_name']}]";
         }
       }
+
       $defaults = array();
       CRM_Core_BAO_CustomGroup::setDefaults($groupTree, $defaults);
-      // Set default values
-      $address = array();
+
+      // since we change element name for address custom data, we need to format the setdefault values
+      $addressDefaults = array();
       foreach ($defaults as $key => $val) {
         if ( empty( $val ) ) {
           continue;
-      }
-        elseif ( is_array($val) ) {
-          $val = var_export($val, TRUE);
         }
-        $$key = "$val";
+
+        // inorder to set correct defaults for checkbox custom data, we need to converted flat key to array
+        // this works for all types custom data
+        $keyValues = explode('[', str_replace(']', '', $key));
+        $addressDefaults[$keyValues[0]][$keyValues[1]][$keyValues[2]] = $val;
       }
-      
-      $defaults = array('address' => $address);
-      $form->setDefaults($defaults);
+
+      $form->setDefaults($addressDefaults);
 
       // we setting the prefix to 'dnc_' below, so that we don't overwrite smarty's grouptree var.
       // And we can't set it to 'address_' because we want to set it in a slightly different format.
@@ -460,7 +463,7 @@ class CRM_Contact_Form_Edit_Address {
             'address' => $addressValue['display'],
             'name' => $shareAddressContactNames[$addressValue['master_id']]['name'],
           );
-}
+        }
         else {
           $defaults['address'][$key]['use_shared_address'] = 0;
         }
