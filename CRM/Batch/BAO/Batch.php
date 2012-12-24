@@ -521,9 +521,11 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
     if ($expected && $expected != $actual) {
       $class .= ' crm-error';
     }
-    $output = "<span class='$class'>$actual</span>";
+    $actualTitle = ts('Current Total');
+    $output = "<span class='$class' title='$actualTitle'>$actual</span>";
     if ($expected) {
-      $output .= " / <span class='expected-value'>$expected</span>";
+      $expectedTitle = ts('Expected Total');
+      $output .= " / <span class='expected-value' title='$expectedTitle'>$expected</span>";
     }
     return $output;
   }

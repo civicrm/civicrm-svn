@@ -187,6 +187,7 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
       $exportedStatusId = CRM_Utils_Array::key('Exported', $batchStatus );
       unset($batchStatus[$exportedStatusId]);
       $this->add('select', 'status_id', ts('Batch Status'), array('' => ts('- select -')) + $batchStatus, true);
+      $this->freeze(array('status_id'));
     }
 
     $attributes = CRM_Core_DAO::getAttribute('CRM_Batch_DAO_Batch');
