@@ -240,13 +240,21 @@ class CRM_Core_Payment_AuthorizeNetIPN extends CRM_Core_Payment_BaseIPN {
 
     // joining with contribution table for extra checks
     $sql = "
-    SELECT cr.id
+    SELECT cr.id, cr.contact_id
       FROM civicrm_contribution_recur cr
 INNER JOIN civicrm_contribution co ON co.contribution_recur_id = cr.id
      WHERE cr.processor_id = '{$input['subscription_id']}' AND
            (cr.contact_id = {$ids['contact']} OR co.id = {$ids['contribution']})
      LIMIT 1";
-    $ids['contributionRecur'] = CRM_Core_DAO::singleValueQuery($sql);
+    $contRecur = CRM_Core_DAO::executeQuery($sql);
+    $contRecur->fetch();
+    $ids['contributionRecur'] = $contRecur->id;
+    if($ids['contact_id'] != $contRecur->contact_id){
+      CRM_Core_Error::debug_log_message("Recurring contribution appears to have been re-assigned from id {$ids['contact_id']} to {$contRecur->contact_id}
+        Continuing with {$contRecur->contact_id}
+      ");
+      $ids['contact_id'] = $contRecur->contact_id;
+    }
     if (!$ids['contributionRecur']) {
       CRM_Core_Error::debug_log_message("Could not find contributionRecur id: ".print_r($input, TRUE));
       echo "Failure: Could not find contributionRecur<p>";
