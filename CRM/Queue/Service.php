@@ -57,8 +57,7 @@ class CRM_Queue_Service {
    *
    * @param $forceNew bool
    */
-  static
-  function &singleton($forceNew = FALSE) {
+  static function &singleton($forceNew = FALSE) {
     if ($forceNew || !self::$_singleton) {
       self::$_singleton = new CRM_Queue_Service();
     }

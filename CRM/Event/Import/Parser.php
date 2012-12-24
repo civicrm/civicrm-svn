@@ -634,8 +634,7 @@ abstract class CRM_Event_Import_Parser {
    * @return void
    * @access public
    */
-  static
-  function exportCSV($fileName, $header, $data) {
+  static function exportCSV($fileName, $header, $data) {
     $output = array();
     $fd = fopen($fileName, 'w');
 

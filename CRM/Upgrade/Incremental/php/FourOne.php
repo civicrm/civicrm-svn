@@ -268,8 +268,7 @@ VALUES
     CRM_Core_DAO::executeQuery($sql);
   }
 
-  static
-  function retrieveDirectoryAndURLPaths(&$params) {
+  static function retrieveDirectoryAndURLPaths(&$params) {
 
     $sql = "
 SELECT v.name as valueName, v.value, g.name as optionName
