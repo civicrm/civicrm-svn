@@ -756,23 +756,9 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       }
       $formValues['contact_id'] = $this->_contactID;
       
-      CRM_Member_BAO_Membership::recordMembershipContribution( $formValues, CRM_Core_DAO::$_nullArray, $renewMembership->id );
-
-      if ($this->_mode) {
-        $trxnParams = array(
-          'contribution_id' => CRM_Utils_Array::value('contribution_id', $formValues),
-          'trxn_date' => $now,
-          'trxn_type' => 'Debit',
-          'total_amount' => $formValues['total_amount'],
-          'fee_amount' => CRM_Utils_Array::value('fee_amount', $result),
-          'net_amount' => CRM_Utils_Array::value('net_amount', $result, $formValues['total_amount']),
-          'currency' => $config->defaultCurrency,
-          'payment_processor' => $this->_paymentProcessor['payment_processor_type'],
-          'trxn_id' => $result['trxn_id'],
-        );
-
-        $trxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
-      }
+      CRM_Member_BAO_Membership::recordMembershipContribution( $formValues,
+        CRM_Core_DAO::$_nullArray,
+        $renewMembership->id );
     }
 
     if (CRM_Utils_Array::value('send_receipt', $formValues)) {

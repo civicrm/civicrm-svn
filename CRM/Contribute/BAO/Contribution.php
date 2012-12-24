@@ -2647,10 +2647,10 @@ WHERE  contribution_id = %1 ";
     //records finanical trxn and entity financial trxn
     $financialTxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
 
-      // record line items and finacial items
-      $entityId = $params['contribution']->id;
-      $entityTable = 'civicrm_contribution';
-      CRM_Price_BAO_LineItem::processPriceSet($entityId, $params['line_item'], $params['contribution'], $entityTable);
+    // record line items and finacial items
+    $entityId = $params['contribution']->id;
+    $entityTable = 'civicrm_contribution';
+    CRM_Price_BAO_LineItem::processPriceSet($entityId, $params['line_item'], $params['contribution'], $entityTable);
 
     // create batch entry if batch_id is passed
     if (CRM_Utils_Array::value('batch_id', $params)) {
