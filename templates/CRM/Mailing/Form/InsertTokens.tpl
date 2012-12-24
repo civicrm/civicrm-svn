@@ -44,7 +44,7 @@ var isMailing    = false;
   {else}
   {literal}
   text_message = "text_message";
-  html_message = "html_message";
+  html_message = (cj("#edit-html-message-value").length > 0) ? "edit-html-message-value" : "html_message";
   isMailing    = true;
   {/literal}
 {/if}
@@ -110,14 +110,28 @@ function selectValue( val ) {
     if ( editor == "ckeditor" ) {
       oEditor = CKEDITOR.instances[html_message];
       oEditor.setData('');
-    } else if ( editor == "tinymce" ) {
+    }
+    else if ( editor == "tinymce" ) {
       tinyMCE.getInstanceById(html_message).setContent( html_body );
-    } else if ( editor == "joomlaeditor" ) {
+    }
+    else if ( editor == "joomlaeditor" ) {
       document.getElementById(html_message).value = '' ;
       tinyMCE.execCommand('mceSetContent',false, '');
-    } else if ( editor =="drupalwysiwyg" ) {
-      //doesn't work! WYSIWYG API doesn't support a clear or replace method
-    } else {
+    }
+    else if ( editor =="drupalwysiwyg" ) {
+      if (Drupal.wysiwyg.instances[html_message].setContent) {
+        Drupal.wysiwyg.instances[html_message].setContent(html_body);
+      }
+      // @TODO: Remove this when http://drupal.org/node/614146 drops
+      else if (Drupal.wysiwyg.instances[html_message].insert) {
+        alert("Please note your editor doesn't completely support this function. You may need to clear the contents of the editor prior to choosing a new template.");
+        Drupal.wysiwyg.instances[html_message].insert(html_body);
+      }
+      else {
+        alert("Sorry, your editor doesn't support this function yet.");
+      }
+    }
+    else {
       document.getElementById(html_message).value = '' ;
     }
     if ( isPDF ) {
@@ -159,7 +173,17 @@ function selectValue( val ) {
       tinyMCE.execCommand('mceSetContent',false, html_body);
     }
     else if ( editor =="drupalwysiwyg") {
-      Drupal.wysiwyg.instances[html_message].insert(html_body);
+      if (Drupal.wysiwyg.instances[html_message].setContent) {
+        Drupal.wysiwyg.instances[html_message].setContent(html_body);
+      }
+      // @TODO: Remove this when http://drupal.org/node/614146 drops
+      else if (Drupal.wysiwyg.instances[html_message].insert) {
+        alert("Please note your editor doesn't completely support this function. You may need to clear the contents of the editor prior to choosing a new template.");
+        Drupal.wysiwyg.instances[html_message].insert(html_body);
+      }
+      else {
+        alert("Sorry, your editor doesn't support this function yet.");
+      }
     }
     else {
       cj("#"+ html_message).val( html_body );
@@ -293,6 +317,14 @@ function tokenReplHtml() {
     oEditor = CKEDITOR.instances[html_message];
     oEditor.insertHtml(token2.toString() );
   }
+  else if ( editor == "drupalwysiwyg" ) {
+    if (Drupal.wysiwyg.instances[html_message].insert) {
+      Drupal.wysiwyg.instances[html_message].insert(token2.toString() );
+    }
+    else {
+      alert("Sorry, your editor doesn't support this function yet.");
+    }
+  }
   else {
     cj( "#"+ html_message ).replaceSelection( token2 );
   }
@@ -309,16 +341,18 @@ cj(function() {
   cj('.accordion .head').hover( function() { cj(this).addClass( "ui-state-hover");
   }, function() { cj(this).removeClass( "ui-state-hover");
   }).bind('click', function() {
-      var checkClass = cj(this).find('span').attr( 'class' );
-      var len        = checkClass.length;
-      if ( checkClass.substring( len - 1, len ) == 's' ) {
-        cj(this).find('span').removeClass().addClass('ui-icon ui-icon-triangle-1-e');
-        cj("span#help"+cj(this).find('span').attr('id')).hide();
-      } else {
-        cj(this).find('span').removeClass().addClass('ui-icon ui-icon-triangle-1-s');
-        cj("span#help"+cj(this).find('span').attr('id')).show();
-      }
-      cj(this).next().toggle(); return false; }).next().hide();
+    var checkClass = cj(this).find('span').attr( 'class' );
+    var len        = checkClass.length;
+    if ( checkClass.substring( len - 1, len ) == 's' ) {
+      cj(this).find('span').removeClass().addClass('ui-icon ui-icon-triangle-1-e');
+      cj("span#help"+cj(this).find('span').attr('id')).hide();
+    }
+    else {
+      cj(this).find('span').removeClass().addClass('ui-icon ui-icon-triangle-1-s');
+      cj("span#help"+cj(this).find('span').attr('id')).show();
+    }
+    cj(this).next().toggle(); return false;
+  }).next().hide();
   cj('span#html').removeClass().addClass('ui-icon ui-icon-triangle-1-s');
   cj("div.html").show();
 
@@ -406,7 +440,17 @@ function setSignature( ) {
           tinyMCE.execInstanceCommand('html_message',"mceInsertContent",false, htmlMessage);
         }
         else if ( editor == "drupalwysiwyg" ) {
-          Drupal.wysiwyg.instances[html_message].insert(htmlMessage);
+          if (Drupal.wysiwyg.instances[html_message].setContent) {
+            Drupal.wysiwyg.instances[html_message].setContent(htmlMessage);
+          }
+          // @TODO: Remove this when http://drupal.org/node/614146 drops
+          else if (Drupal.wysiwyg.instances[html_message].insert) {
+            alert("Please note your editor doesn't completely support this function. You may need to clear the contents of the editor prior to choosing a new template.");
+            Drupal.wysiwyg.instances[html_message].insert(htmlMessage);
+          }
+          else {
+            alert("Sorry, your editor doesn't support this function yet.");
+          }
         }
         else {
           cj("#"+ html_message).val(htmlMessage);
