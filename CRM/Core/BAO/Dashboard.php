@@ -76,11 +76,13 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard {
    *
    * Initializes the dashboard with defaults if this is the user's first visit to their dashboard
    *
+   * @param boolean $flatFormat this is true if you want simple associated array of contact dashlets
+   *
    * @return array $dashlets array of dashlets
    * @access public
    * @static
    */
-  static function getContactDashlets() {
+  static function getContactDashlets($flatFormat = FALSE) {
     $dashlets = array();
 
     $contactID = CRM_Core_Session::singleton()->get('userID');
@@ -93,10 +95,19 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard {
     $dao->find();
     while ($dao->fetch()) {
       $hasDashlets = TRUE;
-      if ($dao->is_active) {
-        // append weight so that order is preserved.
-        $dashlets[$dao->column_no]["{$dao->weight}-{$dao->dashboard_id}"] = $dao->is_minimized;
+      if (!$flatFormat) {
+        if ($dao->is_active) {
+          // append weight so that order is preserved.
+          $dashlets[$dao->column_no]["{$dao->weight}-{$dao->dashboard_id}"] = $dao->is_minimized;
+        }
       }
+      else {
+        $dashlets[$dao->dashboard_id] = $dao->dashboard_id;
+      }
+    }
+
+    if ($flatFormat) {
+      return $dashlets;
     }
 
     // If empty then initialize contact dashboard for this user
@@ -274,7 +285,7 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard {
     $contactID = $session->get('userID');
 
     //we need to get existing dashletes, so we know when to update or insert
-    $contactDashlets = CRM_Core_BAO_Dashboard::getContactDashlets();
+    $contactDashlets = CRM_Core_BAO_Dashboard::getContactDashlets(true);
 
     $dashletIDs = array();
     if (is_array($columns)) {
