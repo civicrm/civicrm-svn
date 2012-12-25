@@ -65,7 +65,7 @@ cj(function($) {
           msg += '<li><a href="'+viewIndividual+contact.id+'">'+ contact.display_name +'</a> '+contact.email+'</li>';
         });
         msg += '</ul>';
-        lastnameMsg = $().crmAlert(msg, title);
+        lastnameMsg = CRM.alert(msg, title);
         cj('.matching-contacts-actions a').click(function(){
           // No confirmation dialog on click
           global_formNavigate = true;

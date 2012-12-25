@@ -108,13 +108,13 @@ var CRM = CRM || {};
       case "setvalue":
       case "replace":
         settings.success = function() {
-          $().crmAlert('', ts('Saved'), 'success');
+          CRM.alert('', ts('Saved'), 'success');
           return true;
         };
         break;
       case "delete":
         settings.success = function() {
-          $().crmAlert('', ts('Removed'), 'success');
+          CRM.alert('', ts('Removed'), 'success');
           return true;
         };
     }

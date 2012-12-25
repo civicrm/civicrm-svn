@@ -1657,7 +1657,7 @@ function _civicrm_core_data(&$data, $enabled) {
       'handler' => 'views_handler_sort',
     ),
   );
-  //BOOLEAN : IS A TEST ACTIVITY
+  //BOOLEAN : IS AUTO ACTIVITY
   $data['civicrm_activity']['is_auto'] = array(
     'title' => t('Is Automaticaly created'),
     'help' => t('Is the activity created by the system?'),
@@ -1729,7 +1729,7 @@ function _civicrm_core_data(&$data, $enabled) {
 
 
 
-  // CHILLING OUT AT THE CIVICRM_ACTIVTY_ASSIGNMENT TABLE
+  // CHILLING OUT AT THE civicrm_activity_assignment TABLE
 
   $data['civicrm_activity_assignment']['table']['group'] = t('CiviCRM Activity Assignments');
 
@@ -1754,7 +1754,7 @@ function _civicrm_core_data(&$data, $enabled) {
     ),
   );
 
-  // CHILLING OUT AT THE CIVICRM_ACTIVTY_ASSIGNMENT TABLE
+  // CHILLING OUT AT THE civicrm_activity_target TABLE
 
   $data['civicrm_activity_target']['table']['group'] = t('CiviCRM Activity Targets');
 

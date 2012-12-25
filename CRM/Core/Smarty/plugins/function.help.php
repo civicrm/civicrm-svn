@@ -69,5 +69,5 @@ function smarty_function_help($params, &$smarty) {
   foreach ($params as &$param) {
     $param = is_bool($param) || is_numeric($param) ? (int) $param : (string) $param;
   }
-  return '<a class="helpicon" title="' . $title . '" href=\'javascript:cj().crmHelp("' . $name . '", ' . json_encode($params) . ')\'>&nbsp;</a>';
+  return '<a class="helpicon" title="' . $title . '" href=\'javascript:CRM.help("' . $name . '", ' . json_encode($params) . ')\'>&nbsp;</a>';
 }

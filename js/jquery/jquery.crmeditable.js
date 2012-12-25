@@ -126,7 +126,7 @@
         },
         success: function(entity,field,value,data) {
           var $i = $(this);
-          $().crmAlert('', ts('Saved'), 'success');
+          CRM.alert('', ts('Saved'), 'success');
           $i.removeClass ('crm-editable-saving crm-error');
           $i.html(value);
         }
@@ -398,7 +398,7 @@
               $(this).closest('.crm-summary-block').load(CRM.url('civicrm/ajax/inline', data), function() {$(this).trigger('load');});
             });
           }
-          cj().crmAlert('', ts('Saved'), 'success');
+          CRM.alert('', ts('Saved'), 'success');
         }
       },
       error: function (obj, status) {

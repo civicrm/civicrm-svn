@@ -378,11 +378,11 @@ invert              = 0
         // Display info
         cj('.ui-notify-message .icon.info').click();
         if ( cj("#allow_same_participant_emails").attr( 'checked' ) && cj("#is_multiple_registrations").attr( 'checked' ) ) {
-            cj().crmAlert( msg1, '', 'info' );
+            CRM.alert( msg1, '', 'info' );
         } else if ( cj("#allow_same_participant_emails").attr( 'checked' ) && !cj("#is_multiple_registrations").attr( 'checked' ) ) {
-            cj().crmAlert( msg2, '', 'info' );
+            CRM.alert( msg2, '', 'info' );
         } else if ( !cj("#allow_same_participant_emails").attr( 'checked' ) && cj("#is_multiple_registrations").attr( 'checked' ) ) {
-            cj().crmAlert( msg3, '', 'info' );
+            CRM.alert( msg3, '', 'info' );
         }
     }
 

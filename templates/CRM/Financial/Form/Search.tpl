@@ -235,7 +235,7 @@ cj(function($) {
       function(response) {
         //this is custom status set when record update success.
         if (response.status == 'record-updated-success') {
-          $().crmAlert(listRecords(records), op == 'delete' ? {/literal}'{ts escape="js"}Deleted{/ts}' : '{ts escape="js"}Updated{/ts}'{literal}, 'success');
+          CRM.alert(listRecords(records), op == 'delete' ? {/literal}'{ts escape="js"}Deleted{/ts}' : '{ts escape="js"}Updated{/ts}'{literal}, 'success');
           batchSelector.fnDraw();
         }
         else {
@@ -273,7 +273,7 @@ cj(function($) {
     }
     if (invalid.length) {
       var msg = (invalid.length == 1 ? {/literal}'{ts escape="js"}This record already has the status{/ts}' : '{ts escape="js"}The following records already have the status{/ts}'{literal}) + ' ' + $('tr[data-id='+invalid[0]+'] .crm-batch-status').text() + ':' + listRecords(invalid);
-      $().crmAlert(msg, {/literal}'{ts escape="js"}Cannot{/ts} '{literal} + $("#batch_update option[value=" + op + "]").text());
+      CRM.alert(msg, {/literal}'{ts escape="js"}Cannot{/ts} '{literal} + $("#batch_update option[value=" + op + "]").text());
     }
     return records;
   }
@@ -285,11 +285,11 @@ cj(function($) {
   $('#Go').click(function() {
     var op = $("#batch_update").val();
     if (op == "") {
-       $().crmAlert({/literal}'{ts escape="js"}Please select an action from the menu.{/ts}', '{ts escape="js"}No Action Selected{/ts}'{literal});
+       CRM.alert({/literal}'{ts escape="js"}Please select an action from the menu.{/ts}', '{ts escape="js"}No Action Selected{/ts}'{literal});
        return false;
     }
     else if (!$("input.crm-batch-select:checked").length) {
-       $().crmAlert({/literal}'{ts escape="js"}Please select one or more batches for this action.{/ts}', '{ts escape="js"}No Batches Selected{/ts}'{literal});
+       CRM.alert({/literal}'{ts escape="js"}Please select one or more batches for this action.{/ts}', '{ts escape="js"}No Batches Selected{/ts}'{literal});
        return false;
     }
     else if (op == 'close' || op == 'reopen' || op == 'delete') {

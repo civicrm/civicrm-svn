@@ -183,7 +183,7 @@ function fileOnCase( action, activityID, currentCaseId ) {
                   } else {
                       var activitySubject = cj("#case_activity_subject").val( );
                       var statusMsg = activitySubject + '" has been filed to selected case: <a href="' + caseUrl + '">' + cj("#unclosed_cases").val( ) + '</a>.';
-                      cj().crmAlert(statusMsg, '{/literal}{ts escape="js"}Activity Filed{/ts}{literal}', 'success');
+                      CRM.alert(statusMsg, '{/literal}{ts escape="js"}Activity Filed{/ts}{literal}', 'success');
 
                              }
                    }

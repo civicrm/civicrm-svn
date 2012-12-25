@@ -23,7 +23,7 @@
 * | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
 * +--------------------------------------------------------------------+
 */
-(function($, undefined){ 
+(function($, undefined) {
   $.fn.crmtooltip = function(){
     $('a.crm-summary-link')
     .addClass('crm-processed')
@@ -55,12 +55,12 @@
   };
   
   var h;
-  $.fn.crmHelp = function(title, params) {
+  CRM.help = function(title, params) {
     h && h.close && h.close();
     var options = {
       expires: 0
     };
-    h = $().crmAlert('...', title, 'crm-help crm-msg-loading', options);
+    h = CRM.alert('...', title, 'crm-help crm-msg-loading', options);
     params.class_name = 'CRM_Core_Page_Help';
     params.type = 'page';
     $.ajax(CRM.url('civicrm/ajax/inline'),
@@ -79,7 +79,7 @@
     );
   };
 
-  $.fn.crmAlert = function(text, title, type, options) {
+  CRM.alert = function(text, title, type, options) {
     type = type || 'alert';
     title = title || '';
     options = options || {};
@@ -141,7 +141,7 @@
       }
       $(this).addClass('error');
     }
-    var msg = $().crmAlert(text, title, 'error', $.extend(extra, options));
+    var msg = CRM.alert(text, title, 'error', $.extend(extra, options));
     if ($(this).length) {
       var ele = $(this);
       setTimeout(function() {ele.one('change', function() {
@@ -175,7 +175,7 @@
         $(this).remove();
         // Duplicates were already removed server-side
         options.unique = false;
-        $().crmAlert(text, title, type, options);
+        CRM.alert(text, title, type, options);
       });
       // Handle qf form errors
       $('#crm-container form :input.error').one('blur', function() {

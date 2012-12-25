@@ -51,7 +51,7 @@ cj(function($) {
         {/literal}
         var msg = '{ts escape="js"}Displaying results as "%1" is not available without search criteria from the pane you just closed.{/ts}';
         msg = msg.replace('%1', oldMode);
-        $().crmAlert(msg, '{ts escape="js"}Display Results have been Reset{/ts}');
+        CRM.alert(msg, '{ts escape="js"}Display Results have been Reset{/ts}');
         {literal}
       }
       $(this).remove();
@@ -98,7 +98,7 @@ cj(function($) {
           body.html(data);
         },
         error: function() {
-          $().crmAlert({/literal}'{ts escape="js"}Sorry, could not load the requested information from the server.{/ts}', '{ts escape="js"}Network Error{/ts}'{literal});
+          CRM.alert({/literal}'{ts escape="js"}Sorry, could not load the requested information from the server.{/ts}', '{ts escape="js"}Network Error{/ts}'{literal});
           $('.close-accordion', header).click();
         }
       });
