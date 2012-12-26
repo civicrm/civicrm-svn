@@ -192,11 +192,16 @@ FROM   civicrm_mailing
     }
   }
 }
-/*
- * Implementation of hook_perm().
+/**
+ * Implementation of hook_permission().
  */
-function civicrm_rules_perm() {
-  return array('access civicrm rules settings');
+function civicrm_rules_permission() {
+  return array(
+    'access civicrm rules settings' =>
+    array('title' => t('Access CiviCRM Rules Settings'),
+      'description' => t('Access CiviCRM Rules Settings.'),
+    ),
+  );
 }
 
 function civicrm_rules_menu() {
