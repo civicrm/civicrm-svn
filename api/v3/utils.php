@@ -1112,14 +1112,14 @@ function _civicrm_api3_validate_date(&$params, &$fieldname, &$fieldInfo) {
   //should we check first to prevent it from being copied if they have passed in sql friendly format?
   if (CRM_Utils_Array::value($fieldInfo['name'], $params)) {
     //accept 'whatever strtotime accepts
-    if (strtotime($params[$fieldInfo['name']]) == 0) {
+    if (strtotime($params[$fieldInfo['name']]) === FALSE) {
       throw new Exception($fieldInfo['name'] . " is not a valid date: " . $params[$fieldInfo['name']]);
     }
     $params[$fieldInfo['name']] = CRM_Utils_Date::processDate($params[$fieldInfo['name']]);
   }
   if ((CRM_Utils_Array::value('name', $fieldInfo) != $fieldname) && CRM_Utils_Array::value($fieldname, $params)) {
     //If the unique field name differs from the db name & is set handle it here
-    if (strtotime($params[$fieldname]) == 0) {
+    if (strtotime($params[$fieldname]) === FALSE) {
       throw new Exception($fieldname . " is not a valid date: " . $params[$fieldname]);
     }
     $params[$fieldname] = CRM_Utils_Date::processDate($params[$fieldname]);
