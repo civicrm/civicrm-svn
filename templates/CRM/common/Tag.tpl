@@ -290,7 +290,7 @@
   </div>
   {/foreach}
 {elseif $tagsetType eq 'attachment'}
-  {foreach from=$tagsetInfo_attachment item=tagset}
+  {assign var=tagset     value = $tagsetInfo_attachment.$tagsetNumber}
   <div class="crm-section tag-section attachment-tagset-{$tagset.parentID}-section">
     <div class="label">
       <label>{$tagset.parentName}</label>
@@ -381,6 +381,5 @@
     </div>
     <div class="clear"></div>
   </div>
-  {/foreach}
 {/if}
 

@@ -144,6 +144,11 @@
      if (!empty($fileParams['tag'])) {
        CRM_Core_BAO_EntityTag::create($fileParams['tag'], 'civicrm_file', $entityFileDAO->id);
      }
+
+     //save free tags
+     if (isset($fileParams['attachment_taglist']) && !empty($fileParams['attachment_taglist'])) {
+       CRM_Core_Form_Tag::postProcess($fileParams['attachment_taglist'], $entityFileDAO->id, 'civicrm_file', CRM_Core_DAO::$_nullObject);
+     }
    }
 
    /**
@@ -367,10 +372,10 @@
            array('id' => "tags_$i", 'multiple' => 'multiple', 'title' => ts('- select -'))
          );
        }
-
-       // build tagset widget
-       CRM_Core_Form_Tag::buildQuickForm($form, $parentNames, 'civicrm_file', NULL, FALSE, TRUE, FALSE, "attachment_taglist_$i");
      }
+
+     // build tagset widget
+     CRM_Core_Form_Tag::buildQuickForm($form, $parentNames, 'civicrm_file', NULL, FALSE, TRUE, FALSE);
    }
 
    /**
@@ -421,6 +426,7 @@
        $attachName = "attachFile_$i";
        $attachDesc = "attachDesc_$i";
        $attachTags = "tag_$i";
+       $attachFreeTags = "attachment_taglist_$i";
        if (isset($formValues[$attachName]) && !empty($formValues[$attachName])) {
          // add static tags if selects
          $tagParams = array();
@@ -438,7 +444,8 @@
            'location' => $formValues[$attachName]['name'],
            'description' => $formValues[$attachDesc],
            'upload_date' => $now,
-           'tag' => $tagParams
+           'tag' => $tagParams,
+           'attachment_taglist' => CRM_Utils_Array::value($attachFreeTags, $formValues, array())
          );
 
          $params[$attachName] = $fileParams;

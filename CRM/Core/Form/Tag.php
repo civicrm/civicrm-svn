@@ -107,8 +107,10 @@ class CRM_Core_Form_Tag {
         }
 
         $tagset[$tagsetItem]['tagsetElementName'] = $tagsetElementName;
+        if ($tagsetElementName) {
+          $form->add('text', "{$tagsetElementName}[{$parentId}]", NULL);
+        }
 
-        $form->add('text', "{$tagsetElementName}[{$parentId}]", NULL);
         if ($entityId) {
           $tagset[$tagsetItem]['entityId'] = $entityId;
           $entityTags = CRM_Core_BAO_EntityTag::getChildEntityTags($parentId, $entityId, $entityTable);
@@ -160,6 +162,9 @@ class CRM_Core_Form_Tag {
             case 'civicrm_file':
               $numAttachments = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'max_attachments');
               for ($i = 1; $i <= $numAttachments; $i++) {
+                $tagset[$i] = $tagset[$tagsetItem];
+                $tagset[$i]['tagsetElementName'] = "attachment_taglist_$i";
+                $form->add('text', "attachment_taglist_{$i}[{$parentId}]", NULL);
                 if (!empty($form->_submitValues["attachment_taglist_$i"]) &&
                   CRM_Utils_Array::value($parentId, $form->_submitValues["attachment_taglist_$i"])
                 ) {
@@ -179,6 +184,7 @@ class CRM_Core_Form_Tag {
                   }
                 }
               }
+              unset($tagset[$tagsetItem]);
               break;
 
             default:
