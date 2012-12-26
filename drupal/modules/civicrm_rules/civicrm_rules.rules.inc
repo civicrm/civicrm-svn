@@ -68,7 +68,7 @@ function civicrm_rules_rules_condition_info() {
  */
 function civicrm_rules_rules_integration_access($type, $name) {
   if ($type == 'event' || $type == 'condition') {
-    return entity_access('access', 'civicrm');
+    return user_access('access CiviCRM');
   }
 }
 
@@ -76,7 +76,7 @@ function civicrm_rules_rules_integration_access($type, $name) {
  * CiviCRM integration admin access callback.
  */
 function civicrm_rules_rules_admin_access() {
-  return user_access('administer civicrm');
+  return user_access('administer CiviCRM');
 }
 
 /**
