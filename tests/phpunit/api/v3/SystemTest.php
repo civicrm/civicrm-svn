@@ -30,7 +30,7 @@
 require_once 'CiviTest/CiviUnitTestCase.php';
 
 /**
- * Test class for Domain API - civicrm_domain_*
+ * Test class for System API - civicrm_system_*
  *
  *  @package   CiviCRM
  */
