@@ -297,10 +297,6 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
           $label = $fieldOptions[$optionKey]['label'];
         }
 
-        if ($field->is_display_amounts) {
-          $label .= '&nbsp;-&nbsp;';
-          $label .= CRM_Utils_Money::format(CRM_Utils_Array::value($valueFieldName, $customOption[$optionKey]));
-        }
         $element = &$qf->add('text', $elementName, $label,
                    array_merge($extra,
                      array('price' => json_encode(array($optionKey, $priceVal)),

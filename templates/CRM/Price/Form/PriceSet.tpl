@@ -64,6 +64,11 @@
 
                 <div class="label">{$form.$element_name.label}</div>
                 <div class="content {$element.name}-content">{$form.$element_name.html}
+                  {if $element.is_display_amounts && $element.html_type eq 'Text'}
+                    <span class="price-field-amount">
+                      x {foreach item=option from=$element.options}{$option.amount|crmMoney}{/foreach}
+                    </span>
+                  {/if}
                       {if $element.help_post}<br /><span class="description">{$element.help_post}</span>{/if}
                 </div>
                 <div class="clear"></div>

@@ -26,23 +26,19 @@
 {capture assign=infoTitle}{ts}Preview Mode{/ts}{/capture}
 {assign var="infoType" value="info"}
 {if $preview_type eq 'group'}
-  {capture assign=infoMessage}{ts}Showing price set as it will be displayed within an edit form.{/ts}{/capture}
+  {capture assign=infoMessage}{ts}Showing price set as it will be displayed within a form.{/ts}{/capture}
 {else}
-  {capture assign=infoMessage}{ts}Showing field as it will be displayed in an edit form.{/ts}{/capture}
+  {capture assign=infoMessage}{ts}Showing field as it will be displayed in a form.{/ts}{/capture}
 {/if}
 {include file="CRM/common/info.tpl"}
 <div class="crm-block crm-form-block crm-price-set-preview-block">
-{strip}
-
-{foreach from=$groupTree item=cd_edit key=group_id}
-    <fieldset>
-  {if $preview_type eq 'group'}<legend>{$setTitle}</legend>{/if}
-         <table class="form-layout">
-                {assign var="priceSet" value=`$cd_edit`}
-                {include file="CRM/Price/Form/PriceSet.tpl"}
-         </table>
-    </fieldset>
-{/foreach}
-{/strip}
-<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
+  {strip}
+    {foreach from=$groupTree item=priceSet key=group_id}
+      <fieldset>
+        {if $preview_type eq 'group'}<legend>{$setTitle}</legend>{/if}
+        {include file="CRM/Price/Form/PriceSet.tpl"}
+      </fieldset>
+    {/foreach}
+  {/strip}
+  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>
