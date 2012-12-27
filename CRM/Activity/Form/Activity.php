@@ -141,40 +141,40 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task {
         CRM_Core_DAO::getAttribute('CRM_Activity_DAO_Activity',
           'location'
         ),
-        'required' => FALSE,
+        'required' => FALSE
       ),
       'details' => array(
         'type' => 'wysiwyg',
         'label' => ts('Details'),
         // forces a smaller edit window
         'attributes' => array('rows' => 4, 'cols' => 60),
-        'required' => FALSE,
+        'required' => FALSE
       ),
       'status_id' => array(
         'type' => 'select',
         'label' => ts('Status'),
         'attributes' =>
         CRM_Core_PseudoConstant::activityStatus(),
-        'required' => TRUE,
+        'required' => TRUE
       ),
       'priority_id' => array(
         'type' => 'select',
         'label' => ts('Priority'),
         'attributes' =>
         CRM_Core_PseudoConstant::priority(),
-        'required' => TRUE,
+        'required' => TRUE
       ),
       'source_contact_id' => array(
         'type' => 'text',
         'label' => ts('Added By'),
-        'required' => FALSE,
+        'required' => FALSE
       ),
       'followup_activity_type_id' => array(
         'type' => 'select',
         'label' => ts('Followup Activity'),
         'attributes' => array(
           '' => '- ' . ts('select activity') . ' -') +
-        CRM_Core_PseudoConstant::ActivityType(FALSE),
+        CRM_Core_PseudoConstant::ActivityType(FALSE)
       ),
       // Add optional 'Subject' field for the Follow-up Activiity, CRM-4491
       'followup_activity_subject' => array(
@@ -182,8 +182,8 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task {
         'label' => ts('Subject'),
         'attributes' => CRM_Core_DAO::getAttribute('CRM_Activity_DAO_Activity',
           'subject'
-        ),
-      ),
+        )
+      )
     );
 
     if (($this->_context == 'standalone') &&
@@ -212,13 +212,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task {
     if ($this->_atypefile) {
       $this->assign('atypefile', TRUE);
     }
-
-    $this->_addAssigneeContact = CRM_Utils_Array::value('assignee_contact', $_GET);
-    $this->assign('addAssigneeContact', FALSE);
-    if ($this->_addAssigneeContact) {
-      $this->assign('addAssigneeContact', TRUE);
-    }
-
 
     $session = CRM_Core_Session::singleton();
     $this->_currentUserId = $session->get('userID');
@@ -629,12 +622,12 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task {
             'type' => 'next',
             'name' => $button,
             'spacing' => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
-            'isDefault' => TRUE,
+            'isDefault' => TRUE
           ),
           array(
             'type' => 'cancel',
-            'name' => ts('Cancel'),
-          ),
+            'name' => ts('Cancel')
+          )
         ));
       return;
     }
@@ -777,7 +770,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task {
     );
 
     $this->add('hidden', 'source_contact_qid', '', array('id' => 'source_contact_qid'));
-    //$this->add('text', 'target_contact_id', ts('target'));
     CRM_Contact_Form_NewContact::buildQuickForm($this);
     $this->assign('multiClient', 1);
 
@@ -833,7 +825,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task {
           'type' => 'cancel',
           'name' => ts('File on case'),
           'subName' => 'file_on_case',
-          'js' => array('onClick' => "Javascript:fileOnCase( \"file\", $this->_activityId ); return false;"),
+          'js' => array('onClick' => "Javascript:fileOnCase( \"file\", $this->_activityId ); return false;")
         );
       }
       // form should be frozen for view mode
@@ -856,12 +848,12 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task {
             'type' => 'upload',
             'name' => ts('Save'),
             'js' => $js,
-            'isDefault' => TRUE,
+            'isDefault' => TRUE
           ),
           array(
             'type' => 'cancel',
-            'name' => ts('Cancel'),
-          ),
+            'name' => ts('Cancel')
+          )
         )
       );
     }
@@ -1024,15 +1016,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task {
     else {
       $params['target_contact_id'] = array();
     }
-
-    /*
-    if (CRM_Utils_Array::value('target_contact_id', $params)) {
-      $params['target_contact_id'] = explode(',', $params['target_contact_id']);
-    }
-    else {
-      $params['target_contact_id'] = array();
-    }
-    */
 
     // assigning formated value to related variable
     if (CRM_Utils_Array::value('assignee_contact_id', $params)) {
