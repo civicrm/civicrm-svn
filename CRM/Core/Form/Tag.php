@@ -244,10 +244,10 @@ class CRM_Core_Form_Tag {
       if (!empty($tagsIDs)) {
         foreach ($tagsIDs as $tagId) {
           if (is_numeric($tagId)) {
-            if ($form->_action != CRM_Core_Action::UPDATE) {
+            if ($form && $form->_action != CRM_Core_Action::UPDATE) {
               $insertValues[] = "( {$tagId}, {$entityId}, '{$entityTable}' ) ";
             }
-            elseif (!array_key_exists($tagId, $form->_entityTagValues)) {
+            elseif (!$form || !array_key_exists($tagId, $form->_entityTagValues)) {
               $insertValues[] = "( {$tagId}, {$entityId}, '{$entityTable}' ) ";
             }
           }

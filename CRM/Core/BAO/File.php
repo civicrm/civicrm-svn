@@ -272,7 +272,8 @@
      }
 
      //fix tag names
-     $tags = CRM_Core_BAO_Tag::getTags('civicrm_file');
+     $tags = CRM_Core_PseudoConstant::tag();
+
      foreach($results as &$values) {
        if (!empty($values['tag'])) {
          $tagNames = array();
@@ -280,6 +281,8 @@
            $tagNames[] = $tags[$tid];
          }
          $values['tag'] = implode(', ', $tagNames);
+       } else {
+         $values['tag'] = '';
        }
      }
 
