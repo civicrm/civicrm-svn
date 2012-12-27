@@ -41,13 +41,6 @@
 class CRM_UF_Form_Preview extends CRM_Core_Form {
 
   /**
-   * The group id that we are editing
-   *
-   * @var int
-   */
-  protected $_gid;
-
-  /**
    * the fields needed to build this form
    *
    * @var array
@@ -68,12 +61,12 @@ class CRM_UF_Form_Preview extends CRM_Core_Form {
    */
   function preProcess() {
     $flag = FALSE;
-    $this->_gid = $this->get('id');
-    $this->set('gid', $this->_gid);
+    $gid = $this->get('id');
+    $this->set('gid', $gid);
     $field = CRM_Utils_Request::retrieve('field', 'Boolean', $this, TRUE, 0);
 
     if ($field) {
-      $this->_fields = CRM_Core_BAO_UFGroup::getFields($this->_gid, FALSE, NULL, NULL, NULL, TRUE);
+      $fields = CRM_Core_BAO_UFGroup::getFields($gid, FALSE, NULL, NULL, NULL, TRUE);
       $fieldDAO = new CRM_Core_DAO_UFField();
       $fieldDAO->id = $this->get('fieldId');
       $fieldDAO->find(TRUE);
@@ -115,15 +108,22 @@ class CRM_UF_Form_Preview extends CRM_Core_Form {
         $name .= '-' . $fieldDAO->phone_type;
       }
 
-      $fieldArray[$name] = $this->_fields[$name];
-      $this->_fields = $fieldArray;
-      if (!is_array($this->_fields[$name])) {
+      $fieldArray[$name] = $fields[$name];
+      $fields = $fieldArray;
+      if (!is_array($fields[$name])) {
         $flag = TRUE;
       }
-      $this->assign('previewField', TRUE);
+      $this->setProfile($fields, TRUE, $flag);
     }
     else {
-      $this->_fields = CRM_Core_BAO_UFGroup::getFields($this->_gid);
+      $fields = CRM_Core_BAO_UFGroup::getFields($gid);
+      $this->setProfile($fields);
+    }
+  }
+
+  public function setProfile($fields, $isSingleField = FALSE, $flag = FALSE) {
+    if ($isSingleField) {
+      $this->assign('previewField', $isSingleField);
     }
 
     if ($flag) {
@@ -134,7 +134,8 @@ class CRM_UF_Form_Preview extends CRM_Core_Form {
     }
 
     $this->set('fieldId', NULL);
-    $this->assign("fields", $this->_fields);
+    $this->assign("fields", $fields);
+    $this->_fields = $fields;
   }
 
   /**
