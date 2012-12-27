@@ -67,11 +67,11 @@
       <td class="label">{$form.description.label}</td>
       <td class="html-adjust">{$form.description.html}</td>
     </tr>
-    <tr class="crm-contribution-form-block-contact">
-      <td class="label">{$form.contact_name.label}</td>
-      <td class="html-adjust">{$form.contact_name.html}</td>
-    </tr>
     {if $action eq 2}
+      <tr class="crm-contribution-form-block-contact">
+      	<td class="label">{ts}Created By{/ts}</td>
+      	<td class="html-adjust">{$contactName}</td>
+      </tr>   
       <tr class="crm-contribution-form-block-open_date">
         <td class="label">{ts}Opened Date{/ts}</td>
         <td class="html-adjust">{$created_date|crmDate}</td>
@@ -113,46 +113,6 @@
 <script type="text/javascript">
 cj(function($){
   $().crmAccordions();
-  var dataUrl = "{/literal}{$dataURL}{literal}";
-  cj('#contact_name').autocomplete( dataUrl, {
-    width        : 250,
-    selectFirst  : false,
-    matchCase    : true,
-    matchContains: true
-  }).result( function(event, data, formatted) {
-    if ( parseInt( data[1] ) ) {
-      cj( "#created_id" ).val( data[1] );
-    }
-    else {
-      cj( "#created_id" ).val('');
-    }
-  }).bind('click', function( ) {
-      cj('#created_id').val('');
-  });
-
-  {/literal}
-  {if $contact_name}
-    {literal} cj('#contact_name').val("{/literal}{$contact_name}{literal}");{/literal}
-  {/if}
-
-  {if $action eq 2}
-  var created_id = "{$created_id}";
-  {literal}
-  var contactUrl = "{/literal}{crmURL p='civicrm/ajax/rest' h=0
-  q="className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=contact&id=" }{literal}" + created_id;
-
-  cj.ajax({
-    url     : contactUrl,
-    success : function(html){
-      htmlText = html.split( '|' , 2);
-      cj('#contact_name').val(htmlText[0]);
-    }
-  });
-  {/literal}{/if}{literal}
-
-  cj("input#contact_name").click( function( ) {
-    cj("input#created_id").val('');
-  });
 });
 </script>
 {/literal}

@@ -130,6 +130,16 @@ class CRM_Financial_Page_FinancialBatch extends CRM_Core_Page_Basic {
    * @return string user context.
    */
   function userContext($mode = null) {
+    if ($mode == CRM_Core_Action::UPDATE) {
+      return "civicrm/financial/financialbatches";
+    }
     return 'civicrm';
   }
+
+  function userContextParams($mode = NULL) {
+    if ($mode == CRM_Core_Action::UPDATE) {
+      return "reset=1&batchStatus=1";
+    }
+  }
+
 }

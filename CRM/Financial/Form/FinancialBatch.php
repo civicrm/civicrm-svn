@@ -104,9 +104,12 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
   public function buildQuickForm() {
     parent::buildQuickForm();
     if (isset( $this->_id)) {
-      $this->_title = CRM_Core_DAO::getFieldValue('CRM_Batch_DAO_Batch', $this->_id, 'name');
+      $this->_title = CRM_Core_DAO::getFieldValue('CRM_Batch_DAO_Batch', $this->_id, 'title');
       CRM_Utils_System::setTitle($this->_title .' - '.ts( 'Accounting Batch'));
       $this->assign('batchTitle', $this->_title);
+      $contactID = CRM_Core_DAO::getFieldValue('CRM_Batch_DAO_Batch', $this->_id, 'created_id');
+      $contactName = CRM_Contact_BAO_Contact::displayName($contactID);
+      $this->assign('contactName', $contactName);
     }
 
     if ($this->_action & (CRM_Core_Action::CLOSE | CRM_Core_Action::REOPEN | CRM_Core_Action::EXPORT)) {
@@ -167,22 +170,8 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
     );
 
     if ($this->_action & CRM_Core_Action::UPDATE && $this->_id) {
-      if ($flag = CRM_Core_Permission::check('edit all manual batches')) {
-        $dataUrl = CRM_Utils_System::url("civicrm/ajax/rest",
-          "className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=batch&reset=1&cmsuser=1",
-          FALSE, NULL, FALSE
-        );
-
-        $this->assign('dataURL', $dataUrl);
-        $creator = $this->add('text', 'contact_name', ts('Created By'));
-        $this->add('hidden', 'created_id', '', array('id' => 'created_id'));
-        if ($creator->getValue()) {
-          $this->assign('contact_name', $creator->getValue());
-        }
-      }
-
       $batchStatus = CRM_Core_PseudoConstant::accountOptionValues('batch_status');
-
+      
       //unset exported status
       $exportedStatusId = CRM_Utils_Array::key('Exported', $batchStatus );
       unset($batchStatus[$exportedStatusId]);
