@@ -130,7 +130,7 @@
   </item>
   <item>
       <path>civicrm/batch</path>
-     <title>Bulk Data Entry</title>
+     <title>Batch Data Entry</title>
      <page_callback>CRM_Batch_Page_Batch</page_callback>
      <access_arguments>access CiviContribute</access_arguments>
   </item>

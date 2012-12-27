@@ -2253,7 +2253,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
 
     CRM_Utils_Hook::aclGroup(CRM_Core_Permission::ADMIN, NULL, 'civicrm_uf_group', $ufGroups, $ufGroups);
 
-    // Exclude Bulk Data Entry profiles - CRM-10901
+    // Exclude Batch Data Entry profiles - CRM-10901
     $batchProfiles = CRM_Core_BAO_UFGroup::getBatchProfiles();
 
     foreach ($ufGroups as $id => $title) {

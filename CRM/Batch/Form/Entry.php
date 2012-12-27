@@ -115,11 +115,11 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
 
     // get the profile information
     if ($this->_batchInfo['type_id'] == 1) {
-      CRM_Utils_System::setTitle(ts('Bulk Data Entry for Contributions'));
+      CRM_Utils_System::setTitle(ts('Batch Data Entry for Contributions'));
       $customFields = CRM_Core_BAO_CustomField::getFields('Contribution');
     }
     else {
-      CRM_Utils_System::setTitle(ts('Bulk Data Entry for Memberships'));
+      CRM_Utils_System::setTitle(ts('Batch Data Entry for Memberships'));
       $customFields = CRM_Core_BAO_CustomField::getFields('Membership');
     }
 

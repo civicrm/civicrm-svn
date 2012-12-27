@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 <div class="crm-block crm-form-block crm-batch-search-form-block">
-  <h3>{ts}Bulk Data Entry Batches{/ts}</h3>
+  <h3>{ts}Data Entry Batches{/ts}</h3>
   <table class="form-layout-compressed">
     <tr>
       <td>
@@ -38,7 +38,7 @@
   </table>
 </div>
 <div class="crm-submit-buttons">
-    <a accesskey="N" href="{crmURL p='civicrm/batch/add' q='reset=1&action=add'}" id="newBatch" class="button"><span><div class="icon add-icon"></div>{ts}New Bulk Data Entry Batch{/ts}</span></a><br/>
+    <a accesskey="N" href="{crmURL p='civicrm/batch/add' q='reset=1&action=add'}" id="newBatch" class="button"><span><div class="icon add-icon"></div>{ts}New Data Entry Batch{/ts}</span></a><br/>
 </div>
 <table id="crm-batch-selector">
   <thead>
@@ -67,11 +67,11 @@ function buildBatchSelector( filterSearch ) {
   var status = {/literal}{$status}{literal};
   if ( filterSearch ) {
     crmBatchSelector.fnDestroy();
-    var ZeroRecordText = '<div class="status messages">{/literal}{ts escape="js"}No matching Bulk Data Entry Batches found for your search criteria.{/ts}{literal}</li></ul></div>';
+    var ZeroRecordText = '<div class="status messages">{/literal}{ts escape="js"}No matching Data Entry Batches found for your search criteria.{/ts}{literal}</li></ul></div>';
   } else if ( status == 1 ) {
-    var ZeroRecordText = {/literal}'<div class="status messages">{ts escape="js"}You do not have any Open Bulk Data Entry Batches.{/ts}</div>'{literal};
+    var ZeroRecordText = {/literal}'<div class="status messages">{ts escape="js"}You do not have any Open Data Entry Batches.{/ts}</div>'{literal};
   } else {
-    var ZeroRecordText = {/literal}'<div class="status messages">{ts escape="js"}No Bulk Data Entry Batches have been created for this site.{/ts}</div>'{literal};
+    var ZeroRecordText = {/literal}'<div class="status messages">{ts escape="js"}No Data Entry Batches have been created for this site.{/ts}</div>'{literal};
   }
 
     var columns = '';
