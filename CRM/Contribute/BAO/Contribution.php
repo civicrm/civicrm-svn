@@ -417,7 +417,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
    * @static
    */
   static function resolveDefaults(&$defaults, $reverse = FALSE) {
-        self::lookupValue($defaults, 'financial_type', CRM_Contribute_PseudoConstant::financialType(), $reverse);
+    self::lookupValue($defaults, 'financial_type', CRM_Contribute_PseudoConstant::financialType(), $reverse);
     self::lookupValue($defaults, 'payment_instrument', CRM_Contribute_PseudoConstant::paymentInstrument(), $reverse);
     self::lookupValue($defaults, 'contribution_status', CRM_Contribute_PseudoConstant::contributionStatus(), $reverse);
     self::lookupValue($defaults, 'pcp', CRM_Contribute_PseudoConstant::pcPage(), $reverse);
@@ -2120,20 +2120,20 @@ WHERE  contribution_id = %1 ";
   }
 
   /*
-     * Create array of message information - ie. return html version, txt version, to field
-     *
-     * @param array $input incoming information
-     *  - is_recur - should this be treated as recurring (not sure why you wouldn't
-     *    just check presence of recur object but maintaining legacy approach
-     *    to be careful)
-     * @param array $ids IDs of related objects
-     * @param array $values any values that may have already been compiled by calling process
-     *   This is augmented by values 'gathered' by gatherMessageValues
-     * @param bool $returnMessageText distinguishes between whether to send message or return
-     *   message text. We are working towards this function ALWAYS returning message text & calling
-     *   function doing emails / pdfs with it
-     * @return array $messageArray - messages
-     */
+   * Create array of message information - ie. return html version, txt version, to field
+   *
+   * @param array $input incoming information
+   *  - is_recur - should this be treated as recurring (not sure why you wouldn't
+   *    just check presence of recur object but maintaining legacy approach
+   *    to be careful)
+   * @param array $ids IDs of related objects
+   * @param array $values any values that may have already been compiled by calling process
+   *   This is augmented by values 'gathered' by gatherMessageValues
+   * @param bool $returnMessageText distinguishes between whether to send message or return
+   *   message text. We are working towards this function ALWAYS returning message text & calling
+   *   function doing emails / pdfs with it
+   * @return array $messageArray - messages
+   */
   function composeMessageArray(&$input, &$ids, &$values, $recur = FALSE, $returnMessageText = TRUE) {
     if (empty($this->_relatedObjects)) {
       $this->loadRelatedObjects($input, $ids);
@@ -2250,18 +2250,19 @@ WHERE  contribution_id = %1 ";
       }
     }
   }
+
   /*
-     * Gather values for contribution mail - this function has been created
-     * as part of CRM-9996 refactoring as a step towards simplifying the composeMessage function
-     * Values related to the contribution in question are gathered
-     *
-     * @param array $input input into function (probably from payment processor)
-     * @param array $ids   the set of ids related to the inpurt
-     *
-     * @return array $values
-     *
-     * NB don't add direct calls to the function as we intend to change the signature
-     */
+   * Gather values for contribution mail - this function has been created
+   * as part of CRM-9996 refactoring as a step towards simplifying the composeMessage function
+   * Values related to the contribution in question are gathered
+   *
+   * @param array $input input into function (probably from payment processor)
+   * @param array $ids   the set of ids related to the inpurt
+   *
+   * @return array $values
+   *
+   * NB don't add direct calls to the function as we intend to change the signature
+   */
   function _gatherMessageValues($input, &$values, $ids = array()) {
     // set display address of contributor
     if ($this->address_id) {
@@ -2650,7 +2651,7 @@ WHERE  contribution_id = %1 ";
     // record line items and finacial items
     $entityId = $params['contribution']->id;
     $entityTable = 'civicrm_contribution';
-    CRM_Price_BAO_LineItem::processPriceSet($entityId, $params['line_item'], $params['contribution'], $entityTable);
+    CRM_Price_BAO_LineItem::processPriceSet($entityId, CRM_Utils_Array::value('line_item', $params), $params['contribution'], $entityTable);
 
     // create batch entry if batch_id is passed
     if (CRM_Utils_Array::value('batch_id', $params)) {
