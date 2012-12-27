@@ -1,8 +1,6 @@
 <?php
 // $Id$
 
-require_once 'CRM/Core/BAO/OptionValue.php';
-
 /**
  * Retrieve one or more OptionValues
  *
