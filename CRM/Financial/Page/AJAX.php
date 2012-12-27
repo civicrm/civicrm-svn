@@ -274,6 +274,7 @@ ORDER by f.name";
     $context   = isset($_REQUEST['context']) ? CRM_Utils_Type::escape($_REQUEST['context'], 'String') : NULL;
     $entityID  = isset($_REQUEST['entityID']) ? CRM_Utils_Type::escape($_REQUEST['entityID'], 'String') : NULL;
     $notPresent = isset($_REQUEST['notPresent']) ? CRM_Utils_Type::escape($_REQUEST['notPresent'], 'String') : NULL;
+    $statusID  = isset($_REQUEST['statusID']) ? CRM_Utils_Type::escape($_REQUEST['statusID'], 'String') : NULL;
 
     $params = $_POST;
     if ($sort && $sortOrder) {
@@ -282,6 +283,7 @@ ORDER by f.name";
 
     $returnvalues =
       array(
+        'civicrm_financial_trxn.payment_instrument_id as payment_method',
         'civicrm_contribution.contact_id as contact_id',
         'civicrm_contribution.id as contributionID',
         'sort_name',
@@ -298,6 +300,7 @@ ORDER by f.name";
         'sort_name' => ts('Contact Name'),
         'amount'   => ts('Amount'),
         'transaction_date' => ts('Received'),
+        'payment_method' => ts('Payment Method'),
         'name' => ts('Type')
       );
 
@@ -340,16 +343,21 @@ ORDER by f.name";
           continue;
         }
         $row[$financialItem->id][$columnKey] = $financialItem->$columnKey;
+        if ($columnKey == 'payment_method' && $financialItem->$columnKey) {
+          $row[$financialItem->id][$columnKey] = CRM_Core_OptionGroup::getLabel('payment_instrument', $financialItem->$columnKey);
+        }
       }
-      if (isset($notPresent)) {
-        $js = "enableActions('x')";
-        $row[$financialItem->id]['check'] = "<input type='checkbox' id='mark_x_". $financialItem->id."' name='mark_x_". $financialItem->id."' value='1' onclick={$js}></input>";
-        $row[$financialItem->id]['action'] = CRM_Core_Action::formLink(CRM_Financial_Form_BatchTransaction::links(), null, array('id' => $financialItem->id, 'contid' => $financialItem->contributionID, 'cid' => $financialItem->contact_id));
-      }
-      else {
-        $js = "enableActions('y')";
-        $row[$financialItem->id]['check'] = "<input type='checkbox' id='mark_y_". $financialItem->id."' name='mark_y_". $financialItem->id."' value='1' onclick={$js}></input>";
-        $row[$financialItem->id]['action'] = CRM_Core_Action::formLink(CRM_Financial_Page_BatchTransaction::links(), null, array('id' => $financialItem->id, 'contid' => $financialItem->contributionID, 'cid' => $financialItem->contact_id));
+      if ($statusID == CRM_Core_OptionGroup::getValue('batch_status','Open')) {
+        if (isset($notPresent)) {
+          $js = "enableActions('x')";
+          $row[$financialItem->id]['check'] = "<input type='checkbox' id='mark_x_". $financialItem->id."' name='mark_x_". $financialItem->id."' value='1' onclick={$js}></input>";
+          $row[$financialItem->id]['action'] = CRM_Core_Action::formLink(CRM_Financial_Form_BatchTransaction::links(), null, array('id' => $financialItem->id, 'contid' => $financialItem->contributionID, 'cid' => $financialItem->contact_id));
+        }
+        else {
+          $js = "enableActions('y')";
+          $row[$financialItem->id]['check'] = "<input type='checkbox' id='mark_y_". $financialItem->id."' name='mark_y_". $financialItem->id."' value='1' onclick={$js}></input>";
+          $row[$financialItem->id]['action'] = CRM_Core_Action::formLink(CRM_Financial_Page_BatchTransaction::links(), null, array('id' => $financialItem->id, 'contid' => $financialItem->contributionID, 'cid' => $financialItem->contact_id));
+        }
       }
       $row[$financialItem->id]['contact_type'] = CRM_Contact_BAO_Contact_Utils::getImage(CRM_Utils_Array::value('contact_sub_type',$row[$financialItem->id]) ? CRM_Utils_Array::value('contact_sub_type',$row[$financialItem->id]) : CRM_Utils_Array::value('contact_type',$row[$financialItem->id]) ,false, $financialItem->contact_id);
       $financialitems = $row;
@@ -359,7 +367,7 @@ ORDER by f.name";
     $selectorElements =
       array(
         'check', 'contact_type', 'sort_name',
-        'amount', 'transaction_date', 'name', 'action'
+        'amount', 'transaction_date', 'payment_method', 'name', 'action'
       );
 
     echo CRM_Utils_JSON::encodeDataTableSelector($financialitems, $sEcho, $iTotal, $iFilteredTotal, $selectorElements);

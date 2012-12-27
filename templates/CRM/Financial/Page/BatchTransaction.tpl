@@ -25,8 +25,9 @@
 *}
 	
  <div id="enableDisableStatusMsg" class="success-status" style="display:none;"></div> 
-
-  <div class="form-layout-compressed">{$form.trans_remove.html}&nbsp;{$form.rSubmit.html}</div><br/>
+ {if $statusID eq 1}
+     <div class="form-layout-compressed">{$form.trans_remove.html}&nbsp;{$form.rSubmit.html}</div><br/>
+ {/if}
   <div id="ltype">
     <p></p>
     <div class="form-item">
@@ -34,11 +35,12 @@
     <table id="crm-transaction-selector-remove" cellpadding="0" cellspacing="0" border="0">
       <thead>
           <tr>
-            <th class="crm-transaction-checkbox">{$form.toggleSelects.html}</th>
+            <th class="crm-transaction-checkbox">{if $statusID eq 1}{$form.toggleSelects.html}{/if}</th>
 	    <th class="crm-contact-type"></th>
             <th class="crm-contact-name">{ts}Contact Name{/ts}</th>
             <th class="crm-amount">{ts}Amount{/ts}</th>
             <th class="crm-received">{ts}Received{/ts}</th>
+	    <th class="crm-payment-method">{ts}Payment Method{/ts}</th>
       	    <th class="crm-type">{ts}Type{/ts}</th>
       	    <th class="crm-transaction-links"></th>
     	  </tr>

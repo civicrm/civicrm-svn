@@ -25,7 +25,7 @@
 *}
 {* this template is used for adding/editing/deleting financial type  *}
 <div class="crm-form-block crm-search-form-block">
-  <div class="crm-accordion-wrapper crm-activity_search-accordion {if $searchRows}crm-accordion-closed{else}crm-accordion-open{/if}">
+  <div class="crm-accordion-wrapper crm-activity_search-accordion collapsed">
     <div class="crm-accordion-header crm-master-accordion-header">
       <div class="icon crm-accordion-pointer"></div> 
       {ts}Edit Search Criteria{/ts}
@@ -84,8 +84,9 @@
     </div>	
   </div>
 </div>
-
-  <div class="form-layout-compressed">{$form.trans_assign.html}&nbsp;{$form.submit.html}</div><br/>
+  {if $statusID eq 1}	
+      <div class="form-layout-compressed">{$form.trans_assign.html}&nbsp;{$form.submit.html}</div><br/>
+  {/if}
   <div id="ltype">
     <p></p>
     <div class="form-item">
@@ -93,11 +94,12 @@
       <table id="crm-transaction-selector-assign" cellpadding="0" cellspacing="0" border="0">
         <thead>
           <tr>
-            <th class="crm-transaction-checkbox">{$form.toggleSelect.html}</th>
+            <th class="crm-transaction-checkbox">{if $statusID eq 1}{$form.toggleSelect.html}{/if}</th>
 	    <th class="crm-contact-type"></th>
             <th class="crm-contact-name">{ts}Contact Name{/ts}</th>
             <th class="crm-amount">{ts}Amount{/ts}</th>
             <th class="crm-received">{ts}Received{/ts}</th>
+	    <th class="crm-payment-method">{ts}Payment Method{/ts}</th>
       	    <th class="crm-type">{ts}Type{/ts}</th>
       	    <th class="crm-transaction-links"></th>
     	  </tr>
@@ -112,6 +114,7 @@
 {literal}
 <script type="text/javascript">
 cj( function() {
+    cj().crmAccordions();
     buildTransactionSelectorAssign( false );
     buildTransactionSelectorRemove();	
     cj('#_qf_BatchTransaction_submit-botttom, #_qf_BatchTransaction_submit-top').click( function() {
@@ -184,7 +187,7 @@ function buildTransactionSelectorAssign( filterSearch ) {
     var ZeroRecordText = '<div class="status messages">{/literal}{ts escape="js"}No Contributions found for your search criteria.{/ts}{literal}</li></ul></div>';
   }
     var columns = '';
-    var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/rest" h=0 q="className=CRM_Financial_Page_AJAX&fnName=getFinancialTransactionsList&snippet=4&context=financialBatch&entityID=$entityID&notPresent=1"}'{literal};
+    var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/rest" h=0 q="className=CRM_Financial_Page_AJAX&fnName=getFinancialTransactionsList&snippet=4&context=financialBatch&entityID=$entityID&notPresent=1&statusID=$statusID"}'{literal};
  
     crmBatchSelector1 = cj('#crm-transaction-selector-assign').dataTable({
         "bDestroy"   : true,
@@ -197,6 +200,7 @@ function buildTransactionSelectorAssign( filterSearch ) {
                         {sClass:'crm-contact-name'},
                         {sClass:'crm-amount'},
                         {sClass:'crm-received'},
+			{sClass:'crm-payment-method'},
                         {sClass:'crm-type'},
                         {sClass:'crm-transaction-links', bSortable:false}
                        ],
@@ -241,7 +245,7 @@ function buildTransactionSelectorAssign( filterSearch ) {
 
 function buildTransactionSelectorRemove( ) {
     var columns = '';
-    var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/rest" h=0 q="className=CRM_Financial_Page_AJAX&fnName=getFinancialTransactionsList&snippet=4&context=financialBatch&entityID=$entityID"}'{literal};	 
+    var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/rest" h=0 q="className=CRM_Financial_Page_AJAX&fnName=getFinancialTransactionsList&snippet=4&context=financialBatch&entityID=$entityID&statusID=$statusID"}'{literal};	 
  
     crmBatchSelector = cj('#crm-transaction-selector-remove').dataTable({
        	"bDestroy"   : true,	     
@@ -254,6 +258,7 @@ function buildTransactionSelectorRemove( ) {
                         {sClass:'crm-contact-name'},
                         {sClass:'crm-amount'},
                         {sClass:'crm-received'},
+			{sClass:'crm-payment-method'},
                         {sClass:'crm-type'},
                         {sClass:'crm-transaction-links', bSortable:false}
                        ],

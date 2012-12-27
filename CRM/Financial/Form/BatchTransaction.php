@@ -47,6 +47,8 @@ class CRM_Financial_Form_BatchTransaction extends CRM_Contribute_Form {
     self::$_entityID = CRM_Utils_Request::retrieve( 'bid' , 'Positive' ) ? CRM_Utils_Request::retrieve( 'bid' , 'Positive' ) : $_POST['batch_id'];
     $this->assign('entityID', self::$_entityID);
     if (isset(self::$_entityID)) {
+      $statusID = CRM_Core_DAO::getFieldValue('CRM_Batch_BAO_Batch', self::$_entityID, 'status_id');
+      $this->assign('statusID', $statusID);
       $batchTitle = CRM_Core_DAO::getFieldValue('CRM_Batch_BAO_Batch', self::$_entityID, 'title');
       CRM_Utils_System::setTitle(ts('Accounting Batch - %1',
                                     array(1 => $batchTitle)
