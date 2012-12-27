@@ -9,8 +9,9 @@
   <field> 
     <name>id</name> 
     <type>int unsigned</type> 
+    <title>Event ID</title>
     <required>true</required> 
-    <comment>Event</comment> 
+    <comment>Event</comment>  
     <add>1.7</add> 
   </field> 
   <primaryKey> 
@@ -50,14 +51,19 @@
     <cols>60</cols>
     <localizable>true</localizable>
     <comment>Full description of event. Text and html allowed. Displayed on built-in Event Information screens.</comment>
-    <add>1.7</add>     
-  </field>   
-  <field> 
-    <name>event_type_id</name> 
-    <type>int unsigned</type> 
+    <add>1.7</add>
+  </field>
+  <field>
+    <name>event_type_id</name>
+    <type>int unsigned</type>
     <uniqueName>event_type_id</uniqueName>
-    <title>Event Type ID</title>  
-    <default>0</default>                
+    <title>Event Type ID</title>
+    <default>0</default>
+    <pseudoconstant>
+      <name>eventType</name>
+      <optionGroupName>event_type</optionGroupName>
+      <class>CRM_Event_PseudoConstant</class>
+    </pseudoconstant>
     <comment>Event Type ID.Implicit FK to civicrm_option_value where option_group = event_type.</comment> 
     <add>1.7</add> 
   </field> 
@@ -174,6 +180,7 @@
   <field> 
     <name>financial_type_id</name> 
     <type>int unsigned</type> 
+    <title>Financial Type ID</title>
     <default>NULL</default>
     <comment>Financial type assigned to paid event registrations for this event. Required if is_monetary is true.</comment> 
     <add>4.3</add> 
@@ -220,6 +227,7 @@
   <field>
     <name>loc_block_id</name>
     <type>int unsigned</type>
+    <title>Location Block ID</title>
     <comment>FK to Location Block ID</comment>
     <add>2.0</add>
   </field>
@@ -358,12 +366,14 @@
   <field>
     <name>default_fee_id</name>
     <type>int unsigned</type>
+    <title>Default Fee ID</title>
     <comment>FK to civicrm_option_value.</comment>
     <add>1.7</add>
   </field>
   <field>
     <name>default_discount_fee_id</name>
     <type>int unsigned</type>
+    <title>Default Discount Fee ID</title>
     <comment>FK to civicrm_option_value.</comment>
     <add>1.7</add>
   </field>
@@ -523,6 +533,7 @@
   <field>
     <name>created_id</name>
     <type>int unsigned</type>
+    <title>Created By Contact ID</title>
     <comment>FK to civicrm_contact, who created this event</comment>
     <add>3.0</add>
   </field>
@@ -548,30 +559,32 @@
     <headerPattern>/cur(rency)?/i</headerPattern>
     <dataPattern>/^[A-Z]{3}$/i</dataPattern>
     <comment>3 character string, value from config setting or input via user.</comment>
-    <add>3.3</add>   
+    <add>3.3</add>
   </field>
-  <field> 
-    <name>campaign_id</name> 
-    <type>int unsigned</type>                 
-    <comment>The campaign for which this event has been created.</comment> 
+  <field>
+    <name>campaign_id</name>
+    <type>int unsigned</type>
+    <title>Campaign ID</title>
+    <comment>The campaign for which this event has been created.</comment>
     <add>3.4</add> 
-  </field> 
-  <foreignKey> 
-    <name>campaign_id</name> 
-    <table>civicrm_campaign</table> 
-    <key>id</key> 
+  </field>
+  <foreignKey>
+    <name>campaign_id</name>
+    <table>civicrm_campaign</table>
+    <key>id</key>
     <onDelete>SET NULL</onDelete>
   </foreignKey>
-  <field> 
+  <field>
     <name>is_share</name> 
     <type>boolean</type>
-    <default>1</default>                
-    <comment>Can people share the event through social media?</comment> 
+    <default>1</default>
+    <comment>Can people share the event through social media?</comment>
     <add>4.1</add> 
   </field>
   <field>
     <name>parent_event_id</name>
     <type>int unsigned</type>
+    <title>Parent Event ID</title>
     <default>NULL</default>
     <comment>Implicit FK to civicrm_event: parent event</comment>
     <add>4.1</add>

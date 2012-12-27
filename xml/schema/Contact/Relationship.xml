@@ -10,6 +10,7 @@
   <field>
       <name>id</name>
       <type>int unsigned</type>
+      <title>Relationship ID</title>
       <required>true</required>
       <comment>Relationship ID</comment>
       <add>1.1</add>
@@ -21,6 +22,7 @@
   <field>
       <name>contact_id_a</name>
       <type>int unsigned</type>
+      <title>Contact A ID</title>
       <required>true</required>
       <comment>id of the first contact</comment>
        <add>1.1</add>
@@ -35,6 +37,7 @@
   <field>
       <name>contact_id_b</name>
       <type>int unsigned</type>
+      <title>Contact B ID</title>
       <required>true</required>
       <comment>id of the second contact</comment>
        <add>1.1</add>
@@ -49,6 +52,7 @@
   <field>
       <name>relationship_type_id</name>
       <type>int unsigned</type>
+      <title>Relationship Type ID</title>
       <required>true</required>
       <comment>id of the relationship</comment>
        <add>1.1</add>
@@ -63,18 +67,21 @@
   <field>
        <name>start_date</name>
        <type>date</type>
+       <title>Relationship Start Date</title>
        <comment>date when the relationship started</comment>
        <add>1.1</add>
   </field>
   <field>
        <name>end_date</name>
        <type>date</type>
+       <title>Relationship End Date</title>
        <comment>date when the relationship ended</comment>
        <add>1.1</add>
   </field>
   <field>
        <name>is_active</name>
        <type>boolean</type>
+       <title>Relationship Is Active</title>
        <default>1</default>
        <comment>is the relationship active ?</comment>
        <add>1.1</add>
@@ -82,6 +89,7 @@
   <field>
        <name>description</name>
        <type>varchar</type>
+       <title>Relationship Description</title>
        <length>255</length>
        <comment>Optional verbose description for the relationship.</comment>
        <add>1.5</add>
@@ -105,6 +113,7 @@
   <field>
        <name>case_id</name>
        <type>int unsigned</type>
+       <title>Relationship Case ID</title>
        <default>NULL</default>
        <comment>FK to civicrm_case</comment>
        <add>2.2</add>
