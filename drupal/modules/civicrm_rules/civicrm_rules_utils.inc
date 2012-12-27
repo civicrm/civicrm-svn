@@ -114,7 +114,7 @@ function civicrm_rules_get_options($type) {
   if (!civicrm_initialize()) {
     return;
   }
-  require_once 'api/api.php';
+
   $result = civicrm_api('OptionValue', 'Get', array('version' => 3, 'option_group_name' => $type));
   foreach ($result['values'] as $options) {
     $values[$options['value']] = $options['label'];
