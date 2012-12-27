@@ -32,7 +32,7 @@
     <div id="contact-success-{$prefix}{$blockNo}" class="hiddenElement">
       <span class="success-status">{ts}New contact has been created.{/ts}</span>
     </div>
-    {$form.$fldName.$blockNo.html} <br/>
+    {$form.$fldName.$blockNo.html} {if !$skipBreak}<br/>{/if}
     {if $form.$profSelect}
       {ts}OR{/ts}<br/>{$form.$profSelect.$blockNo.html}<div id="contact-dialog-{$prefix}{$blockNo}" class="hiddenElement"></div>
     {/if}
@@ -55,12 +55,13 @@
 {literal}
 <script type="text/javascript">
   var allowMultiClient = Boolean({/literal}{if !empty($multiClient)}1{else}0{/if}{literal});
-  var newToken = '';
+  var prePopulateData = {/literal}'{$prePopulateData}'{literal};
+
   var existingTokens = '';
   cj( function( ) {
     // add multiple client option if configured
     if ( allowMultiClient ) {
-      addMultiClientOption{/literal}{$prefix}{$blockNo}{literal}( newToken, {/literal}{$blockNo},"{$prefix}"{literal} );
+      addMultiClientOption{/literal}{$prefix}{$blockNo}{literal}( prePopulateData, {/literal}{$blockNo},"{$prefix}"{literal} );
     } else {
       addSingleClientOption{/literal}{$prefix}{$blockNo}{literal}( {/literal}{$blockNo},"{$prefix}"{literal} );
     }
@@ -69,16 +70,24 @@
   function newContact{/literal}{$prefix}{$blockNo}{literal}( gid, blockNo, prefix ) {
 
     if ( allowMultiClient ) {
+
+      // FIX ME: this is called adding of new contact
+      /*
       existingTokens = '';
       var cid = cj('#' + prefix + 'contact_' + blockNo ).val();
+
       var cids = new Array();
       cids = cid.split(',');
       var i = 0;
       cj('li.token-input-token-facebook').each(function(){
         var displayName = cj(this).children('p').text();
-        existingTokens += '{"name":"'+displayName+'","id":"'+cids[i]+'"},';
+        if (existingTokens) {
+          existingTokens += ',';
+        }
+        existingTokens += '{"name":"'+displayName+'","id":"'+cids[i]+'"}';
         i++;
       });
+      */
     }
 
     var dataURL = {/literal}"{crmURL p='civicrm/profile/create' q="reset=1&snippet=5&context=dialog&blockNo=$blockNo&prefix=$prefix" h=0 }"{literal};
@@ -112,14 +121,14 @@
     });
   }
 
-  function addMultiClientOption{/literal}{$prefix}{$blockNo}{literal}( newToken, blockNo, prefix ) {
-    existingTokens = existingTokens + newToken;
-    eval( 'existingTokens = [' + existingTokens + ']');
+  function addMultiClientOption{/literal}{$prefix}{$blockNo}{literal}( prePopulateData, blockNo, prefix ) {
+    existingTokens = existingTokens + prePopulateData;
+    eval( 'prePopulateData = ' + existingTokens );
 
     var hintText = "{/literal}{ts escape='js'}Type in a partial or complete name of an existing contact.{/ts}{literal}";
     var contactUrl = {/literal}"{crmURL p='civicrm/ajax/checkemail' q='id=1&noemail=1' h=0 }"{literal};
 
-    cj('#' + prefix + 'contact_' + blockNo).tokenInput( contactUrl, { prePopulate:existingTokens, theme: 'facebook', hintText: hintText });
+    cj('#' + prefix + 'contact_' + blockNo).tokenInput( contactUrl, { prePopulate:prePopulateData, theme: 'facebook', hintText: hintText });
     cj('ul.token-input-list-facebook, div.token-input-dropdown-facebook' ).css( 'width', '450px');
   }
 

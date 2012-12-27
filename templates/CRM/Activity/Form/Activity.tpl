@@ -38,20 +38,17 @@
   {* added onload javascript for source contact*}
   {literal}
   <script type="text/javascript">
-  var target_contact = assignee_contact = '';
+  var assignee_contact = '';
 
   {/literal}
-  {if $target_contact}
-    var target_contact = {$target_contact};
-  {/if}
-
   {if $assignee_contact}
     var assignee_contact = {$assignee_contact};
   {/if}
-
   {literal}
-  var target_contact_id = assignee_contact_id = null;
+
+  //FIX ME: need to check below code
   //loop to set the value of cc and bcc if form rule.
+  var assignee_contact_id = null;
   var toDataUrl = "{/literal}{crmURL p='civicrm/ajax/checkemail' q='id=1&noemail=1' h=0 }{literal}"; {/literal}
   {foreach from=","|explode:"target,assignee" key=key item=element}
     {assign var=currentElement value=`$element`_contact_id}
@@ -60,14 +57,12 @@
     {/if}
   {/foreach}
   {literal}
-  if ( target_contact_id ) {
-    eval( 'target_contact = ' + target_contact_id );
-  }
+
   if ( assignee_contact_id ) {
     eval( 'assignee_contact = ' + assignee_contact_id );
   }
 
-  cj( function( ) {
+  cj(function( ) {
     {/literal}
     {if $source_contact and $admin and $action neq 4}
       {literal} cj( '#source_contact_id' ).val( "{/literal}{$source_contact}{literal}");{/literal}
@@ -75,10 +70,8 @@
     {literal}
 
     var sourceDataUrl = "{/literal}{$dataUrl}{literal}";
-    var tokenDataUrl_target  = "{/literal}{$tokenUrl}&context=activity_target{literal}";
     var tokenDataUrl_assignee  = "{/literal}{$tokenUrl}&context=activity_assignee{literal}";
     var hintText = "{/literal}{ts escape='js'}Type in a partial or complete name of an existing contact.{/ts}{literal}";
-    cj( "#target_contact_id"  ).tokenInput( tokenDataUrl_target,   { prePopulate: target_contact,   theme: 'facebook', hintText: hintText });
     cj( "#assignee_contact_id").tokenInput( tokenDataUrl_assignee, { prePopulate: assignee_contact, theme: 'facebook', hintText: hintText });
     cj( 'ul.token-input-list-facebook, div.token-input-dropdown-facebook' ).css( 'width', '450px' );
     cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst : false, hintText: hintText, matchContains: true, minChars: 1
@@ -135,7 +128,10 @@
       <td class="view-value" style="white-space: normal">{$with|escape}</td>
       {elseif $action neq 4}
       <td class="label">{ts}With Contact{/ts}</td>
-      <td>{$form.target_contact_id.html}</td>
+      <td>
+        {include file="CRM/Contact/Form/NewContact.tpl" noLabel=true skipBreak=true}
+        <span class="description">{ts}You can select existing contact or create a new contact.{/ts}</span>
+      </td>
       {else}
       <td class="label">{ts}With Contact{/ts}</td>
       <td class="view-value" style="white-space: normal">
@@ -156,11 +152,12 @@
       {else}
       <td class="label">{ts}Assigned To{/ts}</td>
       <td>{$form.assignee_contact_id.html}
-        {edit}<span class="description">{ts}You can optionally assign this activity to someone. Assigned activities will appear in their Activities listing at CiviCRM Home.{/ts}
+        {edit}
+          <span class="description">{ts}You can optionally assign this activity to someone. Assigned activities will appear in their Activities listing at CiviCRM Home.{/ts}
           {if $config->activityAssigneeNotification}
             <br />{ts}A copy of this activity will be emailed to each Assignee.{/ts}
           {/if}
-                           </span>
+          </span>
         {/edit}
       </td>
     {/if}
@@ -265,13 +262,13 @@
   {/if}
 
   {if $action eq 4 AND $currentAttachmentInfo}
-  {include file="CRM/Form/attachment.tpl"}{* For view action the include provides the row and cells. *}
-    {elseif $action eq 1 OR $action eq 2}
-  <tr class="crm-activity-form-block-attachment">
-    <td colspan="2">
-    {include file="CRM/Form/attachment.tpl"}
-    </td>
-  </tr>
+    {include file="CRM/Form/attachment.tpl"}{* For view action the include provides the row and cells. *}
+  {elseif $action eq 1 OR $action eq 2}
+    <tr class="crm-activity-form-block-attachment">
+      <td colspan="2">
+      {include file="CRM/Form/attachment.tpl"}
+      </td>
+    </tr>
   {/if}
 
   {if $action neq 4} {* Don't include "Schedule Follow-up" section in View mode. *}

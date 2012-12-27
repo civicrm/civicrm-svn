@@ -219,11 +219,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task {
       $this->assign('addAssigneeContact', TRUE);
     }
 
-    $this->_addTargetContact = CRM_Utils_Array::value('target_contact', $_GET);
-    $this->assign('addTargetContact', FALSE);
-    if ($this->_addTargetContact) {
-      $this->assign('addTargetContact', TRUE);
-    }
 
     $session = CRM_Core_Session::singleton();
     $this->_currentUserId = $session->get('userID');
@@ -491,10 +486,10 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task {
 
     // if we're editing...
     if (isset($this->_activityId)) {
-            $defaults['source_contact_qid'] = CRM_Utils_Array::value( 'source_contact_id',
-                                                                      $defaults );
-            $defaults['source_contact_id']  = CRM_Utils_Array::value( 'source_contact',
-                                                                      $defaults );
+      $defaults['source_contact_qid'] = CRM_Utils_Array::value( 'source_contact_id',
+        $defaults );
+      $defaults['source_contact_id']  = CRM_Utils_Array::value( 'source_contact',
+        $defaults );
 
       if (!CRM_Utils_Array::crmIsEmptyArray($defaults['target_contact'])) {
         $target_contact_value = explode(';', trim($defaults['target_contact_value']));
@@ -504,7 +499,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task {
           $this->assign('target_contact', $target_contact);
         }
         else {
-          $this->assign('target_contact', $this->formatContactValues($target_contact));
+          $this->assign('prePopulateData', $this->formatContactValues($target_contact));
         }
       }
 
@@ -780,9 +775,13 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task {
       NULL,
       $admin
     );
-    $hiddenSourceContactField = &$this->add('hidden', 'source_contact_qid', '', array('id' => 'source_contact_qid'));
-    $targetContactField = &$this->add('text', 'target_contact_id', ts('target'));
-    $assigneeContactField = &$this->add('text', 'assignee_contact_id', ts('assignee'));
+
+    $this->add('hidden', 'source_contact_qid', '', array('id' => 'source_contact_qid'));
+    //$this->add('text', 'target_contact_id', ts('target'));
+    CRM_Contact_Form_NewContact::buildQuickForm($this);
+    $this->assign('multiClient', 1);
+
+    $this->add('text', 'assignee_contact_id', ts('assignee'));
 
     if ($sourceContactField->getValue()) {
       $this->assign('source_contact', $sourceContactField->getValue());
@@ -1018,14 +1017,24 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task {
     // store the date with proper format
     $params['activity_date_time'] = CRM_Utils_Date::processDate($params['activity_date_time'], $params['activity_date_time_time']);
 
-    // assigning formated value to related variable
+    // format with contact (target contact) values
+    if (isset($params['contact'][1])) {
+      $params['target_contact_id'] = explode(',', $params['contact'][1]);
+    }
+    else {
+      $params['target_contact_id'] = array();
+    }
+
+    /*
     if (CRM_Utils_Array::value('target_contact_id', $params)) {
       $params['target_contact_id'] = explode(',', $params['target_contact_id']);
     }
     else {
       $params['target_contact_id'] = array();
     }
+    */
 
+    // assigning formated value to related variable
     if (CRM_Utils_Array::value('assignee_contact_id', $params)) {
       $params['assignee_contact_id'] = explode(',', $params['assignee_contact_id']);
     }
