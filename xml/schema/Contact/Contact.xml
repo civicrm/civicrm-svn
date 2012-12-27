@@ -396,6 +396,7 @@
   <field>
        <name>email_greeting_id</name>
        <type>int unsigned</type>
+       <title>Email Greeting ID</title>
        <comment>FK to civicrm_option_value.id, that has to be valid registered Email Greeting.</comment>
        <add>3.0</add>
   </field>
@@ -419,6 +420,7 @@
   <field>
        <name>postal_greeting_id</name>
        <type>int unsigned</type>
+       <title>Postal Greeting ID</title>
        <comment>FK to civicrm_option_value.id, that has to be valid registered Postal Greeting.</comment>
        <add>3.0</add>
   </field>
@@ -442,6 +444,7 @@
   <field>
        <name>addressee_id</name>
        <type>int unsigned</type>
+       <title>Addressee ID</title>
        <comment>FK to civicrm_option_value.id, that has to be valid registered Addressee.</comment>
        <add>3.0</add>
   </field>
@@ -551,6 +554,7 @@
   <field>
       <name>primary_contact_id</name>
       <type>int unsigned</type>
+      <title>Household Primary Contact ID</title>
       <comment>Optional FK to Primary Contact for this household.</comment>
        <add>1.1</add>
   </field>
