@@ -201,11 +201,16 @@ class CRM_Utils_VersionCheck {
     $dao->is_active = 1;
     $dao->find();
     $ppTypes = array();
+
+    // Get title and id for all processor types
+    $ppTypeNames = CRM_Core_PseudoConstant::paymentProcessorType();
+    
     while ($dao->fetch()) {
-      $ppTypes[] = $dao->payment_processor_type;
+      $ppTypes[] = $ppTypeNames[$dao->payment_processor_type_id];
     }
     // add the .-separated list of the processor types
-    $this->stats['PPTypes'] = implode('.', array_unique($ppTypes));
+    $this->stats['PPTypes'] = implode(',', array_unique($ppTypes));
+    
   }
 
   /**
