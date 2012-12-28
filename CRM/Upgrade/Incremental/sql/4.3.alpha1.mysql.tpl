@@ -561,7 +561,7 @@ VALUES
   ('{ts escape="sql"}Accounts Receivable{/ts}'  , @domainContactId, @opAsset, 'Amounts to be received later (eg pay later event revenues)', '1200', 0, 1, 0, 0),
   ('{ts escape="sql"}Accounts Payable{/ts}'     , @domainContactId, @opLiability, 'Amounts to be paid out such as grants and refunds', '2200', 0, 1, 0, 0),
   ('{ts escape="sql"}Premiums{/ts}'             , @domainContactId, @opCost, 'Account to record cost of premiums provided to payors', '5100', 0, 1, 0, 0),
-  ('{ts escape="sql"}Premiums inventory{/ts}'   , @domainContactId, @opAsset, 'Account representing value of premiums inventory', '1375', 0, 1, 0, 0),
+  ('{ts escape="sql"}Premiums Inventory{/ts}'   , @domainContactId, @opAsset, 'Account representing value of premiums inventory', '1375', 0, 1, 0, 0),
   ('{ts escape="sql"}Discounts{/ts}'            , @domainContactId, @opval, 'Contra-revenue account for amounts discounted from sales', '4900', 0, 1, 0, 0),
   ('{ts escape="sql"}Payment Processor Account{/ts}', @domainContactId, @opAsset, 'Account to record payments into a payment processor merchant account', '1150', 0, 1, 0, 0),
   ('{ts escape="sql"}Refunds{/ts}'              , @domainContactId, @opval, 'Contra-revenue account for amounts refunded', '4800', 0, 1, 0, 0);
