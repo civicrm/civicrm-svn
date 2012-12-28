@@ -278,7 +278,8 @@ cj(function() {
   {literal}
     if ( document.getElementsByName("cms_create_account")[0].checked ) {
        cj('#details').show();
-    } else {
+    }
+    else {
        cj('#details').hide();
     }
   {/literal}
@@ -298,10 +299,10 @@ field_type          ="radio"
 invert              = 0
 }
 {elseif $statusMessage}
-    <div class="messages status no-popup">
-        <div class="icon inform-icon"></div>
-        {$statusMessage}
-    </div>
+  <div class="messages status no-popup">
+    <div class="icon inform-icon"></div>
+    {$statusMessage}
+  </div>
 {/if}
 {/if} {*end of if for $deleteRecord*}
 {literal}
@@ -314,52 +315,49 @@ cj(document).ready(function(){
 {/literal}
 {if $context eq 'dialog'}
 {literal}
-    var options = {
-        beforeSubmit:  showRequest  // pre-submit callback
-    };
+  var options = {
+      beforeSubmit:  showRequest  // pre-submit callback
+  };
 
-    // bind form using 'ajaxForm'
-    cj('#Edit').ajaxForm( options );
+  // bind form using 'ajaxForm'
+  cj('#Edit').ajaxForm( options );
 
-     // pre-submit callback
-    function showRequest(formData, jqForm, options) {
-        // formData is an array; here we use $.param to convert it to a string to display it
-        // but the form plugin does this for you automatically when it submits the data
-        var queryString = cj.param(formData);
-        queryString = queryString + '&snippet=5&gid=' + {/literal}"{$profileID}"{literal};
-        var postUrl = {/literal}"{crmURL p='civicrm/profile/create' h=0 }"{literal};
-        var blockNo = {/literal}{$blockNo}{literal};
-        var prefix  = {/literal}"{$prefix}"{literal};
-        var response = cj.ajax({
-           type: "POST",
-           url: postUrl,
-           async: false,
-           data: queryString,
-           dataType: "json",
-           success: function( response ) {
-               if ( response.newContactSuccess ) {
-                   cj('#' + prefix + 'contact_' + blockNo ).val( response.sortName ).focus( );
-                   if ( typeof(allowMultiClient) != "undefined" ) {
-                       if ( allowMultiClient ) {
-                           var newToken = '{"name":"'+response.sortName+'","id":"'+response.contactID+'"},';
-                           cj('ul.token-input-list-facebook, div.token-input-dropdown-facebook' ).remove();
-                           //we are having multiple instances, CRM-6932
-                           eval( 'addMultiClientOption' + blockNo + "( newToken,  blockNo, prefix )" );
-                       }
-                   }
-                   cj('input[name="' + prefix + 'contact_select_id[' + blockNo +']"]').val( response.contactID );
-                   cj('#contact-success-' + prefix + blockNo ).show( );
-                   cj('#contact-dialog-' + prefix + blockNo ).dialog('close');
-               }
-           }
-         }).responseText;
+   // pre-submit callback
+  function showRequest(formData, jqForm, options) {
+    // formData is an array; here we use $.param to convert it to a string to display it
+    // but the form plugin does this for you automatically when it submits the data
+    var queryString = cj.param(formData);
+    queryString = queryString + '&snippet=5&gid=' + {/literal}"{$profileID}"{literal};
+    var postUrl = {/literal}"{crmURL p='civicrm/profile/create' h=0 }"{literal};
+    var blockNo = {/literal}{$blockNo}{literal};
+    var prefix  = {/literal}"{$prefix}"{literal};
+    var response = cj.ajax({
+      type: "POST",
+      url: postUrl,
+      async: false,
+      data: queryString,
+      dataType: "json",
+      success: function( response ) {
+        if ( response.newContactSuccess ) {
+          cj('#' + prefix + 'contact_' + blockNo ).val( response.sortName ).focus( );
+          if ( typeof(allowMultiClient) != "undefined" ) {
+            if ( allowMultiClient ) {
+              cj('#' + prefix + 'contact_' + blockNo).tokenInput("add", {id: response.contactID, name: response.sortName });
+            }
+          }
+          cj('input[name="' + prefix + 'contact_select_id[' + blockNo +']"]').val( response.contactID );
+          cj('#contact-success-' + prefix + blockNo ).show( );
+          cj('#contact-dialog-' + prefix + blockNo ).dialog('close');
+        }
+      }
+    }).responseText;
 
-         cj('#contact-dialog-' + prefix + blockNo).html( response );
+    cj('#contact-dialog-' + prefix + blockNo).html( response );
 
-        // here we could return false to prevent the form from being submitted;
-        // returning anything other than false will allow the form submit to continue
-        return false;
-    }
+    // here we could return false to prevent the form from being submitted;
+    // returning anything other than false will allow the form submit to continue
+    return false;
+  }
 
 {/literal}
 {/if}

@@ -68,28 +68,6 @@
   });
 
   function newContact{/literal}{$prefix}{$blockNo}{literal}( gid, blockNo, prefix ) {
-
-    if ( allowMultiClient ) {
-
-      // FIX ME: this is called adding of new contact
-      /*
-      existingTokens = '';
-      var cid = cj('#' + prefix + 'contact_' + blockNo ).val();
-
-      var cids = new Array();
-      cids = cid.split(',');
-      var i = 0;
-      cj('li.token-input-token-facebook').each(function(){
-        var displayName = cj(this).children('p').text();
-        if (existingTokens) {
-          existingTokens += ',';
-        }
-        existingTokens += '{"name":"'+displayName+'","id":"'+cids[i]+'"}';
-        i++;
-      });
-      */
-    }
-
     var dataURL = {/literal}"{crmURL p='civicrm/profile/create' q="reset=1&snippet=5&context=dialog&blockNo=$blockNo&prefix=$prefix" h=0 }"{literal};
     dataURL = dataURL + '&gid=' + gid;
     {/literal}{if $profileCreateCallback}{literal}
@@ -99,7 +77,7 @@
       url: dataURL,
       success: function( content ) {
         cj( '#contact-dialog-'+ prefix + blockNo ).show( ).html( content ).dialog({
-          title: "Create New Contact",
+          title: "{/literal}{ts escape='js'}Create New Contact{/ts}{literal}",
           modal: true,
           width: 680,
           overlay: {
@@ -122,8 +100,7 @@
   }
 
   function addMultiClientOption{/literal}{$prefix}{$blockNo}{literal}( prePopulateData, blockNo, prefix ) {
-    existingTokens = existingTokens + prePopulateData;
-    eval( 'prePopulateData = ' + existingTokens );
+    eval('prePopulateData = ' + prePopulateData);
 
     var hintText = "{/literal}{ts escape='js'}Type in a partial or complete name of an existing contact.{/ts}{literal}";
     var contactUrl = {/literal}"{crmURL p='civicrm/ajax/checkemail' q='id=1&noemail=1' h=0 }"{literal};
