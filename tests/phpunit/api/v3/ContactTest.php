@@ -135,7 +135,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     );
     $contact = civicrm_api('contact', 'create', $params);
     $cid = $contact['id'];
-    
+
     $params = array(
       'id' => $cid,
       'middle_name' => 'foo',
@@ -143,9 +143,9 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     );
     civicrm_api('contact', 'create', $params);
     unset($params['middle_name']);
-    
+
     $contact = civicrm_api('contact', 'get', $params);
-    
+
     $this->assertEquals(array('Student', 'Staff'), $contact['values'][$cid]['contact_sub_type'], "In line " . __LINE__);
   }
 
@@ -390,6 +390,38 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     $this->customFieldDelete($ids['custom_field_id']);
     $this->customGroupDelete($ids['custom_group_id']);
   }
+
+  /*
+   * Test creating a current employer through API
+   */
+  function testContactCreateCurrentEmployer(){
+    //here we will just do the get for set-up purposes
+    $count = civicrm_api('contact', 'getcount', array(
+      'version' => 3,
+      'organization_name' => 'new employer org',
+      'contact_type' => 'Organization'
+    ));
+    $this->assertEquals(0, $count);
+    $employerResult = civicrm_api('contact', 'create', array_merge($this->_params, array(
+      'current_employer' => 'new employer org',)
+    ));
+
+    $count = civicrm_api('contact', 'getcount', array(
+      'version' => 3,
+      'organization_name' => 'new employer org',
+      'contact_type' => 'Organization'
+    ));
+    $this->assertEquals(1, $count['count'], 'failed to create organization');
+
+    $result = civicrm_api('contact', 'getsingle', array(
+      'version' => $this->_apiversion,
+      'id' => $employerResult['id'],
+    ));
+
+    $this->assertEquals('new employer org', $result['current_employer']);
+
+  }
+
   /*
      * Test that sort works - old syntax
      */
