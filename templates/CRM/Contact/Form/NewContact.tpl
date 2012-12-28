@@ -100,7 +100,9 @@
   }
 
   function addMultiClientOption{/literal}{$prefix}{$blockNo}{literal}( prePopulateData, blockNo, prefix ) {
-    eval('prePopulateData = ' + prePopulateData);
+    if (prePopulateData) {
+      eval('prePopulateData = ' + prePopulateData);
+    }
 
     var hintText = "{/literal}{ts escape='js'}Type in a partial or complete name of an existing contact.{/ts}{literal}";
     var contactUrl = {/literal}"{crmURL p='civicrm/ajax/checkemail' q='id=1&noemail=1' h=0 }"{literal};

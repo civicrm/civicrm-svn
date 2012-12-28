@@ -562,9 +562,10 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task {
         $target_contact[$this->_targetContactId] = self::_getDisplayNameById($this->_targetContactId);
       }
 
-      $this->assign('target_contact', $this->formatContactValues($target_contact));
+      $this->assign('prePopulateData', $this->formatContactValues($target_contact));
 
-      list($defaults['activity_date_time'], $defaults['activity_date_time_time']) = CRM_Utils_Date::setDateDefaults(NULL, 'activityDateTime');
+      list($defaults['activity_date_time'], $defaults['activity_date_time_time']) =
+        CRM_Utils_Date::setDateDefaults(NULL, 'activityDateTime');
     }
 
     if ($this->_activityTypeId) {
@@ -601,7 +602,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task {
     foreach ($contactNames as $id => $name) {
       $formatContacts[] = array(
         'id' => $id,
-        'name' => $name,
+        'name' => $name
       );
     }
 
@@ -970,8 +971,9 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task {
       // delete tags for the entity
       $tagParams = array(
         'entity_table' => 'civicrm_activity',
-        'entity_id' => $this->_activityId,
+        'entity_id' => $this->_activityId
       );
+
       CRM_Core_BAO_EntityTag::del($tagParams);
 
       CRM_Core_Session::setStatus(ts("Selected Activity has been deleted successfully."), ts('Record Deleted'), 'success');
