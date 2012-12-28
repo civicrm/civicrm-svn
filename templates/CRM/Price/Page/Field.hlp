@@ -27,14 +27,14 @@
   {ts}Negative Amounts{/ts}
 {/htxt}
 {htxt id="id-negative"}
-    {ts}You may enter a negative amount value if the field or option is being used to discount the total event price.{/ts}
+    {ts}You may enter a negative amount value if the field or option is being used to discount the total price. Use a price of 1 and Display Amount off (unchecked) to allow a user to enter a contribution amount in a Text / Numeric Quantity field.{/ts}
 {/htxt}
 
 {htxt id="id-negative-options-title"}
   {ts}Negative Options{/ts}
 {/htxt}
 {htxt id="id-negative-options"}
-    {ts}You may enter a negative amount value if the field or option is being used to discount the total event price.{/ts}
+    {ts}You may enter a negative amount value if the field or option is being used to discount the total price.{/ts}
 {/htxt}
 
 {htxt id="id-participant-count-title"}
