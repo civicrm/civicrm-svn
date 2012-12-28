@@ -122,7 +122,7 @@ function civicrm_api3_verify_mandatory($params, $daoName = NULL, $keys = array(
     }
   }
   if (!empty($unmatched)) {
-    throw new Exception("Mandatory key(s) missing from params array: " . implode(", ", $unmatched));
+    throw new API_Exception("Mandatory key(s) missing from params array: " . implode(", ", $unmatched),"mandatory_missing",array("fields"=>$unmatched));
   }
 }
 
@@ -1443,7 +1443,7 @@ function _civicrm_api3_validate_integer(&$params, &$fieldname, &$fieldInfo) {
     if (CRM_Utils_Array::value('pseudoconstant', $fieldInfo) && !CRM_Utils_Array::value('FKClassName',$fieldInfo)) {
       $constant = $fieldInfo['options'];
       if (is_numeric($params[$fieldname]) && !array_key_exists($params[$fieldname], $fieldInfo['options'])) {
-        throw new API_Exception("$fieldname is not valid", 2001, array('error_field' => $fieldname));
+        throw new API_Exception("$fieldname is not valid", 2001, array('error_field' => $fieldname,"type"=>"integer"));
       }
       elseif (!is_numeric($params[$fieldname])) {
         $numericvalue = array_search($params[$fieldname], $fieldInfo['options']);
@@ -1461,7 +1461,7 @@ function _civicrm_api3_validate_integer(&$params, &$fieldname, &$fieldInfo) {
       && strlen($params[$fieldname]) > $fieldInfo['maxlength']
       ){
       throw new API_Exception( $params[$fieldname] . " is " . strlen($params[$fieldname]) . " characters  - longer than $fieldname length" . $fieldInfo['maxlength'] . ' characters',
-        2100, array('field' => $fieldname)
+        2100, array('field' => $fieldname, "max_length"=>$fieldInfo['maxlength'])
       );
     }
   }
@@ -1470,7 +1470,7 @@ function _civicrm_api3_validate_integer(&$params, &$fieldname, &$fieldInfo) {
 function _civicrm_api3_validate_html(&$params, &$fieldname, &$fieldInfo) {
   if ($value = CRM_Utils_Array::value($fieldname, $params)) {
     if (!CRM_Utils_Rule::xssString($value)) {
-      throw new Exception('Illegal characters in input (potential scripting attack)');
+      throw new API_Exception('Illegal characters in input (potential scripting attack)',array("field"=>$fieldname,"error_code"=>"xss"));
     }
   }
 }
