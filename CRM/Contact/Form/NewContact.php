@@ -52,11 +52,13 @@ class CRM_Contact_Form_NewContact {
    */
   static function buildQuickForm(&$form, $blockNo = 1, $extraProfiles = NULL, $required = FALSE, $prefix = '') {
     // call to build contact autocomplete
-    $attributes = array(
-      'width' => '200px',
-    );
+    $attributes = array('width' => '200px');
 
-    $form->add('text', "{$prefix}contact[{$blockNo}]", ts('Select Contact'), $attributes, $required);
+    $selectContacts = $form->add('text', "{$prefix}contact[{$blockNo}]", ts('Select Contact'), $attributes, $required);
+    if ($selectContacts->getValue()) {
+      $form->assign("selectedContacts", $selectContacts->getValue());
+    }
+
     $form->addElement('hidden', "{$prefix}contact_select_id[{$blockNo}]");
 
     if (CRM_Core_Permission::check('edit all contacts') || CRM_Core_Permission::check('add contacts')) {

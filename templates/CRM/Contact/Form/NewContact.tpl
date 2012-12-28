@@ -100,12 +100,19 @@
   }
 
   function addMultiClientOption{/literal}{$prefix}{$blockNo}{literal}( prePopulateData, blockNo, prefix ) {
+    var hintText = "{/literal}{ts escape='js'}Type in a partial or complete name of an existing contact.{/ts}{literal}";
+    var contactUrl = {/literal}"{crmURL p='civicrm/ajax/checkemail' q='id=1&noemail=1' h=0 }"{literal};
+
+    // setdefaults incase of formRule
+    {/literal}
+    {if $selectedContacts}
+      {literal} var prePopulateData = cj.ajax({ url: contactUrl + "&cid={/literal}{$selectedContacts}{literal}", async: false }).responseText;{/literal}
+    {/if}
+    {literal}
+
     if (prePopulateData) {
       eval('prePopulateData = ' + prePopulateData);
     }
-
-    var hintText = "{/literal}{ts escape='js'}Type in a partial or complete name of an existing contact.{/ts}{literal}";
-    var contactUrl = {/literal}"{crmURL p='civicrm/ajax/checkemail' q='id=1&noemail=1' h=0 }"{literal};
 
     cj('#' + prefix + 'contact_' + blockNo).tokenInput( contactUrl, { prePopulate:prePopulateData, theme: 'facebook', hintText: hintText });
     cj('ul.token-input-list-facebook, div.token-input-dropdown-facebook' ).css( 'width', '450px');
