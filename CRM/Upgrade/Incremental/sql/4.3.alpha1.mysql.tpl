@@ -557,7 +557,7 @@ INSERT INTO
    `civicrm_financial_account` (`name`, `contact_id`, `financial_account_type_id`, `description`, `accounting_code`, `is_reserved`, `is_active`, `is_deductible`, `is_default`)
 VALUES
   ('{ts escape="sql"}Banking Fees{/ts}'         , @domainContactId, @opexp, 'Payment processor fees and manually recorded banking fees', '5200', 0, 1, 0, 0),
-  ('{ts escape="sql"}Deposit bank account{/ts}' , @domainContactId, @opAsset, 'All manually recorded cash and cheques go to this account', '1100', 0, 1, 0, 1),
+  ('{ts escape="sql"}Deposit Bank Account{/ts}' , @domainContactId, @opAsset, 'All manually recorded cash and cheques go to this account', '1100', 0, 1, 0, 1),
   ('{ts escape="sql"}Accounts Receivable{/ts}'  , @domainContactId, @opAsset, 'Amounts to be received later (eg pay later event revenues)', '1200', 0, 1, 0, 0),
   ('{ts escape="sql"}Accounts Payable{/ts}'     , @domainContactId, @opLiability, 'Amounts to be paid out such as grants and refunds', '2200', 0, 1, 0, 0),
   ('{ts escape="sql"}Premiums{/ts}'             , @domainContactId, @opCost, 'Account to record cost of premiums provided to payors', '5100', 0, 1, 0, 0),
@@ -592,7 +592,7 @@ SELECT 'civicrm_financial_type', ft.id, @option_value_rel_id_ar, @financial_acco
 FROM `civicrm_financial_type` as ft;
 
 -- CRM-11516
-SELECT @financial_account_id_ar := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Deposit bank account';
+SELECT @financial_account_id_ar := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Deposit Bank Account';
 
 INSERT INTO  civicrm_entity_financial_account (entity_table, entity_id, account_relationship, financial_account_id)
 SELECT 'civicrm_option_value', cov.id, @option_value_rel_id_as, @financial_account_id_ar  FROM `civicrm_option_group` cog
@@ -600,8 +600,10 @@ LEFT JOIN civicrm_option_value cov ON cog.id = cov.option_group_id
 WHERE cog.name = 'payment_instrument';
 
 -- CRM-11515
+SELECT @financial_account_id_ppa := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Payment Processor Account';
+
 INSERT INTO civicrm_entity_financial_account (`entity_table`, `entity_id`, `account_relationship`, `financial_account_id`)
-SELECT 'civicrm_payment_processor', id, @option_value_rel_id_as, @financial_account_id_ar FROM `civicrm_payment_processor`;
+SELECT 'civicrm_payment_processor', id, @option_value_rel_id_as, @financial_account_id_ppa FROM `civicrm_payment_processor`;
 
 -- CRM-9923 and CRM-11037
 SELECT @option_group_id_batch_status   := max(id) from civicrm_option_group where name = 'batch_status';

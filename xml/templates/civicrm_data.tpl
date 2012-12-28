@@ -893,7 +893,7 @@ VALUES
   ( '{ts escape="sql"}Campaign Contribution{/ts}', @contactID, @opval, 'Sample account for recording payments to a campaign', '4100', 0, 1, 0, 0 ),
   ( '{ts escape="sql"}Event Fee{/ts}'            , @contactID, @opval, 'Default account for event ticket sales', '4300', 0, 1, 0, 0 ),
   ( '{ts escape="sql"}Banking Fees{/ts}'         , @contactID, @opexp, 'Payment processor fees and manually recorded banking fees', '5200', 0, 1, 0, 0 ),
-  ( '{ts escape="sql"}Deposit bank account{/ts}' , @contactID, @opAsset, 'All manually recorded cash and cheques go to this account', '1100', 0, 1, 0, 1 ),
+  ( '{ts escape="sql"}Deposit Bank Account{/ts}' , @contactID, @opAsset, 'All manually recorded cash and cheques go to this account', '1100', 0, 1, 0, 1 ),
   ( '{ts escape="sql"}Accounts Receivable{/ts}'  , @contactID, @opAsset, 'Amounts to be received later (eg pay later event revenues)', '1200', 0, 1, 0, 0 ),
   ( '{ts escape="sql"}Accounts Payable{/ts}'     , @contactID, @opLiability, 'Amounts to be paid out such as grants and refunds', '2200', 0, 1, 0, 0 ),
   ( '{ts escape="sql"}Premiums{/ts}'             , @contactID, @opCost, 'Account to record cost of premiums provided to payors', '5100', 0, 1, 0, 0 ),
@@ -1480,7 +1480,7 @@ SELECT @financial_account_id_cc	       := max(id) FROM `civicrm_financial_accoun
 SELECT @financial_account_id_ef	       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Event Fee';
 SELECT @financial_account_id_bf	       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Banking Fees';
 SELECT @financial_account_id_ap	       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Accounts Receivable';
-SELECT @financial_account_id_ar        := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Deposit bank account';
+SELECT @financial_account_id_ar        := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Deposit Bank Account';
 
 INSERT INTO `civicrm_entity_financial_account`
      ( entity_table, entity_id, account_relationship, financial_account_id )
