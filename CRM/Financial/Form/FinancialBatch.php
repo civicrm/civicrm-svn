@@ -324,6 +324,10 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
     elseif (CRM_Utils_Array::value($batch->status_id, $batchStatus) == 'Closed') {
       $session->replaceUserContext(CRM_Utils_System::url('civicrm', 'reset=1'));
     }
+    elseif ($buttonName == $this->getButtonName('next') & $this->_action == CRM_Core_Action::UPDATE) {
+      $session->replaceUserContext(CRM_Utils_System::url('civicrm/financial/financialbatches',
+                                                           "reset=1&batchStatus=1"));
+    }
     else {
       $session->replaceUserContext(CRM_Utils_System::url('civicrm/batchtransaction',
         "reset=1&bid={$batch->id}"));
