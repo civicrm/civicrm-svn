@@ -138,6 +138,10 @@ function civicrm_api3_contact_create($params) {
 function _civicrm_api3_contact_create_spec(&$params) {
   $params['contact_type']['api.required'] = 1;
   $params['id']['api.aliases'] = array('contact_id');
+  $params['current_employer'] = array(
+    'title' => 'Current Employer',
+    'description' => 'Name of Current Employer',
+  );
 }
 
 /**
@@ -347,16 +351,16 @@ function _civicrm_api3_contact_check_params( &$params, $dupeCheck = true, $dupeE
     $dedupParams = CRM_Dedupe_Finder::formatParams($organizationParams, 'Organization');
 
     $dedupParams['check_permission'] = FALSE;
-    $dupeIds = CRM_Dedupe_Finder::dupesByParams($dedupParams, 'Organization', 'Fuzzy');
+    $dupeIds = CRM_Dedupe_Finder::dupesByParams($dedupParams, 'Organization', 'Supervised');
 
     // check for mismatch employer name and id
     if (!empty($params['employer_id']) && !in_array($params['employer_id'], $dupeIds)) {
-      return civicrm_api3_create_error('Employer name and Employer id Mismatch');
+      throw new API_Exception('Employer name and Employer id Mismatch');
     }
 
     // show error if multiple organisation with same name exist
     if (empty($params['employer_id']) && (count($dupeIds) > 1)) {
-      return civicrm_api3_create_error('Found more than one Organisation with same Name.');
+      throw new API_Exception('Found more than one Organisation with same Name.');
     }
   }
 
