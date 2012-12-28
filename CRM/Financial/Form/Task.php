@@ -165,7 +165,7 @@ class CRM_Financial_Form_Task extends CRM_Core_Form {
           'type'      => $nextType,
           'name'      => $title,
           'isDefault' => true
-        )
+        ),
         array (
           'type'      => $backType,
           'name'      => ts('Cancel')
