@@ -234,10 +234,10 @@
     {/if}
   </table>
     {if !$contributionMode}
-    <div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-processed crm-accordion-open" id="submitPayment_Information">
+    <div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-processed crm-accordion-open" id="paymentDetails_Information">
       <div class="crm-accordion-header">
         <div class="icon crm-accordion-pointer"></div>
-        {ts}Submit a Payment{/ts}
+        {ts}Payment Details{/ts}
       </div>
       <table class="form-layout-compressed" >
         <tr class="crm-contribution-form-block-receive_date">
@@ -266,8 +266,8 @@
           <tr class="crm-contribution-form-block-is_email_receipt">
             <td class="label">
               {$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html}&nbsp;
-            <span class="description">{ts 1=$email}Automatically email a receipt for this payment to %1?{/ts}</span>
-          </td>
+              <span class="description">{ts 1=$email}Automatically email a receipt for this payment to %1?{/ts}</span>
+            </td>
           </tr>
           {elseif $context eq 'standalone' and $outBound_option != 2 }
           <tr id="email-receipt" style="display:none;" class="crm-contribution-form-block-is_email_receipt">
@@ -287,7 +287,6 @@
           <td>{$form.from_email_address.html}</td>
         </tr>
       </table>
-    </div>
     </div>
     {/if}
 
