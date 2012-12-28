@@ -97,12 +97,22 @@ class CRM_Financial_Page_BatchTransaction extends CRM_Core_Page_Basic {
   function run() {
     // get the requested action
     $action = CRM_Utils_Request::retrieve('action', 'String', $this, false, 'browse'); // default to 'browse'
-
+  
     // assign vars to templates
     $this->assign('action', $action);
     
     self::$_entityID = CRM_Utils_Request::retrieve('bid' , 'Positive');
-
+    if (isset(self::$_entityID)) {
+      $statusID = CRM_Core_DAO::getFieldValue('CRM_Batch_BAO_Batch', self::$_entityID, 'status_id');
+    }
+    $breadCrumb = 
+      array(
+            array(
+                  'title' => ts('Accounting Batches'),
+                  'url' => CRM_Utils_System::url("civicrm/financial/financialbatches","reset=1&batchStatus=$statusID")
+                  )
+            );
+    CRM_Utils_System::appendBreadCrumb($breadCrumb);
     $this->edit($action, self::$_entityID);
     return parent::run();
   }

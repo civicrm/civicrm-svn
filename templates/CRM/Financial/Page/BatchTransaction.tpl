@@ -25,7 +25,24 @@
 *}
 	
  <div id="enableDisableStatusMsg" class="success-status" style="display:none;"></div> 
+ <table id="batch-summary" cellpadding="0" cellspacing="0" border="0">
+   <thead class="sticky">
+     <tr>
+     {foreach from=$columnHeaders item=head}
+       <th>{$head}</th>
+     {/foreach}
+     </tr>
+   </thead>
+   <tbody>
+      <tr>
+      {foreach from=$columnHeaders item=head key=rowKey}
+        <td id = "row_{$rowKey}" class="even-row"></td>
+      {/foreach}
+      </tr>
+   </tbody>
+ </table>
  {if $statusID eq 1}
+     <div class="crm-submit-buttons">{$form.close_batch.html}</div><br/>
      <div class="form-layout-compressed">{$form.trans_remove.html}&nbsp;{$form.rSubmit.html}</div><br/>
  {/if}
   <div id="ltype">
@@ -55,7 +72,13 @@
 
 {literal}
 <script type="text/javascript">
-
+ cj( function() {
+   var entityID = {/literal}{$entityID}{literal};  
+   batchSummary(entityID);
+   cj('#close_batch').click( function() {
+     assignRemove(entityID, 'close');
+   });
+ });
 function assignRemove(recordID, op) {
   var recordBAO = 'CRM_Batch_BAO_Batch';	
   if (op == 'remove') {
@@ -88,6 +111,9 @@ function assignRemove(recordID, op) {
       },
       "OK": function() {    
         saveRecord( recordID, op, recordBAO, entityID);
+	if (op == 'close') {
+	  window.location.href = {/literal}"{crmURL p='civicrm/financial/financialbatches' h=0 q='reset=1&batchStatus=2'}"{literal}; 
+	}
         cj(this).dialog("close");			        
       }
     } 
@@ -110,12 +136,26 @@ function saveRecord(recordID, op, recordBAO, entityID) {
     //this is custom status set when record update success.
     if (html.status == 'record-updated-success') {
        buildTransactionSelectorAssign( false );
-       buildTransactionSelectorRemove();	
+       buildTransactionSelectorRemove();
+       batchSummary(entityID);	
     } 
   }, 'json');
 
   //if no response from server give message to user.
   setTimeout( "noServerResponse( )", 1500 ); 
+}
+
+
+function batchSummary(entityID) {
+  var postUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Financial_Page_AJAX&fnName=getBatchSummary'}"{literal};
+  //post request and get response
+  cj.post( postUrl, { batchID: entityID } , function( html ) {
+    cj.each(html, function(i, val) {
+    cj("#row_" + i).html(val);
+  });
+ }, 'json');
+
+
 }	
 </script>
 {/literal}

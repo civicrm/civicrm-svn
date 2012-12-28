@@ -53,6 +53,19 @@ class CRM_Financial_Form_BatchTransaction extends CRM_Contribute_Form {
       CRM_Utils_System::setTitle(ts('Accounting Batch - %1',
                                     array(1 => $batchTitle)
                                     ));
+      $columnHeaders = 
+        array(
+              'created_by' => ts('Created By'),
+              'description'=> ts('Description'),
+              'payment_instrument' => ts('Payment Instrument'),
+              'type' => ts('Type'),
+              'item_count' => ts('Entered Transactions'),
+              'assigned_item_count' => ts('Assigned Transactions'),
+              'total' => ts('Entered Total'),
+              'assigned_total' => ts('Assigned Total'),
+              'opened_date' => ts('Opened')
+              );
+      $this->assign('columnHeaders', $columnHeaders);
     }
   }
   /**
@@ -63,6 +76,7 @@ class CRM_Financial_Form_BatchTransaction extends CRM_Contribute_Form {
    */
   public function buildQuickForm() {
     parent::buildQuickForm();
+    $this->add('submit','close_batch', ts('Close Batch'));   
     // text for sort_name
     $this->addElement('text',
                       'sort_name',

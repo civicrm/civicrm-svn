@@ -329,7 +329,8 @@ function bulkAssignRemove( action ) {
     //this is custom status set when record update success.
     if (data.status == 'record-updated-success') {
       buildTransactionSelectorAssign( false );
-      buildTransactionSelectorRemove();	
+      buildTransactionSelectorRemove();
+      batchSummary({/literal}{$entityID}{literal});		
     }
   }, 'json');
 }	 

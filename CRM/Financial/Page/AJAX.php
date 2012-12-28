@@ -265,7 +265,7 @@ ORDER by f.name";
         0 => '', 1 => '', 2 => 'sort_name',
         3 => 'amount', 4 => 'transaction_date', 5 => '',
       );
-
+ 
     $sEcho     = CRM_Utils_Type::escape($_REQUEST['sEcho'], 'Integer');
     $offset    = isset($_REQUEST['iDisplayStart']) ? CRM_Utils_Type::escape($_REQUEST['iDisplayStart'], 'Integer') : 0;
     $rowCount  = isset($_REQUEST['iDisplayLength']) ? CRM_Utils_Type::escape($_REQUEST['iDisplayLength'], 'Integer') : 25;
@@ -405,5 +405,27 @@ ORDER by f.name";
     CRM_Utils_System::civiExit();
 
   }
+
+  static function getBatchSummary() {
+    $batchID = CRM_Utils_Type::escape($_REQUEST['batchID'], 'String');
+    $params = array('id' => $batchID);
+    $batchInfo = CRM_Batch_BAO_Batch::retrieve($params, $value);
+    $batchTotals = CRM_Batch_BAO_Batch::batchTotals(array($batchID));
+    $batchSummary = 
+      array(
+            'created_by' => CRM_Contact_BAO_Contact::displayName($batchInfo->created_id),
+            'description' => $batchInfo->description,
+            'payment_instrument' => CRM_Core_OptionGroup::getLabel('payment_instrument', $batchInfo->payment_instrument_id),
+            'type' => $batchInfo->type_id,
+            'item_count' => $batchInfo->item_count,
+            'assigned_item_count' => $batchTotals[$batchID]['item_count'],
+            'total' => $batchInfo->total,
+            'assigned_total' => $batchTotals[$batchID]['total'],
+            'opened_date' => $batchInfo->created_date
+            );
+    echo json_encode($batchSummary);
+    CRM_Utils_System::civiExit();
+  }
+
 
   }
