@@ -113,4 +113,24 @@ class CRM_UF_Form_Preview extends CRM_UF_Form_AbstractPreview {
       $this->setProfile($fields);
     }
   }
+
+  /**
+   * Function to actually build the form
+   *
+   * @return void
+   * @access public
+   */
+  public function buildQuickForm() {
+    parent::buildQuickForm();
+
+    $this->addButtons(array(
+        array(
+          'type' => 'cancel',
+          'name' => ts('Done with Preview'),
+          'isDefault' => TRUE,
+        ),
+      )
+    );
+  }
+
 }
