@@ -334,6 +334,52 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
   }
 
   /**
+   * Format a list of UFFields for use with buildProfile. This is the in-memory analog
+   * of getFields().
+   *
+   * @param array $groupArr (mimic CRM_UF_DAO_UFGroup)
+   * @param array $fieldArrs list of fields (each mimics CRM_UF_DAO_UFField)
+   * @param bool $visibility   visibility of fields we are interested in
+   * @param bool $searchable
+   * @param bool $showall
+   * @return array
+   * @see getFields
+   */
+  public static function formatUFFields(
+    $groupArr,
+    $fieldArrs,
+    $visibility = NULL,
+    $searchable = NULL,
+    $showAll = FALSE,
+    $ctype = NULL,
+    $permissionType = CRM_Core_Permission::CREATE
+  ) {
+    $group = new CRM_Core_DAO_UFGroup();
+    $group->copyValues($groupArr);
+
+    $profileType = CRM_Core_BAO_UFField::getProfileType($group->id); // FIXME, new group or changed field list
+    $contactActivityProfile = CRM_Core_BAO_UFField::checkContactActivityProfileType($group->id); // FIXME new group or changed field list
+    $importableFields = self::getImportableFields($showAll, $profileType, $contactActivityProfile);
+    list($customFields, $addressCustomFields) = self::getCustomFields($ctype);
+
+    $formattedFields = array();
+    foreach ($fieldArrs as $fieldArr) {
+      //$field = new CRM_Core_DAO_UFField();
+      //$field->copyValues($fieldArr); // no... converts string('') to string('null')
+      $field = (object) $fieldArr;
+      if (!self::filterUFField($field, $searchable, $showAll, $visibility)) {
+        continue;
+      }
+
+      list($name, $formattedField) = self::formatUFField($group, $field, $customFields, $addressCustomFields, $importableFields, $permissionType);
+      if ($formattedField !== NULL) {
+        $formattedFields[$name] = $formattedField;
+      }
+    }
+    return $formattedFields;
+  }
+
+  /**
    * Prepare a field for rendering with CRM_Core_BAO_UFGroup::buildProfile.
    *
    * @param CRM_Core_DAO_UFGroup|CRM_Core_DAO $group
@@ -482,6 +528,46 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
       return $query;
     }
     return $query;
+  }
+
+  /**
+   * Create a query to find all visible UFFields in a UFGroup
+   *
+   * This is the PHP in-memory variant of createUFFieldQuery().
+   *
+   * @param CRM_Core_DAO_UFField|CRM_Core_DAO $field
+   * @param bool $searchable
+   * @param bool $showAll
+   * @param int $visibility
+   * @return bool TRUE if field is displayable
+   */
+  protected static function filterUFField($field, $searchable, $showAll, $visibility) {
+    if ($searchable && $field->is_searchable != 1) {
+      return FALSE;
+    }
+
+    if (!$showAll && $field->is_active != 1) {
+      return FALSE;
+    }
+
+    if ($visibility) {
+      $allowedVisibilities = array();
+      if ($visibility & self::PUBLIC_VISIBILITY) {
+        $allowedVisibilities[] = 'Public Pages';
+      }
+      if ($visibility & self::ADMIN_VISIBILITY) {
+        $allowedVisibilities[] = 'User and User Admin Only';
+      }
+      if ($visibility & self::LISTINGS_VISIBILITY) {
+        $allowedVisibilities[] = 'Public Pages and Listings';
+      }
+      // !empty($allowedVisibilities) seems silly to me, but it is equivalent to the pre-existing SQL
+      if (!empty($allowedVisibilities) && !in_array($field->visibility, $allowedVisibilities)) {
+        return FALSE;
+      }
+    }
+
+    return TRUE;
   }
 
   protected static function getImportableFields($showAll, $profileType, $contactActivityProfile) {
