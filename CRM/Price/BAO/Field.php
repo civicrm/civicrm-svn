@@ -237,17 +237,18 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
   ) {
 
     $field = new CRM_Price_DAO_Field();
-    $mode = $qf->_mode;
-    if(empty( $mode )){
-      $is_pay_later = 1;
-    }else{
-      $is_pay_later = CRM_Utils_Array::value( 'is_pay_later', $qf->_values);
-    }
     $field->id = $fieldId;
     if (!$field->find(TRUE)) {
       /* FIXME: failure! */
-
       return NULL;
+    }
+    
+    $is_pay_later = 0;
+    if (isset($qf->_mode) && empty($qf->_mode)) {
+      $is_pay_later = 1;
+    }
+    elseif (isset($qf->_values)) {
+      $is_pay_later = CRM_Utils_Array::value( 'is_pay_later', $qf->_values);
     }
 
     $otherAmount = $qf->get('values');
@@ -293,7 +294,8 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
         if (property_exists($qf,'_membershipBlock') && CRM_Utils_Array::value('is_separate_payment', $qf->_membershipBlock) && $qf->_quickConfig && $field->name == 'other_amount' && !property_exists($qf,'_contributionAmount')) {
           $label = ts('Additional Contribution');
           $useRequired = 0;
-        } elseif (CRM_Utils_Array::value('label', $fieldOptions[$optionKey])) {      //check for label.
+        } 
+        elseif (CRM_Utils_Array::value('label', $fieldOptions[$optionKey])) {      //check for label.
           $label = $fieldOptions[$optionKey]['label'];
         }
 
@@ -305,7 +307,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
                    ),
                    $useRequired && $field->is_required
         );
-        if (  $is_pay_later ){
+        if ($is_pay_later) {
           $qf->add( 'text', 'txt-'.$elementName, $label, array( 'size' => '4'));
         }
 
@@ -318,7 +320,8 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
         if (property_exists($qf, '_quickConfig') && $qf->_quickConfig) {
           $message = ts("Please enter a valid amount.");
           $type = "money";
-        } else {
+        } 
+        else {
           $message = ts('%1 must be an integer (whole number).', array(1 => $label));
           $type = "positiveInteger";
         }
@@ -347,15 +350,17 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
           );
           if (property_exists($qf, '_quickConfig') && $qf->_quickConfig && $field->name == 'contribution_amount') {
             $extra += array('onclick' => 'clearAmountOther();');
-          } elseif (property_exists($qf, '_quickConfig') && $qf->_quickConfig && $field->name == 'membership_amount') {
-            $extra += array('onclick' => "return showHideAutoRenew({$opt['membership_type_id']});",
-                      'membership-type' => $opt['membership_type_id'],
+          } 
+          elseif (property_exists($qf, '_quickConfig') && $qf->_quickConfig && $field->name == 'membership_amount') {
+            $extra += array(
+              'onclick' => "return showHideAutoRenew({$opt['membership_type_id']});",
+              'membership-type' => $opt['membership_type_id'],
             );
             $qf->assign('membershipFieldID',$field->id);
           }
           $choice[$opId] = $qf->createElement('radio', NULL, '', $opt['label'], $opt['id'], $extra);
 
-          if (  $is_pay_later ){
+          if ($is_pay_later) {
             $qf->add( 'text', 'txt-'.$elementName, $label, array( 'size' => '4'));
           }
 
@@ -376,9 +381,11 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
           // add "none" option
           if (CRM_Utils_Array::value('is_allow_other_amount', $otherAmount) && $field->name == 'contribution_amount') {
             $none = ts('Other Amount');
-          } elseif (property_exists($qf, '_membershipBlock') && !CRM_Utils_Array::value('is_required', $qf->_membershipBlock) && $field->name == 'membership_amount') {
+          } 
+          elseif (property_exists($qf, '_membershipBlock') && !CRM_Utils_Array::value('is_required', $qf->_membershipBlock) && $field->name == 'membership_amount') {
             $none = ts('No thank you');
-          } else {
+          } 
+          else {
             $none = ts('- none -');
           }
 
@@ -416,16 +423,16 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
           if (!in_array($opt['id'], $feezeOptions)) {
             $allowedOptions[] = $opt['id'];
           }
-          if (  $is_pay_later ){
+          if ($is_pay_later) {
             $qf->add( 'text', 'txt-'.$elementName, $label, array( 'size' => '4'));
           }
         }
         $element = &$qf->add('select', $elementName, $label,
-                   array(
-                     '' => ts('- select -')) + $selectOption,
-                   $useRequired && $field->is_required,
-                   array('price' => json_encode($priceVal))
-        );
+          array(
+            '' => ts('- select -')) + $selectOption,
+            $useRequired && $field->is_required,
+            array('price' => json_encode($priceVal))
+          );
 
         // CRM-6902
         $button = substr($qf->controller->getButtonName(), -4);
@@ -452,7 +459,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
                             'data-currency' => $currencyName,
                           )
           );
-          if ( $is_pay_later ){
+          if ($is_pay_later) {
             $txtcheck[$opId] =& $qf->createElement( 'text', $opId, $opt['label'], array( 'size' => '4' ) );
             $qf->addGroup($txtcheck, 'txt-'.$elementName, $label);
           }
