@@ -243,7 +243,9 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
   }
 
   /**
-   * get all the fields that belong to the group with the name title
+   * Get all the fields that belong to the group with the name title,
+   * and format for use with buildProfile. This is the SQL analog of
+   * formatUFFields().
    *
    * @param mix      $id           the id of the UF group or ids of ufgroup
    * @param int      $register     are we interested in registration fields
@@ -306,180 +308,18 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
 
     while ($group->fetch()) {
       $validGroup = TRUE;
-      $where = " WHERE uf_group_id = {$group->id}";
-
-      if ($searchable) {
-        $where .= " AND is_searchable = 1";
-      }
-
-      if (!$showAll) {
-        $where .= " AND is_active = 1";
-      }
-
-      if ($visibility) {
-        $clause = array();
-        if ($visibility & self::PUBLIC_VISIBILITY) {
-          $clause[] = 'visibility = "Public Pages"';
-        }
-        if ($visibility & self::ADMIN_VISIBILITY) {
-          $clause[] = 'visibility = "User and User Admin Only"';
-        }
-        if ($visibility & self::LISTINGS_VISIBILITY) {
-          $clause[] = 'visibility = "Public Pages and Listings"';
-        }
-        if (!empty($clause)) {
-          $where .= ' AND ( ' . implode(' OR ', $clause) . ' ) ';
-        }
-      }
-
-      $query = "SELECT * FROM civicrm_uf_field $where ORDER BY weight";
-      if ($orderBy) {
-        $query .= ", " . $orderBy;
-      }
-
+      $query = self::createUFFieldQuery($group->id, $searchable, $showAll, $visibility, $orderBy);
       $field = CRM_Core_DAO::executeQuery($query);
-
-      if (!$showAll) {
-        $importableFields = CRM_Contact_BAO_Contact::importableFields('All', FALSE, FALSE, FALSE, TRUE, TRUE);
-      }
-      else {
-        $importableFields = CRM_Contact_BAO_Contact::importableFields('All', FALSE, TRUE, FALSE, TRUE, TRUE);
-      }
 
       $profileType = CRM_Core_BAO_UFField::getProfileType($group->id);
       $contactActivityProfile = CRM_Core_BAO_UFField::checkContactActivityProfileType($group->id);
-
-      if ($profileType == 'Activity' || $contactActivityProfile) {
-        $componentFields = CRM_Activity_BAO_Activity::getProfileFields();
-      }
-      else {
-        $componentFields = CRM_Core_Component::getQueryFields();
-      }
-
-      $importableFields = array_merge($importableFields, $componentFields);
-
-      $importableFields['group']['title'] = ts('Group(s)');
-      $importableFields['group']['where'] = NULL;
-      $importableFields['tag']['title'] = ts('Tag(s)');
-      $importableFields['tag']['where'] = NULL;
-
-      $locationFields = array(
-        'street_address',
-        'supplemental_address_1',
-        'supplemental_address_2',
-        'city',
-        'postal_code',
-        'postal_code_suffix',
-        'geo_code_1',
-        'geo_code_2',
-        'state_province',
-        'country',
-        'county',
-        'phone',
-        'email',
-        'im',
-        'address_name',
-        'phone_ext',
-      );
-
-      //get location type
-      $locationType = array();
-      $locationType = CRM_Core_PseudoConstant::locationType();
-
-      $customFields = CRM_Core_BAO_CustomField::getFieldsForImport($ctype, FALSE, FALSE, FALSE, TRUE, TRUE);
-
-      // hack to add custom data for components
-      $components = array('Contribution', 'Participant', 'Membership', 'Activity');
-      foreach ($components as $value) {
-        $customFields = array_merge($customFields, CRM_Core_BAO_CustomField::getFieldsForImport($value));
-      }
-      $addressCustomFields = CRM_Core_BAO_CustomField::getFieldsForImport('Address');
-      $customFields = array_merge($customFields, $addressCustomFields);
+      $importableFields = self::getImportableFields($showAll, $profileType, $contactActivityProfile);
+      list($customFields, $addressCustomFields) = self::getCustomFields($ctype);
 
       while ($field->fetch()) {
-        $name  = $title = $locType = $phoneType = '';
-        $name  = $field->field_name;
-        $title = $field->label;
-
-        $addressCustom = FALSE;
-        if (in_array($permissionType, array(
-          CRM_Core_Permission::CREATE,
-              CRM_Core_Permission::EDIT,
-            )) &&
-          in_array($field->field_name, array_keys($addressCustomFields))
-        ) {
-          $addressCustom = TRUE;
-          $name = "address_{$name}";
-        }
-
-        if ($field->location_type_id) {
-          $name .= "-{$field->location_type_id}";
-          $locType = " ( {$locationType[$field->location_type_id]} ) ";
-        }
-        else {
-          if (in_array($field->field_name, $locationFields) || $addressCustom) {
-            $name .= '-Primary';
-            $locType = ' ( Primary ) ';
-          }
-        }
-
-        if (isset($field->phone_type_id)) {
-          $name .= "-{$field->phone_type_id}";
-          // this hack is to prevent Phone Phone (work)
-          if ($field->phone_type_id != '1') {
-            $phoneType = "-{$field->phone_type_id}";
-          }
-        }
-
-        $fields[$name] = array(
-          'name' => $name,
-          'groupTitle' => $group->title,
-          'groupHelpPre' => $group->help_pre,
-          'groupHelpPost' => $group->help_post,
-          'title' => $title,
-          'where' => CRM_Utils_Array::value('where', CRM_Utils_Array::value($field->field_name, $importableFields)),
-          'attributes' => CRM_Core_DAO::makeAttribute(CRM_Utils_Array::value($field->field_name,
-              $importableFields
-            )),
-          'is_required' => $field->is_required,
-          'is_view' => $field->is_view,
-          'help_pre' => $field->help_pre,
-          'help_post' => $field->help_post,
-          'visibility' => $field->visibility,
-          'in_selector' => $field->in_selector,
-          'rule' => CRM_Utils_Array::value('rule', CRM_Utils_Array::value($field->field_name, $importableFields)),
-          'location_type_id' => $field->location_type_id,
-          'phone_type_id' => isset($field->phone_type_id) ? $field->phone_type_id : NULL,
-          'group_id' => $group->id,
-          'add_to_group_id' => $group->add_to_group_id,
-          'add_captcha' => $group->add_captcha,
-          'field_type' => $field->field_type,
-          'field_id' => $field->id,
-        );
-
-        //adding custom field property
-        if (substr($field->field_name, 0, 6) == 'custom' ||
-          substr($field->field_name, 0, 14) === 'address_custom'
-        ) {
-          // if field is not present in customFields, that means the user
-          // DOES NOT HAVE permission to access that field
-          if (array_key_exists($field->field_name, $customFields)) {
-            $fields[$name]['is_search_range'] = $customFields[$field->field_name]['is_search_range'];
-            // fix for CRM-1994
-            $fields[$name]['options_per_line'] = $customFields[$field->field_name]['options_per_line'];
-            $fields[$name]['data_type'] = $customFields[$field->field_name]['data_type'];
-            $fields[$name]['html_type'] = $customFields[$field->field_name]['html_type'];
-
-            if (CRM_Utils_Array::value('html_type', $fields[$name]) == 'Select Date') {
-              $fields[$name]['date_format'] = $customFields[$field->field_name]['date_format'];
-              $fields[$name]['time_format'] = $customFields[$field->field_name]['time_format'];
-            }
-
-            $fields[$name]['is_multi_summary'] = $field->is_multi_summary;
-          }
-          else {
-            unset($fields[$name]);
-          }
+        list($name, $formattedField) = self::formatUFField($group, $field, $customFields, $addressCustomFields, $importableFields, $permissionType);
+        if ($formattedField !== NULL) {
+          $fields[$name] = $formattedField;
         }
       }
       $field->free();
@@ -491,6 +331,220 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
         ));
     }
     return $fields;
+  }
+
+  /**
+   * Prepare a field for rendering with CRM_Core_BAO_UFGroup::buildProfile.
+   *
+   * @param CRM_Core_DAO_UFGroup|CRM_Core_DAO $group
+   * @param CRM_Core_DAO_UFField|CRM_Core_DAO $field
+   * @param array $addressCustomFields
+   * @param array $importableFields
+   * @param array $customFields
+   * @param int $permissionType eg CRM_Core_Permission::CREATE
+   * @return array
+   */
+  protected static function formatUFField($group, $field, $customFields, $addressCustomFields, $importableFields, $permissionType = CRM_Core_Permission::CREATE) {
+    $name = $title = $locType = $phoneType = '';
+    $name = $field->field_name;
+    $title = $field->label;
+
+    $addressCustom = FALSE;
+    if (in_array($permissionType, array(
+      CRM_Core_Permission::CREATE,
+      CRM_Core_Permission::EDIT,
+    )) &&
+      in_array($field->field_name, array_keys($addressCustomFields))
+    ) {
+      $addressCustom = TRUE;
+      $name = "address_{$name}";
+    }
+
+    if ($field->location_type_id) {
+      $locationType = CRM_Core_PseudoConstant::locationType();
+      $name .= "-{$field->location_type_id}";
+      $locType = " ( {$locationType[$field->location_type_id]} ) ";
+    }
+    else {
+      $locationFields = self::getLocationFields();
+      if (in_array($field->field_name, $locationFields) || $addressCustom) {
+        $name .= '-Primary';
+        $locType = ' ( Primary ) ';
+      }
+    }
+
+    if (isset($field->phone_type_id)) {
+      $name .= "-{$field->phone_type_id}";
+      // this hack is to prevent Phone Phone (work)
+      if ($field->phone_type_id != '1') {
+        $phoneType = "-{$field->phone_type_id}";
+      }
+    }
+
+    // No lie: this is bizarre; why do we need to mix so many UFGroup properties into UFFields?
+    $formattedField = array(
+      'name' => $name,
+      'groupTitle' => $group->title,
+      'groupHelpPre' => $group->help_pre,
+      'groupHelpPost' => $group->help_post,
+      'title' => $title,
+      'where' => CRM_Utils_Array::value('where', CRM_Utils_Array::value($field->field_name, $importableFields)),
+      'attributes' => CRM_Core_DAO::makeAttribute(CRM_Utils_Array::value($field->field_name,
+        $importableFields
+      )),
+      'is_required' => $field->is_required,
+      'is_view' => $field->is_view,
+      'help_pre' => $field->help_pre,
+      'help_post' => $field->help_post,
+      'visibility' => $field->visibility,
+      'in_selector' => $field->in_selector,
+      'rule' => CRM_Utils_Array::value('rule', CRM_Utils_Array::value($field->field_name, $importableFields)),
+      'location_type_id' => $field->location_type_id,
+      'phone_type_id' => isset($field->phone_type_id) ? $field->phone_type_id : NULL,
+      'group_id' => $group->id,
+      'add_to_group_id' => $group->add_to_group_id,
+      'add_captcha' => $group->add_captcha,
+      'field_type' => $field->field_type,
+      'field_id' => $field->id,
+    );
+
+    //adding custom field property
+    if (substr($field->field_name, 0, 6) == 'custom' ||
+      substr($field->field_name, 0, 14) === 'address_custom'
+    ) {
+      // if field is not present in customFields, that means the user
+      // DOES NOT HAVE permission to access that field
+      if (array_key_exists($field->field_name, $customFields)) {
+        $formattedField['is_search_range'] = $customFields[$field->field_name]['is_search_range'];
+        // fix for CRM-1994
+        $formattedField['options_per_line'] = $customFields[$field->field_name]['options_per_line'];
+        $formattedField['data_type'] = $customFields[$field->field_name]['data_type'];
+        $formattedField['html_type'] = $customFields[$field->field_name]['html_type'];
+
+        if (CRM_Utils_Array::value('html_type', $formattedField) == 'Select Date') {
+          $formattedField['date_format'] = $customFields[$field->field_name]['date_format'];
+          $formattedField['time_format'] = $customFields[$field->field_name]['time_format'];
+        }
+
+        $formattedField['is_multi_summary'] = $field->is_multi_summary;
+        return array($name, $formattedField);
+      }
+      else {
+        $formattedField = NULL;
+        return array($name, $formattedField);
+      }
+    }
+    return array($name, $formattedField);
+  }
+
+  /**
+   * Create a query to find all visible UFFields in a UFGroup
+   *
+   * This is the SQL-variant of checkUFFieldDisplayable().
+   *
+   * @param int $groupId
+   * @param bool $searchable
+   * @param bool $showAll
+   * @param int $visibility
+   * @param string $orderBy comma-delimited list of SQL columns
+   * @return string
+   */
+  protected static function createUFFieldQuery($groupId, $searchable, $showAll, $visibility, $orderBy) {
+    $where = " WHERE uf_group_id = {$groupId}";
+
+    if ($searchable) {
+      $where .= " AND is_searchable = 1";
+    }
+
+    if (!$showAll) {
+      $where .= " AND is_active = 1";
+    }
+
+    if ($visibility) {
+      $clause = array();
+      if ($visibility & self::PUBLIC_VISIBILITY) {
+        $clause[] = 'visibility = "Public Pages"';
+      }
+      if ($visibility & self::ADMIN_VISIBILITY) {
+        $clause[] = 'visibility = "User and User Admin Only"';
+      }
+      if ($visibility & self::LISTINGS_VISIBILITY) {
+        $clause[] = 'visibility = "Public Pages and Listings"';
+      }
+      if (!empty($clause)) {
+        $where .= ' AND ( ' . implode(' OR ', $clause) . ' ) ';
+      }
+    }
+
+    $query = "SELECT * FROM civicrm_uf_field $where ORDER BY weight";
+    if ($orderBy) {
+      $query .= ", " . $orderBy;
+      return $query;
+    }
+    return $query;
+  }
+
+  protected static function getImportableFields($showAll, $profileType, $contactActivityProfile) {
+    if (!$showAll) {
+      $importableFields = CRM_Contact_BAO_Contact::importableFields('All', FALSE, FALSE, FALSE, TRUE, TRUE);
+    }
+    else {
+      $importableFields = CRM_Contact_BAO_Contact::importableFields('All', FALSE, TRUE, FALSE, TRUE, TRUE);
+    }
+
+    if ($profileType == 'Activity' || $contactActivityProfile) {
+      $componentFields = CRM_Activity_BAO_Activity::getProfileFields();
+    }
+    else {
+      $componentFields = CRM_Core_Component::getQueryFields();
+    }
+
+    $importableFields = array_merge($importableFields, $componentFields);
+
+    $importableFields['group']['title'] = ts('Group(s)');
+    $importableFields['group']['where'] = NULL;
+    $importableFields['tag']['title'] = ts('Tag(s)');
+    $importableFields['tag']['where'] = NULL;
+    return $importableFields;
+  }
+
+  protected static function getLocationFields() {
+    static $locationFields = array(
+      'street_address',
+      'supplemental_address_1',
+      'supplemental_address_2',
+      'city',
+      'postal_code',
+      'postal_code_suffix',
+      'geo_code_1',
+      'geo_code_2',
+      'state_province',
+      'country',
+      'county',
+      'phone',
+      'email',
+      'im',
+      'address_name',
+      'phone_ext',
+    );
+    return $locationFields;
+  }
+
+  protected static function getCustomFields($ctype) {
+    static $customFieldCache = array();
+    if (!isset($customFieldCache[$ctype])) {
+      $customFields = CRM_Core_BAO_CustomField::getFieldsForImport($ctype, FALSE, FALSE, FALSE, TRUE, TRUE);
+
+      // hack to add custom data for components
+      $components = array('Contribution', 'Participant', 'Membership', 'Activity');
+      foreach ($components as $value) {
+        $customFields = array_merge($customFields, CRM_Core_BAO_CustomField::getFieldsForImport($value));
+      }
+      $addressCustomFields = CRM_Core_BAO_CustomField::getFieldsForImport('Address');
+      $customFields = array_merge($customFields, $addressCustomFields);
+      $customFieldCache[$ctype] = array($customFields, $addressCustomFields);
+    }
+    return $customFieldCache[$ctype];
   }
 
   /**
@@ -2485,7 +2539,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
    * @return array
    * @access public
    */
-  function checkFieldsEmptyValues($gid, $cid, $params, $skipCheck = false) {
+  function checkFieldsEmptyValues($gid, $cid, $params, $skipCheck = FALSE) {
     if ($gid) {
       if (CRM_Core_BAO_UFGroup::filterUFGroups($gid, $cid) || $skipCheck) {
         $values = array();
