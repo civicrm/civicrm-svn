@@ -45,6 +45,17 @@
 require_once 'api/v3/utils.php';
 
 /**
+ * Retrieve one or more job
+ * @param  array input parameters
+ * @return  array api result array
+ * {@getfields email_get}
+ * @access public
+ */
+function civicrm_api3_job_get($params) {
+  return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
+}
+
+/**
  * Dumb wrapper to execute scheduled jobs. Always creates success - errors
  * and results are handled in the job log.
  *
