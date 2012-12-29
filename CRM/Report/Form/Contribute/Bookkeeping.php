@@ -158,8 +158,8 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
             'dao' => 'CRM_Financial_DAO_EntityFinancialTrxn',
             'fields' =>  array (
                                 'amount' => array('title' => ts('Amount'),
-                                                           'default' => TRUE,
-                                                           ),
+                                                  'default' => TRUE,
+                                                   ),
                                 ),
             ),
     );
@@ -204,11 +204,11 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
               LEFT JOIN civicrm_membership {$this->_aliases['civicrm_membership']}
                     ON payment.membership_id = {$this->_aliases['civicrm_membership']}.id 
               LEFT JOIN civicrm_entity_financial_trxn etrxn
-                    ON {$this->_aliases['civicrm_contribution']}.id = etrxn.entity_id     
+                    ON ({$this->_aliases['civicrm_contribution']}.id = etrxn.entity_id AND etrxn.entity_table = 'civicrm_contribution')
               LEFT JOIN civicrm_entity_financial_trxn {$this->_aliases['civicrm_entity_financial_trxn']}
-                    ON etrxn.financial_trxn_id = {$this->_aliases['civicrm_entity_financial_trxn']}.entity_id
+                    ON (etrxn.financial_trxn_id = {$this->_aliases['civicrm_entity_financial_trxn']}.entity_id AND {$this->_aliases['civicrm_entity_financial_trxn']}.entity_table = 'civicrm_financial_trxn')
               LEFT JOIN civicrm_financial_item fitem
-                    ON fitem.id = {$this->_aliases['civicrm_entity_financial_trxn']}.entity_id 
+                    ON (fitem.id = {$this->_aliases['civicrm_entity_financial_trxn']}.entity_id AND {$this->_aliases['civicrm_entity_financial_trxn']}.entity_table = 'civicrm_financial_item')
               LEFT JOIN civicrm_financial_trxn trxn
                     ON trxn.id = {$this->_aliases['civicrm_entity_financial_trxn']}.financial_trxn_id
               LEFT JOIN civicrm_financial_account {$this->_aliases['civicrm_financial_account']}
@@ -217,10 +217,6 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
                     ON fitem.financial_account_id = credit.id";
   }
 
-  function where() {
-    $this->_where = NULL;
-  }
-  
   function groupBy() {
     $this->_groupBy = "";
   }
@@ -269,9 +265,8 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
     $checkList          = array();
     $entryFound         = FALSE;
     $display_flag       = $prev_cid = $cid = 0;
-        $contributionTypes = CRM_Contribute_PseudoConstant::financialType( );
+    $contributionTypes = CRM_Contribute_PseudoConstant::financialType( );
     $paymentInstruments = CRM_Contribute_PseudoConstant::paymentInstrument();
-
 
     foreach ($rows as $rowNum => $row) {
 
