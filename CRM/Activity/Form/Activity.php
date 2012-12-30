@@ -770,7 +770,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task {
 
     $this->add('hidden', 'source_contact_qid', '', array('id' => 'source_contact_qid'));
     CRM_Contact_Form_NewContact::buildQuickForm($this);
-    $this->assign('multiClient', 1);
 
     $this->add('text', 'assignee_contact_id', ts('assignee'));
 
@@ -824,7 +823,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task {
           'type' => 'cancel',
           'name' => ts('File on case'),
           'subName' => 'file_on_case',
-          'js' => array('onClick' => "Javascript:fileOnCase( \"file\", $this->_activityId ); return false;")
+          'js' => array('onClick' => "javascript:fileOnCase( \"file\", $this->_activityId ); return false;")
         );
       }
       // form should be frozen for view mode
