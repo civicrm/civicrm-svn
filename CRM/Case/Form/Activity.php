@@ -87,7 +87,7 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity {
     $scheduleStatusId = CRM_Core_OptionGroup::getValue('activity_status', 'Scheduled', 'name');
     $this->assign('scheduleStatusId', $scheduleStatusId);
 
-    if ($this->_cdType || $this->_addAssigneeContact || $this->_addTargetContact) {
+    if ($this->_cdType) {
       return $result;
     }
 
@@ -251,7 +251,7 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity {
     $this->assign('targetContactValues', empty($targetContactValues) ? FALSE : $targetContactValues);
 
     //return form for ajax
-    if ($this->_cdType || $this->_addAssigneeContact || $this->_addTargetContact) {
+    if ($this->_cdType) {
       return $this->_defaults;
     }
 
@@ -297,7 +297,7 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity {
       return;
     }
 
-    if ($this->_cdType || $this->_addAssigneeContact || $this->_addTargetContact) {
+    if ($this->_cdType) {
       return $result;
     }
 
