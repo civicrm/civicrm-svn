@@ -786,14 +786,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task {
     $this->assign('customDataSubType', $this->_activityTypeId);
     $this->assign('entityID', $this->_activityId);
 
-    if ($this->_targetContactId) {
-      $defaultTargetContactName = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact',
-        $this->_targetContactId,
-        'sort_name'
-      );
-      $this->assign('target_contact_value', $defaultTargetContactName);
-    }
-
     $tags = CRM_Core_BAO_Tag::getTags('civicrm_activity');
 
     if (!empty($tags)) {
