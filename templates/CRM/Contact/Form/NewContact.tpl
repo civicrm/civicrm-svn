@@ -27,29 +27,37 @@
 {if !in_array($context, array('search','advanced', 'builder')) }
   {assign var='fldName' value=$prefix|cat:'contact'}
   {assign var='profSelect' value=$prefix|cat:'profiles'}
+
   {if $noLabel}
-  <div>
-    <div id="contact-success-{$prefix}{$blockNo}" class="hiddenElement">
-      <span class="success-status">{ts}New contact has been created.{/ts}</span>
-    </div>
-    {$form.$fldName.$blockNo.html} {if !$skipBreak}<br/>{/if}
-    {if $form.$profSelect}
-      {ts}OR{/ts}{if !$skipBreak}<br/>{else}&nbsp;{/if}{$form.$profSelect.$blockNo.html}<div id="contact-dialog-{$prefix}{$blockNo}" class="hiddenElement"></div>
-    {/if}
-  </div>
-    {else}
-  <tr id="contact-success-{$prefix}{$blockNo}" class="hiddenElement">
-    <td></td>
-    <td><span class="success-status">{ts}New contact has been created.{/ts}</span></td>
-  </tr>
-  <tr class="crm-new-contact-form-block-contact crm-new-contact-form-block-contact-{$blockNo}">
-    <td class="label">{$form.$fldName.$blockNo.label}</td>
-    <td>{$form.$fldName.$blockNo.html}
-      {if $form.$profSelect}
-        &nbsp;&nbsp;{ts}OR{/ts}&nbsp;&nbsp;{$form.$profSelect.$blockNo.html}<div id="contact-dialog-{$prefix}{$blockNo}" class="hiddenElement"></div>
+    <div>
+      <div id="contact-success-{$prefix}{$blockNo}" class="hiddenElement">
+        <span class="success-status">{ts}New contact has been created.{/ts}</span>
+      </div>
+      {if !$skipBreak}
+        {$form.$fldName.$blockNo.html} <br/>
+        {if $form.$profSelect}
+          {ts}OR{/ts}<br/>{$form.$profSelect.$blockNo.html}<div id="contact-dialog-{$prefix}{$blockNo}" class="hiddenElement"></div>
+        {/if}
+      {else}
+        {$form.$fldName.$blockNo.html}
+        {if $form.$profSelect}
+          &nbsp;&nbsp;{ts}OR{/ts}&nbsp;&nbsp;{$form.$profSelect.$blockNo.html}<div id="contact-dialog-{$prefix}{$blockNo}" class="hiddenElement"></div>
+        {/if}
       {/if}
-    </td>
-  </tr>
+    </div>
+  {else}
+    <tr id="contact-success-{$prefix}{$blockNo}" class="hiddenElement">
+      <td></td>
+      <td><span class="success-status">{ts}New contact has been created.{/ts}</span></td>
+    </tr>
+    <tr class="crm-new-contact-form-block-contact crm-new-contact-form-block-contact-{$blockNo}">
+      <td class="label">{$form.$fldName.$blockNo.label}</td>
+      <td>{$form.$fldName.$blockNo.html}
+        {if $form.$profSelect}
+          &nbsp;&nbsp;{ts}OR{/ts}&nbsp;&nbsp;{$form.$profSelect.$blockNo.html}<div id="contact-dialog-{$prefix}{$blockNo}" class="hiddenElement"></div>
+        {/if}
+      </td>
+    </tr>
   {/if}
 
 {literal}

@@ -127,7 +127,7 @@
       <td class="view-value" style="white-space: normal">{$with|escape}</td>
       {elseif $action neq 4}
       <td class="label">{ts}With Contact{/ts}</td>
-      <td>
+      <td class="view-value">
         {include file="CRM/Contact/Form/NewContact.tpl" noLabel=true skipBreak=true multiClient=true}
       </td>
       {else}
