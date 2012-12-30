@@ -34,7 +34,7 @@
     </div>
     {$form.$fldName.$blockNo.html} {if !$skipBreak}<br/>{/if}
     {if $form.$profSelect}
-      {ts}OR{/ts}<br/>{$form.$profSelect.$blockNo.html}<div id="contact-dialog-{$prefix}{$blockNo}" class="hiddenElement"></div>
+      {ts}OR{/ts}{if !$skipBreak}<br/>{else}&nbsp;{/if}{$form.$profSelect.$blockNo.html}<div id="contact-dialog-{$prefix}{$blockNo}" class="hiddenElement"></div>
     {/if}
   </div>
     {else}

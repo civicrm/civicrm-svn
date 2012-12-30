@@ -55,6 +55,8 @@ class CRM_Contact_Form_NewContact {
     $attributes = array('width' => '200px');
 
     $selectContacts = $form->add('text', "{$prefix}contact[{$blockNo}]", ts('Select Contact'), $attributes, $required);
+
+    // use submitted values to set default if form submit fails dues to form rules
     if ($selectContacts->getValue()) {
       $form->assign("selectedContacts", $selectContacts->getValue());
     }

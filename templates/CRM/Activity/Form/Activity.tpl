@@ -129,7 +129,6 @@
       <td class="label">{ts}With Contact{/ts}</td>
       <td>
         {include file="CRM/Contact/Form/NewContact.tpl" noLabel=true skipBreak=true multiClient=true}
-        <span class="description">{ts}You can select existing contact or create a new contact.{/ts}</span>
       </td>
       {else}
       <td class="label">{ts}With Contact{/ts}</td>

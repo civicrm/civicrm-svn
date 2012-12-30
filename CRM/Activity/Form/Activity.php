@@ -490,6 +490,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task {
           $this->assign('target_contact', $target_contact);
         }
         else {
+          //this assigned variable is used by newcontact creation widget to set defaults
           $this->assign('prePopulateData', $this->formatContactValues($target_contact));
         }
       }
@@ -560,6 +561,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task {
         $target_contact[$this->_targetContactId] = self::_getDisplayNameById($this->_targetContactId);
       }
 
+      //this assigned variable is used by newcontact creation widget to set defaults
       $this->assign('prePopulateData', $this->formatContactValues($target_contact));
 
       list($defaults['activity_date_time'], $defaults['activity_date_time_time']) =
@@ -823,7 +825,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task {
 
       $buttons[] = array(
         'type' => 'cancel',
-        'name' => ts('Done'),
+        'name' => ts('Done')
       );
 
       $this->addButtons($buttons);
