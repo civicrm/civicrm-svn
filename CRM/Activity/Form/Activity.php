@@ -904,31 +904,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task {
       $errors['source_contact_id'] = ts('Source Contact non-existent!');
     }
 
-    if (CRM_Utils_Array::value('assignee_contact_id', $fields)) {
-      foreach (explode(',', $fields['assignee_contact_id']) as $key => $id) {
-        if ($id && !is_numeric($id)) {
-          $nullAssignee[] = $id;
-        }
-      }
-      if (!empty($nullAssignee)) {
-        $errors["assignee_contact_id"] = ts('Assignee Contact(s) "%1" does not exist.<br/>',
-          array(1 => implode(", ", $nullAssignee))
-        );
-      }
-    }
-    if (CRM_Utils_Array::value('target_contact_id', $fields)) {
-      foreach (explode(',', $fields['target_contact_id']) as $key => $id) {
-        if ($id && !is_numeric($id)) {
-          $nullTarget[] = $id;
-        }
-      }
-      if (!empty($nullTarget)) {
-        $errors["target_contact_id"] = ts('Target Contact(s) "%1" does not exist.',
-          array(1 => implode(", ", $nullTarget))
-        );
-      }
-    }
-
     if (CRM_Utils_Array::value('activity_type_id', $fields) == 3 &&
       CRM_Utils_Array::value('status_id', $fields) == 1
     ) {
