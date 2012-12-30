@@ -474,8 +474,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task {
     }
 
     $defaults = $this->_values;
-    $params   = array();
-    $config   = CRM_Core_Config::singleton();
 
     // if we're editing...
     if (isset($this->_activityId)) {

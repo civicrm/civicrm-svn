@@ -46,11 +46,10 @@
   {/if}
   {literal}
 
-  //FIX ME: need to check below code
   //loop to set the value of cc and bcc if form rule.
   var assignee_contact_id = null;
   var toDataUrl = "{/literal}{crmURL p='civicrm/ajax/checkemail' q='id=1&noemail=1' h=0 }{literal}"; {/literal}
-  {foreach from=","|explode:"target,assignee" key=key item=element}
+  {foreach from=","|explode:"assignee" key=key item=element}
     {assign var=currentElement value=`$element`_contact_id}
     {if $form.$currentElement.value }
       {literal} var {/literal}{$currentElement}{literal} = cj.ajax({ url: toDataUrl + "&cid={/literal}{$form.$currentElement.value}{literal}", async: false }).responseText;{/literal}

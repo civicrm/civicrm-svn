@@ -43,51 +43,41 @@
     {* added onload javascript for source contact*}
     {literal}
     <script type="text/javascript">
-    var target_contact = assignee_contact = target_contact_id = '';
+    var assignee_contact = '';
 
     {/literal}
-    {if $target_contact}
-    var target_contact = {$target_contact};
-    {/if}
-
     {if $assignee_contact}
     var assignee_contact = {$assignee_contact};
     {/if}
 
     {literal}
-    var target_contact_id = assignee_contact_id = null;
+    var assignee_contact_id = null;
     //loop to set the value of cc and bcc if form rule.
     var toDataUrl = "{/literal}{crmURL p='civicrm/ajax/checkemail' q='id=1&noemail=1' h=0 }{literal}"; {/literal}
-    {foreach from=","|explode:"assignee,target" key=key item=element}
+    {foreach from=","|explode:"assignee" key=key item=element}
       {assign var=currentElement value=`$element`_contact_id}
       {if $form.$currentElement.value}
         {literal} var {/literal}{$currentElement}{literal} = cj.ajax({ url: toDataUrl + "&cid={/literal}{$form.$currentElement.value}{literal}", async: false }).responseText;{/literal}
       {/if}
     {/foreach}
-
     {literal}
-    if ( target_contact_id ) {
-      eval( 'target_contact = ' + target_contact_id );
-    }
+
     if ( assignee_contact_id ) {
       eval( 'assignee_contact = ' + assignee_contact_id );
     }
 
-    cj(document).ready( function( ) {
+    cj(function( ) {
       {/literal}
       {if $source_contact and $admin and $action neq 4}
         {literal} cj( '#source_contact_id' ).val( "{/literal}{$source_contact}{literal}");{/literal}
       {/if}
-
       {literal}
 
       var sourceDataUrl = "{/literal}{$dataUrl}{literal}";
-      var tokenDataUrl_target  = "{/literal}{$tokenUrl}&context=case_activity_target{literal}";
       var tokenDataUrl_assignee  = "{/literal}{$tokenUrl}&context=case_activity_assignee{literal}";
 
       var hintText = "{/literal}{ts escape='js'}Type in a partial or complete name or email address of an existing contact.{/ts}{literal}";
       cj( "#assignee_contact_id").tokenInput( tokenDataUrl_assignee, { prePopulate: assignee_contact, theme: 'facebook', hintText: hintText });
-      cj( "#target_contact_id"  ).tokenInput( tokenDataUrl_target, { prePopulate: target_contact,   theme: 'facebook', hintText: hintText });
       cj( 'ul.token-input-list-facebook, div.token-input-dropdown-facebook' ).css( 'width', '450px' );
       cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirst : false, matchContains:true
       }).result( function(event, data, formatted) { cj( "#source_contact_qid" ).val( data[1] );
@@ -107,7 +97,7 @@
       {ts 1=$activityTypeName}Click Restore to retrieve this &quot;%1&quot; activity from the Trash.{/ts}
     {/if}
   </div><br />
-    {else}
+  {else}
   <table class="form-layout">
     {if $activityTypeDescription }
       <tr>
@@ -115,40 +105,31 @@
       </tr>
     {/if}
     <tr id="with-clients" class="crm-case-activity-form-block-client_name">
-      {if not $multiClient}
-        <td class="label font-size12pt">{ts}Client{/ts}</td>
-        <td class="view-value"><span class="font-size12pt">{$client_name|escape}&nbsp;&nbsp;&nbsp;&nbsp;</span>
-          {else}
-        <td class="label font-size12pt">{ts}Clients{/ts}</td>
+      <td class="label font-size12pt">{ts}Client{/ts}</td>
       <td class="view-value">
         <span class="font-size12pt">
           {foreach from=$client_names item=client name=clients}
             {$client.display_name}{if not $smarty.foreach.clients.last}; &nbsp; {/if}
           {/foreach}
         </span>
-      {/if}
 
-      {if $action eq 1 or $action eq 2}
-        <br />
-        <a href="#" onClick="buildTargetContact(1); return false;">
-        <span id="with-other-contacts-link" class="add-remove-link hide-block">&raquo;
-          {ts}With other contact(s){/ts}</span>
-        </a>
-      {/if}
+        {if $action eq 1 or $action eq 2}
+          <br />
+          <a href="#" class="crm-with-contact">&raquo; {ts}With other contact(s){/ts}</a>
+        {/if}
       </td>
     </tr>
 
     {if $action eq 1 or $action eq 2}
       <tr class="crm-case-activity-form-block-target_contact_id hide-block" id="with-contacts-widget">
         <td class="label font-size10pt">{ts}With Contact{/ts}</td>
-        <td>{$form.target_contact_id.html}
-          <a href="#" onClick="buildTargetContact(1); return false;">
-               <span id="with-clients-link" class="add-remove-link">&raquo;
-                 {if not $multiClient}{ts}With client{/ts}{else}{ts}With client(s){/ts}{/if}
-                   </span>
+        <td>
+          {include file="CRM/Contact/Form/NewContact.tpl" noLabel=true skipBreak=true}
+          <span class="description">{ts}You can select existing contact or create a new contact.{/ts}</span>
+          <a href="#" class="crm-with-contact">
+            &raquo; {if not $multiClient}{ts}With client{/ts}{else}{ts}With client(s){/ts}{/if}
           </a>
         </td>
-        <td class="hide-block">{$form.hidden_target_contact.html}</td>
       </tr>
     {/if}
 
@@ -341,60 +322,20 @@
   </script>
   {/if}
 
-{* include jscript to warn if unsaved form field changes *}
-{include file="CRM/common/formNavigate.tpl"}
+  {* include jscript to warn if unsaved form field changes *}
+  {include file="CRM/common/formNavigate.tpl"}
 
-  {literal}
-  <script type="text/javascript">
-
-  {/literal}{if $action eq 2 or $action eq 1}{literal}
-  cj(function( ) {
-    var reset = {/literal}{if $targetContactValues}true{else}false{/if}{literal};
-    buildTargetContact( reset );
-  });
-{/literal}
-{/if}{literal}
-
-function buildTargetContact( resetVal ) {
-  var hideWidget  = showWidget = false;
-  var value       = cj("#hidden_target_contact").attr( 'checked' );
-
-  if ( resetVal ) {
-    if ( value ) {
-      hideWidget  = true;
-      value       = false;
-    }
-    else {
-      showWidget  = true;
-      value       = true;
-    }
-  }
-  else {
-    if ( value ) {
-      showWidget = true;
-    }
-    else {
-      hideWidget = true;
-    }
-  }
-
-  if ( hideWidget ) {
-    cj('#with-clients-link').hide( );
-    cj('#with-contacts-widget').hide( );
-    cj('#with-clients').show( );
-    cj('#with-other-contacts-link').show( );
-  }
-  if ( showWidget ) {
-    cj('#with-contacts-widget').show( );
-    cj('#with-clients-link').show( );
-
-    cj('#with-other-contacts-link').hide( );
-    cj('#with-clients').hide( );
-  }
-  cj("#hidden_target_contact").attr( 'checked', value );
-}
-</script>
-{/literal}
+  {if $action eq 2 or $action eq 1}
+    {literal}
+    <script type="text/javascript">
+      cj(function( ) {
+        cj('.crm-with-contact').click(function(){
+          cj('#with-contacts-widget').toggle();
+          cj('#with-clients').toggle();
+        });
+      });
+    </script>
+    {/literal}
+  {/if}
 </div>
 {/if} {* end of main if block*}
-</script>

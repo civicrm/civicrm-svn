@@ -140,14 +140,9 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity {
     $isMultiClient = $xmlProcessorProcess->getAllowMultipleCaseClients();
     $this->assign('multiClient', $isMultiClient);
 
-    if ($isMultiClient) {
-      $clients = CRM_Case_BAO_Case::getContactNames($this->_caseId);
-      $this->assign('client_names', $clients);
-    }
-    else {
-      $clientName = $this->_getDisplayNameById($this->_currentlyViewedContactId);
-      $this->assign('client_name', $clientName);
-    }
+    $clients = CRM_Case_BAO_Case::getContactNames($this->_caseId);
+    $this->assign('client_names', $clients);
+
     // set context for pushUserContext and for statusBounce
     if ($this->_context == 'fulltext') {
       if ($this->_action == CRM_Core_Action::UPDATE || $this->_action == CRM_Core_Action::DELETE) {
@@ -185,10 +180,7 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity {
         $activityCount = CRM_Case_BAO_Case::getCaseActivityCount($this->_caseId, $this->_activityTypeId);
         if ($activityCount >= $activityInst[$this->_activityTypeName]) {
           if ($activityInst[$this->_activityTypeName] == 1) {
-            $atArray = array(
-              'activity_type_id' =>
-              $this->_activityTypeId,
-            );
+            $atArray = array('activity_type_id' => $this->_activityTypeId);
             $activities = CRM_Case_BAO_Case::getCaseActivity($this->_caseId,
               $atArray,
               $this->_currentUserId
@@ -202,7 +194,7 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity {
           CRM_Core_Error::statusBounce(ts("You can not add another '%1' activity to this case. %2",
               array(
                 1 => $this->_activityTypeName,
-                2 => "Do you want to <a href='$editUrl'>edit the existing activity</a> ?",
+                2 => "Do you want to <a href='$editUrl'>edit the existing activity</a> ?"
               )
             ),
             $url
@@ -214,7 +206,6 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity {
     if ($this->_currentlyViewedContactId) {
       CRM_Contact_Page_View::setTitle($this->_currentlyViewedContactId);
     }
-    //        CRM_Utils_System::setTitle( $this->_activityTypeName );
 
     $session = CRM_Core_Session::singleton();
     $session->pushUserContext($url);
@@ -270,12 +261,6 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity {
   }
 
   public function buildQuickForm() {
-    // modify core Activity fields
-    $this->add('text', 'target_contact_id', ts('target'));
-
-    //FIXME : ideally hidden element should work.
-    $this->addElement('advcheckbox', "hidden_target_contact");
-
     $this->_fields['source_contact_id']['label'] = ts('Reported By');
     $this->_fields['status_id']['attributes'] = array('' => ts('- select -')) + CRM_Core_PseudoConstant::activityStatus();
 
@@ -394,7 +379,7 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity {
 
       $tagParams = array(
         'entity_table' => 'civicrm_activity',
-        'entity_id' => $this->_activityId,
+        'entity_id' => $this->_activityId
       );
       CRM_Core_BAO_EntityTag::del($tagParams);
 
@@ -431,17 +416,13 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity {
     $params['activity_date_time'] = CRM_Utils_Date::processDate($params['activity_date_time'], $params['activity_date_time_time']);
     $params['activity_type_id'] = $this->_activityTypeId;
 
-    $xmlProcessorProcess = new CRM_Case_XMLProcessor_Process();
-    $isMultiClient = $xmlProcessorProcess->getAllowMultipleCaseClients();
-    $this->assign('multiClient', $isMultiClient);
-
-    $targetContacts = array($this->_currentlyViewedContactId);
-    if (CRM_Utils_Array::value('hidden_target_contact', $params) &&
-      CRM_Utils_Array::value('target_contact_id', $params)
-    ) {
-      $targetContacts = array_unique(explode(',', $params['target_contact_id']));
+    // format with contact (target contact) values
+    if (isset($params['contact'][1])) {
+      $params['target_contact_id'] = explode(',', $params['contact'][1]);
     }
-    $params['target_contact_id'] = $targetContacts;
+    else {
+      $params['target_contact_id'] = array();
+    }
 
     // format activity custom data
     if (CRM_Utils_Array::value('hidden_custom', $params)) {
@@ -477,17 +458,16 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity {
       );
     }
 
+    // assigning formated value
     if (CRM_Utils_Array::value('assignee_contact_id', $params)) {
-      $assineeContacts = explode(',', $params['assignee_contact_id']);
-      $assineeContacts = array_unique($assineeContacts);
-      unset($params['assignee_contact_id']);
+      $params['assignee_contact_id'] = explode(',', $params['assignee_contact_id']);
     }
     else {
-      $params['assignee_contact_id'] = $assineeContacts = array();
+      $params['assignee_contact_id'] = array();
     }
 
-    if (isset($this->_activityId)) {
 
+    if (isset($this->_activityId)) {
       // activity which hasn't been modified by a user yet
       if ($this->_defaults['is_auto'] == 1) {
         $params['is_auto'] = 0;
@@ -534,7 +514,6 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity {
     // create a new version of activity if activity was found to
     // have been modified/created by user
     if (isset($newActParams)) {
-
       // set proper original_id
       if (CRM_Utils_Array::value('original_id', $this->_defaults)) {
         $newActParams['original_id'] = $this->_defaults['original_id'];
@@ -589,7 +568,6 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity {
       }
     }
 
-    $params['assignee_contact_id'] = $assineeContacts;
     // update existing case record if needed
     $caseParams = $params;
     $caseParams['id'] = $this->_caseId;
