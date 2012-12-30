@@ -594,7 +594,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
     return $importableFields;
   }
 
-  protected static function getLocationFields() {
+  public static function getLocationFields() {
     static $locationFields = array(
       'street_address',
       'supplemental_address_1',
