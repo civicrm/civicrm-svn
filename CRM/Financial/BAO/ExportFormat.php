@@ -153,7 +153,7 @@ class CRM_Financial_BAO_ExportFormat {
     //create activity. 
     $activityTypes = CRM_Core_PseudoConstant::activityType(TRUE, FALSE, FALSE, 'name');
     $activityParams = array(
-      'activity_type_id' => array_search('Export of Financial Transactions Batch', $activityTypes),
+      'activity_type_id' => array_search('Export Accounting Batch', $activityTypes),
       'subject' => 'Total ['.$values['total'].'], Count ['.$values['item_count'].'], Batch ['.$values['title'].']',
       'status_id' => 2,
       'activity_date_time' => date('YmdHis'),

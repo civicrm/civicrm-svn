@@ -354,7 +354,9 @@ VALUES
    (@option_group_id_act, '{ts escape="sql"}Reminder Sent{/ts}',      		      40, 'Reminder Sent', NULL, 1, 0, 40, '', 0, 1, 1, NULL, NULL),
 
  -- Activity Types for Financial Transactions Batch
-   (@option_group_id_act, '{ts escape="sql"}Export of Financial Transactions Batch{/ts}',41, 'Export of Financial Transactions Batch', NULL,0, 0, 41, 'Export of Financial Transactions Batch', 0, 1, 1, 2, NULL),
+   (@option_group_id_act, '{ts escape="sql"}Export Accounting Batch{/ts}', 41, 'Export Accounting Batch', NULL,0, 0, 41, 'Export Accounting Batch', 0, 1, 1, @contributeCompId, NULL),
+   (@option_group_id_act, '{ts escape="sql"}Create Batch{/ts}', 42, 'Create Batch', NULL, 0, 0, 42, 'Create Batch', 0, 1, 1, @contributeCompId, NULL),
+   (@option_group_id_act, '{ts escape="sql"}Edit Batch{/ts}', 43, 'Edit Batch', NULL, 0, 0, 43, 'Edit Batch', 0, 1, 1, @contributeCompId, NULL),
 
    (@option_group_id_gender, '{ts escape="sql"}Female{/ts}',      1, 'Female',      NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_gender, '{ts escape="sql"}Male{/ts}',        2, 'Male',        NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),

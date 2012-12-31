@@ -281,6 +281,7 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
       $params['created_date'] = date('YmdHis');
       $params['created_id'] = $session->get('userID');
       $details = "{$params['title']} batch has been created by this contact.";
+      $activityTypeName = 'Create Batch';      
     }
 
     if ($this->_action & CRM_Core_Action::UPDATE && $this->_id) {
@@ -288,19 +289,23 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
       if (CRM_Utils_Array::value($params['status_id'], $batchStatus) == 'Closed') {
         $details = "{$params['title']} batch has been closed by this contact.";
       }
+      $activityTypeName = 'Edit Batch';
     }
 
     $batch = CRM_Batch_BAO_Batch::create($params, $ids, $context='financialBatch');
-
+    
     if ($this->_action & CRM_Core_Action::EXPORT) {
       CRM_Batch_BAO_Batch::exportFinancialBatch($ids, $params['export_format']);
     }
     else {
       $activityTypes = CRM_Core_PseudoConstant::activityType(TRUE, FALSE, FALSE, 'name');
+      $subject = CRM_Utils_Array::value('name', $params, FALSE) ? 
+        $params['name'] : CRM_Utils_String::titleToVar($params['title']);
+
       //create activity.
       $activityParams = array(
-        'activity_type_id' => array_search('Export of Financial Transactions Batch', $activityTypes),
-        'subject' => CRM_Utils_Array::value('name', $params). "- Batch",
+        'activity_type_id' => array_search($activityTypeName, $activityTypes),
+        'subject' => $subject ."- Batch",
         'status_id' => 2,
         'priority_id' => 2,
         'activity_date_time' => date('YmdHis'),
