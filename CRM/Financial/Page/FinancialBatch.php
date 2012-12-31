@@ -50,7 +50,7 @@ class CRM_Financial_Page_FinancialBatch extends CRM_Core_Page_Basic {
   /**
    * Get BAO Name
    *
-   * @return string Classname of BAO.
+   * @return string classname of BAO.
    */
   function getBAOName() {
     return 'CRM_Batch_BAO_Batch';
@@ -81,14 +81,8 @@ class CRM_Financial_Page_FinancialBatch extends CRM_Core_Page_Basic {
    */
   function run() {
     // assign vars to templates
-    $id = CRM_Utils_Request::retrieve(
-      'id', 'Positive',
-      $this, false, 0
-    );
-    $action = CRM_Utils_Request::retrieve(
-      'action', 'String',
-      $this, false, 'browse'
-    ); // default to 'browse'
+    $id = CRM_Utils_Request::retrieve('id', 'Positive', $this, false, 0);
+    $action = CRM_Utils_Request::retrieve('action', 'String', $this, false, 'browse'); // default to 'browse'
 
     // what action to take ?
     if ($action &
@@ -107,7 +101,7 @@ class CRM_Financial_Page_FinancialBatch extends CRM_Core_Page_Basic {
   /**
    * Get name of edit form
    *
-   * @return string Classname of edit form.
+   * @return string classname of edit form.
    */
   function editForm() {
     return 'CRM_Financial_Form_FinancialBatch';

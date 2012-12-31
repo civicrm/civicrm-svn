@@ -81,13 +81,11 @@ class CRM_Financial_Form_Export extends CRM_Core_Form {
 
     $optionTypes = array(
       'IIF' => ts('Export to IIF'),
-      'CSV' => ts('Export to CSV')
+      'CSV' => ts('Export to CSV'),
     );
 
     $this->addRadio('export_format', NULL, $optionTypes, NULL, '<br/>', TRUE);
-    $this->setdefaults(array(
-      'export_format' => 'IIF'
-    ));
+    $this->setdefaults(array('export_format' => 'IIF'));
 
     $this->addButtons(
       array(
@@ -95,11 +93,11 @@ class CRM_Financial_Form_Export extends CRM_Core_Form {
           'type' => 'next',
           'name' => ts('Export Batch'),
           'spacing' => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
-          'isDefault' => true
+          'isDefault' => true,
         ),
         array(
           'type' => 'cancel',
-          'name' => ts('Cancel')
+          'name' => ts('Cancel'),
         ),
       )
     );

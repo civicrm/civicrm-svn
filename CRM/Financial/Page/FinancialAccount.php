@@ -45,7 +45,7 @@ class CRM_Financial_Page_FinancialAccount extends CRM_Core_Page_Basic {
    * @static
    */
   static $_links = null;
-    
+
   /**
    * Get BAO Name
    *
@@ -54,7 +54,7 @@ class CRM_Financial_Page_FinancialAccount extends CRM_Core_Page_Basic {
   function getBAOName() {
     return 'CRM_Financial_BAO_FinancialAccount';
   }
-  
+
   /**
    * Get action Links
    *
@@ -63,39 +63,39 @@ class CRM_Financial_Page_FinancialAccount extends CRM_Core_Page_Basic {
   function &links() {
     if (!(self::$_links)) {
       self::$_links = array(
-                            CRM_Core_Action::UPDATE  => array(
-                                                              'name'  => ts('Edit'),
-                                                              'url'   => 'civicrm/admin/financial/financialAccount',
-                                                              'qs'    => 'action=update&id=%%id%%&reset=1',
-                                                              'title' => ts('Edit Financial Type') 
-                                                              ),
-                            CRM_Core_Action::DISABLE => array(
-                                                              'name'  => ts('Disable'),
-                                                              'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Financial_BAO_FinancialAccount' . '\',\'' . 'enable-disable' . '\' );"',
-                                                              'ref'   => 'disable-action',
-                                                              'title' => ts('Disable Financial Type') 
-                                                              ),
-                            CRM_Core_Action::ENABLE  => array(
-                                                              'name'  => ts('Enable'),
-                                                              'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Financial_BAO_FinancialAccount' . '\',\'' . 'disable-enable' . '\' );"',
-                                                              'ref'   => 'enable-action',
-                                                              'title' => ts('Enable Financial Type') 
-                                                              ),
-                            CRM_Core_Action::DELETE  => array(
-                                                              'name'  => ts('Delete'),
-                                                              'url'   => 'civicrm/admin/financial/financialAccount',
-                                                              'qs'    => 'action=delete&id=%%id%%',
-                                                              'title' => ts('Delete Financial Type') 
-                                                              )
-                            );
+        CRM_Core_Action::UPDATE  => array(
+          'name'  => ts('Edit'),
+          'url'   => 'civicrm/admin/financial/financialAccount',
+          'qs'    => 'action=update&id=%%id%%&reset=1',
+          'title' => ts('Edit Financial Type'),
+        ),
+        CRM_Core_Action::DISABLE => array(
+          'name'  => ts('Disable'),
+          'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Financial_BAO_FinancialAccount' . '\',\'' . 'enable-disable' . '\' );"',
+          'ref'   => 'disable-action',
+          'title' => ts('Disable Financial Type'),
+        ),
+        CRM_Core_Action::ENABLE  => array(
+          'name'  => ts('Enable'),
+          'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Financial_BAO_FinancialAccount' . '\',\'' . 'disable-enable' . '\' );"',
+          'ref'   => 'enable-action',
+          'title' => ts('Enable Financial Type'),
+        ),
+        CRM_Core_Action::DELETE  => array(
+          'name'  => ts('Delete'),
+          'url'   => 'civicrm/admin/financial/financialAccount',
+          'qs'    => 'action=delete&id=%%id%%',
+          'title' => ts('Delete Financial Type'),
+        ),
+      );
     }
     return self::$_links;
   }
-  
+
   /**
    * Run the page.
    *
-   * This method is called after the page is created. It checks for the  
+   * This method is called after the page is created. It checks for the
    * type of action and executes that action.
    * Finally it calls the parent's run method.
    *
@@ -105,27 +105,25 @@ class CRM_Financial_Page_FinancialAccount extends CRM_Core_Page_Basic {
    */
   function run() {
     // get the requested action
-    $action = CRM_Utils_Request::retrieve('action', 'String',
-                                          $this, false, 'browse'); // default to 'browse'
-    
+    $action = CRM_Utils_Request::retrieve('action', 'String', $this, false, 'browse'); // default to 'browse'
+
     // assign vars to templates
     $this->assign('action', $action);
-    $id = CRM_Utils_Request::retrieve('id', 'Positive',
-                                      $this, false, 0);
-    
+    $id = CRM_Utils_Request::retrieve('id', 'Positive', $this, false, 0);
+
     // what action to take ?
     if ($action & (CRM_Core_Action::UPDATE | CRM_Core_Action::ADD)) {
       $this->edit($action, $id) ;
-    } 
-    
+    }
+
     // parent run 
     return parent::run();
   }
-  
+
   /**
    * Browse all custom data groups.
-   *  
-   * 
+   *
+   *
    * @return void
    * @access public
    * @static
@@ -137,31 +135,33 @@ class CRM_Financial_Page_FinancialAccount extends CRM_Core_Page_Basic {
     $dao->orderBy('financial_account_type_id, name');
     $dao->find();
     $financialAccountType = CRM_Core_PseudoConstant::accountOptionValues('financial_account_type');
-    
+
     while ($dao->fetch()) {
       $contributionType[$dao->id] = array();
       CRM_Core_DAO::storeValues( $dao, $contributionType[$dao->id]);
       $contributionType[$dao->id]['financial_account_type_id'] =  $financialAccountType[$dao->financial_account_type_id];
       // form all action links
       $action = array_sum(array_keys($this->links()));
-      
+
       // update enable/disable links depending on if it is is_reserved or is_active
       if ($dao->is_reserved) {
         continue;
-      } else {
+      }
+      else {
         if ($dao->is_active) {
           $action -= CRM_Core_Action::ENABLE;
-        } else {
+        }
+        else {
           $action -= CRM_Core_Action::DISABLE;
         }
       }
-      
-      $contributionType[$dao->id]['action'] = CRM_Core_Action::formLink(self::links(), $action, 
-                                                                        array('id' => $dao->id));
+
+      $contributionType[$dao->id]['action'] = CRM_Core_Action::formLink(self::links(), $action,
+        array('id' => $dao->id));
     }
     $this->assign('rows', $contributionType);
   }
-  
+
   /**
    * Get name of edit form
    *
@@ -170,7 +170,7 @@ class CRM_Financial_Page_FinancialAccount extends CRM_Core_Page_Basic {
   function editForm() {
     return 'CRM_Financial_Form_FinancialAccount';
   }
-  
+
   /**
    * Get edit form name
    *
@@ -179,7 +179,7 @@ class CRM_Financial_Page_FinancialAccount extends CRM_Core_Page_Basic {
   function editName() {
     return 'Financial Types';
   }
-  
+
   /**
    * Get user context.
    *
