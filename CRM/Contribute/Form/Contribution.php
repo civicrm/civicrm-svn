@@ -467,6 +467,7 @@ WHERE  contribution_id = {$this->_id}
       $lineItem = CRM_Price_BAO_LineItem::getLineItems($this->_id, 'contribution',1);
       empty($lineItem) ? null :$this->_lineItems[] =  $lineItem;
     }
+
     $this->assign('lineItem', empty($this->_lineItems) ? FALSE : $this->_lineItems);
   }
 
@@ -1133,7 +1134,17 @@ WHERE  contribution_id = {$this->_id}
 
     // get the submitted form values.
     $submittedValues = $this->controller->exportValues($this->_name);
-
+    if ($submittedValues['price_set_id'] && $this->_action & CRM_Core_Action::UPDATE ) {
+      $line  = CRM_Price_BAO_LineItem::getLineItems($this->_id, 'contribution');
+      $lineID = key($line);
+      $priceFieldId = $line[$lineID]['price_field_id'];
+      $priceSetId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $line[$lineID]['price_field_id'], 'price_set_id');
+      $quickConfig = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $priceSetId, 'is_quick_config');
+      if ($quickConfig) {
+        CRM_Price_BAO_LineItem::deleteLineItems($this->_id, 'civicrm_contribution');
+      }
+    }
+    
     // process price set and get total amount and line items.
     $lineItem = array();
     $priceSetId = $pId = NULL;
