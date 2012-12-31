@@ -11,7 +11,7 @@
  | under the terms of the GNU Affero General Public License           |
  | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
  |                                                                    |
- | CiviCRM is distributed in the hope that it will be usefusul, but     |
+ | CiviCRM is distributed in the hope that it will be usefusul, but   |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
  | See the GNU Affero General Public License for more details.        |
@@ -1031,7 +1031,8 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
 
     if ($priceSetId) {
       CRM_Price_BAO_Set::processAmount($this->_priceSet['fields'],
-        $submittedValues, $lineItem[$priceSetId]);
+        $submittedValues, $lineItem[$priceSetId]); 
+      
       $submittedValues['total_amount'] = CRM_Utils_Array::value('amount', $submittedValues);
     }
     if (!$priceSetId && CRM_Utils_Array::value('total_amount', $submittedValues) && $this->_id) {
@@ -1067,7 +1068,17 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
     if ($this->_priceSetId && CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_priceSetId, 'is_quick_config')) {
       $isQuickConfig = 1;
     }
-
+    //CRM-11529 for quick config backoffice transactions 
+    //when financial_type_id is passed in form, update the 
+    //lineitems with the financial type selected in form
+    if ($isQuickConfig && CRM_Utils_Array::value('financial_type_id', $submittedValues)) {
+      if (CRM_Utils_Array::value($this->_priceSetId, $lineItem)) {
+        foreach ($lineItem[$this->_priceSetId] as &$values) {
+          $values['financial_type_id'] = $submittedValues['financial_type_id'];
+        }
+      }
+    }
+    
     if (!CRM_Utils_Array::value('total_amount', $submittedValues)) {
       $submittedValues['total_amount'] = CRM_Utils_Array::value('total_amount', $this->_values);
     }
@@ -1254,46 +1265,45 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
             $adjustTotalAmount
           );
         }
-
-        $statusMsg = ts('The contribution record has been saved.');
-        if (CRM_Utils_Array::value('is_email_receipt', $formValues) && $sendReceipt) {
-          $statusMsg .= ' ' . ts('A receipt has been emailed to the contributor.');
-        }
-
-        if ($relatedComponentStatusMsg) {
-          $statusMsg .= ' ' . $relatedComponentStatusMsg;
-        }
-
-        CRM_Core_Session::setStatus($statusMsg, ts('Saved'), 'success');
-        //Offline Contribution ends.
       }
-
-      $buttonName = $this->controller->getButtonName();
-      if ($this->_context == 'standalone') {
-        if ($buttonName == $this->getButtonName('upload', 'new')) {
-          $session->replaceUserContext(CRM_Utils_System::url('civicrm/contribute/add',
-            'reset=1&action=add&context=standalone'
-          ));
-        }
-        else {
-          $session->replaceUserContext(CRM_Utils_System::url('civicrm/contact/view',
-            "reset=1&cid={$this->_contactID}&selectedChild=contribute"
-          ));
-        }
+            
+      $statusMsg = ts('The contribution record has been saved.');
+      if (CRM_Utils_Array::value('is_email_receipt', $formValues) && $sendReceipt) {
+        $statusMsg .= ' ' . ts('A receipt has been emailed to the contributor.');
       }
-      elseif ($this->_context == 'contribution' && $this->_mode && $buttonName == $this->getButtonName('upload', 'new')) {
-        $session->replaceUserContext(CRM_Utils_System::url('civicrm/contact/view/contribution',
-          "reset=1&action=add&context={$this->_context}&cid={$this->_contactID}&mode={$this->_mode}"
+      
+      if ($relatedComponentStatusMsg) {
+        $statusMsg .= ' ' . $relatedComponentStatusMsg;
+      }
+      
+      CRM_Core_Session::setStatus($statusMsg, ts('Saved'), 'success');
+      //Offline Contribution ends.
+    }      
+    $buttonName = $this->controller->getButtonName();
+    if ($this->_context == 'standalone') {
+      if ($buttonName == $this->getButtonName('upload', 'new')) {
+        $session->replaceUserContext(CRM_Utils_System::url('civicrm/contribute/add',
+          'reset=1&action=add&context=standalone'
         ));
       }
-      elseif ($buttonName == $this->getButtonName('upload', 'new')) {
-        $session->replaceUserContext(CRM_Utils_System::url('civicrm/contact/view/contribution',
-          "reset=1&action=add&context={$this->_context}&cid={$this->_contactID}"
+      else {
+        $session->replaceUserContext(CRM_Utils_System::url('civicrm/contact/view',
+          "reset=1&cid={$this->_contactID}&selectedChild=contribute"
         ));
       }
     }
+    elseif ($this->_context == 'contribution' && $this->_mode && $buttonName == $this->getButtonName('upload', 'new')) {
+      $session->replaceUserContext(CRM_Utils_System::url('civicrm/contact/view/contribution',
+        "reset=1&action=add&context={$this->_context}&cid={$this->_contactID}&mode={$this->_mode}"
+      ));
+    }
+    elseif ($buttonName == $this->getButtonName('upload', 'new')) {
+      $session->replaceUserContext(CRM_Utils_System::url('civicrm/contact/view/contribution',
+        "reset=1&action=add&context={$this->_context}&cid={$this->_contactID}"
+      ));
+    }
   }
-
+  
   public function processCreditCard($submittedValues, $config, $session, $pId, $lineItem) {
     $unsetParams = array(
       'trxn_id',

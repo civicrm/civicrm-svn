@@ -744,13 +744,22 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       $priceSetId = null;
       CRM_Member_BAO_Membership::createLineItems($this, $formValues['membership_type_id'], $priceSetId);
       CRM_Price_BAO_Set::processAmount($this->_priceSet['fields'],
-                                       $this->_params, $lineItem[$priceSetId]
-                                       );
+        $this->_params, $lineItem[$priceSetId]
+      );
+      //CRM-11529 for quick config backoffice transactions 
+      //when financial_type_id is passed in form, update the 
+      //lineitems with the financial type selected in form
+      if ($submittedFinancialType = CRM_Utils_Array::value('financial_type_id', $formValues)) {
+        foreach ($lineItem[$priceSetId] as &$li) {
+          $li['financial_type_id'] = $submittedFinancialType;
+        }
+      }
       $formValues['total_amount'] = CRM_Utils_Array::value('amount', $this->_params);
       if (!empty($lineItem)) {
         $formValues['lineItems'] = $lineItem;
         $formValues['processPriceSet'] = TRUE;
       }
+
       //assign contribution contact id to the field expected by recordMembershipContribution
       if($this->_contributorContactID != $this->_contactID){
         $formValues['contribution_contact_id'] = $this->_contributorContactID;

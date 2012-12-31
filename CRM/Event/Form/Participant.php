@@ -1093,6 +1093,16 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
             $params, $lineItem[0]
           );
         }
+        //CRM-11529 for quick config backoffice transactions 
+        //when financial_type_id is passed in form, update the 
+        //lineitems with the financial type selected in form
+        $submittedFinancialType = CRM_Utils_Array::value('financial_type_id', $params);
+        $isPaymentRecorded = CRM_Utils_Array::value('record_contribution', $params);
+        if ($isPaymentRecorded && $this->_quickConfig && $submittedFinancialType) {
+          foreach ($lineItem[0] as &$values) {
+            $values['financial_type_id'] = $submittedFinancialType;
+          }
+        }
 
         $params['fee_level'] = $params['amount_level'];
         $contributionParams['total_amount'] = $params['amount'];
@@ -1129,7 +1139,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
         $this->assign('amount_level', $params['amount_level']);
       }
     }
-
+    
     $this->_params = $params;
     unset($params['amount']);
     $params['register_date'] = CRM_Utils_Date::processDate($params['register_date'], $params['register_date_time']);
@@ -1302,8 +1312,8 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
       );
 
       //add contribution record
-            $this->_params['financial_type_id'] =
-                CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $params['event_id'], 'financial_type_id' );
+      $this->_params['financial_type_id'] =
+        CRM_Core_DAO::getFieldValue('CRM_Event_DAO_Event', $params['event_id'], 'financial_type_id');
       $this->_params['mode'] = $this->_mode;
 
       //add contribution reocord

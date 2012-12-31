@@ -1021,11 +1021,11 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       CRM_Member_BAO_Membership::deleteMembership($this->_id);
       return;
     }
-
+    
     $config = CRM_Core_Config::singleton();
     // get the submitted form values.
     $this->_params = $formValues = $this->controller->exportValues($this->_name);
-
+    
     $params = $ids = array();
 
     $membershipTypeValues = array();
@@ -1069,22 +1069,35 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     if (!$priceSetId = CRM_Utils_Array::value('price_set_id', $formValues)) {
       CRM_Member_BAO_Membership::createLineItems($this, $formValues['membership_type_id'], $priceSetId);
     }
+    $isQuickConfig = 0;
+    if ($this->_priceSetId && CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_priceSetId, 'is_quick_config')) {
+      $isQuickConfig = 1;      
+    }
 
     $termsByType = array();
-
     if ($priceSetId) {
       CRM_Price_BAO_Set::processAmount($this->_priceSet['fields'],
         $this->_params, $lineItem[$priceSetId]);
       $params['total_amount'] = CRM_Utils_Array::value('amount', $this->_params);
-      foreach ($lineItem[$priceSetId] as $li) {
+      $submittedFinancialType = CRM_Utils_Array::value('financial_type_id', $formValues);
+      $isPaymentRecorded = CRM_Utils_Array::value('record_contribution', $formValues);
+      
+      foreach ($lineItem[$priceSetId] as &$li) {
         if (CRM_Utils_Array::value('membership_type_id', $li)) {
           if (CRM_Utils_Array::value('membership_num_terms', $li)) {
             $termsByType[$li['membership_type_id']] = $li['membership_num_terms'];
           }
         }
+        
+        ///CRM-11529 for quick config backoffice transactions 
+        //when financial_type_id is passed in form, update the 
+        //lineitems with the financial type selected in form
+        if ($isPaymentRecorded && $isQuickConfig && $submittedFinancialType) {
+          $li['financial_type_id'] = $submittedFinancialType;
+        }
       }
     }
-
+    
     $this->storeContactFields($formValues);
 
     $params['contact_id'] = $this->_contactID;
@@ -1193,11 +1206,11 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
 
     //CRM-10223 - allow contribution to be recorded against different contact
     if($this->_contributorContactID != $this->_contactID){
-        $params['contribution_contact_id'] = $this->_contributorContactID;
-        if(CRM_Utils_Array::value('honor_type_id', $this->_params)){
-          $params['honor_type_id'] = $this->_params['honor_type_id'];
-          $params['honor_contact_id'] = $params['contact_id'];
-        }
+      $params['contribution_contact_id'] = $this->_contributorContactID;
+      if(CRM_Utils_Array::value('honor_type_id', $this->_params)){
+        $params['honor_type_id'] = $this->_params['honor_type_id'];
+        $params['honor_contact_id'] = $params['contact_id'];
+      }
     }
     if (CRM_Utils_Array::value('record_contribution', $formValues)) {
       $recordContribution = array(
@@ -1256,13 +1269,16 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       }
 
       if ($priceSetId) {
-                $params['financial_type_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set',
+        $params['financial_type_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set',
           $priceSetId,
-                                                                               'financial_type_id' );
-            } else {
-                $params['financial_type_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType',
+          'financial_type_id'
+        );
+      }
+      else {
+        $params['financial_type_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType',
           end($this->_memTypeSelected),
-                                                                               'financial_type_id' );
+          'financial_type_id'
+        );
       }
 
       $this->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment($formValues['payment_processor_id'],
@@ -1324,7 +1340,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       $this->_params['currencyID'] = $config->defaultCurrency;
       $this->_params['payment_action'] = 'Sale';
       $this->_params['invoiceID'] = md5(uniqid(rand(), TRUE));
-            $this->_params['financial_type_id'] = $params['financial_type_id'];
+      $this->_params['financial_type_id'] = $params['financial_type_id'];
 
       // at this point we've created a contact and stored its address etc
       // all the payment processors expect the name and address to be in the
@@ -1577,10 +1593,6 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
           $priceFieldOp['start_date'] = $priceFieldOp['end_date'] = 'N/A';
         }
       }
-    }
-    $isQuickConfig = 0;
-    if ($this->_priceSetId &&  CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_priceSetId, 'is_quick_config')) {
-      $isQuickConfig = 1;
     }
     $this->assign('lineItem', !empty($lineItem) && !$isQuickConfig ? $lineItem : FALSE);
 
