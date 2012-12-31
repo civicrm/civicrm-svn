@@ -89,7 +89,7 @@ class CRM_Financial_BAO_FinancialAccountTest extends CiviUnitTestCase {
     $params = array(
       'name' => 'testDonations',
       'is_deductible' => 0,
-      'is_active' => ,
+      'is_active' => 1,
     );
     $ids = array();
     $contributionType = CRM_Financial_BAO_FinancialAccount::add($params, $ids);
