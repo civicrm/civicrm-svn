@@ -275,6 +275,7 @@ ORDER by f.name";
     $entityID  = isset($_REQUEST['entityID']) ? CRM_Utils_Type::escape($_REQUEST['entityID'], 'String') : NULL;
     $notPresent = isset($_REQUEST['notPresent']) ? CRM_Utils_Type::escape($_REQUEST['notPresent'], 'String') : NULL;
     $statusID  = isset($_REQUEST['statusID']) ? CRM_Utils_Type::escape($_REQUEST['statusID'], 'String') : NULL;
+    $search    = isset($_REQUEST['search']) ? TRUE : FALSE;
 
     $params = $_POST;
     if ($sort && $sortOrder) {
@@ -286,10 +287,10 @@ ORDER by f.name";
         'civicrm_financial_trxn.payment_instrument_id as payment_method',
         'civicrm_contribution.contact_id as contact_id',
         'civicrm_contribution.id as contributionID',
-        'sort_name',
+        'contact_a.sort_name',
         'civicrm_entity_financial_trxn.amount',
-        'contact_type',
-        'contact_sub_type',
+        'contact_a.contact_type',
+        'contact_a.contact_sub_type',
         'transaction_date',
         'name'
       );
@@ -319,7 +320,12 @@ ORDER by f.name";
     // get batch list
     if (isset($notPresent)) {
       $financialItem = CRM_Batch_BAO_Batch::getBatchFinancialItems($entityID, $returnvalues, $notPresent, $params);
-      $unassignedTransactions = CRM_Batch_BAO_Batch::getBatchFinancialItems($entityID, $returnvalues, 1);
+      if ($search) {
+        $unassignedTransactions = CRM_Batch_BAO_Batch::getBatchFinancialItems($entityID, $returnvalues, $notPresent, $params, TRUE);
+      }
+      else {
+        $unassignedTransactions = CRM_Batch_BAO_Batch::getBatchFinancialItems($entityID, $returnvalues, $notPresent, NULL, TRUE);
+      }
       while ($unassignedTransactions->fetch()) {
         $unassignedTransactionsCount[] = $unassignedTransactions->id;
       }

@@ -188,6 +188,9 @@ function buildTransactionSelectorAssign( filterSearch ) {
   }
     var columns = '';
     var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/rest" h=0 q="className=CRM_Financial_Page_AJAX&fnName=getFinancialTransactionsList&snippet=4&context=financialBatch&entityID=$entityID&notPresent=1&statusID=$statusID"}'{literal};
+    if ( filterSearch ) {
+      sourceUrl = sourceUrl+"&search=1";
+    }
  
     crmBatchSelector1 = cj('#crm-transaction-selector-assign').dataTable({
         "bDestroy"   : true,
@@ -228,9 +231,18 @@ function buildTransactionSelectorAssign( filterSearch ) {
                     },
         "fnServerData": function ( sSource, aoData, fnCallback ) {
             if ( filterSearch ) {
-                aoData.push(
-                    {name:'sort_name', value: cj('#searchForm #sort_name').val()}
-                );
+              cj('#searchForm :input').each(function() {
+                if (cj(this).val()) {
+                  aoData.push(
+                    {name:cj(this).attr('id'), value: cj(this).val()}
+                  );
+		   cj(':radio').each(function() {
+                     if (cj(this).is(':checked')) {
+                       aoData.push( { name: cj(this).attr('name'), value: cj(this).val() } );
+                     }
+                  });
+                }
+              });
             }
             cj.ajax( {
                 "dataType": 'json',

@@ -798,14 +798,15 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
    * @param null $params
    * @return Object
    */
-  static function getBatchFinancialItems($entityID, $returnValues, $notPresent = NULL, $params = NULL) {
+  static function getBatchFinancialItems($entityID, $returnValues, $notPresent = NULL, $params = NULL, $getCount = FALSE) {
 
-    if (!empty($params['rowCount']) &&
-      $params['rowCount'] > 0
-    ) {
-      $limit = " LIMIT {$params['offset']}, {$params['rowCount']} ";
+    if (!$getCount) {
+      if (!empty($params['rowCount']) &&
+          $params['rowCount'] > 0
+          ) {
+        $limit = " LIMIT {$params['offset']}, {$params['rowCount']} ";
+      }
     }
-
     // action is taken depending upon the mode
     $select = 'civicrm_financial_trxn.id ';
     if (!empty( $returnValues)) {
@@ -824,13 +825,78 @@ LEFT JOIN civicrm_entity_batch ON civicrm_entity_batch.entity_id = civicrm_finan
 LEFT JOIN civicrm_financial_item ON civicrm_entity_financial_trxn.entity_id = civicrm_financial_item.id
 LEFT JOIN civicrm_financial_account ON civicrm_financial_account.id = civicrm_financial_item.financial_account_id
 LEFT JOIN civicrm_contribution ON civicrm_contribution.id = civicrm_entity_financial_trxn.entity_id
-LEFT JOIN civicrm_contact contact ON contact.id = civicrm_contribution.contact_id";
-    if (!$notPresent) {
-      $where =  " ( civicrm_entity_batch.batch_id = {$entityID} AND civicrm_entity_batch.entity_table = 'civicrm_financial_trxn' AND civicrm_entity_financial_trxn.entity_table = 'civicrm_contribution') ";
-    } else {
-      $where = "( civicrm_financial_trxn.status_id = 1 AND civicrm_entity_batch.batch_id IS NULL AND civicrm_entity_financial_trxn.entity_table = 'civicrm_contribution')";
-    }
+LEFT JOIN civicrm_contact contact_a ON contact_a.id = civicrm_contribution.contact_id
+LEFT JOIN civicrm_contribution_soft ON civicrm_contribution_soft.contribution_id = civicrm_contribution.id
+";
 
+    $searchFields = 
+      array(
+            'sort_name',
+            'financial_type_id',
+            'contribution_page_id',
+            'contribution_payment_instrument_id',
+            'contribution_transaction_id',
+            'contribution_source',
+            'contribution_currency_type',
+            'contribution_pay_later',
+            'contribution_recurring',
+            'contribution_test',
+            'contribution_thankyou_date_is_not_null',
+            'contribution_receipt_date_is_not_null',
+            'contribution_pcp_made_through_id',
+            'contribution_pcp_display_in_roll',
+            'contribution_date_relative',
+            'contribution_amount_low',
+            'contribution_amount_high',
+            'contribution_in_honor_of',
+            'contact_tags',
+            'group',
+            'contribution_date_relative'
+            );
+    $values = array();
+    foreach ($searchFields as $field) {
+      if (isset($params[$field])) {
+        $values[$field] = $params[$field];
+        if ($field == 'sort_name') {
+          $from .= " LEFT JOIN civicrm_contact contact_b ON contact_b.id = civicrm_contribution.contact_id LEFT JOIN civicrm_email ON contact_b.id = civicrm_email.contact_id";
+        }
+        
+        if ($field == 'contact_tags') {
+          $from .= " LEFT JOIN civicrm_entity_tag `civicrm_entity_tag-{$params[$field]}` ON `civicrm_entity_tag-{$params[$field]}`.entity_id = contact_a.id";
+        }
+        if ($field == 'group') {
+          $from .= " LEFT JOIN civicrm_group_contact `civicrm_group_contact-{$params[$field]}` ON contact_a.id = `civicrm_group_contact-{$params[$field]}`.contact_id ";
+        }
+        if ($field == 'contribution_date_relative') {
+          $relativeDate = explode('.', $params[$field]);
+          $date = CRM_Utils_Date::relativeToAbsolute($relativeDate[0], $relativeDate[1]);
+          $values['contribution_date_low'] = $date['from'];
+          $values['contribution_date_high'] = $date['to'];
+        }
+        $searchParams = CRM_Contact_BAO_Query::convertFormValues($values);
+        $query = new CRM_Contact_BAO_Query($searchParams,
+                                           CRM_Contribute_BAO_Query::defaultReturnProperties(CRM_Contact_BAO_Query::MODE_CONTRIBUTE,
+                                                                                             FALSE
+                                                                                             ),NULL, FALSE, FALSE,CRM_Contact_BAO_Query::MODE_CONTRIBUTE
+                                           );
+      }
+    }
+    if (!empty($query->_where[0])) {
+      $where = implode(' AND ', $query->_where[0])." AND civicrm_entity_financial_trxn.entity_table = 'civicrm_contribution'";
+      $searchValue = TRUE;
+    }
+    else {
+      $searchValue = FALSE;
+    }
+ 
+    if (!$searchValue) {
+      if (!$notPresent) {
+        $where =  " ( civicrm_entity_batch.batch_id = {$entityID} AND civicrm_entity_batch.entity_table = 'civicrm_financial_trxn' AND civicrm_entity_financial_trxn.entity_table = 'civicrm_contribution') ";
+      } else {
+        $where = "( civicrm_financial_trxn.status_id = 1 AND civicrm_entity_batch.batch_id IS NULL AND civicrm_entity_financial_trxn.entity_table = 'civicrm_contribution')";
+      }
+    }
+ 
     $sql = "SELECT {$select}
 FROM {$from}
 WHERE {$where}
