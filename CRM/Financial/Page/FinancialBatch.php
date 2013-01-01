@@ -80,6 +80,8 @@ class CRM_Financial_Page_FinancialBatch extends CRM_Core_Page_Basic {
    *
    */
   function run() {
+    $context = CRM_Utils_Request::retrieve('context', 'String', $this);
+    $this->set("context", $context);
     // assign vars to templates
     $id = CRM_Utils_Request::retrieve('id', 'Positive', $this, false, 0);
     $action = CRM_Utils_Request::retrieve('action', 'String', $this, false, 'browse'); // default to 'browse'
@@ -124,14 +126,16 @@ class CRM_Financial_Page_FinancialBatch extends CRM_Core_Page_Basic {
    * @return string user context.
    */
   function userContext($mode = null) {
-    if ($mode == CRM_Core_Action::UPDATE) {
+    $context = $this->get("context");
+    if ($mode == CRM_Core_Action::UPDATE || ($mode = CRM_Core_Action::ADD & $context == 'open')) {
       return "civicrm/financial/financialbatches";
     }
     return 'civicrm';
   }
 
   function userContextParams($mode = NULL) {
-    if ($mode == CRM_Core_Action::UPDATE) {
+    $context = $this->get("context");
+    if ($mode == CRM_Core_Action::UPDATE || ($mode = CRM_Core_Action::ADD & $context == 'open')) {
       return "reset=1&batchStatus=1";
     }
   }

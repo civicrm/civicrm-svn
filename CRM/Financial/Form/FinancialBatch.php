@@ -56,6 +56,8 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
    */
 
   public function preProcess() {
+    $context = CRM_Utils_Request::retrieve('context', 'String', $this);
+    $this->set("context", $context);
     $this->_id = CRM_Utils_Request::retrieve('id', 'Positive', $this);
     parent::preProcess();
     $session = CRM_Core_Session::singleton();
@@ -318,18 +320,24 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
 
     $buttonName = $this->controller->getButtonName();
 
+    $context = $this->get("context");
     $session = CRM_Core_Session::singleton();
     if ($batch->title) {
       CRM_Core_Session::setStatus(ts("'%1' batch has been saved.", array(1 => $batch->title)), ts('Saved'), 'success');
     }
-    if ($buttonName == $this->getButtonName('next', 'new')) {
+    if ($buttonName == $this->getButtonName('next', 'new') & $this->_action == CRM_Core_Action::UPDATE) {
+      $session->replaceUserContext(CRM_Utils_System::url('civicrm/financial/batch',
+                                                         "reset=1&action=add&context=open"));
+    }
+    elseif ($buttonName == $this->getButtonName('next', 'new')) {
       $session->replaceUserContext(CRM_Utils_System::url('civicrm/financial/batch',
         "reset=1&action=add"));
     }
     elseif (CRM_Utils_Array::value($batch->status_id, $batchStatus) == 'Closed') {
       $session->replaceUserContext(CRM_Utils_System::url('civicrm', 'reset=1'));
     }
-    elseif ($buttonName == $this->getButtonName('next') & $this->_action == CRM_Core_Action::UPDATE) {
+    elseif (($buttonName == $this->getButtonName('next') & $this->_action == CRM_Core_Action::UPDATE) || 
+            ($buttonName == $this->getButtonName('next') & $this->_action == CRM_Core_Action::ADD & $context == 'open' )) {
       $session->replaceUserContext(CRM_Utils_System::url('civicrm/financial/financialbatches',
                                                            "reset=1&batchStatus=1"));
     }
