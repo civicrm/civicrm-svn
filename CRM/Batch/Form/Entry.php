@@ -432,8 +432,19 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
 
         $lineItem = array();
         CRM_Price_BAO_Set::processAmount($this->_priceSet['fields'], $value, $lineItem[$priceSetId]);
+        
+        //CRM-11529 for backoffice transactions 
+        //when financial_type_id is passed in form, update the 
+        //lineitems with the financial type selected in form
+        if (CRM_Utils_Array::value('financial_type_id', $value)) {
+          if (CRM_Utils_Array::value($priceSetId, $lineItem)) {
+            foreach ($lineItem[$priceSetId] as &$values) {
+              $values['financial_type_id'] = $value['financial_type_id'];
+            }
+          }
+        }
         $value['line_item'] = $lineItem;
-
+        
         //finally call contribution create for all the magic
         $contribution = CRM_Contribute_BAO_Contribution::create($value, CRM_Core_DAO::$_nullArray);
 
@@ -633,6 +644,17 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
             $value, $lineItem[$priceSetId]
           );
 
+          //CRM-11529 for backoffice transactions 
+          //when financial_type_id is passed in form, update the 
+          //lineitems with the financial type selected in form
+          if (CRM_Utils_Array::value('financial_type_id', $value)) {
+            if (CRM_Utils_Array::value($priceSetId, $lineItem)) {
+              foreach ($lineItem[$priceSetId] as &$values) {
+                $values['financial_type_id'] = $value['financial_type_id'];
+              }
+            }
+          }
+          
           $value['lineItems'] = $lineItem;
           $value['processPriceSet'] = TRUE;
         }
