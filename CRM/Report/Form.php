@@ -2219,13 +2219,14 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
             list($from, $to) = $this->getFromTo(CRM_Utils_Array::value("{$fieldName}_relative", $this->_params),
                                CRM_Utils_Array::value("{$fieldName}_from", $this->_params),
                                CRM_Utils_Array::value("{$fieldName}_to", $this->_params),
-                               isset($this->_params["{$fieldName}_from_time"])
-                               ? date('his', strtotime(CRM_Utils_Array::value("{$fieldName}_from_time", $this->_params), '000000')) : '000000',
-                               isset($this->_params["{$fieldName}_to_time"])
-                               ? date('his', strtotime(CRM_Utils_Array::value("{$fieldName}_to_time", $this->_params), '235959')) : '235959'
+                               CRM_Utils_Array::value("{$fieldName}_from_time", $this->_params),
+                               CRM_Utils_Array::value("{$fieldName}_to_time", $this->_params)
             );
-            $from = CRM_Utils_Date::customFormat($from, NULL, array('d'));
-            $to = CRM_Utils_Date::customFormat($to, NULL, array('d'));
+            $from_time_format = CRM_Utils_Array::value("{$fieldName}_from_time", $this->_params) ? 'h' : 'd';
+            $from = CRM_Utils_Date::customFormat($from, null, array($from_time_format));
+
+            $to_time_format = CRM_Utils_Array::value("{$fieldName}_to_time", $this->_params) ? 'h' : 'd';
+            $to = CRM_Utils_Date::customFormat($to, null, array($to_time_format));
 
             if ($from || $to) {
               $statistics['filters'][] = array(
