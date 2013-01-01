@@ -436,11 +436,9 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
         //CRM-11529 for backoffice transactions 
         //when financial_type_id is passed in form, update the 
         //lineitems with the financial type selected in form
-        if (CRM_Utils_Array::value('financial_type_id', $value)) {
-          if (CRM_Utils_Array::value($priceSetId, $lineItem)) {
-            foreach ($lineItem[$priceSetId] as &$values) {
-              $values['financial_type_id'] = $value['financial_type_id'];
-            }
+        if (CRM_Utils_Array::value('financial_type_id', $value) && CRM_Utils_Array::value($priceSetId, $lineItem)) {
+          foreach ($lineItem[$priceSetId] as &$values) {
+            $values['financial_type_id'] = $value['financial_type_id'];
           }
         }
         $value['line_item'] = $lineItem;
@@ -647,11 +645,9 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
           //CRM-11529 for backoffice transactions 
           //when financial_type_id is passed in form, update the 
           //lineitems with the financial type selected in form
-          if (CRM_Utils_Array::value('financial_type_id', $value)) {
-            if (CRM_Utils_Array::value($priceSetId, $lineItem)) {
-              foreach ($lineItem[$priceSetId] as &$values) {
-                $values['financial_type_id'] = $value['financial_type_id'];
-              }
+          if (CRM_Utils_Array::value('financial_type_id', $value) && CRM_Utils_Array::value($priceSetId, $lineItem)) {
+            foreach ($lineItem[$priceSetId] as &$values) {
+              $values['financial_type_id'] = $value['financial_type_id'];
             }
           }
           

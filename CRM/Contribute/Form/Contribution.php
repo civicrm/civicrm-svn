@@ -1071,11 +1071,10 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
     //CRM-11529 for quick config backoffice transactions 
     //when financial_type_id is passed in form, update the 
     //lineitems with the financial type selected in form
-    if ($isQuickConfig && CRM_Utils_Array::value('financial_type_id', $submittedValues)) {
-      if (CRM_Utils_Array::value($this->_priceSetId, $lineItem)) {
-        foreach ($lineItem[$this->_priceSetId] as &$values) {
-          $values['financial_type_id'] = $submittedValues['financial_type_id'];
-        }
+    if ($isQuickConfig && CRM_Utils_Array::value('financial_type_id', $submittedValues)
+      && CRM_Utils_Array::value($this->_priceSetId, $lineItem)) {
+      foreach ($lineItem[$this->_priceSetId] as &$values) {
+        $values['financial_type_id'] = $submittedValues['financial_type_id'];
       }
     }
     
