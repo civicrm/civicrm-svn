@@ -1137,7 +1137,7 @@ WHERE  contribution_id = {$this->_id}
     if (CRM_Utils_Array::value('price_set_id', $submittedValues) && $this->_action & CRM_Core_Action::UPDATE ) {
       $line  = CRM_Price_BAO_LineItem::getLineItems($this->_id, 'contribution');
       $lineID = key($line);
-      $priceSetId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $line[$lineID]['price_field_id'], 'price_set_id');
+      $priceSetId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', CRM_Utils_Array::value('price_field_id', $line[$lineID]), 'price_set_id');
       $quickConfig = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $priceSetId, 'is_quick_config');
       if ($quickConfig) {
         CRM_Price_BAO_LineItem::deleteLineItems($this->_id, 'civicrm_contribution');
@@ -1169,17 +1169,17 @@ WHERE  contribution_id = {$this->_id}
         $entityTable = 'participant';
         $entityID = $pId;
         $participantParams = array(
-                                   'fee_amount' => $submittedValues['total_amount'],
-                                   'id'         => $entityID);
+          'fee_amount' => $submittedValues['total_amount'],
+          'id'         => $entityID);
         CRM_Event_BAO_Participant::add($participantParams);
       } else {
         $entityTable = 'contribution';
         $entityID = $this->_id;
       }
 
-      $lineItems         = CRM_Price_BAO_LineItem::getLineItems($entityID, $entityTable);
-      $itemId            = key($lineItems);
-      $fieldType         = NULL;
+      $lineItems = CRM_Price_BAO_LineItem::getLineItems($entityID, $entityTable);
+      $itemId    = key($lineItems);
+      $fieldType = NULL;
       if ($itemId && CRM_Utils_Array::value('price_field_id', $lineItems[$itemId])) {
         $fieldType = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $lineItems[$itemId]['price_field_id'], 'html_type');
       }
