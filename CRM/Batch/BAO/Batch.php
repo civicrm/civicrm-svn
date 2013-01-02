@@ -530,8 +530,17 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
     return $output;
   }
 
-  /*
+  /**
+   * Function for exporting financial accounts, currently we support CSV and IIF format
    * @see http://wiki.civicrm.org/confluence/display/CRM/CiviAccounts+Specifications+-++Batches#CiviAccountsSpecifications-Batches-%C2%A0Overviewofimplementation
+   *
+   * @param array  $batchIds associated array of batch ids
+   * @param string $exportFormat export format
+   *
+   * @return void
+   *
+   * @static
+   * @access public
    */
   static function exportFinancialBatch($batchIds, $exportFormat) {
     if (empty($batchIds)) {
@@ -609,13 +618,11 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
     // Keep running list of accounts and contacts used in this batch, since we need to
     // include those in the output. Only want to include ones used in the batch, not everything in the db,
     // since would increase the chance of messing up user's existing Quickbooks entries.
-    $accounts = array();
-    $contacts = array();
-
-    $journalEntries = array();
+    $accounts = $contacts = $journalEntries = array();
 
     $dao = CRM_Core_DAO::executeQuery( $sql, $params );
 
+    $financialItems = array();
     if (self::$_exportFormat == "CSV") {
       while ($dao->fetch()) {
         $financialItems[$dao->financial_trxn_id]['Transaction Date'] = $dao->trxn_date;
@@ -632,54 +639,55 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
         $financialItems[$dao->financial_trxn_id]['Credit Account Name'] = $dao->credit_account_name;
         $financialItems[$dao->financial_trxn_id]['Item Description'] = $dao->item_description;
       }
+      $dao->free();
       $financialItems['headers'] = self::formatHeaders($financialItems);
     }
     else {
       while ( $dao->fetch() ) {
         // add to running list of accounts
-        if ( !empty( $dao->from_account_id ) && !isset( $accounts[$dao->from_account_id] ) ) {
+        if (!empty($dao->from_account_id) && !isset($accounts[$dao->from_account_id])) {
           $accounts[$dao->from_account_id] = array(
-            'name' => $exporter->format( $dao->from_account_name ),
-            'account_code' => $exporter->format( $dao->from_account_code ),
-            'description' => $exporter->format( $dao->from_account_description ),
-            'type' => $exporter->format( $dao->from_qb_account_type ),
-           );
+            'name' => $exporter->format($dao->from_account_name),
+            'account_code' => $exporter->format($dao->from_account_code),
+            'description' => $exporter->format($dao->from_account_description),
+            'type' => $exporter->format($dao->from_qb_account_type),
+          );
         }
-        if ( !empty( $dao->to_account_id ) && !isset( $accounts[$dao->to_account_id] ) ) {
+        if (!empty($dao->to_account_id) && !isset($accounts[$dao->to_account_id])) {
           $accounts[$dao->to_account_id] = array(
-            'name' => $exporter->format( $dao->to_account_name ),
-            'account_code' => $exporter->format( $dao->to_account_code ),
-            'description' => $exporter->format( $dao->to_account_description ),
-            'type' => $exporter->format( $dao->to_qb_account_type ),
+            'name' => $exporter->format($dao->to_account_name),
+            'account_code' => $exporter->format($dao->to_account_code),
+            'description' => $exporter->format($dao->to_account_description),
+            'type' => $exporter->format($dao->to_qb_account_type),
           );
         }
 
         // add to running list of contacts
-        if ( !empty( $dao->contact_from_id ) && !isset( $contacts[$dao->contact_from_id] ) ) {
+        if (!empty($dao->contact_from_id) && !isset($contacts[$dao->contact_from_id])) {
           $contacts[$dao->contact_from_id] = array(
-            'name' => $exporter->format( $dao->contact_from_name ),
-            'first_name' => $exporter->format( $dao->contact_from_first_name ),
-            'last_name' => $exporter->format( $dao->contact_from_last_name ),
+            'name' => $exporter->format($dao->contact_from_name),
+            'first_name' => $exporter->format($dao->contact_from_first_name),
+            'last_name' => $exporter->format($dao->contact_from_last_name),
           );
         }
 
-        if ( !empty( $dao->contact_to_id ) && !isset( $contacts[$dao->contact_to_id] ) ) {
+        if (!empty($dao->contact_to_id) && !isset($contacts[$dao->contact_to_id])) {
           $contacts[$dao->contact_to_id] = array(
-            'name' => $exporter->format( $dao->contact_to_name ),
-            'first_name' => $exporter->format( $dao->contact_to_first_name ),
-            'last_name' => $exporter->format( $dao->contact_to_last_name ),
+            'name' => $exporter->format($dao->contact_to_name),
+            'first_name' => $exporter->format($dao->contact_to_first_name),
+            'last_name' => $exporter->format($dao->contact_to_last_name),
           );
         }
 
         // set up the journal entries for this financial trxn
         $journalEntries[$dao->financial_trxn_id] = array(
           'to_account' => array(
-            'trxn_date' => $exporter->format( $dao->trxn_date, 'date' ),
-            'account_name' => $exporter->format( $dao->to_account_name ),
-            'amount' => $exporter->format( $dao->debit_total_amount ),
-            'contact_name' => $exporter->format( $dao->contact_to_name ),
-            'payment_instrument' => $exporter->format( $dao->payment_instrument ),
-            'check_number' => $exporter->format( $dao->check_number ),
+            'trxn_date' => $exporter->format($dao->trxn_date, 'date'),
+            'account_name' => $exporter->format($dao->to_account_name),
+            'amount' => $exporter->format($dao->debit_total_amount),
+            'contact_name' => $exporter->format($dao->contact_to_name),
+            'payment_instrument' => $exporter->format($dao->payment_instrument),
+            'check_number' => $exporter->format($dao->check_number),
            ),
           'splits' => array(),
         );
@@ -717,39 +725,39 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
             WHERE eft.entity_table = 'civicrm_financial_item'
             AND eft.financial_trxn_id = %1";
 
-          $item_params = array( 1 => array( $dao->financial_trxn_id, 'Integer' ) );
+          $itemParams = array( 1 => array( $dao->financial_trxn_id, 'Integer' ) );
 
-          $item_dao = CRM_Core_DAO::executeQuery( $item_sql, $item_params );
-          while ($item_dao->fetch()) {
+          $itemDAO = CRM_Core_DAO::executeQuery( $item_sql, $itemParams );
+          while ($itemDAO->fetch()) {
             // add to running list of accounts
-            if (!empty($item_dao->account_id) && !isset($accounts[$item_dao->account_id])) {
-              $accounts[$item_dao->account_id] = array(
-                'name' => $exporter->format( $item_dao->account_name ),
-                'account_code' => $exporter->format( $item_dao->account_code ),
-                'description' => $exporter->format( $item_dao->account_description ),
-                'type' => $exporter->format( $item_dao->qb_account_type ),
+            if (!empty($itemDAO->account_id) && !isset($accounts[$itemDAO->account_id])) {
+              $accounts[$itemDAO->account_id] = array(
+                'name' => $exporter->format( $itemDAO->account_name ),
+                'account_code' => $exporter->format( $itemDAO->account_code ),
+                'description' => $exporter->format( $itemDAO->account_description ),
+                'type' => $exporter->format( $itemDAO->qb_account_type ),
               );
             }
 
-            if (!empty($item_dao->contact_id) && !isset($contacts[$item_dao->contact_id])) {
-              $contacts[$item_dao->contact_id] = array(
-                'name' => $exporter->format( $item_dao->contact_name ),
-                'first_name' => $exporter->format( $item_dao->contact_first_name ),
-                'last_name' => $exporter->format( $item_dao->contact_last_name ),
+            if (!empty($itemDAO->contact_id) && !isset($contacts[$itemDAO->contact_id])) {
+              $contacts[$itemDAO->contact_id] = array(
+                'name' => $exporter->format( $itemDAO->contact_name ),
+                'first_name' => $exporter->format( $itemDAO->contact_first_name ),
+                'last_name' => $exporter->format( $itemDAO->contact_last_name ),
               );
             }
 
             // add split line for this item
-            $journalEntries[$dao->financial_trxn_id]['splits'][$item_dao->financial_item_id] = array(
-              'trxn_date' => $exporter->format( $item_dao->transaction_date, 'date' ),
-              'account_name' => $exporter->format( $item_dao->account_name ),
-              'amount' => $exporter->format( (-1) * $item_dao->amount ),
-              'contact_name' => $exporter->format( $item_dao->contact_name ),
-              'payment_instrument' => $exporter->format( $item_dao->payment_instrument ),
-              'check_number' => $exporter->format( $item_dao->check_number ),
+            $journalEntries[$dao->financial_trxn_id]['splits'][$itemDAO->financial_item_id] = array(
+              'trxn_date' => $exporter->format( $itemDAO->transaction_date, 'date' ),
+              'account_name' => $exporter->format( $itemDAO->account_name ),
+              'amount' => $exporter->format( (-1) * $itemDAO->amount ),
+              'contact_name' => $exporter->format( $itemDAO->contact_name ),
+              'payment_instrument' => $exporter->format( $itemDAO->payment_instrument ),
+              'check_number' => $exporter->format( $itemDAO->check_number ),
             );
           } // end items loop
-          $item_dao->free();
+          $itemDAO->free();
         }
         else {
           // In this case, split record just uses the FROM account from the trxn, and there's only one record here
@@ -758,9 +766,9 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
             'account_name' => $exporter->format( $dao->from_account_name ),
             'amount' => $exporter->format( (-1) * $dao->total_amount ),
             'contact_name' => $exporter->format( $dao->contact_from_name ),
-            'payment_instrument' => $exporter->format( $item_dao->payment_instrument ),
-            'check_number' => $exporter->format( $item_dao->check_number ),
-            'currency' => $exporter->format( $item_dao->currency ),
+            'payment_instrument' => $exporter->format( $itemDAO->payment_instrument ),
+            'check_number' => $exporter->format( $itemDAO->check_number ),
+            'currency' => $exporter->format( $itemDAO->currency ),
           );
         }
       }
