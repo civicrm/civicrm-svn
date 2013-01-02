@@ -64,33 +64,34 @@
         <tr>
           <td class="label">{$form.attachFile_1.label}</td>
           <td>{$form.attachFile_1.html}&nbsp;{$form.attachDesc_1.html}<span class="crm-clear-link">(<a href="javascript:clearAttachment( '#attachFile_1', '#attachDesc_1' );">{ts}clear{/ts}</a>)</span><br />
-            <span class="description">{ts}Browse to the <strong>file</strong> you want to upload.{/ts}{if $numAttachments GT 1} {ts 1=$numAttachments}You can have a maximum of %1 attachment(s).{/ts}{/if} Each file must be less than {$config->maxFileSize}M in size. You can also add a short description.</span>
+            <span class="description">{ts}Browse to the <strong>file</strong> you want to upload.{/ts}{if $maxAttachments GT 1} {ts 1=$maxAttachments}You can have a maximum of %1 attachment(s).{/ts}{/if} Each file must be less than {$config->maxFileSize}M in size. You can also add a short description.</span>
           </td>
         </tr>
         {if $form.tag_1.html}
           <tr>
-            <td class="label">{$form.tag_1.label}</td>
-            <td class="view-value"><div class="crm-select-container">{$form.tag_1.html}</div></td>
+            <td></td>
+            <td><label>{$form.tag_1.label}</label> <div class="crm-select-container">{$form.tag_1.html}</div></td>
           </tr>
         {/if}
         {if $tagsetInfo_attachment}
-          <tr><td colspan="2">{include file="CRM/common/Tag.tpl" tagsetType='attachment' tagsetNumber=1 }</td></tr>
+          <tr><td></td><td>{include file="CRM/common/Tag.tpl" tagsetType='attachment' tagsetNumber=1 }</td></tr>
         {/if}
         {section name=attachLoop start=2 loop=$numAttachments+1}
           {assign var=index value=$smarty.section.attachLoop.index}
           {assign var=attachName value="attachFile_"|cat:$index}
           {assign var=attachDesc value="attachDesc_"|cat:$index}
           {assign var=tagElement value="tag_"|cat:$index}
+            <tr class="attachment-fieldset"><td colspan="2"></td></tr>
             <tr>
-                <td class="label"></td>
+                <td class="label">{$form.attachFile_1.label}</td>
                 <td>{$form.$attachName.html}&nbsp;{$form.$attachDesc.html}<span class="crm-clear-link">(<a href="javascript:clearAttachment( '#{$attachName}' );">{ts}clear{/ts}</a>)</span></td>
             </tr>
             <tr>
-              <td class="label">{$form.$tagElement.label}</td>
-              <td class="view-value"><div class="crm-select-container">{$form.$tagElement.html}</div></td>
+              <td></td>
+              <td><label>{$form.$tagElement.label}</label> <div class="crm-select-container">{$form.$tagElement.html}</div></td>
             </tr>
             {if $tagsetInfo_attachment}
-              <tr><td colspan="2">{include file="CRM/common/Tag.tpl" tagsetType='attachment' tagsetNumber=$index}</td></tr>
+              <tr><td></td><td>{include file="CRM/common/Tag.tpl" tagsetType='attachment' tagsetNumber=$index}</td></tr>
             {/if}
         {/section}
 
@@ -106,7 +107,8 @@
           </script>
         {/literal}
       {/if}
-    {if $currentAttachmentInfo}
+      {if $currentAttachmentInfo}
+        <tr class="attachment-fieldset"><td colspan="2"></td></tr>
         <tr>
             <td class="label">{ts}Current Attachment(s){/ts}</td>
             <td class="view-value">
@@ -133,7 +135,7 @@
                 <span class="description">{ts}Click the red trash-can next to a file name to delete a specific attachment. If you want to delete ALL attachments, check the box above and click Save.{/ts}</span>
             </td>
         </tr>
-    {/if}
+      {/if}
       </table>
     </div>
   </div><!-- /.crm-accordion-body -->

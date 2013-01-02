@@ -292,10 +292,10 @@
 {elseif $tagsetType eq 'attachment'}
   {assign var=tagset     value = $tagsetInfo_attachment.$tagsetNumber}
   <div class="crm-section tag-section attachment-tagset-{$tagset.parentID}-section">
-    <div class="label">
+    <div class="crm-attachment-tagset-label">
       <label>{$tagset.parentName}</label>
     </div>
-    <div class="content">
+    <div class="crm-attachment-tagset">
       {assign var=elemName  value = $tagset.tagsetElementName}
       {assign var=parID     value = $tagset.parentID}
       {assign var=editTagSet value=false}
