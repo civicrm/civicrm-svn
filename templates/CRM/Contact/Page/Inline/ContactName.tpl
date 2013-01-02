@@ -30,5 +30,5 @@
     </div>
   {/if}
 
-  <div class="crm-summary-display_name">{$title}{if $domainContact} {ts}(default organization){/ts}{/if}</div>
+  <div class="crm-summary-display_name">{$title}{if $domainContact} ({ts}default organization{/ts}){/if}</div>
 </div>
