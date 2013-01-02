@@ -270,8 +270,8 @@ ORDER by f.name";
   static function getFinancialTransactionsList() {
     $sortMapper =
       array(
-        0 => '', 1 => 'contact_type', 2 => 'sort_name',
-        3 => 'amount', 4 => 'transaction_date', 5 => '',
+        0 => '', 1 => '', 2 => 'sort_name',
+        3 => 'amount', 4 => 'transaction_date', 5 => 'payment_method', 6 => 'name',
       );
 
     $sEcho     = CRM_Utils_Type::escape($_REQUEST['sEcho'], 'Integer');

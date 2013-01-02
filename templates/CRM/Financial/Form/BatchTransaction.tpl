@@ -197,7 +197,7 @@ function buildTransactionSelectorAssign(filterSearch) {
   "aaSorting"  : [[4, 'desc']],
   "aoColumns"  : [
     {sClass:'crm-transaction-checkbox', bSortable:false},
-    {sClass:'crm-contact-type'},
+    {sClass:'crm-contact-type', bSortable:false},
     {sClass:'crm-contact-name'},
     {sClass:'crm-amount'},
     {sClass:'crm-received'},
@@ -265,7 +265,7 @@ function buildTransactionSelectorRemove( ) {
   "aaSorting"  : [[4, 'desc']],
   "aoColumns"  : [
     {sClass:'crm-transaction-checkbox', bSortable:false},
-    {sClass:'crm-contact-type'},
+    {sClass:'crm-contact-type', bSortable:false},
     {sClass:'crm-contact-name'},
     {sClass:'crm-amount'},
     {sClass:'crm-received'},
