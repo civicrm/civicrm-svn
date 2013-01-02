@@ -343,6 +343,9 @@ function bulkAssignRemove( action ) {
       buildTransactionSelectorRemove();
       batchSummary({/literal}{$entityID}{literal});
     }
+    else {
+      CRM.alert(data.status);
+    } 
   }, 'json');
 }
 </script>

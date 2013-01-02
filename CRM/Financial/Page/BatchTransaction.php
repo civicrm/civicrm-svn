@@ -71,11 +71,11 @@ class CRM_Financial_Page_BatchTransaction extends CRM_Core_Page_Basic {
           'name'  => ts('View'),
           'url'   => 'civicrm/contact/view/contribution',
           'qs'    => 'reset=1&id=%%contid%%&cid=%%cid%%&action=view&context=contribution&selectedChild=contribute',
-          'title' => ts('Accounts'),
+          'title' => ts('View Contribution'),
         ),
         'remove'  => array(
           'name'  => ts('Remove'),
-          'title' => ts('Edit Financial Type'),
+          'title' => ts('Remove Transaction'),
           'extra' => 'onclick = "assignRemove( %%id%%,\'' . 'remove' . '\' );"',
         ),
       );

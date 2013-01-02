@@ -231,7 +231,7 @@ ORDER by f.name";
               );
             }
             else {
-              $response = array('status' => ts("This batch is configured to include only transactions using {$paymentInstrument} payment method. If you want to include other transactions, please edit the batch first and modify the Payment Method."));
+              $response = array('status' => ts("This batch is configured to include only transactions using %1 payment method. If you want to include other transactions, please edit the batch first and modify the Payment Method.", array( 1 => $paymentInstrument)));
             }
             break;
           case 'close':
@@ -270,7 +270,7 @@ ORDER by f.name";
   static function getFinancialTransactionsList() {
     $sortMapper =
       array(
-        0 => '', 1 => '', 2 => 'sort_name',
+        0 => '', 1 => 'contact_type', 2 => 'sort_name',
         3 => 'amount', 4 => 'transaction_date', 5 => '',
       );
 
@@ -398,22 +398,31 @@ ORDER by f.name";
         $cIDs[] = $contributions[2];
       }
     }
-
+    
+    $batchPID = CRM_Core_DAO::getFieldValue('CRM_Batch_DAO_Batch', $entityID, 'payment_instrument_id');
+    $paymentInstrument =  CRM_Core_OptionGroup::getLabel('payment_instrument',$batchPID);
     foreach ($cIDs as $key => $value) {
-      $params =
-        array('entity_id' => $value,
-          'entity_table' => 'civicrm_financial_trxn',
-          'batch_id' => $entityID,
-        );
-      if ($action == 'Assign') {
-        $updated = CRM_Batch_BAO_Batch::addBatchEntity($params);
-      }
-      else {
-        $updated = CRM_Batch_BAO_Batch::removeBatchEntity($params);
+      $recordPID = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_FinancialTrxn', $value, 'payment_instrument_id');
+      if ($recordPID == $batchPID) {
+        $params =
+          array(
+            'entity_id' => $value,
+            'entity_table' => 'civicrm_financial_trxn',
+            'batch_id' => $entityID,
+          );
+        if ($action == 'Assign') {
+          $updated = CRM_Batch_BAO_Batch::addBatchEntity($params);
+        }
+        else {
+          $updated = CRM_Batch_BAO_Batch::removeBatchEntity($params);
+        }
       }
     }
     if ($updated) {
       $status = array('status' => 'record-updated-success');
+    }
+    else {
+      $status = array('status' => ts("This batch is configured to include only transactions using %1 payment method. If you want to include other transactions, please edit the batch first and modify the Payment Method.", array( 1 => $paymentInstrument)));
     }
     echo json_encode($status);
     CRM_Utils_System::civiExit();

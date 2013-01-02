@@ -850,6 +850,8 @@ LEFT JOIN civicrm_contribution_soft ON civicrm_contribution_soft.contribution_id
         'contact_tags',
         'group',
         'contribution_date_relative',
+        'contribution_date_high',
+        'contribution_date_low',
       );
     $values = array();
     foreach ($searchFields as $field) {
@@ -859,7 +861,9 @@ LEFT JOIN civicrm_contribution_soft ON civicrm_contribution_soft.contribution_id
           $from .= " LEFT JOIN civicrm_contact contact_b ON contact_b.id = civicrm_contribution.contact_id
           LEFT JOIN civicrm_email ON contact_b.id = civicrm_email.contact_id";
         }
-        
+        if ($field == 'contribution_in_honor_of') {
+          $from .= " LEFT JOIN civicrm_contact contact_b ON contact_b.id = civicrm_contribution.contact_id";
+        }
         if ($field == 'contact_tags') {
           $from .= " LEFT JOIN civicrm_entity_tag `civicrm_entity_tag-{$params[$field]}` ON `civicrm_entity_tag-{$params[$field]}`.entity_id = contact_a.id";
         }
@@ -878,6 +882,9 @@ LEFT JOIN civicrm_contribution_soft ON civicrm_contribution_soft.contribution_id
             FALSE
           ),NULL, FALSE, FALSE,CRM_Contact_BAO_Query::MODE_CONTRIBUTE
         );
+        if ($field == 'contribution_date_high' || $field == 'contribution_date_low') {
+          $query->dateQueryBuilder($params[$field], 'civicrm_contribution', 'contribution_date', 'receive_date', 'Contribution Date');
+        }
       }
     }
     if (!empty($query->_where[0])) {
@@ -909,7 +916,7 @@ WHERE {$where}
 {$orderBy}
 {$limit}
 ";
-
+ 
     $result = CRM_Core_DAO::executeQuery($sql);
     return $result;
   }

@@ -159,12 +159,12 @@ class CRM_Financial_Form_BatchTransaction extends CRM_Contribute_Form {
           'name'  => ts('View'),
           'url'   => 'civicrm/contact/view/contribution',
           'qs'    => 'reset=1&id=%%contid%%&cid=%%cid%%&action=view&context=contribution&selectedChild=contribute',
-          'title' => ts('Accounts'),
+          'title' => ts('View Contribution'),
         ),
         'assign' => array(
           'name'  => ts('Assign'),
           'ref'   => 'disable-action',
-          'title' => ts('Disable Financial Type'),
+          'title' => ts('Assign Transaction'),
           'extra' => 'onclick = "assignRemove( %%id%%,\'' . 'assign' . '\' );"',
         )
       );
