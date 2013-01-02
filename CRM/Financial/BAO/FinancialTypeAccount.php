@@ -114,16 +114,17 @@ class CRM_Financial_BAO_FinancialTypeAccount extends CRM_Financial_DAO_EntityFin
     $financialTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_EntityFinancialAccount', $financialTypeAccountId, 'entity_id' );
     //check dependencies
     // FIXME more table containing financial_type_id to come
-    $dependancy = array( 
-      array('Contribute', 'Contribution'), 
-      array('Contribute', 'ContributionPage'), 
-      array( 'Member', 'MembershipType' ),
-      array( 'Price', 'FieldValue' ),
-      array( 'Grant', 'Grant' ),
-      array( 'Contribute', 'PremiumsProduct' ),
-      array( 'Contribute', 'Product' ),
-      array( 'Price', 'LineItem' ),
-                         );
+    $dependancy = array(
+      array('Contribute', 'Contribution'),
+      array('Contribute', 'ContributionPage'),
+      array('Member', 'MembershipType'),
+      array('Price', 'FieldValue'),
+      array('Grant', 'Grant'),
+      array('Contribute', 'PremiumsProduct'),
+      array('Contribute', 'Product'),
+      array('Price', 'LineItem'),
+    );
+
     foreach ($dependancy as $name) {
       eval('$dao = new CRM_' . $name[0] . '_DAO_' . $name[1] . '();');
       $dao->financial_type_id = $financialTypeId;
@@ -132,13 +133,14 @@ class CRM_Financial_BAO_FinancialTypeAccount extends CRM_Financial_DAO_EntityFin
         break;
       }
     }
+
     if ($check) {
-      $session = CRM_Core_Session::singleton();
       if ($name[1] == 'PremiumsProduct' || $name[1] == 'Product') {
         CRM_Core_Session::setStatus( ts('You cannot remove an account with a '.$relationValues[$financialTypeAccountId].'relationship while the Financial Type is used for a Premium.'));
-      } else {
+      }
+      else {
         CRM_Core_Session::setStatus( ts('You cannot remove an account with a '.$relationValues[$financialTypeAccountId].'relationship because it is being referenced by one or more of the following types of records: Contributions, Contribution Pages, or Membership Types. Consider disabling this type instead if you no longer want it used.') );
-        }
+      }
       return CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/admin/financial/financialType/accounts', "reset=1&action=browse&aid={$accountId}" ));
     }
     
@@ -159,15 +161,17 @@ class CRM_Financial_BAO_FinancialTypeAccount extends CRM_Financial_DAO_EntityFin
    * @static
    */
   static function getFinancialAccount($entityId, $entityTable, $columnName = 'name') {
-    
     $join = $columnName == 'name' ? 'LEFT JOIN civicrm_financial_account ON civicrm_entity_financial_account.financial_account_id = civicrm_financial_account.id' : NULL;
-    $query = "SELECT {$columnName}
+    $query = "
+SELECT {$columnName}
 FROM civicrm_entity_financial_account
 {$join}
 WHERE entity_table = %1
-AND entity_id = %2"; 
-    $params = array(1 => array($entityTable, 'String'),
-      2 => array($entityId, 'Integer')
+AND entity_id = %2";
+
+    $params = array(
+      1 => array($entityTable, 'String'),
+      2 => array($entityId, 'Integer'),
     );
     return CRM_Core_DAO::singleValueQuery($query, $params);
   }
@@ -181,15 +185,16 @@ AND entity_id = %2";
    */
   static function getInstrumentFinancialAccount($paymentInstrumentValue = NULL) {
     if (!self::$financialAccount) {
-      $query = "SELECT ceft.financial_account_id, cov.value  FROM `civicrm_entity_financial_account` ceft
+      $query = "SELECT ceft.financial_account_id, cov.value
+FROM civicrm_entity_financial_account ceft
 INNER JOIN civicrm_option_value cov ON cov.id = ceft.entity_id AND ceft.entity_table = 'civicrm_option_value' 
 INNER JOIN civicrm_option_group cog ON cog.id = cov.option_group_id 
 WHERE cog.name = 'payment_instrument' ";
-    
+
       if ($paymentInstrumentValue) {
         $query .= " AND cov.value = '{$paymentInstrumentValue}' ";
         return CRM_Core_DAO::singleValueQuery($query);
-      } 
+      }
       else {
         $result = CRM_Core_DAO::executeQuery($query);
         while ($result->fetch()) {
@@ -198,7 +203,7 @@ WHERE cog.name = 'payment_instrument' ";
         return self::$financialAccount;
       }
     }
-    
+
     return $paymentInstrumentValue ? self::$financialAccount[$paymentInstrumentValue] : self::$financialAccount;
   }
 }

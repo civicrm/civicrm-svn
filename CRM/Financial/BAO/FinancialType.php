@@ -65,7 +65,7 @@ class CRM_Financial_BAO_FinancialType extends CRM_Financial_DAO_FinancialType {
   static function retrieve( &$params, &$defaults ) {
     $financialType = new CRM_Financial_DAO_FinancialType( );
     $financialType->copyValues( $params );
-    if ( $financialType->find( true ) ) {
+    if ($financialType->find(true)) {
       CRM_Core_DAO::storeValues( $financialType, $defaults );
       return $financialType;
     }
@@ -96,26 +96,29 @@ class CRM_Financial_BAO_FinancialType extends CRM_Financial_DAO_FinancialType {
    * @return object
    */
   static function add(&$params, &$ids) {
-    $params['is_active'] =  CRM_Utils_Array::value( 'is_active', $params, false );
-    $params['is_deductible'] =  CRM_Utils_Array::value( 'is_deductible', $params, false );
-    $params['is_reserved'] =  CRM_Utils_Array::value( 'is_reserved', $params, false );
+    $params['is_active'] = CRM_Utils_Array::value('is_active', $params, false);
+    $params['is_deductible'] = CRM_Utils_Array::value('is_deductible', $params, false);
+    $params['is_reserved'] = CRM_Utils_Array::value('is_reserved', $params, false);
 
     // action is taken depending upon the mode
-    $financialType               = new CRM_Financial_DAO_FinancialType( );
+    $financialType = new CRM_Financial_DAO_FinancialType( );
     $financialType->copyValues( $params );;
 
     if (CRM_Utils_Array::value( 'financialType', $ids ) ){
-      $oldFinancialType      = new CRM_Financial_DAO_FinancialType( );
-      $oldFinancialType->id  = CRM_Utils_Array::value( 'financialType', $ids );
+      $oldFinancialType     = new CRM_Financial_DAO_FinancialType( );
+      $oldFinancialType->id = CRM_Utils_Array::value('financialType', $ids);
       $oldFinancialType->is_current_revision = 0;
-      if ($originalId = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialType', $oldFinancialType->id, 'original_id' ) )
+      if ($originalId = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_FinancialType', $oldFinancialType->id,
+        'original_id')) {
         $financialType->original_id = $originalId;
-      else
+      }
+      else {
         $financialType->original_id = $oldFinancialType->id;
+      }
     }
 
     $financialType->save( );
-    if (CRM_Utils_Array::value( 'financialType', $ids ) ){
+    if (CRM_Utils_Array::value('financialType', $ids)) {
       $oldFinancialType->save( );
     }
     return $financialType;
@@ -152,7 +155,7 @@ class CRM_Financial_BAO_FinancialType extends CRM_Financial_DAO_FinancialType {
         ),
         array(
           'table'  => 'civicrm_pledge',
-          'column' => 'financial_type_id'
+          'column' => 'financial_type_id',
         ),
       );
 

@@ -162,7 +162,6 @@ class CRM_Financial_BAO_PaymentProcessorType extends CRM_Financial_DAO_PaymentPr
     }
 
     // FIXME handle is_default
-
     if (!empty($paymentProcessorType->id)) {
       $ppByName = self::getAllPaymentProcessorTypes('name');
       if (array_key_exists($paymentProcessorType->name, $ppByName)) {
@@ -184,9 +183,10 @@ class CRM_Financial_BAO_PaymentProcessorType extends CRM_Financial_DAO_PaymentPr
    * @static
    */
   static function del($paymentProcessorTypeId) {
-    $query = "SELECT pp.id processor_id
-                  FROM civicrm_payment_processor pp, civicrm_payment_processor_type ppt
-                  WHERE pp.payment_processor_type = ppt.name AND ppt.id = %1";
+    $query = "
+SELECT pp.id processor_id
+FROM civicrm_payment_processor pp, civicrm_payment_processor_type ppt
+WHERE pp.payment_processor_type = ppt.name AND ppt.id = %1";
 
     $params = array(1 => array($paymentProcessorTypeId, 'Integer'));
     $dao = CRM_Core_DAO::executeQuery($query, $params);
@@ -209,7 +209,7 @@ class CRM_Financial_BAO_PaymentProcessorType extends CRM_Financial_DAO_PaymentPr
     $dao = new CRM_Financial_DAO_PaymentProcessorType();
     $dao->find();
     while ($dao->fetch()) {
-        $ppt[$dao->$attr] = $dao->id;
+      $ppt[$dao->$attr] = $dao->id;
     }
     return $ppt;
   }

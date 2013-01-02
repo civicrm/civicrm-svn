@@ -58,8 +58,8 @@ class CRM_Financial_BAO_ExportFormat_CSV extends CRM_Financial_BAO_ExportFormat 
   // For this phase, we always output these records too so that there isn't data referenced in the journal entries that isn't defined anywhere.
   // Possibly in the future this could be selected by the user.
   public static $complementaryTables = array(
-      'ACCNT',
-      'CUST',
+    'ACCNT',
+    'CUST',
   );
   
   /**
@@ -69,41 +69,41 @@ class CRM_Financial_BAO_ExportFormat_CSV extends CRM_Financial_BAO_ExportFormat 
     parent::__construct();
   }
 
-  function export( $exportParams ) {   
+  function export($exportParams) {
     $export = parent::export($exportParams);
     $config = CRM_Core_Config::singleton();
-      
+
     $fileName = $config->uploadDir.'Financial_Transactions_'.date('YmdHis').'.'.$this->getFileExtension() ;
     $out = fopen($fileName, 'w');
     fputcsv($out, $export['csvExport']['headers']);
     unset($export['csvExport']['headers']);
-   
+
     foreach ($export['csvExport'] as $fields) {
       fputcsv($out, $fields);
     }
     fclose($out);
-    
+
     foreach ( self::$complementaryTables as $rct ) {
       $func = "export{$rct}";
       $this->$func();
     }
-    
+
     // now do general journal entries
     $this->exportTRANS();
-    
+
     $this->output($fileName);
   }
 
   function getFileExtension() {
     return 'csv';
   }
-  
+
   function exportACCNT() {
   }
 
   function exportCUST() {
   }
-  
+
   function exportTRANS() {
   }
 }

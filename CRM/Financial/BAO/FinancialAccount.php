@@ -62,11 +62,11 @@ class CRM_Financial_BAO_FinancialAccount extends CRM_Financial_DAO_FinancialAcco
    * @access public
    * @static
    */
-  static function retrieve( &$params, &$defaults ) {
+  static function retrieve(&$params, &$defaults) {
     $financialAccount = new CRM_Financial_DAO_FinancialAccount( );
     $financialAccount->copyValues( $params );
-    if ( $financialAccount->find( true ) ) {
-      CRM_Core_DAO::storeValues( $financialAccount, $defaults );
+    if ($financialAccount->find(true)) {
+      CRM_Core_DAO::storeValues($financialAccount, $defaults);
       return $financialAccount;
     }
     return null;
@@ -81,8 +81,8 @@ class CRM_Financial_BAO_FinancialAccount extends CRM_Financial_DAO_FinancialAcco
    * @return Object             DAO object on sucess, null otherwise
    * @static
    */
-  static function setIsActive( $id, $is_active ) {
-    return CRM_Core_DAO::setFieldValue( 'CRM_Financial_DAO_FinancialAccount', $id, 'is_active', $is_active );
+  static function setIsActive($id, $is_active) {
+    return CRM_Core_DAO::setFieldValue('CRM_Financial_DAO_FinancialAccount', $id, 'is_active', $is_active);
   }
 
   /**
@@ -101,15 +101,14 @@ class CRM_Financial_BAO_FinancialAccount extends CRM_Financial_DAO_FinancialAcco
     $params['is_tax'] =  CRM_Utils_Array::value( 'is_tax', $params, false );
     $params['is_header_account'] =  CRM_Utils_Array::value( 'is_header_account', $params, false );
     $params['is_default'] =  CRM_Utils_Array::value( 'is_default', $params, false );
-    if ( CRM_Utils_Array::value( 'is_default', $params ) ) {
+    if (CRM_Utils_Array::value('is_default', $params)) {
       $query = 'UPDATE civicrm_financial_account SET is_default = 0';
       CRM_Core_DAO::executeQuery( $query );
     }   
     
     // action is taken depending upon the mode
     $financialAccount = new CRM_Financial_DAO_FinancialAccount( );
-    $financialAccount->copyValues( $params );;
-    
+    $financialAccount->copyValues($params);
     $financialAccount->id = CRM_Utils_Array::value( 'contributionType', $ids );
     $financialAccount->save( );
     return $financialAccount;
@@ -161,7 +160,6 @@ class CRM_Financial_BAO_FinancialAccount extends CRM_Financial_DAO_FinancialAcco
     }
     
     if ($check) {
-      $session = CRM_Core_Session::singleton();
       CRM_Core_Session::setStatus( ts('This financial account cannot be deleted since it is being used as a header account. Please remove it from being a header account before trying to delete it again.') );
       return CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/admin/financial/financialAccount', "reset=1&action=browse" ));
     }
@@ -182,12 +180,15 @@ class CRM_Financial_BAO_FinancialAccount extends CRM_Financial_DAO_FinancialAcco
    */
   static function getAccountingCode($financialTypeId) {
     $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Income Account is' "));
-    $query = "SELECT cfa.accounting_code FROM `civicrm_financial_type` cft
+    $query = "SELECT cfa.accounting_code
+FROM civicrm_financial_type cft
 LEFT JOIN civicrm_entity_financial_account cefa ON cefa.entity_id = cft.id AND cefa.entity_table = 'civicrm_financial_type'
 LEFT JOIN  civicrm_financial_account cfa ON cefa.financial_account_id = cfa.id
-WHERE cft.id = %1 AND account_relationship = %2";
-    $params = array(1 => array($financialTypeId, 'Integer'),
-      2 => array($relationTypeId, 'Integer')
+WHERE cft.id = %1
+  AND account_relationship = %2";
+    $params = array(
+      1 => array($financialTypeId, 'Integer'),
+      2 => array($relationTypeId, 'Integer'),
     );
     return CRM_Core_DAO::singleValueQuery($query, $params);
   }

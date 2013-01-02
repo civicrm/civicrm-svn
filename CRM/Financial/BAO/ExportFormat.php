@@ -165,8 +165,8 @@ class CRM_Financial_BAO_ExportFormat {
         'uri' => $fileName,
         'type' => 'text/csv',
         'location' => $fileName,
-        'upload_date' => date('YmdHis')
-      )
+        'upload_date' => date('YmdHis'),
+      ),
     );
     $activity = CRM_Activity_BAO_Activity::create($activityParams);
        

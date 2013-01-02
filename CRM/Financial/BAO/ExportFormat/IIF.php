@@ -85,10 +85,10 @@ class CRM_Financial_BAO_ExportFormat_IIF extends CRM_Financial_BAO_ExportFormat 
       $func = "export{$rct}";
       $this->$func();
     }
-    
+
     // now do general journal entries
     $this->exportTRANS();
-    
+
     $this->output();
   }
   
@@ -120,12 +120,12 @@ class CRM_Financial_BAO_ExportFormat_IIF extends CRM_Financial_BAO_ExportFormat 
    * $s the input string
    * $type can be string, date, or notepad
    */
-  static function format( $s, $type = 'string' ) {
+  static function format($s, $type = 'string') {
     // If I remember right there's a couple things:
     // NOTEPAD field needs to be surrounded by quotes and then get rid of double quotes inside, also newlines should be literal \n, and ditch any ascii 0x0d's.
     // Date handling has changed over the years. It used to only understand mm/dd/yy but I think now it might depend on your OS settings. Sometimes mm/dd/yyyy works but sometimes it wants yyyy/mm/dd, at least where I had used it.
     // In all cases need to do something with tabs in the input.
-    
+
     $s1 = str_replace( self::$SEPARATOR, '\t', $s );
     switch( $type ) {
       case 'date':
@@ -143,7 +143,7 @@ class CRM_Financial_BAO_ExportFormat_IIF extends CRM_Financial_BAO_ExportFormat 
         }
         break;
     }
-    
+
     return $sout;
   }
 }
