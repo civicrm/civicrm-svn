@@ -763,16 +763,16 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
       }
       $dao->free();
     }
-      $exportParams = array(
-        'accounts' => $accounts,
-        'contacts' => $contacts,
-        'journalEntries' => $journalEntries,
-        'batchIds' => $batchIds,
-        'csvExport' => isset($financialItems) ? $financialItems : NULL,
-      );
 
-      $exporter->export( $exportParams );
+    $exportParams = array(
+      'accounts' => $accounts,
+      'contacts' => $contacts,
+      'journalEntries' => $journalEntries,
+      'batchIds' => $batchIds,
+      'csvExport' => isset($financialItems) ? $financialItems : NULL,
+    );
 
+    $exporter->export( $exportParams );
   }
 
   static function closeReOpen($batchIds = array(), $status) {

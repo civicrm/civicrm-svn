@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.0                                                |
+ | CiviCRM version 4.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -23,15 +23,13 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{* this template is used for adding/editing/deleting financial type  *}
+{* this template is used for adding/editing/deleting financial batch  *}
 <h3>{if $action eq 8}
   {ts}Delete Batch{/ts} - {$batchTitle}
   {elseif $action eq 1}
   {ts}Add New Batch{/ts}
   {elseif $action eq 2}
   {ts}Edit Batch{/ts} - {$batchTitle}
-  {elseif $action eq 262144}
-  {ts}Close Batch{/ts} - {$batchTitle}
   {/if}
 </h3>
 <div class="crm-block crm-form-block crm-financial_type-form-block">
@@ -39,16 +37,6 @@
   <div class="messages status">
     <div class="icon inform-icon"></div>
     {ts}WARNING: You cannot delete a financial type if it is currently used by any Contributions, Contribution Pages or Membership Types. Consider disabling this option instead.{/ts} {ts}Deleting a financial type cannot be undone.{/ts} {ts}Do you want to continue?{/ts}
-  </div>
-{elseif $action eq 524288 }
-  <div class="messages status">
-    <div class="icon inform-icon"></div>
-    {ts}WARNING: Do you want to Reopen '{$batchTitle}'- batch?{/ts}
-  </div>
-{elseif $action eq 262144 }
-  <div class="messages status">
-    <div class="icon inform-icon"></div>
-    {ts}WARNING: You will not be able to change the batch after it is closed. Are you sure you want to close this batch?{/ts}
   </div>
 {else}
   <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>

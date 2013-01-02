@@ -75,7 +75,6 @@ class CRM_Financial_Form_Export extends CRM_Core_Form {
    */
   function buildQuickForm() {
     /*
-    $this->addDefaultButtons(ts('Export Batch(s)'), 'done');
     foreach ( $this->_financialBatchIds as $financialBatchId )
       $batchNames[] = CRM_Core_DAO::getFieldValue( 'CRM_Batch_DAO_Batch', $financialBatchId, 'name' );
     $this->assign( 'batchNames', $batchNames );

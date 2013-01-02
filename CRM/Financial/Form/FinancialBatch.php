@@ -80,13 +80,6 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
       if (CRM_Utils_Array::value($this->_action, $permissions)) {
         $this->checkPermissions($this->_action, $permissions[$this->_action]['permission'], $createdID, $session->get('userID'), $permissions[$this->_action]['actionName'] );
       }
-
-      $status = CRM_Core_DAO::getFieldValue('CRM_Batch_DAO_Batch', $this->_id, 'status_id');
-      $batchStatus = CRM_Core_PseudoConstant::accountOptionValues('batch_status');
-      //FIXME
-      //if (CRM_Utils_Array::value($status, $batchStatus) != 'Open') {
-      // CRM_Core_Error::statusBounce(ts("You cannot edit {$batchStatus[$status]} Batch"));
-      //}
     }
   }
 
@@ -107,32 +100,6 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
       $this->assign('contactName', $contactName);
     }
 
-    if ($this->_action & (CRM_Core_Action::CLOSE | CRM_Core_Action::REOPEN | CRM_Core_Action::EXPORT)) {
-      if ($this->_action & CRM_Core_Action::CLOSE) {
-        $buttonName = ts('Close Batch');
-      }
-      elseif ($this->_action & CRM_Core_Action::REOPEN) {
-        $buttonName = ts('ReOpen Batch');
-      }
-
-      $this->addButtons(
-        array(
-          array(
-            'type' => 'next',
-            'name' => $buttonName,
-            'spacing' => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
-            'isDefault' => true,
-          ),
-          array(
-            'type' => 'cancel',
-            'name' => ts('Cancel'),
-          ),
-        )
-      );
-      $this->assign('actionName', $buttonName);
-      return;
-    }
-
     $this->applyFilter('__ALL__', 'trim');
 
     $this->addButtons(
@@ -140,12 +107,12 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
         array(
           'type' => 'next',
           'name' => ts('Save'),
-          'isDefault' => true
+          'isDefault' => true,
         ),
         array(
           'type' => 'next',
           'name' => ts('Save and New'),
-          'subName' => 'new'
+          'subName' => 'new',
         ),
         array(
           'type' => 'cancel',
@@ -296,7 +263,6 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
     $buttonName = $this->controller->getButtonName();
 
     $context = $this->get("context");
-    $session = CRM_Core_Session::singleton();
     if ($batch->title) {
       CRM_Core_Session::setStatus(ts("'%1' batch has been saved.", array(1 => $batch->title)), ts('Saved'), 'success');
     }
