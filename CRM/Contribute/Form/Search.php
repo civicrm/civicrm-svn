@@ -149,11 +149,10 @@ class CRM_Contribute_Form_Search extends CRM_Core_Form {
     $this->defaults = array();
 
     /*
-         * we allow the controller to set force/reset externally, useful when we are being
-         * driven by the wizard framework
-         */
-
-
+     * we allow the controller to set force/reset externally, useful when we are being
+     * driven by the wizard framework
+     */
+        
     $this->_reset   = CRM_Utils_Request::retrieve('reset', 'Boolean', CRM_Core_DAO::$_nullObject);
     $this->_force   = CRM_Utils_Request::retrieve('force', 'Boolean', $this, FALSE);
     $this->_limit   = CRM_Utils_Request::retrieve('limit', 'Positive', $this);
@@ -271,11 +270,10 @@ class CRM_Contribute_Form_Search extends CRM_Core_Form {
     CRM_Contribute_BAO_Query::buildSearchForm($this);
 
     /*
-         * add form checkboxes for each row. This is needed out here to conform to QF protocol
-         * of all elements being declared in builQuickForm
-         */
-
-
+     * add form checkboxes for each row. This is needed out here to conform to QF protocol
+     * of all elements being declared in builQuickForm
+     */
+    
     $rows = $this->get('rows');
     if (is_array($rows)) {
       if (!$this->_single) {
@@ -515,6 +513,11 @@ class CRM_Contribute_Form_Search extends CRM_Core_Form {
       $highDate = CRM_Utils_Type::escape($highDate, 'Timestamp');
       $date = CRM_Utils_Date::setDateDefaults($highDate);
       $this->_formValues['contribution_date_high'] = $this->_defaults['contribution_date_high'] = $date[0];
+    }
+
+    if ($highDate || $lowDate) {
+      //set the Choose Date Range value
+      $this->_formValues['contribution_date_relative'] = 0;
     }
 
     $this->_limit = CRM_Utils_Request::retrieve('limit', 'Positive',
