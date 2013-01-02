@@ -238,7 +238,7 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search {
                 }
               }
               else {
-                if (!preg_match('/^[(]([A-Za-z0-9åäöÅÄÖüÜœŒæÆøØ\,\s]+)[)]$/', $inVal)) {
+                if (!(substr($inVal, 0, 1) == '(' && substr($inVal, -1, 1) == ')' ) && !preg_match('/^[(]([A-Za-z0-9åäöÅÄÖüÜœŒæÆøØ\,\s]+)[)]$/', $inVal)) {
                   $errorMsg["value[$v[3]][$v[4]]"] = ts("Please enter correct Data ( in valid format ).");
                 }
               }
