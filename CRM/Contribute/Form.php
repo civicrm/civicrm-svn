@@ -89,9 +89,11 @@ class CRM_Contribute_Form extends CRM_Core_Form {
       if (CRM_Utils_Array::value('contact_id', $defaults) || CRM_Utils_Array::value('created_id', $defaults)) {
         $contactID = CRM_Utils_Array::value('created_id', $defaults) ? $defaults['created_id'] : $defaults['contact_id'];
         $this->assign('created_id', $contactID);
+        $this->assign('organisationId', $contactID);
       }
+
       if ($parentId = CRM_Utils_Array::value('parent_id', $defaults)) {
-        $this->assign('parentId', $parentId); 
+        $this->assign('parentId', $parentId);
       }
     }   
     return $defaults;
