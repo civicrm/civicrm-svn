@@ -56,7 +56,7 @@
                       <th>{ts}Tag{/ts}</th>
                       <th>{ts}ID{/ts}</th>
                       <th id="nosort">{ts}Description{/ts}</th>
-                      <th>{ts}Parent / ID{/ts}</th>
+                      <th>{ts}Parent (ID){/ts}</th>
                       <th>{ts}Used For{/ts}</th>
                       <th>{ts}Tag set?{/ts}</th>
                       <th>{ts}Reserved?{/ts}</th>
@@ -68,7 +68,7 @@
                     <td class="crm-tag-name crm-editable crmf-name">{$row.name}</td>
                     <td class="crm-tag-id">{$row.id}</td>
                     <td class="crm-tag-description crm-editable crmf-description">{$row.description} </td>
-                    <td class="crm-tag-parent">{$row.parent} {if $row.parent_id}<span class='crmf-parent_id crm-editable'>{$row.parent_id}</span>{/if}</td>
+                    <td class="crm-tag-parent">{$row.parent}{if $row.parent_id} ({$row.parent_id}){/if}</td>
               <td class="crm-tag-used_for">{$row.used_for}</td>
                     <td class="crm-tag-is_tagset">{if $row.is_tagset}<img src="{$config->resourceBase}i/check.gif" alt="{ts}Tag Set{/ts}" />{/if}</td>
                     <td class="crm-tag-is_reserved">{if $row.is_reserved}<img src="{$config->resourceBase}i/check.gif" alt="{ts}Reserved{/ts}" />{/if}</td>
