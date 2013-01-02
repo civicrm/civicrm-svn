@@ -325,6 +325,8 @@
      if (!$numAttachments) {
        $numAttachments = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'max_attachments');
      }
+     // Assign maxAttachments count to template for help message
+     $form->assign('maxAttachments', $numAttachments);
 
      $config = CRM_Core_Config::singleton();
      // set default max file size as 2MB
