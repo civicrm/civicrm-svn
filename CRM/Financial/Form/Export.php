@@ -61,7 +61,6 @@ class CRM_Financial_Form_Export extends CRM_Core_Form {
     if ( !CRM_Core_Permission::checkActionPermission( 'CiviContribute', CRM_Core_Action::UPDATE ) ) {
       CRM_Core_Error::fatal( ts( 'You do not have permission to access this page' ) );  
     }
-
   }
   
   /**
@@ -128,7 +127,6 @@ class CRM_Financial_Form_Export extends CRM_Core_Form {
     $params['status_id'] = CRM_Utils_Array::key('Exported', $batchStatus);
     CRM_Batch_BAO_Batch::exportFinancialBatch($ids, $params['export_format']);
   }
-  
 }
 
 

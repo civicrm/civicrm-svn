@@ -99,7 +99,7 @@ ORDER by f.name";
     $elements = array(
       array(
         'name'  => ts('- select -'),
-        'value' => 'select'
+        'value' => 'select',
       )
     );
 
@@ -107,7 +107,7 @@ ORDER by f.name";
       foreach ($result as $id => $name) {
         $elements[] = array(
           'name'  => $name,
-          'value' => $id
+          'value' => $id,
         );
       }
     }
@@ -138,7 +138,7 @@ ORDER by f.name";
     $elements = array(
       array(
         'name'  => ts('- Select Financial Account Relationship -'),
-        'value' => 'select'
+        'value' => 'select',
       )
     );
 
@@ -149,21 +149,21 @@ ORDER by f.name";
           if ($countResult != 1){
             $elements[] = array(
               'name'  => $name,
-              'value' => $id
+              'value' => $id,
             );
           }
           else {
             $elements[] = array(
               'name'     => $name,
               'value'    => $id,
-              'selected' => 'Selected'
+              'selected' => 'Selected',
             );
           }
         }
         elseif ($_GET['_value'] == 'select'){
           $elements[] = array(
             'name'  => $name,
-            'value' => $id
+            'value' => $id,
           );
         }
       }
@@ -292,7 +292,7 @@ ORDER by f.name";
         'contact_a.contact_type',
         'contact_a.contact_sub_type',
         'transaction_date',
-        'name'
+        'name',
       );
 
     $columnHeader =
@@ -302,7 +302,7 @@ ORDER by f.name";
         'amount'   => ts('Amount'),
         'transaction_date' => ts('Received'),
         'payment_method' => ts('Payment Method'),
-        'name' => ts('Type')
+        'name' => ts('Type'),
       );
 
     if ($sort && $sortOrder) {
@@ -329,7 +329,7 @@ ORDER by f.name";
       while ($unassignedTransactions->fetch()) {
         $unassignedTransactionsCount[] = $unassignedTransactions->id;
       }
-      $params['total']   =  count($unassignedTransactionsCount);
+      $params['total'] = count($unassignedTransactionsCount);
 
     }
     else {
@@ -338,7 +338,7 @@ ORDER by f.name";
       while ($assignedTransactions->fetch()) {
         $assignedTransactionsCount[] = $assignedTransactions->id;
       }
-      $params['total']   =  count($assignedTransactionsCount);
+      $params['total'] = count($assignedTransactionsCount);
     }
     $financialitems = array();
     while ($financialItem->fetch()) {
@@ -373,7 +373,7 @@ ORDER by f.name";
     $selectorElements =
       array(
         'check', 'contact_type', 'sort_name',
-        'amount', 'transaction_date', 'payment_method', 'name', 'action'
+        'amount', 'transaction_date', 'payment_method', 'name', 'action',
       );
 
     echo CRM_Utils_JSON::encodeDataTableSelector($financialitems, $sEcho, $iTotal, $iFilteredTotal, $selectorElements);
@@ -427,7 +427,7 @@ ORDER by f.name";
             'assigned_item_count' => $batchTotals[$batchID]['item_count'],
             'total' => $batchInfo->total,
             'assigned_total' => $batchTotals[$batchID]['total'],
-            'opened_date' => $batchInfo->created_date
+            'opened_date' => $batchInfo->created_date,
             );
     echo json_encode($batchSummary);
     CRM_Utils_System::civiExit();
