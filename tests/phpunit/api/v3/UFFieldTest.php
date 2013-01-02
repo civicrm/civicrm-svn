@@ -28,15 +28,13 @@
 */
 
 
-
-
 require_once 'CiviTest/CiviUnitTestCase.php';
 
 /**
  * Test class for UFGroup API - civicrm_uf_*
  * @todo Split UFGroup and UFJoin tests
  *
- *  @package   CiviCRM
+ * @package   CiviCRM
  */
 class api_v3_UFFieldTest extends CiviUnitTestCase {
   // ids from the uf_group_test.xml fixture
@@ -47,6 +45,7 @@ class api_v3_UFFieldTest extends CiviUnitTestCase {
   protected $_params;
   protected $_entity = 'UFField';
   public $_eNoticeCompliant = TRUE;
+
   protected function setUp() {
     parent::setUp();
     $this->quickCleanup(
@@ -66,7 +65,7 @@ class api_v3_UFFieldTest extends CiviUnitTestCase {
       $this->_dbconn,
       new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(dirname(__FILE__) . '/dataset/uf_group_test.xml')
     );
-    $this-> _sethtmlGlobals();
+    $this->_sethtmlGlobals();
 
     $this->_params = array(
       'field_name' => 'country',
@@ -161,174 +160,174 @@ class api_v3_UFFieldTest extends CiviUnitTestCase {
     $this->assertAPISuccess($result, 0, 'in line' . __LINE__);
     $this->getAndCheck($this->_params, $result['id'], $this->_entity);
   }
-  
-/*
- *  FIXME: something NULLs $GLOBALS['_HTML_QuickForm_registered_rules'] when the tests are ran all together
- * (NB unclear if this is still required)
- */
+
+  /**
+   * FIXME: something NULLs $GLOBALS['_HTML_QuickForm_registered_rules'] when the tests are ran all together
+   * (NB unclear if this is still required)
+   */
   function _sethtmlGlobals() {
-   $GLOBALS['_HTML_QuickForm_registered_rules'] = array(
+    $GLOBALS['_HTML_QuickForm_registered_rules'] = array(
       'required' => array(
-        'html_quickform_rule_required', 
+        'html_quickform_rule_required',
         'HTML/QuickForm/Rule/Required.php'
-      ), 
+      ),
       'maxlength' => array(
-        'html_quickform_rule_range', 
+        'html_quickform_rule_range',
         'HTML/QuickForm/Rule/Range.php'
-      ), 
+      ),
       'minlength' => array(
-        'html_quickform_rule_range', 
+        'html_quickform_rule_range',
         'HTML/QuickForm/Rule/Range.php'
-      ), 
+      ),
       'rangelength' => array(
-        'html_quickform_rule_range', 
+        'html_quickform_rule_range',
         'HTML/QuickForm/Rule/Range.php'
-      ), 
+      ),
       'email' => array(
-        'html_quickform_rule_email', 
+        'html_quickform_rule_email',
         'HTML/QuickForm/Rule/Email.php'
-      ), 
+      ),
       'regex' => array(
-        'html_quickform_rule_regex', 
+        'html_quickform_rule_regex',
         'HTML/QuickForm/Rule/Regex.php'
-      ), 
+      ),
       'lettersonly' => array(
-        'html_quickform_rule_regex', 
+        'html_quickform_rule_regex',
         'HTML/QuickForm/Rule/Regex.php'
-      ), 
+      ),
       'alphanumeric' => array(
-        'html_quickform_rule_regex', 
+        'html_quickform_rule_regex',
         'HTML/QuickForm/Rule/Regex.php'
-      ), 
+      ),
       'numeric' => array(
-        'html_quickform_rule_regex', 
+        'html_quickform_rule_regex',
         'HTML/QuickForm/Rule/Regex.php'
-      ), 
+      ),
       'nopunctuation' => array(
-        'html_quickform_rule_regex', 
+        'html_quickform_rule_regex',
         'HTML/QuickForm/Rule/Regex.php'
-      ), 
+      ),
       'nonzero' => array(
-        'html_quickform_rule_regex', 
+        'html_quickform_rule_regex',
         'HTML/QuickForm/Rule/Regex.php'
-      ), 
+      ),
       'callback' => array(
-        'html_quickform_rule_callback', 
+        'html_quickform_rule_callback',
         'HTML/QuickForm/Rule/Callback.php'
-      ), 
+      ),
       'compare' => array(
-        'html_quickform_rule_compare', 
+        'html_quickform_rule_compare',
         'HTML/QuickForm/Rule/Compare.php'
       )
     );
     // FIXME: …ditto for $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES']
     $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES'] = array(
       'group' => array(
-        'HTML/QuickForm/group.php', 
+        'HTML/QuickForm/group.php',
         'HTML_QuickForm_group'
-      ), 
+      ),
       'hidden' => array(
-        'HTML/QuickForm/hidden.php', 
+        'HTML/QuickForm/hidden.php',
         'HTML_QuickForm_hidden'
-      ), 
+      ),
       'reset' => array(
-        'HTML/QuickForm/reset.php', 
+        'HTML/QuickForm/reset.php',
         'HTML_QuickForm_reset'
-      ), 
+      ),
       'checkbox' => array(
-        'HTML/QuickForm/checkbox.php', 
+        'HTML/QuickForm/checkbox.php',
         'HTML_QuickForm_checkbox'
-      ), 
+      ),
       'file' => array(
-        'HTML/QuickForm/file.php', 
+        'HTML/QuickForm/file.php',
         'HTML_QuickForm_file'
-      ), 
+      ),
       'image' => array(
-        'HTML/QuickForm/image.php', 
+        'HTML/QuickForm/image.php',
         'HTML_QuickForm_image'
-      ), 
+      ),
       'password' => array(
-        'HTML/QuickForm/password.php', 
+        'HTML/QuickForm/password.php',
         'HTML_QuickForm_password'
-      ), 
+      ),
       'radio' => array(
-        'HTML/QuickForm/radio.php', 
+        'HTML/QuickForm/radio.php',
         'HTML_QuickForm_radio'
-      ), 
+      ),
       'button' => array(
-        'HTML/QuickForm/button.php', 
+        'HTML/QuickForm/button.php',
         'HTML_QuickForm_button'
-      ), 
+      ),
       'submit' => array(
-        'HTML/QuickForm/submit.php', 
+        'HTML/QuickForm/submit.php',
         'HTML_QuickForm_submit'
-      ), 
+      ),
       'select' => array(
-        'HTML/QuickForm/select.php', 
+        'HTML/QuickForm/select.php',
         'HTML_QuickForm_select'
-      ), 
+      ),
       'hiddenselect' => array(
-        'HTML/QuickForm/hiddenselect.php', 
+        'HTML/QuickForm/hiddenselect.php',
         'HTML_QuickForm_hiddenselect'
-      ), 
+      ),
       'text' => array(
-        'HTML/QuickForm/text.php', 
+        'HTML/QuickForm/text.php',
         'HTML_QuickForm_text'
-      ), 
+      ),
       'textarea' => array(
-        'HTML/QuickForm/textarea.php', 
+        'HTML/QuickForm/textarea.php',
         'HTML_QuickForm_textarea'
-      ), 
+      ),
       'fckeditor' => array(
-        'HTML/QuickForm/fckeditor.php', 
+        'HTML/QuickForm/fckeditor.php',
         'HTML_QuickForm_FCKEditor'
-      ), 
+      ),
       'tinymce' => array(
-        'HTML/QuickForm/tinymce.php', 
+        'HTML/QuickForm/tinymce.php',
         'HTML_QuickForm_TinyMCE'
-      ), 
+      ),
       'dojoeditor' => array(
-        'HTML/QuickForm/dojoeditor.php', 
+        'HTML/QuickForm/dojoeditor.php',
         'HTML_QuickForm_dojoeditor'
-      ), 
+      ),
       'link' => array(
-        'HTML/QuickForm/link.php', 
+        'HTML/QuickForm/link.php',
         'HTML_QuickForm_link'
-      ), 
+      ),
       'advcheckbox' => array(
-        'HTML/QuickForm/advcheckbox.php', 
+        'HTML/QuickForm/advcheckbox.php',
         'HTML_QuickForm_advcheckbox'
-      ), 
+      ),
       'date' => array(
-        'HTML/QuickForm/date.php', 
+        'HTML/QuickForm/date.php',
         'HTML_QuickForm_date'
-      ), 
+      ),
       'static' => array(
-        'HTML/QuickForm/static.php', 
+        'HTML/QuickForm/static.php',
         'HTML_QuickForm_static'
-      ), 
+      ),
       'header' => array(
-        'HTML/QuickForm/header.php', 
+        'HTML/QuickForm/header.php',
         'HTML_QuickForm_header'
-      ), 
+      ),
       'html' => array(
-        'HTML/QuickForm/html.php', 
+        'HTML/QuickForm/html.php',
         'HTML_QuickForm_html'
-      ), 
+      ),
       'hierselect' => array(
-        'HTML/QuickForm/hierselect.php', 
+        'HTML/QuickForm/hierselect.php',
         'HTML_QuickForm_hierselect'
-      ), 
+      ),
       'autocomplete' => array(
-        'HTML/QuickForm/autocomplete.php', 
+        'HTML/QuickForm/autocomplete.php',
         'HTML_QuickForm_autocomplete'
-      ), 
+      ),
       'xbutton' => array(
-        'HTML/QuickForm/xbutton.php', 
+        'HTML/QuickForm/xbutton.php',
         'HTML_QuickForm_xbutton'
-      ), 
+      ),
       'advmultiselect' => array(
-        'HTML/QuickForm/advmultiselect.php', 
+        'HTML/QuickForm/advmultiselect.php',
         'HTML_QuickForm_advmultiselect'
       )
     );
