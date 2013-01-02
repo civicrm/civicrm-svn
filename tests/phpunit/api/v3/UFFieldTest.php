@@ -68,14 +68,15 @@ class api_v3_UFFieldTest extends CiviUnitTestCase {
     $this->_sethtmlGlobals();
 
     $this->_params = array(
-      'field_name' => 'country',
+      'field_name' => 'phone',
       'field_type' => 'Contact',
       'visibility' => 'Public Pages and Listings',
       'weight' => 1,
-      'label' => 'Test Country',
+      'label' => 'Test Phone',
       'is_searchable' => 1,
       'is_active' => 1,
       'location_type_id' => 1,
+      'phone_type_id' => 1,
       'version' => $this->_apiversion,
       'uf_group_id' => $this->_ufGroupId,
     );
@@ -97,17 +98,7 @@ class api_v3_UFFieldTest extends CiviUnitTestCase {
    * create / updating field
    */
   public function testCreateUFField() {
-    $params = array(
-      'field_name' => 'country',
-      'field_type' => 'Contact',
-      'visibility' => 'Public Pages and Listings',
-      'weight' => 1,
-      'label' => 'Test Country',
-      'is_searchable' => 1,
-      'is_active' => 1,
-      'version' => $this->_apiversion,
-      'uf_group_id' => $this->_ufGroupId,
-    );
+    $params = $this->_params; // copy
     $ufField = civicrm_api('uf_field', 'create', $params);
     $this->documentMe($params, $ufField, __FUNCTION__, __FILE__);
     unset($params['version']);

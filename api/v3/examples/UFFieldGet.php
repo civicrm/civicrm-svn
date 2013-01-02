@@ -30,7 +30,7 @@ function uf_field_get_expectedresult(){
       '1' => array( 
           'id' => '1',
           'uf_group_id' => '11',
-          'field_name' => 'country',
+          'field_name' => 'phone',
           'is_active' => '1',
           'is_view' => 0,
           'is_required' => 0,
@@ -39,8 +39,10 @@ function uf_field_get_expectedresult(){
           'in_selector' => 0,
           'is_searchable' => '1',
           'location_type_id' => '1',
-          'label' => 'Test Country',
+          'phone_type_id' => '1',
+          'label' => 'Test Phone',
           'field_type' => 'Contact',
+          'is_multi_summary' => 0,
         ),
     ),
 );

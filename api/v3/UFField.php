@@ -71,7 +71,7 @@ function civicrm_api3_uf_field_create($params) {
   $field_type       = CRM_Utils_Array::value('field_type', $params);
   $field_name       = CRM_Utils_Array::value('field_name', $params);
   $location_type_id = CRM_Utils_Array::value('location_type_id', $params);
-  $phone_type       = CRM_Utils_Array::value('phone_type', $params);
+  $phone_type       = CRM_Utils_Array::value('phone_type_id', $params, CRM_Utils_Array::value('phone_type', $params));
 
   $params['field_name'] = array($field_type, $field_name, $location_type_id, $phone_type);
 

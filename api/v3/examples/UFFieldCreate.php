@@ -7,13 +7,15 @@
  */
 function uf_field_create_example(){
 $params = array( 
-  'field_name' => 'country',
+  'field_name' => 'phone',
   'field_type' => 'Contact',
   'visibility' => 'Public Pages and Listings',
   'weight' => 1,
-  'label' => 'Test Country',
+  'label' => 'Test Phone',
   'is_searchable' => 1,
   'is_active' => 1,
+  'location_type_id' => 1,
+  'phone_type_id' => 1,
   'version' => 3,
   'uf_group_id' => 11,
 );
@@ -33,12 +35,12 @@ function uf_field_create_expectedresult(){
   'is_error' => 0,
   'version' => 3,
   'count' => 1,
-  'id' => 65,
+  'id' => 1,
   'values' => array( 
-      '65' => array( 
-          'id' => 65,
+      '1' => array( 
+          'id' => 1,
           'uf_group_id' => 11,
-          'field_name' => 'country',
+          'field_name' => 'phone',
           'is_active' => 1,
           'is_view' => '',
           'is_required' => '',
@@ -48,11 +50,12 @@ function uf_field_create_expectedresult(){
           'visibility' => 'Public Pages and Listings',
           'in_selector' => '',
           'is_searchable' => 1,
-          'location_type_id' => 'null',
-          'phone_type_id' => '',
-          'label' => 'Test Country',
+          'location_type_id' => 1,
+          'phone_type_id' => 1,
+          'label' => 'Test Phone',
           'field_type' => 'Contact',
           'is_reserved' => '',
+          'is_multi_summary' => '',
         ),
     ),
 );

@@ -8,7 +8,7 @@
 function uf_field_delete_example(){
 $params = array( 
   'version' => 3,
-  'field_id' => 66,
+  'field_id' => 1,
 );
 
   require_once 'api/api.php';
