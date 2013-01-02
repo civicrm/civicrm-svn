@@ -2835,7 +2835,7 @@ WHERE  id IN ( $groupIDs )
       $firstChar = substr($name, 0, 1);
       $lastChar  = substr($name, -1, 1);
       $quotes    = array("'", '"');
-      if (in_array($firstChar, $quotes) &&
+      if ((strlen($name) > 2) && in_array($firstChar, $quotes) &&
         in_array($lastChar, $quotes)
       ) {
         $name   = substr($name, 1);
