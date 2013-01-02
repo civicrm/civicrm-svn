@@ -186,7 +186,7 @@ class CRM_Financial_BAO_PaymentProcessorType extends CRM_Financial_DAO_PaymentPr
     $query = "
 SELECT pp.id processor_id
 FROM civicrm_payment_processor pp, civicrm_payment_processor_type ppt
-WHERE pp.payment_processor_type = ppt.name AND ppt.id = %1";
+WHERE pp.payment_processor_type_id = ppt.id AND ppt.id = %1";
 
     $params = array(1 => array($paymentProcessorTypeId, 'Integer'));
     $dao = CRM_Core_DAO::executeQuery($query, $params);

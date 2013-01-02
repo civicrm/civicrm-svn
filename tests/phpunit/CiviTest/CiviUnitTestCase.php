@@ -684,7 +684,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
       // FIXME: I know it's 1, cause it was loaded directly to the db.
       // FIXME: when we load all the data, we'll need to address this to
       // FIXME: avoid hunting numbers around.
-                         'financial_type_id' =>$contributionTypeID,
+      'financial_type_id' => $contributionTypeID,
       'is_active' => 1,
       'version' => $version,
       'sequential' => 1,
