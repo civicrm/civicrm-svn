@@ -747,7 +747,10 @@ class CRM_Report_Form extends CRM_Core_Form {
 
           case CRM_Report_FORM::OP_DATE:
             // build datetime fields
-            CRM_Core_Form_Date::buildDateRange($this, $fieldName, $count);
+            CRM_Core_Form_Date::buildDateRange(
+              $this, $fieldName, $count,
+              '_from', '_to', 'From:', FALSE, TRUE, 'searchDate',
+              $field['type'] != CRM_Utils_Type::T_DATE);
             $count++;
             break;
 

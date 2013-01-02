@@ -77,7 +77,7 @@ Class CRM_Core_Form_Date {
    * @static
    * @access public
    */
-  static function buildDateRange(&$form, $fieldName, $count = 1, $from = '_from', $to = '_to', $fromLabel = 'From:', $required = FALSE, $addReportFilters = TRUE, $dateFormat = 'searchDate') {
+  static function buildDateRange(&$form, $fieldName, $count = 1, $from = '_from', $to = '_to', $fromLabel = 'From:', $required = FALSE, $addReportFilters = TRUE, $dateFormat = 'searchDate', $displayTime = FALSE) {
     $selector = array('' => ts('- any -'),
       0 => ts('Choose Date Range'),
       'this.year' => ts('This Year'),
@@ -135,7 +135,7 @@ Class CRM_Core_Form_Date {
       $required
     );
 
-    $form->addDateRange($fieldName, $from, $to, $fromLabel, $dateFormat);
+    $form->addDateRange($fieldName, $from, $to, $fromLabel, $dateFormat, FALSE, $displayTime);
   }
 }
 
