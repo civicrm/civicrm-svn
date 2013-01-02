@@ -258,7 +258,8 @@ div#crm-container {
   border-bottom: 2px solid #777;
 }
 
-#crm-container div.solid-border-top {
+#crm-container div.solid-border-top,
+#crm-container .attachment-fieldset {
   margin-top: 15px;
   border-top: 1px solid #696969;
 }

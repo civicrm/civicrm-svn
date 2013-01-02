@@ -234,6 +234,13 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
     // set page title
     $title = self::setTitle($this->_contactId, $isDeleted);
     $this->assign('title', $title);
+    
+    // Check if this is default domain contact CRM-10482
+    if (CRM_Contact_BAO_Contact::checkDomainContact($this->_contactId)) {
+      $this->assign('domainContact', TRUE);
+    } else {
+      $this->assign('domainContact', FALSE);      
+    }
 
     // Add links for actions menu
     self::addUrls($this, $this->_contactId);

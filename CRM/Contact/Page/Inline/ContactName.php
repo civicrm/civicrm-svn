@@ -59,6 +59,13 @@ class CRM_Contact_Page_Inline_ContactName extends CRM_Core_Page {
     $title = CRM_Contact_Page_View::setTitle($contactId, $isDeleted); 
     $this->assign('title', $title);
 
+    // Check if this is default domain contact CRM-10482
+    if (CRM_Contact_BAO_Contact::checkDomainContact($contactId)) {
+      $this->assign('domainContact', TRUE);
+    } else {
+      $this->assign('domainContact', FALSE);      
+    }
+
     // check logged in user permission
     CRM_Contact_Page_View::checkUserPermission($this, $contactId);
  
