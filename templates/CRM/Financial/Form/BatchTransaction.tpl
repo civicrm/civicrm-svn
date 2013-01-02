@@ -312,11 +312,11 @@ function selectAction( id, toggleSelectId, checkId ) {
     return false;
   }
   else if (!cj("#" + toggleSelectId).is(':checked') && !cj("#" + checkId).is(':checked') && cj("#" + id).val() != "") {
-    CRM.alert ('Please select one or more contributions for this action.');
+    CRM.alert ({/literal}'{ts escape="js"}Please select one or more contributions for this action.{/ts}'{literal});
     return false;
   }
   else if (cj("#" + id).val() == "") {
-    CRM.alert ('Please select an action from the drop-down menu.');
+    CRM.alert ({/literal}'{ts escape="js"}Please select an action from the drop-down menu.{/ts}'{literal});
     return false;
   }
 }

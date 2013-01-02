@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.2                                                |
+ | CiviCRM version 4.3                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
@@ -23,8 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-  {include file="CRM/Financial/Form/Search.tpl"}
-  <script type="text/javascript">
-    cj().crmAccordions();
-  </script>
-
+{include file="CRM/Financial/Form/Search.tpl"}
+<script type="text/javascript">
+  cj().crmAccordions();
+</script>
