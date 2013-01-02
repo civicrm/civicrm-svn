@@ -1,16 +1,6 @@
 #!/usr/bin/env /bin/bash
 
-# define your database name here
-DBNAME='civicrm'
-
-DBUSER=""
-
-DBPASS=""
-
-DBARGS=""
-
-# define the root of your svn directory here
-SVNROOT='UNDEFINED'
+source `dirname $0`/setup.conf
 
 # someone might want to use empty password for development,
 # let's make it possible - we asked before.
