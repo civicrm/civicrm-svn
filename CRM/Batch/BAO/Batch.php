@@ -403,12 +403,12 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
         'export' =>  array(
           'name'  => ts('Export'),
           'url'   => 'civicrm/financial/batch/export',
-          'qs'    => 'reset=1&id=%%id%%',
+          'qs'    => 'reset=1&id=%%id%%&status=%%status%%',
           'title' => ts('Export Batch'),
         ),
         'reopen' =>  array(
-          'name'  => ts('ReOpen'),
-          'title' => ts('ReOpen Batch'),
+          'name'  => ts('Re-open'),
+          'title' => ts('Re-open Batch'),
           'url'   => '#',
           'extra' => 'rel="reopen"',
         ),
@@ -938,7 +938,7 @@ WHERE {$where}
    *
    * @return array array of batches
    */
-  static function getBatcheNames($batchIds) {
+  static function getBatchNames($batchIds) {
     $query = 'SELECT id, title
       FROM civicrm_batch
       WHERE id IN ('.$batchIds.')';

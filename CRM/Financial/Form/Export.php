@@ -77,9 +77,14 @@ class CRM_Financial_Form_Export extends CRM_Core_Form {
       $this->_batchIds = $this->_id;
     }
 
+    $status = CRM_Utils_Request::retrieve('status', 'Positive', $this);
+    $path = '';
+    if ($status) {
+      $path = "&batchStatus={$status}";
+    }
     $session = CRM_Core_Session::singleton();
     $session->replaceUserContext(CRM_Utils_System::url('civicrm/financial/financialbatches',
-      'reset=1&batchStatus=1'));
+      "reset=1{$path}"));
   }
   
   /**
@@ -91,7 +96,7 @@ class CRM_Financial_Form_Export extends CRM_Core_Form {
   function buildQuickForm() {
     // this mean it's a batch action
     if (!empty($this->_batchIds)) {
-      $batchNames = CRM_Batch_BAO_Batch::getBatcheNames($this->_batchIds);
+      $batchNames = CRM_Batch_BAO_Batch::getBatchNames($this->_batchIds);
       $this->assign( 'batchNames', $batchNames );
     }
 
