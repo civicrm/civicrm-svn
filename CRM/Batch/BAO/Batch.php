@@ -402,7 +402,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
         ),
         'export' =>  array(
           'name'  => ts('Export'),
-          'url'   => 'civicrm/financial/batch',
+          'url'   => 'civicrm/financial/batch/export',
           'qs'    => 'reset=1&action=export&id=%%id%%',
           'title' => ts('Export Batch'),
         ),
@@ -432,19 +432,19 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
           'name' => ts('Enter records'),
           'url' => 'civicrm/batch/entry',
           'qs' => 'id=%%id%%&reset=1',
-          'title' => ts('Batch Data Entry')
+          'title' => ts('Batch Data Entry'),
         ),
         CRM_Core_Action::UPDATE => array(
           'name' => ts('Edit'),
           'url' => 'civicrm/batch',
           'qs' => 'action=update&id=%%id%%&reset=1',
-          'title' => ts('Edit Batch')
+          'title' => ts('Edit Batch'),
         ),
         CRM_Core_Action::DELETE => array(
           'name' => ts('Delete'),
           'url' => 'civicrm/batch',
           'qs' => 'action=delete&id=%%id%%',
-          'title' => ts('Delete Batch')
+          'title' => ts('Delete Batch'),
         )
       );
     }
@@ -639,7 +639,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
             'name' => $exporter->format( $dao->from_account_name ),
             'account_code' => $exporter->format( $dao->from_account_code ),
             'description' => $exporter->format( $dao->from_account_description ),
-            'type' => $exporter->format( $dao->from_qb_account_type )
+            'type' => $exporter->format( $dao->from_qb_account_type ),
            );
         }
         if ( !empty( $dao->to_account_id ) && !isset( $accounts[$dao->to_account_id] ) ) {
@@ -647,7 +647,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
             'name' => $exporter->format( $dao->to_account_name ),
             'account_code' => $exporter->format( $dao->to_account_code ),
             'description' => $exporter->format( $dao->to_account_description ),
-            'type' => $exporter->format( $dao->to_qb_account_type )
+            'type' => $exporter->format( $dao->to_qb_account_type ),
           );
         }
 
@@ -656,7 +656,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
           $contacts[$dao->contact_from_id] = array(
             'name' => $exporter->format( $dao->contact_from_name ),
             'first_name' => $exporter->format( $dao->contact_from_first_name ),
-            'last_name' => $exporter->format( $dao->contact_from_last_name )
+            'last_name' => $exporter->format( $dao->contact_from_last_name ),
           );
         }
 
@@ -664,7 +664,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
           $contacts[$dao->contact_to_id] = array(
             'name' => $exporter->format( $dao->contact_to_name ),
             'first_name' => $exporter->format( $dao->contact_to_first_name ),
-            'last_name' => $exporter->format( $dao->contact_to_last_name )
+            'last_name' => $exporter->format( $dao->contact_to_last_name ),
           );
         }
 
@@ -676,7 +676,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
             'amount' => $exporter->format( $dao->debit_total_amount ),
             'contact_name' => $exporter->format( $dao->contact_to_name ),
             'payment_instrument' => $exporter->format( $dao->payment_instrument ),
-            'check_number' => $exporter->format( $dao->check_number )
+            'check_number' => $exporter->format( $dao->check_number ),
            ),
           'splits' => array(),
         );
@@ -724,7 +724,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
                 'name' => $exporter->format( $item_dao->account_name ),
                 'account_code' => $exporter->format( $item_dao->account_code ),
                 'description' => $exporter->format( $item_dao->account_description ),
-                'type' => $exporter->format( $item_dao->qb_account_type )
+                'type' => $exporter->format( $item_dao->qb_account_type ),
               );
             }
 
@@ -732,7 +732,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
               $contacts[$item_dao->contact_id] = array(
                 'name' => $exporter->format( $item_dao->contact_name ),
                 'first_name' => $exporter->format( $item_dao->contact_first_name ),
-                'last_name' => $exporter->format( $item_dao->contact_last_name )
+                'last_name' => $exporter->format( $item_dao->contact_last_name ),
               );
             }
 
@@ -743,7 +743,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
               'amount' => $exporter->format( (-1) * $item_dao->amount ),
               'contact_name' => $exporter->format( $item_dao->contact_name ),
               'payment_instrument' => $exporter->format( $item_dao->payment_instrument ),
-              'check_number' => $exporter->format( $item_dao->check_number )
+              'check_number' => $exporter->format( $item_dao->check_number ),
             );
           } // end items loop
           $item_dao->free();
@@ -757,7 +757,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
             'contact_name' => $exporter->format( $dao->contact_from_name ),
             'payment_instrument' => $exporter->format( $item_dao->payment_instrument ),
             'check_number' => $exporter->format( $item_dao->check_number ),
-            'currency' => $exporter->format( $item_dao->currency )
+            'currency' => $exporter->format( $item_dao->currency ),
           );
         }
       }
@@ -799,11 +799,10 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
    * @return Object
    */
   static function getBatchFinancialItems($entityID, $returnValues, $notPresent = NULL, $params = NULL, $getCount = FALSE) {
-
     if (!$getCount) {
       if (!empty($params['rowCount']) &&
-          $params['rowCount'] > 0
-          ) {
+        $params['rowCount'] > 0
+      ) {
         $limit = " LIMIT {$params['offset']}, {$params['rowCount']} ";
       }
     }
@@ -818,7 +817,6 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
       $orderBy = ' ORDER BY ' . CRM_Utils_Array::value('sort', $params);
     }
 
-
     $from = "civicrm_financial_trxn
 LEFT JOIN civicrm_entity_financial_trxn ON civicrm_entity_financial_trxn.financial_trxn_id = civicrm_financial_trxn.id
 LEFT JOIN civicrm_entity_batch ON civicrm_entity_batch.entity_id = civicrm_financial_trxn.id
@@ -829,36 +827,37 @@ LEFT JOIN civicrm_contact contact_a ON contact_a.id = civicrm_contribution.conta
 LEFT JOIN civicrm_contribution_soft ON civicrm_contribution_soft.contribution_id = civicrm_contribution.id
 ";
 
-    $searchFields = 
+    $searchFields =
       array(
-            'sort_name',
-            'financial_type_id',
-            'contribution_page_id',
-            'contribution_payment_instrument_id',
-            'contribution_transaction_id',
-            'contribution_source',
-            'contribution_currency_type',
-            'contribution_pay_later',
-            'contribution_recurring',
-            'contribution_test',
-            'contribution_thankyou_date_is_not_null',
-            'contribution_receipt_date_is_not_null',
-            'contribution_pcp_made_through_id',
-            'contribution_pcp_display_in_roll',
-            'contribution_date_relative',
-            'contribution_amount_low',
-            'contribution_amount_high',
-            'contribution_in_honor_of',
-            'contact_tags',
-            'group',
-            'contribution_date_relative'
-            );
+        'sort_name',
+        'financial_type_id',
+        'contribution_page_id',
+        'contribution_payment_instrument_id',
+        'contribution_transaction_id',
+        'contribution_source',
+        'contribution_currency_type',
+        'contribution_pay_later',
+        'contribution_recurring',
+        'contribution_test',
+        'contribution_thankyou_date_is_not_null',
+        'contribution_receipt_date_is_not_null',
+        'contribution_pcp_made_through_id',
+        'contribution_pcp_display_in_roll',
+        'contribution_date_relative',
+        'contribution_amount_low',
+        'contribution_amount_high',
+        'contribution_in_honor_of',
+        'contact_tags',
+        'group',
+        'contribution_date_relative',
+      );
     $values = array();
     foreach ($searchFields as $field) {
       if (isset($params[$field])) {
         $values[$field] = $params[$field];
         if ($field == 'sort_name') {
-          $from .= " LEFT JOIN civicrm_contact contact_b ON contact_b.id = civicrm_contribution.contact_id LEFT JOIN civicrm_email ON contact_b.id = civicrm_email.contact_id";
+          $from .= " LEFT JOIN civicrm_contact contact_b ON contact_b.id = civicrm_contribution.contact_id
+          LEFT JOIN civicrm_email ON contact_b.id = civicrm_email.contact_id";
         }
         
         if ($field == 'contact_tags') {
@@ -875,28 +874,35 @@ LEFT JOIN civicrm_contribution_soft ON civicrm_contribution_soft.contribution_id
         }
         $searchParams = CRM_Contact_BAO_Query::convertFormValues($values);
         $query = new CRM_Contact_BAO_Query($searchParams,
-                                           CRM_Contribute_BAO_Query::defaultReturnProperties(CRM_Contact_BAO_Query::MODE_CONTRIBUTE,
-                                                                                             FALSE
-                                                                                             ),NULL, FALSE, FALSE,CRM_Contact_BAO_Query::MODE_CONTRIBUTE
-                                           );
+          CRM_Contribute_BAO_Query::defaultReturnProperties(CRM_Contact_BAO_Query::MODE_CONTRIBUTE,
+            FALSE
+          ),NULL, FALSE, FALSE,CRM_Contact_BAO_Query::MODE_CONTRIBUTE
+        );
       }
     }
     if (!empty($query->_where[0])) {
-      $where = implode(' AND ', $query->_where[0])." AND civicrm_financial_trxn.status_id = 1 AND civicrm_entity_batch.batch_id IS NULL AND civicrm_entity_financial_trxn.entity_table = 'civicrm_contribution'";
+      $where = implode(' AND ', $query->_where[0])." AND civicrm_financial_trxn.status_id = 1
+      AND civicrm_entity_batch.batch_id IS NULL
+      AND civicrm_entity_financial_trxn.entity_table = 'civicrm_contribution'";
       $searchValue = TRUE;
     }
     else {
       $searchValue = FALSE;
     }
- 
+
     if (!$searchValue) {
       if (!$notPresent) {
-        $where =  " ( civicrm_entity_batch.batch_id = {$entityID} AND civicrm_entity_batch.entity_table = 'civicrm_financial_trxn' AND civicrm_entity_financial_trxn.entity_table = 'civicrm_contribution') ";
-      } else {
-        $where = "( civicrm_financial_trxn.status_id = 1 AND civicrm_entity_batch.batch_id IS NULL AND civicrm_entity_financial_trxn.entity_table = 'civicrm_contribution')";
+        $where =  " ( civicrm_entity_batch.batch_id = {$entityID}
+        AND civicrm_entity_batch.entity_table = 'civicrm_financial_trxn'
+        AND civicrm_entity_financial_trxn.entity_table = 'civicrm_contribution') ";
+      }
+      else {
+        $where = " ( civicrm_financial_trxn.status_id = 1
+        AND civicrm_entity_batch.batch_id IS NULL
+        AND civicrm_entity_financial_trxn.entity_table = 'civicrm_contribution')";
       }
     }
- 
+
     $sql = "SELECT {$select}
 FROM {$from}
 WHERE {$where}

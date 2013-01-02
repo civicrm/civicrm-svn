@@ -58,9 +58,13 @@ class CRM_Financial_Form_Export extends CRM_Core_Form {
   function preProcess() {
     $this->_id = CRM_Utils_Request::retrieve('id', 'Positive', $this);
     //check for delete
-    if ( !CRM_Core_Permission::checkActionPermission( 'CiviContribute', CRM_Core_Action::UPDATE ) ) {
-      CRM_Core_Error::fatal( ts( 'You do not have permission to access this page' ) );  
+    if (!CRM_Core_Permission::checkActionPermission('CiviContribute', CRM_Core_Action::UPDATE)) {
+      CRM_Core_Error::fatal(ts('You do not have permission to access this page'));
     }
+
+    $session = CRM_Core_Session::singleton();
+    $session->replaceUserContext(CRM_Utils_System::url('civicrm/financial/financialbatches',
+      'reset=1&batchStatus=1'));
   }
   
   /**

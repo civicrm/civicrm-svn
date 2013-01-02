@@ -24,7 +24,11 @@
  +--------------------------------------------------------------------+
 *}
 {* Confirmation of Export Batch(s)  *}
-
+<h3>{ts}Export Batch{/ts}</h3>
+<div class="messages status">
+  <div class="icon inform-icon"></div>
+  {ts}Warning: You will not be able to reopen or change the batch after it is exported. Are you sure you want to export?{/ts}
+</div>
 <div class = "batch-names">
   <ul>
   {foreach from=$batchNames item=batchName}

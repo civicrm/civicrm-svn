@@ -54,7 +54,6 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
    * @return void
    * @access public
    */
-
   public function preProcess() {
     $context = CRM_Utils_Request::retrieve('context', 'String', $this);
     $this->set("context", $context);
@@ -66,21 +65,15 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
         CRM_Core_Action::UPDATE => array(
           'permission' => array(
             'edit own manual batches',
-            'edit all manual batches'
+            'edit all manual batches',
           ),
           'actionName' => 'edit'),
-        CRM_Core_Action::EXPORT => array(
-          'permission' => array(
-            'export own manual batches',
-            'export all manual batches'
-          ),
-          'actionName' => 'export'),
         CRM_Core_Action::DELETE => array(
           'permission' => array(
             'delete own manual batches',
-            'delete all manual batches'
+            'delete all manual batches',
           ),
-          'actionName' => 'delete')
+          'actionName' => 'delete'),
       );
 
       $createdID = CRM_Core_DAO::getFieldValue('CRM_Batch_DAO_Batch', $this->_id, 'created_id');
@@ -121,28 +114,18 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
       elseif ($this->_action & CRM_Core_Action::REOPEN) {
         $buttonName = ts('ReOpen Batch');
       }
-      elseif ($this->_action & CRM_Core_Action::EXPORT) {
-        $optionTypes = array(
-          'IIF' => ts('Export to IIF'),
-          'CSV' => ts('Export to CSV'),
-        );
-        $element = &$this->addRadio('export_format', NULL, $optionTypes, NULL, '<br/>', TRUE);
-        $this->setdefaults(array(
-          'export_format' => 'IIF'
-        ));
-        $buttonName = ts('Export Batch');
-      }
+
       $this->addButtons(
         array(
           array(
             'type' => 'next',
             'name' => $buttonName,
             'spacing' => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
-            'isDefault' => true
+            'isDefault' => true,
           ),
           array(
             'type' => 'cancel',
-            'name' => ts('Cancel')
+            'name' => ts('Cancel'),
           ),
         )
       );
@@ -166,8 +149,8 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
         ),
         array(
           'type' => 'cancel',
-          'name' => ts('Cancel')
-        )
+          'name' => ts('Cancel'),
+        ),
       )
     );
 
@@ -266,9 +249,6 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
       $ids['batchID'] = $this->_id;
       $params['id'] = $this->_id;
     }
-    if ($this->_action & CRM_Core_Action::EXPORT) {
-      $params['status_id'] = CRM_Utils_Array::key('Exported', $batchStatus);
-    }
 
     // store the submitted values in an array
     $params['modified_date'] = date('YmdHis');
@@ -295,28 +275,23 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
     }
 
     $batch = CRM_Batch_BAO_Batch::create($params, $ids, $context='financialBatch');
-    
-    if ($this->_action & CRM_Core_Action::EXPORT) {
-      CRM_Batch_BAO_Batch::exportFinancialBatch($ids, $params['export_format']);
-    }
-    else {
-      $activityTypes = CRM_Core_PseudoConstant::activityType(TRUE, FALSE, FALSE, 'name');
-      $subject = CRM_Utils_Array::value('name', $params, FALSE) ? 
-        $params['name'] : CRM_Utils_String::titleToVar($params['title']);
 
-      //create activity.
-      $activityParams = array(
-        'activity_type_id' => array_search($activityTypeName, $activityTypes),
-        'subject' => $subject ."- Batch",
-        'status_id' => 2,
-        'priority_id' => 2,
-        'activity_date_time' => date('YmdHis'),
-        'source_contact_id' => $session->get('userID'),
-        'source_contact_qid' => $session->get('userID'),
-        'details' => $details,
-      );
-      $activity = CRM_Activity_BAO_Activity::create($activityParams);
-    }
+    $activityTypes = CRM_Core_PseudoConstant::activityType(TRUE, FALSE, FALSE, 'name');
+    $subject = CRM_Utils_Array::value('name', $params, FALSE) ?
+      $params['name'] : CRM_Utils_String::titleToVar($params['title']);
+
+    //create activity.
+    $activityParams = array(
+      'activity_type_id' => array_search($activityTypeName, $activityTypes),
+      'subject' => $subject ."- Batch",
+      'status_id' => 2,
+      'priority_id' => 2,
+      'activity_date_time' => date('YmdHis'),
+      'source_contact_id' => $session->get('userID'),
+      'source_contact_qid' => $session->get('userID'),
+      'details' => $details,
+    );
+    CRM_Activity_BAO_Activity::create($activityParams);
 
     $buttonName = $this->controller->getButtonName();
 
@@ -327,7 +302,7 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
     }
     if ($buttonName == $this->getButtonName('next', 'new') & $this->_action == CRM_Core_Action::UPDATE) {
       $session->replaceUserContext(CRM_Utils_System::url('civicrm/financial/batch',
-                                                         "reset=1&action=add&context=open"));
+        "reset=1&action=add&context=open"));
     }
     elseif ($buttonName == $this->getButtonName('next', 'new')) {
       $session->replaceUserContext(CRM_Utils_System::url('civicrm/financial/batch',
@@ -336,10 +311,10 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
     elseif (CRM_Utils_Array::value($batch->status_id, $batchStatus) == 'Closed') {
       $session->replaceUserContext(CRM_Utils_System::url('civicrm', 'reset=1'));
     }
-    elseif (($buttonName == $this->getButtonName('next') & $this->_action == CRM_Core_Action::UPDATE) || 
-            ($buttonName == $this->getButtonName('next') & $this->_action == CRM_Core_Action::ADD & $context == 'open' )) {
+    elseif (($buttonName == $this->getButtonName('next') & $this->_action == CRM_Core_Action::UPDATE) ||
+      ($buttonName == $this->getButtonName('next') & $this->_action == CRM_Core_Action::ADD & $context == 'open' )) {
       $session->replaceUserContext(CRM_Utils_System::url('civicrm/financial/financialbatches',
-                                                           "reset=1&batchStatus=1"));
+        "reset=1&batchStatus=1"));
     }
     else {
       $session->replaceUserContext(CRM_Utils_System::url('civicrm/batchtransaction',

@@ -24,17 +24,17 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing/deleting financial type  *}
-<h3>{if $action eq 8}{ts}Delete Batch{/ts} - {$batchTitle}{elseif $action eq 1}{ts}Add New Batch{/ts}{elseif $action eq 2}{ts}Edit Batch{/ts} - {$batchTitle}{elseif $action eq 262144}{ts}Close Batch{/ts} - {$batchTitle}{elseif $action eq 128}{ts}Export Batch{/ts} - {$batchTitle}{/if}</h3>
+<h3>{if $action eq 8}
+  {ts}Delete Batch{/ts} - {$batchTitle}
+  {elseif $action eq 1}
+  {ts}Add New Batch{/ts}
+  {elseif $action eq 2}
+  {ts}Edit Batch{/ts} - {$batchTitle}
+  {elseif $action eq 262144}
+  {ts}Close Batch{/ts} - {$batchTitle}
+  {/if}
+</h3>
 <div class="crm-block crm-form-block crm-financial_type-form-block">
-{if $action eq 128}
-<table class="form-layout">
-  <tr class="crm-contribution-form-block-name">
-    <td class="html-adjust">
-     {$form.export_format.html}
-    </td>
-  </tr>
-</table>
-{/if}
 {if $action eq 8}
   <div class="messages status">
     <div class="icon inform-icon"></div>
@@ -49,11 +49,6 @@
   <div class="messages status">
     <div class="icon inform-icon"></div>
     {ts}WARNING: You will not be able to change the batch after it is closed. Are you sure you want to close this batch?{/ts}
-  </div>
-{elseif $action eq 128}
-  <div class="messages status">
-    <div class="icon inform-icon"></div>
-    {ts}Warning: You will not be able to reopen or change the batch after it is exported. Are you sure you want to export this batch?{/ts}
   </div>
 {else}
   <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
