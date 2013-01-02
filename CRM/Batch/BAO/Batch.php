@@ -882,7 +882,7 @@ LEFT JOIN civicrm_contribution_soft ON civicrm_contribution_soft.contribution_id
       }
     }
     if (!empty($query->_where[0])) {
-      $where = implode(' AND ', $query->_where[0])." AND civicrm_entity_financial_trxn.entity_table = 'civicrm_contribution'";
+      $where = implode(' AND ', $query->_where[0])." AND civicrm_financial_trxn.status_id = 1 AND civicrm_entity_batch.batch_id IS NULL AND civicrm_entity_financial_trxn.entity_table = 'civicrm_contribution'";
       $searchValue = TRUE;
     }
     else {

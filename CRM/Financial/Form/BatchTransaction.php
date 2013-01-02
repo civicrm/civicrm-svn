@@ -143,6 +143,15 @@ class CRM_Financial_Form_BatchTransaction extends CRM_Contribute_Form {
     $this->add('text', 'name', ts('Batch Name'));
   }
 
+  function setDefaultValues() {
+    if (isset(self::$_entityID)) {
+      $paymentInstrumentID = CRM_Core_DAO::getFieldValue('CRM_Batch_BAO_Batch', self::$_entityID, 'payment_instrument_id');
+      $defaults['contribution_payment_instrument_id'] = $paymentInstrumentID;
+      $this->assign('paymentInstrumentID', $paymentInstrumentID);
+    }
+    return $defaults;
+  }
+
   function &links() {
     if (!(self::$_links)) {
       self::$_links = array(

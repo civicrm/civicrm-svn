@@ -135,9 +135,12 @@ function saveRecord(recordID, op, recordBAO, entityID) {
     responseFromServer = true;      
     //this is custom status set when record update success.
     if (html.status == 'record-updated-success') {
-       buildTransactionSelectorAssign( false );
+       buildTransactionSelectorAssign( true );
        buildTransactionSelectorRemove();
        batchSummary(entityID);	
+    }
+    else {
+      CRM.alert(html.status);
     } 
   }, 'json');
 

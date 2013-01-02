@@ -1747,7 +1747,8 @@ WHERE cefa.account_relationship = 1";
         'currency' => $result->currency,
         'status_id' => 1,
         'contribution_id' => $result->contribution_id,
-        'to_financial_account_id' => $result->payment_instrument_id ? $financialAccountId[$result->payment_instrument_id] : $defaultFinancialAccount
+        'to_financial_account_id' => $result->payment_instrument_id ? $financialAccountId[$result->payment_instrument_id] : $defaultFinancialAccount,
+        'payment_instrument_id' => $result->payment_instrument_id,
       );
       $trxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
       $financialItem = array(

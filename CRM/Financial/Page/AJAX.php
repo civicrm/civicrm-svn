@@ -220,12 +220,20 @@ ORDER by f.name";
         switch ($op) {
           case 'assign':
           case 'remove':
-            $params = array('entity_id' => $recordID,
-              'entity_table' => 'civicrm_financial_trxn',
-              'batch_id' => $entityID,
-            );
+            $recordPID = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_FinancialTrxn', $recordID, 'payment_instrument_id');
+            $batchPID = CRM_Core_DAO::getFieldValue('CRM_Batch_DAO_Batch', $entityID, 'payment_instrument_id');
+            $paymentInstrument =  CRM_Core_OptionGroup::getLabel('payment_instrument',$batchPID);
+            if ($recordPID == $batchPID) {
+              $params = array(
+                          'entity_id' => $recordID,
+                          'entity_table' => 'civicrm_financial_trxn',
+                          'batch_id' => $entityID,
+                        );
+            }
+            else {
+              $response = array('status' => ts("This batch is configured to include only transactions using {$paymentInstrument} payment method. If you want to include other transactions, please edit the batch first and modify the Payment Method."));
+            }
             break;
-
           case 'close':
             // Update totals when closing a batch
             $params = $totals[$recordID];
@@ -247,7 +255,7 @@ ORDER by f.name";
             break;
         }
 
-        if (method_exists($recordBAO, $methods[$op])) {
+        if (method_exists($recordBAO, $methods[$op]) & !empty($params)) {
           $updated = call_user_func_array(array($recordBAO, $methods[$op]), array(&$params, $ids, $context));
           if ($updated) {
             $response = array('status' => 'record-updated-success');

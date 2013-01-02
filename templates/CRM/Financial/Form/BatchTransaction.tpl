@@ -115,7 +115,13 @@
 <script type="text/javascript">
 cj( function() {
     cj().crmAccordions();
-    buildTransactionSelectorAssign( false );
+    var paymentInstrumentID = {/literal}{if $paymentInstrumentID neq null}{$paymentInstrumentID}{else}'null'{/if}{literal};
+    if (paymentInstrumentID != 'null') {
+      buildTransactionSelectorAssign( true );
+    }
+    else {
+      buildTransactionSelectorAssign( false );
+    }
     buildTransactionSelectorRemove();	
     cj('#_qf_BatchTransaction_submit-botttom, #_qf_BatchTransaction_submit-top').click( function() {
 	  buildTransactionSelectorAssign( true );
@@ -183,7 +189,6 @@ function enableActions( type ) {
 
 function buildTransactionSelectorAssign( filterSearch ) {
   if ( filterSearch ) {
-    crmBatchSelector1.fnDestroy();
     var ZeroRecordText = '<div class="status messages">{/literal}{ts escape="js"}No Contributions found for your search criteria.{/ts}{literal}</li></ul></div>';
   }
     var columns = '';
@@ -340,7 +345,7 @@ function bulkAssignRemove( action ) {
   cj.post(postUrl, { ID: fids, action:action }, function(data) {     
     //this is custom status set when record update success.
     if (data.status == 'record-updated-success') {
-      buildTransactionSelectorAssign( false );
+      buildTransactionSelectorAssign( true );
       buildTransactionSelectorRemove();
       batchSummary({/literal}{$entityID}{literal});		
     }
