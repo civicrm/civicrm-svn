@@ -201,6 +201,14 @@ cj(function($) {
     }
   }
 
+  function exportRecords(records, op) {
+    records = validateOp(records, op);
+    if (records.length) {
+      var exportUrl = {/literal}'{crmURL p='civicrm/financial/batch/export' h=0 q='reset=1'}'{literal};
+      cj().redirect(exportUrl, {'batch_id': records});
+    }
+  }
+
   function listRecords(records, compareValues) {
     var txt = '<ul>',
     mismatch = false;
@@ -298,6 +306,14 @@ cj(function($) {
         records.push($(this).attr('id').replace('check_', ''));
       });
       editRecords(records, op);
+      return false;
+    }
+    else if (op == 'export') {
+      records = [];
+      $("input.crm-batch-select:checked").each(function() {
+        records.push($(this).attr('id').replace('check_', ''));
+      });
+      exportRecords(records, op);
       return false;
     }
   });

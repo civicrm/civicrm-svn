@@ -81,6 +81,8 @@
 
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.notify.js"></script>
 
+<script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.redirect.min.js"></script>
+
 {* CRM-6819: localize datepicker *}
 {if $l10nURL}
   <script type="text/javascript" src="{$l10nURL}"></script>

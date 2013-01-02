@@ -403,7 +403,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
         'export' =>  array(
           'name'  => ts('Export'),
           'url'   => 'civicrm/financial/batch/export',
-          'qs'    => 'reset=1&action=export&id=%%id%%',
+          'qs'    => 'reset=1&id=%%id%%',
           'title' => ts('Export Batch'),
         ),
         'reopen' =>  array(
@@ -534,9 +534,13 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
    * @see http://wiki.civicrm.org/confluence/display/CRM/CiviAccounts+Specifications+-++Batches#CiviAccountsSpecifications-Batches-%C2%A0Overviewofimplementation
    */
   static function exportFinancialBatch($batchIds, $exportFormat) {
-    //TEST
+    if (empty($batchIds)) {
+      CRM_Core_Error::fatal(ts('No batches were selected.'));
+      return;
+    }
+
     self::$_exportFormat = $exportFormat;
-    //ENDTEST
+
     // Instantiate appropriate exporter based on user-selected format.
     $exporterClass = "CRM_Financial_BAO_ExportFormat_" . self::$_exportFormat;
     if ( class_exists( $exporterClass ) ) {
@@ -546,7 +550,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
       CRM_Core_Error::fatal("Could not locate exporter: $exporterClass");
     }
 
-    $id_list = implode(',', $batchIds);
+    $batchIds = implode(',', $batchIds);
 
     $sql = "SELECT
       ft.id as financial_trxn_id,
@@ -600,7 +604,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
       LEFT JOIN civicrm_contact contact_to ON contact_to.id = fa_to.contact_id
       WHERE eb.batch_id IN ( %1 )";
 
-    $params = array( 1 => array( $id_list, 'String' ) );
+    $params = array(1 => array($batchIds, 'String'));
 
     // Keep running list of accounts and contacts used in this batch, since we need to
     // include those in the output. Only want to include ones used in the batch, not everything in the db,
@@ -632,7 +636,6 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
     }
     else {
       while ( $dao->fetch() ) {
-
         // add to running list of accounts
         if ( !empty( $dao->from_account_id ) && !isset( $accounts[$dao->from_account_id] ) ) {
           $accounts[$dao->from_account_id] = array(
@@ -919,5 +922,24 @@ WHERE {$where}
  
     $result = CRM_Core_DAO::executeQuery($sql);
     return $result;
+  }
+
+  /**
+   * function to get batch names
+   * @param string $batchIds
+   *
+   * @return array array of batches
+   */
+  static function getBatcheNames($batchIds) {
+    $query = 'SELECT id, title
+      FROM civicrm_batch
+      WHERE id IN ('.$batchIds.')';
+
+    $batches = array();
+    $dao = CRM_Core_DAO::executeQuery($query);
+    while ( $dao->fetch( ) ) {
+      $batches[$dao->id] = $dao->title;
+    }
+    return $batches;
   }
 }

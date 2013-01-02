@@ -140,15 +140,18 @@ class CRM_Financial_BAO_ExportFormat {
   static function createActivityExport($batchIds, $fileName) {
     $session = CRM_Core_Session::singleton();
     $values = array();
-    $params = array(
-      'id' => $batchIds,
-    );
+    $params = array('id' => $batchIds);
     CRM_Batch_BAO_Batch::retrieve($params, $values);
+
     $createdBy = CRM_Contact_BAO_Contact::displayName($values['created_id']);
     $modifiedBy = CRM_Contact_BAO_Contact::displayName($values['modified_id']);
-    $paymentInstrument = array_flip(CRM_Contribute_PseudoConstant::paymentInstrument('label'));
-    $values['payment_instrument_id'] = isset($values['payment_instrument_id']) ? $values['payment_instrument_id'] : NULL ;
-    $details = '<p>' . ts('Record: ') . $values['title'] . '</p><p>' . ts('Description: ') . $values['description'] . '</p><p>' . ts('Created By: ') . $createdBy . '</p><p>' . ts('Created Date: ') . $values['created_date'] . '</p><p>' . ts('Last Modified By: ') . $modifiedBy . '</p><p>' . ts('Payment Instrument: ') . array_search($values['payment_instrument_id'], $paymentInstrument) . '</p>';
+
+    $values['payment_instrument_id'] = '';
+    if (isset($values['payment_instrument_id'])) {
+      $paymentInstrument = array_flip(CRM_Contribute_PseudoConstant::paymentInstrument('label'));
+      $values['payment_instrument_id'] = array_search($values['payment_instrument_id'], $paymentInstrument);
+    }
+    $details = '<p>' . ts('Record: ') . $values['title'] . '</p><p>' . ts('Description: ') . $values['description'] . '</p><p>' . ts('Created By: ') . $createdBy . '</p><p>' . ts('Created Date: ') . $values['created_date'] . '</p><p>' . ts('Last Modified By: ') . $modifiedBy . '</p><p>' . ts('Payment Instrument: ') . $values['payment_instrument_id'] . '</p>';
 
     //create activity. 
     $activityTypes = CRM_Core_PseudoConstant::activityType(TRUE, FALSE, FALSE, 'name');

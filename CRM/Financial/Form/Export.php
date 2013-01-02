@@ -48,7 +48,12 @@ class CRM_Financial_Form_Export extends CRM_Core_Form {
    * @access protected
    */
   protected $_id;
-  
+
+  /**
+   * Financial batch ids
+   */
+  protected $_batchIds = array();
+
   /**
    * build all the data structures needed to build the form
    *
@@ -57,9 +62,19 @@ class CRM_Financial_Form_Export extends CRM_Core_Form {
    */
   function preProcess() {
     $this->_id = CRM_Utils_Request::retrieve('id', 'Positive', $this);
-    //check for delete
-    if (!CRM_Core_Permission::checkActionPermission('CiviContribute', CRM_Core_Action::UPDATE)) {
-      CRM_Core_Error::fatal(ts('You do not have permission to access this page'));
+
+    // this mean it's a batch action
+    if (!$this->_id ) {
+      if (!empty($_POST['batch_id'])) {
+        $this->_batchIds = $_POST['batch_id'];
+        $this->set('batchIds', $this->_batchIds);
+      }
+      else {
+        $this->_batchIds = $this->get('batchIds');
+      }
+    }
+    else {
+      $this->_batchIds = $this->_id;
     }
 
     $session = CRM_Core_Session::singleton();
@@ -74,12 +89,11 @@ class CRM_Financial_Form_Export extends CRM_Core_Form {
    * @return void
    */
   function buildQuickForm() {
-    /*
-    foreach ( $this->_financialBatchIds as $financialBatchId )
-      $batchNames[] = CRM_Core_DAO::getFieldValue( 'CRM_Batch_DAO_Batch', $financialBatchId, 'name' );
-    $this->assign( 'batchNames', $batchNames );
-    $this->assign( 'batchCount', count( $this->_financialBatchIds ) );
-    */
+    // this mean it's a batch action
+    if (!empty($this->_batchIds)) {
+      $batchNames = CRM_Batch_BAO_Batch::getBatcheNames($this->_batchIds);
+      $this->assign( 'batchNames', $batchNames );
+    }
 
     $optionTypes = array(
       'IIF' => ts('Export to IIF'),
@@ -95,7 +109,7 @@ class CRM_Financial_Form_Export extends CRM_Core_Form {
           'type' => 'next',
           'name' => ts('Export Batch'),
           'spacing' => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
-          'isDefault' => true,
+          'isDefault' => TRUE,
         ),
         array(
           'type' => 'cancel',
@@ -115,20 +129,13 @@ class CRM_Financial_Form_Export extends CRM_Core_Form {
     $params = $this->exportValues();
 
     if ($this->_id) {
-      $ids['batchID'] = $this->_id;
-      $params['id'] = $this->_id;
+      $batchIds = array($this->_id);
+    }
+    else if (!empty($this->_batchIds)) {
+      $batchIds = explode(',', $this->_batchIds);
     }
 
-    // store the submitted values in an array
-    $session = CRM_Core_Session::singleton();
-    $params['modified_date'] = date('YmdHis');
-    $params['modified_id'] = $session->get('userID');
-    if (CRM_Utils_Array::value('created_date', $params)) {
-      $params['created_date'] = CRM_Utils_Date::processDate($params['created_date']);
-    }
-    $batchStatus = CRM_Core_PseudoConstant::accountOptionValues('batch_status');
-    $params['status_id'] = CRM_Utils_Array::key('Exported', $batchStatus);
-    CRM_Batch_BAO_Batch::exportFinancialBatch($ids, $params['export_format']);
+    CRM_Batch_BAO_Batch::exportFinancialBatch($batchIds, $params['export_format']);
   }
 }
 
