@@ -142,14 +142,14 @@ cj( function() {
   cj('#Go').click( function() {
     if (cj("#trans_assign" ).val() != "" && cj("input[id^='mark_x_']").is(':checked')) {
       bulkAssignRemove('Assign');
-      return false;
     }
+    return false;
   });
   cj('#GoRemove').click( function() {
     if (cj("#trans_remove" ).val() != "" && cj("input[id^='mark_y_']").is(':checked')) {
       bulkAssignRemove('Remove');
-      return false;
     }
+    return false;
   });
   cj("#crm-transaction-selector-assign input[id^='mark_x_']").click( function() {
     enableActions('x');
