@@ -146,6 +146,8 @@ class CRM_Financial_BAO_ExportFormat {
     CRM_Batch_BAO_Batch::retrieve($params, $values);
     $createdBy = CRM_Contact_BAO_Contact::displayName($values['created_id']);
     $modifiedBy = CRM_Contact_BAO_Contact::displayName($values['modified_id']);
+
+    $values['payment_instrument_id'] = '';
     if (isset($values['payment_instrument_id'])) {
       $paymentInstrument = array_flip(CRM_Contribute_PseudoConstant::paymentInstrument('label'));
       $values['payment_instrument_id'] = array_search($values['payment_instrument_id'], $paymentInstrument);
