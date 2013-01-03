@@ -151,6 +151,69 @@ class api_v3_UFFieldTest extends CiviUnitTestCase {
     $this->assertAPISuccess($result, 0, 'in line' . __LINE__);
     $this->getAndCheck($this->_params, $result['id'], $this->_entity);
   }
+  /**
+   * create / updating field
+   */
+  public function testReplaceUFFields() {
+    $baseFields = array();
+    $baseFields[] = array(
+      'field_name' => 'first_name',
+      'field_type' => 'Contact',
+      'visibility' => 'Public Pages and Listings',
+      'weight' => 3,
+      'label' => 'Test First Name',
+      'is_searchable' => 1,
+      'is_active' => 1,
+    );
+    $baseFields[] = array(
+      'field_name' => 'country',
+      'field_type' => 'Contact',
+      'visibility' => 'Public Pages and Listings',
+      'weight' => 2,
+      'label' => 'Test Country',
+      'is_searchable' => 1,
+      'is_active' => 1,
+      'location_type_id' => 1,
+    );
+    $baseFields[] = array(
+      'field_name' => 'phone',
+      'field_type' => 'Contact',
+      'visibility' => 'Public Pages and Listings',
+      'weight' => 1,
+      'label' => 'Test Phone',
+      'is_searchable' => 1,
+      'is_active' => 1,
+      'location_type_id' => 1,
+      'phone_type_id' => 1,
+    );
+
+    $params = array(
+      'version' => $this->_apiversion,
+      'uf_group_id' => $this->_ufGroupId,
+      'values' => $baseFields,
+    );
+
+    $result = civicrm_api('uf_field', 'replace', $params);
+    var_dump($result);
+    $this->assertAPISuccess($result);
+    $this->documentMe($params, $result, __FUNCTION__, __FILE__);
+    $inputsByName = CRM_Utils_Array::index(array('field_name'), $params['values']);
+    $this->assertEquals(count($params['values']), count($result['values']));
+    foreach ($result['values'] as $outUfField) {
+      $this->assertTrue(is_string($outUfField['field_name']));
+      $inUfField = $inputsByName[$outUfField['field_name']];
+      foreach ($inUfField as $key => $inValue) {
+        $this->assertEquals($inValue, $outUfField[$key],
+          sprintf("field_name=[%s] key=[%s] expected=[%s] actual=[%s]",
+            $outUfField['field_name'],
+            $key,
+            $inValue,
+            $outUfField[$key]
+          )
+        );
+      }
+    }
+  }
 
   /**
    * FIXME: something NULLs $GLOBALS['_HTML_QuickForm_registered_rules'] when the tests are ran all together
