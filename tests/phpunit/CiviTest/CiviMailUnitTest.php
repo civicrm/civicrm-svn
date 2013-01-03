@@ -43,7 +43,7 @@
 require_once 'ezc/Base/src/ezc_bootstrap.php';
 require_once 'ezc/autoload/mail_autoload.php';
 
-class CiviMailUnitTest {
+class CiviMailUnitTest extends PHPUnit_Framework_TestCase {
 
   /*
    * current outbound email option
