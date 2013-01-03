@@ -152,14 +152,20 @@ class CRM_Financial_BAO_ExportFormat {
       $paymentInstrument = array_flip(CRM_Contribute_PseudoConstant::paymentInstrument('label'));
       $values['payment_instrument_id'] = array_search($values['payment_instrument_id'], $paymentInstrument);
     }
-
-    $details = '<p>' . ts('Record: ') . $values['title'] . '</p><p>' . ts('Description: ') . CRM_Utils_Array::value('description', $values) . '</p><p>' . ts('Created By: ') . $createdBy . '</p><p>' . ts('Created Date: ') . $values['created_date'] . '</p><p>' . ts('Last Modified By: ') . $modifiedBy . '</p><p>' . ts('Payment Instrument: ') . $values['payment_instrument_id'] . '</p>';
-
+    $details = '<p>' . ts('Record: ') . $values['title'] . '</p><p>' . ts('Description: ') . '</p><p>' . ts('Created By: ') . $createdBy . '</p><p>' . ts('Created Date: ') . $values['created_date'] . '</p><p>' . ts('Last Modified By: ') . $modifiedBy . '</p><p>' . ts('Payment Instrument: ') . $values['payment_instrument_id'] . '</p>';
+    $subject = '';
+    if (CRM_Utils_Array::value('total', $values)) {
+      $subject .= 'Total ['. $values['total'] .'],';
+    }
+    if (CRM_Utils_Array::value('item_count', $values)) {
+      $subject .= 'Count ['. $values['item_count'] .'],';
+    }
     //create activity.
+    $subject .=  ' Batch ['. $values['title'] .']';
     $activityTypes = CRM_Core_PseudoConstant::activityType(TRUE, FALSE, FALSE, 'name');
     $activityParams = array(
-      'activity_type_id' => array_search('Export of Financial Transactions Batch', $activityTypes),
-      'subject' => 'Total ['. CRM_Utils_Array::value('total', $values) .'], Count ['. CRM_Utils_Array::value('item_count', $values) .'], Batch ['. $values['title'] .']',
+      'activity_type_id' => array_search('Export Accounting Batch', $activityTypes),
+      'subject' => $subject,
       'status_id' => 2,
       'activity_date_time' => date('YmdHis'),
       'source_contact_id' => $session->get('userID'),
