@@ -223,6 +223,7 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
     if (CRM_Utils_Array::value('created_date', $params)) {
       $params['created_date'] = CRM_Utils_Date::processDate($params['created_date']);
     }
+
     if ($this->_action & CRM_Core_Action::ADD) {
       $batchMode = CRM_Core_PseudoConstant::getBatchMode('name');
       $params['mode_id'] = CRM_Utils_Array::key('Manual Batch', $batchMode);
@@ -232,8 +233,7 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
       $details = "{$params['title']} batch has been created by this contact.";
       $activityTypeName = 'Create Batch';      
     }
-
-    if ($this->_action & CRM_Core_Action::UPDATE && $this->_id) {
+    elseif ($this->_action & CRM_Core_Action::UPDATE && $this->_id) {
       $details = "{$params['title']} batch has been edited by this contact.";
       if (CRM_Utils_Array::value($params['status_id'], $batchStatus) == 'Closed') {
         $details = "{$params['title']} batch has been closed by this contact.";
@@ -241,16 +241,14 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
       $activityTypeName = 'Edit Batch';
     }
 
-    $batch = CRM_Batch_BAO_Batch::create($params, $ids, $context='financialBatch');
+    $batch = CRM_Batch_BAO_Batch::create($params, $ids, 'financialBatch');
 
     $activityTypes = CRM_Core_PseudoConstant::activityType(TRUE, FALSE, FALSE, 'name');
-    $subject = CRM_Utils_Array::value('name', $params, FALSE) ?
-      $params['name'] : CRM_Utils_String::titleToVar($params['title']);
 
     //create activity.
     $activityParams = array(
       'activity_type_id' => array_search($activityTypeName, $activityTypes),
-      'subject' => $subject ."- Batch",
+      'subject' => $batch->title ."- Batch",
       'status_id' => 2,
       'priority_id' => 2,
       'activity_date_time' => date('YmdHis'),
@@ -258,6 +256,7 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
       'source_contact_qid' => $session->get('userID'),
       'details' => $details,
     );
+
     CRM_Activity_BAO_Activity::create($activityParams);
 
     $buttonName = $this->controller->getButtonName();

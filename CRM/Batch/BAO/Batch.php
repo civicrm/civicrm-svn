@@ -52,7 +52,11 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
   /**
    * Create a new batch
    *
-   * @return batch array
+   * @param array  $params associated array
+   * @param array  $ids associated array of ids
+   * @param string $context string
+   *
+   * @return object $batch batch object
    * @access public
    */
   static function create(&$params, $ids = NULL, $context = NULL) {
@@ -221,7 +225,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
 
     foreach ($batches as $id => $value) {
       $batch = array();
-      if (($params['context'] == 'financialBatch')) {
+      if ($params['context'] == 'financialBatch') {
         $batch['check'] = $value['check'];
       }
       $batch['batch_name'] = $value['title'];
