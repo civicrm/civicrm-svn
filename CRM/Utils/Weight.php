@@ -120,7 +120,7 @@ class CRM_Utils_Weight {
    * @param string $weightField field which contains the weight value,
    * defaults to 'weight'
    *
-   * @return bool
+   * @return int
    */
   static function updateOtherWeights($daoName, $oldWeight, $newWeight, $fieldValues = NULL, $weightField = 'weight') {
     $oldWeight = (int ) $oldWeight;

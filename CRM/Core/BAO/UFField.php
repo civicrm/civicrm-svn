@@ -230,7 +230,22 @@ WHERE cf.id IN (" . $customFieldIds . ") AND is_multiple = 1 LIMIT 0,1";
     $ufField->is_match = CRM_Utils_Array::value('is_match', $params, FALSE);
     $ufField->is_searchable = CRM_Utils_Array::value('is_searchable', $params, FALSE);
     $ufField->is_multi_summary = CRM_Utils_Array::value('is_multi_summary', $params, FALSE);
+    $ufField->weight = CRM_Utils_Array::value('weight', $params, 0);
 
+    // need the FKEY - uf group id
+    $ufField->uf_group_id = CRM_Utils_Array::value('uf_group', $ids, FALSE);
+    $ufField->id = CRM_Utils_Array::value('uf_field', $ids, FALSE);
+
+    return $ufField->save();
+  }
+
+  /**
+   * Automatically determine one weight and modify others
+   *
+   * @param array $params UFField record, e.g. with 'weight', 'uf_group_id', and 'field_id'
+   * @return int
+   */
+  public static function autoWeight($params) {
     // fix for CRM-316
     $oldWeight = NULL;
 
@@ -238,13 +253,7 @@ WHERE cf.id IN (" . $customFieldIds . ") AND is_multiple = 1 LIMIT 0,1";
       $oldWeight = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFField', $params['field_id'], 'weight', 'id');
     }
     $fieldValues = array('uf_group_id' => $params['group_id']);
-    $ufField->weight = CRM_Utils_Weight::updateOtherWeights('CRM_Core_DAO_UFField', $oldWeight, $params['weight'], $fieldValues);
-
-    // need the FKEY - uf group id
-    $ufField->uf_group_id = CRM_Utils_Array::value('uf_group', $ids, FALSE);
-    $ufField->id = CRM_Utils_Array::value('uf_field', $ids, FALSE);
-
-    return $ufField->save();
+    return CRM_Utils_Weight::updateOtherWeights('CRM_Core_DAO_UFField', $oldWeight, $params['weight'], $fieldValues);
   }
 
   /**

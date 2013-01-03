@@ -554,6 +554,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
       return;
     }
     else {
+      $params['weight'] = CRM_Core_BAO_UFField::autoWeight($params);
       $ufField = CRM_Core_BAO_UFField::add($params, $ids);
 
       //reset other field is searchable and in selector settings, CRM-4363

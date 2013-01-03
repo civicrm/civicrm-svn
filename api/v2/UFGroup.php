@@ -318,6 +318,7 @@ function civicrm_uf_field_create($groupId, $params) {
     return civicrm_create_error("The field was not added. It already exists in this profile.");
   }
 
+  $params['weight'] = CRM_Core_BAO_UFField::autoWeight($params);
   $ufField = CRM_Core_BAO_UFField::add($params, $ids);
   _civicrm_object_to_array($ufField, $ufFieldArray);
 
@@ -376,6 +377,7 @@ function civicrm_uf_field_update($params, $fieldId) {
     return civicrm_create_error("The field was not added. It already exists in this profile.");
   }
 
+  $params['weight'] = CRM_Core_BAO_UFField::autoWeight($params);
   $ufField = CRM_Core_BAO_UFField::add($params, $ids);
   _civicrm_object_to_array($ufField, $ufFieldArray);
 
