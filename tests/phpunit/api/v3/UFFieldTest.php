@@ -194,7 +194,6 @@ class api_v3_UFFieldTest extends CiviUnitTestCase {
     );
 
     $result = civicrm_api('uf_field', 'replace', $params);
-    var_dump($result);
     $this->assertAPISuccess($result);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__);
     $inputsByName = CRM_Utils_Array::index(array('field_name'), $params['values']);
