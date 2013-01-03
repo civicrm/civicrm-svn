@@ -28,4 +28,41 @@ class CRM_Utils_ArrayTest extends CiviUnitTestCase {
     return $foo;
   }
 
+  function testIndexArray() {
+    $inputs = array();
+    $inputs[] = array(
+      'lang' => 'en',
+      'msgid' => 'greeting',
+      'familiar' => false,
+      'value' => 'Hello'
+    );
+    $inputs[] = array(
+      'lang' => 'en',
+      'msgid' => 'parting',
+      'value' => 'Goodbye'
+    );
+    $inputs[] = array(
+      'lang' => 'fr',
+      'msgid' => 'greeting',
+      'value' => 'Bon jour'
+    );
+    $inputs[] = array(
+      'lang' => 'fr',
+      'msgid' => 'parting',
+      'value' => 'Au revoir'
+    );
+    $inputs[] = array(
+      'lang' => 'en',
+      'msgid' => 'greeting',
+      'familiar' => true,
+      'value' => 'Hey'
+    );
+
+    $byLangMsgid = CRM_Utils_Array::index(array('lang', 'msgid'), $inputs);
+    $this->assertEquals(array($inputs[0], $inputs[4]), $byLangMsgid['en']['greeting']);
+    $this->assertEquals(array($inputs[1]), $byLangMsgid['en']['parting']);
+    $this->assertEquals(array($inputs[2]), $byLangMsgid['fr']['greeting']);
+    $this->assertEquals(array($inputs[3]), $byLangMsgid['fr']['parting']);
+  }
+
 }

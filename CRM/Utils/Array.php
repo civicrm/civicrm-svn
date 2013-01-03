@@ -493,5 +493,37 @@ class CRM_Utils_Array {
      }
    }
 
+  /**
+   * Build an array-tree which indexes the records in an array
+   *
+   * @param $keys array of string (properties by which to index)
+   * @param $records array of records (objects or assoc-arrays)
+   * @return array; multi-dimensional, with one layer for each key
+   */
+  static function index($keys, $records) {
+    $final_key = array_pop($keys);
+
+    $result = array();
+    foreach ($records as $record) {
+      $node = &$result;
+      foreach ($keys as $key) {
+        if (is_array($record)) {
+          $keyvalue = $record[$key];
+        } else {
+          $keyvalue = $record->{$key};
+        }
+        if (!is_array($node[$keyvalue])) {
+          $node[$keyvalue] = array();
+        }
+        $node = &$node[$keyvalue];
+      }
+      if (is_array($record)) {
+        $node[ $record[$final_key] ] = $record;
+      } else {
+        $node[ $record->{$final_key} ] = $record;
+      }
+    }
+    return $result;
+  }
 }
 
