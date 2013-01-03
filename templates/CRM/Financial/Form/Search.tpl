@@ -25,7 +25,7 @@
 *}
 
 {* Financial search component. *}
-<div id="enableDisableStatusMsg" class="success-status" style="display:none"></div>
+<div id="enableDisableStatusMsg" class="crm-container" style="display:none"></div>
 <div class="crm-submit-buttons">
   <a accesskey="N" href="{crmURL p='civicrm/financial/batch' q='reset=1&action=add'}" id="newBatch" class="button"><span><div class="icon add-icon"></div>{ts}New Accounting Batch{/ts}</span></a>
 </div>
@@ -75,6 +75,14 @@ cj(function($) {
   $('#financial-search-form :input').change(function() {
     if (!$(this).hasClass('crm-inline-error')) {
       batchSelector.fnDraw();
+    }
+  });
+
+  $('#financial-search-form :input').keypress(function(event) {
+    if (event.which == 13) {
+      event.preventDefault();
+      $(this).change();
+      return false;
     }
   });
 
