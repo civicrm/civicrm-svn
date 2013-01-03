@@ -122,6 +122,7 @@ cj( function() {
   buildTransactionSelectorRemove();
   cj('#_qf_BatchTransaction_submit-botttom, #_qf_BatchTransaction_submit-top').click( function() {
     buildTransactionSelectorAssign( true );
+    return false;
   });
 
   cj("#trans_assign").attr('disabled',true);
@@ -141,11 +142,13 @@ cj( function() {
   cj('#Go').click( function() {
     if (cj("#trans_assign" ).val() != "" && cj("input[id^='mark_x_']").is(':checked')) {
       bulkAssignRemove('Assign');
+      return false;
     }
   });
   cj('#GoRemove').click( function() {
     if (cj("#trans_remove" ).val() != "" && cj("input[id^='mark_y_']").is(':checked')) {
       bulkAssignRemove('Remove');
+      return false;
     }
   });
   cj("#crm-transaction-selector-assign input[id^='mark_x_']").click( function() {

@@ -43,7 +43,6 @@ class CRM_Financial_Form_BatchTransaction extends CRM_Contribute_Form {
   static $_entityID;
 
   function preProcess() {
-    $this->assign('suppressForm', TRUE);
     self::$_entityID = CRM_Utils_Request::retrieve( 'bid' , 'Positive' ) ? CRM_Utils_Request::retrieve( 'bid' , 'Positive' ) : $_POST['batch_id'];
     $this->assign('entityID', self::$_entityID);
     if (isset(self::$_entityID)) {

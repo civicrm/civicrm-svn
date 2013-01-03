@@ -223,7 +223,7 @@ ORDER by f.name";
             $recordPID = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_FinancialTrxn', $recordID, 'payment_instrument_id');
             $batchPID = CRM_Core_DAO::getFieldValue('CRM_Batch_DAO_Batch', $entityID, 'payment_instrument_id');
             $paymentInstrument =  CRM_Core_OptionGroup::getLabel('payment_instrument',$batchPID);
-            if ($recordPID == $batchPID) {
+            if ($op == 'remove' || ($recordPID == $batchPID && $op == 'assign') || !isset($batchPID)) {
               $params = array(
                 'entity_id' => $recordID,
                 'entity_table' => 'civicrm_financial_trxn',
@@ -403,7 +403,7 @@ ORDER by f.name";
     $paymentInstrument =  CRM_Core_OptionGroup::getLabel('payment_instrument',$batchPID);
     foreach ($cIDs as $key => $value) {
       $recordPID = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_FinancialTrxn', $value, 'payment_instrument_id');
-      if ($recordPID == $batchPID) {
+      if ($action == 'Remove' || ($recordPID == $batchPID && $action == 'Assign')  || !isset($batchPID)) {
         $params =
           array(
             'entity_id' => $value,

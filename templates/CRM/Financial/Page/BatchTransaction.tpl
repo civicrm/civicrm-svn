@@ -77,6 +77,7 @@
    batchSummary(entityID);
    cj('#close_batch').click( function() {
      assignRemove(entityID, 'close');
+     return false;
    });
  });
 function assignRemove(recordID, op) {
@@ -101,7 +102,11 @@ function assignRemove(recordID, op) {
       var postUrl = {/literal}"{crmURL p='civicrm/ajax/statusmsg' h=0 }"{literal};
       cj.post( postUrl, { recordID: recordID, recordBAO: recordBAO, op: op  }, function( statusMessage ) {
         if ( statusMessage.status ) {
- 	  cj( '#enableDisableStatusMsg' ).show().html( statusMessage.status );
+	  msg = statusMessage.status;
+	  if (op == 'close') {
+	    msg += checkMismatch();
+	  }
+ 	  cj( '#enableDisableStatusMsg' ).show().html(msg);
        	}
       }, 'json' );
     },
@@ -159,6 +164,27 @@ function batchSummary(entityID) {
  }, 'json');
 
 
+}
+
+function checkMismatch() {
+  txt = '<ul>',
+  mismatch = false;
+  enteredItem = cj("#row_item_count").text();
+  assignedItem = cj("#row_assigned_item_count").text();
+  enteredTotal = cj("#row_total").text();
+  assignedTotal = cj("#row_assigned_total").text();
+  if (enteredItem != assignedItem) {
+     mismatch = true;
+     txt += '{/literal}<li><span class="crm-error">Item Count mismatch<br/>{ts escape="js"}Expected{/ts}:{literal}' + enteredItem +'{/literal}<br/>{ts escape="js"}Current Total{/ts}:{literal}' + assignedItem + '{/literal}</span></li>{literal}';
+  }
+  if (enteredTotal != assignedTotal) {
+     mismatch = true;
+     txt += '{/literal}<li><span class="crm-error">Total Amount mismatch<br/>{ts escape="js"}Expected{/ts}:{literal}' + enteredTotal +'{/literal}<br/>{ts escape="js"}Current Total{/ts}:{literal}' + assignedTotal + '{/literal}</span></li></ul>{literal}';
+  }
+  if (mismatch) {
+    txt += {/literal}'<div class="messages status">{ts escape="js"}Click OK to override and update expected values.{/ts}</div>'{literal}
+  }
+  return txt;
 }	
 </script>
 {/literal}
