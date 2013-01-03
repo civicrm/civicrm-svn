@@ -37,7 +37,7 @@
     {/literal}
 </script>
 
-<div class="block-crm">
+<div class="block-crm crm-container">
     <form method="post" id="id_fulltext_search">
     <div style="margin-bottom: 8px;">
     <input type="text" name="text" id='text' value="" style="width: 10em;" />&nbsp;<input type="submit" name="submit" id="fulltext_submit" value="{ts}Go{/ts}" class="form-submit"/ onclick='submitForm();'>

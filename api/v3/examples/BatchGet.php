@@ -30,8 +30,8 @@ function batch_get_expectedresult(){
   'values' => array( 
       '1' => array( 
           'id' => '1',
-          'name' => 'Batch_981437',
-          'title' => 'Batch_981437',
+          'name' => 'Batch_82682',
+          'title' => 'Batch_82682',
           'status_id' => '1',
         ),
     ),

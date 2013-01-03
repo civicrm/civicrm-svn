@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div id="crm-quick-create">
+<div id="crm-quick-create" class="crm-container">
 <form action="{$postURL}" method="post">
 
 <div class="form-item">

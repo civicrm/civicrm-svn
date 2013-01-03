@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div id='crm-mail'>
+<div id='crm-mail' class="crm-container">
 {foreach from=$shortCuts item=short}
   <a href="{$short.url}">{$short.title}</a><br />
 {/foreach}

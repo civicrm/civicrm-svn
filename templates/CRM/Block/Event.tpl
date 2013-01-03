@@ -26,7 +26,7 @@
 {* Block to display upcoming events. *}
 {* You can add the following additional event elements to this tpl as needed: $ev.end_date, $ev.location, $ev.description, $ev.contact_email *}
 {* Change truncate:80 to a larger or smaller value to show more or less of the summary. Remove it to show complete summary. *}
-<div id="crm-event-block">
+<div id="crm-event-block" class="crm-container">
      {if $eventBlock}
         {foreach from=$eventBlock item=ev}
             <p>

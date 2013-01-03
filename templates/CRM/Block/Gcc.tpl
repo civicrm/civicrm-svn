@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="menu">
+<div class="menu crm-container">
 <ul class="indented">
 {foreach from=$shortCuts item=short}
     <li class="leaf"><a href="{$short.url}">{$short.title}</a></li>

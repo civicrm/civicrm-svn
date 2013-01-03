@@ -28,7 +28,7 @@
 {include file="CRM/common/debug.tpl"}
 {/if}
 
-<div id="crm-container" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}" {if $urlIsPublic}class="crm-public"{/if}>
+<div id="crm-container" class="crm-container" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}" {if $urlIsPublic}class="crm-public"{/if}>
 
 {include file="CRM/common/action.tpl"}
 {if $buildNavigation }

@@ -22,7 +22,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="block-civicrm">
+<div class="block-civicrm crm-container">
 <div id="crm-create-new-wrapper">
   <div id="crm-create-new-link"><span><div class="icon dropdown-icon"></div>{ts}Create New{/ts}</span></div>
     <div id="crm-create-new-list" class="ac_results">

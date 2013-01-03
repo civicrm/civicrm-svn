@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* Displays recently viewed objects (contacts and other objects like groups, notes, etc. *}
-<div id="recently-viewed" class="left">
+<div id="crm-recently-viewed" class="left crm-container">
     <ul>
     {foreach from=$recentlyViewed item=item}
          <li class="crm-recently-viewed" ><a  href="{$item.url}" title="{$item.title}">
@@ -46,8 +46,8 @@
 {literal}
 <script type="text/javascript">
     cj( function( ) {
-      if (cj('#recently-viewed').offset().left > 150) {
-        cj('#recently-viewed').removeClass('left').addClass('right');
+      if (cj('#crm-recently-viewed').offset().left > 150) {
+        cj('#crm-recently-viewed').removeClass('left').addClass('right');
           }
     });
 </script>

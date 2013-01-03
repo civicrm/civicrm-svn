@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="block-civicrm">
+<div class="block-civicrm crm-container">
 {foreach from=$dashboardLinks item=dash}
 <a accesskey="{$dash.key}" href="{$dash.url}">{$dash.title}</a>
 {/foreach}
