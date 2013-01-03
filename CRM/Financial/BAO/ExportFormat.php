@@ -61,21 +61,23 @@ class CRM_Financial_BAO_ExportFormat {
   }
 
   // Override to assemble the appropriate subset of financial data for the specific export format
-  function export( $exportParams ) {
+  function export($exportParams) {
     $this->_exportParams = $exportParams;
     return $exportParams;
   }
 
   function output($fileName = NULL) {
-    $tplFile = $this->getTemplateFileName();
-    $out = self::getTemplate()->fetch( $tplFile );
-        
-    if ($this->getFileExtension() == 'csv') {
-      self::createActivityExport($this->_exportParams['batchIds']['batchID'], $fileName);
-      self::createCSVDownload($fileName);
-    }
-    else {
-      self::createIIFDownload($out);
+    switch ($this->getFileExtension()) {
+      case 'csv':
+        self::createActivityExport($this->_batchIds, $fileName);
+      break;
+
+      case 'iif':
+        $tplFile = $this->getTemplateFileName();
+        $out = self::getTemplate()->fetch( $tplFile );
+        $fileName = $this->putFile($out);
+        self::createActivityExport($this->_batchIds, $fileName);
+      break;
     }
   }
 
@@ -102,11 +104,11 @@ class CRM_Financial_BAO_ExportFormat {
 
   /*
    * This gets called for every item of data being compiled before being sent to the exporter for output.
-   * 
+   *
    * Depending on the output format might want to override this, e.g. for IIF tabs need to be escaped etc,
    * but for CSV it doesn't make sense because php has built in csv output functions.
    */
-  static function format( $s, $type = 'string' ) {
+  static function format($s, $type = 'string') {
     if (!empty($s)) {
       return $s;
     }
@@ -115,26 +117,26 @@ class CRM_Financial_BAO_ExportFormat {
     }
   }
 
-  function createCSVDownload($fileName) {
+  function initiateDownload() {
     $config = CRM_Core_Config::singleton();
-    header('Content-Type: text/csv');
-    header('Content-Disposition: attachment; filename='.CRM_Utils_File::cleanFileName(basename($fileName)));
-    readfile($config->customFileUploadDir.CRM_Utils_File::cleanFileName(basename($fileName)));
-    CRM_Utils_System::civiExit();
-  }
-
-  function createIIFDownload($out) {
-    $config = CRM_Core_Config::singleton();
-    $fileName = $config->uploadDir.'Financial_Transactions_'.date('YmdHis').'.iif' ;
-    $buffer = fopen($fileName, 'w');
-    fwrite($buffer, $out);
-    fclose($buffer);
-
-    self::createActivityExport($this->_exportParams['batchIds']['batchID'], $fileName);
-    header('Content-Type: text/plain');
-    header('Content-Disposition: attachment; filename='.CRM_Utils_File::cleanFileName(basename($fileName)));
-    readfile($config->customFileUploadDir.CRM_Utils_File::cleanFileName(basename($fileName)));
-    CRM_Utils_System::civiExit();
+    //zip files if more than one.
+    if (count($this->_downloadFile)>1) {
+      $zip = $config->customFileUploadDir.'Financial_Transactions_'.date('YmdHis').'.zip';
+      $result = $this->createZip($this->_downloadFile, $zip, TRUE);
+      if ($result) {
+        header('Content-Type: application/zip');
+        header('Content-Disposition: attachment; filename='.CRM_Utils_File::cleanFileName(basename($zip)));
+        readfile($config->customFileUploadDir.CRM_Utils_File::cleanFileName(basename($zip)));
+        unlink($zip); //delete the zip to avoid clutter.
+        CRM_Utils_System::civiExit();
+      }
+    }
+    else {
+      header('Content-Type: text/csv');
+      header('Content-Disposition: attachment; filename='.CRM_Utils_File::cleanFileName(basename($this->_downloadFile[0])));
+      readfile($config->customFileUploadDir.CRM_Utils_File::cleanFileName(basename($this->_downloadFile[0])));
+      CRM_Utils_System::civiExit();
+    }
   }
 
   static function createActivityExport($batchIds, $fileName) {
@@ -142,22 +144,20 @@ class CRM_Financial_BAO_ExportFormat {
     $values = array();
     $params = array('id' => $batchIds);
     CRM_Batch_BAO_Batch::retrieve($params, $values);
-
     $createdBy = CRM_Contact_BAO_Contact::displayName($values['created_id']);
     $modifiedBy = CRM_Contact_BAO_Contact::displayName($values['modified_id']);
-
-    $values['payment_instrument_id'] = '';
     if (isset($values['payment_instrument_id'])) {
       $paymentInstrument = array_flip(CRM_Contribute_PseudoConstant::paymentInstrument('label'));
       $values['payment_instrument_id'] = array_search($values['payment_instrument_id'], $paymentInstrument);
     }
-    $details = '<p>' . ts('Record: ') . $values['title'] . '</p><p>' . ts('Description: ') . $values['description'] . '</p><p>' . ts('Created By: ') . $createdBy . '</p><p>' . ts('Created Date: ') . $values['created_date'] . '</p><p>' . ts('Last Modified By: ') . $modifiedBy . '</p><p>' . ts('Payment Instrument: ') . $values['payment_instrument_id'] . '</p>';
 
-    //create activity. 
+    $details = '<p>' . ts('Record: ') . $values['title'] . '</p><p>' . ts('Description: ') . CRM_Utils_Array::value('description', $values) . '</p><p>' . ts('Created By: ') . $createdBy . '</p><p>' . ts('Created Date: ') . $values['created_date'] . '</p><p>' . ts('Last Modified By: ') . $modifiedBy . '</p><p>' . ts('Payment Instrument: ') . $values['payment_instrument_id'] . '</p>';
+
+    //create activity.
     $activityTypes = CRM_Core_PseudoConstant::activityType(TRUE, FALSE, FALSE, 'name');
     $activityParams = array(
-      'activity_type_id' => array_search('Export Accounting Batch', $activityTypes),
-      'subject' => 'Total ['.$values['total'].'], Count ['.$values['item_count'].'], Batch ['.$values['title'].']',
+      'activity_type_id' => array_search('Export of Financial Transactions Batch', $activityTypes),
+      'subject' => 'Total ['. CRM_Utils_Array::value('total', $values) .'], Count ['. CRM_Utils_Array::value('item_count', $values) .'], Batch ['. $values['title'] .']',
       'status_id' => 2,
       'activity_date_time' => date('YmdHis'),
       'source_contact_id' => $session->get('userID'),
@@ -172,7 +172,35 @@ class CRM_Financial_BAO_ExportFormat {
       ),
     );
     $activity = CRM_Activity_BAO_Activity::create($activityParams);
-       
-    return $activity;
+  }
+
+  function createZip($files = array(), $destination = NULL, $overwrite = FALSE) {
+    //if the zip file already exists and overwrite is false, return false
+    if (file_exists($destination) && !$overwrite) {
+      return FALSE;
+    }
+    $valid_files = array();
+    if (is_array($files)) {
+      foreach ($files as $file) {
+        //make sure the file exists
+        if (file_exists($file)) {
+          $validFiles[] = $file;
+        }
+      }
+    }
+    if (count($validFiles)) {
+      $zip = new ZipArchive();
+      if ($zip->open($destination,$overwrite ? ZIPARCHIVE::OVERWRITE : ZIPARCHIVE::CREATE) !== TRUE) {
+        return FALSE;
+      }
+      foreach ($validFiles as $file) {
+        $zip->addFile($file, CRM_Utils_File::cleanFileName(basename($file)));
+      }
+      $zip->close();
+      return file_exists($destination);
+    }
+    else {
+        return FALSE;
+      }
   }
 }

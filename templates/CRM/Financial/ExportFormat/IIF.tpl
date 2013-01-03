@@ -57,9 +57,9 @@ CUST{$tabchar}{$contact.name}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{$tabchar}{
 !SPL{$tabchar}SPLID{$tabchar}TRNSTYPE{$tabchar}DATE{$tabchar}ACCNT{$tabchar}NAME{$tabchar}CLASS{$tabchar}AMOUNT{$tabchar}DOCNUM{$tabchar}MEMO{$tabchar}PAYMETH
 !ENDTRNS
 {foreach from=$journalEntries key=id item=je}
-TRNS{$tabchar}{$tabchar}GENERAL JOURNAL{$tabchar}{$je.to_account.trxn_date}{$tabchar}{$je.to_account.account_name}{$tabchar}{$je.to_account.contact_name}{$tabchar}{$tabchar}{$je.to_account.amount}{$tabchar}{$je.to_account.check_number}{$tabchar}{$tabchar}{$je.to_account.payment_instrument}
+TRNS{$tabchar}{$je.to_account.trxn_id}{$tabchar}GENERAL JOURNAL{$tabchar}{$je.to_account.trxn_date}{$tabchar}{$je.to_account.account_name}{$tabchar}{$je.to_account.contact_name}{$tabchar}{$tabchar}{$je.to_account.amount}{$tabchar}{$je.to_account.check_number}{$tabchar}{$tabchar}{$je.to_account.payment_instrument}
 {foreach from=$je.splits key=spl_id item=spl}
-SPL{$tabchar}{$tabchar}GENERAL JOURNAL{$tabchar}{$spl.trxn_date}{$tabchar}{$spl.account_name}{$tabchar}{$spl.contact_name}{$tabchar}{$tabchar}{$spl.amount}{$tabchar}{$spl.check_date}{$tabchar}{$tabchar}{$spl.payment_instrument}
+SPL{$tabchar}{$spl.spl_id}{$tabchar}GENERAL JOURNAL{$tabchar}{$spl.trxn_date}{$tabchar}{$spl.account_name}{$tabchar}{$spl.contact_name}{$tabchar}{$tabchar}{$spl.amount}{$tabchar}{$spl.check_date}{$tabchar}{$tabchar}{$spl.payment_instrument}
 {/foreach}
 ENDTRNS
 {/foreach}

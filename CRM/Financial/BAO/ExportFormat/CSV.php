@@ -61,7 +61,7 @@ class CRM_Financial_BAO_ExportFormat_CSV extends CRM_Financial_BAO_ExportFormat 
     'ACCNT',
     'CUST',
   );
-  
+
   /**
    * class constructor
    */
@@ -71,17 +71,9 @@ class CRM_Financial_BAO_ExportFormat_CSV extends CRM_Financial_BAO_ExportFormat 
 
   function export($exportParams) {
     $export = parent::export($exportParams);
-    $config = CRM_Core_Config::singleton();
 
-    $fileName = $config->uploadDir.'Financial_Transactions_'.date('YmdHis').'.'.$this->getFileExtension() ;
-    $out = fopen($fileName, 'w');
-    fputcsv($out, $export['csvExport']['headers']);
-    unset($export['csvExport']['headers']);
-
-    foreach ($export['csvExport'] as $fields) {
-      fputcsv($out, $fields);
-    }
-    fclose($out);
+    // Save the file in the public directory
+    $fileName = self::putFile($export);
 
     foreach ( self::$complementaryTables as $rct ) {
       $func = "export{$rct}";
@@ -92,6 +84,71 @@ class CRM_Financial_BAO_ExportFormat_CSV extends CRM_Financial_BAO_ExportFormat 
     $this->exportTRANS();
 
     $this->output($fileName);
+  }
+
+  function putFile($export) {
+    $config = CRM_Core_Config::singleton();
+    $fileName = $config->uploadDir.'Financial_Transactions_'.$this->_batchIds.'_'.date('YmdHis').'.'.$this->getFileExtension();
+    $this->_downloadFile[] = $config->customFileUploadDir.CRM_Utils_File::cleanFileName(basename($fileName));
+    $out = fopen($fileName, 'w');
+    fputcsv($out, $export['headers']);
+    unset($export['headers']);
+    if (!empty($export)) {
+      foreach ($export as $fields) {
+        fputcsv($out, $fields);
+      }
+      fclose($out);
+    }
+    return $fileName;
+  }
+
+  /**
+   * Format table headers
+   *
+   * @param array $values
+   * @return array
+   */
+  function formatHeaders($values) {
+    $arrayKeys = array_keys($values);
+    $headers = '';
+    if (!empty($arrayKeys)) {
+      foreach ($values[$arrayKeys[0]] as $title => $value) {
+        $headers[] = $title;
+      }
+    }
+    return $headers;
+  }
+
+  /**
+   * Generate CSV array for export
+   *
+   * @param array $export
+   *
+   */
+  function makeCSV($export) {
+    foreach ($export as $batchId => $dao) {
+      $financialItems = array();
+      $this->_batchIds = $batchId;
+      while ($dao->fetch()) {
+        $financialItems[$dao->financial_trxn_id]['Transaction Date'] = $dao->trxn_date;
+        $financialItems[$dao->financial_trxn_id]['Transaction Status'] = $dao->status;
+        $financialItems[$dao->financial_trxn_id]['Debit Account'] = $dao->to_account_code;
+        $financialItems[$dao->financial_trxn_id]['Debit Account Name'] = $dao->to_account_name;
+        $financialItems[$dao->financial_trxn_id]['Debit Account Amount (Unsplit)'] = $dao->debit_total_amount;
+        $financialItems[$dao->financial_trxn_id]['Transaction ID (Unsplit)'] = $dao->trxn_id;
+        $financialItems[$dao->financial_trxn_id]['Payment Instrument'] = $dao->payment_instrument;
+        $financialItems[$dao->financial_trxn_id]['Check Number'] = $dao->check_number;
+        $financialItems[$dao->financial_trxn_id]['Source'] = $dao->source;
+        $financialItems[$dao->financial_trxn_id]['Currency'] = $dao->currency;
+        $financialItems[$dao->financial_trxn_id]['Amount'] = $dao->amount;
+        $financialItems[$dao->financial_trxn_id]['Credit Account'] = $dao->credit_account;
+        $financialItems[$dao->financial_trxn_id]['Credit Account Name'] = $dao->credit_account_name;
+        $financialItems[$dao->financial_trxn_id]['Item Description'] = $dao->item_description;
+      }
+      $financialItems['headers'] = self::formatHeaders($financialItems);
+      self::export($financialItems);
+    }
+    parent::initiateDownload();
   }
 
   function getFileExtension() {

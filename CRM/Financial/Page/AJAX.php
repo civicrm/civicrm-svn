@@ -249,6 +249,10 @@ ORDER by f.name";
             $context = "financialBatch";
             break;
 
+          case 'export':
+            CRM_Utils_System::redirect("civicrm/financial/batch/export?reset=1&id=$recordID");
+            break;
+
           case 'delete':
             $params = $recordID;
             $context = "financialBatch";
@@ -412,7 +416,7 @@ ORDER by f.name";
         $cIDs[] = $contributions[2];
       }
     }
-    
+
     $batchPID = CRM_Core_DAO::getFieldValue('CRM_Batch_DAO_Batch', $entityID, 'payment_instrument_id');
     $paymentInstrument =  CRM_Core_OptionGroup::getLabel('payment_instrument',$batchPID);
     foreach ($cIDs as $key => $value) {
