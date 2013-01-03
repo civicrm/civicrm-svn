@@ -102,7 +102,9 @@ function civicrm_api3_uf_field_create($params) {
   if (CRM_Core_BAO_UFField::duplicateField($params, $ids)) {
     return civicrm_api3_create_error("The field was not added. It already exists in this profile.");
   }
-  $params['weight'] = CRM_Core_BAO_UFField::autoWeight($params);
+  if (CRM_Utils_Array::value('option.autoweight', $params, TRUE)) {
+    $params['weight'] = CRM_Core_BAO_UFField::autoWeight($params);
+  }
   $ufField = CRM_Core_BAO_UFField::add($params, $ids);
 
   $fieldsType = CRM_Core_BAO_UFGroup::calculateGroupType($groupId, TRUE);
@@ -110,6 +112,18 @@ function civicrm_api3_uf_field_create($params) {
 
   _civicrm_api3_object_to_array($ufField, $ufFieldArray[$ufField->id]);
   return civicrm_api3_create_success($ufFieldArray, $params);
+}
+
+/**
+ * Gets field for civicrm_uf_field create
+ *
+ * @return array fields valid for other functions
+ */
+function _civicrm_api3_uf_field_create_spec(&$params) {
+  $params['option.autoweight'] = array(
+    'title' => "Automatically adjust weights in UFGroup to align with UFField",
+    'type' => CRM_Utils_Type::T_BOOL
+  );
 }
 
 /**

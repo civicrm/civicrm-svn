@@ -124,6 +124,29 @@ class api_v3_UFFieldTest extends CiviUnitTestCase {
     $result = civicrm_api('uf_field', 'create', array('label' => 'name-less field'));
     $this->assertEquals($result['is_error'], 1);
   }
+  /**
+   * Create a field with 'weight=1' and then a second with 'weight=1'. The second field
+   * winds up with weight=1, and the first field gets bumped to 'weight=2'.
+   */
+  public function testCreateUFFieldWithDefaultAutoWeight() {
+    $params1 = $this->_params; // copy
+    $ufField1 = civicrm_api('uf_field', 'create', $params1);
+    $this->assertEquals(1, $ufField1['values'][$ufField1['id']]['weight']);
+    $this->assertDBQuery(1, 'SELECT weight FROM civicrm_uf_field WHERE id = %1', array(
+      1 => array($ufField1['id'], 'Int'),
+    ));
+
+    $params2 = $this->_params; // copy
+    $params2['location_type_id'] = 2; // needs to be a different field
+    $ufField2 = civicrm_api('uf_field', 'create', $params2);
+    $this->assertEquals(1, $ufField2['values'][$ufField2['id']]['weight']);
+    $this->assertDBQuery(1, 'SELECT weight FROM civicrm_uf_field WHERE id = %1', array(
+      1 => array($ufField2['id'], 'Int'),
+    ));
+    $this->assertDBQuery(2, 'SELECT weight FROM civicrm_uf_field WHERE id = %1', array(
+      1 => array($ufField1['id'], 'Int'),
+    ));
+  }
 
   /**
    * deleting field
@@ -151,6 +174,7 @@ class api_v3_UFFieldTest extends CiviUnitTestCase {
     $this->assertAPISuccess($result, 0, 'in line' . __LINE__);
     $this->getAndCheck($this->_params, $result['id'], $this->_entity);
   }
+
   /**
    * create / updating field
    */
@@ -190,6 +214,7 @@ class api_v3_UFFieldTest extends CiviUnitTestCase {
     $params = array(
       'version' => $this->_apiversion,
       'uf_group_id' => $this->_ufGroupId,
+      'option.autoweight' => FALSE,
       'values' => $baseFields,
     );
 
