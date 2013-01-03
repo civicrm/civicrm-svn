@@ -491,51 +491,51 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
       array(
         'Intended Recipients' => 
         array(
-          'report' => array('report_name' => 'Mailing Detail Report', 'Mailing' => "Mailing $mailingName Webtest"),
+          'report' => array('report_name' => 'Mailing Details', 'Mailing' => "Mailing $mailingName Webtest"),
           'search' => array('Mailing Name IN' => "\"Mailing {$mailingName} Webtest")
         ),
         'Successful Deliveries' =>
         array(
-          'report' => array('report_name' => 'Mailing Detail Report', 'Mailing' => "Mailing $mailingName Webtest",
+          'report' => array('report_name' => 'Mailing Details', 'Mailing' => "Mailing $mailingName Webtest",
                             "Delivery Status" => " Successful"),
           'search' => array('Mailing Name IN' => "\"Mailing {$mailingName} Webtest", 'Mailing Delivery -' => "Successful")
         ),
         'Tracked Opens' =>
         array(
-          'report' => array('report_name' => 'Mailing Detail Report', 'Mailing' => "Mailing $mailingName Webtest"),
+          'report' => array('report_name' => 'Mail Opened', 'Mailing' => "Mailing $mailingName Webtest"),
           'search' => array('Mailing Name IN' => "\"Mailing {$mailingName} Webtest", 'Mailing: Trackable Opens -' => "Opened")
         ),
         'Click-throughs' =>
         array(
-          'report' => array('report_name' => 'Mail Clickthrough Report', 'Mailing' => "Mailing $mailingName Webtest"),
+          'report' => array('report_name' => 'Mail Clickthroughs', 'Mailing' => "Mailing $mailingName Webtest"),
           'search' => array('Mailing Name IN' => "\"Mailing {$mailingName} Webtest", 'Mailing: Trackable URL Clicks -' => "Clicked")
         ),
         'Forwards' =>
         array(
-          'report' => array('report_name' => 'Mailing Detail Report', 'Mailing' => "Mailing $mailingName Webtest",
+          'report' => array('report_name' => 'Mailing Details', 'Mailing' => "Mailing $mailingName Webtest",
                             'Forwarded' => 'Is equal to Yes'),
           'search' => array('Mailing Name IN' => "\"Mailing {$mailingName} Webtest", 'Mailing: -' => "Forwards")
         ),
         'Replies' =>
         array(
-          'report' => array('report_name' => 'Mailing Detail Report', 'Mailing' => "Mailing $mailingName Webtest",
+          'report' => array('report_name' => 'Mailing Details', 'Mailing' => "Mailing $mailingName Webtest",
                             'Replied' => 'Is equal to Yes'),
           'search' => array('Mailing Name IN' => "\"Mailing {$mailingName} Webtest", 'Mailing: Trackable Replies -' => "Replied")
         ),
         'Bounces' =>
         array(
-          'report' => array('report_name' => 'Mail Bounce Report', 'Mailing' => "Mailing $mailingName Webtest"),
+          'report' => array('report_name' => 'Mail Bounces', 'Mailing' => "Mailing $mailingName Webtest"),
           'search' => array('Mailing Name IN' => "\"Mailing {$mailingName} Webtest", 'Mailing Delivery -' => "Bounced")
         ),
         'Unsubscribe Requests' =>
         array(
-          'report' => array('report_name' => 'Mailing Detail Report', 'Mailing' => "Mailing $mailingName Webtest",
+          'report' => array('report_name' => 'Mailing Details', 'Mailing' => "Mailing $mailingName Webtest",
                             'Unsubscribed' => 'Is equal to Yes'),
           'search' => array('Mailing Name IN' => "\"Mailing {$mailingName} Webtest", 'Mailing: -' => "Unsubscribe Requests")
         ),
         'Opt-out Requests' =>
         array(
-          'report' => array('report_name' => 'Mailing Detail Report', 'Mailing' => "Mailing $mailingName Webtest",
+          'report' => array('report_name' => 'Mailing Details', 'Mailing' => "Mailing $mailingName Webtest",
                             'Opted-out' => 'Is equal to Yes'),
           'search' => array('Mailing Name IN' => "\"Mailing {$mailingName} Webtest", 'Mailing: -' => "Opt-out Requests")
         ),

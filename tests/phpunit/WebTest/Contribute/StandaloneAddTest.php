@@ -50,37 +50,38 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
     $softCreditLname = substr(sha1(rand()), 0, 7);
     $this->webtestAddContact($softCreditFname, $softCreditLname, FALSE);
 
-      // Add new Financial Account
-        $orgName = 'Alberta '.substr(sha1(rand()), 0, 7);
-        $financialAccountTitle = 'Financial Account '.substr(sha1(rand()), 0, 4);
-        $financialAccountDescription = "{$financialAccountTitle} Description";
-        $accountingCode = 1033;
-      $financialAccountType = 'Asset';
-      $parentFinancialAccount = 'Donation';
-      $taxDeductible = FALSE;
-      $isActive = FALSE;
-      $headerAccount = TRUE;
-      $isTax = TRUE;
-      $taxRate = 10;
-      $isDefault = FALSE;
-      
-        //Add new organisation
-       if( $orgName )
-            $this->webtestAddOrganization( $orgName );
-        
-       $this->_testAddFinancialAccount( $financialAccountTitle,
-                                         $financialAccountDescription,
-                                         $accountingCode,
-                                         $orgName,
-                                         $parentFinancialAccount,
-                                         $financialAccountType,
-                                         $taxDeductible,
-                                         $isActive,
-                                         $headerAccount,
-                                         $isTax,
-                                         $taxRate,
-                                         $isDefault
-                                         );
+    // Add new Financial Account
+    $orgName = 'Alberta '.substr(sha1(rand()), 0, 7);
+    $financialAccountTitle = 'Financial Account '.substr(sha1(rand()), 0, 4);
+    $financialAccountDescription = "{$financialAccountTitle} Description";
+    $accountingCode = 1033;
+    $financialAccountType = 'Asset';
+    $parentFinancialAccount = 'Donation';
+    $taxDeductible = FALSE;
+    $isActive = FALSE;
+    $headerAccount = TRUE;
+    $isTax = TRUE;
+    $taxRate = 9.9999999;
+    $isDefault = FALSE;
+    
+    //Add new organisation
+    if($orgName) {
+      $this->webtestAddOrganization($orgName);
+    }
+    
+    $this->_testAddFinancialAccount($financialAccountTitle,
+      $financialAccountDescription,
+      $accountingCode,
+      $orgName,
+      $parentFinancialAccount,
+      $financialAccountType,
+      $taxDeductible,
+      $isActive,
+      $headerAccount,
+      $isTax,
+      $taxRate,
+      $isDefault
+    );
 
     // Go directly to the URL of the screen that you will be testing (New Contribution-standalone).
     $this->open($this->sboxPath . "civicrm/contribute/add?reset=1&context=standalone");
@@ -94,11 +95,10 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
     // create new contact using dialog
     $firstName = substr(sha1(rand()), 0, 7);
     $this->webtestNewDialogContact($firstName, "Contributor", $firstName . "@example.com");
-
-
-      // select financial type
-      $this->select("financial_type_id", "value=1");
-
+    
+    // select financial type
+    $this->select("financial_type_id", "value=1");
+    
     // fill in Received Date
     $this->webtestFillDate('receive_date');
 
@@ -108,15 +108,11 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
     // total amount
     $this->type("total_amount", "100");
 
-      //select Recieved Into
-        $this->select("to_financial_account_id", "label={$financialAccountTitle}");
-        //$this->select("to_financial_account_id", "value=5");
-
     // select payment instrument type = Check and enter chk number
     $this->select("payment_instrument_id", "value=4");
     $this->waitForElementPresent("check_number");
     $this->type("check_number", "check #1041");
-
+    
     $this->type("trxn_id", "P20901X1" . rand(100, 10000));
 
     // soft credit
@@ -127,7 +123,7 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
     $this->click("css=div.ac_results-inner li");
 
     //Custom Data
-      //$this->click('CIVICRM_QFID_3_6');
+    //$this->click('CIVICRM_QFID_3_6');
 
     //Additional Detail section
     $this->click("AdditionalDetail");
@@ -172,20 +168,21 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("_qf_ContributionView_cancel-bottom");
 
     $expected = array(
-      2 => 'Donation',
-      3 => '100.00',
-      8 => 'Completed',
-      9 => 'Check',
-      10 => 'check #1041',
-      16 => "{$softCreditFname} {$softCreditLname}",
+      'Financial Type' => 'Donation',
+      'Total Amount' => '$ 100.00',
+      'Contribution Status' => 'Completed',
+      'Paid By' => 'Check',
+      'Check Number' => 'check #1041',
+      'Soft Credit To' => "{$softCreditFname} {$softCreditLname}",
     );
+
     foreach ($expected as $label => $value) {
-          $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody//tr/td[1][text()='$label']/../td[2]", preg_quote($value));
+      $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody//tr/td[1][text()='$label']/../td[2]", preg_quote($value));
     }
 
     // go to soft creditor contact view page
-      $this->click( "xpath=id('ContributionView')/div[2]/table[1]/tbody//tr/td[1][text()='Soft Credit To']/../td[2]/a[text()='{$softCreditFname} {$softCreditLname}']" );
-
+    $this->click("xpath=id('ContributionView')/div[2]/table[1]/tbody//tr/td[1][text()='Soft Credit To']/../td[2]/a[text()='{$softCreditFname} {$softCreditLname}']");
+    
     // go to contribution tab
     $this->waitForElementPresent("css=li#tab_contribute a");
     $this->click("css=li#tab_contribute a");
