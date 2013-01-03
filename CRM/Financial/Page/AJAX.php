@@ -256,7 +256,12 @@ ORDER by f.name";
         }
 
         if (method_exists($recordBAO, $methods[$op]) & !empty($params)) {
-          $updated = call_user_func_array(array($recordBAO, $methods[$op]), array(&$params, $ids, $context));
+          if (isset($context)) {
+            $updated = call_user_func_array(array($recordBAO, $methods[$op]), array(&$params, $ids, $context));
+          }
+          else {
+            $updated = call_user_func_array(array($recordBAO, $methods[$op]), array(&$params, $ids));
+          }
           if ($updated) {
             $response = array('status' => 'record-updated-success');
           }
@@ -324,6 +329,7 @@ ORDER by f.name";
     $params['offset']   = ($params['page'] - 1) * $params['rp'];
     $params['rowCount'] = $params['rp'];
     $params['sort']     = CRM_Utils_Array::value('sortBy', $params);
+    $params['total']    = 0;
 
     // get batch list
     if (isset($notPresent)) {
@@ -337,7 +343,9 @@ ORDER by f.name";
       while ($unassignedTransactions->fetch()) {
         $unassignedTransactionsCount[] = $unassignedTransactions->id;
       }
-      $params['total'] = count($unassignedTransactionsCount);
+      if (!empty($unassignedTransactionsCount)) {
+        $params['total'] = count($unassignedTransactionsCount);
+      }
 
     }
     else {
@@ -346,7 +354,9 @@ ORDER by f.name";
       while ($assignedTransactions->fetch()) {
         $assignedTransactionsCount[] = $assignedTransactions->id;
       }
-      $params['total'] = count($assignedTransactionsCount);
+      if (!empty($assignedTransactionsCount)) {
+        $params['total'] = count($assignedTransactionsCount);
+      }
     }
     $financialitems = array();
     while ($financialItem->fetch()) {
@@ -372,6 +382,10 @@ ORDER by f.name";
           $row[$financialItem->id]['check'] = "<input type='checkbox' id='mark_y_". $financialItem->id."' name='mark_y_". $financialItem->id."' value='1' onclick={$js}></input>";
           $row[$financialItem->id]['action'] = CRM_Core_Action::formLink(CRM_Financial_Page_BatchTransaction::links(), null, array('id' => $financialItem->id, 'contid' => $financialItem->contributionID, 'cid' => $financialItem->contact_id));
         }
+      }
+      else {
+        $row[$financialItem->id]['check'] = NULL;
+        $row[$financialItem->id]['action'] = NULL;
       }
       $row[$financialItem->id]['contact_type'] = CRM_Contact_BAO_Contact_Utils::getImage(CRM_Utils_Array::value('contact_sub_type',$row[$financialItem->id]) ? CRM_Utils_Array::value('contact_sub_type',$row[$financialItem->id]) : CRM_Utils_Array::value('contact_type',$row[$financialItem->id]) ,false, $financialItem->contact_id);
       $financialitems = $row;

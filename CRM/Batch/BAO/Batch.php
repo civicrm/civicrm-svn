@@ -230,11 +230,14 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
       }
       $batch['batch_name'] = $value['title'];
       $batch['payment_instrument'] = $value['payment_instrument'];
-      $batch['item_count'] = $value['item_count'];
-      $batch['total'] = $value['total'] ? CRM_Utils_Money::format($value['total']) : '';
+      $batch['item_count'] = CRM_Utils_Array::value('item_count', $value);
+      $batch['total'] = ''; 
+      if (CRM_Utils_Array::value('total', $value)) {
+        $batch['total'] = CRM_Utils_Money::format($value['total']);
+      }
       // Compare totals with actuals
       if (isset($totals[$id])) {
-        $batch['item_count'] = self::displayTotals($totals[$id]['item_count'], $value['item_count']);
+        $batch['item_count'] = self::displayTotals($totals[$id]['item_count'], CRM_Utils_Array::value('item_count', $value));
         $batch['total'] = self::displayTotals(CRM_Utils_Money::format($totals[$id]['total']), $batch['total']);
       }
       $batch['status'] = $value['batch_status'];
@@ -305,8 +308,9 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
             CRM_Utils_Array::remove($newLinks, 'close', 'edit', 'reopen');
         }
       }
-
-      $values['batch_type'] = $batchTypes[$values['type_id']];
+      if (CRM_Utils_Array::value('type_id', $values)) {
+        $values['batch_type'] = $batchTypes[$values['type_id']];
+      }
       $values['batch_status'] = $batchStatus[$values['status_id']];
       $values['created_by'] = $object->created_by;
       $values['payment_instrument'] = $object->payment_instrument_id ? $paymentInstrument[$object->payment_instrument_id] : '';
@@ -929,9 +933,11 @@ LEFT JOIN civicrm_contribution_soft ON civicrm_contribution_soft.contribution_id
 FROM {$from}
 WHERE {$where}
 {$orderBy}
-{$limit}
 ";
- 
+    if (isset($limit)) {
+      $sql .= "{$limit}";
+    }
+    
     $result = CRM_Core_DAO::executeQuery($sql);
     return $result;
   }
