@@ -154,7 +154,11 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
       $defaults['options_per_line'] = 1;
       $defaults['is_display_amounts'] = 1;
     }
-
+    if (isset($this->_sid)) {
+      $financialTypeId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_sid, 'financial_type_id');
+      $defaults['financial_type_id'] = $financialTypeId;
+    }
+    
     return $defaults;
   }
 
