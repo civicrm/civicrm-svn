@@ -363,7 +363,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
     // they did -- the obvious fix would produce mutual recursion.
     $ufGroupType = self::_calculateGroupType($fieldArrs);
     $profileType = CRM_Core_BAO_UFField::calculateProfileType(implode(',',$ufGroupType));
-    $contactActivityProfile = CRM_Core_BAO_UFField::checkContactActivityProfileType($group->id); // FIXME new group or changed field list
+    $contactActivityProfile = CRM_Core_BAO_UFField::checkContactActivityProfileTypeByGroupType(implode(',',$ufGroupType));
     $importableFields = self::getImportableFields($showAll, $profileType, $contactActivityProfile);
     list($customFields, $addressCustomFields) = self::getCustomFields($ctype);
 

@@ -386,9 +386,18 @@ WHERE cf.id IN (" . $customFieldIds . ") AND is_multiple = 1 LIMIT 0,1";
     $ufGroup->id = $ufGroupId;
     $ufGroup->find(TRUE);
 
+    return self::checkContactActivityProfileTypeByGroupType($ufGroup->group_type);
+  }
+
+  /**
+   * FIXME say 10 ha
+   * @param $ufGroupType
+   * @return bool
+   */
+  public static function checkContactActivityProfileTypeByGroupType($ufGroupType) {
     $profileTypes = array();
-    if ($ufGroup->group_type) {
-      $typeParts = explode(CRM_Core_DAO::VALUE_SEPARATOR, $ufGroup->group_type);
+    if ($ufGroupType) {
+      $typeParts = explode(CRM_Core_DAO::VALUE_SEPARATOR, $ufGroupType);
       $profileTypes = explode(',', $typeParts[0]);
     }
 
