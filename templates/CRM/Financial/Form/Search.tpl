@@ -268,10 +268,8 @@ cj(function($) {
         var notAllowed = [1, 5];
         break;
       case 'close':
-        var notAllowed = [2, 5];
-        break;
       case 'export':
-        var notAllowed = [1, 2, 5];
+        var notAllowed = [2, 5];
         break;
       default:
         return records;
