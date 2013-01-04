@@ -54,10 +54,10 @@ class WebTest_Import_ContactCustomDataTest extends ImportCiviSeleniumTestCase {
     $this->open($this->sboxPath . "civicrm/contact/deduperules?reset=1");
     $this->waitForPageToLoad("30000");
 
-    $this->click("xpath=//div[@class='action-link']/a");
+    $this->click("xpath=//div[@id='browseValues_Individual']/div[2]/a/span");
     $this->waitForElementPresent('_qf_DedupeRules_next-bottom');
     $this->type('title', $newRuleTitle);
-    $this->select('level', 'label=Strict');
+    $this->click("CIVICRM_QFID_1_10");
     $this->select("where_0", "label=$customDataParams[1]");
     $this->type('weight_0', '10');
     $this->type('threshold', '10');
@@ -65,7 +65,7 @@ class WebTest_Import_ContactCustomDataTest extends ImportCiviSeleniumTestCase {
     $this->waitForPageToLoad("30000");
     $this->assertTrue($this->isTextPresent("The rule '{$newRuleTitle}' has been saved."));
 
-    $rgId = explode('&rgid=', $this->getAttribute("xpath=//div[@id='browseValues']//table/tbody//tr/td[text()='{$newRuleTitle}']/../td[3][text()='Strict']/../td[5]/span/a[text()='Use Rule']@href"));
+    $rgId = explode('&rgid=', $this->getAttribute("xpath=//div[@id='browseValues_Individual']//table/tbody//tr/td[text()='{$newRuleTitle}']/../td[3]/span/a[text()='Use Rule']@href"));
     $rgId = explode('&', $rgId[1]);
 
     // Add Contact

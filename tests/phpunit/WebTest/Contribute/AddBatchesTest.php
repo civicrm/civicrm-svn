@@ -48,7 +48,6 @@ class WebTest_Contribute_AddBatchesTest extends CiviSeleniumTestCase {
     // create contact
     $contact = array();
 
-
     //Open Live Contribution Page
     $this->open($this->sboxPath . "civicrm/batch?reset=1");
     $this->click("xpath=//div[@class='crm-submit-buttons']/a");
@@ -60,12 +59,12 @@ class WebTest_Contribute_AddBatchesTest extends CiviSeleniumTestCase {
     // Add Contact Details
     $data = array();
     for ($i=1; $i<=$itemCount; $i++ ) {
-      $data[$i] = array (
-                         'first_name' => 'Ma'.substr(sha1(rand()), 0, 7),
-                         'last_name' => 'An'.substr(sha1(rand()), 0, 7),
-                         'financial_type' => 'Donation',
-                         'amount' => 100,           
-                         );
+      $data[$i] = array(
+        'first_name' => 'Ma'.substr(sha1(rand()), 0, 7),
+        'last_name' => 'An'.substr(sha1(rand()), 0, 7),
+        'financial_type' => 'Donation',
+        'amount' => 100,           
+      );
       $this->_fillData($data[$i], $i, "Contribution");
     } 
     $this->click("_qf_Entry_cancel");
@@ -105,13 +104,13 @@ class WebTest_Contribute_AddBatchesTest extends CiviSeleniumTestCase {
     // Add Contact Details
     $data = array();
     for ($i=1; $i<=$itemCount; $i++ ) {
-      $data[$i] = array (
-                         'first_name' => 'Ma'.substr(sha1(rand()), 0, 7),
-                         'last_name' => 'An'.substr(sha1(rand()), 0, 7),
-                         'membership_type' => 'Default Organization',
-                         'amount' => 100,  
-                         'financial_type' => 'Member Dues',
-                         );
+      $data[$i] = array(
+        'first_name' => 'Ma'.substr(sha1(rand()), 0, 7),
+        'last_name' => 'An'.substr(sha1(rand()), 0, 7),
+        'membership_type' => 'Default Organization',
+        'amount' => 100,  
+        'financial_type' => 'Member Dues',
+      );
       $this->_fillData($data[$i], $i, "Membership");
     }
     $this->click("_qf_Entry_cancel");
@@ -121,7 +120,7 @@ class WebTest_Contribute_AddBatchesTest extends CiviSeleniumTestCase {
   
 
   
-  function _fillData ($data, $row, $type) {
+  function _fillData($data, $row, $type) {
     $email = $data['first_name'] . '@example.com';
     $this->webtestNewDialogContact($data['first_name'], $data['last_name'], $email, 4, "primary_profiles_{$row}", "primary_{$row}");
     
@@ -137,7 +136,6 @@ class WebTest_Contribute_AddBatchesTest extends CiviSeleniumTestCase {
       $this->type("field_{$row}_invoice_id", substr(sha1(rand()), 0, 10));
       
     } elseif ($type == "Membership") {
-      
       $this->select("field[{$row}][membership_type][0]", $data['membership_type']);
       $this->webtestFillDate("field_{$row}_join_date", "now");
       $this->webtestFillDate("field_{$row}_membership_start_date", "now");
@@ -152,7 +150,7 @@ class WebTest_Contribute_AddBatchesTest extends CiviSeleniumTestCase {
     }
   }
 
-  function _checkResult ($data, $type) {
+  function _checkResult($data, $type) {
     if ($type == "Contribution") {
       $this->open($this->sboxPath . "civicrm/contribute/search?reset=1");
       $this->waitForElementPresent("contribution_date_low");
@@ -165,13 +163,14 @@ class WebTest_Contribute_AddBatchesTest extends CiviSeleniumTestCase {
       $this->waitForPageToLoad('30000');
       $this->waitForElementPresent("_qf_ContributionView_cancel-bottom");
       $expected = array(
-                        'From'                => "{$data['first_name']} {$data['last_name']}",
-                        'Financial Type'      => $data['financial_type'],
-                        'Total Amount'        => $data['amount'],
-                        'Contribution Status' => 'Completed',
-                        );   
+        'From'                => "{$data['first_name']} {$data['last_name']}",
+        'Financial Type'      => $data['financial_type'],
+        'Total Amount'        => $data['amount'],
+        'Contribution Status' => 'Completed',
+      );   
       $this->webtestVerifyTabularData($expected);
-    } elseif ($type == "Membership") {
+    }
+    elseif ($type == "Membership") {
       $this->open($this->sboxPath . "civicrm/member/search?reset=1");
       $this->waitForElementPresent("member_join_date_low");
       
@@ -196,16 +195,16 @@ class WebTest_Contribute_AddBatchesTest extends CiviSeleniumTestCase {
       $this->click("xpath=//div[@class='crm-block crm-content-block crm-membership-view-form-block']/table[2]/tbody/tr[1]/td[8]/span/a[text()='View']");
       $this->waitForElementPresent("_qf_ContributionView_cancel-bottom");
       $expected = array(
-                        'From'                => "{$data['first_name']} {$data['last_name']}",
-                        'Financial Type'      => $data['financial_type'],
-                        'Total Amount'        => $data['amount'],
-                        'Contribution Status' => 'Completed',
-                        );   
+        'From'                => "{$data['first_name']} {$data['last_name']}",
+        'Financial Type'      => $data['financial_type'],
+        'Total Amount'        => $data['amount'],
+        'Contribution Status' => 'Completed',
+      );   
       $this->webtestVerifyTabularData($expected);
     }
   }
   
-  function _verifyData ($data, $type) {
+  function _verifyData($data, $type) {
     $this->waitForElementPresent("xpath=//div[@id='crm-batch-selector_wrapper']//table//tbody/tr[1]/td[7]/span/a[text()='Enter records']");
     $this->click("xpath=//div[@id='crm-batch-selector_wrapper']//table//tbody/tr[1]/td[7]/span/a[text()='Enter records']");
     $this->waitForPageToLoad('30000');
@@ -231,15 +230,15 @@ class WebTest_Contribute_AddBatchesTest extends CiviSeleniumTestCase {
         $this->type('first_name', $fname);
         $this->type('last_name', $lname);
         break;
-
+        
       case 5:
         $this->type('organization_name', $fname);
         break;
-
+        
       case 6:
         $this->type('household_name', $fname);
         break;
-}
+    }
 
     $this->type('email-Primary', $email);
     $this->click('_qf_Edit_next');
