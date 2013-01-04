@@ -379,7 +379,7 @@ ORDER by f.name";
           $row[$financialItem->id][$columnKey] = CRM_Utils_Money::format($financialItem->$columnKey, $financialItem->currency);
         }
         elseif ($columnKey == 'transaction_date' && $financialItem->$columnKey) {
-          $row[$financialItem->id][$columnKey] =  CRM_Utils_Date::mysqlToIso(CRM_Utils_Date::processDate($financialItem->$columnKey));
+          $row[$financialItem->id][$columnKey] =  CRM_Utils_Date::customFormat($financialItem->$columnKey);
         }
       }
       if ($statusID == CRM_Core_OptionGroup::getValue('batch_status','Open')) {
@@ -468,7 +468,7 @@ ORDER by f.name";
         'assigned_item_count' => $batchTotals[$batchID]['item_count'],
         'total' => CRM_Utils_Money::format($batchInfo->total),
         'assigned_total' => CRM_Utils_Money::format($batchTotals[$batchID]['total']),
-        'opened_date' => CRM_Utils_Date::mysqlToIso(CRM_Utils_Date::processDate($batchInfo->created_date)),
+        'opened_date' => CRM_Utils_Date::customFormat($batchInfo->created_date),
       );
 
     echo json_encode($batchSummary);
