@@ -185,7 +185,7 @@ class CRM_Activity_Form_Task_Batch extends CRM_Activity_Form_Task {
     // don't set the status message when form is submitted.
     // $buttonName = $this->controller->getButtonName('submit');
 
-    if ($suppressFields && $buttonName != '_qf_Batch_next') {
+    if ($suppressFields) {
       CRM_Core_Session::setStatus(ts("FILE or Autocomplete Select type field(s) in the selected profile are not supported for Batch Update."), ts("Some fields have been excluded"), "info");
     }
 
@@ -257,8 +257,8 @@ class CRM_Activity_Form_Task_Batch extends CRM_Activity_Form_Task {
         }
 
         $query = "
-SELECT activity_type_id , source_contact_id 
-FROM   civicrm_activity 
+SELECT activity_type_id , source_contact_id
+FROM   civicrm_activity
 WHERE  id = %1";
         $params = array(1 => array($key, 'Integer'));
         $dao = CRM_Core_DAO::executeQuery($query, $params);
