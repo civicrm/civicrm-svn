@@ -45,11 +45,12 @@ class CRM_Event_Cart_Form_Cart extends CRM_Core_Form {
 
     foreach ($this->cart->get_main_events_in_carts() as $event_in_cart) {
       if (empty($event_in_cart->participants)) {
-        $participant = CRM_Event_Cart_BAO_MerParticipant::create(array(
+        $participant_params = array(
             'cart_id' => $this->cart->id,
             'event_id' => $event_in_cart->event_id,
             'contact_id' => self::find_or_create_contact($this->getContactID()),
-          ));
+        );
+        $participant = CRM_Event_Cart_BAO_MerParticipant::create($participant_params);
         $participant->save();
         $event_in_cart->add_participant($participant);
       }

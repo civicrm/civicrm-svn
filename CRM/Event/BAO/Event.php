@@ -1933,7 +1933,7 @@ WHERE  ce.loc_block_id = $locBlockId";
    * @access public
    * @static
    */
-  function eventTotalSeats($eventId, $extraWhereClause = NULL) {
+  static function eventTotalSeats($eventId, $extraWhereClause = NULL) {
     if (empty($eventId)) {
       return 0;
     }

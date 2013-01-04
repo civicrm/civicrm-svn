@@ -6,7 +6,7 @@ class CRM_Event_Cart_Form_MerParticipant extends CRM_Core_Form {
     $this->participant = $participant;
   }
 
-  function buildQuickForm(&$form) {
+  function appendQuickForm(&$form) {
     $textarea_size = array('size' => 30, 'maxlength' => 60);
     $form->add('text', $this->email_field_name(), ts('Email Address'), $textarea_size, TRUE);
 

@@ -40,13 +40,15 @@ class CRM_Event_Cart_BAO_MerParticipant extends CRM_Event_BAO_Participant {
   static
   function get_attendee_role_id() {
     $roles = CRM_Event_PseudoConstant::participantRole(NULL, "v.label='Attendee'");
-    return array_pop(array_keys($roles));
+    $role_names = array_keys($roles);
+    return end($role_names);
   }
 
   static
   function get_pending_in_cart_status_id() {
     $status_types = CRM_Event_PseudoConstant::participantStatus(NULL, "name='Pending in cart'");
-    return array_pop(array_keys($status_types));
+    $status_names = array_keys($status_types);
+    return end($status_names);
   }
 
   public static function find_all_by_cart_id($event_cart_id) {
