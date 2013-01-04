@@ -39,6 +39,7 @@ class CRM_Financial_Form_Search extends CRM_Core_Form {
   function preProcess() {
     $batchStatus = CRM_Utils_Request::retrieve('batchStatus', 'Positive', CRM_Core_DAO::$_nullObject, FALSE, NULL);
     $this->_batchStatus = $batchStatus;
+    $this->assign('batchStatus', $batchStatus);
   }
 
   function setDefaultValues() {

@@ -310,7 +310,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
             CRM_Utils_Array::remove($newLinks, 'close', 'edit', 'download');
             break;
           case '5':
-            CRM_Utils_Array::remove($newLinks, 'close', 'edit', 'reopen');
+            CRM_Utils_Array::remove($newLinks, 'close', 'edit', 'reopen', 'export');
         }
       }
       if (CRM_Utils_Array::value('type_id', $values)) {
@@ -323,10 +323,13 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
         $values['payment_instrument'] = $paymentInstrument[$object->payment_instrument_id];
       }
 
+      $aid = CRM_Core_OptionGroup::getValue('activity_type','Export Accounting Batch');
+      $activityParams = array('source_record_id' => $object->id, 'activity_type_id' => $aid );
+      $exportActivity = CRM_Activity_BAO_Activity::retrieve($activityParams);
       $values['action'] = CRM_Core_Action::formLink(
         $newLinks,
         $action,
-        array('id' => $object->id, 'status' => $values['status_id'])
+        array('id' => $object->id, 'status' => $values['status_id'], 'eid' => $exportActivity->id)
       );
       $results[$object->id] = $values;
     }
@@ -407,7 +410,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
         'edit' =>    array(
           'name'  => ts('Edit'),
           'url'   => 'civicrm/financial/batch',
-          'qs'    => 'reset=1&action=update&id=%%id%%',
+          'qs'    => 'reset=1&action=update&id=%%id%%&context=1',
           'title' => ts('Edit Batch'),
         ),
         'close' =>   array(
@@ -437,7 +440,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
         'download' => array(
           'name'  => ts('Download'),
           'url'   => 'civicrm/file',
-          'qs'    => 'reset=1&id=%%fid%%&eid=%%id%%',
+          'qs'    => 'reset=1&id=%%id%%&eid=%%eid%%',
           'title' => ts('Download Batch'),
         )
       );

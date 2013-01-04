@@ -127,7 +127,7 @@ class CRM_Financial_Page_FinancialBatch extends CRM_Core_Page_Basic {
    */
   function userContext($mode = null) {
     $context = $this->get("context");
-    if ($mode == CRM_Core_Action::UPDATE || ($mode = CRM_Core_Action::ADD & $context == 'open')) {
+    if ($mode == CRM_Core_Action::UPDATE || ($mode = CRM_Core_Action::ADD & isset($context))) {
       return "civicrm/financial/financialbatches";
     }
     return 'civicrm';
@@ -135,8 +135,8 @@ class CRM_Financial_Page_FinancialBatch extends CRM_Core_Page_Basic {
 
   function userContextParams($mode = NULL) {
     $context = $this->get("context");
-    if ($mode == CRM_Core_Action::UPDATE || ($mode = CRM_Core_Action::ADD & $context == 'open')) {
-      return "reset=1&batchStatus=1";
+    if ($mode == CRM_Core_Action::UPDATE || ($mode = CRM_Core_Action::ADD & isset($context))) {
+      return "reset=1&batchStatus={$context}";
     }
   }
 

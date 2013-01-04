@@ -267,7 +267,7 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
     }
     if ($buttonName == $this->getButtonName('next', 'new') & $this->_action == CRM_Core_Action::UPDATE) {
       $session->replaceUserContext(CRM_Utils_System::url('civicrm/financial/batch',
-        "reset=1&action=add&context=open"));
+        "reset=1&action=add&context=1"));
     }
     elseif ($buttonName == $this->getButtonName('next', 'new')) {
       $session->replaceUserContext(CRM_Utils_System::url('civicrm/financial/batch',
@@ -277,7 +277,7 @@ class CRM_Financial_Form_FinancialBatch extends CRM_Contribute_Form {
       $session->replaceUserContext(CRM_Utils_System::url('civicrm', 'reset=1'));
     }
     elseif (($buttonName == $this->getButtonName('next') & $this->_action == CRM_Core_Action::UPDATE) ||
-      ($buttonName == $this->getButtonName('next') & $this->_action == CRM_Core_Action::ADD & $context == 'open' )) {
+      ($buttonName == $this->getButtonName('next') & $this->_action == CRM_Core_Action::ADD & $context == 1 )) {
       $session->replaceUserContext(CRM_Utils_System::url('civicrm/financial/financialbatches',
         "reset=1&batchStatus=1"));
     }
