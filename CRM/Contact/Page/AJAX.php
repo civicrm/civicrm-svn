@@ -637,7 +637,7 @@ WHERE sort_name LIKE '%$name%'";
     */
   static public function checkUserName() {
     $config = CRM_Core_Config::singleton();
-    $username = trim(htmlentities($_REQUEST['cms_name']));
+    $username = trim($_REQUEST['cms_name']);
 
     $params = array('name' => $username);
 
