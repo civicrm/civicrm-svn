@@ -549,23 +549,39 @@ WHERE cf.id IN (" . $customFieldIds . ") AND is_multiple = 1 LIMIT 0,1";
    * @return  profile group_type
    * @acess public
    * @static
+   *
+   * TODO Why is this function in this class? It seems to be about the UFGroup.
    */
   static function getProfileType($ufGroupId, $returnMixType = TRUE, $onlyPure = FALSE, $skipComponentType = FALSE) {
-    // profile types
-    $contactTypes = array('Contact', 'Individual', 'Household', 'Organization');
-    $subTypes = CRM_Contact_BAO_ContactType::subTypes();
-
-    $components = array('Contribution', 'Participant', 'Membership', 'Activity');
-
     $ufGroup = new CRM_Core_DAO_UFGroup();
     $ufGroup->id = $ufGroupId;
     $ufGroup->is_active = 1;
 
     $ufGroup->find(TRUE);
+    return self::calculateProfileType($ufGroup->group_type, $onlyPure, $skipComponentType, $returnMixType);
+  }
+
+  /**
+   * function to get the profile type (eg: individual/organization/household)
+   *
+   * @param int      $ufGroupId     uf group id
+   * @param boolean  $returnMixType this is true, then field type of  mix profile field is returned
+   * @param boolean  $onlyPure      true if only pure profiles are required
+   *
+   * @return  profile group_type
+   * @acess public
+   * @static
+   *
+   * TODO Why is this function in this class? It seems to be about the UFGroup.
+   */
+  public static function calculateProfileType($ufGroupType, $onlyPure, $skipComponentType, $returnMixType) { // profile types
+    $contactTypes = array('Contact', 'Individual', 'Household', 'Organization');
+    $subTypes = CRM_Contact_BAO_ContactType::subTypes();
+    $components = array('Contribution', 'Participant', 'Membership', 'Activity');
 
     $profileTypes = array();
-    if ($ufGroup->group_type) {
-      $typeParts = explode(CRM_Core_DAO::VALUE_SEPARATOR, $ufGroup->group_type);
+    if ($ufGroupType) {
+      $typeParts = explode(CRM_Core_DAO::VALUE_SEPARATOR, $ufGroupType);
       $profileTypes = explode(',', $typeParts[0]);
     }
 
