@@ -358,7 +358,11 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
     // $group->copyValues($groupArr); // no... converts string('') to string('null')
     $group = (object) $groupArr;
 
-    $profileType = CRM_Core_BAO_UFField::getProfileType($group->id); // FIXME, new group or changed field list
+    // Refactoring note: The $fieldArrs here may be slightly different than the $ufFields
+    // used by calculateGroupType, but I don't think the missing fields matter, and -- if
+    // they did -- the obvious fix would produce mutual recursion.
+    $ufGroupType = self::_calculateGroupType($fieldArrs);
+    $profileType = CRM_Core_BAO_UFField::calculateProfileType(implode(',',$ufGroupType));
     $contactActivityProfile = CRM_Core_BAO_UFField::checkContactActivityProfileType($group->id); // FIXME new group or changed field list
     $importableFields = self::getImportableFields($showAll, $profileType, $contactActivityProfile);
     list($customFields, $addressCustomFields) = self::getCustomFields($ctype);
@@ -2810,6 +2814,18 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
   static function calculateGroupType($gId, $includeTypeValues = FALSE, $ignoreFieldId = NULL) {
     //get the profile fields.
     $ufFields = self::getFields($gId, FALSE, NULL, NULL, NULL, TRUE, NULL, TRUE);
+    return self::_calculateGroupType($ufFields, $includeTypeValues, $ignoreFieldId);
+  }
+
+  /**
+   * calculate the profile type 'group_type' as per profile fields.
+   *
+   * @param int $gid           profile id
+   * @param int $ignoreFieldId ignore perticular profile field
+   *
+   * @return array list of calculated group type
+   */
+  static function _calculateGroupType($ufFields, $includeTypeValues = FALSE, $ignoreFieldId = NULL) {
     $groupType = $groupTypeValues = $customFieldIds = array();
     if (!empty($ufFields)) {
       foreach ($ufFields as $fieldName => $fieldValue) {

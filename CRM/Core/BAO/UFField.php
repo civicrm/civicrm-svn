@@ -558,7 +558,7 @@ WHERE cf.id IN (" . $customFieldIds . ") AND is_multiple = 1 LIMIT 0,1";
     $ufGroup->is_active = 1;
 
     $ufGroup->find(TRUE);
-    return self::calculateProfileType($ufGroup->group_type, $onlyPure, $skipComponentType, $returnMixType);
+    return self::calculateProfileType($ufGroup->group_type, $returnMixType, $onlyPure, $skipComponentType);
   }
 
   /**
@@ -574,7 +574,8 @@ WHERE cf.id IN (" . $customFieldIds . ") AND is_multiple = 1 LIMIT 0,1";
    *
    * TODO Why is this function in this class? It seems to be about the UFGroup.
    */
-  public static function calculateProfileType($ufGroupType, $onlyPure, $skipComponentType, $returnMixType) { // profile types
+  public static function calculateProfileType($ufGroupType, $returnMixType = TRUE, $onlyPure = FALSE, $skipComponentType= FALSE) {
+    // profile types
     $contactTypes = array('Contact', 'Individual', 'Household', 'Organization');
     $subTypes = CRM_Contact_BAO_ContactType::subTypes();
     $components = array('Contribution', 'Participant', 'Membership', 'Activity');
