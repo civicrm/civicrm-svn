@@ -72,12 +72,14 @@ class WebTest_Contact_PrivacyOptionSearchTest extends CiviSeleniumTestCase {
     $this->type('last_name', $lname1);
     $email1 = $fname1 . '@example.org';
     $this->type('email_1_email', $email1);
-
+    
+    //click 'Communication Preferences' Panel
     $this->click("commPrefs");
-    $this->click("privacy[do_not_phone]");
-    $this->click("privacy[do_not_email]");
-    $this->click("privacy[do_not_mail]");
-    $this->click("privacy[do_not_sms]");
+    $this->waitForElementPresent("preferred_mail_format");
+    $this->click("privacy_do_not_phone");
+    $this->click("privacy_do_not_email");
+    $this->click("privacy_do_not_mail");
+    $this->click("privacy_do_not_sms");
 
     $this->click('_qf_Contact_upload_view-bottom');
     $this->waitForPageToLoad('30000');
@@ -99,10 +101,12 @@ class WebTest_Contact_PrivacyOptionSearchTest extends CiviSeleniumTestCase {
     $email2 = $fname2 . '@example.org';
     $this->type('email_1_email', $email2);
 
+    //click 'Communication Preferences' Panel
     $this->click("commPrefs");
-    $this->click("privacy[do_not_phone]");
-    $this->click("privacy[do_not_email]");
-    $this->click("privacy[do_not_trade]");
+    $this->waitForElementPresent("preferred_mail_format");
+    $this->click("privacy_do_not_phone");
+    $this->click("privacy_do_not_email");
+    $this->click("privacy_do_not_trade");
 
     $this->click('_qf_Contact_upload_view-bottom');
     $this->waitForPageToLoad('30000');
@@ -121,10 +125,10 @@ class WebTest_Contact_PrivacyOptionSearchTest extends CiviSeleniumTestCase {
     $this->select("xpath=//form[@id='Advanced']//table[1]/tbody/tr[2]/td[2]//select[1]", "label={$groupName}");
     $this->waitForTextPresent($groupName);
 
-    $this->select("xpath=//form[@id='Advanced']//table[1]/tbody/tr[5]/td[1]/table[1]/tbody/tr[2]/td[1]//select[1]", 'value=do_not_phone');
+    $this->select("xpath=//form[@id='Advanced']//table[1]/tbody/tr[6]/td[1]/table[1]/tbody/tr[2]/td[1]//select[1]", 'value=do_not_phone');
     $this->waitForTextPresent('Do not phone');
 
-    $this->select("xpath=//form[@id='Advanced']//table[1]/tbody/tr[5]/td[1]/table[1]/tbody/tr[2]/td[1]//select[1]", 'value=do_not_email');
+    $this->select("xpath=//form[@id='Advanced']//table[1]/tbody/tr[6]/td[1]/table[1]/tbody/tr[2]/td[1]//select[1]", 'value=do_not_email');
     $this->waitForTextPresent('Do not email');
 
     $this->click("_qf_Advanced_refresh");
@@ -139,12 +143,12 @@ class WebTest_Contact_PrivacyOptionSearchTest extends CiviSeleniumTestCase {
     $this->select("xpath=//form[@id='Advanced']//table[1]/tbody/tr[2]/td[2]//select[1]", "label={$groupName}");
     $this->waitForTextPresent($groupName);
 
-    $this->click("xpath=//form[@id='Advanced']//table[1]/tbody/tr[5]/td[1]/table[1]/tbody/tr[1]/td[1]//input[2]");
+    $this->click("xpath=//form[@id='Advanced']//table[1]/tbody/tr[6]/td[1]/table[1]/tbody/tr[1]/td[1]//input[2]");
 
-    $this->select("xpath=//form[@id='Advanced']//table[1]/tbody/tr[5]/td[1]/table[1]/tbody/tr[2]/td[1]//select[1]", 'value=do_not_phone');
+    $this->select("xpath=//form[@id='Advanced']//table[1]/tbody/tr[6]/td[1]/table[1]/tbody/tr[2]/td[1]//select[1]", 'value=do_not_phone');
     $this->waitForTextPresent('Do not phone');
 
-    $this->select("xpath=//form[@id='Advanced']//table[1]/tbody/tr[5]/td[1]/table[1]/tbody/tr[2]/td[1]//select[1]", 'value=do_not_email');
+    $this->select("xpath=//form[@id='Advanced']//table[1]/tbody/tr[6]/td[1]/table[1]/tbody/tr[2]/td[1]//select[1]", 'value=do_not_email');
     $this->waitForTextPresent('Do not email');
 
     $this->click("_qf_Advanced_refresh");
@@ -160,12 +164,12 @@ class WebTest_Contact_PrivacyOptionSearchTest extends CiviSeleniumTestCase {
     $this->select("xpath=//form[@id='Advanced']//table[1]/tbody/tr[2]/td[2]//select[1]", "label={$groupName}");
     $this->waitForTextPresent($groupName);
 
-    $this->click("xpath=//form[@id='Advanced']//table[1]/tbody/tr[5]/td[1]/table[1]/tbody/tr[1]/td[1]//input[2]");
+    $this->click("xpath=//form[@id='Advanced']//table[1]/tbody/tr[6]/td[1]/table[1]/tbody/tr[1]/td[1]//input[2]");
 
-    $this->select("xpath=//form[@id='Advanced']//table[1]/tbody/tr[5]/td[1]/table[1]/tbody/tr[2]/td[1]//select[1]", 'value=do_not_phone');
+    $this->select("xpath=//form[@id='Advanced']//table[1]/tbody/tr[6]/td[1]/table[1]/tbody/tr[2]/td[1]//select[1]", 'value=do_not_phone');
     $this->waitForTextPresent('Do not phone');
 
-    $this->select("xpath=//form[@id='Advanced']//table[1]/tbody/tr[5]/td[1]/table[1]/tbody/tr[2]/td[1]//select[1]", 'value=do_not_trade');
+    $this->select("xpath=//form[@id='Advanced']//table[1]/tbody/tr[6]/td[1]/table[1]/tbody/tr[2]/td[1]//select[1]", 'value=do_not_trade');
     $this->waitForTextPresent('Do not trade');
 
     $this->select('privacy_operator', 'value=AND');

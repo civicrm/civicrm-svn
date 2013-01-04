@@ -1008,7 +1008,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       'period_type' => $period_type,
     );
 
-    $this->open($this->sboxPath . 'civicrm/admin/member/membershipType?action=add&reset=1');
+    $this->open($this->sboxPath . 'civicrm/admin/member/membershipType/add?action=add&reset=1');
     $this->waitForElementPresent('_qf_MembershipType_cancel-bottom');
 
     $this->type('name', $memTypeParams['membership_type']);
