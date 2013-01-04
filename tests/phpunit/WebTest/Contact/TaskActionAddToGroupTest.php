@@ -46,7 +46,7 @@ class WebTest_Contact_TaskActionAddToGroupTest extends CiviSeleniumTestCase {
     for ($i = 0; $i < 2; $i++) {
       // logout before calling included test, to avoid impossible repeated login
       $this->open($this->sboxPath . "civicrm/logout?reset=1");
-
+      
       // create new contact
       WebTest_Contact_AddTest::testIndividualAdd();
 
@@ -57,7 +57,7 @@ class WebTest_Contact_TaskActionAddToGroupTest extends CiviSeleniumTestCase {
       // update email of new contact
       $this->click("//ul[@id='actions']/li/a/span[text()='Edit']");
       $this->waitForPageToLoad("30000");
-      $this->type("email_1_email", $emailString . $i);
+      $this->type("email_1_email", $emailString . $i . 'webtest');
       $this->click("_qf_Contact_upload_view");
       $this->waitForPageToLoad("30000");
     }
@@ -82,6 +82,7 @@ class WebTest_Contact_TaskActionAddToGroupTest extends CiviSeleniumTestCase {
     // Click "check all" box and act on "Add to group" action
     $this->click('toggleSelect');
     $this->select("task", "label=Add Contacts to Group");
+    sleep(1);
     $this->click("Go");
     $this->waitForPageToLoad("30000");
 
@@ -90,12 +91,11 @@ class WebTest_Contact_TaskActionAddToGroupTest extends CiviSeleniumTestCase {
     $this->select("group_id", "label=" . $newGroupName);
     $this->click("_qf_AddToGroup_next-bottom");
     $this->waitForPageToLoad("30000");
-
+    
     // Check status messages are as expected
-    $this->assertTrue($this->isTextPresent("Added Contact(s) to " . $newGroupName));
-    $this->assertTrue($this->isTextPresent("Total Selected Contact(s): 2"));
-    $this->assertTrue($this->isTextPresent("Total Contact(s) added to group: 2"));
-
+    $this->assertTrue($this->isTextPresent("Added Contacts to {$newGroupName}"));
+    $this->assertTrue($this->isTextPresent("2 contacts added to group "));
+   
     // Search by group membership in newly created group
     // Use class names for menu items since li array can change based on which components are enabled
     $this->click("css=ul#civicrm-menu li.crm-Search");
@@ -146,10 +146,9 @@ class WebTest_Contact_TaskActionAddToGroupTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad("30000");
 
     // Check status messages are as expected
-    $this->assertTrue($this->isTextPresent("Added Contact(s) to " . $newGroupName));
-    $this->assertTrue($this->isTextPresent("Total Selected Contact(s): 50"));
-    $this->assertTrue($this->isTextPresent("Total Contact(s) added to group: 50"));
-
+    $this->assertTrue($this->isTextPresent("Added Contacts to {$newGroupName}"));
+    $this->assertTrue($this->isTextPresent("50 contacts added to group"));
+   
     $this->click("css=ul#civicrm-menu li.crm-Search");
     $this->click("css=ul#civicrm-menu li.crm-Advanced_Search a");
     $this->waitForPageToLoad("30000");
@@ -159,7 +158,7 @@ class WebTest_Contact_TaskActionAddToGroupTest extends CiviSeleniumTestCase {
     
     if (!$this->isTextPresent("50 Contacts")) {
        die("nothing found for group $newGroupName");
-}
+    }
 
     $this->assertTrue($this->isTextPresent("50 Contacts"), 'Looking for 50 results belonging to group: ' . $newGroupName);
   }
