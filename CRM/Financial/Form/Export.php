@@ -140,6 +140,20 @@ class CRM_Financial_Form_Export extends CRM_Core_Form {
       $batchIds = explode(',', $this->_batchIds);
     }
 
+    // build batch params
+    $session = CRM_Core_Session::singleton();
+    $batchParams['modified_date'] = date('YmdHis');
+    $batchParams['modified_id'] = $session->get('userID');
+
+    $batchStatus = CRM_Core_PseudoConstant::accountOptionValues('batch_status');
+    $batchParams['status_id'] = CRM_Utils_Array::key('Exported', $batchStatus);
+
+    $ids = array();
+    foreach($batchIds as $batchId) {
+      $batchParams['id'] = $ids['batchID'] = $batchId;
+      CRM_Batch_BAO_Batch::create($batchParams, $ids, 'financialBatch');
+    }
+
     CRM_Batch_BAO_Batch::exportFinancialBatch($batchIds, $params['export_format']);
   }
 }
