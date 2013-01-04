@@ -58,13 +58,6 @@ class CRM_Core_BAO_FinancialTrxn extends CRM_Financial_DAO_FinancialTrxn {
       $trxn->currency = $config->defaultCurrency;
     }
 
-    // if a transaction already exists for a contribution id, lets get the finTrxnId and entityFinTrxId
-    if (!$trxnEntityTable ) {
-      $fids = self::getFinancialTrxnIds($params['contribution_id'], 'civicrm_contribution');
-    }
-    if (CRM_Utils_Array::value( 'financialTrxnId', $fids ) && empty ( $trxnEntityTable )) {
-      $trxn->id = $fids['financialTrxnId'];
-    }
     $trxn->save();
 
     $contributionAmount = CRM_Utils_Array::value('net_amount', $params);
@@ -92,9 +85,6 @@ class CRM_Core_BAO_FinancialTrxn extends CRM_Financial_DAO_FinancialTrxn {
 
     $entityTrxn = new CRM_Financial_DAO_EntityFinancialTrxn();
     $entityTrxn->copyValues($entityFinancialTrxnParams);
-    if (CRM_Utils_Array::value('entityFinancialTrxnId', $fids) && empty($trxnEntityTable)) {
-      $entityTrxn->id = $fids['entityFinancialTrxnId'];
-    }
     $entityTrxn->save();
     return $trxn;
   }

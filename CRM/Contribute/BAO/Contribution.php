@@ -155,6 +155,10 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
       $contribution->currency = $config->defaultCurrency;
     }
 
+    if (CRM_Utils_Array::value('contribution', $ids)) {
+      $params['prevContribution'] = self::getValues($ids['contribution'], CRM_Core_DAO::$_nullArray, CRM_Core_DAO::$_nullArray);
+    }
+
     $result = $contribution->save();
 
     // Add financial_trxn details as part of fix for CRM-4724
@@ -811,8 +815,8 @@ INNER JOIN  civicrm_contact contact ON ( contact.id = civicrm_contribution.conta
     if ($addExtraFields) {
       $contributionFields = array_merge($contributionFields, self::getSpecialContributionFields());
     }
-
-        $contributionFields = array_merge( $contributionFields, CRM_Financial_DAO_FinancialType::export( ) );
+    
+    $contributionFields = array_merge($contributionFields, CRM_Financial_DAO_FinancialType::export());
 
     foreach ($contributionFields as $key => $var) {
       if ($key == 'contribution_contact_id') {
@@ -969,8 +973,8 @@ GROUP BY p.id
     while ($honorDAO->fetch()) {
       $params[$honorDAO->id]['honorId'] = $honorDAO->contact_id;
       $params[$honorDAO->id]['display_name'] = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $honorDAO->contact_id, 'display_name');
-            $params[$honorDAO->id]['type']         = $type[$honorDAO->financial_type_id];
-            $params[$honorDAO->id]['type_id']      = $honorDAO->financial_type_id;
+      $params[$honorDAO->id]['type'] = $type[$honorDAO->financial_type_id];
+      $params[$honorDAO->id]['type_id'] = $honorDAO->financial_type_id;
       $params[$honorDAO->id]['amount'] = CRM_Utils_Money::format($honorDAO->total_amount, $honorDAO->currency);
       $params[$honorDAO->id]['source'] = $honorDAO->source;
       $params[$honorDAO->id]['receive_date'] = $honorDAO->receive_date;
@@ -1292,7 +1296,7 @@ LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.cont
       $result[$cs->id]['contributor_id'] = $cs->contributor_id;
       $result[$cs->id]['contribution_id'] = $cs->contribution_id;
       $result[$cs->id]['contributor_name'] = $cs->display_name;
-            $result[$cs->id]['financial_type']    = $cs->contributionType;
+      $result[$cs->id]['financial_type'] = $cs->contributionType;
       $result[$cs->id]['receive_date'] = $cs->receive_date;
       $result[$cs->id]['pcp_id'] = $cs->pcp_id;
       $result[$cs->id]['pcp_title'] = $cs->pcp_title;
@@ -1757,7 +1761,7 @@ LEFT JOIN  civicrm_contribution contribution ON ( componentPayment.contribution_
       $contributionParams = array();
       $fields = array(
         'contact_id', 'total_amount', 'receive_date', 'is_test', 'campaign_id',
-                             'payment_instrument_id', 'trxn_id', 'invoice_id', 'financial_type_id', 
+        'payment_instrument_id', 'trxn_id', 'invoice_id', 'financial_type_id', 
         'contribution_status_id', 'non_deductible_amount', 'receipt_date', 'check_number',
       );
       foreach ($fields as $field) {
@@ -2629,7 +2633,6 @@ WHERE  contribution_id = %1 ";
     $trxnParams = array(
       'contribution_id' => $params['contribution']->id,
       'to_financial_account_id' => $params['to_financial_account_id'],
-      'from_financial_account_id' => CRM_Utils_Array::value('from_financial_account_id', $params, NULL),
       'trxn_date' => date('YmdHis'),
       'total_amount' => CRM_Utils_Array::value('initial_amount', $params) ? $params['initial_amount'] : $params['total_amount'],
       'fee_amount' => CRM_Utils_Array::value('fee_amount', $params),
@@ -2645,14 +2648,40 @@ WHERE  contribution_id = %1 ";
       $trxnParams['payment_processor_id'] = $params['payment_processor'];
     }
 
-    //records finanical trxn and entity financial trxn
-    $financialTxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
+    $update = FALSE;
+    if (CRM_Utils_Array::value('prevContribution', $params)) {
+      $params['trxnParams'] = $trxnParams;
+      
+      //if Change contribution amount
+      if ($params['total_amount'] != $params['prevContribution']->total_amount) {
+        //Update Financial Records
+        self::updateFinancialAccounts($params, 'changedAmount');        
+      }
 
+      //Pay-later contribution received
+      if ($params['prevContribution']->contribution_status_id == array_search('Pending', $contributionStatuses) && $params['contribution']->contribution_status_id == array_search('Completed', $contributionStatuses)) {
+        //Update Financial Records
+        self::updateFinancialAccounts($params, 'changedStatus');
+      }
+      
+      //Change Payment Instrument for a Completed contribution
+      if (!($params['contribution']->payment_instrument_id  == 'null') && ($params['contribution']->payment_instrument_id != $params['prevContribution']->payment_instrument_id)) {
+        //Update Financial Records
+        self::updateFinancialAccounts($params, 'changePaymentInstrument');
+      }
+      $update = TRUE;
+    }
+
+    if(!$update) {
+      //records finanical trxn and entity financial trxn
+      $financialTxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
+    }
+    
     // record line items and finacial items
     $entityId = $params['contribution']->id;
     $entityTable = 'civicrm_contribution';
-    CRM_Price_BAO_LineItem::processPriceSet($entityId, CRM_Utils_Array::value('line_item', $params), $params['contribution'], $entityTable);
-
+    CRM_Price_BAO_LineItem::processPriceSet($entityId, CRM_Utils_Array::value('line_item', $params), $params['contribution'], $entityTable, $update);
+    
     // create batch entry if batch_id is passed
     if (CRM_Utils_Array::value('batch_id', $params)) {
       $entityParams = array(
@@ -2669,4 +2698,76 @@ WHERE  contribution_id = %1 ";
       //CRM_Core_BAO_FinancialTrxn::recordFees();
     }
   }
+
+  /**
+   * Function to update all financial accounts entry 
+   *
+   * @param array $params contribution object, line item array and params for trxn
+   *
+   * @param array $ids of contribution id
+   *
+   * @access public
+   * @static
+   */
+  static function updateFinancialAccounts(&$params, $context = NULL) {
+    $diffAmount = NULL;
+    if ($context == 'changedAmount') {
+      $params['trxnParams']['total_amount'] = $diffAmount = $params['total_amount'] - $params['prevContribution']->total_amount;
+    }
+    if ($context == 'changedStatus') {
+      $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Accounts Receivable Account is' "));
+      $params['trxnParams']['from_financial_account_id'] = CRM_Contribute_PseudoConstant::financialAccountType($params['financial_type_id'], $relationTypeId);
+    }
+    elseif ($context == 'changePaymentInstrument') {
+      $params['trxnParams']['from_financial_account_id'] = CRM_Financial_BAO_FinancialTypeAccount::getInstrumentFinancialAccount($params['prevContribution']->payment_instrument_id);
+    }
+    if (CRM_Utils_Array::value('from_financial_account_id', $params['trxnParams']) == CRM_Utils_Array::value('to_financial_account_id', $params['trxnParams'])) {
+      return;
+    }
+    $trxn = CRM_Core_BAO_FinancialTrxn::create($params['trxnParams']);
+
+    if ($context == 'changedStatus') {
+      $query = "UPDATE civicrm_financial_item SET status_id = %1 WHERE entity_id = %2";
+      foreach ($params['line_item'] as $fieldId => $fields) {
+        foreach ($fields as $fieldValueId => $fieldValues) {
+          $fparams = array(
+            1 => array(CRM_Core_OptionGroup::getValue('financial_item_status', 'Paid', 'name'), 'Integer'), 
+            2 => array($fieldValues['id'], 'Integer')
+          );
+          $entityParams = array(
+            'entity_table' => 'civicrm_financial_item',
+            'financial_trxn_id' => $trxn->id
+          );
+          CRM_Core_DAO::executeQuery($query, $fparams);
+          // FIXME:need to change
+          $entityParams['amount'] = $fieldValues['line_total'];
+          $entityParams['entity_id'] = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_FinancialItem', $fieldValues['id'], 'id', 'entity_id');
+          CRM_Financial_BAO_FinancialItem::createEntityTrxn($entityParams);
+        } 
+      }
+    } 
+    elseif ($context != 'changePaymentInstrument') {
+      $itemParams['entity_table'] = 'civicrm_line_item';
+      foreach ($params['line_item'] as $fieldId => $fields) {
+        foreach ($fields as $fieldValueId => $fieldValues) {
+          $itemParams['entity_id'] = $fieldValues['id'];
+          $prevfinancialItem = CRM_Financial_BAO_FinancialItem::retrieve($itemParams, CRM_Core_DAO::$_nullArray);
+          $itemParams = array(
+            'transaction_date' => CRM_Utils_Date::isoToMysql($params['contribution']->receive_date),
+            'contact_id' => $params['contribution']->contact_id,
+            'amount' => $diffAmount,
+            'currency' => $params['contribution']->currency,
+            'description' => $prevfinancialItem->description,
+            'status_id' => $prevfinancialItem->status_id,
+            'financial_account_id' => $prevfinancialItem->financial_account_id,
+            'entity_table' => 'civicrm_line_item',
+            'entity_id' => $fieldValues['id']
+          );
+          
+          $ids['id'] = $trxn->id;
+          $financialItem = CRM_Financial_BAO_FinancialItem::create($itemParams, NULL, $ids);
+        }
+      }
+    }
+  }   
 }

@@ -60,7 +60,6 @@
   <field>  
     <name>to_financial_account_id</name>  
     <type>int unsigned</type>  
-    <required>true</required>  
     <comment>FK to financial_financial_account table.</comment>   
     <add>4.3</add>
   </field> 

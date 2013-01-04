@@ -264,7 +264,7 @@ class CRM_Price_BAO_LineItem extends CRM_Price_DAO_LineItem {
    * @return void
    * @static
    */
-  static function processPriceSet($entityId, $lineItem, $contributionDetails = NULL, $entityTable = 'civicrm_contribution') {
+  static function processPriceSet($entityId, $lineItem, $contributionDetails = NULL, $entityTable = 'civicrm_contribution', $update = FALSE) {
     if (!$entityId || !is_array($lineItem)
       || CRM_Utils_system::isNull($lineItem)
     ) {
@@ -280,7 +280,9 @@ class CRM_Price_BAO_LineItem extends CRM_Price_DAO_LineItem {
         $line['entity_table'] = $entityTable;
         $line['entity_id'] = $entityId;
         $lineItems = CRM_Price_BAO_LineItem::create($line);
-        CRM_Financial_BAO_FinancialItem::add($lineItems, $contributionDetails);
+        if (!$update) {
+          CRM_Financial_BAO_FinancialItem::add($lineItems, $contributionDetails);
+        }
       }
     }
   } 

@@ -163,10 +163,6 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem {
    */
   static function createEntityTrxn($params) {
     $entity_trxn = new CRM_Financial_DAO_EntityFinancialTrxn();
-    if (CRM_Utils_Array::value('id', $params)) {
-      $entity_trxn->id = $params['id'];
-      $entity_trxn->find(TRUE);
-    }
     $entity_trxn->copyValues($params);
     $entity_trxn->save();
     return $entity_trxn;
