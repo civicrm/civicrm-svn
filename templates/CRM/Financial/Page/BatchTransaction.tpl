@@ -173,11 +173,11 @@ function checkMismatch() {
   assignedItem = cj("#row_assigned_item_count").text();
   enteredTotal = cj("#row_total").text();
   assignedTotal = cj("#row_assigned_total").text();
-  if (enteredItem != assignedItem) {
+  if (enteredItem != "" & enteredItem != assignedItem) {
      mismatch = true;
      txt += '{/literal}<li><span class="crm-error">Item Count mismatch<br/>{ts escape="js"}Expected{/ts}:{literal}' + enteredItem +'{/literal}<br/>{ts escape="js"}Current Total{/ts}:{literal}' + assignedItem + '{/literal}</span></li>{literal}';
   }
-  if (enteredTotal != assignedTotal) {
+  if (enteredTotal != "" & enteredTotal != assignedTotal) {
      mismatch = true;
      txt += '{/literal}<li><span class="crm-error">Total Amount mismatch<br/>{ts escape="js"}Expected{/ts}:{literal}' + enteredTotal +'{/literal}<br/>{ts escape="js"}Current Total{/ts}:{literal}' + assignedTotal + '{/literal}</span></li></ul>{literal}';
   }

@@ -310,6 +310,7 @@ ORDER by f.name";
         'contact_a.contact_sub_type',
         'transaction_date',
         'name',
+        'civicrm_contribution.currency as currency',
       );
 
     $columnHeader =
@@ -373,6 +374,9 @@ ORDER by f.name";
         $row[$financialItem->id][$columnKey] = $financialItem->$columnKey;
         if ($columnKey == 'payment_method' && $financialItem->$columnKey) {
           $row[$financialItem->id][$columnKey] = CRM_Core_OptionGroup::getLabel('payment_instrument', $financialItem->$columnKey);
+        }
+        elseif ($columnKey == 'amount' && $financialItem->$columnKey) {
+          $row[$financialItem->id][$columnKey] = CRM_Utils_Money::format($financialItem->$columnKey, $financialItem->currency);
         }
       }
       if ($statusID == CRM_Core_OptionGroup::getValue('batch_status','Open')) {
