@@ -237,7 +237,6 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart {
       $price_set        = $price_sets[$price_set_id];
       $price_set_amount = array();
       CRM_Price_BAO_Set::processAmount($price_set['fields'], $event_price_values, $price_set_amount);
-      $price_set_index = end(array_keys($event_price_values['amount_priceset_level_radio']));
       $cost            = $event_price_values['amount'];
       $amount_level    = $event_price_values['amount_level'];
     }
