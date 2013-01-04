@@ -13,7 +13,7 @@ class CRM_Event_Cart_BAO_EventInCart extends CRM_Event_Cart_DAO_EventInCart impl
     $this->participants[$participant->id] = $participant;
   }
 
-  public static function create($params) {
+  public static function create(&$params) {
     $transaction = new CRM_Core_Transaction();
     $event_in_cart = new CRM_Event_Cart_BAO_EventInCart();
     $event_in_cart->copyValues($params);
@@ -29,7 +29,7 @@ class CRM_Event_Cart_BAO_EventInCart extends CRM_Event_Cart_DAO_EventInCart impl
     return $event_in_cart;
   }
 
-  function delete() {
+  function delete($useWhere = false) {
     $this->load_associations();
     $contacts_to_delete = array();
     foreach ($this->participants as $participant) {
