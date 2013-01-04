@@ -108,7 +108,7 @@ class WebTest_Contribute_AddBatchesTest extends CiviSeleniumTestCase {
       $data[$i] = array (
                          'first_name' => 'Ma'.substr(sha1(rand()), 0, 7),
                          'last_name' => 'An'.substr(sha1(rand()), 0, 7),
-                         'membership_type' => 'Inner City Arts',
+                         'membership_type' => 'Default Organization',
                          'amount' => 100,  
                          'financial_type' => 'Member Dues',
                          );
@@ -166,7 +166,7 @@ class WebTest_Contribute_AddBatchesTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("_qf_ContributionView_cancel-bottom");
       $expected = array(
                         'From'                => "{$data['first_name']} {$data['last_name']}",
-                        'Contribution Type'   => $data['financial_type'],
+                        'Financial Type'      => $data['financial_type'],
                         'Total Amount'        => $data['amount'],
                         'Contribution Status' => 'Completed',
                         );   
@@ -185,9 +185,9 @@ class WebTest_Contribute_AddBatchesTest extends CiviSeleniumTestCase {
       $this->click("xpath=//div[@id='memberSearch']//table/tbody/tr[1]/td[11]/span/a[text()='View']");
       $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
       $expected = array(
-                        2 => 'General',
-                        3 => 'New',
-                        );
+        2 => 'General',
+        4 => 'New'
+      );
       foreach ($expected as $label => $value) {
         $this->verifyText("xpath=id('MembershipView')/div[2]/div/table[1]/tbody/tr[$label]/td[2]", preg_quote($value));
       }
@@ -197,7 +197,7 @@ class WebTest_Contribute_AddBatchesTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("_qf_ContributionView_cancel-bottom");
       $expected = array(
                         'From'                => "{$data['first_name']} {$data['last_name']}",
-                        'Contribution Type'   => $data['financial_type'],
+                        'Financial Type'      => $data['financial_type'],
                         'Total Amount'        => $data['amount'],
                         'Contribution Status' => 'Completed',
                         );   
