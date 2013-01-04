@@ -44,6 +44,7 @@ class CRM_Report_Form extends CRM_Core_Form {
     OP_INT    = 1,
     OP_STRING = 2,
     OP_DATE   = 4,
+    OP_DATETIME = 5,
     OP_FLOAT  = 8,
     OP_SELECT = 64,
     OP_MULTISELECT = 65,
@@ -747,10 +748,13 @@ class CRM_Report_Form extends CRM_Core_Form {
 
           case CRM_Report_FORM::OP_DATE:
             // build datetime fields
-            CRM_Core_Form_Date::buildDateRange(
-              $this, $fieldName, $count,
-              '_from', '_to', 'From:', FALSE, TRUE, 'searchDate',
-              $field['type'] != CRM_Utils_Type::T_DATE);
+            CRM_Core_Form_Date::buildDateRange($this, $fieldName, $count);
+            $count++;
+            break;
+
+          case CRM_Report_FORM::OP_DATETIME:
+            // build datetime fields
+            CRM_Core_Form_Date::buildDateRange($this, $fieldName, $count, '_from', '_to', 'From:', FALSE, TRUE, 'searchDate', true);
             $count++;
             break;
 
