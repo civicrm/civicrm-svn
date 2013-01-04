@@ -240,7 +240,8 @@ function _civicrm_api3_job_update_greeting_spec(&$params) {
  *
  */
 function civicrm_api3_job_process_pledge($params) {
-
+  // *** Uncomment the next line if you want automated reminders to be sent                                                                                                                               
+  // $params['send_reminders'] = true;  
   $result = CRM_Pledge_BAO_Pledge::updatePledgeStatus($params);
 
   if ($result['is_error'] == 0) {
