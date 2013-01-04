@@ -47,6 +47,13 @@ class CRM_UF_Form_AbstractPreview extends CRM_Core_Form {
    */
   public $_fields;
 
+  /**
+   * Set the profile/field structure for this form
+   *
+   * @param array $fields list of fields per CRM_Core_BAO_UFGroup::formatUFFields or CRM_Core_BAO_UFGroup::getFields
+   * @param bool $isSingleField
+   * @param bool $flag
+   */
   public function setProfile($fields, $isSingleField = FALSE, $flag = FALSE) {
     if ($isSingleField) {
       $this->assign('previewField', $isSingleField);
