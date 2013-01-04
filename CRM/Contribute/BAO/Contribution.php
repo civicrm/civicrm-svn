@@ -156,7 +156,8 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
     }
 
     if (CRM_Utils_Array::value('contribution', $ids)) {
-      $params['prevContribution'] = self::getValues($ids['contribution'], CRM_Core_DAO::$_nullArray, CRM_Core_DAO::$_nullArray);
+      $contributionId['id'] = $ids['contribution'];
+      $params['prevContribution'] = self::getValues($contributionId, CRM_Core_DAO::$_nullArray, CRM_Core_DAO::$_nullArray);
     }
 
     $result = $contribution->save();
@@ -2672,7 +2673,7 @@ WHERE  contribution_id = %1 ";
       $update = TRUE;
     }
 
-    if(!$update) {
+    if (!$update) {
       //records finanical trxn and entity financial trxn
       $financialTxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
     }
@@ -2704,7 +2705,7 @@ WHERE  contribution_id = %1 ";
    *
    * @param array $params contribution object, line item array and params for trxn
    *
-   * @param array $ids of contribution id
+   * @param string $context update scenarios
    *
    * @access public
    * @static
