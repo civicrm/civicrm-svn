@@ -354,8 +354,9 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
     $ctype = NULL,
     $permissionType = CRM_Core_Permission::CREATE
   ) {
-    $group = new CRM_Core_DAO_UFGroup();
-    $group->copyValues($groupArr);
+    // $group = new CRM_Core_DAO_UFGroup();
+    // $group->copyValues($groupArr); // no... converts string('') to string('null')
+    $group = (object) $groupArr;
 
     $profileType = CRM_Core_BAO_UFField::getProfileType($group->id); // FIXME, new group or changed field list
     $contactActivityProfile = CRM_Core_BAO_UFField::checkContactActivityProfileType($group->id); // FIXME new group or changed field list
