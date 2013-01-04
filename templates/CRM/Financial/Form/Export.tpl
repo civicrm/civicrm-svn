@@ -49,3 +49,11 @@
 <div class="form-item">
 {$form.buttons.html}
 </div>
+{literal}
+<script type="text/javascript">
+  cj(function(){
+    cj('input[name="export_format"]').filter('[value=IIF]').attr('checked', true);
+  });
+</script>
+{/literal}
+
