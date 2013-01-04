@@ -212,7 +212,7 @@ class WebTest_Import_ContactSubtypeTest extends ImportCiviSeleniumTestCase {
       // Check old Organization name.
       $organizationName = $updateRows[$cid]['organization_name'];
       $this->assertTrue($this->isTextPresent("$organizationName"), "Contact should not update in fill mode!");
-      $this->verifyText("xpath=//div[@id='contactTopBar']/table/tbody/tr/td[4]", preg_quote($fillRow['legal_name']));
+      $this->verifyText("xpath=//div[@id='crm-contactinfo-content']/div/div[3]/div[2]", preg_quote($fillRow['legal_name']));
     }
 
     // Recreate same conacts using 'No Duplicate Checking' with contact type Team.
@@ -304,7 +304,7 @@ class WebTest_Import_ContactSubtypeTest extends ImportCiviSeleniumTestCase {
       // Check old Household name.
       $householdName = $updateRows[$cid]['household_name'];
       $this->assertTrue($this->isTextPresent("$householdName"), "Contact should not update in fill mode!");
-      $this->verifyText("xpath=//div[@id='contactTopBar']/table/tbody/tr/td[4]", preg_quote($fillRow['nick_name']));
+      $this->verifyText("xpath=//div[@id='crm-contactinfo-content']/div/div[2]/div[2]", preg_quote($fillRow['nick_name']));
     }
 
     // Recreate same conacts using 'No Duplicate Checking'
