@@ -29,25 +29,27 @@
   <div class="icon inform-icon"></div>
   {ts}Warning: You will not be able to reopen or change the batch after it is exported. Are you sure you want to export?{/ts}
 </div>
-<div class = "batch-names">
-  <ul>
-  {foreach from=$batchNames item=batchName}
-    <li>{$batchName}</li>
-  {/foreach}
-  </ul>
-</div>
+<div class="crm-block crm-form-block crm-export_batch-form-block">
+  <div class = "batch-names">
+    <ul>
+    {foreach from=$batchNames item=batchName}
+      <li>{$batchName}</li>
+    {/foreach}
+    </ul>
+  </div>
 
-<table class="form-layout">
-  <tr class="crm-contribution-form-block-name">
-    <td class="html-adjust">
-    {$form.export_format.html}
-    </td>
-  </tr>
-</table>
+  <table class="form-layout">
+    <tr class="crm-contribution-form-block-name">
+      <td class="html-adjust">
+      {$form.export_format.html}
+      </td>
+    </tr>
+  </table>
 
 
-<div class="form-item">
-{$form.buttons.html}
+  <div class="form-item">
+  {$form.buttons.html}
+  </div>
 </div>
 {literal}
 <script type="text/javascript">
