@@ -211,7 +211,13 @@
         if ($i.data('options')){
           settings.data = $i.data('options');
         }
-        $i.addClass ('crm-editable-enabled');
+        if(settings.type == 'textarea'){
+          $i.addClass ('crm-editable-textarea-enabled');
+        }
+        else{
+          $i.addClass ('crm-editable-enabled');
+        }
+
         $i.editable(function(value,settings) {
         //$i.editable(function(value,editableSettings) {
           parent=$i.closest('.crm-entity');

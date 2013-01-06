@@ -3654,6 +3654,13 @@ div.m ul#civicrm-menu,
   border: 2px dashed transparent;
   white-space: nowrap;
 }
+
+#crm-container .crm-editable-textarea-enabled {
+  display: block;
+  padding-left: 2px;
+  border: 2px dashed transparent;
+}
+
 #crm-container .crm-editable-enabled:hover {
   display: block;
   padding-left: 2px;
