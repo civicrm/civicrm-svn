@@ -432,7 +432,10 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
 
         $lineItem = array();
         CRM_Price_BAO_Set::processAmount($this->_priceSet['fields'], $value, $lineItem[$priceSetId]);
-        
+
+        //unset amount level since we always use quick config price set
+        unset($value['amount_level']);
+
         //CRM-11529 for backoffice transactions 
         //when financial_type_id is passed in form, update the 
         //lineitems with the financial type selected in form
@@ -442,7 +445,7 @@ class CRM_Batch_Form_Entry extends CRM_Core_Form {
           }
         }
         $value['line_item'] = $lineItem;
-        
+
         //finally call contribution create for all the magic
         $contribution = CRM_Contribute_BAO_Contribution::create($value, CRM_Core_DAO::$_nullArray);
 
