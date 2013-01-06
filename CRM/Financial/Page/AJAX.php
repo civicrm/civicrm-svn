@@ -38,38 +38,8 @@
  * This class contains all the function that are called using AJAX
  */
 class CRM_Financial_Page_AJAX {
-
-  /**
-   * Function for building financial account select
-   */
-  function financialAccount() {
-    $name = trim(CRM_Utils_Type::escape($_GET['s'], 'String'));
-    if (!$name) {
-      $name = '%';
-    }
-    $whereClause = " f.name LIKE '$name%' ";
-
-    //if(CRM_Utils_Array::getValue('id',$_GET))
-    if (array_key_exists('parentID', $_GET)) {
-      $parentID = $_GET['parentID'];
-      $whereClause .= " AND f.id = {$parentID} ";
-    }
-
-    $query ="
-SELECT CONCAT_WS(' :: ', f.name, accounting_code) as name, f.id
-FROM   civicrm_financial_account as f
-WHERE  {$whereClause}
-ORDER by f.name";
-
-    $dao = CRM_Core_DAO::executeQuery($query);
-    while ($dao->fetch()) {
-      echo $elements = "$dao->name|$dao->id\n";
-    }
-    CRM_Utils_System::civiExit();
-  }
-
   /*
-   * Function to get finacial accounts of required account relationship
+   * Function to get financial accounts of required account relationship
    * $financialAccountType array with key account relationship and value financial account type option groups
    *
    */

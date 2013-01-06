@@ -55,12 +55,6 @@
         <span class="description">{ts}Use this field to indicate the organization that owns this account.{/ts}</span>
       </td>
     </tr>
-    <tr class="crm-contribution-form-block-parent_financial_account">
-      <td class="label">{$form.parent_financial_account.label}</td>
-      <td class="html-adjust">{$form.parent_financial_account.html|crmReplace:class:twenty}<br />
-        <span class="description">{ts}Use this field to indicate account hierarchies in your accounting system's Chart of Accounts. NB: for information only - not used by core CiviCRM.{/ts}</span>
-      </td>
-    </tr>
     <tr class="crm-contribution-form-block-financial_account_type_id">
       <td class="label">{$form.financial_account_type_id.label}</td>
       <td class="html-adjust">{$form.financial_account_type_id.html|crmReplace:class:twenty}</td>
@@ -74,12 +68,6 @@
     <tr class="crm-contribution-form-block-is_active">
       <td class="label">{$form.is_active.label}</td>
       <td class="html-adjust">{$form.is_active.html}</td>
-    </tr>
-    <tr class="crm-contribution-form-block-is_header_account">
-      <td class="label">{$form.is_header_account.label}</td>
-      <td class="html-adjust">{$form.is_header_account.html}<br />
-        <span class="description">{ts}Is this a header account which does not allow transactions to be posted against it directly, but only to its sub-accounts?{/ts}</span>
-      </td>
     </tr>
     <tr class="crm-contribution-form-block-is_tax">
       <td class="label">{$form.is_tax.label}</td>
@@ -107,7 +95,6 @@
 {literal}
 <script type="text/javascript">
 var dataUrl        = "{/literal}{$dataURL}{literal}";
-var newContactText = "{/literal}({ts}new contact record{/ts}){literal}";
 cj('#contact_name').autocomplete( dataUrl, {
   width        : 250,
   selectFirst  : false,
@@ -140,45 +127,6 @@ if ( employerId ) {
 
 cj("input#contact_name").click( function( ) {
   cj("input#contact_id").val('');
-});
-</script>
-{/literal}
-
-{literal}
-<script type="text/javascript">
-var dataUrl        = "{/literal}{$dataURLParentID}{literal}";
-var newContactText = "{/literal}({ts}new contact record{/ts}){literal}";
-cj('#parent_financial_account').autocomplete( dataUrl, {
-  width        : 250,
-  selectFirst  : false,
-  matchCase    : true,
-  matchContains: true
-}).result( function(event, data, formatted) {
-    ( parseInt( data[1] ) ) ? cj( "#parent_id" ).val( data[1] ) : cj( "#parent_id" ).val('');
-  });
-
-cj("form").submit(function() {
-  if (!cj('#parent_financial_account').val()) cj("#parent_id").val('');
-});
-
-//current parent account default setting
-var employerId = "{/literal}{$parentId}{literal}";
-if (employerId) {
-  var dataUrl = "{/literal}{crmURL p='civicrm/ajax/rest' h=0 q="className=CRM_Financial_Page_AJAX&fnName=financialAccount&json=1&parentID=" }{literal}" + employerId ;
-  cj.ajax({
-    url     : dataUrl,
-    async   : false,
-    success : function(html){
-      //fixme for showing address in div
-      htmlText = html.split( '|' , 2);
-      cj('input#parent_financial_account').val(htmlText[0]);
-      cj('input#parent_id').val(htmlText[1]);
-    }
-  });
-}
-
-cj("input#parent_financial_account").click( function( ) {
-  cj("input#parent_id").val('');
 });
 </script>
 {/literal}

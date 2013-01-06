@@ -51,9 +51,7 @@ class CRM_Financial_Form_FinancialAccount extends CRM_Contribute_Form {
     $dataURL = CRM_Utils_System::url( 'civicrm/ajax/rest',
       'className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=contact&org=1', false, null, false );
     $this->assign('dataURL', $dataURL);
-    $dataURLParentID = CRM_Utils_System::url( 'civicrm/ajax/rest',
-      'className=CRM_Financial_Page_AJAX&fnName=financialAccount&json=1', false, null, false );
-    $this->assign('dataURLParentID', $dataURLParentID);
+
     if ($this->_action & CRM_Core_Action::DELETE) {
       return;
     }
@@ -68,12 +66,9 @@ class CRM_Financial_Form_FinancialAccount extends CRM_Contribute_Form {
     $this->add('text', 'accounting_code', ts('Accounting Code'), $attributes['accounting_code']);
     $this->add('text', 'contact_name', ts('Owner'), $attributes['name']);
     $this->add('hidden', 'contact_id', '', array('id' => 'contact_id'));
-    $this->add('text', 'parent_financial_account', ts('Parent Financial Account'));
-    $this->add('hidden', 'parent_id', '', array('id' => 'parent_id'));
     $this->add('text', 'tax_rate', ts('Tax Rate'), $attributes['tax_rate']);
     $this->add('checkbox', 'is_deductible', ts('Tax-Deductible?'));
     $this->add('checkbox', 'is_active', ts('Enabled?'));
-    $this->add('checkbox', 'is_header_account', ts('Header-Account?'));
     $this->add('checkbox', 'is_tax', ts('Is Tax?'));
     $this->add('checkbox', 'is_default', ts('Default?'));
     
