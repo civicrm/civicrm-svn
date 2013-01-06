@@ -1002,9 +1002,6 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       $errors['contribution_status_id'] = ts("Please select a valid payment status before updating.");
     }
 
-    CRM_Financial_BAO_FinancialAccount::financialAccountValidation($params, $errors);
-    
-
     return empty($errors) ? TRUE : $errors;
   }
 
