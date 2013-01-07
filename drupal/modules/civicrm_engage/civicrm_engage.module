@@ -131,6 +131,19 @@ function civicrm_engage_civicrm_postProcess($class, &$form) {
   }
 }
 
+ /** The big picture is:
+ * set our custom demographics group of fields to be a
+ * tab; hide the tab; shove the fields into the core
+ * Demographics display. 
+ **/
+
+ /**
+ * Alter the page as displayed on the contact summary
+ * and inline demographics. This is the function where we
+ * stick the custom demographics fields into the core 
+ * demographics displayed. It goes with the custom
+ * Demographics.tpl file we are shipping.
+ **/
 function civicrm_engage_civicrm_pageRun(&$page) {
   if ($page->getVar('_name') == 'CRM_Contact_Page_View_Summary' ||
     $page->getVar('_name') == 'CRM_Contact_Page_Inline_Demographics') {
@@ -158,6 +171,11 @@ function civicrm_engage_civicrm_pageRun(&$page) {
   }
 }
 
+/**
+ * Hide the custom demographics tab because we are handling
+ * the custom demographics fields inline in the 
+ * civicrm_engage_civicrm_pageRun() function.
+ **/
 function civicrm_engage_civicrm_tabs(&$tabs, $contactID) {
   foreach ($tabs as $tabID => $tabValue) {
     if ($tabValue['title'] == CIVICRM_ENGAGE_DEMOGRAPHICS_TITLE) {
