@@ -661,6 +661,7 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
               CRM_Price_BAO_Set::addTo('civicrm_event', $this->_id, $priceSet->id);
               $fieldParams['option_label'] = $params['label'];
               $fieldParams['option_amount'] = $params['value'];
+              $fieldParams['financial_type_id'] = $params['financial_type_id'];
               foreach ($options as $value) $fieldParams['option_weight'][$value['weight']] = $value['weight'];
               $fieldParams['default_option'] = $params['default'];
               $priceField = CRM_Price_BAO_Field::create($fieldParams);
@@ -726,6 +727,7 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
                 $fieldParams['is_required'] = 1;
                 $fieldParams['price_set_id'] = $priceSetID;
                 $fieldParams['html_type'] = 'Radio';
+                $fieldParams['financial_type_id'] = $params['financial_type_id'];
                 foreach ($discountOptions as $value) {
                   $fieldParams['option_label'][$value['weight']] = $value['label'];
                   $fieldParams['option_amount'][$value['weight']] = $value['value'];
