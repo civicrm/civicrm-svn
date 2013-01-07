@@ -1003,7 +1003,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     $title = 'Membership Type ' . substr(sha1(rand()), 0, 7);
     $memTypeParams = array(
       'membership_type' => $title,
-      'member_org' => $membershipOrg,
+      'member_of_contact' => $membershipOrg,
       'financial_type' => 2,
       'period_type' => $period_type,
     );
@@ -1028,10 +1028,11 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         break;
     }
 
-    $this->type('member_org', $membershipTitle);
-    $this->click('_qf_MembershipType_refresh');
-    $this->waitForElementPresent("xpath=//div[@id='membership_type_form']/fieldset/table[2]/tbody/tr[2]/td[2]");
-
+    $this->type('member_of_contact', $membershipTitle);
+    $this->click('member_of_contact');
+    $this->waitForElementPresent("css=div.ac_results-inner li");
+    $this->click("css=div.ac_results-inner li");
+    
     $this->type('minimum_fee', '100');
     $this->select( 'financial_type_id', "value={$memTypeParams['financial_type']}" );
 
@@ -1496,13 +1497,13 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     }
   }
     
-  function addeditFinancialType( $financialType, $option = 'new' ){
+  function addeditFinancialType($financialType, $option = 'new') {
     $this->open($this->sboxPath . 'civicrm/admin/financial/financialType?reset=1');
         
-    if( $option == 'Delete' ){
-      $this->click ("xpath=id('ltype')/div/table/tbody/tr/td[1][text()='$financialType[name]']/../td[7]/span[2]");
+    if($option == 'Delete'){
+      $this->click("xpath=id('ltype')/div/table/tbody/tr/td[1][text()='$financialType[name]']/../td[7]/span[2]");
       $this->waitForElementPresent("css=span.btn-slide-active");
-      $this->click ("xpath=id('ltype')/div/table/tbody/tr/td[1][text()='$financialType[name]']/../td[7]/span[2]/ul/li[2]/a");
+      $this->click("xpath=id('ltype')/div/table/tbody/tr/td[1][text()='$financialType[name]']/../td[7]/span[2]/ul/li[2]/a");
       $this->waitForElementPresent("_qf_FinancialType_next");
       $this->click("_qf_FinancialType_next"); 
       $this->assertTrue( $this->isTextPresent('Selected financial type has been deleted.'), 'Missing text: ' . 'Selected financial type has been deleted.' );
@@ -1600,26 +1601,27 @@ function _testAddFinancialType(){
   $isActive = FALSE;
   $headerAccount = TRUE;
   $isTax = TRUE;
-  $taxRate = 10;
+  $taxRate = 9.99999999;
   $isDefault = FALSE;
         
   //Add new organisation
-  if( $orgName )
-          $this->webtestAddOrganization( $orgName );
+  if ($orgName) {
+    $this->webtestAddOrganization($orgName);
+  }
   
   $this->_testAddFinancialAccount( $financialAccountTitle,
-                                   $financialAccountDescription,
-                                   $accountingCode,
-                                   $orgName,
-                                   $parentFinancialAccount,
-                                   $financialAccountType,
-                                   $taxDeductible,
-                                   $isActive,
-                                   $headerAccount,
-                                   $isTax,
-                                   $taxRate,
-                                   $isDefault
-                                   );
+    $financialAccountDescription,
+    $accountingCode,
+    $orgName,
+    $parentFinancialAccount,
+    $financialAccountType,
+    $taxDeductible,
+    $isActive,
+    $headerAccount,
+    $isTax,
+    $taxRate,
+    $isDefault
+  );
   $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[8]/span/a[text()='Edit']" );
   
   //Add new Financial Type
@@ -1629,8 +1631,9 @@ function _testAddFinancialType(){
   $this->addeditFinancialType( $financialType );
   
   $accountRelationship = "Income Account is"; //Asset Account - of Income Account is
-  $expected[] = array( 'financial_account'     => $financialAccountTitle, 
-                       'account_relationship'  => $accountRelationship );
+  $expected[] = array('financial_account' => $financialAccountTitle, 
+    'account_relationship'  => $accountRelationship
+  );
   
   $this->select( 'account_relationship', "label={$accountRelationship}" );
   sleep(2);
