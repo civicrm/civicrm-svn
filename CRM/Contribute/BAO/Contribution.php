@@ -2670,6 +2670,20 @@ WHERE  contribution_id = %1 ";
         //Update Financial Records
         self::updateFinancialAccounts($params, 'changePaymentInstrument');
       }
+
+      //if financial type is changed 
+      if ($params['contribution']->financial_type_id != $params['prevContribution']->financial_type_id) {
+        $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Income Account is' "));
+        $oldFinancialAccount = CRM_Contribute_PseudoConstant::financialAccountType($params['prevContribution']->financial_type_id, $relationTypeId);
+        $newFinancialAccount = CRM_Contribute_PseudoConstant::financialAccountType($params['financial_type_id'], $relationTypeId);
+        if ($oldFinancialAccount != $newFinancialAccount) {
+          $params['total_amount'] = 0;
+          self::updateFinancialAccounts($params, 'changeFinancialType');
+          $params['financial_account_id'] = $newFinancialAccount;
+          $params['total_amount'] = $params['trxnParams']['total_amount'] = $trxnParams['total_amount'];
+          self::updateFinancialAccounts($params);
+        }
+      }
       $update = TRUE;
     }
 
@@ -2711,7 +2725,8 @@ WHERE  contribution_id = %1 ";
    * @static
    */
   static function updateFinancialAccounts(&$params, $context = NULL) {
-    if ($context == 'changedAmount') {
+    $itemAmount = NULL;
+    if ($context == 'changedAmount' || $context == 'changeFinancialType') {
       $itemAmount = $params['trxnParams']['total_amount'] = $params['total_amount'] - $params['prevContribution']->total_amount;
     }
     if ($context == 'changedStatus') {
@@ -2768,10 +2783,10 @@ WHERE  contribution_id = %1 ";
             'transaction_date' => CRM_Utils_Date::isoToMysql($params['contribution']->receive_date),
             'contact_id' => $params['contribution']->contact_id,
             'currency' => $params['contribution']->currency,
-            'amount' => $itemAmount,
+            'amount' => $itemAmount ? $itemAmount : $params['total_amount'],
             'description' => $prevfinancialItem->description,
             'status_id' => $prevfinancialItem->status_id,
-            'financial_account_id' => $prevfinancialItem->financial_account_id,
+            'financial_account_id' => CRM_Utils_Array::value('financial_account_id', $params) ? $params['financial_account_id'] : $prevfinancialItem->financial_account_id,
             'entity_table' => 'civicrm_line_item',
             'entity_id' => $fieldValues['id']
           );
