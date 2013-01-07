@@ -46,6 +46,7 @@ class WebTest_Campaign_ActivityTest extends CiviSeleniumTestCase {
       $this->click("add");
       $this->click("_qf_Component_next-bottom");
       $this->waitForPageToLoad("30000");
+      sleep(1);
       $this->assertTrue($this->isTextPresent("Your changes have been saved."));
     }
 
@@ -218,10 +219,10 @@ class WebTest_Campaign_ActivityTest extends CiviSeleniumTestCase {
     // Is status message correct?
     $this->assertTrue($this->isTextPresent("Activity '$subject' has been saved."), "Status message didn't show up after saving!");
 
-    $this->waitForElementPresent("xpath=//div[@id='Activities']//table/tbody/tr[1]/td[8]/span/a[text()='View']");
+    $this->waitForElementPresent("xpath=//div[@id='Activities']//table/tbody/tr[1]/td[9]/span/a[text()='View']");
 
     // click through to the Activity view screen
-    $this->click("xpath=//div[@id='Activities']//table/tbody//tr/td[2][text()='This is subject of test activity being added through activity tab of contact summary screen.']/../td[8]/span/a[text()='View']");
+    $this->click("xpath=//div[@id='Activities']//table/tbody//tr/td[2][text()='This is subject of test activity being added through activity tab of contact summary screen.']/../td[9]/span/a[text()='View']");
     $this->waitForElementPresent('_qf_Activity_cancel-bottom');
    
     // verify Activity created
