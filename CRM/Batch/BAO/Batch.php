@@ -322,14 +322,17 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
       if (!empty($object->payment_instrument_id)) {
         $values['payment_instrument'] = $paymentInstrument[$object->payment_instrument_id];
       }
-
-      $aid = CRM_Core_OptionGroup::getValue('activity_type','Export Accounting Batch');
-      $activityParams = array('source_record_id' => $object->id, 'activity_type_id' => $aid );
-      $exportActivity = CRM_Activity_BAO_Activity::retrieve($activityParams);
+      $tokens = array('id' => $object->id, 'status' => $values['status_id']);
+      if ($values['status_id'] == CRM_Core_OptionGroup::getValue('batch_status', 'Exported')) {
+        $aid = CRM_Core_OptionGroup::getValue('activity_type','Export Accounting Batch');
+        $activityParams = array('source_record_id' => $object->id, 'activity_type_id' => $aid );
+        $exportActivity = CRM_Activity_BAO_Activity::retrieve($activityParams, $val);
+        $tokens = array_merge(array('eid' => $exportActivity->id), $tokens);
+      }
       $values['action'] = CRM_Core_Action::formLink(
         $newLinks,
         $action,
-        array('id' => $object->id, 'status' => $values['status_id'], 'eid' => $exportActivity->id)
+        $tokens
       );
       $results[$object->id] = $values;
     }
