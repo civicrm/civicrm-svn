@@ -683,11 +683,11 @@ SELECT @max_wt     := MAX(weight) FROM civicrm_option_value WHERE option_group_i
 SELECT @CompId     := MAX(id)     FROM civicrm_component where name = 'CiviContribute';
 
 INSERT INTO civicrm_option_value
-  (option_group_id, {localize field='label'}label{/localize}, value, name, weight, {localize field='description'}description{/localize}, is_active, is_reserved, component_id)
+  (option_group_id, {localize field='label'}label{/localize}, value, name, weight, {localize field='description'}description{/localize}, is_active, is_reserved, component_id, filter)
 VALUES
- (@option_group_id_act, {localize field='label'}'Export Accounting Batch'{/localize}, @max_val+1, 'Export Accounting Batch', @max_wt+1, {localize field='description'}'Export Accounting Batch'{/localize}, 1, 1, @CompId),
- (@option_group_id_act, {localize field='label'}'Create Batch'{/localize}, @max_val+2, 'Create Batch', @max_wt+2, {localize field='description'}'Create Batch'{/localize}, 1, 1, @CompId),
- (@option_group_id_act, {localize field='label'}'Edit Batch'{/localize}, @max_val+3, 'Edit Batch', @max_wt+3, {localize field='description'}'Edit Batch'{/localize}, 1, 1, @CompId);
+ (@option_group_id_act, {localize field='label'}'Export Accounting Batch'{/localize}, @max_val+1, 'Export Accounting Batch', @max_wt+1, {localize field='description'}'Export Accounting Batch'{/localize}, 1, 1, @CompId, 1),
+ (@option_group_id_act, {localize field='label'}'Create Batch'{/localize}, @max_val+2, 'Create Batch', @max_wt+2, {localize field='description'}'Create Batch'{/localize}, 1, 1, @CompId, 1),
+ (@option_group_id_act, {localize field='label'}'Edit Batch'{/localize}, @max_val+3, 'Edit Batch', @max_wt+3, {localize field='description'}'Edit Batch'{/localize}, 1, 1, @CompId, 1);
 
 -- CRM-11341
 INSERT INTO
