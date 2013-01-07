@@ -818,3 +818,13 @@ INSERT IGNORE INTO civicrm_state_province (country_id, abbreviation, name) VALUE
 -- CRM-11507
 ALTER TABLE `civicrm_batch` CHANGE `type_id` `type_id` INT( 10 ) UNSIGNED NULL COMMENT 'fk to Batch Type options in civicrm_option_values';
 UPDATE `civicrm_batch` SET `mode_id` = '1';
+
+-- add Refunded in contribution status
+SELECT @option_group_id_cs := MAX(id) FROM civicrm_option_group WHERE name = 'contribution_status';
+
+SELECT @max_weight := MAX(weight) FROM civicrm_option_value WHERE option_group_id = @option_group_id_cs;
+
+INSERT INTO
+  `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`)
+VALUES
+  (@option_group_id_cs, '{ts escape="sql"}Refunded{/ts}', @max_weight + 1, 'Refunded', NULL, 0, NULL, @max_weight + 1, NULL, 0, 1, 1, NULL, NULL);
