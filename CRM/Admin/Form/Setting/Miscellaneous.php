@@ -108,15 +108,14 @@ class CRM_Admin_Form_Setting_Miscellaneous extends CRM_Admin_Form_Setting {
 
   public function postProcess() {
     // store the submitted values in an array
+    $config = CRM_Core_Config::singleton();
     $params = $this->controller->exportValues($this->_name);
-
 
     // get current logging status
     $values = $this->exportValues();
 
     parent::postProcess();
 
-    $config = CRM_Core_Config::singleton();
     if ($config->logging != $values['logging']) {
       $logging = new CRM_Logging_Schema;
       if ($values['logging']) {
