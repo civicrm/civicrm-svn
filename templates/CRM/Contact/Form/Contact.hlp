@@ -118,7 +118,7 @@
 {/htxt}
 
 {htxt id="id-internal-id-title"}
-  {ts}Internal ID{/ts}
+  {ts}CiviCRM ID{/ts}
 {/htxt}
 {htxt id="id-internal-id"}
 <p>{ts}Every contact in CiviCRM has a unique ID number. This number will never change and is the most accurate way of identifying a contact.{/ts}</p>

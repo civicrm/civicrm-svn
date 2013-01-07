@@ -63,7 +63,7 @@
                 {$form.external_identifier.html}
               </td>
               {if $contactId}
-                <td><label for="internal_identifier_display">{ts}Internal Id{/ts}{help id="id-internal-id"}</label><br /><input id="internal_identifier_display" type="text" class="form-text eight" size="8" disabled="disabled" value="{$contactId}"></td>
+                <td><label for="internal_identifier_display">{ts}CiviCRM ID{/ts}{help id="id-internal-id"}</label><br /><input id="internal_identifier_display" type="text" class="form-text eight" size="8" disabled="disabled" value="{$contactId}"></td>
               {/if}
             </tr>
           </table>

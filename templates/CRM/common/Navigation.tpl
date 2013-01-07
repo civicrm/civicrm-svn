@@ -36,8 +36,8 @@
             </form>
           <ul>
             <li><label class="crm-quickSearchField"><input type="radio" checked="" data-tablename="cc" checked="checked" value="" name="quickSearchField">{ts}Name/Email{/ts}</label></li>
-            <li><label class="crm-quickSearchField"><input type="radio" data-tablename="cc" value="id" name="quickSearchField">{ts}Internal Id{/ts}</label></li>
-            <li><label class="crm-quickSearchField"><input type="radio" data-tablename="cc" value="external_identifier" name="quickSearchField">{ts}External Id{/ts}</label></li>
+            <li><label class="crm-quickSearchField"><input type="radio" data-tablename="cc" value="id" name="quickSearchField">{ts}CiviCRM ID{/ts}</label></li>
+            <li><label class="crm-quickSearchField"><input type="radio" data-tablename="cc" value="external_identifier" name="quickSearchField">{ts}External ID{/ts}</label></li>
             <li><label class="crm-quickSearchField"><input type="radio" data-tablename="cc" value="first_name" name="quickSearchField">{ts}First Name{/ts}</label></li>
             <li><label class="crm-quickSearchField"><input type="radio" data-tablename="cc" value="last_name" name="quickSearchField">{ts}Last Name{/ts}</label></li>
             <li><label class="crm-quickSearchField"><input type="radio" data-tablename="eml" value="email" name="quickSearchField">{ts}Email{/ts}</label></li>
