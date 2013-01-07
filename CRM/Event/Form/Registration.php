@@ -1307,8 +1307,13 @@ WHERE  v.option_group_id = g.id
           if (isset($optionsCountDetails[$priceFieldId]) && isset($optionsCountDetails[$priceFieldId]['options'][$optId])) {
             $currentMaxValue = $optionsCountDetails[$priceFieldId]['options'][$optId] * $optVal;
           }
+          if (empty($optionMaxValues)) {
+            $optionMaxValues[$priceFieldId][$optId] = $currentMaxValue;
+          }
+          else {
+            $optionMaxValues[$priceFieldId][$optId] = $currentMaxValue + CRM_Utils_Array::value($optId, CRM_Utils_Array::value($priceFieldId, $optionMaxValues), 0);
+          }
 
-          $optionMaxValues[$priceFieldId][$optId] = $currentMaxValue + CRM_Utils_Array::value($optId, CRM_Utils_Array::value($priceFieldId, $optionMaxValues), 0);
         }
       }
     }
