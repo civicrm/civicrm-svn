@@ -725,6 +725,7 @@ LEFT JOIN civicrm_contribution_soft ON civicrm_contribution_soft.contribution_id
         'contribution_date_relative',
         'contribution_date_high',
         'contribution_date_low',
+        'contribution_check_number',
       );
     $values = array();
     foreach ($searchFields as $field) {
