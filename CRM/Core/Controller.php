@@ -106,6 +106,13 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
   public $_print = 0;
 
   /**
+   * Should we generate a qfKey, true by default
+   *
+   * @var boolean
+   */
+  public $_generateQFKey = TRUE;
+
+  /**
    * cache the smarty template for efficiency reasons
    *
    * @var CRM_Core_Smarty
@@ -148,9 +155,13 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
    *
    */
 
-  function __construct($title = NULL, $modal = TRUE,
-    $mode = NULL, $scope = NULL,
-    $addSequence = FALSE, $ignoreKey = FALSE
+  function __construct(
+    $title = NULL,
+    $modal = TRUE,
+    $mode = NULL,
+    $scope = NULL,
+    $addSequence = FALSE,
+    $ignoreKey = FALSE
   ) {
     // this has to true for multiple tab session fix
     $addSequence = TRUE;
@@ -231,7 +242,8 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
   function key($name, $addSequence = FALSE, $ignoreKey = FALSE) {
     $config = CRM_Core_Config::singleton();
 
-    if ($ignoreKey ||
+    if (
+      $ignoreKey ||
       (isset($config->keyDisable) && $config->keyDisable)
     ) {
       return NULL;
@@ -239,7 +251,7 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
 
 
     $key = CRM_Utils_Array::value('qfKey', $_REQUEST, NULL);
-    if (!$key) {
+    if (!$key && $_SERVER['REQUEST_METHOD'] === 'GET') {
       $key = CRM_Core_Key::get($name, $addSequence);
     }
     else {
