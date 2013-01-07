@@ -39,56 +39,47 @@
             <span class="description">&nbsp;{ts}Select the type of CiviCRM record and the field you want to include in this Profile.{/ts}</span></td>
         </tr>
         <tr class="crm-uf-field-form-block-label">
-            <td class="label">{$form.label.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_uf_field' field='label' id=$fieldId}{/if}</td>
-            <td>{$form.label.html}<br />
-            <span class="description">{ts}The field label displayed on the form (over-ride the default field label here, if desired).{/ts}</span></td>
+            <td class="label">{$form.label.label} {help id='label'}{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_uf_field' field='label' id=$fieldId}{/if}</td>
+            <td>{$form.label.html}</td>
         </tr>
         <tr class="crm-uf-field-form-block-is_multi">
             <td class="label">{$form.is_multi_summary.label}</td>
             <td>{$form.is_multi_summary.html}<br />
         </tr>
-	<tr class="crm-uf-field-form-block-is_required">
-            <td class="label">{$form.is_required.label}</td>
-            <td>{$form.is_required.html}<br />
-            <span class="description">{ts}Are users required to complete this field?{/ts}</span></td>
+        <tr class="crm-uf-field-form-block-is_required">
+            <td class="label">{$form.is_required.label} {help id='is_required'}</td>
+            <td>{$form.is_required.html}</td>
         </tr>
         <tr class="crm-uf-field-form-block-is_view">
-            <td class="label">{$form.is_view.label}</td>
-            <td>{$form.is_view.html}<br />
-            <span class="description">&nbsp;{ts}If checked, users can view but not edit this field.{/ts}<br />&nbsp;{ts}NOTE: View Only fields can not be included in Profile Search forms.{/ts}</span></td>
+            <td class="label">{$form.is_view.label} {help id='is_view'}</td>
+            <td>{$form.is_view.html}</td>
         </tr>
         <tr  id="profile_visibility" class="crm-uf-field-form-block-visibility">
-            <td class="label">{$form.visibility.label}</td>
-            <td>{$form.visibility.html}<br />
-            <span class="description">&nbsp;{ts}Is this field hidden from other users ('User and User Admin Only'), or is it visible to others and potentially searchable in the Profile Search form ('Public Pages' or 'Public Pages and Listings')? When visibility is 'Public Pages and Listings', users can also click the field value when viewing a contact in order to locate other contacts with the same value(s) (i.e. other contacts who live in Poland).{/ts}</span></td>
+            <td class="label">{$form.visibility.label} {help id='visibility'}</td>
+            <td>{$form.visibility.html}</td>
         </tr>
         <tr class="crm-uf-field-form-block-is_searchable">
-            <td class="label"><div id="is_search_label">{$form.is_searchable.label}</div></td>
-            <td><div id="is_search_html">{$form.is_searchable.html}<br />
-            <span class="description" id="is_search_desSpan">{ts}Do you want to include this field in the Profile's Search form?{/ts}</span></div></td>
+            <td class="label"><div id="is_search_label">{$form.is_searchable.label} {help id='is_searchable'}</div></td>
+            <td><div id="is_search_html">{$form.is_searchable.html}</td>
         </tr>
         <tr class="crm-uf-field-form-block-in_selector">
-            <td class="label"><div id="in_selector_label">{$form.in_selector.label}</div></td>
-            <td><div id="in_selector_html">{$form.in_selector.html}<br />
-            <span id="in_selector_desSpan" class="description">{ts}Is this field included as a column in the search results table? This setting applies only to fields with 'Public Pages' or 'Public Pages and Listings' visibility.{/ts}</span></div></td>
+            <td class="label"><div id="in_selector_label">{$form.in_selector.label} {$form.is_searchable.label} {help id='in_selector'}</div></td>
+            <td><div id="in_selector_html">{$form.in_selector.html}</div></td>
         </tr>
         <tr class="crm-uf-field-form-block-help_pre">
-            <td class="label">{$form.help_pre.label}{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_uf_field' field='help_pre' id=$fieldId}{/if}</td>
-            <td>{$form.help_pre.html|crmAddClass:huge}<br />
-            <span class="description">&nbsp;{ts}Explanatory text displayed to users for this field (can include HTML formatting tags).{/ts}</span></td>
+            <td class="label">{$form.help_pre.label}{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_uf_field' field='help_pre' id=$fieldId}{/if} {help id='help'}</td>
+            <td>{$form.help_pre.html}</td>
         </tr>
         <tr class="crm-uf-field-form-block-help_post">
-            <td class="label">{$form.help_post.label}{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_uf_field' field='help_post' id=$fieldId}{/if}</td>
-            <td>{$form.help_post.html|crmAddClass:huge}<br />
-            <span class="description">&nbsp;{ts}Explanatory text displayed to users for this field (can include HTML formatting tags).{/ts}</span></td>
+            <td class="label">{$form.help_post.label}{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_uf_field' field='help_post' id=$fieldId}{/if} {help id='help'}</td>
+            <td>{$form.help_post.html}</td>
         </tr>
         <tr class="crm-uf-field-form-block-weight">
-            <td class="label">{$form.weight.label}</td>
-            <td>&nbsp;{$form.weight.html}<br />
-            <span class="description">&nbsp;{ts}Weight controls the order in which fields are displayed within a profile. Enter a positive or negative integer - lower numbers are displayed ahead of higher numbers. Note: The field order will not respect non-multi fields interspersed with multi record fields in edit mode{/ts}</span></td>
+            <td class="label">{$form.weight.label} {help id='weight'}</td>
+            <td>&nbsp;{$form.weight.html}</td>
         </tr>
         <tr class="crm-uf-field-form-block-is_active">
-            <td class="label">{$form.is_active.label}</td>
+            <td class="label">{$form.is_active.label} {help id='is_active'}</td>
             <td>{$form.is_active.html}</td>
         </tr>
         </table>
@@ -164,7 +155,7 @@ function showLabel( ) {
   {foreach from=$noSearchable key=dnc item=val}
     {literal}
       if (field2 == "{/literal}{$val}{literal}") {
-        cj('#is_search_label, #is_search_html, #is_search_desSpan').hide();
+        cj('#is_search_label, #is_search_html').hide();
       }
     {/literal}
   {/foreach}
@@ -185,8 +176,8 @@ function showLabel( ) {
   showHideSeletorSearch();
 
   function showHideSeletorSearch() {
-    var is_search = cj('#is_search_label, #is_search_html, #is_search_desSpan');
-    var in_selector = cj('#in_selector_label, #in_selector_html, #in_selector_desSpan');
+    var is_search = cj('#is_search_label, #is_search_html');
+    var in_selector = cj('#in_selector_label, #in_selector_html');
     if (cj("#visibility").val() == "User and User Admin Only") {
       is_search.hide();
       in_selector.hide();
@@ -258,7 +249,7 @@ if (customId && customId.match(/custom_[\d]/)) {
 }
 
 function viewOnlyShowHide() {
-  var is_search = cj('#is_search_label, #is_search_html, #is_search_desSpan');
+  var is_search = cj('#is_search_label, #is_search_html');
   if (cj("#is_view").attr('checked')) {
     is_search.hide();
     cj("#is_searchable").attr('checked', false);
@@ -281,7 +272,7 @@ function mixProfile( ) {
       } else {
         var message = type + {/literal}'{ts escape="js"} fields can not be marked as Searchable in a profile.{/ts}'{literal};
       }
-      cj().crmError(message, {/literal}'{ts escape="js"}Oops{/ts}'{literal});
+      cj().crmError(message, {/literal}'{ts escape="js"}Error{/ts}'{literal});
     }
     if ( document.getElementById("in_selector").checked ) {
       document.getElementById("in_selector").checked = false;
@@ -290,7 +281,7 @@ function mixProfile( ) {
       } else {
         var message = type + {/literal}'{ts escape="js"} can not be used as a Result Column for profile searches.{/ts}'{literal};
       }
-      cj().crmError(message, {/literal}'{ts escape="js"}Oops{/ts}'{literal});
+      cj().crmError(message, {/literal}'{ts escape="js"}Error{/ts}'{literal});
     }
   }
 }
