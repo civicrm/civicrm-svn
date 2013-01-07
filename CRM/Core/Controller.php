@@ -204,6 +204,7 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
       elseif ($snippet == 4) {
         $this->_print = CRM_Core_Smarty::PRINT_NOFORM;
         self::$_template->assign('suppressForm', TRUE);
+        $this->_generateQFKey = FALSE;
       }
       elseif ($snippet == 5) {
         $this->_print = CRM_Core_Smarty::PRINT_NOFORM;
