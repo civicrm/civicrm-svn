@@ -24,6 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing/deleting financial type  *}
+<div id="crm-transactions">
 <div class="crm-form-block crm-search-form-block">
   <div class="crm-accordion-wrapper crm-activity_search-accordion collapsed">
     <div class="crm-accordion-header crm-master-accordion-header">
@@ -106,12 +107,16 @@
   {/strip}
   </div>
 </div>
-
+</div>
 
 {literal}
 <script type="text/javascript">
 cj( function() {
   cj().crmAccordions();
+  var batchStatus = {/literal}{$statusID}{literal};
+  if (batchStatus != 1) {
+    cj('#crm-transactions').hide();
+  }
   var paymentInstrumentID = {/literal}{if $paymentInstrumentID neq null}{$paymentInstrumentID}{else}'null'{/if}{literal};
   if (paymentInstrumentID != 'null') {
     buildTransactionSelectorAssign( true );

@@ -693,9 +693,8 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
     $from = "civicrm_financial_trxn
 LEFT JOIN civicrm_entity_financial_trxn ON civicrm_entity_financial_trxn.financial_trxn_id = civicrm_financial_trxn.id
 LEFT JOIN civicrm_entity_batch ON civicrm_entity_batch.entity_id = civicrm_financial_trxn.id
-LEFT JOIN civicrm_financial_item ON civicrm_entity_financial_trxn.entity_id = civicrm_financial_item.id
-LEFT JOIN civicrm_financial_account ON civicrm_financial_account.id = civicrm_financial_item.financial_account_id
 LEFT JOIN civicrm_contribution ON civicrm_contribution.id = civicrm_entity_financial_trxn.entity_id
+LEFT JOIN civicrm_financial_account ON civicrm_financial_account.id = civicrm_contribution.financial_type_id
 LEFT JOIN civicrm_contact contact_a ON contact_a.id = civicrm_contribution.contact_id
 LEFT JOIN civicrm_contribution_soft ON civicrm_contribution_soft.contribution_id = civicrm_contribution.id
 ";
