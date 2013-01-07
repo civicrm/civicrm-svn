@@ -137,7 +137,7 @@ cj("#account_relationship").change(function()
 	     
 	     if( financialId == 'select' ){
 {/literal}
-		 callbackURL   = "{crmURL p='civicrm/ajax/jqFinancialRelation' h=0 q='className=CRM_Financial_Page_AJAX&fnName=jqFinancialRelation'}"     
+		 callbackURL   = "{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Financial_Page_AJAX&fnName=jqFinancialRelation'}"     
 {literal}	     	 
 		 callbackURL = callbackURL+"&_value=select";
 	         cj.ajax({

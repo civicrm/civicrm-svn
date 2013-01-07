@@ -259,6 +259,7 @@ class CRM_Financial_Form_FinancialTypeAccount extends CRM_Contribute_Form {
           $errorFlag = FALSE;
         }
         else {
+          $params['financial_account_id'] = $values['financial_account_id'];
           $result = CRM_Financial_BAO_FinancialTypeAccount::retrieve($params, $defaults);
           if ($result) {
             $errorFlag = TRUE;

@@ -87,13 +87,8 @@ class CRM_Financial_BAO_FinancialTypeAccount extends CRM_Financial_DAO_EntityFin
   static function add(&$params, &$ids = NULL) {
     // action is taken depending upon the mode
     $financialTypeAccount = new CRM_Financial_DAO_EntityFinancialAccount();
-    if ($params['entity_table'] != 'civicrm_financial_type') {
-      $financialTypeAccount->entity_id = $params['entity_id'];
-      $financialTypeAccount->entity_table = $params['entity_table'];
-      $financialTypeAccount->find(TRUE);
-    }
-    else {
-      $financialTypeAccount->id = CRM_Utils_Array::value('entityFinancialAccount', $ids);
+    if (CRM_Utils_Array::value('entityFinancialAccount', $ids)) {
+      $financialTypeAccount->id = $ids['entityFinancialAccount'];
     }
     $financialTypeAccount->copyValues($params);
     $financialTypeAccount->save();
