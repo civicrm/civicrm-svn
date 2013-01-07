@@ -27,7 +27,7 @@
     <ul id="civicrm-menu">
         {if call_user_func(array('CRM_Core_Permission','giveMeAllACLs'))}
         <li id="crm-qsearch" class="menumain">
-            <form action="{crmURL p='civicrm/contact/search/basic' h=0 }" name="search_block" id="id_search_block" method="post" onsubmit="getSearchURLValue( );">
+            <form action="{crmURL p='civicrm/contact/search/basic' h=0 }" name="search_block" id="id_search_block" method="get" onsubmit="getSearchURLValue( );">
             	<div id="quickSearch">
             	</div>
             </form>
