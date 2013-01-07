@@ -398,8 +398,7 @@ class CRM_Core_I18n {
  *
  * @return         string  the translated string
  */
-function ts($text, $params = array(
-  )) {
+function ts($text, $params = array()) {
   static $config = NULL;
   static $locale = NULL;
   static $i18n = NULL;
