@@ -203,12 +203,7 @@ ADD CONSTRAINT `FK_civicrm_financial_account_parent_id` FOREIGN KEY (`parent_id`
 RENAME TABLE `civicrm_contribution_type` TO `civicrm_financial_type`;
 
 ALTER TABLE `civicrm_financial_type`
-ADD `version_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'A Unix timestamp indicating when this version was created.',
-ADD `is_current_revision` tinyint(4) DEFAULT '1' COMMENT 'is_current_revision',
-ADD `original_id` int(10) unsigned DEFAULT NULL,
-ADD KEY `UI_is_current_revision` (is_current_revision),
 ADD CONSTRAINT `UI_id` UNIQUE INDEX(id),
-ADD CONSTRAINT `FK_civicrm_financial_type_original_id` FOREIGN KEY (`original_id`) REFERENCES `civicrm_financial_type` (`id`),
 DROP INDEX UI_name;
 
 CREATE TABLE IF NOT EXISTS `civicrm_entity_financial_account` (

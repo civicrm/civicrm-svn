@@ -61,23 +61,6 @@ BEGIN
   DELETE FROM civicrm_log  WHERE entity_id = OLD.id AND entity_table = 'civicrm_participant';
 END;
 
-CREATE TRIGGER civicrm_financial_type_ad
-AFTER UPDATE ON civicrm_financial_type
-FOR EACH ROW
-BEGIN
-DECLARE financialTypeId INT;
-  SELECT MAX(id) INTO financialTypeId FROM civicrm_financial_type;
-  UPDATE civicrm_contribution_page SET financial_type_id = financialTypeId WHERE financial_type_id = NEW.id;
-  UPDATE civicrm_event SET financial_type_id = financialTypeId WHERE financial_type_id = NEW.id;
-  UPDATE civicrm_membership_type SET financial_type_id = financialTypeId WHERE financial_type_id = NEW.id;
-  UPDATE civicrm_pledge SET financial_type_id = financialTypeId WHERE financial_type_id = NEW.id;
-  UPDATE civicrm_contribution_recur SET financial_type_id = financialTypeId WHERE financial_type_id = NEW.id;
-  UPDATE civicrm_product SET financial_type_id = financialTypeId WHERE financial_type_id = NEW.id;
-  UPDATE civicrm_price_field_value SET financial_type_id = financialTypeId WHERE financial_type_id = NEW.id;
-  UPDATE civicrm_premiums_product SET financial_type_id = financialTypeId WHERE financial_type_id = NEW.id;
-  UPDATE civicrm_entity_financial_account SET entity_id = financialTypeId WHERE entity_id = NEW.id;
-END;
-
 |
 
 DELIMITER ;

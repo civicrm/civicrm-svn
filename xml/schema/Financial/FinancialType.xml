@@ -71,44 +71,10 @@
     <comment>Is this property active?</comment>
     <add>1.3</add>
   </field>
-  <field>
-    <name>version_timestamp</name>
-    <type>timestamp</type>
-    <length>11</length>
-    <default>CURRENT_TIMESTAMP</default>
-    <comment>A Unix timestamp indicating when this version was created.</comment>
-    <add>4.3</add>
-  </field>
-  <field>
-    <name>is_current_revision</name>
-    <type>boolean</type>
-    <length>4</length>
-    <default>1</default>
-    <comment>is_current_revision</comment>
-    <add>4.3</add>
-  </field>
-  <field>
-    <name>original_id</name>
-    <type>int unsigned</type>
-    <length>10</length>
-    <add>4.3</add>
-  </field>
-  <foreignKey> 
-    <name>original_id</name> 
-    <table>civicrm_financial_type</table> 
-    <key>id</key> 
-    <add>4.3</add>
-    <onDelete>RESTRICT</onDelete>
-  </foreignKey>
   <index>
     <name>UI_id</name>
     <fieldName>id</fieldName>
     <unique>true</unique>
-    <add>4.3</add>
-  </index>
-  <index>
-    <name>UI_is_current_revision</name>
-    <fieldName>is_current_revision</fieldName>
     <add>4.3</add>
   </index>
 </table>

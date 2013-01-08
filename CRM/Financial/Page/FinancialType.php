@@ -138,7 +138,6 @@ class CRM_Financial_Page_FinancialType extends CRM_Core_Page_Basic {
     // get all financial types sorted by weight
     $financialType = array();
     $dao = new CRM_Financial_DAO_FinancialType();
-    $dao->is_current_revision =1;
     $dao->orderBy('name');
     $dao->find();
 

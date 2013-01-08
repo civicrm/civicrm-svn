@@ -123,7 +123,7 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
    */
   public static function &financialType($id = NULL) {
     if (!self::$financialType) {
-      $condition = " is_active = 1 and is_current_revision = 1 ";
+      $condition = " is_active = 1 ";
       CRM_Core_PseudoConstant::populate( 
         self::$financialType,
         'CRM_Financial_DAO_FinancialType',
