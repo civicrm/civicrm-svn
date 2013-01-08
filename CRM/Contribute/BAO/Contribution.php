@@ -2795,4 +2795,30 @@ WHERE  contribution_id = %1 ";
       }
     }
   }   
+
+  /**
+   * Function to check status validation on update of a contribution
+   *
+   * @param array $values previous form values before submit
+   *
+   * @param array $fields the input form values
+   *
+   * @param array $errors list of errors
+   *
+   * @access public
+   * @static
+   */
+  static function checkStatusValidation($values, &$fields, &$errors) {
+    $contributionStatuses = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
+    $checkStatus = array(
+      'Cancelled' => array('Completed'), 
+      'Completed' => array('Cancelled', 'Refunded'),
+      'Pending' => array('Cancelled', 'Completed'),
+      'Refunded' => array('Cancelled')
+    );
+    
+    if (!in_array($contributionStatuses[$fields['contribution_status_id']], $checkStatus[$contributionStatuses[$values['contribution_status_id']]])) {
+     $errors['contribution_status_id'] = "Cannot change contribution status from {$contributionStatuses[$values['contribution_status_id']]} to {$contributionStatuses[$fields['contribution_status_id']]}.";
+    } 
+  }
 }

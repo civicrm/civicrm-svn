@@ -969,6 +969,11 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
         $errors['pcp_made_through'] = ts('Please select a Personal Campaign Page, OR uncheck Display in Honor Roll and clear both the Honor Roll Name and the Personal Note field.');
       }
     }
+    
+    //form rule for status http://wiki.civicrm.org/confluence/display/CRM/CiviAccounts+4.3+Data+Flow
+    if ($self->_id && $self->_values['contribution_status_id'] != $fields['contribution_status_id']) {
+      CRM_Contribute_BAO_Contribution::checkStatusValidation($self->_values, $fields, $errors);
+    }
 
     //FIXME FOR NEW DATA FLOW http://wiki.civicrm.org/confluence/display/CRM/CiviAccounts+4.3+Data+Flow
     if (CRM_Utils_Array::value('fee_amount', $fields)) {
