@@ -278,7 +278,7 @@ class CRM_Custom_Form_Group extends CRM_Core_Form {
         $formName = 'document.forms.' . $this->_name;
 
         $js = "<script type='text/javascript'>\n";
-        $js .= "{$formName}['extends[1]'].style.display = 'none';\n";
+        $js .= "{$formName}['extends_1'].style.display = 'none';\n";
         $js .= "</script>";
         $this->assign('initHideBlocks', $js);
       }
