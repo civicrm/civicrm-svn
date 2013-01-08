@@ -1451,46 +1451,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
         }
         // next create the transaction record
         $transaction = new CRM_Core_Transaction( );
-        $trxnParams = array(
-          'contribution_id'   => $contributions[0]->id,
-          'trxn_date'         => date( 'YmdHis' ),
-          'total_amount'      =>  CRM_Utils_Array::value('int_amount', $params ) ? $params['initial_amount'] : $params['total_amount'],
-          'currency'          => $params['fee_currency'],
-          'trxn_id'           => $params['trxn_id'],
-        );
-
-        $revenueFinancialType = array( );
-        $statusID = $cId = $financialAccount = null;
-
-        if ( $params['contribution_status_id'] == 2 ) {
-          CRM_Core_PseudoConstant::populate( $revenueFinancialType,
-            'CRM_Financial_DAO_EntityFinancialAccount',
-            $all = True,
-            $retrieve = 'financial_account_id',
-            $filter = null,
-            " account_relationship = 3 AND entity_id = ".$params['financial_type_id'] );
-          $financialAccount = current( $revenueFinancialType );
-          $statusID = key(CRM_Core_PseudoConstant::accountOptionValues( 'financial_item_status', null, " AND v.name LIKE 'Unpaid' " ));
-        } 
-        else {
-          //$finanTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_PaymentProcessor', $this->_paymentProcessor['id'], 'financial_type_id' );
-          CRM_Core_PseudoConstant::populate( $revenueFinancialType,
-            'CRM_Financial_DAO_EntityFinancialAccount',
-            $all = True,
-            $retrieve = 'financial_account_id',
-            $filter = null,
-            " account_relationship = 6 AND entity_id = ".$params['financial_type_id']);
-
-          $financialAccount = current( $revenueFinancialType );
-          $statusID = key(CRM_Core_PseudoConstant::accountOptionValues( 'financial_item_status', null, " AND v.name LIKE 'Paid' " ));
-        }
-
-        if ( $financialAccount ) { 
-          $trxnParams['to_financial_account_id'] = $financialAccount;
-          $cId = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialAccount', $financialAccount, 'contact_id' );
-        }
-
-        $trxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
+       
         // CRM-11124
         $checkDiscount = CRM_Core_BAO_Discount::findSet($this->_eventId,'civicrm_event');
         if (!empty($checkDiscount)) {
@@ -1509,7 +1470,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
     }
 
     //do cleanup line  items if participant edit the Event Fee.
-    if ( ( $this->_lineItem || !isset($params['proceSetId'] ) ) && !$this->_paymentId && isset($params['participant_id'])  ) {
+    if (($this->_lineItem || !isset($params['proceSetId'])) && !$this->_paymentId && isset($params['participant_id'])) {
       CRM_Price_BAO_LineItem::deleteLineItems($params['participant_id'], 'civicrm_participant');
     }
 
@@ -1528,15 +1489,6 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
                 $line['unit_price'] = $line['line_total'] = $params['total_amount'];
               }
               $lineItems = CRM_Price_BAO_LineItem::create($line);
-              if ( CRM_Utils_Array::value( 'record_contribution', $params ) ) {
-                $int_name  = 'txt-price_'. $line['price_field_id'];
-                $initValue = CRM_Utils_Array::value( $int_name , $params );
-                if ( is_array( $initValue ) ) {
-                  $initValue = CRM_Utils_Array::value( $line['price_field_value_id'],  $initValue );
-                }
-                $lineItems->$int_name = $initValue;
-                CRM_Financial_BAO_FinancialItem::add(  $lineItems, $contributions[0] );
-              }
             }
           }
         }
