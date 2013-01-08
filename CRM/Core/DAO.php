@@ -1003,7 +1003,13 @@ FROM   civicrm_domain
         }
       }
     }
-    return strtr($query, $tr);
+
+    // CRM-11582
+    foreach($tr as $key => $value) {
+      $key   = preg_quote($key);
+      $query = preg_replace("/$key\b/", $value, $query);
+    }
+    return $query;
   }
 
   static function freeResult($ids = NULL) {
