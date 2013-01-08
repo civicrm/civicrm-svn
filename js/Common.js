@@ -537,12 +537,7 @@ CRM.validate = CRM.validate || {
         var target = $(this).closest('tr');
         $('input.select-rows', table).prop('checked', $(".select-row:not(':checked')", table).length < 1);
       }
-      if ($(this).is(':checked')) {
-        target.addClass('crm-row-selected');
-      }
-      else {
-        target.removeClass('crm-row-selected');
-      }
+      target.toggleClass('crm-row-selected', $(this).is(':checked'));
     });
   });
   $(window).resize(function() {
