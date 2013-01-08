@@ -37,15 +37,13 @@ class CRM_Event_Cart_BAO_MerParticipant extends CRM_Event_BAO_Participant {
     return $mer_participant;
   }
 
-  static
-  function get_attendee_role_id() {
+  static function get_attendee_role_id() {
     $roles = CRM_Event_PseudoConstant::participantRole(NULL, "v.label='Attendee'");
     $role_names = array_keys($roles);
     return end($role_names);
   }
 
-  static
-  function get_pending_in_cart_status_id() {
+  static function get_pending_in_cart_status_id() {
     $status_types = CRM_Event_PseudoConstant::participantStatus(NULL, "name='Pending in cart'");
     $status_names = array_keys($status_types);
     return end($status_names);
@@ -96,8 +94,7 @@ class CRM_Event_Cart_BAO_MerParticipant extends CRM_Event_BAO_Participant {
     return $index + 1;
   }
 
-  static
-  function billing_address_from_contact($contact) {
+  static function billing_address_from_contact($contact) {
     foreach ($contact->address as $loc) {
       if ($loc['is_billing']) {
         return $loc;

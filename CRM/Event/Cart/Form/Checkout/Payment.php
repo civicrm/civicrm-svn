@@ -11,7 +11,9 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart {
   public $payment_required = TRUE;
   public $payer_contact_id;
   public $is_pay_later = FALSE;
-  public $pay_later_receipt; function registerParticipant($params, &$participant, $event) {
+  public $pay_later_receipt;
+
+  function registerParticipant($params, &$participant, $event) {
     $transaction = new CRM_Core_Transaction();
 
     // handle register date CRM-4320
@@ -352,8 +354,7 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart {
     CRM_Core_BAO_MessageTemplates::sendTemplate($send_template_params);
   }
 
-  static
-  function formRule($fields, $files, $self) {
+  static function formRule($fields, $files, $self) {
     $errors = array();
 
     if ($self->payment_required && !CRM_Utils_Array::value('is_pay_later', $self->_submitValues)) {

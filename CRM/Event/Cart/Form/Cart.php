@@ -85,8 +85,7 @@ class CRM_Event_Cart_Form_Cart extends CRM_Core_Form {
     }
   }
 
-  static
-  function is_administrator() {
+  static function is_administrator() {
     global $user;
     return CRM_Core_Permission::check('administer CiviCRM');
   }
@@ -110,8 +109,7 @@ class CRM_Event_Cart_Form_Cart extends CRM_Core_Form {
     return $session->get('userID');
   }
 
-  static
-  function find_contact($fields) {
+  static function find_contact($fields) {
     $dedupe_params = CRM_Dedupe_Finder::formatParams($fields, 'Individual');
     $dedupe_params['check_permission'] = FALSE;
     $ids = CRM_Dedupe_Finder::dupesByParams($dedupe_params, 'Individual');
@@ -121,8 +119,7 @@ class CRM_Event_Cart_Form_Cart extends CRM_Core_Form {
     else return NULL;
   }
 
-  static
-  function find_or_create_contact($registeringContactID = NULL, $fields = array(
+  static function find_or_create_contact($registeringContactID = NULL, $fields = array(
     )) {
     $contact_id = self::find_contact($fields);
 

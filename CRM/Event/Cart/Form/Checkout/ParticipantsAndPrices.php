@@ -1,7 +1,9 @@
 <?php
 class CRM_Event_Cart_Form_Checkout_ParticipantsAndPrices extends CRM_Event_Cart_Form_Cart {
   public $price_fields_for_event;
-  public $_values = NULL; function preProcess() {
+  public $_values = NULL;
+
+  function preProcess() {
     parent::preProcess();
 
     $this->cid = CRM_Utils_Request::retrieve('cid', 'Positive', $this);
@@ -44,8 +46,7 @@ class CRM_Event_Cart_Form_Checkout_ParticipantsAndPrices extends CRM_Event_Cart_
     }
   }
 
-  static
-  function primary_email_from_contact($contact) {
+  static function primary_email_from_contact($contact) {
     foreach ($contact->email as $email) {
       if ($email['is_primary']) {
         return $email['email'];
