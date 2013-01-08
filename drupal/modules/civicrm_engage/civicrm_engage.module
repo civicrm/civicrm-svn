@@ -162,12 +162,14 @@ function civicrm_engage_civicrm_pageRun(&$page) {
       NULL, NULL
     );
 
-
     CRM_Core_BAO_CustomGroup::buildCustomDataView($page,
       $groupTree,
       FALSE, NULL,
       CIVICRM_ENGAGE_DEMOGRAPHICS_PREFIX
     );
+
+    $cgID = _civicrm_engage_getCustomGroupID(CIVICRM_ENGAGE_CG_DEMOGRAPHICS_NAME);
+    $page->assign('demographics_custom_group_id', $cgID);
   }
 }
 

@@ -78,6 +78,10 @@
             {/foreach}
         {/foreach}
       {/if}
+      {* We have to hide the edit link or we will get two of them for this block *}
+      <script>
+      cj("#custom-set-content-{$demographics_custom_group_id} .crm-edit-help").hide();
+      </script>
       {* End of civicrm_engage modification *}
 
     </div>
