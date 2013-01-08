@@ -227,9 +227,26 @@ function civicrm_engage_menu() {
     'page arguments' => array('civicrm_engage_admin_settings'),
     'access arguments' => array('access civiengage settings'),
     'file' => 'civicrm_engage.admin.inc',
-    'type' => MENU_NORMAL_ITEM,
   );
-
+  $items['admin/config/civicrm/civicrm_engage/settings'] = array(
+    'title' => t('Civicrm engage settings'),
+    'description' => t('CiviCRM Engage Configuration'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('civicrm_engage_admin_settings'),
+    'access arguments' => array('access civiengage settings'),
+    'file' => 'civicrm_engage.admin.inc',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+  $items['admin/config/civicrm/civicrm_engage/load-data'] = array(
+    'title' => t('Civicrm engage load default data'),
+    'description' => t('CiviCRM Engage Load Data'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('civicrm_engage_admin_load_data'),
+    'access arguments' => array('access civiengage settings'),
+    'file' => 'civicrm_engage.admin.inc',
+    'type' => MENU_LOCAL_TASK,
+  );
   return $items;
 }
+
 
