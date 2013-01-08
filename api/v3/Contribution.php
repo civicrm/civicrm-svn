@@ -71,10 +71,6 @@ function civicrm_api3_contribution_create($params) {
   if (CRM_Utils_Array::value('id', $params)) {
     $ids['contribution'] = $params['id'];
   }
-
-  if (!empty($params['use_default_price_set']) && empty($params['id'])) {
-   $values['line_item'] = _civicrm_api3_contribution_getDefaultLineitem($params);
-  }
   $contribution = CRM_Contribute_BAO_Contribution::create($values, $ids);
 
   if (is_a($contribution, 'CRM_Core_Error')) {
@@ -93,11 +89,6 @@ function civicrm_api3_contribution_create($params) {
 function _civicrm_api3_contribution_create_spec(&$params) {
   $params['contact_id']['api.required'] = 1;
   $params['total_amount']['api.required'] = 1;
-  $params['use_default_price_set'] = array(
-    'api.default' => 1,
-    'title' => 'Use Default Price Set',
-     'description' => 'Set this to 0 if you are setting up the lineitems',
-   );
   $params['note'] = array(
     'name' => 'note',
     'uniqueName' => 'contribution_note',
@@ -121,34 +112,6 @@ function _civicrm_api3_contribution_create_spec(&$params) {
     'description' => 'Do not add to recent view (setting this improves performance)',
   );
 }
-/*
- * Create a default contribution line item
- */
- function _civicrm_api3_contribution_getDefaultLineitem(&$params) {
-   $priceSetDetails = CRM_Price_BAO_Set::getDefaultPriceSet();
-   foreach ($priceSetDetails as $field => $values) {
-     $priceFieldValueBAO = new CRM_Price_BAO_FieldValue();
-     $priceFieldValueBAO->price_field_id = $values['priceFieldID'];
-     $priceFieldValueBAO->selectAdd();
-     $priceFieldValueBAO->selectAdd('id');
-     $priceFieldValueBAO->selectAdd('label');
-     $priceFieldValueBAO->selectAdd('financial_type_id');
-     $priceFieldValueBAO->find(true);
-     continue;
-   }
-   $lineItemparams[$values['setID']][$priceFieldValueBAO->price_field_id] = array(
-     'price_field_id' => $priceFieldValueBAO->price_field_id,
-     'price_field_value_id' => $priceFieldValueBAO->id,
-     'label' => $priceFieldValueBAO->label,
-     'qty' => 1,
-     'unit_price' => $params['total_amount'],
-     'line_total' => $params['total_amount'],
-     'financial_type_id' => $priceFieldValueBAO->financial_type_id,
-   );
-   return $lineItemparams;
- }
-
-
 
 /**
  * Delete a contribution

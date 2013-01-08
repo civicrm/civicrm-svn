@@ -334,4 +334,46 @@ class CRM_Price_BAO_LineItem extends CRM_Price_DAO_LineItem {
 
     CRM_Core_DAO::executeQuery($query, $params);
   }
+
+   /**
+   * Function to build line items array.
+   * @param int $params form values
+   *
+   * @param string $entityId entity id
+   *
+   * @param string $entityTable entity Table
+   *
+   * @access public
+   * @return void
+   * @static
+   */
+  static function getLineItemArray(&$params, $entityId = NULL, $entityTable = 'contribution') {
+    
+    if (!$entityId) {
+      $priceSetDetails = CRM_Price_BAO_Set::getDefaultPriceSet();
+      foreach ($priceSetDetails as $values) {
+        $params['line_item'][$values['setID']][$values['priceFieldID']] = array(
+          'price_field_id' => $values['priceFieldID'],
+          'price_field_value_id' => $values['priceFieldValueID'],
+          'label' => $values['label'],
+          'qty' => 1,
+          'unit_price' => $params['total_amount'],
+          'line_total' => $params['total_amount'],
+          'financial_type_id' => $params['financial_type_id']
+        );
+      }
+    } 
+    else {
+      $setID = NULL;
+      $lineItems = CRM_Price_BAO_LineItem::getLineItems($entityId, $entityTable);
+      foreach ($lineItems as $key => $values) {
+        if (!$setID) {
+          $setID = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $values['price_field_id'], 'price_set_id');
+        }
+        $values['line_total'] = $values['unit_price'] = $params['total_amount'];
+        $values['id'] = $key;
+        $params['line_item'][$setID][$key] = $values;
+      }
+    }
+  }
 }

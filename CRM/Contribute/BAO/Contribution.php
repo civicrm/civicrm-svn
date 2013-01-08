@@ -2652,7 +2652,11 @@ WHERE  contribution_id = %1 ";
     $update = FALSE;
     if (CRM_Utils_Array::value('prevContribution', $params)) {
       $params['trxnParams'] = $trxnParams;
- 
+      
+      if (!CRM_Utils_Array::value('line_item', $params)) {
+        $entityId = $params['contribution']->id;
+        CRM_Price_BAO_LineItem::getLineItemArray($params, $entityId);
+      }
       //if Change contribution amount
       if ($params['total_amount'] != $params['prevContribution']->total_amount) {
         //Update Financial Records
@@ -2687,7 +2691,10 @@ WHERE  contribution_id = %1 ";
       $update = TRUE;
     }
 
-    if (!$update) {
+    if (!$update) { 
+      if (!CRM_Utils_Array::value('line_item', $params)) {
+        CRM_Price_BAO_LineItem::getLineItemArray($params);
+      }
       //records finanical trxn and entity financial trxn
       $financialTxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
     }
@@ -2789,9 +2796,9 @@ WHERE  contribution_id = %1 ";
           $prevParams['entity_id'] = $fieldValues['id'];
           $prevfinancialItem = CRM_Financial_BAO_FinancialItem::retrieve($prevParams, CRM_Core_DAO::$_nullArray);
           $itemParams = array(
-            'transaction_date' => CRM_Utils_Date::isoToMysql($params['contribution']->receive_date),
-            'contact_id' => $params['contribution']->contact_id,
-            'currency' => $params['contribution']->currency,
+            'transaction_date' => $params['contribution']->receive_date ? CRM_Utils_Date::isoToMysql($params['contribution']->receive_date) : CRM_Utils_Date::isoToMysql($params['prevContribution']->receive_date),
+            'contact_id' => $params['prevContribution']->contact_id,
+            'currency' => $params['contribution']->currency ? $params['contribution']->currency : $params['prevContribution']->currency,
             'amount' => $itemAmount ? $itemAmount : $params['total_amount'],
             'description' => $prevfinancialItem->description,
             'status_id' => $prevfinancialItem->status_id,

@@ -131,8 +131,8 @@ WHERE       ps.name = '{$entityName}'
       $defaultPriceSet[$dao->priceFieldValueID]['priceFieldID'] = $dao->priceFieldID;
       $defaultPriceSet[$dao->priceFieldValueID]['name'] = $dao->name;
       $defaultPriceSet[$dao->priceFieldValueID]['label'] = $dao->label;
+      $defaultPriceSet[$dao->priceFieldValueID]['priceFieldValueID'] = $dao->priceFieldValueID;
     }
-
 
     return $defaultPriceSet;
   }
