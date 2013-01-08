@@ -237,7 +237,6 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form {
    * @access public
    */
   public function buildQuickForm() {
-    $className = CRM_Utils_System::getClassName($this);
     $session = CRM_Core_Session::singleton();
 
     $this->_cancelURL = CRM_Utils_Array::value('cancelURL', $_POST);
@@ -259,10 +258,7 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form {
       $this->addElement('hidden', 'cancelURL', $this->_cancelURL);
     }
 
-    $buttons = array();
     if ($this->_single) {
-      // make this form an upload since we dont know if the custom data injected dynamically
-      // is of type file etc $uploadNames = $this->get( 'uploadNames' );
       $buttons = array(
         array(
           'type' => 'upload',
