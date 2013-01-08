@@ -296,8 +296,8 @@ class CRM_Financial_Form_FinancialTypeAccount extends CRM_Contribute_Form {
       if ($this->_action & CRM_Core_Action::ADD || $this->_action & CRM_Core_Action::UPDATE) {
         $params['financial_account_id'] = $this->_submitValues['financial_account_id'];  
       }
+      $params['entity_table'] = 'civicrm_financial_type';
       if ($this->_action & CRM_Core_Action::ADD) {
-        $params['entity_table'] = 'civicrm_financial_type';
         $params['entity_id'] = $this->_aid;
       }
       $financialTypeAccount = CRM_Financial_BAO_FinancialTypeAccount::add($params, $ids);
