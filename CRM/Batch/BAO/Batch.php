@@ -300,7 +300,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
         $newLinks = array();
       }
       elseif ($params['context'] == 'financialBatch') {
-        $values['check'] = "<input type='checkbox' id='check_".$object->id."' name='check_".$object->id."' value='1'  data-status_id='".$values['status_id']."' class='crm-batch-select'></input>";
+        $values['check'] = "<input type='checkbox' id='check_".$object->id."' name='check_".$object->id."' value='1'  data-status_id='".$values['status_id']."' class='select-row'></input>";
 
         switch ($values['status_id']) {
           case '1':

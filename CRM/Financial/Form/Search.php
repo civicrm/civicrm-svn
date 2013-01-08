@@ -84,7 +84,7 @@ class CRM_Financial_Form_Search extends CRM_Core_Form {
     $this->add('text', 'sort_name', ts('Created By'), CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'sort_name'));
 
     $this->assign('elements', array('status_id', 'title', 'sort_name', 'payment_instrument_id', 'item_count', 'total'));
-    $this->addElement('checkbox', 'toggleSelect', NULL, NULL);
+    $this->addElement('checkbox', 'toggleSelect', NULL, NULL, array('class' => 'select-rows'));
     $batchAction = array(
       'reopen' => ts('Re-open'),
       'close' => ts('Close'),

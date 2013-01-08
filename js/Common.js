@@ -527,6 +527,23 @@ CRM.validate = CRM.validate || {
   $(document).ready(function() {
     advmultiselectResize();
     $().crmtooltip();
+    $('.crm-container table.row-highlight').on('change', 'input.select-row, input.select-rows', function() {
+      var table = $(this).closest('table');
+      if ($(this).hasClass('select-rows')) {
+        var target = $('tbody tr', table);
+        $('input.select-row', table).prop('checked', $(this).prop('checked'));
+      }
+      else {
+        var target = $(this).closest('tr');
+        $('input.select-rows', table).prop('checked', $(".select-row:not(':checked')", table).length < 1);
+      }
+      if ($(this).is(':checked')) {
+        target.addClass('crm-row-selected');
+      }
+      else {
+        target.removeClass('crm-row-selected');
+      }
+    });
   });
   $(window).resize(function() {
     advmultiselectResize();

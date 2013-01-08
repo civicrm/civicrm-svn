@@ -50,7 +50,7 @@
   </div>
 </div>
 <div class="form-layout-compressed">{$form.batch_update.html}&nbsp;{$form.submit.html}</div><br/>
-<table id="crm-batch-selector">
+<table id="crm-batch-selector" class="row-highlight">
   <thead>
     <tr>
       <th class="crm-batch-checkbox">{$form.toggleSelect.html}</th>
@@ -84,14 +84,6 @@ cj(function($) {
       $(this).change();
       return false;
     }
-  });
-
-  $("#toggleSelect").change(function() {
-    $("#crm-batch-selector input.crm-batch-select").prop('checked', $(this).is(':checked'));
-  });
-
-  $("#crm-batch-selector").on('change', 'input[id^=check_]', function() {
-    $("#toggleSelect").prop('checked', $("#crm-batch-selector .crm-batch-select:not(':checked')").length < 1);
   });
 
   var checkedRows = [];
@@ -145,7 +137,7 @@ cj(function($) {
           }
         });
         checkedRows = [];
-        $("#crm-batch-selector input.crm-batch-select:checked").each(function() {
+        $("#crm-batch-selector input.select-row:checked").each(function() {
           checkedRows.push('#' + $(this).attr('id'));
         });
       },
@@ -159,8 +151,7 @@ cj(function($) {
       "fnDrawCallback": function(oSettings) {
         $('.crm-editable', '#crm-batch-selector').crmEditable();
         if (checkedRows.length) {
-          $(checkedRows.join(',')).prop('checked', true);
-          $("#toggleSelect").prop('checked', $("#crm-batch-selector .crm-batch-select:not(':checked')").length < 1);
+          $(checkedRows.join(',')).prop('checked', true).change();
         }
         else {
           $("#toggleSelect").prop('checked', false);
@@ -279,7 +270,7 @@ cj(function($) {
     while (i < len) {
       var status = $('tr[data-id='+records[i]+']').data('status_id');
       if ($.inArray(status, notAllowed) >= 0) {
-        $('#check_' + records[i] + ':checked').prop('checked', false).trigger('change');
+        $('#check_' + records[i] + ':checked').prop('checked', false).change();
         invalid.push(records[i]);
         records.splice(i, 1);
         --len;
@@ -296,7 +287,7 @@ cj(function($) {
   }
 
   function serverError() {
-     $().crmError({/literal}'{ts escape="js"}No response from the server. Check your internet connection and try reloading the page.{/ts}', '{ts escape="js"}Network Error{/ts}'{literal});
+     CRM.alert({/literal}'{ts escape="js"}No response from the server. Check your internet connection and try reloading the page.{/ts}', '{ts escape="js"}Network Error{/ts}'{literal}, 'error');
   }
 
   $('#Go').click(function() {
@@ -305,13 +296,13 @@ cj(function($) {
        CRM.alert({/literal}'{ts escape="js"}Please select an action from the menu.{/ts}', '{ts escape="js"}No Action Selected{/ts}'{literal});
        return false;
     }
-    else if (!$("input.crm-batch-select:checked").length) {
+    else if (!$("input.select-row:checked").length) {
        CRM.alert({/literal}'{ts escape="js"}Please select one or more batches for this action.{/ts}', '{ts escape="js"}No Batches Selected{/ts}'{literal});
        return false;
     }
     else if (op == 'close' || op == 'reopen' || op == 'delete') {
       records = [];
-      $("input.crm-batch-select:checked").each(function() {
+      $("input.select-row:checked").each(function() {
         records.push($(this).attr('id').replace('check_', ''));
       });
       editRecords(records, op);
@@ -319,7 +310,7 @@ cj(function($) {
     }
     else if (op == 'export') {
       records = [];
-      $("input.crm-batch-select:checked").each(function() {
+      $("input.select-row:checked").each(function() {
         records.push($(this).attr('id').replace('check_', ''));
       });
       exportRecords(records, op);
