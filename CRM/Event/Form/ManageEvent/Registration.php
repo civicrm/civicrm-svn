@@ -472,11 +472,13 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
           $errorMsg['confirm_from_email'] = ts('Please enter Confirmation Email FROM Email Address.');
         }
       }
-
-      $start = CRM_Utils_Date::processDate($values['registration_start_date']);
-      $end = CRM_Utils_Date::processDate($values['registration_end_date']); 
-      if ($start > 0 && $end > 0 && $end <= $start) {
-        $errorMsg['registration_end_date'] = ts('Registration end date should be after Registration start date');
+      
+      if ($values['registration_start_date'] && $values['registration_end_date']) {
+        $start = CRM_Utils_Date::processDate($values['registration_start_date']);
+        $end   = CRM_Utils_Date::processDate($values['registration_end_date']);
+        if ($end < $start) {
+          $errorMsg['registration_end_date'] = ts('Registration end date should be after Registration start date');
+        }
       }
 
       //check that the selected profiles have either firstname+lastname or email required
