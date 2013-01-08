@@ -1361,11 +1361,9 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     $financialAccountDescription = FALSE,
     $accountingCode = FALSE,
     $firstName = FALSE,
-    $parentFinancialAccount = FALSE,
     $financialAccountType = FALSE,
     $taxDeductible = FALSE,
     $isActive = TRUE,
-    $headerAccount = FALSE,
     $isTax = FALSE,
     $taxRate = FALSE,
     $isDefault = FALSE
@@ -1397,20 +1395,6 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     if($firstName)
       $this->webtestOrganisationAutocomplete($firstName);
         
-    // Autofill Edit Financial Account Name
-    if ($parentFinancialAccount) {
-      $this->type("parent_financial_account", $parentFinancialAccount);
-      $this->click("parent_financial_account");
-      if ($firstName) {
-        $this->waitForElementPresent("xpath=//body/div[8]/div/ul/li");
-        $this->click("xpath=//body/div[8]/div/ul/li"); 
-      }
-      else {
-        $this->waitForElementPresent("css=div.ac_results-inner li");
-        $this->click("css=div.ac_results-inner li");
-      }
-    }
-        
     // Financial Account Type  
     if($financialAccountType)
       $this->select('financial_account_type_id', "label={$financialAccountType}");
@@ -1430,12 +1414,6 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     // Tax Rate
     if($taxRate)
       $this->type('tax_rate', $taxRate);
-        
-    // Is Header Account
-    if($headerAccount)
-      $this->check('is_header_account');
-    else
-      $this->uncheck('is_header_account');
 
     // Set Default
     if($isDefault)
@@ -1585,10 +1563,8 @@ function _testAddFinancialType(){
   $financialAccountDescription = "{$financialAccountTitle} Description";
   $accountingCode = 1033;
   $financialAccountType = 'Revenue'; //Asset Revenue
-  $parentFinancialAccount = 'Donation';
   $taxDeductible = FALSE;
   $isActive = FALSE;
-  $headerAccount = TRUE;
   $isTax = TRUE;
   $taxRate = 9.99999999;
   $isDefault = FALSE;
@@ -1602,11 +1578,9 @@ function _testAddFinancialType(){
     $financialAccountDescription,
     $accountingCode,
     $orgName,
-    $parentFinancialAccount,
     $financialAccountType,
     $taxDeductible,
     $isActive,
-    $headerAccount,
     $isTax,
     $taxRate,
     $isDefault

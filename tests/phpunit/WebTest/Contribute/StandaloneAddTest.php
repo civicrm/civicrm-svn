@@ -56,10 +56,8 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
     $financialAccountDescription = "{$financialAccountTitle} Description";
     $accountingCode = 1033;
     $financialAccountType = 'Asset';
-    $parentFinancialAccount = 'Donation';
     $taxDeductible = FALSE;
     $isActive = FALSE;
-    $headerAccount = TRUE;
     $isTax = TRUE;
     $taxRate = 9.9999999;
     $isDefault = FALSE;
@@ -73,11 +71,9 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
       $financialAccountDescription,
       $accountingCode,
       $orgName,
-      $parentFinancialAccount,
       $financialAccountType,
       $taxDeductible,
       $isActive,
-      $headerAccount,
       $isTax,
       $taxRate,
       $isDefault

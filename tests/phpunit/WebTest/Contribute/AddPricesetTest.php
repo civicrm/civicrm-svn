@@ -41,8 +41,8 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
     // Log in using webtestLogin() method
     $this->webtestLogin();
 
-      //add financial type of account type expense
-      $financialType= $this->_testAddFinancialType();
+    //add financial type of account type expense
+    $financialType= $this->_testAddFinancialType();
 
     $setTitle = 'Conference Fees - ' . substr(sha1(rand()), 0, 7);
     $usedFor  = 'Contribution';
@@ -63,7 +63,7 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
       'Pre-conference Meetup?' => 'Radio',
       'Evening Sessions' => 'CheckBox',
     );
-      $this->_testAddPriceFields( $fields, $validateStrings, $financialType );
+    $this->_testAddPriceFields( $fields, $validateStrings, $financialType );
     // var_dump($validateStrings);
 
     // load the Price Set Preview and check for expected values
@@ -95,153 +95,148 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
 
   function _testAddPriceFields( &$fields, &$validateString, $financialType, $dateSpecificFields = false )
   {
-      $validateStrings [] = $financialType;
+    $validateStrings [] = $financialType;
     foreach ($fields as $label => $type) {
       $validateStrings[] = $label;
-
+      
       $this->type('label', $label);
       $this->select('html_type', "value={$type}");
 
       switch ($type) {
-        case 'Text':
-          $validateStrings[] = '525.00';
-          $this->type('price', '525.00');
-          if ($dateSpecificFields == TRUE) {
-            $this->webtestFillDateTime('active_on', '+1 week');
-          }
-          else {
-            $this->check('is_required');
-          }
-          break;
-
-        case 'Select':
-          $options = array(
-            1 => array('label' => 'Chicken',
-              'amount' => '30.00',
-            ),
-            2 => array(
-              'label' => 'Vegetarian',
-              'amount' => '25.00',
-            ),
-          );
-          $this->addMultipleChoiceOptions($options, $validateStrings);
-          if ($dateSpecificFields == TRUE) {
-            $this->webtestFillDateTime('expire_on', '-1 week');
-          }
-          break;
-
-        case 'Radio':
-          $options = array(
-            1 => array('label' => 'Yes',
-              'amount' => '50.00',
-            ),
-            2 => array(
-              'label' => 'No',
-              'amount' => '0',
-            ),
-          );
-          $this->addMultipleChoiceOptions($options, $validateStrings);
+      case 'Text':
+        $validateStrings[] = '525.00';
+        $this->type('price', '525.00');
+        if ($dateSpecificFields == TRUE) {
+          $this->webtestFillDateTime('active_on', '+1 week');
+        }
+        else {
           $this->check('is_required');
-          if ($dateSpecificFields == TRUE) {
-            $this->webtestFillDateTime('active_on', '-1 week');
-          }
-          break;
-
-        case 'CheckBox':
-          $options = array(
-            1 => array('label' => 'First Night',
-              'amount' => '15.00',
-            ),
-            2 => array(
-              'label' => 'Second Night',
-              'amount' => '15.00',
-            ),
-          );
-          $this->addMultipleChoiceOptions($options, $validateStrings);
-          if ($dateSpecificFields == TRUE) {
-            $this->webtestFillDateTime('expire_on', '+1 week');
-          }
-          break;
-
-        default:
-          break;
+        }
+        break;
+        
+      case 'Select':
+        $options = array(
+          1 => array('label' => 'Chicken',
+            'amount' => '30.00',
+          ),
+          2 => array(
+            'label' => 'Vegetarian',
+            'amount' => '25.00',
+          ),
+        );
+        $this->addMultipleChoiceOptions($options, $validateStrings);
+        if ($dateSpecificFields == TRUE) {
+          $this->webtestFillDateTime('expire_on', '-1 week');
+        }
+        break;
+        
+      case 'Radio':
+        $options = array(
+          1 => array('label' => 'Yes',
+            'amount' => '50.00',
+          ),
+          2 => array(
+            'label' => 'No',
+            'amount' => '0',
+          ),
+        );
+        $this->addMultipleChoiceOptions($options, $validateStrings);
+        $this->check('is_required');
+        if ($dateSpecificFields == TRUE) {
+          $this->webtestFillDateTime('active_on', '-1 week');
+        }
+        break;
+        
+      case 'CheckBox':
+        $options = array(
+          1 => array('label' => 'First Night',
+            'amount' => '15.00',
+          ),
+          2 => array(
+            'label' => 'Second Night',
+            'amount' => '15.00',
+          ),
+        );
+        $this->addMultipleChoiceOptions($options, $validateStrings);
+        if ($dateSpecificFields == TRUE) {
+          $this->webtestFillDateTime('expire_on', '+1 week');
+        }
+        break;
+        
+      default:
+        break;
       }
-          $this->select( 'financial_type_id', "label={$financialType}" );
+      $this->select( 'financial_type_id', "label={$financialType}" );
       $this->click('_qf_Field_next_new-bottom');
       $this->waitForPageToLoad('30000');
       $this->waitForElementPresent('_qf_Field_next-bottom');
     }
   }
-
+  
   function _testAddFinancialType(){
-      // Add new Financial Account
-      $orgName = 'Alberta '.substr(sha1(rand()), 0, 7);
-      $financialAccountTitle = 'Financial Account '.substr(sha1(rand()), 0, 4);
-      $financialAccountDescription = "{$financialAccountTitle} Description";
-      $accountingCode = 1033;
-      $financialAccountType = 'Revenue';
-      $parentFinancialAccount = 'Donation';
-      $taxDeductible = FALSE;
-      $isActive = FALSE;
-      $headerAccount = TRUE;
-      $isTax = TRUE;
-      $taxRate = 10;
-      $isDefault = FALSE;
+    // Add new Financial Account
+    $orgName = 'Alberta '.substr(sha1(rand()), 0, 7);
+    $financialAccountTitle = 'Financial Account '.substr(sha1(rand()), 0, 4);
+    $financialAccountDescription = "{$financialAccountTitle} Description";
+    $accountingCode = 1033;
+    $financialAccountType = 'Revenue';
+    $taxDeductible = FALSE;
+    $isActive = FALSE;
+    $isTax = TRUE;
+    $taxRate = 10;
+    $isDefault = FALSE;
         
-      //Add new organisation
-      if( $orgName )
-          $this->webtestAddOrganization( $orgName );
+    //Add new organisation
+    if($orgName) {
+      $this->webtestAddOrganization($orgName);
+    }
         
-      $this->_testAddFinancialAccount( $financialAccountTitle,
-                                       $financialAccountDescription,
-                                       $accountingCode,
-                                       $orgName,
-                                       $parentFinancialAccount,
-                                       $financialAccountType,
-                                       $taxDeductible,
-                                       $isActive,
-                                       $headerAccount,
-                                       $isTax,
-                                       $taxRate,
-                                       $isDefault
-                                       );
-      $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[7]/span/a[text()='Edit']" );
+    $this->_testAddFinancialAccount($financialAccountTitle,
+      $financialAccountDescription,
+      $accountingCode,
+      $orgName,
+      $financialAccountType,
+      $taxDeductible,
+      $isActive,
+      $isTax,
+      $taxRate,
+      $isDefault
+    );
+    $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[7]/span/a[text()='Edit']" );
       
-      //Add new Financial Type
-      $financialType['name'] = 'FinancialType '.substr(sha1(rand()), 0, 4);
-      $financialType['is_deductible'] = true;
-      $financialType['is_reserved'] = false;
-      $this->addeditFinancialType( $financialType );
+    //Add new Financial Type
+    $financialType['name'] = 'FinancialType '.substr(sha1(rand()), 0, 4);
+    $financialType['is_deductible'] = true;
+    $financialType['is_reserved'] = false;
+    $this->addeditFinancialType( $financialType );
 
-      $accountRelationship = "Income Account is";
-      $expected[] = array( 'financial_account'     => $financialAccountTitle, 
-                           'account_relationship'  => $accountRelationship );
+    $accountRelationship = "Income Account is";
+    $expected[] = array( 'financial_account'     => $financialAccountTitle, 
+      'account_relationship'  => $accountRelationship
+    );
 
-        
-      $this->select( 'account_relationship', "label={$accountRelationship}" );
-      sleep(2);
-      $this->select( 'financial_account_id', "label={$financialAccountTitle}" );
-      $this->click( '_qf_FinancialTypeAccount_next' );
-      $this->waitForPageToLoad('30000');
-      $text = 'The financial type Account has been saved.';
-      $this->assertTrue( $this->isTextPresent($text), 'Missing text: ' . $text );
-      return $financialType['name'];
-      
+    $this->select( 'account_relationship', "label={$accountRelationship}" );
+    sleep(2);
+    $this->select( 'financial_account_id', "label={$financialAccountTitle}" );
+    $this->click( '_qf_FinancialTypeAccount_next' );
+    $this->waitForPageToLoad('30000');
+    $text = 'The financial type Account has been saved.';
+    $this->assertTrue( $this->isTextPresent($text), 'Missing text: ' . $text );
+    return $financialType['name'];
   }
   
-  function _testVerifyPriceSet( $validateStrings, $sid )
-  {
+  function _testVerifyPriceSet($validateStrings, $sid) {
     // verify Price Set at Preview page
     // start at Manage Price Sets listing
     $this->open($this->sboxPath . 'civicrm/admin/price?reset=1');
     $this->waitForPageToLoad('30000');
 
     // Use the price set id ($sid) to pick the correct row
-      $this->click("css=tr#row_{$sid} a[title='View and Edit Price Fields']");
-
+    $this->click("css=tr#row_{$sid} a[title='View and Edit Price Fields']");
+    
     $this->waitForPageToLoad('30000');
     // Look for Register button
-      $this->waitForElementPresent('Link=Add Price Field');
+    $this->waitForElementPresent('Link=Add Price Field');
     // Check for expected price set field strings
     $this->assertStringsPresent($validateStrings);
   }
@@ -255,14 +250,14 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
     // Log in using webtestLogin() method
     $this->webtestLogin();
 
-      //add financial type of account type expense
-      $financialType= $this->_testAddFinancialType();
-
+    //add financial type of account type expense
+    $financialType= $this->_testAddFinancialType();
+    
     $setTitle = 'Conference Fees - ' . substr(sha1(rand()), 0, 7);
     $usedFor  = 'Contribution';
     $setHelp  = 'Select your conference options.';
     $this->_testAddSet($setTitle, $usedFor, $setHelp);
-
+    
     // Get the price set id ($sid) by retrieving and parsing the URL of the New Price Field form
     // which is where we are after adding Price Set.
     $elements = $this->parseURL();
@@ -276,49 +271,46 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
       'Pre-conference Meetup?' => 'Radio',
       'Evening Sessions' => 'CheckBox',
     );
-      $this->_testAddPriceFields( $fields, $validateStrings, $financialType  );
+    $this->_testAddPriceFields( $fields, $validateStrings, $financialType  );
 
     // load the Price Set Preview and check for expected values
     $this->_testVerifyPriceSet($validateStrings, $sid);
-      // Add new Financial Account
-      $orgName = 'Alberta '.substr(sha1(rand()), 0, 7);
-      $financialAccountTitle = 'Financial Account '.substr(sha1(rand()), 0, 4);
-      $financialAccountDescription = "{$financialAccountTitle} Description";
-      $accountingCode = 1033;
-      $financialAccountType = 'Asset';
-      $parentFinancialAccount = 'Donation';
-      $taxDeductible = FALSE;
-      $isActive = FALSE;
-      $headerAccount = TRUE;
-      $isTax = TRUE;
-      $taxRate = 10;
-      $isDefault = FALSE;
+    // Add new Financial Account
+    $orgName = 'Alberta '.substr(sha1(rand()), 0, 7);
+    $financialAccountTitle = 'Financial Account '.substr(sha1(rand()), 0, 4);
+    $financialAccountDescription = "{$financialAccountTitle} Description";
+    $accountingCode = 1033;
+    $financialAccountType = 'Asset';
+    $taxDeductible = FALSE;
+    $isActive = FALSE;
+    $isTax = TRUE;
+    $taxRate = 10;
+    $isDefault = FALSE;
 
-        //Add new organisation
-       if( $orgName )
-            $this->webtestAddOrganization( $orgName );
+    //Add new organisation
+    if ($orgName) {
+      $this->webtestAddOrganization($orgName);
+    }
         
-       $this->_testAddFinancialAccount( $financialAccountTitle,
-                                         $financialAccountDescription,
-                                         $accountingCode,
-                                         $orgName,
-                                         $parentFinancialAccount,
-                                         $financialAccountType,
-                                         $taxDeductible,
-                                         $isActive,
-                                         $headerAccount,
-                                         $isTax,
-                                         $taxRate,
-                                         $isDefault
-                                         );
+    $this->_testAddFinancialAccount( $financialAccountTitle,
+      $financialAccountDescription,
+      $accountingCode,
+      $orgName,
+      $financialAccountType,
+      $taxDeductible,
+      $isActive,
+      $isTax,
+      $taxRate,
+      $isDefault
+    );
     $this->open($this->sboxPath . 'civicrm/contribute/add?reset=1&action=add&context=standalone');
 
     // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
     // button at the end of this page to show up, to make sure it's fully loaded.
     $this->waitForElementPresent('_qf_Contribution_upload');
-
+    
     // Let's start filling the form with values.
-
+    
     // create new contact using dialog
     $firstName = substr(sha1(rand()), 0, 7);
     $this->webtestNewDialogContact($firstName, 'Contributor', $firstName . '@example.com');
@@ -329,8 +321,8 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
     // fill in Received Date
     $this->webtestFillDate('receive_date');
 
-      //select recieved into
-      $this->select("to_financial_account_id", "label={$financialAccountTitle}");
+    //select recieved into
+    $this->select("to_financial_account_id", "label={$financialAccountTitle}");
     // source
     $this->type('source', 'Mailer 1');
 
@@ -418,9 +410,9 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
     // page contents loaded and you can continue your test execution.
     $this->webtestLogin();
 
-      //add financial type of account type expense
-      $financialType= $this->_testAddFinancialType();
-
+    //add financial type of account type expense
+    $financialType= $this->_testAddFinancialType();
+    
     $setTitle = 'Conference Fees - ' . substr(sha1(rand()), 0, 7);
     $usedFor  = 'Contribution';
     $setHelp  = 'Select your conference options.';
@@ -440,8 +432,8 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
       'Evening Sessions' => 'CheckBox',
     );
     //$this->_testAddPriceFields( $fields, $validateStrings, true );
-      $this->_testAddPriceFields( $fields, $validateStrings, $financialType );
-
+    $this->_testAddPriceFields( $fields, $validateStrings, $financialType );
+      
     // load the Price Set Preview and check for expected values
     $this->_testVerifyPriceSet($validateStrings, $sid);
 
@@ -549,8 +541,8 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
       3 => '590.00',
       7 => 'Completed',
     );
-      foreach ( $expected as $label => $value ) {
-          $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody//tr/td[1][text()='$label']/../td[2]", preg_quote($value));
+    foreach($expected as $label => $value) {
+      $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody//tr/td[1][text()='$label']/../td[2]", preg_quote($value));
     }
   }
 
@@ -567,9 +559,9 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
     // page contents loaded and you can continue your test execution.
     $this->webtestLogin();
 
-      //add financial type of account type expense
-      $financialType= $this->_testAddFinancialType();
-      
+    //add financial type of account type expense
+    $financialType= $this->_testAddFinancialType();
+    
     $setTitle = 'Conference Fees - ' . substr(sha1(rand()), 0, 7);
     $usedFor  = 'Contribution';
     $setHelp  = 'Select your conference options.';
@@ -588,7 +580,7 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
       'Pre-conference Meetup?' => 'Radio',
       'Evening Sessions' => 'CheckBox',
     );
-      $this->_testAddPriceFields( $fields, $validateStrings, $financialType, true );
+    $this->_testAddPriceFields( $fields, $validateStrings, $financialType, true );
     //$this->_testAddPriceFields( $fields, $validateStrings );
 
     // load the Price Set Preview and check for expected values
@@ -697,8 +689,8 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
       3 => '65.00',
       7 => 'Completed',
     );
-      foreach ( $expected as $label => $value ) {
-          $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody//tr/td[1][text()='$label']/../td[2]", preg_quote($value));
+    foreach($expected as $label => $value) {
+      $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody//tr/td[1][text()='$label']/../td[2]", preg_quote($value));
     }
   }
 
@@ -803,19 +795,17 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
     $this->click("xpath=//div[@id='Contributions']//table/tbody/tr[1]/td[8]/span/a[text()='View']");
     $this->waitForElementPresent('_qf_ContributionView_cancel-bottom');
        
-    
-    $expected = array(
-                      2 => 'Donation',
-                      3 => '590.00',
-                      8 => 'Completed',
-                      9 => 'Check',
-                      10 => 'check #1041',
-                      16 => "$firstNameSoft $lastNameSoft",
-                      );
+    $expected = array(2 => 'Donation',
+      3 => '590.00',
+      8 => 'Completed',
+      9 => 'Check',
+      10 => 'check #1041',
+      16 => "$firstNameSoft $lastNameSoft",
+    );
     foreach ($expected as $label => $value) {
       $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[$label]/td[2]", preg_quote($value));
-}
-
+    }
+    
     $exp = array(
       2 => '$ 525.00',
       3 => '$ 50.00',
@@ -827,11 +817,10 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
         preg_quote($val)
       );
     }
-
-    
+        
     // Check for Soft contact created
     $this->click("css=input#sort_name_navigation");
-     $this->type("css=input#sort_name_navigation", "$lastNameSoft, $firstNameSoft");
+    $this->type("css=input#sort_name_navigation", "$lastNameSoft, $firstNameSoft");
     $this->typeKeys("css=input#sort_name_navigation", "$lastNameSoft, $firstNameSoft");
     // wait for result list
     $this->waitForElementPresent("css=div.ac_results-inner li");
@@ -851,24 +840,22 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
       $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[$label]/td[2]", preg_quote($value));
     }
     
-    $params = array( 
-                    'contribution_id' => $id,
-                    'version' => 3,
-                     );
+    $params = array('contribution_id' => $id,
+      'version' => 3,
+    );
     
     require_once 'api/api.php';
     $fields = $this->webtest_civicrm_api('contribution','get',$params );
     $params['id'] = $params['contact_id'] = $fields['values'][$fields['id']]['soft_credit_to'];
     $contact      = CRM_Contact_BAO_Contact::retrieve( $params, $defaults, true );
-    $expected = array(
-                      1 => $fields['values'][$fields['id']]['display_name'],
-                      2 => $fields['values'][$fields['id']]['financial_type'],
-                      3 => $fields['values'][$fields['id']]['total_amount'],
-                      8 => $fields['values'][$fields['id']]['contribution_status'],
-                      9 => $fields['values'][$fields['id']]['contribution_payment_instrument'],
-                      10 => $fields['values'][$fields['id']]['contribution_check_number'],
-                      16 => $contact->display_name,
-                      );
+    $expected = array(1 => $fields['values'][$fields['id']]['display_name'],
+      2 => $fields['values'][$fields['id']]['financial_type'],
+      3 => $fields['values'][$fields['id']]['total_amount'],
+      8 => $fields['values'][$fields['id']]['contribution_status'],
+      9 => $fields['values'][$fields['id']]['contribution_payment_instrument'],
+      10 => $fields['values'][$fields['id']]['contribution_check_number'],
+      16 => $contact->display_name,
+    );
     foreach ($expected as $label => $value) {
       $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[$label]/td[2]", preg_quote($value));
     }
