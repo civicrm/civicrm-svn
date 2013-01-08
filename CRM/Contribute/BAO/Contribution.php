@@ -2716,8 +2716,9 @@ WHERE  contribution_id = %1 ";
     
     // when a fee is charged
     // FIX ME: work in progress
-    if (CRM_Utils_Array::value('net_amount', $params) && !CRM_Utils_Array::value('contribution', $ids)) {
-      //CRM_Core_BAO_FinancialTrxn::recordFees();
+    if (CRM_Utils_Array::value('fee_amount', $params) && !CRM_Utils_Array::value('contribution', $ids)) {
+      $params['entity_id'] = $financialTxn->id;
+      CRM_Core_BAO_FinancialTrxn::recordFees($params);
     }
   }
 

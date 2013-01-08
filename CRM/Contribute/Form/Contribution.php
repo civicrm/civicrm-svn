@@ -967,6 +967,12 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
       }
     }
     
+    if (CRM_Utils_Array::value('total_amount', $fields) && CRM_Utils_Array::value('net_amount', $fields) && CRM_Utils_Array::value('fee_amount', $fields)) {
+      $sum = $fields['net_amount'] + $fields['fee_amount'];
+      if ($fields['total_amount'] != $sum) {
+        $errors['total_amount'] = ts('The sum of fee amount and net amount must be equal to total amount');
+      }
+    }
     //form rule for status http://wiki.civicrm.org/confluence/display/CRM/CiviAccounts+4.3+Data+Flow
     if ($self->_id && $self->_values['contribution_status_id'] != $fields['contribution_status_id']) {
       CRM_Contribute_BAO_Contribution::checkStatusValidation($self->_values, $fields, $errors);

@@ -322,5 +322,42 @@ WHERE lt.entity_id = %1 ";
       CRM_Core_BAO_FinancialTrxn::createPremiumTrxn($params);
     }
   }
+  /**
+   * create financial trxn and items when fee is charged
+   *
+   * @params params to create trxn entries
+   *
+   * @access public
+   * @static
+   */
+
+  static function recordFees($params) {
+    $expenseTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Expense Account is' "));
+    $financialAccount = CRM_Contribute_PseudoConstant::financialAccountType($params['financial_type_id'], $expenseTypeId);
+    $trxnParams = 
+      array(
+        'from_financial_account_id' => $params['to_financial_account_id'],
+        'to_financial_account_id' => $financialAccount,
+        'trxn_date' => date('YmdHis'),
+        'total_amount' => $params['fee_amount'],
+        'status_id' => CRM_Core_OptionGroup::getValue('contribution_status','Completed','name'),
+      );
+    $trxnParams['contribution_id'] = $params['contribution']->id;
+    $trxn = self::create($trxnParams);
+    $fItemParams = 
+      array(
+        'financial_account_id' => $financialAccount,
+        'contact_id' => $params['contact_id'],
+        'created_date' => date('YmdHis'),
+        'transaction_date' => date('YmdHis'),
+        'amount' => CRM_Utils_Array::value('fee_amount', $params) ? CRM_Utils_Array::value('fee_amount', $params) : 0,
+        'description' => 'Fee',
+        'status_id' => CRM_Core_OptionGroup::getValue('financial_item_status','Paid','name'),
+        'entity_table' => 'civicrm_financial_trxn',
+        'entity_id' => $params['entity_id'],
+      );
+    $trxnIDS['id'] = $trxn->id;
+    $financialItem = CRM_Financial_BAO_FinancialItem::create($fItemParams, NULL, $trxnIDS);
+  }
 }
 
