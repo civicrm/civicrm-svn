@@ -74,14 +74,21 @@ class CRM_Core_ClassLoader {
     // we do this to prevent a autoloader errors with joomla / 3rd party packages
     // use absolute path since we dont know the content of include_path as yet
     // CRM-11304
+
     // since HTML Purifier could potentially be loaded / used by other modules / components
     // lets check it its already loaded
+    // we also check if the bootstrap file exists since during install of a drupal distro profile
+    // the files might not exists, in which case we skip loading the file
     $includeHTMLPurifier = TRUE;
-    if (class_exists('HTMLPurifier_Bootstrap')) {
+    $htmlPurifierPath = dirname(__FILE__) . '/../../packages/IDS/vendors/htmlpurifier/HTMLPurifier/Bootstrap.php';
+    if (
+      class_exists('HTMLPurifier_Bootstrap') ||
+      !file_exists($htmlPurifierPath)
+    ) {
       $includeHTMLPurifier = FALSE;
     }
     else {
-      require_once dirname(__FILE__) . '/../../packages/IDS/vendors/htmlpurifier/HTMLPurifier/Bootstrap.php';
+      require_once $htmlPurifierPath;
     }
 
     if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
