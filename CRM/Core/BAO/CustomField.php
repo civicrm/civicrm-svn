@@ -580,7 +580,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField {
     $onlyParent      = FALSE,
     $search          = FALSE,
     $checkPermission = TRUE,
-    $withMultiple    = FALSE                                         
+    $withMultiple    = FALSE
   ) {
     // Note: there are situations when we want getFieldsForImport() return fields related
     // ONLY to basic contact types, but NOT subtypes. And thats where $onlyParent is helpful
@@ -992,7 +992,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField {
         $qf->assign('customUrls', $customUrls);
         break;
     }
-    
+
     switch ($field->data_type) {
       case 'Int':
         // integers will have numeric rule applied to them.
@@ -1090,7 +1090,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField {
     $html_type  = $attributes['html_type'];
     $data_type  = $attributes['data_type'];
     $format     = CRM_Utils_Array::value('format', $attributes);
-    
+
     return self::getDisplayValueCommon($value,
       $option,
       $html_type,
@@ -1110,7 +1110,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField {
     $fieldID   = NULL
   ) {
     $display = $value;
- 
+
     if ($fieldID &&
       (($html_type == 'Radio' && $data_type != 'Boolean') ||
         ($html_type == 'Autocomplete-Select' && $data_type != 'ContactReference') ||
@@ -1303,7 +1303,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField {
    * @param  int    $mode          profile mode
    * @param  mixed  $value         if passed - dont fetch value from db,
    *                               just format the given value
-   * @static  
+   * @static
    * @access public
    */
   static function setProfileDefaults($customFieldId,
@@ -1311,7 +1311,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField {
     &$defaults,
     $contactId = NULL,
     $mode = NULL,
-    $value = NULL                                 
+    $value = NULL
   ) {
     //get the type of custom field
     $customField = new CRM_Core_BAO_CustomField();
@@ -1332,7 +1332,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField {
           $value = $result->value;
         }
       }
-      
+
       if ($customField->data_type == 'Country') {
         if (!$value) {
           $config = CRM_Core_Config::singleton();
@@ -1753,7 +1753,8 @@ SELECT $columnName
   }
 
   static function createField($field, $operation, $indexExist = FALSE, $triggerRebuild = TRUE) {
-    $tableName = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_CustomGroup',
+    $tableName = CRM_Core_DAO::getFieldValue(
+      'CRM_Core_DAO_CustomGroup',
       $field->custom_group_id,
       'table_name'
     );
@@ -1762,7 +1763,8 @@ SELECT $columnName
       'table_name' => $tableName,
       'operation' => $operation,
       'name' => $field->column_name,
-      'type' => CRM_Core_BAO_CustomValueTable::fieldToSQLType($field->data_type,
+      'type' => CRM_Core_BAO_CustomValueTable::fieldToSQLType(
+        $field->data_type,
         $field->text_length
       ),
       'required' => $field->is_required,
@@ -2364,7 +2366,7 @@ WHERE      f.id IN ($ids)";
     if (is_numeric($customId)) {
       $sql = "SELECT cg.id cgId
  FROM civicrm_custom_group cg
- INNER JOIN civicrm_custom_field cf 
+ INNER JOIN civicrm_custom_field cf
  ON cg.id = cf.custom_group_id
 WHERE cf.id = %1 AND cg.is_multiple = 1";
       $params[1] = array($customId, 'Integer');
@@ -2372,10 +2374,10 @@ WHERE cf.id = %1 AND cg.is_multiple = 1";
       if ($dao->fetch()) {
         if ($dao->cgId) {
           $isMultipleWithGid = $dao->cgId;
-        } 
+        }
       }
     }
- 
+
     return $isMultipleWithGid;
   }
 }
