@@ -2730,12 +2730,21 @@ WHERE  contribution_id = %1 ";
       $itemAmount = $params['trxnParams']['total_amount'] = $params['total_amount'] - $params['prevContribution']->total_amount;
     }
     if ($context == 'changedStatus') {
-      if (($params['prevContribution']->contribution_status_id == CRM_Core_OptionGroup::getValue('contribution_status', 'Completed', 'name')) && ($params['contribution']->contribution_status_id == CRM_Core_OptionGroup::getValue('contribution_status', 'Refunded', 'name'))) {
+      //get all the statuses
+      $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
+            
+      if ($params['prevContribution']->contribution_status_id == array_search('Completed', $contributionStatus)
+          && ($params['contribution']->contribution_status_id == array_search('Refunded', $contributionStatus)
+              || $params['contribution']->contribution_status_id == array_search('Cancelled', $contributionStatus))) {
+
         $params['trxnParams']['total_amount'] = - $params['total_amount'];
       }
-      elseif ($params['contribution']->contribution_status_id == CRM_Core_OptionGroup::getValue('contribution_status', 'Cancelled', 'name') && $params['prevContribution']->contribution_status_id == CRM_Core_OptionGroup::getValue('contribution_status', 'Pending', 'name')) {
+      elseif ($params['contribution']->contribution_status_id == array_search('Cancelled', $contributionStatus)
+              && $params['prevContribution']->contribution_status_id == array_search('Pending', $contributionStatus)) {
+
         $params['trxnParams']['to_financial_account_id'] = NULL;
-        $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Accounts Receivable Account is' "));
+        $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL,
+          " AND v.name LIKE 'Accounts Receivable Account is' "));
         $params['trxnParams']['from_financial_account_id'] = CRM_Contribute_PseudoConstant::financialAccountType($params['financial_type_id'], $relationTypeId) ;
         $params['trxnParams']['total_amount'] = - $params['total_amount'];
       }
@@ -2750,7 +2759,7 @@ WHERE  contribution_id = %1 ";
     $trxn = CRM_Core_BAO_FinancialTrxn::create($params['trxnParams']);
     
     if ($context == 'changedStatus') {
-      if (($params['prevContribution']->contribution_status_id == CRM_Core_OptionGroup::getValue('contribution_status', 'Pending', 'name')) && ($params['contribution']->contribution_status_id == CRM_Core_OptionGroup::getValue('contribution_status', 'Completed', 'name'))) {
+      if (($params['prevContribution']->contribution_status_id == array_search('Pending', $contributionStatus)) && ($params['contribution']->contribution_status_id == array_search('Completed', $contributionStatus))) {
         $query = "UPDATE civicrm_financial_item SET status_id = %1 WHERE entity_id = %2";
         foreach ($params['line_item'] as $fieldId => $fields) {
           foreach ($fields as $fieldValueId => $fieldValues) {

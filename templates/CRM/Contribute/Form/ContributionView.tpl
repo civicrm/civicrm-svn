@@ -110,12 +110,12 @@
 
   {if $cancel_date}
         <tr>
-          <td class="label">{ts}Cancelled Date{/ts}</td>
+          <td class="label">{ts}Cancelled / Refunded Date{/ts}</td>
           <td>{$cancel_date|crmDate}</td>
         </tr>
       {if $cancel_reason}
           <tr>
-              <td class="label">{ts}Cancellation Reason{/ts}</td>
+              <td class="label">{ts}Cancellation / Refund Reason{/ts}</td>
               <td>{$cancel_reason}</td>
           </tr>
       {/if}

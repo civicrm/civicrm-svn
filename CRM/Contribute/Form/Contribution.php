@@ -741,10 +741,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
     $this->add('select', 'contribution_status_id',
       ts('Contribution Status'),
       $status,
-      FALSE, array(
-        'onClick' => "if (this.value != 3) {  status();} else return false",
-        'onChange' => "return showHideByValue('contribution_status_id','3','cancelInfo','table-row','select',false);",
-      )
+      FALSE
     );
 
     // add various dates
@@ -756,9 +753,9 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
     $this->add('text', 'check_number', ts('Check Number'), $attributes['check_number']);
 
     $this->addDateTime('receipt_date', ts('Receipt Date'), FALSE, array('formatType' => 'activityDateTime'));
-    $this->addDateTime('cancel_date', ts('Cancelled Date'), FALSE, array('formatType' => 'activityDateTime'));
+    $this->addDateTime('cancel_date', ts('Cancelled / Refunded Date'), FALSE, array('formatType' => 'activityDateTime'));
 
-    $this->add('textarea', 'cancel_reason', ts('Cancellation Reason'), $attributes['cancel_reason']);
+    $this->add('textarea', 'cancel_reason', ts('Cancellation / Refund Reason'), $attributes['cancel_reason']);
 
     $recurJs = NULL;
     if ($buildRecurBlock) {
@@ -1157,7 +1154,8 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
         $params['receipt_date'] = date("Y-m-d");
       }
 
-      if ($params['contribution_status_id'] == CRM_Core_OptionGroup::getValue('contribution_status', 'Cancelled', 'name')) {
+      if ($params['contribution_status_id'] == CRM_Core_OptionGroup::getValue('contribution_status', 'Cancelled', 'name')
+          || $params['contribution_status_id'] == CRM_Core_OptionGroup::getValue('contribution_status', 'Refunded', 'name')) {
         if (CRM_Utils_System::isNull(CRM_Utils_Array::value('cancel_date', $params))) {
           $params['cancel_date'] = date("Y-m-d");
         }

@@ -164,10 +164,10 @@
         </td>
       </tr>
 
-      {* Cancellation fields are hidden unless contribution status is set to Cancelled *}
+      {* Cancellation / Refunded fields are hidden unless contribution status is set to Cancelled or Refunded*}
       <tr id="cancelInfo" class="crm-contribution-form-block-cancelInfo">
         <td>&nbsp;</td>
-        <td><fieldset><legend>{ts}Cancellation Information{/ts}</legend>
+        <td><fieldset><legend>{ts}Cancellation or Refund Information{/ts}</legend>
           <table class="form-layout-compressed">
             <tr id="cancelDate" class="crm-contribution-form-block-cancel_date">
               <td class="label">{$form.cancel_date.label}</td>
@@ -181,7 +181,7 @@
             </tr>
             <tr id="cancelDescription" class="crm-contribution-form-block-cancel_reason">
               <td class="label">&nbsp;</td>
-              <td class="description">{ts}Enter the cancellation date, or you can skip this field and the cancellation date will be automatically set to TODAY.{/ts}</td>
+              <td class="description">{ts}Enter the cancellation or refunded date, or you can skip this field and the cancellation date or refunded date will be automatically set to TODAY.{/ts}</td>
             </tr>
             <tr id="cancelReason">
               <td class="label" style="vertical-align: top;">{$form.cancel_reason.label}</td>
@@ -415,10 +415,12 @@
       }
     }
   }
+  
   function status() {
     cj("#cancel_date").val('');
     cj("#cancel_reason").val('');
   }
+
   </script>
   {/literal}
 
@@ -442,18 +444,32 @@
           cj('#receiptDate').show( );
         }
       }
-    </script>
-    {/literal}
-    {if !$contributionMode}
-      {include file="CRM/common/showHideByFieldValue.tpl"
-      trigger_field_id    ="contribution_status_id"
-      trigger_value       = '3'
-      target_element_id   ="cancelInfo"
-      target_element_type ="table-row"
-      field_type          ="select"
-      invert              = 0
+
+    {/literal}{if !$contributionMode}{literal}
+     cj( function( ) {
+      showHideCancelInfo(cj('#contribution_status_id'));	
+      
+      cj('#contribution_status_id').change(function() {
+       showHideCancelInfo(this);
       }
-      {if !$isOnline}
+       );
+     });
+
+     function showHideCancelInfo(obj) {
+       contributionStatus = cj(obj).val();
+       if (contributionStatus == 3 || contributionStatus == 7) {
+         cj('#cancelInfo').show( );
+       }
+       else {
+       	 status();          
+         cj('#cancelInfo').hide( );
+       }
+     }
+
+    {/literal}{/if}{literal}
+    </script>	
+    {/literal}
+      {if !$isOnline && !$contributionMode}
         {include file="CRM/common/showHideByFieldValue.tpl"
         trigger_field_id    ="payment_instrument_id"
         trigger_value       = '4'
@@ -462,7 +478,6 @@
         field_type          ="select"
         invert              = 0
         }
-      {/if}
     {/if}
   {/if} {* not delete mode if*}
 
