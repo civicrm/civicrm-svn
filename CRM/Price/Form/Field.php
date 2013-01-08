@@ -110,7 +110,6 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
    */
   function setDefaultValues() {
     $defaults = array();
-
     // is it an edit operation ?
     if (isset($this->_fid)) {
       $params = array('id' => $this->_fid);
@@ -154,11 +153,10 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
       $defaults['options_per_line'] = 1;
       $defaults['is_display_amounts'] = 1;
     }
-    if (isset($this->_sid)) {
-      $financialTypeId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_sid, 'financial_type_id');
-      $defaults['financial_type_id'] = $financialTypeId;
+    $eventComponentId  = CRM_Core_Component::getComponentID('CiviEvent');
+    if ($this->_fid && !in_array($eventComponentId, $this->_extendComponentId)) {
+      $defaults['financial_type_id'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_FieldValue', $this->_fid, 'financial_type_id', 'price_field_id');
     }
-    
     return $defaults;
   }
 
