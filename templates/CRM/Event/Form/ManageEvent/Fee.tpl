@@ -110,10 +110,6 @@
   	    </table>
 
         <table id="contributionType" class="form-layout">
-	    <tr class="crm-event-manage-fee-form-block-financial_type_id">
-	       <td class="label">{$form.financial_type_id.label}</td> 
-               <td class="crm-contribution-amount-form-block-financial_type_id">{$form.financial_type_id.html}<br /><span class="description">{ts}Select the corresponding financial type for contributions made using this page.{/ts}</span> {help id="id-financial_type"}</td>
-            </tr>
             <tr class="crm-event-manage-fee-form-block-fee_label">
                <td class="label">{$form.fee_label.label}<span class="marker"> *</span>
                </td>
@@ -149,10 +145,10 @@
         {ts}Use the table below to enter descriptive labels and amounts for up to ten event fee levels. These will be presented as a list of radio button options. Both the label and dollar amount will be displayed. You can also configure one or more sets of discounted fees by checking "Discounts by Signup Date" below.{/ts}<br />
   {if $isQuick}{ts}Click <a id = 'quickconfig' href='#'>here</a> if you want to configure the Regular Fees below as part of a Price Set, with the added flexibility and complexity that entails.{/ts}{/if}
         <table id="map-field-table">
-        <tr class="columnheader"><td scope="column">{ts}Fee Label{/ts}</td><td scope="column">{ts}Amount{/ts}</td><td scope="column">{ts}Default?{/ts}<br /><span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('default', 'Fee'); return false;" >{ts}clear{/ts}</a>)</span></td></tr>
+        <tr class="columnheader"><td scope="column">{ts}Fee Label{/ts}</td><td scope="column">{ts}Amount{/ts}</td><td scope="column">{ts}Default?{/ts}<br /><span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('default', 'Fee'); return false;" >{ts}clear{/ts}</a>)</span></td><td scope="column">{ts}Financial Type{/ts}</td></tr>
         {section name=loop start=1 loop=11}
            {assign var=idx value=$smarty.section.loop.index}
-           <tr><td class="even-row crm-event-manage-fee-form-block-label_{$idx}">{$form.label.$idx.html}</td><td class="crm-event-manage-fee-form-block-value_{$idx}">{$form.value.$idx.html|crmMoney}</td><td class="even-row crm-event-manage-fee-form-block-default_{$idx}">{$form.default.$idx.html}</tr>
+           <tr><td class="even-row crm-event-manage-fee-form-block-label_{$idx}">{$form.label.$idx.html}</td><td class="crm-event-manage-fee-form-block-value_{$idx}">{$form.value.$idx.html|crmMoney}</td><td class="even-row crm-event-manage-fee-form-block-default_{$idx}">{$form.default.$idx.html}</td><td class="crm-event-manage-fee-form-block-financial_type_id_{$idx}">{$form.financial_type_id.$idx.html}</td></tr>
         {/section}
         </table>
         </fieldset>
@@ -218,6 +214,7 @@
           {/if}
             {/section}
             <td class="even-row">{$form.discounted_default.$idx.html}</td>
+            <td class="even-row">{$form.discounted_financial_type_id.$idx.html}</td>
          </tr>
             {/section}
             </table>
@@ -321,21 +318,21 @@
         }
     }
 
-cj('#map-field-table input').blur( function(){
-    		var currentId = cj(this).attr('id');
-    		var arrayID = currentId.split('_');
-		if( ( arrayID[0] == 'label' || arrayID[0] == 'value' ) && arrayID[1] > 1 ){
-		    var value = cj("#"+currentId).val(); 
-		    if( value.length != 0  && cj("#financial_type_id_"+arrayID[1]).val() ==''){
-		    	var currentFtid = "#financial_type_id_"+arrayID[1];
-		    	var previousFtid = "#financial_type_id_"+ (arrayID[1]-1);
-		    	var financial_type = cj(previousFtid).val(); 
-		    	cj(currentFtid).val(financial_type); 
-		   }
-		   if( cj("#label_"+arrayID[1]).val().length == 0 && cj("#value_"+arrayID[1]).val().length == 0  )
-		   	cj("#financial_type_id_"+arrayID[1]).val('');
-		}
-		
+    cj('#map-field-table input').blur(function() {
+      var currentId = cj(this).attr('id');
+      var arrayID = currentId.split('_');
+      if ((arrayID[0] == 'label' || arrayID[0] == 'value') && arrayID[1] > 1) {
+        var value = cj("#"+currentId).val(); 
+	if (value.length != 0  && cj("#financial_type_id_"+arrayID[1]).val() =='') {
+	  var currentFtid = "#financial_type_id_"+arrayID[1];
+	  var previousFtid = "#financial_type_id_"+ (arrayID[1]-1);
+	  var financial_type = cj(previousFtid).val(); 
+	  cj(currentFtid).val(financial_type); 
+	}
+	if (cj("#label_"+arrayID[1]).val().length == 0 && cj("#value_"+arrayID[1]).val().length == 0) {
+	  cj("#financial_type_id_"+arrayID[1]).val('');
+	}
+      }		
     });
 {/literal}
 </script>
