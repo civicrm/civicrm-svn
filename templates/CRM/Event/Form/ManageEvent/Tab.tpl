@@ -28,7 +28,7 @@
     <div class="crm-actions-ribbon crm-event-manage-tab-actions-ribbon">
       <ul id="actions">
       <li><div id="crm-event-links-wrapper">
-            <div id="crm-event-links-link"><span><div class="icon dropdown-icon"></div>{ts}Event Links{/ts}</span></div>
+            <a id="crm-event-links-link" class="button"><span><div class="icon dropdown-icon"></div>{ts}Event Links{/ts}</span></a>
             <div class="ac_results" id="crm-event-links-list">
                  <div class="crm-event-links-list-inner">
                    <ul>
@@ -44,7 +44,7 @@
         </div></li>
 
       <li><div id="crm-participant-wrapper">
-            <div id="crm-participant-link"><span><div class="icon dropdown-icon"></div>{ts}Find Participants{/ts}</span></div>
+            <a id="crm-participant-link" class="button"><span><div class="icon dropdown-icon"></div>{ts}Find Participants{/ts}</span></a>
             <div class="ac_results" id="crm-participant-list">
                  <div class="crm-participant-list-inner">
                    <ul>
@@ -85,13 +85,17 @@ cj('#crm-event-links-link').click(function(event) {
   cj('#crm-event-links-list').toggle();
   cj('#crm-participant-list').hide();
   event.stopPropagation();
-  });
+  return false;
+});
 
 cj('#crm-participant-link').click(function(event) {
   cj('#crm-participant-list').toggle();
-        cj('#crm-event-links-list').hide();
+  cj('#crm-event-links-list').hide();
   event.stopPropagation();
-  });
+  return false;
+});
+
+cj().crmAccordions();
 
 </script>
 {/literal}

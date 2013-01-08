@@ -69,7 +69,7 @@
     </div>
     <div class="spacer"></div>
     <div id="registration_blocks">
-  <table class="form-layout-compressed">
+      <table class="form-layout-compressed">
 
         <tr class="crm-event-manage-registration-form-block-registration_link_text">
             <td scope="row" class="label" width="20%">{$form.registration_link_text.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='registration_link_text' id=$eventID}{/if}</td>
@@ -111,25 +111,22 @@
         </tr>
     </table>
     <div class="spacer"></div>
-    <div id="registration">
-        {*Registration Block*}
-        <div id="registration_screen_show" class="section-hidden section-hidden-border">
-            <a href="#" onclick="cj('#registration_screen_show').hide(); cj('#registration_screen').show(); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a><label>{ts}Registration Screen{/ts}</label><br />
-        </div>
-        <div id="registration_screen">
-        <h3><a href="#" onclick= "cj('#registration_screen').hide(); cj('#registration_screen_show').show(); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{ts}Registration Screen{/ts}</h3>
-        <table class= "form-layout-compressed">
-         <tr class="crm-event-manage-registration-form-block-intro_text">
-            <td scope="row" class="label" width="20%">{$form.intro_text.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='intro_text' id=$eventID}{/if}</td>
-            <td>{$form.intro_text.html}
-            <div class="description">{ts}Introductory message / instructions for online event registration page (may include HTML formatting tags).{/ts}</div>
-            </td>
-         </tr>
-         <tr class="crm-event-manage-registration-form-block-footer_text">
-            <td scope="row" class="label" width="20%">{$form.footer_text.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='footer_text' id=$eventID}{/if}</td>
-            <td>{$form.footer_text.html}
-            <div class="description">{ts}Optional footer text for registration screen.{/ts}</div></td>
-         </tr>
+    {*Registration Block*}
+    <fieldset id="registration" class="crm-collapsible {if $defaultsEmpty}collapsed{/if}">
+      <legend class="collapsible-title">{ts}Registration Screen{/ts}</legend>
+      <div id="registration_screen">
+      <table class= "form-layout-compressed">
+       <tr class="crm-event-manage-registration-form-block-intro_text">
+          <td scope="row" class="label" width="20%">{$form.intro_text.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='intro_text' id=$eventID}{/if}</td>
+          <td>{$form.intro_text.html}
+          <div class="description">{ts}Introductory message / instructions for online event registration page (may include HTML formatting tags).{/ts}</div>
+          </td>
+       </tr>
+       <tr class="crm-event-manage-registration-form-block-footer_text">
+          <td scope="row" class="label" width="20%">{$form.footer_text.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='footer_text' id=$eventID}{/if}</td>
+          <td>{$form.footer_text.html}
+          <div class="description">{ts}Optional footer text for registration screen.{/ts}</div></td>
+       </tr>
    </table>
     <table class= "form-layout-compressed">
          <tr class="crm-event-manage-registration-form-block-custom_pre_id">
@@ -201,14 +198,11 @@
         </tr>
         </table>
         </div>
+  </fieldset>
 
         {*Confirmation Block*}
-        <div id="confirm_show" class="section-hidden section-hidden-border">
-            <a href="#" onclick="cj('#confirm_show').hide(); cj('#confirm').show(); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a><label>{ts}Confirmation Screen{/ts}</label><br />
-        </div>
-
-        <div id="confirm">
-        <h3><a href="#" onclick="cj('#confirm').hide(); cj('#confirm_show').show(); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{ts}Confirmation Screen{/ts}</h3>
+        <fieldset id="confirm" class="crm-collapsible {if $defaultsEmpty}collapsed{/if}">
+        <legend class="collapsible-title">{ts}Confirmation Screen{/ts}</legend>
          <table class= "form-layout-compressed">
            <tr class="crm-event-manage-registration-form-block-confirm_title">
               <td scope="row" class="label" width="20%">{$form.confirm_title.label} <span class="marker">*</span> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='confirm_title' id=$eventID}{/if}</td>
@@ -229,15 +223,11 @@
               </td>
            </tr>
          </table>
-       </div>
+       </fieldset>
 
          {*ThankYou Block*}
-        <div id="thankyou_show" class="section-hidden section-hidden-border">
-            <a href="#" onclick="cj('#thankyou_show').hide(); cj('#thankyou').show(); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a><label>{ts}Thank-you Screen{/ts}</label><br />
-        </div>
-
-        <div id="thankyou">
-        <h3><a href="#" onclick="cj('#thankyou').hide(); cj('#thankyou_show').show(); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{ts}Thank-you Screen{/ts}</h3>
+        <fieldset id="thankyou" class="crm-collapsible {if $defaultsEmpty}collapsed{/if}">
+        <legend class="collapsible-title">{ts}Thank-you Screen{/ts}</legend>
          <table class= "form-layout-compressed">
            <tr class="crm-event-manage-registration-form-block-confirm_thankyou_title">
               <td scope="row" class="label" width="20%">{$form.thankyou_title.label} <span class="marker">*</span> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='thankyou_title' id=$eventID}{/if}</td>
@@ -258,15 +248,12 @@
               </td>
             </tr>
          </table>
-       </div>
+       </fieldset>
 
         {* Confirmation Email Block *}
-        <div id="mail_show" class="section-hidden section-hidden-border">
-            <a href="#" onclick="cj('#mail_show').hide(); cj('#mail').show(); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a><label>{ts}Confirmation Email{/ts}</label><br />
-        </div>
-
-        <div id="mail">
-        <h3><a href="#" onclick="cj('#mail').hide(); cj('#mail_show').show(); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{ts}Confirmation Email{/ts}</h3>
+        <fieldset id="mail" class="crm-collapsible {if $defaultsEmpty}collapsed{/if}">
+        <legend class="collapsible-title">{ts}Confirmation Email{/ts}</legend>
+          <div>
           <table class= "form-layout-compressed">
             <tr class="crm-event-manage-registration-form-block-is_email_confirm">
               <td scope="row" class="label" width="20%">{$form.is_email_confirm.label}</td>
@@ -301,15 +288,16 @@
                     <span class="description">{ts}You can notify event organizers of each online registration by specifying one or more email addresses to receive a carbon copy (cc). Multiple email addresses should be separated by a comma (e.g. jane@example.org, paula@example.org).{/ts}</span>
                </td>
              </tr>
-       <tr class="crm-event-manage-registration-form-block-bcc_confirm">
+              <tr class="crm-event-manage-registration-form-block-bcc_confirm">
                <td scope="row" class="label" width="20%">{$form.bcc_confirm.label}</td>
                <td>{$form.bcc_confirm.html}<br />
                   <span class="description">{ts}You may specify one or more email addresses to receive a blind carbon copy (bcc) of the confirmation email. Multiple email addresses should be separated by a comma (e.g. jane@example.org, paula@example.org).{/ts}</span>
                </td>
              </tr>
            </table>
-    </div>
-       </div>
+        </div>
+      </div>
+     </fieldset>
     </div> {*end of div registration_blocks*}
     </div>
  <div class="crm-submit-buttons">

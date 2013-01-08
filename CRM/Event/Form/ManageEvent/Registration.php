@@ -211,32 +211,17 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
    *
    * @return void
    */
-  function setShowHide(&$defaults) {
+  function setShowHide($defaults) {
     $this->_showHide = new CRM_Core_ShowHideBlocks(array('registration' => 1),
       ''
     );
     if (empty($defaults)) {
-      $this->_showHide->addShow('registration_screen_show');
-      $this->_showHide->addShow('confirm_show');
-      $this->_showHide->addShow('mail_show');
-      $this->_showHide->addShow('thankyou_show');
       $this->_showHide->addHide('registration');
-      $this->_showHide->addHide('registration_screen');
-      $this->_showHide->addHide('confirm');
-      $this->_showHide->addHide('mail');
-      $this->_showHide->addHide('thankyou');
       $this->_showHide->addHide('additional_profile_pre');
       $this->_showHide->addHide('additional_profile_post');
       $this->_showHide->addHide('id-approval-text');
     }
     else {
-      $this->_showHide->addShow('confirm');
-      $this->_showHide->addShow('mail');
-      $this->_showHide->addShow('thankyou');
-      $this->_showHide->addHide('registration_screen_show');
-      $this->_showHide->addHide('confirm_show');
-      $this->_showHide->addHide('mail_show');
-      $this->_showHide->addHide('thankyou_show');
       if (!CRM_Utils_Array::value('is_multiple_registrations', $defaults)) {
         $this->_showHide->addHide('additional_profile_pre');
         $this->_showHide->addHide('additional_profile_post');
@@ -245,6 +230,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
         $this->_showHide->addHide('id-approval-text');
       }
     }
+    $this->assign('defaultsEmpty', empty($defaults));
     $this->_showHide->addToTemplate();
   }
 

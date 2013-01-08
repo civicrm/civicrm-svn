@@ -2294,9 +2294,6 @@ div.grippie {
 
 .crm-container a.button,
 .crm-container a.button:link,
-#crm-participant-link,
-#crm-event-links-link,
-#crm-contribpage-links-link,
 #crm-contact-actions-link,
 .crm-container input.form-submit,
 #crm-container input[type=button],
@@ -2337,18 +2334,12 @@ div.grippie {
 
 .crm-container a.button,
 .crm-container a.button:link,
-#crm-participant-link,
-#crm-event-links-link,
-#crm-contribpage-links-link,
 #crm-contact-actions-link {
   display: block;
   float: left;
 }
 
 #crm-contact-actions-link span,
-#crm-participant-link span,
-#crm-event-links-link span,
-#crm-contribpage-links-link span,
 .crm-container a.button span {
   display: block;
   line-height: 14px;
@@ -2403,12 +2394,6 @@ div.grippie {
   z-index: 15;
 }
 
-#crm-event-links-link {
-  width: 90px;
-}
-#crm-participant-link {
-  width: 120px;
-}
 #crm-create-new-list {
   width: 124px;
 }
@@ -2504,9 +2489,6 @@ div.grippie {
 }
 
 #crm-contact-actions-link .icon,
-#crm-participant-link .icon,
-#crm-event-links-link .icon,
-#crm-contribpage-links-link .icon,
 .crm-container .button .icon,
 .crm-container .crm-button .icon {
   background-image: url("../i/icons/jquery-ui-FFFFFF.png");
@@ -3253,9 +3235,6 @@ tbody.scrollContent tr.alternateRow {
 /* rounded corners - we will call dd_roundies on all this */
 .crm-container .crm-button,
 .crm-container a.button,
-#crm-participant-link,
-#crm-event-links-link,
-#crm-contribpage-links-link,
 #crm-contact-actions-link,
 .crm-container a.button:link,
 .crm-container input.form-submit,

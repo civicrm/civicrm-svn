@@ -27,9 +27,9 @@
 <div class="crm-actions-ribbon crm-contribpage-tab-actions-ribbon">
    <ul id="actions">
       <li><div id="crm-contribpage-links-wrapper">
-            <div id="crm-contribpage-links-link">
-                <span><div class="icon dropdown-icon"></div>{ts}Contribution Links{/ts}</span>
-              </div>
+            <a id="crm-contribpage-links-link" class="button">
+              <span><div class="icon dropdown-icon"></div>{ts}Contribution Links{/ts}</span>
+            </a>
               <div class="ac_results" id="crm-contribpage-links-list">
                  <div class="crm-contribpage-links-list-inner">
                    <ul>
@@ -53,12 +53,13 @@
 
 cj('body').click(function() {
   cj('#crm-contribpage-links-list').hide();
-  });
+});
 
 cj('#crm-contribpage-links-link').click(function(event) {
   cj('#crm-contribpage-links-list').toggle();
   event.stopPropagation();
-  });
+  return false;
+});
 
 </script>
 {/literal}
