@@ -268,10 +268,25 @@ AND        v.name = %1
   }
 
   function customFields(&$xml, &$idMap) {
+    // Re-index by group id so we can build out the custom fields one table
+    // at a time, and then rebuild the table triggers at the end, rather than
+    // rebuilding the table triggers after each field is added (which is
+    // painfully slow).
+    $fields_indexed_by_group_id = array();
     foreach ($xml->CustomFields as $customFieldsXML) {
+      $total = count($customFieldsXML->CustomField);
       foreach ($customFieldsXML->CustomField as $customFieldXML) {
+        $id = $idMap['custom_group'][(string ) $customFieldXML->custom_group_name];
+        $fields_indexed_by_group_id[$id][] = $customFieldXML;
+      }
+    }
+    while(list($group_id, $fields) = each($fields_indexed_by_group_id)) {
+      $total = count($fields);
+      $count = 0;
+      while(list(,$customFieldXML) = each($fields)) {
+        $count++;
         $customField = new CRM_Core_DAO_CustomField();
-        $customField->custom_group_id = $idMap['custom_group'][(string ) $customFieldXML->custom_group_name];
+        $customField->custom_group_id = $group_id;
         $skipStore = FALSE;
         if (!$this->copyData($customField, $customFieldXML, FALSE, 'label')) {
           $skipStore = TRUE;
@@ -287,7 +302,14 @@ AND        v.name = %1
         }
         $customField->save();
 
-        CRM_Core_BAO_CustomField::createField($customField, 'add');
+        // Only rebuild the table's trigger on the last field added to avoid un-necessary
+        // and slow rebuilds when adding many fields at the same time.
+        $triggerRebuild = FALSE;
+        if($count == $total) {
+          $triggerRebuild = TRUE;
+        } 
+        $indexExist = FALSE;
+        CRM_Core_BAO_CustomField::createField($customField, 'add', $indexExist, $triggerRebuild);
       }
     }
   }

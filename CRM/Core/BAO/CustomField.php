@@ -1752,7 +1752,7 @@ SELECT $columnName
     return $table;
   }
 
-  static function createField($field, $operation, $indexExist = FALSE) {
+  static function createField($field, $operation, $indexExist = FALSE, $triggerRebuild = TRUE) {
     $tableName = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_CustomGroup',
       $field->custom_group_id,
       'table_name'
@@ -1806,7 +1806,7 @@ SELECT $columnName
       $params['default'] = "'{$field->default_value}'";
     }
 
-    CRM_Core_BAO_SchemaHandler::alterFieldSQL($params, $indexExist);
+    CRM_Core_BAO_SchemaHandler::alterFieldSQL($params, $indexExist, $triggerRebuild);
   }
 
   /**

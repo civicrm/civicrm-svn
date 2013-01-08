@@ -252,7 +252,7 @@ ALTER TABLE {$tableName}
     return $sql;
   }
 
-  static function alterFieldSQL(&$params, $indexExist = FALSE) {
+  static function alterFieldSQL(&$params, $indexExist = FALSE, $triggerRebuild = TRUE) {
     $sql = str_repeat(' ', 8);
     $sql .= "ALTER TABLE {$params['table_name']}";
 
@@ -302,8 +302,9 @@ ALTER TABLE {$tableName}
       }
     }
 
-    // always do a trigger rebuild for this table
-    CRM_Core_DAO::triggerRebuild($params['table_name']);
+    if($triggerRebuild) {
+      CRM_Core_DAO::triggerRebuild($params['table_name']);
+    }
 
     return TRUE;
   }
