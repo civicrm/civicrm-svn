@@ -24,7 +24,7 @@
 *}
 <div class="block-civicrm crm-container">
 <div id="crm-create-new-wrapper">
-  <div id="crm-create-new-link"><span><div class="icon dropdown-icon"></div>{ts}Create New{/ts}</span></div>
+  <a id="crm-create-new-link" class="button" href="#"><span><div class="icon dropdown-icon"></div>{ts}Create New{/ts}</span></a>
     <div id="crm-create-new-list" class="ac_results">
       <div class="crm-create-new-list-inner">
       <ul>
@@ -56,6 +56,7 @@ cj('#crm-create-new-list li').hover(
 cj('#crm-create-new-link').click(function(event) {
   cj('#crm-create-new-list').toggle();
   event.stopPropagation();
+  return false;
   });
 
 </script>
