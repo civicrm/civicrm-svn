@@ -208,20 +208,15 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
                         ON ( {$this->_aliases['civicrm_contribution']}.id = payment.contribution_id )
               LEFT JOIN civicrm_membership {$this->_aliases['civicrm_membership']}
                     ON payment.membership_id = {$this->_aliases['civicrm_membership']}.id 
-              LEFT JOIN civicrm_entity_financial_trxn etrxn
-                    ON ({$this->_aliases['civicrm_contribution']}.id = etrxn.entity_id AND etrxn.entity_table = 'civicrm_contribution')
               LEFT JOIN civicrm_entity_financial_trxn {$this->_aliases['civicrm_entity_financial_trxn']}
-                    ON (etrxn.financial_trxn_id = {$this->_aliases['civicrm_entity_financial_trxn']}.entity_id AND 
-                        {$this->_aliases['civicrm_entity_financial_trxn']}.entity_table = 'civicrm_financial_trxn')
-              LEFT JOIN civicrm_financial_item fitem
-                    ON (fitem.id = {$this->_aliases['civicrm_entity_financial_trxn']}.entity_id AND 
-                        {$this->_aliases['civicrm_entity_financial_trxn']}.entity_table = 'civicrm_financial_item')
+                    ON ({$this->_aliases['civicrm_contribution']}.id = {$this->_aliases['civicrm_entity_financial_trxn']}.entity_id AND 
+                        {$this->_aliases['civicrm_entity_financial_trxn']}.entity_table = 'civicrm_contribution')
               LEFT JOIN civicrm_financial_trxn trxn
                     ON trxn.id = {$this->_aliases['civicrm_entity_financial_trxn']}.financial_trxn_id
               LEFT JOIN civicrm_financial_account {$this->_aliases['civicrm_financial_account']}_debit
                     ON trxn.to_financial_account_id = {$this->_aliases['civicrm_financial_account']}_debit.id
               LEFT JOIN civicrm_financial_account {$this->_aliases['civicrm_financial_account']}_credit
-                    ON fitem.financial_account_id = {$this->_aliases['civicrm_financial_account']}_credit.id";
+                    ON trxn.from_financial_account_id = {$this->_aliases['civicrm_financial_account']}_credit.id";
   }
 
   function orderBy() {
