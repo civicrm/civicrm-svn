@@ -2818,7 +2818,7 @@ WHERE  contribution_id = %1 ";
     );
     
     if (!in_array($contributionStatuses[$fields['contribution_status_id']], $checkStatus[$contributionStatuses[$values['contribution_status_id']]])) {
-     $errors['contribution_status_id'] = "Cannot change contribution status from {$contributionStatuses[$values['contribution_status_id']]} to {$contributionStatuses[$fields['contribution_status_id']]}.";
+      $errors['contribution_status_id'] = ts("Cannot change contribution status from {$contributionStatuses[$values['contribution_status_id']]} to {$contributionStatuses[$fields['contribution_status_id']]}.");
     } 
   }
 }
