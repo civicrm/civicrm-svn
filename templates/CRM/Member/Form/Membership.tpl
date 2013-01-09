@@ -338,7 +338,7 @@
         cj('#record_contribution').click( function( ) {
           if ( cj(this).attr('checked') ) {
             cj('#recordContribution').show( );
-            setPaymentBlock( );
+            setPaymentBlock( false, true);
           }
           else {
             cj('#recordContribution').hide( );
@@ -347,29 +347,29 @@
       }
 
       cj('#membership_type_id_1').change( function( ) {
-        setPaymentBlock( mode );
+        setPaymentBlock(mode);
       });
       cj('#num_terms').change( function( ) {
-        setPaymentBlock( mode );
+        setPaymentBlock(mode);
       });
-      setPaymentBlock( mode );
+      setPaymentBlock(mode);
 
       // show/hide different contact section
       setDifferentContactBlock();
       cj('#is_different_contribution_contact').change( function() {
         setDifferentContactBlock();
       });
-});
+    });
 
-      function setDifferentContactBlock( ) {
-  // show/hide different contact section
-        if ( cj('#is_different_contribution_contact').attr('checked') ) {
-          cj('#record-different-contact').show();
-        }
-        else {
-          cj('#record-different-contact').hide();
-        }
+    function setDifferentContactBlock( ) {
+      // show/hide different contact section
+      if ( cj('#is_different_contribution_contact').attr('checked') ) {
+        cj('#record-different-contact').show();
       }
+      else {
+        cj('#record-different-contact').hide();
+      }
+    }
     </script>
     {/literal}
 
@@ -410,7 +410,7 @@
     {/literal}{/if}
 
     {literal}
-    function setPaymentBlock( mode ) {
+    function setPaymentBlock(mode, checkboxEvent) {
       var memType = parseInt(cj('#membership_type_id_1').val( ));
       var isPriceSet = 0;
 
@@ -424,25 +424,27 @@
 
       var allMemberships = {/literal}{$allMembershipInfo}{literal};
       if ( !mode ) {
-
         //check the record_contribution checkbox if membership is a paid one
         {/literal}{if $action eq 1}{literal}
-	 if (allMemberships[memType]['total_amount'] > 0) {
-	    cj('#record_contribution').attr('checked','checked');
-	    cj('#recordContribution').show();
-	 }
-	 else if (allMemberships[memType]['total_amount'] == 0) {
-           cj('#record_contribution').removeAttr('checked');
-           cj('#recordContribution').hide();
-	 }
-	{/literal}{/if}{literal}
+          if (!checkboxEvent) {
+            if (allMemberships[memType]['total_amount_numeric'] > 0) {
+              cj('#record_contribution').attr('checked','checked');
+              cj('#recordContribution').show();
+            }
+            else {
+              cj('#record_contribution').removeAttr('checked');
+              cj('#recordContribution').hide();
+            }
+          }
+        {/literal}{/if}{literal}
 
-          // skip this for test and live modes because financial type is set automatically
-          cj("#financial_type_id").val( allMemberships[memType]['financial_type_id'] );
+        // skip this for test and live modes because financial type is set automatically
+        cj("#financial_type_id").val( allMemberships[memType]['financial_type_id'] );
       }
+
       var term = cj('#num_terms').val();
       if ( term ) {
-        var feeTotal = allMemberships[memType]['total_amount'] * term;
+        var feeTotal = allMemberships[memType]['total_amount_numeric'] * term;
         cj("#total_amount").val( feeTotal.toFixed(2) );
       }
       else {

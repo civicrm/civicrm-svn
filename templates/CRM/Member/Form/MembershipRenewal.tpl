@@ -293,18 +293,18 @@ cj(function() {
 });
 
 function checkPayment() {
-    showHideByValue('record_contribution','','recordContribution','table-row','radio',false);
-    {/literal}{if $email and $outBound_option != 2}{literal}
-    var record_contribution = document.getElementsByName('record_contribution');
-    if ( record_contribution[0].checked ) {
-        document.getElementsByName('send_receipt')[0].checked = true;
-        cj('#fromEmail').show();
+  showHideByValue('record_contribution','','recordContribution','table-row','radio',false);
+  {/literal}{if $email and $outBound_option != 2}{literal}
+  var record_contribution = document.getElementsByName('record_contribution');
+  if ( record_contribution[0].checked ) {
+    document.getElementsByName('send_receipt')[0].checked = true;
+    cj('#fromEmail').show();
   }
   else {
-        document.getElementsByName('send_receipt')[0].checked = false;
-    }
-    showHideByValue('send_receipt','','notice','table-row','radio',false);
-    {/literal}{/if}{literal}
+    document.getElementsByName('send_receipt')[0].checked = false;
+  }
+  showHideByValue('send_receipt','','notice','table-row','radio',false);
+  {/literal}{/if}{literal}
 }
 
 function adjustMembershipOrgType( ) {
@@ -318,60 +318,73 @@ function changeNumTerms( ) {
 }
 
 cj( function( ) {
-    cj('#record_contribution').click( function( ) {
-        if ( cj(this).attr('checked') ) {
-            cj('#recordContribution').show( );
-            setPaymentBlock( );
+  cj('#record_contribution').click( function( ) {
+    if ( cj(this).attr('checked') ) {
+      cj('#recordContribution').show( );
+      setPaymentBlock(true);
     }
     else {
-            cj('#recordContribution').hide( );
-        }
-    });
+      cj('#recordContribution').hide( );
+    }
+  });
 
-    cj('#membership_type_id_1').change( function( ) {
-        setPaymentBlock( );
-    });
+  cj('#membership_type_id_1').change( function( ) {
+    setPaymentBlock( );
+  });
   setPaymentBlock( );
 });
 
-function setPaymentBlock( ) {
-    var memType = cj('#membership_type_id_1').val( );
+function setPaymentBlock(checkboxEvent) {
+  var memType = cj('#membership_type_id_1').val( );
 
-    if ( !memType ) {
-        return;
-    }
+  if ( !memType ) {
+    return;
+  }
 
   var allMemberships = {/literal}{$allMembershipInfo}{literal};
   var mode   = {/literal}'{$membershipMode}'{literal};
+
   if ( !mode ) {
     // skip this for test and live modes because contribution type is set automatically
     cj("#financial_type_id").val( allMemberships[memType]['financial_type_id'] );
   }
 
+  if (!checkboxEvent) {
+    if (allMemberships[memType]['total_amount_numeric'] > 0) {
+      cj('#record_contribution').attr('checked','checked');
+      cj('#recordContribution').show();
+    }
+    else {
+      cj('#record_contribution').removeAttr('checked');
+      cj('#recordContribution').hide();
+    }
+  }
+
   var term = cj("#num_terms").val();
   if ( term ) {
     var renewTotal = allMemberships[memType]['total_amount_numeric'] * term;
-        cj("#total_amount").val( renewTotal.toFixed(2) );
+    cj("#total_amount").val( renewTotal.toFixed(2) );
   }
   else {
     cj("#total_amount").val( allMemberships[memType]['total_amount'] );
   }
 }
 
-    // show/hide different contact section
-    setDifferentContactBlock();
-    cj('#contribution_contact').change( function() {
-      setDifferentContactBlock();
-    });
+// show/hide different contact section
+setDifferentContactBlock();
+cj('#contribution_contact').change( function() {
+  setDifferentContactBlock();
+});
 
-    function setDifferentContactBlock( ) {
-      //get the
-      if ( cj('#contribution_contact').attr('checked') ) {
-        cj('#record-different-contact').show();
-      } else {
-        cj('#record-different-contact').hide();
-      }
-    }
+function setDifferentContactBlock( ) {
+  //get the
+  if ( cj('#contribution_contact').attr('checked') ) {
+    cj('#record-different-contact').show();
+  }
+  else {
+    cj('#record-different-contact').hide();
+  }
+}
 </script>
 {/literal}
 {/if}{* closing of custom data if *}
