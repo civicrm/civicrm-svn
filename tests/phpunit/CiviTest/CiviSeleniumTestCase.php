@@ -430,7 +430,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
    * @return void
    */
 
-  function webtestAddPaymentProcessor( $processorName, $processorType = 'Dummy', $processorSettings = null, $financialType = 'Donation' ) {
+  function webtestAddPaymentProcessor( $processorName, $processorType = 'Dummy', $processorSettings = null, $financialAccount = 'Deposit Bank Account' ) {
     if (!$processorName) {
       $this->fail("webTestAddPaymentProcessor requires $processorName.");
     }
@@ -468,7 +468,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     $this->open($this->sboxPath . 'civicrm/admin/paymentProcessor?action=add&reset=1&pp=' . $pid); 
     $this->waitForPageToLoad('30000');
     $this->type('name', $processorName);
-    $this->select( 'financial_type_id', "label={$financialType}" );
+    $this->select( 'financial_account_id', "label={$financialAccount}" );
 
     foreach ($processorSettings AS $f => $v) {
       $this->type($f, $v);
@@ -478,7 +478,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     // Is new processor created?
     $this->assertTrue($this->isTextPresent($processorName), 'Processor name not found in selector after adding payment processor (webTestAddPaymentProcessor).');
 
-    $paymentProcessorId = explode('&id=', $this->getAttribute("xpath=//table[@class='selector']//tbody//tr/td[text()='{$processorName}']/../td[6]/span/a[1]@href"));
+    $paymentProcessorId = explode('&id=', $this->getAttribute("xpath=//table[@class='selector']//tbody//tr/td[text()='{$processorName}']/../td[7]/span/a[1]@href"));
     $paymentProcessorId = explode('&', $paymentProcessorId[1]);
     return $paymentProcessorId[0];
   }
@@ -1629,5 +1629,24 @@ function _testLineItem( $lineitem ){
   $this->click('_qf_Contribution_cancel'); 
 }
 
+function addPremium($name, $sku, $amount, $price, $cost, $financialType) {
+  $this->waitForElementPresent("_qf_ManagePremiums_upload-bottom");
+  $this->type("name", $name);
+  $this->type("sku", $sku);
+  $this->click("CIVICRM_QFID_noImage_16");
+  $this->type("min_contribution", $amount);
+  $this->type("price", $price);
+  $this->type("cost", $cost);
+  $this->select("financial_type_id", "value=$financialType");
+  $this->click("_qf_ManagePremiums_upload-bottom");
+}
+
+function addPaymentInstrument($label, $financialAccount) {
+  $this->open($this->sboxPath . "civicrm/admin/options/payment_instrument?group=payment_instrument&action=add&reset=1");
+  $this->waitForElementPresent("_qf_Options_next-bottom");
+  $this->type("label", $label);
+  $this->select("financial_account_id", "value=$financialAccount");
+  $this->click("_qf_Options_next-bottom");
+}
 }
 
