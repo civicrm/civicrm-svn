@@ -526,11 +526,14 @@ class CRM_Contact_Form_Search_Custom_Group extends CRM_Contact_Form_Search_Custo
       $this->_where .= " AND {$this->_aclWhere} ";
     }
 
+    // also exclude all contacts that are deleted
+    // CRM-11627
+    $this->_where .= " AND (contact_a.is_deleted != 1) ";
+
     return $from;
   }
 
   function where($includeContactIDs = FALSE) {
-
     if ($includeContactIDs) {
       $contactIDs = array();
 
