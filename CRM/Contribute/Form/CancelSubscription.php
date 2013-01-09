@@ -96,6 +96,11 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form {
       }
       $this->_paymentProcessorObj = CRM_Core_BAO_PaymentProcessor::getProcessorForEntity($this->_coid, 'contribute', 'obj');
       $this->_subscriptionDetails = CRM_Contribute_BAO_ContributionRecur::getSubscriptionDetails($this->_coid, 'contribution');
+    
+      $this->assign('frequency_unit', $this->_subscriptionDetails->frequency_unit);
+      $this->assign('frequency_interval', $this->_subscriptionDetails->frequency_interval);
+      $this->assign('amount', $this->_subscriptionDetails->amount);
+      $this->assign('installments', $this->_subscriptionDetails->installments);
     }
 
     if ((!$this->_crid && !$this->_coid && !$this->_mid) ||
