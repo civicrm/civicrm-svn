@@ -210,33 +210,45 @@ function setLocationDetails(contactID) {
     url         : locationUrl,
     dataType    : "json",
     timeout     : 5000, //Time in milliseconds
-    success     : function( data, status ) {
+    success     : function(data, status) {
       for (var ele in data) {
-        if ( data[ele].type == 'Radio' ) {
-          if ( data[ele].value ) {
-            cj( "input[name='"+ ele +"']" ).filter( "[value=" + data[ele].value + "]" ).attr( 'checked', 'checked' );
+        if (data[ele].type == 'Radio') {
+          if (data[ele].value) {
+            cj("input[name='"+ ele +"']").filter("[value=" + data[ele].value + "]").attr('checked', 'checked');
           }
         }
-        else if ( data[ele].type == 'CheckBox' ) {
-          if ( data[ele].value ) {
-            cj( "input[name='"+ ele +"']" ).attr( 'checked','checked' );
+        else if (data[ele].type == 'CheckBox') {
+          if (data[ele].value) {
+            cj("input[name='"+ ele +"']").attr('checked','checked');
           }
         }
-        else if ( data[ele].type == 'Multi-Select' ) {
-          for ( var selectedOption in data[ele].value ) {
-            cj( "#" + ele + " option[value='" + selectedOption + "']" ).attr( 'selected', 'selected' );
+        else if (data[ele].type == 'Multi-Select') {
+          for (var selectedOption in data[ele].value) {
+            cj('#' + ele + " option[value='" + selectedOption + "']").attr('selected', 'selected');
           }
         }
-        else if ( data[ele].type == 'Autocomplete-Select' ) {
-          cj( "#" + ele ).val( data[ele].value );
-          cj( "#" + ele + '_id' ).val( data[ele].id );
+        else if (data[ele].type == 'Autocomplete-Select') {
+          cj('#' + ele ).val( data[ele].value );
+          cj('#' + ele + '_id').val(data[ele].id);
+        }
+        else if (data[ele].type == 'AdvMulti-Select') {
+          var customFld = ele.replace('onbehalf_', '');
+          // remove empty value if any
+          cj('#onbehalf\\['+ customFld +'\\]-f option[value=""]').remove();
+          cj('#onbehalf\\['+ customFld +'\\]-t option[value=""]').remove();
+
+          for (var selectedOption in data[ele].value) {
+            // remove selected values from left and selected values to right
+            cj('#onbehalf\\['+ customFld +'\\]-f option[value="' + selectedOption + '"]').remove()
+              .appendTo('#onbehalf\\['+ customFld +'\\]-t');
+          }
         }
         else {
-          cj( "#" + ele ).val( data[ele].value );
+          cj('#' + ele ).val(data[ele].value);
         }
       }
     },
-    error       : function( XMLHttpRequest, textStatus, errorThrown ) {
+    error       : function(XMLHttpRequest, textStatus, errorThrown) {
       console.error("HTTP error status: ", textStatus);
     }
   });
