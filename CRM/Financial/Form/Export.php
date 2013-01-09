@@ -55,6 +55,11 @@ class CRM_Financial_Form_Export extends CRM_Core_Form {
   protected $_batchIds = array();
 
   /**
+   * Export status id
+   */
+  protected $_exportStatusId;
+
+  /**
    * build all the data structures needed to build the form
    *
    * @return void
@@ -75,6 +80,18 @@ class CRM_Financial_Form_Export extends CRM_Core_Form {
     }
     else {
       $this->_batchIds = $this->_id;
+    }
+
+    $allBatchStatus = CRM_Core_PseudoConstant::accountOptionValues('batch_status');
+    $this->_exportStatusId = CRM_Utils_Array::key('Exported', $allBatchStatus);
+
+    //check if batch status is valid, do not allow exported batches to export again
+    $batchStatus = CRM_Batch_BAO_Batch::getBatchStatuses($this->_batchIds);
+
+    foreach( $batchStatus as $batchStatusId ) {
+      if ($batchStatusId == $this->_exportStatusId) {
+       CRM_Core_Error::fatal(ts('You cannot exported the batches which were exported earlier.'));
+      }
     }
 
     $status = CRM_Utils_Request::retrieve('status', 'Positive', $this);
@@ -143,9 +160,7 @@ class CRM_Financial_Form_Export extends CRM_Core_Form {
     $session = CRM_Core_Session::singleton();
     $batchParams['modified_date'] = date('YmdHis');
     $batchParams['modified_id'] = $session->get('userID');
-
-    $batchStatus = CRM_Core_PseudoConstant::accountOptionValues('batch_status');
-    $batchParams['status_id'] = CRM_Utils_Array::key('Exported', $batchStatus);
+    $batchParams['status_id'] = $this->_exportStatusId;
 
     $ids = array();
     foreach($batchIds as $batchId) {

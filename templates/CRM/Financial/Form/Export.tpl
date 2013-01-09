@@ -46,7 +46,6 @@
     </tr>
   </table>
 
-
   <div class="form-item">
   {$form.buttons.html}
   </div>
@@ -55,6 +54,10 @@
 <script type="text/javascript">
   cj(function(){
     cj('input[name="export_format"]').filter('[value=IIF]').attr('checked', true);
+    cj('#_qf_Export_next').click(function(){
+      cj(this).hide();
+      cj('#_qf_Export_cancel').val('{/literal}{ts}Done{/ts}{literal}');
+    });
   });
 </script>
 {/literal}

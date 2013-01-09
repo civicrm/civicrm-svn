@@ -815,4 +815,24 @@ WHERE {$where}
     }
     return $batches;
   }
+
+  /**
+   * Function get batch statuses
+   *
+   * @param string $batchIds
+   *
+   * @return array array of batches
+   */
+  static function getBatchStatuses($batchIds) {
+    $query = 'SELECT id, status_id
+      FROM civicrm_batch
+      WHERE id IN ('.$batchIds.')';
+
+    $batches = array();
+    $dao = CRM_Core_DAO::executeQuery($query);
+    while ( $dao->fetch( ) ) {
+      $batches[$dao->id] = $dao->status_id;
+    }
+    return $batches;
+  }
 }
