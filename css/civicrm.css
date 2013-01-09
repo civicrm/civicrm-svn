@@ -2277,7 +2277,6 @@ div.grippie {
 
 .crm-container a.button,
 .crm-container a.button:link,
-#crm-contact-actions-link,
 .crm-container input.form-submit,
 #crm-container input[type=button],
 #crm-container input.form-submit-inline,
@@ -2316,13 +2315,11 @@ div.grippie {
 }
 
 .crm-container a.button,
-.crm-container a.button:link,
-#crm-contact-actions-link {
+.crm-container a.button:link {
   display: block;
   float: left;
 }
 
-#crm-contact-actions-link span,
 .crm-container a.button span {
   display: block;
   line-height: 14px;
@@ -2471,7 +2468,6 @@ div.grippie {
   display: inline-block;
 }
 
-#crm-contact-actions-link .icon,
 .crm-container .button .icon,
 .crm-container .crm-button .icon {
   background-image: url("../i/icons/jquery-ui-FFFFFF.png");
@@ -3218,7 +3214,6 @@ tbody.scrollContent tr.alternateRow {
 /* rounded corners - we will call dd_roundies on all this */
 .crm-container .crm-button,
 .crm-container a.button,
-#crm-contact-actions-link,
 .crm-container a.button:link,
 .crm-container input.form-submit,
 .crm-container input[type=button],
@@ -3287,11 +3282,9 @@ div.m ul#civicrm-menu,
 
 .ac_results li,
 .ac_results li a,
-.ac_results li a:hover,
 .ac_results li a:visited,
 .crm-container .ac_results li,
 .crm-container .ac_results li a,
-.crm-container .ac_results li a:hover,
 .crm-container .ac_results li a:visited {
   color: #DFDFDF;
   text-decoration: none;
@@ -3318,14 +3311,10 @@ div.m ul#civicrm-menu,
 
 .ac_results li.ac_over,
 .ac_results li:hover,
+.ac_results li:hover a,
 .ac_results li.ac_over a,
-.ac_results li.ac_over a:hover,
-.ac_results li.ac_over a:visited,
-.crm-container .ac_results li.ac_over,
-.crm-container .ac_results li:hover,
-.crm-container .ac_results li.ac_over a,
-.crm-container .ac_results li.ac_over a:hover,
-.crm-container .ac_results li.ac_over a:visited {
+.ac_results li a:hover,
+.ac_results li.ac_over a:visited {
   background-color: #F5F6F1;
   color: #666;
 }
