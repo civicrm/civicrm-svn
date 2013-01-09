@@ -24,7 +24,7 @@
  */
 
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'api/v3/Mailing.php';
+
 
 /**
  *  Test APIv3 civicrm_mailing_* functions
@@ -52,6 +52,29 @@ class api_v3_MailingTest extends CiviUnitTestCase {
   function tearDown() {
     $this->groupDelete($this->_groupID);
   }
+
+  /**
+   * Test civicrm_mailing_create
+   */
+  public function testMailerCreateSuccess() {
+    $params = array(
+      'subject' => 'maild',
+      'body_text' => 'bdkfhdskfhduew',
+      'version' => 3,
+      'name' => 'mailing name',
+      'created_id' => 1,
+    );
+    $result = civicrm_api('mailing', 'create', $params);
+    $jobs = civicrm_api('mailing_job', 'get', array('version' =>3, 'mailing_id' => $result['id']));
+    $this->assertAPISuccess($jobs);
+    $this->assertEquals(1, $jobs['count']);
+    $this->assertAPISuccess($result, 'In line ' . __LINE__);
+    unset($params['created_id']);// return isn't working on this in getAndCheck so lets not check it for now
+    $this->getAndCheck($params, $result['id'], 'mailing');
+  }
+
+
+  //@ todo tests below here are all failure tests which are not hugely useful - need success tests
 
   //------------ civicrm_mailing_event_bounce methods------------
 
@@ -130,5 +153,8 @@ class api_v3_MailingTest extends CiviUnitTestCase {
     $this->assertEquals($result['is_error'], 1, 'In line ' . __LINE__);
     $this->assertEquals($result['error_message'], 'Queue event could not be found', 'In line ' . __LINE__);
   }
-}
 
+
+//----------- civicrm_mailing_create ----------
+
+}

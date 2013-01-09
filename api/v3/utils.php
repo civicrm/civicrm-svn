@@ -292,6 +292,14 @@ function _civicrm_api3_get_DAO($name) {
   if($name == 'price_field_value'){
     return 'CRM_Price_DAO_FieldValue';
   }
+  // these aren't listed on ticket CRM-10859 - but same problem - lack of standardisation
+  if($name == 'mailing_job'){
+    return 'CRM_Mailing_BAO_Job';
+  }
+  if($name == 'mailing_recipients'){
+    return 'CRM_Mailing_BAO_Recipients';
+  }
+
 
   return CRM_Utils_Array::value(_civicrm_api_get_camel_name($name, 3), $dao);
 }

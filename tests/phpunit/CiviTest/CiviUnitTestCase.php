@@ -2031,7 +2031,7 @@ AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
     }
 
     foreach ($params as $key => $value) {
-      if ($key == 'version') {
+      if ($key == 'version' || substr($key, 0, 3) == 'api') {
         continue;
       }
       if (in_array($key, $dateFields)) {

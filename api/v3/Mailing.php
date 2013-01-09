@@ -42,8 +42,40 @@
  * Files required for this package
  */
 
+/**
+ * Handle a create event.
+ *
+ * @param array $params
+ * @return array API Success Array
+ */
+function civicrm_api3_mailing_create($params, $ids = array()) {
+  return _civicrm_api3_basic_create(_civicrm_api3_get_BAO(__FUNCTION__), $params);
+}
 
-require_once 'api/v3/utils.php';
+/*
+ * Adjust Metadata for Create action
+*
+* The metadata is used for setting defaults, documentation & validation
+* @param array $params array or parameters determined by getfields
+*/
+function _civicrm_api3_mailing_create_spec(&$params) {
+  $params['name']['api.required'] = 1;
+  $params['subject']['api.required'] = 1;
+  // should be able to default to 'user_contact_id' & have it work but it didn't work in test so
+  // making required for simplicity
+  $params['created_id']['api.required'] = 1;
+  $params['api.mailing_job.create']['api.default'] = 1;
+}
+
+/**
+ * Handle a get event.
+ *
+ * @param array $params
+ * @return array
+ */
+function civicrm_api3_mailing_get($params, $ids = array()) {
+  return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
+}
 
 /**
  * Process a bounce event by passing through to the BAOs.
@@ -54,12 +86,6 @@ require_once 'api/v3/utils.php';
  */
 function civicrm_api3_mailing_event_bounce($params) {
 
-  civicrm_api3_verify_mandatory($params,
-    'CRM_Mailing_Event_DAO_Bounce',
-    array('job_id', 'event_queue_id', 'hash', 'body'),
-    FALSE
-  );
-
   $body = $params['body'];
   unset($params['body']);
 
@@ -69,8 +95,22 @@ function civicrm_api3_mailing_event_bounce($params) {
     return civicrm_api3_create_success($params);
   }
   else {
-    return civicrm_api3_create_error('Queue event could not be found');
+    throw new API_Exception(ts('Queue event could not be found'),'no_queue_event
+      ');
   }
+}
+
+/*
+ * Adjust Metadata for bounce_spec action
+*
+* The metadata is used for setting defaults, documentation & validation
+* @param array $params array or parameters determined by getfields
+*/
+function _civicrm_api3_mailing_event_bounce_spec(&$params) {
+  $params['job_id']['api.required'] = 1;
+  $params['event_queue_id']['api.required'] = 1;
+  $params['hash']['api.required'] = 1;
+  $params['body']['api.required'] = 1;
 }
 
 /**
@@ -93,12 +133,6 @@ function civicrm_api3_mailing_event_confirm($params) {
  * @return array
  */
 function civicrm_api3_mailing_event_reply($params) {
-  civicrm_api3_verify_mandatory($params,
-    'CRM_Mailing_Event_DAO_Reply',
-    array('job_id', 'event_queue_id', 'hash', 'replyTo'),
-    FALSE
-  );
-
   $job       = $params['job_id'];
   $queue     = $params['event_queue_id'];
   $hash      = $params['hash'];
@@ -118,6 +152,19 @@ function civicrm_api3_mailing_event_reply($params) {
   return civicrm_api3_create_success($params);
 }
 
+/*
+ * Adjust Metadata for event_reply action
+*
+* The metadata is used for setting defaults, documentation & validation
+* @param array $params array or parameters determined by getfields
+*/
+function _civicrm_api3_mailing_event_reply_spec(&$params) {
+  $params['job_id']['api.required'] = 1;
+  $params['event_queue_id']['api.required'] = 1;
+  $params['hash']['api.required'] = 1;
+  $params['replyTo']['api.required'] = 1;
+}
+
 /**
  * Handle a forward event
  *
@@ -126,13 +173,6 @@ function civicrm_api3_mailing_event_reply($params) {
  * @return array
  */
 function civicrm_api3_mailing_event_forward($params) {
-
-  civicrm_api3_verify_mandatory($params,
-    'CRM_Mailing_Event_DAO_Forward',
-    array('job_id', 'event_queue_id', 'hash', 'email'),
-    FALSE
-  );
-
   $job       = $params['job_id'];
   $queue     = $params['event_queue_id'];
   $hash      = $params['hash'];
@@ -147,6 +187,19 @@ function civicrm_api3_mailing_event_forward($params) {
   }
 
   return civicrm_api3_create_error('Queue event could not be found');
+}
+
+/*
+ * Adjust Metadata for event_forward action
+*
+* The metadata is used for setting defaults, documentation & validation
+* @param array $params array or parameters determined by getfields
+*/
+function _civicrm_api3_mailing_event_forward_spec(&$params) {
+  $params['job_id']['api.required'] = 1;
+  $params['event_queue_id']['api.required'] = 1;
+  $params['hash']['api.required'] = 1;
+  $params['email']['api.required'] = 1;
 }
 
 /**
@@ -201,7 +254,6 @@ function civicrm_api3_mailing_event_open($params) {
   return civicrm_api3_create_success($params);
 }
 
-
 /**
  * Fix the reset dates on the email record based on when a mail was last delivered
  * We only consider mailings that were completed and finished in the last 3 to 7 days
@@ -214,3 +266,5 @@ function civicrm_api3_mailing_update_email_resetdate($params) {
   );
   return civicrm_api3_create_success();
 }
+
+
