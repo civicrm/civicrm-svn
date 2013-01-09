@@ -115,6 +115,41 @@
   }
 
   /**
+   * Prompt the user for confirmation.
+   * 
+   * @param {Object} with keys "title", "message", "onContinue", "onCancel"
+   */
+  CRM.confirm = function(options) {
+    var isContinue = false;
+    var dialog = $('<div></div>')
+      .attr('title', options.title)
+      .html(options.message)
+      .appendTo('body');
+    var buttons = {};
+    buttons[ts('Continue')] = function() {
+      isContinue = true;
+      $(dialog).dialog('close');
+    };
+    buttons[ts('Cancel')] = function() {
+      $(dialog).dialog('close');
+    };
+    $(dialog).dialog({
+      resizable: false,
+      modal: true,
+      buttons: buttons,
+      close: function() {
+        $(dialog).remove();
+        if (isContinue) {
+          if (options.onContinue) options.onContinue();
+        } else {
+          if (options.onCancel) options.onCancel();
+        }
+      }
+    });
+
+  }
+
+  /**
    * Sets an error message
    * If called for a form item, title and removal condition will be handled automatically
    */
