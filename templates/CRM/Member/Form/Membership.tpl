@@ -422,8 +422,21 @@
         return;
       }
 
-	    var allMemberships = {/literal}{$allMembershipInfo}{literal};
+      var allMemberships = {/literal}{$allMembershipInfo}{literal};
       if ( !mode ) {
+
+        //check the record_contribution checkbox if membership is a paid one
+        {/literal}{if $action eq 1}{literal}
+	 if (allMemberships[memType]['total_amount'] > 0) {
+	    cj('#record_contribution').attr('checked','checked');
+	    cj('#recordContribution').show();
+	 }
+	 else if (allMemberships[memType]['total_amount'] == 0) {
+           cj('#record_contribution').removeAttr('checked');
+           cj('#recordContribution').hide();
+	 }
+	{/literal}{/if}{literal}
+
           // skip this for test and live modes because financial type is set automatically
           cj("#financial_type_id").val( allMemberships[memType]['financial_type_id'] );
       }

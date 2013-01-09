@@ -118,6 +118,12 @@ class CRM_Event_Form_EventFees {
       list($defaults[$form->_pId]['receive_date']) = CRM_Utils_Date::setDateDefaults();
     }
 
+    //CRM-11601 we should keep the record contribution 
+    //true by default while adding participant
+     if ($form->_action == CRM_Core_Action::ADD && !$form->_mode && $form->_isPaidEvent) {
+      $defaults[$form->_pId]['record_contribution'] = 1;
+    }
+
     if ($form->_mode) {
       $fields = array();
 
@@ -254,6 +260,7 @@ class CRM_Event_Form_EventFees {
           }
 
           $defaults[$form->_pId]['discount_id'] = $discountId;
+
           $defaults[$form->_pId]['amount'] = key(array_slice($form->_values['discount'][$discountId],
               $discountKey - 1,
               $discountKey,
@@ -324,8 +331,8 @@ class CRM_Event_Form_EventFees {
     if ($contriId = $form->get('onlinePendingContributionId')) {
       $contribution = new CRM_Contribute_DAO_Contribution();
       $contribution->id = $contriId;
-            $contribution->find( true );
-            foreach( array('financial_type_id', 'payment_instrument_id','contribution_status_id', 'receive_date', 'total_amount' ) as $f ) {
+      $contribution->find( true );
+      foreach( array('financial_type_id', 'payment_instrument_id','contribution_status_id', 'receive_date', 'total_amount' ) as $f ) {
         if ($f == 'receive_date') {
           list($defaults[$form->_pId]['receive_date']) = CRM_Utils_Date::setDateDefaults($contribution->$f);
         }
@@ -334,7 +341,6 @@ class CRM_Event_Form_EventFees {
         }
       }
     }
-
     return $defaults[$form->_pId];
   }
 
@@ -489,8 +495,8 @@ SELECT  id, html_type
           array('onclick' => "return showHideByValue('record_contribution','','payment_information','table-row','radio',false);")
         );
 
-                $form->add('select', 'financial_type_id',
-                           ts( 'Financial Type' ),
+        $form->add('select', 'financial_type_id',
+          ts( 'Financial Type' ),
           array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::financialType()
         );
 
