@@ -117,8 +117,8 @@ class CRM_Contact_Form_Search_Custom_Group extends CRM_Contact_Form_Search_Custo
     );
 
     $andOr = array(
-      '1' => ts('Contacts are present in the included Groups AND included Tags'),
-      '0' => ts('Contacts are present either in included Groups OR included Tags')
+      '1' => ts('Show contacts that meet the Groups criteria AND the Tags criteria'),
+      '0' => ts('Show contacts that meet the Groups criteria OR  the Tags criteria'),
     );
     $form->addRadio('andOr', ts('AND/OR'), $andOr, TRUE, '<br />', TRUE);
 
