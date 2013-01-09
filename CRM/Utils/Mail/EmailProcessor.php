@@ -271,7 +271,8 @@ class CRM_Utils_Mail_EmailProcessor {
                 }
               }
 
-              if ($text == NULL &&
+              if (
+                $text == NULL &&
                 $mail->subject == "Delivery Status Notification (Failure)"
               ) {
                 // Exchange error - CRM-9361
@@ -285,6 +286,11 @@ class CRM_Utils_Mail_EmailProcessor {
                     }
                   }
                 }
+              }
+
+              if (empty($text)) {
+                // If bounce processing fails, just take the raw body. Cf. CRM-11046
+                $text = $mail->generateBody();
               }
 
               $params = array(
