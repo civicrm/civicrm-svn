@@ -1241,8 +1241,8 @@ class CRM_GCD {
     $membershipType = "INSERT INTO civicrm_membership_type
         (name, description, member_of_contact_id, financial_type_id, minimum_fee, duration_unit, duration_interval, period_type, fixed_period_start_day, fixed_period_rollover_day, relationship_type_id, relationship_direction, visibility, weight, is_active)
         VALUES
-        ('General', 'Regular annual membership.', " . $contact_id . ", 3, 100, 'year', 1, 'rolling',null, null, 7, 'b_a', 'Public', 1, 1),
-        ('Student', 'Discount membership for full-time students.', " . $contact_id . ", 1, 50, 'year', 1, 'rolling', null, null, 7, 'b_a', 'Public', 2, 1),
+        ('General', 'Regular annual membership.', " . $contact_id . ", 2, 100, 'year', 1, 'rolling',null, null, 7, 'b_a', 'Public', 1, 1),
+        ('Student', 'Discount membership for full-time students.', " . $contact_id . ", 2, 50, 'year', 1, 'rolling', null, null, 7, 'b_a', 'Public', 2, 1),
         ('Lifetime', 'Lifetime membership.', " . $contact_id . ", 2, 1200, 'lifetime', 1, 'rolling', null, null, 7, 'b_a', 'Admin', 3, 1);
         ";
     $this->_query($membershipType);
