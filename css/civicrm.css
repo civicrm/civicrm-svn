@@ -2330,14 +2330,18 @@ div.grippie {
   background-image: url(../i/icons/jquery-ui-FFFFFF.png);
 }
 
-#crm-container a.button:active {
+.crm-container a.button:active {
   color: #000;
   outline: none;
   /* hide dotted outline in Firefox */
 }
 
-#crm-container .crm-button:hover,
-#crm-container a.button:hover {
+.crm-container .crm-button:hover,
+.crm-container .crm-button:focus,
+.crm-container input[type=submit]:hover,
+.crm-container input[type=button]:hover,
+.crm-container a.button:hover,
+.crm-container a.button:focus {
   background-position: 0px -25px;
 }
 
@@ -2479,10 +2483,6 @@ div.grippie {
 
 .crm-container .crm-button .icon {
   margin-top: 3px;
-}
-
-.crm-container .button:hover {
-  color: #333;
 }
 
 .crm-container .dark-icon {
@@ -3305,6 +3305,7 @@ div.m ul#civicrm-menu,
 }
 
 .ac_results li a:hover .icon,
+.ac_results li.ac_over a .icon,
 .crm-container .ac_results li a:hover .icon {
   background-image: url(../i/icons/jquery-ui-3E3E3E.png);
 }
@@ -3319,6 +3320,7 @@ div.m ul#civicrm-menu,
   color: #666;
 }
 .ac_results li.ac_over strong,
+.ac_results li:hover strong,
 .crm-container .ac_results li.ac_over strong {
   color: #000;
 }
