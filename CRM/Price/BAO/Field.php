@@ -253,7 +253,8 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
 
     $otherAmount = $qf->get('values');
     $config = CRM_Core_Config::singleton();
-    $qf->assign('currencySymbol', CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_Currency',$config->defaultCurrency,'symbol','name') );
+    $currencySymbol = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_Currency',$config->defaultCurrency,'symbol','name');
+    $qf->assign('currencySymbol', $currencySymbol);
     // get currency name for price field and option attributes
     $currencyName = $config->defaultCurrency;
 
@@ -286,8 +287,14 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
 
         $extra = array();
         if (property_exists($qf,'_quickConfig') && $qf->_quickConfig && property_exists($qf,'_contributionAmount') && $qf->_contributionAmount) {
+          foreach($fieldOptions as &$fieldOption) {
+            if ($fieldOption['name'] == 'other_amount') {
+              $fieldOption['label'] = $fieldOption['label'] . '  ' . $currencySymbol;
+            }
+          }
           $qf->assign('priceset', $elementName);
           $extra = array('onclick' => 'useAmountOther();');
+
         }
 
         // if seperate membership payment is used with quick config priceset then change the other amount label
