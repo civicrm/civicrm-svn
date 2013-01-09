@@ -187,10 +187,10 @@
                 <fieldset><legend>{ts}Fixed Contribution Options{/ts}</legend>
                     {ts}Use the table below to enter up to ten fixed contribution amounts. These will be presented as a list of radio button options. Both the label and dollar amount will be displayed.{/ts}{if $isQuick}{ts} Click <a  id = 'quickconfig' href='#'>here</a> if you want to configure the Fixed Contribution Options below as part of a Price Set, with the added flexibility and complexity that entails.{/ts}{/if}<br />
                     <table id="map-field-table">
-                        <tr class="columnheader" ><th scope="column">{ts}Contribution Label{/ts}</th><th scope="column">{ts}Amount{/ts}</th><th scope="column">{ts}Default?{/ts}<br /><span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('default', 'Amount'); return false;" >{ts}clear{/ts}</a>)</span></th></tr>
+                        <tr class="columnheader" ><th scope="column">{ts}Contribution Label{/ts}</th><th scope="column">{ts}Amount{/ts}</th><th scope="column">{ts}Default?{/ts}<br /><span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('default', 'Amount'); return false;" >{ts}clear{/ts}</a>)</span></th><th scope="column">{ts}Financial Type{/ts}</th></tr>
                         {section name=loop start=1 loop=11}
                             {assign var=idx value=$smarty.section.loop.index}
-                            <tr><td class="even-row">{$form.label.$idx.html}</td><td>{$form.value.$idx.html|crmMoney}</td><td class="even-row">{$form.default.$idx.html}</td></tr>
+                            <tr><td class="even-row">{$form.label.$idx.html}</td><td>{$form.value.$idx.html|crmMoney}</td><td class="even-row">{$form.default.$idx.html}</td><td>{$form.option_financial_type_id.$idx.html}</td></tr>
                         {/section}
                     </table>
               </fieldset>
@@ -339,6 +339,25 @@
             cj( '#recurringContribution' ).hide( );
         }
     }
+    
+    
+    cj('#map-field-table input').blur(function() {
+      var currentId = cj(this).attr('id');
+      var arrayID = currentId.split('_');
+      if ((arrayID[0] == 'label' || arrayID[0] == 'value') && arrayID[1] > 1) {
+        var value = cj("#"+currentId).val(); 
+	if (value.length != 0  && cj("#option_financial_type_id_"+arrayID[1]).val() =='') {
+	  var currentFtid = "#option_financial_type_id_"+arrayID[1];
+	  var previousFtid = "#option_financial_type_id_"+ (arrayID[1]-1);
+	  var financial_type = cj(previousFtid).val(); 
+	  cj(currentFtid).val(financial_type); 
+	}
+	if (cj("#label_"+arrayID[1]).val().length == 0 && cj("#value_"+arrayID[1]).val().length == 0) {
+	  cj("#option_financial_type_id_"+arrayID[1]).val('');
+	}
+      }		
+    });
+    
 </script>
 {/literal}
 {if $form.is_recur}

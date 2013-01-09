@@ -67,15 +67,18 @@ class CRM_Contribute_Form_ContributionPage_Amount extends CRM_Contribute_Form_Co
     $this->add('text', 'max_amount', ts('Maximum Amount'), array('size' => 8, 'maxlength' => 8));
     $this->addRule('max_amount', ts('Please enter a valid money value (e.g. %1).', array(1 => CRM_Utils_Money::format('99.99', ' '))), 'money');
 
+    //financial type
     $this->add('select', "financial_type_id",ts('Financial Type'),
-      array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::financialType( ));
-
+      array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::financialType());
     $default = array();
     $this->add('hidden', "price_field_id", '', array('id' => "price_field_id"));
     $this->add('hidden', "price_field_other", '', array('id' => "price_field_option"));
     for ($i = 1; $i <= self::NUM_OPTION; $i++) {
       // label
       $this->add('text', "label[$i]", ts('Label'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_OptionValue', 'label'));
+      //financial type for each option
+      $this->add('select', "option_financial_type_id[$i]",ts('Financial Type'),
+        array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::financialType());
 
       $this->add('hidden', "price_field_value[$i]", '', array('id' => "price_field_value[$i]"));
 
@@ -221,6 +224,7 @@ SELECT id
                 $countRow++;
                 $defaults['value'][$countRow] = $optionValue['amount'];
                 $defaults['label'][$countRow] = CRM_Utils_Array::value('label', $optionValue);
+                $defaults['option_financial_type_id'][$countRow] = CRM_Utils_Array::value('financial_type_id', $optionValue);
                 $defaults['name'][$countRow] = CRM_Utils_Array::value('name', $optionValue);
                 $defaults['weight'][$countRow] = $optionValue['weight'];
 
@@ -319,18 +323,6 @@ SELECT id
       if (empty($fields['pay_later_receipt'])) {
         $errors['pay_later_receipt'] = ts('Please enter the instructions to be sent to the contributor when they choose to \'pay later\'.');
       }
-      //partial payment check
-      if (isset($fields['is_partial_payment'])) {
-        if (empty($fields['initial_amount_label'])) {
-          $errors['initial_amount_label'] = ts('Please enter initial amount label');
-        }
-        if (empty($fields['initial_amount_help_text'])) {
-          $errors['initial_amount_help_text'] = ts('Please enter initial amount help text');
-        }
-        if (empty($fields['min_initial_amount'])) {
-          $errors['min_initial_amount'] = ts('Please enter minimum initial amount');
-        }
-      }
     }
     
     // don't allow price set w/ membership signup, CRM-5095
@@ -381,6 +373,7 @@ SELECT id
     if (CRM_Utils_Array::value('amount_block_is_active', $fields) && !CRM_Utils_Array::value('financial_type_id', $fields)) { 
       $errors['financial_type_id'] = ts('Financial Type is a required');
     }
+
     if (CRM_Utils_Array::value('is_recur_interval', $fields)) {
       foreach(array_keys($fields['payment_processor']) as $paymentProcessorID) {
         $paymentProcessorType = CRM_Core_DAO::getFieldValue(
@@ -392,6 +385,12 @@ SELECT id
           $errors['is_recur_interval'] = ts('Google Checkout does not support recurring intervals');
           break;
         }
+      }
+    }
+
+    for ($i = 1; $i <= self::NUM_OPTION; $i++) { 
+       if (!empty($fields['label'][$i]) && !empty($fields['value'][$i]) && empty($fields['option_financial_type_id'][$i])) {
+        $errors["option_financial_type_id[{$i}]"] = ts('Financial Type is a Required field.');
       }
     }
     
@@ -603,9 +602,9 @@ SELECT id
               $fieldParams['html_type'] = 'Radio';
               $fieldParams['option_label'] = $params['label'];
               $fieldParams['option_amount'] = $params['value'];
+              $fieldParams['option_financial_type_id'] = $params['option_financial_type_id'];
               foreach ($options as $value) {
                 $fieldParams['option_weight'][$value['weight']] = $value['weight'];
-                $fieldParams['option_financial_type_id'][$value['weight']] = $params['financial_type_id'];
               }
               $fieldParams['default_option'] = $params['default'];
               $priceField = CRM_Price_BAO_Field::create($fieldParams);
