@@ -66,8 +66,7 @@ class CRM_Campaign_Task {
    * @static
    * @access public
    */
-  static
-  function &tasks() {
+  static function &tasks() {
     if (!(self::$_tasks)) {
       self::$_tasks = array(1 => array('title' => ts('Record Respondents Interview'),
           'class' => array(
@@ -110,8 +109,7 @@ class CRM_Campaign_Task {
    * @static
    * @access public
    */
-  static
-  function &taskTitles() {
+  static function &taskTitles() {
     self::tasks();
     $titles = array();
     foreach (self::$_tasks as $id => $value) {
@@ -130,8 +128,7 @@ class CRM_Campaign_Task {
    * @return array set of tasks that are valid for the user
    * @access public
    */
-  static
-  function &permissionedTaskTitles($permission) {
+  static function &permissionedTaskTitles($permission) {
     $tasks = self::taskTitles();
 
     return $tasks;
@@ -147,8 +144,7 @@ class CRM_Campaign_Task {
    * @static
    * @access public
    */
-  static
-  function getTask($value) {
+  static function getTask($value) {
     self::tasks();
     if (!$value || !CRM_Utils_Array::value($value, self::$_tasks)) {
       // make the interview task by default
