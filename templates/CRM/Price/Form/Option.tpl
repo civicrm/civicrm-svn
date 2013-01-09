@@ -58,19 +58,19 @@
                 <td class="label">{$form.description.label}</td>
                 <td>{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_price_field_value' field='description' id=$sid}{/if}{$form.description.html}</td>
             </tr>
-            {* fix for CRM-10241 *}
-            {if $form.count.html}
 	    <tr class="crm-price-option-form-block-financial-type">
                 <td class="label">{$form.financial_type_id.label}</td>
                 <td>
 		{if !$financialType }
-			    	{capture assign=ftUrl}{crmURL p='civicrm/admin/financial/financialType' q="reset=1"}{/capture}
-				{ts 1=$ftUrl}There are no financial types configured with a linked 'Revenue Account of' account. <a href='%1'>Click here</a> if you want to configure financial types for your site.{/ts}
+		   {capture assign=ftUrl}{crmURL p='civicrm/admin/financial/financialType' q="reset=1"}{/capture}
+		   {ts 1=$ftUrl}There are no financial types configured with a linked 'Revenue Account of' account. <a href='%1'>Click here</a> if you want to configure financial types for your site.{/ts}
 	        {else}  	
-		{$form.financial_type_id.html}
+		  {$form.financial_type_id.html}
 		{/if}
 		</td>
             </tr>
+            {* fix for CRM-10241 *}
+            {if $form.count.html}
             <tr class="crm-price-option-form-block-count">
                 <td class="label">{$form.count.label}</td>
                 <td>{$form.count.html} {help id="id-participant-count" file="CRM/Price/Page/Field.hlp"}</td>

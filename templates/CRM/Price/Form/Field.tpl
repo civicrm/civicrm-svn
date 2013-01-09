@@ -99,32 +99,31 @@
                {/if}
                </td>
             </tr>
-      {if $useForEvent}
-        <tr class="crm-price-field-form-block-financial_type">
-		<td class="label">{$form.financial_type_id.label}</td>
-		<td>
-		{if !$financialType }
-			    	{capture assign=ftUrl}{crmURL p='civicrm/admin/financial/financialType' q="reset=1"}{/capture}
-				{ts 1=$ftUrl}There are no financial types configured with a linked 'Revenue Account of' account. <a href='%1'>Click here</a> if you want to configure financial types for your site.{/ts}
-	        {else}  
-		{$form.financial_type_id.html}
-		{/if}
-		
-		</td>
-	    </tr>
-      <tr class="crm-price-field-form-block-count">
+            {if $useForEvent}
+            <tr class="crm-price-field-form-block-count">
               <td class="label">{$form.count.label}</td>
               <td>{$form.count.html}<br />
                 <span class="description">{ts}Enter a value here if you want to increment the number of registered participants per unit against the maximum number of participants allowed for this event.{/ts}</span>
                 {help id="id-participant-count"}
               </td>
             </tr>
-      <tr class="crm-price-field-form-block-max_value">
+            <tr class="crm-price-field-form-block-max_value">
               <td class="label">{$form.max_value.label}</td>
               <td>{$form.max_value.html}
               </td>
             </tr>
-    {/if}
+            {/if}
+	    <tr class="crm-price-field-form-block-financial_type">
+	      <td class="label">{$form.financial_type_id.label}<span class="crm-marker" title="{ts}This field is required.{/ts}">*</span></td></td>
+	      <td>
+	      {if !$financialType}
+	      	{capture assign=ftUrl}{crmURL p='civicrm/admin/financial/financialType' q="reset=1"}{/capture}
+		{ts 1=$ftUrl}There is no Financial Type configured of Account Relation Revenue. <a href='%1'>Click here</a> if you want to configure financial type for your site.{/ts}
+	      {else}  
+		{$form.financial_type_id.html}
+	      {/if}
+	      </td>
+	    </tr>
         </table>
     </div>
 
@@ -145,20 +144,6 @@
                    {/if}
                </td>
             </tr>
-	    {if !$useForEvent }
-	    <tr class="crm-price-field-form-block-financial_type">
-		<td class="label">{$form.financial_type_id.label}</td>
-		<td>
-		{if !$financialType }
-			    	{capture assign=ftUrl}{crmURL p='civicrm/admin/financial/financialType' q="reset=1"}{/capture}
-				{ts 1=$ftUrl}There is no Financial Type configured of Account Relation Revenue. <a href='%1'>Click here</a> if you want to configure financial type for your site.{/ts}
-	        {else}  
-		{$form.financial_type_id.html}
-		{/if}
-
-		</td>
-	    </tr>
-	    {/if}
             <tr class="crm-price-field-form-block-weight">
                <td class="label">{$form.weight.label}</td>
                <td>{$form.weight.html|crmAddClass:two}
