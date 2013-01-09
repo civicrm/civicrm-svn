@@ -120,8 +120,8 @@
   var mode             = {/literal}"{$mode}"{literal};
   cj( "div#id-onbehalf-orgname-help").hide( );
 
-  if ( mainDisplay ) {
-    showOnBehalf( false );
+  if (mainDisplay) {
+    showOnBehalf(false);
   }
 
   cj( "#mode" ).hide( );
@@ -132,7 +132,7 @@
     cj( "#mode" ).removeAttr( 'checked' );
   }
 
-function showOnBehalf( onBehalfRequired ) {
+function showOnBehalf(onBehalfRequired) {
   if ( cj( "#is_for_organization" ).attr( 'checked' ) || onBehalfRequired ) {
     cj( "#for_organization" ).html( '' );
     var urlPath = {/literal}"{crmURL p=$urlPath h=0 q='snippet=4&onbehalf=1'}"{literal};
@@ -272,22 +272,15 @@ function selectCreateOrg( orgOption, reset ) {
   }
 }
 
-{/literal}{if ($relatedOrganizationFound or $onBehalfRequired) and $reset and $organizationName}{literal}
-setOrgName( );
-
-{/literal}{else}{literal}
-cj( "#orgOptions" ).show( );
-var orgOption = cj("input:radio[name=org_option]:checked").val( );
-selectCreateOrg( orgOption, false );
-
-{/literal}{/if}{literal}
-</script>
 {/literal}
-</fieldset>
+{if ($relatedOrganizationFound or $onBehalfRequired) and $reset and $organizationName}
+  setOrgName( );
+{else}
+  cj("#orgOptions").show( );
+  var orgOption = cj("input:radio[name=org_option]:checked").val( );
+  selectCreateOrg(orgOption, false);
+{/if}
 
-{literal}
-<script type="text/javascript">
-{/literal}
 {* If mid present in the url, take the required action (poping up related existing contact ..etc) *}
 {if $membershipContactID}
 {literal}
@@ -299,6 +292,6 @@ selectCreateOrg( orgOption, false );
   });
 {/literal}
 {/if}
-{literal}
+
 </script>
-{/literal}
+</fieldset>

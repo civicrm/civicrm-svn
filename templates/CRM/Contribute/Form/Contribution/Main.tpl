@@ -374,16 +374,18 @@ function enablePeriod ( ) {
   }
 }
 
-{/literal}{if $relatedOrganizationFound and $reset}{literal}
-   cj( "#is_for_organization" ).attr( 'checked', true );
-   showOnBehalf( false );
-{/literal}{elseif $onBehalfRequired}{literal}
-   showOnBehalf( true );
-{/literal}{/if}{literal}
+{/literal}
+{if $relatedOrganizationFound and $reset}
+  cj( "#is_for_organization" ).attr( 'checked', true );
+  showOnBehalf(false);
+{elseif $onBehalfRequired}
+  showOnBehalf(true);
+{/if}
 
-{/literal}{if $honor_block_is_active AND $form.honor_type_id.html}{literal}
-    enableHonorType();
-{/literal} {/if}{literal}
+{if $honor_block_is_active AND $form.honor_type_id.html}
+  enableHonorType();
+{/if}
+{literal}
 
 function enableHonorType( ) {
   var element = document.getElementsByName("honor_type_id");
