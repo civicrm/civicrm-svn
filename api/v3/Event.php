@@ -72,7 +72,7 @@ function civicrm_api3_event_create($params) {
 }
 /*
  * Adjust Metadata for Create action
- * 
+ *
  * The metadata is used for setting defaults, documentation & validation
  * @param array $params array or parameters determined by getfields
  */
@@ -80,6 +80,7 @@ function _civicrm_api3_event_create_spec(&$params) {
   $params['event_type_id']['api.required'] = 1;;
   $params['start_date']['api.required'] = 1;
   $params['title']['api.required'] = 1;
+  $params['is_active']['api.default'] = 1;
 }
 /*
  * Support for schema changes made in 4.2
@@ -195,10 +196,10 @@ function civicrm_api3_event_delete($params) {
 /*
  * Function to add 'is_full' & 'available_seats' to the return array. (this might be better in the BAO)
  * Default BAO function returns a string if full rather than a Bool - which is more appropriate to a form
- * 
+ *
  * @param array $event return array of the event
  * @param int $event_id Id of the event to be updated
- * 
+ *
  */
 function _civicrm_api3_event_getisfull(&$event, $event_id) {
   require_once 'CRM/Event/BAO/Participant.php';
