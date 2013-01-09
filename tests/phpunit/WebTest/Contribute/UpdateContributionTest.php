@@ -404,14 +404,117 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
    $this->assertEquals($amount, '-100.00', 'Verify Financial Trxn Amount.');
  }
 
- function _getPremiumActualCost($entityId, $from = NULL, $to, $cost = NULL, $entityTable = NULL, $select = "ft.total_amount AS amount") {
+ function testCancelPayLater() {
+   // This is the path where our testing install resides.
+   // The rest of URL is defined in CiviSeleniumTestCase base class, in
+   // class attributes.
+   $this->open($this->sboxPath);
+   // Logging in. Remember to wait for page to load. In most cases,
+   // you can rely on 30000 as the value that allows your test to pass, however,
+   // sometimes your test might fail because of this. In such cases, it's better to pick one element
+   // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
+   // page contents loaded and you can continue your test execution.
+   $this->webtestLogin();
+   $firstName = substr(sha1(rand()), 0, 7);
+   $lastName  = 'Contributor';
+   $email     = $firstName . "@example.com";
+   $label = 'TEST'.substr(sha1(rand()), 0, 7);
+   $amount = 100.00;
+   $toParams = array( 'name' => 'Accounts Receivable' );
+   $to = array();
+   CRM_Financial_BAO_FinancialAccount::retrieve($toParams, $to);
+   $this->_testOfflineContribution($firstName, $lastName, $email, $amount, "Pending");
+   $this->click("xpath=//div[@id='Contributions']//table/tbody/tr[1]/td[8]/span/a[text()='Edit']");
+   $this->waitForPageToLoad("30000");
+   //Contribution status
+   $this->select("contribution_status_id", "label=Cancelled");
+   $elements = $this->parseURL();
+   $contId = $elements['queryString']['id'];
+   $this->click("_qf_Contribution_upload");
+   $this->waitForPageToLoad("30000");
+
+   //Assertions
+   $search = array( 'id' => $contId );
+   $compare = array( 'contribution_status_id' => 3 );
+   $this->assertDBCompareValues('CRM_Contribute_DAO_Contribution', $search, $compare);
+   $lineItem = key(CRM_Price_BAO_LineItem::getLineItems($contId, 'contribution'));
+   $itemParams = array(
+     'amount' => '-100.00',
+     'entity_id' => $lineItem,
+   );
+   $defaults = array();
+   $items = CRM_Financial_BAO_FinancialItem::retrieve($itemParams, $defaults);
+   $this->assertEquals($items->amount, $itemParams['amount'], 'Verify Amount for financial Item');
+   $totalAmount = $this->_getPremiumActualCost($items->id, $to['id'], NULL, "-100.00", "'civicrm_financial_item'");
+   $this->assertEquals($totalAmount, "-$amount", 'Verify Amount for Financial Trxn');
+   $totalAmount = $this->_getPremiumActualCost($contId, $to['id'], NULL, "-100.00", "'civicrm_contribution'");
+   $this->assertEquals($totalAmount, "-$amount", 'Verify Amount for Financial Trxn');
+ }
+
+ function testChangeFinancialType() {
+   // This is the path where our testing install resides.
+   // The rest of URL is defined in CiviSeleniumTestCase base class, in
+   // class attributes.
+   $this->open($this->sboxPath);
+   // Logging in. Remember to wait for page to load. In most cases,
+   // you can rely on 30000 as the value that allows your test to pass, however,
+   // sometimes your test might fail because of this. In such cases, it's better to pick one element
+   // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
+   // page contents loaded and you can continue your test execution.
+   $this->webtestLogin();
+   $firstName = substr(sha1(rand()), 0, 7);
+   $lastName  = 'Contributor';
+   $email     = $firstName . "@example.com";
+   $label = 'TEST'.substr(sha1(rand()), 0, 7);
+   $amount = 100.00;
+   $this->_testOfflineContribution($firstName, $lastName, $email, $amount);
+   $this->click("xpath=//div[@id='Contributions']//table/tbody/tr[1]/td[8]/span/a[text()='Edit']");
+   $this->waitForPageToLoad("30000");
+   //Contribution status
+   $this->select("financial_type_id", "value=3");
+   $elements = $this->parseURL();
+   $contId = $elements['queryString']['id'];
+   $this->click("_qf_Contribution_upload");
+   $this->waitForPageToLoad("30000");
+
+   //Assertions
+   $search = array( 'id' => $contId );
+   $compare = array( 'financial_type_id' => 3 );
+   $this->assertDBCompareValues('CRM_Contribute_DAO_Contribution', $search, $compare);
+
+   $lineItem = key(CRM_Price_BAO_LineItem::getLineItems($contId, 'contribution'));
+   $itemParams = array(
+     'amount' => '-100.00',
+     'entity_id' => $lineItem,
+   );
+   $item1 = $item2 = array();
+   CRM_Financial_BAO_FinancialItem::retrieve($itemParams, $item1);
+   $this->assertEquals($item1['amount'], "-100.00", "Verify Amount for New Financial Item");
+   $itemParams['amount'] = '100.00';
+   CRM_Financial_BAO_FinancialItem::retrieve($itemParams, $item2);
+   $this->assertEquals($item2['amount'], "100.00", "Verify Amount for New Financial Item");
+
+   $cValue1 = $this->_getPremiumActualCost($contId, NULL, NULL, "-100.00", "'civicrm_contribution'");
+   $fValue1 = $this->_getPremiumActualCost($item1['id'], NULL, NULL, "-100.00", "'civicrm_financial_item'");
+   $this->assertEquals($cValue1, "-100.00", "Verify Amount");
+   $this->assertEquals($fValue1, "-100.00", "Verify Amount");
+   $cValue2 = $this->_getPremiumActualCost($contId, NULL, NULL, "100.00", "'civicrm_contribution'");
+   $fValue2 = $this->_getPremiumActualCost($item2['id'], NULL, NULL, "100.00", "'civicrm_financial_item'");
+   $this->assertEquals($cValue2, "100.00", "Verify Amount");
+   $this->assertEquals($fValue2, "100.00", "Verify Amount");
+ }
+
+ function _getPremiumActualCost($entityId, $from = NULL, $to = NULL, $cost = NULL, $entityTable = NULL, $select = "ft.total_amount AS amount") {
    $query = "SELECT
      {$select}
      FROM civicrm_financial_trxn ft
      INNER JOIN civicrm_entity_financial_trxn eft ON eft.financial_trxn_id = ft.id AND eft.entity_id = {$entityId}
-     WHERE  ft.to_financial_account_id = {$to}";
+     WHERE  1";
    if ($entityTable) {
      $query .= " AND eft.entity_table = {$entityTable}";
+   }
+   if (!empty($to)) {
+     $query .= " AND ft.to_financial_account_id = {$to}";
    }
    if (!empty($from)) {
      $query .= " AND ft.from_financial_account_id = {$from}";
