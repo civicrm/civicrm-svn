@@ -35,7 +35,6 @@
  * @copyright CiviCRM LLC (c) 2004-2012
  */
 
-require_once 'CRM/Campaign/BAO/Survey.php';
 
 /**
  * Create or update a survey
@@ -53,7 +52,7 @@ function civicrm_api3_survey_create($params) {
 }
 /*
  * Adjust Metadata for Create action
- * 
+ *
  * The metadata is used for setting defaults, documentation & validation
  * @param array $params array or parameters determined by getfields
  */
