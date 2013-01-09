@@ -489,6 +489,20 @@ LIMIT 1;";
       );
 
       $trxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
+      if (CRM_Utils_Array::value('fee_amount', $trxnParams) != 0 ) {
+        $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Accounts Receivable Account is' "));
+        $financialAccount = CRM_Contribute_PseudoConstant::financialAccountType($contribution->financial_type_id, $relationTypeId);
+        $params = 
+          array(
+            'financial_type_id' => $contribution->financial_type_id,
+            'to_financial_account_id' => $financialAccount,
+            'entity_id' => $trxn->id,
+            'contribution_id' => $contribution->id,
+            'contact_id' => $contribution->contact_id,
+            'fee_amount' => $contribution->fee_amount,
+          );  
+        CRM_Core_BAO_FinancialTrxn::recordFees($params);
+      }
     }
 
     self::updateRecurLinkedPledge($contribution);

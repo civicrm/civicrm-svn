@@ -342,7 +342,7 @@ WHERE lt.entity_id = %1 ";
         'total_amount' => $params['fee_amount'],
         'status_id' => CRM_Core_OptionGroup::getValue('contribution_status','Completed','name'),
       );
-    $trxnParams['contribution_id'] = $params['contribution']->id;
+    $trxnParams['contribution_id'] = isset($params['contribution']->id) ? $params['contribution']->id : $params['contribution_id'];
     $trxn = self::create($trxnParams);
     $fItemParams = 
       array(
