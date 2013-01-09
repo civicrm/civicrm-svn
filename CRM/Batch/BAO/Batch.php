@@ -424,9 +424,9 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
         ),
         'export' =>  array(
           'name'  => ts('Export'),
-          'url'   => 'civicrm/financial/batch/export',
-          'qs'    => 'reset=1&id=%%id%%&status=%%status%%',
           'title' => ts('Export Batch'),
+          'url'   => '#',
+          'extra' => 'rel="export"',
         ),
         'reopen' =>  array(
           'name'  => ts('Re-open'),

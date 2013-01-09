@@ -60,6 +60,11 @@ class CRM_Financial_Form_Export extends CRM_Core_Form {
   protected $_exportStatusId;
 
   /**
+   * Export format
+   */
+  protected $_exportFormat;
+
+  /**
    * build all the data structures needed to build the form
    *
    * @return void
@@ -76,6 +81,9 @@ class CRM_Financial_Form_Export extends CRM_Core_Form {
       }
       else {
         $this->_batchIds = $this->get('batchIds');
+      }
+      if (!empty($_POST['export_format']) && in_array($_POST['export_format'], array('IIF', 'CSV'))) {
+        $this->_exportFormat = $_POST['export_format'];
       }
     }
     else {
@@ -114,7 +122,11 @@ class CRM_Financial_Form_Export extends CRM_Core_Form {
     // this mean it's a batch action
     if (!empty($this->_batchIds)) {
       $batchNames = CRM_Batch_BAO_Batch::getBatchNames($this->_batchIds);
-      $this->assign( 'batchNames', $batchNames );
+      $this->assign('batchNames', $batchNames);
+      // Skip building the form if we already have batches and an export format
+      if ($this->_exportFormat) {
+        $this->postProcess();
+      }
     }
 
     $optionTypes = array(
@@ -147,7 +159,10 @@ class CRM_Financial_Form_Export extends CRM_Core_Form {
    * @return None
    */
   public function postProcess( ) {
-    $params = $this->exportValues();
+    if (!$this->_exportFormat) {
+      $params = $this->exportValues();
+      $this->_exportFormat = $params['export_format'];
+    }
 
     if ($this->_id) {
       $batchIds = array($this->_id);
@@ -155,6 +170,8 @@ class CRM_Financial_Form_Export extends CRM_Core_Form {
     else if (!empty($this->_batchIds)) {
       $batchIds = explode(',', $this->_batchIds);
     }
+    // Recalculate totals
+    $totals = CRM_Batch_BAO_Batch::batchTotals($batchIds);
 
     // build batch params
     $session = CRM_Core_Session::singleton();
@@ -165,11 +182,11 @@ class CRM_Financial_Form_Export extends CRM_Core_Form {
     $ids = array();
     foreach($batchIds as $batchId) {
       $batchParams['id'] = $ids['batchID'] = $batchId;
+      // Update totals
+      $batchParams = array_merge($batchParams, $totals[$batchId]);
       CRM_Batch_BAO_Batch::create($batchParams, $ids, 'financialBatch');
     }
 
-    CRM_Batch_BAO_Batch::exportFinancialBatch($batchIds, $params['export_format']);
+    CRM_Batch_BAO_Batch::exportFinancialBatch($batchIds, $this->_exportFormat);
   }
 }
-
-

@@ -175,16 +175,26 @@ cj(function($) {
         open:function() {
           switch (op) {{/literal}
             case 'reopen':
-              var msg = '{ts escape="js"}Are you sure you want to re-open:{/ts}';
+              var msg = '<h3>{ts escape="js"}Are you sure you want to re-open:{/ts}</h3>';
               break;
             case 'delete':
-              var msg = '{ts escape="js"}Are you sure you want to delete:{/ts}';
+              var msg = '<h3>{ts escape="js"}Are you sure you want to delete:{/ts}</h3>';
               break;
             case 'close':
-              var msg = '{ts escape="js"}Are you sure you want to close:{/ts}';
+              var msg = '<h3>{ts escape="js"}Are you sure you want to close:{/ts}</h3>';
+              break;
+            case 'export':
+              var msg = '<h3>{ts escape="js"}Export:{/ts}</h3>\
+              <div>\
+                <label>{ts escape="js"}Format:{/ts}</label>\
+                <select class="export-format">\
+                  <option value="IIF">IIF</option>\
+                  <option value="CSV">CSV</option>\
+                </select>\
+              </div>';
               break;
           {literal}}
-          msg += listRecords(records, op == 'close');
+          msg += listRecords(records, op == 'close' || op == 'export');
           $('#enableDisableStatusMsg').show().html(msg);
         },
         buttons: {
@@ -197,14 +207,6 @@ cj(function($) {
           }
         }
       });
-    }
-  }
-
-  function exportRecords(records, op) {
-    records = validateOp(records, op);
-    if (records.length) {
-      var exportUrl = {/literal}'{crmURL p='civicrm/financial/batch/export' h=0 q='reset=1'}'{literal};
-      cj().redirect(exportUrl, {'batch_id': records});
     }
   }
 
@@ -222,8 +224,8 @@ cj(function($) {
           var label = $th.text();
           var actual = $(this).text();
           var expected = $expected.text();
-          txt += {/literal}'<br /><span class="crm-error">' +
-          label + ' {ts escape="js"}mismatch.{/ts} {ts escape="js"}Expected{/ts}: ' + expected + ' {ts escape="js"}Current Total{/ts}: ' + actual + '</span>'{literal};
+          txt += {/literal}'<div class="messages crm-error"><strong>' +
+          label + ' {ts escape="js"}mismatch.{/ts}</strong><br />{ts escape="js"}Expected{/ts}: ' + expected + '<br />{ts escape="js"}Current Total{/ts}: ' + actual + '</div>'{literal};
         });
       }
       txt += '</li>';
@@ -236,7 +238,10 @@ cj(function($) {
   }
 
   function saveRecords(records, op) {
-    var postUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Financial_Page_AJAX&fnName=assignRemove'}"{literal};
+    if (op == 'export') {
+      return exportRecords(records);
+    }
+    var postUrl = CRM.url('civicrm/ajax/rest', 'className=CRM_Financial_Page_AJAX&fnName=assignRemove');
     //post request and get response
     $.post(postUrl, {records: records, recordBAO: 'CRM_Batch_BAO_Batch', op: op, key: {/literal}"{crmKey name='civicrm/ajax/ar'}"{literal}},
       function(response) {
@@ -246,32 +251,41 @@ cj(function($) {
           batchSelector.fnDraw();
         }
         else {
-          serverError();
+          CRM.alert({/literal}'{ts escape="js"}An error occurred while processing your request.{/ts}', $("#batch_update option[value=" + op + "]").text() + ' {ts escape="js"}Error{/ts}'{literal}, 'error');
         }
       },
       'json').error(serverError);
   }
+  
+  function exportRecords(records) {
+    var exportUrl = CRM.url('civicrm/financial/batch/export', 'reset=1');
+    $().redirect(exportUrl, {'batch_id': records, 'export_format': $('select.export-format').val()});
+    batchSelector.fnDraw();
+  }
 
   function validateOp(records, op) {
-    var invalid = [];
     switch (op) {
       case 'reopen':
         var notAllowed = [1, 5];
         break;
       case 'close':
-      case 'export':
         var notAllowed = [2, 5];
+        break;
+      case 'export':
+        var notAllowed = [5];
         break;
       default:
         return records;
     }
     var len = records.length;
+    var invalid = {};
     var i = 0;
     while (i < len) {
       var status = $('tr[data-id='+records[i]+']').data('status_id');
       if ($.inArray(status, notAllowed) >= 0) {
         $('#check_' + records[i] + ':checked').prop('checked', false).change();
-        invalid.push(records[i]);
+        invalid[status] = invalid[status] || []; 
+        invalid[status].push(records[i]);
         records.splice(i, 1);
         --len;
       }
@@ -279,8 +293,9 @@ cj(function($) {
         i++;
       }
     }
-    if (invalid.length) {
-      var msg = (invalid.length == 1 ? {/literal}'{ts escape="js"}This record already has the status{/ts}' : '{ts escape="js"}The following records already have the status{/ts}'{literal}) + ' ' + $('tr[data-id='+invalid[0]+'] .crm-batch-status').text() + ':' + listRecords(invalid);
+    for (status in invalid) {
+      i = invalid[status];
+      var msg = (i.length == 1 ? {/literal}'{ts escape="js"}This record already has the status{/ts}' : '{ts escape="js"}The following records already have the status{/ts}'{literal}) + ' ' + $('tr[data-id='+i[0]+'] .crm-batch-status').text() + ':' + listRecords(i);
       CRM.alert(msg, {/literal}'{ts escape="js"}Cannot{/ts} '{literal} + $("#batch_update option[value=" + op + "]").text());
     }
     return records;
@@ -294,28 +309,18 @@ cj(function($) {
     var op = $("#batch_update").val();
     if (op == "") {
        CRM.alert({/literal}'{ts escape="js"}Please select an action from the menu.{/ts}', '{ts escape="js"}No Action Selected{/ts}'{literal});
-       return false;
     }
     else if (!$("input.select-row:checked").length) {
        CRM.alert({/literal}'{ts escape="js"}Please select one or more batches for this action.{/ts}', '{ts escape="js"}No Batches Selected{/ts}'{literal});
-       return false;
     }
-    else if (op == 'close' || op == 'reopen' || op == 'delete') {
+    else {
       records = [];
       $("input.select-row:checked").each(function() {
         records.push($(this).attr('id').replace('check_', ''));
       });
       editRecords(records, op);
-      return false;
     }
-    else if (op == 'export') {
-      records = [];
-      $("input.select-row:checked").each(function() {
-        records.push($(this).attr('id').replace('check_', ''));
-      });
-      exportRecords(records, op);
-      return false;
-    }
+    return false;
   });
 
   $('#crm-container').on('click', 'a.action-item[href="#"]', function(event) {
