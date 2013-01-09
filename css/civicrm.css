@@ -37,7 +37,6 @@
 
 /* TABLE STYLING */
 
-#crm-container table,
 .crm-container table {
   margin: 0em 0em 1em;
   border-collapse: collapse;
@@ -285,7 +284,6 @@
   padding: 0px;
 }
 
-#crm-container textarea,
 .crm-container textarea {
   border: 1px solid #999;
 }
@@ -377,7 +375,6 @@
   float: right;
 }
 
-#crm-container fieldset,
 .crm-container fieldset {
   background: none;
   padding: 4px 0px;
@@ -434,12 +431,10 @@
   border: none;
 }
 
-#crm-container .crm-section,
 .crm-container .crm-section {
   margin-bottom: 1em;
 }
 
-#crm-container .crm-section .label,
 .crm-container .crm-section .label {
   float: left;
   width: 15%;
@@ -450,7 +445,6 @@
   text-align: left;
 }
 
-#crm-container .crm-section .content,
 .crm-container .crm-section .content {
   margin-left: 16%;
 }
@@ -659,7 +653,6 @@
 }
 
 /* messages and status */
-#crm-container .messages,
 .crm-container .messages {
   margin: 1.0em 0em 1.0em;
   border: none;
@@ -738,7 +731,7 @@
   background-color: #ffffff;
 }
 
-#crm-container .footer {
+.crm-container .footer {
   font-size: 0.8em;
 }
 
@@ -754,12 +747,12 @@
   text-align: right;
 }
 
-#crm-container #access {
+.crm-container #access {
   padding: 0.8em 0.8em 0em 0em;
   text-align: right;
 }
 
-#crm-container .header-dark {
+.crm-container .header-dark {
   margin: 0.5em 0em 0.5em;
   padding: 0.5em;
   background-color: #999999;
@@ -771,7 +764,7 @@
   -khtml-border-radius: 2px;
 }
 
-#crm-container div.display-block {
+.crm-container div.display-block {
   font-weight: normal;
   margin: 1.0em 2.0em 1.0em 2.0em;
 }
@@ -829,8 +822,7 @@
 ** CSS for links from Drupal Blocks.
 */
 /* Following styles are used to remove the white bullets from the Garland Theme */
-.crm-container ul li,
-#crm-container ul li {
+.crm-container ul li {
   background-image: none;
 }
 
@@ -878,7 +870,6 @@
 }
 
 /* Page and form-level 'help' */
-#crm-container #help,
 .crm-container .help {
   background-color: #F1F8EB;
   border: 1px solid #B0D730;
@@ -888,7 +879,6 @@
   padding: 4px;
 }
 
-#crm-container #help p,
 .crm-container .help p {
   margin: 4px;
 }
@@ -1070,13 +1060,13 @@
   padding: 0px;
 }
 
-#crm-container #search-status {
+.crm-container #search-status {
   border: none;
   font-size: 12px;
   font-weight: normal;
 }
 
-#crm-container .crm-pager {
+.crm-container .crm-pager {
   border: none;
   background-color: #F5F6F1;
   position: relative;
@@ -1085,11 +1075,11 @@
   margin-bottom: 4px;
 }
 
-#crm-container #search-status ul {
+.crm-container #search-status ul {
   margin: 0em;
 }
 
-#crm-container #search-status ul li,
+.crm-container #search-status ul li,
 #crm-container ul.left-alignment li {
   display: list-item;
   margin-left: 2.0em;
@@ -1245,14 +1235,14 @@
   width: auto;
 }
 
-#crm-container div#alpha-filter {
+.crm-container div#alpha-filter {
   background-color: #CDE8FE;
   margin: 4px 0 5px;
   padding: 2px;
   text-align: left;
 }
 
-#crm-container #alpha-filter li {
+.crm-container #alpha-filter li {
   background-color: transparent;
   background-image: none;
   border: none;
@@ -1266,13 +1256,13 @@
   font-family: Helvetica;
 }
 
-#crm-container #alpha-filter a {
+.crm-container #alpha-filter a {
   border-bottom: 1px dotted #2A71B4;
   color: #2A71B4;
   font-weight: normal;
 }
 
-#crm-container div#lang-switch {
+.crm-container #lang-switch {
   float: right;
   z-index: 2;
   margin: -24px 30px 0px 0px;
@@ -1281,7 +1271,7 @@
 /*
 ** Boxes of checkbox elements (e.g. Advanced Search page)
 */
-#crm-container .listing-box {
+.crm-container .listing-box {
   width: auto;
   max-width: 30em;
   height: 7.25em;
@@ -1289,14 +1279,14 @@
   border: 1px solid #999999;
 }
 
-#crm-container .listing-box div {
+.crm-container .listing-box div {
   color: black;
 }
 
 /*
 ** To allow for taller boxes of groups/tags.
 */
-#crm-container .listing-box-tall {
+.crm-container .listing-box-tall {
   margin: 0.25em 2.0em 0.5em 0em;
   width: auto;
   max-width: 30em;
@@ -1306,7 +1296,7 @@
 }
 
 /* Image Styles */
-#crm-container .action-icon {
+.crm-container .action-icon {
   vertical-align: middle;
   padding: 2px 2px 2px 3px;
   margin: 2px 2px 3px 2px;
@@ -1342,11 +1332,11 @@
   margin: 0em -0.5em 0em -0.5em;
 }
 
-#crm-container .underline-effect {
+.crm-container .underline-effect {
   color: #285286;
 }
 
-#crm-container .underline-effect:hover {
+.crm-container .underline-effect:hover {
   text-decoration: underline;
 }
 
@@ -1383,9 +1373,6 @@
   cursor: pointer;
   color: #213245;
   font-weight: bold;
-}
-
-#crm-container .label-pane:hover {
   cursor: pointer;
 }
 
@@ -1705,21 +1692,21 @@ editor specific classes
 }
 
 /* Styles for Action Items &  Action Link pop-up */
-#crm-container .action-item {
+.crm-container .action-item {
   padding: 0px 5px;
   border-left: 1px solid #CCC;
   white-space: nowrap;
 }
-#crm-container .action-item-wrap {
+.crm-container .action-item-wrap {
   padding: 0px 5px;
   border-left: 1px solid #CCC;
   white-space: normal;
 }
-#crm-container .action-item-first {
+.crm-container .action-item-first {
   border-left: none;
   /* last action item should not have right hand border */}
 
-#crm-container .panel {
+.crm-container .panel {
   display: none;
   z-index: 9999;
   position: absolute;
@@ -1731,12 +1718,12 @@ editor specific classes
   width: 180px;
 }
 
-#crm-container td ul.panel {
+.crm-container td ul.panel {
   top: 15px;
   right: 0px;
 }
 
-#crm-container td ul.panel li {
+.crm-container td ul.panel li {
   margin: 0px;
   padding: 2px;
   list-style: none;
@@ -1768,7 +1755,7 @@ editor specific classes
   z-index: 1;
 }
 
-#crm-container .panel li a {
+.crm-container .panel li a {
   text-decoration: none;
   padding: 4px;
   display: block;
@@ -1801,7 +1788,7 @@ div.grippie {
   height: 20%;
 }
 
-#crm-container ul li.crm-tab-button {
+.crm-container ul li.crm-tab-button {
   border-bottom: 0 none;
   float: left;
   margin: 0 0.2em 1px 0;
@@ -1956,17 +1943,17 @@ div.grippie {
 
 #crm-container div.contactCardLeft .label,
 #crm-container div.contactCardRight .label {
-  FONT-SIZE: 11px;
-  VERTICAL-ALIGN: top;
-  MARGIN-RIGHT: 10px;
+  font-size: 11px;
+  vertical-align: top;
+  margin-right: 10px;
 }
 
 #crm-container div.contactCardLeft .grouplabel,
 #crm-container div.contactCardRight .grouplabel {
-  BORDER-BOTTOM: grey 1px solid;
-  WIDTH: 100%;
-  FONT-SIZE: 0.95em;
-  FONT-WEIGHT: bold;
+  border-bottom: grey 1px solid;
+  width: 100%;
+  font-size: 0.95em;
+  font-weight: bold;
   background-color: #ddd;
 }
 
@@ -2011,7 +1998,7 @@ div.grippie {
   height: 25px;
 }
 
-#crm-container .crm-clearfix:after,
+.crm-container .crm-clearfix:after,
 #crm-container .crm-summary-row:after {
   clear: both;
   content: ".";
@@ -2020,7 +2007,7 @@ div.grippie {
   visibility: hidden;
 }
 
-#crm-container div.crm-clear {
+.crm-container div.crm-clear {
   clear: both;
   margin-bottom: 1px;
   background-color: #FAFAFA;
@@ -2178,10 +2165,10 @@ div.grippie {
 
 #crm-container table.view-layout .label {
   color: DimGray;
-  FONT-SIZE: 0.95em;
-  VERTICAL-ALIGN: top;
-  FONT-WEIGHT: bold;
-  MARGIN-RIGHT: 10px;
+  font-size: 0.95em;
+  vertical-align: top;
+  font-weight: bold;
+  margin-right: 10px;
   background-color: #EEEEEE;
   width: 20%;
 }
