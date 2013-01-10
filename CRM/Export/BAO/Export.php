@@ -570,7 +570,8 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
     $paymentDetails = array();
     if ($paymentFields) {
       //special return properties for event and members
-      $paymentHeaders = array('total_amount' => ts('Total Amount'),
+      $paymentHeaders = array(
+        'total_amount' => ts('Total Amount'),
         'contribution_status' => ts('Contribution Status'),
         'received_date' => ts('Received Date'),
         'payment_instrument' => ts('Payment Instrument'),
@@ -808,7 +809,6 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
             }
           }
           elseif (array_key_exists($field, $contactRelationshipTypes)) {
-
             $relDAO = CRM_Utils_Array::value($dao->contact_id, $allRelContactArray[$field]);
             foreach ($value as $relationField => $relationValue) {
               if (is_object($relDAO) && property_exists($relDAO, $relationField)) {
@@ -1090,7 +1090,7 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
   /**
    * Function to handle import error file creation.
    *
-   **/
+   */
   function invoke() {
     $type = CRM_Utils_Request::retrieve('type', 'Positive', CRM_Core_DAO::$_nullObject);
     $parserName = CRM_Utils_Request::retrieve('parser', 'String', CRM_Core_DAO::$_nullObject);
@@ -1228,7 +1228,12 @@ INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_c
         $sqlColumns[$fieldName] = "$fieldName varchar(16)";
       }
       else {
-        $changeFields = array('groups', 'tags', 'notes');
+        $changeFields = array(
+          'groups',
+          'tags',
+          'notes'
+        );
+
         if (in_array($fieldName, $changeFields)) {
           $sqlColumns[$fieldName] = "$fieldName text";
         }
@@ -1322,7 +1327,12 @@ CREATE TABLE {$exportTempTable} (
   PRIMARY KEY ( id )
 ";
     // add indexes for street_address and household_name if present
-    $addIndices = array('street_address', 'household_name', 'civicrm_primary_id');
+    $addIndices = array(
+      'street_address',
+      'household_name',
+      'civicrm_primary_id',
+    );
+
     foreach ($addIndices as $index) {
       if (isset($sqlColumns[$index])) {
         $sql .= ",
@@ -1407,7 +1417,6 @@ ORDER BY  r1.id
     }
     $merge = $merge + $linkedMerge;
 
-    $processed = array();
     foreach ($merge as $masterID => $values) {
       $sql = "
 UPDATE $tableName
@@ -1446,7 +1455,10 @@ WHERE  id IN ( $deleteIDString )
     $greetings = array();
     $contact = NULL;
 
-    $greetingFields = array('postal_greeting', 'addressee');
+    $greetingFields = array(
+      'postal_greeting',
+      'addressee',
+    );
     foreach ($greetingFields as $greeting) {
       if (CRM_Utils_Array::value($greeting, $exportParams)) {
         $greetingLabel = $exportParams[$greeting];
@@ -1470,13 +1482,12 @@ WHERE  id IN ( $deleteIDString )
     return $greetings;
   }
 
-  /*
-     * The function unsets static part of the string, if token is the dynamic part.
-     * Example: 'Hello {contact.first_name}' => converted to => '{contact.first_name}'
-     * i.e 'Hello Alan' => converted to => 'Alan'
-     *
-     */
-
+  /**
+   * The function unsets static part of the string, if token is the dynamic part.
+   * Example: 'Hello {contact.first_name}' => converted to => '{contact.first_name}'
+   * i.e 'Hello Alan' => converted to => 'Alan'
+   *
+   */
   static function _trimNonTokens(&$parsedString, $defaultGreeting,
     $addressMergeGreetings, $greetingType = 'postal_greeting'
   ) {
