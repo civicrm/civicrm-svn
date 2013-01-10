@@ -37,9 +37,8 @@ class CRM_Financial_Form_Search extends CRM_Core_Form {
   public $_batchStatus;
 
   function preProcess() {
-    $batchStatus = CRM_Utils_Request::retrieve('batchStatus', 'Positive', CRM_Core_DAO::$_nullObject, FALSE, NULL);
-    $this->_batchStatus = $batchStatus;
-    $this->assign('batchStatus', $batchStatus);
+    $this->_batchStatus = CRM_Utils_Request::retrieve('batchStatus', 'Positive', CRM_Core_DAO::$_nullObject, FALSE, NULL);
+    $this->assign('batchStatus', $this->_batchStatus);
   }
 
   function setDefaultValues() {
@@ -100,7 +99,7 @@ class CRM_Financial_Form_Search extends CRM_Core_Form {
     $this->add('submit','submit', ts('Go'),
       array(
         'class' => 'form-submit',
-        'id' => 'Go'
+        'id' => 'Go',
       ));
 
     $this->addButtons(
@@ -108,7 +107,7 @@ class CRM_Financial_Form_Search extends CRM_Core_Form {
         array(
           'type' => 'refresh',
           'name' => ts('Search'),
-          'isDefault' => TRUE
+          'isDefault' => TRUE,
         )
       )
     );
