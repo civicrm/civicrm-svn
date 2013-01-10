@@ -608,72 +608,6 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
     }
 
     $this->applyFilter('__ALL__', 'trim');
-    if ($this->_action & CRM_Core_Action::UPDATE) {
-      if (empty($this->_compId)) {
-        $txrnLineTotal = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnLineTotal($this->_id, 'civicrm_contribution');
-      }
-      else {
-        $txrnLineTotal = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnLineTotal($this->_compId, 'civicrm_participant');
-      }
-
-      $lineItemTotal = $lineTotal = array();
-      if (is_array($txrnLineTotal)) {
-        reset($txrnLineTotal);
-        $fitemParams = array(
-          'entity_table' => 'civicrm_financial_item',
-          'financial_trxn_id' => key($txrnLineTotal)
-        );
-        $financialItems = CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($fitemParams);
-        foreach($financialItems as $key => $value) {
-          $fid[] = $value['entity_id'];
-        }
-        foreach ($txrnLineTotal as $lineKey => $lineValue) {
-          $i = $trxAmount = 0;
-          foreach ($lineValue as $itemKey => $itemValue) {
-            $entityParams['entity_table'] = 'civicrm_financial_item';
-            $entityParams['entity_id'] = $fid[$i++];
-            $prevAmount = CRM_Financial_BAO_FinancialItem::retrievePreviousAmount($entityParams);
-            $lineItemTotal[$itemKey] = $prevAmount;
-            if (!array_key_exists($itemKey, $lineItemTotal)) {
-              $lineItemTotal[$itemKey] = 0;
-            }
-          }
-          if (!empty($lineTotal)) {
-            $lineTotal[] += $prevAmount;
-          }
-          else {
-            $lineTotal[] = $prevAmount;
-          }
-        }
-      }
-
-      $lineTotal = CRM_Utils_Array::value(0, $lineTotal);
-      if (empty($this->_lineItems)) {
-        $element = $this->addElement('text', 'paid', 'Paid', array(
-          'READONLY' => TRUE,
-          'style' => "background-color:#EBECE4",
-          'size' => 4,
-          'price' => $lineTotal
-        ));
-        $element->setValue($lineTotal);
-        $owingAmount = (float) $this->_values['total_amount'] - $lineTotal;
-        $element = $this->addElement('text', 'owing', 'Owing', array(
-          'READONLY' => TRUE,
-          'style' => "background-color:#EBECE4",
-          'size' => 4
-        ));
-
-        $element->setValue($owingAmount);
-        $this->addElement('text', '', 'Owing', array(
-          'READONLY' => TRUE,
-          'style' => "background-color:#EBECE4",
-          'price' => $owingAmount,
-          'size' => 4
-        ));
-      }
-
-      $this->addElement('checkbox', 'ch_price', ts('Send Receipt?'));
-    } 
     
     if ($this->_action & CRM_Core_Action::DELETE) {
       $this->addButtons(array(
@@ -1076,7 +1010,10 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
       
       $submittedValues['total_amount'] = CRM_Utils_Array::value('amount', $submittedValues);
     }
-      $pId = ($this->_compId && $this->_context == 'participant') ? $this->_compId : CRM_Core_DAO::getFieldValue('CRM_Event_DAO_ParticipantPayment', $this->_id, 'participant_id', 'contribution_id'); //CRM-10964
+    if ($this->_id) {
+      //CRM-10964
+      $pId = ($this->_compId && $this->_context == 'participant') ? $this->_compId : CRM_Core_DAO::getFieldValue('CRM_Event_DAO_ParticipantPayment', $this->_id, 'participant_id', 'contribution_id'); 
+    }
     if (!$priceSetId && CRM_Utils_Array::value('total_amount', $submittedValues) && $this->_id) {
       // 10117 update th line items for participants
       if ($pId) {
