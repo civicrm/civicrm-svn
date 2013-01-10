@@ -1394,6 +1394,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
         $this->_contactIds[] = $this->_contactId;
       }
 
+      $contributions = array();
       if (CRM_Utils_Array::value('record_contribution', $params)) {
         if (CRM_Utils_Array::value('id', $params)) {
           if ($this->_onlinePendingContributionId) {
@@ -1433,7 +1434,6 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
 
         //insert financial type name in receipt.
         $this->assign('contributionTypeName', CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_FinancialType', $contributionParams['financial_type_id']));
-        $contributions = array();
         $contributionParams['skipLineItem'] = 1;
         if ($this->_single) {
           $contributions[] = CRM_Contribute_BAO_Contribution::create($contributionParams, $ids);
@@ -1478,18 +1478,17 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
     // also store lineitem stuff here
     if ((($this->_lineItem & $this->_action & CRM_Core_Action::ADD) ||
       ($this->_lineItem && CRM_Core_Action::UPDATE && !$this->_paymentId))
-      && !CRM_Utils_Array::value('record_contribution', $params)
     ) {
       foreach ($this->_contactIds as $num => $contactID) {
         foreach ($this->_lineItem as $key => $value) {
           if (is_array($value) && $value != 'skip') {
-            foreach ($value as $line) {
+            foreach ($value as $lineKey => $line) {
               //10117 update the line items for participants if contribution amount is recorded
               if ($this->_quickConfig && CRM_Utils_Array::value('total_amount', $params )) {
                 $line['unit_price'] = $line['line_total'] = $params['total_amount'];
               }
-              $lineItem[$this->_priceSetId] = $line;
-              CRM_Price_BAO_LineItem::processPriceSet($participants[$num]->id, $lineItem, CRM_Utils_Array::value($num, $contributions), 'civicrm_participant');
+              $lineItem[$this->_priceSetId][$lineKey] = $line;
+              CRM_Price_BAO_LineItem::processPriceSet($participants[$num]->id, $lineItem, CRM_Utils_Array::value($num, $contributions, NULL), 'civicrm_participant');
             }
           }
         }
