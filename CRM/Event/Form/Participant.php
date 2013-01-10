@@ -1015,7 +1015,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
         }
       }
       CRM_Event_BAO_Participant::deleteParticipant($this->_id);
-      CRM_Core_Session::setStatus(ts('Selected participant was deleted successfully.', ts('Record Deleted'), 'success'));
+      CRM_Core_Session::setStatus(ts('Selected participant was deleted successfully.', ts('Record Deleted')), 'success');
       if (!empty($participantLinks)) {
         $status = ts('The following participants no longer have an event fee recorded. You can edit their registration and record a replacement contribution by clicking the links below:') . '<br>' . $participantLinks;
         CRM_Core_Session::setStatus($status, ts('Group Payment Deleted'));
@@ -1091,8 +1091,8 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
             $params, $lineItem[0]
           );
         }
-        //CRM-11529 for quick config backoffice transactions 
-        //when financial_type_id is passed in form, update the 
+        //CRM-11529 for quick config backoffice transactions
+        //when financial_type_id is passed in form, update the
         //lineitems with the financial type selected in form
         $submittedFinancialType = CRM_Utils_Array::value('financial_type_id', $params);
         $isPaymentRecorded = CRM_Utils_Array::value('record_contribution', $params);
@@ -1137,7 +1137,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
         $this->assign('amount_level', $params['amount_level']);
       }
     }
-    
+
     $this->_params = $params;
     unset($params['amount']);
     $params['register_date'] = CRM_Utils_Date::processDate($params['register_date'], $params['register_date_time']);
@@ -1451,7 +1451,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
         }
         // next create the transaction record
         $transaction = new CRM_Core_Transaction( );
-       
+
         // CRM-11124
         $checkDiscount = CRM_Core_BAO_Discount::findSet($this->_eventId,'civicrm_event');
         if (!empty($checkDiscount)) {
@@ -1494,7 +1494,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
         }
       }
     }
-    
+
     $updateStatusMsg = NULL;
     //send mail when participant status changed, CRM-4326
     if ($this->_id && $this->_statusId &&
