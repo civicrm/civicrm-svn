@@ -327,7 +327,8 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
         $aid = CRM_Core_OptionGroup::getValue('activity_type','Export Accounting Batch');
         $activityParams = array('source_record_id' => $object->id, 'activity_type_id' => $aid );
         $exportActivity = CRM_Activity_BAO_Activity::retrieve($activityParams, $val);
-        $tokens = array_merge(array('eid' => $exportActivity->id), $tokens);
+        $fid = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_EntityFile', $exportActivity->id, 'file_id', 'entity_id' ); 
+        $tokens = array_merge(array('eid' => $exportActivity->id, 'fid' => $fid), $tokens);
       }
       $values['action'] = CRM_Core_Action::formLink(
         $newLinks,
@@ -443,7 +444,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
         'download' => array(
           'name'  => ts('Download'),
           'url'   => 'civicrm/file',
-          'qs'    => 'reset=1&id=%%id%%&eid=%%eid%%',
+          'qs'    => 'reset=1&id=%%fid%%&eid=%%eid%%',
           'title' => ts('Download Batch'),
         )
       );

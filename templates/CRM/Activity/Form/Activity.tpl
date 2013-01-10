@@ -33,6 +33,9 @@
     {if $context NEQ 'standalone'}
     <h3>{if $action eq 1 or $action eq 1024}{ts 1=$activityTypeName}New %1{/ts}{elseif $action eq 8}{ts 1=$activityTypeName}Delete %1{/ts}{else}{ts 1=$activityTypeName}Edit %1{/ts}{/if}</h3>
     {/if}
+    {if $activityTypeDescription }
+      <div class="help">{$activityTypeDescription}</div>
+    {/if}
     <div class="crm-block crm-form-block crm-activity-form-block">
   {/if}
   {* added onload javascript for source contact*}
@@ -92,15 +95,15 @@
     </td>
   </tr>
   {elseif $action eq 1 or $action eq 2  or $action eq 4 or $context eq 'search' or $context eq 'smog'}
-    {if $activityTypeDescription }
-    <div id="help">{$activityTypeDescription}</div>
-    {/if}
 
   <table class="{if $action eq 4}crm-info-panel{else}form-layout{/if}">
 
   {if $action eq 4}
   <h3>{$activityTypeName}</h3>
-    {else}
+    {if $activityTypeDescription }
+    <div class="help">{$activityTypeDescription}</div>
+    {/if}  
+  {else}
     {if $context eq 'standalone' or $context eq 'search' or $context eq 'smog'}
     <tr class="crm-activity-form-block-activity_type_id">
       <td class="label">{$form.activity_type_id.label}</td><td class="view-value">{$form.activity_type_id.html}</td>
