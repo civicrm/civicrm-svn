@@ -126,14 +126,20 @@ class CRM_Financial_BAO_ExportFormat {
       if ($result) {
         header('Content-Type: application/zip');
         header('Content-Disposition: attachment; filename='.CRM_Utils_File::cleanFileName(basename($zip)));
+        header('Content-Length: ' . filesize($zip));
+        ob_clean();
+        flush();
         readfile($config->customFileUploadDir.CRM_Utils_File::cleanFileName(basename($zip)));
         unlink($zip); //delete the zip to avoid clutter.
         CRM_Utils_System::civiExit();
       }
     }
     else {
-      header('Content-Type: text/csv');
+      header('Content-Type: '.mime_content_type($this->_downloadFile[0]));
       header('Content-Disposition: attachment; filename='.CRM_Utils_File::cleanFileName(basename($this->_downloadFile[0])));
+      header('Content-Length: ' . filesize($this->_downloadFile[0]));
+      ob_clean();
+      flush();
       readfile($config->customFileUploadDir.CRM_Utils_File::cleanFileName(basename($this->_downloadFile[0])));
       CRM_Utils_System::civiExit();
     }
