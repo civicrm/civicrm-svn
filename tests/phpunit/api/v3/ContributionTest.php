@@ -50,7 +50,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'contact_id' => $this->_individualId,
       'receive_date' => '20120511',
       'total_amount' => 100.00,
-                        'financial_type_id'   => $this->_contributionTypeId,
+      'financial_type_id'   => $this->_contributionTypeId,
       'non_deductible_amount' => 10.00,
       'fee_amount' => 51.00,
       'net_amount' => 91.00,
@@ -604,21 +604,24 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
   }
 
   /*
-   * Function tests that line items are updated
+   * Function tests that line items, financial records are updated when contribution amount is changed
    */
-  function testCreateUpdateContributionChangeTotal(){
+  function testCreateUpdateContributionChangeTotal() {
     $contribution = civicrm_api('contribution', 'create', $this->_params);
     $lineItems = civicrm_api('line_item','getvalue',array(
-        'version' => $this->_apiversion,
-        'entity_id' => $contribution['id'],
-        'entity_table' => 'civicrm_contribution',
-        'sequential' => 1,
-        'return' => 'line_total',
+      'version' => $this->_apiversion,
+      'entity_id' => $contribution['id'],
+      'entity_table' => 'civicrm_contribution',
+      'sequential' => 1,
+      'return' => 'line_total',
     ));
     $this->assertEquals('100.00', $lineItems);
 
-    $newParams = array_merge($this->_params, array('total_amount' => '777'));
-    $contribution = civicrm_api('contribution', 'create', $newParams);
+    $newParams = array_merge($this->_params, array(
+                                                   'id' => $contribution['id'],
+                                                   'total_amount' => '125')
+                             );
+    $contribution = civicrm_api('contribution', 'update', $newParams);
     $lineItems = civicrm_api('line_item','getvalue',array(
         'version' => $this->_apiversion,
         'entity_id' => $contribution['id'],
@@ -626,7 +629,107 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
         'sequential' => 1,
         'return' => 'line_total',
     ));
-    $this->assertEquals('777.00', $lineItems);
+    $this->assertEquals('125.00', $lineItems);
+    $trxnAmount = $this->_getFinancialTrxnAmount($contribution['id']);
+    $fitemAmount = $this->_getFinancialItemAmount($contribution['id']);
+    $this->assertEquals('125.00', $trxnAmount);
+    $this->assertEquals('125.00', $fitemAmount);
+  }  
+
+  /*
+   * Function tests that line items, financial records are updated when pay later contribution is received
+   */
+  function testCreateUpdateContributionPayLater() {
+    $contribParams = array(
+      'contact_id' => $this->_individualId,
+      'receive_date' => '2012-01-01',
+      'total_amount' => 100.00,
+      'financial_type_id' => $this->_contributionTypeId,
+      'payment_instrument_id' => 1,
+      'contribution_status_id' => 2,
+      'version' => $this->_apiversion,
+    );
+    $contribution = civicrm_api('contribution', 'create', $contribParams);
+
+    $newParams = array_merge($contribParams, array(
+                                                   'id' => $contribution['id'],
+                                                   'contribution_status_id' => 1,)
+                             );
+    $contribution = civicrm_api('contribution', 'update', $newParams);
+    $contribution = $contribution['values'][$contribution['id']];
+    $this->assertEquals($contribution['contribution_status_id'],'1');
+    $this->_checkFinancialItem($contribution['id'], 'paylater');
+    $this->_checkFinancialTrxn($contribution, 'payLater');
+  }
+
+  /*
+   * Function tests that financial records are updated when Payment Instrument is changed
+   */
+  function testCreateUpdateContributionPaymentInstrument() {
+    $instrumentId = $this->_addPaymentInstrument();
+    $contribParams = array(
+      'contact_id' => $this->_individualId,
+      'total_amount' => 100.00,
+      'financial_type_id' => $this->_contributionTypeId,
+      'payment_instrument_id' => 1,
+      'contribution_status_id' => 1,
+      'version' => $this->_apiversion,
+    );
+    $contribution = civicrm_api('contribution', 'create', $contribParams);
+    $newParams = array_merge($contribParams, array(
+     'id' => $contribution['id'],
+     'payment_instrument_id' => $instrumentId,)
+    );
+    $contribution = civicrm_api('contribution', 'update', $newParams);
+    $this->_checkFinancialTrxn($contribution, 'paymentInstrument');
+  }
+
+  /*
+   * Function tests that financial records are added when Contribution is Refunded
+   */
+  function testCreateUpdateContributionRefund() {
+    $contribParams = array(
+      'contact_id' => $this->_individualId,
+      'receive_date' => '2012-01-01',
+      'total_amount' => 100.00,
+      'financial_type_id' => $this->_contributionTypeId,
+      'payment_instrument_id' => 1,
+      'contribution_status_id' => 1,
+      'version' => $this->_apiversion,
+    );
+    $contribution = civicrm_api('contribution', 'create', $contribParams);
+    $newParams = array_merge($contribParams, array(
+     'id' => $contribution['id'],
+     'contribution_status_id' => 7,
+      )
+    );
+    $contribution = civicrm_api('contribution', 'update', $newParams);
+    $this->_checkFinancialTrxn($contribution, 'refund');
+    $this->_checkFinancialItem($contribution['id'], 'refund');
+  }
+
+  /*
+   * Function tests that financial records are added when Pending Contribution is Canceled
+   */
+  function testCreateUpdateContributionCancelPending() {
+    $contribParams = array(
+      'contact_id' => $this->_individualId,
+      'receive_date' => '2012-01-01',
+      'total_amount' => 100.00,
+      'financial_type_id' => $this->_contributionTypeId,
+      'payment_instrument_id' => 1,
+      'contribution_status_id' => 2,
+      'version' => $this->_apiversion,
+    );
+    $contribution = civicrm_api('contribution', 'create', $contribParams);
+    $newParams = array_merge($contribParams, array(
+     'id' => $contribution['id'],
+     'contribution_status_id' => 3,
+      )
+    );
+    $contribution = civicrm_api('contribution', 'update', $newParams);
+    $this->_checkFinancialTrxn($contribution, 'cancelPending');
+    $this->_checkFinancialItem($contribution['id'], 'cancelPending');
   }
 
   //To Update Contribution
@@ -956,5 +1059,134 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       $this->assertEquals($value, $values[$key], $key . " value: $value doesn't match " . print_r($values, TRUE) . 'in line' . __LINE__);
     }
   }
+
+ function _getFinancialTrxnAmount($contId) {
+   $query = "SELECT
+     SUM( ft.total_amount ) AS total
+     FROM civicrm_financial_trxn AS ft
+     LEFT JOIN civicrm_entity_financial_trxn AS ceft ON ft.id = ceft.financial_trxn_id
+     WHERE ceft.entity_table = 'civicrm_contribution'
+     AND ceft.entity_id = {$contId}";
+   $result = CRM_Core_DAO::singleValueQuery($query);
+   return $result;
+ }
+ 
+ function _getFinancialItemAmount($contId) {
+   $lineItem = key(CRM_Price_BAO_LineItem::getLineItems($contId, 'contribution'));
+   $query = "SELECT
+     SUM(amount)
+     FROM civicrm_financial_item
+     WHERE entity_table = 'civicrm_line_item'
+     AND entity_id = {$lineItem}";
+   $result = CRM_Core_DAO::singleValueQuery($query);
+   return $result;
+ }
+ 
+ function _checkFinancialItem($contId, $context) {
+   if ($context != 'paylater') {
+     $params = array (
+       'entity_id' =>   $contId,
+       'entity_table' => 'civicrm_contribution',
+     );
+     $trxn = CRM_Financial_BAO_FinancialItem::retrieveMaxEntityFinancialTrxn($params);
+     $entityParams = array(
+        'financial_trxn_id' => $trxn->financial_trxn_id,
+        'entity_table' => 'civicrm_financial_item',
+     );
+     $entityTrxn = current(CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($entityParams));
+     $params = array(
+        'id' => $entityTrxn['entity_id'],
+     );
+   }
+   if ($context == 'paylater') {
+     $lineItems = CRM_Price_BAO_LineItem::getLineItems($contId, 'contribution');
+     foreach ($lineItems as $key=>$item) {
+       $params = array(
+         'entity_id' => $key,
+         'entity_table' => 'civicrm_line_item',
+       );
+       $compareParams = array ('status_id' => 1);
+       $this->assertDBCompareValues('CRM_Financial_DAO_FinancialItem', $params, $compareParams);
+     }
+   }
+   elseif ($context == 'refund') {
+     $compareParams = array(
+       'status_id' => 1,
+       'financial_account_id' => 3,
+       'amount' => -100,
+     );
+   }
+   elseif ($context == 'cancelPending'){
+     $compareParams = array(
+       'status_id' => 3,
+       'financial_account_id' => 3,
+       'amount' => -100,
+     );
+   }
+   if ($context != 'paylater') {
+     $this->assertDBCompareValues('CRM_Financial_DAO_FinancialItem', $params, $compareParams);
+   }
+ }
+
+ function _checkFinancialTrxn($contribution, $context) {  
+   $trxnParams = array(
+     'entity_id' =>   $contribution['id'],
+     'entity_table' => 'civicrm_contribution',
+   );
+   $trxn = CRM_Financial_BAO_FinancialItem::retrieveMaxEntityFinancialTrxn($trxnParams);
+   $params = array(
+     'id' => $trxn->financial_trxn_id,
+   );
+   if ($context == 'payLater') {
+     $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Accounts Receivable Account is' "));
+     $compareParams = array(
+       'status_id' => 1,
+       'from_financial_account_id' => CRM_Contribute_PseudoConstant::financialAccountType($contribution['financial_type_id'], $relationTypeId),  
+     );
+   }
+   elseif ($context == 'paymentInstrument') {
+     $compareParams = array(
+       'from_financial_account_id' => 6,  
+       'to_financial_account_id'  =>  7,
+     );
+   }
+   elseif ($context == 'refund') {
+     $compareParams = array(
+       'to_financial_account_id' => 6,
+       'total_amount' => -100,
+       'status_id' => 7,
+     );
+   }
+   elseif ($context == 'cancelPending') {
+     $compareParams = array(
+       'from_financial_account_id' => 7,
+       'total_amount' => -100,
+       'status_id' => 3,
+     );
+   }
+   $this->assertDBCompareValues('CRM_Financial_DAO_FinancialTrxn',$params,$compareParams);
+ }
+
+ function _addPaymentInstrument () { 
+   $gId = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionGroup', 'payment_instrument', 'id', 'name');
+   $optionParams = array( 
+     'option_group_id' => $gId,
+     'label' => 'Test Card',
+     'name' => 'Test Card',
+     'value' => '6',
+     'weight' => '6',
+     'is_active' => 1,
+);
+   $optionValue = CRM_Core_BAO_OptionValue::add($optionParams, CRM_Core_DAO::$_nullArray);
+   $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Asset Account is' "));
+   $financialParams = array(
+     'entity_table' => 'civicrm_option_value',
+     'entity_id' => $optionValue->id,
+     'account_relationship' => $relationTypeId,
+     'financial_account_id' => 7,
+   );
+   $financialType = CRM_Financial_BAO_FinancialTypeAccount::add($financialParams, CRM_Core_DAO::$_nullArray);
+   return $optionValue->value;
+ }
 }
 
