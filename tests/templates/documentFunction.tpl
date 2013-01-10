@@ -1,13 +1,10 @@
 {literal}<?php{/literal}
 
-
-
 /*
  {$description}
  */
 function {$function}_example(){literal}{{/literal}
 $params = {$params|@print_array};
-
 
   $result = civicrm_api( '{$fnPrefix}','{$action}',$params );
 
@@ -33,8 +30,13 @@ function {$function}_expectedresult(){literal}{{/literal}
 *
 * You can see the outcome of the API tests at
 * http://tests.dev.civicrm.org/trunk/results-api_v3
+*
+* To Learn about the API read
+* http://book.civicrm.org/developer/current/techniques/api/
+*
 * and review the wiki at
 * http://wiki.civicrm.org/confluence/display/CRMDOC/CiviCRM+Public+APIs
+*
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 *
