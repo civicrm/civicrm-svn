@@ -74,7 +74,8 @@ class CRM_Financial_Form_BatchTransaction extends CRM_Contribute_Form {
    */
   public function buildQuickForm() {
     parent::buildQuickForm();
-    $this->add('submit','close_batch', ts('Close Batch'));
+    $this->add('submit', 'close_batch', ts('Close Batch'));
+    $this->add('submit', 'export_batch', ts('Close & Export'));
     // text for sort_name
     $this->addElement('text',
       'sort_name',

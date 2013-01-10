@@ -225,6 +225,9 @@ class CRM_Admin_Page_AJAX {
           elseif ($op == 'remove') {
             $status = ts('Are you sure you want to remove this financial transaction?');
           }
+          elseif ($op == 'export') {
+            $status = ts('Are you sure you want to close and export this batch?');
+          }
           else {
             $status = ts('Are you sure you want to assign this financial transaction to the batch?');
           }

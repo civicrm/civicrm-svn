@@ -150,11 +150,9 @@ cj(function($) {
       },
       "fnDrawCallback": function(oSettings) {
         $('.crm-editable', '#crm-batch-selector').crmEditable();
+        $("#toggleSelect").prop('checked', false);
         if (checkedRows.length) {
           $(checkedRows.join(',')).prop('checked', true).change();
-        }
-        else {
-          $("#toggleSelect").prop('checked', false);
         }
       }
     });
