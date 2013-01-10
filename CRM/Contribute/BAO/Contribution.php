@@ -2678,7 +2678,8 @@ WHERE  contribution_id = %1 ";
       // change Payment Instrument for a Completed contribution
       // first handle special case when contribution is changed from Pending to Completed status when initial payment
       // instrument is null and now new payment instrument is added along with the payment
-      if ($params['prevContribution']->payment_instrument_id == null && $params['contribution']->payment_instrument_id != null ) {
+      if (CRM_Utils_System::isNull($params['prevContribution']->payment_instrument_id) && 
+        !CRM_Utils_System::isNull($params['contribution']->payment_instrument_id)) {
         //check if status is changed from Pending to Completed
         // do not update payment instrument changes for Pending to Completed
         if (!($params['contribution']->contribution_status_id == array_search('Completed', $contributionStatuses) &&
@@ -2686,10 +2687,13 @@ WHERE  contribution_id = %1 ";
           // for all other statuses create new financial records
           self::updateFinancialAccounts($params, 'changePaymentInstrument');
         }
-      } else if ($params['contribution']->payment_instrument_id != $params['prevContribution']->payment_instrument_id) {
+      } else if ((!CRM_Utils_System::isNull($params['contribution']->payment_instrument_id) ||
+        !CRM_Utils_System::isNull($params['prevContribution']->payment_instrument_id)) &&
+        $params['contribution']->payment_instrument_id != $params['prevContribution']->payment_instrument_id) {
         // for any other payment instrument changes create new financial records
         self::updateFinancialAccounts($params, 'changePaymentInstrument');
-      } else if ($params['contribution']->check_number != $params['prevContribution']->check_number) {
+      } else if (!CRM_Utils_System::isNull($params['contribution']->check_number) && 
+        $params['contribution']->check_number != $params['prevContribution']->check_number) {
         // another special case when check number is changed, create new financial records
         self::updateFinancialAccounts($params, 'changePaymentInstrument');
       }
