@@ -258,21 +258,23 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
               && count( $this->_params['onbehalf_location'][$blockName] ) > 0 ) {
                 $isPrimary = 0;
             }
-            if ( !$locTypeId ) {
-              $this->_params['onbehalf_location'][$blockName][] = array( 
-                $fieldName    => $value,
-                $locationType => $locationValue,
-                'is_primary'  => $isPrimary
-              );
-          }
-            else {
-               $this->_params['onbehalf_location'][$blockName][] = array( 
-                $fieldName    => $value,
-                $locationType => $locationValue,
-                'is_primary'  => $isPrimary,
-                $locTypeId  => $typeId
-              );
-        }
+            if ($locationValue) {
+              if ( !$locTypeId ) {
+                $this->_params['onbehalf_location'][$blockName][] = array( 
+                  $fieldName    => $value,
+                  $locationType => $locationValue,
+                  'is_primary'  => $isPrimary
+                );
+              }
+              else {
+                $this->_params['onbehalf_location'][$blockName][] = array( 
+                  $fieldName    => $value,
+                  $locationType => $locationValue,
+                  'is_primary'  => $isPrimary,
+                  $locTypeId  => $typeId
+                );
+              }
+            }
           }
         }
         elseif (strstr($loc, 'custom')) {
