@@ -25,7 +25,7 @@
 *}
 
 <div id="enableDisableStatusMsg" class="crm-container" style="display:none;"></div>
-<table id="batch-summary" cellpadding="0" cellspacing="0" border="0">
+<table id="batch-summary" cellpadding="0" cellspacing="0" border="0" class="report crm-batch_summary">
   <thead class="sticky">
     <tr>
      {foreach from=$columnHeaders item=head}
@@ -41,10 +41,13 @@
     </tr>
   </tbody>
 </table>
-{if $statusID eq 1}
-<div class="crm-submit-buttons">{$form.close_batch.html}{$form.export_batch.html}</div><br/>
-<div class="form-layout-compressed">{$form.trans_remove.html}&nbsp;{$form.rSubmit.html}</div><br/>
+
+<div class="crm-submit-buttons">{if $statusID eq 1}{$form.close_batch.html}{/if} {$form.export_batch.html}</div>
+
+{if $statusID eq 1} {* Add / remove transactions only allowed for Open batches *}
+  <br /><div class="form-layout-compressed">{$form.trans_remove.html}&nbsp;{$form.rSubmit.html}</div><br/>
 {/if}
+
 <div id="ltype">
   <p></p>
   <div class="form-item">

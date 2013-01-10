@@ -433,9 +433,9 @@ class CRM_Financial_Page_AJAX {
     $batchSummary =
       array(
         'created_by' => CRM_Contact_BAO_Contact::displayName($batchInfo->created_id),
+        'status' => CRM_Core_OptionGroup::getLabel('batch_status', $batchInfo->status_id),
         'description' => $batchInfo->description,
         'payment_instrument' => CRM_Core_OptionGroup::getLabel('payment_instrument', $batchInfo->payment_instrument_id),
-        'type' => $batchInfo->type_id,
         'item_count' => $batchInfo->item_count,
         'assigned_item_count' => $batchTotals[$batchID]['item_count'],
         'total' => CRM_Utils_Money::format($batchInfo->total),

@@ -61,9 +61,9 @@ class CRM_Financial_Form_BatchTransaction extends CRM_Contribute_Form {
       $columnHeaders =
         array(
           'created_by' => ts('Created By'),
+          'status' => ts('Status'),
           'description'=> ts('Description'),
           'payment_instrument' => ts('Payment Instrument'),
-          'type' => ts('Type'),
           'item_count' => ts('Entered Transactions'),
           'assigned_item_count' => ts('Assigned Transactions'),
           'total' => ts('Entered Total'),
@@ -80,14 +80,19 @@ class CRM_Financial_Form_BatchTransaction extends CRM_Contribute_Form {
    * @access public
    */
   public function buildQuickForm() {
-    // do not build form unless it is open batch
+    if ($this->_batchStatusId == 2) {
+      $this->add('submit', 'export_batch', ts('Export Batch'));      
+    }
+    
+    // do not build rest of form unless it is open batch
     if ($this->_batchStatusId != 1 ) {
       return;
     }
 
     parent::buildQuickForm();
     $this->add('submit', 'close_batch', ts('Close Batch'));
-    $this->add('submit', 'export_batch', ts('Close & Export'));
+    $this->add('submit', 'export_batch', ts('Close & Export Batch'));
+
     // text for sort_name
     $this->addElement('text',
       'sort_name',
