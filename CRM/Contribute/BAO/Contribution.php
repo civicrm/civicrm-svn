@@ -2657,8 +2657,8 @@ WHERE  contribution_id = %1 ";
       $entityTable = 'civicrm_contribution';
     }
     $update = FALSE;
+    $params['trxnParams'] = $trxnParams;
     if (CRM_Utils_Array::value('prevContribution', $params)) {
-      $params['trxnParams'] = $trxnParams;
       
       if (!CRM_Utils_Array::value('line_item', $params)) {
         CRM_Price_BAO_LineItem::getLineItemArray($params, $entityId, str_replace('civicrm_', '', $entityTable));
