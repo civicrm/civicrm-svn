@@ -65,6 +65,7 @@ class api_v3_MailingTest extends CiviUnitTestCase {
       'created_id' => 1,
     );
     $result = civicrm_api('mailing', 'create', $params);
+    $this->documentMe($params, $result, __FUNCTION__, __FILE__);
     $jobs = civicrm_api('mailing_job', 'get', array('version' =>3, 'mailing_id' => $result['id']));
     $this->assertAPISuccess($jobs);
     $this->assertEquals(1, $jobs['count']);
