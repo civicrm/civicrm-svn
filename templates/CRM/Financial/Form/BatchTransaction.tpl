@@ -23,10 +23,10 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{* this template is used for adding/editing/deleting financial type  *}
-<div id="crm-transactions">
+{* this template is used for batch transaction screen, assign/remove transactions to batch  *}
+{if $statusID eq 1}
 <div class="crm-form-block crm-search-form-block">
-  <div class="crm-accordion-wrapper crm-activity_search-accordion collapsed">
+  <div class="crm-accordion-wrapper crm-batch_transaction_search-accordion collapsed">
     <div class="crm-accordion-header crm-master-accordion-header">
       <div class="icon crm-accordion-pointer"></div>
     {ts}Edit Search Criteria{/ts}
@@ -107,7 +107,7 @@
   {/strip}
   </div>
 </div>
-</div>
+{/if}
 
 {literal}
 <script type="text/javascript">
@@ -180,7 +180,6 @@ cj( function() {
     });
   }
   else {
-    cj('#crm-transactions').hide();
     buildTransactionSelectorRemove();
   }
 });

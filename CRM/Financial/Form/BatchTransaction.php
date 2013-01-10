@@ -39,15 +39,22 @@
  *
  */
 class CRM_Financial_Form_BatchTransaction extends CRM_Contribute_Form {
-  static $_links = null;
+  static $_links = NULL;
   static $_entityID;
+
+  /**
+   * Batch status
+   * @var
+   */
+  protected $_batchStatusId;
 
   function preProcess() {
     self::$_entityID = CRM_Utils_Request::retrieve( 'bid' , 'Positive' ) ? CRM_Utils_Request::retrieve( 'bid' , 'Positive' ) : $_POST['batch_id'];
     $this->assign('entityID', self::$_entityID);
     if (isset(self::$_entityID)) {
-      $statusID = CRM_Core_DAO::getFieldValue('CRM_Batch_BAO_Batch', self::$_entityID, 'status_id');
-      $this->assign('statusID', $statusID);
+      $this->_batchStatusId = CRM_Core_DAO::getFieldValue('CRM_Batch_BAO_Batch', self::$_entityID, 'status_id');
+      $this->assign('statusID', $this->_batchStatusId);
+
       $batchTitle = CRM_Core_DAO::getFieldValue('CRM_Batch_BAO_Batch', self::$_entityID, 'title');
       CRM_Utils_System::setTitle(ts('Accounting Batch - %1', array(1 => $batchTitle)));
 
@@ -73,6 +80,11 @@ class CRM_Financial_Form_BatchTransaction extends CRM_Contribute_Form {
    * @access public
    */
   public function buildQuickForm() {
+    // do not build form unless it is open batch
+    if ($this->_batchStatusId != 1 ) {
+      return;
+    }
+
     parent::buildQuickForm();
     $this->add('submit', 'close_batch', ts('Close Batch'));
     $this->add('submit', 'export_batch', ts('Close & Export'));
@@ -120,7 +132,7 @@ class CRM_Financial_Form_BatchTransaction extends CRM_Contribute_Form {
       array(
         array('type' => 'submit',
           'name' => ts('Search'),
-          'isDefault' => true,
+          'isDefault' => TRUE,
         )
       )
     );
@@ -144,6 +156,10 @@ class CRM_Financial_Form_BatchTransaction extends CRM_Contribute_Form {
   }
 
   function setDefaultValues() {
+    // do not setdefault unless it is open batch
+    if ($this->_batchStatusId != 1 ) {
+      return;
+    }
     if (isset(self::$_entityID)) {
       $paymentInstrumentID = CRM_Core_DAO::getFieldValue('CRM_Batch_BAO_Batch', self::$_entityID, 'payment_instrument_id');
       $defaults['contribution_payment_instrument_id'] = $paymentInstrumentID;
