@@ -598,5 +598,13 @@ function showStartDate( ) {
 }
 
 {/literal}{/if}{literal}
+cj('#fee_amount').change( function() {
+  var totalAmount = cj('#total_amount').val();
+  var feeAmount = cj('#fee_amount').val();  
+  var netAmount = totalAmount - feeAmount;
+  if (!cj('#net_amount').val()) {
+    cj('#net_amount').val(netAmount);
+  }
+});
 </script>
 {/literal}
