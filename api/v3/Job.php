@@ -70,7 +70,7 @@ function civicrm_api3_job_get($params) {
 function civicrm_api3_job_execute($params) {
   require_once 'CRM/Core/JobManager.php';
   $facility = new CRM_Core_JobManager();
-  $facility->execute(CRM_Utils_Array::value('auth', $params, TRUE));
+  $facility->execute(FALSE);
 
   // always creates success - results are handled elsewhere
   return civicrm_api3_create_success();
@@ -82,7 +82,6 @@ function civicrm_api3_job_execute($params) {
  * @param array $params array or parameters determined by getfields
  */
 function _civicrm_api3_job_execute_spec(&$params) {
-  $params['auth'] = array('title' => 'Require authentication');
 }
 
 /**
