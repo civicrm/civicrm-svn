@@ -366,7 +366,9 @@ class CRM_Financial_Page_AJAX {
       }
       else {
         $row[$financialItem->id]['check'] = NULL;
-        $row[$financialItem->id]['action'] = NULL;
+        $links = CRM_Financial_Page_BatchTransaction::links();
+        unset($links['remove']);
+        $row[$financialItem->id]['action'] = CRM_Core_Action::formLink($links, null, array('id' => $financialItem->id, 'contid' => $financialItem->contributionID, 'cid' => $financialItem->contact_id));
       }
       $row[$financialItem->id]['contact_type'] = CRM_Contact_BAO_Contact_Utils::getImage(CRM_Utils_Array::value('contact_sub_type',$row[$financialItem->id]) ? CRM_Utils_Array::value('contact_sub_type',$row[$financialItem->id]) : CRM_Utils_Array::value('contact_type',$row[$financialItem->id]) ,false, $financialItem->contact_id);
       $financialitems = $row;
