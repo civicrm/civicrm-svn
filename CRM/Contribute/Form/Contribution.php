@@ -703,6 +703,8 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
           }
           break;
       }
+    } else {
+      unset($status[CRM_Utils_Array::key('Refunded', $statusName)]);
     }
 
     $this->add('select', 'contribution_status_id',
