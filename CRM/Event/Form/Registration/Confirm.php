@@ -98,7 +98,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
         $payment = CRM_Core_Payment::singleton($this->_mode, $this->_paymentProcessor, $this);
         $paymentObjError = ts('The system did not record payment details for this payment and so could not process the transaction. Please report this error to the site administrator.');
         if (is_object($payment)) 
-        $expressParams = $payment->getExpressCheckoutDetails($this->get('token'));
+          $expressParams = $payment->getExpressCheckoutDetails($this->get('token'));
         else
           CRM_Core_Error::fatal($paymentObjError);
 
@@ -271,10 +271,6 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
         }
       }
 
-      if (CRM_Utils_Array::value('int_amount', $this->_params[0])
-          && $initialAmount = CRM_Utils_Array::value('initial_amount', $this->_params[0])) {
-        $this->assign('initialAmount', $initialAmount);
-      }
       $this->assign('part', $this->_part);
       $this->set('part', $this->_part);
       $this->assign('amounts', $this->_amount);
@@ -690,7 +686,6 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
         $this->set('trxnId', CRM_Utils_Array::value('trxn_id', $value));
       }
 
-      $value['fee_amount'] = CRM_Utils_Array::value('initial_amount', $value);
       $this->set('value', $value);
 
       // handle register date CRM-4320
@@ -732,10 +727,6 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
         $allParticipantIds = array_merge(array($registerByID), $this->_additionalParticipantIds);
       }
 
-      $initPoint = 1;
-      if ( CRM_Utils_Array::value('initial_amount', $this->_params) > 0.00) {
-        $initPoint = $this->_params['amount'] / $this->_params['initial_amount'];
-      }
       $entityTable = 'civicrm_participant';
       foreach ($this->_lineItem as $key => $value) {
         if (($value != 'skip') &&
@@ -746,20 +737,8 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
           if ($this->_allowConfirmation) {
             CRM_Price_BAO_LineItem::deleteLineItems($entityId, $entityTable);
           }
-
-          // create line.
-          foreach ($value as $line) {
-            $line['entity_id'] = $entityId;
-            $line['entity_table'] = $entityTable;
-            $line['financial_type_id'] = $this->_values['event']['financial_type_id'];
-            $lineItems = CRM_Price_BAO_LineItem::create( $line );
-
-            $int_name  = 'txt-price_'. $line['price_field_id'];
-            $initvalue = (float) $line['unit_price']/$initPoint;
-            $initValue = number_format($initvalue, 2, '.', '');
-            $lineItems->$int_name= $initValue;
-            CRM_Financial_BAO_FinancialItem::add( $lineItems, $contribution );
-          }
+          $lineItem[$this->_priceSetId] = $value;
+          CRM_Price_BAO_LineItem::processPriceSet($entityId, $lineItem, $contribution, $entityTable);
         }
       }
     }
@@ -995,7 +974,8 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
       // available at hook_post_process, CRM-8908
       $contribParams['soft_credit_to'] = $params['soft_credit_to'] = $contribSoftContactId;
     }
-
+    $contribParams['payment_processor'] = CRM_Utils_Array::value('payment_processor', $params);
+    $contribParams['skipLineItem'] = 1; 
     // create contribution record
     $contribution = CRM_Contribute_BAO_Contribution::add($contribParams, $ids);
 

@@ -280,7 +280,7 @@ class CRM_Price_BAO_LineItem extends CRM_Price_DAO_LineItem {
         $line['entity_table'] = $entityTable;
         $line['entity_id'] = $entityId;
         $lineItems = CRM_Price_BAO_LineItem::create($line);
-        if (!$update) {
+        if (!$update && $contributionDetails) {
           CRM_Financial_BAO_FinancialItem::add($lineItems, $contributionDetails);
         }
       }

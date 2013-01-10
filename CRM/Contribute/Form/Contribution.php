@@ -608,7 +608,6 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
     }
 
     $this->applyFilter('__ALL__', 'trim');
-
     if ($this->_action & CRM_Core_Action::UPDATE) {
       if (empty($this->_compId)) {
         $txrnLineTotal = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnLineTotal($this->_id, 'civicrm_contribution');
@@ -675,7 +674,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
 
       $this->addElement('checkbox', 'ch_price', ts('Send Receipt?'));
     } 
-
+    
     if ($this->_action & CRM_Core_Action::DELETE) {
       $this->addButtons(array(
           array(
@@ -1077,9 +1076,9 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
       
       $submittedValues['total_amount'] = CRM_Utils_Array::value('amount', $submittedValues);
     }
+      $pId = ($this->_compId && $this->_context == 'participant') ? $this->_compId : CRM_Core_DAO::getFieldValue('CRM_Event_DAO_ParticipantPayment', $this->_id, 'participant_id', 'contribution_id'); //CRM-10964
     if (!$priceSetId && CRM_Utils_Array::value('total_amount', $submittedValues) && $this->_id) {
       // 10117 update th line items for participants
-      $pId = ($this->_compId && $this->_context == 'participant') ? $this->_compId : CRM_Core_DAO::getFieldValue('CRM_Event_DAO_ParticipantPayment', $this->_id, 'participant_id', 'contribution_id'); //CRM-10964
       if ($pId) {
         $entityTable = 'participant';
         $entityID = $pId;
@@ -1213,7 +1212,10 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
 
       //Add Additional common information  to formatted params
       CRM_Contribute_Form_AdditionalInfo::postProcessCommon($formValues, $params, $this);
-
+      if ($pId) {
+        $params['contribution_mode'] = 'participant';
+        $params['participant_id'] = $pId;
+      }
       $params['line_item'] = $lineItem;
       $params['payment_processor_id'] = $params['payment_processor'] = CRM_Utils_Array::value('id', $this->_paymentProcessor);
       //create contribution.

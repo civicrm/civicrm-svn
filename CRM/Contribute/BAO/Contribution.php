@@ -2648,14 +2648,20 @@ WHERE  contribution_id = %1 ";
     if (CRM_Utils_Array::value('payment_processor', $params)) {
       $trxnParams['payment_processor_id'] = $params['payment_processor'];
     }
-
+    if (CRM_Utils_Array::value('contribution_mode', $params) == 'participant') { 
+      $entityId = $params['participant_id'];
+      $entityTable = 'civicrm_participant';
+    }
+    else {
+      $entityId = $params['contribution']->id;
+      $entityTable = 'civicrm_contribution';
+    }
     $update = FALSE;
     if (CRM_Utils_Array::value('prevContribution', $params)) {
       $params['trxnParams'] = $trxnParams;
       
       if (!CRM_Utils_Array::value('line_item', $params)) {
-        $entityId = $params['contribution']->id;
-        CRM_Price_BAO_LineItem::getLineItemArray($params, $entityId);
+        CRM_Price_BAO_LineItem::getLineItemArray($params, $entityId, str_replace('civicrm_', '', $entityTable));
       }
       //if Change contribution amount
       if ($params['total_amount'] != $params['prevContribution']->total_amount) {
@@ -2713,9 +2719,10 @@ WHERE  contribution_id = %1 ";
     }
     
     // record line items and finacial items
-    $entityId = $params['contribution']->id;
-    $entityTable = 'civicrm_contribution';
-    CRM_Price_BAO_LineItem::processPriceSet($entityId, CRM_Utils_Array::value('line_item', $params), $params['contribution'], $entityTable, $update);
+   
+    if (!CRM_Utils_Array::value('skipLineItem', $params)) {
+      CRM_Price_BAO_LineItem::processPriceSet($entityId, CRM_Utils_Array::value('line_item', $params), $params['contribution'], $entityTable, $update);
+    }
     
     // create batch entry if batch_id is passed
     if (CRM_Utils_Array::value('batch_id', $params)) {

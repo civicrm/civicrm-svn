@@ -1256,6 +1256,11 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
       }
     }
 
+    //do cleanup line  items if participant edit the Event Fee.
+      if (($this->_lineItem || !isset($params['proceSetId'])) && !$this->_paymentId && $this->_id) {
+      CRM_Price_BAO_LineItem::deleteLineItems($this->_id, 'civicrm_participant');
+    }
+    
     if ($this->_mode) {
       // add all the additioanl payment params we need
       $this->_params["state_province-{$this->_bltID}"] = $this->_params["billing_state_province-{$this->_bltID}"] = CRM_Core_PseudoConstant::stateProvinceAbbreviation($this->_params["billing_state_province_id-{$this->_bltID}"]);
@@ -1315,7 +1320,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
       $this->_params['mode'] = $this->_mode;
 
       //add contribution reocord
-      $contribution = CRM_Event_Form_Registration_Confirm::processContribution($this, $this->_params, $result, $contactID, FALSE);
+      $contributions[] = $contribution = CRM_Event_Form_Registration_Confirm::processContribution($this, $this->_params, $result, $contactID, FALSE);
 
       // add participant record
       $participants = array();
@@ -1429,6 +1434,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
         //insert financial type name in receipt.
         $this->assign('contributionTypeName', CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_FinancialType', $contributionParams['financial_type_id']));
         $contributions = array();
+        $contributionParams['skipLineItem'] = 1;
         if ($this->_single) {
           $contributions[] = CRM_Contribute_BAO_Contribution::create($contributionParams, $ids);
         }
@@ -1469,26 +1475,21 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
       }
     }
 
-    //do cleanup line  items if participant edit the Event Fee.
-    if (($this->_lineItem || !isset($params['proceSetId'])) && !$this->_paymentId && isset($params['participant_id'])) {
-      CRM_Price_BAO_LineItem::deleteLineItems($params['participant_id'], 'civicrm_participant');
-    }
-
     // also store lineitem stuff here
-    if (($this->_lineItem & $this->_action & CRM_Core_Action::ADD) ||
-      ($this->_lineItem && CRM_Core_Action::UPDATE && !$this->_paymentId)
+    if ((($this->_lineItem & $this->_action & CRM_Core_Action::ADD) ||
+      ($this->_lineItem && CRM_Core_Action::UPDATE && !$this->_paymentId))
+      && !CRM_Utils_Array::value('record_contribution', $params)
     ) {
       foreach ($this->_contactIds as $num => $contactID) {
         foreach ($this->_lineItem as $key => $value) {
           if (is_array($value) && $value != 'skip') {
             foreach ($value as $line) {
-              $line['entity_table'] = 'civicrm_participant';
-              $line['entity_id'] = $participants[$num]->id;
               //10117 update the line items for participants if contribution amount is recorded
               if ($this->_quickConfig && CRM_Utils_Array::value('total_amount', $params )) {
                 $line['unit_price'] = $line['line_total'] = $params['total_amount'];
               }
-              $lineItems = CRM_Price_BAO_LineItem::create($line);
+              $lineItem[$this->_priceSetId] = $line;
+              CRM_Price_BAO_LineItem::processPriceSet($participants[$num]->id, $lineItem, CRM_Utils_Array::value($num, $contributions), 'civicrm_participant');
             }
           }
         }
