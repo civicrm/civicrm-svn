@@ -92,12 +92,13 @@ class CRM_Event_Form_Registration_ThankYou extends CRM_Event_Form_Registration {
    */
   public function buildQuickForm() {
     // Assign the email address from a contact id lookup as in CRM_Event_BAO_Event->sendMail()
-    if (isset($this->_params[0]['contact_id'])) {
-      list($displayName, $email) = CRM_Contact_BAO_Contact_Location::getEmailDetails($this->_params[0]['contact_id']);
+    $primaryContactId = $this->get('primaryContactId');
+    if ($primaryContactId) {
+      list($displayName, $email) = CRM_Contact_BAO_Contact_Location::getEmailDetails($primaryContactId);
       $this->assign('email', $email);
     }
     $this->assignToTemplate();
-
+    
     if ($this->_priceSetId && !CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_priceSetId, 'is_quick_config')) {
       $lineItemForTemplate = array();
       foreach ($this->_lineItem as $key => $value) {
