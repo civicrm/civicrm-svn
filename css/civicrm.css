@@ -870,7 +870,8 @@
 }
 
 /* Page and form-level 'help' */
-.crm-container .help {
+.crm-container .help,
+.crm-container #help {
   background-color: #F1F8EB;
   border: 1px solid #B0D730;
   color: #3E3E3E;
