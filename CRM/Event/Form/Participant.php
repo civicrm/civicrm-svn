@@ -1015,7 +1015,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
         }
       }
       CRM_Event_BAO_Participant::deleteParticipant($this->_id);
-      CRM_Core_Session::setStatus(ts('Selected participant was deleted successfully.', ts('Record Deleted')), 'success');
+      CRM_Core_Session::setStatus(ts('Selected participant was deleted successfully.'), ts('Record Deleted'), 'success');
       if (!empty($participantLinks)) {
         $status = ts('The following participants no longer have an event fee recorded. You can edit their registration and record a replacement contribution by clicking the links below:') . '<br>' . $participantLinks;
         CRM_Core_Session::setStatus($status, ts('Group Payment Deleted'));
