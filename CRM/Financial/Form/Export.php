@@ -102,14 +102,9 @@ class CRM_Financial_Form_Export extends CRM_Core_Form {
       }
     }
 
-    $status = CRM_Utils_Request::retrieve('status', 'Positive', $this);
-    $path = '';
-    if ($status) {
-      $path = "&batchStatus={$status}";
-    }
     $session = CRM_Core_Session::singleton();
     $session->replaceUserContext(CRM_Utils_System::url('civicrm/financial/financialbatches',
-      "reset=1{$path}"));
+      "reset=1&batchStatus=5"));
   }
   
   /**
