@@ -133,12 +133,13 @@ class CRM_Financial_Page_FinancialTypeAccount extends CRM_Core_Page {
     $params = array();
     $dao = new CRM_Financial_DAO_EntityFinancialAccount();
     $params['entity_id'] = $this->_aid;
+    $params['entity_table'] = 'civicrm_financial_type';
     if ($this->_aid) {
-      $this->_title = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_FinancialType', $this->_aid, 'name' );
-      CRM_Utils_System::setTitle( $this->_title .' - '.ts( 'Financial Accounts' ) );
-
-      $dao->copyValues( $params );
-      //$dao->orderBy('id');
+      $this->_title = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_FinancialType', $this->_aid, 'name');
+      CRM_Utils_System::setTitle($this->_title .' - '.ts( 'Financial Accounts'));
+      $financialAccountType = CRM_Core_PseudoConstant::accountOptionValues('financial_account_type');
+      $accountRelationship = CRM_Core_PseudoConstant::accountOptionValues('account_relationship');
+      $dao->copyValues($params);
       $dao->find();
       while ($dao->fetch()) {
         $financialType[$dao->id] = array();
@@ -152,15 +153,16 @@ class CRM_Financial_Page_FinancialTypeAccount extends CRM_Core_Page {
           $financialType[$dao->id]['accounting_code'] = $financialAccount->accounting_code;
           $financialType[$dao->id]['is_active'] = $financialAccount->is_active;
           if (!empty($financialAccount->contact_id)) {
-            $financialType[$dao->id]['owned_by'] = CRM_Contact_BAO_Contact::displayName( $financialAccount->contact_id );
+            $financialType[$dao->id]['owned_by'] = CRM_Contact_BAO_Contact::displayName($financialAccount->contact_id);
           }
           if (!empty($financialAccount->financial_account_type_id)) {
             $optionGroupName = 'financial_account_type';
-            $financialType[$dao->id]['financial_account_type'] = current (CRM_Core_OptionGroup::values( $optionGroupName, false, false, false, "and v.value = {$financialAccount->financial_account_type_id} " ) ) ;
+            $financialType[$dao->id]['financial_account_type'] = CRM_Utils_Array::value($financialAccount->financial_account_type_id, $financialAccountType);
+            
           }
           if (!empty($dao->account_relationship)) {
             $optionGroupName = 'account_relationship';
-            $financialType[$dao->id]['account_relationship'] = current (CRM_Core_OptionGroup::values( $optionGroupName, false, false, false, "and v.value = {$dao->account_relationship} " ) ) ;
+            $financialType[$dao->id]['account_relationship'] = CRM_Utils_Array::value($dao->account_relationship, $accountRelationship);
           }
         }
 
