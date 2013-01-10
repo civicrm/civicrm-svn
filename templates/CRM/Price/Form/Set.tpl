@@ -93,30 +93,3 @@
     </div>
 {/if}
 
-
-{literal}
-<script type="text/javascript">
-    cj( function( ) {
-      showHideContribution();
-  var showContribution = {/literal}"{$showContribution}"{literal};
-  if (showContribution) {
-      cj('#financial_type_id').show();
-  }
-    	cj("input[id='extends_3']").click(function(){
-
-      showHideContribution();
-  });
-
-    });
-
-    function showHideContribution() {
-	if(cj("input[id='extends_3']").attr('checked') ) {
-	      cj("#financial_type_id").show();
-  } else {
-        cj('#financial_type_id').hide();
-  }
-
-}
-{/literal}
-
-</script>

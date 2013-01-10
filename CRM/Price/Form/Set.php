@@ -173,16 +173,12 @@ class CRM_Price_Form_Set extends CRM_Core_Form {
 
           if (in_array($table, $priceSetUsedTables)) {
             $option->freeze();
-            if ($compValues['title'] == 'Membership') {
-              $showContribution = TRUE;
-            }
             break;
           }
         }
       }
       $extends[] = $option;
     }
-    $this->assign('showContribution', $showContribution);
 
     if (CRM_Utils_System::isNull($extends)) {
       $this->assign('extends', FALSE);
@@ -196,8 +192,8 @@ class CRM_Price_Form_Set extends CRM_Core_Form {
     $this->addRule('extends', ts('%1 is a required field.', array(1 => ts('Used For'))), 'required');
 
     $this->add('select', 'financial_type_id',
-      ts('Financial Type (Membership Fees)'),
-      array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::financialType()
+      ts('Default Financial Type'),
+          array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::financialType(), 'required'
     );
 
     // help text
