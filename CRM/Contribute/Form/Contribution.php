@@ -726,15 +726,49 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
     $this->add('select', 'from_email_address', ts('Receipt From'), $this->_fromEmails);
 
     $status = CRM_Contribute_PseudoConstant::contributionStatus();
+
     // suppressing contribution statuses that are NOT relevant to pledges (CRM-5169)
+    $statusName = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
     if ($this->_ppID) {
-      $statusName = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
       foreach (array(
                  'Cancelled',
                  'Failed',
                  'In Progress'
                ) as $suppress) {
         unset($status[CRM_Utils_Array::key($suppress, $statusName)]);
+      }
+    }
+    elseif ((!$this->_ppID && $this->_id) || !$this->_id) {
+      foreach(array(
+                'Overdue',
+                'In Progress'
+              ) as $suppress) {
+        unset($status[CRM_Utils_Array::key($suppress, $statusName)]);
+      }
+    }
+    if ($this->_id) {
+      $contributionStatus = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_Contribution', $this->_id, 'contribution_status_id');
+      $name = CRM_Utils_Array::value($contributionStatus, $statusName);
+      switch($name) {
+        case 'Completed':
+        case 'Cancelled':
+        case 'Refunded':
+          unset($status[CRM_Utils_Array::key('Pending', $statusName)]);
+          unset($status[CRM_Utils_Array::key('Failed', $statusName)]);
+          break;
+        case 'Pending':
+          unset($status[CRM_Utils_Array::key('Refunded', $statusName)]);
+          break;
+        case 'Failed':
+          foreach(array(
+                    'Pending',
+                    'Refunded',
+                    'Completed',
+                    'Cancelled'
+                  ) as $suppress) {
+            unset($status[CRM_Utils_Array::key($suppress, $statusName)]);
+          }
+          break;
       }
     }
 
