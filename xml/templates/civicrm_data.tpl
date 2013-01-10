@@ -1484,6 +1484,7 @@ SELECT @financial_account_id_ef	       := max(id) FROM `civicrm_financial_accoun
 SELECT @financial_account_id_bf	       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Banking Fees';
 SELECT @financial_account_id_ap	       := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Accounts Receivable';
 SELECT @financial_account_id_ar        := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Deposit Bank Account';
+SELECT @financial_account_id_pp        := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Payment Processor Account';
 
 INSERT INTO `civicrm_entity_financial_account`
      ( entity_table, entity_id, account_relationship, financial_account_id )
@@ -1505,7 +1506,16 @@ VALUES
 INSERT INTO  civicrm_entity_financial_account (entity_table, entity_id, account_relationship, financial_account_id)
 SELECT 'civicrm_option_value', cov.id, @option_value_rel_id_as, @financial_account_id_ar  FROM `civicrm_option_group` cog
 LEFT JOIN civicrm_option_value cov ON cog.id = cov.option_group_id
-WHERE cog.name = 'payment_instrument';
+WHERE cog.name = 'payment_instrument' AND cov.name NOT IN ('Credit Card', 'Debit Card');
+
+SELECT @option_value_cc_id  := max(id) FROM `civicrm_option_value` WHERE `option_group_id` = @option_group_id_pi AND `name` = 'Credit Card';
+SELECT @option_value_dc_id  := max(id) FROM `civicrm_option_value` WHERE `option_group_id` = @option_group_id_pi AND `name` = 'Debit Card';
+
+INSERT INTO `civicrm_entity_financial_account`
+     ( entity_table, entity_id, account_relationship, financial_account_id )
+VALUES
+     ( 'civicrm_option_value', @option_value_cc_id, @option_value_rel_id_as, @financial_account_id_pp),
+     ( 'civicrm_option_value', @option_value_dc_id, @option_value_rel_id_as, @financial_account_id_pp);
 
 -- CRM-9714
 

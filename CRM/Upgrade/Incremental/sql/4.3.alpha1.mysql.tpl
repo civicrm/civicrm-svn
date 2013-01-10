@@ -588,11 +588,18 @@ FROM `civicrm_financial_type` as ft;
 
 -- CRM-11516
 SELECT @financial_account_id_ar := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Deposit Bank Account';
+SELECT @financial_account_id_pp := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Payment Processor Account';
 
 INSERT INTO  civicrm_entity_financial_account (entity_table, entity_id, account_relationship, financial_account_id)
 SELECT 'civicrm_option_value', cov.id, @option_value_rel_id_as, @financial_account_id_ar  FROM `civicrm_option_group` cog
 LEFT JOIN civicrm_option_value cov ON cog.id = cov.option_group_id
-WHERE cog.name = 'payment_instrument';
+WHERE cog.name = 'payment_instrument' AND cov.name NOT IN ('Credit Card', 'Debit Card');
+
+INSERT INTO  civicrm_entity_financial_account (entity_table, entity_id, account_relationship, financial_account_id)
+SELECT 'civicrm_option_value', cov.id, @option_value_rel_id_as, @financial_account_id_pp  FROM `civicrm_option_group` cog
+LEFT JOIN civicrm_option_value cov ON cog.id = cov.option_group_id
+WHERE cog.name = 'payment_instrument' AND cov.name IN ('Credit Card', 'Debit Card');
+
 
 -- CRM-11515
 SELECT @financial_account_id_ppa := max(id) FROM `civicrm_financial_account` WHERE `name` = 'Payment Processor Account';
