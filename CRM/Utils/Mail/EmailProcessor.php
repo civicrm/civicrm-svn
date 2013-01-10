@@ -291,6 +291,9 @@ class CRM_Utils_Mail_EmailProcessor {
               if (empty($text)) {
                 // If bounce processing fails, just take the raw body. Cf. CRM-11046
                 $text = $mail->generateBody();
+
+                // if text is still empty, lets fudge a blank text so the api call below will succeed
+                $text = ts('We could not extract the mail body from this bounce message.');
               }
 
               $params = array(
