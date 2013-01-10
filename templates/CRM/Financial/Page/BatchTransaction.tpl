@@ -111,37 +111,37 @@ function assignRemove(recordID, op) {
     open:function() {
       var postUrl = {/literal}"{crmURL p='civicrm/ajax/statusmsg' h=0 }"{literal};
       cj.post( postUrl, { recordID: recordID, recordBAO: recordBAO, op: op  }, function( statusMessage ) {
-      if ( statusMessage.status ) {
-        msg = statusMessage.status;
-        if (op == 'close' || op == 'export') {
-          var mismatch = checkMismatch();
-          if (mismatch !== false) {
-            msg += mismatch;
+        if ( statusMessage.status ) {
+          msg = statusMessage.status;
+          if (op == 'close' || op == 'export') {
+            var mismatch = checkMismatch();
+            if (mismatch !== false) {
+              msg += mismatch;
+            }
+            else if (op == 'export') {
+              window.location.href = CRM.url('civicrm/financial/batch/export', {reset: 1, id: recordID, status: 1});
+              msg = {/literal}'{ts escape="js"}Exporting Batch{/ts}'{literal};
+            }
           }
-          else if (op == 'export') {
-            window.location.href = CRM.url('civicrm/financial/batch/export', {reset: 1, id: recordID, status: 1});
-            msg = {/literal}'{ts escape="js"}Exporting Batch{/ts}'{literal};
-          }
+          cj( '#enableDisableStatusMsg' ).show().html(msg);
         }
-        cj( '#enableDisableStatusMsg' ).show().html(msg);
-      }
       }, 'json' );
     },
     buttons: {
       "Cancel": function() {
         cj(this).dialog("close");
       },
-    "OK": function() {
-      if (op == 'export') {
-        window.location.href = CRM.url('civicrm/financial/batch/export', {reset: 1, id: recordID, status: 1});
-        return;
+      "OK": function() {
+        if (op == 'export') {
+          window.location.href = CRM.url('civicrm/financial/batch/export', {reset: 1, id: recordID, status: 1});
+          return;
+        }
+        saveRecord(recordID, op, recordBAO, entityID);
+        if (op == 'close') {
+          window.location.href = {/literal}"{crmURL p='civicrm/financial/financialbatches' h=0 q='reset=1&batchStatus=2'}"{literal};
+        }
+        cj(this).dialog("close");
       }
-      saveRecord(recordID, op, recordBAO, entityID);
-      if (op == 'close') {
-      window.location.href = {/literal}"{crmURL p='civicrm/financial/financialbatches' h=0 q='reset=1&batchStatus=2'}"{literal};
-    }
-      cj(this).dialog("close");
-    }
     }
   });
 }

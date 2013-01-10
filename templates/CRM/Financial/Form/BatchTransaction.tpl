@@ -114,71 +114,75 @@
 cj( function() {
   cj().crmAccordions();
   var batchStatus = {/literal}{$statusID}{literal};
-  if (batchStatus != 1) {
-    cj('#crm-transactions').hide();
-  }
-  var paymentInstrumentID = {/literal}{if $paymentInstrumentID neq null}{$paymentInstrumentID}{else}'null'{/if}{literal};
-  if (paymentInstrumentID != 'null') {
-    buildTransactionSelectorAssign( true );
+  // build transaction listing only for open batches
+  if (batchStatus == 1) {
+    var paymentInstrumentID = {/literal}{if $paymentInstrumentID neq null}{$paymentInstrumentID}{else}'null'{/if}{literal};
+    if (paymentInstrumentID != 'null') {
+      buildTransactionSelectorAssign( true );
+    }
+    else {
+      buildTransactionSelectorAssign( false );
+    }
+    buildTransactionSelectorRemove();
+    cj('#_qf_BatchTransaction_submit-botttom, #_qf_BatchTransaction_submit-top').click( function() {
+      buildTransactionSelectorAssign( true );
+      return false;
+    });
+
+    cj("#trans_assign").attr('disabled',true);
+    cj("#trans_remove").attr('disabled',true);
+    cj('#crm-transaction-selector-assign #toggleSelect').click( function() {
+      enableActions('x');
+    });
+    cj('#crm-transaction-selector-remove #toggleSelects').click( function() {
+      enableActions('y');
+    });
+    cj('#Go').click( function() {
+      return selectAction("trans_assign","toggleSelect", "crm-transaction-selector-assign input[id^='mark_x_']");
+    });
+    cj('#GoRemove').click( function() {
+      return selectAction("trans_remove","toggleSelects", "crm-transaction-selector-remove input[id^='mark_y_']");
+    });
+    cj('#Go').click( function() {
+      if (cj("#trans_assign" ).val() != "" && cj("input[id^='mark_x_']").is(':checked')) {
+        bulkAssignRemove('Assign');
+      }
+      return false;
+    });
+    cj('#GoRemove').click( function() {
+      if (cj("#trans_remove" ).val() != "" && cj("input[id^='mark_y_']").is(':checked')) {
+        bulkAssignRemove('Remove');
+      }
+      return false;
+    });
+    cj("#crm-transaction-selector-assign input[id^='mark_x_']").click( function() {
+      enableActions('x');
+    });
+    cj("#crm-transaction-selector-remove input[id^='mark_y_']").click( function() {
+      enableActions('y');
+    });
+
+    cj("#crm-transaction-selector-assign #toggleSelect").click( function() {
+      if (cj("#crm-transaction-selector-assign #toggleSelect").is(':checked')) {
+        cj("#crm-transaction-selector-assign input[id^='mark_x_']").prop('checked',true);
+      }
+      else {
+        cj("#crm-transaction-selector-assign input[id^='mark_x_']").prop('checked',false);
+      }
+    });
+    cj("#crm-transaction-selector-remove #toggleSelects").click( function() {
+      if (cj("#crm-transaction-selector-remove #toggleSelects").is(':checked')) {
+        cj("#crm-transaction-selector-remove input[id^='mark_y_']").prop('checked',true);
+      }
+      else {
+        cj("#crm-transaction-selector-remove input[id^='mark_y_']").prop('checked',false);
+      }
+    });
   }
   else {
-    buildTransactionSelectorAssign( false );
+    cj('#crm-transactions').hide();
+    buildTransactionSelectorRemove();
   }
-  buildTransactionSelectorRemove();
-  cj('#_qf_BatchTransaction_submit-botttom, #_qf_BatchTransaction_submit-top').click( function() {
-    buildTransactionSelectorAssign( true );
-    return false;
-  });
-
-  cj("#trans_assign").attr('disabled',true);
-  cj("#trans_remove").attr('disabled',true);
-  cj('#crm-transaction-selector-assign #toggleSelect').click( function() {
-    enableActions('x');
-  });
-  cj('#crm-transaction-selector-remove #toggleSelects').click( function() {
-    enableActions('y');
-  });
-  cj('#Go').click( function() {
-    return selectAction("trans_assign","toggleSelect", "crm-transaction-selector-assign input[id^='mark_x_']");
-  });
-  cj('#GoRemove').click( function() {
-    return selectAction("trans_remove","toggleSelects", "crm-transaction-selector-remove input[id^='mark_y_']");
-  });
-  cj('#Go').click( function() {
-    if (cj("#trans_assign" ).val() != "" && cj("input[id^='mark_x_']").is(':checked')) {
-      bulkAssignRemove('Assign');
-    }
-    return false;
-  });
-  cj('#GoRemove').click( function() {
-    if (cj("#trans_remove" ).val() != "" && cj("input[id^='mark_y_']").is(':checked')) {
-      bulkAssignRemove('Remove');
-    }
-    return false;
-  });
-  cj("#crm-transaction-selector-assign input[id^='mark_x_']").click( function() {
-    enableActions('x');
-  });
-  cj("#crm-transaction-selector-remove input[id^='mark_y_']").click( function() {
-    enableActions('y');
-  });
-
-  cj("#crm-transaction-selector-assign #toggleSelect").click( function() {
-    if (cj("#crm-transaction-selector-assign #toggleSelect").is(':checked')) {
-      cj("#crm-transaction-selector-assign input[id^='mark_x_']").prop('checked',true);
-    }
-    else {
-      cj("#crm-transaction-selector-assign input[id^='mark_x_']").prop('checked',false);
-    }
-  });
-  cj("#crm-transaction-selector-remove #toggleSelects").click( function() {
-    if (cj("#crm-transaction-selector-remove #toggleSelects").is(':checked')) {
-      cj("#crm-transaction-selector-remove input[id^='mark_y_']").prop('checked',true);
-    }
-    else {
-      cj("#crm-transaction-selector-remove input[id^='mark_y_']").prop('checked',false);
-    }
-  });
 });
 
 function enableActions( type ) {
