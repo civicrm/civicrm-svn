@@ -99,9 +99,9 @@ class CRM_Pledge_BAO_Query {
       $query->_element['pledge_outstanding_amount'] = 1;
     }
 
-    if (CRM_Utils_Array::value('pledge_contribution_type', $query->_returnProperties)) {
-            $query->_select['pledge_contribution_type']  = "(SELECT civicrm_financial_type.name FROM civicrm_financial_type WHERE civicrm_financial_type.id = civicrm_pledge.financial_type_id) as pledge_contribution_type";
-      $query->_element['pledge_contribution_type'] = 1;
+    if (CRM_Utils_Array::value('pledge_financial_type', $query->_returnProperties)) {
+      $query->_select['pledge_financial_type']  = "(SELECT civicrm_financial_type.name FROM civicrm_financial_type WHERE civicrm_financial_type.id = civicrm_pledge.financial_type_id) as pledge_financial_type";
+      $query->_element['pledge_financial_type'] = 1;
       $query->_tables['civicrm_pledge'] = $query->_whereTables['civicrm_pledge'] = 1;
     }
 
@@ -441,7 +441,7 @@ class CRM_Pledge_BAO_Query {
         $from .= " $side JOIN civicrm_option_value pledge_status ON (civicrm_pledge.status_id = pledge_status.value AND option_group_pledge_status.id = pledge_status.option_group_id ) ";
         break;
 
-      case 'pledge_contribution_type':
+      case 'pledge_financial_type':
             $from .= " $side JOIN civicrm_financial_type ON civicrm_pledge.financial_type_id = civicrm_financial_type.id ";
         break;
 
@@ -500,7 +500,7 @@ class CRM_Pledge_BAO_Query {
         'pledge_status_id' => 1,
         'pledge_is_test' => 1,
         'pledge_contribution_page_id' => 1,
-        'pledge_contribution_type' => 1,
+        'pledge_financial_type' => 1,
         'pledge_frequency_interval' => 1,
         'pledge_frequency_unit' => 1,
         'pledge_currency' => 1,
@@ -577,18 +577,18 @@ class CRM_Pledge_BAO_Query {
 
     $form->addGroup($paymentStatus, 'pledge_payment_status_id', ts('Pledge Payment Status'));
 
-    $form->add('select', 'pledge_contribution_type_id',
-                   ts( 'Financial Type' ),
+    $form->add('select', 'pledge_financial_type_id',
+      ts( 'Financial Type' ),
       array(
         '' => ts('- select -')) +
-      CRM_Contribute_PseudoConstant::financialType()
+        CRM_Contribute_PseudoConstant::financialType()
     );
 
     $form->add('select', 'pledge_contribution_page_id',
       ts('Contribution Page'),
       array(
         '' => ts('- any -')) +
-      CRM_Contribute_PseudoConstant::contributionPage()
+        CRM_Contribute_PseudoConstant::contributionPage()
     );
 
     //add fields for honor search
