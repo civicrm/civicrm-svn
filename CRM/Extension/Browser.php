@@ -204,7 +204,7 @@ class CRM_Extension_Browser {
   private function grabRemoteKeyList() {
 
     ini_set('default_socket_timeout', CRM_Utils_VersionCheck::CHECK_TIMEOUT);
-    set_error_handler(array('CRM_Utils_VersionCheck', 'downloadError'));
+    set_error_handler(array('CRM_Extension_Browser', 'downloadError'));
 
     if (!ini_get('allow_url_fopen')) {
       ini_set('allow_url_fopen', 1);
@@ -290,4 +290,12 @@ class CRM_Extension_Browser {
   private function getTsPath() {
       return $this->cacheDir . DIRECTORY_SEPARATOR . 'timestamp.txt';
   }
+
+  /**
+   * A dummy function required for suppressing download errors
+   */
+  public static function downloadError($errorNumber, $errorString) {
+    return;
+  }
+
 }
