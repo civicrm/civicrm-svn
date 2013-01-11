@@ -206,11 +206,12 @@ class CRM_Extension_Manager_Payment extends CRM_Extension_Manager_Base {
     if ($processor_id = CRM_Core_DAO::singleValueQuery("
                 SELECT pp.id
                   FROM civicrm_extension ext
+            INNER JOIN civicrm_payment_processor_type ppt
+                    ON ext.name = ppt.name
             INNER JOIN civicrm_payment_processor pp
-                    ON pp.payment_processor_type = ext.name
+                    ON ppt.id = pp.payment_processor_type_id
                  WHERE ext.type = 'payment'
                    AND ext.full_name = %1
-
         ",
         array(
           1 => array($info->key, 'String'),
