@@ -34,23 +34,30 @@
  */
 class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact {
 
+  /**
+   * SQL function used to format the phone_numeric field via trigger.
+   * @see self::triggerInfo()
+   *
+   * Note that this is also used by the 4.3 upgrade script.
+   * @see CRM_Upgrade_Incremental_php_FourThree
+   */
   const DROP_STRIP_FUNCTION_43 = "DROP FUNCTION IF EXISTS civicrm_strip_non_numeric";
-
-  const CREATE_STRIP_FUNCTION_43 = "CREATE FUNCTION civicrm_strip_non_numeric(input VARCHAR(255))
-          RETURNS VARCHAR(255)
-          DETERMINISTIC
-          NO SQL
-        BEGIN
-          DECLARE output   VARCHAR(255) DEFAULT '';
-          DECLARE iterator INT          DEFAULT 1;
-          WHILE iterator < (LENGTH(input) + 1) DO
-            IF SUBSTRING(input, iterator, 1) IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9') THEN
-              SET output = CONCAT(output, SUBSTRING(input, iterator, 1));
-            END IF;
-            SET iterator = iterator + 1;
-          END WHILE;
-          RETURN output;
-        END";
+  const CREATE_STRIP_FUNCTION_43 = "
+    CREATE FUNCTION civicrm_strip_non_numeric(input VARCHAR(255))
+      RETURNS VARCHAR(255)
+      DETERMINISTIC
+      NO SQL
+    BEGIN
+      DECLARE output   VARCHAR(255) DEFAULT '';
+      DECLARE iterator INT          DEFAULT 1;
+      WHILE iterator < (LENGTH(input) + 1) DO
+        IF SUBSTRING(input, iterator, 1) IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9') THEN
+          SET output = CONCAT(output, SUBSTRING(input, iterator, 1));
+        END IF;
+        SET iterator = iterator + 1;
+      END WHILE;
+      RETURN output;
+    END";
 
   /**
    * the types of communication preferences
