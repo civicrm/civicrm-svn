@@ -93,6 +93,7 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
   function setDefaultValues() {
     $defaults = array();
     $defaults['is_active'] = 1;
+    $defaults['record_activity'] = 1;
     return $defaults;
   }
 
@@ -146,6 +147,8 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
     $this->add('select', 'start_action_condition', ts('Action Condition'), $condition);
 
     $this->add('select', 'start_action_date', ts('Date Field'), $sel4, TRUE);
+
+    $this->addElement('checkbox', 'record_activity', ts('Record activity for automated email'));
 
     $this->addElement('checkbox', 'is_repeat', ts('Repeat'),
       NULL, array('onclick' => "return showHideByValue('is_repeat',true,'repeatFields','table-row','radio',false);")
@@ -248,6 +251,7 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
       'subject',
       'absolute_date',
       'group_id',
+      'record_activity'
     );
     foreach ($keys as $key) {
       $params[$key] = CRM_Utils_Array::value($key, $values);
