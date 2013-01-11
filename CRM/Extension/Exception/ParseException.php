@@ -26,61 +26,7 @@
 */
 
 /**
- * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2012
- * $Id$
+ * Error reading XML for an extension
  */
-
-/**
- * An extension container is a locally-accessible source tree which can be
- * scanned for extensions.
- */
-class CRM_Extension_Container_Static implements CRM_Extension_Container_Interface {
-  public function __construct($exts) {
-    $this->exts = $exts;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getName() {
-    return $this->name;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getKeys() {
-    return array_keys($this->exts);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getPath($key) {
-    $e = $this->getExt($key);
-    return $e['path'];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getResUrl($key) {
-    $e = $this->getExt($key);
-    return $e['resUrl'];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function refresh() {
-  }
-
-  protected function getExt($key) {
-    if (isset($this->exts[$key])) {
-      return $this->exts[$key];
-    } else {
-      throw new CRM_Extension_Exception_MissingException("Missing extension: $key");
-    }
-  }
+class CRM_Extension_Exception_ParseException extends CRM_Extension_Exception {
 }

@@ -121,7 +121,7 @@ class CRM_Extension_Container_Collection implements CRM_Extension_Container_Inte
     if (isset($k2c[$key])) {
       return $this->containers[$k2c[$key]];
     } else {
-      throw new CRM_Extension_Exception("Unknown extension: $key");
+      throw new CRM_Extension_Exception_MissingException("Unknown extension: $key");
     }
   }
 

@@ -132,7 +132,7 @@ class CRM_Extension_Container_Basic implements CRM_Extension_Container_Interface
   protected function getRelPath($key) {
     $keypaths = $this->getRelPaths();
     if (! isset($keypaths[$key])) {
-      throw new CRM_Extension_Exception("Failed to find extension: $key");
+      throw new CRM_Extension_Exception_MissingException("Failed to find extension: $key");
     }
     return $keypaths[$key];
   }
@@ -152,7 +152,15 @@ class CRM_Extension_Container_Basic implements CRM_Extension_Container_Interface
         $infoPaths = CRM_Utils_File::findFiles($this->baseDir, 'info.xml');
         foreach ($infoPaths as $infoPath) {
           $relPath = CRM_Utils_File::relativize(dirname($infoPath), $this->baseDir);
-          $info = CRM_Extension_Info::loadFromFile($infoPath);
+          try {
+            $info = CRM_Extension_Info::loadFromFile($infoPath);
+          } catch (CRM_Extension_Exception_ParseException $e) {
+            CRM_Core_Session::setStatus(ts('Parse error in extension: %1', array(
+              1 => $e->getMessage(),
+            )), '', 'error');
+            CRM_Core_Error::debug_log_message("Parse error in extension: " . $e->getMessage());
+            continue;
+          }
           $this->relPaths[$info->key] = $relPath;
         }
         if ($this->cache) {
