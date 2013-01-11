@@ -2695,6 +2695,13 @@ WHERE  contribution_id = %1 ";
       } else if (!CRM_Utils_System::isNull($params['contribution']->check_number) && 
         $params['contribution']->check_number != $params['prevContribution']->check_number) {
         // another special case when check number is changed, create new financial records
+        // create financial trxn with negative amount
+        $params['trxnParams']['total_amount'] = - $trxnParams['total_amount'];
+        $params['trxnParams']['check_number'] = $params['prevContribution']->check_number;
+        self::updateFinancialAccounts($params, 'changePaymentInstrument');
+        // create financial trxn with positive amount
+        $params['trxnParams']['check_number'] = $params['contribution']->check_number;
+        $params['total_amount'] = $params['trxnParams']['total_amount'] = $trxnParams['total_amount'];
         self::updateFinancialAccounts($params, 'changePaymentInstrument');
       }
 
@@ -2860,10 +2867,10 @@ WHERE  contribution_id = %1 ";
   static function checkStatusValidation($values, &$fields, &$errors) {
     $contributionStatuses = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
     $checkStatus = array(
-      'Cancelled' => array('Completed'), 
+      'Cancelled' => array('Completed', 'Refunded'), 
       'Completed' => array('Cancelled', 'Refunded'),
-      'Pending' => array('Cancelled', 'Completed'),
-      'Refunded' => array('Cancelled')
+      'Pending' => array('Cancelled', 'Completed', 'Failed'),
+      'Refunded' => array('Cancelled', 'Completed')
     );
     
     if (!in_array($contributionStatuses[$fields['contribution_status_id']], $checkStatus[$contributionStatuses[$values['contribution_status_id']]])) {
