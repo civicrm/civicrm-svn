@@ -423,7 +423,6 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     }
     if (CRM_Utils_Array::value('is_pay_later', $this->_values)) {
       $pps[0] = $this->_values['pay_later_text'];
-      $this->assign('initialPayment', CRM_Utils_Array::value('is_partial_payment', $this->_values));
     }
 
     if (count($pps) > 1) {

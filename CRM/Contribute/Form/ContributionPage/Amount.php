@@ -427,7 +427,6 @@ SELECT id
       'max_amount' => "null",
       'is_monetary' => FALSE,
       'is_pay_later' => FALSE,
-      'is_partial_payment' => FALSE,
       'is_recur_interval' => FALSE,
       'is_recur_installments' => FALSE,
       'recur_frequency_unit' => "null",

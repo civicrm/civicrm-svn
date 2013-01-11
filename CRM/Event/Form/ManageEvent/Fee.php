@@ -525,18 +525,6 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
         if (empty($values['pay_later_receipt'])) {
           $errors['pay_later_receipt'] = ts('Please enter the Pay Later instructions to be displayed to your users.');
         }
-        //partial payment check
-        if (isset($values['is_partial_payment'])) {
-          if (empty($values['initial_amount_label'])) {
-            $errors['initial_amount_label'] = ts('Please enter initial amount label');
-          }
-          if (empty($values['initial_amount_help_text'])) {
-            $errors['initial_amount_help_text'] = ts('Please enter initial amount help text');
-          }
-          if (empty($values['min_initial_amount'])) {
-            $errors['min_initial_amount'] = ts('Please enter minimum initial amount');
-          }
-        }
       }
     }
     return empty($errors) ? TRUE : $errors;
@@ -592,7 +580,6 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
     }
 
     $params['is_pay_later'] = CRM_Utils_Array::value('is_pay_later', $params, 0);
-    $params['is_partial_payment'] = CRM_Utils_Array::value('is_partial_payment', $params, 0);
 
     if ($this->_id) {
 
