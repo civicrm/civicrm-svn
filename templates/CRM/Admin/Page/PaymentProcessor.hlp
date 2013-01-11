@@ -36,40 +36,40 @@
 <p>{ts 1="http://civicrm.org/extensions"}If your desired processor is not in the list, check the <a href="%1">Extensions Directory</a> for more payment processors you can download. If you still can't find it, consider partnering with a developer and contributing a new extension.{/ts}</p>
 {/htxt}
 
-{htxt id='AuthNet_AIM-live-user-name'}
+{htxt id='AuthNet-live-user-name'}
 <strong>{ts}API Login (LIVE account):{/ts}</strong>
 <br />{ts}Generate your API Login and Transaction Key by logging in to your Merchant Account and navigating to <strong>Settings &raquo; General Security Settings</strong>.{/ts}</p>
 {/htxt}
-{htxt id='AuthNet_AIM-live-password'}
+{htxt id='AuthNet-live-password'}
 <strong>{ts}Transaction Key (LIVE account):{/ts}</strong>
 <br />{ts}Generate your API Login and Transaction Key by logging in to your Merchant Account and navigating to <strong>Settings &raquo; General Security Settings</strong>.{/ts}</p>
 {/htxt}
-{htxt id='AuthNet_AIM-live-signature'}
+{htxt id='AuthNet-live-signature'}
 <strong>{ts}MD5-Hash (LIVE account):{/ts}</strong>
 <br />{ts}You may also optionally set an MD5 Hash Key to verify that responses come directly from Authorize.Net. Login to your merchant account and navigate to <strong>Account Settings</strong>. Select MD5-Hash and enter a new hash value. This can be just about any string of characters or words. Then enter the exact same value here.{/ts}</p>
 {/htxt}
-{htxt id='AuthNet_AIM-live-url-site'}
+{htxt id='AuthNet-live-url-site'}
 {ts}The URL for Authorize.net's LIVE Payment server. Use the default value unless otherwise advised by the processor.{/ts}
 {/htxt}
-{htxt id='AuthNet_AIM-live-url-recur'}
+{htxt id='AuthNet-live-url-recur'}
 {ts}The URL for recurring payments. Use the default value unless otherwise advised by the processor.{/ts}
 {/htxt}
-{htxt id='AuthNet_AIM-test-user-name'}
+{htxt id='AuthNet-test-user-name'}
 <strong>{ts}API Login (TEST account):{/ts}</strong>
 <br />{ts}Generate your API Login and Transaction Key by logging in to your Merchant Account and navigating to <strong>Settings &raquo; General Security Settings</strong>.{/ts}</p>
 {/htxt}
-{htxt id='AuthNet_AIM-test-password'}
+{htxt id='AuthNet-test-password'}
 <strong>{ts}Transaction Key (TEST account):{/ts}</strong>
 <br />{ts}Generate your API Login and Transaction Key by logging in to your Merchant Account and navigating to <strong>Settings &raquo; General Security Settings</strong>.{/ts}</p>
 {/htxt}
-{htxt id='AuthNet_AIM-test-signature'}
+{htxt id='AuthNet-test-signature'}
 <strong>{ts}MD5-Hash (TEST account):{/ts}</strong>
 <br />{ts}You may also optionally set an MD5 Hash Key to verify that responses come directly from Authorize.Net. Login to your merchant account and navigate to <strong>Account Settings</strong>. Select MD5-Hash and enter a new hash value. This can be just about any string of characters or words. Then enter the exact same value here.{/ts}</p>
 {/htxt}
-{htxt id='AuthNet_AIM-test-url-site'}
+{htxt id='AuthNet-test-url-site'}
 {ts}The URL for Authorize.net's TEST Payment server. Use the default value unless otherwise advised by the processor.{/ts}
 {/htxt}
-{htxt id='AuthNet_AIM-test-url-recur'}
+{htxt id='AuthNet-test-url-recur'}
 {ts}The URL for recurring payments. Use the default value unless otherwise advised by the processor.{/ts}
 {/htxt}
 
