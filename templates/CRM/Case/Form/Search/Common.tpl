@@ -24,28 +24,28 @@
  +--------------------------------------------------------------------+
 *}
 {if $notConfigured} {* Case types not present. Component is not configured for use. *}
-    {include file="CRM/Case/Page/ConfigureError.tpl"}
+{include file="CRM/Case/Page/ConfigureError.tpl"}
 {else}
 <tr id='case_search_form'>
   <td class="crm-case-common-form-block-case_type" width="25%">
     <label>{ts}Case Type{/ts}</label><br />
     <div class="listing-box">
-     {foreach from=$form.case_type_id item="case_type_id_val"}
-      <div class="{cycle values='odd-row,even-row'}">
-        {$case_type_id_val.html}
-      </div>
-    {/foreach}
+      {foreach from=$form.case_type_id item="case_type_id_val"}
+        <div class="{cycle values='odd-row,even-row'}">
+          {$case_type_id_val.html}
+        </div>
+      {/foreach}
     </div><br />
   </td>
 
   <td class="crm-case-common-form-block-case_status_id" width="25%">
     <label>{ts}Status{/ts}</label><br />
     <div class="listing-box">
-     {foreach from=$form.case_status_id item="case_status_id_val"}
-      <div class="{cycle values='odd-row,even-row'}">
-        {$case_status_id_val.html}
-      </div>
-    {/foreach}
+      {foreach from=$form.case_status_id item="case_status_id_val"}
+        <div class="{cycle values='odd-row,even-row'}">
+          {$case_status_id_val.html}
+        </div>
+      {/foreach}
     </div>
     {if $accessAllCases}
       <br />
@@ -57,28 +57,28 @@
       {$form.case_deleted.label}
     {/if}
   </td>
-  {if $form.case_tags }
-  <td class="crm-case-common-form-block-case_tags">
-    <label>{ts}Case Tag(s){/ts}</label>
-    <div id="Tag" class="listing-box">
-      {foreach from=$form.case_tags item="tag_val"}
-        <div class="{cycle values='odd-row,even-row'}">
-          {$tag_val.html}
-        </div>
-      {/foreach}
-  </td>
-{/if}
+  {if $form.case_tags}
+    <td class="crm-case-common-form-block-case_tags">
+      <label>{ts}Case Tag(s){/ts}</label>
+      <div id="Tag" class="listing-box">
+        {foreach from=$form.case_tags item="tag_val"}
+          <div class="{cycle values='odd-row,even-row'}">
+            {$tag_val.html}
+          </div>
+        {/foreach}
+    </td>
+  {/if}
 </tr>
 
 <tr><td colspan="3">{include file="CRM/common/Tag.tpl" tagsetType='case'}</td></tr>
 
-{if $caseGroupTree }
-<tr>
+  {if $caseGroupTree}
+  <tr>
     <td colspan="4">
-       {include file="CRM/Custom/Form/Search.tpl" groupTree=$caseGroupTree showHideLinks=false}
+    {include file="CRM/Custom/Form/Search.tpl" groupTree=$caseGroupTree showHideLinks=false}
     </td>
-</tr>
-{/if}
+  </tr>
+  {/if}
 
 {/if}
 
