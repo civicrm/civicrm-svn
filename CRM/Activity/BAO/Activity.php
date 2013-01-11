@@ -1244,7 +1244,8 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
    * @access public
    * @static
    */
-  static function sendEmail(&$contactDetails,
+  static function sendEmail(
+    &$contactDetails,
     &$subject,
     &$text,
     &$html,
@@ -1341,7 +1342,8 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
     // get token details for contacts, call only if tokens are used
     $details = array();
     if (!empty($returnProperties)) {
-      list($details) = CRM_Utils_Token::getTokenDetails($contactIds,
+      list($details) = CRM_Utils_Token::getTokenDetails(
+        $contactIds,
         $returnProperties,
         NULL, NULL, FALSE,
         $messageToken,
@@ -1355,9 +1357,7 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
     $categories = array_keys($tokens);
 
     $escapeSmarty = FALSE;
-    if (defined('CIVICRM_MAIL_SMARTY') &&
-      CIVICRM_MAIL_SMARTY
-    ) {
+    if (defined('CIVICRM_MAIL_SMARTY') && CIVICRM_MAIL_SMARTY) {
       $smarty = CRM_Core_Smarty::singleton();
       $escapeSmarty = TRUE;
     }
@@ -1394,9 +1394,7 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
         $tokenHtml = NULL;
       }
 
-      if (defined('CIVICRM_MAIL_SMARTY') &&
-        CIVICRM_MAIL_SMARTY
-      ) {
+      if (defined('CIVICRM_MAIL_SMARTY') && CIVICRM_MAIL_SMARTY) {
         // also add the contact tokens to the template
         $smarty->assign_by_ref('contact', $values);
 
@@ -1406,7 +1404,8 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
       }
 
       $sent = FALSE;
-      if (self::sendMessage($from,
+      if (self::sendMessage(
+          $from,
           $userID,
           $contactId,
           $tokenSubject,

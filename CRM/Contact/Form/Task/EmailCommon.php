@@ -366,6 +366,11 @@ class CRM_Contact_Form_Task_EmailCommon {
     $tempEmails = array();
 
     foreach ($form->_contactIds as $key => $contactId) {
+      // if we dont have details on this contactID, we should ignore
+      // potentially this is due to the contact not wanting to receive email
+      if (!isset($form->_contactDetails[$contactId])) {
+        continue;
+      }
       $email = $form->_toContactEmails[$key];
       // prevent duplicate emails if same email address is selected CRM-4067
       // we should allow same emails for different contacts
@@ -380,7 +385,8 @@ class CRM_Contact_Form_Task_EmailCommon {
     }
 
     // send the mail
-    list($sent, $activityId) = CRM_Activity_BAO_Activity::sendEmail($formattedContactDetails,
+    list($sent, $activityId) = CRM_Activity_BAO_Activity::sendEmail(
+      $formattedContactDetails,
       $subject,
       $formValues['text_message'],
       $formValues['html_message'],

@@ -1692,7 +1692,7 @@ SELECT case_status.label AS case_status, status_id, case_type.label AS case_type
 
   static function getGlobalContacts(&$groupInfo, $sort = NULL, $showLinks = NULL, $returnOnlyCount = FALSE, $offset = 0, $rowCount = 25) {
     $globalContacts = array();
-    
+
     $settingsProcessor = new CRM_Case_XMLProcessor_Settings();
     $settings = $settingsProcessor->run();
     if (!empty($settings)) {
@@ -1708,11 +1708,11 @@ SELECT case_status.label AS case_status, status_id, case_type.label AS case_type
           $return             = array('sort_name' => 1, 'display_name' => 1, 'email' => 1, 'phone' => 1);
           $return             = array('contact_id' => 1, 'sort_name' => 1, 'display_name' => 1, 'email' => 1, 'phone' => 1);
           list($globalContacts, $_) = CRM_Contact_BAO_Query::apiQuery($params, $return, NULL, $sort, $offset, $rowCount, TRUE, $returnOnlyCount);
-          
+
           if ($returnOnlyCount) {
             return $globalContacts;
           }
-          
+
           if ($showLinks) {
             foreach($globalContacts as $idx => $contact) {
               $globalContacts[$idx]['sort_name'] = '<a href="' . $contactViewUrl . $contact['contact_id'] . '">' . $contact['sort_name'] . '</a>';
@@ -2616,7 +2616,7 @@ WHERE id IN (' . implode(',', $copiedActivityIds) . ')';
    * @return boolean $allow  true/false
    * @static
    */
-  function checkPermission($activityId, $operation, $actTypeId = NULL, $contactId = NULL, $checkComponent = TRUE) {
+  static function checkPermission($activityId, $operation, $actTypeId = NULL, $contactId = NULL, $checkComponent = TRUE) {
     $allow = FALSE;
     if (!$actTypeId && $activityId) {
       $actTypeId = CRM_Core_DAO::getFieldValue('CRM_Activity_DAO_Activity', $activityId, 'activity_type_id');

@@ -2114,7 +2114,7 @@ AND civicrm_contact.is_opt_out =0";
    * @return boolean | array - TRUE if the user has access to all mailings, else array of mailing IDs (possibly empty)
    * @static
    */
-  static function &mailingACLIDs() {
+  static function mailingACLIDs() {
     // CRM-11633
     // optimize common case where admin has access
     // to all mailings
