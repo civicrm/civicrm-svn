@@ -254,7 +254,7 @@ cj(function($) {
       },
       'json').error(serverError);
   }
-  
+
   function exportRecords(records) {
     var exportUrl = CRM.url('civicrm/financial/batch/export', 'reset=1');
     $().redirect(exportUrl, {'batch_id': records, 'export_format': $('select.export-format').val()});
@@ -282,7 +282,7 @@ cj(function($) {
       var status = $('tr[data-id='+records[i]+']').data('status_id');
       if ($.inArray(status, notAllowed) >= 0) {
         $('#check_' + records[i] + ':checked').prop('checked', false).change();
-        invalid[status] = invalid[status] || []; 
+        invalid[status] = invalid[status] || [];
         invalid[status].push(records[i]);
         records.splice(i, 1);
         --len;
