@@ -732,6 +732,30 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $this->_checkFinancialItem($contribution['id'], 'cancelPending');
   }
 
+  /*
+   * Function tests that financial records are added when Financial Type is Changed
+   */
+  function testCreateUpdateContributionChangeFinancialType() {
+    $contribParams = array(
+      'contact_id' => $this->_individualId,
+      'receive_date' => '2012-01-01',
+      'total_amount' => 100.00,
+      'financial_type_id' => 1,
+      'payment_instrument_id' => 1,
+      'contribution_status_id' => 1,
+      'version' => $this->_apiversion,
+    );
+    $contribution = civicrm_api('contribution', 'create', $contribParams);
+    $newParams = array_merge($contribParams, array(
+     'id' => $contribution['id'],
+     'financial_type_id' => 3,
+      )
+    );
+    $contribution = civicrm_api('contribution', 'update', $newParams);
+    $this->_checkFinancialTrxn($contribution, 'changeFinancial');
+    $this->_checkFinancialItem($contribution['id'], 'changeFinancial');
+  }
+
   //To Update Contribution
   //CHANGE: we require the API to do an incremental update
   function testCreateUpdateContribution() {
@@ -1116,11 +1140,29 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
        'amount' => -100,
      );
    }
-   elseif ($context == 'cancelPending'){
+   elseif ($context == 'cancelPending') {
      $compareParams = array(
        'status_id' => 3,
        'financial_account_id' => 3,
        'amount' => -100,
+     );
+   }
+   elseif ($context == 'changeFinancial') {
+     $lineKey = key(CRM_Price_BAO_LineItem::getLineItems($contId, 'contribution'));
+     $params = array(
+       'entity_id' => $lineKey,
+       'amount' => -100,
+     );
+     $compareParams = array(
+       'financial_account_id' => 1,
+     );
+     $this->assertDBCompareValues('CRM_Financial_DAO_FinancialItem', $params, $compareParams);
+     $params = array(
+       'financial_account_id' => 3,
+       'entity_id' => $lineKey,
+     );
+     $compareParams = array(
+       'amount' => 100,
      );
    }
    if ($context != 'paylater') {
@@ -1162,6 +1204,28 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
        'from_financial_account_id' => 7,
        'total_amount' => -100,
        'status_id' => 3,
+     );
+   }
+   elseif ($context == 'changeFinancial') {
+     $entityParams = array(
+       'entity_id' =>   $contribution['id'],
+       'entity_table' => 'civicrm_contribution',
+       'amount' => -100,
+     );
+     $trxn = current( CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($entityParams));
+     $trxnParams1 = array(
+        'id' => $trxn['financial_trxn_id'],                
+     );
+     $compareParams = array(
+       'to_financial_account_id' => 6,
+       'total_amount' => -100,
+       'status_id' => 1,
+     );
+     $this->assertDBCompareValues('CRM_Financial_DAO_FinancialTrxn',$trxnParams1,$compareParams);
+     $compareParams = array(
+       'to_financial_account_id' => 6,
+       'total_amount' => 100,
+       'status_id' => 1,
      );
    }
    $this->assertDBCompareValues('CRM_Financial_DAO_FinancialTrxn',$params,$compareParams);
