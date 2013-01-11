@@ -161,8 +161,9 @@
     
   <field>    
       <name>fee_amount</name>
-      <uniqueName>participant_fee_amount</uniqueName>   
-      <type>decimal</type>    
+      <uniqueName>participant_fee_amount</uniqueName>
+      <title>Fee Amount</title>
+      <type>decimal</type>
       <import>true</import>
       <headerPattern>/fee(.?am(ou)?nt)?/i</headerPattern>
       <dataPattern>/^\d+(\.\d{2})?$/</dataPattern>
@@ -189,12 +190,12 @@
   </foreignKey> 
   <field> 
       <name>discount_id</name>
-      <uniqueName>participant_discount_id</uniqueName> 
+      <uniqueName>participant_discount_id</uniqueName>
       <type>int unsigned</type> 
       <title>Discount ID</title>
       <default>NULL</default>
-      <comment>FK to Discount ID</comment> 
-      <add>2.1</add> 
+      <comment>FK to Discount ID</comment>
+      <add>2.1</add>
   </field>
   <foreignKey> 
        <name>discount_id</name> 
@@ -206,13 +207,14 @@
   <field>      
       <name>fee_currency</name>
       <uniqueName>participant_fee_currency</uniqueName>
+      <title>Fee Currency</title>
       <type>varchar</type>
       <length>3</length>
       <default>NULL</default>
       <import>true</import>
       <headerPattern>/(fee)?.?cur(rency)?/i</headerPattern>
       <dataPattern>/^[A-Z]{3}$/i</dataPattern>
-      <comment>3 character string, value derived from config setting.</comment>   
+      <comment>3 character string, value derived from config setting.</comment>
       <add>3.0</add>
   </field>
   <field> 
@@ -233,6 +235,7 @@
   <field>
       <name>discount_amount</name>
       <type>int unsigned</type>
+      <title>Discount Amount</title>
       <comment>Discount Amount</comment>
       <add>4.1</add>
   </field>
@@ -252,6 +255,7 @@
   <field>
       <name>must_wait</name>
       <type>int</type>
+      <title>Must Wait on List</title>
       <comment>On Waiting List</comment>
       <add>4.1</add>
   </field>
