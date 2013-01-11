@@ -28,7 +28,7 @@
        <name>title</name>
        <title>Payment Processor Title</title>
        <type>varchar</type>
-       <length>64</length>
+       <length>127</length>
        <comment>Payment Processor Name.</comment>
        <add>1.8</add>
   </field>

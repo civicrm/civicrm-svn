@@ -830,3 +830,6 @@ INSERT INTO
   `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`)
 VALUES
   (@option_group_id_cs, '{ts escape="sql"}Refunded{/ts}', @max_weight + 1, 'Refunded', NULL, 0, NULL, @max_weight + 1, NULL, 0, 1, 1, NULL, NULL);
+
+-- Payprocs from extensions may have long titles
+ALTER TABLE civicrm_payment_processor_type MODIFY COLUMN title varchar(127);
