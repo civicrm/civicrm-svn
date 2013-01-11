@@ -34,6 +34,7 @@
 <div class="spacer"></div>
 
 <div id="pcpFields">
+{crmRegion name="pcp-form-pcp-fields"}
   {if $form.target_entity_type}
   <table class="form-layout">
     <tr  class="crm-contribution-contributionpage-pcp-form-block-target_entity_type">
@@ -77,6 +78,7 @@
         <td>{$form.link_text.html|crmAddClass:huge} {help id="id-link_text"}</td>
      </tr>
   </table>
+{/crmRegion}
 </div>
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>

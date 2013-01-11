@@ -28,6 +28,7 @@
 </div>
 <fieldset>
 <div class="crm-block crm-contribution-campaign-form-block">
+{crmRegion name="pcp-form-campaign"}
 <table class="form-layout-compressed" width="100%">
   <tr class="crm-contribution-form-block-title">
     <td class="label">{$form.pcp_title.label}</td>
@@ -80,6 +81,7 @@
             <span class="description">{ts}Is your Personal Campaign Page active? You can activate/de-activate it any time during it's lifecycle.{/ts}</span></td>
   </tr>
 </table>
+{/crmRegion}
 </div>
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </fieldset>

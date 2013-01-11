@@ -52,6 +52,7 @@
 </div>
 {/if}
 <div class="campaign">
+{crmRegion name="pcp-page-pcpinfo"}
     <div class="pcp-intro-text">
       {$pcp.intro_text}
   </div>
@@ -119,6 +120,7 @@
         <a href={$linkTextUrl} class="pcp-create-link"><span>{$linkText}</span></a>
    </div>
    {/if}
+{/crmRegion}
 </div><!-- /.campaign -->
 
 
