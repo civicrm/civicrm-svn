@@ -152,9 +152,6 @@ You were registered by: {$payer.name}
 
 {ts}Total Amount{/ts}: {$totalAmount|crmMoney} {if $hookDiscount.message}({$hookDiscount.message}){/if}
 
-{if $initialAmount}
-{ts}Initial Amount{/ts}: {$initialAmount|crmMoney}
-{/if}
 {if $pricesetFieldsCount }
       {assign var="count" value= 0}
       {foreach from=$lineItem item=pcount}

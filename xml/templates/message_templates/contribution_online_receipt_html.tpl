@@ -99,16 +99,6 @@
        </tr>
 
       {/if}
-    {if $initialAmount}
-       <tr>
-	 <td {$labelStyle}>
-	   {ts}Initial Amount{/ts}
-	 </td>  
-	 <td {$labelStyle}>
-            {$initialAmount|crmMoney:$currency}
-	 </td>
-       </tr> 
-    {/if}
 
      {/if}
 

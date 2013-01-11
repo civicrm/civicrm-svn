@@ -34,9 +34,6 @@
 {else}
 {ts}Amount{/ts}: {$amount|crmMoney:$currency} {if $amount_level } - {$amount_level} {/if}
 {/if}
-{if $initialAmount}
-{ts}Initial Amount{/ts}: {$initialAmount|crmMoney:$currency}
-{/if}
 {/if}
 {if $receive_date}
 

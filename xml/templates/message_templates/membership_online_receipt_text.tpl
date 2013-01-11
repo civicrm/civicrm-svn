@@ -80,9 +80,6 @@
 {ts 1=$membership_name}%1 Membership{/ts}: {$membership_amount|crmMoney}
 {/if}
 
-{if $initialAmount}
-{ts}Initial Amount{/ts}: {$initialAmount|crmMoney}
-{/if}
 {if $receive_date}
 
 {ts}Date{/ts}: {$receive_date|crmDate}

@@ -257,16 +257,6 @@ registration process.{/ts}</p>
          {$totalAmount|crmMoney} {if $hookDiscount.message}({$hookDiscount.message}){/if}
         </td>
        </tr>
-        {if $initialAmount}
-         <tr>
-          <td {$labelStyle}>
-           {ts}Initial Amount{/ts}
-          </td>  
-          <td {$valueStyle}>
-           {$initialAmount|crmMoney}
-          </td>
-         </tr>
-        {/if}
        {if $pricesetFieldsCount }
      <tr>
        <td {$labelStyle}> 
