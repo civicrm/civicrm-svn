@@ -150,6 +150,8 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form {
 
     $this->add('select', 'start_action_date', ts('Date Field'), $sel4, TRUE);
 
+    $this->addElement('checkbox', 'record_activity', ts('Record activity for automated email'));
+
     $this->addElement('checkbox', 'is_repeat', ts('Repeat'),
       NULL, array('onclick' => "return showHideByValue('is_repeat',true,'repeatFields','table-row','radio',false);")
     );
@@ -254,6 +256,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form {
   function setDefaultValues() {
     if ($this->_action & CRM_Core_Action::ADD) {
       $defaults['is_active'] = 1;
+      $defaults['record_activity'] = 1;
     }
     else {
       $defaults = $this->_values;
@@ -325,6 +328,7 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form {
       'subject',
       'absolute_date',
       'group_id',
+      'record_activity'
     );
     foreach ($keys as $key) {
       $params[$key] = CRM_Utils_Array::value($key, $values);
@@ -379,11 +383,6 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form {
     $params['mapping_id'] = $values['entity'][0];
     $entity_value = $values['entity'][1];
     $entity_status = $values['entity'][2];
-    
-    //force recording activity for membership reminder
-    if ($params['mapping_id'] == 4) {
-      $params['record_activity'] = 1;  
-    }
 
     foreach (array(
       'entity_value', 'entity_status') as $key) {
