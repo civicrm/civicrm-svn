@@ -67,16 +67,16 @@
 <legend>{ts}Processor Details for Live Payments{/ts}</legend>
     <table class="form-layout-compressed">
         <tr class="crm-paymentProcessor-form-block-user_name">
-            <td class="label">{$form.user_name.label}</td><td>{$form.user_name.html} {help id=$ppType|cat:'-live-user-name'}</td>
+            <td class="label">{$form.user_name.label}</td><td>{$form.user_name.html} {help id=$ppTypeName|cat:'-live-user-name'}</td>
         </tr>
 {if $form.password}
         <tr class="crm-paymentProcessor-form-block-password">
-            <td class="label">{$form.password.label}</td><td>{$form.password.html} {help id=$ppType|cat:'-live-password'}</td>
+            <td class="label">{$form.password.label}</td><td>{$form.password.html} {help id=$ppTypeName|cat:'-live-password'}</td>
         </tr>
 {/if}
 {if $form.signature}
         <tr class="crm-paymentProcessor-form-block-signature">
-            <td class="label">{$form.signature.label}</td><td>{$form.signature.html} {help id=$ppType|cat:'-live-signature'}</td>
+            <td class="label">{$form.signature.label}</td><td>{$form.signature.html} {help id=$ppTypeName|cat:'-live-signature'}</td>
         </tr>
 {/if}
 {if $form.subject}
@@ -85,21 +85,21 @@
         </tr>
 {/if}
         <tr class="crm-paymentProcessor-form-block-url_site">
-            <td class="label">{$form.url_site.label}</td><td>{$form.url_site.html|crmAddClass:huge} {help id=$ppType|cat:'-live-url-site'}</td>
+            <td class="label">{$form.url_site.label}</td><td>{$form.url_site.html|crmAddClass:huge} {help id=$ppTypeName|cat:'-live-url-site'}</td>
         </tr>
 {if $form.url_api}
         <tr class="crm-paymentProcessor-form-block-url_api">
-            <td class="label">{$form.url_api.label}</td><td>{$form.url_api.html|crmAddClass:huge} {help id=$ppType|cat:'-live-url-api'}</td>
+            <td class="label">{$form.url_api.label}</td><td>{$form.url_api.html|crmAddClass:huge} {help id=$ppTypeName|cat:'-live-url-api'}</td>
         </tr>
 {/if}
 {if $is_recur}
         <tr class="crm-paymentProcessor-form-block-url_recur">
-            <td class="label">{$form.url_recur.label}</td><td>{$form.url_recur.html|crmAddClass:huge} {help id=$ppType|cat:'-live-url-recur'}</td>
+            <td class="label">{$form.url_recur.label}</td><td>{$form.url_recur.html|crmAddClass:huge} {help id=$ppTypeName|cat:'-live-url-recur'}</td>
         </tr>
 {/if}
 {if $form.url_button}
         <tr class="crm-paymentProcessor-form-block-url_button">
-            <td class="label">{$form.url_button.label}</td><td>{$form.url_button.html|crmAddClass:huge} {help id=$ppType|cat:'-live-url-button'}</td>
+            <td class="label">{$form.url_button.label}</td><td>{$form.url_button.html|crmAddClass:huge} {help id=$ppTypeName|cat:'-live-url-button'}</td>
         </tr>
 {/if}
     </table>        
@@ -109,15 +109,15 @@
 <legend>{ts}Processor Details for Test Payments{/ts}</legend>
     <table class="form-layout-compressed">                      
         <tr class="crm-paymentProcessor-form-block-test_user_name">
-            <td class="label">{$form.test_user_name.label}</td><td>{$form.test_user_name.html} {help id=$ppType|cat:'-test-user-name'}</td></tr>
+            <td class="label">{$form.test_user_name.label}</td><td>{$form.test_user_name.html} {help id=$ppTypeName|cat:'-test-user-name'}</td></tr>
 {if $form.test_password}
         <tr class="crm-paymentProcessor-form-block-test_password">
-            <td class="label">{$form.test_password.label}</td><td>{$form.test_password.html} {help id=$ppType|cat:'-test-password'}</td>
+            <td class="label">{$form.test_password.label}</td><td>{$form.test_password.html} {help id=$ppTypeName|cat:'-test-password'}</td>
         </tr>
 {/if}
 {if $form.test_signature}
         <tr class="crm-paymentProcessor-form-block-test_signature">
-            <td class="label">{$form.test_signature.label}</td><td>{$form.test_signature.html} {help id=$ppType|cat:'-test-signature'}</td>
+            <td class="label">{$form.test_signature.label}</td><td>{$form.test_signature.html} {help id=$ppTypeName|cat:'-test-signature'}</td>
         </tr>
 {/if}
 {if $form.test_subject}
@@ -126,21 +126,21 @@
         </tr>
 {/if}
         <tr class="crm-paymentProcessor-form-block-test_url_site">
-            <td class="label">{$form.test_url_site.label}</td><td>{$form.test_url_site.html|crmAddClass:huge} {help id=$ppType|cat:'-test-url-site'}</td>
+            <td class="label">{$form.test_url_site.label}</td><td>{$form.test_url_site.html|crmAddClass:huge} {help id=$ppTypeName|cat:'-test-url-site'}</td>
         </tr>
 {if $form.test_url_api}
         <tr class="crm-paymentProcessor-form-block-test_url_api">
-            <td class="label">{$form.test_url_api.label}</td><td>{$form.test_url_api.html|crmAddClass:huge} {help id=$ppType|cat:'-test-url-api'}</td>
+            <td class="label">{$form.test_url_api.label}</td><td>{$form.test_url_api.html|crmAddClass:huge} {help id=$ppTypeName|cat:'-test-url-api'}</td>
         </tr>
 {/if}
 {if $is_recur}
         <tr class="crm-paymentProcessor-form-block-test_url_recur">
-            <td class="label">{$form.test_url_recur.label}</td><td>{$form.test_url_recur.html|crmAddClass:huge} {help id=$ppType|cat:'-test-url-recur'}</td>
+            <td class="label">{$form.test_url_recur.label}</td><td>{$form.test_url_recur.html|crmAddClass:huge} {help id=$ppTypeName|cat:'-test-url-recur'}</td>
         </tr>
 {/if}
 {if $form.test_url_button}
         <tr class="crm-paymentProcessor-form-block-test_url_button">
-            <td class="label">{$form.test_url_button.label}</td><td>{$form.test_url_button.html|crmAddClass:huge} {help id=$ppType|cat:'-test-url-button'}</td>
+            <td class="label">{$form.test_url_button.label}</td><td>{$form.test_url_button.html|crmAddClass:huge} {help id=$ppTypeName|cat:'-test-url-button'}</td>
         </tr>
 {/if}  
 {/if} 
