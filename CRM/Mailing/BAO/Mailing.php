@@ -2077,10 +2077,12 @@ AND civicrm_contact.is_opt_out =0";
       return;
     }
 
-    $mailingIDs = CRM_Mailing_BAO_Mailing::mailingACLIDs();
-    if (!in_array($id,
-        $mailingIDs
-      )) {
+    $mailingIDs = self::mailingACLIDs();
+    if ($mailingIDs === TRUE) {
+      return;
+    }
+
+    if (!in_array($id, $mailingIDs)) {
       CRM_Core_Error::fatal(ts('You do not have permission to access this mailing report'));
     }
     return;
@@ -2090,6 +2092,10 @@ AND civicrm_contact.is_opt_out =0";
     $mailingACL = " ( 0 ) ";
 
     $mailingIDs = self::mailingACLIDs();
+    if ($mailingIDs === TRUE) {
+      return " ( 1 ) ";
+    }
+
     if (!empty($mailingIDs)) {
       $mailingIDs = implode(',', $mailingIDs);
       $tableName  = !$alias ? self::getTableName() : $alias;
@@ -2098,7 +2104,27 @@ AND civicrm_contact.is_opt_out =0";
     return $mailingACL;
   }
 
-  static function &mailingACLIDs($count = FALSE, $condition = NULL) {
+  /**
+   * returns all the mailings that this user can access. This is dependent on
+   * all the groups that the user has access to.
+   * However since most civi installs dont use ACL's we special case the condition
+   * where the user has access to ALL groups, and hence ALL mailings and return a
+   * value of TRUE (to avoid the downstream where clause with a list of mailing list IDs
+   *
+   * @return boolean | array - TRUE if the user has access to all mailings, else array of mailing IDs (possibly empty)
+   * @static
+   */
+  static function &mailingACLIDs() {
+    // CRM-11633
+    // optimize common case where admin has access
+    // to all mailings
+    if (
+      CRM_Core_Permission::check('view all contacts') ||
+      CRM_Core_Permission::check('edit all contacts')
+    ) {
+      return TRUE;
+    }
+
     $mailingIDs = array();
 
     // get all the groups that this user can access
@@ -2115,13 +2141,8 @@ SELECT    $selectClause
 LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
  WHERE ( ( g.entity_table like 'civicrm_group%' AND g.entity_id IN ( $groupIDs ) )
     OR   ( g.entity_table IS NULL AND g.entity_id IS NULL ) )
-   $condition";
-      $dao = CRM_Core_DAO::executeQuery($query, CRM_Core_DAO::$_nullArray);
-
-      if ($count) {
-        $dao->fetch();
-        return $dao->count;
-      }
+";
+      $dao = CRM_Core_DAO::executeQuery($query);
 
       $mailingIDs = array();
       while ($dao->fetch()) {

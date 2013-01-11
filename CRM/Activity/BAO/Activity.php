@@ -834,8 +834,10 @@ LEFT JOIN  civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.ac
 
     //CRM-3553, need to check user has access to target groups.
     $mailingIDs = CRM_Mailing_BAO_Mailing::mailingACLIDs();
-    $accessCiviMail = ((CRM_Core_Permission::check('access CiviMail')) ||
-      (CRM_Mailing_Info::workflowEnabled() && CRM_Core_Permission::check('create mailings'))
+    $accessCiviMail = (
+      (CRM_Core_Permission::check('access CiviMail')) ||
+      (CRM_Mailing_Info::workflowEnabled() &&
+        CRM_Core_Permission::check('create mailings'))
     );
 
     //get all campaigns.
@@ -883,7 +885,10 @@ LEFT JOIN  civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.ac
       else {
         $values[$activityID]['recipients'] = ts('(recipients)');
         $values[$activityID]['mailingId'] = '';
-        if ($accessCiviMail && in_array($dao->source_record_id, $mailingIDs)) {
+        if (
+          $accessCiviMail &&
+          ($mailingIDs === TRUE || in_array($dao->source_record_id, $mailingIDs))
+        ) {
           $values[$activityID]['mailingId'] = CRM_Utils_System::url('civicrm/mailing/report',
             "mid={$dao->source_record_id}&reset=1&cid={$dao->source_contact_id}&context=activitySelector"
           );
@@ -2164,7 +2169,7 @@ AND cl.modified_id  = c.id
           'title' => ts('Source Contact'),
           'type' => CRM_Utils_Type::T_STRING,
         );
-          
+
 
         $Activityfields = array(
           'activity_type' => array('title' => ts('Activity Type'), 'type' => CRM_Utils_Type::T_STRING),
