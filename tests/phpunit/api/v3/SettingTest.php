@@ -68,6 +68,7 @@ class api_v3_SettingTest extends CiviUnitTestCase {
     $result = civicrm_api( 'domain','get',$params);
     if(empty($result['id'])){
       $result = civicrm_api( 'domain','create',$params );
+      $this->assertAPISuccess($result);
     }
 
     $this->_domainID2 = $result['id'];
@@ -75,6 +76,7 @@ class api_v3_SettingTest extends CiviUnitTestCase {
     $result = civicrm_api( 'domain','get',$params);
     if(empty($result['id'])){
       $result = civicrm_api( 'domain','create',$params );
+      $this->assertAPISuccess($result);
     }
     $this->_domainID3 = $result['id'];
     $this->_currentDomain = CRM_Core_Config::domainID();
@@ -82,6 +84,7 @@ class api_v3_SettingTest extends CiviUnitTestCase {
 
   function tearDown() {
     parent::tearDown();
+    $this->quickCleanup(array('civicrm_domain'));
     civicrm_api('system','flush', array('version' => $this->_apiversion));
   }
 

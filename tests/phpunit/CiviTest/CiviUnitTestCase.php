@@ -382,7 +382,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
    */
   protected function tearDown() {
     error_reporting(E_ALL & ~E_NOTICE);
-    $tablesToTruncate = array('civicrm_domain', 'civicrm_contact');
+    $tablesToTruncate = array('civicrm_contact');
     $this->quickCleanup($tablesToTruncate);
     $this->cleanTempDirs();
     $this->unsetExtensionSystem();
