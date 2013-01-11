@@ -87,9 +87,99 @@ class CRM_Upgrade_Incremental_php_FourThree {
     //CRM-11514 create financial records for contributions
     $this->addTask(ts('Create financial records for contributions'), 'createFinancialRecords');
     
+    //CRM-11636
+    $this->addTask(ts('Populate financial type values for price records'), 'assignFinancialTypeToPriceRecords');
     return TRUE;
   }
 
+  //CRM-11636
+  function assignFinancialTypeToPriceRecords() {
+    //here we do the finantial type migration 
+    $isDefaultsModified = self::_checkAndMigrateDefaultFinancialTypes();
+
+    //here we update price set entries
+    $sqlFinancialIds = "SELECT id, name FROM civicrm_financial_type
+ WHERE name IN ('Donation', 'Event Fee', 'Member Dues');";
+    $daoFinancialIds = CRM_Core_DAO::executeQuery($sqlFinancialIds);
+    while($daoFinancialIds->fetch()) {
+      $financialIds[$daoFinancialIds->name] = $daoFinancialIds->id;
+    }
+    $sqlPriceSetUpdate = "UPDATE civicrm_price_set ps
+  SET ps.financial_type_id = CASE
+    WHEN ps.extends LIKE '%1%' THEN {$financialIds['Event Fee']}
+    WHEN ps.extends LIKE '2' THEN {$financialIds['Donation']}
+    WHEN ps.extends LIKE '3' THEN {$financialIds['Member Dues']}
+  END
+  WHERE financial_type_id IS NULL";
+    CRM_Core_DAO::executeQuery($sqlPriceSetUpdate);
+
+    //here we update price field value rows
+    $sqlPriceFieldValueUpdate = "UPDATE civicrm_price_field_value pfv
+ LEFT JOIN civicrm_membership_type mt ON (pfv.membership_type_id = mt.id)
+ INNER JOIN civicrm_price_field pf ON (pfv.price_field_id = pf.id)
+ INNER JOIN civicrm_price_set ps ON (pf.price_set_id = ps.id)
+ SET pfv.financial_type_id = CASE
+   WHEN pfv.membership_type_id IS NOT NULL THEN mt.financial_type_id
+   WHEN pfv.membership_type_id IS NULL THEN ps.financial_type_id 
+ END";
+    CRM_Core_DAO::executeQuery($sqlPriceFieldValueUpdate);
+    
+    return TRUE;
+  }
+  
+  static function _checkAndMigrateDefaultFinancialTypes() {
+    $modifiedDefaults = FALSE;
+    //insert types if not exists
+    $sqlFetchTypes = "SELECT id, name FROM civicrm_financial_type
+  WHERE name IN ('Donation', 'Event Fee', 'Member Dues')";
+    $daoFetchTypes = CRM_Core_DAO::executeQuery($sqlFetchTypes);
+    
+    $financialTypes = array();
+    while($daoFetchTypes->fetch()) {
+      $financialTypes[$daoFetchTypes->id] = $daoFetchTypes->name;
+    }
+    $insertStatments['Donation'] = "('Donation', 0, 1, 1)";
+    $insertStatments['Member Dues'] = "('Member Dues', 0, 1, 1)";
+    $insertStatments['Event Fee'] = "('Event Fee', 0, 1, 0)";
+    $insertString = array();
+    foreach($insertStatments as $key => $value) {
+      if (!in_array($key, $financialTypes)) {
+        $insertString[$key] = $value;
+      }
+    }
+    
+    if (!empty($insertString)) {
+      $modifiedDefaults = TRUE;
+      $append = implode(',', $insertString);
+      $insertSql = "INSERT INTO civicrm_financial_type (name, is_reserved, is_active, is_deductible)
+  VALUES {$append};";
+      CRM_Core_DAO::executeQuery($insertSql);
+    }
+
+    $updateTypes = array_diff(array('Donation', 'Member Dues', 'Event Fee'), array_keys($insertString));
+    if (!empty($updateTypes)) {
+      $value = implode("','", $updateTypes);
+      if (count($updateTypes) == 1) {
+        $clause = " = '{$value}'";
+      } 
+      else {
+        $clause = " IN ('$value')";
+      }
+      //active the types which are disabled
+      $sqlSetFinancialTypeActive = "UPDATE civicrm_financial_type SET is_active = 1 
+  WHERE name {$clause} AND is_active = 0;";
+      CRM_Core_DAO::executeQuery($sqlSetFinancialTypeActive);    
+      
+      if (!$modifiedDefaults) {
+        //to check affected rows
+        $sqlAffectedRows = "SELECT ROW_COUNT();"; 
+        $modifiedDefaults = CRM_Core_DAO::singleValueQuery($sqlAffectedRows);
+      }
+    }
+
+    return $modifiedDefaults;
+  }
+  
   function createFinancialRecords() {
     //fetch completed and pending contributions
     $sql = "SELECT con.id, con.payment_instrument_id, con.currency, con.total_amount, con.net_amount, con.fee_amount, con.trxn_id, con.contribution_status_id, con.payment_instrument_id, con.contact_id, con.receive_date, con.check_number, con.is_pay_later FROM civicrm_contribution con 
