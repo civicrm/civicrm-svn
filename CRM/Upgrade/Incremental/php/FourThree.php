@@ -54,6 +54,13 @@ class CRM_Upgrade_Incremental_php_FourThree {
         $postUpgradeMessage .= '<br />' . ts('Membership renewal reminders must now be configured using the Schedule Reminders feature, which supports multiple renewal reminders  (Administer > Communications > Schedule Reminders). The Update Membership Statuses scheduled job will no longer send membershp renewal reminders. You can use your existing renewal reminder message template(s) with the Schedule Reminders feature.');
         $postUpgradeMessage .= '<br />' . ts('The Set Membership Reminder Dates scheduled job has been deleted since membership reminder dates stored in the membership table are no longer in use.');
       }
+      
+      //CRM-11636
+      //here we do the financial type check and migration 
+      $isDefaultsModified = self::_checkAndMigrateDefaultFinancialTypes();
+      if($isDefaultsModified) {
+        $postUpgradeMessage .= '<br />' . ts('Please review all price set financial type assignments.');
+      }
     }
   }
 
@@ -94,9 +101,6 @@ class CRM_Upgrade_Incremental_php_FourThree {
 
   //CRM-11636
   function assignFinancialTypeToPriceRecords() {
-    //here we do the finantial type migration 
-    $isDefaultsModified = self::_checkAndMigrateDefaultFinancialTypes();
-
     //here we update price set entries
     $sqlFinancialIds = "SELECT id, name FROM civicrm_financial_type
  WHERE name IN ('Donation', 'Event Fee', 'Member Dues');";
