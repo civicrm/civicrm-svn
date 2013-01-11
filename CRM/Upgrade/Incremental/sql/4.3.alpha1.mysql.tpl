@@ -174,7 +174,7 @@ DELETE FROM civicrm_option_value WHERE option_group_id = @option_group_id_sms_pr
 
 -- CRM-11292
 ALTER TABLE `civicrm_phone`
-ADD `phone_numeric` varchar(16) 
+ADD `phone_numeric` varchar(32) 
 COMMENT 'Phone number stripped of all whitespace, letters, and punctuation.'
 AFTER `phone_ext`,
 ADD INDEX phone_numeric_index(`phone_numeric`);

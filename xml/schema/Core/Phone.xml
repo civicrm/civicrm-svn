@@ -111,7 +111,7 @@
   <field>
        <name>phone_numeric</name>
        <type>varchar</type>
-       <length>16</length>
+       <length>32</length>
        <comment>Phone number stripped of all whitespace, letters, and punctuation.</comment>
        <add>4.3</add>
   </field>
