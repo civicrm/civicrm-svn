@@ -71,7 +71,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
 
   /**
    * The title of the category we are editing
-   * 
+   *
    * @var string
    */
   protected $_title;
@@ -144,24 +144,24 @@ class CRM_Profile_Form extends CRM_Core_Form {
    */
   protected $_activityId = NULL;
 
-  
+
   protected $_multiRecordFields = NULL;
-  
+
   protected $_recordId = NULL;
-  
+
   /**
    * action for multi record profile (create/edit/delete)
    *
    * @var string
    */
   protected $_multiRecord = NULL;
-    
+
   protected $_multiRecordProfile = FALSE;
 
   protected $_recordExists = TRUE;
 
   protected $_customGroupTitle = NULL;
-  
+
   protected $_deleteButtonName = NULL;
 
   protected $_customGroupId = NULL;
@@ -194,17 +194,17 @@ class CRM_Profile_Form extends CRM_Core_Form {
         $this->set('recordId', NULL);
       }
     }
-        
+
     if ($this->_mode == self::MODE_EDIT) {
       //specifies the action being done on a multi record field
       $multiRecordAction = CRM_Utils_Request::retrieve('multiRecord', 'String', $this);
-      $this->_multiRecord = (!is_numeric($multiRecordAction)) ? 
+      $this->_multiRecord = (!is_numeric($multiRecordAction)) ?
         CRM_Core_Action::resolve($multiRecordAction) : $multiRecordAction;
       if ($this->_multiRecord) {
         $this->set('multiRecord', $this->_multiRecord);
       }
 
-      if ($this->_multiRecord && 
+      if ($this->_multiRecord &&
           !in_array($this->_multiRecord, array(CRM_Core_Action::UPDATE, CRM_Core_Action::ADD, CRM_Core_Action::DELETE))) {
         CRM_Core_Error::fatal(ts('Proper action not specified for this custom value record profile'));
       }
@@ -212,7 +212,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
     $this->_duplicateButtonName = $this->getButtonName('upload', 'duplicate');
 
     $gids = explode(',', CRM_Utils_Request::retrieve('gid', 'String', CRM_Core_DAO::$_nullObject, FALSE, 0, 'GET'));
-    
+
     if ((count($gids) > 1) && !$this->_profileIds && empty($this->_profileIds)) {
       if (!empty($gids)) {
         foreach ($gids as $pfId) {
@@ -291,7 +291,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
       //using selector for listing of multirecord fields
       if ($this->_mode == self::MODE_EDIT && $this->_gid) {
         CRM_Core_BAO_UFGroup::shiftMultiRecordFields($this->_fields, $this->_multiRecordFields);
-            
+
         if ($this->_multiRecord) {
           if ($this->_multiRecord != CRM_Core_Action::ADD) {
             $this->_recordId = CRM_Utils_Request::retrieve('recordId', 'Positive', $this);
@@ -310,19 +310,19 @@ class CRM_Profile_Form extends CRM_Core_Form {
               array(1 => $this->_gid)
             ));
           }
-          
+
           $fieldId = CRM_Core_BAO_CustomField::getKeyID(key($this->_multiRecordFields));
           $customGroupDetails = CRM_Core_BAO_CustomGroup::getGroupTitles(array($fieldId));
           $this->_customGroupTitle = $customGroupDetails[$fieldId]['groupTitle'];
           $this->_customGroupId = $customGroupDetails[$fieldId]['groupID'];
-                    
+
           if ($this->_multiRecord == CRM_Core_Action::UPDATE || $this->_multiRecord == CRM_Core_Action::DELETE) {
             //record exists check
             foreach ($this->_multiRecordFields as $key => $field) {
               $fieldIds[] = CRM_Core_BAO_CustomField::getKeyID($key);
             }
             $getValues = CRM_Core_BAO_CustomValueTable::getEntityValues($this->_id, NULL, $fieldIds, TRUE);
-                  
+
             if (array_key_exists($this->_recordId, $getValues)) {
               $this->_recordExists = TRUE;
             } else {
@@ -339,7 +339,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
               CRM_Core_Session::setStatus(ts('You cannot add a new record as  maximum allowed limit is reached'), ts('Sorry'), 'error');
             }
           }
-          
+
         } elseif (!empty($this->_multiRecordFields)
            && (!$this->_multiRecord || !in_array($this->_multiRecord, array(CRM_Core_Action::DELETE, CRM_Core_Action::UPDATE)) )) {
           //multirecord listing page
@@ -355,7 +355,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
         }
       }
       $this->assign('multiRecordFieldListing', $multiRecordFieldListing);
-      
+
       // is profile double-opt in?
       if (CRM_Utils_Array::value('group', $this->_fields) &&
         CRM_Core_BAO_UFGroup::isProfileDoubleOptin()
@@ -373,7 +373,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
           $session->setStatus($status);
         }
       }
-      
+
       //transfering all the multirecord custom fields in _fields
       if ($this->_multiRecord && !empty($this->_multiRecordFields)) {
         $this->_fields = $this->_multiRecordFields;
@@ -384,7 +384,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
         return CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm', 'reset=1'));
       }
     }
-    
+
     if (!is_array($this->_fields)) {
       $session = CRM_Core_Session::singleton();
       CRM_Core_Session::setStatus(ts('This feature is not currently available.'), ts('Sorry'), 'error');
@@ -410,7 +410,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
     if ($this->_multiRecordProfile && ($this->_multiRecord == CRM_Core_Action::DELETE)) {
       return;
     }
-    
+
     if ($this->_id && !$this->_multiRecordProfile) {
       if ($this->_isContactActivityProfile) {
         $contactFields = $activityFields = array();
@@ -460,13 +460,13 @@ class CRM_Profile_Form extends CRM_Core_Form {
                 $this->_defaults,
                 $this->_id,
                 $this->_mode,
-                $value                                           
+                $value
               );
             } else {
               $this->_defaults[$name] = "";
             }
           }
-          
+
           if ($htmlType == 'File') {
             $entityId = $this->_id;
             if (CRM_Utils_Array::value('field_type', $field) == 'Activity' &&
@@ -475,10 +475,10 @@ class CRM_Profile_Form extends CRM_Core_Form {
               $entityId = $this->_activityId;
             }
             $url = CRM_Core_BAO_CustomField::getFileURL($entityId, $key);
-            
+
             if ($url) {
               $customFiles[$name]['displayURL'] = ts("Attached File") . ": {$url['file_url']}";
-              
+
               $deleteExtra = ts("Are you sure you want to delete attached file?");
               $fileId      = $url['file_id'];
               $deleteURL   = CRM_Utils_System::url('civicrm/file',
@@ -486,7 +486,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
                            );
               $text = ts("Delete Attached File");
               $customFiles[$field['name']]['deleteURL'] = "<a href=\"{$deleteURL}\" onclick = \"if (confirm( ' $deleteExtra ' )) this.href+='&amp;confirmed=1'; else return false;\">$text</a>";
-              
+
               // also delete the required rule that we've set on the form element
               $this->removeFileRequiredRules($name);
             }
@@ -516,10 +516,10 @@ class CRM_Profile_Form extends CRM_Core_Form {
               $entityId = $this->_activityId;
             }
             $url = CRM_Core_BAO_CustomField::getFileURL($entityId, $customFieldID);
-            
+
             if ($url) {
               $customFiles[$field['name']]['displayURL'] = ts("Attached File") . ": {$url['file_url']}";
-              
+
               $deleteExtra = ts("Are you sure you want to delete attached file?");
               $fileId      = $url['file_id'];
               $deleteURL   = CRM_Utils_System::url('civicrm/file',
@@ -527,7 +527,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
               );
               $text = ts("Delete Attached File");
               $customFiles[$field['name']]['deleteURL'] = "<a href=\"{$deleteURL}\" onclick = \"if (confirm( ' $deleteExtra ' )) this.href+='&amp;confirmed=1'; else return false;\">$text</a>";
-              
+
               // also delete the required rule that we've set on the form element
               $this->removeFileRequiredRules($field['name']);
             }
@@ -543,7 +543,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
       $this->setDefaults($this->_defaults);
       return;
     }
-    
+
     if (CRM_Utils_Array::value('image_URL', $this->_defaults)) {
       list($imageWidth, $imageHeight) = getimagesize($this->_defaults['image_URL']);
       list($imageThumbWidth, $imageThumbHeight) = CRM_Contact_BAO_Contact::getThumbSize($imageWidth, $imageHeight);
@@ -578,24 +578,24 @@ class CRM_Profile_Form extends CRM_Core_Form {
     if (($this->_multiRecord & CRM_Core_Action::ADD) && $this->_maxRecordLimit) {
       return;
     }
-  
+
     if (($this->_multiRecord & CRM_Core_Action::DELETE)) {
       if (!$this->_recordExists) {
         $session = CRM_Core_Session::singleton();
         CRM_Core_Session::setStatus(ts('The record %1 doesnot exists', array(1 => $this->_recordId)), ts('Record doesnot exists'), 'alert');
-      } else {
+      }
+      else {
         $this->assign('deleteRecord', TRUE);
       }
       return;
-    } 
+    }
 
     CRM_Core_BAO_Address::checkContactSharedAddressFields($this->_fields, $this->_id);
- 
-    //we should not allow component and mix profiles in search mode
+
+    // we should not allow component and mix profiles in search mode
     if ($this->_mode != self::MODE_REGISTER) {
       //check for mix profile fields (eg:  individual + other contact type)
       if (CRM_Core_BAO_UFField::checkProfileType($this->_gid)) {
-
         if (($this->_mode & self::MODE_EDIT) && $this->_isContactActivityProfile) {
           $errors = self::validateContactActivityProfile($this->_activityId, $this->_id, $this->_gid);
           if (!empty($errors)) {
@@ -624,20 +624,24 @@ class CRM_Profile_Form extends CRM_Core_Form {
           $profileType = CRM_Contact_BAO_ContactType::getBasicType($profileType);
         }
 
-        if (($profileType != 'Contact' && !$this->_isContactActivityProfile) &&
-            (($profileSubType && !empty($contactSubtypes) && (!in_array($profileSubType,$contactSubtypes))) ||
-            ($profileType != $contactType)
-          )
+        if (
+          ($profileType != 'Contact' && !$this->_isContactActivityProfile) &&
+          (($profileSubType && !empty($contactSubtypes) && (!in_array($profileSubType,$contactSubtypes))) ||
+            ($profileType != $contactType))
         ) {
           $return = TRUE;
           if (!$statusMessage) {
-            $statusMessage = ts("This profile is configured for contact type '%1'. It cannot be used to edit contacts of other types.", array(1 => $profileSubType ? $profileSubType : $profileType));
+            $statusMessage =
+              ts("This profile is configured for contact type '%1'. It cannot be used to edit contacts of other types.",
+                array(1 => $profileSubType ? $profileSubType : $profileType));
           }
         }
       }
 
-      if (in_array($profileType, array(
-        "Membership", "Participant", "Contribution"))) {
+      if (in_array(
+          $profileType,
+          array("Membership", "Participant", "Contribution")
+        )) {
         $return = TRUE;
         if (!$statusMessage) {
           $statusMessage = ts('Profile is not configured for the selected action.');
@@ -678,11 +682,14 @@ class CRM_Profile_Form extends CRM_Core_Form {
       // show all fields that are visibile:
       // if we are a admin OR the same user OR acl-user with access to the profile
       // or we have checksum access to this contact (i.e. the user without a login) - CRM-5909
-      if (CRM_Core_Permission::check('administer users') ||
+      if (
+        CRM_Core_Permission::check('administer users') ||
         $this->_id == $session->get('userID') ||
         $this->_isPermissionedChecksum ||
-        in_array($this->_gid,
-          CRM_ACL_API::group(CRM_Core_Permission::EDIT,
+        in_array(
+          $this->_gid,
+          CRM_ACL_API::group(
+            CRM_Core_Permission::EDIT,
             NULL,
             'civicrm_uf_group',
             CRM_Core_PseudoConstant::ufGroup()
@@ -708,7 +715,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
 
     // cache the state country fields. based on the results, we could use our javascript solution
     // in create or register mode
-    $stateCountryMap = array();    
+    $stateCountryMap = array();
 
     // add the form elements
     foreach ($this->_fields as $name => $field) {
@@ -720,9 +727,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
 
       // since the CMS manages the email field, suppress the email display if in
       // register mode which occur within the CMS form
-      if ($this->_mode == self::MODE_REGISTER &&
-        substr($name, 0, 5) == 'email'
-      ) {
+      if ($this->_mode == self::MODE_REGISTER && substr($name, 0, 5) == 'email') {
         unset($this->_fields[$name]);
         continue;
       }
@@ -812,7 +817,8 @@ class CRM_Profile_Form extends CRM_Core_Form {
     }
 
     if ($this->_context == 'dialog') {
-      $this->addElement('submit',
+      $this->addElement(
+        'submit',
         $this->_duplicateButtonName,
         ts('Save Matching Contact')
       );
@@ -1054,7 +1060,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
    */
   public function postProcess() {
     $params = $this->controller->exportValues($this->_name);
-    
+
     //if the delete record button is clicked
     if ($this->_deleteButtonName) {
       if (CRM_Utils_Array::value($this->_deleteButtonName, $_POST) && $this->_recordId) {
@@ -1065,7 +1071,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
           if ($tableName = CRM_Utils_Array::value('table_name', $returnValues)) {
             $sql = "DELETE FROM {$tableName} WHERE id = %1 AND entity_id = %2";
             $sqlParams = array(
-                          1 => array($this->_recordId, 'Integer'), 
+                          1 => array($this->_recordId, 'Integer'),
                           2 => array($this->_id, 'Integer')
                          );
            $dao = CRM_Core_DAO::executeQuery($sql, $sqlParams);
@@ -1256,7 +1262,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
         $activity = civicrm_api('Activity', 'create', $activityParams);
       }
     }
-    
+
     if ($this->_multiRecord && $this->_recordId && $this->_multiRecordFields && $this->_recordExists) {
       $params['customRecordValues'][$this->_recordId] = array_keys($this->_multiRecordFields);
     }
@@ -1266,7 +1272,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
       $this->_gid, $this->_ctype,
       TRUE
     );
-    
+
     //mailing type group
     if (!empty($mailingType)) {
       // we send in the contactID so we match the same groups and are exact, rather than relying on email

@@ -1975,7 +1975,8 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
     elseif ($fieldName == 'payment_instrument') {
       $form->add('select', $name, $title,
                        array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::paymentInstrument( ), $required );
-        } else if ($fieldName == 'financial_type' ) {
+    }
+    else if ($fieldName == 'financial_type' ) {
       $form->add('select', $name, $title,
         array(
           '' => ts('- select -')) + CRM_Contribute_PseudoConstant::financialType(), $required
@@ -2034,15 +2035,6 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             '' => ts('- select -')) + CRM_Event_PseudoConstant::participantRole(), $required
         );
       }
-    }
-    elseif ($fieldName == 'scholarship_type_id') {
-      $form->add('select', $name, $title, array('' => '-- Select -- ') + array_flip(CRM_Core_OptionGroup::values('scholarship_type', TRUE)));
-    }
-    elseif ($fieldName == 'applicant_status_id') {
-      $form->add('select', $name, $title, array('' => '-- Select -- ') + array_flip(CRM_Core_OptionGroup::values('applicant_status', TRUE)));
-    }
-    elseif ($fieldName == 'highschool_gpa_id') {
-      $form->add('select', $name, $title, array('' => '-- Select -- ') + CRM_Core_OptionGroup::values('highschool_gpa'));
     }
     elseif ($fieldName == 'world_region') {
       $form->add('select', $name, $title,
