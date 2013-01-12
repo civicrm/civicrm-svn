@@ -408,9 +408,9 @@ WHERE payment_processor_type = `civicrm_payment_processor_type`.name;
 ALTER TABLE `civicrm_payment_processor` DROP `payment_processor_type`;
 
 -- CRM-9730
-ALTER TABLE `civicrm_price_field_value` ADD `deductible_amount` DECIMAL( 20, 2 ) NOT NULL COMMENT 'Tax-deductible portion of the amount';
+ALTER TABLE `civicrm_price_field_value` ADD `deductible_amount` DECIMAL( 20, 2 ) NOT NULL DEFAULT '0.00' COMMENT 'Tax-deductible portion of the amount';
 
-ALTER TABLE `civicrm_line_item` ADD `deductible_amount` DECIMAL( 20, 2 ) NOT NULL COMMENT 'Tax-deductible portion of the amount';
+ALTER TABLE `civicrm_line_item` ADD `deductible_amount` DECIMAL( 20, 2 ) NOT NULL DEFAULT '0.00' COMMENT 'Tax-deductible portion of the amount';
 
 ALTER TABLE `civicrm_price_field_value` ADD
 `financial_type_id` int(10) unsigned DEFAULT NULL COMMENT 'FK to Financial Type.',
