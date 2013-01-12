@@ -202,11 +202,11 @@ VALUES
    ('batch_status'                  , '{ts escape="sql"}Batch Status{/ts}'                       , 1, 1),
    ('sms_api_type'                  , '{ts escape="sql"}Api Type{/ts}'                           , 1, 1),
    ('sms_provider_name'             , '{ts escape="sql"}Sms Provider Internal Name{/ts}'         , 1, 1),
-   ('auto_renew_options'            , '{ts escape="sql"}Auto Renew Options{/ts}'         	 , 1, 1),
+   ('auto_renew_options'            , '{ts escape="sql"}Auto Renew Options{/ts}'         	       , 1, 1),
    ('financial_account_type'        , '{ts escape="sql"}Financial Account Type{/ts}'             , 1, 1),
    ('financial_item_status'         , '{ts escape="sql"}Financial Item Status{/ts}'              , 1, 1),
-   ('grant_program_status'          , '{ts escape="sql"}Grant Program Status{/ts}'                , 1, 1),
-   ('allocation_algorithm'          , '{ts escape="sql"}Grant Program Allocation Algorithm{/ts}'  , 1, 1);
+   ('grant_program_status'          , '{ts escape="sql"}Grant Program Status{/ts}'               , 1, 1),
+   ('allocation_algorithm'          , '{ts escape="sql"}Grant Program Allocation Algorithm{/ts}' , 1, 1);
 
 SELECT @option_group_id_pcm            := max(id) from civicrm_option_group where name = 'preferred_communication_method';
 SELECT @option_group_id_act            := max(id) from civicrm_option_group where name = 'activity_type';
@@ -814,11 +814,11 @@ VALUES
 
 -- financial_account_type
 -- grouping field is specific to Quickbooks for mapping to .iif format
-   (@option_group_id_fat, '{ts escape="sql"}Asset{/ts}', 1, 'Asset', 'AR', 0, 0, 1, 'Things you own', 0, 1, 1, 2, NULL),
-   (@option_group_id_fat, '{ts escape="sql"}Liability{/ts}', 2, 'Liability', 'AP', 0, 0, 2, 'Things you own, like a grant still to be disbursed', 0, 1, 1, 2, NULL),
-   (@option_group_id_fat, '{ts escape="sql"}Revenue{/ts}', 3, 'Revenue', 'INC', 0, 1, 3, 'Income from contributions and sales of tickets and memberships', 0, 1, 1, 2, NULL),
-   (@option_group_id_fat, '{ts escape="sql"}Cost of Sales{/ts}', 4, 'Cost of Sales', 'COGS', 0, 0, 4, 'Costs incurred to get revenue, e.g. premiums for donations, dinner for a fundraising dinner ticket', 0, 1, 1, 2, NULL),
-   (@option_group_id_fat, '{ts escape="sql"}Expenses{/ts}', 5, 'Expenses', 'EXP', 0, 0, 5, 'Things that are paid for that are consumable, e.g. grants disbursed', 0, 1, 1, 2, NULL),
+   (@option_group_id_fat, '{ts escape="sql"}Asset{/ts}', 1, 'Asset', NULL, 0, 0, 1, 'Things you own', 0, 1, 1, 2, NULL),
+   (@option_group_id_fat, '{ts escape="sql"}Liability{/ts}', 2, 'Liability', NULL, 0, 0, 2, 'Things you own, like a grant still to be disbursed', 0, 1, 1, 2, NULL),
+   (@option_group_id_fat, '{ts escape="sql"}Revenue{/ts}', 3, 'Revenue', NULL, 0, 1, 3, 'Income from contributions and sales of tickets and memberships', 0, 1, 1, 2, NULL),
+   (@option_group_id_fat, '{ts escape="sql"}Cost of Sales{/ts}', 4, 'Cost of Sales', NULL, 0, 0, 4, 'Costs incurred to get revenue, e.g. premiums for donations, dinner for a fundraising dinner ticket', 0, 1, 1, 2, NULL),
+   (@option_group_id_fat, '{ts escape="sql"}Expenses{/ts}', 5, 'Expenses', NULL, 0, 0, 5, 'Things that are paid for that are consumable, e.g. grants disbursed', 0, 1, 1, 2, NULL),
 
 -- account_relationship
     (@option_group_id_arel, '{ts escape="sql"}Income Account is{/ts}', 1, 'Income Account is', NULL, 0, 1, 1, 'Income Account is', 0, 1, 1, 2, NULL),
@@ -889,21 +889,21 @@ SELECT @opLiability := value FROM civicrm_option_value WHERE name = 'Liability' 
 SELECT @opCost := value FROM civicrm_option_value WHERE name = 'Cost of Sales' and option_group_id = @option_group_id_fat;
 
 INSERT INTO
-   `civicrm_financial_account` (`name`, `contact_id`, `financial_account_type_id`, `description`, `accounting_code`, `is_reserved`, `is_active`, `is_deductible`, `is_default`)
+   `civicrm_financial_account` (`name`, `contact_id`, `financial_account_type_id`, `description`, `accounting_code`, `account_type_code`, `is_reserved`, `is_active`, `is_deductible`, `is_default`)
 VALUES
-  ( '{ts escape="sql"}Donation{/ts}'            , @contactID, @opval, 'Default account for donations', '4200', 0, 1, 1, 0 ),
-  ( '{ts escape="sql"}Member Dues{/ts}'          , @contactID, @opval, 'Default account for membership sales', '4400', 0, 1, 1, 0 ),
-  ( '{ts escape="sql"}Campaign Contribution{/ts}', @contactID, @opval, 'Sample account for recording payments to a campaign', '4100', 0, 1, 0, 0 ),
-  ( '{ts escape="sql"}Event Fee{/ts}'            , @contactID, @opval, 'Default account for event ticket sales', '4300', 0, 1, 0, 0 ),
-  ( '{ts escape="sql"}Banking Fees{/ts}'         , @contactID, @opexp, 'Payment processor fees and manually recorded banking fees', '5200', 0, 1, 0, 0 ),
-  ( '{ts escape="sql"}Deposit Bank Account{/ts}' , @contactID, @opAsset, 'All manually recorded cash and cheques go to this account', '1100', 0, 1, 0, 1 ),
-  ( '{ts escape="sql"}Accounts Receivable{/ts}'  , @contactID, @opAsset, 'Amounts to be received later (eg pay later event revenues)', '1200', 0, 1, 0, 0 ),
-  ( '{ts escape="sql"}Accounts Payable{/ts}'     , @contactID, @opLiability, 'Amounts to be paid out such as grants and refunds', '2200', 0, 1, 0, 0 ),
-  ( '{ts escape="sql"}Premiums{/ts}'             , @contactID, @opCost, 'Account to record cost of premiums provided to payors', '5100', 0, 1, 0, 0 ),
-  ( '{ts escape="sql"}Premiums inventory{/ts}'   , @contactID, @opAsset, 'Account representing value of premiums inventory', '1375', 0, 1, 0, 0 ),
-  ( '{ts escape="sql"}Discounts{/ts}'            , @contactID, @opval, 'Contra-revenue account for amounts discounted from sales', '4900', 0, 1, 0, 0 ),
-  ( '{ts escape="sql"}Payment Processor Account{/ts}', @contactID, @opAsset, 'Account to record payments into a payment processor merchant account', '1150', 0, 1, 0, 0 ),
-  ( '{ts escape="sql"}Refunds{/ts}'              , @contactID, @opval, 'Contra-revenue account for amounts refunded', '4800', 0, 1, 0, 0 );
+  ( '{ts escape="sql"}Donation{/ts}'            , @contactID, @opval, 'Default account for donations', '4200', 'INC', 0, 1, 1, 0 ),
+  ( '{ts escape="sql"}Member Dues{/ts}'          , @contactID, @opval, 'Default account for membership sales', '4400', 'INC', 0, 1, 1, 0 ),
+  ( '{ts escape="sql"}Campaign Contribution{/ts}', @contactID, @opval, 'Sample account for recording payments to a campaign', '4100', 'INC', 0, 1, 0, 0 ),
+  ( '{ts escape="sql"}Event Fee{/ts}'            , @contactID, @opval, 'Default account for event ticket sales', '4300', 'INC', 0, 1, 0, 0 ),
+  ( '{ts escape="sql"}Banking Fees{/ts}'         , @contactID, @opexp, 'Payment processor fees and manually recorded banking fees', '5200', 'EXP', 0, 1, 0, 0 ),
+  ( '{ts escape="sql"}Deposit Bank Account{/ts}' , @contactID, @opAsset, 'All manually recorded cash and cheques go to this account', '1100', 'BANK', 0, 1, 0, 1 ),
+  ( '{ts escape="sql"}Accounts Receivable{/ts}'  , @contactID, @opAsset, 'Amounts to be received later (eg pay later event revenues)', '1200', 'AR', 0, 1, 0, 0 ),
+  ( '{ts escape="sql"}Accounts Payable{/ts}'     , @contactID, @opLiability, 'Amounts to be paid out such as grants and refunds', '2200', 'AP', 0, 1, 0, 0 ),
+  ( '{ts escape="sql"}Premiums{/ts}'             , @contactID, @opCost, 'Account to record cost of premiums provided to payors', '5100', 'COGS', 0, 1, 0, 0 ),
+  ( '{ts escape="sql"}Premiums inventory{/ts}'   , @contactID, @opAsset, 'Account representing value of premiums inventory', '1375', 'OCASSET', 0, 1, 0, 0 ),
+  ( '{ts escape="sql"}Discounts{/ts}'            , @contactID, @opval, 'Contra-revenue account for amounts discounted from sales', '4900', 'INC', 0, 1, 0, 0 ),
+  ( '{ts escape="sql"}Payment Processor Account{/ts}', @contactID, @opAsset, 'Account to record payments into a payment processor merchant account', '1150', 'BANK', 0, 1, 0, 0
+);
 
 -- Now insert option values which require domainID
 --

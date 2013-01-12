@@ -31,7 +31,7 @@
   <div class="form-item">
     {if $action ne 1 and $action ne 2}
 	    <div class="action-link">
-    	<a href="{crmURL q="action=add&reset=1&aid=$aid"}" id="newfinancialTypeAccount" class="button"><span><div class="icon add-icon"></div>{ts}Add Financial Account{/ts}</span></a>
+    	<a href="{crmURL q="action=add&reset=1&aid=$aid"}" id="newfinancialTypeAccount" class="button"><span><div class="icon add-icon"></div>{ts}Assign Account{/ts}</span></a>
 	<a href="{crmURL p="civicrm/admin/financial/financialType" q="action=update&id=`$aid`&reset=1"}" class="button"><span><div class="icon edit-icon"></div>{ts}Edit Financial Type{/ts}</span></a>
       </div>
     {/if}
@@ -43,8 +43,8 @@
           <th>{ts}Financial Account{/ts}</th>
           <th>{ts}Relationship{/ts}</th>
           <th>{ts}Accounting Code{/ts}</th>
+          <th>{ts}Account Type (Code){/ts}</th>
           <th>{ts}Owned By{/ts}</th>
-          <th>{ts}Account Type{/ts}</th>
           <th>{ts}Is Active?{/ts}</th>
           <th></th>
         </thead>
@@ -53,8 +53,8 @@
 	        <td>{$row.financial_account}</td>	
 	        <td>{$row.account_relationship}</td>
 		      <td>{$row.accounting_code}</td>	
+		      <td>{$row.financial_account_type}{if $row.account_type_code} ({$row.account_type_code}){/if}</td>	
 	        <td>{$row.owned_by}</td>
-		      <td>{$row.financial_account_type}</td>
 	        <td id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
 	        <td>{$row.action|replace:'xx':$row.id}</td>
         </tr>
@@ -64,7 +64,7 @@
 
     {if $action ne 1 and $action ne 2}
 	    <div class="action-link">
-    	<a href="{crmURL q="action=add&reset=1&aid=$aid"}" id="newfinancialTypeAccount" class="button"><span><div class="icon add-icon"></div>{ts}Add Financial Account{/ts}</span></a>
+    	<a href="{crmURL q="action=add&reset=1&aid=$aid"}" id="newfinancialTypeAccount" class="button"><span><div class="icon add-icon"></div>{ts}Assign Account{/ts}</span></a>
 	<a href="{crmURL p="civicrm/admin/financial/financialType" q="action=update&id=`$aid`&reset=1"}" class="button"><span><div class="icon edit-icon"></div>{ts}Edit Financial Type{/ts}</span></a>
       </div>
     {/if}
@@ -74,7 +74,7 @@
       <div class="messages status">
           <div class="icon inform-icon"></div>
           {capture assign=crmURL}{crmURL q="action=add&reset=1&aid=$aid"}{/capture}
-          {ts 1=$crmURL}There are no Financial Types Accounts entered. You can <a href='%1'>add one</a>.{/ts}
+          {ts 1=$crmURL}There are no financial accounts assigned to this financial type. You can <a href='%1'>assign one</a>.{/ts}
       </div>    
   {/if}
 {/if}

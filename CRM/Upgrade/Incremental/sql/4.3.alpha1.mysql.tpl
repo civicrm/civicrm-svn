@@ -506,11 +506,12 @@ SELECT @option_group_id_financial_item_status := max(id) from civicrm_option_gro
 INSERT INTO
    `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`)
 VALUES
-   (@option_group_id_fat, '{ts escape="sql"}Asset{/ts}', 1, 'Asset', 'AR', 0, 0, 1, 'Things you own', 0, 1, 1, 2, NULL),
-   (@option_group_id_fat, '{ts escape="sql"}Liability{/ts}', 2, 'Liability', 'AP', 0, 0, 2, 'Things you own, like a grant still to be disbursed', 0, 1, 1, 2, NULL),
-   (@option_group_id_fat, '{ts escape="sql"}Revenue{/ts}', 3, 'Revenue', 'INC', 0, 1, 3, 'Income from contributions and sales of tickets and memberships', 0, 1, 1, 2, NULL),
-   (@option_group_id_fat, '{ts escape="sql"}Cost of Sales{/ts}', 4, 'Cost of Sales', 'COGS', 0, 0, 4, 'Costs incurred to get revenue, e.g. premiums for donations, dinner for a fundraising dinner ticket', 0, 1, 1, 2, NULL),
-   (@option_group_id_fat, '{ts escape="sql"}Expenses{/ts}', 5, 'Expenses', 'EXP', 0, 0, 5, 'Things that are paid for that are consumable, e.g. grants disbursed', 0, 1, 1, 2, NULL),
+   (@option_group_id_fat, '{ts escape="sql"}Asset{/ts}', 1, 'Asset', NULL, 0, 0, 1, 'Things you own', 0, 1, 1, 2, NULL),
+   (@option_group_id_fat, '{ts escape="sql"}Liability{/ts}', 2, 'Liability', NULL, 0, 0, 2, 'Things you own, like a grant still to be disbursed', 0, 1, 1, 2, NULL),
+   (@option_group_id_fat, '{ts escape="sql"}Revenue{/ts}', 3, 'Revenue', NULL, 0, 1, 3, 'Income from contributions and sales of tickets and memberships', 0, 1, 1, 2, NULL),
+   (@option_group_id_fat, '{ts escape="sql"}Cost of Sales{/ts}', 4, 'Cost of Sales', NULL, 0, 0, 4, 'Costs incurred to get revenue, e.g. premiums for donations, dinner for a fundraising dinner ticket', 0, 1, 1, 2, NULL),
+   (@option_group_id_fat, '{ts escape="sql"}Expenses{/ts}', 5, 'Expenses', NULL, 0, 0, 5, 'Things that are paid for that are consumable, e.g. grants disbursed', 0, 1, 1, 2, NULL),
+
 -- Financial account relationship
    (@option_group_id_arel, '{ts escape="sql"}Income Account is{/ts}', 1, 'Income Account is', NULL, 0, 1, 1, 'Income Account is', 0, 1, 1, 2, NULL),
    (@option_group_id_arel, '{ts escape="sql"}Credit/Contra Account is{/ts}', 2, 'Credit/Contra Account is', NULL, 0, 0, 2, 'Credit/Contra Account is', 0, 1, 0, 2, NULL),
@@ -536,8 +537,8 @@ INSERT INTO `civicrm_financial_account`
   SELECT id, name, CONCAT('Default account for ', name), is_deductible, is_reserved, is_active, @opval, @domainContactId, accounting_code 
   FROM `civicrm_financial_type`;
 
--- CRM-9306
-UPDATE `civicrm_financial_account` SET `is_default` =0;
+-- CRM-9306 and CRM-11657
+UPDATE `civicrm_financial_account` SET `is_default` = 0, `account_type_code` = 'INC';
 
 SELECT @option_value_rel_id  := value FROM `civicrm_option_value` WHERE `option_group_id` = @option_group_id_arel AND `name` = 'Income Account is';
 SELECT @opexp := value FROM civicrm_option_value WHERE name = 'Expenses' and option_group_id = @option_group_id_fat;
@@ -549,17 +550,16 @@ SELECT @opCost := value FROM civicrm_option_value WHERE name = 'Cost of Sales' a
 ALTER TABLE civicrm_financial_type DROP accounting_code;
 
 INSERT INTO
-   `civicrm_financial_account` (`name`, `contact_id`, `financial_account_type_id`, `description`, `accounting_code`, `is_reserved`, `is_active`, `is_deductible`, `is_default`)
+   `civicrm_financial_account` (`name`, `contact_id`, `financial_account_type_id`, `description`, `accounting_code`, `account_type_code`, `is_reserved`, `is_active`, `is_deductible`, `is_default`)
 VALUES
-  ('{ts escape="sql"}Banking Fees{/ts}'         , @domainContactId, @opexp, 'Payment processor fees and manually recorded banking fees', '5200', 0, 1, 0, 0),
-  ('{ts escape="sql"}Deposit Bank Account{/ts}' , @domainContactId, @opAsset, 'All manually recorded cash and cheques go to this account', '1100', 0, 1, 0, 1),
-  ('{ts escape="sql"}Accounts Receivable{/ts}'  , @domainContactId, @opAsset, 'Amounts to be received later (eg pay later event revenues)', '1200', 0, 1, 0, 0),
-  ('{ts escape="sql"}Accounts Payable{/ts}'     , @domainContactId, @opLiability, 'Amounts to be paid out such as grants and refunds', '2200', 0, 1, 0, 0),
-  ('{ts escape="sql"}Premiums{/ts}'             , @domainContactId, @opCost, 'Account to record cost of premiums provided to payors', '5100', 0, 1, 0, 0),
-  ('{ts escape="sql"}Premiums Inventory{/ts}'   , @domainContactId, @opAsset, 'Account representing value of premiums inventory', '1375', 0, 1, 0, 0),
-  ('{ts escape="sql"}Discounts{/ts}'            , @domainContactId, @opval, 'Contra-revenue account for amounts discounted from sales', '4900', 0, 1, 0, 0),
-  ('{ts escape="sql"}Payment Processor Account{/ts}', @domainContactId, @opAsset, 'Account to record payments into a payment processor merchant account', '1150', 0, 1, 0, 0),
-  ('{ts escape="sql"}Refunds{/ts}'              , @domainContactId, @opval, 'Contra-revenue account for amounts refunded', '4800', 0, 1, 0, 0);
+  ('{ts escape="sql"}Banking Fees{/ts}'         , @domainContactId, @opexp, 'Payment processor fees and manually recorded banking fees', '5200', 'EXP', 0, 1, 0, 0),
+  ('{ts escape="sql"}Deposit Bank Account{/ts}' , @domainContactId, @opAsset, 'All manually recorded cash and cheques go to this account', '1100', 'BANK', 0, 1, 0, 1),
+  ('{ts escape="sql"}Accounts Receivable{/ts}'  , @domainContactId, @opAsset, 'Amounts to be received later (eg pay later event revenues)', '1200', 'AR', 0, 1, 0, 0),
+  ('{ts escape="sql"}Accounts Payable{/ts}'     , @domainContactId, @opLiability, 'Amounts to be paid out such as grants and refunds', '2200', 'AP', 0, 1, 0, 0),
+  ('{ts escape="sql"}Premiums{/ts}'             , @domainContactId, @opCost, 'Account to record cost of premiums provided to payors', '5100', 'COGS', 0, 1, 0, 0),
+  ('{ts escape="sql"}Premiums Inventory{/ts}'   , @domainContactId, @opAsset, 'Account representing value of premiums inventory', '1375', 'OCASSET', 0, 1, 0, 0),
+  ('{ts escape="sql"}Discounts{/ts}'            , @domainContactId, @opval, 'Contra-revenue account for amounts discounted from sales', '4900', 'INC', 0, 1, 0, 0),
+  ('{ts escape="sql"}Payment Processor Account{/ts}', @domainContactId, @opAsset, 'Account to record payments into a payment processor merchant account', '1150', 'BANK', 0, 1, 0, 0);
 
 -- CRM-10926
 SELECT @option_value_rel_id_exp  := value FROM `civicrm_option_value` WHERE `option_group_id` = @option_group_id_arel AND `name` = 'Expense Account is';

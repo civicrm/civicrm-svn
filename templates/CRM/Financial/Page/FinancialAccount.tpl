@@ -43,7 +43,7 @@
             <th>{ts}Name{/ts}</th>
             <th>{ts}Description{/ts}</th>
             <th>{ts}Acctg Code{/ts}</th>
-            <th id="sortable">{ts}Financial Account Type{/ts}</th>
+            <th id="sortable">{ts}Account Type{/ts}</th>
             <th>{ts}Deductible?{/ts}</th>
             <th>{ts}Reserved?{/ts}</th>
             <th>{ts}Default?{/ts}</th>
@@ -55,7 +55,7 @@
 	        <td>{$row.name}</td>	
 	        <td>{$row.description}</td>
           <td>{$row.accounting_code}</td>
-          <td>{$row.financial_account_type_id}</td>
+          <td>{$row.financial_account_type_id}{if $row.account_type_code} ({$row.account_type_code}){/if}</td>
 	        <td>{if $row.is_deductible eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
 	        <td>{if $row.is_reserved eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
           <td>{if $row.is_default eq 1}<img src="{$config->resourceBase}i/check.gif" alt="{ts}Default{/ts}" /> {/if}</td>

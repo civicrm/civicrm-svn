@@ -42,15 +42,8 @@
       <td class="label">{$form.description.label}</td>
       <td class="html-adjust">{$form.description.html}</td>
     </tr>
-    <tr class="crm-contribution-form-block-accounting_code">
-      <td class="label">{$form.accounting_code.label}</td>
-      <td class="html-adjust">{$form.accounting_code.html}<br />
-        <span class="description">{ts}Use this field to flag contributions of this type with the corresponding code used in your accounting system. This code will be included when you export contribution data to your accounting package.{/ts}</span>
-      </td>
-    </tr>
     <tr class="crm-contribution-form-block-organisation_name">
-      <td class="label">{$form.contact_name.label}&nbsp;{help id="id-financial-owner" file="CRM/Contact/Form/Contact.hlp"}
-      </td>
+      <td class="label">{$form.contact_name.label}&nbsp;{help id="id-financial-owner" file="CRM/Contact/Form/Contact.hlp"}</td>
       <td class="html-adjust">{$form.contact_name.html|crmReplace:class:twenty}<br />
         <span class="description">{ts}Use this field to indicate the organization that owns this account.{/ts}</span>
       </td>
@@ -58,6 +51,18 @@
     <tr class="crm-contribution-form-block-financial_account_type_id">
       <td class="label">{$form.financial_account_type_id.label}</td>
       <td class="html-adjust">{$form.financial_account_type_id.html|crmReplace:class:twenty}</td>
+    </tr>
+    <tr class="crm-contribution-form-block-accounting_code">
+      <td class="label">{$form.accounting_code.label}</td>
+      <td class="html-adjust">{$form.accounting_code.html}<br />
+        <span class="description">{ts}Enter the corresponding account code used in your accounting system. This code will be available for contribution export, and included in accounting batch exports.{/ts}</span>
+      </td>
+    </tr>
+    <tr class="crm-contribution-form-block-account_type_code">
+      <td class="label">{$form.account_type_code.label}</td>
+      <td class="html-adjust">{$form.account_type_code.html}<br />
+        <span class="description">{ts}Enter an account type code for this account. Account type codes are required for QuickBooks integration and will be included in all accounting batch exports.{/ts}</span>
+      </td>
     </tr>
     <tr class="crm-contribution-form-block-is_deductible">
       <td class="label">{$form.is_deductible.label}</td>

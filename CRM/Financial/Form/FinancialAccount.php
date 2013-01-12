@@ -64,6 +64,7 @@ class CRM_Financial_Form_FinancialAccount extends CRM_Contribute_Form {
     
     $this->add('text', 'description', ts('Description'), $attributes['description']);
     $this->add('text', 'accounting_code', ts('Accounting Code'), $attributes['accounting_code']);
+    $this->add('text', 'account_type_code', ts('Account Type Code'), $attributes['account_type_code']);
     $this->add('text', 'contact_name', ts('Owner'), $attributes['name']);
     $this->add('hidden', 'contact_id', '', array('id' => 'contact_id'));
     $this->add('text', 'tax_rate', ts('Tax Rate'), $attributes['tax_rate']);
@@ -75,7 +76,7 @@ class CRM_Financial_Form_FinancialAccount extends CRM_Contribute_Form {
     $financialAccountType = CRM_Core_PseudoConstant::accountOptionValues('financial_account_type');
     if (!empty($financialAccountType)) {
       $this->add('select', 'financial_account_type_id', ts('Financial Account Type'),
-        array('select' => '- select -') + $financialAccountType);
+        array('' => '- select -') + $financialAccountType, true);
     }
     
     if ($this->_action == CRM_Core_Action::UPDATE &&

@@ -65,6 +65,15 @@
     <add>4.3</add>
   </field>
   <field>
+    <name>account_type_code</name>
+    <title>Account Type Code</title>
+    <type>varchar</type>
+    <length>64</length>
+    <export>true</export>
+    <comment>Optional value for mapping account types to accounting system account categories (QuickBooks Account Type Codes for example).</comment>
+    <add>4.3</add>
+  </field>
+  <field>
     <name>description</name>
     <type>varchar</type>
     <length>255</length>
