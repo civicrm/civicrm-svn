@@ -61,10 +61,15 @@ function smarty_function_help($params, &$smarty) {
 
   $params['file'] = str_replace(array('.tpl', '.hlp'), '', $params['file']);
 
-  $smarty->assign('id', $params['id'] . '-title');
-  $name = trim($smarty->fetch($params['file'] . '.hlp'));
+  if (empty($params['title'])) {
+    $smarty->assign('id', $params['id'] . '-title');
+    $name = trim($smarty->fetch($params['file'] . '.hlp'));
+  }
+  else {
+    $name = trim(strip_tags($params['title']));
+  }
   $title = ts('%1 Help', array(1 => $name));
-  unset($params['text']);
+  unset($params['text'], $params['title']);
   // Format params to survive being passed through json & the url
   foreach ($params as &$param) {
     $param = is_bool($param) || is_numeric($param) ? (int) $param : (string) $param;
