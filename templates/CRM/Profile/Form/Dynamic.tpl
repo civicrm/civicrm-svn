@@ -32,43 +32,44 @@
 {literal}
 <script type="text/javascript">
 cj(function() {
-    var formOptions = {
-        beforeSubmit:  proccessMultiRecordForm //pre-submit callback
-    };
+  var formOptions = {
+    beforeSubmit:  proccessMultiRecordForm //pre-submit callback
+  };
 
-    //binding the callback to snippet profile form
-    cj('.crm-container-snippet #Edit').ajaxForm(formOptions);
+  //binding the callback to snippet profile form
+  cj('.crm-container-snippet #Edit').ajaxForm(formOptions);
 });
-    // pre-submit callback	  
-    function proccessMultiRecordForm(formData, jqForm, options) {
-      var queryString = cj.param(formData);
-      queryString = queryString + '{/literal}{$urlParams}{literal}' + '&snippet=1';
 
-      if (cj('#profile-dialog')) {
-        var postUrl = {/literal}"{crmURL p='civicrm/profile/edit' h=0 }"{literal};
-        var response = cj.ajax({
-           type: "POST",
-           url: postUrl,
-           async: false,
-           data: queryString,
-           dataType: "json",
+// pre-submit callback
+function proccessMultiRecordForm(formData, jqForm, options) {
+  var queryString = cj.param(formData);
+  queryString = queryString + '{/literal}{$urlParams}{literal}' + '&snippet=1';
 
-         }).responseText;
+  if (cj('#profile-dialog')) {
+    var postUrl = {/literal}"{crmURL p='civicrm/profile/edit' h=0 }"{literal};
+    var response = cj.ajax({
+      type: "POST",
+      url: postUrl,
+      async: false,
+      data: queryString,
+      dataType: "json",
 
-	 //if there is any form error show the dialog 
-	 //else redirect to post url
-	 if (cj(response).find('.crm-error').html()) {
-           cj('#profile-dialog').show().html(response);
-	 }
-	 else {
-	  window.location = '{/literal}{$postUrl}{literal}';
-         }
+    }).responseText;
 
-        // here we could return false to prevent the form from being submitted;
-        // returning anything other than false will allow the form submit to continue
-        return false;
-      }
-    }   
+    //if there is any form error show the dialog
+    //else redirect to post url
+    if (cj(response).find('.crm-error').html()) {
+      cj('#profile-dialog').show().html(response);
+    }
+    else {
+      window.location = '{/literal}{$postUrl}{literal}';
+    }
+
+    // here we could return false to prevent the form from being submitted;
+    // returning anything other than false will allow the form submit to continue
+    return false;
+  }
+}
 </script>
 {/literal}
 {/if}
