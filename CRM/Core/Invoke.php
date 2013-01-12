@@ -97,9 +97,7 @@ class CRM_Core_Invoke {
    * @void
    */
   static public function hackMenuRebuild($args) {
-    if ((isset($args[1]) and $args[1] == 'menu' and
-      isset($args[2]) and $args[2] == 'rebuild') || isset($args[1]) and $args[1] == 'clearcache'
-    ) {
+    if (array('civicrm','menu','rebuild') == $args || array('civicrm', 'clearcache') == $args) {
       // ensure that the user has a good privilege level
       if (CRM_Core_Permission::check('administer CiviCRM')) {
         self::rebuildMenuAndCaches();
