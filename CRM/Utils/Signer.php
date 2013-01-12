@@ -56,7 +56,6 @@ class CRM_Utils_Signer {
    * @var int
    */
   const SALT_LEN = 4;
-  const SALT_ALPHABET = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
 
   /**
    * Instantiate a signature-processor
@@ -69,13 +68,7 @@ class CRM_Utils_Signer {
     $this->secret = $secret;
     $this->paramNames = $paramNames;
     $this->signDelim = "_"; // chosen to be valid in URLs but not in salt or md5
-    $this->defaultSalt = '';
-
-    $alphabet = self::SALT_ALPHABET;
-    $alphabetSize = strlen(self::SALT_ALPHABET);
-    for ($i = 0; $i < self::SALT_LEN; $i++) {
-      $this->defaultSalt .= $alphabet{ rand(1, $alphabetSize)-1 };
-    }
+    $this->defaultSalt = CRM_Utils_String::createRandom(self::SALT_LEN, CRM_Utils_String::ALPHANUMERIC);
   }
 
   /**
