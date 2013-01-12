@@ -525,5 +525,24 @@ class CRM_Utils_Array {
     }
     return $result;
   }
+
+  /**
+   * Iterate through a list of records and grab the value of some property
+   *
+   * @param string $prop
+   * @param array $records a list of records (object|array)
+   * @return array keys are the original keys of $records; values are the $prop values
+   */
+  static function collect($prop, $records) {
+    $result = array();
+    foreach ($records as $key => $record) {
+      if (is_object($record)) {
+        $result[$key] = $record->{$prop};
+      } else {
+        $result[$key] = $record[$prop];
+      }
+    }
+    return $result;
+  }
 }
 

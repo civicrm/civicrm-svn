@@ -65,4 +65,21 @@ class CRM_Utils_ArrayTest extends CiviUnitTestCase {
     $this->assertEquals(array($inputs[3]), $byLangMsgid['fr']['parting']);
   }
 
+  function testCollect() {
+    $arr = array(
+      array('catWord' => 'cat', 'dogWord' => 'dog'),
+      array('catWord' => 'chat', 'dogWord' => 'chien'),
+      array('catWord' => 'gato'),
+    );
+    $expected = array('cat', 'chat', 'gato');
+    $this->assertEquals($expected, CRM_Utils_Array::collect('catWord', $arr));
+
+    $arr = array();
+    $arr['en']= (object) array('catWord' => 'cat', 'dogWord' => 'dog');
+    $arr['fr']= (object) array('catWord' => 'chat', 'dogWord' => 'chien');
+    $arr['es']= (object) array('catWord' => 'gato');
+    $expected = array('en' => 'cat', 'fr' => 'chat', 'es' => 'gato');
+    $this->assertEquals($expected, CRM_Utils_Array::collect('catWord', $arr));
+  }
+
 }
