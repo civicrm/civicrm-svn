@@ -21,7 +21,7 @@ Depends: CRM/common/enableDisable.tpl and CRM/common/jsortable.tpl
         {foreach from=$localExtensionRows key=extKey item=row}
         <tr id="row_{$row.id}" class="crm-extensions crm-extensions_{$row.id}{if $row.status eq 'disabled'} disabled{/if}{if $row.status eq 'installed-missing' or $row.status eq 'disabled-missing'} extension-missing{/if}{if $row.upgradable} extension-upgradable{elseif $row.status eq 'installed'} extension-installed{/if}">
           <td class="crm-extensions-label">
-              <a class="collapsed" href="#">(expand)</a>&nbsp;<strong>{$row.label}</strong><br/>({$row.key})
+              <a class="collapsed" href="#"></a>&nbsp;<strong>{$row.label}</strong><br/>({$row.key})
               {if $extAddNewEnabled && $remoteExtensionRows[$extKey] && $row.version != $remoteExtensionRows[$extKey].version}
                 {capture assign='upgradeURL'}{crmURL p='civicrm/admin/extensions' q="action=update&id=$extKey&key=$extKey"}{/capture}
                 <div class="crm-extensions-upgrade">{ts 1=$upgradeURL}Version {$remoteExtensionRows[$extKey].version} is available. <a href="%1">Upgrade</a>{/ts}</div>
@@ -46,6 +46,6 @@ Depends: CRM/common/enableDisable.tpl and CRM/common/jsortable.tpl
 {else}
   <div class="messages status no-popup">
        <div class="icon inform-icon"></div>
-      {ts}There are no extensions to display. Please click "Refresh" to update information about available extensions.{/ts}
+      {ts 1="http://civicrm.org/extensions"}There are no extensions to display. Click the "Add New" tab to browse and install extensions posted on the <a href="%1">public CiviCRM Extensions Directory</a>. If you have downloaded extensions manually and don't see them here, try clicking the "Refresh" button.{/ts}
   </div>
 {/if}

@@ -22,7 +22,7 @@ Depends: CRM/common/enableDisable.tpl and CRM/common/jsortable.tpl
         {/if}
         <tr id="addnew-row_{$row.id}" class="crm-extensions crm-extensions_{$row.id}">
           <td class="crm-extensions-label">
-              <a class="collapsed" href="#">(expand)</a>&nbsp;<strong>{$row.label}</strong><br/>({$row.key})
+              <a class="collapsed" href="#"></a>&nbsp;<strong>{$row.label}</strong><br/>({$row.key})
           </td>
           <td class="crm-extensions-label">{$row.version} {if $row.upgradable}<br/>({$row.upgradeVersion}){/if}</td>
           <td class="crm-extensions-description">{$row.type|capitalize}</td>

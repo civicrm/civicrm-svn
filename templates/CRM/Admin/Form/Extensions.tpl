@@ -41,7 +41,7 @@
    {if $action eq 2}
       <div class="messages status no-popup">
           <div class="icon inform-icon"></div>
-          {ts}Upgrading this extension will provide you with new functionality. Please make sure that the extension you're installing comes from a trusted source.{/ts} {ts}Do you want to continue?{/ts}
+          {ts}Downloading this extension will provide you with new functionality. Please make sure that the extension you're installing or upgrading comes from a trusted source.{/ts} {ts}Do you want to continue?{/ts}
       </div>
    {/if}
    {if $action eq 8 or $action eq 1 or $action eq 2}
