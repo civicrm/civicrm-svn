@@ -118,7 +118,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
     }
 
     $paymentProcessorID = CRM_Core_DAO::getFieldValue(
-      'CRM_Core_DAO_PaymentProcessorType',
+      'CRM_Financial_DAO_PaymentProcessorType',
       'Google_Checkout',
       'id',
       'payment_processor_type'
@@ -286,7 +286,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
     }
 
     $paymentProcessorID = CRM_Core_DAO::getFieldValue(
-      'CRM_Core_DAO_PaymentProcessorType',
+      'CRM_Financial_DAO_PaymentProcessorType',
       'Google_Checkout',
       'id',
       'payment_processor_type'
@@ -457,7 +457,7 @@ WHERE  contribution_recur_id = {$ids['contributionRecur']}
     }
 
     $paymentProcessorID = CRM_Core_DAO::getFieldValue(
-      'CRM_Core_DAO_PaymentProcessor',
+      'CRM_Financial_DAO_PaymentProcessor',
       'Google_Checkout',
       'id',
       'payment_processor_type'
