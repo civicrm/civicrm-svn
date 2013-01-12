@@ -29,6 +29,10 @@
  * This class facilitates the loading of secondary, per-page resources
  * such as JavaScript files and CSS files.
  *
+ * Any URLs generated for resources may include a 'cache-code'. By resetting the
+ * cache-code, one may force clients to re-download resource files (regardless of
+ * any HTTP caching rules).
+ *
  * TODO: This is currently a thin wrapper over CRM_Core_Region. We
  * should incorporte services for aggregation, minimization, etc.
  *
@@ -62,6 +66,16 @@ class CRM_Core_Resources {
   protected $addedSettings = FALSE;
 
   /**
+   * @var string a value to append to JS/CSS URLs to coerce cache resets
+   */
+  protected $cacheCode = NULL;
+
+  /**
+   * @var string the name of a setting which persistently stores the cacheCode
+   */
+  protected $cacheCodeKey = NULL;
+
+  /**
    * Get or set the single instance of CRM_Core_Resources
    *
    * @param $instance CRM_Core_Resources, new copy of the manager
@@ -72,7 +86,10 @@ class CRM_Core_Resources {
       self::$_singleton = $instance;
     }
     if (self::$_singleton === NULL) {
-      self::$_singleton = new CRM_Core_Resources(array(CRM_Extension_System::singleton()->getMapper(), 'keyToUrl'));
+      self::$_singleton = new CRM_Core_Resources(
+        array(CRM_Extension_System::singleton()->getMapper(), 'keyToUrl'),
+        'resCacheCode'
+      );
     }
     return self::$_singleton;
   }
@@ -84,8 +101,15 @@ class CRM_Core_Resources {
    *  - The $extMapper['*'] is a grandparent-URL for unknown extension dirs
    *  - URLs should end with a trailing '/'
    */
-  public function __construct($extMapper) {
+  public function __construct($extMapper, $cacheCodeKey = NULL) {
     $this->extMapper = $extMapper;
+    $this->cacheCodeKey = $cacheCodeKey;
+    if ($cacheCodeKey !== NULL) {
+      $this->cacheCode = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, $cacheCodeKey);
+    }
+    if (! $this->cacheCode) {
+      $this->resetCacheCode();
+    }
   }
 
   /**
@@ -98,7 +122,7 @@ class CRM_Core_Resources {
    * @return CRM_Core_Resources
    */
   public function addScriptFile($ext, $file, $weight = self::DEFAULT_WEIGHT, $region = self::DEFAULT_REGION) {
-    return $this->addScriptUrl($this->getUrl($ext, $file), $weight, $region);
+    return $this->addScriptUrl($this->getUrl($ext, $file, TRUE), $weight, $region);
   }
 
   /**
@@ -230,7 +254,7 @@ class CRM_Core_Resources {
    * @return CRM_Core_Resources
    */
   public function addStyleFile($ext, $file, $weight = self::DEFAULT_WEIGHT, $region = self::DEFAULT_REGION) {
-    return $this->addStyleUrl($this->getUrl($ext, $file), $weight, $region);
+    return $this->addStyleUrl($this->getUrl($ext, $file, TRUE), $weight, $region);
   }
 
   /**
@@ -278,11 +302,29 @@ class CRM_Core_Resources {
    * @param $file string, file path -- relative to the extension base dir
    * @return string, URL
    */
-  public function getUrl($ext, $file = NULL) {
+  public function getUrl($ext, $file = NULL, $addCacheCode = FALSE) {
     if ($file === NULL) {
       $file = '';
     }
+    if ($addCacheCode) {
+      $file .= '?r=' . $this->getCacheCode();
+    }
     // TODO consider caching call_user_func results
     return call_user_func($this->extMapper, $ext) . '/' . $file;
+  }
+
+  public function getCacheCode() {
+    return $this->cacheCode;
+  }
+
+  public function setCacheCode($value) {
+    $this->cacheCode = $value;
+    if ($this->cacheCodeKey) {
+      CRM_Core_BAO_Setting::setItem($value, CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, $this->cacheCodeKey);
+    }
+  }
+
+  public function resetCacheCode() {
+    $this->setCacheCode(CRM_Utils_String::createRandom(5, CRM_Utils_String::ALPHANUMERIC));
   }
 }

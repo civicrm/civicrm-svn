@@ -45,5 +45,5 @@ function smarty_function_crmResURL($params, &$smarty) {
   if (!array_key_exists('file', $params)) {
     $params['file'] = NULL;
   }
-  return  $res->getUrl($params['ext'], $params['file']);
+  return  $res->getUrl($params['ext'], $params['file'], $params['addCacheCode']);
 }
