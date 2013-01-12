@@ -3633,13 +3633,15 @@ div.m ul#civicrm-menu,
   padding: 3px 0px 0px .5em;
   opacity: 0.75;
 }
-#crm-container span.collapsed {
+#crm-container span.collapsed,
+#crm-container a.collapsed {
   background: url("../i/TreePlus.gif") no-repeat 0 0;
   padding-left: 19px;
   cursor: pointer;
 }
 
-#crm-container span.expanded {
+#crm-container span.expanded,
+#crm-container a.expanded {
   background: url("../i/TreeMinus.gif") no-repeat 0 0;
   padding-left: 19px;
   cursor: pointer;
