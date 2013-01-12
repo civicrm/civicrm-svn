@@ -112,8 +112,8 @@ class CRM_Admin_Form_Extensions extends CRM_Admin_Form {
         break;
 
       case CRM_Core_Action::UPDATE:
-        $buttonName = ts('Download');
-        $title = ts('Download Extension');
+        $buttonName = ts('Download and Install');
+        $title = ts('Download and Install Extension');
         break;
 
       case CRM_Core_Action::DELETE:

@@ -107,7 +107,7 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic {
           'title' => ts('Uninstall Extension'),
         ),
         CRM_Core_Action::UPDATE => array(
-          'name' => ts('Install'),
+          'name' => ts('Download'),
           'url' => 'civicrm/admin/extensions',
           'qs' => 'action=update&id=%%id%%&key=%%key%%',
           'title' => ts('Download Extension'),
