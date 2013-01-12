@@ -48,9 +48,23 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Financial_DAO_PaymentProcessor
    *
    * @params array parameters for Processor entity
    */
-  function create(&$params) {
+  static function create($params) {
+    // FIXME Reconcile with CRM_Admin_Form_PaymentProcessor::updatePaymentProcessor
     $processor = new CRM_Financial_DAO_PaymentProcessor();
     $processor->copyValues($params);
+
+    $ppTypeDAO = new CRM_Financial_DAO_PaymentProcessorType();
+    $ppTypeDAO->id = $params['payment_processor_type_id'];
+    if (!$ppTypeDAO->find(TRUE)) {
+      CRM_Core_Error::fatal(ts('Could not find payment processor meta information'));
+    }
+
+    // also copy meta fields from the info DAO
+    $processor->is_recur = $ppTypeDAO->is_recur;
+    $processor->billing_mode = $ppTypeDAO->billing_mode;
+    $processor->class_name = $ppTypeDAO->class_name;
+    $processor->payment_type = $ppTypeDAO->payment_type;
+
     $processor->save();
     return $processor;
   }
@@ -131,14 +145,14 @@ class CRM_Core_BAO_PaymentProcessor extends CRM_Financial_DAO_PaymentProcessor
       CRM_Core_Error::fatal(ts('Invalid value passed to delete function'));
     }
 
-        $dao            = new CRM_Financial_DAO_PaymentProcessor( );
+    $dao = new CRM_Financial_DAO_PaymentProcessor();
     $dao->id = $paymentProcessorID;
     if (!$dao->find(TRUE)) {
       return NULL;
     }
 
-        $testDAO            = new CRM_Financial_DAO_PaymentProcessor( );
-    $testDAO->name    = $dao->name;
+    $testDAO = new CRM_Financial_DAO_PaymentProcessor();
+    $testDAO->name = $dao->name;
     $testDAO->is_test = 1;
     $testDAO->delete();
 

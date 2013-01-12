@@ -115,27 +115,19 @@ class CRM_Extension_Manager_Payment extends CRM_Extension_Manager_Base {
    * {@inheritdoc}
    */
   public function onPreUninstall(CRM_Extension_Info $info) {
-    // HMM? // if ($this->type == 'payment' && $this->status != 'missing') {
-    $this->_runPaymentHook($info, 'uninstall');
-
     $paymentProcessorTypes = $this->_getAllPaymentProcessorTypes('class_name');
     if (!array_key_exists($info->key, $paymentProcessorTypes)) {
       CRM_Core_Error::fatal('This payment processor type is not registered.');
     }
 
-    $paymentProcessors = CRM_Core_PseudoConstant::paymentProcessor(TRUE);
-
-    foreach ($paymentProcessors as $id => $name) {
-      $dao = new CRM_Core_DAO_PaymentProcessor();
-      $dao->id = $id;
-      $dao->find();
-      while ($dao->fetch()) {
-        if ($dao->payment_processor_type == $info->name) {
-          CRM_Core_Session::setStatus(ts('Cannot uninstall this extension - there is at least one payment processor using the payment processor type provided by it.'), ts('Uninstall Error'), 'error');
-          return;
-        }
-      }
+    $dao = new CRM_Financial_DAO_PaymentProcessor();
+    $dao->payment_processor_type_id = $paymentProcessorTypes[$info->key];
+    $dao->find();
+    while ($dao->fetch()) {
+      throw new CRM_Extension_Exception_DependencyException('payment');
     }
+
+    $this->_runPaymentHook($info, 'uninstall');
     return CRM_Financial_BAO_PaymentProcessorType::del($paymentProcessorTypes[$info->key]);
   }
 
@@ -166,6 +158,10 @@ class CRM_Extension_Manager_Payment extends CRM_Extension_Manager_Base {
     $this->_runPaymentHook($info, 'enable');
   }
 
+  /**
+   * @param string $attr the attribute used to key the array
+   * @return array ($$attr => $id)
+   */
   private function _getAllPaymentProcessorTypes($attr) {
     $ppt = array();
     $dao = new CRM_Financial_DAO_PaymentProcessorType();
@@ -237,7 +233,7 @@ class CRM_Extension_Manager_Payment extends CRM_Extension_Manager_Base {
       if ($dao->fetch()) $paymentProcessor = array(
         'id' => -1,
         'name' => $dao->title,
-        'payment_processor_type' => $dao->name,
+        'payment_processor_type_id' => $dao->id,
         'user_name' => 'nothing',
         'password' => 'nothing',
         'signature' => '',

@@ -175,8 +175,13 @@ class CRM_Admin_Form_Extensions extends CRM_Admin_Form {
     CRM_Utils_System::flushCache();
 
     if ($this->_action & CRM_Core_Action::DELETE) {
-      CRM_Extension_System::singleton()->getManager()->uninstall(array($this->_key));
-      CRM_Core_Session::setStatus("", ts('Extension Uninstalled'), "success");
+      try {
+        CRM_Extension_System::singleton()->getManager()->uninstall(array($this->_key));
+        CRM_Core_Session::setStatus("", ts('Extension Uninstalled'), "success");
+      } catch (CRM_Extension_Exception_DependencyException $e) {
+        // currently only thrown for payment-processor dependencies
+        CRM_Core_Session::setStatus(ts('Cannot uninstall this extension - there is at least one payment processor using the payment processor type provided by it.'), ts('Uninstall Error'), 'error');
+      }
     }
 
     if ($this->_action & CRM_Core_Action::ADD) {
