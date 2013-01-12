@@ -95,7 +95,7 @@
 
           close: function(event, ui) {
             cj('#contact-success-' + prefix + blockNo).fadeOut(5000);
-            cj('#' + prefix + 'profiles-' + blockNo).val('');
+            cj('#' + prefix + 'profiles_' + blockNo).val('');
             {/literal}
             {if $newContactCallback}
               eval("{$newContactCallback}");
