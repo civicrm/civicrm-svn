@@ -99,7 +99,10 @@ class CRM_Price_Form_Option extends CRM_Core_Form {
     if (!isset($defaults['membership_num_terms']) && $memberComponentId == $extendComponentId) {
       $defaults['membership_num_terms'] = 1;
     }
-
+    // set financial type used for price set to set default for new option
+    if (!$this->_oid) {
+      $defaults['financial_type_id'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_sid, 'financial_type_id', 'id');;
+    }
     if (!isset($defaults['weight']) || !$defaults['weight']) {
       $fieldValues = array('price_field_id' => $this->_fid);
       $defaults['weight'] = CRM_Utils_Weight::getDefaultWeight('CRM_Price_DAO_FieldValue', $fieldValues);
@@ -178,35 +181,36 @@ class CRM_Price_Form_Option extends CRM_Core_Form {
           $this->add('text', 'max_value', ts('Max Participants'));
           $this->addRule('max_value', ts('Please enter a valid Max Participants.'), 'positiveInteger');
         }
-        //Financial Type
-        $financialType = CRM_Contribute_PseudoConstant::financialType();
-        $revenueFinancialType = array();
-        CRM_Core_PseudoConstant::populate( 
-          $revenueFinancialType,
-          'CRM_Financial_DAO_EntityFinancialAccount',
-          $all = True, 
-          $retrieve = 'entity_id', 
-          $filter = null, 
-          'account_relationship = 1'
-        ); 
         
-        foreach ($financialType as $key => $financialTypeName) {
-          if (!in_array( $key, $revenueFinancialType)) {
-            unset($financialType[$key]);
-          }
-        }
-        if (count($financialType)) {
-            $this->assign('financialType', $financialType);
-        }
-        $this->add(
-          'select', 
-          'financial_type_id', 
-          ts('Financial Type'), 
-          array('' => ts('- select -')) + $financialType,
-          true
-        );
       }
-
+      //Financial Type
+      $financialType = CRM_Contribute_PseudoConstant::financialType();
+      $revenueFinancialType = array();
+      CRM_Core_PseudoConstant::populate( 
+        $revenueFinancialType,
+        'CRM_Financial_DAO_EntityFinancialAccount',
+        $all = True, 
+        $retrieve = 'entity_id', 
+        $filter = null, 
+        'account_relationship = 1'
+      ); 
+      
+      foreach ($financialType as $key => $financialTypeName) {
+        if (!in_array( $key, $revenueFinancialType)) {
+          unset($financialType[$key]);
+        }
+      }
+      if (count($financialType)) {
+        $this->assign('financialType', $financialType);
+      }
+      $this->add(
+        'select', 
+        'financial_type_id', 
+        ts('Financial Type'), 
+        array('' => ts('- select -')) + $financialType,
+        true
+      );
+      
       //CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Field', $this->_fid, 'weight', 'id' );
       // FIX ME: duplicate rule?
       /*
