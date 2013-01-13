@@ -67,8 +67,9 @@ class CRM_Upgrade_Incremental_php_FourThree {
   function upgrade_4_3_alpha1($rev) {
     self::createDomainContacts();
     self::task_4_3_alpha1_checkDBConstraints();
-    $upgrade = new CRM_Upgrade_Form();
-    $upgrade->processSQL($rev);
+    
+    // task to process sql
+    $this->addTask(ts('Upgrade DB to 4.3.alpha1: SQL'), 'task_4_3_x_runSql', $rev);
 
     $minId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(min(id),0) FROM civicrm_contact');
     $maxId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(max(id),0) FROM civicrm_contact');
@@ -134,7 +135,7 @@ class CRM_Upgrade_Incremental_php_FourThree {
   static function _checkAndMigrateDefaultFinancialTypes() {
     $modifiedDefaults = FALSE;
     //insert types if not exists
-    $sqlFetchTypes = "SELECT id, name FROM civicrm_financial_type
+    $sqlFetchTypes = "SELECT id, name FROM civicrm_contribution_type
   WHERE name IN ('Donation', 'Event Fee', 'Member Dues')";
     $daoFetchTypes = CRM_Core_DAO::executeQuery($sqlFetchTypes);
     
@@ -155,7 +156,7 @@ class CRM_Upgrade_Incremental_php_FourThree {
     if (!empty($insertString)) {
       $modifiedDefaults = TRUE;
       $append = implode(',', $insertString);
-      $insertSql = "INSERT INTO civicrm_financial_type (name, is_reserved, is_active, is_deductible)
+      $insertSql = "INSERT INTO civicrm_contribution_type (name, is_reserved, is_active, is_deductible)
   VALUES {$append};";
       CRM_Core_DAO::executeQuery($insertSql);
     }
@@ -170,7 +171,7 @@ class CRM_Upgrade_Incremental_php_FourThree {
         $clause = " IN ('$value')";
       }
       //active the types which are disabled
-      $sqlSetFinancialTypeActive = "UPDATE civicrm_financial_type SET is_active = 1 
+      $sqlSetFinancialTypeActive = "UPDATE civicrm_contribution_type SET is_active = 1 
   WHERE name {$clause} AND is_active = 0;";
       CRM_Core_DAO::executeQuery($sqlSetFinancialTypeActive);    
       
@@ -414,6 +415,16 @@ AND TABLE_SCHEMA = '{$dbUf['database']}'";
     CRM_Core_DAO::executeQuery(CRM_Contact_BAO_Contact::DROP_STRIP_FUNCTION_43);
     CRM_Core_DAO::executeQuery(CRM_Contact_BAO_Contact::CREATE_STRIP_FUNCTION_43);
     CRM_Core_DAO::executeQuery("UPDATE civicrm_phone SET phone_numeric = civicrm_strip_non_numeric(phone)");
+    return TRUE;
+  }
+
+  /**
+   * (Queue Task Callback)
+   */
+  static function task_4_3_x_runSql(CRM_Queue_TaskContext $ctx, $rev) {
+    $upgrade = new CRM_Upgrade_Form();
+    $upgrade->processSQL($rev);
+
     return TRUE;
   }
 
