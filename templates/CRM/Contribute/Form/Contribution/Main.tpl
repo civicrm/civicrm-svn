@@ -490,4 +490,5 @@
 {/if}
 
 {* jQuery validate *}
-{include file="CRM/Form/validate.tpl"}
+{* disabled because more work needs to be done to conditionally require credit card fields *}
+{*include file="CRM/Form/validate.tpl"*}
