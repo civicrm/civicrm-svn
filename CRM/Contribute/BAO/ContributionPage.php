@@ -686,8 +686,9 @@ WHERE entity_table = 'civicrm_contribution_page'
    *
    * @return array $info info regarding all sections.
    * @access public
+   * @static
    */
-  function getSectionInfo($contribPageIds = array(
+  static function getSectionInfo($contribPageIds = array(
     )) {
     $info = array();
     $whereClause = NULL;

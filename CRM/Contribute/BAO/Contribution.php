@@ -1925,7 +1925,11 @@ SELECT source_contact_id
     return $ids;
   }
 
-  function getContributionDates() {
+  /**
+   * @return array
+   * @static
+   */
+  static function getContributionDates() {
     $config       = CRM_Core_Config::singleton();
     $currentMonth = date('m');
     $currentDay   = date('d');
