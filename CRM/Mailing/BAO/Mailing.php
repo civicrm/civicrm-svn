@@ -1120,7 +1120,10 @@ AND civicrm_contact.is_opt_out =0";
         CRM_Core_Error::debug_log_message(ts('CiviMail will not send email to a non-existent contact: %1',
             array(1 => $contactId)
           ));
-        return NULL;
+        // setting this because function is called by reference
+        //@todo test not calling function by reference
+        $res = NULL;
+        return $res;
       }
 
       // also call the hook to get contact details
@@ -1205,15 +1208,14 @@ AND civicrm_contact.is_opt_out =0";
       $mailParams['html'] = $htmlBody;
     }
 
-    if (empty($mailParams['text']) &&
-      empty($mailParams['html'])
-    ) {
+    if (empty($mailParams['text']) && empty($mailParams['html'])) {
       // CRM-9833
-      // something went wrong, lets log it and return null
+      // something went wrong, lets log it and return null (by reference)
       CRM_Core_Error::debug_log_message(ts('CiviMail will not send an empty mail body, Skipping: %1',
           array(1 => $email)
         ));
-      return NULL;
+      $res = NULL;
+      return $res;
     }
 
     $mailParams['attachments'] = $attachments;
@@ -1435,7 +1437,8 @@ AND civicrm_contact.is_opt_out =0";
    * @return object
    */
   static function add(&$params, $ids = array()) {
-    $id = CRM_Utils_Array::value('mailing', $ids, CRM_Utils_Array::value('id', $params));
+    $id = CRM_Utils_Array::value('mailing_id', $ids, CRM_Utils_Array::value('id', $params));
+
     if ($id) {
       CRM_Utils_Hook::pre('edit', 'Mailing', $id, $params);
     }
@@ -1489,10 +1492,10 @@ AND civicrm_contact.is_opt_out =0";
       $domain_name  = $domain['from_name'];
     }
     else {
-      $domain_email = 'info@FIXME.ORG';
-      $domain_name  = 'FIXME.ORG';
+      $domain_email = 'info@EXAMPLE.ORG';
+      $domain_name  = 'EXAMPLE.ORG';
     }
-    if (!isset($params['contact_id'])) {
+    if (!isset($params['created_id'])) {
       $session =& CRM_Core_Session::singleton();
       $params['created_id'] = $session->get('userID');
     }
@@ -1518,7 +1521,6 @@ AND civicrm_contact.is_opt_out =0";
       'created_date'    => date('YmdHis'),
       'scheduled_date'  => date('YmdHis'),
       'approval_date'   => date('YmdHis'),
-      'from_name'       => '',
     );
 
     // Get the default from email address, if not provided.
@@ -1587,6 +1589,22 @@ AND civicrm_contact.is_opt_out =0";
     CRM_Core_BAO_File::processAttachment($params, 'civicrm_mailing', $mailing->id);
 
     $transaction->commit();
+
+    /**
+     * 'approval_status_id' set in
+     * CRM_Mailing_Form_Mailing_Schedule::postProcess() or via API.
+     */
+    if (isset($params['approval_status_id']) && $params['approval_status_id']) {
+      $job = new CRM_Mailing_BAO_Job();
+      $job->mailing_id = $mailing->id;
+      $job->status = 'Scheduled';
+      $job->is_test = 0;
+      $job->scheduled_date = $params['scheduled_date'];
+      $job->save();
+      // Populate the recipients.
+      $mailing->getRecipients($job->id, $mailing->id, NULL, NULL, true, false);
+    }
+
     return $mailing;
   }
 
@@ -2613,9 +2631,7 @@ WHERE  civicrm_mailing_job.id = %1
     // check if we are enforcing number of parallel cron jobs
     // CRM-8460
     $gotCronLock = FALSE;
-    if ($config->mailerJobsMax &&
-      $config->mailerJobsMax > 1
-    ) {
+    if ($config->mailerJobsMax && $config->mailerJobsMax > 1) {
 
       $lockArray = range(1, $config->mailerJobsMax);
       shuffle($lockArray);
@@ -2638,7 +2654,6 @@ WHERE  civicrm_mailing_job.id = %1
         return TRUE;
       }
     }
-
 
     // load bootstrap to call hooks
 

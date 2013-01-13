@@ -55,7 +55,7 @@ class CRM_Mailing_Form_Settings extends CRM_Core_Form {
     $this->assign("value", $result);
     }
   }
- 
+
   /**
    * This function sets the default values for the form.
    * the default values are retrieved from the database
@@ -168,6 +168,9 @@ class CRM_Mailing_Form_Settings extends CRM_Core_Form {
 
   public function postProcess() {
     $params = $ids = array();
+
+    $session = CRM_Core_Session::singleton();
+    $params['created_id'] = $session->get('userID');
 
     $uploadParams = array('reply_id', 'unsubscribe_id', 'optout_id', 'resubscribe_id');
     $uploadParamsBoolean = array('override_verp', 'forward_replies', 'url_tracking', 'open_tracking', 'auto_responder');

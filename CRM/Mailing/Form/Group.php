@@ -428,9 +428,9 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task {
     $session            = CRM_Core_Session::singleton();
     $params['groups']   = $groups;
     $params['mailings'] = $mailings;
-
+    $ids = array();
     if ($this->get('mailing_id')) {
-      $ids = array();
+      
       // don't create a new mailing if already exists
       $ids['mailing_id'] = $this->get('mailing_id');
 

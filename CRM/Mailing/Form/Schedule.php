@@ -264,65 +264,58 @@ class CRM_Mailing_Form_Schedule extends CRM_Core_Form {
       CRM_Core_Error::fatal(ts('Could not find a mailing id'));
     }
 
-    foreach (array(
-      'now', 'start_date', 'start_date_time') as $parameter) {
+    foreach (array('now', 'start_date', 'start_date_time') as $parameter) {
       $params[$parameter] = $this->controller->exportValue($this->_name, $parameter);
     }
 
-    $mailing = new CRM_Mailing_BAO_Mailing();
-    $mailing->id = $ids['mailing_id'];
-    if ($mailing->find(TRUE)) {
-      $job             = new CRM_Mailing_BAO_Job();
-      $job->mailing_id = $mailing->id;
-      $job->is_test    = 0;
-      if ($job->find(TRUE)) {
-        CRM_Core_Error::fatal(ts('A job for this mailing already exists'));
-      }
+    dpm($this->controller->exportValues(), 'values');
 
-      if (empty($mailing->is_template)) {
-        $job->status = 'Scheduled';
-        if ($params['now']) {
-          $job->scheduled_date = date('YmdHis');
-        }
-        else {
-          $job->scheduled_date = CRM_Utils_Date::processDate($params['start_date'] . ' ' . $params['start_date_time']);
-        }
-        $job->save();
-      }
-
-      // set approval details if workflow is not enabled
-      if (!CRM_Mailing_Info::workflowEnabled()) {
-        $session = CRM_Core_Session::singleton();
-        $mailing->approver_id = $session->get('userID');
-        $mailing->approval_date = date('YmdHis');
-        $mailing->approval_status_id = 1;
-      }
-      else {
-        // reset them in case this mailing was rejected
-        $mailing->approver_id = 'null';
-        $mailing->approval_date = 'null';
-        $mailing->approval_status_id = 'null';
-      }
-
-      if ($mailing->approval_date) {
-        $mailing->approval_date = CRM_Utils_Date::isoToMysql($mailing->approval_date);
-      }
-
-      // also set the scheduled_id
-      $session = CRM_Core_Session::singleton();
-      $mailing->scheduled_id = $session->get('userID');
-      $mailing->scheduled_date = date('YmdHis');
-      $mailing->created_date = CRM_Utils_Date::isoToMysql($mailing->created_date);
-      $mailing->save();
+    // Previously, we checked if $mailing->is_template, and did *not*
+    // schedule if it was set. Discussed with Lobo, removed that check
+    // as it appeared to prevent mails being scheduled if they were
+    // saved as a template, and this wasn't the documented behaviour.
+    // $saveTemplate = $this->controller->exportValue('saveTemplate');
+    $job->status = 'Scheduled';
+    if ($params['now']) {
+      $params['scheduled_date'] = date('YmdHis');
     }
+    else {
+      $params['scheduled_date'] = CRM_Utils_Date::processDate($params['start_date'] . ' ' . $params['start_date_time']);
+    }
+
+    $session = CRM_Core_Session::singleton();
+    // set the scheduled_id
+    $params['scheduled_id'] = $session->get('userID');
+    $params['scheduled_date'] = date('YmdHis');
+    //$params['created_date'] = CRM_Utils_Date::isoToMysql($params['created_date']);
+
+    // set approval details if workflow is not enabled
+    if (!CRM_Mailing_Info::workflowEnabled()) {
+      $params['approver_id'] = $session->get('userID');
+      $params['approval_date'] = date('YmdHis');
+      $params['approval_status_id'] = 1;
+    }
+    else {
+      // reset them in case this mailing was rejected
+      $mailing->approver_id = 'null';
+      $mailing->approval_date = 'null';
+      $mailing->approval_status_id = 'null';
+    }
+
+    if ($params['now']) {
+      $params['scheduled_date'] = date('YmdHis');
+    }
+    else {
+      $params['scheduled_date'] = CRM_Utils_Date::processDate($params['start_date'] . ' ' . $params['start_date_time']);
+    }
+
+    /* Build the mailing object */
+    CRM_Mailing_BAO_Mailing::create($params, $ids);
 
     //when user perform mailing from search context
     //redirect it to search result CRM-3711.
     $ssID = $this->get('ssID');
-    if ($ssID &&
-      $this->_searchBasedMailing &&
-      !CRM_Mailing_Info::workflowEnabled()
-    ) {
+    if ($ssID && $this->_searchBasedMailing && !CRM_Mailing_Info::workflowEnabled()) {
       if ($this->_action == CRM_Core_Action::BASIC) {
         $fragment = 'search';
       }
