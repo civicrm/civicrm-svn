@@ -44,7 +44,7 @@ class CRM_Contribute_Form_ContributionPage_TabHeader {
       $form->set('tabHeader', $tabs);
     }
     $form->assign_by_ref('tabHeader', $tabs);
-    $form->assign_by_ref('selectedTab', self::getCurrentTab($tabs));
+    $form->assign('selectedTab', self::getCurrentTab($tabs));
     return $tabs;
   }
 
