@@ -2711,15 +2711,24 @@ WHERE  contribution_id = %1 ";
 
       //if financial type is changed 
       if ($params['contribution']->financial_type_id != $params['prevContribution']->financial_type_id) {
-        $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Income Account is' "));
-        $oldFinancialAccount = CRM_Contribute_PseudoConstant::financialAccountType($params['prevContribution']->financial_type_id, $relationTypeId);
-        $newFinancialAccount = CRM_Contribute_PseudoConstant::financialAccountType($params['financial_type_id'], $relationTypeId);
+        $incomeTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Income Account is' "));
+        $oldFinancialAccount = CRM_Contribute_PseudoConstant::financialAccountType($params['prevContribution']->financial_type_id, $incomeTypeId);
+        $newFinancialAccount = CRM_Contribute_PseudoConstant::financialAccountType($params['financial_type_id'], $incomeTypeId);
         if ($oldFinancialAccount != $newFinancialAccount) {
           $params['total_amount'] = 0;
-          self::updateFinancialAccounts($params, 'changeFinancialType');
+          $skipTrxn = TRUE;
+          if ($params['contribution']->contribution_status_id == array_search('Pending', $contributionStatuses)) {
+            $params['trxnParams']['to_financial_account_id'] = CRM_Contribute_PseudoConstant::financialAccountType(
+              $params['prevContribution']->financial_type_id, $relationTypeId);
+            $skipTrxn = $params['trxnParams']['to_financial_account_id'] == $trxnParams['to_financial_account_id'] ? TRUE : FALSE;
+          }
+          self::updateFinancialAccounts($params, 'changeFinancialType', $skipTrxn);
+          if (!$skipTrxn) {
+            $params['trxnParams']['to_financial_account_id'] = $trxnParams['to_financial_account_id'];            
+          }
           $params['financial_account_id'] = $newFinancialAccount;
           $params['total_amount'] = $params['trxnParams']['total_amount'] = $trxnParams['total_amount'];
-          self::updateFinancialAccounts($params);
+          self::updateFinancialAccounts($params, NULL, $skipTrxn);
         }
       }
       $update = TRUE;
@@ -2767,8 +2776,8 @@ WHERE  contribution_id = %1 ";
    * @access public
    * @static
    */
-  static function updateFinancialAccounts(&$params, $context = NULL) {
-    $itemAmount = NULL;
+  static function updateFinancialAccounts(&$params, $context = NULL, $skipTrxn = NULL) {
+    $itemAmount = $trxnID = NULL;
     if ($context == 'changedAmount' || $context == 'changeFinancialType') {
       $itemAmount = $params['trxnParams']['total_amount'] = $params['total_amount'] - $params['prevContribution']->total_amount;
     }
@@ -2806,7 +2815,12 @@ WHERE  contribution_id = %1 ";
       }
     }
 
-    $trxn = CRM_Core_BAO_FinancialTrxn::create($params['trxnParams']);
+    if (!$skipTrxn) {
+      $trxn = CRM_Core_BAO_FinancialTrxn::create($params['trxnParams']);
+    } 
+    else {
+      $trxnID = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnIds($params['contribution']->id);
+    }
     
     if ($context == 'changedStatus') {
       if (($params['prevContribution']->contribution_status_id == array_search('Pending', $contributionStatus)) &&
@@ -2834,7 +2848,7 @@ WHERE  contribution_id = %1 ";
     } 
     if ($context != 'changePaymentInstrument') {
       $itemParams['entity_table'] = 'civicrm_line_item';
-      $trxnIds['id'] = $trxn->id;
+      $trxnIds['id'] = $trxnID ? $trxnID['financialTrxnId'] : $trxn->id;
       foreach ($params['line_item'] as $fieldId => $fields) {
         foreach ($fields as $fieldValueId => $fieldValues) {
           $prevParams['entity_id'] = $fieldValues['id'];
