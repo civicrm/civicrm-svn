@@ -189,6 +189,7 @@ ADD `description` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Fin
 ADD `parent_id` int(10) unsigned DEFAULT NULL COMMENT 'Parent ID in account hierarchy',
 ADD `is_header_account` tinyint(4) DEFAULT NULL COMMENT 'Is this a header account which does not allow transactions to be posted against it directly, but only to its sub-accounts?',
 ADD `accounting_code` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Optional value for mapping monies owed and received to accounting system codes.',
+ADD `account_type_code` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Optional value for mapping account types to accounting system account categories (QuickBooks Account Type Codes for example).',
 ADD `is_deductible` tinyint(4) DEFAULT '1' COMMENT 'Is this account tax-deductible?',
 ADD `is_tax` tinyint(4) DEFAULT '0' COMMENT 'Is this account for taxes?',
 ADD `tax_rate` decimal(9,8) DEFAULT '0.00' COMMENT 'The percentage of the total_amount that is due for this tax.',
