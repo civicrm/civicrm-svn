@@ -637,21 +637,21 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
 
     $attributes = CRM_Core_DAO::getAttribute('CRM_Contribute_DAO_Contribution');
 
-    $this->add('select', 'financial_type_id',
+    $financialType = $this->add('select', 'financial_type_id',
       ts('Financial Type'),
       array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::financialType(),
       TRUE
     );
 
     if (!$this->_mode) {
-      $this->add('select', 'payment_instrument_id',
+      $paymentInstrument = $this->add('select', 'payment_instrument_id',
         ts('Paid By'),
         array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::paymentInstrument(),
         FALSE, array('onChange' => "return showHideByValue('payment_instrument_id','4','checkNumber','table-row','select',false);")
       );
     }
 
-    $this->add('text', 'trxn_id', ts('Transaction ID'), $attributes['trxn_id']);
+    $trxnId = $this->add('text', 'trxn_id', ts('Transaction ID'), $attributes['trxn_id']);
 
     //add receipt for offline contribution
     $this->addElement('checkbox', 'is_email_receipt', ts('Send Receipt?'));
@@ -719,7 +719,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
     if ($this->_online) {
       $this->assign('hideCalender', TRUE);
     }
-    $this->add('text', 'check_number', ts('Check Number'), $attributes['check_number']);
+    $checkNumber = $this->add('text', 'check_number', ts('Check Number'), $attributes['check_number']);
 
     $this->addDateTime('receipt_date', ts('Receipt Date'), FALSE, array('formatType' => 'activityDateTime'));
     $this->addDateTime('cancel_date', ts('Cancelled / Refunded Date'), FALSE, array('formatType' => 'activityDateTime'));
@@ -804,7 +804,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
       }
       }
 
-      $this->addMoney('total_amount',
+      $totalAmount = $this->addMoney('total_amount',
         ts('Total Amount'),
         ($hasPriceSets) ? FALSE : TRUE,
         $attributes['total_amount'],
@@ -874,6 +874,15 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
         ),
       )
     );
+
+    // if status is Cancelled freeze Amount, Payment Instrument, Check #, Financial Type
+    if ($this->_id && $this->_values['contribution_status_id'] == array_search('Cancelled', $statusName)) {
+      $totalAmount->freeze();
+      $checkNumber->freeze();
+      $paymentInstrument->freeze();
+      $trxnId->freeze();
+      $financialType->freeze();
+    }
 
     $this->addFormRule(array('CRM_Contribute_Form_Contribution', 'formRule'), $this);
 
