@@ -888,7 +888,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
         $name = 'contact_id';
       }
 
-      // skipe pseudo fields
+      // skip pseudo fields
       if (substr($name, 0, 9) == 'phone_ext') {
         continue;
       }
@@ -1551,8 +1551,6 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
    * @static
    */
   public static function getModuleUFGroup($moduleName = NULL, $count = 0, $skipPermission = TRUE, $op = CRM_Core_Permission::VIEW) {
-
-    $dao = new CRM_Core_DAO();
     $queryString = 'SELECT civicrm_uf_group.id, title, civicrm_uf_group.is_active, is_reserved, group_type
                         FROM civicrm_uf_group
                         LEFT JOIN civicrm_uf_join ON (civicrm_uf_group.id = uf_group_id)';
@@ -2140,6 +2138,8 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
     $singleProfile = TRUE, $componentId = NULL, $component = NULL
   ) {
     if (!$componentId) {
+      self::reformatProfileFields($fields);
+
       //get the contact details
       list($contactDetails, $options) = CRM_Contact_BAO_Contact::getHierContactDetails($contactId, $fields);
       $details = CRM_Utils_Array::value($contactId, $contactDetails);
@@ -2147,6 +2147,11 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
 
       //start of code to set the default values
       foreach ($fields as $name => $field) {
+        // skip pseudo fields
+        if (substr($name, 0, 9) == 'phone_ext') {
+          continue;
+        }
+
         //set the field name depending upon the profile mode(single/batch)
         if ($singleProfile) {
           $fldName = $name;
@@ -2318,6 +2323,9 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                         if ($phoneTypeId) {
                           if (isset($value['phone'][$phoneTypeId])) {
                             $defaults[$fldName] = $value['phone'][$phoneTypeId];
+                          }
+                          if (isset($value['phone_ext'][$phoneTypeId])) {
+                            $defaults[str_replace('phone', 'phone_ext', $fldName)] = $value['phone_ext'][$phoneTypeId];
                           }
                         }
                         else {
@@ -3014,7 +3022,6 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         $defaults[$fldName] = $values[$name];
       }
       elseif ($name == 'participant_note') {
-        $noteDetails        = array();
         $noteDetails        = CRM_Core_BAO_Note::getNote($componentId, 'civicrm_participant');
         $defaults[$fldName] = array_pop($noteDetails);
       }
@@ -3406,4 +3413,27 @@ SELECT  group_id
     return $multiSummaryFields;
   }
 
+  /**
+   * This is function is used to format pseudo fields
+   *
+   * @param array $fields associated array of profile fields
+   *
+   * @static
+   */
+  static function reformatProfileFields(&$fields) {
+    //reformat fields array
+    foreach ($fields as $name => $field) {
+      //reformat phone and extension field
+      if ( substr($field['name'], 0, 13) == 'phone_and_ext') {
+        $fieldSuffix = str_replace('phone_and_ext-', '', $field['name']);
+        $field['name'] = 'phone';
+        $field['where'] = 'civicrm_phone.phone';
+        $fields["phone-{$fieldSuffix}"] = $field;
+        $field['name'] = 'phone_ext';
+        $field['where'] = 'civicrm_phone.phone_ext';
+        $fields["phone_ext-{$fieldSuffix}"] = $field;
+        unset($fields[$name]);
+      }
+    }
+  }
 }
