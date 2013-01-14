@@ -51,9 +51,6 @@ class CRM_Contact_Form_Edit_Lock {
    */
   public static function buildQuickForm(&$form) {
     $form->addElement('hidden', 'modified_date', '', array('id' => 'modified_date'));
-
-    $form->addElement('button', 'qf_Ignore', ts('Ignore'));
-    $form->addElement('button', 'qf_StartOver', ts('Start Over'));
   }
 
   /**
@@ -72,12 +69,12 @@ class CRM_Contact_Form_Edit_Lock {
 
     $timestamps = CRM_Contact_BAO_Contact::getTimestamps($contactID);
     if ($fields['modified_date'] != $timestamps['modified_date']) {
-      $errors['modified_date'] = ts('This record was modified by another user!');
-      
-      $template = CRM_Core_Smarty::singleton(); 
-      $template->assign('modified_date', $timestamps['modified_date']);
+      // Inline buttons generated via JS
+      $open = sprintf("<span id='update_modified_date' data:latest_modified_date='%s'>", $timestamps['modified_date']);
+      $close = "</span>";
+      $errors['modified_date'] = $open . ts('This record was modified by another user!') . $close;
     }
-    
+
     return empty($errors) ? TRUE : $errors;
   }
 }
