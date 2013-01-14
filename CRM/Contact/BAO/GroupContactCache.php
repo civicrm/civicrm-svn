@@ -462,7 +462,7 @@ AND  civicrm_group_contact.group_id = $groupID ";
 
     $contactIDString = CRM_Core_DAO::escapeString(implode(', ', $contactIDs));
     $sql = "
-SELECT     gc.group_id, gc.contact_id, g.title, g.children
+SELECT     gc.group_id, gc.contact_id, g.title, g.children, g.description
 FROM       civicrm_group_contact_cache gc
 INNER JOIN civicrm_group g ON g.id = gc.group_id
 WHERE      gc.contact_id IN ($contactIDString)
@@ -489,6 +489,7 @@ ORDER BY   gc.contact_id, g.children
         array(
           'id' => $dao->group_id,
           'title' => $dao->title,
+          'description' => $dao->description,
           'children' => $dao->children
         );
       $contactGroup[$dao->contact_id]['groupTitle'][] = $dao->title;

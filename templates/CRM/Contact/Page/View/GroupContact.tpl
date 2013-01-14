@@ -75,11 +75,13 @@
     <thead>
     <tr>
     <th>{ts}Group{/ts}</th>
+    <th>{ts}Description{/ts}</th>
     </tr>
     </thead>
    {foreach from=$groupSmart item=row}
         <tr id="grp_{$row.id}" class="{cycle values="odd-row,even-row"}">
           <td class="bold"><a href="{crmURL p='civicrm/group/search' q="reset=1&force=1&context=smog&gid=`$row.id`"}">{$row.title}</a></td>
+          <td>{$row.description}</td>
         </tr>
        {/foreach}
     </table>
