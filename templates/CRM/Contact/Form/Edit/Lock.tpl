@@ -1,5 +1,6 @@
 {if $modified_date}
-<div class="messages crm-error" id='update_modified_date' data:latest_modified_date='{$modified_date}'>
+{* Store outside "messages" because that gets munged by CRM.alert stuff *}
+<div class="messages crm-error no-popup" id='update_modified_date' data:latest_modified_date='{$modified_date}'>
    <div class="crm-submit-buttons">
      {$form.qf_Ignore.html}&nbsp;{$form.qf_StartOver.html}
    </div>
