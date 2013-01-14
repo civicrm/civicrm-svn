@@ -335,7 +335,6 @@ class CRM_Profile_Form extends CRM_Core_Form {
           if ($this->_multiRecord & CRM_Core_Action::ADD) {
             $this->_maxRecordLimit = CRM_Core_BAO_CustomGroup::hasReachedMaxLimit($customGroupDetails[$fieldId]['groupID'], $this->_id);
             if ($this->_maxRecordLimit) {
-              $session = CRM_Core_Session::singleton();
               CRM_Core_Session::setStatus(ts('You cannot add a new record as  maximum allowed limit is reached'), ts('Sorry'), 'error');
             }
           }
@@ -379,14 +378,12 @@ class CRM_Profile_Form extends CRM_Core_Form {
         $this->_fields = $this->_multiRecordFields;
         $this->_multiRecordProfile = TRUE;
       } elseif ($this->_multiRecord && empty($this->_multiRecordFields)) {
-        $session = CRM_Core_Session::singleton();
         CRM_Core_Session::setStatus(ts('This feature is not currently available.'), ts('Sorry'), 'error');
         return CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm', 'reset=1'));
       }
     }
 
     if (!is_array($this->_fields)) {
-      $session = CRM_Core_Session::singleton();
       CRM_Core_Session::setStatus(ts('This feature is not currently available.'), ts('Sorry'), 'error');
       return CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm', 'reset=1'));
     }
@@ -655,23 +652,11 @@ class CRM_Profile_Form extends CRM_Core_Form {
       return FALSE;
     }
 
-    $sBlocks = array();
-    $hBlocks = array();
-    $config  = CRM_Core_Config::singleton();
-
     $this->assign('id', $this->_id);
     $this->assign('mode', $this->_mode);
     $this->assign('action', $this->_action);
-    $this->assign_by_ref('fields', $this->_fields);
+    $this->assign('fields', $this->_fields);
     $this->assign('fieldset', (isset($this->_fieldset)) ? $this->_fieldset : "");
-
-    // do we need inactive options ?
-    if ($this->_action & CRM_Core_Action::VIEW) {
-      $inactiveNeeded = TRUE;
-    }
-    else {
-      $inactiveNeeded = FALSE;
-    }
 
     $session = CRM_Core_Session::singleton();
 
@@ -707,8 +692,8 @@ class CRM_Profile_Form extends CRM_Core_Form {
       $defaultLocationType = CRM_Core_BAO_LocationType::getDefault();
       $primaryLocationType = $defaultLocationType->id;
       $anonUser            = TRUE;
-      $this->assign('anonUser', TRUE);
     }
+    $this->assign('anonUser', $anonUser);
 
     $addCaptcha = array();
     $emailPresent = FALSE;
@@ -766,11 +751,8 @@ class CRM_Profile_Form extends CRM_Core_Form {
         $dao = new CRM_Core_DAO_UFGroup();
         $dao->id = $this->_gid;
         $dao->addSelect();
-        $dao->addSelect('add_captcha', 'is_update_dupe');
+        $dao->addSelect('is_update_dupe');
         if ($dao->find(TRUE)) {
-          if ($dao->add_captcha) {
-            $setCaptcha = TRUE;
-          }
           if ($dao->is_update_dupe) {
             $this->_isUpdateDupe = $dao->is_update_dupe;
           }
@@ -884,11 +866,10 @@ class CRM_Profile_Form extends CRM_Core_Form {
       return TRUE;
     }
 
-    $cid = $register = NULL;
+    $register = NULL;
 
     // hack we use a -1 in options to indicate that its registration
     if ($form->_id) {
-      $cid = $form->_id;
       $form->_isUpdateDupe = 1;
     }
 
@@ -1259,7 +1240,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
         $activityParams['version'] = 3;
         $activityParams['id'] = $this->_activityId;
         $activityParams['skipRecentView'] = TRUE;
-        $activity = civicrm_api('Activity', 'create', $activityParams);
+        civicrm_api('Activity', 'create', $activityParams);
       }
     }
 
