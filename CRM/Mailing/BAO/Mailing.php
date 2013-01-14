@@ -1923,6 +1923,10 @@ AND civicrm_contact.is_opt_out =0";
         'civicrm/mailing/report/event',
         "reset=1&event=unsubscribe&mid=$mailing_id"
       ),
+      'optout' => CRM_Utils_System::url(
+        'civicrm/mailing/report/event',
+        "reset=1&event=optout&mid=$mailing_id"
+      ),
       'forward' => CRM_Utils_System::url(
         'civicrm/mailing/report/event',
         "reset=1&event=forward&mid=$mailing_id"
