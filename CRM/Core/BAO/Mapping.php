@@ -753,11 +753,11 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping {
 
               $jsSet = TRUE;
 
-              if (CRM_Utils_Array::value($i, $mappingOperator[$x])) {
+              if (CRM_Utils_Array::value($i, CRM_Utils_Array::value($x, $mappingOperator))) {
                 $defaults["operator[$x][$i]"] = CRM_Utils_Array::value($i, $mappingOperator[$x]);
               }
 
-              if (CRM_Utils_Array::value($i, $mappingValue[$x])) {
+              if (CRM_Utils_Array::value($i, CRM_Utils_Array::value($x, $mappingValue))) {
                 $defaults["value[$x][$i]"] = CRM_Utils_Array::value($i, $mappingValue[$x]);
               }
             }
