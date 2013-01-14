@@ -134,6 +134,7 @@ class CRM_Financial_BAO_ExportFormat_CSV extends CRM_Financial_BAO_ExportFormat 
         $financialItems[$dao->financial_trxn_id]['Transaction Status'] = $dao->status;
         $financialItems[$dao->financial_trxn_id]['Debit Account'] = $dao->to_account_code;
         $financialItems[$dao->financial_trxn_id]['Debit Account Name'] = $dao->to_account_name;
+        $financialItems[$dao->financial_trxn_id]['Debit Account Type'] = $dao->to_account_type_code;
         $financialItems[$dao->financial_trxn_id]['Debit Account Amount (Unsplit)'] = $dao->debit_total_amount;
         $financialItems[$dao->financial_trxn_id]['Transaction ID (Unsplit)'] = $dao->trxn_id;
         $financialItems[$dao->financial_trxn_id]['Payment Instrument'] = $dao->payment_instrument;
@@ -143,6 +144,7 @@ class CRM_Financial_BAO_ExportFormat_CSV extends CRM_Financial_BAO_ExportFormat 
         $financialItems[$dao->financial_trxn_id]['Amount'] = $dao->amount;
         $financialItems[$dao->financial_trxn_id]['Credit Account'] = $dao->credit_account;
         $financialItems[$dao->financial_trxn_id]['Credit Account Name'] = $dao->credit_account_name;
+        $financialItems[$dao->financial_trxn_id]['Credit Account Type'] = $dao->from_account_type_code;
         $financialItems[$dao->financial_trxn_id]['Item Description'] = $dao->item_description;
       }
       $financialItems['headers'] = self::formatHeaders($financialItems);

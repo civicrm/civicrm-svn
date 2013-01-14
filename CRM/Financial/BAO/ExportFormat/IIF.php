@@ -117,7 +117,7 @@ class CRM_Financial_BAO_ExportFormat_IIF extends CRM_Financial_BAO_ExportFormat 
             'name' => $this->format($dao->from_account_name),
             'account_code' => $this->format($dao->from_account_code),
             'description' => $this->format($dao->from_account_description),
-            'type' => $this->format($dao->from_qb_account_type),
+            'type' => $this->format($dao->from_account_type_code),
           );
         }
         if (!empty($dao->to_account_id) && !isset($accounts[$dao->to_account_id])) {
@@ -125,7 +125,7 @@ class CRM_Financial_BAO_ExportFormat_IIF extends CRM_Financial_BAO_ExportFormat 
             'name' => $this->format($dao->to_account_name),
             'account_code' => $this->format($dao->to_account_code),
             'description' => $this->format($dao->to_account_description),
-            'type' => $this->format($dao->to_qb_account_type),
+            'type' => $this->format($dao->to_account_type_code),
           );
         }
 

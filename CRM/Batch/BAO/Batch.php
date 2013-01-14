@@ -546,37 +546,37 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
     $sql = "SELECT
       ft.id as financial_trxn_id,
       ft.trxn_date,
-      cov_status.label as status,
-      ft.total_amount as debit_total_amount,
-      eft.amount as amount,
-      ft.currency as currency,
+      cov_status.label AS status,
+      ft.total_amount AS debit_total_amount,
+      eft.amount AS amount,
+      ft.currency AS currency,
       ft.trxn_id AS trxn_id,
-      c.source as source,
-      cov.label as payment_instrument,
+      c.source AS source,
+      cov.label AS payment_instrument,
       ft.check_number,
-      fa_from.id as from_account_id,
-      fa_from.name as from_account_name,
-      fa_from.accounting_code as from_account_code,
-      fa_from.financial_account_type_id as from_account_type_id,
-      fa_from.description as from_account_description,
-      ov_from.grouping as from_qb_account_type,
-      fa_to.id as to_account_id,
-      fa_to.name as to_account_name,
+      fa_from.id AS from_account_id,
+      fa_from.name AS from_account_name,
+      fa_from.accounting_code AS from_account_code,
+      fa_from.financial_account_type_id AS from_account_type_id,
+      fa_from.description AS from_account_description,
+      fa_from.account_type_code AS from_account_type_code,
+      fa_to.id AS to_account_id,
+      fa_to.name AS to_account_name,
       fac.accounting_code AS credit_account,
       fac.name AS credit_account_name,
       fi.description AS item_description,
-      fa_to.accounting_code as to_account_code,
-      fa_to.financial_account_type_id as to_account_type_id,
-      fa_to.description as to_account_description,
-      ov_to.grouping as to_qb_account_type,
-      contact_from.id as contact_from_id,
-      contact_from.display_name as contact_from_name,
-      contact_from.first_name as contact_from_first_name,
-      contact_from.last_name as contact_from_last_name,
-      contact_to.id as contact_to_id,
-      contact_to.display_name as contact_to_name,
-      contact_to.first_name as contact_to_first_name,
-      contact_to.last_name as contact_to_last_name
+      fa_to.accounting_code AS to_account_code,
+      fa_to.financial_account_type_id AS to_account_type_id,
+      fa_to.account_type_code AS to_account_type_code,
+      fa_to.description AS to_account_description,
+      contact_from.id AS contact_from_id,
+      contact_from.display_name AS contact_from_name,
+      contact_from.first_name AS contact_from_first_name,
+      contact_from.last_name AS contact_from_last_name,
+      contact_to.id AS contact_to_id,
+      contact_to.display_name AS contact_to_name,
+      contact_to.first_name AS contact_to_first_name,
+      contact_to.last_name AS contact_to_last_name
       FROM civicrm_entity_batch eb
       LEFT JOIN civicrm_financial_trxn ft ON (eb.entity_id = ft.id AND eb.entity_table = 'civicrm_financial_trxn')
       LEFT JOIN civicrm_financial_account fa_from ON fa_from.id = ft.from_financial_account_id
@@ -590,10 +590,6 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
       LEFT JOIN civicrm_financial_account fac ON fac.id = fi.financial_account_id
       LEFT JOIN civicrm_option_value cov ON (cov.value = ft.payment_instrument_id AND cov.option_group_id = cog.id)
       LEFT JOIN civicrm_financial_account fa_to ON fa_to.id = ft.to_financial_account_id
-      LEFT JOIN civicrm_option_group og_from ON og_from.name = 'financial_account_type'
-      LEFT JOIN civicrm_option_value ov_from ON (ov_from.option_group_id = og_from.id AND ov_from.value = fa_from.financial_account_type_id)
-      LEFT JOIN civicrm_option_group og_to ON og_to.name = 'financial_account_type'
-      LEFT JOIN civicrm_option_value ov_to ON (ov_to.option_group_id = og_to.id AND ov_to.value = fa_to.financial_account_type_id)
       LEFT JOIN civicrm_contact contact_from ON contact_from.id = fa_from.contact_id
       LEFT JOIN civicrm_contact contact_to ON contact_to.id = fa_to.contact_id
       WHERE eb.batch_id = ( %1 )";
