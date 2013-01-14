@@ -162,12 +162,6 @@
      <access_arguments>administer CiviCampaign;manage campaign</access_arguments>
   </item>
   <item>
-     <path>civicrm/survey/configure/questions</path>
-     <title>Configure Survey</title>
-     <page_callback>CRM_Campaign_Form_Survey_Questions</page_callback>
-     <access_arguments>administer CiviCampaign;manage campaign</access_arguments>
-  </item>
-  <item>
      <path>civicrm/survey/configure/results</path>
      <title>Configure Survey</title>
      <page_callback>CRM_Campaign_Form_Survey_Results</page_callback>
