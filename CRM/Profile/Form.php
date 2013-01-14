@@ -1074,7 +1074,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
                           1 => array($this->_recordId, 'Integer'),
                           2 => array($this->_id, 'Integer')
                          );
-           $dao = CRM_Core_DAO::executeQuery($sql, $sqlParams);
+           CRM_Core_DAO::executeQuery($sql, $sqlParams);
            CRM_Core_Session::setStatus(ts('Your record has been deleted.'), ts('Deleted'), 'success');
           }
         }

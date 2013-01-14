@@ -1843,7 +1843,7 @@ ORDER BY civicrm_email.is_primary DESC";
         $loc = CRM_Utils_Array::key($index, $locationType);
 
         $blockName = in_array( $fieldName, $blocks) ? $fieldName : 'address';
-        if($fieldName == 'phone_ext' ){
+        if ($fieldName == 'phone_and_ext' ) {
           $blockName = 'phone';
         }
 
@@ -1866,7 +1866,7 @@ ORDER BY civicrm_email.is_primary DESC";
           $data[$blockName][$loc]['is_primary'] = 1;
         }
 
-        if ($fieldName == 'phone') {
+        if ( in_array($fieldName, array('phone','phone_and_ext'))) {
           if ($typeId) {
             $data['phone'][$loc]['phone_type_id'] = $typeId;
           }
@@ -1875,8 +1875,8 @@ ORDER BY civicrm_email.is_primary DESC";
           }
           $data['phone'][$loc]['phone'] = $value;
 
-          if (isset($params[$fieldName . '_ext-'. $locTypeId]) || ($actualLocTypeId == 'Primary' && isset($params[$fieldName . '_ext-'.$actualLocTypeId]))) {
-            $data['phone'][$loc]['phone_ext'] = isset($params[$fieldName . '_ext-'. $locTypeId]) ? $params[$fieldName . '_ext-'. $locTypeId] : $params[$fieldName . '_ext-'.$actualLocTypeId];
+          if ($fieldName == 'phone_and_ext' ) {
+            $data['phone'][$loc]['phone_ext'] = $params['phone_ext-'. $locTypeId . '-'. $type];
           }
 
           //special case to handle primary phone with different phone types
