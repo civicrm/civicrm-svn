@@ -7,6 +7,15 @@
   </p>
 {/htxt}
 
+{htxt id='is_multi_summary-title'}
+  {ts}Multi-record listing{/ts}
+{/htxt}
+{htxt id='is_multi_summary'}
+  <p>
+    {ts}Do you want to include this field in multi-record custom set of profile?.{/ts}
+  </p>
+{/htxt}
+
 {htxt id='is_required-title'}
   {ts}Required{/ts}
 {/htxt}

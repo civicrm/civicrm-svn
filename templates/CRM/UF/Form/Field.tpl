@@ -43,7 +43,7 @@
       <td>{$form.label.html}</td>
     </tr>
     <tr class="crm-uf-field-form-block-is_multi">
-      <td class="label">{$form.is_multi_summary.label}</td>
+      <td class="label">{$form.is_multi_summary.label}{help id='is_multi_summary'}</td>
       <td>{$form.is_multi_summary.html}<br />
     </tr>
     <tr class="crm-uf-field-form-block-is_required">
@@ -63,7 +63,7 @@
       <td><div id="is_search_html">{$form.is_searchable.html}</td>
     </tr>
     <tr class="crm-uf-field-form-block-in_selector">
-      <td class="label"><div id="in_selector_label">{$form.in_selector.label} {$form.is_searchable.label} {help id='in_selector'}</div></td>
+      <td class="label"><div id="in_selector_label">{$form.in_selector.label}{help id='in_selector'}</div></td>
       <td><div id="in_selector_html">{$form.in_selector.html}</div></td>
     </tr>
     <tr class="crm-uf-field-form-block-help_pre">
@@ -186,7 +186,7 @@ function showHideSeletorSearch() {
   }
   else {
     if (!cj("#is_view").attr('checked')) {
-      is_search.hide();
+      is_search.show();
     }
     var fldName = cj("#field_name_1").val();
     if (fldName == 'group' || fldName == 'tag') {
