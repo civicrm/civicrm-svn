@@ -133,6 +133,32 @@ class CRM_Admin_Form_Setting_Localization extends CRM_Admin_Form_Setting {
     $includeState->setButtonAttributes('remove', array('value' => ts('<< Remove')));
 
     $this->addElement('select', 'defaultContactCountry', ts('Default Country'), array('' => ts('- select -')) + $country);
+    
+    /***Default State/Province***/
+    $stateCountryMap = array();
+    $stateCountryMap[] = array(
+      'state_province' => 'defaultContactStateProvince',
+      'country' => 'defaultContactCountry',
+    );
+
+    $countryDefault = isset($this->_submitValues['defaultContactCountry']) ? $this->_submitValues['defaultContactCountry'] : $config->defaultContactCountry;
+
+    if ($countryDefault) {
+      $selectStateProvinceOptions = array('' => ts('- select -')) + CRM_Core_PseudoConstant::stateProvinceForCountry($countryDefault);
+    }
+    else {
+      $selectStateProvinceOptions = array('' => ts('- select a country -'));
+    }
+
+    $i18n->localizeArray($selectStateProvinceOptions, array('context' => 'state_province'));
+    asort($selectStateProvinceOptions);
+
+    $this->addElement('select', 'defaultContactStateProvince', ts('Default State/Province'), $selectStateProvinceOptions);
+
+    // state country js
+    CRM_Core_BAO_Address::addStateCountryMap($stateCountryMap);
+    CRM_Core_BAO_Address::fixAllStateSelects($form, $defaults);
+    /***Default State/Province***/
 
     // we do this only to initialize currencySymbols, kinda hackish but works!
     $config->defaultCurrencySymbol();
@@ -200,6 +226,13 @@ class CRM_Admin_Form_Setting_Localization extends CRM_Admin_Form_Setting {
       )
     ) {
       $errors['defaultContactCountry'] = ts('Please select a default country that is in the list of available countries.');
+    } 
+    elseif ((!empty($fields['defaultContactCountry']) &&
+      (CRM_Utils_Array::value('countryLimit', $fields) &&
+        (in_array($fields['defaultContactCountry'], $fields['countryLimit']))
+      )) && empty($fields['defaultContactStateProvince'])
+    ) {
+      $errors['defaultContactStateProvince'] = ts('Please select a default state/province for the default country.');
     }
 
     return empty($errors) ? TRUE : $errors;

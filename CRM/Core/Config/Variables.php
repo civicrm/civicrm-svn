@@ -108,6 +108,13 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults {
   public $countryLimit = array('1228');
 
   /**
+   * Id of default state/province for contact.
+   * 1046 is an id for Washington(country:United States).
+   * @var int
+   */
+  //public $defaultContactStateProvince = '1046';
+
+  /**
    * List of country codes limiting the province list.
    * 1228 is an id for United States.
    * @var string

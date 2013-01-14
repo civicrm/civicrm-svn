@@ -531,6 +531,11 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
           $defaults[$name][$instance]['country_id'] = $config->defaultContactCountry;
         }
 
+        //set default state/province
+        if ($name == 'address' && $config->defaultContactStateProvince) {
+          $defaults[$name][$instance]['state_province_id'] = $config->defaultContactStateProvince;
+        }
+
         //set default phone type.
         if ($name == 'phone' && $defPhoneTypeId) {
           $defaults[$name][$instance]['phone_type_id'] = $defPhoneTypeId;
@@ -557,7 +562,9 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
           CRM_Utils_Array::value('country_id',
             $values, $config->defaultContactCountry
           ),
-          CRM_Utils_Array::value('state_province_id', $values)
+          CRM_Utils_Array::value('state_province_id',
+            $values, $config->defaultContactStateProvince
+          )
         );
       }
     }

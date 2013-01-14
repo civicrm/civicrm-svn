@@ -298,14 +298,21 @@ class CRM_Contact_Form_Search_Criteria {
       }
 
       if ($select) {
-        $config            = CRM_Core_Config::singleton();
-        $countryDefault    = $config->defaultContactCountry;
+        $config = CRM_Core_Config::singleton();
+        $countryDefault = $config->defaultContactCountry;
+        $stateProvinceDefault = $config->defaultContactStateProvince;
+        $defaultValues = array();
         $stateCountryMap[] = array(
           'state_province' => 'state_province',
           'country' => 'country',
           'county' => 'county',
         );
         if ($select == 'stateProvince') {
+          if ($stateProvinceDefault) {
+            //for setdefault state/province
+            $defaultValues[$name] = $stateProvinceDefault;
+            $form->setDefaults($defaultValues);
+          }
           if ($countryDefault && !isset($formValues['country'])) {
             $selectElements = array('' => ts('- any -')) + CRM_Core_PseudoConstant::stateProvinceForCountry($countryDefault);
           }
@@ -321,7 +328,6 @@ class CRM_Contact_Form_Search_Criteria {
         elseif ($select == 'country') {
           if ($countryDefault) {
             //for setdefault country
-            $defaultValues = array();
             $defaultValues[$name] = $countryDefault;
             $form->setDefaults($defaultValues);
           }

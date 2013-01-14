@@ -120,6 +120,10 @@ class CRM_Event_Form_ManageEvent_Location extends CRM_Event_Form_ManageEvent {
     if (!isset($defaults['address'][1]['country_id'])) {
       $defaults['address'][1]['country_id'] = $config->defaultContactCountry;
     }
+    
+    if (!isset($defaults['address'][1]['state_province_id'])) {
+      $defaults['address'][1]['state_province_id'] = $config->defaultContactStateProvince;
+    }
 
     if (!empty($defaults['address'])) {
       foreach ($defaults['address'] as $key => $value) {

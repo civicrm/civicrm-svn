@@ -1724,6 +1724,14 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         array(
           '' => ts('- select -')) + CRM_Core_PseudoConstant::stateProvince(), $required
       );
+      $config = CRM_Core_Config::singleton();
+      if (!in_array($mode, array(
+        CRM_Profile_Form::MODE_EDIT, CRM_Profile_Form::MODE_SEARCH)) &&
+        $config->defaultContactStateProvince
+      ) {
+        $defaultValues[$name] = $config->defaultContactStateProvince;
+        $form->setDefaults($defaultValues);
+      }
     }
     elseif (substr($fieldName, 0, 7) === 'country') {
       $form->add('select', $name, $title,
@@ -2489,6 +2497,11 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         $config = CRM_Core_Config::singleton();
         if ($config->defaultContactCountry) {
           $defaults[$name] = $config->defaultContactCountry;
+        }
+      }
+      elseif (substr($name, 0, 15) == 'state_province-') {
+        if ($config->defaultContactStateProvince) {
+          $defaults[$name] = $config->defaultContactStateProvince;
         }
       }
     }

@@ -121,6 +121,10 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
       if (!isset($defaults['address'][1]['country_id'])) {
         $defaults['address'][1]['country_id'] = $config->defaultContactCountry;
       }
+      
+      if (!isset($defaults['address'][1]['state_province_id'])) {
+        $defaults['address'][1]['state_province_id'] = $config->defaultContactStateProvince;
+      }
 
       if (!empty($defaults['address'])) {
         foreach ($defaults['address'] as $key => $value) {
@@ -131,7 +135,9 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
             CRM_Utils_Array::value('country_id', $value,
               $config->defaultContactCountry
             ),
-            CRM_Utils_Array::value('state_province_id', $value)
+            CRM_Utils_Array::value('state_province_id', $value,
+              $config->defaultContactStateProvince
+            )
           );
         }
       }

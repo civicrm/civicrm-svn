@@ -243,9 +243,10 @@ AND cgc.group_id = {$this->_group}
   }
 
   function setDefaultValues() {
-    $config         = CRM_Core_Config::singleton();
+    $config = CRM_Core_Config::singleton();
     $countryDefault = $config->defaultContactCountry;
-    $defaults       = array();
+    $stateprovinceDefault = $config->defaultContactStateProvince;
+    $defaults = array();
 
     if ($countryDefault) {
       if ($countryDefault == '1228' || $countryDefault == '1226') {
@@ -255,6 +256,9 @@ AND cgc.group_id = {$this->_group}
         $defaults['prox_distance_unit'] = 'km';
       }
       $defaults['country_id'] = $countryDefault;
+      if ($stateprovinceDefault) {
+        $defaults['state_province_id'] = $stateprovinceDefault;
+      }
       return $defaults;
     }
     return NULL;

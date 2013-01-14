@@ -99,6 +99,11 @@
                 <td>{$form.defaultContactCountry.html}<br />
                 <span class="description">{ts}This value is selected by default when adding a new contact address.{/ts}</span></td>
             </tr>
+	         <tr class="crm-localization-form-block-defaultContactStateProvince">
+                <td class="label">{$form.defaultContactStateProvince.label}</td>
+                <td>{$form.defaultContactStateProvince.html}<br />
+                <span class="description">{ts}This value is selected by default when adding a new contact address.{/ts}</span></td>
+            </tr>
             <tr class="crm-localization-form-block-countryLimit">
                 <td class="label">{$form.countryLimit.label}</td>
                 <td>{$form.countryLimit.html}<br />

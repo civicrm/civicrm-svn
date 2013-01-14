@@ -316,6 +316,10 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
         $defaults["billing_country_id-{$this->_bltID}"] = $config->defaultContactCountry;
       }
 
+      if (!CRM_Utils_Array::value("billing_state_province_id-{$this->_bltID}", $defaults)) {
+        $defaults["billing_state_province_id-{$this->_bltID}"] = $config->defaultContactStateProvince;
+      }
+
       // now fix all state country selectors
       CRM_Core_BAO_Address::fixAllStateSelects($this, $defaults);
     }

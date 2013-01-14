@@ -168,7 +168,9 @@ class CRM_Contact_Form_Inline_Address extends CRM_Contact_Form_Inline {
       CRM_Utils_Array::value('country_id',
         $values, $config->defaultContactCountry
       ),
-      CRM_Utils_Array::value('state_province_id', $values)
+      CRM_Utils_Array::value('state_province_id',
+        $values, $config->defaultContactStateProvince
+      )
     );
 
     return $defaults;
