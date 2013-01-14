@@ -1,4 +1,10 @@
 {include file='../CRM/Upgrade/4.3.alpha1.msg_template/civicrm_msg_template.tpl'}
+
+-- CRM-11514 if contribution type name is null, assign it a name
+UPDATE civicrm_contribution_type 
+SET name = CONCAT('Unknown_', id)
+WHERE name IS NULL OR TRIM(name) = '';      
+
 -- CRM-8507
 ALTER TABLE civicrm_custom_field
   ADD UNIQUE INDEX `UI_name_custom_group_id` (`name`, `custom_group_id`);
@@ -204,6 +210,7 @@ ADD CONSTRAINT `FK_civicrm_financial_account_parent_id` FOREIGN KEY (`parent_id`
 RENAME TABLE `civicrm_contribution_type` TO `civicrm_financial_type`;
 
 ALTER TABLE `civicrm_financial_type`
+CHANGE `name` `name` varchar(64) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Financial Type Name.',
 ADD CONSTRAINT `UI_id` UNIQUE INDEX(id),
 DROP INDEX UI_name;
 
