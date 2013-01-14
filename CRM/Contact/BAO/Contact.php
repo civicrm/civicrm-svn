@@ -1452,7 +1452,7 @@ WHERE id={$id}; ";
     $locationTypes = CRM_Core_PseudoConstant::locationType();
 
     $returnProperties = array();
-    $locationIds      = array();
+
     $multipleFields   = array('website' => 'url');
     foreach ($fields as $name => $dontCare) {
       if (strpos($name, '-') !== FALSE) {
@@ -1477,7 +1477,7 @@ WHERE id={$id}; ";
             $returnProperties['location'][$locationTypeName]['location_type'] = $id;
           }
           if (in_array($fieldName, array(
-            'phone', 'im', 'email', 'openid'))) {
+            'phone', 'im', 'email', 'openid', 'phone_ext'))) {
             if ($type) {
               $returnProperties['location'][$locationTypeName][$fieldName . '-' . $type] = 1;
             }

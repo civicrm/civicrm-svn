@@ -852,7 +852,7 @@ class CRM_Contact_BAO_Query {
           }
           elseif (is_numeric($name)) {
             //this for phone type to work
-            if ($elementName == "phone") {
+            if (in_array($elementName, array('phone', 'phone_ext'))) {
               $field = CRM_Utils_Array::value($elementName . "-Primary" . $elementType, $this->_fields);
             }
             else {
@@ -861,7 +861,7 @@ class CRM_Contact_BAO_Query {
           }
           else {
             //this is for phone type to work for profile edit
-            if ($elementName == "phone") {
+            if (in_array($elementName, array('phone', 'phone_ext'))) {
               $field = CRM_Utils_Array::value($elementName . "-$locationTypeId$elementType", $this->_fields);
             }
             else {
@@ -4066,6 +4066,8 @@ civicrm_relationship.start_date > CURDATE()
     if ($count) {
       return CRM_Core_DAO::singleValueQuery($query);
     }
+
+    //crm_core_error::debug('$query', $query); //exit;
 
     $dao = CRM_Core_DAO::executeQuery($query);
     if ($groupContacts) {

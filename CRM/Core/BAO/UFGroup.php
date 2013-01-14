@@ -396,7 +396,6 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
    * @return array
    */
   protected static function formatUFField($group, $field, $customFields, $addressCustomFields, $importableFields, $permissionType = CRM_Core_Permission::CREATE) {
-    $name = $title = $locType = $phoneType = '';
     $name = $field->field_name;
     $title = $field->label;
 
@@ -412,27 +411,21 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
     }
 
     if ($field->location_type_id) {
-      $locationType = CRM_Core_PseudoConstant::locationType();
       $name .= "-{$field->location_type_id}";
-      $locType = " ( {$locationType[$field->location_type_id]} ) ";
     }
     else {
       $locationFields = self::getLocationFields();
       if (in_array($field->field_name, $locationFields) || $addressCustom) {
         $name .= '-Primary';
-        $locType = ' ( Primary ) ';
       }
     }
 
     if (isset($field->phone_type_id)) {
       $name .= "-{$field->phone_type_id}";
-      // this hack is to prevent Phone Phone (work)
-      if ($field->phone_type_id != '1') {
-        $phoneType = "-{$field->phone_type_id}";
-      }
     }
 
     // No lie: this is bizarre; why do we need to mix so many UFGroup properties into UFFields?
+    // I guess to make field self sufficient with all the required data and avoid additional calls
     $formattedField = array(
       'name' => $name,
       'groupTitle' => $group->title,
@@ -863,7 +856,6 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
 
     // get the contact details (hier)
     $returnProperties = CRM_Contact_BAO_Contact::makeHierReturnProperties($fields);
-
     $params = $cid ? array(array('contact_id', '=', $cid, 0, 0)) : array();
 
     // add conditions specified by components. eg partcipant_id etc
@@ -894,6 +886,11 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
       // fix for CRM-3962
       if ($name == 'id') {
         $name = 'contact_id';
+      }
+
+      // skipe pseudo fields
+      if (substr($name, 0, 9) == 'phone_ext') {
+        continue;
       }
 
       $index = $field['title'];
@@ -933,8 +930,8 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
         }
         elseif ($name === 'preferred_communication_method') {
           $communicationFields = CRM_Core_PseudoConstant::pcm();
-          $pref                = $compref = array();
-          $pref                = explode(CRM_Core_DAO::VALUE_SEPARATOR, $details->$name);
+          $compref = array();
+          $pref    = explode(CRM_Core_DAO::VALUE_SEPARATOR, $details->$name);
 
           foreach ($pref as $k) {
             if ($k) {
@@ -1152,6 +1149,17 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
             else {
               $values[$index] = $details->$detailName;
             }
+            $params[$index] = $details->$detailName;
+          }
+          elseif ($fieldName == 'phone') {
+            $phoneExtField = str_replace('phone', 'phone_ext', $detailName);
+            if (isset($details->$phoneExtField)) {
+              $values[$index] = $details->$detailName . " (" . $details->$phoneExtField . ")";
+            }
+            else {
+              $values[$index] = $details->$detailName;
+            }
+
             $params[$index] = $details->$detailName;
           }
           else {

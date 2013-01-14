@@ -258,14 +258,27 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
         }
       }
 
-      // also eliminate all formatting fields
+      //reformat fields array
       foreach ($fields as $name => $field) {
+        // also eliminate all formatting fields
         if (CRM_Utils_Array::value('field_type', $field) == 'Formatting') {
           unset($fields[$name]);
         }
 
         // make sure that there is enough permission to expose this field
         if (!$admin && $field['visibility'] == 'User and User Admin Only') {
+          unset($fields[$name]);
+        }
+
+        //reformat phone and extension field
+        if ( substr($field['name'], 0, 13) == 'phone_and_ext') {
+          $fieldSuffix = str_replace('phone_and_ext-', '', $field['name']);
+          $field['name'] = 'phone';
+          $field['where'] = 'civicrm_phone.phone';
+          $fields["phone-{$fieldSuffix}"] = $field;
+          $field['name'] = 'phone_ext';
+          $field['where'] = 'civicrm_phone.phone_ext';
+          $fields["phone_ext-{$fieldSuffix}"] = $field;
           unset($fields[$name]);
         }
       }
