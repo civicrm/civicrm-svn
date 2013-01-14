@@ -112,7 +112,7 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults {
    * 1046 is an id for Washington(country:United States).
    * @var int
    */
-  //public $defaultContactStateProvince = '1046';
+  public $defaultContactStateProvince;
 
   /**
    * List of country codes limiting the province list.
