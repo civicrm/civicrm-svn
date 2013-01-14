@@ -598,8 +598,7 @@ class CRM_Utils_REST {
     // restrict calls to this etc
     // the request has to be sent by an ajax call. First line of protection against csrf
     $config = CRM_Core_Config::singleton();
-    if (FALSE &&
-      !$config->debug &&
+    if (!$config->debug &&
       (!array_key_exists('HTTP_X_REQUESTED_WITH', $_SERVER) ||
         $_SERVER['HTTP_X_REQUESTED_WITH'] != "XMLHttpRequest"
       )

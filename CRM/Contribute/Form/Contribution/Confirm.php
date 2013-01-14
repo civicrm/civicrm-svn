@@ -1235,13 +1235,14 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
     $contribParams['total_amount'] = trim(CRM_Utils_Money::format($contribParams['total_amount'], ' '));
 
     // Prepare soft contribution due to pcp or Submit Credit / Debit Card Contribution by admin.
-    if (CRM_Utils_Array::value('pcp_made_through_id', $params) ||
+    if (
+      CRM_Utils_Array::value('pcp_made_through_id', $params) ||
       CRM_Utils_Array::value('soft_credit_to', $params)
     ) {
-
       // if its due to pcp
       if (CRM_Utils_Array::value('pcp_made_through_id', $params)) {
-        $contribSoftContactId = CRM_Core_DAO::getFieldValue('CRM_PCP_DAO_PCP',
+        $contribSoftContactId = CRM_Core_DAO::getFieldValue(
+          'CRM_PCP_DAO_PCP',
           $params['pcp_made_through_id'],
           'contact_id'
         );
@@ -1265,7 +1266,8 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
     CRM_Contribute_Form_Contribution_Confirm::processPcpSoft($params, $contribution);
   
     //handle pledge stuff.
-    if (!CRM_Utils_Array::value('separate_membership_payment', $form->_params) &&
+    if (
+      !CRM_Utils_Array::value('separate_membership_payment', $form->_params) &&
       CRM_Utils_Array::value('pledge_block_id', $form->_values) &&
       (CRM_Utils_Array::value('is_pledge', $form->_params) ||
         CRM_Utils_Array::value('pledge_id', $form->_values)
@@ -1277,7 +1279,8 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         //when user doing pledge payments.
         //update the schedule when payment(s) are made
         foreach ($form->_params['pledge_amount'] as $paymentId => $dontCare) {
-          $scheduledAmount = CRM_Core_DAO::getFieldValue('CRM_Pledge_DAO_PledgePayment',
+          $scheduledAmount = CRM_Core_DAO::getFieldValue(
+            'CRM_Pledge_DAO_PledgePayment',
             $paymentId,
             'scheduled_amount',
             'id'
@@ -1332,7 +1335,6 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
 
         //send acknowledgment email. only when pledge is created
         if ($pledge->id) {
-
           //build params to send acknowledgment.
           $pledgeParams['id'] = $pledge->id;
           $pledgeParams['receipt_from_name'] = $form->_values['receipt_from_name'];

@@ -1317,7 +1317,7 @@ class CRM_Contact_BAO_Query {
       (substr($values[0], 0, 13) == 'contribution_') ||
       (substr($values[0], 0, 6) == 'event_') ||
       (substr($values[0], 0, 12) == 'participant_') ||
-      (substr($values[0], 0, 12) == 'member_') ||
+      (substr($values[0], 0, 7) == 'member_') ||
       (substr($values[0], 0, 6) == 'grant_') ||
       (substr($values[0], 0, 7) == 'pledge_') ||
       (substr($values[0], 0, 5) == 'case_')

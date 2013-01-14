@@ -94,8 +94,6 @@ WHERE     pledge_id = %1
 
   static function create($params) {
     $transaction = new CRM_Core_Transaction();
-
-
     $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
 
     //calculate the scheduled date for every installment
@@ -393,7 +391,10 @@ WHERE     pledge_id = %1
       // check if this is the last payment and adjust the actual amount.
       if ($pledgeStatusId && $pledgeStatusId == array_search('Completed', $allStatus) || $lastPending) {
         // last scheduled payment
-        if ($actualAmount < $pledgeScheduledAmount) {
+        if ($actualAmount >= $pledgeScheduledAmount) {
+            $adjustTotalAmount = TRUE;
+          }
+        elseif (!$adjustTotalAmount) {
           // actual amount is less than the scheduled amount, so enter new pledge payment record
           $pledgeFrequencyUnit = CRM_Core_DAO::getFieldValue('CRM_Pledge_DAO_Pledge', $pledgeID, 'frequency_unit', 'id');
           $pledgeFrequencyInterval = CRM_Core_DAO::getFieldValue('CRM_Pledge_DAO_Pledge', $pledgeID, 'frequency_interval', 'id');
@@ -418,10 +419,7 @@ WHERE     pledge_id = %1
             CRM_Core_DAO::setFieldValue('CRM_Pledge_DAO_PledgePayment', $payments, 'scheduled_amount', $actualAmount);
           }
         }
-        else {
-          $adjustTotalAmount = TRUE;
         }
-      }
       elseif (!$adjustTotalAmount) {
         // not last schedule amount and also not selected to adjust Total
         $paymentContributionId = CRM_Core_DAO::getFieldValue('CRM_Pledge_DAO_PledgePayment',

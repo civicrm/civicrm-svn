@@ -667,6 +667,9 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
           elseif ($field == 'registration_url') {
             $entityTokenParams["{$tokenEntity}." . $field] = CRM_Utils_System::url('civicrm/event/register', 'reset=1&id=' . $dao->event_id, TRUE, NULL, FALSE);
           }
+          elseif (in_array($field, array('start_date','end_date','join_date','activity_date_time'))) {
+            $entityTokenParams["{$tokenEntity}." . $field] = CRM_Utils_Date::customFormat($dao->$field);
+          }
           else {
             $entityTokenParams["{$tokenEntity}." . $field] = $dao->$field;
           }

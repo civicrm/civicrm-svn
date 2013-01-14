@@ -728,7 +728,7 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
       }
 
       // If we have enabled the Throttle option, this is the time to enforce it.
-      if ($config->mailThrottleTime > 0) {
+      if (isset($config->mailThrottleTime) && $config->mailThrottleTime > 0) {
         usleep((int ) $config->mailThrottleTime);
       }
     }

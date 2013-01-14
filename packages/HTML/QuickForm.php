@@ -1932,49 +1932,6 @@ class HTML_QuickForm extends HTML_Common
      */
     function exportValues($elementList = null)
     {
-        $skipFields = array( 'widget_code', 
-                             'html_message',
-                             'body_html',
-                             'msg_html',
-                             'description',
-                             'intro',
-                             'thankyou_text',
-                             'tf_thankyou_text',
-                             'intro_text',
-                             'page_text',
-                             'body_text',
-                             'footer_text',
-                             'thankyou_footer',
-                             'thankyou_footer_text',
-                             'new_text',
-                             'renewal_text',
-                             'help_pre',
-                             'help_post',
-                             'confirm_title',
-                             'confirm_text',
-                             'confirm_footer_text',
-                             'confirm_email_text',
-                             'event_full_text',
-                             'waitlist_text',
-                             'approval_req_text',
-                             'report_header',
-                             'report_footer',
-                             'cc_id',
-                             'bcc_id',
-                             'premiums_intro_text',
-                             'honor_block_text',
-                             'pay_later_receipt',
-                             'label', // This is needed for FROM Email Address configuration. dgg
-                             'url',  // This is needed for navigation items urls
-                             'details',
-                             'msg_text', // message templates’ text versions
-                             'text_message', // (send an) email to contact’s and CiviMail’s text version
-                             'data', // data i/p of persistent table
-                             'sqlQuery', // CRM-6673
-                             'pcp_title',
-                             'pcp_intro_text',
-                             );
-                                  
         $values = array();
         if (null === $elementList) {
             // iterate over all elements, calling their exportValue() methods
@@ -1989,15 +1946,13 @@ class HTML_QuickForm extends HTML_Common
                     // if not a text/textarea…
                     !in_array($this->_elements[$key]->_type, array('text', 'textarea'))
                     // …or should be skipped…
-                    or in_array($fldName, $skipFields)
-                    // …or is multilingual and after cutting off _xx_YY should be skipped (CRM-7230)…
-                    or (preg_match('/_[a-z][a-z]_[A-Z][A-Z]$/', $fldName) and in_array(substr($fldName, 0, -6), $skipFields))
+                    or CRM_Core_HTMLInputCoder::isSkippedField($fldName)
                 ) {
                     // …don’t filter, otherwise filter (else clause below)
                 } else {
                     //here value might be array or single value.
                     //so we should iterate and get filtered value.
-                    $this->filterValue( $value );
+                    CRM_Core_HTMLInputCoder::encodeInput( $value );
                 }
                 
                 if (is_array($value)) {
@@ -2013,8 +1968,8 @@ class HTML_QuickForm extends HTML_Common
                 $value = $this->exportValue($elementName);
                                 
                 //filter the value across XSS vulnerability issues.
-                if ( !in_array( $elementName, $skipFields ) ) {
-                    $this->filterValue( $value );
+                if ( ! CRM_Core_HTMLInputCoder::isSkippedField($elementName)) {
+                    CRM_Core_HTMLInputCoder::encodeInput( $value );
                 }
                 
                 if (PEAR::isError($value)) {
@@ -2024,21 +1979,6 @@ class HTML_QuickForm extends HTML_Common
             }
         }
         return $values;
-    }
-
-   /**
-    * This function is going to filter the
-    * submitted values across XSS vulnerability.
-    */
-    function filterValue( &$values ) 
-    {
-        if ( is_array( $values ) ) {
-            foreach ( $values as &$value ) {
-                $this->filterValue( $value );
-            }
-        } else {
-            $values = str_replace(array('<', '>'), array('&lt;', '&gt;'), $values);
-        }
     }
 
     // }}}

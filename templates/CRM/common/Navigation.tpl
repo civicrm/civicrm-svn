@@ -27,7 +27,7 @@
     <ul id="civicrm-menu">
         {if call_user_func(array('CRM_Core_Permission','giveMeAllACLs'))}
         <li id="crm-qsearch" class="menumain crm-link-home">
-          <form action="{crmURL p='civicrm/contact/search/basic' h=0 }" name="search_block" id="id_search_block" method="post" onsubmit="getSearchURLValue( );">
+            <form action="{crmURL p='civicrm/contact/search/basic' h=0 }" name="search_block" id="id_search_block" method="get" onsubmit="getSearchURLValue( );">
               <div id="quickSearch">
                 <input type="text" class="form-text" id="sort_name_navigation" placeholder="{ts}Name/Email{/ts}" name="sort_name" style="width: 12em;" />
                 <input type="hidden" id="sort_contact_id" value="" />

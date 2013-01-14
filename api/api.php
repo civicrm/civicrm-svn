@@ -19,6 +19,7 @@
  *   array to be passed to function
  */
 function civicrm_api($entity, $action, $params, $extra = NULL) {
+  $apiWrappers = array(CRM_Core_HTMLInputCoder::singleton());
   try {
     require_once ('api/v3/utils.php');
     require_once 'api/Exception.php';
@@ -53,6 +54,11 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
       //if 'id' is set then only 'version' will be checked but should still be checked for consistency
       civicrm_api3_verify_mandatory($apiRequest['params'], NULL, _civicrm_api3_getrequired($apiRequest));
     }
+
+    foreach ($apiWrappers as $apiWrapper) {
+      $apiRequest = $apiWrapper->fromApiInput($apiRequest);
+    }
+
     $function = $apiRequest['function'];
     if ($apiRequest['function'] && $apiRequest['is_generic']) {
       // Unlike normal API implementations, generic implementations require explicit
@@ -67,6 +73,10 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     }
     else {
       return civicrm_api3_create_error("API (" . $apiRequest['entity'] . "," . $apiRequest['action'] . ") does not exist (join the API team and implement it!)");
+    }
+
+    foreach ($apiWrappers as $apiWrapper) {
+      $result = $apiWrapper->toApiOutput($apiRequest, $result);
     }
 
     if (CRM_Utils_Array::value('format.is_success', $apiRequest['params']) == 1) {

@@ -497,13 +497,15 @@ function civicrm_check_permission($args) {
 
   // a contribution page
   if (in_array('CiviContribute', $config->enableComponents)) {
-    if ($arg1 == 'contribute' &&
+    if (
+      $arg1 == 'contribute' &&
       in_array($arg2, array('transact', 'campaign', 'pcp'))
     ) {
       return TRUE;
     }
 
-    if ($arg1 == 'pcp' &&
+    if (
+      $arg1 == 'pcp' &&
       in_array($arg2, array('info'))
     ) {
       return TRUE;

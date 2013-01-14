@@ -591,18 +591,20 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
     //delete activity record
     $activityTypes = CRM_Core_PseudoConstant::activityType(TRUE, FALSE, FALSE, 'name');
 
-    $params = array(
-      'source_record_id' => $membershipId,
-      'activity_type_id' => array(array_search('Membership Signup', $activityTypes),
-        array_search('Membership Renewal', $activityTypes),
-        array_search('Change Membership Status', $activityTypes),
-        array_search('Change Membership Type', $activityTypes),
-        array_search('Membership Renewal Reminder', $activityTypes),
-      ),
-    );
-
+    $params = array();
+    $deleteActivity = false;
+    $membershipActivities = array('Membership Signup', 'Membership Renewal', 'Change Membership Status', 'Change Membership Type', 'Membership Renewal Reminder');
+    foreach($membershipActivities as $membershipActivity) {
+      $activityId = array_search($membershipActivity, $activityTypes);
+      if ($activityId) { 
+        $params['activity_type_id'][] = $activityId;
+        $deleteActivity = true;
+      }
+    }
+    if ($deleteActivity) {
+      $params['source_record_id'] = $membershipId;
     CRM_Activity_BAO_Activity::deleteActivity($params);
-
+    }
     self::deleteMembershipPayment($membershipId);
 
     $membership     = new CRM_Member_DAO_Membership();

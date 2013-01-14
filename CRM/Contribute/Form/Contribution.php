@@ -254,6 +254,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
       }
       empty($lineItem) ? NULL : $this->_lineItems[] = $lineItem;
     }
+
     $this->assign('lineItem', empty($this->_lineItems) ? FALSE : $this->_lineItems);
   }
 
@@ -995,6 +996,16 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
 
     // get the submitted form values.
     $submittedValues = $this->controller->exportValues($this->_name);
+    if (CRM_Utils_Array::value('price_set_id', $submittedValues) && $this->_action & CRM_Core_Action::UPDATE ) {
+      $line  = CRM_Price_BAO_LineItem::getLineItems($this->_id, 'contribution');
+      $lineID = key($line);
+      $priceSetId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', CRM_Utils_Array::value('price_field_id', $line[$lineID]), 'price_set_id');
+      $quickConfig = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $priceSetId, 'is_quick_config');
+      if ($quickConfig) {
+        CRM_Price_BAO_LineItem::deleteLineItems($this->_id, 'civicrm_contribution');
+      }
+    }
+
     // If Contribution action is update then calculate and set initial amount 
     if ($this->_action & CRM_Core_Action::UPDATE) {
       $totalPrice = 0;

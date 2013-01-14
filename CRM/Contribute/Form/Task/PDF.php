@@ -74,9 +74,7 @@ SELECT count(*)
 FROM   civicrm_contribution
 WHERE  contribution_status_id != 1
 AND    {$this->_componentClause}";
-    $count = CRM_Core_DAO::singleValueQuery($query,
-      CRM_Core_DAO::$_nullArray
-    );
+    $count = CRM_Core_DAO::singleValueQuery($query);
     if ($count != 0) {
       CRM_Core_Error::statusBounce("Please select only online contributions with Completed status.");
     }

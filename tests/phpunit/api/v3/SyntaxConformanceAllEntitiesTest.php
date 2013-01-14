@@ -600,6 +600,155 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
     $this->assertEquals("Input variable `params` is not an array", $result['error_message']);
   }
 
+  /**
+   * Verify that HTML metacharacters provided as inputs appear consistently
+   * as outputs.
+   *
+   * At time of writing, the encoding scheme requires (for example) that an
+   * event title be partially-HTML-escaped before writing to DB.  To provide
+   * consistency, the API must perform extra encoding and decoding on some
+   * fields.
+   *
+   * In this example, the event 'title' is subject to encoding, but the
+   * event 'description' is not.
+   */
+  public function testEncodeDecodeConsistency() {
+    // Create example
+    $createResult = civicrm_api('Event', 'Create', array(
+      'version' => 3,
+      'title' => 'CiviCRM <> TheRest',
+      'description' => 'TheRest <> CiviCRM',
+      'event_type_id' => 1,
+      'is_public' => 1,
+      'start_date' => 20081021,
+    ));
+    $this->assertAPISuccess($createResult);
+    $eventId = $createResult['id'];
+    $this->assertEquals('CiviCRM <> TheRest', $createResult['values'][$eventId]['title']);
+    $this->assertEquals('TheRest <> CiviCRM', $createResult['values'][$eventId]['description']);
 
+    // Verify "get" handles decoding in result value
+    $getByIdResult = civicrm_api('Event', 'Get', array(
+      'version' => 3,
+      'id' => $eventId,
+    ));
+    $this->assertAPISuccess($getByIdResult);
+    $this->assertEquals('CiviCRM <> TheRest', $getByIdResult['values'][$eventId]['title']);
+    $this->assertEquals('TheRest <> CiviCRM', $getByIdResult['values'][$eventId]['description']);
+
+    // Verify "get" handles encoding in search value
+    $getByTitleResult = civicrm_api('Event', 'Get', array(
+      'version' => 3,
+      'title' => 'CiviCRM <> TheRest',
+    ));
+    $this->assertAPISuccess($getByTitleResult);
+    $this->assertEquals('CiviCRM <> TheRest', $getByTitleResult['values'][$eventId]['title']);
+    $this->assertEquals('TheRest <> CiviCRM', $getByTitleResult['values'][$eventId]['description']);
+
+    // Verify that "getSingle" handles decoding
+    $getSingleResult = civicrm_api('Event', 'GetSingle', array(
+      'version' => 3,
+      'id' => $eventId,
+    ));
+
+    $this->assertAPISuccess($getSingleResult);
+    $this->assertEquals('CiviCRM <> TheRest', $getSingleResult['title']);
+    $this->assertEquals('TheRest <> CiviCRM', $getSingleResult['description']);
+
+    // Verify that chaining handles decoding
+    $chainResult = civicrm_api('Event', 'Get', array(
+      'version' => 3,
+      'id' => $eventId,
+      'api.event.get' => array(
+      ),
+    ));
+    $this->assertEquals('CiviCRM <> TheRest', $chainResult['values'][$eventId]['title']);
+    $this->assertEquals('TheRest <> CiviCRM', $chainResult['values'][$eventId]['description']);
+    $this->assertEquals('CiviCRM <> TheRest', $chainResult['values'][$eventId]['api.event.get']['values'][0]['title']);
+    $this->assertEquals('TheRest <> CiviCRM', $chainResult['values'][$eventId]['api.event.get']['values'][0]['description']);
+
+    // Verify that "setvalue" handles encoding for updates
+    $setValueTitleResult = civicrm_api('Event', 'setvalue', array(
+      'version' => 3,
+      'id' => $eventId,
+      'field' => 'title',
+      'value' => 'setValueTitle: CiviCRM <> TheRest',
+    ));
+    $this->assertAPISuccess($setValueTitleResult);
+    $this->assertEquals('setValueTitle: CiviCRM <> TheRest', $setValueTitleResult['values']['title']);
+    $setValueDescriptionResult = civicrm_api('Event', 'setvalue', array(
+      'version' => 3,
+      'id' => $eventId,
+      'field' => 'description',
+      'value' => 'setValueDescription: TheRest <> CiviCRM',
+    ));
+    $this->assertTrue((bool)$setValueDescriptionResult['is_error']); // not supported by setValue
+    //$this->assertAPISuccess($setValueDescriptionResult);
+    //$this->assertEquals('setValueDescription: TheRest <> CiviCRM', $setValueDescriptionResult['values']['description']);
 }
 
+  /**
+   * Verify that write operations (create/update) use partial HTML-encoding
+   *
+   * In this example, the event 'title' is subject to encoding, but the
+   * event 'description' is not.
+   */
+  public function testEncodeWrite() {
+    // Create example
+    $createResult = civicrm_api('Event', 'Create', array(
+      'version' => 3,
+      'title' => 'createNew: CiviCRM <> TheRest',
+      'description' => 'createNew: TheRest <> CiviCRM',
+      'event_type_id' => 1,
+      'is_public' => 1,
+      'start_date' => 20081021,
+    ));
+    $this->assertAPISuccess($createResult);
+    $eventId = $createResult['id'];
+    $this->assertDBQuery('createNew: CiviCRM &lt;&gt; TheRest', 'SELECT title FROM civicrm_event WHERE id = %1', array(
+      1 => array($eventId, 'Integer')
+    ));
+    $this->assertDBQuery('createNew: TheRest <> CiviCRM', 'SELECT description FROM civicrm_event WHERE id = %1', array(
+      1 => array($eventId, 'Integer')
+    ));
+
+    // Verify that "create" handles encoding for updates
+    $createWithIdResult = civicrm_api('Event', 'Create', array(
+      'version' => 3,
+      'id' => $eventId,
+      'title' => 'createWithId:  CiviCRM <> TheRest',
+      'description' => 'createWithId:  TheRest <> CiviCRM',
+    ));
+    $this->assertAPISuccess($createWithIdResult);
+    $this->assertDBQuery('createWithId:  CiviCRM &lt;&gt; TheRest', 'SELECT title FROM civicrm_event WHERE id = %1', array(
+      1 => array($eventId, 'Integer')
+    ));
+    $this->assertDBQuery('createWithId:  TheRest <> CiviCRM', 'SELECT description FROM civicrm_event WHERE id = %1', array(
+      1 => array($eventId, 'Integer')
+    ));
+
+    // Verify that "setvalue" handles encoding for updates
+    $setValueTitleResult = civicrm_api('Event', 'setvalue', array(
+      'version' => 3,
+      'id' => $eventId,
+      'field' => 'title',
+      'value' => 'setValueTitle: CiviCRM <> TheRest',
+    ));
+    $this->assertAPISuccess($setValueTitleResult);
+    $this->assertDBQuery('setValueTitle: CiviCRM &lt;&gt; TheRest', 'SELECT title FROM civicrm_event WHERE id = %1', array(
+      1 => array($eventId, 'Integer')
+    ));
+    $setValueDescriptionResult = civicrm_api('Event', 'setvalue', array(
+      'version' => 3,
+      'id' => $eventId,
+      'field' => 'description',
+      'value' => 'setValueDescription: TheRest <> CiviCRM',
+    ));
+    $this->assertTrue((bool)$setValueDescriptionResult['is_error']); // not supported by setValue
+    //$this->assertAPISuccess($setValueDescriptionResult);
+    //$this->assertDBQuery('setValueDescription: TheRest <> CiviCRM', 'SELECT description FROM civicrm_event WHERE id = %1', array(
+    //  1 => array($eventId, 'Integer')
+    //));
+  }
+
+}

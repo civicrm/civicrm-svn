@@ -476,7 +476,7 @@ class CRM_Core_Payment_Realex extends CRM_Core_Payment {
         $display_error = ts('Card declined by bank. Please try with a different card.');
       }
       elseif ($errorCode == '103') {
-        $display_error = ts('Card reported lot or stolen - This incident will be reported.');
+        $display_error = ts('Card reported lost or stolen. This incident will be reported.');
       }
       elseif ($errorCode == '501') {
         $display_error = ts("It appears that this transaction is a duplicate. Have you already submitted the form once? If so there may have been a connection problem. Check your email for a receipt for this transaction.  If you do not receive a receipt within 2 hours you can try your transaction again.  If you continue to have problems please contact the site administrator.");

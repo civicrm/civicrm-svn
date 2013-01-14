@@ -546,6 +546,7 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
     require $joomlaBase . '/libraries/import.php';
     require $joomlaBase . '/libraries/joomla/event/dispatcher.php';
     require $joomlaBase . '/libraries/joomla/environment/uri.php';
+    require $joomlaBase . '/libraries/joomla/application/component/helper.php';
     require $joomlaBase . '/configuration.php';
 
     jimport('joomla.application.cli');
