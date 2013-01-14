@@ -838,8 +838,8 @@ SELECT  id
       unset($fields['Individual']['county'], $fields['Household']['county'], $fields['Organization']['county']);
     }
 
-    // Break out common contact fields array CRM-3037.
-    // FIXME: From a UI perspective this makes very little sense
+    // break out common contact fields array CRM-3037.
+    // from a UI perspective this makes very little sense
     foreach ($fields['Individual'] as $key => $value) {
       if (!empty($fields['Household'][$key]) && !empty($fields['Organization'][$key])) {
         $fields['Contact'][$key] = $value;
@@ -849,6 +849,16 @@ SELECT  id
 
     // Internal field not exposed to forms
     unset($fields['Contact']['contact_type']);
+
+    // convert phone extension in to psedo-field phone + phone extension
+    //unset extension
+    unset($fields['Contact']['phone_ext']);
+    //add psedo field
+    $fields['Contact']['phone_and_ext'] = array(
+      'name' => 'phone_and_ext',
+      'title' => ts('Phone and Extension'),
+      'hasLocationType' => 1,
+    );
 
     // include Subtypes For Profile
     $subTypes = CRM_Contact_BAO_ContactType::subTypeInfo();

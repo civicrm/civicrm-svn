@@ -866,8 +866,6 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
       return NULL;
     }
 
-    $options = array();
-
     // get the contact details (hier)
     $returnProperties = CRM_Contact_BAO_Contact::makeHierReturnProperties($fields);
 
@@ -889,7 +887,6 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
 
     $config = CRM_Core_Config::singleton();
 
-    $locationTypes = $imProviders = array();
     $locationTypes = CRM_Core_PseudoConstant::locationType();
     $imProviders   = CRM_Core_PseudoConstant::IMProvider();
     $websiteTypes  = CRM_Core_PseudoConstant::websiteType();

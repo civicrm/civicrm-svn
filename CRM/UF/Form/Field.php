@@ -163,6 +163,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
     $this->_selectFields['group'] = ts('Group(s)');
     $this->_selectFields['tag'] = ts('Tag(s)');
     $this->_selectFields['current_employer'] = ts('Current Employer');
+    $this->_selectFields['phone_and_ext'] = ts('Phone and Extension');
 
     //CRM-4363 check for in selector or searchable fields.
     $this->_hasSearchableORInSelector = CRM_Core_BAO_UFField::checkSearchableORInSelector($this->_gid);
@@ -282,11 +283,11 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
     $this->_location_types = CRM_Core_PseudoConstant::locationType();
     $defaultLocationType = CRM_Core_BAO_LocationType::getDefault();
 
-    /* FIXME: dirty hack to make the default option show up first.  This
-        * avoids a mozilla browser bug with defaults on dynamically constructed
-        * selector widgets. */
-
-
+    /**
+     * FIXME: dirty hack to make the default option show up first.  This
+     * avoids a mozilla browser bug with defaults on dynamically constructed
+     * selector widgets.
+     */
     if ($defaultLocationType) {
       $defaultLocation = $this->_location_types[$defaultLocationType->id];
       unset($this->_location_types[$defaultLocationType->id]);
@@ -337,6 +338,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
       if ($k) {
         foreach ($this->_location_types as $key => $value) {
           $sel4[$k]['phone'][$key] = &$phoneTypes;
+          $sel4[$k]['phone_and_ext'][$key] = &$phoneTypes;
         }
       }
     }
@@ -368,7 +370,6 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
 
     $sel = &$this->addElement('hierselect', 'field_name', ts('Field Name'));
 
-    $formValues = array();
     $formValues = $this->exportValues();
 
     if (empty($formValues)) {
