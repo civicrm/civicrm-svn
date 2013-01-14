@@ -1773,6 +1773,13 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
           $form->freeze($name . '-provider_id');
         }
       }
+    } elseif (substr($fieldName, 0, 13) === 'phone_and_ext') {
+      // add phone and phone extension
+      $fieldSuffix = str_replace('phone_and_ext-', '', $fieldName);
+      // rebuild phone field
+      $form->add('text', "phone-{$fieldSuffix}", $title, $attributes, $required);
+      // rebuild ext field
+      $form->add('text', "phone_ext-{$fieldSuffix}", $title, $attributes, $required);
     }
     elseif (($fieldName === 'birth_date') || ($fieldName === 'deceased_date')) {
       $form->addDate($name, $title, $required, array('formatType' => 'birth'));
@@ -2050,9 +2057,9 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
     elseif (substr($fieldName, -11) == 'campaign_id') {
       if (CRM_Campaign_BAO_Campaign::isCampaignEnable()) {
         $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns(CRM_Utils_Array::value($contactId,
-            $form->_componentCampaigns
-          ));
-        $campaign = &$form->add('select', $name, $title,
+          $form->_componentCampaigns
+        ));
+        $form->add('select', $name, $title,
           array(
             '' => ts('- select -')) + $campaigns, $required, 'class="big"'
         );

@@ -963,7 +963,7 @@ SELECT  id
       'email_greeting_custom',
       'postal_greeting_custom',
       'addressee_custom',
-      'id'
+      'id',
     ));
     //unset selected fields
     foreach ($groupFieldList as $key => $value) {

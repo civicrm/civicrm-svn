@@ -120,7 +120,7 @@ function proccessMultiRecordForm(formData, jqForm, options) {
       {assign var=n value=$field.name}
       {if $field.field_type eq "Formatting"}
         {$field.help_pre}
-      {elseif $form.$n}
+      {elseif $n}
         {if $field.groupTitle != $fieldset}
           {if $fieldset != $zeroField}
             {if $groupHelpPost}
@@ -184,7 +184,16 @@ function proccessMultiRecordForm(formData, jqForm, options) {
           </div>{* end of main edit section div*}
           {else}
           <div id="editrow-{$n}" class="crm-section editrow_{$n}-section form-item">
-            <div class="label">{$form.$n.label}</div>
+            <div class="label">
+              {if $n|substr:0:13 neq 'phone_and_ext'}
+                {$form.$n.label}
+              {else}
+                {assign var="phone_suffix" value=$n|replace:'phone_and_ext':''}
+                {assign var="phone_field" value="phone"|cat:$phone_suffix}
+                {assign var="phone_ext_field" value="phone_ext"|cat:$phone_suffix}
+                {$form.$phone_field.label}
+              {/if}
+            </div>
             <div class="edit-value content">
               {if $n|substr:0:3 eq 'im-'}
                 {assign var="provider" value=$n|cat:"-provider_id"}
@@ -206,7 +215,9 @@ function proccessMultiRecordForm(formData, jqForm, options) {
                     </div>
                   </div>
                  {/if}
-               {else}
+              {elseif $n|substr:0:13 eq 'phone_and_ext'}
+                {$form.$phone_field.html}&nbsp;{$form.$phone_ext_field.html}
+              {else}
                 {if ( $field.data_type eq 'Date' or
                 ( ( ( $n eq 'birth_date' ) or ( $n eq 'deceased_date' ) or ( $n eq 'activity_date_time' ) ) ) ) and $field.is_view neq 1 }
                 {include file="CRM/common/jcalendar.tpl" elementName=$n}
