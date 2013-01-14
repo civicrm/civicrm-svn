@@ -564,6 +564,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
       fa_to.name AS to_account_name,
       fac.accounting_code AS credit_account,
       fac.name AS credit_account_name,
+      fac.account_type_code AS credit_account_type_code,
       fi.description AS item_description,
       fa_to.accounting_code AS to_account_code,
       fa_to.financial_account_type_id AS to_account_type_id,

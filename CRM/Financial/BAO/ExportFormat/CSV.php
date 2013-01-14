@@ -37,21 +37,6 @@
 /*
  * @see http://wiki.civicrm.org/confluence/display/CRM/CiviAccounts+Specifications+-++Batches#CiviAccountsSpecifications-Batches-%C2%A0Overviewofimplementation
  */
-// **************************************
-// FIXME: This doesn't do anything. PHP has built-in csv functions, and there will be multiple output files,
-// so this is different from IIF.
-// **************************************
-// TODO: For csv we need to export multiple files. Create a ZIP?
-// TODO: There's some csv export code in CRM_Export_BAO_Export that first writes to a temp db table and then
-// exports. Decide if want to follow same strategy or just go straight to filesystem.
-/*
-    CRM_Utils_System::download(CRM_Utils_String::munge($fileName),
-      'text/x-csv',
-      CRM_Core_DAO::$_nullObject,
-      'csv',
-      FALSE
-    );
- */
 
 class CRM_Financial_BAO_ExportFormat_CSV extends CRM_Financial_BAO_ExportFormat {
 
@@ -144,7 +129,7 @@ class CRM_Financial_BAO_ExportFormat_CSV extends CRM_Financial_BAO_ExportFormat 
         $financialItems[$dao->financial_trxn_id]['Amount'] = $dao->amount;
         $financialItems[$dao->financial_trxn_id]['Credit Account'] = $dao->credit_account;
         $financialItems[$dao->financial_trxn_id]['Credit Account Name'] = $dao->credit_account_name;
-        $financialItems[$dao->financial_trxn_id]['Credit Account Type'] = $dao->from_account_type_code;
+        $financialItems[$dao->financial_trxn_id]['Credit Account Type'] = $dao->credit_account_type_code;
         $financialItems[$dao->financial_trxn_id]['Item Description'] = $dao->item_description;
       }
       $financialItems['headers'] = self::formatHeaders($financialItems);
