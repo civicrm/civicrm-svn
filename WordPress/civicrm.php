@@ -324,17 +324,10 @@ function civicrm_wp_scripts() {
     return;
   }
 
-  require_once 'CRM/Core/Smarty.php';
-  $template = CRM_Core_Smarty::singleton();
-  $buffer   = $template->fetch('CRM/common/jquery.files.tpl');
-  $lines    = preg_split('/\s+/', $buffer);
-  foreach ($lines as $line) {
-    $line = trim($line);
-    if (empty($line)) {
-      continue;
-    }
-    if (strpos($line, '.js') !== FALSE) {
-      wp_enqueue_script($line, WP_PLUGIN_URL . "/civicrm/civicrm/$line");
+  $files = CRM_Core_Resources::parseTemplate('CRM/common/jquery.files.tpl');
+  foreach ($files as $file => $type) {
+    if ($type == 'js') {
+      wp_enqueue_script($file, WP_PLUGIN_URL . "/civicrm/civicrm/$file");
     }
   }
 
@@ -358,23 +351,14 @@ function civicrm_wp_styles() {
     return;
   }
 
-  require_once 'CRM/Core/Smarty.php';
-  $template = CRM_Core_Smarty::singleton();
-  $buffer   = $template->fetch('CRM/common/jquery.files.tpl');
-  $lines    = preg_split('/\s+/', $buffer);
-  foreach ($lines as $line) {
-    $line = trim($line);
-    if (empty($line)) {
-      continue;
-    }
-    if (strpos($line, '.css') !== FALSE) {
-      wp_register_style($line, WP_PLUGIN_URL . "/civicrm/civicrm/$line");
-      wp_enqueue_style($line);
+  $files = CRM_Core_Resources::parseTemplate('CRM/common/jquery.files.tpl');
+  foreach ($files as $file => $type) {
+    if ($type == 'css') {
+      wp_register_style($file, WP_PLUGIN_URL . "/civicrm/civicrm/$file");
+      wp_enqueue_style($file);
     }
   }
 
-  wp_register_style('civicrm/css/deprecate.css', WP_PLUGIN_URL . "/civicrm/civicrm/css/deprecate.css");
-  wp_enqueue_style('civicrm/css/deprecate.css');
   wp_register_style('civicrm/css/civicrm.css', WP_PLUGIN_URL . "/civicrm/civicrm/css/civicrm.css");
   wp_enqueue_style('civicrm/css/civicrm.css');
   wp_register_style('civicrm/css/extras.css', WP_PLUGIN_URL . "/civicrm/civicrm/css/extras.css");

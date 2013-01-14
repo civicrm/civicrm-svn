@@ -47,24 +47,17 @@ function civicrm_html_head() {
   if (arg(0) == 'civicrm') {
     require_once 'CRM/Core/Config.php';
     $config = CRM_Core_Config::singleton();
-
-    $template = CRM_Core_Smarty::singleton();
-    $buffer   = $template->fetch('CRM/common/jquery.files.tpl');
-    $lines    = preg_split('/\s+/', $buffer);
-    foreach ($lines as $line) {
-      $line = trim($line);
-      if (empty($line)) {
-        continue;
-      }
-      if (strpos($line, '.js') !== FALSE) {
-        drupal_add_js(drupal_get_path('module', 'civicrm') . '/../' . $line, array(
+    $files = CRM_Core_Resources::parseTemplate('CRM/common/jquery.files.tpl');
+    foreach ($files as $file => $type) {
+      if ($type == 'js') {
+        drupal_add_js(drupal_get_path('module', 'civicrm') . '/../' . $file, array(
             'group' => JS_LIBRARY,
             'weight' => 10,
             'scope' => 'header',
           ));
       }
-      elseif (strpos($line, '.css') !== FALSE) {
-        drupal_add_css(drupal_get_path('module', 'civicrm') . '/../' . $line);
+      elseif ($type == 'css') {
+        drupal_add_css(drupal_get_path('module', 'civicrm') . '/../' . $file);
       }
     }
 
@@ -97,7 +90,6 @@ function civicrm_html_head() {
     $head = "<style type=\"text/css\">@import url({$config->customCSSURL});</style>\n";
   }
   else {
-    drupal_add_css(drupal_get_path('module', 'civicrm') . '/../css/deprecate.css');
     drupal_add_css(drupal_get_path('module', 'civicrm') . '/../css/civicrm.css');
     drupal_add_css(drupal_get_path('module', 'civicrm') . '/../css/extras.css');
   }
@@ -310,7 +302,6 @@ function civicrm_initialize() {
     if (!empty($header)) {
       drupal_add_html_head($header);
     }
-    require_once 'CRM/Core/BAO/Preferences.php';
 
     $args = explode('/', $_GET['q']);
     if (

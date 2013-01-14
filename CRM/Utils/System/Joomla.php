@@ -251,7 +251,6 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
     if ($includeAll) {
       $config = CRM_Core_Config::singleton();
 
-      $document->addStyleSheet("{$config->resourceBase}css/deprecate.css");
       $document->addStyleSheet("{$config->resourceBase}css/civicrm.css");
 
       if (!$config->userFrameworkFrontend) {

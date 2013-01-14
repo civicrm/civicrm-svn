@@ -202,6 +202,12 @@ class CRM_Core_Resources {
    * Helper fn for addSetting
    * Render JavaScript variables for the global CRM object.
    *
+   * Example:
+   * From the server:
+   * CRM_Core_Resources::singleton()->addSetting(array('myNamespace' => array('foo' => 'bar')));
+   * From javascript:
+   * CRM.myNamespace.foo // "bar"
+   *
    * @return string
    */
   public function renderSetting() {
@@ -211,7 +217,7 @@ class CRM_Core_Resources {
   /**
    * Add translated string to the js CRM object.
    * It can then be retrived from the client-side ts() function
-   * Variable substitutions can happen from server-side or client-side or both
+   * Variable substitutions can happen from client-side
    *
    * Simple example:
    * // From php:
@@ -326,5 +332,25 @@ class CRM_Core_Resources {
 
   public function resetCacheCode() {
     $this->setCacheCode(CRM_Utils_String::createRandom(5, CRM_Utils_String::ALPHANUMERIC));
+  }
+
+  /**
+   * Read resource files from a template
+   * 
+   * @param $tpl (str) template file name
+   * @return array filename => filetype
+   */
+  static function parseTemplate($tpl) {
+    $items = array();
+    $template = CRM_Core_Smarty::singleton();
+    $buffer = $template->fetch($tpl);
+    $lines = preg_split('/\s+/', $buffer);
+    foreach ($lines as $line) {
+      $line = trim($line);
+      if ($line) {
+        $items[$line] = substr($line, 1 + strrpos($line, '.'));
+      }
+    }
+    return $items;
   }
 }
