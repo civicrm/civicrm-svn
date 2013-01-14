@@ -454,7 +454,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
           $name = "custom_{$key}";
           $htmlType = $this->_multiRecordFields[$name]['html_type'];
           if ($htmlType != 'File') {
-            if ($value) {
+            if (isset($value)) {
               CRM_Core_BAO_CustomField::setProfileDefaults($key,
                 $name,
                 $this->_defaults,

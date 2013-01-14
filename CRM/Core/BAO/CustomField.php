@@ -1324,7 +1324,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField {
       }
     }
     else {
-      if (!$value) {
+      if (!isset($value)) {
         $info   = self::getTableColumnGroup($customFieldId);
         $query  = "SELECT {$info[0]}.{$info[1]} as value FROM {$info[0]} WHERE {$info[0]}.entity_id = {$contactId}";
         $result = CRM_Core_DAO::executeQuery($query);

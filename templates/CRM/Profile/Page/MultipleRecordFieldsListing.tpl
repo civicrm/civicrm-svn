@@ -76,6 +76,7 @@ function formDialog(dataURL, dialogTitle){
 	           cj('#profile-dialog').html('');
                  }
              });
+	     cj('.action-link').hide();
              cj('#profile-dialog #crm-profile-block .edit-value label').css('display', 'inline');
 	 }});
 }
