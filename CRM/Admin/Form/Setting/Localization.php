@@ -227,13 +227,6 @@ class CRM_Admin_Form_Setting_Localization extends CRM_Admin_Form_Setting {
     ) {
       $errors['defaultContactCountry'] = ts('Please select a default country that is in the list of available countries.');
     } 
-    elseif ((!empty($fields['defaultContactCountry']) &&
-      (CRM_Utils_Array::value('countryLimit', $fields) &&
-        (in_array($fields['defaultContactCountry'], $fields['countryLimit']))
-      )) && empty($fields['defaultContactStateProvince'])
-    ) {
-      $errors['defaultContactStateProvince'] = ts('Please select a default state/province for the default country.');
-    }
 
     return empty($errors) ? TRUE : $errors;
   }
