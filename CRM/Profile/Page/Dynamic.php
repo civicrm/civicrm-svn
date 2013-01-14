@@ -103,6 +103,7 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
    * fetch multirecord as well as non-multirecord fields
    */
   protected $_allFields = NULL;
+
   /**
    * class constructor
    *
@@ -111,7 +112,8 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
    *
    * @return void
    * @access public
-   */ function __construct($id, $gid, $restrict, $skipPermission = FALSE, $profileIds = NULL) {
+   */
+  function __construct($id, $gid, $restrict, $skipPermission = FALSE, $profileIds = NULL) {
     parent::__construct();
 
     $this->_id = $id;
@@ -256,18 +258,14 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
         }
       }
 
-      if (!$admin) {
-        foreach ($fields as $name => $field) {
-          // make sure that there is enough permission to expose this field
-          if ($field['visibility'] == 'User and User Admin Only') {
-            unset($fields[$name]);
-          }
-        }
-      }
-
       // also eliminate all formatting fields
       foreach ($fields as $name => $field) {
         if (CRM_Utils_Array::value('field_type', $field) == 'Formatting') {
+          unset($fields[$name]);
+        }
+
+        // make sure that there is enough permission to expose this field
+        if (!$admin && $field['visibility'] == 'User and User Admin Only') {
           unset($fields[$name]);
         }
       }
