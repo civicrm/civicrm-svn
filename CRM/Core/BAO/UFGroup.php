@@ -440,9 +440,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
       'groupHelpPost' => $group->help_post,
       'title' => $title,
       'where' => CRM_Utils_Array::value('where', CRM_Utils_Array::value($field->field_name, $importableFields)),
-      'attributes' => CRM_Core_DAO::makeAttribute(CRM_Utils_Array::value($field->field_name,
-        $importableFields
-      )),
+      'attributes' => CRM_Core_DAO::makeAttribute(CRM_Utils_Array::value($field->field_name, $importableFields)),
       'is_required' => $field->is_required,
       'is_view' => $field->is_view,
       'help_pre' => $field->help_pre,
@@ -613,6 +611,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
       'country',
       'county',
       'phone',
+      'phone_and_ext',
       'email',
       'im',
       'address_name',
@@ -651,8 +650,6 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
    * @access public
    */
   static function isValid($userID, $title, $register = FALSE, $action = NULL) {
-    $session = CRM_Core_Session::singleton();
-
     if ($register) {
       $controller = new CRM_Core_Controller_Simple('CRM_Profile_Form_Dynamic',
         ts('Dynamic Form Creator'),
@@ -704,8 +701,6 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
     $doNotProcess = FALSE,
     $ctype        = NULL
   ) {
-
-    $session = CRM_Core_Session::singleton();
 
     if ($register) {
       $controller = new CRM_Core_Controller_Simple('CRM_Profile_Form_Dynamic',
@@ -1020,7 +1015,6 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
           else {
             if ($cfID = CRM_Core_BAO_CustomField::getKeyID($name)) {
               $htmlType = $field['html_type'];
-              $dataType = $field['data_type'];
 
               // field_type is only set when we are retrieving profile values
               // when sending email, we call the same function to get custom field
