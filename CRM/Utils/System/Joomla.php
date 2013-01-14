@@ -277,7 +277,6 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
       }
 
       $document->addCustomTag($template->fetch('CRM/common/jquery.tpl'));
-      $document->addCustomTag($template->fetch('CRM/common/action.tpl'));
     }
   }
 

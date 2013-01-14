@@ -30,7 +30,6 @@
 
 <div id="crm-container" class="crm-container{if $urlIsPublic} crm-public{/if}" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
 
-{include file="CRM/common/action.tpl"}
 {if $buildNavigation }
     {include file="CRM/common/Navigation.tpl" }
 {/if}

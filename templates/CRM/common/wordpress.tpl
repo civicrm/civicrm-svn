@@ -50,7 +50,6 @@
 {/if*}
 
 
-{include file="CRM/common/action.tpl"}
 {if $buildNavigation }
     {include file="CRM/common/Navigation.tpl" }
 {/if}
