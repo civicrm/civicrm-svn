@@ -68,8 +68,6 @@ class CRM_Campaign_Form_Survey_Main extends CRM_Campaign_Form_Survey {
   CONST NUM_OPTION = 11;
 
   public function preProcess() {
-    $this->_first = TRUE;
-
     parent::preProcess();
 
     $this->_context = CRM_Utils_Request::retrieve('context', 'String', $this);
@@ -537,7 +535,6 @@ class CRM_Campaign_Form_Survey_Main extends CRM_Campaign_Form_Survey {
     }
 
     if ($this->_surveyId) {
-
       if ($this->_action & CRM_Core_Action::DELETE) {
         CRM_Campaign_BAO_Survey::del($this->_surveyId);
         CRM_Core_Session::setStatus('', ts('Survey Deleted.'), 'success');
@@ -608,12 +605,13 @@ class CRM_Campaign_Form_Survey_Main extends CRM_Campaign_Form_Survey {
       $this->_surveyId,
       'Survey'
     );
-    $surveyId = CRM_Campaign_BAO_Survey::create($params);
+    $survey = CRM_Campaign_BAO_Survey::create($params);
 
     $status = false;
-    if (!is_a($surveyId, 'CRM_Core_Error')) {
+    if (!is_a($survey, 'CRM_Core_Error')) {
       $status = ts('Survey %1 has been saved.', array(1 => $params['title']));
     }
+    $this->_surveyId = $survey->id;
 
     if (CRM_Utils_Array::value('result_id', $this->_values)) {
       $query = "SELECT COUNT(*) FROM civicrm_survey WHERE result_id = %1";
@@ -630,15 +628,15 @@ class CRM_Campaign_Form_Survey_Main extends CRM_Campaign_Form_Survey {
     }
 
     // create report if required.
-    if ( !$this->_reportId && $surveyId->id && $params['create_report'] ) {
+    if ( !$this->_reportId && $survey->id && $params['create_report'] ) {
       $activityStatus = CRM_Core_PseudoConstant::activityStatus('name');
       $activityStatus = array_flip($activityStatus);
       $this->_params = 
-        array( 'name'  => "survey_{$surveyId->id}",
+        array( 'name'  => "survey_{$survey->id}",
                'title' => $params['report_title'] ? $params['report_title'] : $params['title'], 
                'status_id_op'    => 'eq',
                'status_id_value' => $activityStatus['Scheduled'], // reserved status
-               'survey_id_value' => array($surveyId->id), 
+               'survey_id_value' => array($survey->id), 
                'description'     => ts('Detailed report for canvassing, phone-banking, walk lists or other surveys.'),
                );
       //Default value of order by
@@ -689,10 +687,10 @@ class CRM_Campaign_Form_Survey_Main extends CRM_Campaign_Form_Survey {
       } 
       $this->_createNew = TRUE;
       $this->_id = CRM_Report_Utils_Report::getInstanceIDForValue('survey/detail');
-      CRM_Report_Form_Instance::postProcess($this);
+      CRM_Report_Form_Instance::postProcess($this, FALSE);
       
       $query = "SELECT MAX(id) FROM civicrm_report_instance WHERE name = %1";
-      $reportID = CRM_Core_DAO::singleValueQuery($query, array(1 => array("survey_{$surveyId->id}",'String')));
+      $reportID = CRM_Core_DAO::singleValueQuery($query, array(1 => array("survey_{$survey->id}",'String')));
       if ($reportID) {
         $url = CRM_Utils_System::url("civicrm/report/instance/{$reportID}",'reset=1');
         $status .= ts(" A Survey Detail Report <a href='%1'>%2</a> has been created.", 
@@ -701,6 +699,10 @@ class CRM_Campaign_Form_Survey_Main extends CRM_Campaign_Form_Survey {
     }
 
     if ($status) {
+      // reset status as we don't want status set by Instance::postProcess
+      $session = CRM_Core_Session::singleton();
+      $session->getStatus(TRUE);
+      // set new status
       CRM_Core_Session::setStatus($status, ts('Saved'), 'success');
     }
 
@@ -709,7 +711,7 @@ class CRM_Campaign_Form_Survey_Main extends CRM_Campaign_Form_Survey {
       'is_active' => 1,
       'module' => 'CiviCampaign',
       'entity_table' => 'civicrm_survey',
-      'entity_id' => $surveyId->id,
+      'entity_id' => $survey->id,
     );
 
     // first delete all past entries
@@ -721,15 +723,6 @@ class CRM_Campaign_Form_Survey_Main extends CRM_Campaign_Form_Survey {
       $ufJoinParams['weight'] = 1;
       $ufJoinParams['uf_group_id'] = $params['profile_id'];
       CRM_Core_BAO_UFJoin::create($ufJoinParams);
-    }
-
-    $buttonName = $this->controller->getButtonName();
-    if ($buttonName == $this->getButtonName('next', 'new')) {
-      CRM_Core_Session::setStatus(ts('You can add another Survey.'), '', 'info');
-      $session->replaceUserContext(CRM_Utils_System::url('civicrm/survey/add', 'reset=1&action=add'));
-    }
-    else {
-      $session->replaceUserContext(CRM_Utils_System::url('civicrm/campaign', 'reset=1&subPage=survey'));
     }
 
     parent::endPostProcess();

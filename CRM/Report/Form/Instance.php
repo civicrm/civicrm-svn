@@ -240,7 +240,7 @@ class CRM_Report_Form_Instance {
     }
   }
 
-  static function postProcess(&$form) {
+  static function postProcess(&$form, $redirect = TRUE) {
     $params              = $form->getVar('_params');
     $config              = CRM_Core_Config::singleton();
     $params['header']    = CRM_Utils_Array::value('report_header',$params);
@@ -402,7 +402,9 @@ class CRM_Report_Form_Instance {
           
     CRM_Core_Session::setStatus($statusMsg);
 
-    CRM_Utils_System::redirect($instanceUrl);
+    if ( $redirect ) {
+      CRM_Utils_System::redirect($instanceUrl);
+    }
   }
 }
 

@@ -53,22 +53,6 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form {
    */
   protected $_action;
 
-  /**
-   * is this the first page?
-   *
-   * @var boolean
-   * @access protected
-   */
-  protected $_first = FALSE;
-
-  /**
-   * are we in single form mode or wizard mode?
-   *
-   * @var boolean
-   * @access protected
-   */
-  protected $_single = FALSE;
-
   public function preProcess() {
     if (!CRM_Campaign_BAO_Campaign::accessCampaign()) {
       CRM_Utils_System::permissionDenied();
@@ -98,7 +82,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form {
   public function buildQuickForm() {
     $session = CRM_Core_Session::singleton();
 
-    if ($this->_single) {
+    if ($this->_surveyId) {
       $buttons = array(
         array(
           'type' => 'upload',
@@ -111,32 +95,23 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form {
           'spacing' => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
           'subName' => 'done',
         ),
-        array(
-          'type' => 'cancel',
-          'name' => ts('Cancel'),
-        ),
       );
     } 
     else {
-      $buttons = array();
-      if (!$this->_first) {
-        $buttons[] = array(
-          'type' => 'back',
-          'name' => ts('<< Previous'),
-          'spacing' => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
-        );
-      }
-      $buttons[] = array(
-        'type' => 'upload',
-        'name' => ts('Continue >>'),
-        'spacing' => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
-        'isDefault' => TRUE,
-      );
-      $buttons[] = array(
-        'type' => 'cancel',
-        'name' => ts('Cancel'),
+      $buttons = array(
+        array(
+          'type' => 'upload',
+          'name' => ts('Continue >>'),
+          'spacing' => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+          'isDefault' => TRUE,
+        ), 
       );
     }
+    $buttons[] = 
+      array(
+            'type' => 'cancel',
+            'name' => ts('Cancel'),
+            );
     $this->addButtons($buttons);
   }
 
@@ -144,15 +119,16 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form {
     // make submit buttons keep the current working tab opened.
     if ($this->_action & CRM_Core_Action::UPDATE) {
       $className = CRM_Utils_String::getClassName($this->_name);
-
-      $subPage = strtolower($className);
-      CRM_Core_Session::setStatus(ts("'%1' information has been saved.",
-          array(1 => ($subPage == 'friend') ? 'Friend' : $className)
-        ), ts('Saved'), 'success');
+      $subPage   = strtolower($className);
+      CRM_Core_Session::setStatus(ts("'%1' information has been saved.", array(1 => $className)), ts('Saved'), 'success');
 
       $this->postProcessHook();
 
       CRM_Utils_System::redirect(CRM_Utils_System::url("civicrm/survey/configure/{$subPage}",
+                                                       "action=update&reset=1&id={$this->_surveyId}"));
+    }
+    else if ($this->_action & CRM_Core_Action::ADD) {
+      CRM_Utils_System::redirect(CRM_Utils_System::url("civicrm/survey/configure/contact",
                                                        "action=update&reset=1&id={$this->_surveyId}"));
     }
   }
