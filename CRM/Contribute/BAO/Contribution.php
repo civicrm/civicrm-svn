@@ -2662,11 +2662,17 @@ WHERE  contribution_id = %1 ";
     }
     $update = FALSE;
     $params['trxnParams'] = $trxnParams;
+    
+    $entityID = $entityId;
+    if (!CRM_Utils_Array::value('prevContribution', $params)) {
+      $entityID = NULL;
+    } 
+    // build line item array if its not set in $params
+    if (!CRM_Utils_Array::value('line_item', $params)) {
+      CRM_Price_BAO_LineItem::getLineItemArray($params, $entityID, str_replace('civicrm_', '', $entityTable));
+    }
     if (CRM_Utils_Array::value('prevContribution', $params)) {
       
-      if (!CRM_Utils_Array::value('line_item', $params)) {
-        CRM_Price_BAO_LineItem::getLineItemArray($params, $entityId, str_replace('civicrm_', '', $entityTable));
-      }
       //if Change contribution amount
       if ($params['total_amount'] != $params['prevContribution']->total_amount) {
         //Update Financial Records
@@ -2735,9 +2741,6 @@ WHERE  contribution_id = %1 ";
     }
 
     if (!$update) { 
-      if (!CRM_Utils_Array::value('line_item', $params)) {
-        CRM_Price_BAO_LineItem::getLineItemArray($params);
-      }
       //records finanical trxn and entity financial trxn
       $financialTxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
     }
