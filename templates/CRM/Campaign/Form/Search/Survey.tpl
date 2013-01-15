@@ -179,7 +179,7 @@ function loadSurveyList( )
      var surveyTypes    = {/literal}{$surveyTypes}{literal};
      var surveyCampaigns = {/literal}{$surveyCampaigns}{literal};
 
-     var noRecordFoundMsg  = {/literal}{ts escape='js'}'No matches found for:'{/ts}{literal};
+     var noRecordFoundMsg  = "{/literal}{ts escape='js'}No matches found for:{/ts}{literal}";
      noRecordFoundMsg += '<div class="qill">';
 
      var count = 0;
