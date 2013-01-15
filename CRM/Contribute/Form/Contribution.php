@@ -880,7 +880,8 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
       )
     );
 
-    // if status is Cancelled freeze Amount, Payment Instrument, Check #, Financial Type
+    // if status is Cancelled freeze Amount, Payment Instrument, Check #, Financial Type,
+    // Net and Fee Amounts are frozen in AdditionalInfo::buildAdditionalDetail
     if ($this->_id && $this->_values['contribution_status_id'] == array_search('Cancelled', $statusName)) {
       $totalAmount->freeze();
       $checkNumber->freeze();

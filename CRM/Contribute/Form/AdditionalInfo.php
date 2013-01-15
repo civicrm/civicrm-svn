@@ -99,27 +99,28 @@ class CRM_Contribute_Form_AdditionalInfo {
     $form->addDateTime('thankyou_date', ts('Thank-you Sent'), FALSE, array('formatType' => 'activityDateTime'));
 
     // add various amounts
-    $element = & $form->add('text', 'non_deductible_amount', ts('Non-deductible Amount'),
+    $nonDeductAmount = & $form->add('text', 'non_deductible_amount', ts('Non-deductible Amount'),
                $attributes['non_deductible_amount']
     );
     $form->addRule('non_deductible_amount', ts('Please enter a valid monetary value for Non-deductible Amount.'), 'money');
 
     if ($form->_online) {
-      $element->freeze();
+      $nonDeductAmount->freeze();
     }
-    $element = & $form->add('text', 'fee_amount', ts('Fee Amount'),
+    $feeAmount = & $form->add('text', 'fee_amount', ts('Fee Amount'),
                $attributes['fee_amount']
     );
     $form->addRule('fee_amount', ts('Please enter a valid monetary value for Fee Amount.'), 'money');
     if ($form->_online) {
-      $element->freeze();
+      $feeAmount->freeze();
     }
-    $element = & $form->add('text', 'net_amount', ts('Net Amount'),
+    
+    $netAmount = & $form->add('text', 'net_amount', ts('Net Amount'),
                $attributes['net_amount']
     );
     $form->addRule('net_amount', ts('Please enter a valid monetary value for Net Amount.'), 'money');
     if ($form->_online) {
-      $element->freeze();
+      $netAmount->freeze();
     }
     $element = & $form->add('text', 'invoice_id', ts('Invoice ID'),
                $attributes['invoice_id']
@@ -143,8 +144,14 @@ class CRM_Contribute_Form_AdditionalInfo {
       CRM_Contribute_PseudoConstant::contributionPage()
     );
 
-
     $form->add('textarea', 'note', ts('Notes'), array("rows" => 4, "cols" => 60));
+    
+    $statusName = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
+    if ($form->_id && $form->_values['contribution_status_id'] == array_search('Cancelled', $statusName)) {
+      $netAmount->freeze();
+      $feeAmount->freeze();
+    }
+    
   }
 
   /**
