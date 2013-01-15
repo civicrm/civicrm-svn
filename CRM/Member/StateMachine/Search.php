@@ -102,5 +102,14 @@ class CRM_Member_StateMachine_Search extends CRM_Core_StateMachine {
   function getTaskFormName() {
     return CRM_Utils_String::getClassName($this->_task);
   }
+
+  /**
+   * Since this is a state machine for search and we want to come back to the same state
+   * we dont want to issue a reset of the state session when we are done processing a task
+   *
+   */
+  function shouldReset() {
+    return FALSE;
+  }
 }
 
