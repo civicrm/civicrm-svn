@@ -75,15 +75,21 @@ class CRM_Financial_Form_Export extends CRM_Core_Form {
 
     // this mean it's a batch action
     if (!$this->_id ) {
-      if (!empty($_POST['batch_id'])) {
-        $this->_batchIds = $_POST['batch_id'];
+      if (!empty($_GET['batch_id'])) {
+        //validate batch ids
+        $batchIds = explode(',', $_GET['batch_id']);
+        foreach($batchIds as $batchId) {
+          CRM_Utils_Type::validate($batchId,'Positive');
+        }
+
+        $this->_batchIds = $_GET['batch_id'];
         $this->set('batchIds', $this->_batchIds);
       }
       else {
         $this->_batchIds = $this->get('batchIds');
       }
-      if (!empty($_POST['export_format']) && in_array($_POST['export_format'], array('IIF', 'CSV'))) {
-        $this->_exportFormat = $_POST['export_format'];
+      if (!empty($_GET['export_format']) && in_array($_GET['export_format'], array('IIF', 'CSV'))) {
+        $this->_exportFormat = $_GET['export_format'];
       }
     }
     else {

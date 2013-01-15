@@ -257,7 +257,7 @@ cj(function($) {
 
   function exportRecords(records) {
     var exportUrl = CRM.url('civicrm/financial/batch/export', 'reset=1');
-    $().redirect(exportUrl, {'batch_id': records, 'export_format': $('select.export-format').val()});
+    $().redirect(exportUrl, {'batch_id': records, 'export_format': $('select.export-format').val()}, 'GET');
     setTimeout(function() {batchSelector.fnDraw();}, 2000);
   }
 
