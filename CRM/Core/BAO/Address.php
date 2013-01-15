@@ -77,7 +77,6 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address {
     }
 
     $isPrimary = $isBilling = TRUE;
-    $isGeoCode = TRUE;
     $blocks = array();
     foreach ($params['address'] as $key => $value) {
       if (!is_array($value)) {
@@ -124,12 +123,6 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address {
         $value['is_billing'] = 0;
       }
 
-      if ($isGeoCode && CRM_Utils_Array::value('manual_geo_code', $value)) {
-        $isGeoCode = FALSE;
-      }
-      else {
-        $value['manual_geo_code'] = 0;
-      }
       $value['contact_id'] = $contactId;
       $blocks[] = self::add($value, $fixAddress);
     }
