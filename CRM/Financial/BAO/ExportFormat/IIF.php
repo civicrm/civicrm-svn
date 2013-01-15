@@ -46,29 +46,8 @@ class CRM_Financial_BAO_ExportFormat_IIF extends CRM_Financial_BAO_ExportFormat 
   // For this phase, we always output these records too so that there isn't data referenced in the journal entries that isn't defined anywhere.
   // Possibly in the future this could be selected by the user.
   public static $complementaryTables = array(
-      'ACCNT',
-      'CUST',
-  );
-
-  // This field is required. We use the grouping column in civicrm_option_value for the financial_account_type option group to map to the right code.
-  // - So this variable below isn't actually used anywhere, but is good to keep here for reference.
-  public static $accountTypes = array(
-    'AP' => 'Accounts payable',
-    'AR' => 'Accounts receivable',
-    'BANK' => 'Checking or savings',
-    'CCARD' => 'Credit card account',
-    'COGS' => 'Cost of goods sold',
-    'EQUITY' => 'Capital/Equity',
-    'EXEXP' => 'Other expense',
-    'EXINC' => 'Other income',
-    'EXP' => 'Expense',
-    'FIXASSET' => 'Fixed asset',
-    'INC' => 'Income',
-    'LTLIAB' => 'Long term liability',
-    'NONPOSTING' => 'Non-posting account',
-    'OASSET' => 'Other asset',
-    'OCASSET' => 'Other current asset',
-    'OCLIAB' => 'Other current liability',
+    'ACCNT',
+    'CUST',
   );
 
   /**
