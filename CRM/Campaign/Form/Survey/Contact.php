@@ -52,6 +52,20 @@ class CRM_Campaign_Form_Survey_Contact extends CRM_Campaign_Form_Survey {
    * @access public
    */
   public function buildQuickForm() {
+    $contactProfiles = CRM_Core_BAO_UFGroup::getProfiles(array('Contact', 'Individual'));
+    // custom group id
+    $this->add('select', 'contact_profile_id', ts('Contact Info'),
+      array(
+        '' => ts('- select profile -')) + $contactProfiles
+    );
+
+    $activityProfiles = CRM_Core_BAO_UFGroup::getProfiles(array('Activity'));
+    // custom group id
+    $this->add('select', 'activity_profile_id', ts('Profile'),
+      array(
+        '' => ts('- select profile -')) + $activityProfiles
+    );
+
     parent::buildQuickForm();
   }
 

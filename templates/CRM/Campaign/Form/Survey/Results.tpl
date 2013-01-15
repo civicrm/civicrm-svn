@@ -35,5 +35,28 @@
            </table>
            </td>
        </tr>
+
+       {* Create Report *}
+       <tr id='showoption'>
+         <td colspan="2">
+           <div id="new-group" class="crm-accordion-wrapper ">
+           <div class="crm-accordion-header">
+             {ts}Create Report{/ts}
+           </div><!-- /.crm-accordion-header -->
+           <div class="crm-accordion-body">
+           <table class="form-layout-compressed">
+             <tr>
+                <td class="description label">{$form.create_report.label}</td>
+                <td>{$form.create_report.html}</td>
+             </tr>
+             <tr>
+                <td class="description label">{$form.report_title.label}</td>
+                <td>{$form.report_title.html|crmAddClass:big}</td>
+             </tr>
+            </table>
+            </div><!-- /.crm-accordion-body -->
+            </div><!-- /.crm-accordion-wrapper -->
+         </td>
+       </tr>
       </table>
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>

@@ -53,10 +53,6 @@ class CRM_Campaign_Form_Survey_Main extends CRM_Campaign_Form_Survey {
    */
   protected $_context;
 
-  protected $_reportId;
-
-  protected $_reportTitle;
-
   public function preProcess() {
     parent::preProcess();
 
@@ -106,16 +102,6 @@ class CRM_Campaign_Form_Survey_Main extends CRM_Campaign_Form_Survey {
         CRM_Campaign_BAO_Survey::retrieve($params, $this->_values);
       }
       $this->set('values', $this->_values);
-    }
-
-    if ($this->_surveyId) {
-      $query  = "SELECT MAX(id) as id, title FROM civicrm_report_instance WHERE name = %1";
-      $params = array( 1 => array("survey_{$this->_surveyId}",'String') );
-      $result = CRM_Core_DAO::executeQuery($query, $params);
-      if ( $result->fetch() ) {
-        $this->_reportId = $result->id;
-        $this->_reportTitle = $result->title;
-      }
     }
 
     $this->assign('action', $this->_action);
@@ -173,10 +159,6 @@ class CRM_Campaign_Form_Survey_Main extends CRM_Campaign_Form_Survey {
       $defaults['is_default'] = 1;
     }
 
-    $defaults['create_report'] = 1;
-    if ($this->_reportId) {
-      $defaults['report_title'] = $this->_reportTitle;
-    }
     return $defaults;
   }
 
@@ -209,14 +191,6 @@ class CRM_Campaign_Form_Survey_Main extends CRM_Campaign_Form_Survey {
       array(
         '' => ts('- select -')) + $customProfiles
     );
-
-    $this->addElement('checkbox', 'create_report', ts('Create Report'));
-    $this->addElement('text', 'report_title', ts('Report Title'));
-   
-    if( $this->_reportId){
-      $this->freeze('create_report');
-      $this->freeze('report_title');
-    }
 
     // script / instructions
     $this->addWysiwyg('instructions', ts('Instructions for interviewers'), array('rows' => 5, 'cols' => 40));
@@ -305,82 +279,7 @@ class CRM_Campaign_Form_Survey_Main extends CRM_Campaign_Form_Survey {
       }
     }
 
-    // create report if required.
-    if ( !$this->_reportId && $survey->id && $params['create_report'] ) {
-      $activityStatus = CRM_Core_PseudoConstant::activityStatus('name');
-      $activityStatus = array_flip($activityStatus);
-      $this->_params = 
-        array( 'name'  => "survey_{$survey->id}",
-               'title' => $params['report_title'] ? $params['report_title'] : $params['title'], 
-               'status_id_op'    => 'eq',
-               'status_id_value' => $activityStatus['Scheduled'], // reserved status
-               'survey_id_value' => array($survey->id), 
-               'description'     => ts('Detailed report for canvassing, phone-banking, walk lists or other surveys.'),
-               );
-      //Default value of order by
-      $this->_params['order_bys'] =
-        array(
-              1 =>
-              array(
-                    'column' => 'sort_name',
-                    'order' => 'ASC'
-                    ),
-              );
-      // for WalkList or default
-      $displayFields = array('id', 'sort_name', 'result', 'street_number','street_name','street_unit','survey_response');
-      if ( CRM_Core_OptionGroup::getValue('activity_type','WalkList') == $params['activity_type_id'] ) {
-        $this->_params['order_bys'] =
-          array(
-                1 =>
-                array(
-                      'column' => 'street_name',
-                      'order'  => 'ASC'
-                      ),
-                2 =>
-                array(
-                      'column' => 'street_number_odd_even',
-                      'order' => 'ASC'
-                      ),
-                3 =>
-                array(
-                      'column' => 'street_number',
-                      'order' => 'ASC'
-                      ),
-                4 =>
-                array(
-                      'column' => 'sort_name',
-                      'order' => 'ASC'
-                      ),
-                );
-      }
-      elseif ( CRM_Core_OptionGroup::getValue('activity_type','PhoneBank') == $params['activity_type_id'] ) {
-        array_push($displayFields, 'phone');
-      }
-      elseif ((CRM_Core_OptionGroup::getValue('activity_type','Survey')  == $params['activity_type_id']) || 
-              (CRM_Core_OptionGroup::getValue('activity_type','Canvass') == $params['activity_type_id']) ) {
-        array_push($displayFields, 'phone','city','state_province_id','postal_code','email');
-      }
-      foreach($displayFields as $key){
-        $this->_params['fields'][$key] = 1;
-      } 
-      $this->_createNew = TRUE;
-      $this->_id = CRM_Report_Utils_Report::getInstanceIDForValue('survey/detail');
-      CRM_Report_Form_Instance::postProcess($this, FALSE);
-      
-      $query = "SELECT MAX(id) FROM civicrm_report_instance WHERE name = %1";
-      $reportID = CRM_Core_DAO::singleValueQuery($query, array(1 => array("survey_{$survey->id}",'String')));
-      if ($reportID) {
-        $url = CRM_Utils_System::url("civicrm/report/instance/{$reportID}",'reset=1');
-        $status .= ts(" A Survey Detail Report <a href='%1'>%2</a> has been created.", 
-                      array(1 => $url, 2 => $this->_params['title']));
-      }
-    }
-
     if ($status) {
-      // reset status as we don't want status set by Instance::postProcess
-      $session = CRM_Core_Session::singleton();
-      $session->getStatus(TRUE);
-      // set new status
       CRM_Core_Session::setStatus($status, ts('Saved'), 'success');
     }
 
