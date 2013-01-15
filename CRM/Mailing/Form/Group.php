@@ -135,7 +135,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task {
 
       if (!empty($mailingGroups['civicrm_mailing'])) {
         $defaults['includeMailings'] = CRM_Utils_Array::value('Include', $mailingGroups['civicrm_mailing']);
-        $defaults['excludeMailings'] = $mailingGroups['civicrm_mailing']['Exclude'];
+        $defaults['excludeMailings'] = CRM_Utils_Array::value('Exclude', $mailingGroups['civicrm_mailing']);
       }
     }
 
@@ -430,7 +430,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task {
     $params['mailings'] = $mailings;
     $ids = array();
     if ($this->get('mailing_id')) {
-      
+
       // don't create a new mailing if already exists
       $ids['mailing_id'] = $this->get('mailing_id');
 
