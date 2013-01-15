@@ -64,7 +64,8 @@ class CRM_Export_Form_Select extends CRM_Core_Form {
    *
    * @return void
    * @access public
-   */ function preProcess() {
+   */
+  function preProcess() {
     //special case for custom search, directly give option to download csv file
     $customSearchID = $this->get('customSearchID');
     if ($customSearchID) {
@@ -450,8 +451,7 @@ FROM   {$this->_componentTable}
     }
   }
 
-  static
-  function getGreetingOptions() {
+  static function getGreetingOptions() {
     $options = array();
     $greetings = array(
       'postal_greeting' => 'postal_greeting_other',

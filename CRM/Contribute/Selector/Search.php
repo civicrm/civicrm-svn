@@ -159,7 +159,8 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
    *
    * @return CRM_Contact_Selector
    * @access public
-   */ function __construct(&$queryParams,
+   */
+  function __construct(&$queryParams,
     $action             = CRM_Core_Action::NONE,
     $contributionClause = NULL,
     $single             = FALSE,
@@ -204,8 +205,7 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
    * @access public
    *
    */
-  static
-  function &links($componentId = NULL, $componentAction = NULL, $key = NULL, $compContext = NULL) {
+  static function &links($componentId = NULL, $componentAction = NULL, $key = NULL, $compContext = NULL) {
     $extraParams = NULL;
     if ($componentId) {
       $extraParams = "&compId={$componentId}&compAction={$componentAction}";
