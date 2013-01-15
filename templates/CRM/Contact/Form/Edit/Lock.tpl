@@ -6,6 +6,7 @@ cj(function() {
   }
   cj('<br>')
     .appendTo(cj('#update_modified_date'));
+  /*
   cj('<button>')
     .text("{/literal}{ts}Ignore{/ts}{literal}")
     .click(function() {
@@ -16,6 +17,18 @@ cj(function() {
       if (cj('#errorList').find('li').length <= 1) {
           CRM.closeAlertByChild(cj('#errorList'));
       }
+      return false;
+    })
+    .appendTo(cj('#update_modified_date'))
+    ;
+  */
+  cj('<button>')
+    .text("{/literal}{ts}Save Anyway{/ts}{literal}")
+    .click(function() {
+      cj('input[name="modified_date"]').val(
+              cj('#update_modified_date').attr('data:latest_modified_date')
+      );
+      cj('.crm-form-block .form-submit.default').first().click();
       return false;
     })
     .appendTo(cj('#update_modified_date'))

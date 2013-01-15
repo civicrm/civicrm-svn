@@ -457,6 +457,7 @@
 
         var buttonContainer = o.find('.crm-lock-button');
 
+        /*
         $('<button>')
           .addClass('crm-button')
           .text(options.ignoreLabel)
@@ -467,6 +468,18 @@
             if (containerTag.find('li').length == 1) {
               containerTag.hide();
             }
+            return false;
+          })
+          .appendTo(buttonContainer)
+          ;
+         */
+        $('<button>')
+          .addClass('crm-button')
+          .text(options.saveAnywayLabel)
+          .click(function() {
+            oplock_ts = errorTag.attr('data:update_oplock_ts');
+            errorTag.parent().hide();
+            $(this).closest('form').find('.form-submit.default').first().click();
             return false;
           })
           .appendTo(buttonContainer)
