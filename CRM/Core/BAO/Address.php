@@ -71,12 +71,13 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address {
       // get all address from location block
       $entityElements = array(
         'entity_table' => $params['entity_table'],
-        'entity_id' => $params['entity_id'],
+        'entity_id'    => $params['entity_id'],
       );
       $addresses = self::allEntityAddress($entityElements);
     }
 
     $isPrimary = $isBilling = TRUE;
+    $isGeoCode = TRUE;
     $blocks = array();
     foreach ($params['address'] as $key => $value) {
       if (!is_array($value)) {
@@ -85,16 +86,16 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address {
 
       $addressExists = self::dataExists($value);
       if ( !CRM_Utils_Array::value('id', $value) ) {
-      if ($updateBlankLocInfo) {
-        if ((!empty($addresses) || !$addressExists) && array_key_exists($key, $addresses)) {
-          $value['id'] = $addresses[$key];
+        if ($updateBlankLocInfo) {
+          if ((!empty($addresses) || !$addressExists) && array_key_exists($key, $addresses)) {
+            $value['id'] = $addresses[$key];
+          }
         }
-      }
-      else {
-        if (!empty($addresses) && array_key_exists(CRM_Utils_Array::value('location_type_id', $value), $addresses)) {
+        else {
+          if (!empty($addresses) && array_key_exists(CRM_Utils_Array::value('location_type_id', $value), $addresses)) {
             $value['id'] = $addresses[CRM_Utils_Array::value('location_type_id', $value)];
+          }
         }
-      }
       }
 
       // Note there could be cases when address info already exist ($value[id] is set) for a contact/entity
@@ -121,6 +122,13 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address {
       }
       else {
         $value['is_billing'] = 0;
+      }
+
+      if ($isGeoCode && CRM_Utils_Array::value('manual_geo_code', $value)) {
+        $isGeoCode = FALSE;
+      }
+      else {
+        $value['manual_geo_code'] = 0;
       }
       $value['contact_id'] = $contactId;
       $blocks[] = self::add($value, $fixAddress);
@@ -395,7 +403,7 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address {
     }
 
     // add latitude and longitude and format address if needed
-    if (!empty($config->geocodeMethod) && ($config->geocodeMethod != 'CRM_Utils_Geocode_OpenStreetMaps')) {
+    if (!empty($config->geocodeMethod) && ($config->geocodeMethod != 'CRM_Utils_Geocode_OpenStreetMaps') && empty($params['manual_geo_code'])) {
       $class = $config->geocodeMethod;
       $class::format($params);
     }

@@ -29,5 +29,14 @@
           {$form.address.$blockId.geo_code_1.label},&nbsp;{$form.address.$blockId.geo_code_2.label} {help id="id-geo-code" file="CRM/Contact/Form/Contact.hlp"}<br />
           {$form.address.$blockId.geo_code_1.html},&nbsp;{$form.address.$blockId.geo_code_2.html}<br />
       </td>
+    </tr>
+    {if !empty($form.address.$blockId.manual_geo_code)}
+     <tr>
+        <td colspan="2">
+          {$form.address.$blockId.manual_geo_code.label}
+          {$form.address.$blockId.manual_geo_code.html}
+        </td>
+      </tr>
+    {/if}
    </tr>
 {/if}
