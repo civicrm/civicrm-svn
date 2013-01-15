@@ -115,6 +115,15 @@
   }
 
   /**
+   * Close whichever alert contains the given node
+   *
+   * @param node
+   */
+  CRM.closeAlertByChild = function(node) {
+    $(node).closest('.ui-notify-message').find('.icon.ui-notify-close').click();
+  }
+
+  /**
    * Prompt the user for confirmation.
    * 
    * @param {Object} with keys "title", "message", "onContinue", "onCancel"

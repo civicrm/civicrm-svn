@@ -4,13 +4,18 @@ cj(function() {
   if (cj('#update_modified_date').length == 0) {
     return;
   }
+  cj('<br>')
+    .appendTo(cj('#update_modified_date'));
   cj('<button>')
     .text("{/literal}{ts}Ignore{/ts}{literal}")
     .click(function() {
       cj('input[name="modified_date"]').val(
         cj('#update_modified_date').attr('data:latest_modified_date')
       );
-      cj('#update_modified_date').parent().hide();
+      cj('#update_modified_date').closest('li').hide();
+      if (cj('#errorList').find('li').length <= 1) {
+          CRM.closeAlertByChild(cj('#errorList'));
+      }
       return false;
     })
     .appendTo(cj('#update_modified_date'))
