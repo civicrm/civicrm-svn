@@ -841,3 +841,7 @@ VALUES
 
 -- Payprocs from extensions may have long titles
 ALTER TABLE civicrm_payment_processor_type MODIFY COLUMN title varchar(127);
+
+-- CRM-11665
+ALTER TABLE civicrm_address
+  ADD COLUMN manual_geo_code tinyint(4) DEFAULT '0' COMMENT 'Is this a manually entered geo code.';
