@@ -161,13 +161,18 @@ class CRM_Contribute_Form_AbstractEditPayment extends CRM_Core_Form {
     $params = array('id' => $id);
     CRM_Contribute_BAO_Contribution::getValues($params, $values, $ids);
 
-    //do check for online / recurring contributions
+    //Check if this is an online transaction (financial_trxn.payment_processor_id NOT NULL)
+    $this->_online = FALSE;
     $fids = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnIds($id, 'civicrm_contribution');
-    $this->_online = CRM_Utils_Array::value('entityFinancialTrxnId', $fids);
-    //don't allow to update all fields for recuring contribution.
+    if (CRM_Utils_Array::value('financialTrxnId', $fids)) {
+      $this->_online = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_FinancialTrxn', $fids['financialTrxnId'], 'payment_processor_id');
+    }
+    
+    // Also don't allow user to update some fields for recurring contributions.
     if (!$this->_online) {
       $this->_online = CRM_Utils_Array::value('contribution_recur_id', $values);
     }
+    
     $this->assign('isOnline', $this->_online ? TRUE : FALSE);
 
     //unset the honor type id:when delete the honor_contact_id
