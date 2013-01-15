@@ -94,7 +94,7 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page {
       self::$_surveyActionLinks = array(
         CRM_Core_Action::UPDATE => array(
           'name' => ts('Edit'),
-          'url' => 'civicrm/survey/add',
+          'url' => 'civicrm/survey/configure/main',
           'qs' => 'action=update&id=%%id%%&reset=1',
           'title' => ts('Update Survey'),
         ),

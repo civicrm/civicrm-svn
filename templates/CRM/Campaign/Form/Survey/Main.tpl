@@ -69,15 +69,6 @@
            </td>
        </tr>
 
-       <tr id='showoption'>
-           <td colspan="2">
-           <table class="form-layout-compressed">
-               {* Conditionally show table for setting up selection options - for field types = radio, checkbox or select *}
-               {include file="CRM/Campaign/Form/ResultOptions.tpl"}
-           </table>
-     </td>
-       </tr>
-
        {* Create Report *}
        <tr id='showoption'>
            <td colspan="2">

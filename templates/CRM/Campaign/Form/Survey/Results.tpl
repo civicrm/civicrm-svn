@@ -26,4 +26,14 @@
 
 <div class="crm-block crm-form-block crm-campaign-survey-results-form-block">
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
+      <table class="form-layout-compressed">
+       <tr id='showoption'>
+           <td colspan="2">
+           <table class="form-layout-compressed">
+               {* Conditionally show table for setting up selection options - for field types = radio, checkbox or select *}
+               {include file="CRM/Campaign/Form/ResultOptions.tpl"}
+           </table>
+           </td>
+       </tr>
+      </table>
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
