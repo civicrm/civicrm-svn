@@ -130,23 +130,25 @@ class CRM_Extension_Downloader {
    */
   public function fetch($remoteFile, $localFile) {
     require_once 'CA/Config/Curl.php';
+    $caConfig = CA_Config_Curl::probe(array(
+      'verify_peer' => (bool)CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'verifySSL', NULL, TRUE)
+    ));
 
     // Download extension zip file ...
     if (!function_exists('curl_init')) {
       CRM_Core_Error::fatal('Cannot install this extension - curl is not installed!');
     }
-    if (preg_match('/^https:/', $remoteFile) && !CA_Config_Curl::singleton()->isEnableSSL()) {
+    if (preg_match('/^https:/', $remoteFile) && !$caConfig->isEnableSSL()) {
       CRM_Core_Error::fatal('Cannot install this extension - does not support SSL');
     }
 
     //setting the curl parameters.
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $remoteFile);
-    curl_setopt($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_HEADER, FALSE);
     curl_setopt($ch, CURLOPT_VERBOSE, 1);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, CRM_Core_BAO_Setting::getItem('Civicrm Preferences', 'verifySSL', null, True));
     if (preg_match('/^https:/', $remoteFile)) {
-      curl_setopt_array($ch, CA_Config_Curl::singleton()->toCurlOptions());
+      curl_setopt_array($ch, $caConfig->toCurlOptions());
     }
 
     //follow redirects

@@ -507,4 +507,18 @@ When enabled, statistics about your CiviCRM installation are reported anonymousl
     'description' => 'Code appended to resource URLs (JS/CSS) to coerce HTTP caching',
     'help_text' => null,
   ),
+  'verifySSL' => array(
+    'group_name' => 'CiviCRM Preferences',
+    'group' => 'core',
+    'name' => 'verifySSL',
+    'type' => 'Boolean',
+    'quick_form_type' => 'YesNo',
+    'default' => 1,
+    'add' => '4.3',
+    'title' => '',
+    'is_domain' => 1,
+    'is_contact' => 0,
+    'description' => 'If disabled, backend HTTPS services will allow unverified, insecure connections',
+    'help_text' => null,
+  ),
 );
