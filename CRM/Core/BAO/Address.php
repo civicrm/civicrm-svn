@@ -123,6 +123,9 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address {
         $value['is_billing'] = 0;
       }
 
+      if (!CRM_Utils_Array::value('manual_geo_code', $value)) {
+        $value['manual_geo_code'] = 0;
+      }
       $value['contact_id'] = $contactId;
       $blocks[] = self::add($value, $fixAddress);
     }
