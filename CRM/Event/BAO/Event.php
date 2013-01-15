@@ -642,26 +642,16 @@ WHERE civicrm_address.geo_code_1 IS NOT NULL
       $location['lat'] = $dao->latitude;
       $location['marker_class'] = 'Event';
       $location['lng'] = $dao->longitude;
-      $address = '';
 
-      CRM_Utils_String::append($address, '<br />',
-        array(
-          $dao->street_address,
-          $dao->city,
-        )
-      );
-      CRM_Utils_String::append($address, ', ',
-        array($dao->state, $dao->postal_code)
-      );
-      CRM_Utils_String::append($address, '<br /> ',
-        array($dao->country)
-      );
-      $location['address'] = addslashes($address);
+      $params = array('entity_id' => $id, 'entity_table' => 'civicrm_event');
+      $addressValues = CRM_Core_BAO_Location::getValues($params, TRUE);
+      $location['address'] = str_replace(array("\r", "\n"), '', addslashes(nl2br($addressValues['address'][1]['display_text'])));
+
       $location['url'] = CRM_Utils_System::url('civicrm/event/register', 'reset=1&id=' . $dao->event_id);
       $location['location_type'] = $dao->location_type;
       $eventImage = '<img src="' . $config->resourceBase . 'i/contact_org.gif" alt="Organization " height="20" width="15" />';
       $location['image'] = $eventImage;
-      $location['displayAddress'] = str_replace('<br />', ', ', $address);
+      $location['displayAddress'] = str_replace('<br />', ', ', $location['address']);
       $locations[] = $location;
     }
     return $locations;
