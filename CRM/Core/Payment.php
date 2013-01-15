@@ -211,7 +211,7 @@ abstract class CRM_Core_Payment {
              SELECT ppt.class_name, ppt.name as processor_name, pp.id AS processor_id
                FROM civicrm_payment_processor_type ppt
          INNER JOIN civicrm_payment_processor pp
-                 ON pp.payment_processor_type = ppt.name
+                 ON pp.payment_processor_type_id = ppt.id
                 AND pp.is_active
                 AND pp.is_test = %1
               WHERE ppt.name = %2
