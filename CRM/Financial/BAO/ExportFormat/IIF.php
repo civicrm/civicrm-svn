@@ -176,7 +176,7 @@ class CRM_Financial_BAO_ExportFormat_IIF extends CRM_Financial_BAO_ExportFormat 
             ft.check_number as check_number,
             fi.transaction_date,
             fi.amount,
-            ov.grouping as qb_account_type,
+            fa.account_type_code as account_type_code,
             contact.id as contact_id,
             contact.display_name as contact_name,
             contact.first_name as contact_first_name,
@@ -187,8 +187,6 @@ class CRM_Financial_BAO_ExportFormat_IIF extends CRM_Financial_BAO_ExportFormat 
             LEFT JOIN civicrm_option_group cog ON cog.name = 'payment_instrument'
             LEFT JOIN civicrm_option_value cov ON (cov.value = ft.payment_instrument_id AND cov.option_group_id = cog.id)
             LEFT JOIN civicrm_financial_account fa ON fa.id = fi.financial_account_id
-            LEFT JOIN civicrm_option_group og ON og.name = 'financial_account_type'
-            LEFT JOIN civicrm_option_value ov ON (ov.option_group_id = og.id AND ov.value = fa.financial_account_type_id)
             LEFT JOIN civicrm_contact contact ON contact.id = fi.contact_id
             WHERE eft.entity_table = 'civicrm_financial_item'
             AND eft.financial_trxn_id = %1";
@@ -203,7 +201,7 @@ class CRM_Financial_BAO_ExportFormat_IIF extends CRM_Financial_BAO_ExportFormat 
                 'name' => $this->format( $itemDAO->account_name ),
                 'account_code' => $this->format( $itemDAO->account_code ),
                 'description' => $this->format( $itemDAO->account_description ),
-                'type' => $this->format( $itemDAO->qb_account_type ),
+                'type' => $this->format( $itemDAO->account_type_code ),
               );
             }
 
