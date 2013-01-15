@@ -44,7 +44,6 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     parent::setUp();
 
     $this->_apiversion = 3;
-    $this->_contributionTypeId = $this->contributionTypeCreate();
     $this->_individualId = $this->individualCreate();
     $this->_params = array(
       'contact_id' => $this->_individualId,
@@ -58,6 +57,29 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'contribution_status_id' => 1,
       'version' => $this->_apiversion,
     );
+    $this->_processorParams = array(
+      'domain_id' => 1,
+      'name' => 'Dummy',
+      'payment_processor_type_id' => 10,
+      'financial_account_id' => 12,
+      'is_active' => 1,
+      'user_name' => '',
+      'url_site' => 'http://dummy.com',
+      'url_recur' => 'http://dummy.com',
+      'billing_mode' => 1,
+    ); 
+    $this->_pageParams = array( 
+      'version' => 3,
+      'title' => 'Test Contribution Page', 
+      'financial_type_id' => 1,
+      'currency' => 'USD',
+      'financial_account_id' => 1,
+      'payment_processor' => $paymentProcessor->id,
+      'is_active' => 1,
+      'is_allow_other_amount' => 1,
+      'min_amount' => 10,
+      'max_amount' => 1000,
+     );    
   }
 
   function tearDown() {
@@ -273,7 +295,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
         'contact_id' => $this->_individualId,
         'receive_date' => '20120511',
         'total_amount' => 100.00,
-                        'financial_type_id'      => $this->_contributionTypeId,
+        'financial_type_id'      => $this->_contributionTypeId,
         'payment_instrument_id' => 1,
         'non_deductible_amount' => 10.00,
         'fee_amount' => 50.00,
@@ -346,17 +368,12 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $this->assertEquals(2, $lineItems['count']);
   }
 
-  function testCreateContribution() {
-
+  function testCreateContributionOffline() {
     $params = array(
       'contact_id' => $this->_individualId,
       'receive_date' => '20120511',
       'total_amount' => 100.00,
-      'financial_type_id' => $this->_contributionTypeId,
-      'payment_instrument_id' => 1,
-      'non_deductible_amount' => 10.00,
-      'fee_amount' => 50.00,
-      'net_amount' => 90.00,
+      'financial_type_id' => 1,
       'trxn_id' => 12345,
       'invoice_id' => 67890,
       'source' => 'SSF',
@@ -368,11 +385,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $this->documentMe($params, $contribution, __FUNCTION__, __FILE__);
     $this->assertEquals($contribution['values'][$contribution['id']]['contact_id'], $this->_individualId, 'In line ' . __LINE__);
     $this->assertEquals($contribution['values'][$contribution['id']]['total_amount'], 100.00, 'In line ' . __LINE__);
-        $this->assertEquals($contribution['values'][$contribution['id']]['financial_type_id'],$this->_contributionTypeId, 'In line ' . __LINE__ );
-    $this->assertEquals($contribution['values'][$contribution['id']]['payment_instrument_id'], 1, 'In line ' . __LINE__);
-    $this->assertEquals($contribution['values'][$contribution['id']]['non_deductible_amount'], 10.00, 'In line ' . __LINE__);
-    $this->assertEquals($contribution['values'][$contribution['id']]['fee_amount'], 50.00, 'In line ' . __LINE__);
-    $this->assertEquals($contribution['values'][$contribution['id']]['net_amount'], 90.00, 'In line ' . __LINE__);
+    $this->assertEquals($contribution['values'][$contribution['id']]['financial_type_id'],1, 'In line ' . __LINE__ );
     $this->assertEquals($contribution['values'][$contribution['id']]['trxn_id'], 12345, 'In line ' . __LINE__);
     $this->assertEquals($contribution['values'][$contribution['id']]['invoice_id'], 67890, 'In line ' . __LINE__);
     $this->assertEquals($contribution['values'][$contribution['id']]['source'], 'SSF', 'In line ' . __LINE__);
@@ -386,14 +399,15 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $this->assertEquals(1, $lineItems['count']);
     $this->assertEquals($contribution['id'], $lineItems['values'][0]['entity_id']);
     $this->assertEquals($contribution['id'], $lineItems['values'][0]['entity_id']);
-    $this->contributionGetnCheck($params, $contribution['id']);
     $lineItems = civicrm_api('line_item','get',array(
         'version' => $this->_apiversion,
         'entity_id' => $contribution['id'],
         'entity_table' => 'civicrm_contribution',
         'sequential' => 1,
     ));
-    $this->assertEquals(0, $lineItems['count']);
+    $this->assertEquals(1, $lineItems['count']);
+    $this->_checkFinancialRecords($contribution, 'offline');  
+    $this->contributionGetnCheck($params, $contribution['id']);
   }
   /*
    *
@@ -601,6 +615,120 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $expectedResult = contribution_create_expectedresult();
     $this->checkArrayEquals($result, $expectedResult);
     $this->contributionDelete($contributionId);
+  }
+
+  /*
+   * Function tests that additional financial records are created when fee amount is recorded
+   */
+  function testCreateContributionWithFee() {
+    $params = array(
+      'contact_id' => $this->_individualId,
+      'receive_date' => '20120511',
+      'total_amount' => 100.00,
+      'fee_amount' => 50,
+      'financial_type_id' => 1,
+      'trxn_id' => 12345,
+      'invoice_id' => 67890,
+      'source' => 'SSF',
+      'contribution_status_id' => 1,
+      'version' => $this->_apiversion,
+    );
+
+    $contribution = civicrm_api('contribution', 'create', $params);
+    $this->documentMe($params, $contribution, __FUNCTION__, __FILE__);
+    $this->assertEquals($contribution['values'][$contribution['id']]['contact_id'], $this->_individualId, 'In line ' . __LINE__);
+    $this->assertEquals($contribution['values'][$contribution['id']]['total_amount'], 100.00, 'In line ' . __LINE__);
+    $this->assertEquals($contribution['values'][$contribution['id']]['financial_type_id'],1, 'In line ' . __LINE__ );
+    $this->assertEquals($contribution['values'][$contribution['id']]['trxn_id'], 12345, 'In line ' . __LINE__);
+    $this->assertEquals($contribution['values'][$contribution['id']]['invoice_id'], 67890, 'In line ' . __LINE__);
+    $this->assertEquals($contribution['values'][$contribution['id']]['source'], 'SSF', 'In line ' . __LINE__);
+    $this->assertEquals($contribution['values'][$contribution['id']]['contribution_status_id'], 1, 'In line ' . __LINE__);
+    $lineItems = civicrm_api('line_item','get',array(
+      'version' => $this->_apiversion,
+      'entity_id' => $contribution['id'],
+      'entity_table' => 'civicrm_contribution',
+      'sequential' => 1,
+      ));
+    $this->assertEquals(1, $lineItems['count']);
+    $this->assertEquals($contribution['id'], $lineItems['values'][0]['entity_id']);
+    $this->assertEquals($contribution['id'], $lineItems['values'][0]['entity_id']);
+    $lineItems = civicrm_api('line_item','get',array(
+        'version' => $this->_apiversion,
+        'entity_id' => $contribution['id'],
+        'entity_table' => 'civicrm_contribution',
+        'sequential' => 1,
+    ));
+    $this->assertEquals(1, $lineItems['count']);
+    $this->_checkFinancialRecords($contribution, 'feeAmount');
+  }
+
+
+  /*
+   * Function tests that additional financial records are created when online contribution is created
+   */
+  function testCreateContributionOnline() {
+    $paymentProcessor = CRM_Core_BAO_PaymentProcessor::create($this->_processorParams);
+    $contributionPage = civicrm_api( 'contribution_page','create',  $this->_pageParams );
+
+    $params = array(
+      'contact_id' => $this->_individualId,
+      'receive_date' => '20120511',
+      'total_amount' => 100.00,
+      'financial_type_id' => 1,
+      'contribution_page_id' => $contributionPage['id'],
+      'payment_processor' => 1,
+      'trxn_id' => 12345,
+      'invoice_id' => 67890,
+      'source' => 'SSF',
+      'contribution_status_id' => 1,
+      'version' => $this->_apiversion,
+    );
+
+    $contribution = civicrm_api('contribution', 'create', $params);
+    $this->documentMe($params, $contribution, __FUNCTION__, __FILE__);
+    $this->assertEquals($contribution['values'][$contribution['id']]['contact_id'], $this->_individualId, 'In line ' . __LINE__);
+    $this->assertEquals($contribution['values'][$contribution['id']]['total_amount'], 100.00, 'In line ' . __LINE__);
+    $this->assertEquals($contribution['values'][$contribution['id']]['financial_type_id'],1, 'In line ' . __LINE__ );
+    $this->assertEquals($contribution['values'][$contribution['id']]['trxn_id'], 12345, 'In line ' . __LINE__);
+    $this->assertEquals($contribution['values'][$contribution['id']]['invoice_id'], 67890, 'In line ' . __LINE__);
+    $this->assertEquals($contribution['values'][$contribution['id']]['source'], 'SSF', 'In line ' . __LINE__);
+    $this->assertEquals($contribution['values'][$contribution['id']]['contribution_status_id'], 1, 'In line ' . __LINE__);
+    $this->_checkFinancialRecords($contribution, 'online');
+  }
+
+  /*
+   * Function tests that additional financial records are created when online contribution with pay later option
+   * is created
+   */
+  function testCreateContributionPayLaterOnline() {
+    $paymentProcessor = CRM_Core_BAO_PaymentProcessor::create($this->_processorParams);
+    $this->_pageParams['is_pay_later'] = 1;
+    $contributionPage = civicrm_api( 'contribution_page','create',$this->_pageParams );
+
+    $params = array(
+      'contact_id' => $this->_individualId,
+      'receive_date' => '20120511',
+      'total_amount' => 100.00,
+      'financial_type_id' => 1,
+      'contribution_page_id' => $contributionPage['id'],
+      'trxn_id' => 12345,
+      'is_pay_later' => 1,
+      'invoice_id' => 67890,
+      'source' => 'SSF',
+      'contribution_status_id' => 2,
+      'version' => $this->_apiversion,
+    );
+
+    $contribution = civicrm_api('contribution', 'create', $params);
+    $this->documentMe($params, $contribution, __FUNCTION__, __FILE__);
+    $this->assertEquals($contribution['values'][$contribution['id']]['contact_id'], $this->_individualId, 'In line ' . __LINE__);
+    $this->assertEquals($contribution['values'][$contribution['id']]['total_amount'], 100.00, 'In line ' . __LINE__);
+    $this->assertEquals($contribution['values'][$contribution['id']]['financial_type_id'],1, 'In line ' . __LINE__ );
+    $this->assertEquals($contribution['values'][$contribution['id']]['trxn_id'], 12345, 'In line ' . __LINE__);
+    $this->assertEquals($contribution['values'][$contribution['id']]['invoice_id'], 67890, 'In line ' . __LINE__);
+    $this->assertEquals($contribution['values'][$contribution['id']]['source'], 'SSF', 'In line ' . __LINE__);
+    $this->assertEquals($contribution['values'][$contribution['id']]['contribution_status_id'], 2, 'In line ' . __LINE__);
+    $this->_checkFinancialRecords($contribution, 'payLater');
   }
 
   /*
@@ -1251,6 +1379,90 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
    );
    $financialType = CRM_Financial_BAO_FinancialTypeAccount::add($financialParams, CRM_Core_DAO::$_nullArray);
    return $optionValue->value;
+ }
+ 
+ function _checkFinancialRecords($params,$context) {
+   $entityParams = array(
+     'entity_id' => $params['id'],
+     'entity_table' => 'civicrm_contribution',
+   );
+   $trxn = current(CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($entityParams));
+   $trxnParams = array(
+     'id' => $trxn['financial_trxn_id'],                
+   );   
+   if ($context != 'online' && $context != 'payLater') {
+     $compareParams = array(
+       'to_financial_account_id' => 6,
+       'total_amount' => 100,
+       'status_id' => 1,
+     );
+   }
+   if ($context == 'feeAmount') {
+     $compareParams['fee_amount'] = 50;
+   }
+   elseif ($context == 'online') {
+     $compareParams = array(
+       'to_financial_account_id' => 12,
+       'total_amount' => 100,
+       'status_id' => 1,
+     );
+   }
+   elseif ($context == 'payLater') {
+     $compareParams = array(
+       'to_financial_account_id' => 7,
+       'total_amount' => 100,
+       'status_id' => 2,
+     );
+   }
+   $this->assertDBCompareValues('CRM_Financial_DAO_FinancialTrxn',$trxnParams,$compareParams);
+   $entityParams = array(
+     'financial_trxn_id' => $trxn->financial_trxn_id,
+     'entity_table' => 'civicrm_financial_item',
+   );
+   $entityTrxn = current(CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($entityParams));
+   $fitemParams = array(
+     'id' => $entityTrxn->entity_id,
+   );
+   $compareParams = array(
+     'amount' => 100,
+     'status_id' => 1,
+     'financial_account_id' => 1,
+   );
+   if ($context == 'payLater') {
+     $compareParams = array(
+       'amount' => 100,
+       'status_id' => 3,
+       'financial_account_id' => 1,
+     );
+   }
+   $this->assertDBCompareValues('CRM_Financial_DAO_FinancialItem', $fitemParams, $compareParams);
+   if ($context == 'feeAmount') {
+     $maxParams = array(
+       'entity_id' => $params['id'],
+       'entity_table' => 'civicrm_contribution',
+     );
+     $maxTrxn = CRM_Financial_BAO_FinancialItem::retrieveMaxEntityFinancialTrxn($maxParams);
+     $trxnParams = array(
+       'id' => $maxTrxn->financial_trxn_id,                     
+     );
+     $compareParams = array(
+       'to_financial_account_id' => 5,
+       'from_financial_account_id' => 6,
+       'total_amount' => 50,
+       'status_id' => 1,
+     );
+     $this->assertDBCompareValues('CRM_Financial_DAO_FinancialTrxn',$trxnParams,$compareParams);
+     $fitemParams = array(
+       'entity_id' => $maxTrxn->finanacial_trxn_id,  
+       'entity_table' => 'civicrm_financial_trxn',
+     );
+     $compareParams = array(
+       'amount' => 50,
+       'status_id' => 1,
+       'financial_account_id' => 5,
+     );
+     $this->assertDBCompareValues('CRM_Financial_DAO_FinancialItem', $fitemParams, $compareParams);
+   }
  }
 }
 
