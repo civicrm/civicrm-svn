@@ -266,7 +266,8 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
    * @static
    * @access public
    */
-  static function setItem($value,
+  static function setItem(
+    $value,
     $group,
     $name,
     $componentID = NULL,
