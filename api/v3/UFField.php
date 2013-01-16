@@ -59,14 +59,11 @@ require_once 'CRM/Core/BAO/UFGroup.php';
  * @example UFFieldCreate.php
  */
 function civicrm_api3_uf_field_create($params) {
-
   civicrm_api3_verify_one_mandatory($params, NULL, array('field_name', 'uf_group_id'));
   $groupId = CRM_Utils_Array::value('uf_group_id', $params);
   if ((int) $groupId < 1) {
     return civicrm_api3_create_error('Params must be a field_name-carrying array and a positive integer.');
   }
-
-
 
   $field_type       = CRM_Utils_Array::value('field_type', $params);
   $field_name       = CRM_Utils_Array::value('field_name', $params);
@@ -139,7 +136,6 @@ function _civicrm_api3_uf_field_create_spec(&$params) {
  * @access public
  */
 function civicrm_api3_uf_field_get($params) {
-
   return _civicrm_api3_basic_get('CRM_Core_BAO_UFField', $params);
 }
 
@@ -154,20 +150,7 @@ function civicrm_api3_uf_field_get($params) {
  * {@getfields UFField_delete}
  * @example UFFieldDelete.php
  */
-
-/**
- * Delete uf field
- *
- * @param $fieldId int  Valid uf_field id that to be deleted
- *
- * @return true on successful delete or return error
- *
- * @access public
- *
- */
 function civicrm_api3_uf_field_delete($params) {
-
-
   $fieldId = $params['id'];
 
   $ufGroupId = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFField', $fieldId, 'uf_group_id');
