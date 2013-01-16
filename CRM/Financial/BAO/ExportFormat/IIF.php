@@ -145,21 +145,22 @@ class CRM_Financial_BAO_ExportFormat_IIF extends CRM_Financial_BAO_ExportFormat 
         if (empty($dao->from_account_id)) {
           // In this case, split records need to use the individual financial_item account for each item in the trxn
           $item_sql = "SELECT
-            fa.id as account_id,
-            fa.name as account_name,
-            fa.accounting_code as account_code,
-            fa.description as account_description,
-            fi.id as financial_item_id,
-            ft.currency as currency,
-            cov.label as payment_instrument,
-            ft.check_number as check_number,
-            fi.transaction_date,
-            fi.amount,
-            fa.account_type_code as account_type_code,
-            contact.id as contact_id,
-            contact.display_name as contact_name,
-            contact.first_name as contact_first_name,
-            contact.last_name as contact_last_name
+            fa.id AS account_id,
+            fa.name AS account_name,
+            fa.accounting_code AS account_code,
+            fa.description AS account_description,
+            fi.description AS description,
+            fi.id AS financial_item_id,
+            fi.currency AS currency,
+            cov.label AS payment_instrument,
+            ft.check_number AS check_number,
+            fi.transaction_date AS transaction_date,
+            fi.amount AS amount,
+            fa.account_type_code AS account_type_code,
+            contact.id AS contact_id,
+            contact.display_name AS contact_name,
+            contact.first_name AS contact_first_name,
+            contact.last_name AS contact_last_name
             FROM civicrm_entity_financial_trxn eft
             LEFT JOIN civicrm_financial_item fi ON eft.entity_id = fi.id
             LEFT JOIN civicrm_financial_trxn ft ON ft.id = eft.financial_trxn_id
@@ -200,7 +201,9 @@ class CRM_Financial_BAO_ExportFormat_IIF extends CRM_Financial_BAO_ExportFormat 
               'amount' => $this->format( (-1) * $itemDAO->amount ),
               'contact_name' => $this->format( $itemDAO->contact_name ),
               'payment_instrument' => $this->format( $itemDAO->payment_instrument ),
+              'description' => $this->format( $itemDAO->description ),
               'check_number' => $this->format( $itemDAO->check_number ),
+              'currency' => $this->format( $itemDAO->currency ),
             );
           } // end items loop
           $itemDAO->free();
@@ -209,12 +212,14 @@ class CRM_Financial_BAO_ExportFormat_IIF extends CRM_Financial_BAO_ExportFormat 
           // In this case, split record just uses the FROM account from the trxn, and there's only one record here
           $journalEntries[$dao->financial_trxn_id]['splits'][] = array(
             'trxn_date' => $this->format( $dao->trxn_date, 'date' ),
+            'spl_id' => $this->format( $dao->financial_trxn_id ),
             'account_name' => $this->format( $dao->from_account_name ),
-            'amount' => $this->format( (-1) * $dao->total_amount ),
+            'amount' => $this->format( (-1) * $dao->debit_total_amount ),
             'contact_name' => $this->format( $dao->contact_from_name ),
-            'payment_instrument' => $this->format( $itemDAO->payment_instrument ),
-            'check_number' => $this->format( $itemDAO->check_number ),
-            'currency' => $this->format( $itemDAO->currency ),
+            'description' => $this->format( $dao->item_description ),
+            'payment_instrument' => $this->format( $dao->payment_instrument ),
+            'check_number' => $this->format( $dao->check_number ),
+            'currency' => $this->format( $dao->currency ),
           );
         }
       }
