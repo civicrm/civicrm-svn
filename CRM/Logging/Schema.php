@@ -302,8 +302,8 @@ COLS;
     $query = preg_replace("/ AUTO_INCREMENT/i", '', $query);
     $query = preg_replace("/^  [^`].*$/m", '', $query);
     $query = preg_replace("/^\) ENGINE=[^ ]+ /im", ') ENGINE=ARCHIVE ', $query);
-    // log_civicrm_contact.modified_date for example would always be copied from civicrm_contact.modified_date, 
-    // so there's no need for a default timestamp and therefore we remove such default timestamps by using fixTimeStampSQL() method, 
+    // log_civicrm_contact.modified_date for example would always be copied from civicrm_contact.modified_date,
+    // so there's no need for a default timestamp and therefore we remove such default timestamps by using fixTimeStampSQL() method,
     // before we inject special log columns with default timestamps
     $query = self::fixTimeStampSQL($query);
     $query = preg_replace("/^\) /m", "$cols\n) ", $query);
@@ -365,7 +365,7 @@ COLS;
 
   function triggerInfo(&$info, $tableName = NULL) {
     // check if we have logging enabled
-    $config = &CRM_Core_Config::singleton();
+    $config =& CRM_Core_Config::singleton();
     if (!$config->logging) {
       return;
     }
@@ -388,7 +388,10 @@ COLS;
       // only do the change if any data has changed
       $cond = array( );
       foreach ($columns as $column) {
-        $cond[] = "IFNULL(OLD.$column,'') <> IFNULL(NEW.$column,'')";
+        // ignore modified_date changes
+        if ($column != 'modified_date') {
+          $cond[] = "IFNULL(OLD.$column,'') <> IFNULL(NEW.$column,'')";
+        }
       }
       $suppressLoggingCond = "@civicrm_disable_logging IS NULL OR @civicrm_disable_logging = 0";
       $updateSQL = "IF ( (" . implode( ' OR ', $cond ) . ") AND ( $suppressLoggingCond ) ) THEN ";
