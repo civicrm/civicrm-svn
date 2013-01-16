@@ -35,8 +35,34 @@ class CRM_Extension_Container_BasicTest extends CiviUnitTestCase {
     $this->assertEquals("$basedir/foo/bar", $c->getPath('test.foo.bar'));
   }
 
+  function testGetPath_extraSlashFromConfig() {
+    list($basedir, $c) = $this->_createContainer(NULL, NULL, '/');
+    try {
+      $c->getPath('un.kno.wn');
+    } catch (CRM_Extension_Exception $e) {
+      $exc = $e;
+    }
+    $this->assertTrue(is_object($exc), 'Expected exception');
+
+    $this->assertEquals("$basedir/foo", $c->getPath('test.foo'));
+    $this->assertEquals("$basedir/foo/bar", $c->getPath('test.foo.bar'));
+  }
+
   function testGetResUrl() {
     list($basedir, $c) = $this->_createContainer();
+    try {
+      $c->getResUrl('un.kno.wn');
+    } catch (CRM_Extension_Exception $e) {
+      $exc = $e;
+    }
+    $this->assertTrue(is_object($exc), 'Expected exception');
+
+    $this->assertEquals('http://example/basedir/foo', $c->getResUrl('test.foo'));
+    $this->assertEquals('http://example/basedir/foo/bar', $c->getResUrl('test.foo.bar'));
+  }
+
+  function testGetResUrl_extraSlashFromConfig() {
+    list($basedir, $c) = $this->_createContainer(NULL, NULL, '/');
     try {
       $c->getResUrl('un.kno.wn');
     } catch (CRM_Extension_Exception $e) {
@@ -59,15 +85,15 @@ class CRM_Extension_Container_BasicTest extends CiviUnitTestCase {
     $this->assertEquals('/foo/bar', $cacheData['test.foo.bar']);
   }
 
-  function _createContainer(CRM_Utils_Cache_Interface $cache = NULL, $cacheKey = NULL) {
-    $basedir = $this->createTempDir('ext-');
+  function _createContainer(CRM_Utils_Cache_Interface $cache = NULL, $cacheKey = NULL, $appendPathGarbage = '') {
+    $basedir = rtrim($this->createTempDir('ext-'), '/');
     mkdir("$basedir/foo");
     mkdir("$basedir/foo/bar");
     file_put_contents("$basedir/foo/info.xml", "<extension key='test.foo' type='module'><file>foo</file></extension>");
     // not needed for now // file_put_contents("$basedir/foo/foo.php", "<?php\n");
     file_put_contents("$basedir/foo/bar/info.xml", "<extension key='test.foo.bar' type='report'><file>oddball</file></extension>");
     // not needed for now // file_put_contents("$basedir/foo/bar/oddball.php", "<?php\n");
-    $c = new CRM_Extension_Container_Basic($basedir, 'http://example/basedir', $cache, $cacheKey);
+    $c = new CRM_Extension_Container_Basic($basedir . $appendPathGarbage, 'http://example/basedir' . $appendPathGarbage, $cache, $cacheKey);
     return array($basedir, $c);
   }
 }

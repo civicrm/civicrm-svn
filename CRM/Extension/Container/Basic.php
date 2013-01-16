@@ -81,8 +81,8 @@ class CRM_Extension_Container_Basic implements CRM_Extension_Container_Interface
   public function __construct($baseDir, $baseUrl, CRM_Utils_Cache_Interface $cache = NULL, $cacheKey = NULL) {
     $this->cache = $cache;
     $this->cacheKey = $cacheKey;
-    $this->baseDir = $baseDir;
-    $this->baseUrl = $baseUrl;
+    $this->baseDir = rtrim($baseDir, '/');
+    $this->baseUrl = rtrim($baseUrl, '/');
   }
 
   /**

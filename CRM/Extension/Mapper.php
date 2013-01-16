@@ -84,6 +84,8 @@ class CRM_Extension_Mapper {
     $this->container = $container;
     $this->cache = $cache;
     $this->cacheKey = $cacheKey;
+    $config = CRM_Core_Config::singleton();
+    $this->civicrmUrl = rtrim($config->resourceBase, '/');
   }
 
   /**
@@ -216,8 +218,7 @@ class CRM_Extension_Mapper {
    */
   public function keyToUrl($key) {
     if ($key == 'civicrm') {
-      $config = CRM_Core_Config::singleton();
-      return $config->resourceBase;
+      return $this->civicrmUrl;
     }
 
     return $this->container->getResUrl($key);
