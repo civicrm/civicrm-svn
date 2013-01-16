@@ -24,6 +24,13 @@
  +--------------------------------------------------------------------+
 *}
 {crmRegion name="billing-block"}
+{* Add 'required' marker to billing fields in this template for front-end / online contribution and event registration forms only. *}
+{if $context EQ 'front-end'}
+  {assign var=reqMark value=' <span class="crm-marker" title="This field is required.">*</span>'}
+{else}
+  {assign var=reqMark value=''}
+{/if}
+
 {if $form.credit_card_number or $form.bank_account_number}
     <div id="payment_information">
         <fieldset class="billing_mode-group {if $paymentProcessor.payment_type & 2}direct_debit_info-group{else}credit_card_info-group{/if}">
@@ -73,17 +80,17 @@
                         </div>
                     {else}
                         <div class="crm-section {$form.credit_card_type.name}-section">
-                             <div class="label">{$form.credit_card_type.label} <span class="crm-marker" title="This field is required.">*</span></div>
+                             <div class="label">{$form.credit_card_type.label} {$reqMark}</div>
                              <div class="content">{$form.credit_card_type.html}</div>
                              <div class="clear"></div>
                         </div>
                         <div class="crm-section {$form.credit_card_number.name}-section">
-                             <div class="label">{$form.credit_card_number.label} <span class="crm-marker" title="This field is required.">*</span></div>
+                             <div class="label">{$form.credit_card_number.label} {$reqMark}</div>
                              <div class="content">{$form.credit_card_number.html|crmAddClass:creditcard}</div>
                              <div class="clear"></div>
                         </div>
                         <div class="crm-section {$form.cvv2.name}-section">
-                            <div class="label">{$form.cvv2.label} <span class="crm-marker" title="This field is required.">*</span></div>
+                            <div class="label">{$form.cvv2.label} {$reqMark}</div>
                             <div class="content">
                                 {$form.cvv2.html}
                                 <img src="{$config->resourceBase}i/mini_cvv2.gif" alt="{ts}Usually the last 3-4 digits in the signature area on the back of the card.{/ts}" title="{ts}Usually the last 3-4 digits in the signature area on the back of the card.{/ts}" style="vertical-align: text-bottom;" />
@@ -91,7 +98,7 @@
                             <div class="clear"></div>
                         </div>
                         <div class="crm-section {$form.credit_card_exp_date.name}-section">
-                            <div class="label">{$form.credit_card_exp_date.label} <span class="crm-marker" title="This field is required.">*</span></div>
+                            <div class="label">{$form.credit_card_exp_date.label} {$reqMark}</div>
                             <div class="content">{$form.credit_card_exp_date.html}</div>
                             <div class="clear"></div>
                         </div>
@@ -106,7 +113,7 @@
                   <legend>{ts}Billing Name and Address{/ts}</legend>
                     <div class="crm-section billing_name_address-section">
                         <div class="crm-section {$form.billing_first_name.name}-section">
-                            <div class="label">{$form.billing_first_name.label} <span class="crm-marker" title="This field is required.">*</span></div>
+                            <div class="label">{$form.billing_first_name.label} {$reqMark}</div>
                             <div class="content">{$form.billing_first_name.html}</div>
                             <div class="clear"></div>
                         </div>
@@ -116,37 +123,37 @@
                             <div class="clear"></div>
                         </div>
                         <div class="crm-section {$form.billing_last_name.name}-section">
-                            <div class="label">{$form.billing_last_name.label} <span class="crm-marker" title="This field is required.">*</span></div>
+                            <div class="label">{$form.billing_last_name.label} {$reqMark}</div>
                             <div class="content">{$form.billing_last_name.html}</div>
                             <div class="clear"></div>
                         </div>
                         {assign var=n value=billing_street_address-$bltID}
                         <div class="crm-section {$form.$n.name}-section">
-                            <div class="label">{$form.$n.label} <span class="crm-marker" title="This field is required.">*</span></div>
+                            <div class="label">{$form.$n.label} {$reqMark}</div>
                             <div class="content">{$form.$n.html}</div>
                             <div class="clear"></div>
                         </div>
                         {assign var=n value=billing_city-$bltID}
                         <div class="crm-section {$form.$n.name}-section">
-                            <div class="label">{$form.$n.label} <span class="crm-marker" title="This field is required.">*</span></div>
+                            <div class="label">{$form.$n.label} {$reqMark}</div>
                             <div class="content">{$form.$n.html}</div>
                             <div class="clear"></div>
                         </div>
                         {assign var=n value=billing_country_id-$bltID}
                         <div class="crm-section {$form.$n.name}-section">
-                            <div class="label">{$form.$n.label} <span class="crm-marker" title="This field is required.">*</span></div>
+                            <div class="label">{$form.$n.label} {$reqMark}</div>
                             <div class="content">{$form.$n.html|crmAddClass:big}</div>
                             <div class="clear"></div>
                         </div>
                         {assign var=n value=billing_state_province_id-$bltID}
                         <div class="crm-section {$form.$n.name}-section">
-                            <div class="label">{$form.$n.label} <span class="crm-marker" title="This field is required.">*</span></div>
+                            <div class="label">{$form.$n.label} {$reqMark}</div>
                             <div class="content">{$form.$n.html|crmAddClass:big}</div>
                             <div class="clear"></div>
                         </div>
                         {assign var=n value=billing_postal_code-$bltID}
                         <div class="crm-section {$form.$n.name}-section">
-                            <div class="label">{$form.$n.label} <span class="crm-marker" title="This field is required.">*</span></div>
+                            <div class="label">{$form.$n.label} {$reqMark}</div>
                             <div class="content">{$form.$n.html}</div>
                             <div class="clear"></div>
                         </div>
