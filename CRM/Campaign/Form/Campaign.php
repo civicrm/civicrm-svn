@@ -268,7 +268,7 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form {
     }
 
     //get the campaign groups.
-    $groups = CRM_Core_PseudoConstant::group('Campaign');
+    $groups = CRM_Core_PseudoConstant::group();
 
     $inG = &$this->addElement('advmultiselect', 'includeGroups',
       ts('Include Group(s)') . ' ',
