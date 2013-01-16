@@ -57,12 +57,13 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
     $this->_mode = $mode;
     $this->_paymentProcessor = $paymentProcessor;
     $this->_processorName = ts('PayPal Pro');
+    $paymentProcessorType = CRM_Core_PseudoConstant::paymentProcessorType(false, null, 'name');
 
-    if ($this->_paymentProcessor['payment_processor_type_id'] == '1') {
+    if ($this->_paymentProcessor['payment_processor_type_id'] == CRM_Utils_Array::key('PayPal_Standard', $paymentProcessorType)) {
       $this->_processorName = ts('PayPal Standard');
       return;
     }
-    elseif ($this->_paymentProcessor['payment_processor_type_id'] == '3') {
+    elseif ($this->_paymentProcessor['payment_processor_type_id'] == CRM_Utils_Array::key('PayPal_Express', $paymentProcessorType)) {
       $this->_processorName = ts('PayPal Express');
     }
 
@@ -353,15 +354,16 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
    */
   function checkConfig() {
     $error = array();
-    if ($this->_paymentProcessor['payment_processor_type_id'] == '1' ||
-      $this->_paymentProcessor['payment_processor_type_id'] == '2'
+    $paymentProcessorType = CRM_Core_PseudoConstant::paymentProcessorType(false, null, 'name');
+    if ($this->_paymentProcessor['payment_processor_type_id'] == CRM_Utils_Array::key('PayPal_Standard', $paymentProcessorType) ||
+      $this->_paymentProcessor['payment_processor_type_id'] == CRM_Utils_Array::key('PayPal', $paymentProcessorType)
     ) {
       if (empty($this->_paymentProcessor['user_name'])) {
         $error[] = ts('User Name is not set in the Administer CiviCRM &raquo; System Settings &raquo; Payment Processors.');
       }
     }
 
-    if ($this->_paymentProcessor['payment_processor_type_id'] != '1') {
+    if ($this->_paymentProcessor['payment_processor_type_id'] != CRM_Utils_Array::key('PayPal_Standard', $paymentProcessorType)) {
       if (empty($this->_paymentProcessor['signature'])) {
         $error[] = ts('Signature is not set in the Administer CiviCRM &raquo; System Settings &raquo; Payment Processors.');
       }

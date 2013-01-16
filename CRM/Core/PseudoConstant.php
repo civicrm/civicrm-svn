@@ -1656,9 +1656,9 @@ WHERE  id = %1";
    * @return array - array of all payment processor types
    *
    */
-  public static function &paymentProcessorType($all = FALSE, $id = NULL) {
+  public static function &paymentProcessorType($all = FALSE, $id = NULL, $return = 'title') {
     if (!self::$paymentProcessorType) {
-      self::populate(self::$paymentProcessorType, 'CRM_Financial_DAO_PaymentProcessorType', $all, 'title', 'is_active', NULL, 'is_default, title', 'id');
+      self::populate(self::$paymentProcessorType, 'CRM_Financial_DAO_PaymentProcessorType', $all, $return, 'is_active', NULL, "is_default, $return", 'id');
     }
     if ($id && CRM_Utils_Array::value($id, self::$paymentProcessorType)) {
       return self::$paymentProcessorType[$id];
