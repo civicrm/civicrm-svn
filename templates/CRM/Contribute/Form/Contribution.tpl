@@ -469,7 +469,7 @@
     {/literal}{/if}{literal}
     </script>	
     {/literal}
-      {if !$isOnline && !$contributionMode}
+      {if !$contributionMode}
         {include file="CRM/common/showHideByFieldValue.tpl"
         trigger_field_id    ="payment_instrument_id"
         trigger_value       = '4'
