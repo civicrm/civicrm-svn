@@ -311,7 +311,7 @@ WHERE cf.id IN (" . $customFieldIds . ") AND is_multiple = 1 LIMIT 0,1";
    * @static
    * @access public
    */
-  function delUFField($customFieldId) {
+  static function delUFField($customFieldId) {
     //find the profile id given custom field id
     $ufField = new CRM_Core_DAO_UFField();
     $ufField->field_name = "custom_" . $customFieldId;

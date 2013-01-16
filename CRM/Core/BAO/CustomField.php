@@ -1068,6 +1068,9 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField {
     self::createField($field, 'delete');
 
     $field->delete();
+    CRM_Core_BAO_UFField::delUFField($field->id);
+    CRM_Utils_Weight::correctDuplicateWeights('CRM_Core_DAO_CustomField');
+
     return;
   }
 
