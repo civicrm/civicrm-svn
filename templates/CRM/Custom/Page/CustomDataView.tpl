@@ -90,7 +90,6 @@
                  {if $element.field_data_type == 'Memo'}
                    {$element.field_value|nl2br}
                  {else}
-                 {$element.field_data_type}
                    {$element.field_value}
                  {/if}
                {if $element.contact_ref_id}

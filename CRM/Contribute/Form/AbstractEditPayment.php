@@ -225,7 +225,7 @@ class CRM_Contribute_Form_AbstractEditPayment extends CRM_Core_Form {
     $this->set('subType', $subType);
     $this->set('entityId', $entityId);
 
-    CRM_Custom_Form_CustomData::preProcess($this);
+    CRM_Custom_Form_CustomData::preProcess($this, NULL, $subType, 1, $type, $entityId);
     CRM_Custom_Form_CustomData::buildQuickForm($this);
     CRM_Custom_Form_CustomData::setDefaultValues($this);
   }
