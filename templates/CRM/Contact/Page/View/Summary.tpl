@@ -410,7 +410,7 @@ cj(function($) {
   $('.crm-inline-edit-container').crmFormContactLock({
     ignoreLabel: "{/literal}{ts escape='js'}Ignore{/ts}{literal}",
     saveAnywayLabel: "{/literal}{ts escape='js'}Save Anyway{/ts}{literal}",
-    reloadLabel: "{/literal}{ts escape='js'}Start Over{/ts}{literal}"
+    reloadLabel: "{/literal}{ts escape='js'}Reload Page{/ts}{literal}"
   });
 });
 </script>

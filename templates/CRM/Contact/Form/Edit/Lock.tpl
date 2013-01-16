@@ -34,7 +34,7 @@ cj(function() {
     .appendTo(cj('#update_modified_date'))
     ;
   cj('<button>')
-    .text("{/literal}{ts}Start Over{/ts}{literal}")
+    .text("{/literal}{ts}Reload Page{/ts}{literal}")
     .click(function() {
       window.location = CRM.url('civicrm/contact/add', {
         reset: 1,
