@@ -275,13 +275,6 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
       $defaults['option_type'] = 1;
     }
 
-    if ($this->_action & CRM_Core_Action::UPDATE) {
-      $financialTrxnId = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnIds($defaults['contribution_id']);
-      if (CRM_Utils_Array::value('financialTrxnId', $financialTrxnId)) {
-        $defaults['to_financial_account_id'] = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_FinancialTrxn', $financialTrxnId['financialTrxnId'], 'to_financial_account_id');
-      }
-    }
-
     $fields = array();
     if ($this->_action & CRM_Core_Action::DELETE) {
       return $defaults;
@@ -1204,7 +1197,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
       //process premium
       if ($contribution->id && isset($formValues['product_name'][0])) {
         // get initial financial_trxn for this contribution so we can link premium trxn to it
-        $mainTrxnId = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnIds($contribution->id);        
+        $mainTrxnId = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnId($contribution->id);        
         CRM_Contribute_Form_AdditionalInfo::processPremium($formValues, $contribution->id,
           $this->_premiumID, $this->_options
         );
@@ -1580,7 +1573,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
     }
     //process premium
     if ($contribution->id && isset($params['product_name'][0])) {
-      $mainTrxnId = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnIds($contribution->id);
+      $mainTrxnId = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnId($contribution->id);
       CRM_Contribute_Form_AdditionalInfo::processPremium($params, $contribution->id, NULL, $this->_options);
     }
 

@@ -163,7 +163,7 @@ class CRM_Contribute_Form_AbstractEditPayment extends CRM_Core_Form {
 
     //Check if this is an online transaction (financial_trxn.payment_processor_id NOT NULL)
     $this->_online = FALSE;
-    $fids = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnIds($id, 'civicrm_contribution');
+    $fids = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnId($id, 'civicrm_contribution');
     if (CRM_Utils_Array::value('financialTrxnId', $fids)) {
       $this->_online = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_FinancialTrxn', $fids['financialTrxnId'], 'payment_processor_id');
     }

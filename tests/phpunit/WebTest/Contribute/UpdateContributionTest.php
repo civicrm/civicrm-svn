@@ -229,7 +229,7 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
    $this->waitForPageToLoad("30000");
 
    //Assertions
-   $financialTrxnIds = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnIds($contId);
+   $financialTrxnIds = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnId($contId);
    $actualAmount = $this->_getPremiumActualCost($financialTrxnIds['financialTrxnId'], $to, $from, $cost2);
    $this->assertEquals($actualAmount, $cost2, "Verify actual cost for changed premium");
 
@@ -324,7 +324,7 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
    $this->waitForPageToLoad("30000");
 
    //Assertions
-   $financialTrxnIds = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnIds($contId);
+   $financialTrxnIds = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnId($contId);
    $actualAmount = $this->_getPremiumActualCost($financialTrxnIds['financialTrxnId'], $from, $to);
    $this->assertEquals($actualAmount, $cost, "Verify actual cost for deleted premium");
  }

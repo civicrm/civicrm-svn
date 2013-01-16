@@ -109,7 +109,7 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem {
       $params['financial_account_id'] = CRM_Utils_Array::value( 'financial_account_id', $result );
     }
 
-    $trxn = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnIds($contribution->id);
+    $trxn = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnId($contribution->id);
     $trxnId['id'] = $trxn['financialTrxnId'];
 
     self::create($params, NULL, $trxnId);

@@ -120,13 +120,14 @@ class CRM_Core_BAO_FinancialTrxn extends CRM_Financial_DAO_FinancialTrxn {
    *
    * @param string $entityTable name of the entity table usually 'civicrm_contact'
    * @param int $entityID id of the entity usually the contactID.
+   * @param string  $orderBy to get single trxn id for a entity table i.e last or first.
    *
    * @return array( ) reference $tag array of catagory id's the contact belongs to.
    *
    * @access public
    * @static
    */
-  static function getFinancialTrxnIds($entity_id, $entity_table = 'civicrm_contribution') {
+  static function getFinancialTrxnId($entity_id, $entity_table = 'civicrm_contribution', $orderBy = 'ASC') {
     $ids = array('entityFinancialTrxnId' => NULL, 'financialTrxnId' => NULL);
 
     $query = "
@@ -134,7 +135,8 @@ class CRM_Core_BAO_FinancialTrxn extends CRM_Financial_DAO_FinancialTrxn {
             FROM civicrm_entity_financial_trxn
             WHERE entity_id = %1
             AND entity_table = %2
-        ";
+            ORDER BY id {$orderBy}
+            LIMIT 1; ";
 
     $params = array(1 => array($entity_id, 'Integer'), 2 => array($entity_table, 'String'));
     $dao = CRM_Core_DAO::executeQuery($query, $params);
@@ -257,7 +259,7 @@ WHERE lt.entity_id = %1 ";
    * @static
    */
   static function deleteFinancialTrxn($entity_id, $entity_table = 'civicrm_contribution') {
-    $fids = self::getFinancialTrxnIds($entity_id, $entity_table);
+    $fids = self::getFinancialTrxnId($entity_id, $entity_table);
 
     if ($fids['financialTrxnId']) {
       // delete enity financial transaction before financial transaction since financial_trxn_id will be set to null if financial transaction deleted first
@@ -286,7 +288,7 @@ WHERE lt.entity_id = %1 ";
     }
     
     if (CRM_Utils_Array::value('cost', $params)) {
-      $fids = self::getFinancialTrxnIds($params['contributionId'], 'civicrm_contribution');
+      $fids = self::getFinancialTrxnId($params['contributionId'], 'civicrm_contribution');
       $contributionStatuses = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
       $financialAccountType = CRM_Contribute_PseudoConstant::financialAccountType($params['financial_type_id']);
       $accountRelationship = CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND label IN ('Premiums Inventory Account is', 'Cost of Sales Account is')");

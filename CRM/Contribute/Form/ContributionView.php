@@ -66,8 +66,8 @@ class CRM_Contribute_Form_ContributionView extends CRM_Core_Form {
     }
 
     // get to_financial_type from civicrm_financial_trxn
-    $financialTrxnId = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnIds($values['contribution_id']);
-    if (CRM_Utils_Array::value( 'financialTrxnId', $financialTrxnId)) {
+    $financialTrxnId = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnId($values['contribution_id']);
+    if (CRM_Utils_Array::value('financialTrxnId', $financialTrxnId)) {
       $values['to_financial_account_id'] = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_FinancialTrxn', $financialTrxnId['financialTrxnId'], 'to_financial_account_id');   
       $values['to_financial_account'] = CRM_Contribute_PseudoConstant::financialAccount($values['to_financial_account_id']);
     }

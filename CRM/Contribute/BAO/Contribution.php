@@ -2822,7 +2822,7 @@ WHERE  contribution_id = %1 ";
       $trxn = CRM_Core_BAO_FinancialTrxn::create($params['trxnParams']);
     } 
     else {
-      $trxnID = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnIds($params['contribution']->id);
+      $trxnID = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnId($params['contribution']->id);
     }
     
     if ($context == 'changedStatus') {
