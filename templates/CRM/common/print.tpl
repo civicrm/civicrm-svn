@@ -35,14 +35,13 @@
   <style type="text/css" media="screen, print">@import url({$config->resourceBase}css/extras.css);</style>
   <style type="text/css" media="print">@import url({$config->resourceBase}css/print.css);</style>
   <style type="text/css">@import url({$config->resourceBase}css/skins/aqua/theme.css);</style>
-  <script type="text/javascript" src="{$config->resourceBase}js/Common.js"></script>
+  {include file="CRM/common/jquery.tpl"}
 </head>
 
 <body>
 {if $config->debug}
-{include file="CRM/common/debug.tpl"}
+  {include file="CRM/common/debug.tpl"}
 {/if}
-{include file="CRM/common/jquery.tpl"}
 <div id="crm-container" class="crm-container" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
 {* Check for Status message for the page (stored in session->getStatus). Status is cleared on retrieval. *}
 {if $session->getStatus(false)}
