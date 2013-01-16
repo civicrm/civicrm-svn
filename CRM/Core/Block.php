@@ -45,7 +45,14 @@ class CRM_Core_Block {
    *
    * @var int
    */
-  CONST CREATE_NEW = 1, RECENTLY_VIEWED = 2, DASHBOARD = 3, ADD = 4, LANGSWITCH = 5, EVENT = 6, FULLTEXT_SEARCH = 7;
+  CONST
+    CREATE_NEW = 1,
+    RECENTLY_VIEWED = 2,
+    DASHBOARD = 3,
+    ADD = 4,
+    LANGSWITCH = 5,
+    EVENT = 6,
+    FULLTEXT_SEARCH = 7;
 
   /**
    * template file names for the above blocks
@@ -342,11 +349,12 @@ class CRM_Core_Block {
 
       // new activity (select target contact)
       $shortCuts = array_merge($shortCuts, array(
-        array('path' => 'civicrm/activity',
-            'query' => 'action=add&reset=1&context=standalone',
-            'ref' => 'new-activity',
-            'title' => ts('Activity'),
-          )));
+        array(
+          'path' => 'civicrm/activity',
+          'query' => 'action=add&reset=1&context=standalone',
+          'ref' => 'new-activity',
+          'title' => ts('Activity'),
+        )));
 
       $components = CRM_Core_Component::getEnabledComponents();
 
