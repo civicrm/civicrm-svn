@@ -61,7 +61,7 @@
       expires: 0
     };
     h = CRM.alert('...', title, 'crm-help crm-msg-loading', options);
-    params.class_name = 'CRM_Core_Page_Help';
+    params.class_name = 'CRM_Core_Page_Inline_Help';
     params.type = 'page';
     $.ajax(CRM.url('civicrm/ajax/inline'),
       {

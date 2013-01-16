@@ -73,8 +73,7 @@ class CRM_Core_Page_AJAX {
       case '':
         // FIXME: This is done to maintain current wire protocol, but it might be
         // simpler to just require different 'types' for pages and forms
-        if ($className == 'CRM_Core_Page_Help' ||
-          preg_match('/^CRM_[a-zA-Z0-9]+_Page_Inline_/', $className)) {
+        if (preg_match('/^CRM_[a-zA-Z0-9]+_Page_Inline_/', $className)) {
           $page = new $className;
           $page->run();
         }
@@ -132,9 +131,6 @@ class CRM_Core_Page_AJAX {
         return method_exists($className, $fnName);
 
       case 'page':
-        if ($className == 'CRM_Core_Page_Help') {
-          return class_exists($className);
-        }
       case 'class':
       case '':
         if (!preg_match('/^CRM_[a-zA-Z0-9]+_(Page|Form)_Inline_[a-zA-Z0-9]+$/', $className)) {
