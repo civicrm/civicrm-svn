@@ -98,18 +98,17 @@ class CRM_Utils_String {
     }
   }
 
-
-  /* 
-     * Takes a variable name and munges it randomly into another variable name
-     *  
-     * @param  string $name    Initial Variable Name
-     * @param int     $len  length of valid variables
-     *
-     * @return string  Randomized Variable Name
-     * @access public 
-     * @static
-     */
-
+  /**
+   *
+   * Takes a variable name and munges it randomly into another variable name
+   *
+   * @param  string $name    Initial Variable Name
+   * @param int     $len  length of valid variables
+   *
+   * @return string  Randomized Variable Name
+   * @access public
+   * @static
+   */
   static function rename($name, $len = 4) {
     $rand = substr(uniqid(), 0, $len);
     return substr_replace($name, $rand, -$len, $len);
@@ -191,12 +190,9 @@ class CRM_Utils_String {
     if (!function_exists('mb_detect_encoding')) {
       // eliminate all white space from the string
       $str = preg_replace('/\s+/', '', $str);
-      /* FIXME:  This is a pretty brutal hack to make utf8 and 8859-1 work.
-             */
-
+      // FIXME:  This is a pretty brutal hack to make utf8 and 8859-1 work.
 
       /* match low- or high-ascii characters */
-
       if (preg_match('/[\x00-\x20]|[\x7F-\xFF]/', $str)) {
         // || // low ascii characters
         // high ascii characters
@@ -449,7 +445,6 @@ class CRM_Utils_String {
       }
     }
     else {
-
       // name has no comma - assume fname [mname] fname
       $names = explode(' ', $name);
       if (count($names) == 1) {
@@ -584,7 +579,7 @@ class CRM_Utils_String {
    */
   static function purifyHTML($string) {
     static $_filter = null;
-    if ( ! $_filter ) {
+    if (!$_filter) {
       $config = HTMLPurifier_Config::createDefault();
       $config->set('Core.Encoding', 'UTF-8');
 
@@ -592,7 +587,7 @@ class CRM_Utils_String {
       $config->set('Cache.DefinitionImpl', null);
 
       $_filter = new HTMLPurifier($config);
-}
+    }
 
     return $_filter->purify($string);
   }
@@ -607,9 +602,10 @@ class CRM_Utils_String {
     $len = strlen($string);
     if ($len <= $maxLen) {
       return $string;
-    } else {
+    }
+    else {
       return substr($string, 0, $maxLen-3) . '...';
-}
+    }
   }
 
   /**
