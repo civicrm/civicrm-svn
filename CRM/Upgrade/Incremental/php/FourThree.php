@@ -70,7 +70,12 @@ class CRM_Upgrade_Incremental_php_FourThree {
     
     // task to process sql
     $this->addTask(ts('Upgrade DB to 4.3.alpha1: SQL'), 'task_4_3_x_runSql', $rev);
-
+ 
+    //CRM-11636
+    $this->addTask(ts('Populate financial type values for price records'), 'assignFinancialTypeToPriceRecords');
+    //CRM-11514 create financial records for contributions
+    $this->addTask(ts('Create financial records for contributions'), 'createFinancialRecords');
+    
     $minId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(min(id),0) FROM civicrm_contact');
     $maxId = CRM_Core_DAO::singleValueQuery('SELECT coalesce(max(id),0) FROM civicrm_contact');
     for ($startId = $minId; $startId <= $maxId; $startId += self::BATCH_SIZE) {
@@ -91,12 +96,7 @@ class CRM_Upgrade_Incremental_php_FourThree {
 
     // Update phones CRM-11292.
     $this->addTask(ts('Upgrade Phone Numbers'), 'phoneNumeric');
-    
-    //CRM-11514 create financial records for contributions
-    $this->addTask(ts('Create financial records for contributions'), 'createFinancialRecords');
-    
-    //CRM-11636
-    $this->addTask(ts('Populate financial type values for price records'), 'assignFinancialTypeToPriceRecords');
+   
     return TRUE;
   }
 
@@ -131,57 +131,28 @@ class CRM_Upgrade_Incremental_php_FourThree {
     
     return TRUE;
   }
-  
+ 
   static function _checkAndMigrateDefaultFinancialTypes() {
     $modifiedDefaults = FALSE;
     //insert types if not exists
     $sqlFetchTypes = "SELECT id, name FROM civicrm_contribution_type
-  WHERE name IN ('Donation', 'Event Fee', 'Member Dues')";
+  WHERE name IN ('Donation', 'Event Fee', 'Member Dues') AND is_active =1;";
     $daoFetchTypes = CRM_Core_DAO::executeQuery($sqlFetchTypes);
-    
-    $financialTypes = array();
-    while($daoFetchTypes->fetch()) {
-      $financialTypes[$daoFetchTypes->id] = $daoFetchTypes->name;
-    }
-    $insertStatments['Donation'] = "('Donation', 0, 1, 1)";
-    $insertStatments['Member Dues'] = "('Member Dues', 0, 1, 1)";
-    $insertStatments['Event Fee'] = "('Event Fee', 0, 1, 0)";
-    $insertString = array();
-    foreach($insertStatments as $key => $value) {
-      if (!in_array($key, $financialTypes)) {
-        $insertString[$key] = $value;
-      }
-    }
-    
-    if (!empty($insertString)) {
+
+    if ($daoFetchTypes->N < 3) {
       $modifiedDefaults = TRUE;
-      $append = implode(',', $insertString);
-      $insertSql = "INSERT INTO civicrm_contribution_type (name, is_reserved, is_active, is_deductible)
-  VALUES {$append};";
-      CRM_Core_DAO::executeQuery($insertSql);
-    }
-
-    $updateTypes = array_diff(array('Donation', 'Member Dues', 'Event Fee'), array_keys($insertString));
-    if (!empty($updateTypes)) {
-      $value = implode("','", $updateTypes);
-      if (count($updateTypes) == 1) {
-        $clause = " = '{$value}'";
+      $insertStatments = array ( 
+        'Donation' => "('Donation', 0, 1, 1)",
+        'Member' => "('Member Dues', 0, 1, 1)",
+        'Event Fee' => "('Event Fee', 0, 1, 0)",
+      );
+      foreach ($insertStatments as $values) {
+        $query = "INSERT INTO  civicrm_contribution_type  (name, is_reserved, is_active, is_deductible)
+          VALUES $values
+          ON DUPLICATE KEY UPDATE  is_active = 1;";
+        CRM_Core_DAO::executeQuery($query);
       } 
-      else {
-        $clause = " IN ('$value')";
-      }
-      //active the types which are disabled
-      $sqlSetFinancialTypeActive = "UPDATE civicrm_contribution_type SET is_active = 1 
-  WHERE name {$clause} AND is_active = 0;";
-      CRM_Core_DAO::executeQuery($sqlSetFinancialTypeActive);    
-      
-      if (!$modifiedDefaults) {
-        //to check affected rows
-        $sqlAffectedRows = "SELECT ROW_COUNT();"; 
-        $modifiedDefaults = CRM_Core_DAO::singleValueQuery($sqlAffectedRows);
-      }
     }
-
     return $modifiedDefaults;
   }
   
@@ -246,13 +217,22 @@ class CRM_Upgrade_Incremental_php_FourThree {
       $trxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
       $trxnIds[$dao->id] = $trxn->id;
     }
-        
-    //update all linked line_item rows - set line_item.financial_type_id = contribution.financial_type_id
+
+    //update all linked line_item rows
+    // set line_item.financial_type_id = contribution.financial_type_id if contribution page id is null and not participant line item
+    // set line_item.financial_type_id = price_field_value.financial_type_id if contribution page id is set and not participant line item
+    // set line_item.financial_type_id = event.financial_type_id if its participant line item and line_item.price_field_value_id is null
+    // set line_item.financial_type_id = price_field_value.financial_type_id if its participant line item and line_item.price_field_value_id is set
     $updateLineItemSql = "UPDATE civicrm_line_item li
-      INNER JOIN civicrm_contribution con ON (li.entity_id = con.id)
-      SET li.financial_type_id = con.financial_type_id
-      WHERE li.entity_table = 'civicrm_contribution'
-      AND con.contribution_status_id IN (%1, %2)";
+      LEFT JOIN civicrm_contribution con ON (li.entity_id = con.id) AND li.entity_table = 'civicrm_contribution'
+      LEFT JOIN civicrm_price_field_value cpfv ON li.price_field_value_id = cpfv.id
+      LEFT JOIN civicrm_participant cp ON (li.entity_id = cp.id) AND li.entity_table = 'civicrm_participant'
+      LEFT JOIN civicrm_event ce ON ce.id = cp.event_id 
+      SET li.financial_type_id = CASE
+        WHEN (con.contribution_page_id IS NULL || li.price_field_value_id IS NULL) AND cp.id IS NULL THEN con.financial_type_id
+        WHEN (con.contribution_page_id IS NOT NULL AND cp.id IS NULL) || (cp.id IS NOT NULL AND  li.price_field_value_id IS NOT NULL) THEN cpfv.financial_type_id
+        WHEN cp.id IS NOT NULL AND  li.price_field_value_id IS NULL THEN ce.financial_type_id
+      END";
     CRM_Core_DAO::executeQuery($updateLineItemSql, $queryParams);
     
     //add financial_item entries so loop the line item and build appropriate details needed for financial_item records
