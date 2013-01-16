@@ -989,18 +989,33 @@ SELECT  id
    * @return array, multidimensional; e.g. $result['field_name']['label']
    * @static
    */
-  public static function getAvailableFieldsFlat() {
-    $fieldTree = self::getAvailableFields();
-    $result = array();
-    foreach ($fieldTree as $field_type => $fields) {
-      foreach ($fields as $field_name => $field) {
-        if (!isset($result[$field_name])) {
-          $field['field_type'] = $field_type;
-          $result[$field_name] = $field;
+  public static function getAvailableFieldsFlat($force = FALSE) {
+    // FIXME reset when data model changes
+    static $result = NULL;
+    if ($result === NULL || $force) {
+      $fieldTree = self::getAvailableFields();
+      $result = array();
+      foreach ($fieldTree as $field_type => $fields) {
+        foreach ($fields as $field_name => $field) {
+          if (!isset($result[$field_name])) {
+            $field['field_type'] = $field_type;
+            $result[$field_name] = $field;
+          }
         }
       }
     }
     return $result;
+  }
+
+  /**
+   * Determine whether the given field_name is valid
+   *
+   * @param string $fieldName
+   * @return bool
+   */
+  static function isValidFieldName($fieldName) {
+    $availableFields = CRM_Core_BAO_UFField::getAvailableFieldsFlat();
+    return isset($availableFields[$fieldName]);
   }
 
   static function getContribBatchEntryFields() {

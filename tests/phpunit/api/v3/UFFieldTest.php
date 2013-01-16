@@ -110,6 +110,13 @@ class api_v3_UFFieldTest extends CiviUnitTestCase {
     }
   }
 
+  public function testCreateUFFieldWithBadFieldName() {
+    $params = $this->_params; // copy
+    $params['field_name'] = 'custom_98789'; // invalid field
+    $result = civicrm_api('uf_field', 'create', $params);
+    $this->assertEquals($result['is_error'], 1);
+  }
+
   function testCreateUFFieldWithEmptyParams() {
     $params = array();
     $result = civicrm_api('uf_field', 'create', $params);
