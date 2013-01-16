@@ -336,16 +336,14 @@ WHERE lt.entity_id = %1 ";
   static function recordFees($params) {
     $expenseTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Expense Account is' "));
     $financialAccount = CRM_Contribute_PseudoConstant::financialAccountType($params['financial_type_id'], $expenseTypeId);
-    $trxnParams = 
-      array(
-        'from_financial_account_id' => $params['to_financial_account_id'],
-        'to_financial_account_id' => $financialAccount,
-        'trxn_date' => date('YmdHis'),
-        'total_amount' => $params['fee_amount'],
-        'status_id' => CRM_Core_OptionGroup::getValue('contribution_status','Completed','name'),
-      );
-    $trxnParams['contribution_id'] = isset($params['contribution']->id) ? $params['contribution']->id : $params['contribution_id'];
-    $trxn = self::create($trxnParams);
+    $params['trxnParams']['from_financial_account_id'] = $params['to_financial_account_id'];
+    $params['trxnParams']['to_financial_account_id'] = $financialAccount;
+    $params['trxnParams']['total_amount'] = $params['fee_amount'];
+    $params['trxnParams']['fee_amount'] = 
+      $params['trxnParams']['net_amount'] = 0;
+    $params['trxnParams']['status_id'] = CRM_Core_OptionGroup::getValue('contribution_status','Completed','name');
+    $params['trxnParams']['contribution_id'] = isset($params['contribution']->id) ? $params['contribution']->id : $params['contribution_id'];
+    $trxn = self::create($params['trxnParams']);
     $fItemParams = 
       array(
         'financial_account_id' => $financialAccount,

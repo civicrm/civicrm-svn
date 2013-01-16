@@ -267,12 +267,13 @@ class CRM_Core_Payment_BaseIPN {
     $recurContrib = &$objects['contributionRecur'];
 
     $values = array();
+    $source = NULL;
     if ($input['component'] == 'contribute') {
       if ($contribution->contribution_page_id) {
         CRM_Contribute_BAO_ContributionPage::setValues($contribution->contribution_page_id, $values);
         $source = ts('Online Contribution') . ': ' . $values['title'];
       }
-      elseif ($recurContrib->id) {
+      elseif ($recurContrib && $recurContrib->id) {
         $contribution->contribution_page_id = NULL;
         $values['amount'] = $recurContrib->amount;
         $values['financial_type_id'] = $objects['contributionType']->id;
@@ -455,7 +456,11 @@ LIMIT 1;";
     if (CRM_Utils_Array::value('payment_instrument_id', $input)) {
       $contribution->payment_instrument_id = $input['payment_instrument_id'];
     }
-
+  
+    if ($contribution->id) {
+      $contributionId['id'] = $contribution->id;
+      $input['prevContribution'] = CRM_Contribute_BAO_Contribution::getValues($contributionId, CRM_Core_DAO::$_nullArray, CRM_Core_DAO::$_nullArray);
+    }
     $contribution->save();
 
     //add lineitems for recurring payments
@@ -474,35 +479,16 @@ LIMIT 1;";
       }
     }
 
-    if ($contribution->trxn_id) {
-
-      $trxnParams = array(
-        'contribution_id' => $contribution->id,
-        'trxn_date' => isset($input['trxn_date']) ? $input['trxn_date'] : self::$_now,
-        'trxn_type' => 'Debit',
-        'total_amount' => $input['amount'],
-        'fee_amount' => $contribution->fee_amount,
-        'net_amount' => $contribution->net_amount,
-        'currency' => $contribution->currency,
-        'payment_processor' => $paymentProcessor,
-        'trxn_id' => $contribution->trxn_id,
-      );
-
-      $trxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
-      if (CRM_Utils_Array::value('fee_amount', $trxnParams) != 0 ) {
-        $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Accounts Receivable Account is' "));
-        $financialAccount = CRM_Contribute_PseudoConstant::financialAccountType($contribution->financial_type_id, $relationTypeId);
-        $params = 
-          array(
-            'financial_type_id' => $contribution->financial_type_id,
-            'to_financial_account_id' => $financialAccount,
-            'entity_id' => $trxn->id,
-            'contribution_id' => $contribution->id,
-            'contact_id' => $contribution->contact_id,
-            'fee_amount' => $contribution->fee_amount,
-          );  
-        CRM_Core_BAO_FinancialTrxn::recordFees($params);
+    if ($contribution->id) {
+      $input['payment_processor'] = $paymentProcessor;
+      $input['total_amount'] = $input['amount'];
+      $input['contribution'] = $contribution;
+      if (CRM_Utils_Array::value('participant', $contribution->_relatedObjects)) {
+        $input['contribution_mode'] = 'participant';
+        $input['participant_id'] = $contribution->_relatedObjects['participant']->id;
       }
+      
+      CRM_Contribute_BAO_Contribution::recordFinancialAccounts($input, NULL);
     }
 
     self::updateRecurLinkedPledge($contribution);

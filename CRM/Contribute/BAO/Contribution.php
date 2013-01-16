@@ -2618,7 +2618,7 @@ WHERE  contribution_id = %1 ";
    * @access public
    * @static
    */
-  static function recordFinancialAccounts(&$params, &$ids) {
+  static function recordFinancialAccounts(&$params, $ids) {
     $contributionStatuses = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
     if (CRM_Utils_Array::value('contribution_status_id', $params) == array_search('Pending', $contributionStatuses)) {
       $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Accounts Receivable Account is' "));
@@ -2639,12 +2639,12 @@ WHERE  contribution_id = %1 ";
       'contribution_id' => $params['contribution']->id,
       'to_financial_account_id' => $params['to_financial_account_id'],
       'trxn_date' => date('YmdHis'),
-      'total_amount' => CRM_Utils_Array::value('initial_amount', $params) ? $params['initial_amount'] : $params['total_amount'],
+      'total_amount' => $params['total_amount'],
       'fee_amount' => CRM_Utils_Array::value('fee_amount', $params),
       'net_amount' => CRM_Utils_Array::value('net_amount', $params),
       'currency' => $params['contribution']->currency,
-      'trxn_id' => CRM_Utils_Array::value('trxn_id', $params),
-      'status_id' => CRM_Utils_Array::value('contribution_status_id', $params),
+      'trxn_id' => $params['contribution']->trxn_id,
+      'status_id' => $params['contribution']->contribution_status_id,
       'payment_instrument_id' => CRM_Utils_Array::value('payment_instrument_id', $params),
       'check_number' => CRM_Utils_Array::value('check_number', $params)
     );
@@ -2676,7 +2676,7 @@ WHERE  contribution_id = %1 ";
       //if Change contribution amount
       if ($params['total_amount'] != $params['prevContribution']->total_amount) {
         //Update Financial Records
-        self::updateFinancialAccounts($params, 'changedAmount');        
+        self::updateFinancialAccounts($params, 'changedAmount');
       }
 
       //Update contribution status
@@ -2763,7 +2763,8 @@ WHERE  contribution_id = %1 ";
     
     // when a fee is charged
     // FIX ME: work in progress
-    if (CRM_Utils_Array::value('fee_amount', $params) && !CRM_Utils_Array::value('contribution', $ids)) {
+    if (CRM_Utils_Array::value('fee_amount', $params) &&  (!CRM_Utils_Array::value('prevContribution', $params)
+      || $params['contribution']->fee_amount != $params['prevContribution']->fee_amount)) {
       $params['entity_id'] = $financialTxn->id;
       CRM_Core_BAO_FinancialTrxn::recordFees($params);
     }
@@ -2795,6 +2796,7 @@ WHERE  contribution_id = %1 ";
         $params['trxnParams']['total_amount'] = - $params['total_amount'];
       }
       elseif ($params['prevContribution']->contribution_status_id == array_search('Pending', $contributionStatus)) {
+        $financialTypeID = CRM_Utils_Array::value('financial_type_id', $params) ? $params['financial_type_id'] : $params['prevContribution']->financial_type_id;
         if ($params['contribution']->contribution_status_id == array_search('Cancelled', $contributionStatus)) {
           $params['trxnParams']['to_financial_account_id'] = NULL;
           $params['trxnParams']['total_amount'] = - $params['total_amount'];
@@ -2802,7 +2804,7 @@ WHERE  contribution_id = %1 ";
         $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL,
           " AND v.name LIKE 'Accounts Receivable Account is' "));
         $params['trxnParams']['from_financial_account_id'] = CRM_Contribute_PseudoConstant::financialAccountType(
-          $params['financial_type_id'], $relationTypeId) ;
+          $financialTypeID, $relationTypeId);
       }
       $itemAmount = $params['trxnParams']['total_amount'];
     }
