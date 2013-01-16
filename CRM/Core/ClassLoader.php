@@ -80,7 +80,7 @@ class CRM_Core_ClassLoader {
     // we also check if the bootstrap file exists since during install of a drupal distro profile
     // the files might not exists, in which case we skip loading the file
     $includeHTMLPurifier = TRUE;
-    $htmlPurifierPath = dirname(__FILE__) . '/../../packages/IDS/vendors/htmlpurifier/HTMLPurifier/Bootstrap.php';
+    $htmlPurifierPath = dirname(__FILE__) . '/../../packages/IDS/vendors/htmlpurifier/HTMLPurifier.auto.php';
     if (
       class_exists('HTMLPurifier_Bootstrap') ||
       !file_exists($htmlPurifierPath)
