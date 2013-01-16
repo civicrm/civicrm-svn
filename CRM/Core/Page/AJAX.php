@@ -73,13 +73,15 @@ class CRM_Core_Page_AJAX {
       case '':
         // FIXME: This is done to maintain current wire protocol, but it might be
         // simpler to just require different 'types' for pages and forms
-        if (preg_match('/^CRM_[a-zA-Z0-9]+_Page_Inline_/', $className)) {
-        $page = new $className;
-        $page->run();
-        } else {
+        if ($className == 'CRM_Core_Page_Help' ||
+          preg_match('/^CRM_[a-zA-Z0-9]+_Page_Inline_/', $className)) {
+          $page = new $className;
+          $page->run();
+        }
+        else {
           $wrapper = new CRM_Utils_Wrapper();
           $wrapper->run($className);
-      }
+        }
         break;
       default:
         CRM_Core_Error::debug_log_message('Unsupported inline request type: ' . var_export($type, TRUE));
