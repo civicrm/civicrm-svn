@@ -41,7 +41,10 @@ abstract class CRM_Core_Payment {
    * FORM   - we collect it on the same page
    * BUTTON - the processor collects it and sends it back to us via some protocol
    */
-  CONST BILLING_MODE_FORM = 1, BILLING_MODE_BUTTON = 2, BILLING_MODE_NOTIFY = 4;
+  CONST
+    BILLING_MODE_FORM = 1,
+    BILLING_MODE_BUTTON = 2,
+    BILLING_MODE_NOTIFY = 4;
 
   /**
    * which payment type(s) are we using?
@@ -51,14 +54,18 @@ abstract class CRM_Core_Payment {
    * or both
    *
    */
-  CONST PAYMENT_TYPE_CREDIT_CARD = 1, PAYMENT_TYPE_DIRECT_DEBIT = 2;
+  CONST
+    PAYMENT_TYPE_CREDIT_CARD = 1,
+    PAYMENT_TYPE_DIRECT_DEBIT = 2;
 
   /**
    * Subscription / Recurring payment Status
    * START, END
    *
    */
-  CONST RECURRING_PAYMENT_START = 'START', RECURRING_PAYMENT_END = 'END';
+  CONST
+    RECURRING_PAYMENT_START = 'START',
+    RECURRING_PAYMENT_END = 'END';
 
   /**
    * We only need one instance of this object. So we use the singleton
