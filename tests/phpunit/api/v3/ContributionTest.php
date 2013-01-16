@@ -667,7 +667,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
    * Function tests that additional financial records are created when online contribution is created
    */
   function testCreateContributionOnline() {
-    $paymentProcessor = CRM_Core_BAO_PaymentProcessor::create($this->_processorParams);
+    $paymentProcessor = CRM_Financial_BAO_PaymentProcessor::create($this->_processorParams);
     $contributionPage = civicrm_api( 'contribution_page','create',  $this->_pageParams );
 
     $params = array(
@@ -701,7 +701,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
    * is created
    */
   function testCreateContributionPayLaterOnline() {
-    $paymentProcessor = CRM_Core_BAO_PaymentProcessor::create($this->_processorParams);
+    $paymentProcessor = CRM_Financial_BAO_PaymentProcessor::create($this->_processorParams);
     $this->_pageParams['is_pay_later'] = 1;
     $contributionPage = civicrm_api( 'contribution_page','create',$this->_pageParams );
 

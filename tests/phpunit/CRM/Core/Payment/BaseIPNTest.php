@@ -59,7 +59,7 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase {
 
     $this->_contactId = $this->individualCreate();
     $this->ids['contact'] = $this->_contactId;
-    $this->paymentProcessor = new CRM_Core_BAO_PaymentProcessor();
+    $this->paymentProcessor = new CRM_Financial_BAO_PaymentProcessor();
 
     $paymentProcessorParams = array(
       'user_name' => 'user_name',

@@ -300,10 +300,10 @@ INNER JOIN civicrm_contribution       con ON ( mp.contribution_id = con.id )
       $result = $ppID;
     }
     elseif ($type == 'info') {
-      $result = CRM_Core_BAO_PaymentProcessor::getPayment($ppID, $mode);
+      $result = self::getPayment($ppID, $mode);
     }
     elseif ($type == 'obj') {
-      $payment = CRM_Core_BAO_PaymentProcessor::getPayment($ppID, $mode);
+      $payment = self::getPayment($ppID, $mode);
       $result = CRM_Core_Payment::singleton($mode, $payment);
     }
 

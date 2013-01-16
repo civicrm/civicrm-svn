@@ -255,7 +255,7 @@ abstract class CRM_Core_Payment {
         continue;
       }
 
-      $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment($dao->processor_id, $mode);
+      $paymentProcessor = CRM_Financial_BAO_PaymentProcessor::getPayment($dao->processor_id, $mode);
 
       // Should never be empty - we already established this processor_id exists and is active.
       if (empty($paymentProcessor)) {

@@ -104,7 +104,7 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
         }
 
         $isUpdateBilling = false;
-        $paymentObject   = CRM_Core_BAO_PaymentProcessor::getProcessorForEntity($membership[$dao->id]['membership_id'], 'membership', 'obj');
+        $paymentObject   = CRM_Financial_BAO_PaymentProcessor::getProcessorForEntity($membership[$dao->id]['membership_id'], 'membership', 'obj');
         if (!empty($paymentObject)) {
           $isUpdateBilling = $paymentObject->isSupported('updateSubscriptionBillingInfo');
         }
