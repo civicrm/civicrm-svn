@@ -341,7 +341,7 @@ LEFT JOIN  civicrm_contribution on (civicrm_contribution.contact_id = civicrm_co
     $processors = CRM_Core_PseudoConstant::paymentProcessor(FALSE, FALSE, "billing_mode IN ( 1, 3 )");
 
     foreach ($processors as $ppID => $label) {
-      $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment($ppID, $this->_mode);
+      $paymentProcessor = CRM_Financial_BAO_PaymentProcessor::getPayment($ppID, $this->_mode);
       // at this stage only Authorize.net has been tested to support future start dates so if it's enabled let the template know
       // to show receive date
       $processorsSupportingFutureStartDate = array('AuthNet');

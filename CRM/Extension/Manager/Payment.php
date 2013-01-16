@@ -214,7 +214,7 @@ class CRM_Extension_Manager_Payment extends CRM_Extension_Manager_Base {
         )
       )) {
       // If so, load params in the usual way ..
-      $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment($processor_id, NULL);
+      $paymentProcessor = CRM_Financial_BAO_PaymentProcessor::getPayment($processor_id, NULL);
     }
     else {
       // Otherwise, do the best we can to construct some ..

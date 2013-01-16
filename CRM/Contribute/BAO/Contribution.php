@@ -2114,7 +2114,7 @@ WHERE  contribution_id = %1 ";
 
     $loadObjectSuccess = TRUE;
     if ($paymentProcessorID) {
-      $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment($paymentProcessorID,
+      $paymentProcessor = CRM_Financial_BAO_PaymentProcessor::getPayment($paymentProcessorID,
         $this->is_test ? 'test' : 'live'
       );
       $ids['paymentProcessor'] = $paymentProcessorID;
@@ -2576,7 +2576,7 @@ WHERE  contribution_id = %1 ";
         $isCancelled = self::isSubscriptionCancelled($contributionId);
       }
 
-      $paymentObject = CRM_Core_BAO_PaymentProcessor::getProcessorForEntity($contributionId, 'contribute', 'obj');
+      $paymentObject = CRM_Financial_BAO_PaymentProcessor::getProcessorForEntity($contributionId, 'contribute', 'obj');
       if (!empty($paymentObject)) {
         $supportsCancel[$cacheKeyString] = $paymentObject->isSupported('cancelSubscription') && !$isCancelled;
       }

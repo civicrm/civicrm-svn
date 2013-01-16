@@ -167,7 +167,7 @@ SELECT r.payment_processor_id
       return NULL;
     }
 
-    return CRM_Core_BAO_PaymentProcessor::getPayment($paymentProcessorID, $mode);
+    return CRM_Financial_BAO_PaymentProcessor::getPayment($paymentProcessorID, $mode);
   }
 
   /**

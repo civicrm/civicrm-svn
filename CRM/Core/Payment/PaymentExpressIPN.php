@@ -368,7 +368,7 @@ class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
     $mode = $mode ? 'test' : 'live';
 
 
-    $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment($paymentProcessorID,
+    $paymentProcessor = CRM_Financial_BAO_PaymentProcessor::getPayment($paymentProcessorID,
       $mode
     );
 

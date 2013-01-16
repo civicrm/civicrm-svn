@@ -302,7 +302,7 @@ INNER JOIN civicrm_membership_payment mp ON m.id = mp.membership_id AND mp.contr
   }
 
   function checkMD5($ids, $input) {
-    $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment($ids['paymentProcessor'],
+    $paymentProcessor = CRM_Financial_BAO_PaymentProcessor::getPayment($ids['paymentProcessor'],
       $input['is_test'] ? 'test' : 'live'
     );
     $paymentObject = CRM_Core_Payment::singleton($input['is_test'] ? 'test' : 'live', $paymentProcessor);

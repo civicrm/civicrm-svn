@@ -325,7 +325,7 @@ class CRM_Admin_Form_PaymentProcessor extends CRM_Admin_Form {
     CRM_Utils_System::flushCache( 'CRM_Financial_DAO_PaymentProcessor' );
 
     if ($this->_action & CRM_Core_Action::DELETE) {
-      CRM_Core_BAO_PaymentProcessor::del($this->_id);
+      CRM_Financial_BAO_PaymentProcessor::del($this->_id);
       CRM_Core_Session::setStatus("", ts('Payment Processor Deleted.'), "success");
       return;
     }

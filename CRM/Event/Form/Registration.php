@@ -336,7 +336,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form {
         }
 
         $ppIds = explode(CRM_Core_DAO::VALUE_SEPARATOR, $ppID);
-        $this->_paymentProcessors = CRM_Core_BAO_PaymentProcessor::getPayments($ppIds,
+        $this->_paymentProcessors = CRM_Financial_BAO_PaymentProcessor::getPayments($ppIds,
           $this->_mode
         );
 
@@ -353,7 +353,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form {
         }
 
         if (isset($defaultProcessorId)) {
-          $this->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment($defaultProcessorId, $this->_mode);
+          $this->_paymentProcessor = CRM_Financial_BAO_PaymentProcessor::getPayment($defaultProcessorId, $this->_mode);
           $this->assign_by_ref('paymentProcessor', $this->_paymentProcessor);
         }
 

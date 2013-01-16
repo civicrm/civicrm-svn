@@ -47,7 +47,7 @@ class CRM_Core_Payment_ProcessorForm {
     }
 
     if ($form->_type) {
-      $form->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment($form->_type, $form->_mode);
+      $form->_paymentProcessor = CRM_Financial_BAO_PaymentProcessor::getPayment($form->_type, $form->_mode);
     }
 
     $form->set('paymentProcessor', $form->_paymentProcessor);

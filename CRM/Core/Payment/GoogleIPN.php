@@ -517,7 +517,7 @@ WHERE  contribution_recur_id = {$ids['contributionRecur']}
     list($mode, $module, $paymentProcessorID) = $ipn->getContext($privateData, $orderNo, $root, $response, $serial);
     $mode = $mode ? 'test' : 'live';
 
-    $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment($paymentProcessorID, $mode);
+    $paymentProcessor = CRM_Financial_BAO_PaymentProcessor::getPayment($paymentProcessorID, $mode);
     $merchant_id = $paymentProcessor['user_name'];
     $merchant_key = $paymentProcessor['password'];
     $response->SetMerchantAuthentication($merchant_id, $merchant_key);

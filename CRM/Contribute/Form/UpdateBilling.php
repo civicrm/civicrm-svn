@@ -61,8 +61,8 @@ class CRM_Contribute_Form_UpdateBilling extends CRM_Core_Form {
     $this->_mid = CRM_Utils_Request::retrieve('mid', 'Integer', $this, FALSE);
     $this->_crid = CRM_Utils_Request::retrieve('crid', 'Integer', $this, FALSE);
     if ($this->_crid) {
-      $this->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getProcessorForEntity($this->_crid, 'recur', 'info');
-      $this->_paymentProcessorObj = CRM_Core_BAO_PaymentProcessor::getProcessorForEntity($this->_crid, 'recur', 'obj');
+      $this->_paymentProcessor = CRM_Financial_BAO_PaymentProcessor::getProcessorForEntity($this->_crid, 'recur', 'info');
+      $this->_paymentProcessorObj = CRM_Financial_BAO_PaymentProcessor::getProcessorForEntity($this->_crid, 'recur', 'obj');
       $this->_subscriptionDetails = CRM_Contribute_BAO_ContributionRecur::getSubscriptionDetails($this->_crid);
       
       // Are we cancelling a recurring contribution that is linked to an auto-renew membership?
@@ -73,14 +73,14 @@ class CRM_Contribute_Form_UpdateBilling extends CRM_Core_Form {
 
     $this->_coid = CRM_Utils_Request::retrieve('coid', 'Integer', $this, FALSE);
     if ($this->_coid) {
-      $this->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getProcessorForEntity($this->_coid, 'contribute', 'info');
-      $this->_paymentProcessorObj = CRM_Core_BAO_PaymentProcessor::getProcessorForEntity($this->_coid, 'contribute', 'obj');
+      $this->_paymentProcessor = CRM_Financial_BAO_PaymentProcessor::getProcessorForEntity($this->_coid, 'contribute', 'info');
+      $this->_paymentProcessorObj = CRM_Financial_BAO_PaymentProcessor::getProcessorForEntity($this->_coid, 'contribute', 'obj');
       $this->_subscriptionDetails = CRM_Contribute_BAO_ContributionRecur::getSubscriptionDetails($this->_coid, 'contribution');
     }
 
     if ($this->_mid) {
-      $this->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getProcessorForEntity($this->_mid, 'membership', 'info');
-      $this->_paymentProcessorObj = CRM_Core_BAO_PaymentProcessor::getProcessorForEntity($this->_mid, 'membership', 'obj');
+      $this->_paymentProcessor = CRM_Financial_BAO_PaymentProcessor::getProcessorForEntity($this->_mid, 'membership', 'info');
+      $this->_paymentProcessorObj = CRM_Financial_BAO_PaymentProcessor::getProcessorForEntity($this->_mid, 'membership', 'obj');
       $this->_subscriptionDetails = CRM_Contribute_BAO_ContributionRecur::getSubscriptionDetails($this->_mid, 'membership');
       $membershipTypes = CRM_Member_PseudoConstant::membershipType();
       $membershipTypeId = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_Membership', $this->_mid, 'membership_type_id');

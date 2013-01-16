@@ -146,7 +146,7 @@ class CRM_Event_Cart_Form_Checkout_Payment extends CRM_Event_Cart_Form_Cart {
       CRM_Core_Error::statusBounce(ts('A payment processor must be selected for this event registration page, or the event must be configured to give users the option to pay later (contact the site administrator for assistance).'));
     }
 
-    $this->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment($payment_processor_id, $this->_mode);
+    $this->_paymentProcessor = CRM_Financial_BAO_PaymentProcessor::getPayment($payment_processor_id, $this->_mode);
     $this->assign('paymentProcessor', $this->_paymentProcessor);
 
     CRM_Core_Payment_Form::setCreditCardFields($this);

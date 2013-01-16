@@ -63,7 +63,7 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form {
 
     $this->_crid = CRM_Utils_Request::retrieve('crid', 'Integer', $this, FALSE);
     if ($this->_crid) {
-      $this->_paymentProcessorObj = CRM_Core_BAO_PaymentProcessor::getProcessorForEntity($this->_crid, 'recur', 'obj');
+      $this->_paymentProcessorObj = CRM_Financial_BAO_PaymentProcessor::getProcessorForEntity($this->_crid, 'recur', 'obj');
       $this->_subscriptionDetails = CRM_Contribute_BAO_ContributionRecur::getSubscriptionDetails($this->_crid);
       $this->assign('frequency_unit', $this->_subscriptionDetails->frequency_unit);
       $this->assign('frequency_interval', $this->_subscriptionDetails->frequency_interval);
@@ -81,7 +81,7 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form {
         CRM_Core_Error::fatal(ts('The auto renewal option for this membership looks to have been cancelled already.'));
       }
       $this->_mode = 'auto_renew';
-      $this->_paymentProcessorObj = CRM_Core_BAO_PaymentProcessor::getProcessorForEntity($this->_mid, 'membership', 'obj');
+      $this->_paymentProcessorObj = CRM_Financial_BAO_PaymentProcessor::getProcessorForEntity($this->_mid, 'membership', 'obj');
       $this->_subscriptionDetails = CRM_Contribute_BAO_ContributionRecur::getSubscriptionDetails($this->_mid, 'membership');
 
       $membershipTypes = CRM_Member_PseudoConstant::membershipType();
@@ -94,7 +94,7 @@ class CRM_Contribute_Form_CancelSubscription extends CRM_Core_Form {
       if (CRM_Contribute_BAO_Contribution::isSubscriptionCancelled($this->_coid)) {
         CRM_Core_Error::fatal(ts('The recurring contribution looks to have been cancelled already.'));
       }
-      $this->_paymentProcessorObj = CRM_Core_BAO_PaymentProcessor::getProcessorForEntity($this->_coid, 'contribute', 'obj');
+      $this->_paymentProcessorObj = CRM_Financial_BAO_PaymentProcessor::getProcessorForEntity($this->_coid, 'contribute', 'obj');
       $this->_subscriptionDetails = CRM_Contribute_BAO_ContributionRecur::getSubscriptionDetails($this->_coid, 'contribution');
     
       $this->assign('frequency_unit', $this->_subscriptionDetails->frequency_unit);

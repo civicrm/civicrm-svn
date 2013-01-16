@@ -133,7 +133,7 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form {
       $processors = CRM_Core_PseudoConstant::paymentProcessor(FALSE, FALSE, 'billing_mode IN ( 1, 3 )');
 
       foreach ($processors as $ppID => $label) {
-        $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment($ppID, $this->_mode);
+        $paymentProcessor = CRM_Financial_BAO_PaymentProcessor::getPayment($ppID, $this->_mode);
         if ($paymentProcessor['payment_processor_type'] == 'PayPal' && !$paymentProcessor['user_name']) {
           continue;
         }
@@ -583,7 +583,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
         ));
       $formValues['financial_type_id'] = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType', $this->_memType,'financial_type_id');
 
-      $this->_paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment($formValues['payment_processor_id'],
+      $this->_paymentProcessor = CRM_Financial_BAO_PaymentProcessor::getPayment($formValues['payment_processor_id'],
         $this->_mode
       );
       
@@ -716,7 +716,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     }
 
     //if contribution status is pending then set pay later
-    if ($formValues["contribution_status_id"] == array_search('Pending', CRM_Contribute_PseudoConstant::contributionStatus())) {
+    if ($formValues['contribution_status_id'] == array_search('Pending', CRM_Contribute_PseudoConstant::contributionStatus())) {
       $this->_params['is_pay_later'] = 1;
     }
     $renewMembership = CRM_Member_BAO_Membership::renewMembership($this->_contactID,
