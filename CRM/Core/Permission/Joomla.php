@@ -47,7 +47,7 @@ class CRM_Core_Permission_Joomla extends CRM_Core_Permission_Base {
    * @return boolean true if yes, else false
    * @access public
    */
-  static function check($str) {
+  function check($str) {
     $config = CRM_Core_Config::singleton();
 
     // ensure that we are running in a joomla context
@@ -72,7 +72,7 @@ class CRM_Core_Permission_Joomla extends CRM_Core_Permission_Base {
    * @static
    * @access public
    */
-  static function checkGroupRole($array) {
+  function checkGroupRole($array) {
     return FALSE;
   }
 }
