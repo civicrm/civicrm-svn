@@ -79,6 +79,14 @@
     );
   };
 
+  /**
+   * @param string text Displayable message
+   * @param string title Displayable title
+   * @param string type 'alert'|'info'|'success'|'error' (default: 'alert')
+   * @param {object} options
+   * @return {*}
+   * @see http://wiki.civicrm.org/confluence/display/CRM/Notifications+in+CiviCRM
+   */
   CRM.alert = function(text, title, type, options) {
     type = type || 'alert';
     title = title || '';
