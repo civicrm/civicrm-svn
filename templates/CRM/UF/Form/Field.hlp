@@ -12,7 +12,7 @@
 {/htxt}
 {htxt id='is_multi_summary'}
   <p>
-    {ts}Do you want to include this field in multi-record custom set of profile?.{/ts}
+    {ts}Fields which are part of a custom data set that supports multiple records will be listed below the standard single-record fields when in profile edit view. Use this option to determine which fields you want displayed in that listing{/ts}
   </p>
 {/htxt}
 
