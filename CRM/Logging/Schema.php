@@ -208,6 +208,7 @@ AND    TABLE_NAME LIKE 'log_civicrm_%'
   }
 
   function fixTimeStampSQL($query) {
+    $query = str_ireplace("TIMESTAMP NOT NULL", "TIMESTAMP NULL", $query);
     $query = str_ireplace("DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", '', $query);
     $query = str_ireplace("DEFAULT CURRENT_TIMESTAMP", '', $query);
     return $query;
@@ -301,8 +302,11 @@ COLS;
     $query = preg_replace("/ AUTO_INCREMENT/i", '', $query);
     $query = preg_replace("/^  [^`].*$/m", '', $query);
     $query = preg_replace("/^\) ENGINE=[^ ]+ /im", ') ENGINE=ARCHIVE ', $query);
-    $query = preg_replace("/^\) /m", "$cols\n) ", $query);
+    // log_civicrm_contact.modified_date for example would always be copied from civicrm_contact.modified_date, 
+    // so there's no need for a default timestamp and therefore we remove such default timestamps by using fixTimeStampSQL() method, 
+    // before we inject special log columns with default timestamps
     $query = self::fixTimeStampSQL($query);
+    $query = preg_replace("/^\) /m", "$cols\n) ", $query);
 
     CRM_Core_DAO::executeQuery($query);
 
