@@ -68,6 +68,7 @@ class CRM_Core_Page_AJAX {
       case 'method':
         call_user_func(array($className, $fnName));
         break;
+
       case 'page':
       case 'class':
       case '':
