@@ -241,42 +241,95 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
    * @return void
    * @access public
    */
-  function addHTMLHead($string = NULL, $includeAll = FALSE) {
-    $document = JFactory::getDocument();
-
+  function addHTMLHead($string = NULL) {
     if ($string) {
+      $document = JFactory::getDocument();
       $document->addCustomTag($string);
     }
+  }
 
-    if ($includeAll) {
-      $config = CRM_Core_Config::singleton();
-
-      $document->addStyleSheet("{$config->resourceBase}css/civicrm.css");
-
-      if (!$config->userFrameworkFrontend) {
-        $document->addStyleSheet("{$config->resourceBase}css/joomla.css");
-      }
-      else {
-        $document->addStyleSheet("{$config->resourceBase}css/joomla_frontend.css");
-      }
-      if (isset($config->customCSSURL) && !empty($config->customCSSURL)) {
-        $document->addStyleSheet($config->customCSSURL);
-      }
-
-      $document->addStyleSheet("{$config->resourceBase}css/extras.css");
-
-      $template = CRM_Core_Smarty::singleton();
-
-      // CRM-6819 + CRM-7086
-      $lang     = substr($config->lcMessages, 0, 2);
-      $l10nFile = "{$config->smartyDir}../jquery/jquery-ui-1.9.0/development-bundle/ui/i18n/jquery.ui.datepicker-{$lang}.js";
-      $l10nURL  = "{$config->resourceBase}packages/jquery/jquery-ui-1.9.0/development-bundle/ui/i18n/jquery.ui.datepicker-{$lang}.js";
-      if (file_exists($l10nFile)) {
-        $template->assign('l10nURL', $l10nURL);
-      }
-
-      $document->addCustomTag($template->fetch('CRM/common/jquery.tpl'));
+  /**
+   * Add a script file
+   *
+   * @param $url: string, absolute path to file
+   * @param $region string, location within the document: 'html-header', 'page-header', 'page-footer'
+   *
+   * Note: This function is not to be called directly
+   * @see CRM_Core_Region::render()
+   *
+   * @return bool TRUE if we support this operation in this CMS, FALSE otherwise
+   * @access public
+   */
+  public function addScriptUrl($url, $region) {
+    if ($region == 'html-header') {
+      $document = JFactory::getDocument();
+      $document->addScript($url);
+      return TRUE;
     }
+    return FALSE;
+  }
+
+  /**
+   * Add an inline script
+   *
+   * @param $code: string, javascript code
+   * @param $region string, location within the document: 'html-header', 'page-header', 'page-footer'
+   *
+   * Note: This function is not to be called directly
+   * @see CRM_Core_Region::render()
+   *
+   * @return bool TRUE if we support this operation in this CMS, FALSE otherwise
+   * @access public
+   */
+  public function addScript($code, $region) {
+    if ($region == 'html-header') {
+      $document = JFactory::getDocument();
+      $document->addScriptDeclaration($code);
+      return TRUE;
+    }
+    return FALSE;
+  }
+
+  /**
+   * Add a css file
+   *
+   * @param $url: string, absolute path to file
+   * @param $region string, location within the document: 'html-header', 'page-header', 'page-footer'
+   *
+   * Note: This function is not to be called directly
+   * @see CRM_Core_Region::render()
+   *
+   * @return bool TRUE if we support this operation in this CMS, FALSE otherwise
+   * @access public
+   */
+  public function addStyleUrl($url, $region) {
+    if ($region == 'html-header') {
+      $document = JFactory::getDocument();
+      $document->addStyleSheet($url);
+      return TRUE;
+    }
+    return FALSE;
+  }
+
+  /**
+   * Add an inline style
+   *
+   * @param $code: string, css code
+   * @param $region string, location within the document: 'html-header', 'page-header', 'page-footer'
+   *
+   * Note: This function is not to be called directly
+   * @see CRM_Core_Region::render()
+   *
+   * @return bool TRUE if we support this operation in this CMS, FALSE otherwise
+   * @access public
+   */
+  public function addStyle($code, $region) {
+    if ($region == 'html-header') {
+      $document = JFactory::getDocument();
+      $document->addStyleDeclaration($code);
+      return TRUE;
+    }
+    return FALSE;
   }
 
   /**

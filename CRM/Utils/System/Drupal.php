@@ -270,8 +270,6 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
    *
    * @return void
    * @access public
-   *
-   * @todo Not Drupal 7 compatible
    */
   function addHTMLHead($header) {
     static $count = 0;
@@ -286,33 +284,122 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
   }
 
   /**
-   * Append a <SCRIPT SRC> to the <HEAD>
+   * Add a script file
    *
-   * On D7, drupal_add_html_head puts markup too high.
-   * It's better if scripts added this way load late in
-   * the process.
+   * @param $url: string, absolute path to file
+   * @param $region string, location within the document: 'html-header', 'page-header', 'page-footer'
+   *
+   * Note: This function is not to be called directly
+   * @see CRM_Core_Region::render()
+   *
+   * @return bool TRUE if we support this operation in this CMS, FALSE otherwise
+   * @access public
    */
-  public function addHtmlHeadScriptUrl($url, $weight) {
-    $weightOffset = 1000;
-    drupal_add_js($url, array(
-     'type' => 'external',
-     'weight' => $weightOffset = $weight,
-    ));
+  public function addScriptUrl($url, $region) {
+    $params = array('type' => 'external', 'group' => JS_LIBRARY, 'weight' => 10);
+    switch ($region) {
+      case 'html-header':
+      case 'page-footer':
+        $params['scope'] = substr($region, 5);
+        break;
+      default:
+        return FALSE;
+    }
+    // If the path is within the drupal directory we can use the more efficient 'file' setting
+    $this->formatResourceUrl($url, $params);
+    drupal_add_js($url, $params);
+    return TRUE;
   }
 
   /**
-   * Append a <SCRIPT>...</SCRIPT> to the <HEAD>
+   * Add an inline script
    *
-   * On D7, drupal_add_html_head puts markup too high.
-   * It's better if scripts added this way load late in
-   * the process.
+   * @param $code: string, javascript code
+   * @param $region string, location within the document: 'html-header', 'page-header', 'page-footer'
+   *
+   * Note: This function is not to be called directly
+   * @see CRM_Core_Region::render()
+   *
+   * @return bool TRUE if we support this operation in this CMS, FALSE otherwise
+   * @access public
    */
-  public function addHtmlHeadScriptCode($code, $weight) {
-    $weightOffset = 1000;
-    drupal_add_js($code, array(
-     'type' => 'inline',
-     'weight' => $weightOffset = $weight,
-    ));
+  public function addScript($code, $region) {
+    $params = array('type' => 'inline', 'group' => JS_LIBRARY, 'weight' => 10);
+    switch ($region) {
+      case 'html-header':
+      case 'page-footer':
+        $params['scope'] = substr($region, 5);
+        break;
+      default:
+        return FALSE;
+    }
+    drupal_add_js($code, $params);
+    return TRUE;
+  }
+
+  /**
+   * Add a css file
+   *
+   * @param $url: string, absolute path to file
+   * @param $region string, location within the document: 'html-header', 'page-header', 'page-footer'
+   *
+   * Note: This function is not to be called directly
+   * @see CRM_Core_Region::render()
+   *
+   * @return bool TRUE if we support this operation in this CMS, FALSE otherwise
+   * @access public
+   */
+  public function addStyleUrl($url, $region) {
+    if ($region != 'html-header') {
+      return FALSE;
+    }
+    $params = array('type' => 'external');
+    // If the path is within the drupal directory we can use the more efficient 'file' setting
+    $this->formatResourceUrl($url, $params);
+    drupal_add_css($url, $params);
+    return TRUE;
+  }
+
+  /**
+   * Add an inline style
+   *
+   * @param $code: string, css code
+   * @param $region string, location within the document: 'html-header', 'page-header', 'page-footer'
+   *
+   * Note: This function is not to be called directly
+   * @see CRM_Core_Region::render()
+   *
+   * @return bool TRUE if we support this operation in this CMS, FALSE otherwise
+   * @access public
+   */
+  public function addStyle($code, $region) {
+    if ($region != 'html-header') {
+      return FALSE;
+    }
+    $params = array('type' => 'inline');
+    drupal_add_css($code, $params);
+    return TRUE;
+  }
+
+  /**
+   * Check if a resource url is within the drupal directory and format appropriately
+   *
+   * @param url (reference)
+   * @param params (reference)
+   */
+  private function formatResourceUrl(&$url, &$params) {
+    // Strip query string
+    $q = strpos($url, '?');
+    if ($q) {
+      $url = substr($url, 0, $q);
+    }
+    $base = CRM_Core_Config::singleton()->resourceBase;
+    global $base_url;
+    if (strpos($url, $base) === 0 || strpos($url, $base_url) === 0) {
+      $params['type'] = 'file';
+      $url = str_replace($base_url, '', $url);
+      $url = trim($url, '/');
+    }
   }
 
   /**

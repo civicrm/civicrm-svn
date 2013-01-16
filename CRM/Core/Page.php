@@ -205,6 +205,7 @@ class CRM_Core_Page {
 
     $content = self::$_template->fetch('CRM/common/' . strtolower($config->userFramework) . '.tpl');
 
+    // Render page header
     if ($region = CRM_Core_Region::instance('html-header', FALSE)) {
       CRM_Utils_System::addHTMLHead($region->render(''));
     }

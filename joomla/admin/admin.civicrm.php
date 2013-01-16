@@ -63,26 +63,33 @@ function civicrm_invoke() {
   $user = JFactory::getUser();
 
   /* bypass synchronize if running upgrade
-     * to avoid any serious non-recoverable error
-     * which might hinder the upgrade process.
-     */
+   * to avoid any serious non-recoverable error
+   * which might hinder the upgrade process.
+   */
 
-  require_once 'CRM/Utils/Array.php';
   if (CRM_Utils_Array::value('task', $_REQUEST) != 'civicrm/upgrade') {
-    require_once 'CRM/Core/BAO/UFMatch.php';
     CRM_Core_BAO_UFMatch::synchronize($user, FALSE, 'Joomla', 'Individual', TRUE);
   }
 
-  require_once 'CRM/Utils/System/Joomla.php';
-  CRM_Utils_System_Joomla::addHTMLHead(NULL, TRUE);
+  // Add our standard css & js
+  $resources = CRM_Core_Resources::singleton();
+  $resources->addCoreResources();
+
+  $config = CRM_Core_Config::singleton();
+  if (!$config->userFrameworkFrontend) {
+    $resources->addStyleFile('civicrm', 'css/joomla.css', -97, 'html-header');
+  }
+  else {
+    $resources->addStyleFile('civicrm', 'css/joomla_frontend.css', -97, 'html-header');
+  }
 
   if (isset($_GET['task'])) {
     $args = explode('/', trim($_GET['task']));
   }
   else {
-    $_GET['task']  = 'civicrm/dashboard';
+    $_GET['task'] = 'civicrm/dashboard';
     $_GET['reset'] = 1;
-    $args          = array('civicrm', 'dashboard');
+    $args = array('civicrm', 'dashboard');
   }
   CRM_Core_Invoke::invoke($args);
 }

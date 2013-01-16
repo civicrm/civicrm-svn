@@ -114,6 +114,11 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
       ));
     $template->assign('upgraded', FALSE);
 
+    // Render page header
+    if ($region = CRM_Core_Region::instance('html-header', FALSE)) {
+      CRM_Utils_System::addHTMLHead($region->render(''));
+    }
+
     $template->assign('preUpgradeMessage', $preUpgradeMessage);
     // $template->assign( 'message', $postUpgradeMessage );
 
@@ -183,6 +188,11 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
 
     $template->assign('message', $postUpgradeMessage);
     $template->assign('upgraded', TRUE);
+
+    // Render page header
+    if ($region = CRM_Core_Region::instance('html-header', FALSE)) {
+      CRM_Utils_System::addHTMLHead($region->render(''));
+    }
 
     $content = $template->fetch('CRM/common/success.tpl');
     echo CRM_Utils_System::theme('page', $content, TRUE, $this->_print, FALSE, TRUE);

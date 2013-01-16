@@ -286,6 +286,9 @@ function civicrm_wp_invoke() {
     return '';
   }
 
+  // Add our standard css & js
+  CRM_Core_Resources::singleton()->addCoreResources();
+
   // CRM-95XX
   // At this point we are calling a civicrm function
   // Since WP messes up and always quotes the request, we need to reverse
@@ -305,17 +308,15 @@ function civicrm_wp_invoke() {
   get_currentuserinfo();
 
   /* bypass synchronize if running upgrade
-     * to avoid any serious non-recoverable error
-     * which might hinder the upgrade process.
-     */
+   * to avoid any serious non-recoverable error
+   * which might hinder the upgrade process.
+   */
 
-  require_once 'CRM/Utils/Array.php';
   if (CRM_Utils_Array::value('q', $_GET) != 'civicrm/upgrade') {
     require_once 'CRM/Core/BAO/UFMatch.php';
     CRM_Core_BAO_UFMatch::synchronize($current_user, FALSE, 'WordPress', 'Individual', TRUE);
   }
 
-  require_once 'CRM/Core/Invoke.php';
   CRM_Core_Invoke::invoke($args);
 }
 
@@ -364,7 +365,7 @@ function civicrm_wp_styles() {
   wp_register_style('civicrm/css/extras.css', WP_PLUGIN_URL . "/civicrm/civicrm/css/extras.css");
   wp_enqueue_style('civicrm/css/extras.css');
 
-  return;
+ return;
 }
 
 function civicrm_wp_frontend($shortcode = FALSE) {
@@ -602,6 +603,7 @@ function civicrm_wp_main() {
 
   if (!is_admin()) {
     add_action('wp_print_styles', 'civicrm_wp_styles');
+    add_action('wp_print_scripts', 'civicrm_wp_scripts');
 
     add_action('wp_footer', 'civicrm_buffer_end');
 
@@ -611,10 +613,6 @@ function civicrm_wp_main() {
 
     civicrm_wp_frontend();
   }
-  else {
-    add_action('admin_print_styles', 'civicrm_wp_styles');
-  }
-  add_action('wp_print_scripts', 'civicrm_wp_scripts');
 }
 
 function civicrm_add_form_button($context) {
@@ -624,7 +622,7 @@ function civicrm_add_form_button($context) {
 
   $config      = CRM_Core_Config::singleton();
   $imageBtnURL = $config->resourceBase . 'i/widget/logo.png';
-  $out         = '<a href="#TB_inline?width=480&inlineId=civicrm_frontend_pages" class="thickbox" id="add_civi" title="' . __("Add CiviCRM Public Pages", 'CiviCRM') . '"><img src="' . $imageBtnURL . '" hieght="15" width="15" alt="' . __("Add CiviCRM Public Pages", 'CiviCRM') . '" /></a>';
+  $out         = '<a href="#TB_inline?width=480&inlineId=civicrm_frontend_pages" class="button thickbox" id="add_civi" style="padding-left: 4px;" title="' . __("Add CiviCRM Public Pages", 'CiviCRM') . '"><img src="' . $imageBtnURL . '" height="15" width="15" alt="' . __("Add CiviCRM Public Pages", 'CiviCRM') . '" />CiviCRM</a>';
   return $context . $out;
 }
 

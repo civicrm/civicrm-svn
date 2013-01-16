@@ -43,57 +43,10 @@ function civicrm_html_head() {
     return;
   }
 
-  $head = NULL;
   if (arg(0) == 'civicrm') {
-    require_once 'CRM/Core/Config.php';
-    $config = CRM_Core_Config::singleton();
-    $files = CRM_Core_Resources::parseTemplate('CRM/common/jquery.files.tpl');
-    foreach ($files as $file => $type) {
-      if ($type == 'js') {
-        drupal_add_js(drupal_get_path('module', 'civicrm') . '/../' . $file, array(
-            'group' => JS_LIBRARY,
-            'weight' => 10,
-            'scope' => 'header',
-          ));
-      }
-      elseif ($type == 'css') {
-        drupal_add_css(drupal_get_path('module', 'civicrm') . '/../' . $file);
-      }
-    }
-
-    // add localized calendar js
-    $localisation = explode('_', $config->lcMessages);
-    $localizationFile =
-      drupal_get_path('module', 'civicrm') .
-      '/../packages/jquery/jquery-ui-1.9.0/development-bundle/ui/i18n/jquery.ui.datepicker-' .
-      $localisation[0] .
-      '.js';
-
-    if (file_exists($localizationFile)) {
-      drupal_add_js($localizationFile, array(
-          'group' => JS_LIBRARY,
-          'weight' => 11,
-          'scope' => 'header',
-        ));
-    }
-
-    // add the final assignment
-    drupal_add_js('var cj = jQuery.noConflict(true);', array(
-        'type' => 'inline',
-        'group' => JS_LIBRARY,
-        'weight' => 12,
-        'scope' => 'header',
-      ));
+    // Add our standard css & js
+    CRM_Core_Resources::singleton()->addCoreResources();
   }
-
-  if (isset($config->customCSSURL) && !empty($config->customCSSURL)) {
-    $head = "<style type=\"text/css\">@import url({$config->customCSSURL});</style>\n";
-  }
-  else {
-    drupal_add_css(drupal_get_path('module', 'civicrm') . '/../css/civicrm.css');
-    drupal_add_css(drupal_get_path('module', 'civicrm') . '/../css/extras.css');
-  }
-  return $head;
 }
 
 /**

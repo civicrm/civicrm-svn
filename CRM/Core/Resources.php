@@ -64,6 +64,7 @@ class CRM_Core_Resources {
    */
   protected $settings = array();
   protected $addedSettings = FALSE;
+  protected $addedCoreResources = FALSE;
 
   /**
    * @var string a value to append to JS/CSS URLs to coerce cache resets
@@ -134,18 +135,13 @@ class CRM_Core_Resources {
    * @return CRM_Core_Resources
    */
   public function addScriptUrl($url, $weight = self::DEFAULT_WEIGHT, $region = self::DEFAULT_REGION) {
-    $config = CRM_Core_Config::singleton();
-    if ($region == 'html-header' && is_callable(array($config->userSystem, 'addHtmlHeadScriptUrl'))) {
-      $config->userSystem->addHtmlHeadScriptUrl($url, $weight);
-    } else {
-      CRM_Core_Region::instance($region)->add(array(
-        'name' => $url,
-        'type' => 'scriptUrl',
-        'scriptUrl' => $url,
-        'weight' => $weight,
-        'region' => $region,
-      ));
-    }
+    CRM_Core_Region::instance($region)->add(array(
+      'name' => $url,
+      'type' => 'scriptUrl',
+      'scriptUrl' => $url,
+      'weight' => $weight,
+      'region' => $region,
+    ));
     return $this;
   }
 
@@ -158,18 +154,13 @@ class CRM_Core_Resources {
    * @return CRM_Core_Resources
    */
   public function addScript($code, $weight = self::DEFAULT_WEIGHT, $region = self::DEFAULT_REGION) {
-    $config = CRM_Core_Config::singleton();
-    if ($region == 'html-header' && is_callable(array($config->userSystem, 'addHtmlHeadScriptCode'))) {
-      $config->userSystem->addHtmlHeadScriptCode($code, $weight);
-    } else {
-      CRM_Core_Region::instance($region)->add(array(
-        // 'name' => automatic
-        'type' => 'script',
-        'script' => $code,
-        'weight' => $weight,
-        'region' => $region,
-      ));
-    }
+    CRM_Core_Region::instance($region)->add(array(
+      // 'name' => automatic
+      'type' => 'script',
+      'script' => $code,
+      'weight' => $weight,
+      'region' => $region,
+    ));
     return $this;
   }
 
@@ -335,10 +326,59 @@ class CRM_Core_Resources {
   }
 
   /**
+   * This adds CiviCRM's standard css and js to the document header.
+   * It will only run once.
+   *
+   * @return void
+   * @access public
+   */
+  public function addCoreResources() {
+    if (!$this->addedCoreResources) {
+      $this->addedCoreResources = TRUE;
+      $config = CRM_Core_Config::singleton();
+
+      // Add resources from jquery.files.tpl
+      $files = self::parseTemplate('CRM/common/jquery.files.tpl');
+      $jsWeight = -9999;
+      foreach ($files as $file => $type) {
+        if ($type == 'js') {
+          $this->addScriptFile('civicrm', $file, $jsWeight++, 'html-header');
+        }
+        elseif ($type == 'css') {
+          $this->addStyleFile('civicrm', $file, -100, 'html-header');
+        }
+      }
+
+      // Add localized calendar js
+      $localisation = explode('_', $config->lcMessages);
+      $localizationFile =
+        $config->resourceBase .
+        'packages/jquery/jquery-ui-1.9.0/development-bundle/ui/i18n/jquery.ui.datepicker-' .
+        $localisation[0] .
+        '.js';
+      if (file_exists($localizationFile)) {
+        $this->addScriptUrl($localizationFile, $jsWeight++, 'html-header');
+      }
+
+      // Give control of jQuery back to the CMS - this loads last
+      $this->addScript('cj = jQuery.noConflict(true);', 9999, 'html-header');
+
+      // Load custom or core css
+      if (isset($config->customCSSURL) && !empty($config->customCSSURL)) {
+        $this->addStyleUrl($config->customCSSURL, -99, 'html-header');
+      }
+      else {
+        $this->addStyleFile('civicrm', 'css/civicrm.css', -99, 'html-header');
+        $this->addStyleFile('civicrm', 'css/extra.css', -98, 'html-header');
+      }
+    }
+  }
+
+  /**
    * Read resource files from a template
    * 
    * @param $tpl (str) template file name
-   * @return array filename => filetype
+   * @return array: filename => filetype
    */
   static function parseTemplate($tpl) {
     $items = array();
