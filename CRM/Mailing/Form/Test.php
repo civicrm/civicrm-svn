@@ -276,9 +276,17 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form {
     $session = CRM_Core_Session::singleton();
     if (!empty($testParams['emails'])) {
       $query = "
-                      SELECT id, contact_id, email
-                      FROM civicrm_email
-                      WHERE civicrm_email.email IN ($emails)";
+SELECT     e.id, e.contact_id, e.email
+FROM       civicrm_email e
+INNER JOIN civicrm_contact c ON e.contact_id = c.id
+WHERE      e.email IN ($emails)
+AND        e.on_hold = 0
+AND        c.is_opt_out = 0
+AND        c.do_not_email = 0
+AND        c.is_deceased = 0
+GROUP BY   e.id
+ORDER BY   e.is_bulkmail DESC, e.is_primary DESC
+";
 
       $dao = CRM_Core_DAO::executeQuery($query);
       $emailDetail = array();
@@ -332,7 +340,8 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form {
     if (CRM_Utils_Array::value('sendtest', $testParams)) {
       $status = NULL;
       if (CRM_Mailing_Info::workflowEnabled()) {
-        if ((CRM_Core_Permission::check('schedule mailings') &&
+        if ((
+            CRM_Core_Permission::check('schedule mailings') &&
             CRM_Core_Permission::check('create mailings')
           ) ||
           CRM_Core_Permission::check('access CiviMail')
@@ -365,6 +374,8 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form {
     return ts('Test');
   }
 
-  public function postProcess() {}
+  public function postProcess() {
+  }
+
 }
 

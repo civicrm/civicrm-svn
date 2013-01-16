@@ -844,17 +844,22 @@ ORDER BY   i.contact_id, i.{$tempColumn}
        );
 
       foreach (array_keys($contacts['values']) as $groupContact) {
-        $query = "SELECT DISTINCT civicrm_email.id AS email_id, civicrm_email.is_primary as is_primary,
-                                 civicrm_email.is_bulkmail as is_bulkmail
-FROM civicrm_email
+        $query = "
+SELECT     civicrm_email.id AS email_id,
+           civicrm_email.is_primary as is_primary,
+           civicrm_email.is_bulkmail as is_bulkmail
+FROM       civicrm_email
 INNER JOIN civicrm_contact ON civicrm_email.contact_id = civicrm_contact.id
-WHERE civicrm_email.is_bulkmail = 1
-AND civicrm_contact.id = {$groupContact}
-AND civicrm_contact.do_not_email = 0
-AND civicrm_contact.is_deceased = 0
-AND civicrm_email.on_hold = 0
-AND civicrm_contact.is_opt_out =0";
-        $dao = CRM_Core_DAO::executeQuery($query, CRM_Core_DAO::$_nullArray);
+WHERE      (civicrm_email.is_bulkmail = 1 OR civicrm_email.is_primary = 1)
+AND        civicrm_contact.id = {$groupContact}
+AND        civicrm_contact.do_not_email = 0
+AND        civicrm_contact.is_deceased = 0
+AND        civicrm_email.on_hold = 0
+AND        civicrm_contact.is_opt_out = 0
+GROUP BY   civicrm_email.id
+ORDER BY   civicrm_email.is_bulkmail DESC
+";
+        $dao = CRM_Core_DAO::executeQuery($query);
         if ($dao->fetch()) {
           $params = array(
             'job_id' => $testParams['job_id'],
@@ -862,27 +867,6 @@ AND civicrm_contact.is_opt_out =0";
             'contact_id' => $groupContact,
           );
           $queue = CRM_Mailing_Event_BAO_Queue::create($params);
-        }
-        else {
-          $query = "SELECT DISTINCT civicrm_email.id AS email_id, civicrm_email.is_primary as is_primary,
-                                 civicrm_email.is_bulkmail as is_bulkmail
-FROM civicrm_email
-INNER JOIN civicrm_contact ON civicrm_email.contact_id = civicrm_contact.id
-WHERE civicrm_email.is_primary = 1
-AND civicrm_contact.id = {$groupContact}
-AND civicrm_contact.do_not_email =0
-AND civicrm_contact.is_deceased = 0
-AND civicrm_email.on_hold = 0
-AND civicrm_contact.is_opt_out =0";
-          $dao = CRM_Core_DAO::executeQuery($query, CRM_Core_DAO::$_nullArray);
-          if ($dao->fetch()) {
-            $params = array(
-              'job_id' => $testParams['job_id'],
-              'email_id' => $dao->email_id,
-              'contact_id' => $groupContact,
-            );
-            $queue = CRM_Mailing_Event_BAO_Queue::create($params);
-          }
         }
       }
     }
