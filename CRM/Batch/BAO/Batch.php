@@ -581,7 +581,7 @@ class CRM_Batch_BAO_Batch extends CRM_Batch_DAO_Batch {
       FROM civicrm_entity_batch eb
       LEFT JOIN civicrm_financial_trxn ft ON (eb.entity_id = ft.id AND eb.entity_table = 'civicrm_financial_trxn')
       LEFT JOIN civicrm_financial_account fa_from ON fa_from.id = ft.from_financial_account_id
-      LEFT JOIN civicrm_option_group cog_status ON cog_status.name = 'financial_item_status'
+      LEFT JOIN civicrm_option_group cog_status ON cog_status.name = 'contribution_status'
       LEFT JOIN civicrm_option_value cov_status ON (cov_status.value = ft.status_id AND cov_status.option_group_id = cog_status.id)
       LEFT JOIN civicrm_option_group cog ON cog.name = 'payment_instrument'
       LEFT JOIN civicrm_entity_financial_trxn eft ON eft.financial_trxn_id  = ft.id AND eft.entity_table = 'civicrm_financial_item'
