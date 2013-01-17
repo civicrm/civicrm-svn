@@ -2757,7 +2757,7 @@ WHERE  contribution_id = %1 ";
       $entityParams = array(
         'batch_id' => $params['batch_id'],
         'entity_table' => 'civicrm_financial_trxn',
-        'entity_id' => $financialTxn->id
+        'entity_id' => $financialTxn->id,
       );
       CRM_Batch_BAO_Batch::addBatchEntity($entityParams);
     }
@@ -2788,10 +2788,10 @@ WHERE  contribution_id = %1 ";
     if ($context == 'changedStatus') {
       //get all the statuses
       $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
-            
+
       if ($params['prevContribution']->contribution_status_id == array_search('Completed', $contributionStatus)
-          && ($params['contribution']->contribution_status_id == array_search('Refunded', $contributionStatus)
-              || $params['contribution']->contribution_status_id == array_search('Cancelled', $contributionStatus))) {
+        && ($params['contribution']->contribution_status_id == array_search('Refunded', $contributionStatus)
+          || $params['contribution']->contribution_status_id == array_search('Cancelled', $contributionStatus))) {
 
         $params['trxnParams']['total_amount'] = - $params['total_amount'];
       }
@@ -2809,7 +2809,7 @@ WHERE  contribution_id = %1 ";
       $itemAmount = $params['trxnParams']['total_amount'];
     }
     elseif ($context == 'changePaymentInstrument') {
-      if ( $params['prevContribution']->payment_instrument_id != null ) {
+      if ($params['prevContribution']->payment_instrument_id != null) {
         $params['trxnParams']['from_financial_account_id'] =
           CRM_Financial_BAO_FinancialTypeAccount::getInstrumentFinancialAccount(
             $params['prevContribution']->payment_instrument_id);
@@ -2860,18 +2860,34 @@ WHERE  contribution_id = %1 ";
         foreach ($fields as $fieldValueId => $fieldValues) {
           $prevParams['entity_id'] = $fieldValues['id'];
           $prevfinancialItem = CRM_Financial_BAO_FinancialItem::retrieve($prevParams, CRM_Core_DAO::$_nullArray);
+
+          $receiveDate = CRM_Utils_Date::isoToMysql($params['prevContribution']->receive_date);
+          if ($params['contribution']->receive_date) {
+            $receiveDate = CRM_Utils_Date::isoToMysql($params['contribution']->receive_date);
+          }
+
+          $financialAccount = $prevfinancialItem->financial_account_id;
+          if (CRM_Utils_Array::value('financial_account_id', $params)) {
+            $financialAccount = $params['financial_account_id'];
+          }
+
+          $currency = $params['prevContribution']->currency;
+          if ($params['contribution']->currency) {
+            $currency = $params['contribution']->currency;
+          }
+
           $itemParams = array(
-            'transaction_date' => $params['contribution']->receive_date ? CRM_Utils_Date::isoToMysql($params['contribution']->receive_date) : CRM_Utils_Date::isoToMysql($params['prevContribution']->receive_date),
+            'transaction_date' => $receiveDate,
             'contact_id' => $params['prevContribution']->contact_id,
-            'currency' => $params['contribution']->currency ? $params['contribution']->currency : $params['prevContribution']->currency,
+            'currency' => $currency,
             'amount' => $itemAmount ? $itemAmount : $params['total_amount'],
             'description' => $prevfinancialItem->description,
             'status_id' => $prevfinancialItem->status_id,
-            'financial_account_id' => CRM_Utils_Array::value('financial_account_id', $params) ? $params['financial_account_id'] : $prevfinancialItem->financial_account_id,
+            'financial_account_id' => $financialAccount,
             'entity_table' => 'civicrm_line_item',
             'entity_id' => $fieldValues['id']
           );
-          $financialItem = CRM_Financial_BAO_FinancialItem::create($itemParams, NULL, $trxnIds);
+          CRM_Financial_BAO_FinancialItem::create($itemParams, NULL, $trxnIds);
         }
       }
     }
