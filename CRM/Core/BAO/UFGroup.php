@@ -410,7 +410,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
       $name = "address_{$name}";
     }
 
-    if ($field->location_type_id) {
+    if (!empty($field->location_type_id)) {
       $name .= "-{$field->location_type_id}";
     }
     else {
@@ -429,8 +429,8 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
     $formattedField = array(
       'name' => $name,
       'groupTitle' => $group->title,
-      'groupHelpPre' => $group->help_pre,
-      'groupHelpPost' => $group->help_post,
+      'groupHelpPre' => empty($group->help_pre) ? '' : $group->help_pre,
+      'groupHelpPost' => empty($group->help_post) ? '' : $group->help_post,
       'title' => $title,
       'where' => CRM_Utils_Array::value('where', CRM_Utils_Array::value($field->field_name, $importableFields)),
       'attributes' => CRM_Core_DAO::makeAttribute(CRM_Utils_Array::value($field->field_name, $importableFields)),
@@ -441,11 +441,11 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
       'visibility' => $field->visibility,
       'in_selector' => $field->in_selector,
       'rule' => CRM_Utils_Array::value('rule', CRM_Utils_Array::value($field->field_name, $importableFields)),
-      'location_type_id' => $field->location_type_id,
+      'location_type_id' => isset($field->location_type_id) ? $field->location_type_id : NULL,
       'phone_type_id' => isset($field->phone_type_id) ? $field->phone_type_id : NULL,
       'group_id' => $group->id,
-      'add_to_group_id' => $group->add_to_group_id,
-      'add_captcha' => $group->add_captcha,
+      'add_to_group_id' => isset($field->add_to_group_id) ? $field->add_to_group_id : NULL,
+      'add_captcha' => isset($field->add_captcha) ? $field->add_captcha : NULL,
       'field_type' => $field->field_type,
       'field_id' => $field->id,
     );
