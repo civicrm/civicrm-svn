@@ -397,7 +397,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
           }
 
           $choice[] = $qf->createElement('radio', NULL, '', $none, '0',
-                      array('price' => json_encode(array($elementName, "0")))
+            array('price' => json_encode(array($elementName, "0")))
           );
         }
 

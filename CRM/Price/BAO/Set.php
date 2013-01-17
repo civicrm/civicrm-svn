@@ -1100,5 +1100,41 @@ GROUP BY     mt.member_of_contact_id";
   static function setIsQuickConfig($id, $isQuickConfig) {
     return CRM_Core_DAO::setFieldValue('CRM_Price_DAO_Set', $id, 'is_quick_config', $isQuickConfig);
   }
+
+  /**
+   * Check if price set id provides option for 
+   * user to select both auto-renew and non-auto-renew memberships
+   *
+   * @access public                                                                                                                                                                                     
+   * @static
+   *
+   */
+  public static function checkMembershipPriceSet($id) {
+    $query = 
+"
+SELECT      pfv.id, pfv.price_field_id, pfv.name, pfv.membership_type_id, pf.html_type, mt.auto_renew
+FROM        civicrm_price_field_value pfv
+LEFT JOIN   civicrm_price_field pf ON pf.id = pfv.price_field_id
+LEFT JOIN   civicrm_price_set ps ON ps.id = pf.price_set_id
+LEFT JOIN   civicrm_membership_type mt ON mt.id = pfv.membership_type_id
+WHERE       ps.id = %1
+";
+
+    $params = array(1 => array($id, 'Integer'));
+    $dao = CRM_Core_DAO::executeQuery($query, $params);
+
+    $autorenew = array();
+    //FIXME: do a comprehensive check of whether
+    //2 membership types can be selected
+    //instead of comparing all of them
+    while ($dao->fetch()) {
+      if (!empty($autorenew) && !in_array($dao->auto_renew, $autoRenew)) {
+        return true;
+      }
+      $autorenew[] = $dao->auto_renew;
+    }
+    return false;
+  }
+
 }
 

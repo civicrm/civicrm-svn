@@ -215,6 +215,14 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
    */
   static function formRule($params, $files, $contributionPageId = NULL) {
     $errors = array();
+
+    if (CRM_Utils_Array::value('member_price_set_id', $params)) {
+      //get all the membership types associated with the price set
+      $bothTypes =  CRM_Price_BAO_Set::checkMembershipPriceSet($params['member_price_set_id']);
+
+      //check if this price set has membership type both auto-renew and non-auto-renew memberships.
+        
+    }
     if (CRM_Utils_Array::value('member_is_active', $params)) {
 
       // don't allow price set w/ membership signup, CRM-5095
@@ -227,7 +235,8 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
         }
       }
 
-      if ($contributionPageId && CRM_Utils_Array::value('member_price_set_id', $params) && CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_ContributionPage', $contributionPageId, 'amount_block_is_active')) {
+      if ($contributionPageId && CRM_Utils_Array::value('member_price_set_id', $params) && 
+        CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_ContributionPage', $contributionPageId, 'amount_block_is_active')) {
         $errors['member_price_set_id'] = ts('You cannot use Membership Price Sets with the Contribution Amounts section. However, a membership price set may include additional fields for non-membership options that requires an additional fee (e.g. magazine subscription) or an additional voluntary contribution.');
       }
 
