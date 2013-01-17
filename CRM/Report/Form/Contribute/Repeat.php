@@ -48,17 +48,20 @@ class CRM_Report_Form_Contribute_Repeat extends CRM_Report_Form {
         'fields' =>
         array(
           'sort_name' =>
-          array('title' => ts('Contact Name'),
+          array(
+            'title' => ts('Contact Name'),
             'no_repeat' => TRUE,
             'default' => TRUE,
           ),
           'display_name' =>
-          array('title' => ts('Display Name'),
-		  'no_repeat' => TRUE,
+          array(
+            'title' => ts('Display Name'),
+            'no_repeat' => TRUE,
           ),
           'addressee_display' =>
-          array('title' => ts('Addressee Name'),
-		  'no_repeat' => TRUE,
+          array(
+            'title' => ts('Addressee Name'),
+            'no_repeat' => TRUE,
           ),
           'id' =>
           array(
@@ -69,7 +72,8 @@ class CRM_Report_Form_Contribute_Repeat extends CRM_Report_Form {
         'filters' =>
         array(
           'percentage_change' =>
-          array('title' => ts('Percentage Change'),
+          array(
+            'title' => ts('Percentage Change'),
             'type' => CRM_Utils_Type::T_INT,
             'operatorType' => CRM_Report_Form::OP_INT,
             'name' => 'percentage_change',
@@ -79,7 +83,8 @@ class CRM_Report_Form_Contribute_Repeat extends CRM_Report_Form {
         'group_bys' =>
         array(
           'id' =>
-          array('title' => ts('Contact'),
+          array(
+            'title' => ts('Contact'),
             'default' => TRUE,
           ),
         ),
@@ -90,7 +95,8 @@ class CRM_Report_Form_Contribute_Repeat extends CRM_Report_Form {
         'fields' =>
         array(
           'email' =>
-          array('title' => ts('Email'),
+          array(
+            'title' => ts('Email'),
             'no_repeat' => TRUE,
           ),
         ),
@@ -102,7 +108,8 @@ class CRM_Report_Form_Contribute_Repeat extends CRM_Report_Form {
         'fields' =>
         array(
           'phone' =>
-          array('title' => ts('Phone'),
+          array(
+            'title' => ts('Phone'),
             'no_repeat' => TRUE,
           ),
         ),
@@ -114,41 +121,33 @@ class CRM_Report_Form_Contribute_Repeat extends CRM_Report_Form {
         'grouping' => 'contact-fields',
         'fields' =>
         array(
-          'street_address' =>
-          array('title' => ts('Street Address')),
-          'supplemental_address_1' =>
-          array('title' => ts('Additional Address')),
-          'city' =>
-          array('title' => ts('City')),
-          'country_id' =>
-          array('title' => ts('Country')),
-          'state_province_id' =>
-          array('title' => ts('State/Province')),
-          'postal_code' =>
-          array('title' => ts('Postal Code')),
+          'street_address' => array('title' => ts('Street Address')),
+          'supplemental_address_1' => array('title' => ts('Additional Address')),
+          'city' => array('title' => ts('City')),
+          'country_id' => array('title' => ts('Country')),
+          'state_province_id' => array('title' => ts('State/Province')),
+          'postal_code' => array('title' => ts('Postal Code')),
         ),
         'group_bys' =>
         array(
-          'country_id' =>
-          array('title' => ts('Country')),
-          'state_province_id' =>
-          array('title' => ts('State/Province'),
+          'country_id' => array('title' => ts('Country')),
+          'state_province_id' => array('title' => ts('State/Province'),
           ),
         ),
       ),
       'civicrm_financial_type' =>
-      array( 'dao'           => 'CRM_Financial_DAO_FinancialType',
-             'fields'        => array( 'financial_type' => 
-                                       array('title' => ts('Financial Type'),), 
-                                       ),
-             'grouping'  => 'contri-fields',
-             'group_bys' => 
-             array( 'financial_type'   => 
-                    array('name' => 'id',
-                          'title' => ts('Financial Type'),
-                          ), 
-                    ), 
-             ),
+      array(
+        'dao'       => 'CRM_Financial_DAO_FinancialType',
+        'fields'    => array('financial_type' => array('title' => ts('Financial Type'))),
+        'grouping'  => 'contri-fields',
+        'group_bys' =>
+        array( 'financial_type'   =>
+        array(
+          'name' => 'id',
+          'title' => ts('Financial Type'),
+        ),
+        ),
+      ),
       'civicrm_contribution' =>
       array(
         'dao' => 'CRM_Contribute_DAO_Contribution',
@@ -184,45 +183,50 @@ contribution_civireport2.total_amount_sum as contribution2_total_amount_sum',
         'filters' =>
         array(
           'receive_date1' =>
-          array('title' => ts('Initial Date Range'),
+          array(
+            'title' => ts('Initial Date Range'),
             'default' => 'previous.year',
             'type' => CRM_Utils_Type::T_DATE,
             'operatorType' => CRM_Report_Form::OP_DATE,
             'name' => 'receive_date',
           ),
           'receive_date2' =>
-          array('title' => ts('Second Date Range'),
+          array(
+            'title' => ts('Second Date Range'),
             'default' => 'this.year',
             'type' => CRM_Utils_Type::T_DATE,
             'operatorType' => CRM_Report_Form::OP_DATE,
             'name' => 'receive_date',
           ),
           'total_amount1' =>
-          array('title' => ts('Range One Amount'),
+          array(
+            'title' => ts('Range One Amount'),
             'type' => CRM_Utils_Type::T_INT,
             'operatorType' => CRM_Report_Form::OP_INT,
             'name' => 'total_amount',
           ),
           'total_amount2' =>
-          array('title' => ts('Range Two Amount'),
+          array(
+            'title' => ts('Range Two Amount'),
             'type' => CRM_Utils_Type::T_INT,
             'operatorType' => CRM_Report_Form::OP_INT,
             'name' => 'total_amount',
           ),
-                                'financial_type_id'  =>
-                                array( 'title'   => ts( 'Financial Type' ),
+          'financial_type_id'  =>
+          array(
+            'title'   => ts('Financial Type'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-                                       'options'      => CRM_Contribute_PseudoConstant::financialType( ) ,
+            'options'      => CRM_Contribute_PseudoConstant::financialType( ) ,
           ),
           'contribution_status_id' =>
-                                array( 'title'   => ts( 'Financial Status' ),
+          array(
+            'title'   => ts('Financial Status'),
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => CRM_Contribute_PseudoConstant::contributionStatus(),
             'default' => array('1'),
           ),
         ),
-        'group_bys' =>
-        array('contribution_source' => NULL),
+        'group_bys' => array('contribution_source' => NULL),
       ),
       'civicrm_group' =>
       array(
@@ -258,44 +262,12 @@ contribution_civireport2.total_amount_sum as contribution2_total_amount_sum',
   function select() {
     $select = array();
     $append = NULL;
-
-        // since contact fields not related to financial type
-        if ( array_key_exists('financial_type', $this->_params['group_bys']) ||
+    // since contact fields not related to financial type
+    if ( array_key_exists('financial_type', $this->_params['group_bys']) ||
       array_key_exists('contribution_source', $this->_params['group_bys'])
     ) {
       unset($this->_columns['civicrm_contact']['fields']['id']);
     }
-
-    /*         if ( array_key_exists('country_id', $this->_params['group_bys']) ) { */
-
-
-    /*             $this->_columns['civicrm_contribution']['fields']['total_amount1']['clause'] = ' */
-
-
-    /* SUM(contribution1_total_amount_count) as contribution1_total_amount_count, */
-
-
-    /* SUM(contribution1_total_amount_sum)   as contribution1_total_amount_sum'; */
-
-
-    /*             $this->_columns['civicrm_contribution']['fields']['total_amount2']['clause'] = ' */
-
-
-    /* SUM(contribution2_total_amount_count) as contribution2_total_amount_count, */
-
-
-    /* SUM(contribution2_total_amount_sum)   as contribution2_total_amount_sum'; */
-
-
-    /*             $this->_columns['civicrm_contribution']['fields']['total_amount1']['clause'] = ''; */
-
-
-    /*             $this->_columns['civicrm_contribution']['fields']['total_amount2']['clause'] = ''; */
-
-
-    /*         } */
-
-
 
     foreach ($this->_columns as $tableName => $table) {
       if (array_key_exists('fields', $table)) {
@@ -348,15 +320,6 @@ contribution_civireport2.total_amount_sum as contribution2_total_amount_sum',
       }
 
       $this->_groupBy = "GROUP BY " . implode(', ', $this->_groupBy);
-
-      // Set default sort order
-      /*             if(count($this->_params['group_bys']) == 1 && !empty($this->_params['group_bys']['id'])) { */
-
-
-      /*               $this->_groupBy .= ' ORDER BY contact_civireport.sort_name'; */
-
-
-      /*             } */
     }
   }
 
@@ -372,9 +335,10 @@ LEFT JOIN civicrm_email   {$this->_aliases['civicrm_email']}
        ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_email']}.contact_id AND {$this->_aliases['civicrm_email']}.is_primary = 1
 LEFT JOIN civicrm_phone   {$this->_aliases['civicrm_phone']}
        ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_phone']}.contact_id AND {$this->_aliases['civicrm_phone']}.is_primary = 1";
-            
-        } else if ( $fromTable == 'civicrm_financial_type' ) {
-            $contriCol  = "financial_type_id";
+
+    }
+    else if ( $fromTable == 'civicrm_financial_type' ) {
+      $contriCol  = "financial_type_id";
     }
     elseif ($fromTable == 'civicrm_contribution') {
       $contriCol = $fromCol;
@@ -426,12 +390,12 @@ LEFT JOIN civicrm_temp_civireport_repeat2 {$this->_aliases['civicrm_contribution
     if (!$this->_amountClauseWithAND) {
       $amountClauseWithAND = array();
       if (CRM_Utils_Array::value('total_amount1', $clauses)) {
-        $amountClauseWithAND[] = str_replace("{$this->_aliases['civicrm_contribution']}.total_amount", 
-                                             "{$this->_aliases['civicrm_contribution']}1.total_amount_sum", $clauses['total_amount1']);
+        $amountClauseWithAND[] = str_replace("{$this->_aliases['civicrm_contribution']}.total_amount",
+          "{$this->_aliases['civicrm_contribution']}1.total_amount_sum", $clauses['total_amount1']);
       }
       if (CRM_Utils_Array::value('total_amount2', $clauses)) {
-        $amountClauseWithAND[] = str_replace("{$this->_aliases['civicrm_contribution']}.total_amount", 
-                                             "{$this->_aliases['civicrm_contribution']}2.total_amount_sum", $clauses['total_amount2']);
+        $amountClauseWithAND[] = str_replace("{$this->_aliases['civicrm_contribution']}.total_amount",
+          "{$this->_aliases['civicrm_contribution']}2.total_amount_sum", $clauses['total_amount2']);
       }
       $this->_amountClauseWithAND = !empty($amountClauseWithAND) ? implode(' AND ', $amountClauseWithAND) : NULL;
     }
@@ -448,12 +412,13 @@ LEFT JOIN civicrm_temp_civireport_repeat2 {$this->_aliases['civicrm_contribution
     if ($replaceAliasWith) {
       $whereClause = str_replace($this->_aliases['civicrm_contribution'], $replaceAliasWith, $whereClause);
     }
+
     return $whereClause;
   }
 
   function where() {
     if (!$this->_amountClauseWithAND) {
-      $this->_amountClauseWithAND = 
+      $this->_amountClauseWithAND =
         "!({$this->_aliases['civicrm_contribution']}1.total_amount_count IS NULL AND {$this->_aliases['civicrm_contribution']}2.total_amount_count IS NULL)";
     }
     $clauses = array("atleast_one_amount" => $this->_amountClauseWithAND);
@@ -486,34 +451,45 @@ LEFT JOIN civicrm_temp_civireport_repeat2 {$this->_aliases['civicrm_contribution
     $errors = $checkDate = $errorCount = array();
 
     $rules = array(
-      'id' => array('sort_name', 'display_name', 'addressee_display', 'email', 'phone', 'state_province_id', 'country_id', 'city', 'street_address', 'supplemental_address_1', 'postal_code'
+      'id' => array(
+        'sort_name',
+        'display_name',
+        'addressee_display',
+        'email',
+        'phone',
+        'state_province_id',
+        'country_id',
+        'city',
+        'street_address',
+        'supplemental_address_1',
+        'postal_code',
       ),
       'country_id' => array('country_id'),
       'state_province_id' => array('country_id', 'state_province_id'),
       'contribution_source' => array('contribution_source'),
-                        'financial_type'      => array( 'financial_type' ),
+      'financial_type'      => array( 'financial_type' ),
     );
+
     $idMapping = array(
-      'id' => 'Contact',
-      'country_id' => 'Country',
-      'state_province_id' => 'State/Province',
-      'contribution_source' => 'Contribution Source',
-                            'financial_type'      => 'Financial Type',
-      'sort_name' => 'Contact Name',
-      'email' => 'Email',
-      'phone' => 'Phone',
+      'id' => ts('Contact'),
+      'country_id' => ts('Country'),
+      'state_province_id' => ts('State/Province'),
+      'contribution_source' => ts('Contribution Source'),
+      'financial_type'      => ts('Financial Type'),
+      'sort_name' => ts('Contact Name'),
+      'email' => ts('Email'),
+      'phone' => ts('Phone'),
     );
 
     if (empty($fields['group_bys'])) {
       $errors['fields'] = ts('Please select at least one Group by field.');
     }
     elseif ((array_key_exists('contribution_source', $fields['group_bys']) ||
-        array_key_exists('contribution_type', $fields['group_bys'])
-      ) &&
+      array_key_exists('contribution_type', $fields['group_bys'])
+    ) &&
       (count($fields['group_bys']) > 1)
     ) {
-
-            $errors['fields'] = ts('You can not use other Group by with Financial type or Contribution source.');
+      $errors['fields'] = ts('You can not use other Group by with Financial type or Contribution source.');
     }
     else {
       foreach ($fields['fields'] as $fld_id => $value) {
@@ -621,7 +597,7 @@ LEFT JOIN civicrm_temp_civireport_repeat2 {$this->_aliases['civicrm_contribution
 
   function statistics(&$rows) {
     $statistics = parent::statistics($rows);
-    
+
     //fetch contributions for both date ranges from pre-existing temp tables
     $sql = "
 CREATE TEMPORARY TABLE civicrm_temp_civireport_repeat3
@@ -637,26 +613,26 @@ LEFT JOIN civicrm_temp_civireport_repeat1
 			 ON civicrm_temp_civireport_repeat3.contact_id = civicrm_temp_civireport_repeat1.contact_id
 LEFT JOIN civicrm_temp_civireport_repeat2
 			 ON civicrm_temp_civireport_repeat3.contact_id = civicrm_temp_civireport_repeat2.contact_id";
-			
+
     $dao = CRM_Core_DAO::executeQuery($sql);
-	
+
     //store contributions in array 'contact_sums' for comparison
-    $contact_sums = array();		
+    $contact_sums = array();
     while ($dao->fetch()) {
-      $contact_sums[$dao->contact_id] = 
+      $contact_sums[$dao->contact_id] =
         array(
-              'contribution1_total_amount_sum' => $dao->contribution1_total_amount_sum,
-              'contribution2_total_amount_sum' => $dao->contribution2_total_amount_sum
-              );
+          'contribution1_total_amount_sum' => $dao->contribution1_total_amount_sum,
+          'contribution2_total_amount_sum' => $dao->contribution2_total_amount_sum
+        );
     }
-    
+
     $total_distinct_contacts = count($contact_sums);
     $number_maintained = 0;
     $number_upgraded = 0;
     $number_downgraded = 0;
     $number_new = 0;
     $number_lapsed = 0;
-    
+
     foreach ($contact_sums as $uid => $row) {
       if ($row['contribution1_total_amount_sum'] && $row['contribution2_total_amount_sum']) {
         $change = ($row['contribution1_total_amount_sum'] - $row['contribution2_total_amount_sum']);
@@ -674,35 +650,35 @@ LEFT JOIN civicrm_temp_civireport_repeat2
         $number_lapsed +=1;
       }
     }
-    
+
     //calculate percentages from numbers
     $percent_maintained = ($number_maintained / $total_distinct_contacts) * 100;
     $percent_upgraded = ($number_upgraded / $total_distinct_contacts) * 100;
     $percent_downgraded = ($number_downgraded / $total_distinct_contacts) * 100;
     $percent_new = ($number_new / $total_distinct_contacts) * 100;
     $percent_lapsed = ($number_lapsed / $total_distinct_contacts) * 100;
-    
+
     //display percentages for new, lapsed, upgraded, downgraded, and maintained contributors
     $statistics['counts']['count_new'] = array(
-                                              'value' => $percent_new,
-                                              'title' => '% New Donors',
-                                              );
+      'value' => $percent_new,
+      'title' => '% New Donors',
+    );
     $statistics['counts']['count_lapsed'] = array(
-                                              'value' => $percent_lapsed,
-                                              'title' => '% Lapsed Donors',
-                                              );  
+      'value' => $percent_lapsed,
+      'title' => '% Lapsed Donors',
+    );
     $statistics['counts']['count_upgraded'] = array(
-                                              'value' => $percent_upgraded,
-                                              'title' => '% Upgraded Donors',
-                                              );
+      'value' => $percent_upgraded,
+      'title' => '% Upgraded Donors',
+    );
     $statistics['counts']['count_downgraded'] = array(
-                                              'value' => $percent_downgraded,
-                                              'title' => '% Downgraded Donors',
-                                              ); 
+      'value' => $percent_downgraded,
+      'title' => '% Downgraded Donors',
+    );
     $statistics['counts']['count_maintained'] = array(
-                                              'value' => $percent_maintained,
-                                              'title' => '% Maintained Donors',
-                                              );
+      'value' => $percent_maintained,
+      'title' => '% Maintained Donors',
+    );
 
     $select = "
 SELECT COUNT({$this->_aliases['civicrm_contribution']}1.total_amount_count )       as count,
@@ -713,42 +689,40 @@ SELECT COUNT({$this->_aliases['civicrm_contribution']}1.total_amount_count )    
        ROUND(AVG({$this->_aliases['civicrm_contribution']}2.total_amount_sum), 2)  as avg2";
     $sql = "{$select} {$this->_from} {$this->_where}";
     $dao = CRM_Core_DAO::executeQuery($sql);
-    
+
     if ($dao->fetch()) {
-      $statistics['counts']['range_one_title'] = array(
-                                                       'title' => 'Initial Date Range:',
-                                                       );
+      $statistics['counts']['range_one_title'] = array('title' => 'Initial Date Range:');
       $statistics['counts']['amount'] = array(
-                                              'value' => $dao->amount,
-                                              'title' => 'Total Amount',
-                                              'type' => CRM_Utils_Type::T_MONEY,
-                                              );
+        'value' => $dao->amount,
+        'title' => 'Total Amount',
+        'type' => CRM_Utils_Type::T_MONEY,
+      );
       $statistics['counts']['count '] = array(
-                                              'value' => $dao->count,
-                                              'title' => 'Total Donations',
-                                              );
+        'value' => $dao->count,
+        'title' => 'Total Donations',
+      );
       $statistics['counts']['avg   '] = array(
-                                              'value' => $dao->avg,
-                                              'title' => 'Average',
-                                              'type' => CRM_Utils_Type::T_MONEY,
-                                              );
-	    $statistics['counts']['range_two_title'] = array(
-                                              'title' => 'Second Date Range:',
-                                              );
+        'value' => $dao->avg,
+        'title' => 'Average',
+        'type' => CRM_Utils_Type::T_MONEY,
+      );
+      $statistics['counts']['range_two_title'] = array(
+        'title' => 'Second Date Range:',
+      );
       $statistics['counts']['amount2'] = array(
-                                              'value' => $dao->amount2,
-                                              'title' => 'Total Amount',
-                                              'type' => CRM_Utils_Type::T_MONEY,
-                                              );
+        'value' => $dao->amount2,
+        'title' => 'Total Amount',
+        'type' => CRM_Utils_Type::T_MONEY,
+      );
       $statistics['counts']['count2 '] = array(
-                                              'value' => $dao->count2,
-                                              'title' => 'Total Donations',
-                                              );
+        'value' => $dao->count2,
+        'title' => 'Total Donations',
+      );
       $statistics['counts']['avg2   '] = array(
-                                              'value' => $dao->avg2,
-                                              'title' => 'Average',
-                                              'type' => CRM_Utils_Type::T_MONEY,
-                                              );
+        'value' => $dao->avg2,
+        'title' => 'Average',
+        'type' => CRM_Utils_Type::T_MONEY,
+      );
     }
 
     return $statistics;
@@ -756,7 +730,7 @@ SELECT COUNT({$this->_aliases['civicrm_contribution']}1.total_amount_count )    
 
   function postProcess() {
     $this->beginPostProcess();
-
+    $create = $subSelect1 = $subSelect2 = NULL;
     list($fromTable, $fromAlias, $fromCol) = $this->groupBy(TRUE);
     if ($fromTable == 'civicrm_contact') {
       $contriCol = "contact_id";
@@ -770,10 +744,16 @@ SELECT COUNT({$this->_aliases['civicrm_contribution']}1.total_amount_count )    
     elseif ($fromTable == 'civicrm_address') {
       $contriCol = "contact_id";
     }
+    elseif ($fromTable == 'civicrm_financial_type') {
+      $contriCol = 'financial_type_id';
+      $subSelect1 = 'contribution1.contact_id,';
+      $subSelect2 = 'contribution2.contact_id,';
+      $create = 'contact_id int unsigned,';
+    }
 
     $subWhere = $this->whereContribution();
     $subContributionQuery1 = "
-SELECT contribution1.{$contriCol},
+SELECT {$subSelect1} contribution1.{$contriCol},
        sum( contribution1.total_amount ) AS total_amount_sum,
        count( * ) AS total_amount_count
 FROM   civicrm_contribution contribution1
@@ -782,7 +762,7 @@ GROUP BY contribution1.{$contriCol}";
 
     $subWhere = $this->whereContribution('contribution2');
     $subContributionQuery2 = "
-SELECT contribution2.{$contriCol},
+SELECT {$subSelect2} contribution2.{$contriCol},
        sum( contribution2.total_amount ) AS total_amount_sum,
        count( * ) AS total_amount_count
 FROM   civicrm_contribution contribution2
@@ -790,10 +770,11 @@ FROM   civicrm_contribution contribution2
 GROUP BY contribution2.{$contriCol}";
 
     $sql = "
-CREATE TEMPORARY TABLE civicrm_temp_civireport_repeat1 ( 
+CREATE TEMPORARY TABLE civicrm_temp_civireport_repeat1 (
+{$create} 
 {$contriCol} int unsigned,
 total_amount_sum int,
-total_amount_count int          
+total_amount_count int         
 ) ENGINE=HEAP DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci";
     CRM_Core_DAO::executeQuery($sql);
     $sql = "INSERT INTO civicrm_temp_civireport_repeat1 {$subContributionQuery1}";
@@ -801,9 +782,10 @@ total_amount_count int
 
     $sql = "
 CREATE TEMPORARY TABLE civicrm_temp_civireport_repeat2 ( 
+{$create}
 {$contriCol} int unsigned,
 total_amount_sum int,
-total_amount_count int          
+total_amount_count int
 ) ENGINE=HEAP DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci";
     CRM_Core_DAO::executeQuery($sql);
     $sql = "INSERT INTO civicrm_temp_civireport_repeat2 {$subContributionQuery2}";
@@ -830,9 +812,9 @@ total_amount_count int
     foreach ($rows as $uid => $row) {
       if ($row['contribution1_total_amount_sum'] && $row['contribution2_total_amount_sum']) {
         $rows[$uid]['change'] = number_format((($row['contribution2_total_amount_sum'] -
-              $row['contribution1_total_amount_sum']
-            ) * 100) /
-          ($row['contribution1_total_amount_sum']), 2
+            $row['contribution1_total_amount_sum']
+          ) * 100) /
+            ($row['contribution1_total_amount_sum']), 2
         );
       }
       elseif ($row['contribution1_total_amount_sum']) {
@@ -871,7 +853,7 @@ total_amount_count int
     $this->_columnHeaders['contribution1_total_amount_sum']['title'] = "$from1 -<br/> $to1";
     $this->_columnHeaders['contribution2_total_amount_sum']['title'] = "$from2 -<br/> $to2";
     unset($this->_columnHeaders['contribution1_total_amount_count'],
-      $this->_columnHeaders['contribution2_total_amount_count']
+    $this->_columnHeaders['contribution2_total_amount_count']
     );
 
     $this->formatDisplay($rows);
@@ -915,16 +897,14 @@ total_amount_count int
 
           $url = CRM_Report_Utils_Report::getNextUrl('contribute/detail',
             "reset=1&force=1&" .
-            "country_id_op=in&country_id_value={$value}&" .
-            "$dateUrl",
+              "country_id_op=in&country_id_value={$value}&" .
+              "$dateUrl",
             $this->_absoluteUrl, $this->_id, $this->_drilldownReport
           );
-
 
           $rows[$rowNum]['address_civireport_country_id_link'] = $url;
           $rows[$rowNum]['address_civireport_country_id_hover'] = ts("View contributions for this Country.");
         }
-        $entryFound = TRUE;
       }
 
       // handle state province
@@ -934,14 +914,14 @@ total_amount_count int
 
           $url = CRM_Report_Utils_Report::getNextUrl('contribute/detail',
             "reset=1&force=1&" .
-            "state_province_id_op=in&state_province_id_value={$value}&" .
-            "$dateUrl",
+              "state_province_id_op=in&state_province_id_value={$value}&" .
+              "$dateUrl",
             $this->_absoluteUrl, $this->_id, $this->_drilldownReport
           );
+
           $rows[$rowNum]['address_civireport_state_province_id_link'] = $url;
           $rows[$rowNum]['address_civireport_state_province_id_hover'] = ts("View repeatDetails for this state.");
         }
-        $entryFound = TRUE;
       }
 
       // convert display name to links
@@ -952,9 +932,9 @@ total_amount_count int
           'reset=1&force=1&id_op=eq&id_value=' . $row['contact_civireport_id'],
           $this->_absoluteUrl, $this->_id, $this->_drilldownReport
         );
+        
         $rows[$rowNum]['contact_civireport_sort_name_link'] = $url;
         $rows[$rowNum]['contact_civireport_sort_name_hover'] = ts("View Contribution details for this contact");
-        $entryFound = TRUE;
       }
     }
     // foreach ends
