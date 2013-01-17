@@ -124,7 +124,7 @@ class CRM_Core_BAO_SettingTest extends CiviUnitTestCase {
     //check current domain
     $value = civicrm_api('setting', 'getvalue', array(
         'version' => 3,
-        'name' => 'max_attachments',
+        'name' => 'maxAttachments',
         'group' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
     ));
 
@@ -132,12 +132,12 @@ class CRM_Core_BAO_SettingTest extends CiviUnitTestCase {
     // check alternate domain
     $value = civicrm_api('setting', 'getvalue', array(
         'version' => 3,
-        'name' => 'max_attachments',
+        'name' => 'maxAttachments',
         'group' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
         'domain_id' => 2
     ));
 
-    $this->assertEquals(3, $value);
+    $this->assertEquals(6, $value);
     $config = CRM_Core_Config::singleton(true, true);
 
     //some caching inconsistency here

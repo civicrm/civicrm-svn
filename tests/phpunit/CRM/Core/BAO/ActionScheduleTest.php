@@ -65,7 +65,7 @@ class CRM_Core_BAO_ActionScheduleTest extends CiviUnitTestCase {
     $this->fixtures['contact'] = array( // API
       'version' => 3,
       'contact_type' => 'Individual',
-      'email' => 'test@example.com',
+      'email' => 'test-member@example.com',
     );
     $this->fixtures['sched_activity_1day'] = array( // create()
       'name' => 'One_Day_Phone_Call_Notice',
@@ -221,7 +221,7 @@ class CRM_Core_BAO_ActionScheduleTest extends CiviUnitTestCase {
       ),
       array( // After the 24-hour mark, an email
         'time' => '2012-06-14 15:00:00',
-        'recipients' => array(array('test@example.com')),
+        'recipients' => array(array('test-member@example.com')),
       ),
       array( // Run cron again; message already sent
         'time' => '',
@@ -247,7 +247,7 @@ class CRM_Core_BAO_ActionScheduleTest extends CiviUnitTestCase {
       ),
       array( // After the 24-hour mark, an email
         'time' => '2012-06-14 15:00:00',
-        'recipients' => array(array('test@example.com')),
+        'recipients' => array(array('test-member@example.com')),
       ),
       array( // Run cron 4 hours later; first message already sent
         'time' => '2012-06-14 20:00:00',
@@ -255,7 +255,7 @@ class CRM_Core_BAO_ActionScheduleTest extends CiviUnitTestCase {
       ),
       array( // Run cron 6 hours later; send second message
         'time' => '2012-06-14 21:00:01',
-        'recipients' => array(array('test@example.com')),
+        'recipients' => array(array('test-member@example.com')),
       ),
     ));
   }
@@ -278,6 +278,7 @@ class CRM_Core_BAO_ActionScheduleTest extends CiviUnitTestCase {
     $result = civicrm_api('Email', 'create', array(
       'contact_id' => $membership->contact_id,
       'email' => 'test-member@example.com',
+      'location_type_id' => 1,
       'version' => 3,
     ));
     $this->assertAPISuccess($result);
@@ -304,6 +305,7 @@ class CRM_Core_BAO_ActionScheduleTest extends CiviUnitTestCase {
     $this->assertTrue(is_numeric($membership->id));
     $result = civicrm_api('Email', 'create', array(
       'contact_id' => $membership->contact_id,
+      'location_type_id' => 1,
       'email' => 'test-member@example.com',
       'version' => 3,
     ));

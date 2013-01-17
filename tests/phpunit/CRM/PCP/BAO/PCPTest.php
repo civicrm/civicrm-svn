@@ -143,6 +143,7 @@ class CRM_PCP_BAO_PCPTest extends CiviUnitTestCase {
       'entity_table' => 'civicrm_contribution_page',
       'entity_id' => $contribPageId,
       'supporter_profile_id' => $supporterProfileId,
+      'target_entity_id' => 1,
       'is_approval_needed' => 1,
       'is_tellfriend_enabled' => 1,
       'tellfriend_limit' => 1,

@@ -5,6 +5,8 @@ require_once 'CiviTest/CiviUnitTestCase.php';
 class CRM_Extension_Manager_ModuleTest extends CiviUnitTestCase {
   function setUp() {
     parent::setUp();
+    $query = "INSERT INTO civicrm_domain ( name, version ) VALUES ( 'domain', 3 )";
+    $result = CRM_Core_DAO::executeQuery($query);
     global $_test_extension_manager_moduletest_counts;
     $_test_extension_manager_moduletest_counts = array();
     $this->basedir = $this->createTempDir('ext-');

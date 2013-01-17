@@ -72,15 +72,17 @@ class CRM_Member_BAO_MembershipTypeTest extends CiviUnitTestCase {
      *
      */
   function testAdd() {
-    $ids = array('memberOfContact' => $this->_orgContactID);
+    $ids = array();
     $params = array(
       'name' => 'test type',
+      'domain_id' => 1,
       'description' => NULL,
       'minimum_fee' => 10,
       'duration_unit' => 'year',
+      'member_of_contact_id' => $this->_orgContactID,
       'period_type' => 'fixed',
       'duration_interval' => 1,
-                         'financial_type_id' => $this->_contributionTypeId,
+      'financial_type_id' => $this->_contributionTypeId,
       'relationship_type_id' => $this->_relationshipTypeId,
       'visibility' => 'Public',
     );
@@ -100,15 +102,17 @@ class CRM_Member_BAO_MembershipTypeTest extends CiviUnitTestCase {
      *
      */
   function testRetrieve() {
-    $ids = array('memberOfContact' => $this->_orgContactID);
+    $ids = array();
     $params = array(
       'name' => 'General',
       'description' => NULL,
+      'domain_id' => 1,
       'minimum_fee' => 100,
       'duration_unit' => 'year',
       'period_type' => 'fixed',
+      'member_of_contact_id' => $this->_orgContactID,
       'duration_interval' => 1,
-                         'financial_type_id' => $this->_contributionTypeId,
+      'financial_type_id' => $this->_contributionTypeId,
       'relationship_type_id' => $this->_relationshipTypeId,
       'visibility' => 'Public',
     );
@@ -125,15 +129,17 @@ class CRM_Member_BAO_MembershipTypeTest extends CiviUnitTestCase {
      *
      */
   function testSetIsActive() {
-    $ids = array('memberOfContact' => $this->_orgContactID);
+    $ids = array();
     $params = array(
       'name' => 'General',
       'description' => NULL,
+      'domain_id' => 1,
       'minimum_fee' => 100,
       'duration_unit' => 'year',
       'period_type' => 'fixed',
       'duration_interval' => 1,
-                         'financial_type_id' => $this->_contributionTypeId,
+      'member_of_contact_id' => $this->_orgContactID,
+      'financial_type_id' => $this->_contributionTypeId,
       'relationship_type_id' => $this->_relationshipTypeId,
       'visibility' => 'Public',
       'is_active' => 1,
@@ -155,15 +161,17 @@ class CRM_Member_BAO_MembershipTypeTest extends CiviUnitTestCase {
      *
      */
   function testdel() {
-    $ids = array('memberOfContact' => $this->_orgContactID);
+    $ids = array();
     $params = array(
       'name' => 'General',
       'description' => NULL,
       'minimum_fee' => 100,
+      'domain_id' => 1,
       'duration_unit' => 'year',
       'period_type' => 'fixed',
+      'member_of_contact_id' => $this->_orgContactID,
       'duration_interval' => 1,
-                         'financial_type_id' => $this->_contributionTypeId,
+      'financial_type_id' => $this->_contributionTypeId,
       'relationship_type_id' => $this->_relationshipTypeId,
       'visibility' => 'Public',
       'is_active' => 1,
@@ -179,17 +187,19 @@ class CRM_Member_BAO_MembershipTypeTest extends CiviUnitTestCase {
      *
      */
   function testConvertDayFormat() {
-    $ids = array('memberOfContact' => $this->_orgContactID);
+    $ids = array();
     $params = array(
       'name' => 'General',
       'description' => NULL,
       'minimum_fee' => 100,
+      'domain_id' => 1,
       'duration_unit' => 'year',
       'period_type' => 'fixed',
+      'member_of_contact_id' => $this->_orgContactID,
       'fixed_period_start_day' => 1213,
       'fixed_period_rollover_day' => 1214,
       'duration_interval' => 1,
-                         'financial_type_id' => $this->_contributionTypeId,
+      'financial_type_id' => $this->_contributionTypeId,
       'relationship_type_id' => $this->_relationshipTypeId,
       'visibility' => 'Public',
       'is_active' => 1,
@@ -207,15 +217,17 @@ class CRM_Member_BAO_MembershipTypeTest extends CiviUnitTestCase {
      *
      */
   function testGetMembershipTypes() {
-    $ids = array('memberOfContact' => $this->_orgContactID);
+    $ids = array();
     $params = array(
       'name' => 'General',
       'description' => NULL,
       'minimum_fee' => 100,
+      'domain_id' => 1,
       'duration_unit' => 'year',
+      'member_of_contact_id' => $this->_orgContactID,
       'period_type' => 'fixed',
       'duration_interval' => 1,
-                         'financial_type_id' => $this->_contributionTypeId,
+      'financial_type_id' => $this->_contributionTypeId,
       'relationship_type_id' => $this->_relationshipTypeId,
       'visibility' => 'Public',
       'is_active' => 1,
@@ -230,15 +242,17 @@ class CRM_Member_BAO_MembershipTypeTest extends CiviUnitTestCase {
      *
      */
   function testGetMembershipTypeDetails() {
-    $ids = array('memberOfContact' => $this->_orgContactID);
+    $ids = array();
     $params = array(
       'name' => 'General',
       'description' => NULL,
       'minimum_fee' => 100,
+      'domain_id' => 1,
       'duration_unit' => 'year',
       'period_type' => 'fixed',
+      'member_of_contact_id' => $this->_orgContactID,
       'duration_interval' => 1,
-                         'financial_type_id' => $this->_contributionTypeId,
+      'financial_type_id' => $this->_contributionTypeId,
       'relationship_type_id' => $this->_relationshipTypeId,
       'visibility' => 'Public',
       'is_active' => 1,
@@ -255,15 +269,17 @@ class CRM_Member_BAO_MembershipTypeTest extends CiviUnitTestCase {
      *
      */
   function testGetDatesForMembershipType() {
-    $ids = array('memberOfContact' => $this->_orgContactID);
+    $ids = array();
     $params = array(
       'name' => 'General',
       'description' => NULL,
       'minimum_fee' => 100,
+      'domain_id' => 1,
       'duration_unit' => 'year',
+      'member_of_contact_id' => $this->_orgContactID,
       'period_type' => 'rolling',
       'duration_interval' => 1,
-                         'financial_type_id' => $this->_contributionTypeId,
+      'financial_type_id' => $this->_contributionTypeId,
       'relationship_type_id' => $this->_relationshipTypeId,
       'visibility' => 'Public',
       'is_active' => 1,
@@ -279,15 +295,17 @@ class CRM_Member_BAO_MembershipTypeTest extends CiviUnitTestCase {
      *
      */
   function testGetRenewalDatesForMembershipType() {
-    $ids = array('memberOfContact' => $this->_orgContactID);
+    $ids = array();
     $params = array(
       'name' => 'General',
+      'domain_id' => 1,
       'description' => NULL,
       'minimum_fee' => 100,
       'duration_unit' => 'year',
+      'member_of_contact_id' => $this->_orgContactID,
       'period_type' => 'rolling',
       'duration_interval' => 1,
-                         'financial_type_id' => $this->_contributionTypeId,
+      'financial_type_id' => $this->_contributionTypeId,
       'relationship_type_id' => $this->_relationshipTypeId,
       'visibility' => 'Public',
       'is_active' => 1,
@@ -320,15 +338,17 @@ class CRM_Member_BAO_MembershipTypeTest extends CiviUnitTestCase {
      *
      */
   function testGetMembershipTypesByOrg() {
-    $ids = array('memberOfContact' => $this->_orgContactID);
+    $ids = array();
     $params = array(
       'name' => 'General',
       'description' => NULL,
+      'domain_id' => 1,
       'minimum_fee' => 100,
       'duration_unit' => 'year',
+      'member_of_contact_id' => $this->_orgContactID,
       'period_type' => 'rolling',
       'duration_interval' => 1,
-                         'financial_type_id' => $this->_contributionTypeId,
+      'financial_type_id' => $this->_contributionTypeId,
       'relationship_type_id' => $this->_relationshipTypeId,
       'visibility' => 'Public',
       'is_active' => 1,

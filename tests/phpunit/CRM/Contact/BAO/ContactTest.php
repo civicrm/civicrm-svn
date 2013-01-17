@@ -199,10 +199,10 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase {
     $this->assertEquals($updateParams['gender_id'], $contact->gender_id, 'Check for gender_id creation.');
     $this->assertEquals('1', $contact->is_deceased, 'Check for is_deceased creation.');
     $this->assertEquals(CRM_Utils_Date::processDate($updateParams['birth_date']),
-      $contact->birth_date, 'Check for birth_date creation.'
+      date('YmdHis', strtotime($contact->birth_date)), 'Check for birth_date creation.'
     );
     $this->assertEquals(CRM_Utils_Date::processDate($updateParams['deceased_date']),
-      $contact->deceased_date, 'Check for deceased_date creation.'
+      date('YmdHis', strtotime($contact->deceased_date)), 'Check for deceased_date creation.'
     );
     $dbPrefComm = explode(CRM_Core_DAO::VALUE_SEPARATOR,
       $contact->preferred_communication_method

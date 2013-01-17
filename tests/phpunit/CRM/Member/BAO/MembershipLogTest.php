@@ -55,15 +55,15 @@ class CRM_Member_BAO_MembershipLogTest extends CiviUnitTestCase {
     $this->_orgContactID = $this->organizationCreate();
     $this->_contributionTypeId = $this->contributionTypeCreate();
 
-    $ids = array('memberOfContact' => $this->_orgContactID);
     $params = array(
       'name' => 'test type',
       'description' => NULL,
       'minimum_fee' => 10,
       'duration_unit' => 'year',
+      'member_of_contact_id' => $this->_orgContactID,
       'period_type' => 'fixed',
       'duration_interval' => 1,
-                         'financial_type_id' => $this->_contributionTypeId,
+      'financial_type_id' => $this->_contributionTypeId,
       'relationship_type_id' => $this->_relationshipTypeId,
       'visibility' => 'Public',
       'is_active' => 1,
@@ -95,13 +95,14 @@ class CRM_Member_BAO_MembershipLogTest extends CiviUnitTestCase {
     $params = array(
       'contact_id' => $contactId,
       'membership_type_id' => $this->_membershipTypeID,
-      'join_date' => '2007-01-21',
-      'start_date' => '2007-01-21',
-      'end_date' => '2007-12-21',
+      'join_date' => date('Ymd',strtotime('2006-01-21')),
+      'start_date' => date('Ymd',strtotime('2006-01-21')),
+      'end_date' => date('Ymd',strtotime('2006-12-21')),
       'source' => 'Payment',
       'is_override' => 1,
       'status_id' => $this->_mebershipStatusID,
     );
+
     $ids = array();
     $membership = CRM_Member_BAO_Membership::create($params, $ids);
     $this->assertDBNotNull('CRM_Member_BAO_MembershipLog', $membership->id,
@@ -122,9 +123,9 @@ class CRM_Member_BAO_MembershipLogTest extends CiviUnitTestCase {
     $params = array(
       'contact_id' => $contactId,
       'membership_type_id' => $this->_membershipTypeID,
-      'join_date' => '2008-01-21',
-      'start_date' => '2008-01-21',
-      'end_date' => '2008-12-21',
+      'join_date' => date('Ymd',strtotime('2006-01-21')),
+      'start_date' => date('Ymd',strtotime('2006-01-21')),
+      'end_date' => date('Ymd',strtotime('2006-12-21')),
       'source' => 'Payment',
       'is_override' => 1,
       'status_id' => $this->_mebershipStatusID,
@@ -151,9 +152,9 @@ class CRM_Member_BAO_MembershipLogTest extends CiviUnitTestCase {
     $params = array(
       'contact_id' => $contactId,
       'membership_type_id' => $this->_membershipTypeID,
-      'join_date' => '2009-01-21',
-      'start_date' => '2009-01-21',
-      'end_date' => '2009-12-21',
+      'join_date' => date('Ymd',strtotime('2006-01-21')),
+      'start_date' => date('Ymd',strtotime('2006-01-21')),
+      'end_date' => date('Ymd',strtotime('2006-12-21')),
       'source' => 'Payment',
       'is_override' => 1,
       'status_id' => $this->_mebershipStatusID,

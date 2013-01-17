@@ -28,7 +28,6 @@ class CRM_Extension_Manager_PaymentTest extends CiviUnitTestCase {
   function testInstallDisableUninstall() {
     $manager = $this->system->getManager();
     $this->assertDBQuery(0, 'SELECT count(*) FROM civicrm_payment_processor_type WHERE class_name = "test.extension.manager.paymenttest"');
-
     $manager->install(array('test.extension.manager.paymenttest'));
     $this->assertEquals(1, test_extension_manager_paymenttest::$counts['install']);
     $this->assertDBQuery(1, 'SELECT count(*) FROM civicrm_payment_processor_type WHERE class_name = "test.extension.manager.paymenttest" AND is_active = 1');
@@ -49,7 +48,7 @@ class CRM_Extension_Manager_PaymentTest extends CiviUnitTestCase {
   function testInstallDisableEnable() {
     $manager = $this->system->getManager();
     $this->assertDBQuery(0, 'SELECT count(*) FROM civicrm_payment_processor_type WHERE class_name = "test.extension.manager.paymenttest"');
-
+    
     $manager->install(array('test.extension.manager.paymenttest'));
     $this->assertEquals(1, test_extension_manager_paymenttest::$counts['install']);
     $this->assertDBQuery(1, 'SELECT count(*) FROM civicrm_payment_processor_type WHERE class_name = "test.extension.manager.paymenttest" AND is_active = 1');

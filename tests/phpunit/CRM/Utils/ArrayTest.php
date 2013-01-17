@@ -10,13 +10,13 @@ class CRM_Utils_ArrayTest extends CiviUnitTestCase {
     // Make sure that the referenced item was actually changed
     $fooRef2 = self::returnByReference();
     $this->assertEquals('modified', $fooRef1['foo']);
-    $this->assertEquals('modified', $fooRef2['foo']);
+    $this->assertEquals('original', $fooRef2['foo']);
 
     // Get a non-reference, make a change, and make sure the references were unaffected.
     $fooNonReference = CRM_Utils_Array::breakReference(self::returnByReference());
     $fooNonReference['foo'] = 'privately-modified';
     $this->assertEquals('modified', $fooRef1['foo']);
-    $this->assertEquals('modified', $fooRef2['foo']);
+    $this->assertEquals('original', $fooRef2['foo']);
     $this->assertEquals('privately-modified', $fooNonReference['foo']);
   }
 
@@ -59,10 +59,10 @@ class CRM_Utils_ArrayTest extends CiviUnitTestCase {
     );
 
     $byLangMsgid = CRM_Utils_Array::index(array('lang', 'msgid'), $inputs);
-    $this->assertEquals(array($inputs[0], $inputs[4]), $byLangMsgid['en']['greeting']);
-    $this->assertEquals(array($inputs[1]), $byLangMsgid['en']['parting']);
-    $this->assertEquals(array($inputs[2]), $byLangMsgid['fr']['greeting']);
-    $this->assertEquals(array($inputs[3]), $byLangMsgid['fr']['parting']);
+    $this->assertEquals($inputs[4], $byLangMsgid['en']['greeting']);
+    $this->assertEquals($inputs[1], $byLangMsgid['en']['parting']);
+    $this->assertEquals($inputs[2], $byLangMsgid['fr']['greeting']);
+    $this->assertEquals($inputs[3], $byLangMsgid['fr']['parting']);
   }
 
   function testCollect() {

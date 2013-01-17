@@ -185,6 +185,13 @@ class CRM_Contact_BAO_DupeContactTest extends CiviUnitTestCase {
     foreach ($params as $param) {
       $param['version'] = 3;
       $contact = civicrm_api('contact', 'create', $param);
+      $params = array(
+        'contact_id' => $contact['id'],
+        'street_address' => 'Ambachtstraat 23',
+        'location_type_id' => 1,
+        'version' => 3,
+      );
+      $result = civicrm_api( 'address','create',$params );
       $contactIds[$count++] = $contact['id'];
     }
 
@@ -193,7 +200,7 @@ class CRM_Contact_BAO_DupeContactTest extends CiviUnitTestCase {
 
     $dao               = new CRM_Dedupe_DAO_RuleGroup();
     $dao->contact_type = 'Individual';
-    $dao->level        = 'Fuzzy';
+    $dao->used        = 'General';
     $dao->is_default   = 1;
     $dao->find(TRUE);
 
@@ -201,10 +208,11 @@ class CRM_Contact_BAO_DupeContactTest extends CiviUnitTestCase {
       'first_name' => 'robin',
       'last_name' => 'hood',
       'email' => 'hood@example.com',
+      'street_address' => 'Ambachtstraat 23',
     );
     $errorScope = CRM_Core_TemporaryErrorScope::useException();
     $dedupeParams = CRM_Dedupe_Finder::formatParams($fields, 'Individual');
-    $ids = CRM_Dedupe_Finder::dupesByParams($dedupeParams, 'Individual', 'Fuzzy');
+    $ids = CRM_Dedupe_Finder::dupesByParams($dedupeParams, 'Individual', 'General');
 
     // Check with default Individual-Fizzy rule
     $this->assertEquals(count($ids), 1, 'Check Individual-Fizzy rule for dupesByParams().');

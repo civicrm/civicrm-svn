@@ -12,11 +12,10 @@ class CRM_Contact_BAO_ContactType_ContactSearchTest extends CiviUnitTestCase {
 
   function setUp() {
     parent::setUp();
-
-
+    $students = 'indivi_student'.substr(sha1(rand()), 0, 7);
     $params = array(
-      'label' => 'indivi_student',
-      'name' => 'indivi_student',
+      'label' => $students,
+      'name' => $students,
       // Individual
       'parent_id' => 1,
       'is_active' => 1,
@@ -24,9 +23,10 @@ class CRM_Contact_BAO_ContactType_ContactSearchTest extends CiviUnitTestCase {
     $result = CRM_Contact_BAO_ContactType::add($params);
     $this->student = $params['name'];
 
+    $parents = 'indivi_parent'.substr(sha1(rand()), 0, 7);
     $params = array(
-      'label' => 'indivi_parent',
-      'name' => 'indivi_parent',
+      'label' => $parents,
+      'name' => $parents,
       // Individual
       'parent_id' => 1,
       'is_active' => 1,
@@ -34,10 +34,10 @@ class CRM_Contact_BAO_ContactType_ContactSearchTest extends CiviUnitTestCase {
     $result = CRM_Contact_BAO_ContactType::add($params);
     $this->parent = $params['name'];
 
-
+    $orgs = 'org_sponsor'.substr(sha1(rand()), 0, 7);
     $params = array(
-      'label' => 'org_sponsor',
-      'name' => 'org_sponsor',
+      'label' => $orgs,
+      'name' => $orgs,
       // Organization
       'parent_id' => 3,
       'is_active' => 1,

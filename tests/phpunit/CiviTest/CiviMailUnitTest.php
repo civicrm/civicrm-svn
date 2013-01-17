@@ -131,7 +131,7 @@ class CiviMailUnitTest extends PHPUnit_Framework_TestCase {
       $mailingBackend = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME,
         'mailing_backend'
       );
- 
+
       $mailingBackend['outBound_option'] = $this->_outBound_option;
 
       CRM_Core_BAO_Setting::setItem($mailingBackend,
@@ -143,7 +143,7 @@ class CiviMailUnitTest extends PHPUnit_Framework_TestCase {
 
   function getMostRecentEmail( $type = 'raw' ) {
     $msg = '';
- 
+
     // Check if running under webtests or not
     if ( $this->_webtest ) {
 
