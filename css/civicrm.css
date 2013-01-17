@@ -731,7 +731,7 @@
   background-color: #ffffff;
 }
 
-.crm-container .footer {
+.crm-container .crm-footer {
   font-size: 0.8em;
 }
 
@@ -742,7 +742,7 @@
   text-align: center;
 }
 
-#crm-container #record-log {
+#crm-record-log {
   padding: 0.8em 0.8em 0em 0em;
   text-align: right;
 }

@@ -318,7 +318,6 @@
       }
       {/literal}
       var selectedTab = '{if !empty($selectedChild)}{$selectedChild}{else}summary{/if}';
-      {if $selectedChild}selectedTab = "{$selectedChild}";{/if}
       var tabIndex = $('#tab_' + selectedTab).prevAll().length;
       var spinnerImage = '<img src="{$config->resourceBase}i/loading.gif" style="width:10px;height:10px"/>';
       {literal}

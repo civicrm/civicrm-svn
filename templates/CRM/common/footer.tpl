@@ -25,7 +25,7 @@
 *}
 {include file="CRM/common/accesskeys.tpl"}
 {if !empty($contactId)} {* Display contact-related footer. *}
-  <div class="footer" id="record-log">
+  <div class="crm-footer" id="crm-record-log">
     <span class="col1">
       {if !empty($external_identifier)}{ts}External ID{/ts}:&nbsp;{$external_identifier}{/if}
       {if $action NEQ 2}&nbsp; &nbsp;{ts}CiviCRM ID{/ts}:&nbsp;{$contactId}{/if}
@@ -33,13 +33,13 @@
     {if !empty($lastModified)}
       {ts}Last Change by{/ts} <a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$lastModified.id`"}">{$lastModified.name}</a> ({$lastModified.date|crmDate}) &nbsp;
       {if !empty($changeLog)}
-        <a href="{crmURL p='civicrm/contact/view' q="reset=1&action=browse&selectedChild=log&cid=`$contactId`"}">&raquo; {ts}View Change Log{/ts}</a>
+        <a href="{crmURL p='civicrm/contact/view' q="reset=1&action=browse&selectedChild=log&cid=`$contactId`"}" class="crm-log-view">&raquo; {ts}View Change Log{/ts}</a>
       {/if}
     {/if}
   </div>
 {/if}
 
-<div class="footer" id="civicrm-footer">
+<div class="crm-footer" id="civicrm-footer">
   {include file="CRM/common/version.tpl" assign=version}
   {ts 1=$version}Powered by CiviCRM %1.{/ts}
   {if !empty($newer_civicrm_version)}

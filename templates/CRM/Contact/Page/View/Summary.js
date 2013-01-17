@@ -82,6 +82,15 @@
               $(this).closest('.crm-summary-block').load(CRM.url('civicrm/ajax/inline', data), function() {$(this).trigger('load');});
             });
           }
+          // Reload changelog tab
+          if ($('#Change_Log div').length) {
+            $('#Change_Log').load($("#tab_log a").attr('href'));
+          }
+          // Update changelog count
+          // TODO: somehow reload the "last change by" footer block
+          // Hack - this should really come from the server
+          $("#tab_log a em").html(1 + parseInt($("#tab_log a em").text()));
+
           CRM.alert('', ts('Saved'), 'success');
         }
       },
@@ -233,16 +242,16 @@
       })
       // Switch tabs when clicking tag link
       .on('click', '#tagLink a', function() {
-        $('.ui-tabs-anchor[href*="/contact/view/tag"]').click();
+        $('#tab_tag a').click();
         return false;
       })
-      // make sure only one is primary radio is checked
+      // make sure only one is_primary radio is checked
       .on('change', '[class$=is_primary] input', function() {
         if ($(this).is(':checked')) {
           $('[class$=is_primary] input', $(this).closest('form')).not(this).prop('checked', false);
         }
       })
-      // make sure only one builk mail radio is checked
+      // make sure only one builk_mail radio is checked
       .on('change', '.crm-email-bulkmail input', function(){
         if ($(this).is(':checked')) {
           $('.crm-email-bulkmail input').not(this).prop('checked', false);
@@ -278,6 +287,11 @@
       if (key.which == 27) {
         $('.crm-inline-edit.form :submit[name$=cancel]').click();
       }
+    });
+    // Switch tabs when clicking log link
+    $('#crm-record-log').on('click', 'a.crm-log-view', function() {
+      $('#tab_log a').click();
+      return false;
     });
   });
 })(cj);
