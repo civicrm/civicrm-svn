@@ -123,11 +123,20 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task {
 
       $dao = new CRM_Mailing_DAO_Group();
 
-      $mailingGroups = array( 'civicrm_group' => array( ), 'civicrm_mailing' => array( ));
+      $mailingGroups = array(
+        'civicrm_group' => array( ),
+        'civicrm_mailing' => array( )
+      );
       $dao->mailing_id = $this->_mailingID;
       $dao->find();
       while ($dao->fetch()) {
-        $mailingGroups[$dao->entity_table][$dao->group_type][] = $dao->entity_id;
+        // account for multi-lingual
+        // CRM-11431
+        $entityTable = 'civicrm_group';
+        if (substr($dao->entity_table, 0, 15) == 'civicrm_mailing') {
+          $entityTable = 'civicrm_mailing';
+        }
+        $mailingGroups[$entityTable][$dao->group_type][] = $dao->entity_id;
       }
 
       $defaults['includeGroups'] = $mailingGroups['civicrm_group']['Include'];
@@ -378,8 +387,9 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task {
       $values['includeGroups'][] = $smartGroupId;
     }
 
-    foreach (array(
-      'name', 'group_id', 'search_id', 'search_args', 'campaign_id', 'dedupe_email') as $n) {
+    foreach (
+      array('name', 'group_id', 'search_id', 'search_args', 'campaign_id', 'dedupe_email') as $n
+    ) {
       if (CRM_Utils_Array::value($n, $values)) {
         $params[$n] = $values[$n];
       }
@@ -438,8 +448,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task {
       $mailingTableName = CRM_Mailing_BAO_Mailing::getTableName();
 
       // delete previous includes/excludes, if mailing already existed
-      foreach (array(
-        'groups', 'mailings') as $entity) {
+      foreach (array('groups', 'mailings') as $entity) {
         $mg               = new CRM_Mailing_DAO_Group();
         $mg->mailing_id   = $ids['mailing_id'];
         $mg->entity_table = ($entity == 'groups') ? $groupTableName : $mailingTableName;
