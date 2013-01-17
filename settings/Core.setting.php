@@ -519,6 +519,6 @@ When enabled, statistics about your CiviCRM installation are reported anonymousl
     'is_domain' => 1,
     'is_contact' => 0,
     'description' => 'If disabled, backend HTTPS services will allow unverified, insecure connections',
-    'help_text' => null,
+    'help_text' => 'Unless you are absolutely unable to configure your server to check the SSL certificate of the remote server you should leave this set to Yes',
   ),
 );
