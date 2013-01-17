@@ -97,10 +97,10 @@
         <th class="crm-contact-type"></th>
         <th class="crm-contact-name">{ts}Name{/ts}</th>
         <th class="crm-amount">{ts}Amount{/ts}</th>
-	<th class="crm-trxnID">{ts}Trxn ID{/ts}</th>
+	      <th class="crm-trxnID">{ts}Trxn ID{/ts}</th>
         <th class="crm-received">{ts}Received{/ts}</th>
         <th class="crm-payment-method">{ts}Pay Method{/ts}</th>
-	<th class="crm-status">{ts}Status{/ts}</th>
+	      <th class="crm-status">{ts}Status{/ts}</th>
         <th class="crm-type">{ts}Type{/ts}</th>
         <th class="crm-transaction-links"></th>
       </tr>
@@ -115,6 +115,9 @@
 <script type="text/javascript">
 cj( function() {
   cj().crmAccordions();
+  cj('#_qf_BatchTransaction_submit-top, #_qf_BatchTransaction_submit-botttom').click(function() {
+    cj('.crm-batch_transaction_search-accordion:not(.collapsed)').crmAccordionToggle(250);
+  });
   var batchStatus = {/literal}{$statusID}{literal};
   // build transaction listing only for open batches
   if (batchStatus == 1) {
