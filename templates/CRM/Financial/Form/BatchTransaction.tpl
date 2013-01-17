@@ -95,10 +95,12 @@
       <tr>
         <th class="crm-transaction-checkbox">{if $statusID eq 1}{$form.toggleSelect.html}{/if}</th>
         <th class="crm-contact-type"></th>
-        <th class="crm-contact-name">{ts}Contact Name{/ts}</th>
+        <th class="crm-contact-name">{ts}Name{/ts}</th>
         <th class="crm-amount">{ts}Amount{/ts}</th>
+	<th class="crm-trxnID">{ts}Trxn ID{/ts}</th>
         <th class="crm-received">{ts}Received{/ts}</th>
-        <th class="crm-payment-method">{ts}Payment Method{/ts}</th>
+        <th class="crm-payment-method">{ts}Pay Method{/ts}</th>
+	<th class="crm-status">{ts}Status{/ts}</th>
         <th class="crm-type">{ts}Type{/ts}</th>
         <th class="crm-transaction-links"></th>
       </tr>
@@ -205,14 +207,16 @@ function buildTransactionSelectorAssign(filterSearch) {
   "bDestroy"   : true,
   "bFilter"    : false,
   "bAutoWidth" : false,
-  "aaSorting"  : [[4, 'desc']],
+  "aaSorting"  : [[5, 'desc']],
   "aoColumns"  : [
     {sClass:'crm-transaction-checkbox', bSortable:false},
     {sClass:'crm-contact-type', bSortable:false},
     {sClass:'crm-contact-name'},
     {sClass:'crm-amount'},
+    {sClass:'crm-trxnID'},
     {sClass:'crm-received'},
     {sClass:'crm-payment-method'},
+    {sClass:'crm-status'},
     {sClass:'crm-type'},
     {sClass:'crm-transaction-links', bSortable:false}
   ],
@@ -246,7 +250,7 @@ function buildTransactionSelectorAssign(filterSearch) {
           aoData.push(
             {name:cj(this).attr('id'), value: cj(this).val()}
           );
-          cj(':radio').each(function() {
+          cj(':radio, :checkbox').each(function() {
             if (cj(this).is(':checked')) {
               aoData.push( { name: cj(this).attr('name'), value: cj(this).val() } );
             }
@@ -273,14 +277,16 @@ function buildTransactionSelectorRemove( ) {
   "bDestroy"   : true,
   "bFilter"    : false,
   "bAutoWidth" : false,
-  "aaSorting"  : [[4, 'desc']],
+  "aaSorting"  : [[5, 'desc']],
   "aoColumns"  : [
     {sClass:'crm-transaction-checkbox', bSortable:false},
     {sClass:'crm-contact-type', bSortable:false},
     {sClass:'crm-contact-name'},
     {sClass:'crm-amount'},
+    {sClass:'crm-trxnID'},
     {sClass:'crm-received'},
     {sClass:'crm-payment-method'},
+    {sClass:'crm-status'},
     {sClass:'crm-type'},
     {sClass:'crm-transaction-links', bSortable:false}
   ],

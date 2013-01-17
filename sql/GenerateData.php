@@ -1716,7 +1716,7 @@ order by cc.id; ";
 
   private function addContributionFinancialItem() {
 
-    $sql = " SELECT cc.id contribution_id, cli.id as line_item_id, cc.contact_id, cc.receive_date, cc.total_amount, cc.currency, cli.label, cli.financial_type_id,  cefa.financial_account_id, cc.payment_instrument_id
+    $sql = " SELECT cc.id contribution_id, cli.id as line_item_id, cc.contact_id, cc.receive_date, cc.total_amount, cc.currency, cli.label, cli.financial_type_id,  cefa.financial_account_id, cc.payment_instrument_id, cc.check_number, cc.trxn_id
 FROM `civicrm_contribution` cc
 INNER JOIN civicrm_line_item cli ON cli.entity_id = cc.id and cli.entity_table = 'civicrm_contribution'
 INNER JOIN civicrm_entity_financial_account cefa ON cefa.entity_id =  cli.financial_type_id
@@ -1728,7 +1728,7 @@ WHERE cefa.account_relationship = 1; ";
 
   private function addParticipantFinancialItem() {
 
-    $sql = " SELECT cpp.contribution_id, cli.id as line_item_id, cp.contact_id, now() as receive_date, cp.fee_amount as total_amount, cp.fee_currency as currency, cli.label, cli.financial_type_id, cefa.financial_account_id, NULL as payment_instrument_id
+    $sql = " SELECT cpp.contribution_id, cli.id as line_item_id, cp.contact_id, now() as receive_date, cp.fee_amount as total_amount, cp.fee_currency as currency, cli.label, cli.financial_type_id, cefa.financial_account_id, NULL as payment_instrument_id, NULL as check_number, NULL as trxn_id
 FROM `civicrm_participant` cp
 INNER JOIN civicrm_participant_payment cpp ON cpp.participant_id = cp.id
 INNER JOIN civicrm_line_item cli ON cli.entity_id = cp.id and cli.entity_table = 'civicrm_participant'
@@ -1746,9 +1746,11 @@ WHERE cefa.account_relationship = 1";
         'total_amount' => $result->total_amount,
         'currency' => $result->currency,
         'status_id' => 1,
+        'trxn_id' => $result->trxn_id,
         'contribution_id' => $result->contribution_id,
         'to_financial_account_id' => $result->payment_instrument_id ? $financialAccountId[$result->payment_instrument_id] : $defaultFinancialAccount,
         'payment_instrument_id' => $result->payment_instrument_id,
+        'check_number' => $result->check_number
       );
       $trxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
       $financialItem = array(

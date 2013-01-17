@@ -57,10 +57,12 @@
         <tr>
           <th class="crm-transaction-checkbox">{if $statusID eq 1}{$form.toggleSelects.html}{/if}</th>
           <th class="crm-contact-type"></th>
-          <th class="crm-contact-name">{ts}Contact Name{/ts}</th>
+          <th class="crm-contact-name">{ts}Name{/ts}</th>
           <th class="crm-amount">{ts}Amount{/ts}</th>
+	  <th class="crm-trxnID">{ts}Trxn ID{/ts}</th>
           <th class="crm-received">{ts}Received{/ts}</th>
-          <th class="crm-payment-method">{ts}Payment Method{/ts}</th>
+          <th class="crm-payment-method">{ts}Pay Method{/ts}</th>
+	  <th class="crm-status">{ts}Status{/ts}</th>
           <th class="crm-type">{ts}Type{/ts}</th>
           <th class="crm-transaction-links"></th>
         </tr>

@@ -250,7 +250,7 @@ class CRM_Financial_Page_AJAX {
     $sortMapper =
       array(
         0 => '', 1 => '', 2 => 'sort_name',
-        3 => 'amount', 4 => 'transaction_date', 5 => 'payment_method', 6 => 'name',
+        3 => 'amount', 4 => 'trxn_id', 5 => 'transaction_date', 6 => 'payment_method', 7 => 'status', 8 => 'name',
       );
 
     $sEcho     = CRM_Utils_Type::escape($_REQUEST['sEcho'], 'Integer');
@@ -275,12 +275,15 @@ class CRM_Financial_Page_AJAX {
         'civicrm_contribution.contact_id as contact_id',
         'civicrm_contribution.id as contributionID',
         'contact_a.sort_name',
-        'civicrm_entity_financial_trxn.amount',
+        'civicrm_financial_trxn.total_amount as amount',
+        'civicrm_financial_trxn.trxn_id as trxn_id',
         'contact_a.contact_type',
         'contact_a.contact_sub_type',
-        'civicrm_contribution.receive_date as transaction_date',
+        'civicrm_financial_trxn.trxn_date as transaction_date',
         'name',
         'civicrm_contribution.currency as currency',
+        'civicrm_financial_trxn.status_id as status',
+        'civicrm_financial_trxn.check_number as check_number',
       );
 
     $columnHeader =
@@ -288,8 +291,10 @@ class CRM_Financial_Page_AJAX {
         'contact_type' => '',
         'sort_name' => ts('Contact Name'),
         'amount'   => ts('Amount'),
+        'trxn_id'  => ts('Trxn ID'),
         'transaction_date' => ts('Received'),
         'payment_method' => ts('Payment Method'),
+        'status'  => ts('Status'),
         'name' => ts('Type'),
       );
 
@@ -342,14 +347,24 @@ class CRM_Financial_Page_AJAX {
           continue;
         }
         $row[$financialItem->id][$columnKey] = $financialItem->$columnKey;
-        if ($columnKey == 'payment_method' && $financialItem->$columnKey) {
+        if ($columnKey == 'sort_name' && $financialItem->$columnKey) {
+          $url = CRM_Utils_System::url('civicrm/contact/view', "reset=1&cid=".$financialItem->contact_id);
+          $row[$financialItem->id][$columnKey] = '<a href='.$url.'>'.$financialItem->$columnKey.'</a>';
+        }
+        elseif ($columnKey == 'payment_method' && $financialItem->$columnKey) {
           $row[$financialItem->id][$columnKey] = CRM_Core_OptionGroup::getLabel('payment_instrument', $financialItem->$columnKey);
+          if ($row[$financialItem->id][$columnKey] == 'Check') {
+            $row[$financialItem->id][$columnKey] = $row[$financialItem->id][$columnKey].' ('.$financialItem->check_number.')';
+          }
         }
         elseif ($columnKey == 'amount' && $financialItem->$columnKey) {
           $row[$financialItem->id][$columnKey] = CRM_Utils_Money::format($financialItem->$columnKey, $financialItem->currency);
         }
         elseif ($columnKey == 'transaction_date' && $financialItem->$columnKey) {
           $row[$financialItem->id][$columnKey] =  CRM_Utils_Date::customFormat($financialItem->$columnKey);
+        }
+        elseif ($columnKey == 'status' && $financialItem->$columnKey) {
+          $row[$financialItem->id][$columnKey] = CRM_Core_OptionGroup::getLabel('contribution_status', $financialItem->$columnKey);
         }
       }
       if ($statusID == CRM_Core_OptionGroup::getValue('batch_status','Open')) {
@@ -378,7 +393,7 @@ class CRM_Financial_Page_AJAX {
     $selectorElements =
       array(
         'check', 'contact_type', 'sort_name',
-        'amount', 'transaction_date', 'payment_method', 'name', 'action',
+        'amount', 'trxn_id', 'transaction_date', 'payment_method', 'status', 'name', 'action',
       );
 
     echo CRM_Utils_JSON::encodeDataTableSelector($financialitems, $sEcho, $iTotal, $iFilteredTotal, $selectorElements);
