@@ -173,6 +173,11 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
 
     // add a unique validable key to the name
     $name         = CRM_Utils_System::getClassName($this);
+    if ($name == 'CRM_Core_Controller_Simple' && !empty($scope)) {
+      // use form name if we have, since its a lot better and
+      // definitely different for different forms
+      $name = $scope;
+    }
     $name         = $name . '_' . $this->key($name, $addSequence, $ignoreKey);
     $this->_title = $title;
     if ($scope) {

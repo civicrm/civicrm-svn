@@ -58,6 +58,7 @@
     <input type="hidden" name="email_greeting_id" value="{$email_greeting_id}" />
     <input type="hidden" name="postal_greeting_id" value="{$postal_greeting_id}" />
     <input type="hidden" name="addressee_id" value="{$addressee_id}" />
+    <input type="hidden" name="qfKey" value="{crmKey name='CRM_Contact_Form_Contact' addSequence=1}" />
 </div>
 
 <div class="form-item"><input type="submit" name="_qf_Contact_next" value="{ts}Save{/ts}" class="form-submit" /></div>

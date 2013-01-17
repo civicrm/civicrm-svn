@@ -128,7 +128,7 @@ class CRM_Core_Block {
           'info' => ts('CiviCRM Quick Add'),
           'subject' => ts('New Individual'),
           'active' => TRUE,
-          'cache' => BLOCK_CACHE_GLOBAL,
+          'cache' => BLOCK_NO_CACHE,
           'visibility' => 1,
           'weight' => -97,
           'status' => 1,
