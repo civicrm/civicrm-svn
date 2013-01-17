@@ -128,6 +128,9 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
    * @access public
    */
   function view() {
+    // Add js for in-place editing
+    CRM_Core_Resources::singleton()
+      ->addScriptFile('civicrm', 'templates/CRM/Contact/Page/View/Summary.js');
     $session = CRM_Core_Session::singleton();
     $url = CRM_Utils_System::url('civicrm/contact/view', 'reset=1&cid=' . $this->_contactId);
     $session->pushUserContext($url);

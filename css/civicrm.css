@@ -1876,7 +1876,7 @@ div.grippie {
   position: relative;
 }
 
-#crm-container div.crm-inline-edit:hover {
+#crm-container .crm-edit-ready .crm-inline-edit:hover {
   cursor: pointer;
   border: 2px dashed lightgrey;
 }
@@ -1905,7 +1905,7 @@ div.grippie {
   background-color: #EBEBEB;
 }
 
-#crm-container div.crm-inline-edit:hover .crm-edit-help {
+#crm-container .crm-edit-ready .crm-inline-edit:hover .crm-edit-help {
   display: block;
   background-color: #DFE1FF;
 }
