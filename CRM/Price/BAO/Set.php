@@ -354,7 +354,7 @@ WHERE     ct.id = cp.financial_type_id AND
                 INNER JOIN civicrm_price_set_entity pse ON ps.id = pse.price_set_id
                 WHERE pse.entity_table = %1 AND pse.entity_id = %2 ';
     if ($isQuickConfig) {
-      $sql .= " AND ps.is_quick_config = 0 ";
+      $sql .= ' AND ps.is_quick_config = 0 ';
     }
     $params = array(1 => array($entityTable, 'String'),
               2 => array($entityId, 'Integer'),
@@ -411,21 +411,21 @@ WHERE     ct.id = cp.financial_type_id AND
    * @return array associative array of id => name
    */
   public static function getAssoc($withInactive = FALSE, $extendComponentName = FALSE) {
-    $query = "
+    $query = '
     SELECT
        DISTINCT ( price_set_id ) as id, title
     FROM
        civicrm_price_field,
        civicrm_price_set
     WHERE
-       civicrm_price_set.id = civicrm_price_field.price_set_id  AND is_quick_config = 0 ";
+       civicrm_price_set.id = civicrm_price_field.price_set_id  AND is_quick_config = 0 ';
 
     if (!$withInactive) {
-      $query .= " AND civicrm_price_set.is_active = 1 ";
+      $query .= ' AND civicrm_price_set.is_active = 1 ';
     }
 
     if (self::eventPriceSetDomainID()) {
-      $query .= " AND civicrm_price_set.domain_id = " . CRM_Core_Config::domainID();
+      $query .= ' AND civicrm_price_set.domain_id = ' . CRM_Core_Config::domainID();
     }
 
     $priceSets = array();
@@ -766,7 +766,7 @@ WHERE  id = %1";
     }
 
     $form->assign('quickConfig', $quickConfig);
-    if ($className == "CRM_Contribute_Form_Contribution_Main") {
+    if ($className == 'CRM_Contribute_Form_Contribution_Main') {
       $form->_quickConfig = $quickConfig;
     }
     $form->assign('priceSet', $form->_priceSet);

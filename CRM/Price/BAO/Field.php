@@ -325,12 +325,12 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
 
         //CRM-10117
         if (property_exists($qf, '_quickConfig') && $qf->_quickConfig) {
-          $message = ts("Please enter a valid amount.");
-          $type = "money";
+          $message = ts('Please enter a valid amount.');
+          $type = 'money';
         } 
         else {
           $message = ts('%1 must be an integer (whole number).', array(1 => $label));
-          $type = "positiveInteger";
+          $type = 'positiveInteger';
         }
         // integers will have numeric rule applied to them.
         $qf->addRule($elementName, $message, $type);
@@ -397,7 +397,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
           }
 
           $choice[] = $qf->createElement('radio', NULL, '', $none, '0',
-            array('price' => json_encode(array($elementName, "0")))
+            array('price' => json_encode(array($elementName, '0')))
           );
         }
 
@@ -461,10 +461,10 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
             $opt['label'] .= CRM_Utils_Money::format($opt[$valueFieldName]);
           }
           $check[$opId] = &$qf->createElement('checkbox', $opt['id'], NULL, $opt['label'],
-                          array('price' => json_encode(array($opt['id'], $priceVal)),
-                            'data-amount' => $opt[$valueFieldName],
-                            'data-currency' => $currencyName,
-                          )
+            array('price' => json_encode(array($opt['id'], $priceVal)),
+             'data-amount' => $opt[$valueFieldName],
+             'data-currency' => $currencyName,
+            )
           );
           if ($is_pay_later) {
             $txtcheck[$opId] =& $qf->createElement( 'text', $opId, $opt['label'], array( 'size' => '4' ) );
@@ -665,10 +665,10 @@ WHERE  id IN (" . implode(',', array_keys($priceFields)) . ')';
     else {
       if ($allowNoneSelection) {
         if (empty($noneSelectedPriceFields)) {
-          $error['_qf_default'] = ts("Please select at least one option from price set.");
+          $error['_qf_default'] = ts('Please select at least one option from price set.');
         }
       } else {
-        $error['_qf_default'] = ts("Please select at least one option from price set.");
+        $error['_qf_default'] = ts('Please select at least one option from price set.');
       }
     }
   }

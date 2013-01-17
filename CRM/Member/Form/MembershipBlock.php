@@ -134,7 +134,6 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
         $this->_id, 'payment_processor'
       );
       $paymentProcessorId = explode(CRM_Core_DAO::VALUE_SEPARATOR, $paymentProcessorIds);
-
       $isRecur = TRUE;
       foreach ($paymentProcessorId as $dontCare => $id) {
         if (!array_key_exists($id, $paymentProcessor)) {
@@ -217,11 +216,32 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
     $errors = array();
 
     if (CRM_Utils_Array::value('member_price_set_id', $params)) {
-      //get all the membership types associated with the price set
+      //check if this price set has membership type both auto-renew and non-auto-renew memberships.  
       $bothTypes =  CRM_Price_BAO_Set::checkMembershipPriceSet($params['member_price_set_id']);
 
-      //check if this price set has membership type both auto-renew and non-auto-renew memberships.
-        
+      //check for supporting payment processors
+      //if both auto-renew and non-auto-renew memberships
+      if ($bothTypes) {
+          $paymentProcessorIds = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_ContributionPage',
+            $contributionPageId, 'payment_processor'
+            );
+
+          $paymentProcessorId = explode(CRM_Core_DAO::VALUE_SEPARATOR, $paymentProcessorIds);
+
+        if (!empty($paymentProcessorId)) {
+          $paymentProcessorType = CRM_Core_PseudoConstant::paymentProcessorType(false, null, 'name');
+          foreach($paymentProcessorId as $pid) {
+            $paymentProcessorTypeId = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_PaymentProcessor',
+              $pid, 'payment_processor_type_id'
+              );
+            if (!($paymentprocessorTypeId == CRM_Utils_Array::key('PayPal_Standard', $paymentProcessorType) ||
+              ($paymentprocessorTypeId == CRM_Utils_Array::key('AuthNet', $paymentProcessorType)))) {
+              $errors['member_price_set_id'] = ts('The membership price set associated with this online contribution allows a user to select BOTH an auto-renew AND a non-auto-renew membership. This requires submitting multiple processor transactions, and is not supported for one or more of the payment processors enabled under the Fees tab.');
+            }
+
+          }
+        }
+      }  
     }
     if (CRM_Utils_Array::value('member_is_active', $params)) {
 
