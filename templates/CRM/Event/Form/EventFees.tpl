@@ -189,7 +189,27 @@
     invert              = 0
 }
 {/if}
+{if ($context eq 'standalone' || $context eq 'participant') && $priceSet && $priceSet.is_quick_config}
+{literal}
+<script type="text/javascript">
+cj(document).ready(function() { 
+  cj("#priceset .content input").each(function() {
+    if (cj(this).attr('checked')) {
+      changeFinancialType(this);
+    }
+  });
+  cj("#priceset .content input").click(function() {
+    changeFinancialType(this);
+  });			       
+});
 
+function changeFinancialType(form) {
+  financialTypeID = cj(form).attr('financialType');
+  cj("#financial_type_id").val(financialTypeID);
+}
+</script>
+{/literal}
+{/if}
 {if $context eq 'standalone' and $outBound_option != 2 }
 <script type="text/javascript">
 {literal}

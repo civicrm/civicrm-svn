@@ -362,9 +362,14 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
             $extra += array(
               'onclick' => "return showHideAutoRenew({$opt['membership_type_id']});",
               'membership-type' => $opt['membership_type_id'],
-            );
+            ); 
             $qf->assign('membershipFieldID',$field->id);
           }
+          elseif (property_exists($qf, '_quickConfig') && $qf->_quickConfig && 
+            property_exists($qf, '_context') && ($qf->_context == 'standalone' || $qf->_context == 'participant')) {
+            $extra += array('financialType' => "{$opt['financial_type_id']}");
+          }
+            
           $choice[$opId] = $qf->createElement('radio', NULL, '', $opt['label'], $opt['id'], $extra);
 
           if ($is_pay_later) {

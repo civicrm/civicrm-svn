@@ -617,6 +617,9 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
       //format price set fields across option full.
       self::formatFieldsForOptionFull($form);
 
+      if (CRM_Utils_Array::value('is_quick_config', $form->_priceSet)) {
+        $form->_quickConfig = $form->_priceSet['is_quick_config'];
+      }
       $form->add('hidden', 'priceSetId', $form->_priceSetId);
 
       foreach ($form->_feeBlock as $field) {
@@ -643,7 +646,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
           if (!empty($optionFullIds) && (count($options) == count($optionFullIds))) {
             $isRequire = FALSE;
           }
-
+          
           //build the element.
           CRM_Price_BAO_Field::addQuickFormElement($form,
             $elementName,
