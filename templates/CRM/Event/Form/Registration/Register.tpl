@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {if $ppType}
-  {include file="CRM/Core/BillingBlock.tpl"}
+  {include file="CRM/Core/BillingBlock.tpl" context="front-end"}
 
 <div id="paypalExpress">
 {* Put PayPal Express button after customPost block since it's the submit button in this case. *}
@@ -142,14 +142,20 @@
 {include file="CRM/common/CMSUser.tpl"}
 
 {include file="CRM/UF/Form/Block.tpl" fields=$customPre}
- <div class="crm-section payment_processor-section">
-      <div class="label">{$form.payment_processor.label}</div>
-      <div class="content">{$form.payment_processor.html}</div>
-      <div class="clear"></div>
- </div>
 
- <div id="billing-payment-block"></div>
- {include file="CRM/common/paymentBlock.tpl"}
+{if $form.payment_processor.label}
+<fieldset class="crm-group payment_options-group">
+  <legend>{ts}Payment Options{/ts}</legend>
+  <div class="crm-section payment_processor-section">
+    <div class="label">{$form.payment_processor.label}</div>
+    <div class="content">{$form.payment_processor.html}</div>
+    <div class="clear"></div>
+  </div>
+</fieldset>
+{/if}
+
+<div id="billing-payment-block"></div>
+{include file="CRM/common/paymentBlock.tpl"}
 
 {include file="CRM/UF/Form/Block.tpl" fields=$customPost}
 
