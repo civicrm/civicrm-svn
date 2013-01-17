@@ -128,13 +128,13 @@ class CRM_Financial_BAO_ExportFormat_IIF extends CRM_Financial_BAO_ExportFormat 
         // set up the journal entries for this financial trxn
         $journalEntries[$dao->financial_trxn_id] = array(
           'to_account' => array(
-            'trxn_date' => $this->format( $dao->trxn_date, 'date' ),
-            'trxn_id' =>  $this->format( $dao->trxn_id ),
-            'account_name' => $this->format( $dao->to_account_name ),
-            'amount' => $this->format( $dao->debit_total_amount ),
-            'contact_name' => $this->format( $dao->contact_to_name ),
-            'payment_instrument' => $this->format( $dao->payment_instrument ),
-            'check_number' => $this->format( $dao->check_number ),
+            'trxn_date' => $this->format($dao->trxn_date, 'date'),
+            'trxn_id' =>  $this->format($dao->trxn_id),
+            'account_name' => $this->format($dao->to_account_name),
+            'amount' => $this->format($dao->debit_total_amount, 'money'),
+            'contact_name' => $this->format($dao->contact_to_name),
+            'payment_instrument' => $this->format($dao->payment_instrument),
+            'check_number' => $this->format($dao->check_number),
           ),
           'splits' => array(),
         );
@@ -178,32 +178,32 @@ class CRM_Financial_BAO_ExportFormat_IIF extends CRM_Financial_BAO_ExportFormat 
             // add to running list of accounts
             if (!empty($itemDAO->account_id) && !isset($accounts[$itemDAO->account_id])) {
               $accounts[$itemDAO->account_id] = array(
-                'name' => $this->format( $itemDAO->account_name ),
-                'account_code' => $this->format( $itemDAO->account_code ),
-                'description' => $this->format( $itemDAO->account_description ),
-                'type' => $this->format( $itemDAO->account_type_code ),
+                'name' => $this->format($itemDAO->account_name),
+                'account_code' => $this->format($itemDAO->account_code),
+                'description' => $this->format($itemDAO->account_description),
+                'type' => $this->format($itemDAO->account_type_code),
               );
             }
 
             if (!empty($itemDAO->contact_id) && !isset($contacts[$itemDAO->contact_id])) {
               $contacts[$itemDAO->contact_id] = array(
-                'name' => $this->format( $itemDAO->contact_name ),
-                'first_name' => $this->format( $itemDAO->contact_first_name ),
-                'last_name' => $this->format( $itemDAO->contact_last_name ),
+                'name' => $this->format($itemDAO->contact_name),
+                'first_name' => $this->format($itemDAO->contact_first_name),
+                'last_name' => $this->format($itemDAO->contact_last_name),
               );
             }
 
             // add split line for this item
             $journalEntries[$dao->financial_trxn_id]['splits'][$itemDAO->financial_item_id] = array(
-              'trxn_date' => $this->format( $itemDAO->transaction_date, 'date' ),
-              'spl_id' => $this->format( $itemDAO->financial_item_id ),
-              'account_name' => $this->format( $itemDAO->account_name ),
-              'amount' => $this->format( (-1) * $itemDAO->amount ),
-              'contact_name' => $this->format( $itemDAO->contact_name ),
-              'payment_instrument' => $this->format( $itemDAO->payment_instrument ),
-              'description' => $this->format( $itemDAO->description ),
-              'check_number' => $this->format( $itemDAO->check_number ),
-              'currency' => $this->format( $itemDAO->currency ),
+              'trxn_date' => $this->format($itemDAO->transaction_date, 'date'),
+              'spl_id' => $this->format($itemDAO->financial_item_id),
+              'account_name' => $this->format($itemDAO->account_name),
+              'amount' => '-' .$this->format($itemDAO->amount, 'money'),
+              'contact_name' => $this->format($itemDAO->contact_name),
+              'payment_instrument' => $this->format($itemDAO->payment_instrument),
+              'description' => $this->format($itemDAO->description),
+              'check_number' => $this->format($itemDAO->check_number),
+              'currency' => $this->format($itemDAO->currency),
             );
           } // end items loop
           $itemDAO->free();
@@ -211,15 +211,15 @@ class CRM_Financial_BAO_ExportFormat_IIF extends CRM_Financial_BAO_ExportFormat 
         else {
           // In this case, split record just uses the FROM account from the trxn, and there's only one record here
           $journalEntries[$dao->financial_trxn_id]['splits'][] = array(
-            'trxn_date' => $this->format( $dao->trxn_date, 'date' ),
-            'spl_id' => $this->format( $dao->financial_trxn_id ),
-            'account_name' => $this->format( $dao->from_account_name ),
-            'amount' => $this->format( (-1) * $dao->debit_total_amount ),
-            'contact_name' => $this->format( $dao->contact_from_name ),
-            'description' => $this->format( $dao->item_description ),
-            'payment_instrument' => $this->format( $dao->payment_instrument ),
-            'check_number' => $this->format( $dao->check_number ),
-            'currency' => $this->format( $dao->currency ),
+            'trxn_date' => $this->format($dao->trxn_date, 'date'),
+            'spl_id' => $this->format($dao->financial_trxn_id),
+            'account_name' => $this->format($dao->from_account_name),
+            'amount' => '-' . $this->format($dao->debit_total_amount, 'money'),
+            'contact_name' => $this->format($dao->contact_from_name),
+            'description' => $this->format($dao->item_description),
+            'payment_instrument' => $this->format($dao->payment_instrument),
+            'check_number' => $this->format($dao->check_number),
+            'currency' => $this->format($dao->currency),
           );
         }
       }
@@ -272,14 +272,18 @@ class CRM_Financial_BAO_ExportFormat_IIF extends CRM_Financial_BAO_ExportFormat 
       case 'date':
         $sout = date( 'Y/m/d', strtotime( $s1 ) );
         break;
+      case 'money':
+        $sout = CRM_Utils_Money::format($s, null, null, true);
+        break;
       case 'string':
       case 'notepad':
         $s2 = str_replace( "\n", '\n', $s1 );
         $s3 = str_replace( "\r", '', $s2 );
         $s4 = str_replace( '"', "'", $s3 );
-        if ( $type == 'notepad' ) {
+        if ($type == 'notepad') {
           $sout = '"' . $s4 . '"';
-        } else {
+        }
+        else {
           $sout = $s4;
         }
         break;
