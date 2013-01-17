@@ -404,35 +404,8 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
     $showHidePaymentInformation = FALSE;
     if ($this->_values['event']['is_monetary']) {
       self::buildAmount($this);
-
-      $attributes = NULL;
-      $freezePayLater = TRUE;
-      if (is_array($this->_paymentProcessor)) {
-        $freezePayLater = FALSE;
-        if (!in_array($this->_paymentProcessor['billing_mode'], array(
-          2, 4))) {
-          $showHidePayfieldName = 'billing-payment-block';
-          $attributes = array('onclick' => "showHidePaymentInfo( );");
-        }
-
-        if ($this->_paymentProcessor['payment_processor_type'] == 'PayPal_Express') {
-          $showHidePayfieldName = 'PayPalExpress';
-          $attributes = array('onclick' => "showHidePayPalExpressOption();");
-        }
-      }
-
-      //lets build only when there is no waiting and no required approval.
-      /*if ( $this->_allowConfirmation || ( !$this->_requireApproval && !$this->_allowWaitlist ) ) {
-
-                CRM_Core_Payment_Form::buildCreditCard( $this );
-                if ( $showHidePayfieldName == 'billing-payment-block' ) {
-                    $showHidePaymentInformation = true;
-                }
-                if ( $showHidePayfieldName == 'PayPalExpress' ) {
-                    $buildExpressPayBlock = true;
-                }
-            }*/
     }
+
     $pps = NULL;
     $this->_paymentProcessors = $this->get('paymentProcessors');
     if (!empty($this->_paymentProcessors)) {
@@ -466,13 +439,6 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
 
     //lets add some qf element to bypass payment validations, CRM-4320
     if ($bypassPayment) {
-      $attributes = NULL;
-      if ($showHidePayfieldName == 'billing-payment-block' && $showHidePaymentInformation) {
-        $attributes = array('onclick' => "showHidePaymentInfo();");
-      }
-      if ($showHidePayfieldName == 'PayPalExpress') {
-        $attributes = array('onclick' => "showHidePayPalExpressOption();");
-      }
       $this->addElement('hidden', 'bypass_payment', NULL, array('id' => 'bypass_payment'));
     }
     $this->assign('bypassPayment', $bypassPayment);
