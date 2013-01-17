@@ -49,7 +49,7 @@ class CRM_Contact_Form_Inline_Lock {
    * @access public
    * @return void
    */
-  public function buildQuickForm(&$form, $contactID) {
+  static function buildQuickForm(&$form, $contactID) {
     // We provide a value for oplock_ts to client, but JS uses it carefully
     // -- i.e.  when loading the first inline form, JS copies oplock_ts to a
     // global value, and that global value is used for future form submissions.
