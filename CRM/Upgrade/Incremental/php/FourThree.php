@@ -160,9 +160,11 @@ class CRM_Upgrade_Incremental_php_FourThree {
     $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
     $completedStatus = array_search('Completed', $contributionStatus);
     $pendingStatus = array_search('Pending', $contributionStatus);
+    $cancelledStatus = array_search('Cancelled', $contributionStatus);
     $queryParams = array(
       1 => array($completedStatus, 'Integer'),
-      2 => array($pendingStatus, 'Integer')
+      2 => array($pendingStatus, 'Integer'),
+      3 => array($cancelledStatus, 'Integer')
     );
     
     $accountType = key(CRM_Core_PseudoConstant::accountOptionValues('financial_account_type', NULL, " AND v.name = 'Asset' "));
@@ -187,7 +189,7 @@ class CRM_Upgrade_Incremental_php_FourThree {
     $sql = "ALTER TABLE civicrm_financial_trxn ADD COLUMN contribution_id INT DEFAULT NULL";
     CRM_Core_DAO::executeQuery($sql);
     
-    //pending status handling 
+    //pending pay later status handling 
     $sql = "
     INSERT INTO civicrm_financial_trxn (contribution_id, payment_instrument_id, currency, total_amount, net_amount, fee_amount, trxn_id, status_id,
      check_number, to_financial_account_id, from_financial_account_id, trxn_date)
@@ -209,7 +211,7 @@ class CRM_Upgrade_Incremental_php_FourThree {
      WHERE cog.name = 'payment_instrument'";
     CRM_Core_DAO::executeQuery($sql);
 
-    //create temp table to process completed contribution 
+    //create temp table to process completed / cancelled contribution 
     $tempTableName2 = CRM_Core_DAO::createTempTableName();
     $sql = "CREATE TEMPORARY TABLE {$tempTableName2}
     SELECT con.id as contribution_id, con.payment_instrument_id, IF(con.currency IN ('{$validCurrencyCodes}'), con.currency, '{$defaultCurrency}') as currency, con.total_amount, con.net_amount, con.fee_amount, con.trxn_id, con.contribution_status_id, con.check_number, NULL as from_financial_account_id, REPLACE(REPLACE(REPLACE( IF(con.receive_date IS NOT NULL, con.receive_date, con.receipt_date) , '-', ''), ':', ''), ' ', '') as trxn_date,
@@ -224,32 +226,46 @@ class CRM_Upgrade_Incremental_php_FourThree {
     LEFT JOIN civicrm_entity_financial_trxn eft
     ON (eft.entity_table = 'civicrm_contribution' AND eft.entity_id = con.id) 
     LEFT JOIN {$tempTableName1} tpi ON con.payment_instrument_id = tpi.instrument_id
-    WHERE con.contribution_status_id = {$completedStatus}";
+    WHERE con.contribution_status_id IN ({$completedStatus}, {$cancelledStatus})";
     CRM_Core_DAO::executeQuery($sql);
-
+    
+    //handling for completed contribution and cancelled contribution
     //insertion of new records
     $sql = "INSERT INTO civicrm_financial_trxn (contribution_id, payment_instrument_id, currency, total_amount, net_amount, fee_amount, trxn_id, 
        status_id, check_number, to_financial_account_id, from_financial_account_id, trxn_date)       
      SELECT tempI.contribution_id, tempI.payment_instrument_id, tempI.currency, tempI.total_amount, tempI.net_amount, tempI.fee_amount, tempI.trxn_id,
       tempI.contribution_status_id, tempI.check_number, tempI.to_financial_account_id, tempI.from_financial_account_id, tempI.trxn_date 
-     FROM {$tempTableName2} tempI WHERE tempI.action = 'insert';";
+     FROM {$tempTableName2} tempI
+     WHERE tempI.action = 'insert';";
     CRM_Core_DAO::executeQuery($sql);
 
-    //updatate of existing records
+    //update of existing records
     $sql = "UPDATE civicrm_financial_trxn ft 
     INNER JOIN {$tempTableName2} tempU ON (tempU.action != 'insert' AND ft.id = tempU.action)
     SET ft.from_financial_account_id = NULL, ft.to_financial_account_id = tempU.to_financial_account_id,
         ft.status_id = tempU.contribution_status_id, ft.payment_instrument_id = tempU.payment_instrument_id,
-        ft.check_number = tempU.check_number, ft.contribution_id = tempU.contribution_id";
+        ft.check_number = tempU.check_number, ft.contribution_id = tempU.contribution_id;";
     CRM_Core_DAO::executeQuery($sql);
 
-    //inserting entity financial trxn entries if its not present in entity_financial_trxn
+    //insert the -ve transaction rows for cancelled contributions
+    $sql = "INSERT INTO civicrm_financial_trxn (contribution_id, payment_instrument_id, currency, total_amount, net_amount, fee_amount, trxn_id, status_id, 
+      check_number, to_financial_account_id, from_financial_account_id, trxn_date)       
+      SELECT ft.contribution_id, ft.payment_instrument_id, ft.currency, -ft.total_amount, ft.net_amount, ft.fee_amount, ft.trxn_id, ft.status_id, ft.check_number, ft.to_financial_account_id, ft.from_financial_account_id, ft.trxn_date
+      FROM civicrm_financial_trxn ft 
+      WHERE ft.status_id = {$cancelledStatus};";
+    CRM_Core_DAO::executeQuery($sql);
+
+    //inserting entity financial trxn entries if its not present in entity_financial_trxn for completed and pending contribution statuses
+    //this also handles +ve and -ve both transaction entries for a cancelled contribution
     $sql = "
     INSERT INTO civicrm_entity_financial_trxn (entity_table, entity_id, financial_trxn_id, amount)
     SELECT 'civicrm_contribution', ft.contribution_id, ft.id, IF(net_amount IS NULL, total_amount, net_amount) as amount
     FROM civicrm_financial_trxn ft
-    WHERE contribution_id IS NOT NULL AND NOT EXISTS
-      (SELECT financial_trxn_id FROM civicrm_entity_financial_trxn WHERE entity_table = 'civicrm_contribution' AND entity_id = ft.contribution_id)";
+    WHERE contribution_id IS NOT NULL AND 
+       ft.id NOT IN (SELECT financial_trxn_id 
+         FROM civicrm_entity_financial_trxn 
+         WHERE entity_table = 'civicrm_contribution'
+           AND entity_id = ft.contribution_id)";
     CRM_Core_DAO::executeQuery($sql);
     //end of adding financial_trxn records and entity_financial_trxn records related to contribution
 
@@ -275,18 +291,18 @@ class CRM_Upgrade_Incremental_php_FourThree {
     $sql = "ALTER TABLE civicrm_financial_item ADD COLUMN f_trxn_id INT DEFAULT NULL";
     CRM_Core_DAO::executeQuery($sql);
     
-    //add financial_item entries for contribution
+    //add financial_item entries for contribution  completed / pending pay later / cancelled
     $contributionlineItemSql = "
     INSERT INTO civicrm_financial_item (transaction_date, contact_id, amount, currency, entity_table, entity_id, description, status_id, financial_account_id, f_trxn_id)
-    SELECT REPLACE(REPLACE(REPLACE(ft.trxn_date, '-', ''), ':', ''), ' ', ''), con.contact_id, li.line_total, con.currency, 'civicrm_line_item', li.id as line_item_id, li.label as line_item_label, IF(con.contribution_status_id = {$pendingStatus}, {$unpaidStatus}, {$paidStatus}) as status_id, efa.financial_account_id as financial_account_id, ft.id as f_trxn_id
+    SELECT REPLACE(REPLACE(REPLACE(ft.trxn_date, '-', ''), ':', ''), ' ', ''), con.contact_id, IF(ft.total_amount < 0 AND con.contribution_status_id = %3, -li.line_total, li.line_total) as line_total, con.currency, 'civicrm_line_item', li.id as line_item_id, li.label as line_item_label, IF(con.contribution_status_id = {$pendingStatus}, {$unpaidStatus}, {$paidStatus}) as status_id, efa.financial_account_id as financial_account_id, ft.id as f_trxn_id
     FROM civicrm_line_item li
       INNER JOIN civicrm_contribution con ON (li.entity_id = con.id AND li.entity_table = 'civicrm_contribution')
       INNER JOIN civicrm_financial_trxn ft ON (con.id = ft.contribution_id)
       LEFT JOIN civicrm_entity_financial_account efa ON (li.financial_type_id = efa.entity_id AND
       efa.entity_table = 'civicrm_financial_type' AND efa.account_relationship = {$incomeAccountIs})
-    WHERE con.contribution_status_id = %1 OR (con.is_pay_later = 1 AND con.contribution_status_id = %2)";
+    WHERE con.contribution_status_id IN (%1, %3) OR (con.is_pay_later = 1 AND con.contribution_status_id = %2)";
     CRM_Core_DAO::executeQuery($contributionlineItemSql, $queryParams);
-        
+    
     //add financial_item entries for event
     $participantLineItemSql = "
     INSERT INTO civicrm_financial_item (transaction_date, contact_id, amount, currency, entity_table, entity_id, description, status_id, financial_account_id, f_trxn_id)
@@ -317,26 +333,6 @@ class CRM_Upgrade_Incremental_php_FourThree {
     return TRUE;
   }
 
-  static function _getFinancialAccountId($financialTypeId, $relationshipId) {
-    $cacheKey = "FINANCIAL_{$financialTypeId}_{$relationshipId}";
-    $cache = CRM_Utils_Cache::singleton();
-    $accId = $cache->get($cacheKey);
-    if ($accId) {
-      return $accId;
-    }
-
-    $searchParams = array( 
-      'entity_table' => 'civicrm_financial_type',
-      'entity_id' => $financialTypeId,
-      'account_relationship' => $relationshipId
-    );
-    $result = array();
-    CRM_Financial_BAO_FinancialTypeAccount::retrieve($searchParams, $result);
-    $accId = CRM_Utils_Array::value('financial_account_id', $result);
-    $cache->set($cacheKey, $accId);
-    return $accId;
-  }
-  
   function createDomainContacts() {
     $domainParams = array();
     $locParams['entity_table'] = CRM_Core_BAO_Domain::getTableName();
