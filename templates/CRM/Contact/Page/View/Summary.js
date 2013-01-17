@@ -82,14 +82,12 @@
               $(this).closest('.crm-summary-block').load(CRM.url('civicrm/ajax/inline', data), function() {$(this).trigger('load');});
             });
           }
-          // Reload changelog tab
+          // Update changelog tab and contact footer
+          $("#tab_log a em").html(response.changeLog.count);
+          $("#crm-record-log").replaceWith(response.changeLog.markup);
           if ($('#Change_Log div').length) {
             $('#Change_Log').load($("#tab_log a").attr('href'));
           }
-          // Update changelog count
-          // TODO: somehow reload the "last change by" footer block
-          // Hack - this should really come from the server
-          $("#tab_log a em").html(1 + parseInt($("#tab_log a em").text()));
 
           CRM.alert('', ts('Saved'), 'success');
         }
@@ -289,7 +287,7 @@
       }
     });
     // Switch tabs when clicking log link
-    $('#crm-record-log').on('click', 'a.crm-log-view', function() {
+    $('#crm-container').on('click', '#crm-record-log a.crm-log-view', function() {
       $('#tab_log a').click();
       return false;
     });

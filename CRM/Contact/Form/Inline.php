@@ -134,8 +134,23 @@ abstract class CRM_Contact_Form_Inline extends CRM_Core_Form {
    * @protected
    */
   protected function response($response = array()) {
+    // Load changelog footer from template
+    $smarty = CRM_Core_Smarty::singleton();
+    $smarty->assign('contactId', $this->_contactId);
+    $smarty->assign('external_identifier', CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $this->_contactId, 'external_identifier'));
+    $smarty->assign('lastModified', CRM_Core_BAO_Log::lastModified($this->_contactId, 'civicrm_contact'));
+    $viewOptions = CRM_Core_BAO_Setting::valueOptions(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+      'contact_view_options', TRUE
+    );
+    $smarty->assign('changeLog', $viewOptions['log']);
     $response = array_merge(
-      array('status' => 'save'),
+      array(
+        'status' => 'save',
+        'changeLog' => array(
+         'count' => CRM_Contact_BAO_Contact::getCountComponent('log', $this->_contactId),
+         'markup' => $smarty->fetch('CRM/common/contactFooter.tpl'),
+        ),
+      ),
       $response,
       CRM_Contact_Form_Inline_Lock::getResponse($this->_contactId)
     );
