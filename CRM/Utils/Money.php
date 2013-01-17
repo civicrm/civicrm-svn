@@ -70,10 +70,10 @@ class CRM_Utils_Money {
     }
 
     if ($onlyNumber) {
-    // money_format() exists only in certain PHP install (CRM-650)
-    if (is_numeric($amount) and function_exists('money_format')) {
-      $amount = money_format($config->moneyvalueformat, $amount);
-    }
+      // money_format() exists only in certain PHP install (CRM-650)
+      if (is_numeric($amount) and function_exists('money_format')) {
+        $amount = money_format($config->moneyvalueformat, $amount);
+      }
       return $amount;
     }
 
@@ -96,7 +96,7 @@ class CRM_Utils_Money {
     // setlocale() affects native gettext (CRM-11054, CRM-9976)
     if (is_numeric($amount) && function_exists('money_format')) {
       $lc = setlocale(LC_MONETARY, 0);
-    setlocale(LC_MONETARY, 'en_US.utf8', 'en_US', 'en_US.utf8', 'en_US', 'C');
+      setlocale(LC_MONETARY, 'en_US.utf8', 'en_US', 'en_US.utf8', 'en_US', 'C');
       $amount = money_format($config->moneyvalueformat, $amount);
       setlocale(LC_MONETARY, $lc);
     }
