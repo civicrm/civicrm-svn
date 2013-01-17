@@ -34,7 +34,7 @@
   {ts}Template{/ts}
 {/htxt}
 {htxt id="id-select-template"}
-{if $isTemplate}
+{if $params.isTemplate}
     {ts}You can select an existing Event Template as the basis for the new template you are creating, or you can create the template from scratch.{/ts}
 {else}
     {ts}You can select a pre-configured Event Template to streamline setting up your new event. The information and configuration settings from the selected template will be automatically copied to this new event. You can then add and modify as needed for this specific event instance. Event templates do NOT store the event date and time - so you will definitely need to set those on this page.{/ts}
@@ -54,17 +54,17 @@
 {/htxt}
 {htxt id="id-listing"}
     {ts}To allow users to see a listing of participants, set this field to 'Name' (list names only), 'Name and Email', or 'Name, Status and Register Date'.{/ts}
-    {if !$isTemplate}
+    {if !$params.isTemplate}
         {if $config->userSystem->is_drupal}
             {ts}You will need to set Drupal Access Control permissions to include 'view event participants' for any Roles you want to access this listing.{/ts}
-            {if $action eq 2 AND $entityId}
+            {if $params.action eq 2 AND $params.entityId}
                 {ts}Create links to the listing page by copying the following URL, and adding it to the Event Description below and / or as a menu item or links elsewhere on your site:{/ts}<br />
-                <em>{crmURL a=true p='civicrm/event/participant' q="reset=1&id=`$entityId`"}</em>
+                <em>{crmURL a=true p='civicrm/event/participant' q="reset=1&id=`$params.entityId`"}</em>
             {else} {* Creating new event *}
                 {ts}After adding your event, create links to the listing page by copying the URL provided in the 'Participant Listing' section of the Configure Event page.{/ts}
             {/if}
         {elseif $config->userFramework EQ 'Joomla'}
-            {ts 1=$id}Then create front-end links to the Participant Listing page using the Menu Manager. Select <strong>Participant Listing Page</strong> and enter <strong>%1</strong> for the Event ID.{/ts}
+            {ts 1=$params.entityId}Then create front-end links to the Participant Listing page using the Menu Manager. Select <strong>Participant Listing Page</strong> and enter <strong>%1</strong> for the Event ID.{/ts}
         {/if}
     {/if}
 {/htxt}
@@ -74,7 +74,7 @@
 {/htxt}
 {htxt id="id-max_participants"}
 <p>{ts}Optionally set a maximum number of participants for this event.{/ts}</p>
-<p>{if $waitlist}
+<p>{if $params.waitlist}
   {ts}You may allow users to join a waitlist when the event is full (by checking the box below).{/ts}
 {else}
   {ts}You may allow users to join a waitlist when the event is full. To enable this feature you must first enable the Participant Statuses used by the waitlist work-flow (Administer » CiviEvent » Participant Statuses). Then reload this form and check 'Offer a Waitlist?'.{/ts}

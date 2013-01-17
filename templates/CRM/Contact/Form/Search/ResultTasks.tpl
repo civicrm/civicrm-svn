@@ -41,9 +41,9 @@
         {if $context eq 'smog'}
             {help id="id-smog-criteria" group_id=$group.id group_title=$group.title ssID=$ssID ssMappingID=$ssMappingID permissionedForGroup=$permissionedForGroup}
         {elseif $context eq 'amtg'}
-            {help id="id-amtg-criteria"}
+            {help id="id-amtg-criteria" group_title=$group.title}
         {else}
-            {help id="id-basic-criteria" amt=$amt}
+            {help id="id-basic-criteria"}
         {/if}
     {elseif $action eq 512}
         <a href="{$searchBuilderURL}">&raquo; {ts}Search Builder{/ts}</a><br />

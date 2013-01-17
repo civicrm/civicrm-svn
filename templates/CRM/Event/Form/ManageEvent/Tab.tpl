@@ -64,7 +64,7 @@
         </div></li>
 
       <li><div>
-          {help id="id-configure-events" isTemplate=$isTemplate participantListingURL=$participantListingURL isOnlineRegistration=$isOnlineRegistration}
+          {help id="id-configure-events" isTemplate=$isTemplate participantListingURL=$participantListingURL isOnlineRegistration=$isOnlineRegistration eventId=$id}
       </div></li>
       </ul>
       <div class="clear"></div>

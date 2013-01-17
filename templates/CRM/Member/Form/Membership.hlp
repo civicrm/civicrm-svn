@@ -30,7 +30,7 @@
 <p>{ts}A recurring payment (subscription) request will be submitted to the selected payment processor. If the request is
 successful, this membership will be automatically renewed on the last day of the membership period until the recurring payment is
 cancelled. Membership payment receipt emails will include a link for the member to cancel the auto-renewal.{/ts}</p>
-{if $action eq 2}
+{if $params.action eq 2}
     {ts}To cancel automatic renewal ...
     <ul><li>If this recurring payment uses a processor which has support for integrated cancellation, click "Cancel" on this form, and use the
     "Cancel Auto-renew Subscription" action (click "more" in the membership listing row).</li>

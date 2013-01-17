@@ -28,7 +28,7 @@
 {/htxt}
 {htxt id="id-from_email"}
 <p>{ts}By default, CiviCRM uses the primary email address of the logged in user as the FROM address when sending emails to contacts. However, users with Administer CiviCRM permission can configure one or more general email addresses that can be selected as an alternative. EXAMPLE: "Client Services" &lt;clientservices@example.org&gt;{/ts}</p>
-{if $isAdmin}
+{if $params.isAdmin}
     {capture assign="fromConfig"}{crmURL p="civicrm/admin/options/from_email_address" q="group=from_email_address&reset=1"}{/capture}
     <p>{ts 1=$fromConfig}Go to <a href='%1'>Administer CiviCRM &raquo; Communications &raquo; FROM Email Addresses</a> to add or edit general email addresses. Make sure these email addresses are valid email accounts with your email service provider.{/ts}</p>
 {/if}
@@ -48,7 +48,7 @@
 <p>{ts}Use tokens when you are sending mail to a number of recipients, and want to include their name and / or other values from their contact record automatically within your message.{/ts}</p>
 <p>{ts 1='&#123;contact.first_name&#125;'}EXAMPLE: If you want your message to begin with "Dear " followed by the recipient's first name, you can use the %1 token in your message. <em>Dear %1</em>{/ts}</p>
 <p>{ts}Place your cursor within the Message box where you want to the token to be inserted. Then click the &quot;Insert Tokens&quot; link in the upper right corner of the message box to see a list of available tokens. Insert the token by clicking the desired token name in the list (for example, click &quot;First Name&quot;).{/ts}</p>
-{if $tplFile EQ 'CRM/Mailing/Form/Upload.tpl'}
+{if $params.tplFile EQ 'CRM/Mailing/Form/Upload.tpl'}
     <p>
     {ts}You will also use tokens to insert Unsubscribe, Opt out and Forwarding links in your message.{/ts}
     </p>
@@ -66,17 +66,17 @@ be an equal sign and a number (=12). The number (12 in this example) is the id o
 <p>{ts}Use tokens when you are sending mail or generating PDF letters for a number of recipients, and want to include their name and / or other values from their contact record automatically within your message.{/ts}</p>
 <p>{ts 1='&#123;contact.first_name&#125;'}EXAMPLE: If you want your message to begin with "Dear " followed by the recipient's first name, you can use the %1 token in your message. <em>Dear %1</em>{/ts}</p>
 <p>{ts}Place your cursor within the Message box where you want to the token to be inserted. Then click the &quot;Insert Tokens&quot; link in the upper right corner of the message box to see a list of available tokens. Insert the token by clicking the desired token name in the list (for example, click &quot;First Name&quot;).{/ts}</p>
-{if $tplFile EQ 'CRM/Mailing/Form/Upload.tpl'}
+{if $params.tplFile EQ 'CRM/Mailing/Form/Upload.tpl'}
     <p>
     {ts}You will also use tokens to insert Unsubscribe, Opt out and Forwarding links in your message.{/ts}
-    {if $editor NEQ 'textarea'}
+    {if $params.editor NEQ 'textarea'}
         {ts}Use these steps to insert clickable action links:{/ts}
         <ul>
             <li>{ts}Select the action token from the Insert Tokens pop-up list - e.g. Unsubscribe via web page - and insert into your message.{/ts}</li>
             <li>{ts 1='&#123;action.unsubscribeUrl&#125;}'}Highlight the token and copy it to your clipboard - e.g. %1.{/ts}</li>
             <li>{ts}Replace the token in your message with the text you want for the link - e.g. Click here to unsubscribe.{/ts}</li>
             <li>{ts}With the text highlighted, click the Insert/Edit Link icon in the editor toolbar.{/ts}</li>
-            {if $editor EQ 'fckeditor'}
+            {if $params.editor EQ 'fckeditor'}
                 <li>{ts}In the Link pop-up window select &lt;other&gt; for the &quot;Protocol&quot; (selecting &quot;http://&quot; will result in an invalid link).{/ts}</li>
                 <li>{ts}Paste the action token into the URL field and click OK.{/ts}</li>
             {else}

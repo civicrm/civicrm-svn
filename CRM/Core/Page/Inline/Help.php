@@ -39,13 +39,15 @@
 class CRM_Core_Page_Inline_Help {
   function run() {
     $args = $_REQUEST;
-    if (!empty($args['file'])) {
+    if (!empty($args['file']) && strpos($args['file'], '..') === FALSE) {
       $file = $args['file'] . '.hlp';
-      CRM_Utils_Array::remove($args, 'file', 'class_name', 'type', 'q');
       $smarty = CRM_Core_Smarty::singleton();
-      foreach ($args as $id => $arg) {
-        $smarty->assign($id, $arg);
+      $smarty->assign('id', $args['id']);
+      CRM_Utils_Array::remove($args, 'file', 'class_name', 'type', 'q', 'id');
+      foreach ($args as &$arg) {
+        $arg = strip_tags($arg);
       }
+      $smarty->assign('params', $args);
       exit($smarty->fetch($file));
     }
   }
