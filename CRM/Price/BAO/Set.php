@@ -1123,15 +1123,15 @@ WHERE       ps.id = %1
     $params = array(1 => array($id, 'Integer'));
     $dao = CRM_Core_DAO::executeQuery($query, $params);
 
-    $autorenew = array();
+    $autoRenew = array();
     //FIXME: do a comprehensive check of whether
     //2 membership types can be selected
     //instead of comparing all of them
     while ($dao->fetch()) {
-      if (!empty($autorenew) && !in_array($dao->auto_renew, $autoRenew)) {
+      if (!empty($autoRenew) && !in_array($dao->auto_renew, $autoRenew)) {
         return true;
       }
-      $autorenew[] = $dao->auto_renew;
+      $autoRenew[] = $dao->auto_renew;
     }
     return false;
   }
