@@ -130,7 +130,6 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
     }
 
     if (CRM_Utils_Array::value('hidden_processor', $_POST)) {
-
       $this->set('type', CRM_Utils_Array::value('payment_processor', $_POST));
       $this->set('mode', $this->_mode);
       $this->set('paymentProcessor', $this->_paymentProcessor);
@@ -150,13 +149,8 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
    * @return None
    */
   function setDefaultValues() {
-    if ($this->_ppType) {
-      return;
-    }
-
     $contactID = parent::getContactID();
     if ($contactID) {
-      $options = array();
       $fields = array();
 
       if (!empty($this->_fields)) {
@@ -267,7 +261,8 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
     // add this event's default participant role to defaults array
     // (for cases where participant_role field is included in form via profile)
     if ($this->_values['event']['default_role_id']) {
-      $this->_defaults['participant_role'] = $this->_defaults['participant_role_id'] = $this->_values['event']['default_role_id'];
+      $this->_defaults['participant_role'] =
+      $this->_defaults['participant_role_id'] = $this->_values['event']['default_role_id'];
     }
     if ($this->_priceSetId) {
       foreach ($this->_feeBlock as $key => $val) {
@@ -517,9 +512,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
       );
     }
 
-    $this->addFormRule(array('CRM_Event_Form_Registration_Register', 'formRule'),
-      $this
-    );
+    $this->addFormRule(array('CRM_Event_Form_Registration_Register', 'formRule'), $this);
 
     // add pcp fields
     if ($this->_pcpId) {
@@ -961,10 +954,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
     //set as Primary participant
     $params['is_primary'] = 1;
 
-    if ($this->_values['event']['is_pay_later'] &&
-      //empty( $this->_paymentProcessor ) &&
-      !array_key_exists('hidden_processor', $params)
-    ) {
+    if ($this->_values['event']['is_pay_later'] && !array_key_exists('hidden_processor', $params)) {
       $params['is_pay_later'] = 1;
     }
     else {

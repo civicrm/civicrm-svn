@@ -190,21 +190,14 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
   }
 
   function setDefaultValues() {
-    // process defaults only once
-    if (!empty($this->_defaults)) {
-      // return $this->_defaults;
-    }
-
     if ($this->_onbehalf) {
       return;
     }
 
     // check if the user is registered and we have a contact ID
-    $session = CRM_Core_Session::singleton();
     $contactID = $this->_userID;
 
     if ($contactID) {
-      $options = array();
       $fields = array();
       $removeCustomFieldTypes = array('Contribution', 'Membership');
       $contribFields = CRM_Contribute_BAO_Contribution::getContributionFields();
@@ -340,7 +333,6 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
       if ($this->_useForMember && !empty($this->_currentMemberships)) {
         $selectedCurrentMemTypes = array();
         foreach ($this->_priceSet['fields'] as $key => $val) {
-          $isHavingMemid = FALSE;
           foreach ($val['options'] as $keys => $values) {
             $opMemTypeId = CRM_Utils_Array::value('membership_type_id', $values);
             if ($opMemTypeId &&
