@@ -335,10 +335,16 @@ WHERE lt.entity_id = %1 ";
 
   static function recordFees($params) {
     $expenseTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Expense Account is' "));
+    $domainId = CRM_Core_Config::domainID();
+    $amount = 0;
+    if (CRM_Utils_Array::value('prevContribution', $params)) {
+      $amount = $params['prevContribution']->fee_amount;
+    }
+    $amount = $params['fee_amount'] - $amount;
     $financialAccount = CRM_Contribute_PseudoConstant::financialAccountType($params['financial_type_id'], $expenseTypeId);
     $params['trxnParams']['from_financial_account_id'] = $params['to_financial_account_id'];
     $params['trxnParams']['to_financial_account_id'] = $financialAccount;
-    $params['trxnParams']['total_amount'] = $params['fee_amount'];
+    $params['trxnParams']['total_amount'] = $amount;
     $params['trxnParams']['fee_amount'] = 
       $params['trxnParams']['net_amount'] = 0;
     $params['trxnParams']['status_id'] = CRM_Core_OptionGroup::getValue('contribution_status','Completed','name');
@@ -347,14 +353,14 @@ WHERE lt.entity_id = %1 ";
     $fItemParams = 
       array(
         'financial_account_id' => $financialAccount,
-        'contact_id' => $params['contact_id'],
+        'contact_id' => CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Domain', $domainId, 'contact_id'),
         'created_date' => date('YmdHis'),
         'transaction_date' => date('YmdHis'),
-        'amount' => CRM_Utils_Array::value('fee_amount', $params) ? CRM_Utils_Array::value('fee_amount', $params) : 0,
+        'amount' => $amount,
         'description' => 'Fee',
         'status_id' => CRM_Core_OptionGroup::getValue('financial_item_status','Paid','name'),
         'entity_table' => 'civicrm_financial_trxn',
-        'entity_id' => $params['entity_id'],
+        'entity_id' => CRM_Utils_Array::value('entity_id', $params),
       );
     $trxnIDS['id'] = $trxn->id;
     $financialItem = CRM_Financial_BAO_FinancialItem::create($fItemParams, NULL, $trxnIDS);

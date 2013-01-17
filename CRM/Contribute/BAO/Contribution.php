@@ -2743,6 +2743,7 @@ WHERE  contribution_id = %1 ";
     if (!$update) { 
       //records finanical trxn and entity financial trxn
       $financialTxn = CRM_Core_BAO_FinancialTrxn::create($trxnParams);
+      $params['entity_id'] = $financialTxn->id;
     }
     
     // record line items and finacial items
@@ -2765,7 +2766,6 @@ WHERE  contribution_id = %1 ";
     // FIX ME: work in progress
     if (CRM_Utils_Array::value('fee_amount', $params) && (!CRM_Utils_Array::value('prevContribution', $params)
       || $params['contribution']->fee_amount != $params['prevContribution']->fee_amount)) {
-      $params['entity_id'] = $financialTxn->id;
       CRM_Core_BAO_FinancialTrxn::recordFees($params);
     }
   }
@@ -2822,9 +2822,11 @@ WHERE  contribution_id = %1 ";
 
     if (!$skipTrxn) {
       $trxn = CRM_Core_BAO_FinancialTrxn::create($params['trxnParams']);
+      $params['entity_id'] = $financialTxn->id;
     } 
     else {
       $trxnID = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnId($params['contribution']->id);
+      $params['entity_id'] = $trxnID['financialTrxnId'];
     }
     
     if ($context == 'changedStatus') {
@@ -2853,7 +2855,7 @@ WHERE  contribution_id = %1 ";
     } 
     if ($context != 'changePaymentInstrument') {
       $itemParams['entity_table'] = 'civicrm_line_item';
-      $trxnIds['id'] = $trxnID ? $trxnID['financialTrxnId'] : $trxn->id;
+      $trxnIds['id'] = $params['entity_id'];
       foreach ($params['line_item'] as $fieldId => $fields) {
         foreach ($fields as $fieldValueId => $fieldValues) {
           $prevParams['entity_id'] = $fieldValues['id'];
