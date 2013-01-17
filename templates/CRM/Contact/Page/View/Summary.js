@@ -176,16 +176,41 @@
   };
 
   $('document').ready(function() {
-    // Respond to a click (not drag, not right-click) of crm-inline-edit blocks
+    // Set page title
+    var oldName = 'CiviCRM';
+    var nameTitle = $('#crm-remove-title');
+    if (nameTitle.length > 0) {
+      oldName = nameTitle.text();
+      nameTitle.parent('h1').remove();
+    }
+    else {
+      $('h1').each(function() {
+        if ($(this).text() == oldName) {
+          $(this).remove();
+        }
+      });
+    }
+    function refreshTitle() {
+      var contactName = $('.crm-summary-display_name').text();
+      contactName = $.trim(contactName);
+      var title = $('title').html().replace(oldName, contactName);
+      document.title = title;
+      oldName = contactName;
+    }
+    $('#contactname-block').load(refreshTitle);
+    refreshTitle();
+
     var clicking;
     $('.crm-inline-edit-container')
       .addClass('crm-edit-ready')
+      // Allow links inside edit blocks to be clicked without triggering edit
       .on('mousedown', '.crm-inline-edit:not(.form) a, .crm-inline-edit:not(.form) .crm-accordion-header, .crm-inline-edit:not(.form) .collapsible-title', function(event) {
         if (event.which == 1) {
           event.stopPropagation();
           return false;
         }
       })
+      // Respond to a click (not drag, not right-click) of crm-inline-edit blocks
       .on('mousedown', '.crm-inline-edit:not(.form)', function(button) {
         if (button.which == 1) {
           clicking = this;
@@ -197,6 +222,7 @@
           crmFormInline($(this));
         }
       })
+      // Inline edit form cancel button
       .on('click', '.crm-inline-edit :submit[name$=cancel]', function() {
         var container = $(this).closest('.crm-inline-edit.form');
         $('.inline-edit-hidden-content', container).nextAll().remove();
@@ -204,6 +230,48 @@
         container.removeClass('form');
         container.closest('.crm-inline-edit-container').addClass('crm-edit-ready');
         return false;
+      })
+      // Switch tabs when clicking tag link
+      .on('click', '#tagLink a', function() {
+        $('.ui-tabs-anchor[href*="/contact/view/tag"]').click();
+        return false;
+      })
+      // make sure only one is primary radio is checked
+      .on('change', '[class$=is_primary] input', function() {
+        if ($(this).is(':checked')) {
+          $('[class$=is_primary] input', $(this).closest('form')).not(this).prop('checked', false);
+        }
+      })
+      // make sure only one builk mail radio is checked
+      .on('change', '.crm-email-bulkmail input', function(){
+        if ($(this).is(':checked')) {
+          $('.crm-email-bulkmail input').not(this).prop('checked', false);
+        }
+      })
+      // handle delete link within blocks
+      .on('click', '.crm-delete-inline', function() {
+        var row = $(this).closest('tr');
+        var form = $(this).closest('form');
+        row.addClass('hiddenElement');
+        $('input', row).val('');
+        //if the primary is checked for deleted block
+        //unset and set first as primary
+        if ($('[class$=is_primary] input:checked', row).length > 0) {
+          $('[class$=is_primary] input', row).prop('checked', false);
+          $('[class$=is_primary] input:first', form).prop('checked', true );
+        }
+        $('.add-more-inline', form).show();
+      })
+      // add more and set focus to new row
+      .on('click', '.add-more-inline', function() {
+        var form = $(this).closest('form');
+        var row = $('tr[class="hiddenElement"]:first', form);
+        row.removeClass('hiddenElement');
+        $('input:focus', form).blur();
+        $('input:first', row).focus();
+        if ($('tr[class="hiddenElement"]').length < 1) {
+          $(this).hide();
+        }
       });
     // Trigger cancel button on esc keypress
     $(document).keydown(function(key) {

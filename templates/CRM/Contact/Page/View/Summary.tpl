@@ -312,29 +312,6 @@
    <script type="text/javascript">
     {literal}
     cj(function($) {
-      // Set page title
-      var oldName = 'CiviCRM';
-      var nameTitle = $('#crm-remove-title');
-      if (nameTitle.length > 0) {
-        oldName = nameTitle.text();
-        nameTitle.parent('h1').remove();
-      }
-      else {
-        $('h1').each(function() {
-          if ($(this).text() == oldName) {
-            $(this).remove();
-          }
-        });
-      }
-      function refreshTitle() {
-        var contactName = $('.crm-summary-display_name').text();
-        contactName = $.trim(contactName);
-        var title = $('title').html().replace(oldName, contactName);
-        document.title = title;
-        oldName = contactName;
-      }
-      $('#contactname-block').load(refreshTitle);
-      refreshTitle();
       //explicitly stop spinner
       function stopSpinner( ) {
         $('li.crm-tab-button span').text(' ');
@@ -349,52 +326,6 @@
       $(".crm-tab-button").addClass("ui-corner-bottom");
       $().crmAccordions();
 
-      $('.crm-inline-edit-container').on('click', '#tagLink a', function() {
-        $('.ui-tabs-anchor[href*="/contact/view/tag"]').click();
-        return false;
-      });
-
-      // make sure only one is primary radio is checked
-      $('.crm-inline-edit-container').on('change', '[class$=is_primary] input', function() {
-        if ($(this).is(':checked')) {
-          $('[class$=is_primary] input', $(this).closest('form')).not(this).prop('checked', false);
-        }
-      });
-
-      // make sure only one builk mail radio is checked
-      $('.crm-inline-edit-container').on('change', '.crm-email-bulkmail input', function(){
-        if ($(this).is(':checked')) {
-          $('.crm-email-bulkmail input').not(this).prop('checked', false);
-        }
-      });
-
-      // handle delete link within blocks
-      $('.crm-inline-edit-container').on('click', '.crm-delete-inline', function() {
-        var row = $(this).closest('tr');
-        var form = $(this).closest('form');
-        row.addClass('hiddenElement');
-        $('input', row).val('');
-        //if the primary is checked for deleted block
-        //unset and set first as primary
-        if ($('[class$=is_primary] input:checked', row).length > 0) {
-          $('[class$=is_primary] input', row).prop('checked', false);
-          $('[class$=is_primary] input:first', form).prop('checked', true );
-        }
-        $('.add-more-inline', form).show();
-      });
-
-      // add more and set focus to new row
-      $('.crm-inline-edit-container').on('click', '.add-more-inline', function() {
-        var form = $(this).closest('form');
-        var row = $('tr[class="hiddenElement"]:first', form);
-        row.removeClass('hiddenElement');
-        $('input:focus', form).blur();
-        $('input:first', row).focus();
-        if ($('tr[class="hiddenElement"]').length < 1) {
-          $(this).hide();
-        }
-      });
-
       $('body').click(function() {
         cj('#crm-contact-actions-list').hide();
       });
@@ -406,7 +337,7 @@
 {* CRM-10560 *}
 {literal}
 <script type="text/javascript">
-cj(function($) {
+cj(document).ready(function($) {
   $('.crm-inline-edit-container').crmFormContactLock({
     ignoreLabel: "{/literal}{ts escape='js'}Ignore{/ts}{literal}",
     saveAnywayLabel: "{/literal}{ts escape='js'}Save Anyway{/ts}{literal}",
