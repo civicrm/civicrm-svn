@@ -1657,13 +1657,14 @@ WHERE  id = %1";
    *
    */
   public static function &paymentProcessorType($all = FALSE, $id = NULL, $return = 'title') {
-    if (!self::$paymentProcessorType) {
-      self::populate(self::$paymentProcessorType, 'CRM_Financial_DAO_PaymentProcessorType', $all, $return, 'is_active', NULL, "is_default, $return", 'id');
+    $cacheKey = $id . '_' .$return;
+    if (empty(self::$paymentProcessorType[$cacheKey])) {
+      self::populate(self::$paymentProcessorType[$cacheKey], 'CRM_Financial_DAO_PaymentProcessorType', $all, $return, 'is_active', NULL, "is_default, $return", 'id');
     }
-    if ($id && CRM_Utils_Array::value($id, self::$paymentProcessorType)) {
-      return self::$paymentProcessorType[$id];
+    if ($id && CRM_Utils_Array::value($id, self::$paymentProcessorType[$cacheKey])) {
+      return self::$paymentProcessorType[$cacheKey][$id];
     }
-    return self::$paymentProcessorType;
+    return self::$paymentProcessorType[$cacheKey];
   }
 
   /**
