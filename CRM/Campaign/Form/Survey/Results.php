@@ -403,7 +403,7 @@ class CRM_Campaign_Form_Survey_Results extends CRM_Campaign_Form_Survey {
       $activityStatus = array_flip($activityStatus);
       $this->_params = 
         array( 'name'  => "survey_{$survey->id}",
-               'title' => $params['report_title'] ? $params['report_title'] : $params['title'], 
+               'title' => $params['report_title'] ? $params['report_title'] : $this->_values['title'], 
                'status_id_op'    => 'eq',
                'status_id_value' => $activityStatus['Scheduled'], // reserved status
                'survey_id_value' => array($survey->id), 
@@ -420,7 +420,7 @@ class CRM_Campaign_Form_Survey_Results extends CRM_Campaign_Form_Survey {
               );
       // for WalkList or default
       $displayFields = array('id', 'sort_name', 'result', 'street_number','street_name','street_unit','survey_response');
-      if ( CRM_Core_OptionGroup::getValue('activity_type','WalkList') == $params['activity_type_id'] ) {
+      if ( CRM_Core_OptionGroup::getValue('activity_type','WalkList') == $this->_values['activity_type_id'] ) {
         $this->_params['order_bys'] =
           array(
                 1 =>
@@ -445,11 +445,11 @@ class CRM_Campaign_Form_Survey_Results extends CRM_Campaign_Form_Survey {
                       ),
                 );
       }
-      elseif ( CRM_Core_OptionGroup::getValue('activity_type','PhoneBank') == $params['activity_type_id'] ) {
+      elseif ( CRM_Core_OptionGroup::getValue('activity_type','PhoneBank') == $this->_values['activity_type_id'] ) {
         array_push($displayFields, 'phone');
       }
-      elseif ((CRM_Core_OptionGroup::getValue('activity_type','Survey')  == $params['activity_type_id']) || 
-              (CRM_Core_OptionGroup::getValue('activity_type','Canvass') == $params['activity_type_id']) ) {
+      elseif ((CRM_Core_OptionGroup::getValue('activity_type','Survey')  == $this->_values['activity_type_id']) || 
+              (CRM_Core_OptionGroup::getValue('activity_type','Canvass') == $this->_values['activity_type_id']) ) {
         array_push($displayFields, 'phone','city','state_province_id','postal_code','email');
       }
       foreach($displayFields as $key){
@@ -463,8 +463,8 @@ class CRM_Campaign_Form_Survey_Results extends CRM_Campaign_Form_Survey {
       $reportID = CRM_Core_DAO::singleValueQuery($query, array(1 => array("survey_{$survey->id}",'String')));
       if ($reportID) {
         $url = CRM_Utils_System::url("civicrm/report/instance/{$reportID}",'reset=1');
-        $status .= ts(" A Survey Detail Report <a href='%1'>%2</a> has been created.", 
-                      array(1 => $url, 2 => $this->_params['title']));
+        $status = ts("A Survey Detail Report <a href='%1'>%2</a> has been created.", 
+                     array(1 => $url, 2 => $this->_params['title']));
       }
     }
 

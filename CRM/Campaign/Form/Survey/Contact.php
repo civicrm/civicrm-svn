@@ -39,8 +39,28 @@
  */
 class CRM_Campaign_Form_Survey_Contact extends CRM_Campaign_Form_Survey {
 
-  public function preProcess() {
-    parent::preProcess();
+  /**
+   * This function sets the default values for the form. Note that in edit/view mode
+   * the default values are retrieved from the database
+   *
+   * @param null
+   *
+   * @return array    array of default values
+   * @access public
+   */
+  function setDefaultValues() {
+    $defaults = array();
+
+    $ufJoinParams = array(
+      'entity_table' => 'civicrm_survey',
+      'module' => 'CiviCampaign',
+      'entity_id' => $this->_surveyId,
+    );
+
+    list($defaults['contact_profile_id'],
+         $defaults['activity_profile_id']) = CRM_Core_BAO_UFJoin::getUFGroupIds($ufJoinParams);
+
+    return $defaults;
   }
 
   /**
@@ -52,14 +72,14 @@ class CRM_Campaign_Form_Survey_Contact extends CRM_Campaign_Form_Survey {
    * @access public
    */
   public function buildQuickForm() {
-    $contactProfiles = CRM_Core_BAO_UFGroup::getProfiles(array('Contact', 'Individual'));
+    $contactProfiles = CRM_Core_BAO_UFGroup::getProfiles(CRM_Campaign_BAO_Survey::surveyProfileTypes());
     // custom group id
     $this->add('select', 'contact_profile_id', ts('Contact Info'),
       array(
         '' => ts('- select profile -')) + $contactProfiles
     );
 
-    $activityProfiles = CRM_Core_BAO_UFGroup::getProfiles(array('Activity'));
+    $activityProfiles = CRM_Core_BAO_UFGroup::getProfiles(CRM_Campaign_BAO_Survey::surveyProfileTypes());
     // custom group id
     $this->add('select', 'activity_profile_id', ts('Profile'),
       array(
@@ -81,6 +101,37 @@ class CRM_Campaign_Form_Survey_Contact extends CRM_Campaign_Form_Survey {
   public function postProcess() {
     // store the submitted values in an array
     $params = $this->controller->exportValues($this->_name);
+
+    // also update the ProfileModule tables
+    $ufJoinParams = array(
+      'is_active' => 1,
+      'module'    => 'CiviCampaign',
+      'entity_table' => 'civicrm_survey',
+      'entity_id'    => $this->_surveyId,
+    );
+
+    // first delete all past entries
+    CRM_Core_BAO_UFJoin::deleteAll($ufJoinParams);
+
+    $uf = array();
+    $wt = 2;
+    if (!empty($params['contact_profile_id'])) {
+      $uf[1] = $params['contact_profile_id'];
+      $wt = 1;
+    }
+    if (!empty($params['activity_profile_id'])) {
+      $uf[2] = $params['activity_profile_id'];
+    }
+
+    $uf = array_values($uf);
+    if (!empty($uf)) {
+      foreach ($uf as $weight => $ufGroupId) {
+        $ufJoinParams['weight'] = $weight + $wt;
+        $ufJoinParams['uf_group_id'] = $ufGroupId;
+        CRM_Core_BAO_UFJoin::create($ufJoinParams);
+        unset($ufJoinParams['id']);
+      }
+    }
 
     parent::endPostProcess();
   }

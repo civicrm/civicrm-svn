@@ -59,16 +59,6 @@
            <td class="view-value">{$form.activity_type_id.html}
      <div class="description">{ts}Select the Activity Type.{/ts}</div></td>
        </tr>
-       <tr class="crm-campaign-survey-main-form-block-profile_id">
-           <td class="label">{$form.profile_id.label}</td>
-           <td class="view-value">{$form.profile_id.html}&nbsp;<span class="profile-links"></span>
-         <div class="description">{ts}Select the Profile for Survey.{/ts}</div>
-           <div class="profile-create">
-                <a href="{crmURL p='civicrm/admin/uf/group/add' q='reset=1&action=add'}" target="_blank">{ts}Click here for new profile{/ts}
-           </div>
-           </td>
-       </tr>
-
        <tr class="crm-campaign-survey-main-form-block-instructions">
            <td class="label">{$form.instructions.label}</td>
            <td class="view-value">{$form.instructions.html}

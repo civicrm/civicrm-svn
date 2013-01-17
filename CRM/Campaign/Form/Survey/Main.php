@@ -138,16 +138,6 @@ class CRM_Campaign_Form_Survey_Main extends CRM_Campaign_Form_Survey {
         unset($defaults['recontact_interval']);
         $defaults['option_group_id'] = $resultId;
       }
-
-      $ufJoinParams = array(
-        'entity_table' => 'civicrm_survey',
-        'entity_id' => $this->_surveyId,
-        'weight' => 1,
-      );
-
-      if ($ufGroupId = CRM_Core_BAO_UFJoin::findUFGroupId($ufJoinParams)) {
-        $defaults['profile_id'] = $ufGroupId;
-      }
     }
 
     if (!isset($defaults['is_active'])) {
@@ -184,13 +174,6 @@ class CRM_Campaign_Form_Survey_Main extends CRM_Campaign_Form_Survey {
     // Campaign id
     $campaigns = CRM_Campaign_BAO_Campaign::getCampaigns(CRM_Utils_Array::value('campaign_id', $this->_values));
     $this->add('select', 'campaign_id', ts('Campaign'), array('' => ts('- select -')) + $campaigns);
-
-    $customProfiles = CRM_Core_BAO_UFGroup::getProfiles(CRM_Campaign_BAO_Survey::surveyProfileTypes());
-    // custom group id
-    $this->add('select', 'profile_id', ts('Profile'),
-      array(
-        '' => ts('- select -')) + $customProfiles
-    );
 
     // script / instructions
     $this->addWysiwyg('instructions', ts('Instructions for interviewers'), array('rows' => 5, 'cols' => 40));
@@ -281,25 +264,6 @@ class CRM_Campaign_Form_Survey_Main extends CRM_Campaign_Form_Survey {
 
     if ($status) {
       CRM_Core_Session::setStatus($status, ts('Saved'), 'success');
-    }
-
-    // also update the ProfileModule tables
-    $ufJoinParams = array(
-      'is_active' => 1,
-      'module' => 'CiviCampaign',
-      'entity_table' => 'civicrm_survey',
-      'entity_id' => $survey->id,
-    );
-
-    // first delete all past entries
-    if ($this->_surveyId) {
-      CRM_Core_BAO_UFJoin::deleteAll($ufJoinParams);
-    }
-    if (CRM_Utils_Array::value('profile_id', $params)) {
-
-      $ufJoinParams['weight'] = 1;
-      $ufJoinParams['uf_group_id'] = $params['profile_id'];
-      CRM_Core_BAO_UFJoin::create($ufJoinParams);
     }
 
     parent::endPostProcess();
