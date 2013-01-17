@@ -94,16 +94,16 @@ class CRM_Core_ClassLoader {
     if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
       spl_autoload_register(array($this, 'loadClass'), TRUE, $prepend);
       if ($includeHTMLPurifier) {
-      spl_autoload_register(array('HTMLPurifier_Bootstrap', 'autoload'), TRUE, $prepend);
-    }
+        spl_autoload_register(array('HTMLPurifier_Bootstrap', 'autoload'), TRUE, $prepend);
+      }
     }
     else {
       // http://www.php.net/manual/de/function.spl-autoload-register.php#107362
       // "when specifying the third parameter (prepend), the function will fail badly in PHP 5.2"
       spl_autoload_register(array($this, 'loadClass'), TRUE);
       if ($includeHTMLPurifier) {
-      spl_autoload_register(array('HTMLPurifier_Bootstrap', 'autoload'), TRUE);
-    }
+        spl_autoload_register(array('HTMLPurifier_Bootstrap', 'autoload'), TRUE);
+      }
     }
 
     $this->_registered = TRUE;
