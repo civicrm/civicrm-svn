@@ -128,7 +128,7 @@ class civicrm_handler_relationship extends views_handler_relationship {
     // Make sure the join to civicrm_contact form the civicrm_relationship table
     // Is is to the opposite field (contact_id_a vs contact_id_b or vice versa)
     // Otherwise the displayed field will always be the same as the base table's record
-    if (isset($this->view->query->table_queue['civicrm_relationship']['join']->field)) {
+    if ($this->table == 'civicrm_relationship' && isset($this->view->query->table_queue[$this->table_alias]['join']->field)) {
       $this->view->query->table_queue[$this->table_alias]['join']->field = $this->definition['relationship field'];
     }
 
