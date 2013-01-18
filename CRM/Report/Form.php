@@ -1525,13 +1525,12 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
 
     foreach ($rows as $key => $list) {
       foreach ($list as $colName => $colVal) {
-        if (is_array($checkList[$colName]) &&
-          in_array($colVal, $checkList[$colName])
-        ) {
+        if (array_key_exists($colName, $checkList) && 
+          $checkList[$colName] == $colVal) {
           $rows[$key][$colName] = "";
         }
         if (in_array($colName, $this->_noRepeats)) {
-          $checkList[$colName][] = $colVal;
+          $checkList[$colName] = $colVal;
         }
       }
     }

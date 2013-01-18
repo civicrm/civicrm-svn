@@ -348,18 +348,9 @@ class CRM_Report_Form_Contribute_SoftCredit extends CRM_Report_Form {
   }
 
   function groupBy() {
-    $alias_constituent = 'constituentname';
-    $alias_creditor    = 'contact_civireport';
-    $this->_groupBy    = "GROUP BY {$this->_aliases['civicrm_contribution_soft']}.contact_id,
-                                       {$alias_constituent}.id, 
-                                       {$alias_creditor}.display_name";
-  }
-
-  function orderBy() {
-    $alias_constituent = 'constituentname';
-    $alias_creditor    = 'contact_civireport';
-    $this->_orderBy    = "ORDER BY {$alias_constituent}.sort_name, {$this->_aliases['civicrm_contribution_soft']}.contact_id,
-                                       {$alias_creditor}.sort_name, {$alias_creditor}.id ";
+    $this->_rollup     = "WITH ROLLUP";
+    $this->_groupBy    = "
+GROUP BY {$this->_aliases['civicrm_contribution_soft']}.contact_id, constituentname.id {$this->_rollup}";
   }
 
   function where() {
@@ -448,110 +439,12 @@ class CRM_Report_Form_Contribute_SoftCredit extends CRM_Report_Form {
         $entryFound = TRUE;
       }
 
-      // Handling Creditor's display_name no Repeat
-      if (array_key_exists('civicrm_contact_display_name_creditor', $row) && $this->_outputMode != 'csv') {
-        if ($value = $row['civicrm_contact_display_name_creditor']) {
-          if ($rowNum == 0) {
-            $prev_dispname = $value;
-          }
-          else {
-            if ($prev_dispname == $value) {
-              $dispname_flag = 1;
-              $prev_dispname = $value;
-            }
-            else {
-              $dispname_flag = 0;
-              $prev_dispname = $value;
-            }
-          }
-
-          if ($dispname_flag) {
-            unset($rows[$rowNum]['civicrm_contact_display_name_creditor']);
-          }
-          else {
-            $url = CRM_Report_Utils_Report::getNextUrl('contribute/detail',
-              'reset=1&force=1&id_op=eq&id_value=' . $row['civicrm_contact_id_creditor'],
-              $this->_absoluteUrl, $this->_id, $this->_drilldownReport
-            );
-            $rows[$rowNum]['civicrm_contact_display_name_creditor_link'] = $url;
-            $rows[$rowNum]['civicrm_contact_display_name_creditor_hover'] = ts("List direct contribution(s) from this contact.");
-          }
-          $entryFound = TRUE;
-        }
-      }
-
-      // Handling Creditor's Phone No Repeat
-      if (array_key_exists('civicrm_phone_phone_creditor', $row) && $this->_outputMode != 'csv') {
-        //$value = 0;
-        if ($value = $row['civicrm_phone_phone_creditor']) {
-          if ($rowNum == 0) {
-            $prev_phone = $value;
-          }
-          else {
-            if ($prev_phone == $value) {
-              $phone_flag = 1;
-              $prev_phone = $value;
-            }
-            else {
-              $phone_flag = 0;
-              $prev_phone = $value;
-            }
-          }
-
-          if ($phone_flag) {
-            unset($rows[$rowNum]['civicrm_phone_phone_creditor']);
-          }
-          else {
-            $rows[$rowNum]['civicrm_phone_phone_creditor'] = $value;
-          }
-          $entryFound = TRUE;
-        }
-      }
-
-      // Handling Creditor's Email No Repeat
-      if (array_key_exists('civicrm_email_email_creditor', $row) && $this->_outputMode != 'csv') {
-        if ($value = $row['civicrm_email_email_creditor']) {
-          if ($rowNum == 0) {
-            $prev_email = $value;
-          }
-          else {
-            if ($prev_email == $value) {
-              $email_flag = 1;
-              $prev_email = $value;
-            }
-            else {
-              $email_flag = 0;
-              $prev_email = $value;
-            }
-          }
-
-          if ($email_flag) {
-            unset($rows[$rowNum]['civicrm_email_email_creditor']);
-          }
-          else {
-            $rows[$rowNum]['civicrm_email_email_creditor'] = $value;
-          }
-          $entryFound = TRUE;
-        }
-      }
-
-      if (!empty($this->_noRepeats) && $this->_outputMode != 'csv') {
-        // not repeat contact display names if it matches with the one
-        // in previous row
-        $repeatFound = FALSE;
-
-        foreach ($row as $colName => $colVal) {
-          if (isset($checkList) && CRM_Utils_Array::value($colName, $checkList) && 
-            is_array($checkList[$colName]) &&
-            in_array($colVal, $checkList[$colName])
-          ) {
-            $rows[$rowNum][$colName] = "";
-            $repeatFound = TRUE;
-          }
-          if (in_array($colName, $this->_noRepeats)) {
-            $checkList[$colName][] = $colVal;
-          }
-        }
+      // make subtotals look nicer
+      if (array_key_exists('civicrm_contact_id_constituent', $row) &&
+        !$row['civicrm_contact_id_constituent']
+      ) {
+        $this->fixSubTotalDisplay($rows[$rowNum], $this->_statFields);
+        $entryFound = TRUE;
       }
 
       // skip looking further in rows, if first row itself doesn't
@@ -560,6 +453,8 @@ class CRM_Report_Form_Contribute_SoftCredit extends CRM_Report_Form {
         break;
       }
     }
+
+    $this->removeDuplicates($rows);
   }
 }
 
