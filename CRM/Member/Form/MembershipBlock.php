@@ -92,7 +92,6 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
           $priceFieldOptions = CRM_Price_BAO_FieldValue::getValues($defaults['mem_price_field_id'], $options, 'id', 1);
           foreach ($options as $k => $v) {
             $newMembershipType[$v['membership_type_id']] = 1;
-            $defaults['option_financial_type_id'][$v['membership_type_id']] = $v['financial_type_id'];
             if ( !empty($defaults['auto_renew']) ) {
               $defaults["auto_renew_".$v['membership_type_id']] = $defaults['auto_renew'][$v['membership_type_id']];
             }
@@ -144,12 +143,7 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
 
       $membership = $membershipDefault = array();
       foreach ($membershipTypes as $k => $v) {
-        $financialTypeID = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType', $k, 'financial_type_id');
-        $js = array('onclick' => "setFinancialType($k, $financialTypeID);");
-        $membership[] = $this->createElement('advcheckbox', $k, NULL, $v, $js);
-        //financial type for each option
-        $this->add('select', "option_financial_type_id[$k]",ts('Financial Type'),
-          array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::financialType());
+        $membership[] = $this->createElement('advcheckbox', $k, NULL, $v);
         $membershipDefault[] = $this->createElement('radio', NULL, NULL, NULL, $k);
         if ($isRecur) {
           $autoRenew        = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType', $k, 'auto_renew');
@@ -296,12 +290,6 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
         }
       }
       
-      // form rule for financial type
-      foreach ($params['membership_type'] as $key => $values) {
-        if ($values && !CRM_Utils_Array::value($key, $params['option_financial_type_id'])) {
-          $errors["option_financial_type_id[$key]"] = ts('Financial Type is a required.');
-        }
-      }
     }
 
     return empty($errors) ? TRUE : $errors;
@@ -411,7 +399,6 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
           $fieldParams['option_amount'][$rowCount]      = CRM_Utils_Array::value('minimum_fee', $membetype, 0);
           $fieldParams['option_weight'][$rowCount]      = CRM_Utils_Array::value('weight', $membetype);
           $fieldParams['option_description'][$rowCount] = CRM_Utils_Array::value('description', $membetype);
-          $fieldParams['option_financial_type_id']      = CRM_Utils_Array::value('option_financial_type_id', $params);
           $fieldParams['default_option']                = CRM_Utils_Array::value('membership_type_default', $params);
 
           $fieldParams['membership_type_id'][$rowCount] = $memType;
@@ -421,7 +408,7 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
         foreach ($options as $priceFieldID => $memType) {
           CRM_Price_BAO_FieldValue::setIsActive($priceFieldID, '0');
         }
-
+        $fieldParams['financial_type_id'] = CRM_Utils_Array::value('financial_type_id', $this->_values);
         $priceField = CRM_Price_BAO_Field::create($fieldParams);
       }
       elseif (!$priceSetID){

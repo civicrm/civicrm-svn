@@ -87,7 +87,7 @@
                 {strip}
                   <table class="report">
                     <tr class="columnheader" style="vertical-align:top;"><th style="border-right: 1px solid #4E82CF;">{ts}Include these membership types{/ts}</th><th{if $is_recur} style="border-right: 1px solid #4E82CF;"{/if}>{ts}Default{/ts}<br />
-                    <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('membership_type_default', 'MembershipBlock'); return false;" >unselect</a>)</span></th>{if $is_recur}<th>{ts}Auto-renew{/ts}</th>{/if}<th style="border-right: 1px solid #4E82CF;">{ts}Financial Type{/ts}</th></tr>
+                    <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('membership_type_default', 'MembershipBlock'); return false;" >unselect</a>)</span></th>{if $is_recur}<th>{ts}Auto-renew{/ts}</th>{/if}</tr>
                       {assign var="index" value="1"}
                       {foreach name=outer key=key item=item from=$form.membership_type}
                         {if $index < 10}
@@ -105,7 +105,6 @@
                                 {/if}
                               </td>
                          {/if}
-                         <td class="labels font-light">{$form.option_financial_type_id.$key.html}</td>
                          </tr>
                         {/if}
                       {/foreach}
@@ -159,17 +158,6 @@
         cj('#memberFields').show();
       } else {
         cj('#memberFields').hide();
-      }
-    }
-    // function to set default financial type of the membership type when a membership type is checked
-    function setFinancialType(membershipTypeId, financialType) {
-      if (cj('#membership_type_' + membershipTypeId).attr('checked')) {
-      	 if (!cj('#option_financial_type_id_' + membershipTypeId).val()) {
-	   cj("#option_financial_type_id_" + membershipTypeId).val(financialType);	 
-	 }
-      }
-      else {
-        cj("#option_financial_type_id_" + membershipTypeId).val('');
       }
     }
     // function to handle show/hide of membership type and related blocks if price set is selected
