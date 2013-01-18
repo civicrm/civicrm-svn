@@ -216,10 +216,11 @@ class CRM_Contact_Form_Search_Criteria {
       )
     );
 
-    $toggleChoice   = array();
-    $toggleChoice[] = $form->createElement('radio', NULL, '', ' ' . ts('Exclude'), '1');
-    $toggleChoice[] = $form->createElement('radio', NULL, '', ' ' . ts('Include by Privacy Option(s)'), '2');
-    $form->addGroup($toggleChoice, 'privacy_toggle', 'Privacy Options');
+    $options = array(
+      1 => ts('Exclude'),
+      2 => ts('Include by Privacy Option(s)'),
+    );
+    $form->addRadio('privacy_toggle', ts('Privacy Options'), $options);
 
     // preferred communication method
     $comm = CRM_Core_PseudoConstant::pcm();
