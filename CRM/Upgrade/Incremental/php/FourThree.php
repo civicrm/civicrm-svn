@@ -306,7 +306,7 @@ class CRM_Upgrade_Incremental_php_FourThree {
     //add financial_item entries for event
     $participantLineItemSql = "
     INSERT INTO civicrm_financial_item (transaction_date, contact_id, amount, currency, entity_table, entity_id, description, status_id, financial_account_id, f_trxn_id)
-    SELECT REPLACE(REPLACE(REPLACE(ft.trxn_date, '-', ''), ':', ''), ' ', ''), con.contact_id, li.line_total, con.currency, 'civicrm_line_item', li.id as line_item_id, li.label as line_item_label, IF(con.contribution_status_id = {$pendingStatus}, {$unpaidStatus}, {$paidStatus}) as status_id, efa.financial_account_id as financial_account_id, ft.id as f_trxn_id
+    SELECT REPLACE(REPLACE(REPLACE(ft.trxn_date, '-', ''), ':', ''), ' ', ''), con.contact_id, IF(ft.total_amount < 0 AND con.contribution_status_id = %3, -li.line_total, li.line_total) as line_total, con.currency, 'civicrm_line_item', li.id as line_item_id, li.label as line_item_label, IF(con.contribution_status_id = {$pendingStatus}, {$unpaidStatus}, {$paidStatus}) as status_id, efa.financial_account_id as financial_account_id, ft.id as f_trxn_id
     FROM civicrm_line_item li
       INNER JOIN civicrm_participant par ON (li.entity_id = par.id AND li.entity_table = 'civicrm_participant')
       INNER JOIN civicrm_participant_payment pp ON (pp.participant_id = par.id) 
@@ -314,7 +314,7 @@ class CRM_Upgrade_Incremental_php_FourThree {
       INNER JOIN civicrm_financial_trxn ft ON (con.id = ft.contribution_id)
       LEFT JOIN civicrm_entity_financial_account efa ON (li.financial_type_id = efa.entity_id AND
       efa.entity_table = 'civicrm_financial_type' AND efa.account_relationship = {$incomeAccountIs})
-    WHERE con.contribution_status_id = %1 OR (con.is_pay_later = 1 AND con.contribution_status_id = %2)";
+    WHERE con.contribution_status_id IN (%1, %3) OR (con.is_pay_later = 1 AND con.contribution_status_id = %2)";
     CRM_Core_DAO::executeQuery($participantLineItemSql, $queryParams);
 
     //add entries to entity_financial_trxn table
