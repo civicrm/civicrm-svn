@@ -696,6 +696,12 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
 
   function &addRadio($name, $title, &$values, $attributes = NULL, $separator = NULL, $required = FALSE) {
     $options = array();
+    if (empty($attributes)) {
+      $attributes = array('id_suffix' => $name);
+    }
+    else {
+      $attributes = array_merge($attributes, array('id_suffix' => $name));
+    }
     foreach ($values as $key => $var) {
       $options[] = $this->createElement('radio', NULL, NULL, $var, $key, $attributes);
     }
@@ -707,13 +713,19 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
   }
 
   function addYesNo($id, $title, $dontKnow = NULL, $required = NULL, $attribute = NULL) {
+    if (empty($attribute)) {
+      $attribute = array('id_suffix' => $id);
+    }
+    else {
+      $attribute = array_merge($attribute, array('id_suffix' => $id));
+    }
     $choice   = array();
     $choice[] = $this->createElement('radio', NULL, '11', ts('Yes'), '1', $attribute);
     $choice[] = $this->createElement('radio', NULL, '11', ts('No'), '0', $attribute);
     if ($dontKnow) {
       $choice[] = $this->createElement('radio', NULL, '22', ts("Don't Know"), '2', $attribute);
     }
-    $group = $this->addGroup($choice, $id, $title);
+    $this->addGroup($choice, $id, $title);
 
     if ($required) {
       $this->addRule($id, ts('%1 is a required field.', array(1 => $title)), 'required');

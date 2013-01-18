@@ -78,7 +78,13 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input
         if ( ! $this->getAttribute('id') ) {
             //hack to add 'id' for checkbox
             static $idTextStr = 1;
-            $this->updateAttributes( array('id' => CRM_Utils_String::munge( "CIVICRM_QFID_{$value}_{$idTextStr}" ) ) );
+            $idSuffix = $idTextStr;
+            if (CRM_Utils_Array::value('id_suffix', $attributes)) {
+              $idSuffix =  $attributes['id_suffix'] .'_' . $idTextStr;
+              $this->removeAttribute('id_suffix');
+            }
+
+            $this->updateAttributes( array('id' => CRM_Utils_String::munge( "CIVICRM_QFID_{$value}_{$idSuffix}" ) ) );
             $idTextStr++;
         }
     } //end constructor
