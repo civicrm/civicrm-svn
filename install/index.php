@@ -266,6 +266,9 @@ else {
 class InstallRequirements {
   var $errors, $warnings, $tests;
 
+  // @see CRM_Upgrade_Form::MINIMUM_THREAD_STACK
+  const MINIMUM_THREAD_STACK = 192;
+
   /**
    * Just check that the database configuration is okay
    */
@@ -311,16 +314,14 @@ class InstallRequirements {
             "An auto_increment_increment value greater than 1 is not currently supported. Please see issue CRM-7923 for further details and potential workaround.",
           )
         );
-        // @see CRM_Upgrade_Form::MINIMUM_THREAD_STACK
-        define('CIVICRM_INSTALL_MINIMUM_THREAD_STACK', 192);
         $this->requireMySQLThreadStack($databaseConfig['server'],
           $databaseConfig['username'],
           $databaseConfig['password'],
           $databaseConfig['database'],
-          CIVICRM_INSTALL_MINIMUM_THREAD_STACK,
+          self::MINIMUM_THREAD_STACK,
           array(
             "MySQL $dbName Configuration",
-            "Does MySQL thread_stack meet minimum (" . CIVICRM_INSTALL_MINIMUM_THREAD_STACK . "k)",
+            "Does MySQL thread_stack meet minimum (" . self::MINIMUM_THREAD_STACK . "k)",
             "", // "The MySQL thread_stack does not meet minimum " . CRM_Upgrade_Form::MINIMUM_THREAD_STACK . "k. Please update thread_stack in my.cnf.",
           )
         );

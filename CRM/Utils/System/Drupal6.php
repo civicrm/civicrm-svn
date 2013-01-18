@@ -337,7 +337,7 @@ SELECT name, mail
         return FALSE;
     }
     // If the path is within the drupal directory we can add in the normal way
-    if ($this->formatResourceUrl($url)) {
+    if (CRM_Utils_System_Drupal::formatResourceUrl($url)) {
       drupal_add_js($url, 'module', $scope);
     }
     // D6 hack for external js files
@@ -385,7 +385,7 @@ SELECT name, mail
    * @access public
    */
   public function addStyleUrl($url, $region) {
-    if ($region != 'html-header' || !$this->formatResourceUrl($url)) {
+    if ($region != 'html-header' || !CRM_Utils_System_Drupal::formatResourceUrl($url)) {
       return FALSE;
     }
     drupal_add_css($url);
@@ -405,29 +405,6 @@ SELECT name, mail
    * @access public
    */
   public function addStyle($code, $region) {
-    return FALSE;
-  }
-
-  /**
-   * Check if a resource url is within the drupal directory and format appropriately
-   *
-   * @param url (reference)
-   *
-   * @return bool: TRUE for internal paths, FALSE for external
-   */
-  private function formatResourceUrl(&$url) {
-    // Strip query string
-    $q = strpos($url, '?');
-    if ($q) {
-      $url = substr($url, 0, $q);
-    }
-    $base = CRM_Core_Config::singleton()->resourceBase;
-    global $base_url;
-    if (strpos($url, $base) === 0 || strpos($url, $base_url) === 0) {
-      $url = str_replace($base_url, '', $url);
-      $url = trim($url, '/');
-      return TRUE;
-    }
     return FALSE;
   }
 

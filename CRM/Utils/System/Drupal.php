@@ -296,7 +296,7 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
    * @access public
    */
   public function addScriptUrl($url, $region) {
-    $params = array('type' => 'external', 'group' => JS_LIBRARY, 'weight' => 10);
+    $params = array('group' => JS_LIBRARY, 'weight' => 10);
     switch ($region) {
       case 'html-header':
       case 'page-footer':
@@ -306,7 +306,7 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
         return FALSE;
     }
     // If the path is within the drupal directory we can use the more efficient 'file' setting
-    $this->formatResourceUrl($url, $params);
+    $params['type'] = self::formatResourceUrl($url) ? 'file' : 'external';
     drupal_add_js($url, $params);
     return TRUE;
   }
@@ -353,9 +353,9 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
     if ($region != 'html-header') {
       return FALSE;
     }
-    $params = array('type' => 'external');
+    $params = array();
     // If the path is within the drupal directory we can use the more efficient 'file' setting
-    $this->formatResourceUrl($url, $params);
+    $params['type'] = self::formatResourceUrl($url) ? 'file' : 'external';
     drupal_add_css($url, $params);
     return TRUE;
   }
@@ -387,19 +387,33 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
    * @param url (reference)
    * @param params (reference)
    */
-  private function formatResourceUrl(&$url, &$params) {
-    // Strip query string
-    $q = strpos($url, '?');
-    if ($q) {
-      $url = substr($url, 0, $q);
-    }
+  /**
+   * Check if a resource url is within the drupal directory and format appropriately
+   *
+   * @param url (reference)
+   *
+   * @return bool: TRUE for internal paths, FALSE for external
+   */
+  static function formatResourceUrl(&$url) {
+    $internal = FALSE;
     $base = CRM_Core_Config::singleton()->resourceBase;
     global $base_url;
-    if (strpos($url, $base) === 0 || strpos($url, $base_url) === 0) {
-      $params['type'] = 'file';
-      $url = str_replace($base_url, '', $url);
-      $url = trim($url, '/');
+    // Handle absolute urls
+    if (strpos($url, $base_url) === 0) {
+      $internal = TRUE;
+      $url = trim(str_replace($base_url, '', $url), '/');
     }
+    // Handle relative urls
+    elseif (strpos($url, $base) === 0) {
+      $internal = TRUE;
+      $url = substr(drupal_get_path('module', 'civicrm'), 0, -6) . trim(substr($url, strlen($base)), '/');
+    }
+    // Strip query string
+    $q = strpos($url, '?');
+    if ($q && $internal) {
+      $url = substr($url, 0, $q);
+    }
+    return $internal;
   }
 
   /**
