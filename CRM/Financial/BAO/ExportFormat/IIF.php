@@ -82,6 +82,55 @@ class CRM_Financial_BAO_ExportFormat_IIF extends CRM_Financial_BAO_ExportFormat 
     return $fileName;
   }
 
+  function generateExportQuery($batchId) {
+
+    $sql = "SELECT
+      ft.id as financial_trxn_id,
+      ft.trxn_date,
+      ft.total_amount AS debit_total_amount,
+      ft.currency AS currency,
+      ft.trxn_id AS trxn_id,
+      cov.label AS payment_instrument,
+      ft.check_number,
+      fa_from.id AS from_account_id,
+      fa_from.name AS from_account_name,
+      fa_from.accounting_code AS from_account_code,
+      fa_from.financial_account_type_id AS from_account_type_id,
+      fa_from.description AS from_account_description,
+      fa_from.account_type_code AS from_account_type_code,
+      fa_to.id AS to_account_id,
+      fa_to.name AS to_account_name,
+      fa_to.accounting_code AS to_account_code,
+      fa_to.financial_account_type_id AS to_account_type_id,
+      fa_to.account_type_code AS to_account_type_code,
+      fa_to.description AS to_account_description,
+      fi.description AS item_description,
+      contact_from.id AS contact_from_id,
+      contact_from.display_name AS contact_from_name,
+      contact_from.first_name AS contact_from_first_name,
+      contact_from.last_name AS contact_from_last_name,
+      contact_to.id AS contact_to_id,
+      contact_to.display_name AS contact_to_name,
+      contact_to.first_name AS contact_to_first_name,
+      contact_to.last_name AS contact_to_last_name
+      FROM civicrm_entity_batch eb
+      LEFT JOIN civicrm_financial_trxn ft ON (eb.entity_id = ft.id AND eb.entity_table = 'civicrm_financial_trxn')
+      LEFT JOIN civicrm_financial_account fa_from ON fa_from.id = ft.from_financial_account_id
+      LEFT JOIN civicrm_financial_account fa_to ON fa_to.id = ft.to_financial_account_id
+      LEFT JOIN civicrm_option_group cog ON cog.name = 'payment_instrument'
+      LEFT JOIN civicrm_option_value cov ON (cov.value = ft.payment_instrument_id AND cov.option_group_id = cog.id)
+      LEFT JOIN civicrm_contact contact_from ON contact_from.id = fa_from.contact_id
+      LEFT JOIN civicrm_contact contact_to ON contact_to.id = fa_to.contact_id
+      LEFT JOIN civicrm_entity_financial_trxn efti ON (efti.financial_trxn_id  = ft.id AND efti.entity_table = 'civicrm_financial_item')
+      LEFT JOIN civicrm_financial_item fi ON fi.id = efti.entity_id
+      WHERE eb.batch_id = ( %1 )";
+
+    $params = array(1 => array($batchId, 'String'));
+    $dao = CRM_Core_DAO::executeQuery( $sql, $params );
+
+    return $dao;
+  }
+
   function makeIIF($export) {
     // Keep running list of accounts and contacts used in this batch, since we need to
     // include those in the output. Only want to include ones used in the batch, not everything in the db,

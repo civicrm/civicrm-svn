@@ -71,6 +71,46 @@ class CRM_Financial_BAO_ExportFormat_CSV extends CRM_Financial_BAO_ExportFormat 
     $this->output($fileName);
   }
 
+  function generateExportQuery($batchId) {
+    $sql = "SELECT
+      ft.id as financial_trxn_id,
+      ft.trxn_date,
+      fa_to.accounting_code AS to_account_code,
+      fa_to.name AS to_account_name,
+      fa_to.account_type_code AS to_account_type_code,
+      fa_from.account_type_code AS from_account_type_code,
+      ft.total_amount AS debit_total_amount,
+      ft.trxn_id AS trxn_id,
+      cov.label AS payment_instrument,
+      ft.check_number,
+      c.source AS source,
+      ft.currency AS currency,
+      cov_status.label AS status,
+      eftc.amount AS amount,
+      fa.accounting_code AS credit_account,
+      fa.name AS credit_account_name,
+      fi.description AS item_description
+      FROM civicrm_entity_batch eb
+      LEFT JOIN civicrm_financial_trxn ft ON (eb.entity_id = ft.id AND eb.entity_table = 'civicrm_financial_trxn')
+      LEFT JOIN civicrm_financial_account fa_to ON fa_to.id = ft.to_financial_account_id
+      LEFT JOIN civicrm_financial_account fa_from ON fa_from.id = ft.from_financial_account_id
+      LEFT JOIN civicrm_option_group cog ON cog.name = 'payment_instrument'
+      LEFT JOIN civicrm_option_value cov ON (cov.value = ft.payment_instrument_id AND cov.option_group_id = cog.id)
+      LEFT JOIN civicrm_entity_financial_trxn eftc ON (eftc.financial_trxn_id  = ft.id AND eftc.entity_table = 'civicrm_contribution')
+      LEFT JOIN civicrm_contribution c ON c.id = eftc.entity_id
+      LEFT JOIN civicrm_option_group cog_status ON cog_status.name = 'contribution_status'
+      LEFT JOIN civicrm_option_value cov_status ON (cov_status.value = ft.status_id AND cov_status.option_group_id = cog_status.id)
+      LEFT JOIN civicrm_entity_financial_trxn efti ON (efti.financial_trxn_id  = ft.id AND efti.entity_table = 'civicrm_financial_item')
+      LEFT JOIN civicrm_financial_item fi ON fi.id = efti.entity_id
+      LEFT JOIN civicrm_financial_account fa ON fa.id = fi.financial_account_id
+      WHERE eb.batch_id = ( %1 )";
+
+    $params = array(1 => array($batchId, 'String'));
+    $dao = CRM_Core_DAO::executeQuery( $sql, $params );
+
+    return $dao;
+  }
+
   function putFile($export) {
     $config = CRM_Core_Config::singleton();
     $fileName = $config->uploadDir.'Financial_Transactions_'.$this->_batchIds.'_'.date('YmdHis').'.'.$this->getFileExtension();
@@ -116,7 +156,6 @@ class CRM_Financial_BAO_ExportFormat_CSV extends CRM_Financial_BAO_ExportFormat 
       $this->_batchIds = $batchId;
       while ($dao->fetch()) {
         $financialItems[$dao->financial_trxn_id]['Transaction Date'] = $dao->trxn_date;
-        $financialItems[$dao->financial_trxn_id]['Transaction Status'] = $dao->status;
         $financialItems[$dao->financial_trxn_id]['Debit Account'] = $dao->to_account_code;
         $financialItems[$dao->financial_trxn_id]['Debit Account Name'] = $dao->to_account_name;
         $financialItems[$dao->financial_trxn_id]['Debit Account Type'] = $dao->to_account_type_code;
@@ -126,10 +165,11 @@ class CRM_Financial_BAO_ExportFormat_CSV extends CRM_Financial_BAO_ExportFormat 
         $financialItems[$dao->financial_trxn_id]['Check Number'] = $dao->check_number;
         $financialItems[$dao->financial_trxn_id]['Source'] = $dao->source;
         $financialItems[$dao->financial_trxn_id]['Currency'] = $dao->currency;
+        $financialItems[$dao->financial_trxn_id]['Transaction Status'] = $dao->status;
         $financialItems[$dao->financial_trxn_id]['Amount'] = $dao->amount;
         $financialItems[$dao->financial_trxn_id]['Credit Account'] = $dao->credit_account;
         $financialItems[$dao->financial_trxn_id]['Credit Account Name'] = $dao->credit_account_name;
-        $financialItems[$dao->financial_trxn_id]['Credit Account Type'] = $dao->credit_account_type_code;
+        $financialItems[$dao->financial_trxn_id]['Credit Account Type'] = $dao->from_account_type_code;
         $financialItems[$dao->financial_trxn_id]['Item Description'] = $dao->item_description;
       }
       $financialItems['headers'] = self::formatHeaders($financialItems);
