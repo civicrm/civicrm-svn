@@ -62,7 +62,10 @@
   {ts}Privacy{/ts}
 {/htxt}
 {htxt id="id-privacy"}
-{ts}Select the preferred method for Privacy.{/ts}
+{ts}Select the appropriate Privacy Options.{/ts}
+<p>{ts}Contacts with 'Do not email' will be excluded from receiving CiviMail mailings, and the Send Email activity will be disabled for them. However they will still receive email for contribution receipts and event registration confirmations.{/ts}</p>
+<p>{ts}Contacts with 'Do not SMS' will be excluded from receiving Bulk SMS messages, and the Send SMS activity will be disabled.{/ts}</p>
+<p>{ts}Contacts with 'Do not mail' will be excluded when mailing labels are created.{/ts}</p>
 {/htxt}
 
 {htxt id="id-sharedAddress-title"}
