@@ -695,7 +695,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $this->assertEquals($contribution['values'][$contribution['id']]['contribution_status_id'], 1, 'In line ' . __LINE__);
     $this->_checkFinancialRecords($contribution, 'online');
   }
-
+  
   /*
    * Function tests that additional financial records are created when online contribution with pay later option
    * is created
@@ -729,6 +729,39 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $this->assertEquals($contribution['values'][$contribution['id']]['source'], 'SSF', 'In line ' . __LINE__);
     $this->assertEquals($contribution['values'][$contribution['id']]['contribution_status_id'], 2, 'In line ' . __LINE__);
     $this->_checkFinancialRecords($contribution, 'payLater');
+  }
+
+  /*
+   * Function tests that additional financial records are created when online contribution with pending option
+   * is created
+   */
+  function testCreateContributionPendingOnline() {
+    $paymentProcessor = CRM_Financial_BAO_PaymentProcessor::create($this->_processorParams);
+    $contributionPage = civicrm_api( 'contribution_page', 'create', $this->_pageParams );
+
+    $params = array(
+      'contact_id' => $this->_individualId,
+      'receive_date' => '20120511',
+      'total_amount' => 100.00,
+      'financial_type_id' => 1,
+      'contribution_page_id' => $contributionPage['id'],
+      'trxn_id' => 12345,
+      'invoice_id' => 67890,
+      'source' => 'SSF',
+      'contribution_status_id' => 2,
+      'version' => $this->_apiversion,
+    );
+
+    $contribution = civicrm_api('contribution', 'create', $params);
+    $this->documentMe($params, $contribution, __FUNCTION__, __FILE__);
+    $this->assertEquals($contribution['values'][$contribution['id']]['contact_id'], $this->_individualId, 'In line ' . __LINE__);
+    $this->assertEquals($contribution['values'][$contribution['id']]['total_amount'], 100.00, 'In line ' . __LINE__);
+    $this->assertEquals($contribution['values'][$contribution['id']]['financial_type_id'],1, 'In line ' . __LINE__ );
+    $this->assertEquals($contribution['values'][$contribution['id']]['trxn_id'], 12345, 'In line ' . __LINE__);
+    $this->assertEquals($contribution['values'][$contribution['id']]['invoice_id'], 67890, 'In line ' . __LINE__);
+    $this->assertEquals($contribution['values'][$contribution['id']]['source'], 'SSF', 'In line ' . __LINE__);
+    $this->assertEquals($contribution['values'][$contribution['id']]['contribution_status_id'], 2, 'In line ' . __LINE__);
+    $this->_checkFinancialRecords($contribution, 'pending');
   }
 
   /*
@@ -1386,6 +1419,11 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
      'entity_id' => $params['id'],
      'entity_table' => 'civicrm_contribution',
    );
+   if ($context == 'pending') {
+     $trxn = CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($entityParams);
+     $this->assertNull($trxn, 'No Trxn to be created until IPN callback');
+     return;
+   }
    $trxn = current(CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($entityParams));
    $trxnParams = array(
      'id' => $trxn['financial_trxn_id'],                
