@@ -78,7 +78,6 @@ class CRM_Financial_BAO_ExportFormat_CSV extends CRM_Financial_BAO_ExportFormat 
       fa_to.accounting_code AS to_account_code,
       fa_to.name AS to_account_name,
       fa_to.account_type_code AS to_account_type_code,
-      fa_from.account_type_code AS from_account_type_code,
       ft.total_amount AS debit_total_amount,
       ft.trxn_id AS trxn_id,
       cov.label AS payment_instrument,
@@ -87,8 +86,12 @@ class CRM_Financial_BAO_ExportFormat_CSV extends CRM_Financial_BAO_ExportFormat 
       ft.currency AS currency,
       cov_status.label AS status,
       eftc.amount AS amount,
+      fa_from.account_type_code AS credit_account_type_code,
       fa_from.accounting_code AS credit_account,
       fa_from.name AS credit_account_name,
+      fac.account_type_code AS from_credit_account_type_code,
+      fac.accounting_code AS from_credit_account,
+      fac.name AS from_credit_account_name,
       fi.description AS item_description
       FROM civicrm_entity_batch eb
       LEFT JOIN civicrm_financial_trxn ft ON (eb.entity_id = ft.id AND eb.entity_table = 'civicrm_financial_trxn')
@@ -102,6 +105,7 @@ class CRM_Financial_BAO_ExportFormat_CSV extends CRM_Financial_BAO_ExportFormat 
       LEFT JOIN civicrm_option_value cov_status ON (cov_status.value = ft.status_id AND cov_status.option_group_id = cog_status.id)
       LEFT JOIN civicrm_entity_financial_trxn efti ON (efti.financial_trxn_id  = ft.id AND efti.entity_table = 'civicrm_financial_item')
       LEFT JOIN civicrm_financial_item fi ON fi.id = efti.entity_id
+      LEFT JOIN civicrm_financial_account fac ON fac.id = fi.financial_account_id
       LEFT JOIN civicrm_financial_account fa ON fa.id = fi.financial_account_id
       WHERE eb.batch_id = ( %1 )";
 
@@ -167,9 +171,16 @@ class CRM_Financial_BAO_ExportFormat_CSV extends CRM_Financial_BAO_ExportFormat 
         $financialItems[$dao->financial_trxn_id]['Currency'] = $dao->currency;
         $financialItems[$dao->financial_trxn_id]['Transaction Status'] = $dao->status;
         $financialItems[$dao->financial_trxn_id]['Amount'] = $dao->amount;
-        $financialItems[$dao->financial_trxn_id]['Credit Account'] = $dao->credit_account;
-        $financialItems[$dao->financial_trxn_id]['Credit Account Name'] = $dao->credit_account_name;
-        $financialItems[$dao->financial_trxn_id]['Credit Account Type'] = $dao->from_account_type_code;
+        if ($dao->credit_account) {
+          $financialItems[$dao->financial_trxn_id]['Credit Account'] = $dao->credit_account;
+          $financialItems[$dao->financial_trxn_id]['Credit Account Name'] = $dao->credit_account_name;
+          $financialItems[$dao->financial_trxn_id]['Credit Account Type'] = $dao->credit_account_type_code;
+        }
+        else {
+          $financialItems[$dao->financial_trxn_id]['Credit Account'] = $dao->from_credit_account;
+          $financialItems[$dao->financial_trxn_id]['Credit Account Name'] = $dao->from_credit_account_name;
+          $financialItems[$dao->financial_trxn_id]['Credit Account Type'] = $dao->from_credit_account_type_code;
+        }
         $financialItems[$dao->financial_trxn_id]['Item Description'] = $dao->item_description;
       }
       $financialItems['headers'] = self::formatHeaders($financialItems);
