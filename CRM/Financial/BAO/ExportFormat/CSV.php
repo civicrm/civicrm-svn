@@ -87,8 +87,8 @@ class CRM_Financial_BAO_ExportFormat_CSV extends CRM_Financial_BAO_ExportFormat 
       ft.currency AS currency,
       cov_status.label AS status,
       eftc.amount AS amount,
-      fa.accounting_code AS credit_account,
-      fa.name AS credit_account_name,
+      fa_from.accounting_code AS credit_account,
+      fa_from.name AS credit_account_name,
       fi.description AS item_description
       FROM civicrm_entity_batch eb
       LEFT JOIN civicrm_financial_trxn ft ON (eb.entity_id = ft.id AND eb.entity_table = 'civicrm_financial_trxn')
