@@ -234,12 +234,12 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search {
               //checking for format to avoid db errors
               if ($type == 'Int') {
                 if (!preg_match('/^[(]([A-Za-z0-9\,]+)[)]$/', $inVal)) {
-                  $errorMsg["value[$v[3]][$v[4]]"] = ts("Please enter correct Data ( in valid format ).");
+                  $errorMsg["value[$v[3]][$v[4]]"] = ts("Please enter correct Data (in valid format).");
                 }
               }
               else {
-                if (!(substr($inVal, 0, 1) == '(' && substr($inVal, -1, 1) == ')' ) && !preg_match('/^[(]([A-Za-z0-9åäöÅÄÖüÜœŒæÆøØ\,\s]+)[)]$/', $inVal)) {
-                  $errorMsg["value[$v[3]][$v[4]]"] = ts("Please enter correct Data ( in valid format ).");
+                if (!(substr($inVal, 0, 1) == '(' && substr($inVal, -1, 1) == ')') && !preg_match('/^[(]([A-Za-z0-9åäöÅÄÖüÜœŒæÆøØ\,\s]+)[)]$/', $inVal)) {
+                  $errorMsg["value[$v[3]][$v[4]]"] = ts("Please enter correct Data (in valid format).");
                 }
               }
 
@@ -305,13 +305,14 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search {
 
     $params = $this->controller->exportValues($this->_name);
     if (!empty($params)) {
+      // Add another block
       if (CRM_Utils_Array::value('addBlock', $params)) {
         $this->_blockCount = $this->_blockCount + 1;
         $this->set('blockCount', $this->_blockCount);
         $this->set('showSearchForm', TRUE);
         return;
       }
-
+      // Add another field
       for ($x = 1; $x <= $this->_blockCount; $x++) {
         $addMore = CRM_Utils_Array::value('addMore', $params);
         if (CRM_Utils_Array::value($x, $addMore)) {
@@ -353,9 +354,7 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search {
     // we dont want to store the sortByCharacter in the formValue, it is more like
     // a filter on the result set
     // this filter is reset if we click on the search button
-    if ($this->_sortByCharacter !== NULL
-      && empty($_POST)
-    ) {
+    if ($this->_sortByCharacter !== NULL && empty($_POST)) {
       if (strtolower($this->_sortByCharacter) == 'all') {
         $this->_formValues['sortByCharacter'] = NULL;
       }
@@ -367,28 +366,29 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search {
     $this->_params = &$this->convertFormValues($this->_formValues);
     $this->_returnProperties = &$this->returnProperties();
 
-
     // CRM-10338 check if value is empty array
-    foreach ( $this->_params as $k => $v ) {
+    foreach ($this->_params as $k => $v) {
       $this->_params[$k][2] = self::checkArrayKeyEmpty($v[2]);
     }
 
     parent::postProcess();
   }
 
-  // CRM-10338
-  // tags and groups use array keys for selection list.
-  // if using IS NULL/NOT NULL, an array with no array key is created
-  // convert that to simple null so processing can proceed
-  function checkArrayKeyEmpty( $val ) {
-    if ( is_array($val) ) {
+  /**
+   * CRM-10338
+   * tags and groups use array keys for selection list.
+   * if using IS NULL/NOT NULL, an array with no array key is created
+   * convert that to simple null so processing can proceed
+   */
+  static function checkArrayKeyEmpty($val) {
+    if (is_array($val)) {
       $v2empty = true;
-      foreach ( $val as $vk => $vv ) {
-        if ( !empty($vk) ) {
+      foreach ($val as $vk => $vv) {
+        if (!empty($vk)) {
           $v2empty = false;
-}
+        }
       }
-      if ( $v2empty ) {
+      if ($v2empty) {
         $val = null;
       }
     }
