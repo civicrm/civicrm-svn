@@ -56,7 +56,7 @@ class CRM_Contact_Form_Search_Criteria {
         $ids = implode(',', array_keys($form->_group));
         $ids = 'IN (' . $ids . ')';
         $groupHierarchy = CRM_Contact_BAO_Group::getGroupsHierarchy($ids, NULL, '&nbsp;&nbsp;', TRUE);
-        
+
         $form->add('select', 'group', ts('Groups'), $groupHierarchy, FALSE,
           array('id' => 'group', 'multiple' => 'multiple', 'title' => ts('- select -'))
         );
@@ -483,10 +483,7 @@ class CRM_Contact_Form_Search_Criteria {
 
 
     // radio button for is_deceased
-    $deceasedOptions    = array();
-    $deceasedOptions[1] = $form->createElement('radio', NULL, ts('Deceased'), 'Yes', 1);
-    $deceasedOptions[0] = $form->createElement('radio', NULL, ts('Deceased'), 'No', 0);
-    $form->addGroup($deceasedOptions, 'is_deceased', ts('Deceased'));
+    $form->addYesNo( 'is_deceased', ts('Deceased'));
   }
 
   static function notes(&$form) {
