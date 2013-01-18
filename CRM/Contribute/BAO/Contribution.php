@@ -2646,7 +2646,7 @@ WHERE  contribution_id = %1 ";
       'trxn_id' => $params['contribution']->trxn_id,
       'status_id' => $params['contribution']->contribution_status_id,
       'payment_instrument_id' => CRM_Utils_Array::value('payment_instrument_id', $params),
-      'check_number' => CRM_Utils_Array::value('check_number', $params)
+      'check_number' => CRM_Utils_Array::value('check_number', $params),
     );
 
     if (CRM_Utils_Array::value('payment_processor', $params)) {
@@ -2671,8 +2671,8 @@ WHERE  contribution_id = %1 ";
     if (!CRM_Utils_Array::value('line_item', $params)) {
       CRM_Price_BAO_LineItem::getLineItemArray($params, $entityID, str_replace('civicrm_', '', $entityTable));
     }
+
     if (CRM_Utils_Array::value('prevContribution', $params)) {
-      
       //if Change contribution amount
       if ($params['total_amount'] != $params['prevContribution']->total_amount) {
         //Update Financial Records
@@ -2697,12 +2697,14 @@ WHERE  contribution_id = %1 ";
           // for all other statuses create new financial records
           self::updateFinancialAccounts($params, 'changePaymentInstrument');
         }
-      } else if ((!CRM_Utils_System::isNull($params['contribution']->payment_instrument_id) ||
+      }
+      elseif ((!CRM_Utils_System::isNull($params['contribution']->payment_instrument_id) ||
         !CRM_Utils_System::isNull($params['prevContribution']->payment_instrument_id)) &&
         $params['contribution']->payment_instrument_id != $params['prevContribution']->payment_instrument_id) {
         // for any other payment instrument changes create new financial records
         self::updateFinancialAccounts($params, 'changePaymentInstrument');
-      } else if (!CRM_Utils_System::isNull($params['contribution']->check_number) && 
+      }
+      elseif (!CRM_Utils_System::isNull($params['contribution']->check_number) &&
         $params['contribution']->check_number != $params['prevContribution']->check_number) {
         // another special case when check number is changed, create new financial records
         // create financial trxn with negative amount
@@ -2746,8 +2748,7 @@ WHERE  contribution_id = %1 ";
       $params['entity_id'] = $financialTxn->id;
     }
     
-    // record line items and finacial items
-   
+    // record line items and financial items
     if (!CRM_Utils_Array::value('skipLineItem', $params)) {
       CRM_Price_BAO_LineItem::processPriceSet($entityId, CRM_Utils_Array::value('line_item', $params), $params['contribution'], $entityTable, $update);
     }
@@ -2763,7 +2764,6 @@ WHERE  contribution_id = %1 ";
     }
     
     // when a fee is charged
-    // FIX ME: work in progress
     if (CRM_Utils_Array::value('fee_amount', $params) && (!CRM_Utils_Array::value('prevContribution', $params)
       || $params['contribution']->fee_amount != $params['prevContribution']->fee_amount)) {
       CRM_Core_BAO_FinancialTrxn::recordFees($params);
