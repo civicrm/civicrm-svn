@@ -2411,9 +2411,15 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
    */
   function getTemplateFileName(){
     $defaultTpl = parent::getTemplateFileName();
-    if(!CRM_Utils_File::isIncludable($defaultTpl)){
+
+    $template = CRM_Core_Smarty::singleton();
+    // FIXME: check to see if a tpl file exists. There could be a better way to do this.
+    // Applying all code of smarty here, to check for a tpl in include paths doesn't look appropriate.
+    $output   = @$template->fetch($defaultTpl);
+    if (empty($output)) {
       $defaultTpl = 'CRM/Report/Form.tpl';
     }
+    unset($output);
     return $defaultTpl;
   }
 
