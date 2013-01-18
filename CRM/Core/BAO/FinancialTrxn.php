@@ -59,10 +59,6 @@ class CRM_Core_BAO_FinancialTrxn extends CRM_Financial_DAO_FinancialTrxn {
     }
 
     $trxn->save();
-    
-    if (CRM_Utils_Array::value('id', $params)) {
-      return $trxn;
-    }
 
     $contributionAmount = CRM_Utils_Array::value('net_amount', $params);
     if (!$contributionAmount && isset($params['total_amount'])) {
