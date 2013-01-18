@@ -28,9 +28,8 @@
 <div class="crm-form-block crm-search-form-block">
   <div class="crm-accordion-wrapper crm-batch_transaction_search-accordion collapsed">
     <div class="crm-accordion-header crm-master-accordion-header">
-      <div class="icon crm-accordion-pointer"></div>
-    {ts}Edit Search Criteria{/ts}
-    </div><!-- /.crm-accordion-header -->
+      {ts}Edit Search Criteria{/ts}
+    </div>
     <div class="crm-accordion-body">
       <div id="searchForm" class="crm-block crm-form-block crm-contact-custom-search-activity-search-form-block">
         <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>

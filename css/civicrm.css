@@ -778,13 +778,10 @@
   font-weight: bold;
   color: #121A2D;
   padding: 4px 6px;
-  margin-bottom: 4px;
+  margin: 0 0 0.3em;
 }
 
-.crm-container h3.nobackground {
-  background-color: transparent !important;
-}
-
+.crm-container h3.nobackground,
 .crm-container .crm-form-block h3 {
   background-color: transparent;
 }
