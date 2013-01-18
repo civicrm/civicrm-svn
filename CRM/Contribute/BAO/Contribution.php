@@ -2782,13 +2782,12 @@ WHERE  contribution_id = %1 ";
    */
   static function updateFinancialAccounts(&$params, $context = NULL, $skipTrxn = NULL) {
     $itemAmount = $trxnID = NULL;
+    //get all the statuses
+    $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
     if ($context == 'changedAmount' || $context == 'changeFinancialType') {
       $itemAmount = $params['trxnParams']['total_amount'] = $params['total_amount'] - $params['prevContribution']->total_amount;
     }
     if ($context == 'changedStatus') {
-      //get all the statuses
-      $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
-
       if ($params['prevContribution']->contribution_status_id == array_search('Completed', $contributionStatus)
         && ($params['contribution']->contribution_status_id == array_search('Refunded', $contributionStatus)
           || $params['contribution']->contribution_status_id == array_search('Cancelled', $contributionStatus))) {
@@ -2808,7 +2807,7 @@ WHERE  contribution_id = %1 ";
       }
       $itemAmount = $params['trxnParams']['total_amount'];
     }
-    elseif ($context == 'changePaymentInstrument') {
+    elseif ($context == 'changePaymentInstrument' && $params['contribution']->contribution_status_id != array_search('Pending', $contributionStatus)) {
       if ($params['prevContribution']->payment_instrument_id != null) {
         $params['trxnParams']['from_financial_account_id'] =
           CRM_Financial_BAO_FinancialTypeAccount::getInstrumentFinancialAccount(
@@ -2821,7 +2820,15 @@ WHERE  contribution_id = %1 ";
     }
 
     if (!$skipTrxn) {
+      // update last transaction if status is pending and payment instrument is changed
+      if ($context == 'changePaymentInstrument' && $params['contribution']->contribution_status_id == array_search('Pending', $contributionStatus)) {
+        $toUpdateTrxnId = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnId($params['contribution']->id, 'civicrm_contribution', 'DESC');  
+        $params['trxnParams']['id'] = CRM_Utils_Array::value('financialTrxnId', $toUpdateTrxnId);
+      }
       $trxn = CRM_Core_BAO_FinancialTrxn::create($params['trxnParams']);
+      if (CRM_Utils_Array::value('id', $params['trxnParams'])) {
+        unset($params['trxnParams']['id']);
+      }
       $params['entity_id'] = $trxn->id;
     } 
     else {
