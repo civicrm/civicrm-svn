@@ -365,10 +365,6 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field {
             ); 
             $qf->assign('membershipFieldID',$field->id);
           }
-          elseif (property_exists($qf, '_quickConfig') && $qf->_quickConfig && 
-            property_exists($qf, '_context') && ($qf->_context == 'standalone' || $qf->_context == 'participant')) {
-            $extra += array('financialType' => "{$opt['financial_type_id']}");
-          }
             
           $choice[$opId] = $qf->createElement('radio', NULL, '', $opt['label'], $opt['id'], $extra);
 
