@@ -55,7 +55,6 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase {
       'civicrm_contact',
     );
     $this->quickCleanup($tablesToTruncate);
-    $this->_contributionTypeId = $this->contributionTypeCreate();
     $event = $this->eventCreate(NULL);
     $this->_eventID = $event['id'];
 
@@ -197,12 +196,12 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase {
   }
 
   /**
-   * check with complete array
+   * check financial records for offline Participants
    */
-  function testPaymentUpdate() {
+  function testPaymentOffline() {
 
     // create contribution
-    $contributionID = $this->contributionCreate($this->_contactID, $this->_contributionTypeId);
+    $contributionID = $this->contributionCreate($this->_contactID, 1);
 
     $this->_participantPaymentID = $this->participantPaymentCreate($this->_participantID, $contributionID);
     $params = array(
@@ -216,7 +215,84 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase {
     $participantPayment = civicrm_api('participant_payment', 'create', $params);
     $this->assertEquals($participantPayment['id'], $this->_participantPaymentID);
     $this->assertTrue(array_key_exists('id', $participantPayment));
+    // check Financial records
+    $this->_checkFinancialRecords($params, 'offline');
+    $params = array(
+      'id' => $this->_participantPaymentID,
+      'version' => $this->_apiversion,
+    );
+    $deletePayment = civicrm_api('participant_payment', 'delete', $params);
+    $this->assertEquals($deletePayment['is_error'], 0);
+  }
 
+  /**
+   * check financial records for online Participant 
+   */
+  function testPaymentOnline() {
+
+    $paymentProcessor = $this->processorCreate();
+    $pageParams['processor_id'] = $paymentProcessor->id;
+    $contributionPage = $this->contributionPageCreate($pageParams);
+    $contributionParams = array(
+       'contact_id' => $this->_contactID,
+       'contribution_page_id' => $contributionPage['id'],
+       'payment_processor' => $paymentProcessor->id,
+    );
+    $contributionID = $this->onlineContributionCreate($contributionParams, 1);
+
+    $this->_participantPaymentID = $this->participantPaymentCreate($this->_participantID, $contributionID);
+    $params = array(
+      'id' => $this->_participantPaymentID,
+      'participant_id' => $this->_participantID,
+      'contribution_id' => $contributionID,
+      'version' => $this->_apiversion,
+    );
+
+    // Update Payment
+    $participantPayment = civicrm_api('participant_payment', 'create', $params);
+    $this->assertEquals($participantPayment['id'], $this->_participantPaymentID);
+    $this->assertTrue(array_key_exists('id', $participantPayment));
+    // check Financial records
+    $this->_checkFinancialRecords($params, 'online');
+    $params = array(
+      'id' => $this->_participantPaymentID,
+      'version' => $this->_apiversion,
+    );
+    $deletePayment = civicrm_api('participant_payment', 'delete', $params);
+    $this->assertEquals($deletePayment['is_error'], 0);
+  }
+
+  /**
+   * check financial records for online Participant pay later scenario
+   */
+  function testPaymentPayLaterOnline() {
+
+    $paymentProcessor = $this->processorCreate();
+    $pageParams['processor_id'] = $paymentProcessor->id;
+    $pageParams['is_pay_later'] = 1;
+    $contributionPage = $this->contributionPageCreate($pageParams);
+    $contributionParams = array(
+      'contact_id' => $this->_contactID,
+      'contribution_page_id' => $contributionPage['id'],
+      'contribution_status_id' => 2,
+      'is_pay_later' => 1,
+    );
+    $contributionID = $this->onlineContributionCreate($contributionParams, 1);
+
+    $this->_participantPaymentID = $this->participantPaymentCreate($this->_participantID, $contributionID);
+    $params = array(
+      'id' => $this->_participantPaymentID,
+      'participant_id' => $this->_participantID,
+      'contribution_id' => $contributionID,
+      'version' => $this->_apiversion,
+    );
+
+    // Update Payment
+    $participantPayment = civicrm_api('participant_payment', 'create', $params);
+    // check Financial Records
+    $this->_checkFinancialRecords($params, 'payLater');
+    $this->assertEquals($participantPayment['id'], $this->_participantPaymentID);
+    $this->assertTrue(array_key_exists('id', $participantPayment));
     $params = array(
       'id' => $this->_participantPaymentID,
       'version' => $this->_apiversion,
@@ -320,5 +396,53 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase {
     $this->assertEquals($result['values'][$result['id']]['contribution_id'], $contributionID, 'Check Contribution Id');
   }
 
+  function _checkFinancialRecords($params, $context) {
+    $entityParams = array(
+      'entity_id' => $params['id'],
+      'entity_table' => 'civicrm_contribution',
+    );
+    $trxn = current(CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($entityParams));
+    $trxnParams = array(
+      'id' => $trxn['financial_trxn_id'],                
+    ); 
+   if ($context == 'offline' || $context == 'online') {
+     $compareParams = array(
+       'to_financial_account_id' => 12,
+       'total_amount' => 100,
+       'status_id' => 1,
+     );
+   }
+   elseif ($context == 'payLater') {
+     $compareParams = array(
+       'to_financial_account_id' => 7,
+       'total_amount' => 100,
+       'status_id' => 2,
+     );
+   }
+    $this->assertDBCompareValues('CRM_Financial_DAO_FinancialTrxn', $trxnParams, $compareParams);
+    $entityParams = array(
+      'financial_trxn_id' => $trxn['financial_trxn_id'],
+      'entity_table' => 'civicrm_financial_item',
+    );
+    $entityTrxn = current(CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($entityParams));
+    $fitemParams = array(
+      'id' => $entityTrxn['entity_id'],
+    );
+    if ($context == 'offline' || $context == 'online') {
+      $compareParams = array(
+        'amount' => 100,
+        'status_id' => 1,
+        'financial_account_id' => 1,
+      );
+    }
+    elseif ($context == 'payLater') {
+      $compareParams = array(
+        'amount' => 100,
+        'status_id' => 3,
+        'financial_account_id' => 1,
+      );
+    }
+    $this->assertDBCompareValues('CRM_Financial_DAO_FinancialItem', $fitemParams, $compareParams);
+  }
 }
 

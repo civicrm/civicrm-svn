@@ -879,6 +879,49 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
   }
 
   /**
+   * Function to create Payment Processor
+   *
+   * @return object of Payment Processsor
+   */
+  function processorCreate() {
+    $processorParams = array(
+      'domain_id' => 1,
+      'name' => 'Dummy',
+      'payment_processor_type_id' => 10,
+      'financial_account_id' => 12,
+      'is_active' => 1,
+      'user_name' => '',
+      'url_site' => 'http://dummy.com',
+      'url_recur' => 'http://dummy.com',
+      'billing_mode' => 1,
+    ); 
+    $paymentProcessor = CRM_Financial_BAO_PaymentProcessor::create($processorParams);
+    return $paymentProcessor;
+  }
+
+  /**
+   * Function to create contribution page
+   *
+   * @return object of contribution page
+   */
+  function contributionPageCreate($params) {
+    $this->_pageParams = array( 
+      'version' => 3,
+      'title' => 'Test Contribution Page', 
+      'financial_type_id' => 1,
+      'currency' => 'USD',
+      'financial_account_id' => 1,
+      'payment_processor' => $params['processor_id'],
+      'is_active' => 1,
+      'is_allow_other_amount' => 1,
+      'min_amount' => 10,
+      'max_amount' => 1000,
+     );    
+    $contributionPage = civicrm_api( 'contribution_page','create',  $this->_pageParams );
+    return $contributionPage;
+  }
+
+  /**
    * Function to create Financial Type
    *
    * @return int $id of financial account created
@@ -1056,6 +1099,53 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     );
 
     $result = civicrm_api('contribution', 'create', $params);
+    if (CRM_Utils_Array::value('is_error', $result) ||
+      !CRM_Utils_Array::value('id', $result)
+    ) {
+      if (CRM_Utils_Array::value('error_message', $result)) {
+        throw new Exception('Could not create contribution, with message: ' . CRM_Utils_Array::value('error_message', $result));
+      }
+      else {
+        throw new Exception('Could not create contribution in line: ' . __LINE__);
+      }
+    }
+
+    return $result['id'];
+  }
+
+  /**
+   * Function to create online contribution
+   *
+   * @param int $financialType  id of financial type
+   *
+   * @return int id of created contribution
+   */
+  function onlineContributionCreate($params, $financialType, $invoiceID = 67890, $trxnID = 12345) {
+    $contribParams = array(
+      'contact_id' => $params['contact_id'],
+      'receive_date' => date('Ymd'),
+      'total_amount' => 100.00,
+      'financial_type_id' => $financialType,
+      'contribution_page_id' => $params['contribution_page_id'],
+      'trxn_id' => 12345,
+      'invoice_id' => 67890,
+      'source' => 'SSF',
+      'version' => $this->_apiversion,
+    );
+
+    if (isset($params['contribution_status_id'])) {
+      $contribParams['contribution_status_id'] = $params['contribution_status_id'];
+    }
+    else {
+      $contribParams['contribution_status_id'] = 1;
+    }
+    if (isset($params['is_pay_later'])) {
+      $contribParams['is_pay_later'] = 1;
+    }
+    if (isset($params['payment_processor'])) {
+      $contribParams['payment_processor'] = $params['payment_processor'];
+    }
+    $result = civicrm_api('contribution', 'create', $contribParams);
     if (CRM_Utils_Array::value('is_error', $result) ||
       !CRM_Utils_Array::value('id', $result)
     ) {
