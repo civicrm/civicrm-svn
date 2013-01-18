@@ -936,11 +936,14 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping {
   }
 
 
-  /* Function returns all  Custom group Names
-   * @customfieldId related custom field id
+  /**
+   * Function returns all  Custom group Names
+   *
+   * @param customfieldId related custom field id
    * @return $customGroupName all custom group names
+   * @static
    */
-  function getCustomGroupName($customfieldId) {
+  static function getCustomGroupName($customfieldId) {
     if ($customFieldId = CRM_Core_BAO_CustomField::getKeyID($customfieldId)) {
       $customGroupId = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_CustomField', $customFieldId, 'custom_group_id');
       $customGroupName = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_CustomGroup', $customGroupId, 'title');
