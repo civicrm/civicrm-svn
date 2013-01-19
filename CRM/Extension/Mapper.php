@@ -203,6 +203,10 @@ class CRM_Extension_Mapper {
    * @return string local path of the extension source tree
    */
   public function keyToBasePath($key) {
+    if ($key == 'civicrm') {
+      global $civicrm_root;
+      return rtrim($civicrm_root,'/');
+    }
     return $this->container->getPath($key);
   }
 
