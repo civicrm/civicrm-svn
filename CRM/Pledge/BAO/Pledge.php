@@ -303,7 +303,7 @@ class CRM_Pledge_BAO_Pledge extends CRM_Pledge_DAO_Pledge {
   /**
    * function to get the amount details date wise.
    */
-  function getTotalAmountAndCount($status = NULL, $startDate = NULL, $endDate = NULL) {
+  static function getTotalAmountAndCount($status = NULL, $startDate = NULL, $endDate = NULL) {
     $where = array();
     $select = $from = $queryDate = NULL;
     //get all status

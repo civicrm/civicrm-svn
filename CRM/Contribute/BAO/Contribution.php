@@ -610,7 +610,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
     return self::$_exportableFields;
   }
 
-  function getTotalAmountAndCount($status = NULL, $startDate = NULL, $endDate = NULL) {
+  static function getTotalAmountAndCount($status = NULL, $startDate = NULL, $endDate = NULL) {
     $where = array();
     switch ($status) {
       case 'Valid':
