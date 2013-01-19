@@ -215,5 +215,14 @@ class CRM_Core_Smarty extends Smarty {
     require_once 'CRM/Core/Smarty/resources/String.php';
     civicrm_smarty_register_string_resource();
   }
+
+  function addTemplateDir($path) {
+    if ( is_array( $this->template_dir ) ) {
+      array_unshift( $this->template_dir, $path );
+    } else {
+      $this->template_dir = array( $path, $this->template_dir );
+    }
+
+  }
 }
 

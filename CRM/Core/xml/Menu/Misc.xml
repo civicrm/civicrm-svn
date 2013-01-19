@@ -159,4 +159,10 @@
      <page_callback>CRM_Core_Page_AJAX::run</page_callback>
      <access_arguments>access CiviCRM</access_arguments>
   </item>
+  <item>
+    <path>civicrm/dev/qunit</path>
+    <page_callback>CRM_Core_Page_QUnit</page_callback>
+    <title>QUnit</title>
+    <access_arguments>administer CiviCRM</access_arguments>
+  </item>
 </menu>
