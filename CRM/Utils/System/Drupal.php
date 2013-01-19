@@ -385,12 +385,6 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
    * Check if a resource url is within the drupal directory and format appropriately
    *
    * @param url (reference)
-   * @param params (reference)
-   */
-  /**
-   * Check if a resource url is within the drupal directory and format appropriately
-   *
-   * @param url (reference)
    *
    * @return bool: TRUE for internal paths, FALSE for external
    */
