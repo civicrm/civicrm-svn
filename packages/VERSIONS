@@ -99,6 +99,7 @@ Backbone       0.9.9      X11/MIT     http://backbonejs.org/
 Backone Forms  c6920b3c89 X11/MIT     https://github.com/powmedia/backbone-forms
 json2          2012-10-08 PUBDOM      https://github.com/douglascrockford/JSON-js
 Marionette     1.0.0-rc2  X11/MIT     http://marionettejs.com/
+QUnit          1.10.0     X11/MIT     http://qunitjs.com/
 Underscore     1.4.3      X11/MIT     http://underscorejs.org/
 
 
