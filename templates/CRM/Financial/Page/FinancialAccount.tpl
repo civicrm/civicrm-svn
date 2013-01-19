@@ -29,55 +29,60 @@
   <div id="help">
     <p>{ts}Financial types are used to categorize contributions for reporting and accounting purposes. These are also referred to as <strong>Funds</strong>. You may set up as many types as needed. Each type can carry an accounting code which can be used to map contributions to codes in your accounting system. Commonly used financial types are: Donation, Campaign Contribution, Membership Dues...{/ts}</p>
   </div>
+  {if $action ne 1 and $action ne 2}
+    <div class="action-link">
+	    <a href="{crmURL q="action=add&reset=1"}" id="newFinancialAccount-top" class="button"><span><div class="icon add-icon"></div>{ts}Add Financial Account{/ts}</span></a>
+    </div>
+  {/if}
 
-{if $rows}
-{include file="CRM/common/jsortable.tpl"}
-<div id="ltype">
-<p></p>
-    <div class="form-item">
-        {strip}
-	{* handle enable/disable actions*}
- 	{include file="CRM/common/enableDisable.tpl"}
-        <table id="crm-financial_accounts" class="display">
-           <thead class="sticky">
-            <th>{ts}Name{/ts}</th>
-            <th>{ts}Description{/ts}</th>
-            <th>{ts}Acctg Code{/ts}</th>
-            <th id="sortable">{ts}Account Type{/ts}</th>
-            <th>{ts}Deductible?{/ts}</th>
-            <th>{ts}Reserved?{/ts}</th>
-            <th>{ts}Default?{/ts}</th>
-            <th>{ts}Enabled?{/ts}</th>
-            <th></th>
-          </thead>
-         {foreach from=$rows item=row}
+  {if $rows}
+    {include file="CRM/common/jsortable.tpl"}
+    <div id="ltype">
+    <p></p>
+      <div class="form-item">
+      {strip}
+    	{* handle enable/disable actions*}
+     	{include file="CRM/common/enableDisable.tpl"}
+      <table id="crm-financial_accounts" class="display">
+         <thead class="sticky">
+          <th>{ts}Name{/ts}</th>
+          <th>{ts}Description{/ts}</th>
+          <th>{ts}Acctg Code{/ts}</th>
+          <th id="sortable">{ts}Account Type{/ts}</th>
+          <th>{ts}Deductible?{/ts}</th>
+          <th>{ts}Reserved?{/ts}</th>
+          <th>{ts}Default?{/ts}</th>
+          <th>{ts}Enabled?{/ts}</th>
+          <th></th>
+        </thead>
+        {foreach from=$rows item=row}
         <tr id="row_{$row.id}"class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
-	        <td>{$row.name}</td>	
-	        <td>{$row.description}</td>
-          <td>{$row.accounting_code}</td>
-          <td>{$row.financial_account_type_id}{if $row.account_type_code} ({$row.account_type_code}){/if}</td>
-	        <td>{if $row.is_deductible eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-	        <td>{if $row.is_reserved eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-          <td>{if $row.is_default eq 1}<img src="{$config->resourceBase}i/check.gif" alt="{ts}Default{/ts}" /> {/if}</td>
-          <td id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-	        <td>{$row.action|replace:'xx':$row.id}</td>
+        <td>{$row.name}</td>	
+        <td>{$row.description}</td>
+        <td>{$row.accounting_code}</td>
+        <td>{$row.financial_account_type_id}{if $row.account_type_code} ({$row.account_type_code}){/if}</td>
+        <td>{if $row.is_deductible eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+        <td>{if $row.is_reserved eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+        <td>{if $row.is_default eq 1}<img src="{$config->resourceBase}i/check.gif" alt="{ts}Default{/ts}" /> {/if}</td>
+        <td id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+        <td>{$row.action|replace:'xx':$row.id}</td>
         </tr>
         {/foreach}
-         </table>
-        {/strip}
+      </table>
+      {/strip}
 
-        {if $action ne 1 and $action ne 2}
-	    <div class="action-link">
-    	<a href="{crmURL q="action=add&reset=1"}" id="newFinancialAccount" class="button"><span><div class="icon add-icon"></div>{ts}Add Financial Account{/ts}</span></a>
+      {if $action ne 1 and $action ne 2}
+        <div class="action-link">
+    	    <a href="{crmURL q="action=add&reset=1"}" id="newFinancialAccount-bottom" class="button"><span><div class="icon add-icon"></div>{ts}Add Financial Account{/ts}</span></a>
         </div>
-        {/if}
+      {/if}
+      </div>
     </div>
-</div>
-{else}
+  {else}
     <div class="messages status">
-        <div class="icon inform-icon"></div>
-        {capture assign=crmURL}{crmURL q="action=add&reset=1"}{/capture}
-        {ts 1=$crmURL}There are no Financial Account entered. You can <a href='%1'>add one</a>.{/ts}
+      <div class="icon inform-icon"></div>
+      {capture assign=crmURL}{crmURL q="action=add&reset=1"}{/capture}
+      {ts 1=$crmURL}There are no Financial Account entered. You can <a href='%1'>add one</a>.{/ts}
     </div>    
-{/if}
+  {/if}
 {/if}
