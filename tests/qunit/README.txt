@@ -1,8 +1,8 @@
 ==== QUnit Test Suite for CiviCRM ====
 
 QUnit is a JavaScript-based unit-testing framework. It is ideally suited to
-testing pure-JavaScript modules -- for example, many jQuery and Backbone
-plugins use QUnit. For more details about, see:
+testing pure-JavaScript modules -- for example, jQuery, Backbone, and many
+of their plugins test with QUnit. For more details about, see:
 
   http://qunitjs.com/
   http://qunitjs.com/cookbook/
@@ -107,7 +107,8 @@ with it, we can change it -- but please communicate any problems/issues
 
 ==== TODO ====
 
- * Display a browsable list of all tests.
- * Each test-suite must be run individually. This is OK for now. In the future,
-   we might further automate -- e.g. we could make a WebTest which iterates
-   through tests/qunit/*/index.php and checks the outcome for each.
+ * GUI Testing -- Display a browsable list of all tests.
+
+ * Automatic Testing -- Add an item to the WebTest suite (e.g.
+   WebTest_Core_QUnitTestCase) which iteratively executes each QUnit
+   test-suite and verifies that they pass.
