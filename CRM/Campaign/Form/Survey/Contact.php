@@ -82,8 +82,8 @@ class CRM_Campaign_Form_Survey_Contact extends CRM_Campaign_Form_Survey {
       'contact_1' => 'IndividualModel',
       'activity_1' => 'ActivityModel',
     );
-    $this->addProfileSelector('contact_profile_id', $allowCoreTypes, $allowSubTypes, $entities);
-    $this->addProfileSelector('activity_profile_id', $allowCoreTypes, $allowSubTypes, $entities);
+    $this->addProfileSelector('contact_profile_id', ts('Contact Info'), $allowCoreTypes, $allowSubTypes, $entities);
+    $this->addProfileSelector('activity_profile_id', ts('Activity Info'), $allowCoreTypes, $allowSubTypes, $entities);
 
     parent::buildQuickForm();
   }

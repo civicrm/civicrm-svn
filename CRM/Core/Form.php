@@ -851,9 +851,9 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
    * @param string $allowSubTypes only present a UFGroup if its group_type is compatible with $allowSubypes
    * @param array $entities
    */
-  function addProfileSelector($name, $allowCoreTypes, $allowSubTypes, $entities) {
+  function addProfileSelector($name, $label, $allowCoreTypes, $allowSubTypes, $entities) {
     $profiles = CRM_Core_BAO_UFGroup::getProfiles($allowCoreTypes);
-    $this->add('select', $name, ts('Contact Info'),
+    $this->add('select', $name, $label,
       array(
         '' => ts('- select profile -')) + $profiles
     );
