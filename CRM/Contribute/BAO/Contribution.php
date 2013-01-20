@@ -2823,7 +2823,12 @@ WHERE  contribution_id = %1 ";
       $itemAmount = $params['trxnParams']['total_amount'];
     }
     elseif ($context == 'changePaymentInstrument') {
-      if ($params['prevContribution']->payment_instrument_id != null) {
+      if ($params['prevContribution']->payment_instrument_id != null
+        && $params['prevContribution']->contribution_status_id == array_search('Pending', $contributionStatus)
+        && $params['contribution']->contribution_status_id == array_search('Pending', $contributionStatus)) {
+        $params['trxnParams']['from_financial_account_id'] = $params['trxnParams']['to_financial_account_id'];
+      }
+      elseif ($params['prevContribution']->payment_instrument_id != null) {
         $params['trxnParams']['from_financial_account_id'] =
           CRM_Financial_BAO_FinancialTypeAccount::getInstrumentFinancialAccount(
             $params['prevContribution']->payment_instrument_id);
