@@ -2826,7 +2826,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
    * calculate the profile type 'group_type' as per profile fields.
    *
    * @param int $gid           profile id
-   * @param int $ignoreFieldId ignore perticular profile field
+   * @param int $ignoreFieldId ignore particular profile field
    *
    * @return array list of calculated group type
    */
@@ -2895,6 +2895,17 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
   /**
    * Update the profile type 'group_type' as per profile fields including group types and group subtype values.
    * Build and store string like: group_type1,group_type2[VALUE_SEPERATOR]group_type1Type:1:2:3,group_type2Type:1:2
+   *
+   * FIELDS                                                   GROUP_TYPE
+   * BirthDate + Email                                        Individual,Contact
+   * BirthDate + Subject                                      Individual,Activity
+   * BirthDate + Subject + SurveyOnlyField                    Individual,Activity\0ActivityType:28
+   * BirthDate + Subject + SurveyOnlyField + PhoneOnlyField   (Not allowed)
+   * BirthDate + SurveyOnlyField                              Individual,Activity\0ActivityType:28
+   * BirthDate + Subject + SurveyOrPhoneField                 Individual,Activity\0ActivityType:2:28
+   * BirthDate + SurveyOrPhoneField                           Individual,Activity\0ActivityType:2:28
+   * BirthDate + SurveyOrPhoneField + SurveyOnlyField         Individual,Activity\0ActivityType:2:28
+   * BirthDate + StudentField + Subject + SurveyOnlyField     Individual,Activity,Student\0ActivityType:28
    *
    * @param  Integer $gid         profile id
    * @param  Array   $groupTypes  With key having group type names
