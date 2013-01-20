@@ -25,25 +25,36 @@
 *}
 
 <div class="crm-block crm-form-block crm-campaign-survey-contact-form-block">
-<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
-      <table class="form-layout-compressed">
-       <tr class="crm-campaign-survey-main-form-block-contact_profile_id">
-           <td class="label">{$form.contact_profile_id.label}</td>
-           <td class="view-value">{$form.contact_profile_id.html}&nbsp;<span class="profile-links"></span>
-         <div class="description">{ts}Select the Profile for Survey.{/ts}</div>
-           <div class="profile-create">
-                <a href="{crmURL p='civicrm/admin/uf/group/add' q='reset=1&action=add'}" target="_blank">{ts}Click here for new profile{/ts}
-           </div>
-           </td>
-       </tr>
-       <tr class="crm-campaign-survey-main-form-block-activity_profile_id">
-           <td class="label">{$form.activity_profile_id.label}</td>
-           <td class="view-value">{$form.activity_profile_id.html}&nbsp;<span class="profile-links"></span>
-         <div class="description">{ts}Select the Profile for Survey.{/ts}</div>
-           <div class="profile-create">
-                <a href="{crmURL p='civicrm/admin/uf/group/add' q='reset=1&action=add'}" target="_blank">{ts}Click here for new profile{/ts}
-           </div>
-           </td>
-       </tr>
-      </table>
-<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
+  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
+
+  <table class="form-layout-compressed">
+    <tr class="crm-campaign-survey-main-form-block-contact_profile_id">
+      <td class="label">{$form.contact_profile_id.label}</td>
+      <td class="view-value">{$form.contact_profile_id.html}&nbsp;
+        <span class="profile-links"></span>
+
+        <div class="description">{ts}Select the Profile for Survey.{/ts}</div>
+        <div class="profile-create">
+          <a href="{crmURL p='civicrm/admin/uf/group/add' q='reset=1&action=add'}" target="_blank">
+          {ts}Click here for new profile{/ts}
+          </a>
+        </div>
+      </td>
+    </tr>
+    <tr class="crm-campaign-survey-main-form-block-activity_profile_id">
+      <td class="label">{$form.activity_profile_id.label}</td>
+      <td class="view-value">{$form.activity_profile_id.html}&nbsp;
+        <span class="profile-links"></span>
+
+        <div class="description">{ts}Select the Profile for Survey.{/ts}</div>
+        <div class="profile-create">
+          <a href="{crmURL p='civicrm/admin/uf/group/add' q='reset=1&action=add'}" target="_blank">
+          {ts}Click here for new profile{/ts}
+          </a>
+        </div>
+      </td>
+    </tr>
+  </table>
+
+  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
+</div>
