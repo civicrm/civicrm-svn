@@ -43,6 +43,7 @@
   var CRM = CRM || {};
   CRM = cj.extend(true, {
     strings: {{/literal}
+      '- select -': '{ts escape="js"}- select -{/ts}',
       Ok: '{ts escape="js"}Ok{/ts}',
       Cancel: '{ts escape="js"}Cancel{/ts}',
       Yes: '{ts escape="js"}Yes{/ts}',
