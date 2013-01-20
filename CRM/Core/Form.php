@@ -843,6 +843,22 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
     }
   }
 
+  /**
+   * Add a widget for selecting/editing/creating/copying a profile form
+   *
+   * @param string $name HTML form-element name
+   * @param string $allowCoreTypes only present a UFGroup if its group_type includes a subset of $allowCoreTypes
+   * @param string $allowSubTypes only present a UFGroup if its group_type is compatible with $allowSubypes
+   * @param array $entities
+   */
+  function addProfileSelector($name, $allowCoreTypes, $allowSubTypes, $entities) {
+    $profiles = CRM_Core_BAO_UFGroup::getProfiles($allowCoreTypes);
+    $this->add('select', $name, ts('Contact Info'),
+      array(
+        '' => ts('- select profile -')) + $profiles
+    );
+  }
+
   function addWysiwyg($name, $label, $attributes, $forceTextarea = FALSE) {
     // 1. Get configuration option for editor (tinymce, ckeditor, pure textarea)
     // 2. Based on the option, initialise proper editor

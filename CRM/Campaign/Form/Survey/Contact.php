@@ -72,19 +72,18 @@ class CRM_Campaign_Form_Survey_Contact extends CRM_Campaign_Form_Survey {
    * @access public
    */
   public function buildQuickForm() {
-    $contactProfiles = CRM_Core_BAO_UFGroup::getProfiles(CRM_Campaign_BAO_Survey::surveyProfileTypes());
-    // custom group id
-    $this->add('select', 'contact_profile_id', ts('Contact Info'),
-      array(
-        '' => ts('- select profile -')) + $contactProfiles
+    $allowCoreTypes = CRM_Campaign_BAO_Survey::surveyProfileTypes();
+    $allowSubTypes = array(
+      'ActivityType' => array(
+        CRM_Core_DAO::getFieldValue('CRM_Campaign_DAO_Survey', $this->_surveyId, 'activity_type_id')
+      ),
     );
-
-    $activityProfiles = CRM_Core_BAO_UFGroup::getProfiles(CRM_Campaign_BAO_Survey::surveyProfileTypes());
-    // custom group id
-    $this->add('select', 'activity_profile_id', ts('Profile'),
-      array(
-        '' => ts('- select profile -')) + $activityProfiles
+    $entities = array(
+      'contact_1' => 'IndividualModel',
+      'activity_1' => 'ActivityModel',
     );
+    $this->addProfileSelector('contact_profile_id', $allowCoreTypes, $allowSubTypes, $entities);
+    $this->addProfileSelector('activity_profile_id', $allowCoreTypes, $allowSubTypes, $entities);
 
     parent::buildQuickForm();
   }
