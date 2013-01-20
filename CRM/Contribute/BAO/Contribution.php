@@ -2789,6 +2789,8 @@ WHERE  contribution_id = %1 ";
    */
   static function updateFinancialAccounts(&$params, $context = NULL, $skipTrxn = NULL) {
     $itemAmount = $trxnID = NULL;
+    //get all the statuses
+    $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
     if ($params['prevContribution']->contribution_status_id == array_search('Pending', $contributionStatus) &&
       $params['contribution']->contribution_status_id == array_search('Completed', $contributionStatus) 
       && $context == 'changePaymentInstrument') {
