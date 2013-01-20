@@ -656,9 +656,9 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType {
 
     $priceSetId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', 'default_membership_type_amount', 'id', 'name');
 
-    if (CRM_Utils_Array::value('memberOfContact', $ids)) {
-      $fieldName = $ids['memberOfContact'];
-}
+    if (CRM_Utils_Array::value('member_of_contact_id', $params)) {
+      $fieldName = $params['member_of_contact_id'];
+    }
     else {
       $fieldName = $previousID;
     }
@@ -681,13 +681,15 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType {
       $fieldParams['option_label'][1] = $params['name'];
       $fieldParams['membership_type_id'][1] = $membershipTypeId;
       $fieldParams['option_amount'][1] = empty($params['minimum_fee']) ? 0 : $params['minimum_fee'];
+      $fieldParams['financial_type_id'] = CRM_Utils_Array::value('financial_type_id', $params);
 
       if ($previousID) {
         CRM_Member_Form_MembershipType::checkPreviousPriceField($previousID, $priceSetId, $membershipTypeId, $optionsIds);
         $fieldParams['option_id'] = CRM_Utils_Array::value('option_id', $optionsIds);
       }
       $priceField = CRM_Price_BAO_Field::create($fieldParams);
-    } else {
+    } 
+    else {
       $fieldID = $results['id'];
       $fieldValueParams = array(
         'price_field_id' => $fieldID,
@@ -699,7 +701,8 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType {
         $results['label']  = $results['name'] = $params['name'];
         $results['amount'] = empty($params['minimum_fee']) ? 0 : $params['minimum_fee'];
         $optionsIds['id']  = $results['id'];
-      } else {
+      } 
+      else {
         $results = array(
           'price_field_id' => $fieldID,
           'name' => $params['name'],
@@ -716,6 +719,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType {
           $optionsIds['id'] = current(CRM_Utils_Array::value('option_id', $optionsIds));
         }
       }
+      $results['financial_type_id'] = CRM_Utils_Array::value('financial_type_id', $params);
       CRM_Price_BAO_FieldValue::add($results, $optionsIds);
     }
   }
