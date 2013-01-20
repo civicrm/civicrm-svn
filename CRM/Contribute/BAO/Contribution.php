@@ -2826,7 +2826,8 @@ WHERE  contribution_id = %1 ";
       if ($params['prevContribution']->payment_instrument_id != null
         && $params['prevContribution']->contribution_status_id == array_search('Pending', $contributionStatus)
         && $params['contribution']->contribution_status_id == array_search('Pending', $contributionStatus)) {
-        $params['trxnParams']['from_financial_account_id'] = $params['trxnParams']['to_financial_account_id'];
+        $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Accounts Receivable Account is' "));
+        $params['trxnParams']['from_financial_account_id'] = CRM_Contribute_PseudoConstant::financialAccountType($params['financial_type_id'], $relationTypeId);
       }
       elseif ($params['prevContribution']->payment_instrument_id != null) {
         $params['trxnParams']['from_financial_account_id'] =
