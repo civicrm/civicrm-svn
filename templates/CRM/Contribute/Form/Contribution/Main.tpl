@@ -100,7 +100,7 @@ var priceset = {/literal}{if $priceset}'#{$priceset}'{else}0{/if}{literal}
       {$intro_text}
   </div>
   {if $islifetime or $ispricelifetime }
-    <div id="help">You have a current Lifetime Membership which does not need top be renewed.</div>
+    <div id="help">You have a current Lifetime Membership which does not need to be renewed.</div>
   {/if}
 
   {if !empty($useForMember)}
