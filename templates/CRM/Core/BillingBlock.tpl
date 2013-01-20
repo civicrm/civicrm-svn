@@ -268,6 +268,11 @@ cj( function( ) {
         var orig_id = input_ids[id];
         cj(orig_id).val( cj(id).val() );
       };
+      for(var id in select_ids) {
+        var orig_id = select_ids[id];
+        cj(orig_id+' option').removeAttr('selected');
+        cj(orig_id+' option[value="'+cj(id).val()+'"]').attr('selected', 'selected');
+      };
     } else {
       cj('.billing_name_address-group').show(200);
     }
