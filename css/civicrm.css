@@ -3089,10 +3089,11 @@ tbody.scrollContent tr.alternateRow {
 .crm-container .ui-tabs .ui-tabs-nav {
   background-color: #e6e6dc;
 }
-#mainTabContainer li.crm-tab-button {
+#mainTabContainer .crm-tab-button {
   background-color: #f5f6f1;
 }
-#mainTabContainer li.ui-state-active {
+#mainTabContainer li.ui-state-active,
+#mainTabContainer li.ui-state-hover {
   background-color: #FFF;
 }
 
