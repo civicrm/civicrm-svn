@@ -1172,6 +1172,9 @@ WHERE  contribution_id = {$this->_id}
           'fee_amount' => $submittedValues['total_amount'],
           'id'         => $entityID);
         CRM_Event_BAO_Participant::add($participantParams);
+        if (empty($this->_lineItems)) {
+          $this->_lineItems = CRM_Price_BAO_LineItem::getLineItems($entityID, 'participant',1);
+        }
       } else {
         $entityTable = 'contribution';
         $entityID = $this->_id;
@@ -1470,7 +1473,7 @@ WHERE  contribution_id = {$this->_id}
       }
       // process line items, until no previous line items.
       if (empty($this->_lineItems) && $entityID && !empty($lineItem)) {
-        CRM_Contribute_Form_AdditionalInfo::processPriceSet($entityID, $lineItem, "civicrm_".$entityTable);
+        CRM_Contribute_Form_AdditionalInfo::processPriceSet($entityID, $lineItem, 'civicrm_' . $entityTable);
       }
 
       //send receipt mail.
@@ -1618,9 +1621,10 @@ WHERE  contribution_id = {$this->_id}
         $entityID = $contribution->id;
         $entityTable = 'contribution';
       }
+
       // process line items, until no previous line items.
       if (empty($this->_lineItems) && $entityID && !empty($lineItem)) {
-        CRM_Contribute_Form_AdditionalInfo::processPriceSet($entityID, $lineItem, "civicrm_".$entityTable);
+        CRM_Contribute_Form_AdditionalInfo::processPriceSet($entityID, $lineItem, 'civicrm_' . $entityTable);
       }
 
       // process associated membership / participant, CRM-4395
