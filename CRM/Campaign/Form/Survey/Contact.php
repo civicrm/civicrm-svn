@@ -58,7 +58,8 @@ class CRM_Campaign_Form_Survey_Contact extends CRM_Campaign_Form_Survey {
     );
 
     list($defaults['contact_profile_id'],
-         $defaults['activity_profile_id']) = CRM_Core_BAO_UFJoin::getUFGroupIds($ufJoinParams);
+         $second) = CRM_Core_BAO_UFJoin::getUFGroupIds($ufJoinParams);
+    $defaults['activity_profile_id'] = $second ? array_shift($second) : '';
 
     return $defaults;
   }
