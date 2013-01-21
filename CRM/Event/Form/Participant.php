@@ -1463,7 +1463,9 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
         $transaction = new CRM_Core_Transaction();
 
         // CRM-11124
-        CRM_Event_BAO_Participant::createDiscountTrxn($this->_eventId, $contributionParams);
+        if ($this->_quickConfig) {
+          CRM_Event_BAO_Participant::createDiscountTrxn($this->_eventId, $contributionParams, $this->_params['amount_priceset_level_radio']);
+        }
         $transaction->commit();
       }
     }

@@ -1725,17 +1725,26 @@ WHERE    civicrm_participant.contact_id = {$contactID} AND
    *
    * @static
    */
-  static function createDiscountTrxn($eventID, $contributionParams) { 
+  static function createDiscountTrxn($eventID, $contributionParams, $feeLevel) { 
     // CRM-11124
     $checkDiscount = CRM_Core_BAO_Discount::findSet($eventID,'civicrm_event');
     if (!empty($checkDiscount)) {
+      $feeLevel = current($feeLevel);
+      $priceSetId = CRM_Price_BAO_Set::getFor('civicrm_event', $eventID, NULL);
+      $query = "SELECT cpfv.amount FROM `civicrm_price_field_value` cpfv
+LEFT JOIN civicrm_price_field cpf ON cpfv.price_field_id = cpf.id
+WHERE cpf.price_set_id = %1 AND cpfv.label LIKE %2";
+      $params = array(1 => array($priceSetId, 'Integer'),
+        2 => array($feeLevel, 'String'));
+      $mainAmount = CRM_Core_DAO::singleValueQuery($query, $params);
       $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Discounts Account is' "));
       $contributionParams['trxnParams']['from_financial_account_id'] = CRM_Contribute_PseudoConstant::financialAccountType(
         $contributionParams['financial_type_id'], $relationTypeId);
       if (CRM_Utils_Array::value('from_financial_account_id', $contributionParams['trxnParams'])) {
-        $contributionParams['trxnParams']['total_amount'] = $contributionParams['total_amount'];
+        $contributionParams['trxnParams']['total_amount'] = $mainAmount - $contributionParams['total_amount'];
         $contributionParams['trxnParams']['payment_processor_id'] = $contributionParams['trxnParams']['payment_instrument_id'] = 
-          $contributionParams['trxnParams']['check_number'] = $contributionParams['trxnParams']['trxn_id'] = NULL;
+          $contributionParams['trxnParams']['check_number'] = $contributionParams['trxnParams']['trxn_id'] = 
+          $contributionParams['trxnParams']['net_amount'] = $contributionParams['trxnParams']['fee_amount'] = NULL;
         
         CRM_Core_BAO_FinancialTrxn::create($contributionParams['trxnParams']);
       }
