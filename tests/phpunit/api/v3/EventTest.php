@@ -58,7 +58,7 @@ class api_v3_EventTest extends CiviUnitTestCase {
         'registration_end_date' => '2008-10-15',
         'max_participants' => 100,
         'event_full_text' => 'Sorry! We are already full',
-        'is_monetory' => 0,
+        'is_monetary' => 0,
         'is_active' => 1,
         'is_show_location' => 0,
         'version' => $this->_apiversion,
@@ -299,7 +299,23 @@ class api_v3_EventTest extends CiviUnitTestCase {
 
     $this->contactDelete($contactID);
   }
-
+  /*
+   * Legacy support for Contribution Type ID. We need to ensure this is supported
+   * as an alias for financial_type_id
+   */
+  function testCreateGetEventLegacyContributionTypeID() {
+    $contributionTypeArray = array('contribution_type_id' => 3);
+    if(isset($this->_params[0]['financial_type_id'])){
+      //in case someone edits $this->_params & invalidates this test :-)
+      unset($this->_params[0]['financial_type_id']);
+    }
+    $result = civicrm_api('event', 'create', $this->_params[0] + $contributionTypeArray);
+    $this->assertAPISuccess($result, ' Event Creation Failedon line ' . __LINE__);
+    $getresult = civicrm_api('event', 'get', array('version' => 3,) + $contributionTypeArray);
+    $this->assertAPISuccess($result, ' Event Creation on line ' . __LINE__);
+    $this->assertEquals($result['id'], $getresult['id']);
+    civicrm_api('event', 'delete', array('version' => 3, 'id' => $result['id']));
+  }
   ///////////////// civicrm_event_create methods
 
   /**

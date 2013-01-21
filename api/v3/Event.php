@@ -81,6 +81,7 @@ function _civicrm_api3_event_create_spec(&$params) {
   $params['start_date']['api.required'] = 1;
   $params['title']['api.required'] = 1;
   $params['is_active']['api.default'] = 1;
+  $params['financial_type_id']['api.aliases'] = array('contribution_type_id');
 }
 /*
  * Support for schema changes made in 4.2
@@ -125,8 +126,6 @@ function civicrm_api3_event_get($params) {
     unset($params['return.max_results']);
   }
 
-  require_once 'CRM/Core/BAO/CustomGroup.php';
-
   $eventDAO = new CRM_Event_BAO_Event();
   _civicrm_api3_dao_set_filter($eventDAO, $params, TRUE, 'Event');
 
@@ -159,7 +158,15 @@ function civicrm_api3_event_get($params) {
 
   return civicrm_api3_create_success($event, $params, 'event', 'get', $eventDAO);
 }
-
+/*
+ * Adjust Metadata for Get action
+*
+* The metadata is used for setting defaults, documentation & validation
+* @param array $params array or parameters determined by getfields
+*/
+function _civicrm_api3_event_get_spec(&$params) {
+  $params['financial_type_id']['api.aliases'] = array('contribution_type_id');
+}
 /*
  * Support for schema changes made in 4.2
  * The main purpose of the API is to provide integrators a level of stability not provided by
