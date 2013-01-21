@@ -3094,7 +3094,7 @@ tbody.scrollContent tr.alternateRow {
 }
 #mainTabContainer li.ui-state-active,
 #mainTabContainer li.ui-state-hover {
-  background-color: #FFF;
+  background: #FFF;
 }
 
 #crm-container div.contact_details,
