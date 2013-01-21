@@ -36,6 +36,19 @@
  */
 
 function civicrm_api3_setting_getfields($params) {
+  if(strtolower($params['action']) == 'getvalue'){
+    $result = array(
+      'name' => array(
+        'title' => 'name of setting field',
+        'api.required' => 1,
+        'type' => CRM_Utils_Type::T_STRING),
+      'group' => array('title' => 'name of setting field',
+        'api.required' => 0,
+        'description' => 'Settings Group. This is required if the setting is not stored in config',
+        'type' => CRM_Utils_Type::T_STRING)
+      );
+    return civicrm_api3_create_success($result, $params, 'setting', 'getfields');
+  }
   if(!empty($params['name'])){
     //am of two minds about special handling for 'name' as opposed to other filters - but is does make most common
     //usage really easy
@@ -54,7 +67,7 @@ function civicrm_api3_setting_getfields($params) {
       $specFunction($result);
     }
   }
-  return civicrm_api3_create_success($result,$params,'setting','getfields');
+  return civicrm_api3_create_success($result, $params, 'setting', 'getfields');
 }
 /*
  * Alter metadata for getfields functions
