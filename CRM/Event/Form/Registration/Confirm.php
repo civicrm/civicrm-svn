@@ -977,19 +977,8 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
     $contribParams['skipLineItem'] = 1;
     // create contribution record
     $contribution = CRM_Contribute_BAO_Contribution::add($contribParams, $ids);
-          
     // CRM-11124
-    $checkDiscount = CRM_Core_BAO_Discount::findSet($form->_eventId,'civicrm_event');
-    if (!empty($checkDiscount)) {
-      $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Discounts Account is' "));
-      $contribParams['trxnParams']['from_financial_account_id'] = CRM_Contribute_PseudoConstant::financialAccountType($contribParams['financial_type_id'], $relationTypeId);
-      if (CRM_Utils_Array::value('from_financial_account_id', $contribParams['trxnParams'])) {
-        $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Income Account is' "));
-        $contribParams['trxnParams']['to_financial_account_id'] = CRM_Contribute_PseudoConstant::financialAccountType($contribParams['financial_type_id'], $relationTypeId);
-        $contribParams['trxnParams']['total_amount'] = $contribParams['total_amount'];
-        $discountTrxn = CRM_Core_BAO_FinancialTrxn::create($contribParams['trxnParams']);
-      }
-    }
+    CRM_Event_BAO_Participant::createDiscountTrxn($form->_eventId, $contribParams);
 
     // process soft credit / pcp pages
     CRM_Contribute_Form_Contribution_Confirm::processPcpSoft($params, $contribution);

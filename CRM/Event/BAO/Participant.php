@@ -738,7 +738,7 @@ GROUP BY  participant.event_id
         $participantFields['participant_campaign'] = array('title' => ts('Campaign Title'));
       }
 
-            $discountFields  = CRM_Core_DAO_Discount::export( );
+      $discountFields  = CRM_Core_DAO_Discount::export();
 
       $fields = array_merge($participantFields, $participantStatus, $participantRole, $noteField, $discountFields);
 
@@ -1715,6 +1715,32 @@ WHERE    civicrm_participant.contact_id = {$contactID} AND
       $links = "<table><tr>" . implode("</tr><tr>", $links) . "</tr></table>";
       return $links;
     }
+  }
+
+  /**
+   * to create trxn entry if an event has discount.
+   *
+   * @param int     $eventID  event id
+   * @param array   $contributionParams  contribution params.
+   *
+   * @static
+   */
+  static function createDiscountTrxn($eventID, $contributionParams) { 
+    // CRM-11124
+    $checkDiscount = CRM_Core_BAO_Discount::findSet($eventID,'civicrm_event');
+    if (!empty($checkDiscount)) {
+      $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Discounts Account is' "));
+      $contributionParams['trxnParams']['from_financial_account_id'] = CRM_Contribute_PseudoConstant::financialAccountType(
+        $contributionParams['financial_type_id'], $relationTypeId);
+      if (CRM_Utils_Array::value('from_financial_account_id', $contributionParams['trxnParams'])) {
+        $contributionParams['trxnParams']['total_amount'] = $contributionParams['total_amount'];
+        $contributionParams['trxnParams']['payment_processor_id'] = $contributionParams['trxnParams']['payment_instrument_id'] = 
+          $contributionParams['trxnParams']['check_number'] = $contributionParams['trxnParams']['trxn_id'] = NULL;
+        
+        CRM_Core_BAO_FinancialTrxn::create($contributionParams['trxnParams']);
+      }
+    }
+    return;
   }
 }
 

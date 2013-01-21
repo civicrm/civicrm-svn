@@ -1459,17 +1459,7 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
         $transaction = new CRM_Core_Transaction();
 
         // CRM-11124
-        $checkDiscount = CRM_Core_BAO_Discount::findSet($this->_eventId,'civicrm_event');
-        if (!empty($checkDiscount)) {
-          $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Discounts Account is' "));
-          $contributionParams['trxnParams']['from_financial_account_id'] = CRM_Contribute_PseudoConstant::financialAccountType($params['financial_type_id'], $relationTypeId);
-          if (CRM_Utils_Array::value('from_financial_account_id', $contributionParams['trxnParams'])) {
-            $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Income Account is' "));
-            $contributionParams['trxnParams']['to_financial_account_id'] = CRM_Contribute_PseudoConstant::financialAccountType($params['financial_type_id'], $relationTypeId);
-            $contributionParams['trxnParams']['total_amount'] = $params['total_amount'];
-            $discountTrxn = CRM_Core_BAO_FinancialTrxn::create($contributionParams['trxnParams']);
-          }
-        }
+        CRM_Event_BAO_Participant::createDiscountTrxn($this->_eventId, $contributionParams);
         $transaction->commit();
       }
     }
