@@ -498,6 +498,9 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
    * it via the API or other mechanisms. In order to keep this consistent it is important the form layer
    * also leverages it.
    *
+   * Note that this function should never be called when using the runtime getvalue function. Caching works
+   * around the expectation it will be called during setting administration
+   *
    * Function is intended for configuration rather than runtime access to settings
    *
    * The following params will filter the result. If none are passed all settings will be returns
@@ -521,10 +524,10 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
     foreach ($filters as $filterField => $filterString) {
       $cacheString .= "_{$filterField}_{$filterString}";
     }
-
+    $cached = 1;
     $settingsMetadata = CRM_Core_BAO_Cache::getItem('CiviCRM setting Specs', $cacheString, $componentID);
     if ($settingsMetadata === NULL) {
-      $settingsMetadata = CRM_Core_BAO_Cache::getItem('CiviCRM setting Spec', 'All');
+      $settingsMetadata = CRM_Core_BAO_Cache::getItem('CiviCRM setting Spec', 'All', $componentID);
       if (empty($settingsMetadata)) {
         global $civicrm_root;
         $metaDataFolders = array($civicrm_root. '/settings');
@@ -532,11 +535,18 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
         foreach ($metaDataFolders as $metaDataFolder) {
           $settingsMetadata = self::loadSettingsMetaData($metaDataFolder);
         }
+        CRM_Core_BAO_Cache::setItem($settingsMetadata,'CiviCRM setting Spec', 'All', $componentID);
       }
+      $cached = 0;
     }
+
     $hookCacheString = CRM_Utils_Hook::alterSettingsMetaData($settingsMetadata, $domainID, $profile);
     self::_filterSettingsSpecification($filters, $settingsMetadata);
-    CRM_Core_BAO_Cache::setItem($settingsMetadata,'CiviCRM setting Specs', $cacheString . $hookCacheString, $componentID);
+    if(!$cached || !empty($hookCacheString)){
+      // this is a bit 'heavy' if you are using hooks but this function is expected to only be called during setting administration
+      // it should not be called by 'getvalue' or 'getitem
+      CRM_Core_BAO_Cache::setItem($settingsMetadata,'CiviCRM setting Specs', $cacheString . $hookCacheString, $componentID);
+    }
     return $settingsMetadata;
 
   }
