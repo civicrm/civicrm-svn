@@ -80,7 +80,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
       CRM_Utils_Hook::pre('create', 'Membership', NULL, $params);
     }
 
-    if (!CRM_Utils_Array::value('reminder_date', $params)) {
+    if (array_key_exists('reminder_date', $params) && !$params['reminder_date']) {
       $params['reminder_date'] = 'null';
     }
 
