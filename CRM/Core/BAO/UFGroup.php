@@ -717,7 +717,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
       $controller->set('skipPermission', 1);
       $controller->set('ctype', $ctype);
       $controller->process();
-      if ($doNotProcess) {
+      if ($doNotProcess || !empty($_POST)) {
         $controller->validate();
       }
       $controller->setEmbedded(TRUE);
@@ -733,6 +733,11 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
       }
 
       $template = CRM_Core_Smarty::singleton();
+
+      // Hide CRM error messages if they are displayed using drupal form_set_error.
+      if (!empty($_POST)) {
+        $template->assign('suppressForm', TRUE);
+      }
 
       return trim($template->fetch('CRM/Profile/Form/Dynamic.tpl'));
     }
@@ -783,6 +788,13 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
         $controller->run();
 
         $template = CRM_Core_Smarty::singleton();
+
+        // Hide CRM error messages if they are displayed using drupal form_set_error.
+        if (!empty($_POST) && CRM_Core_Config::singleton()->userFramework == 'Drupal') {
+          if (arg(0) == 'user' || (arg(0) == 'admin' && arg(1) == 'people')) {
+            $template->assign('suppressForm', TRUE);
+          }
+        }
 
         $templateFile = "CRM/Profile/Form/{$profileID}/Dynamic.tpl";
         if (!$template->template_exists($templateFile)) {

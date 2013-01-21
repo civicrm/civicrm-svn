@@ -576,29 +576,19 @@ function civicrm_user_form_validate($form, &$form_state) {
 
   $validated = TRUE;
 
-  require_once 'CRM/Utils/Array.php';
-
-  require_once 'CRM/Core/BAO/UFMatch.php';
-  require_once 'CRM/Core/BAO/UFGroup.php';
-
   // check for either user/register or admin/people/create
   $register =
     ((arg(0) == 'user' && arg(1) == 'register') ||
     (arg(0) == 'admin' && arg(1) == 'people' && arg(2) == 'create')
   ) ? TRUE : FALSE;
   $userID = NULL;
-  if ($form['#user']) {
+  if (!empty($form['#user'])) {
     $userID = CRM_Core_BAO_UFMatch::getContactId($form['#user']->uid);
   }
   $errors = CRM_Core_BAO_UFGroup::isValid($userID, $form['#user_category'], $register);
-  if (is_array($errors)) {
-    if ($register) {
-      foreach ($errors as $name => $error) {
-        form_set_error($name, $error);
-      }
-    }
-    else {
-      form_set_error('error', "Please complete and save required values in the tab $title");
+  if ($errors && is_array($errors)) {
+    foreach ($errors as $name => $error) {
+      form_set_error($name, $error);
     }
     return FALSE;
   }
