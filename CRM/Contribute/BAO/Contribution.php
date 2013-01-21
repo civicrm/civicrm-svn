@@ -2729,19 +2729,15 @@ WHERE  contribution_id = %1 ";
           $newFinancialAccount = CRM_Contribute_PseudoConstant::financialAccountType($params['financial_type_id'], $incomeTypeId);
           if ($oldFinancialAccount != $newFinancialAccount) {
             $params['total_amount'] = 0;
-            $skipTrxn = TRUE;
             if ($params['contribution']->contribution_status_id == array_search('Pending', $contributionStatuses)) {
               $params['trxnParams']['to_financial_account_id'] = CRM_Contribute_PseudoConstant::financialAccountType(
                 $params['prevContribution']->financial_type_id, $relationTypeId);
-              $skipTrxn = $params['trxnParams']['to_financial_account_id'] == $trxnParams['to_financial_account_id'] ? TRUE : FALSE;
             }
-            self::updateFinancialAccounts($params, 'changeFinancialType', $skipTrxn);
-            if (!$skipTrxn) {
-              $params['trxnParams']['to_financial_account_id'] = $trxnParams['to_financial_account_id'];            
-            }
+            self::updateFinancialAccounts($params, 'changeFinancialType');
+            $params['trxnParams']['to_financial_account_id'] = $trxnParams['to_financial_account_id']; 
             $params['financial_account_id'] = $newFinancialAccount;
             $params['total_amount'] = $params['trxnParams']['total_amount'] = $trxnParams['total_amount'];
-            self::updateFinancialAccounts($params, NULL, $skipTrxn);
+            self::updateFinancialAccounts($params);
           }
         }
         $update = TRUE;
@@ -2840,14 +2836,8 @@ WHERE  contribution_id = %1 ";
       }
     }
 
-    if (!$skipTrxn) {
-      $trxn = CRM_Core_BAO_FinancialTrxn::create($params['trxnParams']);
-      $params['entity_id'] = $trxn->id;
-    } 
-    else {
-      $trxnID = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnId($params['contribution']->id);
-      $params['entity_id'] = $trxnID['financialTrxnId'];
-    }
+    $trxn = CRM_Core_BAO_FinancialTrxn::create($params['trxnParams']);
+    $params['entity_id'] = $trxn->id;
     
     if ($context == 'changedStatus') {
       if (($params['prevContribution']->contribution_status_id == array_search('Pending', $contributionStatus)) &&
