@@ -36,7 +36,7 @@
  */
 
 function civicrm_api3_setting_getfields($params) {
-  if(strtolower($params['action']) == 'getvalue'){
+  if(!empty($params['action']) && strtolower($params['action']) == 'getvalue'){
     $result = array(
       'name' => array(
         'title' => 'name of setting field',
