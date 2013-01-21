@@ -2771,6 +2771,14 @@ WHERE  contribution_id = %1 ";
       || $params['contribution']->fee_amount != $params['prevContribution']->fee_amount) && !$skipRecords) {
       CRM_Core_BAO_FinancialTrxn::recordFees($params);
     }
+    
+    if (CRM_Utils_Array::value('prevContribution', $params) && $entityTable == 'civicrm_participant'
+      && $params['prevContribution']->contribution_status_id != $params['contribution']->contribution_status_id) {
+      $eventID = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_Participant', $entityId, 'event_id');
+      $feeLevel[] = str_replace('', '', $params['prevContribution']->amount_level);
+      CRM_Event_BAO_Participant::createDiscountTrxn($eventID, $params, $feeLevel);
+    }
+    unset($params['line_item']);
   }
 
   /**
