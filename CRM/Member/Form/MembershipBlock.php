@@ -400,6 +400,7 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
           $fieldParams['option_weight'][$rowCount]      = CRM_Utils_Array::value('weight', $membetype);
           $fieldParams['option_description'][$rowCount] = CRM_Utils_Array::value('description', $membetype);
           $fieldParams['default_option']                = CRM_Utils_Array::value('membership_type_default', $params);
+          $fieldParams['option_financial_type_id'] [$rowCount] = CRM_Utils_Array::value('financial_type_id', $membetype);
 
           $fieldParams['membership_type_id'][$rowCount] = $memType;
           // [$rowCount] = $membetype[''];
@@ -408,7 +409,6 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
         foreach ($options as $priceFieldID => $memType) {
           CRM_Price_BAO_FieldValue::setIsActive($priceFieldID, '0');
         }
-        $fieldParams['financial_type_id'] = CRM_Utils_Array::value('financial_type_id', $this->_values);
         $priceField = CRM_Price_BAO_Field::create($fieldParams);
       }
       elseif (!$priceSetID){

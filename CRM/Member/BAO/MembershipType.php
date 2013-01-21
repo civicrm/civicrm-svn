@@ -117,6 +117,10 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType {
     $membershipType->save();
 
     self::createMembershipPriceField($params, $ids, $previousID, $membershipType->id);
+    // update all price field value for quick config when membership type is set CRM-11718
+    if (CRM_Utils_Array::value('membershipType', $ids) && CRM_Utils_Array::value('financial_type_id', $params)) {
+      self::updateAllPriceFieldValue($ids['membershipType'], $params['financial_type_id']);
+    }
 
     return $membershipType;
   }
@@ -723,5 +727,23 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType {
       CRM_Price_BAO_FieldValue::add($results, $optionsIds);
     }
   }
+
+  /** This function updates all price field value for quick config
+   * price set which has membership type
+   *
+   *  @param  integer      membership type id 
+   *
+   *  @param  integer      financial type id 
+   */
+  static function updateAllPriceFieldValue($membershipTypeId, $financialTypeId) {
+    $query = "UPDATE `civicrm_price_field_value` cpfv
+INNER JOIN civicrm_price_field cpf on cpf.id = cpfv.price_field_id 
+INNER JOIN civicrm_price_set cps on cps.id = cpf.price_set_id
+SET cpfv.financial_type_id = %2
+WHERE cpfv.membership_type_id = %1 AND cps.is_quick_config = 1";
+    $params = array(1 => array($membershipTypeId, 'Integer'),
+      2 => array($financialTypeId, 'Integer'));
+      CRM_Core_DAO::executeQuery($query, $params);
+  } 
 }
 
