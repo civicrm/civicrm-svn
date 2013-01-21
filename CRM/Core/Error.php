@@ -84,7 +84,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
    *
    * @return object
    * @static
-   */ 
+   */
    static function &singleton($package = NULL, $msgCallback = FALSE, $contextCallback = FALSE, $throwPEAR_Error = FALSE, $stackClass = 'PEAR_ErrorStack') {
     if (self::$_singleton === NULL) {
       self::$_singleton = new CRM_Core_Error('CiviCRM');
@@ -264,7 +264,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
       'message' => $message,
       'code' => $code,
     );
-    
+
     if (self::$modeException) {
       // CRM-11043
       CRM_Core_Error::debug_var('Fatal Error Details', $vars);
@@ -276,7 +276,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
     }
       throw new Exception($details, $code);
     }
-    
+
     if (!$message) {
       $message = ts('We experienced an unexpected error. Please post a detailed description and the backtrace on the CiviCRM forums: %1', array(1 => 'http://forum.civicrm.org/'));
     }
@@ -370,7 +370,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
         self::abend(CRM_Core_Error::FATAL_ERROR);
       }
     }
-    
+
     // Case C: Default error handler
 
     // log to file
@@ -546,7 +546,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
       $comp = $comp . '.';
     }
 
-    $fileName = "{$config->configAndLogDir}CiviCRM." . $comp . md5($config->dsn . $config->userFrameworkResourceURL) . '.log';
+    $fileName = "{$config->configAndLogDir}CiviCRM." . $comp . md5($config->dsn) . '.log';
 
     // Roll log file monthly or if greater than 256M
     // note that PHP file functions have a limit of 2G and hence
@@ -783,7 +783,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
 
   /*
    * @deprecated
-   * This function is no longer used by v3 api. 
+   * This function is no longer used by v3 api.
    * @fixme Some core files call it but it should be re-thought & renamed or removed
    */
   public static function &createAPIError($msg, $data = NULL) {
