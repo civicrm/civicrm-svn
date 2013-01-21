@@ -164,7 +164,7 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Logging_ReportSummary {
         $row['log_civicrm_entity_altered_contact_link'] = 
           CRM_Utils_System::url('civicrm/contact/view', 'reset=1&cid=' . $row['log_civicrm_entity_altered_contact_id']);
         $row['log_civicrm_entity_altered_contact_hover'] = ts("Go to contact summary");
-        $entity = $this->getEntityValue($row['log_civicrm_entity_id'], $row['log_civicrm_entity_log_type']);
+        $entity = $this->getEntityValue($row['log_civicrm_entity_id'], $row['log_civicrm_entity_log_type'], $row['log_civicrm_entity_log_date']);
         if ($entity)
           $row['log_civicrm_entity_altered_contact'] = $row['log_civicrm_entity_altered_contact'] . " [{$entity}]";
       }
@@ -180,7 +180,11 @@ class CRM_Report_Form_Contact_LoggingSummary extends CRM_Logging_ReportSummary {
         $row['log_civicrm_entity_log_action'] = ts('Update');
       }
 
-      if ($newAction = $this->getEntityAction($row['log_civicrm_entity_id'], $row['log_civicrm_entity_log_conn_id'], $row['log_civicrm_entity_log_type']))
+      if ($newAction = 
+          $this->getEntityAction($row['log_civicrm_entity_id'], 
+                                 $row['log_civicrm_entity_log_conn_id'], 
+                                 $row['log_civicrm_entity_log_type'],
+                                 $row['log_civicrm_entity_log_action']))
         $row['log_civicrm_entity_log_action'] = $newAction;
 
       $row['log_civicrm_entity_log_type'] = $this->getLogType($row['log_civicrm_entity_log_type']);
