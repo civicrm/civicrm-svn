@@ -84,7 +84,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
       $params['reminder_date'] = 'null';
     }
 
-    if (!CRM_Utils_Array::value('is_override', $params)) {
+    if (array_key_exists('is_override', $params) && !$params['is_override']) {
       $params['is_override'] = 'null';
     }
 
