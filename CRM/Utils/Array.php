@@ -544,5 +544,20 @@ class CRM_Utils_Array {
     }
     return $result;
   }
+
+  /**
+   * Given a list of key-value pairs, combine thme into a single string
+   * @param array $pairs e.g. array('a' => '1', 'b' => '2')
+   * @param string $l1Delim e.g. ','
+   * @param string $l2Delim e.g. '='
+   * @return string e.g. 'a=1,b=2'
+   */
+  static function implodeKeyValue($l1Delim, $l2Delim, $pairs) {
+    $exprs = array();
+    foreach ($pairs as $key => $value) {
+      $exprs[] = $key . $l2Delim . $value;
+    }
+    return implode($l1Delim, $exprs);
+  }
 }
 

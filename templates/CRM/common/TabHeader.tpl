@@ -91,6 +91,10 @@ cj( function() {
           if ((typeof(Drupal) != 'undefined') && Drupal.attachBehaviors) {
             Drupal.attachBehaviors(ui.panel);
           }
+          // FIXME - decouple scanProfileSelectors and TabHeader
+          if (CRM.scanProfileSelectors) {
+            CRM.scanProfileSelectors();
+          }
         }
     });
 });

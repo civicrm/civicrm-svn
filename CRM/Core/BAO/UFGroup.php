@@ -2970,6 +2970,30 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
   }
 
   /**
+   * Create a "group_type" string
+   *
+   * @param array $coreTypes e.g. array('Individual','Contact','Student')
+   * @param array $subTypes e.g. array('ActivityType' => array(7, 11))
+   * @param string $delim
+   * @throws CRM_Core_Exception
+   */
+  static function encodeGroupType($coreTypes, $subTypes, $delim = CRM_Core_DAO::VALUE_SEPARATOR) {
+    $groupTypeExpr = '';
+    if ($coreTypes) {
+      $groupTypeExpr .= implode(',', $coreTypes);
+    }
+    if ($subTypes) {
+      if (count($subTypes) > 1) {
+        throw new CRM_Core_Exception("Multiple subtype filtering is not currently supported by widget.");
+      }
+      foreach ($subTypes as $subType => $subTypeIds) {
+        $groupTypeExpr .= $delim . $subType . ':' . implode(':', $subTypeIds);
+      }
+    }
+    return $groupTypeExpr;
+  }
+
+  /**
    * This function is used to setDefault componet specific profile fields.
    *
    * @param array  $fields      profile fields.
