@@ -488,7 +488,7 @@ function _civicrm_api3_dao_set_filter(&$dao, $params, $unique = TRUE, $entity) {
   // support for other syntaxes is discussed in ticket but being put off for now
   $acceptedSQLOperators = array('=', '<=', '>=', '>', '<', 'LIKE', "<>", "!=", "NOT LIKE", 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN');
   if (!$fields) {
-    return;
+    $fields = array();
   }
 
   foreach ($fields as $field) {
