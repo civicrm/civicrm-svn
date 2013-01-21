@@ -3614,23 +3614,29 @@ div.m ul#civicrm-menu,
 /*end crm-10345*/
 
 /* alter display of parent and child groups in Manage Groups selector */
-#crm-container td.crm-group-name {
-  white-space: nowrap;
-}
-#crm-container .crm-group-child td.crm-group-name.level_2 {
+#crm-container .crm-group-parent td.crm-group-name {
   padding-left: 20px;
+  text-indent: -20px;
+}
+
+#crm-container .crm-group-child td.crm-group-name.level_2 {
+  padding-left: 40px;
+  text-indent: -20px;
 }
 #crm-container .crm-group-child td.crm-group-name.level_3 {
-  padding-left: 40px;
-}
-#crm-container span.crm-no-children {
-  padding-left: 20px!important;
+  padding-left: 60px;
+  text-indent: -20px;
 }
 
 #crm-container div.crm-row-parent-name {
   padding: 3px 0px 0px .5em;
   opacity: 0.75;
 }
+#crm-container td span.show-children,
+#crm-container td span.crm-no-children {
+  padding-left: 20px;
+}
+
 #crm-container span.collapsed,
 #crm-container a.collapsed {
   background: url("../i/TreePlus.gif") no-repeat 0 0;

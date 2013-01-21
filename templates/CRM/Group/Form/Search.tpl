@@ -248,7 +248,6 @@ function showChildren( parent_id, showOrgInfo, group_id, levelClass) {
     var sourceUrl = {/literal}'{crmURL p="civicrm/ajax/grouplist" h=0 q="snippet=4"}'{literal};
     cj.ajax( {
         "dataType": 'json',
-        "type": "POST",
         "url": sourceUrl,
         "data": {'parent_id': parent_id, 'showOrgInfo': showOrgInfo},
         "success": function(response){
