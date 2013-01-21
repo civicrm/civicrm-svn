@@ -469,7 +469,7 @@ LIMIT 1;";
     }
 
     // next create the transaction record
-    $paymentProcessor = '';
+    $paymentProcessor = $paymentProcessorId = '';
     if (isset($objects['paymentProcessor'])) {
       if (is_array($objects['paymentProcessor'])) {
         $paymentProcessor = $objects['paymentProcessor']['payment_processor_type'];
