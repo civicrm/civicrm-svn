@@ -117,6 +117,14 @@ class CRM_Member_Form_Membership extends CRM_Member_Form {
     if (!CRM_Core_Permission::checkActionPermission('CiviMember', $this->_action)) {
       CRM_Core_Error::fatal(ts('You do not have permission to access this page'));
     }
+    
+    if ($this->_action & CRM_Core_Action::DELETE) {
+      $contributionID = CRM_Member_BAO_Membership::getMembershipContributionId($this->_id);
+      // check delete permission for contribution
+      if ($this->_id && $contributionID && !CRM_Core_Permission::checkActionPermission('CiviContribute', $this->_action)) {
+        CRM_Core_Error::fatal(ts("This Membership is linked to a contribution. You must have 'delete in CiviContribute' permission in order to delete this record."));
+      }
+    }
 
     $this->_context = CRM_Utils_Request::retrieve('context', 'String', $this);
     $this->assign('context', $this->_context);
