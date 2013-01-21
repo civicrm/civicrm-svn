@@ -90,7 +90,7 @@ class CRM_Campaign_Form_Survey_TabHeader {
 
       foreach ($tabs as $key => $value) {
         $tabs[$key]['link'] = CRM_Utils_System::url("civicrm/survey/configure/{$key}",
-          "{$reset}action=update&snippet=4&id={$surveyID}"
+          "{$reset}action=update&snippet=5&id={$surveyID}"
         );
         $tabs[$key]['active'] = $tabs[$key]['valid'] = TRUE;
       }
