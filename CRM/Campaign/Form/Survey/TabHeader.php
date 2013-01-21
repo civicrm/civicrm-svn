@@ -88,13 +88,9 @@ class CRM_Campaign_Form_Survey_TabHeader {
     if ($surveyID) {
       $reset = CRM_Utils_Array::value('reset', $_GET) ? 'reset=1&' : '';
 
-      //add qf key
-      $qfKey = $form->get('qfKey');
-      $form->assign('qfKey', $qfKey);
-
       foreach ($tabs as $key => $value) {
         $tabs[$key]['link'] = CRM_Utils_System::url("civicrm/survey/configure/{$key}",
-          "{$reset}action=update&snippet=4&id={$surveyID}&qfKey={$qfKey}"
+          "{$reset}action=update&snippet=4&id={$surveyID}"
         );
         $tabs[$key]['active'] = $tabs[$key]['valid'] = TRUE;
       }
