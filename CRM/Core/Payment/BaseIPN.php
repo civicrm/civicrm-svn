@@ -473,14 +473,16 @@ LIMIT 1;";
     if (isset($objects['paymentProcessor'])) {
       if (is_array($objects['paymentProcessor'])) {
         $paymentProcessor = $objects['paymentProcessor']['payment_processor_type'];
+        $paymentProcessorId = $objects['paymentProcessor']['id'];
       }
       else {
         $paymentProcessor = $objects['paymentProcessor']->payment_processor_type;
+        $paymentProcessorId = $objects['paymentProcessor']->id;
       }
     }
 
     if ($contribution->id) {
-      $input['payment_processor'] = $paymentProcessor;
+      $input['payment_processor'] = $paymentProcessorId;
       $input['total_amount'] = $input['amount'];
       $input['contribution'] = $contribution;
       if (CRM_Utils_Array::value('participant', $contribution->_relatedObjects)) {
