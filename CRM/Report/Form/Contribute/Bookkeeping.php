@@ -148,7 +148,7 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
                                       'alias' => 'financial_account_civireport_debit',
                                       'default' => TRUE,
                                       ),
-                                'credit_accounting_code' => 
+                                'credit_accounting_code' =>
                                 array(
                                       'title' => ts('Financial Account Code- Credit'),
                                       'name'  => 'accounting_code',
@@ -185,8 +185,9 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
           if (CRM_Utils_Array::value('required', $field) ||
             CRM_Utils_Array::value($fieldName, $this->_params['fields'])
           ) {
-
-            $select[] = "{$field['dbAlias']} as {$tableName}_{$fieldName}";
+            if ($fieldName != 'credit_accounting_code') {
+              $select[] = "{$field['dbAlias']} as {$tableName}_{$fieldName}";
+            }
             $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = $field['title'];
             $this->_columnHeaders["{$tableName}_{$fieldName}"]['type'] = CRM_Utils_Array::value('type', $field);
           }
@@ -195,6 +196,12 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
     }
 
     $this->_select = "SELECT " . implode(', ', $select) . " ";
+    $this->_select .= ", CASE 
+            WHEN trxn.from_financial_account_id IS NOT NULL
+               THEN  {$this->_aliases['civicrm_financial_account']}_credit_1.accounting_code
+               ELSE  {$this->_aliases['civicrm_financial_account']}_credit_2.accounting_code
+               END AS civicrm_financial_account_credit_accounting_code
+";
   }
 
   function from() {
@@ -215,8 +222,15 @@ class CRM_Report_Form_Contribute_Bookkeeping extends CRM_Report_Form {
                     ON trxn.id = {$this->_aliases['civicrm_entity_financial_trxn']}.financial_trxn_id
               LEFT JOIN civicrm_financial_account {$this->_aliases['civicrm_financial_account']}_debit
                     ON trxn.to_financial_account_id = {$this->_aliases['civicrm_financial_account']}_debit.id
-              LEFT JOIN civicrm_financial_account {$this->_aliases['civicrm_financial_account']}_credit
-                    ON trxn.from_financial_account_id = {$this->_aliases['civicrm_financial_account']}_credit.id";
+              LEFT JOIN civicrm_financial_account {$this->_aliases['civicrm_financial_account']}_credit_1
+                    ON trxn.from_financial_account_id = {$this->_aliases['civicrm_financial_account']}_credit_1.id
+              LEFT JOIN civicrm_entity_financial_trxn {$this->_aliases['civicrm_entity_financial_trxn']}_item
+                    ON (trxn.id = {$this->_aliases['civicrm_entity_financial_trxn']}_item.financial_trxn_id AND 
+                        {$this->_aliases['civicrm_entity_financial_trxn']}_item.entity_table = 'civicrm_financial_item')
+              INNER JOIN civicrm_financial_item fitem
+                    ON fitem.id = {$this->_aliases['civicrm_entity_financial_trxn']}_item.entity_id
+              INNER JOIN civicrm_financial_account {$this->_aliases['civicrm_financial_account']}_credit_2
+                    ON fitem.financial_account_id = {$this->_aliases['civicrm_financial_account']}_credit_2.id";
   }
 
   function orderBy() {
