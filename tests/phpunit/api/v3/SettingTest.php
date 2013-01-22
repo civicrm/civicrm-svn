@@ -60,10 +60,8 @@ class api_v3_SettingTest extends CiviUnitTestCase {
   function setUp() {
     parent::setUp();
     $params = array(
-        'name' => 'A-team domain',
-        'description' => 'domain of chaos',
-        'version' => 3,
-        'domain_version' => '4.3',
+      'name' => 'Default Domain Name',
+      'version' => 3,
     );
     $result = civicrm_api( 'domain','get',$params);
     if(empty($result['id'])){
@@ -71,8 +69,14 @@ class api_v3_SettingTest extends CiviUnitTestCase {
       $this->assertAPISuccess($result);
     }
 
+    $params['name'] = 'Second Domain';
+    $result = civicrm_api( 'domain','get',$params);
+    if(empty($result['id'])){
+      $result = civicrm_api( 'domain','create',$params );
+      $this->assertAPISuccess($result);
+    }
     $this->_domainID2 = $result['id'];
-    $params['name'] = 'B-team domain';
+    $params['name'] = 'A-team domain';
     $result = civicrm_api( 'domain','get',$params);
     if(empty($result['id'])){
       $result = civicrm_api( 'domain','create',$params );
@@ -112,7 +116,8 @@ class api_v3_SettingTest extends CiviUnitTestCase {
    */
   function testGetFieldsCaching() {
     $settingsMetadata = array();
-    CRM_Core_BAO_Cache::setItem($settingsMetadata,'CiviCRM setting Specs', 'settingsMetadata_');
+    CRM_Core_BAO_Cache::setItem($settingsMetadata,'CiviCRM setting Specs', 'settingsMetadata__');
+    CRM_Core_BAO_Cache::setItem($settingsMetadata,'CiviCRM setting Spec', 'All');
     $result = civicrm_api('setting', 'getfields', array('version' => $this->_apiversion));
     $this->assertAPISuccess($result, "in line " . __LINE__);
     $this->assertArrayNotHasKey('customCSSURL', $result['values']);
@@ -236,6 +241,7 @@ class api_v3_SettingTest extends CiviUnitTestCase {
     $params = array('version' => $this->_apiversion,
         'domain_id' => 'all',
         'uniq_email_per_site' => 1,
+      'debug' =>1,
     );
     $result = civicrm_api('setting', 'create', $params);
     $description = "shows setting a variable for all domains";
@@ -441,6 +447,16 @@ class api_v3_SettingTest extends CiviUnitTestCase {
    * Tests filling missing params
   */
   function testFill() {
+    $domparams = array(
+      'name' => 'B Team Domain',
+      'version' => 3,
+    );
+    $dom = civicrm_api('domain', 'create', $domparams);
+    $params = array(
+      'version' => $this->_apiversion,
+      'domain_id' => 'all',
+    );
+    $result = civicrm_api('setting', 'get', $params);
     $params = array(
         'version' => $this->_apiversion,
         'address_format' => 'xyz',
@@ -450,17 +466,17 @@ class api_v3_SettingTest extends CiviUnitTestCase {
     $result = civicrm_api('setting', 'create', $params);
     $params = array(
       'version' => $this->_apiversion,
-      'domain_id' => $this->_domainID3,
+      'domain_id' => $dom['id'],
     );
     $result = civicrm_api('setting', 'get', $params);
     $this->assertAPISuccess($result, "in line " . __LINE__);
-    $this->assertArrayNotHasKey('tag_unconfirmed', $result['values'][$this->_domainID3],'setting for domain 3 should not be set. Debug this IF domain test is passing');
+    $this->assertArrayNotHasKey('tag_unconfirmed', $result['values'][$dom['id']],'setting for domain 3 should not be set. Debug this IF domain test is passing');
     $result = civicrm_api('setting', 'fill', $params);
     $this->assertAPISuccess($result, "in line " . __LINE__);
     $result = civicrm_api('setting', 'get', $params);
     $this->assertAPISuccess($result, "in line " . __LINE__);
-    $this->assertArrayHasKey('tag_unconfirmed', $result['values'][$this->_domainID3]);
-    $this->assertEquals('Unconfirmed', $result['values'][$this->_domainID3]['tag_unconfirmed']);
+    $this->assertArrayHasKey('tag_unconfirmed', $result['values'][$dom['id']]);
+    $this->assertEquals('Unconfirmed', $result['values'][$dom['id']]['tag_unconfirmed']);
   }
 }
 
