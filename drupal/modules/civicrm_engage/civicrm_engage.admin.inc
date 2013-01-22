@@ -75,6 +75,10 @@ function civicrm_engage_admin_load_data($form_state = NULL) {
   if(civicrm_engage_custom_data_added()) {
     $custom_data_added = ' <em>' . t("It appears that the custom data is present.") . '</em>';
   }
+  $custom_voter_us_data_added = NULL;
+  if(civicrm_engage_custom_voter_us_data_added()) {
+    $custom_voter_us_data_added = ' <em>' . t("It appears that the US custom voter data is present.") . '</em>';
+  }
   $address_parsing_enabled = NULL;
   if(civicrm_engage_address_parsing_enabled()) {
     $address_parsing_enabled = ' <em>' . t("It appears that address parsing is enabled.") . '</em>';
@@ -108,8 +112,13 @@ function civicrm_engage_admin_load_data($form_state = NULL) {
   );
   $form['load_data']['custom_data'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Add custom groups, fields and other data'),
+    '#title' => t('Add general custom groups, fields and other data'),
     '#description' => t("Civicrm Engage depends on a number of custom data groups and fields and profiles. Check this box to add them. This step is not reversible and will take several minutes to complete.") . $custom_data_added
+  );
+  $form['load_data']['custom_voter_us_data'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Add US voter custom groups, fields and other data'),
+    '#description' => t("Civicrm Engage depends on voter-related fields being imported (to track congressional district, city district, etc.). Current only US-specific voter fields are available.") . $custom_voter_us_data_added
   );
   $form['load_data']['submit'] = array(
     '#type' => 'submit',
@@ -125,6 +134,9 @@ function civicrm_engage_admin_load_data_submit($form, &$form_state) {
   }
   if($form_state['values']['custom_data'] == 1) {
     civicrm_engage_load_custom_data();
+  }
+  if($form_state['values']['custom_voter_us_data'] == 1) {
+    civicrm_engage_load_custom_voter_us_data();
   }
   if($form_state['values']['address_parsing'] == 1) {
     civicrm_engage_enable_address_parsing();
@@ -150,10 +162,22 @@ function civicrm_engage_subtypes_added() {
 /**
  * Check to see if the custom data has already been added. 
  **/
-
 function civicrm_engage_custom_data_added() {
   civicrm_initialize();
   $sql = "SELECT is_active FROM civicrm_uf_group WHERE name = 'update_constituent_info'";
+  $dao = CRM_Core_DAO::executeQuery($sql);
+  $dao->fetch();
+  if(!property_exists($dao, 'is_active')) return false;
+  if($dao->is_active == 1) return true;
+  return false;
+}
+
+/**
+ * Check to see if the custom voter us data has already been added. 
+ **/
+function civicrm_engage_custom_voter_us_data_added() {
+  civicrm_initialize();
+  $sql = "SELECT is_active FROM civicrm_uf_group WHERE name = 'update_voter_info'";
   $dao = CRM_Core_DAO::executeQuery($sql);
   $dao->fetch();
   if(!property_exists($dao, 'is_active')) return false;
@@ -218,19 +242,18 @@ function civicrm_engage_load_contact_subtypes() {
 
 function civicrm_engage_load_custom_data() {
   drupal_set_message("Loading default civicrm_engage configuration.");
-  // we need to build the path to the CustomGroupDate.xml file
-  // shipped in the civicrm_engage directory. civicrm_engage could
-  // be installed outside of the civicrm root, so we can't rely on
-  // that contstant.
-
-  // instead... start with the drupal root
-  $root = getcwd();
-  // and then added the relative path to the module
-  $civi_engage_path = drupal_get_path('module', 'civicrm_engage');
-  $xml_file = $root . '/' . $civi_engage_path . '/CustomGroupData.xml';
+  $xml_file = civicrm_engage_get_absolute_module_path() . '/CustomGroupData.xml';
   require_once 'CRM/Utils/Migrate/Import.php';
   $import = new CRM_Utils_Migrate_Import();
 
+  $import->run($xml_file);
+}
+
+function civicrm_engage_load_custom_voter_us_data() {
+  drupal_set_message("Loading default civicrm_engage custom voter US data.");
+  $xml_file = civicrm_engage_get_absolute_module_path() . '/Voter.us.xml';
+  require_once 'CRM/Utils/Migrate/Import.php';
+  $import = new CRM_Utils_Migrate_Import();
   $import->run($xml_file);
 }
 
@@ -245,6 +268,21 @@ function civicrm_engage_address_parsing_enabled() {
     return TRUE;
   }
   return FALSE;
+}
+
+/**
+ * Helper file to get path to civicrm_engage directory
+ **/
+function civicrm_engage_get_absolute_module_path() {
+  // we need to build the path to the Voter.us.xml file
+  // shipped in the civicrm_engage directory. civicrm_engage could
+  // be installed outside of the civicrm root, so we can't rely on
+  // that contstant.
+
+  // instead... start with the drupal root
+  $root = getcwd();
+  // and then added the relative path to the module
+  return $root . '/' . drupal_get_path('module', 'civicrm_engage');
 }
 
 /**
