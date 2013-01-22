@@ -369,8 +369,11 @@ class CRM_Price_BAO_LineItem extends CRM_Price_DAO_LineItem {
       foreach ($lineItems as $key => $values) {
         if (!$setID) {
           $setID = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $values['price_field_id'], 'price_set_id');
+          $params['is_quick_config'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $setID, 'is_quick_config');
         }
-        $values['line_total'] = $values['unit_price'] = $params['total_amount'];
+        if (CRM_Utils_Array::value('is_quick_config', $params)) {
+          $values['line_total'] = $values['unit_price'] = $params['total_amount'];
+        }
         $values['id'] = $key;
         $params['line_item'][$setID][$key] = $values;
       }

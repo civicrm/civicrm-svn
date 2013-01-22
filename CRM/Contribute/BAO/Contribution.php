@@ -2893,12 +2893,25 @@ WHERE  contribution_id = %1 ";
           if ($params['contribution']->currency) {
             $currency = $params['contribution']->currency;
           }
+          if (CRM_Utils_Array::value('is_quick_config', $params)) { 
+            $amount = $itemAmount;
+            if (!$amount) {
+              $amount = $params['total_amount'];
+            }
+          }
+          else {
+            $diff = 1;
+            if ($context == 'changeFinancialType' || $params['contribution']->contribution_status_id == array_search('Cancelled', $contributionStatus)) {
+             $diff = -1;
+            }
+            $amount = $diff * $fieldValues['line_total'];
+          }
 
           $itemParams = array(
             'transaction_date' => $receiveDate,
             'contact_id' => $params['prevContribution']->contact_id,
             'currency' => $currency,
-            'amount' => $itemAmount ? $itemAmount : $params['total_amount'],
+            'amount' => $amount,
             'description' => $prevfinancialItem->description,
             'status_id' => $prevfinancialItem->status_id,
             'financial_account_id' => $financialAccount,

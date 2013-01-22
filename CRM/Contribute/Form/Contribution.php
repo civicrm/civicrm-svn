@@ -739,7 +739,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
     if ($this->_online) {
       $element->freeze();
     }
-
+    $totalAmount = NULL;
     if (empty($this->_lineItems)) {
       $buildPriceSet = FALSE;
       $priceSets = CRM_Price_BAO_Set::getAssoc(FALSE, 'CiviContribute');
@@ -884,7 +884,9 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
     // if status is Cancelled freeze Amount, Payment Instrument, Check #, Financial Type,
     // Net and Fee Amounts are frozen in AdditionalInfo::buildAdditionalDetail
     if ($this->_id && $this->_values['contribution_status_id'] == array_search('Cancelled', $statusName)) {
-      $totalAmount->freeze();
+      if ($totalAmount) { 
+        $totalAmount->freeze();
+      }
       $checkNumber->freeze();
       $paymentInstrument->freeze();
       $trxnId->freeze();
@@ -1008,17 +1010,6 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
       }
     }
 
-    // If Contribution action is update then calculate and set initial amount 
-    if ($this->_action & CRM_Core_Action::UPDATE) {
-      $totalPrice = 0;
-      if (CRM_Utils_Array::value('txt-price', $this->_submitValues)) {
-        foreach ($this->_submitValues['txt-price'] as $priceKey => $priceValue) {
-          $totalPrice = $totalPrice + $priceValue;
-        }
-      }
-      $submittedValues['initial_amount'] = $totalPrice;
-    }
-
     // process price set and get total amount and line items.
     $lineItem = array();
     $priceSetId = $pId = NULL;
@@ -1114,8 +1105,6 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
 
       $params['contact_id'] = $this->_contactID;
 
-      $assetRelation = key(CRM_CORE_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Asset Account is' "));
-      $params['to_financial_account_id'] = $this->getFinancialAccount($formValues['financial_type_id'], $assetRelation);
       $params['currency'] = $this->getCurrency($submittedValues);
 
       $fields = array(
@@ -1184,6 +1173,9 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
       $params['line_item'] = $lineItem;
       $params['payment_processor_id'] = $params['payment_processor'] = CRM_Utils_Array::value('id', $this->_paymentProcessor);
       //create contribution.
+      if ($isQuickConfig) {
+        $params['is_quick_config'] = 1;
+      }
       $contribution = CRM_Contribute_BAO_Contribution::create($params, $ids);
 
       // process associated membership / participant, CRM-4395
