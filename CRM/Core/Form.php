@@ -853,7 +853,7 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
    * @param array $entities
    */
   function addProfileSelector($name, $label, $allowCoreTypes, $allowSubTypes, $entities) {
-    if (class_exists('CRM_Profilemockup_Page_ProfileEditor')) {
+    if (CRM_Extension_System::singleton()->getMapper()->isActiveModule('profilemockup')) {
       // Output widget
       // FIXME: Instead of adhoc serialization, use a single json_encode()
       CRM_Profilemockup_Page_ProfileEditor::registerProfileScripts();

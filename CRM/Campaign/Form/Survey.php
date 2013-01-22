@@ -73,7 +73,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form {
     $this->assign('action', $this->_action);
     $this->assign('surveyId', $this->_surveyId);
 
-    if (class_exists('CRM_Profilemockup_Page_ProfileEditor')) {
+    if (CRM_Extension_System::singleton()->getMapper()->isActiveModule('profilemockup')) {
       // CRM-11480, CRM-11682
       CRM_Profilemockup_Page_ProfileEditor::registerProfileScripts();
     }

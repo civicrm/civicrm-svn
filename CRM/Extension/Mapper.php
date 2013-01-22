@@ -280,6 +280,16 @@ class CRM_Extension_Mapper {
     return $moduleExtensions;
   }
 
+  public function isActiveModule($name) {
+    $activeModules = $this->getActiveModuleFiles();
+    foreach ($activeModules as $activeModule) {
+      if ($activeModule['prefix'] == $name) {
+        return TRUE;
+      }
+    }
+    return FALSE;
+  }
+
   /**
    * Get a list of all installed modules, including enabled and disabled ones
    *
