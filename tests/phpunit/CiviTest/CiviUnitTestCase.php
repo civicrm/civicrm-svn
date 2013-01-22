@@ -633,21 +633,27 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
    * @return int    id of Household created
    */
   private function _contactCreate($params) {
+    $params['version'] = API_LATEST_VERSION;
     $result = civicrm_api('Contact', 'create', $params);
     if (CRM_Utils_Array::value('is_error', $result) ||
-      (!CRM_Utils_Array::value('contact_id', $result) &&
         !CRM_Utils_Array::value('id', $result)
-      )
     ) {
       throw new Exception('Could not create test contact, with message: ' . CRM_Utils_Array::value('error_message', $result));
     }
-    return isset($result['contact_id']) ? $result['contact_id'] : CRM_Utils_Array::value('id', $result);
+    return $result['id'];
   }
 
   function contactDelete($contactID) {
     $params['id'] = $contactID;
     $params['version'] = API_LATEST_VERSION;
     $params['skip_undelete'] = 1;
+    $domain = new CRM_Core_BAO_Domain;
+    $domain->domain_contact_id = $contactID;
+    if($domain->find(TRUE)){
+      // we are finding tests trying to delete the domain contact in cleanup
+      //since this is mainly for cleanup lets put a safeguard here
+      return;
+    }
     $result = civicrm_api('Contact', 'delete', $params);
     if (CRM_Utils_Array::value('is_error', $result)) {
       throw new Exception('Could not delete contact, with message: ' . CRM_Utils_Array::value('error_message', $result));
@@ -894,7 +900,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
       'url_site' => 'http://dummy.com',
       'url_recur' => 'http://dummy.com',
       'billing_mode' => 1,
-    ); 
+    );
     $paymentProcessor = CRM_Financial_BAO_PaymentProcessor::create($processorParams);
     return $paymentProcessor;
   }
@@ -905,9 +911,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
    * @return object of contribution page
    */
   function contributionPageCreate($params) {
-    $this->_pageParams = array( 
+    $this->_pageParams = array(
       'version' => 3,
-      'title' => 'Test Contribution Page', 
+      'title' => 'Test Contribution Page',
       'financial_type_id' => 1,
       'currency' => 'USD',
       'financial_account_id' => 1,
@@ -916,7 +922,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
       'is_allow_other_amount' => 1,
       'min_amount' => 10,
       'max_amount' => 1000,
-     );    
+     );
     $contributionPage = civicrm_api( 'contribution_page','create',  $this->_pageParams );
     return $contributionPage;
   }
@@ -1085,7 +1091,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
       'contact_id' => $cID,
       'receive_date' => date('Ymd'),
       'total_amount' => 100.00,
-      'financial_type_id'   => $cTypeID,
+      'financial_type_id'   => empty($cTypeID) ? 1 : $cTypeID,
       'payment_instrument_id' => 1,
       'non_deductible_amount' => 10.00,
       'fee_amount' => 50.00,
