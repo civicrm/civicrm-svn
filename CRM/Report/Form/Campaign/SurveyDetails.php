@@ -230,6 +230,11 @@ class CRM_Report_Form_Campaign_SurveyDetails extends CRM_Report_Form {
             'name' => 'survey_response',
             'title' => ts('Survey Responses'),
           ),
+          'details' => array(
+            'name' => 'details',
+            'title' => ts('Note'),
+            'type' => 1,
+          ),
           'result' => array(
             'name' => 'result',
             'required' => TRUE,

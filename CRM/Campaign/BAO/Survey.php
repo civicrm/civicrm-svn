@@ -846,10 +846,15 @@ INNER JOIN  civicrm_contact contact_a ON ( activityTarget.target_contact_id = co
         'entity_table' => 'civicrm_survey',
         'module' => 'CiviCampaign',
       );
+      
       list($first, $second) = CRM_Core_BAO_UFJoin::getUFGroupIds($ufJoinParams);
-      $ufIds[$surveyId] = array($first);
-      if ($second) 
-        $ufIds[$surveyId][] = array_shift($second);
+
+      if ($first) {
+        $ufIds[$surveyId] = array($first);        
+      }
+      if ($second) {
+        $ufIds[$surveyId][] = array_shift($second);        
+      }
     }
 
     return $ufIds[$surveyId];

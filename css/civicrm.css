@@ -350,6 +350,10 @@
   font-weight: bold;
 }
 
+.crm-container td.Int input {
+  width: 6em;
+}
+
 .crm-container input[type="text"],
 .crm-container input[type="password"] {
   border: 1px solid #999;
