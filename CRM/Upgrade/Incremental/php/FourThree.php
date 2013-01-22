@@ -171,9 +171,12 @@ class CRM_Upgrade_Incremental_php_FourThree {
     $financialAccountId =
       CRM_Core_DAO::singleValueQuery("SELECT id FROM civicrm_financial_account WHERE is_default = 1 AND financial_account_type_id = {$accountType}");
     
-    $accountRelationsips = CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name IN ('Income Account is', 'Accounts Receivable Account is') ");
+    $accountRelationsips = CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL);
+    
     $accountsReceivableAccount = array_search('Accounts Receivable Account is', $accountRelationsips);
     $incomeAccountIs = array_search('Income Account is', $accountRelationsips);
+    $assetAccountIs = array_search('Asset Account is', $accountRelationsips);
+    $expenseAccountIs = array_search('Expense Account is', $accountRelationsips);
     
     $financialItemStatus = CRM_Core_PseudoConstant::accountOptionValues('financial_item_status');
     $unpaidStatus = array_search('Unpaid', $financialItemStatus);
@@ -366,16 +369,73 @@ FROM  civicrm_line_item li
                   efa.entity_table = 'civicrm_financial_type' AND efa.account_relationship = {$incomeAccountIs})
 WHERE con.contribution_status_id IN (%1, %3) OR (con.is_pay_later = 1 AND con.contribution_status_id = %2)";
     CRM_Core_DAO::executeQuery($participantLineItemSql, $queryParams);
+       
+    //fee handling for contributions
+    //insert fee entries in financial_trxn for contributions
+    $sql = "ALTER TABLE civicrm_financial_trxn ADD COLUMN is_fee TINYINT DEFAULT NULL";
+    CRM_Core_DAO::executeQuery($sql);
+    
+    $sql = "
+INSERT INTO civicrm_financial_trxn 
+            (contribution_id, payment_instrument_id, currency, total_amount, net_amount, fee_amount, trxn_id, status_id, check_number,
+             to_financial_account_id, from_financial_account_id, trxn_date, payment_processor_id, is_fee)
 
+SELECT con.id, ft.payment_instrument_id, ft.currency, ft.fee_amount, NULL, NULL, ft.trxn_id, %1 as status_id,
+       ft.check_number, efaFT.financial_account_id as to_financial_account_id, CASE
+         WHEN efaPP.financial_account_id IS NOT NULL THEN
+              efaPP.financial_account_id
+         WHEN tpi.financial_account_id   IS NOT NULL THEN
+              tpi.financial_account_id  
+         ELSE 
+              {$financialAccountId}   
+       END    as from_financial_account_id, ft.trxn_date, ft.payment_processor_id, 1 as is_fee
+FROM   civicrm_contribution con
+       INNER JOIN civicrm_financial_trxn ft
+               ON (ft.contribution_id = con.id)
+       LEFT  JOIN civicrm_entity_financial_account efaFT
+               ON (con.financial_type_id = efaFT.entity_id AND efaFT.entity_table = 'civicrm_financial_type'
+                   AND efaFT.account_relationship = {$expenseAccountIs})
+       LEFT  JOIN civicrm_entity_financial_account efaPP 
+               ON (ft.payment_processor_id = efaPP.entity_id AND efaPP.entity_table = 'civicrm_payment_processor'
+                   AND efaPP.account_relationship = {$assetAccountIs})
+       LEFT  JOIN {$tempTableName1} tpi 
+               ON ft.payment_instrument_id = tpi.instrument_id
+WHERE  con.fee_amount IS NOT NULL AND (con.contribution_status_id IN (%1, %3) OR (con.contribution_status_id =%2 AND con.is_pay_later = 1))
+GROUP  BY con.id";
+    CRM_Core_DAO::executeQuery($sql, $queryParams);
+
+    //link financial_trxn to contribution 
+    $sql = "
+INSERT INTO civicrm_entity_financial_trxn
+            (entity_table, entity_id, financial_trxn_id, amount)
+SELECT 'civicrm_contribution', ft.contribution_id, ft.id, ft.total_amount
+FROM   civicrm_financial_trxn ft
+WHERE ft.is_fee = 1";
+    CRM_Core_DAO::executeQuery($sql);
+    
+    //add fee related entries to financial item table
+    $domainId = CRM_Core_Config::domainID();
+    $domainContactId = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Domain', $domainId, 'contact_id');
+    $sql = "
+INSERT INTO civicrm_financial_item 
+            (transaction_date, contact_id, amount, currency, entity_table, entity_id, description, status_id, financial_account_id, f_trxn_id)
+SELECT ft.trxn_date, {$domainContactId} as contact_id, ft.total_amount, ft.currency, 'civicrm_financial_trxn', ft.id, 
+       'Fee', {$paidStatus} as status_id, ft.to_financial_account_id as financial_account_id, ft.id as f_trxn_id
+FROM   civicrm_financial_trxn ft 
+WHERE  ft.is_fee = 1;";
+    CRM_Core_DAO::executeQuery($sql);
+    
     //add entries to entity_financial_trxn table
     $sql = "
 INSERT INTO civicrm_entity_financial_trxn (entity_table, entity_id, financial_trxn_id, amount)
 SELECT 'civicrm_financial_item' as entity_table, fi.id as entity_id, fi.f_trxn_id as financial_trxn_id, fi.amount
 FROM   civicrm_financial_item fi";
     CRM_Core_DAO::executeQuery($sql);
-    
+
     //drop the temparory columns
-    $sql = "ALTER TABLE civicrm_financial_trxn DROP contribution_id";
+    $sql = "ALTER TABLE civicrm_financial_trxn
+                  DROP COLUMN contribution_id,
+                  DROP COLUMN  is_fee;";
     CRM_Core_DAO::executeQuery($sql);
 
     $sql = "ALTER TABLE civicrm_financial_item DROP f_trxn_id";
