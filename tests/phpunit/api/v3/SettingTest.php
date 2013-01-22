@@ -171,8 +171,8 @@ class api_v3_SettingTest extends CiviUnitTestCase {
    }
 
    /**
-    * check invalid settings rejected - per CRM-11740 this is disabled until someone wants it
-    * to work
+    * check invalid settings rejected -
+    */
 
    function testCreateInvalidURLSettings() {
 
@@ -190,9 +190,10 @@ class api_v3_SettingTest extends CiviUnitTestCase {
      $this->assertAPISuccess($result);
 
    }
+
    /**
     * check getfields works
-    *
+    */
    function testCreateInvalidBooleanSettings() {
 
      $params = array('version' => $this->_apiversion,
@@ -234,7 +235,7 @@ class api_v3_SettingTest extends CiviUnitTestCase {
 
 
    }
-       */
+
   /**
    * check getfields works
    */

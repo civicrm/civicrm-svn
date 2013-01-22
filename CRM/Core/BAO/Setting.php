@@ -343,7 +343,13 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
     }
     $fields = $config_keys = array();
     $fieldsToSet = self::validateSettingsInput($params, $fields);
+
+    foreach ($fieldsToSet as $settingField => &$settingValue) {
+      self::validateSetting($settingValue, $fields['values'][$settingField]);
+    }
+
     foreach ($domains as $domain) {
+      $result[$domain] = array();
       foreach ($fieldsToSet as $name => $value) {
         if(empty($fields['values'][$name]['config_only'])){
           CRM_Core_BAO_Setting::setItem(
@@ -409,20 +415,10 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
       $filteredFields = array_intersect_key($settingParams, $fields['values']);
     }
     else {
-      // no filters so we are interested in all - ie. get mode when no filters specified
-      $filteredFields = $fields['values'];
-    }
-
-    // we are going to disable the validation function rather than fix it until
-    // someone wants to look at it again. per CRM-11740
-    // note that there are also unit tests commented out so review those too
-    return $filteredFields;
-   /*
-    foreach ($filteredFields as $settingField => &$settingValue) {
-      self::validateSetting($settingValue, $fields['values'][$settingField]);
+      // no filters so we are interested in all for get mode. In create mode this means nothing to set
+      $filteredFields = $createMode ? array() : $fields['values'];
     }
     return $filteredFields;
-    */
   }
 
   /**
