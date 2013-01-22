@@ -380,7 +380,7 @@ ADD INDEX `UI_ftrxn_payment_instrument_id` (`payment_instrument_id`);
 
 ALTER TABLE `civicrm_financial_trxn`
 ADD CONSTRAINT FK_civicrm_financial_trxn_to_financial_account_id FOREIGN KEY (`to_financial_account_id`) REFERENCES civicrm_financial_account (id),
-ADD CONSTRAINT FK_civicrm_financial_trxn_from_financial_account_id FOREIGN KEY (`from_financial_account_id`) REFERENCES civicrm_financial_type (id);
+ADD CONSTRAINT FK_civicrm_financial_trxn_from_financial_account_id FOREIGN KEY (`from_financial_account_id`) REFERENCES civicrm_financial_account (id);
 
 
 -- FIXME
