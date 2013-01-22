@@ -483,8 +483,8 @@ LIMIT 1;";
 
     if ($contribution->id) {
       $contributionStatuses = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
-      if ($input['prevContribution']->is_pay_later &&  
-        $input['prevContribution']->contribution_status_id != array_search('Pending', $contributionStatuses)) {
+      if (!$input['prevContribution']->is_pay_later &&  
+        $input['prevContribution']->contribution_status_id == array_search('Pending', $contributionStatuses)) {
         $input['payment_processor'] = $paymentProcessorId;
       }
       $input['total_amount'] = $input['amount'];
