@@ -664,27 +664,32 @@ class CRM_Report_Form_Member_ContributionDetail extends CRM_Report_Form {
     $statistics = parent::statistics($rows);
 
     $select = "
-        SELECT COUNT({$this->_aliases['civicrm_contribution']}.total_amount ) as count,
-               SUM( {$this->_aliases['civicrm_contribution']}.total_amount ) as amount,
-               ROUND(AVG({$this->_aliases['civicrm_contribution']}.total_amount), 2) as avg
+        SELECT ROUND(AVG({$this->_aliases['civicrm_contribution']}.total_amount), 2) as amt
         ";
 
-    $sql = "{$select} {$this->_from} {$this->_where}";
+    $groupBy = " 
+        GROUP BY contribution_id
+        ";
+
+    $sql = "{$select} {$this->_from} {$this->_where} {$groupBy}";
+
     $dao = CRM_Core_DAO::executeQuery($sql);
-
-    if ($dao->fetch()) {
-      $statistics['counts']['amount'] = array(
-        'value' => $dao->amount,
-        'title' => 'Total Amount',
-        'type' => CRM_Utils_Type::T_MONEY,
-      );
-      $statistics['counts']['avg'] = array(
-        'value' => $dao->avg,
-        'title' => 'Average',
-        'type' => CRM_Utils_Type::T_MONEY,
-      );
+    $amount = 0;
+    while ($dao->fetch()) {
+      $amount = $amount + $dao->amt;
     }
+    $statistics['counts']['amount'] = array(                                                                                                                                                    
+      'value' => $amount,                                                                                                                                    
+      'title' => 'Total Amount',
+      'type' => CRM_Utils_Type::T_MONEY,
+      );       
 
+    $statistics['counts']['avg'] = array(
+      'value' => $amount/$dao->N,
+      'title' => 'Average',
+      'type' => CRM_Utils_Type::T_MONEY,
+      );
+  
     return $statistics;
   }
 
