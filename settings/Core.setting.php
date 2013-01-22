@@ -98,7 +98,7 @@ return array (
      ),
     'default' => '12345789',
     'add' => '4.1',
-    'title' => null,
+    'title' => 'Contact Dashboard',
     'is_domain' => 1,
     'is_contact' => 0,
     'description' => null,
