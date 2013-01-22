@@ -88,9 +88,12 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
 
     $this->_first = TRUE;
     $attributes = CRM_Core_DAO::getAttribute('CRM_Contribute_DAO_ContributionPage');
+
+    // financial Type
+    $financialType = CRM_Financial_BAO_FinancialType::getIncomeFinancialType();
     $this->add('select', 'financial_type_id',
       ts('Financial Type'),
-      CRM_Contribute_PseudoConstant::financialType(),
+      $financialType,
       TRUE
     );
 

@@ -97,10 +97,6 @@ class CRM_Price_Form_Set extends CRM_Core_Form {
       if ($count > 1) {
         $errors['extends'] = ts('If you plan on using this price set for membership signup and renewal, you can not also use it for Events or Contributions. However, a membership price set may include additional fields for non-membership options that require an additional fee (e.g. magazine subscription).');
       }
-
-            if ( CRM_Utils_System::isNull( $fields['financial_type_id'] ) ) {
-                $errors['financial_type_id'] = ts('Financial Type (Membership Fees) is a required field.');
-      }
     }
     //checks the given price set doesnot start with digit
     $title = $fields['title'];
@@ -190,10 +186,13 @@ class CRM_Price_Form_Set extends CRM_Core_Form {
     $this->addGroup($extends, 'extends', ts('Used For'), '&nbsp;', TRUE);
 
     $this->addRule('extends', ts('%1 is a required field.', array(1 => ts('Used For'))), 'required');
-
+    
+    // financial type
+    $financialType = CRM_Financial_BAO_FinancialType::getIncomeFinancialType();
+    
     $this->add('select', 'financial_type_id',
       ts('Default Financial Type'),
-          array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::financialType(), 'required'
+          array('' => ts('- select -')) + $financialType, 'required'
     );
 
     // help text

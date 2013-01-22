@@ -258,8 +258,10 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
       array('&nbsp;&nbsp;', '&nbsp;&nbsp;', '&nbsp;&nbsp;', '<br/>')
     );
     
+    // financial type 
+    $financialType = CRM_Financial_BAO_FinancialType::getIncomeFinancialType();
     $this->add('select', 'financial_type_id', ts('Financial Type'),
-      array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::financialType()
+      array('' => ts('- select -')) + $financialType
     );
     // add pay later options
     $this->addElement('checkbox', 'is_pay_later', ts('Enable Pay Later option?'), NULL,

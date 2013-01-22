@@ -184,22 +184,8 @@ class CRM_Price_Form_Option extends CRM_Core_Form {
         
       }
       //Financial Type
-      $financialType = CRM_Contribute_PseudoConstant::financialType();
-      $revenueFinancialType = array();
-      CRM_Core_PseudoConstant::populate( 
-        $revenueFinancialType,
-        'CRM_Financial_DAO_EntityFinancialAccount',
-        $all = True, 
-        $retrieve = 'entity_id', 
-        $filter = null, 
-        'account_relationship = 1'
-      ); 
-      
-      foreach ($financialType as $key => $financialTypeName) {
-        if (!in_array( $key, $revenueFinancialType)) {
-          unset($financialType[$key]);
-        }
-      }
+      $financialType = CRM_Financial_BAO_FinancialType::getIncomeFinancialType();
+       
       if (count($financialType)) {
         $this->assign('financialType', $financialType);
       }

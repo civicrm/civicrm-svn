@@ -168,5 +168,34 @@ class CRM_Financial_BAO_FinancialType extends CRM_Financial_DAO_FinancialType {
     $entityFinancialType ->delete();
     return FALSE;
   }
+  
+  /**
+   * to fetch financial type having relationship as Income Account is
+   *
+   *
+   * @return array  all financial type with income account is relationship
+   * @static
+   */
+  static function getIncomeFinancialType() { 
+    // Financial Type
+    $financialType = CRM_Contribute_PseudoConstant::financialType();
+    $revenueFinancialType = array();
+    $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Income Account is' "));
+    CRM_Core_PseudoConstant::populate( 
+      $revenueFinancialType,
+      'CRM_Financial_DAO_EntityFinancialAccount',
+      $all = True, 
+      $retrieve = 'entity_id', 
+      $filter = null, 
+      "account_relationship = $relationTypeId AND entity_table = 'civicrm_financial_type' " 
+    );
+            
+    foreach ($financialType as $key => $financialTypeName) {
+      if (!in_array($key, $revenueFinancialType)) {
+        unset($financialType[$key]);
+      } 
+    }
+    return $financialType;
+  }
 }
 
