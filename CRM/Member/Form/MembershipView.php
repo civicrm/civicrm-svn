@@ -228,8 +228,8 @@ END AS 'relType'
         $this->assign('has_related', TRUE);
         $this->assign('max_related', CRM_Utils_Array::value('max_related', $values, ts('Unlimited')));
         // split the relations in 2 arrays based on direction
-        $relTypeId = explode(',', $membershipType['relationship_type_id']);
-        $relDirection = explode(',', $membershipType['relationship_direction']);
+        $relTypeId = explode(CRM_Core_DAO::VALUE_SEPARATOR, $membershipType['relationship_type_id']);
+        $relDirection = explode(CRM_Core_DAO::VALUE_SEPARATOR, $membershipType['relationship_direction']);
         foreach ($relTypeId as $rid) {
           $dir = each($relDirection);
           $relTypeDir[substr($dir['value'], 0, 1)][] = $rid;
