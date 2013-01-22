@@ -131,9 +131,12 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form {
   function endPostProcess() {
     // make submit buttons keep the current working tab opened.
     if ($this->_action & (CRM_Core_Action::UPDATE | CRM_Core_Action::ADD)) {
-      $className = CRM_Utils_String::getClassName($this->_name);
+      $tabTitle = $className = CRM_Utils_String::getClassName($this->_name);
+      if ($tabTitle == 'Contact') {
+        $tabTitle = 'Contact and Questions';
+      }
       $subPage   = strtolower($className);
-      CRM_Core_Session::setStatus(ts("'%1' information has been saved.", array(1 => $className)), ts('Saved'), 'success');
+      CRM_Core_Session::setStatus(ts("'%1' settings have been saved.", array(1 => $tabTitle)), ts('Saved'), 'success');
 
       $this->postProcessHook();
 
