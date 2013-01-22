@@ -54,13 +54,17 @@ class CRM_Core_Resources {
   private static $_singleton = NULL;
 
   /**
-   * @var callable(string => string) Map extension names to their base URLs. Note:
-   *  - URLs should end with a trailing '/'
+   * @var callable string Map extensions
    */
   private $extMapper = NULL;
 
   /**
-   * 
+   * @var callable string Access civicrm_cache
+   */
+  private $cacheInterface = NULL;
+
+  /**
+   *
    */
   protected $settings = array();
   protected $addedSettings = FALSE;
@@ -87,8 +91,10 @@ class CRM_Core_Resources {
       self::$_singleton = $instance;
     }
     if (self::$_singleton === NULL) {
+      $sys = CRM_Extension_System::singleton();
       self::$_singleton = new CRM_Core_Resources(
-        array(CRM_Extension_System::singleton()->getMapper(), 'keyToUrl'),
+        $sys->getMapper(),
+        $sys->getCache(),
         'resCacheCode'
       );
     }
@@ -98,12 +104,13 @@ class CRM_Core_Resources {
   /**
    * Construct a resource manager
    *
-   * @var $extMapper array(extensionName => url) Map extension names to their base URLs. Note:
+   * @var $extMapper extensionName Map extension names to their base path or URLs. Note:
    *  - The $extMapper['*'] is a grandparent-URL for unknown extension dirs
    *  - URLs should end with a trailing '/'
    */
-  public function __construct($extMapper, $cacheCodeKey = NULL) {
+  public function __construct($extMapper, $cacheInterface, $cacheCodeKey = NULL) {
     $this->extMapper = $extMapper;
+    $this->cacheInterface = $cacheInterface;
     $this->cacheCodeKey = $cacheCodeKey;
     if ($cacheCodeKey !== NULL) {
       $this->cacheCode = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, $cacheCodeKey);
@@ -120,9 +127,14 @@ class CRM_Core_Resources {
    * @param $file string, file path -- relative to the extension base dir
    * @param $weight int, relative weight within a given region
    * @param $region string, location within the file; 'html-header', 'page-header', 'page-footer'
+   * @param $translate, whether to parse this file for strings enclosed in ts()
+   *
    * @return CRM_Core_Resources
    */
-  public function addScriptFile($ext, $file, $weight = self::DEFAULT_WEIGHT, $region = self::DEFAULT_REGION) {
+  public function addScriptFile($ext, $file, $weight = self::DEFAULT_WEIGHT, $region = self::DEFAULT_REGION, $translate = TRUE) {
+    if ($translate) {
+      $this->translateScript($ext, $file);
+    }
     return $this->addScriptUrl($this->getUrl($ext, $file, TRUE), $weight, $region);
   }
 
@@ -293,6 +305,23 @@ class CRM_Core_Resources {
   }
 
   /**
+   * Determine file path of a resource provided by an extension
+   *
+   * @param $ext string, extension name; use 'civicrm' for core
+   * @param $file string, file path -- relative to the extension base dir
+   *
+   * @return (string|bool), full file path or FALSE if not found
+   */
+  public function getPath($ext, $file) {
+    // TODO consider caching call_user_func results
+    $path = call_user_func(array($this->extMapper, 'keyToBasePath'), $ext) . '/' . $file;
+    if (is_file($path)) {
+      return $path;
+    }
+    return FALSE;
+  }
+
+  /**
    * Determine public URL of a resource provided by an extension
    *
    * @param $ext string, extension name; use 'civicrm' for core
@@ -307,7 +336,7 @@ class CRM_Core_Resources {
       $file .= '?r=' . $this->getCacheCode();
     }
     // TODO consider caching call_user_func results
-    return call_user_func($this->extMapper, $ext) . '/' . $file;
+    return call_user_func(array($this->extMapper, 'keyToUrl'), $ext) . '/' . $file;
   }
 
   public function getCacheCode() {
@@ -342,7 +371,7 @@ class CRM_Core_Resources {
       $jsWeight = -9999;
       foreach ($files as $file => $type) {
         if ($type == 'js') {
-          $this->addScriptFile('civicrm', $file, $jsWeight++, 'html-header');
+          $this->addScriptFile('civicrm', $file, $jsWeight++, 'html-header', FALSE);
         }
         elseif ($type == 'css') {
           $this->addStyleFile('civicrm', $file, -100, 'html-header');
@@ -350,21 +379,17 @@ class CRM_Core_Resources {
       }
 
       // Add localized calendar js
-      $localisation = explode('_', $config->lcMessages);
-      $localizationFile =
-        $config->resourceBase .
-        'packages/jquery/jquery-ui-1.9.0/development-bundle/ui/i18n/jquery.ui.datepicker-' .
-        $localisation[0] .
-        '.js';
-      if (file_exists($localizationFile)) {
-        $this->addScriptUrl($localizationFile, $jsWeight++, 'html-header');
+      list($lang) = explode('_', $config->lcMessages);
+      $localizationFile = "packages/jquery/jquery-ui-1.9.0/development-bundle/ui/i18n/jquery.ui.datepicker-{$lang}.js";
+      if ($this->getPath('civicrm', $localizationFile)) {
+        $this->addScriptFile('civicrm', $localizationFile, $jsWeight++, 'html-header', FALSE);
       }
 
       // Give control of jQuery back to the CMS - this loads last
       $this->addScript('cj = jQuery.noConflict(true);', 9999, 'html-header');
 
       // Load custom or core css
-      if (isset($config->customCSSURL) && !empty($config->customCSSURL)) {
+      if (!empty($config->customCSSURL)) {
         $this->addStyleUrl($config->customCSSURL, -99, 'html-header');
       }
       else {
@@ -375,8 +400,89 @@ class CRM_Core_Resources {
   }
 
   /**
+   * Translate strings in a javascript file
+   *
+   * @param $ext string, extension name
+   * @param $file string, file path
+   *
+   * @return void
+   */
+  private function translateScript($ext, $file) {
+    $cacheKey = $ext . '_' . CRM_Core_Config::singleton()->lcMessages;
+    $cache = $this->getCache($cacheKey);
+    if (!isset($cache[$file])) {
+      $cache[$file] = $this->parseScript($ext, $file);
+      $this->setCache($cacheKey, $cache);
+    }
+    foreach ($cache[$file] as $string) {
+      $this->addString($string);
+    }
+  }
+
+  /**
+   * Parse a javascript file for translatable strings
+   *
+   * @param $ext string, extension name
+   * @param $file string, file path
+   *
+   * @return array
+   */
+  private function parseScript($ext, $file) {
+    $strings = array();
+    $filePath = $this->getPath($ext, $file);
+    if ($filePath) {
+      $file = file_get_contents($filePath);
+      // Match all calls to ts() in an array.
+      // Note: \s also matches newlines with the 's' modifier.
+      preg_match_all('~
+        [^\w]ts\s*                                    # match "ts" with whitespace
+        \(\s*                                         # match "(" argument list start
+        ((?:(?:\'(?:\\\\\'|[^\'])*\'|"(?:\\\\"|[^"])*")(?:\s*\+\s*)?)+)\s*
+        [,\)]                                         # match ")" or "," to finish
+        ~sx', $file, $matches);
+      foreach($matches[1] as $text) {
+        $quote = $text[0];
+        // Remove newlines
+        $text = str_replace("\\\n", '', $text);
+        // Unescape escaped quotes
+        $text = str_replace('\\' . $quote, $quote, $text);
+        // Remove end quotes
+        $text = substr(ltrim($text, $quote), 0, -1);
+        $strings[$text] = $text;
+      }
+    }
+    return array_values($strings);
+  }
+
+  /**
+   * Get an item from the cache
+   * Note: once set or retrieved items are stored in memory by the cacheInterface
+   * so it is safe to call this function multiple times with the same key
+   *
+   * @param string $cacheKey
+   *
+   * @return array
+   */
+  private function getCache($cacheKey) {
+    $stored = call_user_func(array($this->cacheInterface, 'get'), $cacheKey);
+    return $stored ? $stored : array();
+  }
+
+  /**
+   * Set an item in the cache
+   *
+   * @param string $cacheKey
+   * @param string $value
+   *
+   * @return void
+   */
+  private function setCache($cacheKey, $value) {
+    call_user_func_array(array($this->cacheInterface, 'set'), array($cacheKey, &$value));
+  }
+
+  /**
    * Read resource files from a template
-   * 
+   *
    * @param $tpl (str) template file name
    * @return array: filename => filetype
    */

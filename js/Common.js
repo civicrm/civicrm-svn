@@ -519,6 +519,7 @@ function advmultiselectResize() {
   }
 }
 
+CRM.strings = CRM.strings || {};
 CRM.validate = CRM.validate || {
   params: {},
   functions: []

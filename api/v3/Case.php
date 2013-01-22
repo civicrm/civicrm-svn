@@ -37,8 +37,6 @@
  *
  */
 
-require_once 'CRM/Case/BAO/Case.php';
-require_once 'CRM/Case/PseudoConstant.php';
 
 /**
  * Open a new case, add client and manager roles, and add standard timeline
@@ -71,7 +69,7 @@ function civicrm_api3_case_create($params) {
   }
 
   if (isset($params['id']) || isset($params['case_id'])) {
-    return _api_case_update($params);
+    return civicrm_api3_case_update($params);
   }
 
   // ongoing
@@ -100,7 +98,13 @@ function civicrm_api3_case_create($params) {
 
   // format input with value separators
   $sep = CRM_Core_DAO::VALUE_SEPARATOR;
-  $newParams = array('case_type_id' => $sep . $params['case_type_id'] . $sep, 'creator_id' => $params['creator_id'], 'status_id' => $params['status_id'], 'start_date' => $params['start_date'], 'subject' => $params['subject']);
+  $newParams = array(
+    'case_type_id' => $sep . $params['case_type_id'] . $sep,
+    'creator_id' => $params['creator_id'],
+    'status_id' => $params['status_id'],
+    'start_date' => $params['start_date'],
+    'subject' => $params['subject']
+  );
 
   $caseBAO = CRM_Case_BAO_Case::create($newParams);
 
@@ -110,13 +114,25 @@ function civicrm_api3_case_create($params) {
 
   foreach ((array) $params['contact_id'] as $cid) {
     $contactParams = array('case_id' => $caseBAO->id, 'contact_id' => $cid);
-  CRM_Case_BAO_Case::addCaseToContact($contactParams);
+    CRM_Case_BAO_Case::addCaseToContact($contactParams);
   }
 
   // Initialize XML processor with $params
-  require_once 'CRM/Case/XMLProcessor/Process.php';
   $xmlProcessor = new CRM_Case_XMLProcessor_Process();
-  $xmlProcessorParams = array('clientID' => $params['contact_id'], 'creatorID' => $params['creator_id'], 'standardTimeline' => 1, 'activityTypeName' => 'Open Case', 'caseID' => $caseBAO->id, 'subject' => $params['subject'], 'location' => CRM_Utils_Array::value('location', $params), 'activity_date_time' => $params['start_date'], 'duration' => CRM_Utils_Array::value('duration', $params), 'medium_id' => CRM_Utils_Array::value('medium_id', $params), 'details' => CRM_Utils_Array::value('details', $params), 'custom' => array());
+  $xmlProcessorParams = array(
+    'clientID' => $params['contact_id'],
+    'creatorID' => $params['creator_id'],
+    'standardTimeline' => 1,
+    'activityTypeName' => 'Open Case',
+    'caseID' => $caseBAO->id,
+    'subject' => $params['subject'],
+    'location' => CRM_Utils_Array::value('location', $params),
+    'activity_date_time' => $params['start_date'],
+    'duration' => CRM_Utils_Array::value('duration', $params),
+    'medium_id' => CRM_Utils_Array::value('medium_id', $params),
+    'details' => CRM_Utils_Array::value('details', $params),
+    'custom' => array(),
+  );
 
   // Do it! :-D
   $xmlProcessor->run($params['case_type'], $xmlProcessorParams);
@@ -258,7 +274,6 @@ SELECT DISTINCT case_id
  * Deprecated. Use activity API instead
  */
 function civicrm_api3_case_activity_create($params) {
-  require_once 'api/v3/Activity.php';
   return civicrm_api3_activity_create($params);
 }
 
@@ -279,7 +294,7 @@ function civicrm_api3_case_activity_create($params) {
  * @access public
  *
  */
-function _api_case_update($params) {
+function civicrm_api3_case_update($params) {
 
   if (empty($params['case_id'])) {
     $params['case_id'] = CRM_Utils_Array::value('id', $params);
@@ -376,13 +391,8 @@ function civicrm_api3_case_delete($params) {
 
 /***********************************/
 /*                                 */
-
-
 /*     INTERNAL FUNCTIONS          */
-
-
 /*                                 */
-
 /***********************************/
 
 /**
