@@ -100,7 +100,7 @@
         <th class="crm-received">{ts}Received{/ts}</th>
         <th class="crm-payment-method">{ts}Pay Method{/ts}</th>
 	      <th class="crm-status">{ts}Status{/ts}</th>
-        <th class="crm-type">{ts}Type{/ts}</th>
+        <th class="crm-type">{ts}Financial Type{/ts}</th>
         <th class="crm-transaction-links"></th>
       </tr>
       </thead>
