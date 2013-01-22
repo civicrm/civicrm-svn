@@ -412,14 +412,17 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
       // no filters so we are interested in all - ie. get mode when no filters specified
       $filteredFields = $fields['values'];
     }
-    if (!$createMode) {
-      // no validation required
-      return $filteredFields;
-    }
+
+    // we are going to disable the validation function rather than fix it until
+    // someone wants to look at it again. per CRM-11740
+    // note that there are also unit tests commented out so review those too
+    return $filteredFields;
+   /*
     foreach ($filteredFields as $settingField => &$settingValue) {
       self::validateSetting($settingValue, $fields['values'][$settingField]);
     }
     return $filteredFields;
+    */
   }
 
   /**
