@@ -1,13 +1,11 @@
 <?php
 
-
-
 /*
  
  */
 function participant_create_example(){
 $params = array( 
-  'contact_id' => 2,
+  'contact_id' => 4,
   'event_id' => 1,
   'status_id' => 1,
   'role_id' => 1,
@@ -17,7 +15,6 @@ $params = array(
   'custom_1' => 'custom string',
 );
 
-  require_once 'api/api.php';
   $result = civicrm_api( 'participant','create',$params );
 
   return $result;
@@ -35,11 +32,11 @@ function participant_create_expectedresult(){
   'id' => 4,
   'values' => array( 
       '4' => array( 
-          'id' => 4,
-          'contact_id' => 2,
-          'event_id' => 1,
-          'status_id' => 1,
-          'role_id' => 1,
+          'id' => '4',
+          'contact_id' => '4',
+          'event_id' => '1',
+          'status_id' => '1',
+          'role_id' => '1',
           'register_date' => '20070721000000',
           'source' => 'Online Event Registration: API Testing',
           'fee_level' => '',
@@ -61,18 +58,24 @@ function participant_create_expectedresult(){
 }
 
 
-
-
 /*
 * This example has been generated from the API test suite. The test that created it is called
-* 
-* testCreateWithCustom and can be found in 
-* http://svn.civicrm.org/civicrm/branches/v3.4/tests/phpunit/CiviTest/api/v3/ParticipantTest.php
-* 
-* You can see the outcome of the API tests at 
+*
+* testCreateWithCustom and can be found in
+* http://svn.civicrm.org/civicrm/trunk/tests/phpunit/CiviTest/api/v3/ParticipantTest.php
+*
+* You can see the outcome of the API tests at
 * http://tests.dev.civicrm.org/trunk/results-api_v3
+*
+* To Learn about the API read
+* http://book.civicrm.org/developer/current/techniques/api/
+*
 * and review the wiki at
 * http://wiki.civicrm.org/confluence/display/CRMDOC/CiviCRM+Public+APIs
+*
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
+*
+* API Standards documentation:
+* http://wiki.civicrm.org/confluence/display/CRM/API+Architecture+Standards
 */

@@ -1,7 +1,5 @@
 <?php
 
-
-
 /*
  
  */
@@ -20,7 +18,7 @@ $params = array(
       'registration_end_date' => '2008-10-15',
       'max_participants' => 100,
       'event_full_text' => 'Sorry! We are already full',
-      'is_monetory' => 0,
+      'is_monetary' => 0,
       'is_active' => 1,
       'is_show_location' => 0,
       'version' => 3,
@@ -45,7 +43,6 @@ $params = array(
     ),
 );
 
-  require_once 'api/api.php';
   $result = civicrm_api( 'event','update',$params );
 
   return $result;
@@ -82,17 +79,17 @@ function event_update_expectedresult(){
           'max_participants' => '150',
           'event_full_text' => 'Sorry! We are already full',
           'is_monetary' => 0,
-          'financial_type_id' => 0,
           'is_map' => 0,
           'is_active' => '1',
           'is_show_location' => 0,
           'default_role_id' => '1',
           'is_email_confirm' => 0,
           'is_pay_later' => 0,
+          'is_partial_payment' => 0,
           'is_multiple_registrations' => 0,
           'allow_same_participant_emails' => 0,
           'is_template' => 0,
-          'created_date' => '2012-05-11 22:55:16',
+          'created_date' => '2013-01-22 02:53:38',
           'is_share' => '1',
         ),
     ),
@@ -102,18 +99,24 @@ function event_update_expectedresult(){
 }
 
 
-
-
 /*
 * This example has been generated from the API test suite. The test that created it is called
-* 
-* testUpdateEvent and can be found in 
-* http://svn.civicrm.org/civicrm/branches/v3.4/tests/phpunit/CiviTest/api/v3/EventTest.php
-* 
-* You can see the outcome of the API tests at 
+*
+* testUpdateEvent and can be found in
+* http://svn.civicrm.org/civicrm/trunk/tests/phpunit/CiviTest/api/v3/EventTest.php
+*
+* You can see the outcome of the API tests at
 * http://tests.dev.civicrm.org/trunk/results-api_v3
+*
+* To Learn about the API read
+* http://book.civicrm.org/developer/current/techniques/api/
+*
 * and review the wiki at
 * http://wiki.civicrm.org/confluence/display/CRMDOC/CiviCRM+Public+APIs
+*
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
+*
+* API Standards documentation:
+* http://wiki.civicrm.org/confluence/display/CRM/API+Architecture+Standards
 */

@@ -1,7 +1,5 @@
 <?php
 
-
-
 /*
  Demonstrates reverting a parameter to default value
  */
@@ -11,7 +9,6 @@ $params = array(
   'name' => 'address_format',
 );
 
-  require_once 'api/api.php';
   $result = civicrm_api( 'setting','revert',$params );
 
   return $result;
@@ -34,7 +31,12 @@ function setting_revert_expectedresult(){
       'id' => 1,
       'values' => array( 
           '1' => array( 
-              'address_format' => '{contact.address_name}\n{contact.street_address}\n{contact.supplemental_address_1}\n{contact.supplemental_address_2}\n{contact.city}{, }{contact.state_province}{ }{contact.postal_code}\n{contact.country}',
+              'address_format' => '{contact.address_name}
+{contact.street_address}
+{contact.supplemental_address_1}
+{contact.supplemental_address_2}
+{contact.city}{, }{contact.state_province}{ }{contact.postal_code}
+{contact.country}',
             ),
         ),
     ),
@@ -44,18 +46,24 @@ function setting_revert_expectedresult(){
 }
 
 
-
-
 /*
 * This example has been generated from the API test suite. The test that created it is called
-* 
-* testRevert and can be found in 
-* http://svn.civicrm.org/civicrm/branches/v3.4/tests/phpunit/CiviTest/api/v3/SettingTest.php
-* 
-* You can see the outcome of the API tests at 
+*
+* testRevert and can be found in
+* http://svn.civicrm.org/civicrm/trunk/tests/phpunit/CiviTest/api/v3/SettingTest.php
+*
+* You can see the outcome of the API tests at
 * http://tests.dev.civicrm.org/trunk/results-api_v3
+*
+* To Learn about the API read
+* http://book.civicrm.org/developer/current/techniques/api/
+*
 * and review the wiki at
 * http://wiki.civicrm.org/confluence/display/CRMDOC/CiviCRM+Public+APIs
+*
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
+*
+* API Standards documentation:
+* http://wiki.civicrm.org/confluence/display/CRM/API+Architecture+Standards
 */

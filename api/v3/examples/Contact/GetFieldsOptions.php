@@ -1,7 +1,5 @@
 <?php
 
-
-
 /*
  Demonstrate retrieving custom field options
  */
@@ -14,7 +12,6 @@ $params = array(
   'action' => 'create',
 );
 
-  require_once 'api/api.php';
   $result = civicrm_api( 'contact','GetFields',$params );
 
   return $result;
@@ -28,7 +25,7 @@ function contact_getfields_expectedresult(){
   $expectedResult = array( 
   'is_error' => 0,
   'version' => 3,
-  'count' => 49,
+  'count' => 52,
   'values' => array( 
       'id' => array( 
           'name' => 'id',
@@ -51,7 +48,12 @@ function contact_getfields_expectedresult(){
           'size' => 30,
           'export' => true,
           'where' => 'civicrm_contact.contact_type',
-          'pseudoconstant' => 'contactType',
+          'pseudoconstant' => array( 
+              'name' => 'contactType',
+              'table' => 'civicrm_location_type',
+              'keyColumn' => 'name',
+              'labelColumn' => 'label',
+            ),
           'api.required' => 1,
           'options' => array( 
               'Individual' => 'Individual',
@@ -146,7 +148,7 @@ function contact_getfields_expectedresult(){
           'type' => 2,
           'title' => 'External Identifier',
           'maxlength' => 32,
-          'size' => 20,
+          'size' => 8,
           'import' => true,
           'where' => 'civicrm_contact.external_identifier',
           'headerPattern' => '/external\s?id/i',
@@ -158,7 +160,7 @@ function contact_getfields_expectedresult(){
           'type' => 2,
           'title' => 'Sort Name',
           'maxlength' => 128,
-          'size' => 45,
+          'size' => 30,
           'export' => true,
           'where' => 'civicrm_contact.sort_name',
         ),
@@ -167,7 +169,7 @@ function contact_getfields_expectedresult(){
           'type' => 2,
           'title' => 'Display Name',
           'maxlength' => 128,
-          'size' => 45,
+          'size' => 30,
           'export' => true,
           'where' => 'civicrm_contact.display_name',
         ),
@@ -176,7 +178,7 @@ function contact_getfields_expectedresult(){
           'type' => 2,
           'title' => 'Nick Name',
           'maxlength' => 128,
-          'size' => 45,
+          'size' => 30,
           'import' => true,
           'where' => 'civicrm_contact.nick_name',
           'headerPattern' => '/n(ick\s)name|nick$/i',
@@ -188,7 +190,7 @@ function contact_getfields_expectedresult(){
           'type' => 2,
           'title' => 'Legal Name',
           'maxlength' => 128,
-          'size' => 45,
+          'size' => 30,
           'import' => true,
           'where' => 'civicrm_contact.legal_name',
           'headerPattern' => '/^legal|(l(egal\s)?name)$/i',
@@ -221,7 +223,7 @@ function contact_getfields_expectedresult(){
           'type' => 2,
           'title' => 'Preferred Language',
           'maxlength' => 5,
-          'size' => 8,
+          'size' => 6,
           'import' => true,
           'where' => 'civicrm_contact.preferred_language',
           'headerPattern' => '/^lang/i',
@@ -239,8 +241,8 @@ function contact_getfields_expectedresult(){
           'enumValues' => 'Text, HTML, Both',
           'options' => array( 
               '0' => 'Text',
-              '1' => ' HTML',
-              '2' => ' Both',
+              '1' => 'HTML',
+              '2' => 'Both',
             ),
         ),
       'hash' => array( 
@@ -276,7 +278,7 @@ function contact_getfields_expectedresult(){
           'type' => 2,
           'title' => 'Middle Name',
           'maxlength' => 64,
-          'size' => 30,
+          'size' => 20,
           'import' => true,
           'where' => 'civicrm_contact.middle_name',
           'headerPattern' => '/^middle|(m(iddle\s)?name)$/i',
@@ -299,15 +301,46 @@ function contact_getfields_expectedresult(){
           'name' => 'prefix_id',
           'type' => 1,
           'title' => 'Individual Prefix',
+          'pseudoconstant' => array( 
+              'name' => 'individualPrefix',
+              'optionGroupName' => 'individualPrefix',
+            ),
+          'api.aliases' => array( 
+              '0' => 'prefix',
+            ),
+          'options' => array( 
+              '1' => 'Mrs.',
+              '2' => 'Ms.',
+              '3' => 'Mr.',
+              '4' => 'Dr.',
+            ),
         ),
       'suffix_id' => array( 
           'name' => 'suffix_id',
           'type' => 1,
           'title' => 'Individual Suffix',
+          'pseudoconstant' => array( 
+              'name' => 'individualSuffix',
+              'optionGroupName' => 'individualSuffix',
+            ),
+          'api.aliases' => array( 
+              '0' => 'suffix',
+            ),
+          'options' => array( 
+              '1' => 'Jr.',
+              '2' => 'Sr.',
+              '3' => 'II',
+              '4' => 'III',
+              '5' => 'IV',
+              '6' => 'V',
+              '7' => 'VI',
+              '8' => 'VII',
+            ),
         ),
       'email_greeting_id' => array( 
           'name' => 'email_greeting_id',
           'type' => 1,
+          'title' => 'Email Greeting ID',
         ),
       'email_greeting_custom' => array( 
           'name' => 'email_greeting_custom',
@@ -328,6 +361,7 @@ function contact_getfields_expectedresult(){
       'postal_greeting_id' => array( 
           'name' => 'postal_greeting_id',
           'type' => 1,
+          'title' => 'Postal Greeting ID',
         ),
       'postal_greeting_custom' => array( 
           'name' => 'postal_greeting_custom',
@@ -348,6 +382,7 @@ function contact_getfields_expectedresult(){
       'addressee_id' => array( 
           'name' => 'addressee_id',
           'type' => 1,
+          'title' => 'Addressee ID',
         ),
       'addressee_custom' => array( 
           'name' => 'addressee_custom',
@@ -370,7 +405,7 @@ function contact_getfields_expectedresult(){
           'type' => 2,
           'title' => 'Job Title',
           'maxlength' => 255,
-          'size' => 45,
+          'size' => 20,
           'import' => true,
           'where' => 'civicrm_contact.job_title',
           'headerPattern' => '/^job|(j(ob\s)?title)$/i',
@@ -415,7 +450,7 @@ function contact_getfields_expectedresult(){
           'type' => 2,
           'title' => 'Household Name',
           'maxlength' => 128,
-          'size' => 45,
+          'size' => 30,
           'import' => true,
           'where' => 'civicrm_contact.household_name',
           'headerPattern' => '/^household|(h(ousehold\s)?name)$/i',
@@ -425,6 +460,7 @@ function contact_getfields_expectedresult(){
       'primary_contact_id' => array( 
           'name' => 'primary_contact_id',
           'type' => 1,
+          'title' => 'Household Primary Contact ID',
           'FKClassName' => 'CRM_Contact_DAO_Contact',
         ),
       'organization_name' => array( 
@@ -432,7 +468,7 @@ function contact_getfields_expectedresult(){
           'type' => 2,
           'title' => 'Organization Name',
           'maxlength' => 128,
-          'size' => 45,
+          'size' => 30,
           'import' => true,
           'where' => 'civicrm_contact.organization_name',
           'headerPattern' => '/^organization|(o(rganization\s)?name)$/i',
@@ -463,12 +499,26 @@ function contact_getfields_expectedresult(){
           'export' => true,
           'rule' => 'url',
         ),
+      'created_date' => array( 
+          'name' => 'created_date',
+          'type' => 256,
+          'title' => 'Created Date',
+          'required' => '',
+          'default' => 'UL',
+        ),
+      'modified_date' => array( 
+          'name' => 'modified_date',
+          'type' => 256,
+          'title' => 'Modified Date',
+          'required' => '',
+          'default' => 'URRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAM',
+        ),
       'source' => array( 
           'name' => 'source',
           'type' => 2,
           'title' => 'Source of Contact Data',
           'maxlength' => 255,
-          'size' => 45,
+          'size' => 30,
           'import' => true,
           'where' => 'civicrm_contact.source',
           'headerPattern' => '/(S(ource\s)?o(f\s)?C(ontact\s)?Data)$/i',
@@ -506,13 +556,17 @@ function contact_getfields_expectedresult(){
           'extends_entity_column_id' => '',
           'is_view' => 0,
           'is_multiple' => 0,
-          'option_group_id' => '80',
+          'option_group_id' => '86',
           'date_format' => '',
           'time_format' => '',
           'options' => array( 
               '1' => 'Label1',
               '2' => 'Label2',
             ),
+        ),
+      'current_employer' => array( 
+          'title' => 'Current Employer',
+          'description' => 'Name of Current Employer',
         ),
     ),
 );
@@ -521,18 +575,24 @@ function contact_getfields_expectedresult(){
 }
 
 
-
-
 /*
 * This example has been generated from the API test suite. The test that created it is called
-* 
-* testCustomFieldCreateWithOptionValues and can be found in 
-* http://svn.civicrm.org/civicrm/branches/v3.4/tests/phpunit/CiviTest/api/v3/ContactTest.php
-* 
-* You can see the outcome of the API tests at 
+*
+* testCustomFieldCreateWithOptionValues and can be found in
+* http://svn.civicrm.org/civicrm/trunk/tests/phpunit/CiviTest/api/v3/ContactTest.php
+*
+* You can see the outcome of the API tests at
 * http://tests.dev.civicrm.org/trunk/results-api_v3
+*
+* To Learn about the API read
+* http://book.civicrm.org/developer/current/techniques/api/
+*
 * and review the wiki at
 * http://wiki.civicrm.org/confluence/display/CRMDOC/CiviCRM+Public+APIs
+*
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
+*
+* API Standards documentation:
+* http://wiki.civicrm.org/confluence/display/CRM/API+Architecture+Standards
 */

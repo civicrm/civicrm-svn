@@ -1,18 +1,15 @@
 <?php
 
-
-
 /*
  use nested get to get an event
  */
 function participant_get_example(){
 $params = array( 
-  'id' => 17,
+  'id' => 1,
   'version' => 3,
   'api.event.get' => 1,
 );
 
-  require_once 'api/api.php';
   $result = civicrm_api( 'participant','get',$params );
 
   return $result;
@@ -27,9 +24,9 @@ function participant_get_expectedresult(){
   'is_error' => 0,
   'version' => 3,
   'count' => 1,
-  'id' => 17,
+  'id' => 1,
   'values' => array( 
-      '17' => array( 
+      '1' => array( 
           'contact_id' => '2',
           'contact_type' => 'Individual',
           'contact_sub_type' => '',
@@ -39,7 +36,7 @@ function participant_get_expectedresult(){
           'event_title' => 'Annual CiviCRM meet',
           'event_start_date' => '2008-10-21 00:00:00',
           'event_end_date' => '2008-10-23 00:00:00',
-          'participant_id' => '17',
+          'participant_id' => '1',
           'participant_fee_level' => '',
           'participant_fee_amount' => '',
           'participant_fee_currency' => '',
@@ -55,7 +52,7 @@ function participant_get_expectedresult(){
           'participant_registered_by_id' => '',
           'participant_discount_name' => '',
           'participant_campaign_id' => '',
-          'id' => '17',
+          'id' => '1',
           'api.event.get' => array( 
               'is_error' => 0,
               'version' => 3,
@@ -82,17 +79,17 @@ function participant_get_expectedresult(){
                       'max_participants' => '100',
                       'event_full_text' => 'Sorry! We are already full',
                       'is_monetary' => 0,
-              'financial_type_id' => 0,
                       'is_map' => 0,
                       'is_active' => '1',
                       'is_show_location' => 0,
                       'default_role_id' => '1',
                       'is_email_confirm' => 0,
                       'is_pay_later' => 0,
+                      'is_partial_payment' => 0,
                       'is_multiple_registrations' => 0,
                       'allow_same_participant_emails' => 0,
                       'is_template' => 0,
-                      'created_date' => '2012-05-13 12:20:20',
+                      'created_date' => '2013-01-22 00:40:35',
                       'is_share' => '1',
                     ),
                 ),
@@ -105,18 +102,24 @@ function participant_get_expectedresult(){
 }
 
 
-
-
 /*
 * This example has been generated from the API test suite. The test that created it is called
-* 
-* testGetNestedEventGet and can be found in 
-* http://svn.civicrm.org/civicrm/branches/v3.4/tests/phpunit/CiviTest/api/v3/ParticipantTest.php
-* 
-* You can see the outcome of the API tests at 
+*
+* testGetNestedEventGet and can be found in
+* http://svn.civicrm.org/civicrm/trunk/tests/phpunit/CiviTest/api/v3/ParticipantTest.php
+*
+* You can see the outcome of the API tests at
 * http://tests.dev.civicrm.org/trunk/results-api_v3
+*
+* To Learn about the API read
+* http://book.civicrm.org/developer/current/techniques/api/
+*
 * and review the wiki at
 * http://wiki.civicrm.org/confluence/display/CRMDOC/CiviCRM+Public+APIs
+*
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
+*
+* API Standards documentation:
+* http://wiki.civicrm.org/confluence/display/CRM/API+Architecture+Standards
 */

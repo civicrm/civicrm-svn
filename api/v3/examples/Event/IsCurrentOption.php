@@ -1,7 +1,5 @@
 <?php
 
-
-
 /*
  demonstrates use of is.Current option
  */
@@ -11,7 +9,6 @@ $params = array(
   'isCurrent' => 1,
 );
 
-  require_once 'api/api.php';
   $result = civicrm_api( 'event','get',$params );
 
   return $result;
@@ -38,27 +35,27 @@ function event_get_expectedresult(){
           'event_type_id' => '1',
           'participant_listing_id' => 0,
           'is_public' => '1',
-          'start_date' => '2012-05-14 00:00:00',
-          'event_start_date' => '2012-05-14 00:00:00',
-          'end_date' => '2012-05-20 00:00:00',
-          'event_end_date' => '2012-05-20 00:00:00',
+          'start_date' => '2013-01-23 00:00:00',
+          'event_start_date' => '2013-01-23 00:00:00',
+          'end_date' => '2013-01-29 00:00:00',
+          'event_end_date' => '2013-01-29 00:00:00',
           'is_online_registration' => '1',
           'registration_start_date' => '2010-06-01 00:00:00',
           'registration_end_date' => '2010-10-15 00:00:00',
           'max_participants' => '100',
           'event_full_text' => 'Sorry! We are already full',
           'is_monetary' => 0,
-          'financial_type_id' => 0,
           'is_map' => 0,
           'is_active' => '1',
           'is_show_location' => 0,
           'default_role_id' => '1',
           'is_email_confirm' => 0,
           'is_pay_later' => 0,
+          'is_partial_payment' => 0,
           'is_multiple_registrations' => 0,
           'allow_same_participant_emails' => 0,
           'is_template' => 0,
-          'created_date' => '2012-05-13 12:17:16',
+          'created_date' => '2013-01-22 02:53:19',
           'is_share' => '1',
         ),
     ),
@@ -68,18 +65,24 @@ function event_get_expectedresult(){
 }
 
 
-
-
 /*
 * This example has been generated from the API test suite. The test that created it is called
-* 
-* testGetIsCurrent and can be found in 
-* http://svn.civicrm.org/civicrm/branches/v3.4/tests/phpunit/CiviTest/api/v3/EventTest.php
-* 
-* You can see the outcome of the API tests at 
+*
+* testGetIsCurrent and can be found in
+* http://svn.civicrm.org/civicrm/trunk/tests/phpunit/CiviTest/api/v3/EventTest.php
+*
+* You can see the outcome of the API tests at
 * http://tests.dev.civicrm.org/trunk/results-api_v3
+*
+* To Learn about the API read
+* http://book.civicrm.org/developer/current/techniques/api/
+*
 * and review the wiki at
 * http://wiki.civicrm.org/confluence/display/CRMDOC/CiviCRM+Public+APIs
+*
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
+*
+* API Standards documentation:
+* http://wiki.civicrm.org/confluence/display/CRM/API+Architecture+Standards
 */

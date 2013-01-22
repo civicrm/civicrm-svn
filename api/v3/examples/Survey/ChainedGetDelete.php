@@ -1,7 +1,5 @@
 <?php
 
-
-
 /*
  demonstrates get + delete in the same call
  */
@@ -12,7 +10,6 @@ $params = array(
   'api.survey.delete' => 1,
 );
 
-  require_once 'api/api.php';
   $result = civicrm_api( 'survey','get',$params );
 
   return $result;
@@ -37,7 +34,8 @@ function survey_get_expectedresult(){
           'max_number_of_contacts' => '12',
           'is_active' => '1',
           'is_default' => 0,
-          'created_date' => '2012-05-13 12:22:49',
+          'created_date' => '2013-01-22 00:47:17',
+          'bypass_confirm' => 0,
           'api.survey.delete' => array( 
               'is_error' => 0,
               'version' => 3,
@@ -52,18 +50,24 @@ function survey_get_expectedresult(){
 }
 
 
-
-
 /*
 * This example has been generated from the API test suite. The test that created it is called
-* 
-* testGetSurveyChainDelete and can be found in 
-* http://svn.civicrm.org/civicrm/branches/v3.4/tests/phpunit/CiviTest/api/v3/SurveyTest.php
-* 
-* You can see the outcome of the API tests at 
+*
+* testGetSurveyChainDelete and can be found in
+* http://svn.civicrm.org/civicrm/trunk/tests/phpunit/CiviTest/api/v3/SurveyTest.php
+*
+* You can see the outcome of the API tests at
 * http://tests.dev.civicrm.org/trunk/results-api_v3
+*
+* To Learn about the API read
+* http://book.civicrm.org/developer/current/techniques/api/
+*
 * and review the wiki at
 * http://wiki.civicrm.org/confluence/display/CRMDOC/CiviCRM+Public+APIs
+*
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
+*
+* API Standards documentation:
+* http://wiki.civicrm.org/confluence/display/CRM/API+Architecture+Standards
 */

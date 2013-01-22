@@ -1,7 +1,5 @@
 <?php
 
-
-
 /*
  
  */
@@ -10,7 +8,6 @@ $params = array(
   'version' => 3,
 );
 
-  require_once 'api/api.php';
   $result = civicrm_api( 'activity_type','get',$params );
 
   return $result;
@@ -24,7 +21,7 @@ function activity_type_get_expectedresult(){
   $expectedResult = array( 
   'is_error' => 0,
   'version' => 3,
-  'count' => 40,
+  'count' => 44,
   'values' => array( 
       '1' => 'Meeting',
       '2' => 'Phone Call',
@@ -57,15 +54,19 @@ function activity_type_get_expectedresult(){
       '29' => 'Canvass',
       '30' => 'PhoneBank',
       '31' => 'WalkList',
-      '32' => 'Petition',
+      '32' => 'Petition Signature',
       '33' => 'Change Custom Data',
-      '34' => 'BULK SMS',
+      '34' => 'Mass SMS',
       '35' => 'Change Membership Status',
       '36' => 'Change Membership Type',
       '37' => 'Cancel Recurring Contribution',
       '38' => 'Update Recurring Contribution Billing Details',
       '39' => 'Update Recurring Contribution',
-      '40' => 'Test activity type',
+      '40' => 'Reminder Sent',
+      '41' => 'Export Accounting Batch',
+      '42' => 'Create Batch',
+      '43' => 'Edit Batch',
+      '44' => 'Test activity type',
     ),
 );
 
@@ -73,18 +74,24 @@ function activity_type_get_expectedresult(){
 }
 
 
-
-
 /*
 * This example has been generated from the API test suite. The test that created it is called
-* 
-* testActivityTypeGet and can be found in 
-* http://svn.civicrm.org/civicrm/branches/v3.4/tests/phpunit/CiviTest/api/v3/ActivityTypeTest.php
-* 
-* You can see the outcome of the API tests at 
+*
+* testActivityTypeGet and can be found in
+* http://svn.civicrm.org/civicrm/trunk/tests/phpunit/CiviTest/api/v3/ActivityTypeTest.php
+*
+* You can see the outcome of the API tests at
 * http://tests.dev.civicrm.org/trunk/results-api_v3
+*
+* To Learn about the API read
+* http://book.civicrm.org/developer/current/techniques/api/
+*
 * and review the wiki at
 * http://wiki.civicrm.org/confluence/display/CRMDOC/CiviCRM+Public+APIs
+*
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
+*
+* API Standards documentation:
+* http://wiki.civicrm.org/confluence/display/CRM/API+Architecture+Standards
 */

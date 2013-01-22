@@ -1,7 +1,5 @@
 <?php
 
-
-
 /*
  test demonstrates the syntax to create 2 chained entities
  */
@@ -33,7 +31,6 @@ $params = array(
     ),
 );
 
-  require_once 'api/api.php';
   $result = civicrm_api( 'contact','create',$params );
 
   return $result;
@@ -96,7 +93,7 @@ function contact_create_expectedresult(){
           'organization_name' => '',
           'sic_code' => '',
           'user_unique_id' => '',
-          'created_date' => '2012-11-30 14:09:41',
+          'created_date' => '2013-01-22 15:40:48',
           'modified_date' => '2012-11-14 16:02:35',
           'api.contribution.create' => array( 
               'is_error' => 0,
@@ -105,18 +102,18 @@ function contact_create_expectedresult(){
               'id' => 1,
               'values' => array( 
                   '0' => array( 
-                      'id' => 1,
+                      'id' => '1',
                       'contact_id' => '1',
-                      'financial_type_id' => 1,
+                      'financial_type_id' => '1',
                       'contribution_page_id' => '',
-                      'payment_instrument_id' => 1,
+                      'payment_instrument_id' => '1',
                       'receive_date' => '20100101000000',
                       'non_deductible_amount' => '10',
                       'total_amount' => '100',
                       'fee_amount' => '50',
                       'net_amount' => '90',
-                      'trxn_id' => 15345,
-                      'invoice_id' => 67990,
+                      'trxn_id' => '15345',
+                      'invoice_id' => '67990',
                       'currency' => 'USD',
                       'cancel_date' => '',
                       'cancel_reason' => '',
@@ -128,7 +125,7 @@ function contact_create_expectedresult(){
                       'honor_contact_id' => '',
                       'is_test' => '',
                       'is_pay_later' => '',
-                      'contribution_status_id' => 1,
+                      'contribution_status_id' => '1',
                       'honor_type_id' => '',
                       'address_id' => '',
                       'check_number' => 'null',
@@ -143,7 +140,7 @@ function contact_create_expectedresult(){
               'id' => 1,
               'values' => array( 
                   '0' => array( 
-                      'id' => 1,
+                      'id' => '1',
                       'contact_id' => '1',
                       'url' => 'http://civicrm.org',
                       'website_type_id' => '',
@@ -157,7 +154,7 @@ function contact_create_expectedresult(){
               'id' => 2,
               'values' => array( 
                   '0' => array( 
-                      'id' => 2,
+                      'id' => '2',
                       'contact_id' => '1',
                       'url' => 'http://chained.org',
                       'website_type_id' => '',
@@ -172,18 +169,24 @@ function contact_create_expectedresult(){
 }
 
 
-
-
 /*
 * This example has been generated from the API test suite. The test that created it is called
-* 
-* testCreateIndividualWithContributionDottedSyntax and can be found in 
-* http://svn.civicrm.org/civicrm/branches/v3.4/tests/phpunit/CiviTest/api/v3/ContactTest.php
-* 
-* You can see the outcome of the API tests at 
+*
+* testCreateIndividualWithContributionDottedSyntax and can be found in
+* http://svn.civicrm.org/civicrm/trunk/tests/phpunit/CiviTest/api/v3/ContactTest.php
+*
+* You can see the outcome of the API tests at
 * http://tests.dev.civicrm.org/trunk/results-api_v3
+*
+* To Learn about the API read
+* http://book.civicrm.org/developer/current/techniques/api/
+*
 * and review the wiki at
 * http://wiki.civicrm.org/confluence/display/CRMDOC/CiviCRM+Public+APIs
+*
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
+*
+* API Standards documentation:
+* http://wiki.civicrm.org/confluence/display/CRM/API+Architecture+Standards
 */

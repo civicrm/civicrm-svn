@@ -1,7 +1,5 @@
 <?php
 
-
-
 /*
  /*this demonstrates the usage of chained api functions.  Specifically it has one 'parent function' &
     2 child functions - one receives values from the parent (Contact) and the other child (Tag). 
@@ -21,7 +19,6 @@ $params = array(
     ),
 );
 
-  require_once 'api/api.php';
   $result = civicrm_api( 'contact','create',$params );
 
   return $result;
@@ -84,7 +81,7 @@ function contact_create_expectedresult(){
           'organization_name' => '',
           'sic_code' => '',
           'user_unique_id' => '',
-          'created_date' => '',
+          'created_date' => '2013-01-22 15:41:53',
           'modified_date' => '2012-11-14 16:02:35',
           'api.tag.create' => 6,
           'api.entity_tag.create' => array( 
@@ -101,18 +98,24 @@ function contact_create_expectedresult(){
 }
 
 
-
-
 /*
 * This example has been generated from the API test suite. The test that created it is called
-* 
-* testChainingValuesCreate and can be found in 
-* http://svn.civicrm.org/civicrm/branches/v3.4/tests/phpunit/CiviTest/api/v3/ContactTest.php
-* 
-* You can see the outcome of the API tests at 
+*
+* testChainingValuesCreate and can be found in
+* http://svn.civicrm.org/civicrm/trunk/tests/phpunit/CiviTest/api/v3/ContactTest.php
+*
+* You can see the outcome of the API tests at
 * http://tests.dev.civicrm.org/trunk/results-api_v3
+*
+* To Learn about the API read
+* http://book.civicrm.org/developer/current/techniques/api/
+*
 * and review the wiki at
 * http://wiki.civicrm.org/confluence/display/CRMDOC/CiviCRM+Public+APIs
+*
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
+*
+* API Standards documentation:
+* http://wiki.civicrm.org/confluence/display/CRM/API+Architecture+Standards
 */

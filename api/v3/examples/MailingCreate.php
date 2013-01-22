@@ -1,7 +1,5 @@
 <?php
 
-
-
 /*
  
  */
@@ -13,7 +11,6 @@ $params = array(
   'name' => 'mailing name',
   'created_id' => 1,
 );
-
 
   $result = civicrm_api( 'mailing','create',$params );
 
@@ -32,8 +29,8 @@ function mailing_create_expectedresult(){
   'id' => 1,
   'values' => array( 
       '1' => array( 
-          'id' => 1,
-          'domain_id' => 1,
+          'id' => '1',
+          'domain_id' => '1',
           'header_id' => 'null',
           'footer_id' => 'null',
           'reply_id' => '',
@@ -41,25 +38,25 @@ function mailing_create_expectedresult(){
           'resubscribe_id' => '',
           'optout_id' => '',
           'name' => 'mailing name',
-          'from_name' => 'null',
+          'from_name' => 'FIXME',
           'from_email' => 'info@EXAMPLE.ORG',
           'replyto_email' => 'info@EXAMPLE.ORG',
           'subject' => 'maild',
           'body_text' => 'bdkfhdskfhduew',
           'body_html' => '',
-          'url_tracking' => true,
+          'url_tracking' => '1',
           'forward_replies' => '',
           'auto_responder' => 0,
-          'open_tracking' => true,
+          'open_tracking' => '1',
           'is_completed' => '',
           'msg_template_id' => '',
-          'override_verp' => true,
-          'created_id' => '',
-          'created_date' => '20130109235924',
+          'override_verp' => '1',
+          'created_id' => '1',
+          'created_date' => '20130122025827',
           'scheduled_id' => '',
-          'scheduled_date' => '20130109235924',
-          'approver_id' => '',
-          'approval_date' => '20130109235924',
+          'scheduled_date' => '20130122025827',
+          'approver_id' => '1',
+          'approval_date' => '20130122025827',
           'approval_status_id' => '',
           'approval_note' => '',
           'is_archived' => '',
@@ -74,9 +71,9 @@ function mailing_create_expectedresult(){
               'id' => 1,
               'values' => array( 
                   '0' => array( 
-                      'id' => 1,
-                      'mailing_id' => 1,
-                      'scheduled_date' => '20130109235924',
+                      'id' => '1',
+                      'mailing_id' => '1',
+                      'scheduled_date' => '20130122025827',
                       'start_date' => '',
                       'end_date' => '',
                       'status' => 'Scheduled',
@@ -104,8 +101,13 @@ function mailing_create_expectedresult(){
 *
 * You can see the outcome of the API tests at
 * http://tests.dev.civicrm.org/trunk/results-api_v3
+*
+* To Learn about the API read
+* http://book.civicrm.org/developer/current/techniques/api/
+*
 * and review the wiki at
 * http://wiki.civicrm.org/confluence/display/CRMDOC/CiviCRM+Public+APIs
+*
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 *
