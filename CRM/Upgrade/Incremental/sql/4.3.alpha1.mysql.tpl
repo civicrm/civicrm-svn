@@ -382,8 +382,6 @@ ALTER TABLE `civicrm_financial_trxn`
 ADD CONSTRAINT FK_civicrm_financial_trxn_to_financial_account_id FOREIGN KEY (`to_financial_account_id`) REFERENCES civicrm_financial_account (id),
 ADD CONSTRAINT FK_civicrm_financial_trxn_from_financial_account_id FOREIGN KEY (`from_financial_account_id`) REFERENCES civicrm_financial_account (id);
 
-
--- FIXME
 ALTER TABLE `civicrm_financial_trxn` ADD `payment_processor_id` int unsigned COMMENT 'Payment Processor for this contribution Page';
 
 -- Fill in the payment_processor_id based on a lookup using the payment_processor field
