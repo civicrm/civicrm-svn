@@ -891,6 +891,7 @@ INNER JOIN  civicrm_contact contact_a ON ( activityTarget.target_contact_id = co
 
     if (!isset($profileTypes)) {
       $profileTypes = array_merge(array('Activity', 'Contact'), CRM_Contact_BAO_ContactType::basicTypes());
+      $profileTypes = array_diff($profileTypes, array('Organization','Household'));
     }
 
     return $profileTypes;
