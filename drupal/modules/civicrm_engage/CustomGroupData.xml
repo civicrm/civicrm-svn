@@ -1065,16 +1065,6 @@
       <is_active>1</is_active>
     </OptionGroup>
     <OptionGroup>
-      <name>party_registration_options</name>
-      <title>Party Registration Options</title>
-      <is_active>1</is_active>
-    </OptionGroup>
-    <OptionGroup>
-      <name>county_name_options</name>
-      <title>County Name Options</title>
-      <is_active>1</is_active>
-    </OptionGroup>
-    <OptionGroup>
       <name>constituent_type_ind_values</name>
       <title>Constituent Type Values</title>
       <is_active>1</is_active>
@@ -1288,86 +1278,6 @@
       <is_reserved>0</is_reserved>
       <is_active>1</is_active>
       <option_group_name>event_type</option_group_name>
-    </OptionValue>
-    <OptionValue>
-      <label>Democrat</label>
-      <value>Democrat</value>
-      <is_default>0</is_default>
-      <weight>1</weight>
-      <is_optgroup>0</is_optgroup>
-      <is_reserved>0</is_reserved>
-      <is_active>1</is_active>
-      <option_group_name>party_registration_options</option_group_name>
-    </OptionValue>
-    <OptionValue>
-      <label>Republican</label>
-      <value>Republican</value>
-      <is_default>0</is_default>
-      <weight>2</weight>
-      <is_optgroup>0</is_optgroup>
-      <is_reserved>0</is_reserved>
-      <is_active>1</is_active>
-      <option_group_name>party_registration_options</option_group_name>
-    </OptionValue>
-    <OptionValue>
-      <label>Green</label>
-      <value>Green</value>
-      <is_default>0</is_default>
-      <weight>3</weight>
-      <is_optgroup>0</is_optgroup>
-      <is_reserved>0</is_reserved>
-      <is_active>1</is_active>
-      <option_group_name>party_registration_options</option_group_name>
-    </OptionValue>
-    <OptionValue>
-      <label>Libertarian</label>
-      <value>Libertarian</value>
-      <is_default>0</is_default>
-      <weight>5</weight>
-      <is_optgroup>0</is_optgroup>
-      <is_reserved>0</is_reserved>
-      <is_active>1</is_active>
-      <option_group_name>party_registration_options</option_group_name>
-    </OptionValue>
-    <OptionValue>
-      <label>Other</label>
-      <value>Other</value>
-      <is_default>0</is_default>
-      <weight>7</weight>
-      <is_optgroup>0</is_optgroup>
-      <is_reserved>0</is_reserved>
-      <is_active>1</is_active>
-      <option_group_name>party_registration_options</option_group_name>
-    </OptionValue>
-    <OptionValue>
-      <label>Undeclared</label>
-      <value>Undeclared</value>
-      <is_default>0</is_default>
-      <weight>6</weight>
-      <is_optgroup>0</is_optgroup>
-      <is_reserved>0</is_reserved>
-      <is_active>1</is_active>
-      <option_group_name>party_registration_options</option_group_name>
-    </OptionValue>
-    <OptionValue>
-      <label>Independent</label>
-      <value>Independent</value>
-      <is_default>0</is_default>
-      <weight>4</weight>
-      <is_optgroup>0</is_optgroup>
-      <is_reserved>0</is_reserved>
-      <is_active>1</is_active>
-      <option_group_name>party_registration_options</option_group_name>
-    </OptionValue>
-    <OptionValue>
-      <label>add county here</label>
-      <value>add county here</value>
-      <is_default>0</is_default>
-      <weight>2</weight>
-      <is_optgroup>0</is_optgroup>
-      <is_reserved>0</is_reserved>
-      <is_active>1</is_active>
-      <option_group_name>county_name_options</option_group_name>
     </OptionValue>
     <OptionValue>
       <label>Volunteer</label>
