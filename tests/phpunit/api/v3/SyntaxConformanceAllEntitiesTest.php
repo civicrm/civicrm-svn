@@ -21,8 +21,8 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
     */ function setUp() {
     parent::setUp();
 
-    $this->toBeImplemented['get'] = array('ParticipantPayment', 'Profile', 'CustomValue', 'Website', 'Constant', 'Job', 'CustomSearch', 'Extension', 'ReportTemplate', 'System');
-    $this->toBeImplemented['create'] = array('SurveyRespondant', 'OptionGroup', 'UFMatch', 'LocationType', 'CustomSearch', 'Extension', 'ReportTemplate', 'System');
+    $this->toBeImplemented['get'] = array('ParticipantPayment', 'Profile', 'CustomValue', 'Website','Constant', 'Job', 'CustomSearch', 'Extension', 'ReportTemplate', 'System');
+    $this->toBeImplemented['create'] = array('SurveyRespondant', 'OptionGroup', 'MailingRecipients', 'UFMatch', 'LocationType', 'CustomSearch', 'Extension', 'ReportTemplate', 'System');
     $this->toBeImplemented['delete'] = array('MembershipPayment', 'OptionGroup', 'SurveyRespondant', 'UFJoin', 'UFMatch', 'Extension', 'LocationType', 'System');
     $this->onlyIDNonZeroCount['get'] = array('ActivityType', 'Entity', 'Domain','Setting');
     $this->deprecatedAPI = array('Location', 'ActivityType', 'SurveyRespondant');
@@ -77,7 +77,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
 
 
   public static function toBeSkipped_create($sequential = FALSE) {
-    $entitiesWithoutCreate = array('MailingGroup', 'Constant', 'Entity', 'Location', 'Profile');
+    $entitiesWithoutCreate = array('MailingGroup', 'Constant', 'Entity', 'Location', 'Profile', 'MailingRecipients');
     if ($sequential === TRUE) {
       return $entitiesWithoutCreate;
     }
@@ -107,6 +107,8 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
     $entitiesWithout = array(
       'Mailing',
       'MailingGroup',
+      'MailingJob',
+      'Address',
       'MailingEventUnsubscribe',
       'MailingEventSubscribe',
       'Constant',
@@ -159,6 +161,8 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
       'PriceFieldValue',
       'PledgePayment',
       'ContributionPage',
+      'Phone',
+      'MailSettings',
       'Setting',
     );
     if ($sequential === TRUE) {
@@ -177,6 +181,14 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
   public function getKnownUnworkablesUpdateSingle($entity, $key){
     // can't update values are values for which updates don't result in the value being changed
     $knownFailures = array(
+      'Address' => array(
+        'cant_update' => array(
+          'state_province_id', //issues with country id - need to ensure same country
+          'master_id',//creates relationship
+        ),
+        'cant_return' => array(
+        )
+      ),
       'Pledge' => array(
         'cant_update' => array(
           'pledge_original_installment_amount',
@@ -220,7 +232,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
         ),
       ),
     );
-    if(empty($knownFailures[$entity])){
+    if(empty($knownFailures[$entity]) || empty($knownFailures[$entity][$key])){
       return array();
     }
     return $knownFailures[$entity][$key];
@@ -420,7 +432,6 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
       return;
     }
 
-    $baoString = 'CRM_Grant_BAO_Grant';
     $baoString = _civicrm_api3_get_DAO($entityName);
     $this->assertNotEmpty($baoString, $entityName);
     $this->assertNotEmpty($entityName, $entityName);
@@ -491,12 +502,17 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
 
         case CRM_Utils_Type::T_INT:
           // probably created with a 1
-          $entity[$fieldName] = 6;
+          $entity[$fieldName] = '6';
           if (CRM_Utils_Array::value('FKClassName', $specs)) {
-            $entity[$fieldName] = empty($entity2[$field]) ? CRM_Utils_Array::value($specs['uniqueName'], $entity2) : $entity2[$field];
-            //todo - there isn't always something set here - & our checking on unset values is limited
-            if (empty($entity[$field])) {
-              unset($entity[$field]);
+            if($specs['FKClassName'] == $baoString){
+              $entity[$fieldName] = (string) $entity2['id'];
+            }
+            else{
+              $entity[$fieldName] = (string) empty($entity2[$field]) ? CRM_Utils_Array::value($specs['uniqueName'], $entity2) : $entity2[$field];
+             //todo - there isn't always something set here - & our checking on unset values is limited
+              if (empty($entity[$field])) {
+                unset($entity[$field]);
+              }
             }
           }
           break;
@@ -504,12 +520,12 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
         case CRM_Utils_Type::T_BOOL:
         case CRM_Utils_Type::T_BOOLEAN:
           // probably created with a 1
-          $entity[$fieldName] = 0;
+          $entity[$fieldName] = '0';
           break;
 
         case CRM_Utils_Type::T_FLOAT:
         case CRM_Utils_Type::T_MONEY:
-          $entity[$field] = 222;
+          $entity[$field] = '222';
           break;
 
         case CRM_Utils_Type::T_URL:
@@ -518,7 +534,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
       $constant = CRM_Utils_Array::value('pseudoconstant', $specs);
       if (!empty($constant)) {
         $constantOptions = array_reverse(array_keys(CRM_Core_PseudoConstant::getConstant($constant['name'])));
-        $entity[$field] = $constantOptions[0];
+        $entity[$field] = (string) $constantOptions[0];
       }
       $enum = CRM_Utils_Array::value('enumValues', $specs);
       if (!empty($enum)) {
@@ -534,8 +550,10 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
       );
 
       $update = civicrm_api($entityName, 'create', $updateParams);
-
-      $this->assertAPISuccess($update,print_r($updateParams, TRUE) . 'in line ' . __LINE__);
+      if(!empty($update['is_error'])){
+        print_r($update);
+      }
+      $this->assertAPISuccess($update, print_r($updateParams, TRUE) . 'in line ' . __LINE__);
       $checkParams = array(
         'id' => $entity['id'],
         'version' => 3,

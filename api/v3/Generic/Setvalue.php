@@ -15,7 +15,7 @@ function civicrm_api3_generic_setValue($apiRequest) {
   $field = CRM_Utils_String::munge($params['field']);
   $value = $params['value'];
 
-  $fields = civicrm_api($entity, 'getFields', array("version" => 3, "sequential"));
+  $fields = civicrm_api($entity, 'getFields', array('version' => 3, 'action' => 'create', "sequential"));
   // getfields error, shouldn't happen.
   if ($fields['is_error'])
   return $fields;
