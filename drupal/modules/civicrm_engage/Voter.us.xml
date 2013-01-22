@@ -19,142 +19,103 @@
   </CustomGroups>
   <CustomFields>
     <CustomField>
+      <custom_group_name>Voter_Info</custom_group_name>
       <label>Precinct</label>
-      <data_type>String</data_type>
-      <html_type>Text</html_type>
-      <is_required>0</is_required>
-      <is_searchable>1</is_searchable>
-      <is_search_range>0</is_search_range>
-      <weight>93</weight>
-      <is_active>1</is_active>
-      <is_view>0</is_view>
-      <text_length>255</text_length>
-      <date_format>M:;:;:;d:;:;:;Y</date_format>
-      <note_columns>60</note_columns>
-      <note_rows>4</note_rows>
       <column_name>precinct</column_name>
-      <custom_group_name>Voter_Info</custom_group_name>
-    </CustomField>
-    <CustomField>
-      <label>State District</label>
       <data_type>String</data_type>
       <html_type>Text</html_type>
       <is_required>0</is_required>
       <is_searchable>1</is_searchable>
       <is_search_range>0</is_search_range>
-      <weight>99</weight>
+      <weight>124</weight>
       <is_active>1</is_active>
       <is_view>0</is_view>
       <text_length>255</text_length>
       <date_format>M:;:;:;d:;:;:;Y</date_format>
       <note_columns>60</note_columns>
       <note_rows>4</note_rows>
-      <column_name>state_district</column_name>
-      <custom_group_name>Voter_Info</custom_group_name>
     </CustomField>
     <CustomField>
+      <custom_group_name>Voter_Info</custom_group_name>
+      <label>State Senate District</label>
+      <column_name>state_senate_district</column_name>
+      <data_type>String</data_type>
+      <html_type>Text</html_type>
+      <is_required>0</is_required>
+      <is_searchable>1</is_searchable>
+      <is_search_range>0</is_search_range>
+      <weight>140</weight>
+      <is_active>1</is_active>
+      <is_view>0</is_view>
+      <text_length>255</text_length>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+    </CustomField>
+    <CustomField>
+      <custom_group_name>Voter_Info</custom_group_name>
       <label>City District</label>
-      <data_type>String</data_type>
-      <html_type>Text</html_type>
-      <is_required>0</is_required>
-      <is_searchable>1</is_searchable>
-      <is_search_range>0</is_search_range>
-      <weight>103</weight>
-      <is_active>1</is_active>
-      <is_view>0</is_view>
-      <text_length>255</text_length>
-      <date_format>M:;:;:;d:;:;:;Y</date_format>
-      <note_columns>60</note_columns>
-      <note_rows>4</note_rows>
       <column_name>city_district</column_name>
-      <custom_group_name>Voter_Info</custom_group_name>
+      <data_type>String</data_type>
+      <html_type>Text</html_type>
+      <is_required>0</is_required>
+      <is_searchable>1</is_searchable>
+      <is_search_range>0</is_search_range>
+      <weight>133</weight>
+      <is_active>1</is_active>
+      <is_view>0</is_view>
+      <text_length>255</text_length>
+      <date_format>M:;:;:;d:;:;:;Y</date_format>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
     </CustomField>
     <CustomField>
+      <custom_group_name>Voter_Info</custom_group_name>
+      <label>School District</label>
+      <column_name>school_district</column_name>
+      <data_type>String</data_type>
+      <html_type>Text</html_type>
+      <is_required>0</is_required>
+      <is_searchable>1</is_searchable>
+      <is_search_range>0</is_search_range>
+      <weight>149</weight>
+      <is_active>1</is_active>
+      <is_view>0</is_view>
+      <text_length>255</text_length>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+    </CustomField>
+    <CustomField>
+      <custom_group_name>Voter_Info</custom_group_name>
+      <label>County District</label>
+      <column_name>county_district</column_name>
+      <data_type>String</data_type>
+      <html_type>Text</html_type>
+      <is_required>0</is_required>
+      <is_searchable>1</is_searchable>
+      <is_search_range>0</is_search_range>
+      <weight>154</weight>
+      <is_active>1</is_active>
+      <is_view>0</is_view>
+      <text_length>255</text_length>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+    </CustomField>
+    <CustomField>
+      <custom_group_name>Voter_Info</custom_group_name>
       <label>Congressional District</label>
+      <column_name>congressional_district</column_name>
       <data_type>String</data_type>
       <html_type>Text</html_type>
       <is_required>0</is_required>
       <is_searchable>1</is_searchable>
       <is_search_range>0</is_search_range>
-      <weight>113</weight>
+      <weight>158</weight>
       <is_active>1</is_active>
       <is_view>0</is_view>
       <text_length>255</text_length>
       <date_format>M:;:;:;d:;:;:;Y</date_format>
       <note_columns>60</note_columns>
       <note_rows>4</note_rows>
-      <column_name>federal_district</column_name>
-      <custom_group_name>Voter_Info</custom_group_name>
-    </CustomField>
-    <CustomField>
-      <label>Party Registration</label>
-      <data_type>String</data_type>
-      <html_type>Radio</html_type>
-      <is_required>0</is_required>
-      <is_searchable>1</is_searchable>
-      <is_search_range>0</is_search_range>
-      <weight>86</weight>
-      <is_active>1</is_active>
-      <is_view>0</is_view>
-      <text_length>255</text_length>
-      <date_format>M:;:;:;d:;:;:;Y</date_format>
-      <note_columns>60</note_columns>
-      <note_rows>4</note_rows>
-      <column_name>party_registration</column_name>
-      <option_group_name>party_registration_options</option_group_name>
-      <custom_group_name>Voter_Info</custom_group_name>
-    </CustomField>
-    <CustomField>
-      <label>If other party...</label>
-      <data_type>String</data_type>
-      <html_type>Text</html_type>
-      <is_required>0</is_required>
-      <is_searchable>1</is_searchable>
-      <is_search_range>0</is_search_range>
-      <weight>91</weight>
-      <is_active>1</is_active>
-      <is_view>0</is_view>
-      <text_length>255</text_length>
-      <date_format>M:;:;:;d:;:;:;Y</date_format>
-      <note_columns>60</note_columns>
-      <note_rows>4</note_rows>
-      <column_name>if_other_party</column_name>
-      <custom_group_name>Voter_Info</custom_group_name>
-    </CustomField>
-    <CustomField>
-      <label>State Voter ID</label>
-      <data_type>Float</data_type>
-      <html_type>Text</html_type>
-      <is_required>0</is_required>
-      <is_searchable>1</is_searchable>
-      <is_search_range>1</is_search_range>
-      <weight>69</weight>
-      <is_active>1</is_active>
-      <is_view>0</is_view>
-      <text_length>255</text_length>
-      <date_format>M:;:;:;d:;:;:;Y</date_format>
-      <note_columns>60</note_columns>
-      <note_rows>4</note_rows>
-      <column_name>state_voter_id</column_name>
-      <custom_group_name>Voter_Info</custom_group_name>
-    </CustomField>
-    <CustomField>
-      <label>County Name</label>
-      <data_type>String</data_type>
-      <html_type>Select</html_type>
-      <is_required>0</is_required>
-      <is_searchable>1</is_searchable>
-      <is_search_range>0</is_search_range>
-      <weight>121</weight>
-      <is_active>1</is_active>
-      <is_view>0</is_view>
-      <text_length>255</text_length>
-      <date_format>M:;:;:;d:;:;:;Y</date_format>
-      <note_columns>60</note_columns>
-      <note_rows>4</note_rows>
-      <column_name>county_name</column_name>
-      <option_group_name>county_name_options</option_group_name>
-      <custom_group_name>Voter_Info</custom_group_name>
     </CustomField>
     <CustomField>
       <label>Voter History</label>
@@ -174,31 +135,338 @@ N - New</help_post>
       <note_columns>60</note_columns>
       <note_rows>4</note_rows>
       <column_name>voter_history</column_name>
-      <option_group_name>voter_history_values</option_group_name>
+      <option_group_name>voter_history_options</option_group_name>
       <custom_group_name>Voter_Info</custom_group_name>
     </CustomField>
     <CustomField>
-        <label>Ward</label>
+      <custom_group_name>Voter_Info</custom_group_name>
+      <label>Party Registration</label>
+      <column_name>party_registration</column_name>
       <data_type>String</data_type>
-      <html_type>Text</html_type>
+      <html_type>Radio</html_type>
       <is_required>0</is_required>
       <is_searchable>1</is_searchable>
       <is_search_range>0</is_search_range>
-        <weight>94</weight>
+      <weight>8</weight>
       <is_active>1</is_active>
       <is_view>0</is_view>
       <text_length>255</text_length>
       <date_format>M:;:;:;d:;:;:;Y</date_format>
       <note_columns>60</note_columns>
       <note_rows>4</note_rows>
-        <column_name>ward</column_name>
-        <custom_group_name>Voter_Info</custom_group_name>
+      <option_group_name>party_registration_options</option_group_name>
+    </CustomField>
+    <CustomField>
+      <custom_group_name>Voter_Info</custom_group_name>
+      <label>If other party...</label>
+      <column_name>if_other_party</column_name>
+      <data_type>String</data_type>
+      <html_type>Text</html_type>
+      <is_required>0</is_required>
+      <is_searchable>1</is_searchable>
+      <is_search_range>0</is_search_range>
+      <weight>30</weight>
+      <is_active>1</is_active>
+      <is_view>0</is_view>
+      <text_length>255</text_length>
+      <date_format>M:;:;:;d:;:;:;Y</date_format>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+    </CustomField>
+    <CustomField>
+      <custom_group_name>Voter_Info</custom_group_name>
+      <label>County Name</label>
+      <column_name>county_name</column_name>
+      <data_type>String</data_type>
+      <html_type>Select</html_type>
+      <is_required>0</is_required>
+      <is_searchable>1</is_searchable>
+      <is_search_range>0</is_search_range>
+      <weight>166</weight>
+      <is_active>1</is_active>
+      <is_view>0</is_view>
+      <text_length>255</text_length>
+      <date_format>M:;:;:;d:;:;:;Y</date_format>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+      <option_group_name>county_name_options</option_group_name>
+    </CustomField>
+    <CustomField>
+      <custom_group_name>Voter_Info</custom_group_name>
+      <name>Van_ID</name>
+      <label>Van ID</label>
+      <column_name>van_id</column_name>
+      <data_type>String</data_type>
+      <html_type>Text</html_type>
+      <is_required>0</is_required>
+      <is_searchable>1</is_searchable>
+      <is_search_range>0</is_search_range>
+      <weight>188</weight>
+      <is_active>1</is_active>
+      <is_view>0</is_view>
+      <text_length>255</text_length>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+    </CustomField>
+    <CustomField>
+      <custom_group_name>Voter_Info</custom_group_name>
+      <name>DW_ID</name>
+      <column_name>dw_id</column_name>
+      <label>DW ID</label>
+      <data_type>String</data_type>
+      <html_type>Text</html_type>
+      <is_required>0</is_required>
+      <is_searchable>1</is_searchable>
+      <is_search_range>0</is_search_range>
+      <weight>186</weight>
+      <is_active>1</is_active>
+      <is_view>0</is_view>
+      <text_length>255</text_length>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+    </CustomField>
+    <CustomField>
+      <custom_group_name>Voter_Info</custom_group_name>
+      <name>County_File_ID</name>
+      <label>County File ID</label>
+      <column_name>county_field_id</column_name>
+      <data_type>String</data_type>
+      <html_type>Text</html_type>
+      <is_required>0</is_required>
+      <is_searchable>0</is_searchable>
+      <is_search_range>0</is_search_range>
+      <weight>193</weight>
+      <is_active>1</is_active>
+      <is_view>0</is_view>
+      <text_length>255</text_length>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+    </CustomField>
+    <CustomField>
+      <custom_group_name>Voter_Info</custom_group_name>
+      <name>Precinct_Name</name>
+      <label>Precinct Name</label>
+      <column_name>precinct_name</column_name>
+      <data_type>String</data_type>
+      <html_type>Text</html_type>
+      <is_required>0</is_required>
+      <is_searchable>1</is_searchable>
+      <is_search_range>0</is_search_range>
+      <weight>33</weight>
+      <is_active>1</is_active>
+      <is_view>0</is_view>
+      <text_length>255</text_length>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+    </CustomField>
+    <CustomField>
+      <custom_group_name>Voter_Info</custom_group_name>
+      <name>Voter_Registration_Date</name>
+      <label>Voter Registration Date</label>
+      <column_name>voter_registration_date</column_name>
+      <data_type>Date</data_type>
+      <html_type>Select Date</html_type>
+      <is_required>0</is_required>
+      <is_searchable>1</is_searchable>
+      <is_search_range>1</is_search_range>
+      <weight>171</weight>
+      <is_active>1</is_active>
+      <is_view>0</is_view>
+      <text_length>255</text_length>
+      <date_format>M:;:;:;d:;:;:;Y</date_format>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+    </CustomField>
+    <CustomField>
+      <custom_group_name>Voter_Info</custom_group_name>
+      <name>State_Voter_File_ID</name>
+      <label>State Voter File ID</label>
+      <column_name>state_voter_file_id</column_name>
+      <data_type>String</data_type>
+      <html_type>Text</html_type>
+      <is_required>0</is_required>
+      <is_searchable>0</is_searchable>
+      <is_search_range>0</is_search_range>
+      <weight>192</weight>
+      <is_active>1</is_active>
+      <is_view>0</is_view>
+      <text_length>255</text_length>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+    </CustomField>
+    <CustomField>
+      <custom_group_name>Voter_Info</custom_group_name>
+      <name>State_Assembly_District</name>
+      <label>State Assembly District</label>
+      <column_name>state_assembly_district</column_name>
+      <data_type>String</data_type>
+      <html_type>Text</html_type>
+      <is_required>0</is_required>
+      <is_searchable>1</is_searchable>
+      <is_search_range>0</is_search_range>
+      <weight>135</weight>
+      <is_active>1</is_active>
+      <is_view>0</is_view>
+      <text_length>255</text_length>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+    </CustomField>
+    <CustomField>
+      <custom_group_name>Voter_Info</custom_group_name>
+      <name>Elections_2011</name>
+      <label>Elections 2011</label>
+      <column_name>elections_2011</column_name>
+      <data_type>String</data_type>
+      <html_type>CheckBox</html_type>
+      <default_value>Array</default_value>
+      <is_required>0</is_required>
+      <is_searchable>1</is_searchable>
+      <is_search_range>0</is_search_range>
+      <weight>172</weight>
+      <is_active>1</is_active>
+      <is_view>0</is_view>
+      <text_length>255</text_length>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+      <option_group_name>election_options</option_group_name>
+    </CustomField>
+    <CustomField>
+      <custom_group_name>Voter_Info</custom_group_name>
+      <name>Elections_2010</name>
+      <label>Elections 2010</label>
+      <column_name>elections_2010</column_name>
+      <data_type>String</data_type>
+      <html_type>CheckBox</html_type>
+      <default_value>Array</default_value>
+      <is_required>0</is_required>
+      <is_searchable>1</is_searchable>
+      <is_search_range>0</is_search_range>
+      <weight>173</weight>
+      <is_active>1</is_active>
+      <is_view>0</is_view>
+      <text_length>255</text_length>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+      <option_group_name>election_options</option_group_name>
+    </CustomField>
+    <CustomField>
+      <custom_group_name>Voter_Info</custom_group_name>
+      <name>Elections_2009</name>
+      <label>Elections 2009</label>
+      <column_name>elections_2009</column_name>
+      <data_type>String</data_type>
+      <html_type>CheckBox</html_type>
+      <default_value>Array</default_value>
+      <is_required>0</is_required>
+      <is_searchable>1</is_searchable>
+      <is_search_range>0</is_search_range>
+      <weight>174</weight>
+      <is_active>1</is_active>
+      <is_view>0</is_view>
+      <text_length>255</text_length>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+      <option_group_name>election_options</option_group_name>
+    </CustomField>
+    <CustomField>
+      <custom_group_name>Voter_Info</custom_group_name>
+      <name>Elections_2008</name>
+      <label>Elections 2008</label>
+      <column_name>elections_2008</column_name>
+      <data_type>String</data_type>
+      <html_type>CheckBox</html_type>
+      <default_value>Array</default_value>
+      <is_required>0</is_required>
+      <is_searchable>1</is_searchable>
+      <is_search_range>0</is_search_range>
+      <weight>176</weight>
+      <is_active>1</is_active>
+      <is_view>0</is_view>
+      <text_length>255</text_length>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+      <option_group_name>election_options</option_group_name>
+    </CustomField>
+    <CustomField>
+      <custom_group_name>Voter_Info</custom_group_name>
+      <name>Elections_2007</name>
+      <label>Elections 2007</label>
+      <column_name>elections_2007</column_name>
+      <data_type>String</data_type>
+      <html_type>CheckBox</html_type>
+      <default_value>Array</default_value>
+      <is_required>0</is_required>
+      <is_searchable>1</is_searchable>
+      <is_search_range>0</is_search_range>
+      <weight>178</weight>
+      <is_active>1</is_active>
+      <is_view>0</is_view>
+      <text_length>255</text_length>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+      <option_group_name>election_options</option_group_name>
+    </CustomField>
+    <CustomField>
+      <custom_group_name>Voter_Info</custom_group_name>
+      <name>Elections_2006</name>
+      <label>Elections 2006</label>
+      <column_name>elections_2006</column_name>
+      <data_type>String</data_type>
+      <html_type>CheckBox</html_type>
+      <default_value>Array</default_value>
+      <is_required>0</is_required>
+      <is_searchable>1</is_searchable>
+      <is_search_range>0</is_search_range>
+      <weight>180</weight>
+      <is_active>1</is_active>
+      <is_view>0</is_view>
+      <text_length>255</text_length>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+      <option_group_name>election_options</option_group_name>
+    </CustomField>
+    <CustomField>
+      <custom_group_name>Voter_Info</custom_group_name>
+      <name>Elections_2005</name>
+      <label>Elections 2005</label>
+      <column_name>elections_2005</column_name>
+      <data_type>String</data_type>
+      <html_type>CheckBox</html_type>
+      <default_value>Array</default_value>
+      <is_required>0</is_required>
+      <is_searchable>1</is_searchable>
+      <is_search_range>0</is_search_range>
+      <weight>182</weight>
+      <is_active>1</is_active>
+      <is_view>0</is_view>
+      <text_length>255</text_length>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+      <option_group_name>election_options</option_group_name>
+    </CustomField>
+    <CustomField>
+      <custom_group_name>Voter_Info</custom_group_name>
+      <name>Date_of_Voter_Data</name>
+      <label>Date of Voter Data</label>
+      <column_name>date_of_voter_data</column_name>
+      <data_type>Date</data_type>
+      <html_type>Select Date</html_type>
+      <is_required>0</is_required>
+      <is_searchable>1</is_searchable>
+      <is_search_range>1</is_search_range>
+      <weight>183</weight>
+      <is_active>1</is_active>
+      <is_view>0</is_view>
+      <text_length>255</text_length>
+      <date_format>M:;:;:;d:;:;:;Y</date_format>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
     </CustomField>
   </CustomFields>
   <OptionGroups>
     <OptionGroup>
-      <name>voter_history_values</name>
-      <title>Voter History Values</title>
+      <name>voter_history_options</name>
+      <title>Voter History Options</title>
       <is_active>1</is_active>
     </OptionGroup>
     <OptionGroup>
@@ -211,6 +479,12 @@ N - New</help_post>
       <title>Party Registration Options</title>
       <is_active>1</is_active>
     </OptionGroup>
+    <OptionGroup>
+      <name>election_options</name>
+      <title>Election Options</title>
+      <is_active>1</is_active>
+    </OptionGroup>
+
   </OptionGroups>
   <OptionValues>
     <OptionValue>
@@ -221,7 +495,7 @@ N - New</help_post>
       <is_optgroup>0</is_optgroup>
       <is_reserved>0</is_reserved>
       <is_active>1</is_active>
-      <option_group_name>voter_history_values</option_group_name>
+      <option_group_name>voter_history_options</option_group_name>
     </OptionValue>
     <OptionValue>
       <label>O</label>
@@ -231,7 +505,7 @@ N - New</help_post>
       <is_optgroup>0</is_optgroup>
       <is_reserved>0</is_reserved>
       <is_active>1</is_active>
-      <option_group_name>voter_history_values</option_group_name>
+      <option_group_name>voter_history_options</option_group_name>
     </OptionValue>
     <OptionValue>
       <label>N</label>
@@ -241,7 +515,7 @@ N - New</help_post>
       <is_optgroup>0</is_optgroup>
       <is_reserved>0</is_reserved>
       <is_active>1</is_active>
-      <option_group_name>voter_history_values</option_group_name>
+      <option_group_name>voter_history_options</option_group_name>
     </OptionValue>
     <OptionValue>
       <label>Democrat</label>
@@ -322,6 +596,94 @@ N - New</help_post>
       <is_reserved>0</is_reserved>
       <is_active>1</is_active>
       <option_group_name>county_name_options</option_group_name>
+    </OptionValue>
+      <OptionValue>
+      <option_group_name>election_options</option_group_name>
+      <label>G - N</label>
+      <value>GN</value>
+      <name>G__N</name>
+      <is_default>0</is_default>
+      <weight>2</weight>
+      <is_optgroup>0</is_optgroup>
+      <is_reserved>0</is_reserved>
+      <is_active>1</is_active>
+    </OptionValue>
+    <OptionValue>
+      <option_group_name>election_options</option_group_name>
+      <label>G - Y</label>
+      <value>GY</value>
+      <name>G__Y</name>
+      <is_default>0</is_default>
+      <weight>1</weight>
+      <is_optgroup>0</is_optgroup>
+      <is_reserved>0</is_reserved>
+      <is_active>1</is_active>
+    </OptionValue>
+    <OptionValue>
+      <option_group_name>election_options</option_group_name>
+      <label>P - N</label>
+      <value>PN</value>
+      <name>P__N</name>
+      <is_default>0</is_default>
+      <weight>4</weight>
+      <is_optgroup>0</is_optgroup>
+      <is_reserved>0</is_reserved>
+      <is_active>1</is_active>
+    </OptionValue>
+    <OptionValue>
+      <option_group_name>election_options</option_group_name>
+      <label>P - Y</label>
+      <value>PY</value>
+      <name>P__Y</name>
+      <is_default>0</is_default>
+      <weight>3</weight>
+      <is_optgroup>0</is_optgroup>
+      <is_reserved>0</is_reserved>
+      <is_active>1</is_active>
+    </OptionValue>
+    <OptionValue>
+      <option_group_name>election_options</option_group_name>
+      <label>PP - N</label>
+      <value>PPN</value>
+      <name>PP__N</name>
+      <is_default>0</is_default>
+      <weight>6</weight>
+      <is_optgroup>0</is_optgroup>
+      <is_reserved>0</is_reserved>
+      <is_active>1</is_active>
+    </OptionValue>
+    <OptionValue>
+      <option_group_name>election_options</option_group_name>
+      <label>PP - Y</label>
+      <value>PPY</value>
+      <name>PP__Y</name>
+      <is_default>0</is_default>
+      <weight>5</weight>
+      <is_optgroup>0</is_optgroup>
+      <is_reserved>0</is_reserved>
+      <is_active>1</is_active>
+    </OptionValue>
+    <OptionValue>
+      <option_group_name>election_options</option_group_name>
+      <label>S - N</label>
+      <value>SN</value>
+      <name>S__N</name>
+      <is_default>0</is_default>
+      <weight>8</weight>
+      <is_optgroup>0</is_optgroup>
+      <is_reserved>0</is_reserved>
+      <is_active>1</is_active>
+    </OptionValue>
+    <OptionValue>
+      <option_group_name>election_options</option_group_name>
+      <label>S - Y</label>
+      <value>SY</value>
+      <name>S__Y</name>
+      <is_default>0</is_default>
+      <weight>7</weight>
+      <is_optgroup>0</is_optgroup>
+      <is_reserved>0</is_reserved>
+      <is_active>1</is_active>
     </OptionValue>
   </OptionValues>
   <ProfileGroups>

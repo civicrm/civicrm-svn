@@ -241,7 +241,7 @@ function civicrm_engage_load_contact_subtypes() {
 }
 
 function civicrm_engage_load_custom_data() {
-  drupal_set_message("Loading default civicrm_engage configuration.");
+  drupal_set_message("Loading default civicrm_engage custom data.");
   $xml_file = civicrm_engage_get_absolute_module_path() . '/CustomGroupData.xml';
   require_once 'CRM/Utils/Migrate/Import.php';
   $import = new CRM_Utils_Migrate_Import();
@@ -250,7 +250,7 @@ function civicrm_engage_load_custom_data() {
 }
 
 function civicrm_engage_load_custom_voter_us_data() {
-  drupal_set_message("Loading default civicrm_engage custom voter US data.");
+  drupal_set_message("Loading default civicrm_engage US custom voter data.");
   $xml_file = civicrm_engage_get_absolute_module_path() . '/Voter.us.xml';
   require_once 'CRM/Utils/Migrate/Import.php';
   $import = new CRM_Utils_Migrate_Import();
