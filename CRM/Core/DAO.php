@@ -1296,11 +1296,18 @@ SELECT contact_id
         if (CRM_Utils_Array::value($dbName, $params) !== NULL && !is_array($params[$dbName])) {
           $object->$dbName = $params[$dbName];
         }
+
         elseif ($dbName != 'id') {
           if ($FKClassName != NULL) {
             //skip the FK if it is not required
             // if it's contact id we should create even if not required
+            // we'll have a go @ fetching first though
             if (!$required && $dbName != 'contact_id') {
+              $fkDAO = new $FKClassName;
+              if($fkDAO->find(TRUE)){
+                $object->$dbName = $fkDAO->id;
+              }
+              unset($fkDAO);
               continue;
             }
             if(in_array($FKClassName, CRM_Core_DAO::$_testEntitiesToSkip)){
@@ -1435,8 +1442,11 @@ SELECT contact_id
         $dbName = $value['name'];
 
         $FKClassName = CRM_Utils_Array::value('FKClassName', $value);
-
-        if ($FKClassName != NULL && $object->$dbName && !in_array($FKClassName, CRM_Core_DAO::$_testEntitiesToSkip)) {
+        $required = CRM_Utils_Array::value('required', $value);
+        if ($FKClassName != NULL
+          && $object->$dbName
+          && !in_array($FKClassName, CRM_Core_DAO::$_testEntitiesToSkip)
+          && ($required || $dbName == 'contact_id')) {
           $deletions[] = array($FKClassName, array('id' => $object->$dbName)); // x
         }
       }
