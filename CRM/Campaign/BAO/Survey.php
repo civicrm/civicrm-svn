@@ -846,7 +846,10 @@ INNER JOIN  civicrm_contact contact_a ON ( activityTarget.target_contact_id = co
         'entity_table' => 'civicrm_survey',
         'module' => 'CiviCampaign',
       );
-      $ufIds[$surveyId] = CRM_Core_BAO_UFJoin::findUFGroupId($ufJoinParams);
+      list($first, $second) = CRM_Core_BAO_UFJoin::getUFGroupIds($ufJoinParams);
+      $ufIds[$surveyId] = array($first);
+      if ($second) 
+        $ufIds[$surveyId][] = array_shift($second);
     }
 
     return $ufIds[$surveyId];
@@ -923,10 +926,9 @@ INNER JOIN  civicrm_contact contact_a ON ( activityTarget.target_contact_id = co
     $profileId = self::getSurveyProfileId($surveyId);
 
     if (!$profileId) {
-
       return $responseFields;
-
     }
+
     if (!$surveyTypeId) {
       $surveyTypeId = CRM_Core_DAO::getFieldValue('CRM_Campaign_DAO_Survey', $surveyId, 'activity_type_id');
     }
