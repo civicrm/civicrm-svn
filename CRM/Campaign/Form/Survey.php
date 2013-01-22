@@ -123,23 +123,31 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form {
             'name' => ts('Cancel'),
             );
     $this->addButtons($buttons);
+
+    $url = CRM_Utils_System::url('civicrm/campaign', 'reset=1&subPage=survey');
+    $session->replaceUserContext($url);
   }
 
   function endPostProcess() {
     // make submit buttons keep the current working tab opened.
-    if ($this->_action & CRM_Core_Action::UPDATE) {
+    if ($this->_action & (CRM_Core_Action::UPDATE | CRM_Core_Action::ADD)) {
       $className = CRM_Utils_String::getClassName($this->_name);
       $subPage   = strtolower($className);
       CRM_Core_Session::setStatus(ts("'%1' information has been saved.", array(1 => $className)), ts('Saved'), 'success');
 
       $this->postProcessHook();
 
-      CRM_Utils_System::redirect(CRM_Utils_System::url("civicrm/survey/configure/{$subPage}",
-                                                       "action=update&reset=1&id={$this->_surveyId}"));
-    }
-    else if ($this->_action & CRM_Core_Action::ADD) {
-      CRM_Utils_System::redirect(CRM_Utils_System::url("civicrm/survey/configure/contact",
-                                                       "action=update&reset=1&id={$this->_surveyId}"));
+      if ($this->controller->getButtonName('submit') == "_qf_{$className}_upload_done") {
+        CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/campaign', 'reset=1&subPage=survey'));
+      } 
+      else {
+        if ($this->_action & CRM_Core_Action::ADD)
+          CRM_Utils_System::redirect(CRM_Utils_System::url("civicrm/survey/configure/contact",
+                                                           "action=update&reset=1&id={$this->_surveyId}"));
+        else
+          CRM_Utils_System::redirect(CRM_Utils_System::url("civicrm/survey/configure/{$subPage}",
+                                                           "action=update&reset=1&id={$this->_surveyId}"));
+      }
     }
   }
 

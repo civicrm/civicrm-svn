@@ -86,11 +86,8 @@ class CRM_Campaign_Form_Survey_Main extends CRM_Campaign_Form_Survey {
       CRM_Custom_Form_CustomData::buildQuickForm($this);
     }
 
-    $session = CRM_Core_Session::singleton();
-    $url = CRM_Utils_System::url('civicrm/campaign', 'reset=1&subPage=survey');
-    $session->pushUserContext($url);
-
     if ($this->_name != 'Petition') {
+      $url = CRM_Utils_System::url('civicrm/campaign', 'reset=1&subPage=survey');
       CRM_Utils_System::appendBreadCrumb(array(array('title' => ts('Survey Dashboard'), 'url' => $url)));
     }
 
@@ -241,11 +238,6 @@ class CRM_Campaign_Form_Survey_Main extends CRM_Campaign_Form_Survey {
       'Survey'
     );
     $survey = CRM_Campaign_BAO_Survey::create($params);
-
-    $status = false;
-    if (!is_a($survey, 'CRM_Core_Error')) {
-      $status = ts('Survey %1 has been saved.', array(1 => $params['title']));
-    }
     $this->_surveyId = $survey->id;
 
     if (CRM_Utils_Array::value('result_id', $this->_values)) {
@@ -260,10 +252,6 @@ class CRM_Campaign_Form_Survey_Main extends CRM_Campaign_Form_Survey {
       if (!$countSurvey) {
         CRM_Core_BAO_OptionGroup::del($this->_values['result_id']);
       }
-    }
-
-    if ($status) {
-      CRM_Core_Session::setStatus($status, ts('Saved'), 'success');
     }
 
     parent::endPostProcess();

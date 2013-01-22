@@ -337,8 +337,8 @@ class CRM_Campaign_Form_Survey_Results extends CRM_Campaign_Form_Survey {
    */
   public function postProcess() {
     // store the submitted values in an array
+    $status = '';
     $params = $this->controller->exportValues($this->_name);
-
     $params['id'] = $this->_surveyId;
 
     $updateResultSet = FALSE;
