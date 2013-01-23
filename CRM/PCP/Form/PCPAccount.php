@@ -187,7 +187,7 @@ class CRM_PCP_Form_PCPAccount extends CRM_Core_Form {
       if ($addCaptcha) {
         $captcha = &CRM_Utils_ReCAPTCHA::singleton();
         $captcha->add($this);
-        $this->assign("isCaptcha", TRUE);
+        $this->assign('isCaptcha', TRUE);
       }
     }
 

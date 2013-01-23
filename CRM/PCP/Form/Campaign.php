@@ -130,7 +130,8 @@ class CRM_PCP_Form_Campaign extends CRM_Core_Form {
     $this->addElement('checkbox', 'is_honor_roll', ts('Honor Roll'), NULL);
     $this->addElement('checkbox', 'is_active', ts('Active'));
 
-    $this->addButtons(array(
+    $this->addButtons(
+      array(
         array(
           'type' => 'upload',
           'name' => ts('Save'),
@@ -169,7 +170,7 @@ class CRM_PCP_Form_Campaign extends CRM_Core_Form {
     ) {
       list($width, $height) = getimagesize($files['attachFile_1']['tmp_name']);
       if ($width > 360 || $height > 360) {
-        $errors['attachFile_1'] = ts("Your picture or image file cannot be larger than 360 x 360 pixels in size.") . ' ' . ts("The dimensions of the image you have selected are %1 x %2.", array(1 => $width, 2 => $height)) . ' ' . ts("Please shrink or crop the file or find another smaller image and try again.");
+        $errors['attachFile_1'] = ts('Your picture or image file cannot be larger than 360 x 360 pixels in size.') . ' ' . ts("The dimensions of the image you have selected are %1 x %2.", array(1 => $width, 2 => $height)) . ' ' . ts('Please shrink or crop the file or find another smaller image and try again.');
       }
     }
     return $errors;
@@ -265,7 +266,7 @@ class CRM_PCP_Form_Campaign extends CRM_Core_Form {
 
       $this->assign('pcpId', $pcp->id);
 
-      $supporterUrl = CRM_Utils_System::url("civicrm/contact/view",
+      $supporterUrl = CRM_Utils_System::url('civicrm/contact/view',
         "reset=1&cid={$pcp->contact_id}",
         TRUE, NULL, FALSE,
         FALSE
@@ -276,7 +277,7 @@ class CRM_PCP_Form_Campaign extends CRM_Core_Form {
 
 
       if ($this->_component == 'contribute') {
-        $pageUrl = CRM_Utils_System::url("civicrm/contribute/transact",
+        $pageUrl = CRM_Utils_System::url('civicrm/contribute/transact',
           "reset=1&id={$pcpBlock->entity_id}",
           TRUE, NULL, FALSE,
           TRUE
@@ -284,7 +285,7 @@ class CRM_PCP_Form_Campaign extends CRM_Core_Form {
         $contribPageTitle = CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_ContributionPage', $pcpBlock->entity_id, 'title');
       }
       elseif ($this->_component == 'event') {
-        $pageUrl = CRM_Utils_System::url("civicrm/event",
+        $pageUrl = CRM_Utils_System::url('civicrm/event',
           "reset=1&id={$pcpBlock->entity_id}",
           TRUE, NULL, FALSE,
           TRUE
@@ -295,7 +296,7 @@ class CRM_PCP_Form_Campaign extends CRM_Core_Form {
       $this->assign('contribPageUrl', $pageUrl);
       $this->assign('contribPageTitle', $contribPageTitle);
 
-      $managePCPUrl = CRM_Utils_System::url("civicrm/admin/pcp",
+      $managePCPUrl = CRM_Utils_System::url('civicrm/admin/pcp',
         "reset=1",
         TRUE, NULL, FALSE,
         FALSE
@@ -306,7 +307,7 @@ class CRM_PCP_Form_Campaign extends CRM_Core_Form {
       list($domainEmailName, $domainEmailAddress) = CRM_Core_BAO_Domain::getNameAndEmail();
 
       if (!$domainEmailAddress || $domainEmailAddress == 'info@EXAMPLE.ORG') {
-        $fixUrl = CRM_Utils_System::url("civicrm/admin/domain", 'action=update&reset=1');
+        $fixUrl = CRM_Utils_System::url('civicrm/admin/domain', 'action=update&reset=1');
         CRM_Core_Error::fatal(ts('The site administrator needs to enter a valid \'FROM Email Address\' in <a href="%1">Administer CiviCRM &raquo; Communications &raquo; FROM Email Addresses</a>. The email address used may need to be a valid mail account with your email service provider.', array(1 => $fixUrl)));
       }
 
@@ -358,7 +359,7 @@ class CRM_PCP_Form_Campaign extends CRM_Core_Form {
       $session->pushUserContext(CRM_Utils_System::url('civicrm/pcp/info', "reset=1&id={$pcp->id}&ap={$anonymousPCP}"));
     }
     elseif ($this->_context == 'dashboard') {
-      $session->pushUserContext(CRM_Utils_System::url('civicrm/admin/pcp', "reset=1"));
+      $session->pushUserContext(CRM_Utils_System::url('civicrm/admin/pcp', 'reset=1'));
     }
   }
 }
