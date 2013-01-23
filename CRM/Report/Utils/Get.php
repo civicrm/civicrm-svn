@@ -160,7 +160,7 @@ class CRM_Report_Utils_Get {
     }
   }
 
-  function processChart(&$defaults) {
+  static function processChart(&$defaults) {
     $chartType = CRM_Utils_Array::value("charts", $_GET);
     if (in_array($chartType, array(
       'barChart', 'pieChart'))) {
@@ -168,7 +168,7 @@ class CRM_Report_Utils_Get {
     }
   }
 
-  function processFilter(&$fieldGrp, &$defaults) {
+  static function processFilter(&$fieldGrp, &$defaults) {
     // process only filters for now
     foreach ($fieldGrp as $tableName => $fields) {
       foreach ($fields as $fieldName => $field) {
@@ -193,7 +193,7 @@ class CRM_Report_Utils_Get {
   }
 
   //unset default filters
-  function unsetFilters(&$defaults) {
+  static function unsetFilters(&$defaults) {
     static $unsetFlag = TRUE;
     if ($unsetFlag) {
       foreach ($defaults as $field_name => $field_value) {
@@ -210,7 +210,7 @@ class CRM_Report_Utils_Get {
     }
   }
 
-  function processGroupBy(&$fieldGrp, &$defaults) {
+  static function processGroupBy(&$fieldGrp, &$defaults) {
     // process only group_bys for now
     $flag = FALSE;
 
@@ -234,7 +234,7 @@ class CRM_Report_Utils_Get {
     }
   }
 
-  function processFields(&$reportFields, &$defaults) {
+  static function processFields(&$reportFields, &$defaults) {
     //add filters from url
     if (is_array($reportFields)) {
       if ($urlFields = CRM_Utils_Array::value("fld", $_GET)) {
