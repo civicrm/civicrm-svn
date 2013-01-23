@@ -141,23 +141,6 @@
           .appendTo(errorTag);
 
         var buttonContainer = o.find('.crm-lock-button');
-
-        /*
-        $('<button>')
-          .addClass('crm-button')
-          .text(options.ignoreLabel)
-          .click(function() {
-            oplock_ts = errorTag.attr('data:update_oplock_ts');
-            errorTag.parent().hide();
-            var containerTag = errorTag.closest('.crm-error');
-            if (containerTag.find('li').length == 1) {
-              containerTag.hide();
-            }
-            return false;
-          })
-          .appendTo(buttonContainer)
-          ;
-         */
         $('<button>')
           .addClass('crm-button')
           .text(options.saveAnywayLabel)
