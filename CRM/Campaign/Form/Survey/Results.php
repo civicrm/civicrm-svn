@@ -212,7 +212,7 @@ class CRM_Campaign_Form_Survey_Results extends CRM_Campaign_Form_Survey {
       (count(array_filter($fields['option_label'])) == 0) &&
       (count(array_filter($fields['option_value'])) == 0)
     ) {
-      $errors['option_label[1]'] = ts('Enter atleast one response option.');
+      $errors['option_label[1]'] = ts('Enter at least one result option.');
       return $errors;
     }
     elseif (!CRM_Utils_Array::value('option_label', $fields) &&
@@ -224,7 +224,7 @@ class CRM_Campaign_Form_Survey_Results extends CRM_Campaign_Form_Survey {
     if ($fields['option_type'] == 2 &&
       !CRM_Utils_Array::value('option_group_id', $fields)
     ) {
-      $errors['option_group_id'] = ts("Please select Survey Response set.");
+      $errors['option_group_id'] = ts("Please select a Survey Result Set.");
       return $errors;
     }
 
