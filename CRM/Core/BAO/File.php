@@ -1,4 +1,4 @@
- <?php
+<?php
  /*
   +--------------------------------------------------------------------+
   | CiviCRM version 4.2                                                |
@@ -68,12 +68,17 @@
    public function filePostProcess(
      $data,
      $fileTypeID,
-     $entityTable, $entityID,
-     $entitySubtype, $overwrite = TRUE,
+     $entityTable,
+     $entityID,
+     $entitySubtype,
+     $overwrite = TRUE,
      $fileParams = NULL,
      $uploadName = 'uploadFile',
-     $mimeType
+     $mimeType = null
    ) {
+     if (!$mimeType) {
+       CRM_Core_Error::fatal(ts('Mime Type is now a required parameter'));
+     }
 
      $config = CRM_Core_Config::singleton();
 
@@ -100,20 +105,16 @@
        list($sql, $params) = self::sql($entityTable, $entityID, $fileTypeID);
      }
      else {
-       list($sql, $params) = self::sql($entityTable, $entityID, 0);
+       list($sql, $params) = self::sql($entityTable, $entityID, NULL);
      }
 
      $dao = CRM_Core_DAO::executeQuery($sql, $params);
      $dao->fetch();
 
-     if (!$mimeType) {
-       CRM_Core_Error::fatal();
-     }
-
      $fileDAO = new CRM_Core_DAO_File();
-     if (isset($dao->cfID) &&
-       $dao->cfID
-     ) {
+     $op = 'create';
+     if (isset($dao->cfID) && $dao->cfID) {
+       $op = 'edit';
        $fileDAO->id = $dao->cfID;
        unlink($directoryName . DIRECTORY_SEPARATOR . $dao->uri);
      }
@@ -130,9 +131,7 @@
 
      // need to add/update civicrm_entity_file
      $entityFileDAO = new CRM_Core_DAO_EntityFile();
-     if (isset($dao->cefID) &&
-       $dao->cefID
-     ) {
+     if (isset($dao->cefID) && $dao->cefID) {
        $entityFileDAO->id = $dao->cefID;
      }
      $entityFileDAO->entity_table = $entityTable;
@@ -149,6 +148,9 @@
      if (isset($fileParams['attachment_taglist']) && !empty($fileParams['attachment_taglist'])) {
        CRM_Core_Form_Tag::postProcess($fileParams['attachment_taglist'], $entityFileDAO->id, 'civicrm_file', CRM_Core_DAO::$_nullObject);
      }
+
+     // lets call the post hook here so attachments code can do the right stuff
+     CRM_Utils_Hook::post($op, 'File', $fileDAO->id, $fileDAO);
    }
 
    /**
@@ -156,6 +158,17 @@
     */
    public function delete($useWhere = false) {
      list($fileID, $entityID, $fieldID) = func_get_args();
+
+     $fileDAO = new CRM_Core_DAO_File();
+     $fileDAO->id = $fileID;
+     if (!$fileDAO->find(TRUE)) {
+       CRM_Core_Error::fatal();
+     }
+
+     // lets call a pre hook before the delete, so attachments hooks can get the info before things
+     // disappear
+     CRM_Utils_Hook::pre('delete', 'File', $fileID, $fileDAO);
+
      // get the table and column name
      list($tableName, $columnName, $groupID) = CRM_Core_BAO_CustomField::getTableColumnGroup($fieldID);
 
@@ -164,21 +177,12 @@
      $entityFileDAO->entity_id = $entityID;
      $entityFileDAO->entity_table = $tableName;
 
-     if ($entityFileDAO->find(TRUE)) {
-       $entityFileDAO->delete();
-     }
-     else {
+     if (!$entityFileDAO->find(TRUE)) {
        CRM_Core_Error::fatal();
      }
 
-     $fileDAO = new CRM_Core_DAO_File();
-     $fileDAO->id = $fileID;
-     if ($fileDAO->find(TRUE)) {
-       $fileDAO->delete();
-     }
-     else {
-       CRM_Core_Error::fatal();
-     }
+     $entityFileDAO->delete();
+     $fileDAO->delete();
 
      // also set the value to null of the table and column
      $query = "UPDATE $tableName SET $columnName = null WHERE $columnName = %1";
@@ -462,10 +466,12 @@
      $numAttachments = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'max_attachments');
 
      for ($i = 1; $i <= $numAttachments; $i++) {
-       if (isset($params["attachFile_$i"]) &&
+       if (
+         isset($params["attachFile_$i"]) &&
          is_array($params["attachFile_$i"])
        ) {
-         self::filePostProcess($params["attachFile_$i"]['location'],
+         self::filePostProcess(
+           $params["attachFile_$i"]['location'],
            NULL,
            $entityTable,
            $entityID,
