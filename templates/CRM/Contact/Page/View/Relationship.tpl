@@ -149,8 +149,9 @@
             <th>{ts}City{/ts}</th>
             <th>{ts}State/Prov{/ts}</th>
             <th>{ts}Phone{/ts}</th>
-            <th>{ts}End Date{/ts}</th>
+            <th id="dis-end_date">{ts}End Date{/ts}</th>
             <th></th>
+            <th class="hiddenElement"></th>
         </tr>
         </thead>
         {foreach from=$inactiveRelationships item=rel}
@@ -166,8 +167,9 @@
             <td>{$rel.city}</td>
             <td>{$rel.state}</td>
             <td>{$rel.phone}</td>
+            <td>{$rel.end_date}</td>
             <td class="nowrap">{$rel.action|replace:'xx':$rel.id}</td>
-            <td>{$rel.end_date|crmDate}</td>
+            <td class="dis-end_date hiddenElement">{$rel.end_date|crmDate}</td>
           </tr>
         {/foreach}
         </table>
