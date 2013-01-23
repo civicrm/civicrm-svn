@@ -44,7 +44,8 @@ class CRM_Event_Page_Tab extends CRM_Core_Page {
    * @access public
    */
   function browse() {
-    $controller = new CRM_Core_Controller_Simple('CRM_Event_Form_Search',
+    $controller = new CRM_Core_Controller_Simple(
+      'CRM_Event_Form_Search',
       ts('Events'),
       $this->_action
     );
@@ -71,9 +72,11 @@ class CRM_Event_Page_Tab extends CRM_Core_Page {
     // build associated contributions
     $this->associatedContribution();
 
-    $controller = new CRM_Core_Controller_Simple('CRM_Event_Form_ParticipantView',
-      'View Participant',
-      $this->_action
+    $controller = new CRM_Core_Controller_Simple(
+      'CRM_Event_Form_ParticipantView',
+      ts('View Participant'),
+      $this->_action,
+      FALSE, FALSE, TRUE
     );
     $controller->setEmbedded(TRUE);
     $controller->set('id', $this->_id);
@@ -100,9 +103,11 @@ class CRM_Event_Page_Tab extends CRM_Core_Page {
       $this->associatedContribution();
     }
 
-    $controller = new CRM_Core_Controller_Simple('CRM_Event_Form_Participant',
+    $controller = new CRM_Core_Controller_Simple(
+      'CRM_Event_Form_Participant',
       'Create Participation',
-      $this->_action
+      $this->_action,
+      FALSE, FALSE, TRUE
     );
 
     $controller->setEmbedded(TRUE);
@@ -288,7 +293,12 @@ class CRM_Event_Page_Tab extends CRM_Core_Page {
   function associatedContribution() {
     if (CRM_Core_Permission::access('CiviContribute')) {
       $this->assign('accessContribution', TRUE);
-      $controller = new CRM_Core_Controller_Simple('CRM_Contribute_Form_Search', ts('Contributions'), NULL);
+      $controller = new CRM_Core_Controller_Simple(
+        'CRM_Contribute_Form_Search',
+        ts('Contributions'),
+        NULL,
+        FALSE, FALSE, TRUE
+      );
       $controller->setEmbedded(TRUE);
       $controller->set('force', 1);
       $controller->set('cid', $this->_contactId);
