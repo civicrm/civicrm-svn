@@ -980,7 +980,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
 
     foreach ($fields as $key => $value) {
       list($fieldName, $locTypeId, $phoneTypeId) = CRM_Utils_System::explode('-', $key, 3);
-      if ($fieldName == 'state_province' && $fields["country-{$locTypeId}"]) {
+      if ($fieldName == 'state_province' && !empty($fields["country-{$locTypeId}"])) {
         // Validate Country - State list
         $countryId = $fields["country-{$locTypeId}"];
         $stateProvinceId = $value;
