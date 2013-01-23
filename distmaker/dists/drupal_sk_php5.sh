@@ -26,7 +26,7 @@ if [ -d $TRG ] ; then
 fi
 
 # copy all the stuff
-for CODE in css i js l10n packages PEAR templates bin CRM api drupal extern Reports install; do
+for CODE in css i js packages PEAR templates bin CRM api drupal extern Reports install; do
   echo $CODE
   [ -d $SRC/$CODE ] && $RSYNCCOMMAND $SRC/$CODE $TRG
 done
@@ -57,6 +57,10 @@ for F in $SRC/sql/civicrm*.mysql $SRC/sql/counties.US.sql.gz $SRC/sql/case_sampl
 	cp $F $TRG/sql
 done
 
+set +e
+rm -rf $TRG/sql/civicrm_*.??_??.mysql
+set -e
+
 # copy docs
 cp $SRC/agpl-3.0.txt $TRG
 cp $SRC/gpl.txt $TRG
@@ -76,7 +80,7 @@ function civicrmVersion( ) {
 
 # gen tarball
 cd $TRG/..
-tar czf $DM_TARGETDIR/civicrm-$DM_VERSION-starterkit.tgz --exclude l10n --exclude 'civicrm_*.??_??.mysql' civicrm
+tar czf $DM_TARGETDIR/civicrm-$DM_VERSION-starterkit.tgz civicrm
 
 # clean up
 rm -rf $TRG
