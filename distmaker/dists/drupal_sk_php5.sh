@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 # This script assumes
 # that DAOs are generated
