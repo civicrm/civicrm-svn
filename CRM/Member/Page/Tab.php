@@ -51,7 +51,7 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
    *
    * return null
    * @access public
-   */ 
+   */
   function browse() {
     $links = self::links('all', $this->_isPaymentProcessor, $this->_accessContribution);
 
@@ -196,7 +196,9 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
    * @access public
    */
   function view() {
-    $controller = new CRM_Core_Controller_Simple('CRM_Member_Form_MembershipView', 'View Membership',
+    $controller = new CRM_Core_Controller_Simple(
+      'CRM_Member_Form_MembershipView',
+      ts('View Membership'),
       $this->_action
     );
     $controller->setEmbedded(TRUE);
@@ -232,7 +234,9 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
       $path = 'CRM_Member_Form_Membership';
       $title = ts('Create Membership');
     }
-    $controller = new CRM_Core_Controller_Simple($path, $title, $this->_action);
+    $controller = new CRM_Core_Controller_Simple(
+      $path, $title, $this->_action
+    );
     $controller->setEmbedded(TRUE);
     $controller->set('BAOName', $this->getBAOName());
     $controller->set('id', $this->_id);
@@ -534,7 +538,12 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
     // retrieive membership contributions if the $membershipId is set
     if (CRM_Core_Permission::access('CiviContribute') && $membershipId) {
       $this->assign('accessContribution', TRUE);
-      $controller = new CRM_Core_Controller_Simple('CRM_Contribute_Form_Search', ts('Contributions'), NULL);
+      $controller = new CRM_Core_Controller_Simple(
+        'CRM_Contribute_Form_Search',
+        ts('Contributions'),
+        NULL,
+        FALSE, FALSE, TRUE
+      );
       $controller->setEmbedded(TRUE);
       $controller->reset();
       $controller->set('force', 1);

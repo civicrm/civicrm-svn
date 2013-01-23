@@ -156,7 +156,12 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page {
     ) = CRM_Contribute_BAO_Contribution::annual($this->_contactId);
     $this->assign('annual', $annual);
 
-    $controller = new CRM_Core_Controller_Simple('CRM_Contribute_Form_Search', ts('Contributions'), $this->_action);
+    $controller = new CRM_Core_Controller_Simple(
+      'CRM_Contribute_Form_Search',
+      ts('Contributions'),
+      $this->_action,
+      FALSE, FALSE, TRUE
+    );
     $controller->setEmbedded(TRUE);
     $controller->reset();
     $controller->set('cid', $this->_contactId);
@@ -260,8 +265,9 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page {
    * @access public
    */
   function view() {
-    $controller = new CRM_Core_Controller_Simple('CRM_Contribute_Form_ContributionView',
-      'View Contribution',
+    $controller = new CRM_Core_Controller_Simple(
+      'CRM_Contribute_Form_ContributionView',
+      ts('View Contribution'),
       $this->_action
     );
     $controller->setEmbedded(TRUE);
@@ -284,7 +290,8 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page {
       CRM_Utils_System::redirectToSSL();
     }
 
-    $controller = new CRM_Core_Controller_Simple('CRM_Contribute_Form_Contribution',
+    $controller = new CRM_Core_Controller_Simple(
+      'CRM_Contribute_Form_Contribution',
       'Create Contribution',
       $this->_action
     );
