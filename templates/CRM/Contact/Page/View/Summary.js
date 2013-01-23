@@ -109,27 +109,7 @@
    * options.reloadLabel: string, text for a button
    */
   $.fn.crmFormContactLock = function(options) {
-    var oplock_ts = false;
-
-    // AFTER LOAD: For first edit form, extract oplock_ts
-    this.on('crmFormLoad', function(event) {
-      var o = $(event.target);
-      if (oplock_ts == false) { // first block
-        oplock_ts = o.find('input[name="oplock_ts"]').val();
-      }
-    });
-    // BEFORE SAVE: Replace input[oplock_ts] with oplock_ts
-    this.on('crmFormBeforeSave', function(event, formData) {
-      $.each(formData, function(key, formItem) {
-        if (formItem.name == 'oplock_ts') {
-          formItem.value = oplock_ts;
-        }
-      });
-    });
-    // AFTER SUCCESS: Update oplock_ts
-    this.on('crmFormSuccess', function(event, response) {
-      oplock_ts = response.oplock_ts;
-    });
+    var form = this;
     // AFTER ERROR: Render any "Ignore" and "Restart" buttons
     return this.on('crmFormError', function(event, obj, status) {
       var o = $(event.target);
@@ -145,7 +125,7 @@
           .addClass('crm-button')
           .text(options.saveAnywayLabel)
           .click(function() {
-            oplock_ts = errorTag.attr('data:update_oplock_ts');
+            $(form).find('input[name=oplock_ts]').val(errorTag.attr('data:update_oplock_ts'));
             errorTag.parent().hide();
             $(this).closest('form').find('.form-submit.default').first().click();
             return false;
