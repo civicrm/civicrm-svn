@@ -133,8 +133,8 @@ eval('tableId =[' + tableId + ']');
               "sDom"       : '<"crm-datatable-pager-top"lfp>rt<"crm-datatable-pager-bottom"ip>',
               "bServerSide": true,
               "sAjaxSource": sourceUrl,
-            "oLanguage":{"sEmptyTable"  : noRecordFoundMsg,
-                       "sZeroRecords" : noRecordFoundMsg },
+              "oLanguage":{"sEmptyTable"  : noRecordFoundMsg,
+              "sZeroRecords" : noRecordFoundMsg },
 
               {/literal}{if !empty($callBack)}{literal}
               "fnDrawCallback": function() { checkSelected(); },
