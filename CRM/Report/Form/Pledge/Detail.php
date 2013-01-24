@@ -433,7 +433,7 @@ class CRM_Report_Form_Pledge_Detail extends CRM_Report_Form {
       // had been set to completed? In which case this could be done more simply either @ the php or mysql level
       foreach ($display as $pledgeID => $data) {
         $count = $due = $paid = 0;
-        $totalPaidAmt = $display[$pledgeID]['civicrm_pledge_payment_total_paid'];
+        $totalPaidAmt = CRM_Utils_Array::value('civicrm_pledge_payment_total_paid', $display[$pledgeID]);
 
         if (CRM_Utils_Array::value('civicrm_pledge_status_id', $data) == 5) {
           $due = $data['civicrm_pledge_amount'] - $totalPaidAmt;
