@@ -83,45 +83,42 @@
 
     {* Search form and results for surveys *}
     <div class="crm-block crm-form-block crm-search-form-block">
-
     {assign var='searchForm' value="search_form_$searchFor"}
 
-    <div id="{$searchForm}" class="crm-accordion-wrapper crm-survey_search_form-accordion ">
-    <div class="crm-accordion-header">
-        {ts}Search Surveys{/ts}
-    </div><!-- /.crm-accordion-header -->
+      <div id="{$searchForm}" class="crm-accordion-wrapper crm-survey_search_form-accordion ">
+        <div class="crm-accordion-header">
+            {ts}Search Surveys{/ts}
+        </div><!-- /.crm-accordion-header -->
 
-    <div class="crm-accordion-body">
-    {strip}
+        <div class="crm-accordion-body">
+        {strip}
         <table class="form-layout-compressed">
-      <tr>
+          <tr>
             <td>{$form.survey_title.label}<br />
-            {$form.survey_title.html}
-             </td>
-      </tr>
-
-      <tr>
+                {$form.survey_title.html}
+            </td>
+          </tr>
+          <tr>
             <td>{$form.activity_type_id.label}<br />
-              {$form.activity_type_id.html}
+                {$form.activity_type_id.html}
             </td>
-          <td>{$form.survey_campaign_id.label}<br />
-              {$form.survey_campaign_id.html}
+            <td>{$form.survey_campaign_id.label}<br />
+                {$form.survey_campaign_id.html}
             </td>
-      </tr>
-
-        <tr>
+          </tr>
+          <tr>
             <td colspan="2">
             {if $context eq 'search'}
               {$form.buttons.html}
-          {else}
+            {else}
               <a class="searchSurvey button" style="float:left;" href="#" title="{ts}Search{/ts}" onClick="searchSurveys( '{$qfKey}' );return false;">{ts}Search{/ts}</a>
-          {/if}
-          </td>
-        </tr>
+            {/if}
+            </td>
+          </tr>
         </table>
-    {/strip}
-    </div>
-    </div>
+        {/strip}
+        </div>
+      </div>
     </div>
     {* search form ends here *}
 

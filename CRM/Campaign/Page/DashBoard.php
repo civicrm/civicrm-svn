@@ -315,6 +315,9 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page {
         if ($surveysData[$sid]['result_id']) {
           $resultSet = '<a href= "javascript:displayResultSet( ' . $sid . ',' . "'" . $surveysData[$sid]['title'] . "'" . ', ' . $surveysData[$sid]['result_id'] . ' )">' . ts('Result Set') . '</a>';
           $surveysData[$sid]['result_id'] = $resultSet;
+        } else {
+          $resultUrl = CRM_Utils_System::url("civicrm/survey/configure/results", "action=update&id={$sid}&reset=1");
+          $surveysData[$sid]['result_id'] = "<a href='{$resultUrl}' class='status-warning'>(" . ts('Incomplete. Click to configure result set.') . ')</a>';
         }
         $surveysData[$sid]['action'] = CRM_Core_Action::formLink(self::surveyActionLinks($surveysData[$sid]['activity_type']),
           $action,
