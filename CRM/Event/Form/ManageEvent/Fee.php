@@ -615,10 +615,10 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent {
               if (!CRM_Utils_Array::value('price_field_id', $params)) {
                 $setParams['title'] = $eventTitle = ($this->_isTemplate) ? $this->_defaultValues['template_title'] : $this->_defaultValues['title'];
                 $eventTitle = strtolower(CRM_Utils_String::munge($eventTitle, '_', 245));
-                if (!CRM_Core_DAO::getFieldValue('CRM_Price_BAO_Set', $eventTitle, 'id', 'title')) {
+                if (!CRM_Core_DAO::getFieldValue('CRM_Price_BAO_Set', $eventTitle, 'id', 'name')) {
                   $setParams['name'] = $eventTitle;
                 }
-                elseif (!CRM_Core_DAO::getFieldValue('CRM_Price_BAO_Set', $eventTitle . '_' . $this->_id, 'id', 'title')) {
+                elseif (!CRM_Core_DAO::getFieldValue('CRM_Price_BAO_Set', $eventTitle . '_' . $this->_id, 'id', 'name')) {
                   $setParams['name'] = $eventTitle . '_' . $this->_id;
                 }
                 else {
