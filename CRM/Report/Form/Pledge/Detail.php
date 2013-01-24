@@ -39,8 +39,9 @@ class CRM_Report_Form_Pledge_Detail extends CRM_Report_Form {
   protected $_summary = NULL;
   protected $_totalPaid = FALSE;
   protected $_customGroupExtends = array(
-    'Pledge', 'Individual');
-  
+    'Pledge',
+    'Individual'
+  );
   function __construct() {
     $this->_columns = array(
       'civicrm_contact' =>
@@ -154,7 +155,7 @@ class CRM_Report_Form_Pledge_Detail extends CRM_Report_Form {
           ),
         ),
       ),
-    ) + $this->addAddressFields(FALSE, TRUE);
+    ) + $this->addAddressFields(FALSE, FALSE);
 
     $this->_tagFilter = TRUE;
     parent::__construct();
@@ -171,16 +172,16 @@ class CRM_Report_Form_Pledge_Detail extends CRM_Report_Form {
   function from() {
     $this->_from = "
             FROM civicrm_pledge {$this->_aliases['civicrm_pledge']}
-                 LEFT JOIN civicrm_contact {$this->_aliases['civicrm_contact']} 
-                      ON ({$this->_aliases['civicrm_contact']}.id = 
+                 LEFT JOIN civicrm_contact {$this->_aliases['civicrm_contact']}
+                      ON ({$this->_aliases['civicrm_contact']}.id =
                           {$this->_aliases['civicrm_pledge']}.contact_id )
                  {$this->_aclFrom} ";
 
     // include address field if address column is to be included
     if ($this->_addressField) {
       $this->_from .= "
-                 LEFT JOIN civicrm_address {$this->_aliases['civicrm_address']} 
-                           ON ({$this->_aliases['civicrm_contact']}.id = 
+                 LEFT JOIN civicrm_address {$this->_aliases['civicrm_address']}
+                           ON ({$this->_aliases['civicrm_contact']}.id =
                                {$this->_aliases['civicrm_address']}.contact_id) AND
                                {$this->_aliases['civicrm_address']}.is_primary = 1\n";
     }
@@ -188,9 +189,9 @@ class CRM_Report_Form_Pledge_Detail extends CRM_Report_Form {
     // include email field if email column is to be included
     if ($this->_emailField) {
       $this->_from .= "
-                 LEFT JOIN civicrm_email {$this->_aliases['civicrm_email']} 
-                           ON ({$this->_aliases['civicrm_contact']}.id = 
-                               {$this->_aliases['civicrm_email']}.contact_id) AND 
+                 LEFT JOIN civicrm_email {$this->_aliases['civicrm_email']}
+                           ON ({$this->_aliases['civicrm_contact']}.id =
+                               {$this->_aliases['civicrm_email']}.contact_id) AND
                                {$this->_aliases['civicrm_email']}.is_primary = 1\n";
     }
   }
@@ -275,7 +276,7 @@ class CRM_Report_Form_Pledge_Detail extends CRM_Report_Form {
       $this->_where = "WHERE ({$this->_aliases['civicrm_pledge']}.is_test=0 ) ";
     }
     else {
-      $this->_where = "WHERE  ({$this->_aliases['civicrm_pledge']}.is_test=0 )  AND 
+      $this->_where = "WHERE  ({$this->_aliases['civicrm_pledge']}.is_test=0 )  AND
                                       " . implode(' AND ', $clauses);
     }
 
@@ -343,15 +344,15 @@ class CRM_Report_Form_Pledge_Detail extends CRM_Report_Form {
     if (!empty($display)) {
       $sqlPayment = "
                  SELECT min(payment.scheduled_date) as scheduled_date,
-                        payment.pledge_id, 
-                        payment.scheduled_amount, 
+                        payment.pledge_id,
+                        payment.scheduled_amount,
                         pledge.contact_id
-              
-                  FROM civicrm_pledge_payment payment 
-                       LEFT JOIN civicrm_pledge pledge 
+
+                  FROM civicrm_pledge_payment payment
+                       LEFT JOIN civicrm_pledge pledge
                                  ON pledge.id = payment.pledge_id
-                     
-                  WHERE payment.status_id = 2  
+
+                  WHERE payment.status_id = 2
 
                   GROUP BY payment.pledge_id";
 
@@ -376,8 +377,8 @@ class CRM_Report_Form_Pledge_Detail extends CRM_Report_Form {
 
         // Get Sum of all the payments made
         $payDetailsSQL = "
-                    SELECT SUM( payment.actual_amount ) as total_amount 
-                       FROM civicrm_pledge_payment payment 
+                    SELECT SUM( payment.actual_amount ) as total_amount
+                       FROM civicrm_pledge_payment payment
                        WHERE payment.pledge_id = {$pledgeID} AND
                              payment.status_id = 1";
 
