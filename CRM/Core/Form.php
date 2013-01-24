@@ -861,7 +861,7 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
         'class' => 'crm-profile-selector',
         // Note: client treats ';;' as equivalent to \0, and ';;' works better in HTML
         'data-group-type' => CRM_Core_BAO_UFGroup::encodeGroupType($allowCoreTypes, $allowSubTypes, ';;'),
-        'data-entities' => CRM_Utils_Array::implodeKeyValue(',', ':', $entities),
+        'data-entities' => json_encode($entities),
       ));
     }
     else {
