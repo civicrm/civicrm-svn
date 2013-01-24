@@ -1953,7 +1953,7 @@ SELECT  civicrm_custom_group.id as groupID, civicrm_custom_group.title as groupT
    * @return boolean true if empty otherwise false.
    * @access public
    */
-  function isGroupEmpty($gID) {
+  static function isGroupEmpty($gID) {
     if (!$gID) {
       return;
     }
