@@ -88,7 +88,7 @@ class WebTest_Campaign_OfflineEventRegistrationTest extends CiviSeleniumTestCase
       $this->click("add");
       $this->click("_qf_Component_next-bottom");
       $this->waitForPageToLoad("30000");
-      $this->assertTrue($this->isTextPresent("Your changes have been saved."));
+      $this->assertTrue($this->isTextPresent("Changes Saved."));
     }
 
     // now logout and login with admin credentials
@@ -252,7 +252,7 @@ class WebTest_Campaign_OfflineEventRegistrationTest extends CiviSeleniumTestCase
     $this->click("remove");
     $this->click("_qf_Component_next-bottom");
     $this->waitForPageToLoad("30000");
-    $this->assertTrue($this->isTextPresent("Your changes have been saved."));
+    $this->assertTrue($this->isTextPresent("Changes Saved."));
 
     $this->open($this->sboxPath . 'civicrm/event/search?reset=1');
     $this->waitForElementPresent("_qf_Search_refresh");

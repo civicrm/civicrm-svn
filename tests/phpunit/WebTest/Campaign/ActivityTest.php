@@ -47,7 +47,7 @@ class WebTest_Campaign_ActivityTest extends CiviSeleniumTestCase {
       $this->click("_qf_Component_next-bottom");
       $this->waitForPageToLoad("30000");
       sleep(1);
-      $this->assertTrue($this->isTextPresent("Your changes have been saved."));
+      $this->assertTrue($this->isTextPresent("Changes Saved."));
     }
 
     // add the required Drupal permission

@@ -88,7 +88,7 @@ class WebTest_Campaign_OfflineContributionTest extends CiviSeleniumTestCase {
       $this->click("add");
       $this->click("_qf_Component_next-bottom");
       $this->waitForPageToLoad("30000");
-      $this->assertTrue($this->isTextPresent("Your changes have been saved."));
+      $this->assertTrue($this->isTextPresent("Changes Saved."));
     }
 
     // add the required Drupal permission
@@ -177,7 +177,7 @@ class WebTest_Campaign_OfflineContributionTest extends CiviSeleniumTestCase {
     $this->type("source", "Mailer 1");
 
     if ($past) {
-      $this->click("css=tr.crm-contribution-form-block-campaign_id td.view-value a");
+      $this->click("include-past-campaigns");
       sleep(2);
     }
 
@@ -254,7 +254,7 @@ class WebTest_Campaign_OfflineContributionTest extends CiviSeleniumTestCase {
       $this->click("remove");
       $this->click("_qf_Component_next-bottom");
       $this->waitForPageToLoad("30000");
-      $this->assertTrue($this->isTextPresent("Your changes have been saved."));
+      $this->assertTrue($this->isTextPresent("Changes Saved."));
 
       $this->open($this->sboxPath . 'civicrm/contribute/search?reset=1');
       $this->waitForElementPresent("_qf_Search_refresh");

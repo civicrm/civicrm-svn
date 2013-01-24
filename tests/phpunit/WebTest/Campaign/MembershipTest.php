@@ -88,7 +88,7 @@ class WebTest_Campaign_MembershipTest extends CiviSeleniumTestCase {
       $this->click("add");
       $this->click("_qf_Component_next-bottom");
       $this->waitForPageToLoad("30000");
-      $this->assertTrue($this->isTextPresent("Your changes have been saved."));
+      $this->assertTrue($this->isTextPresent("Changes Saved."));
     }
 
     // add the required Drupal permission
@@ -139,12 +139,12 @@ class WebTest_Campaign_MembershipTest extends CiviSeleniumTestCase {
   function memberAddTest($campaignTitle, $id) {
     //Add new memebershipType
     $memTypeParams = $this->webtestAddMembershipType();
-
+   
     // Adding Adding contact with randomized first name for test testContactContextActivityAdd
     // We're using Quick Add block on the main page for this.
     $firstName = substr(sha1(rand()), 0, 7);
     $this->webtestAddContact($firstName, "John", $firstName . "john@gmail.com");
-    $this->assertTrue($this->isTextPresent("Your Individual contact record has been saved."));
+    $this->assertTrue($this->isTextPresent("{$firstName} John has been created."));
 
     // click through to the membership view screen
     $this->click("css=li#tab_member a");
@@ -155,7 +155,7 @@ class WebTest_Campaign_MembershipTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("_qf_Membership_cancel-bottom");
 
     // fill in Membership Organization and Type
-    $this->select("membership_type_id[0]", "label={$memTypeParams['member_org']}");
+    $this->select("membership_type_id_0", "label={$memTypeParams['member_of_contact']}");
 
     // Wait for membership type select to reload
     $this->waitForTextPresent($memTypeParams['membership_type']);
@@ -187,7 +187,7 @@ class WebTest_Campaign_MembershipTest extends CiviSeleniumTestCase {
     );
 
     // click through to the membership view screen
-    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[8]/span/a[text()='View']");
+    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[9]/span/a[text()='View']");
     $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
 
     $this->webtestVerifyTabularData(array('Campaign' => $campaignTitle));
