@@ -375,8 +375,6 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         }
       }
     }
-    if ( CRM_Utils_Array::value( 'min_initial_amount', $this->_values ) )
-      $this->_defaults['initial_amount'] = CRM_Utils_Array::value( 'min_initial_amount', $this->_values );
 
     return $this->_defaults;
   }
@@ -409,7 +407,6 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
       TRUE
     );
     $this->addRule("email-{$this->_bltID}", ts('Email is not valid.'), 'email');
-    CRM_Price_BAO_Field::initialPayCreate( $this, 'contribution', 'online' );
     $this->_paymentProcessors = $this->get('paymentProcessors');
     $pps = array();
     if (!empty($this->_paymentProcessors)) {
@@ -1219,13 +1216,6 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     // get the submitted form values.
     $params = $this->controller->exportValues($this->_name);
 
-    $init_amount = array();
-    foreach( $params as $key => $value){
-      if ( strstr($key,'txt-price')){
-        $init_amount[$key] = $value;
-      }
-    }
-    $this->set( 'init_amount', $init_amount );
     if (CRM_Utils_Array::value('priceSetId', $params)) {
       $is_quick_config = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_priceSetId, 'is_quick_config');
       $formValue = array();

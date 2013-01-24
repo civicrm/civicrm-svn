@@ -673,52 +673,5 @@ WHERE  id IN (" . implode(',', array_keys($priceFields)) . ')';
       }
     }
   }
-
-  /**
-   * Create Initial Payment
-   *
-   * @param array $params
-   *
-   * @access public
-   * @static
-   *
-   */
-  public static function initialPayCreate( &$params, $page, $mode = 'offline' ) {
-    $values = array();
-    if ($page == 'event') {
-      $values = CRM_Utils_Array::value('event', $params->_values);
-    } else {
-      if (property_exists($params, '_values')) {
-        $values = $params->_values;
-      }
-    }
-
-    if (empty($values) || !array_key_exists('initial_amount_label', $values)) {
-      $values['initial_amount_label'] = "Amount to pay now:";
-      $intAmount = ts('Record smaller initial amount');
-    } else {
-      $intAmount = ts('%1', array(1 => $values['initial_amount_label']));
-    }
-
-    $params->add('checkbox', 'int_amount', $intAmount);
-
-    if (array_key_exists('initial_amount_help_text', $values)) {
-      $params->assign( 'initialAmountHelpText', $values['initial_amount_help_text'] );
-    }
-    $element = $params->addElement( 'text', 'initial_amount', ts('%1', array(1 => $values['initial_amount_label'])), NULL );
-
-    if ($mode == 'offline') {
-      $optionTypes = array(
-        '1' => ts( 'Distribute evenly among all selected items' ),
-        '2' => ts( 'Apply to the items I specify')
-      );
-      $params->addRadio( 'option_items',
-        NULL,
-        $optionTypes,
-        array(), '<br/>' );
-    }
-  }
-
- 
 }
 

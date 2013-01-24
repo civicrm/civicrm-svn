@@ -781,10 +781,6 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     );
     $this->assign('outBound_option', $mailingInfo['outBound_option']);
 
-    if ( $this->_action & CRM_Core_Action::ADD ) {
-      CRM_Price_BAO_Field::initialPayCreate( $this, 'offline' );
-    }
-
     parent::buildQuickForm();
   }
 

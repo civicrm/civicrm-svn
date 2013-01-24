@@ -884,7 +884,6 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
     $this->addElement('checkbox', 'is_notify', ts('Send Notification'), NULL);
 
     $this->add('text', 'source', ts('Event Source'));
-    CRM_Price_BAO_Field::initialPayCreate( $this, 'event', 'offline' );
     $noteAttributes = CRM_Core_DAO::getAttribute('CRM_Core_DAO_Note');
     $this->add('textarea', 'note', ts('Notes'), $noteAttributes['note']);
 

@@ -440,9 +440,6 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
       CRM_Custom_Form_CustomData::buildQuickForm($this);
       return;
     }
-    if ($this->_action & CRM_Core_Action::ADD) {
-      CRM_Price_BAO_Field::initialPayCreate($this, 'contribution', 'offline');
-    }
 
     // build price set form.
     $buildPriceSet = FALSE;

@@ -427,11 +427,6 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
       }
     }
 
-   if ( $this->_values['event']['is_monetary'] ){
-      CRM_Price_BAO_Field::initialPayCreate( $this, 'event', 'online' );
-    }
-
-
     //lets add some qf element to bypass payment validations, CRM-4320
     if ($bypassPayment) {
       $this->addElement('hidden', 'bypass_payment', NULL, array('id' => 'bypass_payment'));
