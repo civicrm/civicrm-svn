@@ -117,7 +117,11 @@ WHERE  civicrm_pcp.contact_id = civicrm_contact.id
   static function getPcpDashboardInfo($contactId) {
     $links = self::pcpLinks();
 
-    $query = "                                                                                                                                                                                                  SELECT * FROM civicrm_pcp pcp                                                                                                                                                                              WHERE pcp.is_active = 1 AND                                                                                                                                                                                      pcp.contact_id = %1                                                                                                                                                                                  ORDER BY page_type, page_id";
+    $query = "
+SELECT * FROM civicrm_pcp pcp
+WHERE pcp.is_active = 1
+  AND pcp.contact_id = %1
+ORDER BY page_type, page_id";
 
     $params = array(1 => array($contactId, 'Integer'));
 
@@ -175,7 +179,7 @@ WHERE  civicrm_pcp.contact_id = civicrm_contact.id
     $excludePageClause = $clause = NULL;
     if (!empty($contactPCPPages)) {
       foreach ($contactPCPPages as $component => $entityIds) {
-        $excludePageClause[] = " 
+        $excludePageClause[] = "
 ( target_entity_type = '{$component}'
 AND target_entity_id NOT IN ( " . implode(',', $entityIds) . ") )";
       }
@@ -184,10 +188,10 @@ AND target_entity_id NOT IN ( " . implode(',', $entityIds) . ") )";
     }
 
     $query = "
-SELECT * 
+SELECT *
 FROM civicrm_pcp_block block
 LEFT JOIN civicrm_pcp pcp ON pcp.pcp_block_id = block.id
-WHERE block.is_active = 1 
+WHERE block.is_active = 1
 {$clause}
 GROUP BY block.id
 ORDER BY target_entity_type, target_entity_id
@@ -230,8 +234,8 @@ ORDER BY target_entity_type, target_entity_id
   static function thermoMeter($pcpId) {
     $query = "
 SELECT SUM(cc.total_amount) as total
-FROM civicrm_pcp pcp 
-LEFT JOIN civicrm_contribution_soft cs ON ( pcp.id = cs.pcp_id ) 
+FROM civicrm_pcp pcp
+LEFT JOIN civicrm_contribution_soft cs ON ( pcp.id = cs.pcp_id )
 LEFT JOIN civicrm_contribution cc ON ( cs.contribution_id = cc.id)
 WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
 
@@ -253,11 +257,11 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
     $query = "
             SELECT cc.id, cs.pcp_roll_nickname, cs.pcp_personal_note,
                    cc.total_amount, cc.currency
-            FROM civicrm_contribution cc 
+            FROM civicrm_contribution cc
                  LEFT JOIN civicrm_contribution_soft cs ON cc.id = cs.contribution_id
             WHERE cs.pcp_id = {$pcpId}
-                  AND cs.pcp_display_in_roll = 1 
-                  AND contribution_status_id = 1 
+                  AND cs.pcp_display_in_roll = 1
+                  AND contribution_status_id = 1
                   AND is_test = 0";
     $dao = CRM_Core_DAO::executeQuery($query, CRM_Core_DAO::$_nullArray);
     $honor = array();
@@ -458,9 +462,9 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
 
     $params = array('id' => $pcpInfo['pcp_block_id']);
     CRM_Core_DAO::commonRetrieve('CRM_PCP_DAO_PCPBlock', $params, $pcpBlock);
-    
+
     $params = array('id' => $pcpInfo['page_id']);
-    $now       = time();
+    $now    = time();
 
     if ($component == 'event') {
       // figure out where to redirect if an exception occurs below based on target entity
@@ -470,7 +474,7 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
       $startDate = 0;
       $endDate   = CRM_Utils_Date::unixTime(CRM_Utils_Array::value('end_date', $entity));
     }
-    
+
     elseif ($component == 'contribute') {
       $urlBase = 'civicrm/contribute/transact';
       //start and end date of the contribution page
@@ -516,18 +520,18 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
       }
       elseif ($endDate) {
         if ($component == 'event') {
-            // Target_entity is an event and the event is over, redirect to event info instead of event registration page.
-            $url = CRM_Utils_System::url('civicrm/event/info',
-              "reset=1&id={$pcpBlock['entity_id']}",
-              FALSE, NULL, FALSE, TRUE
-            );
-            $statusMessage = ts('The event linked to the Personal Campaign Page you have just visited is over (as of %1).', array(1 => $customEndDate));            
-        CRM_Core_Error::statusBounce($statusMessage, $url);
+          // Target_entity is an event and the event is over, redirect to event info instead of event registration page.
+          $url = CRM_Utils_System::url('civicrm/event/info',
+            "reset=1&id={$pcpBlock['entity_id']}",
+            FALSE, NULL, FALSE, TRUE
+          );
+          $statusMessage = ts('The event linked to the Personal Campaign Page you have just visited is over (as of %1).', array(1 => $customEndDate));
+          CRM_Core_Error::statusBounce($statusMessage, $url);
         } else {
           $statusMessage = ts('The Personal Campaign Page you have just visited is no longer active (as of %1). However you can still support the campaign here.', array(1 => $customEndDate));
-          CRM_Core_Error::statusBounce($statusMessage, $url);          
+          CRM_Core_Error::statusBounce($statusMessage, $url);
+        }
       }
-    }
     }
 
     return array(
@@ -733,7 +737,7 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
   static function getPcpBlockStatus($pageId, $component) {
     $query = "
      SELECT pb.link_text as linkText
-     FROM civicrm_contribution_page cp 
+     FROM civicrm_contribution_page cp
           LEFT JOIN civicrm_pcp_block pb ON ( cp.id = pb.entity_id AND pb.entity_table = %2 )
      WHERE pb.is_active = 1 AND cp.id = %1";
 
@@ -833,7 +837,7 @@ WHERE field_name like 'email%' And is_active = 1 And uf_group_id = %1";
 
     $query = "
 SELECT pb.id as pcpBlockId, pb.entity_id
-FROM civicrm_pcp pcp 
+FROM civicrm_pcp pcp
 LEFT JOIN civicrm_pcp_block pb ON ( pb.entity_id = pcp.page_id AND pb.entity_table = %2 )
 WHERE pcp.id = %1";
 
@@ -880,9 +884,9 @@ WHERE pcp.id = %1";
 
     $query = "
 SELECT pcp.supporter_profile_id
-FROM civicrm_pcp_block pcp 
-INNER JOIN civicrm_uf_group ufgroup 
-      ON pcp.supporter_profile_id = ufgroup.id 
+FROM civicrm_pcp_block pcp
+INNER JOIN civicrm_uf_group ufgroup
+      ON pcp.supporter_profile_id = ufgroup.id
       WHERE pcp.entity_id = %1
       AND pcp.entity_table = %2
       AND ufgroup.is_active = 1";
