@@ -125,9 +125,6 @@ class CRM_Report_Form_Pledge_Summary extends CRM_Report_Form {
           'status_id' =>
           array('title' => ts('Pledge Status'),
           ),
-          'total_paid' =>
-          array('title' => ts('Total Amount Paid'),
-          ),
         ),
         'filters' =>
         array(
@@ -162,6 +159,19 @@ class CRM_Report_Form_Pledge_Summary extends CRM_Report_Form {
           'status_id' =>
           array('title' => ts('Pledge Status'),
           ),
+        ),
+      ),
+      'civicrm_pledge_payment' =>
+      array(
+        'dao' => 'CRM_Pledge_DAO_PledgePayment',
+        'fields' =>
+        array(
+          'total_paid' =>
+            array(
+              'title' => ts('Total Amount Paid'),
+              'type' => CRM_Utils_Type::T_MONEY,
+              'dbAlias' => 'sum(pledge_payment_civireport.actual_amount)',
+            ),
         ),
       ),
       'civicrm_group' =>
@@ -218,6 +228,14 @@ class CRM_Report_Form_Pledge_Summary extends CRM_Report_Form {
                            ON ({$this->_aliases['civicrm_contact']}.id = 
                                {$this->_aliases['civicrm_email']}.contact_id) AND 
                                {$this->_aliases['civicrm_email']}.is_primary = 1\n";
+    }
+
+    if(CRM_Utils_Array::value('total_paid', $this->_params['fields'])){
+      $this->_from .= "
+        LEFT JOIN civicrm_pledge_payment {$this->_aliases['civicrm_pledge_payment']} ON
+          {$this->_aliases['civicrm_pledge']}.id = {$this->_aliases['civicrm_pledge_payment']}.pledge_id
+          AND {$this->_aliases['civicrm_pledge_payment']}.status_id = 1
+      ";
     }
   }
 
