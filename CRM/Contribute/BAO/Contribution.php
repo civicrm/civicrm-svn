@@ -154,21 +154,19 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution {
       $config = CRM_Core_Config::singleton();
       $contribution->currency = $config->defaultCurrency;
     }
-
-    if (CRM_Utils_Array::value('soft_credit_to', $params) && isset($contribution->id) && (!isset($contribution->financial_type_id) || !isset($contribution->total_amount))) {
-      $values = CRM_Core_DAO::commonRetrieveAll('CRM_Contribute_DAO_Contribution', 'id', $contribution->id, $details);
-      foreach (array('financial_type_id', 'total_amount') as $field) {
-        if (!isset($contribution->$field)) {
-          $contribution->$field = $values[$contribution->id][$field];
-        }
-      }
-    }
-  
+    
     if (CRM_Utils_Array::value('contribution', $ids)) {
       $contributionId['id'] = $ids['contribution'];
       $params['prevContribution'] = self::getValues($contributionId, CRM_Core_DAO::$_nullArray, CRM_Core_DAO::$_nullArray);
+      if (CRM_Utils_Array::value('soft_credit_to', $params)) {
+        foreach (array('financial_type_id', 'total_amount') as $field) {
+          if (!isset($contribution->$field)) {
+            $contribution->$field = $params['prevContribution']->$field;
+          }
+        }
+      }
     }
-
+ 
     $result = $contribution->save();
 
     // Add financial_trxn details as part of fix for CRM-4724
