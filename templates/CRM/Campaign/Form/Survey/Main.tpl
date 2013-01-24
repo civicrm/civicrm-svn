@@ -47,17 +47,18 @@
        <tr class="crm-campaign-survey-main-form-block-title">
            <td class="label">{$form.title.label}</td>
            <td class="view-value">{$form.title.html}
-     <div class="description">{ts}Title of the survey.{/ts}</div></td>
+             <div class="description">{ts}Title of the survey.{/ts}</div></td>
        </tr>
        <tr class="crm-campaign-survey-main-form-block-campaign_id">
-           <td class="label">{$form.campaign_id.label}</td>
-           <td class="view-value">{$form.campaign_id.html}
-     <div class="description">{ts}Select the campaign for which survey is created.{/ts}</div></td>
+         <td class="label">{$form.campaign_id.label}</td>
+         <td class="view-value">{$form.campaign_id.html} &nbsp; <span class="action-link crm-campaign-survey-new_campaign_link"><a href="{crmURL p='civicrm/campaign/add' q='reset=1'}" target="_blank" title="{ts}Opens New Campaign form in a separate window{/ts}">{ts}new campaign{/ts}</a></span>
+            <div class="description">{ts}Select the campaign for which survey is created.{/ts}</div>
+          </td>
        </tr>
        <tr class="crm-campaign-survey-main-form-block-activity_type_id">
            <td class="label">{$form.activity_type_id.label}</td>
            <td class="view-value">{$form.activity_type_id.html}
-     <div class="description">{ts}Select the Activity Type.{/ts}</div></td>
+             <div class="description">{ts}Select the Activity Type.{/ts}</div></td>
        </tr>
        <tr class="crm-campaign-survey-main-form-block-instructions">
            <td class="label">{$form.instructions.label}</td>
