@@ -188,7 +188,7 @@ class CRM_Report_Form_Pledge_Detail extends CRM_Report_Form {
    */
   function selectClause(&$tableName, $tableKey, &$fieldName, &$field) {
     if($fieldName == 'total_paid'){
-      $this->_totalPaid = TRUE;
+      $this->_totalPaid = TRUE; // add pledge_payment join
       $this->_columnHeaders["{$tableName}_{$fieldName}"] = array(
         'title' => $field['title'],
         'type' => $field['type']
@@ -196,6 +196,7 @@ class CRM_Report_Form_Pledge_Detail extends CRM_Report_Form {
       return "sum({$this->_aliases[$tableName]}.actual_amount) as {$tableName}_{$fieldName}";
     }
     if($fieldName == 'balance_due'){
+      $this->_totalPaid = TRUE; // add pledge_payment join
       $this->_columnHeaders["{$tableName}_{$fieldName}"] = $field['title'];
       $this->_columnHeaders["{$tableName}_{$fieldName}"] = array(
         'title' => $field['title'],
