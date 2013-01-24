@@ -115,9 +115,6 @@ class CRM_Report_Form_Pledge_Detail extends CRM_Report_Form {
           array('title' => ts('Pledge Status'),
             'required' => TRUE,
           ),
-          'total_paid' =>
-          array('title' => ts('Total Amount Paid'),
-          ),
         ),
         'filters' =>
         array(
@@ -137,6 +134,24 @@ class CRM_Report_Form_Pledge_Detail extends CRM_Report_Form {
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => CRM_Core_OptionGroup::values('contribution_status'),
           ),
+        ),
+      ),
+      'civicrm_pledge_payment' =>
+      array(
+        'dao' => 'CRM_Pledge_DAO_PledgePayment',
+        'fields' =>
+        array(
+          'total_paid' =>
+            array(
+              'title' => ts('Total Amount Paid'),
+              'type' => CRM_Utils_Type::T_MONEY,
+            ),
+          'balance_due' =>
+            array(
+              'title' => ts('Balance Due'),
+              'default' => TRUE,
+              'type' => CRM_Utils_Type::T_MONEY,
+            ),
         ),
       ),
       'civicrm_group' =>
@@ -168,7 +183,35 @@ class CRM_Report_Form_Pledge_Detail extends CRM_Report_Form {
   function select() {
     parent::select();
   }
+  /*
+   * If we are retrieving total paid we need to define the inclusion of pledge_payment
+   */
+  function selectClause(&$tableName, $tableKey, &$fieldName, &$field) {
+    if($fieldName == 'total_paid'){
+      $this->_totalPaid = TRUE;
+      $this->_columnHeaders["{$tableName}_{$fieldName}"] = array(
+        'title' => $field['title'],
+        'type' => $field['type']
+      );
+      return "sum({$this->_aliases[$tableName]}.actual_amount) as {$tableName}_{$fieldName}";
+    }
+    if($fieldName == 'balance_due'){
+      $this->_columnHeaders["{$tableName}_{$fieldName}"] = $field['title'];
+      $this->_columnHeaders["{$tableName}_{$fieldName}"] = array(
+        'title' => $field['title'],
+        'type' => $field['type']
+      );
+        return "sum({$this->_aliases[$tableName]}.actual_amount) - COALESCE({$this->_aliases['civicrm_pledge']}.amount, 0) as {$tableName}_{$fieldName}";
+    }
+    return FALSE;
+  }
 
+  function groupBy() {
+    parent::groupBy();
+    if (empty($this->_groupBy) && $this->_totalPaid) {
+      $this->_groupBy = " GROUP BY {$this->_aliases['civicrm_pledge']}.id " ;
+    }
+  }
   function from() {
     $this->_from = "
             FROM civicrm_pledge {$this->_aliases['civicrm_pledge']}
@@ -176,6 +219,14 @@ class CRM_Report_Form_Pledge_Detail extends CRM_Report_Form {
                       ON ({$this->_aliases['civicrm_contact']}.id =
                           {$this->_aliases['civicrm_pledge']}.contact_id )
                  {$this->_aclFrom} ";
+
+    if($this->_totalPaid){
+      $this->_from .= "
+        LEFT JOIN civicrm_pledge_payment {$this->_aliases['civicrm_pledge_payment']} ON
+          {$this->_aliases['civicrm_pledge']}.id = {$this->_aliases['civicrm_pledge_payment']}.pledge_id
+          AND {$this->_aliases['civicrm_pledge_payment']}.status_id = 1
+      ";
+    }
 
     // include address field if address column is to be included
     if ($this->_addressField) {
@@ -312,31 +363,35 @@ class CRM_Report_Form_Pledge_Detail extends CRM_Report_Form {
       $pledgeIDArray[] = $pledgeID;
     }
 
-    // Pledge- Payment Detail Headers
-    $tableHeader = array(
-      'scheduled_date' => array('type' => CRM_Utils_Type::T_DATE,
-        'title' => 'Next Payment Due',
-      ),
-      'scheduled_amount' => array(
+    // Add Special headers
+    $this->_columnHeaders['scheduled_date'] = array(
+      'type' => CRM_Utils_Type::T_DATE,
+      'title' => 'Next Payment Due',
+     );
+     $this->_columnHeaders['scheduled_amount'] = array(
         'type' => CRM_Utils_Type::T_MONEY,
         'title' => 'Next Payment Amount',
-      ),
-      'total_paid' => array(
-        'type' => CRM_Utils_Type::T_MONEY,
-        'title' => 'Total Amount Paid',
-      ),
-      'balance_due' => array(
-        'type' => CRM_Utils_Type::T_MONEY,
-        'title' => 'Balance Due',
-      ),
-      'status_id' => NULL,
-    );
-    foreach ($tableHeader as $k => $val) {
-      $this->_columnHeaders[$k] = $val;
-    }
+     );
+     $this->_columnHeaders['status_id'] = NULL;
 
-    if (!$this->_totalPaid) {
-      unset($this->_columnHeaders['total_paid']);
+     /*
+      * this is purely about ordering the total paid & balance due fields off to the end
+      * of the table in case custom or address fields cause them to fall in the middle
+      * (arguably the pledge amount should be moved to after these fields too)
+      *
+      */
+     $tableHeaders = array(
+       'civicrm_pledge_payment_total_paid',
+       'civicrm_pledge_payment_balance_due'
+     );
+
+    foreach ($tableHeaders as $header) {
+      //per above, unset & reset them so they move to the end
+      if(isset($this->_columnHeaders[$header])){
+        $headervalue = $this->_columnHeaders[$header];
+        unset($this->_columnHeaders[$header]);
+        $this->_columnHeaders[$header] = $headervalue;
+      }
     }
 
     // To Display Payment Details of pledged amount
@@ -372,22 +427,17 @@ class CRM_Report_Form_Pledge_Detail extends CRM_Report_Form {
       // Do calculations for Total amount paid AND
       // Balance Due, based on Pledge Status either
       // In Progress, Pending or Completed
+      //?q - what does this add compared to calculating the amount paid & subtracting it from
+      // the amount committed? The only thing I can see if it the pledge was not fully paid but
+      // had been set to completed? In which case this could be done more simply either @ the php or mysql level
       foreach ($display as $pledgeID => $data) {
         $count = $due = $paid = 0;
-
-        // Get Sum of all the payments made
-        $payDetailsSQL = "
-                    SELECT SUM( payment.actual_amount ) as total_amount
-                       FROM civicrm_pledge_payment payment
-                       WHERE payment.pledge_id = {$pledgeID} AND
-                             payment.status_id = 1";
-
-        $totalPaidAmt = CRM_Core_DAO::singleValueQuery($payDetailsSQL);
+        $totalPaidAmt = $display[$pledgeID]['civicrm_pledge_payment_total_paid'];
 
         if (CRM_Utils_Array::value('civicrm_pledge_status_id', $data) == 5) {
           $due = $data['civicrm_pledge_amount'] - $totalPaidAmt;
           $paid = $totalPaidAmt;
-          $count++;
+          $count++; // ?? why?? I can't see any use for this
         }
         elseif (CRM_Utils_Array::value('civicrm_pledge_status_id', $data) == 2) {
           $due = $data['civicrm_pledge_amount'];
@@ -398,8 +448,8 @@ class CRM_Report_Form_Pledge_Detail extends CRM_Report_Form {
           $paid = $paid + $data['civicrm_pledge_amount'];
         }
 
-        $display[$pledgeID]['total_paid'] = $paid;
-        $display[$pledgeID]['balance_due'] = $due;
+        $display[$pledgeID]['civicrm_pledge_payment_total_paid'] = $paid;
+        $display[$pledgeID]['civicrm_pledge_payment_balance_due'] = $due;
       }
     }
 
