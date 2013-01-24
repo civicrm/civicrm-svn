@@ -62,7 +62,7 @@ class CRM_Campaign_Form_Survey_TabHeader {
         'active' => FALSE,
         'current' => FALSE,
       ),
-      'contact' => array('title' => ts('Contact Info And Questions'),
+      'questions' => array('title' => ts('Questions'),
         'link' => NULL,
         'valid' => FALSE,
         'active' => FALSE,

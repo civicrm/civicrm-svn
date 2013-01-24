@@ -36,43 +36,42 @@
 
 {elseif $buildSelector}
 
-       {* use to display result set of survey *}
-       <div id="survey-result-set-dialog" class="hiddenElement"></div>
+  {* use to display result set of survey *}
+  <div id="survey-result-set-dialog" class="hiddenElement"></div>
 
-       {* load survey selector *}
+  {* load survey selector *}
+  {include file="CRM/common/enableDisable.tpl"}
 
-       {include file="CRM/common/enableDisable.tpl"}
+  {literal}
+  <script type="text/javascript">
+    cj( function( ){
+      loadSurveyList( );
+    });
+  </script>
+  {/literal}
 
-       {literal}
-       <script type="text/javascript">
-       cj( function( ){
-           loadSurveyList( );
-       });
-       </script>
-       {/literal}
-
-       <table id="surveys">
-           <thead>
-              <tr class="columnheader">
-            <th class="hiddenElement">{ts}Survey ID{/ts}</th>
+  <table id="surveys">
+    <thead>
+    <tr class="columnheader">
+      <th class="hiddenElement">{ts}Survey ID{/ts}</th>
       <th>{ts}Title{/ts}</th>
       <th class="hiddenElement">{ts}Campaign ID{/ts}</th>
       <th>{ts}Campaign{/ts}</th>
       <th class="hiddenElement">{ts}Survey Type ID{/ts}</th>
       <th>{ts}Survey Type{/ts}</th>
       <th>{ts}Release Frequency{/ts}</th>
-        <th>{ts}Reserve Each Time{/ts}</th>
+      <th>{ts}Reserve Each Time{/ts}</th>
       <th>{ts}Total Reserve{/ts}</th>
       <th>{ts}Default?{/ts}</th>
       <th class="hiddenElement">{ts}Is Active?{/ts}</th>
       <th>{ts}Active?{/ts}</th>
       <th></th>
-            <th></th>
-            <th></th>
-              </tr>
-           </thead>
-           <tbody></tbody>
-       </table>
+      <th></th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
 {else}
 

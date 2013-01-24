@@ -132,11 +132,11 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form {
     // make submit buttons keep the current working tab opened.
     if ($this->_action & (CRM_Core_Action::UPDATE | CRM_Core_Action::ADD)) {
       $tabTitle = $className = CRM_Utils_String::getClassName($this->_name);
-      if ($tabTitle == 'Contact') {
-        $tabTitle = 'Contact and Questions';
+      if ($tabTitle == 'Main') {
+        $tabTitle = 'Main settings';
       }
       $subPage   = strtolower($className);
-      CRM_Core_Session::setStatus(ts("'%1' settings have been saved.", array(1 => $tabTitle)), ts('Saved'), 'success');
+      CRM_Core_Session::setStatus(ts("'%1' have been saved.", array(1 => $tabTitle)), ts('Saved'), 'success');
 
       $this->postProcessHook();
 
@@ -145,7 +145,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form {
       } 
       else {
         if ($this->_action & CRM_Core_Action::ADD)
-          CRM_Utils_System::redirect(CRM_Utils_System::url("civicrm/survey/configure/contact",
+          CRM_Utils_System::redirect(CRM_Utils_System::url("civicrm/survey/configure/questions",
                                                            "action=update&reset=1&id={$this->_surveyId}"));
         else
           CRM_Utils_System::redirect(CRM_Utils_System::url("civicrm/survey/configure/{$subPage}",

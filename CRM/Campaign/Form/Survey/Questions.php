@@ -37,7 +37,7 @@
  * This class generates form components for processing a survey
  *
  */
-class CRM_Campaign_Form_Survey_Contact extends CRM_Campaign_Form_Survey {
+class CRM_Campaign_Form_Survey_Questions extends CRM_Campaign_Form_Survey {
 
   /**
    * This function sets the default values for the form. Note that in edit/view mode
