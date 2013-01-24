@@ -2410,15 +2410,10 @@ WHERE cg.extends IN ('" . implode("','", $this->_customGroupExtends) . "') AND
    */
   function getTemplateFileName(){
     $defaultTpl = parent::getTemplateFileName();
-
-    $template = CRM_Core_Smarty::singleton();
-    // FIXME: check to see if a tpl file exists. There could be a better way to do this.
-    // Applying all code of smarty here, to check for a tpl in include paths doesn't look appropriate.
-    $output   = @$template->fetch($defaultTpl);
-    if (empty($output)) {
+    $template   = CRM_Core_Smarty::singleton();
+    if (!$template->template_exists($defaultTpl)) {
       $defaultTpl = 'CRM/Report/Form.tpl';
     }
-    unset($output);
     return $defaultTpl;
   }
 
