@@ -1438,6 +1438,10 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
         //insert financial type name in receipt.
         $this->assign('contributionTypeName', CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_FinancialType', $contributionParams['financial_type_id']));
         $contributionParams['skipLineItem'] = 1;
+        // Set is_pay_later flag for back-office offline Pending status contributions
+        if ($contributionParams['contribution_status_id'] == CRM_Core_OptionGroup::getValue('contribution_status', 'Pending', 'name')) {
+          $contributionParams['is_pay_later'] = 1;
+        }
         if ($this->_single) {
           $contributions[] = CRM_Contribute_BAO_Contribution::create($contributionParams, $ids);
         }
