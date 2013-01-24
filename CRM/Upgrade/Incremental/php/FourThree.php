@@ -186,6 +186,7 @@ class CRM_Upgrade_Incremental_php_FourThree {
     $validCurrencyCodes = implode("','", $validCurrencyCodes);
     $config = CRM_Core_Config::singleton();
     $defaultCurrency = $config->defaultCurrency;
+    $now = date( 'YmdHis' );
 
     //adding financial_trxn records and entity_financial_trxn records related to contribution
     //Add temp column for easy entry in entity_financial_trxn
@@ -201,7 +202,16 @@ INSERT INTO civicrm_financial_trxn
 SELECT con.id as contribution_id, con.payment_instrument_id, IF(con.currency IN ('{$validCurrencyCodes}'), con.currency, '{$defaultCurrency}')
         as currency, con.total_amount, con.net_amount, con.fee_amount, con.trxn_id, con.contribution_status_id,
         con.check_number, efa.financial_account_id as to_financial_account_id, NULL as from_financial_account_id,
-        REPLACE(REPLACE(REPLACE( IF(con.receive_date IS NOT NULL, con.receive_date, con.receipt_date) , '-', ''), ':', ''), ' ', '') as trxn_date
+        REPLACE(REPLACE(REPLACE(
+          CASE 
+            WHEN con.receive_date IS NOT NULL THEN 
+                con.receive_date
+            WHEN con.receipt_date IS NOT NULL THEN 
+                con.receipt_date
+            ELSE
+                {$now} 
+          END
+        , '-', ''), ':', ''), ' ', '') as trxn_date
 FROM  civicrm_contribution con
       LEFT JOIN civicrm_entity_financial_account efa 
              ON (con.financial_type_id = efa.entity_id AND efa.entity_table = 'civicrm_financial_type'
@@ -227,7 +237,16 @@ WHERE cog.name = 'payment_instrument'";
 
 SELECT con.id as contribution_id, con.payment_instrument_id, IF(con.currency IN ('{$validCurrencyCodes}'), con.currency, '{$defaultCurrency}') as currency,
        con.total_amount, con.net_amount, con.fee_amount, con.trxn_id, con.contribution_status_id, con.check_number, NULL as from_financial_account_id,
-       REPLACE(REPLACE(REPLACE( IF(con.receive_date IS NOT NULL, con.receive_date, con.receipt_date) , '-', ''), ':', ''), ' ', '') as trxn_date,
+       REPLACE(REPLACE(REPLACE( 
+          CASE 
+            WHEN con.receive_date IS NOT NULL THEN 
+                con.receive_date
+            WHEN con.receipt_date IS NOT NULL THEN 
+                con.receipt_date
+            ELSE
+                {$now} 
+          END
+       , '-', ''), ':', ''), ' ', '') as trxn_date,
        CASE 
          WHEN con.payment_instrument_id IS NULL THEN
               {$financialAccountId}
@@ -284,7 +303,7 @@ WHERE  ft.status_id = {$cancelledStatus};";
     //this also handles +ve and -ve both transaction entries for a cancelled contribution
     $sql = "
 INSERT INTO civicrm_entity_financial_trxn (entity_table, entity_id, financial_trxn_id, amount)
-SELECT 'civicrm_contribution', ft.contribution_id, ft.id, IF(net_amount IS NULL, total_amount, net_amount) as amount
+SELECT 'civicrm_contribution', ft.contribution_id, ft.id, ft.total_amount as amount
 FROM   civicrm_financial_trxn ft
 WHERE  contribution_id IS NOT NULL AND 
        ft.id NOT IN (SELECT financial_trxn_id 
