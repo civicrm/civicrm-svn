@@ -60,18 +60,12 @@ class CRM_Core_BAO_FinancialTrxn extends CRM_Financial_DAO_FinancialTrxn {
 
     $trxn->save();
 
-    $contributionAmount = CRM_Utils_Array::value('net_amount', $params);
-    if (!$contributionAmount && isset($params['total_amount'])) {
-      $contributionAmount = $params['total_amount'];
-    }
-
     // save to entity_financial_trxn table
     $entityFinancialTrxnParams =
       array(
         'entity_table' => "civicrm_contribution",
         'financial_trxn_id' => $trxn->id,
-        //use net amount to include all received amount to the contribution
-        'amount' => $contributionAmount,
+        'amount' => $params['total_amount'],
         'currency' => $trxn->currency,
       );
 
