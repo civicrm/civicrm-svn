@@ -335,7 +335,7 @@ function _civicrm_api3_permissions($entity, $action, &$params) {
       'get'    => array(
         'access CiviCRM',
         'access CiviMember',
-        ,'access CiviContribute',
+        'access CiviContribute',
       ),
       'update' => array(
         'access CiviCRM',
