@@ -72,7 +72,7 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("_qf_Membership_cancel-bottom");
 
     // fill in Membership Organization and Type
-    $this->select("membership_type_id[0]", "label={$memTypeParams['member_org']}");
+    $this->select("membership_type_id[0]", "label={$memTypeParams['member_of_contact']}");
     // Wait for membership type select to reload
     $this->waitForTextPresent($memTypeParams['membership_type']);
     sleep(3);
@@ -100,7 +100,7 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
     );
 
     // click through to the membership view screen
-    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[8]/span/a[text()='View']");
+    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[9]/span/a[text()='View']");
     $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
 
     $verifyData = array(
@@ -124,7 +124,7 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
     $this->waitForTextPresent('Membership Signup');
 
     // click through to the activiy view screen (which is the membership view
-    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[8]/span/a[text()='View']");
+    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[9]/span/a[text()='View']");
     $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
 
     $verifyData = array(
@@ -142,12 +142,12 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
 
     $this->waitForPageToLoad("30000");
     $this->waitForElementPresent("xpath=//div[@id='memberships']/div/table/tbody//tr/td[1][text()='{$memTypeParams['membership_type']}']/../td[7]");
-    $this->click("xpath=//div[@id='memberships']/div/table/tbody//tr/td[1][text()='{$memTypeParams['membership_type']}']/../td[8]/span/a[2][text()='Edit']");
+    $this->click("xpath=//div[@id='memberships']/div/table/tbody//tr/td[1][text()='{$memTypeParams['membership_type']}']/../td[9]/span/a[2][text()='Edit']");
 
     $this->waitForElementPresent("_qf_Membership_cancel-bottom");
 
     // fill in Membership Organization and Type
-    $this->select("membership_type_id[0]", "label={$lifeTimeMemTypeParams['member_org']}");
+    $this->select("membership_type_id[0]", "label={$lifeTimeMemTypeParams['member_of_contact']}");
     // Wait for membership type select to reload
     $this->waitForTextPresent($lifeTimeMemTypeParams['membership_type']);
     $this->select("membership_type_id[1]", "label={$lifeTimeMemTypeParams['membership_type']}");
@@ -160,7 +160,7 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
 
     // page was loaded
     $this->waitForTextPresent($sourceText);
-    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[8]/span/a[text()='View']");
+    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[9]/span/a[text()='View']");
     $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
 
     $verifyData = array(
@@ -213,7 +213,7 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("_qf_Membership_cancel-bottom");
 
     // fill in Membership Organization and Type
-    $this->select("membership_type_id[0]", "label={$lifeTimeMemTypeParams['member_org']}");
+    $this->select("membership_type_id[0]", "label={$lifeTimeMemTypeParams['member_of_contact']}");
 
     // Wait for membership type select to reload
     $this->waitForTextPresent($lifeTimeMemTypeParams['membership_type']);
@@ -242,7 +242,7 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
     );
 
     // click through to the membership view screen
-    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[8]/span/a[text()='View']");
+    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[9]/span/a[text()='View']");
     $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
 
     $verifyData = array(
