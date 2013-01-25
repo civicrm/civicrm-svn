@@ -122,7 +122,7 @@ class WebTest_Grant_StandaloneAddTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("_qf_GrantView_cancel-bottom");
 
     $expected = array(
-      2 => 'Pending',
+      2 => 'Submitted',
       3 => 'Emergency',
       8 => '$ 100.00',
       10 => '$ 90.00',

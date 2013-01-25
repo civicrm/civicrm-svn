@@ -52,8 +52,8 @@ class WebTest_Grant_ContactContextAddTest extends CiviSeleniumTestCase {
       $this->click('add');
       $this->click('_qf_Component_next-bottom');
       $this->waitForPageToLoad('30000');
-      $this->waitForElementPresent('css=div.messages');
-      $this->assertTrue($this->isTextPresent('Your changes have been saved.'));
+      $this->waitForElementPresent('css=div.success');
+      $this->assertTrue($this->isTextPresent('Changes Saved.'));
     }
 
     // let's give full CiviGrant permissions to demo user (registered user).
@@ -72,7 +72,7 @@ class WebTest_Grant_ContactContextAddTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('crm-contact-actions-link');
 
     // now add grant from contact summary
-    $this->click("//div[@id='crm-contact-actions-link']/span/div");
+    $this->click("//a[@id='crm-contact-actions-link']/span/div");
 
     // wait for add Grant link
     $this->waitForElementPresent('link=Add Grant');
@@ -141,7 +141,7 @@ class WebTest_Grant_ContactContextAddTest extends CiviSeleniumTestCase {
     // verify tabular data for grant view
     $this->webtestVerifyTabularData(array(
         'Name' => "$firstName $lastName",
-        'Grant Status' => 'Pending',
+        'Grant Status' => 'Submitted',
         'Grant Type' => 'Emergency',
         'Application Received' => $gDate,
         'Grant Decision' => $gDate,

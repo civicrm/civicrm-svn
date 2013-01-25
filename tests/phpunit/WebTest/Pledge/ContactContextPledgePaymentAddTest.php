@@ -62,7 +62,7 @@ class WebTest_Pledge_ContactContextPledgePaymentAddTest extends CiviSeleniumTest
     $this->waitForElementPresent('crm-contact-actions-link');
 
     // now add pledge from contact summary
-    $this->click("//div[@id='crm-contact-actions-link']/span/div");
+    $this->click("//a[@id='crm-contact-actions-link']/span/div");
 
     // wait for add plegde link
     $this->waitForElementPresent('link=Add Pledge');
@@ -255,7 +255,7 @@ class WebTest_Pledge_ContactContextPledgePaymentAddTest extends CiviSeleniumTest
     $this->waitForElementPresent('crm-contact-actions-link');
 
     // now add pledge from contact summary
-    $this->click("//div[@id='crm-contact-actions-link']/span/div");
+    $this->click("//a[@id='crm-contact-actions-link']/span/div");
 
     // wait for add plegde link
     $this->waitForElementPresent('link=Add Pledge');
@@ -334,8 +334,8 @@ class WebTest_Pledge_ContactContextPledgePaymentAddTest extends CiviSeleniumTest
     $this->waitForElementPresent("xpath=//form[@id='Contribution']//table//tbody/tr[3]/td[2]/a[text()='adjust payment amount']");
     $this->click("xpath=//form[@id='Contribution']//table//tbody/tr[3]/td[2]/a[text()='adjust payment amount']");
     $this->waitForElementPresent("adjust-option-type");
-    $this->waitForElementPresent("CIVICRM_QFID_2_8");
-    $this->click("CIVICRM_QFID_2_8");
+    $this->waitForElementPresent("CIVICRM_QFID_2_option_type");
+    $this->click("CIVICRM_QFID_2_option_type");
     $this->type("total_amount", "15");
     $this->click("_qf_Contribution_upload");
 
@@ -347,8 +347,8 @@ class WebTest_Pledge_ContactContextPledgePaymentAddTest extends CiviSeleniumTest
     $this->waitForElementPresent("xpath=//form[@id='Contribution']//table//tbody/tr[3]/td[2]/a[text()='adjust payment amount']");
     $this->click("xpath=//form[@id='Contribution']//table//tbody/tr[3]/td[2]/a[text()='adjust payment amount']");
     $this->waitForElementPresent("adjust-option-type");
-    $this->waitForElementPresent("CIVICRM_QFID_2_8");
-    $this->click("CIVICRM_QFID_2_8");
+    $this->waitForElementPresent("CIVICRM_QFID_2_option_type");
+    $this->click("CIVICRM_QFID_2_option_type");
     $this->type("total_amount", "15");
 
     $this->click("_qf_Contribution_upload");
@@ -430,7 +430,7 @@ class WebTest_Pledge_ContactContextPledgePaymentAddTest extends CiviSeleniumTest
     $this->waitForElementPresent('crm-contact-actions-link');
 
     // now add pledge from contact summary
-    $this->click("//div[@id='crm-contact-actions-link']/span/div");
+    $this->click("//a[@id='crm-contact-actions-link']/span/div");
 
     // wait for add plegde link
     $this->waitForElementPresent('link=Add Pledge');
