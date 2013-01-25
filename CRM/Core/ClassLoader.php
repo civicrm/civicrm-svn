@@ -79,6 +79,7 @@ class CRM_Core_ClassLoader {
     // lets check it its already loaded
     // we also check if the bootstrap file exists since during install of a drupal distro profile
     // the files might not exists, in which case we skip loading the file
+    // if you change the below, please test on Joomla and also PCP pages
     $includeHTMLPurifier = TRUE;
     $htmlPurifierPath = dirname(__FILE__) . '/../../packages/IDS/vendors/htmlpurifier/HTMLPurifier/Bootstrap.php';
     if (

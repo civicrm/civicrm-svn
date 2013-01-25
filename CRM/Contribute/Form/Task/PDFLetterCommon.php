@@ -76,16 +76,16 @@ class CRM_Contribute_Form_Task_PDFLetterCommon extends CRM_Contact_Form_Task_PDF
 
       // update dates (do it for each contribution including grouped recurring contribution)
       if ($receipt_update) {
-        $results = civicrm_api("Contribution", "create", array('version' => '3', 'id' => $contributionId, 'receipt_date' => $nowDate));
+        $result = CRM_Core_DAO::setFieldValue('CRM_Contribute_DAO_Contribution', $contributionId, 'receipt_date', $nowDate);
         // We can't use CRM_Core_Error::fatal here because the api error elevates the exception level. FIXME. dgg
-        if (! $results['is_error']) {
+        if ($result) {
           $receipts++;
       }
       }
       if ($thankyou_update) {
-        $results = civicrm_api("Contribution", "create", array('version' => '3', 'id' => $contributionId, 'thankyou_date' => $nowDate));
+        $result = CRM_Core_DAO::setFieldValue('CRM_Contribute_DAO_Contribution', $contributionId, 'thankyou_date', $nowDate);
         // We can't use CRM_Core_Error::fatal here because the api error elevates the exception level. FIXME. dgg
-        if (! $results['is_error']) {
+        if ($result) {
           $thanks++;
       }
     }

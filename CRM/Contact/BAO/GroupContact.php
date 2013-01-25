@@ -171,7 +171,8 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
    * @access public
    * @static
    */
-  static function removeContactsFromGroup(&$contactIds,
+  static function removeContactsFromGroup(
+    &$contactIds,
     $groupId,
     $method   = 'Admin',
     $status   = 'Removed',
@@ -316,7 +317,8 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
    *
    * $access public
    */
-  static function &getContactGroup($contactId,
+  static function &getContactGroup(
+    $contactId,
     $status           = NULL,
     $numGroupContact  = NULL,
     $count            = FALSE,
@@ -426,22 +428,34 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
    * Returns membership details of a contact for a group
    *
    * @param  int  $contactId id of the contact
-   *
    * @param  int  $groupID   Id of a perticuler group
+   * @param  string $method    If we want the subscription history details for a specific method
    *
    * @return object of group contact
    * @access public
    * @static
    */
-  function &getMembershipDetail($contactId, $groupID) {
-    $query = "SELECT *
+  function &getMembershipDetail($contactId, $groupID, $method = 'Email') {
+    $leftJoin = $where = $orderBy = null;
+
+    if ($method) {
+      $leftJoin =
+        "LEFT JOIN civicrm_subscription_history ON (civicrm_group_contact.contact_id = civicrm_subscription_history.contact_id)";
+      $where = "AND civicrm_subscription_history.method ='Email'";
+      $orderBy = "ORDER BY civicrm_subscription_history.id DESC";
+    }
+    $query = "
+SELECT    *
   FROM civicrm_group_contact
-  LEFT JOIN civicrm_subscription_history ON (civicrm_group_contact.contact_id = civicrm_subscription_history.contact_id)
+          $leftJoin
   WHERE civicrm_group_contact.contact_id = %1
   AND civicrm_group_contact.group_id = %2
-  AND civicrm_subscription_history.method ='Email' ";
+          $where
+          $orderBy
+";
 
-    $params = array(1 => array($contactId, 'Integer'),
+    $params = array(
+      1 => array($contactId, 'Integer'),
       2 => array($groupID, 'Integer'),
     );
     $dao = CRM_Core_DAO::executeQuery($query, $params);
@@ -467,11 +481,13 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
       return CRM_Core_Error::fatal("$contactId or $groupID should not empty");
     }
 
-    $query = "UPDATE civicrm_group_contact
+    $query = "
+UPDATE civicrm_group_contact
   SET civicrm_group_contact.status = 'Added'
   WHERE civicrm_group_contact.contact_id = %1
   AND civicrm_group_contact.group_id = %2";
-    $params = array(1 => array($contactId, 'Integer'),
+    $params = array(
+      1 => array($contactId, 'Integer'),
       2 => array($groupID, 'Integer'),
     );
 

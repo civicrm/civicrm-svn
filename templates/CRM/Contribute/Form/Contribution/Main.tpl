@@ -99,7 +99,7 @@
     {$intro_text}
   </div>
   {if $islifetime or $ispricelifetime }
-  <div id="help">{ts}You have a current Lifetime Membership which does not need top be renewed.{/ts}</div>
+  <div id="help">{ts}You have a current Lifetime Membership which does not need to be renewed.{/ts}</div>
   {/if}
 
   {if !empty($useForMember)}
