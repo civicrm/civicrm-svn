@@ -53,7 +53,7 @@ class WebTest_Member_EditMembershipTest extends CiviSeleniumTestCase {
     $this->webtestFillAutocomplete($contactName);
 
     // fill in Membership Organization
-    $this->select("membership_type_id[0]", "label={$membershipTypes['member_org']}");
+    $this->select("membership_type_id[0]", "label={$membershipTypes['member_of_contact']}");
 
     // select membership type
     $this->select("membership_type_id[1]", "label={$membershipTypes['membership_type']}");
@@ -83,7 +83,7 @@ class WebTest_Member_EditMembershipTest extends CiviSeleniumTestCase {
     $this->click('is_override');
     $this->waitForElementPresent('status_id');
     $this->select('status_id', 'label=Current');
-    $this->select('membership_type_id[0]', 'label=Inner City Arts');
+    $this->select('membership_type_id[0]', 'label=Default Organization');
     $this->select('membership_type_id[1]', 'label=General');
     $this->click('_qf_Membership_upload-bottom');
 

@@ -58,14 +58,14 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('_qf_MembershipType_cancel-bottom');
 
     $this->type('name', "Membership Type $title");
-    $this->type('member_org', $title);
-    $this->click('_qf_MembershipType_refresh');
-    $this->waitForElementPresent("xpath=//div[@id='membership_type_form']/fieldset/table[2]/tbody/tr[2]/td[2]");
+
+    $this->type('member_of_contact', $title);
+    $this->click('member_of_contact');
+    $this->waitForElementPresent("css=div.ac_results-inner li");
+    $this->click("css=div.ac_results-inner li");
 
     $this->type('minimum_fee', '100');
-
-        $this->select( 'financial_type_id', 'value=2' );
-
+    $this->select( 'financial_type_id', 'value=2' );
     $this->type('duration_interval', 1);
     $this->select('duration_unit', 'label=year');
 
@@ -119,7 +119,7 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase {
     );
 
     // click through to the membership view screen
-    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[8]/span/a[text()='View']");
+    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[9]/span/a[text()='View']");
     $this->waitForElementPresent('_qf_MembershipView_cancel-bottom');
 
     $joinDate   = date('Y-m-d');
@@ -130,7 +130,7 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase {
       'joinDate', 'startDate', 'endDate') as $date) {
       $$date = CRM_Utils_Date::customFormat($$date, $configVars->dateformatFull);
     }
-
+        
     $this->webtestVerifyTabularData(
       array(
         'Membership Type' => "Membership Type $title",
@@ -139,7 +139,7 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase {
         'Member Since' => $joinDate,
         'Start date' => $startDate,
         'End date' => $endDate,
-        'Related' => "0 out of 5",
+        'Max related' => "5"
       )
     );
 
@@ -176,7 +176,7 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('css=div#memberships');
 
     // click through to the membership view screen
-    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[8]/span/a[text()='View']");
+    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[9]/span/a[text()='View']");
     $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
 
     $this->webtestVerifyTabularData(
@@ -225,6 +225,7 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase {
     $this->click('css=li#tab_rel a');
     $this->waitForElementPresent('css=div.action-link');
     $this->click("//li[@id='tab_rel']/a");
+ 
     $this->waitForElementPresent("xpath=//div[@id='inactive-relationships']//div//table/tbody//tr/td[7]/span/a[text()='Edit']");
     $this->click("xpath=//div[@id='inactive-relationships']//div//table/tbody//tr/td[7]/span/a[text()='Edit']");
     $this->waitForElementPresent('is_active');
@@ -261,6 +262,7 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase {
     //enable relationship
     $this->click('css=li#tab_rel a');
     $this->waitForElementPresent('css=div.action-link');
+
     $this->waitForElementPresent("xpath=//div[@id='inactive-relationships']//div//table/tbody//tr/td[7]/span[2][text()='more']/ul/li[1]/a[text()='Enable']");
     $this->click("xpath=//div[@id='inactive-relationships']//div//table/tbody//tr/td[7]/span[2][text()='more']/ul/li[1]/a[text()='Enable']");
 

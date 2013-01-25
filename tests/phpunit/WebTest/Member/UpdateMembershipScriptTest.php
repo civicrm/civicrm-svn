@@ -54,7 +54,7 @@ class WebTest_Member_UpdateMembershipScriptTest extends CiviSeleniumTestCase {
     $this->click('link=Add Membership');
 
     $this->waitForElementPresent('_qf_Membership_cancel-bottom');
-    $this->select('membership_type_id[0]', "label={$memTypeParams['member_org']}");
+    $this->select('membership_type_id[0]', "label={$memTypeParams['member_of_contact']}");
     $this->select('membership_type_id[1]', "label={$memTypeParams['membership_type']}");
 
     // Fill join date
@@ -74,8 +74,8 @@ class WebTest_Member_UpdateMembershipScriptTest extends CiviSeleniumTestCase {
     );
 
     // click through to the membership view screen
-    $this->waitForElementPresent("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[8]");
-    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[8]/span/a[text()='View']");
+    $this->waitForElementPresent("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[9]");
+    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[9]/span/a[text()='View']");
     $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
 
     $this->webtestVerifyTabularData(
@@ -97,8 +97,8 @@ class WebTest_Member_UpdateMembershipScriptTest extends CiviSeleniumTestCase {
     $title = "Membership Type " . substr(sha1(rand()), 0, 7);
     $memTypeParams = array(
       'membership_type' => $title,
-      'member_org' => $membershipOrg,
-                                'financial_type' => 2,
+      'member_of_contact' => $membershipOrg,
+      'financial_type' => 2,
       'relationship_type' => '4_b_a',
     );
 
@@ -110,13 +110,14 @@ class WebTest_Member_UpdateMembershipScriptTest extends CiviSeleniumTestCase {
 
     // New membership type
     $this->type('name', $memTypeParams['membership_type']);
-    $this->type('member_org', $membershipTitle);
-    $this->click('_qf_MembershipType_refresh');
-    $this->waitForElementPresent("xpath=//div[@id='membership_type_form']/fieldset/table[2]/tbody/tr[2]/td[2]");
+    $this->type('member_of_contact', $membershipTitle);
+    $this->click('member_of_contact');
+    $this->waitForElementPresent("css=div.ac_results-inner li");
+    $this->click("css=div.ac_results-inner li");
 
     // Membership fees
     $this->type('minimum_fee', '100');
-        $this->select( 'financial_type_id', "value={$memTypeParams['financial_type']}" );
+    $this->select( 'financial_type_id', "value={$memTypeParams['financial_type']}" );
 
     // Duration for which the membership will be active
     $this->type('duration_interval', 1);

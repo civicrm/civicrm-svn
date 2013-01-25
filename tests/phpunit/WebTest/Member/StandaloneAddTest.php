@@ -54,7 +54,7 @@ class WebTest_Member_StandaloneAddTest extends CiviSeleniumTestCase {
     $this->webtestFillAutocomplete($firstName);
 
     // fill in Membership Organization
-    $this->select("membership_type_id[0]", "label={$membershipTypes['member_org']}");
+    $this->select("membership_type_id[0]", "label={$membershipTypes['member_of_contact']}");
 
     // select membership type
     $this->select("membership_type_id[1]", "label={$membershipTypes['membership_type']}");
@@ -75,8 +75,8 @@ class WebTest_Member_StandaloneAddTest extends CiviSeleniumTestCase {
     $this->click("_qf_Membership_upload");
 
     //View Membership
-    $this->waitForElementPresent("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[8]/span/a[text()='View']");
-    $this->click("xpath=//div[@id='memberships']//table/tbody/tr[1]/td[8]/span/a[text()='View']");
+    $this->waitForElementPresent("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[9]/span/a[text()='View']");
+    $this->click("xpath=//div[@id='memberships']//table/tbody/tr[1]/td[9]/span/a[text()='View']");
     $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
     $expected = array(
       2 => $membershipTypes['membership_type'],
@@ -110,7 +110,7 @@ class WebTest_Member_StandaloneAddTest extends CiviSeleniumTestCase {
     $this->webtestFillAutocomplete($firstName);
 
     // fill in Membership Organization
-    $this->select("membership_type_id[0]", "label={$membershipTypes['member_org']}");
+    $this->select("membership_type_id[0]", "label={$membershipTypes['member_of_contact']}");
 
     // select membership type
     $this->select("membership_type_id[1]", "label={$membershipTypes['membership_type']}");
@@ -156,10 +156,10 @@ class WebTest_Member_StandaloneAddTest extends CiviSeleniumTestCase {
     $this->waitForTextPresent("Membership StandaloneAddTest Webtest");
 
     // verify if Membership is created
-    $this->waitForElementPresent("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[8]/span/a[text()='View']");
+    $this->waitForElementPresent("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[9]/span/a[text()='View']");
 
     //click through to the Membership view screen
-    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[8]/span/a[text()='View']");
+    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[9]/span/a[text()='View']");
     $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
 
     $expected = array(

@@ -65,14 +65,13 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('_qf_MembershipType_cancel-bottom');
 
     $this->type('name', "Membership Type $title");
-    $this->type('member_org', $title);
-    $this->click('_qf_MembershipType_refresh');
-    $this->waitForElementPresent("xpath=//div[@id='membership_type_form']/fieldset/table[2]/tbody/tr[2]/td[2]");
+    $this->type('member_of_contact', $title);
+    $this->click('member_of_contact');
+    $this->waitForElementPresent("css=div.ac_results-inner li");
+    $this->click("css=div.ac_results-inner li");
 
     $this->type('minimum_fee', '100');
-
-        $this->select( 'financial_type_id', 'value=2' );
-
+    $this->select( 'financial_type_id', 'value=2' );
     $this->type('duration_interval', 1);
     $this->select('duration_unit', "label=year");
 
@@ -185,7 +184,7 @@ SELECT end_event_adjust_interval
     );
 
     // click through to the membership view screen
-    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[8]/span/a[text()='View']");
+    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[9]/span/a[text()='View']");
     $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
 
     $this->webtestVerifyTabularData(
@@ -232,13 +231,13 @@ SELECT end_event_adjust_interval
     $this->waitForElementPresent('_qf_MembershipType_cancel-bottom');
 
     $this->type('name', "Membership Type $title");
-    $this->type('member_org', $title);
-    $this->click('_qf_MembershipType_refresh');
-    $this->waitForElementPresent("xpath=//div[@id='membership_type_form']/fieldset/table[2]/tbody/tr[2]/td[2]");
+    $this->type('member_of_contact', $title);
+    $this->click('member_of_contact');
+    $this->waitForElementPresent("css=div.ac_results-inner li");
+    $this->click("css=div.ac_results-inner li");
 
     $this->type('minimum_fee', '100');
-
-        $this->select( 'financial_type_id', 'value=2' );
+    $this->select( 'financial_type_id', 'value=2' );
 
     $this->type('duration_interval', 2);
     $this->select('duration_unit', "label=year");
@@ -352,7 +351,7 @@ SELECT end_event_adjust_interval
     );
 
     // click through to the membership view screen
-    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[8]/span/a[text()='View']");
+    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[9]/span/a[text()='View']");
     $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
 
     $this->webtestVerifyTabularData(
@@ -400,14 +399,13 @@ SELECT end_event_adjust_interval
     $this->waitForElementPresent('_qf_MembershipType_cancel-bottom');
 
     $this->type('name', "Membership Type $title");
-    $this->type('member_org', $title);
-    $this->click('_qf_MembershipType_refresh');
-    $this->waitForElementPresent("xpath=//div[@id='membership_type_form']/fieldset/table[2]/tbody/tr[2]/td[2]");
+    $this->type('member_of_contact', $title);
+    $this->click('member_of_contact');
+    $this->waitForElementPresent("css=div.ac_results-inner li");
+    $this->click("css=div.ac_results-inner li");
 
     $this->type('minimum_fee', '100');
-
-        $this->select( 'financial_type_id', 'value=2' );
-
+    $this->select( 'financial_type_id', 'value=2' );
     $this->type('duration_interval', 1);
     $this->select('duration_unit', "label=year");
 
@@ -514,7 +512,7 @@ SELECT end_event_adjust_interval
     );
 
     // click through to the membership view screen
-    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[8]/span/a[text()='View']");
+    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[9]/span/a[text()='View']");
     $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
 
     $this->webtestVerifyTabularData(
@@ -562,14 +560,13 @@ SELECT end_event_adjust_interval
     $this->waitForElementPresent('_qf_MembershipType_cancel-bottom');
 
     $this->type('name', "Membership Type $title");
-    $this->type('member_org', $title);
-    $this->click('_qf_MembershipType_refresh');
-    $this->waitForElementPresent("xpath=//div[@id='membership_type_form']/fieldset/table[2]/tbody/tr[2]/td[2]");
-
+    $this->type('member_of_contact', $title);
+    $this->click('member_of_contact');
+    $this->waitForElementPresent("css=div.ac_results-inner li");
+    $this->click("css=div.ac_results-inner li");
+    
     $this->type('minimum_fee', '100');
-
-        $this->select( 'financial_type_id', 'value=2' );
-
+    $this->select( 'financial_type_id', 'value=2' );
     $this->type('duration_interval', 1);
     $this->select('duration_unit', "label=year");
 
@@ -677,7 +674,7 @@ SELECT end_event_adjust_interval
     );
 
     // click through to the membership view screen
-    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[8]/span/a[text()='View']");
+    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[9]/span/a[text()='View']");
     $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
 
     $this->webtestVerifyTabularData(
