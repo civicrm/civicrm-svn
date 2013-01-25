@@ -128,7 +128,7 @@ class CRM_Campaign_Page_AJAX {
         if ($survey->recontact_interval) {
           $recontactInterval = unserialize($survey->recontact_interval);
           foreach ($opValues as $opValId => $opVal) {
-            if (CRM_Utils_Array::value($opVal['label'], $recontactInterval)) {
+            if (is_numeric($recontactInterval[$opVal['label']])) {
               $opValues[$opValId]['interval'] = $recontactInterval[$opVal['label']];
             }
           }

@@ -388,7 +388,8 @@ class CRM_Campaign_Form_Survey_Results extends CRM_Campaign_Form_Survey {
 
         $optionValue->save();
 
-        if (CRM_Utils_Array::value($k, $params['option_interval'])) {
+        // using is_numeric since 0 is a valid value for option_interval
+        if ( is_numeric($params['option_interval'][$k])) {
           $recontactInterval[$optionValue->label] = $params['option_interval'][$k];
         }
       }
