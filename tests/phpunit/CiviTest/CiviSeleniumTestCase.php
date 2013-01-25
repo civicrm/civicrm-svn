@@ -870,7 +870,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $this->type('premiums_contact_email', "$hash@example.info");
       $this->type('premiums_contact_phone', rand(100000000, 999999999));
       $this->click('premiums_display_min_contribution');
-
+      $this->type('premiums_nothankyou_label', 'No thank-you');
       $this->click('_qf_Premium_next');
       $this->waitForElementPresent('_qf_Premium_next-bottom');
 
@@ -1017,7 +1017,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     // select the radio first since the element id changes after membership org search results are loaded
     switch ($auto_renew) {
       case 'optional':
-        $this->click('CIVICRM_QFID_1_10');
+        $this->click('CIVICRM_QFID_1_auto_renew');
         break;
 
       case 'required':

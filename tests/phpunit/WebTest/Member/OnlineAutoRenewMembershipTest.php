@@ -147,11 +147,11 @@ class WebTest_Member_OnlineAutoRenewMembershipTest extends CiviSeleniumTestCase 
       $this->webtestAddPaymentProcessor($processorName, 'AuthNet');
 
       // -- start updating membership types
-      $this->open($this->sboxPath . "civicrm/admin/member/membershipType?action=update&id=1&reset=1");
+      $this->open($this->sboxPath . "civicrm/admin/member/membershipType/add?action=update&id=1&reset=1");
       $this->waitForPageToLoad("30000");
 
       $this->waitForElementPresent("_qf_MembershipType_upload-bottom");
-      $this->click("CIVICRM_QFID_1_10");
+      $this->click("CIVICRM_QFID_1_auto_renew");
 
       $this->type("duration_interval", "1");
       $this->select("duration_unit", "label=year");
@@ -159,11 +159,11 @@ class WebTest_Member_OnlineAutoRenewMembershipTest extends CiviSeleniumTestCase 
       $this->click("_qf_MembershipType_upload-bottom");
       $this->waitForPageToLoad("30000");
 
-      $this->open($this->sboxPath . "civicrm/admin/member/membershipType?action=update&id=2&reset=1");
+      $this->open($this->sboxPath . "civicrm/admin/member/membershipType/add?action=update&id=2&reset=1");
       $this->waitForPageToLoad("30000");
 
       $this->waitForElementPresent("_qf_MembershipType_upload-bottom");
-      $this->click("CIVICRM_QFID_1_10");
+      $this->click("CIVICRM_QFID_1_auto_renew");
 
       $this->type("duration_interval", "1");
       $this->select("duration_unit", "label=year");
