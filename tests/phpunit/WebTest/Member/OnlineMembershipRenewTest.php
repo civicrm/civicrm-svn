@@ -430,14 +430,15 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('_qf_MembershipType_cancel-bottom');
 
     $membershipTypeTitle = "Membership Type $title";
-
     $this->type('name', "Membership Type $title");
-    $this->type('member_org', $title);
-    $this->click('_qf_MembershipType_refresh');
-    $this->waitForElementPresent("xpath=//div[@id='membership_type_form']/fieldset/table[2]/tbody/tr[2]/td[2]");
+    
+    $this->type('member_of_contact', $title);
+    $this->click('member_of_contact');
+    $this->waitForElementPresent("css=div.ac_results-inner li");
+    $this->click("css=div.ac_results-inner li");
 
     $this->type('minimum_fee', '100');
-        $this->select( 'financial_type_id', 'value=2' );
+    $this->select( 'financial_type_id', 'value=2' );
     $this->type('duration_interval', 1);
     $this->select('duration_unit', 'label=year');
     $this->select('period_type', 'label=rolling');
@@ -449,7 +450,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('link=Add Membership Type');
     $this->assertTrue($this->isTextPresent("The membership type 'Membership Type $title' has been saved."));
 
-    $url = $this->getAttribute("xpath=//div[@id='membership_type']//div[@class='dataTables_wrapper']//table/tbody//tr/td[1][text()='{$membershipTypeTitle}']/../td[11]/span/a[3][text()='Delete']/@href");
+    $url = $this->getAttribute("xpath=//div[@id='membership_type']//div[@class='dataTables_wrapper']//table/tbody//tr/td[1][text()='{$membershipTypeTitle}']/../td[12]/span/a[3][text()='Delete']/@href");
 
     $matches = array();
     preg_match('/id=([0-9]+)/', $url, $matches);

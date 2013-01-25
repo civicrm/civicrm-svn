@@ -61,7 +61,7 @@ class WebTest_Member_BatchUpdateViaProfileTest extends CiviSeleniumTestCase {
     );
 
     // click through to the membership view screen
-    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[8]/span/a[text()='View']");
+    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[9]/span/a[text()='View']");
     $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
 
     // Verify End date
@@ -90,7 +90,7 @@ class WebTest_Member_BatchUpdateViaProfileTest extends CiviSeleniumTestCase {
     );
 
     // click through to the membership view screen
-    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[8]/span/a[text()='View']");
+    $this->click("xpath=//div[@id='memberships']//table//tbody/tr[1]/td[9]/span/a[text()='View']");
     $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
 
     // Verify End date
@@ -181,7 +181,7 @@ class WebTest_Member_BatchUpdateViaProfileTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("_qf_Membership_cancel-bottom");
 
     // fill in Membership Organization and Type
-    $this->select("membership_type_id[0]", "label={$memTypeParams['member_org']}");
+    $this->select("membership_type_id[0]", "label={$memTypeParams['member_of_contact']}");
     // Wait for membership type select to reload
     $this->waitForTextPresent($memTypeParams['membership_type']);
     sleep(3);

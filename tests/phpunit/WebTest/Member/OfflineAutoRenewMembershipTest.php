@@ -70,7 +70,7 @@ class WebTest_Member_OfflineAutoRenewMembershipTest extends CiviSeleniumTestCase
     $this->select("payment_processor_id", "label={$processorName}");
 
     // fill in Membership Organization and Type
-    $this->select("membership_type_id[0]", "label={$memTypeParams['member_org']}");
+    $this->select("membership_type_id[0]", "label={$memTypeParams['member_of_contact']}");
     // Wait for membership type select to reload
     $this->waitForTextPresent($memTypeParams['membership_type']);
     $this->select("membership_type_id[1]", "label={$memTypeParams['membership_type']}");
@@ -101,7 +101,7 @@ class WebTest_Member_OfflineAutoRenewMembershipTest extends CiviSeleniumTestCase
     $this->click("member_test");
     $this->click("_qf_Search_refresh");
     $this->waitForPageToLoad('30000');
-
+    
     $this->waitForElementPresent("xpath=//div[@id='memberSearch']/table/tbody/tr[1]/td[11]/span/a[text()='View']");
     $this->click("xpath=//div[@id='memberSearch']/table/tbody/tr[1]/td[11]/span/a[text()='View']");
     $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
