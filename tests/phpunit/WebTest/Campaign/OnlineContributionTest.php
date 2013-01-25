@@ -88,7 +88,7 @@ class WebTest_Campaign_OnlineContributionTest extends CiviSeleniumTestCase {
       $this->click("add");
       $this->click("_qf_Component_next-bottom");
       $this->waitForPageToLoad("30000");
-      $this->assertTrue($this->isTextPresent("Your changes have been saved."));
+      $this->assertTrue($this->isTextPresent("Changes Saved."));
     }
 
     // add the required Drupal permission
@@ -154,7 +154,7 @@ class WebTest_Campaign_OnlineContributionTest extends CiviSeleniumTestCase {
     // fill in step 1 (Title and Settings)
     $contributionPageTitle = "Title $contributionTitle";
     $this->type('title', $contributionPageTitle);
-        $this->select( 'financial_type_id', 'value=1' );
+    $this->select( 'financial_type_id', 'value=1' );
 
     // select campaign
     $this->click("campaign_id");
@@ -231,6 +231,7 @@ class WebTest_Campaign_OnlineContributionTest extends CiviSeleniumTestCase {
     $this->type('premiums_contact_email', "$contributionTitle@example.info");
     $this->type('premiums_contact_phone', rand(100000000, 999999999));
     $this->click('premiums_display_min_contribution');
+    $this->type('premiums_nothankyou_label', "No Thank you ");
 
     $this->click('_qf_Premium_next-bottom');
     $this->waitForPageToLoad('30000');
@@ -335,7 +336,7 @@ class WebTest_Campaign_OnlineContributionTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("_qf_ContributionView_cancel-bottom");
 
     //View Contribution Record
-    $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[10]/td[2]", preg_quote($campaignTitle));
+    $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody/tr[11]/td[2]", preg_quote($campaignTitle));
   }
 
   function _testVerifyRegisterPage($contributionPageTitle) {
