@@ -561,7 +561,7 @@ class CRM_Utils_Array {
   }
 
   /**
-   * Like exlode() but assumes that the $value is padded with $delim on left and right
+   * Like explode() but assumes that the $value is padded with $delim on left and right
    *
    * @param string|NULL $value
    * @param string $delim
@@ -572,6 +572,20 @@ class CRM_Utils_Array {
       return NULL;
     }
     return explode($delim, trim($value, $delim));
+  }
+
+  /**
+   * Like implode() but assumes that the $value is padded with $delim on left and right
+   *
+   * @param string|NULL $value
+   * @param string $delim
+   * @return array|NULL
+   */
+  static function implodePadded($values, $delim = CRM_Core_DAO::VALUE_SEPARATOR) {
+    if ($values === NULL) {
+      return NULL;
+    }
+    return $delim . implode($delim, $values) . $delim;
   }
 }
 

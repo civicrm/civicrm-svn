@@ -238,6 +238,48 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup {
   }
 
   /**
+   * Determine if given entity (sub)type has any custom groups
+   *
+   * @param string $extends e.g. "Individual", "Activity"
+   * @param int $columnId e.g. custom-group matching mechanism (usu NULL for matching on sub type-id); see extends_entity_column_id
+   * @param string $columnValue e.g. "Student" or "3" or "3\05"; see extends_entity_column_value
+   */
+  public static function hasCustomGroup($extends, $columnId, $columnValue) {
+    $dao = new CRM_Core_DAO_CustomGroup();
+    $dao->extends  = $extends;
+    $dao->extends_entity_column_id = $columnId;
+    $escapedValue = CRM_Core_DAO::VALUE_SEPARATOR . CRM_Core_DAO::escapeString($columnValue) . CRM_Core_DAO::VALUE_SEPARATOR;
+    $dao->whereAdd("extends_entity_column_value LIKE \"%$escapedValue%\"");
+    //$dao->extends_entity_column_value = $columnValue;
+    return $dao->find() ? TRUE : FALSE;
+  }
+
+  /**
+   * Determine if there are any CustomGroups for the given $activityTypeId.
+   * If none found, create one.
+   *
+   * @param int $activityTypeId
+   * @return bool TRUE if a group is found or created; FALSE on error
+   */
+  public static function autoCreateByActivityType($activityTypeId) {
+    if (self::hasCustomGroup('Activity', NULL, $activityTypeId)) {
+      return TRUE;
+    }
+    $activityTypes = CRM_Core_PseudoConstant::activityType(TRUE, TRUE, FALSE, 'label', TRUE, FALSE); // everything
+    $params = array(
+      'version' => 3,
+      'extends' => 'Activity',
+      'extends_entity_column_id' => NULL,
+      'extends_entity_column_value' => CRM_Utils_Array::implodePadded(array($activityTypeId)),
+      'title' => ts('%1 Questions', array(1 => $activityTypes[$activityTypeId])),
+      'style' => 'Inline',
+      'is_active' => 1,
+    );
+    $result = civicrm_api('CustomGroup', 'create', $params);
+    return ! $result['is_error'];
+  }
+
+  /**
    * Get custom groups/fields for type of entity.
    *
    * An array containing all custom groups and their custom fields is returned.
