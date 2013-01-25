@@ -76,11 +76,13 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup {
     }
 
     $group->extends_entity_column_id = 'null';
-    if ($params['extends'][0] == 'ParticipantRole' ||
+    if (
+      $params['extends'][0] == 'ParticipantRole' ||
       $params['extends'][0] == 'ParticipantEventName' ||
       $params['extends'][0] == 'ParticipantEventType'
     ) {
-      $group->extends_entity_column_id = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionValue', $params['extends'][0], 'value', 'name');
+      $group->extends_entity_column_id =
+        CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionValue', $params['extends'][0], 'value', 'name');
     }
 
     //this is format when form get submit.
@@ -140,18 +142,16 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup {
       $group->created_id = CRM_Utils_Array::value('created_id', $params);
       $group->created_date = CRM_Utils_Array::value('created_date', $params);
 
-
-      // lets create the table associated with the group and save it
-      $tableName = $group->table_name = "civicrm_value_" . strtolower(CRM_Utils_String::munge($group->title, '_', 32));
-
       // we do this only once, so name never changes
-      $group->name = CRM_Utils_String::munge($params['title'], '_', 64);
       if (isset($params['name'])) {
         $group->name = CRM_Utils_String::munge($params['name'], '_', 64);
       }
       else {
         $group->name = CRM_Utils_String::munge($group->title, '_', 64);
       }
+
+      // lets create the table associated with the group and save it
+      $tableName = $group->table_name = "civicrm_value_" . strtolower($group->name);
     }
 
     // enclose the below in a transaction
@@ -1665,7 +1665,7 @@ SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 
       if (!empty($gID)){
         return count($details[$gID]);
       }
-      else { 
+      else {
         foreach( $details as $key => $value ) {
           $countValue[$key] = count($details[$key]);
         }
@@ -1814,7 +1814,7 @@ SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 
               if (!is_array($value)) {
                   $customData = explode(CRM_Core_DAO::VALUE_SEPARATOR, $value);
                 }
-          
+
                 $query = "
                     SELECT id as value, name as label
                     FROM civicrm_state_province";
@@ -1911,10 +1911,10 @@ SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 
     if (!is_array($fieldIds) && empty($fieldIds)) {
       return;
     }
-    
+
     $groupLabels = array();
     $fIds = "(" . implode(',', $fieldIds) . ")";
-    
+
     $query = "
 SELECT  civicrm_custom_group.id as groupID, civicrm_custom_group.title as groupTitle,
         civicrm_custom_field.label as fieldLabel, civicrm_custom_field.id as fieldID
@@ -1934,17 +1934,17 @@ SELECT  civicrm_custom_group.id as groupID, civicrm_custom_group.title as groupT
 
     return $groupLabels;
   }
-  
+
   static function dropAllTables() {
     $query = "SELECT table_name FROM civicrm_custom_group";
     $dao = CRM_Core_DAO::executeQuery($query);
-    
+
     while ($dao->fetch()) {
       $query = "DROP TABLE IF EXISTS {$dao->table_name}";
       CRM_Core_DAO::executeQuery($query);
     }
   }
-  
+
   /**
    * Check whether custom group is empty or not.
    *
@@ -1957,7 +1957,7 @@ SELECT  civicrm_custom_group.id as groupID, civicrm_custom_group.title as groupT
     if (!$gID) {
       return;
     }
-    
+
     $tableName = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_CustomGroup',
        $gID,
        'table_name'
@@ -1965,14 +1965,14 @@ SELECT  civicrm_custom_group.id as groupID, civicrm_custom_group.title as groupT
 
     $query = "SELECT count(id) FROM {$tableName} WHERE id IS NOT NULL LIMIT 1";
     $value = CRM_Core_DAO::singleValueQuery($query);
-    
+
     if (empty($value)) {
       return TRUE;
     }
-    
+
     return FALSE;
   }
-  
+
   /**
    * Get the list of types for objects that a custom group extends to.
    *
@@ -1983,45 +1983,45 @@ SELECT  civicrm_custom_group.id as groupID, civicrm_custom_group.title as groupT
    */
   static function getExtendedObjectTypes(&$types = array( )) {
     static $flag = FALSE, $objTypes = array();
-    
+
     if (!$flag) {
       $extendObjs = array();
       CRM_Core_OptionValue::getValues(array('name' => 'cg_extend_objects'), $extendObjs);
-      
+
       foreach ($extendObjs as $ovId => $ovValues) {
         if ($ovValues['description']) {
           // description is expected to be a callback func to subtypes
           list($callback, $args) = explode(';', trim($ovValues['description']));
-          
+
           if (!empty($args)) {
             eval('$args = ' . $args . ';');
           }
           else {
             $args = array();
           }
-          
+
           if (!is_array($args)) {
             CRM_Core_Error::fatal('Arg is not of type array');
           }
-          
+
           list($className) = explode('::', $callback);
           require_once (str_replace('_',DIRECTORY_SEPARATOR, $className) . '.php');
-          
+
           $objTypes[$ovValues['value']] = call_user_func_array($callback, $args);
         }
       }
       $flag = TRUE;
     }
-    
+
     $types = array_merge($types, $objTypes);
     return $objTypes;
   }
-  
+
   function hasReachedMaxLimit($customGroupId, $entityId) {
     //check whether the group is multiple
     $isMultiple = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_CustomGroup', $customGroupId, 'is_multiple');
     $isMultiple = ($isMultiple) ? TRUE : FALSE;
-    $hasReachedMax = FALSE;  
+    $hasReachedMax = FALSE;
     if ($isMultiple &&
         ($maxMultiple = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_CustomGroup', $customGroupId, 'max_multiple'))) {
       if (!$maxMultiple) {
@@ -2032,7 +2032,7 @@ SELECT  civicrm_custom_group.id as groupID, civicrm_custom_group.title as groupT
         $sql = "SELECT COUNT(id) FROM {$tableName} WHERE entity_id = %1";
         $params = array(1 => array($entityId, 'Integer'));
         $count = CRM_Core_DAO::singleValueQuery($sql, $params);
-        
+
         if ($count >= $maxMultiple) {
           $hasReachedMax = TRUE;
         }
@@ -2040,6 +2040,6 @@ SELECT  civicrm_custom_group.id as groupID, civicrm_custom_group.title as groupT
     }
     return $hasReachedMax;
   }
-  
+
  }
 

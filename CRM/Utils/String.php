@@ -87,7 +87,9 @@ class CRM_Utils_String {
    */
   static function munge($name, $char = '_', $len = 63) {
     // replace all white space and non-alpha numeric with $char
-    $name = preg_replace('/\s+|\W+/', $char, trim($name));
+    // we only use the ascii character set since mysql does not create table names / field names otherwise
+    // CRM-11744
+    $name = preg_replace('/[^a-zA-Z0-9]+/', $char, trim($name));
 
     if ($len) {
       // lets keep variable names short
