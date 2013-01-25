@@ -1772,7 +1772,8 @@ AND civicrm_membership.is_test = %2";
       CRM_Utils_Array::value('start_date', $currentMembership),
       CRM_Utils_Array::value('end_date', $currentMembership),
       CRM_Utils_Array::value('join_date', $currentMembership),
-      $today
+      $today,
+      TRUE
     );
 
     if (empty($status) ||
