@@ -277,18 +277,6 @@ ALTER TABLE `civicrm_financial_item`
   ADD CONSTRAINT `FK_civicrm_financial_item_contact_id` FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact` (`id`),
   ADD CONSTRAINT `FK_civicrm_financial_item_financial_account_id` FOREIGN KEY (`financial_account_id`) REFERENCES `civicrm_financial_account` (`id`);
 
-CREATE TABLE IF NOT EXISTS `civicrm_entity_payment` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `payment_id` int(10) unsigned NOT NULL COMMENT 'Type of grant. Implicit FK to civicrm_payment.',
-  `entity_table` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Entity Table.',
-  `entity_id` int(10) unsigned NOT NULL COMMENT 'Entity ID',
-  PRIMARY KEY (`id`),
-  KEY `FK_civicrm_entity_payment_payment_id` (`payment_id`)
-)ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
-ALTER TABLE `civicrm_entity_payment`
-  ADD CONSTRAINT `FK_civicrm_entity_payment_payment_id` FOREIGN KEY (`payment_id`) REFERENCES `civicrm_payment` (`id`);
-
 ALTER TABLE `civicrm_entity_financial_trxn`
 DROP currency;
 

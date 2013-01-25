@@ -157,6 +157,14 @@ class CRM_Upgrade_Incremental_php_FourThree {
   }
   
   function createFinancialRecords() {
+
+    // update civicrm_entity_financial_trxn.amount = civicrm_financial_trxn.total_amount
+    $query = "UPDATE civicrm_entity_financial_trxn ceft
+      LEFT JOIN civicrm_financial_trxn cft ON cft.id = ceft.financial_trxn_id
+      SET ceft.amount = total_amount
+      WHERE cft.net_amount IS NOT NULL AND ceft.entity_table = 'civicrm_contribution';";
+    CRM_Core_DAO::executeQuery($query);
+    
     $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
     $completedStatus = array_search('Completed', $contributionStatus);
     $pendingStatus = array_search('Pending', $contributionStatus);
