@@ -24,11 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* Profile forms when embedded in CMS account create (mode=1) or cms account edit (mode=8) or civicrm/profile (mode=4) pages *}
-{if !($context eq 'dialog' or $context eq 'multiProfileDialog')}
-<script type="text/javascript" src="{$config->resourceBase}js/Common.js"></script>
-{/if}
 {if ($context eq 'multiProfileDialog')}
-
 {literal}
 <script type="text/javascript">
 cj(function() {
