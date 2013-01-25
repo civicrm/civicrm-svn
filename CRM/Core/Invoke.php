@@ -339,7 +339,8 @@ class CRM_Core_Invoke {
     $secondArg = CRM_Utils_Array::value(2, $args, '');
 
     if ($secondArg == 'map') {
-      $controller = new CRM_Core_Controller_Simple('CRM_Contact_Form_Task_Map',
+      $controller = new CRM_Core_Controller_Simple(
+        'CRM_Contact_Form_Task_Map',
         ts('Map Contact'),
         NULL, FALSE, FALSE, TRUE
       );
@@ -354,26 +355,19 @@ class CRM_Core_Invoke {
         $profileGID = $profileIds[0];
       }
       else {
-        $profileGID = CRM_Utils_Request::retrieve('gid', 'Integer',
-          $controller,
-          TRUE
-        );
+        $profileGID = CRM_Utils_Request::retrieve('gid', 'Integer', $controller, TRUE);
       }
+
 
       // make sure that this profile enables mapping
       // CRM-8609
-      $isMap = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup',
-        $profileGID,
-        'is_map'
-      );
+      $isMap =
+        CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', $profileGID, 'is_map');
       if (!$isMap) {
         CRM_Core_Error::statusBounce(ts('This profile does not have the map feature turned on.'));
       }
 
-      $profileView = CRM_Utils_Request::retrieve('pv', 'Integer',
-        $controller,
-        FALSE
-      );
+      $profileView = CRM_Utils_Request::retrieve('pv', 'Integer', $controller, FALSE);
 
       // set the userContext stack
       $session = CRM_Core_Session::singleton();

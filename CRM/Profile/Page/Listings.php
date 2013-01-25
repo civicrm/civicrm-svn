@@ -73,7 +73,7 @@ class CRM_Profile_Page_Listings extends CRM_Core_Page {
   protected $_gid;
 
   /**
-   * state wether to display serch form or not
+   * state whether to display search form or not
    *
    * @var int
    */
@@ -100,7 +100,7 @@ class CRM_Profile_Page_Listings extends CRM_Core_Page {
    * @access public
    *
    */ function preProcess() {
-   
+
     $this->_search = TRUE;
 
     $search = CRM_Utils_Request::retrieve('search', 'Boolean',
@@ -430,10 +430,11 @@ class CRM_Profile_Page_Listings extends CRM_Core_Page {
       }
     }
 
-    $fields = CRM_Core_BAO_UFGroup::getListingFields(CRM_Core_Action::VIEW,
-      CRM_Core_BAO_UFGroup::PUBLIC_VISIBILITY |
-      CRM_Core_BAO_UFGroup::LISTINGS_VISIBILITY,
-      FALSE, $gid
+    $fields = CRM_Core_BAO_UFGroup::getListingFields(
+      CRM_Core_Action::VIEW,
+      CRM_Core_BAO_UFGroup::PUBLIC_VISIBILITY | CRM_Core_BAO_UFGroup::LISTINGS_VISIBILITY,
+      FALSE,
+      $gid
     );
 
     $returnProperties = CRM_Contact_BAO_Contact::makeHierReturnProperties($fields);
