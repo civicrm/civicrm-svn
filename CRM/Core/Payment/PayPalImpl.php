@@ -83,7 +83,7 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
    */
   static function &singleton($mode, &$paymentProcessor) {
     $processorName = $paymentProcessor['name'];
-    if (!empty($processorName) || self::$_singleton[$processorName] === NULL) {
+    if (!isset(self::$_singleton[$processorName]) || self::$_singleton[$processorName] === NULL) {
       self::$_singleton[$processorName] = new CRM_Core_Payment_PaypalImpl($mode, $paymentProcessor);
     }
     return self::$_singleton[$processorName];

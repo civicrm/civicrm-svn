@@ -80,7 +80,7 @@ class CRM_Core_Payment_Google extends CRM_Core_Payment {
    */
   static function &singleton($mode, &$paymentProcessor) {
     $processorName = $paymentProcessor['name'];
-    if (self::$_singleton[$processorName] === NULL) {
+    if (!isset(self::$_singleton[$processorName]) || self::$_singleton[$processorName] === NULL) {
       self::$_singleton[$processorName] = new CRM_Core_Payment_Google($mode, $paymentProcessor);
     }
     return self::$_singleton[$processorName];
