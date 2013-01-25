@@ -122,4 +122,27 @@ class CRM_Campaign_Form_Survey_TabHeader {
     $current = $current ? $current : 'main';
     return $current;
   }
+
+  static function getNextTab(&$form) {
+    static $next = FALSE;
+    if ($next)
+      return $next;
+
+    $tabs = $form->get('tabHeader');
+    if (is_array($tabs)) {
+      $current = false;
+      foreach ($tabs as $subPage => $pageVal) {
+        if ($current) {
+          $next = $subPage;
+          break;
+        }
+        if ($pageVal['current'] === TRUE) {
+          $current = $subPage;
+        }
+      }
+    }
+
+    $next = $next ? $next : 'main';
+    return $next;
+  }
 }
