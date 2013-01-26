@@ -52,7 +52,7 @@
     <td colspan="4" class="label">
     {ts}Clients:{/ts}
     {foreach from=$caseRoles.client item=client name=clients}
-      <a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$client.contact_id`"}" title={ts}"view contact record"{/ts}>{$client.display_name}</a>{if not $smarty.foreach.clients.last}, &nbsp; {/if}
+      <a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$client.contact_id`"}" title="{ts}view contact record{/ts}">{$client.display_name}</a>{if not $smarty.foreach.clients.last}, &nbsp; {/if}
         {/foreach}
     <a href="#" title="{ts}add new client to the case{/ts}" onclick="addClient( );return false;">
       <span class="icon edit-icon"></span>
@@ -98,7 +98,7 @@
             <span class="crm-case-summary-label">{ts}Status{/ts}:</span>&nbsp;{$caseDetails.case_status}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseStatusId`"}" title={ts}"Change case status (creates activity record)"{/ts}><span class="icon edit-icon"></span></a>
         </td>
         <td class="crm-case-caseview-case_start_date label">
-            <span class="crm-case-summary-label">{ts}Start Date{/ts}:</span>&nbsp;{$caseDetails.case_start_date|crmDate}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseStartDateId`"}" title={ts}"Change case start date (creates activity record)"{/ts}><span class="icon edit-icon"></span></a
+            <span class="crm-case-summary-label">{ts}Start Date{/ts}:</span>&nbsp;{$caseDetails.case_start_date|crmDate}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseStartDateId`"}" title="{ts}Change case start date (creates activity record){/ts}"><span class="icon edit-icon"></span></a
         </td>
         <td class="crm-case-caseview-{$caseID} label">
             <span class="crm-case-summary-label">{ts}Case ID{/ts}:</span>&nbsp;{$caseID}
@@ -414,7 +414,7 @@ function createRelationship( relType, contactID, relID, rowNumber, relTypeName )
       } else {
          html = '<img src="' +resourceBase+'i/edit.png" title="edit case role" onclick="createRelationship( ' + relType +','+ data.cid +', ' + data.rel_id +', ' + rowNumber +', \''+ relTypeName +'\' );">&nbsp;&nbsp;';
          var relTypeAdminLink = {/literal}"{crmURL p='civicrm/admin/reltype' q='reset=1' h=0 }"{literal};
-         var errorMsg = '{/literal}{ts 1="' + relTypeName + '" 2="' + relTypeAdminLink + '" }The relationship type definition for the %1 case role is not valid for the client and / or staff contact types. You can review and edit relationship types at <a href="%2">Administer >> Option Lists >> Relationship Types</a>{/ts}{literal}.';
+         var errorMsg = '{/literal}{ts escape="js" 1="' + relTypeName + '" 2="' + relTypeAdminLink + '" }The relationship type definition for the %1 case role is not valid for the client and / or staff contact types. You can review and edit relationship types at <a href="%2">Administer >> Option Lists >> Relationship Types</a>{/ts}{literal}.';
 
          //display error message.
          cj().crmError(errorMsg);
@@ -755,7 +755,7 @@ function addRole() {
               } else {
                    var relTypeName = cj("#role_type :selected").text();
                    var relTypeAdminLink = {/literal}"{crmURL p='civicrm/admin/reltype' q='reset=1' h=0 }"{literal};
-                     var errorMsg = '{/literal}{ts 1="' + relTypeName + '" 2="' + relTypeAdminLink + '"  }The relationship type definition for the %1 case role is not valid for the client and / or staff contact types. You can review and edit relationship types at <a href="%2">Administer >> Option Lists >> Relationship Types</a>{/ts}{literal}.';
+                     var errorMsg = '{/literal}{ts escape="js" 1="' + relTypeName + '" 2="' + relTypeAdminLink + '"  }The relationship type definition for the %1 case role is not valid for the client and / or staff contact types. You can review and edit relationship types at <a href="%2">Administer >> Option Lists >> Relationship Types</a>{/ts}{literal}.';
 
                       //display error message.
                       cj().crmError(errorMsg);
