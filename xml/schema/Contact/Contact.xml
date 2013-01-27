@@ -480,6 +480,10 @@
       <name>gender_id</name>
       <title>Gender</title>
       <type>int unsigned</type>
+      <pseudoconstant>
+        <name>gender</name>
+        <optionGroupName>gender</optionGroupName>
+      </pseudoconstant>
       <headerPattern>/^gender$/i</headerPattern>
       <comment>FK to gender ID</comment>
       <add>1.2</add>
