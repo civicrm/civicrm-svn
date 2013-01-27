@@ -63,7 +63,7 @@ function civicrm_api3_option_value_create($params) {
     }
   }
 
-  if (CRM_Utils_Array::value('component', $params)) {
+  if (isset($params['component'])) {// allow a component to be reset to ''
     // convert 'component' to 'component_id'
     if (empty($params['component'])) {
       $params['component_id'] = '';
