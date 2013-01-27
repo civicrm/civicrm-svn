@@ -621,7 +621,7 @@ function civicrm_add_form_button($context) {
   }
 
   $config      = CRM_Core_Config::singleton();
-  $imageBtnURL = $config->resourceBase . 'i/widget/logo.png';
+  $imageBtnURL = $config->resourceBase . 'i/logo16px.png';
   $out         = '<a href="#TB_inline?width=480&inlineId=civicrm_frontend_pages" class="button thickbox" id="add_civi" style="padding-left: 4px;" title="' . __("Add CiviCRM Public Pages", 'CiviCRM') . '"><img src="' . $imageBtnURL . '" height="15" width="15" alt="' . __("Add CiviCRM Public Pages", 'CiviCRM') . '" />CiviCRM</a>';
   return $context . $out;
 }
