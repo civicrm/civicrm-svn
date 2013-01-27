@@ -394,7 +394,7 @@ class CRM_Core_Resources {
       }
       else {
         $this->addStyleFile('civicrm', 'css/civicrm.css', -99, 'html-header');
-        $this->addStyleFile('civicrm', 'css/extra.css', -98, 'html-header');
+        $this->addStyleFile('civicrm', 'css/extras.css', -98, 'html-header');
       }
     }
   }
