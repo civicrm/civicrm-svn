@@ -66,19 +66,20 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search {
     $this->set('context', 'builder');
     parent::preProcess();
 
-    //get the block count
+    // Get the block count
     $this->_blockCount = $this->get('blockCount');
+    // Initialize new form
     if (!$this->_blockCount) {
-      $this->_blockCount = 3;
+      $this->_blockCount = 5;
+      $this->set('newBlock', 1);
     }
 
     //get the column count
-    $this->_columnCount = array();
     $this->_columnCount = $this->get('columnCount');
 
     for ($i = 1; $i < $this->_blockCount; $i++) {
-      if ((!isset($this->_columnCount[$i])) || (!$this->_columnCount[$i])) {
-        $this->_columnCount[$i] = 1;
+      if (empty($this->_columnCount[$i])) {
+        $this->_columnCount[$i] = 10;
       }
     }
 
@@ -93,6 +94,31 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search {
   }
 
   public function buildQuickForm() {
+    $fields = self::fields();
+    // Get fields of type date
+    // FIXME: This is a hack until our fields contain this meta-data
+    $dateFields = array();
+    foreach ($fields as $name => $field) {
+      if (strpos($name, '_date') || CRM_Utils_Array::value('data_type', $field) == 'Date') {
+        $dateFields[] = $name;
+      }
+    }
+    // All option lists defined here will be selectable in the search form
+    $pseudoconstant = array(
+      'group' => CRM_Core_PseudoConstant::group(),
+      'tag' => CRM_Core_PseudoConstant::tag(),
+    );
+    // Add javascript
+    CRM_Core_Resources::singleton()
+      ->addScriptFile('civicrm', 'templates/CRM/Contact/Form/Search/Builder.js')
+      ->addSetting(array(
+        'pseudoconstant' => $pseudoconstant,
+        'searchBuilder' => array(
+          // Index of newly added/expanded block (1-based index)
+          'newBlock' => $this->get('newBlock'),
+          'dateFields' => $dateFields,
+        ),
+      ));
     //get the saved search mapping id
     $mappingId = NULL;
     if ($this->_ssID) {
@@ -128,15 +154,7 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search {
     if (CRM_Utils_Array::value('addMore', $values) || CRM_Utils_Array::value('addBlock', $values)) {
       return TRUE;
     }
-    $fields = array();
-    $fields = CRM_Contact_BAO_Contact::exportableFields('All', FALSE, TRUE);
-
-    $compomentFields = CRM_Core_Component::getQueryFields();
-    $activityFields  = CRM_Activity_BAO_Activity::exportableFields();
-    $compomentFields = array_merge($compomentFields, $activityFields);
-    $fields          = array_merge($fields, $compomentFields);
-
-    $fld = array();
+    $fields = self::fields();
     $fld = CRM_Core_BAO_Mapping::formattedFields($values, TRUE);
 
     $errorMsg = array();
@@ -152,8 +170,7 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search {
           !empty($v[2])) {
           $errorMsg["value[$v[3]][$v[4]]"] = ts('Please clear your value if you want to use %1 operator.', array(1 => $v[1]));
         }
-        elseif (($v[0] == 'group' || $v[0] == 'tag') &&
-          !empty($v[2])) {
+        elseif (($v[0] == 'group' || $v[0] == 'tag') && !empty($v[2])) {
           $grpId = array_keys($v[2]);
           if (!key($v[2])) {
             $errorMsg["value[$v[3]][$v[4]]"] = ts("Please enter a value.");
@@ -306,23 +323,25 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search {
     $params = $this->controller->exportValues($this->_name);
     if (!empty($params)) {
       // Add another block
-      if (CRM_Utils_Array::value('addBlock', $params)) {
-        $this->_blockCount = $this->_blockCount + 1;
+      if (!empty($params['addBlock'])) {
+        $this->set('newBlock', $this->_blockCount);
+        $this->_blockCount += 3;
         $this->set('blockCount', $this->_blockCount);
         $this->set('showSearchForm', TRUE);
         return;
       }
       // Add another field
+      $addMore = CRM_Utils_Array::value('addMore', $params);
       for ($x = 1; $x <= $this->_blockCount; $x++) {
-        $addMore = CRM_Utils_Array::value('addMore', $params);
-        if (CRM_Utils_Array::value($x, $addMore)) {
-          $this->_columnCount[$x] = $this->_columnCount[$x] + 1;
+        if (!empty($addMore[$x])) {
+          $this->set('newBlock',  $x);
+          $this->_columnCount[$x] = $this->_columnCount[$x] + 5;
           $this->set('columnCount', $this->_columnCount);
           $this->set('showSearchForm', TRUE);
           return;
         }
       }
-
+      $this->set('newBlock', NULL);
       $checkEmpty = NULL;
       foreach ($params['mapper'] as $key => $value) {
         foreach ($value as $k => $v) {
@@ -333,6 +352,7 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search {
       }
 
       if (!$checkEmpty) {
+        $this->set('newBlock', 1);
         CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/contact/search/builder', '_qf_Builder_display=true'));
       }
     }
@@ -372,6 +392,14 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search {
     }
 
     parent::postProcess();
+  }
+  
+  static function fields() {
+    return array_merge(
+      CRM_Contact_BAO_Contact::exportableFields('All', FALSE, TRUE),
+      CRM_Core_Component::getQueryFields(),
+      CRM_Activity_BAO_Activity::exportableFields()
+    );
   }
 
   /**

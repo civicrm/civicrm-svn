@@ -24,47 +24,35 @@
  +--------------------------------------------------------------------+
 *}
 {* template for search builder *}
- <div id="map-field">
-  {strip}
-     {section start=1 name=blocks loop=$blockCount}
-       {assign var="x" value=$smarty.section.blocks.index}
-       <div class="crm-search-block">
-    <h3>{if $x eq 1}{ts}Include contacts where{/ts}{else}{ts}Also include contacts where{/ts}{/if}</h3>
-  <table>
+<div id="map-field">
+{strip}
+  {section start=1 name=blocks loop=$blockCount}
+    {assign var="x" value=$smarty.section.blocks.index}
+    <div class="crm-search-block">
+      <h3>{if $x eq 1}{ts}Include contacts where{/ts}{else}{ts}Also include contacts where{/ts}{/if}</h3>
+      <table>
         {section name=cols loop=$columnCount[$x]}
-            {assign var="i" value=$smarty.section.cols.index}
-            <tr>
-                <td class="form-item even-row">
-                    {$form.mapper[$x][$i].html}
-                    {$form.operator[$x][$i].html}
-                    &nbsp;&nbsp;{$form.value[$x][$i].html}
-                   &nbsp;&nbsp;&nbsp;<a href="javascript:resetBuilderValues({$x},{$i});"><img title="reset the values for this row" src="{$config->resourceBase}i/close.png" class="action-icon" alt="{ts}reset this row{/ts}" /></a>
-                </td>
-            </tr>
+          {assign var="i" value=$smarty.section.cols.index}
+          <tr>
+            <td class="form-item even-row">
+              {$form.mapper[$x][$i].html}
+              {$form.operator[$x][$i].html}
+              &nbsp;&nbsp;{$form.value[$x][$i].html}
+              {if $i gt 0 or $x gt 1}
+                &nbsp;&nbsp;<a href="#" class="crm-reset-builder-row" title="{ts}Remove this row{/ts}"><img src="{$config->resourceBase}i/close.png" class="action-icon" alt="{ts}reset this row{/ts}" /></a>
+              {/if}
+            </td>
+          </tr>
         {/section}
 
-         <tr>
-           <td class="form-item even-row underline-effect">
-               {$form.addMore[$x].html}
-           </td>
-         </tr>
-       </table>
-      </div>
-    {/section}
-    <div class="underline-effect">{$form.addBlock.html}</div>
-  {/strip}
- </div>
-
-<script type="text/javascript">
-{literal}
-  function resetBuilderValues(x, i) {
-    cj('#mapper_'   + x + '_' + i + '_0').val('');
-    cj('#mapper_'   + x + '_' + i + '_1').val('');
-    cj('#mapper_'   + x + '_' + i + '_2').val('');
-    cj('#mapper_'   + x + '_' + i + '_3').val('');
-    cj('#mapper_'   + x + '_' + i + '_4').val('');
-    cj('#operator_' + x + '_' + i).val('');
-    cj('#value_'    + x + '_' + i).val('');
-  }
-{/literal}
-</script>
+        <tr class="crm-search-builder-add-row">
+          <td class="form-item even-row underline-effect">
+            {$form.addMore[$x].html}
+          </td>
+        </tr>
+      </table>
+    </div>
+  {/section}
+  <h3 class="crm-search-builder-add-block underline-effect">{$form.addBlock.html}</h3>
+{/strip}
+</div>

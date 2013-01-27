@@ -676,10 +676,7 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping {
     $form->set('blockCount', $form->_blockCount);
     $form->set('columnCount', $form->_columnCount);
 
-    $defaults = array();
-
-    $noneArray = array();
-    $nullArray = array();
+    $defaults = $noneArray = $nullArray = array();
 
     //used to warn for mismatch column count or mismatch mapping
     $warning = 0;
