@@ -80,7 +80,7 @@ function _civicrm_api3_permissions($entity, $action, &$params) {
         'access CiviCRM',
         'edit all contacts',
       ),
-      'getquick' => array('access AJAX API'),
+      'getquick' => array('access CiviCRM'),
     ),
     'contribution' => array(
       'create' => array(
