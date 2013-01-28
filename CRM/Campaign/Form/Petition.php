@@ -166,7 +166,7 @@ class CRM_Campaign_Form_Petition extends CRM_Campaign_Form_Survey {
     );
 
     // add a form rule to check default value
-    $this->addFormRule(array('CRM_Campaign_Form_Survey', 'formRule'), $this);
+    $this->addFormRule(array('CRM_Campaign_Form_Survey_Results', 'formRule'), $this);
   }
 
 
