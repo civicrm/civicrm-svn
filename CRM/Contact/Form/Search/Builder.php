@@ -416,37 +416,34 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search {
       'state_province' => 'contact',
       'gender' => 'contact',
       'world_region' => 'contact',
+      'individual_prefix' => 'contact',
+      'individual_suffix' => 'contact',
       'activity_type' => 'activity',
       'activity_status' => 'activity',
-      'activity_is_deleted' => 'yesno',
+      'on_hold' => 'yesno',
       'financial_type' => 'contribution',
-      'participant_role' => 'participant',
-      'participant_status' => 'participant',
-      'account_type_code' => 'contribution',
-      'accounting_code' => 'contribution',
       'contribution_page_id' => 'contribution',
       'contribution_status' => 'contribution',
+      'payment_instrument' => 'contribution',
     );
-    $entities = array('contact', 'activity', 'participant', 'contribution', 'pledge', 'member');
+    $entities = array('contact', 'activity', 'participant', 'pledge', 'member', 'contribution');
     foreach ($entities as $entity) {
-      $options[$entity . '_is_test'] = 'yesno';
       $fields = civicrm_api($entity, 'getfields', array('version' => 3));
       foreach ($fields['values'] as $field => $info) {
-        if (!empty($info['options']) || !empty($info['option_group_id'])) {
+        if (!empty($info['options']) || !empty($info['pseudoconstant']) || !empty($info['option_group_id'])) {
           $options[$field] = $entity;
+          if (substr($field, -3) == '_id') {
+            $options[substr($field, 0, -3)] = $entity;
+          }
         }
         elseif (in_array(substr($field, 0, 3), array('is_', 'do_')) || CRM_Utils_Array::value('data_type', $info) == 'Boolean') {
           $options[$field] = 'yesno';
+          if ($entity != 'contact') {
+            $options[$entity . '_' . $field] = 'yesno';
+          }
         }
-        // Ugly hack to reconcile inconsistent naming of fields
-        // FIXME: Search builder should follow standard naming convention
-        if ($entity == 'contact' && in_array($field, array('prefix_id', 'suffix_id'))) {
-          $options['individual_' . str_replace('_id', '', $field)] = $info['options'];
-        }
-        // Hacks, hacks hacks
-        // FIXME: inconsistent field naming sucks
-        if ($field == 'contribution_payment_instrument_id') {
-          $options['payment_instrument'] = $info['options'];
+        elseif (strpos($field, '_is_')) {
+          $options[$field] = 'yesno';
         }
       }
     }

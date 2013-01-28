@@ -9,17 +9,17 @@
   function handleFieldSelection() {
     var field = $(this).val();
     var row = $(this).closest('tr');
-    if (CRM.pseudoconstant[field]) {
-      buildSelect(row, field);
-    }
-    else {
+    if (!CRM.pseudoconstant[field]) {
       removeSelect(row);
     }
-    if ($.inArray(field, CRM.searchBuilder.dateFields) > -1) {
-      buildDate(row);
+    if ($.inArray(field, CRM.searchBuilder.dateFields) < 0) {
+      removeDate(row);
+      if (CRM.pseudoconstant[field]) {
+        buildSelect(row, field);
+      }
     }
     else {
-      removeDate(row);
+      buildDate(row);
     }
   }
 
@@ -180,7 +180,7 @@
   }
 
   /**
-   * Remove select options and restore input to a plain textfield
+   * Restore operators to the default
    * @param row: jQuery object
    */
   function restoreOperators(row) {

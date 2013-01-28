@@ -196,6 +196,9 @@ function civicrm_api3_generic_getoptions($apiRequest) {
   );
   // First try to retrieve the options from getfields
   $result = civicrm_api($apiRequest['entity'], 'getfields', $getFieldsArray);
+  if (!isset($result['values'][$field]) && isset($result['values'][$field . '_id'])) {
+    $field = $field . '_id';
+  }
   if (!empty($result['values'][$field]['options'])) {
     return civicrm_api3_create_success($result['values'][$field]['options']);
   }
@@ -212,6 +215,7 @@ function civicrm_api3_generic_getoptions($apiRequest) {
   elseif ($entity == 'event' || $entity == 'participant') {
     $params['class'] = 'CRM_Event_PseudoConstant';
   }
+  require_once 'api/v3/Constant.php';
   return civicrm_api3_constant_get($params);
 }
 
