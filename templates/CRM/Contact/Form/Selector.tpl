@@ -54,7 +54,7 @@
 
   { if $id }
       {foreach from=$rows item=row}
-        <tr id='rowid{$row.contact_id}' class="{cycle values="odd-row,even-row"}">
+        <tr id='rowid{$row.contact_id}' class="{cycle values='odd-row,even-row'}">
             {assign var=cbName value=$row.checkbox}
             <td>{$form.$cbName.html}</td>
             {if $context eq 'smog'}
@@ -66,17 +66,17 @@
             <td>{$row.contact_type}</td>
             <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`&key=`$qfKey`&context=`$context`"}">{$row.sort_name}</a></td>
             {foreach from=$row item=value key=key}
-               {if ($key neq "checkbox") and ($key neq "action") and ($key neq "contact_type") and ($key neq "contact_type_orig") and ($key neq "status") and ($key neq "sort_name") and ($key neq "contact_id")}
-                <td>
+               {if ($key neq "checkbox") and ($key neq "action") and ($key neq "contact_type") and ($key neq "contact_type_orig") and ($key neq "status") and ($key neq "sort_name") and ($key neq "contact_id")and ($key neq "contact_sub_type")}
+              <td>
                 {if $key EQ "household_income_total" }
                     {$value|crmMoney}
-            {elseif strpos( $key, '_date' ) !== false }
+                {elseif strpos( $key, '_date' ) !== false }
                     {$value|crmDate}
                 {else}
                     {$value}
                 {/if}
                      &nbsp;
-                 </td>
+              </td>
                {/if}
             {/foreach}
             <td>{$row.action|replace:'xx':$row.contact_id}</td>
