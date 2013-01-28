@@ -214,12 +214,6 @@ END AS 'relType'
         }
       }
 
-      $displayName = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact',
-        $values['contact_id'],
-        'display_name'
-      );
-      $this->assign('displayName', $displayName);
-
       $this->assign('has_related', FALSE);
       // if membership can be granted, and we are the owner of the membership
       if (CRM_Utils_Array::value('relationship_type_id', $membershipType)
@@ -294,12 +288,22 @@ SELECT r.id, c.id as cid, c.display_name as name, c.job_title as comment,
         }
       }
 
+      $displayName = CRM_Contact_BAO_Contact::displayName($values['contact_id']);
+      $this->assign('displayName', $displayName);
+      
+      // Check if this is default domain contact CRM-10482
+      if (CRM_Contact_BAO_Contact::checkDomainContact($values['contact_id'])) {
+        $displayName .= ' (' . ts('default organization') . ')';
+      }
+
+      // omitting contactImage from title for now since the summary overlay css doesn't work outside of our crm-container
+      CRM_Utils_System::setTitle(ts('View Membership for') .  ' ' . $displayName);
+      
       // add viewed membership to recent items list
+      $recentTitle = $displayName . ' - ' . ts('Membership Type:') . ' ' . $values['membership_type'];
       $url = CRM_Utils_System::url('civicrm/contact/view/membership',
         "action=view&reset=1&id={$values['id']}&cid={$values['contact_id']}&context=home"
       );
-
-      $title = $displayName . ' - ' . ts('Membership Type:') . ' ' . $values['membership_type'];
 
       $recentOther = array();
       if (CRM_Core_Permission::checkActionPermission('CiviMember', CRM_Core_Action::UPDATE)) {
@@ -312,7 +316,7 @@ SELECT r.id, c.id as cid, c.display_name as name, c.job_title as comment,
           "action=delete&reset=1&id={$values['id']}&cid={$values['contact_id']}&context=home"
         );
       }
-      CRM_Utils_Recent::add($title,
+      CRM_Utils_Recent::add($recentTitle,
         $url,
         $values['id'],
         'Membership',

@@ -126,6 +126,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form {
     $this->_display_name_a = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $this->_contactId, 'display_name');
 
     $this->assign('sort_name_a', $this->_display_name_a);
+    CRM_Utils_System::setTitle(ts('Relationships for') . ' ' . $this->_display_name_a);
 
     $this->_caseId = CRM_Utils_Request::retrieve('caseID', 'Integer', $this);
 

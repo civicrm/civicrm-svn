@@ -101,9 +101,9 @@ class CRM_Pledge_Form_PledgeView extends CRM_Core_Form {
     $displayName = CRM_Contact_BAO_Contact::displayName($values['contact_id']);
     $this->assign('displayName', $displayName);
 
-        $title = $displayName . 
-                 ' - (' . ts('Pledged') . ' ' . CRM_Utils_Money::format( $values['pledge_amount'] ) . 
-                 ' - ' . $values['financial_type'] . ')';
+    $title = $displayName . 
+      ' - (' . ts('Pledged') . ' ' . CRM_Utils_Money::format( $values['pledge_amount'] ) . 
+      ' - ' . $values['financial_type'] . ')';
 
     // add Pledge to Recent Items
     CRM_Utils_Recent::add($title,
@@ -114,6 +114,13 @@ class CRM_Pledge_Form_PledgeView extends CRM_Core_Form {
       NULL,
       $recentOther
     );
+
+    // Check if this is default domain contact CRM-10482
+    if (CRM_Contact_BAO_Contact::checkDomainContact($values['contact_id'])) {
+      $displayName .= ' (' . ts('default organization') . ')';
+    }
+    // omitting contactImage from title for now since the summary overlay css doesn't work outside of our crm-container
+    CRM_Utils_System::setTitle(ts('View Pledge by') .  ' ' . $displayName);
 
     //do check for campaigns
     if ($campaignId = CRM_Utils_Array::value('campaign_id', $values)) {

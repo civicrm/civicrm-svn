@@ -116,8 +116,9 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form {
 
       // set title to "Pledge - "+Contact Name
       $displayName = $this->userDisplayName;
-      $pageTitle = 'Pledge - ' . $displayName;
+      $pageTitle = ts('Pledge by'). ' ' . $displayName;
       $this->assign('pageTitle', $pageTitle);
+      CRM_Utils_System::setTitle($pageTitle);
     }
 
     //build custom data

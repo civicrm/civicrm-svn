@@ -118,6 +118,7 @@ class CRM_Contact_Page_View_Relationship extends CRM_Core_Page {
 
     $displayName = CRM_Contact_BAO_Contact::displayName($this->_contactId);
     $this->assign('displayName', $displayName);
+    CRM_Utils_System::setTitle(ts('View Relationship for') . ' ' . $displayName);
 
     $title = $displayName . ' (' . $viewRelationship[$this->_id]['relation'] . ' ' . CRM_Contact_BAO_Contact::displayName($viewRelationship[$this->_id]['cid']) . ')';
 

@@ -212,7 +212,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
           CRM_Core_Error::statusBounce(ts('You do not have the necessary permission to edit this contact.'));
         }
 
-        list($displayName, $contactImage) = CRM_Contact_BAO_Contact::getDisplayAndImage($this->_contactId);
+        $displayName = CRM_Contact_BAO_Contact::displayName($this->_contactId);
         $displayName = ts('Edit %1', array(1 => $displayName));
         
         // Check if this is default domain contact CRM-10482
@@ -220,7 +220,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form {
           $displayName .= ' (' . ts('default organization') . ')';
         }
         
-        CRM_Utils_System::setTitle($displayName, $contactImage . ' ' . $displayName);
+        // omitting contactImage from title for now since the summary overlay css doesn't work outside of our crm-container
+        CRM_Utils_System::setTitle($displayName);
         $context = CRM_Utils_Request::retrieve('context', 'String', $this);
         $qfKey = CRM_Utils_Request::retrieve('key', 'String', $this);
 
