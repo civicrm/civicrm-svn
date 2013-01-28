@@ -380,7 +380,7 @@ function civicrm_invoke() {
         // finally split on =
         list($key, $value) = CRM_Utils_System::explode('=', $element, 2);
         if ($value) {
-          $_GET[$key] = $value;
+          $_REQUEST[$key] = $value;
         }
       }
 

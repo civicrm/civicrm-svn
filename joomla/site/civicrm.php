@@ -60,7 +60,7 @@ function civicrm_invoke() {
     foreach ($args as $a) {
       $val = $params->get($a, NULL);
       if ($val !== NULL && $view) {
-        $_GET[$a] = $val;
+        $_REQUEST[$a] = $_GET[$a] = $val;
       }
     }
   }
