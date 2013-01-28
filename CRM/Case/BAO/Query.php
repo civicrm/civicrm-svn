@@ -450,6 +450,20 @@ class CRM_Case_BAO_Query {
         $query->_tables['civicrm_case_contact'] = $query->_whereTables['civicrm_case_contact'] = 1;
         return;
 
+      case 'case_start_date_low':
+      case 'case_start_date_high':
+        $query->dateQueryBuilder($values,
+          'civicrm_case', 'case_start_date', 'start_date', 'Start Date'
+        );
+        return;
+
+      case 'case_end_date_low':
+      case 'case_end_date_high':
+        $query->dateQueryBuilder($values,
+          'civicrm_case', 'case_end_date', 'end_date', 'End Date'
+        );
+        return;
+
       case 'case_start_date':
         $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause("civicrm_case.start_date", $op, $value, 'Int');
         $query->_tables['civicrm_case'] = $query->_whereTables['civicrm_case'] = 1;
@@ -666,6 +680,8 @@ case_relation_type.id = case_relationship.relationship_type_id )";
     foreach ($statuses as $id => $name) {
       $form->addElement('checkbox', "case_status_id[$id]", NULL, $name);
     }
+
+    CRM_Core_Form_Date::buildDateRange($form, 'case', 1, '_start_date_low', '_end_date_high', ts('From'), FALSE, FALSE);
 
     $form->assign('validCiviCase', TRUE);
 
