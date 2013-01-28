@@ -72,7 +72,7 @@ class CRM_Core_ManagedEntitiesTest extends CiviUnitTestCase {
     $this->assertEquals('CRM_Example_One_Bar', $bar['name']);
     $this->assertDBQuery(1, 'SELECT count(*) FROM civicrm_option_value WHERE name = "CRM_Example_One_Bar"');
 
-    // and then hook changes its mind, removing 'foo'
+    // and then hook changes its mind, removing 'foo' (first of two entities)
     unset($decls[0]);
     $me = new CRM_Core_ManagedEntities($this->modules, $decls);
     $me->reconcile();
@@ -82,6 +82,17 @@ class CRM_Core_ManagedEntitiesTest extends CiviUnitTestCase {
     $bar = $me->get('com.example.one', 'bar');
     $this->assertEquals('CRM_Example_One_Bar', $bar['name']);
     $this->assertDBQuery(1, 'SELECT count(*) FROM civicrm_option_value WHERE name = "CRM_Example_One_Bar"');
+
+    // and then hook changes its mind, removing 'bar' (the last remaining entity)
+    unset($decls[1]);
+    $me = new CRM_Core_ManagedEntities($this->modules, $decls);
+    $me->reconcile();
+    $foo = $me->get('com.example.one', 'foo');
+    $this->assertTrue($foo === NULL);
+    $this->assertDBQuery(0, 'SELECT count(*) FROM civicrm_option_value WHERE name = "CRM_Example_One_Foo"');
+    $bar = $me->get('com.example.one', 'bar');
+    $this->assertTrue($bar === NULL);
+    $this->assertDBQuery(0, 'SELECT count(*) FROM civicrm_option_value WHERE name = "CRM_Example_One_Bar"');
   }
 
   /**
