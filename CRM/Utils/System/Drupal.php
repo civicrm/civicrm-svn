@@ -66,6 +66,10 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
             $form_state['input']['pass'] = array('pass1'=>$params['cms_pass'],'pass2'=>$params['cms_pass']);
     }
 
+    if(!empty($params['notify'])){
+      $form_state['input']['notify'] = $params['notify'];
+    }
+
     $form_state['rebuild'] = FALSE;
     $form_state['programmed'] = TRUE;
     $form_state['method'] = 'post';
