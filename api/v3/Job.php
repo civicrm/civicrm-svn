@@ -45,6 +45,46 @@
 require_once 'api/v3/utils.php';
 
 /**
+ * Adjust metadata for "Create" action
+ *
+ * The metadata is used for setting defaults, documentation & validation
+ * @param array $params array or parameters determined by getfields
+ */
+function _civicrm_api3_job_create_spec(&$params) {
+  $params['run_frequency']['api.required'] = 1;
+  $params['name']['api.required'] = 1;
+  $params['api_entity']['api.required'] = 1;
+  $params['api_action']['api.required'] = 1;
+
+  $params['domain_id']['api.default'] = CRM_Core_Config::domainID();
+  $params['is_active']['api.default'] = 1;
+}
+
+/**
+ * Function to create scheduled job
+ *
+ * @param  array $params   Associative array of property name/value pairs to insert in new job.
+ *
+ * @return success or error
+ * {@getfields Job_create}
+ * @access public
+ * {@schema Core/Job.xml}
+ */
+function civicrm_api3_job_create($params) {
+  require_once 'CRM/Utils/Rule.php';
+
+  if (isset($params['id']) && !CRM_Utils_Rule::integer($params['id'])) {
+    return civicrm_api3_create_error('Invalid value for job ID');
+  }
+
+  $dao = CRM_Core_BAO_Job::create($params);
+
+  $result = array();
+  _civicrm_api3_object_to_array($dao, $result[$dao->id]);
+  return civicrm_api3_create_success($result, $params, 'job', 'create', $dao);
+}
+
+/**
  * Retrieve one or more job
  * @param  array input parameters
  * @return  array api result array
@@ -53,6 +93,29 @@ require_once 'api/v3/utils.php';
  */
 function civicrm_api3_job_get($params) {
   return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
+}
+
+/**
+ * Delete a job
+ *
+ * @param int $id
+ *
+ * @return array API Result Array
+ * {@getfields Job_delete}
+ * @static void
+ * @access public
+ */
+function civicrm_api3_job_delete($params) {
+  require_once 'CRM/Utils/Rule.php';
+  if ($params['id'] != NULL && !CRM_Utils_Rule::integer($params['id'])) {
+    return civicrm_api3_create_error('Invalid value for job ID');
+  }
+
+  $result = CRM_Core_BAO_Job::del($params['id']);
+  if (!$result) {
+    return civicrm_api3_create_error('Could not delete job');
+  }
+  return civicrm_api3_create_success($result, $params, 'job', 'delete');
 }
 
 /**

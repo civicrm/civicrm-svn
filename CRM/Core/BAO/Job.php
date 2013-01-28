@@ -44,6 +44,22 @@ class CRM_Core_BAO_Job extends CRM_Core_DAO_Job {
   function __construct() {
     parent::__construct();
   }
+  /**
+   * Function to add the payment-processor type in the db
+   *
+   * @param array $params (reference ) an assoc array of name/value pairs
+   * @param array $ids    the array that holds all the db ids
+   *
+   * @return object CRM_Financial_DAO_PaymentProcessorType
+   * @access public
+   * @static
+   *
+   */
+  static function create($params) {
+    $job = new CRM_Core_DAO_Job();
+    $job->copyValues($params);
+    return $job->save();
+  }
 
   /**
    * Takes a bunch of params that are needed to match certain criteria and
@@ -101,7 +117,9 @@ class CRM_Core_BAO_Job extends CRM_Core_DAO_Job {
       return NULL;
     }
 
-    $dao->delete();
+    if ($dao->delete()) {
+      return TRUE;
+    }
   }
 
   /**

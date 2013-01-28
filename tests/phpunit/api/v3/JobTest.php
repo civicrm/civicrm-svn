@@ -48,10 +48,151 @@ class api_v3_JobTest extends CiviUnitTestCase {
 
   function setUp() {
     parent::setUp();
+    $this->quickCleanup(array('civicrm_job'));
   }
 
   function tearDown() {
+    $this->quickCleanup(array('civicrm_job'));
+    parent::tearDown();
   }
+
+  /**
+   * check with no name
+   */
+  function testCreateWithoutName() {
+    $params = array(
+      'is_active' => 1,
+      'version' => $this->_apiVersion,
+    );
+    $result = civicrm_api('job', 'create', $params);
+
+    $this->assertEquals($result['is_error'], 1);
+    $this->assertEquals($result['error_message'],
+      'Mandatory key(s) missing from params array: run_frequency, name, api_entity, api_action'
+    );
+  }
+
+  /**
+   * create job with an invalid "run_frequency" value
+   */
+  function testCreateWithInvalidFrequency() {
+    $params = array(
+      'version' => $this->_apiVersion,
+      'sequential' => 1,
+      'name' => 'API_Test_Job',
+      'description' => 'A long description written by hand in cursive',
+      'run_frequency' => 'Fortnightly',
+      'api_entity' => 'ApiTestEntity',
+      'api_action' => 'apitestaction',
+      'parameters' => 'Semi-formal explanation of runtime job parameters',
+      'is_active' => 1,
+    );
+    $result = civicrm_api('job', 'create', $params);
+    $this->assertEquals($result['is_error'], 1);
+  }
+
+  /**
+   * create job
+   */
+  function testCreate() {
+    $params = array(
+      'version' => $this->_apiVersion,
+      'sequential' => 1,
+      'name' => 'API_Test_Job',
+      'description' => 'A long description written by hand in cursive',
+      'run_frequency' => 'Daily',
+      'api_entity' => 'ApiTestEntity',
+      'api_action' => 'apitestaction',
+      'parameters' => 'Semi-formal explanation of runtime job parameters',
+      'is_active' => 1,
+    );
+    $result = civicrm_api('job', 'create', $params);
+    $this->assertAPISuccess($result);
+    $this->documentMe($params, $result, __FUNCTION__, __FILE__);
+    $this->assertNotNull($result['values'][0]['id'], 'in line ' . __LINE__);
+
+    // mutate $params to match expected return value
+    unset($params['version']);
+    unset($params['sequential']);
+    //assertDBState compares expected values in $result to actual values in the DB
+    $this->assertDBState('CRM_Core_DAO_Job', $result['id'], $params);
+  }
+
+  /**
+   * check with empty array
+   */
+  function testDeleteEmpty() {
+    $params = array();
+    $result = civicrm_api('job', 'delete', $params);
+    $this->assertEquals($result['is_error'], 1);
+  }
+
+  /**
+   * check with No array
+   */
+  function testDeleteParamsNotArray() {
+    $result = civicrm_api('job', 'delete', 'string');
+    $this->assertEquals($result['is_error'], 1);
+  }
+
+  /**
+   * check if required fields are not passed
+   */
+  function testDeleteWithoutRequired() {
+    $params = array(
+      'name' => 'API_Test_PP',
+      'title' => 'API Test Payment Processor',
+      'class_name' => 'CRM_Core_Payment_APITest',
+    );
+
+    $result = civicrm_api('job', 'delete', $params);
+    $this->assertEquals($result['is_error'], 1);
+    $this->assertEquals($result['error_message'], 'Mandatory key(s) missing from params array: version, id');
+  }
+
+  /**
+   * check with incorrect required fields
+   */
+  function testDeleteWithIncorrectData() {
+    $params = array(
+      'id' => 'abcd',
+      'version' => $this->_apiVersion,
+    );
+
+    $result = civicrm_api('job', 'delete', $params);
+
+    $this->assertEquals($result['is_error'], 1);
+    $this->assertEquals($result['error_message'], 'Invalid value for job ID');
+  }
+
+  /**
+   * check job delete
+   */
+  function testDelete() {
+    $createParams = array(
+      'version' => $this->_apiVersion,
+      'sequential' => 1,
+      'name' => 'API_Test_Job',
+      'description' => 'A long description written by hand in cursive',
+      'run_frequency' => 'Daily',
+      'api_entity' => 'ApiTestEntity',
+      'api_action' => 'apitestaction',
+      'parameters' => 'Semi-formal explanation of runtime job parameters',
+      'is_active' => 1,
+    );
+    $createResult = civicrm_api('job', 'create', $createParams);
+    $this->assertAPISuccess($createResult);
+
+    $params = array(
+      'id' => $createResult['id'],
+      'version' => $this->_apiVersion,
+    );
+    $result = civicrm_api('job', 'delete', $params);
+    $this->documentMe($params, $result, __FUNCTION__, __FILE__);
+    $this->assertAPISuccess($result);
+  }
+
+  /**
 
   public function testCallUpdateGreetingMissingParams() {
     $result = civicrm_api($this->_entity, 'update_greeting', array('gt' => 1, 'version' => $this->_apiVersion));
