@@ -92,6 +92,8 @@ class api_v3_AddressTest extends CiviUnitTestCase {
     $this->assertEquals('A', $result['values'][$result['id']]['street_number_suffix'], 'In line ' . __LINE__);
     $this->assertEquals('Excelsior Ave.', $result['values'][$result['id']]['street_name'], 'In line ' . __LINE__);
     $this->assertEquals('Apt 1C', $result['values'][$result['id']]['street_unit'], 'In line ' . __LINE__);
+    civicrm_api('address', 'delete', array('version' => 3, 'id' => $result['id']));
+
   }
 
   /*
@@ -197,14 +199,14 @@ class api_v3_AddressTest extends CiviUnitTestCase {
     );
     $address = civicrm_api('Address', 'getsingle', ($params));
     $this->assertEquals($address['location_type_id'], $this->_params['location_type_id'], 'In line ' . __LINE__);
-    civicrm_api('address', 'delete', $address);
+    civicrm_api('address', 'delete', array('version' => 3, 'id' => $address['id']));
   }
 
   /**
    * Test civicrm_address_get with sort option- success expected.
    */
   public function testGetAddressSort() {
-    civicrm_api('address', 'create', $this->_params);
+    $create = civicrm_api('address', 'create', $this->_params);
     $subfile     = "AddressSort";
     $description = "Demonstrates Use of sort filter";
     $params      = array(
@@ -220,6 +222,7 @@ class api_v3_AddressTest extends CiviUnitTestCase {
     $this->assertEquals(0, $result['is_error'], 'In line ' . __LINE__);
     $this->assertEquals(2, $result['count'], 'In line ' . __LINE__);
     $this->assertEquals('Ambachtstraat 23', $result['values'][0]['street_address'], 'In line ' . __LINE__);
+    civicrm_api('address', 'delete', array('version' => 3, 'id' => $create['id']));
   }
 
   /**
@@ -238,13 +241,14 @@ class api_v3_AddressTest extends CiviUnitTestCase {
     $this->assertEquals(0, $result['is_error'], 'In line ' . __LINE__);
     $this->assertEquals(1, $result['count'], 'In line ' . __LINE__);
     $this->assertEquals('Ambachtstraat 23', $result['values'][0]['street_address'], 'In line ' . __LINE__);
+    civicrm_api('address', 'delete', array('version' => 3, 'id' => $result['id']));
   }
 
   /**
    * Test civicrm_address_get with sort option- success expected.
    */
   public function testGetAddressLikeFail() {
-    civicrm_api('address', 'create', $this->_params);
+    $create = civicrm_api('address', 'create', $this->_params);
     $subfile     = "AddressLike";
     $description = "Demonstrates Use of Like";
     $params      = array('street_address' => array('LIKE' => "'%xy%'"),
@@ -254,6 +258,7 @@ class api_v3_AddressTest extends CiviUnitTestCase {
     $result = civicrm_api('Address', 'Get', ($params));
     $this->assertEquals(0, $result['is_error'], 'In line ' . __LINE__);
     $this->assertEquals(0, $result['count'], 'In line ' . __LINE__);
+    civicrm_api('address', 'delete', array('version' => 3, 'id' => $create['id']));
   }
 
   function testGetWithCustom() {
@@ -272,6 +277,7 @@ class api_v3_AddressTest extends CiviUnitTestCase {
 
     $this->customFieldDelete($ids['custom_field_id']);
     $this->customGroupDelete($ids['custom_group_id']);
+    civicrm_api('address', 'delete', array('version' => 3, 'id' => $result['id']));
   }
 
   public function testCreateAddressPrimaryHandlingChangeToPrimary() {
@@ -286,6 +292,7 @@ class api_v3_AddressTest extends CiviUnitTestCase {
         'id' => $address1['id'],
       ));
     $this->assertEquals(1, $check);
+    civicrm_api('address', 'delete', array('version' => 3, 'id' => $address1['id']));
   }
   public function testCreateAddressPrimaryHandlingChangeExisting() {
     $address1 = civicrm_api('address', 'create', $this->_params);
@@ -298,6 +305,7 @@ class api_v3_AddressTest extends CiviUnitTestCase {
         'contact_id' => $this->_contactID,
       ));
     $this->assertEquals(1, $check);
+    civicrm_api('address', 'delete', array('version' => 3, 'id' => $address1['id']));
   }
 }
 
