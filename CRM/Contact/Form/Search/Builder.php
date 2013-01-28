@@ -70,7 +70,7 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search {
     $this->_blockCount = $this->get('blockCount');
     // Initialize new form
     if (!$this->_blockCount) {
-      $this->_blockCount = 5;
+      $this->_blockCount = 4;
       $this->set('newBlock', 1);
     }
 
@@ -79,7 +79,7 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search {
 
     for ($i = 1; $i < $this->_blockCount; $i++) {
       if (empty($this->_columnCount[$i])) {
-        $this->_columnCount[$i] = 10;
+        $this->_columnCount[$i] = 5;
       }
     }
 
@@ -419,10 +419,17 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search {
       'activity_type' => 'activity',
       'activity_status' => 'activity',
       'activity_is_deleted' => 'yesno',
-      'activity_is_test' => 'yesno',
+      'financial_type' => 'contribution',
+      'participant_role' => 'participant',
+      'participant_status' => 'participant',
+      'account_type_code' => 'contribution',
+      'accounting_code' => 'contribution',
+      'contribution_page_id' => 'contribution',
+      'contribution_status' => 'contribution',
     );
-    $entities = array('contact', 'activity', 'contribution', 'member');
+    $entities = array('contact', 'activity', 'participant', 'contribution', 'pledge', 'member');
     foreach ($entities as $entity) {
+      $options[$entity . '_is_test'] = 'yesno';
       $fields = civicrm_api($entity, 'getfields', array('version' => 3));
       foreach ($fields['values'] as $field => $info) {
         if (!empty($info['options']) || !empty($info['option_group_id'])) {

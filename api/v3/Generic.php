@@ -204,7 +204,15 @@ function civicrm_api3_generic_getoptions($apiRequest) {
     // Convert foo_id to just plain foo
     $field = substr($field, 0, -3);
   }
-  return civicrm_api3_constant_get(array('name' => _civicrm_api_get_camel_name($field)));
+  $params = array('name' => _civicrm_api_get_camel_name($field));
+  $entity = strtolower($apiRequest['entity']);
+  if ($entity == 'contribution') {
+    $params['class'] = 'CRM_Contribute_PseudoConstant';
+  }
+  elseif ($entity == 'event' || $entity == 'participant') {
+    $params['class'] = 'CRM_Event_PseudoConstant';
+  }
+  return civicrm_api3_constant_get($params);
 }
 
 /*
