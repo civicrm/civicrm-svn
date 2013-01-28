@@ -30,9 +30,6 @@
     {include file="CRM/Custom/Form/CustomData.tpl"}
 {else}
 
-<div class="crm-submit-buttons">
-     {include file="CRM/common/formButtons.tpl" location="top"}
-</div>
 {if $action eq 8}
   <table class="form-layout">
     <tr>
@@ -42,8 +39,11 @@
     </tr>
   </table>
 {else}
+  <div class="crm-submit-buttons">
+       {include file="CRM/common/formButtons.tpl" location="top"}
+  </div>
 
-    <table class="form-layout-compressed">
+  <table class="form-layout-compressed">
   <tr class="crm-campaign-form-block-title">
       <td class="label">{$form.title.label}</td>
       <td class="view-value">{$form.title.html}</td>
@@ -97,9 +97,9 @@
       <td class="label">{$form.is_active.label}</td>
       <td class="view-value">{$form.is_active.html}</td>
   </tr>
-    </table>
+  </table>
 
-    <div id="customData"></div>
+  <div id="customData"></div>
 
 {/if}
 <div class="crm-submit-buttons">
