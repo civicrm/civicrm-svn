@@ -190,6 +190,7 @@ cj(function($) {
   <option value="getcount">getcount</option>
   <option value="getsingle">getsingle</option>
   <option value="getvalue">getvalue</option>
+  <option value="getoptions">getoptions</option>
   <option value="update">update</option>
 </select>
 &nbsp;|&nbsp;

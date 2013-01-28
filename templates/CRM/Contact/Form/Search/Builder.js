@@ -4,6 +4,55 @@
   var operators, operatorCount;
 
   /**
+   * Handle Field Selection
+   */
+  function handleFieldSelection() {
+    var field = $(this).val();
+    var row = $(this).closest('tr');
+    if (CRM.pseudoconstant[field]) {
+      buildSelect(row, field);
+    }
+    else {
+      removeSelect(row);
+    }
+    if ($.inArray(field, CRM.searchBuilder.dateFields) > -1) {
+      buildDate(row);
+    }
+    else {
+      removeDate(row);
+    }
+  }
+
+  /**
+   * Handle Search Operator Selection
+   */
+  function handleOperatorSelection() {
+    var noValue = ['', 'IS EMPTY', 'IS NOT EMPTY', 'IS NULL', 'IS NOT NULL'];
+    var row = $(this).closest('tr');
+    if ($.inArray($(this).val(), noValue) < 0) {
+      $('.crm-search-value', row).show();
+      // Change between multiselect and select when using "IN" operator
+      var select = $('.crm-search-value select', row);
+      if (select.length) {
+        var value = select.val();
+        var multi = ($(this).val() == 'IN' || $(this).val() == 'NOT IN');
+        select.attr('multiple', multi);
+        if (multi) {
+          $('option[value=""]', select).remove();
+        }
+        else if ($('option[value=""]', select).length < 1) {
+          $(select).prepend('<option value="">' + ts('- select -') + '</option>');
+        }
+        select.val(value).change();
+      }
+    }
+    // Hide value field if the operator doesn't take a value
+    else {
+      $('.crm-search-value', row).hide().find('input, select').val('');
+    }
+  }
+
+  /**
    * Give user a list of options to choose from
    * @param row: jQuery object
    * @param field: string
@@ -12,16 +61,64 @@
     // Remove operators that can't be used with a select
     removeOperators(row, ['>', '<', '>=', '<=', 'LIKE', 'RLIKE']);
     var op = $('select[id^=operator]', row);
-    if (op.val() == 'IN' || op.val() == 'NOT IN') {
-      var multi = 'multiple="multiple">';
+    var multi = (op.val() == 'IN' || op.val() == 'NOT IN');
+    if (multi) {
+      var multiSelect = 'multiple="multiple">';
     }
     else {
-      var multi = '><option value="">' + ts('- select -') + '</option>';
+      var multiSelect = '><option value="">' + ts('- select -') + '</option>';
     }
     $('.crm-search-value select', row).remove();
-    $('input[id^=value]', row).hide().after('<select class="form-select" ' + multi + '</select>');
+    $('input[id^=value]', row).hide().after('<select class="form-select" ' + multiSelect + '</select>');
+    fetchOptions(row, field, multi);
+  }
+
+  /**
+   * Retrieve option list for given row
+   * @param row: jQuery object
+   * @param field: string
+   * @param multi: bool
+   */
+  function fetchOptions(row, field, multi) {
+    if (CRM.pseudoconstant[field] === 'yesno') {
+      CRM.pseudoconstant[field] = {1: ts('Yes'), 0: ts('No')};
+    }
+    if (typeof(CRM.pseudoconstant[field]) == 'string') {
+      CRM.api(CRM.pseudoconstant[field], 'getoptions', {field: field}, {
+        success: function(result) {
+          if (result.count) {
+            CRM.pseudoconstant[field] = result.values;
+            buildOptions(row, field, multi);
+          }
+          else {
+            removeSelect(row);
+          }
+        },
+        error: function() {
+          removeSelect(row);
+        }
+      });
+    }
+    else {
+      buildOptions(row, field, multi);
+    }
+  }
+
+  /**
+   * Populate option list for given row
+   * @param row: jQuery object
+   * @param field: string
+   */
+  function buildOptions(row, field, multi) {
     var select = $('.crm-search-value select', row);
-    var options = $('input[id^=value]', row).val().split(',');
+    var value = $('input[id^=value]', row).val();
+    if (value.length && value.charAt(0) == '(' && value.charAt(value.length - 1) == ')') {
+      value = value.slice(1, -1);
+    }
+    var options = value.split(',');
+    if (!multi && options.length > 1) {
+      options = [options[0]];
+    }
     $.each(CRM.pseudoconstant[field], function(value, label) {
       var selected = ($.inArray(value, options) > -1) ? 'selected="selected"' : '';
       select.append('<option value="' + value + '"' + selected + '>' + label + '</option>');
@@ -51,7 +148,8 @@
       input.addClass('dateplugin').datepicker({
         dateFormat: 'yymmdd',
         changeMonth: true,
-        changeYear: true
+        changeYear: true,
+        yearRange: '-100:+20'
       });
     }
   }
@@ -155,54 +253,20 @@
         }
       })
       // Handle field selection
-      .on('change', 'select[id^=mapper_][id$=_1]', function() {
-        var field = $(this).val();
-        var row = $(this).closest('tr');
-        if (CRM.pseudoconstant[field]) {
-          buildSelect(row, $(this).val());
-        }
-        else {
-          removeSelect(row);
-        }
-        if ($.inArray(field, CRM.searchBuilder.dateFields) > -1) {
-          buildDate(row);
-        }
-        else {
-          removeDate(row);
-        }
-      })
+      .on('change', 'select[id^=mapper][id$="_1"]', handleFieldSelection)
       // Handle operator selection
-      .on('change', 'select[id^=operator]', function() {
-        var noValue = ['', 'IS EMPTY', 'IS NOT EMPTY', 'IS NULL', 'IS NOT NULL'];
-        var row = $(this).closest('tr');
-        if ($.inArray($(this).val(), noValue) < 0) {
-          $('.crm-search-value', row).show();
-          // Change between multiselect and select when using "IN" operator
-          var select = $('.crm-search-value select', row);
-          if (select.length) {
-            var multi = ($(this).val() == 'IN' || $(this).val() == 'NOT IN');
-            select.attr('multiple', multi);
-            if (multi) {
-              $('option[value=""]', select).remove();
-            }
-            else if ($('option[value=""]', select).length < 1) {
-              $(select).prepend('<option value="">' + ts('- select -') + '</option>');
-            }
-            select.change();
-          }
-        }
-        // Hide value field if the operator doesn't take a value
-        else {
-          $('.crm-search-value', row).hide().find('input, select').val('');
-        }
-      })
+      .on('change', 'select[id^=operator]', handleOperatorSelection)
       // Handle option selection - update hidden value field
       .on('change', '.crm-search-value select', function() {
-        var value = $.makeArray($(this).val());
-        $(this).siblings('input').val(value.join(','));
+        var value = $(this).val();
+        if ($(this).attr('multiple') == 'multiple') {
+          value = '(' + value.join(',') + ')';
+        }
+        $(this).siblings('input').val(value);
       })
     ;
     $().crmAccordions();
-    $('select[id^=operator], select[id^=mapper_][id$=_1]', '#Builder').change();
+    $('select[id^=operator]', '#Builder').each(handleOperatorSelection);
+    $('select[id^=mapper][id$="_1"]', '#Builder').each(handleFieldSelection);
   });
 })(cj, CRM);

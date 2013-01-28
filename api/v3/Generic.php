@@ -181,20 +181,30 @@ function civicrm_api3_generic_replace($apiRequest) {
 }
 
 /**
- * API wrapper for replace function
+ * API wrapper for getoptions function
  *
  * @param array $apiRequest api request as an array. Keys are
  *
- * @return integer count of results
+ * @return array of results
  */
 function civicrm_api3_generic_getoptions($apiRequest) {
+  $field = $apiRequest['params']['field'];
   $getFieldsArray = array(
     'version' => 3,
     'action' => 'create',
-    'options' => array('get_options' => $apiRequest['params']['field'], )
+    'options' => array('get_options' => $field),
   );
+  // First try to retrieve the options from getfields
   $result = civicrm_api($apiRequest['entity'], 'getfields', $getFieldsArray);
-  return $result['values'][$apiRequest['params']['field']]['options'];
+  if (!empty($result['values'][$field]['options'])) {
+    return civicrm_api3_create_success($result['values'][$field]['options']);
+  }
+  // If that didn't work, try the constant api
+  if (substr($field, -3) == '_id') {
+    // Convert foo_id to just plain foo
+    $field = substr($field, 0, -3);
+  }
+  return civicrm_api3_constant_get(array('name' => _civicrm_api_get_camel_name($field)));
 }
 
 /*

@@ -104,10 +104,7 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search {
       }
     }
     // All option lists defined here will be selectable in the search form
-    $pseudoconstant = array(
-      'group' => CRM_Core_PseudoConstant::group(),
-      'tag' => CRM_Core_PseudoConstant::tag(),
-    );
+    $pseudoconstant = self::getOptions();
     // Add javascript
     CRM_Core_Resources::singleton()
       ->addScriptFile('civicrm', 'templates/CRM/Contact/Form/Search/Builder.js')
@@ -393,13 +390,60 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search {
 
     parent::postProcess();
   }
-  
+
   static function fields() {
     return array_merge(
       CRM_Contact_BAO_Contact::exportableFields('All', FALSE, TRUE),
       CRM_Core_Component::getQueryFields(),
       CRM_Activity_BAO_Activity::exportableFields()
     );
+  }
+
+  /**
+   * CRM-9434 Hackish function to fetch fields with options.
+   * FIXME: When our core fields contain reliable metadata this will be much simpler.
+   * @return array: key: field_name value: (string|array) api entity name or array of fetched options
+   * Note: when value is a string the options will be fetched using the ajax api
+   *       this is most efficient, but when all else fails we can just supply the array of options
+   */
+  static function getOptions() {
+    // Hack to add options not retrieved by getfields
+    // This list could go on and on, but it would be better to fix getfields
+    $options = array(
+      'group' => 'contact',
+      'tag' => 'contact',
+      'country' => 'contact',
+      'state_province' => 'contact',
+      'gender' => 'contact',
+      'world_region' => 'contact',
+      'activity_type' => 'activity',
+      'activity_status' => 'activity',
+      'activity_is_deleted' => 'yesno',
+      'activity_is_test' => 'yesno',
+    );
+    $entities = array('contact', 'activity', 'contribution', 'member');
+    foreach ($entities as $entity) {
+      $fields = civicrm_api($entity, 'getfields', array('version' => 3));
+      foreach ($fields['values'] as $field => $info) {
+        if (!empty($info['options']) || !empty($info['option_group_id'])) {
+          $options[$field] = $entity;
+        }
+        elseif (in_array(substr($field, 0, 3), array('is_', 'do_')) || CRM_Utils_Array::value('data_type', $info) == 'Boolean') {
+          $options[$field] = 'yesno';
+        }
+        // Ugly hack to reconcile inconsistent naming of fields
+        // FIXME: Search builder should follow standard naming convention
+        if ($entity == 'contact' && in_array($field, array('prefix_id', 'suffix_id'))) {
+          $options['individual_' . str_replace('_id', '', $field)] = $info['options'];
+        }
+        // Hacks, hacks hacks
+        // FIXME: inconsistent field naming sucks
+        if ($field == 'contribution_payment_instrument_id') {
+          $options['payment_instrument'] = $info['options'];
+        }
+      }
+    }
+    return $options;
   }
 
   /**

@@ -247,7 +247,7 @@ class api_v3_CustomFieldTest extends CiviUnitTestCase {
     $description = "Demonstrates retrieving options for a custom field";
     $subfile = "GetOptions";
     $result = civicrm_api('contact', 'getoptions', $getOptionsArray);
-    $this->assertEquals('Label1', $result[1]);
+    $this->assertEquals('Label1', $result['values'][1]);
     $this->documentMe($getOptionsArray, $result, __FUNCTION__, 'ContactTest.php', $description, '', 'getoptions');
   }
 
