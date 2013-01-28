@@ -68,10 +68,10 @@ class CRM_Core_ScheduledJob {
     $this->apiParams = array('version' => $this->version);
 
     if (!empty($this->parameters)) {
-      $lines = split("\n", $this->parameters);
+      $lines = explode("\n", $this->parameters);
 
       foreach ($lines as $line) {
-        $pair = split("=", $line);
+        $pair = explode("=", $line);
         if (empty($pair[0]) || empty($pair[1])) {
           $this->remarks[] .= 'Malformed parameters!';
           break;

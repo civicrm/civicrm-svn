@@ -36,9 +36,14 @@
  */
 class CRM_Core_JobManager {
 
-
+  /**
+   * @var array ($id => CRM_Core_ScheduledJob)
+   */
   var $jobs = NULL;
 
+  /**
+   * @var CRM_Core_ScheduledJob
+   */
   var $currentJob = NULL;
 
   var $singleRunParams = array();
@@ -76,6 +81,7 @@ class CRM_Core_JobManager {
     require_once 'api/api.php';
 
     // it's not asynchronous at this stage
+    CRM_Utils_Hook::cron($this);
     foreach ($this->jobs as $job) {
       if ($job->is_active) {
         if ($job->needsRunning()) {
@@ -105,7 +111,9 @@ class CRM_Core_JobManager {
     $this->executeJob($job);
   }
 
-
+  /**
+   * @param CRM_Core_ScheduledJob $job
+   */
   public function executeJob($job) {
     $this->currentJob = $job;
     $this->logEntry('Starting execution of ' . $job->name);
@@ -135,6 +143,7 @@ class CRM_Core_JobManager {
    * populates class param.
    * 
    * @param void
+   * @return array ($id => CRM_Core_ScheduledJob)
    * @access private
    * 
    */

@@ -63,7 +63,7 @@ class CRM_Utils_Hook_UnitTests extends CRM_Utils_Hook {
     &$arg1, &$arg2, &$arg3, &$arg4, &$arg5,
     $fnSuffix) {
     $params = array( &$arg1, &$arg2, &$arg3, &$arg4, &$arg5);
-    if ($this->mockObject) {
+    if ($this->mockObject && is_callable(array($this->mockObject, $fnSuffix))) {
       call_user_func(array($this->mockObject, $fnSuffix), $arg1, $arg2, $arg3, $arg4, $arg5);
     }
     if (!empty($this->adhocHooks[$fnSuffix])) {

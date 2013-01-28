@@ -1160,4 +1160,19 @@ abstract class CRM_Utils_Hook {
         'civicrm_alterSettingsMetaData'
     );
   }
+
+  /**
+   * This hook is called before running pending cron jobs.
+   *
+   * @param CRM_Core_JobManager $jobManager
+   *
+   * @return null the return value is ignored
+   * @access public
+   */
+  static function cron($jobManager) {
+    return self::singleton()->invoke(1,
+      $jobManager, self::$_nullObject, self::$_nullObject, self::$_nullObject, self::$_nullObject,
+      'civicrm_cron'
+    );
+  }
 }
