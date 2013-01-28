@@ -92,6 +92,22 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form {
   public function buildQuickForm() {
     $session = CRM_Core_Session::singleton();
 
+    if ($this->_action & CRM_Core_Action::DELETE) {
+      $this->addButtons(array(
+          array(
+            'type' => 'next',
+            'name' => ts('Delete'),
+            'isDefault' => TRUE,
+          ),
+          array(
+            'type' => 'cancel',
+            'name' => ts('Cancel'),
+          ),
+        )
+      );
+      return;
+    }
+
     if ($this->_surveyId) {
       $buttons = array(
         array(
@@ -166,9 +182,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form {
 
   function getTemplateFileName() {
     if ($this->controller->getPrint() == CRM_Core_Smarty::PRINT_NOFORM ||
-      $this->getVar('_surveyId') <= 0 ||
-      ($this->_action & CRM_Core_Action::DELETE)
-    ) {
+      $this->getVar('_surveyId') <= 0 ) {
       return parent::getTemplateFileName();
     }
     else {
