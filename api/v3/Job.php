@@ -190,8 +190,8 @@ function civicrm_api3_job_update_greeting($params) {
 
   if (isset($params['ct']) && isset($params['gt'])) {
     $ct = $gt = array();
-    $ct = explode(",", $params['ct']);
-    $gt = explode(",", $params['gt']);
+    $ct = explode(',', $params['ct']);
+    $gt = explode(',', $params['gt']);
     foreach ($ct as $ctKey => $ctValue) {
       foreach ($gt as $gtKey => $gtValue) {
         $params['ct'] = trim($ctValue);
@@ -278,7 +278,7 @@ function civicrm_api3_job_process_pledge($params) {
 function civicrm_api3_job_process_mailing($params) {
 
   if (!CRM_Mailing_BAO_Mailing::processQueue()) {
-    return civicrm_api3_create_error("Process Queue failed");
+    return civicrm_api3_create_error('Process Queue failed');
   }
   else {
     $values = array();
@@ -296,7 +296,7 @@ function civicrm_api3_job_process_mailing($params) {
 function civicrm_api3_job_process_sms($params) {
 
   if (!CRM_Mailing_BAO_Mailing::processQueue('sms')) {
-    return civicrm_api3_create_error("Process Queue failed");
+    return civicrm_api3_create_error('Process Queue failed');
   }
   else {
     $values = array();
@@ -311,10 +311,10 @@ function civicrm_api3_job_fetch_bounces($params) {
   require_once 'CRM/Core/Lock.php';
   $lock = new CRM_Core_Lock('EmailProcessor');
   if (!$lock->isAcquired()) {
-    return civicrm_api3_create_error("Could not acquire lock, another EmailProcessor process is running");
+    return civicrm_api3_create_error('Could not acquire lock, another EmailProcessor process is running');
   }
   if (!CRM_Utils_Mail_EmailProcessor::processBounces()) {
-    return civicrm_api3_create_error("Process Bounces failed");
+    return civicrm_api3_create_error('Process Bounces failed');
   }
   //   FIXME: processBounces doesn't return true/false on success/failure
   $values = array();
@@ -330,7 +330,7 @@ function civicrm_api3_job_fetch_activities($params) {
   require_once 'CRM/Core/Lock.php';
   $lock = new CRM_Core_Lock('EmailProcessor');
   if (!$lock->isAcquired()) {
-    return civicrm_api3_create_error("Could not acquire lock, another EmailProcessor process is running");
+    return civicrm_api3_create_error('Could not acquire lock, another EmailProcessor process is running');
   }
     try {
        CRM_Utils_Mail_EmailProcessor::processActivities();
@@ -339,7 +339,7 @@ function civicrm_api3_job_fetch_activities($params) {
        return civicrm_api3_create_success($values, $params,'mailing','activities');
     } catch (Exception $e) {
     $lock->release();
-    return civicrm_api3_create_error("Process Activities failed");
+    return civicrm_api3_create_error('Process Activities failed');
   }
 }
 
