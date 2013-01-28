@@ -188,14 +188,30 @@ function civicrm_api3_job_mail_report($params) {
  */
 function civicrm_api3_job_update_greeting($params) {
 
-  $result = CRM_Contact_BAO_Contact_Utils::updateGreeting($params);
-
-  if ($result['is_error'] == 0) {
-    //really we should rely on the exception mechanism here - but we need to test that before removing this line
-    return civicrm_api3_create_success();
+  if (isset($params['ct']) && isset($params['gt'])) {
+    $ct = $gt = array();
+    $ct = explode(",", $params['ct']);
+    $gt = explode(",", $params['gt']);
+    foreach ($ct as $ctKey => $ctValue) {
+      foreach ($gt as $gtKey => $gtValue) {
+        $params['ct'] = trim($ctValue);
+        $params['gt'] = trim($gtValue);
+        $result[] = CRM_Contact_BAO_Contact_Utils::updateGreeting($params);
+      }
+    }
   }
   else {
-    return civicrm_api3_create_error($result['messages']);
+    $result = CRM_Contact_BAO_Contact_Utils::updateGreeting($params);
+  }
+
+  foreach ($result as $resultKey => $resultValue) {
+    if ($resultValue['is_error'] == 0) {
+      //really we should rely on the exception mechanism here - but we need to test that before removing this line
+      return civicrm_api3_create_success();
+    }
+    else {
+      return civicrm_api3_create_error($resultValue['messages']);
+    }
   }
 }
 

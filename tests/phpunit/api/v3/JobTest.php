@@ -69,5 +69,12 @@ class api_v3_JobTest extends CiviUnitTestCase {
     $result = civicrm_api($this->_entity, 'update_greeting', array('gt' => 'postal_greeting', 'ct' => 'Individual', 'version' => $this->_apiVersion));
     $this->assertAPISuccess($result);
    }
+
+  public function testCallUpdateGreetingCommaSeparatedParamsSuccess() {
+    $gt = 'postal_greeting,email_greeting,addressee';
+    $ct = 'Individual,Household';
+    $result = civicrm_api($this->_entity, 'update_greeting', array('gt' => $gt, 'ct' => $ct, 'version' => $this->_apiVersion));
+    $this->assertAPISuccess($result);
+  }
 }
 

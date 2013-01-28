@@ -1505,11 +1505,28 @@ function _civicrm_api3_validate_string(&$params, &$fieldname, &$fieldInfo) {
       // Validate & swap out any pseudoconstants / options
       $options = $fieldInfo['options'];
 
-      // If value passed is not a key, it may be a label
-      // Try to lookup key from label - if it can't be found throw error
-      if (!isset($options[$value]) ) {
-        if (!(in_array($value, $options))) {
+      if ($fieldname == 'ct' || $fieldname == 'gt') {
+        $expValues = explode(",", $value);
+        $invalidOption = false;
+        foreach ($expValues as $expKey => $expValue) {
+          // If value passed is not a key, it may be a label
+          // Try to lookup key from label - if it can't be found throw error
+          if (!isset($options[$expValue])) {
+            if (!(in_array(trim($expValue), $options))) {
+              $invalidOption = true;
+            }
+          }
+        }
+        if ($invalidOption) {
           throw new Exception("$fieldname `$value` is not valid.");
+        }
+      } else {
+        // If value passed is not a key, it may be a label
+        // Try to lookup key from label - if it can't be found throw error
+        if (!isset($options[$value]) ) {
+          if (!(in_array($value, $options))) {
+            throw new Exception("$fieldname `$value` is not valid.");
+          }
         }
       }
     }
