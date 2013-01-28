@@ -316,7 +316,7 @@ function civicrm_wp_invoke() {
     require_once 'CRM/Core/BAO/UFMatch.php';
     CRM_Core_BAO_UFMatch::synchronize($current_user, FALSE, 'WordPress', 'Individual', TRUE);
   }
-
+  
   CRM_Core_Invoke::invoke($args);
 }
 
@@ -864,7 +864,7 @@ function civicrm_shortcode_handler($atts) {
 
   foreach ($args as $key => $value) {
     if ($value !== NULL) {
-      $_GET[$key] = $value;
+      $_REQUEST[$key] = $_GET[$key] = $value;
     }
   }
 
