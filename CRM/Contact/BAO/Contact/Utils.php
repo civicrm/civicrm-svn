@@ -930,7 +930,7 @@ Group By  componentId";
     CRM_Contact_BAO_GroupContactCache::remove();
   }
 
-  public function updateGreeting($params) {
+  public static function updateGreeting($params) {
     $contactType = $params['ct'];
     $greeting    = $params['gt'];
     $valueID     = $id = CRM_Utils_Array::value('id', $params);
