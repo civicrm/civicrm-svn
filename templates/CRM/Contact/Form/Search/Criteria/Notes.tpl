@@ -30,6 +30,10 @@
                 {$form.note.label}<br />
                 {$form.note.html}
             </td>
+            <td>
+                {$form.note_option.label}<br />
+                {$form.note_option.html}
+            </td>
         </tr>
     </table>
 </div>

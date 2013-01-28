@@ -2699,6 +2699,9 @@ WHERE  id IN ( $groupIDs )
   function notes(&$values) {
     list($name, $op, $value, $grouping, $wildcard) = $values;
 
+    $noteOptionValues = $this->getWhereValues('note_option', $grouping);
+    $noteOption = CRM_Utils_Array::value('2', $noteOptionValues, '6');
+
     $this->_useDistinct = TRUE;
 
     $this->_tables['civicrm_note'] =
@@ -2718,8 +2721,15 @@ WHERE  id IN ( $groupIDs )
       $value = NULL;
     }
 
-    $this->_where[$grouping][] = self::buildClause('civicrm_note.note', $op, $value, 'String');
-    $this->_qill[$grouping][] = ts('Note') . " $op - '$n'";
+    $clauses = array();
+    if ( $noteOption % 2 ==  0 ) {
+      $clauses[] = self::buildClause('civicrm_note.note', $op, $value, 'String');
+    }
+    if ( $noteOption % 3 ==  0 ) {
+      $clauses[] = self::buildClause('civicrm_note.subject', $op, $value, 'String');
+    }
+    $this->_where[$grouping][] = "( " . implode(' OR ', $clauses) . " )";
+    $this->_qill[$grouping][]  = ts('Note') . " $op - '$n'";
   }
 
   function nameNullOrEmptyOp($name, $op, $grouping) {
