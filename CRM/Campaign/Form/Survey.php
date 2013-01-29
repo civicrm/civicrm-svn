@@ -53,6 +53,13 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form {
    */
   protected $_action;
 
+  /**
+   * surveyTitle
+   *
+   * @var string
+   */
+  protected $_surveyTitle;
+
   public function preProcess() {
     if (!CRM_Campaign_BAO_Campaign::accessCampaign()) {
       CRM_Utils_System::permissionDenied();
@@ -66,8 +73,9 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form {
 
       $params = array('id' => $this->_surveyId);
       CRM_Campaign_BAO_Survey::retrieve($params, $surveyInfo);
-
-      CRM_Utils_System::setTitle(ts('Configure Survey - %1', array(1 => $surveyInfo['title'])));
+      $this->_surveyTitle = $surveyInfo['title'];
+      $this->assign('surveyTitle', $this->_surveyTitle);
+      CRM_Utils_System::setTitle(ts('Configure Survey - %1', array(1 => $this->_surveyTitle)));
     }
 
     $this->assign('action', $this->_action);
@@ -91,23 +99,6 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form {
    */
   public function buildQuickForm() {
     $session = CRM_Core_Session::singleton();
-
-    if ($this->_action & CRM_Core_Action::DELETE) {
-      $this->addButtons(array(
-          array(
-            'type' => 'next',
-            'name' => ts('Delete'),
-            'isDefault' => TRUE,
-          ),
-          array(
-            'type' => 'cancel',
-            'name' => ts('Cancel'),
-          ),
-        )
-      );
-      return;
-    }
-
     if ($this->_surveyId) {
       $buttons = array(
         array(

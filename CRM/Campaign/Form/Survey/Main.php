@@ -62,15 +62,8 @@ class CRM_Campaign_Form_Survey_Main extends CRM_Campaign_Form_Survey {
 
     $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this);
 
-    if ($this->_action & (CRM_Core_Action::UPDATE | CRM_Core_Action::DELETE)) {
-      $this->_surveyId = CRM_Utils_Request::retrieve('id', 'Positive', $this, TRUE);
-
-      if ($this->_action & CRM_Core_Action::UPDATE) {
-        CRM_Utils_System::setTitle(ts('Edit Survey'));
-      }
-      else {
-        CRM_Utils_System::setTitle(ts('Delete Survey'));
-      }
+    if ($this->_action & CRM_Core_Action::UPDATE) {
+      CRM_Utils_System::setTitle(ts('Configure Survey') . ' - ' . $this->_surveyTitle);
     }
 
     $this->_cdType = CRM_Utils_Array::value('type', $_GET);

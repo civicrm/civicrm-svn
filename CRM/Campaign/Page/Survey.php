@@ -65,8 +65,8 @@ class CRM_Campaign_Page_Survey extends CRM_Core_Page {
         ),
         CRM_Core_Action::DELETE => array(
           'name' => ts('Delete'),
-          'url' => 'civicrm/survey/add',
-          'qs' => 'action=delete&id=%%id%%&reset=1',
+          'url' => 'civicrm/survey/delete',
+          'qs' => 'id=%%id%%&reset=1',
           'title' => ts('Delete Survey'),
         ),
       );
@@ -105,7 +105,7 @@ class CRM_Campaign_Page_Survey extends CRM_Core_Page {
   }
 
   function run() {
-    if (!CRM_Core_Permission::check('administer CiviCampaign')) {
+    if (!CRM_Campaign_BAO_Campaign::accessCampaign()) {
       CRM_Utils_System::permissionDenied();
     }
 

@@ -112,8 +112,8 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page {
         ),
         CRM_Core_Action::DELETE => array(
           'name' => ts('Delete'),
-          'url' => 'civicrm/survey/add',
-          'qs' => 'action=delete&id=%%id%%&reset=1',
+          'url' => 'civicrm/survey/delete',
+          'qs' => 'id=%%id%%&reset=1',
           'title' => ts('Delete Survey'),
         ),
       );
