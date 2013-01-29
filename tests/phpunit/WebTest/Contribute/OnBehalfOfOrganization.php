@@ -304,8 +304,8 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $sourceText = 'On behalf Membership Webtest';
     $this->type('source', $sourceText);
 
-    $this->waitForElementPresent("css=div#{$customGroupTitle} div.crm-accordion-pointer");
-    $this->click("css=div#{$customGroupTitle} div.crm-accordion-pointer");
+    $this->waitForElementPresent("css=div#{$customGroupTitle} div.crm-accordion-header");
+    $this->click("css=div#{$customGroupTitle} div.crm-accordion-header");
     //$this->waitForElementPresent('_qf_Membership_cancel-bottom111');
 
     // select newly created processor                                                                                                                                                                   

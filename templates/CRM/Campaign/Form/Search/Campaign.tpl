@@ -82,57 +82,56 @@
 
     {assign var='searchForm' value="search_form_$searchFor"}
 
-    <div id="{$searchForm}" class="crm-accordion-wrapper crm-campaign_search_form-accordion ">
-    <div class="crm-accordion-header">
-    <div id="campaignsSearch" class="icon crm-accordion-pointer"></div>
-        {ts}Search Campaigns{/ts}
-    </div><!-- /.crm-accordion-header -->
+    <div id="{$searchForm}" class="crm-accordion-wrapper crm-campaign_search_form-accordion {if $force and !$buildSelector}collapsed{/if}">
+      <div class="crm-accordion-header">
+          {ts}Search Campaigns{/ts}
+      </div><!-- /.crm-accordion-header -->
 
-    <div class="crm-accordion-body">
-    {strip}
+      <div class="crm-accordion-body">
+      {strip}
         <table class="form-layout-compressed">
-      <tr>
+          <tr>
             <td>{$form.campaign_title.label}<br />
             {$form.campaign_title.html} &nbsp;
             </td>
-          <td>
+            <td>
                 {$form.description.label}<br />
             {$form.description.html|crmAddClass:huge}
             </td>
-      </tr>
+          </tr>
 
-      <tr>
+          <tr>
             <td>{$form.start_date.label}<br />
               {include file="CRM/common/jcalendar.tpl" elementName=start_date}
             </td>
-          <td>{$form.end_date.label}<br />
+            <td>{$form.end_date.label}<br />
               {include file="CRM/common/jcalendar.tpl" elementName=end_date}
             </td>
-      </tr>
+          </tr>
 
-      <tr>
+          <tr>
             <td>{$form.campaign_type_id.label}<br />
               {$form.campaign_type_id.html}
             </td>
-          <td>{$form.status_id.label}<br />
+            <td>{$form.status_id.label}<br />
               {$form.status_id.html}
             </td>
-      </tr>
+          </tr>
 
-        <tr>
+          <tr>
             <td colspan="2">
             {if $context eq 'search'}
               {$form.buttons.html}
-          {else}
+            {else}
               <a class="searchCampaign button" style="float:left;" href="#" title={ts}Search{/ts} onClick="searchCampaigns( '{$qfKey}' );return false;">{ts}Search{/ts}</a>
-          {/if}
-          </td>
-        </tr>
+            {/if}
+            </td>
+          </tr>
         </table>
-    {/strip}
+      {/strip}
+      </div>
     </div>
-    </div>
-    </div>
+  </div>
     {* search form ends here *}
 
     <div id='campaignList'></div>
@@ -151,12 +150,9 @@
  {* load selector when force *}
  {if $force and !$buildSelector}
  {literal}
- cj( function( ) {
-    //collapse the search form.
-    var searchFormName = '#search_form_' + {/literal}'{$searchFor}'{literal};
-    cj( searchFormName + '.crm-accordion-wrapper:not(.collapsed)').crmAccordionToggle();
-    searchCampaigns( {/literal}'{$qfKey}'{literal} );
- });
+   cj( function( ) {
+     searchCampaigns( {/literal}'{$qfKey}'{literal} );
+   });
 
  {/literal}
  {/if}
