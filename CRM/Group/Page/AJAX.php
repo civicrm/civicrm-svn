@@ -71,12 +71,12 @@ class CRM_Group_Page_AJAX {
 
       $iFilteredTotal = $iTotal = $params['total'];
       $selectorElements = array(
-        'group_name', 'group_id', 'group_description',
+        'group_name', 'group_id', 'created_by', 'group_description',
         'group_type', 'visibility', 'org_info', 'links', 'class',
       );
 
       if (!CRM_Utils_Array::value('showOrgInfo', $params)) {
-        unset($selectorElements[5]);
+        unset($selectorElements[6]);
       }
 
       echo CRM_Utils_JSON::encodeDataTableSelector($groups, $sEcho, $iTotal, $iFilteredTotal, $selectorElements);

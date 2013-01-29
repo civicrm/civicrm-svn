@@ -62,9 +62,14 @@ INSERT IGNORE INTO `civicrm_state_province`(`country_id`, `abbreviation`, `name`
 -- CRM-11047
 ALTER TABLE civicrm_job DROP COLUMN api_prefix;
 
--- CRM-11068, CRM-10678
+-- CRM-11068, CRM-10678, CRM-11759
 ALTER TABLE civicrm_group
-  ADD refresh_date datetime default NULL COMMENT 'Date and time when we need to refresh the cache next.' AFTER `cache_date`;
+  ADD refresh_date datetime default NULL COMMENT 'Date and time when we need to refresh the cache next.' AFTER `cache_date`,
+  ADD COLUMN `created_id` INT(10) unsigned DEFAULT NULL COMMENT 'FK to contact table, creator of the group.';
+
+-- CRM-11759
+ALTER TABLE civicrm_group
+  ADD CONSTRAINT `FK_civicrm_group_created_id` FOREIGN KEY (`created_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE SET NULL;
 
 INSERT INTO `civicrm_job`
     ( domain_id, run_frequency, last_run, name, description, api_entity, api_action, parameters, is_active )

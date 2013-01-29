@@ -342,6 +342,11 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
       $params['group_type'] = '';
     }
 
+    $session = CRM_Core_Session::singleton( );
+    if ($cid = $session->get('userID')) {
+      $params['created_id'] = $cid;
+    }
+
     $group = new CRM_Contact_BAO_Group();
     $group->copyValues($params);
 
@@ -675,6 +680,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
         $groupList[$id]['visibility'] = $value['visibility'];
         $groupList[$id]['links'] = $value['action'];
         $groupList[$id]['org_info'] = CRM_Utils_Array::value('org_info', $value);
+        $groupList[$id]['created_by'] = CRM_Utils_Array::value('created_by', $value);
 
         $groupList[$id]['is_parent'] = $value['is_parent'];
       }
@@ -727,8 +733,10 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
     }
 
     $query = "
-        SELECT groups.* {$select}
+        SELECT groups.*, createdBy.sort_name as created_by {$select}
         FROM  civicrm_group groups
+              LEFT JOIN civicrm_contact createdBy
+                     ON createdBy.id = groups.created_id
               {$from}
         WHERE $whereClause {$where}
         {$orderBy}
@@ -848,8 +856,12 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
         }
         else {
           $values[$object->id]['org_info'] = NULL; // Collapsed column if all cells are NULL
+        }
+        if ($object->created_id) {
+          $contactUrl = CRM_Utils_System::url('civicrm/contact/view', "reset=1&cid={$object->created_id}");
+          $values[$object->id]['created_by'] = "<a href='{$contactUrl}'>{$object->created_by}</a>";
+        }
       }
-    }
     }
 
     return $values;

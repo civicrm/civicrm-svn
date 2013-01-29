@@ -65,6 +65,7 @@
     <tr>
       <th class='crm-group-name'>{ts}Name{/ts}</th>
       <th class='crm-group-group_id'>{ts}ID{/ts}</th>
+      <th class='crm-group-created_by'>{ts}Created By{/ts}</th>
       <th class='crm-group-description'>{ts}Description{/ts}</th>
       <th class='crm-group-group_type'>{ts}Group Type{/ts}</th>
       <th class='crm-group-visibility'>{ts}Visibility{/ts}</th>
@@ -110,6 +111,7 @@ function buildGroupSelector( filterSearch ) {
         "aoColumns"  : [
                         {sClass:'crm-group-name'},
                         {sClass:'crm-group-group_id'},
+                        {sClass:'crm-group-created_by'},
                         {sClass:'crm-group-description', bSortable:false},
                         {sClass:'crm-group-group_type'},
                         {sClass:'crm-group-visibility'},
@@ -261,6 +263,7 @@ function showChildren( parent_id, showOrgInfo, group_id, levelClass) {
               appendHTML += '<td class="crm-group-name ' + levelClass + '"><span class="crm-no-children"></span>' + val.group_name + '</td>';
             }
             appendHTML += "<td>" + val.group_id + "</td>";
+            appendHTML += "<td>" + val.created_by + "</td>";
             if (val.group_description) {
               appendHTML += "<td>" + val.group_description + "</td>";
             } else {

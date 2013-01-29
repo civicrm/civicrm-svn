@@ -155,4 +155,17 @@
     <unique>true</unique>
     <add>2.1</add>
   </index>
+  <field>
+      <name>created_id</name>
+      <type>int unsigned</type>
+      <comment>FK to contact table.</comment>
+       <add>4.3</add>
+  </field>
+  <foreignKey>
+       <name>created_id</name>
+       <table>civicrm_contact</table>
+       <key>id</key>
+       <add>4.3</add>
+       <onDelete>SET NULL</onDelete>
+  </foreignKey>
 </table>
