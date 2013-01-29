@@ -295,41 +295,38 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
     }
 
     if ($this->_mode) {
-      $billingFields = array();
-      foreach ($this->_fields as $name => $dontCare) {
-        if (strpos($name, 'billing_') === 0) {
-          $name = $idName = substr($name, 8);
-          if (in_array($name, array(
-            "state_province_id-$this->_bltID",
-            "country_id-$this->_bltID"
-          ))
-          ) {
-            $name = str_replace('_id', '', $name);
-          }
-          $billingFields[$name] = 'billing_' . $idName;
-        }
-        $fields[$name] = 1;
-      }
-
-      if ($this->_contactID) {
-        CRM_Core_BAO_UFGroup::setProfileDefaults($this->_contactID, $fields, $defaults);
-      }
-      foreach ($billingFields as $name => $billingName) {
-        $defaults[$billingName] = CRM_Utils_Array::value($name, $defaults);
-      }
-
       $config = CRM_Core_Config::singleton();
-      // set default country from config if no country set
+      // set default country from config if no country set                                                                                                                                                  
       if (!CRM_Utils_Array::value("billing_country_id-{$this->_bltID}", $defaults)) {
         $defaults["billing_country_id-{$this->_bltID}"] = $config->defaultContactCountry;
       }
-
+      
       if (!CRM_Utils_Array::value("billing_state_province_id-{$this->_bltID}", $defaults)) {
         $defaults["billing_state_province_id-{$this->_bltID}"] = $config->defaultContactStateProvince;
       }
 
+      $names = array(
+        'first_name', 'middle_name', 'last_name', "street_address-{$this->_bltID}", "city-{$this->_bltID}",
+        "postal_code-{$this->_bltID}", "country_id-{$this->_bltID}", "state_province_id-{$this->_bltID}",
+        "state_province-{$this->_bltID}", "country-{$this->_bltID}"
+        );
+
+      foreach ($names as $name) {
+        $fields[$name] = 1;
+      }
+
+      if ($this->_contactID) {                                                                                                                                                                      
+        CRM_Core_BAO_UFGroup::setProfileDefaults($this->_contactID, $fields, $defaults); 
+      }     
+
+      foreach ($names as $name) {
+        if (!empty($defaults[$name])) {
+          $defaults['billing_' . $name] = $defaults[$name];
+        }
+      }
+
       // now fix all state country selectors
-      CRM_Core_BAO_Address::fixAllStateSelects($this, $defaults);
+      CRM_Core_BAO_Address::fixAllStateSelects($this, $defaults);  
     }
 
     if ($this->_id) {
@@ -831,7 +828,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
     if (!CRM_Utils_Array::crmIsEmptyArray($siteHasPCPs)) {
       $this->assign('siteHasPCPs', 1);
       $pcpDataUrl = CRM_Utils_System::url('civicrm/ajax/rest',
-        "className=CRM_Contact_Page_AJAX&fnName=getPCPList&json=1&context=contact&reset=1",
+        'className=CRM_Contact_Page_AJAX&fnName=getPCPList&json=1&context=contact&reset=1',
         FALSE, NULL, FALSE
       );
       $this->assign('pcpDataUrl', $pcpDataUrl);
@@ -850,7 +847,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
       );      
     } else {
       $dataUrl = CRM_Utils_System::url('civicrm/ajax/rest',
-        "className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&reset=1&context=softcredit",
+        'className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&reset=1&context=softcredit',
         FALSE, NULL, FALSE
       );      
     }
@@ -986,7 +983,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
         $filter = NULL,
         " account_relationship = 5 AND entity_id = {$fields['financial_type_id']} ");
       if (!current($financialAccount)) {
-        $errors['financial_type_id'] = "Financial Account of account relationship of 'Expense Account is' is not configured for this Financial Type";
+        $errors['financial_type_id'] = ts("Financial Account of account relationship of 'Expense Account is' is not configured for this Financial Type");
       }
     }
     return $errors;

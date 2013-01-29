@@ -689,9 +689,7 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
       }
 
       $membershipBlock    = $form->_membershipBlock;
-      $membershipTypeIds  = array();
-      $membershipTypes    = array();
-      $radio              = array();
+      $membershipTypeIds  = $membershipTypes = $radio = array();
       $membershipPriceset = (!empty($form->_priceSetId) && $form->_useForMember) ? TRUE : FALSE;
 
       $allowAutoRenewMembership = $autoRenewOption = FALSE;
