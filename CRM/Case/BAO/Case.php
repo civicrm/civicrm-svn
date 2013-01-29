@@ -2010,7 +2010,7 @@ SELECT civicrm_contact.id as casemanager_id,
     return $unclosedCases;
   }
 
-  function caseCount($contactId = NULL, $excludeDeleted = TRUE) {
+  static function caseCount($contactId = NULL, $excludeDeleted = TRUE) {
     $whereConditions = array();
     if ($excludeDeleted) {
       $whereConditions[] = "( civicrm_case.is_deleted = 0 OR civicrm_case.is_deleted IS NULL )";
@@ -2833,7 +2833,7 @@ WHERE id IN (' . implode(',', $copiedActivityIds) . ')';
    * if user has 'access my cases and activities'
    * or 'access all cases and activities'
    */
-  function accessCiviCase() {
+  static function accessCiviCase() {
     static $componentEnabled;
     if (!isset($componentEnabled)) {
       $componentEnabled = FALSE;
