@@ -394,13 +394,13 @@ class CRM_Contact_BAO_Query {
    * @return Object
    * @access public
    */
-  function __construct($params = NULL, $returnProperties = NULL, $fields = NULL,
+  function __construct(
+    $params = NULL, $returnProperties = NULL, $fields = NULL,
     $includeContactIds = FALSE, $strict = FALSE, $mode = 1,
     $skipPermission    = FALSE, $searchDescendentGroups = TRUE,
     $smartGroupCache   = TRUE, $displayRelationshipType = NULL,
     $operator          = 'AND'
   ) {
-
     $this->_params = &$params;
     if ($this->_params == NULL) {
       $this->_params = array();
@@ -1600,6 +1600,7 @@ class CRM_Contact_BAO_Query {
       }
     }
 
+    CRM_Core_Error::debug_var( 'A', implode(' AND ', $andClauses));
     return implode(' AND ', $andClauses);
   }
 
@@ -1744,40 +1745,36 @@ class CRM_Contact_BAO_Query {
       }
     }
     elseif ($name === 'world_region') {
-      $worldRegions = CRM_Core_PseudoConstant::worldRegion();
-      if (is_numeric($value)) {
-        $value = $worldRegions[(int ) $value];
-      }
-      $wc = self::caseImportant($op) ? "LOWER({$field['where']})" : "{$field['where']}";
-      $this->_where[$grouping][] = self::buildClause($wc, $op, $value, 'String');
-      $this->_qill[$grouping][] = ts('World Region') . " $op '$value'";
+      $this->optionValueQuery(
+        $name, $op, $value, $grouping,
+        CRM_Core_PseudoConstant::worldRegion(),
+        $field,
+        ts('World Region')
+      );
     }
     elseif ($name === 'individual_prefix') {
-      $individualPrefixs = CRM_Core_PseudoConstant::individualPrefix();
-      if (is_numeric($value)) {
-        $value = $individualPrefixs[(int ) $value];
-      }
-      $wc = self::caseImportant($op) ? "LOWER({$field['where']})" : "{$field['where']}";
-      $this->_where[$grouping][] = self::buildClause($wc, $op, $value, 'String');
-      $this->_qill[$grouping][] = ts('Individual Prefix') . " $op '$value'";
+      $this->optionValueQuery(
+        $name, $op, $value, $grouping,
+        CRM_Core_PseudoConstant::individualPrefix(),
+        $field,
+        ts('Individual Prefix')
+      );
     }
     elseif ($name === 'individual_suffix') {
-      $individualSuffixs = CRM_Core_PseudoConstant::individualsuffix();
-      if (is_numeric($value)) {
-        $value = $individualSuffixs[(int ) $value];
-      }
-      $wc = self::caseImportant($op) ? "LOWER({$field['where']})" : "{$field['where']}";
-      $this->_where[$grouping][] = self::buildClause($wc, $op, $value, 'String');
-      $this->_qill[$grouping][] = ts('Individual Suffix') . " $op '$value'";
+      $this->optionValueQuery(
+        $name, $op, $value, $grouping,
+        CRM_Core_PseudoConstant::individualSuffix(),
+        $field,
+        ts('Individual Suffix')
+      );
     }
     elseif ($name === 'gender') {
-      $genders = CRM_Core_PseudoConstant::gender();
-      if (is_numeric($value)) {
-        $value = $genders[(int ) $value];
-      }
-      $wc = self::caseImportant($op) ? "LOWER({$field['where']})" : "{$field['where']}";
-      $this->_where[$grouping][] = self::buildClause($wc, $op, $value, 'String');
-      $this->_qill[$grouping][] = ts('Gender') . " $op '$value'";
+      $this->optionValueQuery(
+        $name, $op, $value, $grouping,
+        CRM_Core_PseudoConstant::gender(),
+        $field,
+        ts('Gender')
+      );
       self::$_openedPanes['Demographics'] = TRUE;
     }
     elseif ($name === 'birth_date') {
@@ -4551,9 +4548,15 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
         return $clause;
 
       case 'IN':
+      case 'NOT IN':
         if (isset($dataType)) {
-          $value = CRM_Utils_Type::escape($value, "String");
-          $values = explode(',', CRM_Utils_Array::value(0, explode(')', CRM_Utils_Array::value(1, explode('(', $value)))));
+          if (is_array($value)) {
+            $values = $value;
+          }
+          else {
+            $value = CRM_Utils_Type::escape($value, "String");
+            $values = explode(',', CRM_Utils_Array::value(0, explode(')', CRM_Utils_Array::value(1, explode('(', $value)))));
+          }
           // supporting multiple values in IN clause
           $val = array();
           foreach ($values as $v) {
@@ -4706,5 +4709,35 @@ AND   displayRelType.is_active = 1
     }
     return FALSE;
   }
+
+  function optionValueQuery(
+    $name,
+    $op,
+    $value,
+    $grouping,
+    $tableValues,
+    $field,
+    $label
+  ) {
+      $qill = $value;
+      if (is_numeric($value)) {
+        $qill = $value = $tableValues[(int ) $value];
+      }
+      elseif ($op == 'IN' || $op == 'NOT IN') {
+        $values = explode(',', CRM_Utils_Array::value(0, explode(')', CRM_Utils_Array::value(1, explode('(', $value)))));
+        if (is_array($values)) {
+          $newValues = array();
+          foreach ($values as $v) {
+            $newValues[] = $tableValues[(int ) $v];
+          }
+          $value = $newValues;
+          $qill  = implode(', ', $value);
+        }
+      }
+      $wc = self::caseImportant($op) ? "LOWER({$field['where']})" : "{$field['where']}";
+      $this->_where[$grouping][] = self::buildClause($wc, $op, $value, 'String');
+      $this->_qill[$grouping][] = $label . " $op '$qill'";
+  }
+
 }
 
