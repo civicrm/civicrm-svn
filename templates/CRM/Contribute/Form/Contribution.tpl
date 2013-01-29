@@ -231,7 +231,7 @@
     {/if}
   </table>
     {if !$contributionMode}
-    <div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-processed crm-accordion-open" id="paymentDetails_Information">
+    <div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-processed" id="paymentDetails_Information">
       <div class="crm-accordion-header">
         {ts}Payment Details{/ts}
       </div>
