@@ -103,17 +103,15 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search {
         $dateFields[] = $name;
       }
     }
-    // All option lists defined here will be selectable in the search form
-    $pseudoconstant = self::getOptions();
     // Add javascript
     CRM_Core_Resources::singleton()
       ->addScriptFile('civicrm', 'templates/CRM/Contact/Form/Search/Builder.js')
       ->addSetting(array(
-        'pseudoconstant' => $pseudoconstant,
         'searchBuilder' => array(
           // Index of newly added/expanded block (1-based index)
           'newBlock' => $this->get('newBlock'),
           'dateFields' => $dateFields,
+          'fieldOptions' => self::fieldOptions(),
         ),
       ));
     //get the saved search mapping id
@@ -402,11 +400,10 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search {
   /**
    * CRM-9434 Hackish function to fetch fields with options.
    * FIXME: When our core fields contain reliable metadata this will be much simpler.
-   * @return array: key: field_name value: (string|array) api entity name or array of fetched options
-   * Note: when value is a string the options will be fetched using the ajax api
-   *       this is most efficient, but when all else fails we can just supply the array of options
+   * @return array: (string => string) key: field_name value: api entity name
+   * Note: options are fetched via ajax using the api "getoptions" method
    */
-  static function getOptions() {
+  static function fieldOptions() {
     // Hack to add options not retrieved by getfields
     // This list could go on and on, but it would be better to fix getfields
     $options = array(
@@ -418,9 +415,9 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search {
       'world_region' => 'contact',
       'individual_prefix' => 'contact',
       'individual_suffix' => 'contact',
+      'on_hold' => 'yesno',
       'activity_type' => 'activity',
       'activity_status' => 'activity',
-      'on_hold' => 'yesno',
       'financial_type' => 'contribution',
       'contribution_page_id' => 'contribution',
       'contribution_status' => 'contribution',

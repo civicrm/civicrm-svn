@@ -138,16 +138,18 @@ var CRM = CRM || {};
       params.action = action;
       params.json = 1;
     }
-    $.ajax({
-      url: settings.ajaxURL.indexOf('http') === 0 ? settings.ajaxURL : CRM.url(settings.ajaxURL),
-      dataType: 'json',
-      data: params,
-      type: action.indexOf('get') < 0 ? 'POST' : 'GET',
-      context:this,
-      success: function(result) {
-        settings.callBack.call(this, result, settings);
-      }
-    });
+    (function(settings) {
+      var stg = $.extend({}, settings);
+      $.ajax({
+        url: stg.ajaxURL.indexOf('http') === 0 ? stg.ajaxURL : CRM.url(stg.ajaxURL),
+        dataType: 'json',
+        data: params,
+        type: action.indexOf('get') < 0 ? 'POST' : 'GET',
+        success: function(result) {
+          stg.callBack.call(this, result, stg);
+        }
+      });
+    })(settings);
   };
 
   // Backwards compatible with jQuery fn
