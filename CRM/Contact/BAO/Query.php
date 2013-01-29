@@ -1836,33 +1836,30 @@ class CRM_Contact_BAO_Query {
     }
     elseif ($name === 'email_greeting') {
       $filterCondition = array('greeting_type' => 'email_greeting');
-      $emailGreetings = CRM_Core_PseudoConstant::greeting($filterCondition);
-      if (is_numeric($value)) {
-        $value = $emailGreetings[(int ) $value];
-      }
-      $wc = self::caseImportant($op) ? "LOWER({$field['where']})" : "{$field['where']}";
-      $this->_where[$grouping][] = self::buildClause($wc, $op, $value, 'String');
-      $this->_qill[$grouping][] = ts('Email Greeting') . " $op '$value'";
+      $this->optionValueQuery(
+        $name, $op, $value, $grouping,
+        CRM_Core_PseudoConstant::greeting($filterCondition),
+        $field,
+        ts('Email Greeting')
+      );
     }
     elseif ($name === 'postal_greeting') {
       $filterCondition = array('greeting_type' => 'postal_greeting');
-      $postalGreetings = CRM_Core_PseudoConstant::greeting($filterCondition);
-      if (is_numeric($value)) {
-        $value = $postalGreetings[(int ) $value];
-      }
-      $wc = self::caseImportant($op) ? "LOWER({$field['where']})" : "{$field['where']}";
-      $this->_where[$grouping][] = self::buildClause($wc, $op, $value, 'String');
-      $this->_qill[$grouping][] = ts('Postal Greeting') . " $op '$value'";
+      $this->optionValueQuery(
+        $name, $op, $value, $grouping,
+        CRM_Core_PseudoConstant::greeting($filterCondition),
+        $field,
+        ts('Postal Greeting')
+      );
     }
     elseif ($name === 'addressee') {
       $filterCondition = array('greeting_type' => 'addressee');
-      $addressee = CRM_Core_PseudoConstant::greeting($filterCondition);
-      if (is_numeric($value)) {
-        $value = $addressee[(int ) $value];
-      }
-      $wc = self::caseImportant($op) ? "LOWER({$field['where']})" : "{$field['where']}";
-      $this->_where[$grouping][] = self::buildClause($wc, $op, $value, 'String');
-      $this->_qill[$grouping][] = ts('Addressee') . " $op '$value'";
+      $this->optionValueQuery(
+        $name, $op, $value, $grouping,
+        CRM_Core_PseudoConstant::greeting($filterCondition),
+        $field,
+        ts('Addressee')
+      );
     }
     elseif (substr($name, 0, 4) === 'url-') {
       $tName = 'civicrm_website';
@@ -3174,14 +3171,16 @@ WHERE  id IN ( $groupIDs )
     }
 
     $countryClause = $countryQill = NULL;
-    if ($values &&
+    if (
+      $values &&
       !empty($values[2])
     ) {
       $this->_tables['civicrm_country'] = 1;
       $this->_whereTables['civicrm_country'] = 1;
 
       if (is_numeric($values[2])) {
-        $countryClause = self::buildClause('civicrm_country.id',
+        $countryClause = self::buildClause(
+          'civicrm_country.id',
           $values[1],
           $values[2],
           'Positive'
@@ -3191,7 +3190,8 @@ WHERE  id IN ( $groupIDs )
       }
       else {
         $wc = ($values[1] != 'LIKE') ? "LOWER('civicrm_country.name')" : 'civicrm_country.name';
-        $countryClause = self::buildClause('civicrm_country.name',
+        $countryClause = self::buildClause(
+          'civicrm_country.name',
           $values[1],
           $values[2],
           'String'
@@ -3281,7 +3281,14 @@ WHERE  id IN ( $groupIDs )
 
     if (!is_array($value)) {
       // force the state to be an array
-      $value = array($value);
+      // check if its in the mapper format!
+      $values = explode(',', CRM_Utils_Array::value(0, explode(')', CRM_Utils_Array::value(1, explode('(', $value)))));
+      if (is_array($values)) {
+        $value = $values;
+      }
+      else {
+        $value = array($value);
+      }
     }
 
     // check if the values are ids OR names of the states
@@ -3295,7 +3302,10 @@ WHERE  id IN ( $groupIDs )
 
     $names = array();
     if ($inputFormat == 'id') {
-      $stateClause = 'civicrm_state_province.id IN (' . implode(',', $value) . ')';
+      if ($op != 'NOT IN') {
+        $op = 'IN';
+      }
+      $stateClause = "civicrm_state_province.id $op (" . implode(',', $value) . ')';
 
       $stateProvince = CRM_Core_PseudoConstant::stateProvince();
       foreach ($value as $id) {
@@ -3308,7 +3318,10 @@ WHERE  id IN ( $groupIDs )
         $name = trim($name);
         $inputClause[] = "'$name'";
       }
-      $stateClause = 'civicrm_state_province.name IN (' . implode(',', $inputClause) . ')';
+      if ($op != 'NOT IN') {
+        $op = 'IN';
+      }
+      $stateClause = "civicrm_state_province.name $op (" . implode(',', $inputClause) . ')';
       $names = $value;
     }
 
@@ -3327,7 +3340,7 @@ WHERE  id IN ( $groupIDs )
 
     $this->_where[$grouping][] = $clause;
     if (!$status) {
-      $this->_qill[$grouping][] = ts('State/Province') . ' - ' . implode(' ' . ts('or') . ' ', $names) . $countryQill;
+      $this->_qill[$grouping][] = ts('State/Province') . " $op " . implode(' ' . ts('or') . ' ', $names) . $countryQill;
     }
     else {
       return implode(' ' . ts('or') . ' ', $names) . $countryQill;;
@@ -4709,32 +4722,47 @@ AND   displayRelType.is_active = 1
     return FALSE;
   }
 
+  /**
+   * Builds the necessary structures for all fields that are similar to option value lookups
+   *
+   * @param $name     string the name of the field
+   * @param $op       string the sql operator, this function should handle ALL SQL operators
+   * @param $value    any    string / integer / array depends on the operator and whos calling the query builder
+   * @param $grouping int    the index where to place the where clause
+   * @param $selectValue array the key value pairs for this element. This allows us to use this function for things besides option-value pairs
+   * @param $field    array  an array that contains various properties of the field identified by $name
+   * @param $label    string The label for this field element
+   * @param $dataType string The data type for this element
+   *
+   * @return void     adds the where clause and qill to the query object
+   */
   function optionValueQuery(
     $name,
     $op,
     $value,
     $grouping,
-    $tableValues,
+    $selectValues,
     $field,
-    $label
+    $label,
+    $dataType = 'String'
   ) {
       $qill = $value;
       if (is_numeric($value)) {
-        $qill = $value = $tableValues[(int ) $value];
+        $qill = $value = $selectValues[(int ) $value];
       }
       elseif ($op == 'IN' || $op == 'NOT IN') {
         $values = explode(',', CRM_Utils_Array::value(0, explode(')', CRM_Utils_Array::value(1, explode('(', $value)))));
         if (is_array($values)) {
           $newValues = array();
           foreach ($values as $v) {
-            $newValues[] = $tableValues[(int ) $v];
+            $newValues[] = $selectValues[(int ) $v];
           }
           $value = $newValues;
           $qill  = implode(', ', $value);
         }
       }
       $wc = self::caseImportant($op) ? "LOWER({$field['where']})" : "{$field['where']}";
-      $this->_where[$grouping][] = self::buildClause($wc, $op, $value, 'String');
+      $this->_where[$grouping][] = self::buildClause($wc, $op, $value, $dataType);
       $this->_qill[$grouping][] = $label . " $op '$qill'";
   }
 
