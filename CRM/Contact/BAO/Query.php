@@ -1600,7 +1600,6 @@ class CRM_Contact_BAO_Query {
       }
     }
 
-    CRM_Core_Error::debug_var( 'A', implode(' AND ', $andClauses));
     return implode(' AND ', $andClauses);
   }
 
