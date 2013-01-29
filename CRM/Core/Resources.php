@@ -68,7 +68,7 @@ class CRM_Core_Resources {
    */
   protected $settings = array();
   protected $addedSettings = FALSE;
-  protected $addedCoreResources = FALSE;
+  protected $addedCoreResources = array();
 
   /**
    * @var string a value to append to JS/CSS URLs to coerce cache resets
@@ -361,9 +361,9 @@ class CRM_Core_Resources {
    * @return void
    * @access public
    */
-  public function addCoreResources() {
-    if (!$this->addedCoreResources) {
-      $this->addedCoreResources = TRUE;
+  public function addCoreResources($region = 'html-header') {
+    if (!isset($this->addedCoreResources[$region])) {
+      $this->addedCoreResources[$region] = TRUE;
       $config = CRM_Core_Config::singleton();
 
       // Add resources from jquery.files.tpl
@@ -371,10 +371,10 @@ class CRM_Core_Resources {
       $jsWeight = -9999;
       foreach ($files as $file => $type) {
         if ($type == 'js') {
-          $this->addScriptFile('civicrm', $file, $jsWeight++, 'html-header', FALSE);
+          $this->addScriptFile('civicrm', $file, $jsWeight++, $region, FALSE);
         }
         elseif ($type == 'css') {
-          $this->addStyleFile('civicrm', $file, -100, 'html-header');
+          $this->addStyleFile('civicrm', $file, -100, $region);
         }
       }
 
@@ -382,19 +382,19 @@ class CRM_Core_Resources {
       list($lang) = explode('_', $config->lcMessages);
       $localizationFile = "packages/jquery/jquery-ui-1.9.0/development-bundle/ui/i18n/jquery.ui.datepicker-{$lang}.js";
       if ($this->getPath('civicrm', $localizationFile)) {
-        $this->addScriptFile('civicrm', $localizationFile, $jsWeight++, 'html-header', FALSE);
+        $this->addScriptFile('civicrm', $localizationFile, $jsWeight++, $region, FALSE);
       }
 
       // Give control of jQuery back to the CMS - this loads last
-      $this->addScript('cj = jQuery.noConflict(true);', 9999, 'html-header');
+      $this->addScript('cj = jQuery.noConflict(true);', 9999, $region);
 
       // Load custom or core css
       if (!empty($config->customCSSURL)) {
-        $this->addStyleUrl($config->customCSSURL, -99, 'html-header');
+        $this->addStyleUrl($config->customCSSURL, -99, $region);
       }
       else {
-        $this->addStyleFile('civicrm', 'css/civicrm.css', -99, 'html-header');
-        $this->addStyleFile('civicrm', 'css/extras.css', -98, 'html-header');
+        $this->addStyleFile('civicrm', 'css/civicrm.css', -99, $region);
+        $this->addStyleFile('civicrm', 'css/extras.css', -98, $region);
       }
     }
   }

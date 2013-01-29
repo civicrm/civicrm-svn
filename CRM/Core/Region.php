@@ -4,7 +4,7 @@
  * Maintain a set of markup/templates to inject inside various regions
  */
 class CRM_Core_Region {
-  static private $_instances = null;
+  static private $_instances = NULL;
 
   /**
    * Obtain the content for a given region
@@ -133,9 +133,10 @@ class CRM_Core_Region {
    * Render all the snippets in a region
    *
    * @param string $default HTML, the initial content of the region
+   * @param bool $allowCmsOverride allow CMS to override rendering of region
    * @return string, HTML
    */
-  public function render($default) {
+  public function render($default, $allowCmsOverride = TRUE) {
     // $default is just another part of the region
     if (is_array($this->_snippets['default'])) {
       $this->_snippets['default']['markup'] = $default;
@@ -169,7 +170,7 @@ class CRM_Core_Region {
           $html .= call_user_func_array($snippet['callback'], $args);
           break;
         case 'scriptUrl':
-          if (!$cms->addScriptUrl($snippet['scriptUrl'], $this->_name)) {
+          if (!$allowCmsOverride || !$cms->addScriptUrl($snippet['scriptUrl'], $this->_name)) {
             $html .= sprintf("<script type=\"text/javascript\" src=\"%s\">\n</script>\n", $snippet['scriptUrl']);
           }
           break;
@@ -177,17 +178,17 @@ class CRM_Core_Region {
           $snippet['script'] = sprintf("cj(function(\$){\n%s\n});", $snippet['jquery']);
           // no break - continue processing as script
         case 'script':
-          if (!$cms->addScript($snippet['script'], $this->_name)) {
+          if (!$allowCmsOverride || !$cms->addScript($snippet['script'], $this->_name)) {
             $html .= sprintf("<script type=\"text/javascript\">\n%s\n</script>\n", $snippet['script']);
           }
           break;
         case 'styleUrl':
-          if (!$cms->addStyleUrl($snippet['styleUrl'], $this->_name)) {
+          if (!$allowCmsOverride || !$cms->addStyleUrl($snippet['styleUrl'], $this->_name)) {
             $html .= sprintf("<link href=\"%s\" rel=\"stylesheet\" type=\"text/css\"/>\n", $snippet['styleUrl']);
           }
           break;
         case 'style':
-          if (!$cms->addStyle($snippet['style'], $this->_name)) {
+          if (!$allowCmsOverride || !$cms->addStyle($snippet['style'], $this->_name)) {
             $html .= sprintf("<style type=\"text/css\">\n%s\n</style>\n", $snippet['style']);
           }
           break;

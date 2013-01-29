@@ -31,11 +31,9 @@
   <title>{if $pageTitle}{$pageTitle|strip_tags}{else}{ts}Printer-Friendly View{/ts}{/if}</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <base href="{crmURL p="" a=true}" /><!--[if IE]></base><![endif]-->
-  <style type="text/css" media="screen, print">@import url({$config->resourceBase}css/civicrm.css);</style>
-  <style type="text/css" media="screen, print">@import url({$config->resourceBase}css/extras.css);</style>
+  {crmRegion name='html-header' allowCmsOverride=0}{/crmRegion}
   <style type="text/css" media="print">@import url({$config->resourceBase}css/print.css);</style>
   <style type="text/css">@import url({$config->resourceBase}css/skins/aqua/theme.css);</style>
-  {include file="CRM/common/jquery.tpl"}
 </head>
 
 <body>
