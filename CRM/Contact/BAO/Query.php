@@ -2365,6 +2365,15 @@ class CRM_Contact_BAO_Query {
 
     $subTypes = array();
     $clause = array();
+
+    // account for search builder mapping multiple values
+    if (!is_array($value)) {
+      $values = explode(',', CRM_Utils_Array::value(0, explode(')', CRM_Utils_Array::value(1, explode('(', $value)))));
+      if (is_array($values)) {
+        $value = array_flip($values);
+      }
+    }
+
     if (is_array($value)) {
       foreach ($value as $k => $v) {
         // fix for CRM-771
@@ -2372,9 +2381,7 @@ class CRM_Contact_BAO_Query {
           $subType = NULL;
           $contactType = $k;
           if (strpos($k, CRM_Core_DAO::VALUE_SEPARATOR)) {
-            list($contactType, $subType) = explode(CRM_Core_DAO::VALUE_SEPARATOR,
-              $k, 2
-            );
+            list($contactType, $subType) = explode(CRM_Core_DAO::VALUE_SEPARATOR, $k, 2);
           }
 
           if (!empty($subType)) {
@@ -3870,7 +3877,8 @@ civicrm_relationship.start_date > CURDATE()
    * @return CRM_Contact_DAO_Contact
    * @access public
    */
-  function searchQuery($offset = 0, $rowCount = 0, $sort = NULL,
+  function searchQuery(
+    $offset = 0, $rowCount = 0, $sort = NULL,
     $count = FALSE, $includeContactIds = FALSE,
     $sortByChar = FALSE, $groupContacts = FALSE,
     $returnQuery = FALSE,
@@ -3892,7 +3900,9 @@ civicrm_relationship.start_date > CURDATE()
     // if we’re explicitely looking for a certain contact’s contribs, events, etc.
     // and that contact happens to be deleted, set $onlyDeleted to true
     foreach ($this->_params as $values) {
-      list($name, $op, $value, $_, $_) = $values;
+      $name     = CRM_Utils_Array::value(0, $values);
+      $op       = CRM_Utils_Array::value(1, $values);
+      $value    = CRM_Utils_Array::value(2, $values);
       if ($name == 'contact_id' and $op == '=') {
         if (CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $value, 'is_deleted')) {
           $onlyDeleted = TRUE;
