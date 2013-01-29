@@ -259,8 +259,18 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
     else {
       $startDate = date_create();
     }
-    // Format start date in Mountain Time to avoid Authorize.net error E00017
-    $startDate->setTimezone(new DateTimeZone(self::TIMEZONE));
+    /* Format start date in Mountain Time to avoid Authorize.net error E00017
+     * we do this only if the day we are setting our start time to is LESS than the current
+     * day in mountaintime (ie. the server time of the A-net server). A.net won't accept a date
+     * earlier than the current date on it's server so if we are in PST we might need to use mountain
+     * time to bring our date forward. But if we are submitting something future dated we want
+     * the date we entered to be respected
+     */
+    $minDate = date_create('now', new DateTimeZone(self::TIMEZONE));
+    if(strtotime($startDate->format('Y-m-d')) < strtotime($minDate->format('Y-m-d'))){
+      $startDate->setTimezone(new DateTimeZone(self::TIMEZONE));
+    }
+
     $template->assign( 'startDate', $startDate->format('Y-m-d') );
     // for open ended subscription totalOccurrences has to be 9999
     $installments = $this->_getParam('installments');
