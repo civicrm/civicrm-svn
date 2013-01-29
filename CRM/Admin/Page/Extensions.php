@@ -164,6 +164,7 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic {
         CRM_Core_Session::setStatus(ts('Failed to read extension (%1). Please refresh the extension list.', array(
           1 => $key,
         )));
+        continue;
       }
 
       $row = self::createExtendedInfo($obj);
