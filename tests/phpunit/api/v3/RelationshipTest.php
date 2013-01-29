@@ -80,7 +80,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase {
       'is_active' => 1,
       'version' => $this->_apiversion,
     );
-    
+
   }
 
   function tearDown() {
@@ -249,6 +249,37 @@ class api_v3_RelationshipTest extends CiviUnitTestCase {
     $params['id'] = $relationship['id'];
     $result = civicrm_api('relationship', 'delete', $params);
   }
+
+  /**
+   * checkupdate doesn't reset stuff badly - CRM-11789
+   */
+  function testRelationshipCreateUpdateDoesntMangle() {
+    $params = array(
+      'contact_id_a' => $this->_cId_a,
+      'contact_id_b' => $this->_cId_b,
+      'relationship_type_id' => $this->_relTypeID,
+      'start_date' => '2008-12-20',
+      'end_date' => NULL,
+      'is_active' => 1,
+      'is_permission_a_b' => 1,
+      'description' => 'my desc',
+      'version' => $this->_apiversion,
+    );
+    $relationship = civicrm_api('relationship', 'create', $params);
+
+    $updateparams = array(
+      'id' => $relationship['id'],
+      'version' => $this->_apiversion,
+    );
+    $result = civicrm_api('relationship', 'create', $updateparams);
+
+    $this->assertAPISuccess($result, 'in line ' . __LINE__);
+    //make sure the orig params didn't get changed
+    $this->getAndCheck($params, $relationship['id'], 'relationship');
+
+  }
+
+
 
   /**
    * check relationship creation
@@ -745,7 +776,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase {
     $this->documentMe($getParams, $result, __FUNCTION__, __FILE__, $description, $subfile);
     $this->assertEquals($result['count'], 1);
     $this->AssertEquals($rel1['id'], $result['id']);
-    
+
     // now try not started
     $rel2Params['is_active'] =1;
     $rel2Params['start_date'] ='tomorrow';
@@ -753,7 +784,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase {
     $result = civicrm_api('relationship', 'get', $getParams);
     $this->assertEquals($result['count'], 1);
     $this->AssertEquals($rel1['id'], $result['id']);
-    
+
     // now try finished
     $rel2Params['is_active'] =1;
     $rel2Params['start_date'] ='last week';

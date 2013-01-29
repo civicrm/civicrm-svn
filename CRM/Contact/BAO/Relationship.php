@@ -209,22 +209,26 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship {
     $relationship->contact_id_b = $contact_b;
     $relationship->contact_id_a = $contact_a;
     $relationship->relationship_type_id = $type;
-        $relationship->is_active            = CRM_Utils_Array::value( 'is_active', $params ) ? 1 : 0;
-    $relationship->is_permission_a_b = CRM_Utils_Array::value('is_permission_a_b', $params, 0);
-    $relationship->is_permission_b_a = CRM_Utils_Array::value('is_permission_b_a', $params, 0);
-    $relationship->description = CRM_Utils_Array::value('description', $params);
-    $relationship->start_date = CRM_Utils_Date::format(CRM_Utils_Array::value('start_date', $params));
-    $relationship->case_id = CRM_Utils_Array::value('case_id', $params);
-    if (!$relationship->start_date) {
-      $relationship->start_date = 'NULL';
-    }
-
-    $relationship->end_date = CRM_Utils_Date::format(CRM_Utils_Array::value('end_date', $params));
-    if (!$relationship->end_date) {
-      $relationship->end_date = 'NULL';
-    }
-
     $relationship->id = CRM_Utils_Array::value('relationship', $ids);
+
+    $dateFields = array('end_date', 'start_date');
+
+    foreach (self::getdefaults() as $defaultField => $defaultValue){
+      if(isset($params[$defaultField])){
+        if(in_array($defaultField, $dateFields)){
+          $relationship->$defaultField = CRM_Utils_Date::format(CRM_Utils_Array::value($defaultField, $params));
+          if(!$relationship->$defaultField){
+            $relationship->$defaultField = 'NULL';
+          }
+        }
+        else{
+          $relationship->$defaultField = $params[$defaultField];
+        }
+      }
+      elseif(empty($relationship->id)){
+        $relationship->$defaultField = $defaultValue;
+      }
+    }
 
     $relationship->save();
 
@@ -244,6 +248,25 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship {
 
     return $relationship;
   }
+  /**
+   * Specifiy defaults for creating a relationship
+   *
+   * @return array $defaults array of defaults for creating relationship
+   * @access public
+   * @static
+   */
+  static function getdefaults() {
+    return array(
+      'is_active' => 0,
+      'is_permission_a_b' => 0,
+      'is_permission_b_a' => 0,
+      'description' => '',
+      'start_date' => 'NULL',
+      'case_id' => NULL,
+      'end_date' => 'NULL',
+    );
+  }
+
 
   /**
    * Check if there is data to create the object
@@ -1450,7 +1473,7 @@ cc.sort_name LIKE '%$name%'";
    */
   static function disableExpiredRelationships() {
     $query = "SELECT id FROM civicrm_relationship WHERE is_active = 1 AND end_date < CURDATE()";
-    
+
     $dao = CRM_Core_DAO::executeQuery($query);
     while ($dao->fetch()) {
       $result = CRM_Contact_BAO_Relationship::setIsActive($dao->id, FALSE);
