@@ -138,8 +138,8 @@ var CRM = CRM || {};
       params.action = action;
       params.json = 1;
     }
-    (function(settings) {
-      var stg = $.extend({}, settings);
+    // Pass copy of settings into closure to preserve its value during multiple requests
+    (function(stg) {
       $.ajax({
         url: stg.ajaxURL.indexOf('http') === 0 ? stg.ajaxURL : CRM.url(stg.ajaxURL),
         dataType: 'json',
@@ -149,7 +149,7 @@ var CRM = CRM || {};
           stg.callBack.call(this, result, stg);
         }
       });
-    })(settings);
+    })($.extend({}, settings));
   };
 
   // Backwards compatible with jQuery fn
