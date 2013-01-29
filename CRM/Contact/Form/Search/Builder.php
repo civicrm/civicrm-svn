@@ -415,6 +415,8 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search {
       'world_region' => 'contact',
       'individual_prefix' => 'contact',
       'individual_suffix' => 'contact',
+      'preferred_communication_method' => 'contact',
+      'preferred_language' => 'contact',
       'on_hold' => 'yesno',
       'activity_type' => 'activity',
       'activity_status' => 'activity',

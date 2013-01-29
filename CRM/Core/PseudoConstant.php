@@ -1610,6 +1610,13 @@ WHERE  id = %1";
   }
 
   /**
+   * Alias of pcm
+   */
+  public static function preferredCommunicationMethod($localize = FALSE) {
+    return self::pcm($localize);
+  }
+
+  /**
    * Get all active payment processors
    *
    * The static array paymentProcessor is returned
@@ -1997,6 +2004,13 @@ ORDER BY name";
    *
    */
   public static function &languages() {
+    return CRM_Core_I18n_PseudoConstant::languages();
+  }
+
+  /**
+   * Alias of above
+   */
+  public static function &preferredLanguage() {
     return CRM_Core_I18n_PseudoConstant::languages();
   }
 

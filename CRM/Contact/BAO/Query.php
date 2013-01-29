@@ -3467,7 +3467,7 @@ WHERE  id IN ( $groupIDs )
     $pref = array();
     if (!is_array($value)) {
       $v = array();
-
+      $value = trim($value, ' ()');
       if (strpos($value, CRM_Core_DAO::VALUE_SEPARATOR) !== FALSE) {
         $v = explode(CRM_Core_DAO::VALUE_SEPARATOR, $value);
       }
@@ -3489,7 +3489,6 @@ WHERE  id IN ( $groupIDs )
       }
     }
 
-    $commPref = array();
     $commPref = CRM_Core_PseudoConstant::pcm();
 
     $sqlValue = array();
