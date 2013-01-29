@@ -1369,6 +1369,8 @@ class CRM_Contact_BAO_Query {
         return;
 
       case 'note':
+      case 'note_body':
+      case 'note_subject':
         $this->notes($values);
         return;
 
@@ -2701,6 +2703,7 @@ WHERE  id IN ( $groupIDs )
 
     $noteOptionValues = $this->getWhereValues('note_option', $grouping);
     $noteOption = CRM_Utils_Array::value('2', $noteOptionValues, '6');
+    $noteOption = ($name == 'note_body') ? 2 : (($name == 'note_subject') ? 3 : $noteOption);
 
     $this->_useDistinct = TRUE;
 
@@ -2721,15 +2724,18 @@ WHERE  id IN ( $groupIDs )
       $value = NULL;
     }
 
+    $label = NULL;
     $clauses = array();
     if ( $noteOption % 2 ==  0 ) {
       $clauses[] = self::buildClause('civicrm_note.note', $op, $value, 'String');
+      $label = ts('Note: Body Only');
     }
     if ( $noteOption % 3 ==  0 ) {
       $clauses[] = self::buildClause('civicrm_note.subject', $op, $value, 'String');
+      $label = $label ? ts('Note: Body and Subject') : ts('Note: Subject Only');
     }
     $this->_where[$grouping][] = "( " . implode(' OR ', $clauses) . " )";
-    $this->_qill[$grouping][]  = ts('Note') . " $op - '$n'";
+    $this->_qill[$grouping][]  = $label . " $op - '$n'";
   }
 
   function nameNullOrEmptyOp($name, $op, $grouping) {
