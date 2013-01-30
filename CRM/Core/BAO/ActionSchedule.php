@@ -86,7 +86,7 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule {
     }
 
     $eventType = CRM_Event_PseudoConstant::eventType();
-
+    $eventTemplate = CRM_Event_PseudoConstant::eventTemplates();
     $autoRenew = CRM_Core_PseudoConstant::autoRenew();
     $membershipType = CRM_Member_PseudoConstant::membershipType();
 
@@ -101,9 +101,7 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule {
     $recipientMapping = array_combine(array_keys($options), array_keys($options));
 
     if (!$id) {
-
       $id = 1;
-
     }
 
     foreach ($mapping as $value) {
@@ -129,6 +127,11 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule {
       ) {
         $val = ts('Event Name');
       }
+      elseif ($entityValue == 'event_template' &&
+        $value['entity'] == 'civicrm_participant'
+      ) {
+        $val = ts('Event Template');
+      }
       elseif ($entityValue == 'civicrm_membership_type' &&
         $value['entity'] == 'civicrm_membership'
       ) {
@@ -145,6 +148,9 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule {
           $sel2[$key] = $valueLabel + $eventType;
           break;
 
+        case 'event_template':
+            $sel2[$key] = $valueLabel + $eventTemplate;
+            break;
         case 'civicrm_event':
           $sel2[$key] = $valueLabel + $event;
           break;
