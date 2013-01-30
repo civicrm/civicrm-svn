@@ -89,6 +89,7 @@ function civicrm_api3_contribution_create($params) {
 function _civicrm_api3_contribution_create_spec(&$params) {
   $params['contact_id']['api.required'] = 1;
   $params['total_amount']['api.required'] = 1;
+  $params['financial_type_id']['api.aliases'] = array('contribution_type_id');
   $params['note'] = array(
     'name' => 'note',
     'uniqueName' => 'contribution_note',
@@ -202,6 +203,7 @@ function civicrm_api3_contribution_get($params) {
  */
 function _civicrm_api3_contribution_get_spec(&$params) {
   $params['contribution_test']['api.default'] = 0;
+  $params['financial_type_id']['api.aliases'] = array('contribution_type_id');
   $params['contact_id'] = $params['contribution_contact_id'];
   $params['contact_id']['api.aliases'] = array('contribution_contact_id');
   unset($params['contribution_contact_id']);
