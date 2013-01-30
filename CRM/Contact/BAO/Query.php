@@ -3303,7 +3303,11 @@ WHERE  id IN ( $groupIDs )
   function stateProvince(&$values, $status = NULL) {
     list($name, $op, $value, $grouping, $wildcard) = $values;
 
-    if (!is_array($value)) {
+    // quick escape for IS NULL
+    if ( in_array( $op, array( 'IS NULL', 'IS NOT NULL', 'IS EMPTY', 'IS NOT EMPTY' ) ) ) {
+      $value = NULL;
+    }
+    else if (!is_array($value)) {
       // force the state to be an array
       // check if its in the mapper format!
       $values = explode(',', CRM_Utils_Array::value(0, explode(')', CRM_Utils_Array::value(1, explode('(', $value)))));
@@ -3317,15 +3321,22 @@ WHERE  id IN ( $groupIDs )
 
     // check if the values are ids OR names of the states
     $inputFormat = 'id';
-    foreach ($value as $v) {
-      if (!is_numeric($v)) {
-        $inputFormat = 'name';
-        break;
+    if ($value) {
+      foreach ($value as $v) {
+        if (!is_numeric($v)) {
+          $inputFormat = 'name';
+          break;
+        }
       }
     }
 
     $names = array();
-    if ($inputFormat == 'id') {
+    if ( in_array( $op, array( 'IS NULL', 'IS NOT NULL', 'IS EMPTY', 'IS NOT EMPTY' ) ) ) {
+      // this converts IS (NOT)? EMPTY to IS (NOT)? NULL
+      $op = str_replace('EMPTY', 'NULL', $op);
+      $stateClause = "civicrm_state_province.id $op";
+    }
+    else if ($inputFormat == 'id') {
       if ($op != 'NOT IN') {
         $op = 'IN';
       }
