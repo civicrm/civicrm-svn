@@ -1610,10 +1610,11 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
     if (CRM_Utils_Array::value('title', $extends)) {
       $params = $extends;
+      $params['title'] = strlen($params['title']) > 13 ? substr($params['title'], 0, 13) : $params['title'];
     }
     else {
       $params = array(
-        'title' => strlen($title) > 10 ? substr($title, 0, 10) : $title,
+        'title' => strlen($title) > 13 ? substr($title, 0, 13) : $title,
         'extends' => $extends,
         'domain_id' => 1,
         'style' => 'Inline',
