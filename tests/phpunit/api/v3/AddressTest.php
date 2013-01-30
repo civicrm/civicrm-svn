@@ -27,9 +27,12 @@
  +--------------------------------------------------------------------+
  */
 
-
-
-
+/**
+ *  Test APIv3 civicrm_activity_* functions
+ *
+ *  @package CiviCRM_APIv3
+ *  @subpackage API_Contact
+ */
 
 require_once 'CiviTest/CiviUnitTestCase.php';
 class api_v3_AddressTest extends CiviUnitTestCase {

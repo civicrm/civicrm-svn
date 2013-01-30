@@ -28,9 +28,14 @@
  */
 
 require_once 'CiviTest/CiviUnitTestCase.php';
+
 /**
  * This class is intended to test ACL permission using the multisite module
+ *
+ *  @package CiviCRM_APIv3
+ *  @subpackage API_Contact
  */
+
 class api_v3_ACLPermissionTest extends CiviUnitTestCase {
   protected $_apiversion;
   protected $_params;

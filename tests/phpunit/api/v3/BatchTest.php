@@ -32,7 +32,7 @@ require_once 'CiviTest/CiviUnitTestCase.php';
 /**
  * Test class for Batch API - civicrm_batch_*
  *
- *  @package   CiviCRM
+ *  @package CiviCRM_APIv3
  */
 class api_v3_BatchTest extends CiviUnitTestCase {
   public $_eNoticeCompliant = TRUE;
@@ -101,7 +101,7 @@ class api_v3_BatchTest extends CiviUnitTestCase {
     $this->assertEquals(1, $result['is_error'], 'In line ' . __LINE__);
     $this->assertEquals('Mandatory key(s) missing from params array: version', $result['error_message'], 'In line ' . __LINE__);
   }
-  
+
   /**
    * Test civicrm_batch_get - success expected.
    */
@@ -115,8 +115,8 @@ class api_v3_BatchTest extends CiviUnitTestCase {
     $this->assertEquals(0, $result['is_error'], 'In line ' . __LINE__);
     $this->assertEquals($params['id'], $result['id'], 'In line ' . __LINE__);
   }
-  
-  
+
+
   ///////////////// civicrm_batch_create methods
 
   /**
@@ -155,7 +155,7 @@ class api_v3_BatchTest extends CiviUnitTestCase {
     $this->documentMe($params, $result, __FUNCTION__, __FILE__);
     $this->assertEquals(0, $result['is_error'], 'In line ' . __LINE__);
     $this->assertNotNull($result['id'], 'In line ' . __LINE__);
-    
+
     // Fetch batch and compare values
     $saved = civicrm_api('batch', 'getSingle', $result);
     unset($params['version']);
@@ -182,7 +182,7 @@ class api_v3_BatchTest extends CiviUnitTestCase {
     $this->documentMe($params, $result, __FUNCTION__, __FILE__);
     $this->assertEquals(0, $result['is_error'], 'In line ' . __LINE__);
     $this->assertNotNull($result['id'], 'In line ' . __LINE__);
-    
+
     // Fetch batch and compare values
     $saved = civicrm_api('batch', 'getSingle', $result);
     unset($params['version']);

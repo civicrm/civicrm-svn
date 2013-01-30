@@ -37,8 +37,10 @@ require_once 'CiviTest/CiviUnitTestCase.php';
 /**
  *  Test APIv3 civicrm_activity_* functions
  *
- *  @package   CiviCRM
+ *  @package CiviCRM_APIv3
+ *  @subpackage API_Activity
  */
+
 class api_v3_ActivityTest extends CiviUnitTestCase {
   protected $_params;
   protected $_params2;
@@ -717,7 +719,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase {
       'version' => $this->_apiversion,
       'status_id' => '1'));
     $this->assertEquals(1, $result['count'], 'status_id should also work');
-    
+
     $result = civicrm_api('Activity', 'Get', array(
       'version' => $this->_apiversion,
       'activity_status_id' => '2'));
@@ -726,10 +728,10 @@ class api_v3_ActivityTest extends CiviUnitTestCase {
       'version' => $this->_apiversion,
       'status_id' => '2'));
     $this->assertEquals(0, $result['count'], 'No activities of status 1 should exist');
- 
-    
+
+
  }
-  
+
   /*
      * test that get functioning does filtering
      */
@@ -1108,7 +1110,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase {
     $this->assertAPISuccess($result);
     $getParams = array(
       'return.assignee_contact_id' => 1,
-      'return.target_contact_id' => 1, 
+      'return.target_contact_id' => 1,
       'version' => $this->_apiversion,
       'id' => $activityId,
     );

@@ -26,13 +26,14 @@
  */
 
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'api/v3/ActivityType.php';
 
 /**
  *  Test APIv3 civicrm_activity_* functions
  *
- *  @package   CiviCRM
+ *  @package CiviCRM_APIv3
+ *  @subpackage API_Activity
  */
+
 class api_v3_ActivityTypeTest extends CiviUnitTestCase {
   protected $_apiversion;
   public $_eNoticeCompliant = TRUE;

@@ -28,15 +28,12 @@
 */
 
 
-
-
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'api/api.php';
 
 /**
  * Test class for API functions
  *
- * @package   CiviCRM
+ *  @package CiviCRM_APIv3
  */
 class api_v3_APITest extends CiviUnitTestCase {
   public $DBResetRequired = FALSE;

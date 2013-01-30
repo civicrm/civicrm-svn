@@ -33,12 +33,11 @@
  *  Include class definitions
  */
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'api/api.php';
 
 /**
  *  Test APIv3 civicrm_activity_* functions
  *
- *  @package   CiviCRM
+ *  @package CiviCRM_APIv3
  *  @todo determine where help functions should sit (here or 'up the tree'), & best way to define API dir
  */
 class api_v3_APIStandardsTest extends CiviUnitTestCase {
@@ -95,7 +94,7 @@ class api_v3_APIStandardsTest extends CiviUnitTestCase {
   }
 
   /*
-     * test checks that all v3 API return a standardised error message when 
+     * test checks that all v3 API return a standardised error message when
      * the $params passed in is not an array.
      */
   function testParamsNotArray() {
@@ -121,10 +120,10 @@ class api_v3_APIStandardsTest extends CiviUnitTestCase {
 
             $this->assertEquals(1,
                                 $result['is_error'],
-                                $function . " does not return error in line " . __LINE__); 
+                                $function . " does not return error in line " . __LINE__);
             $this->assertEquals('Input variable `params` is not an array',
                                 $result['error_message'],
-                                "$function does not return correct error when a non-array is submitted in line " . __LINE__ );      
+                                "$function does not return correct error when a non-array is submitted in line " . __LINE__ );
         }*/
   }
 
