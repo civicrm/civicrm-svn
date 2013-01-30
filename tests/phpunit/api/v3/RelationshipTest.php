@@ -270,6 +270,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase {
     $updateparams = array(
       'id' => $relationship['id'],
       'version' => $this->_apiversion,
+      'relationship_type_id' => $this->_relTypeID,
     );
     $result = civicrm_api('relationship', 'create', $updateparams);
 

@@ -230,12 +230,12 @@ function _civicrm_api3_relationship_format_params($params, &$values) {
 
         // execute for both relationship_type and relationship_type_id
         $relation = $relationTypes[$params['relationship_type_id']];
-        if ($relation['contact_type_a'] &&
+        if (!empty($params['contact_id_a']) && $relation['contact_type_a'] &&
           $relation['contact_type_a'] != CRM_Contact_BAO_Contact::getContactType($params['contact_id_a'])
         ) {
           throw new Exception("Contact ID :{$params['contact_id_a']} is not of contact type {$relation['contact_type_a']}");
         }
-        if ($relation['contact_type_b'] &&
+        if (!empty($params['contact_id_b']) && $relation['contact_type_b'] &&
           $relation['contact_type_b'] != CRM_Contact_BAO_Contact::getContactType($params['contact_id_b'])
         ) {
           throw new Exception("Contact ID :{$params['contact_id_b']} is not of contact type {$relation['contact_type_b']}");
