@@ -74,12 +74,12 @@ class Contact extends CiviUnitTestCase {
   }
 
   /*
-     * Helper function to delete a contact
-     * 
-     * @param  int  $contactID   id of the contact to delete
-     * @return boolean true if contact deleted, false otherwise
-     * 
-     */
+   * Helper function to delete a contact
+   *
+   * @param  int  $contactID   id of the contact to delete
+   * @return boolean true if contact deleted, false otherwise
+   *
+   */
   static function delete($contactID) {
     require_once 'CRM/Contact/BAO/Contact.php';
     return CRM_Contact_BAO_Contact::deleteContact($contactID);
