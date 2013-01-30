@@ -36,6 +36,13 @@
       </span>
     </td>
     <td>
+      {$form.created_by.label}<br />
+      {$form.created_by.html}<br />
+      <span class="description font-italic">
+          {ts}Complete OR partial creator name.{/ts}
+      </span>
+    </td>
+    <td>
       {$form.group_type.label}<br />
       {$form.group_type.html}<br />
       <span class="description font-italic">
@@ -177,6 +184,7 @@ function buildGroupSelector( filterSearch ) {
 
                 aoData.push(
                     {name:'title', value: cj('.crm-group-search-form-block #title').val()},
+                    {name:'created_by', value: cj('.crm-group-search-form-block #created_by').val()},
                     {name:'group_type', value: groupTypes },
                     {name:'visibility', value: cj('.crm-group-search-form-block #visibility').val()},
                     {name:'status', value: groupStatus }

@@ -49,6 +49,10 @@ class CRM_Group_Form_Search extends CRM_Core_Form {
       CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Group', 'title')
     );
 
+    $this->add('text', 'created_by', ts('Created By'),
+      CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Group', 'title')
+    );
+
     $groupTypes = CRM_Core_OptionGroup::values('group_type', TRUE);
     $config = CRM_Core_Config::singleton();
     if ($config->userFramework == 'Joomla') {
@@ -88,7 +92,7 @@ class CRM_Group_Form_Search extends CRM_Core_Form {
     $params = $this->controller->exportValues($this->_name);
     $parent = $this->controller->getParent();
     if (!empty($params)) {
-      $fields = array('title', 'group_type', 'visibility', 'active_status', 'inactive_status');
+      $fields = array('title', 'created_by', 'group_type', 'visibility', 'active_status', 'inactive_status');
       foreach ($fields as $field) {
         if (isset($params[$field]) &&
           !CRM_Utils_System::isNull($params[$field])

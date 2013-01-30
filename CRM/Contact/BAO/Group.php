@@ -973,7 +973,15 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
 
   static function getGroupCount(&$params) {
     $whereClause = self::whereClause($params, FALSE);
-    $query = " SELECT COUNT(*) FROM civicrm_group groups WHERE {$whereClause}";
+    $query = "SELECT COUNT(*) FROM civicrm_group groups";
+
+    if (CRM_Utils_Array::value('created_by', $params)) {
+      $query .= "
+INNER JOIN civicrm_contact createdBy
+       ON createdBy.id = groups.created_id";
+    }
+    $query .= "
+WHERE {$whereClause}";
     return CRM_Core_DAO::singleValueQuery($query, $params);
   }
 
@@ -1037,6 +1045,16 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
     if ($parent_id) {
       $clauses[] = 'groups.id IN (SELECT child_group_id FROM civicrm_group_nesting WHERE parent_group_id = %5)';
       $params[5] = array($parent_id, 'Integer');
+    }
+
+    if ($createdBy = CRM_Utils_Array::value('created_by', $params)) {
+      $clauses[] = "createdBy.sort_name LIKE %6";
+      if (strpos($createdBy, '%') !== FALSE) {
+        $params[6] = array($createdBy, 'String', FALSE);
+      }
+      else {
+        $params[6] = array($createdBy, 'String', TRUE);
+      }
     }
 
     /*
