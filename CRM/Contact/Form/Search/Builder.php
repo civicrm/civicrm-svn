@@ -418,6 +418,7 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search {
       'preferred_communication_method' => 'contact',
       'preferred_language' => 'contact',
       'on_hold' => 'yesno',
+      'is_bulkmail' => 'yesno',
       'activity_type' => 'activity',
       'activity_status' => 'activity',
       'financial_type' => 'contribution',
