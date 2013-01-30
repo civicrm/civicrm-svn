@@ -678,8 +678,7 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship {
         $queryString .= " AND $dateField = " . CRM_Utils_Type::escape(CRM_Utils_Date::format($params[$dateField]), 'Date');
       }
       else{
-        // we are going to process the date again in case it has been loaded from DB in which case it may be Y-m-d not Y-m-h
-        $queryString .= " AND $dateField = " . CRM_Utils_Type::escape(CRM_Utils_Date::processDate($params[$dateField]), 'Date');
+        $queryString .= " AND $dateField = " . CRM_Utils_Type::escape($params[$dateField], 'Date');
       }
     }
 
