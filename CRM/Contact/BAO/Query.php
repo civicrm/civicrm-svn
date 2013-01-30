@@ -3180,32 +3180,49 @@ WHERE  id IN ( $groupIDs )
     $countryClause = $countryQill = NULL;
     if (
       $values &&
-      !empty($values[2])
+      !empty($value)
     ) {
       $this->_tables['civicrm_country'] = 1;
       $this->_whereTables['civicrm_country'] = 1;
 
-      if (is_numeric($values[2])) {
+      $countries = CRM_Core_PseudoConstant::country();
+      if (is_numeric($value)) {
         $countryClause = self::buildClause(
           'civicrm_country.id',
-          $values[1],
-          $values[2],
+          $op,
+          $value,
           'Positive'
         );
-        $countries = CRM_Core_PseudoConstant::country();
-        $countryName = $countries[(int ) $values[2]];
+        $countryName = $countries[(int ) $value];
       }
+
       else {
-        $wc = ($values[1] != 'LIKE') ? "LOWER('civicrm_country.name')" : 'civicrm_country.name';
-        $countryClause = self::buildClause(
-          'civicrm_country.name',
-          $values[1],
-          $values[2],
-          'String'
-        );
-        $countryName = $values[2];
+        $intValues = self::parseSearchBuilderString($value);
+        if ($intValues && ($op == 'IN' || $op == 'NOT IN')) {
+          $countryClause = self::buildClause(
+            'civicrm_country.id',
+            $op,
+            $intValues,
+            'Positive'
+          );
+          $countryNames = array();
+          foreach ($intValues as $v) {
+            $countryNames[] = $countries[$v];
+          }
+          $countryName = implode(',', $countryNames);
+        }
+        else {
+          $wc = ($op != 'LIKE') ? "LOWER('civicrm_country.name')" : 'civicrm_country.name';
+          $countryClause = self::buildClause(
+            'civicrm_country.name',
+            $op,
+            $value,
+            'String'
+          );
+          $countryName = $value;
+        }
       }
-      $countryQill = ts('Country') . " {$values[1]} '$countryName'";
+      $countryQill = ts('Country') . " {$op} '$countryName'";
 
       if (!$fromStateProvince) {
         $this->_where[$grouping][] = $countryClause;
@@ -4755,25 +4772,61 @@ AND   displayRelType.is_active = 1
     $label,
     $dataType = 'String'
   ) {
-      $qill = $value;
-      if (is_numeric($value)) {
-        $qill = $value = $selectValues[(int ) $value];
-      }
-      elseif ($op == 'IN' || $op == 'NOT IN') {
-        $values = explode(',', CRM_Utils_Array::value(0, explode(')', CRM_Utils_Array::value(1, explode('(', $value)))));
-        if (is_array($values)) {
-          $newValues = array();
-          foreach ($values as $v) {
-            $newValues[] = $selectValues[(int ) $v];
-          }
-          $value = $newValues;
-          $qill  = implode(', ', $value);
+    $qill = $value;
+    if (is_numeric($value)) {
+      $qill = $value = $selectValues[(int ) $value];
+    }
+    elseif ($op == 'IN' || $op == 'NOT IN') {
+      $values = self::parseSearchBuilderString($value);
+      if (is_array($values)) {
+        $newValues = array();
+        foreach ($values as $v) {
+          $newValues[] = $selectValues[(int ) $v];
         }
+        $value = $newValues;
+        $qill  = implode(', ', $value);
       }
-      $wc = self::caseImportant($op) ? "LOWER({$field['where']})" : "{$field['where']}";
-      $this->_where[$grouping][] = self::buildClause($wc, $op, $value, $dataType);
-      $this->_qill[$grouping][] = $label . " $op '$qill'";
+    }
+    $wc = self::caseImportant($op) ? "LOWER({$field['where']})" : "{$field['where']}";
+    $this->_where[$grouping][] = self::buildClause($wc, $op, $value, $dataType);
+    $this->_qill[$grouping][] = $label . " $op '$qill'";
   }
 
+  /** function to check and explode a user defined numeric string into an array
+   * this was the protocol used by search builder in the old old days before we had
+   * super nice js widgets to do the hard work
+   *
+   * @param string the string to check
+   *
+   * @return FALSE if string does not match the patter
+   *         array of numeric values if string does match the pattern
+   * @static
+   */
+  static function parseSearchBuilderString($string) {
+    $string = trim($string);
+    if (substr($string, 0, 1) != '(' || substr($string, -1, 1) != ')') {
+      Return FALSE;
+    }
+
+    $string = substr($string, 1, -1);
+    $values = explode(',', $string);
+    if (empty($values)) {
+      return FALSE;
+    }
+
+    $intValues = array();
+    foreach ($values as $v) {
+      if (! is_numeric($v)) {
+        return FALSE;
+      }
+      $intValues[] = (int ) $v;
+    }
+
+    if (empty($intValues)) {
+      return FALSE;
+    }
+
+    return $intValues;
+  }
 }
 
