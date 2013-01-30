@@ -28,6 +28,14 @@
 
 require_once 'CiviTest/CiviUnitTestCase.php';
 
+
+/**
+ *  Test APIv3 civicrm_participant_* functions
+ *
+ *  @package CiviCRM_APIv3
+ *  @subpackage API_Event
+ */
+
 class api_v3_ParticipantPaymentTest extends CiviUnitTestCase {
 
   protected $_apiversion;
@@ -51,7 +59,7 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase {
     $this->_apiversion = 3;
     parent::setUp();
     $tablesToTruncate = array(
-      'civicrm_contribution', 'civicrm_financial_type',
+      'civicrm_contribution',
       'civicrm_contact',
     );
     $this->quickCleanup($tablesToTruncate);
@@ -128,7 +136,7 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase {
    */
   function testPaymentCreate() {
     //Create Contribution & get contribution ID
-    $contributionID = $this->contributionCreate($this->_contactID, $this->_contributionTypeId);
+    $contributionID = $this->contributionCreate($this->_contactID);
 
     //Create Participant Payment record With Values
     $params = array(
@@ -201,7 +209,7 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase {
   function testPaymentOffline() {
 
     // create contribution
-    $contributionID = $this->contributionCreate($this->_contactID, 1);
+    $contributionID = $this->contributionCreate($this->_contactID);
 
     $this->_participantPaymentID = $this->participantPaymentCreate($this->_participantID, $contributionID);
     $params = array(
@@ -226,7 +234,7 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase {
   }
 
   /**
-   * check financial records for online Participant 
+   * check financial records for online Participant
    */
   function testPaymentOnline() {
 
@@ -403,8 +411,8 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase {
     );
     $trxn = current(CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($entityParams));
     $trxnParams = array(
-      'id' => $trxn['financial_trxn_id'],                
-    ); 
+      'id' => $trxn['financial_trxn_id'],
+    );
    if ($context == 'offline' || $context == 'online') {
      $compareParams = array(
        'to_financial_account_id' => 12,
