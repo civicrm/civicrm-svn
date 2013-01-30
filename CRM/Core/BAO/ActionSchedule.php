@@ -72,15 +72,20 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule {
    * @static
    * @access public
    */
-  static function getSelection($id = NULL) {
+  static function getSelection($id = NULL, $isTemplate = 0) {
     $mapping = self::getMapping($id);
-
     $activityStatus = CRM_Core_PseudoConstant::activityStatus();
     $activityType = CRM_Core_PseudoConstant::activityType(FALSE) + CRM_Core_PseudoConstant::activityType(FALSE, TRUE);
 
     $participantStatus = CRM_Event_PseudoConstant::participantStatus(NULL, NULL, 'label');
-    $event             = CRM_Event_PseudoConstant::event(NULL, FALSE, "( is_template IS NULL OR is_template != 1 )");
-    $eventType         = CRM_Event_PseudoConstant::eventType();
+    if ($isTemplate == 0) {
+      $event = CRM_Event_PseudoConstant::event(NULL, FALSE, "( is_template IS NULL OR is_template != 1 )");
+    }
+    else {
+      $event = CRM_Event_PseudoConstant::eventTemplates();
+    }
+
+    $eventType = CRM_Event_PseudoConstant::eventType();
 
     $autoRenew = CRM_Core_PseudoConstant::autoRenew();
     $membershipType = CRM_Member_PseudoConstant::membershipType();
