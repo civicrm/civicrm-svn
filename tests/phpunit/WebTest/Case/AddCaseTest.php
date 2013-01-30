@@ -153,6 +153,17 @@ class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
     );
 
     $this->_testVerifyOpenCaseActivity($subject, $openCaseData);
+    
+    //change the case status to Resolved to get the end date
+    $this->click("xpath=//form[@id='CaseView']/div[2]/table/tbody/tr/td[4]/a");
+    $this->waitForElementPresent("_qf_Activity_cancel-bottom");
+    $this->select("case_status_id","value=2");
+    $this->click("_qf_Activity_upload-top");
+    $this->waitForPageToLoad("30000");
+    
+    $this->_testSearchbyDate($firstName, $lastName, "this.quarter");
+    $this->_testSearchbyDate($firstName, $lastName, "0");
+    $this->_testSearchbyDate($firstName, $lastName, "this.year");
   }
 
   function _testVerifyCaseSummary($validateStrings, $activityTypes) {
@@ -165,6 +176,7 @@ class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
   }
 
   function _testVerifyCaseRoles($caseRoles, $creatorName) {
+    $this->waitForElementPresent("xpath=//table[@id='caseRoles-selector']/tbody/tr[4]/td[2]/a");
     // check that expected roles are listed in the Case Roles pane
     foreach ($caseRoles as $role) {
       $this->assertText("css=div.crm-case-roles-block", $role);
@@ -193,6 +205,48 @@ class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
     // Probably don't need both tableId and prefix - but good examples for other situations where only one can be used
 
     $this->webtestVerifyTabularData($openCaseData, '', $activityViewTableId);
+    $this->click("xpath=//span[@class='ui-icon ui-icon-closethick']");
+  }
+
+  function _testSearchbyDate($firstName, $lastName, $action) {
+    // Find Cases
+    if ($action != "0") {
+      $this->open($this->sboxPath . "civicrm/case/search?reset=1");
+      $this->waitForPageToLoad("30000");
+      $this->select("case_relative", "value=$action");
+      $this->click("_qf_Search_refresh");
+      $this->waitForPageToLoad('30000');
+      $this->assertTrue($this->isTextPresent("$lastName, $firstName"));
+    }
+    else {
+      //select date range
+      $this->open($this->sboxPath . "civicrm/case/search?reset=1");
+      $this->waitForElementPresent("_qf_Search_refresh-bottom");
+      $this->select("case_relative", "value=$action");
+      $this->webtestFillDate("case_start_date_low", "-1 month");
+      $this->webtestFillDate("case_end_date_high", "+1 month");
+      $this->click("_qf_Search_refresh-bottom");
+      $this->waitForPageToLoad('30000');
+      $this->assertTrue($this->isTextPresent("$lastName, $firstName"));
+    }
+    
+    //Advanced Search
+    $this->open($this->sboxPath . "civicrm/contact/search/advanced?reset=1");
+    $this->waitForPageToLoad("30000");
+    $this->waitForElementPresent("_qf_Advanced_refresh");
+    $this->click("CiviCase");
+    $this->waitForElementPresent("xpath=//div[@id='case-search']/table/tbody/tr[2]/td[2]/input[3]");
+    if ($action != "0") {
+      $this->select("case_relative", "value=$action");
+    }
+    else {
+      $this->select("case_relative", "value=$action");
+      $this->webtestFillDate("case_start_date_low", "-1 month");
+      $this->webtestFillDate("case_end_date_high", "+1 month");
+    }
+    $this->click("_qf_Advanced_refresh");
+    $this->waitForPageToLoad('30000');
+    $this->assertTrue($this->isTextPresent("$lastName, $firstName"));
   }
 }
 
