@@ -165,4 +165,10 @@
     <title>QUnit</title>
     <access_arguments>administer CiviCRM</access_arguments>
   </item>
+  <item>
+    <path>civicrm/profile-editor/schema</path>
+    <page_callback>CRM_UF_Page_ProfileEditor::getSchemaJSON</page_callback>
+    <title>ProfileEditor</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
 </menu>

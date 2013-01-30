@@ -853,25 +853,15 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
    * @param array $entities
    */
   function addProfileSelector($name, $label, $allowCoreTypes, $allowSubTypes, $entities) {
-    if (CRM_Extension_System::singleton()->getMapper()->isActiveModule('profilemockup')) {
-      // Output widget
-      // FIXME: Instead of adhoc serialization, use a single json_encode()
-      CRM_Profilemockup_Page_ProfileEditor::registerProfileScripts();
-      $this->add('text', $name, $label, array(
-        'class' => 'crm-profile-selector',
-        // Note: client treats ';;' as equivalent to \0, and ';;' works better in HTML
-        'data-group-type' => CRM_Core_BAO_UFGroup::encodeGroupType($allowCoreTypes, $allowSubTypes, ';;'),
-        'data-entities' => json_encode($entities),
-      ));
-    }
-    else {
-      $profiles = CRM_Core_BAO_UFGroup::getProfiles($allowCoreTypes);
-      $this->add('select', $name, $label,
-        array(
-          '' => ts('- select profile -')
-        ) + $profiles
-      );
-    }
+    // Output widget
+    // FIXME: Instead of adhoc serialization, use a single json_encode()
+    CRM_UF_Page_ProfileEditor::registerProfileScripts();
+    $this->add('text', $name, $label, array(
+      'class' => 'crm-profile-selector',
+      // Note: client treats ';;' as equivalent to \0, and ';;' works better in HTML
+      'data-group-type' => CRM_Core_BAO_UFGroup::encodeGroupType($allowCoreTypes, $allowSubTypes, ';;'),
+      'data-entities' => json_encode($entities),
+    ));
   }
 
   function addWysiwyg($name, $label, $attributes, $forceTextarea = FALSE) {
