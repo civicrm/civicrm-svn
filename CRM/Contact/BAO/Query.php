@@ -3310,7 +3310,7 @@ WHERE  id IN ( $groupIDs )
     else if (!is_array($value)) {
       // force the state to be an array
       // check if its in the mapper format!
-      $values = explode(',', CRM_Utils_Array::value(0, explode(')', CRM_Utils_Array::value(1, explode('(', $value)))));
+      $values = self::parseSearchBuilderString($value);
       if (is_array($values)) {
         $value = $values;
       }
