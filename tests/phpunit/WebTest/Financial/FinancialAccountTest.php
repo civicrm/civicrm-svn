@@ -42,10 +42,8 @@ class WebTest_Financial_FinancialAccountTest extends CiviSeleniumTestCase {
     $financialAccountDescription = "{$financialAccountTitle} Description";
     $accountingCode = 1033;
     $financialAccountType = 'Expenses';
-    $parentFinancialAccount = 'Donation';
     $taxDeductible = FALSE;
     $isActive = TRUE;
-    $headerAccount = TRUE;
     $isTax = TRUE;
     $taxRate = 9.99999999;
     $isDefault = FALSE;
@@ -59,11 +57,9 @@ class WebTest_Financial_FinancialAccountTest extends CiviSeleniumTestCase {
       $financialAccountDescription,
       $accountingCode,
       $orgName,
-      $parentFinancialAccount,
       $financialAccountType,
       $taxDeductible,
       $isActive,
-      $headerAccount,
       $isTax,
       $taxRate,
       $isDefault
@@ -71,24 +67,21 @@ class WebTest_Financial_FinancialAccountTest extends CiviSeleniumTestCase {
         
     $this->waitForElementPresent("xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[9]/span/a[text()='Edit']");
         
-    $this->click( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[9]/span/a[text()='Edit']" );
-    $this->waitForElementPresent( '_qf_FinancialAccount_cancel-botttom' );
-    sleep(2);
-        
+    $this->click("xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[9]/span/a[text()='Edit']");
+    $this->waitForPageToLoad('30000');
+    $this->waitForElementPresent('_qf_FinancialAccount_cancel-botttom');
     //Varify Data after Adding new Financial Account
     $verifyData = array('name' => $financialAccountTitle,
       'description' => $financialAccountDescription,
       'accounting_code' => $accountingCode,
       'contact_name' => $orgName,
-      'parent_financial_account' => $parentFinancialAccount,
       'tax_rate'   => $taxRate,
       'is_tax' => 'on',
       'is_deductible' => 'off',
-      'is_header_account' => 'on',
       'is_default' => 'off'
     );
       
-    $this->_assertFinancialAccount( $verifyData );
+    $this->_assertFinancialAccount($verifyData);
     $verifySelectFieldData = array('financial_account_type_id' => $financialAccountType);
     $this->_assertSelectVerify($verifySelectFieldData);
     $this->click('_qf_FinancialAccount_cancel-botttom');
@@ -97,7 +90,6 @@ class WebTest_Financial_FinancialAccountTest extends CiviSeleniumTestCase {
     $editfinancialAccount = $financialAccountTitle;
     $financialAccountTitle .= ' Edited';
     $orgNameEdit = FALSE;
-    $parentFinancialAccount = 'Member Dues';
     $financialAccountType = 'Revenue';
         
     if ($orgNameEdit) {
@@ -110,11 +102,9 @@ class WebTest_Financial_FinancialAccountTest extends CiviSeleniumTestCase {
       $financialAccountDescription,
       $accountingCode,
       $orgNameEdit,
-      $parentFinancialAccount,
       $financialAccountType,
       $taxDeductible,
       $isActive,
-      $headerAccount,
       $isTax,
       $taxRate,
       $isDefault
@@ -124,18 +114,16 @@ class WebTest_Financial_FinancialAccountTest extends CiviSeleniumTestCase {
     }
     $this->waitForElementPresent("xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[9]/span/a[text()='Edit']");
     $this->click("xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[9]/span/a[text()='Edit']");
+    $this->waitForPageToLoad('30000');
     $this->waitForElementPresent('_qf_FinancialAccount_cancel-botttom');
-    sleep(2);
        
     $verifyData = array( 'name' => $financialAccountTitle,
       'description' => $financialAccountDescription,
       'accounting_code' => $accountingCode,
       'contact_name' => $orgName,
-      'parent_financial_account' => $parentFinancialAccount,
       'tax_rate'   => $taxRate,
       'is_tax' => 'on',
       'is_deductible' => 'off',
-      'is_header_account' => 'on',
       'is_default' => 'off',
     );
     $verifySelectFieldData = array('financial_account_type_id'   => $financialAccountType);
