@@ -207,6 +207,18 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
     // check if the resultset of search builder and advanced search match for the postal code
     $this->_searchBuilder('Postal Code',$postalCode,NULL,'LIKE','4');
     $this->_advancedSearch($postalCode,NULL,NULL,'4','postal_code');
+
+    $firstName8 = "abcc".substr(sha1(rand()), 0, 7);
+    $this->_createContact('Individual', $firstName8,"$firstName8@advsearch.co.in",NULL);
+    $this->_searchBuilder('Note(s): Body and Subject', "this is subject by $firstName8", $firstName8, 'LIKE');
+    $this->_searchBuilder('Note(s): Body and Subject', "this is notes by $firstName8", $firstName8, 'LIKE');
+    $this->_searchBuilder('Note(s): Subject only', "this is subject by $firstName8", $firstName8, 'LIKE');
+    $this->_searchBuilder('Note(s): Body only', "this is notes by $firstName8", $firstName8, 'LIKE');
+    $this->_advancedSearch( "this is notes by $firstName8", $firstName8, NULL, NULL, 'note_body', 'notes');
+    $this->_advancedSearch( "this is subject by $firstName8", $firstName8, NULL, NULL, 'note_subject', 'notes');
+    $this->_advancedSearch( "this is notes by $firstName8", $firstName8, NULL, NULL, 'note_both', 'notes');
+    $this->_advancedSearch( "this is subject by $firstName8", $firstName8, NULL, NULL, 'note_both', 'notes');
+    
   }
 
   function _searchBuilder($field, $fieldValue = NULL, $name = NULL, $op, $count = NULL){
@@ -237,13 +249,29 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
     if (isset($contactType)){
       $this->select("id=crmasmSelect0", "value=$contactType");
     }
-    $this->click("location"); 
-    sleep(4);
-    if ($contactType == 'Individual'){ 
-      $this->type("$field",$fieldValue );
+    if (substr($field, 0, 5) == 'note_') {
+      $this->click("notes"); 
+      $this->waitForElementPresent("xpath=//div[@id='notes-search']/table/tbody/tr/td[2]/input[3]");
+      if ($field == 'note_body') {
+        $this->click("CIVICRM_QFID_2_note_option");
+      }
+      elseif ($field == 'note_subject') {
+        $this->click("CIVICRM_QFID_3_note_option");
+      }
+      else {
+        $this->click("CIVICRM_QFID_6_note_option");
+      }
+      $this->type("note",$fieldValue );
     }
-    else{
-      $this->type("$field",$fieldValue);
+    else {
+      $this->click("location"); 
+      $this->waitForElementPresent("xpath=//div[@id='location']/table/tbody/tr[2]/td/table/tbody/tr[4]/td[2]/select");
+      if ($contactType == 'Individual') { 
+        $this->type("$field",$fieldValue );
+      }
+      else {
+        $this->type("$field",$fieldValue);
+      }
     }
     $this->click("_qf_Advanced_refresh");
     $this->waitForPageToLoad("30000");
@@ -252,7 +280,7 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
                              2 => $name,
                              3 => $fieldValue,
                              );
-      
+
       //the search result should be same as the one that we got in search builder
       foreach($assertValues as $key => $value){
         $this->assertTrue($this->isTextPresent($value));
@@ -267,6 +295,7 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
     if ($contactType == 'Individual'){
       $this->type("first_name", "$name");
       $this->type("last_name", "adv$name");
+      $name = "$name adv$name";
     } elseif ($contactType == 'Organization') {
       $this->type("organization_name",$name);
     } else {
@@ -280,11 +309,16 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
     $this->select("address_1_country_id", "United States");
     $this->select("address_1_state_province_id", "Alaska");
     $this->type("address_1_postal_code",$postalCode);
+
+    $this->click("//form[@id='Contact']/div[2]/div[6]/div[1]");
+    $this->waitForElementPresent("note");
+    $this->type("subject", "this is subject by $name");
+    $this->type("note", "this is notes by $name");
     
     // save contact
     $this->click("_qf_Contact_upload_view");
     $this->waitForPageToLoad("30000");
-    $this->assertTrue($this->isTextPresent("Your $contactType contact record has been saved."));
+    $this->assertTrue($this->isTextPresent("$name has been created."));
   }
 }
 
