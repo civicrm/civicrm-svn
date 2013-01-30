@@ -74,22 +74,39 @@ class api_v3_DomainTest extends CiviUnitTestCase {
     $domain = 1;
     $defaultLocationType = CRM_Core_BAO_LocationType::getDefault();
     $location = array();
-    $params['address'][1]['location_type_id'] = $defaultLocationType->id;
-    $params['phone'][1]['location_type_id'] = $defaultLocationType->id;
-    $params['phone'][1]['phone_type_id'] = 1;
-    $params['email'][1]['location_type_id'] = $defaultLocationType->id;
-    $params['email'][1]['email'] = 'my@email.com';
-    $params['phone'][1]['phone'] = '456-456';
-    $params['address'][1]['street_address'] = '45 Penny Lane';
-    $location = CRM_Core_BAO_Location::create($params, TRUE, 'domain');
-    $domUpdate = civicrm_api('domain','create',array('id' => 1, 'loc_block_id' => $location['id'], 'version' => $this->_apiversion));
+    $domContact = civicrm_api('contact', 'create', array(
+      'version' => $this->_apiversion,
+      'contact_type' => 'Organization',
+      'organization_name' => 'new org',
+      'api.phone.create' => array(
+        'location_type_id' => $defaultLocationType->id,
+        'phone_type_id' => 1,
+        'phone' => '456-456',
+       ),
+      'api.address.create' => array(
+        'location_type_id' => $defaultLocationType->id,
+        'street_address' => '45 Penny Lane',
+        ),
+      'api.email.create' => array(
+        'location_type_id' => $defaultLocationType->id,
+        'email' => 'my@email.com',
+      )
+      )
+    );
+
+    $domUpdate = civicrm_api('domain','create',array(
+      'id' => 1,
+      'contact_id' => $domContact['id'],
+      'version' => $this->_apiversion
+      )
+    );
     $this->_apiversion = 3;
     $this->params = array(
       'name' => 'A-team domain',
       'description' => 'domain of chaos',
       'version' => $this->_apiversion,
       'domain_version' => '4.2',
-      'loc_block_id' => $location['id'],
+      'contact_id' => $domContact['id'],
     );
   }
 
