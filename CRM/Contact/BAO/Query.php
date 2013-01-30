@@ -2368,7 +2368,7 @@ class CRM_Contact_BAO_Query {
 
     // account for search builder mapping multiple values
     if (!is_array($value)) {
-      $values = explode(',', CRM_Utils_Array::value(0, explode(')', CRM_Utils_Array::value(1, explode('(', $value)))));
+      $values = self::parseSearchBuilderString($value, 'String');
       if (is_array($values)) {
         $value = array_flip($values);
       }
@@ -4797,12 +4797,13 @@ AND   displayRelType.is_active = 1
    * super nice js widgets to do the hard work
    *
    * @param string the string to check
+   * @param string the dataType we should check for the values, default integer
    *
    * @return FALSE if string does not match the patter
    *         array of numeric values if string does match the pattern
    * @static
    */
-  static function parseSearchBuilderString($string) {
+  static function parseSearchBuilderString($string, $dataType = 'Integer') {
     $string = trim($string);
     if (substr($string, 0, 1) != '(' || substr($string, -1, 1) != ')') {
       Return FALSE;
@@ -4814,19 +4815,22 @@ AND   displayRelType.is_active = 1
       return FALSE;
     }
 
-    $intValues = array();
+    $returnValues = array();
     foreach ($values as $v) {
-      if (! is_numeric($v)) {
+      if ($dataType == 'Integer' && ! is_numeric($v)) {
         return FALSE;
       }
-      $intValues[] = (int ) $v;
+      else if ($dataType == 'String' && ! is_string($v)) {
+        return FALSE;
+      }
+      $returnValues[] = trim($v);
     }
 
-    if (empty($intValues)) {
+    if (empty($returnValues)) {
       return FALSE;
     }
 
-    return $intValues;
+    return $returnValues;
   }
 }
 
