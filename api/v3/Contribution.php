@@ -75,7 +75,7 @@ function civicrm_api3_contribution_create($params) {
 
   if (is_a($contribution, 'CRM_Core_Error')) {
     return civicrm_api3_create_error($contribution->_errors[0]['message']);
-  } 
+  }
   _civicrm_api3_object_to_array($contribution, $contributeArray[$contribution->id]);
 
   return civicrm_api3_create_success($contributeArray, $params, 'contribution', 'create', $contribution);
@@ -230,18 +230,13 @@ function _civicrm_api3_contribute_format_params($params, &$values, $create = FAL
     }
 
     switch ($key) {
-			case 'financial_type_id' :
-				if (! CRM_Utils_Array::value ( $value, CRM_Contribute_PseudoConstant::financialType() )) {
-          throw new Exception("Invalid Financial Type Id");
-        }
-        break;
-			case 'financial_type' :
-				$contributionTypeId = CRM_Utils_Array::key ( ucfirst ( $value ), CRM_Contribute_PseudoConstant::financialType() );
+      case 'financial_type' :
+        $contributionTypeId = CRM_Utils_Array::key ( ucfirst ( $value ), CRM_Contribute_PseudoConstant::financialType() );
         if ($contributionTypeId) {
           if (CRM_Utils_Array::value('financial_type_id', $values) && $contributionTypeId != $values['financial_type_id']) {
             throw new Exception("Mismatched Financial Type and Financial Type Id");
           }
-					$values ['financial_type_id'] = $contributionTypeId;
+          $values ['financial_type_id'] = $contributionTypeId;
         }
         else {
           throw new Exception("Invalid Financial Type");
