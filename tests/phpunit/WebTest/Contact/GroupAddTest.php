@@ -89,6 +89,28 @@ class WebTest_Contact_GroupAddTest extends CiviSeleniumTestCase {
 
     // Is status message correct?
     $this->assertTrue($this->isTextPresent("The Group '{$params['name']}' has been saved."));
+
+    $this->open($this->sboxPath . "civicrm/group?reset=1");
+    $this->waitForPageToLoad("30000");
+    $this->type('title', $params['name']);
+    $this->click('_qf_Search_refresh');
+    $this->waitForElementPresent("xpath=//table[@id='crm-group-selector']/tbody/tr/td[3]/a");
+    $createdBy = $this->getText("xpath=//table[@id='crm-group-selector']/tbody/tr/td[3]/a");
+    $this->click("xpath=//table[@id='crm-group-selector']/tbody/tr/td[7]/span/a[2]");
+    $this->waitForElementPresent("xpath=//form[@id='Edit']/div[2]/div/table[2]/tbody/tr/td[2]/select");
+    //assert created by in the edit page
+    $this->assertTrue($this->isElementPresent("xpath=//form[@id='Edit']/div[2]/div/table/tbody/tr[2]/td[1][text()='Created By']/following-sibling::td[text()='{$createdBy}']"));
+    $this->open($this->sboxPath . "civicrm/group?reset=1");
+    $this->waitForPageToLoad("30000");
+    //search groups using created by
+    $this->type('created_by', $createdBy);
+    $this->click('_qf_Search_refresh');
+    $this->waitForElementPresent("xpath=//table[@id='crm-group-selector']/tbody//tr//td[3]/a");
+    $this->assertTrue($this->isElementPresent("xpath=//table[@id='crm-group-selector']/tbody//tr/td[1][text()='{$params['name']}']/following-sibling::td[2]/a[text()='{$createdBy}']"));
+    //check link of the contact who created the group
+    $this->click("xpath=//table[@id='crm-group-selector']/tbody//tr/td[1][text()='{$params['name']}']/following-sibling::td[2]/a");
+    $this->waitForPageToLoad("30000");
+    $this->assertTrue($this->isTextPresent($createdBy));
   }
   function testGroupReserved($params = array(
     )) {
