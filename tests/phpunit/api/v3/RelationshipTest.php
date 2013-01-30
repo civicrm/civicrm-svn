@@ -133,6 +133,7 @@ class api_v3_RelationshipTest extends CiviUnitTestCase {
       'contact_id_a' => $this->_cId_a,
       'contact_id_b' => $this->_cId_b,
       'relationship_type_id' => 'Breaking Relationship',
+      'version' => 3,
     );
 
     $result = civicrm_api('relationship', 'create', $params);
@@ -170,8 +171,9 @@ class api_v3_RelationshipTest extends CiviUnitTestCase {
       'contact_id_a' => $this->_cId_a,
       'contact_id_b' => $this->_cId_a,
       'relationship_type_id' => $this->_relTypeID,
-      'start_date' => array('d' => '10', 'M' => '1', 'Y' => '2008'),
+      'start_date' => '2008-01-10',
       'is_active' => 1,
+      'version' => 3,
     );
 
     $result = civicrm_api('relationship', 'create', $params);
@@ -182,8 +184,9 @@ class api_v3_RelationshipTest extends CiviUnitTestCase {
       'contact_id_a' => $this->_cId_b,
       'contact_id_b' => $this->_cId_b,
       'relationship_type_id' => $this->_relTypeID,
-      'start_date' => array('d' => '10', 'M' => '1', 'Y' => '2008'),
+      'start_date' => '2008-01-10',
       'is_active' => 1,
+      'version' => 3,
     );
 
     $result = civicrm_api('relationship', 'create', $params);
@@ -240,9 +243,9 @@ class api_v3_RelationshipTest extends CiviUnitTestCase {
       'id' => $relationship['id'],
       'is_active' => 0,
       'version' => $this->_apiversion,
+      'debug' => 1,
     );
     $result = civicrm_api('relationship', 'create', $params);
-
     $this->assertAPISuccess($result, 'in line ' . __LINE__);
     $result = civicrm_api('relationship', 'get', $params);
     $this->assertEquals(0, $result['values'][$result['id']]['is_active'], 'in line ' . __LINE__);
