@@ -46,6 +46,7 @@
   <field>
       <name>source_record_id</name>
       <type>int unsigned</type>
+      <title>Source Record</title>
       <comment>Artificial FK to original transaction (e.g. contribution) IF it is not an Activity. Table can be figured out through activity_type_id, and further through component registry.</comment>
       <add>2.0</add>
   </field>
@@ -170,6 +171,7 @@
   <field>
       <name>phone_id</name>
       <type>int unsigned</type>
+      <title>Phone (called) ID</title>
       <comment>Phone ID of the number called (optional - used if an existing phone number is selected).</comment>
       <add>2.0</add>
   </field>
@@ -183,6 +185,7 @@
 
   <field>
       <name>phone_number</name>
+      <title>Phone (called) Number</title>
       <type>varchar</type>
       <length>64</length>
       <comment>Phone number in case the number does not exist in the civicrm_phone table.</comment>
@@ -205,10 +208,11 @@
   <field>
       <name>status</name>
       <type>enum</type>
+      <title>Status</title>
       <values>Scheduled, Completed</values>
       <comment>What is the status of this meeting? Completed meeting status results in activity history entry.</comment>
       <add>1.1</add>
-      <drop>2.0</drop>                   
+      <drop>2.0</drop>
   </field>
 
   <field>
@@ -225,6 +229,7 @@
   <field>
       <name>priority_id</name>
       <type>int unsigned</type>
+      <title>Priority</title>
       <comment>ID of the priority given to this activity. Foreign key to civicrm_option_value.</comment>
       <add>2.0</add>
       <pseudoconstant>
@@ -234,6 +239,7 @@
   </field>
   <field>
       <name>parent_id</name>
+      <title>Parent Activity Id</title>
       <type>int unsigned</type>
       <comment>Parent meeting ID (if this is a follow-up item). This is not currently implemented</comment>
        <add>1.1</add>
@@ -279,6 +285,7 @@
   </field>     
   <field> 
        <name>relationship_id</name>
+       <title>Relationship Id</title>
        <type>int unsigned</type> 
        <default>NULL</default>
        <comment>FK to Relationship ID</comment> 
@@ -307,6 +314,7 @@
   <field>
       <name>original_id</name>
       <type>int unsigned</type>
+      <title>Original Activity ID </title>
       <comment>Activity ID of the first activity record in versioning chain.</comment>
       <add>2.2</add>
   </field>
@@ -360,6 +368,8 @@
        <name>engagement_level</name>
        <uniqueName>activity_engagement_level</uniqueName>
        <type>int unsigned</type>
+       
+       
        <title>Engagement Index</title>
        <import>true</import>
        <comment>Assign a specific level of engagement to this activity. Used for tracking constituents in ladder of engagement.</comment> 
