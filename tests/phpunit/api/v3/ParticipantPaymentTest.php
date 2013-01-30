@@ -87,12 +87,14 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase {
     $this->contactDelete($this->_contactID2);
     $this->contactDelete($this->_contactID3);
     $this->quickCleanup(
-        array(
-            'civicrm_contact',
-            'civicrm_contribution',
-            'civicrm_participant_payment',
-            'civicrm_line_item',
-        )
+      array(
+        'civicrm_contact',
+        'civicrm_contribution',
+        'civicrm_participant_payment',
+        'civicrm_line_item',
+        'civicrm_financial_item',
+        'civicrm_financial_trxn',
+      )
     );
     $this->contributionTypeDelete();
   }
