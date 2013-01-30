@@ -3331,9 +3331,17 @@ WHERE  id IN ( $groupIDs )
     }
 
     $names = array();
-    if ( in_array( $op, array( 'IS NULL', 'IS NOT NULL', 'IS EMPTY', 'IS NOT EMPTY' ) ) ) {
+    if ($op == '=') {
+      $op = 'IN';
+    }
+    else if ($op == '!=') {
+      $op = 'NOT IN';
+    }
+    else {
       // this converts IS (NOT)? EMPTY to IS (NOT)? NULL
       $op = str_replace('EMPTY', 'NULL', $op);
+    }
+    if ( in_array( $op, array( 'IS NULL', 'IS NOT NULL', 'IS EMPTY', 'IS NOT EMPTY' ) ) ) {
       $stateClause = "civicrm_state_province.id $op";
     }
     else if ($inputFormat == 'id') {
@@ -3352,9 +3360,6 @@ WHERE  id IN ( $groupIDs )
       foreach ($value as $name) {
         $name = trim($name);
         $inputClause[] = "'$name'";
-      }
-      if ($op != 'NOT IN') {
-        $op = 'IN';
       }
       $stateClause = "civicrm_state_province.name $op (" . implode(',', $inputClause) . ')';
       $names = $value;
