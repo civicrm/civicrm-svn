@@ -667,6 +667,11 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship {
     $dateFields = array('end_date', 'start_date');
     foreach ($dateFields as $dateField){
       if(empty($params[$dateField])){
+        if(array_key_exists($dateField, $params)){
+          //this is most likely coming from an api call & probably loaded from the DB to deal with some of the
+          //other myriad of excessive checks still in place both in the api & the create functions
+          $queryString .= " AND $dateField IS NULL";
+        }
         continue;
       }
       elseif (is_array($params[$dateField])){
