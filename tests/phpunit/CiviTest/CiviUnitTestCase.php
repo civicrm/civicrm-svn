@@ -1613,7 +1613,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     }
     else {
       $params = array(
-        'title' => len($title) > 10 ? substr($title, 0, 10) : $title,
+        'title' => strlen($title) > 10 ? substr($title, 0, 10) : $title,
         'extends' => $extends,
         'domain_id' => 1,
         'style' => 'Inline',
