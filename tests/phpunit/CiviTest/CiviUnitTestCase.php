@@ -1613,7 +1613,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     }
     else {
       $params = array(
-        'title' => $title,
+        'title' => len($title) > 10 ? substr($title, 0, 10) : $title,
         'extends' => $extends,
         'domain_id' => 1,
         'style' => 'Inline',
@@ -1629,7 +1629,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     if (CRM_Utils_Array::value('is_error', $result) ||
       !CRM_Utils_Array::value('id', $result)
     ) {
-      throw new Exception('Could not create Custom Group ' . print_r($params) . $result['error_message']);
+      throw new Exception('Could not create Custom Group ' . print_r($params, True) . $result['error_message']);
     }
     return $result;
   }
