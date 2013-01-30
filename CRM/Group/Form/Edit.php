@@ -134,6 +134,10 @@ class CRM_Group_Form_Edit extends CRM_Core_Form {
             'search_custom_id'
           );
         }
+        if (CRM_Utils_Array::value('created_id', $this->_groupValues)) 
+          $groupValues['created_by'] = 
+            CRM_Core_DAO::getFieldValue("CRM_Contact_DAO_Contact", $this->_groupValues['created_id'] , 'sort_name', 'id');
+
         $this->assign_by_ref('group', $groupValues);
 
         CRM_Utils_System::setTitle(ts('Group Settings: %1', array(1 => $this->_title)));
