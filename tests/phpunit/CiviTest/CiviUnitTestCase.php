@@ -526,10 +526,10 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     );
   }
 
-  function assertAttributesEquals($expectedValues, $actualValues) {
+  function assertAttributesEquals($expectedValues, $actualValues, $message = null) {
     foreach ($expectedValues as $paramName => $paramValue) {
       if (isset($actualValues[$paramName])) {
-        $this->assertEquals($paramValue, $actualValues[$paramName]);
+        $this->assertEquals($paramValue, $actualValues[$paramName], "Value Mismatch On $paramName - value 1 is $paramValue  value 2 is {$actualValues[$paramName]}");
       }
       else {
         $this->fail("Attribute '$paramName' not present in actual array.");
@@ -1086,7 +1086,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
    *
    * @return int id of created contribution
    */
-  function contributionCreate($cID, $cTypeID, $invoiceID = 67890, $trxnID = 12345) {
+  function contributionCreate($cID, $cTypeID = 1, $invoiceID = 67890, $trxnID = 12345) {
     $params = array(
       'domain_id' => 1,
       'contact_id' => $cID,
