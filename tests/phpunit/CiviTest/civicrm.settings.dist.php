@@ -1,5 +1,9 @@
 <?php
 
+// This file is loaded on all systems running tests. To override settings on
+// your local system, please create "civicrm.settings.local.php" and put
+// the settings there.
+
 //--- you shouldn't have to modify anything under this line, but might want to put the compiled templates CIVICRM_TEMPLATE_COMPILEDIR in a different folder than our default location ----------
 
 if ( ! defined( 'CIVICRM_DSN' ) && ! empty( $GLOBALS['mysql_user'] ) ) {
@@ -49,7 +53,10 @@ define('CIVICRM_UF', 'UnitTests');
 
 
 global $civicrm_root;
-$civicrm_root = dirname (dirname (dirname (dirname( __FILE__ ) )));
+if (empty($civicrm_root)) {
+  $civicrm_root = dirname (dirname (dirname (dirname( __FILE__ ) )));
+}
+#$civicrm_root = '/var/www/drupal7.dev.civicrm.org/public/sites/devel.drupal7.tests.dev.civicrm.org/modules/civicrm'; 
 
 // set this to a temporary directory. it defaults to /tmp/civi on linux
 //define( 'CIVICRM_TEMPLATE_COMPILEDIR', 'the/absolute/path/' );
@@ -89,8 +96,9 @@ define( 'CIVICRM_SITE_KEY', 'phpunittestfakekey' );
  *      define( 'CIVICRM_UF_BASEURL' , 'http://www.example.com/joomla/' );
  *
  */
-define( 'CIVICRM_UF_BASEURL'      , 'http://FIX ME' );
-
+if (!defined('CIVICRM_UF_BASEURL')) {
+  define( 'CIVICRM_UF_BASEURL'      , 'http://FIX ME' );
+}
 
 /**
  * Configure MySQL to throw more errors when encountering unusual SQL expressions.
