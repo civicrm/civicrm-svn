@@ -895,7 +895,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
    */
   function testCreateUpdateContributionChangeTotal() {
     $contribution = civicrm_api('contribution', 'create', $this->_params);
-    $lineItems = civicrm_api('line_item','getvalue',array(
+    $lineItems = civicrm_api('line_item','getvalue', array(
       'version' => $this->_apiversion,
       'entity_id' => $contribution['id'],
       'entity_table' => 'civicrm_contribution',
@@ -905,9 +905,9 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $this->assertEquals('100.00', $lineItems);
 
     $newParams = array_merge($this->_params, array(
-                                                   'id' => $contribution['id'],
-                                                   'total_amount' => '125')
-                             );
+      'id' => $contribution['id'],
+      'total_amount' => '125')
+    );
     $contribution = civicrm_api('contribution', 'update', $newParams);
     $lineItems = civicrm_api('line_item','getvalue',array(
         'version' => $this->_apiversion,
