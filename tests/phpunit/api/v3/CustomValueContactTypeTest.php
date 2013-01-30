@@ -1,12 +1,39 @@
 <?php
-// $Id$
-
+/*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 4.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*/
 
 require_once 'CiviTest/CiviUnitTestCase.php';
-//require_once 'CiviTest/Contact.php';
-//require_once 'CiviTest/Custom.php';
-require_once 'CRM/Core/BAO/CustomValueTable.php';
-require_once 'api/v3/Contact.php';
+
+/**
+ *  Test APIv3 civicrm_activity_* functions
+ *
+ *  @package CiviCRM_APIv3
+ *  @subpackage API_Activity
+ */
+
 class api_v3_CustomValueContactTypeTest extends CiviUnitTestCase {
   protected $_contactID;
   protected $_apiversion;
@@ -36,7 +63,8 @@ class api_v3_CustomValueContactTypeTest extends CiviUnitTestCase {
     $this->IndividualField = $this->customFieldCreate($this->CustomGroupIndividual['id'], "Custom Field" . substr(sha1(rand()), 0, 7));
 
     //  Create Group For Individual-Student  Contact Sub  Type
-    $groupIndiStudent = array('title' => 'TestGroup For Individual - Student' . substr(sha1(rand()), 0, 5),
+    $groupIndiStudent = array(
+      'title' => 'Student Test' . substr(sha1(rand()), 0, 5),
       'extends' => array('Individual', array('Student')),
       'style' => 'Inline',
       'is_active' => 1,
