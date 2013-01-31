@@ -1456,7 +1456,7 @@ function _civicrm_api3_validate_integer(&$params, &$fieldname, &$fieldInfo) {
       elseif (!is_numeric($params[$fieldname])) {
         $numericvalue = array_search($params[$fieldname], $fieldInfo['options']);
         if (empty($numericvalue)) {
-          throw new Exception("$fieldname " . $params[$fieldname] . "is not valid");
+          throw new Exception("$fieldname " . $params[$fieldname] . " is not valid");
         }
         else {
           $params[$fieldname] = $numericvalue;
