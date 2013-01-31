@@ -18,6 +18,7 @@
 	      <field name="pageId" type="civicontribpagespcp" label="Select Contribution Page" description="CiviCRM Contribution Pages with PCP enabled." />
 	      <field name="reset" type="hidden" size="5" default="1" label="Reset" />
 	      <field name="action" type="hidden" size="6" default="add" label="Action" description="Sets action to add for creating PCP. This is needed for the form to work properly." />
+              <field name="component" type="hidden" size="5" default="contribute" label="Component" />
             </fieldset>
           </fields>
         </config>

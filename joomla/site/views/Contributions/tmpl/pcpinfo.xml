@@ -11,15 +11,15 @@
         <authorUrl>civicrm.org</authorUrl>
 	 <version>4.0</version>
         <description>CiviCRM Personal Campaign Information Pages</description>
-	<config>	
+	<config>
           <fields name="params" addfieldpath="/administrator/components/com_civicrm/civicrm/joomla/site/elements">
 	    <fieldset name="basic">
-	      <field name="task" type="hidden" default="civicrm/contribute/pcp/info" />
+	      <field name="task" type="hidden" default="civicrm/pcp/info" />
 	      <field name="id" type="civipcps" label="Select Personal Campaign Page" description="CiviCRM Personal Campaign Pages" />
 	      <field name="reset" type="hidden" size="5" default="1" label="Reset" />
             </fieldset>
           </fields>
-	</config>	
+	</config>
     </state>
 </metadata>
-  
+

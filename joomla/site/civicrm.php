@@ -52,7 +52,7 @@ function civicrm_invoke() {
     $component = JComponentHelper::getComponent('com_civicrm');
     $menu      = JSite::getMenu();
     $params    = $menu->getParams($_GET['Itemid']);
-    $args      = array('task', 'id', 'gid', 'pageId', 'action', 'csid');
+    $args      = array('task', 'id', 'gid', 'pageId', 'action', 'csid', 'component');
     $view      = CRM_Utils_Array::value('view', $_GET);
     if ($view) {
       $args[] = 'reset';
