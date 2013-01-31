@@ -230,7 +230,6 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form {
    */
   static function formRule($fields) {
     $errors = array();
-
     if ((array_key_exists(1, $fields['entity']) && $fields['entity'][1][0] == 0) ||
       (array_key_exists(2, $fields['entity']) && $fields['entity'][2][0] == 0)
     ) {
@@ -241,6 +240,10 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form {
       CRM_Utils_System::isNull($fields['subject'])
     ) {
       $errors['subject'] = ts('Subject is a required field.');
+    }
+
+    if (CRM_Utils_System::isNull(CRM_Utils_Array::value(1, $fields['entity']))) {
+      $errors['entity'] = ts('Please select entity value');
     }
 
     if (!CRM_Utils_System::isNull($fields['absolute_date'])) {

@@ -302,6 +302,7 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule {
     $event_type = CRM_Event_PseudoConstant::eventType();
     $civicrm_event = CRM_Event_PseudoConstant::event(NULL, FALSE, "( is_template IS NULL OR is_template != 1 )");
     $civicrm_participant_status_type = CRM_Event_PseudoConstant::participantStatus(NULL, NULL, 'label');
+    $event_template = CRM_Event_PseudoConstant::eventTemplates();
 
     $auto_renew_options = CRM_Core_PseudoConstant::autoRenew();
     $civicrm_membership_type = CRM_Member_PseudoConstant::membershipType();
@@ -370,7 +371,6 @@ WHERE   cas.entity_value = $id AND
         $v = CRM_Utils_Array::value($v, $$value);
       }
       $valueIds = implode(', ', $valueArray);
-
       $list[$dao->id]['entity'] = $entity[$dao->entity];
       $list[$dao->id]['value'] = $valueIds;
       $list[$dao->id]['status'] = $statusIds;
