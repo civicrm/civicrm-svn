@@ -35,10 +35,12 @@ require_once 'CiviTest/CiviUnitTestCase.php';
 
 
 /**
- *  Test APIv3 civicrm_activity_* functions
+ *  Test APIv3 civicrm_contact* functions
  *
- *  @package   CiviCRM
+ *  @package CiviCRM_APIv3
+ *  @subpackage API_Contact
  */
+
 class api_v3_ContactTest extends CiviUnitTestCase {
   public $DBResetRequired = FALSE;
   protected $_apiversion;
@@ -303,13 +305,12 @@ class api_v3_ContactTest extends CiviUnitTestCase {
       'contact_type' => 'Individual',
       'last_name' => 'xyz1',
       'suffix_id' => 'Jr.',
-      'gender_id' => 'M',
+      'gender_id' => 'Male',
       'version' => $this->_apiversion,
     );
 
     $contact = civicrm_api('contact', 'create', $params);
-    $this->assertApiSuccess($contact, "In line " . __LINE__ . " error message: " . CRM_Utils_Array::value('error_message', $contact)
-    );
+    $this->assertApiSuccess($contact, "In line " . __LINE__ );
     $this->assertEquals(1, $contact['id'], "In line " . __LINE__);
 
     // delete the contact
