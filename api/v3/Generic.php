@@ -215,6 +215,9 @@ function civicrm_api3_generic_getoptions($apiRequest) {
   elseif ($entity == 'event' || $entity == 'participant') {
     $params['class'] = 'CRM_Event_PseudoConstant';
   }
+  elseif (strpos($entity, 'membership') === 0) {
+    $params['class'] = 'CRM_Member_PseudoConstant';
+  }
   require_once 'api/v3/Constant.php';
   return civicrm_api3_constant_get($params);
 }

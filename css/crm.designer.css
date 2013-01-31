@@ -5,7 +5,6 @@
     width: 75%;
     min-width: 500px;
     height: 20em;
-    overflow: scroll;
     border: 1px solid black;
     padding: 4px;
 }
@@ -88,6 +87,7 @@
 }
 
 .crm-designer-canvas {
+  padding-right: 1em;
   margin-right: 300px;
 }
 
@@ -207,13 +207,10 @@
   position: relative;
 }
 
+.crm-profile-selector-preview-pane,
 .crm-designer-dialog .crm-designer .scroll {
   overflow-x: auto;
   overflow-y: scroll;
-}
-
-.crm-designer-canvas {
-  padding-right: 1em;
 }
 
 .ui-dialog {

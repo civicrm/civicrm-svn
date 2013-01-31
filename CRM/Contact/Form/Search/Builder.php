@@ -425,6 +425,8 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search {
       'contribution_page_id' => 'contribution',
       'contribution_status' => 'contribution',
       'payment_instrument' => 'contribution',
+      'membership_status' => 'membership',
+      'membership_type' => 'membership',
     );
     $entities = array('contact', 'activity', 'participant', 'pledge', 'member', 'contribution');
     foreach ($entities as $entity) {
