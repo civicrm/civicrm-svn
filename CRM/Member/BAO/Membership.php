@@ -294,7 +294,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
       unset($params['max_related']);
     } else {
       // if membership allows related, default max_related to value in membership_type
-      if (!array_key_exists('max_related', $params)) {
+      if (!array_key_exists('max_related', $params) && !empty($params['membership_type_id'])) {
         $membershipType = CRM_Member_BAO_MembershipType::getMembershipTypeDetails($params['membership_type_id']);
         if (isset($membershipType['relationship_type_id'])) {
           $params['max_related'] = CRM_Utils_Array::value('max_related', $membershipType);
@@ -331,7 +331,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
     if (CRM_Utils_Array::value('contribution_status_id', $params) && !CRM_Utils_Array::value('relate_contribution_id', $params)) {
       $params['contribution'] = self::recordMembershipContribution( $params, $ids, $membership->id );
     }
-  
+
     //insert payment record for this membership
     if (CRM_Utils_Array::value('relate_contribution_id', $params)) {
       $mpDAO = new CRM_Member_DAO_MembershipPayment();
@@ -596,7 +596,7 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
     $membershipActivities = array('Membership Signup', 'Membership Renewal', 'Change Membership Status', 'Change Membership Type', 'Membership Renewal Reminder');
     foreach($membershipActivities as $membershipActivity) {
       $activityId = array_search($membershipActivity, $activityTypes);
-      if ($activityId) { 
+      if ($activityId) {
         $params['activity_type_id'][] = $activityId;
         $deleteActivity = true;
       }
@@ -2632,13 +2632,13 @@ WHERE      civicrm_membership.is_test = 0";
       // deal with possibility of a different person paying for contribution
       $contributionParams['contact_id'] = $params['contribution_contact_id'];
     }
-    
+
     if (CRM_Utils_Array::value('processPriceSet', $params) &&
       !empty($params['lineItems'])
     ) {
       $contributionParams['line_item'] = CRM_Utils_Array::value('lineItems', $params, NULL);
     }
-    
+
     $contribution = CRM_Contribute_BAO_Contribution::create($contributionParams, $ids);
 
     // store contribution id
