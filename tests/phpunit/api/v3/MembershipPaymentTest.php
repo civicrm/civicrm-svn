@@ -29,8 +29,15 @@
 
 require_once 'CiviTest/CiviUnitTestCase.php';
 
+/**
+ *  Test APIv3 civicrm_membership_payment* functions
+ *
+ *  @package CiviCRM_APIv3
+ *  @subpackage API_Member
+ */
+
 class api_v3_MembershipPaymentTest extends CiviUnitTestCase {
-  protected $_apiversion = 3; 
+  protected $_apiversion = 3;
   protected $_contactID;
   protected $_contributionTypeID;
   protected $_membershipTypeID;
@@ -40,27 +47,26 @@ class api_v3_MembershipPaymentTest extends CiviUnitTestCase {
     parent::setUp();
 
     $this->_contactID = $this->organizationCreate(NULL);
-    $this->_contributionTypeID = $this->contributionTypeCreate();
-    $this->_membershipTypeID = $this->membershipTypeCreate($this->_contactID,$this->_contributionTypeID);
+    $this->_membershipTypeID = $this->membershipTypeCreate($this->_contactID, 1);
     $this->_membershipStatusID = $this->membershipStatusCreate('test status');
     $activityTypes = CRM_Core_PseudoConstant::activityType(TRUE, TRUE, TRUE, 'name');
-        $params = array(
+    $params = array(
       'contact_id' => $this->_contactID,
       'currency' => 'USD',
-      'financial_account_id' => $this->_contributionTypeID,
+      'financial_type_id' => 1,
       'contribution_status_id' => 1,
       'contribution_page_id' => NULL,
       'payment_instrument_id' => 1,
       'source' => 'STUDENT',
       'receive_date' => '20080522000000',
       'receipt_date' => '20080522000000',
-      'id' => NULL,
       'total_amount' => 200.00,
       'trxn_id' => '22ereerwww322323',
       'invoice_id' => '22ed39c9e9ee6ef6031621ce0eafe6da70',
       'thankyou_date' => '20080522',
       'version' => 3,
     );
+
     $this->_contribution = civicrm_api('contribution','create', $params);
   }
 
