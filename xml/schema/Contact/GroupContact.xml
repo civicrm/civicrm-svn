@@ -10,6 +10,7 @@
   <field>
       <name>id</name>
       <type>int unsigned</type>
+      <title>Group Contact ID</title>
       <required>true</required>
       <comment>primary key</comment>
        <add>1.1</add>
@@ -21,6 +22,7 @@
   <field>
       <name>group_id</name>
       <type>int unsigned</type>
+      <title>Group ID</title>
       <required>true</required>
       <comment>FK to civicrm_group</comment>
        <add>1.1</add>
@@ -35,6 +37,7 @@
   <field>
       <name>contact_id</name>
       <type>int unsigned</type>
+      <title>Contact ID</title>
       <required>true</required>
       <comment>FK to civicrm_contact</comment>
        <add>1.1</add>
@@ -49,6 +52,7 @@
   <field>
        <name>status</name>
        <type>enum</type>
+       <title>Group Contact Status</title>
        <values>Added, Removed, Pending</values>
        <comment>status of contact relative to membership in group</comment>
        <add>1.1</add>
@@ -56,6 +60,7 @@
   <field>
        <name>location_id</name>
        <type>int unsigned</type>
+       <title>Group Contact Location</title>
        <comment>Optional location to associate with this membership</comment>
        <add>1.1</add>
   </field>
@@ -69,6 +74,7 @@
   <field>
       <name>email_id</name>
       <type>int unsigned</type>
+      <title>Group Contact Email</title>
       <comment>Optional email to associate with this membership</comment>
       <add>1.1</add>
   </field>
