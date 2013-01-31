@@ -254,7 +254,6 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
       return NULL;
     }
 
-
     $key = CRM_Utils_Array::value('qfKey', $_REQUEST, NULL);
     if (!$key && $_SERVER['REQUEST_METHOD'] === 'GET') {
       $key = CRM_Core_Key::get($name, $addSequence);

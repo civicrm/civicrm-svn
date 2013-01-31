@@ -139,14 +139,22 @@ class CRM_Event_Form_ManageEvent_TabHeader {
 
     if (array_key_exists($class, $tabs)) {
       $tabs[$class]['current'] = TRUE;
+      $qfKey = $form->get('qfKey');
+      if ($qfKey) {
+        $tabs[$class]['qfKey'] = "&qfKey={$qfKey}";
+      }
     }
 
     if ($eventID) {
       $reset = CRM_Utils_Array::value('reset', $_GET) ? 'reset=1&' : '';
 
       foreach ($tabs as $key => $value) {
+        if (!isset($tabs[$key]['qfKey'])) {
+          $tabs[$key]['qfKey'] = NULL;
+        }
+
         $tabs[$key]['link'] = CRM_Utils_System::url("civicrm/event/manage/{$key}",
-          "{$reset}action=update&snippet=5&id={$eventID}&component=event{$new}"
+          "{$reset}action=update&snippet=5&id={$eventID}&component=event{$new}{$tabs[$key]['qfKey']}"
         );
         $tabs[$key]['active'] = $tabs[$key]['valid'] = TRUE;
       }

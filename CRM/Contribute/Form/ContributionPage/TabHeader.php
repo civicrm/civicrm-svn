@@ -132,16 +132,24 @@ class CRM_Contribute_Form_ContributionPage_TabHeader {
 
     if (array_key_exists($class, $tabs)) {
       $tabs[$class]['current'] = TRUE;
+      $qfKey = $form->get('qfKey');
+      if ($qfKey) {
+        $tabs[$class]['qfKey'] = "&qfKey={$qfKey}";
+      }
     }
 
     if ($contribPageId) {
       $reset = CRM_Utils_Array::value('reset', $_GET) ? 'reset=1&' : '';
 
       foreach ($tabs as $key => $value) {
+        if (!isset($tabs[$key]['qfKey'])) {
+          $tabs[$key]['qfKey'] = NULL;
+        }
+
         $tabs[$key]['link'] =
           CRM_Utils_System::url(
             "civicrm/admin/contribute/{$key}",
-          "{$reset}action=update&snippet=5&id={$contribPageId}"
+          "{$reset}action=update&snippet=5&id={$contribPageId}{$tabs[$key]['qfKey']}"
         );
         $tabs[$key]['active'] = $tabs[$key]['valid'] = TRUE;
       }

@@ -83,21 +83,29 @@ class CRM_Campaign_Form_Survey_TabHeader {
 
     if (array_key_exists($class, $tabs)) {
       $tabs[$class]['current'] = TRUE;
+      $qfKey = $form->get('qfKey');
+      if ($qfKey) {
+        $tabs[$class]['qfKey'] = "&qfKey={$qfKey}";
+      }
     }
 
     if ($surveyID) {
       $reset = CRM_Utils_Array::value('reset', $_GET) ? 'reset=1&' : '';
 
       foreach ($tabs as $key => $value) {
+        if (!isset($tabs[$key]['qfKey'])) {
+          $tabs[$key]['qfKey'] = NULL;
+        }
+
         $tabs[$key]['link'] = CRM_Utils_System::url("civicrm/survey/configure/{$key}",
-          "{$reset}action=update&snippet=5&id={$surveyID}"
+          "{$reset}action=update&snippet=5&id={$surveyID}{$tabs[$key]['qfKey']}"
         );
         $tabs[$key]['active'] = $tabs[$key]['valid'] = TRUE;
       }
     }
     return $tabs;
   }
-  
+
   static function reset(&$form) {
     $tabs = self::process($form);
     $form->set('tabHeader', $tabs);
