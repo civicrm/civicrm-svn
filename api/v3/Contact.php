@@ -761,7 +761,7 @@ LIMIT    0, {$limit}
   while ($dao->fetch()) {
     $t = array('id' => $dao->id);
     foreach ($as as $k) {
-      $t[$k] = $dao->$k;
+      $t[$k] = isset($dao->$k)? $dao->$k: '';
     }
     $t['data'] = $dao->data;
     $contactList[] = $t;
