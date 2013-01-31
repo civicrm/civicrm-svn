@@ -119,10 +119,6 @@ class CRM_Contribute_Form_Contribution_ThankYou extends CRM_Contribute_Form_Cont
     $this->assign('useForMember', $this->get('useForMember'));
 
     $params = $this->_params;
-    if (CRM_Utils_Array::value('int_amount', $params)
-        && $initialAmount = CRM_Utils_Array::value('initial_amount', $params)) {
-      $this->assign('initialAmount', $initialAmount);
-    }
     $honor_block_is_active = $this->get('honor_block_is_active');
     if ($honor_block_is_active &&
       ((!empty($params["honor_first_name"]) && !empty($params["honor_last_name"])) ||

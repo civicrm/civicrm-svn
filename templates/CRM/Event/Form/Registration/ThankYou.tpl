@@ -122,11 +122,6 @@
                     {/if}
                 {/if}
             {/if}
-	    {if $initialAmount}
-        	<div class="crm-section no-label inital-amount-section">
-                 <div class="content bold"> {ts}Initial Amount{/ts}:&nbsp;&nbsp;{$initialAmount|crmMoney}</div>
-               </div>
-           {/if}
 
             {if $receive_date}
                 <div class="crm-section no-label receive_date-section">

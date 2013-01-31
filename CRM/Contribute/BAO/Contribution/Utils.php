@@ -138,19 +138,11 @@ class CRM_Contribute_BAO_Contribution_Utils {
         }
         else {
           if (!$form->_params['is_pay_later']) {
-            if (CRM_Utils_Array::value('initial_amount', $form->_params)) {
-              $actulAmount = $form->_params['amount'];
-              $form->_params['amount'] = $form->_params['initial_amount'];
-            }
             if (is_object($payment)) {  
               $result = &$payment->doTransferCheckout($form->_params, 'contribute');
             }
             else{ 
               CRM_Core_Error::fatal($paymentObjError);
-            }
-            if (CRM_Utils_Array::value('initial_amount', $form->_params)){
-              $result['gross_amount'] = $actulAmount;
-              $result['amount'] = $actulAmount; 
             }
           } 
           else {
@@ -186,10 +178,6 @@ class CRM_Contribute_BAO_Contribution_Utils {
     elseif ($form->_contributeMode == 'express') {
       if ($form->_values['is_monetary'] && $form->_amount > 0.0) {
         // determine if express + recurring and direct accordingly
-        if (CRM_Utils_Array::value('initial_amount', $paymentParams)) {
-          $actulAmount = $paymentParams['amount'];
-          $paymentParams['amount'] = $paymentParams['initial_amount'];
-        }
         if ($paymentParams['is_recur'] == 1) {
           if (is_object($payment)) {
             $result = &$payment->createRecurringPayments($paymentParams);
@@ -205,10 +193,6 @@ class CRM_Contribute_BAO_Contribution_Utils {
           else { 
             CRM_Core_Error::fatal($paymentObjError);
           }
-        }
-        if (CRM_Utils_Array::value('initial_amount', $paymentParams)) {
-          $result['gross_amount'] = $actulAmount;
-          $result['amount']       = $actulAmount;	
         }
       }
     }
@@ -239,19 +223,11 @@ class CRM_Contribute_BAO_Contribution_Utils {
           $paymentParams['contributionRecurID'] = $contribution->contribution_recur_id;
         }
       }
-      if (CRM_Utils_Array::value('initial_amount', $paymentParams)) {
-        $actulAmount = $paymentParams['amount'];
-        $paymentParams['amount'] = $paymentParams['initial_amount'];   
-      }
       if (is_object($payment)) {
         $result = &$payment->doDirectPayment($paymentParams);
       }
       else { 
         CRM_Core_Error::fatal($paymentObjError);
-      }
-      if (CRM_Utils_Array::value('initial_amount', $paymentParams)) {
-        $result['gross_amount'] = $actulAmount;
-        $result['amount']       = $actulAmount;
       }
     }
 

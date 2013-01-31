@@ -129,11 +129,6 @@
                     </div>
                 {/if}
             {/if}
-            {if $initialAmount}
-		<div class="crm-section no-label initial-amount-section">
-                 <div class="content bold"> {ts}Initial Amount{/ts}:&nbsp;&nbsp;{$initialAmount|crmMoney}</div>
-               </div>
-            {/if}
 
         </div>
     {/if}
