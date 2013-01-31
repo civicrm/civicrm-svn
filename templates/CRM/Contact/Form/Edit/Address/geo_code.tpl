@@ -33,8 +33,8 @@
     {if !empty($form.address.$blockId.manual_geo_code)}
      <tr>
         <td colspan="2">
-          {$form.address.$blockId.manual_geo_code.label}
           {$form.address.$blockId.manual_geo_code.html}
+          {$form.address.$blockId.manual_geo_code.label} {help id="id-geo-code-override" file="CRM/Contact/Form/Contact.hlp"}
         </td>
       </tr>
     {/if}

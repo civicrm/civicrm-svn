@@ -220,10 +220,17 @@ class CRM_Contact_Form_Edit_Address {
       $entityId = $form->_values['address'][$blockId]['id'];
     }
 
-    $form->addElement('checkbox',
-      "address[$blockId][manual_geo_code]",
-      ts('Override automatic geo coding')
-    );
+    // CRM-11665 geocode override option
+    $geoCode = FALSE;
+    if (!empty($config->geocodeMethod)) {
+      $geoCode = TRUE;
+      $form->addElement('checkbox',
+        "address[$blockId][manual_geo_code]",
+        ts('Override automatic geocoding')
+      );
+    }
+    $form->assign('geoCode', $geoCode);
+
     // Process any address custom data -
     $groupTree = CRM_Core_BAO_CustomGroup::getTree('Address',
       $form,
