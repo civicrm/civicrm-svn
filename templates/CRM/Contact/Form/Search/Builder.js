@@ -174,11 +174,15 @@
    * @param illegal: array
    */
   function removeOperators(row, illegal) {
+    var value = $('select[id^=operator]').val();
     $('select[id^=operator] option', row).each(function() {
       if ($.inArray($(this).attr('value'), illegal) > -1) {
         $(this).remove();
       }
     });
+    if (value !== $('select[id^=operator]').val()) {
+      $('select[id^=operator]').change();
+    }
   }
 
   /**

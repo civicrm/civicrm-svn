@@ -99,7 +99,7 @@ function civicrm_api3_constant_get($params) {
     'CRM_Member_PseudoConstant',
   );
   $className = $allowedClasses[0];
-  if (!empty($params['class']) && in_array($params['class'], $allowedClasses)) { 
+  if (!empty($params['class']) && in_array($params['class'], $allowedClasses)) {
     $className = $params['class'];
   }
   $callable = "$className::$name";
