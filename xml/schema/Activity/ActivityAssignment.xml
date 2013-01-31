@@ -9,6 +9,7 @@
   <field>
     <name>id</name>
     <type>int unsigned</type>
+    <title>Activity Assignment ID</title>
     <required>true</required>
     <comment>Activity assignment id</comment>
     <add>1.8</add>
@@ -59,6 +60,7 @@
    <field> 
     <name>activity_id</name>
     <type>int unsigned</type>
+    <title>Activity ID</title>
     <required>true</required>
     <comment>Foreign key to the activity for this assignment.</comment>
     <add>2.0</add>
@@ -74,6 +76,7 @@
    <field> 
     <name>assignee_contact_id</name>
     <type>int unsigned</type>
+    <title>Assignee Contact ID</title>
     <required>true</required>
     <comment>Foreign key to the contact for this assignment.</comment>
     <add>2.0</add>

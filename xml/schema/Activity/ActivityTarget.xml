@@ -9,6 +9,7 @@
   <field>
     <name>id</name>
     <type>int unsigned</type>
+    <title>Activity Target ID</title>
     <required>true</required>
     <comment>Activity target id</comment>
     <add>2.0</add>
@@ -17,10 +18,10 @@
     <name>id</name>
     <autoincrement>true</autoincrement>
   </primaryKey>
-
    <field> 
     <name>activity_id</name>
     <type>int unsigned</type>
+    <title>Activity ID</title>
     <required>true</required>
     <comment>Foreign key to the activity for this target.</comment>
     <add>2.0</add>
@@ -57,6 +58,4 @@
        <unique>true</unique>
        <add>2.0</add>
   </index>
-
-
 </table>
