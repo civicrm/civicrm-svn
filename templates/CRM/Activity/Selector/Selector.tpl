@@ -25,7 +25,7 @@
 *}
 
 <div class="crm-activity-selector-{$context}">
-  <div class="crm-accordion-wrapper crm-search_filters-accordion collapsed">
+  <div class="crm-accordion-wrapper crm-search_filters-accordion">
     <div class="crm-accordion-header">
     {ts}Filter by Activity Type{/ts}</a>
     </div><!-- /.crm-accordion-header -->
@@ -34,10 +34,10 @@
       <table class="no-border form-layout-compressed" id="searchOptions">
         <tr>
           <td class="crm-contact-form-block-activity_type_filter_id">
-          {$form.activity_type_filter_id.html}
+            {$form.activity_type_filter_id.label} {$form.activity_type_filter_id.html}
           </td>
           <td class="crm-contact-form-block-activity_type_exclude_filter_id">
-          {$form.activity_type_exclude_filter_id.html}
+            {$form.activity_type_exclude_filter_id.label} {$form.activity_type_exclude_filter_id.html}
           </td>
         </tr>
       </table>

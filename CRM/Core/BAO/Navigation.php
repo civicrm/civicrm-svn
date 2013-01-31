@@ -581,7 +581,7 @@ ORDER BY parent_id, weight";
 
     $navParams = array('contact_id' => $contactID);
 
-    $navigation = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::NAVIGATION_NAME,
+    $navigation = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::PERSONAL_PREFERENCES_NAME,
       'navigation',
       NULL,
       NULL,
@@ -642,7 +642,7 @@ ORDER BY parent_id, weight";
       $contact->id = $contactID;
       if ($contact->find(TRUE)) {
         CRM_Core_BAO_Setting::setItem($navigation,
-          CRM_Core_BAO_Setting::NAVIGATION_NAME,
+          CRM_Core_BAO_Setting::PERSONAL_PREFERENCES_NAME,
           'navigation',
           NULL,
           $contactID,

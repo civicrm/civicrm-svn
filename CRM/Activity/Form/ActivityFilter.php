@@ -43,19 +43,22 @@ class CRM_Activity_Form_ActivityFilter extends CRM_Core_Form {
     $activityOptions = CRM_Core_PseudoConstant::activityType(TRUE, TRUE, FALSE, 'label', TRUE);
     asort($activityOptions);
 
-    $this->add('select', 'activity_type_filter_id', ts('Activity Type'), array('' => ts('- all activity type(s) -')) + $activityOptions);
-    $this->add('select', 'activity_type_exclude_filter_id', ts('Activity Type Exclude'), array('' => ts('- activity type exclusion -')) + $activityOptions);
+    $this->add('select', 'activity_type_filter_id', ts('Include'), array('' => ts('- all activity type(s) -')) + $activityOptions);
+    $this->add('select', 'activity_type_exclude_filter_id', ts('Exclude'), array('' => ts('- select activity type -')) + $activityOptions);
     $this->assign('suppressForm', TRUE);
   }
 
   function setDefaultValues() {
+    // CRM-11761 retrieve user's activity filter preferences
     $defaults = array();
-    if ($contactID = $this->get('contactId')) {
-      $defaults = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::NAVIGATION_NAME,
+    $session = CRM_Core_Session::singleton();
+    $userID = $session->get('userID');
+    if ($userID) {
+      $defaults = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::PERSONAL_PREFERENCES_NAME,
         'activity_tab_filter',
         NULL,
         NULL,
-        $contactID
+        $userID
       );
     }
     return $defaults;
