@@ -353,7 +353,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase {
 
     $result = civicrm_api('activity', 'create', $params);
     $this->assertEquals($result['is_error'], 1, "In line " . __LINE__);
-    $this->assertEquals('priority_id ergUrgentis not valid', $result['error_message']);
+    $this->assertEquals('priority_id ergUrgent is not valid', $result['error_message']);
   }
 
   /**
