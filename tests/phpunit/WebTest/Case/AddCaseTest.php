@@ -213,7 +213,8 @@ class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
     if ($action != "0") {
       $this->open($this->sboxPath . "civicrm/case/search?reset=1");
       $this->waitForPageToLoad("30000");
-      $this->select("case_relative", "value=$action");
+      $this->select("case_from_relative", "value=$action");
+      $this->select("case_to_relative", "value=$action");
       $this->click("_qf_Search_refresh");
       $this->waitForPageToLoad('30000');
       $this->assertTrue($this->isTextPresent("$lastName, $firstName"));
@@ -222,9 +223,12 @@ class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
       //select date range
       $this->open($this->sboxPath . "civicrm/case/search?reset=1");
       $this->waitForElementPresent("_qf_Search_refresh-bottom");
-      $this->select("case_relative", "value=$action");
-      $this->webtestFillDate("case_start_date_low", "-1 month");
-      $this->webtestFillDate("case_end_date_high", "+1 month");
+      $this->select("case_from_relative", "value=$action");
+      $this->webtestFillDate("case_from_start_date_low", "-1 month");
+      $this->webtestFillDate("case_from_start_date_high", "+1 month");
+      $this->select("case_to_relative", "value=$action");
+      $this->webtestFillDate("case_to_end_date_low", "-1 month");
+      $this->webtestFillDate("case_to_end_date_high", "+1 month");
       $this->click("_qf_Search_refresh-bottom");
       $this->waitForPageToLoad('30000');
       $this->assertTrue($this->isTextPresent("$lastName, $firstName"));
@@ -235,14 +239,18 @@ class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad("30000");
     $this->waitForElementPresent("_qf_Advanced_refresh");
     $this->click("CiviCase");
-    $this->waitForElementPresent("xpath=//div[@id='case-search']/table/tbody/tr[2]/td[2]/input[3]");
+    $this->waitForElementPresent("xpath=//div[@id='case-search']/table/tbody/tr[3]/td[2]/input[3]");
     if ($action != "0") {
-      $this->select("case_relative", "value=$action");
+      $this->select("case_from_relative", "value=$action");
+      $this->select("case_to_relative", "value=$action");
     }
     else {
-      $this->select("case_relative", "value=$action");
-      $this->webtestFillDate("case_start_date_low", "-1 month");
-      $this->webtestFillDate("case_end_date_high", "+1 month");
+      $this->select("case_from_relative", "value=$action");
+      $this->webtestFillDate("case_from_start_date_low", "-1 month");
+      $this->webtestFillDate("case_from_start_date_high", "+1 month");
+      $this->select("case_to_relative", "value=$action");
+      $this->webtestFillDate("case_to_end_date_low", "-1 month");
+      $this->webtestFillDate("case_to_end_date_high", "+1 month");
     }
     $this->click("_qf_Advanced_refresh");
     $this->waitForPageToLoad('30000');
