@@ -35,6 +35,9 @@ class api_v3_LineItemTest extends CiviUnitTestCase {
       'price_field_id' => 1,
       'entity_table' => 'civicrm_contribution',
       'entity_id' => $contribution['id'],
+      'qty' => 1,
+      'unit_price' => 50,
+      'line_total' => 50,
     );
   }
 
@@ -59,7 +62,7 @@ class api_v3_LineItemTest extends CiviUnitTestCase {
             'civicrm_line_item',
         )
     );
-    $result = civicrm_api($this->_entity, 'create', $this->params);
+    $result = civicrm_api($this->_entity, 'create', $this->params + array('debug' => 1));
     $this->id = $result['id'];
     $this->documentMe($this->params, $result, __FUNCTION__, __FILE__);
     $this->assertAPISuccess($result, 'In line ' . __LINE__);
