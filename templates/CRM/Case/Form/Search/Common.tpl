@@ -27,7 +27,10 @@
 {include file="CRM/Case/Page/ConfigureError.tpl"}
 {else}
 <tr>
-  <td><label>{ts}Case Dates{/ts}</label></td>{include file="CRM/Core/DateRange.tpl" fieldName="case" from='_start_date_low' to='_end_date_high'}
+  <td><label>{ts}Case Start Date{/ts}</label></td>{include file="CRM/Core/DateRange.tpl" fieldName="case_from" from='_start_date_low' to='_start_date_high'}
+</tr>
+<tr>
+  <td><label>{ts}Case End Date{/ts}</label></td>{include file="CRM/Core/DateRange.tpl" fieldName="case_to" from='_end_date_low' to='_end_date_high'}
 </tr>
 
 <tr id='case_search_form'>
