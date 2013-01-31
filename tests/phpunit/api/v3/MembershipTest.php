@@ -1,6 +1,4 @@
 <?php
-// $Id$
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.2                                                |
@@ -27,11 +25,16 @@
  +--------------------------------------------------------------------+
 */
 
-
+/**
+ *  Test APIv3 civicrm_membership functions
+ *
+ *  @package CiviCRM_APIv3
+ *  @subpackage API_Member
+ */
 
 
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'CiviTest/CiviUnitTestCase.php';
+
 class api_v3_MembershipTest extends CiviUnitTestCase {
   protected $_apiversion;
   protected $_contactID;
@@ -71,7 +74,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase {
 
   function tearDown() {
     $this->quickCleanup(array(
-      'civicrm_membership', 
+      'civicrm_membership',
       'civicrm_membership_payment')
     );
     $this->membershipStatusDelete($this->_membershipStatusID);
@@ -269,7 +272,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase {
     $this->assertEquals($result['is_override'], 1, "In line " . __LINE__);
   }
 
-  
+
   /**
    * Test civicrm_membership_get with proper params.
    * Memberships expected.
@@ -299,7 +302,7 @@ class api_v3_MembershipTest extends CiviUnitTestCase {
         'version' => $this->_apiversion,
       ));
   }
-  
+
   /**
    * Test civicrm_membership_get for only active.
    * Memberships expected.
