@@ -58,6 +58,10 @@ function civicrm_api3_line_item_create($params) {
 function _civicrm_api3_line_item_create_spec(&$params) {
   $params['entity_id']['api.required'] = 1;
   $params['price_field_id']['api.required'] = 1;
+  $params['qty']['api.required'] = 1;
+  $params['unit_price']['api.required'] = 1;
+  $params['line_total']['api.required'] = 1;
+  $params['label']['api.default'] = 'line item';
 }
 
 /**
