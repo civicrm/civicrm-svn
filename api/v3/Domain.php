@@ -58,25 +58,26 @@ function civicrm_api3_domain_get($params) {
   $domains = _civicrm_api3_dao_to_array($bao, $params, true,'domain');
 
   foreach ($domains as $domain) {
-    $values = array();
-    $locparams = array(
-      'contact_id' => $domain['contact_id']
-    );
-    $values['location'] = CRM_Core_BAO_Location::getValues($locparams, TRUE);
+    if(!empty($domain['contact_id'])){
+      $values = array();
+      $locparams = array(
+        'contact_id' => $domain['contact_id']
+      );
+      $values['location'] = CRM_Core_BAO_Location::getValues($locparams, TRUE);
 
-    $address_array = array(
-      'street_address', 'supplemental_address_1', 'supplemental_address_2',
-      'city', 'state_province_id', 'postal_code', 'country_id',
-      'geo_code_1', 'geo_code_2',
-    );
+      $address_array = array(
+        'street_address', 'supplemental_address_1', 'supplemental_address_2',
+        'city', 'state_province_id', 'postal_code', 'country_id',
+        'geo_code_1', 'geo_code_2',
+      );
 
-    if ( !empty( $values['location']['email'] ) ) {
-    $domain['domain_email'] = CRM_Utils_Array::value('email', $values['location']['email'][1]);
-    }
+      if ( !empty( $values['location']['email'] ) ) {
+        $domain['domain_email'] = CRM_Utils_Array::value('email', $values['location']['email'][1]);
+      }
 
-    if ( !empty( $values['location']['phone'] ) ) {
-    $domain['domain_phone'] = array(
-        'phone_type' => CRM_Core_OptionGroup::getLabel(
+      if ( !empty( $values['location']['phone'] ) ) {
+        $domain['domain_phone'] = array(
+          'phone_type' => CRM_Core_OptionGroup::getLabel(
           'phone_type',
           CRM_Utils_Array::value(
             'phone_type_id',
@@ -91,17 +92,18 @@ function civicrm_api3_domain_get($params) {
     }
 
     if ( !empty( $values['location']['address'] ) ) {
-    foreach ($address_array as $value) {
-      $domain['domain_address'][$value] = CRM_Utils_Array::value($value,
-        $values['location']['address'][1]
-      );
-    }
+      foreach ($address_array as $value) {
+        $domain['domain_address'][$value] = CRM_Utils_Array::value($value,
+          $values['location']['address'][1]
+        );
+      }
     }
 
-    list($domain['from_name'],
-      $domain['from_email']
-    ) = CRM_Core_BAO_Domain::getNameAndEmail(TRUE);
-    $domains[$domain['id']] = array_merge($domains[$domain['id']], $domain);
+      list($domain['from_name'],
+        $domain['from_email']
+      ) = CRM_Core_BAO_Domain::getNameAndEmail(TRUE);
+      $domains[$domain['id']] = array_merge($domains[$domain['id']], $domain);
+    }
   }
 
 
