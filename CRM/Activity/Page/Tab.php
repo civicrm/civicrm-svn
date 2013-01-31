@@ -54,6 +54,7 @@ class CRM_Activity_Page_Tab extends CRM_Core_Page {
     $controller = new CRM_Core_Controller_Simple('CRM_Activity_Form_ActivityFilter',
       ts('Activity Filter'), NULL
     );
+    $controller->set('contactId', $this->_contactId);
     $controller->setEmbedded(TRUE);
     $controller->run();
   }

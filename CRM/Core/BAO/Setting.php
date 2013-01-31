@@ -55,7 +55,7 @@ class CRM_Core_BAO_Setting extends CRM_Core_DAO_Setting {
     CONTRIBUTE_PREFERENCES_NAME = 'Contribute Preferences',
     MEMBER_PREFERENCES_NAME = 'Member Preferences',
     MULTISITE_PREFERENCES_NAME = 'Multi Site Preferences',
-    NAVIGATION_NAME = 'Navigation Menu',
+    NAVIGATION_NAME = 'Personal Preferences',
     SYSTEM_PREFERENCES_NAME = 'CiviCRM Preferences',
     URL_PREFERENCES_NAME = 'URL Preferences',
     LOCALIZATION_PREFERENCES_NAME = 'Localization Preferences',

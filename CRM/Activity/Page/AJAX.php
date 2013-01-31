@@ -426,6 +426,18 @@ class CRM_Activity_Page_AJAX {
     // get the contact activities
     $activities = CRM_Activity_BAO_Activity::getContactActivitySelector($params);
 
+    // store the activity filter preference 
+    $activityFilter = 
+      array('activity_type_filter_id' => CRM_Utils_Array::value('activity_type_id', $params),
+            'activity_type_exclude_filter_id' => CRM_Utils_Array::value('activity_type_exclude_id', $params));
+    CRM_Core_BAO_Setting::setItem($activityFilter,
+                                  CRM_Core_BAO_Setting::NAVIGATION_NAME,
+                                  'activity_tab_filter',
+                                  NULL,
+                                  $contactID,
+                                  $contactID
+                                  );
+
     $iFilteredTotal = $iTotal = $params['total'];
     $selectorElements = array(
       'activity_type', 'subject', 'source_contact',

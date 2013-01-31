@@ -68,7 +68,11 @@
   cj(function ( ) {
     cj().crmAccordions();
     var context = {/literal}"{$context}"{literal};
-    buildContactActivities{/literal}{$context}{literal}( false );
+    var filterSearchOnLoad = false;
+    if (context == 'activity') {
+      filterSearchOnLoad = true;
+    }
+    buildContactActivities{/literal}{$context}{literal}( filterSearchOnLoad );
 
     cj('.crm-activity-selector-'+ context +' #activity_type_filter_id').change( function( ) {
       buildContactActivities{/literal}{$context}{literal}( true );
@@ -80,7 +84,7 @@
   });
 
 function buildContactActivities{/literal}{$context}{literal}( filterSearch ) {
-  if ( filterSearch ) {
+  if ( filterSearch && {/literal}{$context}{literal}oTable ) {
     {/literal}{$context}{literal}oTable.fnDestroy();
   }
 

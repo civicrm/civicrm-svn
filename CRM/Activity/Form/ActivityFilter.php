@@ -47,5 +47,18 @@ class CRM_Activity_Form_ActivityFilter extends CRM_Core_Form {
     $this->add('select', 'activity_type_exclude_filter_id', ts('Activity Type Exclude'), array('' => ts('- activity type exclusion -')) + $activityOptions);
     $this->assign('suppressForm', TRUE);
   }
+
+  function setDefaultValues() {
+    $defaults = array();
+    if ($contactID = $this->get('contactId')) {
+      $defaults = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::NAVIGATION_NAME,
+        'activity_tab_filter',
+        NULL,
+        NULL,
+        $contactID
+      );
+    }
+    return $defaults;
+  }
 }
 
