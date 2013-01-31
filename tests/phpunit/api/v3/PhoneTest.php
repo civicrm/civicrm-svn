@@ -29,6 +29,14 @@
 
 
 require_once 'CiviTest/CiviUnitTestCase.php';
+
+
+/**
+ *  Test APIv3 civicrm_phone* functions
+ *
+ *  @package CiviCRM_APIv3
+ *  @subpackage API_Contact
+ */
 class api_v3_PhoneTest extends CiviUnitTestCase {
   protected $_apiversion;
   protected $_contactID;
@@ -135,9 +143,8 @@ class api_v3_PhoneTest extends CiviUnitTestCase {
   public function testGet() {
     $phone = civicrm_api('phone', 'create', $this->_params);
     $this->assertAPISuccess($phone, 'In line ' . __LINE__);
-
     $params = array(
-      'contact_id' => $phone['id'],
+      'contact_id' => $phone['values'][$phone['contact_id']],
       'phone' => $phone['values'][$phone['id']]['phone'],
       'version' => $this->_apiversion,
     );
@@ -160,7 +167,7 @@ class api_v3_PhoneTest extends CiviUnitTestCase {
     $result = civicrm_api('Phone', 'Create', $params);
     $this->assertEquals(1, $result['is_error'], "In line " . __LINE__);
   }
-  
+
   /**
    * Ensure numeric_phone field is correctly populated (this happens via sql trigger)
    */
@@ -175,7 +182,7 @@ class api_v3_PhoneTest extends CiviUnitTestCase {
 
   /**
    * If a new phone is set to is_primary the prev should no longer be
-   * 
+   *
    * If is_primary is not set then it should become is_primary is no others exist
    */
   public function testCreatePhonePrimaryHandlingChangeToPrimary() {
