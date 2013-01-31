@@ -162,6 +162,7 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form {
     $this->assign('displayName', $displayName);
 
     $title = $displayName . ' - ' . $caseType;
+    CRM_Utils_System::setTitle(ts('Case Summary for') .  ' ' . $title);
 
     $recentOther = array();
     if (CRM_Core_Permission::checkActionPermission('CiviCase', CRM_Core_Action::DELETE)) {

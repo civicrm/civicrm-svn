@@ -28,25 +28,26 @@
 {* here we are showing related cases w/ jquery dialog *}
 <div class="crm-block crm-form-block crm-case-caseview-form-block">
 {if $showRelatedCases}
-    <table class="report">
-      <tr class="columnheader">
-        <th>{ts}Client Name{/ts}</th>
-        <th>{ts}Case Type{/ts}</th>
-    <th></th>
-      </tr>
+  <table class="report">
+    <tr class="columnheader">
+      <th>{ts}Client Name{/ts}</th>
+      <th>{ts}Case Type{/ts}</th>
+      <th></th>
+    </tr>
 
-      {foreach from=$relatedCases item=row key=caseId}
+    {foreach from=$relatedCases item=row key=caseId}
       <tr>
-         <td class="crm-case-caseview-client_name label">{$row.client_name}</td>
-   <td class="crm-case-caseview-case_type label">{$row.case_type}</td>
-   <td class="label">{$row.links}</td>
+        <td class="crm-case-caseview-client_name label">{$row.client_name}</td>
+        <td class="crm-case-caseview-case_type label">{$row.case_type}</td>
+        <td class="label">{$row.links}</td>
       </tr>
-      {/foreach}
-   </table>
+    {/foreach}
+  </table>
 
 {else}
-<h3>{ts}Case Summary{/ts}</h3>
-    <table class="report">
+
+  <h3>{ts}Case Summary{/ts}</h3>
+  <table class="report">
   {if $multiClient}
   <tr class="crm-case-caseview-client">
     <td colspan="4" class="label">
@@ -57,61 +58,61 @@
     <a href="#" title="{ts}add new client to the case{/ts}" onclick="addClient( );return false;">
       <span class="icon edit-icon"></span>
     </a>
-       {if $hasRelatedCases}
-          <div class="crm-block relatedCases-link"><a href='#' onClick='viewRelatedCases( {$caseID}, {$contactID} ); return false;'>{ts}Related Cases{/ts}</a></div>
-        {/if}
-        </td>
+    {if $hasRelatedCases}
+      <div class="crm-block relatedCases-link"><a href='#' onClick='viewRelatedCases( {$caseID}, {$contactID} ); return false;'>{ts}Related Cases{/ts}</a></div>
+    {/if}
+    </td>
   </tr>
   {/if}
-        <tr>
-      {if not $multiClient}
-             <td>
-         <table class="form-layout-compressed" border="1">
-         {foreach from=$caseRoles.client item=client}
-               <tr class="crm-case-caseview-display_name">
-             <td class="label-left" style="padding: 0px">{$client.display_name}</td>
+  <tr>
+  {if not $multiClient}
+    <td>
+      <table class="form-layout-compressed">
+        {foreach from=$caseRoles.client item=client}
+          <tr class="crm-case-caseview-display_name">
+            <td class="label-left bold" style="padding: 0px; border: none;">{$client.display_name}</td>
            </tr>
-             {if $client.phone}
-               <tr class="crm-case-caseview-phone">
-                 <td class="label-left description" style="padding: 0px">{$client.phone}</td>
-               </tr>
-           {/if}
-               {if $client.birth_date}
-                 <tr class="crm-case-caseview-birth_date">
-                         <td class="label-left description" style="padding: 0px">{ts}DOB{/ts}: {$client.birth_date|crmDate}</td>
-                    </tr>
-               {/if}
-             {/foreach}
-           </table>
-           {if $hasRelatedCases}
-               <div class="crm-block relatedCases-link"><a href='#' onClick='viewRelatedCases( {$caseID}, {$contactID} ); return false;'>{ts}Related Cases{/ts}</a></div>
-             {/if}
-             </td>
+          {if $client.phone}
+            <tr class="crm-case-caseview-phone">
+              <td class="label-left description" style="padding: 1px">{$client.phone}</td>
+            </tr>
+          {/if}
+          {if $client.birth_date}
+            <tr class="crm-case-caseview-birth_date">
+              <td class="label-left description" style="padding: 1px">{ts}DOB{/ts}: {$client.birth_date|crmDate}</td>
+            </tr>
+          {/if}
+        {/foreach}
+      </table>
+      {if $hasRelatedCases}
+        <div class="crm-block relatedCases-link"><a href='#' onClick='viewRelatedCases( {$caseID}, {$contactID} ); return false;'>{ts}Related Cases{/ts}</a></div>
       {/if}
-        <td class="crm-case=caseview-case_subject label">
-            <span class="crm-case-summary-label">{ts}Case Subject{/ts}:</span>&nbsp;{$caseDetails.case_subject}
-        </td>
-        <td class="crm-case-caseview-case_type label">
-            <span class="crm-case-summary-label">{ts}Case Type{/ts}:</span>&nbsp;{$caseDetails.case_type}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseTypeId`"}" title={ts}"Change case type (creates activity record)"{/ts}><span class="icon edit-icon"></span></a>
-        </td>
-        <td class="crm-case-caseview-case_status label">
-            <span class="crm-case-summary-label">{ts}Status{/ts}:</span>&nbsp;{$caseDetails.case_status}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseStatusId`"}" title={ts}"Change case status (creates activity record)"{/ts}><span class="icon edit-icon"></span></a>
-        </td>
-        <td class="crm-case-caseview-case_start_date label">
-            <span class="crm-case-summary-label">{ts}Start Date{/ts}:</span>&nbsp;{$caseDetails.case_start_date|crmDate}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseStartDateId`"}" title="{ts}Change case start date (creates activity record){/ts}"><span class="icon edit-icon"></span></a
-        </td>
-        <td class="crm-case-caseview-{$caseID} label">
-            <span class="crm-case-summary-label">{ts}Case ID{/ts}:</span>&nbsp;{$caseID}
-        </td>
-    </tr>
-    </table>
-    {if $hookCaseSummary}
-      <div id="caseSummary">
+    </td>
+  {/if}
+    <td class="crm-case=caseview-case_subject label">
+      <span class="crm-case-summary-label">{ts}Case Subject{/ts}:</span>&nbsp;{$caseDetails.case_subject}
+    </td>
+    <td class="crm-case-caseview-case_type label">
+      <span class="crm-case-summary-label">{ts}Case Type{/ts}:</span>&nbsp;{$caseDetails.case_type}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseTypeId`"}" title={ts}"Change case type (creates activity record)"{/ts}><span class="icon edit-icon"></span></a>
+    </td>
+    <td class="crm-case-caseview-case_status label">
+      <span class="crm-case-summary-label">{ts}Status{/ts}:</span>&nbsp;{$caseDetails.case_status}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseStatusId`"}" title={ts}"Change case status (creates activity record)"{/ts}><span class="icon edit-icon"></span></a>
+    </td>
+    <td class="crm-case-caseview-case_start_date label">
+      <span class="crm-case-summary-label">{ts}Start Date{/ts}:</span>&nbsp;{$caseDetails.case_start_date|crmDate}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseStartDateId`"}" title="{ts}Change case start date (creates activity record){/ts}"><span class="icon edit-icon"></span></a>
+    </td>
+    <td class="crm-case-caseview-{$caseID} label">
+      <span class="crm-case-summary-label">{ts}Case ID{/ts}:</span>&nbsp;{$caseID}
+    </td>
+  </tr>
+  </table>
+  {if $hookCaseSummary}
+    <div id="caseSummary">
       {foreach from=$hookCaseSummary item=val key=div_id}
         <div id="{$div_id}"><label>{$val.label}</label><div class="value">{$val.value}</div></div>
       {/foreach}
-      </div>
-    {/if}
+    </div>
+  {/if}
 
     <table class="form-layout">
         <tr class="crm-case-caseview-form-block-activity_type_id">
