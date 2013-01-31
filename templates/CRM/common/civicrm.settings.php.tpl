@@ -216,27 +216,28 @@ define( 'CIVICRM_DOMAIN_ID'      , 1 );
  *
  * To use the php extension memcache  use a value of 'Memcache'
  * To use the php extension memcached use a value of 'Memcached'
+ * To use the php extension apc       use a value of 'APCcache'
  * To not use any caching (not recommended), use a value of 'NoCache'
  *
  */
 define( 'CIVICRM_DB_CACHE_CLASS', 'ArrayCache' );
 
 /**
- * Change this to the IP address of your memcache server if it is not on the
+ * Change this to the IP address of your cache server if it is not on the
  * same machine (Unix).
  */
-define( 'CIVICRM_MEMCACHE_HOST', 'localhost' );
+define( 'CIVICRM_DB_CACHE_HOST', 'localhost' );
 
 /**
- * Change this if you are not using the standard port for memcache (11211)
+ * Change this if you are not using the standard port for memcache or apccache (11211)
  */
-define( 'CIVICRM_MEMCACHE_PORT', 11211 );
+define( 'CIVICRM_DB_CACHE_PORT', 11211 );
 
 /**
  * Items in cache will expire after the number of seconds specified here.
  * Default value is 3600 (i.e., after an hour)
  */
-define( 'CIVICRM_MEMCACHE_TIMEOUT', 3600 );
+define( 'CIVICRM_DB_CACHE_TIMEOUT', 3600 );
 
 /**
  * If you are sharing the same memcache instance with more than one CiviCRM
@@ -249,9 +250,9 @@ define( 'CIVICRM_MEMCACHE_TIMEOUT', 3600 );
 define( 'CIVICRM_MEMCACHE_PREFIX', '' );
 
 /**
- * If you have multilingual site and you are using the "inherit CMS language" 
+ * If you have multilingual site and you are using the "inherit CMS language"
  * configuration option, but wish to, for example, use fr_CA instead of the
- * default fr_FR (for French), set one or more of the constants below to an 
+ * default fr_FR (for French), set one or more of the constants below to an
  * appropriate regional value.
  */
 // define('CIVICRM_LANGUAGE_MAPPING_FR', 'fr_CA');
