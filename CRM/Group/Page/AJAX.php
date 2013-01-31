@@ -49,8 +49,8 @@ class CRM_Group_Page_AJAX {
       CRM_Utils_System::civiExit();      
     } else {      
       $sortMapper = array(
-        0 => 'groups.title', 1 => 'groups.id', 2 => '',
-        3 => 'groups.group_type', 4 => 'groups.visibility',
+        0 => 'groups.title', 1 => 'groups.id', 2 => 'createdBy.sort_name', 3 => '',
+        4 => 'groups.group_type', 5 => 'groups.visibility',
       );
 
       $sEcho     = CRM_Utils_Type::escape($_REQUEST['sEcho'], 'Integer');
