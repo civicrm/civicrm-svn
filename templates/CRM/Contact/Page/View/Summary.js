@@ -91,6 +91,7 @@
     }
     catch(e) {
       //this is called incase of formRule error
+      $('form', o).ajaxForm('destroy');
       $('.crm-container-snippet', o).replaceWith(response);
       var data = o.data('edit-params');
       $('form', o).ajaxForm({
@@ -100,7 +101,7 @@
         success: requestHandler
       });
 
-      o.trigger('crmFormError', [response]);
+      o.trigger('crmFormError', [response]).trigger('crmFormLoad');
     }
   }; 
 

@@ -134,20 +134,24 @@
   /**
    * Prompt the user for confirmation.
    * 
-   * @param {Object} with keys "title", "message", "onContinue", "onCancel"
+   * @param {Object} with keys "title", "message", "onContinue", "onCancel", "continueButton", "cancelButton"
    */
   CRM.confirm = function(options) {
     var isContinue = false;
-    var dialog = $('<div></div>')
+    options.title = options.title || ts('Confirm Action');
+    options.message = options.message || ts('Are you sure you want to continue?');
+    options.continueButton = options.continueButton || ts('Continue');
+    options.cancelButton = options.cancelButton || ts('Cancel');
+    var dialog = $('<div class="crm-container"></div>')
       .attr('title', options.title)
       .html(options.message)
       .appendTo('body');
     var buttons = {};
-    buttons[ts('Continue')] = function() {
+    buttons[options.continueButton] = function() {
       isContinue = true;
       $(dialog).dialog('close');
     };
-    buttons[ts('Cancel')] = function() {
+    buttons[options.cancelButton] = function() {
       $(dialog).dialog('close');
     };
     $(dialog).dialog({
@@ -155,12 +159,12 @@
       modal: true,
       buttons: buttons,
       close: function() {
-        $(dialog).remove();
         if (isContinue) {
-          if (options.onContinue) options.onContinue();
+          options.onContinue && options.onContinue();
         } else {
-          if (options.onCancel) options.onCancel();
+          options.onCancel && options.onCancel();
         }
+        $(dialog).remove();
       }
     });
 
@@ -205,37 +209,44 @@
     return msg;
   }
   
+  // Display system alerts through js notifications
+  function messagesFromMarkup() {
+    $('div.messages:visible', this).not('.help').not('.no-popup').each(function() {
+      $(this).removeClass('status messages');
+      var type = $(this).attr('class').split(' ')[0] || 'alert';
+      type = type.replace('crm-', '');
+      $('.icon', this).remove();
+      var title = '';
+      if ($('.msg-text', this).length > 0) {
+        var text = $('.msg-text', this).html();
+        title = $('.msg-title', this).html();
+      }
+      else {
+        var text = $(this).html();
+      }
+      var options = $(this).data('options') || {};
+      $(this).remove();
+      // Duplicates were already removed server-side
+      options.unique = false;
+      CRM.alert(text, title, type, options);
+    });
+    // Handle qf form errors
+    $('form :input.error', this).one('blur', function() {
+      $('.ui-notify-message.error a.ui-notify-close').click();
+      $(this).removeClass('error');
+      $(this).next('span.crm-error').remove();
+      $('label[for="' + $(this).attr('name') + '"], label[for="' + $(this).attr('id') + '"]')
+        .removeClass('crm-error')
+        .find('.crm-error').removeClass('crm-error');
+    });
+  }
+  
   $(document).ready(function() {
     if (CRM && CRM.config && CRM.config.urlIsPublic === false) {
       // Initialize notifications
       $('#crm-notification-container').notify();
-      // Display system alerts through js notifications
-      $('#crm-container div.messages:visible').not('.help').not('.no-popup').each(function() {
-        $(this).removeClass('status messages');
-        var type = $(this).attr('class').split(' ')[0] || 'alert';
-        type = type.replace('crm-', '');
-        $('.icon', this).remove();
-        var title = '';
-        if ($('.msg-text', this).length > 0) {
-          var text = $('.msg-text', this).html();
-          title = $('.msg-title', this).html();
-        }
-        else {
-          var text = $(this).html();
-        }
-        var options = $(this).data('options') || {};
-        $(this).remove();
-        // Duplicates were already removed server-side
-        options.unique = false;
-        CRM.alert(text, title, type, options);
-      });
-      // Handle qf form errors
-      $('#crm-container form :input.error').one('blur', function() {
-        $('.ui-notify-message.error a.ui-notify-close').click();
-        $(this).removeClass('error');
-        $(this).next('span.crm-error').remove();
-        $('label[for="' + $(this).attr('name') + '"], label[for="' + $(this).attr('id') + '"]').removeClass('crm-error').find('.crm-error').removeClass('crm-error');
-      });
+      messagesFromMarkup.call($('#crm-container'));
+      $('#crm-container').on('crmFormLoad', '*', messagesFromMarkup);
     }
   });
 })(jQuery);
