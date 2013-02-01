@@ -180,7 +180,10 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
       CRM_Core_BAO_UFGroup::LISTINGS_VISIBILITY,
       FALSE, $this->_profileIds
     );
-    
+
+    //reformat fields array for special fields
+    CRM_Core_BAO_UFGroup::reformatProfileFields($this->_fields);
+
     $this->_customFields = &$customFields;
 
     $returnProperties = CRM_Contact_BAO_Contact::makeHierReturnProperties($this->_fields);
@@ -307,6 +310,11 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
       $locationTypes = CRM_Core_PseudoConstant::locationType();
 
       foreach ($this->_fields as $name => $field) {
+        // skip pseudo fields
+        if (substr($name, 0, 9) == 'phone_ext') {
+          continue;
+        }
+
         if (CRM_Utils_Array::value('in_selector', $field) &&
           !in_array($name, $skipFields)
         ) {
@@ -493,6 +501,11 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
     static $skipFields = array('group', 'tag');
 
     foreach ($this->_fields as $key => $field) {
+      // skip pseudo fields
+      if (substr($key, 0, 9) == 'phone_ext') {
+        continue;
+      }
+
       if (CRM_Utils_Array::value('in_selector', $field) &&
         !in_array($key, $skipFields)
       ) {
@@ -632,6 +645,15 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
           }
           else {
             $row[] = '';
+          }
+        }
+        elseif (strpos($name, '-phone-')) {
+          $phoneExtField = str_replace('phone', 'phone_ext', $name);
+          if (isset($result->$phoneExtField)) {
+            $row[] = $result->$name . " (" . $result->$phoneExtField . ")";
+          }
+          else {
+            $row[] = $result->$name;
           }
         }
         elseif (in_array($name, array(

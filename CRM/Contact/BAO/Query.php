@@ -1626,7 +1626,6 @@ class CRM_Contact_BAO_Query {
 
     //check if the location type exits for fields
     $lType   = '';
-    $locType = array();
     $locType = explode('-', $name);
 
     if (!in_array($locType[0], $multipleFields)) {

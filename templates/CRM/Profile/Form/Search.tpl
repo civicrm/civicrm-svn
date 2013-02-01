@@ -92,7 +92,16 @@
         </tr>
       {else}
         <tr>
-          <td class="label">{$form.$n.label}</td>
+          <td class="label">
+            {if $n|substr:0:13 neq 'phone_and_ext'}
+              {$form.$n.label}
+            {else}
+              {assign var="phone_suffix" value=$n|replace:'phone_and_ext':''}
+              {assign var="phone_field" value="phone"|cat:$phone_suffix}
+              {assign var="phone_ext_field" value="phone_ext"|cat:$phone_suffix}
+              {$form.$phone_field.label}
+            {/if}
+          </td>
           {if $n eq 'addressee' or $n eq 'email_greeting' or $n eq 'postal_greeting'}
             <td class="description">
             {include file="CRM/Profile/Form/GreetingType.tpl"}
@@ -107,7 +116,9 @@
             <td class="description">
               {if ( $field.data_type eq 'Date' or
               ( ( ( $n eq 'birth_date' ) or ( $n eq 'deceased_date' ) ) ) ) }
-              {include file="CRM/common/jcalendar.tpl" elementName=$n}
+                {include file="CRM/common/jcalendar.tpl" elementName=$n}
+              {elseif $n|substr:0:13 eq 'phone_and_ext'}
+                {$form.$phone_field.html}&nbsp;{$form.$phone_ext_field.html}
               {else}
                 {$form.$n.html}
               {/if}

@@ -931,7 +931,6 @@ class CRM_Profile_Form extends CRM_Core_Form {
         }
         else {
           if ($form->_context == 'dialog') {
-
             $contactLinks = CRM_Contact_BAO_Contact_Utils::formatContactIDSToLinks($ids, TRUE, TRUE);
 
             $duplicateContactsLinks = '<div class="matching-contacts-found">';
@@ -964,7 +963,6 @@ class CRM_Profile_Form extends CRM_Core_Form {
             $duplicateContactsLinks .= "If you're sure this record is not a duplicate, click the 'Save Matching Contact' button below.";
 
             $errors['_qf_default'] = $duplicateContactsLinks;
-
 
             // let smarty know that there are duplicates
             $template = CRM_Core_Smarty::singleton();
