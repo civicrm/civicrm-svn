@@ -24,83 +24,85 @@
           o.removeAttr('style');
         });
         removeCiviOverlay(o);
-        $('form', o).ajaxForm( {beforeSubmit: requestHandler} );
+        $('form', o).ajaxForm({
+          dataType:'html',
+          method:'POST',
+          data: data,
+          success: requestHandler
+        });
         o.trigger('crmFormLoad');
       });
     }
   };
 
-  function requestHandler(formData, jqForm, options) {
-    var o = jqForm.closest('div.crm-inline-edit.form');
+  function requestHandler(response) {
+    var o = $('div.crm-inline-edit.form');
     addCiviOverlay($('.crm-container-snippet', o));
-    var data = o.data('edit-params');
-    data.snippet = 5;
-    data.reset = 1;
-    o.trigger('crmFormBeforeSave', [formData]);
-    var queryString = $.param(formData) + '&' + $.param(data); 
-    $.ajax({
-      type: "POST",
-      url: CRM.url('civicrm/ajax/inline'),
-      data: queryString,
-      dataType: "json",
-      success: function( response ) {
-        o.trigger('crmFormSuccess', [response]);
-        if (status = response.status) {
-          o.closest('.crm-inline-edit-container').addClass('crm-edit-ready');
-          var data = o.data('edit-params');
-          var dependent = o.data('dependent-fields') || [];
-          // Clone the add-new link if replacing it, and queue the clone to be refreshed as a dependant block
-          if (o.hasClass('add-new')) {
-            if (response.addressId) {
-              data.aid = response.addressId;
-            }
-            var clone = o.parent().clone();
-            o.data('edit-params', data);
-            $('.crm-container-snippet', clone).remove();
-            if (clone.hasClass('contactCardLeft')) {
-              clone.removeClass('contactCardLeft').addClass('contactCardRight');
-            }
-            else if (clone.hasClass('contactCardRight')) {
-              clone.removeClass('contactCardRight').addClass('contactCardLeft');
-            }
-            var cl = $('.crm-inline-edit', clone);
-            var clData = cl.data('edit-params');
-            var locNo = clData.locno++;
-            cl.attr('id', cl.attr('id').replace(locNo, clData.locno)).removeClass('form')
-            o.parent().after(clone);
-            $.merge(dependent, $('.crm-inline-edit', clone));
-          }
-          // Reload this block plus all dependent blocks
-          var update = $.merge([o], dependent);
-          for (var i in update) {
-            $(update[i]).each(function() {
-              var data = $(this).data('edit-params');
-              data.snippet = 1;
-              data.reset = 1;
-              data.class_name = data.class_name.replace('Form', 'Page');
-              data.type = 'page';
-              $(this).closest('.crm-summary-block').load(CRM.url('civicrm/ajax/inline', data), function() {$(this).trigger('load');});
-            });
-          }
-          // Update changelog tab and contact footer
-          $("#tab_log a em").html(response.changeLog.count);
-          $("#crm-record-log").replaceWith(response.changeLog.markup);
-          if ($('#Change_Log div').length) {
-            $('#Change_Log').load($("#tab_log a").attr('href'));
-          }
 
-          CRM.alert('', ts('Saved'), 'success');
+    o.trigger('crmFormSuccess', [response]);
+    try {
+      response = $.parseJSON(response);
+      if (status = response.status) {
+        o.closest('.crm-inline-edit-container').addClass('crm-edit-ready');
+        var data = o.data('edit-params');
+        var dependent = o.data('dependent-fields') || [];
+        // Clone the add-new link if replacing it, and queue the clone to be refreshed as a dependant block
+        if (o.hasClass('add-new')) {
+          if (response.addressId) {
+            data.aid = response.addressId;
+          }
+          var clone = o.parent().clone();
+          o.data('edit-params', data);
+          $('.crm-container-snippet', clone).remove();
+          if (clone.hasClass('contactCardLeft')) {
+            clone.removeClass('contactCardLeft').addClass('contactCardRight');
+          }
+          else if (clone.hasClass('contactCardRight')) {
+            clone.removeClass('contactCardRight').addClass('contactCardLeft');
+          }
+          var cl = $('.crm-inline-edit', clone);
+          var clData = cl.data('edit-params');
+          var locNo = clData.locno++;
+          cl.attr('id', cl.attr('id').replace(locNo, clData.locno)).removeClass('form')
+            o.parent().after(clone);
+          $.merge(dependent, $('.crm-inline-edit', clone));
         }
-      },
-      error: function (obj, status) {
-        $('.crm-container-snippet', o).replaceWith(obj.responseText);
-        $('form', o).ajaxForm( {beforeSubmit: requestHandler} );
-        o.trigger('crmFormError', [obj, status]);
+        // Reload this block plus all dependent blocks
+        var update = $.merge([o], dependent);
+        for (var i in update) {
+          $(update[i]).each(function() {
+            var data = $(this).data('edit-params');
+            data.snippet = 1;
+            data.reset = 1;
+            data.class_name = data.class_name.replace('Form', 'Page');
+            data.type = 'page';
+            $(this).closest('.crm-summary-block').load(CRM.url('civicrm/ajax/inline', data), function() {$(this).trigger('load');});
+          });
+        }
+        // Update changelog tab and contact footer
+        $("#tab_log a em").html(response.changeLog.count);
+        $("#crm-record-log").replaceWith(response.changeLog.markup);
+        if ($('#Change_Log div').length) {
+          $('#Change_Log').load($("#tab_log a").attr('href'));
+        }
+
+        CRM.alert('', ts('Saved'), 'success');
       }
-    });
-    // disable ajaxForm submit
-    return false; 
-  };
+    }
+    catch(e) {
+      //this is called incase of formRule error
+      $('.crm-container-snippet', o).replaceWith(response);
+      var data = o.data('edit-params');
+      $('form', o).ajaxForm({
+        dataType:'html',
+        method:'POST',
+        data: data,
+        success: requestHandler
+      });
+
+      o.trigger('crmFormError', [response]);
+    }
+  }; 
 
   /**
    * Configure optimistic locking mechanism for inplace editing
