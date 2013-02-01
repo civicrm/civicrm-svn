@@ -1942,11 +1942,12 @@ class CRM_Contact_BAO_Query {
 
       //get the location name
       $locationType = CRM_Core_PseudoConstant::locationType();
-      if ($locType[0] == 'email' ||
-        $locType[0] == 'im' ||
-        $locType[0] == 'phone' ||
-        $locType[0] == 'openid'
-      ) {
+      $specialFields = array('email', 'im', 'phone', 'openid', 'phone_ext');
+      if (in_array($locType[0], $specialFields)) {
+        //hack to fix / special handing for phone_ext
+        if ($locType[0] == 'phone_ext') {
+          $locType[0] = 'phone';
+        }
         if (isset($locType[2]) && $locType[2]) {
           $tName = "{$locationType[$locType[1]]}-{$locType[0]}-{$locType[2]}";
         }

@@ -3480,6 +3480,7 @@ SELECT  group_id
 
         // add additional phone extension field
         $fields["phone_ext-{$fieldSuffix}"] = $field;
+        $fields["phone_ext-{$fieldSuffix}"]['title'] = $field['title'] .' - '.ts('Ext.');
         $fields["phone_ext-{$fieldSuffix}"]['name'] = "phone_ext-{$fieldSuffix}";
         $fields["phone_ext-{$fieldSuffix}"]['where'] = 'civicrm_phone.phone_ext';
       }
