@@ -177,7 +177,6 @@ class CRM_Profile_Form extends CRM_Core_Form {
    * @access public
    */
   function preProcess() {
-
     $this->_id         = $this->get('id');
     $this->_gid        = $this->get('gid');
     $this->_profileIds = $this->get('profileIds');
