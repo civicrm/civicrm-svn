@@ -718,8 +718,6 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
     $is_registration = CRM_Utils_Array::value('is_registration', $fields, FALSE);
     $is_view         = CRM_Utils_Array::value('is_view', $fields, FALSE);
     $in_selector     = CRM_Utils_Array::value('in_selector', $fields, FALSE);
-    $is_searchable   = CRM_Utils_Array::value('is_searchable', $fields, FALSE);
-    $visibility      = CRM_Utils_Array::value('visibility', $fields, FALSE);
     $is_active       = CRM_Utils_Array::value('is_active', $fields, FALSE);
 
     $errors = array();
@@ -802,15 +800,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
 
     switch ($fieldType) {
       case 'Contact':
-        if (in_array('Activity', $groupType)) {
-          //CRM-5803 - do not allow activity + contact.
-          //CRM-7603 - need to support activity + contact.
-
-          //$errors['field_name'] = ts( 'Cannot add or update profile field type Contact with combination of Activity' );
-        }
-        else {
-          self::formRuleSubType($fieldType, $groupType, $errors);
-        }
+        self::formRuleSubType($fieldType, $groupType, $errors);
         break;
 
       case 'Individual':
@@ -945,7 +935,6 @@ class CRM_UF_Form_Field extends CRM_Core_Form {
             'Individual', 'Household', 'Organization')) &&
           !in_array($profileType, CRM_Contact_BAO_ContactType::subTypes())
         ) {
-
           $errors['field_name'] = ts('Cannot add or update profile field Contact Subtype as profile type is not one of Individual, Household or Organization.');
         }
     }
