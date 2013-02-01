@@ -662,9 +662,7 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
     return $addresses;
   }
 
-  static function addStateCountryMap(&$stateCountryMap,
-    $defaults = NULL
-  ) {
+  static function addStateCountryMap(&$stateCountryMap, $defaults = NULL) {
     // first fix the statecountry map if needed
     if (empty($stateCountryMap)) {
       return;
@@ -675,9 +673,7 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
       $config->stateCountryMap = array();
     }
 
-    $config->stateCountryMap = array_merge($config->stateCountryMap,
-      $stateCountryMap
-    );
+    $config->stateCountryMap = array_merge($config->stateCountryMap, $stateCountryMap);
   }
 
   static function fixAllStateSelects(&$form, &$defaults) {
@@ -685,21 +681,17 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
 
     if (!empty($config->stateCountryMap)) {
       foreach ($config->stateCountryMap as $index => $match) {
-        if (array_key_exists('state_province', $match) &&
+        if (
+          array_key_exists('state_province', $match) &&
           array_key_exists('country', $match)
         ) {
-          CRM_Contact_Form_Edit_Address::fixStateSelect($form,
+          CRM_Contact_Form_Edit_Address::fixStateSelect(
+            $form,
             $match['country'],
             $match['state_province'],
-            CRM_Utils_Array::value('county',
-              $match
-            ),
-            CRM_Utils_Array::value($match['country'],
-              $defaults
-            ),
-            CRM_Utils_Array::value($match['state_province'],
-              $defaults
-            )
+            CRM_Utils_Array::value('county', $match),
+            CRM_Utils_Array::value($match['country'], $defaults),
+            CRM_Utils_Array::value($match['state_province'], $defaults)
           );
         }
         else {
@@ -720,18 +712,23 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
 
     $countryState = $cityPostal = FALSE;
     foreach ($addressSequence as $key => $field) {
-      if (in_array($field, array(
-        'country', 'state_province')) && !$countryState) {
+      if (
+        in_array($field, array('country', 'state_province')) &&
+        !$countryState
+      ) {
         $countryState = TRUE;
         $addressSequence[$key] = 'country_state_province';
       }
-      elseif (in_array($field, array(
-        'city', 'postal_code')) && !$cityPostal) {
+      elseif (
+        in_array($field, array('city', 'postal_code')) &&
+        !$cityPostal
+      ) {
         $cityPostal = TRUE;
         $addressSequence[$key] = 'city_postal_code';
       }
-      elseif (in_array($field, array(
-        'country', 'state_province', 'city', 'postal_code'))) {
+      elseif (
+        in_array($field, array('country', 'state_province', 'city', 'postal_code'))
+      ) {
         unset($addressSequence[$key]);
       }
     }

@@ -256,12 +256,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
       $dao->free();
     }
 
-    if (empty($this->_profileIds)) {
-      $gids = $this->_gid;
-    }
-    else {
-      $gids = $this->_profileIds;
-    }
+    $gids = empty($this->_profileIds) ? $this->_gid : $this->_profileIds;
 
     // if we dont have a gid use the default, else just use that specific gid
     if (($this->_mode == self::MODE_REGISTER || $this->_mode == self::MODE_CREATE) && !$this->_gid) {
@@ -386,11 +381,6 @@ class CRM_Profile_Form extends CRM_Core_Form {
       CRM_Core_Session::setStatus(ts('This feature is not currently available.'), ts('Sorry'), 'error');
       return CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm', 'reset=1'));
     }
-    $defaults = array();
-    if ($this->_mode != self::MODE_SEARCH) {
-      CRM_Core_BAO_UFGroup::setRegisterDefaults($this->_fields, $defaults);
-      $this->setDefaults($defaults);
-    }
   }
 
   /**
@@ -405,6 +395,11 @@ class CRM_Profile_Form extends CRM_Core_Form {
     $this->_defaults = array();
     if ($this->_multiRecordProfile && ($this->_multiRecord == CRM_Core_Action::DELETE)) {
       return;
+    }
+
+    if ($this->_mode != self::MODE_SEARCH) {
+      // set default values for country / state to start with
+      CRM_Core_BAO_UFGroup::setRegisterDefaults($this->_fields, $this->_defaults);
     }
 
     if ($this->_id && !$this->_multiRecordProfile) {
@@ -633,10 +628,12 @@ class CRM_Profile_Form extends CRM_Core_Form {
         }
       }
 
-      if (in_array(
+      if (
+        in_array(
           $profileType,
           array("Membership", "Participant", "Contribution")
-        )) {
+        )
+      ) {
         $return = TRUE;
         if (!$statusMessage) {
           $statusMessage = ts('Profile is not configured for the selected action.');
@@ -775,6 +772,9 @@ class CRM_Profile_Form extends CRM_Core_Form {
       }
     }
 
+    // lets do the defaults, so we can use it for the below state country routines
+    $this->setDefaultsValues();
+
     // also do state country js
     CRM_Core_BAO_Address::addStateCountryMap($stateCountryMap, $this->_defaults);
 
@@ -803,8 +803,6 @@ class CRM_Profile_Form extends CRM_Core_Form {
         ts('Save Matching Contact')
       );
     }
-
-    $this->setDefaultsValues();
   }
 
   /*
