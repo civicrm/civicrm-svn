@@ -1650,13 +1650,9 @@ class CRM_Contact_BAO_Query {
     $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
 
     if (substr($name, 0, 14) === 'state_province') {
-      if (isset($locType[1]) &&
-        is_numeric($locType[1])
-      ) {
+      if (isset($locType[1]) && is_numeric($locType[1])) {
         $setTables = FALSE;
 
-        //get the location name
-        $locationType = CRM_Core_PseudoConstant::locationType();
         list($tName, $fldName) = self::getLocationTableName($field['where'], $locType);
         $this->_whereTables[$tName] = $this->_tables[$tName];
         $where = "`$tName`.$fldName";
@@ -1664,8 +1660,6 @@ class CRM_Contact_BAO_Query {
       else {
         $where = $field['where'];
       }
-
-      $wc = self::caseImportant($op) ? "LOWER($where)" : $where;
 
       if (is_numeric($value)) {
         $where = str_replace('.name', '.id', $where);
@@ -1685,13 +1679,9 @@ class CRM_Contact_BAO_Query {
       }
     }
     elseif (substr($name, 0, 7) === 'country') {
-      if (isset($locType[1]) &&
-        is_numeric($locType[1])
-      ) {
+      if (isset($locType[1]) && is_numeric($locType[1])) {
         $setTables = FALSE;
 
-        //get the location name
-        $locationType = CRM_Core_PseudoConstant::locationType();
         list($tName, $fldName) = self::getLocationTableName($field['where'], $locType);
         $this->_whereTables[$tName] = $this->_tables[$tName];
         $where = "`$tName`.$fldName";
@@ -1718,13 +1708,9 @@ class CRM_Contact_BAO_Query {
       }
     }
     elseif (substr($name, 0, 6) === 'county') {
-      if (isset($locType[1]) &&
-        is_numeric($locType[1])
-      ) {
+      if (isset($locType[1]) && is_numeric($locType[1])) {
         $setTables = FALSE;
 
-        //get the location name
-        $locationType = CRM_Core_PseudoConstant::locationType();
         list($tName, $fldName) = self::getLocationTableName($field['where'], $locType);
         $this->_whereTables[$tName] = $this->_tables[$tName];
         $where = "`$tName`.$fldName";
@@ -2427,7 +2413,6 @@ class CRM_Contact_BAO_Query {
    */
   function contactSubType(&$values) {
     list($name, $op, $value, $grouping, $wildcard) = $values;
-
     $this->includeContactSubTypes($value, $grouping);
   }
 
