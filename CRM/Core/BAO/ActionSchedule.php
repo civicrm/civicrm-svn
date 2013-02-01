@@ -800,7 +800,6 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
       if ($mapping->entity == 'civicrm_participant') {
         $contactField = "e.contact_id";
         $join[] = "INNER JOIN civicrm_event r ON e.event_id = r.id";
-
         if ($actionSchedule->recipient_listing) {
           $rList = explode(CRM_Core_DAO::VALUE_SEPARATOR,
             trim($actionSchedule->recipient_listing, CRM_Core_DAO::VALUE_SEPARATOR)
@@ -824,13 +823,14 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
           $where[] = "e.status_id IN ({$status})";
         }
 
-        $where[] = "r.is_active = 1";
+        $where[] = 'r.is_active = 1';
+        $where[] = 'r.is_template = 0';
         $dateField = str_replace('event_', 'r.', $actionSchedule->start_action_date);
       }
 
       $notINClause = '';
       if ($mapping->entity == 'civicrm_membership') {
-        $contactField = "e.contact_id";
+        $contactField = 'e.contact_id';
 
         // build where clause
         if ( $status == 2 ) {

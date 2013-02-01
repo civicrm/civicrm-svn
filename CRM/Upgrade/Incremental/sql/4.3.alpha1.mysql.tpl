@@ -839,3 +839,9 @@ ALTER TABLE civicrm_address
 
 -- CRM-11761
 UPDATE `civicrm_trunk`.`civicrm_setting` SET `group_name` = 'Personal Preferences' WHERE `group_name` = 'Navigation Menu';
+
+-- CRM-11779
+
+INSERT INTO civicrm_action_mapping ( entity, entity_value, entity_value_label, entity_status, entity_status_label, entity_date_start, entity_date_end, entity_recipient )
+VALUES
+( 'civicrm_participant', 'event_template', 'Event Template', 'civicrm_participant_status_type', 'Participant Status', 'event_start_date', 'event_end_date', 'event_contacts');
