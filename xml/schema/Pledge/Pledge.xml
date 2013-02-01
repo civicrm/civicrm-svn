@@ -7,7 +7,7 @@
   <log>true</log>
   <field>
     <name>id</name>
-    <uniqueName>pledge_id</uniqueName> 
+    <uniqueName>pledge_id</uniqueName>
     <title>Pledge ID</title>
     <type>int unsigned</type>
     <required>true</required>
@@ -21,7 +21,7 @@
   </primaryKey>
   <field>
     <name>contact_id</name>
-    <uniqueName>pledge_contact_id</uniqueName> 
+    <uniqueName>pledge_contact_id</uniqueName>
     <title>Contact ID</title>
     <import>true</import>
     <type>int unsigned</type>
@@ -38,7 +38,7 @@
   </foreignKey>
   <field>  
     <name>contribution_type_id</name> 
-    <uniqueName>pledge_contribution_type_id</uniqueName> 
+    <uniqueName>pledge_contribution_type_id</uniqueName>
     <export>false</export>
     <type>int unsigned</type>  
     <comment>FK to Contribution Type. This is propagated to contribution record when pledge payments are made.</comment>
@@ -56,6 +56,7 @@
   <field>  
     <name>financial_type_id</name>  
     <title>Type</title>
+    <uniqueName>pledge_financial_type_id</uniqueName>
     <type>int unsigned</type>  
     <comment>FK to Financial Type</comment>
     <add>4.3</add>  
@@ -68,7 +69,8 @@
   </foreignKey>  
   <field> 
     <name>contribution_page_id</name>
-    <uniqueName>pledge_contribution_page_id</uniqueName> 
+    <uniqueName>pledge_contribution_page_id</uniqueName>
+    <title>Pledge Contribution Page</title>
     <type>int unsigned</type>                 
     <comment>The Contribution Page which triggered this contribution</comment> 
     <add>2.1</add> 
@@ -101,6 +103,7 @@
   <field>
     <name>currency</name>
     <type>varchar</type>
+    <title>Pledge Currency</title>
     <length>3</length>
     <default>NULL</default>
     <comment>3 character string, value from config setting or input via user.</comment>
@@ -109,6 +112,7 @@
   <field>
     <name>frequency_unit</name>
     <uniqueName>pledge_frequency_unit</uniqueName>
+    <title>Pledge Frequency Unit</title>
     <type>enum</type> 
     <values>day,week,month,year</values>
     <default>'month'</default>
@@ -118,6 +122,7 @@
   <field>
     <name>frequency_interval</name>
     <uniqueName>pledge_frequency_interval</uniqueName>
+    <title>Pledge Frequency Interval</title>
     <type>int unsigned</type>
     <required>true</required>
     <default>1</default>
@@ -127,6 +132,7 @@
   <field>
     <name>frequency_day</name>
     <type>int unsigned</type>
+    <title>Pledge day</title>
     <default>3</default>
     <required>true</required>
     <comment>Day in the period when the pledge payment is due e.g. 1st of month, 15th etc. Use this to set the scheduled dates for pledge payments.</comment>
@@ -135,6 +141,7 @@
   <field>
     <name>installments</name>
     <type>int unsigned</type>
+    <title>Pledge Number of Installments</title>
     <default>1</default>
     <comment>Total number of payments to be made.</comment>
     <add>2.1</add>
@@ -142,6 +149,7 @@
   <field>
     <name>start_date</name>
     <type>datetime</type>
+    <title>Pledge Start Date</title>
     <required>true</required>
     <comment>The date the first scheduled pledge occurs.</comment>
     <add>2.1</add>
@@ -159,30 +167,35 @@
   <field>
     <name>acknowledge_date</name>
     <type>datetime</type>
+    <title>Pledge Acknowledged</title>
     <comment>When a pledge acknowledgement message was sent to the contributor.</comment>
     <add>2.1</add>
   </field>
   <field>
     <name>modified_date</name>
     <type>datetime</type>
+    <title>Pledge Modified Date</title>
     <comment>Last updated date for this pledge record.</comment>
     <add>2.1</add>
   </field>
   <field>
     <name>cancel_date</name>
     <type>datetime</type>
+    <title>Pledge Cancelled Date</title>
     <comment>Date this pledge was cancelled by contributor.</comment>
     <add>2.1</add>
   </field>
   <field>
     <name>end_date</name>
     <type>datetime</type>
+    <title>Pledge End Date</title>
     <comment>Date this pledge finished successfully (total pledge payments equal to or greater than pledged amount).</comment>
     <add>2.1</add>
   </field>
   <field>   
-    <name>honor_contact_id</name>   
-    <type>int unsigned</type>   
+    <name>honor_contact_id</name>
+    <type>int unsigned</type>
+    <title>Pledge Honor Contact</title>
     <comment>FK to contact ID. Used when pledge is made in honor of another contact. This is propagated to contribution records when pledge payments are made.</comment>   
     <add>2.1</add>   
   </field>   
