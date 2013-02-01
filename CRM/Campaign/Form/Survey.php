@@ -176,7 +176,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form {
     }
     else {
       // hack lets suppress the form rendering for now
-      self::$_template->assign('suppressForm', TRUE);
+      self::$_template->assign('isForm', FALSE);
       return 'CRM/Campaign/Form/Survey/Tab.tpl';
     }
   }
