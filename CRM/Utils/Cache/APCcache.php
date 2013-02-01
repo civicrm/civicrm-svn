@@ -68,8 +68,6 @@ class CRM_Utils_Cache_APCcache {
     if (isset($config['prefix'])) {
       $this->_prefix = $config['prefix'];
     }
-    // This has to be removed when cache will work on multi-lingual sites
-    $this->flush();
   }
 
   function set($key, &$value) {
