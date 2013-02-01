@@ -578,7 +578,6 @@ class CRM_Profile_Form extends CRM_Core_Form {
 
     if (($this->_multiRecord & CRM_Core_Action::DELETE)) {
       if (!$this->_recordExists) {
-        $session = CRM_Core_Session::singleton();
         CRM_Core_Session::setStatus(ts('The record %1 doesnot exists', array(1 => $this->_recordId)), ts('Record doesnot exists'), 'alert');
       }
       else {

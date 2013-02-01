@@ -99,13 +99,12 @@ class CRM_Profile_Page_Listings extends CRM_Core_Page {
    * @return void
    * @access public
    *
-   */ function preProcess() {
+   */
+  function preProcess() {
 
     $this->_search = TRUE;
 
-    $search = CRM_Utils_Request::retrieve('search', 'Boolean',
-      $this, FALSE, 0, 'GET'
-    );
+    $search = CRM_Utils_Request::retrieve('search', 'Boolean', $this, FALSE, 0, 'GET');
     if (isset($search) && $search == 0) {
       $this->_search = FALSE;
     }
