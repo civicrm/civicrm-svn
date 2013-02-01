@@ -363,6 +363,8 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form {
       return parent::getTemplateFileName();
     }
     else {
+      // hack lets suppress the form rendering for now
+      self::$_template->assign('suppressForm', TRUE);
       return 'CRM/Event/Form/ManageEvent/Tab.tpl';
     }
   }

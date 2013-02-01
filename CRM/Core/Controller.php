@@ -213,13 +213,8 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
       }
       elseif ($snippet == 5) {
         // this is used for popups and inlined ajax forms
+        // also used for the various tabs via TabHeader
         $this->_print = CRM_Core_Smarty::PRINT_NOFORM;
-      }
-      elseif ($snippet == 6) {
-        // this is used for tabs via the TabHeader protocol
-        // for some reason the tab header includes the form - still researching why
-        $this->_print = CRM_Core_Smarty::PRINT_NOFORM;
-        self::$_template->assign('suppressForm', TRUE);
       }
       else {
         $this->_print = CRM_Core_Smarty::PRINT_SNIPPET;

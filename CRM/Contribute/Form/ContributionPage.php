@@ -417,6 +417,8 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form {
       return parent::getTemplateFileName();
     }
     else {
+      // hack lets suppress the form rendering for now
+      self::$_template->assign('suppressForm', TRUE);
       return 'CRM/Contribute/Form/ContributionPage/Tab.tpl';
     }
   }
