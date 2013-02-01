@@ -42,7 +42,7 @@
     o.trigger('crmFormSuccess', [response]);
     try {
       response = $.parseJSON(response);
-      if (status = response.status) {
+      if ( response.status == 'save' || response.status == 'cancel' ) {
         o.closest('.crm-inline-edit-container').addClass('crm-edit-ready');
         var data = o.data('edit-params');
         var dependent = o.data('dependent-fields') || [];
