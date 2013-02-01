@@ -1172,7 +1172,6 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
             else {
               $values[$index] = $details->$detailName;
             }
-
             $params[$index] = $details->$detailName;
           }
           else {
@@ -1203,7 +1202,6 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
         if (!isset($params[$index])) {
           continue;
         }
-        $customFieldID = CRM_Core_BAO_CustomField::getKeyID($field['name']);
         if (!$customFieldName) {
           $fieldName = $field['name'];
         }
@@ -3477,12 +3475,12 @@ SELECT  group_id
 
         // retain existing element properties and just update and replace key
         CRM_Utils_Array::crmReplaceKey($fields, $name, "phone-{$fieldSuffix}");
-        $fields["phone-{$fieldSuffix}"]['name'] = 'phone';
+        $fields["phone-{$fieldSuffix}"]['name'] = "phone-{$fieldSuffix}";
         $fields["phone-{$fieldSuffix}"]['where'] = 'civicrm_phone.phone';
 
         // add additional phone extension field
         $fields["phone_ext-{$fieldSuffix}"] = $field;
-        $fields["phone_ext-{$fieldSuffix}"]['name'] = 'phone_ext';
+        $fields["phone_ext-{$fieldSuffix}"]['name'] = "phone_ext-{$fieldSuffix}";
         $fields["phone_ext-{$fieldSuffix}"]['where'] = 'civicrm_phone.phone_ext';
       }
     }
