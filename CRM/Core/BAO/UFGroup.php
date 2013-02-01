@@ -3474,13 +3474,16 @@ SELECT  group_id
       //reformat phone and extension field
       if ( substr($field['name'], 0, 13) == 'phone_and_ext') {
         $fieldSuffix = str_replace('phone_and_ext-', '', $field['name']);
-        $field['name'] = 'phone';
-        $field['where'] = 'civicrm_phone.phone';
-        $fields["phone-{$fieldSuffix}"] = $field;
-        $field['name'] = 'phone_ext';
-        $field['where'] = 'civicrm_phone.phone_ext';
+
+        // retain existing element properties and just update and replace key
+        CRM_Utils_Array::crmReplaceKey($fields, $name, "phone-{$fieldSuffix}");
+        $fields["phone-{$fieldSuffix}"]['name'] = 'phone';
+        $fields["phone-{$fieldSuffix}"]['where'] = 'civicrm_phone.phone';
+
+        // add additional phone extension field
         $fields["phone_ext-{$fieldSuffix}"] = $field;
-        unset($fields[$name]);
+        $fields["phone_ext-{$fieldSuffix}"]['name'] = 'phone_ext';
+        $fields["phone_ext-{$fieldSuffix}"]['where'] = 'civicrm_phone.phone_ext';
       }
     }
   }

@@ -587,5 +587,25 @@ class CRM_Utils_Array {
     }
     return $delim . implode($delim, $values) . $delim;
   }
+
+  /**
+   * Function to modify the key in an array without actually changing the order
+   * By default when you add an element it is added at the end
+   *
+   * @param array  $elementArray associated array element
+   * @param string $oldKey       old key
+   * @param string $newKey       new key
+   *
+   * @return array
+   */
+  static function crmReplaceKey(&$elementArray, $oldKey, $newKey) {
+    $keys = array_keys($elementArray);
+    if (false === $index = array_search($oldKey, $keys)) {
+      throw new Exception(sprintf('key "%s" does not exit', $oldKey));
+    }
+    $keys[$index] = $newKey;
+    $elementArray = array_combine($keys, array_values($elementArray));
+    return $elementArray;
+  }
 }
 
