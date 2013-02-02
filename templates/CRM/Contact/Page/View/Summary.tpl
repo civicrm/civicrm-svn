@@ -345,3 +345,6 @@ cj(document).ready(function($) {
 });
 </script>
 {/literal}
+
+{* jQuery validate *}
+{include file="CRM/Form/validate.tpl" form=0}

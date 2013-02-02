@@ -71,6 +71,3 @@
     });
 </script>
 {/literal}
-
-{* jQuery validate *}
-{include file="CRM/Form/validate.tpl"}

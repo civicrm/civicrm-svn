@@ -24,6 +24,7 @@
           o.removeAttr('style');
         });
         removeCiviOverlay(o);
+        $('form', o).validate(CRM.validate.params);
         $('form', o).ajaxForm({
           dataType:'html',
           method:'POST',
@@ -47,10 +48,8 @@
         var data = o.data('edit-params');
         var dependent = o.data('dependent-fields') || [];
         // Clone the add-new link if replacing it, and queue the clone to be refreshed as a dependant block
-        if (o.hasClass('add-new')) {
-          if (response.addressId) {
-            data.aid = response.addressId;
-          }
+        if (o.hasClass('add-new') && response.addressId) {
+          data.aid = response.addressId;
           var clone = o.parent().clone();
           o.data('edit-params', data);
           $('.crm-container-snippet', clone).remove();
@@ -94,13 +93,13 @@
       $('form', o).ajaxForm('destroy');
       $('.crm-container-snippet', o).replaceWith(response);
       var data = o.data('edit-params');
+      $('form', o).validate(CRM.validate.params);
       $('form', o).ajaxForm({
         dataType:'html',
         method:'POST',
         data: data,
         success: requestHandler
       });
-
       o.trigger('crmFormError', [response]).trigger('crmFormLoad');
     }
   }; 
@@ -202,6 +201,7 @@
         $('.inline-edit-hidden-content > *:first-child', container).unwrap();
         container.removeClass('form');
         container.closest('.crm-inline-edit-container').addClass('crm-edit-ready');
+        $('a.ui-notify-close', '#crm-notification-container').click();
         return false;
       })
       // Switch tabs when clicking tag link

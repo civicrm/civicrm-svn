@@ -66,17 +66,20 @@ cj(function($) {
     }
   };
 
-  if (CRM.validate && CRM.validate.params) {
-    $.extend(params, CRM.validate.params, true);
-  }
-  $("#{/literal}{$form.formName}{literal}").validate(params);
+  CRM.validate.params = CRM.validate.params || {};
+  $.extend(CRM.validate.params, params);
 
-  // Call any post-initialization callbacks
-  if (CRM.validate && CRM.validate.functions) {
-    for (var i in CRM.validate.functions) {
-      CRM.validate.functions[i]();
+  {/literal}
+  {if $form && $form.formName}
+    $("#{$form.formName}").validate(params);
+    {literal}
+    // Call any post-initialization callbacks
+    if (CRM.validate && CRM.validate.functions) {
+      for (var i in CRM.validate.functions) {
+        CRM.validate.functions[i]();
+      }
     }
-  }
+    {/literal}
+  {/if}
 });
 </script>
-{/literal}

@@ -24,6 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* Display contact-related footer. *}
+{strip}
 <div class="crm-footer" id="crm-record-log">
   <span class="col1">
     {if !empty($external_identifier)}{ts}External ID{/ts}:&nbsp;{$external_identifier}{/if}
@@ -36,3 +37,4 @@
     {/if}
   {/if}
 </div>
+{/strip}

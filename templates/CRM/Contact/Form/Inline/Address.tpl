@@ -33,15 +33,11 @@
         </div>
       </td>
     </tr>
-    {if $masterAddress.$blockId gt 0 }
-        <tr><td><div class="message status"><div class="icon inform-icon"></div>&nbsp; {ts 1=$masterAddress.$blockId}This address is shared with %1 contact record(s). Modifying this address will automatically update the shared address for these contacts.{/ts}</div></td></tr>
-    {/if}
      <tr>
         <td>
            <span class="crm-address-element location_type_id-address-element">
             {$form.address.$blockId.location_type_id.label}&nbsp;{$form.address.$blockId.location_type_id.html}
-            </span>&nbsp;
-            <!--a href="#" title="{ts}Delete Address Block{/ts}">{ts}Delete this address{/ts}</a-->
+            </span>
         </td>
      </tr>
      <tr>
@@ -109,11 +105,16 @@
     var container = cj(this).closest('div.crm-inline-edit.address');
     var origValue = container.attr('data-location-type-id') || '';
     container.data('location-type-id', origValue);
-    cj(':input[id$=_location_type_id]', '.crm-inline-edit.address').each(function() {
-      if (cj(this).val() == origValue) {
-        cj(this).val('').change();
-      }
-    });
   });
+  {/literal}
+  {if $masterAddress.$blockId}
+  {literal}
+    cj(function($) {
+      var msg = CRM.alert({/literal}'{ts escape="js" 1=$masterAddress.$blockId}This address is shared with %1 contact record(s). Modifying this address will automatically update the shared address for these contacts.{/ts}', '{ts escape="js"}Editing Master Address{/ts}'{literal}, 'info', {expires: 0});
+      $('#{/literal}{$form.formName}{literal}').submit(function() {
+        msg && msg.close && msg.close();
+      });
+    });
+  {/literal}
+  {/if}
 </script>
-{/literal}
