@@ -144,21 +144,6 @@ class CRM_Core_Smarty extends Smarty {
       $this->assign('langSwitch', CRM_Core_I18n::languages(TRUE));
     }
 
-    //check if logged in user has access CiviCRM permission and build menu
-    $buildNavigation = CRM_Core_Permission::check('access CiviCRM');
-    $this->assign('buildNavigation', $buildNavigation);
-
-
-    if (!CRM_Core_Config::isUpgradeMode() &&
-      $buildNavigation
-    ) {
-      $contactID = $session->get('userID');
-      if ($contactID) {
-        $navigation = CRM_Core_BAO_Navigation::createNavigation($contactID);
-        $this->assign('navigation', $navigation);
-      }
-    }
-
     $this->register_function('crmURL', array('CRM_Utils_System', 'crmURL'));
   }
 
