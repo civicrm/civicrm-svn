@@ -46,7 +46,7 @@ function civicrm_html_head() {
   }
 
   $head = NULL;
-  if (arg(0) == 'civicrm' || user_access('access CiviCRM')) {
+  if (arg(0) == 'civicrm') {
     require_once 'CRM/Core/Config.php';
     $config = CRM_Core_Config::singleton();
 
