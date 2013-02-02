@@ -35,15 +35,15 @@
   <field>
     <name>price_field_id</name>
     <type>int unsigned</type>
-    <required>true</required>
-    <comment>FK to price_field</comment>
+    <comment>FK to civicrm_price_field</comment>
+    <!-- changed to not required in 4.3 in order to change ON DELETE CASCADE FK constraint to SET NULL -->
     <add>1.7</add>
   </field>
   <foreignKey>
     <name>price_field_id</name>
     <table>civicrm_price_field</table>
     <key>id</key>
-    <onDelete>CASCADE</onDelete>
+    <onDelete>SET NULL</onDelete>
   </foreignKey>
   <field>
     <name>option_group_id</name>
@@ -57,8 +57,9 @@
     <name>label</name>
     <type>varchar</type>
     <length>255</length>
-    <required>true</required>
-    <comment>descriptive label for item - from custom_option.label</comment>
+    <default>NULL</default>
+    <!-- changed to not required in 4.2.3 -->
+    <comment>descriptive label for item - from price_field_value.label</comment>
     <add>1.7</add>
   </field>
   <field>
@@ -108,7 +109,7 @@
     <name>price_field_value_id</name>
     <type>int unsigned</type>
     <default>NULL</default>
-    <comment>Implicit FK to civicrm_option_value</comment>
+    <comment>FK to civicrm_price_field_value</comment>
     <add>3.3</add>
   </field>
   <foreignKey>

@@ -834,7 +834,7 @@ VALUES
 ALTER TABLE civicrm_payment_processor_type MODIFY COLUMN title varchar(127);
 
 -- CRM-11665
-ALTER TABLE civicrm_address
+ALTER TABLE `civicrm_address`
   ADD COLUMN manual_geo_code tinyint(4) DEFAULT '0' COMMENT 'Is this a manually entered geo code.';
 
 -- CRM-11761
@@ -845,3 +845,11 @@ UPDATE `civicrm_trunk`.`civicrm_setting` SET `group_name` = 'Personal Preference
 INSERT INTO civicrm_action_mapping ( entity, entity_value, entity_value_label, entity_status, entity_status_label, entity_date_start, entity_date_end, entity_recipient )
 VALUES
 ( 'civicrm_participant', 'event_template', 'Event Template', 'civicrm_participant_status_type', 'Participant Status', 'event_start_date', 'event_end_date', 'event_contacts');
+
+-- CRM-11802 Fix ON DELETE CASCADE constraint for line_item.price_field_id
+ALTER TABLE `civicrm_line_item`
+  DROP FOREIGN KEY `FK_civicrm_line_item_price_field_id`,
+  CHANGE `price_field_id` `price_field_id` INT( 10 ) UNSIGNED DEFAULT NULL;
+
+ALTER TABLE `civicrm_line_item`
+  ADD CONSTRAINT `FK_civicrm_line_item_price_field_id` FOREIGN KEY (`price_field_id`) REFERENCES `civicrm_price_field`(id) ON DELETE SET NULL;
