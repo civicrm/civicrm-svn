@@ -88,7 +88,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
       $this->click("add");
       $this->click("_qf_Component_next-bottom");
       $this->waitForPageToLoad("30000");
-      $this->assertTrue($this->isTextPresent("Your changes have been saved."));
+      $this->assertTrue($this->isTextPresent("Changes Saved."));
     }
 
     // add the required Drupal permission
@@ -139,8 +139,8 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
 
     // select the group this custom data set extends
     $this->select("extends[0]", "value=Activity");
-    $this->waitForElementPresent("extends[1]");
-    $this->select("extends[1]", "label=Survey");
+    $this->waitForElementPresent("//select[@id='extends_1']");
+    $this->select("//select[@id='extends_1']", "label=Survey");
 
     // save the custom group
     $this->click("_qf_Group_next-bottom");
@@ -196,7 +196,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
     // create a survey
     $this->open($this->sboxPath . "civicrm/survey/add?reset=1");
 
-    $this->waitForElementPresent("_qf_Survey_next-bottom");
+    $this->waitForElementPresent("_qf_Main_upload-bottom");
 
     // fill in a unique title for the survey
     $this->type("title", "Survey $title");
@@ -207,16 +207,6 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
     // select the activity type
     $this->select("activity_type_id", "label=Survey");
 
-    // select the profile created for the survey
-    $this->select("profile_id", "label=Profile $title");
-
-    // create a set of options for Survey Responses
-    $this->type("option_label_1", "Label $title 1");
-    $this->type("option_value_1", "1");
-
-    $this->type("option_label_2", "Label $title 2");
-    $this->type("option_value_2", "2");
-
     // fill in reserve survey respondents
     $this->type("default_number_of_contacts", 50);
 
@@ -226,9 +216,26 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
     // release frequency
     $this->type("release_frequency", 2);
 
-    $this->click("_qf_Survey_next-bottom");
-    $this->waitForPageToLoad("30000");
-    $this->assertTrue($this->isTextPresent("Survey Survey $title has been saved."),
+    $this->click("_qf_Main_upload-bottom");
+    $this->waitForElementPresent("_qf_Questions_upload_next-bottom");
+    
+    //Select the profile for the survey
+    $this->select("//form[@id='Questions']/div[2]/table/tbody/tr[1]/td[2]/div/div/span/select", "label=New Individual");
+
+    // select the question created for the survey 
+    $this->select("//form[@id='Questions']/div[2]/table/tbody/tr[2]/td[2]/div/div/span/select", "label=Profile $title");
+    $this->click("_qf_Questions_upload_next-bottom");
+
+    // create a set of options for Survey Responses _qf_Results_upload_done-bottom
+    $this->waitForElementPresent('_qf_Results_upload_done-bottom');
+    $this->type("//input[@id='option_label_1']", "Label $title 1");
+    $this->type("//input[@id='option_value_1']", "1");
+
+    $this->type("//input[@id='option_label_2']", "Label $title 2");
+    $this->type("//input[@id='option_value_2']", "2");
+    $this->click('_qf_Results_upload_done-bottom');
+    $this->waitForElementPresent("//div[@id='search_form_survey']");
+    $this->assertTrue($this->isTextPresent("'Results' have been saved."),
       "Status message didn't show up after saving survey!"
     );
 
@@ -456,7 +463,6 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
     $surveyProfile = "Survey Profile $title";
     $this->type('title', $surveyProfile);
     $this->click('_qf_Group_next-bottom');
-    $this->waitForPageToLoad("60000");
     $this->waitForElementPresent('_qf_Field_cancel-bottom');
     $this->assertTrue($this->isTextPresent("Your CiviCRM Profile '$surveyProfile' has been added. You can add fields to this profile now. "));
 
@@ -471,8 +477,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
     $this->click('_qf_Field_next_new-bottom');
     $this->waitForPageToLoad("30000");
     $this->waitForElementPresent('_qf_Field_cancel-bottom');
-    $this->assertTrue($this->isTextPresent("Your CiviCRM Profile Field 'Phone' has been saved to '$surveyProfile'. You can add another profile field."));
-
+    
     // Custom Data Fields
     $this->select('field_name[0]', "value=Contact");
     $this->select('field_name[1]', "label=$field1 :: $customGroup");
@@ -482,7 +487,6 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
     $this->check('in_selector');
     $this->click('_qf_Field_next-bottom');
     $this->waitForPageToLoad("30000");
-    $this->assertTrue($this->isTextPresent("Your CiviCRM Profile Field '$field1' has been saved to '$surveyProfile'."));
 
     // Enable CiviCampaign module if necessary
     $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
@@ -495,7 +499,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
       $this->click('add');
       $this->click('_qf_Component_next-bottom');
       $this->waitForPageToLoad("30000");
-      $this->assertTrue($this->isTextPresent('Your changes have been saved.'));
+      $this->assertTrue($this->isTextPresent('Changes Saved.'));
     }
 
     // add the required Drupal permission
@@ -504,30 +508,51 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
 
     // Create a survey
     $this->open($this->sboxPath . "civicrm/survey/add?reset=1");
-    $this->waitForElementPresent("_qf_Survey_next-bottom");
+
+    $this->waitForElementPresent("_qf_Main_upload-bottom");
 
     // fill in a unique title for the survey
     $surveyTitle = "Survey $title";
     $this->type('title', $surveyTitle);
 
+    // select the created campaign
+    //$this->select("campaign_id", "label=Campaign $title");
+
     // select the activity type
-    $this->select('activity_type_id', "label=Survey");
+    $this->select("activity_type_id", "label=Survey");
 
-    // select the profile created for the survey
-    $this->select('profile_id', "label=$surveyProfile");
+    // fill in reserve survey respondents
+    $this->type("default_number_of_contacts", 50);
 
-    // create a set of options for Survey Responses
+    // fill in interview survey respondents
+    $this->type("max_number_of_contacts", 100);
+
+    // release frequency
+    $this->type("release_frequency", 2);
+
+    $this->click("_qf_Main_upload-bottom");
+    $this->waitForElementPresent("_qf_Questions_upload_next-bottom");
+    
+    //Select the profile for the survey
+    $this->select("//form[@id='Questions']/div[2]/table/tbody/tr[1]/td[2]/div/div/span/select", "label=New Individual");
+
+    // select the question created for the survey 
+    $this->select("//form[@id='Questions']/div[2]/table/tbody/tr[2]/td[2]/div/div/span/select", "label=$surveyProfile");
+    $this->click("_qf_Questions_upload_next-bottom");
+
+    // create a set of options for Survey Responses _qf_Results_upload_done-bottom
+    $this->waitForElementPresent('_qf_Results_upload_done-bottom');
     $optionLabel1 = "Label $title 1";
-    $this->type('option_label_1', $optionLabel1);
-    $this->type('option_value_1', 1);
+    $this->type("//input[@id='option_label_1']", "$optionLabel1");
+    $this->type("//input[@id='option_value_1']", "1");
 
     $optionLabel2 = "Label $title 2";
-    $this->type('option_label_2', $optionLabel2);
-    $this->type('option_value_2', 2);
-
-    $this->click('_qf_Survey_next-bottom');
-    $this->waitForPageToLoad("30000");
-    $this->assertTrue($this->isTextPresent("Survey Survey $title has been saved."),
+    $this->type("//input[@id='option_label_2']", "$optionLabel2");
+    $this->type("//input[@id='option_value_2']", "2");
+    $this->type("//input[@id='report_title']", "Survey $title");
+    $this->click('_qf_Results_upload_done-bottom');
+    $this->waitForElementPresent("//div[@id='search_form_survey']");
+    $this->assertTrue($this->isTextPresent("'Results' have been saved."),
       "Status message didn't show up after saving survey!"
     );
 
@@ -604,8 +629,8 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('_qf_Interview_cancel_interview');
 
     $this->type("field_{$id1}_phone-Primary-1", 9876543210);
-    $this->click("xpath=//table[@id='voterRecords']/tbody//tr[@id='row_{$id1}']/td[4]/input[2]/../label[text()='$label1']");
-    $this->click("xpath=//table[@id='voterRecords']/tbody//tr[@id='row_{$id1}']/td[4]/input[6]/../label[text()='$label2']");
+    $this->click("xpath=//table[@id='voterRecords']/tbody//tr[@id='row_{$id1}']/td[5]/input[2]/../label[text()='$label1']");
+    $this->click("xpath=//table[@id='voterRecords']/tbody//tr[@id='row_{$id1}']/td[5]/input[6]/../label[text()='$label2']");
     $this->select("field_{$id1}_result", $optionLabel1);
     $this->click("interview_voter_button_{$id1}");
     sleep(3);
@@ -647,7 +672,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
     $this->select('campaignGroupsSelect1', "label=$groupName");
     $this->waitForElementPresent("xpath=//ul[@id='crmasmList1']/li");
     $this->click("xpath=//div[@id='search_form_gotv']/div[2]/table/tbody/tr[6]/td/a[text()='Search']");
-
+    
     $this->waitForElementPresent("xpath=//table[@id='gotvVoterRecords']/tbody/tr/td[7]");
     $this->check("xpath=//table[@id='gotvVoterRecords']/tbody/tr/td[7]/input");
 
