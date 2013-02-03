@@ -48,24 +48,14 @@ class CRM_Core_BAO_IM extends CRM_Core_DAO_IM {
    * @static
    */
   static function add(&$params) {
-    if (!empty($params['id'])) {
-      CRM_Utils_Hook::pre('edit', 'IM', $params['id'], $params);
-    }
-    else {
-      CRM_Utils_Hook::pre('create', 'IM', NULL, $params);
-    }
+    $hook = empty($params['id']) ? 'create' : 'edit';
+    CRM_Utils_Hook::pre($hook, 'IM', CRM_Utils_Array::value('id', $params), $params);
 
     $im = new CRM_Core_DAO_IM();
     $im->copyValues($params);
     $im->save();
 
-    if (!empty($params['id'])) {
-      CRM_Utils_Hook::post('edit', 'IM', $im->id, $im);
-    }
-    else {
-      CRM_Utils_Hook::post('create', 'IM', $im->id, $im);
-    }
-
+    CRM_Utils_Hook::post($hook, 'IM', $im->id, $im);
     return $im;
   }
 

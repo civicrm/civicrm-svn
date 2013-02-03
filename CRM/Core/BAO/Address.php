@@ -153,14 +153,8 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address {
       CRM_Core_BAO_Address::fixAddress($params);
     }
 
-    if (CRM_Utils_Array::value('id', $params)) {
-      CRM_Utils_Hook::pre('edit', 'Address', $params['id'], $params);
-      $isEdit = TRUE;
-    }
-    else {
-      CRM_Utils_Hook::pre('create', 'Address', NULL, $params);
-      $isEdit = FALSE;
-    }
+    $hook = empty($params['id']) ? 'create' : 'edit';
+    CRM_Utils_Hook::pre($hook, 'Address', CRM_Utils_Array::value('id', $params), $params);
 
     // if id is set & is_primary isn't we can assume no change
     if (is_numeric(CRM_Utils_Array::value('is_primary', $params)) || empty($params['id'])) {
@@ -197,12 +191,7 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address {
       }
 
       // lets call the post hook only after we've done all the follow on processing
-      if ($isEdit) {
-        CRM_Utils_Hook::post('edit', 'Address', $params['id'], $address);
-      }
-      else {
-        CRM_Utils_Hook::post('create', 'Address', NULL, $address);
-      }
+      CRM_Utils_Hook::post($hook, 'Address', $address->id, $address);
     }
 
     return $address;

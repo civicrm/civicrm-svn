@@ -48,10 +48,15 @@ class CRM_Core_BAO_OpenID extends CRM_Core_DAO_OpenID {
    * @static
    */
   static function add(&$params) {
+    $hook = empty($params['id']) ? 'create' : 'edit';
+    CRM_Utils_Hook::pre($hook, 'openId', CRM_Utils_Array::value('id', $params), $params);
+
     $openId = new CRM_Core_DAO_OpenID();
     $openId->copyValues($params);
+    $openId->save();
 
-    return $openId->save();
+    CRM_Utils_Hook::post($hook, 'openId', $openId->id, $openId);
+    return $openId;
   }
 
   /**

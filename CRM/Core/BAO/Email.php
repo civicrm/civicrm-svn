@@ -66,16 +66,10 @@ class CRM_Core_BAO_Email extends CRM_Core_DAO_Email {
    * @static
    */
   static function add(&$params) {
+    $hook = empty($params['id']) ? 'create' : 'edit';
+    CRM_Utils_Hook::pre($hook, 'Email', CRM_Utils_Array::value('id', $params), $params);
+
     $email = new CRM_Core_DAO_Email();
-
-    // CRM-11006 move calls to pre hook from create function to add function
-    if (!empty($params['id'])) {
-      CRM_Utils_Hook::pre('edit', 'Email', $params['id'], $params);
-    }
-    else {
-      CRM_Utils_Hook::pre('create', 'Email', NULL, $params);
-    }
-
     $email->copyValues($params);
 
     // lower case email field to optimize queries
@@ -97,16 +91,8 @@ WHERE  contact_id = {$params['contact_id']}
     self::holdEmail($email);
 
     $email->save();
-    /*
-     * CRM-11006 move calls to pre hook from create function to add function
-     */
-    if (!empty($params['id'])) {
-      CRM_Utils_Hook::post('edit', 'Email', $email->id, $email);
-    }
-    else {
-      CRM_Utils_Hook::post('create', 'Email', $email->id, $email);
-    }
 
+    CRM_Utils_Hook::post($hook, 'Email', $email->id, $email);
     return $email;
   }
 
