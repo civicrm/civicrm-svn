@@ -39,16 +39,22 @@ class CRM_Core_ResourcesTest extends CiviUnitTestCase {
     );
   }
 
+  /**
+   * @var CRM_Core_Resources
+   */
+  protected $res;
+
+  /**
+   * @var CRM_Extension_Mapper
+   */
+  protected $mapper;
+
   function setUp() {
     parent::setUp();
 
-    $this->res = new CRM_Core_Resources(function($name) {
-      if ($name == 'civicrm') {
-        return 'http://core-app';
-      } else {
-        return 'http://ext-dir/' . $name;
-      }
-    }, NULL);
+    list ($this->basedir, $this->container, $this->mapper) = $this->_createMapper();
+    $cache = new CRM_Utils_Cache_Arraycache(array());
+    $this->res = new CRM_Core_Resources($this->mapper, $cache, NULL);
     $this->res->setCacheCode('resTest');
     CRM_Core_Resources::singleton($this->res);
 
@@ -72,6 +78,20 @@ class CRM_Core_ResourcesTest extends CiviUnitTestCase {
       ;
     $this->assertEquals($expected, $actual);
   }
+
+  /**
+   * When adding a script file, any ts() expressions should be translated and added to the 'strings'
+   *
+   * FIXME: This can't work because the tests run in English and CRM_Core_Resources optimizes
+   * away the English data from $settings['strings']
+  function testAddScriptFile_strings() {
+    file_put_contents($this->mapper->keyToBasePath('com.example.ext') . '/hello.js', 'alert(ts("Hello world"));');
+    $this->res->addScriptFile('com.example.ext', 'hello.js', 0, 'testAddScriptFile_strings');
+    $settings = $this->res->getSettings();
+    $expected = array('Hello world');
+    $this->assertEquals($expected, $settings['strings']);
+  }
+  */
 
   function testAddScriptURL() {
     $this->res
@@ -226,4 +246,21 @@ class CRM_Core_ResourcesTest extends CiviUnitTestCase {
     $actual = $smarty->fetch('string:{crmResURL ext=com.example.ext}');
     $this->assertEquals('http://ext-dir/com.example.ext/', $actual);
   }
+
+  /**
+   * @param CRM_Utils_Cache_Interface $cache
+   * @param null $cacheKey
+   * @param string $appendPathGarbage
+   * @return array(string $basedir, CRM_Extension_Container_Interface, CRM_Extension_Mapper)
+   */
+  function _createMapper(CRM_Utils_Cache_Interface $cache = NULL, $cacheKey = NULL) {
+    $basedir = rtrim($this->createTempDir('ext-'), '/');
+    mkdir("$basedir/com.example.ext");
+    file_put_contents("$basedir/com.example.ext/info.xml", "<extension key='com.example.ext' type='report'><file>oddball</file></extension>");
+    // not needed for now // file_put_contents("$basedir/weird/bar/oddball.php", "<?php\n");
+    $c = new CRM_Extension_Container_Basic($basedir, 'http://ext-dir', $cache, $cacheKey);
+    $mapper = new CRM_Extension_Mapper($c, NULL, NULL, '/pathto/civicrm', 'http://core-app');
+    return array($basedir, $c, $mapper);
+  }
+
 }

@@ -80,12 +80,26 @@ class CRM_Extension_Mapper {
 
   protected $cacheKey;
 
-  public function __construct(CRM_Extension_Container_Interface $container, CRM_Utils_Cache_Interface $cache = NULL, $cacheKey = NULL) {
+  protected $civicrmPath;
+
+  protected $civicrmUrl;
+
+  public function __construct(CRM_Extension_Container_Interface $container, CRM_Utils_Cache_Interface $cache = NULL, $cacheKey = NULL, $civicrmPath = NULL, $civicrmUrl = NULL) {
     $this->container = $container;
     $this->cache = $cache;
     $this->cacheKey = $cacheKey;
-    $config = CRM_Core_Config::singleton();
-    $this->civicrmUrl = rtrim($config->resourceBase, '/');
+    if ($civicrmUrl) {
+      $this->civicrmUrl = rtrim($civicrmUrl, '/');
+    } else {
+      $config = CRM_Core_Config::singleton();
+      $this->civicrmUrl = rtrim($config->resourceBase, '/');
+    }
+    if ($civicrmPath) {
+      $this->civicrmPath = rtrim($civicrmPath,'/');
+    } else {
+      global $civicrm_root;
+      $this->civicrmPath = rtrim($civicrm_root,'/');
+    }
   }
 
   /**
@@ -204,8 +218,7 @@ class CRM_Extension_Mapper {
    */
   public function keyToBasePath($key) {
     if ($key == 'civicrm') {
-      global $civicrm_root;
-      return rtrim($civicrm_root,'/');
+      return $this->civicrmPath;
     }
     return $this->container->getPath($key);
   }
