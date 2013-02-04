@@ -85,7 +85,7 @@
     <div class="crm-block crm-form-block crm-search-form-block">
     {assign var='searchForm' value="search_form_$searchFor"}
 
-      <div id="{$searchForm}" class="crm-accordion-wrapper crm-survey_search_form-accordion ">
+      <div id="{$searchForm}" class="crm-accordion-wrapper crm-survey_search_form-accordion{if $force and !$buildSelector} collapsed{/if}">
         <div class="crm-accordion-header">
             {ts}Search Surveys{/ts}
         </div><!-- /.crm-accordion-header -->
@@ -139,9 +139,6 @@
  {if $force and !$buildSelector}
  {literal}
  cj( function( ) {
-    //collapse the search form.
-    var searchFormName = '#search_form_' + {/literal}'{$searchFor}'{literal};
-    cj( searchFormName + '.crm-accordion-wrapper:not(.collapsed)').crmAccordionToggle();
     searchSurveys( {/literal}'{$qfKey}'{literal} );
  });
 

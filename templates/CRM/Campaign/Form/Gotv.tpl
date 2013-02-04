@@ -85,9 +85,6 @@
  {if $force and !$buildSelector}
  {literal}
  cj( function( ) {
-    //collapse the search form.
-    var searchFormName = '#search_form_' + {/literal}'{$searchVoterFor}'{literal};
-    cj( searchFormName + '.crm-accordion-wrapper:not(.collapsed)').crmAccordionToggle();
     searchVoters( {/literal}'{$qfKey}'{literal} );
  });
 

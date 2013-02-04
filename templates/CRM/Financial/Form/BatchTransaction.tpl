@@ -115,7 +115,7 @@
 cj( function() {
   cj().crmAccordions();
   cj('#_qf_BatchTransaction_submit-top, #_qf_BatchTransaction_submit-botttom').click(function() {
-    cj('.crm-batch_transaction_search-accordion:not(.collapsed)').crmAccordionToggle(250);
+    cj('.crm-batch_transaction_search-accordion:not(.collapsed)').crmAccordionToggle();
   });
   var batchStatus = {/literal}{$statusID}{literal};
   // build transaction listing only for open batches

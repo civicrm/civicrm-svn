@@ -26,7 +26,7 @@
   <div class="crm-designer-palette">
     <div class="crm-designer-palette-search">
       <input type="text" placeholder="{ts}Search Fields{/ts}" />
-      <a class="crm-designer-palette-clear-search" href="#" title="{ts}Clear search{/ts}">X</a>
+      <a class="crm-designer-palette-clear-search" href="#" title="{ts}Clear search{/ts}"><img src="{$config->resourceBase}i/close.png" class="action-icon" alt="X" /></a>
       <div class="crm-designer-palette-controls">
         <a href="#" class="crm-designer-palette-toggle" rel="open_all">{ts}Open All{/ts}</a>&nbsp; |&nbsp;
         <a href="#" class="crm-designer-palette-toggle" rel="close_all">{ts}Close All{/ts}</a>&nbsp; |&nbsp;
