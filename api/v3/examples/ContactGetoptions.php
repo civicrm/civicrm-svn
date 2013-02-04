@@ -20,8 +20,13 @@ $params = array(
 function contact_getoptions_expectedresult(){
 
   $expectedResult = array( 
-  '1' => 'Label1',
-  '2' => 'Label2',
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 2,
+  'values' => array( 
+      '1' => 'Label1',
+      '2' => 'Label2',
+    ),
 );
 
   return $expectedResult  ;

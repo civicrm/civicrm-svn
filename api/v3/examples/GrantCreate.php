@@ -35,8 +35,8 @@ function grant_create_expectedresult(){
       '1' => array( 
           'id' => '1',
           'contact_id' => '3',
-          'application_received_date' => '20130122025410',
-          'decision_date' => '20130128000000',
+          'application_received_date' => '20130204223148',
+          'decision_date' => '20130211000000',
           'money_transfer_date' => '',
           'grant_due_date' => '',
           'grant_report_received' => '',

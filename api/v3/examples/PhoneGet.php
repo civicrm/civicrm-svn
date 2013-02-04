@@ -5,7 +5,7 @@
  */
 function phone_get_example(){
 $params = array( 
-  'contact_id' => 1,
+  'contact_id' => '',
   'phone' => '(123) 456-7890',
   'version' => 3,
 );
@@ -23,8 +23,19 @@ function phone_get_expectedresult(){
   $expectedResult = array( 
   'is_error' => 0,
   'version' => 3,
-  'count' => 0,
-  'values' => array(),
+  'count' => 1,
+  'id' => 1,
+  'values' => array( 
+      '1' => array( 
+          'id' => '1',
+          'contact_id' => '8',
+          'location_type_id' => '11',
+          'is_primary' => '1',
+          'is_billing' => 0,
+          'phone' => '(123) 456-7890',
+          'phone_numeric' => '1234567890',
+        ),
+    ),
 );
 
   return $expectedResult  ;

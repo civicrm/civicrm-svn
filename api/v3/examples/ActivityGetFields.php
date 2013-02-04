@@ -38,6 +38,7 @@ function activity_getfields_expectedresult(){
       'source_record_id' => array( 
           'name' => 'source_record_id',
           'type' => 1,
+          'title' => 'Source Record',
         ),
       'activity_type_id' => array( 
           'name' => 'activity_type_id',
@@ -60,18 +61,20 @@ function activity_getfields_expectedresult(){
       'phone_id' => array( 
           'name' => 'phone_id',
           'type' => 1,
+          'title' => 'Phone (called) ID',
           'FKClassName' => 'CRM_Core_DAO_Phone',
         ),
       'phone_number' => array( 
           'name' => 'phone_number',
           'type' => 2,
-          'title' => 'Phone Number',
+          'title' => 'Phone (called) Number',
           'maxlength' => 64,
           'size' => 30,
         ),
       'priority_id' => array( 
           'name' => 'priority_id',
           'type' => 1,
+          'title' => 'Priority',
           'pseudoconstant' => array( 
               'name' => 'priority',
               'optionGroupName' => 'priority',
@@ -88,6 +91,7 @@ function activity_getfields_expectedresult(){
       'parent_id' => array( 
           'name' => 'parent_id',
           'type' => 1,
+          'title' => 'Parent Activity Id',
           'FKClassName' => 'CRM_Activity_DAO_Activity',
         ),
       'is_auto' => array( 
@@ -98,6 +102,7 @@ function activity_getfields_expectedresult(){
       'relationship_id' => array( 
           'name' => 'relationship_id',
           'type' => 1,
+          'title' => 'Relationship Id',
           'default' => 'UL',
           'FKClassName' => 'CRM_Contact_DAO_Relationship',
         ),
@@ -113,6 +118,7 @@ function activity_getfields_expectedresult(){
       'original_id' => array( 
           'name' => 'original_id',
           'type' => 1,
+          'title' => 'Original Activity ID ',
           'FKClassName' => 'CRM_Activity_DAO_Activity',
         ),
       'weight' => array( 

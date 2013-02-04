@@ -8,6 +8,7 @@ $params = array(
   'version' => 3,
   'domain_id' => 'all',
   'uniq_email_per_site' => 1,
+  'debug' => 1,
 );
 
   $result = civicrm_api( 'setting','create',$params );
@@ -21,8 +22,25 @@ $params = array(
 function setting_create_expectedresult(){
 
   $expectedResult = array( 
-  'is_error' => 1,
-  'error_message' => 'All domains not retrieved - problem with Domain Get api call Undefined index: contact_id',
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 3,
+  'values' => array( 
+      '1' => array( 
+          'uniq_email_per_site' => '1',
+        ),
+      '2' => array( 
+          'uniq_email_per_site' => '1',
+        ),
+      '3' => array( 
+          'uniq_email_per_site' => '1',
+        ),
+    ),
+  'xdebug' => array( 
+      'peakMemory' => 127711392,
+      'memory' => 123061848,
+      'timeIndex' => '1357.0696148872',
+    ),
 );
 
   return $expectedResult  ;

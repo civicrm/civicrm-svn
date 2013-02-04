@@ -416,6 +416,18 @@ function contact_getfields_expectedresult(){
           'name' => 'gender_id',
           'type' => 1,
           'title' => 'Gender',
+          'pseudoconstant' => array( 
+              'name' => 'gender',
+              'optionGroupName' => 'gender',
+            ),
+          'api.aliases' => array( 
+              '0' => 'gender',
+            ),
+          'options' => array( 
+              '1' => 'Female',
+              '2' => 'Male',
+              '3' => 'Transgender',
+            ),
         ),
       'birth_date' => array( 
           'name' => 'birth_date',
@@ -545,11 +557,12 @@ function contact_getfields_expectedresult(){
         ),
       'custom_1' => array( 
           'label' => 'Country',
-          'groupTitle' => 'select_test_group',
+          'groupTitle' => 'select_test_g',
           'data_type' => 'String',
           'html_type' => 'Select',
           'text_length' => '',
           'options_per_line' => '',
+          'custom_group_id' => '1',
           'extends' => 'Contact',
           'is_search_range' => 0,
           'extends_entity_column_value' => '',

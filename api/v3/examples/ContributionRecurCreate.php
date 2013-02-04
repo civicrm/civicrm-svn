@@ -27,9 +27,41 @@ $params = array(
 function contribution_recur_create_expectedresult(){
 
   $expectedResult = array( 
-  'is_error' => 1,
-  'error_message' => 'DB Error: 1364 ** Field 'create_date' doesn't have a default value [DB Error: unknown error]',
-  'tip' => 'add debug=1 to your API call to have more info about the error',
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'id' => 1,
+  'values' => array( 
+      '1' => array( 
+          'id' => '1',
+          'contact_id' => '3',
+          'amount' => '500',
+          'currency' => 'USD',
+          'frequency_unit' => 'day',
+          'frequency_interval' => '1',
+          'installments' => '12',
+          'start_date' => '20120101000000',
+          'create_date' => '20130204222627',
+          'modified_date' => '2012-11-14 16:02:35',
+          'cancel_date' => '',
+          'end_date' => '',
+          'processor_id' => '',
+          'trxn_id' => '',
+          'invoice_id' => '',
+          'contribution_status_id' => '1',
+          'is_test' => '',
+          'cycle_day' => '',
+          'next_sched_contribution' => '',
+          'failure_count' => '',
+          'failure_retry_date' => '',
+          'auto_renew' => '',
+          'payment_processor_id' => '',
+          'financial_type_id' => '',
+          'payment_instrument_id' => '',
+          'campaign_id' => '',
+          'is_email_receipt' => '',
+        ),
+    ),
 );
 
   return $expectedResult  ;

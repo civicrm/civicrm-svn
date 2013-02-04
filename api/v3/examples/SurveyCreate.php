@@ -41,7 +41,7 @@ function survey_create_expectedresult(){
           'is_active' => '',
           'is_default' => '',
           'created_id' => '',
-          'created_date' => '20130122004717',
+          'created_date' => '20130204224326',
           'last_modified_id' => '',
           'last_modified_date' => '',
           'result_id' => '',

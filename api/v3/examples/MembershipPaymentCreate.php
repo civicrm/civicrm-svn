@@ -5,7 +5,7 @@
  */
 function membership_payment_create_example(){
 $params = array( 
-  'contribution_id' => '',
+  'contribution_id' => 1,
   'membership_id' => 1,
   'version' => 3,
 );
@@ -21,12 +21,17 @@ $params = array(
 function membership_payment_create_expectedresult(){
 
   $expectedResult = array( 
-  'fields' => array( 
-      '0' => 'contribution_id',
+  'is_error' => 0,
+  'version' => 3,
+  'count' => 1,
+  'id' => 1,
+  'values' => array( 
+      '1' => array( 
+          'id' => '1',
+          'membership_id' => '1',
+          'contribution_id' => '1',
+        ),
     ),
-  'error_code' => 'mandatory_missing',
-  'is_error' => 1,
-  'error_message' => 'Mandatory key(s) missing from params array: contribution_id',
 );
 
   return $expectedResult  ;

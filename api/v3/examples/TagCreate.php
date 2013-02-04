@@ -36,7 +36,7 @@ function tag_create_expectedresult(){
           'is_tagset' => '',
           'used_for' => 'civicrm_contact',
           'created_id' => '',
-          'created_date' => '20130122004931',
+          'created_date' => '20130204224540',
         ),
     ),
 );

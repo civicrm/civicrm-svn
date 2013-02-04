@@ -5,9 +5,9 @@
  */
 function relationship_delete_example(){
 $params = array( 
-  'contact_id_a' => 48,
-  'contact_id_b' => 49,
-  'relationship_type_id' => 25,
+  'contact_id_a' => 51,
+  'contact_id_b' => 52,
+  'relationship_type_id' => 26,
   'start_date' => '2008-12-20',
   'is_active' => 1,
   'version' => 3,

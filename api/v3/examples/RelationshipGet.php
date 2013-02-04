@@ -27,11 +27,12 @@ function relationship_get_expectedresult(){
   'values' => array( 
       '1' => array( 
           'id' => '1',
-          'contact_id_a' => '33',
-          'contact_id_b' => '34',
-          'relationship_type_id' => '20',
+          'contact_id_a' => '36',
+          'contact_id_b' => '37',
+          'relationship_type_id' => '21',
           'start_date' => '2008-12-20',
           'is_active' => '1',
+          'description' => '',
           'is_permission_a_b' => 0,
           'is_permission_b_a' => 0,
           'custom_5' => 'custom string',

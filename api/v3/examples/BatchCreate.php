@@ -28,10 +28,10 @@ function batch_create_expectedresult(){
   'is_error' => 0,
   'version' => 3,
   'count' => 1,
-  'id' => 1,
+  'id' => 2,
   'values' => array( 
-      '1' => array( 
-          'id' => '1',
+      '2' => array( 
+          'id' => '2',
           'name' => 'New_Batch_03',
           'title' => 'New Batch 03',
           'description' => 'This is description for New Batch 03',

@@ -1,7 +1,5 @@
 <?php
 
-
-
 /*
  
  */
@@ -16,7 +14,6 @@ $params = array(
   'id' => 3,
 );
 
-  require_once 'api/api.php';
   $result = civicrm_api( 'batch','update',$params );
 
   return $result;
@@ -34,7 +31,7 @@ function batch_update_expectedresult(){
   'id' => 3,
   'values' => array( 
       '3' => array( 
-          'id' => 3,
+          'id' => '3',
           'name' => 'New_Batch_04',
           'title' => 'New Batch 04',
           'description' => 'This is description for New Batch 04',
@@ -47,7 +44,7 @@ function batch_update_expectedresult(){
           'type_id' => '',
           'mode_id' => '',
           'total' => '400.44',
-          'item_count' => 4,
+          'item_count' => '4',
           'payment_instrument_id' => '',
           'exported_date' => '',
         ),
@@ -58,18 +55,24 @@ function batch_update_expectedresult(){
 }
 
 
-
-
 /*
 * This example has been generated from the API test suite. The test that created it is called
-* 
-* testUpdate and can be found in 
-* http://svn.civicrm.org/civicrm/branches/v3.4/tests/phpunit/CiviTest/api/v3/BatchTest.php
-* 
-* You can see the outcome of the API tests at 
+*
+* testUpdate and can be found in
+* http://svn.civicrm.org/civicrm/trunk/tests/phpunit/CiviTest/api/v3/BatchTest.php
+*
+* You can see the outcome of the API tests at
 * http://tests.dev.civicrm.org/trunk/results-api_v3
+*
+* To Learn about the API read
+* http://book.civicrm.org/developer/current/techniques/api/
+*
 * and review the wiki at
 * http://wiki.civicrm.org/confluence/display/CRMDOC/CiviCRM+Public+APIs
+*
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
+*
+* API Standards documentation:
+* http://wiki.civicrm.org/confluence/display/CRM/API+Architecture+Standards
 */

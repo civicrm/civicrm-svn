@@ -1,20 +1,22 @@
 <?php
 
 /*
- demonstrates use of Not BETWEEN filter
+ 
  */
-function relationship_get_example(){
+function job_create_example(){
 $params = array( 
   'version' => 3,
-  'relationship_type_id' => array( 
-      'NOT BETWEEN' => array( 
-          '0' => 34,
-          '1' => 36,
-        ),
-    ),
+  'sequential' => 1,
+  'name' => 'API_Test_Job',
+  'description' => 'A long description written by hand in cursive',
+  'run_frequency' => 'Daily',
+  'api_entity' => 'ApiTestEntity',
+  'api_action' => 'apitestaction',
+  'parameters' => 'Semi-formal explanation of runtime job parameters',
+  'is_active' => 1,
 );
 
-  $result = civicrm_api( 'relationship','get',$params );
+  $result = civicrm_api( 'job','create',$params );
 
   return $result;
 }
@@ -22,7 +24,7 @@ $params = array(
 /*
  * Function returns array of result expected from previous function
  */
-function relationship_get_expectedresult(){
+function job_create_expectedresult(){
 
   $expectedResult = array( 
   'is_error' => 0,
@@ -30,22 +32,17 @@ function relationship_get_expectedresult(){
   'count' => 1,
   'id' => 1,
   'values' => array( 
-      '1' => array( 
+      '0' => array( 
           'id' => '1',
-          'contact_id_a' => '72',
-          'contact_id_b' => '73',
-          'relationship_type_id' => '33',
-          'start_date' => '2008-12-20',
+          'domain_id' => '1',
+          'run_frequency' => 'Daily',
+          'last_run' => '',
+          'name' => 'API_Test_Job',
+          'description' => 'A long description written by hand in cursive',
+          'api_entity' => 'ApiTestEntity',
+          'api_action' => 'apitestaction',
+          'parameters' => 'Semi-formal explanation of runtime job parameters',
           'is_active' => '1',
-          'description' => '',
-          'is_permission_a_b' => 0,
-          'is_permission_b_a' => 0,
-          'custom_1' => 'xyz',
-          'custom_1_-1' => 'xyz',
-          'custom_3' => '07/11/2009',
-          'custom_3_-1' => '07/11/2009',
-          'custom_4' => 'http://civicrm.org',
-          'custom_4_-1' => 'http://civicrm.org',
         ),
     ),
 );
@@ -57,8 +54,8 @@ function relationship_get_expectedresult(){
 /*
 * This example has been generated from the API test suite. The test that created it is called
 *
-* testGetTypeOperators and can be found in
-* http://svn.civicrm.org/civicrm/trunk/tests/phpunit/CiviTest/api/v3/RelationshipTest.php
+* testCreate and can be found in
+* http://svn.civicrm.org/civicrm/trunk/tests/phpunit/CiviTest/api/v3/JobTest.php
 *
 * You can see the outcome of the API tests at
 * http://tests.dev.civicrm.org/trunk/results-api_v3

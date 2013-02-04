@@ -22,24 +22,25 @@ function group_getfields_expectedresult(){
   $expectedResult = array( 
   'is_error' => 0,
   'version' => 3,
-  'count' => 18,
+  'count' => 19,
   'values' => array( 
       'id' => array( 
           'name' => 'id',
           'type' => 1,
+          'title' => 'Group ID',
           'required' => true,
         ),
       'name' => array( 
           'name' => 'name',
           'type' => 2,
-          'title' => 'Name',
+          'title' => 'Group Name',
           'maxlength' => 64,
           'size' => 30,
         ),
       'title' => array( 
           'name' => 'title',
           'type' => 2,
-          'title' => 'Title',
+          'title' => 'Group Title',
           'maxlength' => 64,
           'size' => 30,
           'api.required' => 1,
@@ -47,31 +48,33 @@ function group_getfields_expectedresult(){
       'description' => array( 
           'name' => 'description',
           'type' => 32,
-          'title' => 'Description',
+          'title' => 'Group Description',
           'rows' => 2,
           'cols' => 60,
         ),
       'source' => array( 
           'name' => 'source',
           'type' => 2,
-          'title' => 'Source',
+          'title' => 'Group Source',
           'maxlength' => 64,
           'size' => 30,
         ),
       'saved_search_id' => array( 
           'name' => 'saved_search_id',
           'type' => 1,
+          'title' => 'Saved Search ID',
           'FKClassName' => 'CRM_Contact_DAO_SavedSearch',
         ),
       'is_active' => array( 
           'name' => 'is_active',
           'type' => 16,
+          'title' => 'Group Enabled',
           'api.default' => 1,
         ),
       'visibility' => array( 
           'name' => 'visibility',
           'type' => 2,
-          'title' => 'Visibility',
+          'title' => 'Group Visibility Setting',
           'default' => 'User and User Admin Only',
           'enumValues' => 'User and User Admin Only,Public Pages',
           'options' => array( 
@@ -82,17 +85,17 @@ function group_getfields_expectedresult(){
       'where_clause' => array( 
           'name' => 'where_clause',
           'type' => 32,
-          'title' => 'Where Clause',
+          'title' => 'Group Where Clause',
         ),
       'select_tables' => array( 
           'name' => 'select_tables',
           'type' => 32,
-          'title' => 'Select Tables',
+          'title' => 'Tables For Select Clause',
         ),
       'where_tables' => array( 
           'name' => 'where_tables',
           'type' => 32,
-          'title' => 'Where Tables',
+          'title' => 'Tables For Where Clause',
         ),
       'group_type' => array( 
           'name' => 'group_type',
@@ -104,30 +107,38 @@ function group_getfields_expectedresult(){
       'cache_date' => array( 
           'name' => 'cache_date',
           'type' => 12,
-          'title' => 'Cache Date',
+          'title' => 'Group Cache Date',
         ),
       'refresh_date' => array( 
           'name' => 'refresh_date',
           'type' => 12,
-          'title' => 'Refresh Date',
+          'title' => 'Next Group Refresh Time',
         ),
       'parents' => array( 
           'name' => 'parents',
           'type' => 32,
-          'title' => 'Parents',
+          'title' => 'Group Parents',
         ),
       'children' => array( 
           'name' => 'children',
           'type' => 32,
-          'title' => 'Children',
+          'title' => 'Group Children',
         ),
       'is_hidden' => array( 
           'name' => 'is_hidden',
           'type' => 16,
+          'title' => 'Group is Hidden',
         ),
       'is_reserved' => array( 
           'name' => 'is_reserved',
           'type' => 16,
+          'title' => 'Group is Reserved',
+        ),
+      'created_id' => array( 
+          'name' => 'created_id',
+          'type' => 1,
+          'title' => 'Group Created By',
+          'FKClassName' => 'CRM_Contact_DAO_Contact',
         ),
     ),
 );

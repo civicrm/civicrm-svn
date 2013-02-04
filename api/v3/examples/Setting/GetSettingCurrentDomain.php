@@ -26,7 +26,7 @@ function setting_get_expectedresult(){
   'id' => 1,
   'values' => array( 
       '1' => array( 
-          'uniq_email_per_site' => '1',
+          'uniq_email_per_site' => 0,
         ),
     ),
 );

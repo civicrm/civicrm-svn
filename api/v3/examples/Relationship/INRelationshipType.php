@@ -8,8 +8,8 @@ $params = array(
   'version' => 3,
   'relationship_type_id' => array( 
       'IN' => array( 
-          '0' => 33,
-          '1' => 34,
+          '0' => 34,
+          '1' => 35,
         ),
     ),
 );
@@ -31,11 +31,12 @@ function relationship_get_expectedresult(){
   'values' => array( 
       '2' => array( 
           'id' => '2',
-          'contact_id_a' => '69',
-          'contact_id_b' => '70',
-          'relationship_type_id' => '33',
+          'contact_id_a' => '72',
+          'contact_id_b' => '73',
+          'relationship_type_id' => '34',
           'start_date' => '2008-12-20',
           'is_active' => '1',
+          'description' => '',
           'is_permission_a_b' => 0,
           'is_permission_b_a' => 0,
           'custom_1' => 'xyz',
@@ -47,11 +48,12 @@ function relationship_get_expectedresult(){
         ),
       '3' => array( 
           'id' => '3',
-          'contact_id_a' => '69',
-          'contact_id_b' => '70',
-          'relationship_type_id' => '34',
+          'contact_id_a' => '72',
+          'contact_id_b' => '73',
+          'relationship_type_id' => '35',
           'start_date' => '2008-12-20',
           'is_active' => '1',
+          'description' => '',
           'is_permission_a_b' => 0,
           'is_permission_b_a' => 0,
           'custom_1' => 'xyz',

@@ -47,6 +47,7 @@ function group_get_expectedresult(){
           'children' => '',
           'is_hidden' => 0,
           'is_reserved' => 0,
+          'created_id' => '',
         ),
     ),
 );

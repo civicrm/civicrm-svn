@@ -28,7 +28,7 @@ function contact_get_expectedresult(){
   'values' => array( 
       '1' => array( 
           'contact_id' => '1',
-          'civicrm_value_testgetwithcustomreturnsyntax_3_id' => '1',
+          'civicrm_value_testgetwithcu_3_id' => '1',
           'custom_3' => 'custom string',
           'id' => '1',
         ),

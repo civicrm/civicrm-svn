@@ -6,9 +6,9 @@
 function pledge_create_example(){
 $params = array( 
   'contact_id' => 11,
-  'pledge_create_date' => '20130122',
-  'start_date' => '20130122',
-  'scheduled_date' => '20130124',
+  'pledge_create_date' => '20130204',
+  'start_date' => '20130204',
+  'scheduled_date' => '20130206',
   'amount' => '100',
   'pledge_status_id' => '2',
   'pledge_financial_type_id' => '1',
@@ -40,7 +40,7 @@ function pledge_create_expectedresult(){
       '0' => array( 
           'id' => '1',
           'contact_id' => '11',
-          'financial_type_id' => '',
+          'financial_type_id' => '1',
           'contribution_page_id' => '',
           'amount' => '100',
           'original_installment_amount' => '20',
@@ -49,8 +49,8 @@ function pledge_create_expectedresult(){
           'frequency_interval' => '5',
           'frequency_day' => '15',
           'installments' => '5',
-          'start_date' => '20130122000000',
-          'create_date' => '20130122000000',
+          'start_date' => '20130204000000',
+          'create_date' => '20130204000000',
           'acknowledge_date' => '',
           'modified_date' => '2012-11-14 16:02:35',
           'cancel_date' => '',

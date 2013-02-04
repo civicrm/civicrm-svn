@@ -57,9 +57,9 @@ function line_item_create_expectedresult(){
         ),
     ),
   'xdebug' => array( 
-      'peakMemory' => 54578344,
-      'memory' => 54442568,
-      'timeIndex' => '16.420650959015',
+      'peakMemory' => 116918264,
+      'memory' => 108682632,
+      'timeIndex' => '804.56360793114',
     ),
 );
 

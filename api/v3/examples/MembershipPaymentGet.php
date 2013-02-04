@@ -5,7 +5,7 @@
  */
 function membership_payment_get_example(){
 $params = array( 
-  'contribution_id' => '',
+  'contribution_id' => 1,
   'membership_id' => 1,
   'version' => 3,
 );
@@ -23,8 +23,15 @@ function membership_payment_get_expectedresult(){
   $expectedResult = array( 
   'is_error' => 0,
   'version' => 3,
-  'count' => 0,
-  'values' => array(),
+  'count' => 1,
+  'id' => 1,
+  'values' => array( 
+      '1' => array( 
+          'id' => '1',
+          'membership_id' => '1',
+          'contribution_id' => '1',
+        ),
+    ),
 );
 
   return $expectedResult  ;

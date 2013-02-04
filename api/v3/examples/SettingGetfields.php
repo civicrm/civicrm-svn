@@ -221,7 +221,7 @@ function setting_getfields_expectedresult(){
               '7' => '9',
             ),
           'add' => '4.1',
-          'title' => '',
+          'title' => 'Contact Dashboard',
           'is_domain' => 1,
           'is_contact' => 0,
           'description' => '',

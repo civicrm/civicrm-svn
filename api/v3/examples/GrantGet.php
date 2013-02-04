@@ -35,8 +35,8 @@ function grant_get_expectedresult(){
       '2' => array( 
           'id' => '2',
           'contact_id' => '4',
-          'application_received_date' => '2013-01-22',
-          'decision_date' => '2013-01-28',
+          'application_received_date' => '2013-02-04',
+          'decision_date' => '2013-02-11',
           'grant_type_id' => '1',
           'amount_total' => '500.00',
           'currency' => 'USD',

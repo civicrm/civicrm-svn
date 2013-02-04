@@ -78,7 +78,7 @@ function profile_set_expectedresult(){
           'organization_name' => '',
           'sic_code' => '',
           'user_unique_id' => '',
-          'created_date' => '2013-01-22 13:44:41',
+          'created_date' => '2013-02-05 11:40:49',
           'modified_date' => '2012-11-14 16:02:35',
         ),
     ),

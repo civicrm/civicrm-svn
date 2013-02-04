@@ -83,7 +83,7 @@ function contribution_get_expectedresult(){
 /*
 * This example has been generated from the API test suite. The test that created it is called
 *
-* testGetContribution and can be found in
+* testGetContributionLegacyBehaviour and can be found in
 * http://svn.civicrm.org/civicrm/trunk/tests/phpunit/CiviTest/api/v3/ContributionTest.php
 *
 * You can see the outcome of the API tests at

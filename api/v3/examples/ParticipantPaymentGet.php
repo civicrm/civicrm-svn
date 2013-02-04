@@ -1,21 +1,16 @@
 <?php
 
 /*
- shows getting a variable for specified domains
+ 
  */
-function setting_get_example(){
+function participant_payment_get_example(){
 $params = array( 
+  'participant_id' => 72,
+  'contribution_id' => 1,
   'version' => 3,
-  'domain_id' => array( 
-      '0' => 1,
-      '1' => 2,
-    ),
-  'return' => array( 
-      '0' => 'uniq_email_per_site',
-    ),
 );
 
-  $result = civicrm_api( 'setting','Get',$params );
+  $result = civicrm_api( 'participant_payment','get',$params );
 
   return $result;
 }
@@ -23,18 +18,18 @@ $params = array(
 /*
  * Function returns array of result expected from previous function
  */
-function setting_get_expectedresult(){
+function participant_payment_get_expectedresult(){
 
   $expectedResult = array( 
   'is_error' => 0,
   'version' => 3,
-  'count' => 2,
+  'count' => 1,
+  'id' => 1,
   'values' => array( 
       '1' => array( 
-          'uniq_email_per_site' => 0,
-        ),
-      '2' => array( 
-          'uniq_email_per_site' => '1',
+          'id' => '1',
+          'participant_id' => '72',
+          'contribution_id' => '1',
         ),
     ),
 );
@@ -46,8 +41,8 @@ function setting_get_expectedresult(){
 /*
 * This example has been generated from the API test suite. The test that created it is called
 *
-* testCreateSettingMultipleDomains and can be found in
-* http://svn.civicrm.org/civicrm/trunk/tests/phpunit/CiviTest/api/v3/SettingTest.php
+* testGet and can be found in
+* http://svn.civicrm.org/civicrm/trunk/tests/phpunit/CiviTest/api/v3/ParticipantPaymentTest.php
 *
 * You can see the outcome of the API tests at
 * http://tests.dev.civicrm.org/trunk/results-api_v3
