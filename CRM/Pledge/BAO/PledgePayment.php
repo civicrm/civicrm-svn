@@ -326,7 +326,8 @@ WHERE     pledge_id = %1
    *
    * @return int $newStatus, updated status id (or 0)
    */
-  function updatePledgePaymentStatus($pledgeID,
+  static function updatePledgePaymentStatus(
+    $pledgeID,
     $paymentIDs        = NULL,
     $paymentStatusID   = NULL,
     $pledgeStatusID    = NULL,

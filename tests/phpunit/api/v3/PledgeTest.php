@@ -225,26 +225,29 @@ class api_v3_PledgeTest extends CiviUnitTestCase {
     $pledge2 = civicrm_api('pledge', 'create', array_merge($this->_params, $overdueParams));
     $params = array(
       'version' => $this->_apiversion,
+      'pledge_is_test' => 0,
       'rowCount' => 1,
     );
     $result = civicrm_api('pledge', 'get', $params);
 
     $resultSortedAsc = civicrm_api('pledge', 'get', array(
-      'version' => $this->_apiversion,
-        'rowCount' => 1,
-        'sort' => 'start_date ASC',
-      ));
+                         'version' => $this->_apiversion,
+                         'rowCount' => 1,
+                         'pledge_is_test' => 0,
+                         'sort' => 'start_date ASC',
+                       ));
     $resultSortedDesc = civicrm_api('pledge', 'get', array(
-      'version' => $this->_apiversion,
-        'rowCount' => 1,
-        'sort' => 'start_date DESC',
-      ));
+                          'version' => $this->_apiversion,
+                          'rowCount' => 1,
+                          'pledge_is_test' => 0,
+                          'sort' => 'start_date DESC',
+                        ));
 
-    civicrm_api('pledge', 'delete', array('version' => 3, 'id' => $pledge1['id']));
-    civicrm_api('pledge', 'delete', array('version' => 3, 'id' => $pledge2['id']));
     $this->assertEquals($pledge1['id'], $result['id'], 'pledge get gets first created pledge in line ' . __LINE__);
     $this->assertEquals($pledge2['id'], $resultSortedAsc['id'], 'Ascending pledge sort works');
     $this->assertEquals($pledge1['id'], $resultSortedDesc['id'], 'Decending pledge sort works');
+    civicrm_api('pledge', 'delete', array('version' => 3, 'id' => $pledge1['id']));
+    civicrm_api('pledge', 'delete', array('version' => 3, 'id' => $pledge2['id']));
   }
 
   function testCreatePledge() {
@@ -272,9 +275,10 @@ class api_v3_PledgeTest extends CiviUnitTestCase {
     $pledgeID = array('id' => $result['id'], 'version' => 3);
     $pledge = civicrm_api('pledge', 'delete', $pledgeID);
   }
+
   /*
-     * Test that pledge with weekly schedule calculates dates correctly
-     */
+   * Test that pledge with weekly schedule calculates dates correctly
+   */
   function testCreatePledgeWeeklySchedule() {
     $params = array(
       'scheduled_date' => '20110510',
@@ -550,4 +554,3 @@ class api_v3_PledgeTest extends CiviUnitTestCase {
     $pledge = civicrm_api('pledge', 'delete', $pledgeID);
   }
 }
-

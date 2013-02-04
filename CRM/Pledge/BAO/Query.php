@@ -351,6 +351,7 @@ class CRM_Pledge_BAO_Query {
         return;
 
       case 'pledge_test':
+      case 'pledge_is_test':
         $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause('civicrm_pledge.is_test',
           $op,
           $value,
