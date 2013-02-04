@@ -1020,14 +1020,15 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     // select the radio first since the element id changes after membership org search results are loaded
     switch ($auto_renew) {
       case 'optional':
-        $this->click('CIVICRM_QFID_1_auto_renew');
+        $this->click("xpath=//div[@id='membership_type_form']//table/tbody/tr[6]/td/label[contains(text(), 'Auto-renew Option')]/../../td[2]/label[contains(text(), 'Give option, but not required')]");
         break;
 
       case 'required':
-        $this->click('CIVICRM_QFID_2_12');
+        $this->click("xpath=//div[@id='membership_type_form']//table/tbody/tr[6]/td/label[contains(text(), 'Auto-renew Option')]/../../td[2]/label[contains(text(), 'Auto-renew required')]");
         break;
 
       default:
+        $this->click("xpath=//div[@id='membership_type_form']//table/tbody/tr[6]/td/label[contains(text(), 'Auto-renew Option')]/../../td[2]/label[contains(text(), 'No auto-renew option')]");
         break;
     }
 

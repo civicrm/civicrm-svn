@@ -129,7 +129,7 @@ class WebTest_Member_DefaultMembershipPricesetTest extends CiviSeleniumTestCase 
     $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&id={$membershipContributionPageId}&cid={$cid}");
     $this->waitForElementPresent("_qf_Main_upload-bottom");
     // checking senario 3
-    $this->assertTrue($this->isTextPresent("You have a current Lifetime Membership which does not need top be renewed."));
+    $this->assertTrue($this->isTextPresent("You have a current Lifetime Membership which does not need to be renewed."));
 
     $this->_testDefaultSenarios("National_Membership_{$title}-section", 1);
     $this->contactInfoFill($firstName, $lastName, $email, $contactParams, $streetAddress);
