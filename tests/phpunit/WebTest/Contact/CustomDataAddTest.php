@@ -240,7 +240,7 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
 
     //create Individual contact
     $this->click("//ul[@id='civicrm-menu']/li[4]");
-    $this->click("//div[@id='root-menu-div']/div[5]/ul/li[1]/div/a");
+    $this->click("//div[@id='root-menu-div']/div[6]/ul/li[1]/div/a");
     $this->waitForPageToLoad("30000");
 
     //expand all tabs
@@ -263,8 +263,8 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad("30000");
 
     //verify the money custom field value in the proper format
-    $this->assertTrue($this->isElementPresent("xpath=//div[@class='customFieldGroup ui-corner-all $customGroupTitle crm-custom-set-block-{$customFieldsetId}']/table/tbody/tr[2]/td/div/div/div/div[3]"));
-    $this->verifyText("xpath=//div[@class='customFieldGroup ui-corner-all $customGroupTitle crm-custom-set-block-{$customFieldsetId}']/table/tbody/tr[2]/td/div/div/div/div[3]", '12,345,678.98');
+    $this->assertTrue($this->isElementPresent("xpath=//div[@id='custom-set-content-{$customFieldsetId}']/div/div[2]/div[2]"));
+    $this->verifyText("xpath=//div[@id='custom-set-content-{$customFieldsetId}']/div/div[2]/div[2]", '12,345,678.98');
   }
   
   function testCustomDataChangeLog(){
@@ -282,9 +282,9 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     
     //enable logging
     $this->open($this->sboxPath . "civicrm/admin/setting/misc?reset=1");
-    $this->click("CIVICRM_QFID_1_6");
+    $this->click("CIVICRM_QFID_1_logging");
     $this->click("_qf_Miscellaneous_next-top");
-    $this->waitForTextPresent("Your changes have been saved");
+    $this->waitForTextPresent("Changes Saved");
 
     // Create new Custom Field Set
     $this->open($this->sboxPath . 'civicrm/admin/custom/group?reset=1');
@@ -293,7 +293,7 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('_qf_Group_next-bottom');
     $customFieldSet = 'Fieldset' . rand();
     $this->type("id=title", $customFieldSet);
-    $this->select("id=extends[0]", "label=Individual");
+    $this->select("id=extends_0", "label=Individual");
     $this->click("id=collapse_display");
     $this->click("id=_qf_Group_next-bottom");
     $this->waitForElementPresent('_qf_Field_next-bottom');
@@ -302,7 +302,7 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     // Add field to fieldset
     $customField = 'CustomField' . rand();
     $this->type("id=label", $customField);
-    $this->select("id=data_type[0]", "value=0");
+    $this->select("id=data_type_0", "value=0");
     $this->click("id=_qf_Field_next-bottom");
     $this->waitForPageToLoad("30000");
     $this->assertTrue($this->isTextPresent("Your custom field '$customField' has been saved."));
@@ -328,7 +328,7 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     $this->click("xpath=//table//tr/td/label[text()=\"$customField\"]");
     $value = "custom".rand();
     $this->type("xpath=//table//tr/td/label[text()=\"$customField\"]/../following-sibling::td/input",$value);
-
+    
     //check for matching contact
     $this->click("_qf_Contact_refresh_dedupe");
     $this->waitForPageToLoad("30000");
@@ -354,7 +354,7 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     $this->click("_qf_Contact_upload_view");
     $this->waitForPageToLoad("30000");
 
-    $this->assertTrue($this->isTextPresent("Your Individual contact record has been saved."));
+    $this->assertTrue($this->isTextPresent("{$firstName} {$lastName} has been created."));
 
     //Update the custom field
     $this->click("xpath=//div[@class='crm-actions-ribbon']/ul/li[2]/a/span[contains(text(), 'Edit')]");
@@ -367,18 +367,18 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     $this->click("xpath=//li[@id='tab_log']/a");
     
     //check the changed log
-    $this->waitForElementPresent("xpath=//div[@id='instance_data']/div[2]/table/tbody/tr[1]/td[3]/a[contains(text(), '$firstName $lastName')]");
-    $this->waitForElementPresent("xpath=//div[@id='instance_data']/div[2]/table/tbody/tr[1]/td[4]/a");
-    $this->click("xpath=//div[@id='instance_data']/div[2]/table/tbody/tr[1]/td[4]/a");
+    $this->waitForElementPresent("xpath=//div[@id='instance_data']/div[2]/table/tbody/tr[1]/td[4]/a[contains(text(), '$firstName $lastName')]");
+    $this->waitForElementPresent("xpath=//div[@id='instance_data']/div[2]/table/tbody/tr[1]/td/a[2]");
+    $this->click("xpath=//div[@id='instance_data']/div[2]/table/tbody/tr[1]/td/a[2]");
     $this->waitForPageToLoad("30000");
     $this->assertTrue($this->isElementPresent("xpath=//form[@id='LoggingDetail']/div[2]/table/tbody/tr/td[2][contains(text(), '$value')]"));
     $this->assertTrue($this->isElementPresent("xpath=//form[@id='LoggingDetail']/div[2]/table/tbody/tr/td[3][contains(text(), '$value1')]"));
 
     //disable logging
     $this->open($this->sboxPath . "civicrm/admin/setting/misc?reset=1");
-    $this->click("CIVICRM_QFID_0_8");
+    $this->click("CIVICRM_QFID_0_logging");
     $this->click("_qf_Miscellaneous_next-top");
-    $this->waitForTextPresent("Your changes have been saved");
+    $this->waitForTextPresent("Changes Saved");
   }
   
 }

@@ -50,8 +50,9 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
     $this->webtestLogin();
 
     $this->open($this->sboxPath . "civicrm/dashboard?reset=1");
-    $this->click("//div[@id='recently-viewed']/ul/li/a");
+    $this->click("//div[@id='crm-recently-viewed']/ul/li/a");
     $this->waitForPageToLoad('30000');
+    $name = $this->getText("xpath=//div[@class='crm-summary-display_name']");
 
     // Get contact id from url.
     $matches = array();
@@ -65,7 +66,6 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad('30000');
 
     $this->click("//tr[@id='Email_Block_1']/td[1]/div[2]/div[1]");
-
     // HTML format message
     $signature = 'Contact Signature in html';
 
@@ -78,10 +78,10 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad('30000');
 
     // Is status message correct?
-    $this->assertTrue($this->isTextPresent('Your Individual contact record has been saved.'));
+    $this->assertTrue($this->isTextPresent("{$name} has been updated."));
 
     // Go for Ckeck Your Editor, Click on Send Mail
-    $this->click("//div[@id='crm-contact-actions-link']/span");
+    $this->click("//a[@id='crm-contact-actions-link']/span");
     $this->click('link=Send an Email');
     $this->waitForPageToLoad('30000');
     sleep(10);
@@ -118,8 +118,9 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
     $this->webtestLogin();
 
     $this->open($this->sboxPath . "civicrm/dashboard?reset=1");
-    $this->click("//div[@id='recently-viewed']/ul/li/a");
+    $this->click("//div[@id='crm-recently-viewed']/ul/li/a");
     $this->waitForPageToLoad('30000');
+    $name = $this->getText("xpath=//div[@class='crm-summary-display_name']");
 
     // Get contact id from url.
     $matches = array();
@@ -133,7 +134,7 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad('30000');
 
     $this->click("//tr[@id='Email_Block_1']/td[1]/div[2]/div[1]");
-
+    
     // HTML format message
     $signature = 'Contact Signature in html';
     $this->fireEvent('email_1_signature_html', 'focus');
@@ -145,10 +146,10 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad('30000');
 
     // Is status message correct?
-    $this->assertTrue($this->isTextPresent('Your Individual contact record has been saved.'));
+    $this->assertTrue($this->isTextPresent("{$name} has been updated."));
 
     // Go for Ckeck Your Editor, Click on Send Mail
-    $this->click("//div[@id='crm-contact-actions-link']/span");
+    $this->click("//a[@id='crm-contact-actions-link']/span");
     $this->click('link=Send an Email');
     $this->waitForPageToLoad('30000');
     sleep(10);
