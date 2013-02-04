@@ -82,24 +82,12 @@ class CRM_UF_Page_ProfileEditor extends CRM_Core_Page {
     $civiSchema['IndividualModel'] = self::convertCiviModelToBackboneModel(
       'Individual',
       ts('Individual'),
-      CRM_Contact_BAO_Contact::importableFields('Individual', FALSE, FALSE, TRUE, TRUE, TRUE),
       $availableFields
     );
-
-    $extends = array('Activity');
-    $activityFields = CRM_Activity_BAO_Activity::getProfileFields();
-
-    if ($activityFields) {
-      // campaign related fields.
-      if (isset($activityFields['activity_campaign_id'])) {
-        $activityFields['activity_campaign_id']['title'] = ts('Campaign');
-      }
-    }
 
     $civiSchema['ActivityModel'] = self::convertCiviModelToBackboneModel(
       'Activity',
       ts('Activity'),
-      $activityFields,
       $availableFields
     );
 
@@ -109,17 +97,15 @@ class CRM_UF_Page_ProfileEditor extends CRM_Core_Page {
   /**
    * FIXME: Move to somewhere more useful
    * FIXME: Do real mapping of "types"
-   * FIXME: Correctly differentiate "field_type" for "Contact" vs "Individual"
    *
+   * @param string $extends entity type; note: "Individual" means "Individual|Contact"; "Household" means "Household|Contact"
    * @param string $title a string to use in section headers
-   * @param array $fields list of all core and custom fields which should be displayed
-   * @param array $customGroups list of custom groups produced by getGroupDetail()
    * @param array $availableFields list of fields that are allowed in profiles, e.g. $availableFields['my_field']['field_type']
    * @return array with keys 'sections' and 'schema'
    * @see js/model/crm.core.js
    * @see js/model/crm.mappedcore.js
    */
-  static function convertCiviModelToBackboneModel($extends, $title, $fields, $availableFields) {
+  static function convertCiviModelToBackboneModel($extends, $title, $availableFields) {
     $locationFields = CRM_Core_BAO_UFGroup::getLocationFields();
 
     $result = array(
@@ -128,22 +114,29 @@ class CRM_UF_Page_ProfileEditor extends CRM_Core_Page {
     );
 
     // build field list
-    foreach ($fields as $fieldName => $field) {
-      if (!isset($field['type']) && !isset($field['html_type'])) {
-        continue;
-      }
-      if (!isset($availableFields[$fieldName])) {
-        continue;
+    foreach ($availableFields as $fieldName => $field) {
+      switch ($extends) {
+        case 'Individual':
+        case 'Organization':
+        case 'Household':
+          if ($field['field_type'] != $extends && $field['field_type'] != 'Contact') {
+            continue 2;
+          }
+          break;
+        default:
+          if ($field['field_type'] != $extends) {
+            continue 2;
+          }
       }
       $result['schema'][$fieldName] = array(
         'type' => 'Text', // FIXME,
         'title' => $field['title'],
-        'civiFieldType' => $availableFields[$fieldName]['field_type'],
+        'civiFieldType' => $field['field_type'],
       );
       if (in_array($fieldName, $locationFields)) {
         $result['schema'][$fieldName]['civiIsLocation'] = TRUE;
       }
-      if (in_array($fieldName, array('phone'))) { // FIXME what about phone_ext?
+      if (in_array($fieldName, array('phone', 'phone_and_ext'))) { // FIXME what about phone_ext?
         $result['schema'][$fieldName]['civiIsPhone'] = TRUE;
       }
     }
@@ -177,8 +170,8 @@ class CRM_UF_Page_ProfileEditor extends CRM_Core_Page {
       $fieldName = 'custom_' . $fieldId;
       if (isset($result['schema'][$fieldName])) {
         $result['schema'][$fieldName]['section'] = $sectionName;
+        $result['schema'][$fieldName]['civiIsMultiple'] = (bool) CRM_Core_BAO_CustomField::isMultiRecordField($fieldId);
       }
-      $result['schema'][$fieldName]['civiIsMultiple'] = (bool) CRM_Core_BAO_CustomField::isMultiRecordField($fieldId);
     }
     return $result;
   }
