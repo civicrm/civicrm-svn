@@ -838,7 +838,7 @@ ALTER TABLE `civicrm_address`
   ADD COLUMN manual_geo_code tinyint(4) DEFAULT '0' COMMENT 'Is this a manually entered geo code.';
 
 -- CRM-11761
-UPDATE `civicrm_trunk`.`civicrm_setting` SET `group_name` = 'Personal Preferences' WHERE `group_name` = 'Navigation Menu';
+UPDATE `civicrm_setting` SET `group_name` = 'Personal Preferences' WHERE `group_name` = 'Navigation Menu';
 
 -- CRM-11779
 
