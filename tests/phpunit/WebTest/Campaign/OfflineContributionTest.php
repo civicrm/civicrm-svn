@@ -312,7 +312,7 @@ class WebTest_Campaign_OfflineContributionTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("link=Add Campaign");
 
     $this->waitForElementPresent("Campaigns");
-    $this->click("campaignsSearch");
+    $this->click("search_form_campaign");
     $this->type("campaign_title", $pastCampaignTitle);
     $this->click("xpath=//div[@class='crm-accordion-body']/table/tbody/tr[4]/td/a[text()='Search']");
 
