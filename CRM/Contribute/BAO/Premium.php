@@ -107,7 +107,7 @@ class CRM_Contribute_BAO_Premium extends CRM_Contribute_DAO_Premium {
    * @static
    */
   static function buildPremiumBlock(&$form, $pageID, $formItems = FALSE, $selectedProductID = NULL, $selectedOption = NULL) {
-    $this->add('hidden', "selectProduct", $selectedProductID, array('id' => 'selectProduct'));
+    $form->add('hidden', "selectProduct", $selectedProductID, array('id' => 'selectProduct'));
 
     $dao = new CRM_Contribute_DAO_Premium();
     $dao->entity_table = 'civicrm_contribution_page';
