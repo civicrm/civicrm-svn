@@ -649,6 +649,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     if (!$pageTitle) {
       $pageTitle = 'Donate Online ' . $hash;
     }
+
     if (!$rand) {
       $rand = 2 * rand(2, 50);
     }
@@ -667,6 +668,9 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     // fill in step 1 (Title and Settings)
     $this->type('title', $pageTitle);
 
+    //to select financial type
+    $this->select('financial_type_id', "label={$financialType}");
+    
     if ($onBehalf) {
       $this->click('is_organization');
       $this->select('onbehalf_profile_id', 'label=On Behalf Of Organization');
@@ -740,8 +744,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         //$this->type('min_amount', $rand / 2);
         //$this->type('max_amount', $rand * 10);
       }
-      //to select financial type
-      $this->select('financial_type_id', "label={$financialType}");
+
       $this->type('label_1', "Label $hash");
       $this->type('value_1', "$rand");
       $this->click('CIVICRM_QFID_1_2');
