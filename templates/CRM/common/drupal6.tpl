@@ -30,9 +30,7 @@
 
 <div id="crm-container" class="crm-container{if $urlIsPublic} crm-public{/if}" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
 
-{if $buildNavigation }
-    {include file="CRM/common/Navigation.tpl" }
-{/if}
+{crmNavigationMenu is_default=1}
 
 {* include wysiwyg related files*}
 {include file="CRM/common/wysiwyg.tpl"}

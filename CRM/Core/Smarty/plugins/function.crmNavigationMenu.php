@@ -1,4 +1,5 @@
-{*
+<?php
+/*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
@@ -22,60 +23,39 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*}
-{include file="CRM/common/scripts.tpl"}
-{if $config->debug}
-{include file="CRM/common/debug.tpl"}
-{/if}
+*/
 
-{* include wysiwyg related files*}
-{include file="CRM/common/wysiwyg.tpl"}
+/**
+ *
+ * @package CRM
+ * @copyright CiviCRM LLC (c) 2004-2012
+ * $Id$
+ *
+ */
 
-<div id="crm-container" class="crm-container{if $urlIsPublic} crm-public{/if}" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
-
-
-{crmNavigationMenu is_default=1}
-
-{if isset($browserPrint) and $browserPrint}
-{* Javascript window.print link. Used for public pages where we can't do printer-friendly view. *}
-<div id="printer-friendly">
-<a href="javascript:window.print()" title="{ts}Print this page.{/ts}">
-  <div class="ui-icon ui-icon-print"></div>
-</a>
-</div>
-{else}
-{* Printer friendly link/icon. *}
-<div id="printer-friendly">
-<a href="{$printerFriendly}" title="{ts}Printer-friendly view of this page.{/ts}">
-  <div class="ui-icon ui-icon-print"></div>
-</a>
-</div>
-{/if}
-
-{crmRegion name='page-header'}
-{/crmRegion}
-<div class="clear"></div>
-
-{if isset($localTasks) and $localTasks}
-    {include file="CRM/common/localNav.tpl"}
-{/if}
-
-{include file="CRM/common/status.tpl"}
-
-{crmRegion name='page-body'}
-<!-- .tpl file invoked: {$tplFile}. Call via form.tpl if we have a form in the page. -->
-{if isset($isForm) and $isForm}
-    {include file="CRM/Form/$formTpl.tpl"}
-{else}
-    {include file=$tplFile}
-{/if}
-{/crmRegion}
-
-{crmRegion name='page-footer'}
-{if ! $urlIsPublic}
-{include file="CRM/common/footer.tpl"}
-{/if}
-{/crmRegion}
-
-
-</div> {* end crm-container div *}
+/**
+ * Generate the nav menu
+ *
+ * @param array $params
+ *   - is_default: bool, true if this is normal/default instance of the menu (which may be subject to CIVICRM_DISABLE_DEFAULT_MENU)
+ * @param object $smarty the Smarty object
+ *
+ * @return string HTML
+ */
+function smarty_function_crmNavigationMenu($params, &$smarty) {
+  //check if logged in user has access CiviCRM permission and build menu
+  $buildNavigation = !CRM_Core_Config::isUpgradeMode() && CRM_Core_Permission::check('access CiviCRM');
+  if (defined('CIVICRM_DISABLE_DEFAULT_MENU') && CRM_Utils_Array::value('is_default', $params, FALSE)) {
+    $buildNavigation = FALSE;
+  }
+  if ($buildNavigation) {
+    $session = CRM_Core_Session::singleton();
+    $contactID = $session->get('userID');
+    if ($contactID) {
+      $navigation = CRM_Core_BAO_Navigation::createNavigation($contactID);
+      $smarty->assign('navigation', $navigation);
+      return $smarty->fetch('CRM/common/Navigation.tpl');
+    }
+  }
+  return '';
+}
