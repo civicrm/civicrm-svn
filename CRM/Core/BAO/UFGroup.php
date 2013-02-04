@@ -1796,7 +1796,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
       // rebuild phone field
       $form->add('text', "phone-{$fieldSuffix}", $title, $attributes, $required);
       // rebuild ext field
-      $form->add('text', "phone_ext-{$fieldSuffix}", $title, $attributes, $required);
+      $form->add('text', "phone_ext-{$fieldSuffix}", $title, $attributes);
     }
     elseif (($fieldName === 'birth_date') || ($fieldName === 'deceased_date')) {
       $form->addDate($name, $title, $required, array('formatType' => 'birth'));

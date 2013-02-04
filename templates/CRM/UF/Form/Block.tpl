@@ -104,7 +104,16 @@
           {if $field.help_pre && $action neq 4 && $action neq 1028}
             &nbsp;&nbsp;<span class="description">{$field.help_pre}</span>
           {/if}
-          <div class="label">{$form.$n.label}</div>
+          <div class="label">
+          {if $n|substr:0:13 neq 'phone_and_ext'}
+            {$form.$n.label}
+          {else}
+            {assign var="phone_suffix" value=$n|replace:'phone_and_ext':''}
+            {assign var="phone_field" value="phone"|cat:$phone_suffix}
+            {assign var="phone_ext_field" value="phone_ext"|cat:$phone_suffix}
+            {$form.$phone_field.label}
+          {/if}
+          </div>
           <div class="content">
             {if $n|substr:0:3 eq 'im-'}
               {assign var="provider" value=$n|cat:"-provider_id"}
@@ -123,6 +132,8 @@
             ( $form.formName neq 'Confirm' )  AND
             ( $form.formName neq 'ThankYou' ) }
               {include file="CRM/common/jcalendar.tpl" elementName=$n}
+            {elseif $n|substr:0:13 eq 'phone_and_ext'}
+              {$form.$phone_field.html}&nbsp;{$form.$phone_ext_field.html}
             {else}
               {$form.$n.html}
               {if $n eq 'gender' && $form.$fieldName.frozen neq true}
