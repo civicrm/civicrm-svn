@@ -159,7 +159,7 @@ class CRM_Pledge_BAO_Pledge extends CRM_Pledge_DAO_Pledge {
     $transaction = new CRM_Core_Transaction();
 
     $paymentParams = array();
-    $paymentParams['status_id'] = $params['status_id'];
+    $paymentParams['status_id'] = CRM_Utils_Array::value('status_id', $params);
     if (CRM_Utils_Array::value('installment_amount', $params)) {
       $params['amount'] = $params['installment_amount'] * $params['installments'];
     }
@@ -175,7 +175,7 @@ class CRM_Pledge_BAO_Pledge extends CRM_Pledge_DAO_Pledge {
         }
       }
       else {
-        if ($params['id']) {
+        if (!empty($params['id'])) {
           $params['status_id'] = CRM_Pledge_BAO_PledgePayment::calculatePledgeStatus($params['id']);
         }
         else {
@@ -407,10 +407,10 @@ GROUP BY  currency
     $whereCond = implode(' AND ', $where);
 
     $query = "
-SELECT $select, cp.currency
-FROM $from
-WHERE  $whereCond 
-GROUP BY  cp.currency
+ SELECT $select, cp.currency
+ FROM $from
+ WHERE  $whereCond
+ GROUP BY  cp.currency
 ";
     if ($select) {
       // CRM_Core_Error::debug($status . ' start:' . $startDate . '- end:' . $endDate, $query);
@@ -783,9 +783,9 @@ GROUP BY  cp.currency
     $statusClause = " IN (" . implode(',', $status) . ")";
 
     $query = "
-SELECT civicrm_pledge.id id
-FROM civicrm_pledge
-WHERE civicrm_pledge.status_id  {$statusClause}        
+ SELECT civicrm_pledge.id id
+ FROM civicrm_pledge
+ WHERE civicrm_pledge.status_id  {$statusClause}
   AND civicrm_pledge.contact_id = %1
 ";
 
@@ -851,12 +851,12 @@ SELECT  pledge.contact_id              as contact_id,
         pledge.is_test                 as is_test,
         pledge.campaign_id             as campaign_id,
         SUM(payment.scheduled_amount)  as amount_due,
-        ( SELECT sum(civicrm_pledge_payment.actual_amount) 
-        FROM civicrm_pledge_payment 
+        ( SELECT sum(civicrm_pledge_payment.actual_amount)
+        FROM civicrm_pledge_payment
         WHERE civicrm_pledge_payment.status_id = 1
         AND  civicrm_pledge_payment.pledge_id = pledge.id
         ) as amount_paid
-        FROM      civicrm_pledge pledge, civicrm_pledge_payment payment 
+        FROM      civicrm_pledge pledge, civicrm_pledge_payment payment
         WHERE     pledge.id = payment.pledge_id
         AND     payment.status_id IN ( {$statusIds} ) AND pledge.status_id IN ( {$statusIds} )
         GROUP By  payment.id
