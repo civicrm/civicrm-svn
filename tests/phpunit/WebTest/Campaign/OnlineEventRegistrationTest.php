@@ -162,7 +162,7 @@ class WebTest_Campaign_OnlineEventRegistrationTest extends CiviSeleniumTestCase 
     $eventInfoStrings = array($eventTitle, $eventDescription, $streetAddress);
     $this->_testVerifyEventInfo($eventTitle, $eventInfoStrings);
 
-    $registerStrings = array("Member - $ 250.00", "Non-member - $ 325.00", $registerIntro);
+    $registerStrings = array("$ 250.00 Member", "$ 325.00 Non-member", $registerIntro);
     $registerUrl = $this->_testVerifyRegisterPage($registerStrings);
 
     $numberRegistrations = 3;
@@ -227,7 +227,7 @@ class WebTest_Campaign_OnlineEventRegistrationTest extends CiviSeleniumTestCase 
     // Go to Fees tab
     $this->click("link=Fees");
     $this->waitForElementPresent("_qf_Fee_upload-bottom");
-    $this->click("CIVICRM_QFID_1_2");
+    $this->click("CIVICRM_QFID_1_is_monetary");
     $this->check("payment_processor[$processorId]");
        $this->select("financial_type_id", "value=4");
     if ($priceSet) {
@@ -268,7 +268,7 @@ class WebTest_Campaign_OnlineEventRegistrationTest extends CiviSeleniumTestCase 
     $this->fillRichTextField("intro_text", $registerIntro);
 
     // enable confirmation email
-    $this->click("CIVICRM_QFID_1_2");
+    $this->click("CIVICRM_QFID_1_is_email_confirm");
     $this->type("confirm_from_name", "Jane Doe");
     $this->type("confirm_from_email", "jane.doe@example.org");
 
