@@ -21,7 +21,7 @@ class CRM_UF_Page_ProfileEditor extends CRM_Core_Page {
     CRM_Core_Resources::singleton()
       ->addSettingsFactory(function(){
         return array(
-          'civiSchema' => self::getSchema(),
+          'civiSchema' => CRM_UF_Page_ProfileEditor::getSchema(),
           'PseudoConstant' => array(
             'locationType' => CRM_Core_PseudoConstant::locationType(),
             'phoneType' => CRM_Core_PseudoConstant::phoneType(),
