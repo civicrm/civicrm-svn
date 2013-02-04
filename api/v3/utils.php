@@ -1062,7 +1062,7 @@ function _civicrm_api3_validate_fields($entity, $action, &$params, $errorMode = 
     switch (CRM_Utils_Array::value('type', $fieldInfo)) {
       case CRM_Utils_Type::T_INT:
         //field is of type integer
-        _civicrm_api3_validate_integer($params, $fieldname, $fieldInfo);
+        _civicrm_api3_validate_integer($params, $fieldname, $fieldInfo, $entity);
         break;
 
       case 4:
@@ -1440,7 +1440,7 @@ function _civicrm_api3_swap_out_aliases(&$apiRequest) {
  * @param string $fieldname uniquename of field being checked
  * @param array $fieldinfo array of fields from getfields function
  */
-function _civicrm_api3_validate_integer(&$params, &$fieldname, &$fieldInfo) {
+function _civicrm_api3_validate_integer(&$params, &$fieldname, &$fieldInfo, $entity) {
   //if fieldname exists in params
   if (CRM_Utils_Array::value($fieldname, $params)) {
     //if value = 'user_contact_id' replace value with logged in user id
@@ -1448,12 +1448,22 @@ function _civicrm_api3_validate_integer(&$params, &$fieldname, &$fieldInfo) {
       $session = &CRM_Core_Session::singleton();
       $params[$fieldname] = $session->get('userID');
     }
-    if (CRM_Utils_Array::value('pseudoconstant', $fieldInfo) && !CRM_Utils_Array::value('FKClassName',$fieldInfo)) {
-      $constant = $fieldInfo['options'];
-      if (is_numeric($params[$fieldname]) && !array_key_exists($params[$fieldname], $fieldInfo['options'])) {
+    if (CRM_Utils_Array::value('pseudoconstant', $fieldInfo) ) {
+      $constant = CRM_Utils_Array::value('options', $fieldInfo);
+      if (is_numeric($params[$fieldname]) && !CRM_Utils_Array::value('FKClassName',$fieldInfo) && !array_key_exists($params[$fieldname], $fieldInfo['options'])) {
         throw new API_Exception("$fieldname is not valid", 2001, array('error_field' => $fieldname,"type"=>"integer"));
       }
-      elseif (!is_numeric($params[$fieldname])) {
+    }
+    // we are looking for strings that should be swapped out e.g swap 'Donation' to financial_type_id 1
+    if (!is_numeric($params[$fieldname]) && !is_array($params[$fieldname])) {
+      if(CRM_Utils_Array::value('FKClassName', $fieldInfo)){
+        // we'll get the options for this now since we are doing a swap out
+        $options = civicrm_api($entity, 'getoptions', array('version' => 3, 'field' => $fieldname));
+        if(empty($fieldInfo['is_error'])){
+          $fieldInfo['options'] = $options['values'];
+        }
+      }
+      if(!empty($fieldInfo['options'])){
         $numericvalue = array_search($params[$fieldname], $fieldInfo['options']);
         if (empty($numericvalue)) {
           throw new Exception("$fieldname " . $params[$fieldname] . " is not valid");
@@ -1463,6 +1473,7 @@ function _civicrm_api3_validate_integer(&$params, &$fieldname, &$fieldInfo) {
         }
       }
     }
+
     // once we have done any swaps check our field length
     if(is_string($params[$fieldname]) &&
       CRM_Utils_Array::value('maxlength',$fieldInfo)

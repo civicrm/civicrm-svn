@@ -312,14 +312,14 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     ));
   }
   ///////////////// civicrm_contribution_
-  function testCreateEmptyContributionID() {
+  function testCreateEmptyContributionIDUseDonation() {
     $params = array(
       'contribution_id' => FALSE,
       'contact_id' => 1,
       'total_amount' => 1,
       'version' => 3,
       'check_permissions' => false,
-      'financial_type_id' => 1,
+      'financial_type_id' => 'Donation',
     );
     $contribution = civicrm_api('contribution', 'create', $params);
     $this->assertEquals($contribution['is_error'], 0, 'In line ' . __LINE__);
