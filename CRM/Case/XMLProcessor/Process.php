@@ -33,9 +33,7 @@
  *
  */
 class CRM_Case_XMLProcessor_Process extends CRM_Case_XMLProcessor {
-  function run($caseType,
-    &$params
-  ) {
+  function run($caseType, &$params) {
     $xml = $this->retrieve($caseType);
 
     if ($xml === FALSE) {
@@ -52,9 +50,7 @@ class CRM_Case_XMLProcessor_Process extends CRM_Case_XMLProcessor {
     $this->process($xml, $params);
   }
 
-  function get($caseType,
-    $fieldSet, $isLabel = FALSE, $maskAction = FALSE
-  ) {
+  function get($caseType, $fieldSet, $isLabel = FALSE, $maskAction = FALSE) {
     $xml = $this->retrieve($caseType);
     if ($xml === FALSE) {
       $docLink = CRM_Utils_System::docURL2("user/case-management/setup");
@@ -76,17 +72,12 @@ class CRM_Case_XMLProcessor_Process extends CRM_Case_XMLProcessor {
     }
   }
 
-  function process($xml,
-    &$params
-  ) {
-
+  function process($xml, &$params) {
     $standardTimeline = CRM_Utils_Array::value('standardTimeline', $params);
     $activitySetName  = CRM_Utils_Array::value('activitySetName', $params);
     $activityTypeName = CRM_Utils_Array::value('activityTypeName', $params);
 
-    if ('Open Case' ==
-      CRM_Utils_Array::value('activityTypeName', $params)
-    ) {
+    if ('Open Case' == CRM_Utils_Array::value('activityTypeName', $params)) {
       // create relationships for the ones that are required
       foreach ($xml->CaseRoles as $caseRoleXML) {
         foreach ($caseRoleXML->RelationshipType as $relationshipTypeXML) {
@@ -102,9 +93,7 @@ class CRM_Case_XMLProcessor_Process extends CRM_Case_XMLProcessor {
       }
     }
 
-    if ('Change Case Start Date' ==
-      CRM_Utils_Array::value('activityTypeName', $params)
-    ) {
+    if ('Change Case Start Date' == CRM_Utils_Array::value('activityTypeName', $params)) {
       // delete all existing activities which are non-empty
       $this->deleteEmptyActivity($params);
     }
@@ -130,12 +119,8 @@ class CRM_Case_XMLProcessor_Process extends CRM_Case_XMLProcessor {
     }
   }
 
-  function processStandardTimeline($activitySetXML,
-    &$params
-  ) {
-    if ('Change Case Type' ==
-      CRM_Utils_Array::value('activityTypeName', $params)
-    ) {
+  function processStandardTimeline($activitySetXML, &$params) {
+    if ('Change Case Type' == CRM_Utils_Array::value('activityTypeName', $params)) {
       // delete all existing activities which are non-empty
       $this->deleteEmptyActivity($params);
     }
@@ -180,14 +165,11 @@ class CRM_Case_XMLProcessor_Process extends CRM_Case_XMLProcessor {
     return $result;
   }
 
-  function createRelationships($relationshipTypeName,
-    &$params
-  ) {
+  function createRelationships($relationshipTypeName, &$params) {
     $relationshipTypes = &$this->allRelationshipTypes();
     // get the relationship id
-    $relationshipTypeID = array_search($relationshipTypeName,
-      $relationshipTypes
-    );
+    $relationshipTypeID = array_search($relationshipTypeName, $relationshipTypes);
+
     if ($relationshipTypeID === FALSE) {
       $docLink = CRM_Utils_System::docURL2("user/case-management/setup");
       CRM_Core_Error::fatal(ts('Relationship type %1, found in case configuration file, is not present in the database %2',
@@ -220,7 +202,6 @@ class CRM_Case_XMLProcessor_Process extends CRM_Case_XMLProcessor {
   }
 
   function createRelationship(&$params) {
-
     $dao = new CRM_Contact_DAO_Relationship();
     $dao->copyValues($params);
     // only create a relationship if it does not exist
@@ -241,9 +222,7 @@ class CRM_Case_XMLProcessor_Process extends CRM_Case_XMLProcessor {
 
         if ($activityTypeInfo['id']) {
           if ($maskAction) {
-            if ($maskAction == 'edit' &&
-              '0' === (string ) $recordXML->editable
-            ) {
+            if ($maskAction == 'edit' && '0' === (string ) $recordXML->editable) {
               $result[$maskAction][] = $activityTypeInfo['id'];
             }
           }
@@ -308,10 +287,7 @@ AND        a.is_deleted = 0
     return $maxInstance ? ($count < $maxInstance ? FALSE : TRUE) : FALSE;
   }
 
-  function createActivity($activityTypeXML,
-    &$params
-  ) {
-
+  function createActivity($activityTypeXML, &$params) {
     $activityTypeName = (string) $activityTypeXML->name;
     $activityTypes    = &$this->allActivityTypes(TRUE, TRUE);
     $activityTypeInfo = CRM_Utils_Array::value($activityTypeName, $activityTypes);
@@ -323,6 +299,7 @@ AND        a.is_deleted = 0
         ));
       return FALSE;
     }
+
     $activityTypeID = $activityTypeInfo['id'];
 
     if (isset($activityTypeXML->status)) {
