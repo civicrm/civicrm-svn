@@ -83,27 +83,9 @@ class plgUserCivicrm extends JPlugin
    */
   public function onUserLogin($user, $options = array()) {
     $app  = JFactory::getApplication();
-    if ($app->isAdmin()) {
+    if ( $app->isAdmin() ) {
       $jUser =& JFactory::getUser();
       $jId = $jUser->get('id');
-      //set user details if jUser is not set and $user is set
-      if (isset($user['username']) && !$jId) {
-        jimport('joomla.user.helper');
-        $jId = JUserHelper::getUserId($user['username']);
-        $jUser = (object) $user;
-        $jUser->id = $jId;
-      }
-      
-      //initialize civicrm for user sync
-      if (!class_exists('CRM_Core_Config')) {
-        require_once JPATH_ROOT.'/administrator/components/com_civicrm/civicrm.settings.php';
-        require_once 'CRM/Core/Config.php';
-        $config = CRM_Core_Config::singleton( );        
-      }
-      //sync user after login
-      CRM_Core_BAO_UFMatch::synchronize($jUser, FALSE, 'Joomla', 'Individual');
-      
-      //reset navigation
       self::civicrmResetNavigation( $jId );
     }
   }
