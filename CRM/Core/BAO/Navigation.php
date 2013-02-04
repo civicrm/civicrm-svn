@@ -573,15 +573,14 @@ ORDER BY parent_id, weight";
 
     // For Joomla front end user, there is no need to create
     // navigation menu items, CRM-5349
-    if ($config->userFramework == 'Joomla' &&
-      $config->userFrameworkFrontend
-    ) {
+    if ($config->userFramework == 'Joomla' && $config->userFrameworkFrontend) {
       return "<!-- $config->lcMessages -->";
     }
 
     $navParams = array('contact_id' => $contactID);
 
-    $navigation = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::PERSONAL_PREFERENCES_NAME,
+    $navigation = CRM_Core_BAO_Setting::getItem(
+      CRM_Core_BAO_Setting::PERSONAL_PREFERENCES_NAME,
       'navigation',
       NULL,
       NULL,
@@ -590,7 +589,8 @@ ORDER BY parent_id, weight";
 
     // FIXME: hack for CRM-5027: we need to prepend the navigation string with
     // (HTML-commented-out) locale info so that we rebuild menu on locale changes
-    if (!$navigation ||
+    if (
+      !$navigation ||
       substr($navigation, 0, 14) != "<!-- $config->lcMessages -->"
     ) {
       //retrieve navigation if it's not cached.
@@ -641,7 +641,8 @@ ORDER BY parent_id, weight";
       $contact = new CRM_Contact_DAO_Contact();
       $contact->id = $contactID;
       if ($contact->find(TRUE)) {
-        CRM_Core_BAO_Setting::setItem($navigation,
+        CRM_Core_BAO_Setting::setItem(
+          $navigation,
           CRM_Core_BAO_Setting::PERSONAL_PREFERENCES_NAME,
           'navigation',
           NULL,
