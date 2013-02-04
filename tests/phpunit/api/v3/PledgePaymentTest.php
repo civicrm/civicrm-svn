@@ -226,6 +226,7 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase {
     //
     $params['option.create_new'] = 1;
     $resultcreatenew = civicrm_api('pledge_payment', 'create', $params);
+    $this->assertAPISuccess($resultcreatenew);
     $this->assertEquals(0, $resultcreatenew['is_error'], "in line " . __LINE__);
     $result = civicrm_api('PledgePayment', 'Get', array(
       'version' => 3,
