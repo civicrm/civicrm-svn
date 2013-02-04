@@ -89,6 +89,14 @@ function civicrm_api3_contribution_create($params) {
 function _civicrm_api3_contribution_create_spec(&$params) {
   $params['contact_id']['api.required'] = 1;
   $params['total_amount']['api.required'] = 1;
+  $params['payment_processor'] = array(
+    'name' => 'payment_processor',
+    'title' => 'Payment Instruments',
+    'description' => 'Payment processor ID',
+    // field is called payment processor - not payment processor id but can only be one id so
+    // it seems likely someone will fix it up one day to be more consistent - lets alias it from the start
+    'api.aliases' => array('payment_processor_id'),
+  );
   $params['financial_type_id']['api.aliases'] = array('contribution_type_id');
   $params['note'] = array(
     'name' => 'note',
@@ -222,7 +230,7 @@ function _civicrm_api3_contribution_get_spec(&$params) {
  * @access public
  */
 function _civicrm_api3_contribute_format_params($params, &$values, $create = FALSE) {
-
+//legacy way of formatting from v2 api - v3 way is to define metadata & do it in the api layer
   _civicrm_api3_filter_fields_for_bao('Contribution', $params, $values);
 
   foreach ($params as $key => $value) {
@@ -230,9 +238,9 @@ function _civicrm_api3_contribute_format_params($params, &$values, $create = FAL
     if (CRM_Utils_System::isNull($value)) {
       continue;
     }
-
+    // note that this is legacy handling - these should be handled at the api layer
     switch ($key) {
-      case 'financial_type' :
+      case 'financial_type' :// should be dealt with either api pseudoconstant in validate_integer fn
         $contributionTypeId = CRM_Utils_Array::key ( ucfirst ( $value ), CRM_Contribute_PseudoConstant::financialType() );
         if ($contributionTypeId) {
           if (CRM_Utils_Array::value('financial_type_id', $values) && $contributionTypeId != $values['financial_type_id']) {
@@ -245,7 +253,7 @@ function _civicrm_api3_contribute_format_params($params, &$values, $create = FAL
         }
         break;
 
-      case 'soft_credit_to':
+      case 'soft_credit_to':// should be dealt with by validate integer
         if (!CRM_Utils_Rule::integer($value)) {
           return civicrm_api3_create_error("$key not a valid Id: $value");
         }
