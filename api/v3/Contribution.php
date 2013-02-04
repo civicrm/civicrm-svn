@@ -97,7 +97,7 @@ function _civicrm_api3_contribution_create_spec(&$params) {
     // it seems likely someone will fix it up one day to be more consistent - lets alias it from the start
     'api.aliases' => array('payment_processor_id'),
   );
-  $params['financial_type_id']['api.aliases'] = array('contribution_type_id');
+  $params['financial_type_id']['api.aliases'] = array('contribution_type_id', 'contribution_type');
   $params['note'] = array(
     'name' => 'note',
     'uniqueName' => 'contribution_note',
