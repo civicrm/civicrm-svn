@@ -231,17 +231,15 @@ class api_v3_PledgeTest extends CiviUnitTestCase {
     $result = civicrm_api('pledge', 'get', $params);
 
     $resultSortedAsc = civicrm_api('pledge', 'get', array(
-                         'version' => $this->_apiversion,
-                         'rowCount' => 1,
-                         'pledge_is_test' => 0,
-                         'sort' => 'start_date ASC',
-                       ));
+      'version' => $this->_apiversion,
+      'rowCount' => 1,
+      'sort' => 'start_date ASC',
+    ));
     $resultSortedDesc = civicrm_api('pledge', 'get', array(
-                          'version' => $this->_apiversion,
-                          'rowCount' => 1,
-                          'pledge_is_test' => 0,
-                          'sort' => 'start_date DESC',
-                        ));
+      'version' => $this->_apiversion,
+      'rowCount' => 1,
+      'sort' => 'start_date DESC',
+    ));
 
     $this->assertEquals($pledge1['id'], $result['id'], 'pledge get gets first created pledge in line ' . __LINE__);
     $this->assertEquals($pledge2['id'], $resultSortedAsc['id'], 'Ascending pledge sort works');
