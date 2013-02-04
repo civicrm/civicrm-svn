@@ -216,6 +216,7 @@ class CRM_Core_Resources {
   public function addSettingsFactory($callable) {
     $this->addSetting(array()); // ensure that 'settings' region is created, even if empty
     $this->settingsFactories[] = $callable;
+    return $this;
   }
 
   public function getSettings() {

@@ -19,19 +19,21 @@ class CRM_UF_Page_ProfileEditor extends CRM_Core_Page {
     $loaded = TRUE;
 
     CRM_Core_Resources::singleton()
-      ->addSetting(array(
-        'civiSchema' => self::getSchema(),
-        'PseudoConstant' => array(
-          'locationType' => CRM_Core_PseudoConstant::locationType(),
-          'phoneType' => CRM_Core_PseudoConstant::phoneType(),
-        ),
-        'initialProfileList' => civicrm_api('UFGroup', 'get', array(
-          'version' => 3,
-          'sequential' => 1,
-          'rowCount' => 1000, // FIXME
-        )),
-        'profilePreviewKey' => CRM_Core_Key::get('CRM_UF_Form_Inline_Preview', TRUE),
-      ))
+      ->addSettingsFactory(function(){
+        return array(
+          'civiSchema' => self::getSchema(),
+          'PseudoConstant' => array(
+            'locationType' => CRM_Core_PseudoConstant::locationType(),
+            'phoneType' => CRM_Core_PseudoConstant::phoneType(),
+          ),
+          'initialProfileList' => civicrm_api('UFGroup', 'get', array(
+            'version' => 3,
+            'sequential' => 1,
+            'rowCount' => 1000, // FIXME
+          )),
+          'profilePreviewKey' => CRM_Core_Key::get('CRM_UF_Form_Inline_Preview', TRUE),
+        );
+      })
       ->addScriptFile('civicrm', 'packages/backbone/json2.js', 100, 'html-header', FALSE)
       ->addScriptFile('civicrm', 'packages/backbone/underscore.js', 110, 'html-header', FALSE)
       ->addScriptFile('civicrm', 'packages/backbone/backbone.js', 120, 'html-header')
