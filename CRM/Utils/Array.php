@@ -141,6 +141,14 @@ class CRM_Utils_Array {
     return str_replace($src, $dst, $value);
   }
 
+  /**
+   * Convert an array-tree to a flat array
+   *
+   * @param array $list the original, tree-shaped list
+   * @param array $flat the flat list to which items will be copied
+   * @param string $prefix
+   * @param string $seperator
+   */
   static function flatten(&$list, &$flat, $prefix = '', $seperator = ".") {
     foreach ($list as $name => $value) {
       $newPrefix = ($prefix) ? $prefix . $seperator . $name : $name;
@@ -600,7 +608,7 @@ class CRM_Utils_Array {
    */
   static function crmReplaceKey(&$elementArray, $oldKey, $newKey) {
     $keys = array_keys($elementArray);
-    if (false === $index = array_search($oldKey, $keys)) {
+    if (FALSE === $index = array_search($oldKey, $keys)) {
       throw new Exception(sprintf('key "%s" does not exit', $oldKey));
     }
     $keys[$index] = $newKey;
