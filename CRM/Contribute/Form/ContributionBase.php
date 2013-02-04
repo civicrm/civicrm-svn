@@ -609,14 +609,6 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form {
     if (isset($this->_values['receipt_text'])) {
       $this->assign('receipt_text', $this->_values['receipt_text']);
     }
-    /*
-        // assign pay later stuff
-        $this->_params['is_pay_later'] = CRM_Utils_Array::value( 'is_pay_later', $this->_params, false );
-        $this->assign( 'is_pay_later', $this->_params['is_pay_later'] );
-        if ( $this->_params['is_pay_later'] ) {
-            $this->assign( 'pay_later_text'   , $this->_values['pay_later_text']    );
-            $this->assign( 'pay_later_receipt', $this->_values['pay_later_receipt'] );
-            }*/
   }
 
   /**
@@ -629,7 +621,6 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form {
     $stateCountryMap = array();
 
     if ($id) {
-      $session = CRM_Core_Session::singleton();
       $contactID = $this->_userID;
 
       // we don't allow conflicting fields to be
@@ -646,7 +637,7 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form {
         'contribution_status_id' => 1,
         'payment_instrument' => 1,
         'check_number' => 1,
-                                     'financial_type'      => 1
+        'financial_type' => 1,
       );
 
       $fields = NULL;

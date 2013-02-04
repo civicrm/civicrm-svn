@@ -154,15 +154,19 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
           }
           if ($isQuickConfig && !empty($this->_params["price_{$priceField->id}"])) {
             if ($this->_values['fee'][$priceField->id]['html_type'] != 'Text') {
-            $this->_params['amount_level'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_FieldValue', $this->_params["price_{$priceField->id}"], 'label');
+            $this->_params['amount_level'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_FieldValue',
+              $this->_params["price_{$priceField->id}"], 'label');
             }
             if ($priceField->name == "membership_amount") {
-              $this->_params['selectMembership'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_FieldValue', $this->_params["price_{$priceField->id}"], 'membership_type_id');
+              $this->_params['selectMembership'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_FieldValue',
+                $this->_params["price_{$priceField->id}"], 'membership_type_id');
             }
           } // if seperate payment we set contribution amount to be null, so that it will not show contribution amount same as membership amount.
-          else 
-            if ((CRM_Utils_Array::value('is_separate_payment', $this->_membershipBlock)) && ($this->_values['fee'][$priceField->id]['name'] == "other_amount") && CRM_Utils_Array::value("price_{$contriPriceId}", $this->_params) < 1 && !CRM_Utils_Array::value("price_{$priceField->id}", $this->_params)) {
-              $this->_params['amount'] = null; 
+          elseif ((CRM_Utils_Array::value('is_separate_payment', $this->_membershipBlock))
+              && ($this->_values['fee'][$priceField->id]['name'] == "other_amount")
+              && CRM_Utils_Array::value("price_{$contriPriceId}", $this->_params) < 1
+              && !CRM_Utils_Array::value("price_{$priceField->id}", $this->_params)) {
+              $this->_params['amount'] = null;
           }
         }
       }

@@ -106,7 +106,7 @@ class CRM_Contribute_BAO_Premium extends CRM_Contribute_DAO_Premium {
    * @param int $pageId
    * @static
    */
-  function buildPremiumBlock(&$form, $pageID, $formItems = FALSE, $selectedProductID = NULL, $selectedOption = NULL) {
+  static function buildPremiumBlock(&$form, $pageID, $formItems = FALSE, $selectedProductID = NULL, $selectedOption = NULL) {
     $this->add('hidden', "selectProduct", $selectedProductID, array('id' => 'selectProduct'));
 
     $dao = new CRM_Contribute_DAO_Premium();
