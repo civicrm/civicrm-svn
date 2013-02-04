@@ -42,7 +42,10 @@ class api_v3_PledgeTest extends CiviUnitTestCase {
   protected $_params;
   protected $_entity;
   protected $scheduled_date;
-  public $DBResetRequired = True; function setUp() {
+  public $DBResetRequired = True;
+  public $_eNoticeCompliant = FALSE;
+
+  function setUp() {
     $this->_apiversion = 3;
     parent::setUp();
     $this->quickCleanup(array('civicrm_pledge', 'civicrm_pledge_payment'));
@@ -89,7 +92,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase {
 
     $result = civicrm_api($this->_entity, 'create', $params);
     $this->assertAPISuccess($result, " testCreateWithCustom ");
-    $this->assertNotEquals($result['is_error'], 1, $result['error_message'] . ' in line ' . __LINE__);
+    $this->assertAPISuccess($result,  ' in line ' . __LINE__);
     $getparams = array('version' => 3, 'id' => $result['id'], 'return.custom_' . $ids['custom_field_id'] => 1);
     $check = civicrm_api($this->_entity, 'get', $getparams);
     civicrm_api('pledge', 'delete', array('id' => $check['values'][$check['id']], 'version' => 3));
