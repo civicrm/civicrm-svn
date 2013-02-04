@@ -25,9 +25,9 @@
 *}
 {capture assign=infoTitle}{ts}Preview Mode{/ts}{/capture}
 {assign var="infoType" value="info"}
-{if $previewField }
+{if $previewField}
   {capture assign=infoMessage}<strong>{ts}Profile Field Preview{/ts}</strong>{/capture}
-  {else}
+{else}
   {capture assign=infoMessage}<strong>{ts}Profile Preview{/ts}</strong>{/capture}
 {/if}
 {include file="CRM/common/info.tpl"}

@@ -97,8 +97,8 @@ class CRM_UF_Form_Preview extends CRM_UF_Form_AbstractPreview {
         $name .= '-Primary';
       }
 
-      if (isset($fieldDAO->phone_type)) {
-        $name .= '-' . $fieldDAO->phone_type;
+      if (isset($fieldDAO->phone_type_id)) {
+        $name .= '-' . $fieldDAO->phone_type_id;
       }
 
       $fieldArray[$name] = $fields[$name];
