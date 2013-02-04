@@ -151,10 +151,13 @@ class WebTest_Member_OnlineAutoRenewMembershipTest extends CiviSeleniumTestCase 
       $this->waitForPageToLoad("30000");
 
       $this->waitForElementPresent("_qf_MembershipType_upload-bottom");
-      $this->click("CIVICRM_QFID_1_auto_renew");
+      $this->click("xpath=//div[@id='membership_type_form']//table/tbody/tr[6]/td/label[contains(text(), 'Auto-renew Option')]/../../td[2]/label[contains(text(), 'Give option, but not required')]");
 
       $this->type("duration_interval", "1");
       $this->select("duration_unit", "label=year");
+      
+      //wait for the auto-complete member_of_contact to populate
+      sleep(2);
 
       $this->click("_qf_MembershipType_upload-bottom");
       $this->waitForPageToLoad("30000");
@@ -163,10 +166,13 @@ class WebTest_Member_OnlineAutoRenewMembershipTest extends CiviSeleniumTestCase 
       $this->waitForPageToLoad("30000");
 
       $this->waitForElementPresent("_qf_MembershipType_upload-bottom");
-      $this->click("CIVICRM_QFID_1_auto_renew");
+      $this->click("xpath=//div[@id='membership_type_form']//table/tbody/tr[6]/td/label[contains(text(), 'Auto-renew Option')]/../../td[2]/label[contains(text(), 'Give option, but not required')]");
 
       $this->type("duration_interval", "1");
       $this->select("duration_unit", "label=year");
+
+      //wait for the auto-complete member_of_contact to populate
+      sleep(2);
 
       $this->click("_qf_MembershipType_upload-bottom");
       $this->waitForPageToLoad("30000");

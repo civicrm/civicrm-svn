@@ -113,27 +113,33 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
       // -- start updating membership types
       $this->open($this->sboxPath . "civicrm/admin/member/membershipType/add?action=update&id=1&reset=1");
       $this->waitForPageToLoad("30000");
-
-      $this->waitForElementPresent("CIVICRM_QFID_1_auto_renew");
-      $this->click("CIVICRM_QFID_1_auto_renew");
-
+      
+      $this->waitForElementPresent("xpath=//div[@id='membership_type_form']//table/tbody/tr[6]/td/label[contains(text(), 'Auto-renew Option')]/../../td[2]/label[contains(text(), 'Give option, but not required')]");
+      $this->click("xpath=//div[@id='membership_type_form']//table/tbody/tr[6]/td/label[contains(text(), 'Auto-renew Option')]/../../td[2]/label[contains(text(), 'Give option, but not required')]");
+      
       $this->type("duration_interval", "1");
       $this->select("duration_unit", "label=year");
 
+      //wait for the auto-complete member_of_contact to populate
+      sleep(3);
+      
       $this->click("_qf_MembershipType_upload-bottom");
-      sleep(5);
+      $this->waitForPageToLoad("30000");
 
       $this->open($this->sboxPath . "civicrm/admin/member/membershipType/add?action=update&id=2&reset=1");
       $this->waitForPageToLoad("30000");
-
-      $this->waitForElementPresent("CIVICRM_QFID_1_auto_renew");
-      $this->click("CIVICRM_QFID_1_auto_renew");
+      
+      $this->waitForElementPresent("xpath=//div[@id='membership_type_form']//table/tbody/tr[6]/td/label[contains(text(), 'Auto-renew Option')]/../../td[2]/label[contains(text(), 'Give option, but not required')]");
+      $this->click("xpath=//div[@id='membership_type_form']//table/tbody/tr[6]/td/label[contains(text(), 'Auto-renew Option')]/../../td[2]/label[contains(text(), 'Give option, but not required')]");
 
       $this->type("duration_interval", "1");
       $this->select("duration_unit", "label=year");
 
+      //wait for the auto-complete member_of_contact to populate
+      sleep(3);
+
       $this->click("_qf_MembershipType_upload-bottom");
-      sleep(5);
+      $this->waitForPageToLoad("30000");
 
       // create contribution page with randomized title and default params
       $amountSection   = FALSE;
