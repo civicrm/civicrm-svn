@@ -473,11 +473,10 @@ FROM   civicrm_financial_item fi";
 
   function createDomainContacts() {
     $domainParams = array();
-    $locParams['entity_table'] = CRM_Core_BAO_Domain::getTableName();
     $query = "
 ALTER TABLE `civicrm_domain` ADD `contact_id` INT( 10 ) UNSIGNED NULL DEFAULT NULL COMMENT 'FK to Contact ID. This is specifically not an FK to avoid circular constraints',
  ADD CONSTRAINT `FK_civicrm_domain_contact_id` FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact` (`id`);";
-    CRM_Core_DAO::executeQuery($query, $params, TRUE, NULL, FALSE, FALSE);
+    CRM_Core_DAO::executeQuery($query, CRM_Core_DAO::$_nullArray, TRUE, NULL, FALSE, FALSE);
     $dao = new CRM_Core_DAO_Domain();
     $dao->find();
     while($dao->fetch()) {
@@ -493,7 +492,6 @@ ALTER TABLE `civicrm_domain` ADD `contact_id` INT( 10 ) UNSIGNED NULL DEFAULT NU
       $domainParams['contact_id'] = $contact->id;
       CRM_Core_BAO_Domain::edit($domainParams, $dao->id);
     }
-    CRM_Core_DAO::executeQuery("ALTER TABLE `civicrm_domain` DROP loc_block_id;", $params, TRUE, NULL, FALSE, FALSE);
   }
 
   function task_4_3_alpha1_checkDBConstraints() {

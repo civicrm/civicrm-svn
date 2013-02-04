@@ -853,3 +853,21 @@ ALTER TABLE `civicrm_line_item`
 
 ALTER TABLE `civicrm_line_item`
   ADD CONSTRAINT `FK_civicrm_line_item_price_field_id` FOREIGN KEY (`price_field_id`) REFERENCES `civicrm_price_field`(id) ON DELETE SET NULL;
+
+-- CRM-11821
+-- update all location info of domain
+-- like address, email, phone etc. 
+UPDATE civicrm_domain cd
+LEFT JOIN civicrm_loc_block clb ON cd.loc_block_id = clb.id
+LEFT JOIN civicrm_address ca ON clb.address_id = ca.id
+LEFT JOIN civicrm_phone cp ON cp.id = clb.phone_id
+LEFT JOIN civicrm_email ce ON ce.id = clb.email_id
+SET
+ca.contact_id = cd.contact_id, cp.contact_id = cd.contact_id, ce.contact_id = cd.contact_id;
+
+-- Delete rows from civicrm_loc_block used for civicrm_domain
+DELETE clb.* FROM civicrm_domain cd
+LEFT JOIN civicrm_loc_block clb ON clb.id = cd.loc_block_id;
+
+-- Delete loc_block_id from civicrm_domain
+ALTER TABLE `civicrm_domain` DROP loc_block_id;
