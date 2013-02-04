@@ -216,6 +216,9 @@ class CRM_Core_ManagedEntities {
    */
   protected static function createDeclarationIndex($moduleIndex, $declarations) {
     $result = array();
+    if (!isset($moduleIndex[TRUE])) {
+      return $result;
+    }
     foreach ($moduleIndex[TRUE] as $moduleName => $module) {
       if ($module->is_active) {
         // need an empty array() for all active modules, even if there are no current $declarations
