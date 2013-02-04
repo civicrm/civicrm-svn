@@ -4,10 +4,10 @@
  *
  *  (PHP 5)
  *
- *   @copyright Copyright CiviCRM LLC (C) 2009
- *   @license   http://www.fsf.org/licensing/licenses/agpl-3.0.html
+ * @copyright Copyright CiviCRM LLC (C) 2009
+ * @license   http://www.fsf.org/licensing/licenses/agpl-3.0.html
  *              GNU Affero General Public License version 3
- *   @package   CiviCRM
+ * @package   CiviCRM
  *
  *   This file is part of CiviCRM
  *
@@ -32,7 +32,7 @@
 define('CIVICRM_SETTINGS_PATH', __DIR__ . '/civicrm.settings.dist.php');
 define('CIVICRM_SETTINGS_LOCAL_PATH', __DIR__ . '/civicrm.settings.local.php');
 
-if(file_exists(CIVICRM_SETTINGS_LOCAL_PATH)){
+if (file_exists(CIVICRM_SETTINGS_LOCAL_PATH)) {
   require_once CIVICRM_SETTINGS_LOCAL_PATH;
 }
 require_once CIVICRM_SETTINGS_PATH;
@@ -53,21 +53,21 @@ define('API_LATEST_VERSION', 3);
  *  Base class for CiviCRM unit tests
  *
  *  Common functions for unit tests
- *  @package CiviCRM
+ * @package CiviCRM
  */
 class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
   /**
    *  Database has been initialized
    *
-   *  @var boolean
+   * @var boolean
    */
   private static $dbInit = FALSE;
 
   /**
    *  Database connection
    *
-   *  @var PHPUnit_Extensions_Database_DB_IDatabaseConnection
+   * @var PHPUnit_Extensions_Database_DB_IDatabaseConnection
    */
   protected $_dbconn;
 
@@ -84,12 +84,12 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
   protected $tempDirs;
 
   /**
-   *  @var Utils instance
+   * @var Utils instance
    */
   public static $utils;
 
   /**
-   *  @var boolean populateOnce allows to skip db resets in setUp
+   * @var boolean populateOnce allows to skip db resets in setUp
    *
    *  WARNING! USE WITH CAUTION - IT'LL RENDER DATA DEPENDENCIES
    *  BETWEEN TESTS WHEN RUN IN SUITE. SUITABLE FOR LOCAL, LIMITED
@@ -107,7 +107,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
   public $_eNoticeCompliant = FALSE;
 
   /**
-   *  @var boolean DBResetRequired allows skipping DB reset
+   * @var boolean DBResetRequired allows skipping DB reset
    *               in specific test case. If you still need
    *               to reset single test (method) of such case, call
    *               $this->cleanDB() in the first line of this
@@ -125,9 +125,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
    *  ReflectionClass of the Test class and checks the constructor
    *  of that class to decide how to set up the test.
    *
-   *  @param  string $name
-   *  @param  array  $data
-   *  @param  string $dataName
+   * @param  string $name
+   * @param  array  $data
+   * @param  string $dataName
    */
   function __construct($name = NULL, array$data = array(), $dataName = '') {
     parent::__construct($name, $data, $dataName);
@@ -170,7 +170,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
    *
    *  Initialize the test database if it hasn't been initialized
    *
-   *  @return PHPUnit_Extensions_Database_DB_IDatabaseConnection connection
+   * @return PHPUnit_Extensions_Database_DB_IDatabaseConnection connection
    */
   protected function getConnection() {
     $dbName = self::$_dbName;
@@ -180,7 +180,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
       //  install test database
       echo PHP_EOL . "Installing {$dbName} database" . PHP_EOL;
 
-      self::_populateDB( FALSE, $this );
+      self::_populateDB(FALSE, $this);
 
       self::$dbInit = TRUE;
     }
@@ -190,7 +190,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
   /**
    *  Required implementation of abstract method
    */
-  protected function getDataSet() {}
+  protected function getDataSet() {
+  }
 
   private static function _populateDB($perClass = FALSE, &$object = NULL) {
 
@@ -207,7 +208,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     self::$populateOnce = NULL;
 
     $dbName = self::getDBName();
-    $pdo    = self::$utils->pdo;
+    $pdo = self::$utils->pdo;
     // only consider real tables and not views
     $tables = $pdo->query("SELECT table_name FROM INFORMATION_SCHEMA.TABLES
     WHERE TABLE_SCHEMA = '{$dbName}' AND TABLE_TYPE = 'BASE TABLE'");
@@ -255,9 +256,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     $sql_file3 = dirname(dirname(dirname(dirname(__FILE__)))) . "/sql/test_data.mysql";
     $sql_file4 = dirname(dirname(dirname(dirname(__FILE__)))) . "/sql/test_data_second_domain.mysql";
 
-    $query2    = file_get_contents($sql_file2);
-    $query3    = file_get_contents($sql_file3);
-    $query4    = file_get_contents($sql_file4);
+    $query2 = file_get_contents($sql_file2);
+    $query3 = file_get_contents($sql_file3);
+    $query4 = file_get_contents($sql_file4);
     if (self::$utils->do_query($query2) === FALSE) {
       echo "Cannot load civicrm_data.mysql. Aborting.";
       exit;
@@ -292,7 +293,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     self::_populateDB(TRUE);
 
     // also set this global hack
-    $GLOBALS['_PEAR_ERRORSTACK_OVERRIDE_CALLBACK'] = array( );
+    $GLOBALS['_PEAR_ERRORSTACK_OVERRIDE_CALLBACK'] = array();
   }
 
   /**
@@ -344,10 +345,10 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     //flush component settings
     CRM_Core_Component::getEnabledComponents(TRUE);
 
-    if($this->_eNoticeCompliant ){
+    if ($this->_eNoticeCompliant) {
       error_reporting(E_ALL);
     }
-    else{
+    else {
       error_reporting(E_ALL & ~E_NOTICE);
     }
   }
@@ -443,7 +444,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
     // Otherwise check matches of DAO field values against expected values in $match.
     if ($object->find(TRUE)) {
-      $fields = &$object->fields();
+      $fields = & $object->fields();
       foreach ($fields as $name => $value) {
         $dbName = $value['name'];
         if (isset($match[$name])) {
@@ -471,7 +472,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     if (empty($searchValue)) {
       $this->fail("empty value passed to assertDBNotNull");
     }
-    $value = CRM_Core_DAO::getFieldValue($daoName, $searchValue, $returnColumn, $searchColumn, true);
+    $value = CRM_Core_DAO::getFieldValue($daoName, $searchValue, $returnColumn, $searchColumn, TRUE);
     $this->assertNotNull($value, $message);
 
     return $value;
@@ -479,13 +480,13 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
   // Request a record from the DB by seachColumn+searchValue. Success if returnColumn value is NULL.
   function assertDBNull($daoName, $searchValue, $returnColumn, $searchColumn, $message) {
-    $value = CRM_Core_DAO::getFieldValue($daoName, $searchValue, $returnColumn, $searchColumn, true);
+    $value = CRM_Core_DAO::getFieldValue($daoName, $searchValue, $returnColumn, $searchColumn, TRUE);
     $this->assertNull($value, $message);
   }
 
   // Request a record from the DB by id. Success if row not found.
   function assertDBRowNotExist($daoName, $id, $message) {
-    $value = CRM_Core_DAO::getFieldValue($daoName, $id, 'id', 'id', true);
+    $value = CRM_Core_DAO::getFieldValue($daoName, $id, 'id', 'id', TRUE);
     $this->assertNull($value, $message);
   }
 
@@ -493,7 +494,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
   function assertDBCompareValue($daoName, $searchValue, $returnColumn, $searchColumn,
                                 $expectedValue, $message
   ) {
-    $value = CRM_Core_DAO::getFieldValue($daoName, $searchValue, $returnColumn, $searchColumn, true);
+    $value = CRM_Core_DAO::getFieldValue($daoName, $searchValue, $returnColumn, $searchColumn, TRUE);
     $this->assertEquals($value, $expectedValue, $message);
   }
 
@@ -516,8 +517,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
    * Example: $this->assertSql(2, 'select count(*) from foo where foo.bar like "%1"',
    * array(1 => array("Whiz", "String")));
    */
-  function assertDBQuery($expected, $query, $params = array(
-  )) {
+  function assertDBQuery($expected, $query, $params = array()) {
     $actual = CRM_Core_DAO::singleValueQuery($query, $params);
     $this->assertEquals($expected, $actual,
       sprintf('expected=[%s] actual=[%s] query=[%s]',
@@ -526,7 +526,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     );
   }
 
-  function assertAttributesEquals($expectedValues, $actualValues, $message = null) {
+  function assertAttributesEquals($expectedValues, $actualValues, $message = NULL) {
     foreach ($expectedValues as $paramName => $paramValue) {
       if (isset($actualValues[$paramName])) {
         $this->assertEquals($paramValue, $actualValues[$paramName], "Value Mismatch On $paramName - value 1 is $paramValue  value 2 is {$actualValues[$paramName]}");
@@ -559,7 +559,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     if (!empty($prefix)) {
       $prefix .= ': ';
     }
-    $this->assertEquals(0, $apiResult['is_error'], $prefix . empty($apiResult['error_message'])?'':$apiResult['error_message']);
+    $this->assertEquals(0, $apiResult['is_error'], $prefix . empty($apiResult['error_message']) ? '' : $apiResult['error_message']);
   }
 
   function assertType($expected, $actual, $message = '') {
@@ -574,7 +574,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
    * @return int    id of Organisation created
    */
   function organizationCreate($params = array()) {
-    if(!$params){
+    if (!$params) {
       $params = array();
     }
     $orgParams = array(
@@ -582,7 +582,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
       'contact_type' => 'Organization',
       'version' => API_LATEST_VERSION,
     );
-    return $this->_contactCreate(array_merge($orgParams,$params));
+    return $this->_contactCreate(array_merge($orgParams, $params));
   }
 
   /**
@@ -637,7 +637,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     $params['version'] = API_LATEST_VERSION;
     $result = civicrm_api('Contact', 'create', $params);
     if (CRM_Utils_Array::value('is_error', $result) ||
-        !CRM_Utils_Array::value('id', $result)
+      !CRM_Utils_Array::value('id', $result)
     ) {
       throw new Exception('Could not create test contact, with message: ' . CRM_Utils_Array::value('error_message', $result));
     }
@@ -650,7 +650,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     $params['skip_undelete'] = 1;
     $domain = new CRM_Core_BAO_Domain;
     $domain->domain_contact_id = $contactID;
-    if($domain->find(TRUE)){
+    if ($domain->find(TRUE)) {
       // we are finding tests trying to delete the domain contact in cleanup
       //since this is mainly for cleanup lets put a safeguard here
       return;
@@ -673,7 +673,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
   function membershipTypeCreate($contactID, $contributionTypeID = 1, $version = 3) {
     require_once 'CRM/Member/PseudoConstant.php';
     CRM_Member_PseudoConstant::flush('membershipType');
-    CRM_Core_Config::clearDBCache( );
+    CRM_Core_Config::clearDBCache();
     $params = array(
       'name' => 'General',
       'duration_unit' => 'year',
@@ -772,13 +772,13 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     CRM_Member_PseudoConstant::flush('membershipStatus');
     if (CRM_Utils_Array::value('is_error', $result)) {
       throw new Exception("Could not create membership status: $name, Error message: " . $result['error_message']);
-      exit( );
+      exit();
     }
     return $result['id'];
   }
 
   function membershipStatusDelete($membershipStatusID) {
-    if ( ! $membershipStatusID ) {
+    if (!$membershipStatusID) {
       return;
     }
     $result = civicrm_api('MembershipStatus', 'Delete', array('id' => $membershipStatusID, 'version' => 3));
@@ -820,7 +820,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
    * @param int $relationshipTypeID
    */
   function relationshipTypeDelete($relationshipTypeID) {
-    $params['id']      = $relationshipTypeID;
+    $params['id'] = $relationshipTypeID;
     $params['version'] = API_LATEST_VERSION;
     civicrm_api('relationship_type', 'delete', $params);
 
@@ -923,8 +923,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
       'is_allow_other_amount' => 1,
       'min_amount' => 10,
       'max_amount' => 1000,
-     );
-    $contributionPage = civicrm_api( 'contribution_page','create',  $this->_pageParams );
+    );
+    $contributionPage = civicrm_api('contribution_page', 'create', $this->_pageParams);
     return $contributionPage;
   }
 
@@ -974,8 +974,12 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
       $del = CRM_Financial_BAO_FinancialType::del(11, 1);
     }
     else {
-      civicrm_api('Contribution', 'get',array('version' => 3, 'financial_type_id' => $contributionTypeID,  'api.contribution.delete' => 1));
-      $del= CRM_Financial_BAO_FinancialType::del($contributionTypeID,1 );
+      civicrm_api('Contribution', 'get', array(
+        'version' => 3,
+        'financial_type_id' => $contributionTypeID,
+        'api.contribution.delete' => 1
+      ));
+      $del = CRM_Financial_BAO_FinancialType::del($contributionTypeID, 1);
     }
     if (is_array($del)) {
       $this->assertEquals(0, CRM_Utils_Array::value('is_error', $del), $del['error_message']);
@@ -1051,7 +1055,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
       'scheduled_date' => date('Ymd'),
       'amount' => 100.00,
       'pledge_status_id' => '2',
-      'financial_type_id'  => '1',
+      'financial_type_id' => '1',
       'pledge_original_installment_amount' => 20,
       'frequency_interval' => 5,
       'frequency_unit' => 'year',
@@ -1092,7 +1096,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
       'contact_id' => $cID,
       'receive_date' => date('Ymd'),
       'total_amount' => 100.00,
-      'financial_type_id'   => empty($cTypeID) ? 1 : $cTypeID,
+      'financial_type_id' => empty($cTypeID) ? 1 : $cTypeID,
       'payment_instrument_id' => 1,
       'non_deductible_amount' => 10.00,
       'fee_amount' => 50.00,
@@ -1200,10 +1204,15 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
    *
    * @return array $event
    */
-  function eventCreate($params = array( )) {
+  function eventCreate($params = array()) {
     // if no contact was passed, make up a dummy event creator
     if (!isset($params['contact_id'])) {
-      $params['contact_id'] = $this->_contactCreate(array('contact_type' => 'Individual', 'first_name' => 'Event', 'last_name' => 'Creator', 'version' => API_LATEST_VERSION));
+      $params['contact_id'] = $this->_contactCreate(array(
+        'contact_type' => 'Individual',
+        'first_name' => 'Event',
+        'last_name' => 'Creator',
+        'version' => API_LATEST_VERSION
+      ));
     }
 
     // set defaults for missing params
@@ -1334,7 +1343,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         'state_province' => 'Michigan',
         'supplemental_address_1' => 'Hallmark Ct',
         'supplemental_address_2' => 'Jersey Village',
-      ));
+      )
+    );
 
     $params = array(
       'contact_id' => $contactID,
@@ -1409,9 +1419,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
   /**
    * Function to add a Group
    *
-   *@params array to add group
+   * @params array to add group
    *
-   *@return int groupId of created group
+   * @return int groupId of created group
    *
    */
   function groupCreate($params = NULL) {
@@ -1630,7 +1640,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     if (CRM_Utils_Array::value('is_error', $result) ||
       !CRM_Utils_Array::value('id', $result)
     ) {
-      throw new Exception('Could not create Custom Group ' . print_r($params, True) . $result['error_message']);
+      throw new Exception('Could not create Custom Group ' . print_r($params, TRUE) . $result['error_message']);
     }
     return $result;
   }
@@ -1639,7 +1649,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
    * existing function doesn't allow params to be over-ridden so need a new one
    * this one allows you to only pass in the params you want to change
    */
-  function CustomGroupCreateByParams($params = array( )) {
+  function CustomGroupCreateByParams($params = array()) {
     $defaults = array(
       'title' => "API Custom Group",
       'extends' => 'Contact',
@@ -1662,7 +1672,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
   /**
    * Create custom group with multi fields
    */
-  function CustomGroupMultipleCreateByParams($params = array( )) {
+  function CustomGroupMultipleCreateByParams($params = array()) {
     $defaults = array(
       'style' => 'Tab',
       'is_multiple' => 1,
@@ -1681,7 +1691,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
   /**
    * Create custom group with multi fields
    */
-  function CustomGroupMultipleCreateWithFields($params = array( )) {
+  function CustomGroupMultipleCreateWithFields($params = array()) {
     // also need to pass on $params['custom_field'] if not set but not in place yet
     $ids = array();
     $customGroup = $this->CustomGroupMultipleCreateByParams($params);
@@ -1746,9 +1756,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
    */
   function customGroupDelete($customGroupID) {
 
-    $params['id']      = $customGroupID;
+    $params['id'] = $customGroupID;
     $params['version'] = API_LATEST_VERSION;
-    $result            = civicrm_api('custom_group', 'delete', $params);
+    $result = civicrm_api('custom_group', 'delete', $params);
     if (CRM_Utils_Array::value('is_error', $result)) {
       print_r($params);
       throw new Exception('Could not delete custom group' . $result['error_message']);
@@ -1856,12 +1866,12 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
    * @param string $action - optional action - otherwise taken from function name
    */
   function documentMe($params, $result, $function, $filename, $description = "", $subfile = NULL, $action = NULL) {
-    if (defined('DONT_DOCUMENT_TEST_CONFIG') ) {
+    if (defined('DONT_DOCUMENT_TEST_CONFIG')) {
       return;
     }
     $entity = substr(basename($filename), 0, strlen(basename($filename)) - 8);
     //todo - this is a bit cludgey
-    if(empty($action)){
+    if (empty($action)) {
       if (strstr($function, 'Create')) {
         $action = empty($action) ? 'create' : $action;
         $entityAction = 'Create';
@@ -1916,7 +1926,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
       'modified_date' => '2012-11-14 16:02:35',
     );
     //swap out keys that change too often
-    foreach ($fieldsToChange as $changeKey => $changeValue){
+    foreach ($fieldsToChange as $changeKey => $changeValue) {
       if (isset($result['values']) && is_array($result['values'])) {
         foreach ($result['values'] as $key => $value) {
           if (is_array($value) && array_key_exists($changeKey, $value)) {
@@ -2017,7 +2027,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
       'label' => 'option_group_label1',
     );
 
-    $optionValue = array('option_label' => array('Label1', 'Label2'),
+    $optionValue = array(
+      'option_label' => array('Label1', 'Label2'),
       'option_value' => array('value1', 'value2'),
       'option_name' => array($name . '_1', $name . '_2'),
       'option_weight' => array(1, 2),
@@ -2159,12 +2170,16 @@ AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
    */
   static function unsetId(&$unformattedArray) {
     $formattedArray = array();
-    if (array_key_exists('id', $unformattedArray))unset($unformattedArray['id']);
+    if (array_key_exists('id', $unformattedArray)) {
+      unset($unformattedArray['id']);
+    }
     if (CRM_Utils_Array::value('values', $unformattedArray) && is_array($unformattedArray['values'])) {
       foreach ($unformattedArray['values'] as $key => $value) {
         if (is_Array($value)) {
           foreach ($value as $k => $v) {
-            if ($k == 'id')unset($value[$k]);
+            if ($k == 'id') {
+              unset($value[$k]);
+            }
           }
         }
         elseif ($key == 'id') {
@@ -2220,7 +2235,7 @@ AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
   }
 
   function cleanTempDirs() {
-    if(!is_array($this->tempDirs)){
+    if (!is_array($this->tempDirs)) {
       // fix test errors where this is not set
       return;
     }
