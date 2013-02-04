@@ -91,8 +91,8 @@ function _civicrm_api3_contribution_create_spec(&$params) {
   $params['total_amount']['api.required'] = 1;
   $params['payment_processor'] = array(
     'name' => 'payment_processor',
-    'title' => 'Payment Instruments',
-    'description' => 'Payment processor ID',
+    'title' => 'Payment Processor ID',
+    'description' => 'ID of payment processor used for this contribution',
     // field is called payment processor - not payment processor id but can only be one id so
     // it seems likely someone will fix it up one day to be more consistent - lets alias it from the start
     'api.aliases' => array('payment_processor_id'),
