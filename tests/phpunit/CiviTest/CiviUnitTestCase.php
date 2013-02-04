@@ -526,6 +526,24 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     );
   }
 
+  /**
+   * Assert that two array-trees are exactly equal, notwithstanding
+   * the sorting of keys
+   *
+   * @param array $expected
+   * @param array $actual
+   */
+  function assertTreeEquals($expected, $actual) {
+    $e = array();
+    $a = array();
+    CRM_Utils_Array::flatten($expected, $e, '', ':::');
+    CRM_Utils_Array::flatten($actual, $a, '', ':::');
+    ksort($e);
+    ksort($a);
+
+    $this->assertEquals($e, $a);
+  }
+
   function assertAttributesEquals($expectedValues, $actualValues, $message = NULL) {
     foreach ($expectedValues as $paramName => $paramValue) {
       if (isset($actualValues[$paramName])) {

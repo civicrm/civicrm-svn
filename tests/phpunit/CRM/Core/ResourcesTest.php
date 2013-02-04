@@ -129,9 +129,45 @@ class CRM_Core_ResourcesTest extends CiviUnitTestCase {
       ->addSetting(array('fruit' => array('mine' => 'apple')))
       ->addSetting(array('fruit' => array('yours' => 'orange')))
     ;
+    $this->assertTreeEquals(
+      array('fruit' => array('yours' => 'orange', 'mine' => 'apple')),
+      $this->res->getSettings()
+    );
     $actual = $this->res->renderSetting();
     $expected = 'CRM = cj.extend(true, ' . json_encode(array('fruit' => array('yours' => 'orange', 'mine' => 'apple'))) . ', CRM);';
     $this->assertEquals($expected, $actual);
+  }
+
+  function testAddSettingFactory() {
+    $this->res->addSettingsFactory(function()  {
+      return array('fruit' => array('yours' => 'orange'));
+    });
+    $this->res->addSettingsFactory(function()  {
+      return array('fruit' => array('mine' => 'apple'));
+    });
+
+    $actual = $this->res->getSettings();
+    $expected = array('fruit' => array('yours' => 'orange', 'mine' => 'apple'));
+    $this->assertTreeEquals($expected, $actual);
+  }
+
+  function testAddSettingAndSettingFactory() {
+    $this->res->addSetting(array('fruit' => array('mine' => 'apple')));
+
+    $muckableValue = array('fruit' => array('yours' => 'orange', 'theirs' => 'apricot'));
+    $this->res->addSettingsFactory(function() use (&$muckableValue) {
+      return $muckableValue;
+    });
+    $actual = $this->res->getSettings();
+    $expected = array('fruit' => array('mine' => 'apple', 'yours' => 'orange', 'theirs' => 'apricot'));
+    $this->assertTreeEquals($expected, $actual);
+
+    // note: the setting is not fixed based on what the factory returns when registered; it's based
+    // on what the factory returns when getSettings is called
+    $muckableValue = array('fruit' => array('yours' => 'banana'));
+    $actual = $this->res->getSettings();
+    $expected = array('fruit' => array('mine' => 'apple', 'yours' => 'banana'));
+    $this->assertTreeEquals($expected, $actual);
   }
 
   function testCrmJS() {

@@ -70,6 +70,11 @@ class CRM_Core_Resources {
   protected $addedSettings = FALSE;
 
   /**
+   * @var array of callables
+   */
+  protected $settingsFactories = array();
+
+  /**
    * @var array ($regionName => bool)
    */
   protected $addedCoreResources = array();
@@ -189,12 +194,7 @@ class CRM_Core_Resources {
    * @return CRM_Core_Resources
    */
   public function addSetting($settings) {
-    foreach ($settings as $k => $v) {
-      if (isset($this->settings[$k]) && is_array($this->settings[$k]) && is_array($v)) {
-        $v += $this->settings[$k];
-      }
-      $this->settings[$k] = $v;
-    }
+    $this->settings = $this->mergeSettings($this->settings, $settings);
     if (!$this->addedSettings) {
       $resources = $this;
       CRM_Core_Region::instance('settings')->add(array(
@@ -207,8 +207,38 @@ class CRM_Core_Resources {
     return $this;
   }
 
+  /**
+   * Add JavaScript variables to the global CRM object.
+   *
+   * @param $settings array
+   * @return CRM_Core_Resources
+   */
+  public function addSettingsFactory($callable) {
+    $this->addSetting(array()); // ensure that 'settings' region is created, even if empty
+    $this->settingsFactories[] = $callable;
+  }
+
   public function getSettings() {
-    return $this->settings;
+    $result = $this->settings;
+    foreach ($this->settingsFactories as $callable) {
+      $result = $this->mergeSettings($result, $callable());
+    }
+    return $result;
+  }
+
+  /**
+   * @param array $settings
+   * @param array $additions
+   * @return array combination of $settings and $additions
+   */
+  protected function mergeSettings($settings, $additions) {
+    foreach ($additions as $k => $v) {
+      if (isset($settings[$k]) && is_array($settings[$k]) && is_array($v)) {
+        $v += $settings[$k];
+      }
+      $settings[$k] = $v;
+    }
+    return $settings;
   }
 
   /**
