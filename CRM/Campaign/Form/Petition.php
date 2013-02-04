@@ -69,7 +69,7 @@ class CRM_Campaign_Form_Petition extends CRM_Campaign_Form_Survey {
    * @access public
    */
   function setDefaultValues() {
-    $defaults = parent::setDefaultValues();
+    $defaults = array();
 
     $ufJoinParams = array(
       'entity_table' => 'civicrm_survey',
@@ -79,6 +79,15 @@ class CRM_Campaign_Form_Petition extends CRM_Campaign_Form_Survey {
 
     if ($ufGroupId = CRM_Core_BAO_UFJoin::findUFGroupId($ufJoinParams)) {
       $defaults['contact_profile_id'] = $ufGroupId;
+    }
+    
+    if (!isset($defaults['is_active'])) {
+      $defaults['is_active'] = 1;
+    }
+
+    $defaultSurveys = CRM_Campaign_BAO_Survey::getSurveys(TRUE, TRUE);
+    if (!isset($defaults['is_default']) && empty($defaultSurveys)) {
+      $defaults['is_default'] = 1;
     }
 
     return $defaults;
