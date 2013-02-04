@@ -97,12 +97,16 @@ class CRM_Grant_Form_Task extends CRM_Core_Form {
     }
     else {
       $queryParams = $form->get('queryParams');
+      $sortOrder = null;
+      if ( $form->get( CRM_Utils_Sort::SORT_ORDER  ) ) {
+        $sortOrder = $form->get( CRM_Utils_Sort::SORT_ORDER );
+      }
       $query = new CRM_Contact_BAO_Query($queryParams, NULL, NULL, FALSE, FALSE,
         CRM_Contact_BAO_Query::MODE_GRANT
       );
-      $query->_distinctComponentClause = " civicrm_grant.id";
-      $query->_groupByComponentClause = " GROUP BY civicrm_grant.id ";
-      $result = $query->searchQuery(0, 0, NULL);
+      $query->_distinctComponentClause = ' civicrm_grant.id';
+      $query->_groupByComponentClause = ' GROUP BY civicrm_grant.id ';
+      $result = $query->searchQuery(0, 0, $sortOrder);
       while ($result->fetch()) {
         $ids[] = $result->grant_id;
       }

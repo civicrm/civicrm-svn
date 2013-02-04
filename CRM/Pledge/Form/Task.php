@@ -98,13 +98,17 @@ class CRM_Pledge_Form_Task extends CRM_Core_Form {
     }
     else {
       $queryParams = $form->get('queryParams');
+      $sortOrder = null;
+      if ( $form->get( CRM_Utils_Sort::SORT_ORDER  ) ) {
+        $sortOrder = $form->get( CRM_Utils_Sort::SORT_ORDER );
+      }
       $query = new CRM_Contact_BAO_Query($queryParams, NULL, NULL, FALSE, FALSE,
         CRM_Contact_BAO_Query::MODE_PLEDGE
       );
-      $query->_distinctComponentClause = " civicrm_pledge.id";
-      $query->_groupByComponentClause = " GROUP BY civicrm_pledge.id ";
+      $query->_distinctComponentClause = ' civicrm_pledge.id';
+      $query->_groupByComponentClause = ' GROUP BY civicrm_pledge.id ';
 
-      $result = $query->searchQuery(0, 0, NULL);
+      $result = $query->searchQuery(0, 0, $sortOrder);
       while ($result->fetch()) {
         $ids[] = $result->pledge_id;
       }
