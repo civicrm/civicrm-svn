@@ -99,6 +99,7 @@ function _civicrm_api3_pledge_get_spec(&$params) {
     'api.filter' => 0,
     'api.return' => 1,
   );
+  $params['pledge_is_test']['api.default'] = 0;
 }
 
 /*
