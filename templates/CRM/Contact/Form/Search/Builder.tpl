@@ -73,3 +73,4 @@
 </div>
 {/if}
 {$initHideBoxes}
+{include file="CRM/Form/validate.tpl"}

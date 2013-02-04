@@ -68,7 +68,7 @@
       var multiSelect = '><option value="">' + ts('- select -') + '</option>';
     }
     $('.crm-search-value select', row).remove();
-    $('input[id^=value]', row).hide().after('<select class="form-select" ' + multiSelect + '</select>');
+    $('input[id^=value]', row).hide().after('<select class="form-select required" ' + multiSelect + '</select>');
     fetchOptions(row, field);
   }
 

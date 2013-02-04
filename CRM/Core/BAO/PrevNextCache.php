@@ -38,7 +38,7 @@
  */
 class CRM_Core_BAO_PrevNextCache extends CRM_Core_DAO_PrevNextCache {
 
-  function getPositions($cacheKey, $id1, $id2, &$mergeId = NULL, $join = NULL, $where = NULL, $flip = FALSE) {
+  static function getPositions($cacheKey, $id1, $id2, &$mergeId = NULL, $join = NULL, $where = NULL, $flip = FALSE) {
     if ($flip) {
       list($id1, $id2) = array($id2, $id1);
     }
@@ -118,7 +118,7 @@ WHERE  cacheKey     = %3 AND
     CRM_Core_DAO::executeQuery($sql, $params);
   }
 
-  function deletePair($id1, $id2, $cacheKey = NULL, $isViceVersa = FALSE, $entityTable = 'civicrm_contact') {
+  static function deletePair($id1, $id2, $cacheKey = NULL, $isViceVersa = FALSE, $entityTable = 'civicrm_contact') {
     $sql = "DELETE FROM civicrm_prevnext_cache WHERE  entity_table = %1";
     $params = array(1 => array($entityTable, 'String'));
 
@@ -159,7 +159,7 @@ WHERE  cacheKey = %1
 
     $main = array();
     while ($dao->fetch()) {
-      if( CRM_Core_BAO_PrevNextCache::is_serialized($dao->data)){
+      if (self::is_serialized($dao->data)) {
         $main[] = unserialize($dao->data);
       }
       else {
@@ -261,7 +261,7 @@ WHERE cacheKey $op %1
         $data = CRM_Core_DAO::escapeString(serialize($row));
         $values[] = " ( 'civicrm_contact', $srcID, $dstID, '$cacheKeyString', '$data' ) ";
       }
-      CRM_Core_BAO_PrevNextCache::setItem($values);
+      self::setItem($values);
     }
   }
 

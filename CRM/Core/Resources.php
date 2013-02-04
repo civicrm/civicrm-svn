@@ -210,7 +210,7 @@ class CRM_Core_Resources {
   /**
    * Add JavaScript variables to the global CRM object.
    *
-   * @param $settings array
+   * @param $callable function
    * @return CRM_Core_Resources
    */
   public function addSettingsFactory($callable) {
