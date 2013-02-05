@@ -156,7 +156,7 @@
                   {$form.field.$voterId.$fieldName.html}
                 {/if}
                 {if $field.html_type eq 'Autocomplete-Select'}
-                {include file="CRM/Custom/Form/AutoComplete.tpl" element_name = field[`$voterId`][`$fieldName`]}
+                  {include file="CRM/Custom/Form/AutoComplete.tpl" element_name = field[`$voterId`][`$fieldName`]}
                 {/if}
               </td>
             {/foreach}
