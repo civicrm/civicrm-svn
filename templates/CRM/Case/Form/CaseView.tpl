@@ -830,7 +830,7 @@ function addRole() {
 
 {literal}
 <script type="text/javascript">
-cj(".crm-select-container select[multiple]").crmasmSelect({
+cj("#manageTags select[multiple]").crmasmSelect({
     addItemTarget: 'bottom',
     animate: true,
     highlight: true,

@@ -70,7 +70,7 @@
         {if $form.tag_1.html}
           <tr>
             <td></td>
-            <td><label>{$form.tag_1.label}</label> <div class="crm-select-container">{$form.tag_1.html}</div></td>
+            <td><label>{$form.tag_1.label}</label> <div class="crm-select-container crm-attachment-tags">{$form.tag_1.html}</div></td>
           </tr>
         {/if}
         {if $tagsetInfo_attachment}
@@ -88,7 +88,7 @@
             </tr>
             <tr>
               <td></td>
-              <td><label>{$form.$tagElement.label}</label> <div class="crm-select-container">{$form.$tagElement.html}</div></td>
+              <td><label>{$form.$tagElement.label}</label> <div class="crm-select-container crm-attachment-tags">{$form.$tagElement.html}</div></td>
             </tr>
             {if $tagsetInfo_attachment}
               <tr><td></td><td>{include file="CRM/common/Tag.tpl" tagsetType='attachment' tagsetNumber=$index}</td></tr>
@@ -97,7 +97,7 @@
 
         {literal}
           <script type="text/javascript">
-            cj(".crm-select-container select[multiple]").crmasmSelect({
+            cj(".crm-attachment-tags select[multiple]").crmasmSelect({
               addItemTarget: 'bottom',
               animate: true,
               highlight: true,
