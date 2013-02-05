@@ -5,7 +5,7 @@
  */
 function contribution_create_example(){
 $params = array( 
-  'contact_id' => 3,
+  'contact_id' => 1,
   'receive_date' => '20120511',
   'total_amount' => '100',
   'financial_type_id' => 1,
@@ -18,7 +18,7 @@ $params = array(
   'source' => 'SSF',
   'contribution_status_id' => 1,
   'version' => 3,
-  'skipLineItems' => 1,
+  'skipLineItem' => 1,
   'api.line_item.create' => array( 
       '0' => array( 
           'price_field_id' => 1,
@@ -53,7 +53,7 @@ function contribution_create_expectedresult(){
   'values' => array( 
       '1' => array( 
           'id' => '1',
-          'contact_id' => '3',
+          'contact_id' => '1',
           'financial_type_id' => '1',
           'contribution_page_id' => '',
           'payment_instrument_id' => '1',
@@ -85,10 +85,10 @@ function contribution_create_expectedresult(){
                   'is_error' => 0,
                   'version' => 3,
                   'count' => 1,
-                  'id' => 2,
+                  'id' => 1,
                   'values' => array( 
                       '0' => array( 
-                          'id' => '2',
+                          'id' => '1',
                           'entity_table' => 'civicrm_contribution',
                           'entity_id' => '1',
                           'price_field_id' => '1',
@@ -107,10 +107,10 @@ function contribution_create_expectedresult(){
                   'is_error' => 0,
                   'version' => 3,
                   'count' => 1,
-                  'id' => 3,
+                  'id' => 2,
                   'values' => array( 
                       '0' => array( 
-                          'id' => '3',
+                          'id' => '2',
                           'entity_table' => 'civicrm_contribution',
                           'entity_id' => '1',
                           'price_field_id' => '1',

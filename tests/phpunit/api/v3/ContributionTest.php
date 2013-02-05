@@ -430,7 +430,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
         'source' => 'SSF',
         'contribution_status_id' => 1,
         'version' => $this->_apiversion,
-        'use_default_price_set' => 0,
+        'skipLineItem' => 1,
     );
 
     $contribution = civicrm_api('contribution', 'create', $params);
