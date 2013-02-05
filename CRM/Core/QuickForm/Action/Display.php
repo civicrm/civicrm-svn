@@ -156,6 +156,12 @@ class CRM_Core_QuickForm_Action_Display extends CRM_Core_QuickForm_Action {
       $html = CRM_Utils_System::theme('page', $content, TRUE, $print, $ret);
     }
 
+    if ($controller->_QFResponseType == 'json') {
+      $response = array('content' => $html);
+      echo json_encode($response);
+      CRM_Utils_System::civiExit();
+    }
+
     if ($ret) {
       return $html;
     }

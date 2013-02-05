@@ -113,6 +113,11 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
   public $_generateQFKey = TRUE;
 
   /**
+   * QF response type
+   */
+  public $_QFResponseType = 'html';
+
+  /**
    * cache the smarty template for efficiency reasons
    *
    * @var CRM_Core_Smarty
@@ -208,6 +213,10 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
       }
       elseif ($snippet == 5) {
         $this->_print = CRM_Core_Smarty::PRINT_NOFORM;
+      }
+      elseif ($snippet == 6) {
+        $this->_print = CRM_Core_Smarty::PRINT_NOFORM;
+        $this->_QFResponseType = 'json';
       }
       else {
         $this->_print = CRM_Core_Smarty::PRINT_SNIPPET;
