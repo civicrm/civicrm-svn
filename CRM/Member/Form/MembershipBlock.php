@@ -225,9 +225,11 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
         if (!empty($paymentProcessorId)) {
           $paymentProcessorType = CRM_Core_PseudoConstant::paymentProcessorType(false, null, 'name');
           foreach($paymentProcessorId as $pid) {
-            $paymentProcessorTypeId = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_PaymentProcessor',
-              $pid, 'payment_processor_type_id'
-              );
+            if ($pid) {
+              $paymentProcessorTypeId = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_PaymentProcessor',
+                $pid, 'payment_processor_type_id'
+                );
+            }
             if (!($paymentProcessorTypeId == CRM_Utils_Array::key('PayPal', $paymentProcessorType) ||
               ($paymentProcessorTypeId == CRM_Utils_Array::key('AuthNet', $paymentProcessorType)))) {
               $errors['member_price_set_id'] = ts('The membership price set associated with this online contribution allows a user to select BOTH an auto-renew AND a non-auto-renew membership. This requires submitting multiple processor transactions, and is not supported for one or more of the payment processors enabled under the Fees tab.');
