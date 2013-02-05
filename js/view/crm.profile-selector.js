@@ -122,7 +122,7 @@
           });
         }
       });
-      designerDialog.on('close-dialog', this.onCloseDesignerDialog, this);
+      designerDialog.on('close-dialog', this.onSave, this);
       this.setDialog(designerDialog);
       return false;
     },
@@ -144,7 +144,7 @@
           });
         }
       });
-      designerDialog.on('close-dialog', this.onCloseDesignerDialog, this);
+      designerDialog.on('close-dialog', this.onSave, this);
       this.setDialog(designerDialog);
       return false;
     },
@@ -158,15 +158,15 @@
           options.onLoad(ufGroupModel);
         }
       });
-      designerDialog.on('close-dialog', this.onCloseDesignerDialog, this);
+      designerDialog.on('close-dialog', this.onSave, this);
       this.setDialog(designerDialog);
       return false;
     },
-    onCloseDesignerDialog: function(designerDialog) {
+    onSave: function(designerDialog) {
       var ufGroupId = designerDialog.model.get('id');
-      if (!ufGroupId || designerDialog.isUfUnsaved) {
-        // abandoned a new profile -- or abandoned a modified, existing profile
-        return; // keep everything the same
+      if (!ufGroupId || !designerDialog.isUfSaved) {
+        // abandoned changes, keep everything the same
+        return;
       }
       var modelFromCollection = this.options.ufGroupCollection.get(ufGroupId);
       if (modelFromCollection) {
