@@ -202,6 +202,9 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
       $removeCustomFieldTypes = array('Contribution', 'Membership');
       $contribFields = CRM_Contribute_BAO_Contribution::getContributionFields();
 
+      //reformat profile fields
+      CRM_Core_BAO_UFGroup::reformatProfileFields($this->_fields);
+
       // remove component related fields
       foreach ($this->_fields as $name => $dontCare) {
         //don't set custom data Used for Contribution (CRM-1344)
