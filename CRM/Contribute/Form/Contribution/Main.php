@@ -454,9 +454,9 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         }
 
         $this->_separateMembershipPayment = CRM_Member_BAO_Membership::buildMembershipBlock($this,
-                                            $this->_id,
-                                            TRUE, NULL, FALSE,
-                                            $isTest, $this->_membershipContactID
+          $this->_id,
+          TRUE, NULL, FALSE,
+          $isTest, $this->_membershipContactID
         );
       }
       $this->set('separateMembershipPayment', $this->_separateMembershipPayment);
@@ -623,9 +623,9 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
 
       foreach ($this->_values['amount'] as $amount) {
         $elements[] = &$this->createElement('radio', NULL, '',
-                      CRM_Utils_Money::format($amount['value']) . ' ' . $amount['label'],
-                      $amount['amount_id'],
-                      array('onclick' => 'clearAmountOther();')
+          CRM_Utils_Money::format($amount['value']) . ' ' . $amount['label'],
+          $amount['amount_id'],
+          array('onclick' => 'clearAmountOther();')
         );
       }
     }
@@ -642,7 +642,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     if ($this->_values['is_allow_other_amount']) {
       if (!empty($this->_values['amount'])) {
         $elements[] = &$this->createElement('radio', NULL, '',
-                      ts('Other Amount'), 'amount_other_radio'
+          ts('Other Amount'), 'amount_other_radio'
         );
 
         $this->addGroup($elements, 'amount', $title, '<br />');
@@ -771,11 +771,11 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
       $className == 'CRM_Contribute_Form_Contribution'
     ) {
       $frUnits = implode(CRM_Core_DAO::VALUE_SEPARATOR,
-                 CRM_Core_OptionGroup::values('recur_frequency_units')
+        CRM_Core_OptionGroup::values('recur_frequency_units')
       );
     }
 
-    $unitVals       = explode(CRM_Core_DAO::VALUE_SEPARATOR, $frUnits);
+    $unitVals = explode(CRM_Core_DAO::VALUE_SEPARATOR, $frUnits);
 
     // CRM 10860, display text instead of a dropdown if there's only 1 frequency unit
     if(sizeof($unitVals) == 1) {
@@ -1218,7 +1218,6 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
 
     // get the submitted form values.
     $params = $this->controller->exportValues($this->_name);
-
     if (CRM_Utils_Array::value('priceSetId', $params)) {
       $is_quick_config = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_priceSetId, 'is_quick_config');
       $formValue = array();
@@ -1290,7 +1289,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     $params['currencyID'] = $config->defaultCurrency;
 
     $params['amount'] = self::computeAmount($params, $this);
-    $params['separate_amount'] =  $params['amount'];
+    $params['separate_amount'] = $params['amount'];
     $memFee = NULL;
     if (CRM_Utils_Array::value('selectMembership', $params)) {
       if (!empty($this->_membershipTypeValues)) {
@@ -1298,7 +1297,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
       }
       else {
         $membershipTypeValues = CRM_Member_BAO_Membership::buildMembershipTypeValues($this,
-                                $params['selectMembership']
+          $params['selectMembership']
         );
       }
       $memFee = $membershipTypeValues['minimum_fee'];
@@ -1367,6 +1366,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     } else {
       $this->set('amount', $params['amount']);
     }
+
     // generate and set an invoiceID for this transaction
     $invoiceID = md5(uniqid(rand(), TRUE));
     $this->set('invoiceID', $invoiceID);

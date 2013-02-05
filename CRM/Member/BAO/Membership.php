@@ -1198,16 +1198,14 @@ AND civicrm_membership.is_test = %2";
     $form->assign('membership_name', CRM_Utils_Array::value('name', $membershipDetails));
 
     $minimumFee = CRM_Utils_Array::value('minimum_fee', $membershipDetails);
-
     $contributionTypeId = NULL;
-
     if ($form->_values['amount_block_is_active']) {
-            $contributionTypeId = $form->_values['financial_type_id'];
+      $contributionTypeId = $form->_values['financial_type_id'];
     }
     else {
       $paymentDone        = TRUE;
       $params['amount']   = $minimumFee;
-            $contributionTypeId = CRM_Utils_Array::value( 'financial_type_id', $membershipDetails );
+      $contributionTypeId = CRM_Utils_Array::value( 'financial_type_id', $membershipDetails );
       if (!$contributionTypeId) {
         $contributionTypeId = CRM_Utils_Array::value('financial_type_id' ,$membershipParams);
       }
@@ -1241,14 +1239,13 @@ AND civicrm_membership.is_test = %2";
       // Save the contribution ID so that I can be used in email receipts
       // For example, if you need to generate a tax receipt for the donation only.
       $form->_values['contribution_other_id'] = $result[1]->id;
-
       $contribution[1] = $result[1];
     }
 
 
     $memBlockDetails = CRM_Member_BAO_Membership::getMembershipBlock($form->_id);
     if (CRM_Utils_Array::value('is_separate_payment', $memBlockDetails) && !$paymentDone) {
-            $contributionType = new CRM_Financial_DAO_FinancialType( );
+      $contributionType = new CRM_Financial_DAO_FinancialType( );
       $contributionType->id = CRM_Utils_Array::value('financial_type_id', $membershipDetails);
       if (!$contributionType->find(TRUE)) {
         CRM_Core_Error::fatal(ts("Could not find a system table"));
@@ -1261,7 +1258,6 @@ AND civicrm_membership.is_test = %2";
       if (CRM_Utils_Array::value('is_recur', $tempParams)) {
         $tempParams['is_recur'] = 0;
       }
-
       $result = NULL;
       if ($form->_values['is_monetary'] && !$form->_params['is_pay_later'] && $minimumFee > 0.0) {
         $payment = CRM_Core_Payment::singleton($form->_mode, $form->_paymentProcessor, $form);
