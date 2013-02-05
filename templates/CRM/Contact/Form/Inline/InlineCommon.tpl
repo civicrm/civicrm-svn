@@ -31,14 +31,14 @@ function inlineEditForm( formName, blockName, contactId, cgId, locNo, addId ) {
   // handle ajax form submitting
   var options = { 
     method: 'POST',
-	  dataType: 'html',
+	  dataType: 'json',
     data: { // pass extra params
       'class_name': 'CRM_Contact_Form_Inline_' + formName,
       'cid'       : contactId,
       'groupID'   : cgId,
       'locno'     : locNo,
       'aid'       : addId,
-	    'snippet'   : 5
+	    'snippet'   : 6
       },
 	  success:  onSuccess  // after submit callback
   }; 
@@ -56,51 +56,48 @@ function inlineEditForm( formName, blockName, contactId, cgId, locNo, addId ) {
   // success callback
   function onSuccess( response ) {
     //check if form is submitted successfully
-    try {
-      response = cj.parseJSON(response);
 
-      if ( response.status == 'save' || response.status == 'cancel' ) {
-        if ( response.addressId ) {
-          addId = response.addressId;
-        }
+    if ( response.status == 'save' || response.status == 'cancel' ) {
+      if ( response.addressId ) {
+        addId = response.addressId;
+      }
 
-        // fetch the view of the block after edit
-        var postUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1' }"{literal};
-        var queryString = 'class_name=CRM_Contact_Page_Inline_' + formName + '&type=page&cid=' + contactId;
+      // fetch the view of the block after edit
+      var postUrl = {/literal}"{crmURL p='civicrm/ajax/inline' h=0 q='snippet=5&reset=1' }"{literal};
+      var queryString = 'class_name=CRM_Contact_Page_Inline_' + formName + '&type=page&cid=' + contactId;
 
-        if ( cgId ) {
-          queryString += '&groupID=' + cgId;
-        }
+      if ( cgId ) {
+        queryString += '&groupID=' + cgId;
+      }
 
-        if ( locNo ) {
-          queryString += '&locno=' + locNo;
-        }
+      if ( locNo ) {
+        queryString += '&locno=' + locNo;
+      }
 
-        if ( addId ) {
-          queryString += '&aid=' + addId;
-        }
+      if ( addId ) {
+        queryString += '&aid=' + addId;
+      }
 
-        var response = cj.ajax({
-              type: "POST",
-              url: postUrl,
-              async: false,
-              data: queryString,
-              dataType: "json"
-              }).responseText;
+      var response = cj.ajax({
+            type: "POST",
+            url: postUrl,
+            async: false,
+            data: queryString,
+            dataType: "json"
+            }).responseText;
 
-        var blockSelector = cj('#' + blockName);
+      var blockSelector = cj('#' + blockName);
 
-        blockSelector.html( response );
+      blockSelector.html( response );
 
-        // append add link only in case of save
-        if ( formName == 'Address' ) {
-          var addLinkBlock = cj('#' + blockName + ' div.appendAddLink');
-          blockSelector.parents('.contact_panel').append(addLinkBlock);
-        }
+      // append add link only in case of save
+      if ( formName == 'Address' ) {
+        var addLinkBlock = cj('#' + blockName + ' div.appendAddLink');
+        blockSelector.parents('.contact_panel').append(addLinkBlock);
       }
     }
-    catch(e) {
-      cj('#' + blockName).html(response);
+    else {
+      cj('#' + blockName).html(response.content);
     }
   }
 }
