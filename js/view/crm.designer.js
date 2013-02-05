@@ -40,25 +40,22 @@
     },
     /** @var bool whether this dialog is currently open */
     isDialogOpen: false,
-    /** @var bool whether any unsaved changes have been made */
-    isUfUnsavedChanges: false,
-    /** @var bool whether changes have been saved */
-    isUfSaved: false,
+    /** @var bool whether any changes have been made */
+    isUfUnsaved: false,
     /** @var obj handle for the CRM.alert containing undo link */
     undoAlert: null,
     /** @var bool whether this dialog is being re-opened by the undo link */
     undoState: false,
 
     initialize: function(options) {
-      CRM.designerApp.vent.on('ufSaved', this.onUfSaved, this);
+      CRM.designerApp.vent.on('ufUnsaved', this.onUfChanged, this);
     },
     onClose: function() {
       this.undoAlert && this.undoAlert.close && this.undoAlert.close();
-      CRM.designerApp.vent.off('ufSaved', this.onUfSaved, this);
+      CRM.designerApp.vent.off('ufUnsaved', this.onUfChanged, this);
     },
-    onUfSaved: function() {
-      this.isUfUnsavedChanges = false;
-      this.isUfSaved = true;
+    onUfChanged: function(isUfUnsaved) {
+      this.isUfUnsaved = isUfUnsaved;
     },
     onRender: function() {
       var designerDialog = this;
@@ -74,7 +71,7 @@
           designerDialog.oldOnBeforeUnload = window.onbeforeunload;
           // Warn of unsaved changes when navigating away from the page
           window.onbeforeunload = function() {
-            if (designerDialog.isDialogOpen && designerDialog.isUfUnsavedChanges) {
+            if (designerDialog.isDialogOpen && designerDialog.isUfUnsaved) {
               return ts("Your profile has not been saved.");
             }
             if (designerDialog.oldOnBeforeUnload) {
@@ -97,7 +94,7 @@
                 designerDialog.$el.unblock();
                 designerDialog.designerRegion.show(designerLayout);
                 CRM.designerApp.vent.trigger('resize');
-                designerDialog.isUfUnsavedChanges = false;
+                designerDialog.isUfUnsaved = false;
               }
             });
           }
@@ -108,7 +105,7 @@
           designerDialog.isDialogOpen = false;
 
           designerDialog.undoAlert && designerDialog.undoAlert.close && designerDialog.undoAlert.close();
-          if (designerDialog.isUfUnsavedChanges) {
+          if (designerDialog.isUfUnsaved) {
             designerDialog.undoAlert = CRM.alert('<p>' + ts('Your changes to "%1" have not been saved.', {1: designerDialog.model.get('title')}) + '</p><a href="#" class="crm-undo">' + ts('Restore unsaved changes') + '</a>', ts('Unsaved Changes'), 'alert', {expires: 60000});
             $('.ui-notify-message a.crm-undo').click(function() {
               designerDialog.undoState = true;
@@ -116,7 +113,6 @@
               return false;
             });
           }
-          designerDialog.trigger('close-dialog', designerDialog);
         },
         resize: function() {
           CRM.designerApp.vent.trigger('resize');
@@ -223,6 +219,7 @@
             if (!ufGroupModel.get('id')) {
               ufGroupModel.set('id', data.id);
             }
+            CRM.designerApp.vent.trigger('ufUnsaved', false);
             CRM.designerApp.vent.trigger('ufSaved');
             $dialog.dialog('close');
           }

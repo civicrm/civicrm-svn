@@ -122,7 +122,7 @@
           });
         }
       });
-      designerDialog.on('close-dialog', this.onSave, this);
+      CRM.designerApp.vent.on('ufSaved', this.onSave, this);
       this.setDialog(designerDialog);
       return false;
     },
@@ -144,7 +144,7 @@
           });
         }
       });
-      designerDialog.on('close-dialog', this.onSave, this);
+      CRM.designerApp.vent.on('ufSaved', this.onSave, this);
       this.setDialog(designerDialog);
       return false;
     },
@@ -158,23 +158,20 @@
           options.onLoad(ufGroupModel);
         }
       });
-      designerDialog.on('close-dialog', this.onSave, this);
+      CRM.designerApp.vent.on('ufSaved', this.onSave, this);
       this.setDialog(designerDialog);
       return false;
     },
-    onSave: function(designerDialog) {
-      var ufGroupId = designerDialog.model.get('id');
-      if (!ufGroupId || !designerDialog.isUfSaved) {
-        // abandoned changes, keep everything the same
-        return;
-      }
+    onSave: function() {
+      CRM.designerApp.vent.off('ufSaved', this.onSave, this);
+      var ufGroupId = this.activeDialog.model.get('id');
       var modelFromCollection = this.options.ufGroupCollection.get(ufGroupId);
       if (modelFromCollection) {
         // copy in changes to UFGroup
-        modelFromCollection.set(designerDialog.model.toStrictJSON());
+        modelFromCollection.set(this.activeDialog.model.toStrictJSON());
       } else {
         // add in new UFGroup
-        modelFromCollection = new CRM.UF.UFGroupModel(designerDialog.model.toStrictJSON());
+        modelFromCollection = new CRM.UF.UFGroupModel(this.activeDialog.model.toStrictJSON());
         this.options.ufGroupCollection.add(modelFromCollection);
       }
       this.setUfGroupId(ufGroupId);
