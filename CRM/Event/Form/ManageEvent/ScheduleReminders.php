@@ -50,14 +50,14 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
     parent::preProcess();
 
     $newReminder = CRM_Utils_Request::retrieve('new', 'Boolean', $this, FALSE, FALSE);
-
     if ($this->_action & CRM_Core_Action::UPDATE &&
       !$newReminder
     ) {
-      $reminderList = CRM_Core_BAO_ActionSchedule::getList(FALSE,
-        'civicrm_event',
-        $this->_id
-      );
+      $field = 'civicrm_event';
+      if ($this->_isTemplate) {
+        $field = 'event_template';
+      }
+      $reminderList = CRM_Core_BAO_ActionSchedule::getList(FALSE, $field, $this->_id );
       if (is_array($reminderList)) {
         // Add action links to each of the reminders
         foreach ($reminderList as & $format) {
@@ -104,7 +104,11 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
    * @access public
    */
   public function buildQuickForm() {
-    $this->_mappingID = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_ActionMapping', 'civicrm_event', 'id', 'entity_value');
+    $field = 'civicrm_event';  
+    if ($this->_isTemplate) {
+      $field = 'event_template';
+    }
+    $this->_mappingID = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_ActionMapping', $field, 'id', 'entity_value');
     if (!$this->_mappingID) {
       CRM_Core_Error::fatal('Could not find mapping for event scheduled reminders.');
     }
@@ -304,6 +308,7 @@ class CRM_Event_Form_ManageEvent_ScheduleReminders extends CRM_Event_Form_Manage
     }
 
     $params['mapping_id']   = $this->_mappingID;
+
     $params['entity_value'] = $this->_id;
     $params['entity_status'] = implode(CRM_Core_DAO::VALUE_SEPARATOR, $values['entity']);
     $params['is_active'] = CRM_Utils_Array::value('is_active', $values, 0);
