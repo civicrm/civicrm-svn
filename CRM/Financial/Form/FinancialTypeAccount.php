@@ -91,6 +91,14 @@ class CRM_Financial_Form_FinancialTypeAccount extends CRM_Contribute_Form {
       $fieldTitle = CRM_Core_DAO::getFieldValue('CRM_Financial_DAO_FinancialAccount', $financialAccount, 'name');
       CRM_Utils_System::setTitle($fieldTitle .' - '.ts('Financial Type Accounts'));
     }
+    
+    $url = CRM_Utils_System::url('civicrm/admin/financial/financialType/accounts', "reset=1&action=browse&aid={$this->_aid}");
+    $breadCrumb = array(
+      array('title' => ts('Financial Type Accounts'),
+        'url' => $url,
+      )
+    );
+    CRM_Utils_System::appendBreadCrumb($breadCrumb);
   }
   
   /**
@@ -309,7 +317,7 @@ class CRM_Financial_Form_FinancialTypeAccount extends CRM_Contribute_Form {
 
     if ($buttonName == $this->getButtonName('next', 'new')) {
       CRM_Core_Session::setStatus(ts(' You can add another Financial Account Type.'));
-      $session->replaceUserContext(CRM_Utils_System::url('civicrm/admin/financial/financialType/accounts/add', 
+      $session->replaceUserContext(CRM_Utils_System::url('civicrm/admin/financial/financialType/accounts', 
         "reset=1&action=add&aid={$this->_aid}"));
     } 
     else {

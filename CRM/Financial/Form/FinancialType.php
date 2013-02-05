@@ -103,7 +103,7 @@ class CRM_Financial_Form_FinancialType extends CRM_Contribute_Form {
         $url = CRM_Utils_System::url( 'civicrm/admin/financial/financialType', 'reset=1&action=browse');
         CRM_Core_Session::setStatus( ts('The financial type \'%1\' has been saved.', array( 1 => $financialType->name )) );
       } else {
-        $url = CRM_Utils_System::url( 'civicrm/admin/financial/financialType/accounts/add', 'reset=1&action=add&aid=' . $financialType->id);
+        $url = CRM_Utils_System::url( 'civicrm/admin/financial/financialType/accounts', 'reset=1&action=add&aid=' . $financialType->id);
         CRM_Core_Session::setStatus( ts('The financial type \'%1\' has been added. You can add Financial Accounts to this Financial Type now.', array( 1 => $financialType->name )) );
       }
 

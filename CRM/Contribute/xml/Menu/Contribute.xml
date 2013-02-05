@@ -249,24 +249,6 @@
     <weight>581</weight>
   </item>
   <item>
-    <path>civicrm/admin/financial/financialType/accounts/add</path>
-    <title>Add Financial Type Account</title>
-    <page_callback>CRM_Financial_Form_FinancialTypeAccount</page_callback>
-    <weight>582</weight>
-  </item>
-  <item>
-    <path>civicrm/admin/financial/financialType/accounts/update</path>
-    <title>Edit Financial Type Account</title>
-    <page_callback>CRM_Financial_Form_FinancialTypeAccount</page_callback>
-    <weight>583</weight>
-  </item>
-  <item>
-    <path>civicrm/admin/financial/financialType/accounts/delete</path>
-    <title>Delete Financial Type Account</title>
-    <page_callback>CRM_Financial_Form_FinancialTypeAccount</page_callback>
-    <weight>584</weight>
-  </item>
-  <item>
     <path>civicrm/financial/batch</path>
     <title>Accounting Batch</title>
     <page_callback>CRM_Financial_Page_FinancialBatch</page_callback>
