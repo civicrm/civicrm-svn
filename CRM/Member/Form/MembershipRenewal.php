@@ -426,11 +426,12 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     $this->applyFilter('__ALL__', 'trim');
 
     $this->addDate('renewal_date', ts('Date Renewal Entered'), FALSE, array('formatType' => 'activityDate'));
+
+    $this->add('select', 'financial_type_id', ts('Financial Type'), 
+      array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::financialType()
+    );
     if (CRM_Core_Permission::access('CiviContribute') && !$this->_mode) {
       $this->addElement('checkbox', 'record_contribution', ts('Record Renewal Payment?'), NULL, array('onclick' => "checkPayment();"));
-      $this->add('select', 'financial_type_id', ts('Financial Type'), 
-        array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::financialType()
-      );
 
       $this->add('text', 'total_amount', ts('Amount'));
       $this->addRule('total_amount', ts('Please enter a valid amount.'), 'money');
@@ -550,6 +551,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
 
     // get the submitted form values.
     $this->_params = $formValues = $this->controller->exportValues($this->_name);
+
     $this->storeContactFields($formValues);
     // use values from screen
 
@@ -581,7 +583,9 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       $formValues['total_amount'] = CRM_Utils_Array::value('total_amount', $this->_params, CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType',
           $this->_memType, 'minimum_fee'
         ));
-      $formValues['financial_type_id'] = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType', $this->_memType,'financial_type_id');
+      if (!CRM_Utils_Array::value('financial_type_id', $formValues)) {
+        $formValues['financial_type_id'] = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType', $this->_memType,'financial_type_id');
+      }
 
       $this->_paymentProcessor = CRM_Financial_BAO_PaymentProcessor::getPayment($formValues['payment_processor_id'],
         $this->_mode

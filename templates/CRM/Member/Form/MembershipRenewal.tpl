@@ -89,7 +89,13 @@
             <td class="label">{$form.renewal_date.label}</td>
             <td>{include file="CRM/common/jcalendar.tpl" elementName=renewal_date}</td>
         </tr>
-
+	{if $membershipMode}
+	  <tr class="crm-member-membershiprenew-form-block-financial_type_id">	
+            <td class="label">{$form.financial_type_id.label}</td>
+            <td>{$form.financial_type_id.html}<br />
+            <span class="description">{ts}Select the appropriate financial type for this payment.{/ts}</span></td>
+          </tr>
+	{/if}
         {if $accessContribution and ! $membershipMode}
         <tr class="crm-member-membershiprenew-form-block-record_contribution">
       <td class="label">{$form.record_contribution.label}</td>
