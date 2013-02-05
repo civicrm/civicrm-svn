@@ -569,7 +569,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
       $elements[]  = &$this->createElement('radio', NULL, '', ts('Include my name and message'), 0, $extraOption);
       $elements[]  = &$this->createElement('radio', NULL, '', ts('List my contribution anonymously'), 1, $extraOption);
       $this->addGroup($elements, 'pcp_is_anonymous', NULL, '&nbsp;&nbsp;&nbsp;');
-      $this->_defaults['pcp_is_anonymous'] = 0;
+      $this->_defaults['pcp_is_anonymous'] = 0;  
 
       $this->add('text', 'pcp_roll_nickname', ts('Name'), array('maxlength' => 30));
       $this->add('textarea', 'pcp_personal_note', ts('Personal Note'), array('style' => 'height: 3em; width: 40em;'));
@@ -1231,7 +1231,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         $otherAmount = FALSE;
         while ($priceField->fetch()) {
           CRM_Price_BAO_FieldValue::getValues($priceField->id, $values);
-          if ($priceField->name == "membership_amount") {
+          if ($priceField->name == 'membership_amount') {
             if ($priceFiledID = CRM_Utils_Array::value("price_{$priceField->id}", $params)) {
               $this->_params['selectMembership'] = $params['selectMembership'] = CRM_Utils_Array::value('membership_type_id', $values[$priceFiledID]);
               $this->set('selectMembership',CRM_Utils_Array::value('selectMembership', $params));
@@ -1251,7 +1251,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
               $this->_values[$priceFiledID]['weight'] = CRM_Utils_Array::value('weight', $values[$priceFiledID]);
             }
           }
-          if ($priceField->name == "other_amount" && $priceFiledID = CRM_Utils_Array::value("price_{$priceField->id}", $params)) {
+          if ($priceField->name == 'other_amount' && $priceFiledID = CRM_Utils_Array::value("price_{$priceField->id}", $params)) {
             $params['amount_other'] = $priceFiledID;
           }
         }
@@ -1287,7 +1287,6 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     }
 
     $params['currencyID'] = $config->defaultCurrency;
-
     $params['amount'] = self::computeAmount($params, $this);
     $params['separate_amount'] = $params['amount'];
     $memFee = NULL;
@@ -1351,6 +1350,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
           }
         }
       }
+
       CRM_Price_BAO_Set::processAmount($this->_values['fee'], $params, $lineItem[$priceSetId]);
       if ($proceFieldAmount) {
         $lineItem[$params['priceSetId']][$fieldOption]['line_total'] = $proceFieldAmount;
@@ -1361,6 +1361,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
       }
       $this->set('lineItem', $lineItem);
     }
+
     if ($this->_membershipBlock['is_separate_payment'] && CRM_Utils_Array::value('separate_amount', $params)) {
       $this->set('amount', $params['separate_amount']);
     } else {

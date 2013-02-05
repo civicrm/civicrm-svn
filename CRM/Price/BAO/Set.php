@@ -637,8 +637,8 @@ WHERE  id = %1";
   static function processAmount(&$fields, &$params, &$lineItem) {
     // using price set
     $totalPrice = 0;
-    $radioLevel = $checkboxLevel = $selectLevel = $textLevel = array();
-
+    $radioLevel = $checkboxLevel = $selectLevel = $textLevel = $autoRenew = array();
+    $autoRenew[0] = $autoRenew[1] = $autoRenew[2] = 0;
     foreach ($fields as $id => $field) {
       if (!CRM_Utils_Array::value("price_{$id}", $params) ||
         (empty($params["price_{$id}"]) && $params["price_{$id}"] == NULL)
@@ -674,6 +674,7 @@ WHERE  id = %1";
           }
           CRM_Price_BAO_LineItem::format($id, $params, $field, $lineItem);
           $totalPrice += $lineItem[$optionValueId]['line_total'];
+          $autoRenew[$lineItem[$optionValueId]['auto_renew']] += $lineItem[$optionValueId]['line_total'];
           break;
 
         case 'Select':
@@ -690,7 +691,9 @@ WHERE  id = %1";
           }
           CRM_Price_BAO_LineItem::format($id, $params, $field, $lineItem);
           $totalPrice += $lineItem[$optionValueId]['line_total'];
+          $autoRenew[$lineItem[$optionValueId]['auto_renew']] += $lineItem[$optionValueId]['line_total'];
           break;
+
         case 'CheckBox':
           $params['amount_priceset_level_checkbox'] = $optionIds = array();
           foreach ($params["price_{$id}"] as $optionId => $option) {
@@ -711,6 +714,7 @@ WHERE  id = %1";
           CRM_Price_BAO_LineItem::format($id, $params, $field, $lineItem);
           foreach ($optionIds as $optionId) {
             $totalPrice += $lineItem[$optionId]['line_total'];
+            $autoRenew[$lineItem[$optionId]['auto_renew']] += $lineItem[$optionId]['line_total'];
           }
           break;
       }
@@ -733,9 +737,9 @@ WHERE  id = %1";
     if ($totalParticipant > 0) {
       $displayParticipantCount = ' Participant Count -' . $totalParticipant;
     }
-
     $params['amount_level'] = CRM_Core_DAO::VALUE_SEPARATOR . implode(CRM_Core_DAO::VALUE_SEPARATOR, $amount_level) . $displayParticipantCount . CRM_Core_DAO::VALUE_SEPARATOR;
     $params['amount'] = $totalPrice;
+    $params['autoRenew'] = $autoRenew;
   }
 
   /**
