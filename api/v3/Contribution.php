@@ -56,7 +56,7 @@ require_once 'CRM/Contribute/PseudoConstant.php';
  * @example ContributionCreate.php
  * {@getfields Contribution_create}
  */
-function civicrm_api3_contribution_create($params) {
+function civicrm_api3_contribution_create(&$params) {
   civicrm_api3_verify_one_mandatory($params, NULL, array('financial_type_id', 'financial_type'));
 
   $values = array();
@@ -70,6 +70,17 @@ function civicrm_api3_contribution_create($params) {
   $ids = array();
   if (CRM_Utils_Array::value('id', $params)) {
     $ids['contribution'] = $params['id'];
+  }
+  if (CRM_Utils_Array::value('api.line_item.create', $params)) {
+    foreach ($params['api.line_item.create'] as $key => $value) {
+      $value['version'] = 3;
+      civicrm_api3_verify_mandatory($value, NULL, array('qty', 'unit_price', 'line_total', 'price_field_id'));
+      if (!CRM_Utils_Array::value('label', $value)) {
+        $params['api.line_item.create'][$key]['label'] = 'line item';
+      }
+    }
+    $values['line_item'][1] = $params['api.line_item.create'];
+    unset($params['api.line_item.create']);
   }
   $contribution = CRM_Contribute_BAO_Contribution::create($values, $ids);
 

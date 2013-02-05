@@ -58,7 +58,7 @@ class CRM_Price_BAO_LineItem extends CRM_Price_DAO_LineItem {
     //create mode only as we don't support editing line items
 
     CRM_Utils_Hook::pre('create', 'LineItem', $params['entity_id'], $params);
-
+    
     $lineItemBAO = new CRM_Price_BAO_LineItem();
     $lineItemBAO->copyValues($params);
 
@@ -283,6 +283,11 @@ class CRM_Price_BAO_LineItem extends CRM_Price_DAO_LineItem {
       foreach ($values as $line) {
         $line['entity_table'] = $entityTable;
         $line['entity_id'] = $entityId;
+        // if financial type is not set and if price field value is NOT NULL
+        // get financial type id of price field value
+        if (CRM_Utils_Array::value('price_field_value_id', $line) && !CRM_Utils_Array::value('financial_type_id', $line)) {
+          $line['financial_type_id'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_FieldValue', $line['price_field_value_id'], 'financial_type_id');
+        }
         $lineItems = CRM_Price_BAO_LineItem::create($line);
         if (!$update && $contributionDetails) {
           CRM_Financial_BAO_FinancialItem::add($lineItems, $contributionDetails);
