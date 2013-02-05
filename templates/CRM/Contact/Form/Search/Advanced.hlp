@@ -89,6 +89,13 @@
     <p>{ts}Find records with tags (regular or tagset tag) which contain a complete or partial word or phrase. EXAMPLE: If you have several tags that contain the word 'Donor', you can find contacts tagged with any of them by entering 'Donor' in this field.{/ts}</p>
 {/htxt}
 
+{htxt id="id-all-tag-types-title"}
+{ts}Include Tags on Other Types of Records{/ts}
+{/htxt}
+{htxt id="id-all-tag-types"}
+  <p>{ts}Check this box if you want to search for tagged activities or cases (in addition to contact records).{/ts}</p>
+{/htxt}
+
 {htxt id="is-test-title"}
 {ts}Test Records{/ts}
 {/htxt}

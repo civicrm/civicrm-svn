@@ -80,6 +80,26 @@ class CRM_Contact_Form_Search_Criteria {
 
       $parentNames = CRM_Core_BAO_Tag::getTagSet('civicrm_contact');
       CRM_Core_Form_Tag::buildQuickForm($form, $parentNames, 'civicrm_contact', NULL, TRUE, FALSE, TRUE);
+      
+      $used_for = CRM_Core_OptionGroup::values('tag_used_for');
+      $tagsTypes = array();
+      $showAllTagTypes = false;
+      foreach ($used_for as $key => $value) {
+        //check tags for every type and find if there are any defined
+        $tags = CRM_Core_BAO_Tag::getTagsUsedFor($key, FALSE, TRUE, NULL);
+        // check if there are tags other than contact type, if no - keep checkbox hidden on adv search
+        // we will hide searching contact by attachments tags until it will be implemented in core
+        if (count($tags) && $key != 'civicrm_file' && $key != 'civicrm_contact') {
+          //if tags exists then add type to display in adv search form help text
+          $tagsTypes[] = ts($value); 
+          $showAllTagTypes = true;
+        }
+      }
+      $tagTypesText = implode(" or ", $tagsTypes);
+      if ($showAllTagTypes) {
+        $form->add('checkbox', 'all_tag_types', ts('Include tags used for %1', array(1 => $tagTypesText)));
+        $form->add('hidden','tag_types_text', $tagTypesText);
+      }
     }
 
     // add text box for last name, first name, street name, city
