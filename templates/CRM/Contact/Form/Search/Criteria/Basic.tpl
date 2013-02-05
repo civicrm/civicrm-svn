@@ -156,8 +156,14 @@
     {else}
       <td>&nbsp;</td>
     {/if}
-    <td colspan="3">{include file="CRM/common/Tag.tpl"}</td>
+    {if $isTagset}
+      <td colspan="2">{include file="CRM/common/Tag.tpl"}</td>
+    {/if}
     <td>{$form.tag_search.label}  {help id="id-all-tags"}<br />{$form.tag_search.html|crmReplace:class:big}</td>
+    {if ! $isTagset}
+      <td colspan="2">&nbsp;</td>
+    {/if}
+    <td>&nbsp;</td>
   </tr>
   {if $form.all_tag_types}
     <tr>
