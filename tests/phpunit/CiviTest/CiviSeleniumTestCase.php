@@ -1379,6 +1379,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             
     $this->waitForElementPresent("xpath=//table/tbody//tr/td[1][text()='{$editfinancialAccount}']/../td[9]/span/a[text()='Edit']");
     $this->click("xpath=//table/tbody//tr/td[1][text()='{$editfinancialAccount}']/../td[9]/span/a[text()='Edit']");
+    $this->waitForPageToLoad("30000");
 
     $this->waitForElementPresent('_qf_FinancialAccount_cancel-botttom');
         
