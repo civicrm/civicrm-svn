@@ -461,7 +461,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
         'source' => 'SSF',
         'contribution_status_id' => 1,
         'version' => $this->_apiversion,
-        'use_default_price_set' => 0,
+        'skipLineItem' => 1,
         'api.line_item.create' => array(
             array(
               'price_field_id' => 1,

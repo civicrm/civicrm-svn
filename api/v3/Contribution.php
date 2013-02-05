@@ -39,13 +39,6 @@
  */
 
 /**
- * Include utility functions
- */
-require_once 'CRM/Contribute/BAO/Contribution.php';
-require_once 'CRM/Utils/Rule.php';
-require_once 'CRM/Contribute/PseudoConstant.php';
-
-/**
  * Add or update a contribution
  *
  * @param  array   $params           (reference ) input parameters
@@ -71,17 +64,7 @@ function civicrm_api3_contribution_create(&$params) {
   if (CRM_Utils_Array::value('id', $params)) {
     $ids['contribution'] = $params['id'];
   }
-  if (CRM_Utils_Array::value('api.line_item.create', $params)) {
-    foreach ($params['api.line_item.create'] as $key => $value) {
-      $value['version'] = 3;
-      civicrm_api3_verify_mandatory($value, NULL, array('qty', 'unit_price', 'line_total', 'price_field_id'));
-      if (!CRM_Utils_Array::value('label', $value)) {
-        $params['api.line_item.create'][$key]['label'] = 'line item';
-      }
-    }
-    $values['line_item'][1] = $params['api.line_item.create'];
-    unset($params['api.line_item.create']);
-  }
+
   $contribution = CRM_Contribute_BAO_Contribution::create($values, $ids);
 
   if (is_a($contribution, 'CRM_Core_Error')) {
@@ -125,11 +108,18 @@ function _civicrm_api3_contribution_create_spec(&$params) {
   );
   // note this is a recommended option but not adding as a default to avoid
   // creating unecessary changes for the dev
-    $params['skipRecentView'] = array(
+  $params['skipRecentView'] = array(
     'name' => 'skipRecentView',
     'title' => 'Skip adding to recent view',
     'type' => 1,
     'description' => 'Do not add to recent view (setting this improves performance)',
+  );
+  $params['skipLineItem'] = array(
+    'name' => 'skipLineItem',
+    'title' => 'Skip adding line items',
+    'type' => 1,
+    'api.default' => 0,
+    'description' => 'Do not add line items by default (if you wish to add your own)',
   );
 }
 

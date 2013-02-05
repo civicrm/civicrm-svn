@@ -5,7 +5,7 @@
  */
 function contribution_create_example(){
 $params = array( 
-  'contact_id' => 1,
+  'contact_id' => 3,
   'receive_date' => '20120511',
   'total_amount' => '100',
   'financial_type_id' => 1,
@@ -18,7 +18,7 @@ $params = array(
   'source' => 'SSF',
   'contribution_status_id' => 1,
   'version' => 3,
-  'use_default_price_set' => 0,
+  'skipLineItems' => 1,
   'api.line_item.create' => array( 
       '0' => array( 
           'price_field_id' => 1,
@@ -53,7 +53,7 @@ function contribution_create_expectedresult(){
   'values' => array( 
       '1' => array( 
           'id' => '1',
-          'contact_id' => '1',
+          'contact_id' => '3',
           'financial_type_id' => '1',
           'contribution_page_id' => '',
           'payment_instrument_id' => '1',

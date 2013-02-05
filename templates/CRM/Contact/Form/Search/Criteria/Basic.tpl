@@ -150,25 +150,22 @@
             respectParents: true
         });
 
-
         </script>
         {/literal}
       </td>
     {else}
       <td>&nbsp;</td>
     {/if}
-    <td colspan="2">{$form.tag_search.label}  {help id="id-all-tags"}<br />{$form.tag_search.html|crmAddClass:huge}</td>
-    {if $form.all_tag_types}
-      <td colspan="2">
+    <td colspan="3">{include file="CRM/common/Tag.tpl"}</td>
+    <td>{$form.tag_search.label}  {help id="id-all-tags"}<br />{$form.tag_search.html|crmReplace:class:big}</td>
+  </tr>
+  {if $form.all_tag_types}
+    <tr>
+      <td colspan="5">
           {$form.all_tag_types.html} {$form.all_tag_types.label} {help id="id-all-tag-types"}
       </td>
-    {else}
-      <td colspan="2">&nbsp;</td>
-    {/if}
-  </tr>
-  <tr>
-    <td colspan="5">{include file="CRM/common/Tag.tpl"}</td>
-  </tr>
+    </tr>
+  {/if}
   <tr>
     <td>
       <div>
