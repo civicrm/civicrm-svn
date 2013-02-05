@@ -66,6 +66,18 @@ class CRM_Financial_BAO_PaymentProcessor extends CRM_Financial_DAO_PaymentProces
     $processor->payment_type = $ppTypeDAO->payment_type;
 
     $processor->save();
+    // CRM-11826, add entry in civicrm_entity_financial_account 
+    // if financial_account_id is not NULL
+    if (CRM_Utils_Array::value('financial_account_id', $params)) {
+      $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Asset Account is' "));
+      $values = array(
+        'entity_table' => 'civicrm_payment_processor',
+        'entity_id' => $processor->id,
+        'account_relationship' => $relationTypeId,
+        'financial_account_id' => $params['financial_account_id']
+      );
+      CRM_Financial_BAO_FinancialTypeAccount::add($values); 
+    }
     return $processor;
   }
 
