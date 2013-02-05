@@ -152,6 +152,10 @@
                 {if ( $field.data_type eq 'Date') or
                 ( $fieldName eq 'thankyou_date' ) or ( $fieldName eq 'cancel_date' ) or ( $fieldName eq 'receipt_date' ) or (  $fieldName eq 'activity_date_time') }
                 {include file="CRM/common/jcalendar.tpl" elementName=$fieldName elementIndex=$voterId batchUpdate=1}
+                {elseif $fieldName|substr:0:13 eq 'phone_and_ext'}
+                  {assign var="phone_field" value=$fieldName|replace:'phone_and_ext':'phone'}
+                  {assign var="phone_ext_field" value=$fieldName|replace:'phone_and_ext':'phone_ext'}
+                  {$form.field.$voterId.$phone_field.html}&nbsp;{$form.field.$voterId.$phone_ext_field.html}
                 {else}
                   {$form.field.$voterId.$fieldName.html}
                 {/if}
