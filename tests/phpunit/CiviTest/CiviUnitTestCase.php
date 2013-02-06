@@ -1108,14 +1108,14 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
    *
    * @return int id of created contribution
    */
-  function contributionCreate($cID, $cTypeID = 1, $invoiceID = 67890, $trxnID = 12345) {
+  function contributionCreate($cID, $cTypeID = 1, $invoiceID = 67890, $trxnID = 12345, $paymentInstrumentID = 1) {
     $params = array(
       'domain_id' => 1,
       'contact_id' => $cID,
       'receive_date' => date('Ymd'),
       'total_amount' => 100.00,
       'financial_type_id' => empty($cTypeID) ? 1 : $cTypeID,
-      'payment_instrument_id' => 1,
+      'payment_instrument_id' => empty($paymentInstrumentID) ? 1 : $paymentInstrumentID,
       'non_deductible_amount' => 10.00,
       'fee_amount' => 50.00,
       'net_amount' => 90.00,

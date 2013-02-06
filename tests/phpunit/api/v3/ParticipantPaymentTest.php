@@ -211,7 +211,7 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase {
   function testPaymentOffline() {
 
     // create contribution
-    $contributionID = $this->contributionCreate($this->_contactID);
+    $contributionID = $this->contributionCreate($this->_contactID, $this->_contributionTypeId, NULL, NULL, 4);
 
     $this->_participantPaymentID = $this->participantPaymentCreate($this->_participantID, $contributionID);
     $params = array(
@@ -415,20 +415,32 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase {
     $trxnParams = array(
       'id' => $trxn['financial_trxn_id'],
     );
-   if ($context == 'offline' || $context == 'online') {
-     $compareParams = array(
-       'to_financial_account_id' => 12,
-       'total_amount' => 100,
-       'status_id' => 1,
-     );
-   }
-   elseif ($context == 'payLater') {
-     $compareParams = array(
-       'to_financial_account_id' => 7,
-       'total_amount' => 100,
-       'status_id' => 2,
-     );
-   }
+
+    switch ($context) {
+      case 'online':
+        $compareParams = array(
+          'to_financial_account_id' => 12,
+          'total_amount' => 100,
+          'status_id' => 1,
+        );
+        break;
+
+      case 'offline':
+        $compareParams = array(
+          'to_financial_account_id' => 6,
+          'total_amount' => 100,
+          'status_id' => 1,
+        );
+        break;
+      case 'payLater':
+        $compareParams = array(
+          'to_financial_account_id' => 7,
+          'total_amount' => 100,
+          'status_id' => 2,
+        );
+        break;
+    }
+    
     $this->assertDBCompareValues('CRM_Financial_DAO_FinancialTrxn', $trxnParams, $compareParams);
     $entityParams = array(
       'financial_trxn_id' => $trxn['financial_trxn_id'],
