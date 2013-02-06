@@ -3480,6 +3480,8 @@ SELECT  group_id
         $fields["phone_ext-{$fieldSuffix}"]['name'] = "phone_ext-{$fieldSuffix}";
         $fields["phone_ext-{$fieldSuffix}"]['where'] = 'civicrm_phone.phone_ext';
         $fields["phone_ext-{$fieldSuffix}"]['skipDisplay'] = 1;
+        //ignore required for extension field
+        $fields["phone_ext-{$fieldSuffix}"]['is_required'] = 0;
       }
     }
   }
