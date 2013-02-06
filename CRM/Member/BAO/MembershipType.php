@@ -469,7 +469,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType {
    * @return Array array fo the start date, end date and join date of the membership
    * @static
    */
-  function getRenewalDatesForMembershipType($membershipId, $changeToday = NULL, $membershipTypeID = NULL, $numRenewTerms = 1) {
+  public static function getRenewalDatesForMembershipType($membershipId, $changeToday = NULL, $membershipTypeID = NULL, $numRenewTerms = 1) {
     $params            = array('id' => $membershipId);
     $membershipDetails = CRM_Member_BAO_Membership::getValues($params, $values);
     $statusID          = $membershipDetails[$membershipId]->status_id;

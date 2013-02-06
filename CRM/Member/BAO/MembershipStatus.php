@@ -165,7 +165,7 @@ class CRM_Member_BAO_MembershipStatus extends CRM_Member_DAO_MembershipStatus {
    * @param int $membershipStatusId
    * @static
    */
-  function getMembershipStatus($membershipStatusId) {
+  public static function getMembershipStatus($membershipStatusId) {
     $statusDetails = array();
     $membershipStatus = new CRM_Member_DAO_MembershipStatus();
     $membershipStatus->id = $membershipStatusId;
@@ -367,7 +367,7 @@ class CRM_Member_BAO_MembershipStatus extends CRM_Member_DAO_MembershipStatus {
    * @return
    * @static
    */
-  function getMembershipStatusCurrent() {
+  public static function getMembershipStatusCurrent() {
     $statusIds = array();
     $membershipStatus = new CRM_Member_DAO_MembershipStatus();
     $membershipStatus->is_current_member = 1;
