@@ -910,12 +910,20 @@ WHERE civicrm_event.is_active = 1
       array('replace' => array('target_entity_id' => $copyEvent->id))
     );
 
+    if ($copyEvent->is_template == 1) {
+      $field = 'event_template';
+    }
+    else {
+      $field = 'civicrm_event';
+    }
+    $mappingId = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_ActionMapping', $field, 'id', 'entity_value');
+    $newData = array('entity_value' => $copyEvent->id, 'mapping_id' => $mappingId);
     $copyReminder = &CRM_Core_DAO::copyGeneric('CRM_Core_DAO_ActionSchedule',
       array(
         'entity_value' => $id,
-        'mapping_id' => 3,
+        'mapping_id' => $mappingId,
       ),
-      array('entity_value' => $copyEvent->id)
+      $newData                                               
     );
     
     if (!$afterCreate) {
