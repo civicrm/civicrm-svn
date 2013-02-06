@@ -75,3 +75,12 @@
 {capture assign="profileURL"}{crmURL p='civicrm/admin/uf/group' q='reset=1'}{/capture}
 <p>{ts 1=$profileURL}The organization data collected from users is controlled by the Organization Profile selected below. You can use the default "On Behalf Of Organization" profile, or any other profile with type 'Contact' and/or 'Organization' (<a href="%1">Administer > Customize > CiviCRM Profile</a>). The profile must include Organization Name and Email Address.{/ts}</p>
 {/htxt}
+
+{htxt id="id-is_share-title"}
+  {ts}Social Sharing{/ts}
+{/htxt}
+{htxt id="id-is_share"}
+<p>{ts}When enabled, links allowing people to share this online contribution page with their social network will be displayed (e.g. Facebook "Like", Google+, and Twitter).{/ts}</p>
+<p>{ts}Social media links will be included on the Contribution page, Thank-you page, Tell-a-Friend page (if enabled), and in contribution receipt emails.{/ts}</p>
+{/htxt}
+

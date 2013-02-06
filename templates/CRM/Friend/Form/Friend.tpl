@@ -25,19 +25,20 @@
 *}
 <div id="form" class="crm-form-block crm-friend-manage-block">
 <div id="help">
-        {if $context EQ 'Contribute'}
-            {assign var=enduser value="contributor"}
-            {assign var=pageType value="Online Contribution page"}
-            {ts}Tell a Friend gives your contributors an easy way to spread the word about this fundraising campaign. The contribution thank-you page will include a link to a form where they can enter their friends' email addresses, along with a personalized message. CiviCRM will record these solicitation activities, and will add the friends to your database.{/ts}
-        {elseif $context EQ 'Event'}
-            {assign var=enduser value="participant"}
-            {assign var=pageType value="Event Information page"}
-            {ts}Tell a Friend gives registering participants an easy way to spread the word about this event. The registration thank-you page will include a link to a form where they can enter their friends' email addresses, along with a personalized message. CiviCRM will record these solicitation activities, and will add the friends to your database.{/ts}
-        {elseif $context EQ 'Pledge'}
-            {assign var=enduser value="pledge"}
-            {assign var=pageType value="Pledge Information page"}
-            {ts}Tell a Friend gives registering pledge signers an easy way to spread the word about this pledge. The registration thank-you page will include a link to a form where they can enter their friends' email addresses, along with a personalized message. CiviCRM will record these solicitation activities, and will add the friends to your database.{/ts}
-        {/if}
+  {if $context EQ 'Contribute'}
+    {assign var=enduser value="contributor"}
+    {assign var=pageType value="Online Contribution page"}
+    {ts}Tell a Friend gives your contributors an easy way to spread the word about this fundraising campaign. The contribution thank-you page will include a link to a form where they can enter their friends' email addresses, along with a personalized message. CiviCRM will record these solicitation activities, and will add the friends to your database.{/ts}
+  {elseif $context EQ 'Event'}
+    {assign var=enduser value="participant"}
+    {assign var=pageType value="Event Information page"}
+    {ts}Tell a Friend gives registering participants an easy way to spread the word about this event. The registration thank-you page will include a link to a form where they can enter their friends' email addresses, along with a personalized message. CiviCRM will record these solicitation activities, and will add the friends to your database.{/ts}
+  {elseif $context EQ 'Pledge'}
+    {assign var=enduser value="pledge"}
+    {assign var=pageType value="Pledge Information page"}
+    {ts}Tell a Friend gives registering pledge signers an easy way to spread the word about this pledge. The registration thank-you page will include a link to a form where they can enter their friends' email addresses, along with a personalized message. CiviCRM will record these solicitation activities, and will add the friends to your database.{/ts}
+  {/if}
+  {ts}If sharing through social media is enabled, links allowing people to share with their social network will also be included on the Tell a Friend form (e.g. Facebook "Like", Google+, and Twitter).{/ts}
 </div>
    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
     <table class="form-layout">

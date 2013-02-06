@@ -91,10 +91,11 @@
 </div>
 {/if}
 
-{if $context EQ 'event'}
-{capture assign=pageURL}{crmURL p='civicrm/event/info' q="id=`$entityID`&amp;reset=1" a=true fe=1 h=1}{/capture}
+{if $isShare}
+  {if $context EQ 'event'}
+    {capture assign=pageURL}{crmURL p='civicrm/event/info' q="id=`$entityID`&amp;reset=1" a=true fe=1 h=1}{/capture}
+  {else}
+    {capture assign=pageURL}{crmURL p='civicrm/contribute/transact' q="reset=1&amp;id=`$entityID`" a=true fe=1 h=1}{/capture}
+  {/if}
+  {include file="CRM/common/SocialNetwork.tpl" url=$pageURL title=$title pageURL=$pageURL}
 {/if}
-{if $context EQ 'contribution'}
-{capture assign=pageURL}{crmURL p='civicrm/contribute/transact' q="reset=1&amp;id=`$entityID`" a=true fe=1 h=1}{/capture}
-{/if}
-{include file="CRM/common/SocialNetwork.tpl" url=$pageURL title=$title pageURL=$pageURL}
