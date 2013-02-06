@@ -153,7 +153,6 @@ class CRM_Campaign_BAO_Query {
 
     switch ($name) {
       case 'campaign_survey_id':
-        $aType = $value;
         $query->_qill[$grouping][] = ts('Survey - %1', array(1 => CRM_Core_DAO::getFieldValue('CRM_Campaign_DAO_Survey', $value, 'title')));
 
         $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause('civicrm_activity.source_record_id',
