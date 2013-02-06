@@ -545,7 +545,7 @@ LIMIT      0, 10
    *
    * @return array array with count of participants for each event based on status/role
    */
-  function getParticipantCount($eventId,
+  public static function getParticipantCount($eventId,
     $considerStatus = TRUE,
     $status         = TRUE,
     $considerRole   = TRUE,

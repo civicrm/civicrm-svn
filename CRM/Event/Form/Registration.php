@@ -973,7 +973,7 @@ WHERE  v.option_group_id = g.id
    * @return $totalCount total participant count.
    * @access public
    */
-  public function getParticipantCount(&$form, $params, $skipCurrent = FALSE) {
+  public static function getParticipantCount(&$form, $params, $skipCurrent = FALSE) {
     $totalCount = 0;
     if (!is_array($params) || empty($params)) {
       return $totalCount;
