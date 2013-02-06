@@ -35,7 +35,10 @@
  */
 class CRM_Campaign_BAO_Query {
   //since normal activity clause clause get collides.
-  CONST civicrm_activity = 'civicrm_survey_activity', civicrm_activity_target = 'civicrm_survey_activity_target', civicrm_activity_assignment = 'civicrm_survey_activity_assignment';
+  CONST
+    CIVICRM_ACTIVITY = 'civicrm_survey_activity',
+    CIVICRM_ACTIVITY_TARGET = 'civicrm_survey_activity_target',
+    CIVICRM_ACTIVITY_ASSIGNMENT = 'civicrm_survey_activity_assignment';
 
   /**
    * static field for all the campaign fields
@@ -45,7 +48,7 @@ class CRM_Campaign_BAO_Query {
    */
   static $_campaignFields = NULL;
 
-  static $_applySurveyClause;
+  static $_applySurveyClause = FALSE;
 
   /**
    * Function get the fields for campaign.
@@ -91,20 +94,20 @@ class CRM_Campaign_BAO_Query {
     $query->_select['survey_activity_target_id'] = 'civicrm_activity_target.id as survey_activity_target_id';
     $query->_element['survey_activity_target_id'] = 1;
     $query->_element['survey_activity_target_contact_id'] = 1;
-    $query->_tables[self::civicrm_activity_target] = 1;
-    $query->_whereTables[self::civicrm_activity_target] = 1;
+    $query->_tables[self::CIVICRM_ACTIVITY_TARGET] = 1;
+    $query->_whereTables[self::CIVICRM_ACTIVITY_TARGET] = 1;
 
     //2. get survey activity table in.
     $query->_select['survey_activity_id'] = 'civicrm_activity.id as survey_activity_id';
     $query->_element['survey_activity_id'] = 1;
-    $query->_tables[self::civicrm_activity] = 1;
-    $query->_whereTables[self::civicrm_activity] = 1;
+    $query->_tables[self::CIVICRM_ACTIVITY] = 1;
+    $query->_whereTables[self::CIVICRM_ACTIVITY] = 1;
 
     //3. get the assignee table in.
     $query->_select['survey_interviewer_id'] = 'civicrm_activity_assignment.id as survey_interviewer_id';
     $query->_element['survey_interviewer_id'] = 1;
-    $query->_tables[self::civicrm_activity_assignment] = 1;
-    $query->_whereTables[self::civicrm_activity_assignment] = 1;
+    $query->_tables[self::CIVICRM_ACTIVITY_ASSIGNMENT] = 1;
+    $query->_whereTables[self::CIVICRM_ACTIVITY_ASSIGNMENT] = 1;
 
     //4. get survey table.
     $query->_select['campaign_survey_id'] = 'civicrm_survey.id as campaign_survey_id';
@@ -198,18 +201,18 @@ class CRM_Campaign_BAO_Query {
     }
 
     switch ($name) {
-      case self::civicrm_activity_target:
+      case self::CIVICRM_ACTIVITY_TARGET:
         $from = " INNER JOIN civicrm_activity_target ON ( civicrm_activity_target.target_contact_id = contact_a.id ) ";
         break;
 
-      case self::civicrm_activity:
+      case self::CIVICRM_ACTIVITY:
         $surveyActivityTypes = CRM_Campaign_PseudoConstant::activityType();
         $surveyKeys          = "(" . implode(',', array_keys($surveyActivityTypes)) . ")";
         $from                = " INNER JOIN civicrm_activity ON ( civicrm_activity.id = civicrm_activity_target.activity_id
                                  AND civicrm_activity.activity_type_id IN $surveyKeys ) ";
         break;
 
-      case self::civicrm_activity_assignment:
+      case self::CIVICRM_ACTIVITY_ASSIGNMENT:
         $from = "
 INNER JOIN civicrm_activity_assignment ON ( civicrm_activity.id = civicrm_activity_assignment.activity_id ) ";
         break;
@@ -271,9 +274,9 @@ INNER JOIN civicrm_activity_assignment ON ( civicrm_activity.id = civicrm_activi
     }
 
     $weight = end($tables);
-    $tables[self::civicrm_activity_target] = ++$weight;
-    $tables[self::civicrm_activity] = ++$weight;
-    $tables[self::civicrm_activity_assignment] = ++$weight;
+    $tables[self::CIVICRM_ACTIVITY_TARGET] = ++$weight;
+    $tables[self::CIVICRM_ACTIVITY] = ++$weight;
+    $tables[self::CIVICRM_ACTIVITY_ASSIGNMENT] = ++$weight;
     $tables['civicrm_survey'] = ++$weight;
     $tables['civicrm_campaign'] = ++$weight;
   }
