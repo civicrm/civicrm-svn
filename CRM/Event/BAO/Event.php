@@ -408,7 +408,6 @@ LIMIT      0, 10
 
           case 'is_map':
             if ($dao->$name && $config->mapAPIKey) {
-              $params             = array();
               $values             = array();
               $ids                = array();
               $params             = array('entity_id' => $dao->id, 'entity_table' => 'civicrm_event');
@@ -766,7 +765,6 @@ WHERE civicrm_event.is_active = 1
 
     // check 'view event info' permission
     $permissions = CRM_Core_Permission::event(CRM_Core_Permission::VIEW);
-
 
     // check if we're in shopping cart mode for events
     $enable_cart = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::EVENT_PREFERENCES_NAME,
@@ -1334,8 +1332,9 @@ WHERE civicrm_event.is_active = 1
    *
    * @return None
    * @access public
+   * @static
    */
-  function displayProfile(&$params, $gid, &$groupTitle, &$values) {
+  static function displayProfile(&$params, $gid, &$groupTitle, &$values) {
     if ($gid) {
       $session = CRM_Core_Session::singleton();
       $contactID = $session->get('userID');
@@ -1356,13 +1355,10 @@ WHERE civicrm_event.is_active = 1
       }
       $customVal     = '';
       $config        = CRM_Core_Config::singleton();
-      $locationTypes = $imProviders = array();
-      $locationTypes = CRM_Core_PseudoConstant::locationType();
       $imProviders   = CRM_Core_PseudoConstant::IMProvider();
       //start of code to set the default values
       foreach ($fields as $name => $field) {
         $index = $field['title'];
-        $customFieldName = NULL;
         if ($name === 'organization_name') {
           $values[$index] = $params[$name];
         }
@@ -1414,7 +1410,6 @@ WHERE civicrm_event.is_active = 1
         }
         elseif ($name === 'preferred_communication_method') {
           $communicationFields = CRM_Core_PseudoConstant::pcm();
-          $pref                = array();
           $compref             = array();
           $pref                = $params[$name];
           if (is_array($pref)) {
@@ -1552,12 +1547,6 @@ WHERE  id = $cfID
                 }
                 else {
                   $values[$index] = $displayValue;
-                }
-
-                if (CRM_Core_DAO::getFieldValue('CRM_Core_DAO_CustomField',
-                    $cfID, 'is_search_range'
-                  )) {
-                  $customFieldName = "{$name}_from";
                 }
               }
             }
