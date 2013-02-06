@@ -297,7 +297,7 @@ class WebTest_Profile_MultiRecordProfileAddTest extends CiviSeleniumTestCase {
     }
     
     // Check Search Functionality
-    if(!$userCheck) {
+    if (!$userCheck) {
       $this->click("//div[@id='profile-dialog']/div/div/div/div/div[2]/a");
       $this->waitForElementPresent("//form[@id='Search']");
       $this->verifyText("//form[@id='Search']/div[3]/div[2]/table/tbody/tr[2]/td[2]", preg_quote($recordNew['firstname']));
@@ -342,7 +342,7 @@ class WebTest_Profile_MultiRecordProfileAddTest extends CiviSeleniumTestCase {
     $this->click("header");
     $this->type("label", $params['textFieldLabel']);
     //Is searchable?
-    if(!$checkSearchable) {
+    if (!$checkSearchable) {
       $this->click("is_searchable");
     }
     $this->click("_qf_Field_next_new-bottom");
@@ -400,5 +400,3 @@ class WebTest_Profile_MultiRecordProfileAddTest extends CiviSeleniumTestCase {
     return $params;
   }
 }
-
-
