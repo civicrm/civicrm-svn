@@ -197,7 +197,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         'postal_code_suffix', 'geo_code_1', 'geo_code_2', 'address_name',
       );
 
-      $blocks = array('email', 'phone', 'im', 'url', 'openid', 'phone_ext');
+      $blocks = array('email', 'phone', 'im', 'url', 'openid');
       foreach ($this->_params['onbehalf'] as $loc => $value) {
         $field = $typeId = NULL;
         if (strstr($loc, '-')) {
@@ -238,9 +238,10 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
               $locationValue = $defaultLocationType->id;
             }
             else {
-            $locationValue = $locType;
+              $locationValue = $locType;
             }
             $locTypeId     = '';
+            $phoneExtField = array();
 
             if ($field == 'url') {
               $blockName     = 'website';
@@ -255,6 +256,12 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             elseif ($field == 'phone') {
               list($field, $locType, $typeId) = explode('-', $loc);
               $locTypeId = 'phone_type_id';
+
+              //check if extension field exists
+              $extField = str_replace('phone','phone_ext', $loc);
+              if (isset($this->_params['onbehalf'][$extField])) {
+                $phoneExtField = array('phone_ext' => $this->_params['onbehalf'][$extField]);
+              }
             }
 
             $isPrimary = 1;
@@ -263,21 +270,20 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                 $isPrimary = 0;
             }
             if ($locationValue) {
-              if ( !$locTypeId ) {
-                $this->_params['onbehalf_location'][$blockName][] = array( 
-                  $fieldName    => $value,
-                  $locationType => $locationValue,
-                  'is_primary'  => $isPrimary
-                );
+              $blockValues = array(
+                $fieldName    => $value,
+                $locationType => $locationValue,
+                'is_primary'  => $isPrimary,
+              );
+
+              if ($locTypeId) {
+                $blockValues = array_merge($blockValues, array($locTypeId  => $typeId));
               }
-              else {
-                $this->_params['onbehalf_location'][$blockName][] = array( 
-                  $fieldName    => $value,
-                  $locationType => $locationValue,
-                  'is_primary'  => $isPrimary,
-                  $locTypeId  => $typeId
-                );
+              if (!empty($phoneExtField)) {
+                $blockValues = array_merge($blockValues, $phoneExtField);
               }
+
+              $this->_params['onbehalf_location'][$blockName][] = $blockValues;
             }
           }
         }
@@ -600,7 +606,6 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
       }
     }
 
-    $now = date('YmdHis');
     $fields = array();
 
     if (CRM_Utils_Array::value('image_URL', $params)) {
@@ -609,9 +614,6 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
 
     // set email for primary location.
     $fields['email-Primary'] = 1;
-
-    // don't create primary email address, just add it to billing location
-    //$params["email-Primary"] = $params["email-{$this->_bltID}"];
 
     // get the add to groups
     $addToGroups = array();
@@ -699,16 +701,16 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
           //fix for custom data (of type checkbox, multi-select)
           if ( substr($block, 0, 7) == 'custom_' ) {
             continue;
-        }
+          }
           // fix the index of block elements
           if (is_array($vals) ) {
-          foreach ( $vals as $key => $val ) {
-            //dont adjust the index of address block as 
-            //it's index is WRT to location type
-            $newKey = ($block == 'address') ? $key : ++$key;
-            $behalfOrganization[$block][$newKey] = $val;
+            foreach ( $vals as $key => $val ) {
+              //dont adjust the index of address block as
+              //it's index is WRT to location type
+              $newKey = ($block == 'address') ? $key : ++$key;
+              $behalfOrganization[$block][$newKey] = $val;
+            }
           }
-        }
         }
         unset($params['onbehalf_location']);
       }
@@ -725,7 +727,6 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         }
       }
     }
-
 
     foreach ($addToGroups as $k) {
       if (array_key_exists($k, $subscribeGroupIds)) {
@@ -1582,7 +1583,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
     // create relationship
     $relParams['contact_check'][$orgID] = 1;
     $cid = array('contact' => $contactID);
-    $relationship = CRM_Contact_BAO_Relationship::create($relParams, $cid);
+    CRM_Contact_BAO_Relationship::create($relParams, $cid);
 
     // if multiple match - send a duplicate alert
     if ($dupeIDs && (count($dupeIDs) > 1)) {
