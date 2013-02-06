@@ -1795,7 +1795,8 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
           $form->freeze($name . '-provider_id');
         }
       }
-    } elseif (substr($fieldName, 0, 13) === 'phone_and_ext') {
+    }
+    elseif (substr($fieldName, 0, 13) === 'phone_and_ext') {
       // add phone and phone extension
       $phoneField = str_replace('phone_and_ext', 'phone', $name);
       $phoneExtField = str_replace('phone_and_ext', 'phone_ext', $name);

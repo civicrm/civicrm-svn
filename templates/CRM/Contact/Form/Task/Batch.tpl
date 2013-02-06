@@ -32,6 +32,9 @@
     <tr class="columnheader">
       <td>{ts}Name{/ts}</td>
     {foreach from=$fields item=field key=fieldName}
+      {if $field.skipDisplay}
+        {continue}
+      {/if}
       <td><img  src="{$config->resourceBase}i/copy.png" alt="{ts 1=$field.title}Click to copy %1 from row one to all rows.{/ts}" fname="{$field.name}" class="action-icon" title="{ts}Click here to copy the value in row one to ALL rows.{/ts}" />{$field.title}</td>
     {/foreach}
     </tr>
@@ -40,6 +43,9 @@
   <tr class="{cycle values="odd-row,even-row"}" entity_id="{$cid}">
     <td>{$sortName.$cid}</td>
     {foreach from=$fields item=field key=fieldName}
+      {if $field.skipDisplay}
+        {continue}
+      {/if}
       {assign var=n value=$field.name}
       {if $field.options_per_line}
         <td class="compressed">
@@ -69,10 +75,14 @@
         </td>
       {elseif ( $fields.$n.data_type eq 'Date') or ( $n eq 'birth_date' ) or ( $n eq 'deceased_date' ) }
         <td class="compressed">{include file="CRM/common/jcalendar.tpl" elementName=$n elementIndex=$cid batchUpdate=1}</td>
-      {elseif $n|substr:0:13 eq 'phone_and_ext'}
-        {assign var="phone_field" value=$n|replace:'phone_and_ext':'phone'}
-        {assign var="phone_ext_field" value=$n|replace:'phone_and_ext':'phone_ext'}
-        <td class="compressed">{$form.field.$cid.$phone_field.html}&nbsp;{$form.field.$cid.$phone_ext_field.html}</td>
+      {elseif $n|substr:0:5 eq 'phone'}
+        <td class="compressed">
+          {assign var="phone_ext_field" value=$n|replace:'phone':'phone_ext'}
+          {$form.field.$cid.$n.html}
+          {if $form.field.$cid.$phone_ext_field.html}
+            &nbsp;{$form.field.$cid.$phone_ext_field.html}
+          {/if}
+        </td>
       {else}
         <td class="compressed">{$form.field.$cid.$n.html}</td>
       {/if}
@@ -80,7 +90,6 @@
   {/foreach}
   </tr>
   </table>
-
 {if $fields}{$form._qf_BatchUpdateProfile_refresh.html}{/if} &nbsp;<div class="crm-submit-buttons">{$form.buttons.html}</div>
 
 </div>

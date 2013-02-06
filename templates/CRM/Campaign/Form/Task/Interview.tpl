@@ -57,8 +57,8 @@
       <table id="optionField" class="form-layout-compressed">
         <tr>
           <th></th>
-          <th> Column</th>
-          <th> Order</th>
+          <th>{ts}Column{/ts}</th>
+          <th>{ts}Order{/ts}</th>
         </tr>
 
         {section name=rowLoop start=1 loop=5}
@@ -128,6 +128,9 @@
       {* display headers for profile survey fields *}
         {if $surveyFields}
           {foreach from=$surveyFields item=field key=fieldName}
+            {if $field.skipDisplay}
+              {continue}
+            {/if}
             <th><img  src="{$config->resourceBase}i/copy.png" alt="{ts 1=$field.title}Click to copy %1 from row one to all rows.{/ts}" fname="{$field.name}" class="action-icon" title="{ts}Click here to copy the value in row one to ALL rows.{/ts}" />{$field.title}</th>
           {/foreach}
         {/if}
@@ -148,14 +151,19 @@
         {* here build the survey profile fields *}
           {if $surveyFields}
             {foreach from=$surveyFields item=field key=fieldName}
+              {if $field.skipDisplay}
+                {continue}
+              {/if}
               <td class="compressed {$field.data_type} {$fieldName}">
                 {if ( $field.data_type eq 'Date') or
                 ( $fieldName eq 'thankyou_date' ) or ( $fieldName eq 'cancel_date' ) or ( $fieldName eq 'receipt_date' ) or (  $fieldName eq 'activity_date_time') }
                 {include file="CRM/common/jcalendar.tpl" elementName=$fieldName elementIndex=$voterId batchUpdate=1}
-                {elseif $fieldName|substr:0:13 eq 'phone_and_ext'}
-                  {assign var="phone_field" value=$fieldName|replace:'phone_and_ext':'phone'}
-                  {assign var="phone_ext_field" value=$fieldName|replace:'phone_and_ext':'phone_ext'}
-                  {$form.field.$voterId.$phone_field.html}&nbsp;{$form.field.$voterId.$phone_ext_field.html}
+                {elseif $fieldName|substr:0:5 eq 'phone'}
+                  {assign var="phone_ext_field" value=$fieldName|replace:'phone':'phone_ext'}
+                  {$form.field.$voterId.$fieldName.html}
+                  {if $form.field.$voterId.$phone_ext_field.html}
+                    &nbsp;{$form.field.$voterId.$phone_ext_field.html}
+                  {/if}
                 {else}
                   {$form.field.$voterId.$fieldName.html}
                 {/if}

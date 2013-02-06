@@ -98,7 +98,6 @@ class CRM_Contact_Form_Task_Batch extends CRM_Contact_Form_Task {
     CRM_Utils_System::setTitle($this->_title);
 
     $this->addDefaultButtons(ts('Save'));
-    $this->_fields = array();
     $this->_fields = CRM_Core_BAO_UFGroup::getFields($ufGroupId, FALSE, CRM_Core_Action::VIEW);
 
     // remove file type field and then limit fields
@@ -113,7 +112,8 @@ class CRM_Contact_Form_Task_Batch extends CRM_Contact_Form_Task {
       }
     }
 
-    $this->_fields = array_slice($this->_fields, 0, $this->_maxFields);
+    //FIX ME: phone ext field is added at the end and it gets removed because of below code
+    //$this->_fields = array_slice($this->_fields, 0, $this->_maxFields);
 
     $this->addButtons(array(
         array(
