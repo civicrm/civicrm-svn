@@ -145,12 +145,6 @@ class CRM_Campaign_BAO_Query {
 
     list($name, $op, $value, $grouping, $wildcard) = $values;
 
-    $fields = array();
-    $fields = self::getFields();
-    if (!empty($value)) {
-      $quoteValue = "\"$value\"";
-    }
-
     switch ($name) {
       case 'campaign_survey_id':
         $query->_qill[$grouping][] = ts('Survey - %1', array(1 => CRM_Core_DAO::getFieldValue('CRM_Campaign_DAO_Survey', $value, 'title')));
