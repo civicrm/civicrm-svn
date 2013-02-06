@@ -59,6 +59,11 @@ class WebTest_Contribute_OfflineContributionTest extends CiviSeleniumTestCase {
     $softCreditLname = substr(sha1(rand()), 0, 7);
     $this->webtestAddContact( $softCreditFname, $softCreditLname, false );
  
+    //financial account for check
+    $this->open($this->sboxPath . 'civicrm/admin/options/payment_instrument?group=payment_instrument&reset=1');
+    $this->waitForPageToLoad();
+    $financialAccount = $this->getText("xpath=//div[@id='payment_instrument']/div[2]/table/tbody//tr/td[1][text()='Check']/../td[3]");
+    
     // Add new Financial Account
     $orgName = 'Alberta '.substr(sha1(rand()), 0, 7);
     $financialAccountTitle = 'Financial Account '.substr(sha1(rand()), 0, 4);
@@ -68,7 +73,7 @@ class WebTest_Contribute_OfflineContributionTest extends CiviSeleniumTestCase {
     $taxDeductible = FALSE;
     $isActive = FALSE;
     $isTax = TRUE;
-    $taxRate = 10;
+    $taxRate = 9;
     $isDefault = FALSE;
       
     //Add new organisation
@@ -110,10 +115,6 @@ class WebTest_Contribute_OfflineContributionTest extends CiviSeleniumTestCase {
     // total amount
     $this->type("total_amount", "100");
 
-    //select Recieved Into
-    $this->select("to_financial_account_id", "label={$financialAccountTitle}");
-    //$this->select("to_financial_account_id", "value=5");
-
     // select payment instrument type = Check and enter chk number
     $this->select("payment_instrument_id", "value=4");
     $this->waitForElementPresent("check_number");
@@ -122,8 +123,9 @@ class WebTest_Contribute_OfflineContributionTest extends CiviSeleniumTestCase {
     $this->type("trxn_id", "P20901X1" . rand(100, 10000));
       
     // soft credit
-    $this->typeKeys("soft_credit_to", $softCreditFname);
-    $this->fireEvent("soft_credit_to", "focus");
+    $this->click("soft_credit_to");
+    $this->type("soft_credit_to", $softCreditFname);
+    $this->typeKeys("soft_credit_to", $softCreditFname);   
     $this->waitForElementPresent("css=div.ac_results-inner li");
     $this->click("css=div.ac_results-inner li");
 
@@ -177,7 +179,7 @@ class WebTest_Contribute_OfflineContributionTest extends CiviSeleniumTestCase {
       'Contribution Status' => 'Completed',
       'Paid By'             => 'Check',
       'Check Number'        => 'check #1041',
-      'Received Into'       => "{$financialAccountTitle}",
+      'Received Into'       => $financialAccount,
       'Soft Credit To'      => "{$softCreditFname} {$softCreditLname}"
     );
     foreach($expected as $label => $value) {
