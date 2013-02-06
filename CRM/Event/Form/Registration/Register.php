@@ -153,9 +153,6 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
     if ($contactID) {
       $fields = array();
 
-      //reformat profile fields
-      CRM_Core_BAO_UFGroup::reformatProfileFields($this->_fields);
-
       if (!empty($this->_fields)) {
         $removeCustomFieldTypes = array('Participant');
         foreach ($this->_fields as $name => $dontCare) {

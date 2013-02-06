@@ -271,9 +271,6 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
         }
       }
 
-      //for pseudo fields in profile
-      CRM_Core_BAO_UFGroup::reformatProfileFields($fields);
-
       if ($this->_isContactActivityProfile) {
         $contactFields = $activityFields = array();
 

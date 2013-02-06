@@ -38,6 +38,9 @@
 
 <div id="select_org" class="crm-section">
   {foreach from=$form.onbehalf item=field key=fieldName}
+    {if $onBehalfOfFields.$fieldName.skipDisplay}
+      {continue}
+    {/if}
     <div class="crm-section {$onBehalfOfFields.$fieldName.name}-section">
       {if $onBehalfOfFields.$fieldName.help_pre}
         &nbsp;&nbsp;<span class='description'>{$onBehalfOfFields.$fieldName.help_pre}</span>
@@ -98,6 +101,12 @@
             {if !empty($onBehalfOfFields.$fieldName.html_type)  && $onBehalfOfFields.$fieldName.html_type eq 'Autocomplete-Select'}
               {assign var=elementName value=onbehalf[$fieldName]}
             {include file="CRM/Custom/Form/AutoComplete.tpl" element_name=$elementName}
+            {/if}
+            {if $onBehalfOfFields.$fieldName.name|substr:0:5 eq 'phone'}
+              {assign var="phone_ext_field" value=$onBehalfOfFields.$fieldName.name|replace:'phone':'phone_ext'}
+              {if $form.onbehalf.$phone_ext_field.html}
+                &nbsp;{$form.onbehalf.$phone_ext_field.html}
+              {/if}
             {/if}
             {if $onBehalfOfFields.$fieldName.help_post}
               <br /><span class='description'>{$onBehalfOfFields.$fieldName.help_post}</span>

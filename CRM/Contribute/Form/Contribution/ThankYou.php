@@ -206,9 +206,7 @@ class CRM_Contribute_Form_Contribution_ThankYou extends CRM_Contribute_Form_Cont
     );
 
     $defaults = array();
-    $options = array();
     $fields = array();
-    $removeCustomFieldTypes = array('Contribution');
     foreach ($this->_fields as $name => $dontCare) {
       if ($name == 'onbehalf') {
         foreach ($dontCare as $key => $value) {

@@ -331,6 +331,10 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
           array(1 => implode(',', $profileIds))
         ));
     }
+    else {
+      self::reformatProfileFields($fields);
+    }
+
     return $fields;
   }
 
@@ -449,6 +453,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
       'add_captcha' => isset($field->add_captcha) ? $field->add_captcha : NULL,
       'field_type' => $field->field_type,
       'field_id' => $field->id,
+      'skipDisplay' => 0,
     );
 
     //adding custom field property
@@ -2151,8 +2156,6 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
     $singleProfile = TRUE, $componentId = NULL, $component = NULL
   ) {
     if (!$componentId) {
-      self::reformatProfileFields($fields);
-
       //get the contact details
       list($contactDetails, $options) = CRM_Contact_BAO_Contact::getHierContactDetails($contactId, $fields);
       $details = CRM_Utils_Array::value($contactId, $contactDetails);
@@ -3485,6 +3488,7 @@ SELECT  group_id
         $fields["phone_ext-{$fieldSuffix}"]['title'] = $field['title'] .' - '.ts('Ext.');
         $fields["phone_ext-{$fieldSuffix}"]['name'] = "phone_ext-{$fieldSuffix}";
         $fields["phone_ext-{$fieldSuffix}"]['where'] = 'civicrm_phone.phone_ext';
+        $fields["phone_ext-{$fieldSuffix}"]['skipDisplay'] = 1;
       }
     }
   }

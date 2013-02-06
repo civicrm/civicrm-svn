@@ -30,6 +30,9 @@
     {assign var=zeroField value="Initial Non Existent Fieldset"}
     {assign var=fieldset  value=$zeroField}
     {foreach from=$fields item=field key=fieldName}
+      {if $field.skipDisplay}
+        {continue}
+      {/if}
       {if $field.groupTitle != $fieldset}
         {if $fieldset != $zeroField}
           {if $groupHelpPost && $action neq 4}
@@ -105,14 +108,7 @@
             &nbsp;&nbsp;<span class="description">{$field.help_pre}</span>
           {/if}
           <div class="label">
-          {if $n|substr:0:13 neq 'phone_and_ext'}
             {$form.$n.label}
-          {else}
-            {assign var="phone_suffix" value=$n|replace:'phone_and_ext':''}
-            {assign var="phone_field" value="phone"|cat:$phone_suffix}
-            {assign var="phone_ext_field" value="phone_ext"|cat:$phone_suffix}
-            {$form.$phone_field.label}
-          {/if}
           </div>
           <div class="content">
             {if $n|substr:0:3 eq 'im-'}
@@ -132,8 +128,12 @@
             ( $form.formName neq 'Confirm' )  AND
             ( $form.formName neq 'ThankYou' ) }
               {include file="CRM/common/jcalendar.tpl" elementName=$n}
-            {elseif $n|substr:0:13 eq 'phone_and_ext'}
-              {$form.$phone_field.html}&nbsp;{$form.$phone_ext_field.html}
+            {elseif $n|substr:0:5 eq 'phone'}
+              {assign var="phone_ext_field" value=$n|replace:'phone':'phone_ext'}
+              {$form.$n.html}
+              {if $form.$phone_ext_field.html}
+                &nbsp;{$form.$phone_ext_field.html}
+              {/if}
             {else}
               {$form.$n.html}
               {if $n eq 'gender' && $form.$fieldName.frozen neq true}

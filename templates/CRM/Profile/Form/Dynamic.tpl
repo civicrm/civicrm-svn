@@ -112,6 +112,9 @@ function proccessMultiRecordForm(formData, jqForm, options) {
     {assign var=zeroField value="Initial Non Existent Fieldset"}
     {assign var=fieldset  value=$zeroField}
     {foreach from=$fields item=field key=fieldName}
+      {if $field.skipDisplay}
+        {continue}
+      {/if}
       {assign var="profileID" value=$field.group_id}
       {assign var=n value=$field.name}
       {if $field.field_type eq "Formatting"}
@@ -181,14 +184,7 @@ function proccessMultiRecordForm(formData, jqForm, options) {
           {else}
           <div id="editrow-{$n}" class="crm-section editrow_{$n}-section form-item">
             <div class="label">
-              {if $n|substr:0:13 neq 'phone_and_ext'}
-                {$form.$n.label}
-              {else}
-                {assign var="phone_suffix" value=$n|replace:'phone_and_ext':''}
-                {assign var="phone_field" value="phone"|cat:$phone_suffix}
-                {assign var="phone_ext_field" value="phone_ext"|cat:$phone_suffix}
-                {$form.$phone_field.label}
-              {/if}
+              {$form.$n.label}
             </div>
             <div class="edit-value content">
               {if $n|substr:0:3 eq 'im-'}
@@ -211,8 +207,12 @@ function proccessMultiRecordForm(formData, jqForm, options) {
                     </div>
                   </div>
                  {/if}
-              {elseif $n|substr:0:13 eq 'phone_and_ext'}
-                {$form.$phone_field.html}&nbsp;{$form.$phone_ext_field.html}
+              {elseif $n|substr:0:5 eq 'phone'}
+                {assign var="phone_ext_field" value=$n|replace:'phone':'phone_ext'}
+                {$form.$n.html}
+                {if $form.$phone_ext_field.html}
+                &nbsp;{$form.$phone_ext_field.html}
+                {/if}
               {else}
                 {if ( $field.data_type eq 'Date' or
                 ( ( ( $n eq 'birth_date' ) or ( $n eq 'deceased_date' ) or ( $n eq 'activity_date_time' ) ) ) ) and $field.is_view neq 1 }

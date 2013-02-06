@@ -197,7 +197,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         'postal_code_suffix', 'geo_code_1', 'geo_code_2', 'address_name',
       );
 
-      $blocks = array('email', 'phone', 'im', 'url', 'openid');
+      $blocks = array('email', 'phone', 'im', 'url', 'openid', 'phone_ext');
       foreach ($this->_params['onbehalf'] as $loc => $value) {
         $field = $typeId = NULL;
         if (strstr($loc, '-')) {
@@ -488,9 +488,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
     }
 
     $defaults = array();
-    $options = array();
     $fields = array();
-    $removeCustomFieldTypes = array('Contribution');
     foreach ($this->_fields as $name => $dontCare) {
       if ($name == 'onbehalf') {
         foreach ($dontCare as $key => $value) {

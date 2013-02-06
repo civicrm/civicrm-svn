@@ -148,9 +148,6 @@ class CRM_Profile_Page_Listings extends CRM_Core_Page {
       CRM_Core_Permission::SEARCH
     );
 
-    //reformat fields array for special fields
-    CRM_Core_BAO_UFGroup::reformatProfileFields($this->_fields);
-
     $this->_customFields = CRM_Core_BAO_CustomField::getFieldsForImport(NULL, FALSE, FALSE, FALSE, TRUE, TRUE);
     $this->_params = array();
 

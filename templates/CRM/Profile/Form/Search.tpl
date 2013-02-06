@@ -36,6 +36,9 @@
 
   <table class="form-layout-compressed" id="profile">
     {foreach from=$fields item=field key=fieldName}
+      {if $field.skipDisplay}
+        {continue}
+      {/if}
       {assign var=n value=$field.name}
       {if $field.is_search_range}
         {assign var=from value=$field.name|cat:'_from'}
@@ -93,14 +96,7 @@
       {else}
         <tr>
           <td class="label">
-            {if $n|substr:0:13 neq 'phone_and_ext'}
-              {$form.$n.label}
-            {else}
-              {assign var="phone_suffix" value=$n|replace:'phone_and_ext':''}
-              {assign var="phone_field" value="phone"|cat:$phone_suffix}
-              {assign var="phone_ext_field" value="phone_ext"|cat:$phone_suffix}
-              {$form.$phone_field.label}
-            {/if}
+            {$form.$n.label}
           </td>
           {if $n eq 'addressee' or $n eq 'email_greeting' or $n eq 'postal_greeting'}
             <td class="description">
@@ -117,8 +113,12 @@
               {if ( $field.data_type eq 'Date' or
               ( ( ( $n eq 'birth_date' ) or ( $n eq 'deceased_date' ) ) ) ) }
                 {include file="CRM/common/jcalendar.tpl" elementName=$n}
-              {elseif $n|substr:0:13 eq 'phone_and_ext'}
-                {$form.$phone_field.html}&nbsp;{$form.$phone_ext_field.html}
+              {elseif $n|substr:0:5 eq 'phone'}
+                {assign var="phone_ext_field" value=$n|replace:'phone':'phone_ext'}
+                {$form.$n.html}
+                {if $form.$phone_ext_field.html}
+                  &nbsp;{$form.$phone_ext_field.html}
+                {/if}
               {else}
                 {$form.$n.html}
               {/if}
