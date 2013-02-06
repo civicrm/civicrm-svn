@@ -216,7 +216,7 @@ class CRM_Core_BAO_LocationTest extends CiviUnitTestCase {
   function testCreateWithLocBlock() {
     $this->_contactId = Contact::createIndividual();
     //create test event record.
-    $eventId = Event::create();
+    $eventId = Event::create($this->_contactId);
     $params = array(
       'address' => array(
         '1' => array(
@@ -297,8 +297,9 @@ class CRM_Core_BAO_LocationTest extends CiviUnitTestCase {
       'Checking database for the record.'
     );
     $locElementIds = array();
+    $locParams = array('id' => $locBlockId);
     CRM_Core_DAO::commonRetrieve('CRM_Core_DAO_LocBlock',
-      $locParams = array('id' => $locBlockId),
+      $locParams,
       $locElementIds
     );
 
@@ -370,7 +371,7 @@ class CRM_Core_BAO_LocationTest extends CiviUnitTestCase {
   function testDeleteLocBlock() {
     $this->_contactId = Contact::createIndividual();
     //create test event record.
-    $eventId = Event::create();
+    $eventId = Event::create($this->_contactId);
     $params['location'][1] = array(
       'location_type_id' => 1,
       'is_primary' => 1,

@@ -43,7 +43,7 @@ class CRM_Event_BAO_ParticipantTest extends CiviUnitTestCase {
   function setUp() {
     parent::setUp();
     $this->_contactId = Contact::createIndividual();
-    $this->_eventId = Event::create();
+    $this->_eventId = Event::create($this->_contactId);
   }
 
   /**
@@ -149,12 +149,11 @@ class CRM_Event_BAO_ParticipantTest extends CiviUnitTestCase {
    * eventFull() method (checking the event for full )
    */
   function testEventFull() {
-    CRM_Event_BAO_Event::add(
-      $eventParams = array(
-        'max_participants' => 1,
-        'id' => $this->_eventId,
-      )
+    $eventParams = array(
+      'max_participants' => 1,
+      'id' => $this->_eventId,
     );
+    CRM_Event_BAO_Event::add($eventParams);
 
     $participantId = Participant::create($this->_contactId, $this->_eventId);
     $eventFull = CRM_Event_BAO_Participant::eventFull($this->_eventId);

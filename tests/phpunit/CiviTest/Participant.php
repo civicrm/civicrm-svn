@@ -6,7 +6,7 @@ class Participant extends PHPUnit_Framework_Testcase {
      *
      * @return $participant id of created Participant
      */
-  function create($contactId, $eventId) {
+  static function create($contactId, $eventId) {
     $params = array(
       'send_receipt' => 1,
       'is_test' => 0,
@@ -31,7 +31,7 @@ class Participant extends PHPUnit_Framework_Testcase {
      * @return boolean true if participant deleted, false otherwise
      * 
      */
-  function delete($participantId) {
+  static function delete($participantId) {
     require_once 'CRM/Event/BAO/Participant.php';
     return CRM_Event_BAO_Participant::deleteParticipant($participantId);
   }

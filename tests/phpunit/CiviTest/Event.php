@@ -6,7 +6,7 @@ class Event extends PHPUnit_Framework_Testcase {
      *
      * @return $event id of created Event
      */
-  function create() {
+  static function create($contactId) {
     require_once "CRM/Event/BAO/Event.php";
     $params = array(
       'title' => 'Test Event',
@@ -19,7 +19,7 @@ class Event extends PHPUnit_Framework_Testcase {
       'start_date' => '20080526200000',
       'end_date' => '20080530200000',
       'is_active' => 1,
-      'contact_id' => $this->_contactId,
+      'contact_id' => $contactId,
     );
 
 
@@ -34,7 +34,7 @@ class Event extends PHPUnit_Framework_Testcase {
      * @return boolean true if event deleted, false otherwise
      * 
      */
-  function delete($eventId) {
+  static function delete($eventId) {
     return CRM_Event_BAO_Event::del($eventId);
   }
 }
