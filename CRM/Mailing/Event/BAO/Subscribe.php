@@ -366,8 +366,10 @@ SELECT     civicrm_email.id as email_id
    * @public
    *
    * @return void
+   * @static
+   * @access public
    */
-  function commonSubscribe(&$groups, &$params, $contactId = NULL, $context = NULL) {
+  public static function commonSubscribe(&$groups, &$params, $contactId = NULL, $context = NULL) {
     $contactGroups = CRM_Mailing_Event_BAO_Subscribe::getContactGroups($params['email'], $contactId);
     $group         = array();
     $success       = NULL;
