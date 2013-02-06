@@ -646,7 +646,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
     $this->cleanup(1, FALSE);
 
     // clear db caching
-    $this->clearDBCache();
+    self::clearDBCache();
 
     if ($sessionReset) {
       $session = CRM_Core_Session::singleton();
@@ -667,7 +667,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
   /**
    * clear db cache
    */
-  function clearDBCache() {
+  public static function clearDBCache() {
     $queries = array(
       'TRUNCATE TABLE civicrm_acl_cache',
       'TRUNCATE TABLE civicrm_acl_contact_cache',
@@ -691,7 +691,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables {
   /**
    * clear leftover temporary tables
    */
-  function clearTempTables() {
+  public static function clearTempTables() {
     // CRM-5645
     $dao = CRM_Core_DAO::executeQuery("SELECT DATABASE();");
     $query = "

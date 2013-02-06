@@ -107,7 +107,7 @@ class CRM_Admin_Form_Setting_UpdateConfigBackend extends CRM_Admin_Form_Setting 
       $config->cleanup(1, FALSE);
 
       // clear db caching
-      $config->clearDBCache();
+      CRM_Core_Config::clearDBCache();
       parent::rebuildMenu();
 
       CRM_Core_Session::setStatus(ts('Cache has been cleared and menu has been rebuilt successfully.'), ts("Success"), "success");

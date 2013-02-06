@@ -288,7 +288,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType {
    * @return array associated array with  start date, end date and join date for the membership
    * @static
    */
-  function getDatesForMembershipType($membershipTypeId, $joinDate = NULL, $startDate = NULL, $endDate = NULL, $numRenewTerms = 1) {
+  public static function getDatesForMembershipType($membershipTypeId, $joinDate = NULL, $startDate = NULL, $endDate = NULL, $numRenewTerms = 1) {
     $membershipTypeDetails = self::getMembershipTypeDetails($membershipTypeId);
 
     // convert all dates to 'Y-m-d' format.
@@ -656,7 +656,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType {
   }
 
 
-  function createMembershipPriceField($params, $ids, $previousID, $membershipTypeId) {
+  public static function createMembershipPriceField($params, $ids, $previousID, $membershipTypeId) {
 
     $priceSetId = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', 'default_membership_type_amount', 'id', 'name');
 

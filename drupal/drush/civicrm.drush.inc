@@ -601,7 +601,7 @@ function drush_civicrm_cacheclear() {
   $config = CRM_Core_Config::singleton();
 
   // clear db caching
-  $config->clearDBCache();
+  CRM_Core_Config::clearDBCache();
 
   // also cleanup the templates_c directory
   $config->cleanup(1, FALSE);

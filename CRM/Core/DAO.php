@@ -1694,7 +1694,7 @@ SELECT contact_id
    * @return boolean true if no value exists in all the tables
    * @static
    */
-  function doesValueExistInTable(&$tables, $params, &$errors) {
+  public static function doesValueExistInTable(&$tables, $params, &$errors) {
     $errors = array();
     foreach ($tables as $table) {
       $sql = "SELECT count(*) FROM {$table['table']} WHERE {$table['column']} = %1";

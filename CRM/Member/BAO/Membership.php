@@ -1086,7 +1086,7 @@ INNER JOIN  civicrm_membership_type type ON ( type.id = membership.membership_ty
    *         start_date is between $startDate and $endDate
    */
   //LCD
-  function getMembershipStarts($membershipTypeId, $startDate, $endDate, $isTest = 0, $isOwner = 0) {
+  public static function getMembershipStarts($membershipTypeId, $startDate, $endDate, $isTest = 0, $isOwner = 0) {
     $query = "SELECT count(civicrm_membership.id) as member_count
   FROM   civicrm_membership left join civicrm_membership_status on ( civicrm_membership.status_id = civicrm_membership_status.id )
 WHERE  membership_type_id = %1 AND start_date >= '$startDate' AND start_date <= '$endDate'
@@ -1123,7 +1123,7 @@ AND is_test = %2";
    * @return returns the number of members of type $membershipTypeId as of
    *         $date.
    */
-  function getMembershipCount($membershipTypeId, $date = NULL, $isTest = 0, $isOwner = 0) {
+  public static function getMembershipCount($membershipTypeId, $date = NULL, $isTest = 0, $isOwner = 0) {
     if (!is_null($date) && !preg_match('/^\d{8}$/', $date)) {
       CRM_Core_Error::fatal(ts('Invalid date "%1" (must have form yyyymmdd).', array(1 => $date)));
     }
