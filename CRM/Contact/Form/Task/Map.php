@@ -230,10 +230,12 @@ class CRM_Contact_Form_Task_Map extends CRM_Contact_Form_Task {
       }
     }
 
-    $center = array('lat' => (float ) $sumLat / count($locations),
+    $center = array(
+      'lat' => (float ) $sumLat / count($locations),
       'lng' => (float ) $sumLng / count($locations),
     );
-    $span = array('lat' => (float )($maxLat - $minLat),
+    $span = array(
+      'lat' => (float )($maxLat - $minLat),
       'lng' => (float )($maxLng - $minLng),
     );
     $page->assign_by_ref('center', $center);
