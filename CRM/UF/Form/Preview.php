@@ -71,6 +71,11 @@ class CRM_UF_Form_Preview extends CRM_UF_Form_AbstractPreview {
         CRM_Core_Error::statusBounce(ts('This field is view only so it will not be displayed on profile form.'));
       }
       $name = $fieldDAO->field_name;
+
+      if ($fieldDAO->field_name == 'phone_and_ext') {
+        $name = 'phone';
+      }
+
       // preview for field
       $specialFields = array(
         'address_name',
@@ -102,6 +107,12 @@ class CRM_UF_Form_Preview extends CRM_UF_Form_AbstractPreview {
       }
 
       $fieldArray[$name] = $fields[$name];
+
+      if ($fieldDAO->field_name == 'phone_and_ext') {
+        $phoneExtField = str_replace('phone', 'phone_ext', $name);;
+        $fieldArray[$phoneExtField] = $fields[$phoneExtField];
+      }
+
       $fields = $fieldArray;
       if (!is_array($fields[$name])) {
         $flag = TRUE;
