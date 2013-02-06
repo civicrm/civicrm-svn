@@ -153,21 +153,21 @@ class CRM_Core_BAO_CustomFieldTest extends CiviUnitTestCase {
         ), array(
           'groupId' => $groups['A']->id,
           'label' => 'Country A',
-          'dataType' => 'country',
+          'dataType' => 'Country',
           'htmlType' => 'Select Country',
         )),
       'countryB' => Custom::createField(array(
         ), array(
           'groupId' => $groups['A']->id,
           'label' => 'Country B',
-          'dataType' => 'country',
+          'dataType' => 'Country',
           'htmlType' => 'Select Country',
         )),
       'countryC' => Custom::createField(array(
         ), array(
           'groupId' => $groups['B']->id,
           'label' => 'Country C',
-          'dataType' => 'country',
+          'dataType' => 'Country',
           'htmlType' => 'Select Country',
         )),
     );
