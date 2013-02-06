@@ -21,9 +21,9 @@
 class CRM_Core_Payment_Dummy extends CRM_Core_Payment {
   CONST CHARSET = 'iso-8859-1';
 
-  static protected $_mode = NULL;
+  protected $_mode = NULL;
 
-  static protected $_params = array();
+  protected $_params = array();
 
   /**
    * We only need one instance of this object. So we use the singleton
@@ -56,7 +56,7 @@ class CRM_Core_Payment_Dummy extends CRM_Core_Payment {
    * @static
    *
    */
-  static function &singleton($mode, &$paymentProcessor) {
+  static function &singleton($mode, &$paymentProcessor, &$paymentForm = NULL, $force = FALSE) {
     $processorName = $paymentProcessor['name'];
     if (CRM_Utils_Array::value($processorName, self::$_singleton) === NULL) {
       self::$_singleton[$processorName] = new CRM_Core_Payment_Dummy($mode, $paymentProcessor);

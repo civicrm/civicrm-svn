@@ -1408,11 +1408,10 @@ SELECT $select
       }
       foreach ($group['fields'] as $key => $field) {
         $fieldName = 'custom_' . $key;
-        $value = CRM_Utils_Request::retrieve($fieldName, 'String',
-          $form
-        );
+        $value = CRM_Utils_Request::retrieve($fieldName, 'String', $form);
 
         if ($value) {
+          $valid = FALSE;
           if (!in_array($field['html_type'], $htmlType) ||
             $field['data_type'] == 'Boolean'
           ) {
@@ -1467,6 +1466,7 @@ SELECT $select
             }
             $valid = TRUE;
           }
+
           if ($valid) {
             $customValue[$fieldName] = $value;
           }

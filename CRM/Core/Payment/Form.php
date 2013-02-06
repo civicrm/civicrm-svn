@@ -239,7 +239,7 @@ class CRM_Core_Payment_Form {
    * @return None
    * @access public
    */
-  function buildCreditCard(&$form, $useRequired = FALSE) {
+  static function buildCreditCard(&$form, $useRequired = FALSE) {
     if ($form->_paymentProcessor['billing_mode'] & CRM_Core_Payment::BILLING_MODE_FORM) {
       self::setCreditCardFields($form);
       foreach ($form->_paymentFields as $name => $field) {

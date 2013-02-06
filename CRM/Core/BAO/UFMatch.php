@@ -112,9 +112,7 @@ class CRM_Core_BAO_UFMatch extends CRM_Core_DAO_UFMatch {
       return;
     }
 
-    if (!isset($uniqId) ||
-      !$uniqId
-    ) {
+    if (!isset($uniqId) || !$uniqId) {
       $uniqId = $user->$mail;
     }
 
@@ -145,7 +143,8 @@ class CRM_Core_BAO_UFMatch extends CRM_Core_DAO_UFMatch {
 
     // add current contact to recently viewed
     if ($ufmatch->contact_id) {
-      list($displayName, $contactImage, $contactType, $contactSubtype, $contactImageUrl) = CRM_Contact_BAO_Contact::getDisplayAndImage($ufmatch->contact_id, TRUE, TRUE);
+      list($displayName, $contactImage, $contactType, $contactSubtype, $contactImageUrl) =
+        CRM_Contact_BAO_Contact::getDisplayAndImage($ufmatch->contact_id, TRUE, TRUE);
 
       $otherRecent = array(
         'imageUrl' => $contactImageUrl,
@@ -199,7 +198,6 @@ class CRM_Core_BAO_UFMatch extends CRM_Core_DAO_UFMatch {
 
     $newContact = FALSE;
 
-
     // make sure that a contact id exists for this user id
     $ufmatch            = new CRM_Core_DAO_UFMatch();
     $ufmatch->domain_id = CRM_Core_Config::domainID();
@@ -209,9 +207,7 @@ class CRM_Core_BAO_UFMatch extends CRM_Core_DAO_UFMatch {
       $transaction = new CRM_Core_Transaction();
 
       $dao = NULL;
-      if (!empty($_POST) &&
-        !$isLogin
-      ) {
+      if (!empty($_POST) && !$isLogin) {
         $params = $_POST;
         $params['email'] = $uniqId;
 
@@ -220,7 +216,8 @@ class CRM_Core_BAO_UFMatch extends CRM_Core_DAO_UFMatch {
         $ids = CRM_Dedupe_Finder::dupesByParams($dedupeParams, 'Individual');
 
         if (!empty($ids) &&
-          CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::MULTISITE_PREFERENCES_NAME,
+          CRM_Core_BAO_Setting::getItem(
+            CRM_Core_BAO_Setting::MULTISITE_PREFERENCES_NAME,
             'uniq_email_per_site'
           )
         ) {
@@ -297,9 +294,7 @@ AND    domain_id = %2
 
         // extract first / middle / last name
         // for joomla
-        if ($uf == 'Joomla' &&
-          $user->name
-        ) {
+        if ($uf == 'Joomla' && $user->name) {
           CRM_Utils_String::extractName($user->name, $params);
         }
 

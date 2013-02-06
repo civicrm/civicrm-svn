@@ -1065,7 +1065,7 @@ WHERE  v.option_group_id = g.id
    * @return array $formatted, formatted price set params.
    * @access public
    */
-  public function formatPriceSetParams(&$form, $params) {
+  public static function formatPriceSetParams(&$form, $params) {
     if (!is_array($params) || empty($params)) {
       return $params;
     }
@@ -1227,7 +1227,7 @@ WHERE  v.option_group_id = g.id
    * as well as user should select at least one price field option.
    *
    */
-  function validatePriceSet(&$form, $params) {
+  static function validatePriceSet(&$form, $params) {
     $errors = array();
     $hasOptMaxValue = FALSE;
     if (!is_array($params) || empty($params)) {
@@ -1241,7 +1241,8 @@ WHERE  v.option_group_id = g.id
 
     $priceSetId = $form->get('priceSetId');
     $priceSetDetails = $form->get('priceSet');
-    if (!$priceSetId ||
+    if (
+      !$priceSetId ||
       !is_array($priceSetDetails) ||
       empty($priceSetDetails)
     ) {
@@ -1249,20 +1250,22 @@ WHERE  v.option_group_id = g.id
     }
 
     $optionsCountDetails = $optionsMaxValueDetails = array();
-    if (isset($priceSetDetails['optionsMaxValueTotal'])
+    if (
+      isset($priceSetDetails['optionsMaxValueTotal'])
       && $priceSetDetails['optionsMaxValueTotal']
     ) {
       $hasOptMaxValue = TRUE;
       $optionsMaxValueDetails = $priceSetDetails['optionsMaxValueDetails']['fields'];
     }
-    if (isset($priceSetDetails['optionsCountTotal'])
+    if (
+      isset($priceSetDetails['optionsCountTotal'])
       && $priceSetDetails['optionsCountTotal']
     ) {
       $hasOptCount = TRUE;
       $optionsCountDetails = $priceSetDetails['optionsCountDetails']['fields'];
     }
     $feeBlock = $form->_feeBlock;
-    
+
     if (empty($feeBlock)) {
       $feeBlock = $priceSetDetails['fields'];
     }
@@ -1282,20 +1285,20 @@ WHERE  v.option_group_id = g.id
         if (!$feeBlock[$priceFieldId]['is_required'] && $value == 0) {
           $noneOptionValueSelected = TRUE;
         }
-        
-        if (!$priceFieldId ||
-         (!$noneOptionValueSelected && !is_array($value))
+
+        if (
+          !$priceFieldId ||
+          (!$noneOptionValueSelected && !is_array($value))
         ) {
           continue;
         }
+
         $fieldSelected[$pNum] = TRUE;
-        if (!$hasOptMaxValue) {
+
+        if (!$hasOptMaxValue || !is_array($value)) {
           continue;
         }
-        
-        if (!is_array($value)) {
-          continue;
-        }
+
         foreach ($value as $optId => $optVal) {
           if (CRM_Utils_Array::value('html_type', $feeBlock[$priceFieldId]) == 'Text') {
             $currentMaxValue = $optVal;
@@ -1311,7 +1314,8 @@ WHERE  v.option_group_id = g.id
             $optionMaxValues[$priceFieldId][$optId] = $currentMaxValue;
           }
           else {
-            $optionMaxValues[$priceFieldId][$optId] = $currentMaxValue + CRM_Utils_Array::value($optId, CRM_Utils_Array::value($priceFieldId, $optionMaxValues), 0);
+            $optionMaxValues[$priceFieldId][$optId] =
+              $currentMaxValue + CRM_Utils_Array::value($optId, CRM_Utils_Array::value($priceFieldId, $optionMaxValues), 0);
           }
 
         }
@@ -1327,13 +1331,16 @@ WHERE  v.option_group_id = g.id
         $total += $opDbCount;
         if ($optMax && $total > $optMax) {
           if ($opDbCount && ($opDbCount >= $optMax)) {
-            $errors[$currentParticipantNum]["price_{$fieldId}"] = ts('Sorry, this option is currently sold out.');
+            $errors[$currentParticipantNum]["price_{$fieldId}"] =
+              ts('Sorry, this option is currently sold out.');
           }
           elseif (($optMax - $opDbCount) == 1) {
-            $errors[$currentParticipantNum]["price_{$fieldId}"] = ts('Sorry, currently only a single seat is available for this option.', array(1 => ($optMax - $opDbCount)));
+            $errors[$currentParticipantNum]["price_{$fieldId}"] =
+              ts('Sorry, currently only a single seat is available for this option.', array(1 => ($optMax - $opDbCount)));
           }
           else {
-            $errors[$currentParticipantNum]["price_{$fieldId}"] = ts('Sorry, currently only %1 seats are available for this option.', array(1 => ($optMax - $opDbCount)));
+            $errors[$currentParticipantNum]["price_{$fieldId}"] =
+              ts('Sorry, currently only %1 seats are available for this option.', array(1 => ($optMax - $opDbCount)));
           }
         }
       }

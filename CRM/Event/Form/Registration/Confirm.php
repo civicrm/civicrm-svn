@@ -75,9 +75,9 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
     if ($this->_params[0]['is_pay_later']) {
       $this->assign('pay_later_receipt', $this->_values['event']['pay_later_receipt']);
     }
-    
+
     CRM_Utils_Hook::eventDiscount($this, $this->_params);
-    
+
     if (CRM_Utils_Array::value('discount', $this->_params[0]) &&
       CRM_Utils_Array::value('applied', $this->_params[0]['discount'])
     ) {
@@ -97,7 +97,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
       if ($rfp || CRM_Utils_Array::value('additional_participants', $this->_params[0], FALSE)) {
         $payment = CRM_Core_Payment::singleton($this->_mode, $this->_paymentProcessor, $this);
         $paymentObjError = ts('The system did not record payment details for this payment and so could not process the transaction. Please report this error to the site administrator.');
-        if (is_object($payment)) 
+        if (is_object($payment))
           $expressParams = $payment->getExpressCheckoutDetails($this->get('token'));
         else
           CRM_Core_Error::fatal($paymentObjError);
@@ -282,7 +282,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
 
     //$this->buildCustom($this->_values['custom_pre_id'], 'customPre', TRUE);
     //$this->buildCustom($this->_values['custom_post_id'], 'customPost', TRUE);
-  
+
     if ($this->_priceSetId && !CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_priceSetId, 'is_quick_config')) {
       $lineItemForTemplate = array();
       foreach ($this->_lineItem as $key => $value) {
@@ -554,7 +554,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
         $value['amount'] = $this->_totalAmount;
       }
 
-      $contactID = &$this->updateContactFields($contactID, $value, $fields);
+      $contactID = $this->updateContactFields($contactID, $value, $fields);
 
       // lets store the contactID in the session
       // we dont store in userID in case the user is doing multiple
@@ -605,17 +605,19 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
           }
         }
         elseif ($this->_contributeMode == 'express' && CRM_Utils_Array::value('is_primary', $value)) {
-          if (is_object($payment)) 
-            $result = &$payment->doExpressCheckout($value);
-          else 
+          if (is_object($payment))
+            $result = $payment->doExpressCheckout($value);
+          else
             CRM_Core_Error::fatal($paymentObjError);
         }
         elseif (CRM_Utils_Array::value('is_primary', $value)) {
           CRM_Core_Payment_Form::mapParams($this->_bltID, $value, $value, TRUE);
-          if (is_object($payment)) 
-          $result = &$payment->doDirectPayment($value);
-          else 
+          if (is_object($payment)) {
+            $result = $payment->doDirectPayment($value);
+          }
+          else {
             CRM_Core_Error::fatal($paymentObjError);
+          }
         }
 
         if (is_a($result, 'CRM_Core_Error')) {
@@ -652,11 +654,10 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
           }
 
           //passing contribution id is already registered.
-          $contribution = &self::processContribution($this, $value, $result, $contactID,
-            $pending, $isAdditionalAmount
-          );
+          $contribution =
+            self::processContribution($this, $value, $result, $contactID, $pending, $isAdditionalAmount);
           $value['contributionID'] = $contribution->id;
-          $value['contributionTypeID'] = $contribution->financial_type_id; 
+          $value['contributionTypeID'] = $contribution->financial_type_id;
           $value['receive_date'] = $contribution->receive_date;
           $value['trxn_id'] = $contribution->trxn_id;
           $value['contributionID'] = $contribution->id;
@@ -779,9 +780,9 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
 
       // do a transfer only if a monetary payment greater than 0
       if ($this->_values['event']['is_monetary'] && $primaryParticipant) {
-        if ($payment && is_object($payment)) 
+        if ($payment && is_object($payment))
         $payment->doTransferCheckout($primaryParticipant, 'event');
-        else 
+        else
           CRM_Core_Error::fatal($paymentObjError);
       }
     }
@@ -854,7 +855,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
             if ($lineItemValue = CRM_Utils_Array::value($participantNum, $lineItems)) {
               $lineItem[] = $lineItemValue;
             }
-            $this->assign('lineItem', $lineItem);                        
+            $this->assign('lineItem', $lineItem);
           }
           $this->_values['params']['additionalParticipant'] = TRUE;
         }
@@ -1074,11 +1075,13 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
       }
     }
     if ($contactID) {
-      $ctype = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact',
+      $ctype = CRM_Core_DAO::getFieldValue(
+        'CRM_Contact_DAO_Contact',
         $contactID,
         'contact_type'
       );
-      $contactID = &CRM_Contact_BAO_Contact::createProfileContact($params,
+      $contactID = CRM_Contact_BAO_Contact::createProfileContact(
+        $params,
         $fields,
         $contactID,
         $addToGroups,

@@ -619,7 +619,7 @@ SELECT $acl.*
 
     $rule->query($query);
     while ($rule->fetch()) {
-      $results[$rule->id] = &$rule->toArray();
+      $results[$rule->id] = $rule->toArray();
     }
 
     return $results;
