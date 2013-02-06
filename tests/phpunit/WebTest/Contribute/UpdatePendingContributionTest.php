@@ -308,7 +308,7 @@ class WebTest_Contribute_UpdatePendingContributionTest extends CiviSeleniumTestC
     $expected = array(
       2 => 'Donation',
       3 => '100.00',
-      6 => 'Pending : Pay Later',
+      7 => 'Pending : Pay Later',
       1 => "{$firstName} {$lastName}",
     );
     foreach ($expected as $value => $label) {
