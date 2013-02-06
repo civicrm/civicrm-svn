@@ -1950,7 +1950,7 @@ SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 
    * @return array $groupLabels - array consisting of groups and fields labels with ids.
    * @access public
    */
-  function getGroupTitles($fieldIds) {
+  public static function getGroupTitles($fieldIds) {
     if (!is_array($fieldIds) && empty($fieldIds)) {
       return;
     }
