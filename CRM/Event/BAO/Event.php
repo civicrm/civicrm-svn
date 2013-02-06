@@ -842,7 +842,7 @@ WHERE civicrm_event.is_active = 1
 
     //get the require event values.
     $eventParams = array('id' => $id);
-    $returnProperties = array('loc_block_id', 'is_show_location', 'default_fee_id', 'default_discount_fee_id');
+    $returnProperties = array('loc_block_id', 'is_show_location', 'default_fee_id', 'default_discount_fee_id', 'is_template');
 
     CRM_Core_DAO::commonRetrieve('CRM_Event_DAO_Event', $eventParams, $eventValues, $returnProperties);
 
@@ -910,19 +910,24 @@ WHERE civicrm_event.is_active = 1
       array('replace' => array('target_entity_id' => $copyEvent->id))
     );
 
-    if ($copyEvent->is_template == 1) {
+    if ($eventValues['is_template']) {
       $field = 'event_template';
     }
     else {
       $field = 'civicrm_event';
     }
     $mappingId = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_ActionMapping', $field, 'id', 'entity_value');
-    $newData = array('entity_value' => $copyEvent->id, 'mapping_id' => $mappingId);
+    $oldData = array('entity_value' => $id, 'mapping_id' => $mappingId);
+    if ($copyEvent->is_template == 1) {
+      $field = 'event_template';
+    }
+    else {
+      $field = 'civicrm_event';
+    }
+    $copyMappingId = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_ActionMapping', $field, 'id', 'entity_value');
+    $newData = array('entity_value' => $copyEvent->id, 'mapping_id' => $copyMappingId);
     $copyReminder = &CRM_Core_DAO::copyGeneric('CRM_Core_DAO_ActionSchedule',
-      array(
-        'entity_value' => $id,
-        'mapping_id' => $mappingId,
-      ),
+      $oldData,
       $newData                                               
     );
     
