@@ -214,7 +214,7 @@ class WebTest_Contribute_OnlineMultiplePaymentProcessorTest extends CiviSelenium
     //View Contribution Record
     $expected = array(
       2 => 'Donation',
-      6 => 'Pending : Pay Later',
+      7 => 'Pending : Pay Later',
       1 => "{$firstName} {$lastName}",
     );
 
