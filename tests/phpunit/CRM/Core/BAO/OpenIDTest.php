@@ -11,7 +11,7 @@ class CRM_Core_BAO_OpenIDTest extends CiviUnitTestCase {
   }
 
   function tearDown() {
-    $tablesToTruncate = array('civicrm_contact');
+    $tablesToTruncate = array('civicrm_contact', 'civicrm_openid');
     $this->quickCleanup($tablesToTruncate);
   }
 
@@ -24,6 +24,7 @@ class CRM_Core_BAO_OpenIDTest extends CiviUnitTestCase {
    */
   function testAdd() {
     $contactId = Contact::createIndividual();
+    $this->assertDBRowExist('CRM_Contact_DAO_Contact', $contactId);
 
     $openIdURL = "http://test-username.civicrm.org/";
     $params = array(
@@ -58,7 +59,8 @@ class CRM_Core_BAO_OpenIDTest extends CiviUnitTestCase {
     );
     $this->assertEquals($allowedToLogin, 1, 'Verify allowed_to_login value is 1.');
 
-    Contact::delete($contactId);
+    $this->contactDelete($contactId);
+    $this->assertDBRowNotExist('CRM_Contact_DAO_Contact', $contactId);
   }
 
   /**
@@ -66,6 +68,7 @@ class CRM_Core_BAO_OpenIDTest extends CiviUnitTestCase {
    */
   function testIfAllowedToLogin() {
     $contactId = Contact::createIndividual();
+    $this->assertDBRowExist('CRM_Contact_DAO_Contact', $contactId);
     $openIdURL = "http://test-username.civicrm.org/";
 
     $params = array(
@@ -83,8 +86,7 @@ class CRM_Core_BAO_OpenIDTest extends CiviUnitTestCase {
     );
 
     $allowedToLogin = CRM_Core_BAO_OpenID::isAllowedToLogin($openIdURL);
-    $this->assertEquals($allowedToLogin, TRUE, 'Verify allowed_to_login value is 0.');
-
+    $this->assertEquals($allowedToLogin, FALSE, 'Verify allowed_to_login value is 0.');
 
     // Now call add() to modify an existing open-id record
 
@@ -101,7 +103,9 @@ class CRM_Core_BAO_OpenIDTest extends CiviUnitTestCase {
     $allowedToLogin = CRM_Core_BAO_OpenID::isAllowedToLogin($openIdURL);
 
     $this->assertEquals($allowedToLogin, TRUE, 'Verify allowed_to_login value is 1.');
-    Contact::delete($contactId);
+    $this->contactDelete($contactId);
+    //domain contact doesn't really get deleted //
+    $this->assertDBRowNotExist('CRM_Contact_DAO_Contact', $contactId);
   }
 
   /**
@@ -109,6 +113,7 @@ class CRM_Core_BAO_OpenIDTest extends CiviUnitTestCase {
    */
   function testAllOpenIDs() {
     $contactId = Contact::createIndividual();
+    $this->assertDBRowExist('CRM_Contact_DAO_Contact', $contactId);
 
     // create first openid
     $openIdURLOne = "http://test-one-username.civicrm.org/";
@@ -146,7 +151,7 @@ class CRM_Core_BAO_OpenIDTest extends CiviUnitTestCase {
     $openIds = CRM_Core_BAO_OpenID::allOpenIDs($contactId);
 
     // check number of openids for the contact
-    $this->assertEquals(count($openIds), 3, 'Checking number of returned open-ids.');
+    $this->assertEquals(2, count($openIds), 'Checking number of returned open-ids.');
 
     // check first openid values
     $this->assertEquals($openIdURLOne, $openIds[$openIdOne]['openid'],
@@ -162,7 +167,9 @@ class CRM_Core_BAO_OpenIDTest extends CiviUnitTestCase {
     $this->assertEquals(0, $openIds[$openIdTwo]['is_primary'], 'Confirm is_primary field value for second openid.');
     $this->assertEquals(0, $openIds[$openIdTwo]['allowed_to_login'], 'Confirm allowed_to_login field value for second openid.');
 
-    Contact::delete($contactId);
+    //Contact::delete($contactId);
+    $this->contactDelete($contactId);
+    $this->assertDBRowNotExist('CRM_Contact_DAO_Contact', $contactId);
   }
 }
 

@@ -485,9 +485,17 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
   }
 
   // Request a record from the DB by id. Success if row not found.
-  function assertDBRowNotExist($daoName, $id, $message) {
+  function assertDBRowNotExist($daoName, $id, $message = NULL) {
+    $message = $message ? $message : "$daoName (#$id) should not exist";
     $value = CRM_Core_DAO::getFieldValue($daoName, $id, 'id', 'id', TRUE);
     $this->assertNull($value, $message);
+  }
+
+  // Request a record from the DB by id. Success if row not found.
+  function assertDBRowExist($daoName, $id, $message = NULL) {
+    $message = $message ? $message : "$daoName (#$id) should exist";
+    $value = CRM_Core_DAO::getFieldValue($daoName, $id, 'id', 'id', TRUE);
+    $this->assertEquals($id, $value, $message);
   }
 
   // Compare a single column value in a retrieved DB record to an expected value
@@ -667,7 +675,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     $params['version'] = API_LATEST_VERSION;
     $params['skip_undelete'] = 1;
     $domain = new CRM_Core_BAO_Domain;
-    $domain->domain_contact_id = $contactID;
+    $domain->contact_id = $contactID;
     if ($domain->find(TRUE)) {
       // we are finding tests trying to delete the domain contact in cleanup
       //since this is mainly for cleanup lets put a safeguard here
