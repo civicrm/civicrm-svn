@@ -1796,16 +1796,6 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         }
       }
     }
-    elseif (substr($fieldName, 0, 13) === 'phone_and_ext') {
-      // add phone and phone extension
-      $phoneField = str_replace('phone_and_ext', 'phone', $name);
-      $phoneExtField = str_replace('phone_and_ext', 'phone_ext', $name);
-
-      // rebuild phone field
-      $form->add('text', $phoneField, $title, $attributes, $required);
-      // rebuild ext field
-      $form->add('text', $phoneExtField, $title, $attributes);
-    }
     elseif (($fieldName === 'birth_date') || ($fieldName === 'deceased_date')) {
       $form->addDate($name, $title, $required, array('formatType' => 'birth'));
     }
