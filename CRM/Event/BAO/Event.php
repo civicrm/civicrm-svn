@@ -1805,7 +1805,7 @@ WHERE  ce.loc_block_id = $locBlockId";
    * @return boolean $alreadyRegistered true/false
    * @access public
    */
-  function checkRegistration($params) {
+  static function checkRegistration($params) {
     $alreadyRegistered = FALSE;
     if (!CRM_Utils_Array::value('contact_id', $params)) {
       return $alreadyRegistered;
