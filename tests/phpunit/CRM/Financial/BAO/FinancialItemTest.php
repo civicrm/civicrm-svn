@@ -62,6 +62,7 @@ class CRM_Financial_BAO_FinancialItemTest extends CiviUnitTestCase {
       'total_amount' => $price,
       'financial_type_id' => 1,
       'is_active'     => 1,
+      'skipLineItem'  => 1,
     );
 
     $defaults = array();
@@ -109,6 +110,7 @@ class CRM_Financial_BAO_FinancialItemTest extends CiviUnitTestCase {
       'total_amount' => $price,
       'financial_type_id' => 1,
       'is_active'     => 1,
+      'skipLineItem'  => 1,
     );
 
     $defaults = array();
@@ -155,6 +157,7 @@ class CRM_Financial_BAO_FinancialItemTest extends CiviUnitTestCase {
       'total_amount' => $price,
       'financial_type_id' => 1,
       'is_active'     => 1,
+      'skipLineItem'  => 1,
     );
 
     $defaults = array();
