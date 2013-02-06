@@ -102,9 +102,13 @@ class CRM_Grant_BAO_Query {
    * @access public
    */
   static function where(&$query) {
-    foreach (array_keys($query->_params) as $id) {
-      if (substr($query->_params[$id][0], 0, 6) == 'grant_') {
-        self::whereClauseSingle($query->_params[$id], $query);
+    foreach ($query->_params as $id => $values) {
+      if (!is_array($values) || count($values) != 5) {
+        continue;
+      }
+
+      if (substr($values[0], 0, 6) == 'grant_') {
+        self::whereClauseSingle($values, $query);
       }
     }
   }

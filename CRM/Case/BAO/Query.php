@@ -219,7 +219,11 @@ class CRM_Case_BAO_Query {
    * @access public
    */
   static function where(&$query) {
-    foreach (array_keys($query->_params) as $id) {
+    foreach ($query->_params as $id => $values) {
+      if (!is_array($values) || count($values) != 5) {
+        continue;
+      }
+
       if (substr($query->_params[$id][0], 0, 5) == 'case_') {
         if ($query->_mode == CRM_Contact_BAO_Query::MODE_CONTACTS) {
           $query->_useDistinct = TRUE;
