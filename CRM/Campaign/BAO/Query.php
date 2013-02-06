@@ -74,6 +74,10 @@ class CRM_Campaign_BAO_Query {
     self::$_applySurveyClause = FALSE;
     if (is_array($query->_params)) {
       foreach ($query->_params as $values) {
+        if (!is_array($values) || count($values) != 5) {
+          continue;
+        }
+
         list($name, $op, $value, $grouping, $wildcard) = $values;
         if ($name == 'campaign_survey_id') {
           self::$_applySurveyClause = TRUE;
@@ -81,6 +85,7 @@ class CRM_Campaign_BAO_Query {
         }
       }
     }
+
     //get survey clause in force,
     //only when we have survey id.
     if (!self::$_applySurveyClause) {

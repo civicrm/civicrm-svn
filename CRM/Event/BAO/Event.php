@@ -851,11 +851,11 @@ WHERE civicrm_event.is_active = 1
     if (!CRM_Utils_Array::value('is_show_location', $eventValues)) {
       $fieldsFix['prefix']['is_show_location'] = 0;
     }
-    
+
     if ($newEvent && is_a($newEvent, 'CRM_Event_DAO_Event')) {
       $copyEvent = $newEvent;
     }
-    
+
     if (!isset($copyEvent)) {
       $copyEvent = &CRM_Core_DAO::copyGeneric('CRM_Event_DAO_Event',
         array('id' => $id),
@@ -926,9 +926,9 @@ WHERE civicrm_event.is_active = 1
     $newData = array('entity_value' => $copyEvent->id, 'mapping_id' => $copyMappingId);
     $copyReminder = &CRM_Core_DAO::copyGeneric('CRM_Core_DAO_ActionSchedule',
       $oldData,
-      $newData                                               
+      $newData
     );
-    
+
     if (!$afterCreate) {
       //copy custom data
       $extends = array('event');
@@ -940,7 +940,7 @@ WHERE civicrm_event.is_active = 1
             $table[$groupTree[$groupID]['table_name']][] = $groupTree[$groupID]['fields'][$fieldID]['column_name'];
           }
         }
-        
+
         foreach ($table as $tableName => $tableColumns) {
           $insert          = 'INSERT INTO ' . $tableName . ' (' . implode(', ', $tableColumns) . ') ';
           $tableColumns[0] = $copyEvent->id;
@@ -953,14 +953,14 @@ WHERE civicrm_event.is_active = 1
       }
     }
     $copyEvent->save();
-    
+
     CRM_Utils_System::flushCache();
     if (!$afterCreate) {
-      CRM_Utils_Hook::copy('Event', $copyEvent);   
+      CRM_Utils_Hook::copy('Event', $copyEvent);
     }
     return $copyEvent;
   }
-  
+
   /**
    * This is sometimes called in a loop (during event search)
    * hence we cache the values to prevent repeated calls to the db
@@ -1012,7 +1012,7 @@ WHERE civicrm_event.is_active = 1
           if (!is_array($gIdValues)) {
             $gIdValues = array( $gIdValues );
           }
-          
+
           foreach ($gIdValues as $gId) {
           $email = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', $gId, 'notify');
           if ($email) {
@@ -1512,9 +1512,7 @@ SELECT html_type, data_type
 FROM   civicrm_custom_field
 WHERE  id = $cfID
 ";
-              $dao = CRM_Core_DAO::executeQuery($query,
-                CRM_Core_DAO::$_nullArray
-              );
+              $dao = CRM_Core_DAO::executeQuery($query);
               $dao->fetch();
               $htmlType = $dao->html_type;
               $dataType = $dao->data_type;
