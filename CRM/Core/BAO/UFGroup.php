@@ -906,8 +906,8 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
         $name = 'contact_id';
       }
 
-      // skip pseudo fields
-      if (substr($name, 0, 9) == 'phone_ext') {
+      // skip fields that should not be displayed separately
+      if (CRM_Utils_Array::value('skipDisplay', $field)) {
         continue;
       }
 

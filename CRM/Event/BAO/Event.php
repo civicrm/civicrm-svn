@@ -1354,10 +1354,14 @@ WHERE civicrm_event.is_active = 1
         }
       }
       $customVal     = '';
-      $config        = CRM_Core_Config::singleton();
       $imProviders   = CRM_Core_PseudoConstant::IMProvider();
       //start of code to set the default values
       foreach ($fields as $name => $field) {
+        // skip fields that should not be displayed separately
+        if ($field['skipDisplay']) {
+          continue;
+        }
+
         $index = $field['title'];
         if ($name === 'organization_name') {
           $values[$index] = $params[$name];
@@ -1477,6 +1481,15 @@ WHERE civicrm_event.is_active = 1
             }
             if ($providerName) {
               $values[$index] = $params[$detailName] . " (" . $providerName . ")";
+            }
+            else {
+              $values[$index] = $params[$detailName];
+            }
+          }
+          elseif ($fieldName == 'phone') {
+            $phoneExtField = str_replace('phone', 'phone_ext', $detailName);
+            if (isset($params[$phoneExtField])) {
+              $values[$index] = $params[$detailName] . " (" . $params[$phoneExtField] . ")";
             }
             else {
               $values[$index] = $params[$detailName];
