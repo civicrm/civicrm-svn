@@ -200,7 +200,7 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
     //View Contribution Record
     $expected = array(
       2 => 'Donation',
-      6 => 'Pending : Pay Later',
+      7 => 'Pending : Pay Later',
       1 => "{$firstName} {$lastName}",
     );
     foreach ($expected as $value => $label) {
