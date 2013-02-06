@@ -100,9 +100,7 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant {
 
     $defaults = array();
 
-    $bao = new CRM_Core_BAO_OptionGroup();
-    $og = $bao->retrieve($params, $defaults);
-
+    $og = CRM_Core_BAO_OptionGroup::retrieve($params, $defaults);
     if (!$og) {
       CRM_Core_Error::fatal('No option group for grant statuses - database discrepancy! Make sure you loaded civicrm_data.mysql');
     }

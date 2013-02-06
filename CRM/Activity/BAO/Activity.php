@@ -86,7 +86,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity {
    * @return object CRM_Core_BAO_Meeting object
    * @access public
    */
-  public function retrieve(&$params, &$defaults) {
+  public static function retrieve(&$params, &$defaults) {
     $activity = new CRM_Activity_DAO_Activity();
     $activity->copyValues($params);
 
