@@ -201,7 +201,7 @@ class WebTest_Contact_AdvancedSearchedRelatedContactTest extends CiviSeleniumTes
     // Go to Fees tab
     $this->click("link=Fees");
     $this->waitForElementPresent("_qf_Fee_upload-bottom");
-    $this->click("CIVICRM_QFID_1_2");
+    $this->click("CIVICRM_QFID_1_is_monetary");
     $this->check("payment_processor[{$processorId}]");
         $this->select("financial_type_id", "value=4");
     if ($priceSet) {
