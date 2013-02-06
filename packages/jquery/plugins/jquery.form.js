@@ -593,10 +593,10 @@ $.fn.ajaxSubmit = function(options) {
 						var pre = doc.getElementsByTagName('pre')[0];
 						var b = doc.getElementsByTagName('body')[0];
 						if (pre) {
-                            xhr.responseText = pre.textContent ? pre.textContent : pre.innerText;
+                            xhr.responseText = pre.innerHTML ? pre.innerHTML : pre.textContent;  
 						}
 						else if (b) {
-                            xhr.responseText = b.textContent ? b.textContent : b.innerText;
+                          xhr.responseText = b.innerHTML ? b.innerHTML : b.textContent;
 						}
 					}
 				}
@@ -698,7 +698,8 @@ $.fn.ajaxSubmit = function(options) {
 			}
 			if (typeof data === 'string') {
 				if (type === 'json' || !type && ct.indexOf('json') >= 0) {
-					data = parseJSON(data);
+                    // commenting becuase IE gives error with parseJSON
+                    //data = parseJSON(data);
 				} else if (type === "script" || !type && ct.indexOf("javascript") >= 0) {
 					$.globalEval(data);
 				}
