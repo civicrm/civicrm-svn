@@ -1,6 +1,15 @@
 // http://civicrm.org/licensing
 (function($) {
 
+  var ajaxFormParams = {
+    dataType:'json',
+    beforeSubmit: function(arr, $form, options) {
+      addCiviOverlay($form);
+    },
+    success: requestHandler,
+    error: errorHandler
+  };
+
   function crmFormInline(o) {
     var data = o.data('edit-params');
     if (o.is('.crm-edit-ready .crm-inline-edit') && data) {
@@ -10,43 +19,37 @@
       o.addClass('form');
       o.closest('.crm-edit-ready').removeClass('crm-edit-ready');
       addCiviOverlay(o);
-      $.ajax({
-        url: CRM.url('civicrm/ajax/inline', data),
-        dataType: 'json'
-      }).done(function(response) {
-        o.css('overflow', 'hidden').wrapInner('<div class="inline-edit-hidden-content" style="display:none" />').append(response.content);
-        // Smooth resizing
-        var newHeight = $('.crm-container-snippet', o).height();
-        var diff = newHeight - parseInt(o.css('height'));
-        if (diff < 0) {
-          diff = 0 - diff;
-        }
-        o.animate({height: '' + newHeight + 'px'}, diff * 2, function() {
-          o.removeAttr('style');
+      $.getJSON(CRM.url('civicrm/ajax/inline', data))
+        .fail(errorHandler)
+        .done(function(response) {
+          o.css('overflow', 'hidden').wrapInner('<div class="inline-edit-hidden-content" style="display:none" />').append(response.content);
+          // Smooth resizing
+          var newHeight = $('.crm-container-snippet', o).height();
+          var diff = newHeight - parseInt(o.css('height'), 10);
+          if (diff < 0) {
+            diff = 0 - diff;
+          }
+          o.animate({height: '' + newHeight + 'px'}, diff * 2, function() {
+            o.removeAttr('style');
+          });
+          removeCiviOverlay(o);
+          $('form', o).validate(CRM.validate.params);
+          ajaxFormParams.data = data;
+          $('form', o).ajaxForm(ajaxFormParams);
+          o.trigger('crmFormLoad');
         });
-        removeCiviOverlay(o);
-        $('form', o).validate(CRM.validate.params);
-        $('form', o).ajaxForm({
-          dataType:'json',
-          method:'POST',
-          data: data,
-          success: requestHandler
-        });
-        o.trigger('crmFormLoad');
-      });
     }
   };
 
   function requestHandler(response) {
     var o = $('div.crm-inline-edit.form');
-    addCiviOverlay($('.crm-container-snippet', o));
 
     if (response.status == 'save' || response.status == 'cancel') {
       o.trigger('crmFormSuccess', [response]);
       o.closest('.crm-inline-edit-container').addClass('crm-edit-ready');
       var data = o.data('edit-params');
       var dependent = o.data('dependent-fields') || [];
-      // Clone the add-new link if replacing it, and queue the clone to be refreshed as a dependant block
+      // Clone the add-new link if replacing it, and queue the clone to be refreshed as a dependent block
       if (o.hasClass('add-new') && response.addressId) {
         data.aid = response.addressId;
         var clone = o.parent().clone();
@@ -61,21 +64,28 @@
         var cl = $('.crm-inline-edit', clone);
         var clData = cl.data('edit-params');
         var locNo = clData.locno++;
-        cl.attr('id', cl.attr('id').replace(locNo, clData.locno)).removeClass('form')
-          o.parent().after(clone);
+        cl.attr('id', cl.attr('id').replace(locNo, clData.locno)).removeClass('form');
+        o.parent().after(clone);
         $.merge(dependent, $('.crm-inline-edit', clone));
       }
-      // Reload this block plus all dependent blocks
-      var update = $.merge([o], dependent);
-      for (var i in update) {
-        $(update[i]).each(function() {
-          var data = $(this).data('edit-params');
-          data.snippet = 1;
-          data.reset = 1;
-          data.class_name = data.class_name.replace('Form', 'Page');
-          data.type = 'page';
-          $(this).closest('.crm-summary-block').load(CRM.url('civicrm/ajax/inline', data), function() {$(this).trigger('load');});
-        });
+      // Delete an address
+      if (o.hasClass('address') && !o.hasClass('add-new') && !response.addressId) {
+        o.parent().remove();
+        CRM.alert('', ts('Removed'), 'success');
+      }
+      else {
+        // Reload this block plus all dependent blocks
+        var update = $.merge([o], dependent);
+        for (var i in update) {
+          $(update[i]).each(function() {
+            var data = $(this).data('edit-params');
+            data.snippet = data.reset = 1;
+            data.class_name = data.class_name.replace('Form', 'Page');
+            data.type = 'page';
+            $(this).closest('.crm-summary-block').load(CRM.url('civicrm/ajax/inline', data), function() {$(this).trigger('load');});
+          });
+        }
+        CRM.alert('', ts('Saved'), 'success');
       }
       // Update changelog tab and contact footer
       $("#tab_log a em").html(response.changeLog.count);
@@ -83,24 +93,15 @@
       if ($('#Change_Log div').length) {
         $('#Change_Log').load($("#tab_log a").attr('href'));
       }
-
-      CRM.alert('', ts('Saved'), 'success');
     }
     else {
-      //this is called incase of formRule error
+      // Handle formRule error
       $('form', o).ajaxForm('destroy');
       $('.crm-container-snippet', o).replaceWith(response.content);
-      var data = o.data('edit-params');
       $('form', o).validate(CRM.validate.params);
-      $('form', o).ajaxForm({
-        dataType:'json',
-        method:'POST',
-        data: data,
-        success: requestHandler
-      });
+      $('form', o).ajaxForm(ajaxFormParams);
       o.trigger('crmFormError', [response]).trigger('crmFormLoad');
     }
-    // todo deal with timeout/no response
   }; 
 
   /**
@@ -145,6 +146,11 @@
       }
     });
   };
+
+  function errorHandler(response) {
+    CRM.alert(ts('Unable to reach the server. Please refresh this page in your browser and try again.'), ts('Network Error'), 'error');
+    removeCiviOverlay($('.crm-inline-edit.form form'));
+  }
 
   $('document').ready(function() {
     // Set page title

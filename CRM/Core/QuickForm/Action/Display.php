@@ -158,7 +158,7 @@ class CRM_Core_QuickForm_Action_Display extends CRM_Core_QuickForm_Action {
 
     if ($controller->_QFResponseType == 'json') {
       $response = array('content' => $html);
-      // @see http://www.malsup.com/jquery/form/#file-upload
+      // CRM-11831 @see http://www.malsup.com/jquery/form/#file-upload
       $xhr = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
       if (!$xhr) {
         echo '<textarea>';
