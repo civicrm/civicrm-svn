@@ -5,15 +5,16 @@
     var data = o.data('edit-params');
     if (o.is('.crm-edit-ready .crm-inline-edit') && data) {
       o.animate({height: '+=50px'}, 200);
-      data.snippet = 5;
+      data.snippet = 6;
       data.reset = 1;
       o.addClass('form');
       o.closest('.crm-edit-ready').removeClass('crm-edit-ready');
       addCiviOverlay(o);
       $.ajax({
         url: CRM.url('civicrm/ajax/inline', data),
-      }).done( function(response) {
-        o.css('overflow', 'hidden').wrapInner('<div class="inline-edit-hidden-content" style="display:none" />').append(response);
+        dataType: 'json'
+      }).done(function(response) {
+        o.css('overflow', 'hidden').wrapInner('<div class="inline-edit-hidden-content" style="display:none" />').append(response.content);
         // Smooth resizing
         var newHeight = $('.crm-container-snippet', o).height();
         var diff = newHeight - parseInt(o.css('height'));
