@@ -11,8 +11,11 @@ class CRM_Core_BAO_OpenIDTest extends CiviUnitTestCase {
   }
 
   function tearDown() {
-    $tablesToTruncate = array('civicrm_contact', 'civicrm_openid');
-    $this->quickCleanup($tablesToTruncate);
+    // If we truncate only contact, then stale domain and openid records will be left.
+    // If we truncate none of these tables, then contactDelete() will incrementally
+    // clean correctly.
+    //$tablesToTruncate = array('civicrm_domain', 'civicrm_contact', 'civicrm_openid');
+    //$this->quickCleanup($tablesToTruncate);
   }
 
   function setUp() {
