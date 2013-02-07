@@ -229,8 +229,11 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
    * @return  An array of group objects.
    *
    * @access public
+   *
+   * @todo other BAO functions that use returnProperties (e.g. Query Objects) receive the array flipped & filled with 1s and
+   * add in essential fields (e.g. id). This should follow a regular pattern like the others
    */
-  static function getGroups($params = NULL, $returnProperties = NULL) {
+  static function getGroups($params = NULL, $returnProperties = NULL, $sort = NULL, $offset = NULL, $rowCount = NULL) {
     $dao = new CRM_Contact_DAO_Group();
     $dao->is_active = 1;
     if ($params) {
@@ -246,6 +249,17 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
         }
       }
     }
+
+    if ($offset || $rowCount) {
+      $offset = ($offset > 0) ? $offset : 0;
+      $rowCount = ($rowCount > 0) ? $rowCount : 25;
+      $dao->limit($offset, $rowCount);
+    }
+
+    if ($sort) {
+      $dao->orderBy($sort);
+    }
+
     // return only specific fields if returnproperties are sent
     if (!empty($returnProperties)) {
       $dao->selectAdd();

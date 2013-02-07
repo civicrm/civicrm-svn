@@ -73,7 +73,7 @@ function civicrm_api3_group_create($params) {
 }
 /*
  * Adjust Metadata for Create action
- * 
+ *
  * The metadata is used for setting defaults, documentation & validation
  * @param array $params array or parameters determined by getfields
  */
@@ -95,18 +95,19 @@ function _civicrm_api3_group_create_spec(&$params) {
  * @access public
  */
 function civicrm_api3_group_get($params) {
-  $returnProperties = array();
-  foreach ($params as $n => $v) {
-    if (substr($n, 0, 7) == 'return.') {
-      $returnProperties[] = substr($n, 7);
-    }
-  }
 
-  if (!empty($returnProperties)) {
-    $returnProperties[] = 'id';
+  $options          = _civicrm_api3_get_options_from_params($params, TRUE,'group','get');
+  $sort             = CRM_Utils_Array::value('sort', $options, NULL);
+  $offset           = CRM_Utils_Array::value('offset', $options);
+  $rowCount         = CRM_Utils_Array::value('limit', $options);
+  $returnProperties = CRM_Utils_Array::value('return', $options, NULL);
+  $inputParams      = CRM_Utils_Array::value('input_params', $options, array());
+  if(is_array($returnProperties) && !empty($returnProperties)){
+    // group function takes $returnProperties in non standard format & doesn't add id
+    $returnProperties['id'] = 1;
+    $returnProperties = array_keys($returnProperties);
   }
-
-  $groupObjects = CRM_Contact_BAO_Group::getGroups($params, $returnProperties);
+  $groupObjects = CRM_Contact_BAO_Group::getGroups($inputParams, $returnProperties, $sort, $offset, $rowCount);
   if (empty($groupObjects)) {
     return civicrm_api3_create_success(FALSE);
   }
