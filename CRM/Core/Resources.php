@@ -262,6 +262,9 @@ class CRM_Core_Resources {
    * Add translated string to the js CRM object.
    * It can then be retrived from the client-side ts() function
    * Variable substitutions can happen from client-side
+   * 
+   * Note: this function rarely needs to be called directly and is mostly for internal use.
+   * @see CRM_Core_Resources::addScriptFile which automatically adds translated strings from js files
    *
    * Simple example:
    * // From php:
@@ -281,29 +284,17 @@ class CRM_Core_Resources {
    * CRM_Core_Resources::singleton()->addSetting(array('myNamespace' => array('myString' => ts('Your %1 has been %2', array(subs)))));
    * And from javascript access it at CRM.myNamespace.myString
    *
-   * @param $text string
+   * @param $text string|array
    * @return CRM_Core_Resources
    */
   public function addString($text) {
-    $translated = ts($text);
-    // We only need to push this string to client if the translation
-    // is actually different from the original
-    if ($translated != $text) {
-      $this->addSetting(array('strings' => array($text => $translated)));
-    }
-    return $this;
-  }
-
-  /**
-   * Add several translatable strings
-   *
-   * @param array $strings list of translatable strings
-   * @return CRM_Core_Resources
-   * @see addString
-   */
-  public function addStrings($strings) {
-    foreach ($strings as $string) {
-      $this->addString($string);
+    foreach ((array) $text as $str) {
+      $translated = ts($str);
+      // We only need to push this string to client if the translation
+      // is actually different from the original
+      if ($translated != $str) {
+        $this->addSetting(array('strings' => array($str => $translated)));
+      }
     }
     return $this;
   }
@@ -477,7 +468,7 @@ class CRM_Core_Resources {
       }
       $this->cache->set($ext, $stringsByFile);
     }
-    $this->addStrings($stringsByFile[$file]);
+    $this->addString($stringsByFile[$file]);
   }
 
   /**
