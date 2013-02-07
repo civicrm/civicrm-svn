@@ -624,13 +624,11 @@ function _civicrm_api3_get_options_from_params(&$params, $queryObject = false, $
   // handle the format return =sort_name,display_name...
   if (array_key_exists('return', $params)) {
     if (is_array($params['return'])) {
-      $returnProperties = array_flip($params['return']);
-      $returnProperties[key($returnProperties)] = 1;
+      $returnProperties = array_fill_keys($params['return'], 1);
     }
     else {
-      $returnProperties = explode(',', $params['return']);
-      $returnProperties = array_flip($returnProperties);
-      $returnProperties[key($returnProperties)] = 1;
+      $returnProperties = explode(',', str_replace(' ', '', $params['return']));
+      $returnProperties = array_fill_keys($returnProperties, 1);
     }
   }
   if($entity && $action =='get' ){

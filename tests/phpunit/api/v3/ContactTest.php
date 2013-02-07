@@ -490,7 +490,7 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     $c2     = civicrm_api($this->_entity, 'create', array('version' => $this->_apiversion, 'first_name' => 'bb', 'last_name' => 'ccc', 'contact_type' => 'Individual'));
     $result = civicrm_api($this->_entity, 'getvalue', array(
       'version' => $this->_apiversion,
-        'return' => 'first_name',
+      'return' => 'first_name',
         'options' => array(
           'limit' => 1,
           'sort' => 'first_name',
@@ -1099,23 +1099,68 @@ class api_v3_ContactTest extends CiviUnitTestCase {
    *  Test civicrm_contact_get() return only first name
    */
   public function testContactGetRetFirst() {
-    //  Insert a row in civicrm_contact creating contact 17
-    $op = new PHPUnit_Extensions_Database_Operation_Insert();
-    $op->execute($this->_dbconn,
-      new PHPUnit_Extensions_Database_DataSet_XMLDataSet(
-        dirname(__FILE__) . '/dataset/contact_17.xml'
-      )
+    $contact = civicrm_api('contact', 'create', $this->_params);
+    $params = array(
+      'contact_id' => $contact['id'],
+      'return' => 'first_name, last_name',
+      'version' => $this->_apiversion,
     );
     $params = array(
-      'contact_id' => 17,
+      'contact_id' => $contact['id'],
       'return_first_name' => TRUE,
       'sort' => 'first_name',
       'version' => $this->_apiversion,
     );
     $result = civicrm_api('contact', 'get', $params);
     $this->assertEquals(1, $result['count'], "In line " . __LINE__);
-    $this->assertEquals(17, $result['id'], "In line " . __LINE__);
-    $this->assertEquals('Test', $result['values'][17]['first_name'], "In line " . __LINE__);
+    $this->assertEquals($contact['id'], $result['id'], "In line " . __LINE__);
+    $this->assertEquals('abc1', $result['values'][$contact['id']]['first_name'], "In line " . __LINE__);
+  }
+
+  /**
+   *  Test civicrm_contact_get() return only first name & last name
+   *  Use comma separated string return with a space
+   */
+  public function testContactGetRetFirstLast() {
+    $contact = civicrm_api('contact', 'create', $this->_params);
+    $params = array(
+      'contact_id' => $contact['id'],
+      'return' => 'first_name, last_name',
+      'version' => $this->_apiversion,
+    );
+    $result = civicrm_api('contact', 'getsingle', $params);
+    $this->assertEquals('abc1', $result['first_name'], "In line " . __LINE__);
+    $this->assertEquals('xyz1', $result['last_name'], "In line " . __LINE__);
+    //check that other defaults not returns
+    $this->assertArrayNotHasKey('sort_name', $result);
+    $params = array(
+      'contact_id' => $contact['id'],
+      'return' => 'first_name,last_name',
+      'version' => $this->_apiversion,
+    );
+    $result = civicrm_api('contact', 'getsingle', $params);
+    $this->assertEquals('abc1', $result['first_name'], "In line " . __LINE__);
+    $this->assertEquals('xyz1', $result['last_name'], "In line " . __LINE__);
+    //check that other defaults not returns
+    $this->assertArrayNotHasKey('sort_name', $result);
+  }
+
+  /**
+   *  Test civicrm_contact_get() return only first name & last name
+   *  Use comma separated string return without a space
+   */
+  public function testContactGetRetFirstLastNoComma() {
+    $contact = civicrm_api('contact', 'create', $this->_params);
+    $params = array(
+      'contact_id' => $contact['id'],
+      'return' => 'first_name,last_name',
+      'version' => $this->_apiversion,
+    );
+    $result = civicrm_api('contact', 'getsingle', $params);
+    $this->assertEquals('abc1', $result['first_name'], "In line " . __LINE__);
+    $this->assertEquals('xyz1', $result['last_name'], "In line " . __LINE__);
+    //check that other defaults not returns
+    $this->assertArrayNotHasKey('sort_name', $result);
   }
 
   /**
