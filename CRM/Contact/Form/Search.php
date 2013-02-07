@@ -234,7 +234,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
   /**
    * name of the selector to use
    */
-  protected $_selectorName = 'CRM_Contact_Selector';
+  static $_selectorName = 'CRM_Contact_Selector';
   protected $_customSearchID = NULL;
   protected $_customSearchClass = NULL;
 
@@ -267,12 +267,11 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
     return $searchContext ? TRUE : FALSE;
   }
 
-  function setModeValues() {
+  static function setModeValues() {
     if (!self::$_modeValues) {
       self::$_modeValues = array(
-        1 => array('selectorName' =>
-          (property_exists($this, '_selectorName') && $this->_selectorName) ?
-          $this->_selectorName : 'CRM_Contact_Selector',
+        1 => array(
+          'selectorName' => self::$_selectorName,
           'selectorLabel' => ts('Contacts'),
           'taskFile' => 'CRM/Contact/Form/Search/ResultTasks.tpl',
           'taskContext' => NULL,
@@ -326,9 +325,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
           'taskClassName' => 'CRM_Case_Task',
         ),
         7 => array(
-          'selectorName' =>
-          (property_exists($this, '_selectorName') && $this->_selectorName) ?
-          $this->_selectorName : 'CRM_Contact_Selector',
+          'selectorName' => self::$_selectorName,
           'selectorLabel' => ts('Related Contacts'),
           'taskFile' => 'CRM/Contact/Form/Search/ResultTasks.tpl',
           'taskContext' => NULL,
@@ -340,7 +337,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
     }
   }
 
-  function getModeValue($mode = 1) {
+  static function getModeValue($mode = 1) {
     self::setModeValues();
 
     if (!array_key_exists($mode, self::$_modeValues)) {
@@ -350,7 +347,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
     return self::$_modeValues[$mode];
   }
 
-  function getModeSelect() {
+  static function getModeSelect() {
     self::setModeValues();
 
     $select = array();
@@ -383,24 +380,20 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
    */
   function buildQuickForm() {
     $permission = CRM_Core_Permission::getPermission();
-        $financialBatchStatus = 0;
-        if( $this->_financialBatchStatus ){
-            $financialBatchStatus = "'{$this->_financialBatchStatus}'";
-        }
+    $financialBatchStatus = 0;
+    if ($this->_financialBatchStatus) {
+      $financialBatchStatus = "'{$this->_financialBatchStatus}'";
+    }
     // some tasks.. what do we want to do with the selected contacts ?
     $tasks = array('' => ts('- actions -'));
-    if ($this->_componentMode == 1 ||
-      $this->_componentMode == 7
-    ) {
+    if ($this->_componentMode == 1 || $this->_componentMode == 7) {
       $tasks += CRM_Contact_Task::permissionedTaskTitles($permission,
-        CRM_Utils_Array::value('deleted_contacts',
-          $this->_formValues
-        )
+        CRM_Utils_Array::value('deleted_contacts', $this->_formValues)
       );
     }
     else {
-      require_once (str_replace('_', DIRECTORY_SEPARATOR, $this->_modeValue['taskClassName']) . '.php');
-            eval( '$tasks += ' . $this->_modeValue['taskClassName'] . "::permissionedTaskTitles( $permission, false, $financialBatchStatus );" );
+      $className = $this->_modeValue['taskClassName'];
+      $tasks += $className::permissionedTaskTitles($permission, false, $financialBatchStatus);
     }
 
     if (isset($this->_ssID)) {
@@ -644,10 +637,10 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
     $this->set('context', $this->_context);
     $this->assign('context', $this->_context);
 
-    $this->_modeValue = $this->getModeValue($this->_componentMode);
+    $this->_modeValue = self::getModeValue($this->_componentMode);
     $this->assign($this->_modeValue);
 
-    $this->set('selectorName', $this->_selectorName);
+    $this->set('selectorName', self::$_selectorName);
 
     // get user submitted values
     // get it from controller only if form has been submitted, else preProcess has set this
@@ -761,36 +754,33 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
       $this->assign('contextMenu', $primaryActions + $this->_contextMenu);
     }
 
-    // CRM_Core_Error::debug( 'f', $this->_formValues );
-    // CRM_Core_Error::debug( 'p', $this->_params );
     if (!isset($this->_componentMode)) {
       $this->_componentMode = CRM_Contact_BAO_Query::MODE_CONTACTS;
     }
-    $modeValues = $this->getModeValue($this->_componentMode);
+    $modeValues = self::getModeValue($this->_componentMode);
 
-    require_once (str_replace('_', DIRECTORY_SEPARATOR, $this->_modeValue['selectorName']) . '.php');
-    $this->_selectorName = $this->_modeValue['selectorName'];
+    self::$_selectorName = $this->_modeValue['selectorName'];
 
     $setDynamic = FALSE;
-    if (strpos($this->_selectorName, 'CRM_Contact_Selector') !== FALSE) {
-      eval('$selector = new ' . $this->_selectorName .
-        '( $this->_customSearchClass,
-                     $this->_formValues,
-                     $this->_params,
-                     $this->_returnProperties,
-                     $this->_action,
-                     false, true,
-                     $this->_context,
-                     $this->_contextMenu );'
+    if (strpos(self::$_selectorName, 'CRM_Contact_Selector') !== FALSE) {
+      $selector = new self::$_selectorName(
+        $this->_customSearchClass,
+        $this->_formValues,
+        $this->_params,
+        $this->_returnProperties,
+        $this->_action,
+        false, true,
+        $this->_context,
+        $this->_contextMenu
       );
       $setDynamic = TRUE;
     }
     else {
-      eval('$selector = new ' . $this->_selectorName .
-        '( $this->_params,
-                     $this->_action,
-                     null, false, null,
-                     "search", "advanced" );'
+      $selector = new self::$_selectorName(
+        $this->_params,
+        $this->_action,
+        null, false, null,
+        "search", "advanced"
       );
     }
 
@@ -917,8 +907,8 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
 
       $setDynamic = FALSE;
 
-      if (strpos($this->_selectorName, 'CRM_Contact_Selector') !== FALSE) {
-        $selector = new $this->_selectorName (
+      if (strpos(self::$_selectorName, 'CRM_Contact_Selector') !== FALSE) {
+        $selector = new self::$_selectorName (
           $this->_customSearchClass,
           $this->_formValues,
           $this->_params,
@@ -932,7 +922,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         $setDynamic = TRUE;
       }
       else {
-        $selector = new  $this->_selectorName (
+        $selector = new  self::$_selectorName (
           $this->_params,
           $this->_action,
           null,

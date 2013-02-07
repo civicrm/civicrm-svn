@@ -67,7 +67,7 @@ class CRM_Contact_Form_Search_Custom extends CRM_Contact_Form_Search {
     CRM_Utils_System::appendBreadCrumb($breadCrumb);
 
     // use the custom selector
-    $this->_selectorName = 'CRM_Contact_Selector_Custom';
+    self::$_selectorName = 'CRM_Contact_Selector_Custom';
 
     $this->set('customSearchID', $this->_customSearchID);
     $this->set('customSearchClass', $this->_customSearchClass);
@@ -119,7 +119,7 @@ class CRM_Contact_Form_Search_Custom extends CRM_Contact_Form_Search {
     }
 
     //use the custom selector
-    $this->_selectorName = 'CRM_Contact_Selector_Custom';
+    self::$_selectorName = 'CRM_Contact_Selector_Custom';
 
     parent::postProcess();
   }
