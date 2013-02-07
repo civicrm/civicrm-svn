@@ -79,10 +79,12 @@ class CRM_Contact_Form_Search_Basic extends CRM_Contact_Form_Search {
 
     if (CRM_Utils_Array::value('groups', $searchOptions)) {
       // Arrange groups into hierarchical listing (child groups follow their parents and have indentation spacing in title)
-      $ids = implode(',', array_keys($this->_group));
-      $ids = 'IN (' . $ids . ')';
-      $groupHierarchy = CRM_Contact_BAO_Group::getGroupsHierarchy($ids, NULL, '&nbsp;&nbsp;', TRUE);
-
+      $groupHierarchy = array();
+      if (!empty($groupHierarchy)) {
+        $ids = implode(',', array_keys($this->_group));
+        $ids = 'IN (' . $ids . ')';
+        $groupHierarchy = CRM_Contact_BAO_Group::getGroupsHierarchy($ids, NULL, '&nbsp;&nbsp;', TRUE);
+      }
       // add select for groups
       $group = array(
         '' => ts('- any group -')) + $groupHierarchy;
