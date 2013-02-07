@@ -98,10 +98,14 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $this->quickCleanup(array(
       'civicrm_contribution',
       'civicrm_event',
+      'civicrm_contribution_page',
       'civicrm_participant',
-      'civicrm_contact',
       'civicrm_participant_payment',
       'civicrm_line_item',
+      'civicrm_financial_trxn',
+      'civicrm_financial_item',
+      'civicrm_entity_financial_trxn',
+      'civicrm_contact',
     ));
   }
 
@@ -544,6 +548,8 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $this->assertArrayHasKey('payment_instrument', $contribution['values'][0]);
     $eftTypeId = CRM_Core_OptionGroup::getValue('payment_instrument', 'EFT');
     $this->assertEquals('EFT',$contribution['values'][0]['payment_instrument']);
+    $contribution = civicrm_api('contribution', 'update', array('id' => $contribution['id'], 'version' => $this->_apiversion, 'payment_instrument' => 'Credit Card'));
+    $this->assertAPISuccess($contribution);
   }
 
   function testGetContributionByPaymentInstrument() {
