@@ -811,8 +811,6 @@ function _civicrm_api3_object_to_array_unique_fields(&$dao, &$values) {
  */
 function _civicrm_api3_custom_format_params($params, &$values, $extends, $entityId = NULL) {
   $values['custom'] = array();
-
-  require_once 'CRM/Core/BAO/CustomField.php';
   foreach ($params as $key => $value) {
     list($customFieldID, $customValueID) = CRM_Core_BAO_CustomField::getKeyID($key, TRUE);
     if ($customFieldID) {
