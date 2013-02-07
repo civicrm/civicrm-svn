@@ -50,8 +50,6 @@
  * {@getfields Contribution_create}
  */
 function civicrm_api3_contribution_create(&$params) {
-  civicrm_api3_verify_one_mandatory($params, NULL, array('financial_type_id', 'financial_type'));
-
   $values = array();
 
   _civicrm_api3_contribute_format_params($params, $values);
@@ -92,6 +90,7 @@ function _civicrm_api3_contribution_create_spec(&$params) {
     'api.aliases' => array('payment_processor_id'),
   );
   $params['financial_type_id']['api.aliases'] = array('contribution_type_id', 'contribution_type');
+  $params['financial_type_id']['api.required'] = 1;
   $params['note'] = array(
     'name' => 'note',
     'uniqueName' => 'contribution_note',

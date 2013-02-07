@@ -111,8 +111,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
 
   ///////////////// civicrm_contribution_get methods
   function testGetEmptyParamsContribution() {
-
-    $params = array('debug' => 1);
+    $params = array();
     $contribution = civicrm_api('contribution', 'get', $params);
     $this->assertEquals($contribution['is_error'], 1);
     $this->assertEquals($contribution['error_message'], 'Mandatory key(s) missing from params array: version');
@@ -355,7 +354,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $params = array('version' => $this->_apiversion);
     $contribution = civicrm_api('contribution', 'create', $params);
     $this->assertEquals($contribution['is_error'], 1, 'In line ' . __LINE__);
-    $this->assertEquals($contribution['error_message'], 'Mandatory key(s) missing from params array: total_amount, contact_id', 'In line ' . __LINE__);
+    $this->assertEquals($contribution['error_message'], 'Mandatory key(s) missing from params array: financial_type_id, total_amount, contact_id', 'In line ' . __LINE__);
   }
 
   function testCreateParamsNotArrayContribution() {
@@ -370,7 +369,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $params = array('version' => 3);
     $contribution = civicrm_api('contribution', 'create', $params);
     $this->assertEquals($contribution['is_error'], 1);
-    $this->assertEquals($contribution['error_message'], 'Mandatory key(s) missing from params array: total_amount, contact_id');
+    $this->assertEquals($contribution['error_message'], 'Mandatory key(s) missing from params array: financial_type_id, total_amount, contact_id');
   }
 
   /**
