@@ -1205,9 +1205,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
       }
 
       //process premium
-      if ($contribution->id && isset($formValues['product_name'][0])) {
-        // get initial financial_trxn for this contribution so we can link premium trxn to it
-        $mainTrxnId = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnId($contribution->id);        
+      if ($contribution->id && isset($formValues['product_name'][0])) {       
         CRM_Contribute_Form_AdditionalInfo::processPremium($formValues, $contribution->id,
           $this->_premiumID, $this->_options
         );
@@ -1583,7 +1581,6 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
     }
     //process premium
     if ($contribution->id && isset($params['product_name'][0])) {
-      $mainTrxnId = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnId($contribution->id);
       CRM_Contribute_Form_AdditionalInfo::processPremium($params, $contribution->id, NULL, $this->_options);
     }
 

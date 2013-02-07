@@ -121,18 +121,25 @@ class CRM_Core_BAO_FinancialTrxn extends CRM_Financial_DAO_FinancialTrxn {
    * @access public
    * @static
    */
-  static function getFinancialTrxnId($entity_id, $entity_table = 'civicrm_contribution', $orderBy = 'ASC') {
+  static function getFinancialTrxnId($entity_id, $orderBy = 'ASC', $newTrxn = FALSE) {
     $ids = array('entityFinancialTrxnId' => NULL, 'financialTrxnId' => NULL);
 
-    $query = "
-            SELECT id, financial_trxn_id
-            FROM civicrm_entity_financial_trxn
-            WHERE entity_id = %1
-            AND entity_table = %2
-            ORDER BY id {$orderBy}
-            LIMIT 1; ";
-
-    $params = array(1 => array($entity_id, 'Integer'), 2 => array($entity_table, 'String'));
+    $condition = "";
+    if (!$newTrxn) {
+      $condition = " AND ((ceft1.entity_table IS NOT NULL) OR (cft.payment_instrument_id IS NOT NULL AND ceft1.entity_table IS NULL)) ";
+    }
+    $query = "SELECT ceft.id, ceft.financial_trxn_id FROM `civicrm_financial_trxn` cft
+LEFT JOIN civicrm_entity_financial_trxn ceft 
+ON ceft.financial_trxn_id = cft.id AND ceft.entity_table = 'civicrm_contribution'
+LEFT JOIN civicrm_entity_financial_trxn ceft1
+ON ceft1.financial_trxn_id = cft.id AND ceft1.entity_table = 'civicrm_financial_item'
+LEFT JOIN civicrm_financial_item cfi ON ceft1.entity_table = 'civicrm_financial_item' and cfi.id = ceft1.entity_id
+WHERE ceft.entity_id = %1 AND (cfi.entity_table <> 'civicrm_financial_trxn' or cfi.entity_table is NULL)
+{$condition}
+ORDER BY cft.id {$orderBy}
+LIMIT 1;"; 
+ 
+    $params = array(1 => array($entity_id, 'Integer'));
     $dao = CRM_Core_DAO::executeQuery($query, $params);
     if ($dao->fetch()) {
       $ids['entityFinancialTrxnId'] = $dao->id;
@@ -252,8 +259,8 @@ WHERE lt.entity_id = %1 ";
    * @access public
    * @static
    */
-  static function deleteFinancialTrxn($entity_id, $entity_table = 'civicrm_contribution') {
-    $fids = self::getFinancialTrxnId($entity_id, $entity_table);
+  static function deleteFinancialTrxn($entity_id) {
+    $fids = self::getFinancialTrxnId($entity_id);
 
     if ($fids['financialTrxnId']) {
       // delete enity financial transaction before financial transaction since financial_trxn_id will be set to null if financial transaction deleted first
@@ -282,7 +289,6 @@ WHERE lt.entity_id = %1 ";
     }
     
     if (CRM_Utils_Array::value('cost', $params)) {
-      $fids = self::getFinancialTrxnId($params['contributionId'], 'civicrm_contribution');
       $contributionStatuses = CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name');
       $financialAccountType = CRM_Contribute_PseudoConstant::financialAccountType($params['financial_type_id']);
       $accountRelationship = CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND label IN ('Premiums Inventory Account is', 'Cost of Sales Account is')");
@@ -297,8 +303,8 @@ WHERE lt.entity_id = %1 ";
         'currency' => CRM_Utils_Array::value('currency', $params),
         'status_id' => array_search('Completed', $contributionStatuses)
       );
-      $trxnEntityTable['entity_table'] = 'civicrm_financial_trxn';
-      $trxnEntityTable['entity_id'] = $fids['financialTrxnId'];
+      $trxnEntityTable['entity_table'] = 'civicrm_contribution';
+      $trxnEntityTable['entity_id'] = $params['contributionId'];
       CRM_Core_BAO_FinancialTrxn::create($financialtrxn, $trxnEntityTable);
     }
 
@@ -344,6 +350,10 @@ WHERE lt.entity_id = %1 ";
     $params['trxnParams']['status_id'] = CRM_Core_OptionGroup::getValue('contribution_status','Completed','name');
     $params['trxnParams']['contribution_id'] = isset($params['contribution']->id) ? $params['contribution']->id : $params['contribution_id'];
     $trxn = self::create($params['trxnParams']);
+    if (!CRM_Utils_Array::value('entity_id', $params)) {
+      $financialTrxnID = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnId($params['trxnParams']['contribution_id'], 'DESC');
+      $params['entity_id'] = $financialTrxnID['financialTrxnId'];
+    }
     $fItemParams = 
       array(
         'financial_account_id' => $financialAccount,
@@ -354,7 +364,8 @@ WHERE lt.entity_id = %1 ";
         'description' => 'Fee',
         'status_id' => CRM_Core_OptionGroup::getValue('financial_item_status','Paid','name'),
         'entity_table' => 'civicrm_financial_trxn',
-        'entity_id' => CRM_Utils_Array::value('entity_id', $params),
+        'entity_id' => $params['entity_id'],
+        'currency' => $params['trxnParams']['currency'],
       );
     $trxnIDS['id'] = $trxn->id;
     $financialItem = CRM_Financial_BAO_FinancialItem::create($fItemParams, NULL, $trxnIDS);

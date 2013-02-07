@@ -2773,9 +2773,8 @@ WHERE  contribution_id = %1 ";
     }
     
     // when a fee is charged
-    // FIX ME: work in progress
     if (CRM_Utils_Array::value('fee_amount', $params) && (!CRM_Utils_Array::value('prevContribution', $params)
-      || $params['contribution']->fee_amount != $params['prevContribution']->fee_amount) && !$skipRecords) {
+      || $params['contribution']->fee_amount != $params['prevContribution']->fee_amount) && $skipRecords) {
       CRM_Core_BAO_FinancialTrxn::recordFees($params);
     }
     
