@@ -669,10 +669,7 @@ $.fn.ajaxSubmit = function(options) {
 
 		var toXml = $.parseXML;
 
-		var parseJSON = !$.support.changeBubbles ? $.parseJSON : function(s) {
-            /*jslint evil:true */
-			return window['eval']('(' + s + ')');
-		};
+		var parseJSON = $.parseJSON;
 
 		var httpData = function( xhr, type, s ) { // mostly lifted from jq1.4.4
 

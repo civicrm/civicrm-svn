@@ -156,7 +156,7 @@ abstract class CRM_Contact_Form_Inline extends CRM_Core_Form {
     );
     $this->postProcessHook();
     // @see http://www.malsup.com/jquery/form/#file-upload
-    $xhr = $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest'; 
+    $xhr = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
     if (!$xhr) {
       echo '<textarea>';
     }
