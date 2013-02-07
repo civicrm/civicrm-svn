@@ -1,5 +1,9 @@
 {include file='../CRM/Upgrade/4.3.alpha1.msg_template/civicrm_msg_template.tpl'}
 
+-- CRM-10999
+ALTER TABLE `civicrm_premiums` 
+ADD COLUMN `premiums_nothankyou_position` int(10) unsigned DEFAULT '1';
+
 -- CRM-11514 if contribution type name is null, assign it a name
 UPDATE civicrm_contribution_type
 SET name = CONCAT('Unknown_', id)
@@ -50,10 +54,12 @@ SELECT @country_id := id from civicrm_country where name = 'Luxembourg' AND iso_
 INSERT IGNORE INTO `civicrm_state_province`(`country_id`, `abbreviation`, `name`) VALUES
 (@country_id, 'L', 'Luxembourg');
 
--- CRM-10899
+-- CRM-10899 and CRM-10999
 {if $multilingual}
   {foreach from=$locales item=locale}
     UPDATE civicrm_option_group SET title_{$locale} = '{ts escape="sql"}Currencies Enabled{/ts}' WHERE name = "currencies_enabled";
+    ALTER TABLE `civicrm_premiums` 
+      ADD COLUMN premiums_nothankyou_label_{$locale} varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Label displayed for No Thank-you option in premiums block (e.g. No thank you)';
   {/foreach}
 {else}
     UPDATE civicrm_option_group SET title = '{ts escape="sql"}Currencies Enabled{/ts}' WHERE name = "currencies_enabled";
