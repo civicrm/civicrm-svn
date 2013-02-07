@@ -1,5 +1,4 @@
 #!/bin/sh
-set -e
 
 # This script assumes
 # that DAOs are generated
@@ -15,7 +14,7 @@ else
 	. $CFFILE
 fi
 
-RSYNCOPTIONS="-avC --exclude=svn --exclude=.git --exclude=_ORIGINAL_ --include=core"
+RSYNCOPTIONS="-avC --exclude=svn --include=core"
 RSYNCCOMMAND="$DM_RSYNC $RSYNCOPTIONS"
 SRC=$DM_SOURCEDIR
 TRG=$DM_TMPDIR/civicrm
@@ -26,7 +25,7 @@ if [ -d $TRG ] ; then
 fi
 
 # copy all the rest of the stuff
-for CODE in css i install js packages PEAR templates bin joomla CRM api extern Reports; do
+for CODE in css i install js l10n packages PEAR templates bin joomla CRM api drupal extern Reports; do
   echo $CODE
   [ -d $SRC/$CODE ] && $RSYNCCOMMAND $SRC/$CODE $TRG
 done
@@ -45,10 +44,6 @@ fi
 for F in $SRC/sql/civicrm*.mysql $SRC/sql/counties.US.sql.gz $SRC/sql/case_sample*.mysql; do
 	cp $F $TRG/sql
 done
-
-set +e
-rm -rf $TRG/sql/civicrm_*.??_??.mysql
-set -e
 
 # copy docs
 cp $SRC/agpl-3.0.txt $TRG
@@ -106,7 +101,7 @@ cp -r -p civicrm/* com_civicrm/admin/civicrm
 $DM_PHP $DM_SOURCEDIR/distmaker/utils/joomlaxml.php $DM_SOURCEDIR com_civicrm $DM_VERSION alt
 
 # generate alt version of package
-$DM_ZIP -q -r -9 $DM_TARGETDIR/civicrm-$DM_VERSION-joomla-alt.zip com_civicrm
+$DM_ZIP -q -r -9 $DM_TARGETDIR/civicrm-$DM_VERSION-joomla-alt.zip com_civicrm -x '*/l10n/*' -x '*/sql/civicrm_*.??_??.mysql'
 
 # delete the civicrm directory
 rm -rf com_civicrm/admin/civicrm
@@ -114,10 +109,10 @@ rm -rf com_civicrm/admin/civicrm
 # generate zip version of civicrm.xml
 $DM_PHP $DM_SOURCEDIR/distmaker/utils/joomlaxml.php $DM_SOURCEDIR com_civicrm $DM_VERSION zip
 
-$DM_ZIP -q -r -9 com_civicrm/admin/civicrm.zip civicrm
+$DM_ZIP -q -r -9 com_civicrm/admin/civicrm.zip civicrm -x '*/l10n/*' -x '*/sql/civicrm_*.??_??.mysql'
 
 # generate zip within zip file
-$DM_ZIP -q -r -9 $DM_TARGETDIR/civicrm-$DM_VERSION-joomla.zip com_civicrm -x 'com_civicrm/admin/civicrm'
+$DM_ZIP -q -r -9 $DM_TARGETDIR/civicrm-$DM_VERSION-joomla.zip com_civicrm -x '*/l10n/*' -x '*/sql/civicrm_*.??_??.mysql' -x 'com_civicrm/admin/civicrm'
 
 # clean up
 rm -rf com_civicrm

@@ -1,5 +1,4 @@
 #!/bin/sh
-set -e
 
 # This is distmaker script for CiviCRM
 # Author: michau
@@ -35,7 +34,6 @@ D56PACK=0
 J5PACK=0
 WP5PACK=0
 SK5PACK=0
-L10NPACK=0
 
 # Display usage
 display_usage()
@@ -46,7 +44,6 @@ display_usage()
 	echo
 	echo "Options available:"
 	echo "  all  - generate all available tarballs"
-	echo "  l10n - generate internationalization data"
 	echo "  d5   - generate Drupal7 PHP5 module"
 	echo "  d5.6 - generate Drupal6 PHP5 module"
 	echo "  j5   - generate Joomla PHP5 module"
@@ -68,8 +65,7 @@ check_conf()
 		display_usage
 		exit 1
 	else
-		source "$P/distmaker.conf"
-		export DM_SOURCEDIR DM_GENFILESDIR DM_TMPDIR DM_TARGETDIR DM_PHP DM_RSYNC DM_ZIP DM_VERSION DM_REF_CORE DM_REF_DRUPAL DM_REF_DRUPAL6 DM_REF_JOOMLA DM_REF_WORDPRESS DM_REF_PACKAGES
+		for l in `cat $P/distmaker.conf`; do export $l; done
 		for k in "$DM_SOURCEDIR" "$DM_GENFILESDIR" "$DM_TARGETDIR" "$DM_TMPDIR"; do
 			if [ ! -d "$k" ] ; then
 				echo; echo "ERROR! " $k "directory not found!"; echo "(if you get empty directory name, it might mean that one of necessary variables is not set)"; echo;
@@ -94,12 +90,6 @@ check_conf
 
 # Figure out what to do
 case $1 in
-	# L10N PHP5
-	l10n)
-	echo; echo "Generating L10N module"; echo;
-	L10NPACK=1
-	;;
-
 	# DRUPAL7 PHP5
 	d5)
 	echo; echo "Generating Drupal7 PHP5 module"; echo;
@@ -138,7 +128,6 @@ case $1 in
 	J5PACK=1
 	WP5PACK=1
 	SKPACK=1
-	L10NPACK=1
 	;;
 
 	# USAGE
@@ -157,16 +146,6 @@ $DM_PHP GenCode.php schema/Schema.xml $DM_VERSION
 
 cd $ORIGPWD
 
-if [ $L10NPACK = 1 ]; then
-	echo; echo "Packaging for L10N"; echo;
-	sh $P/dists/l10n.sh
-fi
-
-if [ $D56PACK = 1 ]; then
-	echo; echo "Packaging for Drupal6, PHP5 version"; echo;
-	sh $P/dists/drupal6_php5.sh
-fi
-
 if [ $D5PACK = 1 ]; then
 	echo; echo "Packaging for Drupal7, PHP5 version"; echo;
 	sh $P/dists/drupal_php5.sh
@@ -175,6 +154,11 @@ fi
 if [ $SKPACK = 1 ]; then
 	echo; echo "Packaging for Drupal7, PHP5 StarterKit version"; echo;
 	sh $P/dists/drupal_sk_php5.sh
+fi
+
+if [ $D56PACK = 1 ]; then
+	echo; echo "Packaging for Drupal6, PHP5 version"; echo;
+	sh $P/dists/drupal6_php5.sh
 fi
 
 if [ $J5PACK = 1 ]; then
