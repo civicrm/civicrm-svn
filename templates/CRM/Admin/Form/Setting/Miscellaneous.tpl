@@ -92,7 +92,7 @@
     </table>
 <h3>{ts}reCAPTCHA Keys{/ts}</h3>
     <div class="description">
-        {ts}reCAPTCHA is a free service that helps prevent automated abuse of your site. To use reCAPTCHA on public-facing CiviCRM forms: sign up at <a href="http://recaptcha.net" "target=_blank">recaptcha.net</a>; enter the provided public and private reCAPTCHA keys here; then enable reCAPTCHA under Advanced Settings in any Profile.{/ts}
+        {ts 1="https://www.google.com/recaptcha"}reCAPTCHA is a free service that helps prevent automated abuse of your site. To use reCAPTCHA on public-facing CiviCRM forms: sign up at <a href="%1" "target=_blank">Google's reCaptcha site</a>; enter the provided public and private reCAPTCHA keys here; then enable reCAPTCHA under Advanced Settings in any Profile.{/ts}
     </div>
     <table class="form-layout">
         <tr class="crm-miscellaneous-form-block-recaptchaPublicKey">
