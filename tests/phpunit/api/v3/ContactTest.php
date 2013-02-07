@@ -511,6 +511,20 @@ class api_v3_ContactTest extends CiviUnitTestCase {
     civicrm_api($this->_entity, 'delete', array('version' => $this->_apiversion, 'id' => $c1['id']));
     civicrm_api($this->_entity, 'delete', array('version' => $this->_apiversion, 'id' => $c2['id']));
   }
+  /*
+   * Test appostrophe works in get & create
+   */
+  function testGetAppostropheCRM10857() {
+    $params = array_merge($this->_params, array('last_name' => "O'Connor"));
+    $contact = civicrm_api($this->_entity, 'create', $params);
+    $this->assertAPISuccess($contact, 'check contact with appostrophe created');
+    $result = civicrm_api($this->_entity, 'getsingle', array(
+      'version' => $this->_apiversion,
+      'last_name' => "O'Connor",
+      'sequential' => 1,
+    ));
+    $this->assertEquals("O'Connor", $result['last_name'], 'in line' . __LINE__);
+  }
 
   /**
    * check with complete array + custom field
