@@ -1348,7 +1348,12 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         }
       }
 
-      CRM_Price_BAO_Set::processAmount($this->_values['fee'], $params, $lineItem[$priceSetId]);
+      $component = '';
+      if ($this->_membershipBlock) {
+        $component = 'membership';
+      }
+      CRM_Price_BAO_Set::processAmount($this->_values['fee'], $params, $lineItem[$priceSetId], $component);
+
       if ($proceFieldAmount) {
         $lineItem[$params['priceSetId']][$fieldOption]['line_total'] = $proceFieldAmount;
         $lineItem[$params['priceSetId']][$fieldOption]['unit_price'] = $proceFieldAmount;

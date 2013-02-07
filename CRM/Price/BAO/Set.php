@@ -634,11 +634,14 @@ WHERE  id = %1";
     return FALSE;
   }
 
-  static function processAmount(&$fields, &$params, &$lineItem) {
+  static function processAmount(&$fields, &$params, &$lineItem, $component = '') {
     // using price set
     $totalPrice = 0;
-    $radioLevel = $checkboxLevel = $selectLevel = $textLevel = $autoRenew = array();
-    $autoRenew[0] = $autoRenew[1] = $autoRenew[2] = 0;
+    $radioLevel = $checkboxLevel = $selectLevel = $textLevel = array();
+    if ($component) {
+      $autoRenew = array();
+      $autoRenew[0] = $autoRenew[1] = $autoRenew[2] = 0;
+    }
     foreach ($fields as $id => $field) {
       if (!CRM_Utils_Array::value("price_{$id}", $params) ||
         (empty($params["price_{$id}"]) && $params["price_{$id}"] == NULL)
@@ -674,7 +677,7 @@ WHERE  id = %1";
           }
           CRM_Price_BAO_LineItem::format($id, $params, $field, $lineItem);
           $totalPrice += $lineItem[$optionValueId]['line_total'];
-          if ($lineItem[$optionValueId]['auto_renew']) {
+          if ($component) {
             $autoRenew[$lineItem[$optionValueId]['auto_renew']] += $lineItem[$optionValueId]['line_total'];
           }
           break;
@@ -693,7 +696,7 @@ WHERE  id = %1";
           }
           CRM_Price_BAO_LineItem::format($id, $params, $field, $lineItem);
           $totalPrice += $lineItem[$optionValueId]['line_total'];
-          if ($lineItem[$optionValueId]['auto_renew']) {
+          if ($component) {
             $autoRenew[$lineItem[$optionValueId]['auto_renew']] += $lineItem[$optionValueId]['line_total'];
           }
           break;
@@ -718,7 +721,7 @@ WHERE  id = %1";
           CRM_Price_BAO_LineItem::format($id, $params, $field, $lineItem);
           foreach ($optionIds as $optionId) {
             $totalPrice += $lineItem[$optionId]['line_total'];
-            if ($lineItem[$optionValueId]['auto_renew']) {
+            if ($component) {
               $autoRenew[$lineItem[$optionId]['auto_renew']] += $lineItem[$optionId]['line_total'];
             }
           }
@@ -745,8 +748,16 @@ WHERE  id = %1";
     }
     $params['amount_level'] = CRM_Core_DAO::VALUE_SEPARATOR . implode(CRM_Core_DAO::VALUE_SEPARATOR, $amount_level) . $displayParticipantCount . CRM_Core_DAO::VALUE_SEPARATOR;
     $params['amount'] = $totalPrice;
-    $params['autoRenew'] = $autoRenew;
-
+    if ($component) {
+      foreach ($autoRenew as $dontCare => $eachAmount) {
+        if (!$eachAmount) {
+          unset($autoRenew[$dontCare]);  
+        }
+      }
+      if (count($autoRenew) > 1 ) {
+        $params['autoRenew'] = $autoRenew;
+      }
+    }
   }
 
   /**
