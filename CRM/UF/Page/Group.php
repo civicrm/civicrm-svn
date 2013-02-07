@@ -396,16 +396,11 @@ class CRM_UF_Page_Group extends CRM_Core_Page {
       $context = 'group';
     }
 
-    switch ($context) {
-      case 'group':
-        $url = CRM_Utils_System::url('civicrm/admin/uf/group', 'reset=1&action=browse');
-        break;
-
-      case 'field':
-        $url = CRM_Utils_System::url('civicrm/admin/uf/group/field',
-          "reset=1&action=browse&gid={$id}"
-        );
-        break;
+    if ($context == 'field') {
+      $url = CRM_Utils_System::url('civicrm/admin/uf/group/field', "reset=1&action=browse&gid={$id}");
+    }
+    else {
+      $url = CRM_Utils_System::url('civicrm/admin/uf/group', 'reset=1&action=browse');
     }
 
     $session = CRM_Core_Session::singleton();
