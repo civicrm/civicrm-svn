@@ -85,24 +85,26 @@ class CRM_Profile_Form_Edit extends CRM_Profile_Form {
     }
 
     if ($this->get('edit')) {
-      //this is edit mode.
-      $this->_mode = CRM_Profile_Form::MODE_EDIT;
-
       // make sure we have right permission to edit this user
       $session = CRM_Core_Session::singleton();
       $userID  = $session->get('userID');
       $id      = CRM_Utils_Request::retrieve('id', 'Positive', $this, FALSE, $userID);
 
-      if ($id != $userID) {
-        // do not allow edit for anon users in joomla frontend, CRM-4668, unless u have checksum CRM-5228
-        $config = CRM_Core_Config::singleton();
-        if ($config->userFrameworkFrontend) {
-          CRM_Contact_BAO_Contact_Permission::validateOnlyChecksum($id, $this);
+      if ($id) {
+        // this is edit mode.
+        $this->_mode = CRM_Profile_Form::MODE_EDIT;
+
+        if ($id != $userID) {
+          // do not allow edit for anon users in joomla frontend, CRM-4668, unless u have checksum CRM-5228
+          $config = CRM_Core_Config::singleton();
+          if ($config->userFrameworkFrontend) {
+            CRM_Contact_BAO_Contact_Permission::validateOnlyChecksum($id, $this);
+          }
+          else {
+            CRM_Contact_BAO_Contact_Permission::validateChecksumContact($id, $this);
+          }
+          $this->_isPermissionedChecksum = TRUE;
         }
-        else {
-          CRM_Contact_BAO_Contact_Permission::validateChecksumContact($id, $this);
-        }
-        $this->_isPermissionedChecksum = TRUE;
       }
     }
 
