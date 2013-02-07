@@ -26,7 +26,7 @@
         removeCiviOverlay(o);
         $('form', o).validate(CRM.validate.params);
         $('form', o).ajaxForm({
-          dataType:'html',
+          dataType:'json',
           method:'POST',
           data: data,
           success: requestHandler
@@ -40,68 +40,66 @@
     var o = $('div.crm-inline-edit.form');
     addCiviOverlay($('.crm-container-snippet', o));
 
-    o.trigger('crmFormSuccess', [response]);
-    try {
-      response = $.parseJSON(response);
-      if ( response.status == 'save' || response.status == 'cancel' ) {
-        o.closest('.crm-inline-edit-container').addClass('crm-edit-ready');
-        var data = o.data('edit-params');
-        var dependent = o.data('dependent-fields') || [];
-        // Clone the add-new link if replacing it, and queue the clone to be refreshed as a dependant block
-        if (o.hasClass('add-new') && response.addressId) {
-          data.aid = response.addressId;
-          var clone = o.parent().clone();
-          o.data('edit-params', data);
-          $('.crm-container-snippet', clone).remove();
-          if (clone.hasClass('contactCardLeft')) {
-            clone.removeClass('contactCardLeft').addClass('contactCardRight');
-          }
-          else if (clone.hasClass('contactCardRight')) {
-            clone.removeClass('contactCardRight').addClass('contactCardLeft');
-          }
-          var cl = $('.crm-inline-edit', clone);
-          var clData = cl.data('edit-params');
-          var locNo = clData.locno++;
-          cl.attr('id', cl.attr('id').replace(locNo, clData.locno)).removeClass('form')
-            o.parent().after(clone);
-          $.merge(dependent, $('.crm-inline-edit', clone));
+    if (response.status == 'save' || response.status == 'cancel') {
+      o.trigger('crmFormSuccess', [response]);
+      o.closest('.crm-inline-edit-container').addClass('crm-edit-ready');
+      var data = o.data('edit-params');
+      var dependent = o.data('dependent-fields') || [];
+      // Clone the add-new link if replacing it, and queue the clone to be refreshed as a dependant block
+      if (o.hasClass('add-new') && response.addressId) {
+        data.aid = response.addressId;
+        var clone = o.parent().clone();
+        o.data('edit-params', data);
+        $('.crm-container-snippet', clone).remove();
+        if (clone.hasClass('contactCardLeft')) {
+          clone.removeClass('contactCardLeft').addClass('contactCardRight');
         }
-        // Reload this block plus all dependent blocks
-        var update = $.merge([o], dependent);
-        for (var i in update) {
-          $(update[i]).each(function() {
-            var data = $(this).data('edit-params');
-            data.snippet = 1;
-            data.reset = 1;
-            data.class_name = data.class_name.replace('Form', 'Page');
-            data.type = 'page';
-            $(this).closest('.crm-summary-block').load(CRM.url('civicrm/ajax/inline', data), function() {$(this).trigger('load');});
-          });
+        else if (clone.hasClass('contactCardRight')) {
+          clone.removeClass('contactCardRight').addClass('contactCardLeft');
         }
-        // Update changelog tab and contact footer
-        $("#tab_log a em").html(response.changeLog.count);
-        $("#crm-record-log").replaceWith(response.changeLog.markup);
-        if ($('#Change_Log div').length) {
-          $('#Change_Log').load($("#tab_log a").attr('href'));
-        }
-
-        CRM.alert('', ts('Saved'), 'success');
+        var cl = $('.crm-inline-edit', clone);
+        var clData = cl.data('edit-params');
+        var locNo = clData.locno++;
+        cl.attr('id', cl.attr('id').replace(locNo, clData.locno)).removeClass('form')
+          o.parent().after(clone);
+        $.merge(dependent, $('.crm-inline-edit', clone));
       }
+      // Reload this block plus all dependent blocks
+      var update = $.merge([o], dependent);
+      for (var i in update) {
+        $(update[i]).each(function() {
+          var data = $(this).data('edit-params');
+          data.snippet = 1;
+          data.reset = 1;
+          data.class_name = data.class_name.replace('Form', 'Page');
+          data.type = 'page';
+          $(this).closest('.crm-summary-block').load(CRM.url('civicrm/ajax/inline', data), function() {$(this).trigger('load');});
+        });
+      }
+      // Update changelog tab and contact footer
+      $("#tab_log a em").html(response.changeLog.count);
+      $("#crm-record-log").replaceWith(response.changeLog.markup);
+      if ($('#Change_Log div').length) {
+        $('#Change_Log').load($("#tab_log a").attr('href'));
+      }
+
+      CRM.alert('', ts('Saved'), 'success');
     }
-    catch(e) {
+    else {
       //this is called incase of formRule error
       $('form', o).ajaxForm('destroy');
-      $('.crm-container-snippet', o).replaceWith(response);
+      $('.crm-container-snippet', o).replaceWith(response.content);
       var data = o.data('edit-params');
       $('form', o).validate(CRM.validate.params);
       $('form', o).ajaxForm({
-        dataType:'html',
+        dataType:'json',
         method:'POST',
         data: data,
         success: requestHandler
       });
       o.trigger('crmFormError', [response]).trigger('crmFormLoad');
     }
+    // todo deal with timeout/no response
   }; 
 
   /**

@@ -155,7 +155,15 @@ abstract class CRM_Contact_Form_Inline extends CRM_Core_Form {
       CRM_Contact_Form_Inline_Lock::getResponse($this->_contactId)
     );
     $this->postProcessHook();
+    // @see http://www.malsup.com/jquery/form/#file-upload
+    $xhr = $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest'; 
+    if (!$xhr) {
+      echo '<textarea>';
+    }
     echo json_encode($response);
+    if (!$xhr) {
+      echo '</textarea>';
+    }
     CRM_Utils_System::civiExit();
   }
 }
