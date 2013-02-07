@@ -91,6 +91,7 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
 
     //fill in the relationship start date
     $this->webtestFillDate('start_date', '-2 year');
+    $this->webtestFillDate('end_date', '+1 year');
 
     $description = "Well here is some description !!!!";
     $this->type("description", $description);
@@ -101,7 +102,7 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("current-relationships");
 
     //check the status message
-    $this->assertTrue($this->isTextPresent("1 new relationship record created."));
+    $this->assertTrue($this->isTextPresent("New relationship created."));
 
     $this->waitForElementPresent("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='View']");
     $this->click("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='View']");
@@ -178,11 +179,12 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
 
     //fill in the individual
     $this->webtestFillAutocomplete($sortName);
-    
+
     $this->waitForElementPresent("quick-save");
 
     //fill in the relationship start date
     $this->webtestFillDate('start_date', '-2 year');
+    $this->webtestFillDate('end_date', '+1 year');
 
     $description = "Well here is some description !!!!";
     $this->type("description", $description);
@@ -283,7 +285,7 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
 
     //fill in the relationship start date
     $this->webtestFillDate('start_date', '-2 year');
-
+    $this->webtestFillDate('end_date', '+1 year');
     $description = "Well here is some description !!!!";
     $this->type("description", $description);
 
@@ -345,6 +347,7 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
 
     //fill in the relationship start date
     $this->webtestFillDate('start_date', '-2 year');
+    $this->webtestFillDate('end_date', '+1 year');
 
     $description = "Long-standing board member.";
     $this->type("description", $description);
@@ -355,7 +358,7 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("current-relationships");
 
     //check the status message
-    $this->assertTrue($this->isTextPresent("1 new relationship record created."));
+    $this->assertTrue($this->isTextPresent("New relationship created."));
 
     $this->waitForElementPresent("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='View']");
     $this->click("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='View']");

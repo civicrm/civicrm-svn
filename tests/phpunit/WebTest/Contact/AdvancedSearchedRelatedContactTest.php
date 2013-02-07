@@ -135,7 +135,7 @@ class WebTest_Contact_AdvancedSearchedRelatedContactTest extends CiviSeleniumTes
     $this->click('Go');
     $this->waitForPageToLoad('30000');
 
-    $this->click('CIVICRM_QFID_1_4');
+    $this->click('CIVICRM_QFID_1_group_option');
 
     $groupName = "Group " . substr(sha1(rand()), 0, 7);
     $this->type('title', $groupName);
@@ -143,9 +143,8 @@ class WebTest_Contact_AdvancedSearchedRelatedContactTest extends CiviSeleniumTes
     $this->click("_qf_AddToGroup_next-bottom");
     $this->waitForPageToLoad('30000');
 
-    $this->assertTrue($this->isTextPresent("Added Contact(s) to $groupName"));
-    $this->assertTrue($this->isTextPresent('Total Selected Contact(s): 2'));
-    $this->assertTrue($this->isTextPresent('Total Contact(s) added to group: 2'));
+    $this->assertTrue($this->isTextPresent("Added Contacts to ".$groupName));
+    $this->assertTrue($this->isTextPresent('2 contacts added to group'));
     $this->_testSearchResult($relType);
   }
 
@@ -252,12 +251,13 @@ class WebTest_Contact_AdvancedSearchedRelatedContactTest extends CiviSeleniumTes
     $this->select('relationship_type_id', "label={$relType}");
 
     //fill in the individual
-    $this->webtestFillAutocomplete($relatedName);
-    
+    $this->webtestFillAutocomplete($relatedName);    
+
     $this->waitForElementPresent("quick-save");
 
     //fill in the relationship start date
     $this->webtestFillDate('start_date', '-2 year');
+    $this->webtestFillDate('end_date', '+1 year');
 
     $description = "Well here is some description !!!!";
     $this->type("description", $description);
@@ -268,7 +268,7 @@ class WebTest_Contact_AdvancedSearchedRelatedContactTest extends CiviSeleniumTes
     $this->waitForElementPresent("current-relationships");
 
     //check the status message
-    $this->assertTrue($this->isTextPresent("1 new relationship record created."));
+    $this->assertTrue($this->isTextPresent("New relationship created."));
 
     $this->waitForElementPresent("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='View']");
     $this->click("xpath=//div[@id='current-relationships']//div//table/tbody//tr/td[9]/span/a[text()='View']");
@@ -331,6 +331,7 @@ class WebTest_Contact_AdvancedSearchedRelatedContactTest extends CiviSeleniumTes
     $this->type('sort_name', $lastNameSoft.', '.$firstNameSoft);
     $this->click('changeLog');
     $this->waitForElementPresent("log_date_low");
+    $this->select("log_date_relative","value=0");
     $this->webtestFillDate('log_date_low', "-1 day");
     $this->webtestFillDate('log_date_high', "+1 day");
     $this->click('_qf_Advanced_refresh');
