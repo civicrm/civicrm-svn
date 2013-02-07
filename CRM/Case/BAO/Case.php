@@ -584,25 +584,25 @@ t_act.act_type AS case_recent_activity_type ";
 
     if ($type == 'upcoming') {
       // This gets the earliest activity per case that's scheduled within 14 days from now.
-      // Note we have an inner select to get the min activity id in order to remove duplicates in case there are two with the same datetime. In this case we don't really care which one, so min(id) works.
-
+      // Note we have an inner select to get the min activity id in order to remove duplicates in case there are two with the same datetime.
+      // In this case we don't really care which one, so min(id) works.
+      // optimized in CRM-11837
       $query .= " INNER JOIN
 (
-SELECT act3.case_id, act3.minid AS id, act_details.activity_date_time AS desired_date, act_details.activity_type_id,
- act_details.status_id, aov.name AS act_type_name, aov.label AS act_type
- FROM civicrm_view_case_activity_upcoming act_details INNER JOIN
-(
-  SELECT t.case_id, MIN(act2.id) as minid FROM civicrm_view_case_activity_upcoming act2 INNER JOIN
-    (SELECT vu.case_id, MIN(vu.activity_date_time) AS mindate FROM civicrm_view_case_activity_upcoming vu
-     GROUP BY vu.case_id ORDER BY NULL
-    ) AS t
-  ON act2.activity_date_time = t.mindate
-  GROUP BY t.case_id ORDER BY NULL
-) AS act3
- ON act3.minid = act_details.id
- LEFT JOIN civicrm_option_group aog ON aog.name='activity_type'
- LEFT JOIN civicrm_option_value aov ON (aov.option_group_id = aog.id AND aov.value = act_details.activity_type_id)
-) AS t_act ";
+  SELECT case_id, act.id, activity_date_time AS desired_date, activity_type_id, status_id, aov.name AS act_type_name, aov.label AS act_type
+  FROM (
+    SELECT *
+    FROM (
+      SELECT *
+      FROM civicrm_view_case_activity_upcoming
+      ORDER BY activity_date_time ASC, id ASC
+      ) AS upcomingOrdered
+    GROUP BY case_id
+    ) AS act
+  LEFT JOIN civicrm_option_group aog ON aog.name='activity_type'
+  LEFT JOIN civicrm_option_value aov ON ( aov.option_group_id = aog.id AND aov.value = act.activity_type_id )
+) AS t_act
+";
     }
     elseif ($type == 'recent') {
       // Similarly, the most recent activity in the past 14 days, and exclude scheduled.
