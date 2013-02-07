@@ -667,18 +667,9 @@ $.fn.ajaxSubmit = function(options) {
 			}, 100);
 		}
 
-		var toXml = $.parseXML || function(s, doc) { // use parseXML if available (jQuery 1.5+)
-			if (window.ActiveXObject) {
-				doc = new ActiveXObject('Microsoft.XMLDOM');
-				doc.async = 'false';
-				doc.loadXML(s);
-			}
-			else {
-				doc = (new DOMParser()).parseFromString(s, 'text/xml');
-			}
-			return (doc && doc.documentElement && doc.documentElement.nodeName != 'parsererror') ? doc : null;
-		};
-		var parseJSON = $.parseJSON || function(s) {
+		var toXml = $.parseXML;
+
+		var parseJSON = !$.support.changeBubbles ? $.parseJSON : function(s) {
             /*jslint evil:true */
 			return window['eval']('(' + s + ')');
 		};
@@ -698,8 +689,7 @@ $.fn.ajaxSubmit = function(options) {
 			}
 			if (typeof data === 'string') {
 				if (type === 'json' || !type && ct.indexOf('json') >= 0) {
-                    // commenting becuase IE gives error with parseJSON
-                    //data = parseJSON(data);
+                    data = parseJSON(data);
 				} else if (type === "script" || !type && ct.indexOf("javascript") >= 0) {
 					$.globalEval(data);
 				}
