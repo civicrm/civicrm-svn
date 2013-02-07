@@ -222,20 +222,37 @@ function civicrm_api3_activity_get($params) {
   else {
     $activities = _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params, FALSE);
   }
-  if (CRM_Utils_Array::value('return.assignee_contact_id', $params)) {
-    foreach ($activities as $key => $activityArray) {
-      $activities[$key]['assignee_contact_id'] = CRM_Activity_BAO_ActivityAssignment::retrieveAssigneeIdsByActivityId($activityArray['id']);
-    }
+  
+  $returns = CRM_Utils_Array::value('return', $params, array());
+  if (!is_array($returns)) {
+    $returns = str_replace(' ', '', $returns);
+    $returns = explode(',', $returns);
   }
-  if (CRM_Utils_Array::value('return.target_contact_id', $params)) {
-    foreach ($activities as $key => $activityArray) {
-      $activities[$key]['target_contact_id'] = CRM_Activity_BAO_ActivityTarget::retrieveTargetIdsByActivityId($activityArray['id']);
-    }
-  }
+  $returns = array_fill_keys($returns, 1);
+  
   foreach ($params as $n => $v) {
-    // handle the format return.sort_name=1,return.display_name=1
-    if (substr($n, 0, 13) == 'return.custom') {
-      $returnProperties[substr($n, 7)] = $v;
+    if (substr($n, 0, 7) == 'return.') {
+      $returnkey = substr($n, 7);
+      $returns[$returnkey] = $v;
+    }
+  }
+  
+  foreach ($returns as $n => $v) {
+    switch ($n) {
+      case 'assignee_contact_id':
+        foreach ($activities as $key => $activityArray) {
+          $activities[$key]['assignee_contact_id'] = CRM_Activity_BAO_ActivityAssignment::retrieveAssigneeIdsByActivityId($activityArray['id']);
+        }
+        break;
+      case 'target_contact_id':
+        foreach ($activities as $key => $activityArray) {
+          $activities[$key]['target_contact_id'] = CRM_Activity_BAO_ActivityTarget::retrieveTargetIdsByActivityId($activityArray['id']);
+        }
+        break;
+      default:
+        if (substr($n, 0, 6) == 'custom') {
+          $returnProperties[$n] = $v;
+        }
     }
   }
   if (!empty($activities) && (!empty($returnProperties) || !empty($params['contact_id']))) {
