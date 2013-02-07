@@ -1,9 +1,9 @@
 {include file='../CRM/Upgrade/4.3.alpha1.msg_template/civicrm_msg_template.tpl'}
 
 -- CRM-11514 if contribution type name is null, assign it a name
-UPDATE civicrm_contribution_type 
+UPDATE civicrm_contribution_type
 SET name = CONCAT('Unknown_', id)
-WHERE name IS NULL OR TRIM(name) = '';      
+WHERE name IS NULL OR TRIM(name) = '';
 
 -- CRM-8507
 ALTER TABLE civicrm_custom_field
@@ -185,7 +185,7 @@ DELETE FROM civicrm_option_value WHERE option_group_id = @option_group_id_sms_pr
 
 -- CRM-11292
 ALTER TABLE `civicrm_phone`
-ADD `phone_numeric` varchar(32) 
+ADD `phone_numeric` varchar(32)
 COMMENT 'Phone number stripped of all whitespace, letters, and punctuation.'
 AFTER `phone_ext`,
 ADD INDEX phone_numeric_index(`phone_numeric`);
@@ -346,7 +346,7 @@ ADD `min_initial_amount` decimal(20,2) DEFAULT NULL COMMENT 'Minimum initial amo
       ADD `initial_amount_help_text_{$loc}` text COLLATE utf8_unicode_ci COMMENT 'Initial amount help text for partial payment';
   {/foreach}
 {else}
-  ALTER TABLE `civicrm_contribution_page` 
+  ALTER TABLE `civicrm_contribution_page`
     ADD `initial_amount_label` varchar(255) COLLATE utf8_unicode_ci COMMENT 'Initial amount label for partial payment',
     ADD `initial_amount_help_text` text COLLATE utf8_unicode_ci COMMENT 'Initial amount help text for partial payment';
 {/if}
@@ -533,7 +533,7 @@ SELECT @domainContactId := contact_id from civicrm_domain where id = {$domainID}
 
 INSERT INTO `civicrm_financial_account`
   (`id`, `name`, `description`, `is_deductible`, `is_reserved`, `is_active`, `financial_account_type_id`, `contact_id`, accounting_code)
-  SELECT id, name, CONCAT('Default account for ', name), is_deductible, is_reserved, is_active, @opval, @domainContactId, accounting_code 
+  SELECT id, name, CONCAT('Default account for ', name), is_deductible, is_reserved, is_active, @opval, @domainContactId, accounting_code
   FROM `civicrm_financial_type`;
 
 -- CRM-9306 and CRM-11657
@@ -631,7 +631,7 @@ VALUES
 -- End of civiaccounts upgrade
 
 -- CRM-10933
-ALTER TABLE `civicrm_report_instance` 
+ALTER TABLE `civicrm_report_instance`
 ADD COLUMN  `drilldown_id` int(10) unsigned DEFAULT NULL COMMENT 'FK to instance ID drilldown to',
 ADD CONSTRAINT `FK_civicrm_report_instance_drilldown_id` FOREIGN KEY (`drilldown_id`) REFERENCES `civicrm_report_instance` (`id`) ON DELETE SET NULL;
 
@@ -644,8 +644,8 @@ ALTER TABLE `civicrm_membership_log`
 ADD COLUMN `max_related` INT(10) unsigned DEFAULT NULL COMMENT 'Maximum number of related memberships.' AFTER `membership_type_id`;
 
 -- CRM-11358
-INSERT INTO `civicrm_dashboard` 
-(`domain_id`, `label`, `url`, `permission`, `permission_operator`, `column_no`, `is_minimized`, `is_active`, `weight`, `fullscreen_url`, `is_fullscreen`, `is_reserved`) 
+INSERT INTO `civicrm_dashboard`
+(`domain_id`, `label`, `url`, `permission`, `permission_operator`, `column_no`, `is_minimized`, `is_active`, `weight`, `fullscreen_url`, `is_fullscreen`, `is_reserved`)
 SELECT id, '{ts escape="sql"}CiviCRM News{/ts}', 'civicrm/dashlet/blog&reset=1&snippet=5', 'access CiviCRM', NULL, 0, 0, 1, 0, 'civicrm/dashlet/blog&reset=1&snippet=5&context=dashletFullscreen', 1, 1
 FROM `civicrm_domain`;
 
@@ -856,7 +856,7 @@ ALTER TABLE `civicrm_line_item`
 
 -- CRM-11821
 -- update all location info of domain
--- like address, email, phone etc. 
+-- like address, email, phone etc.
 UPDATE civicrm_domain cd
 LEFT JOIN civicrm_loc_block clb ON cd.loc_block_id = clb.id
 LEFT JOIN civicrm_address ca ON clb.address_id = ca.id
@@ -871,3 +871,14 @@ LEFT JOIN civicrm_loc_block clb ON clb.id = cd.loc_block_id;
 
 -- Delete loc_block_id from civicrm_domain
 ALTER TABLE `civicrm_domain` DROP loc_block_id;
+
+-- CRM11818
+-- pledge payments should not be cancelled if the contribution was
+-- compledged but the pledge is cancelled
+UPDATE
+civicrm_pledge_payment pp
+INNER JOIN civicrm_contribution c ON
+c.id = pp.contribution_id AND pp.status_id =3
+AND contribution_status_id = 1
+SET pp.status_id = contribution_status_id
+
