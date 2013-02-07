@@ -102,6 +102,7 @@ class CRM_Upgrade_Incremental_php_FourThree {
 
   //CRM-11636
   function assignFinancialTypeToPriceRecords() {
+    $upgrade = new CRM_Upgrade_Form();
     //here we update price set entries
     $sqlFinancialIds = "SELECT id, name FROM civicrm_financial_type
  WHERE name IN ('Donation', 'Event Fee', 'Member Dues');";
@@ -157,6 +158,7 @@ class CRM_Upgrade_Incremental_php_FourThree {
   }
   
   function createFinancialRecords() {
+    $upgrade = new CRM_Upgrade_Form();
 
     // update civicrm_entity_financial_trxn.amount = civicrm_financial_trxn.total_amount
     $query = "UPDATE civicrm_entity_financial_trxn ceft

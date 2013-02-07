@@ -491,41 +491,41 @@ VALUES
 
 -- Insert an entry for financial_account_type in civicrm_option_group and for the the following financial account types in civicrm_option_value as per CRM-8425
 INSERT INTO
-   `civicrm_option_group` (`name`, `title`, `is_reserved`, `is_active`)
+   `civicrm_option_group` (`name`, {localize field='title'}title{/localize}, `is_reserved`, `is_active`)
 VALUES
-   ('financial_account_type', '{localize}Financial Account Type{/localize}', 1, 1),
-   ('account_relationship', '{localize}Account Relationship{/localize}', 1, 1),
-   ('financial_item_status', '{localize}Financial Item Status{/localize}', 1, 1),
-   ('batch_mode', '{localize}Batch Mode{/localize}', 1, 1);
+   ('financial_account_type', {localize}'{ts escape="sql"}Financial Account Type{/ts}'{/localize}, 1, 1),
+   ('account_relationship', {localize}'{ts escape="sql"}Account Relationship{/ts}'{/localize}, 1, 1),
+   ('financial_item_status', {localize}'{ts escape="sql"}Financial Item Status{/ts}'{/localize}, 1, 1),
+   ('batch_mode', {localize}'{ts escape="sql"}Batch Mode{/ts}'{/localize}, 1, 1);
 
 SELECT @option_group_id_fat := max(id) from civicrm_option_group where name = 'financial_account_type';
 SELECT @option_group_id_arel           := max(id) from civicrm_option_group where name = 'account_relationship';
 SELECT @option_group_id_financial_item_status := max(id) from civicrm_option_group where name = 'financial_item_status';
 
 INSERT INTO
-   `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`)
+   `civicrm_option_value` (`option_group_id`, {localize field='label'}label{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, {localize field='description'}`description`{/localize}, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`)
 VALUES
-   (@option_group_id_fat, '{ts escape="sql"}Asset{/ts}', 1, 'Asset', NULL, 0, 0, 1, 'Things you own', 0, 1, 1, 2, NULL),
-   (@option_group_id_fat, '{ts escape="sql"}Liability{/ts}', 2, 'Liability', NULL, 0, 0, 2, 'Things you own, like a grant still to be disbursed', 0, 1, 1, 2, NULL),
-   (@option_group_id_fat, '{ts escape="sql"}Revenue{/ts}', 3, 'Revenue', NULL, 0, 1, 3, 'Income from contributions and sales of tickets and memberships', 0, 1, 1, 2, NULL),
-   (@option_group_id_fat, '{ts escape="sql"}Cost of Sales{/ts}', 4, 'Cost of Sales', NULL, 0, 0, 4, 'Costs incurred to get revenue, e.g. premiums for donations, dinner for a fundraising dinner ticket', 0, 1, 1, 2, NULL),
-   (@option_group_id_fat, '{ts escape="sql"}Expenses{/ts}', 5, 'Expenses', NULL, 0, 0, 5, 'Things that are paid for that are consumable, e.g. grants disbursed', 0, 1, 1, 2, NULL),
+   (@option_group_id_fat, {localize}'{ts escape="sql"}Asset{/ts}'{/localize}, 1, 'Asset', NULL, 0, 0, 1, {localize}'Things you own'{/localize}, 0, 1, 1, 2, NULL),
+   (@option_group_id_fat, {localize}'{ts escape="sql"}Liability{/ts}'{/localize}, 2, 'Liability', NULL, 0, 0, 2, {localize}'Things you own, like a grant still to be disbursed'{/localize}, 0, 1, 1, 2, NULL),
+   (@option_group_id_fat, {localize}'{ts escape="sql"}Revenue{/ts}'{/localize}, 3, 'Revenue', NULL, 0, 1, 3, {localize}'Income from contributions and sales of tickets and memberships'{/localize}, 0, 1, 1, 2, NULL),
+   (@option_group_id_fat, {localize}'{ts escape="sql"}Cost of Sales{/ts}'{/localize}, 4, 'Cost of Sales', NULL, 0, 0, 4, {localize}'Costs incurred to get revenue, e.g. premiums for donations, dinner for a fundraising dinner ticket'{/localize}, 0, 1, 1, 2, NULL),
+   (@option_group_id_fat, {localize}'{ts escape="sql"}Expenses{/ts}'{/localize}, 5, 'Expenses', NULL, 0, 0, 5, {localize}'Things that are paid for that are consumable, e.g. grants disbursed'{/localize}, 0, 1, 1, 2, NULL),
 
 -- Financial account relationship
-   (@option_group_id_arel, '{ts escape="sql"}Income Account is{/ts}', 1, 'Income Account is', NULL, 0, 1, 1, 'Income Account is', 0, 1, 1, 2, NULL),
-   (@option_group_id_arel, '{ts escape="sql"}Credit/Contra Account is{/ts}', 2, 'Credit/Contra Account is', NULL, 0, 0, 2, 'Credit/Contra Account is', 0, 1, 0, 2, NULL),
-   (@option_group_id_arel, '{ts escape="sql"}Accounts Receivable Account is{/ts}', 3, 'Accounts Receivable Account is', NULL, 0, 0, 3, 'Accounts Receivable Account is', 0, 1, 1, 2, NULL),
-   (@option_group_id_arel, '{ts escape="sql"}Credit Liability Account is{/ts}', 4, 'Credit Liability Account is', NULL, 0, 0, 4, 'Credit Liability Account is', 0, 1, 0, 2, NULL),
-   (@option_group_id_arel, '{ts escape="sql"}Expense Account is{/ts}', 5, 'Expense Account is', NULL, 0, 0, 5, 'Expense Account is', 0, 1, 1, 2, NULL),
-   (@option_group_id_arel, '{ts escape="sql"}Asset Account is{/ts}', 6, 'Asset Account is', NULL, 0, 0, 6, 'Asset Account is', 0, 1, 1, 2, NULL),
-   (@option_group_id_arel, '{ts escape="sql"}Cost of Sales Account is{/ts}', 7, 'Cost of Sales Account is', NULL, 0, 0, 7, 'Cost of Sales Account is', 0, 1, 1, 2, NULL),
-   (@option_group_id_arel, '{ts escape="sql"}Premiums Inventory Account is{/ts}', 8, 'Premiums Inventory Account is', NULL, 0, 0, 8, 'Premiums Inventory Account is', 0, 1, 1, 2, NULL),
-   (@option_group_id_arel, '{ts escape="sql"}Discounts Account is{/ts}', 9, 'Discounts Account is', NULL, 0, 0, 9, 'Discounts Account is', 0, 1, 1, 2, NULL),
+   (@option_group_id_arel, {localize}'{ts escape="sql"}Income Account is{/ts}'{/localize}, 1, 'Income Account is', NULL, 0, 1, 1, {localize}'Income Account is'{/localize}, 0, 1, 1, 2, NULL),
+   (@option_group_id_arel, {localize}'{ts escape="sql"}Credit/Contra Account is{/ts}'{/localize}, 2, 'Credit/Contra Account is', NULL, 0, 0, 2, {localize}'Credit/Contra Account is'{/localize}, 0, 1, 0, 2, NULL),
+   (@option_group_id_arel, {localize}'{ts escape="sql"}Accounts Receivable Account is{/ts}'{/localize}, 3, 'Accounts Receivable Account is', NULL, 0, 0, 3, {localize}'Accounts Receivable Account is'{/localize}, 0, 1, 1, 2, NULL),
+   (@option_group_id_arel, {localize}'{ts escape="sql"}Credit Liability Account is{/ts}'{/localize}, 4, 'Credit Liability Account is', NULL, 0, 0, 4, {localize}'Credit Liability Account is'{/localize}, 0, 1, 0, 2, NULL),
+   (@option_group_id_arel, {localize}'{ts escape="sql"}Expense Account is{/ts}'{/localize}, 5, 'Expense Account is', NULL, 0, 0, 5, {localize}'Expense Account is'{/localize}, 0, 1, 1, 2, NULL),
+   (@option_group_id_arel, {localize}'{ts escape="sql"}Asset Account is{/ts}'{/localize}, 6, 'Asset Account is', NULL, 0, 0, 6, {localize}'Asset Account is'{/localize}, 0, 1, 1, 2, NULL),
+   (@option_group_id_arel, {localize}'{ts escape="sql"}Cost of Sales Account is{/ts}'{/localize}, 7, 'Cost of Sales Account is', NULL, 0, 0, 7, {localize}'Cost of Sales Account is'{/localize}, 0, 1, 1, 2, NULL),
+   (@option_group_id_arel, {localize}'{ts escape="sql"}Premiums Inventory Account is{/ts}'{/localize}, 8, 'Premiums Inventory Account is', NULL, 0, 0, 8, {localize}'Premiums Inventory Account is'{/localize}, 0, 1, 1, 2, NULL),
+   (@option_group_id_arel, {localize}'{ts escape="sql"}Discounts Account is{/ts}'{/localize}, 9, 'Discounts Account is', NULL, 0, 0, 9, {localize}'Discounts Account is'{/localize}, 0, 1, 1, 2, NULL),
 
 -- Financial Item Status
-   (@option_group_id_financial_item_status, '{ts escape="sql"}Paid{/ts}', 1, 'Paid', NULL, 0, 0, 1, 'Paid', 0, 1, 1, 2, NULL),
-   (@option_group_id_financial_item_status, '{ts escape="sql"}Partially paid{/ts}', 2, 'Partially paid', NULL, 0, 0, 2, 'Partially paid', 0, 1, 1, 2, NULL),
-   (@option_group_id_financial_item_status, '{ts escape="sql"}Unpaid{/ts}', 3, 'Unpaid', NULL, 0, 0, 1, 'Unpaid', 0, 1, 1, 2, NULL);
+   (@option_group_id_financial_item_status, {localize}'{ts escape="sql"}Paid{/ts}'{/localize}, 1, 'Paid', NULL, 0, 0, 1, {localize}'Paid'{/localize}, 0, 1, 1, 2, NULL),
+   (@option_group_id_financial_item_status, {localize}'{ts escape="sql"}Partially paid{/ts}'{/localize}, 2, 'Partially paid', NULL, 0, 0, 2, {localize}'Partially paid'{/localize}, 0, 1, 1, 2, NULL),
+   (@option_group_id_financial_item_status, {localize}'{ts escape="sql"}Unpaid{/ts}'{/localize}, 3, 'Unpaid', NULL, 0, 0, 1, {localize}'Unpaid'{/localize}, 0, 1, 1, 2, NULL);
 
 -- Data migration from civicrm_contibution_type to civicrm_financial_account, civicrm_financial_type, civicrm_entity_financial_account
 SELECT @opval := value FROM civicrm_option_value WHERE name = 'Revenue' and option_group_id = @option_group_id_fat;
@@ -645,8 +645,8 @@ ADD COLUMN `max_related` INT(10) unsigned DEFAULT NULL COMMENT 'Maximum number o
 
 -- CRM-11358
 INSERT INTO `civicrm_dashboard`
-(`domain_id`, `label`, `url`, `permission`, `permission_operator`, `column_no`, `is_minimized`, `is_active`, `weight`, `fullscreen_url`, `is_fullscreen`, `is_reserved`)
-SELECT id, '{ts escape="sql"}CiviCRM News{/ts}', 'civicrm/dashlet/blog&reset=1&snippet=5', 'access CiviCRM', NULL, 0, 0, 1, 0, 'civicrm/dashlet/blog&reset=1&snippet=5&context=dashletFullscreen', 1, 1
+(`domain_id`, {localize field='label'}`label`{/localize}, `url`, `permission`, `permission_operator`, `column_no`, `is_minimized`, `is_active`, `weight`, `fullscreen_url`, `is_fullscreen`, `is_reserved`)
+SELECT id, {localize}'{ts escape="sql"}CiviCRM News{/ts}'{/localize}, 'civicrm/dashlet/blog&reset=1&snippet=5', 'access CiviCRM', NULL, 0, 0, 1, 0, 'civicrm/dashlet/blog&reset=1&snippet=5&context=dashletFullscreen', 1, 1
 FROM `civicrm_domain`;
 
 INSERT INTO `civicrm_dashboard_contact` (dashboard_id, contact_id, column_no, is_active)
@@ -826,9 +826,9 @@ SELECT @option_group_id_cs := MAX(id) FROM civicrm_option_group WHERE name = 'co
 SELECT @max_weight := MAX(weight) FROM civicrm_option_value WHERE option_group_id = @option_group_id_cs;
 
 INSERT INTO
-  `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`)
+  `civicrm_option_value` (`option_group_id`, {localize field='label'}label{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`)
 VALUES
-  (@option_group_id_cs, '{ts escape="sql"}Refunded{/ts}', @max_weight + 1, 'Refunded', NULL, 0, NULL, @max_weight + 1, NULL, 0, 1, 1, NULL, NULL);
+  (@option_group_id_cs, {localize}'{ts escape="sql"}Refunded{/ts}'{/localize}, @max_weight + 1, 'Refunded', NULL, 0, NULL, @max_weight + 1, 0, 1, 1, NULL, NULL);
 
 -- Payprocs from extensions may have long titles
 ALTER TABLE civicrm_payment_processor_type MODIFY COLUMN title varchar(127);
