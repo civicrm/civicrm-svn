@@ -308,11 +308,11 @@
           var items = [];
           if (paletteFieldsByEntitySection[entitySection]) {
             _.each(paletteFieldsByEntitySection[entitySection], function(paletteFieldModel, k) {
-              items.push({data: paletteFieldModel.getLabel(), attr: {class: 'crm-designer-palette-field', "data-plm-cid": paletteFieldModel.cid}});
+              items.push({data: paletteFieldModel.getLabel(), attr: {'class': 'crm-designer-palette-field', 'data-plm-cid': paletteFieldModel.cid}});
             });
           }
           if (section.is_addable) {
-            items.push({data: 'placeholder', attr: {class: 'crm-designer-palette-add', 'data-entity': ufEntityModel.get('entity_name'), 'data-section': sectionKey}});
+            items.push({data: 'placeholder', attr: {'class': 'crm-designer-palette-add', 'data-entity': ufEntityModel.get('entity_name'), 'data-section': sectionKey}});
           }
           if (items.length > 0) {
             treeData.push({data: section.title, children: items});
