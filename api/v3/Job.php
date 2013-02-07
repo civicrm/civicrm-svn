@@ -289,21 +289,11 @@ function _civicrm_api3_job_update_greeting_spec(&$params) {
     'api.required' => 1,
     'title' => 'Contact Type',
     'type' => CRM_Utils_Type::T_STRING,
-    'options' => array(
-      'Individual' => 'Individual',
-      'Household' => 'Household',
-      'Organization' => 'Organization'
-    )
   );
   $params['gt'] = array(
       'api.required' => 1,
       'title' => 'Greeting Type',
       'type' => CRM_Utils_Type::T_STRING,
-      'options' => array(
-          'email_greeting' => 'email_greeting',
-          'postal_greeting' => 'postal_greeting',
-          'addressee' => 'addressee'
-      )
   );
 }
 
@@ -318,8 +308,8 @@ function _civicrm_api3_job_update_greeting_spec(&$params) {
  *
  */
 function civicrm_api3_job_process_pledge($params) {
-  // *** Uncomment the next line if you want automated reminders to be sent                                                                                                                               
-  // $params['send_reminders'] = true;  
+  // *** Uncomment the next line if you want automated reminders to be sent
+  // $params['send_reminders'] = true;
   $result = CRM_Pledge_BAO_Pledge::updatePledgeStatus($params);
 
   if ($result['is_error'] == 0) {
