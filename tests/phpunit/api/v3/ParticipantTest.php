@@ -1,6 +1,4 @@
 <?php
-// $Id$
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.2                                                |
@@ -25,13 +23,15 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
+*/
+
+require_once 'CiviTest/CiviUnitTestCase.php';
+
+/**
+ * Test class for Batch API - civicrm_participant_*
+ *
+ *  @package CiviCRM_APIv3
  */
-
-
-
-
-
-
 require_once 'CRM/Utils/DeprecatedUtils.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 class api_v3_ParticipantTest extends CiviUnitTestCase {

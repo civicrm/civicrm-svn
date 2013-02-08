@@ -36,7 +36,7 @@ require_once 'CiviTest/CiviUnitTestCase.php';
 /**
  *  Test APIv3 civicrm_case_* functions
  *
- *  @package   CiviCRM
+ *  @package CiviCRM_APIv3
  */
 class api_v3_CaseTest extends CiviUnitTestCase {
   protected $_params;
