@@ -168,6 +168,8 @@ class WebTest_Profile_SearchTest extends CiviSeleniumTestCase {
     // sleep 5 to make sure jQuery is not hiding field after page load
     sleep(5);
     $this->assertTrue($this->isElementPresent("visibility"), 'Visibility field not present when editing existing profile field.');
+    $this->click("xpath=//tr[@id='profile_visibility']/td[1]/a");
+    $this->waitForElementPresent("xpath=//div[@id='crm-notification-container']/div/div[2]/p[2]");
     $this->assertTrue($this->isTextPresent("Is this field hidden from other users"));
     $this->select('visibility', 'value=Public Pages and Listings');
   }
