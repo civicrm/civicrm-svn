@@ -2345,7 +2345,7 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
    * @return None
    * @access public
    */
-  public function commonCompose(&$form) {
+  public static function commonCompose(&$form) {
     //get the tokens.
     $tokens = CRM_Core_SelectValues::contactTokens();
 

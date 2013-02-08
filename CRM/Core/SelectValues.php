@@ -805,7 +805,7 @@ class CRM_Core_SelectValues {
    *
    * @static
    */
-  function getNumericOptions( $start = 0, $end = 10 ) {
+  public static function getNumericOptions($start = 0, $end = 10) {
     for ($i = $start; $i <= $end; $i++) {
         $numericOptions[$i] = $i;
     }
