@@ -130,7 +130,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form {
     $this->assign('context', $this->_context);
 
     if ($this->_id) {
-      $this->_memType = CRM_Core_DAO::getFieldValue("CRM_Member_DAO_Membership", $this->_id, "membership_type_id");
+      $this->_memType = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_Membership', $this->_id, 'membership_type_id');
       $this->_membershipIDs[] = $this->_id;
     }
 
@@ -140,7 +140,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form {
     if ($this->_mode) {
       $this->_paymentProcessor = array('billing_mode' => 1);
       $validProcessors = array();
-      $processors = CRM_Core_PseudoConstant::paymentProcessor(FALSE, FALSE, "billing_mode IN ( 1, 3 )");
+      $processors = CRM_Core_PseudoConstant::paymentProcessor(FALSE, FALSE, 'billing_mode IN ( 1, 3 )');
 
       foreach ($processors as $ppID => $label) {
         $paymentProcessor = CRM_Financial_BAO_PaymentProcessor::getPayment($ppID, $this->_mode);
@@ -226,7 +226,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form {
     }
 
     // when custom data is included in this page
-    if (CRM_Utils_Array::value("hidden_custom", $_POST)) {
+    if (CRM_Utils_Array::value('hidden_custom', $_POST)) {
       CRM_Custom_Form_CustomData::preProcess($this);
       CRM_Custom_Form_CustomData::buildQuickForm($this);
       CRM_Custom_Form_CustomData::setDefaultValues($this);
@@ -283,16 +283,16 @@ class CRM_Member_Form_Membership extends CRM_Member_Form {
     }
 
     if (is_numeric($this->_memType)) {
-      $defaults["membership_type_id"] = array();
-      $defaults["membership_type_id"][0] = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType',
+      $defaults['membership_type_id'] = array();
+      $defaults['membership_type_id'][0] = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType',
         $this->_memType,
         'member_of_contact_id',
         'id'
       );
-      $defaults["membership_type_id"][1] = $this->_memType;
+      $defaults['membership_type_id'][1] = $this->_memType;
     }
     else {
-      $defaults["membership_type_id"] = $this->_memType;
+      $defaults['membership_type_id'] = $this->_memType;
     }
 
     $defaults['num_terms'] = 1;
@@ -356,7 +356,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form {
     }
     $this->assign('alreadyAutoRenew', $alreadyAutoRenew);
 
-    $this->assign("member_is_test", CRM_Utils_Array::value('member_is_test', $defaults));
+    $this->assign('member_is_test', CRM_Utils_Array::value('member_is_test', $defaults));
 
     $this->assign('membership_status_id', CRM_Utils_Array::value('status_id', $defaults));
 
@@ -370,7 +370,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form {
         $fields[$name] = 1;
       }
       $names = array(
-        "first_name", "middle_name", "last_name", "street_address-{$this->_bltID}",
+        'first_name', 'middle_name', 'last_name', "street_address-{$this->_bltID}",
         "city-{$this->_bltID}", "postal_code-{$this->_bltID}", "country_id-{$this->_bltID}",
         "state_province_id-{$this->_bltID}",
       );
@@ -380,7 +380,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form {
       $fields["state_province-{$this->_bltID}"] = 1;
       $fields["country-{$this->_bltID}"] = 1;
       $fields["email-{$this->_bltID}"] = 1;
-      $fields["email-Primary"] = 1;
+      $fields['email-Primary'] = 1;
 
       if ($this->_contactID) {
         CRM_Core_BAO_UFGroup::setProfileDefaults($this->_contactID, $fields, $this->_defaults);
@@ -388,14 +388,14 @@ class CRM_Member_Form_Membership extends CRM_Member_Form {
 
       // use primary email address if billing email address is empty
       if (empty($this->_defaults["email-{$this->_bltID}"]) &&
-        !empty($this->_defaults["email-Primary"])
+        !empty($this->_defaults['email-Primary'])
       ) {
-        $defaults["email-{$this->_bltID}"] = $this->_defaults["email-Primary"];
+        $defaults["email-{$this->_bltID}"] = $this->_defaults['email-Primary'];
       }
 
       foreach ($names as $name) {
         if (!empty($this->_defaults[$name])) {
-          $defaults["billing_" . $name] = $this->_defaults[$name];
+          $defaults['billing_' . $name] = $this->_defaults[$name];
         }
       }
 
@@ -895,13 +895,13 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
         if (CRM_Utils_Array::value('credit_card_number', $params) &&
           !CRM_Utils_Rule::creditCardNumber($params['credit_card_number'], $params['credit_card_type'])
         ) {
-          $errors['credit_card_number'] = ts("Please enter a valid Credit Card Number");
+          $errors['credit_card_number'] = ts('Please enter a valid Credit Card Number');
         }
 
         if (CRM_Utils_Array::value('cvv2', $params) &&
           !CRM_Utils_Rule::cvv($params['cvv2'], $params['credit_card_type'])
         ) {
-          $errors['cvv2'] = ts("Please enter a valid Credit Card Verification Number");
+          $errors['cvv2'] = ts('Please enter a valid Credit Card Verification Number');
         }
       }
     }
@@ -1016,7 +1016,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
         array_search('Failed', CRM_Contribute_PseudoConstant::contributionStatus(NULL, 'name'))
       )
     ) {
-      $errors['contribution_status_id'] = ts("Please select a valid payment status before updating.");
+      $errors['contribution_status_id'] = ts('Please select a valid payment status before updating.');
     }
 
     return empty($errors) ? TRUE : $errors;
@@ -1095,19 +1095,20 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       $params['total_amount'] = CRM_Utils_Array::value('amount', $this->_params);
       $submittedFinancialType = CRM_Utils_Array::value('financial_type_id', $formValues);
       $isPaymentRecorded = CRM_Utils_Array::value('record_contribution', $formValues);
-      
-      foreach ($lineItem[$priceSetId] as &$li) {
-        if (CRM_Utils_Array::value('membership_type_id', $li)) {
-          if (CRM_Utils_Array::value('membership_num_terms', $li)) {
-            $termsByType[$li['membership_type_id']] = $li['membership_num_terms'];
+      if (!empty($lineItem[$priceSetId])) {
+        foreach ($lineItem[$priceSetId] as &$li) {
+          if (CRM_Utils_Array::value('membership_type_id', $li)) {
+            if (CRM_Utils_Array::value('membership_num_terms', $li)) {
+              $termsByType[$li['membership_type_id']] = $li['membership_num_terms'];
+            }
           }
-        }
-        
-        ///CRM-11529 for quick config backoffice transactions 
-        //when financial_type_id is passed in form, update the 
-        //lineitems with the financial type selected in form
-        if ($isPaymentRecorded && $isQuickConfig && $submittedFinancialType) {
-          $li['financial_type_id'] = $submittedFinancialType;
+          
+          ///CRM-11529 for quick config backoffice transactions 
+          //when financial_type_id is passed in form, update the 
+          //lineitems with the financial type selected in form
+          if ($isPaymentRecorded && $isQuickConfig && $submittedFinancialType) {
+            $li['financial_type_id'] = $submittedFinancialType;
+          }
         }
       }
     }
@@ -1307,8 +1308,8 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       $fields = array();
 
       // set email for primary location.
-      $fields["email-Primary"] = 1;
-      $formValues["email-5"] = $formValues["email-Primary"] = $this->_memberEmail;
+      $fields['email-Primary'] = 1;
+      $formValues['email-5'] = $formValues['email-Primary'] = $this->_memberEmail;
       $params['register_date'] = $now;
 
       // now set the values for the billing location.
@@ -1596,11 +1597,11 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       }
     }
 
-    if (!empty($lineItem)) {
+    if (!empty($lineItem[$priceSetId])) {
       foreach ($lineItem[$priceSetId] as & $priceFieldOp) {
         if (CRM_Utils_Array::value('membership_type_id', $priceFieldOp)) {
           $priceFieldOp['start_date'] = $membershipTypeValues[$priceFieldOp['membership_type_id']]['start_date'] ? CRM_Utils_Date::customFormat($membershipTypeValues[$priceFieldOp['membership_type_id']]['start_date'], '%d%f %b, %Y') : '-';
-
+          
           $priceFieldOp['end_date'] = $membershipTypeValues[$priceFieldOp['membership_type_id']]['end_date'] ? CRM_Utils_Date::customFormat($membershipTypeValues[$priceFieldOp['membership_type_id']]['end_date'], '%d%f %b, %Y') : '-';
         }
         else {

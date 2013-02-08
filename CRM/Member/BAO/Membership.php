@@ -2700,7 +2700,7 @@ WHERE      civicrm_membership.is_test = 0";
     }
 
     $fieldID = key($qf->_priceSet['fields']);
-    $qf->_params['price_' . $fieldID] = $editedResults['id'];
+    $qf->_params['price_' . $fieldID] = CRM_Utils_Array::value('id', $editedResults);
   }
 }
 
