@@ -241,7 +241,7 @@ class WebTest_Event_TellAFriendTest extends CiviSeleniumTestCase {
     $this->fillRichTextField("intro_text", $registerIntro);
 
     // enable confirmation email
-    $this->click("CIVICRM_QFID_1_2");
+    $this->click('xpath=//fieldset[@id="mail"]/div/table/tbody/tr/td[2]/label[contains(text(), "Yes")]');
     $this->type("confirm_from_name", "Jane Doe");
     $this->type("confirm_from_email", "jane.doe@example.org");
 
