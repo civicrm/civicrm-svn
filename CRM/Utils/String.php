@@ -487,6 +487,7 @@ class CRM_Utils_String {
    * CMS to output JS/CSS tags).
    */
   static function addJqueryFiles(&$html) {
+    CRM_Core_Resources::singleton()->addCoreResources('html-header');
     return CRM_Core_Region::instance('html-header')->render('', FALSE) . $html;
   }
 
