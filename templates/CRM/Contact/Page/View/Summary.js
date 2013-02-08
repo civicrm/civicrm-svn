@@ -88,7 +88,9 @@
         CRM.alert('', ts('Saved'), 'success');
       }
       // Update changelog tab and contact footer
-      $("#tab_log a em").html(response.changeLog.count);
+      if (response.changeLog.count) {
+        $("#tab_log a em").html(response.changeLog.count);
+      }
       $("#crm-record-log").replaceWith(response.changeLog.markup);
       if ($('#Change_Log div').length) {
         $('#Change_Log').load($("#tab_log a").attr('href'));

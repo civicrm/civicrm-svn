@@ -101,7 +101,7 @@ class CRM_Logging_ReportDetail extends CRM_Report_Form {
     );
   }
 
-  function buildQuery() {}
+  function buildQuery($applyLimit = TRUE) {}
 
   function buildRows($sql, &$rows) {
     // safeguard for when there aren’t any log entries yet

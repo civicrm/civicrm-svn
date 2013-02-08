@@ -82,9 +82,9 @@
     <div class="crm-search-results">
       {if $resultFile}
         {if $resultContext}
-           {include file=$resultFile context=$resultContext}
+          {include file=$resultFile context=$resultContext}
         {else}
-           {include file=$resultFile}
+          {include file=$resultFile}
         {/if}
       {else}
         {include file="CRM/Contact/Form/Selector.tpl"}

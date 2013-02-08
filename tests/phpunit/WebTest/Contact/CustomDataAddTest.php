@@ -284,7 +284,7 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . "civicrm/admin/setting/misc?reset=1");
     $this->click("CIVICRM_QFID_1_logging");
     $this->click("_qf_Miscellaneous_next-top");
-    $this->waitForTextPresent("Changes Saved");
+    $this->waitForPageToLoad("30000");
 
     // Create new Custom Field Set
     $this->open($this->sboxPath . 'civicrm/admin/custom/group?reset=1');
@@ -348,7 +348,7 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     if ($this->isTextPresent("Latitude")) {
       $this->type("address_1_geo_code_1", "1234");
       $this->type("address_1_geo_code_2", "5678");
-}
+    }
 
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
@@ -357,14 +357,14 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     $this->assertTrue($this->isTextPresent("{$firstName} {$lastName} has been created."));
 
     //Update the custom field
-    $this->click("xpath=//div[@class='crm-actions-ribbon']/ul/li[2]/a/span[contains(text(), 'Edit')]");
+    $this->click("css=a.edit.button");
     $this->waitForPageToLoad("30000");
     $this->click("xpath=//table//tr/td/label[text()=\"$customField\"]");
     $value1 = "custom_1".rand();
     $this->type("xpath=//table//tr/td/label[text()=\"$customField\"]/../following-sibling::td/input",$value1);
     $this->click("_qf_Contact_upload_view-bottom");
     $this->waitForPageToLoad("30000");
-    $this->click("xpath=//li[@id='tab_log']/a");
+    $this->click("css=#tab_log a");
     
     //check the changed log
     $this->waitForElementPresent("xpath=//div[@id='instance_data']/div[2]/table/tbody/tr[1]/td[4]/a[contains(text(), '$firstName $lastName')]");
