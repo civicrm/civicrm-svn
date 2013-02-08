@@ -1511,10 +1511,11 @@ function _civicrm_api3_validate_string(&$params, &$fieldname, &$fieldInfo) {
     if (!empty ($fieldInfo['options'])) {
       // Validate & swap out any pseudoconstants / options
       $options = $fieldInfo['options'];
+      $lowerCaseOptions = array_map("strtolower", $options);
       // If value passed is not a key, it may be a label
       // Try to lookup key from label - if it can't be found throw error
-      if (!isset($options[$value]) ) {
-        if (!(in_array($value, $options))) {
+      if (!isset($options[strtolower($value)]) && !isset($options[$value]) ) {
+        if (!in_array(strtolower($value), $lowerCaseOptions)) {
           throw new Exception("$fieldname `$value` is not valid.");
         }
       }
