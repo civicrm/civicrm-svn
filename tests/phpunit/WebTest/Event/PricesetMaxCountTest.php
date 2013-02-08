@@ -44,7 +44,8 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
 
     // create priceset
     $priceset = 'Price - ' . substr(sha1(rand()), 0, 7);
-    $this->_testAddSet($priceset);
+    $financialType = 'Donation';
+    $this->_testAddSet($priceset, $financialType);
 
     // create price fields
     $fields = array(
@@ -241,7 +242,8 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
 
     // create priceset
     $priceset = 'Price - ' . substr(sha1(rand()), 0, 7);
-    $this->_testAddSet($priceset);
+    $financialType = 'Donation';
+    $this->_testAddSet($priceset, $financialType);
 
     // create price fields
     $fields = array(
@@ -446,7 +448,8 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
 
     // create priceset
     $priceset = 'Price - ' . substr(sha1(rand()), 0, 7);
-    $this->_testAddSet($priceset);
+    $financialType = 'Donation';
+    $this->_testAddSet($priceset, $financialType);
 
     // create price fields
     $fields = array(
@@ -733,7 +736,8 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
 
     // create priceset
     $priceset = 'Price - ' . substr(sha1(rand()), 0, 7);
-    $this->_testAddSet($priceset);
+    $financialType = 'Donation';
+    $this->_testAddSet($priceset, $financialType);
 
     // create price fields
     $fields = array(
@@ -1015,14 +1019,20 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->_checkConfirmationAndRegister();
   }
 
-  function _testAddSet($setTitle) {
+  function _testAddSet($setTitle, $financialType = NULL) {
     $this->open($this->sboxPath . 'civicrm/admin/price?reset=1&action=add');
     $this->waitForPageToLoad('30000');
     $this->waitForElementPresent('_qf_Set_next-bottom');
 
     // Enter Priceset fields (Title, Used For ...)
     $this->type('title', $setTitle);
-    $this->check('extends[1]');
+    $this->check('extends_1');
+
+    if ($financialType) {
+      $this->select("css=select.form-select", "label={$financialType}");
+    }
+
+    $this->click("xpath=//form[@id='Set']/div[3]/table/tbody/tr[4]/td[2]/select");
     $this->type('help_pre', 'This is test priceset.');
 
     $this->assertChecked('is_active', 'Verify that Is Active checkbox is set.');
@@ -1144,7 +1154,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     // Go to Fees tab
     $this->click('link=Fees');
     $this->waitForElementPresent('_qf_Fee_upload-bottom');
-    $this->click('CIVICRM_QFID_1_2');
+    $this->click('xpath=//form[@id="Fee"]/div[2]/table/tbody/tr[2]/td[2]/label[contains(text(), "Yes")]');
     $processorName = $params['payment_processor'];
     $this->click("xpath=//tr[@class='crm-event-manage-fee-form-block-payment_processor']/td[2]/label[text()='$processorName']");
     $this->select('financial_type_id', 'value=4');
@@ -1178,7 +1188,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->fillRichTextField('intro_text', 'Fill in all the fields below and click Continue.');
 
     // enable confirmation email
-    $this->click('CIVICRM_QFID_1_2');
+    $this->click('CIVICRM_QFID_1_is_email_confirm');
     $this->type('confirm_from_name', 'Jane Doe');
     $this->type('confirm_from_email', 'jane.doe@example.org');
 
