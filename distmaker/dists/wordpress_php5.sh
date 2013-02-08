@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 # This script assumes
 # that DAOs are generated
@@ -14,7 +15,7 @@ else
 	. $CFFILE	
 fi
 
-RSYNCOPTIONS="-avC --exclude=svn --include=core"
+RSYNCOPTIONS="-avC --exclude=svn --exclude=.git --exclude=_ORIGINAL_ --include=core"
 RSYNCCOMMAND="$DM_RSYNC $RSYNCOPTIONS"
 SRC=$DM_SOURCEDIR
 TRG=$DM_TMPDIR/civicrm
@@ -37,7 +38,7 @@ if [ ! -d $TRG/civicrm/civicrm ] ; then
 fi
 
 # copy all the stuff
-for CODE in css i js l10n packages PEAR templates bin joomla CRM api drupal extern Reports install; do
+for CODE in css i js packages PEAR templates bin CRM api extern Reports install; do
   echo $CODE
   [ -d $SRC/$CODE ] && $RSYNCCOMMAND $SRC/$CODE $TRG/civicrm/civicrm
 done
@@ -57,6 +58,10 @@ fi
 for F in $SRC/sql/civicrm*.mysql $SRC/sql/counties.US.sql.gz $SRC/sql/case_sample*.mysql; do
 	cp $F $TRG/civicrm/civicrm/sql
 done
+
+set +e
+rm -rf $TRG/civicrm/civicrm/sql/civicrm_*.??_??.mysql
+set -e
 
 for F in $SRC/WordPress/*; do 
 	cp $F $TRG/civicrm
@@ -79,6 +84,6 @@ function civicrmVersion( ) {
 
 # gen tarball
 cd $TRG
-$DM_ZIP -r -9 $DM_TARGETDIR/civicrm-$DM_VERSION-wordpress.zip * -x '*/l10n/*' -x '*/sql/civicrm_*.??_??.mysql'
+$DM_ZIP -r -9 $DM_TARGETDIR/civicrm-$DM_VERSION-wordpress.zip *
 # clean up
 rm -rf $TRG

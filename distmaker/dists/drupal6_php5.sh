@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 # This script assumes
 # that DAOs are generated
@@ -14,7 +15,7 @@ else
 	. $CFFILE	
 fi
 
-RSYNCOPTIONS="-avC --exclude=svn --include=core"
+RSYNCOPTIONS="-avC --exclude=svn --exclude=.git --exclude=_ORIGINAL_ --include=core"
 RSYNCCOMMAND="$DM_RSYNC $RSYNCOPTIONS"
 SRC=$DM_SOURCEDIR
 TRG=$DM_TMPDIR/civicrm
@@ -25,7 +26,7 @@ if [ -d $TRG ] ; then
 fi
 
 # copy all the stuff
-for CODE in css i js l10n packages PEAR templates bin joomla CRM api drupal extern Reports install; do
+for CODE in css i js packages PEAR templates bin CRM api drupal extern Reports install; do
   echo $CODE
   [ -d $SRC/$CODE ] && $RSYNCCOMMAND $SRC/$CODE $TRG
 done
@@ -47,6 +48,10 @@ for F in $SRC/sql/civicrm*.mysql $SRC/sql/counties.US.sql.gz $SRC/sql/case_sampl
 	cp $F $TRG/sql
 done
 
+set +e
+rm -rf $TRG/sql/civicrm_*.??_??.mysql
+set -e
+
 # copy docs
 cp $SRC/agpl-3.0.txt $TRG
 cp $SRC/gpl.txt $TRG 
@@ -63,7 +68,7 @@ if [ -d $TRG/drupal ]; then
 fi
 
 cd $TRG/drupal
-grep -lr -e 'version = 4.2.alpha4' * | xargs sed -i 's/version = 4.2.alpha4/version = '$DM_VERSION'/g'
+grep -lr -e 'version = 3.4' * | xargs sed -i '' 's/version = 3.4/version = '$DM_VERSION'/g'
 
 # final touch
 echo "<?php
@@ -76,7 +81,7 @@ function civicrmVersion( ) {
 
 # gen tarball
 cd $TRG/..
-tar czf $DM_TARGETDIR/civicrm-$DM_VERSION-drupal6.tar.gz --exclude l10n --exclude 'civicrm_*.??_??.mysql' civicrm
+tar czf $DM_TARGETDIR/civicrm-$DM_VERSION-drupal6.tar.gz civicrm
 
 # clean up
 rm -rf $TRG
