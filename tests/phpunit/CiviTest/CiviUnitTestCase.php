@@ -301,7 +301,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
    */
   protected function setUp() {
     CRM_Utils_Hook::singleton(TRUE);
-    // $this->errorScope = CRM_Core_TemporaryErrorScope::useException(); // REVERT
+    $this->errorScope = CRM_Core_TemporaryErrorScope::useException(); // REVERT
     //  Use a temporary file for STDIN
     $GLOBALS['stdin'] = tmpfile();
     if ($GLOBALS['stdin'] === FALSE) {
