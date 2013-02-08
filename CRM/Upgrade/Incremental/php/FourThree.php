@@ -121,6 +121,11 @@ WHERE    entity_value = '' OR entity_value IS NULL
   }
 
   function upgrade_4_3_alpha2($rev) {
+    //CRM-11847
+    $isColumnPresent = CRM_Core_DAO::checkFieldExists('civicrm_dedupe_rule_group', 'is_default');
+    if ($isColumnPresent) {
+      CRM_Core_DAO::executeQuery('ALTER TABLE civicrm_dedupe_rule_group DROP COLUMN is_default');
+    }
     $this->addTask(ts('Upgrade DB to 4.3.alpha2: SQL'), 'task_4_3_x_runSql', $rev);
   }
 
