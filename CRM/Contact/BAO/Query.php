@@ -1879,7 +1879,7 @@ class CRM_Contact_BAO_Query {
 
       if (!empty($field['where'])) {
         if ($op != 'IN') {
-          $value = $strtolower(CRM_Core_DAO::escapeString($value));
+          $value = $strtolower($value);
         }
         if ($wildcard) {
           $value = "%$value%";
