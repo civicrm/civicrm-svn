@@ -377,17 +377,21 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
 
     //Adding a survey
     $this->open($this->sboxPath . "civicrm/survey/add?reset=1");
-    $this->waitForElementPresent('_qf_Survey_next-bottom');
+    $this->waitForElementPresent('_qf_Main_upload-bottom');
     $surveyTitle = "BatchUpdateTest Survey" . substr(sha1(rand()), 0, 7);
     $this->type("title", $surveyTitle);
     $this->select('activity_type_id', 'label=Survey');
-    $this->select('profile_id', "label={$profileTitle}");
-    $this->click('CIVICRM_QFID_1_2');
+    $this->click('_qf_Main_upload-bottom');
+    $this->waitForElementPresent('_qf_Questions_cancel-bottom');
+    $this->select("//form[@id='Questions']/div[2]/table/tbody/tr[1]/td[2]/div/div/span/select", "label={$profileTitle}");
+    $this->click('_qf_Questions_upload_next-bottom');
+    $this->waitForElementPresent('_qf_Results_cancel-bottom');
+    $this->click('CIVICRM_QFID_1_option_type');
     $this->type('option_label_1', 'option1');
     $this->type('option_value_1', 'option1');
     $this->type('option_label_2', 'option2');
     $this->type('option_value_2', 'option2');
-    $this->click('_qf_Survey_next-bottom');
+    $this->click('_qf_Results_upload_done-bottom');
     $this->waitForPageToLoad('30000');
 
     //Reserve and interview responsedents
