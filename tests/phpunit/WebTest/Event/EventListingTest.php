@@ -62,8 +62,8 @@ class WebTest_Event_EventListingTest extends CiviSeleniumTestCase {
     $this->type("xpath=//div[@class='crm-block crm-form-block crm-event-searchevent-form-block']/table/tbody/tr/td/input","");
 
     //check if closed Event is present
-    $this->waitForElementPresent('CIVICRM_QFID_1_4');
-    $this->click('CIVICRM_QFID_1_4');
+    $this->waitForElementPresent('CIVICRM_QFID_1_eventsByDates');
+    $this->click('CIVICRM_QFID_1_eventsByDates');
     $this->webtestFillDate("end_date", "now");
     $this->waitForElementPresent('_qf_SearchEvent_refresh');
     $this->click('_qf_SearchEvent_refresh');
