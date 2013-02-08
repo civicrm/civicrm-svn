@@ -1052,7 +1052,7 @@ VALUES (@drgid, 'civicrm_contact', 'household_name', 10),
        (@drgid, 'civicrm_email'  , 'email',          10);
 
 INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, used, name, title, is_reserved)
-VALUES ('Individual', 15, 'General', 'IndividualComplete', '{ts escape="sql"}Name and Address (reserved){/ts}', 1);
+VALUES ('Individual', 15, 'General', 'IndividualGeneral', '{ts escape="sql"}Name and Address (reserved){/ts}', 1);
 
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
