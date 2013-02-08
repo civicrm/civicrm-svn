@@ -46,6 +46,8 @@ function civicrm_html_head() {
   if (arg(0) == 'civicrm') {
     // Add our standard css & js
     CRM_Core_Resources::singleton()->addCoreResources();
+  } else {
+    CRM_Core_Resources::singleton()->addCoreStyles();
   }
 }
 

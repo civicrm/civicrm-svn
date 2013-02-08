@@ -80,6 +80,11 @@ class CRM_Core_Resources {
   protected $addedCoreResources = array();
 
   /**
+   * @var array ($regionName => bool)
+   */
+  protected $addedCoreStyles = array();
+
+  /**
    * @var string a value to append to JS/CSS URLs to coerce cache resets
    */
   protected $cacheCode = NULL;
@@ -404,7 +409,10 @@ class CRM_Core_Resources {
    * This adds CiviCRM's standard css and js to the document header.
    * It will only run once.
    *
-   * @return void
+   * TODO: Separate the functional code (like addStyle/addScript) from the policy code
+   * (like addCoreResources/addCoreStyles).
+   *
+   * @return CRM_Core_Resources
    * @access public
    */
   public function addCoreResources($region = 'html-header') {
@@ -434,7 +442,26 @@ class CRM_Core_Resources {
       // Give control of jQuery back to the CMS - this loads last
       $this->addScript('cj = jQuery.noConflict(true);', 9999, $region);
 
+      $this->addCoreStyles($region);
+    }
+    return $this;
+  }
+
+  /**
+   * This will add CiviCRM's standard CSS
+   *
+   * TODO: Separate the functional code (like addStyle/addScript) from the policy code
+   * (like addCoreResources/addCoreStyles).
+   *
+   * @param string $region
+   * @return CRM_Core_Resources
+   */
+  public function addCoreStyles($region = 'html-header') {
+    if (!isset($this->addedCoreStyles[$region])) {
+      $this->addedCoreStyles[$region] = TRUE;
+
       // Load custom or core css
+      $config = CRM_Core_Config::singleton();
       if (!empty($config->customCSSURL)) {
         $this->addStyleUrl($config->customCSSURL, -99, $region);
       }
@@ -443,6 +470,7 @@ class CRM_Core_Resources {
         $this->addStyleFile('civicrm', 'css/extras.css', -98, $region);
       }
     }
+    return $this;
   }
 
   /**
