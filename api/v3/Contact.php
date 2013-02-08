@@ -224,6 +224,8 @@ function _civicrm_api3_contact_get_spec(&$params) {
   $params['im']['title'] = 'Primary Instant Messanger';
   $params['im_id']['title'] = 'Primary Instant Messanger ID';
   $params['group_id']['title'] = 'Group Memberships (filter)';
+  $params['group']['title'] = 'Group Memberships (filter, array)';
+  $params['tag']['title'] = 'Assigned tags (filter, array)';
 }
 
 /*
