@@ -380,7 +380,7 @@ class CRM_Price_BAO_LineItem extends CRM_Price_DAO_LineItem {
           $setID = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Field', $values['price_field_id'], 'price_set_id');
           $params['is_quick_config'] = CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $setID, 'is_quick_config');
         }
-        if (CRM_Utils_Array::value('is_quick_config', $params)) {
+        if (CRM_Utils_Array::value('is_quick_config', $params) && array_key_exists('total_amount', $params)) {
           $values['line_total'] = $values['unit_price'] = $params['total_amount'];
         }
         $values['id'] = $key;
