@@ -111,9 +111,15 @@ class CRM_Core_BAO_SettingTest extends CiviUnitTestCase {
   }
 
   /**
-   * Ensure that overrides in $civicrm_setting apply when
-   * when using retrieveDirectoryAndURLPreferences().
-   */
+   * This test checks that CRM_Core_BAO_Setting::updateSettingsFromMetaData();
+   * 1) Removes 'maxAttachments' from config (because 'prefetch' is not set in the metadata it should
+   * be removed
+   *  2) for current domain setting max_attachments is set to the value that $config->maxAttachments
+   *    had (6)
+   *  3) for other domain (2) max_attachments is set to the configured default (3)
+   * 
+   *
+   **/
   function testConvertAndFillSettings() {
     $sql = " DELETE FROM civicrm_setting WHERE name = 'max_attachments'";
     CRM_Core_DAO::executeQuery($sql);
@@ -127,19 +133,20 @@ class CRM_Core_BAO_SettingTest extends CiviUnitTestCase {
     //check current domain
     $value = civicrm_api('setting', 'getvalue', array(
       'version' => 3,
-      'name' => 'maxAttachments',
+      'name' => 'max_attachments',
       'group' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
     ));
-    $this->assertEquals(6, $value);
 
+    $this->assertEquals(6, $value);
     // check alternate domain
     $value = civicrm_api('setting', 'getvalue', array(
       'version' => 3,
-      'name' => 'maxAttachments',
+      'name' => 'max_attachments',
       'group' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
       'domain_id' => 2
     ));
-    $this->assertEquals(6, $value);
+
+    $this->assertEquals(3, $value);
 
     //some caching inconsistency here
     $config = CRM_Core_Config::singleton(TRUE, TRUE);
