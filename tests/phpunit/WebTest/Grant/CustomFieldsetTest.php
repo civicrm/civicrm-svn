@@ -52,8 +52,7 @@ class WebTest_Grant_CustomFieldsetTest extends CiviSeleniumTestCase {
       $this->click('add');
       $this->click('_qf_Component_next-bottom');
       $this->waitForPageToLoad('30000');
-      $this->waitForElementPresent('css=div.messages');
-      $this->assertTrue($this->isTextPresent('Your changes have been saved.'));
+      $this->assertElementContainsText("css=#crm-notification-container", "Changes Saved", "CiviCRM Message does not indicate the enabled component changes were saved");
     }
 
     // let's give full CiviGrant permissions to demo user (registered user).
