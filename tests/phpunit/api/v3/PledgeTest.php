@@ -1,6 +1,4 @@
 <?php
-// $Id$
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.2                                                |
@@ -27,10 +25,13 @@
  +--------------------------------------------------------------------+
 */
 
-
-
-
 require_once 'CiviTest/CiviUnitTestCase.php';
+
+/**
+ * Test class for Pledge API - civicrm_pledge_*
+ *
+ *  @package CiviCRM_APIv3
+ */
 class api_v3_PledgeTest extends CiviUnitTestCase {
 
   /**
@@ -302,6 +303,21 @@ class api_v3_PledgeTest extends CiviUnitTestCase {
     $pledgeID = array('pledge_id' => $pledge['id'], 'version' => 3);
     $pledge = civicrm_api('pledge', 'delete', $pledgeID);
   }
+  /*
+   * Test that pledge with weekly schedule calculates dates correctly
+  */
+  function testCreatePledgeMontlySchedule() {
+    $params = array(
+      'scheduled_date' => '20110510',
+      'frequency_unit' => 'Month',
+      'frequency_day' => 3,
+      'frequency_interval' => 2,
+    );
+    $params = array_merge($this->_params, $params);
+    $apiResult = civicrm_api('pledge', 'create', $params);
+    $this->assertAPISuccess($apiResult);
+  }
+
 
   /*
      * Test creation of pledge with only one payment.
@@ -555,3 +571,4 @@ class api_v3_PledgeTest extends CiviUnitTestCase {
     $pledge = civicrm_api('pledge', 'delete', $pledgeID);
   }
 }
+
