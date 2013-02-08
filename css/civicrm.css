@@ -2796,7 +2796,8 @@ div.grippie {
 }
 
 /* Pop-up help icon - eliminate forced line break */
-.crm-container a.helpicon {
+.crm-container a.helpicon,
+.crm-container .crm-master-accordion-header a.helpicon {
   background-position: -128px -98px;
   background-image: url(../i/icons/jquery-ui-2786C2.png);
   background-color: transparent;

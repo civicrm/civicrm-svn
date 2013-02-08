@@ -25,7 +25,7 @@
 *}
 <table class="form-layout">
   <tr>
-    <td><label>{ts}Complete OR Partial Name{/ts}</label>&nbsp;{help id='id-advanced-intro'}<br />
+    <td><label>{ts}Complete OR Partial Name{/ts}</label><br />
       {$form.sort_name.html}
     </td>
     <td>

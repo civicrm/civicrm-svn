@@ -24,15 +24,11 @@
  +--------------------------------------------------------------------+
 *}
 {* Search Builder *}
-{capture assign=docLink}{docURL page="user/the-user-interface/searching" text="Search documentation in the User Guide"}{/capture}
-<div class="messages help" id="help">
-<strong>{ts 1=$docLink}IMPORTANT: Search Builder requires you to use specific formats for your search values. Review the %1 before building your first search.{/ts}</strong> {help id='builder-intro'}
-</div>
 
 <div class="crm-form-block crm-search-form-block">
   <div class="crm-accordion-wrapper crm-search_builder-accordion {if $rows and !$showSearchForm}collapsed{/if}">
     <div class="crm-accordion-header crm-master-accordion-header">
-      {ts}Edit Search Criteria{/ts}
+      {ts}Search Criteria{/ts} {help id='builder-intro'}
     </div>
     <div class="crm-accordion-body">
       <div id = "searchForm">
