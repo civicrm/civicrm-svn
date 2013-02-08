@@ -135,7 +135,7 @@ class WebTest_Contact_AdvanceSearchPrivacyOptionsTest extends CiviSeleniumTestCa
   }
 
   function _addPrivacyCriteria($inEx, $privacyOptions, $privacyOperator, $allPrivacyOptions) {
-    $inExId = ($inEx == 'include') ? 'CIVICRM_QFID_2_8' : 'CIVICRM_QFID_1_6';
+    $inExId = ($inEx == 'include') ? 'CIVICRM_QFID_2_privacy_toggle' : 'CIVICRM_QFID_1_privacy_toggle';
     $this->click($inExId);
     $this->select('privacy_operator', "{$privacyOperator}");
     foreach ($privacyOptions as $privacyOption) {
