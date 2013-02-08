@@ -43,7 +43,7 @@ class CRM_Contact_Form_Search_Custom extends CRM_Contact_Form_Search {
 
     $csID = CRM_Utils_Request::retrieve('csid', 'Integer', $this);
     $ssID = CRM_Utils_Request::retrieve('ssID', 'Integer', $this);
-    $gID  = CRM_Utils_Request::retrieve('gid', 'Integer', $this);
+    $gID = CRM_Utils_Request::retrieve('gid', 'Integer', $this);
 
     list($this->_customSearchID,
       $this->_customSearchClass,

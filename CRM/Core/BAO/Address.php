@@ -71,7 +71,7 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address {
       // get all address from location block
       $entityElements = array(
         'entity_table' => $params['entity_table'],
-        'entity_id'    => $params['entity_id'],
+        'entity_id' => $params['entity_id'],
       );
       $addresses = self::allEntityAddress($entityElements);
     }
@@ -421,9 +421,9 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address {
         if (substr($name, 0, 7) == 'country') {
           // make sure its different from the default country
           // iso code
-          $defaultCountry = &$config->defaultContactCountry();
+          $defaultCountry = $config->defaultContactCountry();
           // full name
-          $defaultCountryName = &$config->defaultContactCountryName();
+          $defaultCountryName = $config->defaultContactCountryName();
 
           if ($defaultCountry) {
             if ($value == $defaultCountry ||
@@ -600,8 +600,8 @@ ORDER BY civicrm_address.is_primary DESC, address_id ASC";
     $params = array(1 => array($id, 'Integer'));
 
     $addresses = array();
-    $dao       = CRM_Core_DAO::executeQuery($query, $params);
-    $count     = 1;
+    $dao = CRM_Core_DAO::executeQuery($query, $params);
+    $count = 1;
     while ($dao->fetch()) {
       if ($updateBlankLocInfo) {
         $addresses[$count++] = $dao->address_id;
@@ -640,9 +640,9 @@ WHERE ev.id = %1
   AND ltype.id = civicrm_address.location_type_id
 ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC, address_id ASC ";
 
-    $params        = array(1 => array($entityId, 'Integer'));
-    $addresses     = array();
-    $dao           = CRM_Core_DAO::executeQuery($sql, $params);
+    $params = array(1 => array($entityId, 'Integer'));
+    $addresses = array();
+    $dao = CRM_Core_DAO::executeQuery($sql, $params);
     $locationCount = 1;
     while ($dao->fetch()) {
       $addresses[$locationCount] = $dao->address_id;
@@ -1102,18 +1102,18 @@ SELECT is_primary,
 
     $dao = CRM_Core_DAO::executeQuery($query, array(1 => array($entityId, 'Integer')));
 
-    $deleteStatus      = array();
+    $deleteStatus = array();
     $sharedContactList = array();
-    $statusMessage     = NULL;
-    $addressCount      = 0;
+    $statusMessage = NULL;
+    $addressCount = 0;
     while ($dao->fetch()) {
       if (empty($deleteStatus)) {
         $deleteStatus[] = ts('The following contact(s) have address records which were shared with the address you removed from this contact. These address records are no longer shared - but they have not been removed or altered.');
       }
 
-      $contactViewUrl      = CRM_Utils_System::url('civicrm/contact/view', "reset=1&cid={$dao->id}");
+      $contactViewUrl = CRM_Utils_System::url('civicrm/contact/view', "reset=1&cid={$dao->id}");
       $sharedContactList[] = "<a href='{$contactViewUrl}'>{$dao->display_name}</a>";
-      $deleteStatus[]      = "<a href='{$contactViewUrl}'>{$dao->display_name}</a>";
+      $deleteStatus[] = "<a href='{$contactViewUrl}'>{$dao->display_name}</a>";
 
       $addressCount++;
     }
