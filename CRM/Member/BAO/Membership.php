@@ -1550,8 +1550,8 @@ AND civicrm_membership.is_test = %2";
 
       //we renew expired membership, CRM-6277
       if (!$changeToday) {
-        if ($form->get('renewDate')) {
-          $changeToday = $form->get('renewDate');
+        if ($form->get('renewalDate')) {
+          $changeToday = $form->get('renewalDate');
         }
         elseif (get_class($form) == 'CRM_Contribute_Form_Contribution_Confirm') {
           $changeToday = date('YmdHis');
