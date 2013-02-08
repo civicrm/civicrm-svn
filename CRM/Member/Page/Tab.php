@@ -154,7 +154,7 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
      LEFT JOIN civicrm_membership_status ms ON ms.id = m.status_id
   WHERE m.owner_membership_id = {$dao->id} AND m.is_test = 0 AND ms.is_current_member = 1";
         $num_related = CRM_Core_DAO::singleValueQuery($query);
-        $max_related = $membership[$dao->id]['max_related'];
+        $max_related = CRM_Utils_Array::value('max_related', $membership[$dao->id]);
         $membership[$dao->id]['related_count'] = ($max_related == '' ?
           ts('%1 created', array(1 => $num_related)) :
           ts('%1 out of %2', array(1 => $num_related, 2 => $max_related))
