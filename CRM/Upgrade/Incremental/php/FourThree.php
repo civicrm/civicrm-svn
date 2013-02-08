@@ -62,6 +62,26 @@ class CRM_Upgrade_Incremental_php_FourThree {
         $postUpgradeMessage .= '<br />' . ts('Please review all price set financial type assignments.');
       }
     }
+
+    if ($rev == '4.3.alpha2') {
+      $sql = "
+SELECT   title, id
+FROM     civicrm_action_schedule
+WHERE    entity_value = '' OR entity_value IS NULL
+";
+    
+      $dao = CRM_Core_DAO::executeQuery($sql);
+      $reminder = array();
+      $list = '';
+      while ($dao->fetch()) {
+          $reminder[$dao->id] = $dao->title;
+          $list .= "<li>{$dao->title}</li>";
+      }
+      if (!empty($reminder)) { 
+        $list = "<br /><ul>" . $list . "</ul>";
+        $postUpgradeMessage .=  '<br />' .ts("Scheduled Reminders must be linked to one or more 'entities' (Events, Event Templates, Activity Types, Membership Types). The following reminders are not configured properly and will not be run. Please review them and update or delete them: %1", array(1 => $list));
+      }
+    }
   }
 
   function upgrade_4_3_alpha1($rev) {
