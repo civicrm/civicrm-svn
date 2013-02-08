@@ -1,7 +1,7 @@
 <?php
 /*
  +----------------------------------------------------------------------------+
- | Elavon (Nova) Virtual Merchant Core Payment Module for CiviCRM version 4.2 |
+ | Elavon (Nova) Virtual Merchant Core Payment Module for CiviCRM version 4.3 |
  +----------------------------------------------------------------------------+
  | Licensed to CiviCRM under the Academic Free License version 3.0            |
  |                                                                            |
