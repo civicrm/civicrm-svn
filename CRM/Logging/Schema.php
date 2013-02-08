@@ -193,8 +193,8 @@ AND    TABLE_NAME LIKE 'log_civicrm_%'
     $dao->fetch();
     $create = explode("\n", $dao->Create_Table);
     foreach ($cols as $col) {
-      $line = substr(array_pop(preg_grep("/^  `$col` /", $create)), 0, -1);
-
+      $line = preg_grep("/^  `$col` /", $create);
+      $line = substr(array_pop($line), 0, -1);
       // CRM-11179
       $line = self::fixTimeStampSQL($line);
 

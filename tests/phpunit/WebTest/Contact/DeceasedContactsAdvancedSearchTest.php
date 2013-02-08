@@ -53,7 +53,7 @@ class WebTest_Contact_DeceasedContactsAdvancedSearchTest extends CiviSeleniumTes
     $lastName = substr(sha1(rand()), 0, 7);
     $names = array(
       'firstName1' => FALSE,
-      'firstName2' => TRUE,
+      'firstName2' => FALSE,
       'firstName3' => FALSE,
       'firstName4' => TRUE,
       'firstName5' => TRUE,
@@ -71,15 +71,16 @@ class WebTest_Contact_DeceasedContactsAdvancedSearchTest extends CiviSeleniumTes
     // Select the group and check deceased contacts
     $this->select('crmasmSelect1', "label={$groupName}");
     $this->click('demographics');
-    $this->waitForElementPresent('CIVICRM_QFID_1_5');
-    $this->click('CIVICRM_QFID_0_7');
+    $this->waitForElementPresent('CIVICRM_QFID_1_is_deceased');
+    $this->click('CIVICRM_QFID_1_is_deceased');
     $this->click('_qf_Advanced_refresh');
+    $this->waitForPageToLoad("30000");
 
     // Remove contacts from group
     $this->waitForElementPresent('Go');
     $this->assertTrue($this->isTextPresent('2 Contacts'));
     $this->click("toggleSelect");
-    sleep(1);
+    $this->waitForTextPresent('2 Selected records only');
     
     $this->select('task', 'label=Remove Contacts from Group');
     $this->click("xpath=//div[@id='search-status']/table/tbody/tr[3]/td/ul/input[2]");
