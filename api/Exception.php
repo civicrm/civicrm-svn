@@ -5,7 +5,7 @@
  * @package CiviCRM_APIv3
  * @subpackage API
  *
- * @copyright CiviCRM LLC (c) 2004-2012
+ * @copyright CiviCRM LLC (c) 2004-2013
  */
 
 /* This api exception returns more information than the default one. The aim it let the api consumer know better what is exactly the error without having to parse the error message.
