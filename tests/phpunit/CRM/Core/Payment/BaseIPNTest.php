@@ -150,7 +150,7 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase {
     $this->assertFalse(empty($contribution->_relatedObjects['membership']), 'in line ' . __LINE__);
     $this->assertArrayHasKey($this->_membershipTypeID, $contribution->_relatedObjects['membership'], 'in line ' . __LINE__);
     $this->assertTrue(is_a($contribution->_relatedObjects['membership'][$this->_membershipTypeID], 'CRM_Member_BAO_Membership'));
-    $this->assertTrue(is_a($contribution->_relatedObjects['contributionType'], 'CRM_Contribute_BAO_ContributionType'));
+    $this->assertTrue(is_a($contribution->_relatedObjects['contributionType'], 'CRM_Financial_BAO_FinancialType'));
     $this->assertFalse(empty($contribution->_relatedObjects['contributionRecur']), __LINE__);
     $this->assertFalse(empty($contribution->_relatedObjects['paymentProcessor']), __LINE__);
   }
@@ -210,9 +210,9 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase {
     $this->assertContains('registration has been received and your status has been updated to registered', $msg['body']);
     $this->assertContains('Annual CiviCRM meet', $msg['html']);
   }
-  
+
   /**
-   * 
+   *
    *
    */
   function testComposeMailParticipantObjects() {
@@ -224,7 +224,7 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase {
     $this->assertContains('<p>Please print this confirmation for your records.</p>', $msg['html']);
     $this->assertContains('Thank you for your participation', $msg['body']);
   }
-  
+
   /**
    * Test the LoadObjects function with recurring membership data
    *
@@ -232,6 +232,7 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase {
   function testsendMailParticipantObjectsCheckLog() {
     $this->_setUpParticipantObjects();
     $values = array();
+    require_once 'CiviTest/CiviMailUnitTest.php';
     $mut = new CiviMailUnitTest( $this, true );
     $this->IPN->loadObjects($this->input, $this->ids, $this->objects, FALSE, $this->_processorId);
     $this->IPN->sendMail($this->input, $this->ids, $this->objects, $values, FALSE, FALSE);
@@ -257,13 +258,14 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase {
       'civicrm_mailing_spool',
     );
     $this->quickCleanup($tablesToTruncate, FALSE);
+    require_once 'CiviTest/CiviMailUnitTest.php';
     $mut = new CiviMailUnitTest( $this, true );
     $this->IPN->loadObjects($this->input, $this->ids, $this->objects, FALSE, $this->_processorId);
     $this->IPN->sendMail($this->input, $this->ids, $this->objects, $values, FALSE, FALSE);
     $mut->assertMailLogEmpty('no mail should have been send as event set to no confirm');
     $mut->stop();
   }
-  
+
   /*
      * Test that loadObjects works with participant values
      */
@@ -371,70 +373,70 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase {
 
   /*
      * Test calls main functions in sequence per 'main' - I had hoped to test the functions more
-     * fully but the calls to the POST happen in more than one function 
+     * fully but the calls to the POST happen in more than one function
      * keeping this as good example of data to bring back to life later
 
     function testMainFunctionActions(){
       $ids                = $objects = array( );
      $input['component'] = 'Contribute';
     $postedParams       = array(
-      'x_response_code' => 1, 
-      'x_response_reason_code' => 1, 
-      'x_response_reason_text' => 'This transaction has been approved.', 
-      'x_avs_code' => 'Y', 
-      'x_auth_code' => 140454, 
-      'x_trans_id' => 4353599599, 
-      'x_method' => 'CC', 
-      'x_card_type' => 'American Express', 
-      'x_account_number' => 'XXXX2701', 
-      'x_first_name' => 'Arthur', 
-      'x_last_name' => 'Jacobs', 
-      'x_company' => null, 
-      'x_address' => '866 2166th St SN', 
-      'x_city' => 'Edwardstown', 
-      'x_state' => 'WA', 
-      'x_zip' => 98026, 
-      'x_country' => 'US', 
-      'x_phone' => null, 
-      'x_fax' => null, 
-      'x_email' => null, 
-      'x_invoice_num' => 'a9fb56c24576lk4c9490f6', 
-      'x_description' => 'my desc', 
-      'x_type' => 'auth_capture', 
-      'x_cust_id' => 5191, 
-      'x_ship_to_first_name' => null, 
-      'x_ship_to_last_name' => null, 
-      'x_ship_to_company' => null, 
-      'x_ship_to_address' => null, 
-      'x_ship_to_city' => null, 
-      'x_ship_to_state' => null, 
-      'x_ship_to_zip' => null, 
-      'x_ship_to_country' => null, 
-      'x_amount' => 60.00, 
-      'x_tax' => 0.00, 
-      'x_duty' => 0.00, 
-      'x_freight' => 0.00, 
-      'x_tax_exempt' => FALSE, 
-      'x_po_num' => null, 
-      'x_MD5_Hash' => '069ECAD13C8E15AC205CDF92B8B58CC7', 
-      'x_cvv2_resp_code' => null, 
-      'x_cavv_response' => null, 
-      'x_test_request' => false, 
+      'x_response_code' => 1,
+      'x_response_reason_code' => 1,
+      'x_response_reason_text' => 'This transaction has been approved.',
+      'x_avs_code' => 'Y',
+      'x_auth_code' => 140454,
+      'x_trans_id' => 4353599599,
+      'x_method' => 'CC',
+      'x_card_type' => 'American Express',
+      'x_account_number' => 'XXXX2701',
+      'x_first_name' => 'Arthur',
+      'x_last_name' => 'Jacobs',
+      'x_company' => null,
+      'x_address' => '866 2166th St SN',
+      'x_city' => 'Edwardstown',
+      'x_state' => 'WA',
+      'x_zip' => 98026,
+      'x_country' => 'US',
+      'x_phone' => null,
+      'x_fax' => null,
+      'x_email' => null,
+      'x_invoice_num' => 'a9fb56c24576lk4c9490f6',
+      'x_description' => 'my desc',
+      'x_type' => 'auth_capture',
+      'x_cust_id' => 5191,
+      'x_ship_to_first_name' => null,
+      'x_ship_to_last_name' => null,
+      'x_ship_to_company' => null,
+      'x_ship_to_address' => null,
+      'x_ship_to_city' => null,
+      'x_ship_to_state' => null,
+      'x_ship_to_zip' => null,
+      'x_ship_to_country' => null,
+      'x_amount' => 60.00,
+      'x_tax' => 0.00,
+      'x_duty' => 0.00,
+      'x_freight' => 0.00,
+      'x_tax_exempt' => FALSE,
+      'x_po_num' => null,
+      'x_MD5_Hash' => '069ECAD13C8E15AC205CDF92B8B58CC7',
+      'x_cvv2_resp_code' => null,
+      'x_cavv_response' => null,
+      'x_test_request' => false,
       'description' => 'my description'
     );
       $this->IPN->getInput( $input, $ids );
       $this->IPN->getIDs( $ids, $input );
-            
+
             CRM_Core_Error::debug_var( '$ids', $ids );
             CRM_Core_Error::debug_var( '$input', $input );
-            
+
             $paymentProcessorID = CRM_Core_DAO::getFieldValue( 'CRM_Financial_DAO_PaymentProcessorType',
                                                                'AuthNet', 'id', 'name' );
-            
+
             if ( ! $this->IPN->validateData( $input, $ids, $objects, true, $paymentProcessorID ) ) {
                 return false;
             }
-            
+
             if ( $component == 'contribute' && $ids['contributionRecur'] ) {
                 // check if first contribution is completed, else complete first contribution
                 $first = true;
@@ -444,7 +446,7 @@ class CRM_Core_Payment_BaseIPNTest extends CiviUnitTestCase {
                 return $this->IPN->recur( $input, $ids, $objects, $first );
             }
     }
-    
+
     /*
      * Prepare for contribution Test - involving only contribution objects
      */

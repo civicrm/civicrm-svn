@@ -83,7 +83,10 @@ abstract class CRM_Core_Payment {
   /**
    * singleton function used to manage this object
    *
-   * @param string $mode the mode of operation: live or test
+   * @param string  $mode the mode of operation: live or test
+   * @param object  $paymentProcessor the details of the payment processor being invoked
+   * @param object  $paymentForm      reference to the form object if available
+   * @param boolean $force            should we force a reload of this payment object
    *
    * @return object
    * @static

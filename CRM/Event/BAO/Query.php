@@ -370,25 +370,29 @@ class CRM_Event_BAO_Query {
           }
         }
         else {
-          $value = array($value => 1);
+          $val = array($value => 1);
         }
 
         $roleTypes = CRM_Event_PseudoConstant::participantRole();
 
         $names = array();
-        if (!empty($val)) {
-          foreach ($val as $id => $dontCare) {
-            $names[] = $roleTypes[$id];
-          }
-        }
-        else {
-          $names[] = $roleTypes[$value];
+        foreach ($val as $id => $dontCare) {
+          $names[] = $roleTypes[$id];
         }
 
-        $query->_qill[$grouping][] = ts('Participant Role %1', array(1 => $op)) . ' ' . implode(' ' . ts('or') . ' ', $names);
-        $query->_where[$grouping][] = " civicrm_participant.role_id REGEXP '[[:<:]]" . implode('[[:>:]]|[[:<:]]', array_keys($value)) . "[[:>:]]' ";
+        if (!empty($names)) {
+          $query->_qill[$grouping][] =
+            ts('Participant Role %1', array(1 => $op)) .
+            ' ' .
+            implode(' ' . ts('or') . ' ', $names);
+          $query->_where[$grouping][] =
+            " civicrm_participant.role_id REGEXP '[[:<:]]" .
+            implode('[[:>:]]|[[:<:]]', array_keys($value)) .
+            "[[:>:]]' ";
 
-        $query->_tables['civicrm_participant'] = $query->_whereTables['civicrm_participant'] = 1;
+          $query->_tables['civicrm_participant'] =
+            $query->_whereTables['civicrm_participant'] = 1;
+        }
         return;
 
       case 'participant_source':
