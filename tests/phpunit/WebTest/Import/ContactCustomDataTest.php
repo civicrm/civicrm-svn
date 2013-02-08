@@ -57,7 +57,7 @@ class WebTest_Import_ContactCustomDataTest extends ImportCiviSeleniumTestCase {
     $this->click("xpath=//div[@id='browseValues_Individual']/div[2]/a/span");
     $this->waitForElementPresent('_qf_DedupeRules_next-bottom');
     $this->type('title', $newRuleTitle);
-    $this->click("CIVICRM_QFID_1_10");
+    $this->click("CIVICRM_QFID_1_used");
     $this->select("where_0", "label=$customDataParams[1]");
     $this->type('weight_0', '10');
     $this->type('threshold', '10');

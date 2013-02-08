@@ -327,7 +327,7 @@ class WebTest_Import_MatchExternalIdTest extends ImportCiviSeleniumTestCase {
     // Go to Fees tab
     $this->click("link=Fees");
     $this->waitForElementPresent("_qf_Fee_upload-bottom");
-    $this->click("CIVICRM_QFID_1_2");
+    $this->click("CIVICRM_QFID_1_is_monetary");
     $this->click("xpath=//tr[@class='crm-event-manage-fee-form-block-payment_processor']/td[2]/label[text()='$processorName']");
         $this->select( "financial_type_id", "value=4" );
 
@@ -351,7 +351,7 @@ class WebTest_Import_MatchExternalIdTest extends ImportCiviSeleniumTestCase {
     $this->fillRichTextField("intro_text", "Fill in all the fields below and click Continue.");
 
     // enable confirmation email
-    $this->click("CIVICRM_QFID_1_2");
+    $this->click("CIVICRM_QFID_1_is_email_confirm");
     $this->type("confirm_from_name", "Jane Doe");
     $this->type("confirm_from_email", "jane.doe@example.org");
 

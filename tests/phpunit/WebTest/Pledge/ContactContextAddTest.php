@@ -57,7 +57,7 @@ class WebTest_Pledge_ContactContextAddTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('crm-contact-actions-link');
 
     // now add pledge from contact summary
-    $this->click("//div[@id='crm-contact-actions-link']/span/div");
+    $this->click("//a[@id='crm-contact-actions-link']/span/div");
 
     // wait for add plegde link
     $this->waitForElementPresent('link=Add Pledge');
