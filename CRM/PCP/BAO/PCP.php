@@ -63,27 +63,24 @@ class CRM_PCP_BAO_PCP extends CRM_PCP_DAO_PCP {
       $dao->save();
       return $dao;
     }
-    else {
-      $dao = new CRM_PCP_DAO_PCP();
-      $dao->copyValues($params);
 
-      // ensure we set status_id since it is a not null field
-      // we should change the schema and allow this to be null
-      if (!$dao->id &&
-        !isset($dao->status_id)
-      ) {
-        $dao->status_id = 0;
-      }
+    $dao = new CRM_PCP_DAO_PCP();
+    $dao->copyValues($params);
 
-      // set currency for CRM-1496
-      if (!isset($dao->currency)) {
-        $config = &CRM_Core_Config::singleton();
-        $dao->currency = $config->defaultCurrency;
-      }
-
-      $dao->save();
-      return $dao;
+    // ensure we set status_id since it is a not null field
+    // we should change the schema and allow this to be null
+    if (!$dao->id && !isset($dao->status_id)) {
+      $dao->status_id = 0;
     }
+
+    // set currency for CRM-1496
+    if (!isset($dao->currency)) {
+      $config = &CRM_Core_Config::singleton();
+        $dao->currency = $config->defaultCurrency;
+    }
+
+    $dao->save();
+    return $dao;
   }
 
   /**

@@ -52,7 +52,7 @@ class CRM_PCP_BAO_PCPTest extends CiviUnitTestCase {
     parent::setUp();
   }
 
-  function testAddWithPCPBlockTrue() {
+  function testAddPCPBlock() {
 
     $params = $this->pcpBlockParams();
     $pcpBlock = CRM_PCP_BAO_PCP::add($params, TRUE);
@@ -72,8 +72,12 @@ class CRM_PCP_BAO_PCPTest extends CiviUnitTestCase {
     // CRM_Core_DAO::deleteTestObjects( 'CRM_PCP_DAO_PCPBlock', $delParams );
   }
 
-  function testAddWithPCPBlockFalse() {
+  function testAddPCP() {
+    $blockParams = $this->pcpBlockParams();
+    $pcpBlock = CRM_PCP_BAO_PCP::add($blockParams, TRUE);
+
     $params = $this->pcpParams();
+    $params['pcp_block_id'] = $pcpBlock->id;
 
     $pcp = CRM_PCP_BAO_PCP::add($params, FALSE);
 
@@ -95,8 +99,12 @@ class CRM_PCP_BAO_PCPTest extends CiviUnitTestCase {
     // CRM_Core_DAO::deleteTestObjects( 'CRM_PCP_DAO_PCP', $delParams );
   }
 
-  function testAddWithPCPBlockFalseNoStatus() {
+  function testAddPCPNoStatus() {
+    $blockParams = $this->pcpBlockParams();
+    $pcpBlock = CRM_PCP_BAO_PCP::add($blockParams, TRUE);
+
     $params = $this->pcpParams();
+    $params['pcp_block_id'] = $pcpBlock->id;
     unset($params['status_id']);
 
     $pcp = CRM_PCP_BAO_PCP::add($params, FALSE);
@@ -171,7 +179,7 @@ class CRM_PCP_BAO_PCPTest extends CiviUnitTestCase {
       'intro_text' => 'Hey you, contribute now!',
       'page_text' => 'You better give more.',
       'donate_link_text' => 'Donate Now',
-      'contribution_page_id' => $contribPageId,
+      'page_id' => $contribPageId,
       'is_thermometer' => 1,
       'is_honor_roll' => 1,
       'goal_amount' => 10000.00,
