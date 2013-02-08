@@ -85,9 +85,6 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
 
     $this->click("xpath=//input[@class='form-radio']");
 
-    // Select 'Record Payment'
-    $this->click('record_contribution');
-
     // Enter amount to be paid (note: this should default to selected fee level amount, s/b fixed during 3.2 cycle)
     $this->type('total_amount', '800');
 
@@ -121,7 +118,6 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
         'Event Fees' => '$ 800.00',
       )
     );
-
     // check contribution record as well
     //click through to the contribution view screen
     $this->click("xpath=id('ParticipantView')/div[2]/table[@class='selector']/tbody/tr[1]/td[8]/span/a[text()='View']");
@@ -302,9 +298,6 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('priceset');
 
     $this->click("xpath=//input[@class='form-radio']");
-
-    // Select 'Record Payment'
-    $this->click('record_contribution');
 
     // Enter amount to be paid (note: this should default to selected fee level amount, s/b fixed during 3.2 cycle)
     $this->type('total_amount', '800');
