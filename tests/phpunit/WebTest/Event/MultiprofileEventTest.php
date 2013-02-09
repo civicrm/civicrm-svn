@@ -562,23 +562,21 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     // Go to Fees tab
     $this->click("link=Fees");
     $this->waitForElementPresent("_qf_Fee_upload-bottom");
-    $this->click("CIVICRM_QFID_1_2");
+    $this->click("CIVICRM_QFID_1_is_monetary");
 
     // select newly created processor
     $xpath = "xpath=//label[text() = '{$processorName}']/preceding-sibling::input[1]";
     $this->assertTrue($this->isTextPresent($processorName));
     $this->check($xpath);
-        $this->select("financial_type_id", "value=4");
+    $this->select("financial_type_id", "label=Event Fee");
     if ($priceSet) {
       // get one - TBD
     }
     else {
       $this->type("label_1", "Member");
       $this->type("value_1", "250.00");
-      $this->select("financial_type_id_1", "value=1");
       $this->type("label_2", "Non-member");
       $this->type("value_2", "325.00");
-      $this->select("financial_type_id_2", "value=1");
       //set default
       $this->click("xpath=//table[@id='map-field-table']/tbody/tr[2]/td[3]/input");
     }
@@ -648,14 +646,13 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("additional_custom_post_id_multiple_4");
     $this->select("additional_custom_post_id_multiple_4", "value=" . $profileId[3]);
 
-    $this->click("CIVICRM_QFID_1_2");
+    $this->click("CIVICRM_QFID_1_is_email_confirm");
     $this->type("confirm_from_name", "TestEvent");
     $this->type("confirm_from_email", "testevent@test.com");
     $this->click("_qf_Registration_upload-bottom");
 
     // Wait for "saved" status msg
     $this->waitForPageToLoad('30000');
-    //sleep(5);
     $elements = $this->parseURL();
     $eventPageId = $elements['queryString']['id'];
 
