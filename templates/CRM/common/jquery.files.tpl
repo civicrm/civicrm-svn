@@ -50,9 +50,6 @@ packages/jquery/plugins/jquery.mousewheel.pack.js
 packages/jquery/plugins/DataTables/media/css/demo_table_jui.css
 packages/jquery/plugins/DataTables/media/js/jquery.dataTables.min.js
 
-packages/jquery/plugins/jquery.dashboard.js
-packages/jquery/css/dashboard.css
-
 packages/jquery/plugins/jquery.FormNavigate.js
 
 packages/jquery/plugins/jquery.validate.min.js

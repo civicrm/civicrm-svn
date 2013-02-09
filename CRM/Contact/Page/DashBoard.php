@@ -46,6 +46,11 @@ class CRM_Contact_Page_DashBoard extends CRM_Core_Page {
    * @access public
    */
   function run() {
+    // Add dashboard js and css
+    CRM_Core_Resources::singleton()
+      ->addScriptFile('civicrm', 'packages/jquery/plugins/jquery.dashboard.js', 0, 'html-header', FALSE)
+      ->addStyleFile('civicrm', 'packages/jquery/css/dashboard.css');
+
     $resetCache = CRM_Utils_Request::retrieve('resetCache', 'Positive', CRM_Core_DAO::$_nullObject);
 
     if ($resetCache) {
