@@ -94,6 +94,7 @@ class CRM_Campaign_Form_Survey_Questions extends CRM_Campaign_Form_Survey {
     );
     $this->addProfileSelector('contact_profile_id', ts('Contact Info'), $allowCoreTypes, $allowSubTypes, $entities);
     $this->addProfileSelector('activity_profile_id', ts('Questions'), $allowCoreTypes, $allowSubTypes, $entities);
+    // Note: Because this is in a tab, we also preload the schema via CRM_Campaign_Form_Survey::preProcess
 
     parent::buildQuickForm();
   }

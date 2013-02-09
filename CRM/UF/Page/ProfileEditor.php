@@ -21,7 +21,6 @@ class CRM_UF_Page_ProfileEditor extends CRM_Core_Page {
     CRM_Core_Resources::singleton()
       ->addSettingsFactory(function(){
         return array(
-          'civiSchema' => CRM_UF_Page_ProfileEditor::getSchema(),
           'PseudoConstant' => array(
             'locationType' => CRM_Core_PseudoConstant::locationType(),
             'phoneType' => CRM_Core_PseudoConstant::phoneType(),
@@ -62,36 +61,73 @@ class CRM_UF_Page_ProfileEditor extends CRM_Core_Page {
   }
 
   /**
+   * Register entity schemas for use in the editor's palette
+   *
+   * @param array $entityTypes strings, e.g. "IndividualModel", "ActivityModel"
+   */
+  static function registerSchemas($entityTypes) {
+    // TODO in cases where registerSchemas is called multiple times for same entity, be more efficient
+    CRM_Core_Resources::singleton()->addSettingsFactory(function () use ($entityTypes) {
+      return array(
+        'civiSchema' => CRM_UF_Page_ProfileEditor::getSchema($entityTypes),
+      );
+    });
+  }
+
+  /**
    * AJAX callback
    */
   static function getSchemaJSON() {
-    echo json_encode(self::getSchema());
+    $entityTypes = explode(',', $_REQUEST['entityTypes']);
+    echo json_encode(self::getSchema($entityTypes));
     CRM_Utils_System::civiExit();
   }
 
   /**
    * Get a list of Backbone-Form models
    *
+   * @param array $entityTypes model names ("IndividualModel")
    * @return array; keys are model names ("IndividualModel") and values describe 'sections' and 'schema'
    * @see js/model/crm.core.js
    * @see js/model/crm.mappedcore.js
    */
-  static function getSchema() {
+  static function getSchema($entityTypes) {
     // FIXME: Depending on context (eg civicrm/profile/create vs search-columns), it may be appropriate to
     // pick importable or exportable fields
-    $availableFields = CRM_Core_BAO_UFField::getAvailableFieldsFlat();
 
-    $civiSchema['IndividualModel'] = self::convertCiviModelToBackboneModel(
-      'Individual',
-      ts('Individual'),
-      $availableFields
-    );
-
-    $civiSchema['ActivityModel'] = self::convertCiviModelToBackboneModel(
-      'Activity',
-      ts('Activity'),
-      $availableFields
-    );
+    $entityTypes = array_unique($entityTypes);
+    $availableFields = NULL;
+    foreach ($entityTypes as $entityType) {
+      if (!$availableFields) {
+        $availableFields = CRM_Core_BAO_UFField::getAvailableFieldsFlat();
+        //dpm($availableFields);
+      }
+      switch ($entityType) {
+        case 'IndividualModel':
+          $civiSchema[$entityType] = self::convertCiviModelToBackboneModel(
+            'Individual',
+            ts('Individual'),
+            $availableFields
+          );
+          break;
+        case 'ActivityModel':
+          $civiSchema[$entityType] = self::convertCiviModelToBackboneModel(
+            'Activity',
+            ts('Activity'),
+            $availableFields
+          );
+          break;
+        case 'ParticipantModel':
+          $civiSchema[$entityType] = self::convertCiviModelToBackboneModel(
+            'Participant',
+            ts('Participant'),
+            $availableFields
+          );
+          break;
+        default:
+          throw new CRM_Core_Exception("Unrecognized entity type: $entityType");
+      }
+    }
 
     return $civiSchema;
   }

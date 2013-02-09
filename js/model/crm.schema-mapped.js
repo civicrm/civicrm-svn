@@ -30,7 +30,10 @@
     return $
       .ajax({
         url: CRM.url("civicrm/profile-editor/schema"),
-        type: 'GET',
+        data: {
+          'entityTypes': _.keys(CRM.civiSchema).join(',')
+        },
+        type: 'POST',
         dataType: 'json',
         success: function(data) {
           if (data) {

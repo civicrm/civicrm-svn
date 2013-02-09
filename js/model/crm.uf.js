@@ -81,6 +81,8 @@
         return 'contact_1';
       case 'Activity':
         return 'activity_1';
+      case 'Participant':
+        return 'participant_1';
       default:
         throw "Cannot guess entity name for field_type=" + field_type;
     }

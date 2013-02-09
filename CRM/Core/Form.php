@@ -856,6 +856,7 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
     // Output widget
     // FIXME: Instead of adhoc serialization, use a single json_encode()
     CRM_UF_Page_ProfileEditor::registerProfileScripts();
+    CRM_UF_Page_ProfileEditor::registerSchemas(CRM_Utils_Array::collect('entity_type', $entities));
     $this->add('text', $name, $label, array(
       'class' => 'crm-profile-selector',
       // Note: client treats ';;' as equivalent to \0, and ';;' works better in HTML
