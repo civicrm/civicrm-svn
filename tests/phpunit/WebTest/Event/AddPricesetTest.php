@@ -67,7 +67,7 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
     $this->_testVerifyPriceSet($validateStrings, $sid);
   }
 
-  function _testAddSet($setTitle, $usedFor, $setHelp) {
+  function _testAddSet($setTitle, $usedFor, $setHelp, $financialType = 'Event Fee') {
     $this->open($this->sboxPath . 'civicrm/admin/price?reset=1&action=add');
     $this->waitForPageToLoad('30000');
     $this->waitForElementPresent('_qf_Set_next-bottom');
@@ -81,6 +81,7 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
       $this->check('extends[2]');
     }
 
+    $this->select("css=select.form-select", "label={$financialType}");    
     $this->type('help_pre', $setHelp);
 
     $this->assertChecked('is_active', 'Verify that Is Active checkbox is set.');
@@ -264,8 +265,9 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
     // Go to Fees tab
     $this->click('link=Fees');
     $this->waitForElementPresent('_qf_Fee_upload-bottom');
-    $this->click('CIVICRM_QFID_1_2');
+    $this->click('CIVICRM_QFID_1_is_monetary');
     $this->click("xpath=//tr[@class='crm-event-manage-fee-form-block-payment_processor']/td[2]/label[text()='$processorName']");
+    $this->select('financial_type_id','label=Event Fee');
     $this->select('price_set_id', 'label=' . $setTitle);
 
     $this->click('_qf_Fee_upload-bottom');
@@ -284,7 +286,7 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
     $this->fillRichTextField('intro_text', $registerIntro);
 
     // enable confirmation email
-    $this->click('CIVICRM_QFID_1_2');
+    $this->click('CIVICRM_QFID_1_is_email_confirm');
     $this->type('confirm_from_name', 'Jane Doe');
     $this->type('confirm_from_email', 'jane.doe@example.org');
 
@@ -441,9 +443,9 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
     // Go to Fees tab
     $this->click('link=Fees');
     $this->waitForElementPresent('_qf_Fee_upload-bottom');
-    $this->click('CIVICRM_QFID_1_2');
+    $this->click('CIVICRM_QFID_1_is_monetary');
     $this->click("xpath=//tr[@class='crm-event-manage-fee-form-block-payment_processor']/td[2]/label[text()='$processorName']");
-   
+    $this->select('financial_type_id','label=Event Fee');
     $this->select('price_set_id', 'label=' . $setTitle);
 
     $this->click('_qf_Fee_upload-bottom');
@@ -462,7 +464,7 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
     $this->fillRichTextField('intro_text', $registerIntro);
 
     // enable confirmation email
-    $this->click('CIVICRM_QFID_1_2');
+    $this->click('CIVICRM_QFID_1_is_email_confirm');
     $this->type('confirm_from_name', 'Jane Doe');
     $this->type('confirm_from_email', 'jane.doe@example.org');
 
