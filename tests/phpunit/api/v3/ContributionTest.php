@@ -991,7 +991,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'receive_date' => '2012-01-01',
       'total_amount' => 100.00,
       'financial_type_id' => $this->_contributionTypeId,
-      'payment_instrument_id' => 1,
+      'payment_instrument_id' => 4,
       'contribution_status_id' => 1,
       'version' => $this->_apiversion,
     );
@@ -1001,6 +1001,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
      'contribution_status_id' => 7,
       )
     );
+    
     $contribution = civicrm_api('contribution', 'update', $newParams);
     $this->_checkFinancialTrxn($contribution, 'refund');
     $this->_checkFinancialItem($contribution['id'], 'refund');
@@ -1435,14 +1436,14 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
    elseif ($context == 'refund') {
      $compareParams = array(
        'status_id' => 1,
-       'financial_account_id' => 3,
+       'financial_account_id' => 1,
        'amount' => -100,
      );
    }
    elseif ($context == 'cancelPending') {
      $compareParams = array(
        'status_id' => 3,
-       'financial_account_id' => 3,
+       'financial_account_id' => 1,
        'amount' => -100,
      );
    }
@@ -1516,17 +1517,18 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
         'id' => $trxn['financial_trxn_id'],
      );
      $compareParams = array(
-       'to_financial_account_id' => 6,
+       'to_financial_account_id' => 12,
        'total_amount' => -100,
        'status_id' => 1,
      );
      $this->assertDBCompareValues('CRM_Financial_DAO_FinancialTrxn',$trxnParams1,$compareParams);
      $compareParams = array(
-       'to_financial_account_id' => 6,
+       'to_financial_account_id' => 12,
        'total_amount' => 100,
        'status_id' => 1,
      );
    }
+   
    $this->assertDBCompareValues('CRM_Financial_DAO_FinancialTrxn',$params,$compareParams);
  }
 
