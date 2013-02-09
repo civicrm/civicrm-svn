@@ -30,9 +30,6 @@ packages/jquery/jquery-ui-1.9.0/css/smoothness/jquery-ui-1.9.0.custom.min.css
 packages/jquery/plugins/jquery.autocomplete.js
 packages/jquery/css/jquery.autocomplete.css
 
-packages/jquery/plugins/jstree/jquery.jstree.js
-packages/jquery/plugins/jstree/themes/default/style.css
-
 packages/jquery/plugins/jquery.menu.pack.js
 packages/jquery/css/menu.css
 

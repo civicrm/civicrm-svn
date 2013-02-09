@@ -43,6 +43,8 @@ class CRM_UF_Page_ProfileEditor extends CRM_Core_Page {
       ->addScriptFile('civicrm', 'packages/backbone-forms/distribution/adapters/backbone.bootstrap-modal.min.js', 140, 'html-header', FALSE)
       ->addScriptFile('civicrm', 'packages/backbone-forms/distribution/editors/list.min.js', 140, 'html-header', FALSE)
       ->addStyleFile('civicrm', 'packages/backbone-forms/distribution/templates/default.css', 140, 'html-header')
+      ->addScriptFile('civicrm', 'packages/jquery/plugins/jstree/jquery.jstree.js', 0, 'html-header', FALSE)
+      ->addStyleFile('civicrm', 'packages/jquery/plugins/jstree/themes/default/style.css', 0, 'html-header')
       ->addStyleFile('civicrm', 'css/crm.designer.css', 140, 'html-header')
       ->addScriptFile('civicrm', 'js/crm.backbone.js', 150)
       ->addScriptFile('civicrm', 'js/model/crm.schema-mapped.js', 200)
