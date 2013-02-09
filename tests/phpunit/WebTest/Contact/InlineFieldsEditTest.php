@@ -98,7 +98,7 @@ class WebTest_Contact_InlineFieldsEditTest extends CiviSeleniumTestCase {
     foreach ($params as $str) {
       $this->assertElementNotContainsText('crm-contactinfo-content', $str);
     }
-    
+
     // Add a phone
     $this->inlineEdit('crm-phone-content', array(
       'phone_1_phone' => '123-456-7890',
@@ -106,7 +106,7 @@ class WebTest_Contact_InlineFieldsEditTest extends CiviSeleniumTestCase {
       'phone_1_location_type_id' => array('Work'),
       'phone_1_phone_type_id' => array('Mobile'),
     ));
-    
+
     // Add im
     $this->inlineEdit('crm-im-content', array(
       'im_1_name' => 'testmeout',
@@ -214,6 +214,14 @@ class WebTest_Contact_InlineFieldsEditTest extends CiviSeleniumTestCase {
       'css=#Website_Block_2 a.crm-delete-inline' => TRUE,
     ));
     $this->assertElementNotContainsText('crm-website-content', 'http://example.net');
+
+    // Change contact name
+    $this->inlineEdit('crm-contactname-content', array(
+      'first_name' => 'NewName',
+      'prefix_id' => array('Mr.'),
+    ));
+    // Page title should be updated with new name
+    $this->assertElementContainsText('css=title', "Mr. NewName $lastName");
   }
 
   /**
@@ -270,7 +278,7 @@ class WebTest_Contact_InlineFieldsEditTest extends CiviSeleniumTestCase {
     $this->click("css=#$block input.form-submit");
     if ($valid !== 'error') {
       // Verify the form saved
-      $this->waitForElementPresent("css=#$block > .crm-clear");
+      $this->waitForElementPresent("css=#$block > .crm-inline-block-content");
       $validate = FALSE;
       foreach ($params as $val) {
         if (is_string($val) && $val && substr($val, 0, 5) != 'date:') {

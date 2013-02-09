@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 <div id="crm-demographic-content" {if $permission EQ 'edit'} class="crm-inline-edit" data-edit-params='{ldelim}"cid": "{$contactId}", "class_name": "CRM_Contact_Form_Inline_Demographics"{rdelim}'{/if}>
-  <div class="crm-clear" {if $permission EQ 'edit'}title="{ts}Edit demographics{/ts}"{/if}>
+  <div class="crm-clear crm-inline-block-content" {if $permission EQ 'edit'}title="{ts}Edit demographics{/ts}"{/if}>
     {if $permission EQ 'edit'}
     <div class="crm-edit-help">
       <span class="batch-edit"></span>{ts}Edit demographics{/ts}
