@@ -68,8 +68,7 @@ class WebTest_Import_DuplicateMatchingTest extends ImportCiviSeleniumTestCase {
     // Clicking save.
     $this->click('_qf_Contact_upload_view');
     $this->waitForPageToLoad("30000");
-
-    $this->isTextPresent('Your Individual contact record has been saved.');
+    $this->assertElementContainsText('crm-notification-container', "Contact Saved");
 
     // Reset Individual strict dedupe rule for contact email (default)
     $this->webtestStrictDedupeRuleDefault();

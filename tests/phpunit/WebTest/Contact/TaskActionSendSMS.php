@@ -65,14 +65,14 @@ class WebTest_Contact_TaskActionSendSMS extends CiviSeleniumTestCase {
 
     $this->click("_qf_Contact_upload_view");
     $this->waitForPageToLoad("30000");
-    $this->assertTrue($this->isTextPresent("Your Individual contact record has been saved."));
+    $this->assertElementContainsText('crm-notification-container', "Contact Saved");
 
     $this->click('css=li#tab_group a');
     $this->waitForElementPresent('_qf_GroupContact_next');
     $this->select('group_id', "label=$smsGroupName");
     $this->click('_qf_GroupContact_next');
     $this->waitForPageToLoad("30000");
-    $this->assertTrue($this->isTextPresent("Contact has been added to the selected group "));
+    $this->assertElementContainsText('crm-notification-container', "Added to Group");
 
     // ADD contact2
     $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
@@ -90,14 +90,14 @@ class WebTest_Contact_TaskActionSendSMS extends CiviSeleniumTestCase {
 
     $this->click("_qf_Contact_upload_view");
     $this->waitForPageToLoad("30000");
-    $this->assertTrue($this->isTextPresent("Your Individual contact record has been saved."));
+    $this->assertElementContainsText('crm-notification-container', "Contact Saved");
 
     $this->click('css=li#tab_group a');
     $this->waitForElementPresent('_qf_GroupContact_next');
     $this->select('group_id', "label=$smsGroupName");
     $this->click('_qf_GroupContact_next');
     $this->waitForPageToLoad("30000");
-    $this->assertTrue($this->isTextPresent("Contact has been added to the selected group "));
+    $this->assertElementContainsText('crm-notification-container', "Added to Group");
 
     // Do an advanced search
     $this->click("css=ul#civicrm-menu li.crm-Search");

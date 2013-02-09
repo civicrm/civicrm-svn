@@ -186,7 +186,7 @@ class WebTest_Contact_MultipleContactSubTypes extends CiviSeleniumTestCase {
     $this->waitForPageToLoad("30000");
 
     //checking the contact sub-type of newly created individual
-    $this->assertTrue($this->isTextPresent("Your Individual contact record has been saved."));
+    $this->assertElementContainsText('crm-notification-container', "Contact Saved");
     $this->assertTrue($this->isElementPresent("xpath=//div[@id='contact-summary']/div[@id='contactTopBar']/table/tbody/tr/td[@class='crm-contact_type_label'][text()='{$selection1}, {$selection2}']"));
 
     //custom data check
@@ -301,7 +301,7 @@ class WebTest_Contact_MultipleContactSubTypes extends CiviSeleniumTestCase {
     $this->waitForElementPresent('_qf_Field_cancel-bottom');
 
     //Is custom group created?
-    $this->assertTrue($this->isTextPresent("Your custom field set '{$customGroupTitle}' has been added. You can add custom fields now."));
+    $this->assertTrue($this->isTextPresent("Your custom field set '{$customGroupTitle}' has been added."));
     $url = explode('gid=', $this->getLocation());
     $gid = $url[1];
 

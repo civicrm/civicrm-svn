@@ -263,7 +263,7 @@ class WebTest_Import_MatchExternalIdTest extends ImportCiviSeleniumTestCase {
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
     $this->waitForPageToLoad("30000");
-    //$this->assertTrue($this->isTextPresent( "Your Individual contact record has been saved." ) );
+    $this->assertElementContainsText('crm-notification-container', "Contact Saved");
 
     return $externalId;
   }
@@ -357,7 +357,7 @@ class WebTest_Import_MatchExternalIdTest extends ImportCiviSeleniumTestCase {
 
     $this->click("_qf_Registration_upload-bottom");
     $this->waitForPageToLoad("30000");
-    $this->waitForTextPresent("'Registration' information has been saved.");
+    $this->assertElementContainsText('crm-notification-container', "Saved");
 
     // verify event input on info page
     // start at Manage Events listing

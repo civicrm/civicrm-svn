@@ -75,8 +75,7 @@ class WebTest_Contact_DupeContactTest extends CiviSeleniumTestCase {
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
     $this->waitForPageToLoad("30000");
-
-    $this->isTextPresent("Your Individual contact record has been saved.");
+    $this->assertElementContainsText('crm-notification-container', "Contact Saved");
 
     // Go directly to the URL of New Individual.
     $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
