@@ -117,7 +117,7 @@ class CRM_Core_BAO_SettingTest extends CiviUnitTestCase {
    *  2) for current domain setting max_attachments is set to the value that $config->maxAttachments
    *    had (6)
    *  3) for other domain (2) max_attachments is set to the configured default (3)
-   * 
+   *
    *
    **/
   function testConvertAndFillSettings() {
@@ -128,6 +128,10 @@ class CRM_Core_BAO_SettingTest extends CiviUnitTestCase {
     CRM_Core_BAO_ConfigSetting::add($settings);
     $config = CRM_Core_Config::singleton(TRUE, TRUE);
     $this->assertEquals(6, $config->maxAttachments);
+    $checkSQL = "SELECT  count(*) FROM civicrm_domain WHERE config_backend LIKE 'Max%' AND id = 1
+    ";
+    $checkresult = CRM_Core_DAO::singleValueQuery($checkSQL);
+    $this->assertEquals(1, $checkresult, "Check that maxAttachments has been saved to database not just stored in config");
     CRM_Core_BAO_Setting::updateSettingsFromMetaData();
 
     //check current domain
