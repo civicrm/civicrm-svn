@@ -323,13 +323,14 @@ cj(document).ready(function(){
 {if $context eq 'dialog'}
 {literal}
   var options = {
-      beforeSubmit:  showRequest  // pre-submit callback
+      beforeSubmit:  showRequest
   };
 
   // bind form using 'ajaxForm'
   cj('#Edit').ajaxForm( options );
 
-   // pre-submit callback
+   // FIXME - this is improper use of jquery.form
+   // Do not use this code as an example
   function showRequest(formData, jqForm, options) {
     // formData is an array; here we use $.param to convert it to a string to display it
     // but the form plugin does this for you automatically when it submits the data
@@ -341,7 +342,7 @@ cj(document).ready(function(){
     var response = cj.ajax({
       type: "POST",
       url: postUrl,
-      async: false,
+      async: false, // FIXME
       data: queryString,
       dataType: "json",
       success: function( response ) {
@@ -353,7 +354,7 @@ cj(document).ready(function(){
             }
           }
           cj('input[name="' + prefix + 'contact_select_id[' + blockNo +']"]').val( response.contactID );
-          cj('#contact-success-' + prefix + blockNo ).show( );
+          CRM.alert(response.sortName + {/literal}'{ts escape="js"} has been created.{/ts}', '{ts escape="js"}Contact Saved{/ts}'{literal}, 'success');
           cj('#contact-dialog-' + prefix + blockNo ).dialog('close');
         }
       }
@@ -361,8 +362,8 @@ cj(document).ready(function(){
 
     cj('#contact-dialog-' + prefix + blockNo).html( response );
 
-    // here we could return false to prevent the form from being submitted;
-    // returning anything other than false will allow the form submit to continue
+    // FIXME - we have used jquery.form very incorrectly
+    // and are now preventing it from doing what it's supposed to do
     return false;
   }
 

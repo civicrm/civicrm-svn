@@ -30,9 +30,6 @@
 
   {if $noLabel}
     <div>
-      <div id="contact-success-{$prefix}{$blockNo}" class="hiddenElement">
-        <span class="success-status">{ts}New contact has been created.{/ts}</span>
-      </div>
       {if !$skipBreak}
         {$form.$fldName.$blockNo.html} <br/>
         {if $form.$profSelect}
@@ -46,10 +43,6 @@
       {/if}
     </div>
   {else}
-    <tr id="contact-success-{$prefix}{$blockNo}" class="hiddenElement">
-      <td></td>
-      <td><span class="success-status">{ts}New contact has been created.{/ts}</span></td>
-    </tr>
     <tr class="crm-new-contact-form-block-contact crm-new-contact-form-block-contact-{$blockNo}">
       <td class="label">{$form.$fldName.$blockNo.label}</td>
       <td>{$form.$fldName.$blockNo.html}
@@ -94,7 +87,6 @@
           },
 
           close: function(event, ui) {
-            cj('#contact-success-' + prefix + blockNo).fadeOut(5000);
             cj('#' + prefix + 'profiles_' + blockNo).val('');
             {/literal}
             {if $newContactCallback}

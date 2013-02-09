@@ -17,7 +17,7 @@
       data.snippet = 6;
       data.reset = 1;
       o.addClass('form');
-      o.closest('.crm-edit-ready').removeClass('crm-edit-ready');
+      $('.crm-edit-ready').removeClass('crm-edit-ready');
       addCiviOverlay(o);
       $.getJSON(CRM.url('civicrm/ajax/inline', data))
         .fail(errorHandler)
@@ -46,7 +46,7 @@
 
     if (response.status == 'save' || response.status == 'cancel') {
       o.trigger('crmFormSuccess', [response]);
-      o.closest('.crm-inline-edit-container').addClass('crm-edit-ready');
+      $('.crm-inline-edit-container').addClass('crm-edit-ready');
       var data = o.data('edit-params');
       var dependent = o.data('dependent-fields') || [];
       // Clone the add-new link if replacing it, and queue the clone to be refreshed as a dependent block
@@ -68,6 +68,7 @@
         o.parent().after(clone);
         $.merge(dependent, $('.crm-inline-edit', clone));
       }
+      $('a.ui-notify-close', '#crm-notification-container').click();
       // Delete an address
       if (o.hasClass('address') && !o.hasClass('add-new') && !response.addressId) {
         o.parent().remove();
@@ -104,7 +105,7 @@
       $('form', o).ajaxForm(ajaxFormParams);
       o.trigger('crmFormError', [response]).trigger('crmFormLoad');
     }
-  }; 
+  };
 
   /**
    * Configure optimistic locking mechanism for inplace editing
@@ -207,7 +208,7 @@
         $('.inline-edit-hidden-content', container).nextAll().remove();
         $('.inline-edit-hidden-content > *:first-child', container).unwrap();
         container.removeClass('form');
-        container.closest('.crm-inline-edit-container').addClass('crm-edit-ready');
+        $('.crm-inline-edit-container').addClass('crm-edit-ready');
         $('a.ui-notify-close', '#crm-notification-container').click();
         return false;
       })

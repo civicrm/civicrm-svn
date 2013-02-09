@@ -27,275 +27,302 @@
 
 require_once 'CiviTest/CiviSeleniumTestCase.php';
 class WebTest_Contact_InlineFieldsEditTest extends CiviSeleniumTestCase {
-  
+
   protected function setUp() {
     parent::setUp();
   }
-  
+
   function testAddAndEditField() {
     // This is the path where our testing install resides.
     // The rest of URL is defined in CiviSeleniumTestCase base class, in
     // class attributes.
     $this->open($this->sboxPath);
-    
+
     // Logging in. Remember to wait for page to load. In most cases,
     // you can rely on 30000 as the value that allows your test to pass, however,
     // sometimes your test might fail because of this. In such cases, it's better to pick one element
     // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
     // page contents loaded and you can continue your test execution.
     $this->webtestLogin();
-    
-    //adding a contact
-    $firstName = 'Anthony' . substr(sha1(rand()), 0, 7);
-    $lastName  = 'Anderson' . substr(sha1(rand()), 0, 7);
+
+    // Add a contact
+    $firstName = 'WebTest' . substr(sha1(rand()), 0, 7);
+    $lastName  = 'InlineFieldsEdit' . substr(sha1(rand()), 0, 7);
     $this->webtestAddContact($firstName, $lastName);
-    
-    //email block check
-    $this->addEditPhoneEmail();
-    
-    //phone block check
-    $this->addEditPhoneEmail('phone');
+    $this->waitForElementPresent('css=.crm-inline-edit-container.crm-edit-ready');
 
-    //communications block check
-    $this->addCommunicationPreferences($firstName, $lastName);
-    
-    //demographics block check
-    $this->addDemographics();
-   
-    //custom data check
-    $this->fillCustomData();
-  }
-  
-  function addEditPhoneEmail($field = "email") {
-    $isEmail = $isPhone = FALSE;
-    if ($field == "email") {
-      $isEmail = TRUE;
-    } elseif ($field == "phone") {
-      $isPhone = TRUE;
-    }
-    $linkText = "add {$field}";
-    $this->_checkClickLink($linkText, $field);
-    
-    //fill the field data
-    $loc = array( 1 => 'Home', 2 => 'Work', 3 => 'Main');
-    $phoneType = array( 1 => 'Phone', 2 => 'Mobile', 3 => 'Fax');
-    //add / delete link check
-    $moreFields = 3;
-    for ($i = 1; $i <= $moreFields; $i++) {
-      $this->click("xpath=//div[@id='{$field}-block']/div/form/table[@class='crm-inline-edit-form']/tbody/tr[2]/td/span[@id='add-more-{$field}']/a");
-    }
-    $this->click("xpath=//div[@id='{$field}-block']/div/form/table[@class='crm-inline-edit-form']/tbody/tr[5]/td[5]/a");
+    // Set Communication Prefs
+    $this->inlineEdit('crm-communication-pref-content', array(
+      'css=#email_greeting_display a' => TRUE,
+      'privacy_do_not_email' => 1,
+      'preferred_communication_method_1' => 1,
+      'preferred_communication_method_2' => 1,
+    ), 'keep_open');
+    $this->waitForElementPresent('css=.icon.privacy-flag.do-not-email');
+    $this->inlineEdit('crm-communication-pref-content', array(
+      'privacy_do_not_phone' => 1,
+      'privacy_do_not_email' => 0,
+      'preferred_communication_method_1' => 0,
+      'preferred_communication_method_2' => 0,
+    ), 'keep_open');
+    $this->waitForElementPresent('css=.icon.privacy-flag.do-not-phone');
+    $this->inlineEdit('crm-communication-pref-content', array(
+      'email_greeting_custom' => 'Hey You!',
+    ), 'no_open');
+    $this->assertElementNotPresent('css=.icon.privacy-flag.do-not-email');
 
-    $assertValues = array( );
-    for ($i = 1; $i <= $moreFields; $i++) {
-      $randNumber = rand();
-      $inputVal = ($field == "email") ? $randNumber . 'an@example.org' : $randNumber;
-          
-      if ($isEmail) {
-        $this->assertTrue($this->isElementPresent("email[{$i}][on_hold]"));
-        $this->assertTrue($this->isElementPresent("Email_{$i}_IsBulkmail"));
-        $this->assertTrue($this->isElementPresent("Email_{$i}_IsPrimary"));
-      } elseif ($isPhone) {
-        $this->assertTrue($this->isElementPresent("phone_2_phone_ext"));
-        $this->assertTrue($this->isElementPresent("phone_1_phone_type_id"));
-      }
-      
-      $assertValues[$loc[$i]] = $inputVal;
-      $this->select("{$field}_{$i}_location_type_id", "label={$loc[$i]}");
-      $this->type("{$field}_{$i}_{$field}", $inputVal);
-    }
-    $ucFieldName = ucfirst($field);
-    $this->click("_qf_{$ucFieldName}_upload");
-    
-    //to wait for load effect to end
-    $this->waitForElementPresent("xpath=//div[@id='crm-{$field}-content']");
-    //checking done for location values
-    $i = 1;
-    foreach ($assertValues as $location => $value) {
-      $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div/div[@class='crm-label'][$i]", $location ." ". $ucFieldName);
-        $primaryClass = "";
-        if($i == 1) {
-          $key = 1;
-          $primaryClass = "primary";
-        } else {
-          $key = $i - 1;  
-        }
-      if ($isEmail) {
-        $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div/div[@class='crm-content crm-contact_email {$primaryClass}'][$key]/span/a", $value);
-      } else {
-        $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div/div[@class='crm-content crm-contact_phone {$primaryClass}'][$key]/span", $value);
-      }
-      $i++;
-    }
-    
-    $linkText = "add or edit {$field}";      
-    $this->_checkClickLink($linkText, $field);
-    
-    //check for values present in edit mode
-    for ($i = 1; $i <= $moreFields; $i++) {
-      $this->verifySelectedValue("{$field}_{$i}_location_type_id", "{$i}");
-      $this->assertTrue(($this->getValue("{$field}_{$i}_{$field}") == $assertValues[$loc[$i]]), "Failed assertion for {$field} field value present in edit mode");
-    }
-    
-    if ($isEmail) {
-      $this->click('email[3][on_hold]');
-      $this->click('Email_3_IsBulkmail');
-      $this->click('_qf_Email_upload');
-      sleep(2);
-      $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div/div[@class='crm-label'][3]", "Main Email");
-      $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div/div[@class='crm-content crm-contact_email '][2]/span[@class='email-hold']", preg_quote($assertValues[$loc[3]] .' (On Hold) (Bulk)'));
-    } else {
-      $this->type("{$field}_2_{$field}_ext", 543);
-      $this->select("{$field}_1_{$field}_type_id", "label={$phoneType[2]}");
-      $this->click('_qf_Phone_upload');
-      sleep(2);
-      $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div/div[@class='crm-label'][1]", "Home " . $phoneType[2]);
-      $this->verifyText("xpath=//div[@id='crm-{$field}-content']/div[@class='crm-clear']/div/div[@class='crm-content crm-contact_phone '][1]/span", preg_quote($assertValues['Work'] ."  ext. ". 543));
-    }
-
-  }
-  
-  function addCommunicationPreferences($firstName, $lastName) {
-    $linkText = "add or edit communication preferences";
-    $field = "communication-pref";
-    $this->_checkClickLink($linkText, $field);
-    $privacyOptions = array(
-      "do_not_mail" => "Do not mail",
-      "do_not_sms" => "Do not sms",                         
-      "do_not_trade" => "Do not trade"
-    );
-   
-    foreach ($privacyOptions as $key => $value) {
-      $this->check("privacy[{$key}]");
-    }
-    $this->check("is_opt_out");
-    
-    $preferedCommunication = array(1 => "Phone", 2 => "Email");
-    foreach ($preferedCommunication as $key => $value) {
-      $this->check("preferred_communication_method[{$key}]");
-    }
-    
-    $this->assertTrue($this->isElementPresent("preferred_language"), "preferred language field missing");
-    $this->assertTrue($this->isElementPresent("preferred_mail_format"), "preferred mail format field missing");
-    $this->click("xpath=//span[@id='email_greeting_display']/a");
-    $this->select("email_greeting_id", "value=1");        
-    $this->click("xpath=//span[@id='postal_greeting_display']/a");
-    $this->select("postal_greeting_id", "value=1");
-    
-    $this->click("xpath=//span[@id='addressee_display']/a");
-    $this->select("addressee_id", "value=1");
-
-    $this->click("_qf_CommunicationPreferences_upload");
-    
-    //assertions
-    $assertValues = array(
-      'preferred_communication_method_display' => array('label' => "Preferred Method(s)", 'content' => implode(", ", $preferedCommunication)),
-      'preferred_language' => array('label' => "Preferred Language", 'content' => "English (United States)"),
-      'preferred_mail_format' => array('label' => "Email Format", 'content' => "Both"),
-      'email_greeting_display' => array('label' => "Email Greeting", 'content' => "Dear {$firstName}"),
-      'postal_greeting_display' => array('label' => "Postal Greeting", 'content' => "Dear {$firstName}"),
-      'addressee_display' => array('label' => "Addressee", 'content' => "{$firstName} {$lastName}")
-    );
-    //to wait for load effect to end 
-    $this->waitForElementPresent("xpath=//div[@id='crm-communication-pref-content']");
-    //privacy options check
-    $this->verifyText("xpath=//div[@id='crm-communication-pref-content']/div[@class='crm-clear']/div/div[@class='crm-label']", "Privacy");
-    $assertCheck = array_merge($privacyOptions, array("No Bulk Emails (User Opt Out)"));
-    $assertCheck = implode("\n ", $assertCheck);
-    $this->verifyText("xpath=//div[@id='crm-communication-pref-content']/div[@class='crm-clear']/div[3]", preg_quote("{$assertCheck}"));
-    
-    $i = 2;
-    foreach ($assertValues as $key => $value) {
-      $this->verifyText("xpath=//div[@id='crm-communication-pref-content']/div[@class='crm-clear']/div/div[@class='crm-label'][{$i}]", preg_quote($value['label']));
-      $this->verifyText("xpath=//div[@id='crm-communication-pref-content']/div[@class='crm-clear']/div/div[@class='crm-content crm-contact-{$key}']", preg_quote($value['content']));
-      $i++;
-    }
-
-    //check for default values set
-    $this->_checkClickLink($linkText, $field);
-    foreach ($privacyOptions as $key => $value) {
-      $this->assertTrue($this->isChecked("privacy[{$key}]"), "{$value} privacy option is not set by default during edit mode");
-    }
-    $this->assertTrue($this->isChecked("is_opt_out"), "is_opt_out is not set by default during edit mode");
-    
-    $preferedCommunication = array(1 => "Phone", 2 => "Email");
-    foreach ($preferedCommunication as $key => $value) {
-      $this->assertTrue($this->isChecked("preferred_communication_method[{$key}]"), "{$value} preferred communication method is not set by default during edit mode");
-    }
-    $this->verifySelectedValue("postal_greeting_id", "1");
-    $this->verifySelectedValue("addressee_id", "1");
-    $this->verifySelectedValue("email_greeting_id", "1");
-  }
-
-  function addDemographics() {
-    $linkText = "add or edit demographics";
-    $field = "demographic";
-
-    $this->_checkClickLink($linkText, $field);
-    $this->click("civicrm_gender_Male_2");
-    $this->webtestFillDate("birth_date", "10 September 1989");
-    $this->click("is_deceased");
-    $this->click("_qf_Demographics_upload");
-    sleep(2);
-    $assertValues = array(
-      "crm-contact-gender_display" => array("label" => 'Gender', "content" => "Male"),
-      "crm-contact-birth_date_display" => array("label" => "Date of birth", "content" => "September 10th, 1989"),
-      "crm-contact-deceased_message" => array("label" => "", "content" => "Contact is Deceased")
-    );
-    
-    $i = 1;
-    foreach ($assertValues as $key => $value) {
-      $this->verifyText("xpath=//div[@id='crm-demographic-content']/div[@class='crm-clear']/div/div[@class='crm-label'][{$i}]", preg_quote($value['label']));
-      $this->verifyText("xpath=//div[@id='crm-demographic-content']/div[@class='crm-clear']/div/div[@class='crm-content {$key}']", preg_quote($value['content']));
-      $i++;
-    }
-  
-    //check for default value
-    $this->_checkClickLink($linkText, $field);
-    $this->assertTrue($this->isChecked("civicrm_gender_Male_2"), "Gender field is not set");
-    $this->assertTrue(($this->getValue("birth_date") == "09/10/1989"), "Birth date is not set expected 09/10/1989");
-    $this->assertTrue($this->isChecked("is_deceased"), "Deceased field is not set");
-  }
- 
-  function fillCustomData() {
-    $this->verifyText("xpath=//table[@id='constituent_information_1']//div[@class='crm-config-option']/a", "add or edit custom set");
-    $this->click("xpath=//table[@id='constituent_information_1']//div[@class='crm-config-option']/a");
-    
-    $this->click("xpath=//table[@id='constituent_information_1']/tbody/tr/td/a");
+    // Custom data
+    $this->click('css=div.crm-custom-set-block-1 .collapsible-title');
+    sleep(1);
+    $this->openInlineForm('custom-set-content-1');
     $dateFieldId = $this->getAttribute("xpath=//div[@id='constituent_information']/table/tbody/tr[3]/td[@class='html-adjust']/input@id");
-    $this->click("xpath=//div[@id='constituent_information']/table/tbody/tr/td[@class='html-adjust']/input");
-    $this->select("xpath=//div[@id='constituent_information']/table/tbody/tr[2]/td[@class='html-adjust']/select", "value=S");
-    $this->webtestFillDate($dateFieldId, "1 June 2010");
-    $this->click("_qf_CustomData_upload");
-    sleep(2);
-    
-    //assertions
-    $assertValues = array(
-       1 => array('label' => 'Most Important Issue', 'content' => 'Education'),
-       2 => array('label' => 'Marital Status', 'content' => 'Single'),
-       3 => array('label' => 'Marriage Date', 'content' => 'June 1st, 2010')
+    $this->inlineEdit('custom-set-content-1', array(
+      'CIVICRM_QFID_Edu_2' => 1,
+      "//div[@id='constituent_information']/table/tbody/tr[2]/td[@class='html-adjust']/select" => array('Single'),
+      $dateFieldId => 'date: now - 10 years',
+    ));
+
+    // Edit contact info
+    $params = array(
+      'job_title' => 'jobtest123',
+      'nick_name' => 'nicktest123',
+      'contact_source' => 'sourcetest123',
     );
-    
-    foreach($assertValues as $key => $value) {
-      $this->verifyText("xpath=//table[@id='constituent_information_1']/tbody/tr[2]/td/div/div/div/div[@class='crm-clear']/div[@class='crm-label'][{$key}]", preg_quote($value['label']));
-      $this->verifyText("xpath=//table[@id='constituent_information_1']/tbody/tr[2]/td/div/div/div/div[@class='crm-clear']/div[@class='crm-content html-adjust crm-custom-data'][$key]", preg_quote($value['content']));
+    $this->inlineEdit('crm-contactinfo-content', $params, 'keep_open');
+    // Clear fields and verify they are deleted
+    $this->inlineEdit('crm-contactinfo-content', array(
+      'job_title' => '',
+      'nick_name' => '',
+      'contact_source' => '',
+    ), 'no_open');
+    foreach ($params as $str) {
+      $this->assertElementNotContainsText('crm-contactinfo-content', $str);
     }
     
-    $this->verifyText("xpath=//table[@id='constituent_information_1']//div[@class='crm-config-option']/a", "add or edit custom set");
-    $this->click("xpath=//table[@id='constituent_information_1']//div[@class='crm-config-option']/a");
-    $this->click("xpath=//table[@id='constituent_information_1']/tbody/tr/td/a");
+    // Add a phone
+    $this->inlineEdit('crm-phone-content', array(
+      'phone_1_phone' => '123-456-7890',
+      'phone_1_phone_ext' => '101',
+      'phone_1_location_type_id' => array('Work'),
+      'phone_1_phone_type_id' => array('Mobile'),
+    ));
     
-    //assert for default values
-    $this->assertTrue($this->isChecked("xpath=//div[@id='constituent_information']/table/tbody/tr/td[@class='html-adjust']/input"), "custom field value not set in edit mode");
-    $this->verifySelectedValue("xpath=//div[@id='constituent_information']/table/tbody/tr[2]/td[@class='html-adjust']/select", "S");
-    $this->assertTrue(($this->getValue("{$dateFieldId}") == "06/01/2010"), "Constituent information date field not set in edit mode");
-    $this->click('_qf_CustomData_cancel');
+    // Add im
+    $this->inlineEdit('crm-im-content', array(
+      'im_1_name' => 'testmeout',
+      'im_1_location_type_id' => array('Work'),
+      'im_1_provider_id' => array('Jabber'),
+    ));
+
+    // Add an address - should default to home
+    $this->inlineEdit('address-block-1', array(
+      'address_1_street_address' => '123 St',
+      'address_1_city' => 'San Somewhere',
+    ), 'keep_open');
+    // Try to uncheck is_primary, we should get an error and it should stay checked
+    $this->click('address[1][is_primary]');
+    $this->waitForElementPresent('css=#crm-notification-container .error.ui-notify-message');
+    $this->assertChecked('address[1][is_primary]');
+    // Try to open another form while this one is still open - nothing should happen
+    $this->waitForElementPresent('address-block-2');
+    $this->openInlineForm('address-block-2', FALSE);
+    $this->assertElementNotPresent('css#address-block-2.form');
+    // Update address
+    $this->inlineEdit('address-block-1', array(
+      'address_1_street_address' => '321 Other St',
+      'address_1_city' => 'Sans Nowhere',
+      'address_1_postal_code' => '99999',
+      'address_1_postal_code_suffix' => '99',
+    ), 'no_open');
+    // Another address with same location type as first - should give an error
+    $this->inlineEdit('address-block-2', array(
+      'address_2_street_address' => '123 Foo',
+      'address_2_city' => 'San Anywhere',
+      'address_2_location_type_id' => array('Home'),
+    ), 'error');
+    $this->waitForTextPresent('required');
+    // Share address with a new org
+    $this->click('address[2][use_shared_address]');
+    $this->select('profiles_2', 'label=New Organization');
+    $orgName = 'Test Org Inline' . substr(sha1(rand()), 0, 7);
+    $this->waitForElementPresent('css=#contact-dialog-2 form');
+    $this->type('organization_name', $orgName);
+    $this->type('street_address-1', 'Test Org Street');
+    $this->type('city-1', 'Test Org City');
+    $this->click('_qf_Edit_next');
+    sleep(2);
+    $this->waitForElementPresent('selected_shared_address-2');
+    $this->waitForTextPresent('Test Org Street');
+    $this->inlineEdit('address-block-2', array(
+      'address_2_location_type_id' => array('Work'),
+    ), 'no_open');
+    $this->waitForElementPresent('css=.crm-content.crm-contact-current_employer');
+    $this->assertElementContainsText('crm-contactinfo-content', $orgName);
+    $this->assertElementContainsText('address-block-2', $orgName);
+    $this->assertElementContainsText('address-block-2', 'Work Address');
+
+    // Edit demographics
+    $this->inlineEdit('crm-demographic-content', array(
+      'civicrm_gender_Female_1' => 1,
+      'is_deceased' => 1,
+      'birth_date' => 'date: Jan 1 1970',
+    ), 'no_open');
+    $this->assertElementContainsText('crm-demographic-content', 'Female');
+    $this->assertElementContainsText('crm-demographic-content', 'Contact is Deceased');
+    $this->inlineEdit('crm-demographic-content', array(
+      'is_deceased' => 0,
+    ), 'no_open');
+    $age = date('Y') - 1970;
+    $this->assertElementContainsText('crm-demographic-content', "$age years");
+
+    // Add emails
+    $this->inlineEdit('crm-email-content', array(
+      'css=#crm-email-content a.add-more-inline' => TRUE,
+      'email_1_email' => 'test1@monkey.com',
+      'email_2_email' => 'test2@monkey.com',
+    ), 'keep_open');
+
+    // Try an invalid email
+    $this->inlineEdit('crm-email-content', array(
+      'email_2_email' => 'invalid@monkey,com',
+    ), 'error');
+
+    // Delete email
+    $this->inlineEdit('crm-email-content', array(
+      'css=#Email_Block_2 a.crm-delete-inline' => TRUE,
+    ));
+    $this->assertElementNotContainsText('crm-email-content', 'test2@monkey.com');
+
+    // Add website with invalid url
+    $this->inlineEdit('crm-website-content', array(
+      'css=#crm-website-content a.add-more-inline' => TRUE,
+      'website_1_url' => 'http://example.com',
+      'website_2_url' => 'something.wrong',
+    ), 'error');
+
+    // Correct invalid url and add a third website
+    $this->inlineEdit('crm-website-content', array(
+      'css=#crm-website-content a.add-more-inline' => TRUE,
+      'website_2_url' => 'http://example.net',
+      'website_2_website_type_id' => array('Work'),
+      'website_3_url' => 'http://example.biz',
+      'website_3_website_type_id' => array('Main'),
+    ), 'keep_open');
+
+    // Delete website
+    $this->inlineEdit('crm-website-content', array(
+      'css=#Website_Block_2 a.crm-delete-inline' => TRUE,
+    ));
+    $this->assertElementNotContainsText('crm-website-content', 'http://example.net');
   }
-  
-  function _checkClickLink($linkText, $field) {
-    //check element presence
-    $text = $this->getText("xpath=//div[@id='{$field}-block']//div[@id='crm-{$field}-content']//a[@id='edit-{$field}']");
-    $this->assertTrue((($text == $linkText) && $this->isElementPresent("xpath=//div[@id='{$field}-block']//div[@id='crm-{$field}-content']//a[@id='edit-{$field}']")), "'{$linkText}' link text: {$text} missing on contact summary page");
-    $this->click("xpath=//div[@id='{$field}-block']//div[@id='crm-{$field}-content']//a[@id='edit-{$field}']");
+
+  /**
+   * Click on an inline-edit block and wait for it to open
+   *
+   * @param $block string selector
+   */
+  private function openInlineForm($block, $wait = TRUE) {
+    $this->mouseDown($block);
+    $this->mouseUp($block);
+    if ($wait) {
+      $this->waitForElementPresent("css=#$block .crm-container-snippet form");
+    }
+  }
+
+  /**
+   * Enter values in an inline edit block and save
+   *
+   * @param $block string selector
+   * @param $params array
+   * @param $valid str: submit behavior
+   *   'error' if we are expecting a form validation error,
+   *   're_open' (default) after saving, opens the form and validate inputs
+   *   'keep_open' same as 're_open' but doesn't automatically cancel at the end
+   *   'no_open' do not re-open to validate
+   */
+  private function inlineEdit($block, $params, $valid = 're_open') {
+    $this->openInlineForm($block);
+    foreach ($params as $item => $val) {
+      switch(gettype($val)) {
+        case 'boolean':
+          $this->click($item);
+          break;
+        case 'string':
+          if (substr($val, 0, 5) == 'date:') {
+            $this->webtestFillDate($item, trim(substr($val, 5)));
+          }
+          else {
+            $this->type($item, $val);
+          }
+          break;
+        case 'integer':
+          $method = $val ? 'check' : 'uncheck';
+          $this->$method($item);
+          break;
+        case 'array':
+          foreach ($val as $option) {
+            $selector = is_int($option) ? 'value' : 'label';
+            $this->select($item, "$selector=$option");
+          }
+          break;
+      }
+    }
+    $this->click("css=#$block input.form-submit");
+    if ($valid !== 'error') {
+      // Verify the form saved
+      $this->waitForElementPresent("css=#$block > .crm-clear");
+      $validate = FALSE;
+      foreach ($params as $val) {
+        if (is_string($val) && $val && substr($val, 0, 5) != 'date:') {
+          $this->assertElementContainsText($block, $val);
+          $validate = TRUE;
+        }
+        elseif (!is_bool($val)) {
+          $validate = TRUE;
+        }
+        if (is_array($val)) {
+          foreach ($val as $option) {
+            if (!is_int($option)) {
+              $this->assertElementContainsText($block, $option);
+            }
+          }
+        }
+      }
+      // Open the form back up and check everything
+      if ($validate && $valid !== 'no_open') {
+        $this->openInlineForm($block);
+        foreach ($params as $item => $val) {
+          switch(gettype($val)) {
+            case 'string':
+              if ($val && substr($val, 0, 5) == 'date:') {
+                $val = date('m/d/Y', strtotime(trim(substr($val, 5))));
+                $item .= '_display';
+              }
+              if ($val) {
+                $this->assertElementValueEquals($item, $val);
+              }
+              break;
+            case 'integer':
+              $method = $val ? 'assertChecked' : 'assertNotChecked';
+              $this->$method($item);
+              break;
+            case 'array':
+              foreach ($val as $option) {
+                $method = is_int($option) ? 'assertIsSelected' : 'assertSelected';
+                $this->$method($item, $option);
+              }
+              break;
+          }
+        }
+        if ($valid !== 'keep_open') {
+          $this->click("css=#$block input.cancel");
+        }
+      }
+    }
+    // Verify there was a form error
+    else {
+      $this->waitForElementPresent('css=#crm-notification-container .error.ui-notify-message');
+      $this->click('css=#crm-notification-container .error .ui-notify-cross');
+    }
   }
 }

@@ -89,18 +89,14 @@
       }
     }
   });
-  {/literal}{* // Enforce unique is_foo fields *}{literal}
-  cj(':checkbox[id*="[is_"]', 'form#Address_{/literal}{$blockId}{literal}').change(function() {
-    if (cj(this).is(':checked')) {
-      var ids = cj(this).attr('id').slice(-9);
-      cj('.crm-inline-edit.address.form :checkbox:checked[id$="' + ids + '"]').not(this).removeAttr('checked');
-    }
-    else if (cj(this).is("[id*=is_primary]")) {
+  {/literal}{* // Enforce unique is_primary fields *}{literal}
+  cj(':checkbox[id*="[is_primary"]', 'form#Address_{/literal}{$blockId}{literal}').change(function() {
+    if (this.defaultChecked) {
       cj(this).crmError("{/literal} {ts escape='js'}Please choose another address to be primary before changing this one.{/ts}{literal}");
-      cj(this).attr('checked', 'checked');
+      cj(this).prop('checked', true);
     }
   });
-  {/literal}{* // Reset location_type_id when cancel button pressed and enforce on other addr forms *}{literal}
+  {/literal}{* // Reset location_type_id when cancel button pressed *}{literal}
   cj(':submit[name$=cancel]', 'form#Address_{/literal}{$blockId}{literal}').click(function() {
     var container = cj(this).closest('div.crm-inline-edit.address');
     var origValue = container.attr('data-location-type-id') || '';
@@ -108,13 +104,6 @@
   });
   {/literal}
   {if $masterAddress.$blockId}
-  {literal}
-    cj(function($) {
-      var msg = CRM.alert({/literal}'{ts escape="js" 1=$masterAddress.$blockId}This address is shared with %1 contact record(s). Modifying this address will automatically update the shared address for these contacts.{/ts}', '{ts escape="js"}Editing Master Address{/ts}'{literal}, 'info', {expires: 0});
-      $('#{/literal}{$form.formName}{literal}').submit(function() {
-        msg && msg.close && msg.close();
-      });
-    });
-  {/literal}
+    CRM.alert('{ts escape="js" 1=$masterAddress.$blockId}This address is shared with %1 contact record(s). Modifying this address will automatically update the shared address for these contacts.{/ts}', '{ts escape="js"}Editing Master Address{/ts}', 'info', {ldelim}expires: 0{rdelim});
   {/if}
 </script>
