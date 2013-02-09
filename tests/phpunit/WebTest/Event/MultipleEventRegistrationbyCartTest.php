@@ -46,6 +46,7 @@ class WebTest_Event_MultipleEventRegistrationbyCartTest extends CiviSeleniumTest
     $this->waitForPageToLoad("30000");
     $this->check("enable_cart");
     $this->click("_qf_Event_next-top");
+    $this->waitForPageToLoad("30000");
     
     // We need a payment processor
     $processorName = "Webtest Dummy" . substr(sha1(rand()), 0, 7);
@@ -213,7 +214,6 @@ class WebTest_Event_MultipleEventRegistrationbyCartTest extends CiviSeleniumTest
     $this->_testOnlineRegistration($registerUrl1, $numberRegistrations, $anonymous);
     $this->_testOnlineRegistration($registerUrl2, $numberRegistrations, $anonymous);
     $this->_testOnlineRegistration($registerUrl3, $numberRegistrations, $anonymous);
-
     //Checkout
     $value = $this->_testCheckOut();
     // Log in using webtestLogin() method
@@ -280,19 +280,18 @@ class WebTest_Event_MultipleEventRegistrationbyCartTest extends CiviSeleniumTest
     // Go to Fees tab
     $this->click("link=Fees");
     $this->waitForElementPresent("_qf_Fee_upload-bottom");
-    $this->click("CIVICRM_QFID_1_2");
+    $this->click("CIVICRM_QFID_1_is_monetary");
     $this->click("xpath=//tr[@class='crm-event-manage-fee-form-block-payment_processor']/td[2]/label[text()='$processorName']");
+    $this->select('financial_type_id','Event Fee');
     if ($priceSet) {
       // get one - TBD
     }
     else {
       $this->type("label_1", "Member");
       $this->type("value_1", "250.00");
-      $this->select("financial_type_id_1", "value=1");
       $this->type("label_2", "Non-member");
       $this->type("value_2", "325.00");
-      $this->select("financial_type_id_2", "value=1");
-      $this->click("CIVICRM_QFID_1_6");
+      $this->click("CIVICRM_QFID_2_6");
     }
 
     if ($discount) {
@@ -332,7 +331,7 @@ class WebTest_Event_MultipleEventRegistrationbyCartTest extends CiviSeleniumTest
     $this->fillRichTextField("intro_text", $registerIntro);
 
     // enable confirmation email
-    $this->click("CIVICRM_QFID_1_2");
+    $this->click("CIVICRM_QFID_1_is_email_confirm");
     $this->type("confirm_from_name", "Jane Doe");
     $this->type("confirm_from_email", "jane.doe@example.org");
 
@@ -402,7 +401,6 @@ class WebTest_Event_MultipleEventRegistrationbyCartTest extends CiviSeleniumTest
     }
     $this->click("_qf_ParticipantsAndPrices_upload-bottom");
     $this->waitForPageToLoad("30000");
-    
     $this->select("credit_card_type", "value=Visa");
     $this->type("credit_card_number", "4111111111111111");
     $this->type("cvv2", "000");
