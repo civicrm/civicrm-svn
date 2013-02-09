@@ -406,7 +406,8 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
       $this->webtestFillDate("discount_start_date_1", "-3 week");
       $this->webtestFillDate("discount_end_date_1", "-2 week");
       $this->click("_qf_Fee_submit");
-      sleep(3);
+      $this->waitForPageToLoad('30000');
+      $this->waitForElementPresent("discounted_value_1_1");      
       $this->type("discounted_value_1_1","225.00");
       $this->type("discounted_value_2_1","300.00");
 
