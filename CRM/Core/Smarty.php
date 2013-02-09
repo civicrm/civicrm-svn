@@ -120,18 +120,16 @@ class CRM_Core_Smarty extends Smarty {
     $this->assign_by_ref('config', $config);
     $this->assign_by_ref('session', $session);
 
-    // check default editor and assign to template, store it in session to reduce db calls
+    // check default editor and assign to template
     $defaultWysiwygEditor = $session->get('defaultWysiwygEditor');
-    if (!$defaultWysiwygEditor &&
-      !CRM_Core_Config::isUpgradeMode()
-    ) {
-      $editorID = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+    if (!$defaultWysiwygEditor && !CRM_Core_Config::isUpgradeMode()) {
+      $defaultWysiwygEditor = CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
         'editor_id'
       );
-      if (!$session->isEmpty()) {
-        $session->set('defaultWysiwygEditor', $editorID);
+      // For logged-in users, store it in session to reduce db calls
+      if ($session->get('userID')) {
+        $session->set('defaultWysiwygEditor', $defaultWysiwygEditor);
       }
-      $defaultWysiwygEditor = $editorID;
     }
 
     $this->assign('defaultWysiwygEditor', $defaultWysiwygEditor);
