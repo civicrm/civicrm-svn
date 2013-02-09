@@ -60,8 +60,8 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'total_amount' => 100.00,
       'financial_type_id'   => $this->_contributionTypeId,
       'non_deductible_amount' => 10.00,
-      'fee_amount' => 51.00,
-      'net_amount' => 91.00,
+      'fee_amount' => 5.00,
+      'net_amount' => 95.00,
       'source' => 'SSF',
       'contribution_status_id' => 1,
       'version' => $this->_apiversion,
@@ -131,8 +131,8 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'total_amount' => 100.00,
       'financial_type_id' => $this->_contributionTypeId,
       'non_deductible_amount' => 10.00,
-      'fee_amount' => 51.00,
-      'net_amount' => 91.00,
+      'fee_amount' => 5.00,
+      'net_amount' => 95.00,
       'trxn_id' => 23456,
       'invoice_id' => 78910,
       'source' => 'SSF',
@@ -159,8 +159,8 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $this->assertEquals($contribution['values'][$contribution['id']]['financial_type_id'], 1);
     $this->assertEquals($contribution['values'][$contribution['id']]['total_amount'], 100.00, 'In line ' . __LINE__);
     $this->assertEquals($contribution['values'][$contribution['id']]['non_deductible_amount'], 10.00, 'In line ' . __LINE__);
-    $this->assertEquals($contribution['values'][$contribution['id']]['fee_amount'], 51.00, 'In line ' . __LINE__);
-    $this->assertEquals($contribution['values'][$contribution['id']]['net_amount'], 91.00, 'In line ' . __LINE__);
+    $this->assertEquals($contribution['values'][$contribution['id']]['fee_amount'], 5.00, 'In line ' . __LINE__);
+    $this->assertEquals($contribution['values'][$contribution['id']]['net_amount'], 95.00, 'In line ' . __LINE__);
     $this->assertEquals($contribution['values'][$contribution['id']]['trxn_id'], 23456, 'In line ' . __LINE__);
     $this->assertEquals($contribution['values'][$contribution['id']]['invoice_id'], 78910, 'In line ' . __LINE__);
     $this->assertEquals($contribution['values'][$contribution['id']]['contribution_source'], 'SSF', 'In line ' . __LINE__);
@@ -229,8 +229,8 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'total_amount' => 100.00,
       'contribution_type_id' => $this->_contributionTypeId,
       'non_deductible_amount' => 10.00,
-      'fee_amount' => 51.00,
-      'net_amount' => 91.00,
+      'fee_amount' => 5.00,
+      'net_amount' => 95.00,
       'trxn_id' => 23456,
       'invoice_id' => 78910,
       'source' => 'SSF',
@@ -255,8 +255,8 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $this->assertEquals($contribution['values'][$contribution['id']]['financial_type_id'], $this->_contributionTypeId);
     $this->assertEquals($contribution['values'][$contribution['id']]['total_amount'], 100.00, 'In line ' . __LINE__);
     $this->assertEquals($contribution['values'][$contribution['id']]['non_deductible_amount'], 10.00, 'In line ' . __LINE__);
-    $this->assertEquals($contribution['values'][$contribution['id']]['fee_amount'], 51.00, 'In line ' . __LINE__);
-    $this->assertEquals($contribution['values'][$contribution['id']]['net_amount'], 91.00, 'In line ' . __LINE__);
+    $this->assertEquals($contribution['values'][$contribution['id']]['fee_amount'], 5.00, 'In line ' . __LINE__);
+    $this->assertEquals($contribution['values'][$contribution['id']]['net_amount'], 95.00, 'In line ' . __LINE__);
     $this->assertEquals($contribution['values'][$contribution['id']]['trxn_id'], 23456, 'In line ' . __LINE__);
     $this->assertEquals($contribution['values'][$contribution['id']]['invoice_id'], 78910, 'In line ' . __LINE__);
     $this->assertEquals($contribution['values'][$contribution['id']]['contribution_source'], 'SSF', 'In line ' . __LINE__);
@@ -908,12 +908,15 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'return' => 'line_total',
     ));
     $this->assertEquals('100.00', $lineItems);
-
-    $newParams = array_merge($this->_params, array(
+    $trxnAmount = $this->_getFinancialTrxnAmount($contribution['id']);
+    // Financial trxn SUM = 100 + 5 (fee)
+    $this->assertEquals('105.00', $trxnAmount);
+    $newParams = array(
+      'version' => $this->_apiversion,
       'id' => $contribution['id'],
-      'total_amount' => '125')
-    );
+      'total_amount' => '125');
     $contribution = civicrm_api('contribution', 'update', $newParams);
+
     $lineItems = civicrm_api('line_item','getvalue',array(
         'version' => $this->_apiversion,
         'entity_id' => $contribution['id'],
@@ -921,10 +924,12 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
         'sequential' => 1,
         'return' => 'line_total',
     ));
+
     $this->assertEquals('125.00', $lineItems);
     $trxnAmount = $this->_getFinancialTrxnAmount($contribution['id']);
     $fitemAmount = $this->_getFinancialItemAmount($contribution['id']);
-    $this->assertEquals('125.00', $trxnAmount);
+    // Financial trxn SUM = 125 + 5 (fee)
+    $this->assertEquals('130.00', $trxnAmount);
     $this->assertEquals('125.00', $fitemAmount);
   }
 
@@ -963,11 +968,12 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'contact_id' => $this->_individualId,
       'total_amount' => 100.00,
       'financial_type_id' => $this->_contributionTypeId,
-      'payment_instrument_id' => 1,
+      'payment_instrument_id' => 4,
       'contribution_status_id' => 1,
       'version' => $this->_apiversion,
     );
     $contribution = civicrm_api('contribution', 'create', $contribParams);
+
     $newParams = array_merge($contribParams, array(
      'id' => $contribution['id'],
      'payment_instrument_id' => $instrumentId,)
@@ -1182,8 +1188,8 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'total_amount' => 100.00,
                   'financial_type_id'      => $this->_contributionTypeId,
       'non_deductible_amount' => 10.00,
-      'fee_amount' => 51.00,
-      'net_amount' => 91.00,
+      'fee_amount' => 5.00,
+      'net_amount' => 95.00,
       'trxn_id' => 23456,
       'invoice_id' => 78910,
       'source' => 'SSF',
@@ -1383,6 +1389,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
      LEFT JOIN civicrm_entity_financial_trxn AS ceft ON ft.id = ceft.financial_trxn_id
      WHERE ceft.entity_table = 'civicrm_contribution'
      AND ceft.entity_id = {$contId}";
+     
    $result = CRM_Core_DAO::singleValueQuery($query);
    return $result;
  }
