@@ -23,14 +23,18 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{literal}
-<script type="text/javascript" >
+
+{* Include a modified version of jquery-fieldselection
+ * FIXME: we use this plugin for so little it's hard to justify having it at all *}
+<script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery-fieldselection.js"></script>
+
+<script type="text/javascript">
 var text_message = null;
 var html_message = null;
 var isPDF        = false;
 var isMailing    = false;
 
-{/literal}
+
 {if $form.formName eq 'MessageTemplates'}
   {literal}
   text_message = "msg_text";

@@ -55,8 +55,6 @@ packages/jquery/plugins/jquery.FormNavigate.js
 packages/jquery/plugins/jquery.validate.min.js
 packages/jquery/plugins/jquery.ui.datepicker.validation.pack.js
 
-packages/jquery/plugins/jquery-fieldselection.js
-
 packages/jquery/plugins/jquery.jeditable.mini.js
 
 packages/jquery/plugins/jquery.blockUI.js
