@@ -59,7 +59,7 @@ packages/jquery/plugins/jquery.jeditable.mini.js
 
 packages/jquery/plugins/jquery.blockUI.js
 
-packages/jquery/plugins/jquery.notify.js
+packages/jquery/plugins/jquery.notify.min.js
 
 packages/jquery/plugins/jquery.redirect.min.js
 
