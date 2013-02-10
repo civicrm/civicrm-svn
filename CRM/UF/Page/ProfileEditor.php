@@ -117,6 +117,20 @@ class CRM_UF_Page_ProfileEditor extends CRM_Core_Page {
             $availableFields
           );
           break;
+        case 'ContributionModel':
+          $civiSchema[$entityType] = self::convertCiviModelToBackboneModel(
+            'Contribution',
+            ts('Contribution'),
+            $availableFields
+          );
+          break;
+        case 'MembershipModel':
+          $civiSchema[$entityType] = self::convertCiviModelToBackboneModel(
+            'Membership',
+            ts('Membership'),
+            $availableFields
+          );
+          break;
         case 'ParticipantModel':
           $civiSchema[$entityType] = self::convertCiviModelToBackboneModel(
             'Participant',

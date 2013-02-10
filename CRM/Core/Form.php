@@ -848,7 +848,7 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
    *
    * @param string $name HTML form-element name
    * @param string $label Printable label
-   * @param string $allowCoreTypes only present a UFGroup if its group_type includes a subset of $allowCoreTypes
+   * @param string $allowCoreTypes only present a UFGroup if its group_type includes a subset of $allowCoreTypes; e.g. 'Individual', 'Activity'
    * @param string $allowSubTypes only present a UFGroup if its group_type is compatible with $allowSubypes
    * @param array $entities
    */

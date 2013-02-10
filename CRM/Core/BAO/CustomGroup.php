@@ -1006,6 +1006,8 @@ SELECT $select
       case 'Location':
       case 'Address':
       case 'Activity':
+      case 'Contribution':
+      case 'Membership':
       case 'Participant':
         $customGroupDAO->whereAdd("extends IN ('$entityType')");
         break;

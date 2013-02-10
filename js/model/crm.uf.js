@@ -81,6 +81,10 @@
         return 'contact_1';
       case 'Activity':
         return 'activity_1';
+      case 'Contribution':
+        return 'contribution_1';
+      case 'Membership':
+        return 'membership_1';
       case 'Participant':
         return 'participant_1';
       default:
