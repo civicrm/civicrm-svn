@@ -26,7 +26,7 @@
 */
 
 /**
- * This class facilitates the loading of secondary, per-page resources
+ * This class facilitates the loading of resources
  * such as JavaScript files and CSS files.
  *
  * Any URLs generated for resources may include a 'cache-code'. By resetting the
@@ -406,7 +406,7 @@ class CRM_Core_Resources {
   }
 
   /**
-   * This adds CiviCRM's standard css and js to the document header.
+   * This adds CiviCRM's standard css and js to the specified region of the document.
    * It will only run once.
    *
    * TODO: Separate the functional code (like addStyle/addScript) from the policy code

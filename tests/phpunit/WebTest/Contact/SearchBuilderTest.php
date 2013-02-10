@@ -32,12 +32,23 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
     parent::setUp();
   }
 
-  function testSearchBuilderRLIKE() {
-    // This is the path where our testing install resides.
-    // The rest of URL is defined in CiviSeleniumTestCase base class, in
-    // class attributes.
-    $this->open($this->sboxPath);
+  // TODO
+  function _testSearchBuilderOptions() {
+    // Logging in. Remember to wait for page to load. In most cases,
+    // you can rely on 30000 as the value that allows your test to pass, however,
+    // sometimes your test might fail because of this. In such cases, it's better to pick one element
+    // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
+    // page contents loaded and you can continue your test execution.
+    $this->webtestLogin();
 
+    // Go directly to the URL of the search builder
+    $this->open($this->sboxPath . "civicrm/contact/search/builder?reset=1");
+    $this->waitForPageToLoad("30000");
+    
+    $this->
+  }
+
+  function testSearchBuilderRLIKE() {
     // Logging in. Remember to wait for page to load. In most cases,
     // you can rely on 30000 as the value that allows your test to pass, however,
     // sometimes your test might fail because of this. In such cases, it's better to pick one element
@@ -53,19 +64,7 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
     $sortName = "adv$firstName, $firstName";
     $displayName = "$firstName adv$firstName";
 
-    // Go directly to the URL of the screen that you will be testing (Home dashboard).
-    $this->open($this->sboxPath . "civicrm/contact/search/builder?reset=1");
-    $this->waitForPageToLoad("30000");
-
-    $this->select("id=mapper_1_0_0", "label=Individual");
-    $this->select("id=mapper_1_0_1", "label=Postal Code");
-    $this->select("id=operator_1_0", "label=RLIKE");
-    $this->type("id=value_1_0", "100[0-9]");
-    $this->click("id=_qf_Builder_refresh");
-    $this->waitForPageToLoad("30000");
-
-    // Is contact present?
-    $this->assertTrue($this->isTextPresent("$sortName"), "Did not find Contact!");
+    $this->_searchBuilder("Postal Code", "100[0-9]", $sortName, "RLIKE");
   }
 
   // function to create contact with details (contact details, address, Constituent information ...)
@@ -109,11 +108,6 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
   }
 
   function testSearchBuilderContacts(){
-    // This is the path where our testing install resides.
-    // The rest of URL is defined in CiviSeleniumTestCase base class, in
-    // class attributes.
-    $this->open($this->sboxPath);
-
     // Logging in. Remember to wait for page to load. In most cases,
     // you can rely on 30000 as the value that allows your test to pass, however,
     // sometimes your test might fail because of this. In such cases, it's better to pick one element
@@ -124,10 +118,11 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
     //Individual
     $firstName = substr(sha1(rand()), 0, 7);
     $streetName = "street $firstName";
-    $this->_createContact('Individual', $firstName,"$firstName@advsearch.co.in", $streetName);
+    $sortName = "adv$firstName, $firstName";
+    $this->_createContact('Individual', $firstName, "$firstName@advsearch.co.in", $streetName);
     // search using search builder and advanced search
-    $this->_searchBuilder('Street Address',$streetName,"$firstName adv$firstName",'=','1');
-    $this->_advancedSearch($streetName,"$firstName adv$firstName",'Individual','1','street_address');
+    $this->_searchBuilder('Street Address', $streetName, $sortName, '=', '1');
+    $this->_advancedSearch($streetName, $sortName, 'Individual', '1', 'street_address');
     
     //Organization
     $orgName = substr(sha1(rand()), 0, 7)."org";
@@ -218,27 +213,52 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
     $this->_advancedSearch( "this is subject by $firstName8", $firstName8, NULL, NULL, 'note_subject', 'notes');
     $this->_advancedSearch( "this is notes by $firstName8", $firstName8, NULL, NULL, 'note_both', 'notes');
     $this->_advancedSearch( "this is subject by $firstName8", $firstName8, NULL, NULL, 'note_both', 'notes');
-    
   }
 
-  function _searchBuilder($field, $fieldValue = NULL, $name = NULL, $op, $count = NULL){
+  function _searchBuilder($field, $fieldValue = NULL, $name = NULL, $op = '=', $count = NULL) {
     // search builder using contacts(not using contactType)
     $this->open($this->sboxPath . "civicrm/contact/search/builder?reset=1");
     $this->waitForPageToLoad("30000");
-    $this->select("id=mapper_1_0_0", "label=Contacts");
-    $this->select("id=mapper_1_0_1", "label=$field");
-    $this->select("id=operator_1_0", "label=$op");
-    $this->type("id=value_1_0", $fieldValue);
+    $this->enterValues(1, 1, 'Contacts', $field, NULL, $op, "$fieldValue");
     $this->click("id=_qf_Builder_refresh");
     $this->waitForPageToLoad("30000");
-    if(isset($fieldValue) && isset($name)){
-      $assertValues = array( 1 => ($count == 1)?"$count Contact":"$count Contacts",
-                             2 => $name,
-                             3 => $fieldValue,
-                             );
-      foreach($assertValues as $key => $value){
-        $this->assertTrue($this->isTextPresent($value));
+    if (($op == '=' || $op == 'LIKE') && $fieldValue) {
+      $this->assertElementContainsText('css=.crm-search-results > table.row-highlight', "$fieldValue");
+    }
+    if ($name) {
+      $this->assertElementContainsText('css=.crm-search-results > table.row-highlight', "$name");
+    }
+    if ($count) {
+      $this->assertElementContainsText('search-status', "$count Contact");
+    }
+  }
+  
+  function enterValues($row, $set, $entity, $field, $loc, $op, $value = '') {
+    if ($set > 1 && $row == 1) {
+      $this->click('addBlock');
+    }
+    if ($row > 1) {
+      $this->click("addMore_{$set}");
+    }
+    // In the DOM rows are 0 indexed and sets are 1 indexed, so normalizing
+    $row--;
+    $this->select("mapper_{$set}_{$row}_0", "label=$entity");
+    $this->select("mapper_{$set}_{$row}_1", "label=$field");
+    if ($loc) {
+      $this->select("mapper_{$set}_{$row}_2", "label=$loc");
+    }
+    $this->select("operator_{$set}_{$row}", "label=$op");
+    if (is_array($value)) {
+      $this->waitForElementPresent("css=#crm_search_value_{$set}_{$row} select option + option");
+      foreach ($value as $val) {
+        $this->select("css=#crm_search_value_{$set}_{$row} select", "label=$val");
       }
+    }
+    elseif ($value && substr($value, 0, 5) == 'date:') {
+      $this->webtestFillDate("value_{$set}_{$row}", trim(substr($value, 5)));
+    }
+    elseif ($value) {
+      $this->type("value_{$set}_{$row}", $value);
     }
   }
   
