@@ -1255,7 +1255,7 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
     $attachments = NULL,
     $cc          = NULL,
     $bcc         = NULL,
-    &$contactIds
+    $contactIds // FIXME a param with no default shouldn't be last
   ) {
     // get the contact details of logged in contact, which we set as from email
     if ($userID == NULL) {
@@ -1320,7 +1320,7 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
     $activity = self::create($activityParams);
 
     // get the set of attachments from where they are stored
-    $attachments = &CRM_Core_BAO_File::getEntityFile('civicrm_activity',
+    $attachments = CRM_Core_BAO_File::getEntityFile('civicrm_activity',
       $activity->id
     );
     $returnProperties = array();

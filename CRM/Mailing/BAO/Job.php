@@ -520,7 +520,7 @@ VALUES (%1, %2, %3, %4, %5, %6, %7)
     CRM_Mailing_BAO_Mailing::tokenReplace($mailing);
 
     // get and format attachments
-    $attachments = &CRM_Core_BAO_File::getEntityFile('civicrm_mailing', $mailing->id);
+    $attachments = CRM_Core_BAO_File::getEntityFile('civicrm_mailing', $mailing->id);
 
     if (defined('CIVICRM_MAIL_SMARTY') && CIVICRM_MAIL_SMARTY) {
       CRM_Core_Smarty::registerStringResource();

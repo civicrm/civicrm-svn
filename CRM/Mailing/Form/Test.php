@@ -142,7 +142,7 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form {
     $fromEmail = $mailing->from_email;
     $replyToEmail = $mailing->replyto_email;
 
-    $attachments = &CRM_Core_BAO_File::getEntityFile('civicrm_mailing',
+    $attachments = CRM_Core_BAO_File::getEntityFile('civicrm_mailing',
       $mailing->id
     );
 

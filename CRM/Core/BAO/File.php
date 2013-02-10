@@ -40,7 +40,7 @@
 
    static $_signableFields = array('entityTable', 'entityID', 'fileID');
 
-   function path($fileID, $entityID, $entityTable = NULL) {
+   static function path($fileID, $entityID, $entityTable = NULL) {
      $entityFileDAO = new CRM_Core_DAO_EntityFile();
      if ($entityTable) {
        $entityFileDAO->entity_table = $entityTable;
@@ -65,7 +65,7 @@
    }
 
 
-   public function filePostProcess(
+   static function filePostProcess(
      $data,
      $fileTypeID,
      $entityTable,
@@ -194,7 +194,7 @@
     * delete all the files and associated object associated with this
     * combination
     */
-   public function deleteEntityFile($entityTable, $entityID, $fileTypeID = NULL, $fileID = NULL) {
+   static function deleteEntityFile($entityTable, $entityID, $fileTypeID = NULL, $fileID = NULL) {
      if (empty($entityTable) || empty($entityID)) {
        return;
      }
@@ -247,7 +247,7 @@
     * get all the files and associated object associated with this
     * combination
     */
-   public function &getEntityFile($entityTable, $entityID, $addDeleteArgs = false) {
+   static function getEntityFile($entityTable, $entityID, $addDeleteArgs = false) {
      if (empty($entityTable) || !$entityID) {
        $results = NULL;
        return $results;
@@ -294,7 +294,7 @@
      return $results;
    }
 
-   public function sql($entityTable, $entityID, $fileTypeID = NULL, $fileID = NULL) {
+   static function sql($entityTable, $entityID, $fileTypeID = NULL, $fileID = NULL) {
      $sql = "
  SELECT    CF.id as cfID,
            CF.uri as uri,

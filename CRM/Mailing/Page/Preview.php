@@ -72,7 +72,7 @@ class CRM_Mailing_Page_Preview extends CRM_Core_Page {
     CRM_Mailing_BAO_Mailing::tokenReplace($mailing);
 
     // get and format attachments
-    $attachments = &CRM_Core_BAO_File::getEntityFile('civicrm_mailing',
+    $attachments = CRM_Core_BAO_File::getEntityFile('civicrm_mailing',
       $mailing->id
     );
 
