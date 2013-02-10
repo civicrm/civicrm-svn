@@ -67,7 +67,5 @@ js/rest.js
 js/Common.js
 
 js/jquery/jquery.crmeditable.js
-js/jquery/jquery.crmmessages.js
-js/jquery/jquery.crmAccordions.js
 js/jquery/jquery.crmasmselect.js
 
