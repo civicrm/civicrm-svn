@@ -1,11 +1,9 @@
 <?php
-// $Id$
-
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 4.1                                                |
+ | CiviCRM version 4.2                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2011                                |
+ | Copyright CiviCRM LLC (c) 2004-2012                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -25,11 +23,17 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*
-* @package CiviCRM_APIv3_Core
 */
 
-require_once 'tests/phpunit/CiviTest/CiviUnitTestCase.php';
+require_once 'CiviTest/CiviUnitTestCase.php';
+
+
+/**
+ *  Test APIv3 civicrm_setting_* functions
+ *
+ *  @package CiviCRM_APIv3
+ *  @subpackage API_Core
+ */
 
 /**
  * Class contains api test cases for civicrm settings

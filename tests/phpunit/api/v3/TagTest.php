@@ -1,6 +1,4 @@
 <?php
-// $Id$
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.2                                                |
@@ -28,6 +26,15 @@
 */
 
 require_once 'CiviTest/CiviUnitTestCase.php';
+
+
+/**
+ *  Test APIv3 civicrm_tag_* functions
+ *
+ *  @package CiviCRM_APIv3
+ *  @subpackage API_Core
+ */
+
 class api_v3_TagTest extends CiviUnitTestCase {
   protected $_apiversion;
   public $_eNoticeCompliant = TRUE;
