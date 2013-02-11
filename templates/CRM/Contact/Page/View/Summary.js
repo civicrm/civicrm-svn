@@ -22,6 +22,7 @@
       $.getJSON(CRM.url('civicrm/ajax/inline', data))
         .fail(errorHandler)
         .done(function(response) {
+          removeCiviOverlay(o);
           o.css('overflow', 'hidden').wrapInner('<div class="inline-edit-hidden-content" style="display:none" />').append(response.content);
           // Smooth resizing
           var newHeight = $('.crm-container-snippet', o).height();
@@ -32,7 +33,6 @@
           o.animate({height: '' + newHeight + 'px'}, diff * 2, function() {
             o.removeAttr('style');
           });
-          removeCiviOverlay(o);
           $('form', o).validate(CRM.validate.params);
           ajaxFormParams.data = data;
           $('form', o).ajaxForm(ajaxFormParams);
