@@ -44,8 +44,6 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
     // Go directly to the URL of the search builder
     $this->open($this->sboxPath . "civicrm/contact/search/builder?reset=1");
     $this->waitForPageToLoad("30000");
-    
-    $this->
   }
 
   function testSearchBuilderRLIKE() {
