@@ -1769,7 +1769,7 @@ LEFT JOIN  civicrm_contribution contribution ON ( componentPayment.contribution_
       $contributionParams = array();
       $fields = array(
         'contact_id', 'total_amount', 'receive_date', 'is_test', 'campaign_id',
-        'payment_instrument_id', 'trxn_id', 'invoice_id', 'financial_type_id', 
+        'payment_instrument_id', 'trxn_id', 'invoice_id', 'financial_type_id',
         'contribution_status_id', 'non_deductible_amount', 'receipt_date', 'check_number',
       );
       foreach ($fields as $field) {
@@ -2432,14 +2432,14 @@ WHERE  contribution_id = %1 ";
       $template->assign('price', $productDAO->price);
       $template->assign('sku', $productDAO->sku);
     }
+    $template->assign('title', CRM_Utils_Array::value('title',$values));
+    $amount = CRM_Utils_Array::value('total_amount', $input,(CRM_Utils_Array::value('amount', $input)),null);
+    if(empty($amount) && isset($this->total_amount)){
+      $amount = $this->total_amount;
+    }
+    $template->assign('amount', $amount);
     // add the new contribution values
     if (strtolower($this->_component) == 'contribute') {
-      $template->assign('title', CRM_Utils_Array::value('title',$values));
-      $amount = CRM_Utils_Array::value('total_amount', $input,(CRM_Utils_Array::value('amount', $input)),null);
-      if(empty($amount) && isset($this->total_amount)){
-        $amount = $this->total_amount;
-      }
-      $template->assign('amount', $amount);
       //PCP Info
       $softDAO = new CRM_Contribute_DAO_ContributionSoft();
       $softDAO->contribution_id = $this->id;
@@ -2456,10 +2456,6 @@ WHERE  contribution_id = %1 ";
           $template->assign('title', $pcpDAO->title);
         }
       }
-    }
-    else {
-      $template->assign('title', $values['event']['title']);
-      $template->assign('totalAmount', $input['amount']);
     }
 
     if ($this->financial_type_id) {
@@ -2483,6 +2479,7 @@ WHERE  contribution_id = %1 ";
     $template->assign('currency', $this->currency);
     $template->assign('address', CRM_Utils_Address::format($input));
     if ($this->_component == 'event') {
+      $template->assign('title', $values['event']['title']);
       $participantRoles = CRM_Event_PseudoConstant::participantRole();
       $viewRoles = array();
       foreach (explode(CRM_Core_DAO::VALUE_SEPARATOR, $this->_relatedObjects['participant']->role_id) as $k => $v) {

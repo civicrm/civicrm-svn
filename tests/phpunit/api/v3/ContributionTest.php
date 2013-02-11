@@ -48,7 +48,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
   protected $_entity = 'Contribution';
   public $debug = 0;
   protected $_params;
-  public $_eNoticeCompliant = FALSE;
+  public $_eNoticeCompliant = TRUE;
   function setUp() {
     parent::setUp();
 
@@ -1302,7 +1302,10 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
   function testSendMailEvent() {
     $mut = new CiviMailUnitTest( $this, true );
     $contribution = civicrm_api('contribution','create',$this->_params);
-    $event          = $this->eventCreate(array('is_email_confirm' => 1));
+    $event          = $this->eventCreate(array(
+      'is_email_confirm' => 1,
+      'confirm_from_email' => 'test@civicrm.org',
+    ));
     $this->_eventID = $event['id'];
     $participantParams = array(
       'contact_id' => $this->_individualId,
@@ -1327,6 +1330,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'receipt_from_email' => 'api@civicrm.org',
       )
     );
+
     $this->assertAPISuccess($apiResult);
     $mut->checkMailLog(array(
         'Annual CiviCRM meet',
