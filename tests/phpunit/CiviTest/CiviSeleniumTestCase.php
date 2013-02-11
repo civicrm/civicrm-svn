@@ -1087,14 +1087,13 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     return $memTypeParams;
   }
 
-  function WebtestAddGroup() {
+  function WebtestAddGroup($groupName = NULL, $parentGroupName = NULL) {
     $this->openCiviPage('group/add', 'reset=1', '_qf_Edit_upload-bottom');
 
-    // Create new group
-    $title = substr(sha1(rand()), 0, 7);
-    $groupName = "group_$title";
-
     // fill group name
+    if (!$groupName) {
+      $groupName = 'group_' . substr(sha1(rand()), 0, 7);
+    }
     $this->type('title', $groupName);
 
     // fill description
@@ -1108,6 +1107,11 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
     // select Visibility as Public Pages
     $this->select('visibility', 'value=Public Pages');
+
+    // select parent group
+    if ($parentGroupName) {
+      $this->select('parents', "*$parentGroupName");
+    }
 
     // Clicking save.
     $this->click('_qf_Edit_upload-bottom');

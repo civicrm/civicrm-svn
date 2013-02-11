@@ -33,16 +33,6 @@ class WebTest_Contact_SearchTest extends CiviSeleniumTestCase {
   }
 
   function testQuickSearch() {
-    // This is the path where our testing install resides.
-    // The rest of URL is defined in CiviSeleniumTestCase base class, in
-    // class attributes.
-    $this->open($this->sboxPath);
-
-    // Logging in. Remember to wait for page to load. In most cases,
-    // you can rely on 30000 as the value that allows your test to pass, however,
-    // sometimes your test might fail because of this. In such cases, it's better to pick one element
-    // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
-    // page contents loaded and you can continue your test execution.
     $this->webtestLogin();
 
     // Adding contact
@@ -74,8 +64,6 @@ class WebTest_Contact_SearchTest extends CiviSeleniumTestCase {
   }
 
   function testQuickSearchPartial() {
-    $this->open($this->sboxPath);
-
     $this->webtestLogin();
 
     // Adding contact
@@ -107,16 +95,6 @@ class WebTest_Contact_SearchTest extends CiviSeleniumTestCase {
   }
 
   function testContactSearch() {
-    // This is the path where our testing install resides.
-    // The rest of URL is defined in CiviSeleniumTestCase base class, in
-    // class attributes.
-    $this->open($this->sboxPath);
-
-    // Logging in. Remember to wait for page to load. In most cases,
-    // you can rely on 30000 as the value that allows your test to pass, however,
-    // sometimes your test might fail because of this. In such cases, it's better to pick one element
-    // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
-    // page contents loaded and you can continue your test execution.
     $this->webtestLogin();
 
     // Create new tag.
@@ -125,7 +103,7 @@ class WebTest_Contact_SearchTest extends CiviSeleniumTestCase {
 
     // Create new group
     $groupName = 'group_' . substr(sha1(rand()), 0, 7);
-    $this->addGroup($groupName);
+    $this->WebtestAddGroup($groupName);
 
     // Adding contact
     // We're using Quick Add block on the main page for this.
@@ -179,12 +157,7 @@ class WebTest_Contact_SearchTest extends CiviSeleniumTestCase {
   }
 
   function addTag($tagName = 'New Tag') {
-
-    $this->open($this->sboxPath . "civicrm/admin/tag?action=add&reset=1");
-
-    // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
-    // button at the end of this page to show up, to make sure it's fully loaded.
-    $this->waitForElementPresent("_qf_Tag_next");
+    $this->openCiviPage('admin/tag', array('reset' => 1, 'action' => 'add'), '_qf_Tag_next');
 
     // fill tag name
     $this->type("name", $tagName);
@@ -206,61 +179,20 @@ class WebTest_Contact_SearchTest extends CiviSeleniumTestCase {
     $this->assertTrue($this->isTextPresent("The tag '$tagName' has been saved."));
   }
 
-  function addGroup($groupName = 'New Group', $parentGroupName = "- select -") {
-    $this->open($this->sboxPath . "civicrm/group/add?reset=1");
-
-    // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
-    // button at the end of this page to show up, to make sure it's fully loaded.
-    $this->waitForElementPresent("_qf_Edit_upload");
-
-    // fill group name
-    $this->type("title", $groupName);
-
-    // fill description
-    $this->type("description", "Adding new group.");
-
-    // check Access Control
-    $this->click("group_type[1]");
-
-    // check Mailing List
-    $this->click("group_type[2]");
-
-    // select Visibility as Public Pages
-    $this->select("visibility", "value=Public Pages");
-
-    // select parent group
-    $this->select("parents", "label=$parentGroupName");
-
-    // Clicking save.
-    $this->click("_qf_Edit_upload");
-    $this->waitForPageToLoad("30000");
-
-    // Is status message correct?
-    $this->assertTrue($this->isTextPresent("The Group '$groupName' has been saved."));
-  }
-
   // CRM-6586
   function testContactSearchExport() {
-    $this->open($this->sboxPath);
-
-    // Logging in. Remember to wait for page to load. In most cases,
-    // you can rely on 30000 as the value that allows your test to pass, however,
-    // sometimes your test might fail because of this. In such cases, it's better to pick one element
-    // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
-    // page contents loaded and you can continue your test execution.
     $this->webtestLogin();
 
     // Create new  group
     $parentGroupName = 'Parentgroup_' . substr(sha1(rand()), 0, 7);
-    $this->addGroup($parentGroupName);
+    $this->WebtestAddGroup($parentGroupName);
 
     // Create new group and select the previously selected group as parent group for this new group.
     $childGroupName = 'Childgroup_' . substr(sha1(rand()), 0, 7);
-    $this->addGroup($childGroupName, $parentGroupName);
+    $this->WebtestAddGroup($childGroupName, $parentGroupName);
 
 
     // Adding Parent group contact
-    // We're using Quick Add block on the main page for this.
     $firstName = substr(sha1(rand()), 0, 7);
     $this->webtestAddContact($firstName, "Smith", "$firstName.smith@example.org");
 
@@ -291,7 +223,7 @@ class WebTest_Contact_SearchTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("group_id");
 
     // add to child group
-    $this->select("group_id", "label=$childGroupName");
+    $this->select("group_id", "*$childGroupName");
     $this->click("_qf_GroupContact_next");
     $this->waitForPageToLoad("30000");
 
@@ -329,5 +261,3 @@ class WebTest_Contact_SearchTest extends CiviSeleniumTestCase {
     $this->click("_qf_Select_next-bottom");
   }
 }
-
-
