@@ -139,6 +139,9 @@ class CRM_Contribute_BAO_Contribution_Utils {
         else {
           if (!$form->_params['is_pay_later']) {
             if (is_object($payment)) {  
+              // call postprocess hook before leaving
+              $form->postProcessHook();
+              // this does not return
               $result = &$payment->doTransferCheckout($form->_params, 'contribute');
             }
             else{ 
