@@ -43,7 +43,7 @@ class CRM_Contribute_BAO_Contribution_Utils {
    * @param array   $premiumParams   array with premium related key
    * value pairs
    * @param int     $contactID       contact id
-     * @param int     $contributionTypeId   financial type id  
+     * @param int     $contributionTypeId   financial type id
    * @param int     $component   component id
    *
    * @return array associated array
@@ -68,16 +68,16 @@ class CRM_Contribute_BAO_Contribution_Utils {
     elseif (CRM_Utils_Array::value('pledge_id', $form->_values)) {
       $contributionType->id = CRM_Core_DAO::getFieldValue('CRM_Pledge_DAO_Pledge',
         $form->_values['pledge_id'],
-        'financial_type_id' 
+        'financial_type_id'
       );
-    } 
+    }
     else {
       $contributionType->id = $contributionTypeId;
     }
     if (!$contributionType->find(TRUE)) {
       CRM_Core_Error::fatal('Could not find a system table');
     }
-    
+
     // add some financial type details to the params list
     // if folks need to use it
     $paymentParams['contributionType_name'] = $form->_params['contributionType_name'] = $contributionType->name;
@@ -111,11 +111,11 @@ class CRM_Contribute_BAO_Contribution_Utils {
         $contributionType,
         TRUE, TRUE, TRUE
       );
-      
+
       if ($contribution) {
       $form->_params['contributionID'] = $contribution->id;
       }
-      
+
       $form->_params['contributionTypeID'] = $contributionType->id;
       $form->_params['item_name'] = $form->_params['description'];
       $form->_params['receive_date'] = $now;
@@ -138,16 +138,16 @@ class CRM_Contribute_BAO_Contribution_Utils {
         }
         else {
           if (!$form->_params['is_pay_later']) {
-            if (is_object($payment)) {  
+            if (is_object($payment)) {
               // call postprocess hook before leaving
               $form->postProcessHook();
               // this does not return
               $result = &$payment->doTransferCheckout($form->_params, 'contribute');
             }
-            else{ 
+            else{
               CRM_Core_Error::fatal($paymentObjError);
             }
-          } 
+          }
           else {
             // follow similar flow as IPN
             // send the receipt mail
@@ -185,15 +185,15 @@ class CRM_Contribute_BAO_Contribution_Utils {
           if (is_object($payment)) {
             $result = &$payment->createRecurringPayments($paymentParams);
           }
-          else { 
+          else {
             CRM_Core_Error::fatal($paymentObjError);
           }
         }
         else {
-          if (is_object($payment)) { 
+          if (is_object($payment)) {
             $result = &$payment->doExpressCheckout($paymentParams);
           }
-          else { 
+          else {
             CRM_Core_Error::fatal($paymentObjError);
           }
         }
@@ -229,7 +229,7 @@ class CRM_Contribute_BAO_Contribution_Utils {
       if (is_object($payment)) {
         $result = &$payment->doDirectPayment($paymentParams);
       }
-      else { 
+      else {
         CRM_Core_Error::fatal($paymentObjError);
       }
     }
@@ -315,7 +315,7 @@ class CRM_Contribute_BAO_Contribution_Utils {
     // finally send an email receipt
     if ($contribution) {
     $form->_values['contribution_id'] = $contribution->id;
-      CRM_Contribute_BAO_ContributionPage::sendMail($contactID, 
+      CRM_Contribute_BAO_ContributionPage::sendMail($contactID,
         $form->_values, $contribution->is_test,
       FALSE, $fieldTypes
     );
