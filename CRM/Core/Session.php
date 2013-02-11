@@ -102,19 +102,34 @@ class CRM_Core_Session {
    * Creates an array in the session. All variables now will be stored
    * under this array
    *
+   * @param boolean isRead is this a read operation, in this case, the session will not be touched
+   *
    * @access private
    *
    * @return void
    */
-  function initialize() {
+  function initialize($isRead = FALSE) {
     // lets initialize the _session variable just before we need it
     // hopefully any bootstrapping code will actually load the session from the CMS
     if (!isset($this->_session)) {
       // CRM-9483
       if (!isset($_SESSION) && PHP_SAPI !== 'cli') {
-        session_start();
+        if ($isRead) {
+          return;
+        }
+        $config =& CRM_Core_Config::singleton();
+        if ($config->userSystem->is_drupal && function_exists('drupal_session_start')) {
+          drupal_session_start();
+        }
+        else {
+          session_start();
+        }
       }
       $this->_session =& $_SESSION;
+    }
+
+    if ($isRead) {
+      return;
     }
 
     if (!isset($this->_session[$this->_key]) ||
@@ -150,15 +165,17 @@ class CRM_Core_Session {
   /**
    * creates a session local scope
    *
-   * @param string local scope name
+   * @param string  prefix local scope name
+   * @param boolean isRead is this a read operation, in this case, the session will not be touched
+   *
    * @access public
    *
    * @return void
    */
-  function createScope($prefix) {
-    $this->initialize();
+  function createScope($prefix, $isRead = FALSE) {
+    $this->initialize($isRead);
 
-    if (empty($prefix)) {
+    if ($isRead || empty($prefix)) {
       return;
     }
 
@@ -241,13 +258,20 @@ class CRM_Core_Session {
    */
   function get($name, $prefix = NULL) {
     // create session scope
-    $this->createScope($prefix);
+    $this->createScope($prefix, TRUE);
+
+    if (empty($this->_session) || empty($this->_session[$this->_key])) {
+      return null;
+    }
 
     if (empty($prefix)) {
-      $session = &$this->_session[$this->_key];
+      $session =& $this->_session[$this->_key];
     }
     else {
-      $session = &$this->_session[$this->_key][$prefix];
+      if (empty($this->_session[$this->_key][$prefix])) {
+        return null;
+      }
+      $session =& $this->_session[$this->_key][$prefix];
     }
 
     return CRM_Utils_Array::value($name, $session);
@@ -267,7 +291,7 @@ class CRM_Core_Session {
    */
   function getVars(&$vars, $prefix = '') {
     // create session scope
-    $this->createScope($prefix);
+    $this->createScope($prefix, TRUE);
 
     if (empty($prefix)) {
       $values = &$this->_session[$this->_key];
