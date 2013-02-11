@@ -174,7 +174,38 @@ class api_v3_OptionValueTest extends CiviUnitTestCase {
     $this->assertAPISuccess($optionValue);
     $this->getAndCheck($params, $optionValue['id'], 'option_value');
   }
+  /*
+   * Check that pseudoconstant reflects new value added
+  * and deleted
+  */
+  public function testCRM11876CreateOptionPseudoConstantUpdated() {
+    $optionGroupID = civicrm_api('option_group', 'getvalue', array(
+      'version' => $this->_apiversion,
+      'name' => 'payment_instrument',
+      'return' => 'id',)
+    );
+    $apiResult = civicrm_api('option_value', 'create', array(
+      'option_group_id' =>  $optionGroupID,
+      'label' => 'newest',
+      'version' => $this->_apiversion,
+    ));
 
+    $this->assertAPISuccess($apiResult);
+    $fields = civicrm_api('contribution', 'getoptions', array(
+      'version' => $this->_apiversion,
+      'field' => 'payment_instrument',
+      )
+    );
+    $this->assertTrue(in_array('newest', $fields['values']));
+    $deleteResult = civicrm_api('option_value', 'delete', array('id' => $apiResult['id'], 'version' => $this->_apiversion));
+    $this->assertAPISuccess($deleteResult);
+    $fields = civicrm_api('contribution', 'getoptions', array(
+      'version' => $this->_apiversion,
+      'field' => 'payment_instrument',
+      )
+    );
+    $this->assertFalse(in_array('newest', $fields['values']));
+  }
 
 }
 

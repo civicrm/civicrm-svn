@@ -23,6 +23,16 @@ function civicrm_api3_generic_getfields($apiRequest) {
   static $results = array();
   if ((CRM_Utils_Array::value('cache_clear', $apiRequest['params']))) {
     $results = array();
+    // we will also clear pseudoconstants here - should potentially be moved to relevant BAO classes
+    if(!empty($apiRequest['params']['fieldname'])){
+      CRM_Core_PseudoConstant::flushConstant($apiRequest['params']['fieldname']);
+    }
+    if(!empty($apiRequest['params']['option_group_id'])){
+      $optionGroupName = civicrm_api('option_group', 'getvalue', array('version' => 3, 'id' => $apiRequest['params']['option_group_id'], 'return' => 'name') );
+      if(is_string($optionGroupName)){
+        CRM_Core_PseudoConstant::flushConstant(_civicrm_api_get_camel_name($optionGroupName));
+      }
+    }
   }
   $entity       = _civicrm_api_get_camel_name($apiRequest['entity']);
   $lcase_entity = _civicrm_api_get_entity_name_from_camel($entity);

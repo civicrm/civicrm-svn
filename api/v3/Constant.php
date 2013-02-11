@@ -91,6 +91,11 @@
 function civicrm_api3_constant_get($params) {
 
   $name = $params['name'];
+  // all the stuff about classes should be adequately replaced by the bit in the 'else'
+  //ie $values = call_user_func(array('CRM_Core_PseudoConstant', 'getConstant'), $name);
+  // once tests are 100% can try removing the first block & a similar block from Generic:getoptions
+
+
   // Whitelist approach is safer
   $allowedClasses = array(
     'CRM_Core_PseudoConstant',
@@ -114,7 +119,12 @@ function civicrm_api3_constant_get($params) {
     }
     return civicrm_api3_create_success($values, $params);
   }
-
+  else{
+    $values = call_user_func(array('CRM_Core_PseudoConstant', 'getConstant'), $name);
+    if(!empty($values)){
+      return civicrm_api3_create_success($values, $params);
+    }
+  }
   return civicrm_api3_create_error('Unknown civicrm constant or method not callable');
 }
 
@@ -124,46 +134,47 @@ function _civicrm_api3_constant_get_spec(&$params) {
     ('name' => array(
       'api.required' => 1,
         'options' =>
-        'activityStatus',
-        'activityType',
-        'addressee',
-        'allGroup',
-        'country',
-        'countryIsoCode',
-        'county',
-        'currencyCode',
-        'currencySymbols',
-        'customGroup',
-        'emailGreeting',
-        'fromEmailAddress',
-        'gender',
-        'group',
-        'groupIterator',
-        'honor',
-        'IMProvider',
-        'individualPrefix',
-        'individualSuffix',
-        'locationType',
-        'locationVcardName',
-        'mailProtocol',
-        'mappingTypes',
-        'paymentProcessor',
-        'paymentProcessorType',
-        'pcm',
-        'phoneType',
-        'postalGreeting',
-        'priority',
-        'relationshipType',
-        'stateProvince',
-        'stateProvinceAbbreviation',
-        'stateProvinceForCountry',
-        'staticGroup',
-        'tag',
-        'tasks',
-        'ufGroup',
-        'visibility',
-        'worldRegion',
-        'wysiwygEditor',
+          'activityStatus',
+          'activityType',
+          'addressee',
+          'allGroup',
+          'country',
+          'countryIsoCode',
+          'county',
+          'currencyCode',
+          'currencySymbols',
+          'customGroup',
+          'emailGreeting',
+          'fromEmailAddress',
+          'gender',
+          'group',
+          'groupIterator',
+          'honor',
+          'IMProvider',
+          'individualPrefix',
+          'individualSuffix',
+          'locationType',
+          'locationVcardName',
+          'mailProtocol',
+          'mappingTypes',
+          'paymentInstrument',
+          'paymentProcessor',
+          'paymentProcessorType',
+          'pcm',
+          'phoneType',
+          'postalGreeting',
+          'priority',
+          'relationshipType',
+          'stateProvince',
+          'stateProvinceAbbreviation',
+          'stateProvinceForCountry',
+          'staticGroup',
+          'tag',
+          'tasks',
+          'ufGroup',
+          'visibility',
+          'worldRegion',
+          'wysiwygEditor',
       ))
   );
 }

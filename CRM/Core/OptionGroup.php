@@ -488,5 +488,46 @@ WHERE  v.option_group_id = g.id
     }
     return $row;
   }
+
+  /*
+   * Wrapper for calling values with fresh set to true to empty the given value
+   *
+   * Since there appears to be some inconsistency
+   * (@todo remove inconsistency) around the pseudoconstant operations
+   * (for example CRM_Contribution_Pseudoconstant::paymentInstrument doesn't specify isActive
+   * which is part of the cache key
+   * will do a couple of variations & aspire to someone cleaning it up later
+   */
+  static function flush($name, $params = array()){
+    $defaults = array(
+      'flip' => FALSE,
+      'grouping' => FALSE,
+      'localize' => FALSE,
+      'condition' => NULL,
+      'labelColumnName' => 'label',
+    );
+
+    $params = array_merge($defaults, $params);
+    self::values(
+      $name,
+      $params['flip'],
+      $params['grouping'],
+      $params['localize'],
+      $params['condition'],
+      $params['labelColumnName'],
+      TRUE,
+      TRUE
+    );
+    self::values(
+      $name,
+      $params['flip'],
+      $params['grouping'],
+      $params['localize'],
+      $params['condition'],
+      $params['labelColumnName'],
+      FALSE,
+      TRUE
+    );
+  }
 }
 
