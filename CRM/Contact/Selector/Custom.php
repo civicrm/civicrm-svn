@@ -163,7 +163,6 @@ class CRM_Contact_Selector_Custom extends CRM_Contact_Selector {
    *
    */
   static function &links() {
-
     if (!(self::$_links)) {
       self::$_links = array(
         CRM_Core_Action::VIEW => array(
@@ -375,7 +374,7 @@ class CRM_Contact_Selector_Custom extends CRM_Contact_Selector {
     return NULL;
   }
 
-  function &contactIDQuery() {
+  function &contactIDQuery($params, $action, $sortID, $displayRelationshipType = NULL, $queryOperator = 'AND') {
     $params = array();
     $sql = $this->_search->contactIDs($params);
 

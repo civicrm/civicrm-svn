@@ -226,7 +226,8 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
    * @access public
    *
    */
-  static function &links($context = NULL, $contextMenu = NULL, $key = NULL) {
+  static function &links() {
+    list($context, $contextMenu, $key) = func_get_args();
     $extraParams = ($key) ? "&key={$key}" : NULL;
     $searchContext = ($context) ? "&context=$context" : NULL;
 
