@@ -81,7 +81,7 @@ class CRM_Case_Form_Activity_OpenCase {
    *
    * @return None
    */
-  function setDefaultValues(&$form) {
+  static function setDefaultValues(&$form) {
     $defaults = array();
     if ($form->_context == 'caseActivity') {
       return $defaults;

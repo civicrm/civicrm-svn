@@ -53,7 +53,7 @@ class CRM_Case_Form_Activity_ChangeCaseStatus {
    *
    * @return None
    */
-  function setDefaultValues(&$form) {
+  static function setDefaultValues(&$form) {
     $defaults = array();
     // Retrieve current case status
     $defaults['case_status_id'] = $form->_defaultCaseStatus;

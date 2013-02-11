@@ -53,7 +53,7 @@ class CRM_Case_Form_Activity_ChangeCaseStartDate {
    *
    * @return None
    */
-  function setDefaultValues(&$form) {
+  static function setDefaultValues(&$form) {
     $defaults = array();
 
     $openCaseActivityType = CRM_Core_OptionGroup::getValue('activity_type',
@@ -129,10 +129,10 @@ class CRM_Case_Form_Activity_ChangeCaseStartDate {
     if (!$caseType && $form->_caseId) {
 
       $query = "
-SELECT  cov_type.label as case_type FROM civicrm_case 
+SELECT  cov_type.label as case_type FROM civicrm_case
 LEFT JOIN  civicrm_option_group cog_type ON cog_type.name = 'case_type'
-LEFT JOIN civicrm_option_value cov_type ON 
-( civicrm_case.case_type_id = cov_type.value AND cog_type.id = cov_type.option_group_id ) 
+LEFT JOIN civicrm_option_value cov_type ON
+( civicrm_case.case_type_id = cov_type.value AND cog_type.id = cov_type.option_group_id )
 WHERE civicrm_case.id=  %1";
 
       $queryParams = array(1 => array($form->_caseId, 'Integer'));

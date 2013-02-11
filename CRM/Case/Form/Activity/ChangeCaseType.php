@@ -53,7 +53,7 @@ class CRM_Case_Form_Activity_ChangeCaseType {
    *
    * @return None
    */
-  function setDefaultValues(&$form) {
+  static function setDefaultValues(&$form) {
     $defaults = array();
 
     $defaults['is_reset_timeline'] = 1;

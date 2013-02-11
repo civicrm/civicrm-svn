@@ -67,7 +67,7 @@ class CRM_Case_Form_Activity_LinkCases {
    *
    * @return None
    */
-  function setDefaultValues(&$form) {
+  static function setDefaultValues(&$form) {
     return $defaults = array();
   }
 
