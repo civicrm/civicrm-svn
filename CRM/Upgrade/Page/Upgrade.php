@@ -47,13 +47,13 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
     list($currentVer, $latestVer) = $upgrade->getUpgradeVersions();
 
     CRM_Utils_System::setTitle(ts('Upgrade CiviCRM to Version %1',
-        array(1 => $latestVer)
-      ));
+      array(1 => $latestVer)
+    ));
 
     $template = CRM_Core_Smarty::singleton();
     $template->assign('pageTitle', ts('Upgrade CiviCRM to Version %1',
-        array(1 => $latestVer)
-      ));
+      array(1 => $latestVer)
+    ));
     $template->assign('menuRebuildURL',
       CRM_Utils_System::url('civicrm/menu/rebuild', 'reset=1')
     );
@@ -110,8 +110,8 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
     $template->assign('currentVersion', $currentVer);
     $template->assign('newVersion', $latestVer);
     $template->assign('upgradeTitle', ts('Upgrade CiviCRM from v %1 To v %2',
-        array(1 => $currentVer, 2 => $latestVer)
-      ));
+      array(1 => $currentVer, 2 => $latestVer)
+    ));
     $template->assign('upgraded', FALSE);
 
     // Render page header
@@ -156,12 +156,12 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
     file_put_contents($this->get('postUpgradeMessageFile'), $postUpgradeMessage);
 
     $queueRunner = new CRM_Queue_Runner(array(
-        'title' => ts('CiviCRM Upgrade Tasks'),
-        'queue' => CRM_Upgrade_Form::buildQueue($currentVer, $latestVer, $this->get('postUpgradeMessageFile')),
-        'isMinimal' => TRUE,
-        'pathPrefix' => 'civicrm/upgrade/queue',
-        'onEndUrl' => CRM_Utils_System::url('civicrm/upgrade', 'action=finish', FALSE, NULL, FALSE ),
-        'buttons' => array('retry' => $config->debug, 'skip' => $config->debug),
+      'title' => ts('CiviCRM Upgrade Tasks'),
+      'queue' => CRM_Upgrade_Form::buildQueue($currentVer, $latestVer, $this->get('postUpgradeMessageFile')),
+      'isMinimal' => TRUE,
+      'pathPrefix' => 'civicrm/upgrade/queue',
+      'onEndUrl' => CRM_Utils_System::url('civicrm/upgrade', 'action=finish', FALSE, NULL, FALSE ),
+      'buttons' => array('retry' => $config->debug, 'skip' => $config->debug),
       ));
     $queueRunner->runAllViaWeb();
     CRM_Core_Error::fatal(ts('Upgrade failed to redirect'));
