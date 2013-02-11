@@ -299,6 +299,9 @@ function _civicrm_api3_get_DAO($name) {
   if($name == 'mailing_recipients' || $name == 'MailingRecipients'){
     return 'CRM_Mailing_BAO_Recipients';
   }
+  if(strtolower($name) == 'im'){
+    return 'CRM_Core_BAO_IM';
+  }
 
 
   return CRM_Utils_Array::value(_civicrm_api_get_camel_name($name, 3), $dao);
