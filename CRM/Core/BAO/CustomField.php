@@ -850,7 +850,8 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField {
           $selectOption['CiviCRM_OP_OR'] = ts('Select to match ANY; unselect to match ALL');
         }
 
-        $include = &$qf->addElement('advmultiselect',
+        $include =& $qf->addElement(
+          'advmultiselect',
           $elementName,
           $label, $selectOption,
           array(
@@ -908,7 +909,10 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField {
         if ($search) {
           return;
         }
-        $element = &$qf->add(strtolower($field->html_type), $elementName, $label,
+        $qf->add(
+          strtolower($field->html_type),
+          $elementName,
+          $label,
           $field->attributes,
           $useRequired && !$search
         );
@@ -951,7 +955,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField {
         break;
 
       case 'RichTextEditor':
-        $element = &$qf->addWysiwyg($elementName, $label, array('rows' => $field->note_rows, 'cols' => $field->note_columns), $search);
+        $qf->addWysiwyg($elementName, $label, array('rows' => $field->note_rows, 'cols' => $field->note_columns), $search);
         break;
 
       case 'Autocomplete-Select':
@@ -1028,7 +1032,8 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField {
         break;
 
       case 'Link':
-        $element = &$qf->add('text',
+        $qf->add(
+          'text',
           $elementName,
           $label,
           array(
