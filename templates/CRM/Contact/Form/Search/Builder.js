@@ -225,8 +225,6 @@
         block.hide();
       }
     });
-    var wrapperId = 'crm_search_' + $('#Builder input[id^=value]').attr('id');
-    $('#Builder input[id^=value]').wrap('<span class="crm-search-value" id="' + wrapperId + '"/>');
 
     $('#Builder')
       // Reset and hide row

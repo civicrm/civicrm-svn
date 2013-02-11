@@ -90,6 +90,8 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
   }
 
   /**
+   * Authenticate as drupal user
+   * @param $admin: (bool) use admin user/pass instead of normal user
    */
   function webtestLogin($admin = FALSE) {
     $this->open("{$this->sboxPath}user");
@@ -104,14 +106,40 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
   }
 
   /**
-   * Add a contact with the given first and last names and either a given email
-   * (when specified), a random email (when true) or no email (when unspecified or null).
+   * Open an internal path beginning with 'civicrm/'
    *
-   * @param string $fname contact’s first name
-   * @param string $lname contact’s last name
-   * @param mixed  $email contact’s email (when string) or random email (when true) or no email (when null)
-   *
-   * @return mixed either a string with the (either generated or provided) email or null (if no email)
+   * @param $url (str) omit the 'civicrm/' it will be added for you
+   * @param $args (str|array) optional url arguments
+   * @param $waitFor - page element to wait for - using this is recommended to ensure the document is fully loaded
+   * 
+   * Although it doesn't seem to do much now, using this function is recommended for
+   * opening all civi pages, and using the $args param is also strongly encouraged
+   * This will make it much easier to run webtests in other CMSs in the future
+   */
+  function openCiviPage($url, $args = NULL, $waitFor = NULL) {
+    // Construct full url with args
+    // This could be extended in future to work with other CMS style urls
+    if ($args) {
+      if (is_array($args)) {
+        $sep = '?';
+        foreach ($args as $key => $val) {
+          $url .= $sep . $key . '=' . $val;
+          $sep = '&';
+        }
+      }
+      else {
+        $url .= "?$args";
+      }
+    }
+    $this->open("{$this->sboxPath}civicrm/$url");
+    $this->waitForPageToLoad();
+    if ($waitFor) {
+      $this->waitForElementPresent($waitFor);
+    }
+  }
+
+  /**
+   * Call the API
    */
   function webtest_civicrm_api($entity, $action, $params) {
     if (!isset($params['version'])) {
@@ -152,6 +180,16 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     return $_config_backend[$field];
   }
 
+  /**
+   * Add a contact with the given first and last names and either a given email
+   * (when specified), a random email (when true) or no email (when unspecified or null).
+   *
+   * @param string $fname contact’s first name
+   * @param string $lname contact’s last name
+   * @param mixed  $email contact’s email (when string) or random email (when true) or no email (when null)
+   *
+   * @return mixed either a string with the (either generated or provided) email or null (if no email)
+   */
   function webtestAddContact($fname = 'Anthony', $lname = 'Anderson', $email = NULL, $contactSubtype = NULL) {
     $url = $this->sboxPath . 'civicrm/contact/add?reset=1&ct=Individual';
     if ($contactSubtype) {
@@ -385,14 +423,8 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
    * @return   void
    */
   function assertStringsPresent($strings) {
-    if (is_array($strings)) {
-      // search for elements
-      foreach ($strings as $string) {
-        $this->assertTrue($this->isTextPresent($string), "Could not find $string on page");
-      }
-    }
-    else {
-      $this->assertTrue($this->isTextPresent($strings), "Could not find $strings on page");
+    foreach ((array) $strings as $string) {
+      $this->assertTrue($this->isTextPresent($string), "Could not find $string on page");
     }
   }
 
@@ -1056,11 +1088,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
   }
 
   function WebtestAddGroup() {
-    $this->open($this->sboxPath . 'civicrm/group/add?reset=1');
-
-    // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
-    // button at the end of this page to show up, to make sure it's fully loaded.
-    $this->waitForElementPresent('_qf_Edit_upload-bottom');
+    $this->openCiviPage('group/add', 'reset=1', '_qf_Edit_upload-bottom');
 
     // Create new group
     $title = substr(sha1(rand()), 0, 7);
@@ -1086,7 +1114,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     $this->waitForPageToLoad('30000');
 
     // Is status message correct?
-    $this->assertTrue($this->isTextPresent("The Group '$groupName' has been saved."));
+    $this->assertElementContainsText('crm-notification-container', "The Group '$groupName' has been saved.");
     return $groupName;
   }
 
@@ -1362,7 +1390,6 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
   /**
    * Edit Financial Account
    */
-    
   function _testEditFinancialAccount($editfinancialAccount,
     $financialAccountTitle = FALSE,
     $financialAccountDescription = FALSE,

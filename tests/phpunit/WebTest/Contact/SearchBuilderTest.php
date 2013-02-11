@@ -32,18 +32,31 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
     parent::setUp();
   }
 
-  // TODO
-  function _testSearchBuilderOptions() {
+
+  function testSearchBuilderOptions() {
     // Logging in. Remember to wait for page to load. In most cases,
     // you can rely on 30000 as the value that allows your test to pass, however,
     // sometimes your test might fail because of this. In such cases, it's better to pick one element
     // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
     // page contents loaded and you can continue your test execution.
     $this->webtestLogin();
+    
+    $groupName = $this->WebtestAddGroup();
 
-    // Go directly to the URL of the search builder
-    $this->open($this->sboxPath . "civicrm/contact/search/builder?reset=1");
-    $this->waitForPageToLoad("30000");
+    // Open the search builder
+    $this->openCiviPage('contact/search/builder', 'reset=1');
+    
+    $this->enterValues(1, 1, 'Contacts', 'Group(s)', NULL, '=', array($groupName));
+    $this->enterValues(1, 2, 'Contacts', 'Country', NULL, '=', array('United States'));
+    $this->enterValues(1, 3, 'Individual', 'Gender', NULL, '=', array('Male'));
+    $this->click('_qf_Builder_refresh');
+    $this->waitForPageToLoad();
+
+    // We should get no results. But check the options are all still there
+    $this->waitForTextPresent('No matches found');
+    foreach (array($groupName, 'United States', 'Male') as $i => $label) {
+      $this->waitForElementPresent("//span[@id='crm_search_value_1_$i']/select/option[.='$label']");
+    }
   }
 
   function testSearchBuilderRLIKE() {
@@ -231,7 +244,7 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
     }
   }
   
-  function enterValues($row, $set, $entity, $field, $loc, $op, $value = '') {
+  function enterValues($set, $row, $entity, $field, $loc, $op, $value = '') {
     if ($set > 1 && $row == 1) {
       $this->click('addBlock');
     }
@@ -240,6 +253,7 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
     }
     // In the DOM rows are 0 indexed and sets are 1 indexed, so normalizing
     $row--;
+
     $this->select("mapper_{$set}_{$row}_0", "label=$entity");
     $this->select("mapper_{$set}_{$row}_1", "label=$field");
     if ($loc) {

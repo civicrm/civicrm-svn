@@ -36,8 +36,10 @@
           <tr>
             <td class="form-item even-row">
               {$form.mapper[$x][$i].html}
-              {$form.operator[$x][$i].html|crmAddClass:'required'}
-              &nbsp;&nbsp;{$form.value[$x][$i].html|crmAddClass:'required'}
+              {$form.operator[$x][$i].html|crmAddClass:'required'}&nbsp;&nbsp;
+              <span class="crm-search-value" id="crm_search_value_{$x}_{$i}">
+                {$form.value[$x][$i].html|crmAddClass:'required'}
+              </span>
               {if $i gt 0 or $x gt 1}
                 &nbsp;&nbsp;<a href="#" class="crm-reset-builder-row" title="{ts}Remove this row{/ts}"><img src="{$config->resourceBase}i/close.png" class="action-icon" alt="X" /></a>
               {/if}
