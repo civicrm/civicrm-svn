@@ -1456,9 +1456,15 @@ AND civicrm_membership.is_test = %2";
    * @access public
    *
    **/
-  static function renewMembership($contactID, $membershipTypeID, $is_test,
-    &$form, $changeToday = NULL, $modifiedID = NULL,
-    $customFieldsFormatted = NULL, $numRenewTerms = 1
+  static function renewMembership(
+    $contactID,
+    $membershipTypeID,
+    $is_test,
+    &$form,
+    $changeToday = NULL,
+    $modifiedID = NULL,
+    $customFieldsFormatted = NULL,
+    $numRenewTerms = 1
   ) {
     $statusFormat = '%Y-%m-%d';
     $format       = '%Y%m%d';

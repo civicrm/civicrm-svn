@@ -521,9 +521,23 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase {
       'Database checked on membershiplog record.'
     );
 
+    // this is a test and we dont want qfKey generation / validation
+    // easier to suppress it, than change core code
+    $config = CRM_Core_Config::singleton();
+    $config->keyDisable = TRUE;
+
     $membershipRenewal = new CRM_Core_Form;
     $membershipRenewal->controller = new CRM_Core_Controller;
-    $MembershipRenew = CRM_Member_BAO_Membership::renewMembership($contactId, $this->_membershipTypeID, $isTestMembership = 0, $membershipRenewal, NULL, NULL);
+    $isTestMembership = 0;
+    $MembershipRenew =
+      CRM_Member_BAO_Membership::renewMembership(
+        $contactId,
+        $this->_membershipTypeID,
+        $isTestMembership,
+        $membershipRenewal,
+        NULL,
+        NULL
+      );
     $endDate = date("Y-m-d", strtotime($membership->end_date . " +1 year"));
 
     $this->assertDBNotNull('CRM_Member_BAO_MembershipLog',
@@ -589,6 +603,11 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase {
       'membership_id',
       'Database checked on membershiplog record.'
     );
+
+    // this is a test and we dont want qfKey generation / validation
+    // easier to suppress it, than change core code
+    $config = CRM_Core_Config::singleton();
+    $config->keyDisable = TRUE;
 
     $membershipRenewal = new CRM_Core_Form;
     $membershipRenewal->controller = new CRM_Core_Controller;
