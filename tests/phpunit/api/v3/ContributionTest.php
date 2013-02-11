@@ -54,6 +54,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
 
     $this->_apiversion = 3;
     $this->_individualId = $this->individualCreate();
+    $paymentProcessor = $this->processorCreate();
     $this->_params = array(
       'contact_id' => $this->_individualId,
       'receive_date' => '20120511',
@@ -979,6 +980,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
      'payment_instrument_id' => $instrumentId,)
     );
     $contribution = civicrm_api('contribution', 'update', $newParams);
+    $this->assertAPISuccess($contribution);
     $this->_checkFinancialTrxn($contribution, 'paymentInstrument');
   }
 
@@ -1001,7 +1003,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
      'contribution_status_id' => 7,
       )
     );
-    
+
     $contribution = civicrm_api('contribution', 'update', $newParams);
     $this->_checkFinancialTrxn($contribution, 'refund');
     $this->_checkFinancialItem($contribution['id'], 'refund');
@@ -1278,7 +1280,9 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $this->assertAPISuccess($contribution);
     $apiResult = civicrm_api('contribution', 'sendconfirmation', array(
       'version' => $this->_apiversion,
-      'id' => $contribution['id'])
+      'id' => $contribution['id'],
+      'receipt_from_email' => 'api@civicrm.org',
+      )
     );
     $this->assertAPISuccess($apiResult);
     $mut->checkMailLog(array(
@@ -1319,7 +1323,10 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     )), " in line " . __LINE__);
     $apiResult = civicrm_api('contribution', 'sendconfirmation', array(
       'version' => $this->_apiversion,
-      'id' => $contribution['id']) );
+      'id' => $contribution['id'],
+      'receipt_from_email' => 'api@civicrm.org',
+      )
+    );
     $this->assertAPISuccess($apiResult);
     $mut->checkMailLog(array(
         'Annual CiviCRM meet',
@@ -1390,7 +1397,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
      LEFT JOIN civicrm_entity_financial_trxn AS ceft ON ft.id = ceft.financial_trxn_id
      WHERE ceft.entity_table = 'civicrm_contribution'
      AND ceft.entity_id = {$contId}";
-     
+
    $result = CRM_Core_DAO::singleValueQuery($query);
    return $result;
  }
@@ -1528,7 +1535,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
        'status_id' => 1,
      );
    }
-   
+
    $this->assertDBCompareValues('CRM_Financial_DAO_FinancialTrxn',$params,$compareParams);
  }
 
@@ -1541,17 +1548,19 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
      'value' => '6',
      'weight' => '6',
      'is_active' => 1,
+     'version' => 3,
 );
-   $optionValue = CRM_Core_BAO_OptionValue::add($optionParams, CRM_Core_DAO::$_nullArray);
+   $optionValue = civicrm_api('option_value', 'create', $optionParams);
    $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Asset Account is' "));
    $financialParams = array(
      'entity_table' => 'civicrm_option_value',
-     'entity_id' => $optionValue->id,
+     'entity_id' => $optionValue['id'],
      'account_relationship' => $relationTypeId,
      'financial_account_id' => 7,
    );
    $financialType = CRM_Financial_BAO_FinancialTypeAccount::add($financialParams, CRM_Core_DAO::$_nullArray);
-   return $optionValue->value;
+   $this->assertNotEmpty($optionValue['values'][$optionValue['id']]['value']);
+   return $optionValue['values'][$optionValue['id']]['value'];
  }
 
  function _checkFinancialRecords($params,$context) {
@@ -1594,12 +1603,12 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
    }
    $this->assertDBCompareValues('CRM_Financial_DAO_FinancialTrxn',$trxnParams,$compareParams);
    $entityParams = array(
-     'financial_trxn_id' => $trxn->financial_trxn_id,
+     'financial_trxn_id' => $trxn['financial_trxn_id'],
      'entity_table' => 'civicrm_financial_item',
    );
    $entityTrxn = current(CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($entityParams));
    $fitemParams = array(
-     'id' => $entityTrxn->entity_id,
+     'id' => $entityTrxn['entity_id'],
    );
    $compareParams = array(
      'amount' => 100,
@@ -1631,7 +1640,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
      );
      $this->assertDBCompareValues('CRM_Financial_DAO_FinancialTrxn',$trxnParams,$compareParams);
      $fitemParams = array(
-       'entity_id' => $maxTrxn->finanacial_trxn_id,
+       'entity_id' => $maxTrxn->financial_trxn_id,
        'entity_table' => 'civicrm_financial_trxn',
      );
      $compareParams = array(
