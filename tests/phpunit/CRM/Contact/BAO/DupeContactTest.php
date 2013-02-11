@@ -214,8 +214,8 @@ class CRM_Contact_BAO_DupeContactTest extends CiviUnitTestCase {
     $dedupeParams = CRM_Dedupe_Finder::formatParams($fields, 'Individual');
     $ids = CRM_Dedupe_Finder::dupesByParams($dedupeParams, 'Individual', 'General');
 
-    // Check with default Individual-Fizzy rule
-    $this->assertEquals(count($ids), 1, 'Check Individual-Fizzy rule for dupesByParams().');
+    // Check with default Individual-General rule
+    $this->assertEquals(count($ids), 2, 'Check Individual-General rule for dupesByParams().');
 
     // delete all created contacts
     foreach ($contactIds as $contactId) {

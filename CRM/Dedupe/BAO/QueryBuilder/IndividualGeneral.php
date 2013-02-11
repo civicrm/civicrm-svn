@@ -1,18 +1,18 @@
 <?php
 
-// TODO: How to handle NULL values/records?
+  // TODO: How to handle NULL values/records?
 class CRM_Dedupe_BAO_QueryBuilder_IndividualGeneral extends CRM_Dedupe_BAO_QueryBuilder {
   function record($rg) {
     $civicrm_contact = CRM_Utils_Array::value('civicrm_contact', $rg->params);
     $civicrm_address = CRM_Utils_Array::value('civicrm_address', $rg->params);
-
+    
     // Since definitely have first and last name, escape them upfront.
     $first_name     = CRM_Core_DAO::escapeString(CRM_Utils_Array::value('first_name', $civicrm_contact, ''));
     $last_name      = CRM_Core_DAO::escapeString(CRM_Utils_Array::value('last_name', $civicrm_contact, ''));
     $street_address = CRM_Core_DAO::escapeString(CRM_Utils_Array::value('street_address', $civicrm_address, ''));
-
+    
     $query = "
-            SELECT contact1.id id1, 5 weight
+            SELECT contact1.id id1, {$rg->threshold} as weight
             FROM civicrm_contact AS contact1
               JOIN civicrm_address AS address1 ON contact1.id=address1.contact_id
             WHERE contact1.contact_type = 'Individual'
@@ -20,31 +20,25 @@ class CRM_Dedupe_BAO_QueryBuilder_IndividualGeneral extends CRM_Dedupe_BAO_Query
               AND contact1.last_name = '$last_name'
               AND address1.street_address = '$street_address'
               ";
-
+    
     if ($birth_date = CRM_Core_DAO::escapeString(CRM_Utils_Array::value('birth_date', $civicrm_contact, ''))) {
-
       $query .= " AND (contact1.birth_date IS NULL or contact1.birth_date = '$birth_date')\n";
-
     }
 
     if ($suffix_id = CRM_Core_DAO::escapeString(CRM_Utils_Array::value('suffix_id', $civicrm_contact, ''))) {
-
       $query .= " AND (contact1.suffix_id IS NULL or contact1.suffix_id = $suffix_id)\n";
-
     }
 
     if ($middle_name = CRM_Core_DAO::escapeString(CRM_Utils_Array::value('middle_name', $civicrm_contact, ''))) {
-
       $query .= " AND (contact1.middle_name IS NULL or contact1.middle_name = '$middle_name')\n";
-
     }
 
-    return $query;
+    return array("civicrm_contact.{$rg->name}.{$rg->threshold}" => $query);
   }
 
   function internal($rg) {
     $query = "
-            SELECT contact1.id id1,  contact2.id id2, 5 weight
+            SELECT contact1.id id1,  contact2.id id2, {$rg->threshold} weight
             FROM civicrm_contact AS contact1
               JOIN civicrm_contact AS contact2 ON (
                 contact1.first_name = contact2.first_name AND
