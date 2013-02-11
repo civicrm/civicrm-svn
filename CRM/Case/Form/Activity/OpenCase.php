@@ -182,7 +182,7 @@ class CRM_Case_Form_Activity_OpenCase {
    *
    * @return None
    */
-  public function beginPostProcess(&$form, &$params) {
+  static function beginPostProcess(&$form, &$params) {
     if ($form->_context == 'caseActivity') {
       return;
     }
@@ -256,7 +256,7 @@ class CRM_Case_Form_Activity_OpenCase {
    *
    * @return None
    */
-  public function endPostProcess(&$form, &$params) {
+  static function endPostProcess(&$form, &$params) {
     if ($form->_context == 'caseActivity') {
       return;
     }
@@ -276,7 +276,7 @@ class CRM_Case_Form_Activity_OpenCase {
     }
 
     // 1. create case-contact
-    if ($isMultiClient && $this->_context != 'case') {
+    if ($isMultiClient && $form->_context != 'case') {
       $client = explode(',', $params['contact'][1]);
       foreach ($client as $key => $cliId) {
         if (empty($cliId)) {
@@ -333,10 +333,10 @@ class CRM_Case_Form_Activity_OpenCase {
     // status msg
     $params['statusMsg'] = ts('Case opened successfully.');
 
-    $buttonName = $this->controller->getButtonName();
+    $buttonName = $form->controller->getButtonName();
     $session = CRM_Core_Session::singleton();
-    if ($buttonName == $this->getButtonName('upload', 'new')) {
-      if ($this->_context == 'standalone') {
+    if ($buttonName == $form->getButtonName('upload', 'new')) {
+      if ($form->_context == 'standalone') {
         $session->replaceUserContext(CRM_Utils_System::url('civicrm/case/add',
             'reset=1&action=add&context=standalone'
           ));

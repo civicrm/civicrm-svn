@@ -99,7 +99,7 @@ class CRM_Case_Form_Activity_ChangeCaseStatus {
    *
    * @return None
    */
-  public function beginPostProcess(&$form, &$params) {
+  static function beginPostProcess(&$form, &$params) {
     $params['id'] = CRM_Utils_Array::value('case_id', $params);
   }
 
@@ -110,7 +110,7 @@ class CRM_Case_Form_Activity_ChangeCaseStatus {
    *
    * @return None
    */
-  public function endPostProcess(&$form, &$params, $activity) {
+  static function endPostProcess(&$form, &$params, $activity) {
     $groupingValues = CRM_Core_OptionGroup::values('case_status', FALSE, TRUE, FALSE, NULL, 'value');
 
     // Set case end_date if we're closing the case. Clear end_date if we're (re)opening it.

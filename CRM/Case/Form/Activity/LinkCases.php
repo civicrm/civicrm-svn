@@ -112,7 +112,7 @@ class CRM_Case_Form_Activity_LinkCases {
    *
    * @return None
    */
-  public function beginPostProcess(&$form, &$params) {
+  static function beginPostProcess(&$form, &$params) {
     $params['id'] = $params['case_id'];
   }
 
@@ -123,7 +123,7 @@ class CRM_Case_Form_Activity_LinkCases {
    *
    * @return None
    */
-  public function endPostProcess(&$form, &$params, &$activity) {
+  static function endPostProcess(&$form, &$params, &$activity) {
     $activityId = $activity->id;
     $linkCaseID = CRM_Utils_Array::value('link_to_case_id', $params);
 

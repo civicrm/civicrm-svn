@@ -108,7 +108,7 @@ class CRM_Case_Form_Activity_ChangeCaseType {
    *
    * @return None
    */
-  public function beginPostProcess(&$form, &$params) {
+  static function beginPostProcess(&$form, &$params) {
     if ($form->_context == 'case') {
       $params['id'] = $form->_id;
     }
@@ -129,7 +129,7 @@ class CRM_Case_Form_Activity_ChangeCaseType {
    *
    * @return None
    */
-  public function endPostProcess(&$form, &$params, $activity) {
+  static function endPostProcess(&$form, &$params, $activity) {
     if (!$form->_caseId) {
       // always expecting a change, so case-id is a must.
       return;
