@@ -60,9 +60,9 @@ class WebTest_Generic_GeneralClickAroundTest extends CiviSeleniumTestCase {
     $this->click("css=ul#civicrm-menu li.crm-Search");
     $this->click("css=ul#civicrm-menu li.crm-Advanced_Search a");
     $this->waitForElementPresent('_qf_Advanced_refresh');
-    $this->click('crmasmSelect2');
-    $this->select('crmasmSelect2', 'label=Major Donor');
-    $this->waitForElementPresent("//ul[@id='crmasmList2']/li/span");
+    $this->click('crmasmSelect3');
+    $this->select('crmasmSelect3', 'label=Major Donor');
+    $this->waitForElementPresent("//ul[@id='crmasmList3']/li/span");
     $this->click('_qf_Advanced_refresh');
     $this->waitForElementPresent('search-status');
     $this->assertText('search-status', 'Tagged IN Major Donor');
@@ -272,10 +272,12 @@ class WebTest_Generic_GeneralClickAroundTest extends CiviSeleniumTestCase {
 
     // Constituent Report Summary
     $this->click("css=ul#civicrm-menu li.crm-Reports");
-    $this->click("css=ul#civicrm-menu li.crm-Constituent_Report__Summary_ a");
+    $this->click("css=ul#civicrm-menu li.crm-Contact_Reports a");
+    $this->waitForPageToLoad("30000");
+    $this->click("xpath=//div[@id='Contact']/table/tbody/tr/td/a");
     $this->waitForPageToLoad("30000");
 
-    $this->assertTextPresent("Constituent Report (Summary)");
+    $this->assertTextPresent("Constituent Summary");
     $this->click("//form[@id='Summary']/div[2]/div/div/div/div");
     $this->assertTextPresent("Display Columns");
     $this->click("//form[@id='Summary']/div[2]//div[@id='id_default']/div/div/div");
@@ -328,6 +330,7 @@ class WebTest_Generic_GeneralClickAroundTest extends CiviSeleniumTestCase {
 
     $this->assertTextPresent("CiviCRM Profile");
     // Verify Reserved Profiles
+    $this->click("ui-id-2");
     $this->assertTextPresent("New Household");
     $this->assertTextPresent("New Individual");
     $this->assertTextPresent("New Organization");
@@ -336,6 +339,7 @@ class WebTest_Generic_GeneralClickAroundTest extends CiviSeleniumTestCase {
     $this->assertTextPresent("Summary Overlay");
 
     // Verify profiles that are not reserved
+    $this->click("ui-id-1");
     $this->assertTextPresent("Name and Address");
     $this->assertTextPresent("Supporter Profile");
 

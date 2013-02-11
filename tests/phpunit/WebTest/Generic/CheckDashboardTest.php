@@ -67,8 +67,8 @@ class WebTest_Generic_CheckDashboardTest extends CiviSeleniumTestCase {
     $this->waitForTextPresent("$widgetTitle");
 
     // click Full Screen icon and test full screen container
-    $this->click("css=li#widget-1 a.fullscreen-icon");
-    $this->waitForElementPresent("ui-dialog-title-crm-dashlet-container");
+    $this->click("css=li#widget-2 a.fullscreen-icon");
+    $this->waitForElementPresent("ui-id-1");
     $this->assertTrue($this->isTextPresent($widgetTitle));
     sleep(5);
     $this->click("link=close");
@@ -95,7 +95,7 @@ class WebTest_Generic_CheckDashboardTest extends CiviSeleniumTestCase {
     $this->WebtestAddActivity();
     $widgetTitle = "Activities";
     $widgetEnabledSelector = "contact-activity-selector-dashlet_wrapper";
-    $widgetConfigureID = "1-0";
+    $widgetConfigureID = "2-0";
 
     // now add the widget
     $this->open($this->sboxPath . "civicrm");
@@ -110,7 +110,7 @@ class WebTest_Generic_CheckDashboardTest extends CiviSeleniumTestCase {
     }
     else {
       // click 'Delete Activity' link
-      $this->click("//table[@id='contact-activity-selector-dashlet']/tbody/tr[1]/td[8]/span//a[text()='Delete']");
+      $this->click("//table[@id='contact-activity-selector-dashlet']/tbody/tr[1]/td[9]/span//a[text()='Delete']");
     }
     $this->waitForPageToLoad("30000");
     $this->waitForElementPresent("_qf_Activity_next-bottom");

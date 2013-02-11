@@ -85,7 +85,7 @@ class WebTest_Export_ContactTest extends ExportCiviSeleniumTestCase {
     $this->waitForElementPresent("group_id");
 
     // Add to child group.
-    $this->select("group_id", "label=$childGroupName");
+    $this->select("group_id", "label=regexp:$childGroupName");
     $this->click("_qf_GroupContact_next");
     $this->waitForPageToLoad("30000");
 
