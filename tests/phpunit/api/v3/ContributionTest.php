@@ -1421,9 +1421,9 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
        'entity_id' =>   $contId,
        'entity_table' => 'civicrm_contribution',
      );
-     $trxn = CRM_Financial_BAO_FinancialItem::retrieveMaxEntityFinancialTrxn($params);
+     $trxn = current(CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($params, TRUE));
      $entityParams = array(
-        'financial_trxn_id' => $trxn->financial_trxn_id,
+        'financial_trxn_id' => $trxn['financial_trxn_id'],
         'entity_table' => 'civicrm_financial_item',
      );
      $entityTrxn = current(CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($entityParams));
@@ -1484,9 +1484,9 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
      'entity_id' =>   $contribution['id'],
      'entity_table' => 'civicrm_contribution',
    );
-   $trxn = CRM_Financial_BAO_FinancialItem::retrieveMaxEntityFinancialTrxn($trxnParams);
+   $trxn = current(CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($trxnParams, TRUE));
    $params = array(
-     'id' => $trxn->financial_trxn_id,
+     'id' => $trxn['financial_trxn_id'],
    );
    if ($context == 'payLater') {
      $relationTypeId = key(CRM_Core_PseudoConstant::accountOptionValues('account_relationship', NULL, " AND v.name LIKE 'Accounts Receivable Account is' "));
@@ -1521,7 +1521,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
        'entity_table' => 'civicrm_contribution',
        'amount' => -100,
      );
-     $trxn = current( CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($entityParams));
+     $trxn = current(CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($entityParams));
      $trxnParams1 = array(
         'id' => $trxn['financial_trxn_id'],
      );
@@ -1530,7 +1530,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
        'total_amount' => -100,
        'status_id' => 1,
      );
-     $this->assertDBCompareValues('CRM_Financial_DAO_FinancialTrxn',$trxnParams1,$compareParams);
+     $this->assertDBCompareValues('CRM_Financial_DAO_FinancialTrxn', $trxnParams1, $compareParams);
      $compareParams = array(
        'to_financial_account_id' => 12,
        'total_amount' => 100,
@@ -1538,7 +1538,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
      );
    }
 
-   $this->assertDBCompareValues('CRM_Financial_DAO_FinancialTrxn',$params,$compareParams);
+   $this->assertDBCompareValues('CRM_Financial_DAO_FinancialTrxn', $params, $compareParams);
  }
 
  function _addPaymentInstrument () {
@@ -1630,9 +1630,9 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
        'entity_id' => $params['id'],
        'entity_table' => 'civicrm_contribution',
      );
-     $maxTrxn = CRM_Financial_BAO_FinancialItem::retrieveMaxEntityFinancialTrxn($maxParams);
+     $maxTrxn = current(CRM_Financial_BAO_FinancialItem::retrieveEntityFinancialTrxn($maxParams, TRUE));
      $trxnParams = array(
-       'id' => $maxTrxn->financial_trxn_id,
+       'id' => $maxTrxn['financial_trxn_id'],
      );
      $compareParams = array(
        'to_financial_account_id' => 5,

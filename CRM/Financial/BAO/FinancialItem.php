@@ -168,9 +168,25 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem {
     return $entity_trxn;
   }
 
-  static function retrieveEntityFinancialTrxn($params) {
+  /**
+   * retrive entity financial trxn details
+   *
+   * @param array  $params (reference ) an assoc array of name/value pairs
+   *
+   * @param boolean $maxID to retrive max id 
+   *
+   * @return array
+   * @access public
+   * @static
+   */
+  static function retrieveEntityFinancialTrxn($params, $maxId = FALSE) {
     $financialItem = new CRM_Financial_DAO_EntityFinancialTrxn();
     $financialItem->copyValues($params);
+    //retrieve last entry from civicrm_entity_financial_trxn
+    if ($maxId) {
+      $financialItem->orderBy('id DESC');
+      $financialItem->limit(1);
+    }
     $financialItem->find();
     while ($financialItem->fetch()) {
       $financialItems[$financialItem->id] = array(
@@ -187,37 +203,5 @@ class CRM_Financial_BAO_FinancialItem extends CRM_Financial_DAO_FinancialItem {
     else {
       return null;
     }
-  }
-
-  static function retrieveMaxEntityFinancialTrxn($params) {
-    $query = '
-    SELECT * FROM civicrm_entity_financial_trxn WHERE
-      id = (SELECT max(id) FROM civicrm_entity_financial_trxn WHERE ';
-    $where = "";
-    foreach ($params as $field=>$value) {
-      if (empty($where)) {
-        $where .= "$field = '$value'";
-      }
-      else {
-        $where .= " AND $field = '$value'";
-      }
-    }
-
-    $where .= ');';
-    $query .=$where;
-    $dao = CRM_Core_DAO::executeQuery($query);
-    $dao->fetch();
-    return $dao;
-  } 
-
-  static function retrievePreviousAmount($params) {
-    $entity_trxn = new CRM_Financial_DAO_EntityFinancialTrxn();
-    $entity_trxn->copyValues( $params );
-    $entity_trxn->find();
-    $line_amount =0;
-    while ($entity_trxn->fetch()) {
-      $line_amount += $entity_trxn->amount;
-    }
-    return $line_amount;
   }
 }
