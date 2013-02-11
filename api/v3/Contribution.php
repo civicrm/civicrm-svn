@@ -354,7 +354,7 @@ function civicrm_api3_contribution_sendconfirmation($params) {
   if (! $contribution->find(true)) {
     throw new Exception('Contribution does not exist');
 }
-  $input = $ids = $cvalues = array();
+  $input = $ids = $cvalues = array('receipt_from_email' => $params['receipt_from_email']);
   $contribution->loadRelatedObjects($input, $ids, FALSE, true);
   $contribution->composeMessageArray($input, $ids, $cvalues, false, false);
 }
@@ -370,5 +370,9 @@ function _civicrm_api3_contribution_sendconfirmation_spec(&$params) {
     'api.required' => 1,
     'title' => 'Contribution ID'
   );
+  $params['receipt_from_email'] = array(
+    'api.required' =>1,
+    'title' => 'From Email (required until someone provides a patch :-)',
 
+  );
 }
