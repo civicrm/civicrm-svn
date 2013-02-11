@@ -5,12 +5,12 @@ class CRM_Dedupe_BAO_QueryBuilder_IndividualGeneral extends CRM_Dedupe_BAO_Query
   function record($rg) {
     $civicrm_contact = CRM_Utils_Array::value('civicrm_contact', $rg->params);
     $civicrm_address = CRM_Utils_Array::value('civicrm_address', $rg->params);
-    
+
     // Since definitely have first and last name, escape them upfront.
     $first_name     = CRM_Core_DAO::escapeString(CRM_Utils_Array::value('first_name', $civicrm_contact, ''));
     $last_name      = CRM_Core_DAO::escapeString(CRM_Utils_Array::value('last_name', $civicrm_contact, ''));
     $street_address = CRM_Core_DAO::escapeString(CRM_Utils_Array::value('street_address', $civicrm_address, ''));
-    
+
     $query = "
             SELECT contact1.id id1, {$rg->threshold} as weight
             FROM civicrm_contact AS contact1
@@ -20,7 +20,7 @@ class CRM_Dedupe_BAO_QueryBuilder_IndividualGeneral extends CRM_Dedupe_BAO_Query
               AND contact1.last_name = '$last_name'
               AND address1.street_address = '$street_address'
               ";
-    
+
     if ($birth_date = CRM_Core_DAO::escapeString(CRM_Utils_Array::value('birth_date', $civicrm_contact, ''))) {
       $query .= " AND (contact1.birth_date IS NULL or contact1.birth_date = '$birth_date')\n";
     }

@@ -73,7 +73,7 @@ class CRM_Utils_ReCAPTCHA {
    * Add element to form
    *
    */
-  function add(&$form) {
+  static function add(&$form) {
     $error  = NULL;
     $config = CRM_Core_Config::singleton();
     $useSSL = FALSE;
@@ -87,26 +87,29 @@ class CRM_Utils_ReCAPTCHA {
 
     $form->assign('recaptchaHTML', $html);
     $form->assign('recaptchaOptions', $config->recaptchaOptions);
-    $form->add('text',
+    $form->add(
+      'text',
       'recaptcha_challenge_field',
       NULL,
       NULL,
       TRUE
     );
-    $form->add('hidden',
+    $form->add(
+      'hidden',
       'recaptcha_response_field',
       'manual_challenge'
     );
 
     $form->registerRule('recaptcha', 'callback', 'validate', 'CRM_Utils_ReCAPTCHA');
-    $form->addRule('recaptcha_challenge_field',
+    $form->addRule(
+      'recaptcha_challenge_field',
       ts('Input text must match the phrase in the image. Please review the image and re-enter matching text.'),
       'recaptcha',
       $form
     );
   }
 
-  function validate($value, $form) {
+  static function validate($value, $form) {
     $config = CRM_Core_Config::singleton();
 
     $resp = recaptcha_check_answer($config->recaptchaPrivateKey,
