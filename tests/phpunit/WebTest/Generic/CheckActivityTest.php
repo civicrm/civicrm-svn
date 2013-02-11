@@ -56,9 +56,9 @@ class WebTest_Generic_CheckActivityTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("_qf_Activity_upload");
     $this->select("activity_type_id", "label=Meeting");
 
-    $this->click("css=tr.crm-activity-form-block-target_contact_id input#token-input-target_contact_id");
-    $this->type("css=tr.crm-activity-form-block-target_contact_id input#token-input-target_contact_id", "$contactFirstName1");
-    $this->typeKeys("css=tr.crm-activity-form-block-target_contact_id input#token-input-target_contact_id", "$contactFirstName1");
+    $this->click("css=tr.crm-activity-form-block-target_contact_id input#token-input-contact_1");
+    $this->type("css=tr.crm-activity-form-block-target_contact_id input#token-input-contact_1", "$contactFirstName1");
+    $this->typeKeys("css=tr.crm-activity-form-block-target_contact_id input#token-input-contact_1", "$contactFirstName1");
 
     // ...waiting for drop down with results to show up...
     $this->waitForElementPresent("css=div.token-input-dropdown-facebook");
