@@ -91,7 +91,7 @@ class api_v3_DomainTest extends CiviUnitTestCase {
       )
     );
 
-    $domUpdate = civicrm_api('domain','create',array(
+    civicrm_api('domain','create',array(
       'id' => 1,
       'contact_id' => $domContact['id'],
       'version' => $this->_apiversion
@@ -199,12 +199,11 @@ class api_v3_DomainTest extends CiviUnitTestCase {
   public function testCreate() {
     $result = civicrm_api('domain', 'create', $this->params);
     $this->documentMe($this->params, $result, __FUNCTION__, __FILE__);
-    $this->assertType('array', $result);
     $this->assertEquals($result['is_error'], 0);
     $this->assertEquals($result['count'], 1);
-
     $this->assertNotNull($result['id']);
     $this->assertEquals($result['values'][$result['id']]['name'], $this->params['name']);
+    $this->assertEquals($result['values'][$result['id']]['version'], $this->params['domain_version']);
   }
 
   /**
@@ -212,7 +211,7 @@ class api_v3_DomainTest extends CiviUnitTestCase {
    * Error expected.
    */
   public function testCreateWithEmptyParams() {
-    $params = array();
+    $params = array('version' => $this->_apiversion);
     $result = civicrm_api('domain', 'create', $params);
     $this->assertEquals($result['is_error'], 1,
       "In line " . __LINE__

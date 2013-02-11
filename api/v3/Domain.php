@@ -129,13 +129,8 @@ function _civicrm_api3_domain_get_spec(&$params) {
  * {@getfields domain_create}
  */
 function civicrm_api3_domain_create($params) {
-
-  civicrm_api3_verify_mandatory($params, 'CRM_Core_BAO_Domain');
-  $params['version'] = CRM_Utils_Array::value('domain_version', $params);
-  $domain            = CRM_Core_BAO_Domain::create($params);
-  $domain_array      = array();
-  _civicrm_api3_object_to_array($domain, $domain_array[$domain->id]);
-  return civicrm_api3_create_success($domain_array, $params);
+  $params['version'] = $params['domain_version'];
+  return _civicrm_api3_basic_create(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 }
 /*
  * Adjust Metadata for Create action
@@ -145,6 +140,8 @@ function civicrm_api3_domain_create($params) {
  */
 function _civicrm_api3_domain_create_spec(&$params) {
   $params['domain_version'] = $params['version'];
+  $params['domain_version']['api.required'] = 1;
   unset($params['version']);
+  $params['name']['api.required'] = 1;
 }
 
