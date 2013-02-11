@@ -83,7 +83,7 @@
     <tr class="crm-contribution-form-block-tax_rate">
       <td class="label">{$form.tax_rate.label}</td>
       <td class="html-adjust">{$form.tax_rate.html}<br />
-        <span class="description">{ts}The default rate used to calculate the taxes collected into this account. NB: for information only - not used by core CiviCRM.{/ts}</span>
+        <span class="description">{ts}The default rate used to calculate the taxes collected into this account (e.g. for tax rate of 8.27%, enter 8.27). NB: for information only - not used by core CiviCRM.{/ts}</span>
       </td>
     </tr>
     <tr class="crm-contribution-form-block-is_default">
