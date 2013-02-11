@@ -22,7 +22,7 @@
  | at info[AT]civicrm[DOT]org. If you have questions about the        |
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
- +--------------------------------------------------------------------+
+ +------- -------------------------------------------------------------+
 */
 
 /**
@@ -38,29 +38,29 @@
  * polluting the core class and isolates the mass mailer class
  */
 class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
-  
+
   /**
    * financial types
    * @var array
    * @static
    */
   private static $financialType;
-  
+
   /**
    * financial types
    * @var array
    * @static
    */
   private static $financialTypeAccount;
-  
-  
+
+
   /**
    * financial types
    * @var array
    * @static
    */
   private static $financialAccount;
-  
+
     /**
    * contribution pages
    * @var array
@@ -124,16 +124,16 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
   public static function &financialType($id = NULL) {
     if (!self::$financialType) {
       $condition = " is_active = 1 ";
-      CRM_Core_PseudoConstant::populate( 
+      CRM_Core_PseudoConstant::populate(
         self::$financialType,
         'CRM_Financial_DAO_FinancialType',
         TRUE,
-        'name', 
-        NULL, 
+        'name',
+        NULL,
         $condition
-      );    
+      );
     }
-        
+
     if ($id) {
       $result = CRM_Utils_Array::value($id, self::$financialType);
       return $result;
@@ -155,15 +155,15 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
     }
     $cacheKey = "{$id}_{$financialAccountTypeId}";
     if (!isset(self::$financialAccount[$cacheKey])) {
-      CRM_Core_PseudoConstant::populate( 
+      CRM_Core_PseudoConstant::populate(
         self::$financialAccount[$cacheKey],
         'CRM_Financial_DAO_FinancialAccount',
-        TRUE, 
-        'name', 
-        'is_active', 
-        $condition 
+        TRUE,
+        'name',
+        'is_active',
+        $condition
       );
-            
+
     }
     if ($id) {
       $result = CRM_Utils_Array::value($id, self::$financialAccount[$cacheKey]);
@@ -375,7 +375,7 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
       );
     }
     return self::$pcpStatus[$column];
-  } 
+  }
 
   /**
    * Get all financial accounts for a Financial type.
@@ -390,22 +390,22 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
   public static function financialAccountType($financialTypeId, $relationTypeId = NULL) {
     if (!CRM_Utils_Array::value($financialTypeId, self::$financialTypeAccount)) {
       $condition = " entity_id = $financialTypeId ";
-      CRM_Core_PseudoConstant::populate( 
+      CRM_Core_PseudoConstant::populate(
         self::$financialTypeAccount[$financialTypeId],
         'CRM_Financial_DAO_EntityFinancialAccount',
         $all = true,
-        $retrieve = 'financial_account_id', 
+        $retrieve = 'financial_account_id',
         $filter = NULL,
         $condition,
         NULL,
         'account_relationship'
-      );            
+      );
     }
 
     if ($relationTypeId) {
       return CRM_Utils_Array::value($relationTypeId, self::$financialTypeAccount[$financialTypeId]);
     }
-    
+
     return self::$financialTypeAccount[$financialTypeId];
   }
 }
