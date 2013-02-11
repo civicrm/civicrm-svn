@@ -286,17 +286,4 @@ class CRM_Financial_BAO_FinancialItemTest extends CiviUnitTestCase {
     $this->assertEquals( $maxEntity->id, $entityTrxn->id, 'Verify Max ID for Financial Item');
     return $maxEntity;
   }
-
-  /**
-   * check method retrievePreviousAmount()
-   */
-  function testRetrievePreviousAmount() {
-    $entityFinancialTrxn = self::testRetrieveMaxEntityFinancialTrxn();
-    $params = array(
-      'entity_table' => $entityFinancialTrxn->entity_table,
-      'id' => $entityFinancialTrxn->id,
-    );
-    $amount = CRM_Financial_BAO_FinancialItem::retrievePreviousAmount($params);
-    $this->assertEquals( $amount, $entityFinancialTrxn->amount, 'Verify Amount for Financial Item');
-  }
 }

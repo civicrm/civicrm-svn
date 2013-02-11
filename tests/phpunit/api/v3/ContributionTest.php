@@ -95,7 +95,6 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
   function tearDown() {
 
     $this->contributionTypeDelete();
-    $this->contactDelete($this->_individualId);
     $this->quickCleanup(array(
       'civicrm_contribution',
       'civicrm_event',
@@ -421,28 +420,28 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
   function testCreateContributionNoLineItems() {
 
     $params = array(
-        'contact_id' => $this->_individualId,
-        'receive_date' => '20120511',
-        'total_amount' => 100.00,
-        'financial_type_id'      => $this->_contributionTypeId,
-        'payment_instrument_id' => 1,
-        'non_deductible_amount' => 10.00,
-        'fee_amount' => 50.00,
-        'net_amount' => 90.00,
-        'trxn_id' => 12345,
-        'invoice_id' => 67890,
-        'source' => 'SSF',
-        'contribution_status_id' => 1,
-        'version' => $this->_apiversion,
-        'skipLineItem' => 1,
+      'contact_id' => $this->_individualId,
+      'receive_date' => '20120511',
+      'total_amount' => 100.00,
+      'financial_type_id'      => $this->_contributionTypeId,
+      'payment_instrument_id' => 1,
+      'non_deductible_amount' => 10.00,
+      'fee_amount' => 50.00,
+      'net_amount' => 90.00,
+      'trxn_id' => 12345,
+      'invoice_id' => 67890,
+      'source' => 'SSF',
+      'contribution_status_id' => 1,
+      'version' => $this->_apiversion,
+      'skipLineItem' => 1,
     );
 
     $contribution = civicrm_api('contribution', 'create', $params);
     $lineItems = civicrm_api('line_item','get',array(
-        'version' => $this->_apiversion,
-        'entity_id' => $contribution['id'],
-        'entity_table' => 'civicrm_contribution',
-        'sequential' => 1,
+      'version' => $this->_apiversion,
+      'entity_id' => $contribution['id'],
+      'entity_table' => 'civicrm_contribution',
+      'sequential' => 1,
     ));
     $this->assertEquals(0, $lineItems['count']);
   }
@@ -452,35 +451,34 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
   function testCreateContributionChainedLineItems() {
 
     $params = array(
-        'contact_id' => $this->_individualId,
-        'receive_date' => '20120511',
-        'total_amount' => 100.00,
-        'financial_type_id' => $this->_contributionTypeId,
-        'payment_instrument_id' => 1,
-        'non_deductible_amount' => 10.00,
-        'fee_amount' => 50.00,
-        'net_amount' => 90.00,
-        'trxn_id' => 12345,
-        'invoice_id' => 67890,
-        'source' => 'SSF',
-        'contribution_status_id' => 1,
-        'version' => $this->_apiversion,
-        'skipLineItem' => 1,
-        'api.line_item.create' => array(
-            array(
-              'price_field_id' => 1,
-              'qty' => 2,
-              'line_total' => '20',
-              'unit_price' => '10',
-            ),
-            array(
-                'price_field_id' => 1,
-                'qty' => 1,
-                'line_total' => '80',
-                'unit_price' => '80',
-            ),
-          ),
-
+      'contact_id' => $this->_individualId,
+      'receive_date' => '20120511',
+      'total_amount' => 100.00,
+      'financial_type_id' => $this->_contributionTypeId,
+      'payment_instrument_id' => 1,
+      'non_deductible_amount' => 10.00,
+      'fee_amount' => 50.00,
+      'net_amount' => 90.00,
+      'trxn_id' => 12345,
+      'invoice_id' => 67890,
+      'source' => 'SSF',
+      'contribution_status_id' => 1,
+      'version' => $this->_apiversion,
+      'skipLineItem' => 1,
+      'api.line_item.create' => array(
+        array(
+          'price_field_id' => 1,
+          'qty' => 2,
+          'line_total' => '20',
+          'unit_price' => '10',
+        ),
+        array(
+          'price_field_id' => 1,
+          'qty' => 1,
+          'line_total' => '80',
+          'unit_price' => '80',
+        ),
+      ),
     );
 
     $contribution = civicrm_api('contribution', 'create', $params);
@@ -489,10 +487,10 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
     $this->documentMe($params, $contribution, __FUNCTION__,__FILE__, $description, $subfile);
     $this->assertAPISuccess($contribution, 'In line ' . __LINE__);
     $lineItems = civicrm_api('line_item','get',array(
-        'version' => $this->_apiversion,
-        'entity_id' => $contribution['id'],
-        'entity_table' => 'civicrm_contribution',
-        'sequential' => 1,
+      'version' => $this->_apiversion,
+      'entity_id' => $contribution['id'],
+      'entity_table' => 'civicrm_contribution',
+      'sequential' => 1,
     ));
     $this->assertEquals(2, $lineItems['count']);
   }
@@ -593,7 +591,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'contact_id' => $this->_individualId,
       'receive_date' => date('Ymd'),
       'total_amount' => 100.00,
-                        'financial_type_id'   => $this->_contributionTypeId,
+      'financial_type_id' => $this->_contributionTypeId,
       'payment_instrument_id' => 1,
       'non_deductible_amount' => 10.00,
       'fee_amount' => 50.00,
@@ -620,7 +618,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'contact_id' => 999,
       'receive_date' => date('Ymd'),
       'total_amount' => 100.00,
-                        'financial_type_id'   => $this->_contributionTypeId,
+      'financial_type_id' => $this->_contributionTypeId,
       'payment_instrument_id' => 1,
       'non_deductible_amount' => 10.00,
       'fee_amount' => 50.00,
@@ -642,7 +640,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'contribution_contact_id' => 999,
       'receive_date' => date('Ymd'),
       'total_amount' => 100.00,
-      'financial_type_id'   => $this->_contributionTypeId,
+      'financial_type_id' => $this->_contributionTypeId,
       'payment_instrument_id' => 1,
       'non_deductible_amount' => 10.00,
       'fee_amount' => 50.00,
@@ -665,7 +663,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'contact_id' => $this->_individualId,
       'receive_date' => '2012-01-01',
       'total_amount' => 100.00,
-                        'financial_type_id'   => $this->_contributionTypeId,
+      'financial_type_id' => $this->_contributionTypeId,
       'payment_instrument_id' => 1,
       'non_deductible_amount' => 10.00,
       'fee_amount' => 50.00,
@@ -688,20 +686,20 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
 
   function testCreateContributionWithNoteUniqueNameAliases() {
     $params      = array(
-        'contact_id' => $this->_individualId,
-        'receive_date' => '2012-01-01',
-        'total_amount' => 100.00,
-        'financial_type_id' => $this->_contributionTypeId,
-        'payment_instrument_id' => 1,
-        'non_deductible_amount' => 10.00,
-        'fee_amount' => 50.00,
-        'net_amount' => 90.00,
-        'trxn_id' => 12345,
-        'invoice_id' => 67890,
-        'source' => 'SSF',
-        'contribution_status_id' => 1,
-        'version' => $this->_apiversion,
-        'contribution_note' => 'my contribution note',
+      'contact_id' => $this->_individualId,
+      'receive_date' => '2012-01-01',
+      'total_amount' => 100.00,
+      'financial_type_id' => $this->_contributionTypeId,
+      'payment_instrument_id' => 1,
+      'non_deductible_amount' => 10.00,
+      'fee_amount' => 50.00,
+      'net_amount' => 90.00,
+      'trxn_id' => 12345,
+      'invoice_id' => 67890,
+      'source' => 'SSF',
+      'contribution_status_id' => 1,
+      'version' => $this->_apiversion,
+      'contribution_note' => 'my contribution note',
     );
 
     $contribution = civicrm_api('contribution', 'create', $params);
@@ -1095,7 +1093,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'id' => $contributionID,
       'contact_id' => $this->_individualId,
       'total_amount' => 110.00,
-                        'financial_type_id'      => $this->_contributionTypeId,
+      'financial_type_id' => $this->_contributionTypeId,
       'non_deductible_amount' => 10.00,
       'net_amount' => 100.00,
       'contribution_status_id' => 1,
@@ -1189,7 +1187,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'contact_id' => $this->_individualId,
       'receive_date' => date('Ymd'),
       'total_amount' => 100.00,
-                  'financial_type_id'      => $this->_contributionTypeId,
+      'financial_type_id' => $this->_contributionTypeId,
       'non_deductible_amount' => 10.00,
       'fee_amount' => 5.00,
       'net_amount' => 95.00,
@@ -1207,7 +1205,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
 
     $this->assertEquals($p['contact_id'], $res['contact_id'], 'In line ' . __LINE__);
     $this->assertEquals($p['total_amount'], $res['total_amount'], 'In line ' . __LINE__);
-        $this->assertEquals( $p['financial_type_id'],     $res['financial_type_id'], 'In line ' . __LINE__ );
+    $this->assertEquals($p['financial_type_id'], $res['financial_type_id'], 'In line ' . __LINE__ );
     $this->assertEquals($p['net_amount'], $res['net_amount'], 'In line ' . __LINE__);
     $this->assertEquals($p['non_deductible_amount'], $res['non_deductible_amount'], 'In line ' . __LINE__);
     $this->assertEquals($p['fee_amount'], $res['fee_amount'], 'In line ' . __LINE__);
@@ -1228,7 +1226,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'contact_id' => $this->_individualId,
       'receive_date' => date('Ymd'),
       'total_amount' => 100.00,
-                     'financial_type_id'      => $this->_contributionTypeId,
+      'financial_type_id' => $this->_contributionTypeId,
       'non_deductible_amount' => 10.00,
       'contribution_status_id' => 1,
       'version' => $this->_apiversion,
@@ -1239,7 +1237,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'contact_id' => $this->_individualId,
       'receive_date' => date('Ymd'),
       'total_amount' => 200.00,
-                     'financial_type_id'      => $this->_contributionTypeId,
+      'financial_type_id' => $this->_contributionTypeId,
       'non_deductible_amount' => 20.00,
       'trxn_id' => 5454565,
       'invoice_id' => 1212124,
@@ -1259,7 +1257,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
 
     $this->assertEquals($p2['contact_id'], $res['contact_id'], 'In line ' . __LINE__);
     $this->assertEquals($p2['total_amount'], $res['total_amount'], 'In line ' . __LINE__);
-         $this->assertEquals( $p2['financial_type_id'],     $res['financial_type_id'], 'In line ' . __LINE__ );
+    $this->assertEquals($p2['financial_type_id'], $res['financial_type_id'], 'In line ' . __LINE__ );
     $this->assertEquals($p2['net_amount'], $res['net_amount'], 'In line ' . __LINE__);
     $this->assertEquals($p2['non_deductible_amount'], $res['non_deductible_amount'], 'In line ' . __LINE__);
     $this->assertEquals($p2['fee_amount'], $res['fee_amount'], 'In line ' . __LINE__);
@@ -1350,9 +1348,9 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
       'contact_id' => $this->_individualId,
       'receive_date' => date('Ymd'),
       'total_amount' => 100.00,
-                         'financial_type_id'      => $this->_contributionTypeId,
+      'financial_type_id' => $this->_contributionTypeId,
       'contribution_status_id' => 1,
-                         'financial_type'         => null,
+      'financial_type' => null,
       'note' => 'note',
       'contribution_source' => 'test',
     );
@@ -1642,9 +1640,10 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
        'total_amount' => 50,
        'status_id' => 1,
      );
-     $this->assertDBCompareValues('CRM_Financial_DAO_FinancialTrxn',$trxnParams,$compareParams);
+     $trxnId = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnId($params['id'], 'DESC');
+     $this->assertDBCompareValues('CRM_Financial_DAO_FinancialTrxn', $trxnParams, $compareParams);
      $fitemParams = array(
-       'entity_id' => $maxTrxn->financial_trxn_id,
+       'entity_id' => $trxnId['financialTrxnId'],
        'entity_table' => 'civicrm_financial_trxn',
      );
      $compareParams = array(
