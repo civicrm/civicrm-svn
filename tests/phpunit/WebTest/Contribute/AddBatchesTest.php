@@ -244,6 +244,6 @@ class WebTest_Contribute_AddBatchesTest extends CiviSeleniumTestCase {
     $this->click('_qf_Edit_next');
 
     // Is new contact created?
-    $this->assertTrue($this->isTextPresent('New contact has been created.'), "Status message didn't show up after saving!");
+    $this->assertTrue($this->isTextPresent("{$lname}, {$fname} has been created."), "Status message didn't show up after saving!");
   }
 }
