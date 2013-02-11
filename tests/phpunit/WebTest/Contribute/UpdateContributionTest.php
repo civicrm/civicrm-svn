@@ -120,8 +120,8 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
    $this->click("_qf_Contribution_upload");
    $this->waitForPageToLoad("30000");
    //Assertions
-   $search = array( 'id' => $contId );
-   $compare = array( 'contribution_status_id' => 1 );
+   $search = array('id' => $contId);
+   $compare = array('contribution_status_id' => 1);
    $this->assertDBCompareValues('CRM_Contribute_DAO_Contribution', $search, $compare);
 
    $lineItem = key(CRM_Price_BAO_LineItem::getLineItems($contId, 'contribution'));
@@ -129,7 +129,7 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
    $compare = array( 'status_id' => 1 );
    $this->assertDBCompareValues("CRM_Financial_DAO_FinancialItem", $search, $compare);
 
-   $status = $this->_getPremiumActualCost($contId, NULL, 6, NULL, "'civicrm_contribution'",  "ft.status_id as status");
+   $status = $this->_getPremiumActualCost($contId, 'Accounts Receivable', 'Payment Processor Account', NULL, "'civicrm_contribution'",  "ft.status_id as status");
    $this->assertEquals($status, '1', "Verify Completed Status"); 
  }
 
@@ -147,37 +147,21 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
    $firstName = substr(sha1(rand()), 0, 7);
    $lastName  = 'Contributor';
    $email     = $firstName . "@example.com";
-   $from = 9;
-   $to = 10;
+   $from = 'Premiums';
+   $to = 'Premiums inventory';
    $financialType = array(
      'name' => 'Test Financial'.substr(sha1(rand()), 0, 7),
      'is_reserved' => 1,
      'is_deductible' => 1,
    );
    $this->addeditFinancialType($financialType);
-   $ogAccount = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionGroup', 'account_relationship', 'id', 'name');
-   $ogParams = array(
-     'option_group_id' => $ogAccount,
-     'name' => 'Cost of Sales Account is',
-   );
-   $defaults = array();
-   CRM_Core_BAO_OptionValue::retrieve($ogParams, $defaults);
-   $acRel = $defaults['value'];
-   $this->select("account_relationship", "value=$acRel");
-   $this->select("financial_account_id", "value=$from");
+   $this->select("account_relationship", "label=Cost of Sales Account is");
+   $this->select("financial_account_id", "label=$from");
    $this->click("_qf_FinancialTypeAccount_next_new-botttom");
    $this->waitForPageToLoad("30000");
-   $ogParams = array(
-     'option_group_id' => $ogAccount,
-     'name' => 'Premiums Inventory Account is',
-   );
-   $defaults = $info = array();
-   CRM_Core_BAO_OptionValue::retrieve($ogParams, $defaults);
-   $fcRel = $defaults['value'];
-   $this->select("account_relationship", "value=$fcRel");
-   $this->select("financial_account_id", "value=$to");
+   $this->select("account_relationship", "label=Premiums Inventory Account is");
+   $this->select("financial_account_id", "label=$to");
    $this->click("_qf_FinancialTypeAccount_next-botttom");
-   CRM_Financial_BAO_FinancialType::retrieve($financialType, $info);
    $premiumName = 'Premium'.substr(sha1(rand()), 0, 7);
    $amount = 500;
    $sku = 'SKU';
@@ -185,7 +169,7 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
    $cost = 3.00;
    $this->open($this->sboxPath . "civicrm/admin/contribute/managePremiums?action=add&reset=1");
    // add premium
-   $this->addPremium($premiumName, $sku, $amount, $price, $cost, $info['id']);
+   $this->addPremium($premiumName, $sku, $amount, $price, $cost, $financialType['name']);
 
    //add second premium
    $premiumName2 = 'Premium'.substr(sha1(rand()), 0, 7);
@@ -194,7 +178,7 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
    $price2 = 200;
    $cost2 = 2.00;
    $this->open($this->sboxPath . "civicrm/admin/contribute/managePremiums?action=add&reset=1");
-   $this->addPremium($premiumName2, $sku2, $amount2, $price2, $cost2, $info['id']);
+   $this->addPremium($premiumName2, $sku2, $amount2, $price2, $cost2, $financialType['name']);
 
    // add contribution with premium
    $this->open($this->sboxPath . "civicrm/contribute/add?reset=1&action=add&context=standalone");
@@ -229,11 +213,10 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
    $this->waitForPageToLoad("30000");
 
    //Assertions
-   $financialTrxnIds = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnId($contId);
-   $actualAmount = $this->_getPremiumActualCost($financialTrxnIds['financialTrxnId'], $to, $from, $cost2);
+   $actualAmount = $this->_getPremiumActualCost($contId, $to, $from, $cost2, "'civicrm_contribution'");
    $this->assertEquals($actualAmount, $cost2, "Verify actual cost for changed premium");
 
-   $deletedAmount = $this->_getPremiumActualCost($financialTrxnIds['financialTrxnId'], $from, $to, $cost);
+   $deletedAmount = $this->_getPremiumActualCost($contId, $from, $to, $cost, "'civicrm_contribution'");
    $this->assertEquals($deletedAmount, $cost, "Verify actual cost for deleted premium");
  }
 
@@ -251,37 +234,21 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
    $firstName = substr(sha1(rand()), 0, 7);
    $lastName  = 'Contributor';
    $email     = $firstName . "@example.com";
-   $from = 9;
-   $to = 10;
+   $from = 'Premiums';
+   $to = 'Premiums inventory';
    $financialType = array(
      'name' => 'Test Financial'.substr(sha1(rand()), 0, 7),
      'is_reserved' => 1,
      'is_deductible' => 1,
    );
    $this->addeditFinancialType($financialType);
-   $ogAccount = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionGroup', 'account_relationship', 'id', 'name');
-   $ogParams = array(
-     'option_group_id' => $ogAccount,
-     'name' => 'Cost of Sales Account is',
-   );
-   $defaults = array();
-   CRM_Core_BAO_OptionValue::retrieve($ogParams, $defaults);
-   $acRel = $defaults['value'];
-   $this->select("account_relationship", "value=$acRel");
-   $this->select("financial_account_id", "value=$from");
+   $this->select("account_relationship", "label=Cost of Sales Account is");
+   $this->select("financial_account_id", "label=$from");
    $this->click("_qf_FinancialTypeAccount_next_new-botttom");
    $this->waitForPageToLoad("30000");
-   $ogParams = array(
-     'option_group_id' => $ogAccount,
-     'name' => 'Premiums Inventory Account is',
-   );
-   $defaults = $info = array();
-   CRM_Core_BAO_OptionValue::retrieve($ogParams, $defaults);
-   $fcRel = $defaults['value'];
-   $this->select("account_relationship", "value=$fcRel");
-   $this->select("financial_account_id", "value=$to");
+   $this->select("account_relationship", "label=Premiums Inventory Account is");
+   $this->select("financial_account_id", "label=$to");
    $this->click("_qf_FinancialTypeAccount_next-botttom");
-   CRM_Financial_BAO_FinancialType::retrieve($financialType, $info);
    $premiumName = 'Premium'.substr(sha1(rand()), 0, 7);
    $amount = 500;
    $sku = 'SKU';
@@ -289,7 +256,7 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
    $cost = 3.00;
    $this->open($this->sboxPath . "civicrm/admin/contribute/managePremiums?action=add&reset=1");
    // add premium
-   $this->addPremium($premiumName, $sku, $amount, $price, $cost, $info['id']);
+   $this->addPremium($premiumName, $sku, $amount, $price, $cost, $financialType['name']);
 
    // add contribution with premium
    $this->open($this->sboxPath . "civicrm/contribute/add?reset=1&action=add&context=standalone");
@@ -324,8 +291,7 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
    $this->waitForPageToLoad("30000");
 
    //Assertions
-   $financialTrxnIds = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnId($contId);
-   $actualAmount = $this->_getPremiumActualCost($financialTrxnIds['financialTrxnId'], $from, $to);
+   $actualAmount = $this->_getPremiumActualCost($contId, $from, $to, NULL, "'civicrm_contribution'");
    $this->assertEquals($actualAmount, $cost, "Verify actual cost for deleted premium");
  }
 
@@ -345,13 +311,10 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
    $email     = $firstName . "@example.com";
    $label = 'TEST'.substr(sha1(rand()), 0, 7);
    $amount = 100.00;
-   $fromParams = array( 'name' => 'Deposit Bank Account' );
-   $toParams = array( 'name' => 'Accounts Receivable' );
-   $to = $from = array();
-   CRM_Financial_BAO_FinancialAccount::retrieve($toParams, $to);
-   CRM_Financial_BAO_FinancialAccount::retrieve($fromParams, $from);
-
-   $this->addPaymentInstrument($label, $to['id']);
+   $financialAccount = CRM_Contribute_PseudoConstant::financialAccount();
+   $to = array_search('Accounts Receivable', $financialAccount);
+   $from = array_search('Deposit Bank Account', $financialAccount);
+   $this->addPaymentInstrument($label, $to);
    $this->_testOfflineContribution($firstName, $lastName, $email, $amount);
    $this->click("xpath=//div[@id='Contributions']//table/tbody/tr[1]/td[8]/span/a[text()='Edit']");
    $this->waitForPageToLoad("30000");
@@ -362,7 +325,7 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
    $this->click("_qf_Contribution_upload");
    $this->waitForPageToLoad("30000");
    //Assertions
-   $totalAmount = $this->_getPremiumActualCost($contId, $from['id'], $to['id']);
+   $totalAmount = $this->_getPremiumActualCost($contId, 'Payment Processor Account', 'Accounts Receivable');
    $this->assertEquals($totalAmount, $amount, "Verify amount for newly inserted values");
  }
 
@@ -394,13 +357,13 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
 
    //Assertions
    $lineItem = key(CRM_Price_BAO_LineItem::getLineItems($contId, 'contribution'));
-   $search = array( 'entity_id' => $lineItem );
+   $search = array('entity_id' => $lineItem);
    $compare = array(
      'amount' => '100.00',
      'status_id' => 1,
    );
    $this->assertDBCompareValues("CRM_Financial_DAO_FinancialItem", $search, $compare);
-   $amount = $this->_getPremiumActualCost($contId, NULL, 6, -100.00, "'civicrm_contribution'");
+   $amount = $this->_getPremiumActualCost($contId, NULL, 'Payment Processor Account', -100.00, "'civicrm_contribution'");
    $this->assertEquals($amount, '-100.00', 'Verify Financial Trxn Amount.');
  }
 
@@ -420,9 +383,6 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
    $email     = $firstName . "@example.com";
    $label = 'TEST'.substr(sha1(rand()), 0, 7);
    $amount = 100.00;
-   $toParams = array( 'name' => 'Accounts Receivable' );
-   $to = array();
-   CRM_Financial_BAO_FinancialAccount::retrieve($toParams, $to);
    $this->_testOfflineContribution($firstName, $lastName, $email, $amount, "Pending");
    $this->click("xpath=//div[@id='Contributions']//table/tbody/tr[1]/td[8]/span/a[text()='Edit']");
    $this->waitForPageToLoad("30000");
@@ -434,8 +394,8 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
    $this->waitForPageToLoad("30000");
 
    //Assertions
-   $search = array( 'id' => $contId );
-   $compare = array( 'contribution_status_id' => 3 );
+   $search = array('id' => $contId);
+   $compare = array('contribution_status_id' => 3);
    $this->assertDBCompareValues('CRM_Contribute_DAO_Contribution', $search, $compare);
    $lineItem = key(CRM_Price_BAO_LineItem::getLineItems($contId, 'contribution'));
    $itemParams = array(
@@ -445,9 +405,9 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
    $defaults = array();
    $items = CRM_Financial_BAO_FinancialItem::retrieve($itemParams, $defaults);
    $this->assertEquals($items->amount, $itemParams['amount'], 'Verify Amount for financial Item');
-   $totalAmount = $this->_getPremiumActualCost($items->id, $to['id'], NULL, "-100.00", "'civicrm_financial_item'");
+   $totalAmount = $this->_getPremiumActualCost($items->id, 'Accounts Receivable', NULL, "-100.00", "'civicrm_financial_item'");
    $this->assertEquals($totalAmount, "-$amount", 'Verify Amount for Financial Trxn');
-   $totalAmount = $this->_getPremiumActualCost($contId, $to['id'], NULL, "-100.00", "'civicrm_contribution'");
+   $totalAmount = $this->_getPremiumActualCost($contId, 'Accounts Receivable', NULL, "-100.00", "'civicrm_contribution'");
    $this->assertEquals($totalAmount, "-$amount", 'Verify Amount for Financial Trxn');
  }
 
@@ -505,18 +465,20 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
  }
 
  function _getPremiumActualCost($entityId, $from = NULL, $to = NULL, $cost = NULL, $entityTable = NULL, $select = "ft.total_amount AS amount") {
+   $financialAccount = CRM_Contribute_PseudoConstant::financialAccount();
    $query = "SELECT
      {$select}
      FROM civicrm_financial_trxn ft
-     INNER JOIN civicrm_entity_financial_trxn eft ON eft.financial_trxn_id = ft.id AND eft.entity_id = {$entityId}
-     WHERE  1";
+     INNER JOIN civicrm_entity_financial_trxn eft ON eft.financial_trxn_id = ft.id AND eft.entity_id = {$entityId}";
    if ($entityTable) {
      $query .= " AND eft.entity_table = {$entityTable}";
    }
    if (!empty($to)) {
+     $to = array_search($to, $financialAccount);
      $query .= " AND ft.to_financial_account_id = {$to}";
    }
    if (!empty($from)) {
+     $from = array_search($from, $financialAccount);
      $query .= " AND ft.from_financial_account_id = {$from}";
    }
    if (!empty($cost)) {

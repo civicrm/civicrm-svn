@@ -374,7 +374,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     $this->click('_qf_Edit_next');
 
     // Is new contact created?
-    $this->assertTrue($this->isTextPresent('New contact has been created.'), "Status message didn't show up after saving!");
+    $this->assertTrue($this->isTextPresent("$lname, $fname has been created."), "Status message didn't show up after saving!");
   }
 
   /**
@@ -1289,7 +1289,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     $isTax = FALSE,
     $taxRate = FALSE,
     $isDefault = FALSE
-  ){
+  ) {
        
     // Go directly to the URL
     $this->open($this->sboxPath . "civicrm/admin/financial/financialAccount?reset=1");
@@ -1363,7 +1363,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
    * Edit Financial Account
    */
     
-  function _testEditFinancialAccount ( $editfinancialAccount,
+  function _testEditFinancialAccount($editfinancialAccount,
     $financialAccountTitle = FALSE,
     $financialAccountDescription = FALSE,
     $accountingCode = FALSE,
@@ -1374,7 +1374,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     $isTax = FALSE,
     $taxRate = FALSE,
     $isDefault = FALSE
-  ){
+  ) {
     if ($firstName) {
       $this->open($this->sboxPath . "civicrm/admin/financial/financialAccount?reset=1");
       $this->waitForPageToLoad("30000");
@@ -1573,97 +1573,80 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     }
   }
 
-function _testAddFinancialType(){
-  // Add new Financial Account
-  $orgName = 'Alberta '.substr(sha1(rand()), 0, 7);
-  $financialAccountTitle = 'Financial Account '.substr(sha1(rand()), 0, 4);
-  $financialAccountDescription = "{$financialAccountTitle} Description";
-  $accountingCode = 1033;
-  $financialAccountType = 'Revenue'; //Asset Revenue
-  $taxDeductible = FALSE;
-  $isActive = FALSE;
-  $isTax = TRUE;
-  $taxRate = 9.99999999;
-  $isDefault = FALSE;
+  function _testAddFinancialType() {
+    // Add new Financial Account
+    $orgName = 'Alberta '.substr(sha1(rand()), 0, 7);
+    $financialAccountTitle = 'Financial Account '.substr(sha1(rand()), 0, 4);
+    $financialAccountDescription = "{$financialAccountTitle} Description";
+    $accountingCode = 1033;
+    $financialAccountType = 'Revenue'; //Asset Revenue
+    $taxDeductible = FALSE;
+    $isActive = FALSE;
+    $isTax = TRUE;
+    $taxRate = 9.99999999;
+    $isDefault = FALSE;
         
-  //Add new organisation
-  if ($orgName) {
-    $this->webtestAddOrganization($orgName);
+    //Add new organisation
+    if ($orgName) {
+      $this->webtestAddOrganization($orgName);
+    }
+  
+    $this->_testAddFinancialAccount( 
+      $financialAccountTitle,
+      $financialAccountDescription,
+      $accountingCode,
+      $orgName,
+      $financialAccountType,
+      $taxDeductible,
+      $isActive,
+      $isTax,
+      $taxRate,
+      $isDefault
+    );
+    $this->waitForElementPresent("xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[8]/span/a[text()='Edit']");
+  
+    //Add new Financial Type
+    $financialType['name'] = 'FinancialType '.substr(sha1(rand()), 0, 4);
+    $financialType['is_deductible'] = true;
+    $financialType['is_reserved'] = false; 
+    $this->addeditFinancialType($financialType);
+  
+    $accountRelationship = "Income Account is"; //Asset Account - of Income Account is
+    $expected[] = array(
+      'financial_account' => $financialAccountTitle, 
+      'account_relationship'  => $accountRelationship
+    );
+  
+    $this->select('account_relationship', "label={$accountRelationship}");
+    sleep(2);
+    $this->select('financial_account_id', "label={$financialAccountTitle}");
+    $this->click('_qf_FinancialTypeAccount_next');
+    $this->waitForPageToLoad('30000');
+    $text = 'The financial type Account has been saved.';
+    $this->assertTrue($this->isTextPresent($text), 'Missing text: ' . $text);
+    return $financialType['name'];
   }
-  
-  $this->_testAddFinancialAccount( $financialAccountTitle,
-    $financialAccountDescription,
-    $accountingCode,
-    $orgName,
-    $financialAccountType,
-    $taxDeductible,
-    $isActive,
-    $isTax,
-    $taxRate,
-    $isDefault
-  );
-  $this->waitForElementPresent( "xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[8]/span/a[text()='Edit']" );
-  
-  //Add new Financial Type
-  $financialType['name'] = 'FinancialType '.substr(sha1(rand()), 0, 4);
-  $financialType['is_deductible'] = true;
-  $financialType['is_reserved'] = false; 
-  $this->addeditFinancialType( $financialType );
-  
-  $accountRelationship = "Income Account is"; //Asset Account - of Income Account is
-  $expected[] = array('financial_account' => $financialAccountTitle, 
-    'account_relationship'  => $accountRelationship
-  );
-  
-  $this->select( 'account_relationship', "label={$accountRelationship}" );
-  sleep(2);
-  $this->select( 'financial_account_id', "label={$financialAccountTitle}" );
-  $this->click( '_qf_FinancialTypeAccount_next' );
-  $this->waitForPageToLoad('30000');
-  $text = 'The financial type Account has been saved.';
-  $this->assertTrue( $this->isTextPresent($text), 'Missing text: ' . $text );
-  return $financialType['name'];
-  
-}
 
-function _testLineItem( $lineitem ){
-  $i = 2;
-  $this->waitForElementPresent("xpath= id('Contribution')/div[2]/table/tbody/");
-  foreach($lineitem as $key=>$valueArray){
-    $total = $this->getText("xpath= id('Contribution')/div[2]/table/tbody/tr[3]/td[2]/table/tbody/tr[{$i}]/td[4]"); 
-    $Paid = $this->getText("xpath= id('Contribution')/div[2]/table/tbody/tr[3]/td[2]/table/tbody/tr[{$i}]/td[5]"); 
-    $Owing = $this->getText("xpath= id('Contribution')/div[2]/table/tbody/tr[3]/td[2]/table/tbody/tr[{$i}]/td[6]");
-    $Owing = explode(' ',$Owing); 
-    $Owing = $Owing[1]; 
-    $Paid = explode(' ',$Paid); 
-    $Paid = $Paid[1]; 
-    $total= explode(' ',$total); 
-    $total =  (Float)(String)$total[1];
-    $sum = (Float)(String)($Paid+$Owing);
-    $this->assertTrue(($total == $sum), 'Priceset Amount calculation incorrect');
-    $i++;
+  function addPremium($name, $sku, $amount, $price, $cost, $financialType) {
+    $this->waitForElementPresent("_qf_ManagePremiums_upload-bottom");
+    $this->type("name", $name);
+    $this->type("sku", $sku);
+    $this->click("CIVICRM_QFID_noImage_16");
+    $this->type("min_contribution", $amount);
+    $this->type("price", $price);
+    $this->type("cost", $cost);
+    $this->select("financial_type_id", "label=$financialType");
+    $this->click("_qf_ManagePremiums_upload-bottom");
+    $this->waitForPageToLoad('30000');
   }
-  $this->click('_qf_Contribution_cancel'); 
-}
 
-function addPremium($name, $sku, $amount, $price, $cost, $financialType) {
-  $this->waitForElementPresent("_qf_ManagePremiums_upload-bottom");
-  $this->type("name", $name);
-  $this->type("sku", $sku);
-  $this->click("CIVICRM_QFID_noImage_16");
-  $this->type("min_contribution", $amount);
-  $this->type("price", $price);
-  $this->type("cost", $cost);
-  $this->select("financial_type_id", "value=$financialType");
-  $this->click("_qf_ManagePremiums_upload-bottom");
-}
-
-function addPaymentInstrument($label, $financialAccount) {
-  $this->open($this->sboxPath . "civicrm/admin/options/payment_instrument?group=payment_instrument&action=add&reset=1");
-  $this->waitForElementPresent("_qf_Options_next-bottom");
-  $this->type("label", $label);
-  $this->select("financial_account_id", "value=$financialAccount");
-  $this->click("_qf_Options_next-bottom");
-}
+  function addPaymentInstrument($label, $financialAccount) {
+    $this->open($this->sboxPath . "civicrm/admin/options/payment_instrument?group=payment_instrument&action=add&reset=1");
+    $this->waitForElementPresent("_qf_Options_next-bottom");
+    $this->type("label", $label);
+    $this->select("financial_account_id", "value=$financialAccount");
+    $this->click("_qf_Options_next-bottom");
+    $this->waitForPageToLoad('30000');
+  }
 }
 
