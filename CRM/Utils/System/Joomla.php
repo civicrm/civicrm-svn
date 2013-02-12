@@ -241,7 +241,7 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
    * @return void
    * @access public
    */
-  function addHTMLHead($string = NULL) {
+  static function addHTMLHead($string = NULL) {
     if ($string) {
       $document = JFactory::getDocument();
       $document->addCustomTag($string);

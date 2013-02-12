@@ -39,8 +39,6 @@ function civicrm_invoke() {
     // however for standalone forms, it will not have any CiviCRM variables in the
     // session either, so dont check for it
     if (count($_SESSION) <= 1) {
-      require_once 'CRM/Utils/System.php';
-
       $config = CRM_Core_Config::singleton();
       CRM_Utils_System::redirect($config->userFrameworkBaseURL);
     }
@@ -68,11 +66,10 @@ function civicrm_invoke() {
   $task = CRM_Utils_Array::value('task', $_GET, '');
   $args = explode('/', trim($task));
 
-  require_once 'CRM/Utils/System/Joomla.php';
-  CRM_Utils_System_Joomla::addHTMLHead(NULL, TRUE);
+  CRM_Core_Resources::singleton()->addCoreResources();
+  CRM_Utils_System_Joomla::addHTMLHead();
 
   $user = JFactory::getUser();
-  require_once 'CRM/Core/BAO/UFMatch.php';
   CRM_Core_BAO_UFMatch::synchronize($user, FALSE, 'Joomla', 'Individual', TRUE);
 
   CRM_Core_Invoke::invoke($args);
