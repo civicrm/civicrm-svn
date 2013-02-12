@@ -46,7 +46,8 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
     $this->webtestLogin();
 
     //create a relationship type between different contact types
-    $params = array('label_a_b' => 'Owner of ' . rand(),
+    $params = array(
+      'label_a_b' => 'Owner of ' . rand(),
       'label_b_a' => 'Belongs to ' . rand(),
       'contact_type_a' => 'Individual',
       'contact_type_b' => 'Household',
@@ -59,7 +60,6 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
     $firstName = substr(sha1(rand()), 0, 7);
     $this->webtestAddContact($firstName, "Anderson", "$firstName@anderson.name");
     $sortName = "Anderson, $firstName";
-    $displayName = "$firstName Anderson";
 
     // Go directly to the URL of the screen that you will be testing (New Household).
     $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Household");
@@ -114,6 +114,7 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
         'Status' => 'Enabled',
       )
     );
+
     $this->assertTrue($this->isTextPresent($params['label_b_a']));
 
     //create a New Individual subtype
@@ -135,7 +136,6 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
     $this->click("last_name");
     $this->type("last_name", $lastName);
     $sortName = "$lastName, $firstName";
-    $displayName = "$firstName $lastName";
 
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
@@ -162,7 +162,6 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
     $householdName = substr(sha1(rand()), 0, 4) . 'home';
     $this->click("household_name");
     $this->type("household_name", $householdName);
-    $displayName = $householdName;
 
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
@@ -211,14 +210,13 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
     $typeb = "Household" . CRM_Core_DAO::VALUE_SEPARATOR . $householdSubtypeName;
 
     //create a relationship type between different contact types
-    $params = array('label_a_b' => 'Owner of ' . rand(),
+    $params = array(
+      'label_a_b' => 'Owner of ' . rand(),
       'label_b_a' => 'Belongs to ' . rand(),
       'contact_type_a' => 'Individual',
       'contact_type_b' => $typeb,
       'description' => 'The company belongs to this individual',
     );
-
-
 
     //create relationship type
     $this->open($this->sboxPath . 'civicrm/admin/reltype?reset=1&action=add');
@@ -253,7 +251,6 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
     $firstName = substr(sha1(rand()), 0, 7);
     $this->webtestAddContact($firstName, "Anderson", "$firstName@anderson.name");
     $sortName = "Anderson, $firstName";
-    $displayName = "$firstName Anderson";
 
     //create a new contact of household subtype
     $this->open($this->sboxPath . "civicrm/contact/add?ct=Household&cst=" . $householdSubtypeName . "&reset=1");
@@ -263,7 +260,6 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
     $householdName = substr(sha1(rand()), 0, 4) . 'home';
     $this->click("household_name");
     $this->type("household_name", $householdName);
-    $displayName = $householdName;
 
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
@@ -313,7 +309,8 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
     $this->webtestLogin();
 
     //create a relationship type between different contact types
-    $params = array('label_a_b' => 'Board Member of ' . rand(),
+    $params = array(
+      'label_a_b' => 'Board Member of ' . rand(),
       'label_b_a' => 'Board Member is' . rand(),
       'contact_type_a' => 'Individual',
       'contact_type_b' => 'Organization',
@@ -325,8 +322,6 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
     //create a New Individual
     $firstName = substr(sha1(rand()), 0, 7);
     $this->webtestAddContact($firstName, "Anderson", "$firstName@anderson.name");
-    $sortName = "Anderson, $firstName";
-    $displayName = "$firstName Anderson";
 
     // visit relationship tab of the Individual
     $this->click("css=li#tab_rel a");
@@ -338,6 +333,9 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
     //choose the created relationship type
     $this->waitForElementPresent("relationship_type_id");
     $this->select('relationship_type_id', "label={$params['label_a_b']}");
+
+    //wait untill new contact dialog select is built
+    sleep(2);
 
     // create a new organization
     $orgName = 'WestsideCoop' . substr(sha1(rand()), 0, 7);

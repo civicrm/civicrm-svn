@@ -412,7 +412,12 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     $this->click('_qf_Edit_next');
 
     // Is new contact created?
-    $this->assertTrue($this->isTextPresent("$lname, $fname has been created."), "Status message didn't show up after saving!");
+    if ($lname) {
+      $this->assertTrue($this->isTextPresent("$lname, $fname has been created."), "Status message didn't show up after saving!");
+    }
+    else {
+      $this->assertTrue($this->isTextPresent("$fname has been created."), "Status message didn't show up after saving!");
+    }
   }
 
   /**
