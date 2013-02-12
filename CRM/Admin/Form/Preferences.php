@@ -34,7 +34,7 @@
  */
 
 /**
- * This class generates form components for Location Type
+ * Base class for settings forms
  *
  */
 class CRM_Admin_Form_Preferences extends CRM_Core_Form {
@@ -289,7 +289,7 @@ class CRM_Admin_Form_Preferences extends CRM_Core_Form {
       }
     }
 
-    CRM_Core_Session::setStatus(ts('Your changes have been saved.'));
+    CRM_Core_Session::setStatus(ts('Your changes have been saved.'), ts('Saved'), 'success');
   }
 
 }

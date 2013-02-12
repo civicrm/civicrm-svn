@@ -33,16 +33,6 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
   }
 
   function testIndividualAdd() {
-    // This is the path where our testing install resides.
-    // The rest of URL is defined in CiviSeleniumTestCase base class, in
-    // class attributes.
-    $this->open($this->sboxPath);
-
-    // Logging in. Remember to wait for page to load. In most cases,
-    // you can rely on 30000 as the value that allows your test to pass, however,
-    // sometimes your test might fail because of this. In such cases, it's better to pick one element
-    // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
-    // page contents loaded and you can continue your test execution.
     $this->webtestLogin();
 
     // Go directly to the URL of the screen that you will be testing (New Individual).
@@ -60,7 +50,6 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
     //select prefix
     $this->click("prefix_id");
     $this->select("prefix_id", "value=" . $this->webtestGetFirstValueForOptionGroup('individual_prefix'));
-
 
     //fill in first name
     $this->type("first_name", substr(sha1(rand()), 0, 7) . "John");
@@ -176,14 +165,11 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
     $this->waitForPageToLoad("30000");
-    
-    $individualName = $this->getText("xpath=//div[@class='crm-summary-display_name']");
-    $this->assertTrue($this->isTextPresent("$individualName has been created."));
+
+    $this->assertElementContainsText('crm-notification-container', "Contact Saved");
   }
 
   function testHouseholdAdd() {
-    $this->open($this->sboxPath);
-
     $this->webtestLogin();
 
      // go to display preferences to enable Open ID field
@@ -287,21 +273,10 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
     $this->click("_qf_Contact_upload_view");
     $this->waitForPageToLoad("30000");
 
-    $householdName = $this->getText("xpath=//div[@class='crm-summary-display_name']");
-    $this->assertTrue($this->isTextPresent("$householdName has been created."));
+    $this->assertElementContainsText('crm-notification-container', "Contact Saved");
   }
 
   function testOrganizationAdd() {
-    // This is the path where our testing install resides.
-    // The rest of URL is defined in CiviSeleniumTestCase base class, in
-    // class attributes.
-    $this->open($this->sboxPath);
-
-    // Logging in. Remember to wait for page to load. In most cases,
-    // you can rely on 30000 as the value that allows your test to pass, however,
-    // sometimes your test might fail because of this. In such cases, it's better to pick one element
-    // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
-    // page contents loaded and you can continue your test execution.
     $this->webtestLogin();
 
     // go to display preferences to enable Open ID field
@@ -399,22 +374,11 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
     $this->waitForPageToLoad("30000");
-    
-    $organizationName = $this->getText("xpath=//div[@class='crm-summary-display_name']");
-    $this->assertTrue($this->isTextPresent("$organizationName has been created."));
+
+    $this->assertElementContainsText('crm-notification-container', "Contact Saved");
   }
 
   function testIndividualAdWithSharedAddress() {
-    // This is the path where our testing install resides.
-    // The rest of URL is defined in CiviSeleniumTestCase base class, in
-    // class attributes.
-    $this->open($this->sboxPath);
-
-    // Logging in. Remember to wait for page to load. In most cases,
-    // you can rely on 30000 as the value that allows your test to pass, however,
-    // sometimes your test might fail because of this. In such cases, it's better to pick one element
-    // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
-    // page contents loaded and you can continue your test execution.
     $this->webtestLogin();
 
     // Go directly to the URL of the screen that you will be testing (New Individual).
