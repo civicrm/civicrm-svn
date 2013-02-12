@@ -275,7 +275,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity {
    * @return null
    * @access public
    */
-  public function createActivityTarget($params) {
+  static function createActivityTarget($params) {
     if (!$params['target_contact_id']) {
       return;
     }
@@ -298,7 +298,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity {
    * @return null
    * @access public
    */
-  public function createActivityAssignment($params) {
+  static function createActivityAssignment($params) {
     if (!$params['assignee_contact_id']) {
       return;
     }
