@@ -174,20 +174,20 @@ VALUES
     ( @domainID, 'civicrm/contribute/add&reset=1&action=add&context=standalone', '{ts escape="sql" skip="true"}New Contribution{/ts}',  'New Contribution',       'access CiviContribute,edit contributions', 'AND', @contributionlastID, '1', NULL, 2 ), 
     ( @domainID, 'civicrm/contribute/search&reset=1',                       '{ts escape="sql" skip="true"}Find Contributions{/ts}',     'Find Contributions',     'access CiviContribute', '', @contributionlastID, '1', NULL, 3 ), 
     ( @domainID, 'civicrm/report/list&compid=2&reset=1',                    '{ts escape="sql" skip="true"}Contribution Reports{/ts}',   'Contribution Reports',     'access CiviContribute', '', @contributionlastID, '1', 1,    4 ),
-    ( @domainID, 'civicrm/batch&reset=1',                                   '{ts escape="sql" skip="true"}Batch Data Entry{/ts}',        'Batch Data Entry',           'access CiviContribute', '', @contributionlastID, '1', NULL, 5 ),
-    ( @domainID, 'civicrm/contribute/import&reset=1',                       '{ts escape="sql" skip="true"}Import Contributions{/ts}',   'Import Contributions',   'access CiviContribute,edit contributions', 'AND', @contributionlastID, '1', '1',  6 );
+    ( @domainID, 'civicrm/contribute/import&reset=1',                       '{ts escape="sql" skip="true"}Import Contributions{/ts}',   'Import Contributions',   'access CiviContribute,edit contributions', 'AND', @contributionlastID, '1', '1',  5 ),
+    ( @domainID, 'civicrm/batch&reset=1',                                   '{ts escape="sql" skip="true"}Batch Data Entry{/ts}',        'Batch Data Entry',           'access CiviContribute', '', @contributionlastID, '1', NULL, 7 );
 
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES 
-    ( @domainID,NULL, '{ts escape="sql" skip="true"}Pledges{/ts}',  'Pledges', 'access CiviPledge', '', @contributionlastID, '1',  1,   5 );
+    ( @domainID,NULL, '{ts escape="sql" skip="true"}Pledges{/ts}',  'Pledges', 'access CiviPledge', '', @contributionlastID, '1',  1,   6 );
     
 SET @pledgelastID:=LAST_INSERT_ID();
 
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES    
-    ( @domainID,NULL, '{ts escape="sql" skip="true"}Accounting Batches{/ts}',  'Accounting Batches', 'access CiviContribute', '', @contributionlastID, '1',  1,   6 );
+    ( @domainID,NULL, '{ts escape="sql" skip="true"}Accounting Batches{/ts}',  'Accounting Batches', 'view own manual batches,view all manual batches', 'OR', @contributionlastID, '1',  1,   8 );
     
 SET @financialTransactionID:=LAST_INSERT_ID();
 
@@ -198,17 +198,17 @@ VALUES
     ( @domainID, 'civicrm/pledge/add&reset=1&action=add&context=standalone', '{ts escape="sql" skip="true"}New Pledge{/ts}',                'New Pledge',                'access CiviPledge,edit pledges',  'AND',  @pledgelastID,       '1', NULL, 2 ),
     ( @domainID, 'civicrm/pledge/search&reset=1',                           '{ts escape="sql" skip="true"}Find Pledges{/ts}',               'Find Pledges',              'access CiviPledge',  '',  @pledgelastID,       '1', NULL, 3 ), 
     ( @domainID, 'civicrm/report/list&compid=6&reset=1', '{ts escape="sql" skip="true"}Pledge Reports{/ts}', 'Pledge Reports', 'access CiviPledge', '', @pledgelastID, '1', 0,    4 ),
-    ( @domainID, 'civicrm/admin/contribute/add&reset=1&action=add',         '{ts escape="sql" skip="true"}New Contribution Page{/ts}',      'New Contribution Page',     'access CiviContribute,administer CiviCRM', 'AND',  @contributionlastID, '1', NULL, 7 ), 
-    ( @domainID, 'civicrm/admin/contribute&reset=1',                        '{ts escape="sql" skip="true"}Manage Contribution Pages{/ts}',  'Manage Contribution Pages', 'access CiviContribute,administer CiviCRM', 'AND',  @contributionlastID, '1', '1',  8 ), 
-    ( @domainID, 'civicrm/admin/pcp?reset=1&page_type=contribute',          '{ts escape="sql" skip="true"}Personal Campaign Pages{/ts}',    'Personal Campaign Pages',   'access CiviContribute,administer CiviCRM', 'AND',  @contributionlastID, '1', NULL, 9 ), 
-    ( @domainID, 'civicrm/admin/contribute/managePremiums&reset=1',         '{ts escape="sql" skip="true"}Premiums (Thank-you Gifts){/ts}', 'Premiums',                  'access CiviContribute,administer CiviCRM', 'AND',  @contributionlastID, '1', 1,    10 ),
-    ( @domainID, 'civicrm/admin/price&reset=1&action=add',                  '{ts escape="sql" skip="true"}New Price Set{/ts}',              'New Price Set',             'access CiviContribute,administer CiviCRM', 'AND',  @contributionlastID, '1', NULL, 11 ),
-    ( @domainID, 'civicrm/admin/price&reset=1',                             '{ts escape="sql" skip="true"}Manage Price Sets{/ts}',          'Manage Price Sets',         'access CiviContribute,administer CiviCRM', 'AND',  @contributionlastID, '1', NULL, 12 ),
+    ( @domainID, 'civicrm/admin/contribute/add&reset=1&action=add',         '{ts escape="sql" skip="true"}New Contribution Page{/ts}',      'New Contribution Page',     'access CiviContribute,administer CiviCRM', 'AND',  @contributionlastID, '1', NULL, 9 ), 
+    ( @domainID, 'civicrm/admin/contribute&reset=1',                        '{ts escape="sql" skip="true"}Manage Contribution Pages{/ts}',  'Manage Contribution Pages', 'access CiviContribute,administer CiviCRM', 'AND',  @contributionlastID, '1', '1',  10 ), 
+    ( @domainID, 'civicrm/admin/pcp?reset=1&page_type=contribute',          '{ts escape="sql" skip="true"}Personal Campaign Pages{/ts}',    'Personal Campaign Pages',   'access CiviContribute,administer CiviCRM', 'AND',  @contributionlastID, '1', NULL, 11 ), 
+    ( @domainID, 'civicrm/admin/contribute/managePremiums&reset=1',         '{ts escape="sql" skip="true"}Premiums (Thank-you Gifts){/ts}', 'Premiums',                  'access CiviContribute,administer CiviCRM', 'AND',  @contributionlastID, '1', 1,    12 ),
+    ( @domainID, 'civicrm/admin/price&reset=1&action=add',                  '{ts escape="sql" skip="true"}New Price Set{/ts}',              'New Price Set',             'access CiviContribute,administer CiviCRM', 'AND',  @contributionlastID, '1', NULL, 13 ),
+    ( @domainID, 'civicrm/admin/price&reset=1',                             '{ts escape="sql" skip="true"}Manage Price Sets{/ts}',          'Manage Price Sets',         'access CiviContribute,administer CiviCRM', 'AND',  @contributionlastID, '1', NULL, 14 ),
     
-    ( @domainID, 'civicrm/financial/batch&reset=1&action=add',                             '{ts escape="sql" skip="true"}New Batch{/ts}',          'New Batch',         'access CiviContribute,administer CiviCRM', 'AND',  @financialTransactionID, '1', NULL, 1 ),
-    ( @domainID, 'civicrm/financial/financialbatches?reset=1&batchStatus=1', '{ts escape="sql" skip="true"}Open Batches{/ts}',          'Open Batches',         'access CiviContribute,administer CiviCRM', 'AND',  @financialTransactionID, '1', NULL, 2 ),
-    ( @domainID, 'civicrm/financial/financialbatches?reset=1&batchStatus=2', '{ts escape="sql" skip="true"}Closed Batches{/ts}',          'Closed Batches',         'access CiviContribute,administer CiviCRM', 'AND',  @financialTransactionID, '1', NULL, 3 ),
-    ( @domainID, 'civicrm/financial/financialbatches?reset=1&batchStatus=5', '{ts escape="sql" skip="true"}Exported Batches{/ts}',          'Exported Batches',         'access CiviContribute,administer CiviCRM', 'AND',  @financialTransactionID, '1', NULL, 4 );
+    ( @domainID, 'civicrm/financial/batch&reset=1&action=add',                             '{ts escape="sql" skip="true"}New Batch{/ts}',          'New Batch',         'create manual batch', 'AND',  @financialTransactionID, '1', NULL, 1 ),
+    ( @domainID, 'civicrm/financial/financialbatches?reset=1&batchStatus=1', '{ts escape="sql" skip="true"}Open Batches{/ts}',          'Open Batches',         'view own manual batches,view all manual batches', 'OR',  @financialTransactionID, '1', NULL, 2 ),
+    ( @domainID, 'civicrm/financial/financialbatches?reset=1&batchStatus=2', '{ts escape="sql" skip="true"}Closed Batches{/ts}',          'Closed Batches',         'view own manual batches,view all manual batches', 'OR',  @financialTransactionID, '1', NULL, 3 ),
+    ( @domainID, 'civicrm/financial/financialbatches?reset=1&batchStatus=5', '{ts escape="sql" skip="true"}Exported Batches{/ts}',          'Exported Batches',         'view own manual batches,view all manual batches', 'OR',  @financialTransactionID, '1', NULL, 4 );
     
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
