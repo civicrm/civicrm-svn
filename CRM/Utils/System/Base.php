@@ -19,13 +19,14 @@ class CRM_Utils_System_Base {
    *
    * @param string  $content the content that will be themed
    * @param boolean $print   are we displaying to the screen or bypassing theming?
-   * @param boolean $ret     should we echo or return output
    * @param boolean $maintenance  for maintenance mode
    *
    * @return void           prints content on stdout
    * @access public
    */
-  function theme(&$content, $print = FALSE, $ret = FALSE, $maintenance = FALSE) {
+  function theme(&$content, $print = FALSE, $maintenance = FALSE) {
+    $ret = FALSE;
+
     // TODO: Split up; this was copied verbatim from CiviCRM 4.0's multi-UF theming function
     // but the parts should be copied into cleaner subclass implementations
     if (function_exists('theme') && !$print) {
@@ -36,7 +37,7 @@ class CRM_Utils_System_Base {
         exit();
       }
       $out = $content;
-      $ret = TRUE;
+      $ret = TRUE; // TODO: Figure out why D7 returns but everyone else prints
     }
     else {
       $out = $content;

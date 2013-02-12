@@ -48,13 +48,12 @@ class CRM_Utils_System_Drupal6 extends CRM_Utils_System_Base {
    *
    * @param string  $content the content that will be themed
    * @param boolean $print   are we displaying to the screen or bypassing theming?
-   * @param boolean $ret     should we echo or return output
    * @param boolean $maintenance  for maintenance mode
    *
    * @return void           prints content on stdout
    * @access public
    */
-  function theme(&$content, $print = FALSE, $ret = FALSE, $maintenance = FALSE) {
+  function theme(&$content, $print = FALSE, $maintenance = FALSE) {
     // TODO: Simplify; this was copied verbatim from CiviCRM 3.4's multi-UF theming function, but that's more complex than necessary
     if (function_exists('theme') && !$print) {
       if ($maintenance) {
@@ -74,12 +73,7 @@ class CRM_Utils_System_Drupal6 extends CRM_Utils_System_Base {
       $out = $content;
     }
 
-    if ($ret) {
-      return $out;
-    }
-    else {
-      print $out;
-    }
+    print $out;
   }
 
   /**

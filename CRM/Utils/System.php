@@ -152,7 +152,7 @@ class CRM_Utils_System {
     $maintenance = FALSE
   ) {
     $config = &CRM_Core_Config::singleton();
-    return $config->userSystem->theme($content, $print, FALSE, $maintenance);
+    return $config->userSystem->theme($content, $print, $maintenance);
   }
 
   /**
