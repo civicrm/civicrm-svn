@@ -100,6 +100,12 @@ class CRM_Logging_ReportSummary extends CRM_Report_Form {
     // used for redirect back to contact summary
     $this->cid = CRM_Utils_Request::retrieve('cid', 'Integer', CRM_Core_DAO::$_nullObject);
 
+    $logging = new CRM_Logging_Schema;
+    $customTables = $logging->customDataLogTables();
+    foreach ($customTables as $table) {
+      $this->_logTables[$table] = array('fk' => 'entity_id', 'log_type' => 'Contact');
+    }
+
     parent::__construct();
   }
 
