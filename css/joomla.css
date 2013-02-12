@@ -3,12 +3,8 @@
 /*
 ** HTML elements
 */
-div#toolbar-box .icon-48-generic {
-  display: none;
-}
-
 div#toolbar-box {
-  height: 26px;
+  display:none;
 }
 
 fieldset {
@@ -462,7 +458,7 @@ table {
 /* Moved from civicrm.css in v3.2 */
 
 ul#civicrm-menu {
-    z-index: 1;
+    z-index: 101;
     position:relative;
     border: none;
     left:0px;
