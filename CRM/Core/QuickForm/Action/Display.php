@@ -110,7 +110,7 @@ class CRM_Core_QuickForm_Action_Display extends CRM_Core_QuickForm_Action {
    * @return void
    * @access public
    */
-  function renderForm(&$page, $ret = FALSE) {
+  function renderForm(&$page) {
     $this->_setRenderTemplates($page);
     $template = CRM_Core_Smarty::singleton();
     $form = $page->toSmarty();
@@ -153,7 +153,7 @@ class CRM_Core_QuickForm_Action_Display extends CRM_Core_QuickForm_Action {
       $html = &$content;
     }
     else {
-      $html = CRM_Utils_System::theme('page', $content, TRUE, $print, $ret);
+      $html = CRM_Utils_System::theme('page', $content, TRUE, $print, FALSE);
     }
 
     if ($controller->_QFResponseType == 'json') {
@@ -168,10 +168,6 @@ class CRM_Core_QuickForm_Action_Display extends CRM_Core_QuickForm_Action {
         echo '</textarea>';
       }
       CRM_Utils_System::civiExit();
-    }
-
-    if ($ret) {
-      return $html;
     }
 
     if ($print) {
