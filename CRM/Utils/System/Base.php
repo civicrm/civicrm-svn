@@ -36,12 +36,9 @@ class CRM_Utils_System_Base {
         print theme('maintenance_page', array('content' => $content));
         exit();
       }
-      $out = $content;
       $ret = TRUE; // TODO: Figure out why D7 returns but everyone else prints
     }
-    else {
-      $out = $content;
-    }
+    $out = $content;
 
     $config = &CRM_Core_Config::singleton();
     if (!$print &&
