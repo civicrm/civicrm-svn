@@ -197,7 +197,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
 
     if ($config->initialized) {
       $content = $template->fetch('CRM/common/fatal.tpl');
-      echo CRM_Utils_System::theme($content, TRUE);
+      echo CRM_Utils_System::theme($content);
     }
     else {
       echo "Sorry. A non-recoverable error has occurred. The error trace below might help to resolve the issue<p>";

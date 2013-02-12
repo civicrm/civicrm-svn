@@ -47,7 +47,6 @@ class CRM_Utils_System_Drupal6 extends CRM_Utils_System_Base {
    * content
    *
    * @param string  $content the content that will be themed
-   * @param array   $args    the args for the themeing function if any
    * @param boolean $print   are we displaying to the screen or bypassing theming?
    * @param boolean $ret     should we echo or return output
    * @param boolean $maintenance  for maintenance mode
@@ -55,14 +54,21 @@ class CRM_Utils_System_Drupal6 extends CRM_Utils_System_Base {
    * @return void           prints content on stdout
    * @access public
    */
-  function theme(&$content, $args = NULL, $print = FALSE, $ret = FALSE, $maintenance = FALSE) {
+  function theme(&$content, $print = FALSE, $ret = FALSE, $maintenance = FALSE) {
     // TODO: Simplify; this was copied verbatim from CiviCRM 3.4's multi-UF theming function, but that's more complex than necessary
     if (function_exists('theme') && !$print) {
       if ($maintenance) {
         drupal_set_breadcrumb('');
         drupal_maintenance_theme();
       }
-      $out = theme('page', $content, $args);
+
+      // Arg 3 for D6 theme() is "show_blocks". Previously, we passed
+      // through a badly named variable ("$args") which was almost always
+      // TRUE (except on fatal error screen).  However, this feature is
+      // non-functional on D6 default themes, was purposefully removed from
+      // D7, has no analog in other our other CMS's, and clutters the code. 
+      // Hard-wiring to TRUE should be OK.
+      $out = theme('page', $content, TRUE);
     }
     else {
       $out = $content;

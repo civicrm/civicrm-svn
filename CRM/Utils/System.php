@@ -139,7 +139,6 @@ class CRM_Utils_System {
    * content
    *
    * @param string  $content the content that will be themed
-   * @param array   $args    the args for the themeing function if any
    * @param boolean $print   are we displaying to the screen or bypassing theming?
    * @param boolean $ret     should we echo or return output
    * @param boolean $maintenance  for maintenance mode
@@ -150,13 +149,12 @@ class CRM_Utils_System {
    */
   static function theme(
     &$content,
-    $args        = NULL,
     $print       = FALSE,
     $ret         = FALSE,
     $maintenance = FALSE
   ) {
     $config = &CRM_Core_Config::singleton();
-    return $config->userSystem->theme($content, $args, $print, $ret, $maintenance);
+    return $config->userSystem->theme($content, $print, $ret, $maintenance);
   }
 
   /**

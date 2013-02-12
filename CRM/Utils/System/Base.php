@@ -18,7 +18,6 @@ class CRM_Utils_System_Base {
    * content
    *
    * @param string  $content the content that will be themed
-   * @param array   $args    the args for the themeing function if any
    * @param boolean $print   are we displaying to the screen or bypassing theming?
    * @param boolean $ret     should we echo or return output
    * @param boolean $maintenance  for maintenance mode
@@ -26,7 +25,7 @@ class CRM_Utils_System_Base {
    * @return void           prints content on stdout
    * @access public
    */
-  function theme(&$content, $args = NULL, $print = FALSE, $ret = FALSE, $maintenance = FALSE) {
+  function theme(&$content, $print = FALSE, $ret = FALSE, $maintenance = FALSE) {
     // TODO: Split up; this was copied verbatim from CiviCRM 4.0's multi-UF theming function
     // but the parts should be copied into cleaner subclass implementations
     if (function_exists('theme') && !$print) {
