@@ -52,19 +52,15 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
     $this->click('_qf_Builder_refresh');
     $this->waitForPageToLoad();
 
-    // We should get no results. But check the options are all still there
+    // We should get no results. But check the options are all still set
     $this->waitForTextPresent('No matches found');
     foreach (array($groupName, 'United States', 'Male') as $i => $label) {
-      $this->waitForElementPresent("//span[@id='crm_search_value_1_$i']/select/option[.='$label']");
+      $this->waitForElementPresent("//span[@id='crm_search_value_1_$i']/select/option[2]");
+      $this->assertSelectedLabel("//span[@id='crm_search_value_1_$i']/select", $label);
     }
   }
 
   function testSearchBuilderRLIKE() {
-    // Logging in. Remember to wait for page to load. In most cases,
-    // you can rely on 30000 as the value that allows your test to pass, however,
-    // sometimes your test might fail because of this. In such cases, it's better to pick one element
-    // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
-    // page contents loaded and you can continue your test execution.
     $this->webtestLogin();
 
     // Adding contact
@@ -88,9 +84,7 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
     // create contact type Individual with subtype
     // with most of values to required to search
     $Subtype = "Student";
-    $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
-    $this->waitForPageToLoad("30000");
-    $this->waitForElementPresent("_qf_Contact_cancel");
+    $this->openCiviPage('contact/add', array('reset' => 1, 'ct' => 'Individual'), '_qf_Contact_cancel');
 
     // --- fill few values in Contact Detail block
     $this->type("first_name", "$firstName");
@@ -244,6 +238,9 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
     }
   }
   
+  /**
+   * Enter form values in a Search Builder row
+   */
   function enterValues($set, $row, $entity, $field, $loc, $op, $value = '') {
     if ($set > 1 && $row == 1) {
       $this->click('addBlock');
@@ -254,6 +251,7 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
     // In the DOM rows are 0 indexed and sets are 1 indexed, so normalizing
     $row--;
 
+    $this->waitForElementPresent("mapper_{$set}_{$row}_0");
     $this->select("mapper_{$set}_{$row}_0", "label=$entity");
     $this->select("mapper_{$set}_{$row}_1", "label=$field");
     if ($loc) {
@@ -307,22 +305,21 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
     }
     $this->click("_qf_Advanced_refresh");
     $this->waitForPageToLoad("30000");
-    if(isset($fieldValue) && isset($name)){
-      $assertValues = array( 1 => ($count == 1)?"$count Contact":"$count Contacts",
-                             2 => $name,
-                             3 => $fieldValue,
-                             );
 
-      //the search result should be same as the one that we got in search builder
-      foreach($assertValues as $key => $value){
-        $this->assertTrue($this->isTextPresent($value));
-      }
+    //the search result should be same as the one that we got in search builder
+    if ($fieldValue) {
+      $this->assertElementContainsText('Advanced', "$fieldValue");
+    }
+    if ($name) {
+      $this->assertElementContainsText('css=.crm-search-results > table.row-highlight', "$name");
+    }
+    if ($count) {
+      $this->assertElementContainsText('search-status', "$count Contact");
     }
   }
+
   function _createContact($contactType, $name, $email, $streetName = NULL, $postalCode = NULL){
-    $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=$contactType");
-    $this->waitForPageToLoad("30000");
-    $this->waitForElementPresent("_qf_Contact_cancel");
+    $this->openCiviPage('contact/add', array('reset' => 1, 'ct' => $contactType), '_qf_Contact_cancel');
     
     if ($contactType == 'Individual'){
       $this->type("first_name", "$name");
@@ -353,5 +350,3 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
     $this->assertTrue($this->isTextPresent("$name has been created."));
   }
 }
-
-

@@ -91,7 +91,7 @@ class WebTest_Contact_SearchTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("access");
 
     // Is contact present in search result?
-    $this->assertTrue($this->isTextPresent("$sortName"), "Contact not found in search result (QuickSearchPartial).");
+    $this->assertElementContainsText('css=.crm-search-results > table.row-highlight', $sortName);
   }
 
   function testContactSearch() {
@@ -153,7 +153,7 @@ class WebTest_Contact_SearchTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad("30000");
 
     // Is contact present in search result?
-    $this->assertTrue($this->isTextPresent("$sortName"), "Contact not found in search result!");
+    $this->assertElementContainsText('css=.crm-search-results > table.row-highlight', $sortName);
   }
 
   function addTag($tagName = 'New Tag') {
@@ -244,10 +244,8 @@ class WebTest_Contact_SearchTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad("30000");
 
     // Is contact present in search result?
-    $this->assertTrue($this->isTextPresent("$sortName"), "Contact did not found in search result!");
-
-    // Is contact present in search result?
-    $this->assertTrue($this->isTextPresent("$childSortName"), "Contact did not found in search result!");
+    $this->assertElementContainsText('css=.crm-search-results > table.row-highlight', $sortName);
+    $this->assertElementContainsText('css=.crm-search-results > table.row-highlight', $childSortName);
 
     // select to export all the contasct from search result
     $this->click("CIVICRM_QFID_ts_all_4");

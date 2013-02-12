@@ -36,20 +36,9 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
    *  Test Signature in TinyMC.
    */
   function testTinyMCE() {
-
-    // This is the path where our testing install resides.
-    // The rest of URL is defined in CiviSeleniumTestCase base class, in
-    // class attributes.
-    $this->open($this->sboxPath);
-
-    // Logging in. Remember to wait for page to load. In most cases,
-    // you can rely on 30000 as the value that allows your test to pass, however,
-    // sometimes your test might fail because of this. In such cases, it's better to pick one element
-    // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
-    // page contents loaded and you can continue your test execution.
     $this->webtestLogin();
 
-    $this->open($this->sboxPath . "civicrm/dashboard?reset=1");
+    $this->openCiviPage('dashboard', 'reset=1', 'crm-recently-viewed');
     $this->click("//div[@id='crm-recently-viewed']/ul/li/a");
     $this->waitForPageToLoad('30000');
     $name = $this->getText("xpath=//div[@class='crm-summary-display_name']");
@@ -62,8 +51,7 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
     // Select Your Editor
     $this->_selectEditor('TinyMCE');
 
-    $this->open($this->sboxPath . "civicrm/contact/add?reset=1&action=update&cid={$contactId}");
-    $this->waitForPageToLoad('30000');
+    $this->openCiviPage("contact/add", "reset=1&action=update&cid={$contactId}");
 
     $this->click("//tr[@id='Email_Block_1']/td[1]/div[2]/div[1]");
     // HTML format message
@@ -78,7 +66,7 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
     $this->waitForPageToLoad('30000');
 
     // Is status message correct?
-    $this->assertTrue($this->isTextPresent("{$name} has been updated."));
+    $this->assertElementContainsText('crm-notification-container', "Contact Saved");
 
     // Go for Ckeck Your Editor, Click on Send Mail
     $this->click("//a[@id='crm-contact-actions-link']/span");
@@ -104,20 +92,9 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
    *  Test Signature in CKEditor.
    */
   function testCKEditor() {
-
-    // This is the path where our testing install resides.
-    // The rest of URL is defined in CiviSeleniumTestCase base class, in
-    // class attributes.
-    $this->open($this->sboxPath);
-
-    // Logging in. Remember to wait for page to load. In most cases,
-    // you can rely on 30000 as the value that allows your test to pass, however,
-    // sometimes your test might fail because of this. In such cases, it's better to pick one element
-    // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
-    // page contents loaded and you can continue your test execution.
     $this->webtestLogin();
 
-    $this->open($this->sboxPath . "civicrm/dashboard?reset=1");
+    $this->openCiviPage('dashboard', 'reset=1', 'crm-recently-viewed');
     $this->click("//div[@id='crm-recently-viewed']/ul/li/a");
     $this->waitForPageToLoad('30000');
     $name = $this->getText("xpath=//div[@class='crm-summary-display_name']");
@@ -201,15 +178,13 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
    * Helper function for Check Signature in Activity.
    */
   function _checkActivity($subject, $signature) {
-    $this->open($this->sboxPath . 'civicrm/activity/search?reset=1');
-    $this->waitForPageToLoad('30000');
-    $this->waitForElementPresent('_qf_Search_refresh');
+    $this->openCiviPage('activity/search', 'reset=1', '_qf_Search_refresh');
 
     $this->type('activity_subject', $subject);
 
     $this->click('_qf_Search_refresh');
     $this->waitForPageToLoad('30000');
-    $this->waitForElementPresent('_qf_Search_next_print');
+    $this->waitForElementPresent('Search');
 
     // View your Activity
     $this->click("xpath=id('Search')/div[3]/div/div[2]/table/tbody/tr[2]/td[9]/span/a[text()='View']");
