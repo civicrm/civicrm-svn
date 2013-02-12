@@ -105,7 +105,7 @@ class WebTest_Grant_CustomFieldsetTest extends CiviSeleniumTestCase {
     $this->type("id=first_name", $firstName);
     $this->type("id=last_name", $lastName);
     $this->click("id=_qf_Edit_next");
-    $this->select("id=status_id", "label=Granted");
+    $this->select("id=status_id", "label=Approved");
     $this->select("id=grant_type_id", "label=$grantType");
     $this->waitForTextPresent($grantField);
     $this->assertTrue($this->isTextPresent($grantField));
