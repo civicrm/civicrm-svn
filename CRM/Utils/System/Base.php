@@ -17,7 +17,6 @@ class CRM_Utils_System_Base {
    * if we are using a theming system, invoke theme, else just print the
    * content
    *
-   * @param string  $type    name of theme object/file
    * @param string  $content the content that will be themed
    * @param array   $args    the args for the themeing function if any
    * @param boolean $print   are we displaying to the screen or bypassing theming?
