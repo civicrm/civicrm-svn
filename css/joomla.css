@@ -511,3 +511,7 @@ ul#civicrm-menu li#crm-qsearch {
 .ac_results .ac_odd {
   background-color: #444;
 }
+
+#crm-notification-container {
+  top: 100px;
+}
