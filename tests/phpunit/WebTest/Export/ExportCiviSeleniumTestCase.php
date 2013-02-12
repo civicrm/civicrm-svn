@@ -93,7 +93,7 @@ class ExportCiviSeleniumTestCase extends CiviSeleniumTestCase {
     }
 
     // Default seperator ','.
-    $fieldSeparator = CRM_Utils_Array::value('fieldSeparator', $settings, ',');
+    $fieldSeparator = !empty($settings['fieldSeparator']) ? $settings['fieldSeparator'] : ',';
 
     $allRows = array();
 
@@ -144,8 +144,8 @@ class ExportCiviSeleniumTestCase extends CiviSeleniumTestCase {
       }
     }
 
-    // Delete file, since we no more need it.
-    if (!CRM_Utils_Array::value('skipDeleteFile', $settings)) {
+    // Delete file, since we no longer need it.
+    if (empty($settings['skipDeleteFile'])) {
       @unlink($file);
     }
   }

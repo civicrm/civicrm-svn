@@ -418,7 +418,7 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
       }
     }
 
-    if (CRM_Utils_Array::value('callbackImportSummary', $other) && is_callable(array(
+    if (!empty($other['callbackImportSummary']) && is_callable(array(
       $this, $other['callbackImportSummary']))) {
       $callbackImportSummary = $other['callbackImportSummary'];
       $this->$callbackImportSummary($originalHeaders, $originalRows, $checkSummary);

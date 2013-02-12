@@ -1107,7 +1107,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
         $this->type("option_max_value_{$oIndex}", $oValue['max_count']);
       }
       
-      if (CRM_Utils_Array::value( 'financial_type_id', $oValue )) {
+      if (!empty($oValue['financial_type_id'])) {
         $this->select( "option_financial_type_id_{$oIndex}", "value={$oValue['financial_type_id']}" );
       }
       
