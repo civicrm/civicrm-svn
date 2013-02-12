@@ -104,9 +104,13 @@ class CRM_Case_Page_Tab extends CRM_Core_Page {
    * @access public
    */
   function view() {
-    $controller = new CRM_Core_Controller_Simple('CRM_Case_Form_CaseView',
+    $controller = new CRM_Core_Controller_Simple(
+      'CRM_Case_Form_CaseView',
       'View Case',
-      $this->_action
+      $this->_action,
+      FALSE,
+      FALSE,
+      TRUE
     );
     $controller->setEmbedded(TRUE);
     $controller->set('id', $this->_id);
@@ -116,9 +120,17 @@ class CRM_Case_Page_Tab extends CRM_Core_Page {
     $this->assign('caseId', $this->_id);
     $output     = CRM_Core_Selector_Controller::SESSION;
     $selector   = new CRM_Activity_Selector_Activity($this->_contactId, $this->_permission, FALSE, 'case');
-    $controller = new CRM_Core_Selector_Controller($selector, $this->get(CRM_Utils_Pager::PAGE_ID),
-      NULL, CRM_Core_Action::VIEW, $this, $output, NULL, $this->_id
-    );
+    $controller =
+      new CRM_Core_Selector_Controller(
+        $selector,
+        $this->get(CRM_Utils_Pager::PAGE_ID),
+        NULL,
+        CRM_Core_Action::VIEW,
+        $this,
+        $output,
+        NULL,
+        $this->_id
+      );
 
 
     $controller->setEmbedded(TRUE);
@@ -161,7 +173,8 @@ class CRM_Case_Page_Tab extends CRM_Core_Page {
   function edit() {
     $config = CRM_Core_Config::singleton();
 
-    $controller = new CRM_Core_Controller_Simple('CRM_Case_Form_Case',
+    $controller = new CRM_Core_Controller_Simple(
+      'CRM_Case_Form_Case',
       'Open Case',
       $this->_action
     );
