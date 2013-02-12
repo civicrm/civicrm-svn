@@ -780,13 +780,15 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
 
       // do a transfer only if a monetary payment greater than 0
       if ($this->_values['event']['is_monetary'] && $primaryParticipant) {
-        if ($payment && is_object($payment))
-        // call postprocess hook before leaving
-        $form->postProcessHook();
-        // this does not return
-        $payment->doTransferCheckout($primaryParticipant, 'event');
-        else
+        if ($payment && is_object($payment)) {
+          // call postprocess hook before leaving
+          $form->postProcessHook();
+          // this does not return
+          $payment->doTransferCheckout($primaryParticipant, 'event');
+        }
+        else {
           CRM_Core_Error::fatal($paymentObjError);
+        }
       }
     }
     else {
