@@ -550,7 +550,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
    * @access public
    */
   function preProcess() {
-    // set the varios class variables
+    // set the various class variables
 
     $this->_group = CRM_Core_PseudoConstant::group();
 
