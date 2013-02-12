@@ -78,7 +78,7 @@ class CRM_Grant_Form_Grant extends CRM_Core_Form {
     $this->_grantType = NULL;
     if ($this->_id) {
       $this->_grantType =
-        CRM_Core_DAO::getFieldValue("CRM_Grant_DAO_Grant", $this->_id, "grant_type_id");
+        CRM_Core_DAO::getFieldValue('CRM_Grant_DAO_Grant', $this->_id, 'grant_type_id');
     }
     $this->_context = CRM_Utils_Request::retrieve('context', 'String', $this);
 
@@ -105,7 +105,7 @@ class CRM_Grant_Form_Grant extends CRM_Core_Form {
     }
 
     // when custom data is included in this page
-    if (CRM_Utils_Array::value("hidden_custom", $_POST)) {
+    if (CRM_Utils_Array::value('hidden_custom', $_POST)) {
       $this->set('type', 'Grant');
       $this->set('subType', CRM_Utils_Array::value('grant_type_id', $_POST));
       $this->set('entityId', $this->_id);
@@ -198,7 +198,7 @@ class CRM_Grant_Form_Grant extends CRM_Core_Form {
     $this->add('select', 'grant_type_id', ts('Grant Type'),
       array(
         '' => ts('- select -')) + $grantType, TRUE,
-      array('onChange' => "buildCustomData( 'Grant', this.value );")
+      array('onChange' => "CRM.buildCustomData( 'Grant', this.value );")
     );
 
     //need to assign custom data type and subtype to the template
@@ -240,22 +240,22 @@ class CRM_Grant_Form_Grant extends CRM_Core_Form {
     // make this form an upload since we dont know if the custom data injected dynamically
     // is of type file etc $uploadNames = $this->get( 'uploadNames' );
     $this->addButtons(array(
-        array(
-          'type' => 'upload',
-          'name' => ts('Save'),
-          'isDefault' => TRUE,
-        ),
-        array(
-          'type' => 'upload',
-          'name' => ts('Save and New'),
-          'js' => array('onclick' => "return verify( );"),
-          'subName' => 'new',
-        ),
-        array(
-          'type' => 'cancel',
-          'name' => ts('Cancel'),
-        ),
-      )
+      array(
+        'type' => 'upload',
+        'name' => ts('Save'),
+        'isDefault' => TRUE,
+      ),
+      array(
+        'type' => 'upload',
+        'name' => ts('Save and New'),
+        'js' => array('onclick' => "return verify( );"),
+        'subName' => 'new',
+      ),
+      array(
+        'type' => 'cancel',
+        'name' => ts('Cancel'),
+      ),
+     )
     );
 
     if ($this->_context == 'standalone') {
@@ -316,9 +316,6 @@ class CRM_Grant_Form_Grant extends CRM_Core_Form {
     }
 
     $params['contact_id'] = $this->_contactID;
-
-
-
     $ids['note'] = array();
     if ($this->_noteId) {
       $ids['note']['id'] = $this->_noteId;
