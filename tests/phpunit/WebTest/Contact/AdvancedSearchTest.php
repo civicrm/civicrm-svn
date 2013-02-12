@@ -76,6 +76,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $this->click("xpath=//ul/li/label[text()=\"$tagName\"]");
     $this->waitForElementPresent("css=.success");
     // is status message correct?
+    $this->waitForTextPresent("Saved");
     $this->assertTrue($this->isTextPresent("Saved"));
 
     // go to event tab and register for event ( auto add activity and contribution )
