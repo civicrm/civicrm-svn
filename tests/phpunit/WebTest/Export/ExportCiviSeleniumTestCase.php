@@ -26,7 +26,6 @@
 
 
 require_once 'CiviTest/CiviSeleniumTestCase.php';
-require_once 'CRM/Utils/Array.php';
 class ExportCiviSeleniumTestCase extends CiviSeleniumTestCase {
 
   /**
