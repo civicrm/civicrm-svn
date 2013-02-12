@@ -164,7 +164,7 @@ class api_v3_PledgeTest extends CiviUnitTestCase {
     $params = array(
       'pledge_id' => $this->_pledge['id'],
       'version' => $this->_apiversion,
-      'return.pledge_contribution_type' => 1,
+      'return.pledge_financial_type' => 1,
     );
     $result = civicrm_api('pledge', 'get', $params);
     $pledge = $result['values'][$this->_pledge['id']];
