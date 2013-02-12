@@ -51,10 +51,10 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
 
     // take group name and create group
     $groupName = 'group_' . substr(sha1(rand()), 0, 7);
-    include_once 'WebTest/Contact/SearchTest.php';
-    WebTest_Contact_SearchTest::addGroup($groupName);
+    $this->WebtestAddGroup($groupName);
 
     // take a tag name and create tag
+    include_once 'WebTest/Contact/SearchTest.php';
     $tagName = 'tag_' . substr(sha1(rand()), 0, 7);
     WebTest_Contact_SearchTest::addTag($tagName);
 
