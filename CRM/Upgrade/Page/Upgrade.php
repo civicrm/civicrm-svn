@@ -195,7 +195,7 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
     }
 
     $content = $template->fetch('CRM/common/success.tpl');
-    echo CRM_Utils_System::theme($content, TRUE, $this->_print, FALSE, TRUE);
+    echo CRM_Utils_System::theme($content, $this->_print, FALSE, TRUE);
   }
 }
 
