@@ -74,7 +74,7 @@ class CRM_Queue_Page_Runner extends CRM_Core_Page {
       }
       $smarty = CRM_Core_Smarty::singleton();
       $content = $smarty->fetch('CRM/Queue/Page/Runner.tpl');
-      echo CRM_Utils_System::theme('page', $content, TRUE, $this->_print, FALSE, TRUE);
+      echo CRM_Utils_System::theme($content, TRUE, $this->_print, FALSE, TRUE);
     }
     else {
       parent::run();

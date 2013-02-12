@@ -149,7 +149,7 @@ class CRM_Utils_System {
    * @access public
    * @static
    */
-  static function theme($type,
+  static function theme(
     &$content,
     $args        = NULL,
     $print       = FALSE,
@@ -157,7 +157,7 @@ class CRM_Utils_System {
     $maintenance = FALSE
   ) {
     $config = &CRM_Core_Config::singleton();
-    return $config->userSystem->theme($type, $content, $args, $print, $ret, $maintenance);
+    return $config->userSystem->theme($content, $args, $print, $ret, $maintenance);
   }
 
   /**

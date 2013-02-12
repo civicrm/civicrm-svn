@@ -470,7 +470,7 @@ class CRM_Utils_REST {
 
     CRM_Utils_System::setTitle("API Parameters");
     $template = CRM_Core_Smarty::singleton();
-    return CRM_Utils_System::theme('page',
+    return CRM_Utils_System::theme(
       $template->fetch('CRM/Core/APIDoc.tpl'),
       TRUE
     );
@@ -480,7 +480,7 @@ class CRM_Utils_REST {
 
     CRM_Utils_System::setTitle("API explorer and generator");
     $template = CRM_Core_Smarty::singleton();
-    return CRM_Utils_System::theme('page',
+    return CRM_Utils_System::theme(
       $template->fetch('CRM/Core/AjaxDoc.tpl'),
       TRUE
     );
@@ -528,7 +528,7 @@ class CRM_Utils_REST {
         }
         CRM_Utils_System::appendTPLFile( $tpl, $content );
 
-        return CRM_Utils_System::theme( 'page', $content, true);
+        return CRM_Utils_System::theme($content, true);
 
       } else {
         $content = "<!-- .tpl file embeded: $tpl -->\n";

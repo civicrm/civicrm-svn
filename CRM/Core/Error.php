@@ -197,7 +197,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
 
     if ($config->initialized) {
       $content = $template->fetch('CRM/common/fatal.tpl');
-      echo CRM_Utils_System::theme('page', $content, TRUE);
+      echo CRM_Utils_System::theme($content, TRUE);
     }
     else {
       echo "Sorry. A non-recoverable error has occurred. The error trace below might help to resolve the issue<p>";
@@ -319,7 +319,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
       JError::raiseError('CiviCRM-001', $content);
     }
     else {
-      echo CRM_Utils_System::theme('page', $content);
+      echo CRM_Utils_System::theme($content);
     }
 
     self::abend(CRM_Core_Error::FATAL_ERROR);
@@ -390,7 +390,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
       JError::raiseError('CiviCRM-001', $content);
     }
     else {
-      echo CRM_Utils_System::theme('page', $content);
+      echo CRM_Utils_System::theme($content);
     }
 
     // fin

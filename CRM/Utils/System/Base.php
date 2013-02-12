@@ -27,7 +27,7 @@ class CRM_Utils_System_Base {
    * @return void           prints content on stdout
    * @access public
    */
-  function theme($type, &$content, $args = NULL, $print = FALSE, $ret = FALSE, $maintenance = FALSE) {
+  function theme(&$content, $args = NULL, $print = FALSE, $ret = FALSE, $maintenance = FALSE) {
     // TODO: Split up; this was copied verbatim from CiviCRM 4.0's multi-UF theming function
     // but the parts should be copied into cleaner subclass implementations
     if (function_exists('theme') && !$print) {

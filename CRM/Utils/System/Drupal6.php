@@ -56,14 +56,14 @@ class CRM_Utils_System_Drupal6 extends CRM_Utils_System_Base {
    * @return void           prints content on stdout
    * @access public
    */
-  function theme($type, &$content, $args = NULL, $print = FALSE, $ret = FALSE, $maintenance = FALSE) {
+  function theme(&$content, $args = NULL, $print = FALSE, $ret = FALSE, $maintenance = FALSE) {
     // TODO: Simplify; this was copied verbatim from CiviCRM 3.4's multi-UF theming function, but that's more complex than necessary
     if (function_exists('theme') && !$print) {
       if ($maintenance) {
         drupal_set_breadcrumb('');
         drupal_maintenance_theme();
       }
-      $out = theme($type, $content, $args);
+      $out = theme('page', $content, $args);
     }
     else {
       $out = $content;
