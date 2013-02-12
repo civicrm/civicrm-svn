@@ -47,7 +47,7 @@ class api_v3_CaseTest extends CiviUnitTestCase {
   protected $caseStatusGroup;
   protected $caseTypeGroup;
   protected $optionValues;
-  public $_eNoticeCompliant = TRUE;
+  public $_eNoticeCompliant = FALSE;
   /**
    *  Test setup for every test
    *
@@ -125,11 +125,6 @@ class api_v3_CaseTest extends CiviUnitTestCase {
         dirname(__FILE__) . '/dataset/contact_17.xml'
       )
     );
-
-
-
-
-
 
     //Create relationship types
     $relTypeParams = array(
@@ -281,19 +276,41 @@ class api_v3_CaseTest extends CiviUnitTestCase {
   }
 
   /**
-   *  Test civicrm_case_create() with valid parameters
+   *  Test create and get functions with valid parameters
    */
   function testCaseCreate() {
-
+    // Create Case
     $params = $this->_params;
     $result = civicrm_api('case', 'create', $params);
     $id = $result['id'];
     $this->assertAPISuccess($result, 'in line ' . __LINE__);
+
+    // Check result
     $result = civicrm_api('case', 'get', array('version' => $this->_apiversion, 'id' => $id));
     $this->assertEquals($result['values'][$id]['id'], 1, 'in line ' . __LINE__);
     $this->assertEquals($result['values'][$id]['case_type_id'], $params['case_type_id'], 'in line ' . __LINE__);
     $this->assertEquals($result['values'][$id]['subject'], $params['subject'], 'in line ' . __LINE__);
+  }
 
+  /**
+   *  Test update (create with id) function with valid parameters
+   */
+  function testCaseUpdate() {
+    // Create Case
+    $params = $this->_params;
+    $result = civicrm_api('case', 'create', $params);
+    $this->assertAPISuccess($result, 'in line ' . __LINE__);
+
+    // Update Case
+    $params['id'] = $id = $result['id'];
+    $params['subject'] = 'Something Else';
+    civicrm_api('case', 'create', $params);
+
+    // Check result
+    $result = civicrm_api('case', 'get', array('version' => $this->_apiversion, 'id' => $id));
+    $this->assertEquals($result['values'][$id]['id'], 1, 'in line ' . __LINE__);
+    $this->assertEquals($result['values'][$id]['case_type_id'], $params['case_type_id'], 'in line ' . __LINE__);
+    $this->assertEquals($result['values'][$id]['subject'], $params['subject'], 'in line ' . __LINE__);
   }
 
   /**
@@ -314,7 +331,7 @@ class api_v3_CaseTest extends CiviUnitTestCase {
       'version' => $this->_apiversion,
     );
     $result = civicrm_api('activity', 'create', $params);
-    $this->assertAPISuccess($result, 'in line ' . __LINE__ . print_r($params, TRUE));
+    $this->assertAPISuccess($result, 'in line ' . __LINE__);
     $this->assertEquals($result['values'][$result['id']]['activity_type_id'], $params['activity_type_id'], 'in line ' . __LINE__);
 
     // might need this for other tests that piggyback on this one

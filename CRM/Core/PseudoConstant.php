@@ -559,7 +559,7 @@ class CRM_Core_PseudoConstant {
     $index .= '_' . (int) $includeCampaignActivities;
     $index .= '_' . (int) $onlyComponentActivities;
 
-    if (!array_key_exists($index, self::$activityType) || $reset) {
+    if (!is_array(self::$activityType) || !isset(self::$activityType[$index]) || $reset) {
       $condition = NULL;
       if (!$all) {
         $condition = 'AND filter = 0';
