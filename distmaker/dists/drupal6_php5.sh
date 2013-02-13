@@ -68,7 +68,14 @@ if [ -d $TRG/drupal ]; then
 fi
 
 cd $TRG/drupal
-grep -lr -e 'version = 3.4' * | xargs sed -i '' 's/version = 3.4/version = '$DM_VERSION'/g'
+if [ $(uname) = "Darwin" ]; then
+  ## BSD sed
+  grep -lr -e 'version = 3.4' * | xargs sed -i '' 's/version = 3.4/version = '$DM_VERSION'/g'
+else
+  ## GNU sed
+  grep -lr -e 'version = 3.4' * | xargs sed -i'' 's/version = 3.4/version = '$DM_VERSION'/g'
+fi
+
 
 # final touch
 echo "<?php
