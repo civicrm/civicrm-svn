@@ -387,7 +387,7 @@ class CRM_Event_BAO_Query {
             implode(' ' . ts('or') . ' ', $names);
           $query->_where[$grouping][] =
             " civicrm_participant.role_id REGEXP '[[:<:]]" .
-            implode('[[:>:]]|[[:<:]]', array_keys($value)) .
+            implode('[[:>:]]|[[:<:]]', array_keys($val)) .
             "[[:>:]]' ";
 
           $query->_tables['civicrm_participant'] =
