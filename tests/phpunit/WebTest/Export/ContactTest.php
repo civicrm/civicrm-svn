@@ -130,10 +130,6 @@ class WebTest_Export_ContactTest extends ExportCiviSeleniumTestCase {
       if ($key && (substr($key, 0, 6) == 'custom')) {
         continue;
       }
-      if ($field['title'] == 'External Identifier') {
-        // Hack to check 'External Identifier' as 'External Identifier (match to contact)'
-        $field['title'] = 'External Identifier (match to contact)';
-      }
       $checkHeaders[] = $field['title'];
     }
 
@@ -299,10 +295,6 @@ class WebTest_Export_ContactTest extends ExportCiviSeleniumTestCase {
       // Exclude custom fields.
       if ($key && (substr($key, 0, 6) == 'custom')) {
         continue;
-      }
-      if ($field['title'] == 'External Identifier') {
-        // Hack to check 'External Identifier' as 'External Identifier (match to contact)'
-        $field['title'] = 'External Identifier (match to contact)';
       }
       $checkHeaders[] = $field['title'];
     }
