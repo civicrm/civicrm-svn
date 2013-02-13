@@ -121,7 +121,8 @@ class CRM_Core_Action {
    * @static
    *
    */
-  static function resolve($str) {
+  static
+  function resolve($str) {
     $action = 0;
     if ($str) {
       $items = explode('|', $str);

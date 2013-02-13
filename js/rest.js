@@ -193,7 +193,6 @@ var CRM = CRM || {};
              return acd;
       },
       delay:100,
-        width:250,
       minChars:1
       }, options
     );
@@ -211,7 +210,7 @@ var CRM = CRM || {};
             return options.formatItem(data,i,max,value,term);
           },
           parse: function(data){ return options.parse(data);},
-    			  width: options.width,
+    			  width: 250,
           delay:options.delay,
           max:25,
           dataType:'json',

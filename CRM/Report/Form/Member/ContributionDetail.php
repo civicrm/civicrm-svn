@@ -45,9 +45,7 @@ class CRM_Report_Form_Member_ContributionDetail extends CRM_Report_Form {
   protected $_summary = NULL;
 
   protected $_customGroupExtends = array(
-    'Contribution', 'Membership'); 
-
-  function __construct() {
+    'Contribution', 'Membership'); function __construct() {
     $config = CRM_Core_Config::singleton();
     $campaignEnabled = in_array("CiviCampaign", $config->enableComponents);
     if ($campaignEnabled) {
@@ -225,6 +223,8 @@ class CRM_Report_Form_Member_ContributionDetail extends CRM_Report_Form {
           'net_amount' => NULL,
           'total_amount' => array('title' => ts('Amount'),
             'required' => TRUE,
+            'statistics' =>
+            array('sum' => ts('Amount')),
           ),
         ),
         'filters' =>
@@ -664,31 +664,26 @@ class CRM_Report_Form_Member_ContributionDetail extends CRM_Report_Form {
     $statistics = parent::statistics($rows);
 
     $select = "
-        SELECT ROUND(AVG({$this->_aliases['civicrm_contribution']}.total_amount), 2) as amt
+        SELECT COUNT({$this->_aliases['civicrm_contribution']}.total_amount ) as count,
+               SUM( {$this->_aliases['civicrm_contribution']}.total_amount ) as amount,
+               ROUND(AVG({$this->_aliases['civicrm_contribution']}.total_amount), 2) as avg
         ";
 
-    $groupBy = " 
-        GROUP BY contribution_id
-        ";
-
-    $sql = "{$select} {$this->_from} {$this->_where} {$groupBy}";
-
+    $sql = "{$select} {$this->_from} {$this->_where}";
     $dao = CRM_Core_DAO::executeQuery($sql);
-    $amount = 0;
-    while ($dao->fetch()) {
-      $amount = $amount + $dao->amt;
-    }
+
+    if ($dao->fetch()) {
       $statistics['counts']['amount'] = array(
-      'value' => $amount,                                                                                                                                    
+        'value' => $dao->amount,
         'title' => 'Total Amount',
         'type' => CRM_Utils_Type::T_MONEY,
       );
-
       $statistics['counts']['avg'] = array(
-      'value' => $amount/$dao->N,
+        'value' => $dao->avg,
         'title' => 'Average',
         'type' => CRM_Utils_Type::T_MONEY,
       );
+    }
 
     return $statistics;
   }

@@ -106,18 +106,6 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
   public $_print = 0;
 
   /**
-   * Should we generate a qfKey, true by default
-   *
-   * @var boolean
-   */
-  public $_generateQFKey = TRUE;
-
-  /**
-   * QF response type
-   */
-  public $_QFResponseType = 'html';
-
-  /**
    * cache the smarty template for efficiency reasons
    *
    * @var CRM_Core_Smarty
@@ -159,13 +147,9 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
    * @return void
    *
    */
-  function __construct(
-    $title = NULL,
-    $modal = TRUE,
-    $mode = NULL,
-    $scope = NULL,
-    $addSequence = FALSE,
-    $ignoreKey = FALSE
+  function __construct($title = NULL, $modal = TRUE,
+    $mode = NULL, $scope = NULL,
+    $addSequence = FALSE, $ignoreKey = FALSE
   ) {
     // this has to true for multiple tab session fix
     $addSequence = TRUE;
@@ -214,16 +198,11 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
         // this is used to embed fragments of a form
         $this->_print = CRM_Core_Smarty::PRINT_NOFORM;
         self::$_template->assign('suppressForm', TRUE);
-        $this->_generateQFKey = FALSE;
       }
       elseif ($snippet == 5) {
         // this is used for popups and inlined ajax forms
         // also used for the various tabs via TabHeader
         $this->_print = CRM_Core_Smarty::PRINT_NOFORM;
-      }
-      elseif ($snippet == 6) {
-        $this->_print = CRM_Core_Smarty::PRINT_NOFORM;
-        $this->_QFResponseType = 'json';
       }
       else {
         $this->_print = CRM_Core_Smarty::PRINT_SNIPPET;
@@ -259,15 +238,14 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
   function key($name, $addSequence = FALSE, $ignoreKey = FALSE) {
     $config = CRM_Core_Config::singleton();
 
-    if (
-      $ignoreKey ||
+    if ($ignoreKey ||
       (isset($config->keyDisable) && $config->keyDisable)
     ) {
       return NULL;
     }
 
     $key = CRM_Utils_Array::value('qfKey', $_REQUEST, NULL);
-    if (!$key && $_SERVER['REQUEST_METHOD'] === 'GET') {
+    if (!$key) {
       $key = CRM_Core_Key::get($name, $addSequence);
     }
     else {

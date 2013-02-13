@@ -80,7 +80,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
       CRM_Utils_Hook::pre('create', 'Membership', NULL, $params);
     }
 
-    if (array_key_exists('is_override', $params) && !$params['is_override']) {
+    if (!CRM_Utils_Array::value('is_override', $params)) {
       $params['is_override'] = 'null';
     }
 

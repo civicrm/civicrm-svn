@@ -50,7 +50,9 @@
 {/if*}
 
 
-{crmNavigationMenu is_default=1}
+{if $buildNavigation }
+    {include file="CRM/common/Navigation.tpl" }
+{/if}
 
 {if $breadcrumb}
     <div class="breadcrumb">

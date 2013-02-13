@@ -113,10 +113,8 @@ class CRM_Activity_Form_Task extends CRM_Core_Form {
       $result = $query->searchQuery(0, 0, NULL);
 
       while ($result->fetch()) {
-        if(!empty($result->activity_id)) {
         $ids[] = $result->activity_id;
       }
-    }
     }
 
     if (!empty($ids)) {

@@ -475,8 +475,7 @@ WHERE  email = %2
    * @static
    */
   public static function &getRows($mailing_id, $job_id = NULL,
-    $is_distinct = FALSE, $offset = NULL, $rowCount = NULL, $sort = NULL,
-    $org_unsubscribe = NULL
+    $is_distinct = FALSE, $offset = NULL, $rowCount = NULL, $sort = NULL
   ) {
 
     $dao = new CRM_Core_Dao();
@@ -515,10 +514,6 @@ WHERE  email = %2
 
     if (!empty($job_id)) {
       $query .= " AND $job.id = " . CRM_Utils_Type::escape($job_id, 'Integer');
-    }
-
-    if ($org_unsubscribe !== NULL) {
-      $query .= " AND $unsub.org_unsubscribe = " . ($org_unsubscribe ? 0 : 1);
     }
 
     if ($is_distinct) {

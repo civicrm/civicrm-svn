@@ -13,7 +13,8 @@ class CRM_Contribute_Form_Task_PDFLetterCommon extends CRM_Contact_Form_Task_PDF
    *
    * @return None
    */
-  static function postProcess(&$form) {
+  static
+  function postProcess(&$form) {
 
     list($formValues, $categories, $html_message, $messageToken, $returnProperties) = self::processMessageTemplate($form);
 
@@ -76,16 +77,16 @@ class CRM_Contribute_Form_Task_PDFLetterCommon extends CRM_Contact_Form_Task_PDF
 
       // update dates (do it for each contribution including grouped recurring contribution)
       if ($receipt_update) {
-        $result = CRM_Core_DAO::setFieldValue('CRM_Contribute_DAO_Contribution', $contributionId, 'receipt_date', $nowDate);
+        $results = civicrm_api("Contribution", "create", array('version' => '3', 'id' => $contributionId, 'receipt_date' => $nowDate));
         // We can't use CRM_Core_Error::fatal here because the api error elevates the exception level. FIXME. dgg
-        if ($result) {
+        if (! $results['is_error']) {
           $receipts++;
       }
       }
       if ($thankyou_update) {
-        $result = CRM_Core_DAO::setFieldValue('CRM_Contribute_DAO_Contribution', $contributionId, 'thankyou_date', $nowDate);
+        $results = civicrm_api("Contribution", "create", array('version' => '3', 'id' => $contributionId, 'thankyou_date' => $nowDate));
         // We can't use CRM_Core_Error::fatal here because the api error elevates the exception level. FIXME. dgg
-        if ($result) {
+        if (! $results['is_error']) {
           $thanks++;
       }
     }

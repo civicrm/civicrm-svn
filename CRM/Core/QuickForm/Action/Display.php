@@ -156,20 +156,6 @@ class CRM_Core_QuickForm_Action_Display extends CRM_Core_QuickForm_Action {
       $html = CRM_Utils_System::theme($content, $print);
     }
 
-    if ($controller->_QFResponseType == 'json') {
-      $response = array('content' => $html);
-      // CRM-11831 @see http://www.malsup.com/jquery/form/#file-upload
-      $xhr = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
-      if (!$xhr) {
-        echo '<textarea>';
-      }
-      echo json_encode($response);
-      if (!$xhr) {
-        echo '</textarea>';
-      }
-      CRM_Utils_System::civiExit();
-    }
-
     if ($print) {
       if ($print == CRM_Core_Smarty::PRINT_PDF) {
         CRM_Utils_PDF_Utils::html2pdf($content, "{$page->_name}.pdf", FALSE,

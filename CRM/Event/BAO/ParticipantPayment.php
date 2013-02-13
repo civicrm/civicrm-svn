@@ -35,54 +35,31 @@
  */
 class CRM_Event_BAO_ParticipantPayment extends CRM_Event_DAO_ParticipantPayment {
 
-  /**
-   * Creates or updates a participant payment record
-   *
-   * @param $params array of values to initialize the record with
-   * @param $ids    array with one values of id for this participantPayment record (for update)
-   *
-   * @return object the partcipant payment record
-   * @static
-   */
-  static function &create(&$params, &$ids) {
+  static
+  function &create(&$params, &$ids) {
+    $paymentParticipant = new CRM_Event_BAO_ParticipantPayment();
+    $paymentParticipant->copyValues($params);
     if (isset($ids['id'])) {
-      CRM_Utils_Hook::pre('edit', 'ParticipantPayment', $ids['id'], $params);
+      $paymentParticipant->id = CRM_Utils_Array::value('id', $ids);
     }
     else {
-      CRM_Utils_Hook::pre('create', 'ParticipantPayment', NULL, $params);
+      $paymentParticipant->find(TRUE);
     }
+    $paymentParticipant->save();
 
-    $participantPayment = new CRM_Event_BAO_ParticipantPayment();
-    $participantPayment->copyValues($params);
-    if (isset($ids['id'])) {
-      $participantPayment->id = CRM_Utils_Array::value('id', $ids);
-  }
-    else {
-      $participantPayment->find(TRUE);
-    }
-    $participantPayment->save();
-
-    if (isset($ids['id'])) {
-      CRM_Utils_Hook::post('edit', 'ParticipantPayment', $ids['id'], $participantPayment);
-    }
-    else {
-      CRM_Utils_Hook::post('create', 'ParticipantPayment', NULL, $participantPayment);
-    }
-
-    return $participantPayment;
+    return $paymentParticipant;
   }
 
   /**
-   * Delete the record that are associated with this ParticipantPayment
-   * Also deletes the associated contribution for this participant
+   * Delete the record that are associated with this Participation Payment
    *
-   * @param  array  $params   associative array whose values match the record to be deleted
+   * @param  array  $params   array in the format of $field => $value.
    *
    * @return boolean  true if deleted false otherwise
-   * @static
    * @access public
    */
-  static function deleteParticipantPayment($params) {
+  static
+  function deleteParticipantPayment($params) {
     $participantPayment = new CRM_Event_DAO_ParticipantPayment();
 
     $valid = FALSE;
@@ -98,10 +75,8 @@ class CRM_Event_BAO_ParticipantPayment extends CRM_Event_DAO_ParticipantPayment 
     }
 
     if ($participantPayment->find(TRUE)) {
-      CRM_Utils_Hook::pre('delete', 'ParticipantPayment', $participantPayment->id, $params);
       CRM_Contribute_BAO_Contribution::deleteContribution($participantPayment->contribution_id);
       $participantPayment->delete();
-      CRM_Utils_Hook::post('delete', 'ParticipantPayment', $participantPayment->id, $participantPayment);
       return $participantPayment;
     }
     return FALSE;

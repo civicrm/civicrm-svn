@@ -64,8 +64,12 @@ class CRM_Core_Page_AJAX {
       CRM_Utils_System::civiExit();
     }
 
-    switch ($type) {
-      case 'method':
+    if (!$type) {
+      $wrapper = new CRM_Utils_Wrapper();
+      $wrapper->run($className);
+    }
+    else {
+      if ($type == 'method') {
         call_user_func(array($className, $fnName));
         break;
 
@@ -82,9 +86,6 @@ class CRM_Core_Page_AJAX {
           $wrapper = new CRM_Utils_Wrapper();
           $wrapper->run($className);
         }
-        break;
-      default:
-        CRM_Core_Error::debug_log_message('Unsupported inline request type: ' . var_export($type, TRUE));
     }
     CRM_Utils_System::civiExit();
   }

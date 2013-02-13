@@ -915,7 +915,8 @@ ORDER BY   civicrm_email.is_bulkmail DESC
    *
    * @return void
    */
-  static function addMessageIdHeader(&$headers, $prefix, $job_id, $event_queue_id, $hash) {
+  static
+  function addMessageIdHeader(&$headers, $prefix, $job_id, $event_queue_id, $hash) {
     $config           = CRM_Core_Config::singleton();
     $localpart        = CRM_Core_BAO_MailSettings::defaultLocalpart();
     $emailDomain      = CRM_Core_BAO_MailSettings::defaultDomain();
@@ -943,7 +944,8 @@ ORDER BY   civicrm_email.is_bulkmail DESC
    *
    * @return (reference) array    array ref that hold array refs to the verp info and urls
    */
-  static function getVerpAndUrls($job_id, $event_queue_id, $hash, $email) {
+  static
+  function getVerpAndUrls($job_id, $event_queue_id, $hash, $email) {
     // create a skeleton object and set its properties that are required by getVerpAndUrlsAndHeaders()
     $config         = CRM_Core_Config::singleton();
     $bao            = new CRM_Mailing_BAO_Mailing();
@@ -1971,10 +1973,6 @@ ORDER BY   civicrm_email.is_bulkmail DESC
         'civicrm/mailing/report/event',
         "reset=1&event=unsubscribe&mid=$mailing_id"
       ),
-      'optout' => CRM_Utils_System::url(
-        'civicrm/mailing/report/event',
-        "reset=1&event=optout&mid=$mailing_id"
-      ),
       'forward' => CRM_Utils_System::url(
         'civicrm/mailing/report/event',
         "reset=1&event=forward&mid=$mailing_id"
@@ -2078,7 +2076,8 @@ ORDER BY   civicrm_email.is_bulkmail DESC
     return $this->count;
   }
 
-  static function checkPermission($id) {
+  static
+  function checkPermission($id) {
     if (!$id) {
       return;
     }
@@ -2094,7 +2093,8 @@ ORDER BY   civicrm_email.is_bulkmail DESC
     return;
   }
 
-  static function mailingACL($alias = NULL) {
+  static
+  function mailingACL($alias = NULL) {
     $mailingACL = " ( 0 ) ";
 
     $mailingIDs = self::mailingACLIDs();
@@ -2110,34 +2110,17 @@ ORDER BY   civicrm_email.is_bulkmail DESC
     return $mailingACL;
   }
 
-  /**
-   * returns all the mailings that this user can access. This is dependent on
-   * all the groups that the user has access to.
-   * However since most civi installs dont use ACL's we special case the condition
-   * where the user has access to ALL groups, and hence ALL mailings and return a
-   * value of TRUE (to avoid the downstream where clause with a list of mailing list IDs
-   *
-   * @return boolean | array - TRUE if the user has access to all mailings, else array of mailing IDs (possibly empty)
-   * @static
-   */
-  static function mailingACLIDs() {
-    // CRM-11633
-    // optimize common case where admin has access
-    // to all mailings
-    if (
-      CRM_Core_Permission::check('view all contacts') ||
-      CRM_Core_Permission::check('edit all contacts')
-    ) {
-      return TRUE;
-    }
-
+  static
+  function &mailingACLIDs($count = FALSE, $condition = NULL) {
     $mailingIDs = array();
 
     // get all the groups that this user can access
     // if they dont have universal access
     $groups = CRM_Core_PseudoConstant::group(null, false);
     if (!empty($groups)) {
-      $groupIDs = implode(',', array_keys($groups));
+      $groupIDs = implode(',',
+        array_keys($groups)
+      );
       $selectClause = ($count) ? 'COUNT( DISTINCT m.id) as count' : 'DISTINCT( m.id ) as id';
 
       // get all the mailings that are in this subset of groups
@@ -2255,7 +2238,8 @@ LEFT JOIN civicrm_mailing_group g ON g.mailing_id   = m.id
    * @static
    * @access public
    */
-  static function showEmailDetails($id) {
+  static
+  function showEmailDetails($id) {
     return CRM_Utils_System::url('civicrm/mailing/report', "mid=$id");
   }
 
@@ -2592,7 +2576,8 @@ SELECT  $mailing.id as mailing_id
     return $report;
   }
 
-  static function overrideVerp($jobID) {
+  static
+  function overrideVerp($jobID) {
     static $_cache = array();
 
     if (!isset($_cache[$jobID])) {
@@ -2608,7 +2593,8 @@ WHERE  civicrm_mailing_job.id = %1
     return $_cache[$jobID];
   }
 
-  static function processQueue($mode = NULL) {
+  static
+  function processQueue($mode = NULL) {
     $config = &CRM_Core_Config::singleton();
  //   CRM_Core_Error::debug_log_message("Beginning processQueue run: {$config->mailerJobsMax}, {$config->mailerJobSize}");
 
