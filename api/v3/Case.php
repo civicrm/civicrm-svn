@@ -390,7 +390,7 @@ function _civicrm_api3_case_read($caseId, $options) {
     if (!empty($return['activities'])) {
       //get case activities
       $case['activities'] = array();
-      $query = "SELECT activity_id FROM civicrm_case_activity WHERE case_id = $caseId";
+      $query = "SELECT activity_id FROM civicrm_case_activity WHERE case_id = $caseId AND is_current_revision = 1";
       $dao = CRM_Core_DAO::executeQuery($query);
       while ($dao->fetch()) {
         $case['activities'][] = $dao->activity_id;
@@ -412,7 +412,7 @@ function _civicrm_api3_case_format_params(&$params) {
     $params['start_date'] = date('YmdHis');
   }
   // figure out case type id from case type and vice-versa
-  $caseTypes = CRM_Case_PseudoConstant::caseType('label', FALSE);
+  $caseTypes = CRM_Case_PseudoConstant::caseType('name', FALSE);
   if (empty($params['case_type_id'])) {
     $params['case_type_id'] = array_search($params['case_type'], $caseTypes);
   }
