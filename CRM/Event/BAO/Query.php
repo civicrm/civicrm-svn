@@ -208,7 +208,7 @@ class CRM_Event_BAO_Query {
 
   static function where(&$query) {
     $testCondition = $grouping = NULL;
-g    foreach (array_keys($query->_params) as $id) {
+    foreach (array_keys($query->_params) as $id) {
       if (!CRM_Utils_Array::value(0, $query->_params[$id])) {
         continue;
       }
