@@ -1727,7 +1727,41 @@ function _civicrm_core_data(&$data, $enabled) {
     ),
   );
 
-
+  // CRM-11488
+  $data['civicrm_activity']['is_current_revision'] = array(
+    'title' => t('Current Revision'),
+    'help' => t('Use to dedupe Civicase revisions'),
+    'field' => array(
+      'handler' => 'views_handler_field_boolean',
+      'click sortable' => TRUE,
+   ),
+    'argument' => array(
+      'handler' => 'views_handler_argument',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_boolean_operator',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+  );
+  $data['civicrm_activity']['is_deleted'] = array(
+    'title' => t('Is Deleted'),
+    'help' => t('If the current Activity is deleted. Also used to dedupe Civicase revisions'),
+    'field' => array(
+      'handler' => 'views_handler_field_boolean',
+      'click sortable' => TRUE,
+   ),
+    'argument' => array(
+      'handler' => 'views_handler_argument',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_boolean_operator',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+  ); 
 
   // CHILLING OUT AT THE civicrm_activity_assignment TABLE
 
