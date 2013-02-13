@@ -52,7 +52,7 @@ class WebTest_Grant_CustomFieldsetTest extends CiviSeleniumTestCase {
       $this->click('add');
       $this->click('_qf_Component_next-bottom');
       $this->waitForPageToLoad('30000');
-      $this->assertElementContainsText("css=#crm-notification-container", "Changes Saved", "CiviCRM Message does not indicate the enabled component changes were saved");
+      $this->assertElementContainsText("css=#crm-notification-container", 'Changes Saved', 'CiviCRM Message does not indicate the enabled component changes were saved');
     }
 
     // let's give full CiviGrant permissions to demo user (registered user).
@@ -64,55 +64,55 @@ class WebTest_Grant_CustomFieldsetTest extends CiviSeleniumTestCase {
 
     // Add new Grant Type
     $this->open($this->sboxPath . 'civicrm/admin/options/grant_type?group=grant_type&reset=1');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad('30000');
     $this->click("css=#grant_type > div.action-link > #new > span");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad('30000');
     $grantType = 'GrantType' . $rand;
-    $this->type("id=label", $grantType);
-    $this->click("id=_qf_Options_next-top");
-    $this->waitForPageToLoad("30000");
+    $this->type('id=label', $grantType);
+    $this->click('id=_qf_Options_next-top');
+    $this->waitForPageToLoad('30000');
     $this->assertTrue($this->isTextPresent("The Grant Type '$grantType' has been saved."));
 
     // Create new Custom Field Set that extends the grant type
     $this->open($this->sboxPath . 'civicrm/admin/custom/group?reset=1');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad('30000');
     $this->click("css=#newCustomDataGroup > span");
     $this->waitForElementPresent('_qf_Group_next-bottom');
     $grantFieldSet = 'Fieldset' . $rand;
-    $this->type("id=title", $grantFieldSet);
-    $this->select("id=extends_0", "label=Grants");
-    $this->addSelection("id=extends_1", "label=$grantType");
-    $this->click("id=collapse_display");
-    $this->click("id=_qf_Group_next-bottom");
+    $this->type('id=title', $grantFieldSet);
+    $this->select('id=extends_0', 'label=Grants');
+    $this->addSelection('id=extends_1', "label=$grantType");
+    $this->click('id=collapse_display');
+    $this->click('id=_qf_Group_next-bottom');
     $this->waitForElementPresent('_qf_Field_next-bottom');
     $this->assertTrue($this->isTextPresent("Your custom field set '$grantFieldSet' has been added."));
 
     // Add field to fieldset
     $grantField = 'GrantField' . $rand;
-    $this->type("id=label", $grantField);
-    $this->select("id=data_type_0", "label=Money");
-    $this->click("id=_qf_Field_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->type('id=label', $grantField);
+    $this->select('id=data_type_0', 'label=Money');
+    $this->click('id=_qf_Field_next-bottom');
+    $this->waitForPageToLoad('30000');
     $this->assertTrue($this->isTextPresent("Your custom field '$grantField' has been saved."));
 
     // Create new Grant
     $this->open($this->sboxPath . 'civicrm/grant/add?reset=1&action=add&context=standalone');
     $this->waitForElementPresent('_qf_Grant_upload-bottom');
-    $this->select("id=profiles_1", "label=New Individual");
+    $this->select('id=profiles_1', 'label=New Individual');
     $this->waitForElementPresent('_qf_Edit_next');
     $firstName = 'First' . $rand;
     $lastName = 'Last' . $rand;
-    $this->type("id=first_name", $firstName);
-    $this->type("id=last_name", $lastName);
-    $this->click("id=_qf_Edit_next");
-    $this->select("id=status_id", "label=Approved");
-    $this->select("id=grant_type_id", "label=$grantType");
+    $this->type('id=first_name', $firstName);
+    $this->type('id=last_name', $lastName);
+    $this->click('id=_qf_Edit_next');
+    $this->select('id=status_id', 'label=Approved');
+    $this->select('id=grant_type_id', "label=$grantType");
     $this->waitForTextPresent($grantField);
     $this->assertTrue($this->isTextPresent($grantField));
-    $this->type("id=amount_total", "100.00");
-    $this->type("css=div#$grantFieldSet input.form-text", "99.99");
-    $this->click("id=_qf_Grant_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->type('id=amount_total', '100.00');
+    $this->type("css=div#$grantFieldSet input.form-text", '99.99');
+    $this->click('id=_qf_Grant_upload-bottom');
+    $this->waitForPageToLoad('30000');
 
     // Verify grant is created with presence of view link
     $this->waitForElementPresent("xpath=//div[@id='Grants']//table/tbody/tr[1]/td[8]/span/a[text()='View']");
@@ -123,11 +123,11 @@ class WebTest_Grant_CustomFieldsetTest extends CiviSeleniumTestCase {
 
     // verify tabular data for grant view
     $this->webtestVerifyTabularData(array(
-        'Name' => "$firstName $lastName",
-        'Grant Status' => 'Granted',
-        'Grant Type' => $grantType,
-        $grantField => "$ 99.99",
-      )
+      'Name' => "$firstName $lastName",
+      'Grant Status' => 'Approved',
+      'Grant Type' => $grantType,
+      $grantField => '$ 99.99',
+     )
     );
   }
 }
