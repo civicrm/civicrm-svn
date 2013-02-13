@@ -41,9 +41,9 @@
 class CRM_Core_Payment_Realex extends CRM_Core_Payment {
   CONST AUTH_APPROVED = '00';
 
-  static protected $_mode = NULL;
+  protected $_mode = NULL;
 
-  static protected $_params = array();
+  protected $_params = array();
 
   /**
    * We only need one instance of this object. So we use the singleton

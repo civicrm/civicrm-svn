@@ -43,9 +43,8 @@ class CRM_Core_Payment_Google extends CRM_Core_Payment {
    * mode of operation: live or test
    *
    * @var object
-   * @static
    */
-  static protected $_mode = NULL;
+  protected $_mode = NULL;
 
   /**
    * We only need one instance of this object. So we use the singleton

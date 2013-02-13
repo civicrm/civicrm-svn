@@ -34,9 +34,8 @@
  */
 class CRM_Core_Payment_PaymentExpress extends CRM_Core_Payment {
   CONST CHARSET = 'iso-8859-1';
-  static protected $_mode = NULL;
 
-  static protected $_params = array();
+  protected $_mode = NULL;
 
   /**
    * We only need one instance of this object. So we use the singleton

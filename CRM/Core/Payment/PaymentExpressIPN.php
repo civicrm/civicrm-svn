@@ -47,9 +47,8 @@ class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
    * mode of operation: live or test
    *
    * @var object
-   * @static
    */
-  static protected $_mode = NULL;
+  protected $_mode = NULL;
 
   static function retrieve($name, $type, $object, $abort = TRUE) {
     $value = CRM_Utils_Array::value($name, $object);
