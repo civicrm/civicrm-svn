@@ -51,12 +51,6 @@ class CRM_Utils_HttpClient {
     $caConfig = CA_Config_Curl::probe(array(
       'verify_peer' => (bool) CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'verifySSL', NULL, TRUE)
     ));
-    dpm(array(
-      'rf' => $remoteFile,
-      'lf' => $localFile,
-      'vs' => (bool) CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'verifySSL', NULL, TRUE),
-      'ca' => $caConfig
-  ));
 
     // Download extension zip file ...
     if (!function_exists('curl_init')) {
