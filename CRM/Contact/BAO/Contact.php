@@ -2652,9 +2652,7 @@ AND       civicrm_openid.is_primary = 1";
         'ref' => 'new-case',
         'key' => 'case',
         'component' => 'CiviCase',
-        'href' => CRM_Utils_System::url('civicrm/contact/view/case',
-          'reset=1&action=add&context=case'
-        ),
+        'href' => CRM_Utils_System::url('civicrm/case/add', 'reset=1&action=add&context=case'),
         'permissions' => array('add cases'),
       ),
       'grant' => array('title' => ts('Add Grant'),
@@ -2940,7 +2938,7 @@ LEFT JOIN civicrm_address add2 ON ( add1.master_id = add2.id )
    * @static
    */
   static function checkDomainContact($contactId) {
-    if (!$contactId) 
+    if (!$contactId)
       return FALSE;
     $domainId =  CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Domain', $contactId, 'id', 'contact_id');
 

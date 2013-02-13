@@ -30,7 +30,7 @@
     {include file="CRM/Case/Page/ConfigureError.tpl"}
 {else}
 
-{capture assign=newCaseURL}{crmURL p="civicrm/contact/view/case" q="action=add&context=standalone&reset=1"}{/capture}
+{capture assign=newCaseURL}{crmURL p="civicrm/case/add" q="action=add&context=standalone&reset=1"}{/capture}
 
 <div class="crm-submit-buttons crm-case-dashboard-buttons">
     {if $newClient and $allowToAddNewCase}

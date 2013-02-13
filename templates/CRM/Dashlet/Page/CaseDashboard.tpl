@@ -26,7 +26,7 @@
 
 <div id="case_dashboard_dashlet" class="form-item">
 
-{capture assign=newCaseURL}{crmURL p="civicrm/contact/view/case" q="action=add&context=standalone&reset=1"}{/capture}
+{capture assign=newCaseURL}{crmURL p="civicrm/case/add" q="action=add&context=standalone&reset=1"}{/capture}
 
 <div class="float-right">
   <table class="form-layout-compressed">
