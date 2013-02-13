@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
 # This is distmaker script for CiviCRM
@@ -157,34 +157,34 @@ $DM_PHP GenCode.php schema/Schema.xml $DM_VERSION
 
 cd $ORIGPWD
 
-if [ $L10NPACK = 1 ]; then
+if [ "$L10NPACK" = 1 ]; then
 	echo; echo "Packaging for L10N"; echo;
-	sh $P/dists/l10n.sh
+	bash $P/dists/l10n.sh
 fi
 
-if [ $D56PACK = 1 ]; then
+if [ "$D56PACK" = 1 ]; then
 	echo; echo "Packaging for Drupal6, PHP5 version"; echo;
-	sh $P/dists/drupal6_php5.sh
+	bash $P/dists/drupal6_php5.sh
 fi
 
-if [ $D5PACK = 1 ]; then
+if [ "$D5PACK" = 1 ]; then
 	echo; echo "Packaging for Drupal7, PHP5 version"; echo;
-	sh $P/dists/drupal_php5.sh
+	bash $P/dists/drupal_php5.sh
 fi
 
-if [ $SKPACK = 1 ]; then
+if [ "$SKPACK" = 1 ]; then
 	echo; echo "Packaging for Drupal7, PHP5 StarterKit version"; echo;
-	sh $P/dists/drupal_sk_php5.sh
+	bash $P/dists/drupal_sk_php5.sh
 fi
 
-if [ $J5PACK = 1 ]; then
+if [ "$J5PACK" = 1 ]; then
 	echo; echo "Packaging for Joomla, PHP5 version"; echo;
-	sh $P/dists/joomla_php5.sh
+	bash $P/dists/joomla_php5.sh
 fi
 
-if [ $WP5PACK = 1 ]; then
+if [ "$WP5PACK" = 1 ]; then
 	echo; echo "Packaging for Wordpress, PHP5 version"; echo;
-	sh $P/dists/wordpress_php5.sh
+	bash $P/dists/wordpress_php5.sh
 fi
 
 unset DM_SOURCEDIR DM_GENFILESDIR DM_TARGETDIR DM_TMPDIR DM_PHP DM_RSYNC DM_VERSION DM_ZIP
