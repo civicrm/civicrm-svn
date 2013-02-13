@@ -1266,9 +1266,12 @@ SELECT contact_id
   //Creates a test object, including any required objects it needs via recursion
   //createOnly: only create in database, do not store or return the objects (useful for perf testing)
   //ONLY USE FOR TESTING
-  static function createTestObject($daoName, $params = array(
-    ), $numObjects = 1, $createOnly = FALSE) {
-
+  static function createTestObject(
+    $daoName,
+    $params = array(),
+    $numObjects = 1,
+    $createOnly = FALSE
+  ) {
     static $counter = 0;
     CRM_Core_DAO::$_testEntitiesToSkip = array(
       'CRM_Core_DAO_Worldregion',
@@ -1327,8 +1330,11 @@ SELECT contact_id
           }
           $constant = CRM_Utils_Array::value('pseudoconstant', $value);
           if (!empty($constant)) {
-            $constantOptions = array_keys(CRM_Core_PseudoConstant::getConstant($constant['name']));
-            $object->$dbName = $constantOptions[0];
+            $constantValues = CRM_Core_PseudoConstant::getConstant($constant['name']);
+            if (!empty($constantValues)) {
+              $constantOptions = array_keys($constantValues);
+              $object->$dbName = $constantOptions[0];
+            }
             continue;
           }
           $enum = CRM_Utils_Array::value('enumValues', $value);
