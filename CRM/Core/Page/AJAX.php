@@ -84,7 +84,6 @@ class CRM_Core_Page_AJAX {
         break;
       default:
         CRM_Core_Error::debug_log_message('Unsupported inline request type: ' . var_export($type, TRUE));
-        }
     }
     CRM_Utils_System::civiExit();
   }
