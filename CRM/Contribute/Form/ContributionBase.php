@@ -710,9 +710,7 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form {
 
         CRM_Core_BAO_Address::addStateCountryMap($stateCountryMap);
 
-        if ($addCaptcha &&
-          !$viewOnly
-        ) {
+        if ($addCaptcha && !$viewOnly) {
           $captcha = CRM_Utils_ReCAPTCHA::singleton();
           $captcha->add($this);
           $this->assign('isCaptcha', TRUE);
