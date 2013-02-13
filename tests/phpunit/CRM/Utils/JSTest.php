@@ -93,10 +93,6 @@ class CRM_Utils_JSTest extends CiviUnitTestCase {
       'alert(ts("Does the ts(\'example\') notation work?"));',
       array('Does the ts(\'example\') notation work?'),
     );
-    $cases[] = array( // ts() within a string
-      'alert("Does the ts(\'example\') notation work?");',
-      array(),
-    );
     return $cases;
   }
 
