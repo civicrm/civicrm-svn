@@ -116,8 +116,11 @@ class CRM_Contact_Form_Search_Custom_Group extends CRM_Contact_Form_Search_Custo
       )
     );
 
-    $andOr = array('1' => ts('Require all inclusion criteria'), '0' => ts('Select contacts with any of the criteria for inclusion'));
-    $form->addRadio('andOr', ts('And/or'), $andOr, TRUE, NULL, TRUE);
+    $andOr = array(
+      '1' => ts('Show contacts that meet the Groups criteria AND the Tags criteria'),
+      '0' => ts('Show contacts that meet the Groups criteria OR  the Tags criteria'),
+    );
+    $form->addRadio('andOr', ts('AND/OR'), $andOr, TRUE, '<br />', TRUE);
 
     $int = &$form->addElement('advmultiselect', 'includeTags',
       ts('Include Tag(s)') . ' ', $tags,
@@ -154,6 +157,14 @@ class CRM_Contact_Form_Search_Custom_Group extends CRM_Contact_Form_Search_Custo
      * are part of the search criteria
      */
     $form->assign('elements', array('includeGroups', 'excludeGroups', 'andOr', 'includeTags', 'excludeTags'));
+  }
+
+  /*
+   * Set search form field defaults here.
+   */
+  function setDefaultValues() {
+    return
+      array( 'andOr' => '1' );
   }
 
   function all(
@@ -481,13 +492,12 @@ class CRM_Contact_Form_Search_Custom_Group extends CRM_Contact_Form_Search_Custo
     if (!$this->_groups && !$this->_tags) {
       $this->_andOr = 1;
     }
+
     /*
          * Set from statement depending on array sel
          */
-
     $whereitems = array();
-    foreach (array(
-      'Ig', 'It') as $inc) {
+    foreach (array('Ig', 'It') as $inc) {
       if ($this->_andOr == 1) {
         if ($$inc) {
           $from .= " INNER JOIN {$inc}_{$this->_tableName} temptable$inc ON (contact_a.id = temptable$inc.contact_id)";
@@ -503,8 +513,7 @@ class CRM_Contact_Form_Search_Custom_Group extends CRM_Contact_Form_Search_Custo
       }
     }
     $this->_where = $whereitems ? "(" . implode(' OR ', $whereitems) . ')' : '(1)';
-    foreach (array(
-      'Xg', 'Xt') as $exc) {
+    foreach (array('Xg', 'Xt') as $exc) {
       if ($$exc) {
         $from .= " LEFT JOIN {$exc}_{$this->_tableName} temptable$exc ON (contact_a.id = temptable$exc.contact_id)";
         $this->_where .= " AND temptable$exc.contact_id IS NULL";
@@ -517,11 +526,14 @@ class CRM_Contact_Form_Search_Custom_Group extends CRM_Contact_Form_Search_Custo
       $this->_where .= " AND {$this->_aclWhere} ";
     }
 
+    // also exclude all contacts that are deleted
+    // CRM-11627
+    $this->_where .= " AND (contact_a.is_deleted != 1) ";
+
     return $from;
   }
 
   function where($includeContactIDs = FALSE) {
-
     if ($includeContactIDs) {
       $contactIDs = array();
 

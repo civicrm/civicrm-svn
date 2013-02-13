@@ -77,7 +77,8 @@ class CRM_Utils_Wrapper {
       $addSequence = $ignoreKey = $imageUpload = $attachUpload = FALSE;
     }
 
-    $this->_controller = new CRM_Core_Controller_Simple($formName,
+    $this->_controller = new CRM_Core_Controller_Simple(
+      $formName,
       $formLabel,
       $mode,
       $imageUpload,

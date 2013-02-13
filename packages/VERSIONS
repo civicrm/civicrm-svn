@@ -102,6 +102,7 @@ json2          2012-10-08 PUBDOM      https://github.com/douglascrockford/JSON-j
 Marionette     1.0.0-rc2  X11/MIT     http://marionettejs.com/
 QUnit          1.10.0     X11/MIT     http://qunitjs.com/
 Underscore     1.4.3      X11/MIT     http://underscorejs.org/
+CKEditor       4.0.1      GPL 3/LGPL 3/MPL 1.1
 
 
 payment processors for CiviCRM
@@ -115,7 +116,6 @@ eWAY             AGPL 3   by Dolphin Software
 
 Unknown status
 ==============
-CKEditor      GPL 3/LGPL 3/MPL 1.1
 Facebook      BSD 2-cl.
 Google        Apache 2/GPL 2+
 TinyMCE       LGPL 2.1

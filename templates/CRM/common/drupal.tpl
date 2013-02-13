@@ -34,9 +34,7 @@
 <div id="crm-container" class="crm-container{if $urlIsPublic} crm-public{/if}" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
 
 
-{if $buildNavigation }
-    {include file="CRM/common/Navigation.tpl"}
-{/if}
+{crmNavigationMenu is_default=1}
 
 {if isset($browserPrint) and $browserPrint}
 {* Javascript window.print link. Used for public pages where we can't do printer-friendly view. *}

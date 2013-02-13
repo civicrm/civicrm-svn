@@ -279,7 +279,7 @@ WHERE  id = %1";
         if (CRM_Utils_Array::value('custom', $value) &&
           is_array($value['custom'])
         ) {
-          CRM_Core_BAO_CustomValueTable::store($value['custom'], 'civicrm_activity', $activityId->id);
+          CRM_Core_BAO_CustomValueTable::store($value['custom'], 'civicrm_activity', $activityId['id']);
         }
       }
       CRM_Core_Session::setStatus("", ts("Updates Saved"), "success");

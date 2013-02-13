@@ -158,7 +158,10 @@ class CRM_Core_QuickForm_Action_Display extends CRM_Core_QuickForm_Action {
 
     if ($print) {
       if ($print == CRM_Core_Smarty::PRINT_PDF) {
-        CRM_Utils_PDF_Utils::html2pdf($content, "{$page->_name}.pdf", FALSE,
+        CRM_Utils_PDF_Utils::html2pdf(
+          $content,
+          "{$page->_name}.pdf",
+          FALSE,
           array('paper_size' => 'a3', 'orientation' => 'landscape')
         );
       }
