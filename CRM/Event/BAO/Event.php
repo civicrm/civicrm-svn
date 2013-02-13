@@ -1334,7 +1334,7 @@ WHERE civicrm_event.is_active = 1
    * @access public
    * @static
    */
-  static function displayProfile(&$params, $gid, &$groupTitle, &$values) {
+  static function displayProfile(&$params, $gid, &$groupTitle, &$values, &$profileFields = array()) {
     if ($gid) {
       $session = CRM_Core_Session::singleton();
       $contactID = $session->get('userID');
@@ -1576,6 +1576,7 @@ WHERE  id = $cfID
             }
           }
         }
+        $profileFields[$name] = $field;
       }
     }
   }

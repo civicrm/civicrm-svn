@@ -297,7 +297,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
 
     //display additional participants profile.
     $participantParams = $this->_params;
-    $formattedValues   = array();
+    $formattedValues = $profileFields = array();
     $count             = 1;
     foreach ($participantParams as $participantNum => $participantValue) {
       if ($participantNum) {
@@ -314,7 +314,8 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
           CRM_Event_BAO_Event::displayProfile($participantValue,
             $this->_values[ $prefix2 . 'custom_pre_id'],
             $groupName,
-            $values
+            $values,
+            $profileFields
           );
 
           if (count($values)) {
@@ -330,7 +331,8 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
             CRM_Event_BAO_Event::displayProfile($participantValue,
               $gids,
               $group,
-              $val
+              $val,
+              $profileFields
             );
             $values[$gids] = $val;
             $groupName[$gids] = $group;
@@ -349,7 +351,8 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
           $formattedValues[$count][$prefix1 . 'CustomPostGroupTitle'] = $groupName;
         }
         $count++;
-      }
+      }  
+      $this->_fields = $profileFields;
     }
     if (!empty($formattedValues) ) {
       $this->assign('primaryParticipantProfile', $formattedValues[1]);
