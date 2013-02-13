@@ -129,53 +129,13 @@ class CRM_Extension_Downloader {
    * @return boolean Whether the download was successful.
    */
   public function fetch($remoteFile, $localFile) {
-    require_once 'CA/Config/Curl.php';
-    $caConfig = CA_Config_Curl::probe(array(
-      'verify_peer' => (bool)CRM_Core_BAO_Setting::getItem(CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME, 'verifySSL', NULL, TRUE)
-    ));
-
-    // Download extension zip file ...
-    if (!function_exists('curl_init')) {
-      CRM_Core_Error::fatal('Cannot install this extension - curl is not installed!');
-    }
-    if (preg_match('/^https:/', $remoteFile) && !$caConfig->isEnableSSL()) {
-      CRM_Core_Error::fatal('Cannot install this extension - does not support SSL');
-    }
-
-    //setting the curl parameters.
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $remoteFile);
-    curl_setopt($ch, CURLOPT_HEADER, FALSE);
-    curl_setopt($ch, CURLOPT_VERBOSE, 1);
-    if (preg_match('/^https:/', $remoteFile)) {
-      curl_setopt_array($ch, $caConfig->toCurlOptions());
-    }
-
-    //follow redirects
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
-
-    $fp = fopen($localFile, "w");
-    if (! $fp) {
-        CRM_Core_Session::setStatus(ts('Unable to write to %1.<br />Is the location writable?', array(1 => $localFile)), ts('Write Error'), 'error');
+    $result = CRM_Utils_HttpClient::fetch($remoteFile, $localFile);
+    switch ($result) {
+      case CRM_Utils_HttpClient::STATUS_OK:
+        return TRUE;
+      default:
         return FALSE;
-      }
-    curl_setopt($ch, CURLOPT_FILE, $fp);
-
-    curl_exec($ch);
-    if (curl_errno($ch)) {
-      CRM_Core_Error::debug(curl_error($ch));
-      CRM_Core_Error::debug(curl_errno($ch)); exit( );
-      CRM_Core_Session::setStatus(ts('Unable to download extension from %1. Error Message: %2',
-          array(1 => $remoteFile, 2 => curl_error($ch))), ts('Download Error'), 'error');
-        return FALSE;
-      }
-      else {
-      curl_close($ch);
-      }
-
-    fclose($fp);
-
-    return TRUE;
+    }
   }
 
   /**
