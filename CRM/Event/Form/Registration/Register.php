@@ -1412,10 +1412,14 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
       $participant = new CRM_Event_BAO_Participant();
       $participant->contact_id = $contactID;
       $participant->event_id = $self->_values['event']['id'];
-      $participant->role_id = $self->_values['event']['default_role_id'];
+      if (!empty($fields['participant_role']) && is_numeric($fields['participant_role'])) {
+        $participant->role_id = $fields['participant_role'];
+      } 
+      else {
+        $participant->role_id = $self->_values['event']['default_role_id'];
+      }
       $participant->is_test = 0;
       $participant->find();
-
       $statusTypes = CRM_Event_PseudoConstant::participantStatus(NULL, 'is_counted = 1');
       while ($participant->fetch()) {
         if (array_key_exists($participant->status_id, $statusTypes)) {
