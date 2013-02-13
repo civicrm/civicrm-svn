@@ -82,14 +82,11 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase {
 
   function tearDown() {
     $this->eventDelete($this->_eventID);
-    $this->contactDelete($this->_contactID);
-    $this->contactDelete($this->_individualId);
-    $this->contactDelete($this->_contactID2);
-    $this->contactDelete($this->_contactID3);
     $this->quickCleanup(
       array(
         'civicrm_contact',
         'civicrm_contribution',
+        'civicrm_participant',
         'civicrm_participant_payment',
         'civicrm_line_item',
         'civicrm_financial_item',
@@ -440,7 +437,7 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase {
         );
         break;
     }
-    
+
     $this->assertDBCompareValues('CRM_Financial_DAO_FinancialTrxn', $trxnParams, $compareParams);
     $entityParams = array(
       'financial_trxn_id' => $trxn['financial_trxn_id'],
