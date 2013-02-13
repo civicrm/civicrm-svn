@@ -79,9 +79,12 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("_qf_GroupContact_next");
     $this->select("group_id", "$groupName");
     $this->click("_qf_GroupContact_next");
+    $this->waitForPageToLoad("30000");
+    $this->waitForElementPresent("_qf_GroupContact_next");
 
     // configure default mail-box
     $this->open($this->sboxPath . "civicrm/admin/mailSettings?action=update&id=1&reset=1");
+    $this->waitForPageToLoad("30000");
     $this->waitForElementPresent('_qf_MailSettings_cancel-bottom');
     $this->type('name', 'Test Domain');
     $this->type('domain', 'example.com');
@@ -130,7 +133,7 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
     $this->type("subject", "Test subject {$mailingName} for Webtest");
 
     // check for default option enabled
-    $this->assertChecked("CIVICRM_QFID_1_4");
+    $this->assertChecked("CIVICRM_QFID_1_upload_type");
 
     // HTML format message
     $HTMLMessage = "This is HTML formatted content for Mailing {$mailingName} Webtest.";
@@ -367,9 +370,12 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("_qf_GroupContact_next");
     $this->select("group_id", "$groupName");
     $this->click("_qf_GroupContact_next");
+    $this->waitForPageToLoad("30000");
+    $this->waitForElementPresent("_qf_GroupContact_next");
 
     // configure default mail-box
     $this->open($this->sboxPath . "civicrm/admin/mailSettings?action=update&id=1&reset=1");
+    $this->waitForPageToLoad("30000");
     $this->waitForElementPresent('_qf_MailSettings_cancel-bottom');
     $this->type('name', 'Test Domain');
     $this->type('domain', 'example.com');
@@ -412,7 +418,7 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
     $this->type("subject", "Test subject {$mailingName} for Webtest");
     
     // check for default option enabled
-    $this->assertChecked("CIVICRM_QFID_1_4");
+    $this->assertChecked("CIVICRM_QFID_1_upload_type");
 
     // HTML format message
     $HTMLMessage = "This is HTML formatted content for Mailing {$mailingName} Webtest.";
