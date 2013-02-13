@@ -42,7 +42,11 @@
  *
  */
 class CRM_Profile_Form extends CRM_Core_Form {
-  CONST MODE_REGISTER = 1, MODE_SEARCH = 2, MODE_CREATE = 4, MODE_EDIT = 8;
+  CONST
+    MODE_REGISTER = 1,
+    MODE_SEARCH   = 2,
+    MODE_CREATE   = 4,
+    MODE_EDIT     = 8;
 
   protected $_mode;
 
@@ -165,6 +169,10 @@ class CRM_Profile_Form extends CRM_Core_Form {
   protected $_deleteButtonName = NULL;
 
   protected $_customGroupId = NULL;
+
+  protected $_currentUserID = NULL;
+  protected $_session       = NULL;
+
   /**
    * pre processing work done here.
    *
@@ -193,6 +201,9 @@ class CRM_Profile_Form extends CRM_Core_Form {
         $this->set('recordId', NULL);
       }
     }
+
+    $this->_session = CRM_Core_Session::singleton();
+    $this->_currentUserID = $this->_session->get('userID');
 
     if ($this->_mode == self::MODE_EDIT) {
       //specifies the action being done on a multi record field
@@ -361,9 +372,8 @@ class CRM_Profile_Form extends CRM_Core_Form {
         }
 
         if (!$emailField) {
-          $session = CRM_Core_Session::singleton();
           $status = ts("Email field should be included in profile if you want to use Group(s) when Profile double-opt in process is enabled.");
-          $session->setStatus($status);
+          $this->_session->setStatus($status);
         }
       }
 
@@ -653,8 +663,6 @@ class CRM_Profile_Form extends CRM_Core_Form {
     $this->assign('fields', $this->_fields);
     $this->assign('fieldset', (isset($this->_fieldset)) ? $this->_fieldset : "");
 
-    $session = CRM_Core_Session::singleton();
-
     // should we restrict what we display
     $admin = TRUE;
     if ($this->_mode == self::MODE_EDIT) {
@@ -664,7 +672,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
       // or we have checksum access to this contact (i.e. the user without a login) - CRM-5909
       if (
         CRM_Core_Permission::check('administer users') ||
-        $this->_id == $session->get('userID') ||
+        $this->_id == $this->_currentUserID ||
         $this->_isPermissionedChecksum ||
         in_array(
           $this->_gid,
@@ -680,10 +688,9 @@ class CRM_Profile_Form extends CRM_Core_Form {
       }
     }
 
-    $userID = $session->get('userID');
     // if false, user is not logged-in.
     $anonUser = FALSE;
-    if (!$userID) {
+    if (!$this->_currentUserID) {
       $defaultLocationType = CRM_Core_BAO_LocationType::getDefault();
       $primaryLocationType = $defaultLocationType->id;
       $anonUser            = TRUE;
@@ -739,9 +746,14 @@ class CRM_Profile_Form extends CRM_Core_Form {
 
     // add captcha only for create mode.
     if ($this->_mode == self::MODE_CREATE) {
-      if (!$this->_isAddCaptcha && !empty($addCaptcha)) {
+      // suppress captcha for logged in users only
+      if ($this->_currentUserID) {
+        $this->_isAddCaptcha = FALSE;
+      }
+      else if (!$this->_isAddCaptcha && !empty($addCaptcha)) {
         $this->_isAddCaptcha = TRUE;
       }
+
       if ($this->_gid) {
         $dao = new CRM_Core_DAO_UFGroup();
         $dao->id = $this->_gid;
@@ -886,8 +898,6 @@ class CRM_Profile_Form extends CRM_Core_Form {
       ) {
         $fields['phone-Primary'] = $fields['phone-Primary-1'];
       }
-
-      $session = CRM_Core_Session::singleton();
 
       $ctype = CRM_Core_BAO_UFGroup::getContactType($form->_gid);
       // If all profile fields is of Contact Type then consider
