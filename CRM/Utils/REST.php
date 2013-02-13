@@ -85,7 +85,7 @@ class CRM_Utils_REST {
    */
   public function authenticate($name, $pass) {
 
-    $result = &CRM_Utils_System::authenticate($name, $pass);
+    $result = CRM_Utils_System::authenticate($name, $pass);
 
     if (empty($result)) {
       return self::error('Could not authenticate user, invalid name or password.');
