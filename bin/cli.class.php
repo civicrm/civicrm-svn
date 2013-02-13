@@ -27,9 +27,9 @@
  * This files provides several classes for doing command line work with
  * CiviCRM. civicrm_cli is the base class. It's used by cli.php.
  *
- * In addition, there are several additional classes that inherit 
+ * In addition, there are several additional classes that inherit
  * civicrm_cli to do more precise functions.
- *  
+ *
  **/
 
 /**
@@ -266,7 +266,7 @@ class civicrm_cli {
 }
 
 /**
- * class used by csv/export.php to export records from 
+ * class used by csv/export.php to export records from
  * the database in a csv file format.
  **/
 
@@ -378,7 +378,7 @@ class civicrm_cli_csv_importer extends civicrm_cli_csv_file {
 }
 
 /**
- * class for processing records to delete 
+ * class for processing records to delete
  * used by csv/delete.php
  *
  **/

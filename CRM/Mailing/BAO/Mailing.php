@@ -1990,19 +1990,19 @@ ORDER BY   civicrm_email.is_bulkmail DESC
     );
 
 
-    $actionLinks = array(CRM_Core_Action::VIEW => array('name' => ts('Report'),
-      ),
-    );
+    $actionLinks = array(CRM_Core_Action::VIEW => array('name' => ts('Report')));
     if (CRM_Core_Permission::check('view all contacts')) {
-      $actionLinks[CRM_Core_Action::ADVANCED] = array('name' => ts('Advanced Search'),
-        'url' => 'civicrm/contact/search/advanced',
-      );
+      $actionLinks[CRM_Core_Action::ADVANCED] =
+        array(
+          'name' => ts('Advanced Search'),
+          'url' => 'civicrm/contact/search/advanced',
+        );
     }
     $action = array_sum(array_keys($actionLinks));
 
     $report['event_totals']['actionlinks'] = array();
     foreach (array(
-      'clicks', 'clicks_unique', 'queue', 'delivered', 'bounce', 'unsubscribe',
+        'clicks', 'clicks_unique', 'queue', 'delivered', 'bounce', 'unsubscribe',
         'forward', 'reply', 'opened', 'optout',
       ) as $key) {
       $url          = 'mailing/detail';
