@@ -114,8 +114,7 @@ class CRM_Utils_REST {
   }
 
   // Generates values needed for error messages
-  function error($message = 'Unknown Error') {
-
+  static function error($message = 'Unknown Error') {
     $values = array(
       'error_message' => $message,
       'is_error' => 1,
@@ -124,7 +123,7 @@ class CRM_Utils_REST {
   }
 
   // Generates values needed for non-error responses.
-  function simple($params) {
+  static function simple($params) {
     $values = array('is_error' => 0);
     $values += $params;
     return $values;
@@ -135,7 +134,7 @@ class CRM_Utils_REST {
     return self::output($result);
   }
 
-  function output(&$result) {
+  static function output(&$result) {
     $hier = FALSE;
     if (is_scalar($result)) {
       if (!$result) {
@@ -159,7 +158,7 @@ class CRM_Utils_REST {
       header('Content-Type: text/javascript');
       $json = json_encode(array_merge($result));
       if (CRM_Utils_Array::value('debug', $_REQUEST)) {
-        return CRM_Utils_REST::jsonFormated($json);
+        return self::jsonFormated($json);
       }
       return $json;
     }
@@ -191,7 +190,7 @@ class CRM_Utils_REST {
     return $xml;
   }
 
-  function jsonFormated($json) {
+  static function jsonFormated($json) {
     $tabcount   = 0;
     $result     = '';
     $inquote    = FALSE;
@@ -269,7 +268,7 @@ class CRM_Utils_REST {
     return $result;
   }
 
-  function handle() {
+  static function handle() {
     // Get the function name being called from the q parameter in the query string
     $q = CRM_Utils_array::value('q', $_REQUEST);
     // or for the rest interface, from fnName
