@@ -416,7 +416,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity {
         while (!empty($values)) {
           $input = array_splice($values, 0, CRM_Core_DAO::BULK_INSERT_COUNT);
           $str   = implode(',', $input);
-          $sql   = "INSERT INTO civicrm_activity_assignment ( activity_id, assignee_contact_id ) VALUES $str;";
+          $sql   = "INSERT IGNORE INTO civicrm_activity_assignment ( activity_id, assignee_contact_id ) VALUES $str;";
           CRM_Core_DAO::executeQuery($sql);
         }
       }
@@ -471,7 +471,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity {
         while (!empty($values)) {
           $input = array_splice($values, 0, CRM_Core_DAO::BULK_INSERT_COUNT);
           $str   = implode(',', $input);
-          $sql   = "INSERT INTO civicrm_activity_target ( activity_id, target_contact_id ) VALUES $str;";
+          $sql   = "INSERT IGNORE INTO civicrm_activity_target ( activity_id, target_contact_id ) VALUES $str;";
           CRM_Core_DAO::executeQuery($sql);
         }
       }
