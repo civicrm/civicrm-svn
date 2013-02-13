@@ -68,8 +68,10 @@ class CRM_Contact_Form_DedupeRules extends CRM_Admin_Form {
       $this->_contactType = $rgDao->contact_type;
       $this->_defaults['used'] = CRM_Utils_Array::key($rgDao->used, $this->_options);
       $this->_defaults['title'] = $rgDao->title;
+      $this->_defaults['name'] = $rgDao->name;
       $this->_defaults['is_reserved'] = $rgDao->is_reserved;
       $this->assign('isReserved', $rgDao->is_reserved);
+      $this->assign('ruleName', $rgDao->name);
       $ruleDao = new CRM_Dedupe_DAO_Rule();
       $ruleDao->dedupe_rule_group_id = $this->_rgid;
       $ruleDao->find();
