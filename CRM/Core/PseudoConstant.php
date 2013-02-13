@@ -2125,9 +2125,9 @@ ORDER BY name";
       self::$accountOptionValues[$cacheKey] = CRM_Core_OptionGroup::values($optionGroupName, false, false, false, $condition);
     }
     if ($id) {
-      return CRM_Utils_Array::value($id, $accountOptionValues[$cacheKey]);          
+      return CRM_Utils_Array::value($id, $accountOptionValues[$cacheKey]);
     }
-        
+
     return self::$accountOptionValues[$cacheKey];
   }
 
@@ -2216,21 +2216,12 @@ ORDER BY name";
    * @return array - array reference of all relevant constant
    */
   public static function getConstant($constant) {
-    if(empty(self::$$constant)) {
-      if (method_exists(get_class(), $constant)) {
-        self::$$constant = self::$constant();
-        return self::$$constant;
-      }
-      else{
-        $classes = self::$constantClasses;
-        foreach ($classes as $class){
-          if(method_exists($class, lcfirst($constant))){
-            return $class::$constant();
-          }
+    $classes = self::$constantClasses;
+      foreach ($classes as $class){
+        if(method_exists($class, lcfirst($constant))){
+          return $class::$constant();
         }
       }
-
-    }
   }
   /**
    * Flush constant
