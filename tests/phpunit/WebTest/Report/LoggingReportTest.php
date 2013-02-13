@@ -222,7 +222,7 @@ class WebTest_Report_LoggingReportTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . "civicrm/admin/setting/misc?reset=1");
     $this->click("xpath=//tr[@class='crm-miscellaneous-form-block-logging']/td[2]/label[text()='No']");
     $this->click("_qf_Miscellaneous_next-top");
-    $this->waitForTextPresent("Your changes have been saved");
+    $this->waitForTextPresent("Changes Saved");
   }
   
   function verifyReportData($data) {
@@ -241,7 +241,7 @@ class WebTest_Report_LoggingReportTest extends CiviSeleniumTestCase {
   
   function detailReportCheck($dataForReportDetail) {
     foreach ($dataForReportDetail as $value) {
-      $this->click("xpath=//table/tbody//tr/td[2][contains(text(), '{$value['log_type']}')]/../td[4]/a[contains(text(), '{$value['altered_contact']}')]/../../td[1]/a");
+      $this->click("xpath=//table/tbody//tr/td[2][contains(text(), '{$value['log_type']}')]/../td[4]/a[contains(text(), '{$value['altered_contact']}')]/../../td[1]/a[2]");
       $this->waitForPageToLoad("30000");
 
       foreach ($value['data'] as $key => $data) {
