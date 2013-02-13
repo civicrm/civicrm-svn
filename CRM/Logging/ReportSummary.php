@@ -189,7 +189,8 @@ CREATE TEMPORARY TABLE
     $sql = "{$this->_select}
 FROM civicrm_temp_civireport_logsummary entity_log_civireport
 ORDER BY entity_log_civireport.log_date DESC {$this->_limit}";
-    $sql = str_replace('modified_contact_civireport.display_name', 'entity_log_civireport.altered_contact', $sql);
+    $sql = str_replace('modified_contact_civireport.display_name', 'entity_log_civireport.altered_contact',   $sql);
+    $sql = str_replace('modified_contact_civireport.id',           'entity_log_civireport.altered_contact_id', $sql);
     $sql = str_replace(array('modified_contact_civireport.', 'altered_by_contact_civireport.'), 'entity_log_civireport.', $sql);
     $this->buildRows($sql, $rows);
 
