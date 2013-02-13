@@ -43,7 +43,7 @@ class api_v3_CaseTest extends CiviUnitTestCase {
   protected $_entity;
   protected $_apiversion;
   protected $followup_activity_type_value;
-  protected $case_activity_type_value;
+  protected $caseTypeId;
   protected $caseStatusGroup;
   protected $caseTypeGroup;
   protected $optionValues;
@@ -74,7 +74,7 @@ class api_v3_CaseTest extends CiviUnitTestCase {
         'description' => 'Help homeless individuals obtain temporary and long-term housing',
       ));
 
-    $this->case_activity_type_value = $caseTypes['values'][0]['value'];
+    $this->caseTypeId = $caseTypes['values'][0]['value'];
     $this->optionValues[] = $caseTypes['id'];
     $optionValues = array(
       'Medical evaluation' => 'Medical evaluation',
@@ -206,7 +206,7 @@ class api_v3_CaseTest extends CiviUnitTestCase {
     $this->assertTrue($enableResult, 'Cannot enable CiviCase in line ' . __LINE__);
 
     $this->_params = array(
-      'case_type_id' => $this->case_activity_type_value,
+      'case_type_id' => $this->caseTypeId,
       'subject' => 'Test case',
       'contact_id' => 17,
       'version' => $this->_apiversion,
@@ -276,11 +276,14 @@ class api_v3_CaseTest extends CiviUnitTestCase {
   }
 
   /**
-   *  Test create and get functions with valid parameters
+   * Test create function with valid parameters
    */
   function testCaseCreate() {
     // Create Case
     $params = $this->_params;
+    // Test using label instead of value
+    unset($params['case_type_id']);
+    $params['case_type'] = 'Housing Support';
     $result = civicrm_api('case', 'create', $params);
     $id = $result['id'];
     $this->assertAPISuccess($result, 'in line ' . __LINE__);
@@ -288,29 +291,74 @@ class api_v3_CaseTest extends CiviUnitTestCase {
     // Check result
     $result = civicrm_api('case', 'get', array('version' => $this->_apiversion, 'id' => $id));
     $this->assertEquals($result['values'][$id]['id'], 1, 'in line ' . __LINE__);
-    $this->assertEquals($result['values'][$id]['case_type_id'], $params['case_type_id'], 'in line ' . __LINE__);
+    $this->assertEquals($result['values'][$id]['case_type_id'], $this->caseTypeId, 'in line ' . __LINE__);
     $this->assertEquals($result['values'][$id]['subject'], $params['subject'], 'in line ' . __LINE__);
   }
 
   /**
-   *  Test update (create with id) function with valid parameters
+   * Test update (create with id) function with valid parameters
    */
   function testCaseUpdate() {
     // Create Case
-    $params = $this->_params;
+    $result = civicrm_api('case', 'create', $this->_params);
+    $this->assertAPISuccess($result, 'in line ' . __LINE__);
+    $id = $result['id'];
+    $result = civicrm_api('case', 'get', array('version' => $this->_apiversion, 'id' => $id));
+    $case = $result['values'][$id];
+
+    // Update Case
+    $params = array('id' => $id, 'version' => $this->_apiversion);
+    $params['subject'] = $case['subject'] = 'Something Else';
     $result = civicrm_api('case', 'create', $params);
     $this->assertAPISuccess($result, 'in line ' . __LINE__);
 
-    // Update Case
-    $params['id'] = $id = $result['id'];
-    $params['subject'] = 'Something Else';
-    civicrm_api('case', 'create', $params);
+    // Verify that updated case is exactly equal to the original with new subject
+    $result = civicrm_api('case', 'get', array('version' => $this->_apiversion, 'case_id' => $id));
+    $this->assertEquals($result['values'][$id], $case, 'in line ' . __LINE__);
+  }
 
-    // Check result
+  /**
+   * Test delete function with valid parameters
+   */
+  function testCaseDelete() {
+    // Create Case
+    $result = civicrm_api('case', 'create', $this->_params);
+    $this->assertAPISuccess($result, 'in line ' . __LINE__);
+
+    // Move Case to Trash
+    $id = $result['id'];
+    $result = civicrm_api('case', 'delete', array('version' => $this->_apiversion, 'id' => $id, 'move_to_trash' => 1));
+    $this->assertAPISuccess($result, 'in line ' . __LINE__);
+
+    // Check result - also check that 'case_id' works as well as 'id'
+    $result = civicrm_api('case', 'get', array('version' => $this->_apiversion, 'case_id' => $id));
+    $this->assertEquals(1, $result['values'][$id]['is_deleted'], 'in line ' . __LINE__);
+
+    // Delete Case Permanently - also check that 'case_id' works as well as 'id'
+    $result = civicrm_api('case', 'delete', array('version' => $this->_apiversion, 'case_id' => $id));
+    $this->assertAPISuccess($result, 'in line ' . __LINE__);
+
+    // Check result - case should no longer exist
     $result = civicrm_api('case', 'get', array('version' => $this->_apiversion, 'id' => $id));
-    $this->assertEquals($result['values'][$id]['id'], 1, 'in line ' . __LINE__);
-    $this->assertEquals($result['values'][$id]['case_type_id'], $params['case_type_id'], 'in line ' . __LINE__);
-    $this->assertEquals($result['values'][$id]['subject'], $params['subject'], 'in line ' . __LINE__);
+    $this->assertEquals(0, $result['count'], 'in line ' . __LINE__);
+  }
+
+  /**
+   * Test get function based on activity
+   */
+  function testCaseGetByActivity() {
+    // Create Case
+    $result = civicrm_api('case', 'create', $this->_params);
+    $this->assertAPISuccess($result, 'in line ' . __LINE__);
+    $id = $result['id'];
+
+    // Check result - we should get a list of activity ids
+    $result = civicrm_api('case', 'get', array('version' => $this->_apiversion, 'id' => $id));
+    $case = $result['values'][$id];
+    $activity = $case['activities'][0];
+
+    $result = civicrm_api('case', 'get', array('version' => $this->_apiversion, 'activity_id' => $activity, 'return' => 'activities,contacts'));
+    $this->assertEquals($result['values'][$id], $case, 'in line ' . __LINE__);
   }
 
   /**

@@ -79,17 +79,15 @@ function civicrm_api3_verify_one_mandatory($params, $daoName = NULL, $keyoptions
 function civicrm_api3_verify_mandatory($params, $daoName = NULL, $keys = array(
   ), $verifyDAO = TRUE) {
 
-  if ($daoName != NULL && $verifyDAO && !CRM_Utils_Array::value('id', $params)) {
-    if (!is_array($unmatched = _civicrm_api3_check_required_fields($params, $daoName, TRUE))) {
+  $unmatched = array();
+  if ($daoName != NULL && $verifyDAO && empty($params['id'])) {
+    $unmatched = _civicrm_api3_check_required_fields($params, $daoName, TRUE);
+    if (!is_array($unmatched)) {
       $unmatched = array();
     }
   }
-  else {
-    // always define to prevent E_NOTICE warning
-    $unmatched = array();
-  }
-  require_once 'CRM/Utils/Array.php';
-  if (CRM_Utils_Array::value('id', $params)) {
+
+  if (!empty($params['id'])) {
     $keys = array('version');
   }
   else {
@@ -852,8 +850,6 @@ function _civicrm_api3_check_required_fields($params, $daoName, $return = FALSE)
       return civicrm_api3_create_error(ts("Can not create Custom Group in Tab for " . $params['extends']));
     }
   }
-
-  require_once (str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
 
   $dao = new $daoName();
   $fields = $dao->fields();
