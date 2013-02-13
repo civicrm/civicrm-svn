@@ -49,7 +49,8 @@ class WebTest_Report_LoggingReportTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . "civicrm/admin/setting/misc?reset=1");
     $this->click("xpath=//tr[@class='crm-miscellaneous-form-block-logging']/td[2]/label[text()='Yes']");
     $this->click("_qf_Miscellaneous_next-top");
-    $this->waitForTextPresent("Your changes have been saved");
+    
+    $this->waitForTextPresent("Changes Saved");
 
     //add new contact
     $orginalFirstName = $firstName = 'Anthony' . substr(sha1(rand()), 0, 7);
@@ -64,8 +65,10 @@ class WebTest_Report_LoggingReportTest extends CiviSeleniumTestCase {
     sleep(3);
     $this->select("group_id", "label=Case Resources");
     $this->click("_qf_GroupContact_next");
-    sleep(3);
-    $this->click("xpath=//div[@id='groupContact']/div/div/table/tbody/tr/td[4]/a");
+  
+    $this->waitForPageToLoad("30000");
+    $this->waitForElementPresent("xpath=//div[@id='groupContact']/div/div[4]/table/tbody/tr/td[4]/a");
+    $this->click("xpath=//div[@id='groupContact']/div/div[4]/table/tbody/tr/td[4]/a");
     
     // Check confirmation alert. 
     $this->assertTrue((bool)preg_match("/^Are you sure you want to remove/",
@@ -91,19 +94,19 @@ class WebTest_Report_LoggingReportTest extends CiviSeleniumTestCase {
     sleep(3);
     $this->click("xpath=//div[@id='Notes']//div[@class='action-link']/a");
 
-    $this->waitForElementPresent("_qf_Note_next-top");
+    $this->waitForElementPresent("_qf_Note_upload-top");
     $noteSubject = "test note" . substr(sha1(rand()), 0, 7);
     $noteText = "test note text" . substr(sha1(rand()), 0, 7);
     $this->type('subject', $noteSubject);
     $this->type('note', $noteText);
-    $this->click("_qf_Note_next-top");
+    $this->click("_qf_Note_upload-top");
     $this->waitForElementPresent("xpath=//div[@id='notes']//a[text()='Edit']");
     $this->click("xpath=//div[@id='notes']//a[text()='Edit']");
     
-    $this->waitForElementPresent("_qf_Note_next-top");
+    $this->waitForElementPresent("_qf_Note_upload-top");
     $this->type('subject', $noteSubject . "_edited");
     $this->type('note', $noteText . "_edited");
-    $this->click("_qf_Note_next-top");
+    $this->click("_qf_Note_upload-top");
         
     $this->waitForElementPresent("xpath=//div[@class='crm-results-block']/div[@id='notes']/div/table/tbody/tr//td/span[2]/ul/li[2]/a[text()='Delete']");
     $this->click("xpath=//div[@class='crm-results-block']/div[@id='notes']/div/table/tbody/tr//td/span[2]/ul/li[2]/a[text()='Delete']");
@@ -118,11 +121,10 @@ class WebTest_Report_LoggingReportTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("xpath=//li[@id='tab_rel']/a");
     $this->click("xpath=//li[@id='tab_rel']/a");
     sleep(3);
-    
     $this->click("xpath=//div[@id='Relationships']//div[@class='action-link']/a");
     $this->waitForElementPresent("_qf_Relationship_refresh");
     $this->select("relationship_type_id", "label=Employee of");
-    $this->webtestFillAutocomplete("Inner City Arts");
+    $this->webtestFillAutocomplete("Default Organization");
     $this->waitForElementPresent("quick-save");
     $this->click("quick-save");
     $this->waitForPageToLoad("30000");
@@ -226,19 +228,20 @@ class WebTest_Report_LoggingReportTest extends CiviSeleniumTestCase {
   function verifyReportData($data) {
     foreach ($data as $value) {
       // check for the row contains proper data
-      $actionPath = ($value['action'] == 'Update') ? "td[4]/a" : "td[4][contains(text(), '{$value['action']}')]";
-      $contactCheck = ($value['action'] == 'Delete (to trash)') ? "td[3][contains(text(), '{$value['altered_contact']}')]" : "td[3]/a[contains(text(), '{$value['altered_contact']}')]/..";
-      $this->assertTrue($this->isElementPresent("xpath=//table/tbody//tr/td[contains(text(), '{$value['log_type']}')]/../{$contactCheck}/../{$actionPath}"), "The proper record not present for (log type : {$value['log_type']}, altered contact : {$value['altered_contact']}, action as {$value['action']})");
+      $actionPath = ($value['action'] == 'Update') ? "td[1]/a[2]" : "td[1][contains(text(), '{$value['action']}')]";
+      $contactCheck = ($value['action'] == 'Delete (to trash)') ? "td[4][contains(text(), '{$value['altered_contact']}')]" : "td[4]/a[contains(text(), '{$value['altered_contact']}')]/..";
+      
+      $this->assertTrue($this->isElementPresent("xpath=//table/tbody//tr/td[2][contains(text(), '{$value['log_type']}')]/../{$contactCheck}/../{$actionPath}"), "The proper record not present for (log type : {$value['log_type']}, altered contact : {$value['altered_contact']}, action as {$value['action']})");
       
       if ($value['action'] == 'Update') {
-        $this->assertTrue( ($value['action'] == $this->getText("xpath=//table/tbody//tr/td[contains(text(), '{$value['log_type']}')]/../td[3]/a[contains(text(), '{$value['altered_contact']}')]/../../{$actionPath}")), "The proper record action  {$value['action']} not present for (log type : {$value['log_type']}, altered contact : {$value['altered_contact']} record)");
+        $this->assertTrue( ($value['action'] == $this->getText("xpath=//table/tbody//tr/td[2][contains(text(), '{$value['log_type']}')]/../td[4]/a[contains(text(), '{$value['altered_contact']}')]/../../{$actionPath}")), "The proper record action  {$value['action']} not present for (log type : {$value['log_type']}, altered contact : {$value['altered_contact']} record)");
       }
     }
   }
   
   function detailReportCheck($dataForReportDetail) {
     foreach ($dataForReportDetail as $value) {
-      $this->click("xpath=//table/tbody//tr/td[contains(text(), '{$value['log_type']}')]/../td[3]/a[contains(text(), '{$value['altered_contact']}')]/../../td[4]/a");
+      $this->click("xpath=//table/tbody//tr/td[2][contains(text(), '{$value['log_type']}')]/../td[4]/a[contains(text(), '{$value['altered_contact']}')]/../../td[1]/a");
       $this->waitForPageToLoad("30000");
 
       foreach ($value['data'] as $key => $data) {
