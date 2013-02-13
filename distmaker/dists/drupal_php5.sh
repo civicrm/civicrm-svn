@@ -12,7 +12,7 @@ if [ ! -f $CFFILE ] ; then
 	echo "NO DISTMAKER.CONF FILE!"
 	exit 1
 else
-	. $CFFILE	
+	. $CFFILE
 fi
 
 RSYNCOPTIONS="-avC --exclude=svn --exclude=.git --exclude=_ORIGINAL_ --include=core"
@@ -26,7 +26,7 @@ if [ -d $TRG ] ; then
 fi
 
 # copy all the stuff
-for CODE in css i js packages PEAR templates bin CRM api drupal extern Reports install; do
+for CODE in css i js packages PEAR templates bin CRM api drupal extern Reports install settings; do
   echo $CODE
   [ -d $SRC/$CODE ] && $RSYNCCOMMAND $SRC/$CODE $TRG
 done
@@ -54,7 +54,7 @@ set -e
 
 # copy docs
 cp $SRC/agpl-3.0.txt $TRG
-cp $SRC/gpl.txt $TRG 
+cp $SRC/gpl.txt $TRG
 cp $SRC/README.txt $TRG
 cp $SRC/Sponsors.txt $TRG
 cp $SRC/agpl-3.0.exception.txt $TRG

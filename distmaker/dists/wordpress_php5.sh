@@ -12,7 +12,7 @@ if [ ! -f $CFFILE ] ; then
 	echo "NO DISTMAKER.CONF FILE!"
 	exit 1
 else
-	. $CFFILE	
+	. $CFFILE
 fi
 
 RSYNCOPTIONS="-avC --exclude=svn --exclude=.git --exclude=_ORIGINAL_ --include=core"
@@ -38,7 +38,7 @@ if [ ! -d $TRG/civicrm/civicrm ] ; then
 fi
 
 # copy all the stuff
-for CODE in css i js packages PEAR templates bin CRM api extern Reports install; do
+for CODE in css i js packages PEAR templates bin CRM api extern Reports install settings; do
   echo $CODE
   [ -d $SRC/$CODE ] && $RSYNCCOMMAND $SRC/$CODE $TRG/civicrm/civicrm
 done
@@ -63,7 +63,7 @@ set +e
 rm -rf $TRG/civicrm/civicrm/sql/civicrm_*.??_??.mysql
 set -e
 
-for F in $SRC/WordPress/*; do 
+for F in $SRC/WordPress/*; do
 	cp $F $TRG/civicrm
 done
 

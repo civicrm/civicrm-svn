@@ -26,7 +26,7 @@ if [ -d $TRG ] ; then
 fi
 
 # copy all the stuff
-for CODE in css i js packages PEAR templates bin CRM api drupal extern Reports install; do
+for CODE in css i js packages PEAR templates bin CRM api drupal extern Reports install settings; do
   echo $CODE
   [ -d $SRC/$CODE ] && $RSYNCCOMMAND $SRC/$CODE $TRG
 done
