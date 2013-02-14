@@ -111,7 +111,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
    * @param $url (str) omit the 'civicrm/' it will be added for you
    * @param $args (str|array) optional url arguments
    * @param $waitFor - page element to wait for - using this is recommended to ensure the document is fully loaded
-   * 
+   *
    * Although it doesn't seem to do much now, using this function is recommended for
    * opening all civi pages, and using the $args param is also strongly encouraged
    * This will make it much easier to run webtests in other CMSs in the future
@@ -139,7 +139,8 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
   }
 
   /**
-   * Call the API
+   * Call the API on the local server
+   * (kind of defeats the point of a webtest - see CRM-11889)
    */
   function webtest_civicrm_api($entity, $action, $params) {
     if (!isset($params['version'])) {
@@ -149,6 +150,28 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     $result = civicrm_api($entity, $action, $params);
     $this->assertTrue(!civicrm_error($result), 'Civicrm api error.');
     return $result;
+  }
+
+  /**
+   * Call the API on the remote server
+   * Experimental - currently only works if permissions on remote site allow anon user to access ajax api
+   * @see CRM-11889
+   */
+  function rest_civicrm_api($entity, $action, $params = array()) {
+    $params += array(
+      'version' => 3,
+    );
+    $url = "{$this->settings->sandboxURL}/{$this->sboxPath}civicrm/ajax/rest?entity=$entity&action=$action&json=" . json_encode($params);
+    $request = array(
+      'http' => array(
+        'method' => 'POST',
+        // Naughty sidestep of civi's security checks
+        'header' => "X-Requested-With: XMLHttpRequest",
+      ),
+    );
+    $ctx = stream_context_create($request);
+    $result = file_get_contents($url, FALSE, $ctx);
+    return json_decode($result, TRUE);
   }
 
   function webtestGetFirstValueForOptionGroup($option_group_name) {
@@ -193,7 +216,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
   function webtestAddContact($fname = 'Anthony', $lname = 'Anderson', $email = NULL, $contactSubtype = NULL) {
     $url = $this->sboxPath . 'civicrm/contact/add?reset=1&ct=Individual';
     if ($contactSubtype) {
-      $url = $url . "&cst={$contactSubtype}";  
+      $url = $url . "&cst={$contactSubtype}";
     }
     $this->open($url);
     $this->waitForElementPresent('_qf_Contact_upload_view-bottom');
@@ -500,9 +523,9 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     }
     $pid = CRM_Core_DAO::getFieldValue("CRM_Financial_DAO_PaymentProcessorType", $processorType, "id","name");
     if(empty($pid)) {
-      $this->fail("$processorType processortype not found.");    
+      $this->fail("$processorType processortype not found.");
     }
-    $this->open($this->sboxPath . 'civicrm/admin/paymentProcessor?action=add&reset=1&pp=' . $pid); 
+    $this->open($this->sboxPath . 'civicrm/admin/paymentProcessor?action=add&reset=1&pp=' . $pid);
     $this->waitForPageToLoad('30000');
     $this->type('name', $processorName);
     $this->select( 'financial_account_id', "label={$financialAccount}" );
@@ -707,7 +730,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
     //to select financial type
     $this->select('financial_type_id', "label={$financialType}");
-    
+
     if ($onBehalf) {
       $this->click('is_organization');
       $this->select('onbehalf_profile_id', 'label=On Behalf Of Organization');
@@ -1076,7 +1099,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     $this->click('member_of_contact');
     $this->waitForElementPresent("css=div.ac_results-inner li");
     $this->click("css=div.ac_results-inner li");
-    
+
     $this->type('minimum_fee', '100');
     $this->select( 'financial_type_id', "value={$memTypeParams['financial_type']}" );
 
@@ -1315,7 +1338,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
   /**
    * Add new Financial Account
    */
-    
+
   function _testAddFinancialAccount($financialAccountTitle,
     $financialAccountDescription = FALSE,
     $accountingCode = FALSE,
@@ -1327,17 +1350,17 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     $taxRate = FALSE,
     $isDefault = FALSE
   ) {
-       
+
     // Go directly to the URL
     $this->open($this->sboxPath . "civicrm/admin/financial/financialAccount?reset=1");
     $this->waitForPageToLoad("30000");
-        
+
     $this->click("link=Add Financial Account");
     $this->waitForElementPresent('_qf_FinancialAccount_cancel-botttom');
-        
+
     // Financial Account Name
     $this->type('name', $financialAccountTitle);
-        
+
     // Financial Description
     if ($financialAccountDescription) {
       $this->type('description', $financialAccountDescription);
@@ -1347,23 +1370,23 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     if ($accountingCode) {
       $this->type('accounting_code', $accountingCode);
     }
-        
+
     // Autofill Organization
     if ($firstName) {
       $this->webtestOrganisationAutocomplete( $firstName );
     }
-         
-    // Financial Account Type     
+
+    // Financial Account Type
     if ($financialAccountType) {
       $this->select('financial_account_type_id', "label={$financialAccountType}");
     }
-        
+
     // Is Tax Deductible
     if ($taxDeductible) {
       $this->check('is_deductible');
     }
     else {
-      $this->uncheck('is_deductible'); 
+      $this->uncheck('is_deductible');
     }
     // Is Active
     if (!$isActive) {
@@ -1383,7 +1406,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     if ($taxRate) {
       $this->type('tax_rate', $taxRate);
     }
-         
+
     // Set Default
     if ($isDefault) {
       $this->check('is_default');
@@ -1391,7 +1414,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     else {
       $this->uncheck('is_default');
     }
-    $this->click('_qf_FinancialAccount_next-botttom'); 
+    $this->click('_qf_FinancialAccount_next-botttom');
     $this->waitForPageToLoad("30000");
   }
 
@@ -1415,16 +1438,16 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $this->open($this->sboxPath . "civicrm/admin/financial/financialAccount?reset=1");
       $this->waitForPageToLoad("30000");
     }
-            
+
     $this->waitForElementPresent("xpath=//table/tbody//tr/td[1][text()='{$editfinancialAccount}']/../td[9]/span/a[text()='Edit']");
     $this->click("xpath=//table/tbody//tr/td[1][text()='{$editfinancialAccount}']/../td[9]/span/a[text()='Edit']");
     $this->waitForPageToLoad("30000");
 
     $this->waitForElementPresent('_qf_FinancialAccount_cancel-botttom');
-        
+
     // Change Financial Account Name
     if($financialAccountTitle)
-      $this->type('name', $financialAccountTitle);  
+      $this->type('name', $financialAccountTitle);
 
     // Financial Description
     if($financialAccountDescription)
@@ -1433,16 +1456,16 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     //Accounting Code
     if($accountingCode)
       $this->type('accounting_code', $accountingCode);
-        
+
 
     // Autofill Edit Organization
     if($firstName)
       $this->webtestOrganisationAutocomplete($firstName);
-        
-    // Financial Account Type  
+
+    // Financial Account Type
     if($financialAccountType)
       $this->select('financial_account_type_id', "label={$financialAccountType}");
-        
+
     // Is Tax Deductible
     if($taxDeductible)
       $this->check('is_deductible');
@@ -1454,7 +1477,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $this->check('is_tax');
     else
       $this->uncheck('is_tax');
-        
+
     // Tax Rate
     if($taxRate)
       $this->type('tax_rate', $taxRate);
@@ -1464,28 +1487,28 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $this->check('is_default');
     else
       $this->uncheck('is_default');
-        
+
     // Is Active
-    if($isActive) 
+    if($isActive)
       $this->check('is_active');
     else
       $this->uncheck('is_active');
     $this->click('_qf_FinancialAccount_next-botttom');
-    $this->waitForPageToLoad("30000");      
+    $this->waitForPageToLoad("30000");
   }
-    
+
 
   /**
    * Delete Financial Account
    */
-  function _testDeleteFinancialAccount($financialAccountTitle) {     
+  function _testDeleteFinancialAccount($financialAccountTitle) {
     $this->click("xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[9]/span/a[text()='Delete']");
     $this->waitForElementPresent('_qf_FinancialAccount_next-botttom');
     $this->click('_qf_FinancialAccount_next-botttom');
     $this->waitForElementPresent('link=Add Financial Account');
     $this->assertTrue($this->isTextPresent("Selected Financial Account has been deleted."));
   }
-    
+
   /**
    * Verify data after ADD and EDIT
    */
@@ -1494,7 +1517,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $actualValue = $this->getValue($key);
       if ($key == 'parent_financial_account') {
         $this->assertTrue((bool)preg_match("/^{$expectedValue}/", $actualValue));
-      } 
+      }
       else {
         $this->assertEquals($expectedValue, $actualValue);
       }
@@ -1507,24 +1530,24 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $this->assertEquals($expectedvalue, $actualvalue);
     }
   }
-    
+
   function addeditFinancialType($financialType, $option = 'new') {
     $this->open($this->sboxPath . 'civicrm/admin/financial/financialType?reset=1');
-        
+
     if ($option == 'Delete') {
       $this->click("xpath=id('ltype')/div/table/tbody/tr/td[1][text()='$financialType[name]']/../td[7]/span[2]");
       $this->waitForElementPresent("css=span.btn-slide-active");
       $this->click("xpath=id('ltype')/div/table/tbody/tr/td[1][text()='$financialType[name]']/../td[7]/span[2]/ul/li[2]/a");
       $this->waitForElementPresent("_qf_FinancialType_next");
-      $this->click("_qf_FinancialType_next"); 
-      $this->waitForPageToLoad('30000');      
+      $this->click("_qf_FinancialType_next");
+      $this->waitForPageToLoad('30000');
       $this->assertTrue( $this->isTextPresent('Selected financial type has been deleted.'), 'Missing text: ' . 'Selected financial type has been deleted.' );
       return;
     }
     if ($option == 'new') {
       $this->click ("link=Add Financial Type");
     }
-    else { 
+    else {
       $this->click ("xpath=id('ltype')/div/table/tbody/tr/td[1][text()='$financialType[oldname]']/../td[7]/span/a[text()='Edit']");
     }
     $this->waitForPageToLoad('30000');
@@ -1532,21 +1555,21 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     if ($option == 'new') {
       $this->type('description',  $financialType['name'].' description');
     }
-        
+
     if ($financialType['is_reserved']) {
       $this->check('is_reserved');
     }
     else {
-      $this->uncheck('is_reserved'); 
+      $this->uncheck('is_reserved');
     }
-        
+
     if ($financialType['is_deductible']) {
       $this->check('is_deductible');
     }
     else {
-      $this->uncheck('is_deductible'); 
+      $this->uncheck('is_deductible');
     }
-        
+
     $this->click('_qf_FinancialType_next');
     $this->waitForPageToLoad('30000');
     if ($option == 'new') {
@@ -1557,7 +1580,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     }
     $this->assertTrue($this->isTextPresent($text), 'Missing text: ' . $text);
   }
-    
+
 
 
   function changePermissions($permission) {
@@ -1621,13 +1644,13 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     $isTax = TRUE;
     $taxRate = 9.99999999;
     $isDefault = FALSE;
-        
+
     //Add new organisation
     if ($orgName) {
       $this->webtestAddOrganization($orgName);
     }
-  
-    $this->_testAddFinancialAccount( 
+
+    $this->_testAddFinancialAccount(
       $financialAccountTitle,
       $financialAccountDescription,
       $accountingCode,
@@ -1640,19 +1663,19 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $isDefault
     );
     $this->waitForElementPresent("xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[8]/span/a[text()='Edit']");
-  
+
     //Add new Financial Type
     $financialType['name'] = 'FinancialType '.substr(sha1(rand()), 0, 4);
     $financialType['is_deductible'] = true;
-    $financialType['is_reserved'] = false; 
+    $financialType['is_reserved'] = false;
     $this->addeditFinancialType($financialType);
-  
+
     $accountRelationship = "Income Account is"; //Asset Account - of Income Account is
     $expected[] = array(
-      'financial_account' => $financialAccountTitle, 
+      'financial_account' => $financialAccountTitle,
       'account_relationship'  => $accountRelationship
     );
-  
+
     $this->select('account_relationship', "label={$accountRelationship}");
     sleep(2);
     $this->select('financial_account_id', "label={$financialAccountTitle}");
