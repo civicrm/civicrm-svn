@@ -40,7 +40,6 @@
 /**
  * Include utility functions
  */
-require_once 'CRM/Core/BAO/EntityTag.php';
 
 /**
  * {@getfields EntityTag_get}
@@ -62,7 +61,7 @@ function civicrm_api3_entity_tag_get($params) {
 }
 /*
  * Adjust Metadata for Get action
- * 
+ *
  * The metadata is used for setting defaults, documentation & validation
  * @param array $params array or parameters determined by getfields
  */
@@ -96,7 +95,6 @@ function civicrm_api3_entity_tag_display($params) {
     $entityTable = $params['entity_table'];
   }
 
-  require_once 'CRM/Core/BAO/EntityTag.php';
   $values = CRM_Core_BAO_EntityTag::getTag($entityID, $entityTable);
   $result = array();
   $tags   = CRM_Core_PseudoConstant::tag();
@@ -173,7 +171,6 @@ function _civicrm_api3_entity_tag_common($params, $op = 'add') {
     return civicrm_api3_create_error('tag_id is a required field');
   }
 
-  require_once 'CRM/Core/BAO/EntityTag.php';
   $values = array('is_error' => 0);
   if ($op == 'add') {
     $values['total_count'] = $values['added'] = $values['not_added'] = 0;
