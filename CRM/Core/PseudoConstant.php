@@ -404,6 +404,7 @@ class CRM_Core_PseudoConstant {
     'CRM_Event_PseudoConstant',
     'CRM_Contribute_PseudoConstant',
     'CRM_Member_PseudoConstant',
+    'CRM_Grant_PseudoConstant',
   );
     /**
    * populate the object from the database. generic populate

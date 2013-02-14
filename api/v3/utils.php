@@ -939,10 +939,17 @@ function _civicrm_api3_basic_get($bao_name, &$params, $returnAsSuccess = TRUE, $
 
 /*
  * Function to do a 'standard' api create - when the api is only doing a $bao::create then use this
+ * @param string $bao_name Name of BAO Class
+ * @param array $params parameters passed into the api call
+ * @param string $entity Entity - pass in if entity is non-standard & required $ids array
  */
-function _civicrm_api3_basic_create($bao_name, &$params) {
+function _civicrm_api3_basic_create($bao_name, &$params, $entity = null) {
 
   $args = array(&$params);
+  if(!empty($entity)){
+    $ids = array($entity => CRM_Utils_Array::value('id', $params));
+    $args[] = &$ids;
+  }
   if (method_exists($bao_name, 'create')) {
     $fct = 'create';
   }

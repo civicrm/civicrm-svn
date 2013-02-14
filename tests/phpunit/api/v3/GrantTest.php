@@ -1,11 +1,49 @@
 <?php
+/*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 4.3                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2013                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*/
+
 require_once 'CiviTest/CiviUnitTestCase.php';
+
+
+/**
+ *  Test APIv3 civicrm_grant* functions
+ *
+ *  @package CiviCRM_APIv3
+ *  @subpackage API_Grant
+ */
+
 class api_v3_GrantTest extends CiviUnitTestCase {
   protected $_apiversion = 3;
   protected $params;
   protected $ids = array();
   protected $_entity = 'Grant';
-  public $DBResetRequired = FALSE; function setUp() {
+  public $_eNoticeCompliant = TRUE;
+  public $DBResetRequired = FALSE;
+
+  function setUp() {
     parent::setUp();
     $this->ids['contact'][0] = $this->individualCreate();
     $this->params = array(
@@ -108,7 +146,7 @@ class api_v3_GrantTest extends CiviUnitTestCase {
 
         case CRM_Utils_Type::T_INT:
           // probably created with a 1
-          $entity[$field] = 111;
+          $entity[$field] = 2;
           if (CRM_Utils_Array::value('FKClassName', $specs)) {
             $entity[$field] = empty($entity2[$field]) ? $entity2[$specs]['uniqueName'] : $entity2[$field];
           }
@@ -131,11 +169,11 @@ class api_v3_GrantTest extends CiviUnitTestCase {
       $updateParams = array(
         'version' => 3,
         'id' => $entity['id'],
-        $field => $entity[$field],
+         $field => $entity[$field],
+        'debug' => 1,
       );
       $update = civicrm_api($entityName, 'create', $updateParams);
-
-      $this->assertAPISuccess($update, 'in line ' . __LINE__);
+      $this->assertAPISuccess($update, "setting $field to {$entity[$field]} in line " . __LINE__);
       $checkParams = array(
         'id' => $entity['id'],
         'version' => 3,
