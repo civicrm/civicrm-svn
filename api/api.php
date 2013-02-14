@@ -351,17 +351,6 @@ function _civicrm_api_get_camel_name($entity, $version = NULL) {
     $version = civicrm_get_api_version();
   }
 
-  if (!isset($_map[$version])) {
-    $_map[$version]['utils'] = 'utils';
-    if ($version === 2) {
-      // TODO: Check if $_map needs to contain anything.
-      $_map[$version]['contribution'] = 'Contribute';
-      $_map[$version]['custom_field'] = 'CustomGroup';
-    }
-    else {
-      // assume $version == 3.
-    }
-  }
   if (isset($_map[$version][strtolower($entity)])) {
     return $_map[$version][strtolower($entity)];
   }
@@ -501,7 +490,7 @@ function _civicrm_api_replace_variables($entity, $action, &$params, &$parentResu
           if (array_key_exists($fieldname, $parentResult) && is_array($parentResult[$fieldname])) {
             $arrayLocation = $parentResult[$fieldname];
             foreach ($stringParts as $key => $value) {
-              $arrayLocation = $arrayLocation[$value];
+              $arrayLocation = CRM_Utils_Array::value($value, $arrayLocation);
             }
             $params[$field] = $arrayLocation;
           }
