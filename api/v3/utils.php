@@ -1461,7 +1461,7 @@ function _civicrm_api3_validate_integer(&$params, &$fieldname, &$fieldInfo, $ent
       if(CRM_Utils_Array::value('FKClassName', $fieldInfo)){
         // we'll get the options for this now since we are doing a swap out
         $options = civicrm_api($entity, 'getoptions', array('version' => 3, 'field' => $fieldname));
-        if(empty($fieldInfo['is_error'])){
+        if(empty($options['is_error'])){
           $fieldInfo['options'] = $options['values'];
         }
       }

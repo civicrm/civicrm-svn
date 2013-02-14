@@ -1,6 +1,4 @@
 <?php
-// $Id$
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.3                                                |
@@ -42,6 +40,7 @@ class api_v3_PhoneTest extends CiviUnitTestCase {
   protected $_contactID;
   protected $_locationType;
   protected $_params;
+  public $_eNoticeCompliant = TRUE;
 
   function setUp() {
     $this->_apiversion = 3;
@@ -58,6 +57,7 @@ class api_v3_PhoneTest extends CiviUnitTestCase {
       'phone' => '(123) 456-7890',
       'is_primary' => 1,
       'version' => $this->_apiversion,
+      'phone_type_id' => 1,
     );
   }
 
@@ -121,20 +121,19 @@ class api_v3_PhoneTest extends CiviUnitTestCase {
    * Test civicrm_phone_get with wrong params.
    */
   public function testGetWrongParams() {
-    $params = array('contact_id' => 'abc', 'version' => $this->_apiversion);
-    $result = civicrm_api('Phone', 'Get', ($params));
+    $params = array('contact_id' => 'abc', 'version' => $this->_apiversion, 'debug'=>1 );
+    $result = civicrm_api('Phone', 'Get', $params);
     $this->assertEquals(0, $result['is_error'], 'In line ' . __LINE__);
     $this->assertEquals(0, $result['count'], 'In line ' . __LINE__);
 
     $params = array('location_type_id' => 'abc', 'version' => $this->_apiversion);
     $result = civicrm_api('Phone', 'Get', ($params));
     $this->assertEquals(1, $result['is_error'], 'In line ' . __LINE__);
-    $this->assertEquals(0, $result['count'], 'In line ' . __LINE__);
 
     $params = array('phone_type_id' => 'abc', 'version' => $this->_apiversion);
     $result = civicrm_api('Phone', 'Get', ($params));
     $this->assertEquals(1, $result['is_error'], 'In line ' . __LINE__);
-    $this->assertEquals(0, $result['count'], 'In line ' . __LINE__);
+    $this->assertTrue(empty($result['count']), 'In line ' . __LINE__);
   }
 
   /**
@@ -144,7 +143,7 @@ class api_v3_PhoneTest extends CiviUnitTestCase {
     $phone = civicrm_api('phone', 'create', $this->_params);
     $this->assertAPISuccess($phone, 'In line ' . __LINE__);
     $params = array(
-      'contact_id' => $phone['values'][$phone['contact_id']],
+      'contact_id' =>  $this->_params['contact_id'],
       'phone' => $phone['values'][$phone['id']]['phone'],
       'version' => $this->_apiversion,
     );
