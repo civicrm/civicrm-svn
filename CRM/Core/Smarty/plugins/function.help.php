@@ -64,8 +64,11 @@ function smarty_function_help($params, &$smarty) {
   $params['file'] = str_replace(array('.tpl', '.hlp'), '', $params['file']);
 
   if (empty($params['title'])) {
+    // Avod overwriting existing vars CRM-11900
+    $oldID = $smarty->get_template_vars('id');
     $smarty->assign('id', $params['id'] . '-title');
     $name = trim($smarty->fetch($params['file'] . '.hlp'));
+    $smarty->assign('id', $oldID);
   }
   else {
     $name = trim(strip_tags($params['title']));
