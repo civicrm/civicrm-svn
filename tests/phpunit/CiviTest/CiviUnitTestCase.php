@@ -585,7 +585,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     if (!empty($prefix)) {
       $prefix .= ': ';
     }
-    $this->assertEquals(0, $apiResult['is_error'], $prefix . empty($apiResult['error_message']) ? '' : $apiResult['error_message']);
+    $this->assertEquals(0, $apiResult['is_error'], $prefix . (empty($apiResult['error_message']) ? '' : $apiResult['error_message']));
   }
 
   function assertType($expected, $actual, $message = '') {
