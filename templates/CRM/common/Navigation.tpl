@@ -31,6 +31,7 @@
               <div id="quickSearch">
                 <input type="text" class="form-text" id="sort_name_navigation" placeholder="{ts}Name/Email{/ts}" name="sort_name" style="width: 12em;" />
                 <input type="hidden" id="sort_contact_id" value="" />
+                <input type="hidden" name="qfKey" value="{crmKey name='CRM_Contact_Controller_Search' addSequence=1}" />
                 <input type="submit" value="{ts}Go{/ts}" name="_qf_Basic_refresh" class="form-submit default" style="display: none;" />
               </div>
             </form>
@@ -47,7 +48,7 @@
             <li><label class="crm-quickSearchField"><input type="radio" data-tablename="sts" value="postal_code" name="quickSearchField">{ts}Postal Code{/ts}</label></li>
             <li><label class="crm-quickSearchField"><input type="radio" data-tablename="cc" value="job_title" name="quickSearchField">{ts}Job Title{/ts}</label></li>
           </ul>
-        </li>    
+        </li>
 
   {/if}
         {$navigation}
@@ -69,6 +70,7 @@ cj( document ).ready( function( ) {
       htmlContent = '<input type="submit" value="Go" name="_qf_Basic_refresh" class="form-submit default" />';
     }
     htmlContent += '<input type="text" class="form-text" id="sort_name_navigation" placeholder="{/literal}{ts escape='js'}Find Contacts by...{/ts}{literal}" name="sort_name" style="width: 12em; margin-left: -45px;" /><input type="text" id="sort_contact_id" style="display: none" />';
+    htmlContent += '<input type="hidden" name="qfKey" value="' + {/literal}'{crmKey name='CRM_Contact_Controller_Search' addSequence=1}'{literal} + '" />';
     cj('#quickSearch').html(htmlContent);
   }
 
