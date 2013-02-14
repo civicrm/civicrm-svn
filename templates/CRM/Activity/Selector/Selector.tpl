@@ -32,10 +32,10 @@
     <div class="crm-accordion-body">
       <div class="no-border form-layout-compressed" id="searchOptions">
           <div class="crm-contact-form-block-activity_type_filter_id crm-inline-edit-field">
-            {$form.activity_type_filter_id.label} {$form.activity_type_filter_id.html}
+            {$form.activity_type_filter_id.label} {$form.activity_type_filter_id.html|crmAddClass:big}
           </div>
           <div class="crm-contact-form-block-activity_type_exclude_filter_id crm-inline-edit-field">
-            {$form.activity_type_exclude_filter_id.label} {$form.activity_type_exclude_filter_id.html}
+            {$form.activity_type_exclude_filter_id.label} {$form.activity_type_exclude_filter_id.html|crmAddClass:big}
           </div>
       </div>
     </div><!-- /.crm-accordion-body -->
