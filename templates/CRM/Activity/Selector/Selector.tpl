@@ -30,17 +30,14 @@
     {ts}Filter by Activity Type{/ts}</a>
     </div><!-- /.crm-accordion-header -->
     <div class="crm-accordion-body">
-
-      <table class="no-border form-layout-compressed" id="searchOptions">
-        <tr>
-          <td class="crm-contact-form-block-activity_type_filter_id">
+      <div class="no-border form-layout-compressed" id="searchOptions">
+          <div class="crm-contact-form-block-activity_type_filter_id crm-inline-edit-field">
             {$form.activity_type_filter_id.label} {$form.activity_type_filter_id.html}
-          </td>
-          <td class="crm-contact-form-block-activity_type_exclude_filter_id">
+          </div>
+          <div class="crm-contact-form-block-activity_type_exclude_filter_id crm-inline-edit-field">
             {$form.activity_type_exclude_filter_id.label} {$form.activity_type_exclude_filter_id.html}
-          </td>
-        </tr>
-      </table>
+          </div>
+      </div>
     </div><!-- /.crm-accordion-body -->
   </div><!-- /.crm-accordion-wrapper -->
   <table id="contact-activity-selector-{$context}">
