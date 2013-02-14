@@ -2869,6 +2869,16 @@ LEFT JOIN civicrm_address add2 ON ( add1.master_id = add2.id )
    * @see http://issues.civicrm.org/jira/browse/CRM-10554
    */
   static function triggerInfo(&$info, $tableName = NULL) {
+    //during upgrade, first check for valid version and then create triggers
+    //i.e the columns created_date and modified_date are introduced in 4.3.alpha1 so dont create triggers for older version
+    if (CRM_Core_Config::isUpgradeMode()) {
+      $currentVer = CRM_Core_BAO_Domain::version(TRUE);
+      //if current version is less than 4.3.alpha1 dont create below triggers
+      if (version_compare($currentVer, '4.3.alpha1') < 0) {
+        return;
+      }
+    }
+
     if ($tableName == NULL || $tableName == self::getTableName()) {
       $info[] = array(
         'table' => array(self::getTableName()),
