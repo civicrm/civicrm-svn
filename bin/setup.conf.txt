@@ -36,3 +36,9 @@ DBLOAD=
 # IN ADDITION TO either civicrm_generated or civicrm_data.
 # The DBADD file must be in the sql directory.
 # DBADD=
+
+# GenCode produces localized data files for all known
+# locales. This is good for stable-releases but
+# cumbersome during development. To speed it up,
+# list the desired locales.
+# export CIVICRM_LOCALES=en_US,fr_FR
