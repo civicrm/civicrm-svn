@@ -307,7 +307,7 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant {
         $roles = implode(', ', $role);
       }
       $eventTitle = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_Event', $participant->event_id, 'title');
-      $title = CRM_Contact_BAO_Contact::displayName($participant->contact_id) . ' (' . $roles . ' - ' . $eventTitle . ')';
+      $title = CRM_Contact_BAO_Contact::displayName($participant->contact_id) . ' (' . empty($roles) ? '' : $roles . ' - ' . $eventTitle . ')';
 
       // add the recently created Participant
       CRM_Utils_Recent::add($title,
@@ -1725,7 +1725,7 @@ WHERE    civicrm_participant.contact_id = {$contactID} AND
    *
    * @static
    */
-  static function createDiscountTrxn($eventID, $contributionParams, $feeLevel) { 
+  static function createDiscountTrxn($eventID, $contributionParams, $feeLevel) {
     // CRM-11124
     $checkDiscount = CRM_Core_BAO_Discount::findSet($eventID,'civicrm_event');
     if (!empty($checkDiscount)) {
@@ -1742,10 +1742,10 @@ WHERE cpf.price_set_id = %1 AND cpfv.label LIKE %2";
         $contributionParams['contribution']->financial_type_id, $relationTypeId);
       if (CRM_Utils_Array::value('from_financial_account_id', $contributionParams['trxnParams'])) {
         $contributionParams['trxnParams']['total_amount'] = $mainAmount - $contributionParams['total_amount'];
-        $contributionParams['trxnParams']['payment_processor_id'] = $contributionParams['trxnParams']['payment_instrument_id'] = 
-          $contributionParams['trxnParams']['check_number'] = $contributionParams['trxnParams']['trxn_id'] = 
+        $contributionParams['trxnParams']['payment_processor_id'] = $contributionParams['trxnParams']['payment_instrument_id'] =
+          $contributionParams['trxnParams']['check_number'] = $contributionParams['trxnParams']['trxn_id'] =
           $contributionParams['trxnParams']['net_amount'] = $contributionParams['trxnParams']['fee_amount'] = NULL;
-        
+
         CRM_Core_BAO_FinancialTrxn::create($contributionParams['trxnParams']);
       }
     }
