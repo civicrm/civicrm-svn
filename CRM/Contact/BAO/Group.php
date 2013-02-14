@@ -914,7 +914,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
        $query .= " AND SUBSTRING_INDEX(parents, ',', 1) = %2";
      }
      $query .= " ORDER BY title";
-     $dao = CRM_Core_DAO::executeQuery($query, $args, TRUE, NULL, FALSE, FALSE);
+     $dao = CRM_Core_DAO::executeQuery($query, $args, TRUE, NULL, FALSE, TRUE);
 
      // Sort the groups into the correct storage by the parent
      // $roots represent the current leaf nodes that need to be checked for
