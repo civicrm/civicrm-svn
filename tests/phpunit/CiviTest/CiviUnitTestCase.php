@@ -1062,7 +1062,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     if (CRM_Utils_Array::value('is_error', $result)) {
       throw new Exception('Error while creating entity tag');
     }
-    return $result['id'];
+    return TRUE;
   }
 
   /**
