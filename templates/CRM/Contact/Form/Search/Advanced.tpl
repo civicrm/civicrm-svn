@@ -44,7 +44,7 @@
           {ts}Search Criteria{/ts}
         {/if}
       {/if}
-      {help id='id-advanced-intro'}
+      {*help id='id-advanced-intro'*}
     </div>
     <div class="crm-accordion-body">
       {include file="CRM/Contact/Form/Search/AdvancedCriteria.tpl"}
