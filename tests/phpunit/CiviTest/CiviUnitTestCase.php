@@ -2155,7 +2155,7 @@ AND    ( TABLE_NAME LIKE 'civicrm_value_%' )
         $keys[CRM_Utils_Array::Value('name', $settings, $field)] = CRM_Utils_Array::value('name', $settings, $field);
       }
 
-      if ($settings['type'] == CRM_Utils_Type::T_DATE) {
+      if (CRM_Utils_Array::value('type', $settings)  == CRM_Utils_Type::T_DATE) {
         $dateFields[] = $field;
       }
     }
