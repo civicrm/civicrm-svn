@@ -44,7 +44,10 @@ class api_v3_ParticipantTest extends CiviUnitTestCase {
   protected $_participantID;
   protected $_eventID;
   protected $_individualId;
-  protected $_params; function get_info() {
+  protected $_params;
+  public $_eNoticeCompliant = FALSE;
+
+  function get_info() {
     return array(
       'name' => 'Participant Create',
       'description' => 'Test all Participant Create API methods.',
@@ -104,7 +107,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase {
     $result = civicrm_api($this->_entity, 'create', $params);
     $this->assertEquals($result['id'], $result['values'][$result['id']]['id']);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__);
-    $this->assertNotEquals($result['is_error'], 1, $result['error_message'] . ' in line ' . __LINE__);
+    $this->assertAPISuccess($result);
 
     $check = civicrm_api($this->_entity, 'get', array('version' => 3, 'id' => $result['id']));
     $this->assertEquals("custom string", $check['values'][$check['id']]['custom_' . $ids['custom_field_id']], ' in line ' . __LINE__);
@@ -432,7 +435,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase {
       'version' => $this->_apiversion,
     );
     $participant = civicrm_api('participant', 'create', $params);
-    $this->assertNotEquals($participant['is_error'], 1);
+    $this->assertAPISuccess($participant);
     $this->_participantID = $participant['id'];
 
     if (!$participant['is_error']) {
@@ -505,8 +508,8 @@ class api_v3_ParticipantTest extends CiviUnitTestCase {
       'status_id' => 2,
     );
     civicrm_api('participant', 'create', $update);
-    $this->assertEquals($participant['values'][$participant['id']]['participant_fee_level'],
-      $update['values'][$participant['id']]['participant_fee_level']
+    $this->assertEquals($participant['values'][$participant['id']]['fee_level'],
+      $myParams['participant_fee_level']
     );
     $this->getAndCheck($update, $participant['id'], 'participant');
   }
@@ -660,7 +663,7 @@ class api_v3_ParticipantTest extends CiviUnitTestCase {
       'version' => $this->_apiversion,
     );
     $participant = civicrm_api('participant', 'delete', $params);
-    $this->assertNotEquals($participant['is_error'], 1);
+    $this->assertAPISuccess($participant);
     $this->assertDBState('CRM_Event_DAO_Participant', $this->_participantID, NULL, TRUE);
   }
 

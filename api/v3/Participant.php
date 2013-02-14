@@ -41,7 +41,6 @@
 /**
  * Files required for this package
  */
-require_once 'CRM/Event/BAO/Participant.php';
 
 /**
  * Create an Event Participant
@@ -57,9 +56,7 @@ require_once 'CRM/Event/BAO/Participant.php';
  * @access public
  */
 function civicrm_api3_participant_create($params) {
-  //check that event id is not an template
-  // note that check duplicate check was removed as it wasn't actually being called.
-  //check contact exists removed as belongs @ wrapper layer
+  //check that event id is not an template - should be done @ BAO layer
   if (CRM_Utils_Array::value('event_id', $params)) {
     $isTemplate = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_Event', $params['event_id'], 'is_template');
     if (!empty($isTemplate)) {
@@ -70,15 +67,14 @@ function civicrm_api3_participant_create($params) {
   $value = array();
   _civicrm_api3_custom_format_params($params, $values, 'Participant');
   $params = array_merge($values, $params);
-  require_once 'CRM/Event/BAO/Participant.php';
 
   $participantBAO = CRM_Event_BAO_Participant::create($params);
- 
+
   if(empty($params['price_set_id']) && empty($params['id']) && CRM_Utils_Array::value('fee_level', $params)){
     _civicrm_api3_participant_createlineitem($params, $participantBAO);
   }
   _civicrm_api3_object_to_array($participantBAO, $participant[$participantBAO->id]);
- 
+
   return civicrm_api3_create_success($participant, $params, 'participant', 'create', $participantBAO);
 }
 
@@ -94,7 +90,7 @@ LEFT JOIN   civicrm_price_field pf ON pf.`price_set_id` = ps.id
 LEFT JOIN   civicrm_price_field_value pfv ON pfv.price_field_id = pf.id and pfv.label = '{$params['fee_level']}'
 where ps.id is not null
 ";
- 
+
   $dao = CRM_Core_DAO::executeQuery($sql);
   if ($dao->fetch()) {
     $amount = CRM_Utils_Array::value('fee_amount', $params, 0);
@@ -109,15 +105,15 @@ where ps.id is not null
       'unit_price' => $amount,
       'line_total' => $amount,
       'version' => 3,
-    ); 
+    );
     civicrm_api('line_item', 'create', $lineItemparams);
   }
 }
- 
+
 
 /*
  * Adjust Metadata for Create action
- * 
+ *
  * The metadata is used for setting defaults, documentation & validation
  * @param array $params array or parameters determined by getfields
  */
@@ -177,7 +173,7 @@ function civicrm_api3_participant_get($params) {
 
 /*
  * Adjust Metadata for Get action
- * 
+ *
  * The metadata is used for setting defaults, documentation & validation
  * @param array $params array or parameters determined by getfields
  */
@@ -190,20 +186,20 @@ function _civicrm_api3_participant_get_spec(&$params) {
  *
  * This API is used for deleting a contact participant
  *
- * @param  Int  $participantID   Id of the contact participant to be deleted
+ * @param  array  $params Array containing  Id of the contact participant to be deleted
  *
  * {@getfields participant_delete}
  * @access public
  */
-function &civicrm_api3_participant_delete($params) {
-  $participant = new CRM_Event_BAO_Participant();
-  $result = $participant->deleteParticipant($params['id']);
+function civicrm_api3_participant_delete($params) {
+
+  $result = CRM_Event_BAO_Participant::deleteParticipant($params['id']);
 
   if ($result) {
     return civicrm_api3_create_success();
   }
   else {
-    return civicrm_api3_create_error('Error while deleting participant');
+    throw new Exception('Error while deleting participant');
   }
 }
 
