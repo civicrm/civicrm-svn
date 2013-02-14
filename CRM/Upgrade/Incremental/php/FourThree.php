@@ -60,6 +60,13 @@ class CRM_Upgrade_Incremental_php_FourThree {
       $isDefaultsModified = self::_checkAndMigrateDefaultFinancialTypes();
       if($isDefaultsModified) {
         $postUpgradeMessage .= '<br />' . ts('Please review all price set financial type assignments.');
+      }  
+      list($context, $orgName) = self::createDomainContacts();
+      if ($context == 'added') {
+        $postUpgradeMessage .= '<br />' . ts("Added an organization contact as default domain contact of name '{$orgName}'.");
+      }
+      elseif ($context == 'merged') {
+        $postUpgradeMessage .= '<br />' . ts("Merged an organization contact as default domain contact of name '{$orgName}'.");
       }
     }
 
@@ -85,7 +92,6 @@ WHERE    entity_value = '' OR entity_value IS NULL
   }
 
   function upgrade_4_3_alpha1($rev) {
-    self::createDomainContacts();
     self::task_4_3_alpha1_checkDBConstraints();
     
     // task to process sql
@@ -503,13 +509,16 @@ FROM   civicrm_financial_item fi";
   }
 
   function createDomainContacts() {
-    $domainParams = array();
+    $domainParams = $context = array();
     $query = "
 ALTER TABLE `civicrm_domain` ADD `contact_id` INT( 10 ) UNSIGNED NULL DEFAULT NULL COMMENT 'FK to Contact ID. This is specifically not an FK to avoid circular constraints',
  ADD CONSTRAINT `FK_civicrm_domain_contact_id` FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact` (`id`);";
     CRM_Core_DAO::executeQuery($query, CRM_Core_DAO::$_nullArray, TRUE, NULL, FALSE, FALSE);
-    $dao = new CRM_Core_DAO_Domain();
-    $dao->find();
+    
+    $query = 'SELECT cd.id, cd.name, ce.email FROM `civicrm_domain` cd
+LEFT JOIN civicrm_loc_block clb ON clb.id = cd. loc_block_id
+LEFT JOIN civicrm_email ce ON ce.id = clb.email_id ;' ;
+    $dao = CRM_Core_DAO::executeQuery($query);
     while($dao->fetch()) {
       $params = array(
         'sort_name' => $dao->name,
@@ -518,11 +527,26 @@ ALTER TABLE `civicrm_domain` ADD `contact_id` INT( 10 ) UNSIGNED NULL DEFAULT NU
         'organization_name' => $dao->name,
         'contact_type' => 'Organization'
       );
-
-      $contact = CRM_Contact_BAO_Contact::add($params);
-      $domainParams['contact_id'] = $contact->id;
+      $query = "SELECT cc.id FROM `civicrm_contact` cc
+LEFT JOIN civicrm_email ce ON ce.contact_id = cc.id
+WHERE cc.contact_type = 'Organization' AND cc.organization_name = '{$dao->name}' ";
+      if ($dao->email) {
+        $query .= " AND ce.email = '{$dao->email}' ";
+      }
+      $contactID = CRM_Core_DAO::singleValueQuery($query);
+      $context[1] = $dao->name;
+      if (empty($contactID)) {
+        $contact = CRM_Contact_BAO_Contact::add($params);
+        $contactID = $contact->id;
+        $context[0] = 'added';
+      } 
+      else {
+        $context[0] = 'merged';
+      }
+      $domainParams['contact_id'] = $contactID;
       CRM_Core_BAO_Domain::edit($domainParams, $dao->id);
     }
+    return $context;
   }
 
   function task_4_3_alpha1_checkDBConstraints() {
