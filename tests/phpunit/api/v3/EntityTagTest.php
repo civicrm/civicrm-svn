@@ -1,6 +1,4 @@
 <?php
-// $Id$
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.3                                                |
@@ -27,10 +25,16 @@
  +--------------------------------------------------------------------+
 */
 
+require_once 'CiviTest/CiviUnitTestCase.php';
 
 
+/**
+ *  Test APIv3 civicrm_entity_tag_* functions
+ *
+ *  @package CiviCRM_APIv3
+ *  @subpackage API_Core
+ */
 
-require_once 'api/v3/EntityTag.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 class api_v3_EntityTagTest extends CiviUnitTestCase {
 
@@ -39,7 +43,10 @@ class api_v3_EntityTagTest extends CiviUnitTestCase {
   protected $_organizationID;
   protected $_tagID;
   protected $_apiversion;
-  protected $_tag; function setUp() {
+  protected $_tag;
+  public $_eNoticeCompliant = TRUE;
+
+  function setUp() {
     parent::setUp();
     $this->_apiversion = 3;
 
