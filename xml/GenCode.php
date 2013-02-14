@@ -384,6 +384,13 @@ Alternatively you can get a version of CiviCRM that matches your PHP version
       $config->gettextResourceDir = $localeDir;
       $locales = preg_grep('/^[a-z][a-z]_[A-Z][A-Z]$/', scandir($localeDir));
     }
+
+    $localesMask = getenv('CIVICRM_LOCALES');
+    if (!empty($localesMask)) {
+      $mask = explode(',', $localesMask);
+      $locales = array_intersect($locales, $mask);
+    }
+
     if (!in_array('en_US', $locales)) {
       array_unshift($locales, 'en_US');
     }
