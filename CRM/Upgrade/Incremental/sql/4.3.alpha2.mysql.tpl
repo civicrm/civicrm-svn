@@ -26,6 +26,10 @@ UPDATE `civicrm_navigation`
 SELECT @contributionlastID := max(id) from civicrm_navigation where name = 'Contributions';
 SELECT @importWeight := weight from civicrm_navigation where name = 'Import Contributions' and parent_id = @contributionlastID;
 
+-- since 'Bulk Data Entry' was renamed to 'Batch Data Entry'
+UPDATE `civicrm_navigation` SET label = '{ts escape="sql"}Batch Data Entry{/ts}', name = 'Batch Data Entry'
+WHERE url = 'civicrm/batch&reset=1';
+
 UPDATE `civicrm_navigation`
   SET `weight` = `weight`+2
   WHERE `parent_id` = @contributionlastID
