@@ -58,9 +58,8 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form {
     $this->_mappingID = $mappingID = NULL;
 
     if ($this->_action & (CRM_Core_Action::DELETE)) {
-      $reminderName = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_ActionSchedule',
-        $this->_id, 'title'
-      );
+      $reminderName =
+        CRM_Core_DAO::getFieldValue('CRM_Core_DAO_ActionSchedule', $this->_id, 'title');
       $this->_context = CRM_Utils_Request::retrieve('context', 'String', $this);
       if ($this->_context == 'event') {
         $this->_eventId = CRM_Utils_Request::retrieve('eventId', 'Integer', $this);
@@ -69,9 +68,8 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form {
       return;
     }
     elseif ($this->_action & (CRM_Core_Action::UPDATE)) {
-      $this->_mappingID = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_ActionSchedule',
-        $this->_id, 'mapping_id'
-      );
+      $this->_mappingID =
+        CRM_Core_DAO::getFieldValue('CRM_Core_DAO_ActionSchedule', $this->_id, 'mapping_id');
       $this->_context = CRM_Utils_Request::retrieve('context', 'String', $this);
       if ($this->_context == 'event') {
         $this->_eventId = CRM_Utils_Request::retrieve('eventId', 'Integer', $this);
@@ -85,21 +83,25 @@ class CRM_Admin_Form_ScheduleReminders extends CRM_Admin_Form {
       $mappingID = $this->_mappingID;
     }
 
-    $this->add('text', 'title', ts('Title'),
-      array(
-        'size' => 45, 'maxlength' => 128), TRUE
+    $this->add(
+      'text',
+      'title',
+      ts('Title'),
+      array('size' => 45, 'maxlength' => 128),
+      TRUE
     );
 
     $selectionOptions = CRM_Core_BAO_ActionSchedule::getSelection($mappingID);
     extract($selectionOptions);
 
     if (empty($sel1)) {
-        CRM_Core_Error::fatal('Could not find mapping for scheduled reminders.');
+      CRM_Core_Error::fatal('Could not find mapping for scheduled reminders.');
     }
     $this->assign('entityMapping', json_encode($entityMapping));
     $this->assign('recipientMapping', json_encode($recipientMapping));
 
-    $sel = &$this->add('hierselect',
+    $sel = &$this->add(
+      'hierselect',
       'entity',
       ts('Entity'),
       array(

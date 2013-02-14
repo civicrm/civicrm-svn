@@ -1,29 +1,29 @@
 <?php
 /*
- +--------------------------------------------------------------------+
- | CiviCRM version 4.3                                                |
- +--------------------------------------------------------------------+
- | Copyright (C) 2011 Marty Wright                                    |
- | Licensed to CiviCRM under the Academic Free License version 3.0.   |
- +--------------------------------------------------------------------+
- | This file is a part of CiviCRM.                                    |
- |                                                                    |
- | CiviCRM is free software; you can copy, modify, and distribute it  |
- | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
- |                                                                    |
- | CiviCRM is distributed in the hope that it will be useful, but     |
- | WITHOUT ANY WARRANTY; without even the implied warranty of         |
- | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
- | See the GNU Affero General Public License for more details.        |
- |                                                                    |
- | You should have received a copy of the GNU Affero General Public   |
- | License and the CiviCRM Licensing Exception along                  |
- | with this program; if not, contact CiviCRM LLC                     |
- | at info[AT]civicrm[DOT]org. If you have questions about the        |
- | GNU Affero General Public License or the licensing of CiviCRM,     |
- | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
- +--------------------------------------------------------------------+
+  +--------------------------------------------------------------------+
+  | CiviCRM version 4.3                                                |
+  +--------------------------------------------------------------------+
+  | Copyright (C) 2011 Marty Wright                                    |
+  | Licensed to CiviCRM under the Academic Free License version 3.0.   |
+  +--------------------------------------------------------------------+
+  | This file is a part of CiviCRM.                                    |
+  |                                                                    |
+  | CiviCRM is free software; you can copy, modify, and distribute it  |
+  | under the terms of the GNU Affero General Public License           |
+  | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+  |                                                                    |
+  | CiviCRM is distributed in the hope that it will be useful, but     |
+  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+  | See the GNU Affero General Public License for more details.        |
+  |                                                                    |
+  | You should have received a copy of the GNU Affero General Public   |
+  | License and the CiviCRM Licensing Exception along                  |
+  | with this program; if not, contact CiviCRM LLC                     |
+  | at info[AT]civicrm[DOT]org. If you have questions about the        |
+  | GNU Affero General Public License or the licensing of CiviCRM,     |
+  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+  +--------------------------------------------------------------------+
 */
 
 /**
@@ -88,7 +88,7 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule {
 
     $sel1 = $sel2 = $sel3 = $sel4 = $sel5 = array();
     $options = array('manual' => ts('Choose Recipient(s)'),
-      'group' => ts('Select a Group'),
+               'group' => ts('Select a Group'),
     );
 
     $entityMapping = array();
@@ -143,8 +143,8 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule {
           break;
 
         case 'event_template':
-            $sel2[$key] = $valueLabel + $eventTemplate;
-            break;
+          $sel2[$key] = $valueLabel + $eventTemplate;
+          break;
         case 'civicrm_event':
           $sel2[$key] = $valueLabel + $event;
           break;
@@ -201,7 +201,7 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule {
           }
           break;
 
-      case 'auto_renew_options':
+        case 'auto_renew_options':
           foreach ($sel3[$id] as $kkey => & $vval) {
             $auto = 0;
             if ($kkey) {
@@ -209,14 +209,14 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule {
             }
             if ( $auto ) {
               $vval = $statusLabel + $autoRenew;
-          }
+            }
             else {
               $vval = $statusLabel;
             }
           }
           break;
 
-      case '':
+        case '':
           $sel3[$id] = '';
           break;
 
@@ -238,7 +238,7 @@ class CRM_Core_BAO_ActionSchedule extends CRM_Core_DAO_ActionSchedule {
     $mapping = self::getMapping($id);
     $sel4    = $sel5 = array();
     $options = array('manual' => ts('Choose Recipient(s)'),
-      'group' => ts('Select a Group'),
+               'group' => ts('Select a Group'),
     );
 
     $recipientMapping = array_combine(array_keys($options), array_keys($options));
@@ -338,7 +338,7 @@ WHERE   cas.entity_value = $id AND
       $query .= $where;
 
       $params = array(1 => array($id, 'Integer'),
-        2 => array($entityValue, 'String'),
+                2 => array($entityValue, 'String'),
       );
     }
 
@@ -432,7 +432,7 @@ WHERE   cas.entity_value = $id AND
 
       $smarty = CRM_Core_Smarty::singleton();
       foreach (array(
-        'text', 'html') as $elem) {
+          'text', 'html') as $elem) {
         $$elem = $smarty->fetch("string:{$$elem}");
       }
 
@@ -593,19 +593,16 @@ WHERE   cas.entity_value = $id AND
 
       if ($actionSchedule->record_activity) {
         if ($mapping->entity == 'civicrm_membership') {
-        $activityTypeID = CRM_Core_OptionGroup::getValue('activity_type',
-            'Membership Renewal Reminder', 'name'
-          );
+          $activityTypeID =
+            CRM_Core_OptionGroup::getValue('activity_type', 'Membership Renewal Reminder', 'name');
         }
         else {
-          $activityTypeID = CRM_Core_OptionGroup::getValue('activity_type',
-          'Reminder Sent', 'name'
-        );
+          $activityTypeID =
+            CRM_Core_OptionGroup::getValue('activity_type', 'Reminder Sent', 'name');
         }
 
-        $activityStatusID = CRM_Core_OptionGroup::getValue('activity_status',
-          'Completed', 'name'
-        );
+        $activityStatusID =
+          CRM_Core_OptionGroup::getValue('activity_status', 'Completed', 'name');
       }
 
       if ($mapping->entity == 'civicrm_activity') {
@@ -651,7 +648,7 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
 {$extraWhere}";
 
       $dao = CRM_Core_DAO::executeQuery($query,
-        array(1 => array($actionSchedule->id, 'Integer'))
+             array(1 => array($actionSchedule->id, 'Integer'))
       );
 
       while ($dao->fetch()) {
@@ -684,12 +681,14 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
         $errorMsg = '';
         $toEmail  = CRM_Contact_BAO_Contact::getPrimaryEmail($dao->contact_id);
         if ($toEmail) {
-          $result = CRM_Core_BAO_ActionSchedule::sendReminder($dao->contact_id,
-            $toEmail,
-            $actionSchedule->id,
-            $fromEmailAddress,
-            $entityTokenParams
-          );
+          $result =
+            CRM_Core_BAO_ActionSchedule::sendReminder(
+              $dao->contact_id,
+              $toEmail,
+              $actionSchedule->id,
+              $fromEmailAddress,
+              $entityTokenParams
+            );
 
           if (!$result || is_a($result, 'PEAR_Error')) {
             // we could not send an email, for now we ignore, CRM-3406
@@ -745,12 +744,12 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
       $select = $join = $where = array();
 
       $value = explode(CRM_Core_DAO::VALUE_SEPARATOR,
-        trim($actionSchedule->entity_value, CRM_Core_DAO::VALUE_SEPARATOR)
+               trim($actionSchedule->entity_value, CRM_Core_DAO::VALUE_SEPARATOR)
       );
       $value = implode(',', $value);
 
       $status = explode(CRM_Core_DAO::VALUE_SEPARATOR,
-        trim($actionSchedule->entity_status, CRM_Core_DAO::VALUE_SEPARATOR)
+                trim($actionSchedule->entity_status, CRM_Core_DAO::VALUE_SEPARATOR)
       );
       $status = implode(',', $status);
 
@@ -781,7 +780,7 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
         // build where clause
         if (!empty($value)) {
           $where[] = "e.activity_type_id IN ({$value})";
-        } 
+        }
         else {
           $where[] = "e.activity_type_id IS NULL";
         }
@@ -799,7 +798,7 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
         $join[] = 'INNER JOIN civicrm_event r ON e.event_id = r.id';
         if ($actionSchedule->recipient_listing) {
           $rList = explode(CRM_Core_DAO::VALUE_SEPARATOR,
-            trim($actionSchedule->recipient_listing, CRM_Core_DAO::VALUE_SEPARATOR)
+                   trim($actionSchedule->recipient_listing, CRM_Core_DAO::VALUE_SEPARATOR)
           );
           $rList = implode(',', $rList);
 
@@ -840,7 +839,7 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
           $where[] = "e.contribution_recur_id IS NOT NULL ";
         }
         elseif ( $status == 1 ) {
-            $where[] = "e.contribution_recur_id IS NULL ";
+          $where[] = "e.contribution_recur_id IS NULL ";
         }
 
         // build where clause
@@ -849,7 +848,7 @@ WHERE reminder.action_schedule_id = %1 AND reminder.action_date_time IS NULL
         }
         else {
           $where[] = "e.membership_type_id IS NULL";
-        } 
+        }
 
         $dateField = str_replace('membership_', 'e.', $actionSchedule->start_action_date);
         $notINClause = self::permissionedRelationships($contactField);
@@ -962,33 +961,33 @@ INNER JOIN {$reminderJoinClause}
   }
 
   static function permissionedRelationships($field) {
-      $query = '
+    $query = '
 SELECT    cm.id AS owner_id, cm.contact_id AS owner_contact, m.id AS slave_id, m.contact_id AS slave_contact, cmt.relationship_type_id AS relation_type, rel.contact_id_a, rel.contact_id_b, rel.is_permission_a_b, rel.is_permission_b_a
 FROM      civicrm_membership m
 LEFT JOIN civicrm_membership cm ON cm.id = m.owner_membership_id
 LEFT JOIN civicrm_membership_type cmt ON cmt.id = m.membership_type_id
 LEFT JOIN civicrm_relationship rel ON ( ( rel.contact_id_a = m.contact_id AND rel.contact_id_b = cm.contact_id AND rel.relationship_type_id = cmt.relationship_type_id )
                                         OR ( rel.contact_id_a = cm.contact_id AND rel.contact_id_b = m.contact_id AND rel.relationship_type_id = cmt.relationship_type_id ) )
-WHERE     m.owner_membership_id IS NOT NULL AND 
+WHERE     m.owner_membership_id IS NOT NULL AND
           ( rel.is_permission_a_b = 0 OR rel.is_permission_b_a = 0)
 
-';  
-      $excludeIds = array();
-      $dao = CRM_Core_DAO::executeQuery($query, array());
-      while ($dao->fetch()) {
-          if ($dao->slave_contact == $dao->contact_id_a && $dao->is_permission_b_a == 0) {
-            $excludeIds[] = $dao->slave_contact;  
-          } 
-          elseif ($dao->slave_contact == $dao->contact_id_b && $dao->is_permission_a_b == 0) {
-            $excludeIds[] = $dao->slave_contact;
-          }
+';
+    $excludeIds = array();
+    $dao = CRM_Core_DAO::executeQuery($query, array());
+    while ($dao->fetch()) {
+      if ($dao->slave_contact == $dao->contact_id_a && $dao->is_permission_b_a == 0) {
+        $excludeIds[] = $dao->slave_contact;
       }
-  
-      if (!empty($excludeIds)) {
-          $clause = "AND {$field} NOT IN ( " .implode(', ', $excludeIds) . ' ) ';
-          return  $clause;
-      } 
-      return NULL;
+      elseif ($dao->slave_contact == $dao->contact_id_b && $dao->is_permission_a_b == 0) {
+        $excludeIds[] = $dao->slave_contact;
+      }
+    }
+
+    if (!empty($excludeIds)) {
+      $clause = "AND {$field} NOT IN ( " .implode(', ', $excludeIds) . ' ) ';
+      return  $clause;
+    }
+    return NULL;
   }
 
   static function processQueue($now = NULL) {
@@ -1013,7 +1012,7 @@ WHERE     m.owner_membership_id IS NOT NULL AND
                                entity_value = %2";
 
     $params = array(1 => array($mappingID, 'Integer'),
-      2 => array($id, 'Integer'),
+              2 => array($id, 'Integer'),
     );
     return CRM_Core_DAO::singleValueQuery($queryString, $params);
   }
