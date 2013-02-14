@@ -37,9 +37,6 @@
  * @version $Id: CustomGroup.php 30879 2010-11-22 15:45:55Z shot $
  */
 
-
-require_once 'CRM/Core/BAO/CustomGroup.php';
-
 /**
  * Most API functions take in associative arrays ( name => value pairs
  * as parameters. Some of the most commonly used parameters are
@@ -64,7 +61,6 @@ require_once 'CRM/Core/BAO/CustomGroup.php';
  *
  * @return   Newly create custom_group object
  * @todo $params['extends'] is array format - is that std compatible
- * @todo review custom field create if 'html' approx line 110
  * @access public
  */
 function civicrm_api3_custom_group_create($params) {
@@ -85,24 +81,12 @@ function civicrm_api3_custom_group_create($params) {
   $customGroup = CRM_Core_BAO_CustomGroup::create($params);
 
   _civicrm_api3_object_to_array($customGroup, $values[$customGroup->id]);
-
-  if (CRM_Utils_Array::value('html_type', $params)) {
-    $fparams = array(
-      'custom_group_id' => $customGroup->id,
-      'version' => $params['version'],
-      // should put something cleverer here but this will do for now
-      'label' => 'api created field',
-    );
-    require_once 'api/v3/CustomField.php';
-    $fieldValues = civicrm_api3_custom_field_create($fparams);
-    $values[$fieldValues['id']] = array_merge($values[$customGroup->id], $fieldValues['values'][$fieldValues['id']]);
-  }
   return civicrm_api3_create_success($values, $params, 'custom_group', $customGroup);
 }
 
 /*
  * Adjust Metadata for Create action
- * 
+ *
  * @param array $params array or parameters determined by getfields
  */
 function _civicrm_api3_custom_group_create_spec(&$params) {

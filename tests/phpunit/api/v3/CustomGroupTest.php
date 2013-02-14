@@ -1,21 +1,48 @@
 <?php
-// $Id$
+/*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 4.3                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2013                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*/
+
+require_once 'CiviTest/CiviUnitTestCase.php';
+
 
 /**
- *  Include class definitions
- */
-require_once 'tests/phpunit/CiviTest/CiviUnitTestCase.php';
-
-/**
- *  Test APIv3 civicrm_create_custom_group
+ *  Test APIv3 civicrm_custom_group* functions
  *
- *  @package   CiviCRM
+ *  @package CiviCRM_APIv3
+ *  @subpackage API_CustomGroup
  */
+
 class api_v3_CustomGroupTest extends CiviUnitTestCase {
   protected $_apiversion;
   protected $_entity;
   protected $_params;
-  public $DBResetRequired = TRUE; function get_info() {
+  public $_eNoticeCompliant = TRUE;
+  public $DBResetRequired = TRUE;
+
+  function get_info() {
     return array(
       'name' => 'Custom Group Create',
       'description' => 'Test all Custom Group Create API methods.',
@@ -127,38 +154,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase {
     );
 
     $customGroup = civicrm_api('custom_group', 'create', $params);
-    $this->assertEquals($customGroup['is_error'], 0, 'In line ' . __LINE__);
-  }
-
-  /**
-   * check with create fields
-   */
-  function testCustomGroupCreateWithFields() {
-    $params = array(
-      'title' => 'Test_Group_1',
-      'name' => 'test_group_1',
-      'extends' => array('Individual'),
-      'weight' => 4,
-      'collapse_display' => 1,
-      'style' => 'Inline',
-      'help_pre' => 'This is Pre Help For Test Group 1',
-      'help_post' => 'This is Post Help For Test Group 1',
-      'is_active' => 1,
-      'html_type' => 'Select',
-      'data_type' => 'String',
-      'option_label' => array('Label1', 'Label2'),
-      'option_value' => array('value1', 'value2'),
-      'option_name' => array('name_1', 'name_2'),
-      'option_weight' => array(1, 2),
-      'label' => 'Country',
-      'version' => $this->_apiversion,
-    );
-
-    $customGroup = civicrm_api('custom_group', 'create', $params);
-    $this->assertEquals($customGroup['is_error'], 0, 'In line ' . __LINE__);
-    $this->assertNotNull($customGroup['id'], 'In line ' . __LINE__);
-    $this->assertNotNull($customGroup['values'][$customGroup['id']]['id'], 'In line ' . __LINE__);
-    $this->assertEquals($customGroup['values'][$customGroup['id']]['extends'], 'Individual', 'In line ' . __LINE__);
+    $this->assertApiSuccess($customGroup);
   }
 
   /**
@@ -180,7 +176,7 @@ class api_v3_CustomGroupTest extends CiviUnitTestCase {
 
     $result = civicrm_api('custom_group', 'create', $params);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__);
-    $this->assertEquals($result['is_error'], 0, 'In line ' . __LINE__ . ': ' . $result['error_message']);
+    $this->assertAPISuccess($result);
     $this->assertNotNull($result['id'], 'In line ' . __LINE__);
     $this->assertEquals($result['values'][$result['id']]['extends'], 'Individual', 'In line ' . __LINE__);
   }
