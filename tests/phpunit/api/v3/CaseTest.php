@@ -47,7 +47,7 @@ class api_v3_CaseTest extends CiviUnitTestCase {
   protected $caseStatusGroup;
   protected $caseTypeGroup;
   protected $optionValues;
-  public $_eNoticeCompliant = FALSE;
+  public $_eNoticeCompliant = TRUE;
   /**
    *  Test setup for every test
    *
@@ -283,7 +283,7 @@ class api_v3_CaseTest extends CiviUnitTestCase {
     $params = $this->_params;
     // Test using label instead of value
     unset($params['case_type_id']);
-    $params['case_type'] = 'housing_support';
+    $params['case_type'] = 'Housing Support';
     $result = civicrm_api('case', 'create', $params);
     $this->assertAPISuccess($result, 'in line ' . __LINE__);
     $id = $result['id'];
@@ -354,10 +354,31 @@ class api_v3_CaseTest extends CiviUnitTestCase {
 
     // Check result - we should get a list of activity ids
     $result = civicrm_api('case', 'get', array('version' => $this->_apiversion, 'id' => $id));
+    $this->assertAPISuccess($result, 'in line ' . __LINE__);
     $case = $result['values'][$id];
     $activity = $case['activities'][0];
 
+    // Fetch case based on an activity id
     $result = civicrm_api('case', 'get', array('version' => $this->_apiversion, 'activity_id' => $activity, 'return' => 'activities,contacts'));
+    $this->assertEquals(FALSE, empty($result['values'][$id]), 'in line ' . __LINE__);
+    $this->assertEquals($result['values'][$id], $case, 'in line ' . __LINE__);
+  }
+
+  /**
+   * Test get function based on contact id
+   */
+  function testCaseGetByContact() {
+    // Create Case
+    $result = civicrm_api('case', 'create', $this->_params);
+    $this->assertAPISuccess($result, 'in line ' . __LINE__);
+    $id = $result['id'];
+
+    // Store result for later
+    $result = civicrm_api('case', 'get', array('version' => $this->_apiversion, 'id' => $id));
+    $case = $result['values'][$id];
+
+    // Fetch case based on client contact id
+    $result = civicrm_api('case', 'get', array('version' => $this->_apiversion, 'client_id' => $this->_params['contact_id'], 'return' => array('activities', 'contacts')));
     $this->assertEquals($result['values'][$id], $case, 'in line ' . __LINE__);
   }
 
