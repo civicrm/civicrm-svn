@@ -12,7 +12,7 @@ require_once 'tests/phpunit/CiviTest/CiviUnitTestCase.php';
  *  @package   CiviCRM
  */
 class api_v3_ProfileTest extends CiviUnitTestCase {
-  protected $_apiversion; 
+  protected $_apiversion;
   function get_info() {
     return array(
       'name' => 'Profile Test',
@@ -531,7 +531,8 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
     $this->assertEquals(0, $contact['is_error'], "In line " . __LINE__ . " error message: " . CRM_Utils_Array::value('error_message', $contact)
     );
 
-    $contactId = array_pop(array_keys($contact['values']));
+    $keys  = array_keys($contact['values']);
+    $contactId = array_pop($keys);
 
     $this->assertEquals(0, $contact['values'][$contactId]['api.address.create']['is_error'], "In line " . __LINE__ . " error message: " . CRM_Utils_Array::value('error_message', $contact['values'][$contactId]['api.address.create'])
     );
@@ -602,7 +603,8 @@ class api_v3_ProfileTest extends CiviUnitTestCase {
     $this->assertEquals(0, $contact['is_error'], "In line " . __LINE__ . " error message: " . CRM_Utils_Array::value('error_message', $contact)
     );
 
-    $contactId = array_pop(array_keys($contact['values']));
+    $keys = array_keys($contact['values']);
+    $contactId = array_pop($keys);
 
     $this->assertEquals(0, $contact['values'][$contactId]['api.address.create']['is_error'], "In line " . __LINE__ . " error message: " . CRM_Utils_Array::value('error_message', $contact['values'][$contactId]['api.address.create'])
     );

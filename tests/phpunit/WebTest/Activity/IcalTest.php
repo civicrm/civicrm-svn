@@ -26,7 +26,7 @@
 
 
 require_once 'CiviTest/CiviSeleniumTestCase.php';
-require_once 'CiviTest/CiviMailUnitTest.php';
+require_once 'CiviTest/CiviMailUtils.php';
 require_once 'ezc/Base/src/ezc_bootstrap.php';
 require_once 'ezc/autoload/mail_autoload.php';
 
@@ -34,7 +34,7 @@ class WebTest_Activity_IcalTest extends CiviSeleniumTestCase {
 
     // This variable is a bit awkward, but the ezc callback function needed to walk through the email parts needs to be static, so use this variable to "report back" on whether we found what we're looking for or not.
     private static $foundIt = false;
-    
+
 
     protected function setUp() {
         parent::setUp();
@@ -54,7 +54,7 @@ class WebTest_Activity_IcalTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad("30000");
 
         // Start spooling emails
-        $mailer = new CiviMailUnitTest( $this, true );
+        $mailer = new CiviMailUtils( $this, true );
         self::$foundIt = false;
 
         $firstName1 = substr(sha1(rand()), 0, 7);
@@ -108,7 +108,7 @@ class WebTest_Activity_IcalTest extends CiviSeleniumTestCase {
                     if ( $mailPart->subType == 'calendar' ) {
                         // For now we just check for existence.
                         self::$foundIt = true;
-                        
+
                         // echo $mailPart->generateBody() . "\n";
                     }
                 }

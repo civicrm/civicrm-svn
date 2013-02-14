@@ -117,7 +117,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form {
     if (!CRM_Core_Permission::checkActionPermission('CiviMember', $this->_action)) {
       CRM_Core_Error::fatal(ts('You do not have permission to access this page'));
     }
-    
+
     if ($this->_action & CRM_Core_Action::DELETE) {
       $contributionID = CRM_Member_BAO_Membership::getMembershipContributionId($this->_id);
       // check delete permission for contribution
@@ -245,7 +245,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form {
     // Set title
     if ($this->_contactID) {
       $displayName = CRM_Contact_BAO_Contact::displayName($this->_contactID);
-    
+
       // Check if this is default domain contact CRM-10482
       if (CRM_Contact_BAO_Contact::checkDomainContact($this->_contactID)) {
         $displayName .= ' (' . ts('default organization') . ')';
@@ -805,7 +805,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
    * @access public
    * @static
    */
-  public function formRule($params, $files, $self) {
+  static function formRule($params, $files, $self) {
     $errors = array();
 
     $priceSetId = CRM_Utils_Array::value('price_set_id', $params);
@@ -1035,11 +1035,11 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       CRM_Member_BAO_Membership::deleteMembership($this->_id);
       return;
     }
-    
+
     $config = CRM_Core_Config::singleton();
     // get the submitted form values.
     $this->_params = $formValues = $this->controller->exportValues($this->_name);
-    
+
     $params = $ids = array();
 
     $membershipTypeValues = array();
@@ -1085,7 +1085,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
     }
     $isQuickConfig = 0;
     if ($this->_priceSetId && CRM_Core_DAO::getFieldValue('CRM_Price_DAO_Set', $this->_priceSetId, 'is_quick_config')) {
-      $isQuickConfig = 1;      
+      $isQuickConfig = 1;
     }
 
     $termsByType = array();
@@ -1102,9 +1102,9 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
               $termsByType[$li['membership_type_id']] = $li['membership_num_terms'];
             }
           }
-          
-          ///CRM-11529 for quick config backoffice transactions 
-          //when financial_type_id is passed in form, update the 
+
+          ///CRM-11529 for quick config backoffice transactions
+          //when financial_type_id is passed in form, update the
           //lineitems with the financial type selected in form
           if ($isPaymentRecorded && $isQuickConfig && $submittedFinancialType) {
             $li['financial_type_id'] = $submittedFinancialType;
@@ -1112,7 +1112,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
         }
       }
     }
-    
+
     $this->storeContactFields($formValues);
 
     $params['contact_id'] = $this->_contactID;
@@ -1601,7 +1601,7 @@ WHERE   id IN ( ' . implode(' , ', array_keys($membershipType)) . ' )';
       foreach ($lineItem[$priceSetId] as & $priceFieldOp) {
         if (CRM_Utils_Array::value('membership_type_id', $priceFieldOp)) {
           $priceFieldOp['start_date'] = $membershipTypeValues[$priceFieldOp['membership_type_id']]['start_date'] ? CRM_Utils_Date::customFormat($membershipTypeValues[$priceFieldOp['membership_type_id']]['start_date'], '%d%f %b, %Y') : '-';
-          
+
           $priceFieldOp['end_date'] = $membershipTypeValues[$priceFieldOp['membership_type_id']]['end_date'] ? CRM_Utils_Date::customFormat($membershipTypeValues[$priceFieldOp['membership_type_id']]['end_date'], '%d%f %b, %Y') : '-';
         }
         else {

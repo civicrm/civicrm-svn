@@ -1471,8 +1471,11 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     if (CRM_Utils_Array::value('id', $result)) {
       return $result['id'];
     }
-    else {
+    elseif (CRM_Utils_Array::value('result', $result)) {
       return $result['result']->id;
+    }
+    else {
+      return null;
     }
   }
 

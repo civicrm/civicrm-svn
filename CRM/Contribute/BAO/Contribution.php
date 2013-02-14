@@ -953,11 +953,12 @@ GROUP BY p.id
       $honorId = CRM_Utils_Array::value(0, $ids);
     }
 
-    $contact = &CRM_Contact_BAO_Contact::createProfileContact($honorParams,
+    $contactID = CRM_Contact_BAO_Contact::createProfileContact(
+      $honorParams,
       CRM_Core_DAO::$_nullArray,
       $honorId
     );
-    return $contact;
+    return $contactID;
   }
 
   /**

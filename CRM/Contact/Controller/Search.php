@@ -50,7 +50,6 @@ class CRM_Contact_Controller_Search extends CRM_Core_Controller {
    * class constructor
    */
   function __construct($title = NULL, $modal = TRUE, $action = CRM_Core_Action::NONE) {
-
     parent::__construct($title, $modal);
 
     $this->_stateMachine = new CRM_Contact_StateMachine_Search($this, $action);

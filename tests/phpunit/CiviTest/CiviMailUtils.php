@@ -30,7 +30,7 @@
  *
  *  Basic usage:
  *
- *  $mut = new CiviMailUnitTest( $this, true ); //true automatically starts spooling
+ *  $mut = new CiviMailUtils( $this, true ); //true automatically starts spooling
  *  ... do stuff ...
  *  $msg = $mut->getMostRecentEmail( 'raw' ); // or 'ezc' to get an ezc mail object
  *  ... assert stuff about $msg ...
@@ -43,7 +43,7 @@
 require_once 'ezc/Base/src/ezc_bootstrap.php';
 require_once 'ezc/autoload/mail_autoload.php';
 
-class CiviMailUnitTest extends PHPUnit_Framework_TestCase {
+class CiviMailUtils extends PHPUnit_Framework_TestCase {
 
   /*
    * current outbound email option

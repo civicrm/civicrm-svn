@@ -1629,8 +1629,12 @@ ORDER BY civicrm_email.is_primary DESC";
    * @static
    * @access public
    */
-  static function createProfileContact(&$params, &$fields, $contactID = NULL,
-    $addToGroupID = NULL, $ufGroupId = NULL,
+  static function createProfileContact(
+    &$params,
+    &$fields,
+    $contactID = NULL,
+    $addToGroupID = NULL,
+    $ufGroupId = NULL,
     $ctype        = NULL,
     $visibility   = FALSE
   ) {
@@ -1718,8 +1722,13 @@ ORDER BY civicrm_email.is_primary DESC";
     return $contactID;
   }
 
-  static function formatProfileContactParams(&$params, &$fields, $contactID = NULL,
-    $ufGroupId = NULL, $ctype = NULL, $skipCustom = FALSE
+  static function formatProfileContactParams(
+    &$params,
+    &$fields,
+    $contactID = NULL,
+    $ufGroupId = NULL,
+    $ctype = NULL,
+    $skipCustom = FALSE
   ) {
 
     $data = $contactDetails = array();

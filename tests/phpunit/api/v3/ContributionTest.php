@@ -26,7 +26,7 @@
 */
 
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'CiviTest/CiviMailUnitTest.php';
+require_once 'CiviTest/CiviMailUtils.php';
 
 
 /**
@@ -1273,7 +1273,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
    * Test sending a mail via the API
    */
   function testSendMail() {
-    $mut = new CiviMailUnitTest( $this, true );
+    $mut = new CiviMailUtils( $this, true );
     $contribution = civicrm_api('contribution','create',$this->_params);
     $this->assertAPISuccess($contribution);
     $apiResult = civicrm_api('contribution', 'sendconfirmation', array(
@@ -1298,7 +1298,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
    * Test sending a mail via the API
    */
   function testSendMailEvent() {
-    $mut = new CiviMailUnitTest( $this, true );
+    $mut = new CiviMailUtils( $this, true );
     $contribution = civicrm_api('contribution','create',$this->_params);
     $event          = $this->eventCreate(array(
       'is_email_confirm' => 1,

@@ -1,6 +1,6 @@
 <?php
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'CiviTest/CiviMailUnitTest.php';
+require_once 'CiviTest/CiviMailUtils.php';
 
 /*
  * @see also WebTest_Mailing_SpoolTest
@@ -22,7 +22,7 @@ class CRM_Mailing_BAO_SpoolTest extends CiviUnitTestCase {
 
   function setUp() {
     parent::setUp();
-    $this->_mut = new CiviMailUnitTest( $this, true );
+    $this->_mut = new CiviMailUtils( $this, true );
   }
 
   function tearDown() {

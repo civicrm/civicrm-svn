@@ -26,7 +26,7 @@
 
 
 require_once 'CiviTest/CiviSeleniumTestCase.php';
-require_once 'CiviTest/CiviMailUnitTest.php';
+require_once 'CiviTest/CiviMailUtils.php';
 require_once 'ezc/Base/src/ezc_bootstrap.php';
 require_once 'ezc/autoload/mail_autoload.php';
 class WebTest_Mailing_SpoolTest extends CiviSeleniumTestCase {
@@ -41,7 +41,7 @@ class WebTest_Mailing_SpoolTest extends CiviSeleniumTestCase {
     $this->webtestLogin();
 
     // Start spooling mail
-    $mut = new CiviMailUnitTest( $this, true );
+    $mut = new CiviMailUtils( $this, true );
 
     // Add a contact
     $fname = substr(sha1(rand()), 0, 6);

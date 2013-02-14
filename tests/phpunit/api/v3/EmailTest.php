@@ -379,7 +379,8 @@ class api_v3_EmailTest extends CiviUnitTestCase {
     $this->assertAPISuccess($replace1, 'In line ' . __LINE__);
     $this->assertEquals(1, $replace1['count'], 'In line ' . __LINE__);
 
-    $emailID = array_shift(array_keys($replace1['values']));
+    $keys = array_keys($replace1['values']);
+    $emailID = array_shift($keys);
 
     // update the email address, but preserve any other fields
     $replace2Params = array(
