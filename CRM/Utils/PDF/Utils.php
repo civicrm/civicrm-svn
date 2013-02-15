@@ -62,6 +62,7 @@ class CRM_Utils_PDF_Utils {
     $r           = CRM_Core_BAO_PdfFormat::getValue('margin_right', $format);
     $b           = CRM_Core_BAO_PdfFormat::getValue('margin_bottom', $format);
     $l           = CRM_Core_BAO_PdfFormat::getValue('margin_left', $format);
+    $margins     = array($metric,$t,$r,$b,$l);
 
     $config = CRM_Core_Config::singleton();
     $html = "
@@ -97,7 +98,7 @@ class CRM_Utils_PDF_Utils {
   </body>
 </html>";
     if ($config->wkhtmltopdfPath) {
-      return self::_html2pdf_wkhtmltopdf($paper_size, $orientation, $html, $output, $fileName);
+      return self::_html2pdf_wkhtmltopdf($paper_size, $orientation, $margins, $html, $output, $fileName);
     }
     else {
       return self::_html2pdf_dompdf($paper_size, $orientation, $html, $output, $fileName);
@@ -120,13 +121,17 @@ class CRM_Utils_PDF_Utils {
     }
   }
 
-  static function _html2pdf_wkhtmltopdf($paper_size, $orientation, $html, $output, $fileName) {
+  static function _html2pdf_wkhtmltopdf($paper_size, $orientation, $margins, $html, $output, $fileName) {
     require_once 'packages/snappy/src/autoload.php';
     $config = CRM_Core_Config::singleton();
     $snappy = new Knp\Snappy\Pdf($config->wkhtmltopdfPath);
     $snappy->setOption("page-width", $paper_size[2] . "pt");
     $snappy->setOption("page-height", $paper_size[3] . "pt");
     $snappy->setOption("orientation", $orientation);
+    $snappy->setOption("margin-top", $margins[1] . $margins[0]);
+    $snappy->setOption("margin-right", $margins[2] . $margins[0]);
+    $snappy->setOption("margin-bottom", $margins[3] . $margins[0]);
+    $snappy->setOption("margin-left", $margins[4] . $margins[0]);
     $pdf = $snappy->getOutputFromHtml($html);
     if ($output) {
       return $pdf;
