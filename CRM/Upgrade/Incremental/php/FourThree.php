@@ -63,10 +63,10 @@ class CRM_Upgrade_Incremental_php_FourThree {
       }  
       list($context, $orgName) = self::createDomainContacts();
       if ($context == 'added') {
-        $postUpgradeMessage .= '<br />' . ts("Added an organization contact as default domain contact of name '{$orgName}'.");
+        $postUpgradeMessage .= '<br />' . ts("A new organization contact has been added as the default domain contact using the information from your Organization Address and Contact Info settings: '{$orgName}'.");
       }
       elseif ($context == 'merged') {
-        $postUpgradeMessage .= '<br />' . ts("Merged an organization contact as default domain contact of name '{$orgName}'.");
+        $postUpgradeMessage .= '<br />' . ts("The existing organization contact record for '{$orgName}' has marked as the default domain contact, and has been updated with information from your Organization Address and Contact Info settings.");
       }
     }
 
