@@ -365,7 +365,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     // make sure cursor focuses on the field
     $this->fireEvent($fieldName, 'focus');
     if ($editor == 'CKEditor') {
-      $this->waitForElementPresent("xpath=//td[@id='cke_contents_{$fieldName}']/iframe");
+      $this->waitForElementPresent("xpath=//div[@id='cke_{$fieldName}']//iframe");
       $this->runScript("CKEDITOR.instances['{$fieldName}'].setData('<p>{$text}</p>');");
     }
     elseif ($editor == 'TinyMCE') {
