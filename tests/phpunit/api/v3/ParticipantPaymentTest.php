@@ -91,6 +91,7 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase {
         'civicrm_line_item',
         'civicrm_financial_item',
         'civicrm_financial_trxn',
+        'civicrm_entity_financial_trxn',
       )
     );
     $this->contributionTypeDelete();
@@ -371,7 +372,7 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase {
     $params = 'eeee';
     $GetWrongParamsType = civicrm_api('participant_payment', 'get', $params);
     $this->assertEquals($GetWrongParamsType['error_message'], 'Input variable `params` is not an array');
-}
+  }
 
   /**
    * Test civicrm_participantPayment_get with empty params.
