@@ -340,8 +340,8 @@ class CRM_Import_Form_MapField extends CRM_Core_Form {
     $defaultLocationType = CRM_Core_BAO_LocationType::getDefault();
 
     /* FIXME: dirty hack to make the default option show up first.  This
-         * avoids a mozilla browser bug with defaults on dynamically constructed
-         * selector widgets. */
+     * avoids a mozilla browser bug with defaults on dynamically constructed
+     * selector widgets. */
 
     if ($defaultLocationType) {
       $defaultLocation = $this->_location_types[$defaultLocationType->id];
@@ -688,20 +688,20 @@ class CRM_Import_Form_MapField extends CRM_Core_Form {
     $this->setDefaults($defaults);
 
     $this->addButtons(array(
-        array(
-          'type' => 'back',
-          'name' => ts('<< Previous'),
-        ),
-        array(
-          'type' => 'next',
-          'name' => ts('Continue >>'),
-          'spacing' => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
-          'isDefault' => TRUE,
-        ),
-        array(
-          'type' => 'cancel',
-          'name' => ts('Cancel'),
-        ),
+      array(
+        'type' => 'back',
+        'name' => ts('<< Previous'),
+      ),
+       array(
+         'type' => 'next',
+         'name' => ts('Continue >>'),
+         'spacing' => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+         'isDefault' => TRUE,
+       ),
+       array(
+         'type' => 'cancel',
+         'name' => ts('Cancel'),
+       ),
       )
     );
   }
@@ -903,7 +903,7 @@ class CRM_Import_Form_MapField extends CRM_Core_Form {
 
       for ($i = 0; $i < $this->_columnCount; $i++) {
         $updateMappingFields = new CRM_Core_DAO_MappingField();
-        $updateMappingFields->id = $mappingFieldsId[$i];
+        $updateMappingFields->id = CRM_Utils_Array::value($i,$mappingFieldsId);
         $updateMappingFields->mapping_id = $params['mappingId'];
         $updateMappingFields->column_number = $i;
 
