@@ -207,8 +207,8 @@ class api_v3_ParticipantPaymentTest extends CiviUnitTestCase {
    */
   function testPaymentOffline() {
 
-    // create contribution
-    $contributionID = $this->contributionCreate($this->_contactID, $this->_contributionTypeId, NULL, NULL, 4);
+    // create contribution w/o fee
+    $contributionID = $this->contributionCreate($this->_contactID, $this->_contributionTypeId, NULL, NULL, 4, FALSE);
 
     $this->_participantPaymentID = $this->participantPaymentCreate($this->_participantID, $contributionID);
     $params = array(

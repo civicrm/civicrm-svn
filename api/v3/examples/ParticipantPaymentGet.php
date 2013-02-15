@@ -5,7 +5,7 @@
  */
 function participant_payment_get_example(){
 $params = array( 
-  'participant_id' => 72,
+  'participant_id' => 4,
   'contribution_id' => 1,
   'version' => 3,
 );
@@ -28,7 +28,7 @@ function participant_payment_get_expectedresult(){
   'values' => array( 
       '1' => array( 
           'id' => '1',
-          'participant_id' => '72',
+          'participant_id' => '4',
           'contribution_id' => '1',
         ),
     ),

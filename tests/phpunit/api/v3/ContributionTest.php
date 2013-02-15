@@ -1085,7 +1085,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
 
     //check against values in CiviUnitTestCase::createContribution()
     $this->assertEquals($old_contact_id, $this->_individualId, 'In line ' . __LINE__);
-    $this->assertEquals($old_fee_amount, 50.00, 'In line ' . __LINE__);
+    $this->assertEquals($old_fee_amount, 5.00, 'In line ' . __LINE__);
     $this->assertEquals($old_source, 'SSF', 'In line ' . __LINE__);
     $this->assertEquals($old_trxn_id, 212355, 'In line ' . __LINE__);
     $this->assertEquals($old_invoice_id, 'idofsh', 'In line ' . __LINE__);

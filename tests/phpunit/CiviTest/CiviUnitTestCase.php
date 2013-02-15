@@ -1116,7 +1116,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
    *
    * @return int id of created contribution
    */
-  function contributionCreate($cID, $cTypeID = 1, $invoiceID = 67890, $trxnID = 12345, $paymentInstrumentID = 1) {
+  function contributionCreate($cID, $cTypeID = 1, $invoiceID = 67890, $trxnID = 12345, $paymentInstrumentID = 1, $isFee = TRUE) {
     $params = array(
       'domain_id' => 1,
       'contact_id' => $cID,
@@ -1125,8 +1125,6 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
       'financial_type_id' => empty($cTypeID) ? 1 : $cTypeID,
       'payment_instrument_id' => empty($paymentInstrumentID) ? 1 : $paymentInstrumentID,
       'non_deductible_amount' => 10.00,
-      'fee_amount' => 50.00,
-      'net_amount' => 90.00,
       'trxn_id' => $trxnID,
       'invoice_id' => $invoiceID,
       'source' => 'SSF',
@@ -1135,6 +1133,11 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
       // 'note'                   => 'Donating for Nobel Cause', *Fixme
     );
 
+    if ($isFee){
+      $params['fee_amount'] = 5.00;
+      $params['net_amount'] = 95.00;
+    }
+    
     $result = civicrm_api('contribution', 'create', $params);
     if (CRM_Utils_Array::value('is_error', $result) ||
       !CRM_Utils_Array::value('id', $result)
