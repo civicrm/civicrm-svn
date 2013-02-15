@@ -548,7 +548,7 @@ abstract class CRM_Contribute_Import_Parser {
    *
    * @param array mapped array of values
    *
-   * @return void
+pppp   * @return void
    * @access public
    */
   function setActiveFields($fieldKeys) {
