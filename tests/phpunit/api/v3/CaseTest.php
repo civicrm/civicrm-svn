@@ -374,8 +374,7 @@ class api_v3_CaseTest extends CiviUnitTestCase {
     $id = $result['id'];
 
     // Store result for later
-    $result = civicrm_api('case', 'get', array('version' => $this->_apiversion, 'id' => $id));
-    $case = $result['values'][$id];
+    $case = civicrm_api('case', 'getsingle', array('version' => $this->_apiversion, 'id' => $id));
 
     // Fetch case based on client contact id
     $result = civicrm_api('case', 'get', array('version' => $this->_apiversion, 'client_id' => $this->_params['contact_id'], 'return' => array('activities', 'contacts')));

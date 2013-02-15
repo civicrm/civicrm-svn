@@ -202,10 +202,10 @@ function civicrm_api3_case_get($params) {
     $case = _civicrm_api3_case_read($caseId, $options);
 
     if ($case) {
-      return civicrm_api3_create_success(array($caseId => $case));
+      return civicrm_api3_create_success(array($caseId => $case), $params, 'case', 'get');
     }
     else {
-      return civicrm_api3_create_success(array());
+      return civicrm_api3_create_success(array(), $params, 'case', 'get');
     }
   }
 
@@ -223,7 +223,7 @@ function civicrm_api3_case_get($params) {
         $cases[$id] = $case;
       }
     }
-    return civicrm_api3_create_success($cases);
+    return civicrm_api3_create_success($cases, $params, 'case', 'get');
   }
 
   //search by activity
@@ -233,10 +233,10 @@ function civicrm_api3_case_get($params) {
     }
     $caseId = CRM_Case_BAO_Case::getCaseIdByActivityId($params['activity_id']);
     if (!$caseId) {
-      return civicrm_api3_create_success(array());
+      return civicrm_api3_create_success(array(), $params, 'case', 'get');
     }
     $case = array($caseId => _civicrm_api3_case_read($caseId, $options));
-    return civicrm_api3_create_success($case);
+    return civicrm_api3_create_success($case, $params, 'case', 'get');
   }
 
   //search by contacts
@@ -257,7 +257,7 @@ SELECT DISTINCT case_id
     while ($dao->fetch()) {
       $cases[$dao->case_id] = _civicrm_api3_case_read($dao->case_id, $options);
     }
-    return civicrm_api3_create_success($cases);
+    return civicrm_api3_create_success($cases, $params, 'case', 'get');
   }
 
   return civicrm_api3_create_error('Missing required parameter. Must provide case_id, contact_id, activity_id, or contact_id.');
@@ -335,7 +335,7 @@ function civicrm_api3_case_update($params) {
 
   _civicrm_api3_object_to_array($dao, $case);
 
-  return civicrm_api3_create_success($case);
+  return civicrm_api3_create_success($case, $params, 'case', 'update', $dao);
 }
 
 /**
@@ -357,7 +357,7 @@ function civicrm_api3_case_delete($params) {
   civicrm_api3_verify_mandatory($params, NULL, array('id'));
 
   if (CRM_Case_BAO_Case::deleteCase($params['id'], CRM_Utils_Array::value('move_to_trash', $params, FALSE))) {
-    return civicrm_api3_create_success($params);
+    return civicrm_api3_create_success($params, $params, 'case', 'delete');
   }
   else {
     return civicrm_api3_create_error('Could not delete case.');
