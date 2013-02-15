@@ -98,20 +98,15 @@ class CRM_Campaign_Form_Task extends CRM_Core_Form {
       }
     }
     else {
-      $queryParams = $this->get('queryParams');
-      $query = new CRM_Contact_BAO_Query($queryParams, NULL, NULL, FALSE, FALSE,
-        CRM_Contact_BAO_Query::MODE_CAMPAIGN, TRUE
-      );
-      $result = $query->searchQuery(0, 0, NULL);
-      while ($result->fetch()) {
-        $ids[] = $result->contact_id;
-      }
-      $this->assign('totalSelectedVoters', $this->get('rowCount'));
+      $qfKey    = CRM_Utils_Request::retrieve('qfKey', 'String', $this);
+      $cacheKey = "civicrm search {$qfKey}";
+      $allCids  = CRM_Core_BAO_PrevNextCache::getSelection($cacheKey, "getall");
+      $ids = array_keys($allCids[$cacheKey]);
+      $this->assign('totalSelectedVoters', count($ids));
     }
 
     if (!empty($ids)) {
       $this->_componentClause = 'contact_a.id IN ( ' . implode(',', $ids) . ' ) ';
-
       $this->assign('totalSelectedVoters', count($ids));
     }
     $this->_voterIds = $this->_contactIds = $this->_componentIds = $ids;
