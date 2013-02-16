@@ -220,17 +220,19 @@ class api_v3_PledgePaymentTest extends CiviUnitTestCase {
     // check that only 5 exist & we got an error setting the 6th
     $result = civicrm_api('PledgePayment', 'Get', array(
       'version' => 3,
-        'pledge_id' => $this->_pledgeID,
-      ));
+      'pledge_id' => $this->_pledgeID,
+    ));
 
     $this->assertEquals(5, $result['count']);
     $this->assertEquals(1, $resultCont2['is_error']);
     $this->assertEquals("There are no unmatched payment on this pledge. Pass in the pledge_payment id to specify one or 'option.create_new' to create one", $resultCont2['error_message']);
 
-    //
     $params['option.create_new'] = 1;
+    $params['scheduled_amount'] = 20;
+    $params['scheduled_date'] = '20131212';
     $resultcreatenew = civicrm_api('pledge_payment', 'create', $params);
     $this->assertAPISuccess($resultcreatenew);
+    
     $this->assertEquals(0, $resultcreatenew['is_error'], "in line " . __LINE__);
     $result = civicrm_api('PledgePayment', 'Get', array(
       'version' => 3,
