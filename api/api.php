@@ -300,8 +300,7 @@ function civicrm_api_get_function_name($entity, $action, $version = NULL) {
  * @param $desired_version : array or integer
  *   One chance to set the version number.
  *   After that, this version number will be used for the remaining request.
- *   This can either be a number, or an array(
-   .., 'version' => $version, ..).
+ *   This can either be a number, or an array(.., 'version' => $version, ..).
  *   This allows to directly pass the $params array.
  */
 function civicrm_get_api_version($desired_version = NULL) {
@@ -313,12 +312,10 @@ function civicrm_get_api_version($desired_version = NULL) {
   }
   if (isset($desired_version) && is_integer($desired_version)) {
     $_version = $desired_version;
-    // echo "\n".'version: '. $_version ." (parameter)\n";
   }
   else {
     // we will set the default to version 3 as soon as we find that it works.
     $_version = 3;
-    // echo "\n".'version: '. $_version ." (default)\n";
   }
   return $_version;
 }

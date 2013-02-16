@@ -195,10 +195,10 @@ class CRM_Pledge_BAO_PledgeBlock extends CRM_Pledge_DAO_PledgeBlock {
   /**
    * Function to build Pledge Block in Contribution Pages
    *
-   * @param int $pageId
+   * @param obj $form
    * @static
    */
-  function buildPledgeBlock($form) {
+  static function buildPledgeBlock($form) {
     //build pledge payment fields.
     if (CRM_Utils_Array::value('pledge_id', $form->_values)) {
       //get all payments required details.
@@ -267,7 +267,7 @@ class CRM_Pledge_BAO_PledgeBlock extends CRM_Pledge_DAO_PledgeBlock {
     }
     else {
 
-      $pledgeBlock = CRM_Pledge_BAO_PledgeBlock::getPledgeBlock($this->_id);
+      $pledgeBlock = self::getPledgeBlock($form->_id);
 
       //build form for pledge creation.
       $pledgeOptions = array('0' => ts('I want to make a one-time contribution'),

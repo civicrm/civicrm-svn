@@ -425,7 +425,8 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
       );
     }
     elseif (!empty($pps)) {
-      $key = array_pop(array_keys($pps));
+      $key = array_keys($pps);
+      $key = array_pop($key);
       $this->addElement('hidden', 'payment_processor', $key);
       if ($key === 0) {
         $this->assign('is_pay_later', $this->_values['is_pay_later']);
