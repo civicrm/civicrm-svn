@@ -284,6 +284,8 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . "civicrm/admin/setting/misc?reset=1");
     $this->click("CIVICRM_QFID_1_6");
     $this->click("_qf_Miscellaneous_next-top");
+    //adding sleep her since enabling logging takes lot of time
+    sleep(40);
     $this->waitForTextPresent("Your changes have been saved");
 
     // Create new Custom Field Set
@@ -333,7 +335,6 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     $this->click("_qf_Contact_refresh_dedupe");
     $this->waitForPageToLoad("30000");
 
-
     //address section
     $this->click("addressBlock");
     $this->waitForElementPresent("address_1_street_address");
@@ -378,6 +379,8 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . "civicrm/admin/setting/misc?reset=1");
     $this->click("CIVICRM_QFID_0_8");
     $this->click("_qf_Miscellaneous_next-top");
+    //adding sleep here since disabling logging takes lot of time
+    sleep(40);
     $this->waitForTextPresent("Your changes have been saved");
   }
   
