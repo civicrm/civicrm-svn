@@ -739,6 +739,9 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
    *  Test  using example code
    */
   function testContributionCreateExample() {
+    //make sure at least on page exists since there is a truncate in tear down
+    $page = civicrm_api('contribution_page', 'create', $this->_pageParams);
+    $this->assertAPISuccess($page);
     require_once 'api/v3/examples/ContributionCreate.php';
     $result         = contribution_create_example();
     $this->assertAPISuccess($result);
