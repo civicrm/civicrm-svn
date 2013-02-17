@@ -37,8 +37,6 @@
  *
  */
 
-require_once 'CRM/Activity/BAO/Activity.php';
-require_once 'CRM/Core/DAO/OptionGroup.php';
 
 /**
  * Creates or updates an Activity. See the example for usage
@@ -69,8 +67,12 @@ function civicrm_api3_activity_create($params) {
   $errors = array();
 
   // check for various error and required conditions
+  // note that almost all the processing in there should be managed by the wrapper layer
+  // & should be removed - needs testing
   $errors = _civicrm_api3_activity_check_params($params);
 
+  // this should not be required as should throw exception rather than return errors -
+  //needs testing
   if (!empty($errors)) {
     return $errors;
   }
@@ -84,10 +86,13 @@ function civicrm_api3_activity_create($params) {
     $params['custom'] = $values['custom'];
   }
 
+  // this should be set as a default rather than hard coded
+  // needs testing
   $params['skipRecentView'] = TRUE;
 
   // If this is a case activity, see if there is an existing activity
   // and set it as an old revision. Also retrieve details we'll need.
+  // this handling should all be moved to the BAO layer
   $case_id           = '';
   $createRevision    = FALSE;
   $oldActivityValues = array();
@@ -102,7 +107,6 @@ function civicrm_api3_activity_create($params) {
         return civicrm_api3_create_error(ts("Unable to locate existing activity."), NULL, CRM_Core_DAO::$_nullObject);
       }
       else {
-        require_once 'CRM/Activity/DAO/Activity.php';
         $activityDAO = new CRM_Activity_DAO_Activity();
         $activityDAO->id = $params['id'];
         $activityDAO->is_current_revision = 0;
@@ -124,6 +128,7 @@ function civicrm_api3_activity_create($params) {
     $deleteActivityTarget = TRUE;
   }
 
+  // this should all be handled at the BAO layer
   $params['deleteActivityAssignment'] = CRM_Utils_Array::value('deleteActivityAssignment', $params, $deleteActivityAssignment);
   $params['deleteActivityTarget'] = CRM_Utils_Array::value('deleteActivityTarget', $params, $deleteActivityTarget);
 
@@ -140,7 +145,6 @@ function civicrm_api3_activity_create($params) {
     $oldActivityValues['activityID'] = $oldActivityValues['id'];
     $oldActivityValues['contactID'] = $oldActivityValues['source_contact_id'];
 
-    require_once 'CRM/Activity/Page/AJAX.php';
     $copyToCase = CRM_Activity_Page_AJAX::_convertToCaseActivity($oldActivityValues);
     if (empty($copyToCase['error_msg'])) {
       // now fix some things that are different from copy-to-case
@@ -161,7 +165,6 @@ function civicrm_api3_activity_create($params) {
     if ($case_id && !$createRevision) {
       // If this is a brand new case activity we need to add this
       $caseActivityParams = array('activity_id' => $activityBAO->id, 'case_id' => $case_id);
-      require_once 'CRM/Case/BAO/Case.php';
       CRM_Case_BAO_Case::processCaseActivity($caseActivityParams);
     }
 
@@ -222,21 +225,21 @@ function civicrm_api3_activity_get($params) {
   else {
     $activities = _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params, FALSE);
   }
-  
+
   $returns = CRM_Utils_Array::value('return', $params, array());
   if (!is_array($returns)) {
     $returns = str_replace(' ', '', $returns);
     $returns = explode(',', $returns);
   }
   $returns = array_fill_keys($returns, 1);
-  
+
   foreach ($params as $n => $v) {
     if (substr($n, 0, 7) == 'return.') {
       $returnkey = substr($n, 7);
       $returns[$returnkey] = $v;
     }
   }
-  
+
   foreach ($returns as $n => $v) {
     switch ($n) {
       case 'assignee_contact_id':
@@ -307,7 +310,9 @@ function _civicrm_api3_activity_check_params(&$params) {
       'target_contact_id' => 1,
     )
   );
-
+   // this should be handled by wrapper layer & probably the api would already manage it
+   //correctly by doing post validation - ie. a failure should result in a roll-back = an error
+   // needs testing
   if (!empty($contactIDFields)) {
     $contactIds = array();
     foreach ($contactIDFields as $fieldname => $contactfield) {
@@ -347,9 +352,9 @@ SELECT  count(*)
       return civicrm_api3_create_error('Invalid ' . ucfirst($id) . ' Id');
     }
   }
-
-
-  require_once 'CRM/Core/PseudoConstant.php';
+  // this should be handled by wrapper layer & probably the api would already manage it
+  //correctly by doing pseudoconstant validation
+  // needs testing
   $activityTypes = CRM_Core_PseudoConstant::activityType(TRUE, TRUE, FALSE, 'name', TRUE);
   $activityName  = CRM_Utils_Array::value('activity_name', $params);
   $activityName  = ucfirst($activityName);
@@ -364,8 +369,8 @@ SELECT  count(*)
     $activityTypeIdInList = array_search(($activityName ? $activityName : $activityLabel), $activityTypes);
 
     if (!$activityTypeIdInList) {
-      $errorString = $activityName ? "Invalid Activity Name" : "Invalid Activity Type Label";
-      return civicrm_api3_create_error($errorString);
+      $errorString = $activityName ? "Invalid Activity Name : $activityName"  : "Invalid Activity Type Label";
+      throw new Exception($errorString);
     }
     elseif ($activityTypeId && ($activityTypeId != $activityTypeIdInList)) {
       return civicrm_api3_create_error('Mismatch in Activity');
@@ -379,8 +384,9 @@ SELECT  count(*)
   }
 
   // check for activity status is passed in
+  // note this should all be removed in favour of wrapper layer validation
+  // needs testing
   if (isset($params['activity_status_id'])) {
-    require_once "CRM/Core/PseudoConstant.php";
     $activityStatus = CRM_Core_PseudoConstant::activityStatus();
 
     if (is_numeric($params['activity_status_id']) && !array_key_exists($params['activity_status_id'], $activityStatus)) {
@@ -398,12 +404,16 @@ SELECT  count(*)
 
 
   // check for activity duration minutes
+  // this should be validated @ the wrapper layer not here
+  // needs testing
   if (isset($params['duration_minutes']) && !is_numeric($params['duration_minutes'])) {
     return civicrm_api3_create_error('Invalid Activity Duration (in minutes)');
   }
 
 
   //if adding a new activity & date_time not set make it now
+  // this should be managed by the wrapper layer & setting ['api.default'] in speces
+  // needs testing
   if (!CRM_Utils_Array::value('id', $params) &&
     !CRM_Utils_Array::value('activity_date_time', $params)
   ) {
