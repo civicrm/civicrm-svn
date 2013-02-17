@@ -1873,10 +1873,9 @@ class DB_common extends PEAR
      *
      * @see PEAR_Error
      */
-    function &raiseError($message = null, $code = null, $mode = null, $options = null,
-        $userinfo = null, $error_class = NULL, $skipmsg = false)
+    function &raiseError($code = DB_ERROR, $mode = null, $options = null,
+                         $userinfo = null, $nativecode = null)
     {
-        $nativecode = null;
         // The error is yet a DB error object
         if (is_object($code)) {
             // because we the static PEAR::raiseError, our global
