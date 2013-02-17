@@ -457,3 +457,4 @@ GROUP BY {$this->_aliases['civicrm_contribution_soft']}.contact_id, constituentn
     $this->removeDuplicates($rows);
   }
 }
+

@@ -269,6 +269,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
       // omitting contactImage from title for now since the summary overlay css doesn't work outside of our crm-container
       CRM_Utils_System::setTitle(ts('Contribution from') .  ' ' . $displayName);
     }
+    
   }
 
   function setDefaultValues() {

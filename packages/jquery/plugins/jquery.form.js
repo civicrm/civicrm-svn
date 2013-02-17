@@ -669,7 +669,7 @@ $.fn.ajaxSubmit = function(options) {
 
 		var toXml = $.parseXML;
 
-        var parseJSON = $.parseJSON;
+		var parseJSON = $.parseJSON;
 
 		var httpData = function( xhr, type, s ) { // mostly lifted from jq1.4.4
 

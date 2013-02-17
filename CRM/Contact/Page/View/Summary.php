@@ -74,13 +74,9 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
     );
 
     // also create the form element for the activity links box
-    $controller = new CRM_Core_Controller_Simple(
-      'CRM_Activity_Form_ActivityLinks',
+    $controller = new CRM_Core_Controller_Simple('CRM_Activity_Form_ActivityLinks',
       ts('Activity Links'),
-      NULL,
-      FALSE,
-      FALSE,
-      TRUE
+      NULL
     );
     $controller->setEmbedded(TRUE);
     $controller->run();

@@ -46,21 +46,10 @@ if (!class_exists('Smarty')) {
  */
 class CRM_Core_Smarty extends Smarty {
   CONST
-    // use print.tpl and bypass the CMS. Civi prints a valid html file
     PRINT_PAGE = 1,
-    // this and all the below bypasses the CMS html surronding it and assumes we will embed this within other pages
     PRINT_SNIPPET = 2,
-    // sends the generated html to the chosen pdf engine
     PRINT_PDF = 3,
-    // this options also skips the enclosing form html and does not
-    // generate any of the hidden fields, most notably qfKey
-    // this is typically used in ajax scripts to embed form snippets based on user choices
-    PRINT_NOFORM = 4,
-    // this prints a complete form and also generates a qfKey, can we replace this with
-    // snippet = 2?? Does the constant _NOFFORM do anything?
-    PRINT_QFKEY = 5,
-    // this sends the output back in json
-    PRINT_JSON = 6;
+    PRINT_NOFORM = 4;
 
   /**
    * We only need one instance of this object. So we use the singleton

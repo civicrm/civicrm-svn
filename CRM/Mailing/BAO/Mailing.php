@@ -2110,7 +2110,27 @@ ORDER BY   civicrm_email.is_bulkmail DESC
     return $mailingACL;
   }
 
-  static function &mailingACLIDs($count = FALSE, $condition = NULL) {
+  /**
+   * returns all the mailings that this user can access. This is dependent on
+   * all the groups that the user has access to.
+   * However since most civi installs dont use ACL's we special case the condition
+   * where the user has access to ALL groups, and hence ALL mailings and return a
+   * value of TRUE (to avoid the downstream where clause with a list of mailing list IDs
+   *
+   * @return boolean | array - TRUE if the user has access to all mailings, else array of mailing IDs (possibly empty)
+   * @static
+   */
+  static function mailingACLIDs() {
+    // CRM-11633
+    // optimize common case where admin has access
+    // to all mailings
+    if (
+      CRM_Core_Permission::check('view all contacts') ||
+      CRM_Core_Permission::check('edit all contacts')
+    ) {
+      return TRUE;
+    }
+
     $mailingIDs = array();
 
     // get all the groups that this user can access

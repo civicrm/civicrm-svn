@@ -613,7 +613,6 @@ AND    u.status = 1
       return FALSE;
     }
 
-    $uid = $user->uid;
     $contact_id = CRM_Core_BAO_UFMatch::getContactId($uid);
 
     // lets store contact id and user id in session

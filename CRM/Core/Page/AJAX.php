@@ -77,7 +77,8 @@ class CRM_Core_Page_AJAX {
         if (preg_match('/^CRM_[a-zA-Z0-9]+_Page_Inline_/', $className)) {
           $page = new $className;
           $page->run();
-        } else {
+        }
+        else {
           $wrapper = new CRM_Utils_Wrapper();
           $wrapper->run($className);
         }
