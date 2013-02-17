@@ -199,9 +199,7 @@ class api_v3_ActivityTest extends CiviUnitTestCase {
     $result = civicrm_api('activity', 'create', $params);
 
     // we should use the session contact ID, CRM-8180
-    $this->assertEquals($result['is_error'], 0,
-      "In line " . __LINE__
-    );
+    $this->assertAPISuccess($result);
   }
 
   /**

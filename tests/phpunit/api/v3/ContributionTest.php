@@ -741,6 +741,7 @@ class api_v3_ContributionTest extends CiviUnitTestCase {
   function testContributionCreateExample() {
     require_once 'api/v3/examples/ContributionCreate.php';
     $result         = contribution_create_example();
+    $this->assertAPISuccess($result);
     $contributionId = $result['id'];
     $expectedResult = contribution_create_expectedresult();
     $this->checkArrayEquals($result, $expectedResult);
