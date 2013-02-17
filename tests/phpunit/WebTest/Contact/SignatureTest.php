@@ -91,7 +91,7 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
     $this->type('subject', $subject);
 
     // Is signature correct? in Editor
-    $this->_checkSignature('mceIframeContainer', $signature, 'TinyMCE');
+    $this->_checkSignature('html_message', $signature, 'TinyMCE');
 
     $this->click('_qf_Email_upload-top');
     $this->waitForPageToLoad('30000');
@@ -186,11 +186,11 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
    */
   function _checkSignature($fieldName, $signature, $editor) {
     if ($editor == 'CKEditor') {
-      $this->waitForElementPresent("css=td#cke_contents_{$fieldName} iframe");
-      $this->selectFrame("css=td#cke_contents_{$fieldName} iframe");
+      $this->waitForElementPresent("xpath=//div[@id='cke_{$fieldName}']//iframe");
+      $this->selectFrame("xpath=//div[@id='cke_{$fieldName}']//iframe");
     }
     else {
-      $this->selectFrame("css=td.{$fieldName} iframe");
+      $this->selectFrame("xpath=//iframe[@id='{$fieldName}_ifr']");
     }
 
     $this->verifyText('//html/body', preg_quote("{$signature}"));
