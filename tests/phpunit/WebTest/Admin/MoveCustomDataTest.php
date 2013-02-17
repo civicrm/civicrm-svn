@@ -408,8 +408,9 @@ class WebTest_Admin_MoveCustomDataTest extends CiviSeleniumTestCase {
 
     //if the contact has not been saved since this fieldset has been creative,
     //the form uses id = -1. In this case the table pk wont be in the api results
-    if (isset($contact['values'][$contact_id][$group['values'][$group_id]['table_name'] . "_id"])) {
-      $table_pk = $contact['values'][$contact_id][$group['values'][$group_id]['table_name'] . "_id"];
+    $customValueId = $contact['values'][$contact_id][$group['values'][$group_id]['table_name'] . "_id"];
+    if (isset($customValueId) && !empty($customValueId)) {
+      $table_pk = $customValueId;
     }
     else {
       $table_pk = -1;
@@ -417,7 +418,6 @@ class WebTest_Admin_MoveCustomDataTest extends CiviSeleniumTestCase {
 
     //fill a value in for each field
     foreach ($fields as $field_id => $field) {
-
       //if there is an option group id, we grab the labels and select on randomly
       if (isset($field['option_group_id'])) {
         $options = $this->webtest_civicrm_api("OptionValue", "get", array('option_group_id' => $field['option_group_id']));
