@@ -7,13 +7,17 @@ class api_v3_CustomValueTest extends CiviUnitTestCase {
   protected $individual;
   protected $params;
   protected $ids;
-  public $DBResetRequired = FALSE; function setUp() {
+  public $_eNoticeCompliant = TRUE;
+  public $DBResetRequired = FALSE;
+
+  function setUp() {
     parent::setUp();
     $this->_apiversion = 3;
     $this->individual  = $this->individualCreate();
     $this->params      = array(
       'version' => $this->_apiversion,
       'entity_id' => $this->individual,
+      'debug' => 1,
     );
     $this->ids['single'] = $this->entityCustomGroupWithSingleFieldCreate('mySingleField', 'Contacts');
     $this->ids['multi']  = $this->CustomGroupMultipleCreateWithFields();
@@ -36,8 +40,8 @@ class api_v3_CustomValueTest extends CiviUnitTestCase {
 
     $params = array(
       'custom_' . $this->ids['single']['custom_field_id'] => 'customString') + $this->params;
+
     $result = civicrm_api('custom_value', 'create', $params);
-    $this->documentMe($params, $result, __FUNCTION__, __FILE__);
     $this->assertAPISuccess($result, 'In line ' . __LINE__);
     $this->assertEquals(1, $result['count'], 'In line ' . __LINE__);
     $result = civicrm_api('custom_value', 'get', $params);
@@ -89,8 +93,7 @@ class api_v3_CustomValueTest extends CiviUnitTestCase {
     // delete the contact
     civicrm_api('contact', 'delete', array('version' => 1, 'id' => $contact_id));
 
-    $this->assertEquals(0, $result['is_error'], "In line " . __LINE__ . " error message: " . CRM_Utils_Array::value('error_message', $result)
-    );
+    $this->assertAPISuccess( $result);
     $this->assertEquals('coffee', $result['values'][$this->ids['multi2']['custom_field_id'][0]]['2'], "In line " . __LINE__);
     $this->assertEquals('coffee', $result['values'][$this->ids['multi2']['custom_field_id'][0]]['latest'], "In line " . __LINE__);
     $this->assertEquals($this->ids['multi2']['custom_field_id'][0], $result['values'][$this->ids['multi2']['custom_field_id'][0]]['id'], "In line " . __LINE__);
@@ -102,15 +105,15 @@ class api_v3_CustomValueTest extends CiviUnitTestCase {
   }
   /*
    public function testDeleteCustomValue () {
-        $entity = civicrm_api('custom_value','get',$this->params);   
+        $entity = civicrm_api('custom_value','get',$this->params);
         $result = civicrm_api('custom_value','delete',array('version' =>3,'id' => $entity['id']));
-        $this->documentMe($this->params,$result,__FUNCTION__,__FILE__); 
+        $this->documentMe($this->params,$result,__FUNCTION__,__FILE__);
         $this->assertAPISuccess($result, 'In line ' . __LINE__ );
         $checkDeleted = civicrm_api('survey','get',array('version' =>3,));
         $this->assertEquals( 0, $checkDeleted['count'], 'In line ' . __LINE__ );
-        
+
     }
-    
+
    public function testGetCustomValueChainDelete () {
         $description = "demonstrates get + delete in the same call";
         $subfile     = 'ChainedGetDelete';
@@ -118,13 +121,13 @@ class api_v3_CustomValueTest extends CiviUnitTestCase {
           'version' =>3,
                         'title'   => "survey title",
                         'api.survey.delete' => 1);
-        $result = civicrm_api('survey','create',$this->params);   
-        $result = civicrm_api('survey','get',$params );    
-        $this->documentMe($params,$result,__FUNCTION__,__FILE__,$description,$subfile); 
+        $result = civicrm_api('survey','create',$this->params);
+        $result = civicrm_api('survey','get',$params );
+        $this->documentMe($params,$result,__FUNCTION__,__FILE__,$description,$subfile);
         $this->assertAPISuccess($result, 'In line ' . __LINE__ );
         $this->assertEquals( 0,civicrm_api('survey','getcount',array('version' => 3)), 'In line ' . __LINE__ );
 
-    } 
+    }
     */
 }
 

@@ -41,9 +41,6 @@
  * Files required for this package
  */
 
-require_once 'CRM/Core/BAO/CustomField.php';
-require_once 'CRM/Core/BAO/CustomGroup.php';
-require_once 'CRM/Core/BAO/CustomValueTable.php';
 
 /**
  * Sets custom values for an entity.
@@ -75,8 +72,10 @@ require_once 'CRM/Core/BAO/CustomValueTable.php';
  *
  */
 function civicrm_api3_custom_value_create($params) {
-  civicrm_api3_verify_mandatory($params, NULL, array('entity_id'));
-  if (substr($params['entity_table'], 0, 7) == 'civicrm') {
+  // @todo it's not clear where the entity_table is used as  CRM_Core_BAO_CustomValueTable::setValues($create)
+  // didn't seem to use it
+  // so not clear if it's relevant
+  if (!empty($params['entity_table']) && substr($params['entity_table'], 0, 7) == 'civicrm') {
     $params['entity_table'] = substr($params['entity_table'], 8, 7);
   }
   $create = array('entityID' => $params['entity_id']);
@@ -110,11 +109,19 @@ function civicrm_api3_custom_value_create($params) {
   }
   $result = CRM_Core_BAO_CustomValueTable::setValues($create);
   if ($result['is_error']) {
-    return civicrm_api3_create_error($result['error_message']);
+    throw new Exception($result['error_message']);
   }
   return civicrm_api3_create_success(TRUE, $params);
 }
-
+/*
+ * Adjust Metadata for Create action
+*
+* The metadata is used for setting defaults, documentation & validation
+* @param array $params array or parameters determined by getfields
+*/
+function _civicrm_api3_custom_value_create_spec(&$params) {
+  $params['entity_id']['api.required'] = 1;
+}
 /**
  * Use this API to get existing custom values for an entity.
  *
@@ -132,11 +139,10 @@ function civicrm_api3_custom_value_create($params) {
  *
  **/
 function civicrm_api3_custom_value_get($params) {
-  civicrm_api3_verify_mandatory($params, NULL, array('entity_id'));
 
   $getParams = array(
     'entityID' => $params['entity_id'],
-    'entityType' => $params['entity_table'],
+    'entityType' => CRM_Utils_Array::value('entity_table', $params, ''),
   );
   if (strstr($getParams['entityType'], 'civicrm_')) {
     $getParams['entityType'] = ucfirst(substr($getParams['entityType'], 8));
@@ -219,3 +225,12 @@ function civicrm_api3_custom_value_get($params) {
   }
 }
 
+/*
+ * Adjust Metadata for Get action
+*
+* The metadata is used for setting defaults, documentation & validation
+* @param array $params array or parameters determined by getfields
+*/
+function _civicrm_api3_custom_value_get_spec(&$params) {
+  $params['entity_id']['api.required'] = 1;
+}
