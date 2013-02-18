@@ -210,7 +210,14 @@ class CRM_Core_BAO_Block {
       return NULL;
     }
 
-    $name           = ucfirst($blockName);
+    $name = ucfirst($blockName);
+    if ($blockName == 'im') {
+      $name = 'IM';
+    }
+    elseif ($blockName == 'openid') {
+      $name = 'OpenID';
+    }
+
     $contactId      = NULL;
     $isPrimary      = $isBilling = TRUE;
     $entityElements = $blocks = array();
