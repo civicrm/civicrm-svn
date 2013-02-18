@@ -521,6 +521,9 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase {
       'Database checked on membershiplog record.'
     );
 
+    $config = CRM_Core_Config::singleton();
+    $config->keyDisable = TRUE;
+
     $membershipRenewal = new CRM_Core_Form;
     $membershipRenewal->controller = new CRM_Core_Controller;
     $MembershipRenew = CRM_Member_BAO_Membership::renewMembership($contactId, $this->_membershipTypeID, $isTestMembership = 0, $membershipRenewal, NULL, NULL);
