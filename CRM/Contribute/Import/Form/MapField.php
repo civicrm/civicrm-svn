@@ -194,7 +194,7 @@ class CRM_Contribute_Import_Form_MapField extends CRM_Core_Form {
       //modify field title only for update mode. CRM-3245
       foreach (array(
         'contribution_id', 'invoice_id', 'trxn_id') as $key) {
-        $this->_mapperFields[$key] .= " (match to contribution record)";
+        $this->_mapperFields[$key] .= ' (match to contribution record)';
         $highlightedFields[] = $key;
       }
     }
@@ -233,9 +233,9 @@ class CRM_Contribute_Import_Form_MapField extends CRM_Core_Form {
 
       $mappingName        = $mappingName[1];
       $mappingContactType = $mappingContactType[1];
-      $mappingLocation    = CRM_Utils_Array::value('1', $mappingLocation[1]);
-      $mappingPhoneType   = CRM_Utils_Array::value('1', $mappingPhoneType[1]);
-      $mappingRelation    = CRM_Utils_Array::value('1', $mappingRelation[1]);
+      $mappingLocation    = CRM_Utils_Array::value('1', CRM_Utils_Array::value(1, $mappingLocation));
+      $mappingPhoneType   = CRM_Utils_Array::value('1', CRM_Utils_Array::value(1, $mappingPhoneType));
+      $mappingRelation    = CRM_Utils_Array::value('1', CRM_Utils_Array::value(1, $mappingRelation));
 
       //mapping is to be loaded from database
 
