@@ -416,8 +416,9 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
     if ($this->_context === 'smog') {
       // CRM-11788, we might want to do this for all of search where force=1
       $formQFKey = CRM_Utils_Array::value('qfKey', $this->_formValues);
-      $urlQFKey = CRM_Utils_Array::value('qfKey', $_GET);
-      if ($formQFKey && empty($urlQFKey)) {
+      $getQFKey = CRM_Utils_Array::value('qfKey', $_GET);
+      $postQFKey = CRM_Utils_Array::value('qfKey', $_POST);
+      if ($formQFKey && empty($getQFKey) && empty($postQFKey)) {
         $url = CRM_Utils_System::makeURL('qfKey') . $formQFKey;
         CRM_Utils_System::redirect($url);
       }
