@@ -1489,5 +1489,50 @@ class CRM_Utils_Date {
     return $now;
   }
 
+
+  static function formatDate($date, $dateType) {
+    $formattedDate = NULL;
+    if (empty($date)) {
+      return $formattedDate;
+    }
+
+    //1. first convert date to default format.
+    //2. append time to default formatted date (might be removed during format)
+    //3. validate date / date time.
+    //4. If date and time then convert to default date time format.
+
+    $dateKey = 'date';
+    $dateParams = array($dateKey => $date);
+
+    if (CRM_Utils_Date::convertToDefaultDate($dateParams, $dateType, $dateKey)) {
+      $dateVal = $dateParams[$dateKey];
+      $ruleName = 'date';
+      if ($dateType == 1) {
+        $matches = array();
+        if (preg_match("/(\s(([01]\d)|[2][0-3]):([0-5]\d))$/", $date, $matches)) {
+          $ruleName = 'dateTime';
+          if (strpos($date, '-') !== FALSE) {
+            $dateVal .= array_shift($matches);
+          }
+        }
+      }
+
+      // validate date.
+      eval('$valid = CRM_Utils_Rule::' . $ruleName . '( $dateVal );');
+
+      if ($valid) {
+        //format date and time to default.
+        if ($ruleName == 'dateTime') {
+          $dateVal = CRM_Utils_Date::customFormat(preg_replace("/(:|\s)?/", "", $dateVal), '%Y%m%d%H%i');
+          //hack to add seconds
+          $dateVal .= '00';
+        }
+        $formattedDate = $dateVal;
+      }
+    }
+
+    return $formattedDate;
+  }
+
 }
 
