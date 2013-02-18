@@ -75,6 +75,8 @@ function civicrm_api3_verify_one_mandatory($params, $daoName = NULL, $keyoptions
  * @param bool $verifyDAO
  *
  * @return null or throws error if there the required fields not present
+ *
+ * @todo see notes on _civicrm_api3_check_required_fields regarding removing $daoName param
  */
 function civicrm_api3_verify_mandatory($params, $daoName = NULL, $keys = array(
   ), $verifyDAO = TRUE) {
@@ -821,10 +823,14 @@ function _civicrm_api3_custom_format_params($params, &$values, $extends, $entity
 }
 
 /**
+ * @deprecated
  * This function ensures that we have the right input parameters
  *
- * We also need to make sure we run all the form rules on the params list
- * to ensure that the params are valid
+ * This function is only called when $dao is passed into verify_mandatory.
+ * The practice of passing $dao into verify_mandatory turned out to be
+ * unsatisfactory as the required fields @ the dao level is so diffent to the abstract
+ * api level. Hence the intention is to remove this function
+ * & the associated param from viery_mandatory
  *
  * @param array  $params       Associative array of property name/value
  *                             pairs to insert in new history.
@@ -832,12 +838,11 @@ function _civicrm_api3_custom_format_params($params, &$values, $extends, $entity
  *
  * @return bool should the missing fields be returned as an array (core error created as default)
  *
- * @todo the check for required fields unsets the ID as that isn't required for create but potentially also unsets other ID fields, note also the DAO might be a bit 'harsh' in it's required fields as the BAO handles some
- *
  * @return bool true if all fields present, depending on $result a core error is created of an array of missing fields is returned
  * @access public
  */
 function _civicrm_api3_check_required_fields($params, $daoName, $return = FALSE) {
+  //@deprecated - see notes
   if (isset($params['extends'])) {
     if (($params['extends'] == 'Activity' ||
         $params['extends'] == 'Phonecall' ||
@@ -862,7 +867,7 @@ function _civicrm_api3_check_required_fields($params, $daoName, $return = FALSE)
 
     if (CRM_Utils_Array::value('required', $v)) {
       // 0 is a valid input for numbers, CRM-8122
-      if (empty($params[$k]) && !($params[$k] === 0)) {
+      if (!isset($params[$k]) || (empty($params[$k]) && !($params[$k] === 0))) {
         $missing[] = $k;
       }
     }

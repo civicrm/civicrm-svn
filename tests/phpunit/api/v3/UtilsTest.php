@@ -38,6 +38,8 @@ require_once 'CRM/Utils/DeprecatedUtils.php';
 class api_v3_UtilsTest extends CiviUnitTestCase {
   protected $_apiversion;
   public $DBResetRequired = FALSE;
+  public $_eNoticeCompliant = TRUE;
+  public $_contactID = 1;
 
   /**
    * Sets up the fixture, for example, opens a network connection.
@@ -67,7 +69,7 @@ class api_v3_UtilsTest extends CiviUnitTestCase {
 
   function testCheckPermissionReturn() {
     $check = array('check_permissions' => TRUE);
-    $config = &CRM_Core_Config::singleton();
+    $config = CRM_Core_Config::singleton();
     $config->userPermissionClass->permissions = array();
     $this->assertFalse(_civicrm_api3_api_check_permission('contact', 'create', $check, FALSE), 'empty permissions should not be enough');
     $config->userPermissionClass->permissions = array('access CiviCRM');
@@ -84,12 +86,12 @@ class api_v3_UtilsTest extends CiviUnitTestCase {
 
   function testCheckPermissionThrow() {
     $check = array('check_permissions' => TRUE);
-    $config = &CRM_Core_Config::singleton();
+    $config = CRM_Core_Config::singleton();
     try {
       $config->userPermissionClass->permissions = array('access CiviCRM');
       _civicrm_api3_api_check_permission('contact', 'create', $check);
     }
-    catch(Exception$e) {
+    catch(Exception $e) {
       $message = $e->getMessage();
     }
     $this->assertEquals($message, 'API permission check failed for contact/create call; missing permission: add contacts.', 'lacking permissions should throw an exception');
@@ -99,7 +101,7 @@ class api_v3_UtilsTest extends CiviUnitTestCase {
   }
 
   function testCheckPermissionSkip() {
-    $config = &CRM_Core_Config::singleton();
+    $config = CRM_Core_Config::singleton();
     $config->userPermissionClass->permissions = array('access CiviCRM');
     $params = array('check_permissions' => TRUE);
     $this->assertFalse(_civicrm_api3_api_check_permission('contact', 'create', $params, FALSE), 'lacking permissions should not be enough');
@@ -123,7 +125,7 @@ class api_v3_UtilsTest extends CiviUnitTestCase {
     try {
       $result = civicrm_api3_verify_mandatory($params, 'CRM_Core_BAO_Note', array('note', 'subject'));
     }
-    catch(Exception$expected) {
+    catch(Exception $expected) {
       $this->assertEquals('Mandatory key(s) missing from params array: entity_id, note, subject', $expected->getMessage());
       return;
     }
@@ -148,7 +150,7 @@ class api_v3_UtilsTest extends CiviUnitTestCase {
     try {
       $result = civicrm_api3_verify_one_mandatory($params, 'CRM_Core_BAO_Note', array('note', 'subject'));
     }
-    catch(Exception$expected) {
+    catch(Exception $expected) {
       $this->assertEquals('Mandatory key(s) missing from params array: entity_id, one of (note, subject)', $expected->getMessage());
       return;
     }
