@@ -115,6 +115,7 @@ class CiviTestSuite extends PHPUnit_Framework_TestSuite {
     }
 
     //  Pass 1:  Check all *Tests.php files
+    $addTests = array(); // array(callable)
     //echo "start Pass 1 on {$dirInfo->getRealPath()}\n";
     $dir = new DirectoryIterator($dirInfo->getRealPath());
     foreach ($dir as $fileInfo) {
@@ -139,29 +140,38 @@ class CiviTestSuite extends PHPUnit_Framework_TestSuite {
             $oldClassNames
           ) as $name) {
           if (preg_match('/Tests$/', $name)) {
-            //echo "adding test $name\n";
-            $suite->addTest(call_user_func($name . '::suite'));
+            $addTests[] = $name . '::suite';
           }
         }
       }
     }
+    sort($addTests);
+    foreach ($addTests as $addTest) {
+      // printf("addTest [%s]\n", $addTest);
+      $suite->addTest(call_user_func($addTest));
+    }
 
     //  Pass 2:  Scan all subdirectories
+    $addAllTests = array(); // array(array(0 => $suite, 1 => $file, 2 => SplFileinfo))
     $dir = new DirectoryIterator($dirInfo->getRealPath());
     //echo "start Pass 2 on {$dirInfo->getRealPath()}\n";
     foreach ($dir as $fileInfo) {
       if ($fileInfo->isDir()
         && (substr($fileInfo->getFilename(), 0, 1) != '.')
       ) {
-
         //  This is a directory that may contain tests so scan it
-        //echo "descending into {$fileInfo->getRealPath()}\n";
-        $this->addAllTests($suite, $myfile, $fileInfo);
+        $addAllTests[] = array($suite, $myfile, clone $fileInfo);
       }
+    }
+    $addAllTests = CRM_Utils_Array::crmArraySortByField($addAllTests, '1');
+    foreach ($addAllTests as $addAllTest) {
+      // printf("addAllTest [%s]\n", $addAllTest[1]);
+      $this->addAllTests($addAllTest[0], $addAllTest[1], $addAllTest[2]);
     }
 
     //  Pass 3:  Check all *Test.php files in this directory
     //echo "start Pass 3 on {$dirInfo->getRealPath()}\n";
+    $addTestSuites = array(); // array(className)
     $dir = new DirectoryIterator($dirInfo->getRealPath());
     foreach ($dir as $fileInfo) {
       if ($fileInfo->isReadable() && $fileInfo->isFile()
@@ -180,11 +190,15 @@ class CiviTestSuite extends PHPUnit_Framework_TestSuite {
             $oldClassNames
           ) as $name) {
           if (preg_match('/Test$/', $name)) {
-            //echo "adding suite $name\n";
-            $suite->addTestSuite($name);
+            $addTestSuites[] = $name;
           }
         }
       }
+    }
+    sort($addTestSuites);
+    foreach ($addTestSuites as $addTestSuite) {
+      // printf("addTestSuite [%s]\n", $addTestSuite);
+      $suite->addTestSuite($addTestSuite);
     }
   }
 }
