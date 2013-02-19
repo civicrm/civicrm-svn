@@ -34,6 +34,7 @@
  */
 class CRM_Core_OptionGroup {
   static $_values = array();
+  static $_cache = array();
 
   /*
    * $_domainIDGroups array maintains the list of option groups for whom
@@ -101,12 +102,10 @@ class CRM_Core_OptionGroup {
     $localize = FALSE, $condition = NULL,
     $labelColumnName = 'label', $onlyActive = TRUE, $fresh = FALSE
   ) {
-    static $_cache = array();
-
     $cacheKey = "CRM_OG_{$name}_{$flip}_{$grouping}_{$localize}_{$condition}_{$labelColumnName}_{$onlyActive}";
 
-    if (array_key_exists($cacheKey, $_cache) && !$fresh) {
-      return $_cache[$cacheKey];
+    if (array_key_exists($cacheKey, self::$_cache) && !$fresh) {
+      return self::$_cache[$cacheKey];
     }
 
     $cache = CRM_Utils_Cache::singleton();
@@ -144,7 +143,7 @@ WHERE  v.option_group_id = g.id
     // call option value hook
     CRM_Utils_Hook::optionValues($var, $name);
 
-    $_cache[$cacheKey] = $var;
+    self::$_cache[$cacheKey] = $var;
     $cache->set($cacheKey, $var);
 
     return $var;
@@ -528,6 +527,11 @@ WHERE  v.option_group_id = g.id
       FALSE,
       TRUE
     );
+  }
+
+  static function flushAll() {
+    self::$_values = array();
+    self::$_cache = array();
   }
 }
 

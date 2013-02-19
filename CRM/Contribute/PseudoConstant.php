@@ -111,7 +111,7 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
    * @var array
    * @static
    */
-  private static $pcpStatus = array();
+  private static $pcpStatus;
 
   /**
    * Get all the financial types
@@ -367,6 +367,9 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
    * @return array - array reference of all PCP activity statuses
    */
   public static function &pcpStatus($column = 'label') {
+    if (NULL === self::$pcpStatus) {
+      self::$pcpStatus = array();
+    }
     if (!array_key_exists($column, self::$pcpStatus)) {
       self::$pcpStatus[$column] = array();
 

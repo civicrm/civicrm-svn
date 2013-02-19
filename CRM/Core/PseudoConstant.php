@@ -39,6 +39,9 @@
  * currently we're getting the data from the underlying database. this
  * will be reworked to use caching.
  *
+ * Note: All pseudoconstants should be uninitialized or default to NULL.
+ * This provides greater consistency/predictability after flushing.
+ *
  * @package CRM
  * @copyright CiviCRM LLC (c) 2004-2013
  * $Id$
@@ -72,7 +75,7 @@ class CRM_Core_PseudoConstant {
    * @var array
    * @static
    */
-  private static $activityType = array();
+  private static $activityType;
 
   /**
    * payment processor billing modes
@@ -275,14 +278,14 @@ class CRM_Core_PseudoConstant {
    * @var array
    * @static
    */
-  private static $activityStatus = array();
+  private static $activityStatus;
 
   /**
    * priority
    * @var array
    * @static
    */
-  private static $priority = array();
+  private static $priority;
 
   /**
    * wysiwyg Editor
@@ -324,14 +327,14 @@ class CRM_Core_PseudoConstant {
    * @var array
    * @static
    */
-  private static $greeting = array();
+  private static $greeting;
 
   /**
    * Default Greetings
    * @var array
    * @static
    */
-  private static $greetingDefaults = array();
+  private static $greetingDefaults;
 
   /**
    * Extensions of type module
@@ -387,7 +390,7 @@ class CRM_Core_PseudoConstant {
    * @var array
    * @static
    */
-  private static $contactType = array();
+  private static $contactType;
 
   /**
    * Financial Account Type
@@ -550,7 +553,11 @@ class CRM_Core_PseudoConstant {
     $index .= '_' . (int) $includeCampaignActivities;
     $index .= '_' . (int) $onlyComponentActivities;
 
-    if (!is_array(self::$activityType) || !isset(self::$activityType[$index]) || $reset) {
+    if (NULL === self::$activityType) {
+      self::$activityType = array();
+    }
+
+    if (!isset(self::$activityType[$index]) || $reset) {
       $condition = NULL;
       if (!$all) {
         $condition = 'AND filter = 0';
@@ -1730,6 +1737,9 @@ WHERE  id = %1";
    * @return array - array reference of all activity statuses
    */
   public static function &activityStatus($column = 'label') {
+    if (NULL === self::$activityStatus) {
+      self::$activityStatus = array();
+    }
     if (!array_key_exists($column, self::$activityStatus)) {
       self::$activityStatus[$column] = array();
 
@@ -1933,6 +1943,10 @@ ORDER BY name";
     $contactType = CRM_Utils_Array::value('contact_type', $filter);
     if ($contactType) {
       $index .= '_' . $contactType;
+    }
+
+    if (NULL === self::$greeting) {
+      self::$greeting = array();
     }
 
     if (!CRM_Utils_Array::value($index, self::$greeting)) {

@@ -87,4 +87,48 @@ class CRM_Utils_PseudoConstant {
     }
   }
 
+  /**
+   * Scan for a list of pseudo-constants. A pseudo-constant is recognized by listing
+   * any static properties which have corresponding static methods.
+   *
+   * This may be inefficient and should generally be avoided.
+   *
+   * @return array of string, constant names
+   */
+  protected static function findConstants() {
+    $constants = array();
+    foreach (self::$constantClasses as $class) {
+      $constants = array_merge($constants, self::findConstantsByClass($class));
+    }
+    return $constants;
+  }
+
+  /**
+   * Scan for a list of pseudo-constants. A pseudo-constant is recognized by listing
+   * any static properties which have corresponding static methods.
+   *
+   * This may be inefficient and should generally be avoided.
+   *
+   * @return array of string, constant names
+   */
+  protected static function findConstantsByClass($class) {
+    $clazz = new ReflectionClass($class);
+    $classConstants = array_intersect(
+      $clazz->getProperties(ReflectionProperty::IS_STATIC),
+      $clazz->getMethods(ReflectionMethod::IS_STATIC)
+    );
+    return $classConstants;
+  }
+
+  /**
+   * Flush all caches related to pseudo-constants. This may be inefficient
+   * and should generally be avoided.
+   *
+   * @return void
+   */
+  public static function flushAll() {
+    foreach (self::findConstants() as $constant) {
+      self::flushConstant($constant);
+    }
+  }
 }
