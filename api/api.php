@@ -28,8 +28,6 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     }
     _civicrm_api3_initialize();
     $errorScope = CRM_Core_TemporaryErrorScope::useException();
-    require_once 'CRM/Utils/String.php';
-    require_once 'CRM/Utils/Array.php';
     $apiRequest = array();
     $apiRequest['entity'] = CRM_Utils_String::munge($entity);
     $apiRequest['action'] = CRM_Utils_String::munge($action);
@@ -130,6 +128,8 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
       return 0;
     }
     $data = $e->getExtraParams();
+    $data['entity'] = CRM_Utils_Array::value('entity', $apiRequest);
+    $data['action'] = CRM_Utils_Array::value('action', $apiRequest);
     $err = civicrm_api3_create_error($e->getMessage(), $data, $apiRequest, $e->getCode());
     if (CRM_Utils_Array::value('debug', CRM_Utils_Array::value('params',$apiRequest))) {
       $err['trace'] = $e->getTraceAsString();
