@@ -2130,7 +2130,7 @@ ORDER BY name";
       self::$accountOptionValues[$cacheKey] = CRM_Core_OptionGroup::values($optionGroupName, false, false, false, $condition);
     }
     if ($id) {
-      return CRM_Utils_Array::value($id, $accountOptionValues[$cacheKey]);
+      return CRM_Utils_Array::value($id, self::$accountOptionValues[$cacheKey]);
     }
 
     return self::$accountOptionValues[$cacheKey];
