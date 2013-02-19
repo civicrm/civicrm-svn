@@ -33,7 +33,7 @@
  *
  */
 
-  require_once 'CRM/Utils/DeprecatedUtils.php';
+require_once 'CRM/Utils/DeprecatedUtils.php';
 
 /**
  * class to parse membership csv files
@@ -73,7 +73,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser {
    */
   function init() {
     $fields = CRM_Event_BAO_Participant::importableFields($this->_contactType, FALSE);
-    $fields['event_id']['title'] = "Event ID";
+    $fields['event_id']['title'] = 'Event ID';
     $eventfields = &CRM_Event_BAO_Event::fields();
     $fields['event_title'] = $eventfields['event_title'];
 
@@ -85,7 +85,6 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser {
     }
 
     $this->_newParticipants = array();
-
     $this->setActiveFields($this->_mapperKeys);
 
     // FIXME: we should do this in one place together with Form/MapField.php
@@ -204,14 +203,12 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser {
 
     //for date-Formats
     $session = CRM_Core_Session::singleton();
-    $dateType = $session->get("dateTypes");
+    $dateType = $session->get('dateTypes');
 
     foreach ($params as $key => $val) {
       if ($val && ($key == 'participant_register_date')) {
-        if (CRM_Utils_Date::convertToDefaultDate($params, $dateType, $key)) {
-          if (!CRM_Utils_Rule::date($params[$key])) {
-            CRM_Import_Parser_Contact::addToErrorMsg('Register Date', $errorMessage);
-          }
+        if ($dateValue = CRM_Utils_Date::formatDate($params[$key], $dateType)) {
+          $params[$key] = $dateValue;
         }
         else {
           CRM_Import_Parser_Contact::addToErrorMsg('Register Date', $errorMessage);
@@ -231,7 +228,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser {
         else {
           foreach ($val as $role) {
             if (!CRM_Import_Parser_Contact::in_value(trim($role), $roleIDs)) {
-              CRM_Import_Parser_Contact::addToErrorMsg('Participant Role', $errorMessage);
+                CRM_Import_Parser_Contact::addToErrorMsg('Participant Role', $errorMessage);
               break;
             }
           }
@@ -293,16 +290,6 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser {
 
     foreach ($params as $key => $val) {
       if ($val) {
-        if ($key == 'participant_register_date') {
-          if (CRM_Utils_Date::convertToDefaultDate($params, $dateType, $key)) {
-            if (!CRM_Utils_Rule::date($params[$key])) {
-              CRM_Import_Parser_Contact::addToErrorMsg('Register Date', $errorMessage);
-            }
-          }
-          else {
-            CRM_Import_Parser_Contact::addToErrorMsg('Register Date', $errorMessage);
-          }
-        }
         if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
           if ($customFields[$customFieldID]['data_type'] == 'Date') {
             CRM_Import_Parser_Contact::formatCustomDate($params, $formatted, $dateType, $key);
@@ -317,7 +304,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser {
 
     if (!(CRM_Utils_Array::value('participant_role_id', $params) || CRM_Utils_Array::value('participant_role', $params))) {
       if (CRM_Utils_Array::value('event_id', $params)) {
-        $params['participant_role_id'] = CRM_Core_DAO::getFieldValue("CRM_Event_DAO_Event", $params['event_id'], 'default_role_id');
+        $params['participant_role_id'] = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_Event', $params['event_id'], 'default_role_id');
       }
       else {
         $eventTitle = $params['event_title'];
@@ -398,7 +385,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser {
           return CRM_Event_Import_Parser::VALID;
         }
         else {
-          array_unshift($values, "Matching Participant record not found for Participant ID " . $formatValues['participant_id'] . ". Row was skipped.");
+          array_unshift($values, 'Matching Participant record not found for Participant ID ' . $formatValues['participant_id'] . '. Row was skipped.');
           return CRM_Event_Import_Parser::ERROR;
         }
       }
@@ -451,7 +438,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser {
           }
         }
 
-        array_unshift($values, "No matching Contact found for (" . $disp . ")");
+        array_unshift($values, 'No matching Contact found for (' . $disp . ')');
         return CRM_Event_Import_Parser::ERROR;
       }
     }
@@ -461,7 +448,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser {
         $checkCid->external_identifier = $formatValues['external_identifier'];
         $checkCid->find(TRUE);
         if ($checkCid->id != $formatted['contact_id']) {
-          array_unshift($values, "Mismatch of External identifier :" . $formatValues['external_identifier'] . " and Contact Id:" . $formatted['contact_id']);
+          array_unshift($values, 'Mismatch of External identifier :' . $formatValues['external_identifier'] . ' and Contact Id:' . $formatted['contact_id']);
           return CRM_Event_Import_Parser::ERROR;
         }
       }
