@@ -255,10 +255,7 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser {
     $customFields = CRM_Core_BAO_CustomField::getFields(CRM_Utils_Array::value('contact_type', $params));
 
     foreach ($params as $key => $val) {
-      if ($key == 'activity_date_time' && $val) {
-        $params[$key] = CRM_Utils_Date::formatDate($val, $dateType);
-      }
-      elseif ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
+      if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
         if ($customFields[$customFieldID]['data_type'] == 'Date') {
           CRM_Import_Parser_Contact::formatCustomDate($params, $params, $dateType, $key);
         }
