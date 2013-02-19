@@ -185,14 +185,14 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser {
 
     //for date-Formats
     $session = CRM_Core_Session::singleton();
-    $dateType = $session->get("dateTypes");
+    $dateType = $session->get('dateTypes');
     if (!isset($params['source_contact_id'])) {
       $params['source_contact_id'] = $session->get('userID');
     }
     foreach ($params as $key => $val) {
       if ($key == 'activity_date_time') {
         if ($val) {
-          $dateValue = self::formatDate($val, $dateType);
+          $dateValue = CRM_Utils_Date::formatDate($val, $dateType);
           if ($dateValue) {
             $params[$key] = $dateValue;
           }
@@ -247,7 +247,7 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser {
     }
     //for date-Formats
     $session = CRM_Core_Session::singleton();
-    $dateType = $session->get("dateTypes");
+    $dateType = $session->get('dateTypes');
     if (!isset($params['source_contact_id'])) {
       $params['source_contact_id'] = $session->get('userID');
     }
@@ -256,7 +256,7 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser {
 
     foreach ($params as $key => $val) {
       if ($key == 'activity_date_time' && $val) {
-        $params[$key] = self::formatDate($val, $dateType);
+        $params[$key] = CRM_Utils_Date::formatDate($val, $dateType);
       }
       elseif ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
         if ($customFields[$customFieldID]['data_type'] == 'Date') {
@@ -296,7 +296,7 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser {
       if (CRM_Core_Error::isAPIError($error, CRM_Core_ERROR::DUPLICATE_CONTACT)) {
         $matchedIDs = explode(',', $error['error_message']['params'][0]);
         if (count($matchedIDs) > 1) {
-          array_unshift($values, "Multiple matching contact records detected for this row. The activity was not imported");
+          array_unshift($values, 'Multiple matching contact records detected for this row. The activity was not imported');
           return CRM_Activity_Import_Parser::ERROR;
         }
         else {
@@ -343,7 +343,7 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser {
           }
         }
 
-        array_unshift($values, "No matching Contact found for (" . $disp . ")");
+        array_unshift($values, 'No matching Contact found for (' . $disp . ')');
         return CRM_Activity_Import_Parser::ERROR;
       }
     }
@@ -356,14 +356,14 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser {
         if (CRM_Utils_Array::value('target_contact_id', $params) &&
           $params['target_contact_id'] != $targetContactId
         ) {
-          array_unshift($values, "Mismatch of External identifier :" . $params['external_identifier'] . " and Contact Id:" . $params['target_contact_id']);
+          array_unshift($values, 'Mismatch of External identifier :' . $params['external_identifier'] . ' and Contact Id:' . $params['target_contact_id']);
           return CRM_Activity_Import_Parser::ERROR;
         }
         elseif ($targetContactId) {
           $params['target_contact_id'] = $targetContactId;
         }
         else {
-          array_unshift($values, "No Matching Contact for External identifier :" . $params['external_identifier']);
+          array_unshift($values, 'No Matching Contact for External identifier :' . $params['external_identifier']);
           return CRM_Activity_Import_Parser::ERROR;
         }
       }
@@ -388,48 +388,5 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser {
    */
   function fini() {}
 
-  static function formatDate($date, $dateType) {
-    $formattedDate = NULL;
-    if (empty($date)) {
-      return $formattedDate;
-    }
-
-    //1. first convert date to default format.
-    //2. append time to default formatted date (might be removed during format)
-    //3. validate date / date time.
-    //4. If date and time then convert to default date time format.
-
-    $dateKey = 'date';
-    $dateParams = array($dateKey => $date);
-
-    if (CRM_Utils_Date::convertToDefaultDate($dateParams, $dateType, $dateKey)) {
-      $dateVal = $dateParams[$dateKey];
-      $ruleName = 'date';
-      if ($dateType == 1) {
-        $matches = array();
-        if (preg_match("/(\s(([01]\d)|[2][0-3]):([0-5]\d))$/", $date, $matches)) {
-          $ruleName = 'dateTime';
-          if (strpos($date, '-') !== FALSE) {
-            $dateVal .= array_shift($matches);
-          }
-        }
-      }
-
-      // validate date.
-      eval('$valid = CRM_Utils_Rule::' . $ruleName . '( $dateVal );');
-
-      if ($valid) {
-        //format date and time to default.
-        if ($ruleName == 'dateTime') {
-          $dateVal = CRM_Utils_Date::customFormat(preg_replace("/(:|\s)?/", "", $dateVal), '%Y%m%d%H%i');
-          //hack to add seconds
-          $dateVal .= '00';
-        }
-        $formattedDate = $dateVal;
-      }
-    }
-
-    return $formattedDate;
-  }
 }
 
