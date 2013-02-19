@@ -1286,17 +1286,16 @@ INSERT INTO civicrm_uf_group
     (id, name,                 group_type,           title,                                      is_cms_user, is_reserved, help_post) VALUES
     (1,  'name_and_address',   'Individual,Contact',  '{ts escape="sql"}Name and Address{/ts}',   0,           0,           NULL),
     (2,  'supporter_profile',  'Individual,Contact',  '{ts escape="sql"}Supporter Profile{/ts}',  2,           0,           '<p><strong>{ts escape="sql"}The information you provide will NOT be shared with any third party organisations.{/ts}</strong></p><p>{ts escape="sql"}Thank you for getting involved in our campaign!{/ts}</p>'),
-    (3,  'participant_status', 'Participant',         '{ts escape="sql"}Participant Status{/ts}', 0,           1,           NULL),
-    (4,  'new_individual',     'Individual,Contact',  '{ts escape="sql"}New Individual{/ts}'    , 0,           1,           NULL),
-    (5,  'new_organization',   'Organization,Contact','{ts escape="sql"}New Organization{/ts}'  , 0,           1,           NULL),
-    (6,  'new_household',      'Household,Contact',   '{ts escape="sql"}New Household{/ts}'     , 0,           1,           NULL),
-    (7,  'summary_overlay',    'Contact',   		  '{ts escape="sql"}Summary Overlay{/ts}'   , 0,           1,           NULL),
-    (8,  'shared_address',     'Contact',   		  '{ts escape="sql"}Shared Address{/ts}'    , 0,           1,           NULL),
-    (9,  'on_behalf_organization', 'Contact,Organization,Contribution,Membership',
-    '{ts escape="sql"}On Behalf Of Organization{/ts}'    , 0,           1,           NULL),
-    (10,  'contribution_batch_entry', 'Contribution', '{ts escape="sql"}Contribution Bulk Entry{/ts}' , 0,      1,           NULL),
-    (11,  'membership_batch_entry', 'Membership', '{ts escape="sql"}Membership Bulk Entry{/ts}' , 0,      1,           NULL),
-    (12, 'event_registration', 'Individual, Contact', '{ts escape="sql"}Your Registration Info{/ts}',        0,      0,           NULL);
+    (3,  'participant_status', 'Participant',         '{ts escape="sql"}Participant Status{/ts}',             0,      1,           NULL),
+    (4,  'new_individual',     'Individual,Contact',  '{ts escape="sql"}New Individual{/ts}'    ,             0,      1,           NULL),
+    (5,  'new_organization',   'Organization,Contact','{ts escape="sql"}New Organization{/ts}'  ,             0,      1,           NULL),
+    (6,  'new_household',      'Household,Contact',   '{ts escape="sql"}New Household{/ts}'     ,             0,      1,           NULL),
+    (7,  'summary_overlay',    'Contact',   		      '{ts escape="sql"}Summary Overlay{/ts}'   ,             0,      1,           NULL),
+    (8,  'shared_address',     'Contact',   		      '{ts escape="sql"}Shared Address{/ts}'                , 0,      1,           NULL),
+    (9,  'on_behalf_organization', 'Contact,Organization','{ts escape="sql"}On Behalf Of Organization{/ts}',  0,      1,           NULL),
+    (10,  'contribution_batch_entry', 'Contribution', '{ts escape="sql"}Contribution Bulk Entry{/ts}' ,       0,      1,           NULL),
+    (11,  'membership_batch_entry', 'Membership',     '{ts escape="sql"}Membership Bulk Entry{/ts}' ,         0,      1,           NULL),
+    (12, 'event_registration', 'Individual, Contact', '{ts escape="sql"}Your Registration Info{/ts}',         0,      0,           NULL);
 
 INSERT INTO civicrm_uf_join
    (is_active,module,entity_table,entity_id,weight,uf_group_id)
