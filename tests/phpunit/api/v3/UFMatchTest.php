@@ -42,9 +42,12 @@ class api_v3_UFMatchTest extends CiviUnitTestCase {
   // ids from the uf_group_test.xml fixture
   protected $_ufGroupId = 11;
   protected $_ufFieldId;
-  protected $_contactId = 69;
+  protected $_contactId;
   protected $_apiversion;
+  protected $_params = array();
+
   public $_eNoticeCompliant = TRUE;
+
   protected function setUp() {
     parent::setUp();
     $this->_apiversion = 3;
@@ -57,11 +60,20 @@ class api_v3_UFMatchTest extends CiviUnitTestCase {
         'civicrm_uf_match',
       )
     );
+    $this->_contactId = $this->individualCreate();
     $op = new PHPUnit_Extensions_Database_Operation_Insert;
     $op->execute(
       $this->_dbconn,
       new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(dirname(__FILE__) . '/dataset/uf_group_test.xml')
     );
+
+    $this->_params = array(
+      'contact_id' => $this->_contactId,
+      'uf_id' => '2',
+      'uf_name' => 'blahdyblah@gmail.com',
+      'version' => '3',
+      'domain_id' => 1,
+      );
   }
 
   function tearDown() {
@@ -87,7 +99,7 @@ class api_v3_UFMatchTest extends CiviUnitTestCase {
     );
     $result = civicrm_api('uf_match', 'get', $params);
     $this->assertEquals($result['values'][$result['id']]['contact_id'], 69);
-    $this->assertEquals($result['is_error'], 0);
+    $this->assertAPISuccess($result);
   }
 
   function testGetUFMatchIDWrongParam() {
@@ -107,7 +119,7 @@ class api_v3_UFMatchTest extends CiviUnitTestCase {
     $result = civicrm_api('uf_match', 'get', $params);
     $this->documentMe($params, $result, __FUNCTION__, __FILE__);
     $this->assertEquals($result['values'][$result['id']]['uf_id'], 42);
-    $this->assertEquals($result['is_error'], 0);
+    $this->assertAPISuccess($result);
   }
 
   function testGetUFIDWrongParam() {
@@ -124,6 +136,28 @@ class api_v3_UFMatchTest extends CiviUnitTestCase {
     $result = UF_match_get_example();
     $expectedResult = UF_match_get_expectedresult();
     $this->assertEquals($result, $expectedResult);
+  }
+
+  function testCreate() {
+    $result = civicrm_api('uf_match', 'create', $this->_params);
+    $this->assertAPISuccess($result);
+    $this->getAndCheck($this->_params, $result['id'], 'uf_match');
+  }
+
+  function testDelete() {
+    $result = civicrm_api('uf_match', 'create', $this->_params);
+    $this->assertEquals(1, civicrm_api('uf_match', 'getcount', array(
+      'version' => $this->_apiversion,
+      'id' => $result['id'],
+      )));
+    civicrm_api('uf_match', 'delete', array(
+      'version' => $this->_apiversion,
+      'id' => $result['id'],
+    ));
+    $this->assertEquals(0, civicrm_api('uf_match', 'getcount', array(
+      'version' => $this->_apiversion,
+      'id' => $result['id'],
+      )));
   }
 }
 
