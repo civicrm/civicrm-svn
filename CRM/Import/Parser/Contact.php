@@ -1970,8 +1970,11 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser {
       }
     }
 
-    // @todo calling api functions directly is not supported
-    _civicrm_api3_custom_format_params($params, $formatted, $extends);
+    if (($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) && array_key_exists($customFieldID, $customFields) &&
+      !array_key_exists($customFieldID, $addressCustomFields)) {
+      // @todo calling api functions directly is not supported
+      _civicrm_api3_custom_format_params($params, $formatted, $extends);
+    }
 
     // to check if not update mode and unset the fields with empty value.
     if (!$this->_updateWithId && array_key_exists('custom', $formatted)) {
