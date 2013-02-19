@@ -89,5 +89,19 @@ class CRM_PCP_PseudoConstant extends CRM_Core_PseudoConstant {
     }
     return self::$pcpStatus;
   }
+
+  /**
+   * Flush given pseudoconstant so it can be reread from db
+   * nex time it's requested.
+   *
+   * @access public
+   * @static
+   *
+   * @param boolean $name pseudoconstant to be flushed
+   *
+   */
+  public static function flush($name) {
+    self::$$name = NULL;
+  }
 }
 

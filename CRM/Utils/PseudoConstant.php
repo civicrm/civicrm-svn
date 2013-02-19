@@ -95,10 +95,10 @@ class CRM_Utils_PseudoConstant {
    *
    * @return array of string, constant names
    */
-  protected static function findConstants() {
+  public static function findConstants() {
     $constants = array();
     foreach (self::$constantClasses as $class) {
-      $constants = array_merge($constants, self::findConstantsByClass($class));
+      $constants = array_unique(array_merge($constants, self::findConstantsByClass($class)));
     }
     return $constants;
   }
@@ -111,11 +111,11 @@ class CRM_Utils_PseudoConstant {
    *
    * @return array of string, constant names
    */
-  protected static function findConstantsByClass($class) {
+  public static function findConstantsByClass($class) {
     $clazz = new ReflectionClass($class);
     $classConstants = array_intersect(
-      $clazz->getProperties(ReflectionProperty::IS_STATIC),
-      $clazz->getMethods(ReflectionMethod::IS_STATIC)
+      CRM_Utils_Array::collect('name', $clazz->getProperties(ReflectionProperty::IS_STATIC)),
+      CRM_Utils_Array::collect('name', $clazz->getMethods(ReflectionMethod::IS_STATIC))
     );
     return $classConstants;
   }
