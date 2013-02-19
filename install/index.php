@@ -1062,7 +1062,8 @@ class Installer extends InstallRequirements {
       global $installType, $installURLPath;
 
       $output = NULL;
-      if ($installType == 'drupal' &&
+      if (
+        $installType == 'drupal' &&
         version_compare(VERSION, '7.0-rc1') >= 0
       ) {
 

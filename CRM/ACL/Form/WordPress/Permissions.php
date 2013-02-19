@@ -156,7 +156,7 @@ class CRM_ACL_Form_WordPress_Permissions extends CRM_Core_Form {
    * @access public
    * @return array   civicrm permissions
    */
-  function getPermissionArray(){
+  static function getPermissionArray(){
     global $civicrm_root;
 
     $permissions = CRM_Core_Permission::getCorePermissions();

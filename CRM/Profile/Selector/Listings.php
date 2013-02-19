@@ -140,11 +140,16 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
    * @return CRM_Contact_Selector_Profile
    * @access public
    */
-  function __construct(&$params, &$customFields, $ufGroupIds = NULL, $map = FALSE,
-    $editLink = FALSE, $linkToUF = FALSE
+  function __construct(
+    &$params,
+    &$customFields,
+    $ufGroupIds = NULL,
+    $map = FALSE,
+    $editLink = FALSE,
+    $linkToUF = FALSE
   ) {
     $this->_params = $params;
-  
+
     if (is_array($ufGroupIds)) {
       $this->_profileIds = $ufGroupIds;
       $this->_gid = $ufGroupIds[0];
@@ -190,7 +195,7 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
 
     $queryParams    = CRM_Contact_BAO_Query::convertFormValues($this->_params, 1);
     $this->_query   = new CRM_Contact_BAO_Query($queryParams, $returnProperties, $this->_fields);
- 
+
     //the below is done for query building for multirecord custom field listing
     //to show all the custom field multi valued records of a particular contact
     $this->setMultiRecordTableName($this->_fields);
@@ -269,7 +274,7 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
    * @access public
    */
   function getPagerParams($action, &$params) {
-    $status = 
+    $status =
       CRM_Utils_System::isNull($this->_multiRecordTableName) ? ts('Contact %%StatusMessage%%') : ts('Contact Multi Records %%StatusMessage%%');
     $params['status']    = $status;
     $params['csvString'] = NULL;
@@ -387,17 +392,17 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
     if ($this->_multiRecordTableName &&
         !array_key_exists($this->_multiRecordTableName, $this->_query->_whereTables)) {
       $additionalFromClause = CRM_Utils_Array::value($this->_multiRecordTableName, $this->_query->_tables);
-      $returnQuery = TRUE;  
+      $returnQuery = TRUE;
     }
-    
+
     $countVal = $this->_query->searchQuery(0, 0, NULL, TRUE, NULL, NULL, NULL,
       $returnQuery, $additionalWhereClause, NULL, $additionalFromClause
     );
-    
+
     if (!$returnQuery) {
       return $countVal;
     }
-    
+
     if ($returnQuery) {
       $sql = preg_replace('/DISTINCT/', '', $countVal);
       return CRM_Core_DAO::singleValueQuery($sql);
@@ -459,20 +464,20 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
     $sort->_vars = $varArray;
 
     $additionalWhereClause = 'contact_a.is_deleted = 0';
-    $returnQuery = NULL;    
+    $returnQuery = NULL;
     if ($this->_multiRecordTableName) {
       $returnQuery = TRUE;
     }
-    
+
     $result = $this->_query->searchQuery($offset, $rowCount, $sort, NULL, NULL,
       NULL, NULL, $returnQuery, $additionalWhereClause
     );
-    
+
     if ($returnQuery) {
       $resQuery = preg_replace('/GROUP BY contact_a.id[\s]+ORDER BY/', ' ORDER BY', $result);
       $result   = CRM_Core_DAO::executeQuery($resQuery);
     }
-    
+
     // process the result of the query
     $rows = array();
 
@@ -491,7 +496,7 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
       }
     }
     $links = self::links($this->_map, $this->_editLink, $this->_linkToUF, $this->_profileIds);
- 
+
     $locationTypes = CRM_Core_PseudoConstant::locationType();
 
     $names = array();
@@ -559,7 +564,7 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
     if ($this->_multiRecordTableName) {
       $multiRecordTableId = "{$this->_multiRecordTableName}_id";
     }
-    
+
     // we need to determine of overlay profile should be shown
     $showProfileOverlay = CRM_Core_BAO_UFGroup::showOverlayProfile();
 
@@ -679,7 +684,7 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
         'id' => $result->contact_id,
         'gid' => implode(',', $this->_profileIds),
       );
-     
+
       // pass record id param to view url for multi record view
       if ($multiRecordTableId && $newLinks) {
         if ($result->$multiRecordTableId){
@@ -724,7 +729,7 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
   }
 
   /**
-   *  set the _multiRecordTableName to display the result set 
+   *  set the _multiRecordTableName to display the result set
    *  according to multi record custom field values
    */
   function setMultiRecordTableName($fields) {
@@ -756,7 +761,7 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
               return;
             }
           }
-          
+
           if (CRM_Utils_Array::value('in_selector', $properties)) {
             $selectorSet = TRUE;
           }
@@ -767,7 +772,7 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
     if (!isset($customGroupId) || !$customGroupId) {
       return;
     }
-    
+
     //if the field is in selector and not a searchable field
     //get the proper customvalue table name
     if ($selectorSet) {

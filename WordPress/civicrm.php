@@ -234,7 +234,10 @@ function civicrm_wp_initialize() {
     global $current_user;
     if ($current_user) {
       require_once 'CRM/Core/BAO/UFMatch.php';
-      CRM_Core_BAO_UFMatch::synchronize($current_user, FALSE, 'WordPress',
+      CRM_Core_BAO_UFMatch::synchronize(
+        $current_user,
+        FALSE,
+        'WordPress',
         civicrm_get_ctype('Individual')
       );
     }
@@ -316,7 +319,7 @@ function civicrm_wp_invoke() {
     require_once 'CRM/Core/BAO/UFMatch.php';
     CRM_Core_BAO_UFMatch::synchronize($current_user, FALSE, 'WordPress', 'Individual', TRUE);
   }
-  
+
   CRM_Core_Invoke::invoke($args);
 }
 
@@ -405,8 +408,10 @@ function civicrm_wp_frontend($shortcode = FALSE) {
 
   // if snippet is set, which means ajax call, we just
   // output civicrm html and skip the header
-  if (CRM_Utils_Array::value('snippet', $_GET) ||
-    (CRM_Utils_Array::value(0, $args) == 'civicrm' &&
+  if (
+    CRM_Utils_Array::value('snippet', $_GET) ||
+    (
+      CRM_Utils_Array::value(0, $args) == 'civicrm' &&
       CRM_Utils_Array::value(1, $args) == 'ajax'
     )
   ) {
@@ -417,7 +422,6 @@ function civicrm_wp_frontend($shortcode = FALSE) {
   // this places civicrm inside frontend theme
   // wp documentation rocks if you know what you are looking for
   // but best way is to check other plugin implementation :)
-
   if ($shortcode) {
     ob_start(); // start buffering
     civicrm_wp_invoke( ); // now, instead of echoing, shortcode output ends up in buffer

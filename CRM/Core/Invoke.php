@@ -197,7 +197,8 @@ class CRM_Core_Invoke {
 
     if ($item) {
       // CRM-7656 - make sure we send a clean sanitized path to create printer friendly url
-      $printerFriendly = CRM_Utils_System::makeURL('snippet', FALSE, FALSE,
+      $printerFriendly = CRM_Utils_System::makeURL(
+        'snippet', FALSE, FALSE,
         CRM_Utils_Array::value('path', $item)
       ) . '2';
       $template->assign('printerFriendly', $printerFriendly);
@@ -242,26 +243,24 @@ class CRM_Core_Invoke {
 
       if (isset($item['return_url'])) {
         $session = CRM_Core_Session::singleton();
-        $args = CRM_Utils_Array::value('return_url_args',
+        $args = CRM_Utils_Array::value(
+          'return_url_args',
           $item,
           'reset=1'
         );
-        $session->pushUserContext(CRM_Utils_System::url($item['return_url'],
-            $args
-          ));
+        $session->pushUserContext(CRM_Utils_System::url($item['return_url'], $args));
       }
 
       $result = NULL;
       if (is_array($item['page_callback'])) {
         $newArgs = explode('/', $_GET[$config->userFrameworkURLVar]);
         require_once (str_replace('_', DIRECTORY_SEPARATOR, $item['page_callback'][0]) . '.php');
-        $result = call_user_func($item['page_callback'],
-          $newArgs
-        );
+        $result = call_user_func($item['page_callback'], $newArgs);
       }
       elseif (strstr($item['page_callback'], '_Form')) {
         $wrapper = new CRM_Utils_Wrapper();
-        $result = $wrapper->run(CRM_Utils_Array::value('page_callback', $item),
+        $result = $wrapper->run(
+          CRM_Utils_Array::value('page_callback', $item),
           CRM_Utils_Array::value('title', $item),
           isset($pageArgs) ? $pageArgs : NULL
         );
