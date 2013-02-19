@@ -41,6 +41,11 @@ class CRM_Utils_PseudoConstant {
   );
 
   /**
+   * @var array ($name => $className)
+   */
+  private static $constants = NULL;
+
+  /**
    * Get constant
    *
    * Wrapper for Pseudoconstant methods. We use this so the calling function
@@ -53,11 +58,9 @@ class CRM_Utils_PseudoConstant {
    * @return array - array reference of all relevant constant
    */
   public static function getConstant($constant) {
-    $classes = self::$constantClasses;
-    foreach ($classes as $class) {
-      if (method_exists($class, lcfirst($constant))) {
-        return $class::$constant();
-      }
+    $class = self::findConstantClass($constant);
+    if ($class) {
+      return $class::$constant();
     }
   }
 
@@ -74,17 +77,36 @@ class CRM_Utils_PseudoConstant {
    * @return array - array reference of all relevant constant
    */
   public static function flushConstant($constant) {
-    $classes = self::$constantClasses;
-    foreach ($classes as $class) {
+    $class = self::findConstantClass($constant);
+    if ($class) {
+      $class::flush(lcfirst($constant));
+      //@todo the rule is api functions should only be called from within the api - we
+      // should move this function to a Core class
+      $name = _civicrm_api_get_entity_name_from_camel($constant);
+      CRM_Core_OptionGroup::flush($name);
+      return TRUE;
+    }
+  }
+
+  /**
+   * Determine where a constant lives
+   *
+   * If there's a full, preloaded map, use it. Otherwise, use search
+   * class space.
+   *
+   * @param string $name constant-name
+   * @return string|NULL class-name
+   */
+  public static function findConstantClass($constant) {
+    if (self::$constants !== NULL && isset(self::$constants[$constant])) {
+      return self::$constants[$constant];
+    }
+    foreach (self::$constantClasses as $class) {
       if (method_exists($class, lcfirst($constant))) {
-        $class::flush(lcfirst($constant));
-        //@todo the rule is api functions should only be called from within the api - we
-        // should move this function to a Core class
-        $name = _civicrm_api_get_entity_name_from_camel($constant);
-        CRM_Core_OptionGroup::flush($name);
-        return TRUE;
+        return $class;
       }
     }
+    return NULL;
   }
 
   /**
@@ -96,11 +118,15 @@ class CRM_Utils_PseudoConstant {
    * @return array of string, constant names
    */
   public static function findConstants() {
-    $constants = array();
-    foreach (self::$constantClasses as $class) {
-      $constants = array_unique(array_merge($constants, self::findConstantsByClass($class)));
+    if (self::$constants === NULL) {
+      self::$constants = array();
+      foreach (self::$constantClasses as $class) {
+        foreach (self::findConstantsByClass($class) as $constant) {
+          self::$constants[$constant] = $class;
+        }
+      }
     }
-    return $constants;
+    return array_keys(self::$constants);
   }
 
   /**

@@ -102,7 +102,7 @@ class CRM_Core_OptionGroup {
     $localize = FALSE, $condition = NULL,
     $labelColumnName = 'label', $onlyActive = TRUE, $fresh = FALSE
   ) {
-    $cacheKey = "CRM_OG_{$name}_{$flip}_{$grouping}_{$localize}_{$condition}_{$labelColumnName}_{$onlyActive}";
+    $cacheKey = self::createCacheKey($name, $flip, $grouping, $localize, $condition, $labelColumnName, $onlyActive);
 
     if (array_key_exists($cacheKey, self::$_cache) && !$fresh) {
       return self::$_cache[$cacheKey];
@@ -147,6 +147,29 @@ WHERE  v.option_group_id = g.id
     $cache->set($cacheKey, $var);
 
     return $var;
+  }
+
+  /**
+   * Counterpart to values() which removes the item from the cache
+   *
+   * @param $name
+   * @param $flip
+   * @param $grouping
+   * @param $localize
+   * @param $condition
+   * @param $labelColumnName
+   * @param $onlyActive
+   */
+  protected static function flushValues($name, $flip, $grouping, $localize, $condition, $labelColumnName, $onlyActive) {
+    $cacheKey = self::createCacheKey($name, $flip, $grouping, $localize, $condition, $labelColumnName, $onlyActive);
+    $cache = CRM_Utils_Cache::singleton();
+    $cache->delete($cacheKey);
+    unset(self::$_cache[$cacheKey]);
+  }
+
+  protected static function createCacheKey($name, $flip, $grouping, $localize, $condition, $labelColumnName, $onlyActive) {
+    $cacheKey = "CRM_OG_{$name}_{$flip}_{$grouping}_{$localize}_{$condition}_{$labelColumnName}_{$onlyActive}";
+    return $cacheKey;
   }
 
   /**
@@ -507,7 +530,7 @@ WHERE  v.option_group_id = g.id
     );
 
     $params = array_merge($defaults, $params);
-    self::values(
+    self::flushValues(
       $name,
       $params['flip'],
       $params['grouping'],
@@ -517,7 +540,7 @@ WHERE  v.option_group_id = g.id
       TRUE,
       TRUE
     );
-    self::values(
+    self::flushValues(
       $name,
       $params['flip'],
       $params['grouping'],
