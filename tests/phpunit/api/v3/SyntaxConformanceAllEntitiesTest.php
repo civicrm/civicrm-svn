@@ -565,7 +565,7 @@ class api_v3_SyntaxConformanceAllEntitiesTest extends CiviUnitTestCase {
       }
       $constant = CRM_Utils_Array::value('pseudoconstant', $specs);
       if (!empty($constant)) {
-        $constantOptions = array_reverse(array_keys(CRM_Core_PseudoConstant::getConstant($constant['name'])));
+        $constantOptions = array_reverse(array_keys(CRM_Utils_PseudoConstant::getConstant($constant['name'])));
         $entity[$field] = (string) $constantOptions[0];
       }
       $enum = CRM_Utils_Array::value('enumValues', $specs);

@@ -1330,7 +1330,7 @@ SELECT contact_id
           }
           $constant = CRM_Utils_Array::value('pseudoconstant', $value);
           if (!empty($constant)) {
-            $constantValues = CRM_Core_PseudoConstant::getConstant($constant['name']);
+            $constantValues = CRM_Utils_PseudoConstant::getConstant($constant['name']);
             if (!empty($constantValues)) {
               $constantOptions = array_keys($constantValues);
               $object->$dbName = $constantOptions[0];

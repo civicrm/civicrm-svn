@@ -390,23 +390,13 @@ class CRM_Core_PseudoConstant {
   private static $contactType = array();
 
   /**
-     * Financial Account Type
-     * @var array
-     * @static
-     */
-    private static $accountOptionValues;
-
-  /*
-   * CiviCRM pseudoconstant classes for wrapper functions
+   * Financial Account Type
+   * @var array
+   * @static
    */
-  private static $constantClasses = array(
-    'CRM_Core_PseudoConstant',
-    'CRM_Event_PseudoConstant',
-    'CRM_Contribute_PseudoConstant',
-    'CRM_Member_PseudoConstant',
-    'CRM_Grant_PseudoConstant',
-  );
-    /**
+  private static $accountOptionValues;
+
+  /**
    * populate the object from the database. generic populate
    * method
    *
@@ -2204,51 +2194,6 @@ ORDER BY name";
     return self::$contactType;
   }
 
-  /**
-   * Get constant
-   *
-   * Wrapper for Pseudoconstant methods. We use this so the calling function
-   * doesn't need to know which class the Pseudoconstant is on
-   * (some are on the Contribute_Pseudoconsant Class etc
-   *
-   * @access public
-   * @static
-   *
-   * @return array - array reference of all relevant constant
-   */
-  public static function getConstant($constant) {
-    $classes = self::$constantClasses;
-      foreach ($classes as $class){
-        if(method_exists($class, lcfirst($constant))){
-          return $class::$constant();
-        }
-      }
-  }
-  /**
-   * Flush constant
-   *
-   * Wrapper for Pseudoconstant methods. We use this so the calling function
-   * doesn't need to know which class the Pseudoconstant is on
-   * (some are on the Contribute_Pseudoconsant Class etc
-   *
-   * @access public
-   * @static
-   *
-   * @return array - array reference of all relevant constant
-   */
-  public static function flushConstant($constant) {
-    $classes = self::$constantClasses;
-    foreach ($classes as $class){
-      if(method_exists($class, lcfirst($constant))){
-        $class::flush(lcfirst($constant));
-        //@todo the rule is api functions should only be called from within the api - we
-        // should move this function to a Core class
-        $name = _civicrm_api_get_entity_name_from_camel($constant);
-        CRM_Core_OptionGroup::flush($name);
-        return true;
-      }
-    }
-  }
   /**
    * Get all the auto renew options
    *
