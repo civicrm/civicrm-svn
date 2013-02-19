@@ -912,7 +912,7 @@ class CRM_Profile_Form extends CRM_Core_Form {
       }
       else {
         // for edit mode we need to allow our own record to be a dupe match!
-        $exceptions = array($session->get('userID'));
+        $exceptions = array($form->_session->get('userID'));
       }
 
       // for dialog mode we should always use fuzzy rule.
