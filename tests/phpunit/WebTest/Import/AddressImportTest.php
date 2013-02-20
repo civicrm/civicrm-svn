@@ -67,7 +67,7 @@ class WebTest_Import_AddressImportTest extends ImportCiviSeleniumTestCase {
     $this->waitForPageToLoad("30000");
   
     foreach($customDataParams['customFields'] as $key => $value){
-      $this->assertTrue($this->isElementPresent("xpath=//div[@class='crm-accordion-body']/div/div/div[@class='crm-label'][contains(text(), '$key')]"));
+      $this->assertTrue($this->isElementPresent("xpath=//div[@class='crm-summary-row']/div[@class='crm-label'][contains(text(), '$key')]"));
       $this->assertTrue($this->isTextPresent("$value"));
     }
   }
