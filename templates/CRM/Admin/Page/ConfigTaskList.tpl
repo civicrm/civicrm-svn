@@ -30,6 +30,12 @@
 {else}
     {assign var='fromAction' value="&action=add"}
 {/if}
+{if $payPalProId}
+    {assign var='defaultPPUrl' value="action=add&pp=`$payPalProId`&reset=1"} 
+{else}
+    {assign var='defaultPPUrl' value="reset=1"}
+{/if}
+
 <div id="help" class="description">
     {ts 1=$adminMenu}Use this checklist to review and complete configuration tasks for your site. You will be redirected back to this checklist after saving each setting. Settings which you have not yet reviewed will be <span class="status-overdue">displayed in red</span>. After you have visited a page, the links will <span class="status-pending">display in green</span>  (although you may still need to revisit the page to complete or update the settings). You can access this page again from the <a href="%1">Administer CiviCRM</a> menu at any time.{/ts}
 </div>
@@ -92,7 +98,7 @@
         <td colspan="2">{ts}Online Contributions / Online Membership Signup / Online Event Registration{/ts}</td>
     </tr>
     <tr class="even">
-        <td class="tasklist nowrap"><a href="{crmURL p="civicrm/admin/paymentProcessor" q="action=add&reset=1&pp=PayPal&civicrmDestination=`$destination`"}" title="{$linkTitle}">{ts}Payment Processors{/ts}</a></td>
+        <td class="tasklist nowrap"><a href="{crmURL p="civicrm/admin/paymentProcessor" q="`$defaultPPUrl`&civicrmDestination=`$destination`"}" title="{$linkTitle}">{ts}Payment Processors{/ts}</a></td>
         <td>{ts}Select and configure one or more payment processing services for online contributions, events and / or membership fees.{/ts}</td>
     </tr>  
     {if $config->userSystem->is_drupal EQ '1'}
