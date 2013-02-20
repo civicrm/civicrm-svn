@@ -110,7 +110,7 @@ class CRM_Logging_Differ {
     );
 
     // look for all the changes in the given connection that happended less than {$this->interval} s later than log_date to the given id to catch multi-query changes
-    $changedSQL = "SELECT * FROM `{$this->db}`.`log_$table` WHERE log_conn_id = %1 AND log_date < DATE_ADD(%2, INTERVAL {$this->interval}) AND id = %3 ORDER BY log_date DESC LIMIT 1";
+    $changedSQL = "SELECT * FROM `{$this->db}`.`log_$table` WHERE log_conn_id = %1 AND log_date >= %2 AND log_date < DATE_ADD(%2, INTERVAL {$this->interval}) AND id = %3 ORDER BY log_date DESC LIMIT 1";
 
     $changedDAO = CRM_Core_DAO::executeQuery($changedSQL, $params);
     while ($changedDAO->fetch( )) {
@@ -138,6 +138,12 @@ class CRM_Logging_Differ {
           // look for the previous state (different log_conn_id) of the given id
           $originalSQL = "SELECT * FROM `{$this->db}`.`log_$table` WHERE log_conn_id != %1 AND log_date < %2 AND id = %3 ORDER BY log_date DESC LIMIT 1";
           $original = $this->sqlToArray($originalSQL, $params);
+          if (empty($original)) {
+            // A blank original array is not possible for Update action, otherwise we 'll end up displaying all information 
+            // in $changed variable as updated-info
+            $original = $changed;
+          }
+
           break;
       }
 
