@@ -1874,7 +1874,9 @@ class DB_common extends PEAR
      * @see PEAR_Error
      */
     function &raiseError($code = DB_ERROR, $mode = null, $options = null,
-                         $userinfo = null, $nativecode = null)
+        $userinfo = null, $nativecode = null,
+        $argToMatchParentSignature1 = null,
+        $argToMatchParentSignature2 = null)
     {
         // The error is yet a DB error object
         if (is_object($code)) {
