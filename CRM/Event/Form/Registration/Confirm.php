@@ -785,7 +785,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
       if ($this->_values['event']['is_monetary'] && $primaryParticipant) {
         if ($payment && is_object($payment)) {
           // call postprocess hook before leaving
-          $form->postProcessHook();
+          $this->postProcessHook();
           // this does not return
           $payment->doTransferCheckout($primaryParticipant, 'event');
         }
