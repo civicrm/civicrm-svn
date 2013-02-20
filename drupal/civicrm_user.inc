@@ -110,7 +110,6 @@ function civicrm_user_update(&$edit, &$user, $category) {
     $orginRoleDiff = array_diff($orginRoles, $editRoles);
     if (!empty($editRoleDiff) || !empty($orginRoleDiff)) {
       CRM_Core_BAO_Navigation::resetNavigation($contactID);
-      CRM_Core_BAO_Dashboard::resetDashletCache($contactID);
     }
   }
 }
