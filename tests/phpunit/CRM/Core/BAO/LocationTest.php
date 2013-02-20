@@ -253,13 +253,6 @@ class CRM_Core_BAO_LocationTest extends CiviUnitTestCase {
           'location_type_id' => 1,
         ),
       ),
-      'openid' => array(
-        '1' => array(
-          'openid' => 'http://civicrm.org/',
-          'location_type_id' => 1,
-          'is_primary' => 1,
-        ),
-      ),
       'im' => array(
         '1' => array(
           'name' => 'jane.doe',

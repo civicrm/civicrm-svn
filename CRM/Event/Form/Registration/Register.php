@@ -149,29 +149,12 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
    * @return None
    */
   function setDefaultValues() {
+    if ($this->_ppType && !($this->_paymentProcessor['billing_mode'] & CRM_Core_Payment::BILLING_MODE_FORM)) {
+      return;
+    }
+
     $contactID = parent::getContactID();
     if ($contactID) {
-      $fields = array();
-
-      if (!empty($this->_fields)) {
-        $removeCustomFieldTypes = array('Participant');
-        foreach ($this->_fields as $name => $dontCare) {
-          if (substr($name, 0, 7) == 'custom_') {
-            $id = substr($name, 7);
-            if (!$this->_allowConfirmation &&
-              !CRM_Core_BAO_CustomGroup::checkCustomField($id, $removeCustomFieldTypes)
-            ) {
-              continue;
-            }
-            // ignore component fields
-          }
-          elseif ((substr($name, 0, 12) == 'participant_')) {
-            continue;
-          }
-          $fields[$name] = 1;
-        }
-      }
-
       $names = array(
         'first_name', 'middle_name', 'last_name',
         "street_address-{$this->_bltID}", "city-{$this->_bltID}", "postal_code-{$this->_bltID}",
@@ -198,6 +181,42 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
       foreach ($names as $name) {
         if (isset($this->_defaults[$name])) {
           $this->_defaults['billing_' . $name] = $this->_defaults[$name];
+        }
+      }
+    }
+    $config = CRM_Core_Config::singleton();
+    // set default country from config if no country set
+    if (!CRM_Utils_Array::value("billing_country_id-{$this->_bltID}", $this->_defaults)) {
+      $this->_defaults["billing_country_id-{$this->_bltID}"] = $config->defaultContactCountry;
+    }
+    
+    // now fix all state country selectors
+    CRM_Core_BAO_Address::fixAllStateSelects($this, $this->_defaults);
+    
+    if ($this->_ppType) {
+      return $this->_defaults;
+    }
+    
+    if ($contactID) {
+      $options = array();
+      $fields = array();
+
+      if (!empty($this->_fields)) {
+        $removeCustomFieldTypes = array('Participant');
+        foreach ($this->_fields as $name => $dontCare) {
+          if (substr($name, 0, 7) == 'custom_') {
+            $id = substr($name, 7);
+            if (!$this->_allowConfirmation &&
+              !CRM_Core_BAO_CustomGroup::checkCustomField($id, $removeCustomFieldTypes)
+            ) {
+              continue;
+            }
+            // ignore component fields
+          }
+          elseif ((substr($name, 0, 12) == 'participant_')) {
+            continue;
+          }
+          $fields[$name] = 1;
         }
       }
     }
@@ -248,15 +267,6 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
         }
       }
     }
-
-    $config = CRM_Core_Config::singleton();
-    // set default country from config if no country set
-    if (!CRM_Utils_Array::value("billing_country_id-{$this->_bltID}", $this->_defaults)) {
-      $this->_defaults["billing_country_id-{$this->_bltID}"] = $config->defaultContactCountry;
-    }
-
-    // now fix all state country selectors
-    CRM_Core_BAO_Address::fixAllStateSelects($this, $this->_defaults);
 
     // add this event's default participant role to defaults array
     // (for cases where participant_role field is included in form via profile)
