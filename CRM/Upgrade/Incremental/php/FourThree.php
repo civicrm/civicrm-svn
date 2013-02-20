@@ -135,6 +135,10 @@ WHERE    entity_value = '' OR entity_value IS NULL
     $this->addTask(ts('Upgrade DB to 4.3.alpha2: SQL'), 'task_4_3_x_runSql', $rev);
   }
 
+  function upgrade_4_3_alpha3($rev) {
+    $this->addTask(ts('Upgrade DB to 4.3.alpha3: SQL'), 'task_4_3_x_runSql', $rev);
+  }
+
   //CRM-11636
   function assignFinancialTypeToPriceRecords() {
     $upgrade = new CRM_Upgrade_Form();
