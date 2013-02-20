@@ -306,7 +306,7 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant {
         }
         $roles = implode(', ', $role);
       }
-      
+
       $roleString = empty($roles) ? '' : $roles;
       $eventTitle = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_Event', $participant->event_id, 'title');
       $title = CRM_Contact_BAO_Contact::displayName($participant->contact_id) . ' (' . $roleString . ' - ' . $eventTitle . ')';
@@ -1411,7 +1411,8 @@ UPDATE  civicrm_participant
    * @access public
    * @static
    */
-  function sendTransitionParticipantMail($participantId,
+  static function sendTransitionParticipantMail(
+    $participantId,
     $participantValues,
     $eventDetails,
     $contactDetails,
