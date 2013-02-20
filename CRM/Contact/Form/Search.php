@@ -715,9 +715,9 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         // just like they build their own form elements
         foreach (array(
           'mailing_id', 'mailing_delivery_status', 'mailing_open_status',
-            'mailing_click_status', 'mailing_reply_status', 'mailing_optout',
-            'mailing_forward', 'mailing_unsubscribe', 'mailing_date_low',
-            'mailing_date_high',
+          'mailing_click_status', 'mailing_reply_status', 'mailing_optout',
+          'mailing_forward', 'mailing_unsubscribe', 'mailing_date_low',
+          'mailing_date_high',
           ) as $mailingFilter) {
           $type = 'String';
           if ($mailingFilter == 'mailing_id' &&
