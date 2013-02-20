@@ -427,12 +427,20 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard {
   /**
    * Function to reset dashlet cache
    *
+   * @param int $contactID reset cache only for specific contact
+   *
    * @return void
    * @static
    */
-  static function resetDashletCache() {
-    $query = "UPDATE civicrm_dashboard_contact SET content = NULL";
-    $dao = CRM_Core_DAO::executeQuery($query);
+  static function resetDashletCache($contactID = null) {
+    $whereClause = null;
+    $params = array();
+    if ($contactID) {
+      $whereClause = "WHERE contact_id = %1";
+      $params[1] = array($contactID, 'Integer');
+    }
+    $query = "UPDATE civicrm_dashboard_contact SET content = NULL $whereClause";
+    $dao = CRM_Core_DAO::executeQuery($query, $params);
   }
 
   /**

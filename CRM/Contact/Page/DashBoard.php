@@ -53,13 +53,13 @@ class CRM_Contact_Page_DashBoard extends CRM_Core_Page {
 
     $resetCache = CRM_Utils_Request::retrieve('resetCache', 'Positive', CRM_Core_DAO::$_nullObject);
 
-    if ($resetCache) {
-      CRM_Core_BAO_Dashboard::resetDashletCache();
-    }
-
     CRM_Utils_System::setTitle(ts('CiviCRM Home'));
     $session = CRM_Core_Session::singleton();
     $contactID = $session->get('userID');
+
+    if ($resetCache) {
+      CRM_Core_BAO_Dashboard::resetDashletCache($contactID);
+    }
 
     // call hook to get html from other modules
     // ignored but needed to prevent warnings
@@ -77,8 +77,9 @@ class CRM_Contact_Page_DashBoard extends CRM_Core_Page {
 
     // Don't put up notices if user doesn't have administer CiviCRM permission
     if (CRM_Core_Permission::check('administer CiviCRM')) {
-      $destination = CRM_Utils_System::url('civicrm/dashboard',
-        'reset=1',
+      $destination = CRM_Utils_System::url(
+        'civicrm/dashboard',
+        'reseto=1',
         FALSE, NULL, FALSE
       );
 

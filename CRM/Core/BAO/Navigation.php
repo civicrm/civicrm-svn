@@ -657,15 +657,14 @@ ORDER BY parent_id, weight";
   /**
    * Reset navigation for all contacts
    *
-   * @param null $contactId
+   * @param integer $contactID - reset only entries belonging to that contact ID
    */
-  static function resetNavigation($contactId = NULL) {
+  static function resetNavigation($contactID = NULL) {
     $params = array();
     $query = "UPDATE civicrm_setting SET value = NULL WHERE name='navigation'";
-    if ($contactId) {
+    if ($contactID) {
       $query .= " AND contact_id = %1";
-
-      $params[1] = array((int)$contactId, 'Integer');
+      $params[1] = array($contactID, 'Integer');
     }
     else {
       $query .= " AND contact_id IS NOT NULL";
@@ -673,6 +672,9 @@ ORDER BY parent_id, weight";
 
     CRM_Core_DAO::executeQuery($query, $params);
     CRM_Core_BAO_Cache::deleteGroup('navigation');
+
+    // also reset the dashlet cache in case permissions have changed etc
+    CRM_Core_BAO_Dashboard::resetDashletCache($contactID);
   }
 
   /**
