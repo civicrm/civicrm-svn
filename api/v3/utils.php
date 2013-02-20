@@ -154,7 +154,8 @@ function civicrm_api3_create_error($msg, $data = array(
   $data['is_error'] = 1;
   $data['error_message'] = $msg;
   if (is_array($dao) && isset($dao['params']) && is_array($dao['params']) && CRM_Utils_Array::value('api.has_parent', $dao['params'])) {
-    throw new Exception('Error in call to ' . $dao['entity'] . '_' . $dao['action'] . ' : ' . $msg);
+    $errorCode = empty($data['error_code']) ? 'chained_api_failed' : $data['error_code'];
+    throw new API_Exception('Error in call to ' . $dao['entity'] . '_' . $dao['action'] . ' : ' . $msg, $errorCode, $data);
   }
   return $data;
 }

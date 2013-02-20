@@ -107,14 +107,15 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     if (CRM_Utils_Array::value('format.is_success', $apiRequest['params']) == 1) {
       return 0;
     }
-    $data = array();
-    $err = civicrm_api3_create_error($e->getMessage(), $data, $apiRequest);
     if (CRM_Utils_Array::value('debug', $apiRequest['params'])) {
-      $err['trace'] = $e->getTraceSafe();
+      $error = $e->getCause();
+      $data['debug_info'] = $error->getUserInfo();
+      $data['trace'] = $e->getTraceAsString();
     }
-    else {
-      $err['tip'] = "add debug=1 to your API call to have more info about the error";
+    else{
+      $data['tip'] = "add debug=1 to your API call to have more info about the error";
     }
+    $err = civicrm_api3_create_error($e->getMessage(), $data, $apiRequest);
     if (CRM_Utils_Array::value('is_transactional', $apiRequest)) {
       $transaction->rollback();
     }
@@ -131,7 +132,9 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     $data['entity'] = CRM_Utils_Array::value('entity', $apiRequest);
     $data['action'] = CRM_Utils_Array::value('action', $apiRequest);
     $err = civicrm_api3_create_error($e->getMessage(), $data, $apiRequest, $e->getCode());
-    if (CRM_Utils_Array::value('debug', CRM_Utils_Array::value('params',$apiRequest))) {
+    if (CRM_Utils_Array::value('debug', CRM_Utils_Array::value('params',$apiRequest))
+      && empty($data['trace']) // prevent recursion
+    ) {
       $err['trace'] = $e->getTraceAsString();
     }
     if (CRM_Utils_Array::value('is_transactional', CRM_Utils_Array::value('params',$apiRequest))) {
@@ -390,7 +393,9 @@ function _civicrm_api_call_nested_api(&$params, &$result, $action, $entity, $ver
       $subAPI = explode($separator, $field);
 
       $subaction = empty($subAPI[2]) ? $action : $subAPI[2];
-      $subParams = array();
+      $subParams = array(
+        'debug' => CRM_Utils_Array::value('debug', $params),
+      );
       $subEntity = $subAPI[1];
 
       foreach ($result['values'] as $idIndex => $parentAPIValues) {
