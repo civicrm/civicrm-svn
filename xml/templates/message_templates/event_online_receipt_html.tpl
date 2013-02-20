@@ -223,10 +223,10 @@ registration process.{/ts}</p>
                {$line.qty}
               </td>
               <td>
-               {$line.unit_price|crmMoney}
+               {$line.unit_price|crmMoney:$currency}
               </td>
               <td>
-               {$line.line_total|crmMoney}
+               {$line.line_total|crmMoney:$currency}
               </td>
 	      {if $pricesetFieldsCount }<td>{$line.participant_count}</td> {/if}
              </tr>
@@ -242,7 +242,7 @@ registration process.{/ts}</p>
        {foreach from=$amounts item=amnt key=level}
         <tr>
          <td colspan="2" {$valueStyle}>
-          {$amnt.amount|crmMoney} {$amnt.label}
+          {$amnt.amount|crmMoney:$currency} {$amnt.label}
          </td>
         </tr>
        {/foreach}
@@ -254,7 +254,7 @@ registration process.{/ts}</p>
          {ts}Total Amount{/ts}
         </td>  
         <td {$valueStyle}>
-         {$totalAmount|crmMoney} {if $hookDiscount.message}({$hookDiscount.message}){/if}
+         {$totalAmount|crmMoney:$currency} {if $hookDiscount.message}({$hookDiscount.message}){/if}
         </td>
        </tr>
        {if $pricesetFieldsCount }

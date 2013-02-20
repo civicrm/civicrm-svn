@@ -139,18 +139,18 @@ You were registered by: {$payer.name}
 
 {foreach from=$value item=line}
 {if $pricesetFieldsCount }{capture assign=ts_participant_count}{$line.participant_count}{/capture}{/if}
-{capture assign=ts_item}{if $line.html_type eq 'Text'}{$line.label}{else}{$line.field_title} - {$line.label}{/if} {if $line.description} {$line.description}{/if}{/capture}{$ts_item|truncate:30:"..."|string_format:"%-30s"} {$line.qty|string_format:"%5s"} {$line.unit_price|crmMoney|string_format:"%10s"} {$line.line_total|crmMoney|string_format:"%10s"}{$ts_participant_count|string_format:"%10s"}
+{capture assign=ts_item}{if $line.html_type eq 'Text'}{$line.label}{else}{$line.field_title} - {$line.label}{/if} {if $line.description} {$line.description}{/if}{/capture}{$ts_item|truncate:30:"..."|string_format:"%-30s"} {$line.qty|string_format:"%5s"} {$line.unit_price|crmMoney:$currency|string_format:"%10s"} {$line.line_total|crmMoney:$currency|string_format:"%10s"}{$ts_participant_count|string_format:"%10s"}
 {/foreach}
 {/if}
 {/foreach}
 {/if}
 {if $amounts && !$lineItem}
-{foreach from=$amounts item=amnt key=level}{$amnt.amount|crmMoney} {$amnt.label}
+{foreach from=$amounts item=amnt key=level}{$amnt.amount|crmMoney:$currency} {$amnt.label}
 {/foreach}
 {/if}
 {if $isPrimary }
 
-{ts}Total Amount{/ts}: {$totalAmount|crmMoney} {if $hookDiscount.message}({$hookDiscount.message}){/if}
+{ts}Total Amount{/ts}: {$totalAmount|crmMoney:$currency} {if $hookDiscount.message}({$hookDiscount.message}){/if}
 
 {if $pricesetFieldsCount }
       {assign var="count" value= 0}
