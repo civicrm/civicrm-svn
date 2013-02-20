@@ -137,7 +137,7 @@ function civicrm_api($entity, $action, $params, $extra = NULL) {
     ) {
       $err['trace'] = $e->getTraceAsString();
     }
-    if (CRM_Utils_Array::value('is_transactional', CRM_Utils_Array::value('params',$apiRequest))) {
+    if (CRM_Utils_Array::value('is_transactional', $apiRequest)) {
       $transaction->rollback();
     }
     return $err;
