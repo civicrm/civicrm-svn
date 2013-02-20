@@ -135,7 +135,7 @@ class CRM_Utils_File {
    * @access public
    * @static
    */
-  public static function cleanDir($target, $rmdir = TRUE, $verbose = TRUE) {
+  static function cleanDir($target, $rmdir = TRUE, $verbose = TRUE) {
     static $exceptions = array('.', '..');
     if ($target == '' || $target == '/') {
       throw new Exception("Overly broad deletion");
@@ -172,8 +172,7 @@ class CRM_Utils_File {
     }
   }
 
-  public function copyDir($source, $destination) {
-
+  static function copyDir($source, $destination) {
     $dir = opendir($source);
     @mkdir($destination);
     while (FALSE !== ($file = readdir($dir))) {
@@ -253,7 +252,7 @@ class CRM_Utils_File {
     return $name;
   }
 
-  function sourceSQLFile($dsn, $fileName, $prefix = NULL, $isQueryString = FALSE, $dieOnErrors = TRUE) {
+  static function sourceSQLFile($dsn, $fileName, $prefix = NULL, $isQueryString = FALSE, $dieOnErrors = TRUE) {
     require_once 'DB.php';
 
     $db = DB::connect($dsn);

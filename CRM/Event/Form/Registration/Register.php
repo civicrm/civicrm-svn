@@ -75,7 +75,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
    *
    * @return void
    * @access public
-   */ 
+   */
   function preProcess() {
     parent::preProcess();
     $this->_ppType = CRM_Utils_Array::value('type', $_GET);
@@ -97,7 +97,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
         }
       }
     }
-        
+
     //CRM-4320.
     //here we can't use parent $this->_allowWaitlist as user might
     //walk back and we maight set this value in this postProcess.
@@ -137,7 +137,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
       CRM_Core_Payment_ProcessorForm::preProcess($this);
       CRM_Core_Payment_ProcessorForm::buildQuickForm($this);
     }
-   
+
   }
 
   /**
@@ -189,14 +189,14 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
     if (!CRM_Utils_Array::value("billing_country_id-{$this->_bltID}", $this->_defaults)) {
       $this->_defaults["billing_country_id-{$this->_bltID}"] = $config->defaultContactCountry;
     }
-    
+
     // now fix all state country selectors
     CRM_Core_BAO_Address::fixAllStateSelects($this, $this->_defaults);
-    
+
     if ($this->_ppType) {
       return $this->_defaults;
     }
-    
+
     if ($contactID) {
       $options = array();
       $fields = array();
@@ -433,7 +433,9 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
         );
       }
       elseif (!empty($pps)) {
-        $this->addElement('hidden', 'payment_processor', array_pop(array_keys($pps)));
+        $ppKeys = array_keys($pps);
+        $currentPP = array_pop($ppKeys);
+        $this->addElement('hidden', 'payment_processor', $currentPP);
       }
     }
 
@@ -478,7 +480,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
     }
 
     //we have to load confirm contribution button in template
-    //when multiple payment processor as the user 
+    //when multiple payment processor as the user
     //can toggle with payment processor selection
     $billingModePaymentProcessors = 0;
     if (!CRM_Utils_System::isNull($this->_paymentProcessors)) {
@@ -488,7 +490,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
         }
       }
     }
-    
+
     if ($billingModePaymentProcessors && count($this->_paymentProcessors) == $billingModePaymentProcessors) {
       $allAreBillingModeProcessors = TRUE;
     } else {
@@ -496,7 +498,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
     }
 
     if (!$allAreBillingModeProcessors ||
-      CRM_Utils_Array::value('is_pay_later', $this->_values['event']) || $bypassPayment 
+      CRM_Utils_Array::value('is_pay_later', $this->_values['event']) || $bypassPayment
     ) {
 
       //freeze button to avoid multiple calls.
@@ -610,7 +612,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
           if (!empty($optionFullIds) && (count($options) == count($optionFullIds))) {
             $isRequire = FALSE;
           }
-          
+
           //build the element.
           CRM_Price_BAO_Field::addQuickFormElement($form,
             $elementName,
@@ -1424,7 +1426,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration {
       $participant->event_id = $self->_values['event']['id'];
       if (!empty($fields['participant_role']) && is_numeric($fields['participant_role'])) {
         $participant->role_id = $fields['participant_role'];
-      } 
+      }
       else {
         $participant->role_id = $self->_values['event']['default_role_id'];
       }
