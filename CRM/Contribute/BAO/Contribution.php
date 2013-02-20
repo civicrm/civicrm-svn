@@ -2004,7 +2004,7 @@ WHERE  contribution_id = %1 ";
         }
       }
 
-      if (is_array($ids['membership'])) {
+      if (array_key_exists('membership', $ids) && is_array($ids['membership'])) {
         foreach ($ids['membership'] as $id) {
           if (!empty($id)) {
             $membership = new CRM_Member_BAO_Membership();

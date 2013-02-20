@@ -113,7 +113,7 @@ class CRM_Core_Payment_BaseIPN {
     else {
       //legacy support - functions are 'used' to be able to pass in a DAO
       $contribution = new CRM_Contribute_BAO_Contribution();
-      $contribution->id = $ids['contribution'];
+      $contribution->id = CRM_Utils_Array::value('contribution', $ids);
       $contribution->find(TRUE);
       $objects['contribution'] = &$contribution;
     }
