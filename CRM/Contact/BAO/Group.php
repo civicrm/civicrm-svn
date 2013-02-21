@@ -901,7 +901,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
      // separators in front of the name to give it a visual offset.
      // Instead of recursively making mysql queries, we'll make one big
      // query and build the heirarchy with the algorithm below.
-
+     $groups = array();
      $args = array(1 => array($groupIds, 'String'));
      $query = "SELECT id, title, description, visibility, parents
      FROM     civicrm_group
