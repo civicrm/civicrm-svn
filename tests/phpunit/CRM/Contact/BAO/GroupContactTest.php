@@ -83,7 +83,9 @@ class CRM_Contact_BAO_GroupContactTest extends CiviUnitTestCase {
     //check the group contact id is not null
     $this->assertNotNull($groupContact->id);
 
-    $this->assertEquals($groupContact->group_id, 1, 'Check for group_id');
+    $groupId = CRM_Core_DAO::singleValueQuery('select max(id) from civicrm_group');
+
+    $this->assertEquals($groupContact->group_id, $groupId, 'Check for group_id');
 
     //cleanup
     $groupContact->deleteTestObjects('CRM_Contact_DAO_GroupContact');
