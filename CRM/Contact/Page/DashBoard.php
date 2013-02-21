@@ -79,7 +79,7 @@ class CRM_Contact_Page_DashBoard extends CRM_Core_Page {
     if (CRM_Core_Permission::check('administer CiviCRM')) {
       $destination = CRM_Utils_System::url(
         'civicrm/dashboard',
-        'reseto=1',
+        'reset=1',
         FALSE, NULL, FALSE
       );
 
