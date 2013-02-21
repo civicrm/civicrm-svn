@@ -128,7 +128,7 @@ class CRM_Core_BAO_SettingTest extends CiviUnitTestCase {
     CRM_Core_BAO_ConfigSetting::add($settings);
     $config = CRM_Core_Config::singleton(TRUE, TRUE);
     $this->assertEquals(6, $config->maxAttachments);
-    $checkSQL = "SELECT  count(*) FROM civicrm_domain WHERE config_backend LIKE 'Max%' AND id = 1
+    $checkSQL = "SELECT  count(*) FROM civicrm_domain WHERE config_backend LIKE '%Max%' AND id = 1
     ";
     $checkresult = CRM_Core_DAO::singleValueQuery($checkSQL);
     $this->assertEquals(1, $checkresult, "Check that maxAttachments has been saved to database not just stored in config");
