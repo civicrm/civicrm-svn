@@ -147,7 +147,6 @@ class CiviTestSuite extends PHPUnit_Framework_TestSuite {
     }
     sort($addTests);
     foreach ($addTests as $addTest) {
-      // printf("addTest [%s]\n", $addTest);
       $suite->addTest(call_user_func($addTest));
     }
 
@@ -160,13 +159,15 @@ class CiviTestSuite extends PHPUnit_Framework_TestSuite {
         && (substr($fileInfo->getFilename(), 0, 1) != '.')
       ) {
         //  This is a directory that may contain tests so scan it
-        $addAllTests[] = array($suite, $myfile, clone $fileInfo);
+        $addAllTests[] = clone $fileInfo;
       }
     }
-    $addAllTests = CRM_Utils_Array::crmArraySortByField($addAllTests, '1');
+    //$addAllTests = CRM_Utils_Array::crmArraySortByField($addAllTests, '1');
+    usort($addAllTests, function($a, $b) {
+      return strnatcmp($a->getRealPath(), $b->getRealPath());
+    });
     foreach ($addAllTests as $addAllTest) {
-      // printf("addAllTest [%s]\n", $addAllTest[1]);
-      $this->addAllTests($addAllTest[0], $addAllTest[1], $addAllTest[2]);
+      $this->addAllTests($suite, $myfile, $addAllTest);
     }
 
     //  Pass 3:  Check all *Test.php files in this directory
@@ -197,8 +198,9 @@ class CiviTestSuite extends PHPUnit_Framework_TestSuite {
     }
     sort($addTestSuites);
     foreach ($addTestSuites as $addTestSuite) {
-      // printf("addTestSuite [%s]\n", $addTestSuite);
       $suite->addTestSuite($addTestSuite);
     }
+    
+    // print_r(array($prefix, 'addTests' => $addTests, 'addAllTests' => $addAllTests, 'addTestSuites' => $addTestSuites));
   }
 }
