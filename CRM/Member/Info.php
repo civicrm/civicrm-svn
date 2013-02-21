@@ -94,7 +94,7 @@ class CRM_Member_Info extends CRM_Core_Component_Info {
   }
 
   // add shortcut to Create New
-  public function creatNewShortcut(&$shortCuts) {
+  public function creatNewShortcut(&$shortCuts, $newCredit) {
     if (CRM_Core_Permission::check('access CiviMember') &&
       CRM_Core_Permission::check('edit memberships')
     ) {
@@ -104,6 +104,15 @@ class CRM_Member_Info extends CRM_Core_Component_Info {
             'ref' => 'new-membership',
             'title' => ts('Membership'),
           )));
+      if ($newCredit) {
+        $title = ts('Membership') . '<br />&nbsp;&nbsp;(' . ts('credit card') . ')';
+        $shortCuts = array_merge($shortCuts, array(
+          array('path' => 'civicrm/member/add',
+              'query' => "reset=1&action=add&context=standalone&mode=live",
+              'ref' => 'new-membership-cc',
+              'title' => $title,
+            )));        
+      }
     }
   }
 }
