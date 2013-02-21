@@ -2701,7 +2701,7 @@ ORDER BY civicrm_mailing.name";
       $mailing = CRM_Core_DAO::executeQuery($query);
 
       while ($mailing->fetch()) {
-        $list[mysql_real_escape_string($mailing->id)] = "{$mailing->name} :: {$mailing->end_date}";
+        $list[$mailing->id] = "{$mailing->name} :: {$mailing->end_date}";
       }
     }
 
