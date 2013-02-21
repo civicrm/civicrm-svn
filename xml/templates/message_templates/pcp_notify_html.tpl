@@ -58,9 +58,10 @@
      </tr>
 
      <tr>
-      <td rowspan="2" {$labelStyle}>
+      <td {$labelStyle}>
        <a href="{$pcpURL}">{ts}View Page{/ts}</a>
       </td>
+      <td></td>
      </tr>
      <tr>
       <td {$labelStyle}>
@@ -79,9 +80,10 @@
       </td>
      </tr>
      <tr>
-      <td rowspan="2" {$labelStyle}>
+      <td {$labelStyle}>
        <a href="{$managePCPUrl}">{ts}Manage Personal Campaign Pages{/ts}</a>
       </td>
+      <td></td>
      </tr>
 
     </table>
