@@ -49,7 +49,8 @@ class CRM_PCP_Page_PCPInfo extends CRM_Core_Page {
    * @return void
    * @access public
    *
-   */ function run() {
+   */
+  function run() {
     $session         = CRM_Core_Session::singleton();
     $config          = CRM_Core_Config::singleton();
     $permissionCheck = FALSE;
