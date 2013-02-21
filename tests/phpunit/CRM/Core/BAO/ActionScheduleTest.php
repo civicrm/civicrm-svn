@@ -28,6 +28,11 @@
 
 require_once 'CiviTest/CiviUnitTestCase.php';
 class CRM_Core_BAO_ActionScheduleTest extends CiviUnitTestCase {
+  /**
+   * @var object see CiviTest/CiviMailUtils
+   */
+  var $mut;
+
   function get_info() {
     return array(
       'name' => 'Action-Schedule BAO',
@@ -39,10 +44,8 @@ class CRM_Core_BAO_ActionScheduleTest extends CiviUnitTestCase {
   function setUp() {
     parent::setUp();
 
-    global $civicrm_setting;
-    $civicrm_setting[CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME]['mailing_backend'] = array( 'outBound_option' => '4');
-    $this->mailer = CRM_Core_Config::getMailer();
-    $this->mailer->sentMessages = array();
+    require_once 'CiviTest/CiviMailUtils.php';
+    $this->mut = new CiviMailUtils($this, true);
 
     $this->fixtures['rolling_membership'] = array( // createTestObject
       'membership_type_id' => array(
@@ -196,9 +199,9 @@ class CRM_Core_BAO_ActionScheduleTest extends CiviUnitTestCase {
   function tearDown() {
     parent::tearDown();
 
-    global $civicrm_setting;
-    unset($civicrm_setting[CRM_Core_BAO_Setting::MAILING_PREFERENCES_NAME]['mailing_backend']);
-    unset($this->mailer);
+    $this->mut->clearMessages();
+    $this->mut->stop();
+    unset($this->mut);
 
     $this->_tearDown();
   }
@@ -371,20 +374,6 @@ class CRM_Core_BAO_ActionScheduleTest extends CiviUnitTestCase {
   // TODO // function testEventNameStartDate_Match() { }
   // TODO // function testEventNameEndDate_Match() { }
 
-  function assertRecipients($expectedRecipients, $mailer) {
-    $recipients = array();
-    foreach($mailer->sentMessages as $message) {
-      $recipients[] = $message['recipients'];
-    }
-    sort($recipients);
-    sort($expectedRecipients);
-    $this->assertEquals(
-      $expectedRecipients,
-      $recipients,
-      "Incorrect recipients: " . print_r(array('expected'=>$expectedRecipients, 'actual'=>$recipients), TRUE)
-    );
-  }
-
   /**
    * Run a series of cron jobs and make an assertion about email deliveries
    *
@@ -399,8 +388,8 @@ class CRM_Core_BAO_ActionScheduleTest extends CiviUnitTestCase {
         'version' => 3,
       ));
       $this->assertAPISuccess($result);
-      $this->assertRecipients($cronRun['recipients'], $this->mailer);
-      $this->mailer->sentMessages = array();
+      $this->mut->assertRecipients($cronRun['recipients']);
+      $this->mut->clearMessages();
     }
   }
 

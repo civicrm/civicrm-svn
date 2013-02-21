@@ -178,8 +178,8 @@ class CiviMailUtils extends PHPUnit_Framework_TestCase {
       $this->_ut->selectWindow( null );
 
     } else {
-      $dao = CRM_Core_DAO::executeQuery( 'SELECT headers,body FROM civicrm_mailing_spool ORDER BY id DESC LIMIT 1' );
-      if ( $dao->fetch() ) {
+      $dao = CRM_Core_DAO::executeQuery('SELECT headers, body FROM civicrm_mailing_spool ORDER BY id DESC LIMIT 1');
+      if ($dao->fetch()) {
         $msg = $dao->headers . "\n\n" . $dao->body;
       }
       $dao->free();
@@ -190,14 +190,41 @@ class CiviMailUtils extends PHPUnit_Framework_TestCase {
       // nothing to do
       break;
     case 'ezc':
-      $set = new ezcMailVariableSet( $msg );
-      $parser = new ezcMailParser();
-      $mail = $parser->parseMail( $set );
-      $this->_ut->assertNotEmpty( $mail, 'Cannot parse mail' );
-      $msg = $mail[0];
+      $msg = $this->convertToEzc($msg);
       break;
     }
     return $msg;
+  }
+
+  /**
+   * @param string $type 'raw'|'ezc'
+   * @return array(ezcMail)|array(string)
+   */
+  function getAllMessages($type = 'raw') {
+    $msgs = array();
+
+    if ( $this->_webtest ) {  
+      throw new Exception("Not implementated: getAllMessages for WebTest");
+    } else {
+      $dao = CRM_Core_DAO::executeQuery('SELECT headers, body FROM civicrm_mailing_spool ORDER BY id');
+      while ($dao->fetch()) {
+        $msgs[] = $dao->headers . "\n\n" . $dao->body;
+      }
+      $dao->free();
+    }
+    
+    switch ($type) {
+      case 'raw':
+        // nothing to do
+        break;
+      case 'ezc':
+        foreach ($msgs as $i => $msg) {
+          $msgs[$i] = $this->convertToEzc($msg);
+        }
+        break;
+    }
+
+    return $msgs;
   }
 
   function getSelectedOutboundOption() {
@@ -242,5 +269,46 @@ class CiviMailUtils extends PHPUnit_Framework_TestCase {
   function assertMailLogEmpty($prefix = ''){
     $mail = $this->getMostRecentEmail( 'raw' );
     $this->_ut->assertEmpty($mail, 'mail sent when it should not have been ' . $prefix);
+  }
+
+  /**
+   * Assert that $expectedRecipients (and no else) have received emails
+   *
+   * @param array $expectedRecipients array($msgPos => array($recipPos => $emailAddr)) 
+   */
+  function assertRecipients($expectedRecipients) {
+    $recipients = array();
+    foreach($this->getAllMessages('ezc') as $message) {
+      $recipients[] = CRM_Utils_Array::collect('email', $message->to);
+    }
+    sort($recipients);
+    sort($expectedRecipients);
+    $this->_ut->assertEquals(
+      $expectedRecipients,
+      $recipients,
+      "Incorrect recipients: " . print_r(array('expected'=>$expectedRecipients, 'actual'=>$recipients), TRUE)
+    );
+  }
+  /**
+   * Remove any sent messages from the log
+   */
+  function clearMessages() {
+    if ( $this->_webtest ) {
+      throw new Exception("Not implementated: clearMessages for WebTest");
+    } else {
+      CRM_Core_DAO::executeQuery('DELETE FROM civicrm_mailing_spool ORDER BY id DESC LIMIT 1');
+    }
+  }
+  
+  /**
+   * @param string $msg email header and body
+   * @return ezcMail
+   */
+  private function convertToEzc($msg) {
+      $set = new ezcMailVariableSet($msg);
+      $parser = new ezcMailParser();
+      $mail = $parser->parseMail($set);
+      $this->_ut->assertNotEmpty($mail, 'Cannot parse mail');
+      return $mail[0];  
   }
 }
