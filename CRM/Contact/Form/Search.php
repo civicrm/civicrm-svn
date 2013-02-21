@@ -116,15 +116,6 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
    */
   protected $_searchButtonName;
 
-
-  /**
-     * Batch Status name
-     *
-     * @var string
-     * @access protected
-     */
-	protected $_financialBatchStatus = null;
-
     /**
    * name of print button
    *
@@ -380,10 +371,6 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
    */
   function buildQuickForm() {
     $permission = CRM_Core_Permission::getPermission();
-    $financialBatchStatus = 0;
-    if ($this->_financialBatchStatus) {
-      $financialBatchStatus = "'{$this->_financialBatchStatus}'";
-    }
     // some tasks.. what do we want to do with the selected contacts ?
     $tasks = array('' => ts('- actions -'));
     if ($this->_componentMode == 1 || $this->_componentMode == 7) {
@@ -393,7 +380,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
     }
     else {
       $className = $this->_modeValue['taskClassName'];
-      $tasks += $className::permissionedTaskTitles($permission, false, $financialBatchStatus);
+      $tasks += $className::permissionedTaskTitles($permission, false);
     }
 
     if (isset($this->_ssID)) {
