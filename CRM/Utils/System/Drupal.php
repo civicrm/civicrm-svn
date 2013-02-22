@@ -205,6 +205,26 @@ class CRM_Utils_System_Drupal extends CRM_Utils_System_Base {
     }
     return $destination;
   }
+  
+  /**
+   * Get user login URL for hosting CMS (method declared in each CMS system class)
+   *
+   * @param string $destination - if present, add destination to querystring (works for Drupal only)
+   *
+   * @return string - loginURL for the current CMS
+   * @static
+   */
+  public function getLoginURL($destination = '') {
+    $config = CRM_Core_Config::singleton();
+    $loginURL = $config->userFrameworkBaseURL;
+    $loginURL .= 'user';
+    if (!empty($destination)) {
+      // append destination so user is returned to form they came from after login
+      $loginURL .= '?destination=' . urlencode($destination);
+    }
+    return $loginURL;
+  }
+  
 
   /**
    * sets the title of the page

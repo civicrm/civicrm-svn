@@ -644,9 +644,26 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
       // question: is the folder really a critical part of the plugin's name?
       $name = implode('.', array('joomla', $plugin['type'], $plugin['folder'], $plugin['element']));
       $result[] = new CRM_Core_Module($name, $plugin['enabled'] ? TRUE : FALSE);
-}
+    }
 
     return $result;
   }
+
+  /**
+   * Get user login URL for hosting CMS (method declared in each CMS system class)
+   *
+   * @param string $destination - if present, add destination to querystring (works for Drupal only)
+   *
+   * @return string - loginURL for the current CMS
+   * @static
+   */
+  public function getLoginURL($destination = '') {
+    $config = CRM_Core_Config::singleton();
+    $loginURL = $config->userFrameworkBaseURL;
+    $loginURL = str_replace('administrator/', '', $loginURL);
+    $loginURL .= 'index.php?option=com_users&view=login';
+    return $loginURL;
+  }
+  
 }
 

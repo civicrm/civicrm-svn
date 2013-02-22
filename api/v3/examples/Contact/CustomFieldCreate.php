@@ -74,7 +74,7 @@ function contact_create_expectedresult(){
           'organization_name' => '',
           'sic_code' => '',
           'user_unique_id' => '',
-          'created_date' => '2013-02-05 11:25:05',
+          'created_date' => '2013-02-15 16:58:30',
           'modified_date' => '2012-11-14 16:02:35',
         ),
     ),

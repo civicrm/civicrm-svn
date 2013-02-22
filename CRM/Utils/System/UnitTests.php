@@ -161,5 +161,18 @@ class CRM_Utils_System_UnitTests extends CRM_Utils_System_Drupal {
   function getModules() {
     return array();
   }
+
+  /**
+   * Get user login URL for hosting CMS (method declared in each CMS system class)
+   *
+   * @param string $destination - if present, add destination to querystring (works for Drupal only)
+   *
+   * @return string - loginURL for the current CMS
+   * @static
+   */
+  public function getLoginURL($destination = '') {
+    throw new Exception("Method not implemented: getLoginURL");
+  }
+  
 }
 

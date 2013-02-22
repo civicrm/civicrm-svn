@@ -602,23 +602,13 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
     require_once 'Mail/mime.php';
 
     //set loginUrl
-    $loginUrl = $config->userFrameworkBaseURL;
-    switch (ucfirst($config->userFramework)) {
-      case 'Joomla':
-        $loginUrl = str_replace('administrator/', '', $loginUrl);
-        $loginUrl .= 'index.php?option=com_users&view=login';
-        break;
-
-      case 'Drupal':
-        $loginUrl .= 'user';
-        break;
-    }
+    $loginURL = $config->userSystem->getLoginURL($destination);
 
     // used in subject templates
     $contribPageTitle = self::getPcpPageTitle($pcpId, $component);
 
     $tplParams = array(
-      'loginUrl' => $loginUrl,
+      'loginUrl' => $loginURL,
       'contribPageTitle' => $contribPageTitle,
       'pcpId' => $pcpId,
     );

@@ -322,25 +322,9 @@ class CRM_Core_BAO_CMSUser {
       }
     }
 
-
-    $loginUrl = $config->userFrameworkBaseURL;
-    if ($isJoomla) {
-      $loginUrl = str_replace('administrator/', '', $loginUrl);
-      $loginUrl .= 'index.php?option=com_users&view=login';
-    }
-    elseif ($isDrupal) {
-      $loginUrl .= 'user';
-      // append destination so user is returned to form they came from after login
-      $destination = $config->userSystem->getLoginDestination($form);
-      if (!empty($destination)) {
-        $loginUrl .= '?destination=' . urlencode($destination);
-      }
-    }
-    elseif ($isWordPress) {
-      $loginUrl .= 'wp-login.php';
-    }
-
-    $form->assign('loginUrl', $loginUrl);
+    $destination = $config->userSystem->getLoginDestination($form);
+    $loginURL = $config->userSystem->getLoginURL($destination);
+    $form->assign('loginURL', $loginURL);
     $form->assign('showCMS', $showCMS);
   }
 

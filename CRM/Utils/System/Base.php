@@ -3,7 +3,7 @@
 /**
  * Base class for UF system integrations
  */
-class CRM_Utils_System_Base {
+abstract class CRM_Utils_System_Base {
   var $is_drupal = FALSE;
   var $is_joomla = FALSE;
   var $is_wordpress = FALSE;
@@ -88,6 +88,17 @@ class CRM_Utils_System_Base {
    * Currently this is just helping out the test class as defaults is calling it - maybe move fix to defaults
    */
   function cmsRootPath() {
-}
+  }
+
+  /**
+   * Get user login URL for hosting CMS (method declared in each CMS system class)
+   *
+   * @param string $destination - if present, add destination to querystring (works for Drupal only)
+   *
+   * @return string - loginURL for the current CMS
+   * @static
+   */
+  public abstract function getLoginURL($destination = '');
+
 }
 

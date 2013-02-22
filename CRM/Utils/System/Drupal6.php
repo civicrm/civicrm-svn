@@ -886,8 +886,28 @@ SELECT name, mail
     $q = db_query('SELECT name, status FROM {system} WHERE type = \'module\' AND schema_version <> -1');
     while ($row = db_fetch_object($q)) {
       $result[] = new CRM_Core_Module('drupal.' . $row->name, ($row->status == 1) ? TRUE : FALSE);
-}
+    }
     return $result;
   }
+  
+  /**
+   * Get user login URL for hosting CMS (method declared in each CMS system class)
+   *
+   * @param string $destination - if present, add destination to querystring (works for Drupal only)
+   *
+   * @return string - loginURL for the current CMS
+   * @static
+   */
+  public function getLoginURL($destination = '') {
+    $config = CRM_Core_Config::singleton();
+    $loginURL = $config->userFrameworkBaseURL;
+    $loginURL .= 'user';
+    if (!empty($destination)) {
+      // append destination so user is returned to form they came from after login
+      $loginURL .= '?destination=' . urlencode($destination);
+    }
+    return $loginURL;
+  }
+
 }
 

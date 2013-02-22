@@ -84,20 +84,8 @@ class CRM_PCP_Page_PCPInfo extends CRM_Core_Page {
     // check if PCP is created by anonymous user
     $anonymousPCP = CRM_Utils_Request::retrieve('ap', 'Boolean', $this);
     if ($anonymousPCP) {
-      $loginUrl = $config->userFrameworkBaseURL;
-
-      switch (ucfirst($config->userFramework)) {
-        case 'Joomla':
-          $loginUrl = str_replace('administrator/', '', $loginUrl);
-          $loginUrl .= 'index.php?option=com_users&view=login';
-          break;
-
-        case 'Drupal':
-          $loginUrl .= 'user';
-          break;
-      }
-
-      $anonMessage = ts('Once you\'ve received your new account welcome email, you can <a href=%1>click here</a> to login and promote your campaign page.', array(1 => $loginUrl));
+      $loginURL = $config->userSystem->getLoginURL();
+      $anonMessage = ts('Once you\'ve received your new account welcome email, you can <a href=%1>click here</a> to login and promote your campaign page.', array(1 => $loginURL));
       CRM_Core_Session::setStatus($anonMessage, ts('Success'), 'success');
     }
     else {
