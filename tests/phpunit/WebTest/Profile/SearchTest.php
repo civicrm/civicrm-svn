@@ -49,7 +49,7 @@ class WebTest_Profile_SearchTest extends CiviSeleniumTestCase {
     // Add new profile.
     $this->open($this->sboxPath . 'civicrm/admin/uf/group?reset=1');
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click('newCiviCRMProfile-bottom');
 
@@ -61,7 +61,7 @@ class WebTest_Profile_SearchTest extends CiviSeleniumTestCase {
 
     //click on save
     $this->click('_qf_Group_next-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //check for  profile create
     $this->assertTrue($this->isTextPresent("Your CiviCRM Profile '$profileTitle' has been added. You can add fields to this profile now"));
@@ -82,7 +82,7 @@ class WebTest_Profile_SearchTest extends CiviSeleniumTestCase {
     $this->click('in_selector');
     // click on save
     $this->click('_qf_Field_next_new-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     //check for field add
     $this->assertTrue($this->isTextPresent("Your CiviCRM Profile Field 'Last Name' has been saved to '$profileTitle'."));
     $this->assertTrue($this->isTextPresent("You can add another profile field."));
@@ -99,7 +99,7 @@ class WebTest_Profile_SearchTest extends CiviSeleniumTestCase {
     $this->click('in_selector');
     // click on save
     $this->click('_qf_Field_next_new-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     //check for field add
     $this->assertTrue($this->isTextPresent("Your CiviCRM Profile Field 'Email' has been saved to '$profileTitle'."));
     $this->assertTrue($this->isTextPresent("You can add another profile field."));
@@ -116,7 +116,7 @@ class WebTest_Profile_SearchTest extends CiviSeleniumTestCase {
     $this->click('in_selector');
     // click on save
     $this->click('_qf_Field_next-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Add Individual Contact.
     $this->waitForElementPresent("xpath=//div[@id='field_page']/div[1]/a[4]/span[text()='Use (create mode)']");
@@ -155,14 +155,14 @@ class WebTest_Profile_SearchTest extends CiviSeleniumTestCase {
 
     // Go back to Profile fields admin
     $this->open($this->sboxPath . 'civicrm/admin/uf/group/field?reset=1&action=browse&gid=' . $profileId);
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Edit first profile field
     $this->waitForElementPresent("xpath=//table/tbody/tr[1]/td[9]");
     $this->click("xpath=//table/tbody/tr[1]/td[9]/span[1]/a[1]");
 
     // Verify that visibility field is present in edit form
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_Field_next-bottom');
 
     // sleep 5 to make sure jQuery is not hiding field after page load

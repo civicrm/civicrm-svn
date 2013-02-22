@@ -69,7 +69,7 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
 
   function _testAddSet($setTitle, $usedFor, $setHelp, $financialType = 'Event Fee') {
     $this->open($this->sboxPath . 'civicrm/admin/price?reset=1&action=add');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_Set_next-bottom');
 
     // Enter Priceset fields (Title, Used For ...)
@@ -87,7 +87,7 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
     $this->assertChecked('is_active', 'Verify that Is Active checkbox is set.');
     $this->click('_qf_Set_next-bottom');
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_Field_next-bottom');
   }
 
@@ -170,7 +170,7 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
           break;
       }
       $this->click('_qf_Field_next_new-bottom');
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->waitForElementPresent('_qf_Field_next-bottom');
     }
   }
@@ -179,12 +179,12 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
     // verify Price Set at Preview page
     // start at Manage Price Sets listing
     $this->open($this->sboxPath . 'civicrm/admin/price?reset=1');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Use the price set id ($sid) to pick the correct row
     $this->click("css=tr#row_{$sid} a[title='Preview Price Set']");
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     // Look for Register button
     $this->waitForElementPresent('_qf_Preview_cancel-bottom');
 
@@ -260,7 +260,7 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
     $this->click('_qf_EventInfo_upload-bottom');
 
     // Wait for Location tab form to load
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Go to Fees tab
     $this->click('link=Fees');
@@ -271,7 +271,7 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
     $this->select('price_set_id', 'label=' . $setTitle);
 
     $this->click('_qf_Fee_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // intro text for registration page
     $registerIntro = 'Fill in all the fields below and click Continue.';
@@ -291,7 +291,7 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
     $this->type('confirm_from_email', 'jane.doe@example.org');
 
     $this->click('_qf_Registration_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForTextPresent("'Registration' information has been saved.");
 
     // verify event input on info page
@@ -299,11 +299,11 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . 'civicrm/event/manage?reset=1');
     $this->click("link=$eventTitle");
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $eventInfoUrl = $this->getLocation();
 
     $this->open($this->sboxPath . 'civicrm/logout?reset=1');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->open($eventInfoUrl);
     $this->click('link=Register Now');
     $this->waitForElementPresent('_qf_Register_upload-bottom');
@@ -328,12 +328,12 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
     $this->type('billing_postal_code-5', '94129');
 
     $this->click('_qf_Register_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_Confirm_next-bottom');
     $confirmStrings = array('Event Fee(s)', 'Billing Name and Address', 'Credit Card Information');
     $this->assertStringsPresent($confirmStrings);
     $this->click('_qf_Confirm_next-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $thankStrings = array('Thank You for Registering', 'Event Total', 'Transaction Date');
     $this->assertStringsPresent($thankStrings);
 
@@ -351,7 +351,7 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
     $this->type('sort_name', "$email");
     $this->click('_qf_Search_refresh');
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->waitForElementPresent("xpath=id('participantSearch')/table/tbody/tr/td[11]/span/a[text()='View']");
     $this->click("xpath=id('participantSearch')/table/tbody/tr/td[11]/span/a[text()='View']");
@@ -438,7 +438,7 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
     $this->click('_qf_EventInfo_upload-bottom');
 
     // Wait for Location tab form to load
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Go to Fees tab
     $this->click('link=Fees');
@@ -449,7 +449,7 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
     $this->select('price_set_id', 'label=' . $setTitle);
 
     $this->click('_qf_Fee_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // intro text for registration page
     $registerIntro = 'Fill in all the fields below and click Continue.';
@@ -469,7 +469,7 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
     $this->type('confirm_from_email', 'jane.doe@example.org');
 
     $this->click('_qf_Registration_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForTextPresent("'Registration' information has been saved.");
 
     // verify event input on info page
@@ -477,7 +477,7 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . 'civicrm/event/manage?reset=1');
     $this->click("link=$eventTitle");
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     // Adding contact with randomized first name (so we can then select that contact when creating event registration)
     // We're using Quick Add block on the main page for this.
     $firstName = substr(sha1(rand()), 0, 7);
@@ -514,7 +514,7 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click('_qf_Participant_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     // Is status message correct?
     $this->assertTrue($this->isTextPresent("Event registration for $displayName has been added"), "Status message didn't show up after saving!");
 

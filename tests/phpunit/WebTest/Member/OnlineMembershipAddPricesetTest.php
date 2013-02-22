@@ -167,7 +167,7 @@ class WebTest_Member_OnlineMembershipAddPricesetTest extends CiviSeleniumTestCas
     $this->select("financial_type_id", "label={$contributionType}");
     $this->waitForElementPresent('_qf_Field_next-bottom');
     $this->click('_qf_Field_next-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("Price Field '{$fields[0]}' has been saved."));
  
     // load the Price Set Preview and check for expected values
@@ -200,7 +200,7 @@ class WebTest_Member_OnlineMembershipAddPricesetTest extends CiviSeleniumTestCas
 
   function _testAddSet($setTitle, $usedFor, $contributionType = NULL, $setHelp) {
     $this->open($this->sboxPath . 'civicrm/admin/price?reset=1&action=add');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_Set_next-bottom');
 
     // Enter Priceset fields (Title, Used For ...)
@@ -222,7 +222,7 @@ class WebTest_Member_OnlineMembershipAddPricesetTest extends CiviSeleniumTestCas
     $this->assertChecked('is_active', 'Verify that Is Active checkbox is set.');
     $this->click('_qf_Set_next-bottom');
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_Field_next-bottom');
     $this->assertTrue($this->isTextPresent("Your Set '{$setTitle}' has been added. You can add fields to this set now."));
   }
@@ -282,7 +282,7 @@ class WebTest_Member_OnlineMembershipAddPricesetTest extends CiviSeleniumTestCas
       }
       $this->select("financial_type_id", "label={$contributionType}");
       $this->click('_qf_Field_next_new-bottom');
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->waitForElementPresent('_qf_Field_next-bottom');
       $this->assertTrue($this->isTextPresent("Price Field '{$label}' has been saved."));
     }
@@ -293,12 +293,12 @@ class WebTest_Member_OnlineMembershipAddPricesetTest extends CiviSeleniumTestCas
     // verify Price Set at Preview page
     // start at Manage Price Sets listing
     $this->open($this->sboxPath . 'civicrm/admin/price?reset=1');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Use the price set id ($sid) to pick the correct row
     $this->click("css=tr#row_{$sid} a[title='Preview Price Set']");
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     // Look for Register button
     $this->waitForElementPresent('_qf_Preview_cancel-bottom');
 
@@ -320,7 +320,7 @@ class WebTest_Member_OnlineMembershipAddPricesetTest extends CiviSeleniumTestCas
 
   function _testSignUpOrRenewMembership($registerUrl, $contactParams, $memTypeTitle1, $memTypeTitle2, $renew = FALSE) {
     $this->open($this->sboxPath . 'civicrm/logout?reset=1');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->open($this->sboxPath . $registerUrl);
     $this->waitForElementPresent('_qf_Main_upload-bottom');
@@ -373,11 +373,11 @@ class WebTest_Member_OnlineMembershipAddPricesetTest extends CiviSeleniumTestCas
     $this->type("billing_postal_code-5", "94129");
     $this->click("_qf_Main_upload-bottom");
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
 
     $this->click("_qf_Confirm_next-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //login to check membership
     $this->open($this->sboxPath);
@@ -391,7 +391,7 @@ class WebTest_Member_OnlineMembershipAddPricesetTest extends CiviSeleniumTestCas
     $this->type("sort_name", "{$contactParams['first_name']} {$contactParams['last_name']}");
     $this->click("_qf_Search_refresh");
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("2 Results "));
 
     $this->waitForElementPresent("xpath=//div[@id='memberSearch']/table/tbody/tr");
@@ -438,7 +438,7 @@ class WebTest_Member_OnlineMembershipAddPricesetTest extends CiviSeleniumTestCas
       $this->waitForElementPresent("member_end_date_high");
       $this->type("sort_name", "{$contactParams['first_name']} {$contactParams['last_name']}");
       $this->click("_qf_Search_refresh");
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->waitForElementPresent("xpath=//div[@id='memberSearch']/table/tbody/tr");
       $this->click("xpath=//div[@id='memberSearch']/table/tbody//tr/td[4][text()='{$memTypeTitle1}']/../td[11]/span/a[text()='View']");
       $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
@@ -447,7 +447,7 @@ class WebTest_Member_OnlineMembershipAddPricesetTest extends CiviSeleniumTestCas
     }
     
     $this->open($this->sboxPath . 'civicrm/logout?reset=1');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->open($this->sboxPath . $registerUrl);
     $this->waitForElementPresent('_qf_Main_upload-bottom');
@@ -502,11 +502,11 @@ class WebTest_Member_OnlineMembershipAddPricesetTest extends CiviSeleniumTestCas
     $this->type("billing_postal_code-5", "94129");
     $this->click("_qf_Main_upload-bottom");
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
 
     $this->click("_qf_Confirm_next-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //login to check membership
     $this->open($this->sboxPath);
@@ -520,7 +520,7 @@ class WebTest_Member_OnlineMembershipAddPricesetTest extends CiviSeleniumTestCas
     $this->type("sort_name", "{$contactParams['first_name']} {$contactParams['last_name']}");
     $this->click("_qf_Search_refresh");
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("1 Result "));
 
     $this->waitForElementPresent("xpath=//div[@id='memberSearch']/table/tbody/tr");

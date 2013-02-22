@@ -42,7 +42,7 @@ class WebTest_ACL_AssignUsersToRolesTest extends CiviSeleniumTestCase {
     $this->type("title", $groupTitle);
     $this->click("group_type[1]");
     $this->click("_qf_Edit_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent("The Group '{$groupTitle}' has been saved."));
 
@@ -54,7 +54,7 @@ class WebTest_ACL_AssignUsersToRolesTest extends CiviSeleniumTestCase {
     $label = "TestAclRole" . substr(sha1(rand()), 0, 4);
     $this->type("label", $label);
     $this->click("_qf_Options_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("The Acl Role '{$label}' has been saved "));
 
 
@@ -65,7 +65,7 @@ class WebTest_ACL_AssignUsersToRolesTest extends CiviSeleniumTestCase {
     $this->select("entity_id", "label={$groupTitle}");
 
     $this->click("_qf_EntityRole_next-botttom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
 
     // Go directly to the URL of the screen that will manage ACLs
@@ -76,7 +76,7 @@ class WebTest_ACL_AssignUsersToRolesTest extends CiviSeleniumTestCase {
     $this->select("entity_id", "label={$label}");
     $this->type("name", "describe {$label}");
     $this->click("_qf_ACL_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
   }
 }
 

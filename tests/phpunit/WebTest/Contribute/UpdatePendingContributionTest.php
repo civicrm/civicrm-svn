@@ -60,7 +60,7 @@ class WebTest_Contribute_UpdatePendingContributionTest extends CiviSeleniumTestC
     $this->type("sort_name", "$lastName, $firstName");
     $this->click("_qf_Search_refresh");
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click('radio_ts', 'ts_all');
     $contriIDOff = explode('&', $this->getAttribute("xpath=//div[@id='contributionSearch']/table/tbody/tr[1]/td[11]/span/a@href"));
     $contriIDOn = explode('&', $this->getAttribute("xpath=//div[@id='contributionSearch']/table/tbody/tr[2]/td[11]/span/a@href"));
@@ -72,14 +72,14 @@ class WebTest_Contribute_UpdatePendingContributionTest extends CiviSeleniumTestC
     }
     $this->select('task', "label=Update Pending Contribution Status");
     $this->click("_qf_Search_next_action");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->select('contribution_status_id', 'label=Completed');
     $this->type("trxn_id_{$contriIDOff}", substr(sha1(rand()), 0, 5));
     $this->type("trxn_id_{$contriIDOn}", substr(sha1(rand()), 0, 5));
     $this->click('_qf_Status_next');
     $this->waitForElementPresent("_qf_Result_done");
     $this->click("_qf_Result_done");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $status = 'Completed';
     $this->verifyText("xpath=id('contributionSearch')/table[1]/tbody/tr[1]/td[9]", preg_quote($status));
     $this->verifyText("xpath=id('contributionSearch')/table[1]/tbody/tr[2]/td[9]", preg_quote($status));
@@ -165,7 +165,7 @@ class WebTest_Contribute_UpdatePendingContributionTest extends CiviSeleniumTestC
 
     // Clicking save.
     $this->click("_qf_Contribution_upload");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is status message correct?
     $this->assertTrue($this->isTextPresent("The contribution record has been saved."), "Status message didn't show up after saving!");
@@ -254,7 +254,7 @@ class WebTest_Contribute_UpdatePendingContributionTest extends CiviSeleniumTestC
 
     //logout
     $this->open($this->sboxPath . "civicrm/logout?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&id=" . $pageId);
     $this->waitForElementPresent("_qf_Main_upload-bottom");
 
@@ -278,11 +278,11 @@ class WebTest_Contribute_UpdatePendingContributionTest extends CiviSeleniumTestC
 
     $this->click("_qf_Main_upload-bottom");
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
 
     $this->click("_qf_Confirm_next-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
    //login to check contribution
     $this->open($this->sboxPath);
@@ -298,11 +298,11 @@ class WebTest_Contribute_UpdatePendingContributionTest extends CiviSeleniumTestC
     $this->type("sort_name", "$lastName, $firstName");
     $this->click("_qf_Search_refresh");
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->waitForElementPresent("xpath=//div[@id='contributionSearch']//table//tbody/tr[2]/td[11]/span/a[text()='View']");
     $this->click("xpath=//div[@id='contributionSearch']//table//tbody/tr[2]/td[11]/span/a[text()='View']");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_ContributionView_cancel-bottom");
     //View Contribution Record
     $expected = array(

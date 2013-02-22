@@ -82,7 +82,7 @@ class WebTest_Mailing_AddMessageTemplateTest extends CiviSeleniumTestCase {
     }
     // Clicking save.
     $this->click("_qf_MessageTemplates_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is status message correct
     $this->assertTrue($this->isTextPresent("The Message Template '$msgTitle' has been saved."));
@@ -116,7 +116,7 @@ class WebTest_Mailing_AddMessageTemplateTest extends CiviSeleniumTestCase {
     $this->type('domain', 'example.com');
     $this->select('protocol', 'value=1');
     $this->click('_qf_MailSettings_next-bottom');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Go directly to Schedule and Send Mailing form
     $this->openCiviPage("mailing/send", "reset=1", "_qf_Group_cancel");
@@ -171,7 +171,7 @@ class WebTest_Mailing_AddMessageTemplateTest extends CiviSeleniumTestCase {
 
     // finally schedule the mail by clicking submit
     $this->click("_qf_Schedule_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //check redirected page to Scheduled and Sent Mailings and  verify for mailing name
     $this->assertTrue($this->isTextPresent("Scheduled and Sent Mailings"));

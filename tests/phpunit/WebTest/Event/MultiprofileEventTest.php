@@ -59,11 +59,11 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     // create custom group1
     $this->open($this->sboxPath . "civicrm/admin/custom/group?reset=1");
     $this->click("newCustomDataGroup");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->type("title", $customGrp1);
     $this->select("extends[0]", "value=Contact");
     $this->click("_qf_Group_next-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // get custom group id
     $elements = $this->parseURL();
@@ -90,16 +90,16 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     $this->_testEventRegistration($eventPageId, $customId, $firstName, $lastName,
       $participantfname, $participantlname, $email1, $email2
     );
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Find Main Participant
     $this->open($this->sboxPath . "civicrm/event/search?reset=1");
     $this->type("sort_name", $firstName);
     $this->click("_qf_Search_refresh");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("xpath=//div[@id='participantSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
     $this->click("xpath=//div[@id='participantSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_ParticipantView_cancel-top");
 
     $name = $firstName . " " . $lastName;
@@ -113,10 +113,10 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . "civicrm/event/search?reset=1");
     $this->type("sort_name", $participantfname);
     $this->click("_qf_Search_refresh");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("xpath=//div[@id='participantSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
     $this->click("xpath=//div[@id='participantSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_ParticipantView_cancel-top");
 
     $name = $participantfname . " " . $participantlname;
@@ -132,28 +132,28 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     }
     
     $this->open($this->sboxPath . "civicrm/admin/custom/group/field?action=delete&reset=1&gid=" . $customGrpId1 . "&id=" . $customId[0]);
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("_qf_DeleteField_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     
     $this->open($this->sboxPath . "civicrm/admin/custom/group/field?action=delete&reset=1&gid=" . $customGrpId1 . "&id=" . $customId[1]);
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("_qf_DeleteField_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->open($this->sboxPath . "civicrm/admin/custom/group/field?action=delete&reset=1&gid=" . $customGrpId1 . "&id=" . $customId[2]);
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("_qf_DeleteField_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->open($this->sboxPath . "civicrm/admin/custom/group?action=delete&reset=1&id=" . $customGrpId1);
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("_qf_DeleteGroup_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // logout
     $this->open($this->sboxPath . "civicrm/logout?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
   }
 
   function testAnoumyousRegisterPage() {
@@ -190,11 +190,11 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     // create custom group1
     $this->open($this->sboxPath . "civicrm/admin/custom/group?reset=1");
     $this->click("newCustomDataGroup");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->type("title", $customGrp1);
     $this->select("extends[0]", "value=Contact");
     $this->click("_qf_Group_next-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // get custom group id
     $elements = $this->parseURL();
@@ -220,10 +220,10 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
 
     // logout
     $this->open($this->sboxPath . "civicrm/logout?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->_testEventRegistration($eventPageId, $customId, $firstName, $lastName, $participantfname, $participantlname, $email1, $email2);
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     // Log in using webtestLogin() method
     $this->webtestLogin();
 
@@ -231,10 +231,10 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . "civicrm/event/search?reset=1");
     $this->type("sort_name", $firstName);
     $this->click("_qf_Search_refresh");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("xpath=//div[@id='participantSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
     $this->click("xpath=//div[@id='participantSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_ParticipantView_cancel-top");
 
     $name = $firstName . " " . $lastName;
@@ -248,10 +248,10 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . "civicrm/event/search?reset=1");
     $this->type("sort_name", $participantfname);
     $this->click("_qf_Search_refresh");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("xpath=//div[@id='participantSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
     $this->click("xpath=//div[@id='participantSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_ParticipantView_cancel-top");
 
     $name = $participantfname . " " . $participantlname;
@@ -266,10 +266,10 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
 
     // logout
     $this->open($this->sboxPath . "civicrm/logout?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->_testEventRegistrationAfterRemoving($eventPageId, $customId, $firstName2, $lastName2, $participantfname2, $participantlname2, $email3, $email4);
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Log in using webtestLogin() method
     $this->webtestLogin();
@@ -278,10 +278,10 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . "civicrm/event/search?reset=1");
     $this->type("sort_name", $firstName2);
     $this->click("_qf_Search_refresh");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("xpath=//div[@id='participantSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
     $this->click("xpath=//div[@id='participantSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_ParticipantView_cancel-top");
 
     $name = $firstName2 . " " . $lastName2;
@@ -295,10 +295,10 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . "civicrm/event/search?reset=1");
     $this->type("sort_name", $participantfname2);
     $this->click("_qf_Search_refresh");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("xpath=//div[@id='participantSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
     $this->click("xpath=//div[@id='participantSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_ParticipantView_cancel-top");
 
     $name = $participantfname2 . " " . $participantlname2;
@@ -314,24 +314,24 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     }
     
     $this->open($this->sboxPath . "civicrm/admin/custom/group/field?action=delete&reset=1&gid=" . $customGrpId1 . "&id=" . $customId[0]);
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("_qf_DeleteField_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->open($this->sboxPath . "civicrm/admin/custom/group/field?action=delete&reset=1&gid=" . $customGrpId1 . "&id=" . $customId[1]);
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("_qf_DeleteField_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->open($this->sboxPath . "civicrm/admin/custom/group/field?action=delete&reset=1&gid=" . $customGrpId1 . "&id=" . $customId[2]);
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("_qf_DeleteField_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->open($this->sboxPath . "civicrm/admin/custom/group?action=delete&reset=1&id=" . $customGrpId1);
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("_qf_DeleteGroup_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
   }
 
   function _testGetCustomFieldId($customGrpId1) {
@@ -345,21 +345,21 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
 
     // add custom fields for group 1
     $this->open($this->sboxPath . "civicrm/admin/custom/group/field/add?reset=1&action=add&gid=" . $customGrpId1);
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->type("label", $field1);
     $this->check("is_searchable");
     $this->click("_qf_Field_next_new-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->type("label", $field2);
     $this->check("is_searchable");
     $this->click("_qf_Field_next_new-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->type("label", $field3);
     $this->check("is_searchable");
     $this->click("_qf_Field_next-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // get id of custom fields
     $this->open($this->sboxPath . "civicrm/admin/custom/group/field?reset=1&action=browse&gid=" . $customGrpId1);
@@ -387,7 +387,7 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     $this->click("xpath=//select[@id='additional_custom_post_id_multiple_3']/../span/a[text()='remove profile']");
     $this->click("xpath=//select[@id='additional_custom_post_id_multiple_4']/../span/a[text()='remove profile']");
     $this->click("_qf_Registration_upload-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
   }
 
   function _testGetProfileId($customId) {
@@ -478,21 +478,21 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     // testing (Add new profile ).
     $profilename = "Profile_" . substr(sha1(rand()), 0, 7);
     $this->open($this->sboxPath . 'civicrm/admin/uf/group?reset=1');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click('newCiviCRMProfile-top');
     $this->waitForElementPresent('_qf_Group_next-top');
 
     //Name of profile
     $this->type('title', $profilename);
     $this->click('_qf_Group_next-top');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $elements = $this->parseURL();
     $profileId = $elements['queryString']['gid'];
 
     //Add field to profile_testCreateProfile
     foreach ($profilefield as $key => $value) {
       $this->open($this->sboxPath . 'civicrm/admin/uf/group/field/add?reset=1&action=add&gid=' . $profileId);
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       if (in_array($value, $locationfields)) {
         $this->select("field_name[0]", "value={$type}");
         $this->select("field_name[1]", "value={$value}");
@@ -505,7 +505,7 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
         $this->type("label", $value);
       }
       $this->click('_qf_Field_next-top');
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
     }
     return $profileId;
   }
@@ -540,7 +540,7 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
 
   function _testAddLocation($streetAddress) {
     // Wait for Location tab form to load
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Location_upload-bottom");
 
     // Fill in address fields
@@ -554,7 +554,7 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     $this->click("_qf_Location_upload-bottom");
 
     // Wait for "saved" status msg
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForTextPresent("'Location' information has been saved.");
   }
 
@@ -588,7 +588,7 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     $this->click("_qf_Fee_upload-bottom");
 
     // Wait for "saved" status msg
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForTextPresent("'Fee' information has been saved.");
   }
 
@@ -652,7 +652,7 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     $this->click("_qf_Registration_upload-bottom");
 
     // Wait for "saved" status msg
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $elements = $this->parseURL();
     $eventPageId = $elements['queryString']['id'];
 
@@ -737,10 +737,10 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     $this->type("url-1", "http://www.part.com");
 
     $this->click("_qf_Participant_1_next-Array");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
     $this->click("_qf_Confirm_next-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
   }
 
   function _testEventRegistrationAfterRemoving($eventPageId, $customId, $firstName2, $lastName2, $participantfname2, $participantlname2, $email3, $email4) {
@@ -806,7 +806,7 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     $this->type("job_title", "BATCHER");
 
     $this->click("_qf_Participant_1_next-Array");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
     $this->click("_qf_Confirm_next-bottom");
   }
@@ -819,7 +819,7 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
     $this->select("field_name[1]", "value=email");
     $this->select("field_name[2]", "value=0");
     $this->click('_qf_Field_next-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     
     $cfId = "";
     //check wheather webtest has created the field
@@ -833,9 +833,9 @@ class WebTest_Event_MultiprofileEventTest extends CiviSeleniumTestCase {
   
   function _removeEmailField($cfId) {    
     $this->open($this->sboxPath . "civicrm/admin/uf/group/field?action=delete&id={$cfId}");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("_qf_Field_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
   }
 }
 

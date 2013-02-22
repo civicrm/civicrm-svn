@@ -1738,5 +1738,14 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     $this->click("_qf_Options_next-bottom");
     $this->waitForPageToLoad('30000');
   }
+
+  /**
+   * Determine the default time-out in milliseconds.
+   *
+   * @return string, timeout expressed in milliseconds
+   */
+  function getTimeoutMsec() {
+    return '30000';
+  }
 }
 

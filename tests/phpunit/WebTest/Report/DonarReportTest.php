@@ -54,7 +54,7 @@ class WebTest_Report_DonarReportTest extends CiviSeleniumTestCase {
 
     // preview result
     $this->click("_qf_Detail_submit");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Create report
     $this->click("css=div.crm-report_setting-accordion div.crm-accordion-header");
@@ -81,18 +81,18 @@ class WebTest_Report_DonarReportTest extends CiviSeleniumTestCase {
 
     // click to create report
     $this->click("_qf_Detail_submit_save");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Open report list
     $this->open($this->sboxPath . "civicrm/report/list?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is report is resent in list?
     $this->assertTrue($this->isTextPresent($reportName));
 
     // Visit report
     $this->click("link=$reportName");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //now select the criteria
     //click report criteria accordian
@@ -104,7 +104,7 @@ class WebTest_Report_DonarReportTest extends CiviSeleniumTestCase {
 
     // click preview
     $this->click("_qf_Detail_submit");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Is greater than or equal to 100
     //check for criteria
@@ -112,7 +112,7 @@ class WebTest_Report_DonarReportTest extends CiviSeleniumTestCase {
 
     //click on next link
     $this->click("_qf_Detail_submit_print");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // check if criteria still exits
     $this->assertTrue($this->isTextPresent("Is greater than or equal to 10"), "Criteria is not selected");

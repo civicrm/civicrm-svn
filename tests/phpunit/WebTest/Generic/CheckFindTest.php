@@ -40,7 +40,7 @@ class WebTest_Generic_CheckFindTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . "civicrm/contact/search?reset=1");
     $this->waitForElementPresent("_qf_Basic_refresh");
     $this->click("//input[@name='_qf_Basic_refresh' and @value='Search']");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isElementPresent("search-status"));
   }
 }

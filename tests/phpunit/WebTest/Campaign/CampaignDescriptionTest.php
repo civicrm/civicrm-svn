@@ -48,7 +48,7 @@ class WebTest_Campaign_CampaignDescriptionTest extends CiviSeleniumTestCase {
 
     // Enable CiviCampaign module if necessary
     $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Component_next-bottom");
     $enabledComponents = $this->getSelectOptions("enableComponents-t");
     if (!in_array("CiviCampaign", $enabledComponents)) {
@@ -56,7 +56,7 @@ class WebTest_Campaign_CampaignDescriptionTest extends CiviSeleniumTestCase {
       $this->click("//option[@value='CiviCampaign']");
       $this->click("add");
       $this->click("_qf_Component_next-bottom");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->assertTrue($this->isTextPresent("Your changes have been saved."));
     }
 
@@ -91,7 +91,7 @@ class WebTest_Campaign_CampaignDescriptionTest extends CiviSeleniumTestCase {
 
     // click save
     $this->click("_qf_Campaign_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent("Campaign Campaign $title has been saved."),
       "Status message didn't show up after saving campaign!"
@@ -100,7 +100,7 @@ class WebTest_Campaign_CampaignDescriptionTest extends CiviSeleniumTestCase {
     //Opening Edit Page of the created Campaign
     $this->waitForElementPresent("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody//tr/td[text()='{$campaignTitle}']/../td[13]/span/a[text()='Edit']");
     $this->click("//div[@id='campaignList']/div[@class='dataTables_wrapper']/table/tbody//tr/td[text()='{$campaignTitle}']/../td[13]/span/a[text()='Edit']");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Checking for Proper description present
     $this->waitForElementPresent("//textarea[@id='description']");

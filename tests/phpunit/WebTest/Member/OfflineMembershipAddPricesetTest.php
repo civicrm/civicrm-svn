@@ -152,7 +152,7 @@ class WebTest_Member_OfflineMembershipAddPricesetTest extends CiviSeleniumTestCa
     $this->select("financial_type_id", "label={$contributionType}");
     $this->waitForElementPresent('_qf_Field_next-bottom');
     $this->click('_qf_Field_next-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("Price Field '{$fields[0]}' has been saved."));
  
     // load the Price Set Preview and check for expected values
@@ -178,7 +178,7 @@ class WebTest_Member_OfflineMembershipAddPricesetTest extends CiviSeleniumTestCa
 
   function _testAddSet($setTitle, $usedFor, $contributionType = NULL, $setHelp) {
     $this->open($this->sboxPath . 'civicrm/admin/price?reset=1&action=add');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_Set_next-bottom');
 
     // Enter Priceset fields (Title, Used For ...)
@@ -200,7 +200,7 @@ class WebTest_Member_OfflineMembershipAddPricesetTest extends CiviSeleniumTestCa
     $this->assertChecked('is_active', 'Verify that Is Active checkbox is set.');
     $this->click('_qf_Set_next-bottom');
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_Field_next-bottom');
     $this->assertTrue($this->isTextPresent("Your Set '{$setTitle}' has been added. You can add fields to this set now."));
   }
@@ -261,7 +261,7 @@ class WebTest_Member_OfflineMembershipAddPricesetTest extends CiviSeleniumTestCa
       }
       $this->select("financial_type_id", "label={$contributionType}");
       $this->click('_qf_Field_next_new-bottom');
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->waitForElementPresent('_qf_Field_next-bottom');
       $this->assertTrue($this->isTextPresent("Price Field '{$label}' has been saved."));
     }
@@ -272,12 +272,12 @@ class WebTest_Member_OfflineMembershipAddPricesetTest extends CiviSeleniumTestCa
     // verify Price Set at Preview page
     // start at Manage Price Sets listing
     $this->open($this->sboxPath . 'civicrm/admin/price?reset=1');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Use the price set id ($sid) to pick the correct row
     $this->click("css=tr#row_{$sid} a[title='Preview Price Set']");
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     // Look for Register button
     $this->waitForElementPresent('_qf_Preview_cancel-bottom');
 
@@ -424,7 +424,7 @@ class WebTest_Member_OfflineMembershipAddPricesetTest extends CiviSeleniumTestCa
     //check if the membership amount is correct
     $this->assertTrue($this->isElementPresent("xpath=//form[@id='MembershipView']/div[2]/div/table[2]/tbody/tr/td/span[text()='{$amount}']"));
     $this->click("_qf_MembershipView_cancel-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
   }
 }
 

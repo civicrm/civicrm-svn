@@ -70,7 +70,7 @@ class WebTest_Report_AddTest extends CiviSeleniumTestCase {
 
     // preview result
     $this->click("_qf_Summary_submit");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is filter statistics present?
     $this->assertTrue($this->isTextPresent("Contains $firstName"), "Statistics did not found!");
@@ -130,18 +130,18 @@ class WebTest_Report_AddTest extends CiviSeleniumTestCase {
 
     // click to create report
     $this->click("_qf_Summary_submit_save");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Open report list
     $this->open($this->sboxPath . "civicrm/report/list?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is report is resent in list?
     $this->assertTrue($this->isTextPresent($reportName));
 
     // Visit report
     $this->click("link=$reportName");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is filter statistics present?
     $this->assertTrue($this->isTextPresent("Contains $firstName"), "Statistics did not found!");

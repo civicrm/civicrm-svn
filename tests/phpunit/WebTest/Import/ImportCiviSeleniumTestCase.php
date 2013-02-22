@@ -58,7 +58,7 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
     // Go to contact import page.
     $this->open($this->sboxPath . $this->_getImportComponentUrl($component));
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // check for upload field.
     $this->waitForElementPresent("uploadFile");
@@ -109,7 +109,7 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
 
     // Submit form.
     $this->click('_qf_UploadFile_upload');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Select matching field for cvs data.
     if (!empty($fieldMapper)) {
@@ -271,7 +271,7 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
 
     // Submit form.
     $this->click('_qf_DataSource_upload');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     if (isset($other['checkMapperHeaders'])) {
       $checkMapperHeaders = $other['checkMapperHeaders'];
@@ -305,7 +305,7 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
 
     // Submit form.
     $this->click('_qf_MapField_next');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Check mapping data.
     $this->_checkImportMapperData($headers, $rows, $existingMapping, $checkMapperHeaders, 'td');
@@ -544,7 +544,7 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
       }
 
       $this->open($this->sboxPath . "civicrm/dashboard?reset=1");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
 
 
       // Type search name in autocomplete.
@@ -557,7 +557,7 @@ class ImportCiviSeleniumTestCase extends CiviSeleniumTestCase {
 
       // Visit contact summary page.
       $this->click("css=div.ac_results-inner li");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
 
       // Get contact id from url.
       $matches = array();

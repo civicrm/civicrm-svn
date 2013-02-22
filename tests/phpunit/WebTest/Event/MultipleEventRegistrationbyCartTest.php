@@ -43,10 +43,10 @@ class WebTest_Event_MultipleEventRegistrationbyCartTest extends CiviSeleniumTest
     
     //Enable shopping cart style
     $this->open($this->sboxPath . "civicrm/admin/setting/preferences/event?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->check("enable_cart");
     $this->click("_qf_Event_next-top");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     
     // We need a payment processor
     $processorName = "Webtest Dummy" . substr(sha1(rand()), 0, 7);
@@ -205,7 +205,7 @@ class WebTest_Event_MultipleEventRegistrationbyCartTest extends CiviSeleniumTest
 
     //Enable shopping cart style
     $this->open($this->sboxPath . "civicrm/admin/setting/preferences/event?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->check("enable_cart");
     $this->click("_qf_Event_next-top");
 
@@ -260,7 +260,7 @@ class WebTest_Event_MultipleEventRegistrationbyCartTest extends CiviSeleniumTest
 
   function _testAddLocation($streetAddress) {
     // Wait for Location tab form to load
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Location_upload-bottom");
     
     $this->type("address_1_street_address", $streetAddress);
@@ -272,7 +272,7 @@ class WebTest_Event_MultipleEventRegistrationbyCartTest extends CiviSeleniumTest
     $this->click("_qf_Location_upload-bottom");
 
     // Wait for "saved" status msg
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForTextPresent("'Location' information has been saved.");
   }
 
@@ -302,7 +302,7 @@ class WebTest_Event_MultipleEventRegistrationbyCartTest extends CiviSeleniumTest
       $this->webtestFillDate("discount_start_date_1", "-1 week");
       $this->webtestFillDate("discount_end_date_1", "+2 week");
       $this->click("_qf_Fee_submit");
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->waitForElementPresent("discounted_value_2_1");
       $this->type("discounted_value_1_1","225.00");
       $this->type("discounted_value_2_1","300.00");
@@ -312,7 +312,7 @@ class WebTest_Event_MultipleEventRegistrationbyCartTest extends CiviSeleniumTest
     $this->click("_qf_Fee_upload-bottom");
 
     // Wait for "saved" status msg
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForTextPresent("'Fee' information has been saved.");
   }
 
@@ -336,7 +336,7 @@ class WebTest_Event_MultipleEventRegistrationbyCartTest extends CiviSeleniumTest
     $this->type("confirm_from_email", "jane.doe@example.org");
 
     $this->click("_qf_Registration_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForTextPresent("'Registration' information has been saved.");
   }
 
@@ -345,12 +345,12 @@ class WebTest_Event_MultipleEventRegistrationbyCartTest extends CiviSeleniumTest
     // start at Manage Events listing
     $this->open($this->sboxPath . "civicrm/event/manage?reset=1");
     $this->click("link=$eventTitle");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     
     // Look for Add to Cart button
     $this->waitForElementPresent("link=Add to Cart");
     $this->click("link=Add to Cart");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("$eventTitle has been added to your cart"));
   }
   
@@ -359,7 +359,7 @@ class WebTest_Event_MultipleEventRegistrationbyCartTest extends CiviSeleniumTest
     // start at Manage Events listing
     $this->open($this->sboxPath . "civicrm/event/manage?reset=1");
     $this->click("link=$eventTitle");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     
     // Check for correct event info strings
     $this->assertStringsPresent($eventInfoStrings);
@@ -374,13 +374,13 @@ class WebTest_Event_MultipleEventRegistrationbyCartTest extends CiviSeleniumTest
   function _testOnlineRegistration($registerUrl, $numberRegistrations = 1, $anonymous = TRUE) {
     if ($anonymous) {
       $this->open($this->sboxPath . "civicrm/logout?reset=1");
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
     }
     $this->open($registerUrl);
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("link=Add to Cart");
     $this->click("link=Add to Cart");
-    $this->waitForPageToLoad('30000');  
+    $this->waitForPageToLoad($this->getTimeoutMsec());  
   }
   
   function _testCheckOut(){
@@ -390,7 +390,7 @@ class WebTest_Event_MultipleEventRegistrationbyCartTest extends CiviSeleniumTest
     //Click on Checkout
     $this->waitForElementPresent("xpath=//a[@class='button crm-check-out-button']/span");
     $this->click("xpath=//a[@class='button crm-check-out-button']/span");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     
     $firstName = "AB".substr(sha1(rand()), 0, 7);
     $lastName = "XY".substr(sha1(rand()), 0, 7);
@@ -400,7 +400,7 @@ class WebTest_Event_MultipleEventRegistrationbyCartTest extends CiviSeleniumTest
       $this->click("xpath=//form[@id='ParticipantsAndPrices']/fieldset[$i]/div[2]/div[2]/input[2]");
     }
     $this->click("_qf_ParticipantsAndPrices_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->select("credit_card_type", "value=Visa");
     $this->type("credit_card_number", "4111111111111111");
     $this->type("cvv2", "000");
@@ -416,7 +416,7 @@ class WebTest_Event_MultipleEventRegistrationbyCartTest extends CiviSeleniumTest
     $this->type("billing_contact_email", "{$firstName}.{$lastName}@example.com");
     
     $this->click("_qf_Payment_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     
     $this->assertTrue($this->isTextPresent("This is your receipt of payment made for the following event registration."));
     return array($firstName,$lastName);
@@ -433,7 +433,7 @@ class WebTest_Event_MultipleEventRegistrationbyCartTest extends CiviSeleniumTest
     
     // Visit contact summary page.
     $this->click("css=div.ac_results-inner li");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     
     //click on Events Tab
     $this->click("xpath=//li[@id='tab_participant']/a");
@@ -457,7 +457,7 @@ class WebTest_Event_MultipleEventRegistrationbyCartTest extends CiviSeleniumTest
     
     // Visit contact summary page.
     $this->click("css=div.ac_results-inner li");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     
     //click on Contributions Tab
     $this->click("xpath=//li[@id='tab_contribute']/a");
@@ -469,7 +469,7 @@ class WebTest_Event_MultipleEventRegistrationbyCartTest extends CiviSeleniumTest
     
     //Disable shopping cart style
     $this->open($this->sboxPath . "civicrm/admin/setting/preferences/event?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("enable_cart");
     $this->click("_qf_Event_next-top");
   }

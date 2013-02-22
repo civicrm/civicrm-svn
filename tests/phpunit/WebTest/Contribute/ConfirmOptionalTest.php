@@ -42,7 +42,7 @@ class WebTest_Contribute_ConfirmOptionalTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
     $this->assertTrue($this->isTextPresent("Please verify the information below carefully"), "Should load confirmation page");
     $this->click("_qf_Confirm_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // thank you page
     $this->assertTrue($this->isTextPresent("Your transaction has been processed successfully"), "Should load thank you page");
@@ -105,7 +105,7 @@ class WebTest_Contribute_ConfirmOptionalTest extends CiviSeleniumTestCase {
 
     // submit contribution
     $this->click("_qf_Main_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
   }
 }
 

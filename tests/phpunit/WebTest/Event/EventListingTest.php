@@ -38,26 +38,26 @@ class WebTest_Event_EventListingTest extends CiviSeleniumTestCase {
     //go to manage event and check for presence of ongoing and
     //upcomming events
     $this->open($this->sboxPath . "civicrm/event/manage?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->type("xpath=//div[@class='crm-block crm-form-block crm-event-searchevent-form-block']/table/tbody/tr/td/input",$eventTitle1);
     $this->click("_qf_SearchEvent_refresh");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertFalse($this->isTextPresent("{$eventTitle1}"));
     $this->type("xpath=//div[@class='crm-block crm-form-block crm-event-searchevent-form-block']/table/tbody/tr/td/input",$eventTitle2);
     $this->click("_qf_SearchEvent_refresh");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertFalse($this->isTextPresent("{$eventTitle2}"));
     $this->type("xpath=//div[@class='crm-block crm-form-block crm-event-searchevent-form-block']/table/tbody/tr/td/input",$eventTitle3);
     $this->click("_qf_SearchEvent_refresh");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("{$eventTitle3}"));
     $this->type("xpath=//div[@class='crm-block crm-form-block crm-event-searchevent-form-block']/table/tbody/tr/td/input",$eventTitle4);
     $this->click("_qf_SearchEvent_refresh");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("{$eventTitle4}"));
     $this->type("xpath=//div[@class='crm-block crm-form-block crm-event-searchevent-form-block']/table/tbody/tr/td/input",$eventTitle5);
     $this->click("_qf_SearchEvent_refresh");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("{$eventTitle5}"));
     $this->type("xpath=//div[@class='crm-block crm-form-block crm-event-searchevent-form-block']/table/tbody/tr/td/input","");
 
@@ -67,7 +67,7 @@ class WebTest_Event_EventListingTest extends CiviSeleniumTestCase {
     $this->webtestFillDate("end_date", "now");
     $this->waitForElementPresent('_qf_SearchEvent_refresh');
     $this->click('_qf_SearchEvent_refresh');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent("{$eventTitle1}"));
     $this->assertTrue($this->isTextPresent("{$eventTitle2}"));
@@ -77,7 +77,7 @@ class WebTest_Event_EventListingTest extends CiviSeleniumTestCase {
 
     //go to ical and check for presence of ongoing and upcomming events
     $this->open($this->sboxPath . "civicrm/event/ical?reset=1&page=1&html=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertFalse($this->isTextPresent("{$eventTitle1}"));
     $this->assertFalse($this->isTextPresent("{$eventTitle2}"));
     $this->assertTrue($this->isTextPresent("{$eventTitle3}"));
@@ -87,18 +87,18 @@ class WebTest_Event_EventListingTest extends CiviSeleniumTestCase {
     //go to block listing to enable Upcomming Events Block
     // you need to be admin user for below operation
     $this->open($this->sboxPath . "civicrm/logout?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->webtestLogin(TRUE);
 
     $this->open($this->sboxPath . 'admin/structure/block/manage/civicrm/6/configure');
     $this->waitForElementPresent('edit-submit');
     $this->type('edit-pages', 'civicrm/dashboard');
     $this->click('edit-submit');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->open($this->sboxPath . 'admin/structure/block');
     $this->select('edit-blocks-civicrm-6-region', 'value=sidebar_second');
     $this->click('edit-submit');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForTextPresent("The block settings have been updated.");
 
     //go to civicrm home and check for presence of upcomming events
@@ -113,7 +113,7 @@ class WebTest_Event_EventListingTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . 'admin/structure/block');
     $this->select('edit-blocks-civicrm-6-region', 'value=-1');
     $this->click('edit-submit');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForTextPresent("The block settings have been updated.");
   }
 
@@ -160,13 +160,13 @@ class WebTest_Event_EventListingTest extends CiviSeleniumTestCase {
     $this->click("_qf_EventInfo_upload-bottom");
 
     // Wait for Location tab form to load
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Location_upload_done-bottom");
 
     $this->click("_qf_Location_upload_done-bottom");
 
     // Wait for "saved" status msg
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForTextPresent("'Location' information has been saved.");
   }
 }

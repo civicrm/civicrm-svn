@@ -43,13 +43,13 @@ class WebTest_Contact_AddressParsingTest extends CiviSeleniumTestCase {
 
     //Go to the URL of Address Setting to enable street address parsing option
     $this->open($this->sboxPath . "civicrm/admin/setting/preferences/address?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //check the street address parsing is already enabled
     if (!$this->isChecked("address_options[13]")) {
       $this->click("address_options[13]");
       $this->click("_qf_Address_next");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
     }
 
     // Go to the URL to create an Individual contact.
@@ -112,7 +112,7 @@ class WebTest_Contact_AddressParsingTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("{$firstName} {$lastName} has been created."));
 
     //Get the is of newly created contact

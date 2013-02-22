@@ -90,10 +90,10 @@ class WebTest_Member_DefaultMembershipPricesetTest extends CiviSeleniumTestCase 
     $this->_testDefaultSenarios("National_Membership_{$title}-section", 2);
     $this->contactInfoFill($firstName, $lastName, $email, $contactParams, $streetAddress);
     $this->click("_qf_Main_upload-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
     $this->click("_qf_Confirm_next-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //senario 2
     $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&id={$membershipContributionPageId}&cid={$cid}");
@@ -105,10 +105,10 @@ class WebTest_Member_DefaultMembershipPricesetTest extends CiviSeleniumTestCase 
     $this->_testDefaultSenarios("Second_Membership_{$title}-section", 2);
     $this->contactInfoFill($firstName, $lastName, $email, $contactParams, $streetAddress);
     $this->click("_qf_Main_upload-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
     $this->click("_qf_Confirm_next-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //senario 3
     $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&id={$membershipContributionPageId}&cid={$cid}");
@@ -120,10 +120,10 @@ class WebTest_Member_DefaultMembershipPricesetTest extends CiviSeleniumTestCase 
     $this->_testDefaultSenarios("National_Membership_{$title}-section", 3);
     $this->contactInfoFill($firstName, $lastName, $email, $contactParams, $streetAddress);
     $this->click("_qf_Main_upload-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
     $this->click("_qf_Confirm_next-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //senario 4
     $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&id={$membershipContributionPageId}&cid={$cid}");
@@ -134,7 +134,7 @@ class WebTest_Member_DefaultMembershipPricesetTest extends CiviSeleniumTestCase 
     $this->_testDefaultSenarios("National_Membership_{$title}-section", 1);
     $this->contactInfoFill($firstName, $lastName, $email, $contactParams, $streetAddress);
     $this->click("_qf_Main_upload-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Main_upload-bottom");
     $this->assertTrue($this->isTextPresent("You already have a lifetime membership and cannot select a membership with a shorter term."));
   }
@@ -167,7 +167,7 @@ class WebTest_Member_DefaultMembershipPricesetTest extends CiviSeleniumTestCase 
 
   function _testAddSet($setTitle, $usedFor, $contributionType = NULL, $setHelp) {
     $this->open($this->sboxPath . 'civicrm/admin/price?reset=1&action=add');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_Set_next-bottom');
 
     // Enter Priceset fields (Title, Used For ...)
@@ -189,7 +189,7 @@ class WebTest_Member_DefaultMembershipPricesetTest extends CiviSeleniumTestCase 
     $this->assertChecked('is_active', 'Verify that Is Active checkbox is set.');
     $this->click('_qf_Set_next-bottom');
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_Field_next-bottom');
     $this->assertTrue($this->isTextPresent("Your Set '{$setTitle}' has been added. You can add fields to this set now."));
   }
@@ -277,7 +277,7 @@ class WebTest_Member_DefaultMembershipPricesetTest extends CiviSeleniumTestCase 
       }
       $this->select("financial_type_id", "label={$contributionType}");
       $this->click('_qf_Field_next_new-bottom');
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->waitForElementPresent('_qf_Field_next-bottom');
       $this->assertTrue($this->isTextPresent("Price Field '{$label}' has been saved."));
     }

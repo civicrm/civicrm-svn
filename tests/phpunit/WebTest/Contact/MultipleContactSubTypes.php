@@ -183,7 +183,7 @@ class WebTest_Contact_MultipleContactSubTypes extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //checking the contact sub-type of newly created individual
     $this->assertElementContainsText('crm-notification-container', "Contact Saved");
@@ -213,7 +213,7 @@ class WebTest_Contact_MultipleContactSubTypes extends CiviSeleniumTestCase {
 
     //editing contact sub-type
     $this->click("xpath=//ul[@id='actions']/li[2]/a");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->waitForElementPresent('_qf_Contact_upload_view-bottom');
     $selectedValues = $this->getSelectedValues("contact_sub_type");
@@ -287,7 +287,7 @@ class WebTest_Contact_MultipleContactSubTypes extends CiviSeleniumTestCase {
     //add new custom data
     $customGroupTitle = "Custom group For {$contactSubType}" . substr(sha1(rand()), 0, 4);
     $this->click("//a[@id='newCustomDataGroup']/span");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //fill custom group title
     $this->click("title");
@@ -308,7 +308,7 @@ class WebTest_Contact_MultipleContactSubTypes extends CiviSeleniumTestCase {
     $fieldLabel = "custom_field_for_{$contactSubType}" . substr(sha1(rand()), 0, 4);
     $this->type('label', $fieldLabel);
     $this->click('_qf_Field_next-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $customGroupTitle = preg_replace('/\s/', '_', trim($customGroupTitle));
     return array($customGroupTitle, $gid);
   }

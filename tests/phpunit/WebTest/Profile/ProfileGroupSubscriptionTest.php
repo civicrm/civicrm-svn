@@ -49,7 +49,7 @@ class WebTest_Profile_ProfileGroupSubscriptionTest extends CiviSeleniumTestCase 
     // testing (Add new profile ).
     $this->open($this->sboxPath . 'civicrm/admin/uf/group?reset=1');
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click('newCiviCRMProfile-top');
 
@@ -79,7 +79,7 @@ class WebTest_Profile_ProfileGroupSubscriptionTest extends CiviSeleniumTestCase 
 
     //click on save
     $this->click('_qf_Group_next');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //check for  profile create
     $this->assertTrue($this->isTextPresent("Your CiviCRM Profile '$profileTitle' has been added. You can add fields to this profile now"));
@@ -94,7 +94,7 @@ class WebTest_Profile_ProfileGroupSubscriptionTest extends CiviSeleniumTestCase 
 
     //click on save
     $this->click('_qf_Field_next_new-top');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Add email field to profile
     $this->click('field_name[0]');
@@ -107,7 +107,7 @@ class WebTest_Profile_ProfileGroupSubscriptionTest extends CiviSeleniumTestCase 
     //click on save
     $this->click('_qf_Field_next');
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //now use profile create mode for group subscription
     $this->click("xpath=id('field_page')/div[1]/a[4]/span");
@@ -127,7 +127,7 @@ class WebTest_Profile_ProfileGroupSubscriptionTest extends CiviSeleniumTestCase 
 
     $this->click('_qf_Edit_next');
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // assert for subscription message
     $this->assertTrue($this->isTextPresent("Your subscription request has been submitted for group "), "Subscription message is not shown");

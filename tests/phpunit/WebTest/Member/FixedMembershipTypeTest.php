@@ -53,13 +53,13 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
     $this->type('organization_name', "Organization $title");
     $this->type('email_1_email', "$title@org.com");
     $this->click('_qf_Contact_upload_view');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent("Organization $title has been created."));
 
     // Go directly to the URL
     $this->open($this->sboxPath . "civicrm/admin/member/membershipType?reset=1&action=browse");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click("link=Add Membership Type");
     $this->waitForElementPresent('_qf_MembershipType_cancel-bottom');
@@ -107,7 +107,7 @@ class WebTest_Member_FixedMembershipTypeTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click('_qf_Contact_upload_view');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("$firstName $lastName has been created."));
 
     // click through to the membership view screen
@@ -173,7 +173,7 @@ SELECT end_event_adjust_interval
 
     // Clicking save.
     $this->click('_qf_Membership_upload');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // page was loaded
     $this->waitForTextPresent($sourceText);
@@ -219,13 +219,13 @@ SELECT end_event_adjust_interval
     $this->type('organization_name', "Organization $title");
     $this->type('email_1_email', "$title@org.com");
     $this->click('_qf_Contact_upload_view');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent("Organization $title has been created."));
 
     // Go directly to the URL
     $this->open($this->sboxPath . "civicrm/admin/member/membershipType?reset=1&action=browse");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click("link=Add Membership Type");
     $this->waitForElementPresent('_qf_MembershipType_cancel-bottom');
@@ -273,7 +273,7 @@ SELECT end_event_adjust_interval
 
     // Clicking save.
     $this->click('_qf_Contact_upload_view');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent("$firstName $lastName has been created."));
 
@@ -340,7 +340,7 @@ SELECT end_event_adjust_interval
 
     // Clicking save.
     $this->click('_qf_Membership_upload');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // page was loaded
     $this->waitForTextPresent($sourceText);
@@ -387,13 +387,13 @@ SELECT end_event_adjust_interval
     $this->type('organization_name', "Organization $title");
     $this->type('email_1_email', "$title@org.com");
     $this->click('_qf_Contact_upload_view');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent("Organization $title has been created."));
 
     // Go directly to the URL
     $this->open($this->sboxPath . "civicrm/admin/member/membershipType?reset=1&action=browse");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click("link=Add Membership Type");
     $this->waitForElementPresent('_qf_MembershipType_cancel-bottom');
@@ -439,7 +439,7 @@ SELECT end_event_adjust_interval
 
     // Clicking save.
     $this->click('_qf_Contact_upload_view');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent("$firstName $lastName has been created."));
 
@@ -501,7 +501,7 @@ SELECT end_event_adjust_interval
 
     // Clicking save.
     $this->click('_qf_Membership_upload');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // page was loaded
     $this->waitForTextPresent($sourceText);
@@ -548,13 +548,13 @@ SELECT end_event_adjust_interval
     $this->type('organization_name', "Organization $title");
     $this->type('email_1_email', "$title@org.com");
     $this->click('_qf_Contact_upload_view');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent("Organization $title has been created."));
 
     // Go directly to the URL
     $this->open($this->sboxPath . "civicrm/admin/member/membershipType?reset=1&action=browse");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click("link=Add Membership Type");
     $this->waitForElementPresent('_qf_MembershipType_cancel-bottom');
@@ -601,7 +601,7 @@ SELECT end_event_adjust_interval
 
     // Clicking save.
     $this->click('_qf_Contact_upload_view');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent("$firstName $lastName has been created."));
 
@@ -663,7 +663,7 @@ SELECT end_event_adjust_interval
 
     // Clicking save.
     $this->click('_qf_Membership_upload');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // page was loaded
     $this->waitForTextPresent($sourceText);

@@ -69,7 +69,7 @@ class WebTest_Export_ContactTest extends ExportCiviSeleniumTestCase {
     // Add to group.
     $this->select("group_id", "label=$parentGroupName");
     $this->click("_qf_GroupContact_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Adding child group contact
     // We're using Quick Add block on the main page for this.
@@ -87,11 +87,11 @@ class WebTest_Export_ContactTest extends ExportCiviSeleniumTestCase {
     // Add to child group.
     $this->select("group_id", "label=regexp:$childGroupName");
     $this->click("_qf_GroupContact_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Visit contact search page.
     $this->open($this->sboxPath . "civicrm/contact/search?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Select contact type as Indiividual.
     $this->select("contact_type", "value=Individual");
@@ -101,7 +101,7 @@ class WebTest_Export_ContactTest extends ExportCiviSeleniumTestCase {
 
     // Click to search.
     $this->click("_qf_Basic_refresh");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is contact present in search result?
     $this->assertTrue($this->isTextPresent("$sortName"), "Contact did not found in search result!");
@@ -116,7 +116,7 @@ class WebTest_Export_ContactTest extends ExportCiviSeleniumTestCase {
     $this->click("task");
     $this->select("task", "label=Export Contacts");
     $this->click("Go");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $csvFile = $this->downloadCSV("_qf_Select_next-bottom");
 
@@ -190,7 +190,7 @@ class WebTest_Export_ContactTest extends ExportCiviSeleniumTestCase {
     $this->select("address_1_state_province_id", "value=1019");
 
     $this->click('_qf_Contact_upload_view');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Add contact to group
     // visit group tab.
@@ -200,7 +200,7 @@ class WebTest_Export_ContactTest extends ExportCiviSeleniumTestCase {
     // Add to group.
     $this->select("group_id", "label=$groupName");
     $this->click("_qf_GroupContact_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
 
     $firstName1 = 'aa' . substr(sha1(rand()), 0, 5);
@@ -217,7 +217,7 @@ class WebTest_Export_ContactTest extends ExportCiviSeleniumTestCase {
     // Add to group.
     $this->select("group_id", "label=$groupName");
     $this->click("_qf_GroupContact_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $firstName2 = 'bb' . substr(sha1(rand()), 0, 5);
 
@@ -239,7 +239,7 @@ class WebTest_Export_ContactTest extends ExportCiviSeleniumTestCase {
     $this->waitForTextPresent("121A Sherman");
 
     $this->click('_qf_Contact_upload_view-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $sortName2 = "Smith, {$firstName2}";
     $displayName2 = "{$firstName2} Smith";
@@ -252,17 +252,17 @@ class WebTest_Export_ContactTest extends ExportCiviSeleniumTestCase {
     // Add to group.
     $this->select("group_id", "label=$groupName");
     $this->click("_qf_GroupContact_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->open($this->sboxPath . "civicrm/contact/search?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Select group.
     $this->select("group", "label=$groupName");
 
     // Click to search.
     $this->click("_qf_Basic_refresh");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is contact present in search result?
     $this->assertTrue($this->isTextPresent("$sortName1"), "Contact did not found in search result!");
@@ -280,7 +280,7 @@ class WebTest_Export_ContactTest extends ExportCiviSeleniumTestCase {
     $this->click("task");
     $this->select("task", "label=Export Contacts");
     $this->click("Go");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click("CIVICRM_QFID_2_10");
 
@@ -345,7 +345,7 @@ class WebTest_Export_ContactTest extends ExportCiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Edit_upload");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is status message correct?
     $this->assertTrue($this->isTextPresent("The Group '$groupName' has been saved."));

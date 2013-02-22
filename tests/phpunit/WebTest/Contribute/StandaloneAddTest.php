@@ -151,7 +151,7 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Contribution_upload");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is status message correct?
     $this->assertTrue($this->isTextPresent("The contribution record has been saved."), "Status message didn't show up after saving!");

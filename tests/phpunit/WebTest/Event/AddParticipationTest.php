@@ -98,7 +98,7 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click('_qf_Participant_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is status message correct?
     $this->assertTrue($this->isTextPresent("Event registration for $displayName has been added"), "Status message didn't show up after saving!");
@@ -154,11 +154,11 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
 
     // add custom data for participant role
     $this->open($this->sboxPath . 'civicrm/admin/custom/group?reset=1 ');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //add new custom data
     $this->click("//a[@id='newCustomDataGroup']/span");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //fill custom group title
     $customGroupTitle = 'custom_' . substr(sha1(rand()), 0, 7);
@@ -174,7 +174,7 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
 
     $this->click("//option[@value='Contact']");
     $this->click('_qf_Group_next');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Is custom group created?
     $this->assertTrue($this->isTextPresent("Your custom field set '$customGroupTitle' has been added. You can add custom fields now."));
@@ -212,14 +212,14 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
 
     //clicking save
     $this->click('_qf_Field_next');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Is custom field created?
     $this->assertTrue($this->isTextPresent("Your custom field '$checkboxFieldLabel' has been saved."));
 
     //create another custom field - Integer Radio
     $this->click("//a[@id='newCustomField']/span");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click('data_type[0]');
     $this->select('data_type[0]', 'value=1');
     $this->click("//option[@value='1']");
@@ -254,7 +254,7 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
 
     //clicking save
     $this->click('_qf_Field_next');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Go directly to the URL of the screen that you will be testing (Register Participant for Event-standalone).
     $this->open($this->sboxPath . 'civicrm/participant/add?reset=1&action=add&context=standalone');
@@ -309,7 +309,7 @@ class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click('_qf_Participant_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is status message correct?
     $this->assertTrue($this->isTextPresent("Event registration for $displayName has been added"),

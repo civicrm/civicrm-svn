@@ -64,7 +64,7 @@ class WebTest_Import_AddressImportTest extends ImportCiviSeleniumTestCase {
    
     // Visit contact summary page.
     $this->click("css=div.ac_results-inner li");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
   
     foreach($customDataParams['customFields'] as $key => $value){
       $this->assertTrue($this->isElementPresent("xpath=//div[@class='crm-summary-row']/div[@class='crm-label'][contains(text(), '$key')]"));
@@ -114,7 +114,7 @@ class WebTest_Import_AddressImportTest extends ImportCiviSeleniumTestCase {
 
     //add new custom data
     $this->click("//a[@id='newCustomDataGroup']/span");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //fill custom group title
     $customGroupTitle = 'Custom ' . substr(sha1(rand()), 0, 7);
@@ -147,7 +147,7 @@ class WebTest_Import_AddressImportTest extends ImportCiviSeleniumTestCase {
 
     // create custom field - Integer
     $this->click("newCustomField");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $customField1 = 'Customfield_int ' . substr(sha1(rand()), 0, 4);
     $this->type('label', $customField1);
     $this->select("data_type[0]","value=1");
@@ -162,7 +162,7 @@ class WebTest_Import_AddressImportTest extends ImportCiviSeleniumTestCase {
 
     // create custom field - Number
     $this->click("newCustomField");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $customField2 = 'Customfield_Number ' . substr(sha1(rand()), 0, 4);
     $this->type('label', $customField2);
     $this->select("data_type[0]","value=2");
@@ -176,43 +176,43 @@ class WebTest_Import_AddressImportTest extends ImportCiviSeleniumTestCase {
 
     // create custom field - "alphanumeric select"
     $this->click("newCustomField");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $customField3 = 'Customfield_alp_select' . substr(sha1(rand()), 0, 4);
     $customFieldId3 = $this->_createMultipleValueCustomField($customField3,'Select');
   
     // create custom field - "alphanumeric radio"
     $this->click("newCustomField");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $customField4 = 'Customfield_alp_radio' . substr(sha1(rand()), 0, 4);
     $customFieldId4 = $this->_createMultipleValueCustomField($customField4,'Radio');
 
     // create custom field - "alphanumeric checkbox"
     $this->click("newCustomField");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $customField5 = 'Customfield_alp_checkbox' . substr(sha1(rand()), 0, 4);
     $customFieldId5 = $this->_createMultipleValueCustomField($customField5,'CheckBox');
 
     // create custom field - "alphanumeric multiselect"
     $this->click("newCustomField");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $customField6 = 'Customfield_alp_multiselect' . substr(sha1(rand()), 0, 4);
     $customFieldId6 = $this->_createMultipleValueCustomField($customField6,'Multi-Select');
  
      // create custom field - "alphanumeric advmultiselect"
     $this->click("newCustomField");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $customField7 = 'Customfield_alp_advmultiselect' . substr(sha1(rand()), 0, 4);
     $customFieldId7 = $this->_createMultipleValueCustomField($customField7,'AdvMulti-Select');
 
     // create custom field - "alphanumeric autocompleteselect"
     $this->click("newCustomField");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $customField8 = 'Customfield_alp_autocompleteselect' . substr(sha1(rand()), 0, 4);
     $customFieldId8 = $this->_createMultipleValueCustomField($customField8,'Autocomplete-Select');
     
     // create custom field - Money
     $this->click("newCustomField");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $customField9 = 'Customfield_Money' . substr(sha1(rand()), 0, 4);
     $this->type('label', $customField9);
     $this->select("data_type[0]","value=3");
@@ -226,7 +226,7 @@ class WebTest_Import_AddressImportTest extends ImportCiviSeleniumTestCase {
 
     // create custom field - Date
     $this->click("newCustomField");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $customField10 = 'Customfield_Date' . substr(sha1(rand()), 0, 4);
     $this->type('label', $customField10);
     $this->select("data_type[0]","value=5");

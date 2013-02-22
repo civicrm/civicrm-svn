@@ -47,7 +47,7 @@ class WebTest_Contact_DupeContactTest extends CiviSeleniumTestCase {
 
     // Go directly to the URL of New Individual.
     $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $firstName = substr(sha1(rand()), 0, 7);
     $lastName1 = substr(sha1(rand()), 0, 7);
@@ -70,16 +70,16 @@ class WebTest_Contact_DupeContactTest extends CiviSeleniumTestCase {
 
     //check for matching contact
     //$this->click("_qf_Contact_refresh_dedupe");
-    //$this->waitForPageToLoad("30000");
+    //$this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertElementContainsText('crm-notification-container', "Contact Saved");
 
     // Go directly to the URL of New Individual.
     $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //contact details section
 
@@ -95,7 +95,7 @@ class WebTest_Contact_DupeContactTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->isTextPresent("Please correct the following errors in the form fields below: One matching contact was found. You can View or Edit the existing contact, or Merge this contact with an existing contact.");
   }

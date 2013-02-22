@@ -65,7 +65,7 @@ class WebTest_Contribute_OnlineMultiplePaymentProcessorTest extends CiviSelenium
     );
 
     $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&action=preview&id=$pageId");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent($donationPageTitle));
 
     $firstName = 'Ma' . substr(sha1(rand()), 0, 4);
@@ -108,12 +108,12 @@ class WebTest_Contribute_OnlineMultiplePaymentProcessorTest extends CiviSelenium
     $this->type("billing_postal_code-5", "94129");
     $this->click("_qf_Main_upload-bottom");
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
 
     $this->click("_qf_Confirm_next-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     
     //login to check contribution
     $this->open($this->sboxPath);
@@ -158,7 +158,7 @@ class WebTest_Contribute_OnlineMultiplePaymentProcessorTest extends CiviSelenium
 
 
     $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&action=preview&id=$pageId");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent($donationPageTitle));
 
     $firstName = 'Ma' . substr(sha1(rand()), 0, 4);
@@ -184,7 +184,7 @@ class WebTest_Contribute_OnlineMultiplePaymentProcessorTest extends CiviSelenium
     $this->click($xpath);
 
     $this->click("_qf_Main_upload-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
     
@@ -192,7 +192,7 @@ class WebTest_Contribute_OnlineMultiplePaymentProcessorTest extends CiviSelenium
     $this->assertTrue($this->isTextPresent($payLaterInstructionsText));
 
     $this->click("_qf_Confirm_next-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent($payLaterInstructionsText));
 
@@ -205,11 +205,11 @@ class WebTest_Contribute_OnlineMultiplePaymentProcessorTest extends CiviSelenium
     $this->check('contribution_test');
     $this->click('_qf_Search_refresh');
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->waitForElementPresent("xpath=//div[@id='contributionSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
     $this->click("xpath=//div[@id='contributionSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_ContributionView_cancel-bottom');
     //View Contribution Record
     $expected = array(

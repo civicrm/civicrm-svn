@@ -40,7 +40,7 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
 
     // Enable CiviCase module if necessary
     $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_Component_next-bottom');
     $enabledComponents = $this->getSelectOptions('enableComponents-t');
     if (!in_array('CiviCase', $enabledComponents)) {
@@ -48,7 +48,7 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
       $this->click("//option[@value='CiviCase']");
       $this->click('add');
       $this->click('_qf_Component_next-bottom');
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
     }
 
     // let's give full CiviCase permissions to demo user (registered user).
@@ -60,7 +60,7 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
 
     // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
     // button at the end of this page to show up, to make sure it's fully loaded.
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_Case_upload-bottom');
 
     // Adding contact with randomized first name (so we can then select that contact when creating case)
@@ -92,7 +92,7 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
     $this->click('_qf_Case_upload-bottom');
 
     // We should be at manage case screen
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_CaseView_cancel-bottom');
 
     // Is status message correct?
@@ -187,7 +187,7 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Activity_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is status message correct?
     $this->assertTrue($this->isTextPresent("Activity '$subject' has been saved."),
@@ -215,7 +215,7 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
 
     // verify if custom data is present
     $this->open($this->sboxPath . "civicrm/case?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("xpath=//table[@class='caseSelector']/tbody//tr/td[2]/a[text()='{$contactName}']/../../td[9]/span/a[text()='Manage']");
 
     $this->waitForElementPresent('_qf_CaseView_cancel-bottom');
@@ -239,9 +239,9 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
     // change activity status
     $this->select('activity_change_status', 'value=2');
     $this->click("xpath=//div[@class='ui-dialog-buttonset']/button/span[text()='Ok']");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->open($this->sboxPath . "civicrm/case?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("xpath=//table[@class='caseSelector']/tbody//tr/td[2]/a[text()='{$contactName}']/../../td[9]/span/a[text()='Manage']");
     $this->waitForElementPresent('_qf_CaseView_cancel-bottom');
     $this->waitForElementPresent("xpath=//div[@id='activities']//table[@id='activities-selector']/tbody/tr[1]/td[2]");
@@ -256,7 +256,7 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
 
     //add new custom data
     $this->click("//a[@id='newCustomDataGroup']/span");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //fill custom group title
     $this->click("title");
@@ -303,14 +303,14 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
 
     //clicking save
     $this->click("_qf_Field_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Is custom field created
     $this->assertTrue($this->isTextPresent("Your custom field '$radioFieldLabel' has been saved."));
 
     // create another custom field - text field
     $this->click("//a[@id='newCustomField']/span");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $textFieldLabel = 'Custom Field Text_' . substr(sha1(rand()), 0, 4);
     $this->type('label', $textFieldLabel);
@@ -326,7 +326,7 @@ class WebTest_Case_ActivityToCaseTest extends CiviSeleniumTestCase {
 
     //clicking save
     $this->click('_qf_Field_next');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Is custom field created
     $this->assertTrue($this->isTextPresent("Your custom field '$textFieldLabel' has been saved."));

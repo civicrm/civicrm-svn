@@ -113,17 +113,17 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
 
     // get text field Id.
     $this->click("xpath=//div[@id='field_page']//table/tbody/tr[1]/td[9]/span[1]/a[2]");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $matches = array();
     preg_match('/fid=([0-9]+)/', $this->getLocation(), $matches);
     $textFieldId = $matches[1];
 
     $this->open($pricesetLoc);
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // get select field id
     $this->click("xpath=//div[@id='field_page']//table/tbody/tr[2]/td[8]/a");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $selectFieldLoc = $this->getLocation();
     $matches = array();
     preg_match('/fid=([0-9]+)/', $this->getLocation(), $matches);
@@ -132,17 +132,17 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     // get select field ids
     // get select field option1
     $this->click("xpath=//div[@id='field_page']//table/tbody/tr[1]/td[7]/span[1]/a[1]");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $matches = array();
     preg_match('/oid=([0-9]+)/', $this->getLocation(), $matches);
     $selectFieldOp1 = $matches[1];
 
     $this->open($selectFieldLoc);
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // get select field option2
     $this->click("xpath=//div[@id='field_page']//table/tbody/tr[2]/td[7]/span[1]/a[1]");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $matches = array();
     preg_match('/oid=([0-9]+)/', $this->getLocation(), $matches);
     $selectFieldOp2 = $matches[1];
@@ -161,12 +161,12 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
 
     // logout to register for event.
     $this->open($this->sboxPath . 'civicrm/logout?reset=1');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Register Participant 1
     // visit event info page
     $this->open($infoEvent);
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // register for event
     $this->click('link=Register Now');
@@ -189,14 +189,14 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->type("xpath=//input[@id='price_{$textFieldId}']", '1');
 
     $this->click('_qf_Register_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->_checkConfirmationAndRegister();
 
     // Register Participant 2
     // visit event info page
     $this->open($infoEvent);
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click('link=Register Now');
     $this->waitForElementPresent('_qf_Register_upload-bottom');
@@ -217,7 +217,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     // select sold option for select field, check for form rule
     $this->select("price_{$selectFieldId}", "value={$selectFieldOp1}");
     $this->click('_qf_Register_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertStringsPresent(array('Sorry, this option is currently sold out.'));
 
@@ -225,7 +225,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->select("price_{$selectFieldId}", "value={$selectFieldOp2}");
 
     $this->click('_qf_Register_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->_checkConfirmationAndRegister();
   }
@@ -318,17 +318,17 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
 
     // get text field Id.
     $this->click("xpath=//div[@id='field_page']//table/tbody/tr[1]/td[9]/span[1]/a[2]");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $matches = array();
     preg_match('/fid=([0-9]+)/', $this->getLocation(), $matches);
     $textFieldId = $matches[1];
 
     $this->open($pricesetLoc);
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // get select field id
     $this->click("xpath=//div[@id='field_page']//table/tbody/tr[2]/td[8]/a");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $selectFieldLoc = $this->getLocation();
     $matches = array();
     preg_match('/fid=([0-9]+)/', $this->getLocation(), $matches);
@@ -337,17 +337,17 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     // get select field ids
     // get select field option1
     $this->click("xpath=//div[@id='field_page']//table/tbody/tr[1]/td[7]/span[1]/a[1]");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $matches = array();
     preg_match('/oid=([0-9]+)/', $this->getLocation(), $matches);
     $selectFieldOp1 = $matches[1];
 
     $this->open($selectFieldLoc);
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // get select field option2
     $this->click("xpath=//div[@id='field_page']//table/tbody/tr[2]/td[7]/span[1]/a[1]");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $matches = array();
     preg_match('/oid=([0-9]+)/', $this->getLocation(), $matches);
     $selectFieldOp2 = $matches[1];
@@ -366,12 +366,12 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
 
     // logout to register for event.
     $this->open($this->sboxPath . 'civicrm/logout?reset=1');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Register Participant 1
     // visit event info page
     $this->open($infoEvent);
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // register for event
     $this->click('link=Register Now');
@@ -394,14 +394,14 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->type("xpath=//input[@id='price_{$textFieldId}']", '1');
 
     $this->click('_qf_Register_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->_checkConfirmationAndRegister();
 
     // Register Participant 2
     // visit event info page
     $this->open($infoEvent);
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click('link=Register Now');
     $this->waitForElementPresent('_qf_Register_upload-bottom');
@@ -423,7 +423,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->select("price_{$selectFieldId}", "value={$selectFieldOp1}");
 
     $this->click('_qf_Register_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertStringsPresent(array('Sorry, this option is currently sold out.'));
 
@@ -431,7 +431,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->select("price_{$selectFieldId}", "value={$selectFieldOp2}");
 
     $this->click('_qf_Register_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->_checkConfirmationAndRegister();
   }
@@ -517,17 +517,17 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
 
     // get text field Id.
     $this->click("xpath=//div[@id='field_page']//table/tbody/tr[1]/td[9]/span[1]/a[2]");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $matches = array();
     preg_match('/fid=([0-9]+)/', $this->getLocation(), $matches);
     $textFieldId = $matches[1];
 
     $this->open($pricesetLoc);
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // get select field id
     $this->click("xpath=//div[@id='field_page']//table/tbody/tr[2]/td[8]/a");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $selectFieldLoc = $this->getLocation();
     $matches = array();
     preg_match('/fid=([0-9]+)/', $this->getLocation(), $matches);
@@ -536,17 +536,17 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     // get select field ids
     // get select field option1
     $this->click("xpath=//div[@id='field_page']//table/tbody/tr[1]/td[7]/span[1]/a[1]");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $matches = array();
     preg_match('/oid=([0-9]+)/', $this->getLocation(), $matches);
     $selectFieldOp1 = $matches[1];
 
     $this->open($selectFieldLoc);
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // get select field option2
     $this->click("xpath=//div[@id='field_page']//table/tbody/tr[2]/td[7]/span[1]/a[1]");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $matches = array();
     preg_match('/oid=([0-9]+)/', $this->getLocation(), $matches);
     $selectFieldOp2 = $matches[1];
@@ -566,14 +566,14 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
 
     // logout to register for event.
     $this->open($this->sboxPath . 'civicrm/logout?reset=1');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
 
     // 1'st registration
     // Register Participant 1
     // visit event info page
     $this->open($infoEvent);
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // register for event
     $this->click('link=Register Now');
@@ -599,7 +599,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->select("price_{$selectFieldId}", "value={$selectFieldOp2}");
 
     $this->click('_qf_Register_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Check for Participant2
     // exceed maximun count for text field, check for form rule
@@ -609,7 +609,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->type('email-Primary', $email);
 
     $this->click('_qf_Participant_1_next-Array');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertStringsPresent(array('Sorry, currently only 6 seats are available for this option.'));
 
@@ -618,7 +618,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->select("price_{$selectFieldId}", "value={$selectFieldOp2}");
 
     $this->click('_qf_Participant_1_next-Array');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Check for Participant3, check and skip
     // exceed maximun count for text field, check for form rule
@@ -628,7 +628,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->type('email-Primary', $email);
 
     $this->click('_qf_Participant_2_next-Array');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertStringsPresent(array('Sorry, currently only 6 seats are available for this option.'));
 
@@ -639,13 +639,13 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->select("price_{$selectFieldId}", "value={$selectFieldOp2}");
 
     $this->click('_qf_Participant_2_next-Array');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertStringsPresent(array('Sorry, currently only 2 seats are available for this option.'));
 
     // Skip participant3 and register
     $this->click('_qf_Participant_2_next_skip-Array');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->_checkConfirmationAndRegister();
 
@@ -654,7 +654,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     // Register Participant 1
     // visit event info page
     $this->open($infoEvent);
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // register for event
     $this->click('link=Register Now');
@@ -682,7 +682,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->select("price_{$selectFieldId}", "value={$selectFieldOp2}");
 
     $this->click('_qf_Register_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertStringsPresent(array('Sorry, this option is currently sold out.'));
 
@@ -690,7 +690,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->select("price_{$selectFieldId}", "value={$selectFieldOp1}");
 
     $this->click('_qf_Register_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Check for Participant2
     // exceed maximun count for text field, check for form rule
@@ -700,7 +700,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->type('email-Primary', $email);
 
     $this->click('_qf_Participant_1_next-Array');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertStringsPresent(array('Sorry, currently only 2 seats are available for this option.'));
 
@@ -711,7 +711,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->select("price_{$selectFieldId}", "value={$selectFieldOp2}");
 
     $this->click('_qf_Participant_1_next-Array');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertStringsPresent(array('Sorry, this option is currently sold out.'));
 
@@ -719,7 +719,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->select("price_{$selectFieldId}", "value={$selectFieldOp1}");
 
     $this->click('_qf_Participant_1_next-Array');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->_checkConfirmationAndRegister();
   }
@@ -812,17 +812,17 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
 
     // get text field Id.
     $this->click("xpath=//div[@id='field_page']//table/tbody/tr[1]/td[9]/span[1]/a[2]");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $matches = array();
     preg_match('/fid=([0-9]+)/', $this->getLocation(), $matches);
     $textFieldId = $matches[1];
 
     $this->open($pricesetLoc);
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // get select field id
     $this->click("xpath=//div[@id='field_page']//table/tbody/tr[2]/td[8]/a");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $selectFieldLoc = $this->getLocation();
     $matches = array();
     preg_match('/fid=([0-9]+)/', $this->getLocation(), $matches);
@@ -831,17 +831,17 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     // get select field ids
     // get select field option1
     $this->click("xpath=//div[@id='field_page']//table/tbody/tr[1]/td[7]/span[1]/a[1]");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $matches = array();
     preg_match('/oid=([0-9]+)/', $this->getLocation(), $matches);
     $selectFieldOp1 = $matches[1];
 
     $this->open($selectFieldLoc);
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // get select field option2
     $this->click("xpath=//div[@id='field_page']//table/tbody/tr[2]/td[7]/span[1]/a[1]");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $matches = array();
     preg_match('/oid=([0-9]+)/', $this->getLocation(), $matches);
     $selectFieldOp2 = $matches[1];
@@ -861,14 +861,14 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
 
     // logout to register for event.
     $this->open($this->sboxPath . 'civicrm/logout?reset=1');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
 
     // 1'st registration
     // Register Participant 1
     // visit event info page
     $this->open($infoEvent);
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // register for event
     $this->click('link=Register Now');
@@ -894,7 +894,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->select("price_{$selectFieldId}", "value={$selectFieldOp2}");
 
     $this->click('_qf_Register_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Check for Participant2
     // exceed maximun count for text field, check for form rule
@@ -904,7 +904,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->type('email-Primary', $email);
 
     $this->click('_qf_Participant_1_next-Array');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertStringsPresent(array('Sorry, currently only 12 seats are available for this option.'));
 
@@ -913,7 +913,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->select("price_{$selectFieldId}", "value={$selectFieldOp2}");
 
     $this->click('_qf_Participant_1_next-Array');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Check for Participant3, check and skip
     // exceed maximun count for text field, check for form rule
@@ -923,7 +923,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->type('email-Primary', $email);
 
     $this->click('_qf_Participant_2_next-Array');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertStringsPresent(array('Sorry, currently only 12 seats are available for this option.'));
 
@@ -934,13 +934,13 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->select("price_{$selectFieldId}", "value={$selectFieldOp2}");
 
     $this->click('_qf_Participant_2_next-Array');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertStringsPresent(array('Sorry, currently only 4 seats are available for this option.'));
 
     // Skip participant3 and register
     $this->click('_qf_Participant_2_next_skip-Array');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->_checkConfirmationAndRegister();
 
@@ -949,7 +949,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     // Register Participant 1
     // visit event info page
     $this->open($infoEvent);
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // register for event
     $this->click('link=Register Now');
@@ -977,7 +977,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->select("price_{$selectFieldId}", "value={$selectFieldOp2}");
 
     $this->click('_qf_Register_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertStringsPresent(array('Sorry, this option is currently sold out.'));
 
@@ -985,7 +985,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->select("price_{$selectFieldId}", "value={$selectFieldOp1}");
 
     $this->click('_qf_Register_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Check for Participant2
     // exceed maximun count for text field, check for form rule
@@ -995,7 +995,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->type('email-Primary', $email);
 
     $this->click('_qf_Participant_1_next-Array');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertStringsPresent(array('Sorry, currently only 4 seats are available for this option.'));
 
@@ -1006,7 +1006,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->select("price_{$selectFieldId}", "value={$selectFieldOp2}");
 
     $this->click('_qf_Participant_1_next-Array');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertStringsPresent(array('Sorry, this option is currently sold out.'));
 
@@ -1014,14 +1014,14 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->select("price_{$selectFieldId}", "value={$selectFieldOp1}");
 
     $this->click('_qf_Participant_1_next-Array');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->_checkConfirmationAndRegister();
   }
 
   function _testAddSet($setTitle, $financialType = NULL) {
     $this->open($this->sboxPath . 'civicrm/admin/price?reset=1&action=add');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_Set_next-bottom');
 
     // Enter Priceset fields (Title, Used For ...)
@@ -1038,7 +1038,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->assertChecked('is_active', 'Verify that Is Active checkbox is set.');
     $this->click('_qf_Set_next-bottom');
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_Field_next-bottom');
   }
 
@@ -1086,7 +1086,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
       else {
         $this->click('_qf_Field_next-bottom');
       }
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
 
       $count++;
     }
@@ -1149,7 +1149,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->click('_qf_EventInfo_upload-bottom');
 
     // Wait for Location tab form to load
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Go to Fees tab
     $this->click('link=Fees');
@@ -1172,7 +1172,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     }
 
     $this->click('_qf_Fee_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Go to Online Registration tab
     $this->click('link=Online Registration');
@@ -1193,7 +1193,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->type('confirm_from_email', 'jane.doe@example.org');
 
     $this->click('_qf_Registration_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForTextPresent("'Registration' information has been saved.");
 
     // verify event input on info page
@@ -1201,7 +1201,7 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . 'civicrm/event/manage?reset=1');
     $this->click('link=' . $params['title']);
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     return $this->getLocation();
   }
 
@@ -1221,14 +1221,14 @@ class WebTest_Event_PricesetMaxCountTest extends CiviSeleniumTestCase {
     $this->type('billing_postal_code-5', '94129');
 
     $this->click('_qf_Register_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
   }
 
   function _checkConfirmationAndRegister() {
     $confirmStrings = array('Event Fee(s)', 'Billing Name and Address', 'Credit Card Information');
     $this->assertStringsPresent($confirmStrings);
     $this->click('_qf_Confirm_next-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $thankStrings = array('Thank You for Registering', 'Event Total', 'Transaction Date');
     $this->assertStringsPresent($thankStrings);
   }

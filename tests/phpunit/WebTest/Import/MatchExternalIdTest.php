@@ -262,7 +262,7 @@ class WebTest_Import_MatchExternalIdTest extends ImportCiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertElementContainsText('crm-notification-container', "Contact Saved");
 
     return $externalId;
@@ -322,7 +322,7 @@ class WebTest_Import_MatchExternalIdTest extends ImportCiviSeleniumTestCase {
     $this->click("_qf_EventInfo_upload-bottom");
 
     // Wait for Location tab form to load
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Go to Fees tab
     $this->click("link=Fees");
@@ -339,7 +339,7 @@ class WebTest_Import_MatchExternalIdTest extends ImportCiviSeleniumTestCase {
     }
 
     $this->click("_qf_Fee_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Go to Online Registration tab
     $this->click("link=Online Registration");
@@ -356,7 +356,7 @@ class WebTest_Import_MatchExternalIdTest extends ImportCiviSeleniumTestCase {
     $this->type("confirm_from_email", "jane.doe@example.org");
 
     $this->click("_qf_Registration_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertElementContainsText('crm-notification-container', "Saved");
 
     // verify event input on info page
@@ -364,10 +364,10 @@ class WebTest_Import_MatchExternalIdTest extends ImportCiviSeleniumTestCase {
     $this->open($this->sboxPath . "civicrm/event/manage?reset=1");
     $this->type("xpath=//div[@class='crm-block crm-form-block crm-event-searchevent-form-block']/table/tbody/tr/td/input",$params['title']);
     $this->click("_qf_SearchEvent_refresh");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("link=" . $params['title']);
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $matches = array();
     preg_match('/id=([0-9]+)/', $this->getLocation(), $matches);

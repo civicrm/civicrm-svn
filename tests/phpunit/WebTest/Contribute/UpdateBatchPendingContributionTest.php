@@ -56,12 +56,12 @@ class WebTest_Contribute_UpdateBatchPendingContributionTest extends CiviSelenium
     $this->click('contribution_status_id_2');
     $this->click("_qf_Search_refresh");
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click('radio_ts', 'ts_all');
 
     $this->select('task', "label=Update Pending Contribution Status");
     $this->click("_qf_Search_next_action");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->select('contribution_status_id', 'label=Completed');
     $this->click('_qf_Status_next');
     $this->waitForElementPresent("_qf_Result_done");
@@ -73,9 +73,9 @@ class WebTest_Contribute_UpdateBatchPendingContributionTest extends CiviSelenium
     $this->click('contribution_status_id_1');
     $this->click("_qf_Search_refresh");
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("xpath=//div[@id='contributionSearch']/table[@class='selector']/tbody/tr[1]/td[11]/span/a[text()='View']");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $expected = array(
       'Received Into' => "Deposit Bank Account",
       'Contribution Status' => "Completed",
@@ -124,12 +124,12 @@ class WebTest_Contribute_UpdateBatchPendingContributionTest extends CiviSelenium
     $this->click('contribution_status_id_2');
     $this->click("_qf_Search_refresh");
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click('radio_ts', 'ts_all');
 
     $this->select('task', "label=Update Pending Contribution Status");
     $this->click("_qf_Search_next_action");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->select('contribution_status_id', 'label=Completed');
     $this->click('_qf_Status_next');
     $this->waitForElementPresent("_qf_Result_done");
@@ -141,9 +141,9 @@ class WebTest_Contribute_UpdateBatchPendingContributionTest extends CiviSelenium
     $this->click('contribution_status_id_1');
     $this->click("_qf_Search_refresh");
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("xpath=//div[@id='contributionSearch']/table[@class='selector']/tbody/tr[1]/td[11]/span/a[text()='View']");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $expected = array(
       'Received Into'        => "Deposit Bank Account",
       'Contribution Status' => "Completed",
@@ -191,7 +191,7 @@ class WebTest_Contribute_UpdateBatchPendingContributionTest extends CiviSelenium
 
     // Clicking save.
     $this->click('_qf_Participant_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is status message correct?
     $this->assertTrue($this->isTextPresent("Event registration for $firstName Anderson has been added"),
@@ -242,7 +242,7 @@ class WebTest_Contribute_UpdateBatchPendingContributionTest extends CiviSelenium
 
     // Clicking save.
     $this->click("_qf_Contribution_upload");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is status message correct?
     $this->assertTrue($this->isTextPresent("The contribution record has been saved."), "Status message didn't show up after saving!");

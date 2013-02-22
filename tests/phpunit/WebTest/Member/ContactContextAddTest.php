@@ -59,7 +59,7 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent("$firstName $lastName has been created."));
 
@@ -89,7 +89,7 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Membership_upload");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // page was loaded
     $this->waitForTextPresent($sourceText);
@@ -114,7 +114,7 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
       );
     }
     $this->click("_qf_MembershipView_cancel-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     // page was loaded
     $this->waitForTextPresent($sourceText);
 
@@ -140,7 +140,7 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
 
     $this->click("_qf_MembershipView_cancel-bottom");
 
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("xpath=//div[@id='memberships']/div/table/tbody//tr/td[1][text()='{$memTypeParams['membership_type']}']/../td[7]");
     $this->click("xpath=//div[@id='memberships']/div/table/tbody//tr/td[1][text()='{$memTypeParams['membership_type']}']/../td[9]/span/a[2][text()='Edit']");
 
@@ -156,7 +156,7 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
     $this->click("xpath=//form[@id='Membership']/div[2]/div[2]//table/tbody//tr[@class='crm-membership-form-block-end_date']/td[2]/span/a[text()='clear']");
 
     $this->click("_qf_Membership_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // page was loaded
     $this->waitForTextPresent($sourceText);
@@ -200,7 +200,7 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent("$firstName $lastName has been created."));
 
@@ -231,7 +231,7 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Membership_upload");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // page was loaded
     $this->waitForTextPresent($sourceText);
@@ -256,7 +256,7 @@ class WebTest_Member_ContactContextAddTest extends CiviSeleniumTestCase {
       );
     }
     $this->click("_qf_MembershipView_cancel-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
   }
 }
 

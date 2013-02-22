@@ -62,7 +62,7 @@ class WebTest_Campaign_OnlineContributionTest extends CiviSeleniumTestCase {
     // add to group
     $this->select("group_id", "label=$groupName");
     $this->click("_qf_GroupContact_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $firstName2 = substr(sha1(rand()), 0, 7);
     $this->webtestAddContact($firstName2, "John", "$firstName2.john@example.org");
@@ -75,11 +75,11 @@ class WebTest_Campaign_OnlineContributionTest extends CiviSeleniumTestCase {
     // add to group
     $this->select("group_id", "label=$groupName");
     $this->click("_qf_GroupContact_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Enable CiviCampaign module if necessary
     $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Component_next-bottom");
     $enabledComponents = $this->getSelectOptions("enableComponents-t");
     if (!in_array("CiviCampaign", $enabledComponents)) {
@@ -87,7 +87,7 @@ class WebTest_Campaign_OnlineContributionTest extends CiviSeleniumTestCase {
       $this->click("//option[@value='CiviCampaign']");
       $this->click("add");
       $this->click("_qf_Component_next-bottom");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->assertTrue($this->isTextPresent("Changes Saved."));
     }
 
@@ -129,7 +129,7 @@ class WebTest_Campaign_OnlineContributionTest extends CiviSeleniumTestCase {
 
     // click save
     $this->click("_qf_Campaign_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent("Campaign Campaign $title has been saved."),
       "Status message didn't show up after saving campaign!"
@@ -177,7 +177,7 @@ class WebTest_Campaign_OnlineContributionTest extends CiviSeleniumTestCase {
     $this->click("CIVICRM_QFID_1_2");
 
     $this->click("_qf_Amount_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // go to step 4
     $this->click("//div[@id='mainTabContainer']/ul//li/a[text()='Receipt']");
@@ -192,7 +192,7 @@ class WebTest_Campaign_OnlineContributionTest extends CiviSeleniumTestCase {
     $this->type('bcc_receipt', "$contributionTitle@example.com");
 
     $this->click('_qf_ThankYou_next-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // go to step 5
     $this->click("//div[@id='mainTabContainer']/ul//li/a[text()='Tell a Friend']");
@@ -208,7 +208,7 @@ class WebTest_Campaign_OnlineContributionTest extends CiviSeleniumTestCase {
     $this->type('tf_thankyou_text', "TaF Thank-you Message $contributionTitle");
 
     $this->click('_qf_Contribute_next-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // go to step 6
     $this->click("//div[@id='mainTabContainer']/ul//li/a[text()='Profiles']");
@@ -218,7 +218,7 @@ class WebTest_Campaign_OnlineContributionTest extends CiviSeleniumTestCase {
     $this->select('custom_pre_id', 'value=1');
 
     $this->click('_qf_Custom_next-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // go to step 7
     $this->click("//div[@id='mainTabContainer']/ul//li/a[text()='Premiums']");
@@ -234,7 +234,7 @@ class WebTest_Campaign_OnlineContributionTest extends CiviSeleniumTestCase {
     $this->type('premiums_nothankyou_label', "No Thank you ");
 
     $this->click('_qf_Premium_next-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // go to step 8
     $this->click("//div[@id='mainTabContainer']/ul//li/a[text()='Widgets']");
@@ -247,7 +247,7 @@ class WebTest_Campaign_OnlineContributionTest extends CiviSeleniumTestCase {
     $this->type('about', "About $contributionTitle");
 
     $this->click('_qf_Widget_next-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // go to step 9
     $this->click("//div[@id='mainTabContainer']/ul//li/a[text()='Personal Campaigns']");
@@ -263,14 +263,14 @@ class WebTest_Campaign_OnlineContributionTest extends CiviSeleniumTestCase {
 
     // submit new contribution page
     $this->click('_qf_Contribute_next-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //get Url for Live Contribution Page
     $registerUrl = $this->_testVerifyRegisterPage($contributionPageTitle);
 
     //logout
     $this->open($this->sboxPath . "civicrm/logout?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Open Live Contribution Page
     $this->open($this->sboxPath . $registerUrl);
@@ -308,11 +308,11 @@ class WebTest_Campaign_OnlineContributionTest extends CiviSeleniumTestCase {
     $this->type("billing_postal_code-5", "94129");
     $this->click("_qf_Main_upload-bottom");
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
 
     $this->click("_qf_Confirm_next-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //login to check contribution
     $this->open($this->sboxPath);
@@ -328,11 +328,11 @@ class WebTest_Campaign_OnlineContributionTest extends CiviSeleniumTestCase {
     $this->type("sort_name", "$firstName $lastName");
     $this->click("_qf_Search_refresh");
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->waitForElementPresent("xpath=//div[@id='contributionSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
     $this->click("xpath=//div[@id='contributionSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_ContributionView_cancel-bottom");
 
     //View Contribution Record

@@ -296,7 +296,7 @@ class WebTest_Import_ParticipantTest extends ImportCiviSeleniumTestCase {
     $this->click("_qf_EventInfo_upload-bottom");
 
     // Wait for Location tab form to load
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Go to Fees tab
     $this->click("link=Fees");
@@ -318,7 +318,7 @@ class WebTest_Import_ParticipantTest extends ImportCiviSeleniumTestCase {
     }
 
     $this->click("_qf_Fee_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Go to Online Registration tab
     $this->click("link=Online Registration");
@@ -335,7 +335,7 @@ class WebTest_Import_ParticipantTest extends ImportCiviSeleniumTestCase {
     $this->type("confirm_from_email", "jane.doe@example.org");
 
     $this->click("_qf_Registration_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForTextPresent("'Registration' information has been saved.");
 
     // verify event input on info page
@@ -343,7 +343,7 @@ class WebTest_Import_ParticipantTest extends ImportCiviSeleniumTestCase {
     $this->open($this->sboxPath . "civicrm/event/manage?reset=1");
     $this->click("link=" . $params['title']);
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $matches = array();
     preg_match('/id=([0-9]+)/', $this->getLocation(), $matches);

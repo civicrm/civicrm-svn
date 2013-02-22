@@ -59,12 +59,12 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
 
     // logout to register for event.
     $this->open($this->sboxPath . 'civicrm/logout?reset=1');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Register Participant 1
     // visit event info page
     $this->open($infoEvent);
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // register for event
     $this->click('link=Register Now');
@@ -105,7 +105,7 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("css=div.ac_results-inner li");
     $this->click("css=div.ac_results-inner li");
     $this->click('_qf_Search_refresh');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // verify number of registered participants
     $this->assertStringsPresent(array('2 Result'));
@@ -190,7 +190,7 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
         $this->_testAddMultipleChoiceOptions($field['options']);
       }
       $this->click('_qf_Field_next_new-bottom');
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->waitForElementPresent('_qf_Field_next-bottom');
     }
 
@@ -208,14 +208,14 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
 
     // logout to register for event.
     $this->open($this->sboxPath . 'civicrm/logout?reset=1');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $priceFieldOptionCounts = $participants = array();
 
     // Register Participant 1
     // visit event info page
     $this->open($infoEvent);
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // register for event
     $this->click('link=Register Now');
@@ -291,7 +291,7 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("css=div.ac_results-inner li");
     $this->click("css=div.ac_results-inner li");
     $this->click('_qf_Search_refresh');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // verify number of participants records and total participant count
     $this->assertStringsPresent(array('2 Result', 'Actual participant count : 24'));
@@ -303,7 +303,7 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
 
   function _testAddSet($setTitle, $financialType = 'Event Fee') {
     $this->open($this->sboxPath . 'civicrm/admin/price?reset=1&action=add');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_Set_next-bottom');
 
     // Enter Priceset fields (Title, Used For ...)
@@ -315,7 +315,7 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
     $this->assertChecked('is_active', 'Verify that Is Active checkbox is set.');
     $this->click('_qf_Set_next-bottom');
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_Field_next-bottom');
   }
 
@@ -358,7 +358,7 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
     $this->click('_qf_EventInfo_upload-bottom');
 
     // Wait for Location tab form to load
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Go to Fees tab
     $this->click('link=Fees');
@@ -379,7 +379,7 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
     }
 
     $this->click('_qf_Fee_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Go to Online Registration tab
     $this->click('link=Online Registration');
@@ -396,7 +396,7 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
     $this->type('confirm_from_email', 'jane.doe@example.org');
 
     $this->click('_qf_Registration_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForTextPresent("'Registration' information has been saved.");
 
     // verify event input on info page
@@ -404,7 +404,7 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . 'civicrm/event/manage?reset=1');
     $this->click('link=' . $params['title']);
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     return $this->getLocation();
   }
 
@@ -425,23 +425,23 @@ class WebTest_Event_ParticipantCountTest extends CiviSeleniumTestCase {
     $this->type('billing_postal_code-5', '94129');
 
     $this->click('_qf_Register_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_Confirm_next-bottom');
     $confirmStrings = array('Event Fee(s)', 'Billing Name and Address', 'Credit Card Information');
     $this->assertStringsPresent($confirmStrings);
     $this->click('_qf_Confirm_next-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $thankStrings = array('Thank You for Registering', 'Event Total', 'Transaction Date');
     $this->assertStringsPresent($thankStrings);
   }
 
   function _testPricesetDetailsCustomSearch($eventParams, $participants, $priceFieldOptionCounts) {
     $this->open($this->sboxPath . 'civicrm/contact/search/custom?csid=9&reset=1');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->select('event_id', 'label=' . $eventParams['title']);
     $this->click('_qf_Custom_refresh-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $tableHeaders = array('Contact Id', 'Participant Id', 'Name');
     $tableHeaders = array_merge($tableHeaders, array_keys(current($priceFieldOptionCounts)));

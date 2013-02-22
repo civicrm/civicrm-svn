@@ -62,7 +62,7 @@ class WebTest_Contact_PrevNextTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Edit_upload");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     /* add contacts */
 
@@ -75,7 +75,7 @@ class WebTest_Contact_PrevNextTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('_qf_GroupContact_next');
     $this->select('group_id', "label={$groupName}");
     $this->click('_qf_GroupContact_next');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertElementContainsText('crm-notification-container', "Added to Group");
 
     // Individual 2
@@ -87,7 +87,7 @@ class WebTest_Contact_PrevNextTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('_qf_GroupContact_next');
     $this->select('group_id', "label={$groupName}");
     $this->click('_qf_GroupContact_next');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertElementContainsText('crm-notification-container', "Added to Group");
 
     // Individual 3
@@ -99,7 +99,7 @@ class WebTest_Contact_PrevNextTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('_qf_GroupContact_next');
     $this->select('group_id', "label={$groupName}");
     $this->click('_qf_GroupContact_next');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertElementContainsText('crm-notification-container', "Added to Group");
 
     // Search contacts
@@ -112,30 +112,30 @@ class WebTest_Contact_PrevNextTest extends CiviSeleniumTestCase {
     $this->assertTrue($this->isTextPresent("3 Contacts"));
 
     $this->click("xpath=//div[@class='crm-search-results']//table/tbody/tr[1]/td[3]/a");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent("{$contact1} AAA"));
     $this->assertTrue($this->isTextPresent("Next"));
 
     $this->click("xpath=//ul[@id='actions']/li[@class='crm-next-action']/a");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("{$contact2} BBB"));
     $this->assertTrue($this->isTextPresent("Next"));
     $this->assertTrue($this->isTextPresent("Previous"));
 
     $this->click("xpath=//ul[@id='actions']/li[@class='crm-next-action']/a");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("{$contact3} CCC"));
     $this->assertTrue($this->isTextPresent("Previous"));
 
     $this->click("xpath=//ul[@id='actions']/li[@class='crm-previous-action']/a");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("{$contact2} BBB"));
     $this->assertTrue($this->isTextPresent("Next"));
     $this->assertTrue($this->isTextPresent("Previous"));
 
     $this->click("xpath=//ul[@id='actions']/li[@class='crm-previous-action']/a");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("{$contact1} AAA"));
     $this->assertTrue($this->isTextPresent("Next"));
   }

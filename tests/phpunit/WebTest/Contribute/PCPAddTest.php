@@ -49,7 +49,7 @@ class WebTest_Contribute_PCPAddTest extends CiviSeleniumTestCase {
     $this->type('email_address', $email);
 
     $this->click('_qf_Domain_next_view-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("Domain information for 'DefaultDomain' has been saved."),
       "Status message didn't show up after saving!"
     );
@@ -116,7 +116,7 @@ class WebTest_Contribute_PCPAddTest extends CiviSeleniumTestCase {
     $this->webtestAddBillingDetails($firstName, $middleName, $lastName);
 
     $this->click("_qf_Main_upload-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
     $this->click("_qf_Confirm_next-bottom");
 
@@ -150,7 +150,7 @@ class WebTest_Contribute_PCPAddTest extends CiviSeleniumTestCase {
     $pcpId = trim($id[1]);
     $pcpUrl = "civicrm/contribute/pcp/info?reset=1&id=$pcpId";
     $this->click("xpath=//td[@id=$pcpId]/span[1]/a[2]");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     // logout
     $this->open($this->sboxPath . 'civicrm/logout?reset=1');
     // Wait for Login button to indicate we've logged out.
@@ -163,7 +163,7 @@ class WebTest_Contribute_PCPAddTest extends CiviSeleniumTestCase {
 
     $this->open($this->sboxPath . $pcpUrl);
 
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&id=$pageId&pcpId=$id[1]");
 
     $this->waitForElementPresent("_qf_Main_upload-bottom");
@@ -174,7 +174,7 @@ class WebTest_Contribute_PCPAddTest extends CiviSeleniumTestCase {
     $this->webtestAddCreditCardDetails();
     $this->webtestAddBillingDetails($donorFirstName, $middleName, $donorLastName);
     $this->click("_qf_Main_upload-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
     $this->click("_qf_Confirm_next-bottom");
 
@@ -194,11 +194,11 @@ class WebTest_Contribute_PCPAddTest extends CiviSeleniumTestCase {
 
     $this->click("_qf_Search_refresh");
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->waitForElementPresent("xpath=//div[@id='contributionSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
     $this->click("xpath=//div[@id='contributionSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_ContributionView_cancel-bottom");
 
     //View Contribution Record

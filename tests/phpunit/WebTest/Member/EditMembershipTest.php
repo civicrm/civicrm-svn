@@ -96,7 +96,7 @@ class WebTest_Member_EditMembershipTest extends CiviSeleniumTestCase {
     $this->click('activity_type_id[35]');
     $this->click('activity_type_id[36]');
     $this->click("_qf_Search_refresh");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isElementPresent("xpath=//div[@class='crm-search-results']/table/tbody/tr[2]/td[2][text()='Change Membership Status']"));
     $this->assertTrue($this->isElementPresent("xpath=//div[@class='crm-search-results']/table/tbody/tr[2]/td[3][text()='Status changed from New to Current']"));

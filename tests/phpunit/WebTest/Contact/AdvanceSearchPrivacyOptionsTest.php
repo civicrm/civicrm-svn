@@ -76,7 +76,7 @@ class WebTest_Contact_AdvanceSearchPrivacyOptionsTest extends CiviSeleniumTestCa
 
     $this->_addPrivacyCriteria('include', $privacyOptions['dn_phone_mail'], 'OR', $allPrivacyOptions);
     $this->click('_qf_Advanced_refresh');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     if ($this->_searchSortNameCriteria($contactsReffOptions['dn_phone_mail']['first_name'], $contactsReffOptions['dn_phone_mail']['last_name']) && $this->_searchSortNameCriteria($contactsReffOptions['dn_phone_mail']['first_name'], $contactsReffOptions['dn_phone_mail']['last_name']) && !$this->_searchSortNameCriteria($contactsReffOptions['dn_trade_sms']['first_name'], $contactsReffOptions['dn_trade_sms']['last_name'])) {
       $assertCheck = TRUE;
@@ -87,7 +87,7 @@ class WebTest_Contact_AdvanceSearchPrivacyOptionsTest extends CiviSeleniumTestCa
     $this->assertTrue($assertCheck, 'Do not phone / mail assertion failed using criteria(include , OR )');
     $this->_addPrivacyCriteria('exclude', $privacyOptions['dn_phone_mail'], 'OR', $allPrivacyOptions);
     $this->click('_qf_Advanced_refresh');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     
     if (!$this->_searchSortNameCriteria($contactsReffOptions['dn_phone_mail']['first_name'], $contactsReffOptions['dn_phone_mail']['last_name']) && $this->_searchSortNameCriteria($contactsReffOptions['dn_trade_sms']['first_name'], $contactsReffOptions['dn_trade_sms']['last_name'])) {
@@ -100,7 +100,7 @@ class WebTest_Contact_AdvanceSearchPrivacyOptionsTest extends CiviSeleniumTestCa
 
     $this->_addPrivacyCriteria('include', $privacyOptions['dn_phone_mail'], 'AND', $allPrivacyOptions);
     $this->click('_qf_Advanced_refresh');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     if ($this->_searchSortNameCriteria($contactsReffOptions['dn_phone_mail']['first_name'], $contactsReffOptions['dn_phone_mail']['last_name']) && !$this->_searchSortNameCriteria($contactsReffOptions['dn_phone_email']['first_name'], $contactsReffOptions['dn_phone_email']['last_name']) && !$this->_searchSortNameCriteria($contactsReffOptions['dn_trade_sms']['first_name'], $contactsReffOptions['dn_trade_sms']['last_name'])) {
       $assertCheck = TRUE;
@@ -112,7 +112,7 @@ class WebTest_Contact_AdvanceSearchPrivacyOptionsTest extends CiviSeleniumTestCa
 
     $this->_addPrivacyCriteria('exclude', $privacyOptions['dn_phone_mail'], 'AND', $allPrivacyOptions);
     $this->click('_qf_Advanced_refresh');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     if (!$this->_searchSortNameCriteria($contactsReffOptions['dn_phone_mail']['first_name'], $contactsReffOptions['dn_phone_mail']['last_name']) && $this->_searchSortNameCriteria($contactsReffOptions['dn_trade_sms']['first_name'], $contactsReffOptions['dn_trade_sms']['last_name'])) {
       $assertCheck = TRUE;
@@ -123,7 +123,7 @@ class WebTest_Contact_AdvanceSearchPrivacyOptionsTest extends CiviSeleniumTestCa
     $this->assertTrue($assertCheck, 'Do not phone / mail assertion failed using criteria(exclude , AND )');
     $this->_addPrivacyCriteria('include', $privacyOptions['dn_trade_sms'], 'AND', $allPrivacyOptions);
     $this->click('_qf_Advanced_refresh');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
         
     if (!$this->_searchSortNameCriteria($contactsReffOptions['dn_phone_mail']['first_name'], $contactsReffOptions['dn_phone_mail']['last_name']) && !$this->_searchSortNameCriteria($contactsReffOptions['dn_phone_email']['first_name'], $contactsReffOptions['dn_phone_email']['last_name']) && $this->_searchSortNameCriteria($contactsReffOptions['dn_trade_sms']['first_name'], $contactsReffOptions['dn_trade_sms']['last_name'])) {
       $assertCheck = TRUE;
@@ -161,7 +161,7 @@ class WebTest_Contact_AdvanceSearchPrivacyOptionsTest extends CiviSeleniumTestCa
     //type in the criteria
     $this->type("sort_name", "{$lastName}, {$firstName}"); 
     $this->click("_qf_Advanced_refresh"); 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     
     //return its presence
     return $this->isElementPresent("xpath=//div[@class='crm-search-results']/table/tbody/tr/td[3]/a[text()='{$lastName}, {$firstName}']");
@@ -209,7 +209,7 @@ class WebTest_Contact_AdvanceSearchPrivacyOptionsTest extends CiviSeleniumTestCa
   
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("{$firstName} {$lastName} has been created."));
 
   }

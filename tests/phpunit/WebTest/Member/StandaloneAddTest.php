@@ -150,7 +150,7 @@ class WebTest_Member_StandaloneAddTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Membership_upload");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // page was loaded
     $this->waitForTextPresent("Membership StandaloneAddTest Webtest");

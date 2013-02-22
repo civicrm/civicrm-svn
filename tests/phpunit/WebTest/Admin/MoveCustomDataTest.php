@@ -109,7 +109,7 @@ class WebTest_Admin_MoveCustomDataTest extends CiviSeleniumTestCase {
 
     //Go to the contacts page and check that the custom field is in the right group
     $this->open($this->sboxPath . "/civicrm/contact/view?reset=1&cid=" . $cid_all);
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //load the names of the custom fieldsets
     $source      = $this->webtest_civicrm_api("CustomGroup", "get", array('id' => $from_group_id));
@@ -126,7 +126,7 @@ class WebTest_Admin_MoveCustomDataTest extends CiviSeleniumTestCase {
   function _moveCustomField($field_to_move, $from_group_id, $to_group_id) {
     //go to the move field page
     $this->open($this->sboxPath . "civicrm/admin/custom/group/field/move?reset=1&fid=" . $field_to_move);
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //select the destination field set from select box
     $this->click("dst_group_id");
@@ -135,7 +135,7 @@ class WebTest_Admin_MoveCustomDataTest extends CiviSeleniumTestCase {
 
     //click the save button
     $this->click("_qf_MoveField_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //asser that the success text is present
     $this->assertTrue($this->isTextPresent("has been moved"), "Move field success message not displayed");
@@ -145,7 +145,7 @@ class WebTest_Admin_MoveCustomDataTest extends CiviSeleniumTestCase {
 
     //go to the destination fieldset and make sure the field is present
     $this->open($this->sboxPath . "civicrm/admin/custom/group/field?reset=1&action=browse&gid=" . $to_group_id);
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isElementPresent("CustomField-" . $field_to_move), "The moved custom field does not display on the new fieldset page");
   }
 
@@ -214,7 +214,7 @@ class WebTest_Admin_MoveCustomDataTest extends CiviSeleniumTestCase {
     // Go directly to the URL of the screen that you will be testing (New Custom Group).
     $this->open($this->sboxPath . "civicrm/admin/custom/group?action=add&reset=1");
 
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //fill custom group title
     $customGroupTitle = $prefix . '_' . substr(sha1(rand()), 0, 7);
@@ -312,7 +312,7 @@ class WebTest_Admin_MoveCustomDataTest extends CiviSeleniumTestCase {
 
     //Go to the add custom field page for the given group id
     $this->open($this->sboxPath . "civicrm/admin/custom/group/field/add?action=add&reset=1&gid=" . $group_id);
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Do common setup for all field types
 
@@ -360,7 +360,7 @@ class WebTest_Admin_MoveCustomDataTest extends CiviSeleniumTestCase {
 
     //clicking save
     $this->click("_qf_Field_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Is custom field created?
     $this->assertTrue($this->isTextPresent("Your custom field '$fieldLabel' has been saved."), "Field was not created successfully");
@@ -390,7 +390,7 @@ class WebTest_Admin_MoveCustomDataTest extends CiviSeleniumTestCase {
   function _fillCustomDataForContact($contact_id, $group_id) {
     //edit the given contact
     $this->open($this->sboxPath . "civicrm/contact/add?reset=1&action=update&cid=" . $contact_id);
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click("expand");
     $this->waitForElementPresent("address_1_street_address");
@@ -435,7 +435,7 @@ class WebTest_Admin_MoveCustomDataTest extends CiviSeleniumTestCase {
 
     //save the form
     $this->click("_qf_Contact_upload_view");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //assert success
     $this->assertTrue($this->isTextPresent("has been updated"), "Contact Record could not be saved");

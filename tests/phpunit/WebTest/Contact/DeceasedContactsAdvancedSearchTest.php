@@ -44,7 +44,7 @@ class WebTest_Contact_DeceasedContactsAdvancedSearchTest extends CiviSeleniumTes
     // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
     // page contents loaded and you can continue your test execution.
     $this->webtestLogin();
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Create a group
     $groupName = $this->WebtestAddGroup();
@@ -74,7 +74,7 @@ class WebTest_Contact_DeceasedContactsAdvancedSearchTest extends CiviSeleniumTes
     $this->waitForElementPresent('CIVICRM_QFID_1_is_deceased');
     $this->click('CIVICRM_QFID_1_is_deceased');
     $this->click('_qf_Advanced_refresh');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Remove contacts from group
     $this->waitForElementPresent('Go');
@@ -88,7 +88,7 @@ class WebTest_Contact_DeceasedContactsAdvancedSearchTest extends CiviSeleniumTes
     $this->assertTrue($this->isTextPresent('Number of selected contacts: 2'));
     $this->select('group_id', "label={$groupName}");
     $this->click('_qf_RemoveFromGroup_next-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("2 contacts removed from '{$groupName}'"));
 
     // Search for the contacts who are not deceased
@@ -115,7 +115,7 @@ class WebTest_Contact_DeceasedContactsAdvancedSearchTest extends CiviSeleniumTes
 
       // Click on Save
       $this->click('_qf_Contact_upload_view-bottom');
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
     }
 
     // Add contact to group
@@ -123,7 +123,7 @@ class WebTest_Contact_DeceasedContactsAdvancedSearchTest extends CiviSeleniumTes
     $this->waitForElementPresent('_qf_GroupContact_next');
     $this->select('group_id', "{$groupName}");
     $this->click('_qf_GroupContact_next');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
   }
 }
 

@@ -108,7 +108,7 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
 
     // save contact
     $this->click("_qf_Contact_upload_view");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("$firstName adv$firstName"));
   }
 
@@ -146,7 +146,7 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
     $this->_advancedSearch($householdEmail, $householdName, 'Household','1','email');
    
     $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     
     // searching contacts whose email is not set
     $firstName1 = "00a1".substr(sha1(rand()), 0, 7);
@@ -154,28 +154,28 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
     $this->type("last_name", "01adv$firstName1");
     // save contact
     $this->click("_qf_Contact_upload_view");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $firstName2 = "00a2".substr(sha1(rand()), 0, 7);
     $this->type("first_name", $firstName2);
     $this->type("last_name", "02adv$firstName2");
     // save contact
     $this->click("_qf_Contact_upload_view");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $firstName3 = "00a3".substr(sha1(rand()), 0, 7);
     $this->type("first_name", $firstName3);
     $this->type("last_name", "03adv$firstName3");
     // save contact
     $this->click("_qf_Contact_upload_view");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->_searchBuilder('Email',NULL,NULL,'IS NULL');
     $this->click("xpath=//div[@class='crm-search-results']/div[4]/a[2]");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $names = array( 1 => $firstName1,
                     2 => $firstName2,
                     3 => $firstName3,
@@ -191,7 +191,7 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
     //searching contacts whose phone field is not empty
     $this->_searchBuilder('Phone',NULL,$firstName,'IS NOT EMPTY');
     $this->click("xpath=//div[@class='crm-search-results']/div[4]/a[2]");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent($firstName));
     
     $firstName4 = "AB".substr(sha1(rand()), 0, 7);
@@ -223,10 +223,10 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
   function _searchBuilder($field, $fieldValue = NULL, $name = NULL, $op = '=', $count = NULL) {
     // search builder using contacts(not using contactType)
     $this->open($this->sboxPath . "civicrm/contact/search/builder?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->enterValues(1, 1, 'Contacts', $field, NULL, $op, "$fieldValue");
     $this->click("id=_qf_Builder_refresh");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     if (($op == '=' || $op == 'LIKE') && $fieldValue) {
       $this->assertElementContainsText('css=.crm-search-results > table.row-highlight', "$fieldValue");
     }
@@ -275,7 +275,7 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
   function _advancedSearch($fieldValue = NULL, $name = NULL, $contactType = NULL, $count = NULL, $field){
     //advanced search by selecting the contactType
     $this->open($this->sboxPath . "civicrm/contact/search/advanced?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     if (isset($contactType)){
       $this->select("id=crmasmSelect0", "value=$contactType");
     }
@@ -304,7 +304,7 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
       }
     }
     $this->click("_qf_Advanced_refresh");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //the search result should be same as the one that we got in search builder
     if ($fieldValue) {
@@ -346,7 +346,7 @@ class WebTest_Contact_SearchBuilderTest extends CiviSeleniumTestCase {
     
     // save contact
     $this->click("_qf_Contact_upload_view");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("$name has been created."));
   }
 }

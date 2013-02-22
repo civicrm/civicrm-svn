@@ -85,13 +85,13 @@ class WebTest_Contact_GroupAddTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Edit_upload");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is status message correct?
     $this->assertTrue($this->isTextPresent("The Group '{$params['name']}' has been saved."));
 
     $this->open($this->sboxPath . "civicrm/group?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->type('title', $params['name']);
     $this->click('_qf_Search_refresh');
     $this->waitForElementPresent("xpath=//table[@id='crm-group-selector']/tbody/tr/td[3]/a");
@@ -102,7 +102,7 @@ class WebTest_Contact_GroupAddTest extends CiviSeleniumTestCase {
     //assert created by in the edit page
     $this->assertTrue($this->isElementPresent("xpath=//form[@id='Edit']/div[2]/div/table/tbody/tr[2]/td[1][text()='Created By']/following-sibling::td[text()='{$createdBy}']"));
     $this->open($this->sboxPath . "civicrm/group?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //search groups using created by
     $this->type('created_by', $createdBy);
@@ -112,7 +112,7 @@ class WebTest_Contact_GroupAddTest extends CiviSeleniumTestCase {
 
     //check link of the contact who created the group
     $this->click("xpath=//table[@id='crm-group-selector']/tbody//tr/td[1][text()='{$params['name']}']/following-sibling::td[2]/a");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $name = explode(',', $createdBy);
     $displayName = isset($name[1]) ? "{$name[1]} {$name[0]}" : "{$name[0]}";
     $this->assertTrue($this->isTextPresent($displayName));
@@ -168,7 +168,7 @@ class WebTest_Contact_GroupAddTest extends CiviSeleniumTestCase {
     
     // Clicking save.
     $this->click("_qf_Edit_upload");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is status message correct?
     $this->assertTrue($this->isTextPresent("The Group '{$params['name']}' has been saved."));
@@ -180,7 +180,7 @@ class WebTest_Contact_GroupAddTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("edit-add");
     $this->type("edit-name", $role);
     $this->click("edit-add");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     
     $this->open($this->sboxPath . "admin/people/permissions/roles");
     $this->waitForElementPresent("xpath=//table[@id='user-roles']/tbody//tr/td[1][text()='{$role}']");
@@ -200,7 +200,7 @@ class WebTest_Contact_GroupAddTest extends CiviSeleniumTestCase {
     $this->type('edit-name', $user);
     $this->type('edit-pass', 'Test12345');
     $this->click('edit-submit');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     
     $this->open($this->sboxPath . "civicrm/group?&reset=1");
     $this->type('title', $params['name']);
@@ -248,7 +248,7 @@ class WebTest_Contact_GroupAddTest extends CiviSeleniumTestCase {
     $this->select("state_province-1", "value=1019");
 
     $this->click("edit-submit");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     return $name;
   }
   
@@ -257,7 +257,7 @@ class WebTest_Contact_GroupAddTest extends CiviSeleniumTestCase {
     $this->click("xpath=//table[@id='user-roles']/tbody//tr/td[text()='{$role}']/..//td/a[text()='edit role']");
     $this->waitForElementPresent('edit-delete');
     $this->click('edit-delete');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("edit-submit");
     $this->waitForTextPresent("The role has been deleted.");
   }

@@ -58,7 +58,7 @@ class WebTest_Member_OfflineAutoRenewMembershipTest extends CiviSeleniumTestCase
 
     $this->waitForElementPresent('link=Submit Credit Card Membership');
     $this->click('link=Submit Credit Card Membership');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // since we don't have live credentials we will switch to test mode
     $url = $this->getLocation();
@@ -91,7 +91,7 @@ class WebTest_Member_OfflineAutoRenewMembershipTest extends CiviSeleniumTestCase
     $this->webtestAddBillingDetails($firstName, NULL, $lastName);
 
     $this->click("_qf_Membership_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Use Find Members to make sure membership exists
     $this->open($this->sboxPath . "civicrm/member/search?reset=1");
@@ -100,7 +100,7 @@ class WebTest_Member_OfflineAutoRenewMembershipTest extends CiviSeleniumTestCase
     $this->type("sort_name", "$firstName $lastName");
     $this->click("member_test");
     $this->click("_qf_Search_refresh");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     
     $this->waitForElementPresent("xpath=//div[@id='memberSearch']/table/tbody/tr[1]/td[11]/span/a[text()='View']");
     $this->click("xpath=//div[@id='memberSearch']/table/tbody/tr[1]/td[11]/span/a[text()='View']");

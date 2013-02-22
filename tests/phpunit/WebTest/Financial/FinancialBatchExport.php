@@ -41,7 +41,7 @@ class WebTest_Financial_FinancialBatchExport extends CiviSeleniumTestCase {
     // Log in using webtestLogin() method
     $this->webtestLogin(TRUE);
     $this->open($this->sboxPath . 'civicrm/financial/batch?reset=1&action=add');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_FinancialBatch_next-botttom');
     $setTitle = 'Batch ' . substr(sha1(rand()), 0, 7) . date('Y-m-d');
     $setDescription  = 'Test Batch Creation';
@@ -83,7 +83,7 @@ class WebTest_Financial_FinancialBatchExport extends CiviSeleniumTestCase {
     $this->type('total', $totalAmt);
 
     $this->click('_qf_FinancialBatch_next-botttom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // parse URL to grab the batch ID
     $elements = $this->parseURL();
@@ -102,7 +102,7 @@ class WebTest_Financial_FinancialBatchExport extends CiviSeleniumTestCase {
 
   function _testExportBatch($setTitle, $batchId, $exportFormat) {
     $this->open($this->sboxPath . "civicrm/financial/batch?reset=1&action=export&id=$batchId");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     if ($exportFormat == 'CSV') {
       $this->click("xpath=//form[@id='FinancialBatch']/div[2]/table[@class='form-layout']/tbody/tr/td/input[2]");
       $this->click('_qf_FinancialBatch_next-botttom');
@@ -114,10 +114,10 @@ class WebTest_Financial_FinancialBatchExport extends CiviSeleniumTestCase {
       sleep(5);
     }
     $this->open($this->sboxPath . "civicrm?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click("xpath=//div[@id='recently-viewed']/ul/li[1]/a");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Activity_cancel-bottom");
     $this->webtestVerifyTabularData(
       array(

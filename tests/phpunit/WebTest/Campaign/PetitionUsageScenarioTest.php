@@ -52,7 +52,7 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
 
     // Enable CiviCampaign module if necessary
     $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Component_next-bottom");
     $enabledComponents = $this->getSelectOptions("enableComponents-t");
     if (!in_array("CiviCampaign", $enabledComponents)) {
@@ -60,7 +60,7 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
       $this->click("//option[@value='CiviCampaign']");
       $this->click("add");
       $this->click("_qf_Component_next-bottom");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->assertTrue($this->isTextPresent("Your changes have been saved."));
     }
 
@@ -117,7 +117,7 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
 
     // click save
     $this->click("_qf_Campaign_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent("Campaign $title Campaign has been saved."), "Status message didn't show up after saving!");
 
@@ -144,7 +144,7 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
 
     // click save
     $this->click("_qf_Petition_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent("Petition has been saved."));
 
@@ -183,7 +183,7 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
 
     // click Sign the petition.
     $this->click("_qf_Signature_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("Thank You"));
 
     // login
@@ -191,7 +191,7 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
     $this->webtestLogin();
 
     $this->open($this->sboxPath . "civicrm/campaign?reset=1&subPage=petition");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("link=Add Petition");
 
     // check for unconfirmed petition signature
@@ -202,7 +202,7 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
 
     $this->waitForElementPresent("xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[10]/span[2][text()='more']");
     $this->click("xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[10]/span[2][text()='more']/ul/li/a[text()='Signatures']");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // verify tabular data
     $expected = array(
@@ -247,7 +247,7 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
 
     // click save
     $this->click("_qf_Petition_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent("Petition has been saved."));
 
@@ -295,7 +295,7 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
     $this->webtestLogin();
 
     $this->open($this->sboxPath . "civicrm/campaign?reset=1&subPage=petition");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("link=Add Petition");
 
     // check for confirmed petition signature
@@ -306,7 +306,7 @@ class WebTest_Campaign_PetitionUsageScenarioTest extends CiviSeleniumTestCase {
 
     $this->waitForElementPresent("xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[10]/span[2][text()='more']");
     $this->click("xpath=//div[@id='petitions_wrapper']/table[@id='petitions']/tbody/tr/td[10]/span[2][text()='more']/ul/li/a[text()='Signatures']");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // verify tabular data
     $expected = array(

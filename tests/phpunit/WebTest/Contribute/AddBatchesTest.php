@@ -55,7 +55,7 @@ class WebTest_Contribute_AddBatchesTest extends CiviSeleniumTestCase {
     $this->type("item_count", $itemCount);
     $this->type("total", 500);
     $this->click("_qf_Batch_next");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     // Add Contact Details
     $data = array();
     for ($i=1; $i<=$itemCount; $i++ ) {
@@ -68,7 +68,7 @@ class WebTest_Contribute_AddBatchesTest extends CiviSeleniumTestCase {
       $this->_fillData($data[$i], $i, "Contribution");
     } 
     $this->click("_qf_Entry_cancel");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->_verifyData($data, "Contribution");
   }
   
@@ -99,7 +99,7 @@ class WebTest_Contribute_AddBatchesTest extends CiviSeleniumTestCase {
     $this->type("item_count", $itemCount);
     $this->type("total", 500);
     $this->click("_qf_Batch_next");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     
     // Add Contact Details
     $data = array();
@@ -114,7 +114,7 @@ class WebTest_Contribute_AddBatchesTest extends CiviSeleniumTestCase {
       $this->_fillData($data[$i], $i, "Membership");
     }
     $this->click("_qf_Entry_cancel");
-    $this->waitForPageToLoad('30000'); 
+    $this->waitForPageToLoad($this->getTimeoutMsec()); 
     $this->_verifyData($data, "Membership");
   }
   
@@ -156,11 +156,11 @@ class WebTest_Contribute_AddBatchesTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("contribution_date_low");
       $this->type("sort_name", "{$data['first_name']} {$data['last_name']}");
       $this->click("_qf_Search_refresh");
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
 
       $this->waitForElementPresent("xpath=//div[@id='contributionSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
       $this->click("xpath=//div[@id='contributionSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->waitForElementPresent("_qf_ContributionView_cancel-bottom");
       $expected = array(
         'From'                => "{$data['first_name']} {$data['last_name']}",
@@ -177,7 +177,7 @@ class WebTest_Contribute_AddBatchesTest extends CiviSeleniumTestCase {
       // select contact
       $this->type("sort_name", "{$data['first_name']} {$data['last_name']}");
       $this->click("_qf_Search_refresh");
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       
       //View Membership
       $this->waitForElementPresent("xpath=//div[@id='memberSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
@@ -207,10 +207,10 @@ class WebTest_Contribute_AddBatchesTest extends CiviSeleniumTestCase {
   function _verifyData($data, $type) {
     $this->waitForElementPresent("xpath=//div[@id='crm-batch-selector_wrapper']//table//tbody/tr[1]/td[7]/span/a[text()='Enter records']");
     $this->click("xpath=//div[@id='crm-batch-selector_wrapper']//table//tbody/tr[1]/td[7]/span/a[text()='Enter records']");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Entry_upload");
     $this->click("_qf_Entry_upload");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     foreach ($data as $value) {
       $this->_checkResult($value, $type);
     }

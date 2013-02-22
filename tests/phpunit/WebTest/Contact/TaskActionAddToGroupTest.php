@@ -56,10 +56,10 @@ class WebTest_Contact_TaskActionAddToGroupTest extends CiviSeleniumTestCase {
 
       // update email of new contact
       $this->click("//ul[@id='actions']/li/a/span[text()='Edit']");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->type("email_1_email", $emailString . $i . 'webtest');
       $this->click("_qf_Contact_upload_view");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
     }
 
     // Search for those two contacts
@@ -70,11 +70,11 @@ class WebTest_Contact_TaskActionAddToGroupTest extends CiviSeleniumTestCase {
     $this->click("css=ul#civicrm-menu li.crm-Search");
     $this->click("css=ul#civicrm-menu li.crm-Advanced_Search a");
 
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("email");
     $this->type("email", $emailString);
     $this->click("_qf_Advanced_refresh");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Verify exactly two contacts found
     $this->assertTrue($this->isTextPresent("2 Contacts"), 'Looking for 2 results with email like ' . $emailString);
@@ -84,13 +84,13 @@ class WebTest_Contact_TaskActionAddToGroupTest extends CiviSeleniumTestCase {
     $this->select("task", "label=Add Contacts to Group");
     sleep(1);
     $this->click("Go");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Select the new group and click to add
     $this->click("group_id");
     $this->select("group_id", "label=" . $newGroupName);
     $this->click("_qf_AddToGroup_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     
     // Check status messages are as expected
     $this->assertTrue($this->isTextPresent("Added Contacts to {$newGroupName}"));
@@ -100,10 +100,10 @@ class WebTest_Contact_TaskActionAddToGroupTest extends CiviSeleniumTestCase {
     // Use class names for menu items since li array can change based on which components are enabled
     $this->click("css=ul#civicrm-menu li.crm-Search");
     $this->click("css=ul#civicrm-menu li.crm-Advanced_Search a");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->select("crmasmSelect1", "label=" . $newGroupName);
     $this->click("_qf_Advanced_refresh");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Verify those two contacts (and only those two) are in the group
     if (!$this->isTextPresent("2 Contacts")) {
@@ -125,25 +125,25 @@ class WebTest_Contact_TaskActionAddToGroupTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . 'civicrm/contact/search?reset=1');
     $this->click("css=ul#civicrm-menu li.crm-Search");
     $this->click("css=ul#civicrm-menu li.crm-Find_Contacts a");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("_qf_Basic_refresh");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     
     $this->click("xpath=//div[@class='form-item float-right']/a[text()='25']");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("toggleSelect");
     $this->click("xpath=//div[@class='crm-content-block']/div/div[2]/div/span[2]/a");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("toggleSelect");
     $this->select("task", "label=Add Contacts to Group");
     $this->click("Go");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     
      // Select the new group and click to add
     $this->click("group_id");
     $this->select("group_id", "label=" . $newGroupName);
     $this->click("_qf_AddToGroup_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Check status messages are as expected
     $this->assertTrue($this->isTextPresent("Added Contacts to {$newGroupName}"));
@@ -151,10 +151,10 @@ class WebTest_Contact_TaskActionAddToGroupTest extends CiviSeleniumTestCase {
    
     $this->click("css=ul#civicrm-menu li.crm-Search");
     $this->click("css=ul#civicrm-menu li.crm-Advanced_Search a");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->select("crmasmSelect1", "label=" . $newGroupName);
     $this->click("_qf_Advanced_refresh");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     
     if (!$this->isTextPresent("50 Contacts")) {
        die("nothing found for group $newGroupName");

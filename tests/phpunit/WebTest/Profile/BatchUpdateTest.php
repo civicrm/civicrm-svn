@@ -50,7 +50,7 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
     $lastName1  = "Smiths_x" . substr(sha1(rand()), 0, 7);
     $Name1      = $lastName1 . ', ' . $firstName1;
     $this->webtestAddContact($firstName1, $lastName1, "$firstName1.$lastName1@example.com");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     
     // Add new individual using Quick Add block on the main page
     $firstName2 = "James_" . substr(sha1(rand()), 0, 7);
@@ -62,9 +62,9 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
     $Name3 = $lastName3 . ', ' . $firstName3;
 
     $this->webtestAddContact($firstName2, $lastName2, "$firstName2.$lastName2@example.com", "Student");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->webtestAddContact($firstName3, $lastName3, "$firstName3.$lastName3@example.com", "Staff");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $profileTitle  = 'Batch Profile test_' . substr(sha1(rand()), 0, 7);
     $profileFields = array (array (
@@ -102,7 +102,7 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('_qf_Batch_next');
     $this->click("xpath=//table[@class='crm-copy-fields']/thead/tr/td[2]/img");
     sleep(5);
-    //$this->waitForPageToLoad("30000");
+    //$this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_Batch_next');
     $this->click('_qf_Batch_next');
     $this->waitForElementPresent('_qf_Result_done');
@@ -116,7 +116,7 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
     $this->click('_qf_Basic_refresh');
     $this->waitForElementPresent("xpath=//div[@class='crm-search-results']/table/tbody//td/span/a[text()='View']");
     $this->click("xpath=//div[@class='crm-search-results']/table/tbody//td/span/a[text()='View']");
-    $this->waitForPageToLoad("30000"); 
+    $this->waitForPageToLoad($this->getTimeoutMsec()); 
 
     $xpath = "xpath=//div[@id='contact-summary']/div/div[2]/div/div/div[2]/div[@class='crm-content crm-contact_type_label']";
     $this->verifyText($xpath, preg_quote("Student"));
@@ -128,7 +128,7 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
     $this->click('_qf_Basic_refresh');
     $this->waitForElementPresent("xpath=//div[@class='crm-search-results']/table/tbody//td/span/a[text()='View']");
     $this->click("xpath=//div[@class='crm-search-results']/table/tbody//td/span/a[text()='View']");
-    $this->waitForPageToLoad("30000"); 
+    $this->waitForPageToLoad($this->getTimeoutMsec()); 
     
     $xpath = "xpath=//div[@id='contact-summary']/div/div[2]/div/div/div[2]/div[@class='crm-content crm-contact_type_label']";
     $this->verifyText($xpath, preg_quote("Staff"));
@@ -148,13 +148,13 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
     $lastName   = "Smith_" . substr(sha1(rand()), 0, 7);
     $Name1      = $lastName . ', ' . $firstName1;
     $this->webtestAddContact($firstName1, $lastName, "$firstName1.$lastName@example.com");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Add new individual using Quick Add block on the main page
     $firstName1 = "James_" . substr(sha1(rand()), 0, 7);
     $Name2 = $lastName . ', ' . $firstName1;
     $this->webtestAddContact($firstName1, $lastName, "$firstName1.$lastName@example.com");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $profileTitle  = 'Batch Profile test for contacts ' . substr(sha1(rand()), 0, 7);
     $profileFor    = 'Contacts';
     $customDataArr = $this->_addCustomData($profileFor);
@@ -165,7 +165,7 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('_qf_Display_next-bottom');
     $this->select('editor_id', 'CKEditor');
     $this->click('_qf_Display_next-bottom');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Find Contact
     $this->open($this->sboxPath . "civicrm/contact/search?reset=1");
@@ -318,7 +318,7 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('_qf_Display_next-bottom');
     $this->select('editor_id', 'TinyMCE');
     $this->click('_qf_Display_next-bottom');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Find Contact
     $this->open($this->sboxPath . "civicrm/contact/search?reset=1");
@@ -363,7 +363,7 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
     //campaign test for interview
     // Enable CiviCampaign module if necessary
     $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Component_next-bottom");
     $enabledComponents = $this->getSelectOptions("enableComponents-t");
     if (!in_array("CiviCampaign", $enabledComponents)) {
@@ -371,7 +371,7 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
       $this->click("//option[@value='CiviCampaign']");
       $this->click("add");
       $this->click("_qf_Component_next-bottom");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->assertTrue($this->isTextPresent("Your changes have been saved."));
     }
 
@@ -392,20 +392,20 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
     $this->type('option_label_2', 'option2');
     $this->type('option_value_2', 'option2');
     $this->click('_qf_Results_upload_done-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Reserve and interview responsedents
     $this->open($this->sboxPath . "civicrm/campaign?reset=1&subPage=survey");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("xpath=//table[@id='surveys']/tbody//tr/td[2]/a[text()='{$surveyTitle}']/../following-sibling::td[@class='crm-campaign-voterLinks']/span/ul/li/a");
     $this->click("xpath=//table[@id='surveys']/tbody//tr/td[2]/a[text()='{$surveyTitle}']/../following-sibling::td[@class='crm-campaign-voterLinks']/span/ul/li/a");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("xpath=//div[@id='search_form_reserve']/div");
     $this->waitForElementPresent('sort_name');
     $this->type('sort_name', $lastName);
     $this->waitForElementPresent('_qf_Search_refresh');
     $this->click('_qf_Search_refresh');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('Go');
     $this->click('CIVICRM_QFID_ts_all_4');
     $this->click('Go');
@@ -540,14 +540,14 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('_qf_Display_next-bottom');
     $this->select('editor_id', 'CKEditor');
     $this->click('_qf_Display_next-bottom');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
   }
 
   function _addProfile($profileTitle, $customDataArr, $profileFor) {
     // Go directly to the URL of the screen that you will be testing (New Profile).
     $this->open($this->sboxPath . "civicrm/admin/uf/group?reset=1");
 
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click('link=Add Profile');
 
     // Add membership custom data field to profile
@@ -566,7 +566,7 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
 
       // Clicking save and new
       $this->click('_qf_Field_next_new-bottom');
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->assertTrue($this->isTextPresent("Your CiviCRM Profile Field '{$customDataParams[1]}' has been saved to '{$profileTitle}'."));
     }
   }
@@ -579,7 +579,7 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
 
     //add new custom data
     $this->click("//a[@id='newCustomDataGroup']/span");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //fill custom group title
     $this->click("title");
@@ -622,7 +622,7 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
     
     //clicking save
     $this->click('_qf_Field_next');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Is custom field created
     $this->assertTrue($this->isTextPresent("Your custom field '$checkLabel1' has been saved."));
@@ -630,7 +630,7 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
 
     // create another custom field - Integer Radio
     $this->click("//a[@id='newCustomField']/span");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //for checkbox 2
     $checkLabel2 = 'Custom Check Two Text_' . substr(sha1(rand()), 0, 4);
@@ -653,7 +653,7 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
 
     //clicking save
     $this->click('_qf_Field_next');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Is custom field created
     $this->assertTrue($this->isTextPresent("Your custom field '$checkLabel2' has been saved."));
@@ -661,7 +661,7 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
 
     // create another custom field - Integer Radio
     $this->click("//a[@id='newCustomField']/span");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // create another custom field - Date
     $dateFieldLabel = 'Custom Date Field' . substr(sha1(rand()), 0, 4);
@@ -682,7 +682,7 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
 
     //clicking save
     $this->click('_qf_Field_next');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Is custom field created
     $this->assertTrue($this->isTextPresent("Your custom field '$dateFieldLabel' has been saved."));
@@ -690,7 +690,7 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
 
     // create another custom field - Integer Radio
     $this->click("//a[@id='newCustomField']/span");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //create rich text editor field
     $richTextField = 'Custom Rich TextField_' . substr(sha1(rand()), 0, 4);
@@ -701,7 +701,7 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
 
     //clicking save
     $this->click('_qf_Field_next');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Is custom field created
     $this->assertTrue($this->isTextPresent("Your custom field '$richTextField' has been saved."));
@@ -709,7 +709,7 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
 
     // create another custom field - Integer Radio
     $this->click("//a[@id='newCustomField']/span");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //create radio button field
     //for radio 1
@@ -733,7 +733,7 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
 
     //clicking save
     $this->click('_qf_Field_next');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Is custom field created
     $this->assertTrue($this->isTextPresent("Your custom field '$radioLabel1' has been saved."));
@@ -741,7 +741,7 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
 
     // create another custom field - Integer Radio
     $this->click("//a[@id='newCustomField']/span");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //for radio 2
     $radioLabel2 = 'Custom Radio Two Text_' . substr(sha1(rand()), 0, 4);
@@ -764,7 +764,7 @@ class WebTest_Profile_BatchUpdateTest extends CiviSeleniumTestCase {
 
     //clicking save
     $this->click('_qf_Field_next');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Is custom field created
     $this->assertTrue($this->isTextPresent("Your custom field '$radioLabel2' has been saved."));

@@ -62,7 +62,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
     // add to group
     $this->select("group_id", "label=$groupName");
     $this->click("_qf_GroupContact_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $firstName2 = substr(sha1(rand()), 0, 7);
     $this->webtestAddContact($firstName2, "John", "$firstName2.john@example.org");
@@ -75,11 +75,11 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
     // add to group
     $this->select("group_id", "label=$groupName");
     $this->click("_qf_GroupContact_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Enable CiviCampaign module if necessary
     $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Component_next-bottom");
     $enabledComponents = $this->getSelectOptions("enableComponents-t");
     if (!in_array("CiviCampaign", $enabledComponents)) {
@@ -87,7 +87,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
       $this->click("//option[@value='CiviCampaign']");
       $this->click("add");
       $this->click("_qf_Component_next-bottom");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->assertTrue($this->isTextPresent("Changes Saved."));
     }
 
@@ -124,7 +124,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
 
     // click save
     $this->click("_qf_Campaign_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent("Campaign Campaign $title has been saved."),
       "Status message didn't show up after saving campaign!"
@@ -190,7 +190,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
     $this->select("field_name[1]", "label=Field $title :: Group $title");
 
     $this->click("_qf_Field_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("Your CiviCRM Profile Field 'Field $title' has been saved to 'Profile $title'."), "Status message didn't show up after saving profile field!");
 
     // create a survey
@@ -255,7 +255,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
 
     $this->waitForElementPresent("_qf_Reserve_done_reserve-bottom");
     $this->click("_qf_Reserve_done_reserve-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("Reservation has been added for 2 Contact(s)."),
       "Status message didn't show up after adding reservation for 2 contacts!"
     );
@@ -285,7 +285,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
     $this->click("css=#voterRecords .even td a");
 
     $this->click("_qf_Interview_cancel_interview");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // add a contact to the group to test release respondents
     $firstName3 = substr(sha1(rand()), 0, 7);
@@ -302,7 +302,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
     // add to group
     $this->select("group_id", "label=$groupName");
     $this->click("_qf_GroupContact_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Reserve Respondents
     $this->open($this->sboxPath . "civicrm/survey/search?reset=1&op=reserve");
@@ -320,7 +320,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
 
     $this->waitForElementPresent("_qf_Reserve_done_reserve-bottom");
     $this->click("_qf_Reserve_done_reserve-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("Reservation has been added for 3 Contact(s)."),
       "Status message didn't show up after adding reservation for 3 contacts!"
     );
@@ -340,11 +340,11 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
 
     $this->waitForElementPresent("Go");
     $this->click("Go");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->waitForElementPresent("_qf_Release_done-bottom");
     $this->click("_qf_Release_done-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     // wait for Access Keys div to appear at bottom of page - since this page may take a while
     $this->waitForElementPresent('access');
     $this->assertTrue($this->isTextPresent("1 respondent(s) have been released."),
@@ -360,7 +360,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
     $this->select("campaign_survey_id", "label=Survey $title");
 
     $this->click("_qf_Search_refresh");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("1 Result"), "Result didn't show up after saving!");
   }
 
@@ -396,7 +396,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
     // add to group
     $this->select("group_id", "label=$groupName");
     $this->click("_qf_GroupContact_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $firstName2 = substr(sha1(rand()), 0, 7);
     $this->webtestAddContact($firstName2, "John", "$firstName2.john@example.org");
@@ -411,11 +411,11 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
     // add to group
     $this->select("group_id", "label=$groupName");
     $this->click("_qf_GroupContact_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Create custom group and add custom data fields
     $this->open($this->sboxPath . "civicrm/admin/custom/group?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("link=Add Set of Custom Fields");
     $this->waitForElementPresent('_qf_Group_cancel-bottom');
 
@@ -451,12 +451,12 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
     $this->type('option_value_3', $value3);
 
     $this->click('_qf_Field_next-bottom');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("Your custom field '$field1' has been saved."));
 
     // Create a profile for survey
     $this->open($this->sboxPath . "civicrm/admin/uf/group?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("link=Add Profile");
     $this->waitForElementPresent('_qf_Group_cancel-bottom');
 
@@ -475,7 +475,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
     $this->check('is_searchable');
     $this->check('in_selector');
     $this->click('_qf_Field_next_new-bottom');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_Field_cancel-bottom');
     
     // Custom Data Fields
@@ -486,11 +486,11 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
     $this->check('is_searchable');
     $this->check('in_selector');
     $this->click('_qf_Field_next-bottom');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Enable CiviCampaign module if necessary
     $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_Component_next-bottom');
     $enabledComponents = $this->getSelectOptions('enableComponents-t');
     if (!in_array("CiviCampaign", $enabledComponents)) {
@@ -498,7 +498,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
       $this->click("//option[@value='CiviCampaign']");
       $this->click('add');
       $this->click('_qf_Component_next-bottom');
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->assertTrue($this->isTextPresent('Changes Saved.'));
     }
 
@@ -578,7 +578,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('_qf_Reserve_done_reserve-bottom');
 
     $this->click('_qf_Reserve_done_reserve-bottom');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     // wait for Access Keys div to appear at bottom of page - since this page may take a while
     $this->waitForElementPresent('access');
     $this->assertTrue($this->isTextPresent("Reservation has been added for 2 Contact(s)."));
@@ -599,7 +599,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
     // as it is OS-related and cannot be handled through webtest 
 
     // $this->click('_qf_SurveyDetails_submit_print');
-    // $this->waitForPageToLoad("30000");
+    // $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // $this->assertTrue($this->isTextPresent("Survey Title = $surveyTitle"));
     // $this->assertTrue($this->isTextPresent("Q1 = $field1"));
@@ -651,7 +651,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
     // as it is OS-related and cannot be handled through webtest 
 
     // $this->click('_qf_SurveyDetails_submit_print');
-    // $this->waitForPageToLoad("30000");
+    // $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // $this->assertTrue($this->isTextPresent("Survey Title = $surveyTitle"));
     // $this->assertTrue($this->isTextPresent("Q1 = $field1"));
@@ -659,7 +659,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
 
     // use GOTV (campaign/gotv) to mark the respondents as voted
     $this->open($this->sboxPath . "civicrm/campaign/gotv?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // search for the respondents
     // select survey
@@ -681,7 +681,7 @@ class WebTest_Campaign_SurveyUsageScenarioTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('_qf_Search_refresh');
     $this->select('activity_survey_id', "label=$surveyTitle");
     $this->click('_qf_Search_refresh');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->verifyText("xpath=//table[@class='selector']/tbody//tr/td[5]/a[text()='Smith, $firstName1']/../../td[3]",
       preg_quote("$surveyTitle - Respondent Interview")

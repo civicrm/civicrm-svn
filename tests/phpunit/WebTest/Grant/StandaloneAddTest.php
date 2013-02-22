@@ -47,7 +47,7 @@ class WebTest_Grant_StandaloneAddTest extends CiviSeleniumTestCase {
 
     // Enable CiviGrant module if necessary
     $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Component_next-bottom");
     $enabledComponents = $this->getSelectOptions("enableComponents-t");
     if (!in_array("CiviGrant", $enabledComponents)) {
@@ -55,7 +55,7 @@ class WebTest_Grant_StandaloneAddTest extends CiviSeleniumTestCase {
       $this->click("//option[@value='CiviGrant']");
       $this->click("add");
       $this->click("_qf_Component_next-bottom");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->assertTrue($this->isTextPresent("Your changes have been saved."));
     }
 
@@ -111,7 +111,7 @@ class WebTest_Grant_StandaloneAddTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Grant_upload");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // verify if Grant is created
     $this->waitForElementPresent("xpath=//div[@id='Grants']//table//tbody/tr[1]/td[8]/span/a[text()='View']");

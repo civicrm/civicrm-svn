@@ -59,7 +59,7 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
     $this->type('email_address', $email);
 
     $this->click('_qf_Domain_next_view-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // a random 7-char string and an even number to make this pass unique
     $conHash = substr(sha1(rand()), 0, 7);
@@ -171,7 +171,7 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
 
   function _testAddLocation($streetAddress) {
     // Wait for Location tab form to load
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Location_upload-bottom");
 
     // Fill in address fields
@@ -185,7 +185,7 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
     $this->click("_qf_Location_upload-bottom");
 
     // Wait for "saved" status msg
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForTextPresent("'Location' information has been saved.");
   }
 
@@ -215,7 +215,7 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
     $this->click("_qf_Fee_upload-bottom");
 
     // Wait for "saved" status msg
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForTextPresent("'Fee' information has been saved.");
   }
 
@@ -240,7 +240,7 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
     $this->type("confirm_from_email", "jane.doe@example.org");
 
     $this->click("_qf_Registration_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForTextPresent("'Registration' information has been saved.");
   }
 
@@ -251,7 +251,7 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
     // registering online
     if ($anonymous) {
       $this->open($this->sboxPath . "civicrm/logout?reset=1");
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
     }
 
     //participant registeration
@@ -281,7 +281,7 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
 
     if ($numberRegistrations > 1) {
       for ($i = 1; $i <= $numberRegistrations; $i++) {
-        $this->waitForPageToLoad('30000');
+        $this->waitForPageToLoad($this->getTimeoutMsec());
         // Look for Skip button
         $this->waitForElementPresent("_qf_Participant_{$i}_next_skip-Array");
         $this->type("email-Primary", "{$firstName}" . substr(sha1(rand()), 0, 7) . "@example.org");
@@ -289,12 +289,12 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
       }
     }
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
     $confirmStrings = array("Event Fee(s)", "Billing Name and Address", "Credit Card Information");
     $this->assertStringsPresent($confirmStrings);
     $this->click("_qf_Confirm_next-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $thankStrings = array("Thank You for Registering", "Event Total", "Transaction Date");
     $this->assertStringsPresent($thankStrings);
 
@@ -318,7 +318,7 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
     $this->type("pcp_intro_text", "Welcome Text $hash");
     $this->type("goal_amount", $contributionAmount);
     $this->click("_qf_Campaign_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //admin pcp approval
     //login to check contribution
@@ -336,7 +336,7 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
     $pcpUrl = "civicrm/pcp/info?reset=1&id=$id[1]";
     $this->click("xpath=//div[@id='option11_wrapper']/table[@id='option11']/tbody//tr/td/a[text()='$pcpTitle']/../../td[7]/span/a[text()='Approve']");
 
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->open($this->sboxPath . 'civicrm/logout?reset=1');
     // Wait for Login button to indicate we've logged out.
@@ -378,7 +378,7 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
       $this->click('_qf_Register_upload-bottom');
     }
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
     $this->click("_qf_Confirm_next-bottom");
 
@@ -433,7 +433,7 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
 
     $this->click('_qf_Event_upload-bottom');
     $this->waitForElementPresent('_qf_Event_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $text = "'Event' information has been saved.";
     $this->assertTrue($this->isTextPresent($text), 'Missing text: ' . $text);
 
@@ -446,7 +446,7 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
   function _testParticipantSearchEventName($eventName, $lastNameDonar, $firstNameDonar, $firstNameCreator, $lastNameCreator, $amount) {
     $sortName = $lastNameDonar . ', ' . $firstNameDonar;
     $this->open($this->sboxPath . "civicrm/event/search?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->type("event_name", $eventName);
     $this->click("event_name");
@@ -454,14 +454,14 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
     $this->click("css=div.ac_results-inner li");
 
     $this->click("_qf_Search_refresh");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click("xpath=//div[@id='participantSearch']/table/tbody//tr/td[@class='crm-participant-sort_name']/a[text()='{$sortName}']/../../td[11]/span/a[text()='View']");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->waitForElementPresent("xpath=//table[@class='selector']/tbody/tr/td[8]/span/a[text()='View']");
     $this->click("xpath=//table[@class='selector']/tbody/tr/td[8]/span/a[text()='View']");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->webtestVerifyTabularData(
       array(
@@ -479,22 +479,22 @@ class WebTest_Event_PCPAddTest extends CiviSeleniumTestCase {
 
     // visit contact search page
     $this->open($this->sboxPath . "civicrm/contact/search?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // fill name as first_name
     $this->type("css=.crm-basic-criteria-form-block input#sort_name", $pcpCreatorFirstName);
 
     // click to search
     $this->click("_qf_Basic_refresh");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click("xpath=//div[@class='crm-search-results']//table/tbody//tr/td[3]/a[text()='{$sortName}']");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click("css=li#tab_contribute a");
     $this->waitForElementPresent("xpath=//div[@id='Contributions']/div/form[@id='Search']/div[@class='view-content']/table[2]/tbody/tr[@id='rowid']/td/a[text()='$displayName']");
     $this->click("xpath=//div[@id='Contributions']/div/form[@id='Search']/div[@class='view-content']/table[2]/tbody/tr[@id='rowid']/td[7]/a[text()='View']");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->webtestVerifyTabularData(
       array(

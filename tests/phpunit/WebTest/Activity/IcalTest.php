@@ -51,7 +51,7 @@ class WebTest_Activity_IcalTest extends CiviSeleniumTestCase {
         // Notify assignees should be checked by default, so we just need to click the ical setting which is off by default.
         $this->click("name=activity_assignee_notification_ics");
         $this->click("_qf_Display_next");
-        $this->waitForPageToLoad("30000");
+        $this->waitForPageToLoad($this->getTimeoutMsec());
 
         // Start spooling emails
         $mailer = new CiviMailUtils( $this, true );
@@ -83,7 +83,7 @@ class WebTest_Activity_IcalTest extends CiviSeleniumTestCase {
         $this->select("status_id", "value=1");
 
         $this->click("_qf_Activity_upload");
-        $this->waitForPageToLoad("30000");
+        $this->waitForPageToLoad($this->getTimeoutMsec());
 
         $this->assertTrue($this->isTextPresent("Activity '$subject' has been saved."), "Status message didn't show up after saving!");
 

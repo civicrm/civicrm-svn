@@ -96,7 +96,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
 
     //logout
     $this->open($this->sboxPath . "civicrm/logout?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Go to online membership signup page
     $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&id=2");
@@ -128,11 +128,11 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
 
     $this->click("_qf_Main_upload-bottom");
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
 
     $this->click("_qf_Confirm_next-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Log in using webtestLogin() method
     $this->open($this->sboxPath);
@@ -143,7 +143,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
 
     $this->type("sort_name", "$firstName $lastName");
     $this->click("_qf_Search_refresh");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->waitForElementPresent('css=#memberSearch table tbody tr td span a.action-item-first');
     $this->click('css=#memberSearch table tbody tr td span a.action-item-first');
@@ -164,7 +164,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
 
     //logout
     $this->open($this->sboxPath . "civicrm/logout?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&id=2");
     $this->waitForElementPresent("_qf_Main_upload-bottom");
@@ -195,10 +195,10 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
 
     $this->click("_qf_Main_upload-bottom");
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
     $this->click("_qf_Confirm_next-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->open($this->sboxPath);
     $this->webtestLogin();
@@ -208,7 +208,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
 
     $this->type("sort_name", "$firstName $lastName");
     $this->click("_qf_Search_refresh");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->waitForElementPresent('css=#memberSearch table tbody tr td span a.action-item-first');
     $this->click('css=#memberSearch table tbody tr td span a.action-item-first');
@@ -316,11 +316,11 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
 
     $this->click("_qf_Main_upload-bottom");
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
 
     $this->click("_qf_Confirm_next-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Find Member
     $this->open($this->sboxPath . "civicrm/member/search?reset=1");
@@ -328,7 +328,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
 
     $this->type("sort_name", "$firstName $lastName");
     $this->click("_qf_Search_refresh");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->waitForElementPresent('css=#memberSearch table tbody tr td span a.action-item-first');
     $this->click('css=#memberSearch table tbody tr td span a.action-item-first');
@@ -365,10 +365,10 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
     $this->select("credit_card_exp_date[Y]", "value=2020");
     $this->click("_qf_Main_upload-bottom");
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
     $this->click("_qf_Confirm_next-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Find Member
     $this->open($this->sboxPath . "civicrm/member/search?reset=1");
@@ -376,7 +376,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
 
     $this->type("sort_name", "$firstName $lastName");
     $this->click("_qf_Search_refresh");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->waitForElementPresent('css=#memberSearch table tbody tr td span a.action-item-first');
     $this->click('css=#memberSearch table tbody tr td span a.action-item-first');
@@ -418,13 +418,13 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
     $this->type('organization_name', "Organization $title");
     $this->type('email_1_email', "$title@org.com");
     $this->click('_qf_Contact_upload_view');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent("Organization $title has been created."));
 
     // Go directly to the URL
     $this->open($this->sboxPath . 'civicrm/admin/member/membershipType?reset=1&action=browse');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click('link=Add Membership Type');
     $this->waitForElementPresent('_qf_MembershipType_cancel-bottom');
@@ -510,7 +510,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
     $this->select('onbehalf_profile_id', "value=9");
     $this->type('for_organization', "On behalf $hash");
     $this->click('_qf_Settings_next-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click('link=Memberships');
     $this->waitForElementPresent('_qf_MembershipBlock_cancel-bottom');
@@ -520,11 +520,11 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
     $this->click("membership_type_{$membershipTypeId}");
     $this->click('is_required');
     $this->click('_qf_MembershipBlock_next-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //logout
     $this->open($this->sboxPath . "civicrm/logout?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //get Url for Live Contribution Page
     $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&id=" . $pageId);
@@ -567,11 +567,11 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
     $this->select("billing_state_province_id-5", "value=1004");
     $this->type("billing_postal_code-5", "94129");
     $this->click("_qf_Main_upload-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
 
     $this->click("_qf_Confirm_next-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
 
     // Log in using webtestLogin() method
@@ -581,12 +581,12 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
     //Find member
     $endDate = date('F jS, Y', strtotime(" +1 year -1 day"));
     $this->open($this->sboxPath . "civicrm/member/search?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("member_end_date_high");
 
     $this->type("sort_name", "$organisationName");
     $this->click("_qf_Search_refresh");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->waitForElementPresent('css=#memberSearch table tbody tr td span a.action-item-first');
     $this->click('css=#memberSearch table tbody tr td span a.action-item-first');
@@ -607,12 +607,12 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
     }
 
     $this->open($this->sboxPath . "civicrm/member/search?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("member_end_date_high");
 
     $this->type("sort_name", "$lastName, $firstName");
     $this->click("_qf_Search_refresh");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->waitForElementPresent('css=#memberSearch table tbody tr td span a.action-item-first');
     $this->click('css=#memberSearch table tbody tr td span a.action-item-first');
@@ -634,7 +634,7 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
 
     //logout
     $this->open($this->sboxPath . "civicrm/logout?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&id=" . $pageId);
 
@@ -672,11 +672,11 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
 
     $this->click("_qf_Main_upload-bottom");
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
 
     $this->click("_qf_Confirm_next-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Log in using webtestLogin() method
     $this->open($this->sboxPath);
@@ -685,12 +685,12 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
     //Find member
     $endDate = date('F jS, Y', strtotime(" +2 year -1 day"));
     $this->open($this->sboxPath . "civicrm/member/search?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("member_end_date_high");
 
     $this->type("sort_name", "$organisationName");
     $this->click("_qf_Search_refresh");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->waitForElementPresent('css=#memberSearch table tbody tr td span a.action-item-first');
     $this->click('css=#memberSearch table tbody tr td span a.action-item-first');
@@ -710,12 +710,12 @@ class WebTest_Member_OnlineMembershipRenewTest extends CiviSeleniumTestCase {
     }
 
     $this->open($this->sboxPath . "civicrm/member/search?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("member_end_date_high");
 
     $this->type("sort_name", "$lastName, $firstName");
     $this->click("_qf_Search_refresh");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->waitForElementPresent('css=#memberSearch table tbody tr td span a.action-item-first');
     $this->click('css=#memberSearch table tbody tr td span a.action-item-first');

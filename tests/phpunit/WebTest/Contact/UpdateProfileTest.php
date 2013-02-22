@@ -63,7 +63,7 @@ class WebTest_Contact_UpdateProfileTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Edit_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Confirm save was done.
     $this->assertTrue($this->isTextPresent("Thank you. Your information has been saved."), 'In line ' . __LINE__);

@@ -43,7 +43,7 @@ class WebTest_Campaign_PledgeTest extends CiviSeleniumTestCase {
 
     // Enable CiviCampaign module and CiviPledge module if necessary
     $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Component_next-bottom");
     $enabledComponents = $this->getSelectOptions("enableComponents-t");
     if (!in_array("CiviCampaign", $enabledComponents)) {
@@ -51,12 +51,12 @@ class WebTest_Campaign_PledgeTest extends CiviSeleniumTestCase {
       $this->click("//option[@value='CiviCampaign']");
       $this->click("add");
       $this->click("_qf_Component_next-bottom");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->assertTrue($this->isTextPresent("Your changes have been saved."));
     }
 
     $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Component_next-bottom");
     $enabledComponents = $this->getSelectOptions("enableComponents-t");
     if (!in_array("CiviPledge", $enabledComponents)) {
@@ -64,7 +64,7 @@ class WebTest_Campaign_PledgeTest extends CiviSeleniumTestCase {
       $this->click("//option[@value='CiviPledge']");
       $this->click("add");
       $this->click("_qf_Component_next-bottom");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->assertTrue($this->isTextPresent("Your changes have been saved."));
     }
 
@@ -76,7 +76,7 @@ class WebTest_Campaign_PledgeTest extends CiviSeleniumTestCase {
     $this->changePermissions($permissions);
 
     $this->open($this->sboxPath . "civicrm/logout?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Log in as demo user
     $this->open($this->sboxPath);
@@ -99,7 +99,7 @@ class WebTest_Campaign_PledgeTest extends CiviSeleniumTestCase {
     // add to group
     $this->select("group_id", "label=$groupName");
     $this->click("_qf_GroupContact_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $firstName2 = substr(sha1(rand()), 0, 7);
     $this->webtestAddContact($firstName2, "John", "$firstName2.john@example.org");
@@ -112,7 +112,7 @@ class WebTest_Campaign_PledgeTest extends CiviSeleniumTestCase {
     // add to group
     $this->select("group_id", "label=$groupName");
     $this->click("_qf_GroupContact_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Go directly to the URL of the screen that you will be testing
     $this->open($this->sboxPath . "civicrm/campaign/add?reset=1");
@@ -144,7 +144,7 @@ class WebTest_Campaign_PledgeTest extends CiviSeleniumTestCase {
 
     // click save
     $this->click("_qf_Campaign_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent("Campaign Campaign $title has been saved."),
       "Status message didn't show up after saving campaign!"
@@ -216,7 +216,7 @@ class WebTest_Campaign_PledgeTest extends CiviSeleniumTestCase {
     $this->type("additional_reminder_day", "4");
 
     $this->click("_qf_Pledge_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent("Pledge has been recorded and the payment schedule has been created."));
 

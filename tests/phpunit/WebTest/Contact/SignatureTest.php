@@ -40,7 +40,7 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
 
     $this->openCiviPage('dashboard', 'reset=1', 'crm-recently-viewed');
     $this->click("//div[@id='crm-recently-viewed']/ul/li/a");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $name = $this->getText("xpath=//div[@class='crm-summary-display_name']");
 
     // Get contact id from url.
@@ -63,7 +63,7 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
     // TEXT Format Message
     $this->type('email_1_signature_text', 'Contact Signature in text');
     $this->click('_qf_Contact_upload_view-top');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is status message correct?
     $this->assertElementContainsText('crm-notification-container', "Contact Saved");
@@ -71,7 +71,7 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
     // Go for Ckeck Your Editor, Click on Send Mail
     $this->click("//a[@id='crm-contact-actions-link']/span");
     $this->click('link=Send an Email');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     sleep(10);
 
     $this->click('subject');
@@ -82,7 +82,7 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
     $this->_checkSignature('html_message', $signature, 'TinyMCE');
 
     $this->click('_qf_Email_upload-top');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Go for Activity Search
     $this->_checkActivity($subject, $signature);
@@ -96,7 +96,7 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
 
     $this->openCiviPage('dashboard', 'reset=1', 'crm-recently-viewed');
     $this->click("//div[@id='crm-recently-viewed']/ul/li/a");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $name = $this->getText("xpath=//div[@class='crm-summary-display_name']");
 
     // Get contact id from url.
@@ -108,7 +108,7 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
     $this->_selectEditor('CKEditor');
 
     $this->open($this->sboxPath . "civicrm/contact/add?reset=1&action=update&cid={$contactId}");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click("//tr[@id='Email_Block_1']/td[1]/div[2]/div[1]");
     
@@ -120,7 +120,7 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
     // TEXT Format Message
     $this->type('email_1_signature_text', 'Contact Signature in text');
     $this->click('_qf_Contact_upload_view-top');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is status message correct?
     $this->assertTrue($this->isTextPresent("{$name} has been updated."));
@@ -128,7 +128,7 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
     // Go for Ckeck Your Editor, Click on Send Mail
     $this->click("//a[@id='crm-contact-actions-link']/span");
     $this->click('link=Send an Email');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     sleep(10);
 
     $this->click('subject');
@@ -139,7 +139,7 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
     $this->_checkSignature('html_message', $signature, 'CKEditor');
 
     $this->click('_qf_Email_upload-top');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Go for Activity Search
     $this->_checkActivity($subject, $signature);
@@ -151,13 +151,13 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
   function _selectEditor($editor) {
     // Go directly to the URL of Set Default Editor.
     $this->open($this->sboxPath . 'civicrm/admin/setting/preferences/display?reset=1');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Select your Editor
     $this->click('editor_id');
     $this->select('editor_id', "label=$editor");
     $this->click('_qf_Display_next-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
   }
   /*
    * Helper function for Check Signature in Editor.
@@ -183,12 +183,12 @@ class WebTest_Contact_SignatureTest extends CiviSeleniumTestCase {
     $this->type('activity_subject', $subject);
 
     $this->click('_qf_Search_refresh');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('Search');
 
     // View your Activity
     $this->click("xpath=id('Search')/div[3]/div/div[2]/table/tbody/tr[2]/td[9]/span/a[text()='View']");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_ActivityView_next-bottom');
 
     // Is signature correct? in Activity

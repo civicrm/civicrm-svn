@@ -66,7 +66,7 @@ class WebTest_Report_LoggingReportTest extends CiviSeleniumTestCase {
     $this->select("group_id", "label=Case Resources");
     $this->click("_qf_GroupContact_next");
   
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("xpath=//div[@id='groupContact']/div/div[4]/table/tbody/tr/td[4]/a");
     $this->click("xpath=//div[@id='groupContact']/div/div[4]/table/tbody/tr/td[4]/a");
     
@@ -75,7 +75,7 @@ class WebTest_Report_LoggingReportTest extends CiviSeleniumTestCase {
         $this->getConfirmation()
       ));
     $this->chooseOkOnNextConfirmation();
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //tag addition 
     $this->waitForElementPresent("xpath=//li[@id='tab_tag']/a");
@@ -115,7 +115,7 @@ class WebTest_Report_LoggingReportTest extends CiviSeleniumTestCase {
         $this->getConfirmation()
       ));
     $this->chooseOkOnNextConfirmation();
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     
     //add new relationship , disable it , delete it
     $this->waitForElementPresent("xpath=//li[@id='tab_rel']/a");
@@ -127,21 +127,21 @@ class WebTest_Report_LoggingReportTest extends CiviSeleniumTestCase {
     $this->webtestFillAutocomplete("Default Organization");
     $this->waitForElementPresent("quick-save");
     $this->click("quick-save");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("xpath=//div[@id='current-relationships']//a[text()='Disable']");
     $this->click("xpath=//div[@id='current-relationships']//a[text()='Disable']");
     $this->assertTrue((bool)preg_match("/^Are you sure you want to disable this relationship/",
       $this->getConfirmation()
     ));
     $this->chooseOkOnNextConfirmation();
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent(" xpath=//div[@id='inactive-relationships']//a[text()='Delete']");
     $this->click("xpath=//div[@id='inactive-relationships']//a[text()='Delete']");
     $this->assertTrue((bool)preg_match("/^Are you sure you want to delete this relationship/",
       $this->getConfirmation()
     ));
     $this->chooseOkOnNextConfirmation();
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //update existing contact
     $this->click("xpath=//ul[@id='actions']/li[2]/a");
@@ -149,12 +149,12 @@ class WebTest_Report_LoggingReportTest extends CiviSeleniumTestCase {
     $firstName = "{$firstName}_edited";
     $this->type("first_name", $firstName);
     $this->click("_qf_Contact_upload_view-top");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
         
     //visit the logging contact summary report
     $this->open($this->sboxPath . "civicrm/report/logging/contact/summary?reset=1");
     $this->click("_qf_LoggingSummary_submit");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $data = array(
               //contact data check
@@ -209,11 +209,11 @@ class WebTest_Report_LoggingReportTest extends CiviSeleniumTestCase {
     //delete contact check
     $this->open($this->sboxPath . "civicrm/contact/view/delete?&reset=1&delete=1&cid={$cid[1]}");
     $this->click("_qf_Delete_done");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     
     $this->open($this->sboxPath . "civicrm/report/logging/contact/summary?reset=1");
     $this->click("_qf_LoggingSummary_submit");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     
     $contactDataDelete = array(array("log_type" => "Contact", "altered_contact" => "{$firstName} {$lastName}", "action" => "Delete (to trash)"));
     $this->verifyReportData($contactDataDelete);
@@ -242,7 +242,7 @@ class WebTest_Report_LoggingReportTest extends CiviSeleniumTestCase {
   function detailReportCheck($dataForReportDetail) {
     foreach ($dataForReportDetail as $value) {
       $this->click("xpath=//table/tbody//tr/td[2][contains(text(), '{$value['log_type']}')]/../td[4]/a[contains(text(), '{$value['altered_contact']}')]/../../td[1]/a[2]");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
 
       foreach ($value['data'] as $key => $data) {
         $position = $key + 1;
@@ -254,7 +254,7 @@ class WebTest_Report_LoggingReportTest extends CiviSeleniumTestCase {
     //visit the logging contact summary report
     $this->open($this->sboxPath . "civicrm/report/logging/contact/summary?reset=1");
     $this->click("_qf_LoggingSummary_submit");
-    $this->waitForPageToLoad("30000");  
+    $this->waitForPageToLoad($this->getTimeoutMsec());  
     }
   }
 }

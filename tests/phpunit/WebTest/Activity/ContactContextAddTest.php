@@ -124,7 +124,7 @@ class WebTest_Activity_ContactContextAddTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Activity_upload");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is status message correct?
     $this->assertTrue($this->isTextPresent("Activity '$subject' has been saved."), "Status message didn't show up after saving!");

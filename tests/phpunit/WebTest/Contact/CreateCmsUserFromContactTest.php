@@ -72,7 +72,7 @@ class WebTest_Contact_CreateCmsUserFromContactTest extends CiviSeleniumTestCase 
     // click "View Contact Record" link
     $this->waitForElementPresent("xpath=//div[@class='profile']/span/a[text()='View Contact Record']");
     $this->click("xpath=//div[@class='profile']/span/a[text()='View Contact Record']");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Assert that the user actually does have a CMS Id displayed
     $this->assertTrue($this->isTextPresent("User ID"));
@@ -122,7 +122,7 @@ class WebTest_Contact_CreateCmsUserFromContactTest extends CiviSeleniumTestCase 
     $username = $this->settings->adminUsername;
     $this->_fillCMSUserForm($username, $password, $password);
     $this->click("_qf_Useradd_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //the civicrm messages should indicate the username is taken
     $this->assertElementContainsText("css=#crm-notification-container", "already taken", "CiviCRM Message does not indicate the username is in user");
@@ -148,7 +148,7 @@ class WebTest_Contact_CreateCmsUserFromContactTest extends CiviSeleniumTestCase 
     $username = $this->settings->adminUsername;
     $this->_fillCMSUserForm($username, $password, $password . "mismatch");
     $this->click("_qf_Useradd_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //check that that there is a password mismatch text
     $this->assertElementContainsText("css=#crm-notification-container", "Password mismatch", "No form error given on password missmatch");
@@ -172,7 +172,7 @@ class WebTest_Contact_CreateCmsUserFromContactTest extends CiviSeleniumTestCase 
     //submit with mismatch passwords
     $username = $this->settings->adminUsername;
     $this->click("_qf_Useradd_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //the civicrm messages section should not indicate that a user has been created
     $this->assertElementNotContainsText("css=#crm-notification-container", "User has been added", "CiviCRM messages say that a user was created when username left blank");
@@ -204,7 +204,7 @@ class WebTest_Contact_CreateCmsUserFromContactTest extends CiviSeleniumTestCase 
     //submit with matching passwords
     $this->_fillCMSUserForm($firstName, $password, $password);
     $this->click("_qf_Useradd_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //drupal messages should say user created
     $this->assertTrue($this->isTextPresent("Created a new user account"), "Drupal does not report success creating user in the message");
@@ -235,7 +235,7 @@ class WebTest_Contact_CreateCmsUserFromContactTest extends CiviSeleniumTestCase 
 
     //got to the new cms user form
     $this->open($this->sboxPath . "civicrm/contact/view/useradd?reset=1&action=add&cid=" . $cid);
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     return array($cid, $firstName, $lastName, $email);
   }

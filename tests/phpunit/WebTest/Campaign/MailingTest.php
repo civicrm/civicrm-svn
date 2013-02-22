@@ -43,7 +43,7 @@ class WebTest_Campaign_MailingTest extends CiviSeleniumTestCase {
 
     // Enable CiviCampaign module if necessary
     $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Component_next-bottom");
     $enabledComponents = $this->getSelectOptions("enableComponents-t");
     if (!in_array("CiviCampaign", $enabledComponents)) {
@@ -51,7 +51,7 @@ class WebTest_Campaign_MailingTest extends CiviSeleniumTestCase {
       $this->click("//option[@value='CiviCampaign']");
       $this->click("add");
       $this->click("_qf_Component_next-bottom");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->assertTrue($this->isTextPresent("Your changes have been saved."));
     }
 
@@ -76,7 +76,7 @@ class WebTest_Campaign_MailingTest extends CiviSeleniumTestCase {
     // add to group
     $this->select("group_id", "label=$groupName");
     $this->click("_qf_GroupContact_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Go directly to the URL of the screen that you will be testing
     $this->open($this->sboxPath . "civicrm/campaign/add?reset=1");
@@ -109,7 +109,7 @@ class WebTest_Campaign_MailingTest extends CiviSeleniumTestCase {
 
     // click save
     $this->click("_qf_Campaign_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent("Campaign Campaign $title has been saved."),
       "Status message didn't show up after saving campaign!"
@@ -138,7 +138,7 @@ class WebTest_Campaign_MailingTest extends CiviSeleniumTestCase {
     $this->type('domain', 'example.com');
     $this->select('protocol', 'value=1');
     $this->click('_qf_MailSettings_next-bottom');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Go directly to Schedule and Send Mailing form
     $this->open($this->sboxPath . "civicrm/mailing/send?reset=1");
@@ -237,7 +237,7 @@ class WebTest_Campaign_MailingTest extends CiviSeleniumTestCase {
 
     // finally schedule the mail by clicking submit
     $this->click("_qf_Schedule_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //----------end New Mailing-------------
 
@@ -251,7 +251,7 @@ class WebTest_Campaign_MailingTest extends CiviSeleniumTestCase {
 
     // click report link of created mailing
     $this->click("xpath=//table//tbody/tr[td[1]/text()='Mailing $mailingName Webtest']/descendant::a[text()='Report']");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // verify undelivered status message
     $this->assertTrue($this->isTextPresent("Delivery has not yet begun for this mailing. If the scheduled delivery date and time is past, ask the system administrator or technical support contact for your site to verify that the automated mailer task ('cron job') is running - and how frequently."));
@@ -265,7 +265,7 @@ class WebTest_Campaign_MailingTest extends CiviSeleniumTestCase {
 
     //click report link of created mailing
     $this->click("xpath=//table//tbody/tr[td[1]/text()='Mailing $mailingName Webtest']/descendant::a[text()='Report']");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // do check again for recipient group
     $this->assertTrue($this->isTextPresent("Members of $groupName"));
@@ -293,7 +293,7 @@ class WebTest_Campaign_MailingTest extends CiviSeleniumTestCase {
     //---- check for delivery detail--
 
     $this->click("link=Successful Deliveries");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // check for open page
     $this->assertTrue($this->isTextPresent("Successful Deliveries"));

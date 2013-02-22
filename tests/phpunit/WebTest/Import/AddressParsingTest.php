@@ -47,13 +47,13 @@ class WebTest_Import_AddressParsingTest extends ImportCiviSeleniumTestCase {
 
     //Go to the URL of Address Setting to enable street address parsing option
     $this->open($this->sboxPath . "civicrm/admin/setting/preferences/address?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //check the street address parsing is already enabled
     if (!$this->isChecked("address_options[13]")) {
       $this->click("address_options[13]");
       $this->click("_qf_Address_next");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
     }
 
     // Get sample import data.
@@ -87,12 +87,12 @@ class WebTest_Import_AddressParsingTest extends ImportCiviSeleniumTestCase {
 
     //Go to the URL of Address Setting to disable street address parsing option
     $this->open($this->sboxPath . "civicrm/admin/setting/preferences/address?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Disable street address parsing
     $this->click("address_options[13]");
     $this->click("_qf_Address_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
   }
 
   /*
@@ -106,13 +106,13 @@ class WebTest_Import_AddressParsingTest extends ImportCiviSeleniumTestCase {
 
     //Go to the URL of Address Setting to enable street address parsing option
     $this->open($this->sboxPath . "civicrm/admin/setting/preferences/address?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //check the street address parsing is already enabled
     if (!$this->isChecked("address_options[13]")) {
       $this->click("address_options[13]");
       $this->click("_qf_Address_next");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
     }
 
     // Get sample import data.
@@ -148,12 +148,12 @@ class WebTest_Import_AddressParsingTest extends ImportCiviSeleniumTestCase {
 
     //Go to the URL of Address Setting to disable street address parsing option
     $this->open($this->sboxPath . "civicrm/admin/setting/preferences/address?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Disable street address parsing
     $this->click("address_options[13]");
     $this->click("_qf_Address_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
   }
 
   /*
@@ -167,13 +167,13 @@ class WebTest_Import_AddressParsingTest extends ImportCiviSeleniumTestCase {
 
     //Go to the URL of Address Setting to enable street address parsing option
     $this->open($this->sboxPath . "civicrm/admin/setting/preferences/address?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //check the street address parsing is already disabled
     if ($this->isChecked("address_options[13]")) {
       $this->click("address_options[13]");
       $this->click("_qf_Address_next");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
     }
 
     // Get sample import data.

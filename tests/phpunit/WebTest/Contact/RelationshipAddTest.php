@@ -119,12 +119,12 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
 
     //create a New Individual subtype
     $this->open($this->sboxPath . "civicrm/admin/options/subtype?action=add&reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $label = "IndividualSubtype" . substr(sha1(rand()), 0, 4);
     $this->type("label", $label);
     $this->type("description", "here is individual subtype");
     $this->click("_qf_ContactType_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //create a new contact of individual subtype
     $this->open($this->sboxPath . "civicrm/contact/add?ct=Individual&cst={$label}&reset=1");
@@ -143,7 +143,7 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
 
     //create a New household subtype
     $this->open($this->sboxPath . "civicrm/admin/options/subtype?action=add&reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $label = "HouseholdSubtype" . substr(sha1(rand()), 0, 4);
     $householdSubtypeName = $label;
@@ -152,7 +152,7 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
     $this->select("parent_id", "label=Household");
     $this->type("description", "here is household subtype");
     $this->click("_qf_ContactType_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //create a new contact of household subtype
     $this->open($this->sboxPath . "civicrm/contact/add?ct=Household&cst={$label}&reset=1");
@@ -165,7 +165,7 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //choose the created relationship type
     $this->click('css=li#tab_rel a');
@@ -230,7 +230,7 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
 
     //save the data.
     $this->click('_qf_RelationshipType_next-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //does data saved.
     $this->assertTrue($this->isTextPresent('The Relationship Type has been saved.'),
@@ -238,7 +238,7 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
     );
 
     $this->open($this->sboxPath . 'civicrm/admin/reltype?reset=1');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //validate data on selector.
     $data = $params;
@@ -263,7 +263,7 @@ class WebTest_Contact_RelationshipAddTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //choose the created relationship type
     $this->click('css=li#tab_rel a');

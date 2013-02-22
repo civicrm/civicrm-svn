@@ -162,7 +162,7 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
     
     //Assert quick config change and discount deletion
     $this->open($this->sboxPath . "civicrm/admin/price?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertStringsPresent($discount);
   }
 
@@ -216,7 +216,7 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
     sleep(3);
     //Assertions
     $this->open($this->sboxPath . "civicrm/admin/price?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     sleep(3);
     $this->assertStringsPresent($discount[1]);
   }
@@ -335,7 +335,7 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
     $this->select("template_id", "value={$templateID}"); 
 
     // Wait for event type to be filled in (since page reloads)
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->verifySelectedValue("event_type_id", $eventTypeID); 
 
     // Attendee role s/b selected now.
@@ -360,7 +360,7 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
 
   function _testAddLocation($streetAddress) {
     // Wait for Location tab form to load
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Location_upload-bottom");
 
     // Fill in address fields
@@ -374,7 +374,7 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
     $this->click("_qf_Location_upload-bottom");
 
     // Wait for "saved" status msg
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForTextPresent("'Location' information has been saved.");
   }
 
@@ -406,7 +406,7 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
       $this->webtestFillDate("discount_start_date_1", "-3 week");
       $this->webtestFillDate("discount_end_date_1", "-2 week");
       $this->click("_qf_Fee_submit");
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->waitForElementPresent("discounted_value_1_1");      
       $this->type("discounted_value_1_1","225.00");
       $this->type("discounted_value_2_1","300.00");
@@ -420,7 +420,7 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
         $this->webtestFillDate("discount_start_date_2", "-1 week");
         $this->webtestFillDate("discount_end_date_2", "+1 week");
         $this->click("_qf_Fee_submit");
-        $this->waitForPageToLoad('30000');
+        $this->waitForPageToLoad($this->getTimeoutMsec());
         $this->waitForElementPresent("discounted_value_2_1");
         $this->type("discounted_value_1_2","225.00");
         $this->type("discounted_value_2_2","300.00");
@@ -430,7 +430,7 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
     $this->click("_qf_Fee_upload-bottom");
     
     // Wait for "saved" status msg
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForTextPresent("'Fee' information has been saved.");
     return array($discount1, $discount2);
   }
@@ -455,7 +455,7 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
     $this->type("confirm_from_email", "jane.doe@example.org");
 
     $this->click("_qf_Registration_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForTextPresent("'Registration' information has been saved.");
   }
 
@@ -490,7 +490,7 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
   function _testOnlineRegistration($registerUrl, $numberRegistrations = 1, $anonymous = TRUE) {
     if ($anonymous) {
       $this->open($this->sboxPath . "civicrm/logout?reset=1");
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
     }
     $this->open($registerUrl);
 
@@ -514,7 +514,7 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
 
     if ($numberRegistrations > 1) {
       for ($i = 1; $i <= $numberRegistrations; $i++) {
-        $this->waitForPageToLoad('30000');
+        $this->waitForPageToLoad($this->getTimeoutMsec());
         // Look for Skip button
         $this->waitForElementPresent("_qf_Participant_{$i}_next_skip-Array");
         $this->type("email-Primary", "smith" . substr(sha1(rand()), 0, 7) . "@example.org");
@@ -522,12 +522,12 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
       }
     }
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
     $confirmStrings = array("Event Fee(s)", "Billing Name and Address", "Credit Card Information");
     $this->assertStringsPresent($confirmStrings);
     $this->click("_qf_Confirm_next-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $thankStrings = array("Thank You for Registering", "Event Total", "Transaction Date");
     $this->assertStringsPresent($thankStrings);
   }

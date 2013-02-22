@@ -98,7 +98,7 @@ class WebTest_Profile_MultiRecordProfileAddTest extends CiviSeleniumTestCase {
     // testing (Add new profile ).
     $this->open($this->sboxPath . 'civicrm/admin/uf/group?reset=1');
     
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     
     $this->click('newCiviCRMProfile-top');
 
@@ -140,7 +140,7 @@ class WebTest_Profile_MultiRecordProfileAddTest extends CiviSeleniumTestCase {
 
     //click on save
     $this->click('_qf_Group_next');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //check for  profile create
     $this->assertTrue($this->isTextPresent("Your CiviCRM Profile '$profileTitle' has been added. You can add fields to this profile now"));
@@ -166,7 +166,7 @@ class WebTest_Profile_MultiRecordProfileAddTest extends CiviSeleniumTestCase {
     $this->click('is_required');
     $this->type('help_post', 'This is help for profile field');
     $this->click('_qf_Field_next_new-top');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click('field_name[0]');
     $this->select('field_name[0]', 'value=Contact');
     $this->click("//option[@value='Contact']");
@@ -182,7 +182,7 @@ class WebTest_Profile_MultiRecordProfileAddTest extends CiviSeleniumTestCase {
     $this->click('_qf_Field_next_new-top');
 
     // Add Contact
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click('field_name[0]');
     $this->select('field_name[0]', 'value=Student');
     $this->click("//option[@value='Student']");
@@ -195,7 +195,7 @@ class WebTest_Profile_MultiRecordProfileAddTest extends CiviSeleniumTestCase {
     $this->click('in_selector');
     $this->type('help_post', 'This is help for profile field');
     $this->click('_qf_Field_next_new-top');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click('field_name[0]');
     $this->select('field_name[0]', 'value=Student');
     $this->click("//option[@value='Student']");
@@ -207,7 +207,7 @@ class WebTest_Profile_MultiRecordProfileAddTest extends CiviSeleniumTestCase {
     $this->type('help_post', 'This is help for profile field');
     $this->click('_qf_Field_next_new-top');
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click('field_name[0]');
     $this->select('field_name[0]', 'value=Contact');
     $this->click("//option[@value='Contact']");
@@ -218,11 +218,11 @@ class WebTest_Profile_MultiRecordProfileAddTest extends CiviSeleniumTestCase {
     $this->type('help_post', 'This is help for profile field');
     $this->click('_qf_Field_next');
     //click on save
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click('link=Use (create mode)');
     $recordNew = $this->_addRecords('Create');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $elements = $this->parseURL( );
     
     $gid = $elements['queryString']['gid'];
@@ -236,16 +236,16 @@ class WebTest_Profile_MultiRecordProfileAddTest extends CiviSeleniumTestCase {
       $this->type('cms_pass', $recordNew['firstname']);
       $this->type('cms_confirm_pass', $recordNew['firstname']);
       $this->click('_qf_Useradd_next-bottom');
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->open( $this->settings->sandboxPATH . "user/logout"); 
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->open("{$this->sboxPath}user");
       // Make sure login form is available
       $this->waitForElementPresent('edit-submit');
       $this->type('edit-name', $recordNew['firstname']);
       $this->type('edit-pass', $recordNew['firstname']);
       $this->click('edit-submit');
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
     }
     $this->open($this->sboxPath . 'civicrm/profile/edit?reset=1&id='.$id.'&gid='.$gid);
     if (!$checkMultiRecord) {
@@ -255,14 +255,14 @@ class WebTest_Profile_MultiRecordProfileAddTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("//div[@id='crm-profile-block']/a");
     $this->click("//div[@id='crm-profile-block']/a");
     $record1 = $this->_addRecords();
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->verifyText("//div[@id='browseValues']/div/div/table/thead/tr/th[1]", preg_quote($params['textFieldLabel']));
     $this->verifyText("//div[@id='browseValues']/div/div/table/tbody/tr[2]/td[1]", preg_quote($record1['text']));
     $this->open($this->sboxPath . 'civicrm/profile/edit?reset=1&id='.$id.'&gid='.$gid);
     $this->waitForElementPresent("//div[@id='crm-profile-block']/a");
     $this->click("//div[@id='crm-profile-block']/a");
     $record2 = $this->_addRecords();
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->verifyText("//div[@id='browseValues']/div/div/table/tbody/tr[3]/td[1]", preg_quote($record2['text']));
     
     // Check Max Record Limit
@@ -275,7 +275,7 @@ class WebTest_Profile_MultiRecordProfileAddTest extends CiviSeleniumTestCase {
     $this->verifyText("//div[@id='browseValues']/div/div/table/thead/tr/th[1]", preg_quote($params['textFieldLabel']));
     $this->type("//div[@id='profile-dialog']/div/form/div[2]/div/div/div[2]/input", $recordNew['text'].'edit');
     $this->click("//div[@id='profile-dialog']/div/form/div[2]/div[2]/span/input[@id='_qf_Edit_next']");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->verifyText("//div[@id='browseValues']/div/div/table/tbody/tr[1]/td[1]", preg_quote($recordNew['text'].'edit'));
     
     // Check the delete functionality
@@ -318,7 +318,7 @@ class WebTest_Profile_MultiRecordProfileAddTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . "civicrm/admin/custom/group?action=add&reset=1");
     // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
     // button at the end of this page to show up, to make sure it's fully loaded.
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //fill custom group title
     $params['customGroupTitle'] = 'custom_group' . substr(sha1(rand()), 0, 3);
@@ -333,7 +333,7 @@ class WebTest_Profile_MultiRecordProfileAddTest extends CiviSeleniumTestCase {
     $this->click("//input[@id='is_multiple']");
     $this->type("max_multiple", 3);
     $this->click("//form[@id='Group']/div[2]/div[3]/span[1]/input");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Is custom group created?
     $this->assertTrue($this->isTextPresent($params['customGroupTitle']));
@@ -346,7 +346,7 @@ class WebTest_Profile_MultiRecordProfileAddTest extends CiviSeleniumTestCase {
       $this->click("is_searchable");
     }
     $this->click("_qf_Field_next_new-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("data_type[0]");
     $this->select("data_type[0]", "value=0");
     $this->click("//option[@value='0']");
@@ -375,7 +375,7 @@ class WebTest_Profile_MultiRecordProfileAddTest extends CiviSeleniumTestCase {
 
     //clicking save
     $this->click("_qf_Field_next_new-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Is custom field created?
     $this->assertTrue($this->isTextPresent($params['selectFieldLabel']));
@@ -383,7 +383,7 @@ class WebTest_Profile_MultiRecordProfileAddTest extends CiviSeleniumTestCase {
   }
 
   function _addRecords($context = 'Edit') {
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $params['text'] = 'text' . substr(sha1(rand()), 0, 3);
     $this->type("//div[@id='crm-profile-block']/div/div/div[2]/input[@type='text']", $params['text']);
     if ($context == 'Create') {

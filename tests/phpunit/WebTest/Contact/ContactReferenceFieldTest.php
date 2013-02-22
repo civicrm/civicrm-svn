@@ -62,7 +62,7 @@ class WebTest_Contact_ContactReferenceFieldTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Edit_upload");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     /* add contacts */
 
@@ -75,7 +75,7 @@ class WebTest_Contact_ContactReferenceFieldTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('_qf_GroupContact_next');
     $this->select('group_id', "label={$groupName}");
     $this->click('_qf_GroupContact_next');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertElementContainsText('crm-notification-container', "Added to Group");
 
     // Individual 1
@@ -92,7 +92,7 @@ class WebTest_Contact_ContactReferenceFieldTest extends CiviSeleniumTestCase {
     // Go directly to the URL of the screen that you will be testing (New Custom Group).
     $this->open($this->sboxPath . "civicrm/admin/custom/group?action=add&reset=1");
 
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //fill custom group title
     $customGroupTitle = 'custom_' . substr(sha1(rand()), 0, 7);
@@ -124,7 +124,7 @@ class WebTest_Contact_ContactReferenceFieldTest extends CiviSeleniumTestCase {
 
     //clicking save
     $this->click("_qf_Field_next_new-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Is custom field created?
     $this->assertTrue($this->isTextPresent("Your custom field '$contactRefFieldLabel1' has been saved."));
@@ -143,16 +143,16 @@ class WebTest_Contact_ContactReferenceFieldTest extends CiviSeleniumTestCase {
 
     //clicking save
     $this->click("_qf_Field_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Is custom field created?
     $this->assertTrue($this->isTextPresent("Your custom field '$contactRefFieldLabel2' has been saved."));
 
     $this->open($this->sboxPath . "civicrm/admin/custom/group/field?reset=1&action=browse&gid={$customGroupId}");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click("xpath=//div[@id='field_page']//table/tbody/tr[1]/td[8]/span[1]/a[text()='Edit Field']");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $matches = array();
     preg_match('/&id=([0-9]+)/', $this->getLocation(), $matches);
@@ -160,10 +160,10 @@ class WebTest_Contact_ContactReferenceFieldTest extends CiviSeleniumTestCase {
 
 
     $this->open($this->sboxPath . "civicrm/admin/custom/group/field?reset=1&action=browse&gid={$customGroupId}");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click("xpath=//div[@id='field_page']//table/tbody/tr[2]/td[8]/span[1]/a[text()='Edit Field']");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $matches = array();
     preg_match('/&id=([0-9]+)/', $this->getLocation(), $matches);
@@ -171,7 +171,7 @@ class WebTest_Contact_ContactReferenceFieldTest extends CiviSeleniumTestCase {
 
     // Visit custom group preview page
     $this->open($this->sboxPath . "civicrm/admin/custom/group?action=preview&reset=1&id={$customGroupId}");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->type("custom_{$contactRefFieldID1}_-1", "Anderson");
     $this->fireEvent("custom_{$contactRefFieldID1}_-1", "focus");
@@ -182,7 +182,7 @@ class WebTest_Contact_ContactReferenceFieldTest extends CiviSeleniumTestCase {
 
 
     $this->open($this->sboxPath . "civicrm/admin/custom/group?action=preview&reset=1&id={$customGroupId}");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->type("custom_{$contactRefFieldID2}_-1", $org1);
     $this->fireEvent("custom_{$contactRefFieldID2}_-1", "focus");

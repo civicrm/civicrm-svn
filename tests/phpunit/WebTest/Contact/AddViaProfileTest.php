@@ -67,7 +67,7 @@ class WebTest_Contact_AddViaProfileTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Edit_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent("Your information has been saved."));
   }

@@ -121,7 +121,7 @@ class WebTest_Contact_ProfileChecksumTest extends CiviSeleniumTestCase {
 
     // Logout.
     $this->open($this->sboxPath . 'civicrm/logout?reset=1');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Go to edit profile page of the created contact.
     $this->open($this->sboxPath . "civicrm/profile/edit?id={$contactId}&gid={$profileId}&reset=1&cs={$cs}");
@@ -164,14 +164,14 @@ class WebTest_Contact_ProfileChecksumTest extends CiviSeleniumTestCase {
     // Name of the profile.
     $this->type('title', $profileName);
     $this->click('_qf_Group_next-top');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $elements = $this->parseURL();
     $profileId = $elements['queryString']['gid'];
 
     // Add field to the profile.
     foreach ($fields as $key => $values) {
       $this->open($this->sboxPath . 'civicrm/admin/uf/group/field/add?reset=1&action=add&gid=' . $profileId);
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
 
       $this->select("field_name[0]", "value={$values['type']}");
       sleep(1);
@@ -182,7 +182,7 @@ class WebTest_Contact_ProfileChecksumTest extends CiviSeleniumTestCase {
       }
       $this->type("label", $values['label']);
       $this->click('_qf_Field_next-top');
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
     }
     return $profileId;
   }

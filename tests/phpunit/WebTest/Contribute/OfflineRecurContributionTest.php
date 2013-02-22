@@ -51,7 +51,7 @@ class WebTest_Contribute_OfflineRecurContributionTest extends CiviSeleniumTestCa
 
     $this->waitForElementPresent('link=Submit Credit Card Contribution');
     $this->click('link=Submit Credit Card Contribution');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // since we don't have live credentials we will switch to test mode
     $url = $this->getLocation();
@@ -82,7 +82,7 @@ class WebTest_Contribute_OfflineRecurContributionTest extends CiviSeleniumTestCa
     $this->webtestAddBillingDetails($firstName, $middleName, $lastName);
 
     $this->click('_qf_Contribution_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Use Find Contributions to make sure test recurring contribution exists
     $this->open($this->sboxPath . 'civicrm/contribute/search?reset=1');

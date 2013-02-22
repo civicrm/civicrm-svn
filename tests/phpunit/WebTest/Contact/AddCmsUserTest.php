@@ -65,7 +65,7 @@ class WebTest_Contact_AddCmsUserTest extends CiviSeleniumTestCase {
     $this->select("state_province-1", "value=1019");
 
     $this->click("edit-submit");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
   }
 
   function testAnonymousAddUser() {
@@ -83,10 +83,10 @@ class WebTest_Contact_AddCmsUserTest extends CiviSeleniumTestCase {
     $this->click('edit-user-register-1');
     $this->click('edit-user-email-verification');
     $this->click('edit-submit');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     // logout
     $this->open($this->sboxPath . 'civicrm/logout?reset=1');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Go directly to the URL of the screen that will Create User Anonymously.
     $this->open($this->sboxPath . "user/register");
@@ -112,7 +112,7 @@ class WebTest_Contact_AddCmsUserTest extends CiviSeleniumTestCase {
     $this->select("state_province-1", "value=1019");
 
     $this->click("edit-submit");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("A welcome message with further instructions has been sent to your e-mail address."));
 
     $this->webtestLogin();
@@ -121,7 +121,7 @@ class WebTest_Contact_AddCmsUserTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("_qf_Basic_refresh");
     $this->type("sort_name", $emailId);
     $this->click("_qf_Basic_refresh");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent($emailId));
     $this->assertTrue($this->isTextPresent($lastName . ', ' . $firstName));

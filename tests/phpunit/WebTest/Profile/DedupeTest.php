@@ -59,13 +59,13 @@ class WebTest_Profile_DedupeTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $individualName = $this->getText("xpath=//div[@class='crm-summary-display_name']");
     $this->assertTrue($this->isTextPresent("$individualName has been created."));
 
     // submit dupe using profile/create as anonymous
     $this->open($this->sboxPath . "civicrm/profile/create?gid=4&reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Edit_next");
 
     $firstName = "John" . substr(sha1(rand()), 0, 7);

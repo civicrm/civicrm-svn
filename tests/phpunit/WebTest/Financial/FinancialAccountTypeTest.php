@@ -70,7 +70,7 @@ class WebTest_Financial_FinancialAccountTypeTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[9]/span/a[text()='Edit']");
         
     $this->click("xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[9]/span/a[text()='Edit']");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_FinancialAccount_cancel-botttom');
         
     //Varify Data after Adding new Financial Account
@@ -91,7 +91,7 @@ class WebTest_Financial_FinancialAccountTypeTest extends CiviSeleniumTestCase {
     );
     $this->_assertSelectVerify($verifySelectFieldData);
     $this->click('_qf_FinancialAccount_cancel-botttom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Add new Financial Type
     $financialType['name'] = 'FinancialType '.substr(sha1(rand()), 0, 4);
@@ -107,7 +107,7 @@ class WebTest_Financial_FinancialAccountTypeTest extends CiviSeleniumTestCase {
     $this->select('account_relationship', "label={$accountRelationship}");
     $this->select('financial_account_id', "label={$financialAccountTitle}");
     $this->click('_qf_FinancialTypeAccount_next_new');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $text = 'The financial type Account has been saved.';
     $this->assertTrue($this->isTextPresent($text), 'Missing text: ' . $text);
     $text = 'You can add another Financial Account Type.';
@@ -143,10 +143,10 @@ class WebTest_Financial_FinancialAccountTypeTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("xpath=id('ltype')/div/table/tbody/tr/td[1][text()='Accounts Receivable']/../td[7]/span/a[text()='Edit']");
     $this->verifyText("xpath=id('ltype')/div/table/tbody/tr/td[1][text()='Accounts Receivable']/../td[2]", preg_quote('Accounts Receivable Account is'));
     $this->click("xpath=id('ltype')/div/table/tbody/tr/td[1][text()='Accounts Receivable']/../td[7]/span/a[text()='Delete']"); 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_FinancialTypeAccount_next-botttom');
     $this->click('_qf_FinancialTypeAccount_next-botttom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent('Selected financial type account has been deleted.'), 'Missing text: ' . 'Selected financial type account has been deleted.' );
         
     //edit financial type

@@ -60,7 +60,7 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Edit_upload");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is status message correct?
     $this->assertTrue($this->isTextPresent("The Group '$groupName' has been saved."));
@@ -79,18 +79,18 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("_qf_GroupContact_next");
     $this->select("group_id", "$groupName");
     $this->click("_qf_GroupContact_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_GroupContact_next");
 
     // configure default mail-box
     $this->open($this->sboxPath . "civicrm/admin/mailSettings?action=update&id=1&reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_MailSettings_cancel-bottom');
     $this->type('name', 'Test Domain');
     $this->type('domain', 'example.com');
     $this->select('protocol', 'value=1');
     $this->click('_qf_MailSettings_next-bottom');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Go directly to Schedule and Send Mailing form
     $this->open($this->sboxPath . "civicrm/mailing/send?reset=1");
@@ -189,7 +189,7 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
 
     // finally schedule the mail by clicking submit
     $this->click("_qf_Schedule_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //----------end New Mailing-------------
 
@@ -204,7 +204,7 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
 
     // click report link of created mailing
     $this->click("xpath=//table//tbody/tr[td[1]/text()='Mailing $mailingName Webtest']/descendant::a[text()='Report']");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // verify undelivered status message
     $this->assertTrue($this->isTextPresent("Delivery has not yet begun for this mailing. If the scheduled delivery date and time is past, ask the system administrator or technical support contact for your site to verify that the automated mailer task ('cron job') is running - and how frequently."));
@@ -218,7 +218,7 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
 
     //click report link of created mailing
     $this->click("xpath=//table//tbody/tr[td[1]/text()='Mailing $mailingName Webtest']/descendant::a[text()='Report']");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // do check again for recipient group
     $this->assertTrue($this->isTextPresent("Members of $groupName"));
@@ -244,7 +244,7 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
     //---- check for delivery detail--
 
     $this->click("link=Successful Deliveries");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // check for open page
     $this->assertTrue($this->isTextPresent("Successful Deliveries"));
@@ -264,7 +264,7 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
     // build forward url
     $forwardUrl = "civicrm/mailing/forward?reset=1&jid={$eventQueue->job_id}&qid={$eventQueue->id}&h={$eventQueue->hash}";
     $this->open($this->sboxPath . $forwardUrl);
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->type("email_0", substr(sha1(rand()), 0, 7) . '@example.com');
     $this->type("email_1", substr(sha1(rand()), 0, 7) . '@example.com');
@@ -273,18 +273,18 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
     $this->type("forward_comment", "Test Message");
 
     $this->click("_qf_ForwardMailing_next-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent('Mailing is forwarded successfully to 2 email addresses'));
     $this->open($this->sboxPath);
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->webtestLogin();
 
     $this->open($this->sboxPath . "civicrm/mailing/browse/scheduled?reset=1&scheduled=true");
 
     //click report link of created mailing
     $this->click("xpath=//table//tbody/tr[td[1]/text()='Mailing $mailingName Webtest']/descendant::a[text()='Report']");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // verify successful forwards
     $this->verifyText("xpath=//table//tr[td/a[text()='Forwards']]/descendant::td[2]", "2");
@@ -305,18 +305,18 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
 
     // // logout to unsubscribe
     // $this->open($this->sboxPath . 'civicrm/logout?reset=1');
-    // $this->waitForPageToLoad('30000');
+    // $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // // click(visit) unsubscribe path
     // $this->open($this->sboxPath . $unsubscribeUrl);
-    // $this->waitForPageToLoad('30000');
+    // $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // $this->assertTrue($this->isTextPresent('Optout'));
     // $this->assertTrue($this->isTextPresent("mailino$firstName@mailson.co.in"));
 
     // // unsubscribe
     // $this->click('_qf_optout_next');
-    // $this->waitForPageToLoad('30000');
+    // $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // $this->assertTrue($this->isTextPresent('Optout'));
     // $this->assertTrue($this->isTextPresent("mailino$firstName@mailson.co.in"));
@@ -351,7 +351,7 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Edit_upload");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is status message correct?
     $this->assertTrue($this->isTextPresent("The Group '$groupName' has been saved."));
@@ -370,18 +370,18 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("_qf_GroupContact_next");
     $this->select("group_id", "$groupName");
     $this->click("_qf_GroupContact_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_GroupContact_next");
 
     // configure default mail-box
     $this->open($this->sboxPath . "civicrm/admin/mailSettings?action=update&id=1&reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_MailSettings_cancel-bottom');
     $this->type('name', 'Test Domain');
     $this->type('domain', 'example.com');
     $this->select('protocol', 'value=1');
     $this->click('_qf_MailSettings_next-bottom');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Go directly to Schedule and Send Mailing form
     $this->open($this->sboxPath . "civicrm/mailing/send?reset=1");
@@ -456,7 +456,7 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
 
     // finally schedule the mail by clicking submit
     $this->click("_qf_Schedule_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //----------end New Mailing-------------
 
@@ -470,7 +470,7 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
 
     //click report link of created mailing
     $this->click("xpath=//table//tbody/tr[td[1]/text()='Mailing $mailingName Webtest']/descendant::a[text()='Report']");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
    
     $mailingReportUrl = $this->getLocation();
     // do check again for recipient group
@@ -558,7 +558,7 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
         } else {
           $this->click("xpath=//fieldset/legend[text()='Delivery Summary']/../table//tr[td/a[text()='{$key}']]/descendant::td[3]/span/a[2][text()='Advanced Search']");
         }
-        $this->waitForPageToLoad("30000");
+        $this->waitForPageToLoad($this->getTimeoutMsec());
         $this-> _verifyCriteria($key, $dataToCheck, $entity);
       }
     }

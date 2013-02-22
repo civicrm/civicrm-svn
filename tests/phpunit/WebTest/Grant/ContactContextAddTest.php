@@ -43,7 +43,7 @@ class WebTest_Grant_ContactContextAddTest extends CiviSeleniumTestCase {
 
     // Enable CiviGrant module if necessary
     $this->open($this->sboxPath . 'civicrm/admin/setting/component?reset=1');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_Component_next-bottom');
     $enabledComponents = $this->getSelectOptions('enableComponents-t');
     if (!in_array('CiviGrant', $enabledComponents)) {
@@ -51,7 +51,7 @@ class WebTest_Grant_ContactContextAddTest extends CiviSeleniumTestCase {
       $this->click("//option[@value='CiviGrant']");
       $this->click('add');
       $this->click('_qf_Component_next-bottom');
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->waitForElementPresent('css=div.success');
       $this->assertTrue($this->isTextPresent('Changes Saved.'));
     }
@@ -127,7 +127,7 @@ class WebTest_Grant_ContactContextAddTest extends CiviSeleniumTestCase {
     $this->click('_qf_Grant_upload');
 
     // wait for page to load
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // verify if grant is created with presence of view link
     $this->waitForElementPresent("xpath=//div[@id='Grants']//table/tbody/tr[1]/td[8]/span/a[text()='View']");

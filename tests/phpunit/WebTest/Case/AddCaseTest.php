@@ -41,7 +41,7 @@ class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
 
     // Enable CiviCase module if necessary
     $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Component_next-bottom");
     $enabledComponents = $this->getSelectOptions("enableComponents-t");
     if (!in_array("CiviCase", $enabledComponents)) {
@@ -49,7 +49,7 @@ class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
       $this->click("//option[@value='CiviCase']");
       $this->click("add");
       $this->click("_qf_Component_next-bottom");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
     }
 
     // let's give full CiviCase permissions to demo user (registered user).
@@ -60,12 +60,12 @@ class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . "civicrm/profile/edit?reset=1&gid=4");
     $testUserFirstName = "Testuserfirst";
     $testUserLastName = "Testuserlast";
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Edit_next");
     $this->type("first_name", $testUserFirstName);
     $this->type("last_name", $testUserLastName);
     $this->click("_qf_Edit_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("profilewrap4");
 
     // Is status message correct?
@@ -76,12 +76,12 @@ class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
 
     // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
     // button at the end of this page to show up, to make sure it's fully loaded.
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Case_upload-bottom");
 
     // Try submitting the form without creating or selecting a contact (test for CRM-7971)
     $this->click("_qf_Case_upload-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("css=span.crm-error");
     $this->assertTextPresent("Please select a contact or create new contact", "Expected form rule error for submit without selecting contact did not show up after clicking Save.");
 
@@ -120,7 +120,7 @@ class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
     $this->click("_qf_Case_upload-bottom");
 
     // We should be at manage case screen
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_CaseView_cancel-bottom");
 
     // Is status message correct?
@@ -159,7 +159,7 @@ class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("_qf_Activity_cancel-bottom");
     $this->select("case_status_id","value=2");
     $this->click("_qf_Activity_upload-top");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     
     $this->_testSearchbyDate($firstName, $lastName, "this.quarter");
     $this->_testSearchbyDate($firstName, $lastName, "0");
@@ -212,11 +212,11 @@ class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
     // Find Cases
     if ($action != "0") {
       $this->open($this->sboxPath . "civicrm/case/search?reset=1");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->select("case_from_relative", "value=$action");
       $this->select("case_to_relative", "value=$action");
       $this->click("_qf_Search_refresh");
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->assertTrue($this->isTextPresent("$lastName, $firstName"));
     }
     else {
@@ -230,13 +230,13 @@ class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
       $this->webtestFillDate("case_to_end_date_low", "-1 month");
       $this->webtestFillDate("case_to_end_date_high", "+1 month");
       $this->click("_qf_Search_refresh-bottom");
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->assertTrue($this->isTextPresent("$lastName, $firstName"));
     }
     
     //Advanced Search
     $this->open($this->sboxPath . "civicrm/contact/search/advanced?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Advanced_refresh");
     $this->click("CiviCase");
     $this->waitForElementPresent("xpath=//div[@id='case-search']/table/tbody/tr[3]/td[2]/input[3]");
@@ -253,7 +253,7 @@ class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
       $this->webtestFillDate("case_to_end_date_high", "+1 month");
     }
     $this->click("_qf_Advanced_refresh");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("$lastName, $firstName"));
   }
 }

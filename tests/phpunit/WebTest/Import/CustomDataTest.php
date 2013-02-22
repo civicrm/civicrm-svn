@@ -52,14 +52,14 @@ class WebTest_Import_CustomDataTest extends ImportCiviSeleniumTestCase {
     $firstName3 = 'Ma' . substr(sha1(rand()), 0, 4);
     $this->webtestAddContact($firstName3, "Anderson", TRUE);
     $sortName3 = "$firstName3 Anderson";
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $url1 = explode('&cid=', $this->getLocation());
     $id1 = $url1[1];
 
     $firstName4 = 'Ma' . substr(sha1(rand()), 0, 4);
     $this->webtestAddContact($firstName4, "Anderson", TRUE);
     $sortName4 = "$firstName4 Anderson";
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $url2 = explode('&cid=', $this->getLocation());
     $id2 = $url2[1];
 
@@ -82,9 +82,9 @@ class WebTest_Import_CustomDataTest extends ImportCiviSeleniumTestCase {
     $this->waitForElementPresent('_qf_Basic_refresh');
     $this->type('sort_name', $firstName1);
     $this->click('_qf_Basic_refresh');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("xpath=//div[@class='crm-search-results']/table/tbody/tr/td[11]/span/a[text()='View']");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     for ($cnt = 0; $cnt < 2; $cnt++) {
       foreach ($customDataVerify['rows'][$cnt] as $key => $values) {
@@ -158,7 +158,7 @@ class WebTest_Import_CustomDataTest extends ImportCiviSeleniumTestCase {
 
     //add new custom data
     $this->click("//a[@id='newCustomDataGroup']/span");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //fill custom group title
     $this->click("title");
@@ -213,7 +213,7 @@ class WebTest_Import_CustomDataTest extends ImportCiviSeleniumTestCase {
 
     // create another custom field - Integer Radio
     $this->click("//a[@id='newCustomField']/span");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("data_type[0]");
     $this->select("data_type[0]", "value=1");
     $this->click("//option[@value='1']");
@@ -244,7 +244,7 @@ class WebTest_Import_CustomDataTest extends ImportCiviSeleniumTestCase {
 
     //clicking save
     $this->click("_qf_Field_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Is custom field created
     $this->assertTrue($this->isTextPresent("Your custom field '$radioFieldLabel' has been saved."));
@@ -284,7 +284,7 @@ class WebTest_Import_CustomDataTest extends ImportCiviSeleniumTestCase {
 
     // clicking save
     $this->click('_qf_Field_next-bottom');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("Your custom field '{$multiSelectLabel}' has been saved."));
     $multiSelectFieldId = explode('&id=', $this->getAttribute("xpath=//div[@id='field_page']//table/tbody//tr/td/span[text()='$multiSelectLabel']/../../td[8]/span/a@href"));
     $multiSelectFieldId = $multiSelectFieldId[1];
@@ -308,7 +308,7 @@ class WebTest_Import_CustomDataTest extends ImportCiviSeleniumTestCase {
 
     // clicking save
     $this->click('_qf_Field_next-bottom');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent("Your custom field '{$contactReferenceLabel}' has been saved."));
     $contactReferenceFieldId = explode('&id=', $this->getAttribute("xpath=//div[@id='field_page']//table/tbody//tr/td/span[text()='$contactReferenceLabel']/../../td[8]/span/a@href"));

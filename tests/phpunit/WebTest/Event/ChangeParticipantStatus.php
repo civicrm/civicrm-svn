@@ -156,7 +156,7 @@ class WebTest_Event_ChangeParticipantStatus extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click('_qf_Participant_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is status message correct?
     $this->assertTrue($this->isTextPresent("Event registration for $firstName Anderson has been added"),

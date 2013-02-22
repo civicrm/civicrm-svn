@@ -91,7 +91,7 @@ class WebTest_Import_ContactTest extends ImportCiviSeleniumTestCase {
     // Visit contacts to check updated data.
     foreach ($updateRows as $updatedRow) {
       $this->open($this->sboxPath . "civicrm/contact/view?reset=1&cid={$updatedRow['contact_id']}");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
 
       $displayName = "{$updatedRow['first_name']} {$updatedRow['last_name']}";
       $this->assertTrue($this->isTextPresent("$displayName"), "Contact did not update!");
@@ -123,7 +123,7 @@ class WebTest_Import_ContactTest extends ImportCiviSeleniumTestCase {
     // Visit contacts to check filled data.
     foreach ($fillRows as $cid => $fillRow) {
       $this->open($this->sboxPath . "civicrm/contact/view?reset=1&cid={$fillRow['contact_id']}");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
 
       // Check old display name.
       $displayName = "{$updateRows[$cid]['first_name']} {$updateRows[$cid]['last_name']}";
@@ -181,7 +181,7 @@ class WebTest_Import_ContactTest extends ImportCiviSeleniumTestCase {
     foreach ($updateRows as $updatedRow) {
       $organizationName = $updatedRow['organization_name'];
       $this->open($this->sboxPath . "civicrm/contact/view?reset=1&cid={$updatedRow['contact_id']}");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
 
       $this->assertTrue($this->isTextPresent("$organizationName"), "Contact did not update!");
     }
@@ -208,7 +208,7 @@ class WebTest_Import_ContactTest extends ImportCiviSeleniumTestCase {
     // Visit contacts to check filled data.
     foreach ($fillRows as $cid => $fillRow) {
       $this->open($this->sboxPath . "civicrm/contact/view?reset=1&cid={$fillRow['contact_id']}");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
 
       // Check old Organization name.
       $organizationName = $updateRows[$cid]['organization_name'];
@@ -265,7 +265,7 @@ class WebTest_Import_ContactTest extends ImportCiviSeleniumTestCase {
     foreach ($updateRows as $updatedRow) {
       $householdName = $updatedRow['household_name'];
       $this->open($this->sboxPath . "civicrm/contact/view?reset=1&cid={$updatedRow['contact_id']}");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
 
       $this->assertTrue($this->isTextPresent("$householdName"), "Contact did not update!");
     }
@@ -292,7 +292,7 @@ class WebTest_Import_ContactTest extends ImportCiviSeleniumTestCase {
     // Visit contacts to check filled data.
     foreach ($fillRows as $cid => $fillRow) {
       $this->open($this->sboxPath . "civicrm/contact/view?reset=1&cid={$fillRow['contact_id']}");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
 
       // Check old Household name.
       $householdName = $updateRows[$cid]['household_name'];

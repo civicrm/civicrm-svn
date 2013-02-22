@@ -69,7 +69,7 @@ class WebTest_Contact_ContactTagTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Tag_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is status message correct?
     $this->assertTrue($this->isTextPresent("The tag '$tagName' has been saved."));
@@ -124,7 +124,7 @@ class WebTest_Contact_ContactTagTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Tag_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is status message correct?
     $this->assertTrue($this->isTextPresent("The tag '$tagSetName' has been saved."));
@@ -174,7 +174,7 @@ class WebTest_Contact_ContactTagTest extends CiviSeleniumTestCase {
 
     // Visit contact summary page.
     $this->click("css=div.ac_results-inner li");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("tagset1, tagset2"));
   }
 }

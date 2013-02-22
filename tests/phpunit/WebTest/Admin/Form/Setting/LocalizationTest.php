@@ -40,7 +40,7 @@ class WebTest_Admin_Form_Setting_LocalizationTest extends CiviSeleniumTestCase {
     $this->webtestLogin();
     $this->open($this->sboxPath . "civicrm/admin/setting/localization?reset=1");
 
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->addSelection("countryLimit-t", "label=United States");
     $this->click("//select[@id='countryLimit-t']/option");
     $this->click("//input[@name='remove' and @value='<< Remove' and @type='button' and @onclick=\"QFAMS.moveSelection('countryLimit', this.form.elements['countryLimit-f[]'], this.form.elements['countryLimit-t[]'], this.form.elements['countryLimit[]'], 'remove', 'none'); return false;\"]");
@@ -53,7 +53,7 @@ class WebTest_Admin_Form_Setting_LocalizationTest extends CiviSeleniumTestCase {
     $this->addSelection("countryLimit-f", "label=Canada");
     $this->click("//input[@name='add' and @value='Add >>' and @type='button' and @onclick=\"QFAMS.moveSelection('countryLimit', this.form.elements['countryLimit-f[]'], this.form.elements['countryLimit-t[]'], this.form.elements['countryLimit[]'], 'add', 'none'); return false;\"]");
     $this->click("_qf_Localization_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     try {
       $this->assertFalse($this->isTextPresent("Your changes have been saved."));
     }

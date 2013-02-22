@@ -72,7 +72,7 @@ class WebTest_Mailing_AddNewMailingComponentTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Component_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is status message correct.
     $this->assertTrue($this->isTextPresent("The mailing component '$componentName' has been saved."));
@@ -125,7 +125,7 @@ class WebTest_Mailing_AddNewMailingComponentTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Component_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is status message correct.
     $this->assertTrue($this->isTextPresent("The mailing component '$componentName' has been saved."));
@@ -178,7 +178,7 @@ class WebTest_Mailing_AddNewMailingComponentTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Component_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is status message correct.
     $this->assertTrue($this->isTextPresent("The mailing component '$componentName' has been saved."));

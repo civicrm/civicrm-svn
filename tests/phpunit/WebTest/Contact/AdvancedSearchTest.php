@@ -45,7 +45,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
     // page contents loaded and you can continue your test execution.
     $this->webtestLogin();
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //------- first create new group and tag -----
 
@@ -68,7 +68,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("_qf_GroupContact_next");
     $this->select("group_id", "$groupName");
     $this->click("_qf_GroupContact_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // go to tag tab and add to new tag
     $this->click("css=li#tab_tag a");
@@ -94,7 +94,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $this->type("check_number", "chqNo$firstName");
     $this->type("trxn_id", "trid$firstName");
     $this->click("_qf_Participant_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("Event registration for $firstName adv$firstName has been added"));
 
     // go to pledge tab and add pledge
@@ -107,7 +107,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $this->type("frequency_interval", "1");
     $this->select("frequency_unit", "month(s)");
     $this->click("_qf_Pledge_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent("Pledge has been recorded and the payment schedule has been created."));
 
@@ -122,7 +122,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $this->select("membership_type_id[1]", "Student");
     $this->type("source", "membership source$firstName");
     $this->click("_qf_Membership_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
   
     $this->assertTrue($this->isTextPresent("Student membership for $firstName adv$firstName has been added"));
 
@@ -137,7 +137,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     $this->webtestFillDate("start_date", "-1 day");
     $this->webtestFillDate("end_date", "+1 day");
     $this->click("details-save");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("New relationship created."));
 
     //-------------- advance search --------------
@@ -209,7 +209,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     sleep(2);
     $this->check("xpath=//div[@id='Activity']//div/label[text()='Tell a Friend']/../input");
     $this->click("_qf_Advanced_refresh");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $count = explode(" ", trim($this->getText("xpath=//div[@id='search-status']/table/tbody/tr/td")));
     $count = $count[0];
     $this->assertTrue(is_numeric($count), "The total count of search results not found");
@@ -231,7 +231,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
         
         //go to next page
         $this->click("xpath=//div[@class='crm-search-results']/div[@class='crm-pager']/span[@class='crm-pager-nav']/a[@title='next page']");
-        $this->waitForPageToLoad("30000");
+        $this->waitForPageToLoad($this->getTimeoutMsec());
         $j = $j + $subTotal;
       }
       
@@ -248,7 +248,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
   function submitSearch($firstName) {
 
     $this->click("_qf_Advanced_refresh");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     // verify unique name
     $this->verifyText("xpath=//div[@class='crm-search-results']/table/tbody/tr/td[3]/a", preg_quote("adv$firstName, $firstName"));
     // should give 1 result only as we are searching with unique name
@@ -441,7 +441,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
     // with most of values to required to search
     $Subtype = "Student";
     $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Contact_cancel");
 
     // --- fill few values in Contact Detail block
@@ -501,7 +501,7 @@ class WebTest_Contact_AdvancedSearchTest extends CiviSeleniumTestCase {
 
     // save contact
     $this->click("_qf_Contact_upload_view");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("$firstName adv$firstName"));
   }
 }

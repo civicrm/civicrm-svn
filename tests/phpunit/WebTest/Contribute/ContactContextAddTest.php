@@ -152,7 +152,7 @@ class WebTest_Contribute_ContactContextAddTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Contribution_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     sleep(5);
     // Is status message correct?
     $this->assertTrue($this->isTextPresent("The contribution record has been saved"));

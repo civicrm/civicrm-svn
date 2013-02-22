@@ -93,10 +93,10 @@ class WebTest_Contribute_VerifySSLContributionTest extends CiviSeleniumTestCase 
 
       // enable verify ssl
       $this->open($this->sboxPath . "civicrm/admin/setting/url?reset=1");
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->click("id=CIVICRM_QFID_1_verifySSL");
       $this->click("id=_qf_Url_next-bottom");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
 
       $this->initialized = TRUE;
     }
@@ -123,12 +123,12 @@ class WebTest_Contribute_VerifySSLContributionTest extends CiviSeleniumTestCase 
 
     // submit contribution
     $this->click("_qf_Main_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
 
     // confirm contribution
     $this->click("_qf_Confirm_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertFalse($this->isTextPresent("Payment Processor Error message"), "Payment processor returned error message");
   }
 }

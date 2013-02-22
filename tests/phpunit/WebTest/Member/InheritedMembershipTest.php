@@ -47,12 +47,12 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase {
     $this->type('organization_name', "Organization $title");
     $this->type('email_1_email', "$title@org.com");
     $this->click('_qf_Contact_upload_view');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("Organization $title has been created."));
 
     // Go directly to the URL
     $this->open($this->sboxPath . 'civicrm/admin/member/membershipType?reset=1&action=browse');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click('link=Add Membership Type');
     $this->waitForElementPresent('_qf_MembershipType_cancel-bottom');
@@ -88,7 +88,7 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase {
     $this->type('organization_name', "Organization $title1");
     $this->type('email_1_email', "$title1@org.com");
     $this->click('_qf_Contact_upload_view');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // click through to the membership view screen
     $this->click('css=li#tab_member a');
@@ -108,7 +108,7 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click('_qf_Membership_upload');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // page was loaded
     $this->waitForTextPresent($sourceText);
@@ -152,7 +152,7 @@ class WebTest_Member_InheritedMembershipTest extends CiviSeleniumTestCase {
     $this->click('css=li#tab_rel a');
     $this->waitForElementPresent('css=div.action-link');
     $this->click("//div[@class='crm-container-snippet']/div/div[1]/div[1]/a/span");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click('relationship_type_id');
     $this->select('relationship_type_id', 'label=Employee of');
 

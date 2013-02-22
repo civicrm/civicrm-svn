@@ -51,7 +51,7 @@ class WebTest_Member_BatchUpdateViaProfileTest extends CiviSeleniumTestCase {
     $lastName   = "Smith_" . substr(sha1(rand()), 0, 7);
     $Name1      = $lastName . ', ' . $firstName1;
     $this->webtestAddContact($firstName1, $lastName, "$firstName1.$lastName@example.com");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Add membership for this individual
     $this->_addMembership($memTypeParams);
@@ -80,7 +80,7 @@ class WebTest_Member_BatchUpdateViaProfileTest extends CiviSeleniumTestCase {
     $firstName2 = "John_" . substr(sha1(rand()), 0, 7);
     $Name2 = $lastName . ', ' . $firstName2;
     $this->webtestAddContact($firstName2, $lastName, "$firstName2.$lastName@example.com");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Add membership for this individual
     $this->_addMembership($memTypeParams);
@@ -198,7 +198,7 @@ class WebTest_Member_BatchUpdateViaProfileTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Membership_upload");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // page was loaded
     $this->waitForTextPresent($sourceText);
@@ -208,7 +208,7 @@ class WebTest_Member_BatchUpdateViaProfileTest extends CiviSeleniumTestCase {
     // Go directly to the URL of the screen that you will be testing (New Profile).
     $this->open($this->sboxPath . "civicrm/admin/uf/group?reset=1");
 
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click('link=Add Profile');
 
     // Add membership custom data field to profile
@@ -226,7 +226,7 @@ class WebTest_Member_BatchUpdateViaProfileTest extends CiviSeleniumTestCase {
 
     // Clicking save and new
     $this->click('_qf_Field_next_new-bottom');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("Your CiviCRM Profile Field '{$customDataParams[0]}' has been saved to '{$profileTitle}'."));
 
     // Add membership status field to profile - CRM-8618
@@ -236,7 +236,7 @@ class WebTest_Member_BatchUpdateViaProfileTest extends CiviSeleniumTestCase {
     $this->click('label');
     // Clicking save
     $this->click('_qf_Field_next-bottom');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("Your CiviCRM Profile Field 'Membership Status' has been saved to '{$profileTitle}'."));
   }
 
@@ -247,7 +247,7 @@ class WebTest_Member_BatchUpdateViaProfileTest extends CiviSeleniumTestCase {
 
     //add new custom data
     $this->click("//a[@id='newCustomDataGroup']/span");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //fill custom group title
     $this->click("title");
@@ -277,7 +277,7 @@ class WebTest_Member_BatchUpdateViaProfileTest extends CiviSeleniumTestCase {
 
     //clicking save
     $this->click('_qf_Field_next');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Is custom field created
     $this->assertTrue($this->isTextPresent("Your custom field '$textFieldLabel' has been saved."));

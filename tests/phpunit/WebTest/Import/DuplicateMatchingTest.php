@@ -67,7 +67,7 @@ class WebTest_Import_DuplicateMatchingTest extends ImportCiviSeleniumTestCase {
 
     // Clicking save.
     $this->click('_qf_Contact_upload_view');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertElementContainsText('crm-notification-container', "Contact Saved");
 
     // Reset Individual strict dedupe rule for contact email (default)
@@ -136,7 +136,7 @@ class WebTest_Import_DuplicateMatchingTest extends ImportCiviSeleniumTestCase {
 
     foreach ($importedContactIds as $cid) {
       $this->open($this->sboxPath . "civicrm/contact/view?reset=1&cid={$cid}");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
 
       // Check old display name.
       $displayName = "{$updateRows[$cid]['first_name']} {$updateRows[$cid]['last_name']}";
@@ -183,7 +183,7 @@ class WebTest_Import_DuplicateMatchingTest extends ImportCiviSeleniumTestCase {
 
     // Clicking save.
     $this->click('_qf_Contact_upload_view');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Reset Organization strict dedupe rule for  Organization name
     // and Organization email (default)
@@ -245,7 +245,7 @@ class WebTest_Import_DuplicateMatchingTest extends ImportCiviSeleniumTestCase {
 
     foreach ($importedContactIds as $cid) {
       $this->open($this->sboxPath . "civicrm/contact/view?reset=1&cid={$cid}");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
 
       // Check old Organization name.
       $organizationName = $updateRows[$cid]['organization_name'];
@@ -289,13 +289,13 @@ class WebTest_Import_DuplicateMatchingTest extends ImportCiviSeleniumTestCase {
 
     // Clicking save.
     $this->click('_qf_Contact_upload_view');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Reset Household strict dedupe rule for Household name
     // and Household email (default)
     $this->webtestStrictDedupeRuleDefault('Household');
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Store household contact value in array
     $householdFields = array(
@@ -353,7 +353,7 @@ class WebTest_Import_DuplicateMatchingTest extends ImportCiviSeleniumTestCase {
 
     foreach ($importedContactIds as $cid) {
       $this->open($this->sboxPath . "civicrm/contact/view?reset=1&cid={$cid}");
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
 
       // Check old Household name.
       $householdName = $updateRows[$cid]['household_name'];

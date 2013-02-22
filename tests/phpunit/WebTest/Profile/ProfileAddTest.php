@@ -49,7 +49,7 @@ class WebTest_Profile_ProfileAddTest extends CiviSeleniumTestCase {
     // testing (Add new profile ).
     $this->open($this->sboxPath . 'civicrm/admin/uf/group?reset=1');
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click('newCiviCRMProfile-top');
 
@@ -110,7 +110,7 @@ class WebTest_Profile_ProfileAddTest extends CiviSeleniumTestCase {
 
     //click on save
     $this->click('_qf_Group_next');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //check for  profile create
     $this->assertTrue($this->isTextPresent("Your CiviCRM Profile '$profileTitle' has been added. You can add fields to this profile now"));
@@ -124,7 +124,7 @@ class WebTest_Profile_ProfileAddTest extends CiviSeleniumTestCase {
 
     //click on save
     $this->click('_qf_Field_next');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // delete the profile
     $this->open($this->sboxPath . 'civicrm/admin/uf/group?reset=1');
@@ -132,7 +132,7 @@ class WebTest_Profile_ProfileAddTest extends CiviSeleniumTestCase {
   }
 
   function _testdeleteProfile($profileTitle) {
-    //$this->waitForPageToLoad('30000');
+    //$this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("//div[@id='user-profiles']/div/div/table/tbody//tr/td[1]/span[text() = '$profileTitle']/../following-sibling::td[4]/span[2][text()='more']/ul/li[4]/a[text()='Delete']");
     $this->click("//div[@id='user-profiles']/div/div/table/tbody//tr/td[1]/span[text() = '$profileTitle']/../following-sibling::td[4]/span[2][text()='more']/ul/li[4]/a[text()='Delete']");
 

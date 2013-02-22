@@ -57,7 +57,7 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
    $this->type("sort_name", "$lastName, $firstName");
    $this->click("_qf_Search_refresh");
 
-   $this->waitForPageToLoad('30000');
+   $this->waitForPageToLoad($this->getTimeoutMsec());
    $contriIDOff = explode('&', $this->getAttribute("xpath=//div[@id='contributionSearch']/table/tbody/tr[1]/td[11]/span/a@href"));
    if (!empty($contriIDOff)) {
      $contriIDOff = substr($contriIDOff[1], (strrpos($contriIDOff[1], '=') + 1));
@@ -67,7 +67,7 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
    $this->waitForElementPresent("total_amount");
    $this->type("total_amount", "90");
    $this->click('_qf_Contribution_upload');
-   $this->waitForPageToLoad("30000");
+   $this->waitForPageToLoad($this->getTimeoutMsec());
 
    // Is status message correct?
    $this->assertTrue($this->isTextPresent("The contribution record has been saved."), "Status message didn't show up after saving!");
@@ -113,12 +113,12 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
    //Offline Pay Later Contribution
    $this->_testOfflineContribution($firstName, $lastName, $email, $amount, "Pending");
    $this->click("xpath=//div[@id='Contributions']//table/tbody/tr[1]/td[8]/span/a[text()='Edit']");
-   $this->waitForPageToLoad("30000");
+   $this->waitForPageToLoad($this->getTimeoutMsec());
    $elements = $this->parseURL();
    $contId = $elements['queryString']['id'];
    $this->select("contribution_status_id", "label=Completed");
    $this->click("_qf_Contribution_upload");
-   $this->waitForPageToLoad("30000");
+   $this->waitForPageToLoad($this->getTimeoutMsec());
    //Assertions
    $search = array('id' => $contId);
    $compare = array('contribution_status_id' => 1);
@@ -158,7 +158,7 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
    $this->select("account_relationship", "label=Cost of Sales Account is");
    $this->select("financial_account_id", "label=$from");
    $this->click("_qf_FinancialTypeAccount_next_new-botttom");
-   $this->waitForPageToLoad("30000");
+   $this->waitForPageToLoad($this->getTimeoutMsec());
    $this->select("account_relationship", "label=Premiums Inventory Account is");
    $this->select("financial_account_id", "label=$to");
    $this->click("_qf_FinancialTypeAccount_next-botttom");
@@ -182,7 +182,7 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
 
    // add contribution with premium
    $this->open($this->sboxPath . "civicrm/contribute/add?reset=1&action=add&context=standalone");
-   $this->waitForPageToLoad("30000");
+   $this->waitForPageToLoad($this->getTimeoutMsec());
 
    // create new contact using dialog
    $this->webtestNewDialogContact($firstName, $lastName, $email);
@@ -196,7 +196,7 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
    $this->select('product_name_0', "label=$premiumName ( $sku )");
    // Clicking save.
    $this->click("_qf_Contribution_upload");
-   $this->waitForPageToLoad("30000");
+   $this->waitForPageToLoad($this->getTimeoutMsec());
    // Is status message correct?
    $this->assertTrue($this->isTextPresent("The contribution record has been saved."), "Status message didn't show up after saving!");
    // verify if Membership is created
@@ -210,7 +210,7 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
    $this->select('product_name_0', "label=$premiumName2 ( $sku2 )");
    // Clicking save.
    $this->click("_qf_Contribution_upload");
-   $this->waitForPageToLoad("30000");
+   $this->waitForPageToLoad($this->getTimeoutMsec());
 
    //Assertions
    $actualAmount = $this->_getPremiumActualCost($contId, $to, $from, $cost2, "'civicrm_contribution'");
@@ -245,7 +245,7 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
    $this->select("account_relationship", "label=Cost of Sales Account is");
    $this->select("financial_account_id", "label=$from");
    $this->click("_qf_FinancialTypeAccount_next_new-botttom");
-   $this->waitForPageToLoad("30000");
+   $this->waitForPageToLoad($this->getTimeoutMsec());
    $this->select("account_relationship", "label=Premiums Inventory Account is");
    $this->select("financial_account_id", "label=$to");
    $this->click("_qf_FinancialTypeAccount_next-botttom");
@@ -260,7 +260,7 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
 
    // add contribution with premium
    $this->open($this->sboxPath . "civicrm/contribute/add?reset=1&action=add&context=standalone");
-   $this->waitForPageToLoad("30000");
+   $this->waitForPageToLoad($this->getTimeoutMsec());
 
    // create new contact using dialog
    $this->webtestNewDialogContact($firstName, $lastName, $email);
@@ -274,7 +274,7 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
    $this->select('product_name_0', "label=$premiumName ( $sku )");
    // Clicking save.
    $this->click("_qf_Contribution_upload");
-   $this->waitForPageToLoad("30000");
+   $this->waitForPageToLoad($this->getTimeoutMsec());
    // Is status message correct?
    $this->assertTrue($this->isTextPresent("The contribution record has been saved."), "Status message didn't show up after saving!");
    // verify if Membership is created
@@ -288,7 +288,7 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
    $this->select('product_name_0', "value=0");
    // Clicking save.
    $this->click("_qf_Contribution_upload");
-   $this->waitForPageToLoad("30000");
+   $this->waitForPageToLoad($this->getTimeoutMsec());
 
    //Assertions
    $actualAmount = $this->_getPremiumActualCost($contId, $from, $to, NULL, "'civicrm_contribution'");
@@ -317,13 +317,13 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
    $this->addPaymentInstrument($label, $to);
    $this->_testOfflineContribution($firstName, $lastName, $email, $amount);
    $this->click("xpath=//div[@id='Contributions']//table/tbody/tr[1]/td[8]/span/a[text()='Edit']");
-   $this->waitForPageToLoad("30000");
+   $this->waitForPageToLoad($this->getTimeoutMsec());
    $elements = $this->parseURL();
    $contId = $elements['queryString']['id'];
    //change payment processor to newly created value
    $this->select("payment_instrument_id", "label=$label");
    $this->click("_qf_Contribution_upload");
-   $this->waitForPageToLoad("30000");
+   $this->waitForPageToLoad($this->getTimeoutMsec());
    //Assertions
    $totalAmount = $this->_getPremiumActualCost($contId, 'Payment Processor Account', 'Accounts Receivable');
    $this->assertEquals($totalAmount, $amount, "Verify amount for newly inserted values");
@@ -347,13 +347,13 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
    $amount = 100.00;
    $this->_testOfflineContribution($firstName, $lastName, $email, $amount);
    $this->click("xpath=//div[@id='Contributions']//table/tbody/tr[1]/td[8]/span/a[text()='Edit']");
-   $this->waitForPageToLoad("30000");
+   $this->waitForPageToLoad($this->getTimeoutMsec());
    //Contribution status
    $this->select("contribution_status_id", "label=Refunded");
    $elements = $this->parseURL();
    $contId = $elements['queryString']['id'];
    $this->click("_qf_Contribution_upload");
-   $this->waitForPageToLoad("30000");
+   $this->waitForPageToLoad($this->getTimeoutMsec());
 
    //Assertions
    $lineItem = key(CRM_Price_BAO_LineItem::getLineItems($contId, 'contribution'));
@@ -385,13 +385,13 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
    $amount = 100.00;
    $this->_testOfflineContribution($firstName, $lastName, $email, $amount, "Pending");
    $this->click("xpath=//div[@id='Contributions']//table/tbody/tr[1]/td[8]/span/a[text()='Edit']");
-   $this->waitForPageToLoad("30000");
+   $this->waitForPageToLoad($this->getTimeoutMsec());
    //Contribution status
    $this->select("contribution_status_id", "label=Cancelled");
    $elements = $this->parseURL();
    $contId = $elements['queryString']['id'];
    $this->click("_qf_Contribution_upload");
-   $this->waitForPageToLoad("30000");
+   $this->waitForPageToLoad($this->getTimeoutMsec());
 
    //Assertions
    $search = array('id' => $contId);
@@ -429,13 +429,13 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
    $amount = 100.00;
    $this->_testOfflineContribution($firstName, $lastName, $email, $amount);
    $this->click("xpath=//div[@id='Contributions']//table/tbody/tr[1]/td[8]/span/a[text()='Edit']");
-   $this->waitForPageToLoad("30000");
+   $this->waitForPageToLoad($this->getTimeoutMsec());
    //Contribution status
    $this->select("financial_type_id", "value=3");
    $elements = $this->parseURL();
    $contId = $elements['queryString']['id'];
    $this->click("_qf_Contribution_upload");
-   $this->waitForPageToLoad("30000");
+   $this->waitForPageToLoad($this->getTimeoutMsec());
 
    //Assertions
    $search = array( 'id' => $contId );
@@ -552,7 +552,7 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
 
    // Clicking save.
    $this->click("_qf_Contribution_upload");
-   $this->waitForPageToLoad("30000");
+   $this->waitForPageToLoad($this->getTimeoutMsec());
 
    // Is status message correct?
    $this->assertTrue($this->isTextPresent("The contribution record has been saved."), "Status message didn't show up after saving!");
@@ -573,7 +573,7 @@ class WebTest_Contribute_UpdateContributionTest extends CiviSeleniumTestCase {
      $this->verifyText("xpath=id('ContributionView')/div[2]/table[1]/tbody//tr/td[1][text()='$label']/../td[2]", preg_quote($value));
    }
    $this->click("_qf_ContributionView_cancel-top");
-   $this->waitForPageToLoad("30000");
+   $this->waitForPageToLoad($this->getTimeoutMsec());
    sleep(4);
  }
 }

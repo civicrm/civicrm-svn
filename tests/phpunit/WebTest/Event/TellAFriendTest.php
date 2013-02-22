@@ -82,7 +82,7 @@ class WebTest_Event_TellAFriendTest extends CiviSeleniumTestCase {
     $firstName = substr(sha1(rand()), 0, 7);
     $this->type('email-Primary', "$firstName@Anderson.com");
     $this->click('_qf_Register_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("css=div.crm-event-thankyou-form-block div#tell-a-friend a");
     $this->waitForElementPresent('_qf_Form_cancel');
 
@@ -108,7 +108,7 @@ class WebTest_Event_TellAFriendTest extends CiviSeleniumTestCase {
     $this->type('friend_3_email', "$firstName3@$lastName3.com");
 
     $this->click('_qf_Form_submit');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //to wait for thank you message to appear
     sleep(5);
@@ -123,25 +123,25 @@ class WebTest_Event_TellAFriendTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('_qf_Basic_refresh ');
     $this->type('sort_name', $firstName1);
     $this->click('_qf_Basic_refresh ');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("xpath=//div[@class='crm-search-results']/table/tbody/tr/td[11]/span/a[text()='View']");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->open($this->sboxPath . "civicrm/contact/search?reset=1");
     $this->waitForElementPresent('_qf_Basic_refresh ');
     $this->type('sort_name', $firstName2);
     $this->click('_qf_Basic_refresh ');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("xpath=//div[@class='crm-search-results']/table/tbody/tr/td[11]/span/a[text()='View']");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->open($this->sboxPath . "civicrm/contact/search?reset=1");
     $this->waitForElementPresent('_qf_Basic_refresh ');
     $this->type('sort_name', $firstName3);
     $this->click('_qf_Basic_refresh ');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("xpath=//div[@class='crm-search-results']/table/tbody/tr/td[11]/span/a[text()='View']");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->open($this->sboxPath . "civicrm/contact/search?reset=1");
     $this->waitForElementPresent('_qf_Basic_refresh ');
@@ -208,7 +208,7 @@ class WebTest_Event_TellAFriendTest extends CiviSeleniumTestCase {
 
   function _testAddLocation($streetAddress) {
     // Wait for Location tab form to load
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Location_upload-bottom");
 
     // Fill in address fields
@@ -222,7 +222,7 @@ class WebTest_Event_TellAFriendTest extends CiviSeleniumTestCase {
     $this->click("_qf_Location_upload-bottom");
 
     // Wait for "saved" status msg
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForTextPresent("'Location' information has been saved.");
   }
 
@@ -246,7 +246,7 @@ class WebTest_Event_TellAFriendTest extends CiviSeleniumTestCase {
     $this->type("confirm_from_email", "jane.doe@example.org");
 
     $this->click("_qf_Registration_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForTextPresent("'Registration' information has been saved.");
   }
 

@@ -78,7 +78,7 @@ class WebTest_Event_EventWaitListTest extends CiviSeleniumTestCase {
     $streetAddress = "100 Main Street";
 
     // Wait for Location tab form to load
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Location_upload-bottom");
 
     // Fill in address fields
@@ -92,7 +92,7 @@ class WebTest_Event_EventWaitListTest extends CiviSeleniumTestCase {
     $this->click("_qf_Location_upload-bottom");
 
     // Wait for "saved" status msg
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForTextPresent("'Location' information has been saved.");
 
     // Go to Fees tab
@@ -112,7 +112,7 @@ class WebTest_Event_EventWaitListTest extends CiviSeleniumTestCase {
     $this->click("_qf_Fee_upload-bottom");
 
     // Wait for "saved" status msg
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForTextPresent("'Fee' information has been saved.");
 
     // intro text for registration page
@@ -138,7 +138,7 @@ class WebTest_Event_EventWaitListTest extends CiviSeleniumTestCase {
     $this->type("confirm_from_email", "jane.doe@example.org");
 
     $this->click("_qf_Registration_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForTextPresent("'Registration' information has been saved.");
 
     $eventInfoStrings = array($eventTitle, $eventDescription, $streetAddress);
@@ -165,7 +165,7 @@ class WebTest_Event_EventWaitListTest extends CiviSeleniumTestCase {
     // start at Manage Events listing
     $this->open($this->sboxPath . "civicrm/event/manage?reset=1");
     $this->click("link=$eventTitle");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Look for Register button
     $this->waitForElementPresent("link=Register Now");
@@ -185,7 +185,7 @@ class WebTest_Event_EventWaitListTest extends CiviSeleniumTestCase {
   function _testOnlineRegistration($registerUrl, $numberRegistrations = 1, $anonymous = TRUE) {
     if ($anonymous) {
       $this->open($this->sboxPath . "civicrm/logout?reset=1");
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
     }
     $this->open($registerUrl);
 
@@ -209,19 +209,19 @@ class WebTest_Event_EventWaitListTest extends CiviSeleniumTestCase {
 
     if ($numberRegistrations > 1) {
       for ($i = 1; $i <= $numberRegistrations; $i++) {
-        $this->waitForPageToLoad('30000');
+        $this->waitForPageToLoad($this->getTimeoutMsec());
         // Look for continue button
         $this->waitForElementPresent("_qf_Participant_{$i}_next");
         $this->type("email-Primary", "smith" . substr(sha1(rand()), 0, 7) . "@example.org");
         $this->click("_qf_Participant_{$i}_next");
       }
     }
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
     $confirmStrings = array("Event Fee(s)", "Billing Name and Address", "Credit Card Information");
     $this->assertStringsPresent($confirmStrings);
     $this->click("_qf_Confirm_next-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $thankStrings = array("Thank You for Registering", "Event Total", "Transaction Date");
     $this->assertStringsPresent($thankStrings);
 

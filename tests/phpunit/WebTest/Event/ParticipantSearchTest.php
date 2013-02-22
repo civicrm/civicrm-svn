@@ -54,7 +54,7 @@ class WebTest_Event_ParticipantSearchTest extends CiviSeleniumTestCase {
 
     // visit event search page
     $this->open($this->sboxPath . "civicrm/event/search?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $stringsToCheck = array(
       'Participant Name',
@@ -80,7 +80,7 @@ class WebTest_Event_ParticipantSearchTest extends CiviSeleniumTestCase {
 
     // visit event search page
     $this->open($this->sboxPath . "civicrm/event/search?reset=1&force=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // assume generated DB
     // there are participants
@@ -94,13 +94,13 @@ class WebTest_Event_ParticipantSearchTest extends CiviSeleniumTestCase {
 
     // visit event search page
     $this->open($this->sboxPath . "civicrm/event/search?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $crypticName = "foobardoogoo_" . md5(time());
     $this->type("sort_name", $crypticName);
 
     $this->click("_qf_Search_refresh");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $stringsToCheck = array(
       'No matches found for',
@@ -118,14 +118,14 @@ class WebTest_Event_ParticipantSearchTest extends CiviSeleniumTestCase {
 
     // visit event search page
     $this->open($this->sboxPath . "civicrm/event/search?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $eventName = "Fall Fundraiser Dinner";
     $this->type("event_name", $eventName);
     $this->type("event_id", 1);
 
     $this->click("_qf_Search_refresh");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $stringsToCheck = array(
       "Event = $eventName",
@@ -143,14 +143,14 @@ class WebTest_Event_ParticipantSearchTest extends CiviSeleniumTestCase {
 
     // visit event search page
     $this->open($this->sboxPath . "civicrm/event/search?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->select('event_relative', "label=Choose Date Range");
     $this->webtestFillDate('event_start_date_low', '-2 year');
     $this->webtestFillDate('event_end_date_high', '+1 year');
 
     $this->click("_qf_Search_refresh");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $stringsToCheck = array(
       "Start Date - greater than or equal to",
@@ -170,7 +170,7 @@ class WebTest_Event_ParticipantSearchTest extends CiviSeleniumTestCase {
 
     // visit event search page
     $this->open($this->sboxPath . "civicrm/event/search?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->select('event_relative', "label=Choose Date Range");
     $this->webtestFillDate('event_start_date_low', '-2 year');
@@ -182,7 +182,7 @@ class WebTest_Event_ParticipantSearchTest extends CiviSeleniumTestCase {
 
 
     $this->click("_qf_Search_refresh");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $stringsToCheck = array(
       "Start Date - greater than or equal to",
@@ -203,12 +203,12 @@ class WebTest_Event_ParticipantSearchTest extends CiviSeleniumTestCase {
 
     // visit event search page
     $this->open($this->sboxPath . "civicrm/event/search?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click("xpath=//div[@id='Food_Preference']/div[2]/table/tbody/tr/td[2]//label[contains(text(),'Chicken Combo')]");
 
     $this->click("_qf_Search_refresh");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // note since this is generated data
     // we are not sure if someone has this selection, so
@@ -219,7 +219,7 @@ class WebTest_Event_ParticipantSearchTest extends CiviSeleniumTestCase {
 
     $this->click("xpath=//div[@id='Food_Preference']/div[2]/table/tbody/tr/td[2]//label[contains(text(),'Salmon Stew')]");
     $this->click("_qf_Search_refresh");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $stringsToCheck = array("Soup Selection = Salmon Stew");
 
@@ -233,7 +233,7 @@ class WebTest_Event_ParticipantSearchTest extends CiviSeleniumTestCase {
 
     // visit event search page
     $this->open($this->sboxPath . "civicrm/event/search?reset=1&force=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // assume generated DB
     // there are participants
@@ -262,7 +262,7 @@ class WebTest_Event_ParticipantSearchTest extends CiviSeleniumTestCase {
 
     // visit event search page
     $this->open($this->sboxPath . "civicrm/event/search?reset=1&force=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // assume generated DB
     // there are participants

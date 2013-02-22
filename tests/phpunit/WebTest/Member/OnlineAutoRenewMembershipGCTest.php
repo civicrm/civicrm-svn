@@ -49,7 +49,7 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
     $this->type('email-5', "{$lastName}@example.com");
 
     $this->click("_qf_Main_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Confirm_next_checkout");
 
     $text = 'I want this membership to be renewed automatically every 1 year(s).';
@@ -68,7 +68,7 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
 
     $this->open($this->sboxPath);
     $this->webtestLogin();
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //now do the test membership signup.
     $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&action=preview&id={$pageId}");
@@ -84,7 +84,7 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
     $this->type('email-5', "{$lastName}@example.com");
 
     $this->click("_qf_Main_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Confirm_next_checkout");
 
     $text = 'I want this membership to be renewed automatically every 1 year(s).';
@@ -112,7 +112,7 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
 
       // -- start updating membership types
       $this->open($this->sboxPath . "civicrm/admin/member/membershipType/add?action=update&id=1&reset=1");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       
       $this->waitForElementPresent("xpath=//div[@id='membership_type_form']//table/tbody/tr[6]/td/label[contains(text(), 'Auto-renew Option')]/../../td[2]/label[contains(text(), 'Give option, but not required')]");
       $this->click("xpath=//div[@id='membership_type_form']//table/tbody/tr[6]/td/label[contains(text(), 'Auto-renew Option')]/../../td[2]/label[contains(text(), 'Give option, but not required')]");
@@ -124,10 +124,10 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
       sleep(3);
       
       $this->click("_qf_MembershipType_upload-bottom");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
 
       $this->open($this->sboxPath . "civicrm/admin/member/membershipType/add?action=update&id=2&reset=1");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       
       $this->waitForElementPresent("xpath=//div[@id='membership_type_form']//table/tbody/tr[6]/td/label[contains(text(), 'Auto-renew Option')]/../../td[2]/label[contains(text(), 'Give option, but not required')]");
       $this->click("xpath=//div[@id='membership_type_form']//table/tbody/tr[6]/td/label[contains(text(), 'Auto-renew Option')]/../../td[2]/label[contains(text(), 'Give option, but not required')]");
@@ -139,7 +139,7 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
       sleep(3);
 
       $this->click("_qf_MembershipType_upload-bottom");
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
 
       // create contribution page with randomized title and default params
       $amountSection   = FALSE;
@@ -181,7 +181,7 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
 
       // now logout and login with admin credentials
       $this->open($this->sboxPath . "civicrm/logout?reset=1");
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
 
       //make sure we do have required permissions.
       $permissions = array("edit-1-make-online-contributions");
@@ -189,7 +189,7 @@ class WebTest_Member_OnlineAutoRenewMembershipGCTest extends CiviSeleniumTestCas
 
       // now logout and do membership test that way
       $this->open($this->sboxPath . "civicrm/logout?reset=1");
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
     }
 
     return $pageId;

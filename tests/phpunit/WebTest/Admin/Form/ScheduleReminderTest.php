@@ -73,7 +73,7 @@ class WebTest_Admin_Form_ScheduleReminderTest extends CiviSeleniumTestCase {
 
     //click on save
     $this->click('_qf_ScheduleReminders_next-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click("//div[@id='reminder']//div[@class='dataTables_wrapper']/table/tbody//tr/td[1][text()='{$title}']/../td[7]/span/a[text()='Edit']");
     $this->waitForElementPresent('_qf_ScheduleReminders_cancel-bottom');

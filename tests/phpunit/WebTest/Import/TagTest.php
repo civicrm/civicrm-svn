@@ -68,7 +68,7 @@ class WebTest_Import_TagTest extends ImportCiviSeleniumTestCase {
     $this->select('tag', "label={$tagName}");
     // click to search
     $this->click('_qf_Basic_refresh');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // count rows
     $countContacts = count($rows);
@@ -85,12 +85,12 @@ class WebTest_Import_TagTest extends ImportCiviSeleniumTestCase {
     $this->importContacts($headers, $rows, 'Individual', 'Skip', array(), $other);
 
     $this->open($this->sboxPath . 'civicrm/contact/search?reset=1');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->select('tag', "label={$tagName}");
     // click to search
     $this->click('_qf_Basic_refresh');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Counting Contact rows old rows + new rows
     $countContacts += count($rows);

@@ -43,7 +43,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("_qf_Display_next-bottom");
     $this->check("xpath=//ul[@id='contactEditBlocks']//li/span[2]/label[text()='Open ID']/../input");
     $this->click("_qf_Display_next-bottom");    
-    $this->waitForPageToLoad("30000");    
+    $this->waitForPageToLoad($this->getTimeoutMsec());    
     $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Individual");
 
     //contact details section
@@ -90,7 +90,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
 
     //check for matching contact
     $this->click("_qf_Contact_refresh_dedupe");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //address section
     $this->click("addressBlock");
@@ -164,7 +164,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertElementContainsText('crm-notification-container', "Contact Saved");
   }
@@ -177,7 +177,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("_qf_Display_next-bottom");
     $this->check("xpath=//ul[@id='contactEditBlocks']//li/span[2]/label[text()='Open ID']/../input");
     $this->click("_qf_Display_next-bottom");    
-    $this->waitForPageToLoad("30000");    
+    $this->waitForPageToLoad($this->getTimeoutMsec());    
     // Go directly to the URL of the screen that you will be testing (New Household).
     $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Household");
 
@@ -221,7 +221,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
 
     //check for duplicate contact
     $this->click("_qf_Contact_refresh_dedupe");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //address section
     $this->click("addressBlock");
@@ -271,7 +271,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertElementContainsText('crm-notification-container', "Contact Saved");
   }
@@ -284,7 +284,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent("_qf_Display_next-bottom");
     $this->check("xpath=//ul[@id='contactEditBlocks']//li/span[2]/label[text()='Open ID']/../input");
     $this->click("_qf_Display_next-bottom");    
-    $this->waitForPageToLoad("30000");    
+    $this->waitForPageToLoad($this->getTimeoutMsec());    
     // Go directly to the URL of the screen that you will be testing (New Organization).
     $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Organization");
 
@@ -327,7 +327,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
 
     //check for duplicate contact
     $this->click("_qf_Contact_refresh_dedupe");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //address section
     $this->click("addressBlock");
@@ -373,7 +373,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertElementContainsText('crm-notification-container', "Contact Saved");
   }
@@ -473,7 +473,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $name = $this->getText("xpath=//div[@class='crm-summary-display_name']");
     $this->assertTrue($this->isTextPresent("$name has been created."));
 

@@ -48,7 +48,7 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     // Go directly to the URL of the screen that you will be testing (New Custom Group).
     $this->open($this->sboxPath . "civicrm/admin/custom/group?action=add&reset=1");
 
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //fill custom group title
     $customGroupTitle = 'custom_' . substr(sha1(rand()), 0, 7);
@@ -98,14 +98,14 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
 
     //clicking save
     $this->click("_qf_Field_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Is custom field created?
     $this->assertTrue($this->isTextPresent("Your custom field '$checkboxFieldLabel' has been saved."));
 
     //create another custom field - Integer Radio
     $this->click("//a[@id='newCustomField']/span");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("data_type[0]");
     $this->select("data_type[0]", "value=1");
     $this->click("//option[@value='1']");
@@ -140,7 +140,7 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
 
     //clicking save
     $this->click("_qf_Field_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Is custom field created
     $this->assertTrue($this->isTextPresent("Your custom field '$radioFieldLabel' has been saved."));
@@ -148,7 +148,7 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     //create Individual contact
     $this->click("//ul[@id='civicrm-menu']/li[4]");
     $this->click("//div[@id='root-menu-div']/div[5]/ul/li[1]/div/a");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //expand all tabs
     $this->click("expand");
@@ -167,7 +167,7 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     $this->click("xpath=//table//tr/td/label[text()=\"$checkboxOptionLabel2\"]");
     $this->click("xpath=//table//tr/td/label[text()=\"$radioOptionLabel3\"]");
     $this->click("_qf_Contact_upload_view");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
   }
 
   function testCustomDataMoneyAdd() {
@@ -182,12 +182,12 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
     // page contents loaded and you can continue your test execution.
     $this->webtestLogin();
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Go directly to the URL of the screen that you will be testing (New Custom Group).
     $this->open($this->sboxPath . "civicrm/admin/custom/group?action=add&reset=1");
 
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //fill custom group title
     $customGroupTitle = 'custom_' . substr(sha1(rand()), 0, 7);
@@ -227,21 +227,21 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
 
     //clicking save
     $this->click("_qf_Field_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Is custom field created?
     $this->assertTrue($this->isTextPresent("Your custom field '$moneyTextFieldLabel' has been saved."));
 
     //Get the customFieldsetID
     $this->open($this->sboxPath . "civicrm/admin/custom/group?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $customFieldsetId = explode('&gid=', $this->getAttribute("xpath=//div[@id='custom_group']//table/tbody//tr/td/span[text()='$customGroupTitle']/../../td[7]/span/a@href"));
     $customFieldsetId =  $customFieldsetId[1];
 
     //create Individual contact
     $this->click("//ul[@id='civicrm-menu']/li[4]");
     $this->click("//div[@id='root-menu-div']/div[6]/ul/li[1]/div/a");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //expand all tabs
     $this->click("expand");
@@ -260,7 +260,7 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     $this->click("xpath=//table//tr/td/label[text()=\"$moneyTextFieldLabel\"]");    
     $this->type("xpath=//table//tr/td/label[text()=\"$moneyTextFieldLabel\"]/../following-sibling::td/input", "12345678.98");
     $this->click("_qf_Contact_upload_view");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //verify the money custom field value in the proper format
     $this->assertTrue($this->isElementPresent("xpath=//div[@id='custom-set-content-{$customFieldsetId}']/div/div[2]/div[2]"));
@@ -284,14 +284,14 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . "civicrm/admin/setting/misc?reset=1");
     $this->click("CIVICRM_QFID_1_logging");
     $this->click("_qf_Miscellaneous_next-top");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     //adding sleep her since enabling logging takes lot of time
     sleep(40);
     $this->waitForTextPresent("Your changes have been saved");
 
     // Create new Custom Field Set
     $this->open($this->sboxPath . 'civicrm/admin/custom/group?reset=1');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("css=#newCustomDataGroup > span");
     $this->waitForElementPresent('_qf_Group_next-bottom');
     $customFieldSet = 'Fieldset' . rand();
@@ -307,7 +307,7 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     $this->type("id=label", $customField);
     $this->select("id=data_type_0", "value=0");
     $this->click("id=_qf_Field_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("Your custom field '$customField' has been saved."));
 
     // Go directly to the URL of the screen that you will be testing (New Individual).
@@ -334,7 +334,7 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
     
     //check for matching contact
     $this->click("_qf_Contact_refresh_dedupe");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //address section
     $this->click("addressBlock");
@@ -354,25 +354,25 @@ class WebTest_Contact_CustomDataAddTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Contact_upload_view");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent("{$firstName} {$lastName} has been created."));
 
     //Update the custom field
     $this->click("css=a.edit.button");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("xpath=//table//tr/td/label[text()=\"$customField\"]");
     $value1 = "custom_1".rand();
     $this->type("xpath=//table//tr/td/label[text()=\"$customField\"]/../following-sibling::td/input",$value1);
     $this->click("_qf_Contact_upload_view-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("css=#tab_log a");
     
     //check the changed log
     $this->waitForElementPresent("xpath=//div[@id='instance_data']/div[2]/table/tbody/tr[1]/td[4]/a[contains(text(), '$firstName $lastName')]");
     $this->waitForElementPresent("xpath=//div[@id='instance_data']/div[2]/table/tbody/tr[1]/td/a[2]");
     $this->click("xpath=//div[@id='instance_data']/div[2]/table/tbody/tr[1]/td/a[2]");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isElementPresent("xpath=//form[@id='LoggingDetail']/div[2]/table/tbody/tr/td[2][contains(text(), '$value')]"));
     $this->assertTrue($this->isElementPresent("xpath=//form[@id='LoggingDetail']/div[2]/table/tbody/tr/td[3][contains(text(), '$value1')]"));
 

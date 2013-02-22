@@ -39,7 +39,7 @@ class WebTest_Generic_CheckDashboardTest extends CiviSeleniumTestCase {
     $this->webtestLogin();
 
     $this->open($this->sboxPath . "civicrm");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isElementPresent("link=Configure Your Dashboard"));
 
     // Test Activities widget enable and full screen.
@@ -99,7 +99,7 @@ class WebTest_Generic_CheckDashboardTest extends CiviSeleniumTestCase {
 
     // now add the widget
     $this->open($this->sboxPath . "civicrm");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForTextPresent("Configure Your Dashboard");
     $this->_testAddDashboardElement($widgetConfigureID, $widgetEnabledSelector, $widgetTitle);
 
@@ -112,17 +112,17 @@ class WebTest_Generic_CheckDashboardTest extends CiviSeleniumTestCase {
       // click 'Delete Activity' link
       $this->click("//table[@id='contact-activity-selector-dashlet']/tbody/tr[1]/td[9]/span//a[text()='Delete']");
     }
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Activity_next-bottom");
     $this->assertTrue($this->isTextPresent("Are you sure you want to delete"));
     $this->click("_qf_Activity_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("Selected Activity has been deleted successfully."));
     // FIXMED: Currently there's a bug, dashboard context is ignored after delete so we should already be back on home dash.
     // Issue filed: CRM-
     //  $this->assertTrue($this->isTextPresent("Configure Your Dashboard");
     $this->open($this->sboxPath . "civicrm");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForTextPresent("Configure Your Dashboard");
 
     // cleanup by removing the widget

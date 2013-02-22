@@ -73,7 +73,7 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
 
   function _testAddSet($setTitle, $usedFor, $setHelp, $financialType = NULL) {
     $this->open($this->sboxPath . 'civicrm/admin/price?reset=1&action=add');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_Set_next-bottom');
 
     // Enter Priceset fields (Title, Used For ...)
@@ -93,7 +93,7 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
     $this->assertChecked('is_active', 'Verify that Is Active checkbox is set.');
     $this->click('_qf_Set_next-bottom');
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_Field_next-bottom');
   }
 
@@ -171,7 +171,7 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
       }
       $this->select('financial_type_id', "label={$financialType}");
       $this->click('_qf_Field_next_new-bottom');
-      $this->waitForPageToLoad('30000');
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->waitForElementPresent('_qf_Field_next-bottom');
     }
   }
@@ -222,7 +222,7 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
     sleep(2);
     $this->select('financial_account_id', "label={$financialAccountTitle}");
     $this->click('_qf_FinancialTypeAccount_next');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $text = 'The financial type Account has been saved.';
     $this->assertTrue($this->isTextPresent($text), 'Missing text: ' . $text);
     return $financialType['name'];
@@ -232,12 +232,12 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
     // verify Price Set at Preview page
     // start at Manage Price Sets listing
     $this->open($this->sboxPath . 'civicrm/admin/price?reset=1');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Use the price set id ($sid) to pick the correct row
     $this->click("css=tr#row_{$sid} a[title='View and Edit Price Fields']");
     
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     // Look for Register button
     $this->waitForElementPresent('Link=Add Price Field');
     // Check for expected price set field strings
@@ -324,7 +324,7 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click('_qf_Contribution_upload');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is status message correct?
     $this->assertTrue($this->isTextPresent('The contribution record has been saved.'), "Status message didn't show up after saving!");
@@ -435,14 +435,14 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
     $this->click("xpath=//tr[@class='crm-contribution-contributionpage-amount-form-block-payment_processor']/td/label[text()='$processorName']");
     $this->select('price_set_id', 'label=' . $setTitle);
     $this->click('_qf_Amount_next-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //get Url for Live Contribution Page
     $registerUrl = $this->_testVerifyRegisterPage($contributionPageTitle);
 
     //logout
     $this->open($this->sboxPath . 'civicrm/logout?reset=1');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Open Live Contribution Page
     $this->open($this->sboxPath . $registerUrl);
@@ -482,11 +482,11 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
     $this->type('billing_postal_code-5', '94129');
     $this->click('_qf_Main_upload-bottom');
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_Confirm_next-bottom');
 
     $this->click('_qf_Confirm_next-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //login to check contribution
     $this->open($this->sboxPath);
@@ -502,11 +502,11 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
     $this->type('sort_name', "$firstName $lastName");
     $this->click('_qf_Search_refresh');
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->waitForElementPresent("xpath=//div[@id='contributionSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
     $this->click("xpath=//div[@id='contributionSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_ContributionView_cancel-bottom");
 
     //View Contribution Record
@@ -584,14 +584,14 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
     $this->click("xpath=//tr[@class='crm-contribution-contributionpage-amount-form-block-payment_processor']/td/label[text()='$processorName']");
     $this->select('price_set_id', 'label=' . $setTitle);
     $this->click('_qf_Amount_next-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //get Url for Live Contribution Page
     $registerUrl = $this->_testVerifyRegisterPage($contributionPageTitle);
 
     //logout
     $this->open($this->sboxPath . 'civicrm/logout?reset=1');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Open Live Contribution Page
     $this->open($this->sboxPath . $registerUrl);
@@ -630,11 +630,11 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
     $this->type('billing_postal_code-5', '94129');
     $this->click('_qf_Main_upload-bottom');
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_Confirm_next-bottom');
 
     $this->click('_qf_Confirm_next-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //login to check contribution
     $this->open($this->sboxPath);
@@ -650,11 +650,11 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
     $this->type('sort_name', "$firstName $lastName");
     $this->click('_qf_Search_refresh');
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->waitForElementPresent("xpath=//div[@id='contributionSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
     $this->click("xpath=//div[@id='contributionSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_ContributionView_cancel-bottom');
 
     //View Contribution Record
@@ -759,7 +759,7 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click('_qf_Contribution_upload');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Is status message correct?
     $this->assertTrue($this->isTextPresent('The contribution record has been saved.'), "Status message didn't show up after saving!");
@@ -803,7 +803,7 @@ class WebTest_Contribute_AddPricesetTest extends CiviSeleniumTestCase {
     
     // visit contact summary page
     $this->click("css=div.ac_results-inner li");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click( 'css=li#tab_contribute a' );
     $this->waitForElementPresent('link=Record Contribution (Check, Cash, EFT ...)');
    

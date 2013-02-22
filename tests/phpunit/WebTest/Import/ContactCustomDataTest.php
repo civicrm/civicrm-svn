@@ -52,7 +52,7 @@ class WebTest_Import_ContactCustomDataTest extends ImportCiviSeleniumTestCase {
     // Add New Strict Rule
     $newRuleTitle = 'IndividualStrict_' . substr(sha1(rand()), 0, 7);
     $this->open($this->sboxPath . "civicrm/contact/deduperules?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click("xpath=//div[@id='browseValues_Individual']/div[2]/a/span");
     $this->waitForElementPresent('_qf_DedupeRules_next-bottom');
@@ -62,7 +62,7 @@ class WebTest_Import_ContactCustomDataTest extends ImportCiviSeleniumTestCase {
     $this->type('weight_0', '10');
     $this->type('threshold', '10');
     $this->click('_qf_DedupeRules_next-bottom');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("The rule '{$newRuleTitle}' has been saved."));
 
     $rgId = explode('&rgid=', $this->getAttribute("xpath=//div[@id='browseValues_Individual']//table/tbody//tr/td[text()='{$newRuleTitle}']/../td[3]/span/a[text()='Use Rule']@href"));
@@ -71,7 +71,7 @@ class WebTest_Import_ContactCustomDataTest extends ImportCiviSeleniumTestCase {
     // Add Contact
     $firstName2 = 'An_' . substr(sha1(rand()), 0, 7);
     $this->webtestAddContact($firstName2, "Summerson");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Edit and expand all tabs
     $this->click('link=Edit');
@@ -110,7 +110,7 @@ class WebTest_Import_ContactCustomDataTest extends ImportCiviSeleniumTestCase {
 
     // Visit contact summary page.
     $this->click("css=div.ac_results-inner li");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent('This is a test field'));
   }
 
@@ -145,7 +145,7 @@ class WebTest_Import_ContactCustomDataTest extends ImportCiviSeleniumTestCase {
 
     //add new custom data
     $this->click("//a[@id='newCustomDataGroup']/span");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //fill custom group title
     $customGroupTitle = 'Custom ' . substr(sha1(rand()), 0, 7);

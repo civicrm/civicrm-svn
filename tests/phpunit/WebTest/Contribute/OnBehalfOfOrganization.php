@@ -115,13 +115,13 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
 
     //logout
     $this->open($this->sboxPath . "civicrm/logout?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     //$this->_testAnomoyousOganization($pageId, $cid, $pageTitle);
     $this->open($this->sboxPath . "civicrm/logout?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->_testUserWithOneRelationship($pageId, $cid, $pageTitle);
     $this->open($this->sboxPath . "civicrm/logout?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->_testUserWithMoreThanOneRelationship($pageId, $cid, $pageTitle);
   }
 
@@ -144,12 +144,12 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $firstName     = 'John_x_' . substr(sha1(rand()), 0, 7);
     $lastName      = 'Anderson_c_' . substr(sha1(rand()), 0, 7);
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Edit_next");
     $this->type("first_name", $firstName);
     $this->type("last_name", $lastName);
     $this->click("_qf_Edit_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("profilewrap4");
 
     // Is status message correct?                                                                                                                                                                           
@@ -160,7 +160,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     // Go directly to the URL of the screen that you will be testing (New Custom Group).
     $this->open($this->sboxPath . "civicrm/admin/custom/group?action=add&reset=1");
 
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //fill custom group title
     $customGroupTitle = 'custom_' . substr(sha1(rand()), 0, 7);
@@ -210,14 +210,14 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
 
     //clicking save
     $this->click("_qf_Field_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Is custom field created?
     $this->assertTrue($this->isTextPresent("Your custom field '$checkboxFieldLabel' has been saved."));
 
     //create another custom field - Integer Radio
     $this->click("//a[@id='newCustomField']/span");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("data_type[0]");
     $this->select("data_type[0]", "value=1");
     $this->click("//option[@value='1']");
@@ -252,18 +252,18 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
 
     //clicking save
     $this->click("_qf_Field_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Is custom field created
     $this->assertTrue($this->isTextPresent("Your custom field '$radioFieldLabel' has been saved."));
     
     //add the above custom data to the On Behalf of Profile
     $this->open($this->sboxPath . "civicrm/admin/uf/group?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("link=Reserved Profiles");
 
     $this->click("xpath=//div[@id='reserved-profiles']/div/div/table/tbody//tr/td[1][text()='On Behalf Of Organization']/../td[5]/span/a[text()='Fields']");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click("link=Add Field");
     $this->waitForElementPresent('_qf_Field_next-bottom');
@@ -272,14 +272,14 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $this->select('field_name[1]', "label=$label");
     $this->click('field_name[1]');
     $this->click('_qf_Field_next_new-bottom');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->select('field_name[0]', 'value=Membership');
     $label = $radioFieldLabel.' :: '. $customGroupTitle;
     $this->select('field_name[1]', "label=$label");
     $this->click('field_name[1]');
     $this->click('_qf_Field_next-bottom');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("Your CiviCRM Profile Field '{$radioFieldLabel}' has been saved to 'On Behalf Of Organization'."));
 
 
@@ -288,7 +288,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $orgEmail = "org". substr(sha1(rand()), 0, 7) . "@web.com";
     $this->webtestAddOrganization($orgName, $orgEmail);
 
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("css=li#tab_member a");
 
     $this->waitForElementPresent('link=Add Membership');
@@ -325,7 +325,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $this->click('_qf_Membership_upload-bottom');
 
 
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("css=li#tab_rel a");
 
     $this->waitForElementPresent('link=Add Relationship');
@@ -399,7 +399,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
 
     //logout
     $this->open($this->sboxPath . "civicrm/logout?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
   }
 
@@ -422,12 +422,12 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $firstName     = 'John_x_' . substr(sha1(rand()), 0, 7);
     $lastName      = 'Anderson_c_' . substr(sha1(rand()), 0, 7);
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Edit_next");
     $this->type("first_name", $firstName);
     $this->type("last_name", $lastName);
     $this->click("_qf_Edit_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("profilewrap4");
 
     $urlElements = $this->parseURL();
@@ -440,11 +440,11 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     
     //add org fields to profile
     $this->open($this->sboxPath . "civicrm/admin/uf/group?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("link=Reserved Profiles");
 
     $this->click("xpath=//div[@id='reserved-profiles']/div/div/table/tbody//tr/td[1][text()='On Behalf Of Organization']/../td[5]/span/a[text()='Fields']");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click("link=Add Field");
     $this->waitForElementPresent('_qf_Field_next-bottom');
@@ -453,13 +453,13 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $this->select('field_name[1]', 'label=Legal Identifier');
     $this->click('field_name[1]');
     $this->click('_qf_Field_next_new-bottom');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->select('field_name[0]', 'value=Organization');
     $this->select('field_name[1]', 'label=Legal Name');
     $this->click('field_name[1]');
     $this->click('_qf_Field_next-bottom');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     
 
     //create organisation
@@ -467,7 +467,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $orgEmail = "org". substr(sha1(rand()), 0, 7) . "@web.com";
     $this->webtestAddOrganization($orgName, $orgEmail);
 
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("css=li#tab_rel a");
 
     $this->waitForElementPresent('link=Add Relationship');
@@ -565,12 +565,12 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $this->waitForElementPresent("_qf_Main_upload-bottom");
     $this->click("_qf_Main_upload-bottom");
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
 
     $this->click("_qf_Confirm_next-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
   }
 
@@ -622,11 +622,11 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $this->type("billing_postal_code-5", "94129");
     $this->click("_qf_Main_upload-bottom");
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
 
     $this->click("_qf_Confirm_next-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //login to check contribution
     $this->open($this->sboxPath);
@@ -639,11 +639,11 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $this->type("sort_name", $orgName);
     $this->click("_qf_Search_refresh");
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->waitForElementPresent("xpath=//div[@id='contributionSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
     $this->click("xpath=//div[@id='contributionSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_ContributionView_cancel-bottom");
 
     // verify contrb created
@@ -664,17 +664,17 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
     // page contents loaded and you can continue your test execution.
     $this->webtestLogin();
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Create new group
     $groupName = $this->WebtestAddGroup();
     $this->open($this->sboxPath . "civicrm/group?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Search_refresh");
     $groupId = $this->getText("xpath=//table[@id='crm-group-selector']/tbody//tr/td[text()='{$groupName}']/../td[2]");
 
     $this->open($this->sboxPath . "civicrm/contact/view?reset=1&cid={$cid}");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click('link=Edit');
     $this->waitForElementPresent('_qf_Contact_cancel-bottom');
@@ -689,7 +689,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $this->select('address_1_country_id', "value=1228");
     $this->select('address_1_state_province_id', "value=1004");
     $this->click('_qf_Contact_upload_view-bottom');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // add contact to group
     // visit group tab
@@ -699,7 +699,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     // add to group
     $this->select("group_id", "label={$groupName}");
     $this->click("_qf_GroupContact_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->open($this->sboxPath . "civicrm/admin/custom/group?action=add&reset=1");
     $this->waitForElementPresent("_qf_Group_next-bottom");
@@ -724,14 +724,14 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $this->select("data_type[1]", "value=Text");
     $this->click('_qf_Field_next-bottom');
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("Your custom field '$fieldTitle' has been saved."));
     $url = explode('&id=', $this->getAttribute("xpath=//div[@id='field_page']/div[2]/table/tbody//tr/td[1][text()='$fieldTitle']/../td[8]/span/a@href"));
     $fieldId = $url[1];
 
     // Enable CiviCampaign module if necessary
     $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_Component_next-bottom');
     $enabledComponents = $this->getSelectOptions('enableComponents-t');
     if (!in_array("CiviCampaign", $enabledComponents)) {
@@ -739,7 +739,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
       $this->click("//option[@value='CiviCampaign']");
       $this->click('add');
       $this->click('_qf_Component_next-bottom');
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->assertTrue($this->isTextPresent('Your changes have been saved.'));
     }
 
@@ -781,11 +781,11 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $this->assertTrue($this->isTextPresent("Campaign {$title} has been saved."), "Status message didn't show up after saving!");
 
     $this->open($this->sboxPath . "civicrm/admin/uf/group?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("link=Reserved Profiles");
 
     $this->click("xpath=//div[@id='reserved-profiles']/div/div/table/tbody//tr/td[1][text()='On Behalf Of Organization']/../td[5]/span/a[text()='Fields']");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click("link=Add Field");
     $this->waitForElementPresent('_qf_Field_next-bottom');
@@ -793,13 +793,13 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $this->select('field_name[1]', 'label=Campaign');
     $this->click('field_name[1]');
     $this->click('_qf_Field_next_new-bottom');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->select('field_name[0]', 'value=Contribution');
     $this->select('field_name[1]', "label=$fieldTitle :: $groupTitle");
     $this->click('field_name[1]');
     $this->click('_qf_Field_next-bottom');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("Your CiviCRM Profile Field '{$fieldTitle}' has been saved to 'On Behalf Of Organization'."));
 
     // Open Page to create Organization
@@ -834,11 +834,11 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
 
     // Save the Organization
     $this->click("_qf_Contact_upload_view-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // open contact
     $this->open($this->sboxPath . "civicrm/contact/view/rel?cid={$cid}&action=add&reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // select relationship type
     $this->click("relationship_type_id");
@@ -886,19 +886,19 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $this->type("billing_postal_code-5", "94129");
 
     $this->click("_qf_Main_upload-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
     $this->click("_qf_Confirm_next-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Find Contribution
     $this->open($this->sboxPath . "civicrm/contribute/search?reset=1");
     $this->type("sort_name", $orgName1);
     $this->click("_qf_Search_refresh");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("xpath=//div[@id='contributionSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
     $this->click("xpath=//div[@id='contributionSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_ContributionView_cancel-bottom");
 
     // verify contrb created
@@ -914,24 +914,24 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
 
 
     $this->open($this->sboxPath . "civicrm/admin/uf/group?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("link=Reserved Profiles");
 
     $this->click("xpath=//div[@id='reserved-profiles']/div/div/table/tbody//tr/td[1][text()='On Behalf Of Organization']/../td[5]/span/a[text()='Fields']");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click("xpath=//div[@id='field_page']/div[3]/table/tbody//tr/td[1][text()='Campaign']/../td[9]/span[2][text()='more ']/ul/li[2]/a[text()='Delete']");
     $this->waitForElementPresent('_qf_Field_next-bottom');
 
     $this->click('_qf_Field_next-bottom');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent('Selected Profile Field has been deleted.'), "Status message didn't show up after saving!");
 
     $this->click("xpath=//div[@id='field_page']/div[3]/table/tbody//tr/td[1][text()='{$fieldTitle}']/../td[9]/span[2][text()='more ']/ul/li[2]/a[text()='Delete']");
     $this->waitForElementPresent('_qf_Field_next-bottom');
 
     $this->click('_qf_Field_next-bottom');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent('Selected Profile Field has been deleted.'), "Status message didn't show up after saving!");
   }
 
@@ -942,7 +942,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
     // page contents loaded and you can continue your test execution.
     $this->webtestLogin();
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Create new group
     $groupName = $this->WebtestAddGroup();
@@ -953,7 +953,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $groupId = $this->getText("xpath=//div[@id='group']/div[3]/table/tbody//tr/td[text()='{$groupName}']/../td[2]");
 
     $this->open($this->sboxPath . "civicrm/contact/view?reset=1&cid={$cid}");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click('link=Edit');
     $this->waitForElementPresent('_qf_Contact_cancel-bottom');
@@ -968,7 +968,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $this->select('address_1_country_id', "value=1228");
     $this->select('address_1_state_province_id', "value=1004");
     $this->click('_qf_Contact_upload_view-bottom');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // add contact to group
     // visit group tab
@@ -978,7 +978,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     // add to group
     $this->select("group_id", "label=$groupName");
     $this->click("_qf_GroupContact_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->open($this->sboxPath . "civicrm/admin/custom/group?action=add&reset=1");
     $this->waitForElementPresent("_qf_Group_next-bottom");
@@ -1004,14 +1004,14 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $this->select("data_type[1]", "value=Text");
     $this->click('_qf_Field_next-bottom');
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("Your custom field '$fieldTitle' has been saved."));
     $url = explode('&id=', $this->getAttribute("xpath=//div[@id='field_page']/div[2]/table/tbody//tr/td[1]/span[text()='$fieldTitle']/../td[8]/span/a@href"));
     $fieldId = $url[1];
 
     // Enable CiviCampaign module if necessary
     $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_Component_next-bottom');
     $enabledComponents = $this->getSelectOptions('enableComponents-t');
     if (!in_array("CiviCampaign", $enabledComponents)) {
@@ -1019,7 +1019,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
       $this->click("//option[@value='CiviCampaign']");
       $this->click('add');
       $this->click('_qf_Component_next-bottom');
-      $this->waitForPageToLoad("30000");
+      $this->waitForPageToLoad($this->getTimeoutMsec());
       $this->assertTrue($this->isTextPresent('Your changes have been saved.'));
     }
 
@@ -1057,15 +1057,15 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
 
     // click save
     $this->click("_qf_Campaign_upload-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->assertTrue($this->isTextPresent("Campaign {$title} has been saved."), "Status message didn't show up after saving!");
 
     $this->open($this->sboxPath . "civicrm/admin/uf/group?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("link=Reserved Profiles");
     $this->click("xpath=//div[@id='reserved-profiles']/div/div/table/tbody//tr/td[1][text()='On Behalf Of Organization']/../td[5]/span/a[text()='Fields']");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click("link=Add Field");
     $this->waitForElementPresent('_qf_Field_next-bottom');
@@ -1073,14 +1073,14 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $this->select('field_name[1]', 'label=Campaign');
     $this->click('field_name[1]');
     $this->click('_qf_Field_next_new-bottom');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_Field_cancel-bottom');
 
     $this->select('field_name[0]', 'value=Membership');
     $this->select('field_name[1]', "label=$fieldTitle :: $groupTitle");
     $this->click('field_name[1]');
     $this->click('_qf_Field_next-bottom');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("Your CiviCRM Profile Field '{$fieldTitle}' has been saved to 'On Behalf Of Organization'."),
       "Status message didn't show up after saving!"
     );
@@ -1117,7 +1117,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
 
     // Save the Organization
     $this->click("_qf_Contact_upload_view-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // create second orzanization
     $this->open($this->sboxPath . "civicrm/contact/add?reset=1&ct=Organization");
@@ -1151,13 +1151,13 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
 
     // Save the Organization
     $this->click("_qf_Contact_upload_view-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
 
     // create Membership type
     $title1 = "Membership Type" . substr(sha1(rand()), 0, 7);
     $this->open($this->sboxPath . "civicrm/admin/member/membershipType?reset=1&action=browse");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click("link=Add Membership Type");
     $this->waitForElementPresent('_qf_MembershipType_cancel-bottom');
@@ -1190,7 +1190,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
 
     // open contact
     $this->open($this->sboxPath . "civicrm/contact/view/rel?cid={$cid}&action=add&reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // select relationship type
     $this->click("relationship_type_id");
@@ -1212,7 +1212,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
 
     // open contact
     $this->open($this->sboxPath . "civicrm/contact/view/rel?cid={$cid}&action=add&reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // select relationship type
     $this->click("relationship_type_id");
@@ -1239,7 +1239,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $this->click("membership_type[{$typeId}]");
     $this->click("xpath=//div[@id='memberFields']//table[@class='report']/tbody//tr/td[1]/label[text()='{$title1}']/../../td[2]/input");
     $this->click('_qf_MembershipBlock_upload_done-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Open Live Membership Page
     $this->open($this->sboxPath . "civicrm/contribute/transact?reset=1&id=" . $pageId . "&cid=" . $cid);
@@ -1267,19 +1267,19 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $this->select("credit_card_exp_date[Y]", "value=2020");
 
     $this->click("_qf_Main_upload-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
     $this->click("_qf_Confirm_next-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Find Membership for organization
     $this->open($this->sboxPath . "civicrm/member/search?reset=1");
     $this->type("sort_name", $orgName1);
     $this->click("_qf_Search_refresh");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("xpath=//div[@id='memberSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
     $this->click("xpath=//div[@id='memberSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
 
     //verify contrb created
@@ -1294,11 +1294,11 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
 
     // find membership for contact in relationship
     $this->open($this->sboxPath . "civicrm/contact/view?reset=1&force=1&cid={$cid}");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("css=li#tab_member a");
     $this->waitForElementPresent("xpath=//div[@id='memberships']/div/table//tbody//tr/td[1][text()='{$title1}']");
     $this->click("xpath=//div[@id='memberships']/div/table//tbody//tr/td[1][text()='{$title1}']/../td[7]/span/a[text()='View']");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //verify contrb created
     $expected = array(
@@ -1310,16 +1310,16 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     }
 
     $this->open($this->sboxPath . "civicrm/admin/uf/group?reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("link=Reserved Profiles");
     $this->click("xpath=//div[@id='reserved-profiles']/div/div/table/tbody//tr/td[1][text()='On Behalf Of Organization']/../td[5]/span/a[text()='Fields']");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->click("xpath=//div[@id='field_page']/div[3]/table/tbody//tr/td[1][text()='Campaign']/../td[9]/span[2][text()='more ']/ul/li[2]/a[text()='Delete']");
     $this->waitForElementPresent('_qf_Field_next-bottom');
 
     $this->click('_qf_Field_next-bottom');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent('Selected Profile Field has been deleted.'),
       "Status message didn't show up after saving!"
     );
@@ -1328,13 +1328,13 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
     $this->waitForElementPresent('_qf_Field_next-bottom');
 
     $this->click('_qf_Field_next-bottom');
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent('Selected Profile Field has been deleted.'),
       "Status message didn't show up after saving!"
     );
 
     $this->open($this->sboxPath . "civicrm/contact/view?reset=1&cid={$cid}");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("css=li#tab_rel a");
 
     $this->waitForElementPresent("xpath=//div[@id='current-relationships']/div/table/tbody//tr/td[2]/a[text()='{$orgName1}']");
@@ -1345,7 +1345,7 @@ class WebTest_Contribute_OnBehalfOfOrganization extends CiviSeleniumTestCase {
         $this->getConfirmation()
       ));
     $this->chooseOkOnNextConfirmation();
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent('Selected relationship has been deleted successfully.'),
       "Status message didn't show up after saving!"
     );

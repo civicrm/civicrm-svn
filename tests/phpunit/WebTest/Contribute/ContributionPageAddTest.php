@@ -45,12 +45,12 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
     // search for the new contrib page and go to its test version
     $this->type('title', $pageTitle);
     $this->click('_qf_SearchContribution_refresh');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // select testdrive mode
     $this->isTextPresent($pageTitle);
     $this->open($this->sboxPath . 'civicrm/contribute/transact?reset=1&action=preview&id=' . $pageId);
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     // verify whatever’s possible to verify
     // FIXME: ideally should be expanded
     $texts = array(
@@ -98,13 +98,13 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
     // search for the new contrib page and go to its test version
     $this->type('title', $pageTitle);
     $this->click('_qf_SearchContribution_refresh');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // select testdrive mode
     $this->isTextPresent($pageTitle);
     $this->open($this->sboxPath . 'civicrm/contribute/transact?reset=1&action=preview&id=' . $pageId);
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $texts = array(
       "Title - New Membership $hash",
       "This is introductory message for $pageTitle",
@@ -149,13 +149,13 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
     // search for the new contrib page and go to its test version
     $this->type('title', $pageTitle);
     $this->click('_qf_SearchContribution_refresh');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //get Url for Live Contribution Page
     $registerUrl = "civicrm/contribute/transact?reset=1&id=$pageId";
     //logout
     $this->open($this->sboxPath . 'civicrm/logout?reset=1');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Open Live Contribution Page
     $this->open($this->sboxPath . $registerUrl);
@@ -170,11 +170,11 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
     //$this->click( "xpath=id('Main')/x:div[2]/x:div[3]/x:div[2]/x:label[2]" );
     $this->waitForElementPresent('_qf_Main_upload-bottom');
     $this->click('_qf_Main_upload-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_Confirm_next-bottom');
 
     $this->click('_qf_Confirm_next-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //login to check contribution
     $this->open($this->sboxPath);
@@ -190,11 +190,11 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
     $this->type('sort_name', "$firstName $lastName");
     $this->click('_qf_Search_refresh');
 
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->waitForElementPresent("xpath=//div[@id='contributionSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
     $this->click("xpath=//div[@id='contributionSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_ContributionView_cancel-bottom');
     //View Contribution Record
     $expected = array(
@@ -213,12 +213,12 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
     $this->waitForElementPresent('member_source');
     $this->type('sort_name', "$firstName $lastName");
     $this->click('_qf_Search_refresh');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //visit the Member View link
     $this->waitForElementPresent("xpath=//div[@id='memberSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
     $this->click("xpath=//div[@id='memberSearch']//table//tbody/tr[1]/td[11]/span/a[text()='View']");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_MembershipView_cancel-bottom');
 
     //View Membership Record

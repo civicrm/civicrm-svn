@@ -44,7 +44,7 @@ class WebTest_Contact_PrivacyOptionSearchTest extends CiviSeleniumTestCase {
     // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
     // page contents loaded and you can continue your test execution.
     $this->webtestLogin();
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Add new group.
     $this->open($this->sboxPath . "civicrm/group/add?&reset=1");
@@ -61,7 +61,7 @@ class WebTest_Contact_PrivacyOptionSearchTest extends CiviSeleniumTestCase {
 
     // Clicking save.
     $this->click("_qf_Edit_upload");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Add Contact1.
     $fname1 = substr(sha1(rand()), 0, 7);
@@ -82,14 +82,14 @@ class WebTest_Contact_PrivacyOptionSearchTest extends CiviSeleniumTestCase {
     $this->click("privacy_do_not_sms");
 
     $this->click('_qf_Contact_upload_view-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Add contact to the group.
     $this->click("css=li#tab_group a");
     $this->waitForElementPresent("group_id");
     $this->select("group_id", "label=$groupName");
     $this->click("_qf_GroupContact_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Add Contact2.
     $fname2 = substr(sha1(rand()), 0, 7);
@@ -109,18 +109,18 @@ class WebTest_Contact_PrivacyOptionSearchTest extends CiviSeleniumTestCase {
     $this->click("privacy_do_not_trade");
 
     $this->click('_qf_Contact_upload_view-bottom');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Add contact to the group.
     $this->click("css=li#tab_group a");
     $this->waitForElementPresent("group_id");
     $this->select("group_id", "label=$groupName");
     $this->click("_qf_GroupContact_next");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     // Go to advance search, check for 'Exclude' option.
     $this->open($this->sboxPath . "civicrm/contact/search/advanced?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->select("xpath=//form[@id='Advanced']//table[1]/tbody/tr[2]/td[2]//select[1]", "label={$groupName}");
     $this->waitForTextPresent($groupName);
@@ -138,7 +138,7 @@ class WebTest_Contact_PrivacyOptionSearchTest extends CiviSeleniumTestCase {
 
     // Go to advance search, check for 'Include' + 'OR' options.
     $this->open($this->sboxPath . "civicrm/contact/search/advanced?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->select("xpath=//form[@id='Advanced']//table[1]/tbody/tr[2]/td[2]//select[1]", "label={$groupName}");
     $this->waitForTextPresent($groupName);
@@ -159,7 +159,7 @@ class WebTest_Contact_PrivacyOptionSearchTest extends CiviSeleniumTestCase {
 
     // Go to advance search, check for 'Include' + 'AND' options.
     $this->open($this->sboxPath . "civicrm/contact/search/advanced?reset=1");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $this->select("xpath=//form[@id='Advanced']//table[1]/tbody/tr[2]/td[2]//select[1]", "label={$groupName}");
     $this->waitForTextPresent($groupName);

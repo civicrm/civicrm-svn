@@ -49,7 +49,7 @@ class WebTest_Admin_CustomAddTest extends CiviSeleniumTestCase {
     $this->open($this->sboxPath . "civicrm/admin/custom/group?action=add&reset=1");
     // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
     // button at the end of this page to show up, to make sure it's fully loaded.
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //fill custom group title
     $customGroupTitle = 'custom_group' . substr(sha1(rand()), 0, 3);
@@ -61,7 +61,7 @@ class WebTest_Admin_CustomAddTest extends CiviSeleniumTestCase {
     $this->select("extends[0]", "label=Contacts");
     $this->click("//option[@value='Contact']");
     $this->click("//form[@id='Group']/div[2]/div[3]/span[1]/input");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Is custom group created?
     $this->assertTrue($this->isTextPresent("Your custom field set '$customGroupTitle' has been added. You can add custom fields now."));
@@ -70,7 +70,7 @@ class WebTest_Admin_CustomAddTest extends CiviSeleniumTestCase {
     $this->click("header");
     $this->type("label", $textFieldLabel);
     $this->click("_qf_Field_next_new-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->click("data_type[0]");
     $this->select("data_type[0]", "value=0");
     $this->click("//option[@value='0']");
@@ -109,7 +109,7 @@ class WebTest_Admin_CustomAddTest extends CiviSeleniumTestCase {
 
     //clicking save
     $this->click("_qf_Field_next_new-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Is custom field created?
     $this->assertTrue($this->isTextPresent("Your custom field '$checkboxFieldLabel' has been saved."));
@@ -145,14 +145,14 @@ class WebTest_Admin_CustomAddTest extends CiviSeleniumTestCase {
 
     //clicking save
     $this->click("_qf_Field_next-bottom");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     //Is custom field created
     $this->assertTrue($this->isTextPresent("Your custom field '$radioFieldLabel' has been saved."));
 
     //On New Individual contact form
     $this->open($this->sboxPath . "civicrm/contact/add?ct=Individual&reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("New Individual"));
 
     //expand all tabs
@@ -172,7 +172,7 @@ class WebTest_Admin_CustomAddTest extends CiviSeleniumTestCase {
 
     //On New Household contact form
     $this->open($this->sboxPath . "civicrm/contact/add?ct=Household&reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("New Household"));
 
     //expand all tabs
@@ -192,7 +192,7 @@ class WebTest_Admin_CustomAddTest extends CiviSeleniumTestCase {
 
     //On New Organization contact form
     $this->open($this->sboxPath . "civicrm/contact/add?ct=Organization&reset=1");
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("New Organization"));
 
     //expand all tabs

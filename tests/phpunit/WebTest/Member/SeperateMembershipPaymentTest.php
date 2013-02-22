@@ -44,12 +44,12 @@ class WebTest_Member_SeperateMembershipPaymentTest extends CiviSeleniumTestCase 
     // Log in using webtestLogin() method
     $this->webtestLogin();
 
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
 
     $firstName1 = 'Ma_' . substr(sha1(rand()), 0, 7);
     $lastName1 = 'An_' . substr(sha1(rand()), 0, 7);
     $this->webtestAddContact($firstName1, $lastName1, TRUE);
-    $this->waitForPageToLoad("30000");
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->assertTrue($this->isTextPresent("$firstName1 $lastName1 has been created."));
     $url = explode('&cid=', $this->getLocation());
     $cid = $url[1];
@@ -113,7 +113,7 @@ class WebTest_Member_SeperateMembershipPaymentTest extends CiviSeleniumTestCase 
     $this->click("membership_type_$memTypeId1");
     $this->click("membership_type_$memTypeId2");
     $this->click('_qf_MembershipBlock_next');
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent('_qf_MembershipBlock_next-bottom');
     $text = "'MembershipBlock' information has been saved.";
     $this->assertTrue($this->isTextPresent($text), 'Missing text: ' . $text);
@@ -124,7 +124,7 @@ class WebTest_Member_SeperateMembershipPaymentTest extends CiviSeleniumTestCase 
     $this->waitForElementPresent("member_end_date_high");
     $this->type("sort_name", "$firstName1 $lastName1");
     $this->click("_qf_Search_refresh");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("xpath=//div[@id='memberSearch']/table/tbody/tr");
     $this->click("xpath=//div[@id='memberSearch']/table/tbody/tr/td[11]/span/a[text()='View']");
     $this->waitForElementPresent("_qf_MembershipView_cancel-bottom");
@@ -158,7 +158,7 @@ class WebTest_Member_SeperateMembershipPaymentTest extends CiviSeleniumTestCase 
       );
     }
     $this->click("_qf_ContributionView_cancel-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
   }
 
   function _testOnlineMembershipSignup($pageId, $memTypeId, $cid = NULL) {
@@ -176,10 +176,10 @@ class WebTest_Member_SeperateMembershipPaymentTest extends CiviSeleniumTestCase 
     $this->click("xpath=//div[@class='crm-section membership_amount-section']/div[2]//span/label/span[2][contains(text(),'$memTypeId')]");
     $this->type("xpath=//div[@class='crm-section other_amount-section']//div[2]/input", 60);
     $this->click("_qf_Main_upload-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
     $this->waitForElementPresent("_qf_Confirm_next-bottom");
     $this->click("_qf_Confirm_next-bottom");
-    $this->waitForPageToLoad('30000');
+    $this->waitForPageToLoad($this->getTimeoutMsec());
   }
 }
 
