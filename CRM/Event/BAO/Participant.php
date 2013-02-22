@@ -343,7 +343,8 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant {
    * @static
    * @access public
    */
-  static function eventFull($eventId,
+  static function eventFull(
+    $eventId,
     $returnEmptySeats = FALSE,
     $includeWaitingList = TRUE,
     $returnWaitingCount = FALSE,
@@ -395,7 +396,7 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant {
 INNER JOIN  civicrm_event event ON ( event.id = participant.event_id )
             {$whereClause}";
 
-      $eventFullText = ts('This event is full !!!');
+      $eventFullText = ts('This event is full!!!');
       $participants = CRM_Core_DAO::executeQuery($query, $eventParams);
       while ($participants->fetch()) {
         //oops here event is full and we don't want waiting count.
@@ -483,7 +484,8 @@ SELECT  event.event_full_text,
    * @static
    * @access public
    */
-  static function priceSetOptionsCount($eventId,
+  static function priceSetOptionsCount(
+    $eventId,
     $skipParticipantIds = array(),
     $considerCounted = TRUE,
     $considerWaiting = TRUE,
