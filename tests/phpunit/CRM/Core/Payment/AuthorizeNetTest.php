@@ -59,7 +59,7 @@ class CRM_Core_Payment_AuthorizeNetTest extends CiviUnitTestCase {
 
   function tearDown() {
     $this->paymentProcessor->delete($this->processorParams->id);
-    $tablesToTruncate = array( 'civicrm_financial_type', 'civicrm_contribution', 'civicrm_contribution_recur' );
+    $tablesToTruncate = array( 'civicrm_financial_type', 'civicrm_contribution', 'civicrm_contribution_recur', 'civicrm_line_item' );
     $this->quickCleanup($tablesToTruncate);
   }
 
@@ -91,8 +91,8 @@ class CRM_Core_Payment_AuthorizeNetTest extends CiviUnitTestCase {
 
     $contributionParams = array(
       'contact_id' => $contactId,
-                                     'financial_type_id'   => $this->_contributionTypeId,
-      'recieve_date' => date('Ymd'),
+      'financial_type_id'   => $this->_contributionTypeId,
+      'receive_date' => date('Ymd'),
       'total_amount' => 150.00,
       'invoice_id' => 'c8acb91e080ad7bd8a2adc119c192885',
       'currency' => 'USD',
@@ -122,16 +122,16 @@ class CRM_Core_Payment_AuthorizeNetTest extends CiviUnitTestCase {
       'credit_card_type' => 'Visa',
       'is_recur' => 1,
       'frequency_interval' => 1,
-      'frequency_unit' => 'week',
-      'installments' => 2,
-                        'financial_type_id' => $this->_contributionTypeId,
+      'frequency_unit' => 'month',
+      'installments' => 12,
+      'financial_type_id' => $this->_contributionTypeId,
       'is_email_receipt' => 1,
       'from_email_address' => 'gandalf',
       'receive_date' => date('Ymd'),
       'receipt_date_time' => '',
       'payment_processor_id' => $this->processorParams->id,
       'price_set_id' => '',
-      'total_amount' => 150.00,
+      'total_amount' => 125.00,
       'currency' => 'USD',
       'source' => "Mordor",
       'soft_credit_to' => '',
@@ -152,12 +152,11 @@ class CRM_Core_Payment_AuthorizeNetTest extends CiviUnitTestCase {
       'non_deductible_amount' => "",
       'fee_amount' => "",
       'net_amount' => "",
-      'invoiceID' => "c8acb91e080ad7bd8a2adc119c192885",
+      'invoiceID' => "c8acb91e080ad7bd8a2adc119c192885X",
       'contribution_page_id' => "",
       'thankyou_date' => NULL,
       'honor_contact_id' => NULL,
-      'invoiceID' => '',
-      'first_name' => 'Frodo',
+      'first_name' => 'Bilbo',
       'middle_name' => 'bob',
       'last_name' => 'Baggins',
       'street_address' => '8 Hobbiton Road',
@@ -176,9 +175,10 @@ class CRM_Core_Payment_AuthorizeNetTest extends CiviUnitTestCase {
     );
 
     $result = $this->processor->doDirectPayment($params);
-
+    
     //cancel it or the transaction will be rejected by A.net if the test is re-run
-    $this->processor->cancelSubscription();
+    $cancel = $this->processor->cancelSubscription();
+
     Contact::delete($contactId);
   }
 
@@ -211,7 +211,7 @@ class CRM_Core_Payment_AuthorizeNetTest extends CiviUnitTestCase {
     $contributionParams = array(
       'contact_id' => $contactId,
                                      'financial_type_id'   => $this->_contributionTypeId,
-      'recieve_date' => $start_date,
+      'receive_date' => $start_date,
       'total_amount' => 100.00,
       'invoice_id' => 'f72ee3de0a877bfdc03ca1daf4a1d757',
       'currency' => 'USD',
