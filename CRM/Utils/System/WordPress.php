@@ -256,7 +256,7 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
     $fragment = NULL,
     $htmlize = TRUE,
     $frontend = FALSE,
-    $forceBackend = FALSE 
+    $forceBackend = FALSE
   ) {
     $config    = CRM_Core_Config::singleton();
     $script    = '';
@@ -301,14 +301,14 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
     }
 
     $base = $absolute ? $config->userFrameworkBaseURL : $config->useFrameworkRelativeBase;
-    
+
     if ((is_admin() && !$frontend) || $forceBackend) {
       $base .= 'wp-admin/admin.php';
     }
     elseif (defined('CIVICRM_UF_WP_BASEPAGE')) {
       $base .= CIVICRM_UF_WP_BASEPAGE;
     }
-    
+
     if (isset($path)) {
         if (isset($query)) {
         if ($permlinkStructure != '' && ($pageID || $script != '')) {
@@ -569,14 +569,14 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
     }
     return $ufID;
   }
-  
+
   /**
    * Get user login URL for hosting CMS (method declared in each CMS system class)
    *
    * @param string $destination - if present, add destination to querystring (works for Drupal only)
    *
    * @return string - loginURL for the current CMS
-   * @static
+   *
    */
   public function getLoginURL($destination = '') {
     $config = CRM_Core_Config::singleton();
@@ -584,9 +584,24 @@ class CRM_Utils_System_WordPress extends CRM_Utils_System_Base {
     $loginURL .= 'wp-login.php';
     return $loginURL;
   }
-  
+
   public function getLoginDestination(&$form) {
     return;
+  }
+
+  /**
+   * Return the current WordPress version if relevant function exists
+   *
+   * @return string - version number
+   *
+   */
+  function getVersion() {
+    if (function_exists('get_bloginfo')) {
+      return get_bloginfo('version', 'display');
+    }
+    else {
+      return 'Unknown';
+    }
   }
 }
 
