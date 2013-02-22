@@ -34,7 +34,7 @@ require_once 'PHPUnit/Extensions/SeleniumTestCase.php';
 define('CIVICRM_SETTINGS_PATH', __DIR__ . '/civicrm.settings.dist.php');
 define('CIVICRM_SETTINGS_LOCAL_PATH', __DIR__ . '/civicrm.settings.local.php');
 
-if(file_exists(CIVICRM_SETTINGS_LOCAL_PATH)){
+if (file_exists(CIVICRM_SETTINGS_LOCAL_PATH)) {
   require_once CIVICRM_SETTINGS_LOCAL_PATH;
 }
 require_once CIVICRM_SETTINGS_PATH;
@@ -43,7 +43,7 @@ require_once CIVICRM_SETTINGS_PATH;
  *  Base class for CiviCRM Selenium tests
  *
  *  Common functions for unit tests
- *  @package CiviCRM
+ * @package CiviCRM
  */
 class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
@@ -59,12 +59,11 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
    *  ReflectionClass of the Test class and checks the constructor
    *  of that class to decide how to set up the test.
    *
-   *  @param  string $name
-   *  @param  array  $data
-   *  @param  string $dataName
+   * @param  string $name
+   * @param  array  $data
+   * @param  string $dataName
    */
-  function __construct($name = NULL, array$data = array(
-    ), $dataName = '', array$browser = array()) {
+  function __construct($name = NULL, array$data = array(), $dataName = '', array$browser = array()) {
     parent::__construct($name, $data, $dataName, $browser);
 
     require_once 'CiviSeleniumSettings.php';
@@ -175,7 +174,11 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
   }
 
   function webtestGetFirstValueForOptionGroup($option_group_name) {
-    $result = $this->webtest_civicrm_api("OptionValue", "getvalue", array('option_group_name' => $option_group_name, 'option.limit' => 1, 'return' => 'value'));
+    $result = $this->webtest_civicrm_api("OptionValue", "getvalue", array(
+      'option_group_name' => $option_group_name,
+      'option.limit' => 1,
+      'return' => 'value'
+    ));
     return $result['result'];
   }
 
@@ -197,7 +200,11 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
   function webtestGetConfig($field) {
     static $_config_backend;
     if (is_null($_config_backend)) {
-      $result = $this->webtest_civicrm_api("Domain", "getvalue", array('current_domain' => 1, 'option.limit' => 1, 'return' => 'config_backend'));
+      $result = $this->webtest_civicrm_api("Domain", "getvalue", array(
+        'current_domain' => 1,
+        'option.limit' => 1,
+        'return' => 'config_backend'
+      ));
       $_config_backend = unserialize($result);
     }
     return $_config_backend[$field];
@@ -279,9 +286,10 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     $this->click("css=div.ac_results-inner li");
     $this->assertContains($sortName, $this->getValue('contact_1'), "autocomplete expected $sortName but didn’t find it in " . $this->getValue('contact_1'));
   }
+
   /**
    */
-  function webtestOrganisationAutocomplete( $sortName ) {
+  function webtestOrganisationAutocomplete($sortName) {
     $this->type('contact_name', $sortName);
     $this->click('contact_name');
     $this->waitForElementPresent("css=div.ac_results-inner li");
@@ -316,14 +324,15 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     $this->select("css=div#ui-datepicker-div div.ui-datepicker-header div.ui-datepicker-title select.ui-datepicker-year", "value=$year");
     $this->click("link=$day");
   }
+
   // 1. set both date and time.
   function webtestFillDateTime($dateElement, $strToTimeArgs = NULL) {
     $this->webtestFillDate($dateElement, $strToTimeArgs);
 
     $timeStamp = strtotime($strToTimeArgs ? $strToTimeArgs : '+1 month');
-    $hour      = date('h', $timeStamp);
-    $min       = date('i', $timeStamp);
-    $meri      = date('A', $timeStamp);
+    $hour = date('h', $timeStamp);
+    $min = date('i', $timeStamp);
+    $meri = date('A', $timeStamp);
 
     $this->type("{$dateElement}_time", "{$hour}:{$min}{$meri}");
   }
@@ -395,8 +404,8 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       if (CRM_Utils_Array::value('membership_type_id', $oValue)) {
         $this->select("membership_type_id_{$oIndex}", "value={$oValue['membership_type_id']}");
       }
-      if ( CRM_Utils_Array::value( 'financial_type_id', $oValue ) ) {
-        $this->select( "option_financial_type_id_{$oIndex}", "label={$oValue['financial_type_id']}" );
+      if (CRM_Utils_Array::value('financial_type_id', $oValue)) {
+        $this->select("option_financial_type_id_{$oIndex}", "label={$oValue['financial_type_id']}");
       }
       $this->type("option_label_{$oIndex}", $oValue['label']);
       $this->type("option_amount_{$oIndex}", $oValue['amount']);
@@ -490,45 +499,55 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
    * @return void
    */
 
-  function webtestAddPaymentProcessor( $processorName, $processorType = 'Dummy', $processorSettings = null, $financialAccount = 'Deposit Bank Account' ) {
+  function webtestAddPaymentProcessor($processorName, $processorType = 'Dummy', $processorSettings = NULL, $financialAccount = 'Deposit Bank Account') {
     if (!$processorName) {
       $this->fail("webTestAddPaymentProcessor requires $processorName.");
     }
     if ($processorType == 'Dummy') {
-      $processorSettings = array( 'user_name'      => 'dummy',
+      $processorSettings = array(
+        'user_name' => 'dummy',
         'url_site' => 'http://dummy.com',
         'test_user_name' => 'dummytest',
         'test_url_site' => 'http://dummytest.com',
       );
-    } elseif ( $processorType == 'AuthNet' ) {
+    }
+    elseif ($processorType == 'AuthNet') {
       // FIXME: we 'll need to make a new separate account for testing
-      $processorSettings = array( 'test_user_name' => '5ULu56ex',
+      $processorSettings = array(
+        'test_user_name' => '5ULu56ex',
         'test_password' => '7ARxW575w736eF5p',
       );
-    } elseif ( $processorType == 'Google_Checkout' ) {
+    }
+    elseif ($processorType == 'Google_Checkout') {
       // FIXME: we 'll need to make a new separate account for testing
-      $processorSettings = array( 'test_user_name' => '559999327053114',
+      $processorSettings = array(
+        'test_user_name' => '559999327053114',
         'test_password' => 'R2zv2g60-A7GXKJYl0nR0g',
       );
-    } elseif ( $processorType == 'PayPal' ) {
-      $processorSettings = array( 'test_user_name' => '559999327053114',
+    }
+    elseif ($processorType == 'PayPal') {
+      $processorSettings = array(
+        'test_user_name' => '559999327053114',
         'test_password' => 'R2zv2g60-A7GXKJYl0nR0g',
         'test_signature' => 'R2zv2g60-A7GXKJYl0nR0g',
       );
-    } elseif ( $processorType == 'PayPal_Standard' ) {
-      $processorSettings = array( 'test_user_name' => 'V18ki@9r5Bf.org',
+    }
+    elseif ($processorType == 'PayPal_Standard') {
+      $processorSettings = array(
+        'test_user_name' => 'V18ki@9r5Bf.org',
       );
-    } elseif ( empty( $processorSettings ) ) {
+    }
+    elseif (empty($processorSettings)) {
       $this->fail("webTestAddPaymentProcessor requires $processorSettings array if processorType is not Dummy.");
     }
-    $pid = CRM_Core_DAO::getFieldValue("CRM_Financial_DAO_PaymentProcessorType", $processorType, "id","name");
-    if(empty($pid)) {
+    $pid = CRM_Core_DAO::getFieldValue("CRM_Financial_DAO_PaymentProcessorType", $processorType, "id", "name");
+    if (empty($pid)) {
       $this->fail("$processorType processortype not found.");
     }
     $this->open($this->sboxPath . 'civicrm/admin/paymentProcessor?action=add&reset=1&pp=' . $pid);
     $this->waitForPageToLoad('30000');
     $this->type('name', $processorName);
-    $this->select( 'financial_account_id', "label={$financialAccount}" );
+    $this->select('financial_account_id', "label={$financialAccount}");
 
     foreach ($processorSettings AS $f => $v) {
       $this->type($f, $v);
@@ -624,13 +643,13 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
    *
    * @return an array of saved params values.
    */
-  function webtestAddRelationshipType($params = array(
-    )) {
+  function webtestAddRelationshipType($params = array()) {
     $this->open($this->sboxPath . 'civicrm/admin/reltype?reset=1&action=add');
 
     //build the params if not passed.
     if (!is_array($params) || empty($params)) {
-      $params = array('label_a_b' => 'Test Relationship Type A - B -' . rand(),
+      $params = array(
+        'label_a_b' => 'Test Relationship Type A - B -' . rand(),
         'label_b_a' => 'Test Relationship Type B - A -' . rand(),
         'contact_types_a' => 'Individual',
         'contact_types_b' => 'Individual',
@@ -679,29 +698,29 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
    * @return $pageId of newly created online contribution page.
    */
   function webtestAddContributionPage($hash = NULL,
-    $rand = NULL,
-    $pageTitle = NULL,
-    $processor = array('Dummy Processor' => 'Dummy'),
-    $amountSection = TRUE,
-    $payLater = TRUE,
-    $onBehalf = TRUE,
-    $pledges = TRUE,
-    $recurring = FALSE,
-    $membershipTypes = TRUE,
-    $memPriceSetId = NULL,
-    $friend = TRUE,
-    $profilePreId = 1,
-    $profilePostId = 7,
-    $premiums = TRUE,
-    $widget = TRUE,
-    $pcp = TRUE,
-    $isAddPaymentProcessor = TRUE,
-    $isPcpApprovalNeeded = FALSE,
-    $isSeparatePayment = FALSE,
-    $honoreeSection = TRUE,
-    $allowOtherAmmount = TRUE,
-    $isConfirmEnabled = TRUE,
-    $financialType = 'Donation'
+                                      $rand = NULL,
+                                      $pageTitle = NULL,
+                                      $processor = array('Dummy Processor' => 'Dummy'),
+                                      $amountSection = TRUE,
+                                      $payLater = TRUE,
+                                      $onBehalf = TRUE,
+                                      $pledges = TRUE,
+                                      $recurring = FALSE,
+                                      $membershipTypes = TRUE,
+                                      $memPriceSetId = NULL,
+                                      $friend = TRUE,
+                                      $profilePreId = 1,
+                                      $profilePostId = 7,
+                                      $premiums = TRUE,
+                                      $widget = TRUE,
+                                      $pcp = TRUE,
+                                      $isAddPaymentProcessor = TRUE,
+                                      $isPcpApprovalNeeded = FALSE,
+                                      $isSeparatePayment = FALSE,
+                                      $honoreeSection = TRUE,
+                                      $allowOtherAmmount = TRUE,
+                                      $isConfirmEnabled = TRUE,
+                                      $financialType = 'Donation'
   ) {
     if (!$hash) {
       $hash = substr(sha1(rand()), 0, 7);
@@ -904,7 +923,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
     if ($profilePreId || $profilePostId) {
       // fill in step 6 (Include Profiles)
-            $this->click('css=li#tab_custom a');
+      $this->click('css=li#tab_custom a');
       $this->waitForElementPresent('_qf_Custom_next-bottom');
 
       if ($profilePreId) {
@@ -997,8 +1016,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
    * @param   array    $fields       Fields to be set for strict rule
    * @param   Integer  $threshold    Rule's threshold value
    */
-  function webtestStrictDedupeRuleDefault($contactType = 'Individual', $fields = array(
-    ), $threshold = 10) {
+  function webtestStrictDedupeRuleDefault($contactType = 'Individual', $fields = array(), $threshold = 10) {
     // set default strict rule.
     $strictRuleId = 4;
     if ($contactType == 'Organization') {
@@ -1101,7 +1119,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     $this->click("css=div.ac_results-inner li");
 
     $this->type('minimum_fee', '100');
-    $this->select( 'financial_type_id', "value={$memTypeParams['financial_type']}" );
+    $this->select('financial_type_id', "value={$memTypeParams['financial_type']}");
 
     $this->type('duration_interval', $duration_interval);
     $this->select('duration_unit', "label={$duration_unit}");
@@ -1292,7 +1310,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
   // Compare a single column value in a retrieved DB record to an expected value
   function assertDBCompareValue($daoName, $searchValue, $returnColumn, $searchColumn,
-    $expectedValue, $message
+                                $expectedValue, $message
   ) {
     if (!self::checkDoLocalDBTest()) {
       return;
@@ -1340,15 +1358,15 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
    */
 
   function _testAddFinancialAccount($financialAccountTitle,
-    $financialAccountDescription = FALSE,
-    $accountingCode = FALSE,
-    $firstName = FALSE,
-    $financialAccountType = FALSE,
-    $taxDeductible = FALSE,
-    $isActive = FALSE,
-    $isTax = FALSE,
-    $taxRate = FALSE,
-    $isDefault = FALSE
+                                    $financialAccountDescription = FALSE,
+                                    $accountingCode = FALSE,
+                                    $firstName = FALSE,
+                                    $financialAccountType = FALSE,
+                                    $taxDeductible = FALSE,
+                                    $isActive = FALSE,
+                                    $isTax = FALSE,
+                                    $taxRate = FALSE,
+                                    $isDefault = FALSE
   ) {
 
     // Go directly to the URL
@@ -1373,7 +1391,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
     // Autofill Organization
     if ($firstName) {
-      $this->webtestOrganisationAutocomplete( $firstName );
+      $this->webtestOrganisationAutocomplete($firstName);
     }
 
     // Financial Account Type
@@ -1390,7 +1408,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     }
     // Is Active
     if (!$isActive) {
-      $this->check( 'is_active' );
+      $this->check('is_active');
     }
     else {
       $this->uncheck('is_active');
@@ -1423,16 +1441,16 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
    * Edit Financial Account
    */
   function _testEditFinancialAccount($editfinancialAccount,
-    $financialAccountTitle = FALSE,
-    $financialAccountDescription = FALSE,
-    $accountingCode = FALSE,
-    $firstName = FALSE,
-    $financialAccountType = FALSE,
-    $taxDeductible = FALSE,
-    $isActive = TRUE,
-    $isTax = FALSE,
-    $taxRate = FALSE,
-    $isDefault = FALSE
+                                     $financialAccountTitle = FALSE,
+                                     $financialAccountDescription = FALSE,
+                                     $accountingCode = FALSE,
+                                     $firstName = FALSE,
+                                     $financialAccountType = FALSE,
+                                     $taxDeductible = FALSE,
+                                     $isActive = TRUE,
+                                     $isTax = FALSE,
+                                     $taxRate = FALSE,
+                                     $isDefault = FALSE
   ) {
     if ($firstName) {
       $this->open($this->sboxPath . "civicrm/admin/financial/financialAccount?reset=1");
@@ -1446,53 +1464,67 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     $this->waitForElementPresent('_qf_FinancialAccount_cancel-botttom');
 
     // Change Financial Account Name
-    if($financialAccountTitle)
+    if ($financialAccountTitle) {
       $this->type('name', $financialAccountTitle);
+    }
 
     // Financial Description
-    if($financialAccountDescription)
+    if ($financialAccountDescription) {
       $this->type('description', $financialAccountDescription);
+    }
 
     //Accounting Code
-    if($accountingCode)
+    if ($accountingCode) {
       $this->type('accounting_code', $accountingCode);
+    }
 
 
     // Autofill Edit Organization
-    if($firstName)
+    if ($firstName) {
       $this->webtestOrganisationAutocomplete($firstName);
+    }
 
     // Financial Account Type
-    if($financialAccountType)
+    if ($financialAccountType) {
       $this->select('financial_account_type_id', "label={$financialAccountType}");
+    }
 
     // Is Tax Deductible
-    if($taxDeductible)
+    if ($taxDeductible) {
       $this->check('is_deductible');
-    else
+    }
+    else {
       $this->uncheck('is_deductible');
+    }
 
     // Is Tax
-    if($isTax)
+    if ($isTax) {
       $this->check('is_tax');
-    else
+    }
+    else {
       $this->uncheck('is_tax');
+    }
 
     // Tax Rate
-    if($taxRate)
+    if ($taxRate) {
       $this->type('tax_rate', $taxRate);
+    }
 
     // Set Default
-    if($isDefault)
+    if ($isDefault) {
       $this->check('is_default');
-    else
+    }
+    else {
       $this->uncheck('is_default');
+    }
 
     // Is Active
-    if($isActive)
+    if ($isActive) {
       $this->check('is_active');
-    else
+    }
+    else {
       $this->uncheck('is_active');
+    }
     $this->click('_qf_FinancialAccount_next-botttom');
     $this->waitForPageToLoad("30000");
   }
@@ -1513,10 +1545,10 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
    * Verify data after ADD and EDIT
    */
   function _assertFinancialAccount($verifyData) {
-    foreach($verifyData as $key => $expectedValue) {
+    foreach ($verifyData as $key => $expectedValue) {
       $actualValue = $this->getValue($key);
       if ($key == 'parent_financial_account') {
-        $this->assertTrue((bool)preg_match("/^{$expectedValue}/", $actualValue));
+        $this->assertTrue((bool) preg_match("/^{$expectedValue}/", $actualValue));
       }
       else {
         $this->assertEquals($expectedValue, $actualValue);
@@ -1541,19 +1573,19 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $this->waitForElementPresent("_qf_FinancialType_next");
       $this->click("_qf_FinancialType_next");
       $this->waitForPageToLoad('30000');
-      $this->assertTrue( $this->isTextPresent('Selected financial type has been deleted.'), 'Missing text: ' . 'Selected financial type has been deleted.' );
+      $this->assertTrue($this->isTextPresent('Selected financial type has been deleted.'), 'Missing text: ' . 'Selected financial type has been deleted.');
       return;
     }
     if ($option == 'new') {
-      $this->click ("link=Add Financial Type");
+      $this->click("link=Add Financial Type");
     }
     else {
-      $this->click ("xpath=id('ltype')/div/table/tbody/tr/td[1][text()='$financialType[oldname]']/../td[7]/span/a[text()='Edit']");
+      $this->click("xpath=id('ltype')/div/table/tbody/tr/td[1][text()='$financialType[oldname]']/../td[7]/span/a[text()='Edit']");
     }
     $this->waitForPageToLoad('30000');
     $this->type('name', $financialType['name']);
     if ($option == 'new') {
-      $this->type('description',  $financialType['name'].' description');
+      $this->type('description', $financialType['name'] . ' description');
     }
 
     if ($financialType['is_reserved']) {
@@ -1580,7 +1612,6 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     }
     $this->assertTrue($this->isTextPresent($text), 'Missing text: ' . $text);
   }
-
 
 
   function changePermissions($permission) {
@@ -1634,8 +1665,8 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
   function _testAddFinancialType() {
     // Add new Financial Account
-    $orgName = 'Alberta '.substr(sha1(rand()), 0, 7);
-    $financialAccountTitle = 'Financial Account '.substr(sha1(rand()), 0, 4);
+    $orgName = 'Alberta ' . substr(sha1(rand()), 0, 7);
+    $financialAccountTitle = 'Financial Account ' . substr(sha1(rand()), 0, 4);
     $financialAccountDescription = "{$financialAccountTitle} Description";
     $accountingCode = 1033;
     $financialAccountType = 'Revenue'; //Asset Revenue
@@ -1665,15 +1696,15 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     $this->waitForElementPresent("xpath=//table/tbody//tr/td[1][text()='{$financialAccountTitle}']/../td[8]/span/a[text()='Edit']");
 
     //Add new Financial Type
-    $financialType['name'] = 'FinancialType '.substr(sha1(rand()), 0, 4);
-    $financialType['is_deductible'] = true;
-    $financialType['is_reserved'] = false;
+    $financialType['name'] = 'FinancialType ' . substr(sha1(rand()), 0, 4);
+    $financialType['is_deductible'] = TRUE;
+    $financialType['is_reserved'] = FALSE;
     $this->addeditFinancialType($financialType);
 
     $accountRelationship = "Income Account is"; //Asset Account - of Income Account is
     $expected[] = array(
       'financial_account' => $financialAccountTitle,
-      'account_relationship'  => $accountRelationship
+      'account_relationship' => $accountRelationship
     );
 
     $this->select('account_relationship', "label={$accountRelationship}");
