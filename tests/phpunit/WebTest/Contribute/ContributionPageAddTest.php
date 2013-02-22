@@ -50,8 +50,7 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
     // select testdrive mode
     $this->isTextPresent($pageTitle);
     $this->open($this->sboxPath . 'civicrm/contribute/transact?reset=1&action=preview&id=' . $pageId);
-    $this->waitForPageToLoad();
-
+    $this->waitForPageToLoad('30000');
     // verify whatever’s possible to verify
     // FIXME: ideally should be expanded
     $texts = array(
@@ -105,7 +104,7 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
     $this->isTextPresent($pageTitle);
     $this->open($this->sboxPath . 'civicrm/contribute/transact?reset=1&action=preview&id=' . $pageId);
 
-    $this->waitForPageToLoad();
+    $this->waitForPageToLoad('30000');
     $texts = array(
       "Title - New Membership $hash",
       "This is introductory message for $pageTitle",
