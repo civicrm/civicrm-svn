@@ -57,7 +57,6 @@ class CRM_Core_IDS {
    * @return boolean
    */
   public function check(&$args) {
-
     // lets bypass a few civicrm urls from this check
     static $skip = array('civicrm/admin/setting/updateConfigBackend', 'civicrm/admin/messageTemplates');
     $path = implode('/', $args);
@@ -71,19 +70,51 @@ class CRM_Core_IDS {
       $_REQUEST['IDS_user_agent'] = $_SERVER['HTTP_USER_AGENT'];
     }
 
-    require_once 'IDS/Init.php';
+    $configFile = self::createConfigFile(FALSE);
 
     // init the PHPIDS and pass the REQUEST array
+    require_once 'IDS/Init.php';
+    try {
+      $init = IDS_Init::init($configFile);
+      $ids  = new IDS_Monitor($_REQUEST, $init);
+    } catch (Exception $e) {
+      // might be an old stale copy of Config.IDS.ini
+      // lets try to rebuild it again and see if it works
+      $configFile = self::createConfigFile(TRUE);
+      $init = IDS_Init::init($configFile);
+      $ids  = new IDS_Monitor($_REQUEST, $init);
+    }
+
+    $result = $ids->run();
+    if (!$result->isEmpty()) {
+      $this->react($result);
+    }
+
+    return TRUE;
+  }
+
+  /**
+   * Create the default config file for the IDS system
+   *
+   * @param boolean $force should we recreate it irrespective if it exists or not
+   *
+   * @return string the full path to the config file
+   * @static
+   */
+  static function createConfigFile($force = FALSE) {
     $config = CRM_Core_Config::singleton();
-
     $configFile = $config->configAndLogDir . 'Config.IDS.ini';
-    if (!file_exists($configFile)) {
-      $tmpDir = empty($config->uploadDir) ? CIVICRM_TEMPLATE_COMPILEDIR : $config->uploadDir;
-      // also clear the stat cache in case we are upgrading
-      clearstatcache();
+    if (!$force && file_exists($configFile)) {
+      return $configFile;
+    }
 
-      global $civicrm_root;
-      $contents = "
+    $tmpDir = empty($config->uploadDir) ? CIVICRM_TEMPLATE_COMPILEDIR : $config->uploadDir;
+
+    // also clear the stat cache in case we are upgrading
+    clearstatcache();
+
+    global $civicrm_root;
+    $contents = "
 [General]
     filter_type         = xml
     filter_path         = {$civicrm_root}/packages/IDS/default_filter.xml
@@ -125,26 +156,16 @@ class CRM_Core_IDS {
     exceptions[]        = suggested_message
     exceptions[]        = page_text
 ";
-      if (file_put_contents($configFile, $contents) === FALSE) {
-        CRM_Core_Error::movedSiteError($configFile);
-      }
-
-
-      // also create the .htaccess file so we prevent the reading of the log and ini files
-      // via a browser, CRM-3875
-      CRM_Utils_File::restrictAccess($config->configAndLogDir);
+    if (file_put_contents($configFile, $contents) === FALSE) {
+      CRM_Core_Error::movedSiteError($configFile);
     }
 
-    $init = IDS_Init::init($configFile);
 
-    $ids = new IDS_Monitor($_REQUEST, $init);
-    $result = $ids->run();
-    if (!$result->isEmpty()) {
+    // also create the .htaccess file so we prevent the reading of the log and ini files
+    // via a browser, CRM-3875
+    CRM_Utils_File::restrictAccess($config->configAndLogDir);
 
-      $this->react($result);
-    }
-
-    return TRUE;
+    return $configFile;
   }
 
   /**
