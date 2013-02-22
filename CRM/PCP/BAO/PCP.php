@@ -602,7 +602,7 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
     require_once 'Mail/mime.php';
 
     //set loginUrl
-    $loginURL = $config->userSystem->getLoginURL($destination);
+    $loginURL = $config->userSystem->getLoginURL();
 
     // used in subject templates
     $contribPageTitle = self::getPcpPageTitle($pcpId, $component);

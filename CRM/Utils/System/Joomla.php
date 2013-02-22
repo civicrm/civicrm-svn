@@ -665,5 +665,8 @@ class CRM_Utils_System_Joomla extends CRM_Utils_System_Base {
     return $loginURL;
   }
   
+  public function getLoginDestination(&$form) {
+    return;
+  }
 }
 
