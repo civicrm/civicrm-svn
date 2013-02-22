@@ -33,15 +33,16 @@
  *
  */
 class CRM_Utils_VersionCheck {
-  CONST LATEST_VERSION_AT = 'http://latest.civicrm.org/stable.php',
-  // timeout for when the connection or the server is slow
-  CHECK_TIMEOUT = 5,
-  // relative to $civicrm_root
-  LOCALFILE_NAME = 'civicrm-version.php',
-  // relative to $config->uploadDir
-  CACHEFILE_NAME = 'latest-version-cache.txt',
-  // cachefile expiry time (in seconds) - a week
-  CACHEFILE_EXPIRE = 604800;
+  CONST
+    LATEST_VERSION_AT = 'http://latest.civicrm.org/stable.php',
+    // timeout for when the connection or the server is slow
+    CHECK_TIMEOUT = 5,
+    // relative to $civicrm_root
+    LOCALFILE_NAME = 'civicrm-version.php',
+    // relative to $config->uploadDir
+    CACHEFILE_NAME = 'latest-version-cache.txt',
+    // cachefile expiry time (in seconds) - a week
+    CACHEFILE_EXPIRE = 604800;
 
   /**
    * We only need one instance of this object, so we use the
@@ -204,13 +205,13 @@ class CRM_Utils_VersionCheck {
 
     // Get title and id for all processor types
     $ppTypeNames = CRM_Core_PseudoConstant::paymentProcessorType();
-    
+
     while ($dao->fetch()) {
       $ppTypes[] = $ppTypeNames[$dao->payment_processor_type_id];
     }
     // add the .-separated list of the processor types
     $this->stats['PPTypes'] = implode(',', array_unique($ppTypes));
-    
+
   }
 
   /**
