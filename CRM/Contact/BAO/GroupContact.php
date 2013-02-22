@@ -127,7 +127,8 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
    * @access public
    * @static
    */
-  static function addContactsToGroup(&$contactIds,
+  static function addContactsToGroup(
+    &$contactIds,
     $groupId,
     $method   = 'Admin',
     $status   = 'Added',
@@ -182,8 +183,7 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
       return array(0, 0, 0);
     }
 
-
-    if ($status == 'Removed') {
+    if ($status == 'Removed' || $status == 'Deleted') {
       $op = 'delete';
     }
     else {
@@ -476,7 +476,7 @@ SELECT    *
    * @access public
    * @static
    */
-  function updateGroupMembershipStatus($contactId, $groupID, $method = 'Email', $tracking = NULL) {
+  static function updateGroupMembershipStatus($contactId, $groupID, $method = 'Email', $tracking = NULL) {
     if (!isset($contactId) && !isset($groupID)) {
       return CRM_Core_Error::fatal("$contactId or $groupID should not empty");
     }
@@ -515,7 +515,7 @@ UPDATE civicrm_group_contact
    * @access public
    * @static
    */
-  public static function getGroupId($groupContactID) {
+  static function getGroupId($groupContactID) {
     $dao = new CRM_Contact_DAO_GroupContact();
     $dao->id = $groupContactID;
     $dao->find(TRUE);
@@ -719,7 +719,8 @@ AND       group_id IN ( $groupIDString )
    * @access public
    * @static
    */
-  static function bulkAddContactsToGroup($contactIDs,
+  static function bulkAddContactsToGroup(
+    $contactIDs,
     $groupID,
     $method   = 'Admin',
     $status   = 'Added',
