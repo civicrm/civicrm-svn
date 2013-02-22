@@ -271,7 +271,7 @@ class WebTest_Profile_MultiRecordProfileAddTest extends CiviSeleniumTestCase {
     //Check for edit functionality
     sleep(3);
     $this->click("//div[@id='browseValues']/div/div/table/tbody/tr/td[3]/span/a[text()='Edit']");
-    $this->waitForElementPresent("//html/body/div[8]");
+    $this->waitForElementPresent("//html/body/div[5]");
     $this->verifyText("//div[@id='browseValues']/div/div/table/thead/tr/th[1]", preg_quote($params['textFieldLabel']));
     $this->type("//div[@id='profile-dialog']/div/form/div[2]/div/div/div[2]/input", $recordNew['text'].'edit');
     $this->click("//div[@id='profile-dialog']/div/form/div[2]/div[2]/span/input[@id='_qf_Edit_next']");
@@ -280,7 +280,7 @@ class WebTest_Profile_MultiRecordProfileAddTest extends CiviSeleniumTestCase {
     
     // Check the delete functionality
     $this->click("//div[@id='browseValues']/div/div/table/tbody/tr/td[3]/span/a[text()='Delete']");
-    $this->waitForElementPresent("//html/body/div[8]");
+    $this->waitForElementPresent("//html/body/div[5]");
     sleep(3);
     $this->assertTrue($this->isTextPresent('Are you sure you want to delete this record?'));
     $this->click('_qf_Edit_upload_delete');
@@ -288,7 +288,7 @@ class WebTest_Profile_MultiRecordProfileAddTest extends CiviSeleniumTestCase {
     // Check the view functionality
     sleep(3);
     $this->click("//div[@id='browseValues']/div/div/table/tbody/tr/td[3]/span/a[text()='View']");
-    $this->waitForElementPresent("//html/body/div[8]");
+    $this->waitForElementPresent("//html/body/div[5]");
     $this->assertTrue($this->isTextPresent('View '.$params['customGroupTitle']));
     $this->assertTrue($this->isTextPresent($params['textFieldLabel']));
     if ($checkSearchable) {
